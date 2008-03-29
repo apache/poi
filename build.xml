@@ -240,10 +240,10 @@ under the License.
     </path>
 
 
-  <path id="examples.classpath">
-    <path refid="main.classpath"/>
-    <pathelement location="${main.output.dir}"/>
-  </path>
+    <path id="examples.classpath">
+        <path refid="main.classpath"/>
+        <pathelement location="${main.output.dir}"/>
+    </path>
 
 
 
@@ -449,7 +449,7 @@ under the License.
       fork="yes" srcdir="${main.src.test}">
       <classpath>
         <path refid="main.classpath"/>
-        <pathelement location="${main.output.dir}"/>
+        <pathelement path="${main.output.dir}"/>
         <pathelement location="${junit.jar1.dir}"/>
       </classpath>
     </javac>
@@ -478,7 +478,7 @@ under the License.
       fork="yes" srcdir="${scratchpad.src.test}">
       <classpath>
         <path refid="scratchpad.classpath"/>
-        <pathelement location="${scratchpad.output.dir}"/>
+        <pathelement path="${scratchpad.output.dir}"/>
         <pathelement location="${junit.jar1.dir}"/>
       </classpath>
     </javac>
@@ -512,19 +512,20 @@ under the License.
       fork="yes" srcdir="${contrib.src.test}">
       <classpath>
         <path refid="contrib.classpath"/>
-        <pathelement location="${contrib.output.dir}"/>
+        <pathelement path="${contrib.output.dir}"/>
         <pathelement location="${junit.jar1.dir}"/>
       </classpath>
     </javac>
   </target>
 
-  <target name="compile-examples" depends="init">
+  <target name="compile-examples" depends="init,compile-ooxml">
     <javac target="${jdk.version.class}" source="${jdk.version.source}"
-      destdir="${examples.output.dir}" debug="on" srcdir="${examples.src}">
+      failonerror="true" destdir="${examples.output.dir}" debug="on" fork="yes"
+      srcdir="${examples.src}">
       <classpath>
         <path refid="examples.classpath"/>
         <path refid="ooxml.classpath"/>
-        <pathelement location="${ooxml.output.dir}"/>
+        <pathelement path="${ooxml.output.dir}"/>
         <pathelement location="${junit.jar1.dir}"/>
       </classpath>
     </javac>
@@ -542,7 +543,7 @@ under the License.
       fork="yes" srcdir="${ooxml.src.test}">
       <classpath>
         <path refid="ooxml.classpath"/>
-        <pathelement location="${ooxml.output.dir}"/>
+        <pathelement path="${ooxml.output.dir}"/>
         <pathelement location="${junit.jar1.dir}"/>
       </classpath>
     </javac>
