@@ -120,10 +120,28 @@ public final class HSSFRow implements Comparable, Row {
      *
      * @return HSSFCell a high level representation of the created cell.
      */
-
     public HSSFCell createCell(short column)
     {
-      return this.createCell(column,HSSFCell.CELL_TYPE_BLANK);
+        return this.createCell(column,HSSFCell.CELL_TYPE_BLANK);
+    }
+
+    /**
+     * Use this to create new cells within the row and return it.
+     * <p>
+     * The cell that is returned is a CELL_TYPE_BLANK. The type can be changed
+     * either through calling <code>setCellValue</code> or <code>setCellType</code>.
+     *
+     * @param column - the column number this cell represents
+     *
+     * @return HSSFCell a high level representation of the created cell.
+     */
+    public HSSFCell createCell(int column)
+    {
+    	short shortCellNum = (short)column;
+    	if(column > 0x7FFF) {
+    		shortCellNum = (short)(0xffff - column);
+    	}
+        return this.createCell(shortCellNum,HSSFCell.CELL_TYPE_BLANK);
     }
 
     /**
@@ -136,7 +154,6 @@ public final class HSSFRow implements Comparable, Row {
      *
      * @return HSSFCell a high level representation of the created cell.
      */
-
     public HSSFCell createCell(short column, int type)
     {
         HSSFCell cell = new HSSFCell(book, sheet, getRowNum(), column, type);

@@ -33,9 +33,20 @@ public interface Row extends Iterable {
      *
      * @param column - the column number this cell represents
      *
-     * @return HSSFCell a high level representation of the created cell.
+     * @return Cell a high level representation of the created cell.
      */
+    Cell createCell(int column);
 
+    /**
+     * Use this to create new cells within the row and return it.
+     * <p>
+     * The cell that is returned is a CELL_TYPE_BLANK. The type can be changed
+     * either through calling <code>setCellValue</code> or <code>setCellType</code>.
+     *
+     * @param column - the column number this cell represents
+     *
+     * @return Cell a high level representation of the created cell.
+     */
     Cell createCell(short column);
 
     /**

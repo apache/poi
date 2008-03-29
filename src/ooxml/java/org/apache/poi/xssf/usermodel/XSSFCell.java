@@ -39,7 +39,7 @@ public class XSSFCell implements Cell {
     private static final String TRUE_AS_STRING  = "1";
     private final CTCell cell;
     private final XSSFRow row;
-    private short cellNum;
+    private int cellNum;
     private SharedStringSource sharedStringSource;
     private StylesSource stylesSource;
     
@@ -91,7 +91,7 @@ public class XSSFCell implements Cell {
     }
 
     public short getCellNum() {
-        return this.cellNum;
+        return (short)this.cellNum;
     }
 
     public CellStyle getCellStyle() {
@@ -212,6 +212,9 @@ public class XSSFCell implements Cell {
             
     }
 
+    public void setCellNum(int num) {
+    	setCellNum((short)num);
+    }
     public void setCellNum(short num) {
         checkBounds(num);
         this.cellNum = num;
