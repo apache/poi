@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
 
@@ -251,6 +252,35 @@ public class HSSFFormulaEvaluator {
         }
         return cell;
     }
+    
+    /**
+     * Loops over all cells in all sheets of the supplied
+     *  workbook.
+     * For cells that contain formulas, their formulas are
+     *  evaluated, and the results are saved. These cells
+     *  remain as formula cells.
+     * For cells that do not contain formulas, no changes
+     *  are made.
+     * This is a helpful wrapper around looping over all 
+     *  cells, and calling evaluateFormulaCell on each one.
+     */
+	public static void evaluateAllFormulaCells(HSSFWorkbook wb) {
+		for(int i=0; i<wb.getNumberOfSheets(); i++) {
+			HSSFSheet sheet = wb.getSheetAt(i);
+			HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
+
+			for (Iterator rit = sheet.rowIterator(); rit.hasNext();) {
+				HSSFRow r = (HSSFRow)rit.next();
+				evaluator.setCurrentRow(r);
+
+				for (Iterator cit = r.cellIterator(); cit.hasNext();) {
+					HSSFCell c = (HSSFCell)cit.next();
+					if (c.getCellType() == HSSFCell.CELL_TYPE_FORMULA)
+						evaluator.evaluateFormulaCell(c);
+				}
+			}
+		}
+	}
         
     
     /**

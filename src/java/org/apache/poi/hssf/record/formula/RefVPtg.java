@@ -32,6 +32,7 @@ public final class RefVPtg extends ReferencePtg {
 
   public RefVPtg(int row, int column, boolean isRowRelative, boolean isColumnRelative) {
     super(row, column, isRowRelative, isColumnRelative);
+    setClass(CLASS_VALUE);
   }
 
 

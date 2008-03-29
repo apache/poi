@@ -277,11 +277,21 @@ public class HSSFCellStyle implements CellStyle
     
     /**
      * Get the contents of the format string, by looking up
-     *  the DataFormat against the supplied workbook
+     *  the DataFormat against the bound workbook
      * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
      */
     public String getDataFormatString() {
     	HSSFDataFormat format = new HSSFDataFormat(workbook);
+    	
+        return format.getFormat(getDataFormat());
+    }
+    /**
+     * Get the contents of the format string, by looking up
+     *  the DataFormat against the supplied workbook
+     * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
+     */
+    public String getDataFormatString(org.apache.poi.ss.usermodel.Workbook workbook) {
+    	HSSFDataFormat format = new HSSFDataFormat( ((HSSFWorkbook)workbook).getWorkbook() );
     	
         return format.getFormat(getDataFormat());
     }

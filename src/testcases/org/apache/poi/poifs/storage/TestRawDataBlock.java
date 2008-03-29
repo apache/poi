@@ -36,23 +36,23 @@ import junit.framework.*;
 public class TestRawDataBlock
     extends TestCase
 {
-
-    /**
-     * Constructor TestRawDataBlock
-     *
-     * @param name
-     */
-
-    public TestRawDataBlock(String name)
-    {
-        super(name);
-        
+	static {
         // We always want to use our own
         //  logger
         System.setProperty(
         		"org.apache.poi.util.POILogger",
         		"org.apache.poi.util.DummyPOILogger"
         );
+	}
+
+    /**
+     * Constructor TestRawDataBlock
+     *
+     * @param name
+     */
+    public TestRawDataBlock(String name)
+    {
+        super(name);
     }
 
     /**

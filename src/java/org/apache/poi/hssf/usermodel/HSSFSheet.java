@@ -53,6 +53,7 @@ import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.ReferencePtg;
 import org.apache.poi.hssf.util.HSSFCellRangeAddress;
@@ -1843,5 +1844,162 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
         }
         return null;
     }
+
+
+     /**
+      * A factory method allowing to create a conditional formatting rule 
+      * with a cell comparison operator and 
+      * formatting rules such as font format, border format and pattern format
+      * 
+      * @param comparisonOperation - one of the following values: <p>
+      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_BETWEEN}</li> 
+      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_BETWEEN}</li> 
+      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_EQUAL}</li> 
+      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_EQUAL}</li> 
+      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_GT}</li> 
+      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_LT}</li> 
+      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_GE}</li> 
+      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_LE}</li>
+      * </p> 
+      * @param formula1 - formula for the valued, compared with the cell
+      * @param formula2 - second formula (only used with 
+      * {@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_BETWEEN}) and
+      * {@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_BETWEEN} operations)   
+      * @param fontFmt - font formatting rules
+      * @param bordFmt - border formatting rules
+      * @param patternFmt - pattern formatting rules
+      * @return
+      * 
+      */
+     public HSSFConditionalFormattingRule createConditionalFormattingRule(
+     		byte comparisonOperation, 
+     		String formula1, 
+     		String formula2,
+     		HSSFFontFormatting fontFmt,
+ 			HSSFBorderFormatting bordFmt, 
+ 			HSSFPatternFormatting patternFmt)
+     {
+     	HSSFConditionalFormattingRule cf = new HSSFConditionalFormattingRule(workbook);
+ 		cf.setFontFormatting(fontFmt);
+ 		cf.setBorderFormatting(bordFmt);
+ 		cf.setPatternFormatting(patternFmt);
+ 		cf.setCellComparisonCondition(comparisonOperation, formula1, formula2);
+     	return cf;
+     }
+
+     /**
+      * A factory method allowing to create a conditional formatting rule with a formula 
+      * and formatting rules such as font format, border format and pattern format. <br>
+      * 
+      * The formatting rules are applied by Excel when the value of the formula not equal to 0. 
+      * 
+      * @param comparisonOperation - one of the following values: <p>
+      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_BETWEEN}</li> 
+      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_BETWEEN}</li> 
+      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_EQUAL}</li> 
+      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_EQUAL}</li> 
+      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_GT}</li> 
+      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_LT}</li> 
+      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_GE}</li> 
+      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_LE}</li>
+      * </p> 
+      * @param formula1 - formula for the valued, compared with the cell
+      * @param formula2 - second formula (only used with 
+      * {@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_BETWEEN}) and
+      * {@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_BETWEEN} operations)   
+      * @param fontFmt - font formatting rules
+      * @param bordFmt - border formatting rules
+      * @param patternFmt - pattern formatting rules
+      * @return
+      * 
+      */
+     public HSSFConditionalFormattingRule createConditionalFormattingRule(
+     		String formula, 
+     		HSSFFontFormatting fontFmt,
+ 			HSSFBorderFormatting bordFmt, 
+ 			HSSFPatternFormatting patternFmt)
+     {
+     	HSSFConditionalFormattingRule cf = new HSSFConditionalFormattingRule(workbook);
+ 		cf.setFontFormatting(fontFmt);
+ 		cf.setBorderFormatting(bordFmt);
+ 		cf.setPatternFormatting(patternFmt);
+ 		cf.setFormulaCondition(formula);
+     	return cf;
+     }
+     
+     /**
+      * Adds a copy of HSSFConditionalFormatting object to the sheet
+      * <p>This method could be used to copy HSSFConditionalFormatting object
+      * from one sheet to another. For example:
+      * <pre>
+      * HSSFConditionalFormatting cf = sheet.getConditionalFormattingAt(index);
+      * newSheet.addConditionalFormatting(cf);
+      * </pre>  
+      * 
+      * @param cf HSSFConditionalFormatting object
+      * @return index of the new Conditional Formatting object
+      */
+     public int addConditionalFormatting( HSSFConditionalFormatting cf )
+     {
+      	HSSFConditionalFormatting cfClone = new HSSFConditionalFormatting(this,cf.cfAggregate.cloneCFAggregate());
+      	cfClone.sheet=this;
+     	return sheet.addConditionalFormatting(cfClone.cfAggregate);
+     }
+
+     /**
+      * Allows to add a new Conditional Formatting set to the sheet.
+      *  
+      * @param regions - list of rectangular regions to apply conditional formatting rules 
+      * @param cfRules - set of up to three conditional formatting rules
+      * 
+      * @return index of the newly created Conditional Formatting object
+      */
+     
+     public int addConditionalFormatting( Region [] regions, HSSFConditionalFormattingRule [] cfRules )
+     {
+     	HSSFConditionalFormatting cf = new HSSFConditionalFormatting(this);
+     	cf.setFormattingRegions(regions);
+     	if( cfRules != null )
+     	{
+     		for( int i=0; i!= cfRules.length; i++ )
+     		{
+     	    	cf.addConditionalFormat(cfRules[i]);
+     		}
+     	}
+     	return sheet.addConditionalFormatting(cf.cfAggregate);
+     }
+     
+	/**
+	 * gets Conditional Formatting object at a particular index
+	 * @param index of the Conditional Formatting object to fetch
+	 * @return Conditional Formatting object
+	 */
+     
+	public HSSFConditionalFormatting getConditionalFormattingAt(int index)
+	{
+		CFRecordsAggregate cf = sheet.getCFRecordsAggregateAt(index);
+		if( cf != null )
+		{
+			return new HSSFConditionalFormatting(this,cf);
+		}
+		return null;
+	}
+
+	/**
+	 * @return number of Conditional Formatting objects of the sheet
+	 */
+	public int getNumConditionalFormattings()
+	{
+		return sheet.getNumConditionalFormattings();
+	}
+
+	/**
+	 * removes a Conditional Formatting object by index
+	 * @param index of a Conditional Formatting object to remove
+	 */
+	public void removeConditionalFormatting(int index)
+	{
+		sheet.removeConditionalFormatting(index);
+	}
 
 }
