@@ -48,57 +48,59 @@
 				functions in Excel. The framework however makes is easy to add 
 			 	implementation of new functions. See the <link href="eval-devguide.html"> Formula
 				evaluation development guide</link> for details. </p>
+            <p> Both HSSFWorkbook and XSSFWorkbook are supported, so you can 
+                evaluate formulas on both .xls and .xlsx files.</p>
 			<p> Note that user-defined functions are not supported, and is not likely to done
 				any time soon... at least, not till there is a VB implementation in Java!
 			</p>
 		</section>
 		<section><title>User API How-TO</title>
-			<p>The following code demonstrates how to use the HSSFFormulaEvaluator 
+			<p>The following code demonstrates how to use the FormulaEvaluator 
 				in the context of other POI excel reading code.
 			</p>
-			<p>There are several ways in which you can use the HSSFFormulaEvalutator API.</p>
+			<p>There are several ways in which you can use the FormulaEvalutator API.</p>
 
 			<anchor id="Evaluate"/>
-			<section><title>Using HSSFFormulaEvaluator.<strong>evaluate</strong>(HSSFCell cell)</title>
+			<section><title>Using FormulaEvaluator.<strong>evaluate</strong>(Cell cell)</title>
 				<p>This evaluates a given cell, and returns the new value,
 				without affecting the cell</p>
 				<source>
 FileInputStream fis = new FileInputStream("c:/temp/test.xls");
-HSSFWorkbook wb = new HSSFWorkbook(fis);
-HSSFSheet sheet = wb.getSheetAt(0);
-HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
+Workbook wb = new HSSFWorkbook(fis);
+Sheet sheet = wb.getSheetAt(0);
+FormulaEvaluator evaluator = new FormulaEvaluator(sheet, wb);
 
 // suppose your formula is in B3
 CellReference cellReference = new CellReference("B3"); 
-HSSFRow row = sheet.getRow(cellReference.getRow());
-HSSFCell cell = row.getCell(cellReference.getCol()); 
+Row row = sheet.getRow(cellReference.getRow());
+Cell cell = row.getCell(cellReference.getCol()); 
 
 evaluator.setCurrentRow(row);
-HSSFFormulaEvaluator.CellValue cellValue = evaluator.evaluate(cell);
+FormulaEvaluator.CellValue cellValue = evaluator.evaluate(cell);
 
 switch (cellValue.getCellType()) {
-	case HSSFCell.CELL_TYPE_BOOLEAN:
+	case Cell.CELL_TYPE_BOOLEAN:
     	System.out.println(cellValue.getBooleanValue());
     	break;
-	case HSSFCell.CELL_TYPE_NUMERIC:
+	case Cell.CELL_TYPE_NUMERIC:
     	System.out.println(cellValue.getNumberValue());
     	break;
-	case HSSFCell.CELL_TYPE_STRING:
+	case Cell.CELL_TYPE_STRING:
     	System.out.println(cellValue.getStringValue());
     	break;
-	case HSSFCell.CELL_TYPE_BLANK:
+	case Cell.CELL_TYPE_BLANK:
     	break;
-	case HSSFCell.CELL_TYPE_ERROR:
+	case Cell.CELL_TYPE_ERROR:
     	break;
 
 	// CELL_TYPE_FORMULA will never happen
-	case HSSFCell.CELL_TYPE_FORMULA: 
+	case Cell.CELL_TYPE_FORMULA: 
     	break;
 }				
 				</source>
 				<p>Thus using the retrieved value (of type 
-					HSSFFormulaEvaluator.CellValue - a nested class) returned 
-					by HSSFFormulaEvaluator is similar to using a HSSFCell object 
+					FormulaEvaluator.CellValue - a nested class) returned 
+					by FormulaEvaluator is similar to using a Cell object 
 					containing the value of the formula evaluation. CellValue is 
 					a simple value object and does not maintain reference 
 					to the original cell.
@@ -106,46 +108,46 @@ switch (cellValue.getCellType()) {
 			</section>
 
 			<anchor id="EvaluateFormulaCell"/>
-			<section><title>Using HSSFFormulaEvaluator.<strong>evaluateFormulaCell</strong>(HSSFCell cell)</title>
-				<p><strong>evaluateFormulaCell</strong>(HSSFCell cell) 
+			<section><title>Using FormulaEvaluator.<strong>evaluateFormulaCell</strong>(Cell cell)</title>
+				<p><strong>evaluateFormulaCell</strong>(Cell cell) 
 				will check to see if the supplied cell is a formula cell. 
 				If it isn't, then no changes will be made to it. If it is, 
 				then the formula is evaluated. The value for the formula
 				is saved alongside it, to be displayed in excel. The
 				formula remains in the cell, just with a new value</p>
 				<p>The return of the function is the type of the
-				formula result, such as HSSFCell.CELL_TYPE_BOOLEAN</p>
+				formula result, such as Cell.CELL_TYPE_BOOLEAN</p>
 				<source>
 FileInputStream fis = new FileInputStream("/somepath/test.xls");
-HSSFWorkbook wb = new HSSFWorkbook(fis);
-HSSFSheet sheet = wb.getSheetAt(0);
-HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
+Workbook wb = new HSSFWorkbook(fis);
+Sheet sheet = wb.getSheetAt(0);
+FormulaEvaluator evaluator = new FormulaEvaluator(sheet, wb);
 
 // suppose your formula is in B3
 CellReference cellReference = new CellReference("B3"); 
-HSSFRow row = sheet.getRow(cellReference.getRow());
-HSSFCell cell = row.getCell(cellReference.getCol()); 
+Row row = sheet.getRow(cellReference.getRow());
+Cell cell = row.getCell(cellReference.getCol()); 
 evaluator.setCurrentRow(row);
 
 if (cell!=null) {
 	switch (<strong>evaluator.evaluateFormulaCell</strong>(cell)) {
-		case HSSFCell.CELL_TYPE_BOOLEAN:
+		case Cell.CELL_TYPE_BOOLEAN:
 		    System.out.println(cell.getBooleanCellValue());
 		    break;
-		case HSSFCell.CELL_TYPE_NUMERIC:
+		case Cell.CELL_TYPE_NUMERIC:
 		    System.out.println(cell.getNumberCellValue());
 		    break;
-		case HSSFCell.CELL_TYPE_STRING:
+		case Cell.CELL_TYPE_STRING:
 		    System.out.println(cell.getStringCellValue());
 		    break;
-		case HSSFCell.CELL_TYPE_BLANK:
+		case Cell.CELL_TYPE_BLANK:
 		    break;
-		case HSSFCell.CELL_TYPE_ERROR:
+		case Cell.CELL_TYPE_ERROR:
 		    System.out.println(cell.getErrorCellValue());
 		    break;
 		
 		// CELL_TYPE_FORMULA will never occur
-		case HSSFCell.CELL_TYPE_FORMULA: 
+		case Cell.CELL_TYPE_FORMULA: 
 		    break;
 	}
 }
@@ -153,43 +155,43 @@ if (cell!=null) {
 			</section>
 
 			<anchor id="EvaluateInCell"/>
-			<section><title>Using HSSFFormulaEvaluator.<strong>evaluateInCell</strong>(HSSFCell cell)</title>
-				<p><strong>evaluateInCell</strong>(HSSFCell cell) will check to
+			<section><title>Using FormulaEvaluator.<strong>evaluateInCell</strong>(Cell cell)</title>
+				<p><strong>evaluateInCell</strong>(Cell cell) will check to
 				see if the supplied cell is a formula cell. If it isn't,
 				then no changes will be made to it. If it is, then the
 				formula is evaluated, and the new value saved into the cell,
 				in place of the old formula.</p>
 				<source>
 FileInputStream fis = new FileInputStream("/somepath/test.xls");
-HSSFWorkbook wb = new HSSFWorkbook(fis);
-HSSFSheet sheet = wb.getSheetAt(0);
-HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
+Workbook wb = new HSSFWorkbook(fis);
+Sheet sheet = wb.getSheetAt(0);
+FormulaEvaluator evaluator = new FormulaEvaluator(sheet, wb);
 
 // suppose your formula is in B3
 CellReference cellReference = new CellReference("B3"); 
-HSSFRow row = sheet.getRow(cellReference.getRow());
-HSSFCell cell = row.getCell(cellReference.getCol()); 
+Row row = sheet.getRow(cellReference.getRow());
+Cell cell = row.getCell(cellReference.getCol()); 
 evaluator.setCurrentRow(row);
 
 if (cell!=null) {
 	switch (<strong>evaluator.evaluateInCell</strong>(cell).getCellType()) {
-		case HSSFCell.CELL_TYPE_BOOLEAN:
+		case Cell.CELL_TYPE_BOOLEAN:
 		    System.out.println(cell.getBooleanCellValue());
 		    break;
-		case HSSFCell.CELL_TYPE_NUMERIC:
+		case Cell.CELL_TYPE_NUMERIC:
 		    System.out.println(cell.getNumberCellValue());
 		    break;
-		case HSSFCell.CELL_TYPE_STRING:
+		case Cell.CELL_TYPE_STRING:
 		    System.out.println(cell.getStringCellValue());
 		    break;
-		case HSSFCell.CELL_TYPE_BLANK:
+		case Cell.CELL_TYPE_BLANK:
 		    break;
-		case HSSFCell.CELL_TYPE_ERROR:
+		case Cell.CELL_TYPE_ERROR:
 		    System.out.println(cell.getErrorCellValue());
 		    break;
 		
 		// CELL_TYPE_FORMULA will never occur
-		case HSSFCell.CELL_TYPE_FORMULA: 
+		case Cell.CELL_TYPE_FORMULA: 
 		    break;
 	}
 }
@@ -200,18 +202,18 @@ if (cell!=null) {
 			<section><title>Re-calculating all formulas in a Workbook</title>
 				<source>
 FileInputStream fis = new FileInputStream("/somepath/test.xls");
-HSSFWorkbook wb = new HSSFWorkbook(fis);
+Workbook wb = new HSSFWorkbook(fis);
 for(int sheetNum = 0; sheetNum &lt; wb.getNumberOfSheets(); sheetNum++) {
-	HSSFSheet sheet = wb.getSheetAt(sheetNum);
-	HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
+	Sheet sheet = wb.getSheetAt(sheetNum);
+	FormulaEvaluator evaluator = new FormulaEvaluator(sheet, wb);
 
 	for(Iterator rit = sheet.rowIterator(); rit.hasNext();) {
-		HSSFRow r = (HSSFRow)rit.next();
+		Row r = (Row)rit.next();
 		evaluator.setCurrentRow(r);
 
 		for(Iterator cit = r.cellIterator(); cit.hasNext();) {
-			HSSFCell c = (HSSFCell)cit.next();
-			if(c.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+			Cell c = (Cell)cit.next();
+			if(c.getCellType() == Cell.CELL_TYPE_FORMULA) {
 				evaluator.evaluateFormulaCell(c);
 			}
 		}
@@ -225,22 +227,22 @@ wb.write(new FileOutputStream("/somepath/changed.xls"));
 		<anchor id="Performance"/>
 		<section><title>Performance Notes</title>
 			<ul>
-				<li>Generally you should have to create only one HSSFFormulaEvaluator 
+				<li>Generally you should have to create only one FormulaEvaluator 
 					instance per sheet, but there really is no overhead in creating 
-					multiple HSSFFormulaEvaluators per sheet other than that of the 
-					HSSFFormulaEvaluator object creation. 
+					multiple FormulaEvaluators per sheet other than that of the 
+					FormulaEvaluator object creation. 
 				</li>
-				<li>Also note that HSSFFormulaEvaluator maintains a reference to 
+				<li>Also note that FormulaEvaluator maintains a reference to 
 					the sheet and workbook, so ensure that the evaluator instance 
 					is available for garbage collection when you are done with it 
 					(in other words don't maintain long lived reference to 
-					HSSFFormulaEvaluator if you don't really need to - unless 
+					FormulaEvaluator if you don't really need to - unless 
 					all references to the sheet and workbook are removed, these 
 					don't get garbage collected and continue to occupy potentially 
 					large amounts of memory). 
 				</li>	
 				<li>CellValue instances however do not maintain reference to the 
-					HSSFCell or the sheet or workbook, so these can be long-lived 
+					Cell or the sheet or workbook, so these can be long-lived 
 					objects without any adverse effect on performance.
 				</li>
 			</ul>
