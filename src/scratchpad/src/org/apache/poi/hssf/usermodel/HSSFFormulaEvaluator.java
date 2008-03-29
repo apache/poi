@@ -24,71 +24,40 @@ import java.util.Stack;
 
 import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.formula.AddPtg;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.BoolPtg;
-import org.apache.poi.hssf.record.formula.ConcatPtg;
 import org.apache.poi.hssf.record.formula.ControlPtg;
-import org.apache.poi.hssf.record.formula.DividePtg;
-import org.apache.poi.hssf.record.formula.EqualPtg;
-import org.apache.poi.hssf.record.formula.FuncPtg;
-import org.apache.poi.hssf.record.formula.FuncVarPtg;
-import org.apache.poi.hssf.record.formula.GreaterEqualPtg;
-import org.apache.poi.hssf.record.formula.GreaterThanPtg;
 import org.apache.poi.hssf.record.formula.IntPtg;
-import org.apache.poi.hssf.record.formula.LessEqualPtg;
-import org.apache.poi.hssf.record.formula.LessThanPtg;
 import org.apache.poi.hssf.record.formula.MemErrPtg;
 import org.apache.poi.hssf.record.formula.MissingArgPtg;
-import org.apache.poi.hssf.record.formula.MultiplyPtg;
 import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
-import org.apache.poi.hssf.record.formula.NotEqualPtg;
 import org.apache.poi.hssf.record.formula.NumberPtg;
 import org.apache.poi.hssf.record.formula.OperationPtg;
 import org.apache.poi.hssf.record.formula.ParenthesisPtg;
-import org.apache.poi.hssf.record.formula.PowerPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.ReferencePtg;
 import org.apache.poi.hssf.record.formula.StringPtg;
-import org.apache.poi.hssf.record.formula.SubtractPtg;
-import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
-import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.hssf.record.formula.UnknownPtg;
-import org.apache.poi.hssf.record.formula.eval.AddEval;
 import org.apache.poi.hssf.record.formula.eval.Area2DEval;
 import org.apache.poi.hssf.record.formula.eval.Area3DEval;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
-import org.apache.poi.hssf.record.formula.eval.ConcatEval;
-import org.apache.poi.hssf.record.formula.eval.DivideEval;
-import org.apache.poi.hssf.record.formula.eval.EqualEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
-import org.apache.poi.hssf.record.formula.eval.FuncVarEval;
 import org.apache.poi.hssf.record.formula.eval.FunctionEval;
-import org.apache.poi.hssf.record.formula.eval.GreaterEqualEval;
-import org.apache.poi.hssf.record.formula.eval.GreaterThanEval;
-import org.apache.poi.hssf.record.formula.eval.LessEqualEval;
-import org.apache.poi.hssf.record.formula.eval.LessThanEval;
-import org.apache.poi.hssf.record.formula.eval.MultiplyEval;
 import org.apache.poi.hssf.record.formula.eval.NameEval;
-import org.apache.poi.hssf.record.formula.eval.NotEqualEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.OperationEval;
-import org.apache.poi.hssf.record.formula.eval.PowerEval;
 import org.apache.poi.hssf.record.formula.eval.Ref2DEval;
 import org.apache.poi.hssf.record.formula.eval.Ref3DEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
-import org.apache.poi.hssf.record.formula.eval.SubtractEval;
-import org.apache.poi.hssf.record.formula.eval.UnaryMinusEval;
-import org.apache.poi.hssf.record.formula.eval.UnaryPlusEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
@@ -98,8 +67,6 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
 public class HSSFFormulaEvaluator {
                 
     // params to lookup the right constructor using reflection
-    private static final Class[] OPERATION_CONSTRUCTOR_CLASS_ARRAY = new Class[] { Ptg.class };
-
     private static final Class[] VALUE_CONTRUCTOR_CLASS_ARRAY = new Class[] { Ptg.class };
 
     private static final Class[] AREA3D_CONSTRUCTOR_CLASS_ARRAY = new Class[] { Ptg.class, ValueEval[].class };
@@ -111,8 +78,6 @@ public class HSSFFormulaEvaluator {
     // Maps for mapping *Eval to *Ptg
     private static final Map VALUE_EVALS_MAP = new HashMap();
 
-    private static final Map OPERATION_EVALS_MAP = new HashMap();
-
     /*
      * Following is the mapping between the Ptg tokens returned 
      * by the FormulaParser and the *Eval classes that are used 
@@ -123,26 +88,6 @@ public class HSSFFormulaEvaluator {
         VALUE_EVALS_MAP.put(IntPtg.class, NumberEval.class);
         VALUE_EVALS_MAP.put(NumberPtg.class, NumberEval.class);
         VALUE_EVALS_MAP.put(StringPtg.class, StringEval.class);
-
-        OPERATION_EVALS_MAP.put(AddPtg.class, AddEval.class);
-        OPERATION_EVALS_MAP.put(ConcatPtg.class, ConcatEval.class);
-        OPERATION_EVALS_MAP.put(DividePtg.class, DivideEval.class);
-        OPERATION_EVALS_MAP.put(EqualPtg.class, EqualEval.class);
-        //OPERATION_EVALS_MAP.put(ExpPtg.class, ExpEval.class); // TODO: check
-        // this
-        OPERATION_EVALS_MAP.put(FuncPtg.class, FuncVarEval.class); // TODO:
-                                                                   // check this
-        OPERATION_EVALS_MAP.put(FuncVarPtg.class, FuncVarEval.class);
-        OPERATION_EVALS_MAP.put(GreaterEqualPtg.class, GreaterEqualEval.class);
-        OPERATION_EVALS_MAP.put(GreaterThanPtg.class, GreaterThanEval.class);
-        OPERATION_EVALS_MAP.put(LessEqualPtg.class, LessEqualEval.class);
-        OPERATION_EVALS_MAP.put(LessThanPtg.class, LessThanEval.class);
-        OPERATION_EVALS_MAP.put(MultiplyPtg.class, MultiplyEval.class);
-        OPERATION_EVALS_MAP.put(NotEqualPtg.class, NotEqualEval.class);
-        OPERATION_EVALS_MAP.put(PowerPtg.class, PowerEval.class);
-        OPERATION_EVALS_MAP.put(SubtractPtg.class, SubtractEval.class);
-        OPERATION_EVALS_MAP.put(UnaryMinusPtg.class, UnaryMinusEval.class);
-        OPERATION_EVALS_MAP.put(UnaryPlusPtg.class, UnaryPlusEval.class);
 
     }
 
@@ -402,7 +347,7 @@ public class HSSFFormulaEvaluator {
                 if (optg instanceof AttrPtg) { continue; }
                 if (optg instanceof UnionPtg) { continue; }
 
-                OperationEval operation = (OperationEval) getOperationEvalForPtg(optg);
+                OperationEval operation = OperationEvaluatorFactory.create(optg);
 
                 int numops = operation.getNumberOfOperands();
                 Eval[] ops = new Eval[numops];
@@ -555,25 +500,6 @@ public class HSSFFormulaEvaluator {
             }
         }
         return values;
-    }
-
-    /**
-     * returns the OperationEval concrete impl instance corresponding
-     * to the suplied operationPtg
-     * @param ptg
-     */
-    protected static Eval getOperationEvalForPtg(OperationPtg ptg) {
-        Eval retval = null;
-
-        Class clazz = (Class) OPERATION_EVALS_MAP.get(ptg.getClass());
-        try {
-            Constructor constructor = clazz.getConstructor(OPERATION_CONSTRUCTOR_CLASS_ARRAY);
-            retval = (OperationEval) constructor.newInstance(new Ptg[] { ptg });
-        }
-        catch (Exception e) {
-            throw new RuntimeException("Fatal Error: ", e);
-        }
-        return retval;
     }
 
     /**

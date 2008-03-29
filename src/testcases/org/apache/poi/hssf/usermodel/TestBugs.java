@@ -508,6 +508,30 @@ extends TestCase {
         }
         assertTrue("No Exceptions till here!", true);
     }
+
+	public void test28031() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        wb.setSheetName(0, "Sheet1");
+
+        HSSFRow row = sheet.createRow(0);
+        HSSFCell cell = row.createCell((short)0);
+        String formulaText =
+			"IF(ROUND(A2*B2*C2,2)>ROUND(B2*D2,2),ROUND(A2*B2*C2,2),ROUND(B2*D2,2))";
+        cell.setCellFormula(formulaText);
+
+        assertEquals(formulaText, cell.getCellFormula());
+        if(false) {
+            // this file can be inspected manually
+            try {
+                OutputStream os = new FileOutputStream("/tmp/output28031.xls");
+                wb.write(os);
+                os.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 	
 	public void test33082() throws java.io.IOException {
 	       String filename = System.getProperty("HSSF.testdata.path");
@@ -1126,6 +1150,23 @@ extends TestCase {
         wb = new HSSFWorkbook(in);
         in.close();
         assertFalse(wb.isWriteProtected());
+    }
+    
+    /**
+     * Some files were having problems with the DVRecord,
+     *  probably due to dropdowns
+     */
+    public void test44593() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "Bug44593.xls"));
+        
+        // Used to blow up with an IllegalArgumentException
+        //  when creating a DVRecord
+        // Now won't, but no idea if this means we have
+        //  rubbish in the DVRecord or not...
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+        
+        assertEquals(2, wb.getNumberOfSheets());
     }
 }
 

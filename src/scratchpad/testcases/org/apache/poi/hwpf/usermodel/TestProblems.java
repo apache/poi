@@ -16,19 +16,14 @@
 */
 package org.apache.poi.hwpf.usermodel;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
-import java.util.Iterator;
-import java.util.List;
+import java.io.FileOutputStream;
+
+import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.StyleSheet;
-import org.apache.poi.hwpf.model.TextPiece;
-import org.apache.poi.hwpf.usermodel.Paragraph;
-import org.apache.poi.hwpf.usermodel.Range;
-import org.apache.poi.util.LittleEndian;
-
-import junit.framework.TestCase;
 
 /**
  * Test various problem documents
@@ -36,16 +31,18 @@ import junit.framework.TestCase;
  * @author Nick Burch (nick at torchbox dot com)
  */
 public class TestProblems extends TestCase {
+
 	private String dirname = System.getProperty("HWPF.testdata.path");
 	
     protected void setUp() throws Exception {
-    }			
-    
+    }
+
     /**
      * ListEntry passed no ListTable
      */
     public void testListEntryNoListTable() throws Exception {
-    	HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/ListEntryNoListTable.doc"));
+    	HWPFDocument doc = new HWPFDocument(new FileInputStream(
+    			new File(dirname, "ListEntryNoListTable.doc")));
     	
     	Range r = doc.getRange();
     	StyleSheet styleSheet = doc.getStyleSheet();
@@ -62,7 +59,8 @@ public class TestProblems extends TestCase {
 	 * AIOOB for TableSprmUncompressor.unCompressTAPOperation
 	 */
 	public void testSprmAIOOB() throws Exception {
-    	HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/AIOOB-Tap.doc"));
+    	HWPFDocument doc = new HWPFDocument(new FileInputStream(
+    			new File(dirname, "AIOOB-Tap.doc")));
     	
     	Range r = doc.getRange();
     	StyleSheet styleSheet = doc.getStyleSheet();
@@ -79,7 +77,8 @@ public class TestProblems extends TestCase {
 	 * Test for TableCell not skipping the last paragraph
 	 */
 	public void testTableCellLastParagraph() throws Exception {
-    	HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/Bug44292.doc"));
+    	HWPFDocument doc = new HWPFDocument(new FileInputStream(
+    			new File(dirname, "Bug44292.doc")));
 		Range r = doc.getRange();
 			
 		//get the table
@@ -103,5 +102,40 @@ public class TestProblems extends TestCase {
 		cell = row.getCell(2);
 		// Last cell should have one paragraph
 		assertEquals(1, cell.numParagraphs());
+	}
+
+	public void testRangeDelete() throws Exception {
+    	HWPFDocument doc = new HWPFDocument(new FileInputStream(
+    			new File(dirname, "Bug28627.doc")));
+
+    	Range range = doc.getRange();
+		int numParagraphs = range.numParagraphs();
+		
+		int totalLength = 0, deletedLength = 0;
+		
+		for (int i = 0; i < numParagraphs; i++) {
+			Paragraph para = range.getParagraph(i);
+			String text = para.text();
+
+			totalLength += text.length();
+			if (text.indexOf("{delete me}") > -1) {
+				para.delete();
+				deletedLength = text.length();
+			}
+		}
+		
+		// check the text length after deletion
+		int newLength = 0;
+    	range = doc.getRange();
+		numParagraphs = range.numParagraphs();
+		
+		for (int i = 0; i < numParagraphs; i++) {
+			Paragraph para = range.getParagraph(i);
+			String text = para.text();
+
+			newLength += text.length();			
+		}
+		
+		assertEquals(newLength, totalLength - deletedLength);
 	}
 }

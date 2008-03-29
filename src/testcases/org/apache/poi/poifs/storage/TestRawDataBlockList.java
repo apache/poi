@@ -21,6 +21,7 @@ package org.apache.poi.poifs.storage;
 
 import java.io.*;
 
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.DummyPOILogger;
 import org.apache.poi.util.POILogFactory;
 
@@ -69,7 +70,7 @@ public class TestRawDataBlockList
         {
             data[ j ] = ( byte ) j;
         }
-        new RawDataBlockList(new ByteArrayInputStream(data));
+        new RawDataBlockList(new ByteArrayInputStream(data), POIFSConstants.BIG_BLOCK_SIZE);
     }
 
     /**
@@ -81,7 +82,7 @@ public class TestRawDataBlockList
     public void testEmptyConstructor()
         throws IOException
     {
-        new RawDataBlockList(new ByteArrayInputStream(new byte[ 0 ]));
+        new RawDataBlockList(new ByteArrayInputStream(new byte[ 0 ]), POIFSConstants.BIG_BLOCK_SIZE);
     }
 
     /**
@@ -108,7 +109,7 @@ public class TestRawDataBlockList
 
             // Check we logged the error
             logger.reset();
-            new RawDataBlockList(new ByteArrayInputStream(data));
+            new RawDataBlockList(new ByteArrayInputStream(data), POIFSConstants.BIG_BLOCK_SIZE);
             assertEquals(1, logger.logged.size());
         }
     }

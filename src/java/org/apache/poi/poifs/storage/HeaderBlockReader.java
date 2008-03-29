@@ -21,8 +21,6 @@ package org.apache.poi.poifs.storage;
 
 import java.io.*;
 
-import java.util.*;
-
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.util.IOUtils;
@@ -30,7 +28,6 @@ import org.apache.poi.util.IntegerField;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LongField;
-import org.apache.poi.util.ShortField;
 
 /**
  * The block containing the archive header
@@ -41,6 +38,11 @@ import org.apache.poi.util.ShortField;
 public class HeaderBlockReader
     implements HeaderBlockConstants
 {
+    /**
+     * What big block size the file uses. Most files
+     *  use 512 bytes, but a few use 4096
+     */
+    private int bigBlockSize = POIFSConstants.BIG_BLOCK_SIZE;
 
     // number of big block allocation table blocks (int)
     private IntegerField _bat_count;
@@ -69,20 +71,27 @@ public class HeaderBlockReader
     public HeaderBlockReader(final InputStream stream)
         throws IOException
     {
-        _data = new byte[ POIFSConstants.BIG_BLOCK_SIZE ];
-        int byte_count = IOUtils.readFully(stream, _data);
-
-        if (byte_count != POIFSConstants.BIG_BLOCK_SIZE)
-        {
-        	if (byte_count == -1)
-        		//Cant have -1 bytes read in the error message!
-        		byte_count = 0;
-            String type = " byte" + ((byte_count == 1) ? ("")
-                                                       : ("s"));
-
-            throw new IOException("Unable to read entire header; "
-                                  + byte_count + type + " read; expected "
-                                  + POIFSConstants.BIG_BLOCK_SIZE + " bytes");
+    	// At this point, we don't know how big our
+    	//  block sizes are
+    	// So, read the first 32 bytes to check, then
+    	//  read the rest of the block
+    	byte[] blockStart = new byte[32];
+    	int bsCount = IOUtils.readFully(stream, blockStart);
+    	if(bsCount != 32) {
+    		alertShortRead(bsCount);
+    	}
+    	
+    	// Figure out our block size
+    	if(blockStart[30] == 12) {
+    		bigBlockSize = POIFSConstants.LARGER_BIG_BLOCK_SIZE;
+    	}
+        _data = new byte[ bigBlockSize ];
+        System.arraycopy(blockStart, 0, _data, 0, blockStart.length);
+    	
+    	// Now we can read the rest of our header
+        int byte_count = IOUtils.readFully(stream, _data, blockStart.length, _data.length - blockStart.length);
+        if (byte_count+bsCount != bigBlockSize) {
+    		alertShortRead(byte_count);
         }
 
         // verify signature
@@ -110,13 +119,24 @@ public class HeaderBlockReader
         _xbat_start     = new IntegerField(_xbat_start_offset, _data);
         _xbat_count     = new IntegerField(_xbat_count_offset, _data);
     }
+    
+    private void alertShortRead(int read) throws IOException {
+    	if (read == -1)
+    		//Cant have -1 bytes read in the error message!
+    		read = 0;
+        String type = " byte" + ((read == 1) ? ("")
+                                                   : ("s"));
+
+        throw new IOException("Unable to read entire header; "
+                              + read + type + " read; expected "
+                              + bigBlockSize + " bytes");
+    }
 
     /**
      * get start of Property Table
      *
      * @return the index of the first block of the Property Table
      */
-
     public int getPropertyStart()
     {
         return _property_start.get();
@@ -173,6 +193,13 @@ public class HeaderBlockReader
     public int getXBATIndex()
     {
         return _xbat_start.get();
+    }
+    
+    /**
+     * @return The Big Block size, normally 512 bytes, sometimes 4096 bytes
+     */
+    public int getBigBlockSize() {
+    	return bigBlockSize;
     }
 }   // end public class HeaderBlockReader
 

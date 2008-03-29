@@ -33,6 +33,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.Property;
@@ -63,7 +64,6 @@ public class POIFSFileSystem
 {
     private static final Log _logger = LogFactory.getLog(POIFSFileSystem.class);
     
-    
     private static final class CloseIgnoringInputStream extends InputStream {
 
         private final InputStream _is;
@@ -91,11 +91,16 @@ public class POIFSFileSystem
     private PropertyTable _property_table;
     private List          _documents;
     private DirectoryNode _root;
+    
+    /**
+     * What big block size the file uses. Most files
+     *  use 512 bytes, but a few use 4096
+     */
+    private int bigBlockSize = POIFSConstants.BIG_BLOCK_SIZE;
 
     /**
      * Constructor, intended for writing
      */
-
     public POIFSFileSystem()
     {
         _property_table = new PropertyTable();
@@ -138,13 +143,15 @@ public class POIFSFileSystem
         this();
         boolean success = false;
 
-        // read the header block from the stream
         HeaderBlockReader header_block_reader;
-        // read the rest of the stream into blocks
         RawDataBlockList data_blocks;
         try {
+            // read the header block from the stream
             header_block_reader = new HeaderBlockReader(stream);
-            data_blocks = new RawDataBlockList(stream);
+            bigBlockSize = header_block_reader.getBigBlockSize();
+            
+            // read the rest of the stream into blocks
+            data_blocks = new RawDataBlockList(stream, bigBlockSize);
             success = true;
         } finally {
             closeInputStream(stream, success);
@@ -307,7 +314,7 @@ public class POIFSFileSystem
 
         // create a list of BATManaged objects: the documents plus the
         // property table and the small block table
-        List                       bm_objects = new ArrayList();
+        List bm_objects = new ArrayList();
 
         bm_objects.addAll(_documents);
         bm_objects.add(_property_table);
@@ -602,6 +609,13 @@ public class POIFSFileSystem
         return "POIFS FileSystem";
     }
 
+    /**
+     * @return The Big Block size, normally 512 bytes, sometimes 4096 bytes
+     */
+    public int getBigBlockSize() {
+    	return bigBlockSize;
+    }
+    
     /* **********  END  begin implementation of POIFSViewable ********** */
 }   // end public class POIFSFileSystem
 

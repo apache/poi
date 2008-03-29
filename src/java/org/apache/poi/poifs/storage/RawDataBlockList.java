@@ -37,19 +37,20 @@ public class RawDataBlockList
      * Constructor RawDataBlockList
      *
      * @param stream the InputStream from which the data will be read
+     * @param bigBlockSize The big block size, either 512 bytes or 4096 bytes
      *
      * @exception IOException on I/O errors, and if an incomplete
      *            block is read
      */
 
-    public RawDataBlockList(final InputStream stream)
+    public RawDataBlockList(final InputStream stream, int bigBlockSize)
         throws IOException
     {
         List blocks = new ArrayList();
 
         while (true)
         {
-            RawDataBlock block = new RawDataBlock(stream);
+            RawDataBlock block = new RawDataBlock(stream, bigBlockSize);
 
             if (block.eof())
             {

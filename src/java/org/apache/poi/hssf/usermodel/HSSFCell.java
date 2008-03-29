@@ -603,29 +603,30 @@ public class HSSFCell implements Cell
         if (hvalue == null)
         {
             setCellType(CELL_TYPE_BLANK, false, row, col, styleIndex);
+            return;
         }
-        else
-        {
-            if ((cellType != CELL_TYPE_STRING ) && ( cellType != CELL_TYPE_FORMULA))
-            {
-                setCellType(CELL_TYPE_STRING, false, row, col, styleIndex);
-            }
-            int index = 0;
+        if (cellType == CELL_TYPE_FORMULA) {
+            // Set the 'pre-evaluated result' for the formula 
+            // note - formulas do not preserve text formatting.
+            FormulaRecordAggregate fr = (FormulaRecordAggregate) record;
+            // must make new sr because fr.getStringRecord() may be null
+            StringRecord sr = new StringRecord(); 
+            sr.setString(hvalue.getString()); // looses format
+            fr.setStringRecord(sr);
+            return;
+        }
 
-            UnicodeString str = hvalue.getUnicodeString();            
-//          jmh            if (encoding == ENCODING_COMPRESSED_UNICODE)
-//          jmh            {
-//          jmh                str.setCompressedUnicode();
-//          jmh            } else if (encoding == ENCODING_UTF_16)
-//          jmh            {
-//          jmh                str.setUncompressedUnicode();
-//          jmh            }
-            index = book.addSSTString(str);            
-            (( LabelSSTRecord ) record).setSSTIndex(index);
-            stringValue = hvalue;
-            stringValue.setWorkbookReferences(book, (( LabelSSTRecord ) record));
-            stringValue.setUnicodeString(book.getSSTString(index));            
+        if (cellType != CELL_TYPE_STRING) {
+            setCellType(CELL_TYPE_STRING, false, row, col, styleIndex);
         }
+        int index = 0;
+
+        UnicodeString str = hvalue.getUnicodeString();
+        index = book.addSSTString(str);
+        (( LabelSSTRecord ) record).setSSTIndex(index);
+        stringValue = hvalue;
+        stringValue.setWorkbookReferences(book, (( LabelSSTRecord ) record));
+        stringValue.setUnicodeString(book.getSSTString(index));
     }
 
     public void setCellFormula(String formula) {
