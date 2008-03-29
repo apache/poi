@@ -308,9 +308,9 @@ public class HSSFRow
      * @param cellnum  0 based column number
      * @return HSSFCell representing that column or null if undefined.
      */
-    public HSSFCell getCell(short cellnum)
-    {
-   		return getCell((int)cellnum);
+    public HSSFCell getCell(short cellnum) {
+        int ushortCellNum = cellnum & 0x0000FFFF; // avoid sign extension
+        return getCell(ushortCellNum);
     }
     /**
      * Get the hssfcell representing a given column (logical cell)

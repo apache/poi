@@ -15,17 +15,18 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.record.formula;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
+import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 
 /**
  * @author aviks
  * @author Jason Height (jheight at chariot dot net dot au)
  * @author Danny Mui (dmui at apache dot org) (Leftover handling)
  */
-public class FuncPtg extends AbstractFunctionPtg{
+public final class FuncPtg extends AbstractFunctionPtg {
     
     public final static byte sid  = 0x21;
     public final static int  SIZE = 3;
@@ -50,34 +51,24 @@ public class FuncPtg extends AbstractFunctionPtg{
         //field_1_num_args = data[ offset + 0 ];
         field_2_fnc_index  = in.readShort();
         
-      /*  
-        if (data.length - offset > 2) { //save left overs if there are any
-			leftOvers = new byte[2];
-        	System.arraycopy(data, offset+1, leftOvers, 0, leftOvers.length);
+        FunctionMetadata fm = FunctionMetadataRegistry.getFunctionByIndex(field_2_fnc_index);
+        if(fm == null) {
+            throw new RuntimeException("Invalid built-in function index (" + field_2_fnc_index + ")");
         }
-        */	
-        try {
-            numParams = ( (Integer)functionData[field_2_fnc_index][2]).intValue();
-        } catch (NullPointerException npe) {
-            numParams=0;
-        }   
-        
+        numParams = fm.getMinParams();
     }
     public FuncPtg(int functionIndex, int numberOfParameters) {
         field_2_fnc_index = (short) functionIndex;
         numParams = numberOfParameters;
+        paramClass = new byte[] { Ptg.CLASS_VALUE, }; // TODO
     }
     
-     public void writeBytes(byte[] array, int offset) {
+    public void writeBytes(byte[] array, int offset) {
         array[offset+0]= (byte) (sid + ptgClass);
-        //array[offset+1]=field_1_num_args;
         LittleEndian.putShort(array,offset+1,field_2_fnc_index);
-        /**if (leftOvers != null) {
-        	System.arraycopy(leftOvers, 0, array, offset+2, leftOvers.length);
-        }**/
     }
     
-     public int getNumberOfOperands() {
+    public int getNumberOfOperands() {
         return numParams;
     }
 
@@ -94,13 +85,11 @@ public class FuncPtg extends AbstractFunctionPtg{
     }
     
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        buffer
-        .append("<FunctionPtg>").append("\n")
-        .append("   numArgs(internal)=").append(this.numParams).append("\n")
-        .append("      name         =").append(lookupName(field_2_fnc_index)).append("\n")
-        .append("   field_2_fnc_index=").append(field_2_fnc_index).append("\n")
-        .append("</FunctionPtg>");
-        return buffer.toString();
+        StringBuffer sb = new StringBuffer(64);
+        sb.append(getClass().getName()).append(" [");
+        sb.append(lookupName(field_2_fnc_index));
+        sb.append(" nArgs=").append(numParams);
+        sb.append("]");
+        return sb.toString();
     }
 }

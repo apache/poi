@@ -15,39 +15,23 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.formula.functions;
+package org.apache.poi.hssf.record.formula.function;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Direct tests for all implementors of <code>Function</code>.
+ * Collects all tests for this package.
  * 
  * @author Josh Micich
  */
-public final class AllIndividualFunctionEvaluationTests {
-
-	// TODO - have this suite incorporated into a higher level one
+public class AllFormulaFunctionTests {
+	
 	public static Test suite() {
-		TestSuite result = new TestSuite("Tests for org.apache.poi.hssf.record.formula.functions");
-		result.addTestSuite(TestAverage.class);
-		result.addTestSuite(TestCountFuncs.class);
-		result.addTestSuite(TestDate.class);
-		result.addTestSuite(TestFinanceLib.class);
-		result.addTestSuite(TestIndex.class);
-		result.addTestSuite(TestIsBlank.class);
-		result.addTestSuite(TestLen.class);
-		result.addTestSuite(TestMid.class);
-		result.addTestSuite(TestMathX.class);
-		result.addTestSuite(TestMatch.class);
-		result.addTestSuite(TestPmt.class);
-		result.addTestSuite(TestOffset.class);
-		result.addTestSuite(TestRowCol.class);
-		result.addTestSuite(TestSumproduct.class);
-		result.addTestSuite(TestStatsLib.class);
-		result.addTestSuite(TestTFunc.class);
-		result.addTestSuite(TestTrim.class);
-		result.addTestSuite(TestXYNumericFunction.class);
+		TestSuite result = new TestSuite(AllFormulaFunctionTests.class.getName());
+		result.addTestSuite(TestFunctionMetadataRegistry.class);
+		result.addTestSuite(TestParseMissingBuiltInFuncs.class);
+		result.addTestSuite(TestReadMissingBuiltInFuncs.class);
 		return result;
 	}
 }

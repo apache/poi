@@ -293,7 +293,7 @@ public final class TestFormulaParser extends TestCase {
         assertEquals("FOO", tname.toFormulaString(w));
         
         AbstractFunctionPtg tfunc = (AbstractFunctionPtg) ptg[1];
-        assertEquals("externalflag", tfunc.getName());
+        assertTrue(tfunc.isExternalFunction());
     }
 
     public void testEmbeddedSlash() {
@@ -887,5 +887,18 @@ public final class TestFormulaParser extends TestCase {
             // expected during successful test
             assertTrue(e.getMessage().startsWith("Too few arguments suppled to operation token"));
         }
+    }
+    public void testFuncPtgSelection() {
+        Workbook book = Workbook.createWorkbook();
+        Ptg[] ptgs;
+        ptgs = FormulaParser.parse("countif(A1:A2, 1)", book);
+        assertEquals(3, ptgs.length);
+        if(FuncVarPtg.class == ptgs[2].getClass()) {
+            throw new AssertionFailedError("Identified bug 44675");
+        }
+        assertEquals(FuncPtg.class, ptgs[2].getClass());
+        ptgs = FormulaParser.parse("sin(1)", book);
+        assertEquals(2, ptgs.length);
+        assertEquals(FuncPtg.class, ptgs[1].getClass());
     }
 }

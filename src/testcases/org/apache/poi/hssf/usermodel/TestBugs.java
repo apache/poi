@@ -1218,6 +1218,30 @@ extends TestCase {
         
         assertEquals(1, wb.getNumberOfSheets());
     }
+    
+    /**
+     * User reported the wrong number of rows from the
+     *  iterator, but we can't replicate that
+     */
+    public void test44693() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "44693.xls"));
+        
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        HSSFSheet s = wb.getSheetAt(0);
+
+        // Rows are 1 to 713
+        assertEquals(0, s.getFirstRowNum());
+        assertEquals(712, s.getLastRowNum());
+        assertEquals(713, s.getPhysicalNumberOfRows());
+        
+        // Now check the iterator
+        int rowsSeen = 0;
+        for(Iterator i = s.rowIterator(); i.hasNext(); ) {
+        	HSSFRow r = (HSSFRow)i.next();
+        	rowsSeen++;
+        }
+        assertEquals(713, rowsSeen);
+    }
 }
 
 

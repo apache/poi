@@ -14,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -28,10 +27,10 @@ import junit.framework.TestSuite;
  * 
  * @author Josh Micich
  */
-public class AllRecordTests {
+public final class AllRecordTests {
 	
 	public static Test suite() {
-		TestSuite result = new TestSuite("Tests for org.apache.poi.hssf.record");
+		TestSuite result = new TestSuite(AllRecordTests.class.getName());
 
 		result.addTest(AllFormulaTests.suite());
 		
@@ -56,6 +55,7 @@ public class AllRecordTests {
 		result.addTestSuite(TestEmbeddedObjectRefSubRecord.class);
 		result.addTestSuite(TestEndSubRecord.class);
 		result.addTestSuite(TestEscherAggregate.class);
+		result.addTestSuite(TestExternalNameRecord.class);
 		result.addTestSuite(TestFontBasisRecord.class);
 		result.addTestSuite(TestFontIndexRecord.class);
 		result.addTestSuite(TestFormulaRecord.class);
