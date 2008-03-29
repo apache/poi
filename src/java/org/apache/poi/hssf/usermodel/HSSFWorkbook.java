@@ -610,7 +610,11 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         return sheets.size();
     }
 
-    /**
+    public int getSheetIndexFromExternSheetIndex(int externSheetNumber) {
+    	return workbook.getSheetIndexFromExternSheetIndex(externSheetNumber);
+	}
+
+	/**
      * Get the HSSFSheet object at the given index.
      * @param index of the sheet number (0-based physical & logical)
      * @return HSSFSheet at the provided index

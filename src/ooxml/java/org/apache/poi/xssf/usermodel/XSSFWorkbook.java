@@ -472,8 +472,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         }
         return -1;
     }
+    
+    /**
+     * Doesn't do anything - returns the same index
+     * TODO - figure out if this is a ole2 specific thing, or
+     *  if we need to do something proper here too!
+     */
+    public int getSheetIndexFromExternSheetIndex(int externSheetNumber) {
+		return externSheetNumber;
+	}
 
-    public Sheet getSheet(String name) {
+	public Sheet getSheet(String name) {
         CTSheet[] sheets = this.workbook.getSheets().getSheetArray();  
         for (int i = 0 ; i < sheets.length ; ++i) {
             if (name.equals(sheets[i].getName())) {

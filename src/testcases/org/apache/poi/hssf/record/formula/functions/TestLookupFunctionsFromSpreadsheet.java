@@ -32,7 +32,7 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.CellValue;
+import org.apache.poi.ss.usermodel.FormulaEvaluator.CellValue;
 import org.apache.poi.hssf.util.CellReference;
 
 /**
@@ -90,7 +90,7 @@ public final class TestLookupFunctionsFromSpreadsheet extends TestCase {
 
 
 
-    private static void confirmExpectedResult(String msg, HSSFCell expected, HSSFFormulaEvaluator.CellValue actual) {
+    private static void confirmExpectedResult(String msg, HSSFCell expected, CellValue actual) {
         if (expected == null) {
 			throw new AssertionFailedError(msg + " - Bad setup data expected value is null");
 		}

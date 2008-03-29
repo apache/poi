@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.CellValue;
+import org.apache.poi.ss.usermodel.FormulaEvaluator.CellValue;
 import org.apache.poi.hssf.util.CellReference;
 
 public final class TestBug42464 extends TestCase {

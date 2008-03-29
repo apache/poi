@@ -20,8 +20,8 @@ package org.apache.poi.hssf.record.formula.functions;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * Implementation for Excel function INDIRECT<p/>
@@ -41,7 +41,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  */
 public final class Indirect implements FreeRefFunction {
 
-	public ValueEval evaluate(Eval[] args, int srcCellRow, short srcCellCol, HSSFWorkbook workbook, HSSFSheet sheet) {
+	public ValueEval evaluate(Eval[] args, int srcCellRow, short srcCellCol, Workbook workbook, Sheet sheet) {
 		// TODO - implement INDIRECT()
 		return ErrorEval.FUNCTION_NOT_IMPLEMENTED;
 	}
