@@ -36,6 +36,9 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1-beta1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">44636 - Fix formula parsing of RefVPtg, which was causing #VALUE to be shown on subsequent edits</action>
+           <action dev="POI-DEVELOPERS" type="fix">44627 - Improve the thread safety of POILogFactory</action>
+           <action dev="POI-DEVELOPERS" type="add">30311 - Initial support for Conditional Formatting</action>
            <action dev="POI-DEVELOPERS" type="fix">44609 - Handle leading spaces in formulas, such as '= 4'</action>
            <action dev="POI-DEVELOPERS" type="add">44608 - Support for PercentPtg in the formula evaluator</action>
            <action dev="POI-DEVELOPERS" type="fix">44606 - Support calculated string values for evaluated formulas</action>

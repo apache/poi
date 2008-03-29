@@ -33,14 +33,25 @@ import java.util.*;
 public class POILogFactory
 {
 
-    // map of POILogger instances, with classes as keys
-    private static Map          _loggers = new HashMap();;
-
+    /**
+     * Map of POILogger instances, with classes as keys
+     */
+    private static Map _loggers = new HashMap();;
 
     /**
-     * construct a POILogFactory.
+     * A common instance of NullLogger, as it does nothing
+     *  we only need the one
      */
+    private static POILogger _nullLogger = new NullLogger();
+    /**
+     * The name of the class to use. Initialised the
+     *  first time we need it
+     */
+    private static String _loggerClassName = null;
 
+    /**
+     * Construct a POILogFactory.
+     */
     private POILogFactory()
     {
     }
@@ -69,28 +80,48 @@ public class POILogFactory
     public static POILogger getLogger(final String cat)
     {
         POILogger logger = null;
-
-        if (_loggers.containsKey(cat))
-        {
-            logger = ( POILogger ) _loggers.get(cat);
+        
+        // If we haven't found out what logger to use yet,
+        //  then do so now
+        // Don't look it up until we're first asked, so
+        //  that our users can set the system property
+        //  between class loading and first use
+        if(_loggerClassName == null) {
+        	try {
+        		_loggerClassName = System.getProperty("org.apache.poi.util.POILogger");
+        	} catch(Exception e) {}
+        	
+        	// Use the default logger if none specified,
+        	//  or none could be fetched
+        	if(_loggerClassName == null) {
+        		_loggerClassName = _nullLogger.getClass().getName();
+        	}
         }
-        else
-        {
-            try{
-              String loggerClassName = System.getProperty("org.apache.poi.util.POILogger");
-              Class loggerClass = Class.forName(loggerClassName);
+        
+        // Short circuit for the null logger, which
+        //  ignores all categories
+        if(_loggerClassName.equals(_nullLogger.getClass().getName())) {
+        	return _nullLogger;
+        }
+
+        
+        // Fetch the right logger for them, creating
+        //  it if that's required 
+        if (_loggers.containsKey(cat)) {
+            logger = ( POILogger ) _loggers.get(cat);
+        } else {
+            try {
+              Class loggerClass = Class.forName(_loggerClassName);
               logger = ( POILogger ) loggerClass.newInstance();
+              logger.initialize(cat);
+            } catch(Exception e) {
+              // Give up and use the null logger
+              logger = _nullLogger;
             }
-            catch(Exception e){
             
-              logger = new NullLogger();
-            }
-            
-            logger.initialize(cat);
-            
+            // Save for next time
             _loggers.put(cat, logger);
         }
         return logger;
     }
-        
 }   // end public class POILogFactory

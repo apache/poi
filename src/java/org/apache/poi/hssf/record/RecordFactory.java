@@ -82,6 +82,8 @@ public class RecordFactory
                 SupBookRecord.class,
                 CRNCountRecord.class,
                 CRNRecord.class,
+                CFHeaderRecord.class,
+                CFRuleRecord.class,
             };
     }
     private static Map           recordsMap  = recordsToMap(records);

@@ -180,19 +180,17 @@ public final class SharedFormulaRecord extends Record {
       return ((getFirstRow() <= formulaRow) && (getLastRow() >= formulaRow) &&
           (getFirstColumn() <= formulaColumn) && (getLastColumn() >= formulaColumn));
     }
-
-    /** Creates a non shared formula from the shared formula counter part*/
-    public void convertSharedFormulaRecord(FormulaRecord formula) {
-      //Sanity checks
-      final int formulaRow = formula.getRow();
-      final int formulaColumn = formula.getColumn();
-      if (isFormulaInShared(formula)) {
-        formula.setExpressionLength(getExpressionLength());
+    
+    /**
+     * Creates a non shared formula from the shared formula 
+     * counter part
+     */
+    protected static Stack convertSharedFormulas(Stack ptgs, int formulaRow, int formulaColumn) {
         Stack newPtgStack = new Stack();
 
-        if (field_7_parsed_expr != null)
-          for (int k = 0; k < field_7_parsed_expr.size(); k++) {
-            Ptg ptg = (Ptg) field_7_parsed_expr.get(k);
+        if (ptgs != null)
+          for (int k = 0; k < ptgs.size(); k++) {
+            Ptg ptg = (Ptg) ptgs.get(k);
             if (ptg instanceof RefNPtg) {
               RefNPtg refNPtg = (RefNPtg)ptg;
               ptg = new ReferencePtg(fixupRelativeRow(formulaRow,refNPtg.getRow(),refNPtg.isRowRelative()),
@@ -243,7 +241,23 @@ public final class SharedFormulaRecord extends Record {
                                 areaNAPtg.isLastColRelative());
             } 
             newPtgStack.add(ptg);
-          }
+        }
+        return newPtgStack;
+    }
+
+    /** 
+     * Creates a non shared formula from the shared formula 
+     * counter part
+     */
+    public void convertSharedFormulaRecord(FormulaRecord formula) {
+      //Sanity checks
+      final int formulaRow = formula.getRow();
+      final int formulaColumn = formula.getColumn();
+      if (isFormulaInShared(formula)) {
+        formula.setExpressionLength(getExpressionLength());
+        
+        Stack newPtgStack = 
+        	convertSharedFormulas(field_7_parsed_expr, formulaRow, formulaColumn);
         formula.setParsedExpression(newPtgStack);
         //Now its not shared!
         formula.setSharedFormula(false);
@@ -252,7 +266,7 @@ public final class SharedFormulaRecord extends Record {
       }
     }
     
-    private int fixupRelativeColumn(int currentcolumn, int column, boolean relative) {
+    private static int fixupRelativeColumn(int currentcolumn, int column, boolean relative) {
         if(relative) {
             // mask out upper bits to produce 'wrapping' at column 256 ("IV")
             return (column + currentcolumn) & 0x00FF;
@@ -260,7 +274,7 @@ public final class SharedFormulaRecord extends Record {
         return column;
     }
 
-    private int fixupRelativeRow(int currentrow, int row, boolean relative) {
+    private static int fixupRelativeRow(int currentrow, int row, boolean relative) {
         if(relative) {
             // mask out upper bits to produce 'wrapping' at row 65536
             return (row+currentrow) & 0x00FFFF;

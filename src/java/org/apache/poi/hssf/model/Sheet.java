@@ -24,6 +24,7 @@ import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate;
+import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.util.PaneInformation;
 
@@ -96,6 +97,7 @@ public class Sheet implements Model
     protected ObjectProtectRecord        objprotect        =     null;
     protected ScenarioProtectRecord      scenprotect       =     null;
     protected PasswordRecord             password          =     null;
+    protected List                       condFormatting    =     new ArrayList();;
 
     /** Add an UncalcedRecord if not true indicating formulas have not been calculated */ 
     protected boolean uncalced = false;
@@ -183,6 +185,17 @@ public class Sheet implements Model
                 retval.mergedRecords.add(rec);
                 retval.merged = ( MergeCellsRecord ) rec;
                 retval.numMergedRegions += retval.merged.getNumAreas();
+            }
+            else if ( rec.getSid() == CFHeaderRecord.sid )
+            {
+            	CFRecordsAggregate cfAgg = CFRecordsAggregate.createCFAggregate(recs, k);
+            	retval.condFormatting.add(cfAgg);
+            	rec = cfAgg;
+            }
+            else if ( rec.getSid() == CFRuleRecord.sid )
+            {
+            	// Skip it since it is processed by CFRecordsAggregate
+            	rec = null;
             }
             else if (rec.getSid() == ColumnInfoRecord.sid)
             {
@@ -603,6 +616,66 @@ public class Sheet implements Model
     public int getNumMergedRegions()
     {
         return numMergedRegions;
+    }
+    // Find correct position to add new CF record
+    private int findConditionalFormattingPosition()
+    {
+    	// This is default. 
+    	// If the algorithm does not find the right position,
+    	// this one will be used (this is a position before EOF record)
+    	int index = records.size()-2;
+    	
+    	for( int i=index; i>=0; i-- )
+    	{
+    		Record rec = (Record)records.get(i);
+    		short sid = rec.getSid();
+    		
+    		// CFRecordsAggregate records already exist, just add to the end
+    		if (rec instanceof CFRecordsAggregate)	{ return i+1; }
+    		
+    		if( sid == (short)0x00ef )				{ return i+1; }// PHONETICPR
+    		if( sid == (short)0x015f )				{ return i+1; }// LABELRANGES
+    		if( sid == MergeCellsRecord.sid )		{ return i+1; }
+    		if( sid == (short)0x0099 )				{ return i+1; }// STANDARDWIDTH
+    		if( sid == SelectionRecord.sid )		{ return i+1; }
+    		if( sid == PaneRecord.sid )				{ return i+1; }
+    		if( sid == SCLRecord.sid ) 				{ return i+1; }
+    		if( sid == WindowTwoRecord.sid )		{ return i+1; }
+    	}
+    	
+    	return index;
+    }
+
+    public int addConditionalFormatting(CFRecordsAggregate cfAggregate)
+    {
+    	int index = findConditionalFormattingPosition();
+    	records.add(index, cfAggregate);
+    	condFormatting.add(cfAggregate);
+    	return condFormatting.size()-1;
+    }
+
+    public void removeConditionalFormatting(int index)
+    {
+        if (index >= 0 && index <= condFormatting.size()-1 )
+        {
+        	CFRecordsAggregate cfAggregate = getCFRecordsAggregateAt(index);
+        	records.remove(cfAggregate);
+        	condFormatting.remove(index);
+        }
+    }
+    
+    public CFRecordsAggregate getCFRecordsAggregateAt(int index)
+    {
+        if (index >= 0 && index <= condFormatting.size()-1 )
+        {
+        	return (CFRecordsAggregate) condFormatting.get(index);
+        }
+        return null;
+    }
+    
+    public int getNumConditionalFormattings()
+    {
+    	return condFormatting.size();
     }
 
     /**

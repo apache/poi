@@ -266,6 +266,9 @@ public class RecordInputStream extends InputStream
   }
     
   public String readCompressedUnicode(int length) {
+	if(length == 0) {
+		return "";
+	}
     if ((length < 0) || ((remaining() < length) && !isContinueNext())) {
             throw new IllegalArgumentException("Illegal length " + length);
     }
@@ -273,7 +276,7 @@ public class RecordInputStream extends InputStream
     StringBuffer buf = new StringBuffer(length);
     for (int i=0;i<length;i++) {
       if ((remaining() == 0) && (isContinueNext())) {
-        nextRecord();
+          nextRecord();
           int compressByte = readByte();
           if(compressByte != 0) throw new IllegalArgumentException("compressByte in continue records must be 0 while reading compressed unicode");
       }

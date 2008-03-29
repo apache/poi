@@ -1035,6 +1035,28 @@ extends TestCase {
     }
 
     /**
+     * Bug 41546: Constructing HSSFWorkbook is failed,
+     *  Unknown Ptg in Formula: 0x1a (26)
+     */
+    public void test41546() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "41546.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+
+        assertTrue("No Exceptions while reading file", true);
+        assertEquals(1, wb.getNumberOfSheets());
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+        assertEquals(1, wb.getNumberOfSheets());
+    }
+
+    /**
      * Bug 42564: Some files from Access were giving a RecordFormatException
      *  when reading the BOFRecord
      */
@@ -1115,6 +1137,20 @@ extends TestCase {
     }
     
     /**
+     * Something up with the FileSharingRecord
+     */
+    public void test43251() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "43251.xls"));
+        
+        // Used to blow up with an IllegalArgumentException
+        //  when creating a FileSharingRecord
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+        
+        assertEquals(1, wb.getNumberOfSheets());
+    }
+    
+    /**
      * Crystal reports generates files with short 
      *  StyleRecords, which is against the spec
      */
@@ -1157,7 +1193,7 @@ extends TestCase {
      *  probably due to dropdowns
      */
     public void test44593() throws Exception {
-        FileInputStream in = new FileInputStream(new File(cwd, "Bug44593.xls"));
+        FileInputStream in = new FileInputStream(new File(cwd, "44593.xls"));
         
         // Used to blow up with an IllegalArgumentException
         //  when creating a DVRecord
@@ -1167,6 +1203,20 @@ extends TestCase {
         in.close();
         
         assertEquals(2, wb.getNumberOfSheets());
+    }
+    
+    /**
+     * Used to give problems due to trying to read a zero
+     *  length string, but that's now properly handled
+     */
+    public void test44643() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "44643.xls"));
+        
+        // Used to blow up with an IllegalArgumentException
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+        
+        assertEquals(1, wb.getNumberOfSheets());
     }
 }
 
