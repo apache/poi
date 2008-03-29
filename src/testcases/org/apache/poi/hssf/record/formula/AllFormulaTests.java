@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record.formula;
 
+import org.apache.poi.hssf.record.formula.function.AllFormulaFunctionTests;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -28,12 +30,12 @@ import junit.framework.TestSuite;
 public class AllFormulaTests {
 	
 	public static Test suite() {
-		TestSuite result = new TestSuite("Tests for org.apache.poi.hssf.record.formula");
+		TestSuite result = new TestSuite(AllFormulaTests.class.getName());
 		result.addTestSuite(TestArea3DPtg.class);
 		result.addTestSuite(TestAreaErrPtg.class);
-        result.addTestSuite(TestAreaPtg.class);
-        result.addTestSuite(TestErrPtg.class);
-        result.addTestSuite(TestExternalFunctionFormulas.class);
+		result.addTestSuite(TestAreaPtg.class);
+		result.addTestSuite(TestErrPtg.class);
+		result.addTestSuite(TestExternalFunctionFormulas.class);
 		result.addTestSuite(TestFuncPtg.class);
 		result.addTestSuite(TestIntersectionPtg.class);
 		result.addTestSuite(TestPercentPtg.class);
@@ -42,6 +44,7 @@ public class AllFormulaTests {
 		result.addTestSuite(TestReferencePtg.class);
 		result.addTestSuite(TestSheetNameFormatter.class);
 		result.addTestSuite(TestUnionPtg.class);
+		result.addTest(AllFormulaFunctionTests.suite());
 		return result;
 	}
 }

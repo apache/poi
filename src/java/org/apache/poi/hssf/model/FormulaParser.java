@@ -25,6 +25,8 @@ import java.util.regex.Pattern;
 
 //import PTG's .. since we need everything, import *
 import org.apache.poi.hssf.record.formula.*;
+import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
+import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 
 
 
@@ -369,7 +371,23 @@ public final class FormulaParser {
      */
     private AbstractFunctionPtg getFunction(String name, int numArgs, List argumentPointers) {
 
-        AbstractFunctionPtg retval = new FuncVarPtg(name, (byte)numArgs);
+        boolean isVarArgs;
+        int funcIx;
+        FunctionMetadata fm = FunctionMetadataRegistry.getFunctionByName(name.toUpperCase());
+        if(fm == null) {
+            // must be external function
+            isVarArgs = true;
+            funcIx = FunctionMetadataRegistry.FUNCTION_INDEX_EXTERNAL;
+        } else {
+            isVarArgs = !fm.hasFixedArgsLength();
+            funcIx = fm.getIndex();
+        }
+        AbstractFunctionPtg retval;
+        if(isVarArgs) {
+            retval = new FuncVarPtg(name, (byte)numArgs);
+        } else {
+            retval = new FuncPtg(funcIx, (byte)numArgs);
+        }
         if (!name.equals(AbstractFunctionPtg.FUNCTION_NAME_IF)) {
             // early return for everything else besides IF()
             return retval;
@@ -969,6 +987,10 @@ end;
                     // tAttrSpace comes *before* the operand it applies to, which may be consistent
                     // with how the formula text appears but is against the RPN ordering assumed here 
                 }
+                if (attrPtg.isSemiVolatile()) {
+                    // similar to tAttrSpace - RPN is violated
+                    continue;
+                }
             }
 
             final OperationPtg o = (OperationPtg) ptg;
@@ -979,7 +1001,7 @@ end;
                 if(stack.isEmpty()) {
                    String msg = "Too few arguments suppled to operation token ("
                         + o.getClass().getName() + "). Expected (" + nOperands
-                        + ") operands but got (" + (nOperands - j + 1) + ")";
+                        + ") operands but got (" + (nOperands - j - 1) + ")";
                     throw new IllegalStateException(msg);
                 }
                 operands[j] = (String) stack.pop();

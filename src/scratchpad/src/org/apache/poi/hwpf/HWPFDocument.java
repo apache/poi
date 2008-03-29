@@ -190,7 +190,7 @@ public class HWPFDocument extends POIDocument
     }
     
     // read in the pictures stream
-    _pictures = new PicturesTable(_dataStream);
+    _pictures = new PicturesTable(this, _dataStream);
 
     // get the start of text in the main stream
     int fcMin = _fib.getFcMin();

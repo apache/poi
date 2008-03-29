@@ -19,8 +19,10 @@
 package org.apache.poi.hwpf.model;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Picture;
+import org.apache.poi.hwpf.usermodel.Range;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -53,6 +55,7 @@ public class PicturesTable
   static final int BLOCK_TYPE_OFFSET = 0xE;
   static final int MM_MODE_TYPE_OFFSET = 0x6;
 
+  private HWPFDocument _document;
   private byte[] _dataStream;
 
   /** @link dependency
@@ -61,10 +64,12 @@ public class PicturesTable
 
   /**
    *
+   * @param document 
    * @param _dataStream
    */
-  public PicturesTable(byte[] _dataStream)
+  public PicturesTable(HWPFDocument _document, byte[] _dataStream)
   {
+	this._document = _document;
     this._dataStream = _dataStream;
   }
 
@@ -119,24 +124,25 @@ public class PicturesTable
   }
 
   /**
+   * Not all documents have all the images concatenated in the data stream
+   * although MS claims so. The best approach is to scan all character runs.
+   *  
    * @return a list of Picture objects found in current document
    */
   public List getAllPictures() {
     ArrayList pictures = new ArrayList();
-    
-    int pos = 0;
-    boolean atEnd = false;
-    
-    while(pos<_dataStream.length && !atEnd) {
-      if (isBlockContainsImage(pos)) {
-        pictures.add(new Picture(pos, _dataStream, false));
-      }
-      
-      int skipOn = LittleEndian.getInt(_dataStream, pos);
-      if(skipOn <= 0) { atEnd = true; }
-      pos += skipOn;
-    }
-    
+	
+    Range range = _document.getRange();
+    for (int i = 0; i < range.numCharacterRuns(); i++) {
+    	CharacterRun run = range.getCharacterRun(i);
+    	String text = run.text();
+    	int j = text.charAt(0);
+    	Picture picture = extractPicture(run, false);
+    	if (picture != null) {
+    		pictures.add(picture);
+    	}
+	}
+
     return pictures;
   }
 

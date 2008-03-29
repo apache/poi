@@ -15,11 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-/*
- * HSSFSheet.java
- *
- * Created on September 30, 2001, 3:40 PM
- */
 package org.apache.poi.hssf.usermodel;
 
 import java.awt.font.FontRenderContext;
@@ -374,7 +369,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
     {
         return lastrow;
     }
-    
+
     /**
      * Creates a data validation object
      * @param obj_validation The Data validation object settings
@@ -610,25 +605,25 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
     }
 
     /**
-     * Whether a record must be inserted or not at generation to indicate that 
+     * Whether a record must be inserted or not at generation to indicate that
      * formula must be recalculated when workbook is opened.
      * @param value true if an uncalced record must be inserted or not at generation
      */
     public void setForceFormulaRecalculation(boolean value)
     {
-    	sheet.setUncalced(value);
+        sheet.setUncalced(value);
     }
     /**
-     * Whether a record must be inserted or not at generation to indicate that 
+     * Whether a record must be inserted or not at generation to indicate that
      * formula must be recalculated when workbook is opened.
      * @return true if an uncalced record must be inserted or not at generation
      */
     public boolean getForceFormulaRecalculation()
     {
-    	return sheet.getUncalced();
+        return sheet.getUncalced();
     }
 
-    
+
     /**
      * determines whether the output is vertically centered on the page.
      * @param value true to vertically center, false otherwise.
@@ -728,13 +723,13 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
         return rows.values().iterator();
     }
     /**
-     * Alias for {@link #rowIterator()} to allow 
+     * Alias for {@link #rowIterator()} to allow
      *  foreach loops
      */
     public Iterator iterator() {
         return rowIterator();
     }
-    
+
 
     /**
      * used internally in the API to get the low level Sheet record represented by this
@@ -1015,45 +1010,45 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
         getSheet().setMargin( margin, size );
     }
 
-	/**
-	 * Answer whether protection is enabled or disabled
-	 * @return true => protection enabled; false => protection disabled
-	 */
-	public boolean getProtect() {
-		return getSheet().isProtected()[0];
-	}
+    /**
+     * Answer whether protection is enabled or disabled
+     * @return true => protection enabled; false => protection disabled
+     */
+    public boolean getProtect() {
+        return getSheet().isProtected()[0];
+    }
 
-	/**
-	 * @return hashed password
-	 */
-	public short getPassword() {
-		return getSheet().getPassword().getPassword();
-	}
+    /**
+     * @return hashed password
+     */
+    public short getPassword() {
+        return getSheet().getPassword().getPassword();
+    }
 
-	/**
-	 * Answer whether object protection is enabled or disabled
-	 * @return true => protection enabled; false => protection disabled
-	 */
-	public boolean getObjectProtect() {
-		return getSheet().isProtected()[1];
-	}
+    /**
+     * Answer whether object protection is enabled or disabled
+     * @return true => protection enabled; false => protection disabled
+     */
+    public boolean getObjectProtect() {
+        return getSheet().isProtected()[1];
+    }
 
-	/**
-	 * Answer whether scenario protection is enabled or disabled
-	 * @return true => protection enabled; false => protection disabled
-	 */
-	public boolean getScenarioProtect() {
-		return getSheet().isProtected()[2];
-	}
+    /**
+     * Answer whether scenario protection is enabled or disabled
+     * @return true => protection enabled; false => protection disabled
+     */
+    public boolean getScenarioProtect() {
+        return getSheet().isProtected()[2];
+    }
 
-	/**
-	 * Sets the protection on enabled or disabled
-	 * @param protect true => protection enabled; false => protection disabled
+    /**
+     * Sets the protection on enabled or disabled
+     * @param protect true => protection enabled; false => protection disabled
          * @deprecated use protectSheet(String, boolean, boolean)
-	 */
-	public void setProtect(boolean protect) {
-		getSheet().getProtect().setProtect(protect);
-	}
+     */
+    public void setProtect(boolean protect) {
+        getSheet().getProtect().setProtect(protect);
+    }
 
         /**
          * Sets the protection enabled as well as the password
@@ -1083,29 +1078,29 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
         sclRecord.setDenominator((short)denominator);
         getSheet().setSCLRecord(sclRecord);
     }
-    
+
     /**
-     * The top row in the visible view when the sheet is 
-     * first viewed after opening it in a viewer 
+     * The top row in the visible view when the sheet is
+     * first viewed after opening it in a viewer
      * @return short indicating the rownum (0 based) of the top row
      */
-    public short getTopRow() 
+    public short getTopRow()
     {
-    	return sheet.getTopRow();
+        return sheet.getTopRow();
     }
-    
+
     /**
-     * The left col in the visible view when the sheet is 
-     * first viewed after opening it in a viewer 
+     * The left col in the visible view when the sheet is
+     * first viewed after opening it in a viewer
      * @return short indicating the rownum (0 based) of the top row
      */
-    public short getLeftCol() 
+    public short getLeftCol()
     {
-    	return sheet.getLeftCol();
+        return sheet.getLeftCol();
     }
-    
+
     /**
-     * Sets desktop window pane display area, when the 
+     * Sets desktop window pane display area, when the
      * file is first opened in a viewer.
      * @param toprow the top row to show in desktop window pane
      * @param leftcol the left column to show in desktop window pane
@@ -1115,49 +1110,49 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
         this.sheet.setLeftCol((short)leftcol);
         }
 
-	/**
-	 * Shifts the merged regions left or right depending on mode
-	 * <p>
-	 * TODO: MODE , this is only row specific
-	 * @param startRow
-	 * @param endRow
-	 * @param n
-	 * @param isRow
-	 */
-	protected void shiftMerged(int startRow, int endRow, int n, boolean isRow) {
-		List shiftedRegions = new ArrayList();
-		//move merged regions completely if they fall within the new region boundaries when they are shifted
-		for (int i = 0; i < this.getNumMergedRegions(); i++) {
-			 Region merged = this.getMergedRegionAt(i);
+    /**
+     * Shifts the merged regions left or right depending on mode
+     * <p>
+     * TODO: MODE , this is only row specific
+     * @param startRow
+     * @param endRow
+     * @param n
+     * @param isRow
+     */
+    protected void shiftMerged(int startRow, int endRow, int n, boolean isRow) {
+        List shiftedRegions = new ArrayList();
+        //move merged regions completely if they fall within the new region boundaries when they are shifted
+        for (int i = 0; i < this.getNumMergedRegions(); i++) {
+             Region merged = this.getMergedRegionAt(i);
 
-			 boolean inStart = (merged.getRowFrom() >= startRow || merged.getRowTo() >= startRow);
-			 boolean inEnd =  (merged.getRowTo() <= endRow || merged.getRowFrom() <= endRow);
+             boolean inStart = (merged.getRowFrom() >= startRow || merged.getRowTo() >= startRow);
+             boolean inEnd =  (merged.getRowTo() <= endRow || merged.getRowFrom() <= endRow);
 
-			 //dont check if it's not within the shifted area
-			 if (! (inStart && inEnd)) continue;
+             //dont check if it's not within the shifted area
+             if (! (inStart && inEnd)) continue;
 
-			 //only shift if the region outside the shifted rows is not merged too
-			 if (!merged.contains(startRow-1, (short)0) && !merged.contains(endRow+1, (short)0)){
-				 merged.setRowFrom(merged.getRowFrom()+n);
-				 merged.setRowTo(merged.getRowTo()+n);
-				 //have to remove/add it back
-				 shiftedRegions.add(merged);
-				 this.removeMergedRegion(i);
-				 i = i -1; // we have to back up now since we removed one
+             //only shift if the region outside the shifted rows is not merged too
+             if (!merged.contains(startRow-1, (short)0) && !merged.contains(endRow+1, (short)0)){
+                 merged.setRowFrom(merged.getRowFrom()+n);
+                 merged.setRowTo(merged.getRowTo()+n);
+                 //have to remove/add it back
+                 shiftedRegions.add(merged);
+                 this.removeMergedRegion(i);
+                 i = i -1; // we have to back up now since we removed one
 
-			 }
+             }
 
-		}
+        }
 
-		//readd so it doesn't get shifted again
-		Iterator iterator = shiftedRegions.iterator();
-		while (iterator.hasNext()) {
-			Region region = (Region)iterator.next();
+        //readd so it doesn't get shifted again
+        Iterator iterator = shiftedRegions.iterator();
+        while (iterator.hasNext()) {
+            Region region = (Region)iterator.next();
 
-			this.addMergedRegion(region);
-		}
+            this.addMergedRegion(region);
+        }
 
-	}
+    }
 
     /**
      * Shifts rows between startRow and endRow n number of rows.
@@ -1174,7 +1169,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * @param n the number of rows to shift
      */
     public void shiftRows( int startRow, int endRow, int n ) {
-		shiftRows(startRow, endRow, n, false, false);
+        shiftRows(startRow, endRow, n, false, false);
     }
 
     /**
@@ -1211,7 +1206,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
 
         shiftMerged(startRow, endRow, n, true);
         sheet.shiftRowBreaks(startRow, endRow, n);
-			
+
         for ( int rowNum = s; rowNum >= startRow && rowNum <= endRow && rowNum >= 0 && rowNum < 65536; rowNum += inc )
         {
             HSSFRow row = getRow( rowNum );
@@ -1224,23 +1219,23 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
 
 
 
-	    // Removes the cells before over writting them.
+        // Removes the cells before over writting them.
             for ( short col = row2Replace.getFirstCellNum(); col <= row2Replace.getLastCellNum(); col++ )
             {
                 cell = row2Replace.getCell( col );
                 if ( cell != null )
                     row2Replace.removeCell( cell );
             }
-	    if (row == null) continue; // Nothing to do for this row
-	    else {
-		if (copyRowHeight) {
-		    row2Replace.setHeight(row.getHeight());
-		}
+        if (row == null) continue; // Nothing to do for this row
+        else {
+        if (copyRowHeight) {
+            row2Replace.setHeight(row.getHeight());
+        }
 
-		if (resetOriginalRowHeight) {
-		    row.setHeight((short)0xff);
-		}
-	    }
+        if (resetOriginalRowHeight) {
+            row.setHeight((short)0xff);
+        }
+        }
             for ( short col = row.getFirstCellNum(); col <= row.getLastCellNum(); col++ )
             {
                 cell = row.getCell( col );
@@ -1262,55 +1257,55 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
         }
         if ( endRow == lastrow || endRow + n > lastrow ) lastrow = Math.min( endRow + n, 65535 );
         if ( startRow == firstrow || startRow + n < firstrow ) firstrow = Math.max( startRow + n, 0 );
-        
+
         // Update any formulas on this sheet that point to
         //  rows which have been moved
         updateFormulasAfterShift(startRow, endRow, n);
     }
-    
+
     /**
      * Called by shiftRows to update formulas on this sheet
      *  to point to the new location of moved rows
      */
     private void updateFormulasAfterShift(int startRow, int endRow, int n) {
-    	// Need to look at every cell on the sheet
-    	// Not just those that were moved
+        // Need to look at every cell on the sheet
+        // Not just those that were moved
         Iterator ri = rowIterator();
         while(ri.hasNext()) {
-        	HSSFRow r = (HSSFRow)ri.next();
-        	Iterator ci = r.cellIterator();
-        	while(ci.hasNext()) {
-        		HSSFCell c = (HSSFCell)ci.next();
-        		if(c.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
-        			// Since it's a formula cell, process the
-        			//  formula string, and look to see if
-        			//  it contains any references
-        			FormulaParser fp = new FormulaParser(c.getCellFormula(), workbook.getWorkbook());
-        			fp.parse();
-        			
-        			// Look for references, and update if needed
-        			Ptg[] ptgs = fp.getRPNPtg();
-        			boolean changed = false;
-        			for(int i=0; i<ptgs.length; i++) {
-        				if(ptgs[i] instanceof ReferencePtg) {
-        					ReferencePtg rptg = (ReferencePtg)ptgs[i];
-        					if(startRow <= rptg.getRowAsInt() &&
-        							rptg.getRowAsInt() <= endRow) {
-        						// References a row that moved
-        						rptg.setRow(rptg.getRowAsInt() + n);
-        						changed = true;
-        					}
-        				}
-        			}
-        			// If any references were changed, then
-        			//  re-create the formula string
-        			if(changed) {
-        				c.setCellFormula(
-        						fp.toFormulaString(ptgs)
-        				);
-        			}
-        		}
-        	}
+            HSSFRow r = (HSSFRow)ri.next();
+            Iterator ci = r.cellIterator();
+            while(ci.hasNext()) {
+                HSSFCell c = (HSSFCell)ci.next();
+                if(c.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+                    // Since it's a formula cell, process the
+                    //  formula string, and look to see if
+                    //  it contains any references
+                    FormulaParser fp = new FormulaParser(c.getCellFormula(), workbook.getWorkbook());
+                    fp.parse();
+
+                    // Look for references, and update if needed
+                    Ptg[] ptgs = fp.getRPNPtg();
+                    boolean changed = false;
+                    for(int i=0; i<ptgs.length; i++) {
+                        if(ptgs[i] instanceof ReferencePtg) {
+                            ReferencePtg rptg = (ReferencePtg)ptgs[i];
+                            if(startRow <= rptg.getRowAsInt() &&
+                                    rptg.getRowAsInt() <= endRow) {
+                                // References a row that moved
+                                rptg.setRow(rptg.getRowAsInt() + n);
+                                changed = true;
+                            }
+                        }
+                    }
+                    // If any references were changed, then
+                    //  re-create the formula string
+                    if(changed) {
+                        c.setCellFormula(
+                                fp.toFormulaString(ptgs)
+                        );
+                    }
+                }
+            }
         }
     }
 
@@ -1363,7 +1358,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
     {
         getSheet().createSplitPane( xSplitPos, ySplitPos, topRow, leftmostColumn, activePane );
     }
-    
+
     /**
      * Returns the information regarding the currently configured pane (split or freeze).
      * @return null if no pane configured, or the pane information.
@@ -1385,7 +1380,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * @return whether gridlines are displayed
      */
     public boolean isDisplayGridlines() {
-	return sheet.isDisplayGridlines();
+    return sheet.isDisplayGridlines();
     }
 
     /**
@@ -1401,7 +1396,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * @return whether formulas are displayed
      */
     public boolean isDisplayFormulas() {
-    	return sheet.isDisplayFormulas();
+        return sheet.isDisplayFormulas();
     }
 
     /**
@@ -1417,16 +1412,16 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * @return whether RowColHeadings are displayed
      */
     public boolean isDisplayRowColHeadings() {
-    	return sheet.isDisplayRowColHeadings();
+        return sheet.isDisplayRowColHeadings();
     }
-    
+
     /**
      * Sets a page break at the indicated row
      * @param row FIXME: Document this!
      */
     public void setRowBreak(int row) {
-    	validateRow(row);
-    	sheet.setRowBreak(row, (short)0, (short)255);
+        validateRow(row);
+        sheet.setRowBreak(row, (short)0, (short)255);
     }
 
     /**
@@ -1435,35 +1430,35 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * @return FIXME: Document this!
      */
     public boolean isRowBroken(int row) {
-    	return sheet.isRowBroken(row);
+        return sheet.isRowBroken(row);
     }
-    
+
     /**
      * Removes the page break at the indicated row
      * @param row
      */
     public void removeRowBreak(int row) {
-    	sheet.removeRowBreak(row);
+        sheet.removeRowBreak(row);
     }
-    
+
     /**
      * Retrieves all the horizontal page breaks
      * @return all the horizontal page breaks, or null if there are no row page breaks
      */
     public int[] getRowBreaks(){
-    	//we can probably cache this information, but this should be a sparsely used function
-    	int count = sheet.getNumRowBreaks();
-    	if (count > 0) {
-    	  int[] returnValue = new int[count];
-    	  Iterator iterator = sheet.getRowBreaks();
-    	  int i = 0;
-    	  while (iterator.hasNext()) {
-    		PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
-    		returnValue[i++] = (int)breakItem.main;
-    	  }
-    	  return returnValue;
-    	}
-    	return null;
+        //we can probably cache this information, but this should be a sparsely used function
+        int count = sheet.getNumRowBreaks();
+        if (count > 0) {
+          int[] returnValue = new int[count];
+          Iterator iterator = sheet.getRowBreaks();
+          int i = 0;
+          while (iterator.hasNext()) {
+            PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
+            returnValue[i++] = (int)breakItem.main;
+          }
+          return returnValue;
+        }
+        return null;
     }
 
     /**
@@ -1471,29 +1466,29 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * @return all the vertical page breaks, or null if there are no column page breaks
      */
     public short[] getColumnBreaks(){
-    	//we can probably cache this information, but this should be a sparsely used function 
-    	int count = sheet.getNumColumnBreaks();
-    	if (count > 0) {
-    	  short[] returnValue = new short[count];
-    	  Iterator iterator = sheet.getColumnBreaks();
-    	  int i = 0;
-    	  while (iterator.hasNext()) {
-    		PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
-    		returnValue[i++] = breakItem.main;
-    	  }
-    	  return returnValue;
-    	}
-    	return null;
+        //we can probably cache this information, but this should be a sparsely used function
+        int count = sheet.getNumColumnBreaks();
+        if (count > 0) {
+          short[] returnValue = new short[count];
+          Iterator iterator = sheet.getColumnBreaks();
+          int i = 0;
+          while (iterator.hasNext()) {
+            PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
+            returnValue[i++] = breakItem.main;
+          }
+          return returnValue;
+        }
+        return null;
     }
-    
-    
+
+
     /**
      * Sets a page break at the indicated column
      * @param column
      */
     public void setColumnBreak(short column) {
-    	validateColumn(column);
-    	sheet.setColumnBreak(column, (short)0, (short)65535);
+        validateColumn(column);
+        sheet.setColumnBreak(column, (short)0, (short)65535);
     }
 
     /**
@@ -1502,33 +1497,33 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * @return FIXME: Document this!
      */
     public boolean isColumnBroken(short column) {
-    	return sheet.isColumnBroken(column);
+        return sheet.isColumnBroken(column);
     }
-    
+
     /**
      * Removes a page break at the indicated column
      * @param column
      */
     public void removeColumnBreak(short column) {
-    	sheet.removeColumnBreak(column);
+        sheet.removeColumnBreak(column);
     }
-    
+
     /**
      * Runs a bounds check for row numbers
      * @param row
      */
     protected void validateRow(int row) {
-    	if (row > 65535) throw new IllegalArgumentException("Maximum row number is 65535");
-    	if (row < 0) throw new IllegalArgumentException("Minumum row number is 0");
+        if (row > 65535) throw new IllegalArgumentException("Maximum row number is 65535");
+        if (row < 0) throw new IllegalArgumentException("Minumum row number is 0");
     }
-    
+
     /**
      * Runs a bounds check for column numbers
      * @param column
      */
     protected void validateColumn(short column) {
-    	if (column > 255) throw new IllegalArgumentException("Maximum column number is 255");
-    	if (column < 0)	throw new IllegalArgumentException("Minimum column number is 0");
+        if (column > 255) throw new IllegalArgumentException("Maximum column number is 255");
+        if (column < 0)    throw new IllegalArgumentException("Minimum column number is 0");
     }
 
     /**
@@ -1573,7 +1568,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
         agg.setPatriarch(patriarch);
         return patriarch;
     }
-    
+
     /**
      * Returns the top-level drawing patriach, if there is
      *  one.
@@ -1587,32 +1582,32 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      *  start from scratch!
      */
     public HSSFPatriarch getDrawingPatriarch() {
-    	book.findDrawingGroup();
-    	
-    	// If there's now no drawing manager, then there's
-    	//  no drawing escher records on the workbook
-    	if(book.getDrawingManager() == null) {
-    		return null;
-    	}
-    	
-    	int found = sheet.aggregateDrawingRecords(
-    			book.getDrawingManager(), false
-    	);
-    	if(found == -1) {
-    		// Workbook has drawing stuff, but this sheet doesn't
-    		return null;
-    	}
-    	
-    	// Grab our aggregate record, and wire it up
+        book.findDrawingGroup();
+
+        // If there's now no drawing manager, then there's
+        //  no drawing escher records on the workbook
+        if(book.getDrawingManager() == null) {
+            return null;
+        }
+
+        int found = sheet.aggregateDrawingRecords(
+                book.getDrawingManager(), false
+        );
+        if(found == -1) {
+            // Workbook has drawing stuff, but this sheet doesn't
+            return null;
+        }
+
+        // Grab our aggregate record, and wire it up
         EscherAggregate agg = (EscherAggregate) sheet.findFirstRecordBySid(EscherAggregate.sid);
         HSSFPatriarch patriarch = new HSSFPatriarch(this, agg);
         agg.setPatriarch(patriarch);
-        
+
         // Have it process the records into high level objects
         //  as best it can do (this step may eat anything
         //  that isn't supported, you were warned...)
         agg.convertRecordsToUserModel();
-        
+
         // Return what we could cope with
         return patriarch;
     }
@@ -1666,7 +1661,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * @param style the style to set
      */
     public void setDefaultColumnStyle(short column, CellStyle style) {
-	sheet.setColumn(column, new Short(((HSSFCellStyle) style).getIndex()), null, null, null, null);
+       sheet.setColumn(column, new Short(((HSSFCellStyle) style).getIndex()), null, null, null, null);
     }
 
     /**
@@ -1687,13 +1682,13 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
          * '0' looks to be a good choice.
          */
         char defaultChar = '0';
-       
+
         /**
          * This is the multiple that the font height is scaled by when determining the
          * boundary of rotated text.
          */
         double fontHeightMultiple = 2.0;
-       
+
         FontRenderContext frc = new FontRenderContext(null, true, true);
 
         HSSFWorkbook wb = new HSSFWorkbook(book);
@@ -1814,7 +1809,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
     /**
      * Copy text attributes from the supplied HSSFFont to Java2D AttributedString
      */
-    private void copyAttributes(HSSFFont font, AttributedString str, int startIdx, int endIdx){
+    private void copyAttributes(HSSFFont font, AttributedString str, int startIdx, int endIdx) {
         str.addAttribute(TextAttribute.FAMILY, font.getFontName(), startIdx, endIdx);
         str.addAttribute(TextAttribute.SIZE, new Float(font.getFontHeightInPoints()));
         if (font.getBoldweight() == HSSFFont.BOLDWEIGHT_BOLD) str.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, startIdx, endIdx);
@@ -1847,86 +1842,86 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
 
 
      /**
-      * A factory method allowing to create a conditional formatting rule 
-      * with a cell comparison operator and 
+      * A factory method allowing to create a conditional formatting rule
+      * with a cell comparison operator and
       * formatting rules such as font format, border format and pattern format
-      * 
+      *
       * @param comparisonOperation - one of the following values: <p>
-      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_BETWEEN}</li> 
-      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_BETWEEN}</li> 
-      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_EQUAL}</li> 
-      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_EQUAL}</li> 
-      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_GT}</li> 
-      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_LT}</li> 
-      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_GE}</li> 
-      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_LE}</li>
-      * </p> 
+      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_BETWEEN}</li>
+      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_BETWEEN}</li>
+      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_EQUAL}</li>
+      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_EQUAL}</li>
+      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_GT}</li>
+      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_LT}</li>
+      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_GE}</li>
+      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_LE}</li>
+      * </p>
       * @param formula1 - formula for the valued, compared with the cell
-      * @param formula2 - second formula (only used with 
+      * @param formula2 - second formula (only used with
       * {@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_BETWEEN}) and
-      * {@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_BETWEEN} operations)   
+      * {@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_BETWEEN} operations)
       * @param fontFmt - font formatting rules
       * @param bordFmt - border formatting rules
       * @param patternFmt - pattern formatting rules
       * @return
-      * 
+      *
       */
      public HSSFConditionalFormattingRule createConditionalFormattingRule(
-     		byte comparisonOperation, 
-     		String formula1, 
-     		String formula2,
-     		HSSFFontFormatting fontFmt,
- 			HSSFBorderFormatting bordFmt, 
- 			HSSFPatternFormatting patternFmt)
+             byte comparisonOperation,
+             String formula1,
+             String formula2,
+             HSSFFontFormatting fontFmt,
+             HSSFBorderFormatting bordFmt,
+             HSSFPatternFormatting patternFmt)
      {
-     	HSSFConditionalFormattingRule cf = new HSSFConditionalFormattingRule(workbook);
- 		cf.setFontFormatting(fontFmt);
- 		cf.setBorderFormatting(bordFmt);
- 		cf.setPatternFormatting(patternFmt);
- 		cf.setCellComparisonCondition(comparisonOperation, formula1, formula2);
-     	return cf;
+         HSSFConditionalFormattingRule cf = new HSSFConditionalFormattingRule(workbook);
+         cf.setFontFormatting(fontFmt);
+         cf.setBorderFormatting(bordFmt);
+         cf.setPatternFormatting(patternFmt);
+         cf.setCellComparisonCondition(comparisonOperation, formula1, formula2);
+         return cf;
      }
 
      /**
-      * A factory method allowing to create a conditional formatting rule with a formula 
+      * A factory method allowing to create a conditional formatting rule with a formula
       * and formatting rules such as font format, border format and pattern format. <br>
-      * 
-      * The formatting rules are applied by Excel when the value of the formula not equal to 0. 
-      * 
+      *
+      * The formatting rules are applied by Excel when the value of the formula not equal to 0.
+      *
       * @param comparisonOperation - one of the following values: <p>
-      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_BETWEEN}</li> 
-      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_BETWEEN}</li> 
-      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_EQUAL}</li> 
-      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_EQUAL}</li> 
-      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_GT}</li> 
-      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_LT}</li> 
-      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_GE}</li> 
-      * 		<li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_LE}</li>
-      * </p> 
+      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_BETWEEN}</li>
+      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_BETWEEN}</li>
+      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_EQUAL}</li>
+      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_EQUAL}</li>
+      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_GT}</li>
+      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_LT}</li>
+      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_GE}</li>
+      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_LE}</li>
+      * </p>
       * @param formula1 - formula for the valued, compared with the cell
-      * @param formula2 - second formula (only used with 
+      * @param formula2 - second formula (only used with
       * {@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_BETWEEN}) and
-      * {@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_BETWEEN} operations)   
+      * {@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_BETWEEN} operations)
       * @param fontFmt - font formatting rules
       * @param bordFmt - border formatting rules
       * @param patternFmt - pattern formatting rules
       * @return
-      * 
+      *
       */
      public HSSFConditionalFormattingRule createConditionalFormattingRule(
-     		String formula, 
-     		HSSFFontFormatting fontFmt,
- 			HSSFBorderFormatting bordFmt, 
- 			HSSFPatternFormatting patternFmt)
+             String formula,
+             HSSFFontFormatting fontFmt,
+             HSSFBorderFormatting bordFmt,
+             HSSFPatternFormatting patternFmt)
      {
-     	HSSFConditionalFormattingRule cf = new HSSFConditionalFormattingRule(workbook);
- 		cf.setFontFormatting(fontFmt);
- 		cf.setBorderFormatting(bordFmt);
- 		cf.setPatternFormatting(patternFmt);
- 		cf.setFormulaCondition(formula);
-     	return cf;
+         HSSFConditionalFormattingRule cf = new HSSFConditionalFormattingRule(workbook);
+         cf.setFontFormatting(fontFmt);
+         cf.setBorderFormatting(bordFmt);
+         cf.setPatternFormatting(patternFmt);
+         cf.setFormulaCondition(formula);
+         return cf;
      }
-     
+
      /**
       * Adds a copy of HSSFConditionalFormatting object to the sheet
       * <p>This method could be used to copy HSSFConditionalFormatting object
@@ -1934,72 +1929,71 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
       * <pre>
       * HSSFConditionalFormatting cf = sheet.getConditionalFormattingAt(index);
       * newSheet.addConditionalFormatting(cf);
-      * </pre>  
-      * 
+      * </pre>
+      *
       * @param cf HSSFConditionalFormatting object
       * @return index of the new Conditional Formatting object
       */
      public int addConditionalFormatting( HSSFConditionalFormatting cf )
      {
-      	HSSFConditionalFormatting cfClone = new HSSFConditionalFormatting(this,cf.cfAggregate.cloneCFAggregate());
-      	cfClone.sheet=this;
-     	return sheet.addConditionalFormatting(cfClone.cfAggregate);
+         CFRecordsAggregate cfraClone = cf.getCFRecordsAggregate().cloneCFAggregate();
+
+         return sheet.addConditionalFormatting(cfraClone);
      }
 
      /**
       * Allows to add a new Conditional Formatting set to the sheet.
-      *  
-      * @param regions - list of rectangular regions to apply conditional formatting rules 
+      *
+      * @param regions - list of rectangular regions to apply conditional formatting rules
       * @param cfRules - set of up to three conditional formatting rules
-      * 
+      *
       * @return index of the newly created Conditional Formatting object
       */
-     
+
      public int addConditionalFormatting( Region [] regions, HSSFConditionalFormattingRule [] cfRules )
      {
-     	HSSFConditionalFormatting cf = new HSSFConditionalFormatting(this);
-     	cf.setFormattingRegions(regions);
-     	if( cfRules != null )
-     	{
-     		for( int i=0; i!= cfRules.length; i++ )
-     		{
-     	    	cf.addConditionalFormat(cfRules[i]);
-     		}
-     	}
-     	return sheet.addConditionalFormatting(cf.cfAggregate);
+         HSSFConditionalFormatting cf = new HSSFConditionalFormatting(this);
+         cf.setFormattingRegions(regions);
+         if( cfRules != null )
+         {
+             for( int i=0; i!= cfRules.length; i++ )
+             {
+                 cf.addRule(cfRules[i]);
+             }
+         }
+         return sheet.addConditionalFormatting(cf.getCFRecordsAggregate());
      }
-     
-	/**
-	 * gets Conditional Formatting object at a particular index
-	 * @param index of the Conditional Formatting object to fetch
-	 * @return Conditional Formatting object
-	 */
-     
-	public HSSFConditionalFormatting getConditionalFormattingAt(int index)
-	{
-		CFRecordsAggregate cf = sheet.getCFRecordsAggregateAt(index);
-		if( cf != null )
-		{
-			return new HSSFConditionalFormatting(this,cf);
-		}
-		return null;
-	}
 
-	/**
-	 * @return number of Conditional Formatting objects of the sheet
-	 */
-	public int getNumConditionalFormattings()
-	{
-		return sheet.getNumConditionalFormattings();
-	}
+    /**
+     * gets Conditional Formatting object at a particular index
+     * @param index of the Conditional Formatting object to fetch
+     * @return Conditional Formatting object
+     */
 
-	/**
-	 * removes a Conditional Formatting object by index
-	 * @param index of a Conditional Formatting object to remove
-	 */
-	public void removeConditionalFormatting(int index)
-	{
-		sheet.removeConditionalFormatting(index);
-	}
+    public HSSFConditionalFormatting getConditionalFormattingAt(int index)
+    {
+        CFRecordsAggregate cf = sheet.getCFRecordsAggregateAt(index);
+        if( cf != null )
+        {
+            return new HSSFConditionalFormatting(this,cf);
+        }
+        return null;
+    }
 
+    /**
+     * @return number of Conditional Formatting objects of the sheet
+     */
+    public int getNumConditionalFormattings()
+    {
+        return sheet.getNumConditionalFormattings();
+    }
+
+    /**
+     * removes a Conditional Formatting object by index
+     * @param index of a Conditional Formatting object to remove
+     */
+    public void removeConditionalFormatting(int index)
+    {
+        sheet.removeConditionalFormatting(index);
+    }
 }
