@@ -33,10 +33,10 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.CellValue;
 
 /**
  * Test the low level formula parser functionality,
- *  but using parts which need to use the
- *  HSSFFormulaEvaluator, which is in scratchpad 
+ *  but using parts which need to use 
+ *  HSSFFormulaEvaluator.
  */
-public final class TestFormulaParserSP extends TestCase {
+public final class TestFormulaParserEval extends TestCase {
 
 	public void testWithNamedRange() throws Exception {
 		HSSFWorkbook workbook = new HSSFWorkbook();
