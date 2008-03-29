@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.apache.poi.ss.usermodel;
 
 /**
  * This class makes an <tt>EvaluationCycleDetector</tt> instance available to

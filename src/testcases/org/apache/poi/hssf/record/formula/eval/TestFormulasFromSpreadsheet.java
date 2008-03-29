@@ -30,6 +30,8 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 
 /**
  * Tests formulas and operators as loaded from a test data spreadsheet.<p/>
@@ -104,7 +106,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	}
 
 
-	private static void confirmExpectedResult(String msg, HSSFCell expected, HSSFFormulaEvaluator.CellValue actual) {
+	private static void confirmExpectedResult(String msg, Cell expected, FormulaEvaluator.CellValue actual) {
 		if (expected == null) {
 			throw new AssertionFailedError(msg + " - Bad setup data expected value is null");
 		}
@@ -249,7 +251,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 				continue;
 			}
 
-			HSSFFormulaEvaluator.CellValue actualValue = evaluator.evaluate(c);
+			FormulaEvaluator.CellValue actualValue = evaluator.evaluate(c);
 
 			HSSFCell expectedValueCell = getExpectedValueCell(expectedValuesRow, colnum);
 			try {

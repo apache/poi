@@ -18,8 +18,8 @@
 package org.apache.poi.hssf.record.formula.eval;
 
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 /**
  * 
  * Common entry point for all external functions (where 
@@ -29,7 +29,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  */
 final class ExternalFunction implements FreeRefFunction {
 
-	public ValueEval evaluate(Eval[] args, int srcCellRow, short srcCellCol, HSSFWorkbook workbook, HSSFSheet sheet) {
+	public ValueEval evaluate(Eval[] args, int srcCellRow, short srcCellCol, Workbook workbook, Sheet sheet) {
 		
 		int nIncomingArgs = args.length;
 		if(nIncomingArgs < 1) {
@@ -56,7 +56,7 @@ final class ExternalFunction implements FreeRefFunction {
 		return targetFunc.evaluate(outGoingArgs, srcCellRow, srcCellCol, workbook, sheet);
 	}
 
-	private FreeRefFunction findTargetFunction(HSSFWorkbook workbook, NameEval functionNameEval) throws EvaluationException {
+	private FreeRefFunction findTargetFunction(Workbook workbook, NameEval functionNameEval) throws EvaluationException {
 
 		int numberOfNames = workbook.getNumberOfNames();
 		

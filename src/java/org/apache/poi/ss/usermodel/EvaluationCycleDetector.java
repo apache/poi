@@ -15,10 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.apache.poi.ss.usermodel;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * Instances of this class keep track of multiple dependent cell evaluations due
@@ -36,12 +39,12 @@ final class EvaluationCycleDetector {
 	 */
 	private static final class CellEvaluationFrame {
 
-		private final HSSFWorkbook _workbook;
-		private final HSSFSheet _sheet;
+		private final Workbook _workbook;
+		private final Sheet _sheet;
 		private final int _srcRowNum;
 		private final int _srcColNum;
 
-		public CellEvaluationFrame(HSSFWorkbook workbook, HSSFSheet sheet, int srcRowNum, int srcColNum) {
+		public CellEvaluationFrame(Workbook workbook, Sheet sheet, int srcRowNum, int srcColNum) {
 			if (workbook == null) {
 				throw new IllegalArgumentException("workbook must not be null");
 			}
@@ -108,7 +111,7 @@ final class EvaluationCycleDetector {
 	 * @return <code>true</code> if the specified cell has not been visited yet in the current 
 	 * evaluation. <code>false</code> if the specified cell is already being evaluated.
 	 */
-	public boolean startEvaluate(HSSFWorkbook workbook, HSSFSheet sheet, int srcRowNum, int srcColNum) {
+	public boolean startEvaluate(Workbook workbook, Sheet sheet, int srcRowNum, int srcColNum) {
 		CellEvaluationFrame cef = new CellEvaluationFrame(workbook, sheet, srcRowNum, srcColNum);
 		if (_evaluationFrames.contains(cef)) {
 			return false;
@@ -129,7 +132,7 @@ final class EvaluationCycleDetector {
 	 * required. However, they have been included to assert correct behaviour,
 	 * and form more meaningful error messages.
 	 */
-	public void endEvaluate(HSSFWorkbook workbook, HSSFSheet sheet, int srcRowNum, int srcColNum) {
+	public void endEvaluate(Workbook workbook, Sheet sheet, int srcRowNum, int srcColNum) {
 		int nFrames = _evaluationFrames.size();
 		if (nFrames < 1) {
 			throw new IllegalStateException("Call to endEvaluate without matching call to startEvaluate");

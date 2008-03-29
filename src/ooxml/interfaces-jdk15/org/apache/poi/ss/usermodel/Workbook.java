@@ -174,6 +174,14 @@ public interface Workbook {
      */
 
     int getNumberOfSheets();
+    
+    /**
+     * Finds the sheet index for a particular external sheet number.
+     * @param externSheetNumber The external sheet number to convert
+     * @return  The index to the sheet found.
+     */
+    int getSheetIndexFromExternSheetIndex(int externSheetNumber);
+
 
     /**
      * Get the HSSFSheet object at the given index.

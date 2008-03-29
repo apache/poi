@@ -31,8 +31,8 @@ import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 /**
  * Implementation for Excel function OFFSET()<p/>
  * 
@@ -201,7 +201,7 @@ public final class Offset implements FreeRefFunction {
 
 	}
 	
-	public ValueEval evaluate(Eval[] args, int srcCellRow, short srcCellCol, HSSFWorkbook workbook, HSSFSheet sheet) {
+	public ValueEval evaluate(Eval[] args, int srcCellRow, short srcCellCol, Workbook workbook, Sheet sheet) {
 		
 		if(args.length < 3 || args.length > 5) {
 			return ErrorEval.VALUE_INVALID;
@@ -235,7 +235,7 @@ public final class Offset implements FreeRefFunction {
 
 	private static AreaEval createOffset(BaseRef baseRef, 
 			LinearOffsetRange rowOffsetRange, LinearOffsetRange colOffsetRange, 
-			HSSFWorkbook workbook, HSSFSheet sheet) throws EvalEx {
+			Workbook workbook, Sheet sheet) throws EvalEx {
 
 		LinearOffsetRange rows = rowOffsetRange.normaliseAndTranslate(baseRef.getFirstRowIndex());
 		LinearOffsetRange cols = colOffsetRange.normaliseAndTranslate(baseRef.getFirstColumnIndex());
