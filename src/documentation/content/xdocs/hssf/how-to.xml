@@ -421,7 +421,7 @@ public class EventExample
      <anchor id="record_aware_event_api" />
      <section><title>Record Aware Event API</title>
 <p>
-This is an experimental extension to the normal 
+This is an extension to the normal 
 <link href="#event_api">Event API</link>. With this, your listener
 will be called with extra, dummy records. These dummy records should
 alert you to records which aren't present in the file (eg cells that have
@@ -463,7 +463,8 @@ The latest version is always available from
 <link href="http://svn.apache.org/repos/asf/poi/trunk/src/scratchpad/examples/src/org/apache/poi/hssf/eventusermodel/examples/">subversion</link>.
 </p>
 <p>
-<em>This code is currently in the scratchpad section, so you will either
+<em>In POI versions before 3.0.3, this code lived in the scratchpad section.
+ If you're using one of these older versions of POI, you will either
  need to include the scratchpad jar on your classpath, or build from a</em>
  <link href="../subversion.html">subversion checkout</link>.
 </p>
