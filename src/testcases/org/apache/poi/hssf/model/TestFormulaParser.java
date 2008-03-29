@@ -844,4 +844,48 @@ public final class TestFormulaParser extends TestCase {
         }
         assertEquals("SUM(A32769:A32770)", cell.getCellFormula());
     }
+
+    public void testSpaceAtStartOfFormula() {
+        // Simulating cell formula of "= 4" (note space)
+        // The same Ptg array can be observed if an excel file is saved with that exact formula
+
+        AttrPtg spacePtg = AttrPtg.createSpace(AttrPtg.SpaceType.SPACE_BEFORE, 1);
+        Ptg[] ptgs = { spacePtg, new IntPtg(4), };
+        String formulaString;
+        try {
+            formulaString = FormulaParser.toFormulaString(null, ptgs);
+        } catch (IllegalStateException e) {
+            if(e.getMessage().equalsIgnoreCase("too much stuff left on the stack")) {
+                throw new AssertionFailedError("Identified bug 44609");
+            }
+            // else some unexpected error
+            throw e;
+        }
+        // FormulaParser strips spaces anyway
+        assertEquals("4", formulaString); 
+
+        ptgs = new Ptg[] { new IntPtg(3), spacePtg, new IntPtg(4), spacePtg, new AddPtg()};
+        formulaString = FormulaParser.toFormulaString(null, ptgs);
+        assertEquals("3+4", formulaString); 
+    }
+
+    /**
+     * Checks some internal error detecting logic ('stack underflow error' in toFormulaString)
+     */
+    public void testTooFewOperandArgs() {
+        // Simulating badly encoded cell formula of "=/1"
+        // Not sure if Excel could ever produce this
+        Ptg[] ptgs = { 
+                // Excel would probably have put tMissArg here
+                new IntPtg(1),
+                new DividePtg(),
+        };
+        try {
+            FormulaParser.toFormulaString(null, ptgs);
+            fail("Expected exception was not thrown");
+        } catch (IllegalStateException e) {
+            // expected during successful test
+            assertTrue(e.getMessage().startsWith("Too few arguments suppled to operation token"));
+        }
+    }
 }

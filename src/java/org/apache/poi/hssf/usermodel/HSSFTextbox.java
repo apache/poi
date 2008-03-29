@@ -19,6 +19,9 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ss.usermodel.RichTextString;
 
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+
 /**
  * A textbox is a shape that may hold a rich text string.
  *
@@ -29,7 +32,27 @@ public class HSSFTextbox
 {
     public final static short       OBJECT_TYPE_TEXT               = 6;
 
+    /**
+     * How to align text horizontally
+     */
+    public final static short  HORIZONTAL_ALIGNMENT_LEFT = 1;
+    public final static short  HORIZONTAL_ALIGNMENT_CENTERED = 2;
+    public final static short  HORIZONTAL_ALIGNMENT_RIGHT = 3;
+    public final static short  HORIZONTAL_ALIGNMENT_JUSTIFIED = 4;
+    public final static short  HORIZONTAL_ALIGNMENT_DISTRIBUTED = 7;
+
+    /**
+     * How to align text vertically
+     */
+    public final static short  VERTICAL_ALIGNMENT_TOP    = 1;
+    public final static short  VERTICAL_ALIGNMENT_CENTER = 2;
+    public final static short  VERTICAL_ALIGNMENT_BOTTOM = 3;
+    public final static short  VERTICAL_ALIGNMENT_JUSTIFY = 4;
+    public final static short  VERTICAL_ALIGNMENT_DISTRIBUTED= 7;
+
+
     int marginLeft, marginRight, marginTop, marginBottom;
+    short halign, valign;
 
     HSSFRichTextString string = new HSSFRichTextString("");
 
@@ -42,6 +65,9 @@ public class HSSFTextbox
     {
         super( parent, anchor );
         setShapeType(OBJECT_TYPE_TEXT);
+
+        halign = HORIZONTAL_ALIGNMENT_LEFT;
+        valign = VERTICAL_ALIGNMENT_TOP;
     }
 
     /**
@@ -122,5 +148,37 @@ public class HSSFTextbox
     public void setMarginBottom( int marginBottom )
     {
         this.marginBottom = marginBottom;
+    }
+
+    /**
+     * Gets the horizontal alignment.
+     */
+    public short getHorizontalAlignment()
+    {
+        return halign;
+    }
+
+    /**
+     * Sets the horizontal alignment.
+     */
+    public void setHorizontalAlignment( short align )
+    {
+        this.halign = align;
+    }
+
+    /**
+     * Gets the vertical alignment.
+     */
+    public short getVerticalAlignment()
+    {
+        return valign;
+    }
+
+    /**
+     * Sets the vertical alignment.
+     */
+    public void setVerticalAlignment( short align )
+    {
+        this.valign = align;
     }
 }

@@ -78,7 +78,7 @@ public class POIFSReader
         HeaderBlockReader header_block_reader = new HeaderBlockReader(stream);
 
         // read the rest of the stream into blocks
-        RawDataBlockList  data_blocks         = new RawDataBlockList(stream);
+        RawDataBlockList  data_blocks         = new RawDataBlockList(stream, header_block_reader.getBigBlockSize());
 
         // set up the block allocation table (necessary for the
         // data_blocks to be manageable

@@ -133,8 +133,8 @@ public class TextboxShape
         HSSFTextbox shape = hssfShape;
 
         TextObjectRecord obj = new TextObjectRecord();
-        obj.setHorizontalTextAlignment( TextObjectRecord.HORIZONTAL_TEXT_ALIGNMENT_LEFT_ALIGNED );
-        obj.setVerticalTextAlignment( TextObjectRecord.VERTICAL_TEXT_ALIGNMENT_TOP );
+        obj.setHorizontalTextAlignment( hssfShape.getHorizontalAlignment() );
+        obj.setVerticalTextAlignment( hssfShape.getVerticalAlignment());
         obj.setTextLocked( true );
         obj.setTextOrientation( TextObjectRecord.TEXT_ORIENTATION_NONE );
         int frLength = ( shape.getString().numFormattingRuns() + 1 ) * 8;

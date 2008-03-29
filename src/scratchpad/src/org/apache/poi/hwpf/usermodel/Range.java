@@ -494,6 +494,7 @@ public class Range
     int numSections = _sections.size();
     int numRuns = _characters.size();
     int numParagraphs = _paragraphs.size();
+    int numTextPieces = _text.size();
 
     for (int x = _charStart; x < numRuns; x++)
     {
@@ -511,6 +512,12 @@ public class Range
     {
       SEPX sepx = (SEPX)_sections.get(x);
       sepx.adjustForDelete(_start, _end - _start);
+    }
+    
+    for (int x = _textStart; x < numTextPieces; x++)
+    {
+    	TextPiece piece = (TextPiece)_text.get(x);
+    	piece.adjustForDelete(_start, _end - _start);
     }
   }
 

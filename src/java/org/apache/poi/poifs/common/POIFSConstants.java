@@ -27,7 +27,11 @@ package org.apache.poi.poifs.common;
 
 public interface POIFSConstants
 {
+    /** Most files use 512 bytes as their big block size */
     public static final int BIG_BLOCK_SIZE = 0x0200;
+    /** Some use 4096 bytes */
+    public static final int LARGER_BIG_BLOCK_SIZE = 0x1000;
+    
     public static final int END_OF_CHAIN   = -2;
     public static final int PROPERTY_SIZE  = 0x0080;
     public static final int UNUSED_BLOCK   = -1;

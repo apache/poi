@@ -19,6 +19,8 @@
 
 package org.apache.poi.poifs.storage;
 
+import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
@@ -47,7 +49,7 @@ public class LocalRawDataBlockList
     public LocalRawDataBlockList()
         throws IOException
     {
-        super(new ByteArrayInputStream(new byte[ 0 ]));
+        super(new ByteArrayInputStream(new byte[ 0 ]), POIFSConstants.BIG_BLOCK_SIZE);
         _list  = new ArrayList();
         _array = null;
     }

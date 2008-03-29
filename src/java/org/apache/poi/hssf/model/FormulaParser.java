@@ -943,23 +943,7 @@ end;
         }
         Stack stack = new Stack();
 
-           // Excel allows to have AttrPtg at position 0 (such as Blanks) which
-           // do not have any operands. Skip them.
-        int i;
-        if(ptgs[0] instanceof AttrPtg) {
-            AttrPtg attrPtg0 = (AttrPtg) ptgs[0];
-            if(attrPtg0.isSemiVolatile()) {
-                // no visible formula for semi-volatile
-            } else {
-                // TODO -this requirement is unclear and is not addressed by any junits
-                stack.push(ptgs[0].toFormulaString(book));
-            }
-            i=1;
-        } else {
-            i=0;
-        }
-
-        for ( ; i < ptgs.length; i++) {
+        for (int i=0 ; i < ptgs.length; i++) {
             Ptg ptg = ptgs[i];
             // TODO - what about MemNoMemPtg?
             if(ptg instanceof MemAreaPtg || ptg instanceof MemFuncPtg || ptg instanceof MemErrPtg) {
@@ -973,21 +957,30 @@ end;
                 continue;
             }
 
-            if (ptg instanceof AttrPtg && ((AttrPtg) ptg).isOptimizedIf()) {
-                continue;
+            if (ptg instanceof AttrPtg) {
+                AttrPtg attrPtg = ((AttrPtg) ptg);
+                if (attrPtg.isOptimizedIf()) {
+                    continue;
+                }
+                if (attrPtg.isSpace()) {
+                    // POI currently doesn't render spaces in formulas
+                    continue;
+                    // but if it ever did, care must be taken:
+                    // tAttrSpace comes *before* the operand it applies to, which may be consistent
+                    // with how the formula text appears but is against the RPN ordering assumed here 
+                }
             }
 
             final OperationPtg o = (OperationPtg) ptg;
             int nOperands = o.getNumberOfOperands();
             final String[] operands = new String[nOperands];
 
-            for (int j = nOperands-1; j >= 0; j--) {
+            for (int j = nOperands-1; j >= 0; j--) { // reverse iteration because args were pushed in-order
                 if(stack.isEmpty()) {
-                    //TODO: write junit to prove this works
                    String msg = "Too few arguments suppled to operation token ("
                         + o.getClass().getName() + "). Expected (" + nOperands
-                        + " but got " + (nOperands - j + 1);
-                    throw new FormulaParseException(msg);
+                        + ") operands but got (" + (nOperands - j + 1) + ")";
+                    throw new IllegalStateException(msg);
                 }
                 operands[j] = (String) stack.pop();
             }

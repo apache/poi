@@ -18,6 +18,9 @@ package org.apache.poi.hssf.util;
 
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+
 import java.util.ArrayList;
 
 /**
@@ -38,6 +41,8 @@ import java.util.ArrayList;
 
 public class HSSFCellRangeAddress
 {
+	private static POILogger logger = POILogFactory.getLogger(HSSFCellRangeAddress.class);
+	
     /**
      * Number of following ADDR structures
      */
@@ -74,8 +79,19 @@ public class HSSFCellRangeAddress
 		{
             short first_row = in.readShort(); 
             short first_col = in.readShort();
-            short last_row  = in.readShort();
-            short last_col  = in.readShort();
+            
+            short last_row  = first_row;
+            short last_col  = first_col;
+            if(in.remaining() >= 4) {
+	            last_row  = in.readShort();
+	            last_col  = in.readShort();
+            } else {
+            	// Ran out of data
+            	// For now, issue a warning, finish, and 
+            	//  hope for the best....
+            	logger.log(POILogger.WARN, "Ran out of data reading cell references for DVRecord");
+            	k = this.field_addr_number;
+            }
 
 			AddrStructure region = new AddrStructure(first_row, first_col, last_row, last_col);
 			this.field_regions_list.add(region);

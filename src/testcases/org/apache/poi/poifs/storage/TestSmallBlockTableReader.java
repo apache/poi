@@ -25,6 +25,7 @@ import java.util.*;
 
 import junit.framework.*;
 
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.property.PropertyTable;
 import org.apache.poi.poifs.property.RootProperty;
 
@@ -2112,7 +2113,7 @@ public class TestSmallBlockTableReader
             ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF
         };
         RawDataBlockList data_blocks    =
-            new RawDataBlockList(new ByteArrayInputStream(raw_data_array));
+            new RawDataBlockList(new ByteArrayInputStream(raw_data_array), POIFSConstants.BIG_BLOCK_SIZE);
         int[]            bat_array      =
         {
             15
