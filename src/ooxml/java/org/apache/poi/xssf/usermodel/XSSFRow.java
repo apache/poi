@@ -79,8 +79,11 @@ public class XSSFRow implements Row {
         return 0;
     }
 
-    public Cell createCell(short column) {
+    public Cell createCell(int column) {
     	return createCell(column, Cell.CELL_TYPE_BLANK);
+    }
+    public Cell createCell(short column) {
+    	return createCell((int)column);
     }
 
     /**
@@ -91,7 +94,7 @@ public class XSSFRow implements Row {
      * @param type TODO
      * @return The new cell.
      */
-    protected XSSFCell addCell(short column, int index, int type) {
+    protected XSSFCell addCell(int column, int index, int type) {
         CTCell ctcell = row.insertNewC(index);
         XSSFCell xcell = new XSSFCell(this, ctcell);
         xcell.setCellNum(column);
@@ -102,6 +105,9 @@ public class XSSFRow implements Row {
     }
 
     public Cell createCell(short column, int type) {
+    	return createCell((int)column, type);
+    }
+    public Cell createCell(int column, int type) {
         int index = 0;
         for (Cell c : this.cells) {
             if (c.getCellNum() == column) {
