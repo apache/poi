@@ -22,7 +22,7 @@ import java.util.Iterator;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.hssf.util.Region;
 
-public interface Sheet extends Iterable {
+public interface Sheet extends Iterable<Row> {
 
     /* Constants for margins */
     public static final short LeftMargin = Sheet.LeftMargin;
@@ -250,13 +250,13 @@ public interface Sheet extends Iterable {
      * @return an iterator of the PHYSICAL rows.  Meaning the 3rd element may not
      * be the third row if say for instance the second row is undefined.
      */
-    Iterator rowIterator();
+    Iterator<Row> rowIterator();
     
     /**
      * Alias for {@link #rowIterator()} to allow 
      *  foreach loops
      */
-    Iterator iterator();
+    Iterator<Row> iterator();
 
     /**
      * whether alternate expression evaluation is on

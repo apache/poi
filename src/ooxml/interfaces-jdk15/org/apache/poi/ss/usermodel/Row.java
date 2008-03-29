@@ -20,7 +20,7 @@ package org.apache.poi.ss.usermodel;
 import java.lang.Iterable;
 import java.util.Iterator;
 
-public interface Row extends Iterable {
+public interface Row extends Iterable<Cell> {
 
     // used for collections
     public final static int INITIAL_CAPACITY = 5;
