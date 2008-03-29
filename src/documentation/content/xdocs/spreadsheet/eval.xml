@@ -32,11 +32,12 @@
 				formulas in Excels sheets read-in, or created in POI. This document explains
 				how to use the API to evaluate your formulas. 
 			</p>
-			<note> This code currently lives the scratchpad area of the POI SVN repository. 
-				Ensure that you have the scratchpad jar or the scratchpad build area in your
-				classpath before experimenting with this code. You are advised
-				to make use of a recent SVN checkout, as new functions are
-				being supported fairly frequently.
+			<note>In versions of POI before 3.0.3, this code lived in the
+				scratchpad area of the POI SVN repository. If using an such an older
+				version of POI, ensure that you have the scratchpad jar or the 
+				scratchpad build area in your classpath before experimenting with this 
+				code. Users of all versions of POI may wish to make use of a recent 
+				SVN checkout, as new functions are currently being added fairly frequently.
 			</note>
 		</section>
 
