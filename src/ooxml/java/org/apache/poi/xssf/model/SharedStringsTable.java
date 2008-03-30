@@ -87,6 +87,13 @@ public class SharedStringsTable implements SharedStringSource, XSSFModel {
         strings.add(s);
         return strings.size() - 1;
     }
+    
+    /**
+     * For unit testing only!
+     */
+    public int _getNumberOfStrings() {
+    	return strings.size();
+    }
 
     /**
      * Write this table out as XML.
