@@ -15,34 +15,35 @@
 * limitations under the License.
 */
 
-package org.apache.poi.hssf.record.formula.eval;
+package org.apache.poi.xssf.usermodel;
 
-import java.io.FileInputStream;
 import java.io.PrintStream;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.record.formula.eval.TestFormulasFromSpreadsheet;
 import org.apache.poi.hssf.record.formula.functions.TestMathX;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.openxml4j.opc.Package;
 
 /**
- * Tests formulas and operators as loaded from a test data spreadsheet.<p/>
- * This class does not test implementors of <tt>Function</tt> and <tt>OperationEval</tt> in
- * isolation.  Much of the evaluation engine (i.e. <tt>HSSFFormulaEvaluator</tt>, ...) gets
- * exercised as well.  Tests for bug fixes and specific/tricky behaviour can be found in the
- * corresponding test class (<tt>TestXxxx</tt>) of the target (<tt>Xxxx</tt>) implementor, 
- * where execution can be observed more easily.
+ * Performs much the same role as {@link TestFormulasFromSpreadsheet},
+ *  except for a XSSF spreadsheet, not a HSSF one.
+ * This allows us to check that all our Formula Evaluation code
+ *  is able to work for XSSF, as well as for HSSF.
  * 
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
+ * Periodically, you should open FormulaEvalTestData.xls in
+ *  Excel 2007, and re-save it as FormulaEvalTestData_Copy.xlsx
+ *  
+ * Currently disabled, as doesn't work
  */
-public final class TestFormulasFromSpreadsheet extends TestCase {
+public final class TestFormulaEvaluatorOnXSSF extends TestCase {
 	
 	private static final class Result {
 		public static final int SOME_EVALUATIONS_FAILED = -1;
@@ -58,7 +59,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 		/**
 		 * Name of the test spreadsheet (found in the standard test data folder)
 		 */
-		public final static String FILENAME = "FormulaEvalTestData.xls";
+		public final static String FILENAME = "FormulaEvalTestData_Copy.xlsx";
 		/**
 		 * Row (zero-based) in the test spreadsheet where the operator examples start.
 		 */
@@ -156,8 +157,8 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	protected void setUp() throws Exception {
 		if (workbook == null) {
 			String filePath = System.getProperty("HSSF.testdata.path")+ "/" + SS.FILENAME;
-			FileInputStream fin = new FileInputStream( filePath );
-			workbook = new HSSFWorkbook( fin );
+			Package pkg = Package.open(filePath);
+			workbook = new XSSFWorkbook( pkg );
 			sheet = workbook.getSheetAt( 0 );
 		  }
 		_functionFailureCount = 0;
@@ -166,7 +167,18 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 		_evaluationSuccessCount = 0;
 	}
 	
-	public void testFunctionsFromTestSpreadsheet() {
+	/**
+	 * Checks that we can actually open the file
+	 */
+	public void testOpen() {
+		assertNotNull(workbook);
+	}
+	
+	/**
+	 * Disabled for now, as many things seem to break
+	 *  for XSSF, which is a shame
+	 */
+	public void DISABLEDtestFunctionsFromTestSpreadsheet() {
 		
 		processFunctionGroup(SS.START_OPERATORS_ROW_INDEX, null);
 		processFunctionGroup(SS.START_FUNCTIONS_ROW_INDEX, null);
