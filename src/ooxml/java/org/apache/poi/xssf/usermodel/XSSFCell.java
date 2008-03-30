@@ -20,7 +20,6 @@ package org.apache.poi.xssf.usermodel;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.poi.hssf.record.BoolErrRecord;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -28,6 +27,8 @@ import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.SharedStringSource;
 import org.apache.poi.ss.usermodel.StylesSource;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.util.CellReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
@@ -43,6 +44,8 @@ public class XSSFCell implements Cell {
     private int cellNum;
     private SharedStringSource sharedStringSource;
     private StylesSource stylesSource;
+    
+    private POILogger logger = POILogFactory.getLogger(XSSFCell.class);
     
     /**
      * Create a new XSSFCell. This method is protected to be used only by
@@ -154,7 +157,7 @@ public class XSSFCell implements Cell {
     }
     /**
      * Returns the error type, in the same way that
-     *  HSSFCell does. See {@link BoolErrRecord} for details
+     *  HSSFCell does. See {@link Cell} for details
      */
     public byte getErrorCellValue() {
         if (STCellType.E != cell.getT()) { 
@@ -162,25 +165,25 @@ public class XSSFCell implements Cell {
         }
         if (this.cell.isSetV()) {
         	String errS = this.cell.getV();
-        	if(errS.equals("#NULL!")) {
-        		return BoolErrRecord.NULL;
+        	if(errS.equals(Cell.ERROR_NULL.getStringRepr())) {
+        		return Cell.ERROR_NULL.getType();
         	}
-        	if(errS.equals("#DIV/0!")) {
-        		return BoolErrRecord.DIV0;
+        	if(errS.equals(Cell.ERROR_DIV0.getStringRepr())) {
+        		return Cell.ERROR_DIV0.getType();
         	}
-        	if(errS.equals("#VALUE!")) {
-        		return BoolErrRecord.VALUE;
+        	if(errS.equals(Cell.ERROR_VALUE.getStringRepr())) {
+        		return Cell.ERROR_VALUE.getType();
         	}
-        	if(errS.equals("#REF!")) {
-        		return BoolErrRecord.REF;
+        	if(errS.equals(Cell.ERROR_REF.getStringRepr())) {
+        		return Cell.ERROR_REF.getType();
         	}
-        	if(errS.equals("#NAME?")) {
-        		return BoolErrRecord.NAME;
+        	if(errS.equals(Cell.ERROR_NAME.getStringRepr())) {
+        		return Cell.ERROR_NAME.getType();
         	}
-        	if(errS.equals("#NUM!")) {
-        		return BoolErrRecord.NUM;
+        	if(errS.equals(Cell.ERROR_NUM.getStringRepr())) {
+        		return Cell.ERROR_NUM.getType();
         	}
-        	return BoolErrRecord.NA;
+        	return Cell.ERROR_NA.getType();
         }
         return 0;
     }
@@ -224,13 +227,32 @@ public class XSSFCell implements Cell {
     }
 
     public void setCellErrorValue(byte value) {
+    	if(value == Cell.ERROR_DIV0.getType()) {
+			setCellErrorValue(Cell.ERROR_DIV0);
+    	} else if(value == Cell.ERROR_NA.getType()) {
+    		setCellErrorValue(Cell.ERROR_NA);
+    	} else if(value == Cell.ERROR_NAME.getType()) {
+    		setCellErrorValue(Cell.ERROR_NAME);
+    	} else if(value == Cell.ERROR_NULL.getType()) {
+    		setCellErrorValue(Cell.ERROR_NULL);
+    	} else if(value == Cell.ERROR_NUM.getType()) {
+    		setCellErrorValue(Cell.ERROR_NUM);
+    	} else if(value == Cell.ERROR_REF.getType()) {
+    		setCellErrorValue(Cell.ERROR_REF);
+    	} else if(value == Cell.ERROR_VALUE.getType()) {
+    		setCellErrorValue(Cell.ERROR_VALUE);
+    	} else {
+    		logger.log(POILogger.WARN, "Unknown error type " + value + " specified, treating as #N/A");
+			setCellErrorValue(Cell.ERROR_NA);
+    	}
+    }
+    public void setCellErrorValue(CELL_ERROR_TYPE errorType) {
         if ((this.cell.getT() != STCellType.E) && (this.cell.getT() != STCellType.STR))
         {
             this.cell.setT(STCellType.E);
         }
-        this.cell.setV(String.valueOf(value));
+        this.cell.setV( errorType.getStringRepr() );
     }
-
     
    
     public void setCellFormula(String formula) {

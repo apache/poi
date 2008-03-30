@@ -46,14 +46,6 @@ public class BoolErrRecord
     private byte              field_4_bBoolErr;
     private byte              field_5_fError;
     
-    public static final byte NULL = 0;
-    public static final byte DIV0 = 7;
-    public static final byte VALUE = 15;
-    public static final byte REF = 23;
-    public static final byte NAME = 29;
-    public static final byte NUM = 36;
-    public static final byte NA = 42;
-
     /** Creates new BoolErrRecord */
     public BoolErrRecord()
     {

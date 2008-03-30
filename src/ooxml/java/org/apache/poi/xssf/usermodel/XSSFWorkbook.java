@@ -120,12 +120,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 		public String getDefaultFileName() { return DEFAULT_NAME; }
 
 		/**
-		 * Load, off the specified core part
+		 * Fetches the InputStream to read the contents, based
+		 *  of the specified core part
 		 */
-		private XSSFModel load(PackagePart corePart) throws Exception {
-			Constructor<? extends XSSFModel> c = CLASS.getConstructor(InputStream.class);
-			XSSFModel model = null;
-			
+		public InputStream getContents(PackagePart corePart) throws IOException, InvalidFormatException {
             PackageRelationshipCollection prc =
             	corePart.getRelationshipsByType(REL);
             Iterator<PackageRelationship> it = prc.iterator();
@@ -133,17 +131,30 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 PackageRelationship rel = it.next();
                 PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
                 PackagePart part = corePart.getPackage().getPart(relName);
-                InputStream is = part.getInputStream();
-                try {
-                	model = c.newInstance(is);
-                } finally {
-                	is.close();
-                }
+                return part.getInputStream();
             } else {
             	log.log(POILogger.WARN, "No part " + DEFAULT_NAME + " found");
+            	return null;
+            }
+		}
+		/**
+		 * Load, off the specified core part
+		 */
+		public XSSFModel load(PackagePart corePart) throws Exception {
+			Constructor<? extends XSSFModel> c = CLASS.getConstructor(InputStream.class);
+			XSSFModel model = null;
+			
+			InputStream inp = getContents(corePart);
+			if(inp != null) {
+                try {
+                	model = c.newInstance(inp);
+                } finally {
+                	inp.close();
+                }
             }
             return model;
 		}
+		
 		/**
 		 * Save, with the default name
 		 * @return The internal reference ID it was saved at, normally then used as an r:id

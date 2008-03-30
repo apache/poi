@@ -544,6 +544,7 @@ under the License.
       <classpath>
         <path refid="ooxml.classpath"/>
         <pathelement path="${ooxml.output.dir}"/>
+        <pathelement path="${main.output.test.dir}"/>
         <pathelement location="${junit.jar1.dir}"/>
       </classpath>
     </javac>
