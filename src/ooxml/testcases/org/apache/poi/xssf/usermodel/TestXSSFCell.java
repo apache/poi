@@ -109,10 +109,18 @@ public class TestXSSFCell extends TestCase {
     public void testSetGetError() throws Exception {
         XSSFRow row = createParentObjects();
         XSSFCell cell = new XSSFCell(row);
-        cell.setCellErrorValue((byte)255);
+        
+        cell.setCellErrorValue((byte)0);
         assertEquals(Cell.CELL_TYPE_ERROR, cell.getCellType());
-
-        assertEquals((byte)255, cell.getErrorCellValue());
+        assertEquals((byte)0, cell.getErrorCellValue());
+        
+        cell.setCellValue(2.2);
+        assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+        
+        cell.setCellErrorValue(Cell.ERROR_NAME);
+        assertEquals(Cell.CELL_TYPE_ERROR, cell.getCellType());
+        assertEquals(Cell.ERROR_NAME.getType(), cell.getErrorCellValue());
+        assertEquals(Cell.ERROR_NAME.getStringRepr(), cell.getErrorCellString());
     }
     
     public void testSetGetFormula() throws Exception {

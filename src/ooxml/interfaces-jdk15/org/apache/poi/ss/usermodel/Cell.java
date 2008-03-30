@@ -70,6 +70,26 @@ public interface Cell {
      */
 
     public final static int CELL_TYPE_ERROR = 5;
+    
+    public final static class CELL_ERROR_TYPE {
+    	private final byte type;
+    	private final String repr;
+    	private CELL_ERROR_TYPE(int type, String repr) {
+    		this.type = (byte)type;
+    		this.repr = repr;
+    	}
+    	
+    	public byte getType() { return type; }
+    	public String getStringRepr() { return repr; }
+    }
+    public static final CELL_ERROR_TYPE ERROR_NULL  = new CELL_ERROR_TYPE(0, "#NULL!");
+    public static final CELL_ERROR_TYPE ERROR_DIV0  = new CELL_ERROR_TYPE(7, "#DIV/0!");
+    public static final CELL_ERROR_TYPE ERROR_VALUE = new CELL_ERROR_TYPE(15, "#VALUE!");
+    public static final CELL_ERROR_TYPE ERROR_REF   = new CELL_ERROR_TYPE(23, "#REF!");
+    public static final CELL_ERROR_TYPE ERROR_NAME  = new CELL_ERROR_TYPE(29, "#NAME?");
+    public static final CELL_ERROR_TYPE ERROR_NUM   = new CELL_ERROR_TYPE(36, "#NUM!");
+    public static final CELL_ERROR_TYPE ERROR_NA    = new CELL_ERROR_TYPE(42, "#N/A");
+
 
     /**
      * set the cell's number within the row (0 based)
