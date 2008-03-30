@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.poi.hssf.record.BoolErrRecord;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -139,12 +140,47 @@ public class XSSFCell implements Cell {
         throw new NumberFormatException("You cannot get a date value from a cell of type " + this.cell.getT());
     }
 
+    /**
+     * Returns the error message, such as #VALUE!
+     */
+    public String getErrorCellString() {
+        if (STCellType.E != cell.getT()) { 
+            throw new NumberFormatException("You cannot get a error value from a non-error cell");
+        }
+        if (this.cell.isSetV()) {
+        	return this.cell.getV();
+        }
+        return null;
+    }
+    /**
+     * Returns the error type, in the same way that
+     *  HSSFCell does. See {@link BoolErrRecord} for details
+     */
     public byte getErrorCellValue() {
         if (STCellType.E != cell.getT()) { 
             throw new NumberFormatException("You cannot get a error value from a non-error cell");
         }
         if (this.cell.isSetV()) {
-            return Byte.parseByte(this.cell.getV());
+        	String errS = this.cell.getV();
+        	if(errS.equals("#NULL!")) {
+        		return BoolErrRecord.NULL;
+        	}
+        	if(errS.equals("#DIV/0!")) {
+        		return BoolErrRecord.DIV0;
+        	}
+        	if(errS.equals("#VALUE!")) {
+        		return BoolErrRecord.VALUE;
+        	}
+        	if(errS.equals("#REF!")) {
+        		return BoolErrRecord.REF;
+        	}
+        	if(errS.equals("#NAME?")) {
+        		return BoolErrRecord.NAME;
+        	}
+        	if(errS.equals("#NUM!")) {
+        		return BoolErrRecord.NUM;
+        	}
+        	return BoolErrRecord.NA;
         }
         return 0;
     }
