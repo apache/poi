@@ -254,21 +254,20 @@
 				<p>Sometimes, you'd like to just iterate over all the rows in
 				a sheet, or all the cells in a row. This is possible with
 				a simple for loop.</p>
-				<p>Luckily, this is very easy. HSSFRow defines a 
+				<p>Luckily, this is very easy. Row defines a 
 				<em>CellIterator</em> inner class to handle iterating over 
 				the cells (get one with a call to <em>row.cellIterator()</em>),
-				and HSSFSheet provides a <em>rowIterator()</em> method to
+				and Sheet provides a <em>rowIterator()</em> method to
 				give an iterator over all the rows.</p>
-				<p>(Unfortunately, due to the broken and
-				backwards-incompatible way that Java 5 foreach loops were
-				implemented, it isn't possible to use them on a codebase
-				that supports Java 1.4, as POI does)</p>
+				<p>Alternately, Sheet and Row both implement java.lang.Iterable,
+                so if you're using Java 1.5, you can simply take advantage
+                of the built in "foreach" support - see below.</p>
 				<source>
-	HSSFSheet sheet = wb.getSheetAt(0);
+	Sheet sheet = wb.getSheetAt(0);
 	for (Iterator rit = sheet.rowIterator(); rit.hasNext(); ) {
-		HSSFRow row = (HSSFRow)rit.next();
+		Row row = (Row)rit.next();
 		for (Iterator cit = row.cellIterator(); cit.hasNext(); ) {
-			HSSFCell cell = (HSSFCell)cit.next();
+			Cell cell = (Cell)cit.next();
 			// Do something here
 		}
 	}
@@ -284,26 +283,25 @@
 	}
 				</source>
                 </section>
-                <section><title>Iterate over rows and cells using Java 1.5 foreach loops - OOXML Branch Only</title>
+                <section><title>Iterate over rows and cells using Java 1.5 foreach loops</title>
 				<p>Sometimes, you'd like to just iterate over all the rows in
 				a sheet, or all the cells in a row. If you are using Java
 				5 or later, then this is especially handy, as it'll allow the
 				new foreach loop support to work.</p>
-				<p>Luckily, this is very easy. Both HSSFSheet and HSSFRow
+				<p>Luckily, this is very easy. Both Sheet and Row
 				implement <em>java.lang.Iterable</em> to allow foreach
-				loops. For HSSFRow this allows access to the 
+				loops. For Row this allows access to the 
 				<em>CellIterator</em> inner class to handle iterating over 
-				the cells, and for HSSFSheet gives the 
+				the cells, and for Sheet gives the 
 				<em>rowIterator()</em> to iterator over all the rows.</p>
 				<source>
-	HSSFSheet sheet = wb.getSheetAt(0);
-	for (HSSFRow row : sheet.rowIterator()) {
-		for (HSSFCell cell : row.cellIterator()) {
+	Sheet sheet = wb.getSheetAt(0);
+	for (Row row : sheet) {
+		for (Cell cell : row) {
 			// Do something here
 		}
 	}
 				</source>
-				<note>This only works on the OOXML branch of POI</note>
                 </section>
                 <anchor id="TextExtraction"/>
                 <section><title>Text Extraction</title>
