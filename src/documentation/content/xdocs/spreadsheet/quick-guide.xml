@@ -1155,7 +1155,8 @@ Examples:
                 degenerate case of Named Range in that the 'group of cells' contains exactly one
                 cell. You can create as well as refer to cells in a workbook by their named range.
                 When working with Named Ranges, the classes: org.apache.poi.hssf.util.CellReference and
-                &amp; org.apache.poi.hssf.util.AreaReference are used.
+                &amp; org.apache.poi.hssf.util.AreaReference are used (these
+                work for both XSSF and HSSF, despite the package name).
             </p>
             <p>
             Creating Named Range / Named Cell
@@ -1163,28 +1164,27 @@ Examples:
             <source>
     // setup code
     String sname = "TestSheet", cname = "TestName", cvalue = "TestVal";
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet = wb.createSheet(sname);
+    Workbook wb = new HSSFWorkbook();
+    Sheet sheet = wb.createSheet(sname);
     sheet.createRow(0).createCell((short) 0).setCellValue(cvalue);
 
     // 1. create named range for a single cell using areareference
-    HSSFName namedCell = wb.createName();
+    Name namedCell = wb.createName();
     namedCell.setNameName(cname);
     String reference = sname+"!A1:A1"; // area reference
     namedCell.setReference(reference);
 
     // 2. create named range for a single cell using cellreference
-    HSSFName namedCell = wb.createName();
+    Name namedCell = wb.createName();
     namedCell.setNameName(cname);
     String reference = sname+"!A1"; // cell reference
     namedCell.setReference(reference);
 
     // 3. create named range for an area using AreaReference
-    HSSFName namedCell = wb.createName();
+    Name namedCell = wb.createName();
     namedCell.setNameName(cname);
     String reference = sname+"!A1:C5"; // area reference
     namedCell.setReference(reference);
-
             </source>
             <p>
             Reading from Named Range / Named Cell
@@ -1192,19 +1192,19 @@ Examples:
             <source>
     // setup code
     String cname = "TestName";
-    HSSFWorkbook wb = getMyWorkbook(); // retrieve workbook
+    Workbook wb = getMyWorkbook(); // retrieve workbook
 
     // retrieve the named range
     int namedCellIdx = wb.getNameIndex(cellName);
-    HSSFName aNamedCell = wb.getNameAt(namedCellIdx);
+    Name aNamedCell = wb.getNameAt(namedCellIdx);
 
     // retrieve the cell at the named range and test its contents
     AreaReference aref = new AreaReference(aNamedCell.getReference());
     CellReference[] crefs = aref.getAllReferencedCells();
     for (int i=0; i&lt;crefs.length; i++) {
-        HSSFSheet s = wb.getSheet(crefs[i].getSheetName());
-        HSSFRow r = sheet.getRow(crefs[i].getRow());
-        HSSFCell c = r.getCell(crefs[i].getCol());
+        Sheet s = wb.getSheet(crefs[i].getSheetName());
+        Row r = sheet.getRow(crefs[i].getRow());
+        Cell c = r.getCell(crefs[i].getCol());
         // extract the cell contents based on cell type etc.
     }
             </source>
@@ -1214,12 +1214,12 @@ Examples:
             <source>
     // Setup code
     String cname = "TestName";
-    HSSFWorkbook wb = getMyWorkbook(); // retrieve workbook
+    Workbook wb = getMyWorkbook(); // retrieve workbook
 
     // Retrieve the named range
     // Will be something like "$C$10,$D$12:$D$14";
     int namedCellIdx = wb.getNameIndex(cellName);
-    HSSFName aNamedCell = wb.getNameAt(namedCellIdx);
+    Name aNamedCell = wb.getNameAt(namedCellIdx);
 
     // Retrieve the cell at the named range and test its contents
     // Will get back one AreaReference for C10, and
@@ -1231,18 +1231,18 @@ Examples:
         CellReference[] crefs = arefs[i].getCells();
         for (int j=0; j&lt;crefs.length; j++) {
             // Check it turns into real stuff
-            HSSFSheet s = wb.getSheet(crefs[j].getSheetName());
-            HSSFRow r = s.getRow(crefs[j].getRow());
-            HSSFCell c = r.getCell(crefs[j].getCol());
+            Sheet s = wb.getSheet(crefs[j].getSheetName());
+            Row r = s.getRow(crefs[j].getRow());
+            Cell c = r.getCell(crefs[j].getCol());
             // Do something with this corner cell
         }
     }
             </source>
         </section>
         <anchor id="CellComments"/>
-        <section><title>Cell Comments</title>
+        <section><title>Cell Comments - HSSF</title>
         <p>
-  In Excel a comment is a kind of a text shape,
+  In HSSF Excel, a comment is a kind of a text shape,
   so inserting a comment is very similar to placing a text box in a worksheet:
         </p>
             <source>
@@ -1320,6 +1320,90 @@ Examples:
     comment = sheet.getCellComment(3, 1);
   </source>
      </section>
+
+        <section><title>Cell Comments - XSSF</title>
+        <p>
+  In XSSF Excel, a comment is still a kind of a text shape, but
+  things are generally much simpler.
+        </p>
+            <source>
+    Workbook wb = new XSSFWorkbook();
+    CreationHelper createHelper = wb.getCreationHelper();
+
+    Sheet sheet = wb.createSheet("Cell comments in POI XSSF");
+
+    //create a cell in row 3
+    Cell cell1 = sheet.createRow(3).createCell((short)1);
+    cell1.setCellValue(createHelper.createRichTextString("Hello, World"));
+
+    //anchor defines size and position of the comment in worksheet
+    Comment comment1 = createHelper.createComment();
+
+     // set text in the comment
+    comment1.setString(createHelper.createRichTextString(
+		"We can set comments in POI"));
+
+    //set comment author.
+    //you can see it in the status bar when moving mouse over the commented cell
+    comment1.setAuthor("Apache Software Foundation");
+
+    // The first way to assign comment to a cell is via HSSFCell.setCellComment method
+    cell1.setCellComment(comment1);
+
+
+    //create another cell in row 6
+    Cell cell2 = sheet.createRow(6).createCell((short)1);
+    cell2.setCellValue(36.6);
+
+
+    Comment comment2 = createHelper.createComment();
+    //modify background color of the comment
+    comment2.setFillColor(204, 236, 255);
+
+    RichTextString string = createHelper.createRichTextString(
+		"Normal body temperature");
+
+    //apply custom font to the text in the comment
+    Font font = wb.createFont();
+    font.setFontName("Arial");
+    font.setFontHeightInPoints((short)10);
+    font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+    font.setColor(Color.RED.index);
+    string.applyFont(font);
+
+    comment2.setString(string);
+    //by default comments are hidden. This one is always visible.
+    comment2.setVisible(true);
+
+    comment2.setAuthor("Bill Gates");
+
+    /**
+     * The second way to assign comment to a cell is to implicitly specify its row and column.
+     * Note, it is possible to set row and column of a non-existing cell.
+     * It works, the commnet is visible.
+     */
+    comment2.setRow(6);
+    comment2.setColumn((short)1);
+
+    FileOutputStream out = new FileOutputStream("poi_comment.xls");
+    wb.write(out);
+    out.close();
+        </source>
+         <p>
+  Reading cell comments
+        </p>
+  <source>
+    Cell cell = sheet.get(3).getColumn((short)1);
+    Comment comment = cell.getCellComment();
+    if (comment != null) {
+      RichTextString str = comment.getString();
+      String author = comment.getAuthor();
+    }
+    //  alternatively you can retrieve cell comments by (row, column)
+    comment = sheet.getCellComment(3, 1);
+  </source>
+     </section>
+
      <anchor id="Autofit"/>
      <section><title>Adjust column width to fit the contents</title>
         <source>

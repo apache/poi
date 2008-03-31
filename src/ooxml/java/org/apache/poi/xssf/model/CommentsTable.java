@@ -14,27 +14,61 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.usermodel.extensions;
+package org.apache.poi.xssf.model;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CommentsSource;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.util.CellReference;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTAuthors;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CommentsDocument;
 
-public class XSSFComments {
-	
+public class CommentsTable implements CommentsSource, XSSFModel {
 	private CTComments comments;
 
-	public XSSFComments() {
-		this(CTComments.Factory.newInstance());
+	public CommentsTable(InputStream is) throws IOException {
+		readFrom(is);
 	}
-
-	public XSSFComments(CTComments comments) {
+	public CommentsTable() {
+		comments = CTComments.Factory.newInstance();
+	}
+	/**
+	 * For unit testing only!
+	 */
+	public CommentsTable(CTComments comments) {
 		this.comments = comments;
 	}
-
+	
+	public void readFrom(InputStream is) throws IOException {
+		try {
+			CommentsDocument doc = CommentsDocument.Factory.parse(is);
+			comments = doc.getComments();
+        } catch (XmlException e) {
+            throw new IOException(e.getLocalizedMessage());
+        }
+	}
+	public void writeTo(OutputStream out) throws IOException {
+        XmlOptions options = new XmlOptions();
+        options.setSaveOuter();
+        options.setUseDefaultNamespace();
+        
+        // Requests use of whitespace for easier reading
+        options.setSavePrettyPrint();
+        
+        CommentsDocument doc = CommentsDocument.Factory.newInstance(options);
+        doc.setComments(comments);
+        doc.save(out, options);
+	}
+	
 	public String getAuthor(long authorId) {
 		return getCommentsAuthors().getAuthorArray((int)authorId);
 	}
@@ -61,17 +95,17 @@ public class XSSFComments {
 		return null;
 	}
 	
-	public void setCellComment (int row, int column, XSSFComment comment) {
+	public void setCellComment (int row, int column, Comment comment) {
 		XSSFComment current = findCellComment(row, column);
 		if (current == null) {
 			current = addComment();
 		}
-		current = comment;
+		current = (XSSFComment)comment;
 		current.setRow(row);
 		current.setColumn((short) column);
 	}
 	
-	public void setCellComment (String cellRef, XSSFComment comment) {
+	public void setCellComment (String cellRef, Comment comment) {
 		CellReference cellReference = new CellReference(cellRef);
 		setCellComment(cellReference.getRow(), cellReference.getCol(), comment);
 	}
@@ -99,5 +133,4 @@ public class XSSFComments {
 		getCommentsAuthors().insertAuthor(index, author);
 		return index;
 	}
-
 }

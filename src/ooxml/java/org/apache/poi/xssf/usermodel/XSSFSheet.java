@@ -27,20 +27,19 @@ import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CommentsSource;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.Patriarch;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.extensions.XSSFComments;
+import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.xssf.util.CellReference;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
@@ -59,15 +58,13 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 
 public class XSSFSheet implements Sheet {
-
     protected CTSheet sheet;
     protected CTWorksheet worksheet;
     protected CTDialogsheet dialogsheet;
-    protected CTComments comments;
     protected List<Row> rows;
     protected ColumnHelper columnHelper;
     protected XSSFWorkbook workbook;
-    protected XSSFComments sheetComments;
+    protected CommentsSource sheetComments;
 
     public static final short LeftMargin = 0;
     public static final short RightMargin = 1;
@@ -76,7 +73,7 @@ public class XSSFSheet implements Sheet {
     public static final short HeaderMargin = 4;
     public static final short FooterMargin = 5;
 
-	public XSSFSheet(CTSheet sheet, CTWorksheet worksheet, XSSFWorkbook workbook, XSSFComments sheetComments) {
+	public XSSFSheet(CTSheet sheet, CTWorksheet worksheet, XSSFWorkbook workbook, CommentsSource sheetComments) {
 		this(sheet, worksheet, workbook);
 		this.sheetComments = sheetComments;
 	}
@@ -908,18 +905,10 @@ public class XSSFSheet implements Sheet {
 		this.sheet = sheet;
 	}
 	
-	private XSSFComments getComments() {
+	private CommentsSource getComments() {
 		if (sheetComments == null) {
-			sheetComments = new XSSFComments(getCTComments());
+			sheetComments = new CommentsTable();
 		}
 		return sheetComments;
 	}
-
-	private CTComments getCTComments() {
-		if (comments == null) {
-			comments = CTComments.Factory.newInstance();
-		}
-		return comments;
-	}
-
 }

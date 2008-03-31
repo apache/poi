@@ -18,23 +18,21 @@
 package org.apache.poi.ss.usermodel;
 
 /**
- * Allows the getting and saving of shared strings
+ * Allows the getting and saving of cell comments, 
+ *  associated with a given sheet.
  */
-public interface SharedStringSource {
-    
-    /**
-     * Return the string at position <code>idx</idx> (0-based) in this source.
-     * 
-     * @param idx String position.
-     * @return The string, or null if not found.
-     */
-    public String getSharedStringAt(int idx);
-    
-    /**
-     * Store a string in this source.
-     * 
-     * @param s The string to store.
-     * @return The 0-based position of the newly added string.
-     */
-    public int putSharedString(String s);
+public interface CommentsSource {
+	public String getAuthor(long authorId);
+	
+	public int findAuthor(String author);
+	
+	public Comment findCellComment(int row, int column);
+	
+	public Comment findCellComment(String cellRef);
+	
+	public void setCellComment (int row, int column, Comment comment);
+	
+	public void setCellComment (String cellRef, Comment comment);
+
+	public Comment addComment();
 }
