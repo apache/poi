@@ -44,8 +44,8 @@ public final class TestParseMissingBuiltInFuncs extends TestCase {
 		}
 		AbstractFunctionPtg func = (AbstractFunctionPtg) ptgF;
 		if(func.getFunctionIndex() == 255) {
-		    throw new AssertionFailedError("Failed to recognise built-in function in formula '" 
-		            + formula + "'");
+			throw new AssertionFailedError("Failed to recognise built-in function in formula '" 
+					+ formula + "'");
 		}
 		
 		assertEquals(expPtgArraySize, ptgs.length);

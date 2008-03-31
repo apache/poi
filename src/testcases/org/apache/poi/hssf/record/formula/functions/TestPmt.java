@@ -30,7 +30,7 @@ import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
  * @author Josh Micich
  */
 public final class TestPmt extends TestCase {
-	
+
 	private static void confirm(double expected, NumberEval ne) {
 		// only asserting accuracy to 4 fractional digits
 		assertEquals(expected, ne.getNumberValue(), 0.00005);
@@ -61,12 +61,12 @@ public final class TestPmt extends TestCase {
 		confirm(expected, invokeNormal(args));
 	}
 
-	
+
 	public void testBasic() {
 		confirm(-1037.0321, (0.08/12), 10, 10000, 0, false);
 		confirm(-1030.1643, (0.08/12), 10, 10000, 0, true);
 	}
-	
+
 	public void test3args() {
 		
 		Eval[] args = { 

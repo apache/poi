@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Temporarily collects <tt>FunctionMetadata</tt> instances for creation of a 
+ * Temporarily collects <tt>FunctionMetadata</tt> instances for creation of a
  * <tt>FunctionMetadataRegistry</tt>.
  * 
  * @author Josh Micich

@@ -44,7 +44,7 @@ public final class TestExternalNameRecord extends TestCase {
 			}
 		}
 	}
-	
+
 	public void testBasicSize() {
 		ExternalNameRecord enr = createSimpleENR();
 		if(enr.getRecordSize() == 13) {

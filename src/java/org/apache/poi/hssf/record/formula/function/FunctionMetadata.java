@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record.formula.function;
 /**
+ * Holds information about Excel built-in functions.
  * 
  * @author Josh Micich
  */
@@ -46,7 +47,7 @@ public final class FunctionMetadata {
 		return _maxParams;
 	}
 	public boolean hasFixedArgsLength() {
-	    return _minParams == _maxParams;
+		return _minParams == _maxParams;
 	}
 	public String toString() {
 		StringBuffer sb = new StringBuffer(64);

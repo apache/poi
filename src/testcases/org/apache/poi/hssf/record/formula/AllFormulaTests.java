@@ -17,13 +17,15 @@
 
 package org.apache.poi.hssf.record.formula;
 
+import org.apache.poi.hssf.record.formula.eval.AllFormulaEvalTests;
 import org.apache.poi.hssf.record.formula.function.AllFormulaFunctionTests;
+import org.apache.poi.hssf.record.formula.functions.AllIndividualFunctionEvaluationTests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Collects all tests for this package.
+ * Collects all tests for <tt>org.apache.poi.hssf.record.formula</tt>.
  * 
  * @author Josh Micich
  */
@@ -31,6 +33,10 @@ public class AllFormulaTests {
 	
 	public static Test suite() {
 		TestSuite result = new TestSuite(AllFormulaTests.class.getName());
+		result.addTest(AllFormulaEvalTests.suite());
+		result.addTest(AllFormulaFunctionTests.suite());
+		result.addTest(AllIndividualFunctionEvaluationTests.suite());
+
 		result.addTestSuite(TestArea3DPtg.class);
 		result.addTestSuite(TestAreaErrPtg.class);
 		result.addTestSuite(TestAreaPtg.class);
