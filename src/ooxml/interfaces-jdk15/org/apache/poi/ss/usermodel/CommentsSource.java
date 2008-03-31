@@ -24,6 +24,8 @@ package org.apache.poi.ss.usermodel;
 public interface CommentsSource {
 	public String getAuthor(long authorId);
 	
+	public int getNumberOfComments();
+	
 	public int findAuthor(String author);
 	
 	public Comment findCellComment(int row, int column);

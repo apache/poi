@@ -911,4 +911,13 @@ public class XSSFSheet implements Sheet {
 		}
 		return sheetComments;
 	}
+	
+	/**
+	 * Does this sheet have any comments on it? We need to know,
+	 *  so we can decide about writing it to disk or not
+	 */
+	public boolean hasComments() {
+		if(sheetComments == null) { return false; }
+		return (sheetComments.getNumberOfComments() > 0);
+	}
 }
