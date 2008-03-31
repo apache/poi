@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.record.aggregates.AllRecordAggregateTests;
 import org.apache.poi.hssf.record.formula.AllFormulaTests;
+import org.apache.poi.hssf.record.formula.functions.AllIndividualFunctionEvaluationTests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -35,7 +36,7 @@ public final class AllRecordTests {
 
 		result.addTest(AllFormulaTests.suite());
 		result.addTest(AllRecordAggregateTests.suite());
-		
+
 		result.addTestSuite(TestAreaFormatRecord.class);
 		result.addTestSuite(TestAreaRecord.class);
 		result.addTestSuite(TestAxisLineFormatRecord.class);

@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.0.3-beta1" date="2008-04-??">
+           <action dev="POI-DEVELOPERS" type="add">Various fixes: Recognising var-arg built-in functions #44675, ExternalNameRecord serialisation bug #44695, PMT() bug #44691</action>
            <action dev="POI-DEVELOPERS" type="add">30311 - More work on Conditional Formatting</action>
            <action dev="POI-DEVELOPERS" type="add">Move the Formula Evaluator code out of scratchpad</action>
            <action dev="POI-DEVELOPERS" type="add">Move the missing record aware eventusermodel code out of scratchpad</action>

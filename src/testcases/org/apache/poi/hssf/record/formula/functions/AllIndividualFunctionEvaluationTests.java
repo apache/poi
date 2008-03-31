@@ -27,9 +27,8 @@ import junit.framework.TestSuite;
  */
 public final class AllIndividualFunctionEvaluationTests {
 
-	// TODO - have this suite incorporated into a higher level one
 	public static Test suite() {
-		TestSuite result = new TestSuite("Tests for org.apache.poi.hssf.record.formula.functions");
+		TestSuite result = new TestSuite(AllIndividualFunctionEvaluationTests.class.getName());
 		result.addTestSuite(TestAverage.class);
 		result.addTestSuite(TestCountFuncs.class);
 		result.addTestSuite(TestDate.class);

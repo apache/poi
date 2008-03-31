@@ -19,7 +19,11 @@ package org.apache.poi.hssf.record.formula.function;
 
 import java.util.Map;
 import java.util.Set;
-
+/**
+ * Allows clients to get <tt>FunctionMetadata</tt> instances for any built-in function of Excel.
+ * 
+ * @author Josh Micich
+ */
 public final class FunctionMetadataRegistry {
 	/**
 	 * The name of the IF function (i.e. "IF").  Extracted as a constant for clarity.
@@ -35,7 +39,6 @@ public final class FunctionMetadataRegistry {
 	private static FunctionMetadataRegistry getInstance() {
 		if (_instance == null) {
 			_instance = FunctionMetadataReader.createRegistry();
-//			_instance = POIFunctionMetadataCreator.createInstance();
 		}
 		return _instance;
 	}

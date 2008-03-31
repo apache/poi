@@ -18,26 +18,27 @@
 package org.apache.poi.hssf.record.formula.function;
 
 import junit.framework.TestCase;
+
 /**
  * 
  * @author Josh Micich
  */
 public final class TestFunctionMetadataRegistry extends TestCase {
 
-    public void testWellKnownFunctions() {
-        confirmFunction(0, "COUNT");
-        confirmFunction(1, "IF");
-        
-    }
+	public void testWellKnownFunctions() {
+		confirmFunction(0, "COUNT");
+		confirmFunction(1, "IF");
 
-    private static void confirmFunction(int index, String funcName) {
-        FunctionMetadata fm;
-        fm = FunctionMetadataRegistry.getFunctionByIndex(index);
-        assertNotNull(fm);
-        assertEquals(funcName, fm.getName());
-        
-        fm = FunctionMetadataRegistry.getFunctionByName(funcName);
-        assertNotNull(fm);
-        assertEquals(index, fm.getIndex());
-    }
+	}
+
+	private static void confirmFunction(int index, String funcName) {
+		FunctionMetadata fm;
+		fm = FunctionMetadataRegistry.getFunctionByIndex(index);
+		assertNotNull(fm);
+		assertEquals(funcName, fm.getName());
+
+		fm = FunctionMetadataRegistry.getFunctionByName(funcName);
+		assertNotNull(fm);
+		assertEquals(index, fm.getIndex());
+	}
 }
