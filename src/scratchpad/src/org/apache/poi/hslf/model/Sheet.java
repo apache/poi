@@ -266,6 +266,31 @@ public abstract class Sheet {
     }
 
     /**
+     * Removes the specified shape from this sheet.
+     *
+     * @param shape shape to be removed from this sheet, if present.
+     * @return <tt>true</tt> if the shape was deleted.
+     */
+    public boolean removeShape(Shape shape) {
+        PPDrawing ppdrawing = getPPDrawing();
+
+        EscherContainerRecord dg = (EscherContainerRecord) ppdrawing.getEscherRecords()[0];
+        EscherContainerRecord spgr = null;
+
+        for (Iterator it = dg.getChildRecords().iterator(); it.hasNext();) {
+            EscherRecord rec = (EscherRecord) it.next();
+            if (rec.getRecordId() == EscherContainerRecord.SPGR_CONTAINER) {
+                spgr = (EscherContainerRecord) rec;
+                break;
+            }
+        }
+        if(spgr == null) return false;
+
+        List lst = spgr.getChildRecords();
+        return lst.remove(shape.getSpContainer());
+    }
+
+    /**
      * Return the master sheet .
      */
     public abstract MasterSheet getMasterSheet();
