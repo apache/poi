@@ -25,7 +25,6 @@ import org.apache.poi.ddf.EscherComplexProperty;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperty;
 import org.apache.poi.hssf.record.EscherAggregate;
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -34,8 +33,7 @@ import org.apache.poi.util.StringUtil;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class HSSFPatriarch
-        implements HSSFShapeContainer
+public final class HSSFPatriarch implements HSSFShapeContainer
 {
     List shapes = new ArrayList();
     HSSFSheet sheet;
@@ -58,7 +56,7 @@ public class HSSFPatriarch
      */
     HSSFPatriarch(HSSFSheet sheet, EscherAggregate boundAggregate)
     {
-    	this.boundAggregate = boundAggregate;
+        this.boundAggregate = boundAggregate;
         this.sheet = sheet;
     }
 
@@ -197,29 +195,29 @@ public class HSSFPatriarch
      *  to work on some charts so far)
      */
     public boolean containsChart() {
-    	// TODO - support charts properly in usermodel
-    	
-    	// We're looking for a EscherOptRecord
-    	EscherOptRecord optRecord = (EscherOptRecord)
-    		boundAggregate.findFirstWithId(EscherOptRecord.RECORD_ID);
-    	if(optRecord == null) {
-    		// No opt record, can't have chart
-    		return false;
-    	}
-    	
-    	for(Iterator it = optRecord.getEscherProperties().iterator(); it.hasNext();) {
-    		EscherProperty prop = (EscherProperty)it.next();
-    		if(prop.getPropertyNumber() == 896 && prop.isComplex()) {
-    			EscherComplexProperty cp = (EscherComplexProperty)prop;
-    			String str = StringUtil.getFromUnicodeLE(cp.getComplexData());
-    			System.err.println(str);
-    			if(str.equals("Chart 1\0")) {
-    				return true;
-    			}
-    		}
-    	}
+        // TODO - support charts properly in usermodel
+        
+        // We're looking for a EscherOptRecord
+        EscherOptRecord optRecord = (EscherOptRecord)
+            boundAggregate.findFirstWithId(EscherOptRecord.RECORD_ID);
+        if(optRecord == null) {
+            // No opt record, can't have chart
+            return false;
+        }
+        
+        for(Iterator it = optRecord.getEscherProperties().iterator(); it.hasNext();) {
+            EscherProperty prop = (EscherProperty)it.next();
+            if(prop.getPropertyNumber() == 896 && prop.isComplex()) {
+                EscherComplexProperty cp = (EscherComplexProperty)prop;
+                String str = StringUtil.getFromUnicodeLE(cp.getComplexData());
+                //System.err.println(str);
+                if(str.equals("Chart 1\0")) {
+                    return true;
+                }
+            }
+        }
 
-    	return false;
+        return false;
     }
 
     /**
@@ -258,6 +256,6 @@ public class HSSFPatriarch
      * Returns the aggregate escher record we're bound to 
      */
     protected EscherAggregate _getBoundAggregate() {
-    	return boundAggregate;
+        return boundAggregate;
     }
 }

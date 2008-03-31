@@ -23,7 +23,7 @@ import org.apache.poi.hssf.record.ColumnInfoRecord;
 /**
  * @author Glen Stampoultzis
  */
-public class TestColumnInfoRecordsAggregate extends TestCase
+public final class TestColumnInfoRecordsAggregate extends TestCase
 {
     ColumnInfoRecordsAggregate columnInfoRecordsAggregate;
 
@@ -35,7 +35,7 @@ public class TestColumnInfoRecordsAggregate extends TestCase
         columnInfoRecordsAggregate.insertColumn( createColumn( (short)8, (short)8 ));
 //        columnInfoRecordsAggregate.setColumn( (short)2, new Short( (short)200 ), new Integer( 1 ), new Boolean( true ), null);
         columnInfoRecordsAggregate.groupColumnRange( (short)2, (short)5, true );
-        System.out.println( "columnInfoRecordsAggregate = " + columnInfoRecordsAggregate.getNumColumns() );
+        assertEquals(6, columnInfoRecordsAggregate.getNumColumns());
 
         assertEquals(columnInfoRecordsAggregate.getRecordSize(), columnInfoRecordsAggregate.serialize().length);
 
