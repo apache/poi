@@ -24,13 +24,13 @@ import junit.framework.TestCase;
  */
 public class TestCellRange extends TestCase
 {
-	private static final CellRange biggest     = new CellRange(0, -1,(short) 0,(short)-1);
-	private static final CellRange tenthColumn = new CellRange(0, -1,(short)10,(short)10);
-	private static final CellRange tenthRow    = new CellRange(10,10,(short) 0,(short)-1);
-	private static final CellRange box10x10    = new CellRange(0, 10,(short) 0,(short)10);
-	private static final CellRange box9x9      = new CellRange(0,  9,(short) 0,(short) 9);
-	private static final CellRange box10to20c  = new CellRange(0, 10,(short)10,(short)20);
-	private static final CellRange oneCell     = new CellRange(10,10,(short)10,(short)10);
+	private static final CellRange biggest     = new CellRange( 0, -1, 0,-1);
+	private static final CellRange tenthColumn = new CellRange( 0, -1,10,10);
+	private static final CellRange tenthRow    = new CellRange(10, 10, 0,-1);
+	private static final CellRange box10x10    = new CellRange( 0, 10, 0,10);
+	private static final CellRange box9x9      = new CellRange( 0,  9, 0, 9);
+	private static final CellRange box10to20c  = new CellRange( 0, 10,10,20);
+	private static final CellRange oneCell     = new CellRange(10, 10,10,10);
 
 	boolean [][] contanis = new boolean[][]
     {
@@ -61,62 +61,62 @@ public class TestCellRange extends TestCase
 			}
 		}
 	}
-	
-	private static final CellRange col1     = new CellRange(0, -1,(short) 1,(short)1);
-	private static final CellRange col2     = new CellRange(0, -1,(short) 2,(short)2);
-	private static final CellRange row1     = new CellRange(1,  1,(short) 0,(short)-1);
-	private static final CellRange row2     = new CellRange(2,  2,(short) 0,(short)-1);
 
-	private static final CellRange box0     = new CellRange( 0, 2,(short) 0,(short)2);
-	private static final CellRange box1     = new CellRange( 0, 1,(short) 0,(short)1);
-	private static final CellRange box2     = new CellRange( 0, 1,(short) 2,(short)3);
-	private static final CellRange box3     = new CellRange( 2, 3,(short) 0,(short)1);
-	private static final CellRange box4     = new CellRange( 2, 3,(short) 2,(short)3);
-	private static final CellRange box5     = new CellRange( 1, 3,(short) 1,(short)3);
+	private static final CellRange col1     = new CellRange( 0, -1, 1,1);
+	private static final CellRange col2     = new CellRange( 0, -1, 2,2);
+	private static final CellRange row1     = new CellRange( 1,  1, 0,-1);
+	private static final CellRange row2     = new CellRange( 2,  2, 0,-1);
+
+	private static final CellRange box0     = new CellRange( 0, 2, 0,2);
+	private static final CellRange box1     = new CellRange( 0, 1, 0,1);
+	private static final CellRange box2     = new CellRange( 0, 1, 2,3);
+	private static final CellRange box3     = new CellRange( 2, 3, 0,1);
+	private static final CellRange box4     = new CellRange( 2, 3, 2,3);
+	private static final CellRange box5     = new CellRange( 1, 3, 1,3);
 
 	public void testHasSharedBorderMethod()
 	{
-		assertFalse(col1.hasSharedBorder(col1));
-		assertFalse(col2.hasSharedBorder(col2));
-		assertTrue(col1.hasSharedBorder(col2));
-		assertTrue(col2.hasSharedBorder(col1));
+		assertFalse(col1.hasExactSharedBorder(col1));
+		assertFalse(col2.hasExactSharedBorder(col2));
+		assertTrue(col1.hasExactSharedBorder(col2));
+		assertTrue(col2.hasExactSharedBorder(col1));
 
-		assertFalse(row1.hasSharedBorder(row1));
-		assertFalse(row2.hasSharedBorder(row2));
-		assertTrue(row1.hasSharedBorder(row2));
-		assertTrue(row2.hasSharedBorder(row1));
+		assertFalse(row1.hasExactSharedBorder(row1));
+		assertFalse(row2.hasExactSharedBorder(row2));
+		assertTrue(row1.hasExactSharedBorder(row2));
+		assertTrue(row2.hasExactSharedBorder(row1));
 		
-		assertFalse(row1.hasSharedBorder(col1));
-		assertFalse(row1.hasSharedBorder(col2));
-		assertFalse(col1.hasSharedBorder(row1));
-		assertFalse(col2.hasSharedBorder(row1));
-		assertFalse(row2.hasSharedBorder(col1));
-		assertFalse(row2.hasSharedBorder(col2));
-		assertFalse(col1.hasSharedBorder(row2));
-		assertFalse(col2.hasSharedBorder(row2));
-		assertTrue(col2.hasSharedBorder(col1));
+		assertFalse(row1.hasExactSharedBorder(col1));
+		assertFalse(row1.hasExactSharedBorder(col2));
+		assertFalse(col1.hasExactSharedBorder(row1));
+		assertFalse(col2.hasExactSharedBorder(row1));
+		assertFalse(row2.hasExactSharedBorder(col1));
+		assertFalse(row2.hasExactSharedBorder(col2));
+		assertFalse(col1.hasExactSharedBorder(row2));
+		assertFalse(col2.hasExactSharedBorder(row2));
+		assertTrue(col2.hasExactSharedBorder(col1));
 		
-		assertFalse(box1.hasSharedBorder(box1));
-		assertTrue(box1.hasSharedBorder(box2));
-		assertTrue(box1.hasSharedBorder(box3));
-		assertFalse(box1.hasSharedBorder(box4));
+		assertFalse(box1.hasExactSharedBorder(box1));
+		assertTrue(box1.hasExactSharedBorder(box2));
+		assertTrue(box1.hasExactSharedBorder(box3));
+		assertFalse(box1.hasExactSharedBorder(box4));
 		
-		assertTrue(box2.hasSharedBorder(box1));
-		assertFalse(box2.hasSharedBorder(box2));
-		assertFalse(box2.hasSharedBorder(box3));
-		assertTrue(box2.hasSharedBorder(box4));
+		assertTrue(box2.hasExactSharedBorder(box1));
+		assertFalse(box2.hasExactSharedBorder(box2));
+		assertFalse(box2.hasExactSharedBorder(box3));
+		assertTrue(box2.hasExactSharedBorder(box4));
 		
-		assertTrue(box3.hasSharedBorder(box1));
-		assertFalse(box3.hasSharedBorder(box2));
-		assertFalse(box3.hasSharedBorder(box3));
-		assertTrue(box3.hasSharedBorder(box4));
+		assertTrue(box3.hasExactSharedBorder(box1));
+		assertFalse(box3.hasExactSharedBorder(box2));
+		assertFalse(box3.hasExactSharedBorder(box3));
+		assertTrue(box3.hasExactSharedBorder(box4));
 		
-		assertFalse(box4.hasSharedBorder(box1));
-		assertTrue(box4.hasSharedBorder(box2));
-		assertTrue(box4.hasSharedBorder(box3));
-		assertFalse(box4.hasSharedBorder(box4));
+		assertFalse(box4.hasExactSharedBorder(box1));
+		assertTrue(box4.hasExactSharedBorder(box2));
+		assertTrue(box4.hasExactSharedBorder(box3));
+		assertFalse(box4.hasExactSharedBorder(box4));
 	}
-	
+
 	public void testIntersectMethod()
 	{
 		assertEquals( CellRange.OVERLAP,box0.intersect(box5));
@@ -135,5 +135,4 @@ public class TestCellRange extends TestCase
 		assertEquals(CellRange.INSIDE,tenthColumn.intersect(tenthColumn));
 		assertEquals(CellRange.INSIDE,tenthRow.intersect(tenthRow));
 	}
-	
 }

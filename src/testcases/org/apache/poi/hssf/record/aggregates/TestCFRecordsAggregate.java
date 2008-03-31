@@ -24,9 +24,11 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.RecordFactory;
+import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
 import org.apache.poi.hssf.record.cf.CellRange;
 
 /**
@@ -35,77 +37,71 @@ import org.apache.poi.hssf.record.cf.CellRange;
  *
  * @author Dmitriy Kumshayev 
  */
-public class TestCFRecordsAggregate
-        extends TestCase
+public final class TestCFRecordsAggregate extends TestCase
 {
 
-    public TestCFRecordsAggregate(String name)
-    {
-        super(name);
-    }
+	public void testCFRecordsAggregate() 
+	{
+		Workbook workbook = Workbook.createWorkbook();
+		List recs = new ArrayList();
+		CFHeaderRecord header = new CFHeaderRecord();
+		CFRuleRecord rule1 = CFRuleRecord.create(workbook, "7");
+		CFRuleRecord rule2 = CFRuleRecord.create(workbook, ComparisonOperator.BETWEEN, "2", "5");
+		CFRuleRecord rule3 = CFRuleRecord.create(workbook, ComparisonOperator.GE, "100", null);
+		header.setNumberOfConditionalFormats(3);
+		CellRange[] cellRanges = {
+				new CellRange(0,1,0,0),
+				new CellRange(0,1,2,2),
+		};
+		header.setCellRanges(cellRanges);
+		recs.add(header);
+		recs.add(rule1);
+		recs.add(rule2);
+		recs.add(rule3);
+		CFRecordsAggregate record;
+		record = CFRecordsAggregate.createCFAggregate(recs, 0);
 
-    public void testCFRecordsAggregate() 
-    {
-    	CFRecordsAggregate record = new CFRecordsAggregate();
-    	List recs = new ArrayList();
-    	CFHeaderRecord header = new CFHeaderRecord();
-    	CFRuleRecord rule1 = new CFRuleRecord();
-    	CFRuleRecord rule2 = new CFRuleRecord();
-    	CFRuleRecord rule3 = new CFRuleRecord();
-    	header.setNumberOfConditionalFormats(3);
-    	CellRange range1 = new CellRange(0,1,(short)0,(short)0);
-    	CellRange range2 = new CellRange(0,1,(short)2,(short)2);
-    	List cellRanges = new ArrayList();
-    	cellRanges.add(range1);
-    	cellRanges.add(range2);
-    	header.setCellRanges(cellRanges);
-    	recs.add(header);
-    	recs.add(rule1);
-    	recs.add(rule2);
-    	recs.add(rule3);
-    	record = CFRecordsAggregate.createCFAggregate(recs, 0);
-    	
-    	// Serialize
-    	byte [] serializedRecord = record.serialize();
-    	InputStream in = new ByteArrayInputStream(serializedRecord);
-    	
-    	//Parse
-    	recs = RecordFactory.createRecords(in);
-    	
-    	// Verify
-    	assertNotNull(recs);
-    	assertEquals(4, recs.size());
-    	
-    	header = (CFHeaderRecord)recs.get(0);
-    	rule1 = (CFRuleRecord)recs.get(1);
-    	rule2 = (CFRuleRecord)recs.get(2);
-    	rule3 = (CFRuleRecord)recs.get(3);
-    	cellRanges = header.getCellRanges();
-    	
-    	assertEquals(2, cellRanges.size());
-    	assertEquals(3, header.getNumberOfConditionalFormats());
-    	
-    	record = CFRecordsAggregate.createCFAggregate(recs, 0);
-    	
-    	record = record.cloneCFAggregate();
-    	
-    	assertNotNull(record.getHeader());
-    	assertEquals(3,record.getRules().size());
-    	
-    	header = record.getHeader();
-    	rule1 = (CFRuleRecord)record.getRules().get(0);
-    	rule2 = (CFRuleRecord)record.getRules().get(1);
-    	rule3 = (CFRuleRecord)record.getRules().get(2);
-    	cellRanges = header.getCellRanges();
-    	
-    	assertEquals(2, cellRanges.size());
-    	assertEquals(3, header.getNumberOfConditionalFormats());
-    }
+		// Serialize
+		byte [] serializedRecord = record.serialize();
+		InputStream in = new ByteArrayInputStream(serializedRecord);
 
-    public static void main(String[] ignored_args)
+		//Parse
+		recs = RecordFactory.createRecords(in);
+
+		// Verify
+		assertNotNull(recs);
+		assertEquals(4, recs.size());
+
+		header = (CFHeaderRecord)recs.get(0);
+		rule1 = (CFRuleRecord)recs.get(1);
+		rule2 = (CFRuleRecord)recs.get(2);
+		rule3 = (CFRuleRecord)recs.get(3);
+		cellRanges = header.getCellRanges();
+
+		assertEquals(2, cellRanges.length);
+		assertEquals(3, header.getNumberOfConditionalFormats());
+
+		record = CFRecordsAggregate.createCFAggregate(recs, 0);
+
+		record = record.cloneCFAggregate();
+
+		assertNotNull(record.getHeader());
+		assertEquals(3,record.getNumberOfRules());
+
+		header = record.getHeader();
+		rule1 = record.getRule(0);
+		rule2 = record.getRule(1);
+		rule3 = record.getRule(2);
+		cellRanges = header.getCellRanges();
+
+		assertEquals(2, cellRanges.length);
+		assertEquals(3, header.getNumberOfConditionalFormats());
+	}
+
+	public static void main(String[] ignored_args)
 	{
 		System.out.println("Testing org.apache.poi.hssf.record.aggregates.CFRecordsAggregate");
 		junit.textui.TestRunner.run(TestCFRecordsAggregate.class);
 	}
-    
+	
 }

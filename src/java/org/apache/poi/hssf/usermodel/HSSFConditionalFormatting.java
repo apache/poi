@@ -16,9 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
@@ -86,12 +84,8 @@ import org.apache.poi.hssf.util.Region;
  */
 public final class HSSFConditionalFormatting
 {
-	private final HSSFSheet sheet;
+	private final Workbook workbook;
 	private final CFRecordsAggregate cfAggregate;
-
-	HSSFConditionalFormatting(HSSFSheet sheet) {
-		this(sheet, new CFRecordsAggregate());
-	}
 
 	HSSFConditionalFormatting(HSSFSheet sheet, CFRecordsAggregate cfAggregate)
 	{
@@ -101,36 +95,25 @@ public final class HSSFConditionalFormatting
 		if(cfAggregate == null) {
 			throw new IllegalArgumentException("cfAggregate must not be null");
 		}
-		this.sheet = sheet;
+		workbook = sheet.workbook.getWorkbook();
 		this.cfAggregate = cfAggregate;
 	}
 	CFRecordsAggregate getCFRecordsAggregate() {
 		return cfAggregate;
 	}
 
-	public void setFormattingRegions(Region[] regions)
-	{
-		if( regions != null)
-		{
-			CFHeaderRecord header = cfAggregate.getHeader();
-			header.setCellRanges(mergeCellRanges(toCellRangeList(regions)));
-		}
-	}
-
 	/**
-	 * @return array of <tt>Region</tt>s. never <code>null</code>
+	 * @return array of <tt>Region</tt>s. never <code>null</code> 
 	 */
 	public Region[] getFormattingRegions()
 	{
 		CFHeaderRecord cfh = cfAggregate.getHeader();
-
-		List cellRanges = cfh.getCellRanges();
-
-		return toRegionArray(cellRanges);
+		CellRange[] cellRanges = cfh.getCellRanges();
+		return CellRange.convertCellRangesToRegions(cellRanges);
 	}
 
 	/**
-	 * set a Conditional Formatting rule at position idx. 
+	 * Replaces an existing Conditional Formatting rule at position idx. 
 	 * Excel allows to create up to 3 Conditional Formatting rules.
 	 * This method can be useful to modify existing  Conditional Formatting rules.
 	 * 
@@ -139,11 +122,7 @@ public final class HSSFConditionalFormatting
 	 */
 	public void setRule(int idx, HSSFConditionalFormattingRule cfRule)
 	{
-	    if (idx < 0 || idx > 2) {
-	        throw new IllegalArgumentException("idx must be between 0 and 2 but was (" 
-	                + idx + ")");
-	    }
-		cfAggregate.getRules().set(idx, cfRule);
+		cfAggregate.setRule(idx, cfRule.getCfRuleRecord());
 	}
 
 	/**
@@ -153,136 +132,24 @@ public final class HSSFConditionalFormatting
 	 */
 	public void addRule(HSSFConditionalFormattingRule cfRule)
 	{
-		cfAggregate.getRules().add(cfRule);
+		cfAggregate.addRule(cfRule.getCfRuleRecord());
 	}
 
 	/**
-	 * get a Conditional Formatting rule at position idx. 
-	 * @param idx
-	 * @return a Conditional Formatting rule at position idx.
+	 * @return the Conditional Formatting rule at position idx.
 	 */
 	public HSSFConditionalFormattingRule getRule(int idx)
 	{
-		CFRuleRecord ruleRecord = (CFRuleRecord)cfAggregate.getRules().get(idx);
-		return new HSSFConditionalFormattingRule(sheet.workbook, ruleRecord);
+		CFRuleRecord ruleRecord = cfAggregate.getRule(idx);
+		return new HSSFConditionalFormattingRule(workbook, ruleRecord);
 	}
 
 	/**
 	 * @return number of Conditional Formatting rules.
 	 */
-	public int getNumbOfRules()
+	public int getNumberOfRules()
 	{
-		return cfAggregate.getRules().size();
-	}
-
-
-	/**
-	 * Do all possible cell merges between cells of the list so that:<br>
-	 * 	<li>if a cell range is completely inside of another cell range, it gets removed from the list 
-	 * 	<li>if two cells have a shared border, merge them into one bigger cell range
-	 * @param cellRangeList
-	 * @return updated List of cell ranges
-	 */
-	private static List mergeCellRanges(List cellRangeList)
-	{
-		boolean merged = false;
-
-		do
-		{
-			merged = false;
-
-			if( cellRangeList.size()>1 )
-			{
-				for( int i=0; i<cellRangeList.size(); i++)
-				{
-					CellRange range1 = (CellRange)cellRangeList.get(i);
-					for( int j=i+1; j<cellRangeList.size(); j++)
-					{
-						CellRange range2 = (CellRange)cellRangeList.get(j);
-
-						switch(range1.intersect(range2))
-						{
-							case CellRange.NO_INTERSECTION: 
-							{
-								if( range1.hasSharedBorder(range2))
-								{
-									cellRangeList.set(i, range1.createEnclosingCellRange(range2));
-									cellRangeList.remove(j--);
-									merged = true;
-								}
-								else
-								{
-									// No intersection and no shared border: do nothing 
-								}
-								break;
-							}
-							case CellRange.OVERLAP:
-							{
-								// TODO split and re-merge the intersected area
-								break;
-							}
-							case CellRange.INSIDE:
-							{
-								// Remove range2, since it is completely inside of range1
-								cellRangeList.remove(j--);
-								merged = true;
-								break;
-							}
-							case CellRange.ENCLOSES:
-							{
-								// range2 encloses range1, so replace it with the enclosing one
-								cellRangeList.set(i, range2);
-								cellRangeList.remove(j--);
-								merged = true;
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-		while( merged );
-
-		return cellRangeList;
-	}
-
-	/**
-	 * Convert a List of CellRange objects to an array of regions 
-	 *  
-	 * @param List of CellRange objects
-	 * @return regions
-	 */
-	private static Region[] toRegionArray(List cellRanges)
-	{
-		int size = cellRanges.size();
-		Region[] regions = new Region[size];
-
-		for (int i = 0; i != size; i++)
-		{
-			CellRange cr = (CellRange) cellRanges.get(i);
-			regions[i] = new Region(cr.getFirstRow(), cr.getFirstColumn(), 
-					cr.getLastRow(), cr.getLastColumn());
-		}
-		return regions;
-	}
-
-	/**
-	 * Convert array of regions to a List of CellRange objects
-	 *  
-	 * @param regions
-	 * @return List of CellRange objects
-	 */
-	private static List toCellRangeList(Region[] regions)
-	{
-		List cellRangeList = new ArrayList();
-		for( int i=0; i<regions.length; i++)
-		{
-			Region r = regions[i];
-			CellRange cr = new CellRange(r.getRowFrom(), r.getRowTo(), r.getColumnFrom(), r
-					.getColumnTo());
-			cellRangeList.add(cr);
-		}
-		return cellRangeList;
+		return cfAggregate.getNumberOfRules();
 	}
 
 	public String toString()

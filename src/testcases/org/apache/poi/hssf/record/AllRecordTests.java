@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.hssf.record.aggregates.AllRecordAggregateTests;
 import org.apache.poi.hssf.record.formula.AllFormulaTests;
 
 import junit.framework.Test;
@@ -33,6 +34,7 @@ public final class AllRecordTests {
 		TestSuite result = new TestSuite(AllRecordTests.class.getName());
 
 		result.addTest(AllFormulaTests.suite());
+		result.addTest(AllRecordAggregateTests.suite());
 		
 		result.addTestSuite(TestAreaFormatRecord.class);
 		result.addTestSuite(TestAreaRecord.class);
@@ -45,6 +47,8 @@ public final class AllRecordTests {
 		result.addTestSuite(TestBarRecord.class);
 		result.addTestSuite(TestBoundSheetRecord.class);
 		result.addTestSuite(TestCategorySeriesAxisRecord.class);
+		result.addTestSuite(TestCFHeaderRecord.class);
+		result.addTestSuite(TestCFRuleRecord.class);
 		result.addTestSuite(TestChartRecord.class);
 		result.addTestSuite(TestChartTitleFormatRecord.class);
 		result.addTestSuite(TestCommonObjectDataSubRecord.class);

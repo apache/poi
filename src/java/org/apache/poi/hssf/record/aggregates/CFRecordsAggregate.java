@@ -24,6 +24,7 @@ import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.util.Region;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -37,19 +38,38 @@ import org.apache.poi.util.POILogger;
  */
 public final class CFRecordsAggregate extends Record
 {
+	/** Excel allows up to 3 conditional formating rules */
+	private static final int MAX_CONDTIONAL_FORMAT_RULES = 3;
+
 	public final static short sid = -2008; // not a real BIFF record
 
-	private static POILogger  log = POILogFactory.getLogger(CFRecordsAggregate.class);
+	private static POILogger log = POILogFactory.getLogger(CFRecordsAggregate.class);
 
-	private CFHeaderRecord header;
+	private final CFHeaderRecord header;
 
-	// List of CFRuleRecord objects
+	/** List of CFRuleRecord objects */
 	private final List rules;
 
-	public CFRecordsAggregate()
-	{
-		header = null;
-		rules  = new ArrayList(3);
+	private CFRecordsAggregate(CFHeaderRecord pHeader, CFRuleRecord[] pRules) {
+		if(pHeader == null) {
+			throw new IllegalArgumentException("header must not be null");
+		}
+		if(pRules == null) {
+			throw new IllegalArgumentException("rules must not be null");
+		}
+		if(pRules.length > MAX_CONDTIONAL_FORMAT_RULES) {
+			throw new IllegalArgumentException("No more than " 
+					+ MAX_CONDTIONAL_FORMAT_RULES + " rules may be specified");
+		}
+		header = pHeader;
+		rules = new ArrayList(3);
+		for (int i = 0; i < pRules.length; i++) {
+			rules.add(pRules[i]);
+		}
+	}
+
+	public CFRecordsAggregate(Region[] regions, CFRuleRecord[] rules) {
+		this(new CFHeaderRecord(regions), rules);
 	}
 
 	/**
@@ -60,42 +80,46 @@ public final class CFRecordsAggregate extends Record
 	 */
 	public static CFRecordsAggregate createCFAggregate(List recs, int pOffset)
 	{
-
-		int offset = pOffset;
-		CFRecordsAggregate 	cfRecords  = new CFRecordsAggregate();
-		ArrayList 		records = new ArrayList(4);
-
-		Record rec = ( Record ) recs.get(offset++);
-
-		if (rec.getSid() == CFHeaderRecord.sid)
-		{
-			records.add(rec);
-			cfRecords.header = (CFHeaderRecord)rec;
-
-			int nRules = cfRecords.header.getNumberOfConditionalFormats();
-			int rulesCount = 0;
-			while(  offset<recs.size() &&
-					(rec = (Record)recs.get(offset++)).getSid() == CFRuleRecord.sid && 
-					rec instanceof CFRuleRecord &&
-					rulesCount++ < nRules
-				 )
-			{
-				records.add(rec);
-				cfRecords.rules.add(rec);
-			}
-
-			if (nRules != cfRecords.rules.size())
-			{
-				if (log.check(POILogger.DEBUG))
-				{
-					log.log(POILogger.DEBUG, "Expected  " + nRules + " Conditional Formats, "
-							+ "but found " + cfRecords.rules.size() + " rules");
-				}
-				cfRecords.header.setNumberOfConditionalFormats(nRules);
-			}
-
+		Record rec = ( Record ) recs.get(pOffset);
+		if (rec.getSid() != CFHeaderRecord.sid) {
+			throw new IllegalStateException("next record sid was " + rec.getSid() 
+					+ " instead of " + CFHeaderRecord.sid + " as expected");
 		}
-		return cfRecords;
+
+		CFHeaderRecord header = (CFHeaderRecord)rec;
+		int nRules = header.getNumberOfConditionalFormats();
+
+		CFRuleRecord[] rules = new CFRuleRecord[nRules];
+		int offset = pOffset;
+		int countFound = 0;
+		while (countFound < rules.length) {
+			offset++;
+			if(offset>=recs.size()) {
+				break;
+			}
+			rec = (Record)recs.get(offset);
+			if(rec instanceof CFRuleRecord) {
+				rules[countFound] = (CFRuleRecord) rec;
+				countFound++;
+			} else {
+				break;
+			}
+		}
+
+		if (countFound < nRules)
+		{ // TODO -(MAR-2008) can this ever happen? write junit 
+			
+			if (log.check(POILogger.DEBUG))
+			{
+				log.log(POILogger.DEBUG, "Expected  " + nRules + " Conditional Formats, "
+						+ "but found " + countFound + " rules");
+			}
+			header.setNumberOfConditionalFormats(nRules);
+			CFRuleRecord[] lessRules = new CFRuleRecord[countFound];
+			System.arraycopy(rules, 0, lessRules, 0, countFound);
+			rules = lessRules;
+		}
+		return new CFRecordsAggregate(header, rules);
 	}
 
 	/**
@@ -104,22 +128,17 @@ public final class CFRecordsAggregate extends Record
 	 */
 	public CFRecordsAggregate cloneCFAggregate()
 	{
-
-	  ArrayList records = new ArrayList(this.rules.size()+1);
 	  
-	  records.add(this.header.clone());
-	  
-	  for (int i=0; i<this.rules.size();i++) 
-	  {
-		Record rec = (Record)((Record)this.rules.get(i)).clone();
-		records.add(rec);
-	  }
-	  return createCFAggregate(records, 0);
+		CFRuleRecord[] newRecs = new CFRuleRecord[rules.size()];
+		for (int i = 0; i < newRecs.length; i++) {
+			newRecs[i] = (CFRuleRecord) getRule(i).clone();
+		}
+		return new CFRecordsAggregate((CFHeaderRecord) header.clone(), newRecs);
 	}
 
-	/** You never fill an aggregate */
 	protected void fillFields(RecordInputStream in)
 	{
+	     // You never fill an aggregate record
 	}
 
 	public short getSid()
@@ -139,17 +158,14 @@ public final class CFRecordsAggregate extends Record
 
 	public int serialize(int offset, byte[] data)
 	{
+		int nRules = rules.size();
+		header.setNumberOfConditionalFormats(nRules);
+
 		int pos = offset;
-		if( header != null && rules.size()>0 )
-		{
-			header.setNumberOfConditionalFormats(rules.size());
 
-			pos += (( Record ) header).serialize(pos, data);
-
-			for(Iterator itr = rules.iterator(); itr.hasNext();)
-			{
-				pos += (( Record ) itr.next()).serialize(pos, data);
-			}
+		pos += header.serialize(pos, data);
+		for(int i=0; i< nRules; i++) {
+			pos += getRule(i).serialize(pos, data);
 		}
 		return pos - offset;
 	}
@@ -160,19 +176,37 @@ public final class CFRecordsAggregate extends Record
 	}
 
 	/**
-	 * @return the header
+	 * @return the header. Never <code>null</code>.
 	 */
 	public CFHeaderRecord getHeader()
 	{
 		return header;
 	}
-
-	/**
-	 * @return the rules
-	 */
-	public List getRules()
-	{
-		return rules;
+	
+	private void checkRuleIndex(int idx) {
+		if(idx < 0 || idx >= rules.size()) {
+			throw new IllegalArgumentException("Bad rule record index (" + idx 
+					+ ") nRules=" + rules.size());
+		}
+	}
+	public CFRuleRecord getRule(int idx) {
+		checkRuleIndex(idx);
+		return (CFRuleRecord) rules.get(idx);
+	}
+	public void setRule(int idx, CFRuleRecord r) {
+		checkRuleIndex(idx);
+		rules.set(idx, r);
+	}
+	public void addRule(CFRuleRecord r) {
+		if(rules.size() >= MAX_CONDTIONAL_FORMAT_RULES) {
+			throw new IllegalStateException("Cannot have more than " 
+					+ MAX_CONDTIONAL_FORMAT_RULES + " conditional format rules");
+		}
+		rules.add(r);
+		header.setNumberOfConditionalFormats(rules.size());
+	}
+	public int getNumberOfRules() {
+		return rules.size();
 	}
 
 	/**
