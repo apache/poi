@@ -40,6 +40,7 @@
                     <li><link href="#Bullets">How to create bulleted lists</link></li>
                     <li><link href="#Hyperlinks">Hyperlinks</link></li>
                     <li><link href="#Tables">Tables</link></li>
+                    <li><link href="#RemoveShape">How to remove shapes</link></li>
                 </ul>
             </section>
             <section><title>Features</title>
@@ -440,6 +441,22 @@
                     </source>
                 </section>
                   
+                <anchor id="RemoveShape"/>
+                <section><title>How to remove shapes from a slide</title>
+                  <source>
+
+        Shape[] shape = slide.getShapes();
+        for (int i = 0; i &lt; shape.length; i++) {
+    
+            //remove the shape
+            boolean ok = slide.removeShape(shape[i]);
+            if(ok){
+              //the shape was removed. Do something.
+            }
+        }
+                    </source>
+                  </section>
+
             </section>
         </section>
     </body>
