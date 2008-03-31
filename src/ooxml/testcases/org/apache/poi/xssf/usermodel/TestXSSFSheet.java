@@ -23,7 +23,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.extensions.XSSFComments;
+import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
@@ -490,7 +490,7 @@ public class TestXSSFSheet extends TestCase {
         CTSheet ctSheet = CTSheet.Factory.newInstance();
         CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
         CTComments ctComments = CTComments.Factory.newInstance();
-        XSSFComments sheetComments = new XSSFComments(ctComments);
+        CommentsTable sheetComments = new CommentsTable(ctComments);
         XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, workbook, sheetComments);
         assertNotNull(sheet);
         
@@ -509,7 +509,7 @@ public class TestXSSFSheet extends TestCase {
         XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, workbook);
         Cell cell = sheet.createRow(0).createCell((short)0);
         CTComments ctComments = CTComments.Factory.newInstance();
-        XSSFComments comments = new XSSFComments(ctComments);
+        CommentsTable comments = new CommentsTable(ctComments);
         XSSFComment comment = comments.addComment();
         
         sheet.setCellComment("A1", comment);

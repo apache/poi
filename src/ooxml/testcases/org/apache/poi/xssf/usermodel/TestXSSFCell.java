@@ -33,7 +33,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.SharedStringSource;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.extensions.XSSFComments;
+import org.apache.poi.xssf.model.CommentsTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
@@ -235,7 +235,7 @@ public class TestXSSFCell extends TestCase {
         CTSheet ctSheet = CTSheet.Factory.newInstance();
         CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
         CTComments ctComments = CTComments.Factory.newInstance();
-        XSSFComments sheetComments = new XSSFComments(ctComments);
+        CommentsTable sheetComments = new CommentsTable(ctComments);
         XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, workbook, sheetComments);
         assertNotNull(sheet);
         
@@ -261,7 +261,7 @@ public class TestXSSFCell extends TestCase {
         CTSheet ctSheet = CTSheet.Factory.newInstance();
         CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
         CTComments ctComments = CTComments.Factory.newInstance();
-        XSSFComments comments = new XSSFComments(ctComments);
+        CommentsTable comments = new CommentsTable(ctComments);
         XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, workbook, comments);
         assertNotNull(sheet);
         

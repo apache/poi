@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel.extensions;
+package org.apache.poi.xssf.model;
 
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
@@ -26,7 +26,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import junit.framework.TestCase;
 
 
-public class TestXSSFComments extends TestCase {
+public class TestCommentsTable extends TestCase {
 	
 	private static final String TEST_A2_TEXT = "test A2 text";
 	private static final String TEST_A1_TEXT = "test A1 text";
@@ -34,7 +34,7 @@ public class TestXSSFComments extends TestCase {
 
 	public void testfindAuthor() {
 		CTComments comments = CTComments.Factory.newInstance();
-		XSSFComments sheetComments = new XSSFComments(comments);
+		CommentsTable sheetComments = new CommentsTable(comments);
 
 		assertEquals(0, sheetComments.findAuthor(TEST_AUTHOR));
 		assertEquals(1, sheetComments.findAuthor("another author"));
@@ -43,7 +43,7 @@ public class TestXSSFComments extends TestCase {
 	
 	public void testGetCellComment() {
 		CTComments comments = CTComments.Factory.newInstance();
-		XSSFComments sheetComments = new XSSFComments(comments);
+		CommentsTable sheetComments = new CommentsTable(comments);
 		CTCommentList commentList = comments.addNewCommentList();
 		
 		// Create 2 comments for A1 and A" cells
@@ -69,7 +69,7 @@ public class TestXSSFComments extends TestCase {
 	
 	public void testSetCellComment() {
 		CTComments comments = CTComments.Factory.newInstance();
-		XSSFComments sheetComments = new XSSFComments(comments);
+		CommentsTable sheetComments = new CommentsTable(comments);
 		CTCommentList commentList = comments.addNewCommentList();
 		assertEquals(0, commentList.sizeOfCommentArray());
 		XSSFComment comment = new XSSFComment(sheetComments);

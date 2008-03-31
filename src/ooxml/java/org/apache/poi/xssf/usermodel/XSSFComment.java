@@ -17,8 +17,8 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CommentsSource;
 import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.xssf.usermodel.extensions.XSSFComments;
 import org.apache.poi.xssf.usermodel.helpers.RichTextStringHelper;
 import org.apache.poi.xssf.util.CellReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
@@ -27,14 +27,14 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 public class XSSFComment implements Comment {
 	
 	private CTComment comment;
-	private XSSFComments comments;
+	private CommentsSource comments;
 
-	public XSSFComment(XSSFComments comments, CTComment comment) {
+	public XSSFComment(CommentsSource comments, CTComment comment) {
 		this.comment = comment;
 		this.comments = comments;
 	}
 
-	public XSSFComment(XSSFComments sheetComments) {
+	public XSSFComment(CommentsSource sheetComments) {
 		this(sheetComments, CTComment.Factory.newInstance());
 	}
 
