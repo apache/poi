@@ -29,10 +29,10 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CommentsSource;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Palette;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.SharedStringSource;
@@ -41,6 +41,7 @@ import org.apache.poi.ss.usermodel.StylesSource;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.XSSFModel;
@@ -105,6 +106,18 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     		"/xl/image#.xml",
     		null
     );
+	public static final XSSFRelation SHEET_COMMENTS = new XSSFRelation(
+		    "application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml",
+		    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments",
+		    "/xl/comments#.xml",
+		    CommentsTable.class
+	);
+	public static final XSSFRelation SHEET_HYPERLINKS = new XSSFRelation(
+		    null,
+		    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
+		    null,
+		    null
+	);
     
 	public static class XSSFRelation {
 		private String TYPE;
@@ -241,8 +254,20 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 	log.log(POILogger.WARN, "Sheet with name " + ctSheet.getName() + " and r:id " + ctSheet.getId()+ " was defined, but didn't exist in package, skipping");
                     continue;
                 }
+                
+                // Get the comments for the sheet, if there are any
+                CommentsSource comments = null;
+                PackageRelationshipCollection commentsRel =
+                	part.getRelationshipsByType(SHEET_COMMENTS.REL);
+                if(commentsRel != null && commentsRel.size() > 0) {
+                	PackagePart commentsPart = 
+                		getTargetPart(commentsRel.getRelationship(0));
+                	comments = new CommentsTable(commentsPart.getInputStream());
+                }
+                
+                // Now create the sheet
                 WorksheetDocument worksheetDoc = WorksheetDocument.Factory.parse(part.getInputStream());
-                XSSFSheet sheet = new XSSFSheet(ctSheet, worksheetDoc.getWorksheet(), this);
+                XSSFSheet sheet = new XSSFSheet(ctSheet, worksheetDoc.getWorksheet(), this, comments);
                 this.sheets.add(sheet);
             }
         } catch (XmlException e) {
@@ -656,6 +681,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 // Update our internal reference for the package part
                 workbook.getSheets().getSheetArray(i).setId(rel.getId());
                 workbook.getSheets().getSheetArray(i).setSheetId(sheetNumber);
+                
+                // If our sheet has comments, then write out those
+                // TODO
             }
              
             // Write shared strings and styles

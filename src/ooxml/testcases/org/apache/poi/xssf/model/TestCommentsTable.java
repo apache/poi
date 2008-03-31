@@ -17,7 +17,12 @@
 
 package org.apache.poi.xssf.model;
 
+import java.io.File;
+
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFComment;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
@@ -78,7 +83,26 @@ public class TestCommentsTable extends TestCase {
 		sheetComments.setCellComment("A1", comment);
 		assertEquals(1, commentList.sizeOfCommentArray());
 		assertEquals("test A1 author", sheetComments.getAuthor(commentList.getCommentArray(0).getAuthorId()));
-		
 	}
-    
+
+	public void testExisting() throws Exception {
+		File xml = new File(
+				System.getProperty("HSSF.testdata.path") +
+				File.separator + "WithVariousData.xlsx"
+		);
+		assertTrue(xml.exists());
+    	
+		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
+		Sheet sheet1 = workbook.getSheetAt(0);
+		Sheet sheet2 = workbook.getSheetAt(1);
+		
+		assertTrue( ((XSSFSheet)sheet1).hasComments() );
+		assertFalse( ((XSSFSheet)sheet2).hasComments() );
+		
+		// TODO - check rest of comments
+	}
+	
+	public void testWriteRead() throws Exception {
+		// TODO
+	}
 }
