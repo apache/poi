@@ -58,6 +58,8 @@ import org.openxml4j.opc.PackagingURIHelper;
 import org.openxml4j.opc.TargetMode;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookView;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookViews;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
@@ -188,6 +190,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     private CTWorkbook workbook;
     
     private List<XSSFSheet> sheets = new LinkedList<XSSFSheet>();
+    private List<XSSFName> namedRanges = new LinkedList<XSSFName>();
     
     private SharedStringSource sharedStringSource;
     private StylesSource stylesSource;
@@ -246,6 +249,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             throw new IOException(e.toString());
         } catch (InvalidFormatException e) {
             throw new IOException(e.toString());
+        }
+        
+        // Process the named ranges
+        if(workbook.getDefinedNames() != null) {
+        	for(CTDefinedName ctName : workbook.getDefinedNames().getDefinedNameArray()) {
+        		namedRanges.add(new XSSFName(ctName, this));
+        	}
         }
     }
 
@@ -324,9 +334,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         return null;
     }
 
-    public Name createName() {
-        // TODO Auto-generated method stub
-        return null;
+    public XSSFName createName() {
+    	XSSFName name = new XSSFName(this);
+    	namedRanges.add(name);
+    	return name;
     }
 
     public Sheet createSheet() {
@@ -430,19 +441,19 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         return null;
     }
 
-    public Name getNameAt(int index) {
-        // TODO Auto-generated method stub
-        return null;
+    public XSSFName getNameAt(int index) {
+    	return namedRanges.get(index);
     }
-
-    public int getNameIndex(String name) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
     public String getNameName(int index) {
-        // TODO Auto-generated method stub
-        return null;
+        return getNameAt(index).getNameName();
+    }
+    public int getNameIndex(String name) {
+    	for(int i=0; i<namedRanges.size(); i++) {
+    		if(namedRanges.get(i).getNameName().equals(name)) {
+    			return i;
+    		}
+    	}
+    	return -1;
     }
 
     public short getNumCellStyles() {
@@ -456,8 +467,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     public int getNumberOfNames() {
-        // TODO Auto-generated method stub
-        return 0;
+        return namedRanges.size();
     }
 
     public int getNumberOfSheets() {
@@ -656,6 +666,21 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             if(stylesSource != null) {
 	             StylesTable st = (StylesTable)stylesSource;
 	             STYLES.save(st, corePart);
+            }
+            
+            // Named ranges
+            if(namedRanges.size() > 0) {
+            	CTDefinedNames names = CTDefinedNames.Factory.newInstance();
+            	CTDefinedName[] nr = new CTDefinedName[namedRanges.size()];
+            	for(int i=0; i<namedRanges.size(); i++) {
+            		nr[i] = namedRanges.get(i).getCTName();
+            	}
+            	names.setDefinedNameArray(nr);
+            	workbook.setDefinedNames(names);
+            } else {
+            	if(workbook.isSetDefinedNames()) {
+            		workbook.setDefinedNames(null);
+            	}
             }
 
             // Now we can write out the main Workbook, with

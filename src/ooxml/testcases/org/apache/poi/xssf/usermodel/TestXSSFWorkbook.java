@@ -17,15 +17,19 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.StylesSource;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.model.StylesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
@@ -299,7 +303,91 @@ public class TestXSSFWorkbook extends TestCase {
 				st.putNumberFormat("testFORMAT2"));
 		assertEquals(10, st._getNumberFormatSize());
 		
+		
 		// Save, load back in again, and check
-		// TODO
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        workbook.write(baos);
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        workbook = new XSSFWorkbook(Package.open(bais));
+        
+        ss = workbook.getStylesSource();
+		assertNotNull(ss);
+		assertTrue(ss instanceof StylesTable);
+		st = (StylesTable)ss;
+		
+		assertEquals(10, st._getNumberFormatSize());
+		assertEquals(2, st._getFontsSize());
+		assertEquals(2, st._getFillsSize());
+		assertEquals(1, st._getBordersSize());
+    }
+    
+    public void testNamedRanges() throws Exception {
+    	// First up, a new file
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        assertEquals(0, workbook.getNumberOfNames());
+        
+        Name nameA = workbook.createName();
+        nameA.setReference("A2");
+        nameA.setNameName("ForA2");
+        
+        XSSFName nameB = workbook.createName();
+        nameB.setReference("B3");
+        nameB.setNameName("ForB3");
+        nameB.setComment("B3 Comment");
+        
+        // Save and re-load
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        workbook.write(baos);
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        workbook = new XSSFWorkbook(Package.open(bais));
+        
+        assertEquals(2, workbook.getNumberOfNames());
+        assertEquals("A2", workbook.getNameAt(0).getReference());
+        assertEquals("ForA2", workbook.getNameAt(0).getNameName());
+        assertNull(workbook.getNameAt(0).getComment());
+        
+        assertEquals("B3", workbook.getNameAt(1).getReference());
+        assertEquals("ForB3", workbook.getNameAt(1).getNameName());
+        assertEquals("B3 Comment", workbook.getNameAt(1).getComment());
+        
+        assertEquals("ForA2", workbook.getNameName(0));
+        assertEquals(1, workbook.getNameIndex("ForB3"));
+        assertEquals(-1, workbook.getNameIndex("ForB3!!"));
+    	
+        
+        // Now, an existing file with named ranges
+		File xml = new File(
+				System.getProperty("HSSF.testdata.path") +
+				File.separator + "WithVariousData.xlsx"
+		);
+		assertTrue(xml.exists());
+    	
+		workbook = new XSSFWorkbook(xml.toString());
+		
+        assertEquals(2, workbook.getNumberOfNames());
+        assertEquals("Sheet1!$A$2:$A$7", workbook.getNameAt(0).getReference());
+        assertEquals("AllANumbers", workbook.getNameAt(0).getNameName());
+        assertEquals("All the numbers in A", workbook.getNameAt(0).getComment());
+        
+        assertEquals("Sheet1!$B$2:$B$7", workbook.getNameAt(1).getReference());
+        assertEquals("AllBStrings", workbook.getNameAt(1).getNameName());
+        assertEquals("All the strings in B", workbook.getNameAt(1).getComment());
+        
+        // Tweak, save, and re-check
+        workbook.getNameAt(1).setNameName("BStringsFun");
+        
+        baos = new ByteArrayOutputStream();
+        workbook.write(baos);
+        bais = new ByteArrayInputStream(baos.toByteArray());
+        workbook = new XSSFWorkbook(Package.open(bais));
+		
+        assertEquals(2, workbook.getNumberOfNames());
+        assertEquals("Sheet1!$A$2:$A$7", workbook.getNameAt(0).getReference());
+        assertEquals("AllANumbers", workbook.getNameAt(0).getNameName());
+        assertEquals("All the numbers in A", workbook.getNameAt(0).getComment());
+        
+        assertEquals("Sheet1!$B$2:$B$7", workbook.getNameAt(1).getReference());
+        assertEquals("BStringsFun", workbook.getNameAt(1).getNameName());
+        assertEquals("All the strings in B", workbook.getNameAt(1).getComment());
     }
 }
