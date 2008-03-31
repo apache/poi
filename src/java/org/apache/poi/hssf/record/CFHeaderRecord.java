@@ -15,18 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-/*
- * ConditionalFormattingHeaderRecord.java
- *
- * Created on January 17, 2008, 3:05 AM
- */
 package org.apache.poi.hssf.record;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.poi.hssf.record.cf.CellRange;
+import org.apache.poi.hssf.util.Region;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -34,19 +26,27 @@ import org.apache.poi.util.LittleEndian;
  * 
  * @author Dmitriy Kumshayev
  */
-public class CFHeaderRecord extends Record
+public final class CFHeaderRecord extends Record
 {
 	public static final short sid = 0x1B0;
+
+	private static final CellRange[] EMPTY_CELL_RANGE_ARRAY = { };
 
 	private int field_1_numcf;
 	private int field_2_need_recalculation;
 	private CellRange field_3_enclosing_cell_range;
-	private List field_4_cell_ranges;
+	private CellRange[] field_4_cell_ranges;
 
 	/** Creates new CFHeaderRecord */
 	public CFHeaderRecord()
 	{
-		field_4_cell_ranges = new ArrayList(5);
+		field_4_cell_ranges = EMPTY_CELL_RANGE_ARRAY;
+	}
+	public CFHeaderRecord(Region[] regions)
+	{
+		CellRange[] unmergedRanges = CellRange.convertRegionsToCellRanges(regions);
+		CellRange[] mergeCellRanges = CellRange.mergeCellRanges(unmergedRanges);
+		setCellRanges(mergeCellRanges);
 	}
 
 	public CFHeaderRecord(RecordInputStream in)
@@ -60,11 +60,12 @@ public class CFHeaderRecord extends Record
 		field_2_need_recalculation = in.readShort();
 		field_3_enclosing_cell_range = new CellRange(in.readShort(),in.readShort(),in.readShort(),in.readShort());
 		int numCellRanges = in.readShort();
-		field_4_cell_ranges = new ArrayList(5);
+		CellRange[] crs = new CellRange[numCellRanges];
 		for( int i=0; i<numCellRanges; i++)
 		{
-			field_4_cell_ranges.add(new CellRange(in.readShort(),in.readShort(),in.readShort(),in.readShort()));
+			crs[i] = new CellRange(in.readShort(),in.readShort(),in.readShort(),in.readShort());
 		}
+		field_4_cell_ranges = crs;
 	}
 	
 	public int getNumberOfConditionalFormats()
@@ -101,28 +102,24 @@ public class CFHeaderRecord extends Record
 	 * modify the enclosing cell range accordingly.
 	 * @param List cellRanges - list of CellRange objects
 	 */
-	public void setCellRanges( List cellRanges )
+	public void setCellRanges(CellRange[] cellRanges)
 	{
-		field_4_cell_ranges.clear();
-		if(cellRanges!=null)
+		if(cellRanges == null)
 		{
-			field_3_enclosing_cell_range=null;
-			for( int i=0; i<cellRanges.size(); i++)
-			{
-				field_4_cell_ranges.add(cellRanges.get(i));
-				recalculateEnclosingRange((CellRange)cellRanges.get(i));
-			}
+			throw new IllegalArgumentException("cellRanges must not be null");
 		}
-	}
-
-	private void recalculateEnclosingRange(CellRange cellRange)
-	{
-		field_3_enclosing_cell_range = cellRange.createEnclosingCellRange(field_3_enclosing_cell_range);
+		field_4_cell_ranges = (CellRange[]) cellRanges.clone();
+		CellRange enclosingRange = null;
+		for (int i = 0; i < cellRanges.length; i++)
+		{
+			enclosingRange = cellRanges[i].createEnclosingCellRange(enclosingRange);
+		}
+		field_3_enclosing_cell_range=enclosingRange;
 	}
 	
-	public List getCellRanges()
+	public CellRange[] getCellRanges()
 	{
-		return field_4_cell_ranges;
+		return (CellRange[]) field_4_cell_ranges.clone();
 	}
 
 	public String toString()
@@ -130,16 +127,16 @@ public class CFHeaderRecord extends Record
 		StringBuffer buffer = new StringBuffer();
 
 		buffer.append("[CFHEADER]\n");
-        buffer.append("    .id        = ").append(Integer.toHexString(sid)).append("\n");
-		buffer.append("    .numCF            = ").append(getNumberOfConditionalFormats()).append("\n");
-		buffer.append("    .needRecalc       = ").append(getNeedRecalculation()).append("\n");
-		buffer.append("    .enclosingCellRange= ").append(getEnclosingCellRange()).append("\n");
-		if( field_4_cell_ranges.size()>0)
+		buffer.append("	.id		= ").append(Integer.toHexString(sid)).append("\n");
+		buffer.append("	.numCF			= ").append(getNumberOfConditionalFormats()).append("\n");
+		buffer.append("	.needRecalc	   = ").append(getNeedRecalculation()).append("\n");
+		buffer.append("	.enclosingCellRange= ").append(getEnclosingCellRange()).append("\n");
+		if( field_4_cell_ranges.length>0)
 		{
-			buffer.append("    .cfranges=[");
-			for( int i=0; i<field_4_cell_ranges.size(); i++)
+			buffer.append("	.cfranges=[");
+			for( int i=0; i<field_4_cell_ranges.length; i++)
 			{
-				buffer.append(i==0?"":",").append(field_4_cell_ranges.get(i));
+				buffer.append(i==0?"":",").append(field_4_cell_ranges[i].toString());
 			}
 			buffer.append("]\n");
 		}
@@ -163,24 +160,21 @@ public class CFHeaderRecord extends Record
 		LittleEndian.putShort(data, 10 + offset, (short) field_3_enclosing_cell_range.getLastRow());
 		LittleEndian.putShort(data, 12 + offset, (short) field_3_enclosing_cell_range.getFirstColumn());
 		LittleEndian.putShort(data, 14 + offset, (short) field_3_enclosing_cell_range.getLastColumn());
-		LittleEndian.putShort(data, 16 + offset, (short) field_4_cell_ranges.size());
-		for( int i=0 ; i!=field_4_cell_ranges.size(); i++)
+		LittleEndian.putShort(data, 16 + offset, (short) field_4_cell_ranges.length);
+		for( int i=0 ; i!=field_4_cell_ranges.length; i++)
 		{
-			LittleEndian.putShort(data, 18 + 0 + 8 * i + offset,
-					(short) ((CellRange) field_4_cell_ranges.get(i)).getFirstRow());
-			LittleEndian.putShort(data, 18 + 2 + 8 * i + offset,
-					(short) ((CellRange) field_4_cell_ranges.get(i)).getLastRow());
-			LittleEndian.putShort(data, 18 + 4 + 8 * i + offset,
-					(short) ((CellRange) field_4_cell_ranges.get(i)).getFirstColumn());
-			LittleEndian.putShort(data, 18 + 6 + 8 * i + offset,
-					(short) ((CellRange) field_4_cell_ranges.get(i)).getLastColumn());
+			CellRange cr = field_4_cell_ranges[i];
+			LittleEndian.putShort(data, 18 + 0 + 8 * i + offset, (short) cr.getFirstRow());
+			LittleEndian.putShort(data, 18 + 2 + 8 * i + offset, (short) cr.getLastRow());
+			LittleEndian.putShort(data, 18 + 4 + 8 * i + offset, (short) cr.getFirstColumn());
+			LittleEndian.putShort(data, 18 + 6 + 8 * i + offset, (short) cr.getLastColumn());
 		}
 		return getRecordSize();
 	}
 
 	public int getRecordSize()
 	{
-		return 18+8*field_4_cell_ranges.size();
+		return 18+8*field_4_cell_ranges.length;
 	}
 
 	/**
@@ -204,20 +198,17 @@ public class CFHeaderRecord extends Record
 		return sid;
 	}
 
-    public Object clone() 
-    {
-    	CFHeaderRecord rec = new CFHeaderRecord();
-    	rec.field_1_numcf = field_1_numcf;
-    	rec.field_2_need_recalculation = field_2_need_recalculation;
-    	rec.field_3_enclosing_cell_range = field_3_enclosing_cell_range;
-        rec.field_4_cell_ranges = new ArrayList(field_4_cell_ranges.size());
-        Iterator iterator = field_4_cell_ranges.iterator();
-        while (iterator.hasNext()) 
-        {
-           CellRange oldRange = (CellRange)iterator.next();
-           rec.field_4_cell_ranges.add(oldRange.cloneCellRange());
-        }
-        return rec;
-    }
-
+	public Object clone() 
+	{
+		CFHeaderRecord result = new CFHeaderRecord();
+		result.field_1_numcf = field_1_numcf;
+		result.field_2_need_recalculation = field_2_need_recalculation;
+		result.field_3_enclosing_cell_range = field_3_enclosing_cell_range;
+		CellRange[] crs = new CellRange[field_4_cell_ranges.length];
+		for (int i = 0; i < crs.length; i++) {
+			crs[i] = field_4_cell_ranges[i].cloneCellRange();
+		}
+		result.field_4_cell_ranges = crs;
+		return result;
+	}
 }
