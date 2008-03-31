@@ -33,7 +33,8 @@
     <section><title>How to use the HSSF API</title>
 
         <section><title>Capabilities</title>
-            <p>This release of the how-to outlines functionality for the CVS HEAD.
+            <p>This release of the how-to outlines functionality for the 
+            current svn trunk.
             Those looking for information on previous releases should
             look in the documentation distributed with that release.</p>
             <p>
@@ -53,55 +54,64 @@
               have different characteristics, so you should read up on
               all to select the best for you.</p>
            <ul>
-             <li><link href="#user_api">User API</link></li>
-             <li><link href="#event_api">Event API</link></li>
-             <li><link href="#record_aware_event_api">Event API with extensions to be Record Aware</link></li>
+             <li><link href="#user_api">User API (HSSF and XSSF)</link></li>
+             <li><link href="#event_api">Event API (HSSF Only)</link></li>
+             <li><link href="#record_aware_event_api">Event API with extensions to be Record Aware (HSSF Only)</link></li>
+             <li><link href="#xssf_sax_api">XSSF and SAX (Event API)</link></li>
              <li><link href="#low_level_api">Low Level API</link></li>
            </ul>
         </section>
     </section>
     <section><title>General Use</title>
         <anchor id="user_api" />
-        <section><title>User API</title>
+        <section><title>User API (HSSF and XSSF)</title>
                 <section><title>Writing a new file</title>
 
-                    <p>The high level API (package: org.apache.poi.hssf.usermodel)
+                    <p>The high level API (package: org.apache.poi.ss.usermodel)
                     is what most people should use. Usage is very simple.
                     </p>
                     <p>Workbooks are created by creating an instance of
-                    org.apache.poi.hssf.usermodel.HSSFWorkbook.
+                    org.apache.poi.ss.usermodel.Workbook. Either create
+                    a concrete class directly 
+                    (org.apache.poi.hssf.usermodel.HSSFWorkbook or
+                     org.apache.poi.xssf.usermodel.XSSFWorkbook), or use
+                    the handy factory class
+                    org.apache.poi.ss.usermodel.WorkbookFactory.
                     </p>
                     <p>Sheets are created by calling createSheet() from an existing
-                    instance of HSSFWorkbook, the created sheet is automatically added in
+                    instance of Workbook, the created sheet is automatically added in
                     sequence to the workbook. Sheets do not in themselves have a sheet
                     name (the tab at the bottom); you set
                     the name associated with a sheet by calling
-                    HSSFWorkbook.setSheetName(sheetindex,&quot;SheetName&quot;,encoding).
-                    The name may be in 8bit format (HSSFWorkbook.ENCODING_COMPRESSED_UNICODE)
-                    or Unicode (HSSFWorkbook.ENCODING_UTF_16). Default encoding is 8bit per char.
+                    Workbook.setSheetName(sheetindex,&quot;SheetName&quot;,encoding).
+                    For HSSF, the name may be in 8bit format 
+                    (HSSFWorkbook.ENCODING_COMPRESSED_UNICODE)
+                    or Unicode (HSSFWorkbook.ENCODING_UTF_16). Default 
+                    encoding for HSSF is 8bit per char. For XSSF, the name
+                    is automatically handled as unicode.
                     </p>
                     <p>Rows are created by calling createRow(rowNumber) from an existing
-                    instance of HSSFSheet. Only rows that have cell values should be
+                    instance of Sheet. Only rows that have cell values should be
                     added to the sheet. To set the row's height, you just call
                     setRowHeight(height) on the row object. The height must be given in
                     twips, or 1/20th of a point. If you prefer, there is also a
                     setRowHeightInPoints method.
                     </p>
                     <p>Cells are created by calling createCell(column, type) from an
-                    existing HSSFRow. Only cells that have values should be added to the
+                    existing Row. Only cells that have values should be added to the
                     row. Cells should have their cell type set to either
-                    HSSFCell.CELL_TYPE_NUMERIC or HSSFCell.CELL_TYPE_STRING depending on
+                    Cell.CELL_TYPE_NUMERIC or Cell.CELL_TYPE_STRING depending on
                     whether they contain a numeric or textual value. Cells must also have
                     a value set. Set the value by calling setCellValue with either a
                     String or double as a parameter. Individual cells do not have a
                     width; you must call setColumnWidth(colindex, width) (use units of
-                    1/256th of a character) on the HSSFSheet object. (You can't do it on
+                    1/256th of a character) on the Sheet object. (You can't do it on
                     an individual basis in the GUI either).</p>
-                    <p>Cells are styled with HSSFCellStyle objects which in turn contain
-                    a reference to an HSSFFont object. These are created via the
-                    HSSFWorkbook object by calling createCellStyle() and createFont().
+                    <p>Cells are styled with CellStyle objects which in turn contain
+                    a reference to an Font object. These are created via the
+                    Workbook object by calling createCellStyle() and createFont().
                     Once you create the object you must set its parameters (colors,
-                    borders, etc). To set a font for an HSSFCellStyle call
+                    borders, etc). To set a font for an CellStyle call
                     setFont(fontobj).
                     </p>
                     <p>Once you have generated your workbook, you can write it out by
@@ -118,21 +128,21 @@ short rownum;
 // create a new file
 FileOutputStream out = new FileOutputStream("workbook.xls");
 // create a new workbook
-HSSFWorkbook wb = new HSSFWorkbook();
+Workbook wb = new HSSFWorkbook();
 // create a new sheet
-HSSFSheet s = wb.createSheet();
+Sheet s = wb.createSheet();
 // declare a row object reference
-HSSFRow r = null;
+Row r = null;
 // declare a cell object reference
-HSSFCell c = null;
+Cell c = null;
 // create 3 cell styles
-HSSFCellStyle cs = wb.createCellStyle();
-HSSFCellStyle cs2 = wb.createCellStyle();
-HSSFCellStyle cs3 = wb.createCellStyle();
-HSSFDataFormat df = wb.createDataFormat();
+CellStyle cs = wb.createCellStyle();
+CellStyle cs2 = wb.createCellStyle();
+CellStyle cs3 = wb.createCellStyle();
+DataFormat df = wb.createDataFormat();
 // create 2 fonts objects
-HSSFFont f = wb.createFont();
-HSSFFont f2 = wb.createFont();
+Font f = wb.createFont();
+Font f2 = wb.createFont();
 
 //set font 1 to 12 point type
 f.setFontHeightInPoints((short) 12);
@@ -140,14 +150,14 @@ f.setFontHeightInPoints((short) 12);
 f.setColor( (short)0xc );
 // make it bold
 //arial is the default font
-f.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+f.setBoldweight(Font.BOLDWEIGHT_BOLD);
 
 //set font 2 to 10 point type
 f2.setFontHeightInPoints((short) 10);
 //make it red
-f2.setColor( (short)HSSFFont.COLOR_RED );
+f2.setColor( (short)Font.COLOR_RED );
 //make it bold
-f2.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+f2.setBoldweight(Font.BOLDWEIGHT_BOLD);
 
 f2.setStrikeout( true );
 
@@ -159,8 +169,8 @@ cs.setDataFormat(df.getFormat("#,##0.0"));
 //set a thin border
 cs2.setBorderBottom(cs2.BORDER_THIN);
 //fill w fg fill color
-cs2.setFillPattern((short) HSSFCellStyle.SOLID_FOREGROUND);
-//set the cell format to text see HSSFDataFormat for a full list
+cs2.setFillPattern((short) CellStyle.SOLID_FOREGROUND);
+//set the cell format to text see DataFormat for a full list
 cs2.setDataFormat(HSSFDataFormat.getBuiltinFormat("text"));
 
 // set the font
@@ -168,10 +178,9 @@ cs2.setFont(f2);
 
 // set the sheet name in Unicode
 wb.setSheetName(0, "\u0422\u0435\u0441\u0442\u043E\u0432\u0430\u044F " + 
-                   "\u0421\u0442\u0440\u0430\u043D\u0438\u0447\u043A\u0430", 
-                HSSFWorkbook.ENCODING_UTF_16 );
-// in case of compressed Unicode
-// wb.setSheetName(0, "HSSF Test", HSSFWorkbook.ENCODING_COMPRESSED_UNICODE );
+                   "\u0421\u0442\u0440\u0430\u043D\u0438\u0447\u043A\u0430" );
+// in case of plain ascii
+// wb.setSheetName(0, "HSSF Test");
 // create a sheet with 30 rows (0-29)
 for (rownum = (short) 0; rownum < 30; rownum++)
 {
@@ -206,14 +215,12 @@ for (rownum = (short) 0; rownum < 30; rownum++)
             // set this cell to the first cell style we defined
             c.setCellStyle(cs);
             // set the cell's string value to "Test"
-            c.setEncoding( HSSFCell.ENCODING_COMPRESSED_UNICODE );
             c.setCellValue( "Test" );
         }
         else
         {
             c.setCellStyle(cs2);
             // set the cell's string value to "\u0422\u0435\u0441\u0442"
-            c.setEncoding( HSSFCell.ENCODING_UTF_16 );
             c.setCellValue( "\u0422\u0435\u0441\u0442" );
         }
 
@@ -280,7 +287,7 @@ call workbook.write(outputstream) just as you did above.</p>
         </section>
 
         <anchor id="event_api" />
-        <section><title>Event API</title>
+        <section><title>Event API (HSSF Only)</title>
 
           <p>The event API is newer than the User API.  It is intended for intermediate
              developers who are willing to learn a little bit of the low level API
@@ -419,7 +426,7 @@ public class EventExample
      </section>
 
      <anchor id="record_aware_event_api" />
-     <section><title>Record Aware Event API</title>
+     <section><title>Record Aware Event API (HSSF Only)</title>
 <p>
 This is an extension to the normal 
 <link href="#event_api">Event API</link>. With this, your listener
@@ -468,6 +475,138 @@ The latest version is always available from
  need to include the scratchpad jar on your classpath, or build from a</em>
  <link href="../subversion.html">subversion checkout</link>.
 </p>
+     </section>
+
+     <anchor id="xssf_sax_api"/>
+     <section><title>XSSF and SAX (Event API)</title>
+
+	 <p>If memory footprint is an issue, then for XSSF, you can get at
+      the underlying XML data, and process it yourself. This is intended 
+      for intermediate developers who are willing to learn a little bit of 
+      low level structure of .xlsx files, and who are happy processing
+      XML in java. Its relatively simple to use, but requires a basic
+      understanding of the file structure. The advantage provided is that 
+      you can read a XLSX file with a relatively small memory footprint.
+     </p>
+     <p>One important thing to note with the basic Event API is that it
+       triggers events only for things actually stored within the file.
+       With the XLSX file format, it is quite common for things that
+       have yet to be edited to simply not exist in the file. This means
+       there may well be apparent "gaps" in the record stream, which
+       you need to work around.</p>
+     <p>To use this API you construct an instance of
+       org.apache.poi.xssf.eventmodel.XSSFReader. This will optionally
+       provide a nice interace on the shared strings table, and the styles.
+       It provides methods to get the raw xml data from the rest of the
+       file, which you will then pass to SAX.</p>
+     <p>This example shows how to get at a single known sheet, or at
+       all sheets in the file. It is based on the example in svn
+       src/examples/src/org/apache/poi/xssf/eventusermodel/exmaples/FromHowTo.java</p>
+<source><![CDATA[
+import java.io.InputStream;
+import java.util.Iterator;
+
+import org.apache.poi.xssf.eventusermodel.XSSFReader;
+import org.apache.poi.xssf.model.SharedStringsTable;
+import org.openxml4j.opc.Package;
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.XMLReaderFactory;
+
+public class ExampleEventUserModel {
+	public void processOneSheet(String filename) throws Exception {
+		Package pkg = Package.open(filename);
+		XSSFReader r = new XSSFReader( pkg );
+		SharedStringsTable sst = r.getSharedStringsTable();
+
+		XMLReader parser = fetchSheetParser(sst);
+
+		// rId2 found by processing the Workbook
+		// Seems to either be rId# or rSheet#
+		InputStream sheet2 = r.getSheet("rId2");
+		InputSource sheetSource = new InputSource(sheet2);
+		parser.parse(sheetSource);
+		sheet2.close();
+	}
+
+	public void processAllSheets(String filename) throws Exception {
+		Package pkg = Package.open(filename);
+		XSSFReader r = new XSSFReader( pkg );
+		SharedStringsTable sst = r.getSharedStringsTable();
+		
+		XMLReader parser = fetchSheetParser(sst);
+
+		Iterator<InputStream> sheets = r.getSheetsData();
+		while(sheets.hasNext()) {
+			InputStream sheet = sheets.next();
+			InputSource sheetSource = new InputSource(sheet);
+			parser.parse(sheetSource);
+			sheet.close();
+		}
+	}
+
+	public XMLReader fetchSheetParser(SharedStringsTable sst) throws SAXException {
+		XMLReader parser =
+			XMLReaderFactory.createXMLReader(
+					"org.apache.xerces.parsers.SAXParser"
+			);
+		ContentHandler handler = new SheetHandler(sst);
+		parser.setContentHandler(handler);
+		return parser;
+	}
+
+	/** 
+	 * See org.xml.sax.helpers.DefaultHandler javadocs 
+	 */
+	private static class SheetHandler extends DefaultHandler {
+		private SharedStringsTable sst;
+		private String lastContents;
+		private boolean nextIsString;
+		
+		private SheetHandler(SharedStringsTable sst) {
+			this.sst = sst;
+		}
+		
+		public void startElement(String uri, String localName, String name,
+				Attributes attributes) throws SAXException {
+			// c => cell
+			if(name.equals("c")) {
+				// Print the cell reference
+				System.out.print(attributes.getValue("r") + " - ");
+				// Figure out if the value is an index in the SST
+				if(attributes.getValue("t").equals("s")) {
+					nextIsString = true;
+				} else {
+					nextIsString = false;
+				}
+			}
+			// v => contents of a cell
+			if(name.equals("v")) {
+				System.out.println(lastContents);
+			}
+		}
+
+		public void characters(char[] ch, int start, int length)
+				throws SAXException {
+			lastContents = new String(ch, start, length);
+			if(nextIsString) {
+				int idx = Integer.parseInt(lastContents);
+				lastContents = sst.getSharedStringAt(idx);
+			}
+		}
+	}
+	
+	public static void main(String[] args) throws Exception {
+		FromHowTo howto = new FromHowTo();
+		howto.processOneSheet(args[0]);
+		howto.processAllSheets(args[0]);
+	}
+}
+]]></source>
      </section>
 
      <anchor id="low_level_api" />
