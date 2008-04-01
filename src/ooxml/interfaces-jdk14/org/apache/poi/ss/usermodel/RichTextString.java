@@ -17,4 +17,11 @@
 
 package org.apache.poi.ss.usermodel;
 
-public interface RichTextString {}
+/**
+ * This is a JDK 1.4 compatible interface for HSSFRichTextString.
+ * If you are using JDK 1.5 or later, use the other set of interfaces,
+ *  which work properly for both HSSFRichTextString and XSSFRichTextString
+ */
+public interface RichTextString {
+    String getString();
+}

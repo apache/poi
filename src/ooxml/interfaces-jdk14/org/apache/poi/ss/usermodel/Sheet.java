@@ -17,4 +17,19 @@
 
 package org.apache.poi.ss.usermodel;
 
-public interface Sheet {}
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import java.util.Iterator;
+
+/**
+ * This is a JDK 1.4 compatible interface for HSSFSheet.
+ * If you are using JDK 1.5 or later, use the other set of interfaces,
+ *  which work properly for both HSSFSheet and XSSFSheet
+ */
+public interface Sheet {
+    int getPhysicalNumberOfRows();
+    int getFirstRowNum();
+    int getLastRowNum();
+
+    HSSFRow getRow(int rownum);
+    Iterator rowIterator();
+}

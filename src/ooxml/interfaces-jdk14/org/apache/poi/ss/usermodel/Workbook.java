@@ -17,4 +17,26 @@
 
 package org.apache.poi.ss.usermodel;
 
-public interface Workbook {}
+import org.apache.poi.hssf.usermodel.*;
+
+/**
+ * This is a JDK 1.4 compatible interface for HSSFWorkbook.
+ * If you are using JDK 1.5 or later, use the other set of interfaces,
+ *  which work properly for both HSSFWorkbook and XSSFWorkbook
+ */
+public interface Workbook {
+    int getNumberOfSheets();
+    short getNumberOfFonts();
+    int getNumberOfNames();
+
+    HSSFName getNameAt(int index);
+    String getNameName(int index);
+
+    String getSheetName(int sheet);
+    HSSFSheet getSheetAt(int index);
+    int getSheetIndex(String name);
+    int getSheetIndex(Sheet sheet);
+    int getSheetIndexFromExternSheetIndex(int externSheetNumber);
+
+    CreationHelper getCreationHelper();
+}

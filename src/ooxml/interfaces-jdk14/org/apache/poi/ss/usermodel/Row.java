@@ -17,4 +17,20 @@
 
 package org.apache.poi.ss.usermodel;
 
-public interface Row {}
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import java.util.Iterator;
+
+/**
+ * This is a JDK 1.4 compatible interface for HSSFRow.
+ * If you are using JDK 1.5 or later, use the other set of interfaces,
+ *  which work properly for both HSSFRow and XSSFRow
+ */
+public interface Row {
+    int getRowNum();
+    short getFirstCellNum();
+    short getLastCellNum();
+    int getPhysicalNumberOfCells();
+    HSSFCell getCell(int cellnum);
+
+    Iterator cellIterator();
+}
