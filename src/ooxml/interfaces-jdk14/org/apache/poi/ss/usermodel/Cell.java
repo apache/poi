@@ -17,8 +17,14 @@
 
 package org.apache.poi.ss.usermodel;
 
-public interface Cell {
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 
+/**
+ * This is a JDK 1.4 compatible interface for HSSFCell.
+ * If you are using JDK 1.5 or later, use the other set of interfaces,
+ *  which work properly for both HSSFCell and XSSFCell
+ */
+public interface Cell {
     /**
      * Numeric Cell type (0)
      * @see #setCellType(int)
@@ -67,4 +73,20 @@ public interface Cell {
 
     public final static int CELL_TYPE_ERROR = 5;
 
+
+    int getCellType();
+    short getCellNum();
+
+    byte getErrorCellValue();
+    String getCellFormula();
+
+    boolean getBooleanCellValue();
+    double getNumericCellValue();
+    HSSFRichTextString getRichStringCellValue();
+
+    void setCellType(int cellType);
+    void setCellValue(boolean value);
+    void setCellValue(double value);
+    void setCellValue(RichTextString value);
+    void setCellFormula(String formula);
 }

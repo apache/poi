@@ -16,4 +16,13 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
-public interface CreationHelper {}
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+
+/**
+ * This is a JDK 1.4 compatible interface for HSSFCreationHelper.
+ * If you are using JDK 1.5 or later, use the other set of interfaces,
+ *  which work properly for both HSSFCreationHelper and XSSFCreationHelper
+ */
+public interface CreationHelper {
+    HSSFRichTextString createRichTextString(String text);
+}
