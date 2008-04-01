@@ -27,6 +27,9 @@ import org.apache.poi.hssf.record.formula.FuncPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 /**
+ * Tests parsing of some built-in functions that were not properly
+ * registered in POI as bug #44675, #44733 (March/April 2008).
+ * 
  * @author Josh Micich
  */
 public final class TestParseMissingBuiltInFuncs extends TestCase {
@@ -39,6 +42,7 @@ public final class TestParseMissingBuiltInFuncs extends TestCase {
 		Ptg[] ptgs = parse(formula);
 		Ptg ptgF = ptgs[ptgs.length-1];  // func is last RPN token in all these formulas
 		
+		// Check critical things in the Ptg array encoding.
 		if(!(ptgF instanceof AbstractFunctionPtg)) {
 		    throw new RuntimeException("function token missing");
 		}
@@ -47,11 +51,15 @@ public final class TestParseMissingBuiltInFuncs extends TestCase {
 			throw new AssertionFailedError("Failed to recognise built-in function in formula '" 
 					+ formula + "'");
 		}
-		
 		assertEquals(expPtgArraySize, ptgs.length);
 		assertEquals(funcIx, func.getFunctionIndex());
 		Class expCls = isVarArgFunc ? FuncVarPtg.class : FuncPtg.class;
 		assertEquals(expCls, ptgF.getClass());
+		
+		// check that parsed Ptg array converts back to formula text OK
+		Workbook book = Workbook.createWorkbook();
+		String reRenderedFormula = FormulaParser.toFormulaString(book, ptgs);
+		assertEquals(formula, reRenderedFormula);
 	}
 	
 	public void testDatedif() {
@@ -75,5 +83,8 @@ public final class TestParseMissingBuiltInFuncs extends TestCase {
 	}
 	public void testIsnontext() {
 		confirmFunc("ISNONTEXT(\"abc\")", 2, false, 190);
+	}
+	public void testDproduct() {
+		confirmFunc("DPRODUCT(C1:E5,\"HarvestYield\",G1:H2)", 4, false, 189);
 	}
 }
