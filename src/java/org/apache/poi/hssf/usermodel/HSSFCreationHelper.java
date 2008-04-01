@@ -17,8 +17,6 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.RichTextString;
 
 public class HSSFCreationHelper implements CreationHelper {
 	private HSSFWorkbook workbook;
@@ -34,11 +32,11 @@ public class HSSFCreationHelper implements CreationHelper {
     /**
      * Creates a new HSSFRichTextString for you.
      */
-	public RichTextString createRichTextString(String text) {
+	public HSSFRichTextString createRichTextString(String text) {
 		return new HSSFRichTextString(text);
 	}
 	
-	public DataFormat createDataFormat() {
+	public HSSFDataFormat createDataFormat() {
 		return dataFormat;
 	}
 }
