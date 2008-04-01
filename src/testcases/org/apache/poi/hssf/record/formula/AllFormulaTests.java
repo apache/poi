@@ -29,7 +29,7 @@ import junit.framework.TestSuite;
  * 
  * @author Josh Micich
  */
-public class AllFormulaTests {
+public final class AllFormulaTests {
 	
 	public static Test suite() {
 		TestSuite result = new TestSuite(AllFormulaTests.class.getName());
@@ -50,7 +50,6 @@ public class AllFormulaTests {
 		result.addTestSuite(TestReferencePtg.class);
 		result.addTestSuite(TestSheetNameFormatter.class);
 		result.addTestSuite(TestUnionPtg.class);
-		result.addTest(AllFormulaFunctionTests.suite());
 		return result;
 	}
 }

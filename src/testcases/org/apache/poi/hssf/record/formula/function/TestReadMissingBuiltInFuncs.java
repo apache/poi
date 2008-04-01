@@ -21,7 +21,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 
+import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
@@ -29,24 +31,31 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 /**
  * Tests reading from a sample spreadsheet some built-in functions that were not properly
- * registered in POI as bug #44675 (March 2008).
+ * registered in POI as bug #44675, #44733 (March/April 2008).
  * 
  * @author Josh Micich
  */
 public final class TestReadMissingBuiltInFuncs extends TestCase {
 
-	private HSSFSheet sht;
+	/**
+	 * This spreadsheet has examples of calls to the interesting built-in functions in cells A1:A7
+	 */
+	private static final String SAMPLE_SPREADSHEET_FILE_NAME = "missingFuncs44675.xls";
+	private static HSSFSheet _sheet;
 
-	protected void setUp() {
-		String cwd = System.getProperty("HSSF.testdata.path");
-		HSSFWorkbook wb;
-		try {
-			InputStream is = new FileInputStream(new File(cwd, "missingFuncs44675.xls"));
-			wb = new HSSFWorkbook(is);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+	private static HSSFSheet getSheet() {
+		if (_sheet == null) {
+			String cwd = System.getProperty("HSSF.testdata.path");
+			HSSFWorkbook wb;
+			try {
+				InputStream is = new FileInputStream(new File(cwd, SAMPLE_SPREADSHEET_FILE_NAME));
+				wb = new HSSFWorkbook(is);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+			_sheet = wb.getSheetAt(0);
 		}
-		sht = wb.getSheetAt(0);
+		return _sheet;
 	}
 
 	public void testDatedif() {
@@ -128,9 +137,30 @@ public final class TestReadMissingBuiltInFuncs extends TestCase {
 		}
 		assertEquals("ISNONTEXT(\"abc\")", formula);
 	}
+	public void testDproduct() {
+		
+		String formula = getCellFormula(6);
+		assertEquals("DPRODUCT(C1:E5,\"HarvestYield\",G1:H2)", formula);
+	}
 
 	private String getCellFormula(int rowIx) {
-		String result = sht.getRow(rowIx).getCell((short)0).getCellFormula();
+		HSSFSheet sheet;
+		try {
+			sheet = getSheet();
+		} catch (RecordFormatException e) {
+			if(e.getCause() instanceof InvocationTargetException) {
+				InvocationTargetException ite = (InvocationTargetException) e.getCause();
+				if(ite.getTargetException() instanceof RuntimeException) {
+					RuntimeException re = (RuntimeException) ite.getTargetException();
+					if(re.getMessage().equals("Invalid built-in function index (189)")) {
+						throw afe("DPRODUCT() registered with wrong index");
+					}
+				}
+			}
+			// some other unexpected error
+			throw e;
+		}
+		String result = sheet.getRow(rowIx).getCell((short)0).getCellFormula();
 		if (false) {
 			System.err.println(result);
 		}
