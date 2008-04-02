@@ -387,7 +387,7 @@ public class PropertySet
         o += ClassID.LENGTH;
         final long sectionCount = LittleEndian.getUInt(src, o);
         o += LittleEndian.INT_SIZE;
-        if (sectionCount < 1)
+        if (sectionCount < 0)
             return false;
         return true;
     }
@@ -426,9 +426,9 @@ public class PropertySet
         o += ClassID.LENGTH;
         final int sectionCount = LittleEndian.getInt(src, o);
         o += LittleEndian.INT_SIZE;
-        if (sectionCount <= 0)
+        if (sectionCount < 0)
             throw new HPSFRuntimeException("Section count " + sectionCount +
-                                           " must be greater than 0.");
+                                           " is negative.");
 
         /*
          * Read the sections, which are following the header. They
@@ -468,6 +468,8 @@ public class PropertySet
      */
     public boolean isSummaryInformation()
     {
+        if (sections.size() <= 0)
+            return false;
         return Util.equal(((Section) sections.get(0)).getFormatID().getBytes(),
                           SectionIDMap.SUMMARY_INFORMATION_ID);
     }
@@ -483,6 +485,8 @@ public class PropertySet
      */
     public boolean isDocumentSummaryInformation()
     {
+        if (sections.size() <= 0)
+            return false;
         return Util.equal(((Section) sections.get(0)).getFormatID().getBytes(),
                           SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[0]);
     }
