@@ -17,6 +17,9 @@
 package org.apache.poi.xssf.usermodel.helpers;
 
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
 public class RichTextStringHelper {
@@ -26,4 +29,28 @@ public class RichTextStringHelper {
 		text.setT(string.getString());
 	}
 
+	public static RichTextString convertFromRst(CTRst ctText) {
+		if(ctText == null) {
+			return new XSSFRichTextString("");
+		}
+		if(ctText.getT() != null) {
+			return new XSSFRichTextString(ctText.getT());
+		}
+		
+		// Grab all the text
+		StringBuffer t = new StringBuffer();
+		for(CTRElt r : ctText.getRArray()) {
+			t.append( r.getT() );
+		}
+		XSSFRichTextString rtxt = new XSSFRichTextString(t.toString());
+		
+		// Now get all the formatting
+		// TODO: implement Rst/RpR to RichTextString conversion
+		for(CTRElt r : ctText.getRArray()) {
+			// Formatting info comes from rPr
+			CTRPrElt rPr = r.getRPr();
+			rPr.getRFontArray();
+		}
+		return rtxt;
+	}
 }

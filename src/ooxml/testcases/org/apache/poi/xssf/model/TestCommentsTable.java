@@ -17,12 +17,19 @@
 
 package org.apache.poi.xssf.model;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFComment;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxml4j.opc.Package;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
@@ -64,10 +71,10 @@ public class TestCommentsTable extends TestCase {
 		comment1.setText(ctrst1);
 		
 		// test finding the right comment for a cell
-		assertEquals(TEST_A1_TEXT, sheetComments.findCellComment("A1").getString());
-		assertEquals(TEST_A1_TEXT, sheetComments.findCellComment(0, 0).getString());
-		assertEquals(TEST_A2_TEXT, sheetComments.findCellComment("A2").getString());
-		assertEquals(TEST_A2_TEXT, sheetComments.findCellComment(1, 0).getString());
+		assertEquals(TEST_A1_TEXT, sheetComments.findCellComment("A1").getString().getString());
+		assertEquals(TEST_A1_TEXT, sheetComments.findCellComment(0, 0).getString().getString());
+		assertEquals(TEST_A2_TEXT, sheetComments.findCellComment("A2").getString().getString());
+		assertEquals(TEST_A2_TEXT, sheetComments.findCellComment(1, 0).getString().getString());
 		assertNull(sheetComments.findCellComment("A3"));
 		assertNull(sheetComments.findCellComment(2, 0));
 	}
@@ -99,10 +106,73 @@ public class TestCommentsTable extends TestCase {
 		assertTrue( ((XSSFSheet)sheet1).hasComments() );
 		assertFalse( ((XSSFSheet)sheet2).hasComments() );
 		
-		// TODO - check rest of comments
+		// Comments should be in C5 and C7
+		Row r5 = sheet1.getRow(4);
+		Row r7 = sheet1.getRow(6);
+		assertNotNull( r5.getCell(2).getCellComment() );
+		assertNotNull( r7.getCell(2).getCellComment() );
+		
+		// Check they have what we expect
+		// TODO: Rich text formatting
+		Comment cc5 = r5.getCell(2).getCellComment();
+		Comment cc7 = r7.getCell(2).getCellComment();
+		
+		assertEquals("Nick Burch", cc5.getAuthor());
+		assertEquals("Nick Burch:\nThis is a comment", cc5.getString().getString());
+		assertEquals(4, cc5.getRow());
+		assertEquals(2, cc5.getColumn());
+		
+		assertEquals("Nick Burch", cc7.getAuthor());
+		assertEquals("Nick Burch:\nComment #1\n", cc7.getString().getString());
+		assertEquals(6, cc7.getRow());
+		assertEquals(2, cc7.getColumn());
 	}
 	
-	public void testWriteRead() throws Exception {
+	public void DISABLEDtestWriteRead() throws Exception {
+		File xml = new File(
+				System.getProperty("HSSF.testdata.path") +
+				File.separator + "WithVariousData.xlsx"
+		);
+		assertTrue(xml.exists());
+    	
+		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
+		Sheet sheet1 = workbook.getSheetAt(0);
+		XSSFSheet sheet2 = (XSSFSheet)workbook.getSheetAt(1);
+		
+		assertTrue( ((XSSFSheet)sheet1).hasComments() );
+		assertFalse( ((XSSFSheet)sheet2).hasComments() );
+		
+		// Change on comment on sheet 1, and add another into
+		//  sheet 2
+		Row r5 = sheet1.getRow(4);
+		Comment cc5 = r5.getCell(2).getCellComment();
+		cc5.setAuthor("Apache POI");
+		cc5.setString(new XSSFRichTextString("Hello!"));
+		
+		Row r2s2 = sheet2.createRow(2);
+		Cell c1r2s2 = r2s2.createCell(1);
+		assertNull(c1r2s2.getCellComment());
+		
+		Comment cc2 = sheet2.createComment();
+		cc2.setAuthor("Also POI");
+		cc2.setString(new XSSFRichTextString("A new comment"));
+		c1r2s2.setCellComment(cc2);
+		
+		
+		// Save, and re-load the file
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		workbook.write(baos);
+		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+		workbook = new XSSFWorkbook(Package.open(bais));
+		
+		// Check we still have comments where we should do
+		sheet1 = workbook.getSheetAt(0);
+		sheet2 = (XSSFSheet)workbook.getSheetAt(1);
+		assertNotNull(sheet1.getRow(4).getCell(2).getCellComment());
+		assertNotNull(sheet1.getRow(6).getCell(2).getCellComment());
+		assertNotNull(sheet2.getRow(2).getCell(1).getCellComment());
+		
+		// And check they still have the contents they should do
 		// TODO
 	}
 }

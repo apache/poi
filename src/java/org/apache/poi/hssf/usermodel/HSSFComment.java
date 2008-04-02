@@ -137,6 +137,13 @@ public class HSSFComment extends HSSFTextbox implements Comment {
         if(note != null) note.setAuthor(author);
         this.author = author;
     }
+    
+    /**
+     * Fetches the rich text string of the comment
+     */
+    public HSSFRichTextString getString() {
+    	return txo.getStr();
+    }
 
     /**
      * Sets the rich text string used by this comment.

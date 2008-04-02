@@ -164,6 +164,14 @@ public class XSSFSheet implements Sheet {
         // TODO Auto-generated method stub
 
     }
+    
+    /**
+     * Creates a new comment for this sheet. You still
+     *  need to assign it to a cell though
+     */
+    public Comment createComment() {
+    	return getComments().addComment();
+    }
 
     protected XSSFRow addRow(int index, int rownum) {
         CTRow row = this.worksheet.getSheetData().insertNewRow(index);

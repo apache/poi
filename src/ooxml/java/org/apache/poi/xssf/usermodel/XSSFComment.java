@@ -76,6 +76,10 @@ public class XSSFComment implements Comment {
 		String newRef = (new CellReference(comment.getRef())).convertRowColToString((short) row, getColumn());
 		comment.setRef(newRef);
 	}
+	
+	public RichTextString getString() {
+		return RichTextStringHelper.convertFromRst(comment.getText());
+	}
 
 	public void setString(RichTextString string) {
 		CTRst text = comment.addNewText();
@@ -91,9 +95,4 @@ public class XSSFComment implements Comment {
 		// TODO Auto-generated method stub
 
 	}
-	
-	public String getString() {
-		return comment.getText().getT().toString();
-	}
-
 }
