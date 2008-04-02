@@ -92,6 +92,8 @@ public class MutablePropertySet extends PropertySet
         osVersion = ps.getOSVersion();
         setClassID(ps.getClassID());
         clearSections();
+        if (sections == null)
+            sections = new LinkedList();
         for (final Iterator i = ps.getSections().iterator(); i.hasNext();)
         {
             final MutableSection s = new MutableSection((Section) (i.next()));
