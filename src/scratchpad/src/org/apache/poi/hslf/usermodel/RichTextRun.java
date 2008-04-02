@@ -425,6 +425,15 @@ public class RichTextRun {
     }
 
     /**
+     * Sets indentation level
+     *
+     * @param level indentation level. Must be in the range [0, 5]
+     */
+    public void setIndentLevel(int level) {
+        if(paragraphStyle != null ) paragraphStyle.setReservedField((short)level);
+    }
+
+    /**
      * Sets whether this rich text run has bullets
      */
     public void setBullet(boolean flag) {
