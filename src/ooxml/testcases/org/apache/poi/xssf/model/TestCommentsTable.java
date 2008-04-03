@@ -20,6 +20,7 @@ package org.apache.poi.xssf.model;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Comment;
@@ -128,7 +129,7 @@ public class TestCommentsTable extends TestCase {
 		assertEquals(2, cc7.getColumn());
 	}
 	
-	public void DISABLEDtestWriteRead() throws Exception {
+	public void testWriteRead() throws Exception {
 		File xml = new File(
 				System.getProperty("HSSF.testdata.path") +
 				File.separator + "WithVariousData.xlsx"
