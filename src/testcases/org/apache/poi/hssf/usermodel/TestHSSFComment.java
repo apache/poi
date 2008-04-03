@@ -78,6 +78,26 @@ public class TestHSSFComment extends TestCase {
         assertEquals(commentText, comment.getString().getString());
         assertEquals(cellRow, comment.getRow());
         assertEquals(cellColumn, comment.getColumn());
+        
+        
+        // Change slightly, and re-test
+        comment.setString(new HSSFRichTextString("New Comment Text"));
+        
+        out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        sheet = wb.getSheetAt(0);
+        cell = sheet.getRow(cellRow).getCell(cellColumn);
+        comment = cell.getCellComment();
+
+        assertNotNull(comment);
+        assertEquals(HSSFSimpleShape.OBJECT_TYPE_COMMENT, comment.getShapeType());
+        assertEquals(commentAuthor, comment.getAuthor());
+        assertEquals("New Comment Text", comment.getString().getString());
+        assertEquals(cellRow, comment.getRow());
+        assertEquals(cellColumn, comment.getColumn());
     }
 
     /**

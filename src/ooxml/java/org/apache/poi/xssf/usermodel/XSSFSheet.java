@@ -919,6 +919,13 @@ public class XSSFSheet implements Sheet {
 		}
 		return sheetComments;
 	}
+	/**
+	 * Returns the sheet's comments object if there is one,
+	 *  or null if not
+	 */
+	protected CommentsSource getCommentsSourceIfExists() {
+		return sheetComments;
+	}
 	
 	/**
 	 * Does this sheet have any comments on it? We need to know,

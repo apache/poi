@@ -133,6 +133,18 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 		public String getContentType() { return TYPE; }
 		public String getRelation() { return REL; }
 		public String getDefaultFileName() { return DEFAULT_NAME; }
+		
+		/**
+		 * Returns the filename for the nth one of these, 
+		 *  eg /xl/comments4.xml
+		 */
+		public String getFileName(int index) {
+			if(DEFAULT_NAME.indexOf("#") == -1) {
+				// Generic filename in all cases
+				return getDefaultFileName();
+			}
+			return DEFAULT_NAME.replace("#", Integer.toString(index));
+		}
 
 		/**
 		 * Fetches the InputStream to read the contents, based
@@ -667,7 +679,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             for (int i=0 ; i < this.getNumberOfSheets(); i++) {
             	int sheetNumber = (i+1);
             	XSSFSheet sheet = (XSSFSheet) this.getSheetAt(i);
-                PackagePartName partName = PackagingURIHelper.createPartName("/xl/worksheets/sheet" + sheetNumber + ".xml");
+                PackagePartName partName = PackagingURIHelper.createPartName(
+                		WORKSHEET.getFileName(sheetNumber));
                 PackageRelationship rel =
                 	 corePart.addRelationship(partName, TargetMode.INTERNAL, WORKSHEET.getRelation(), "rSheet" + sheetNumber);
                 PackagePart part = pkg.createPart(partName, WORKSHEET.getContentType());
@@ -683,7 +696,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 workbook.getSheets().getSheetArray(i).setSheetId(sheetNumber);
                 
                 // If our sheet has comments, then write out those
-                // TODO
+                if(sheet.hasComments()) {
+                	CommentsTable ct = (CommentsTable)sheet.getCommentsSourceIfExists();
+                    PackagePartName ctName = PackagingURIHelper.createPartName(
+                    		SHEET_COMMENTS.getFileName(sheetNumber));
+                    part.addRelationship(ctName, TargetMode.INTERNAL, SHEET_COMMENTS.getRelation(), "rComments");
+                    PackagePart ctPart = pkg.createPart(ctName, SHEET_COMMENTS.getContentType());
+                    
+                    out = ctPart.getOutputStream();
+                    ct.writeTo(out);
+                    out.close();
+                }
             }
              
             // Write shared strings and styles

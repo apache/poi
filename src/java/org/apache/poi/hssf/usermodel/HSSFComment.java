@@ -139,13 +139,6 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     }
     
     /**
-     * Fetches the rich text string of the comment
-     */
-    public HSSFRichTextString getString() {
-    	return txo.getStr();
-    }
-
-    /**
      * Sets the rich text string used by this comment.
      *
      * @param string    Sets the rich text string used by this object.
