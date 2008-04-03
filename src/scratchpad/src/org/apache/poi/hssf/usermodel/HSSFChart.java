@@ -23,6 +23,7 @@ import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -33,6 +34,15 @@ import java.util.Stack;
  */
 public class HSSFChart
 {
+	private ChartRecord chartRecord;
+	private SeriesRecord seriesRecord;
+	
+	private ChartTitleFormatRecord chartTitleFormat;
+	private SeriesTextRecord chartTitleText;
+	
+	private HSSFChart(ChartRecord chartRecord) {
+		this.chartRecord = chartRecord;
+	}
 
     /**
      * Creates a bar chart.  API needs some work. :)
@@ -107,6 +117,74 @@ public class HSSFChart
         sheet.insertChartRecords( records );
         workbook.insertChartRecord();
     }
+    
+    /**
+     * Returns all the charts for the given sheet.
+     * 
+     * NOTE:  Does not yet work...  checking it in just so others
+     * can take a look.
+     */
+    public static HSSFChart[] getSheetCharts(HSSFSheet sheet) {
+    	List charts = new ArrayList();
+    	HSSFChart lastChart = null;
+    	
+    	// Find records of interest
+    	List records = sheet.getSheet().getRecords();
+    	for(Iterator it = records.iterator(); it.hasNext();) {
+    		Record r = (Record)it.next();
+    		System.err.println(r);
+    		
+    		if(r instanceof DrawingRecord) {
+    			DrawingRecord dr = (DrawingRecord)r;
+    		}
+    		
+    		if(r instanceof ChartRecord) {
+    			lastChart = new HSSFChart((ChartRecord)r);
+    			charts.add(lastChart);
+    		}
+    		if(r instanceof SeriesRecord) {
+    			lastChart.seriesRecord = (SeriesRecord)r;
+    		}
+    		if(r instanceof ChartTitleFormatRecord) {
+    			lastChart.chartTitleFormat =
+    				(ChartTitleFormatRecord)r;
+    		}
+    		if(r instanceof SeriesTextRecord) {
+    			lastChart.chartTitleText =
+    				(SeriesTextRecord)r;
+    		}
+    	}
+    	
+    	return (HSSFChart[])
+    		charts.toArray( new HSSFChart[charts.size()] );
+    }
+    
+    
+    /**
+     * Returns the chart's title, if there is one,
+     *  or null if not
+     */
+    public String getChartTitle() {
+    	if(chartTitleText != null) {
+    		return chartTitleText.getText();
+    	}
+    	return null;
+    }
+    
+    /**
+     * Changes the chart's title, but only if there 
+     *  was one already.
+     * TODO - add in the records if not
+     */
+    public void setChartTitle(String title) {
+    	if(chartTitleText != null) {
+    		chartTitleText.setText(title);
+    	} else {
+    		throw new IllegalStateException("No chart title found to change");
+    	}
+    }
+    
+    
 
     private EOFRecord createEOFRecord()
     {
