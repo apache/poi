@@ -78,8 +78,8 @@ public final class CellRange
 		return _firstColumn == 0 && _lastColumn == LAST_COLUMN_INDEX;
 	}
 	
-	public CellRange(Region r) {
-		this(r.getRowFrom(), r.getRowTo(), r.getColumnFrom(), r.getColumnTo());
+	private static CellRange createFromRegion(Region r) {
+		return new CellRange(r.getRowFrom(), r.getRowTo(), r.getColumnFrom(), r.getColumnTo());
 	}
 
 	private static boolean isValid(int firstRow, int lastRow, int firstColumn, int lastColumn)
@@ -358,7 +358,7 @@ public final class CellRange
 		CellRange[] result = new CellRange[regions.length];
 		for( int i=0; i<regions.length; i++)
 		{
-			result[i] = new CellRange(regions[i]);
+			result[i] = createFromRegion(regions[i]);
 		}
 		return result;
 	}

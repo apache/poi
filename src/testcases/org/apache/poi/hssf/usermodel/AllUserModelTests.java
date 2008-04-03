@@ -40,6 +40,7 @@ public class AllUserModelTests {
 		result.addTestSuite(TestFormulas.class);
 		result.addTestSuite(TestHSSFCell.class);
 		result.addTestSuite(TestHSSFClientAnchor.class);
+		result.addTestSuite(TestHSSFConditionalFormatting.class);
 		result.addTestSuite(TestHSSFComment.class);
 		result.addTestSuite(TestHSSFDateUtil.class);
 		result.addTestSuite(TestHSSFHeaderFooter.class);
