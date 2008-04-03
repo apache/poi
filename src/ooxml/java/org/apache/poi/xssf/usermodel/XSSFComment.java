@@ -56,7 +56,9 @@ public class XSSFComment implements Comment {
 	}
 
 	public void setAuthor(String author) {
-		comments.findAuthor(author);
+		comment.setAuthorId(
+				comments.findAuthor(author)
+		);
 	}
 
 	public void setColumn(short col) {
