@@ -17,62 +17,76 @@ limitations under the License.
 
 package org.apache.poi.hssf.record.cf;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 /**
  * Tests CellRange operations.
  */
-public class TestCellRange extends TestCase
+public final class TestCellRange extends TestCase
 {
-	private static final CellRange biggest     = new CellRange( 0, -1, 0,-1);
-	private static final CellRange tenthColumn = new CellRange( 0, -1,10,10);
-	private static final CellRange tenthRow    = new CellRange(10, 10, 0,-1);
-	private static final CellRange box10x10    = new CellRange( 0, 10, 0,10);
-	private static final CellRange box9x9      = new CellRange( 0,  9, 0, 9);
-	private static final CellRange box10to20c  = new CellRange( 0, 10,10,20);
-	private static final CellRange oneCell     = new CellRange(10, 10,10,10);
+	private static final CellRange biggest     = createCR( 0, -1, 0,-1);
+	private static final CellRange tenthColumn = createCR( 0, -1,10,10);
+	private static final CellRange tenthRow    = createCR(10, 10, 0,-1);
+	private static final CellRange box10x10    = createCR( 0, 10, 0,10);
+	private static final CellRange box9x9      = createCR( 0,  9, 0, 9);
+	private static final CellRange box10to20c  = createCR( 0, 10,10,20);
+	private static final CellRange oneCell     = createCR(10, 10,10,10);
 
-	boolean [][] contanis = new boolean[][]
-    {
-        		//           biggest, tenthColumn, tenthRow, box10x10, box9x9, box10to20c, oneCell
-  /*biggest    */ new boolean[]{true,       true ,    true ,    true ,  true ,      true ,  true},	
-  /*tenthColumn*/ new boolean[]{false,      true ,    false,    false,  false,      false,  true},	
-  /*tenthRow   */ new boolean[]{false,      false,    true ,    false,  false,      false,  true},	
-  /*box10x10   */ new boolean[]{false,      false,    false,    true ,  true ,      false,  true},	
-  /*box9x9     */ new boolean[]{false,      false,    false,    false,  true ,      false, false},	
-  /*box10to20c */ new boolean[]{false,      false,    false,    false,  false,      true ,  true},	
-  /*oneCell    */ new boolean[]{false,      false,    false,    false,  false,      false,  true},	
-     } ;
+	private static final CellRange[] sampleRanges = {
+		biggest, tenthColumn, tenthRow, box10x10, box9x9, box10to20c, oneCell,
+	};
 	
+	/** cross-reference of <tt>contains()</tt> operations for sampleRanges against itself */
+	private static final boolean [][] containsExpectedResults = 
+    {
+	//               biggest, tenthColumn, tenthRow, box10x10, box9x9, box10to20c, oneCell
+	/*biggest    */ {true,       true ,    true ,    true ,    true ,      true ,  true},	
+	/*tenthColumn*/ {false,      true ,    false,    false,    false,      false,  true},	
+	/*tenthRow   */ {false,      false,    true ,    false,    false,      false,  true},	
+	/*box10x10   */ {false,      false,    false,    true ,    true ,      false,  true},	
+	/*box9x9     */ {false,      false,    false,    false,    true ,      false, false},	
+	/*box10to20c */ {false,      false,    false,    false,    false,      true ,  true},	
+	/*oneCell    */ {false,      false,    false,    false,    false,      false,  true},	
+     } ;
+
+	/**
+	 * @param lastRow pass -1 for max row index 
+	 * @param lastCol pass -1 for max col index
+	 */
+	private static CellRange createCR(int firstRow, int lastRow, int firstCol, int lastCol) {
+		// max row & max col limit as per BIFF8
+		return new CellRange(
+				firstRow, 
+				lastRow == -1 ? 0xFFFF : lastRow, 
+				firstCol,
+				lastCol == -1 ? 0x00FF : lastCol);
+	}
 	
 	public void testContainsMethod()
 	{
-		CellRange [] ranges = new CellRange[]{biggest,tenthColumn,tenthRow,box10x10,box9x9,box10to20c,oneCell};
-		testContainsMethod(contanis,ranges);
-	}
-	
-	private void testContainsMethod(boolean[][]contains,CellRange[] ranges)
-	{
+		CellRange [] ranges = sampleRanges;
 		for(int i=0; i!=ranges.length;i++)
 		{
 			for(int j=0; j!=ranges.length;j++)
 			{
-				assertEquals("("+i+","+j+"): ",contains[i][j],ranges[i].contains(ranges[j]));
+				boolean expectedResult = containsExpectedResults[i][j];
+				assertEquals("("+i+","+j+"): ", expectedResult, ranges[i].contains(ranges[j]));
 			}
 		}
 	}
 
-	private static final CellRange col1     = new CellRange( 0, -1, 1,1);
-	private static final CellRange col2     = new CellRange( 0, -1, 2,2);
-	private static final CellRange row1     = new CellRange( 1,  1, 0,-1);
-	private static final CellRange row2     = new CellRange( 2,  2, 0,-1);
+	private static final CellRange col1     = createCR( 0, -1, 1,1);
+	private static final CellRange col2     = createCR( 0, -1, 2,2);
+	private static final CellRange row1     = createCR( 1,  1, 0,-1);
+	private static final CellRange row2     = createCR( 2,  2, 0,-1);
 
-	private static final CellRange box0     = new CellRange( 0, 2, 0,2);
-	private static final CellRange box1     = new CellRange( 0, 1, 0,1);
-	private static final CellRange box2     = new CellRange( 0, 1, 2,3);
-	private static final CellRange box3     = new CellRange( 2, 3, 0,1);
-	private static final CellRange box4     = new CellRange( 2, 3, 2,3);
-	private static final CellRange box5     = new CellRange( 1, 3, 1,3);
+	private static final CellRange box0     = createCR( 0, 2, 0,2);
+	private static final CellRange box1     = createCR( 0, 1, 0,1);
+	private static final CellRange box2     = createCR( 0, 1, 2,3);
+	private static final CellRange box3     = createCR( 2, 3, 0,1);
+	private static final CellRange box4     = createCR( 2, 3, 2,3);
+	private static final CellRange box5     = createCR( 1, 3, 1,3);
 
 	public void testHasSharedBorderMethod()
 	{
@@ -119,8 +133,8 @@ public class TestCellRange extends TestCase
 
 	public void testIntersectMethod()
 	{
-		assertEquals( CellRange.OVERLAP,box0.intersect(box5));
-		assertEquals( CellRange.OVERLAP,box5.intersect(box0));
+		assertEquals(CellRange.OVERLAP,box0.intersect(box5));
+		assertEquals(CellRange.OVERLAP,box5.intersect(box0));
 		assertEquals(CellRange.NO_INTERSECTION,box1.intersect(box4));
 		assertEquals(CellRange.NO_INTERSECTION,box4.intersect(box1));
 		assertEquals(CellRange.NO_INTERSECTION,box2.intersect(box3));
@@ -134,5 +148,32 @@ public class TestCellRange extends TestCase
 		assertEquals(CellRange.OVERLAP,tenthRow.intersect(tenthColumn));
 		assertEquals(CellRange.INSIDE,tenthColumn.intersect(tenthColumn));
 		assertEquals(CellRange.INSIDE,tenthRow.intersect(tenthRow));
+	}
+	
+	/**
+	 * Cell ranges like the following are valid
+	 * =$C:$IV,$B$1:$B$8,$B$10:$B$65536,$A:$A
+	 */
+	public void testCreate() {
+		CellRange cr;
+		
+		cr = createCR(0, -1, 2, 255); // $C:$IV
+		confirmRange(cr, false, true);
+		cr = createCR(0, 7, 1, 1); // $B$1:$B$8
+		
+		try {
+			cr = createCR(9, -1, 1, 1); // $B$65536
+		} catch (IllegalArgumentException e) {
+			if(e.getMessage().startsWith("invalid cell range")) {
+				throw new AssertionFailedError("Identified bug 44739");
+			}
+			throw e;
+		}
+		cr = createCR(0, -1, 0, 0); // $A:$A
+	}
+
+	private static void confirmRange(CellRange cr, boolean isFullRow, boolean isFullColumn) {
+		assertEquals("isFullRowRange", isFullRow, cr.isFullRowRange());
+		assertEquals("isFullColumnRange", isFullColumn, cr.isFullColumnRange());
 	}
 }
