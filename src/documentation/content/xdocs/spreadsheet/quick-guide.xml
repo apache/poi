@@ -1240,47 +1240,62 @@ Examples:
             </source>
         </section>
         <anchor id="CellComments"/>
-        <section><title>Cell Comments - HSSF</title>
+        <section><title>Cell Comments - HSSF and XSSF (slight differences though)</title>
         <p>
-  In HSSF Excel, a comment is a kind of a text shape,
-  so inserting a comment is very similar to placing a text box in a worksheet:
+  In HSSF Excel, cell comments were added to the file format as a bit of a 
+   cludge. As such, comments are a kind of a text shape, so inserting a
+   comment is very similar to placing a text box in a worksheet.
+        </p>
+        <p>
+  In XSSF Excel, cell comments are more cleanly done. Each Sheet has a list
+   of its comments, and they can be added much like other cell properties.
+        </p>
+        <p>
+  Once you have created your comment, how you use it is very similar between
+   HSSF and XSSF. It is only the creation of a new comment where things
+   differ.
+        </p>
+        <p>
+  For HSSF, the process is:
         </p>
             <source>
     HSSFWorkbook wb = new HSSFWorkbook();
     HSSFSheet sheet = wb.createSheet("Cell comments in POI HSSF");
+    CreationHelper createHelper = wb.getCreationHelper();
 
     // Create the drawing patriarch. This is the top level container for all shapes including cell comments.
     HSSFPatriarch patr = sheet.createDrawingPatriarch();
 
-    //create a cell in row 3
-    HSSFCell cell1 = sheet.createRow(3).createCell((short)1);
+    // Create a cell in row 3
+    Cell cell1 = sheet.createRow(3).createCell((short)1);
     cell1.setCellValue(new HSSFRichTextString("Hello, World"));
 
-    //anchor defines size and position of the comment in worksheet
-    HSSFComment comment1 = patr.createComment(new HSSFClientAnchor(0, 0, 0, 0, (short)4, 2, (short) 6, 5));
+    // Anchor defines size and position of the comment in worksheet
+    Comment comment1 = patr.createComment(new HSSFClientAnchor(0, 0, 0, 0, (short)4, 2, (short) 6, 5));
 
      // set text in the comment
-    comment1.setString(new HSSFRichTextString("We can set comments in POI"));
+    comment1.setString(createHelper.createRichTextString("We can set comments in POI"));
 
-    //set comment author.
-    //you can see it in the status bar when moving mouse over the commented cell
+    // set comment author.
+    // you can see it in the status bar when moving mouse over the commented cell
     comment1.setAuthor("Apache Software Foundation");
 
-    // The first way to assign comment to a cell is via HSSFCell.setCellComment method
+    // The first way to assign comment to a cell is via Cell.setCellComment method
     cell1.setCellComment(comment1);
 
-    //create another cell in row 6
-    HSSFCell cell2 = sheet.createRow(6).createCell((short)1);
+
+    // Create another cell in row 6
+    Cell cell2 = sheet.createRow(6).createCell((short)1);
     cell2.setCellValue(36.6);
 
-
+    // And a comment for it
     HSSFComment comment2 = patr.createComment(new HSSFClientAnchor(0, 0, 0, 0, (short)4, 8, (short) 6, 11));
-    //modify background color of the comment
+    // Modify background color of the comment
     comment2.setFillColor(204, 236, 255);
 
     HSSFRichTextString string = new HSSFRichTextString("Normal body temperature");
 
-    //apply custom font to the text in the comment
+    // Apply custom font to the text in the comment
     HSSFFont font = wb.createFont();
     font.setFontName("Arial");
     font.setFontHeightInPoints((short)10);
@@ -1289,15 +1304,16 @@ Examples:
     string.applyFont(font);
 
     comment2.setString(string);
-    //by default comments are hidden. This one is always visible.
+    // By default comments are hidden. This one is always visible.
     comment2.setVisible(true);
 
     comment2.setAuthor("Bill Gates");
 
+
     /**
      * The second way to assign comment to a cell is to implicitly specify its row and column.
      * Note, it is possible to set row and column of a non-existing cell.
-     * It works, the commnet is visible.
+     * It works, the comment is visible.
      */
     comment2.setRow(6);
     comment2.setColumn((short)1);
@@ -1306,85 +1322,40 @@ Examples:
     wb.write(out);
     out.close();
         </source>
-         <p>
-  Reading cell comments
-        </p>
-  <source>
-    HSSFCell cell = sheet.get(3).getColumn((short)1);
-    HSSFComment comment = cell.getCellComment();
-    if (comment != null) {
-      HSSFRichTextString str = comment.getString();
-      String author = comment.getAuthor();
-    }
-    //  alternatively you can retrieve cell comments by (row, column)
-    comment = sheet.getCellComment(3, 1);
-  </source>
-     </section>
-
-        <section><title>Cell Comments - XSSF</title>
         <p>
-  In XSSF Excel, a comment is still a kind of a text shape, but
-  things are generally much simpler.
+  For XSSF, the simpler process is:
         </p>
             <source>
-    Workbook wb = new XSSFWorkbook();
+    XSSFWorkbook wb = new XSSFWorkbook();
+    XSSFSheet sheet = wb.createSheet("Cell comments in POI XSSF");
     CreationHelper createHelper = wb.getCreationHelper();
 
-    Sheet sheet = wb.createSheet("Cell comments in POI XSSF");
-
-    //create a cell in row 3
+    // Create a cell in row 3
     Cell cell1 = sheet.createRow(3).createCell((short)1);
-    cell1.setCellValue(createHelper.createRichTextString("Hello, World"));
+    cell1.setCellValue(new XSSFRichTextString("Hello, World"));
 
-    //anchor defines size and position of the comment in worksheet
-    Comment comment1 = createHelper.createComment();
-
-     // set text in the comment
-    comment1.setString(createHelper.createRichTextString(
-		"We can set comments in POI"));
-
-    //set comment author.
-    //you can see it in the status bar when moving mouse over the commented cell
+    // Create a comment, and set the text and author
+    // (You can see the author in the status bar when moving mouse
+    //  over the commented cell)
+    Comment comment1 = sheet.createComment();
+    comment1.setString(createHelper.createRichTextString("We can set comments in POI"));
     comment1.setAuthor("Apache Software Foundation");
 
-    // The first way to assign comment to a cell is via HSSFCell.setCellComment method
+
+    // The first way to assign comment to a cell is via Cell.setCellComment method
     cell1.setCellComment(comment1);
 
 
-    //create another cell in row 6
-    Cell cell2 = sheet.createRow(6).createCell((short)1);
-    cell2.setCellValue(36.6);
+	// The other way is to set the row and column
+    // This could point to a cell that isn't defined, and the comment will
+    //  will still show up all the same
+    Comment comment2 = sheet.createComment();
+    comment2.setString(createHelper.createRichTextString("Comment for missing cell"));
+    comment2.setAuthor("Apache POI");
+    comment2.setRow(11);
+    comment2.setColumn(1);
 
-
-    Comment comment2 = createHelper.createComment();
-    //modify background color of the comment
-    comment2.setFillColor(204, 236, 255);
-
-    RichTextString string = createHelper.createRichTextString(
-		"Normal body temperature");
-
-    //apply custom font to the text in the comment
-    Font font = wb.createFont();
-    font.setFontName("Arial");
-    font.setFontHeightInPoints((short)10);
-    font.setBoldweight(Font.BOLDWEIGHT_BOLD);
-    font.setColor(Color.RED.index);
-    string.applyFont(font);
-
-    comment2.setString(string);
-    //by default comments are hidden. This one is always visible.
-    comment2.setVisible(true);
-
-    comment2.setAuthor("Bill Gates");
-
-    /**
-     * The second way to assign comment to a cell is to implicitly specify its row and column.
-     * Note, it is possible to set row and column of a non-existing cell.
-     * It works, the commnet is visible.
-     */
-    comment2.setRow(6);
-    comment2.setColumn((short)1);
-
+    // Write out
     FileOutputStream out = new FileOutputStream("poi_comment.xls");
     wb.write(out);
     out.close();
