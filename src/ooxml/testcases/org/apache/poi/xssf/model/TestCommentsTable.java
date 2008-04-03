@@ -31,6 +31,8 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxml4j.opc.Package;
+import org.openxml4j.opc.PackagePart;
+import org.openxml4j.opc.PackagingURIHelper;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
@@ -52,6 +54,8 @@ public class TestCommentsTable extends TestCase {
 		assertEquals(0, sheetComments.findAuthor(TEST_AUTHOR));
 		assertEquals(1, sheetComments.findAuthor("another author"));
 		assertEquals(0, sheetComments.findAuthor(TEST_AUTHOR));
+		assertEquals(2, sheetComments.findAuthor("YAA"));
+		assertEquals(1, sheetComments.findAuthor("another author"));
 	}
 	
 	public void testGetCellComment() {
@@ -91,6 +95,51 @@ public class TestCommentsTable extends TestCase {
 		sheetComments.setCellComment("A1", comment);
 		assertEquals(1, commentList.sizeOfCommentArray());
 		assertEquals("test A1 author", sheetComments.getAuthor(commentList.getCommentArray(0).getAuthorId()));
+		assertEquals("test A1 author", comment.getAuthor());
+		
+		// Change the author, check it updates
+		comment.setAuthor("Another Author");
+		assertEquals(1, commentList.sizeOfCommentArray());
+		assertEquals("Another Author", comment.getAuthor());
+	}
+	
+	public void testDontLoostNewLines() throws Exception {
+		File xml = new File(
+				System.getProperty("HSSF.testdata.path") +
+				File.separator + "WithVariousData.xlsx"
+		);
+		assertTrue(xml.exists());
+    	
+		Package pkg = Package.open(xml.toString());
+		PackagePart cpart = pkg.getPart(
+				PackagingURIHelper.createPartName("/xl/comments1.xml")
+		);
+		
+		CommentsTable ct = new CommentsTable(cpart.getInputStream());
+		assertEquals(2, ct.getNumberOfComments());
+		assertEquals(1, ct.getNumberOfAuthors());
+
+		XSSFComment comment = ct.findCellComment("C5");
+		
+		assertEquals("Nick Burch", comment.getAuthor());
+		assertEquals("Nick Burch:\nThis is a comment", comment.getString().getString());
+		
+		// Re-serialise
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ct.writeTo(baos);
+		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+		ct = new CommentsTable(bais);
+		
+		assertEquals(2, ct.getNumberOfComments());
+		assertEquals(1, ct.getNumberOfAuthors());
+		
+		comment = ct.findCellComment("C5");
+		
+		assertEquals("Nick Burch", comment.getAuthor());
+		
+		// TODO: Fix this!
+		// New line should still be there, but isn't!
+		//assertEquals("Nick Burch:\nThis is a comment", comment.getString().getString());
 	}
 
 	public void testExisting() throws Exception {
@@ -163,6 +212,7 @@ public class TestCommentsTable extends TestCase {
 		// Save, and re-load the file
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		workbook.write(baos);
+		
 		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
 		workbook = new XSSFWorkbook(Package.open(bais));
 		
@@ -174,6 +224,60 @@ public class TestCommentsTable extends TestCase {
 		assertNotNull(sheet2.getRow(2).getCell(1).getCellComment());
 		
 		// And check they still have the contents they should do
-		// TODO
+		assertEquals("Apache POI", 
+				sheet1.getRow(4).getCell(2).getCellComment().getAuthor());
+		assertEquals("Nick Burch", 
+				sheet1.getRow(6).getCell(2).getCellComment().getAuthor());
+		assertEquals("Also POI", 
+				sheet2.getRow(2).getCell(1).getCellComment().getAuthor());
+		
+		// TODO: fix xmlbeans so it doesn't eat newlines
+		assertEquals("Nick Burch:This is a comment",
+				sheet1.getRow(4).getCell(2).getCellComment().getString().getString());
+	}
+	
+	public void testReadWriteMultipleAuthors() throws Exception {
+		File xml = new File(
+				System.getProperty("HSSF.testdata.path") +
+				File.separator + "WithMoreVariousData.xlsx"
+		);
+		assertTrue(xml.exists());
+    	
+		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
+		Sheet sheet1 = workbook.getSheetAt(0);
+		XSSFSheet sheet2 = (XSSFSheet)workbook.getSheetAt(1);
+		
+		assertTrue( ((XSSFSheet)sheet1).hasComments() );
+		assertFalse( ((XSSFSheet)sheet2).hasComments() );
+		
+		assertEquals("Nick Burch", 
+				sheet1.getRow(4).getCell(2).getCellComment().getAuthor());
+		assertEquals("Nick Burch", 
+				sheet1.getRow(6).getCell(2).getCellComment().getAuthor());
+		assertEquals("Torchbox", 
+				sheet1.getRow(12).getCell(2).getCellComment().getAuthor());
+		
+		// Save, and re-load the file
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		workbook.write(baos);
+		
+		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+		workbook = new XSSFWorkbook(Package.open(bais));
+		
+		// Check we still have comments where we should do
+		sheet1 = workbook.getSheetAt(0);
+		assertNotNull(sheet1.getRow(4).getCell(2).getCellComment());
+		assertNotNull(sheet1.getRow(6).getCell(2).getCellComment());
+		assertNotNull(sheet1.getRow(12).getCell(2).getCellComment());
+		
+		// And check they still have the contents they should do
+		assertEquals("Nick Burch", 
+				sheet1.getRow(4).getCell(2).getCellComment().getAuthor());
+		assertEquals("Nick Burch", 
+				sheet1.getRow(6).getCell(2).getCellComment().getAuthor());
+		assertEquals("Torchbox", 
+				sheet1.getRow(12).getCell(2).getCellComment().getAuthor());
+		
+		// Todo - check text too, once bug fixed
 	}
 }

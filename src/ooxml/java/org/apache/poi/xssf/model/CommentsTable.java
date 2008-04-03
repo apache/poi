@@ -72,6 +72,9 @@ public class CommentsTable implements CommentsSource, XSSFModel {
 	public int getNumberOfComments() {
 		return comments.getCommentList().sizeOfCommentArray();
 	}
+	public int getNumberOfAuthors() {
+		return getCommentsAuthors().sizeOfAuthorArray();
+	}
 	
 	public String getAuthor(long authorId) {
 		return getCommentsAuthors().getAuthorArray((int)authorId);
