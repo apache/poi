@@ -26,7 +26,7 @@ import org.apache.poi.hssf.util.Region;
  * 
  * @author Dmitriy Kumshayev
  */
-public final class TestHSSFConfditionalFormatting extends TestCase
+public final class TestHSSFConditionalFormatting extends TestCase
 {
 	public void testLastAndFirstColumns() 
 	{
@@ -55,7 +55,7 @@ public final class TestHSSFConfditionalFormatting extends TestCase
 		short col = 1;
 		Region [] regions =
 		{
-			new Region(0,col,-1,col)
+			new Region(0,col,65535,col)
 		};
 
 		sheet.addConditionalFormatting(regions, cfRules);
@@ -75,7 +75,7 @@ public final class TestHSSFConfditionalFormatting extends TestCase
 		assertEquals(1, r.getColumnFrom());
 		assertEquals(1, r.getColumnTo());
 		assertEquals(0, r.getRowFrom());
-		assertEquals(-1, r.getRowTo());
+		assertEquals(65535, r.getRowTo());
 
 		assertEquals(2, cf.getNumberOfRules());
 
