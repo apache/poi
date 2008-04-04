@@ -413,7 +413,7 @@ under the License.
 	 description="Unpacks the OOXML xsd files, and compiles them into XmlBeans">
 		<taskdef name="xmlbean"
 			classname="org.apache.xmlbeans.impl.tool.XMLBean"
-			classpath="${ooxml.jar3.dir}:${ooxml.jar4.dir}" />
+			classpath="${ooxml.jar2.dir}:${ooxml.jar3.dir}:${ooxml.jar4.dir}:${ooxml.jar4.dir}:${ooxml.jar5.dir}" />
 
 		<unzip src="${ooxml.xsds.izip}" dest="build/ooxml-xsds/" />
 		<!--
@@ -424,7 +424,7 @@ under the License.
 			schema="build/ooxml-xsds/"
 			destfile="${ooxml.xsds.jar}"
 			javasource="1.4"
-			failonerror="false"
+			failonerror="true"
 			fork="true"
 			memoryMaximumSize="512m"
 		>
