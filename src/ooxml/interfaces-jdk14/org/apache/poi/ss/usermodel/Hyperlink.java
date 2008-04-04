@@ -14,35 +14,27 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.ss.usermodel;
 
-/**
- * An object that handles instantiating concrete
- *  classes of the various instances one needs for 
- *  HSSF and XSSF.
- * Works around a major shortcoming in Java, where we
- *  can't have static methods on interfaces or abstract
- *  classes.
- * This allows you to get the appropriate class for
- *  a given interface, without you having to worry
- *  about if you're dealing with HSSF or XSSF, despite
- *  Java being quite rubbish.
- */
-public interface CreationHelper {
+public interface Hyperlink {
     /**
-     * Creates a new RichTextString instance 
-     * @param text The text to initialise the RichTextString with
+     * Link to a existing file or web page
      */
-    RichTextString createRichTextString(String text);
-    
+    public static final int LINK_URL = 1;
+
     /**
-     * Creates a new DataFormat instance
+     * Link to a place in this document
      */
-    DataFormat createDataFormat();
-    
+    public static final int LINK_DOCUMENT = 2;
+
     /**
-     * Creates a new Hyperlink, of the given type,
-     *  for the given sheet
+     * Link to an E-mail address
      */
-    Hyperlink createHyperlink(int type, Sheet sheetFor);
+    public static final int LINK_EMAIL = 3;
+
+    /**
+     * Link to a file
+     */
+    public static final int LINK_FILE = 4;
 }

@@ -18,7 +18,9 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Sheet;
 
 public class XSSFCreationHelper implements CreationHelper {
 	private XSSFWorkbook workbook;
@@ -39,5 +41,9 @@ public class XSSFCreationHelper implements CreationHelper {
 	
 	public DataFormat createDataFormat() {
 		return dataFormat;
+	}
+	
+	public Hyperlink createHyperlink(int type, Sheet sheetFor) {
+		return new XSSFHyperlink(type, (XSSFSheet)sheetFor);
 	}
 }
