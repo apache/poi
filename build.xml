@@ -355,6 +355,7 @@ under the License.
                     <available file="${ooxml.jar3.dir}"/>
                     <available file="${ooxml.jar4.dir}"/>
                     <available file="${ooxml.jar5.dir}"/>
+                    <available file="${ooxml.jar6.dir}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -375,6 +376,7 @@ under the License.
         <get src="${ooxml.jar3.url}" dest="${ooxml.jar3.dir}"/>
         <get src="${ooxml.jar4.url}" dest="${ooxml.jar4.dir}"/>
         <get src="${ooxml.jar5.url}" dest="${ooxml.jar5.dir}"/>
+        <get src="${ooxml.jar6.url}" dest="${ooxml.jar6.dir}"/>
     </target>
 
 	<target name="check-ooxml-xsds">
