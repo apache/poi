@@ -58,10 +58,12 @@ public class FromHowTo {
 
 		Iterator<InputStream> sheets = r.getSheetsData();
 		while(sheets.hasNext()) {
+			System.out.println("Processing new sheet:\n");
 			InputStream sheet = sheets.next();
 			InputSource sheetSource = new InputSource(sheet);
 			parser.parse(sheetSource);
 			sheet.close();
+			System.out.println("");
 		}
 	}
 
@@ -94,13 +96,19 @@ public class FromHowTo {
 				// Print the cell reference
 				System.out.print(attributes.getValue("r") + " - ");
 				// Figure out if the value is an index in the SST
-				if(attributes.getValue("t").equals("s")) {
+				String cellType = attributes.getValue("t");
+				if(cellType != null && cellType.equals("s")) {
 					nextIsString = true;
 				} else {
 					nextIsString = false;
 				}
 			}
+		}
+		
+		public void endElement(String uri, String localName, String name)
+				throws SAXException {
 			// v => contents of a cell
+			// Output after we've seen the string contents
 			if(name.equals("v")) {
 				System.out.println(lastContents);
 			}
