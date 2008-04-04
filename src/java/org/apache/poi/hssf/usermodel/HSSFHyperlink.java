@@ -16,22 +16,15 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.EscherAggregate;
-import org.apache.poi.hssf.record.NoteRecord;
-import org.apache.poi.hssf.record.TextObjectRecord;
 import org.apache.poi.hssf.record.HyperlinkRecord;
-import org.apache.poi.ddf.*;
-
-import java.util.Map;
-import java.util.List;
-import java.util.Iterator;
+import org.apache.poi.ss.usermodel.Hyperlink;
 
 /**
  * Represents an Excel hyperlink.
  *
  * @author Yegor Kozlov (yegor at apache dot org)
  */
-public class HSSFHyperlink {
+public class HSSFHyperlink implements Hyperlink {
 
     /**
      * Link to a existing file or web page
@@ -209,7 +202,7 @@ public class HSSFHyperlink {
      *
      * @return the type of this hyperlink
      */
-    protected int getType(){
+    public int getType(){
         return link_type;
     }
 }

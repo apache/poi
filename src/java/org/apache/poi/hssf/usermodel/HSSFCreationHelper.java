@@ -17,6 +17,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Sheet;
 
 public class HSSFCreationHelper implements CreationHelper {
 	private HSSFWorkbook workbook;
@@ -38,5 +39,12 @@ public class HSSFCreationHelper implements CreationHelper {
 	
 	public HSSFDataFormat createDataFormat() {
 		return dataFormat;
+	}
+	
+	public HSSFHyperlink createHyperlink(int type, Sheet sheetFor) {
+		return createHyperlink(type);
+	}
+	public HSSFHyperlink createHyperlink(int type) {
+		return new HSSFHyperlink(type);
 	}
 }
