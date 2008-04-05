@@ -58,12 +58,12 @@ public final class CFHeaderRecord extends Record
 	{
 		field_1_numcf = in.readShort();
 		field_2_need_recalculation = in.readShort();
-		field_3_enclosing_cell_range = new CellRange(in.readShort(),in.readShort(),in.readShort(),in.readShort());
+		field_3_enclosing_cell_range = new CellRange(in.readUShort(), in.readUShort(), in.readUShort(), in.readUShort());
 		int numCellRanges = in.readShort();
 		CellRange[] crs = new CellRange[numCellRanges];
 		for( int i=0; i<numCellRanges; i++)
 		{
-			crs[i] = new CellRange(in.readShort(),in.readShort(),in.readShort(),in.readShort());
+			crs[i] = new CellRange(in.readUShort(),in.readUShort(),in.readUShort(),in.readUShort());
 		}
 		field_4_cell_ranges = crs;
 	}

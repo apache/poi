@@ -870,5 +870,65 @@ public class TestHSSFSheet
     
     public static void main(java.lang.String[] args) {
 		 junit.textui.TestRunner.run(TestHSSFSheet.class);
-	}    
+	}
+
+    public void testColumnWidth() throws Exception {
+        //check we can correctly read column widths from a reference workbook
+        String filename = System.getProperty("HSSF.testdata.path") + "/colwidth.xls";
+        HSSFWorkbook wb = new HSSFWorkbook(new FileInputStream(filename));
+
+        //reference values
+        int[] ref = {365, 548, 731, 914, 1097, 1280, 1462, 1645, 1828, 2011, 2194, 2377, 2560, 2742, 2925, 3108, 3291, 3474, 3657};
+
+        HSSFSheet sh = wb.getSheetAt(0);
+        for (char i = 'A'; i <= 'S'; i++) {
+            int idx = i - 'A';
+            int w = sh.getColumnWidth((short)idx);
+            assertEquals(ref[idx], w);
+        }
+
+        //the second sheet doesn't have overridden column widths
+        sh = wb.getSheetAt(1);
+        int def_width = sh.getDefaultColumnWidth();
+        for (char i = 'A'; i <= 'S'; i++) {
+            int idx = i - 'A';
+            int w = sh.getColumnWidth((short)idx);
+            //getDefaultColumnWidth returns width measued in characters
+            //getColumnWidth returns width measued in 1/256th units
+            assertEquals(def_width*256, w);
+        }
+
+        //test new workbook
+        wb = new HSSFWorkbook();
+        sh = wb.createSheet();
+        sh.setDefaultColumnWidth((short)10);
+        assertEquals(10, sh.getDefaultColumnWidth());
+        assertEquals(256*10, sh.getColumnWidth((short)0));
+        assertEquals(256*10, sh.getColumnWidth((short)1));
+        assertEquals(256*10, sh.getColumnWidth((short)2));
+        for (char i = 'D'; i <= 'F'; i++) {
+            short w = (short)(256*12);
+            sh.setColumnWidth((short)i, w);
+            assertEquals(w, sh.getColumnWidth((short)i));
+        }
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        sh = wb.getSheetAt(0);
+        assertEquals(10, sh.getDefaultColumnWidth());
+        //columns A-C have default width
+        assertEquals(256*10, sh.getColumnWidth((short)0));
+        assertEquals(256*10, sh.getColumnWidth((short)1));
+        assertEquals(256*10, sh.getColumnWidth((short)2));
+        //columns D-F have custom wodth
+        for (char i = 'D'; i <= 'F'; i++) {
+            short w = (short)(256*12);
+            assertEquals(w, sh.getColumnWidth((short)i));
+        }
+
+    }
 }

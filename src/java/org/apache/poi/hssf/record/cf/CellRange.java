@@ -29,12 +29,10 @@ import org.apache.poi.hssf.util.Region;
  */
 public final class CellRange
 {
-	/** 
-	 * max index for both row and column<p/>
-	 * 
-	 * Note - this value converts to <tt>-1</tt> when cast to a <tt>short</tt> 
-	 */
-	private static final int MAX_INDEX = Integer.MAX_VALUE;
+	/** max 65536 rows in BIFF8 */
+	private static final int LAST_ROW_INDEX = 0x00FFFF; 
+	/** max 256 columns in BIFF8 */
+	private static final int LAST_COLUMN_INDEX = 0x00FF;
 
 	private static final Region[] EMPTY_REGION_ARRAY = { };
 	
@@ -57,54 +55,46 @@ public final class CellRange
 					+ ", " + firstColumn + ", " + lastColumn + ")");
 		}
 		_firstRow = firstRow;
-		_lastRow = convertM1ToMax(lastRow);
+		_lastRow = convertM1ToMax(lastRow, LAST_ROW_INDEX);
 		_firstColumn = firstColumn;
-		_lastColumn = convertM1ToMax(lastColumn);
+		_lastColumn = convertM1ToMax(lastColumn, LAST_COLUMN_INDEX);
 	}
 	
-	private static int convertM1ToMax(int lastIx) {
+	/** 
+	 * Range arithmetic is easier when using a large positive number for 'max row or column' 
+	 * instead of <tt>-1</tt>. 
+	 */
+	private static int convertM1ToMax(int lastIx, int maxIndex) {
 		if(lastIx < 0) {
-			return MAX_INDEX;
-		}
-		return lastIx;
-	}
-	private static int convertMaxToM1(int lastIx) {
-		if(lastIx == MAX_INDEX) {
-			return -1;
+			return maxIndex;
 		}
 		return lastIx;
 	}
 
 	public boolean isFullColumnRange() {
-		return _firstColumn == 0 && _lastColumn == MAX_INDEX;
+		return _firstRow == 0 && _lastRow == LAST_ROW_INDEX;
 	}
 	public boolean isFullRowRange() {
-		return _firstRow == 0 && _lastRow == MAX_INDEX;
+		return _firstColumn == 0 && _lastColumn == LAST_COLUMN_INDEX;
 	}
 	
-	public CellRange(Region r) {
-		this(r.getRowFrom(), r.getRowTo(), r.getColumnFrom(), r.getColumnTo());
+	private static CellRange createFromRegion(Region r) {
+		return new CellRange(r.getRowFrom(), r.getRowTo(), r.getColumnFrom(), r.getColumnTo());
 	}
 
-	
-	
 	private static boolean isValid(int firstRow, int lastRow, int firstColumn, int lastColumn)
 	{
-		if(lastRow == -1) {
-			if(firstRow !=0) {
-				return false;
-			}
+		if(lastRow < 0 || lastRow > LAST_ROW_INDEX) {
+			return false;
 		}
-		if(firstRow < 0 || lastRow < -1) {
+		if(firstRow < 0 || firstRow > LAST_ROW_INDEX) {
 			return false;
 		}
 		
-		if(lastColumn == -1) {
-			if(firstColumn !=0) {
-				return false;
-			}
+		if(lastColumn < 0 || lastColumn > LAST_COLUMN_INDEX) {
+			return false;
 		}
-		if(firstColumn < 0 || lastColumn < -1) {
+		if(firstColumn < 0 || firstColumn > LAST_COLUMN_INDEX) {
 			return false;
 		}
 		return true;
@@ -114,23 +104,17 @@ public final class CellRange
 	{
 		return _firstRow;
 	}
-	/**
-	 * @return <tt>-1</tt> for whole column ranges
-	 */
 	public int getLastRow()
 	{
-		return convertMaxToM1(_lastRow);
+		return _lastRow;
 	}
 	public int getFirstColumn()
 	{
 		return _firstColumn;
 	}
-	/**
-	 * @return <tt>-1</tt> for whole row ranges
-	 */
 	public int getLastColumn()
 	{
-		return convertMaxToM1(_lastColumn);
+		return _lastColumn;
 	}
 	
 	public static final int NO_INTERSECTION = 1;
@@ -374,7 +358,7 @@ public final class CellRange
 		CellRange[] result = new CellRange[regions.length];
 		for( int i=0; i<regions.length; i++)
 		{
-			result[i] = new CellRange(regions[i]);
+			result[i] = createFromRegion(regions[i]);
 		}
 		return result;
 	}
@@ -404,10 +388,8 @@ public final class CellRange
 
 		
 	private Region convertToRegion() {
-		int lastRow = convertMaxToM1(_lastRow);
-		int lastColumn = convertMaxToM1(_lastColumn);
 		
-		return new Region(_firstRow, (short)_firstColumn, lastRow, (short)lastColumn);
+		return new Region(_firstRow, (short)_firstColumn, _lastRow, (short)_lastColumn);
 	}
 
 

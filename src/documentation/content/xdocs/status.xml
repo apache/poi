@@ -34,6 +34,8 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.0.3-beta1" date="2008-04-??">
+           <action dev="POI-DEVELOPERS" type="fix">44739 - Small fixes for conditional formatting (regions with max row/col index)</action>
+           <action dev="RK" type="add">44694 - HPSF: Support for property sets without sections</action>
            <action dev="POI-DEVELOPERS" type="add">Implement Sheet.removeShape(Shape shape) in HSLF</action>
            <action dev="POI-DEVELOPERS" type="add">Various fixes: Recognising var-arg built-in functions #44675, ExternalNameRecord serialisation bug #44695, PMT() bug #44691</action>
            <action dev="POI-DEVELOPERS" type="add">30311 - More work on Conditional Formatting</action>
