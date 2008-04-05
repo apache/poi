@@ -1879,12 +1879,12 @@ public class Sheet implements Model
     }
 
     /**
-     * get the width of a given column in units of 1/20th of a point width (twips?)
+     * get the width of a given column in units of 1/256th of a character width
      * @param column index
      * @see org.apache.poi.hssf.record.DefaultColWidthRecord
      * @see org.apache.poi.hssf.record.ColumnInfoRecord
      * @see #setColumnWidth(short,short)
-     * @return column width in units of 1/20th of a point (twips?)
+     * @return column width in units of 1/256th of a character width
      */
 
     public short getColumnWidth(short column)
@@ -1912,7 +1912,9 @@ public class Sheet implements Model
         }
         else
         {
-            retval = defaultcolwidth.getColWidth();
+            //default column width is measured in characters
+            //multiply
+            retval = (short)(256*defaultcolwidth.getColWidth());
         }
         return retval;
     }
@@ -1951,9 +1953,9 @@ public class Sheet implements Model
     }
 
     /**
-     * set the width for a given column in 1/20th of a character width units
+     * set the width for a given column in 1/256th of a character width units
      * @param column - the column number
-     * @param width (in units of 1/20th of a character width)
+     * @param width (in units of 1/256th of a character width)
      */
     public void setColumnWidth(short column, short width)
     {

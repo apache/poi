@@ -28,7 +28,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Title:        DV Record<P>
+ * Title:        DATAVALIDATION Record (0x01BE)<p/>
  * Description:  This record stores data validation settings and a list of cell ranges
  *               which contain these settings. The data validation settings of a sheet
  *               are stored in a sequential list of DV records. This list is followed by
@@ -36,7 +36,7 @@ import org.apache.poi.util.StringUtil;
  * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
  * @version 2.0-pre
  */
-public class DVRecord extends Record
+public final class DVRecord extends Record
 {
     public final static short sid = 0x01BE;
 
@@ -170,11 +170,6 @@ public class DVRecord extends Record
        this.field_not_used_1 = in.readShort();
 
        //read first formula data condition
-       // Not sure if this was needed or not...
-//       try {
-//    	   in.skip(this.field_size_first_formula);
-//       } catch(IOException e) { throw new IllegalStateException(e); } 
-
        int token_pos = 0;
        while (token_pos < this.field_size_first_formula)
        {
@@ -187,14 +182,14 @@ public class DVRecord extends Record
        this.field_not_used_2 = in.readShort();
 
        //read sec formula data condition
-       //Not sure if this was needed or not...
-       try {
-           in.skip(this.field_size_sec_formula);
-       } catch(IOException e) {
-           e.printStackTrace();
-           throw new IllegalStateException(e.getMessage());
+       if (false) { // TODO - prior to bug 44710 this 'skip' was being executed. write a junit to confirm this fix
+           try {
+               in.skip(this.field_size_sec_formula);
+           } catch(IOException e) {
+               e.printStackTrace();
+               throw new IllegalStateException(e.getMessage());
+           }
        }
-
        token_pos = 0;
        while (token_pos < this.field_size_sec_formula)
        {
@@ -516,7 +511,7 @@ public class DVRecord extends Record
 
     /**@todo DVRecord = Serializare */
 
-    private class StringHandler
+    private static final class StringHandler
     {
         private int     _string_length       = 0x0001;
         private byte    _string_unicode_flag = 0x00;

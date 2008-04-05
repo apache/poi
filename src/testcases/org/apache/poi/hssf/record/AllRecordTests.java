@@ -17,12 +17,12 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.record.aggregates.AllRecordAggregateTests;
-import org.apache.poi.hssf.record.formula.AllFormulaTests;
-import org.apache.poi.hssf.record.formula.functions.AllIndividualFunctionEvaluationTests;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.apache.poi.hssf.record.aggregates.AllRecordAggregateTests;
+import org.apache.poi.hssf.record.cf.TestCellRange;
+import org.apache.poi.hssf.record.formula.AllFormulaTests;
 
 /**
  * Collects all tests for package <tt>org.apache.poi.hssf.record</tt>.
@@ -104,6 +104,7 @@ public final class AllRecordTests {
 		result.addTestSuite(TestUnicodeString.class);
 		result.addTestSuite(TestUnitsRecord.class);
 		result.addTestSuite(TestValueRangeRecord.class);
+		result.addTestSuite(TestCellRange.class);
 		return result;
 	}
 }
