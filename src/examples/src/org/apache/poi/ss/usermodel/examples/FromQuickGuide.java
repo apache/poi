@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -27,6 +28,7 @@ import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -132,6 +134,22 @@ public class FromQuickGuide {
 	        for (Cell cell : row) {
 	            // Do something here
 	        	System.out.println(cell.getCellType());
+	        }
+	    }
+	}
+	
+	public void getCellContents(Sheet sheet) {
+	    for (Row row : sheet) {
+	        for (Cell cell : row) {
+	        	CellReference cellRef = new CellReference(row.getRowNum(), cell.getCellNum());
+	        	System.out.print(cellRef.formatAsString());
+	        	
+	        	switch(cell.getCellType()) {
+	        	case Cell.CELL_TYPE_STRING:
+	        		System.out.println(cell.getRichStringCellValue().getString());
+	        		break;
+	        	case Cell.CELL_TYPE_NUMERIC:
+	        	}
 	        }
 	    }
 	}
