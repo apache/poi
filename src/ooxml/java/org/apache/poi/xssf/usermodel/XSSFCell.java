@@ -24,6 +24,7 @@ import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.SharedStringSource;
 import org.apache.poi.ss.usermodel.StylesSource;
@@ -397,5 +398,12 @@ public class XSSFCell implements Cell {
      */
 	public RichTextString createRichTextString(String text) {
 		return new XSSFRichTextString(text);
+	}
+	
+	public Hyperlink getHyperlink() {
+		return row.getSheet().getHyperlink(row.getRowNum(), cellNum);
+	}
+	public void setHyperlink(Hyperlink hyperlink) {
+		row.getSheet().setCellHyperlink((XSSFHyperlink)hyperlink);
 	}
 }

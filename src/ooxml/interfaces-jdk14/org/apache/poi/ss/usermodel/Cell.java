@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 
 /**
@@ -79,6 +80,8 @@ public interface Cell {
 
     byte getErrorCellValue();
     String getCellFormula();
+
+    HSSFCellStyle getCellStyle();
 
     boolean getBooleanCellValue();
     double getNumericCellValue();

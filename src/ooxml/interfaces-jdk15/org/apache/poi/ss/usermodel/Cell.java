@@ -20,7 +20,6 @@ package org.apache.poi.ss.usermodel;
 import java.util.Calendar;
 import java.util.Date;
 
-
 public interface Cell {
 
     /**
@@ -281,4 +280,17 @@ public interface Cell {
      */
     Comment getCellComment();
 
+    /**
+     * Returns hyperlink associated with this cell
+     *
+     * @return hyperlink associated with this cell or null if not found
+     */
+    public Hyperlink getHyperlink();
+
+    /**
+     * Assign a hypelrink to this cell
+     *
+     * @param link hypelrink associated with this cell
+     */
+    public void setHyperlink(Hyperlink link);
 }

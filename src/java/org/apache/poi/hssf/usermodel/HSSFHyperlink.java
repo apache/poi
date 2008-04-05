@@ -130,7 +130,7 @@ public class HSSFHyperlink implements Hyperlink {
      *
      * @return the 0-based column of the first cell that contains the hyperlink
      */
-    public short getFirstColumn(){
+    public int getFirstColumn(){
         return record.getFirstColumn();
     }
 
@@ -139,8 +139,8 @@ public class HSSFHyperlink implements Hyperlink {
      *
      * @param col the 0-based column of the first cell that contains the hyperlink
      */
-    public void setFirstColumn(short col){
-        record.setFirstColumn(col);
+    public void setFirstColumn(int col){
+        record.setFirstColumn((short)col);
     }
 
     /**
@@ -148,7 +148,7 @@ public class HSSFHyperlink implements Hyperlink {
      *
      * @return the 0-based column of the last cell that contains the hyperlink
      */
-    public short getLastColumn(){
+    public int getLastColumn(){
         return record.getLastColumn();
     }
 
@@ -157,8 +157,8 @@ public class HSSFHyperlink implements Hyperlink {
      *
      * @param col the 0-based column of the last cell that contains the hyperlink
      */
-    public void setLastColumn(short col){
-        record.setLastColumn(col);
+    public void setLastColumn(int col){
+        record.setLastColumn((short)col);
     }
 
     /**

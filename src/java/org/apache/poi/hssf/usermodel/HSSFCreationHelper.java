@@ -41,9 +41,6 @@ public class HSSFCreationHelper implements CreationHelper {
 		return dataFormat;
 	}
 	
-	public HSSFHyperlink createHyperlink(int type, Sheet sheetFor) {
-		return createHyperlink(type);
-	}
 	public HSSFHyperlink createHyperlink(int type) {
 		return new HSSFHyperlink(type);
 	}

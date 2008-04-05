@@ -281,6 +281,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 WorksheetDocument worksheetDoc = WorksheetDocument.Factory.parse(part.getInputStream());
                 XSSFSheet sheet = new XSSFSheet(ctSheet, worksheetDoc.getWorksheet(), this, comments);
                 this.sheets.add(sheet);
+                
+                // Process external hyperlinks for the sheet,
+                //  if there are any
+                PackageRelationshipCollection hyperlinkRels =
+                	part.getRelationshipsByType(SHEET_HYPERLINKS.REL);
+                sheet.initHyperlinks(hyperlinkRels);
             }
         } catch (XmlException e) {
             throw new IOException(e.toString());
@@ -687,9 +693,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                  
                 // XXX This should not be needed, but apparently the setSaveOuter call above does not work in XMLBeans 2.2
                 xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorksheet.type.getName().getNamespaceURI(), "worksheet"));
-                out = part.getOutputStream();
-                sheet.save(out, xmlOptions);
-                out.close();
+                sheet.save(part, xmlOptions);
                  
                 // Update our internal reference for the package part
                 workbook.getSheets().getSheetArray(i).setId(rel.getId());

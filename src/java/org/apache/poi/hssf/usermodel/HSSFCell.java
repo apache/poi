@@ -40,6 +40,7 @@ import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 
 /**
@@ -1120,7 +1121,9 @@ public class HSSFCell implements Cell
      *
      * @param link hypelrink associated with this cell
      */
-    public void setHyperlink(HSSFHyperlink link){
+    public void setHyperlink(Hyperlink hyperlink){
+    	HSSFHyperlink link = (HSSFHyperlink)hyperlink;
+    	
         link.setFirstRow(record.getRow());
         link.setLastRow(record.getRow());
         link.setFirstColumn(record.getColumn());
