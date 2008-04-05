@@ -43,6 +43,7 @@
                     <li><link href="#CreateDateCells">How to create date cells</link></li>
                     <li><link href="#CellTypes">Working with different types of cells</link></li>
                     <li><link href="#Iterator">Iterate over rows and cells</link></li>
+                    <li><link href="#CellContents">Getting the cell contents</link></li>
                     <li><link href="#TextExtraction">Text Extraction</link></li>
                     <li><link href="#Alignment">Aligning cells</link></li>
                     <li><link href="#Borders">Working with borders</link></li>
@@ -303,6 +304,53 @@
 	}
 				</source>
                 </section>
+
+                <anchor id="CellContents"/>
+                <section><title>Getting the cell contents</title>
+					<p>To get the contents of a cell, you first need to
+                    know what kind of cell it is (asking a string cell
+                    for its numeric contents will get you a 
+                    NumberFormatException for example). So, you will
+                    want to switch on the cell's type, and then call
+                    the appropriate getter for that cell.</p>
+                    <p>In the code below, we loop over every cell
+                    in one sheet, print out the cell's reference
+                    (eg A3), and then the cell's contents.</p>
+				<source>
+// import org.apache.poi.ss.usermodel.*;
+
+Sheet sheet1 = wb.getSheetAt(0);
+for (Row row : sheet1) {
+	for (Cell cell : row) {
+		CellReference cellRef = new CellReference(row.getRowNum(), cell.getCellNum());
+		System.out.print(cellRef.formatAsString());
+		System.out.print(" - ");
+		
+		switch(cell.getCellType()) {
+		case Cell.CELL_TYPE_STRING:
+			System.out.println(cell.getRichStringCellValue().getString());
+			break;
+		case Cell.CELL_TYPE_NUMERIC:
+			if(DateUtil.isCellDateFormatted(cell)) {
+				System.out.println(cell.getDateCellValue());
+			} else {
+				System.out.println(cell.getNumericCellValue());
+			}
+			break;
+		case Cell.CELL_TYPE_BOOLEAN:
+			System.out.println(cell.getBooleanCellValue());
+			break;
+		case Cell.CELL_TYPE_FORMULA:
+			System.out.println(cell.getCellFormula());
+			break;
+		default:
+			System.out.println();
+		}
+	}
+}
+				</source>
+                </section>
+
                 <anchor id="TextExtraction"/>
                 <section><title>Text Extraction</title>
 					<p>For most text extraction requirements, the standard

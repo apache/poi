@@ -16,18 +16,20 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel.examples;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -35,7 +37,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * Various things from the quick guide documentation
  */
 public class FromQuickGuide {
-	public void newWorkbook() throws IOException {
+	public static void newWorkbook() throws IOException {
 		boolean doHSSF = true;
 		boolean doXSSF = true;
 		
@@ -53,7 +55,7 @@ public class FromQuickGuide {
 		}
 	}
 	
-	public void newSheet() throws IOException {
+	public static void newSheet() throws IOException {
 		Workbook[] wbs = new Workbook[] {
 				new HSSFWorkbook(), new XSSFWorkbook()
 		};
@@ -68,7 +70,7 @@ public class FromQuickGuide {
 		}
 	}
 	
-	public void newCells() throws IOException {
+	public static void newCells() throws IOException {
 		Workbook[] wbs = new Workbook[] {
 				new HSSFWorkbook(), new XSSFWorkbook()
 		};
@@ -97,7 +99,7 @@ public class FromQuickGuide {
 		}
 	}
 	
-	public void newDateCells() throws IOException {
+	public static void newDateCells() throws IOException {
 	    Workbook wb = new HSSFWorkbook();
 	    //Workbook wb = new XSSFWorkbook();
 	    CreationHelper createHelper = wb.getCreationHelper();
@@ -126,7 +128,7 @@ public class FromQuickGuide {
 	    fileOut.close();
 	}
 	
-	public void iterating() {
+	public static void iterating() {
 	    Workbook wb = new HSSFWorkbook();
 	    Sheet sheet = wb.createSheet("new sheet");
 	    
@@ -138,19 +140,39 @@ public class FromQuickGuide {
 	    }
 	}
 	
-	public void getCellContents(Sheet sheet) {
+	public static void getCellContents(Sheet sheet) {
 	    for (Row row : sheet) {
 	        for (Cell cell : row) {
 	        	CellReference cellRef = new CellReference(row.getRowNum(), cell.getCellNum());
 	        	System.out.print(cellRef.formatAsString());
+	        	System.out.print(" - ");
 	        	
 	        	switch(cell.getCellType()) {
 	        	case Cell.CELL_TYPE_STRING:
 	        		System.out.println(cell.getRichStringCellValue().getString());
 	        		break;
 	        	case Cell.CELL_TYPE_NUMERIC:
+	        		if(DateUtil.isCellDateFormatted(cell)) {
+	        			System.out.println(cell.getDateCellValue());
+	        		} else {
+	        			System.out.println(cell.getNumericCellValue());
+	        		}
+	        		break;
+	        	case Cell.CELL_TYPE_BOOLEAN:
+	        		System.out.println(cell.getBooleanCellValue());
+	        		break;
+	        	case Cell.CELL_TYPE_FORMULA:
+	        		System.out.println(cell.getCellFormula());
+	        		break;
+	        	default:
+	        		System.out.println();
 	        	}
 	        }
 	    }
+	}
+	
+	public static void main(String[] args) throws Exception {
+		Workbook wb = WorkbookFactory.create(new FileInputStream("src/testcases/org/apache/poi/hssf/data/WithMoreVariousData.xlsx"));
+		getCellContents(wb.getSheetAt(0));
 	}
 }
