@@ -280,6 +280,8 @@ public class DateUtil
         double d = cell.getNumericCellValue();
         if ( DateUtil.isValidExcelDate(d) ) {
             CellStyle style = cell.getCellStyle();
+            if(style == null) return false;
+            
             int i = style.getDataFormat();
             String f = style.getDataFormatString();
             bDate = isADateFormat(i, f);
