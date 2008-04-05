@@ -18,7 +18,7 @@ package org.apache.poi.xssf.usermodel.extensions;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellAlignment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STHorizontalAlignment;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STHorizontalAlignment.Enum;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment;
 
 
 public class XSSFCellAlignment {
@@ -29,7 +29,21 @@ public class XSSFCellAlignment {
 		this.cellAlignement = cellAlignment;
 	}
 	
-	public Enum getHorizontal() {
+	public STVerticalAlignment.Enum getVertical() {
+		if (cellAlignement.getVertical() == null) {
+			cellAlignement.setVertical(STVerticalAlignment.TOP);
+		}
+		return cellAlignement.getVertical();
+	}
+	
+	public void setVertical(STVerticalAlignment.Enum vertical) {
+		cellAlignement.setVertical(vertical);
+	}
+	
+	public STHorizontalAlignment.Enum getHorizontal() {
+		if (cellAlignement.getHorizontal() == null) {
+			cellAlignement.setHorizontal(STHorizontalAlignment.GENERAL);
+		}
 		return cellAlignement.getHorizontal();
 	}
 	
@@ -43,5 +57,13 @@ public class XSSFCellAlignment {
 	
 	public void setIndent(long indent) {
 		cellAlignement.setIndent(indent);
+	}
+	
+	public long getTextRotation() {
+		return cellAlignement.getTextRotation();
+	}
+	
+	public boolean getWrapText() {
+		return cellAlignement.getWrapText();
 	}
 }

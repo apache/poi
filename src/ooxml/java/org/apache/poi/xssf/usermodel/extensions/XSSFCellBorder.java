@@ -53,7 +53,7 @@ public class XSSFCellBorder {
 		return borders.size() - 1;
 	}
 	
-	public Enum getBorderStyle(BorderSides side) {
+	public org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle.Enum getBorderStyle(BorderSides side) {
 		return getBorder(side).getStyle();
 	}
 	
