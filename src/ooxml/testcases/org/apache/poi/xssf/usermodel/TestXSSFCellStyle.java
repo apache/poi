@@ -80,9 +80,13 @@ public class TestXSSFCellStyle extends TestCase {
 		cellStyle = new XSSFCellStyle(cellXf, cellStyleXf, stylesTable);
 	}
 	
-	public void testGetBorderBottom() {		
+	public void testGetSetBorderBottom() {		
 		ctBorderA.addNewBottom().setStyle(STBorderStyle.THIN);
 		assertEquals((short)1, cellStyle.getBorderBottom());
+		cellStyle.setBorderBottom((short) 2);
+		assertEquals(STBorderStyle.THIN, ctBorderA.getBottom().getStyle());
+		cellStyle.setBorderBottomEnum(STBorderStyle.THICK);
+		assertEquals(6, ctBorderA.getBottom().getStyle().intValue());
 	}
 
 	public void testGetBorderBottomAsString() {
@@ -90,9 +94,13 @@ public class TestXSSFCellStyle extends TestCase {
 		assertEquals("thin", cellStyle.getBorderBottomAsString());
 	}
 	
-	public void testGetBorderRight() {
+	public void testGetSetBorderRight() {
 		ctBorderA.addNewRight().setStyle(STBorderStyle.MEDIUM);
 		assertEquals((short)2, cellStyle.getBorderRight());
+		cellStyle.setBorderRight((short) 2);
+		assertEquals(STBorderStyle.THIN, ctBorderA.getRight().getStyle());
+		cellStyle.setBorderRightEnum(STBorderStyle.THICK);
+		assertEquals(6, ctBorderA.getRight().getStyle().intValue());
 	}
 
 	public void testGetBorderRightAsString() {
@@ -100,9 +108,13 @@ public class TestXSSFCellStyle extends TestCase {
 		assertEquals("medium", cellStyle.getBorderRightAsString());
 	}
 	
-	public void testGetBorderLeft() {
+	public void testGetSetBorderLeft() {
 		ctBorderA.addNewLeft().setStyle(STBorderStyle.DASHED);
 		assertEquals((short)3, cellStyle.getBorderLeft());
+		cellStyle.setBorderLeft((short) 2);
+		assertEquals(STBorderStyle.THIN, ctBorderA.getLeft().getStyle());
+		cellStyle.setBorderLeftEnum(STBorderStyle.THICK);
+		assertEquals(6, ctBorderA.getLeft().getStyle().intValue());
 	}
 
 	public void testGetBorderLeftAsString() {
@@ -110,12 +122,16 @@ public class TestXSSFCellStyle extends TestCase {
 		assertEquals("dashed", cellStyle.getBorderLeftAsString());
 	}
 	
-	public void testGetBorderTop() {
+	public void testGetSetBorderTop() {
 		ctBorderA.addNewTop().setStyle(STBorderStyle.HAIR);
 		assertEquals((short)7, cellStyle.getBorderTop());
+		cellStyle.setBorderTop((short) 2);
+		assertEquals(STBorderStyle.THIN, ctBorderA.getTop().getStyle());
+		cellStyle.setBorderTopEnum(STBorderStyle.THICK);
+		assertEquals(6, ctBorderA.getTop().getStyle().intValue());
 	}
 
-	public void testGetTopBottomAsString() {
+	public void testGetBorderTopAsString() {
 		ctBorderA.addNewTop().setStyle(STBorderStyle.HAIR);
 		assertEquals("hair", cellStyle.getBorderTopAsString());
 	}

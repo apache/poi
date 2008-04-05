@@ -21,6 +21,7 @@ import java.util.LinkedList;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle.Enum;
 
 
@@ -41,7 +42,7 @@ public class XSSFCellBorder {
 		border = CTBorder.Factory.newInstance();
 	}
 	
-	public static enum BorderSides {
+	public static enum BorderSide {
 		TOP, RIGHT, BOTTOM, LEFT
 	}
 	
@@ -53,11 +54,15 @@ public class XSSFCellBorder {
 		return borders.size() - 1;
 	}
 	
-	public org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle.Enum getBorderStyle(BorderSides side) {
+	public STBorderStyle.Enum getBorderStyle(BorderSide side) {
 		return getBorder(side).getStyle();
 	}
 	
-	public XSSFColor getBorderColor(BorderSides side) {
+	public void setBorderStyle(BorderSide side, STBorderStyle.Enum style) {
+		getBorder(side).setStyle(style);
+	}
+	
+	public XSSFColor getBorderColor(BorderSide side) {
 		CTBorderPr borderPr = getBorder(side);
 		if (!borderPr.isSetColor()) {
 			borderPr.addNewColor();
@@ -65,7 +70,7 @@ public class XSSFCellBorder {
 		return new XSSFColor(getBorder(side).getColor());
 	}
 	
-	private CTBorderPr getBorder(BorderSides side) {
+	private CTBorderPr getBorder(BorderSide side) {
 		switch (side) {
 		case TOP: return border.getTop();
 		case RIGHT: return border.getRight();
