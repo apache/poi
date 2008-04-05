@@ -46,15 +46,15 @@ public final class Pmt extends FinanceFunction {
 		if(args.length < 3 || args.length > 5) {
 			return ErrorEval.VALUE_INVALID;
 		}
-		
- 		try {
- 			// evaluate first three (always present) args
+
+		try {
+			// evaluate first three (always present) args
 			double rate = evalArg(args[0], srcRow, srcCol);
 			double nper = evalArg(args[1], srcRow, srcCol);
-			double pv  = evalArg(args[2], srcRow, srcCol); 
+			double pv  = evalArg(args[2], srcRow, srcCol);
 			double fv = 0;
 			boolean arePaymentsAtPeriodBeginning = false;
-			
+
 			switch (args.length) {
 				case 5:
 					ValueEval ve = singleOperandNumericAsBoolean(args[4], srcRow, srcCol);
@@ -67,10 +67,10 @@ public final class Pmt extends FinanceFunction {
 			}
 			double d = FinanceLib.pmt(rate, nper, pv, fv, arePaymentsAtPeriodBeginning);
 			if (Double.isNaN(d)) {
-				return (ValueEval) ErrorEval.VALUE_INVALID;
+				return ErrorEval.VALUE_INVALID;
 			}
 			if (Double.isInfinite(d)) {
-				return (ValueEval) ErrorEval.NUM_ERROR;
+				return ErrorEval.NUM_ERROR;
 			}
 			return new NumberEval(d);
 		} catch (EvaluationException e) {

@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.record.formula;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.record.RecordInputStream;
@@ -27,22 +26,22 @@ import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class FuncVarPtg extends AbstractFunctionPtg{
-    
+
     public final static byte sid  = 0x22;
-    private final static int  SIZE = 4;  
-    
+    private final static int  SIZE = 4;
+
     private FuncVarPtg() {
       //Required for clone methods
     }
 
- /**Creates new function pointer from a byte array 
-     * usually called while reading an excel file. 
+ /**Creates new function pointer from a byte array
+     * usually called while reading an excel file.
      */
     public FuncVarPtg(RecordInputStream in) {
         field_1_num_args = in.readByte();
         field_2_fnc_index  = in.readShort();
     }
-    
+
     /**
      * Create a function ptg from a string tokenised by the parser
      */
@@ -59,17 +58,17 @@ public final class FuncVarPtg extends AbstractFunctionPtg{
             paramClass = new byte[] {Ptg.CLASS_VALUE};
         }
     }
-    
+
      public void writeBytes(byte[] array, int offset) {
         array[offset+0]=(byte) (sid + ptgClass);
         array[offset+1]=field_1_num_args;
         LittleEndian.putShort(array,offset+2,field_2_fnc_index);
     }
-    
+
      public int getNumberOfOperands() {
         return field_1_num_args;
     }
-    
+
     public Object clone() {
       FuncVarPtg ptg = new FuncVarPtg();
       ptg.field_1_num_args = field_1_num_args;
@@ -77,11 +76,11 @@ public final class FuncVarPtg extends AbstractFunctionPtg{
       ptg.setClass(ptgClass);
       return ptg;
     }
-    
+
     public int getSize() {
         return SIZE;
     }
-    
+
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
         sb.append(getClass().getName()).append(" [");

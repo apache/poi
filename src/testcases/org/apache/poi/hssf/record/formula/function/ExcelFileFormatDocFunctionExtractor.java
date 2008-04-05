@@ -49,14 +49,14 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
- * This class is not used during normal POI run-time but is used at development time to generate 
+ * This class is not used during normal POI run-time but is used at development time to generate
  * the file 'functionMetadata.txt'.   There are more than 300 built-in functions in Excel and the
  * intention of this class is to make it easier to maintain the metadata, by extracting it from
  * a reliable source.
  * 
  * @author Josh Micich
  */
-public class ExcelFileFormatDocFunctionExtractor {
+public final class ExcelFileFormatDocFunctionExtractor {
 
 	private static final String SOURCE_DOC_FILE_NAME = "excelfileformat.odt";
 
@@ -195,19 +195,19 @@ public class ExcelFileFormatDocFunctionExtractor {
 			"table:table-row", "table:table-cell", "text:p", "text:span", "text:note-ref",
 		};
 
-		
+
 		private final Stack _elemNameStack;
 		/** <code>true</code> only when parsing the target tables */
 		private boolean _isInsideTable;
-		
+
 		private final List _rowData; 
 		private final StringBuffer _textNodeBuffer;
 		private final List _rowNoteFlags;
 		private boolean _cellHasNote;
-		
+
 		private final FunctionDataCollector _fdc;
 		private String _lastHeadingText;
-		
+
 		public EFFDocHandler(FunctionDataCollector fdc) {
 			_fdc = fdc;
 			_elemNameStack = new Stack();
@@ -216,7 +216,7 @@ public class ExcelFileFormatDocFunctionExtractor {
 			_textNodeBuffer = new StringBuffer();
 			_rowNoteFlags = new ArrayList();
 		}
-		
+
 		private boolean matchesTargetPath() {
 			return matchesPath(0, TABLE_BASE_PATH_NAMES);
 		}
@@ -365,7 +365,7 @@ public class ExcelFileFormatDocFunctionExtractor {
 		xr.setContentHandler(new EFFDocHandler(fdc));
 
 		InputSource inSrc = new InputSource(is);
-		
+
 		try {
 			xr.parse(inSrc);
 			is.close();
@@ -407,30 +407,30 @@ public class ExcelFileFormatDocFunctionExtractor {
 	}
 
 	private static void outputLicenseHeader(PrintStream ps) {
-	    String[] lines= {
-            "Licensed to the Apache Software Foundation (ASF) under one or more",
-            "contributor license agreements.  See the NOTICE file distributed with",
-            "this work for additional information regarding copyright ownership.",
-            "The ASF licenses this file to You under the Apache License, Version 2.0",
-            "(the \"License\"); you may not use this file except in compliance with",
-            "the License.  You may obtain a copy of the License at",
-            "",
-            "    http://www.apache.org/licenses/LICENSE-2.0",
-            "",
-            "Unless required by applicable law or agreed to in writing, software",
-            "distributed under the License is distributed on an \"AS IS\" BASIS,",
-            "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
-            "See the License for the specific language governing permissions and",
-            "limitations under the License.",
-	    };
-	    for (int i = 0; i < lines.length; i++) {
-	        ps.print("# ");
-            ps.println(lines[i]);
-        }
-        ps.println();
-    }
+		String[] lines= {
+			"Licensed to the Apache Software Foundation (ASF) under one or more",
+			"contributor license agreements.  See the NOTICE file distributed with",
+			"this work for additional information regarding copyright ownership.",
+			"The ASF licenses this file to You under the Apache License, Version 2.0",
+			"(the \"License\"); you may not use this file except in compliance with",
+			"the License.  You may obtain a copy of the License at",
+			"",
+			"    http://www.apache.org/licenses/LICENSE-2.0",
+			"",
+			"Unless required by applicable law or agreed to in writing, software",
+			"distributed under the License is distributed on an \"AS IS\" BASIS,",
+			"WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+			"See the License for the specific language governing permissions and",
+			"limitations under the License.",
+		};
+		for (int i = 0; i < lines.length; i++) {
+			ps.print("# ");
+			ps.println(lines[i]);
+		}
+		ps.println();
+	}
 
-    /**
+	/**
 	 * Helps identify the source file
 	 */
 	private static String getFileCRC(File f) {
@@ -451,10 +451,10 @@ public class ExcelFileFormatDocFunctionExtractor {
 		}
 		return "0x" + Long.toHexString(crc.getValue()).toUpperCase();
 	}
-	
+
 	private static File getSourceFile() {
-		if (true) {
-			File dir = new File("c:/josh/ref-docs");
+		if (false) {
+			File dir = new File("c:/temp");
 			File effDocFile = new File(dir, SOURCE_DOC_FILE_NAME);
 			return effDocFile;
 		}
@@ -464,7 +464,7 @@ public class ExcelFileFormatDocFunctionExtractor {
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		File result;
 		byte[]buf = new byte[2048];
 		try {
@@ -488,16 +488,15 @@ public class ExcelFileFormatDocFunctionExtractor {
 		System.out.println("file downloaded ok");
 		return result;
 	}
-	
+
 	public static void main(String[] args) {
-		
+
 		File effDocFile = getSourceFile();
 		if(!effDocFile.exists()) {
 			throw new RuntimeException("file '" + effDocFile.getAbsolutePath() + "' does not exist");
 		}
-		
+
 		File outFile = new File("functionMetadata-asGenerated.txt");
 		processFile(effDocFile, outFile);
 	}
-	
 }

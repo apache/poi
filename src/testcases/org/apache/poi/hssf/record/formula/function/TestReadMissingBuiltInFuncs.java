@@ -48,7 +48,7 @@ public final class TestReadMissingBuiltInFuncs extends TestCase {
 		}
 		sht = wb.getSheetAt(0);
 	}
-	
+
 	public void testDatedif() {
 		
 		String formula;
@@ -56,9 +56,9 @@ public final class TestReadMissingBuiltInFuncs extends TestCase {
 			formula = getCellFormula(0);
 		} catch (IllegalStateException e) {
 			if(e.getMessage().startsWith("Too few arguments")) {
-			    if(e.getMessage().indexOf("AttrPtg") > 0) {
-	                throw afe("tAttrVolatile not supported in FormulaParser.toFormulaString");
-			    }
+				if(e.getMessage().indexOf("AttrPtg") > 0) {
+					throw afe("tAttrVolatile not supported in FormulaParser.toFormulaString");
+				}
 				throw afe("NOW() registered with 1 arg instead of 0");
 			}
 			if(e.getMessage().startsWith("too much stuff")) {
@@ -70,7 +70,7 @@ public final class TestReadMissingBuiltInFuncs extends TestCase {
 		assertEquals("DATEDIF(NOW(),NOW(),\"d\")", formula);
 	}
 	public void testDdb() {
-		
+
 		String formula = getCellFormula(1);
 		if("externalflag(1,1,1,1,1)".equals(formula)) {
 			throw afe("DDB() not registered");
@@ -78,14 +78,14 @@ public final class TestReadMissingBuiltInFuncs extends TestCase {
 		assertEquals("DDB(1,1,1,1,1)", formula);
 	}
 	public void testAtan() {
-	
+
 		String formula = getCellFormula(2);
 		if(formula.equals("ARCTAN(1)")) {
 			throw afe("func ix 18 registered as ARCTAN() instead of ATAN()");
 		}
 		assertEquals("ATAN(1)", formula);
 	}
-	
+
 	public void testUsdollar() {
 	
 		String formula = getCellFormula(3);
@@ -128,7 +128,7 @@ public final class TestReadMissingBuiltInFuncs extends TestCase {
 		}
 		assertEquals("ISNONTEXT(\"abc\")", formula);
 	}
-	
+
 	private String getCellFormula(int rowIx) {
 		String result = sht.getRow(rowIx).getCell((short)0).getCellFormula();
 		if (false) {
