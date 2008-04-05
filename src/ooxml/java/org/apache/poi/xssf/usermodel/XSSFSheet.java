@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CommentsSource;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Patriarch;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
@@ -38,10 +40,14 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxml4j.opc.PackagePart;
+import org.openxml4j.opc.PackageRelationship;
+import org.openxml4j.opc.PackageRelationshipCollection;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetUpPr;
@@ -62,6 +68,7 @@ public class XSSFSheet implements Sheet {
     protected CTWorksheet worksheet;
     protected CTDialogsheet dialogsheet;
     protected List<Row> rows;
+    protected List<XSSFHyperlink> hyperlinks;
     protected ColumnHelper columnHelper;
     protected XSSFWorkbook workbook;
     protected CommentsSource sheetComments;
@@ -90,10 +97,14 @@ public class XSSFSheet implements Sheet {
         }
         initRows(this.worksheet);
         initColumns(this.worksheet);
+        
+    	hyperlinks = new ArrayList<XSSFHyperlink>();
 	}
 
     public XSSFSheet(XSSFWorkbook workbook) {
         this.workbook = workbook;
+        
+        hyperlinks = new ArrayList<XSSFHyperlink>();
     }
 
     public XSSFWorkbook getWorkbook() {
@@ -105,7 +116,7 @@ public class XSSFSheet implements Sheet {
      *  will accept without a massive huff, and write into
      *  the OutputStream supplied.
      */
-    protected void save(OutputStream out, XmlOptions xmlOptions) throws IOException {
+    protected void save(PackagePart sheetPart, XmlOptions xmlOptions) throws IOException {
     	// Excel objects to <cols/>
     	if(worksheet.getColsArray().length == 1) {
     		CTCols col = worksheet.getColsArray(0);
@@ -113,9 +124,28 @@ public class XSSFSheet implements Sheet {
     			worksheet.setColsArray(null);
     		}
     	}
+    	
+    	// Now re-generate our CTHyperlinks, if needed
+    	if(hyperlinks.size() > 0) {
+	    	if(worksheet.getHyperlinks() == null) {
+	    		worksheet.addNewHyperlinks();
+	    	}
+	    	CTHyperlink[] ctHls = new CTHyperlink[hyperlinks.size()];
+	    	for(int i=0; i<ctHls.length; i++) {
+	            // If our sheet has hyperlinks, have them add
+	            //  any relationships that they might need
+	    		XSSFHyperlink hyperlink = hyperlinks.get(i);
+	    		hyperlink.generateRelationIfNeeded(sheetPart);
+	    		// Now grab their underling object
+	    		ctHls[i] = hyperlink.getCTHyperlink();
+	    	}
+	    	worksheet.getHyperlinks().setHyperlinkArray(ctHls);
+    	}
 
     	// Save
+    	OutputStream out = sheetPart.getOutputStream();
         worksheet.save(out, xmlOptions);
+        out.close();
     }
     
     protected CTWorksheet getWorksheet() {
@@ -136,7 +166,24 @@ public class XSSFSheet implements Sheet {
     protected void initColumns(CTWorksheet worksheet) {
         columnHelper = new ColumnHelper(worksheet);
     }
-
+    
+    protected void initHyperlinks(PackageRelationshipCollection hyperRels) {
+    	if(worksheet.getHyperlinks() == null) return;
+    	
+    	// Turn each one into a XSSFHyperlink
+    	for(CTHyperlink hyperlink : worksheet.getHyperlinks().getHyperlinkArray()) {
+    		PackageRelationship hyperRel = null;
+    		if(hyperlink.getId() != null) {
+    			hyperRel = hyperRels.getRelationshipByID(hyperlink.getId());
+    		}
+    		
+    		// TODO: fix openxml4j
+//    		hyperlinks.add(
+//    				new XSSFHyperlink(hyperlink, hyperRel)
+//    		);
+    	}
+    }
+    
     protected CTSheet getSheet() {
         return this.sheet;
     }
@@ -241,6 +288,16 @@ public class XSSFSheet implements Sheet {
 
     public Comment getCellComment(int row, int column) {
     	return getComments().findCellComment(row, column);
+    }
+    
+    public Hyperlink getHyperlink(int row, int column) {
+    	String ref = new CellReference(row, column).formatAsString();
+    	for(XSSFHyperlink hyperlink : hyperlinks) {
+    		if(hyperlink.getCellRef().equals(ref)) {
+    			return hyperlink;
+    		}
+    	}
+    	return null;
     }
 
     public short[] getColumnBreaks() {
@@ -415,6 +472,10 @@ public class XSSFSheet implements Sheet {
     public int getNumMergedRegions() {
         // TODO Auto-generated method stub
         return 0;
+    }
+    
+    public int getNumHyperlinks() {
+    	return hyperlinks.size();
     }
 
     public boolean getObjectProtect() {
@@ -869,6 +930,10 @@ public class XSSFSheet implements Sheet {
     
     public void setCellComment(String cellRef, XSSFComment comment) {
     	getComments().setCellComment(cellRef, comment);
+    }
+    
+    public void setCellHyperlink(XSSFHyperlink hyperlink) {
+    	hyperlinks.add(hyperlink);
     }
     
     public String getActiveCell() {

@@ -41,8 +41,7 @@ public interface CreationHelper {
     DataFormat createDataFormat();
     
     /**
-     * Creates a new Hyperlink, of the given type,
-     *  for the given sheet
+     * Creates a new Hyperlink, of the given type
      */
-    Hyperlink createHyperlink(int type, Sheet sheetFor);
+    Hyperlink createHyperlink(int type);
 }

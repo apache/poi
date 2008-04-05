@@ -16,11 +16,16 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import java.net.URI;
+
 import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.util.CellReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
 
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
+import org.openxml4j.opc.PackageRelationship;
+
 
 /**
  * XSSF Implementation of a Hyperlink.
@@ -29,20 +34,39 @@ import org.openxml4j.opc.PackagePart;
  */
 public class XSSFHyperlink implements Hyperlink {
 	private int type;
-	private XSSFSheet sheet;
+	private PackageRelationship externalRel;
 	private CTHyperlink ctHyperlink;
+	private String location;
 	
-	protected XSSFHyperlink(int type, XSSFSheet sheet) {
+	protected XSSFHyperlink(int type) {
 		this.type = type;
-		this.sheet = sheet;
 		this.ctHyperlink = CTHyperlink.Factory.newInstance();
 	}
-	protected XSSFHyperlink(CTHyperlink ctHyperlink, XSSFSheet sheet) {
-		this.sheet = sheet;
+	protected XSSFHyperlink(CTHyperlink ctHyperlink, PackageRelationship hyperlinkRel) {
 		this.ctHyperlink = ctHyperlink;
+		this.externalRel = hyperlinkRel;
 		
 		// Figure out the Hyperlink type
-		// TODO
+		
+		// If it has a location, it's internal
+		if(ctHyperlink.getLocation() != null) {
+			type = Hyperlink.LINK_DOCUMENT;
+			location = ctHyperlink.getLocation();
+		} else {
+			// Otherwise it's somehow external, check
+			//  the relation to see how
+			if(externalRel == null) {
+				if(ctHyperlink.getId() != null) {
+					throw new IllegalStateException("The hyperlink for cell " + ctHyperlink.getRef() + " references relation " + ctHyperlink.getId() + ", but that didn't exist!");
+				} else {
+					throw new IllegalStateException("A sheet hyperlink must either have a location, or a relationship. Found:\n" + ctHyperlink);
+				}
+			}
+			// TODO
+			
+			//URI target = externalRel.getTargetURI();
+			//location = target.toString();
+		}
 	}
 
 	/**
@@ -57,65 +81,80 @@ public class XSSFHyperlink implements Hyperlink {
 	 *  this hyperlink?
 	 */
 	public boolean needsRelationToo() {
-		// TODO
-		return false;
+		return (type != Hyperlink.LINK_DOCUMENT);
 	}
 	
 	/**
 	 * Generates the relation if required
 	 */
-	protected void generateRelationIfNeeded(Package pkg, PackagePart sheetPart) {
-		// TODO
+	protected void generateRelationIfNeeded(PackagePart sheetPart) {
+		if(needsRelationToo()) {
+			// TODO
+		}
 	}
 	
 	public int getType() {
 		return type;
 	}
 	
+	/**
+	 * Get the reference of the cell this applies to,
+	 *  eg A55
+	 */
+	public String getCellRef() {
+		return ctHyperlink.getRef();
+	}
+	
 	public String getAddress() {
-		// TODO Auto-generated method stub
-		return null;
+		return location;
 	}
 	public String getLabel() {
-		// TODO Auto-generated method stub
-		return null;
+		return ctHyperlink.getDisplay();
 	}
 	
 	public void setLabel(String label) {
-		// TODO Auto-generated method stub
+		ctHyperlink.setDisplay(label);
 	}
 	public void setAddress(String address) {
-		// TODO Auto-generated method stub
-		
+		location = address;
+	}
+
+	private CellReference buildCellReference() {
+		return new CellReference(ctHyperlink.getRef());
 	}
 	
-	public short getFirstColumn() {
-		// TODO Auto-generated method stub
-		return 0;
+	public int getFirstColumn() {
+		return buildCellReference().getCol();
 	}
+	public int getLastColumn() {
+		return buildCellReference().getCol();
+	}
+	
 	public int getFirstRow() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	public short getLastColumn() {
-		// TODO Auto-generated method stub
-		return 0;
+		return buildCellReference().getRow();
 	}
 	public int getLastRow() {
-		// TODO Auto-generated method stub
-		return 0;
+		return buildCellReference().getRow();
 	}
 	
-	public void setFirstColumn(short col) {
-		// TODO Auto-generated method stub
+	public void setFirstColumn(int col) {
+		ctHyperlink.setRef(
+				new CellReference(
+						getFirstRow(), col
+				).formatAsString()
+		);
+	}
+	public void setLastColumn(int col) {
+		setFirstColumn(col);
 	}
 	public void setFirstRow(int row) {
-		// TODO Auto-generated method stub
-	}
-	public void setLastColumn(short col) {
-		// TODO Auto-generated method stub
+		ctHyperlink.setRef(
+				new CellReference(
+						row, getFirstColumn()
+				).formatAsString()
+		);
 	}
 	public void setLastRow(int row) {
-		// TODO Auto-generated method stub
+		setFirstRow(row);
 	}
 }

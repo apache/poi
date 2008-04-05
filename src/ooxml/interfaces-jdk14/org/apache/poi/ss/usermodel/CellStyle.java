@@ -17,4 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
-public interface CellStyle {}
+public interface CellStyle {
+    short getDataFormat();
+    String getDataFormatString();
+}

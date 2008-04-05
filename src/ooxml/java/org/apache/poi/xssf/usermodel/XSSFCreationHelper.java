@@ -20,7 +20,6 @@ import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Sheet;
 
 public class XSSFCreationHelper implements CreationHelper {
 	private XSSFWorkbook workbook;
@@ -43,7 +42,7 @@ public class XSSFCreationHelper implements CreationHelper {
 		return dataFormat;
 	}
 	
-	public Hyperlink createHyperlink(int type, Sheet sheetFor) {
-		return new XSSFHyperlink(type, (XSSFSheet)sheetFor);
+	public Hyperlink createHyperlink(int type) {
+		return new XSSFHyperlink(type);
 	}
 }

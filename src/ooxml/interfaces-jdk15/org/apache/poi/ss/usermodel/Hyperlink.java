@@ -73,28 +73,28 @@ public interface Hyperlink {
      *
      * @return the 0-based column of the first cell that contains the hyperlink
      */
-    public short getFirstColumn();
+    public int getFirstColumn();
 
     /**
      * Set the column of the first cell that contains the hyperlink
      *
      * @param col the 0-based column of the first cell that contains the hyperlink
      */
-    public void setFirstColumn(short col);
+    public void setFirstColumn(int col);
 
     /**
      * Return the column of the last cell that contains the hyperlink
      *
      * @return the 0-based column of the last cell that contains the hyperlink
      */
-    public short getLastColumn();
+    public int getLastColumn();
 
     /**
      * Set the column of the last cell that contains the hyperlink
      *
      * @param col the 0-based column of the last cell that contains the hyperlink
      */
-    public void setLastColumn(short col);
+    public void setLastColumn(int col);
 
 
     
