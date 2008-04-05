@@ -284,8 +284,7 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public void setRotation(short rotation) {
-		// TODO Auto-generated method stub
-		
+		getCellAlignment().setTextRotation(rotation);
 	}
 
 	public void setTopBorderColor(short color) {
@@ -302,8 +301,7 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public void setWrapText(boolean wrapped) {
-		// TODO Auto-generated method stub
-		
+		getCellAlignment().setWrapText(wrapped);
 	}
 
 	private XSSFCellBorder getCellBorder() {

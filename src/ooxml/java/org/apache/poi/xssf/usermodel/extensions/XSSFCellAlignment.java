@@ -63,7 +63,15 @@ public class XSSFCellAlignment {
 		return cellAlignement.getTextRotation();
 	}
 	
+	public void setTextRotation(long rotation) {
+		cellAlignement.setTextRotation(rotation);
+	}
+	
 	public boolean getWrapText() {
 		return cellAlignement.getWrapText();
+	}
+	
+	public void setWrapText(boolean wrapped) {
+		cellAlignement.setWrapText(wrapped);
 	}
 }
