@@ -37,7 +37,7 @@ public final class ExternalNameRecord extends Record {
 	private static final int OPT_PICTURE_LINK          = 0x0004;
 	private static final int OPT_STD_DOCUMENT_NAME     = 0x0008;
 	private static final int OPT_OLE_LINK              = 0x0010;
-//	private static final int OPT_CLIP_FORMAT_MASK	   = 0x7FE0;
+//	private static final int OPT_CLIP_FORMAT_MASK      = 0x7FE0;
 	private static final int OPT_ICONIFIED_PICTURE_LINK= 0x8000;
 
 

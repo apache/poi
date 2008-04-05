@@ -18,231 +18,105 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.util.List;
-import java.util.Stack;
 
 import org.apache.poi.hssf.model.FormulaParser;
+import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CFRuleRecord;
+import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
+import org.apache.poi.hssf.record.cf.BorderFormatting;
+import org.apache.poi.hssf.record.cf.FontFormatting;
+import org.apache.poi.hssf.record.cf.PatternFormatting;
 import org.apache.poi.hssf.record.formula.Ptg;
 
 /**
  * 
- * High level representation of Conditional Format  
+ * High level representation of Conditional Formatting Rule.
+ * It allows to specify formula based conditions for the Conditional Formatting
+ * and the formatting settings such as font, border and pattern.
  * 
  * @author Dmitriy Kumshayev
  */
 
-public class HSSFConditionalFormattingRule
+public final class HSSFConditionalFormattingRule
 {
-    public static final byte CELL_COMPARISON = CFRuleRecord.CONDITION_TYPE_CELL_VALUE_IS;
-    public static final byte FORMULA = CFRuleRecord.CONDITION_TYPE_FORMULA;
+    private static final byte CELL_COMPARISON = CFRuleRecord.CONDITION_TYPE_CELL_VALUE_IS;
+ 
 
-    public static final byte COMPARISON_OPERATOR_NO_COMPARISON = CFRuleRecord.COMPARISON_OPERATOR_NO_COMPARISON;
-    public static final byte COMPARISON_OPERATOR_BETWEEN 	   = CFRuleRecord.COMPARISON_OPERATOR_BETWEEN;
-    public static final byte COMPARISON_OPERATOR_NOT_BETWEEN   = CFRuleRecord.COMPARISON_OPERATOR_NOT_BETWEEN;
-    public static final byte COMPARISON_OPERATOR_EQUAL         = CFRuleRecord.COMPARISON_OPERATOR_EQUAL;
-    public static final byte COMPARISON_OPERATOR_NOT_EQUAL     = CFRuleRecord.COMPARISON_OPERATOR_NOT_EQUAL;
-    public static final byte COMPARISON_OPERATOR_GT            = CFRuleRecord.COMPARISON_OPERATOR_GT;
-    public static final byte COMPARISON_OPERATOR_LT            = CFRuleRecord.COMPARISON_OPERATOR_LT;
-    public static final byte COMPARISON_OPERATOR_GE            = CFRuleRecord.COMPARISON_OPERATOR_GE;
-    public static final byte COMPARISON_OPERATOR_LE            = CFRuleRecord.COMPARISON_OPERATOR_LE;
-    
-    
 
-	private CFRuleRecord cfRuleRecord;
-	private HSSFWorkbook workbook;
+
+	private final CFRuleRecord cfRuleRecord;
+	private final Workbook workbook;
+
+	HSSFConditionalFormattingRule(Workbook pWorkbook, CFRuleRecord pRuleRecord) {
+		workbook = pWorkbook;
+		cfRuleRecord = pRuleRecord;
+	}
+	HSSFConditionalFormattingRule(Workbook pWorkbook, CFRuleRecord pRuleRecord, 
+			HSSFFontFormatting fontFmt, HSSFBorderFormatting bordFmt, HSSFPatternFormatting patternFmt) {
+		this(pWorkbook, pRuleRecord);
+		setFontFormatting(fontFmt);
+		setBorderFormatting(bordFmt);
+		setPatternFormatting(patternFmt);
+	}
+
+	CFRuleRecord getCfRuleRecord()
+	{
+		return cfRuleRecord;
+	}
 	
-	protected HSSFConditionalFormattingRule(HSSFWorkbook workbook)
-	{
-		this.workbook = workbook;
-		this.cfRuleRecord = new CFRuleRecord();
-	}
-
-	protected HSSFConditionalFormattingRule(HSSFWorkbook workbook, CFRuleRecord cfRuleRecord)
-	{
-		this.workbook = workbook;
-		this.cfRuleRecord = cfRuleRecord;
-	}
-
-	/** 
-	 *  Keep Font Formatting unchanged for this Conditional Formatting Rule 
+	
+	/**
+	 * @param fontFmt pass <code>null</code> to signify 'font unchanged'
 	 */
-	public void setFontFormattingUnchanged()
+	public void setFontFormatting(HSSFFontFormatting fontFmt)
 	{
-		cfRuleRecord.setFontFormattingUnchanged();
+		FontFormatting block = fontFmt==null ? null : fontFmt.getFontFormattingBlock();
+		cfRuleRecord.setFontFormatting(block);
 	}
-	/** 
-	 *  Keep Border Formatting unchanged for this Conditional Formatting Rule 
+	/**
+	 * @param borderFmt pass <code>null</code> to signify 'border unchanged'
 	 */
-	public void setBorderFormattingUnchanged()
+	public void setBorderFormatting(HSSFBorderFormatting borderFmt)
 	{
-		cfRuleRecord.setBorderFormattingUnchanged();
+		BorderFormatting block = borderFmt==null ? null : borderFmt.getBorderFormattingBlock();
+		cfRuleRecord.setBorderFormatting(block);
 	}
-	/** 
-	 *  Keep Pattern Formatting unchanged for this Conditional Formatting Rule 
+	/**
+	 * @param patternFmt pass <code>null</code> to signify 'pattern unchanged'
 	 */
-	public void setPatternFormattingUnchanged()
+	public void setPatternFormatting(HSSFPatternFormatting patternFmt)
 	{
-		cfRuleRecord.setPatternFormattingUnchanged();
-	}
-	
-	public void setFontFormatting(HSSFFontFormatting fontFormatting)
-	{
-		if( fontFormatting!=null )
-		{
-			cfRuleRecord.setFontFormatting(fontFormatting.getFontFormattingBlock());
-		}
-		else
-		{
-			setFontFormattingUnchanged();
-		}
-	}
-	public void setBorderFormatting(HSSFBorderFormatting borderFormatting)
-	{
-		if( borderFormatting != null )
-		{
-			cfRuleRecord.setBorderFormatting(borderFormatting.getBorderFormattingBlock());
-		}
-		else
-		{
-			setBorderFormattingUnchanged();
-		}
-	}
-	public void setPatternFormatting(HSSFPatternFormatting patternFormatting)
-	{
-		if( patternFormatting != null)
-		{
-			cfRuleRecord.setPatternFormatting(patternFormatting.getPatternFormattingBlock());
-		}
-		else
-		{
-			setPatternFormattingUnchanged();
-		}
-	}
-	
-	public void setCellComparisonCondition(byte comparisonOperation, String formula1, String formula2)
-	{
-		cfRuleRecord.setConditionType(CELL_COMPARISON);
-		cfRuleRecord.setComparisonOperation(comparisonOperation);
-		
-		// Formula 1
-		setFormula1(formula1);
-		
-		// Formula 2
-		setFormula1(formula2);
-	}
-	
-	public void setFormulaCondition(String formula)
-	{
-		cfRuleRecord.setConditionType(FORMULA);
-		// Formula 1
-		setFormula1(formula);
-	}
-	
-	public void setFormula1(String formula)
-	{
-		// Formula 1
-		if( formula != null)
-		{
-		    Stack parsedExpression = parseFormula(formula);
-			if( parsedExpression != null )
-			{
-				cfRuleRecord.setParsedExpression1(parsedExpression);
-			}
-			else
-			{
-				cfRuleRecord.setParsedExpression1(null);
-			}
-		}
-		else
-		{
-			cfRuleRecord.setParsedExpression1(null);
-		}
-	}
-	
-	public void setFormula2(String formula)
-	{
-		// Formula 2
-		if( formula != null)
-		{
-		    Stack parsedExpression = parseFormula(formula);
-			if( parsedExpression != null )
-			{
-				cfRuleRecord.setParsedExpression2(parsedExpression);
-			}
-			else
-			{
-				cfRuleRecord.setParsedExpression2(null);
-			}
-		}
-		else
-		{
-			cfRuleRecord.setParsedExpression2(null);
-		}
+		PatternFormatting block = patternFmt==null ? null : patternFmt.getPatternFormattingBlock();
+		cfRuleRecord.setPatternFormatting(block);
 	}
 	
 	public String getFormula1()
 	{
-        return toFormulaString(cfRuleRecord.getParsedExpression1());
+		return toFormulaString(cfRuleRecord.getParsedExpression1());
 	}
 
 	public String getFormula2()
 	{
 		byte conditionType = cfRuleRecord.getConditionType();
-		switch(conditionType)
-		{
-			case CELL_COMPARISON:
+		if (conditionType == CELL_COMPARISON) {
+			byte comparisonOperation = cfRuleRecord.getComparisonOperation();
+			switch(comparisonOperation)
 			{
-				byte comparisonOperation = cfRuleRecord.getComparisonOperation();
-				switch(comparisonOperation)
-				{
-					case COMPARISON_OPERATOR_BETWEEN:
-					case COMPARISON_OPERATOR_NOT_BETWEEN:
-						return toFormulaString(cfRuleRecord.getParsedExpression2());
-				}
+				case ComparisonOperator.BETWEEN:
+				case ComparisonOperator.NOT_BETWEEN:
+					return toFormulaString(cfRuleRecord.getParsedExpression2());
 			}
 		}
 		return null;
 	}
 
-	private String toFormulaString(List parsedExpression)
+	private String toFormulaString(Ptg[] parsedExpression)
 	{
 		String formula = null;
 		if(parsedExpression!=null)
 		{
-	        formula = FormulaParser.toFormulaString(workbook.getWorkbook(),parsedExpression);
+		formula = FormulaParser.toFormulaString(workbook, parsedExpression);
 		}
 		return formula;
 	}
-	
-
-	private Stack parseFormula(String formula2)
-	{
-		FormulaParser parser = 
-			new FormulaParser(formula2, workbook.getWorkbook());
-		parser.parse();
-
-		Stack parsedExpression = convertToTokenStack(parser.getRPNPtg());
-	    parsedExpression = convertToTokenStack(parser.getRPNPtg());
-		return parsedExpression;
-	}
-
-	private static Stack convertToTokenStack(Ptg[] ptgs)
-	{
-		if( ptgs != null)
-		{
-			Stack parsedExpression = new Stack();
-			// fill the Ptg Stack with Ptgs of new formula
-			for (int k = 0; k < ptgs.length; k++) 
-			{
-			    parsedExpression.push(ptgs[ k ]);
-			}
-			return parsedExpression;
-		}
-		else
-		{
-			return null;
-		}
-	}
-	
-	
 }

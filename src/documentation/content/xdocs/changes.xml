@@ -26,6 +26,7 @@
         <!-- in strict alphabetical order -->
         <person id="AO" name="Andrew C. Oliver" email="acoliver2@users.sourceforge.net"/>
         <person id="GJS" name="Glen Stampoultzis" email="user@poi.apache.org"/>
+        <person id="JM" name="Josh Micich" email="josh@apache.org"/>
         <person id="MJ" name="Marc Johnson" email="mjohnson@apache.org"/>
         <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
         <person id="NB" name="Nick Burch" email="nick@torchbox.com"/>
@@ -36,6 +37,9 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.0.3-beta1" date="2008-04-??">
+           <action dev="POI-DEVELOPERS" type="add">Implement Sheet.removeShape(Shape shape) in HSLF</action>
+           <action dev="POI-DEVELOPERS" type="add">Various fixes: Recognising var-arg built-in functions #44675, ExternalNameRecord serialisation bug #44695, PMT() bug #44691</action>
+           <action dev="POI-DEVELOPERS" type="add">30311 - More work on Conditional Formatting</action>
            <action dev="POI-DEVELOPERS" type="add">Move the Formula Evaluator code out of scratchpad</action>
            <action dev="POI-DEVELOPERS" type="add">Move the missing record aware eventusermodel code out of scratchpad</action>
            <action dev="POI-DEVELOPERS" type="add">44652 / 44603 - Improved handling of Pictures in Word Documents</action>

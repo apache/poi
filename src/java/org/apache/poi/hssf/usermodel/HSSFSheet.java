@@ -36,6 +36,7 @@ import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.DVALRecord;
 import org.apache.poi.hssf.record.DVRecord;
 import org.apache.poi.hssf.record.EOFRecord;
@@ -1106,8 +1107,8 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * @param leftcol the left column to show in desktop window pane
      */
     public void showInPane(short toprow, short leftcol){
-        this.sheet.setTopRow((short)toprow);
-        this.sheet.setLeftCol((short)leftcol);
+        this.sheet.setTopRow(toprow);
+        this.sheet.setLeftCol(leftcol);
         }
 
     /**
@@ -1454,7 +1455,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
           int i = 0;
           while (iterator.hasNext()) {
             PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
-            returnValue[i++] = (int)breakItem.main;
+            returnValue[i++] = breakItem.main;
           }
           return returnValue;
         }
@@ -1822,7 +1823,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      *
      * @return cell comment or <code>null</code> if not found
      */
-     public HSSFComment getCellComment(int row, int column){
+     public HSSFComment getCellComment(int row, int column) {
         // Don't call findCellComment directly, otherwise
         //  two calls to this method will result in two
         //  new HSSFComment instances, which is bad
@@ -1846,25 +1847,26 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
       * with a cell comparison operator and
       * formatting rules such as font format, border format and pattern format
       *
-      * @param comparisonOperation - one of the following values: <p>
-      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_BETWEEN}</li>
-      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_BETWEEN}</li>
-      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_EQUAL}</li>
-      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_EQUAL}</li>
-      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_GT}</li>
-      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_LT}</li>
-      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_GE}</li>
-      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_LE}</li>
+      * @param comparisonOperation - a constant value from
+      *         <tt>{@link HSSFConditionalFormattingRule.ComparisonOperator}</tt>: <p>
+      * <ul>
+      *         <li>BETWEEN</li>
+      *         <li>NOT_BETWEEN</li>
+      *         <li>EQUAL</li>
+      *         <li>NOT_EQUAL</li>
+      *         <li>GT</li>
+      *         <li>LT</li>
+      *         <li>GE</li>
+      *         <li>LE</li>
+      * </ul>
       * </p>
       * @param formula1 - formula for the valued, compared with the cell
       * @param formula2 - second formula (only used with
       * {@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_BETWEEN}) and
       * {@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_BETWEEN} operations)
-      * @param fontFmt - font formatting rules
-      * @param bordFmt - border formatting rules
-      * @param patternFmt - pattern formatting rules
-      * @return
-      *
+      * @param fontFmt - font formatting rules (may be <code>null</code>)
+      * @param bordFmt - border formatting rules (may be <code>null</code>)
+      * @param patternFmt - pattern formatting rules (may be <code>null</code>)
       */
      public HSSFConditionalFormattingRule createConditionalFormattingRule(
              byte comparisonOperation,
@@ -1872,14 +1874,11 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
              String formula2,
              HSSFFontFormatting fontFmt,
              HSSFBorderFormatting bordFmt,
-             HSSFPatternFormatting patternFmt)
-     {
-         HSSFConditionalFormattingRule cf = new HSSFConditionalFormattingRule(workbook);
-         cf.setFontFormatting(fontFmt);
-         cf.setBorderFormatting(bordFmt);
-         cf.setPatternFormatting(patternFmt);
-         cf.setCellComparisonCondition(comparisonOperation, formula1, formula2);
-         return cf;
+             HSSFPatternFormatting patternFmt) {
+    	 
+        Workbook wb = workbook.getWorkbook();
+        CFRuleRecord rr = CFRuleRecord.create(wb, comparisonOperation, formula1, formula2);
+        return new HSSFConditionalFormattingRule(wb, rr, fontFmt, bordFmt, patternFmt);
      }
 
      /**
@@ -1888,38 +1887,19 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
       *
       * The formatting rules are applied by Excel when the value of the formula not equal to 0.
       *
-      * @param comparisonOperation - one of the following values: <p>
-      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_BETWEEN}</li>
-      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_BETWEEN}</li>
-      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_EQUAL}</li>
-      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_EQUAL}</li>
-      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_GT}</li>
-      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_LT}</li>
-      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_GE}</li>
-      *         <li>{@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_LE}</li>
-      * </p>
-      * @param formula1 - formula for the valued, compared with the cell
-      * @param formula2 - second formula (only used with
-      * {@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_BETWEEN}) and
-      * {@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_BETWEEN} operations)
-      * @param fontFmt - font formatting rules
-      * @param bordFmt - border formatting rules
-      * @param patternFmt - pattern formatting rules
-      * @return
-      *
+      * @param formula - formula for the valued, compared with the cell
+      * @param fontFmt - font formatting rules (may be <code>null</code>)
+      * @param bordFmt - border formatting rules (may be <code>null</code>)
+      * @param patternFmt - pattern formatting rules (may be <code>null</code>)
       */
      public HSSFConditionalFormattingRule createConditionalFormattingRule(
              String formula,
              HSSFFontFormatting fontFmt,
              HSSFBorderFormatting bordFmt,
-             HSSFPatternFormatting patternFmt)
-     {
-         HSSFConditionalFormattingRule cf = new HSSFConditionalFormattingRule(workbook);
-         cf.setFontFormatting(fontFmt);
-         cf.setBorderFormatting(bordFmt);
-         cf.setPatternFormatting(patternFmt);
-         cf.setFormulaCondition(formula);
-         return cf;
+             HSSFPatternFormatting patternFmt) {
+         Workbook wb = workbook.getWorkbook();
+         CFRuleRecord rr = CFRuleRecord.create(wb, formula);
+         return new HSSFConditionalFormattingRule(wb, rr, fontFmt, bordFmt, patternFmt);
      }
 
      /**
@@ -1934,8 +1914,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
       * @param cf HSSFConditionalFormatting object
       * @return index of the new Conditional Formatting object
       */
-     public int addConditionalFormatting( HSSFConditionalFormatting cf )
-     {
+     public int addConditionalFormatting( HSSFConditionalFormatting cf ) {
          CFRecordsAggregate cfraClone = cf.getCFRecordsAggregate().cloneCFAggregate();
 
          return sheet.addConditionalFormatting(cfraClone);
@@ -1945,46 +1924,46 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
       * Allows to add a new Conditional Formatting set to the sheet.
       *
       * @param regions - list of rectangular regions to apply conditional formatting rules
-      * @param cfRules - set of up to three conditional formatting rules
+      * @param hcfRules - set of up to three conditional formatting rules
       *
       * @return index of the newly created Conditional Formatting object
       */
 
-     public int addConditionalFormatting( Region [] regions, HSSFConditionalFormattingRule [] cfRules )
-     {
-         HSSFConditionalFormatting cf = new HSSFConditionalFormatting(this);
-         cf.setFormattingRegions(regions);
-         if( cfRules != null )
-         {
-             for( int i=0; i!= cfRules.length; i++ )
-             {
-                 cf.addRule(cfRules[i]);
-             }
-         }
-         return sheet.addConditionalFormatting(cf.getCFRecordsAggregate());
+    public int addConditionalFormatting(Region [] regions, HSSFConditionalFormattingRule [] hcfRules) {
+        if (regions == null) {
+            throw new IllegalArgumentException("regions must not be null");
+        }
+        if (hcfRules == null) {
+            throw new IllegalArgumentException("hcfRules must not be null");
+        }
+
+        CFRuleRecord[] rules = new CFRuleRecord[hcfRules.length];
+        for (int i = 0; i != hcfRules.length; i++) {
+            rules[i] = hcfRules[i].getCfRuleRecord();
+        }
+        CFRecordsAggregate cfra = new CFRecordsAggregate(regions, rules);
+        return sheet.addConditionalFormatting(cfra);
      }
 
     /**
      * gets Conditional Formatting object at a particular index
-     * @param index of the Conditional Formatting object to fetch
+     * 
+     * @param index
+     *            of the Conditional Formatting object to fetch
      * @return Conditional Formatting object
      */
-
-    public HSSFConditionalFormatting getConditionalFormattingAt(int index)
-    {
+    public HSSFConditionalFormatting getConditionalFormattingAt(int index) {
         CFRecordsAggregate cf = sheet.getCFRecordsAggregateAt(index);
-        if( cf != null )
-        {
-            return new HSSFConditionalFormatting(this,cf);
+        if (cf == null) {
+            return null;
         }
-        return null;
+        return new HSSFConditionalFormatting(this,cf);
     }
 
     /**
      * @return number of Conditional Formatting objects of the sheet
      */
-    public int getNumConditionalFormattings()
-    {
+    public int getNumConditionalFormattings() {
         return sheet.getNumConditionalFormattings();
     }
 
@@ -1992,8 +1971,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * removes a Conditional Formatting object by index
      * @param index of a Conditional Formatting object to remove
      */
-    public void removeConditionalFormatting(int index)
-    {
+    public void removeConditionalFormatting(int index) {
         sheet.removeConditionalFormatting(index);
     }
 }

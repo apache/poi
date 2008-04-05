@@ -27,11 +27,11 @@ import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
  * @author Danny Mui (dmui at apache dot org) (Leftover handling)
  */
 public final class FuncPtg extends AbstractFunctionPtg {
-    
+
     public final static byte sid  = 0x21;
     public final static int  SIZE = 3;
     private int numParams=0;
-    
+
     /**
      * FuncPtgs are defined to be 4 bytes but the actual FuncPtg uses only 2 bytes.
      * If we have leftOvers that are read from the file we should serialize them back out.
@@ -39,18 +39,18 @@ public final class FuncPtg extends AbstractFunctionPtg {
      * If the leftovers are removed, a prompt "Warning: Data may have been lost occurs in Excel"
      */
 	//protected byte[] leftOvers = null;
-    
+
     private FuncPtg() {
-      //Required for clone methods      
+      //Required for clone methods
     }
 
-    /**Creates new function pointer from a byte array 
-     * usually called while reading an excel file. 
+    /**Creates new function pointer from a byte array
+     * usually called while reading an excel file.
      */
     public FuncPtg(RecordInputStream in) {
         //field_1_num_args = data[ offset + 0 ];
         field_2_fnc_index  = in.readShort();
-        
+
         FunctionMetadata fm = FunctionMetadataRegistry.getFunctionByIndex(field_2_fnc_index);
         if(fm == null) {
             throw new RuntimeException("Invalid built-in function index (" + field_2_fnc_index + ")");
@@ -62,12 +62,12 @@ public final class FuncPtg extends AbstractFunctionPtg {
         numParams = numberOfParameters;
         paramClass = new byte[] { Ptg.CLASS_VALUE, }; // TODO
     }
-    
+
     public void writeBytes(byte[] array, int offset) {
         array[offset+0]= (byte) (sid + ptgClass);
         LittleEndian.putShort(array,offset+1,field_2_fnc_index);
     }
-    
+
     public int getNumberOfOperands() {
         return numParams;
     }
@@ -79,11 +79,11 @@ public final class FuncPtg extends AbstractFunctionPtg {
       ptg.setClass(ptgClass);
      return ptg;
     }
-    
+
     public int getSize() {
         return SIZE;
     }
-    
+
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
         sb.append(getClass().getName()).append(" [");

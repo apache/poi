@@ -23,27 +23,27 @@ import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 
 
 /**
- * This class provides the base functionality for Excel sheet functions 
+ * This class provides the base functionality for Excel sheet functions
  * There are two kinds of function Ptgs - tFunc and tFuncVar
  * Therefore, this class will have ONLY two subclasses
  * @author  Avik Sengupta
  * @author Andrew C. Oliver (acoliver at apache dot org)
  */
 public abstract class AbstractFunctionPtg extends OperationPtg {
-    
+
     /**
      * The name of the IF function (i.e. "IF").  Extracted as a constant for clarity.
-     */ 
+     */
     public static final String FUNCTION_NAME_IF = "IF";
     /** All external functions have function index 255 */
     private static final short FUNCTION_INDEX_EXTERNAL = 255;
-    
+
     protected byte returnClass;
     protected byte[] paramClass;
-    
+
     protected byte field_1_num_args;
     protected short field_2_fnc_index;
- 
+
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
         sb.append(getClass().getName()).append(" [");
@@ -51,17 +51,17 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         sb.append("]");
         return sb.toString();
     }
-   
+
     public int getType() {
         return -1;
-    }   
-    
-   
-    
+    }
+
+
+
     public short getFunctionIndex() {
         return field_2_fnc_index;
     }
-    
+
     public String getName() {
         return lookupName(field_2_fnc_index);
     }
@@ -72,14 +72,14 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     public boolean isExternalFunction() {
         return field_2_fnc_index == FUNCTION_INDEX_EXTERNAL;
     }
-    
+
     public String toFormulaString(Workbook book) {
         return getName();
     }
-    
+
     public String toFormulaString(String[] operands) {
-        StringBuffer buf = new StringBuffer();        
-        
+        StringBuffer buf = new StringBuffer();
+
         if(isExternalFunction()) {
             buf.append(operands[0]); // first operand is actually the function name
             appendArgs(buf, 1, operands);
@@ -100,23 +100,23 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         }
         buf.append(")");
     }
-    
+
     public abstract void writeBytes(byte[] array, int offset);
     public abstract int getSize();
-    
-   
+
+
     /**
      * Used to detect whether a function name found in a formula is one of the standard excel functions
      * <p>
      * The name matching is case insensitive.
-     * @return <code>true</code> if the name specifies a standard worksheet function, 
+     * @return <code>true</code> if the name specifies a standard worksheet function,
      *  <code>false</code> if the name should be assumed to be an external function.
      */
     public static final boolean isInternalFunctionName(String name) {
         short ix = FunctionMetadataRegistry.lookupIndexByName(name.toUpperCase());
         return ix >= 0;
     }
-    
+
     protected String lookupName(short index) {
         if(index == FunctionMetadataRegistry.FUNCTION_INDEX_EXTERNAL) {
             return "#external#";
@@ -127,7 +127,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         }
         return fm.getName();
     }
-    
+
     /**
      * Resolves internal function names into function indexes.
      * <p>
@@ -145,7 +145,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     public byte getDefaultOperandClass() {
         return returnClass;
     }
-    
+
     public byte getParameterClass(int index) {
         try {
             return paramClass[index];

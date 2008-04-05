@@ -46,7 +46,7 @@ final class FunctionMetadataReader {
 
 	public static FunctionMetadataRegistry createRegistry() {
 		InputStream is = FunctionMetadataReader.class.getResourceAsStream(METADATA_FILE_NAME);
-		if(is == null) {
+		if (is == null) {
 			throw new RuntimeException("resource '" + METADATA_FILE_NAME + "' not found");
 		}
 

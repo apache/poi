@@ -21,7 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Collects all tests for this package.
+ * Collects all tests for this <tt>org.apache.poi.hssf.record.formula.function</tt>.
  * 
  * @author Josh Micich
  */

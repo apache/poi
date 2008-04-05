@@ -26,6 +26,7 @@ import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -278,5 +279,32 @@ public class TestShapes extends TestCase {
 
         line = (Line)grshape[1];
         assertEquals(new Rectangle(300, 300, 500, 0), line.getAnchor());
+    }
+
+    /**
+     * Test functionality of Sheet.removeShape(Shape shape)
+     */
+    public void testRemoveShapes() throws IOException {
+        String file = System.getProperty("HSLF.testdata.path")+ "/with_textbox.ppt";
+        SlideShow ppt = new SlideShow(new HSLFSlideShow(file));
+        Slide sl = ppt.getSlides()[0];
+        Shape[] sh = sl.getShapes();
+        assertEquals("expected four shaped in " + file, 4, sh.length);
+        //remove all
+        for (int i = 0; i < sh.length; i++) {
+            boolean ok = sl.removeShape(sh[i]);
+            assertTrue("Failed to delete shape #" + i, ok);
+        }
+        //now Slide.getShapes() should return an empty array
+        assertEquals("expected 0 shaped in " + file, 0, sl.getShapes().length);
+
+        //serialize and read again. The file should be readable and contain no shapes
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ppt.write(out);
+        out.close();
+
+        ppt = new SlideShow(new ByteArrayInputStream(out.toByteArray()));
+        sl = ppt.getSlides()[0];
+        assertEquals("expected 0 shaped in " + file, 0, sl.getShapes().length);
     }
 }

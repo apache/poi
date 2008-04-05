@@ -357,14 +357,14 @@ extends TestCase {
         book.createSheet("TEST");
         HSSFSheet sheet = book.cloneSheet(0);
         book.setSheetName(1,"CLONE");
-        sheet.createRow(0).createCell((short)0).setCellValue("Test");
+        sheet.createRow(0).createCell((short)0).setCellValue(new HSSFRichTextString("Test"));
         book.write(out);
         
         book = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
         sheet = book.getSheet("CLONE");
         HSSFRow row = sheet.getRow(0);
         HSSFCell cell = row.getCell((short)0);
-        System.out.println(cell.getStringCellValue());
+        assertEquals("Test", cell.getRichStringCellValue().getString());
     }
     
     /**

@@ -28,8 +28,6 @@ import org.apache.poi.hssf.record.formula.*;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 
-
-
 /**
  * This class parses a formula string into a List of tokens in RPN order.
  * Inspired by
@@ -48,11 +46,11 @@ import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
  *  @author Pavel Krupets (pkrupets at palmtreebusiness dot com)
  */
 public final class FormulaParser {
-    
+
     /**
      * Specific exception thrown when a supplied formula does not parse properly.<br/>
      * Primarily used by test cases when testing for specific parsing exceptions.</p>
-     *    
+     *
      */
     static final class FormulaParseException extends RuntimeException {
         // This class was given package scope until it would become clear that it is useful to
