@@ -31,6 +31,7 @@
         <menu-item label="Overview" href="index.html"/>
         <menu-item label="Quick Guide" href="quick-guide.html"/>
         <menu-item label="HOWTO" href="how-to.html"/>
+        <menu-item label="HSSF to SS Converting" href="converting.html"/>
         <menu-item label="Formula Support" href="formula.html" />
         <menu-item label="Formula Evaluation" href="eval.html" />
 		<menu-item label="Eval Dev Guide" href="eval-devguide.html" />

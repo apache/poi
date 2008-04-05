@@ -45,20 +45,26 @@
                 <li>an eventmodel api for efficient read-only access</li>
                 <li>a full usermodel api for creating, reading and modifying XLS files</li>
             </ul>
+            <p>For people converting from pure HSSF usermodel, who wish
+              to use the joint SS Usermodel for HSSF and XSSF support, then
+              see the <link href="converting.html">ss usermodel converting
+              guide</link>.
+            </p>
             <p>
         An alternate way of generating a spreadsheet is via the <link href="http://cocoon.apache.org">Cocoon</link> serializer (yet you'll still be using HSSF indirectly). 
          With Cocoon you can serialize any XML datasource (which might be a ESQL page outputting in SQL for instance) by simply 
         applying the stylesheet and designating the serializer.
             </p>
             <p>
-        If you're merely reading spreadsheet data, then use the eventmodel api
-        in the org.apache.poi.hssf.eventusermodel package.
+        If you're merely reading spreadsheet data, then use the 
+        eventmodel api in either the org.apache.poi.hssf.eventusermodel 
+        package, or the org.apache.poi.xssf.eventusermodel package, depending
+        on your file format.
             </p>
             <p>
         If you're modifying spreadsheet data then use the usermodel api.  You
         can also generate spreadsheets this way.
             </p>
-
         </section>
     </body>
 </document>
