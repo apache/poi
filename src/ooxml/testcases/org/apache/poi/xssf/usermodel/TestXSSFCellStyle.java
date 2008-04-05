@@ -183,4 +183,12 @@ public class TestXSSFCellStyle extends TestCase {
 		cellStyle.setVerticalAlignmentEnum(STVerticalAlignment.JUSTIFY);
 		assertEquals((short)4, cellStyle.getVerticalAlignment());
 	}
+	
+	public void testGetSetWrapText() {
+		assertFalse(cellStyle.getWrapText());
+		cellXf.getAlignment().setWrapText(true);
+		assertTrue(cellStyle.getWrapText());
+		cellStyle.setWrapText(false);
+		assertFalse(cellXf.getAlignment().getWrapText());
+	}
 }
