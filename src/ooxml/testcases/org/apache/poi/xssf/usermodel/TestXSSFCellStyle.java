@@ -23,6 +23,7 @@ import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellXfs;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
@@ -30,7 +31,9 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STHorizontalAlignment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment;
 
 
 public class TestXSSFCellStyle extends TestCase {
@@ -41,12 +44,14 @@ public class TestXSSFCellStyle extends TestCase {
 	private CTFont ctFont;
 	private CTXf cellStyleXf;
 	private CTXf cellXf;
+	private CTCellXfs cellXfs;
 	private XSSFCellStyle cellStyle;
+	private CTStylesheet ctStylesheet;
 
 	public void setUp() {
 		stylesTable = new StylesTable();
 		
-		CTStylesheet ctStylesheet = stylesTable._getRawStylesheet();
+		ctStylesheet = stylesTable._getRawStylesheet();
 		
 		// Until we do XSSFBorder properly, cheat
 		ctBorderA = CTBorder.Factory.newInstance();
@@ -69,7 +74,8 @@ public class TestXSSFCellStyle extends TestCase {
 		
 		cellStyleXf = ctStylesheet.addNewCellStyleXfs().addNewXf();
 		cellStyleXf.setBorderId(0);
-		cellXf = ctStylesheet.addNewCellXfs().addNewXf();
+		cellXfs = ctStylesheet.addNewCellXfs();
+		cellXf = cellXfs.addNewXf();
 		cellXf.setXfId(0);
 		cellStyle = new XSSFCellStyle(cellXf, cellStyleXf, stylesTable);
 	}
@@ -136,5 +142,45 @@ public class TestXSSFCellStyle extends TestCase {
 	
 	public void testGetFont() {
 		assertNotNull(cellStyle.getFont());
+	}
+	
+	public void testGetSetHidden() {
+		assertFalse(cellStyle.getHidden());
+		cellXf.getProtection().setHidden(true);
+		assertTrue(cellStyle.getHidden());
+		cellStyle.setHidden(false);
+		assertFalse(cellStyle.getHidden());
+	}
+	
+	public void testGetSetLocked() {
+		assertFalse(cellStyle.getLocked());
+		cellXf.getProtection().setLocked(true);
+		assertTrue(cellStyle.getLocked());
+		cellStyle.setLocked(false);
+		assertFalse(cellStyle.getLocked());
+	}
+	
+	public void testGetSetIndent() {
+		assertEquals((short)0, cellStyle.getIndention());
+		cellXf.getAlignment().setIndent(3);
+		assertEquals((short)3, cellStyle.getIndention());
+		cellStyle.setIndention((short) 13);
+		assertEquals((short)13, cellXf.getAlignment().getIndent());
+	}
+	
+	public void testGetSetAlignement() {
+		assertEquals(1, cellStyle.getAlignment());
+		cellStyle.setAlignment((short)2);
+		assertEquals(STHorizontalAlignment.LEFT, cellStyle.getAlignmentEnum());
+		cellStyle.setAlignementEnum(STHorizontalAlignment.JUSTIFY);
+		assertEquals((short)6, cellStyle.getAlignment());
+	}
+	
+	public void testGetSetVerticalAlignment() {
+		assertEquals(1, cellStyle.getVerticalAlignment());
+		cellStyle.setVerticalAlignment((short)2);
+		assertEquals(STVerticalAlignment.CENTER, cellStyle.getVerticalAlignmentEnum());
+		cellStyle.setVerticalAlignmentEnum(STVerticalAlignment.JUSTIFY);
+		assertEquals((short)4, cellStyle.getVerticalAlignment());
 	}
 }

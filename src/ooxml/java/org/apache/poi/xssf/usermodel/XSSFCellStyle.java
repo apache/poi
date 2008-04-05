@@ -22,11 +22,17 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.StylesSource;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.usermodel.extensions.XSSFCellAlignment;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSides;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellAlignment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellProtection;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle.Enum;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STHorizontalAlignment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment.Enum;
 
 
 public class XSSFCellStyle implements CellStyle {
@@ -36,6 +42,7 @@ public class XSSFCellStyle implements CellStyle {
 	private XSSFCellBorder cellBorder;
 	private XSSFCellFill cellFill;
 	private XSSFFont font;
+	private XSSFCellAlignment cellAlignment;
 	
 	/**
 	 * Creates a Cell Style from the supplied parts
@@ -75,8 +82,11 @@ public class XSSFCellStyle implements CellStyle {
 	}
 	
 	public short getAlignment() {
-		// TODO Auto-generated method stub
-		return 0;
+		return (short)getAlignmentEnum().intValue();
+	}
+	
+	public STHorizontalAlignment.Enum getAlignmentEnum() {
+		return getCellAlignment().getHorizontal();
 	}
 
 	public short getBorderBottom() {
@@ -135,8 +145,7 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public Font getFont(Workbook parentWorkbook) {
-		// TODO Auto-generated method stub
-		return null;
+		return getFont();
 	}
 	
 	public Font getFont() {
@@ -147,18 +156,15 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public short getFontIndex() {
-		// TODO Auto-generated method stub
-		return 0;
+		return (short) getFontId();
 	}
 
 	public boolean getHidden() {
-		// TODO Auto-generated method stub
-		return false;
+		return getCellProtection().getHidden();
 	}
 
 	public short getIndention() {
-		// TODO Auto-generated method stub
-		return 0;
+		return (short) getCellAlignment().getIndent();
 	}
 
 	public short getIndex() {
@@ -171,8 +177,7 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public boolean getLocked() {
-		// TODO Auto-generated method stub
-		return false;
+		return getCellProtection().getLocked();
 	}
 
 	public short getRightBorderColor() {
@@ -180,8 +185,7 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public short getRotation() {
-		// TODO Auto-generated method stub
-		return 0;
+		return (short) getCellAlignment().getTextRotation();
 	}
 
 	public short getTopBorderColor() {
@@ -189,18 +193,23 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public short getVerticalAlignment() {
-		// TODO Auto-generated method stub
-		return 0;
+		return (short) getVerticalAlignmentEnum().intValue();
+	}
+	
+	public STVerticalAlignment.Enum getVerticalAlignmentEnum() {
+		return getCellAlignment().getVertical();
 	}
 
 	public boolean getWrapText() {
-		// TODO Auto-generated method stub
-		return false;
+		return getCellAlignment().getWrapText();
 	}
 
 	public void setAlignment(short align) {
-		// TODO Auto-generated method stub
-		
+		getCellAlignment().setHorizontal(STHorizontalAlignment.Enum.forInt(align));
+	}
+	
+	public void setAlignementEnum(STHorizontalAlignment.Enum align) {
+		getCellAlignment().setHorizontal(align);
 	}
 
 	public void setBorderBottom(short border) {
@@ -253,13 +262,11 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public void setHidden(boolean hidden) {
-		// TODO Auto-generated method stub
-		
+		getCellProtection().setHidden(hidden);
 	}
 
 	public void setIndention(short indent) {
-		// TODO Auto-generated method stub
-		
+		getCellAlignment().setIndent(indent);
 	}
 
 	public void setLeftBorderColor(short color) {
@@ -268,8 +275,7 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public void setLocked(boolean locked) {
-		// TODO Auto-generated method stub
-		
+		getCellProtection().setLocked(locked);
 	}
 
 	public void setRightBorderColor(short color) {
@@ -288,8 +294,11 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public void setVerticalAlignment(short align) {
-		// TODO Auto-generated method stub
-		
+		setVerticalAlignmentEnum(STVerticalAlignment.Enum.forInt(align));
+	}
+
+	public void setVerticalAlignmentEnum(STVerticalAlignment.Enum align) {
+		getCellAlignment().setVertical(align);
 	}
 
 	public void setWrapText(boolean wrapped) {
@@ -326,7 +335,7 @@ public class XSSFCellStyle implements CellStyle {
 		return (int) cellStyleXf.getFillId();
 	}
 
-	private Enum getBorderStyle(BorderSides side) {
+	private STBorderStyle.Enum getBorderStyle(BorderSides side) {
 		return getCellBorder().getBorderStyle(side);
 	}
 
@@ -339,6 +348,27 @@ public class XSSFCellStyle implements CellStyle {
 			return (int) cellXf.getFontId();
 		}
 		return (int) cellStyleXf.getFontId();
+	}
+
+	private CTCellProtection getCellProtection() {
+		if (cellXf.getProtection() == null) {
+			CTCellProtection protection = cellXf.addNewProtection();
+		}
+		return cellXf.getProtection();
+	}
+
+	private XSSFCellAlignment getCellAlignment() {
+		if (this.cellAlignment == null) {
+			this.cellAlignment = new XSSFCellAlignment(getCTCellAlignment());
+		}
+		return this.cellAlignment;
+	}
+
+	private CTCellAlignment getCTCellAlignment() {
+		if (cellXf.getAlignment() == null) {
+			cellXf.setAlignment(CTCellAlignment.Factory.newInstance());
+		}
+		return cellXf.getAlignment();
 	}
 	
 }
