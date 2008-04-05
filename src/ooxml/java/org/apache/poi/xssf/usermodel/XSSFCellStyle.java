@@ -25,7 +25,8 @@ import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellAlignment;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
-import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSides;
+import org.apache.poi.xssf.usermodel.extensions.XSSFColor;
+import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellAlignment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellProtection;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
@@ -90,39 +91,39 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public short getBorderBottom() {
-		return (short) (getBorderStyle(BorderSides.BOTTOM).intValue() - 1);
+		return getBorderStyleAsShort(BorderSide.BOTTOM);
 	}
 	
 	public String getBorderBottomAsString() {
-		return getBorderStyle(BorderSides.BOTTOM).toString();
+		return getBorderStyleAsString(BorderSide.BOTTOM);
 	}
 
 	public short getBorderLeft() {
-		return (short) (getBorderStyle(BorderSides.LEFT).intValue() - 1);
+		return getBorderStyleAsShort(BorderSide.LEFT);
 	}
 	
 	public String getBorderLeftAsString() {
-		return getBorderStyle(BorderSides.LEFT).toString();
+		return getBorderStyleAsString(BorderSide.LEFT);
 	}
 
 	public short getBorderRight() {
-		return (short) (getBorderStyle(BorderSides.RIGHT).intValue() - 1);
+		return getBorderStyleAsShort(BorderSide.RIGHT);
 	}
 	
 	public String getBorderRightAsString() {
-		return getBorderStyle(BorderSides.RIGHT).toString();
+		return getBorderStyleAsString(BorderSide.RIGHT);
 	}
 
 	public short getBorderTop() {
-		return (short) (getBorderStyle(BorderSides.TOP).intValue() - 1);
+		return getBorderStyleAsShort(BorderSide.TOP);
 	}
 	
 	public String getBorderTopAsString() {
-		return getBorderStyle(BorderSides.TOP).toString();
+		return getBorderStyleAsString(BorderSide.TOP);
 	}
 
 	public short getBottomBorderColor() {
-		return getBorderColorBySide(BorderSides.BOTTOM);
+		return getBorderColorIndexed(BorderSide.BOTTOM);
 	}
 
 	public short getDataFormat() {
@@ -173,7 +174,7 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public short getLeftBorderColor() {
-		return getBorderColorBySide(BorderSides.LEFT);
+		return getBorderColorIndexed(BorderSide.LEFT);
 	}
 
 	public boolean getLocked() {
@@ -181,7 +182,7 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public short getRightBorderColor() {
-		return getBorderColorBySide(BorderSides.RIGHT);
+		return getBorderColorIndexed(BorderSide.RIGHT);
 	}
 
 	public short getRotation() {
@@ -189,7 +190,7 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public short getTopBorderColor() {
-		return getBorderColorBySide(BorderSides.TOP);
+		return getBorderColorIndexed(BorderSide.TOP);
 	}
 
 	public short getVerticalAlignment() {
@@ -213,28 +214,39 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public void setBorderBottom(short border) {
-		// TODO Auto-generated method stub
-		
+		setBorderBottomEnum(STBorderStyle.Enum.forInt(border));
+	}
+	
+	public void setBorderBottomEnum(STBorderStyle.Enum style) {
+		getCellBorder().setBorderStyle(BorderSide.BOTTOM, style);
 	}
 
 	public void setBorderLeft(short border) {
-		// TODO Auto-generated method stub
-		
+		setBorderLeftEnum(STBorderStyle.Enum.forInt(border));
+	}
+	
+	public void setBorderLeftEnum(STBorderStyle.Enum style) {
+		getCellBorder().setBorderStyle(BorderSide.LEFT, style);
 	}
 
 	public void setBorderRight(short border) {
-		// TODO Auto-generated method stub
-		
+		setBorderRightEnum(STBorderStyle.Enum.forInt(border));
+	}
+	
+	public void setBorderRightEnum(STBorderStyle.Enum style) {
+		getCellBorder().setBorderStyle(BorderSide.RIGHT, style);
 	}
 
 	public void setBorderTop(short border) {
-		// TODO Auto-generated method stub
-		
+		setBorderTopEnum(STBorderStyle.Enum.forInt(border));
+	}
+	
+	public void setBorderTopEnum(STBorderStyle.Enum style) {
+		getCellBorder().setBorderStyle(BorderSide.TOP, style);
 	}
 
 	public void setBottomBorderColor(short color) {
-		// TODO Auto-generated method stub
-		
+		setBorderColorIndexed(BorderSide.BOTTOM, color);
 	}
 
 	public void setDataFormat(short fmt) {
@@ -270,8 +282,7 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public void setLeftBorderColor(short color) {
-		// TODO Auto-generated method stub
-		
+		setBorderColorIndexed(BorderSide.LEFT, color);
 	}
 
 	public void setLocked(boolean locked) {
@@ -279,8 +290,7 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public void setRightBorderColor(short color) {
-		// TODO Auto-generated method stub
-		
+		setBorderColorIndexed(BorderSide.RIGHT, color);
 	}
 
 	public void setRotation(short rotation) {
@@ -288,8 +298,7 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public void setTopBorderColor(short color) {
-		// TODO Auto-generated method stub
-		
+		setBorderColorIndexed(BorderSide.TOP, color);
 	}
 
 	public void setVerticalAlignment(short align) {
@@ -332,14 +341,6 @@ public class XSSFCellStyle implements CellStyle {
 		}
 		return (int) cellStyleXf.getFillId();
 	}
-
-	private STBorderStyle.Enum getBorderStyle(BorderSides side) {
-		return getCellBorder().getBorderStyle(side);
-	}
-
-	private short getBorderColorBySide(BorderSides side) {
-		return (short) getCellBorder().getBorderColor(side).getIndexed();
-	}
 	
 	private int getFontId() {
 		if (cellXf.isSetFontId()) {
@@ -367,6 +368,30 @@ public class XSSFCellStyle implements CellStyle {
 			cellXf.setAlignment(CTCellAlignment.Factory.newInstance());
 		}
 		return cellXf.getAlignment();
+	}
+
+	private short getBorderColorIndexed(BorderSide side) {
+		return (short) getBorderColor(side).getIndexed();
+	}
+
+	private XSSFColor getBorderColor(BorderSide side) {
+		return getCellBorder().getBorderColor(side);
+	}
+	
+	private void setBorderColorIndexed(BorderSide side, long color) {
+		getBorderColor(side).setIndexed(color);
+	}
+
+	private short getBorderStyleAsShort(BorderSide side) {
+		return (short) (getBorderStyle(side).intValue() - 1);
+	}
+	
+	private String getBorderStyleAsString(BorderSide side) {
+		return getBorderStyle(side).toString();
+	}
+
+	private STBorderStyle.Enum getBorderStyle(BorderSide side) {
+		return getCellBorder().getBorderStyle(side);
 	}
 	
 }

@@ -17,7 +17,7 @@
 
 package org.apache.poi.xssf.usermodel.extensions;
 
-import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSides;
+import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
@@ -38,11 +38,11 @@ public class TestXSSFBorder extends TestCase {
 		right.setStyle(STBorderStyle.NONE);
 		bottom.setStyle(STBorderStyle.THIN);
 		XSSFCellBorder cellBorderStyle = new XSSFCellBorder(border);
-		assertEquals("dashDot", cellBorderStyle.getBorderStyle(BorderSides.TOP).toString());
-		assertEquals("none", cellBorderStyle.getBorderStyle(BorderSides.RIGHT).toString());
-		assertEquals(1, cellBorderStyle.getBorderStyle(BorderSides.RIGHT).intValue());
-		assertEquals("thin", cellBorderStyle.getBorderStyle(BorderSides.BOTTOM).toString());
-		assertEquals(2, cellBorderStyle.getBorderStyle(BorderSides.BOTTOM).intValue());
+		assertEquals("dashDot", cellBorderStyle.getBorderStyle(BorderSide.TOP).toString());
+		assertEquals("none", cellBorderStyle.getBorderStyle(BorderSide.RIGHT).toString());
+		assertEquals(1, cellBorderStyle.getBorderStyle(BorderSide.RIGHT).intValue());
+		assertEquals("thin", cellBorderStyle.getBorderStyle(BorderSide.BOTTOM).toString());
+		assertEquals(2, cellBorderStyle.getBorderStyle(BorderSide.BOTTOM).intValue());
 	}
 	
 }
