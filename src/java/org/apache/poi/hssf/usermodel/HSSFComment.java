@@ -105,7 +105,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
      *
      * @return the 0-based column of the cell that contains the comment
      */
-    public short getColumn(){
+    public int getColumn(){
         return col;
     }
 

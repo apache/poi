@@ -29,7 +29,7 @@ import org.apache.poi.ss.usermodel.SharedStringSource;
 import org.apache.poi.ss.usermodel.StylesSource;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.xssf.util.CellReference;
+import org.apache.poi.ss.util.CellReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
@@ -222,7 +222,8 @@ public class XSSFCell implements Cell {
     }
 
     public void setCellComment(Comment comment) {
-    	String cellRef = new CellReference().convertRowColToString((short) row.getRowNum(), getCellNum());
+    	String cellRef =
+    		new CellReference(row.getRowNum(), getCellNum()).formatAsString();
 		row.getSheet().setCellComment(cellRef, (XSSFComment)comment);
     }
 

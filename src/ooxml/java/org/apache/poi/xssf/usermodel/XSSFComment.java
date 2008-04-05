@@ -20,7 +20,7 @@ import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CommentsSource;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.xssf.usermodel.helpers.RichTextStringHelper;
-import org.apache.poi.xssf.util.CellReference;
+import org.apache.poi.ss.util.CellReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
@@ -42,7 +42,7 @@ public class XSSFComment implements Comment {
 		return comments.getAuthor(comment.getAuthorId());
 	}
 
-	public short getColumn() {
+	public int getColumn() {
 		return (new CellReference(comment.getRef())).getCol();
 	}
 
@@ -63,7 +63,8 @@ public class XSSFComment implements Comment {
 
 	public void setColumn(short col) {
 		initializeRef();
-		String newRef = (new CellReference(comment.getRef())).convertRowColToString((short) getRow(), col);
+		String newRef = 
+			(new CellReference(getRow(), col)).formatAsString();
 		comment.setRef(newRef);
 	}
 
@@ -75,7 +76,8 @@ public class XSSFComment implements Comment {
 
 	public void setRow(int row) {
 		initializeRef();
-		String newRef = (new CellReference(comment.getRef())).convertRowColToString((short) row, getColumn());
+		String newRef =
+			(new CellReference(row, getColumn())).formatAsString();
 		comment.setRef(newRef);
 	}
 	

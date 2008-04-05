@@ -74,7 +74,7 @@ public class CommentShape extends TextboxShape {
      private NoteRecord createNoteRecord( HSSFComment shape, int shapeId )
     {
         NoteRecord note = new NoteRecord();
-        note.setColumn(shape.getColumn());
+        note.setColumn((short)shape.getColumn());
         note.setRow((short)shape.getRow());
         note.setFlags(shape.isVisible() ? NoteRecord.NOTE_VISIBLE : NoteRecord.NOTE_HIDDEN);
         note.setShapeId((short)shapeId);

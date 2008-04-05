@@ -63,7 +63,7 @@ public class Ref3DPtg extends Ptg {
     public Ref3DPtg(String cellref, short externIdx ) {
         CellReference c= new CellReference(cellref);
         setRow(c.getRow());
-        setColumn(c.getCol());
+        setColumn((short)c.getCol());
         setColRelative(!c.isColAbsolute());
         setRowRelative(!c.isRowAbsolute());   
         setExternSheetIndex(externIdx);

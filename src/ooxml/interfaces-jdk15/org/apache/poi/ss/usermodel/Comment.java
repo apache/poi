@@ -52,7 +52,7 @@ public interface Comment {
      *
      * @return the 0-based column of the cell that contains the comment
      */
-    short getColumn();
+    int getColumn();
 
     /**
      * Set the column of the cell that contains the comment

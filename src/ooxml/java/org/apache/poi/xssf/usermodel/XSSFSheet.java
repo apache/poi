@@ -34,9 +34,9 @@ import org.apache.poi.ss.usermodel.Patriarch;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
-import org.apache.poi.xssf.util.CellReference;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
@@ -377,7 +377,7 @@ public class XSSFSheet implements Sheet {
     public short getLeftCol() {
     	String cellRef = worksheet.getSheetViews().getSheetViewArray(0).getTopLeftCell();
     	CellReference cellReference = new CellReference(cellRef);
-        return cellReference.getCol();
+        return (short)cellReference.getCol();
     }
 
     public double getMargin(short margin) {
@@ -832,8 +832,8 @@ public class XSSFSheet implements Sheet {
     }
 
     public void showInPane(short toprow, short leftcol) {
-    	CellReference cellReference = new CellReference();
-    	String cellRef = cellReference.convertRowColToString(toprow, leftcol);
+    	CellReference cellReference = new CellReference(toprow, leftcol);
+    	String cellRef = cellReference.formatAsString();
     	getSheetTypeSheetView().setTopLeftCell(cellRef);
     }
 

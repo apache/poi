@@ -260,9 +260,9 @@ public class Area3DPtg extends Ptg implements AreaI
 		CellReference lastCell = ar.getLastCell();
 
 		setFirstRow(	(short) frstCell.getRow() );
-		setFirstColumn(		 frstCell.getCol() );
-		setLastRow(	 (short) lastCell.getRow() );
-		setLastColumn(		  lastCell.getCol() );
+		setFirstColumn(	(short) frstCell.getCol() );
+		setLastRow(     (short) lastCell.getRow() );
+		setLastColumn(  (short) lastCell.getCol() );
 		setFirstColRelative( !frstCell.isColAbsolute() );
 		setLastColRelative(  !lastCell.isColAbsolute() );
 		setFirstRowRelative( !frstCell.isRowAbsolute() );

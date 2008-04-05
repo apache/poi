@@ -22,8 +22,8 @@ import java.io.OutputStream;
 
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CommentsSource;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFComment;
-import org.apache.poi.xssf.util.CellReference;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTAuthors;
@@ -90,7 +90,8 @@ public class CommentsTable implements CommentsSource, XSSFModel {
 	}
 	
 	public XSSFComment findCellComment(int row, int column) {
-		return findCellComment(new CellReference().convertRowColToString((short)row, (short)column));
+		return findCellComment(
+				(new CellReference(row, column)).formatAsString() );
 	}
 	
 	public XSSFComment findCellComment(String cellRef) {
