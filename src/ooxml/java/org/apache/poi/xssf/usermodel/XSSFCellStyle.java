@@ -33,7 +33,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STHorizontalAlignment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment.Enum;
 
 
 public class XSSFCellStyle implements CellStyle {
@@ -313,6 +312,14 @@ public class XSSFCellStyle implements CellStyle {
 		getCellAlignment().setWrapText(wrapped);
 	}
 
+	public XSSFColor getBorderColor(BorderSide side) {
+		return getCellBorder().getBorderColor(side);
+	}
+	
+	public void setBorderColor(BorderSide side, XSSFColor color) {
+		getCellBorder().setBorderColor(side, color);
+	}
+
 	private XSSFCellBorder getCellBorder() {
 		if (cellBorder == null) {
 			// TODO make a common Cell Border object
@@ -372,10 +379,6 @@ public class XSSFCellStyle implements CellStyle {
 
 	private short getBorderColorIndexed(BorderSide side) {
 		return (short) getBorderColor(side).getIndexed();
-	}
-
-	private XSSFColor getBorderColor(BorderSide side) {
-		return getCellBorder().getBorderColor(side);
 	}
 	
 	private void setBorderColorIndexed(BorderSide side, long color) {

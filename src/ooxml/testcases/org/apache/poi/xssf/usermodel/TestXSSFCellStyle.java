@@ -22,6 +22,8 @@ import junit.framework.TestCase;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
+import org.apache.poi.xssf.usermodel.extensions.XSSFColor;
+import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellXfs;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
@@ -134,6 +136,66 @@ public class TestXSSFCellStyle extends TestCase {
 	public void testGetBorderTopAsString() {
 		ctBorderA.addNewTop().setStyle(STBorderStyle.HAIR);
 		assertEquals("hair", cellStyle.getBorderTopAsString());
+	}
+	
+	public void testGetSetBottomBorderColor() {
+		CTColor ctColor = ctBorderA.addNewBottom().addNewColor();
+		ctColor.setIndexed(2);
+		XSSFColor color = new XSSFColor(ctColor);
+		assertEquals((short)2, cellStyle.getBottomBorderColor());
+		CTColor anotherCtColor = CTColor.Factory.newInstance();
+		anotherCtColor.setIndexed(4);
+		anotherCtColor.setTheme(3);
+		anotherCtColor.setRgb("1234".getBytes());
+		XSSFColor anotherColor = new XSSFColor(anotherCtColor);
+		cellStyle.setBorderColor(BorderSide.BOTTOM, anotherColor);
+		assertEquals((short)4, cellStyle.getBottomBorderColor());
+		assertEquals(new String("1234".getBytes()), new String(cellStyle.getBorderColor(BorderSide.BOTTOM).getRgb()));
+	}
+	
+	public void testGetSetTopBorderColor() {
+		CTColor ctColor = ctBorderA.addNewTop().addNewColor();
+		ctColor.setIndexed(5);
+		XSSFColor color = new XSSFColor(ctColor);
+		assertEquals((short)5, cellStyle.getTopBorderColor());
+		CTColor anotherCtColor = CTColor.Factory.newInstance();
+		anotherCtColor.setIndexed(7);
+		anotherCtColor.setTheme(3);
+		anotherCtColor.setRgb("abcd".getBytes());
+		XSSFColor anotherColor = new XSSFColor(anotherCtColor);
+		cellStyle.setBorderColor(BorderSide.TOP, anotherColor);
+		assertEquals((short)7, cellStyle.getTopBorderColor());
+		assertEquals(new String("abcd".getBytes()), new String(cellStyle.getBorderColor(BorderSide.TOP).getRgb()));
+	}
+	
+	public void testGetSetLeftBorderColor() {
+		CTColor ctColor = ctBorderA.addNewLeft().addNewColor();
+		ctColor.setIndexed(2);
+		XSSFColor color = new XSSFColor(ctColor);
+		assertEquals((short)2, cellStyle.getLeftBorderColor());
+		CTColor anotherCtColor = CTColor.Factory.newInstance();
+		anotherCtColor.setIndexed(4);
+		anotherCtColor.setTheme(3);
+		anotherCtColor.setRgb("1234".getBytes());
+		XSSFColor anotherColor = new XSSFColor(anotherCtColor);
+		cellStyle.setBorderColor(BorderSide.LEFT, anotherColor);
+		assertEquals((short)4, cellStyle.getLeftBorderColor());
+		assertEquals(new String("1234".getBytes()), new String(cellStyle.getBorderColor(BorderSide.LEFT).getRgb()));
+	}
+	
+	public void testGetSetRightBorderColor() {
+		CTColor ctColor = ctBorderA.addNewRight().addNewColor();
+		ctColor.setIndexed(8);
+		XSSFColor color = new XSSFColor(ctColor);
+		assertEquals((short)8, cellStyle.getRightBorderColor());
+		CTColor anotherCtColor = CTColor.Factory.newInstance();
+		anotherCtColor.setIndexed(14);
+		anotherCtColor.setTheme(3);
+		anotherCtColor.setRgb("af67".getBytes());
+		XSSFColor anotherColor = new XSSFColor(anotherCtColor);
+		cellStyle.setBorderColor(BorderSide.RIGHT, anotherColor);
+		assertEquals((short)14, cellStyle.getRightBorderColor());
+		assertEquals(new String("af67".getBytes()), new String(cellStyle.getBorderColor(BorderSide.RIGHT).getRgb()));
 	}
 	
 	public void testGetFillBackgroundColor() {
