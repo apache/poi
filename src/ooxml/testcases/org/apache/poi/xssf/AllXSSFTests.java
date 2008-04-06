@@ -20,6 +20,7 @@ package org.apache.poi.xssf;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.apache.poi.ss.util.TestCellReference;
 import org.apache.poi.xssf.eventusermodel.TestXSSFReader;
 import org.apache.poi.xssf.extractor.TestXSSFExcelExtractor;
 import org.apache.poi.xssf.io.TestLoadSaveXSSF;
@@ -27,7 +28,6 @@ import org.apache.poi.xssf.model.TestCommentsTable;
 import org.apache.poi.xssf.model.TestStylesTable;
 import org.apache.poi.xssf.usermodel.AllXSSFUsermodelTests;
 import org.apache.poi.xssf.util.TestCTColComparator;
-import org.apache.poi.xssf.util.TestCellReference;
 import org.apache.poi.xssf.util.TestNumericRanges;
 
 /**
