@@ -117,11 +117,12 @@ public interface Cell {
     void setCellType(int cellType);
 
     /**
-     * get the cells type (numeric, formula or string)
+     * @return the cell's type (e.g. numeric, formula or string)
      * @see #CELL_TYPE_STRING
      * @see #CELL_TYPE_NUMERIC
      * @see #CELL_TYPE_FORMULA
      * @see #CELL_TYPE_BOOLEAN
+     * @see #CELL_TYPE_BLANK
      * @see #CELL_TYPE_ERROR
      */
 
