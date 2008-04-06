@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel.extensions;
 
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 
 public class XSSFColor {
@@ -64,5 +65,9 @@ public class XSSFColor {
 	
 	public void setTint(double tint) {
 		color.setTint(tint);
+	}
+
+	public void setToBorder(CTBorderPr border) {
+		border.setColor(this.color);
 	}
 }

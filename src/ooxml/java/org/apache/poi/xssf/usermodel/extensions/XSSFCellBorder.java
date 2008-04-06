@@ -22,7 +22,6 @@ import java.util.LinkedList;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle.Enum;
 
 
 public class XSSFCellBorder {
@@ -68,6 +67,10 @@ public class XSSFCellBorder {
 			borderPr.addNewColor();
 		}
 		return new XSSFColor(getBorder(side).getColor());
+	}
+
+	public void setBorderColor(BorderSide side, XSSFColor color) {
+		color.setToBorder(getBorder(side));
 	}
 	
 	private CTBorderPr getBorder(BorderSide side) {

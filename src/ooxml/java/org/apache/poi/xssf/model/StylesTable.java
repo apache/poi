@@ -35,15 +35,19 @@ import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorders;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellStyleXfs;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellXfs;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFills;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmts;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STFontScheme;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;
 
 
@@ -84,16 +88,8 @@ public class StylesTable implements StylesSource, XSSFModel {
     public StylesTable() {
     	doc = StyleSheetDocument.Factory.newInstance();
     	doc.addNewStyleSheet();
-    	
-    	// Add a single, default cell xf and cell style xf
-    	// Excel seems to require these
-    	CTXf[] ctxfs = new CTXf[2];
-    	for (int i = 0; i < ctxfs.length; i++) {
-			ctxfs[i] = CTXf.Factory.newInstance(); 
-			ctxfs[i].setNumFmtId(0);
-		}
-    	xfs.add(ctxfs[0]);
-    	styleXfs.add(ctxfs[1]);
+    	// Initialization required in order to make the document readable by MSExcel
+    	initialize();
     }
 
     /**
@@ -279,18 +275,24 @@ public class StylesTable implements StylesSource, XSSFModel {
     	doc.getStyleSheet().setNumFmts(formats);
     	
     	// Fonts
-    	CTFonts fnts = CTFonts.Factory.newInstance();
-    	fnts.setCount(fonts.size());
-    	fnts.setFontArray(
+    	CTFonts ctFonts = CTFonts.Factory.newInstance();
+    	ctFonts.setCount(fonts.size());
+    	ctFonts.setFontArray(
     			fonts.toArray(new CTFont[fonts.size()])
     	);
-    	doc.getStyleSheet().setFonts(fnts);
+    	doc.getStyleSheet().setFonts(ctFonts);
     	
     	// Fills
-    	// TODO
+    	CTFills ctFills = CTFills.Factory.newInstance();
+    	ctFills.setCount(fills.size());
+    	ctFills.setFillArray(fills.toArray(new CTFill[fills.size()]));
+    	doc.getStyleSheet().setFills(ctFills);
     	
     	// Borders
-    	// TODO
+    	CTBorders ctBorders = CTBorders.Factory.newInstance();
+    	ctBorders.setCount(borders.size());
+    	ctBorders.setBorderArray(borders.toArray(new CTBorder[borders.size()]));
+    	doc.getStyleSheet().setBorders(ctBorders);
     	
     	// Xfs
     	if(xfs.size() > 0) {
@@ -326,5 +328,52 @@ public class StylesTable implements StylesSource, XSSFModel {
 
     private long putFont(XSSFFont font, LinkedList<CTFont> fonts) {
     	return font.putFont(fonts);
+	}
+	private void initialize() {
+		CTFont ctFont = createDefaultFont();
+    	fonts.add(ctFont);
+    	
+    	CTFill ctFill = createDefaultFill();
+    	fills.add(ctFill);
+    	
+    	CTBorder ctBorder = createDefaultBorder();
+    	borders.add(ctBorder);
+    	
+    	CTXf styleXf = createDefaultXf();
+    	styleXfs.add(styleXf);
+    	CTXf xf = createDefaultXf();
+    	xf.setXfId(0);
+    	xfs.add(xf);
+	}
+	private CTXf createDefaultXf() {
+		CTXf ctXf = CTXf.Factory.newInstance();
+    	ctXf.setNumFmtId(0);
+    	ctXf.setFontId(0);
+    	ctXf.setFillId(0);
+    	ctXf.setBorderId(0);
+    	return ctXf;
+	}
+	private CTBorder createDefaultBorder() {
+		CTBorder ctBorder = CTBorder.Factory.newInstance();
+    	ctBorder.addNewBottom();
+    	ctBorder.addNewTop();
+    	ctBorder.addNewLeft();
+    	ctBorder.addNewRight();
+    	ctBorder.addNewDiagonal();
+		return ctBorder;
+	}
+	private CTFill createDefaultFill() {
+		CTFill ctFill = CTFill.Factory.newInstance();
+    	ctFill.addNewPatternFill().setPatternType(STPatternType.NONE);
+		return ctFill;
+	}
+	private CTFont createDefaultFont() {
+		CTFont ctFont = CTFont.Factory.newInstance();
+    	ctFont.addNewSz().setVal(11);
+    	ctFont.addNewColor().setTheme(1);
+    	ctFont.addNewName().setVal("Calibri");
+    	ctFont.addNewFamily().setVal(2);
+    	ctFont.addNewScheme().setVal(STFontScheme.MINOR);
+		return ctFont;
 	}
 }
