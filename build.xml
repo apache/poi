@@ -236,6 +236,7 @@ under the License.
         <path refid="ooxml.classpath"/>
         <pathelement location="${ooxml.output.dir}"/>
         <pathelement location="${ooxml.output.test.dir}"/>
+        <pathelement location="${main.output.test.dir}"/> <!-- ooxml tests use some utilities from main tests -->
         <pathelement location="${junit.jar1.dir}"/>
     </path>
 
@@ -790,7 +791,7 @@ under the License.
             <batchtest todir="${ooxml.reports.test}">
                 <fileset dir="${ooxml.src.test}">
                     <include name="**/Test*.java"/>
-                    <exclude name="**/AllTests.java"/>
+                    <exclude name="**/All*Tests.java"/>
                 </fileset>
             </batchtest>
         </junit>

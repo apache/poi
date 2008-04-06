@@ -35,8 +35,10 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
-
-public class XSSFCell implements Cell {
+/**
+ *
+ */
+public final class XSSFCell implements Cell {
 
     private static final String FALSE_AS_STRING = "0";
     private static final String TRUE_AS_STRING  = "1";
@@ -45,9 +47,9 @@ public class XSSFCell implements Cell {
     private int cellNum;
     private SharedStringSource sharedStringSource;
     private StylesSource stylesSource;
-    
+
     private POILogger logger = POILogFactory.getLogger(XSSFCell.class);
-    
+
     /**
      * Create a new XSSFCell. This method is protected to be used only by
      * tests.
@@ -55,7 +57,7 @@ public class XSSFCell implements Cell {
     protected XSSFCell(XSSFRow row) {
         this(row, CTCell.Factory.newInstance());
     }
-    
+
     public XSSFCell(XSSFRow row, CTCell cell) {
         this.cell = cell;
         this.row = row;
@@ -65,31 +67,31 @@ public class XSSFCell implements Cell {
         this.sharedStringSource = row.getSheet().getWorkbook().getSharedStringSource();
         this.stylesSource = row.getSheet().getWorkbook().getStylesSource();
     }
-    
+
     protected SharedStringSource getSharedStringSource() {
         return this.sharedStringSource;
     }
     protected StylesSource getStylesSource() {
-    	return this.stylesSource;
+        return this.stylesSource;
     }
 
     public boolean getBooleanCellValue() {
-        if (STCellType.B != cell.getT()) { 
+        if (STCellType.B != cell.getT()) {
             throw new NumberFormatException("You cannot get a boolean value from a non-boolean cell");
         }
         if (cell.isSetV()) {
-            return (TRUE_AS_STRING.equals(this.cell.getV()));            
+            return (TRUE_AS_STRING.equals(this.cell.getV()));
         }
-        
+
         return false;
     }
 
     public Comment getCellComment() {
-    	return row.getSheet().getCellComment(row.getRowNum(), getCellNum());
+        return row.getSheet().getCellComment(row.getRowNum(), getCellNum());
     }
 
     public String getCellFormula() {
-        if(this.cell.getF() == null) { 
+        if(this.cell.getF() == null) {
             throw new NumberFormatException("You cannot get a formula from a non-formula cell");
         }
         return this.cell.getF().getStringValue();
@@ -100,24 +102,32 @@ public class XSSFCell implements Cell {
     }
 
     public CellStyle getCellStyle() {
-    	// Zero is the empty default
-    	if(this.cell.getS() > 0) {
-    		return stylesSource.getStyleAt(this.cell.getS());
-    	}
-    	return null;
+        // Zero is the empty default
+        if(this.cell.getS() > 0) {
+            return stylesSource.getStyleAt(this.cell.getS());
+        }
+        return null;
     }
 
     public int getCellType() {
-    	// Detecting formulas is quite pesky,
-    	//  as they don't get their type set
-    	if(this.cell.getF() != null) {
-    		return CELL_TYPE_FORMULA;
-    	}
-    	
+        // Detecting formulas is quite pesky,
+        //  as they don't get their type set
+        if(this.cell.getF() != null) {
+            return CELL_TYPE_FORMULA;
+        }
+
         switch (this.cell.getT().intValue()) {
         case STCellType.INT_B:
             return CELL_TYPE_BOOLEAN;
         case STCellType.INT_N:
+            if(!cell.isSetV()) {
+                // ooxml does have a separate cell type of 'blank'.  A blank cell gets encoded as
+                // (either not present or) a numeric cell with no value set.
+                // The formula evaluator (and perhaps other clients of this interface) needs to
+                // distinguish blank values which sometimes get translated into zero and sometimes
+                // empty string, depending on context
+                return CELL_TYPE_BLANK;
+            }
             return CELL_TYPE_NUMERIC;
         case STCellType.INT_E:
             return CELL_TYPE_ERROR;
@@ -148,11 +158,11 @@ public class XSSFCell implements Cell {
      * Returns the error message, such as #VALUE!
      */
     public String getErrorCellString() {
-        if (STCellType.E != cell.getT()) { 
+        if (STCellType.E != cell.getT()) {
             throw new NumberFormatException("You cannot get a error value from a non-error cell");
         }
         if (this.cell.isSetV()) {
-        	return this.cell.getV();
+            return this.cell.getV();
         }
         return null;
     }
@@ -161,42 +171,59 @@ public class XSSFCell implements Cell {
      *  HSSFCell does. See {@link Cell} for details
      */
     public byte getErrorCellValue() {
-        if (STCellType.E != cell.getT()) { 
+        if (STCellType.E != cell.getT()) {
             throw new NumberFormatException("You cannot get a error value from a non-error cell");
         }
         if (this.cell.isSetV()) {
-        	String errS = this.cell.getV();
-        	if(errS.equals(Cell.ERROR_NULL.getStringRepr())) {
-        		return Cell.ERROR_NULL.getType();
-        	}
-        	if(errS.equals(Cell.ERROR_DIV0.getStringRepr())) {
-        		return Cell.ERROR_DIV0.getType();
-        	}
-        	if(errS.equals(Cell.ERROR_VALUE.getStringRepr())) {
-        		return Cell.ERROR_VALUE.getType();
-        	}
-        	if(errS.equals(Cell.ERROR_REF.getStringRepr())) {
-        		return Cell.ERROR_REF.getType();
-        	}
-        	if(errS.equals(Cell.ERROR_NAME.getStringRepr())) {
-        		return Cell.ERROR_NAME.getType();
-        	}
-        	if(errS.equals(Cell.ERROR_NUM.getStringRepr())) {
-        		return Cell.ERROR_NUM.getType();
-        	}
-        	return Cell.ERROR_NA.getType();
+            String errS = this.cell.getV();
+            if(errS.equals(Cell.ERROR_NULL.getStringRepr())) {
+                return Cell.ERROR_NULL.getType();
+            }
+            if(errS.equals(Cell.ERROR_DIV0.getStringRepr())) {
+                return Cell.ERROR_DIV0.getType();
+            }
+            if(errS.equals(Cell.ERROR_VALUE.getStringRepr())) {
+                return Cell.ERROR_VALUE.getType();
+            }
+            if(errS.equals(Cell.ERROR_REF.getStringRepr())) {
+                return Cell.ERROR_REF.getType();
+            }
+            if(errS.equals(Cell.ERROR_NAME.getStringRepr())) {
+                return Cell.ERROR_NAME.getType();
+            }
+            if(errS.equals(Cell.ERROR_NUM.getStringRepr())) {
+                return Cell.ERROR_NUM.getType();
+            }
+            return Cell.ERROR_NA.getType();
         }
         return 0;
     }
 
     public double getNumericCellValue() {
-        if (STCellType.N != cell.getT() && STCellType.STR != cell.getT()) { 
+        if (STCellType.N != cell.getT() && STCellType.STR != cell.getT()) {
             throw new NumberFormatException("You cannot get a numeric value from a non-numeric cell");
         }
         if (this.cell.isSetV()) {
             return Double.parseDouble(this.cell.getV());
         }
-        return Double.NaN;
+        // else - cell is blank.
+
+        // TODO - behaviour in the case of blank cells.
+        // Revise spec, choose best alternative below, and comment why.
+        if (true) {
+            // returning NaN from a blank cell seems wrong
+            // there are a few junits which assert this behaviour, though.
+            return Double.NaN;
+        }
+        if (true) {
+            // zero is probably a more reasonable value.
+            return 0.0;
+        } else {
+            // or perhaps disallow reading value from blank cell.
+            throw new RuntimeException("You cannot get a numeric value from a blank cell");
+        }
+        // Note - it would be nice if the behaviour is consistent with getRichStringCellValue
+        // (i.e. whether to return empty string or throw exception).
     }
 
     public RichTextString getRichStringCellValue() {
@@ -219,34 +246,34 @@ public class XSSFCell implements Cell {
     }
 
     public void setAsActiveCell() {
-    	row.getSheet().setActiveCell(cell.getR());
+        row.getSheet().setActiveCell(cell.getR());
     }
 
     public void setCellComment(Comment comment) {
-    	String cellRef =
-    		new CellReference(row.getRowNum(), getCellNum()).formatAsString();
-		row.getSheet().setCellComment(cellRef, (XSSFComment)comment);
+        String cellRef =
+            new CellReference(row.getRowNum(), getCellNum()).formatAsString();
+        row.getSheet().setCellComment(cellRef, (XSSFComment)comment);
     }
 
     public void setCellErrorValue(byte value) {
-    	if(value == Cell.ERROR_DIV0.getType()) {
-			setCellErrorValue(Cell.ERROR_DIV0);
-    	} else if(value == Cell.ERROR_NA.getType()) {
-    		setCellErrorValue(Cell.ERROR_NA);
-    	} else if(value == Cell.ERROR_NAME.getType()) {
-    		setCellErrorValue(Cell.ERROR_NAME);
-    	} else if(value == Cell.ERROR_NULL.getType()) {
-    		setCellErrorValue(Cell.ERROR_NULL);
-    	} else if(value == Cell.ERROR_NUM.getType()) {
-    		setCellErrorValue(Cell.ERROR_NUM);
-    	} else if(value == Cell.ERROR_REF.getType()) {
-    		setCellErrorValue(Cell.ERROR_REF);
-    	} else if(value == Cell.ERROR_VALUE.getType()) {
-    		setCellErrorValue(Cell.ERROR_VALUE);
-    	} else {
-    		logger.log(POILogger.WARN, "Unknown error type " + value + " specified, treating as #N/A");
-			setCellErrorValue(Cell.ERROR_NA);
-    	}
+        if(value == Cell.ERROR_DIV0.getType()) {
+            setCellErrorValue(Cell.ERROR_DIV0);
+        } else if(value == Cell.ERROR_NA.getType()) {
+            setCellErrorValue(Cell.ERROR_NA);
+        } else if(value == Cell.ERROR_NAME.getType()) {
+            setCellErrorValue(Cell.ERROR_NAME);
+        } else if(value == Cell.ERROR_NULL.getType()) {
+            setCellErrorValue(Cell.ERROR_NULL);
+        } else if(value == Cell.ERROR_NUM.getType()) {
+            setCellErrorValue(Cell.ERROR_NUM);
+        } else if(value == Cell.ERROR_REF.getType()) {
+            setCellErrorValue(Cell.ERROR_REF);
+        } else if(value == Cell.ERROR_VALUE.getType()) {
+            setCellErrorValue(Cell.ERROR_VALUE);
+        } else {
+            logger.log(POILogger.WARN, "Unknown error type " + value + " specified, treating as #N/A");
+            setCellErrorValue(Cell.ERROR_NA);
+        }
     }
     public void setCellErrorValue(CELL_ERROR_TYPE errorType) {
         if ((this.cell.getT() != STCellType.E) && (this.cell.getT() != STCellType.STR))
@@ -255,8 +282,8 @@ public class XSSFCell implements Cell {
         }
         this.cell.setV( errorType.getStringRepr() );
     }
-    
-   
+
+
     public void setCellFormula(String formula) {
         if (this.cell.getT() != STCellType.STR)
         {
@@ -269,11 +296,11 @@ public class XSSFCell implements Cell {
         if (this.cell.isSetV()) {
             this.cell.unsetV();
         }
-            
+
     }
 
     public void setCellNum(int num) {
-    	setCellNum((short)num);
+        setCellNum((short)num);
     }
     public void setCellNum(short num) {
         checkBounds(num);
@@ -303,13 +330,13 @@ public class XSSFCell implements Cell {
     }
 
     public void setCellStyle(CellStyle style) {
-    	if(style == null) {
-    		this.cell.setS(0);
-    	} else {
-    		this.cell.setS(
-    			row.getSheet().getWorkbook().getStylesSource().putStyle(style)
-    		);
-    	}
+        if(style == null) {
+            this.cell.setS(0);
+        } else {
+            this.cell.setS(
+                row.getSheet().getWorkbook().getStylesSource().putStyle(style)
+            );
+        }
     }
 
     public void setCellType(int cellType) {
@@ -364,7 +391,7 @@ public class XSSFCell implements Cell {
         if ((this.cell.getT() != STCellType.B) && (this.cell.getT() != STCellType.STR))
         {
             this.cell.setT(STCellType.B);
-        }        
+        }
         this.cell.setV(value ? TRUE_AS_STRING : FALSE_AS_STRING);
     }
 
@@ -372,12 +399,12 @@ public class XSSFCell implements Cell {
     public String toString() {
         return "[" + this.row.getRowNum() + "," + this.getCellNum() + "] " + this.cell.getV();
     }
-    
+
     /**
      * Returns the raw, underlying ooxml value for the cell
      */
     public String getRawValue() {
-    	return this.cell.getV();
+        return this.cell.getV();
     }
 
     /**
@@ -396,14 +423,14 @@ public class XSSFCell implements Cell {
     /**
      * Creates an XSSFRichTextString for you.
      */
-	public RichTextString createRichTextString(String text) {
-		return new XSSFRichTextString(text);
-	}
-	
-	public Hyperlink getHyperlink() {
-		return row.getSheet().getHyperlink(row.getRowNum(), cellNum);
-	}
-	public void setHyperlink(Hyperlink hyperlink) {
-		row.getSheet().setCellHyperlink((XSSFHyperlink)hyperlink);
-	}
+    public RichTextString createRichTextString(String text) {
+        return new XSSFRichTextString(text);
+    }
+
+    public Hyperlink getHyperlink() {
+        return row.getSheet().getHyperlink(row.getRowNum(), cellNum);
+    }
+    public void setHyperlink(Hyperlink hyperlink) {
+        row.getSheet().setCellHyperlink((XSSFHyperlink)hyperlink);
+    }
 }

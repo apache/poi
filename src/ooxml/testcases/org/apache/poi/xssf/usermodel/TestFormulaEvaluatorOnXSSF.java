@@ -41,7 +41,6 @@ import org.openxml4j.opc.Package;
  * Periodically, you should open FormulaEvalTestData.xls in
  *  Excel 2007, and re-save it as FormulaEvalTestData_Copy.xlsx
  *  
- * Currently disabled, as doesn't work
  */
 public final class TestFormulaEvaluatorOnXSSF extends TestCase {
 	
@@ -178,7 +177,7 @@ public final class TestFormulaEvaluatorOnXSSF extends TestCase {
 	 * Disabled for now, as many things seem to break
 	 *  for XSSF, which is a shame
 	 */
-	public void DISABLEDtestFunctionsFromTestSpreadsheet() {
+	public void testFunctionsFromTestSpreadsheet() {
 		
 		processFunctionGroup(SS.START_OPERATORS_ROW_INDEX, null);
 		processFunctionGroup(SS.START_FUNCTIONS_ROW_INDEX, null);
@@ -261,8 +260,19 @@ public final class TestFormulaEvaluatorOnXSSF extends TestCase {
 			if (c == null || c.getCellType() != Cell.CELL_TYPE_FORMULA) {
 				continue;
 			}
+			if(isIgnoredFormulaTestCase(c.getCellFormula())) {
+				continue;
+			}
 
-			FormulaEvaluator.CellValue actualValue = evaluator.evaluate(c);
+			FormulaEvaluator.CellValue actualValue;
+			try {
+				actualValue = evaluator.evaluate(c);
+			} catch (RuntimeException e) {
+				_evaluationFailureCount ++;
+				printShortStackTrace(System.err, e);
+				result = Result.SOME_EVALUATIONS_FAILED;
+				continue;
+			}
 
 			Cell expectedValueCell = getExpectedValueCell(expectedValuesRow, colnum);
 			try {
@@ -281,10 +291,29 @@ public final class TestFormulaEvaluatorOnXSSF extends TestCase {
  		return result;
 	}
 
+	/*
+	 * TODO - these are all formulas which currently (Apr-2008) break on ooxml 
+	 */
+	private static boolean isIgnoredFormulaTestCase(String cellFormula) {
+		if ("COLUMN(1:2)".equals(cellFormula) || "ROW(2:3)".equals(cellFormula)) {
+			// full row ranges are not parsed properly yet.
+			// These cases currently work in svn trunk because of another bug which causes the 
+			// formula to get rendered as COLUMN($A$1:$IV$2) or ROW($A$2:$IV$3) 
+			return true;
+		}
+		if ("ISREF(currentcell())".equals(cellFormula)) {
+			// currently throws NPE because unknown function "currentcell" causes name lookup 
+			// Name lookup requires some equivalent object of the Workbook within xSSFWorkbook.
+			return true;
+		}
+		return false;
+	}
+
+
 	/**
 	 * Useful to keep output concise when expecting many failures to be reported by this test case
 	 */
-	private static void printShortStackTrace(PrintStream ps, AssertionFailedError e) {
+	private static void printShortStackTrace(PrintStream ps, Throwable e) {
 		StackTraceElement[] stes = e.getStackTrace();
 		
 		int startIx = 0;
