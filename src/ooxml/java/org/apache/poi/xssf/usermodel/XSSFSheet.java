@@ -25,7 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.poi.hssf.util.PaneInformation;
-import org.apache.poi.hssf.util.Region;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CommentsSource;
@@ -37,6 +36,7 @@ import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.util.Region;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.xmlbeans.XmlOptions;
@@ -48,6 +48,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetUpPr;
@@ -72,6 +74,7 @@ public class XSSFSheet implements Sheet {
     protected ColumnHelper columnHelper;
     protected XSSFWorkbook workbook;
     protected CommentsSource sheetComments;
+    protected CTMergeCells ctMergeCells;
 
     public static final short LeftMargin = 0;
     public static final short RightMargin = 1;
@@ -189,9 +192,17 @@ public class XSSFSheet implements Sheet {
     }
     
     public int addMergedRegion(Region region) {
-        // TODO Auto-generated method stub
-        return 0;
+    	addNewMergeCell(region);
+    	return ctMergeCells.sizeOfMergeCellArray();
     }
+
+    private void addNewMergeCell(Region region) {
+    	if (ctMergeCells == null) {
+    		ctMergeCells = worksheet.addNewMergeCells();
+    	}
+    	CTMergeCell ctMergeCell = ctMergeCells.addNewMergeCell();
+    	ctMergeCell.setRef(region.getRegionRef());
+	}
 
     public void autoSizeColumn(short column) {
     	columnHelper.setColBestFit(column, true);

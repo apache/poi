@@ -21,7 +21,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.hssf.util.Region;
+import org.apache.poi.ss.util.Region;
 /**
  * 
  * @author Dmitriy Kumshayev

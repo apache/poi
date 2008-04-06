@@ -21,7 +21,7 @@ import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
 import org.apache.poi.hssf.record.cf.CellRange;
-import org.apache.poi.hssf.util.Region;
+import org.apache.poi.ss.util.Region;
 
 /**
  * HSSFConditionalFormatting class encapsulates all settings of Conditional Formatting. 

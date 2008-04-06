@@ -20,7 +20,7 @@ package org.apache.poi.ss.usermodel;
 import java.util.Iterator;
 
 import org.apache.poi.hssf.util.PaneInformation;
-import org.apache.poi.hssf.util.Region;
+import org.apache.poi.ss.util.Region;
 
 public interface Sheet extends Iterable<Row> {
 
