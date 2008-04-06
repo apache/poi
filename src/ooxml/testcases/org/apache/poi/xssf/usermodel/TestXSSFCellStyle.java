@@ -59,26 +59,28 @@ public class TestXSSFCellStyle extends TestCase {
 		ctBorderA = CTBorder.Factory.newInstance();
 		XSSFCellBorder borderA = new XSSFCellBorder(ctBorderA);
 		long borderId = stylesTable.putBorder(borderA);
-		assertEquals(0, borderId);
+		assertEquals(1, borderId);
 		
 		XSSFCellBorder borderB = new XSSFCellBorder();
-		assertEquals(1, stylesTable.putBorder(borderB));
+		assertEquals(2, stylesTable.putBorder(borderB));
 		
 		ctFill = CTFill.Factory.newInstance();
 		XSSFCellFill fill = new XSSFCellFill(ctFill);
 		long fillId = stylesTable.putFill(fill);
-		assertEquals(0, fillId);
+		assertEquals(1, fillId);
 		
 		ctFont = CTFont.Factory.newInstance();
 		XSSFFont font = new XSSFFont(ctFont);
 		long fontId = stylesTable.putFont(font);
-		assertEquals(0, fontId);
+		assertEquals(1, fontId);
 		
 		cellStyleXf = ctStylesheet.addNewCellStyleXfs().addNewXf();
-		cellStyleXf.setBorderId(0);
+		cellStyleXf.setBorderId(1);
+		cellStyleXf.setFillId(1);
+		cellStyleXf.setFontId(1);
 		cellXfs = ctStylesheet.addNewCellXfs();
 		cellXf = cellXfs.addNewXf();
-		cellXf.setXfId(0);
+		cellXf.setXfId(1);
 		cellStyle = new XSSFCellStyle(cellXf, cellStyleXf, stylesTable);
 	}
 	

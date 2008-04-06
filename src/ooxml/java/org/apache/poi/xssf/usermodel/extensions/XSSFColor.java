@@ -25,6 +25,9 @@ public class XSSFColor {
 	
 	public XSSFColor(CTColor color) {
 		this.color = color;
+		if (this.color == null) {
+			this.color = CTColor.Factory.newInstance();
+		}
 	}
 	
 	public boolean isAuto() {
