@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.util;
+package org.apache.poi.ss.util;
 
 import org.apache.poi.ss.util.CellReference;
 

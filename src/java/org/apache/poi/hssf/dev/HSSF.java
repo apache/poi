@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.util.Region;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.*;
 

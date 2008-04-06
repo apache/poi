@@ -20,7 +20,8 @@
 package org.apache.poi.hssf.usermodel;
 
 import junit.framework.TestCase;
-import org.apache.poi.hssf.util.Region;
+
+import org.apache.poi.ss.util.Region;
 import org.apache.poi.util.TempFile;
 
 import java.io.*;

@@ -16,7 +16,7 @@
 ==================================================================== */
 
 
-package org.apache.poi.hssf.util;
+package org.apache.poi.ss.util;
 
 import org.apache.poi.hssf.record.MergeCellsRecord.MergedRegion;
 
@@ -217,5 +217,15 @@ public class Region
     {
         return ((1 + (getRowTo() - getRowFrom()))
                 * (1 + (getColumnTo() - getColumnFrom())));
+    }
+    
+    /**
+     * @return the string reference for this region
+     */
+    public String getRegionRef() {
+    	CellReference cellRefFrom = new CellReference(rowFrom, colFrom);
+    	CellReference cellRefTo = new CellReference(rowTo, colTo);
+    	String ref = cellRefFrom.formatAsString() + ":" + cellRefTo.formatAsString();
+		return ref;
     }
 }

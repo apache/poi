@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.util.*;
+import org.apache.poi.ss.util.Region;
 
 import java.io.*;
 import java.util.*;

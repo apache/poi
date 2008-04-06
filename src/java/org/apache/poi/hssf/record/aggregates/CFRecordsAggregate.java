@@ -24,7 +24,7 @@ import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.hssf.util.Region;
+import org.apache.poi.ss.util.Region;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
