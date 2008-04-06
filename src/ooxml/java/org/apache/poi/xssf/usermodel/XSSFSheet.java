@@ -196,14 +196,6 @@ public class XSSFSheet implements Sheet {
     	return ctMergeCells.sizeOfMergeCellArray();
     }
 
-    private void addNewMergeCell(Region region) {
-    	if (ctMergeCells == null) {
-    		ctMergeCells = worksheet.addNewMergeCells();
-    	}
-    	CTMergeCell ctMergeCell = ctMergeCells.addNewMergeCell();
-    	ctMergeCell.setRef(region.getRegionRef());
-	}
-
     public void autoSizeColumn(short column) {
     	columnHelper.setColBestFit(column, true);
     }
@@ -282,20 +274,6 @@ public class XSSFSheet implements Sheet {
     public boolean getAutobreaks() {
         return getSheetTypePageSetUpPr().getAutoPageBreaks();
     }
-
-	private CTPageSetUpPr getSheetTypePageSetUpPr() {
-    	if (getSheetTypeSheetPr().getPageSetUpPr() == null) {
-    		getSheetTypeSheetPr().setPageSetUpPr(CTPageSetUpPr.Factory.newInstance());
-    	}
-		return getSheetTypeSheetPr().getPageSetUpPr();
-	}
-
-	protected CTSheetPr getSheetTypeSheetPr() {
-    	if (worksheet.getSheetPr() == null) {
-    		worksheet.setSheetPr(CTSheetPr.Factory.newInstance());
-    	}
-		return worksheet.getSheetPr();
-	}
 
     public Comment getCellComment(int row, int column) {
     	return getComments().findCellComment(row, column);
@@ -890,18 +868,6 @@ public class XSSFSheet implements Sheet {
         	}
         }
     }
-    
-    private boolean removeRow(int startRow, int endRow, int n, int rownum) {
-    	if (rownum >= (startRow + n) && rownum <= (endRow + n)) {
-    		if (n > 0 && rownum > endRow) {
-    			return true;
-    		}
-    		else if (n < 0 && rownum < startRow) {
-    			return true;
-    		}
-    	}
-    	return false;
-    }
 
     public void showInPane(short toprow, short leftcol) {
     	CellReference cellReference = new CellReference(toprow, leftcol);
@@ -954,6 +920,15 @@ public class XSSFSheet implements Sheet {
 	public void setActiveCell(String cellRef) {
 		getSheetTypeSelection().setActiveCell(cellRef);
 	}
+	
+	/**
+	 * Does this sheet have any comments on it? We need to know,
+	 *  so we can decide about writing it to disk or not
+	 */
+	public boolean hasComments() {
+		if(sheetComments == null) { return false; }
+		return (sheetComments.getNumberOfComments() > 0);
+	}
 
 	private CTSelection getSheetTypeSelection() {
 		if (getSheetTypeSheetView().sizeOfSelectionArray() == 0) {
@@ -1002,13 +977,38 @@ public class XSSFSheet implements Sheet {
 	protected CommentsSource getCommentsSourceIfExists() {
 		return sheetComments;
 	}
-	
-	/**
-	 * Does this sheet have any comments on it? We need to know,
-	 *  so we can decide about writing it to disk or not
-	 */
-	public boolean hasComments() {
-		if(sheetComments == null) { return false; }
-		return (sheetComments.getNumberOfComments() > 0);
+
+	private void addNewMergeCell(Region region) {
+    	if (ctMergeCells == null) {
+    		ctMergeCells = worksheet.addNewMergeCells();
+    	}
+    	CTMergeCell ctMergeCell = ctMergeCells.addNewMergeCell();
+    	ctMergeCell.setRef(region.getRegionRef());
 	}
+
+	private CTPageSetUpPr getSheetTypePageSetUpPr() {
+    	if (getSheetTypeSheetPr().getPageSetUpPr() == null) {
+    		getSheetTypeSheetPr().setPageSetUpPr(CTPageSetUpPr.Factory.newInstance());
+    	}
+		return getSheetTypeSheetPr().getPageSetUpPr();
+	}
+
+	protected CTSheetPr getSheetTypeSheetPr() {
+    	if (worksheet.getSheetPr() == null) {
+    		worksheet.setSheetPr(CTSheetPr.Factory.newInstance());
+    	}
+		return worksheet.getSheetPr();
+	}
+    
+    private boolean removeRow(int startRow, int endRow, int n, int rownum) {
+    	if (rownum >= (startRow + n) && rownum <= (endRow + n)) {
+    		if (n > 0 && rownum > endRow) {
+    			return true;
+    		}
+    		else if (n < 0 && rownum < startRow) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
 }
