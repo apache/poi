@@ -22,7 +22,6 @@ import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.util.CellReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
 
-import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackageRelationship;
 
@@ -46,7 +45,7 @@ public class XSSFHyperlink implements Hyperlink {
 		this.ctHyperlink = ctHyperlink;
 		this.externalRel = hyperlinkRel;
 		
-		// Figure out the Hyperlink type
+		// Figure out the Hyperlink type and distination
 		
 		// If it has a location, it's internal
 		if(ctHyperlink.getLocation() != null) {
@@ -62,10 +61,19 @@ public class XSSFHyperlink implements Hyperlink {
 					throw new IllegalStateException("A sheet hyperlink must either have a location, or a relationship. Found:\n" + ctHyperlink);
 				}
 			}
-			// TODO
 			
-			//URI target = externalRel.getTargetURI();
-			//location = target.toString();
+			URI target = externalRel.getTargetURI();
+			location = target.toString();
+			
+			// Try to figure out the type
+			if(location.startsWith("http://") || location.startsWith("https://")
+					|| location.startsWith("ftp://")) {
+				type = Hyperlink.LINK_URL;
+			} else if(location.startsWith("mailto:")) {
+				type = Hyperlink.LINK_EMAIL;
+			} else {
+				type = Hyperlink.LINK_FILE;
+			}
 		}
 	}
 
@@ -89,7 +97,12 @@ public class XSSFHyperlink implements Hyperlink {
 	 */
 	protected void generateRelationIfNeeded(PackagePart sheetPart) {
 		if(needsRelationToo()) {
-			// TODO
+			// Generate the relation
+			PackageRelationship rel =
+				sheetPart.addExternalRelationship(location, XSSFWorkbook.SHEET_HYPERLINKS.getRelation());
+			
+			// Update the r:id
+			ctHyperlink.setId(rel.getId());
 		}
 	}
 	
@@ -119,6 +132,13 @@ public class XSSFHyperlink implements Hyperlink {
 		location = address;
 	}
 
+	/**
+	 * Assigns this hyperlink to the given cell reference
+	 */
+	protected void setCellReference(String ref) {
+		ctHyperlink.setRef(ref);
+	}
+	
 	private CellReference buildCellReference() {
 		return new CellReference(ctHyperlink.getRef());
 	}
