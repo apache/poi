@@ -23,6 +23,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.Region;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
@@ -546,6 +547,27 @@ public class TestXSSFSheet extends TestCase {
     	sheet.createSplitPane(4, 8, 12, 12, 1);
     	assertEquals((double)8, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getYSplit());
     	assertEquals(STPane.BOTTOM_RIGHT, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getActivePane());
+    }
+    
+    public void testNewMergedRegionAt() {
+    	Workbook workbook = new XSSFWorkbook();
+    	CTSheet ctSheet = CTSheet.Factory.newInstance();
+    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
+    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+    	Region region = new Region("B2:D4");
+    	sheet.addMergedRegion(region);
+    	assertEquals("B2:D4", sheet.getMergedRegionAt(0).getRegionRef());
+    }
+    
+    public void testGetNumMergedRegions() {
+    	Workbook workbook = new XSSFWorkbook();
+    	CTSheet ctSheet = CTSheet.Factory.newInstance();
+    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
+    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+    	assertEquals(0, sheet.getNumMergedRegions());
+    	Region region = new Region("B2:D4");
+    	sheet.addMergedRegion(region);
+    	assertEquals(1, sheet.getNumMergedRegions());
     }
     
 

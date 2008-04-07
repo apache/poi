@@ -62,7 +62,16 @@ public class Region
         this(region.row_from, region.col_from, region.row_to, region.col_to);
     }
 
-    /**
+    public Region(String ref) {
+    	CellReference cellReferenceFrom = new CellReference(ref.substring(0, ref.indexOf(":")));
+    	CellReference cellReferenceTo = new CellReference(ref.substring(ref.indexOf(":") + 1));
+    	this.rowFrom = cellReferenceFrom.getRow();
+    	this.colFrom = (short) cellReferenceFrom.getCol();
+    	this.rowTo = cellReferenceTo.getRow();
+    	this.colTo = (short) cellReferenceTo.getCol();
+	}
+
+	/**
      * get the upper left hand corner column number
      *
      * @return column number for the upper left hand corner

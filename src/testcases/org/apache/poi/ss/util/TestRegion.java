@@ -46,4 +46,10 @@ public class TestRegion extends TestCase {
 		assertFalse(region.contains(9, (short) 10));
 	}
 	
+	public void testConstructors() {
+		Region region_1 = new Region("A1:E7");
+		assertEquals(0, region_1.getColumnFrom());
+		assertEquals((short)4, region_1.getColumnTo());
+	}
+	
 }
