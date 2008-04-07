@@ -24,6 +24,7 @@ import org.apache.poi.util.POILogFactory;
 
 import java.util.Iterator;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
 /**
  *  <p>
@@ -143,24 +144,39 @@ public abstract class Shape {
      * @return the anchor of this shape
      */
     public java.awt.Rectangle getAnchor(){
+        Rectangle2D anchor2d = getAnchor2D();
+        return anchor2d.getBounds();
+    }
+
+    /**
+     * Returns the anchor (the bounding box rectangle) of this shape.
+     * All coordinates are expressed in points (72 dpi).
+     *
+     * @return the anchor of this shape
+     */
+    public Rectangle2D getAnchor2D(){
         EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
         int flags = spRecord.getFlags();
-        java.awt.Rectangle anchor=null;
+        Rectangle2D anchor=null;
         if ((flags & EscherSpRecord.FLAG_CHILD) != 0){
             EscherChildAnchorRecord rec = (EscherChildAnchorRecord)getEscherChild(_escherContainer, EscherChildAnchorRecord.RECORD_ID);
             anchor = new java.awt.Rectangle();
-            anchor.x = rec.getDx1()*POINT_DPI/MASTER_DPI;
-            anchor.y = rec.getDy1()*POINT_DPI/MASTER_DPI;
-            anchor.width = rec.getDx2()*POINT_DPI/MASTER_DPI - anchor.x;
-            anchor.height = rec.getDy2()*POINT_DPI/MASTER_DPI - anchor.y;
+            anchor = new Rectangle2D.Float(
+                (float)rec.getDx1()*POINT_DPI/MASTER_DPI,
+                (float)rec.getDy1()*POINT_DPI/MASTER_DPI,
+                (float)(rec.getDx2()-rec.getDx1())*POINT_DPI/MASTER_DPI,
+                (float)(rec.getDy2()-rec.getDy1())*POINT_DPI/MASTER_DPI
+            );
         }
         else {
             EscherClientAnchorRecord rec = (EscherClientAnchorRecord)getEscherChild(_escherContainer, EscherClientAnchorRecord.RECORD_ID);
             anchor = new java.awt.Rectangle();
-            anchor.y = rec.getFlag()*POINT_DPI/MASTER_DPI;
-            anchor.x = rec.getCol1()*POINT_DPI/MASTER_DPI;
-            anchor.width = (rec.getDx1() - rec.getCol1())*POINT_DPI/MASTER_DPI;
-            anchor.height = (rec.getRow1() - rec.getFlag())*POINT_DPI/MASTER_DPI;
+            anchor = new Rectangle2D.Float(
+                (float)rec.getCol1()*POINT_DPI/MASTER_DPI,
+                (float)rec.getFlag()*POINT_DPI/MASTER_DPI,
+                (float)(rec.getDx1()-rec.getCol1())*POINT_DPI/MASTER_DPI,
+                (float)(rec.getRow1()-rec.getFlag())*POINT_DPI/MASTER_DPI
+            );
         }
         return anchor;
     }
@@ -171,22 +187,22 @@ public abstract class Shape {
      *
      * @param anchor new anchor
      */
-    public void setAnchor(java.awt.Rectangle anchor){
+    public void setAnchor(Rectangle2D anchor){
         EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
         int flags = spRecord.getFlags();
         if ((flags & EscherSpRecord.FLAG_CHILD) != 0){
             EscherChildAnchorRecord rec = (EscherChildAnchorRecord)getEscherChild(_escherContainer, EscherChildAnchorRecord.RECORD_ID);
-            rec.setDx1(anchor.x*MASTER_DPI/POINT_DPI);
-            rec.setDy1(anchor.y*MASTER_DPI/POINT_DPI);
-            rec.setDx2((anchor.width + anchor.x)*MASTER_DPI/POINT_DPI);
-            rec.setDy2((anchor.height + anchor.y)*MASTER_DPI/POINT_DPI);
+            rec.setDx1((int)(anchor.getX()*MASTER_DPI/POINT_DPI));
+            rec.setDy1((int)(anchor.getY()*MASTER_DPI/POINT_DPI));
+            rec.setDx2((int)((anchor.getWidth() + anchor.getX())*MASTER_DPI/POINT_DPI));
+            rec.setDy2((int)((anchor.getHeight() + anchor.getY())*MASTER_DPI/POINT_DPI));
         }
         else {
             EscherClientAnchorRecord rec = (EscherClientAnchorRecord)getEscherChild(_escherContainer, EscherClientAnchorRecord.RECORD_ID);
-            rec.setFlag((short)(anchor.y*MASTER_DPI/POINT_DPI));
-            rec.setCol1((short)(anchor.x*MASTER_DPI/POINT_DPI));
-            rec.setDx1((short)((anchor.width + anchor.x)*MASTER_DPI/POINT_DPI));
-            rec.setRow1((short)((anchor.height + anchor.y)*MASTER_DPI/POINT_DPI));
+            rec.setFlag((short)(anchor.getY()*MASTER_DPI/POINT_DPI));
+            rec.setCol1((short)(anchor.getX()*MASTER_DPI/POINT_DPI));
+            rec.setDx1((short)(((anchor.getWidth() + anchor.getX())*MASTER_DPI/POINT_DPI)));
+            rec.setRow1((short)(((anchor.getHeight() + anchor.getY())*MASTER_DPI/POINT_DPI)));
         }
 
     }
@@ -197,9 +213,9 @@ public abstract class Shape {
      * @param x the x coordinate of the top left corner of the shape
      * @param y the y coordinate of the top left corner of the shape
      */
-    public void moveTo(int x, int y){
-        java.awt.Rectangle anchor = getAnchor();
-        anchor.setLocation(x, y);
+    public void moveTo(float x, float y){
+        Rectangle2D anchor = getAnchor2D();
+        anchor.setRect(x, y, anchor.getWidth(), anchor.getHeight());
         setAnchor(anchor);
     }
 
@@ -252,6 +268,28 @@ public abstract class Shape {
             opt.addEscherProperty(new EscherSimpleProperty(propId, value));
             opt.sortProperties();
         }
+    }
+
+    /**
+     * Set an simple escher property for this shape.
+     *
+     * @param propId    The id of the property. One of the constants defined in EscherOptRecord.
+     * @param value     value of the property. If value = -1 then the property is removed.
+     */
+    public void setEscherProperty(short propId, int value){
+        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        setEscherProperty(opt, propId, value);
+    }
+
+    /**
+     * Get the value of a simple escher property for this shape.
+     *
+     * @param propId    The id of the property. One of the constants defined in EscherOptRecord.
+     */
+   public int getEscherProperty(short propId){
+        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, propId);
+        return prop == null ? 0 : prop.getPropertyNumber();
     }
 
     /**
