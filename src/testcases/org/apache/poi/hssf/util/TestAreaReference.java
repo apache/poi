@@ -14,24 +14,29 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.util;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.formula.MemFuncPtg;
-import org.apache.poi.hssf.record.formula.Area3DPtg;
-import org.apache.poi.hssf.record.formula.UnionPtg;
-
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import junit.framework.TestCase;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.hssf.record.formula.MemFuncPtg;
+import org.apache.poi.hssf.record.formula.UnionPtg;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFName;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+/**
+ * 
+ */
 public final class TestAreaReference extends TestCase {
 
     public void testAreaRef1() {
@@ -99,7 +104,7 @@ public final class TestAreaReference extends TestCase {
         TestCellReference.confirmCell(allCells[2], "Tabelle1", 6, 1, true, true, "Tabelle1!$B$7");
     }
 
-    private static class HSSFWB extends HSSFWorkbook {
+    private static final class HSSFWB extends HSSFWorkbook {
         public HSSFWB(InputStream in) throws IOException {
             super(in);
         }
@@ -182,12 +187,9 @@ public final class TestAreaReference extends TestCase {
     }
 
     public void testDiscontinousReference() throws Exception {
-        String filename = System.getProperty( "HSSF.testdata.path" );
-        filename = filename + "/44167.xls";
-        FileInputStream fin = new FileInputStream( filename );
-        HSSFWB wb = new HSSFWB( fin );
+        InputStream is = HSSFTestDataSamples.openSampleFileStream("44167.xls");
+        HSSFWB wb = new HSSFWB(is);
         Workbook workbook = wb.getWorkbook();
-        fin.close();
 
         assertEquals(1, wb.getNumberOfNames());
         String sheetName = "Tabelle1";
@@ -269,5 +271,4 @@ public final class TestAreaReference extends TestCase {
     public static void main(String[] args) {
         junit.textui.TestRunner.run(TestAreaReference.class);
     }
-        
 }

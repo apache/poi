@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -45,14 +46,7 @@ public final class TestReadMissingBuiltInFuncs extends TestCase {
 
 	private static HSSFSheet getSheet() {
 		if (_sheet == null) {
-			String cwd = System.getProperty("HSSF.testdata.path");
-			HSSFWorkbook wb;
-			try {
-				InputStream is = new FileInputStream(new File(cwd, SAMPLE_SPREADSHEET_FILE_NAME));
-				wb = new HSSFWorkbook(is);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+			HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(SAMPLE_SPREADSHEET_FILE_NAME);
 			_sheet = wb.getSheetAt(0);
 		}
 		return _sheet;

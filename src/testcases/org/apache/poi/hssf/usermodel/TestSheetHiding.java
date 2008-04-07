@@ -14,40 +14,28 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+
 package org.apache.poi.hssf.usermodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 
 /**
  * Tests for how HSSFWorkbook behaves with XLS files
  *  with a WORKBOOK directory entry (instead of the more
  *  usual, Workbook)
  */
-public class TestSheetHiding extends TestCase {
-	private String dirPath;
-	private String xlsHidden = "TwoSheetsOneHidden.xls";
-	private String xlsShown  = "TwoSheetsNoneHidden.xls";
+public final class TestSheetHiding extends TestCase {
 	private HSSFWorkbook wbH;
 	private HSSFWorkbook wbU;
 
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		dirPath = System.getProperty("HSSF.testdata.path");
-		FileInputStream isH = new FileInputStream(dirPath + "/" + xlsHidden);
-		POIFSFileSystem fsH = new POIFSFileSystem(isH);
-
-		FileInputStream isU = new FileInputStream(dirPath + "/" + xlsShown);
-		POIFSFileSystem fsU = new POIFSFileSystem(isU);
-
-		wbH = new HSSFWorkbook(fsH);
-		wbU = new HSSFWorkbook(fsU);
+	protected void setUp() {
+		wbH = HSSFTestDataSamples.openSampleWorkbook("TwoSheetsOneHidden.xls");
+		wbU = HSSFTestDataSamples.openSampleWorkbook("TwoSheetsNoneHidden.xls");
 	}
 
 	/**

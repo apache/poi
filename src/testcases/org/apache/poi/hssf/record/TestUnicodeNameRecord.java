@@ -14,39 +14,23 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+/**
+ * 
+ */
+public final class TestUnicodeNameRecord extends TestCase {
 
-public class TestUnicodeNameRecord extends TestCase {
-    private String _test_file_path;
-    private static final String _test_file_path_property = "HSSF.testdata.path";
-
-    public TestUnicodeNameRecord()
-    {
-        super();
-        _test_file_path = System.getProperty( _test_file_path_property ) +
-        	File.separator + "unicodeNameRecord.xls";
-    }
-
-	public void testReadBook() throws IOException {
-    	POIFSFileSystem fs = new POIFSFileSystem(
-    			new FileInputStream(_test_file_path)
-    	);
+	public void testReadBook() {
 
 		// This bit used to crash
-    	HSSFWorkbook book = new HSSFWorkbook(fs);
-    	HSSFSheet sheet = book.getSheetAt(0);
+		HSSFWorkbook book = HSSFTestDataSamples.openSampleWorkbook("unicodeNameRecord.xls");
+		book.getSheetAt(0);
 	}
 }

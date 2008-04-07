@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,11 +14,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.usermodel;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Iterator;
+
 import junit.framework.TestCase;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.BackupRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
@@ -29,12 +35,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.util.Region;
 import org.apache.poi.util.TempFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Iterator;
-
 /**
  * Class to test Workbook functionality
  *
@@ -42,10 +42,7 @@ import java.util.Iterator;
  * @author Greg Merrill
  * @author Siggi Cherem
  */
-
-public class TestWorkbook
-    extends TestCase
-{
+public class TestWorkbook extends TestCase {
     private static final String LAST_NAME_KEY        = "lastName";
     private static final String FIRST_NAME_KEY       = "firstName";
     private static final String SSN_KEY              = "ssn";
@@ -58,15 +55,9 @@ public class TestWorkbook
     private static final String SSN_VALUE            = "555555555";
     private SanityChecker sanityChecker = new SanityChecker();
 
-    /**
-     * Constructor TestWorkbook
-     *
-     * @param name
-     */
 
-    public TestWorkbook(String name)
-    {
-        super(name);
+    private static HSSFWorkbook openSample(String sampleFileName) {
+        return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);
     }
 
     /**
@@ -178,21 +169,12 @@ public class TestWorkbook
      *
      */
 
-    public void testReadSimple()
-        throws IOException
-    {
-        String filename = System.getProperty("HSSF.testdata.path");
+    public void testReadSimple() {
+        HSSFWorkbook workbook = openSample("Simple.xls");
+        HSSFSheet sheet = workbook.getSheetAt(0);
 
-        filename = filename + "/Simple.xls";
-        FileInputStream stream   = new FileInputStream(filename);
-        POIFSFileSystem fs       = new POIFSFileSystem(stream);
-        HSSFWorkbook    workbook = new HSSFWorkbook(fs);
-        HSSFSheet       sheet    = workbook.getSheetAt(0);
-
-        assertEquals(REPLACE_ME,
-                     sheet.getRow(( short ) 0).getCell(( short ) 0)
-                         .getStringCellValue());
-        stream.close();
+        HSSFCell cell = sheet.getRow(0).getCell(0);
+        assertEquals(REPLACE_ME, cell .getRichStringCellValue().getString());
     }
 
     /**
@@ -204,24 +186,15 @@ public class TestWorkbook
      *
      */
 
-    public void testReadSimpleWithDataFormat()
-        throws IOException
-    {
-        String filename = System.getProperty("HSSF.testdata.path");
-
-        filename = filename + "/SimpleWithDataFormat.xls";
-        FileInputStream stream   = new FileInputStream(filename);
-        POIFSFileSystem fs       = new POIFSFileSystem(stream);
-        HSSFWorkbook    workbook = new HSSFWorkbook(fs);
+    public void testReadSimpleWithDataFormat() {
+        HSSFWorkbook workbook = openSample("SimpleWithDataFormat.xls");
         HSSFSheet       sheet    = workbook.getSheetAt(0);
         HSSFDataFormat  format   = workbook.createDataFormat();
-	HSSFCell	cell	 = 
-                     sheet.getRow(( short ) 0).getCell(( short ) 0);
+        HSSFCell cell = sheet.getRow(0).getCell(0);
 
         assertEquals(1.25,cell.getNumericCellValue(), 1e-10);
 
-	assertEquals(format.getFormat(cell.getCellStyle().getDataFormat()), "0.0");
-        stream.close();
+        assertEquals(format.getFormat(cell.getCellStyle().getDataFormat()), "0.0");
     }
 
 /**
@@ -236,23 +209,23 @@ public class TestWorkbook
     public void testWriteDataFormat()
         throws IOException
     {
-	File             file = TempFile.createTempFile("testWriteDataFormat",
+    File             file = TempFile.createTempFile("testWriteDataFormat",
                                                     ".xls");
         FileOutputStream out  = new FileOutputStream(file);
         HSSFWorkbook     wb   = new HSSFWorkbook();
         HSSFSheet        s    = wb.createSheet();
         HSSFRow          r    = null;
         HSSFCell         c    = null;
-	HSSFDataFormat format = wb.createDataFormat();
-	HSSFCellStyle    cs   = wb.createCellStyle();
-	
-	short df = format.getFormat("0.0");
-	cs.setDataFormat(df);
-	
-	r = s.createRow((short)0);
-	c = r.createCell((short)0);
-	c.setCellStyle(cs);
-	c.setCellValue(1.25);
+    HSSFDataFormat format = wb.createDataFormat();
+    HSSFCellStyle    cs   = wb.createCellStyle();
+
+    short df = format.getFormat("0.0");
+    cs.setDataFormat(df);
+
+    r = s.createRow((short)0);
+    c = r.createCell((short)0);
+    c.setCellStyle(cs);
+    c.setCellValue(1.25);
 
         wb.write(out);
         out.close();
@@ -261,16 +234,16 @@ public class TestWorkbook
         POIFSFileSystem fs       = new POIFSFileSystem(stream);
         HSSFWorkbook    workbook = new HSSFWorkbook(fs);
         HSSFSheet       sheet    = workbook.getSheetAt(0);
-	HSSFCell	cell	 = 
+    HSSFCell    cell     =
                      sheet.getRow(( short ) 0).getCell(( short ) 0);
-	format = workbook.createDataFormat();
+    format = workbook.createDataFormat();
 
         assertEquals(1.25,cell.getNumericCellValue(), 1e-10);
 
-	assertEquals(format.getFormat(df), "0.0");
+    assertEquals(format.getFormat(df), "0.0");
 
-	assertEquals(format, workbook.createDataFormat());
-	
+    assertEquals(format, workbook.createDataFormat());
+
         stream.close();
     }
 
@@ -283,30 +256,14 @@ public class TestWorkbook
      *
      */
 
-    public void testReadEmployeeSimple()
-        throws IOException
-    {
-        String filename = System.getProperty("HSSF.testdata.path");
-
-        filename = filename + "/Employee.xls";
-        FileInputStream stream   = new FileInputStream(filename);
-        POIFSFileSystem fs       = new POIFSFileSystem(stream);
-        HSSFWorkbook    workbook = new HSSFWorkbook(fs);
+    public void testReadEmployeeSimple() {
+        HSSFWorkbook workbook = openSample("Employee.xls");
         HSSFSheet       sheet    = workbook.getSheetAt(0);
 
-        assertEquals(EMPLOYEE_INFORMATION,
-                     sheet.getRow(1).getCell(( short ) 1)
-                         .getStringCellValue());
-        assertEquals(LAST_NAME_KEY,
-                     sheet.getRow(3).getCell(( short ) 2)
-                         .getStringCellValue());
-        assertEquals(FIRST_NAME_KEY,
-                     sheet.getRow(4).getCell(( short ) 2)
-                         .getStringCellValue());
-        assertEquals(SSN_KEY,
-                     sheet.getRow(5).getCell(( short ) 2)
-                         .getStringCellValue());
-        stream.close();
+        assertEquals(EMPLOYEE_INFORMATION, sheet.getRow(1).getCell(1).getStringCellValue());
+        assertEquals(LAST_NAME_KEY, sheet.getRow(3).getCell(2).getStringCellValue());
+        assertEquals(FIRST_NAME_KEY, sheet.getRow(4).getCell(2).getStringCellValue());
+        assertEquals(SSN_KEY, sheet.getRow(5).getCell(2).getStringCellValue());
     }
 
     /**
@@ -322,33 +279,17 @@ public class TestWorkbook
      *
      */
 
-    public void testModifySimple()
-        throws IOException
-    {
-        String filename = System.getProperty("HSSF.testdata.path");
+    public void testModifySimple() {
+        HSSFWorkbook workbook = openSample("Simple.xls");
+        HSSFSheet sheet = workbook.getSheetAt(0);
+        HSSFCell cell = sheet.getRow(0).getCell(0);
 
-        filename = filename + "/Simple.xls";
-        FileInputStream instream = new FileInputStream(filename);
-        POIFSFileSystem fsin     = new POIFSFileSystem(instream);
-        HSSFWorkbook    workbook = new HSSFWorkbook(fsin);
-        HSSFSheet       sheet    = workbook.getSheetAt(0);
-        HSSFCell        cell     =
-            sheet.getRow(( short ) 0).getCell(( short ) 0);
+        cell.setCellValue(new HSSFRichTextString(REPLACED));
 
-        cell.setCellValue(REPLACED);
-        File             destination = TempFile.createTempFile("SimpleResult",
-                                           ".xls");
-        FileOutputStream outstream   = new FileOutputStream(destination);
-
-        workbook.write(outstream);
-        instream.close();
-        outstream.close();
-        instream = new FileInputStream(destination);
-        workbook = new HSSFWorkbook(new POIFSFileSystem(instream));
+        workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
         sheet    = workbook.getSheetAt(0);
-        cell     = sheet.getRow(( short ) 0).getCell(( short ) 0);
-        assertEquals(REPLACED, cell.getStringCellValue());
-        instream.close();
+        cell     = sheet.getRow(0).getCell(0);
+        assertEquals(REPLACED, cell.getRichStringCellValue().getString());
     }
 
     /**
@@ -364,42 +305,26 @@ public class TestWorkbook
      *             or is incorrect. <P>
      *
      */
-
-    public void testModifySimpleWithSkip()
-        throws IOException
-    {
-        String filename = System.getProperty("HSSF.testdata.path");
-
-        filename = filename + "/SimpleWithSkip.xls";
-        FileInputStream instream = new FileInputStream(filename);
-        POIFSFileSystem fsin     = new POIFSFileSystem(instream);
-        HSSFWorkbook    workbook = new HSSFWorkbook(fsin);
-        HSSFSheet       sheet    = workbook.getSheetAt(0);
-        HSSFCell        cell     =
-            sheet.getRow(( short ) 0).getCell(( short ) 1);
+    public void testModifySimpleWithSkip() {
+        HSSFWorkbook workbook = openSample("SimpleWithSkip.xls");
+        HSSFSheet sheet = workbook.getSheetAt(0);
+        HSSFCell cell = sheet.getRow(0).getCell(1);
 
         cell.setCellValue(REPLACED);
-        cell = sheet.getRow(( short ) 1).getCell(( short ) 0);
+        cell = sheet.getRow(1).getCell(0);
         cell.setCellValue(REPLACED);
-        File             destination =
-            TempFile.createTempFile("SimpleWithSkipResult", ".xls");
-        FileOutputStream outstream   = new FileOutputStream(destination);
 
-        workbook.write(outstream);
-        instream.close();
-        outstream.close();
-        instream = new FileInputStream(destination);
-        workbook = new HSSFWorkbook(new POIFSFileSystem(instream));
+        workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
+
         sheet    = workbook.getSheetAt(0);
-        cell     = sheet.getRow(( short ) 0).getCell(( short ) 1);
+        cell     = sheet.getRow(0).getCell(1);
         assertEquals(REPLACED, cell.getStringCellValue());
-        cell = sheet.getRow(( short ) 0).getCell(( short ) 0);
+        cell = sheet.getRow(0).getCell(0);
         assertEquals(DO_NOT_REPLACE, cell.getStringCellValue());
-        cell = sheet.getRow(( short ) 1).getCell(( short ) 0);
+        cell = sheet.getRow(1).getCell(0);
         assertEquals(REPLACED, cell.getStringCellValue());
-        cell = sheet.getRow(( short ) 1).getCell(( short ) 1);
+        cell = sheet.getRow(1).getCell(1);
         assertEquals(DO_NOT_REPLACE, cell.getStringCellValue());
-        instream.close();
     }
 
     /**
@@ -415,41 +340,26 @@ public class TestWorkbook
      *             is incorrect or has not been replaced. <P>
      *
      */
-
-    public void testModifySimpleWithStyling()
-        throws IOException
-    {
-        String filename = System.getProperty("HSSF.testdata.path");
-
-        filename = filename + "/SimpleWithStyling.xls";
-        FileInputStream instream = new FileInputStream(filename);
-        POIFSFileSystem fsin     = new POIFSFileSystem(instream);
-        HSSFWorkbook    workbook = new HSSFWorkbook(fsin);
+    public void testModifySimpleWithStyling() {
+        HSSFWorkbook workbook = openSample("SimpleWithStyling.xls");
         HSSFSheet       sheet    = workbook.getSheetAt(0);
 
         for (int k = 0; k < 4; k++)
         {
             HSSFCell cell = sheet.getRow(( short ) k).getCell(( short ) 0);
 
-            cell.setCellValue(REPLACED);
+            cell.setCellValue(new HSSFRichTextString(REPLACED));
         }
-        File             destination =
-            TempFile.createTempFile("SimpleWithStylingResult", ".xls");
-        FileOutputStream outstream   = new FileOutputStream(destination);
 
-        workbook.write(outstream);
-        instream.close();
-        outstream.close();
-        instream = new FileInputStream(destination);
-        workbook = new HSSFWorkbook(new POIFSFileSystem(instream));
+
+        workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
         sheet    = workbook.getSheetAt(0);
         for (int k = 0; k < 4; k++)
         {
             HSSFCell cell = sheet.getRow(( short ) k).getCell(( short ) 0);
 
-            assertEquals(REPLACED, cell.getStringCellValue());
+            assertEquals(REPLACED, cell.getRichStringCellValue().getString());
         }
-        instream.close();
     }
 
     /**
@@ -465,48 +375,23 @@ public class TestWorkbook
      *             is incorrect or has not been replaced. <P>
      *
      */
-
-    public void testModifyEmployee()
-        throws IOException
-    {
-        String filename = System.getProperty("HSSF.testdata.path");
-
-        filename = filename + "/Employee.xls";
-        FileInputStream instream = new FileInputStream(filename);
-        POIFSFileSystem fsin     = new POIFSFileSystem(instream);
-        HSSFWorkbook    workbook = new HSSFWorkbook(fsin);
+    public void testModifyEmployee() {
+        HSSFWorkbook workbook = openSample("Employee.xls");
         HSSFSheet       sheet    = workbook.getSheetAt(0);
-        HSSFCell        cell     =
-            sheet.getRow(( short ) 3).getCell(( short ) 2);
+        HSSFCell        cell     = sheet.getRow(3).getCell(2);
 
         cell.setCellValue(LAST_NAME_VALUE);
-        cell = sheet.getRow(( short ) 4).getCell(( short ) 2);
+        cell = sheet.getRow(4).getCell(2);
         cell.setCellValue(FIRST_NAME_VALUE);
-        cell = sheet.getRow(( short ) 5).getCell(( short ) 2);
+        cell = sheet.getRow(5).getCell(2);
         cell.setCellValue(SSN_VALUE);
-        File             destination = TempFile.createTempFile("EmployeeResult",
-                                           ".xls");
-        FileOutputStream outstream   = new FileOutputStream(destination);
 
-        workbook.write(outstream);
-        instream.close();
-        outstream.close();
-        instream = new FileInputStream(destination);
-        workbook = new HSSFWorkbook(new POIFSFileSystem(instream));
+        workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
         sheet    = workbook.getSheetAt(0);
-        assertEquals(EMPLOYEE_INFORMATION,
-                     sheet.getRow(1).getCell(( short ) 1)
-                         .getStringCellValue());
-        assertEquals(LAST_NAME_VALUE,
-                     sheet.getRow(3).getCell(( short ) 2)
-                         .getStringCellValue());
-        assertEquals(FIRST_NAME_VALUE,
-                     sheet.getRow(4).getCell(( short ) 2)
-                         .getStringCellValue());
-        assertEquals(SSN_VALUE,
-                     sheet.getRow(5).getCell(( short ) 2)
-                         .getStringCellValue());
-        instream.close();
+        assertEquals(EMPLOYEE_INFORMATION, sheet.getRow(1).getCell(1).getStringCellValue());
+        assertEquals(LAST_NAME_VALUE, sheet.getRow(3).getCell(2).getStringCellValue());
+        assertEquals(FIRST_NAME_VALUE, sheet.getRow(4).getCell(2).getStringCellValue());
+        assertEquals(SSN_VALUE, sheet.getRow(5).getCell(2).getStringCellValue());
     }
 
     /**
@@ -517,21 +402,10 @@ public class TestWorkbook
      * FAILURE:    HSSF does not read a sheet or excepts.  HSSF incorrectly indentifies the cell<P>
      *
      */
-
-    public void testReadSheetWithRK()
-        throws IOException
-    {
-        String filename = System.getProperty("HSSF.testdata.path");
-
-        filename = filename + "/rk.xls";
-
-        // a.xls has a value on position (0,0)
-        FileInputStream in = new FileInputStream(filename);
-        POIFSFileSystem fs = new POIFSFileSystem(in);
-        HSSFWorkbook    h  = new HSSFWorkbook(fs);
+    public void testReadSheetWithRK() {
+        HSSFWorkbook h = openSample("rk.xls");
         HSSFSheet       s  = h.getSheetAt(0);
-        HSSFRow         r  = s.getRow(0);
-        HSSFCell        c  = r.getCell(( short ) 0);
+        HSSFCell        c  = s.getRow(0).getCell(0);
         int             a  = c.getCellType();
 
         assertEquals(a, c.CELL_TYPE_NUMERIC);
@@ -564,7 +438,6 @@ public class TestWorkbook
         {
             r = s.createRow(rownum);
 
-            // r.setRowNum(( short ) rownum);
             for (short cellnum = ( short ) 0; cellnum < 50; cellnum += 2)
             {
                 c = r.createCell(cellnum);
@@ -572,7 +445,7 @@ public class TestWorkbook
                                + ((( double ) rownum / 1000)
                                   + (( double ) cellnum / 10000)));
                 c = r.createCell(( short ) (cellnum + 1));
-                c.setCellValue("TEST");
+                c.setCellValue(new HSSFRichTextString("TEST"));
             }
         }
         s.addMergedRegion(new Region(( short ) 0, ( short ) 0, ( short ) 10,
@@ -632,7 +505,7 @@ public class TestWorkbook
         HSSFRow      row      = sheet.createRow(( short ) 2);
         HSSFCell     cell     = row.createCell(( short ) 1);
 
-        cell.setCellValue("Class");
+        cell.setCellValue(new HSSFRichTextString("Class"));
         cell = row.createCell(( short ) 2);
 
         // workbook.write(new FileOutputStream("/a2.xls"));
@@ -687,49 +560,35 @@ public class TestWorkbook
         in.close();
         file.deleteOnExit();
     }
-    
+
     /**
      * Generate a file to visually/programmatically verify repeating rows and cols made it
      */
     public void testRepeatingColsRows() throws IOException
     {
-		HSSFWorkbook workbook = new HSSFWorkbook();        
-		HSSFSheet sheet = workbook.createSheet("Test Print Titles");                
-		String sheetName = workbook.getSheetName(0);
-	     
-	    HSSFRow row = sheet.createRow(0);
-	    
-	    HSSFCell cell = row.createCell((short)1);
-	    cell.setCellValue("hi");
-	     
-	     
-		workbook.setRepeatingRowsAndColumns(0, 0, 1, 0, 0); 
-	     
-		File file = TempFile.createTempFile("testPrintTitles",".xls");        
-	     
-		FileOutputStream fileOut = new FileOutputStream(file);
-		workbook.write(fileOut);
-		fileOut.close();
-	     
-		assertTrue("file exists",file.exists());
-	     
-    	
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Test Print Titles");
+
+        HSSFRow row = sheet.createRow(0);
+
+        HSSFCell cell = row.createCell((short)1);
+        cell.setCellValue(new HSSFRichTextString("hi"));
+
+
+        workbook.setRepeatingRowsAndColumns(0, 0, 1, 0, 0);
+
+        File file = TempFile.createTempFile("testPrintTitles",".xls");
+
+        FileOutputStream fileOut = new FileOutputStream(file);
+        workbook.write(fileOut);
+        fileOut.close();
+
+        assertTrue("file exists",file.exists());
     }
-  
-    
+
+
     public static void main(String [] ignored_args)
     {
-        String filename = System.getProperty("HSSF.testdata.path");
-
-        // assume this is relative to basedir
-        if (filename == null)
-        {
-            System.setProperty(
-                "HSSF.testdata.path",
-                "src/testcases/org/apache/poi/hssf/data");
-        }
-        System.out
-            .println("Testing org.apache.poi.hssf.usermodel.HSSFWorkbook");
         junit.textui.TestRunner.run(TestWorkbook.class);
     }
 }

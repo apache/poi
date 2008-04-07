@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -34,20 +32,8 @@ import org.apache.poi.util.HexRead;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Csaba Nagy (ncsaba at yahoo dot com)
  */
+public final class TestRecordFactory extends TestCase {
 
-public class TestRecordFactory
-    extends TestCase
-{
-
-    /**
-     * Creates new TestRecordFactory
-     * @param testCaseName
-     */
-
-    public TestRecordFactory(String testCaseName)
-    {
-        super(testCaseName);
-    }
 
     /**
      * TEST NAME:  Test Basic Record Construction <P>
@@ -57,13 +43,9 @@ public class TestRecordFactory
      * FAILURE:    The wrong records are creates or contain the wrong values <P>
      *
      */
-
-    public void testBasicRecordConstruction()
-        throws Exception
-    {
+    public void testBasicRecordConstruction() {
         short    recType = BOFRecord.sid;
-        byte[]   data    = new byte[]
-        {
+        byte[]   data    = {
             0, 6, 5, 0, -2, 28, -51, 7, -55, 64, 0, 0, 6, 1, 0, 0
         };
         short    size    = 16;
@@ -106,13 +88,9 @@ public class TestRecordFactory
      * FAILURE:    The wrong records are created or contain the wrong values <P>
      *
      */
-
-    public void testSpecial()
-        throws Exception
-    {
+    public void testSpecial() {
         short    recType = RKRecord.sid;
-        byte[]   data    = new byte[]
-        {
+        byte[]   data    = {
             0, 0, 0, 0, 21, 0, 0, 0, 0, 0
         };
         short    size    = 10;
@@ -138,10 +116,8 @@ public class TestRecordFactory
      * FAILURE:    The wrong records are created or contain the wrong values <P>
      *
      */
-    public void testContinuedUnknownRecord()
-    {
-        byte[]   data    = new byte[]
-        {
+    public void testContinuedUnknownRecord() {
+        byte[]   data    = {
             0, -1, 0, 0, // an unknown record with 0 length
             0x3C , 0, 3, 0, 1, 2, 3, // a continuation record with 3 bytes of data
             0x3C , 0, 1, 0, 4 // one more continuation record with 1 byte of data
@@ -178,7 +154,7 @@ public class TestRecordFactory
      */
     public void testMixedContinue() throws Exception {
         /**
-         *  Taken from a real file $HSSF.testdata.path/39512.xls. See Bug 39512 for details.
+         *  Taken from a real test sample file 39512.xls. See Bug 39512 for details.
          */
         String dump =
                 //OBJ
@@ -228,10 +204,7 @@ public class TestRecordFactory
         assertTrue(Arrays.equals(data, ser));
     }
 
-    public static void main(String [] ignored_args)
-    {
-        System.out
-            .println("Testing org.apache.poi.hssf.record.TestRecordFactory");
+    public static void main(String [] ignored_args) {
         junit.textui.TestRunner.run(TestRecordFactory.class);
     }
 }

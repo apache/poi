@@ -17,13 +17,13 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
-import java.io.FileInputStream;
 import java.io.PrintStream;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.formula.functions.TestMathX;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -155,9 +155,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 
 	protected void setUp() throws Exception {
 		if (workbook == null) {
-			String filePath = System.getProperty("HSSF.testdata.path")+ "/" + SS.FILENAME;
-			FileInputStream fin = new FileInputStream( filePath );
-			workbook = new HSSFWorkbook( fin );
+			workbook = HSSFTestDataSamples.openSampleWorkbook(SS.FILENAME);
 			sheet = workbook.getSheetAt( 0 );
 		  }
 		_functionFailureCount = 0;
@@ -178,14 +176,14 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 		String successMsg = "There were " 
 				+ _evaluationSuccessCount + " successful evaluation(s) and "
 				+ _functionSuccessCount + " function(s) without error";
- 		if(_functionFailureCount > 0) {
+		if(_functionFailureCount > 0) {
 			String msg = _functionFailureCount + " function(s) failed in "
 			+ _evaluationFailureCount + " evaluation(s).  " + successMsg;
 			throw new AssertionFailedError(msg);
 		}
- 		if(false) { // normally no output for successful tests
- 			System.out.println(getClass().getName() + ": " + successMsg);
- 		}
+		if(false) { // normally no output for successful tests
+			System.out.println(getClass().getName() + ": " + successMsg);
+		}
 	}
 
 	/**

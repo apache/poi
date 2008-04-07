@@ -17,12 +17,12 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
 
 /**
  * Test <code>HSSFPicture</code>.
@@ -58,9 +58,8 @@ public final class TestHSSFPicture extends TestCase{
      private static byte[] getTestDataFileContent(String fileName) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-        String readFilename = System.getProperty("HSSF.testdata.path");
         try {
-            InputStream fis = new FileInputStream(readFilename+File.separator+fileName);
+            InputStream fis = HSSFTestDataSamples.openSampleFileStream(fileName);
 
             byte[] buf = new byte[512];
             while(true) {

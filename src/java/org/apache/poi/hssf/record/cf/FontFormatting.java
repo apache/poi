@@ -45,8 +45,8 @@ public class FontFormatting
     private static final int OFFSET_OPTION_FLAGS = 88;
     private static final int OFFSET_ESCAPEMENT_TYPE_MODIFIED = 92;
     private static final int OFFSET_UNDERLINE_TYPE_MODIFIED = 96;
-    private static final int OFFSET_NOT_USED1 = 100;
-    private static final int OFFSET_NOT_USED2 = 104;
+    private static final int OFFSET_FONT_WEIGHT_MODIFIED = 100;
+    private static final int OFFSET_NOT_USED = 104;
     private static final int OFFSET_FONT_FORMATING_END = 116;
 
     
@@ -56,7 +56,6 @@ public class FontFormatting
     private static final BitField posture		= BitFieldFactory.getInstance(0x00000002);
     private static final BitField outline		= BitFieldFactory.getInstance(0x00000008);
     private static final BitField shadow		= BitFieldFactory.getInstance(0x00000010);
-    private static final BitField condense		= BitFieldFactory.getInstance(0x00000020);
     private static final BitField cancellation	= BitFieldFactory.getInstance(0x00000080);
     
     // OPTION FLAGS MASKS
@@ -64,7 +63,6 @@ public class FontFormatting
     private static final BitField styleModified			= BitFieldFactory.getInstance(0x00000002);
     private static final BitField outlineModified 		= BitFieldFactory.getInstance(0x00000008);
     private static final BitField shadowModified 		= BitFieldFactory.getInstance(0x00000010);
-    private static final BitField condenseModified		= BitFieldFactory.getInstance(0x00000020);
     private static final BitField cancellationModified	= BitFieldFactory.getInstance(0x00000080);
 
     /**
@@ -125,10 +123,9 @@ public class FontFormatting
     	
     	this.setFontHeight((short)-1);
     	this.setItalic(false);
-    	this.setBold(false);
+    	this.setFontWieghtModified(false);
     	this.setOutline(false);
     	this.setShadow(false);
-    	this.setCondense(false);
     	this.setStrikeout(false);
     	this.setEscapementType((short)0);
     	this.setUnderlineType((byte)0);
@@ -137,15 +134,13 @@ public class FontFormatting
     	this.setFontStyleModified(false);
     	this.setFontOutlineModified(false);
     	this.setFontShadowModified(false);
-    	this.setFontCondenseModified(false);
     	this.setFontCancellationModified(false);
     	
     	this.setEscapementTypeModified(false);
     	this.setUnderlineTypeModified(false);
     	
     	LittleEndian.putShort(record, OFFSET_FONT_NAME, (short)0);
-    	LittleEndian.putInt(record, OFFSET_NOT_USED1, 0x00000001);
-    	LittleEndian.putInt(record, OFFSET_NOT_USED2, 0x00000001);
+    	LittleEndian.putInt(record, OFFSET_NOT_USED, 0x00000001);
     	LittleEndian.putShort(record, OFFSET_FONT_FORMATING_END, (short)0x0001);
     }
     
@@ -247,16 +242,6 @@ public class FontFormatting
     public boolean isShadowOn()
     {
     	return getFontOption(shadow);
-    }
-
-    public void setCondense(boolean on)
-    {
-    	setFontOption(on, condense);
-    }
-
-    public boolean isCondenseOn()
-    {
-    	return getFontOption(condense);
     }
 
     /**
@@ -420,6 +405,7 @@ public class FontFormatting
     	return getOptionFlag(styleModified);
     }
 
+    
     public void setFontStyleModified(boolean modified)
     {
     	setOptionFlag(modified, styleModified);
@@ -444,16 +430,6 @@ public class FontFormatting
     {
     	setOptionFlag(modified, shadowModified);
     }
-    public boolean isFontCondenseModified()
-    {
-    	return getOptionFlag(condenseModified);
-    }
-    
-    public void setFontCondenseModified(boolean modified)
-    {
-    	setOptionFlag(modified, condenseModified);
-    }
-    
     public void setFontCancellationModified(boolean modified)
     {
     	setOptionFlag(modified, cancellationModified);
@@ -469,7 +445,6 @@ public class FontFormatting
     	int value = modified? 0 : 1;
     	LittleEndian.putInt(record,OFFSET_ESCAPEMENT_TYPE_MODIFIED, value);
     }
-    
     public boolean isEscapementTypeModified()
     {
     	int escapementModified = LittleEndian.getInt(record,OFFSET_ESCAPEMENT_TYPE_MODIFIED);
@@ -488,6 +463,18 @@ public class FontFormatting
     	return underlineModified == 0;
     }
     
+    public void setFontWieghtModified(boolean modified)
+    {
+    	int value = modified? 0 : 1;
+    	LittleEndian.putInt(record,OFFSET_FONT_WEIGHT_MODIFIED, value);
+    }
+
+    public boolean isFontWeightModified()
+    {
+    	int fontStyleModified = LittleEndian.getInt(record,OFFSET_FONT_WEIGHT_MODIFIED);
+    	return fontStyleModified == 0;
+    }
+
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
@@ -520,14 +507,6 @@ public class FontFormatting
         else
         {
             buffer.append("    .font shadow is not modified\n");
-        }
-        if( isFontCondenseModified() )
-        {
-            buffer.append("    .font condense = ").append(isCondenseOn()).append("\n");
-        }
-        else
-        {
-            buffer.append("    .font condense is not modified\n");
         }
         
         if( isFontCancellationModified() )
@@ -572,11 +551,32 @@ public class FontFormatting
         }
         buffer.append("    .color index = ").append("0x"+Integer.toHexString(getFontColorIndex()).toUpperCase()).append("\n");
         
+
+        buffer.append("    ====\n");
+        buffer.append("    ["+OFFSET_FONT_HEIGHT+"] FONT HEIGHT: "+intToHex(OFFSET_FONT_HEIGHT)+"\n");
+        buffer.append("    ["+OFFSET_FONT_OPTIONS+"] FONT OPTIONS: "+intToHex(OFFSET_FONT_OPTIONS)+"\n");
+        buffer.append("    ["+OFFSET_FONT_WEIGHT+"] FONT WEIGHT: "+shortToHex(OFFSET_FONT_WEIGHT)+"\n");
+        buffer.append("    ["+OFFSET_ESCAPEMENT_TYPE+"] FONT ESCAPEMENT: "+shortToHex(OFFSET_ESCAPEMENT_TYPE)+"\n");
+        buffer.append("    ["+OFFSET_UNDERLINE_TYPE+"] FONT UNDERLINE: "+byteToHex(OFFSET_UNDERLINE_TYPE)+"\n");
+        buffer.append("    ["+(OFFSET_UNDERLINE_TYPE+1)+"] FONT NOT USED: "+byteToHex(OFFSET_UNDERLINE_TYPE+1)+"\n");
+        buffer.append("    ["+(OFFSET_UNDERLINE_TYPE+2)+"] FONT NOT USED: "+byteToHex(OFFSET_UNDERLINE_TYPE+2)+"\n");
+        buffer.append("    ["+(OFFSET_UNDERLINE_TYPE+3)+"] FONT NOT USED: "+byteToHex(OFFSET_UNDERLINE_TYPE+3)+"\n");
+        buffer.append("    ["+OFFSET_FONT_COLOR_INDEX+"] FONT COLIDX: "+intToHex(OFFSET_FONT_COLOR_INDEX)+"\n");
+        buffer.append("    ["+(OFFSET_FONT_COLOR_INDEX+4)+"] FONT NOT USED: "+intToHex(OFFSET_FONT_COLOR_INDEX+4)+"\n");
+        buffer.append("    ["+OFFSET_OPTION_FLAGS+"] FONT OPTIONS: "+intToHex(OFFSET_OPTION_FLAGS)+"\n");
+        buffer.append("    ["+OFFSET_ESCAPEMENT_TYPE_MODIFIED+"] FONT ESC MOD: "+intToHex(OFFSET_ESCAPEMENT_TYPE_MODIFIED)+"\n");
+        buffer.append("    ["+OFFSET_UNDERLINE_TYPE_MODIFIED+"] FONT UND MOD: "+intToHex(OFFSET_UNDERLINE_TYPE_MODIFIED)+"\n");
+        buffer.append("    ["+OFFSET_FONT_WEIGHT+"] FONT WGH MOD: "+intToHex(OFFSET_FONT_WEIGHT)+"\n");
+        buffer.append("    ["+OFFSET_NOT_USED+"] FONT NOT USED: "+intToHex(OFFSET_NOT_USED)+"\n");
+        buffer.append("    ["+(OFFSET_NOT_USED+4)+"] FONT NOT USED: "+intToHex(OFFSET_NOT_USED+4)+"\n");
+        buffer.append("    ["+(OFFSET_NOT_USED+8)+"] FONT NOT USED: "+intToHex(OFFSET_NOT_USED+8)+"\n");
+        buffer.append("    ["+OFFSET_FONT_FORMATING_END+"] FONT FORMATTING END: "+shortToHex(OFFSET_FONT_FORMATING_END)+"\n");
+        buffer.append("    ====\n");
         
         buffer.append("    [/Font Formatting]\n");
         return buffer.toString();
     }
-    
+
     public Object clone() 
     {
       FontFormatting rec = new FontFormatting();
@@ -588,4 +588,18 @@ public class FontFormatting
       }
       return rec;
     }
+
+	private String intToHex(int offset)
+	{
+		return Integer.toHexString(LittleEndian.getInt(record, offset));
+	}
+	private String shortToHex(int offset)
+	{
+		return Integer.toHexString(LittleEndian.getShort(record, offset)&0xFFFF);
+	}
+	private String byteToHex(int offset)
+	{
+		return Integer.toHexString(record[offset]&0xFF);
+	}
+	
 }

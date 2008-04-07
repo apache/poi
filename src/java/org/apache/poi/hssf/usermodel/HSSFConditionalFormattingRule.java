@@ -17,8 +17,6 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.util.List;
-
 import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CFRuleRecord;
@@ -40,9 +38,6 @@ import org.apache.poi.hssf.record.formula.Ptg;
 public final class HSSFConditionalFormattingRule
 {
     private static final byte CELL_COMPARISON = CFRuleRecord.CONDITION_TYPE_CELL_VALUE_IS;
- 
-
-
 
 	private final CFRuleRecord cfRuleRecord;
 	private final Workbook workbook;
@@ -73,6 +68,19 @@ public final class HSSFConditionalFormattingRule
 		FontFormatting block = fontFmt==null ? null : fontFmt.getFontFormattingBlock();
 		cfRuleRecord.setFontFormatting(block);
 	}
+	
+	/**
+	 * @return - font formatting object  if defined,  <code>null</code> otherwise
+	 */
+	public HSSFFontFormatting getFontFormatting()
+	{
+		FontFormatting ff = cfRuleRecord.getFontFormatting();
+		if ( ff == null ) {
+			return null;
+		}
+		return new HSSFFontFormatting(ff);
+	}
+	
 	/**
 	 * @param borderFmt pass <code>null</code> to signify 'border unchanged'
 	 */
@@ -82,12 +90,34 @@ public final class HSSFConditionalFormattingRule
 		cfRuleRecord.setBorderFormatting(block);
 	}
 	/**
+	 * @return - border formatting object  if defined,  <code>null</code> otherwise
+	 */
+	public HSSFBorderFormatting getBorderFormatting()
+	{
+		BorderFormatting bf = cfRuleRecord.getBorderFormatting();
+		if ( bf == null ) {
+			return null;
+		}
+		return new HSSFBorderFormatting(bf);
+	}
+	/**
 	 * @param patternFmt pass <code>null</code> to signify 'pattern unchanged'
 	 */
 	public void setPatternFormatting(HSSFPatternFormatting patternFmt)
 	{
 		PatternFormatting block = patternFmt==null ? null : patternFmt.getPatternFormattingBlock();
 		cfRuleRecord.setPatternFormatting(block);
+	}
+	/**
+	 * @return - pattern formatting object  if defined, <code>null</code> otherwise
+	 */
+	public HSSFPatternFormatting getPatternFormatting()
+	{
+		PatternFormatting pf = cfRuleRecord.getPatternFormatting();
+		if ( pf == null ) {
+			return null;
+		}
+		return new HSSFPatternFormatting(pf);
 	}
 	
 	public String getFormula1()
@@ -112,11 +142,9 @@ public final class HSSFConditionalFormattingRule
 
 	private String toFormulaString(Ptg[] parsedExpression)
 	{
-		String formula = null;
-		if(parsedExpression!=null)
-		{
-		formula = FormulaParser.toFormulaString(workbook, parsedExpression);
+		if(parsedExpression ==null) {
+			return null;
 		}
-		return formula;
+		return FormulaParser.toFormulaString(workbook, parsedExpression);
 	}
 }
