@@ -32,9 +32,5 @@ public interface CommentsSource {
 	
 	public Comment findCellComment(String cellRef);
 	
-	public void setCellComment (int row, int column, Comment comment);
-	
-	public void setCellComment (String cellRef, Comment comment);
-
 	public Comment addComment();
 }

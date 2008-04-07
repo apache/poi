@@ -17,10 +17,17 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.model.CommentsTable;
+import org.openxml4j.opc.Package;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTAuthors;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
@@ -35,7 +42,7 @@ public class TestXSSFComment extends TestCase {
 
 	public void testConstructors() {
 		CommentsTable sheetComments = new CommentsTable();
-		XSSFComment comment = new XSSFComment(sheetComments);
+		XSSFComment comment = sheetComments.addComment();
 		assertNotNull(comment);
 		
 		CTComment ctComment = CTComment.Factory.newInstance();
@@ -121,4 +128,61 @@ public class TestXSSFComment extends TestCase {
 		assertEquals(TEST_RICHTEXTSTRING, ctComment.getText().getT());
 	}
     
+	/**
+	 * Tests that we can add comments to a new
+	 *  file, save, load, and still see them
+	 * @throws Exception
+	 */
+	public void testCreateSave() throws Exception {
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet s1 = (XSSFSheet)wb.createSheet();
+		Row r1 = s1.createRow(0);
+		Cell r1c1 = r1.createCell(0);
+		r1c1.setCellValue(2.2);
+		
+		assertEquals(0, s1.getNumberOfComments());
+		
+		Comment c1 = s1.createComment();
+		c1.setAuthor("Author 1");
+		c1.setString(new XSSFRichTextString("Comment 1"));
+		r1c1.setCellComment(c1);
+		
+		assertEquals(1, s1.getNumberOfComments());
+		
+		// Save and re-load
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		wb.write(baos);
+		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+		
+		wb = new XSSFWorkbook(Package.open(bais));
+		s1 = (XSSFSheet)wb.getSheetAt(0);
+		
+		assertEquals(1, s1.getNumberOfComments());
+		assertNotNull(s1.getRow(0).getCell(0).getCellComment());
+		assertEquals("Author 1", s1.getRow(0).getCell(0).getCellComment().getAuthor());
+		assertEquals("Comment 1", s1.getRow(0).getCell(0).getCellComment().getString().getString());
+		
+		// Now add an orphaned one
+		Comment c2 = s1.createComment();
+		c2.setAuthor("Author 2");
+		c2.setString(new XSSFRichTextString("Second Comment"));
+		c2.setRow(0);
+		c2.setColumn((short)1);
+		assertEquals(2, s1.getNumberOfComments());
+		
+		// Save and re-load
+		baos = new ByteArrayOutputStream();
+		wb.write(baos);
+		bais = new ByteArrayInputStream(baos.toByteArray());
+		
+		wb = new XSSFWorkbook(Package.open(bais));
+		s1 = (XSSFSheet)wb.getSheetAt(0);
+		
+		assertEquals(2, s1.getNumberOfComments());
+		assertNotNull(s1.getCellComment(0, 0));
+		assertNotNull(s1.getCellComment(0, 1));
+		
+		assertEquals("Author 1", s1.getCellComment(0, 0).getAuthor());
+		assertEquals("Author 2", s1.getCellComment(0, 1).getAuthor());
+	}
 }

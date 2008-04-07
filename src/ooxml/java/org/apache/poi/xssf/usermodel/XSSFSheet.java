@@ -905,7 +905,10 @@ public class XSSFSheet implements Sheet {
     }
     
     public void setCellComment(String cellRef, XSSFComment comment) {
-    	getComments().setCellComment(cellRef, comment);
+		CellReference cellReference = new CellReference(cellRef);
+    	
+		comment.setRow(cellReference.getRow());
+		comment.setColumn((short)cellReference.getCol());
     }
     
     public void setCellHyperlink(XSSFHyperlink hyperlink) {
@@ -927,6 +930,10 @@ public class XSSFSheet implements Sheet {
 	public boolean hasComments() {
 		if(sheetComments == null) { return false; }
 		return (sheetComments.getNumberOfComments() > 0);
+	}
+	protected int getNumberOfComments() {
+		if(sheetComments == null) { return 0; }
+		return sheetComments.getNumberOfComments();
 	}
 
 	private CTSelection getSheetTypeSelection() {
