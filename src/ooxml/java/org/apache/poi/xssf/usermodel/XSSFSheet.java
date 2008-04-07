@@ -458,13 +458,12 @@ public class XSSFSheet implements Sheet {
 	}
 
     public Region getMergedRegionAt(int index) {
-        // TODO Auto-generated method stub
-        return null;
+    	CTMergeCell ctMergeCell = getMergedCells().getMergeCellArray(index);
+    	return new Region(ctMergeCell.getRef());
     }
 
     public int getNumMergedRegions() {
-        // TODO Auto-generated method stub
-        return 0;
+    	return getMergedCells().sizeOfMergeCellArray();
     }
     
     public int getNumHyperlinks() {
@@ -990,11 +989,16 @@ public class XSSFSheet implements Sheet {
 	}
 
 	private void addNewMergeCell(Region region) {
-    	if (ctMergeCells == null) {
-    		ctMergeCells = worksheet.addNewMergeCells();
-    	}
+    	ctMergeCells = getMergedCells();
     	CTMergeCell ctMergeCell = ctMergeCells.addNewMergeCell();
     	ctMergeCell.setRef(region.getRegionRef());
+	}
+
+	private CTMergeCells getMergedCells() {
+		if (ctMergeCells == null) {
+			ctMergeCells = worksheet.addNewMergeCells();
+    	}
+		return ctMergeCells;
 	}
 
 	private CTPageSetUpPr getSheetTypePageSetUpPr() {
