@@ -53,6 +53,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetUpPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPrintOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSelection;
@@ -63,6 +64,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
 
 
 public class XSSFSheet implements Sheet {
@@ -205,13 +208,15 @@ public class XSSFSheet implements Sheet {
     }
 
     public void createFreezePane(int colSplit, int rowSplit, int leftmostColumn, int topRow) {
-        // TODO Auto-generated method stub
-
+    	this.createFreezePane(colSplit, rowSplit);
+    	this.showInPane((short)topRow, (short)leftmostColumn);
     }
 
     public void createFreezePane(int colSplit, int rowSplit) {
-        // TODO Auto-generated method stub
-
+    	getPane().setXSplit(colSplit);
+    	getPane().setYSplit(rowSplit);
+    	// make bottomRight default active pane
+    	getPane().setActivePane(STPane.BOTTOM_RIGHT);
     }
     
     /**
@@ -250,9 +255,9 @@ public class XSSFSheet implements Sheet {
         return xrow;
     }
 
-    public void createSplitPane(int splitPos, int splitPos2, int leftmostColumn, int topRow, int activePane) {
-        // TODO Auto-generated method stub
-
+    public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane) {
+    	createFreezePane(xSplitPos, ySplitPos, leftmostColumn, topRow);
+    	getPane().setActivePane(STPane.Enum.forInt(activePane));
     }
 
     public void dumpDrawingRecords(boolean fat) {
@@ -1017,4 +1022,11 @@ public class XSSFSheet implements Sheet {
     	}
     	return false;
     }
+
+	private CTPane getPane() {
+		if (getDefaultSheetView().getPane() == null) {
+			getDefaultSheetView().addNewPane();
+		}
+		return getDefaultSheetView().getPane();
+	}
 }
