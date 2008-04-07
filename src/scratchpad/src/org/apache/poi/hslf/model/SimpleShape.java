@@ -105,9 +105,13 @@ public class SimpleShape extends Shape {
      */
     public void setLineColor(Color color){
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
-        int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 0).getRGB();
-        setEscherProperty(opt, EscherProperties.LINESTYLE__COLOR, rgb);
-        setEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH, color == null ? 0x180010 : 0x180018);
+        if (color == null) {
+            setEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x80000);
+        } else {
+            int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 0).getRGB();
+            setEscherProperty(opt, EscherProperties.LINESTYLE__COLOR, rgb);
+            setEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH, color == null ? 0x180010 : 0x180018);
+        }
     }
 
     /**
@@ -212,9 +216,13 @@ public class SimpleShape extends Shape {
      */
     public void setFillColor(Color color){
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
-        int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 0).getRGB();
-        setEscherProperty(opt, EscherProperties.FILL__FILLCOLOR, rgb);
-        setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, color == null ? 0x150010 : 0x150011);
+        if(color == null) {
+            setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150000);
+        } else {
+            int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 0).getRGB();
+            setEscherProperty(opt, EscherProperties.FILL__FILLCOLOR, rgb);
+            setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150011);
+        }
     }
 
 }
