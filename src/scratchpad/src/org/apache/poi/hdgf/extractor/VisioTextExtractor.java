@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.hdgf.HDGFDiagram;
+import org.apache.poi.hdgf.chunks.Chunk;
 import org.apache.poi.hdgf.chunks.Chunk.Command;
 import org.apache.poi.hdgf.streams.ChunkStream;
 import org.apache.poi.hdgf.streams.PointerContainingStream;
@@ -71,11 +72,13 @@ public class VisioTextExtractor extends POITextExtractor {
 		if(stream instanceof ChunkStream) {
 			ChunkStream cs = (ChunkStream)stream;
 			for(int i=0; i<cs.getChunks().length; i++) {
-				if(cs.getChunks()[i] != null && 
-						cs.getChunks()[i].getName() != null &&
-						cs.getChunks()[i].getName().equals("Text")) {
+				Chunk chunk = cs.getChunks()[i];
+				if(chunk != null && 
+						chunk.getName() != null &&
+						chunk.getName().equals("Text") &&
+						chunk.getCommands().length > 0) {
 					// First command
-					Command cmd = cs.getChunks()[i].getCommands()[0];
+					Command cmd = chunk.getCommands()[0];
 					if(cmd != null && cmd.getValue() != null) {
 						text.add( cmd.getValue().toString() );
 					}
