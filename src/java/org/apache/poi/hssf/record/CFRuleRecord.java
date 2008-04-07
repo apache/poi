@@ -238,6 +238,17 @@ public final class CFRuleRecord extends Record
 		this.fontFormatting = fontFormatting;
 		setOptionFlag(fontFormatting != null, font);
 	}
+	public FontFormatting getFontFormatting()
+	{
+		if( containsFontFormattingBlock())
+		{
+			return fontFormatting;
+		}
+		else
+		{
+			return null;
+		}
+	}
 	
 	public boolean containsAlignFormattingBlock()
 	{
@@ -257,6 +268,17 @@ public final class CFRuleRecord extends Record
 		this.borderFormatting = borderFormatting;
 		setOptionFlag(borderFormatting != null, bord);
 	}
+	public BorderFormatting getBorderFormatting()
+	{
+		if( containsBorderFormattingBlock())
+		{
+			return borderFormatting;
+		}
+		else
+		{
+			return null;
+		}
+	}
 	
 	public boolean containsPatternFormattingBlock()
 	{
@@ -267,7 +289,17 @@ public final class CFRuleRecord extends Record
 		this.patternFormatting = patternFormatting;
 		setOptionFlag(patternFormatting!=null, patt);
 	}
-
+	public PatternFormatting getPatternFormatting()
+	{
+		if( containsPatternFormattingBlock())
+		{
+			return patternFormatting;
+		}
+		else
+		{
+			return null;
+		}
+	}
 	
 	public boolean containsProtectionFormattingBlock()
 	{
@@ -616,12 +648,6 @@ public final class CFRuleRecord extends Record
 		return rec;
 	}
 
-	public FontFormatting getFontFormatting()
-	{
-		return fontFormatting;
-	}
-
-	
 	/**
 	 * @return <code>null</code> if <tt>formula</tt> was null.
 	 */

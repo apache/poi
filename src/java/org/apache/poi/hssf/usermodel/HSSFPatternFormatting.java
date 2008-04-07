@@ -27,50 +27,54 @@ import org.apache.poi.hssf.record.cf.PatternFormatting;
  */
 public class HSSFPatternFormatting
 {
-    /**  No background */
-    public final static short NO_FILL 				=  PatternFormatting.NO_FILL;
-    /**  Solidly filled */
-    public final static short SOLID_FOREGROUND 		=  PatternFormatting.SOLID_FOREGROUND;
-    /**  Small fine dots */
-    public final static short FINE_DOTS 			=  PatternFormatting.FINE_DOTS;
-    /**  Wide dots */
-    public final static short ALT_BARS 				=  PatternFormatting.ALT_BARS;
-    /**  Sparse dots */
-    public final static short SPARSE_DOTS 			=  PatternFormatting.SPARSE_DOTS;
-    /**  Thick horizontal bands */
-    public final static short THICK_HORZ_BANDS 		=  PatternFormatting.THICK_HORZ_BANDS;
-    /**  Thick vertical bands */
-    public final static short THICK_VERT_BANDS 		=  PatternFormatting.THICK_VERT_BANDS;
-    /**  Thick backward facing diagonals */
-    public final static short THICK_BACKWARD_DIAG 	=  PatternFormatting.THICK_BACKWARD_DIAG;
-    /**  Thick forward facing diagonals */
-    public final static short THICK_FORWARD_DIAG 	=  PatternFormatting.THICK_FORWARD_DIAG;
-    /**  Large spots */
-    public final static short BIG_SPOTS 			=  PatternFormatting.BIG_SPOTS;
-    /**  Brick-like layout */
-    public final static short BRICKS 				=  PatternFormatting.BRICKS;
-    /**  Thin horizontal bands */
-    public final static short THIN_HORZ_BANDS 		=  PatternFormatting.THIN_HORZ_BANDS;
-    /**  Thin vertical bands */
-    public final static short THIN_VERT_BANDS 		=  PatternFormatting.THIN_VERT_BANDS;
-    /**  Thin backward diagonal */
-    public final static short THIN_BACKWARD_DIAG 	=  PatternFormatting.THIN_BACKWARD_DIAG;
-    /**  Thin forward diagonal */
-    public final static short THIN_FORWARD_DIAG 	=  PatternFormatting.THIN_FORWARD_DIAG;
-    /**  Squares */
-    public final static short SQUARES 				=  PatternFormatting.SQUARES;
-    /**  Diamonds */
-    public final static short DIAMONDS 				=  PatternFormatting.DIAMONDS;
-    /**  Less Dots */
-    public final static short LESS_DOTS 			=  PatternFormatting.LESS_DOTS;
-    /**  Least Dots */
-    public final static short LEAST_DOTS 			=  PatternFormatting.LEAST_DOTS;
+	/**  No background */
+	public final static short NO_FILL 				=  PatternFormatting.NO_FILL;
+	/**  Solidly filled */
+	public final static short SOLID_FOREGROUND 		=  PatternFormatting.SOLID_FOREGROUND;
+	/**  Small fine dots */
+	public final static short FINE_DOTS 			=  PatternFormatting.FINE_DOTS;
+	/**  Wide dots */
+	public final static short ALT_BARS 				=  PatternFormatting.ALT_BARS;
+	/**  Sparse dots */
+	public final static short SPARSE_DOTS 			=  PatternFormatting.SPARSE_DOTS;
+	/**  Thick horizontal bands */
+	public final static short THICK_HORZ_BANDS 		=  PatternFormatting.THICK_HORZ_BANDS;
+	/**  Thick vertical bands */
+	public final static short THICK_VERT_BANDS 		=  PatternFormatting.THICK_VERT_BANDS;
+	/**  Thick backward facing diagonals */
+	public final static short THICK_BACKWARD_DIAG 	=  PatternFormatting.THICK_BACKWARD_DIAG;
+	/**  Thick forward facing diagonals */
+	public final static short THICK_FORWARD_DIAG 	=  PatternFormatting.THICK_FORWARD_DIAG;
+	/**  Large spots */
+	public final static short BIG_SPOTS 			=  PatternFormatting.BIG_SPOTS;
+	/**  Brick-like layout */
+	public final static short BRICKS 				=  PatternFormatting.BRICKS;
+	/**  Thin horizontal bands */
+	public final static short THIN_HORZ_BANDS 		=  PatternFormatting.THIN_HORZ_BANDS;
+	/**  Thin vertical bands */
+	public final static short THIN_VERT_BANDS 		=  PatternFormatting.THIN_VERT_BANDS;
+	/**  Thin backward diagonal */
+	public final static short THIN_BACKWARD_DIAG 	=  PatternFormatting.THIN_BACKWARD_DIAG;
+	/**  Thin forward diagonal */
+	public final static short THIN_FORWARD_DIAG 	=  PatternFormatting.THIN_FORWARD_DIAG;
+	/**  Squares */
+	public final static short SQUARES 				=  PatternFormatting.SQUARES;
+	/**  Diamonds */
+	public final static short DIAMONDS 				=  PatternFormatting.DIAMONDS;
+	/**  Less Dots */
+	public final static short LESS_DOTS 			=  PatternFormatting.LESS_DOTS;
+	/**  Least Dots */
+	public final static short LEAST_DOTS 			=  PatternFormatting.LEAST_DOTS;
 
 	private PatternFormatting patternFormatting;
 	
 	public HSSFPatternFormatting()
 	{
 		patternFormatting = new PatternFormatting();
+	}
+	protected HSSFPatternFormatting(PatternFormatting patternFormatting)
+	{
+		this.patternFormatting = patternFormatting;
 	}
 
 	protected PatternFormatting getPatternFormattingBlock()
