@@ -65,6 +65,11 @@ public final class HSSFBorderFormatting
 		borderFormatting = new BorderFormatting();
 	}
 
+	protected HSSFBorderFormatting(BorderFormatting borderFormatting)
+	{
+		this.borderFormatting = borderFormatting;
+	}
+	
 	protected BorderFormatting getBorderFormattingBlock()
 	{
 		return borderFormatting;
