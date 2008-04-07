@@ -29,13 +29,15 @@ public class XSSFComment implements Comment {
 	private CTComment comment;
 	private CommentsSource comments;
 
+	/**
+	 * Creates a new XSSFComment, associated with a given
+	 *  low level comment object.
+	 * If, as an end user, you want a new XSSFComment
+	 *  object, the please ask your sheet for one.
+	 */
 	public XSSFComment(CommentsSource comments, CTComment comment) {
 		this.comment = comment;
 		this.comments = comments;
-	}
-
-	public XSSFComment(CommentsSource sheetComments) {
-		this(sheetComments, CTComment.Factory.newInstance());
 	}
 
 	public String getAuthor() {
@@ -97,6 +99,5 @@ public class XSSFComment implements Comment {
 
 	public void setVisible(boolean visible) {
 		// TODO Auto-generated method stub
-
 	}
 }

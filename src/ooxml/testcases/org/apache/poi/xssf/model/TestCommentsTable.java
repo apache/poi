@@ -84,15 +84,17 @@ public class TestCommentsTable extends TestCase {
 		assertNull(sheetComments.findCellComment(2, 0));
 	}
 	
-	public void testSetCellComment() {
+	public void testAddCellComment() {
 		CTComments comments = CTComments.Factory.newInstance();
 		CommentsTable sheetComments = new CommentsTable(comments);
 		CTCommentList commentList = comments.addNewCommentList();
 		assertEquals(0, commentList.sizeOfCommentArray());
-		XSSFComment comment = new XSSFComment(sheetComments);
-		comment.setAuthor("test A1 author");
 		
-		sheetComments.setCellComment("A1", comment);
+		XSSFComment comment = sheetComments.addComment();
+		comment.setAuthor("test A1 author");
+		comment.setRow(0);
+		comment.setColumn((short)0);
+		
 		assertEquals(1, commentList.sizeOfCommentArray());
 		assertEquals("test A1 author", sheetComments.getAuthor(commentList.getCommentArray(0).getAuthorId()));
 		assertEquals("test A1 author", comment.getAuthor());

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CommentsSource;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFComment;
@@ -102,22 +101,11 @@ public class CommentsTable implements CommentsSource, XSSFModel {
 		}
 		return null;
 	}
-	
-	public void setCellComment (int row, int column, Comment comment) {
-		XSSFComment current = findCellComment(row, column);
-		if (current == null) {
-			current = addComment();
-		}
-		current = (XSSFComment)comment;
-		current.setRow(row);
-		current.setColumn((short) column);
-	}
-	
-	public void setCellComment (String cellRef, Comment comment) {
-		CellReference cellReference = new CellReference(cellRef);
-		setCellComment(cellReference.getRow(), cellReference.getCol(), comment);
-	}
 
+	/**
+	 * Generates a new XSSFComment, associated with the
+	 *  current comments list.
+	 */
 	public XSSFComment addComment() {
 		return new XSSFComment(this, getCommentsList().addNewComment());
 	}
