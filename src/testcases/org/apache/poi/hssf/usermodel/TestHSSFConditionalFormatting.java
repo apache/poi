@@ -28,7 +28,7 @@ import org.apache.poi.ss.util.Region;
  */
 public final class TestHSSFConditionalFormatting extends TestCase
 {
-	public void testLastAndFirstColumns() 
+	public void testCreateCF() 
 	{
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet();
@@ -82,9 +82,27 @@ public final class TestHSSFConditionalFormatting extends TestCase
 		HSSFConditionalFormattingRule rule1 = cf.getRule(0);
 		assertEquals("7",rule1.getFormula1()); 
 		assertNull(rule1.getFormula2());
+		
+		HSSFFontFormatting    r1fp = rule1.getFontFormatting();
+		assertNotNull(r1fp);
+		
+		assertTrue(r1fp.isItalic());
+		assertFalse(r1fp.isBold());
+
+		HSSFBorderFormatting  r1bf = rule1.getBorderFormatting();
+		assertNotNull(r1bf);
+		assertEquals(HSSFBorderFormatting.BORDER_THIN, r1bf.getBorderBottom());
+		assertEquals(HSSFBorderFormatting.BORDER_THICK,r1bf.getBorderTop());
+		assertEquals(HSSFBorderFormatting.BORDER_DASHED,r1bf.getBorderLeft());
+		assertEquals(HSSFBorderFormatting.BORDER_DOTTED,r1bf.getBorderRight());
+
+		HSSFPatternFormatting r1pf = rule1.getPatternFormatting();
+		assertNotNull(r1pf);
+		assertEquals(HSSFColor.RED.index,r1pf.getFillBackgroundColor());		
 
 		HSSFConditionalFormattingRule rule2 = cf.getRule(1);
 		assertEquals("2",rule2.getFormula2()); 
 		assertEquals("1",rule2.getFormula1()); 
 	}
+	
 }

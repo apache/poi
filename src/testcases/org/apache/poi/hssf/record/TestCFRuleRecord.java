@@ -182,14 +182,13 @@ public final class TestCFRuleRecord extends TestCase
 		// Check for defaults
 		assertFalse(fontFormatting.isEscapementTypeModified());
 		assertFalse(fontFormatting.isFontCancellationModified());
-		assertFalse(fontFormatting.isFontCondenseModified());
 		assertFalse(fontFormatting.isFontOutlineModified());
 		assertFalse(fontFormatting.isFontShadowModified());
 		assertFalse(fontFormatting.isFontStyleModified());
 		assertFalse(fontFormatting.isUnderlineTypeModified());
+		assertFalse(fontFormatting.isFontWeightModified());
 
 		assertFalse(fontFormatting.isBold());
-		assertFalse(fontFormatting.isCondenseOn());
 		assertFalse(fontFormatting.isItalic());
 		assertFalse(fontFormatting.isOutlineOn());
 		assertFalse(fontFormatting.isShadowOn());
@@ -198,18 +197,13 @@ public final class TestCFRuleRecord extends TestCase
 		assertEquals(0, fontFormatting.getEscapementType());
 		assertEquals(-1, fontFormatting.getFontColorIndex());
 		assertEquals(-1, fontFormatting.getFontHeight());
-		assertEquals(400, fontFormatting.getFontWeight());
+		assertEquals(0, fontFormatting.getFontWeight());
 		assertEquals(0, fontFormatting.getUnderlineType());
 
 		fontFormatting.setBold(true);
 		assertTrue(fontFormatting.isBold());
 		fontFormatting.setBold(false);
 		assertFalse(fontFormatting.isBold());
-
-		fontFormatting.setCondense(true);
-		assertTrue(fontFormatting.isCondenseOn());
-		fontFormatting.setCondense(false);
-		assertFalse(fontFormatting.isCondenseOn());
 
 		fontFormatting.setEscapementType(FontFormatting.SS_SUB);
 		assertEquals(FontFormatting.SS_SUB, fontFormatting.getEscapementType());
@@ -223,6 +217,11 @@ public final class TestCFRuleRecord extends TestCase
 		fontFormatting.setEscapementTypeModified(true);
 		assertTrue(fontFormatting.isEscapementTypeModified());
 
+		fontFormatting.setFontWieghtModified(false);
+		assertFalse(fontFormatting.isFontWeightModified());
+		fontFormatting.setFontWieghtModified(true);
+		assertTrue(fontFormatting.isFontWeightModified());
+
 		fontFormatting.setFontCancellationModified(false);
 		assertFalse(fontFormatting.isFontCancellationModified());
 		fontFormatting.setFontCancellationModified(true);
@@ -230,11 +229,6 @@ public final class TestCFRuleRecord extends TestCase
 
 		fontFormatting.setFontColorIndex((short)10);
 		assertEquals(10,fontFormatting.getFontColorIndex());
-
-		fontFormatting.setFontCondenseModified(false);
-		assertFalse(fontFormatting.isFontCondenseModified());
-		fontFormatting.setFontCondenseModified(true);
-		assertTrue(fontFormatting.isFontCondenseModified());
 
 		fontFormatting.setFontHeight((short)100);
 		assertEquals(100,fontFormatting.getFontHeight());

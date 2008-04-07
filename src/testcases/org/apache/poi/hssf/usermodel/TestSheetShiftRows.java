@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,20 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.util.TempFile;
-
-import java.io.File;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+
+import junit.framework.TestCase;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
 
 /**
  * Tests row shifting capabilities.
@@ -37,16 +31,7 @@ import java.io.FileOutputStream;
  * @author Shawn Laubach (slaubach at apache dot com)
  * @author Toshiaki Kamoshida (kamoshida.toshiaki at future dot co dot jp)
  */
-
-public class TestSheetShiftRows extends TestCase {
-
-    /**
-     * Constructor for TestSheetShiftRows.
-     * @param arg0
-     */
-    public TestSheetShiftRows(String arg0) {
-	super(arg0);
-    }
+public final class TestSheetShiftRows extends TestCase {
 
     /**
      * Tests the shiftRows function.  Does three different shifts.
@@ -59,25 +44,16 @@ public class TestSheetShiftRows extends TestCase {
     public void testShiftRows() throws Exception
     {
         // Read initial file in
-        String filename = System.getProperty( "HSSF.testdata.path" );
-        filename = filename + "/SimpleMultiCell.xls";
-        FileInputStream fin = new FileInputStream( filename );
-        HSSFWorkbook wb = new HSSFWorkbook( fin );
-        fin.close();
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleMultiCell.xls");
         HSSFSheet s = wb.getSheetAt( 0 );
 
         // Shift the second row down 1 and write to temp file
         s.shiftRows( 1, 1, 1 );
-        File tempFile = TempFile.createTempFile( "shift", "test.xls" );
-        FileOutputStream fout = new FileOutputStream( tempFile );
-        wb.write( fout );
-        fout.close();
+
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
 
         // Read from temp file and check the number of cells in each
         // row (in original file each row was unique)
-        fin = new FileInputStream( tempFile );
-        wb = new HSSFWorkbook( fin );
-        fin.close();
         s = wb.getSheetAt( 0 );
 
         assertEquals( s.getRow( 0 ).getPhysicalNumberOfCells(), 1 );
@@ -89,15 +65,9 @@ public class TestSheetShiftRows extends TestCase {
         // Shift rows 1-3 down 3 in the current one.  This tests when
         // 1 row is blank.  Write to a another temp file
         s.shiftRows( 0, 2, 3 );
-        tempFile = TempFile.createTempFile( "shift", "test.xls" );
-        fout = new FileOutputStream( tempFile );
-        wb.write( fout );
-        fout.close();
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
 
         // Read and ensure things are where they should be
-        fin = new FileInputStream( tempFile );
-        wb = new HSSFWorkbook( fin );
-        fin.close();
         s = wb.getSheetAt( 0 );
         assertTrue( s.getRow( 0 ) == null || s.getRow( 0 ).getPhysicalNumberOfCells() == 0 );
         assertTrue( s.getRow( 1 ) == null || s.getRow( 1 ).getPhysicalNumberOfCells() == 0 );
@@ -107,22 +77,12 @@ public class TestSheetShiftRows extends TestCase {
         assertEquals( s.getRow( 5 ).getPhysicalNumberOfCells(), 2 );
 
         // Read the first file again
-        fin = new FileInputStream( filename );
-        wb = new HSSFWorkbook( fin );
-        fin.close();
+        wb = HSSFTestDataSamples.openSampleWorkbook("SimpleMultiCell.xls");
         s = wb.getSheetAt( 0 );
 
         // Shift rows 3 and 4 up and write to temp file
         s.shiftRows( 2, 3, -2 );
-        tempFile = TempFile.createTempFile( "shift", "test.xls" );
-        fout = new FileOutputStream( tempFile );
-        wb.write( fout );
-        fout.close();
-
-        // Read file and test
-        fin = new FileInputStream( tempFile );
-        wb = new HSSFWorkbook( fin );
-        fin.close();
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         s = wb.getSheetAt( 0 );
         assertEquals( s.getRow( 0 ).getPhysicalNumberOfCells(), 3 );
         assertEquals( s.getRow( 1 ).getPhysicalNumberOfCells(), 4 );
@@ -137,11 +97,11 @@ public class TestSheetShiftRows extends TestCase {
      * @author Toshiaki Kamoshida (kamoshida.toshiaki at future dot co dot jp)
      */
     public void testShiftRow(){
-   	HSSFWorkbook b = new HSSFWorkbook();
-   	HSSFSheet s    = b.createSheet();
-   	s.createRow(0).createCell((short)0).setCellValue("TEST1");
-   	s.createRow(3).createCell((short)0).setCellValue("TEST2");
-   	s.shiftRows(0,4,1);
+       HSSFWorkbook b = new HSSFWorkbook();
+       HSSFSheet s    = b.createSheet();
+       s.createRow(0).createCell((short)0).setCellValue("TEST1");
+       s.createRow(3).createCell((short)0).setCellValue("TEST2");
+       s.shiftRows(0,4,1);
     }
 
     /**
@@ -150,13 +110,13 @@ public class TestSheetShiftRows extends TestCase {
      * @author Toshiaki Kamoshida (kamoshida.toshiaki at future dot co dot jp)
      */
     public void testShiftRow0(){
-   	HSSFWorkbook b = new HSSFWorkbook();
-   	HSSFSheet s    = b.createSheet();
-   	s.createRow(0).createCell((short)0).setCellValue("TEST1");
-   	s.createRow(3).createCell((short)0).setCellValue("TEST2");
-   	s.shiftRows(0,4,1);
+       HSSFWorkbook b = new HSSFWorkbook();
+       HSSFSheet s    = b.createSheet();
+       s.createRow(0).createCell((short)0).setCellValue("TEST1");
+       s.createRow(3).createCell((short)0).setCellValue("TEST2");
+       s.shiftRows(0,4,1);
     }
-    
+
     /**
      * When shifting rows, the page breaks should go with it
      *
@@ -167,29 +127,25 @@ public class TestSheetShiftRows extends TestCase {
       HSSFRow row = s.createRow(4);
       row.createCell((short)0).setCellValue("test");
       s.setRowBreak(4);
-      
+
       s.shiftRows(4, 4, 2);
       assertTrue("Row number 6 should have a pagebreak", s.isRowBroken(6));
-      
+
     }
 
 
     public void testShiftWithComments() throws Exception {
-        String filename = System.getProperty( "HSSF.testdata.path" );
-        filename = filename + "/comments.xls";
-        FileInputStream fin = new FileInputStream( filename );
-        HSSFWorkbook wb = new HSSFWorkbook( fin );
-        fin.close();
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("comments.xls");
 
         HSSFSheet sheet = wb.getSheet("Sheet1");
         assertEquals(3, sheet.getLastRowNum());
-        
+
         // Verify comments are in the position expected
         assertNotNull(sheet.getCellComment(0,0));
         assertNull(sheet.getCellComment(1,0));
         assertNotNull(sheet.getCellComment(2,0));
         assertNotNull(sheet.getCellComment(3,0));
-        
+
         String comment1 = sheet.getCellComment(0,0).getString().getString();
         assertEquals(comment1,"comment top row1 (index0)\n");
         String comment3 = sheet.getCellComment(2,0).getString().getString();
@@ -197,7 +153,7 @@ public class TestSheetShiftRows extends TestCase {
         String comment4 = sheet.getCellComment(3,0).getString().getString();
         assertEquals(comment4,"comment top row4 (index3)\n");
 
-        // Shifting all but first line down to test comments shifting 
+        // Shifting all but first line down to test comments shifting
         sheet.shiftRows(1, sheet.getLastRowNum(), 1, true, true);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         wb.write(outputStream);
@@ -216,7 +172,7 @@ public class TestSheetShiftRows extends TestCase {
         assertEquals(comment3,comment3_shifted);
         String comment4_shifted = sheet.getCellComment(4,0).getString().getString();
         assertEquals(comment4,comment4_shifted);
-                
+
         // Write out and read back in again
         // Ensure that the changes were persisted
         wb = new HSSFWorkbook( new ByteArrayInputStream(outputStream.toByteArray()) );
@@ -235,22 +191,18 @@ public class TestSheetShiftRows extends TestCase {
         comment3_shifted = sheet.getCellComment(3,0).getString().getString();
         assertEquals(comment3,comment3_shifted);
         comment4_shifted = sheet.getCellComment(4,0).getString().getString();
-        assertEquals(comment4,comment4_shifted);        
+        assertEquals(comment4,comment4_shifted);
     }
-    
+
     /**
      * See bug #34023
      */
-    public void testShiftWithFormulas() throws Exception {
-        String filename = System.getProperty( "HSSF.testdata.path" );
-        filename = filename + "/ForShifting.xls";
-        FileInputStream fin = new FileInputStream( filename );
-        HSSFWorkbook wb = new HSSFWorkbook( fin );
-        fin.close();
+    public void testShiftWithFormulas() {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ForShifting.xls");
 
         HSSFSheet sheet = wb.getSheet("Sheet1");
         assertEquals(19, sheet.getLastRowNum());
-        
+
         assertEquals("cell B1 (ref)", sheet.getRow(0).getCell((short)3).getRichStringCellValue().toString());
         assertEquals("CONCATENATE(B1,\" (ref)\")", sheet.getRow(0).getCell((short)3).getCellFormula());
         assertEquals("cell B2 (ref)", sheet.getRow(1).getCell((short)3).getRichStringCellValue().toString());
@@ -259,15 +211,15 @@ public class TestSheetShiftRows extends TestCase {
         assertEquals("CONCATENATE(B3,\" (ref)\")", sheet.getRow(2).getCell((short)3).getCellFormula());
         assertEquals("cell B2 (ref)", sheet.getRow(6).getCell((short)1).getRichStringCellValue().toString());
         assertEquals("CONCATENATE(B2,\" (ref)\")", sheet.getRow(6).getCell((short)1).getCellFormula());
-        
+
         sheet.shiftRows(1, 1, 10);
-        
+
         // Row 1 => Row 11
         // So strings on row 11 unchanged, but reference in formula is
         assertEquals("cell B1 (ref)", sheet.getRow(0).getCell((short)3).getRichStringCellValue().toString());
         assertEquals("CONCATENATE(B1,\" (ref)\")", sheet.getRow(0).getCell((short)3).getCellFormula());
         assertEquals(0, sheet.getRow(1).getPhysicalNumberOfCells());
-        
+
         // still save b2
         assertEquals("cell B2 (ref)", sheet.getRow(11).getCell((short)3).getRichStringCellValue().toString());
         // but points to b12
@@ -275,7 +227,7 @@ public class TestSheetShiftRows extends TestCase {
 
         assertEquals("cell B3 (ref)", sheet.getRow(2).getCell((short)3).getRichStringCellValue().toString());
         assertEquals("CONCATENATE(B3,\" (ref)\")", sheet.getRow(2).getCell((short)3).getCellFormula());
-        
+
         // one on a non-shifted row also updated
         assertEquals("cell B2 (ref)", sheet.getRow(6).getCell((short)1).getRichStringCellValue().toString());
         assertEquals("CONCATENATE(B12,\" (ref)\")", sheet.getRow(6).getCell((short)1).getCellFormula());

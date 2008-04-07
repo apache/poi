@@ -15,17 +15,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi;
 
 
-import junit.framework.TestCase;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.*;
+import junit.framework.TestCase;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Tests that POIDocument correctly loads and saves the common
@@ -36,85 +36,73 @@ import org.apache.poi.poifs.filesystem.*;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestPOIDocumentMain extends TestCase {
+public final class TestPOIDocumentMain extends TestCase {
 	// The POI Documents to work on
 	private POIDocument doc;
 	private POIDocument doc2;
-	// POIFS primed on the test (two different hssf) data
-	private POIFSFileSystem pfs;
-	private POIFSFileSystem pfs2;
 
 	/**
-	 * Set things up, using a PowerPoint document and 
-	 *  a Word Document for our testing
+	 * Set things up, two spreadsheets for our testing
 	 */
-    public void setUp() throws Exception {
-		String dirnameHSSF = System.getProperty("HSSF.testdata.path");
-		String filenameHSSF = dirnameHSSF + "/DateFormats.xls";
-		String filenameHSSF2 = dirnameHSSF + "/StringFormulas.xls";
+	public void setUp() {
 		
-		FileInputStream fisHSSF = new FileInputStream(filenameHSSF);
-		pfs = new POIFSFileSystem(fisHSSF);
-		doc = new HSSFWorkbook(pfs);
-		
-		FileInputStream fisHSSF2 = new FileInputStream(filenameHSSF2);
-		pfs2 = new POIFSFileSystem(fisHSSF2);
-		doc2 = new HSSFWorkbook(pfs2);
+		doc = HSSFTestDataSamples.openSampleWorkbook("DateFormats.xls");
+		doc2 = HSSFTestDataSamples.openSampleWorkbook("StringFormulas.xls");
 	}
-    
-    public void testReadProperties() throws Exception {
-    	// We should have both sets
-    	assertNotNull(doc.getDocumentSummaryInformation());
-    	assertNotNull(doc.getSummaryInformation());
-    	
-    	// Check they are as expected for the test doc
-    	assertEquals("Administrator", doc.getSummaryInformation().getAuthor());
-    	assertEquals(0, doc.getDocumentSummaryInformation().getByteCount());
-    }
-    	
-    public void testReadProperties2() throws Exception {	
-    	// Check again on the word one
-    	assertNotNull(doc2.getDocumentSummaryInformation());
-    	assertNotNull(doc2.getSummaryInformation());
-    	
-    	assertEquals("Avik Sengupta", doc2.getSummaryInformation().getAuthor());
-    	assertEquals(null, doc2.getSummaryInformation().getKeywords());
-    	assertEquals(0, doc2.getDocumentSummaryInformation().getByteCount());
-    }
+	
+	public void testReadProperties() throws Exception {
+		// We should have both sets
+		assertNotNull(doc.getDocumentSummaryInformation());
+		assertNotNull(doc.getSummaryInformation());
+		
+		// Check they are as expected for the test doc
+		assertEquals("Administrator", doc.getSummaryInformation().getAuthor());
+		assertEquals(0, doc.getDocumentSummaryInformation().getByteCount());
+	}
+		
+	public void testReadProperties2() throws Exception {	
+		// Check again on the word one
+		assertNotNull(doc2.getDocumentSummaryInformation());
+		assertNotNull(doc2.getSummaryInformation());
+		
+		assertEquals("Avik Sengupta", doc2.getSummaryInformation().getAuthor());
+		assertEquals(null, doc2.getSummaryInformation().getKeywords());
+		assertEquals(0, doc2.getDocumentSummaryInformation().getByteCount());
+	}
 
-    public void testWriteProperties() throws Exception {
-    	// Just check we can write them back out into a filesystem
-    	POIFSFileSystem outFS = new POIFSFileSystem();
-    	doc.readProperties();
-        doc.writeProperties(outFS);
-    	
-    	// Should now hold them
-    	assertNotNull(
-    			outFS.createDocumentInputStream("\005SummaryInformation")
-    	);
-    	assertNotNull(
-    			outFS.createDocumentInputStream("\005DocumentSummaryInformation")
-    	);
-    }
+	public void testWriteProperties() throws Exception {
+		// Just check we can write them back out into a filesystem
+		POIFSFileSystem outFS = new POIFSFileSystem();
+		doc.readProperties();
+		doc.writeProperties(outFS);
+		
+		// Should now hold them
+		assertNotNull(
+				outFS.createDocumentInputStream("\005SummaryInformation")
+		);
+		assertNotNull(
+				outFS.createDocumentInputStream("\005DocumentSummaryInformation")
+		);
+	}
 
-    public void testWriteReadProperties() throws Exception {
+	public void testWriteReadProperties() throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		
-    	// Write them out
-    	POIFSFileSystem outFS = new POIFSFileSystem();
-    	doc.readProperties();
-        doc.writeProperties(outFS);
-    	outFS.writeFilesystem(baos);
-    	
-    	// Create a new version
-    	ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-    	POIFSFileSystem inFS = new POIFSFileSystem(bais);
-    	
-    	// Check they're still there
-    	doc.filesystem = inFS;
-    	doc.readProperties();
-    	
-    	// Delegate test
-    	testReadProperties();
-    }
+		// Write them out
+		POIFSFileSystem outFS = new POIFSFileSystem();
+		doc.readProperties();
+		doc.writeProperties(outFS);
+		outFS.writeFilesystem(baos);
+		
+		// Create a new version
+		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+		POIFSFileSystem inFS = new POIFSFileSystem(bais);
+		
+		// Check they're still there
+		doc.filesystem = inFS;
+		doc.readProperties();
+		
+		// Delegate test
+		testReadProperties();
+	}
 }

@@ -17,9 +17,6 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +24,7 @@ import java.io.InputStream;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -43,49 +41,13 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator.CellValue;
  */
 public final class TestFormulaBugs extends TestCase {
 
-	private static final String TEST_DATA_DIR_SYS_PROPERTY_NAME = "HSSF.testdata.path";
-
-	/**
-	 * Opens a sample file from the standard HSSF test data directory
-	 * 
-	 * @return an open <tt>InputStream</tt> for the specified sample file
-	 */
-	private static InputStream openSampleFileStream(String sampleFileName) {
-		// TODO - move this method somewhere common
-		String dataDirName = System
-				.getProperty(TEST_DATA_DIR_SYS_PROPERTY_NAME);
-		if (dataDirName == null) {
-			throw new RuntimeException("Must set system property '"
-					+ TEST_DATA_DIR_SYS_PROPERTY_NAME
-					+ "' before running tests");
-		}
-		File dataDir = new File(dataDirName);
-		if (!dataDir.exists()) {
-			throw new RuntimeException("Data dir '" + dataDirName
-					+ "' specified by system property '"
-					+ TEST_DATA_DIR_SYS_PROPERTY_NAME + "' does not exist");
-		}
-		File f = new File(dataDir, sampleFileName);
-		if (!f.exists()) {
-			throw new RuntimeException("Sample file '" + sampleFileName
-					+ "' not found in data dir '" + dataDirName + "'");
-		}
-		InputStream is;
-		try {
-			is = new FileInputStream(f);
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
-		}
-		return is;
-	}
-
 	/**
 	 * Bug 27349 - VLOOKUP with reference to another sheet.<p/> This test was
 	 * added <em>long</em> after the relevant functionality was fixed.
 	 */
 	public void test27349() {
 		// 27349-vlookupAcrossSheets.xls is bugzilla/attachment.cgi?id=10622
-		InputStream is = openSampleFileStream("27349-vlookupAcrossSheets.xls");
+		InputStream is = HSSFTestDataSamples.openSampleFileStream("27349-vlookupAcrossSheets.xls");
 		HSSFWorkbook wb;
 		try {
 			// original bug may have thrown exception here, or output warning to

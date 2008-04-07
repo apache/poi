@@ -17,13 +17,12 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
 
 /**
  * Tests for POIFSFileSystem
@@ -32,10 +31,6 @@ import junit.framework.TestCase;
  */
 public final class TestPOIFSFileSystem extends TestCase {
 
-	public TestPOIFSFileSystem(String testName) {
-		super(testName);
-	}
-	
 	/**
 	 * Mock exception used to ensure correct error handling
 	 */
@@ -121,16 +116,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 		
 	}
 
-	private static InputStream openSampleStream(String sampleName) {
-		String dataDirName = System.getProperty("HSSF.testdata.path");
-		if(dataDirName == null) {
-		    throw new RuntimeException("Missing system property '" + "HSSF.testdata.path" + "'");
-		}
-        File f = new File(dataDirName + "/" + sampleName);
-        try {
-            return new FileInputStream(f);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Sample file '" + f.getAbsolutePath() + "' not found");
-        }
+	private static InputStream openSampleStream(String sampleFileName) {
+		return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
 	}
 }

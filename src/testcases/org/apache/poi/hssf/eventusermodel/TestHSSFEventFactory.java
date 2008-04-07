@@ -16,109 +16,108 @@
 ==================================================================== */
 
 package org.apache.poi.hssf.eventusermodel;
-import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
-import org.apache.poi.hssf.eventusermodel.HSSFListener;
-
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
+import junit.framework.TestCase;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.DVALRecord;
 import org.apache.poi.hssf.record.DVRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-
-import junit.framework.TestCase;
-
-public class TestHSSFEventFactory extends TestCase {
-	private String dirname;
+/**
+ * 
+ */
+public final class TestHSSFEventFactory extends TestCase {
 	
-	public TestHSSFEventFactory() {
-		dirname = System.getProperty("HSSF.testdata.path");
+	private static final InputStream openSample(String sampleFileName) {
+		return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
 	}
 
 	public void testWithMissingRecords() throws Exception {
-		File f = new File(dirname + "/SimpleWithSkip.xls");
 
 		HSSFRequest req = new HSSFRequest();
 		MockHSSFListener mockListen = new MockHSSFListener();
 		req.addListenerForAllRecords(mockListen);
 		
-		POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(f));
+		POIFSFileSystem fs = new POIFSFileSystem(openSample("SimpleWithSkip.xls"));
 		HSSFEventFactory factory = new HSSFEventFactory();
 		factory.processWorkbookEvents(req, fs);
 
+		Record[] recs = mockListen.getRecords();
 		// Check we got the records
-		System.out.println("Processed, found " + mockListen.records.size() + " records");
-		assertTrue( mockListen.records.size() > 100 );
+		assertTrue( recs.length > 100 );
 		
 		// Check that the last few records are as we expect
 		// (Makes sure we don't accidently skip the end ones)
-		int numRec = mockListen.records.size();
-		assertEquals(WindowTwoRecord.class, mockListen.records.get(numRec-3).getClass());
-		assertEquals(SelectionRecord.class, mockListen.records.get(numRec-2).getClass());
-		assertEquals(EOFRecord.class,       mockListen.records.get(numRec-1).getClass());
+		int numRec = recs.length;
+		assertEquals(WindowTwoRecord.class, recs[numRec-3].getClass());
+		assertEquals(SelectionRecord.class, recs[numRec-2].getClass());
+		assertEquals(EOFRecord.class,	   recs[numRec-1].getClass());
 	}
 
 	public void testWithCrazyContinueRecords() throws Exception {
 		// Some files have crazy ordering of their continue records
 		// Check that we don't break on them (bug #42844)
-
-		File f = new File(dirname + "/ContinueRecordProblem.xls");
 		
 		HSSFRequest req = new HSSFRequest();
 		MockHSSFListener mockListen = new MockHSSFListener();
 		req.addListenerForAllRecords(mockListen);
 		
-		POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(f));
+		POIFSFileSystem fs = new POIFSFileSystem(openSample("ContinueRecordProblem.xls"));
 		HSSFEventFactory factory = new HSSFEventFactory();
 		factory.processWorkbookEvents(req, fs);
 
+		Record[] recs = mockListen.getRecords();
 		// Check we got the records
-		System.out.println("Processed, found " + mockListen.records.size() + " records");
-		assertTrue( mockListen.records.size() > 100 );
+		assertTrue( recs.length > 100 );
 
 		// And none of them are continue ones
-		Record[] r = (Record[])mockListen.records.toArray( 
-							new Record[mockListen.records.size()] );
-		for(int i=0; i<r.length; i++) {
-			assertFalse( r[i] instanceof ContinueRecord );
+		for(int i=0; i<recs.length; i++) {
+			assertFalse( recs[i] instanceof ContinueRecord );
 		}
 		
 		// Check that the last few records are as we expect
 		// (Makes sure we don't accidently skip the end ones)
-		int numRec = mockListen.records.size();
-		assertEquals(DVALRecord.class, mockListen.records.get(numRec-3).getClass());
-		assertEquals(DVRecord.class, mockListen.records.get(numRec-2).getClass());
-		assertEquals(EOFRecord.class,       mockListen.records.get(numRec-1).getClass());
+		int numRec = recs.length;
+		assertEquals(DVALRecord.class, recs[numRec-3].getClass());
+		assertEquals(DVRecord.class,  recs[numRec-2].getClass());
+		assertEquals(EOFRecord.class, recs[numRec-1].getClass());
 	}
 
-    /**
-     * Unknown records can be continued.
-     * Check that HSSFEventFactory doesn't break on them.
-     * (the test file was provided in a reopen of bug #42844)
-     */
-    public void testUnknownContinueRecords() throws Exception {
-         File f = new File(dirname + "/42844.xls");
+	/**
+	 * Unknown records can be continued.
+	 * Check that HSSFEventFactory doesn't break on them.
+	 * (the test file was provided in a reopen of bug #42844)
+	 */
+	public void testUnknownContinueRecords() throws Exception {
 
-        HSSFRequest req = new HSSFRequest();
-        MockHSSFListener mockListen = new MockHSSFListener();
-        req.addListenerForAllRecords(mockListen);
+		HSSFRequest req = new HSSFRequest();
+		MockHSSFListener mockListen = new MockHSSFListener();
+		req.addListenerForAllRecords(mockListen);
 
-        POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(f));
-        HSSFEventFactory factory = new HSSFEventFactory();
-        factory.processWorkbookEvents(req, fs);
+		POIFSFileSystem fs = new POIFSFileSystem(openSample("42844.xls"));
+		HSSFEventFactory factory = new HSSFEventFactory();
+		factory.processWorkbookEvents(req, fs);
 
-        assertTrue("no errors while processing the file", true);
-    }
+		assertTrue("no errors while processing the file", true);
+	}
 
 	private static class MockHSSFListener implements HSSFListener {
-		private MockHSSFListener() {}
-		private ArrayList records = new ArrayList();
+		private final List records = new ArrayList();
+
+		public MockHSSFListener() {}
+		public Record[] getRecords() {
+			Record[] result = new Record[records.size()];
+			records.toArray(result);
+			return result;
+		}
 
 		public void processRecord(Record record) {
 			records.add(record);

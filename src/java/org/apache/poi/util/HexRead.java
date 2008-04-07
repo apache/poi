@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
 
@@ -25,6 +23,7 @@ import java.util.ArrayList;
 
 /**
  * Utilities to read hex from files.
+ * TODO - move to test packages
  *
  * @author Marc Johnson
  * @author Glen Stampoultzis (glens at apache.org)
@@ -62,10 +61,8 @@ public class HexRead
      *
      * @see #readData(String)
      */
-    public static byte[] readData( String filename, String section ) throws IOException
-    {
-        File file = new File( filename );
-        FileInputStream stream = new FileInputStream( file );
+    public static byte[] readData(InputStream stream, String section ) throws IOException {
+    	
         try
         {
             StringBuffer sectionText = new StringBuffer();
@@ -99,6 +96,12 @@ public class HexRead
             stream.close();
         }
         throw new IOException( "Section '" + section + "' not found" );
+    }
+    public static byte[] readData( String filename, String section ) throws IOException
+    {
+        File file = new File( filename );
+        FileInputStream stream = new FileInputStream( file );
+        return readData(stream, section);
     }
 
     static public byte[] readData( InputStream stream, int eofChar )

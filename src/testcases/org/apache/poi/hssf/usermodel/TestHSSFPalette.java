@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.usermodel;
 
 import java.io.File;
@@ -25,6 +24,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import junit.framework.TestCase;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.PaletteRecord;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.util.TempFile;
@@ -32,15 +33,10 @@ import org.apache.poi.util.TempFile;
 /**
  * @author Brian Sanders (bsanders at risklabs dot com)
  */
-public class TestHSSFPalette extends TestCase
-{
+public final class TestHSSFPalette extends TestCase {
     private PaletteRecord palette;
     private HSSFPalette hssfPalette;
     
-    public TestHSSFPalette(String name)
-    {
-        super(name);
-    }
     
     public void setUp()
     {
@@ -54,12 +50,7 @@ public class TestHSSFPalette extends TestCase
     public void testCustomPalette() throws IOException
     {
         //reading sample xls
-        String dir = System.getProperty("HSSF.testdata.path");
-        File sample = new File(dir + "/Simple.xls");
-        assertTrue("Simple.xls exists and is readable", sample.canRead());
-        FileInputStream fis = new FileInputStream(sample);
-        HSSFWorkbook book = new HSSFWorkbook(fis);
-        fis.close();
+        HSSFWorkbook book = HSSFTestDataSamples.openSampleWorkbook("Simple.xls");
         
         //creating custom palette
         HSSFPalette palette = book.getCustomPalette();
@@ -72,7 +63,7 @@ public class TestHSSFPalette extends TestCase
         book.write(fos);
         fos.close();
         
-        fis = new FileInputStream(temp);
+        FileInputStream fis = new FileInputStream(temp);
         book = new HSSFWorkbook(fis);
         fis.close();
         
@@ -98,14 +89,9 @@ public class TestHSSFPalette extends TestCase
     /**
      * Uses the palette from cell stylings
      */
-    public void testPaletteFromCellColours() throws Exception {
-        String dir = System.getProperty("HSSF.testdata.path");
-        File sample = new File(dir + "/SimpleWithColours.xls");
-        assertTrue("SimpleWithColours.xls exists and is readable", sample.canRead());
-        FileInputStream fis = new FileInputStream(sample);
-        HSSFWorkbook book = new HSSFWorkbook(fis);
-        fis.close();
-    	
+    public void testPaletteFromCellColours() {
+        HSSFWorkbook book = HSSFTestDataSamples.openSampleWorkbook("SimpleWithColours.xls");
+        
         HSSFPalette p = book.getCustomPalette();
         
         HSSFCell cellA = book.getSheetAt(0).getRow(0).getCell((short)0);
@@ -161,46 +147,46 @@ public class TestHSSFPalette extends TestCase
     }
     
     public void testFindSimilar() throws Exception {
-    	HSSFWorkbook book = new HSSFWorkbook();
-    	HSSFPalette p = book.getCustomPalette();
-    	
-    	
-    	// Add a few edge colours in
-    	p.setColorAtIndex((short)8, (byte)-1, (byte)0, (byte)0);
-    	p.setColorAtIndex((short)9, (byte)0, (byte)-1, (byte)0);
-    	p.setColorAtIndex((short)10, (byte)0, (byte)0, (byte)-1);
-    	
-    	// And some near a few of them
-    	p.setColorAtIndex((short)11, (byte)-1, (byte)2, (byte)2);
-    	p.setColorAtIndex((short)12, (byte)-2, (byte)2, (byte)10);
-    	p.setColorAtIndex((short)13, (byte)-4, (byte)0, (byte)0);
-    	p.setColorAtIndex((short)14, (byte)-8, (byte)0, (byte)0);
-    	
-    	assertEquals(
-    			"FFFF:0:0", p.getColor((short)8).getHexString()
-    	);
-    	
-    	// Now check we get the right stuff back
-    	assertEquals(
-    			p.getColor((short)8).getHexString(), 
-    			p.findSimilarColor((byte)-1, (byte)0, (byte)0).getHexString()
-    	);
-    	assertEquals(
-    			p.getColor((short)8).getHexString(), 
-    			p.findSimilarColor((byte)-2, (byte)0, (byte)0).getHexString()
-    	);
-    	assertEquals(
-    			p.getColor((short)8).getHexString(), 
-    			p.findSimilarColor((byte)-1, (byte)1, (byte)0).getHexString()
-    	);
-    	assertEquals(
-    			p.getColor((short)11).getHexString(), 
-    			p.findSimilarColor((byte)-1, (byte)2, (byte)1).getHexString()
-    	);
-    	assertEquals(
-    			p.getColor((short)12).getHexString(), 
-    			p.findSimilarColor((byte)-1, (byte)2, (byte)10).getHexString()
-    	);
+        HSSFWorkbook book = new HSSFWorkbook();
+        HSSFPalette p = book.getCustomPalette();
+        
+        
+        // Add a few edge colours in
+        p.setColorAtIndex((short)8, (byte)-1, (byte)0, (byte)0);
+        p.setColorAtIndex((short)9, (byte)0, (byte)-1, (byte)0);
+        p.setColorAtIndex((short)10, (byte)0, (byte)0, (byte)-1);
+        
+        // And some near a few of them
+        p.setColorAtIndex((short)11, (byte)-1, (byte)2, (byte)2);
+        p.setColorAtIndex((short)12, (byte)-2, (byte)2, (byte)10);
+        p.setColorAtIndex((short)13, (byte)-4, (byte)0, (byte)0);
+        p.setColorAtIndex((short)14, (byte)-8, (byte)0, (byte)0);
+        
+        assertEquals(
+                "FFFF:0:0", p.getColor((short)8).getHexString()
+        );
+        
+        // Now check we get the right stuff back
+        assertEquals(
+                p.getColor((short)8).getHexString(), 
+                p.findSimilarColor((byte)-1, (byte)0, (byte)0).getHexString()
+        );
+        assertEquals(
+                p.getColor((short)8).getHexString(), 
+                p.findSimilarColor((byte)-2, (byte)0, (byte)0).getHexString()
+        );
+        assertEquals(
+                p.getColor((short)8).getHexString(), 
+                p.findSimilarColor((byte)-1, (byte)1, (byte)0).getHexString()
+        );
+        assertEquals(
+                p.getColor((short)11).getHexString(), 
+                p.findSimilarColor((byte)-1, (byte)2, (byte)1).getHexString()
+        );
+        assertEquals(
+                p.getColor((short)12).getHexString(), 
+                p.findSimilarColor((byte)-1, (byte)2, (byte)10).getHexString()
+        );
     }
     
     /**

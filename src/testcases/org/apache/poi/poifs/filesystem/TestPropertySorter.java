@@ -18,12 +18,21 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import junit.framework.TestCase;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Iterator;
+
 import junit.framework.ComparisonFailure;
+import junit.framework.TestCase;
 
-import java.io.*;
-import java.util.*;
-
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.Property;
 
@@ -36,45 +45,46 @@ import org.apache.poi.poifs.property.Property;
  *
  * @author Yegor Kozlov
  */
-public class TestPropertySorter extends TestCase {
+public final class TestPropertySorter extends TestCase {
 
     //the correct order of entries in the test file
-    protected static final String[] _entries = {
+    private static final String[] _entries = {
         "dir", "JML", "UTIL", "Loader", "Sheet1", "Sheet2", "Sheet3",
         "__SRP_0", "__SRP_1", "__SRP_2", "__SRP_3", "__SRP_4", "__SRP_5",
         "ThisWorkbook", "_VBA_PROJECT",
     };
 
-    protected File testFile;
-
-    public void setUp(){
-        String home = System.getProperty("HSSF.testdata.path");
-        testFile = new File(home + "/39234.xls");
+    private static POIFSFileSystem openSampleFS() {
+        InputStream is = HSSFTestDataSamples.openSampleFileStream("39234.xls");
+        try {
+            return new POIFSFileSystem(is);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
-
+    
     /**
      * Test sorting of properties in <code>DirectoryProperty</code>
      */
     public void testSortProperties() throws IOException {
-        InputStream is = new FileInputStream(testFile);
-        POIFSFileSystem fs = new POIFSFileSystem(is);
-        is.close();
+        POIFSFileSystem fs = openSampleFS();
         Property[] props = getVBAProperties(fs);
 
         assertEquals(_entries.length, props.length);
 
-        // (1). See that there is a problem with the old case-sensitive property comparartor
-        Arrays.sort(props, new CaseSensitivePropertyComparator());
+        // (1). See that there is a problem with the old case-sensitive property comparator
+        Arrays.sort(props, OldCaseSensitivePropertyComparator);
         try {
             for (int i = 0; i < props.length; i++) {
                 assertEquals(_entries[i], props[i].getName());
             }
-            fail("case-sensitive property comparator returns properties in wrong order");
+            fail("expected old case-sensitive property comparator to return properties in wrong order");
         } catch (ComparisonFailure e){
-            ; // as expected
+            // expected during successful test
+            assertNotNull(e.getMessage());
         }
 
-        // (2) Verify that the fixed proeprty comparator works right
+        // (2) Verify that the fixed property comparator works right
         Arrays.sort(props, new DirectoryProperty.PropertyComparator());
         for (int i = 0; i < props.length; i++) {
             assertEquals(_entries[i], props[i].getName());
@@ -85,14 +95,12 @@ public class TestPropertySorter extends TestCase {
      * Serialize file system and verify that the order of properties is the same as in the original file.
      */
     public void testSerialization() throws IOException {
-        InputStream is = new FileInputStream(testFile);
-        POIFSFileSystem fs = new POIFSFileSystem(is);
-        is.close();
+        POIFSFileSystem fs = openSampleFS();
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         fs.writeFilesystem(out);
         out.close();
-        is = new ByteArrayInputStream(out.toByteArray());
+        InputStream is = new ByteArrayInputStream(out.toByteArray());
         fs = new POIFSFileSystem(is);
         is.close();
         Property[] props = getVBAProperties(fs);
@@ -128,26 +136,17 @@ public class TestPropertySorter extends TestCase {
     /**
      * Old version of case-sensitive PropertyComparator to demonstrate the problem
      */
-    private class CaseSensitivePropertyComparator  implements Comparator
-    {
+    private static final Comparator OldCaseSensitivePropertyComparator = new Comparator() {
 
-        public boolean equals(Object o)
-        {
-            return this == o;
-        }
-
-        public int compare(Object o1, Object o2)
-        {
+        public int compare(Object o1, Object o2) {
             String name1  = (( Property ) o1).getName();
             String name2  = (( Property ) o2).getName();
-            int    result = name1.length() - name2.length();
+            int result = name1.length() - name2.length();
 
-            if (result == 0)
-            {
+            if (result == 0) {
                 result = name1.compareTo(name2);
             }
             return result;
         }
-    }
-
+    };
 }

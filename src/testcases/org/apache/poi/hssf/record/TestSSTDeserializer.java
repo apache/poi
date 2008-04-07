@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,51 +14,47 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexRead;
-import org.apache.poi.util.IntMapper;
-import org.apache.poi.hssf.record.TestcaseRecordInputStream;
-
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.util.HexRead;
+import org.apache.poi.util.IntMapper;
 
 /**
  * Exercise the SSTDeserializer class.
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestSSTDeserializer
-        extends TestCase
-{
-    private String _test_file_path;
-    private static final String _test_file_path_property = "HSSF.testdata.path";
+public final class TestSSTDeserializer extends TestCase {
 
-    public TestSSTDeserializer( String s )
-    {
-        super( s );
-    }
-
-    protected void setUp() throws Exception
-    {
-        _test_file_path = System.getProperty( _test_file_path_property );
-    }
 
     private byte[] joinArray(byte[] array1, byte[] array2) {
-      byte[] bigArray = new byte[array1.length+array2.length];
-      System.arraycopy(array1, 0, bigArray, 0, array1.length);
-      System.arraycopy(array2, 0, bigArray, array1.length, array2.length);
-      return bigArray;    
+        byte[] bigArray = new byte[array1.length + array2.length];
+        System.arraycopy(array1, 0, bigArray, 0, array1.length);
+        System.arraycopy(array2, 0, bigArray, array1.length, array2.length);
+        return bigArray;
+    }
+    
+    private static byte[] readSampleHexData(String sampleFileName, String sectionName) {
+        InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleFileName);
+        try {
+            return HexRead.readData(is, sectionName);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void testSpanRichTextToPlainText()
             throws Exception
     {
-      byte[] header = HexRead.readData( _test_file_path + File.separator + "richtextdata.txt", "header" );
-        byte[] continueBytes = HexRead.readData( _test_file_path + File.separator + "richtextdata.txt", "continue1" );
+      byte[] header = readSampleHexData("richtextdata.txt", "header" );
+        byte[] continueBytes = readSampleHexData("richtextdata.txt", "continue1" );
       continueBytes = TestcaseRecordInputStream.mergeDataAndSid(ContinueRecord.sid, (short)continueBytes.length, continueBytes);
       TestcaseRecordInputStream in = new TestcaseRecordInputStream((short)0, (short)header.length, joinArray(header, continueBytes));
       
@@ -74,8 +69,8 @@ public class TestSSTDeserializer
     public void testContinuationWithNoOverlap()
             throws Exception
     {
-        byte[] header = HexRead.readData( _test_file_path + File.separator + "evencontinuation.txt", "header" );
-        byte[] continueBytes = HexRead.readData( _test_file_path + File.separator + "evencontinuation.txt", "continue1" );
+        byte[] header = readSampleHexData("evencontinuation.txt", "header" );
+        byte[] continueBytes = readSampleHexData("evencontinuation.txt", "continue1" );
         continueBytes = TestcaseRecordInputStream.mergeDataAndSid(ContinueRecord.sid, (short)continueBytes.length, continueBytes);
         TestcaseRecordInputStream in = new TestcaseRecordInputStream((short)0, (short)header.length, joinArray(header, continueBytes));
 
@@ -93,10 +88,10 @@ public class TestSSTDeserializer
     public void testStringAcross2Continuations()
             throws Exception
     {
-        byte[] header = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "header" );
-        byte[] continue1 = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "continue1" );
+        byte[] header = readSampleHexData("stringacross2continuations.txt", "header" );
+        byte[] continue1 = readSampleHexData("stringacross2continuations.txt", "continue1" );
         continue1 = TestcaseRecordInputStream.mergeDataAndSid(ContinueRecord.sid, (short)continue1.length, continue1);
-        byte[] continue2 = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "continue2" );
+        byte[] continue2 = readSampleHexData("stringacross2continuations.txt", "continue2" );
         continue2 = TestcaseRecordInputStream.mergeDataAndSid(ContinueRecord.sid, (short)continue2.length, continue2);
         
         byte[] bytes = joinArray(header, continue1);
@@ -111,11 +106,9 @@ public class TestSSTDeserializer
         assertEquals( "At a dinner partyAt a dinner party", strings.get( 1 ) + "" );
     }
 
-    public void testExtendedStrings()
-            throws Exception
-    {
-        byte[] header = HexRead.readData( _test_file_path + File.separator + "extendedtextstrings.txt", "rich-header" );
-        byte[] continueBytes = HexRead.readData( _test_file_path + File.separator + "extendedtextstrings.txt", "rich-continue1" );
+    public void testExtendedStrings() {
+        byte[] header = readSampleHexData("extendedtextstrings.txt", "rich-header" );
+        byte[] continueBytes = readSampleHexData("extendedtextstrings.txt", "rich-continue1" );
         continueBytes = TestcaseRecordInputStream.mergeDataAndSid(ContinueRecord.sid, (short)continueBytes.length, continueBytes);
         TestcaseRecordInputStream in = new TestcaseRecordInputStream((short)0, (short)header.length, joinArray(header, continueBytes));
         
@@ -126,8 +119,8 @@ public class TestSSTDeserializer
         assertEquals( "At a dinner party orAt At At ", strings.get( 0  ) + "" );
 
 
-        header = HexRead.readData( _test_file_path + File.separator + "extendedtextstrings.txt", "norich-header" );
-        continueBytes = HexRead.readData( _test_file_path + File.separator + "extendedtextstrings.txt", "norich-continue1" );
+        header = readSampleHexData("extendedtextstrings.txt", "norich-header" );
+        continueBytes = readSampleHexData("extendedtextstrings.txt", "norich-continue1" );
         continueBytes = TestcaseRecordInputStream.mergeDataAndSid(ContinueRecord.sid, (short)continueBytes.length, continueBytes);
         in = new TestcaseRecordInputStream((short)0, (short)header.length, joinArray(header, continueBytes));
         
@@ -136,7 +129,5 @@ public class TestSSTDeserializer
         deserializer.manufactureStrings( 1, in);
 
         assertEquals( "At a dinner party orAt At At ", strings.get( 0 ) + "" );
-
     }
-
 }

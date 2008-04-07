@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,47 +14,29 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.usermodel;
 
+import java.util.GregorianCalendar;
+import java.util.List;
+
 import junit.framework.TestCase;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.EOFRecord;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-
-import java.io.FileInputStream;
-import java.util.GregorianCalendar;
-import java.util.List;
 
 /**
  * @author Glen Stampoultzis (glens at apache.org)
  */
-
-public class TestReadWriteChart
-    extends TestCase
-{
-    public TestReadWriteChart(String s)
-    {
-        super(s);
-    }
+public final class TestReadWriteChart extends TestCase {
 
     /**
      * In the presence of a chart we need to make sure BOF/EOF records still exist.
      */
-
-    public void testBOFandEOFRecords()
-        throws Exception
-    {
-        //System.out.println("made it in testBOFandEOF");
-        String          path      = System.getProperty("HSSF.testdata.path");
-        String          filename  = path + "/SimpleChart.xls";
-        //System.out.println("path is "+path);
-        POIFSFileSystem fs        =
-            new POIFSFileSystem(new FileInputStream(filename));
-        //System.out.println("opened file");
-        HSSFWorkbook    workbook  = new HSSFWorkbook(fs);
+    public void testBOFandEOFRecords() {
+        HSSFWorkbook workbook  = HSSFTestDataSamples.openSampleWorkbook("SimpleChart.xls");
         HSSFSheet       sheet     = workbook.getSheetAt(0);
         HSSFRow         firstRow  = sheet.getRow(0);
         HSSFCell        firstCell = firstRow.getCell(( short ) 0);
@@ -77,29 +58,7 @@ public class TestReadWriteChart
         assertTrue(records.get(records.size() - 1) instanceof EOFRecord);
     }
     
-    public static void main(String [] args)
-    {
-        String filename = System.getProperty("HSSF.testdata.path");
-
-        // assume andy is running this in the debugger
-        if (filename == null)
-        {
-            if (args != null && args[0].length() == 1) {
-            System.setProperty(
-                "HSSF.testdata.path",
-                args[0]);
-            } else {
-                System.err.println("Geesh, no HSSF.testdata.path system " +
-                          "property, no command line arg with the path "+
-                          "what do you expect me to do, guess where teh data " +
-                          "files are?  Sorry, I give up!");
-                                   
-            }
-            
-        }
-        System.out
-            .println("Testing org.apache.poi.hssf.usermodel.TestReadWriteChart");
+    public static void main(String [] args) {
         junit.textui.TestRunner.run(TestReadWriteChart.class);
     }
-    
 }
