@@ -151,8 +151,8 @@ under the License.
   <property name="ooxml.jar5.dir" location="${ooxml.lib}/jsr173_1.0_api.jar"/>
   <property name="ooxml.jar5.url" value="${repository}/xmlbeans/jars/jsr173_1.0_api.jar"/>
   <!-- No official release of openxml4j yet -->
-  <property name="ooxml.jar6.dir" location="${ooxml.lib}/openxml4j-bin-alpha-080403.jar"/>
-  <property name="ooxml.jar6.url" value="http://people.apache.org/~nick/openxml4j-bin-alpha-080403.jar"/>
+  <property name="ooxml.jar6.dir" location="${ooxml.lib}/openxml4j-bin-alpha-080407.jar"/>
+  <property name="ooxml.jar6.url" value="http://people.apache.org/~nick/openxml4j-bin-alpha-080407.jar"/>
 
   <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
   <!-- "Copy these file(s), free of charge" -->

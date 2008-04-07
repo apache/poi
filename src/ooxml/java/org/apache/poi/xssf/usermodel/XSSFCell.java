@@ -423,14 +423,20 @@ public final class XSSFCell implements Cell {
     /**
      * Creates an XSSFRichTextString for you.
      */
-    public RichTextString createRichTextString(String text) {
-        return new XSSFRichTextString(text);
-    }
-
-    public Hyperlink getHyperlink() {
-        return row.getSheet().getHyperlink(row.getRowNum(), cellNum);
-    }
-    public void setHyperlink(Hyperlink hyperlink) {
-        row.getSheet().setCellHyperlink((XSSFHyperlink)hyperlink);
-    }
+	public RichTextString createRichTextString(String text) {
+		return new XSSFRichTextString(text);
+	}
+	
+	public Hyperlink getHyperlink() {
+		return row.getSheet().getHyperlink(row.getRowNum(), cellNum);
+	}
+	public void setHyperlink(Hyperlink hyperlink) {
+		XSSFHyperlink link = (XSSFHyperlink)hyperlink;
+		
+		// Assign to us
+		link.setCellReference( new CellReference(row.getRowNum(), cellNum).formatAsString() );
+		
+		// Add to the lists
+		row.getSheet().setCellHyperlink(link);
+	}
 }

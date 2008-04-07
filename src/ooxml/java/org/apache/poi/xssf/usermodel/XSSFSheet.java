@@ -180,10 +180,9 @@ public class XSSFSheet implements Sheet {
     			hyperRel = hyperRels.getRelationshipByID(hyperlink.getId());
     		}
     		
-    		// TODO: fix openxml4j
-//    		hyperlinks.add(
-//    				new XSSFHyperlink(hyperlink, hyperRel)
-//    		);
+    		hyperlinks.add(
+    				new XSSFHyperlink(hyperlink, hyperRel)
+    		);
     	}
     }
     
