@@ -14,21 +14,36 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hssf.extractor;
 
-import java.io.File;
-import java.io.FileInputStream;
-
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import java.io.IOException;
+import java.io.InputStream;
 
 import junit.framework.TestCase;
 
-public class TestExcelExtractor extends TestCase {
-	public void testSimple() throws Exception {
-		String path = System.getProperty("HSSF.testdata.path");
-		FileInputStream fin = new FileInputStream(path + File.separator + "Simple.xls");
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+/**
+ * 
+ */
+public final class TestExcelExtractor extends TestCase {
+
+	private static final ExcelExtractor createExtractor(String sampleFileName) {
 		
-		ExcelExtractor extractor = new ExcelExtractor(new POIFSFileSystem(fin));
+		InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleFileName);
+		
+		try {
+			return new ExcelExtractor(new POIFSFileSystem(is));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	
+	public void testSimple() {
+		
+		ExcelExtractor extractor = createExtractor("Simple.xls");
 		
 		assertEquals("Sheet1\nreplaceMe\nSheet2\nSheet3\n", extractor.getText());
 		
@@ -37,11 +52,9 @@ public class TestExcelExtractor extends TestCase {
 		assertEquals("replaceMe\n", extractor.getText());
 	}
 	
-	public void testNumericFormula() throws Exception {
-		String path = System.getProperty("HSSF.testdata.path");
-		FileInputStream fin = new FileInputStream(path + File.separator + "sumifformula.xls");
+	public void testNumericFormula() {
 		
-		ExcelExtractor extractor = new ExcelExtractor(new POIFSFileSystem(fin));
+		ExcelExtractor extractor = createExtractor("sumifformula.xls");
 		
 		assertEquals(
 				"Sheet1\n" +
@@ -68,11 +81,9 @@ public class TestExcelExtractor extends TestCase {
 		);
 	}
 	
-	public void testwithContinueRecords() throws Exception {
-		String path = System.getProperty("HSSF.testdata.path");
-		FileInputStream fin = new FileInputStream(path + File.separator + "StringContinueRecords.xls");
+	public void testwithContinueRecords() {
 		
-		ExcelExtractor extractor = new ExcelExtractor(new POIFSFileSystem(fin));
+		ExcelExtractor extractor = createExtractor("StringContinueRecords.xls");
 		
 		extractor.getText();
 		
@@ -82,11 +93,9 @@ public class TestExcelExtractor extends TestCase {
 		assertTrue(extractor.getText().length() > 40960);
 	}
 	
-	public void testStringConcat() throws Exception {
-		String path = System.getProperty("HSSF.testdata.path");
-		FileInputStream fin = new FileInputStream(path + File.separator + "SimpleWithFormula.xls");
+	public void testStringConcat() {
 		
-		ExcelExtractor extractor = new ExcelExtractor(new POIFSFileSystem(fin));
+		ExcelExtractor extractor = createExtractor("SimpleWithFormula.xls");
 		
 		// Comes out as NaN if treated as a number
 		// And as XYZ if treated as a string
@@ -97,11 +106,9 @@ public class TestExcelExtractor extends TestCase {
 		assertEquals("Sheet1\nreplaceme\nreplaceme\nCONCATENATE(A1,A2)\nSheet2\nSheet3\n", extractor.getText());
 	}
 	
-	public void testStringFormula() throws Exception {
-		String path = System.getProperty("HSSF.testdata.path");
-		FileInputStream fin = new FileInputStream(path + File.separator + "StringFormulas.xls");
+	public void testStringFormula() {
 		
-		ExcelExtractor extractor = new ExcelExtractor(new POIFSFileSystem(fin));
+		ExcelExtractor extractor = createExtractor("StringFormulas.xls");
 		
 		// Comes out as NaN if treated as a number
 		// And as XYZ if treated as a string

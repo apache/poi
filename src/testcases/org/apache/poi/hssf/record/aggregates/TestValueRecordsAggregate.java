@@ -29,6 +29,7 @@ import java.util.zip.CRC32;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
@@ -250,22 +251,14 @@ public class TestValueRecordsAggregate extends TestCase
      * 
      */
     public void testSpuriousSharedFormulaFlag() {
-        File dataDir = new File(System.getProperty("HSSF.testdata.path"));
-        File testFile = new File(dataDir, ABNORMAL_SHARED_FORMULA_FLAG_TEST_FILE);
         
-        long actualCRC = getFileCRC(testFile);
+        long actualCRC = getFileCRC(HSSFTestDataSamples.openSampleFileStream(ABNORMAL_SHARED_FORMULA_FLAG_TEST_FILE));
         long expectedCRC = 2277445406L;
         if(actualCRC != expectedCRC) {
             System.err.println("Expected crc " + expectedCRC  + " but got " + actualCRC);
             throw failUnexpectedTestFileChange();
         }
-        HSSFWorkbook wb;
-        try {
-            FileInputStream in = new FileInputStream(testFile);
-            wb = new HSSFWorkbook(in);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(ABNORMAL_SHARED_FORMULA_FLAG_TEST_FILE);
         
         HSSFSheet s = wb.getSheetAt(0); // Sheet1
         
@@ -311,11 +304,10 @@ public class TestValueRecordsAggregate extends TestCase
     /**
      * gets a CRC checksum for the content of a file
      */
-    private static long getFileCRC(File f) {
+    private static long getFileCRC(InputStream is) {
         CRC32 crc = new CRC32();
         byte[] buf = new byte[2048];
         try {
-            InputStream is = new FileInputStream(f);
             while(true) {
                 int bytesRead = is.read(buf);
                 if(bytesRead < 1) {

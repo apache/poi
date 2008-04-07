@@ -15,20 +15,19 @@
    limitations under the License.
 ==================================================================== */
 
-
-/*
- * HSSFWorkbook.java
- *
- * Created on September 30, 2001, 3:37 PM
- */
 package org.apache.poi.hssf.usermodel;
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import junit.framework.TestCase;
 
-import javax.imageio.ImageIO;
-import java.io.*;
-import java.util.*;
-import java.awt.image.BufferedImage;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 
 /**
  * Test <code>HSSFPictureData</code>.
@@ -37,14 +36,11 @@ import java.awt.image.BufferedImage;
  * @author Yegor Kozlov (yegor at apache dot org)
  * @author Trejkaz (trejkaz at trypticon dot org)
  */
-public class TestHSSFPictureData extends TestCase{
+public final class TestHSSFPictureData extends TestCase{
 
-    static String cwd = System.getProperty("HSSF.testdata.path");
 
     public void testPictures() throws IOException {
-        FileInputStream is = new FileInputStream(new File(cwd, "SimpleWithImages.xls"));
-        HSSFWorkbook wb = new HSSFWorkbook(is);
-        is.close();
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithImages.xls");
 
         List lst = wb.getAllPictures();
         //assertEquals(2, lst.size());
@@ -69,6 +65,5 @@ public class TestHSSFPictureData extends TestCase{
                 //TODO: test code for PICT, WMF and EMF
             }
         }
-
     }
 }

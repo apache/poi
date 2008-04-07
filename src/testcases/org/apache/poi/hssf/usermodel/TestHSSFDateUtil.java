@@ -19,16 +19,15 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
-
-import java.io.FileInputStream;
-import java.util.Date;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import junit.framework.TestCase;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Class TestHSSFDateUtil
@@ -40,16 +39,13 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * @author Alex Jacoby (ajacoby at gmail.com)
  * @version %I%, %G%
  */
+public class TestHSSFDateUtil extends TestCase {
 
-public class TestHSSFDateUtil
-        extends TestCase
-{
-
-	public static final int CALENDAR_JANUARY = 0;
-	public static final int CALENDAR_FEBRUARY = 1;
-	public static final int CALENDAR_MARCH = 2;
-	public static final int CALENDAR_APRIL = 3;
-	public static final int CALENDAR_JULY = 6;
+    public static final int CALENDAR_JANUARY = 0;
+    public static final int CALENDAR_FEBRUARY = 1;
+    public static final int CALENDAR_MARCH = 2;
+    public static final int CALENDAR_APRIL = 3;
+    public static final int CALENDAR_JULY = 6;
     public static final int CALENDAR_OCTOBER = 9;
     
     public TestHSSFDateUtil(String s)
@@ -223,77 +219,77 @@ public class TestHSSFDateUtil
      * Tests that we correctly detect date formats as such
      */
     public void testIdentifyDateFormats() {
-    	// First up, try with a few built in date formats
-    	short[] builtins = new short[] { 0x0e, 0x0f, 0x10, 0x16, 0x2d, 0x2e };
-    	for(int i=0; i<builtins.length; i++) {
-    		String formatStr = HSSFDataFormat.getBuiltinFormat(builtins[i]);
-    		assertTrue( HSSFDateUtil.isInternalDateFormat(builtins[i]) );
-    		assertTrue( HSSFDateUtil.isADateFormat(builtins[i],formatStr) );
-    	}
-    	
-    	// Now try a few built-in non date formats
-    	builtins = new short[] { 0x01, 0x02, 0x17, 0x1f, 0x30 };
-    	for(int i=0; i<builtins.length; i++) {
-    		String formatStr = HSSFDataFormat.getBuiltinFormat(builtins[i]);
-    		assertFalse( HSSFDateUtil.isInternalDateFormat(builtins[i]) );
-    		assertFalse( HSSFDateUtil.isADateFormat(builtins[i],formatStr) );
-    	}
-    	
-    	// Now for some non-internal ones
-    	// These come after the real ones
-    	int numBuiltins = HSSFDataFormat.getNumberOfBuiltinBuiltinFormats();
-    	assertTrue(numBuiltins < 60);
-    	short formatId = 60;
-    	assertFalse( HSSFDateUtil.isInternalDateFormat(formatId) );
-    	
-    	// Valid ones first
-    	String[] formats = new String[] {
-    			"yyyy-mm-dd", "yyyy/mm/dd", "yy/mm/dd", "yy/mmm/dd",
-    			"dd/mm/yy", "dd/mm/yyyy", "dd/mmm/yy",
-    			"dd-mm-yy", "dd-mm-yyyy",
-    			"DD-MM-YY", "DD-mm-YYYY",
-    			"dd\\-mm\\-yy", // Sometimes escaped
-    			
-    			// These crazy ones are valid
-    			"yyyy-mm-dd;@", "yyyy/mm/dd;@",
-    			"dd-mm-yy;@", "dd-mm-yyyy;@",
-    			// These even crazier ones are also valid
-    			// (who knows what they mean though...)
-    			"[$-F800]dddd\\,\\ mmm\\ dd\\,\\ yyyy",
-    			"[$-F900]ddd/mm/yyy",
-    	};
-    	for(int i=0; i<formats.length; i++) {
-    		assertTrue( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
-    	}
-    	
-    	// Then time based ones too
-    	formats = new String[] {
-    			"yyyy-mm-dd hh:mm:ss", "yyyy/mm/dd HH:MM:SS", 
-    			"mm/dd HH:MM", "yy/mmm/dd SS",
-    	};
-    	for(int i=0; i<formats.length; i++) {
-    		assertTrue( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
-    	}
-    	
-    	// Then invalid ones
-    	formats = new String[] {
-    			"yyyy*mm*dd", 
-    			"0.0", "0.000",
-    			"0%", "0.0%",
-    			"", null
-    	};
-    	for(int i=0; i<formats.length; i++) {
-    		assertFalse( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
-    	}
-    	
-    	// And these are ones we probably shouldn't allow,
-    	//  but would need a better regexp
-    	formats = new String[] {
-    			"yyyy:mm:dd", 
-    	};
-    	for(int i=0; i<formats.length; i++) {
-    	//	assertFalse( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
-    	}
+        // First up, try with a few built in date formats
+        short[] builtins = new short[] { 0x0e, 0x0f, 0x10, 0x16, 0x2d, 0x2e };
+        for(int i=0; i<builtins.length; i++) {
+            String formatStr = HSSFDataFormat.getBuiltinFormat(builtins[i]);
+            assertTrue( HSSFDateUtil.isInternalDateFormat(builtins[i]) );
+            assertTrue( HSSFDateUtil.isADateFormat(builtins[i],formatStr) );
+        }
+        
+        // Now try a few built-in non date formats
+        builtins = new short[] { 0x01, 0x02, 0x17, 0x1f, 0x30 };
+        for(int i=0; i<builtins.length; i++) {
+            String formatStr = HSSFDataFormat.getBuiltinFormat(builtins[i]);
+            assertFalse( HSSFDateUtil.isInternalDateFormat(builtins[i]) );
+            assertFalse( HSSFDateUtil.isADateFormat(builtins[i],formatStr) );
+        }
+        
+        // Now for some non-internal ones
+        // These come after the real ones
+        int numBuiltins = HSSFDataFormat.getNumberOfBuiltinBuiltinFormats();
+        assertTrue(numBuiltins < 60);
+        short formatId = 60;
+        assertFalse( HSSFDateUtil.isInternalDateFormat(formatId) );
+        
+        // Valid ones first
+        String[] formats = new String[] {
+                "yyyy-mm-dd", "yyyy/mm/dd", "yy/mm/dd", "yy/mmm/dd",
+                "dd/mm/yy", "dd/mm/yyyy", "dd/mmm/yy",
+                "dd-mm-yy", "dd-mm-yyyy",
+                "DD-MM-YY", "DD-mm-YYYY",
+                "dd\\-mm\\-yy", // Sometimes escaped
+                
+                // These crazy ones are valid
+                "yyyy-mm-dd;@", "yyyy/mm/dd;@",
+                "dd-mm-yy;@", "dd-mm-yyyy;@",
+                // These even crazier ones are also valid
+                // (who knows what they mean though...)
+                "[$-F800]dddd\\,\\ mmm\\ dd\\,\\ yyyy",
+                "[$-F900]ddd/mm/yyy",
+        };
+        for(int i=0; i<formats.length; i++) {
+            assertTrue( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
+        }
+        
+        // Then time based ones too
+        formats = new String[] {
+                "yyyy-mm-dd hh:mm:ss", "yyyy/mm/dd HH:MM:SS", 
+                "mm/dd HH:MM", "yy/mmm/dd SS",
+        };
+        for(int i=0; i<formats.length; i++) {
+            assertTrue( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
+        }
+        
+        // Then invalid ones
+        formats = new String[] {
+                "yyyy*mm*dd", 
+                "0.0", "0.000",
+                "0%", "0.0%",
+                "", null
+        };
+        for(int i=0; i<formats.length; i++) {
+            assertFalse( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
+        }
+        
+        // And these are ones we probably shouldn't allow,
+        //  but would need a better regexp
+        formats = new String[] {
+                "yyyy:mm:dd", 
+        };
+        for(int i=0; i<formats.length; i++) {
+        //    assertFalse( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
+        }
     }
 
     /**
@@ -301,11 +297,8 @@ public class TestHSSFDateUtil
      *  correctly
      */
     public void testOnARealFile() throws Exception {
-        String path     = System.getProperty("HSSF.testdata.path");
-        String filename = path + "/DateFormats.xls";
-        POIFSFileSystem fs =
-            new POIFSFileSystem(new FileInputStream(filename));
-        HSSFWorkbook workbook = new HSSFWorkbook(fs);
+
+        HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("DateFormats.xls");
         HSSFSheet sheet       = workbook.getSheetAt(0);
         Workbook wb           = workbook.getWorkbook();
         

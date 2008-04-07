@@ -17,17 +17,18 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hpsf.PropertySetFactory;
-
-import java.io.FileInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.hpsf.PropertySetFactory;
+import org.apache.poi.hpsf.SummaryInformation;
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Old-style setting of POIFS properties doesn't work with POI 3.0.2
@@ -35,14 +36,12 @@ import junit.framework.TestCase;
  * @author Yegor Kozlov
  */
 public class TestPOIFSProperties extends TestCase{
-    protected String cwd = System.getProperty("HSSF.testdata.path");
 
-    protected String title = "Testing POIFS properties";
+    private static final String title = "Testing POIFS properties";
 
     public void testFail() throws Exception {
-        FileInputStream is = new FileInputStream(new File(cwd, "Simple.xls"));
+        InputStream is = HSSFTestDataSamples.openSampleFileStream("Simple.xls");
         POIFSFileSystem fs = new POIFSFileSystem(is);
-        is.close();
 
         HSSFWorkbook wb = new HSSFWorkbook(fs);
 
@@ -62,19 +61,13 @@ public class TestPOIFSProperties extends TestCase{
         POIFSFileSystem fs2 = new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
         SummaryInformation summary2 = (SummaryInformation)PropertySetFactory.create(fs2.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));
 
-        try {
-            //failing assertion
-            assertEquals(title, summary2.getTitle());
-
-        } catch (AssertionError e){
-            assertTrue(true);
-        }
+        //failing assertion
+        assertEquals(title, summary2.getTitle());
     }
 
     public void testOK() throws Exception {
-        FileInputStream is = new FileInputStream(new File(cwd, "Simple.xls"));
+        InputStream is = HSSFTestDataSamples.openSampleFileStream("Simple.xls");
         POIFSFileSystem fs = new POIFSFileSystem(is);
-        is.close();
 
         //set POIFS properties before constructing HSSFWorkbook
         SummaryInformation summary1 = (SummaryInformation)PropertySetFactory.create(fs.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,54 +14,33 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-import junit.framework.TestCase;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.util.HexRead;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.TempFile;
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
+
+import junit.framework.TestCase;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * @author Marc Johnson (mjohnson at apache dot org)
  * @author Glen Stampoultzis (glens at apache.org)
  */
 
-public class TestSSTRecord
-        extends TestCase
-{
-    private String _test_file_path;
-    private static final String _test_file_path_property = "HSSF.testdata.path";
-
-    /**
-     * Creates new TestSSTRecord
-     *
-     * @param name
-     */
-
-    public TestSSTRecord( String name )
-    {
-        super( name );
-        _test_file_path = System.getProperty( _test_file_path_property );
-    }
+public final class TestSSTRecord extends TestCase {
 
     /**
      * test processContinueRecord
-     *
-     * @exception IOException
      */
-
-    public void testProcessContinueRecord()
-            throws IOException
-    {
+    public void testProcessContinueRecord() {
 //jmh        byte[] testdata = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord" );
 //jmh        byte[] input = new byte[testdata.length - 4];
 //jmh
@@ -182,9 +160,7 @@ public class TestSSTRecord
      * @exception IOException
      */
 
-    public void testHugeStrings()
-            throws IOException
-    {
+    public void testHugeStrings() {
         SSTRecord record = new SSTRecord();
         byte[][] bstrings =
                 {
@@ -265,12 +241,8 @@ public class TestSSTRecord
 
     /**
      * test SSTRecord boundary conditions
-     *
-     * @exception IOException
      */
-    public void testSSTRecordBug()
-            throws IOException
-    {
+    public void testSSTRecordBug() {
         // create an SSTRecord and write a certain pattern of strings
         // to it ... then serialize it and verify the content
         SSTRecord record = new SSTRecord();
@@ -350,38 +322,6 @@ public class TestSSTRecord
     }
 
     /**
-     * test reader constructor
-     *
-     * @exception IOException
-     */
-
-    public void testReaderConstructor()
-            throws IOException
-    {
-/* JMH this test case data is crap because it does not contain a full record. Ie the last string
-       is missing a record
-
-        byte[] testdata = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord" );
-//        byte[] input = new byte[testdata.length - 4];
-
-        System.arraycopy( testdata, 4, input, 0, input.length );
-        SSTRecord record = new SSTRecord( new TestcaseRecordInputStream(LittleEndian.getShort( testdata, 0 ),
-                LittleEndian.getShort( testdata, 2 ),
-                input) );
-
-        assertEquals( 1464, record.getNumStrings() );
-        assertEquals( 688, record.getNumUniqueStrings() );
-        assertEquals( 492, record.countStrings() );
-        assertEquals( 1, record.getDeserializer().getContinuationExpectedChars() );
-        assertEquals( "Consolidated B-24J Liberator The Dragon & His Tai",
-                record.getDeserializer().getUnfinishedString() );
-//        assertEquals( 52, record.getDeserializer().getTotalLength() );
-//        assertEquals( 3, record.getDeserializer().getStringDataOffset() );
-        assertTrue( !record.getDeserializer().isWideChar() );
- */
-    }
-
-    /**
      * test simple constructor
      */
 
@@ -413,9 +353,7 @@ public class TestSSTRecord
      * @param ignored_args
      */
 
-    public static void main( String[] ignored_args )
-    {
-        System.out.println( "Testing hssf.record.SSTRecord functionality" );
+    public static void main( String[] ignored_args ) {
         junit.textui.TestRunner.run( TestSSTRecord.class );
     }
 
@@ -425,25 +363,16 @@ public class TestSSTRecord
     public void testReadWriteDuplicatedRichText1()
             throws Exception
     {
-        File file = new File( _test_file_path + File.separator + "duprich1.xls" );
-        InputStream stream = new FileInputStream( file );
-        HSSFWorkbook wb = new HSSFWorkbook( stream );
-        stream.close();
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("duprich1.xls");
         HSSFSheet sheet = wb.getSheetAt( 1 );
         assertEquals( "01/05 (Wed)", sheet.getRow( 0 ).getCell( (short) 8 ).getStringCellValue() );
         assertEquals( "01/05 (Wed)", sheet.getRow( 1 ).getCell( (short) 8 ).getStringCellValue() );
 
-        file = TempFile.createTempFile( "testout", "xls" );
-        FileOutputStream outStream = new FileOutputStream( file );
-        wb.write( outStream );
-        outStream.close();
-        file.delete();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        wb.write( baos );
 
         // test the second file.
-        file = new File( _test_file_path + File.separator + "duprich2.xls" );
-        stream = new FileInputStream( file );
-        wb = new HSSFWorkbook( stream );
-        stream.close();
+        wb = HSSFTestDataSamples.openSampleWorkbook("duprich2.xls");
         sheet = wb.getSheetAt( 0 );
         int row = 0;
         assertEquals( "Testing", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
@@ -453,12 +382,6 @@ public class TestSSTRecord
         assertEquals( "Testing", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
         assertEquals( "Testing", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
 
-//        file = new File("/tryme.xls");
-        file = TempFile.createTempFile( "testout", ".xls" );
-        outStream = new FileOutputStream( file );
-        wb.write( outStream );
-        outStream.close();
-        file.delete();
+        wb.write( baos );
     }
-
 }

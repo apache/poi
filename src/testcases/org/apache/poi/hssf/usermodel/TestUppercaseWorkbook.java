@@ -14,37 +14,33 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+
 package org.apache.poi.hssf.usermodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import java.io.InputStream;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Tests for how HSSFWorkbook behaves with XLS files
  *  with a WORKBOOK directory entry (instead of the more
  *  usual, Workbook)
  */
-public class TestUppercaseWorkbook extends TestCase {
-	private String dirPath;
-	private String xlsA = "WORKBOOK_in_capitals.xls";
+public final class TestUppercaseWorkbook extends TestCase {
 
-	protected void setUp() throws Exception {
-		super.setUp();
-		
-        dirPath = System.getProperty("HSSF.testdata.path");
-	}
+	private String xlsA = "WORKBOOK_in_capitals.xls";
 
 	/**
 	 * Test that we can open a file with WORKBOOK
 	 */
 	public void testOpen() throws Exception {
-		FileInputStream is = new FileInputStream(dirPath + "/" + xlsA);
+		InputStream is = HSSFTestDataSamples.openSampleFileStream(xlsA);
 		
 		POIFSFileSystem fs = new POIFSFileSystem(is);
 
@@ -68,7 +64,7 @@ public class TestUppercaseWorkbook extends TestCase {
 	 * Test that when we write out, we go back to the correct case
 	 */
 	public void testWrite() throws Exception {
-		FileInputStream is = new FileInputStream(dirPath + "/" + xlsA);
+		InputStream is = HSSFTestDataSamples.openSampleFileStream(xlsA);
 		POIFSFileSystem fs = new POIFSFileSystem(is);
 
 		// Open the workbook, not preserving nodes
@@ -96,7 +92,7 @@ public class TestUppercaseWorkbook extends TestCase {
 	 *  correct case
 	 */
 	public void testWritePreserve() throws Exception {
-		FileInputStream is = new FileInputStream(dirPath + "/" + xlsA);
+		InputStream is = HSSFTestDataSamples.openSampleFileStream(xlsA);
 		POIFSFileSystem fs = new POIFSFileSystem(is);
 
 		// Open the workbook, not preserving nodes
