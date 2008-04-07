@@ -30,6 +30,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
 
 
 public class TestXSSFSheet extends TestCase {
@@ -527,6 +529,23 @@ public class TestXSSFSheet extends TestCase {
     	
     	assertEquals("R5", sheet.getActiveCell());
     	
+    }
+    
+    public void testCreateFreezePane() {
+    	Workbook workbook = new XSSFWorkbook();
+    	CTSheet ctSheet = CTSheet.Factory.newInstance();
+    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
+    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+    	sheet.createFreezePane(2, 4);
+    	assertEquals((double)2, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getXSplit());
+    	assertEquals(STPane.BOTTOM_RIGHT, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getActivePane());
+    	sheet.createFreezePane(3, 6, 10, 10);
+    	assertEquals((double)3, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getXSplit());
+    	assertEquals(10, sheet.getTopRow());
+    	assertEquals(10, sheet.getLeftCol());
+    	sheet.createSplitPane(4, 8, 12, 12, 1);
+    	assertEquals((double)8, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getYSplit());
+    	assertEquals(STPane.BOTTOM_RIGHT, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getActivePane());
     }
     
 
