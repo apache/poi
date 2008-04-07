@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,58 +14,56 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.filesystem;
 
 import junit.framework.TestCase;
 import java.io.*;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
+
 /**
  * Class to test that POIFS complains when given an Office 2007 XML document
  *
  * @author Marc Johnson
  */
+public class TestOffice2007XMLException extends TestCase {
 
-public class TestOffice2007XMLException extends TestCase
-{
-	public String dirname;
-
-	public void setUp() {
-		dirname = System.getProperty("HSSF.testdata.path");
+	private static final InputStream openSampleStream(String sampleFileName) {
+		return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
 	}
-
 	public void testXMLException() throws IOException
 	{
-		FileInputStream in = new FileInputStream(dirname + "/sample.xlsx");
+		InputStream in = openSampleStream("sample.xlsx");
 
 		try {
 			new POIFSFileSystem(in);
-			fail();
+			fail("expected exception was not thrown");
 		} catch(OfficeXmlFileException e) {
-			// Good
+			// expected during successful test
+			assertTrue(e.getMessage().indexOf("POI only supports OLE2 Office documents") > 0);
 		}
 	}
 	
-	public void testDetectAsPOIFS() throws IOException {
-		InputStream in;
+	public void testDetectAsPOIFS() {
 		
 		// ooxml file isn't
-		in = new PushbackInputStream(
-				new FileInputStream(dirname + "/SampleSS.xlsx"), 10
-		);
-		assertFalse(POIFSFileSystem.hasPOIFSHeader(in));
+		confirmIsPOIFS("SampleSS.xlsx", false);
 		
 		// xls file is
-		in = new PushbackInputStream(
-				new FileInputStream(dirname + "/SampleSS.xls"), 10
-		);
-		assertTrue(POIFSFileSystem.hasPOIFSHeader(in));
+		confirmIsPOIFS("SampleSS.xls", true);
 		
 		// text file isn't
-		in = new PushbackInputStream(
-				new FileInputStream(dirname + "/SampleSS.txt"), 10
-		);
-		assertFalse(POIFSFileSystem.hasPOIFSHeader(in));
+		confirmIsPOIFS("SampleSS.txt", false);
+	}
+	private void confirmIsPOIFS(String sampleFileName, boolean expectedResult) {
+		InputStream in  = new PushbackInputStream(openSampleStream(sampleFileName), 10);
+		boolean actualResult;
+		try {
+			actualResult = POIFSFileSystem.hasPOIFSHeader(in);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		assertEquals(expectedResult, actualResult);
 	}
 }

@@ -19,11 +19,13 @@ package org.apache.poi.hssf.eventusermodel;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.LastCellOfRowDummyRecord;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.MissingCellDummyRecord;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.MissingRowDummyRecord;
@@ -39,8 +41,6 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 	private Record[] r;
 
 	public void setUp() {
-		String dirname = System.getProperty("HSSF.testdata.path");
-		File f = new File(dirname + "/MissingBits.xls");
 
 		HSSFRequest req = new HSSFRequest();
 		MockHSSFListener mockListen = new MockHSSFListener();
@@ -49,7 +49,8 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 		
 		HSSFEventFactory factory = new HSSFEventFactory();
 		try {
-			POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(f));
+			InputStream is = HSSFTestDataSamples.openSampleFileStream("MissingBits.xls");
+			POIFSFileSystem fs = new POIFSFileSystem(is);
 			factory.processWorkbookEvents(req, fs);
 		} catch (IOException e) {
 			throw new RuntimeException(e);

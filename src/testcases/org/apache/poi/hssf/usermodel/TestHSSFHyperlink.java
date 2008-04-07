@@ -14,28 +14,28 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hssf.usermodel;
 
 import junit.framework.TestCase;
 
 import java.io.*;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
+
 /**
  * Tests HSSFHyperlink.
  *
  * @author  Yegor Kozlov
  */
-public class TestHSSFHyperlink extends TestCase {
-    protected String cwd = System.getProperty("HSSF.testdata.path");
+public final class TestHSSFHyperlink extends TestCase {
 
     /**
      * Test that we can read hyperlinks.
      */
-    public void testRead() throws Exception {
+    public void testRead() {
 
-        FileInputStream is = new FileInputStream(new File(cwd, "HyperlinksOnManySheets.xls"));
-        HSSFWorkbook wb = new HSSFWorkbook(is);
-        is.close();
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("HyperlinksOnManySheets.xls");
 
         HSSFSheet sheet;
         HSSFCell cell;
@@ -74,9 +74,7 @@ public class TestHSSFHyperlink extends TestCase {
     }
 
     public void testModify() throws Exception {
-        FileInputStream is = new FileInputStream(new File(cwd, "HyperlinksOnManySheets.xls"));
-        HSSFWorkbook wb = new HSSFWorkbook(is);
-        is.close();
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("HyperlinksOnManySheets.xls");
 
         HSSFSheet sheet;
         HSSFCell cell;
@@ -168,10 +166,8 @@ public class TestHSSFHyperlink extends TestCase {
         assertEquals("'Target Sheet'!A1", link.getAddress());
     }
 
-    public void testCloneSheet() throws Exception {
-        FileInputStream is = new FileInputStream(new File(cwd, "HyperlinksOnManySheets.xls"));
-        HSSFWorkbook wb = new HSSFWorkbook(is);
-        is.close();
+    public void testCloneSheet() {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("HyperlinksOnManySheets.xls");
 
         HSSFCell cell;
         HSSFHyperlink link;

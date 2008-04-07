@@ -20,13 +20,14 @@ import junit.framework.TestCase;
 
 import java.io.*;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
+
 /**
  * Tests TestHSSFCellComment.
  *
  * @author  Yegor Kozlov
  */
-
-public class TestHSSFComment extends TestCase {
+public final class TestHSSFComment extends TestCase {
 
     /**
      * Test that we can create cells and add comments to it.
@@ -83,12 +84,9 @@ public class TestHSSFComment extends TestCase {
     /**
      * test that we can read cell comments from an existing workbook.
      */
-    public static void testReadComments() throws Exception {
+    public static void testReadComments() {
 
-         String dir = System.getProperty("HSSF.testdata.path");
-         FileInputStream is = new FileInputStream(new File(dir, "SimpleWithComments.xls"));
-         HSSFWorkbook wb = new HSSFWorkbook(is);
-         is.close();
+         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithComments.xls");
 
          HSSFSheet sheet = wb.getSheetAt(0);
 
@@ -123,12 +121,9 @@ public class TestHSSFComment extends TestCase {
     /**
      * test that we can modify existing cell comments
      */
-    public static void testModifyComments() throws Exception {
+    public static void testModifyComments() throws IOException {
 
-         String dir = System.getProperty("HSSF.testdata.path");
-         FileInputStream is = new FileInputStream(new File(dir, "SimpleWithComments.xls"));
-         HSSFWorkbook wb = new HSSFWorkbook(is);
-         is.close();
+         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithComments.xls");
 
          HSSFSheet sheet = wb.getSheetAt(0);
 

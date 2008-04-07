@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -39,36 +36,29 @@ import junit.framework.TestCase;
  *
  * @author Andrew C. Oliver 
  */
-public class TestFormulaRecord
-        extends TestCase
-{
+public final class TestFormulaRecord extends TestCase {
 
-    public TestFormulaRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testCreateFormulaRecord () {
-        FormulaRecord record = new FormulaRecord();
-        record.setColumn((short)0);
-        //record.setRow((short)1);
-        record.setRow(1);
-        record.setXFIndex((short)4);
-        
-        assertEquals(record.getColumn(),(short)0);
-        //assertEquals(record.getRow(),(short)1);
-        assertEquals((short)record.getRow(),(short)1);
-        assertEquals(record.getXFIndex(),(short)4);
-    }
-    
-    /**
-     * Make sure a NAN value is preserved
-     * This formula record is a representation of =1/0 at row 0, column 0 
-     */
-    public void testCheckNanPreserve() {
-    	byte[] formulaByte = new byte[29];
-    	for (int i = 0; i < formulaByte.length; i++) formulaByte[i] = (byte)0;
-    	formulaByte[4] = (byte)0x0F;
+	public void testCreateFormulaRecord () {
+		FormulaRecord record = new FormulaRecord();
+		record.setColumn((short)0);
+		//record.setRow((short)1);
+		record.setRow(1);
+		record.setXFIndex((short)4);
+		
+		assertEquals(record.getColumn(),(short)0);
+		//assertEquals(record.getRow(),(short)1);
+		assertEquals((short)record.getRow(),(short)1);
+		assertEquals(record.getXFIndex(),(short)4);
+	}
+	
+	/**
+	 * Make sure a NAN value is preserved
+	 * This formula record is a representation of =1/0 at row 0, column 0 
+	 */
+	public void testCheckNanPreserve() {
+		byte[] formulaByte = new byte[29];
+		for (int i = 0; i < formulaByte.length; i++) formulaByte[i] = (byte)0;
+		formulaByte[4] = (byte)0x0F;
 		formulaByte[6] = (byte)0x02;
 		formulaByte[8] = (byte)0x07;
 		formulaByte[12] = (byte)0xFF;
@@ -80,7 +70,7 @@ public class TestFormulaRecord
 		formulaByte[23] = (byte)0x01;
 		formulaByte[25] = (byte)0x1E;
 		formulaByte[28] = (byte)0x06;
-    	
+		
 		FormulaRecord record = new FormulaRecord(new TestcaseRecordInputStream(FormulaRecord.sid, (short)29, formulaByte));
 		assertEquals("Row", 0, record.getRow());
 		assertEquals("Column", 0, record.getColumn());		
@@ -92,19 +82,18 @@ public class TestFormulaRecord
 		for (int i = 5; i < 13;i++) {
 			assertEquals("FormulaByte NaN doesn't match", formulaByte[i], output[i+4]);
 		}
+	}
+	
+	/**
+	 * Tests to see if the shared formula cells properly reserialize the expPtg
+	 *
+	 */
+	public void testExpFormula() {
+		byte[] formulaByte = new byte[27];
 		
-    }
-    
-    /**
-     * Tests to see if the shared formula cells properly reserialize the expPtg
-     *
-     */
-    public void testExpFormula() {
-    	byte[] formulaByte = new byte[27];
-    	
 		for (int i = 0; i < formulaByte.length; i++) formulaByte[i] = (byte)0;
-    	
-    	formulaByte[4] =(byte)0x0F;
+		
+		formulaByte[4] =(byte)0x0F;
 		formulaByte[14]=(byte)0x08;
 		formulaByte[18]=(byte)0xE0;
 		formulaByte[19]=(byte)0xFD;
@@ -115,19 +104,19 @@ public class TestFormulaRecord
 		assertEquals("Column", 0, record.getColumn());
 		byte[] output = record.serialize();
 		assertEquals("Output size", 31, output.length); //includes sid+recordlength
-    	assertEquals("Offset 22", 1, output[26]);
-    }
-    
-    public void testWithConcat()  throws Exception {
-    	// =CHOOSE(2,A2,A3,A4)
-    	byte[] data = new byte[] {
-    			6, 0, 68, 0,
-    			1, 0, 1, 0, 15, 0, 0, 0, 0, 0, 0, 0, 57,
+		assertEquals("Offset 22", 1, output[26]);
+	}
+	
+	public void testWithConcat()  throws Exception {
+		// =CHOOSE(2,A2,A3,A4)
+		byte[] data = new byte[] {
+				6, 0, 68, 0,
+				1, 0, 1, 0, 15, 0, 0, 0, 0, 0, 0, 0, 57,
 				64, 0, 0, 12, 0, 12, -4, 46, 0, 
-				30, 2, 0,    // Int - 2
+				30, 2, 0,	// Int - 2
 				25, 4, 3, 0, // Attr
-				8, 0,        // Concat 
-				17, 0,       // Range 
+				8, 0,		// Concat 
+				17, 0,	   // Range 
 				26, 0, 35, 0, // Bit like an attr
 				36, 1, 0, 0, -64, // Ref - A2
 				25, 8, 21, 0, // Attr
@@ -136,43 +125,35 @@ public class TestFormulaRecord
 				36, 3, 0, 0, -64, // Ref - A4
 				25, 8, 3, 0,  // Attr 
 				66, 4, 100, 0 // CHOOSE
-    	};
-    	RecordInputStream inp = new RecordInputStream(
-    			new ByteArrayInputStream(data)
-    	);
-    	inp.nextRecord();
-    	
-    	FormulaRecord fr = new FormulaRecord(inp);
-    	
-    	assertEquals(14, fr.getNumberOfExpressionTokens());
-    	assertEquals(IntPtg.class,       fr.getParsedExpression().get(0).getClass());
-    	assertEquals(AttrPtg.class,      fr.getParsedExpression().get(1).getClass());
-    	assertEquals(ConcatPtg.class,    fr.getParsedExpression().get(2).getClass());
-    	assertEquals(UnknownPtg.class,   fr.getParsedExpression().get(3).getClass());
-    	assertEquals(RangePtg.class,     fr.getParsedExpression().get(4).getClass());
-    	assertEquals(UnknownPtg.class,   fr.getParsedExpression().get(5).getClass());
-    	assertEquals(AttrPtg.class,      fr.getParsedExpression().get(6).getClass());
-    	assertEquals(ReferencePtg.class, fr.getParsedExpression().get(7).getClass());
-    	assertEquals(AttrPtg.class,      fr.getParsedExpression().get(8).getClass());
-    	assertEquals(ReferencePtg.class, fr.getParsedExpression().get(9).getClass());
-    	assertEquals(AttrPtg.class,      fr.getParsedExpression().get(10).getClass());
-    	assertEquals(ReferencePtg.class, fr.getParsedExpression().get(11).getClass());
-    	assertEquals(AttrPtg.class,      fr.getParsedExpression().get(12).getClass());
-    	assertEquals(FuncVarPtg.class,   fr.getParsedExpression().get(13).getClass());
-    	
-    	FuncVarPtg choose = (FuncVarPtg)fr.getParsedExpression().get(13);
-    	assertEquals("CHOOSE", choose.getName());
-    }
-    
-    
-    public static void main(String [] ignored_args)
-    {
-        String filename = System.getProperty("HSSF.testdata.path");
-
-        System.out
-            .println("Testing org.apache.poi.hssf.record.FormulaRecord");
-        junit.textui.TestRunner.run(TestFormulaRecord.class);
-    }
-    
-    
+		};
+		RecordInputStream inp = new RecordInputStream(
+				new ByteArrayInputStream(data)
+		);
+		inp.nextRecord();
+		
+		FormulaRecord fr = new FormulaRecord(inp);
+		
+		assertEquals(14, fr.getNumberOfExpressionTokens());
+		assertEquals(IntPtg.class,	   fr.getParsedExpression().get(0).getClass());
+		assertEquals(AttrPtg.class,	  fr.getParsedExpression().get(1).getClass());
+		assertEquals(ConcatPtg.class,	fr.getParsedExpression().get(2).getClass());
+		assertEquals(UnknownPtg.class,   fr.getParsedExpression().get(3).getClass());
+		assertEquals(RangePtg.class,	 fr.getParsedExpression().get(4).getClass());
+		assertEquals(UnknownPtg.class,   fr.getParsedExpression().get(5).getClass());
+		assertEquals(AttrPtg.class,	  fr.getParsedExpression().get(6).getClass());
+		assertEquals(ReferencePtg.class, fr.getParsedExpression().get(7).getClass());
+		assertEquals(AttrPtg.class,	  fr.getParsedExpression().get(8).getClass());
+		assertEquals(ReferencePtg.class, fr.getParsedExpression().get(9).getClass());
+		assertEquals(AttrPtg.class,	  fr.getParsedExpression().get(10).getClass());
+		assertEquals(ReferencePtg.class, fr.getParsedExpression().get(11).getClass());
+		assertEquals(AttrPtg.class,	  fr.getParsedExpression().get(12).getClass());
+		assertEquals(FuncVarPtg.class,   fr.getParsedExpression().get(13).getClass());
+		
+		FuncVarPtg choose = (FuncVarPtg)fr.getParsedExpression().get(13);
+		assertEquals("CHOOSE", choose.getName());
+	}
+	
+	public static void main(String [] ignored_args) {
+		junit.textui.TestRunner.run(TestFormulaRecord.class);
+	}
 }

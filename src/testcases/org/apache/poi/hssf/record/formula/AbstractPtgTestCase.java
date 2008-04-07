@@ -25,6 +25,7 @@ import java.io.InputStream;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -36,40 +37,27 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * @author Daniel Noll (daniel at nuix dot com dot au)
  */
 public abstract class AbstractPtgTestCase extends TestCase {
-    /** Directory containing the test data. */
-    private static String dataDir = System.getProperty("HSSF.testdata.path");
 
     /**
      * Loads a workbook from the given filename in the test data dir.
      *
-     * @param filename the filename.
+     * @param sampleFileName the filename.
      * @return the loaded workbook.
-     * @throws IOException if an error occurs loading the workbook.
      */
-    protected static final HSSFWorkbook loadWorkbook(String filename)
-            throws IOException {
-        File file = new File(dataDir, filename);
-        InputStream stream = new BufferedInputStream(new FileInputStream(file));
-        // TODO - temp workaround to keep stdout quiet due to warning msg in POIFS 
-        // When that warning msg is disabled, remove this wrapper and the close() call, 
-        InputStream wrappedStream = POIFSFileSystem.createNonClosingInputStream(stream);
-        try {
-            return new HSSFWorkbook(wrappedStream);
-        } finally {
-            stream.close();
-        }
+    protected static final HSSFWorkbook loadWorkbook(String sampleFileName) {
+        return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);
     }
 
     /**
      * Creates a new Workbook and adds one sheet with the specified name
      */
     protected static final Workbook createWorkbookWithSheet(String sheetName) {
-		
-		Workbook book = Workbook.createWorkbook();
-		// this creates sheet if it doesn't exist
-		book.checkExternSheet(0);
-		// TODO - this call alone does not create the sheet even though the javadoc says it does
-		book.setSheetName(0, sheetName); 
-		return book;
-	}
+        
+        Workbook book = Workbook.createWorkbook();
+        // this creates sheet if it doesn't exist
+        book.checkExternSheet(0);
+        // TODO - this call alone does not create the sheet even though the javadoc says it does
+        book.setSheetName(0, sheetName); 
+        return book;
+    }
 }

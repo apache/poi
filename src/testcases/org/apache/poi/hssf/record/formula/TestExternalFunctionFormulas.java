@@ -17,11 +17,9 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 /**
@@ -37,15 +35,7 @@ public final class TestExternalFunctionFormulas extends TestCase {
      * tests <tt>NameXPtg.toFormulaString(Workbook)</tt> and logic in Workbook below that   
      */
     public void testReadFormulaContainingExternalFunction() {
-        String filePath = System.getProperty("HSSF.testdata.path")+ "/" 
-        + "externalFunctionExample.xls";
-        HSSFWorkbook wb;
-        try {
-            FileInputStream fin = new FileInputStream(filePath);
-            wb = new HSSFWorkbook( fin );
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
         
         String expectedFormula = "YEARFRAC(B1,C1)";
         HSSFSheet sht = wb.getSheetAt(0);

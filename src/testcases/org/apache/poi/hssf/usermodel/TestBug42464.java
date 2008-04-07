@@ -14,42 +14,35 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hssf.usermodel;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.CellValue;
 import org.apache.poi.hssf.util.CellReference;
 
+/**
+ * 
+ */
 public final class TestBug42464 extends TestCase {
-	String dirname;
-
-	protected void setUp() throws Exception {
-		super.setUp();
-		dirname = System.getProperty("HSSF.testdata.path");
-	}
 
 	public void testOKFile() throws Exception {
-		HSSFWorkbook wb = new HSSFWorkbook(
-				new FileInputStream(new File(dirname,"42464-ExpPtg-ok.xls"))
-		);
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("42464-ExpPtg-ok.xls");
 		process(wb);
 	}
 	public void testExpSharedBadFile() throws Exception {
-		HSSFWorkbook wb = new HSSFWorkbook(
-				new FileInputStream(new File(dirname,"42464-ExpPtg-bad.xls"))
-		);
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("42464-ExpPtg-bad.xls");
 		process(wb);
 	}
 	
-	protected void process(HSSFWorkbook wb) {
+	private static void process(HSSFWorkbook wb) {
 		for(int i=0; i<wb.getNumberOfSheets(); i++) {
 			HSSFSheet s = wb.getSheetAt(i);
 			HSSFFormulaEvaluator eval =
@@ -64,7 +57,7 @@ public final class TestBug42464 extends TestCase {
 		}
 	}
 	
-	protected void process(HSSFRow row, HSSFFormulaEvaluator eval) {
+	private static void process(HSSFRow row, HSSFFormulaEvaluator eval) {
 		Iterator it = row.cellIterator();
 		while(it.hasNext()) {
 			HSSFCell cell = (HSSFCell)it.next();

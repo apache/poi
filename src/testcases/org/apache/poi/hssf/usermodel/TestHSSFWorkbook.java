@@ -14,28 +14,22 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+
 package org.apache.poi.hssf.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import junit.framework.TestCase;
 
-import junit.framework.*;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.NameRecord;
+/**
+ * 
+ */
+public final class TestHSSFWorkbook extends TestCase {
+    private static HSSFWorkbook openSample(String sampleFileName) {
+        return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);
+    }
 
-public class TestHSSFWorkbook extends TestCase
-{
-    HSSFWorkbook hssfWorkbook;
-    String filename;
-
-	protected void setUp() throws Exception {
-		super.setUp();
-        filename = System.getProperty("HSSF.testdata.path");
-	}
-
-	public void testSetRepeatingRowsAndColumns() throws Exception
-    {
+    public void testSetRepeatingRowsAndColumns() {
         // Test bug 29747
         HSSFWorkbook b = new HSSFWorkbook( );
         b.createSheet();
@@ -46,9 +40,7 @@ public class TestHSSFWorkbook extends TestCase
         assertEquals( 3, nameRecord.getIndexToSheet() );
     }
     
-    public void testDuplicateNames()
-            throws Exception
-    {
+    public void testDuplicateNames() {
         HSSFWorkbook b = new HSSFWorkbook( );
         b.createSheet("Sheet1");
         b.createSheet();
@@ -105,15 +97,15 @@ public class TestHSSFWorkbook extends TestCase
     public void testSheetSelection() {
         HSSFWorkbook b = new HSSFWorkbook();
         b.createSheet("Sheet One");
-        HSSFSheet s = b.createSheet("Sheet Two");
+        b.createSheet("Sheet Two");
         b.setSelectedTab((short) 1);
         b.setDisplayedTab((short) 1);
         assertEquals(b.getSelectedTab(), 1);
         assertEquals(b.getDisplayedTab(), 1);
     }
     
-    public void testSheetClone() throws Exception {
-    	// First up, try a simple file
+    public void testSheetClone() {
+        // First up, try a simple file
         HSSFWorkbook b = new HSSFWorkbook();
         assertEquals(0, b.getNumberOfSheets());
         b.createSheet("Sheet One");
@@ -122,24 +114,20 @@ public class TestHSSFWorkbook extends TestCase
         assertEquals(2, b.getNumberOfSheets());
         b.cloneSheet(0);
         assertEquals(3, b.getNumberOfSheets());
-    	
-    	// Now try a problem one with drawing records in it
-        b = new HSSFWorkbook(
-        		new FileInputStream(new File(filename,"SheetWithDrawing.xls"))
-        );
+        
+        // Now try a problem one with drawing records in it
+        b = openSample("SheetWithDrawing.xls");
         assertEquals(1, b.getNumberOfSheets());
         b.cloneSheet(0);
         assertEquals(2, b.getNumberOfSheets());
     }
     
-    public void testReadWriteWithCharts() throws Exception {
+    public void testReadWriteWithCharts() {
         HSSFWorkbook b;
         HSSFSheet s;
         
         // Single chart, two sheets
-        b = new HSSFWorkbook(
-        		new FileInputStream(new File(filename,"44010-SingleChart.xls"))
-        );
+        b = openSample("44010-SingleChart.xls");
         assertEquals(2, b.getNumberOfSheets());
         s = b.getSheetAt(1);
         assertEquals(0, s.getFirstRowNum());
@@ -154,9 +142,7 @@ public class TestHSSFWorkbook extends TestCase
         // We've now called getDrawingPatriarch() so 
         //  everything will be all screwy
         // So, start again
-        b = new HSSFWorkbook(
-        		new FileInputStream(new File(filename,"44010-SingleChart.xls"))
-        );
+        b = openSample("44010-SingleChart.xls");
         
         b = writeRead(b);
         assertEquals(2, b.getNumberOfSheets());
@@ -166,9 +152,7 @@ public class TestHSSFWorkbook extends TestCase
 
         
         // Two charts, three sheets
-        b = new HSSFWorkbook(
-        		new FileInputStream(new File(filename,"44010-TwoCharts.xls"))
-        );
+        b = openSample("44010-TwoCharts.xls");
         assertEquals(3, b.getNumberOfSheets());
         
         s = b.getSheetAt(1);
@@ -188,9 +172,7 @@ public class TestHSSFWorkbook extends TestCase
         // We've now called getDrawingPatriarch() so 
         //  everything will be all screwy
         // So, start again
-        b = new HSSFWorkbook(
-        		new FileInputStream(new File(filename,"44010-TwoCharts.xls"))
-        );
+        b = openSample("44010-TwoCharts.xls");
         
         b = writeRead(b);
         assertEquals(3, b.getNumberOfSheets());
@@ -203,11 +185,7 @@ public class TestHSSFWorkbook extends TestCase
         assertEquals(0, s.getLastRowNum());
     }
     
-    private HSSFWorkbook writeRead(HSSFWorkbook b) throws Exception {
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    	b.write(baos);
-    	return new HSSFWorkbook(
-    			new ByteArrayInputStream(baos.toByteArray())
-    	);
+    private static HSSFWorkbook writeRead(HSSFWorkbook b) {
+    	return HSSFTestDataSamples.writeOutAndReadBack(b);
     }
 }
