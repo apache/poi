@@ -98,7 +98,7 @@ public class TestTxMasterStyleAtom extends TestCase {
         assertEquals(0, prop.getValue());
 
         prop = props.findByName("font.size");
-        assertEquals(49, prop.getValue());
+        assertEquals(44, prop.getValue());
 
     }
 
@@ -138,7 +138,7 @@ public class TestTxMasterStyleAtom extends TestCase {
         assertEquals(0, prop.getValue());
 
         prop = props.findByName("font.size");
-        assertEquals(36, prop.getValue());
+        assertEquals(32, prop.getValue());
     }
 
     /**
@@ -164,7 +164,7 @@ public class TestTxMasterStyleAtom extends TestCase {
         assertEquals(0, prop.getValue());
 
         prop = props.findByName("font.size");
-        assertEquals(24, prop.getValue());
+        assertEquals(18, prop.getValue());
     }
 
     /**

@@ -47,10 +47,32 @@ public abstract class ChunkHeader {
 			ch.unknown3 = (short)LittleEndian.getUnsignedByte(data, offset + 18);
 			
 			return ch;
-		} else if(documentVersion == 5) {
-			throw new RuntimeException("TODO");
+		} else if(documentVersion == 5 || documentVersion == 4) {
+			ChunkHeaderV4V5 ch = new ChunkHeaderV4V5();
+			
+			ch.type = (int)LittleEndian.getShort(data, offset + 0);
+			ch.id   = (int)LittleEndian.getShort(data, offset + 2);
+			ch.unknown2 = (short)LittleEndian.getUnsignedByte(data, offset + 4);
+			ch.unknown3 = (short)LittleEndian.getUnsignedByte(data, offset + 5);
+			ch.unknown1 = (short)LittleEndian.getShort(data, offset + 6);
+			ch.length   = (int)LittleEndian.getUInt(data, offset + 8);
+			
+			return ch;
 		} else {
-			throw new IllegalArgumentException("Visio files with versions below 5 are not supported, yours was " + documentVersion);
+			throw new IllegalArgumentException("Visio files with versions below 4 are not supported, yours was " + documentVersion);
+		}
+	}
+	
+	/**
+	 * Returns the size of a chunk header for the given document version.
+	 */
+	public static int getHeaderSize(int documentVersion) {
+		if(documentVersion > 6) {
+			return ChunkHeaderV11.getHeaderSize();
+		} else if(documentVersion == 6) {
+			return ChunkHeaderV6.getHeaderSize();
+		} else {
+			return ChunkHeaderV4V5.getHeaderSize();
 		}
 	}
 	
