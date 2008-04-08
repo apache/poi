@@ -32,6 +32,7 @@ import org.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLTextExtractor;
+import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
@@ -109,7 +110,6 @@ public class ExtractorFactory {
 		for(Iterator entries = fs.getRoot().getEntries(); entries.hasNext(); ) {
 			Entry entry = (Entry)entries.next();
 			
-			System.err.println(entry.getName());
 			if(entry.getName().equals("Workbook")) {
 				return new ExcelExtractor(fs);
 			}
@@ -119,7 +119,9 @@ public class ExtractorFactory {
 			if(entry.getName().equals("PowerPoint Document")) {
 				return new PowerPointExtractor(fs);
 			}
-			// TODO - visio
+			if(entry.getName().equals("VisioDocument")) {
+				return new VisioTextExtractor(fs);
+			}
 		}
 		throw new IllegalArgumentException("No supported documents found in the OLE2 stream");
 	}

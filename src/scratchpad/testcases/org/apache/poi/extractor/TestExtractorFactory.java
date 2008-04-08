@@ -17,10 +17,14 @@
 package org.apache.poi.extractor;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
+import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
@@ -34,6 +38,7 @@ public class TestExtractorFactory extends TestCase {
 	private String excel_dir;
 	private String word_dir;
 	private String powerpoint_dir;
+	private String visio_dir;
 	
 	private File txt;
 	
@@ -45,6 +50,8 @@ public class TestExtractorFactory extends TestCase {
 
 	private File ppt;
 	private File pptx;
+	
+	private File vsd;
 
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -52,8 +59,9 @@ public class TestExtractorFactory extends TestCase {
 		excel_dir = System.getProperty("HSSF.testdata.path");
 		word_dir = System.getProperty("HWPF.testdata.path");
 		powerpoint_dir = System.getProperty("HSLF.testdata.path");
+		visio_dir = System.getProperty("HDGF.testdata.path");
 		
-		txt = new File(excel_dir, "SampleSS.txt");
+		txt = new File(powerpoint_dir, "SampleShow.txt");
 		
 		xls = new File(excel_dir, "SampleSS.xls");
 		xlsx = new File(excel_dir, "SampleSS.xlsx");
@@ -63,6 +71,8 @@ public class TestExtractorFactory extends TestCase {
 		
 		ppt = new File(powerpoint_dir, "SampleShow.ppt");
 		pptx = new File(powerpoint_dir, "SampleShow.pptx");
+		
+		vsd = new File(visio_dir, "Test_Visio-Some_Random_Text.vsd");
 	}
 
 	public void testFile() throws Exception {
@@ -118,7 +128,13 @@ public class TestExtractorFactory extends TestCase {
 		);
 		
 		// Visio
-		// TODO
+		assertTrue(
+				ExtractorFactory.createExtractor(vsd)
+				instanceof VisioTextExtractor
+		);
+		assertTrue(
+				ExtractorFactory.createExtractor(vsd).getText().length() > 50
+		);
 		
 		// Text
 		try {
@@ -128,12 +144,123 @@ public class TestExtractorFactory extends TestCase {
 			// Good
 		}
 	}
+	
 	public void testInputStream() throws Exception {
+		// Excel
+		assertTrue(
+				ExtractorFactory.createExtractor(new FileInputStream(xls))
+				instanceof ExcelExtractor
+		);
+		assertTrue(
+				ExtractorFactory.createExtractor(new FileInputStream(xls)).getText().length() > 200
+		);
 		
+		assertTrue(
+				ExtractorFactory.createExtractor(new FileInputStream(xlsx))
+				instanceof XSSFExcelExtractor
+		);
+		assertTrue(
+				ExtractorFactory.createExtractor(new FileInputStream(xlsx)).getText().length() > 200
+		);
+		
+		// Word
+		assertTrue(
+				ExtractorFactory.createExtractor(new FileInputStream(doc))
+				instanceof WordExtractor
+		);
+		assertTrue(
+				ExtractorFactory.createExtractor(new FileInputStream(doc)).getText().length() > 120
+		);
+		
+		assertTrue(
+				ExtractorFactory.createExtractor(new FileInputStream(docx))
+				instanceof XWPFWordExtractor
+		);
+		assertTrue(
+				ExtractorFactory.createExtractor(new FileInputStream(docx)).getText().length() > 120
+		);
+		
+		// PowerPoint
+		assertTrue(
+				ExtractorFactory.createExtractor(new FileInputStream(ppt))
+				instanceof PowerPointExtractor
+		);
+		assertTrue(
+				ExtractorFactory.createExtractor(new FileInputStream(ppt)).getText().length() > 120
+		);
+		
+		assertTrue(
+				ExtractorFactory.createExtractor(new FileInputStream(pptx))
+				instanceof XSLFPowerPointExtractor
+		);
+		assertTrue(
+				ExtractorFactory.createExtractor(new FileInputStream(pptx)).getText().length() > 120
+		);
+		
+		// Visio
+		assertTrue(
+				ExtractorFactory.createExtractor(new FileInputStream(vsd))
+				instanceof VisioTextExtractor
+		);
+		assertTrue(
+				ExtractorFactory.createExtractor(new FileInputStream(vsd)).getText().length() > 50
+		);
+		
+		// Text
+		try {
+			ExtractorFactory.createExtractor(new FileInputStream(txt));
+			fail();
+		} catch(IllegalArgumentException e) {
+			// Good
+		}
 	}
+	
 	public void testPOIFS() throws Exception {
+		// Excel
+		assertTrue(
+				ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls)))
+				instanceof ExcelExtractor
+		);
+		assertTrue(
+				ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls))).getText().length() > 200
+		);
 		
+		// Word
+		assertTrue(
+				ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(doc)))
+				instanceof WordExtractor
+		);
+		assertTrue(
+				ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(doc))).getText().length() > 120
+		);
+		
+		// PowerPoint
+		assertTrue(
+				ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(ppt)))
+				instanceof PowerPointExtractor
+		);
+		assertTrue(
+				ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(ppt))).getText().length() > 120
+		);
+		
+		// Visio
+		assertTrue(
+				ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(vsd)))
+				instanceof VisioTextExtractor
+		);
+		assertTrue(
+				ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(vsd))).getText().length() > 50
+		);
+		
+		// Text
+		try {
+			ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(txt)));
+			fail();
+		} catch(IOException e) {
+			// Good
+		}
 	}
+	
 	public void testPackage() throws Exception {
 		
 	}
