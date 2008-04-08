@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import org.apache.poi.hdgf.chunks.Chunk;
 import org.apache.poi.hdgf.chunks.ChunkFactory;
+import org.apache.poi.hdgf.chunks.ChunkHeader;
 import org.apache.poi.hdgf.pointers.Pointer;
 
 public class ChunkStream extends Stream {
@@ -51,10 +52,17 @@ public class ChunkStream extends Stream {
 		int pos = 0;
 		byte[] contents = getStore().getContents();
 		while(pos < contents.length) {
-			Chunk chunk = chunkFactory.createChunk(contents, pos);
-			chunksA.add(chunk);
-			
-			pos += chunk.getOnDiskSize();
+			// Ensure we have enough data to create a chunk from
+			int headerSize = ChunkHeader.getHeaderSize(chunkFactory.getVersion());
+			if(pos+headerSize <= contents.length) {
+				Chunk chunk = chunkFactory.createChunk(contents, pos);
+				chunksA.add(chunk);
+				
+				pos += chunk.getOnDiskSize();
+			} else {
+				System.err.println("Needed " + headerSize + " bytes to create the next chunk header, but only found " + (contents.length-pos) + " bytes, ignoring rest of data");
+				pos = contents.length;
+			}
 		}
 		
 		chunks = (Chunk[])chunksA.toArray(new Chunk[chunksA.size()]);

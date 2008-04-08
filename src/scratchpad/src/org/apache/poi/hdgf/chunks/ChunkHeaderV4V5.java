@@ -17,9 +17,9 @@
 package org.apache.poi.hdgf.chunks;
 
 /**
- * A chunk header from v6
+ * A chunk header from v4 or v5
  */
-public class ChunkHeaderV6 extends ChunkHeader {
+public class ChunkHeaderV4V5 extends ChunkHeader {
 	protected short unknown2;
 	protected short unknown3;
 
@@ -31,9 +31,9 @@ public class ChunkHeaderV6 extends ChunkHeader {
 	}
 	
 	protected static int getHeaderSize() {
-		// Looks like it ought to be 19...
-		return 19;
+		return 12;
 	}
+	
 	public int getSizeInBytes() {
 		return getHeaderSize();
 	}
@@ -42,20 +42,15 @@ public class ChunkHeaderV6 extends ChunkHeader {
 	 * Does the chunk have a trailer?
 	 */
 	public boolean hasTrailer() {
-		if(unknown1 != 0 || type == 0x71 || type == 0x70) {
-			return true;
-		}
-		if(type == 0x6b || type == 0x6a || type == 0x69 || type == 0x66
-				|| type == 0x65 || type == 0x2c) {
-			return true;
-		}
+		// V4 and V5 never has trailers
 		return false;
 	}
+	
 	/**
 	 * Does the chunk have a separator?
 	 */
 	public boolean hasSeparator() {
-		// V6 never has separators
+		// V4 and V5 never has separators
 		return false;
 	}
 }

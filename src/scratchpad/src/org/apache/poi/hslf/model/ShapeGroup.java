@@ -22,6 +22,7 @@ import org.apache.poi.util.POILogger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.awt.geom.Rectangle2D;
 
 /**
  *  Represents a group of shapes.
@@ -186,16 +187,16 @@ public class ShapeGroup extends Shape{
      *
      * @return the anchor of this shape group
      */
-    public java.awt.Rectangle getAnchor(){
+    public Rectangle2D getAnchor2D(){
         EscherContainerRecord groupInfoContainer = (EscherContainerRecord)_escherContainer.getChild(0);
         EscherSpgrRecord spgr = (EscherSpgrRecord)getEscherChild(groupInfoContainer, EscherSpgrRecord.RECORD_ID);
-        java.awt.Rectangle anchor=null;
+        Rectangle2D anchor = new Rectangle2D.Float(
+            (float)spgr.getRectX1()*POINT_DPI/MASTER_DPI,
+            (float)spgr.getRectY1()*POINT_DPI/MASTER_DPI,
+            (float)(spgr.getRectX2() - spgr.getRectX1())*POINT_DPI/MASTER_DPI,
+            (float)(spgr.getRectY2() - spgr.getRectY1())*POINT_DPI/MASTER_DPI
+        );
 
-        anchor = new java.awt.Rectangle();
-        anchor.x = spgr.getRectX1()*POINT_DPI/MASTER_DPI;
-        anchor.y = spgr.getRectY1()*POINT_DPI/MASTER_DPI;
-        anchor.width = (spgr.getRectX2() - spgr.getRectX1())*POINT_DPI/MASTER_DPI;
-        anchor.height = (spgr.getRectY2() - spgr.getRectY1())*POINT_DPI/MASTER_DPI;
         return anchor;
     }
 
