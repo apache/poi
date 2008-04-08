@@ -32,7 +32,9 @@ import org.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLTextExtractor;
+import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
+import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xslf.XSLFSlideShow;
@@ -51,20 +53,21 @@ public class ExtractorFactory {
 	public static final String CORE_DOCUMENT_REL =
 		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument";
 	
-	public POITextExtractor createExtractor(File f) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
-		FileInputStream finp = new FileInputStream(f);
+	public static POITextExtractor createExtractor(File f) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
+		InputStream inp = new PushbackInputStream( 
+			new FileInputStream(f), 8);
 		
-		if(POIFSFileSystem.hasPOIFSHeader(finp)) {
-			return createExtractor(new POIFSFileSystem(finp));
+		if(POIFSFileSystem.hasPOIFSHeader(inp)) {
+			return createExtractor(new POIFSFileSystem(inp));
 		}
-		if(POIXMLDocument.hasOOXMLHeader(finp)) {
-			finp.close();
+		if(POIXMLDocument.hasOOXMLHeader(inp)) {
+			inp.close();
 			return createExtractor(Package.open(f.toString()));
 		}
 		throw new IllegalArgumentException("Your File was neither an OLE2 file, nor an OOXML file");
 	}
 	
-	public POITextExtractor createExtractor(InputStream inp) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
+	public static POITextExtractor createExtractor(InputStream inp) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
 		// Figure out the kind of stream
 		// If clearly doesn't do mark/reset, wrap up
 		if(! inp.markSupported()) {
@@ -80,7 +83,7 @@ public class ExtractorFactory {
 		throw new IllegalArgumentException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
 	}
 	
-	public POIXMLTextExtractor createExtractor(Package pkg) throws IOException, OpenXML4JException, XmlException {
+	public static POIXMLTextExtractor createExtractor(Package pkg) throws IOException, OpenXML4JException, XmlException {
 		PackageRelationshipCollection core = 
 			pkg.getRelationshipsByType(CORE_DOCUMENT_REL);
 		if(core.size() != 1) {
@@ -100,14 +103,23 @@ public class ExtractorFactory {
 		throw new IllegalArgumentException("No supported documents found in the OOXML package");
 	}
 	
-	public POITextExtractor createExtractor(POIFSFileSystem fs) throws IOException {
+	public static POITextExtractor createExtractor(POIFSFileSystem fs) throws IOException {
 		// Look for certain entries in the stream, to figure it
 		//  out from
 		for(Iterator entries = fs.getRoot().getEntries(); entries.hasNext(); ) {
 			Entry entry = (Entry)entries.next();
+			
+			System.err.println(entry.getName());
 			if(entry.getName().equals("Workbook")) {
 				return new ExcelExtractor(fs);
 			}
+			if(entry.getName().equals("WordDocument")) {
+				return new WordExtractor(fs);
+			}
+			if(entry.getName().equals("PowerPoint Document")) {
+				return new PowerPointExtractor(fs);
+			}
+			// TODO - visio
 		}
 		throw new IllegalArgumentException("No supported documents found in the OLE2 stream");
 	}
