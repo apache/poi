@@ -24,6 +24,7 @@ import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
+import org.openxml4j.opc.PackageRelationshipCollection;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBody;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocument1;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
@@ -47,6 +48,7 @@ public class XWPFDocument extends POIXMLDocument {
 	public static final String HEADER_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml";
 	public static final String STYLES_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml";
 	public static final String STYLES_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles";
+	public static final String HYPERLINK_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink"; 
 	
 	private DocumentDocument wordDoc;
 	
@@ -88,5 +90,19 @@ public class XWPFDocument extends POIXMLDocument {
 		StylesDocument sd =
 			StylesDocument.Factory.parse(parts[0].getInputStream());
 		return sd.getStyles();
+	}
+	
+	/**
+	 * Returns all the hyperlink relations for the file.
+	 * You'll generally want to get the target to get
+	 *  the destination of the hyperlink
+	 */
+	public PackageRelationshipCollection getHyperlinks() {
+		try {
+			return getCorePart().getRelationshipsByType(HYPERLINK_RELATION_TYPE); 
+		} catch(InvalidFormatException e) {
+			// Should never happen
+			throw new IllegalStateException(e);
+		}
 	}
 }

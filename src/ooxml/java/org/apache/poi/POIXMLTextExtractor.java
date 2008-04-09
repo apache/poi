@@ -16,6 +16,12 @@
 ==================================================================== */
 package org.apache.poi;
 
+import java.io.IOException;
+
+import org.apache.poi.POIXMLProperties.*;
+import org.apache.xmlbeans.XmlException;
+import org.openxml4j.exceptions.OpenXML4JException;
+
 public abstract class POIXMLTextExtractor extends POITextExtractor {
 	/** The POIXMLDocument that's open */
 	protected POIXMLDocument document;
@@ -27,5 +33,18 @@ public abstract class POIXMLTextExtractor extends POITextExtractor {
 		super(null);
 		
 		this.document = document;
+	}
+	
+	/**
+	 * Returns the core document properties
+	 */
+	public CoreProperties getCoreProperties() throws IOException, OpenXML4JException, XmlException {
+		 return document.getProperties().getCoreProperties();
+	}
+	/**
+	 * Returns the extended document properties
+	 */
+	public ExtendedProperties getExtendedProperties() throws IOException, OpenXML4JException, XmlException {
+		return document.getProperties().getExtendedProperties();
 	}
 }

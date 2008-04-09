@@ -92,29 +92,29 @@ public class TestXWPFDocument extends TestCase {
 		XWPFDocument xml = new XWPFDocument(
 				POIXMLDocument.openPackage(sampleFile.toString())
 		);
-		assertNotNull(xml.getCoreProperties());
-		assertNotNull(xml.getExtendedProperties());
+		assertNotNull(xml.getProperties().getCoreProperties());
+		assertNotNull(xml.getProperties().getExtendedProperties());
 		
-		assertEquals("Microsoft Office Word", xml.getExtendedProperties().getApplication());
-		assertEquals(1315, xml.getExtendedProperties().getCharacters());
-		assertEquals(10, xml.getExtendedProperties().getLines());
+		assertEquals("Microsoft Office Word", xml.getProperties().getExtendedProperties().getUnderlyingProperties().getApplication());
+		assertEquals(1315, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getCharacters());
+		assertEquals(10, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getLines());
 		
-		assertEquals(null, xml.getCoreProperties().getTitleProperty().getValue());
-		assertEquals(null, xml.getCoreProperties().getSubjectProperty().getValue());
+		assertEquals(null, xml.getProperties().getCoreProperties().getTitle());
+		assertEquals(null, xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().getValue());
 	}
 	
 	public void testMetadataComplex() throws Exception {
 		XWPFDocument xml = new XWPFDocument(
 				POIXMLDocument.openPackage(complexFile.toString())
 		);
-		assertNotNull(xml.getCoreProperties());
-		assertNotNull(xml.getExtendedProperties());
+		assertNotNull(xml.getProperties().getCoreProperties());
+		assertNotNull(xml.getProperties().getExtendedProperties());
 		
-		assertEquals("Microsoft Office Outlook", xml.getExtendedProperties().getApplication());
-		assertEquals(5184, xml.getExtendedProperties().getCharacters());
-		assertEquals(0, xml.getExtendedProperties().getLines());
+		assertEquals("Microsoft Office Outlook", xml.getProperties().getExtendedProperties().getUnderlyingProperties().getApplication());
+		assertEquals(5184, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getCharacters());
+		assertEquals(0, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getLines());
 		
-		assertEquals(" ", xml.getCoreProperties().getTitleProperty().getValue());
-		assertEquals(" ", xml.getCoreProperties().getSubjectProperty().getValue());
+		assertEquals(" ", xml.getProperties().getCoreProperties().getTitle());
+		assertEquals(" ", xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().getValue());
 	}
 }

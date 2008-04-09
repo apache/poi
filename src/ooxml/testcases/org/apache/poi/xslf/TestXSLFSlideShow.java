@@ -46,7 +46,7 @@ public class TestXSLFSlideShow extends TestCase {
 			if(part.getContentType().equals(XSLFSlideShow.MAIN_CONTENT_TYPE)) {
 				found = true;
 			}
-			System.out.println(part);
+			//System.out.println(part);
 		}
 		assertTrue(found);
 	}
@@ -110,14 +110,14 @@ public class TestXSLFSlideShow extends TestCase {
 	public void testMetadataBasics() throws Exception {
 		XSLFSlideShow xml = new XSLFSlideShow(sampleFile);
 		
-		assertNotNull(xml.getCoreProperties());
-		assertNotNull(xml.getExtendedProperties());
+		assertNotNull(xml.getProperties().getCoreProperties());
+		assertNotNull(xml.getProperties().getExtendedProperties());
 		
-		assertEquals("Microsoft Office PowerPoint", xml.getExtendedProperties().getApplication());
-		assertEquals(0, xml.getExtendedProperties().getCharacters());
-		assertEquals(0, xml.getExtendedProperties().getLines());
+		assertEquals("Microsoft Office PowerPoint", xml.getProperties().getExtendedProperties().getUnderlyingProperties().getApplication());
+		assertEquals(0, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getCharacters());
+		assertEquals(0, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getLines());
 		
-		assertEquals(null, xml.getCoreProperties().getTitleProperty().getValue());
-		assertEquals(null, xml.getCoreProperties().getSubjectProperty().getValue());
+		assertEquals(null, xml.getProperties().getCoreProperties().getTitle());
+		assertEquals(null, xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().getValue());
 	}
 }
