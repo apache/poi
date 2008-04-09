@@ -186,7 +186,7 @@ under the License.
     description="JDK version of generated class files, when built on JDK 1.4"/>  
  
 
-    <!-- normally use the jdk 1.5 stuff -->
+	<!-- normally use the jdk 1.5 stuff -->
     <path id="main.classpath">
         <pathelement location="${main.jar1.dir}"/>
         <pathelement location="${main.jar2.dir}"/>
@@ -221,8 +221,8 @@ under the License.
         <path refid="main.classpath"/>
         <path refid="scratchpad.classpath"/>
         <fileset dir="${ooxml.lib}">
-            <include name="*.jar" />
-        </fileset>
+			<include name="*.jar" />
+		</fileset>
     </path>
 
     <path id="test.classpath">
@@ -268,7 +268,7 @@ under the License.
       -Ddisconnected="true": Do not execute any targets that require an online
           connection to the Internet.
       -Dtestcase=org.apache.poi.xxx.xxx : for the single-test target, specify
-          the test to run
+	      the test to run
       -Dfilename=xxxx.xls : for the command line task targets, specify the
           file to run against
 
@@ -380,7 +380,7 @@ under the License.
         <get src="${ooxml.jar6.url}" dest="${ooxml.jar6.dir}"/>
     </target>
 
-    <target name="check-ooxml-xsds">
+	<target name="check-ooxml-xsds">
         <condition property="ooxml-xsds.present">
             <or>
                 <and>
@@ -389,17 +389,17 @@ under the License.
                 <isset property="disconnected"/>
             </or>
         </condition>
-    </target>
+	</target>
     <target name="fetch-ooxml-xsds" unless="ooxml-xsds.present"
      description="Fetches needed OOXML xsd files from the Internet">
         <get src="${ooxml.xsds.url}" dest="${ooxml.xsds.ozip}"/>
-        <unzip src="${ooxml.xsds.ozip}" dest="${ooxml.lib}">
-            <patternset>
-                <include name="OfficeOpenXML-XMLSchema.zip" />
-            </patternset>
-        </unzip>
-    </target>
-    <target name="check-compiled-ooxml-xsds">
+		<unzip src="${ooxml.xsds.ozip}" dest="${ooxml.lib}">
+			<patternset>
+				<include name="OfficeOpenXML-XMLSchema.zip" />
+			</patternset>
+		</unzip>
+	</target>
+	<target name="check-compiled-ooxml-xsds">
         <condition property="ooxml-compiled-xsds.present">
             <or>
                 <and>
@@ -408,30 +408,30 @@ under the License.
                 <isset property="disconnected"/>
             </or>
         </condition>
-    </target>
-    <target name="compile-ooxml-xsds" unless="ooxml-compiled-xsds.present"
-     depends="check-jars,fetch-jars,check-ooxml-xsds,fetch-ooxml-xsds,check-compiled-ooxml-xsds"
-     description="Unpacks the OOXML xsd files, and compiles them into XmlBeans">
-        <taskdef name="xmlbean"
-            classname="org.apache.xmlbeans.impl.tool.XMLBean"
-            classpath="${ooxml.jar2.dir}:${ooxml.jar3.dir}:${ooxml.jar4.dir}:${ooxml.jar4.dir}:${ooxml.jar5.dir}" />
+	</target>
+	<target name="compile-ooxml-xsds" unless="ooxml-compiled-xsds.present"
+	 depends="check-jars,fetch-jars,check-ooxml-xsds,fetch-ooxml-xsds,check-compiled-ooxml-xsds"
+	 description="Unpacks the OOXML xsd files, and compiles them into XmlBeans">
+		<taskdef name="xmlbean"
+			classname="org.apache.xmlbeans.impl.tool.XMLBean"
+			classpath="${ooxml.jar2.dir}:${ooxml.jar3.dir}:${ooxml.jar4.dir}:${ooxml.jar4.dir}:${ooxml.jar5.dir}" />
 
-        <unzip src="${ooxml.xsds.izip}" dest="build/ooxml-xsds/" />
-        <!--
-            schema="build/ooxml-xsds/"
-            schema="build/ooxml-xsds/sml-workbook.xsd"
-        -->
-        <xmlbean
-            schema="build/ooxml-xsds/"
-            destfile="${ooxml.xsds.jar}"
-            javasource="1.4"
-            failonerror="true"
-            fork="true"
-            memoryMaximumSize="512m"
-        >
-            <classpath refid="ooxml.classpath"/>
-        </xmlbean>
-    </target>
+		<unzip src="${ooxml.xsds.izip}" dest="build/ooxml-xsds/" />
+		<!--
+			schema="build/ooxml-xsds/"
+			schema="build/ooxml-xsds/sml-workbook.xsd"
+		-->
+		<xmlbean
+			schema="build/ooxml-xsds/"
+			destfile="${ooxml.xsds.jar}"
+			javasource="1.4"
+			failonerror="true"
+			fork="true"
+			memoryMaximumSize="512m"
+		>
+			<classpath refid="ooxml.classpath"/>
+		</xmlbean>
+	</target>
 
   <target name="compile" depends="init, compile-main, compile-main-14, 
     compile-scratchpad, compile-contrib, compile-examples"
@@ -486,22 +486,22 @@ under the License.
       </classpath>
     </javac>
 
-    <!-- Copy HSLF Resources over -->
-    <property name="hslf.data" value="org/apache/poi/hslf/data" />
-    <mkdir dir="${scratchpad.output.dir}/${hslf.data}" />
-    <copy todir="${scratchpad.output.dir}/${hslf.data}">
-        <fileset dir="${scratchpad.src}/${hslf.data}">
-            <include name="*.ppt" />
-        </fileset>
-    </copy>
+	<!-- Copy HSLF Resources over -->
+	<property name="hslf.data" value="org/apache/poi/hslf/data" />
+	<mkdir dir="${scratchpad.output.dir}/${hslf.data}" />
+	<copy todir="${scratchpad.output.dir}/${hslf.data}">
+		<fileset dir="${scratchpad.src}/${hslf.data}">
+			<include name="*.ppt" />
+		</fileset>
+	</copy>
 
-    <!-- Copy HDGF Resources over -->
-    <property name="hdgf.chunks" value="org/apache/poi/hdgf/chunks" />
-    <copy todir="${scratchpad.output.dir}/${hdgf.chunks}">
-        <fileset dir="${scratchpad.src}/${hdgf.chunks}">
-            <include name="*.tbl" />
-        </fileset>
-    </copy>
+	<!-- Copy HDGF Resources over -->
+	<property name="hdgf.chunks" value="org/apache/poi/hdgf/chunks" />
+	<copy todir="${scratchpad.output.dir}/${hdgf.chunks}">
+		<fileset dir="${scratchpad.src}/${hdgf.chunks}">
+			<include name="*.tbl" />
+		</fileset>
+	</copy>
   </target>
 
   <target name="compile-contrib" depends="init">
@@ -535,7 +535,7 @@ under the License.
   </target>
 
   <target name="compile-ooxml" depends="init, check-ooxml-xsds, fetch-ooxml-xsds, compile-ooxml-xsds, compile-main">
-    <!-- openxml4j requires java 1.5, so so must we, for now -->
+	<!-- openxml4j requires java 1.5, so so must we, for now -->
     <javac target="1.5" source="1.5"
       destdir="${ooxml.output.dir}" debug="on" srcdir="${ooxml.src}">
       <classpath refid="ooxml.classpath"/>
@@ -648,7 +648,7 @@ under the License.
     </target>
 
     <target name="debug-test" depends="-test-property-check,compile-main" description="Runs a single test case specified with -Dtestcase=classname with remote debug options turned on." >
-        <echo>Waiting for debugger on port 5001</echo>    
+	    <echo>Waiting for debugger on port 5001</echo>    
         <junit printsummary="no" showoutput="true" filtertrace="no" fork="yes" haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed">
             <jvmarg value="-Xdebug"/>
             <jvmarg value="-Xrunjdwp:transport=dt_socket,address=5001,server=y,suspend=y"/>
@@ -712,30 +712,30 @@ under the License.
         <echo file="${scratchpad.testokfile}" append="false" message="testok"/>
     </target>
 
-    <target name="single-scratchpad-test" depends="compile-scratchpad,-test-property-check" description="Runs a single test case specified with -Dtestcase=classname">
-            <junit printsummary="yes" showoutput="true" filtertrace="no" haltonfailure="false" >
-            <classpath refid="test.classpath"/>
-            <classpath>
-                <path refid="scratchpad.classpath"/>
-                <pathelement location="${main.output.dir}"/>
-                <pathelement location="${scratchpad.output.dir}"/>
-                <pathelement location="${scratchpad.output.test.dir}"/>
-                <pathelement location="${junit.jar1.dir}"/>
-            </classpath>
+	<target name="single-scratchpad-test" depends="compile-scratchpad,-test-property-check" description="Runs a single test case specified with -Dtestcase=classname">
+	        <junit printsummary="yes" showoutput="true" filtertrace="no" haltonfailure="false" >
+	        <classpath refid="test.classpath"/>
+	        <classpath>
+	            <path refid="scratchpad.classpath"/>
+	            <pathelement location="${main.output.dir}"/>
+	            <pathelement location="${scratchpad.output.dir}"/>
+	            <pathelement location="${scratchpad.output.test.dir}"/>
+	            <pathelement location="${junit.jar1.dir}"/>
+	        </classpath>
                 <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
-                <sysproperty key="HPSF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpsf/data"/>
-                <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
+	            <sysproperty key="HPSF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpsf/data"/>
+	            <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
                 <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
                 <sysproperty key="HSMF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hsmf/data"/>
                 <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
-                <sysproperty key="java.awt.headless" value="true"/>
-                <sysproperty key="java.awt.headless" value="true"/>
-                <formatter type="plain" usefile="no"/>
-                <formatter type="xml"/>
-                <test name="${testcase}"/>
-            </junit>
-        </target>
-    
+	            <sysproperty key="java.awt.headless" value="true"/>
+	            <sysproperty key="java.awt.headless" value="true"/>
+	            <formatter type="plain" usefile="no"/>
+	            <formatter type="xml"/>
+	            <test name="${testcase}"/>
+	        </junit>
+	    </target>
+	
     <target name="-test-contrib-check">
         <uptodate property="contrib.test.notRequired" targetfile="${contrib.testokfile}">
             <srcfiles dir="${contrib.src}"/>
@@ -1070,110 +1070,110 @@ FORREST_HOME environment variable!</echo>
 
 
     <target name="maven-dist" depends="jar" description="Builds the POM files for a maven distribution, and copies these and the jars to the appropriate locations">
-        <!-- Copy the jar files into the maven jar directory -->
-        <!-- Same jars as for the main release, only lacking the datestamp -->
-        <copy
-            file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"
-            tofile="${mavendist.oap.dir}/jars/${jar.name}-${version.id}.jar" />
-        <copy
-            file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"
-            tofile="${mavendist.oap.dir}/jars/${jar.name}-contrib-${version.id}.jar" />
-        <copy
-            file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"
-            tofile="${mavendist.oap.dir}/jars/${jar.name}-scratchpad-${version.id}.jar" />
+		<!-- Copy the jar files into the maven jar directory -->
+		<!-- Same jars as for the main release, only lacking the datestamp -->
+		<copy
+			file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"
+			tofile="${mavendist.oap.dir}/jars/${jar.name}-${version.id}.jar" />
+		<copy
+			file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"
+			tofile="${mavendist.oap.dir}/jars/${jar.name}-contrib-${version.id}.jar" />
+		<copy
+			file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"
+			tofile="${mavendist.oap.dir}/jars/${jar.name}-scratchpad-${version.id}.jar" />
 
-        <!-- TODO: Decide about source jars, and copy them if we have some -->
+		<!-- TODO: Decide about source jars, and copy them if we have some -->
 
-        <!-- Build the org.apache.poi poms -->
-        <!-- Copy from the base file, substituting in the version and -->
-        <!--  artificat, plus doing the core poi dependency as needed -->
+		<!-- Build the org.apache.poi poms -->
+		<!-- Copy from the base file, substituting in the version and -->
+		<!--  artificat, plus doing the core poi dependency as needed -->
 
-        <!-- Build the main pom -->
-        <copy 
-            file="poi.pom" 
-            tofile="${mavendist.oap.dir}/poms/${jar.name}-${version.id}.pom" 
-        >
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${version.id}" />
-                    <token key="ARTIFICAT" value="poi" />
-                </replacetokens>
-                <tokenfilter>
-                    <filetokenizer/>
-                    <replaceregex pattern="START_NON_MAIN.*END_NON_MAIN_DEPENDENCY" replace="No POI dependency on the main jar" flags="s" />
-                </tokenfilter>
-            </filterchain>
-        </copy>
-        <!-- And the contrib pom -->
-        <copy 
-            file="poi.pom" 
-            tofile="${mavendist.oap.dir}/poms/${jar.name}-contrib-${version.id}.pom" 
-        >
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${version.id}" />
-                    <token key="ARTIFICAT" value="poi-contrib" />
-                </replacetokens>
-                <tokenfilter>
-                    <replaceregex pattern="..-- START_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
-                    <replaceregex pattern="..-- END_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
-                </tokenfilter>
-            </filterchain>
-        </copy>
-        <!-- And the scratchpad pom -->
-        <copy 
-            file="poi.pom" 
-            tofile="${mavendist.oap.dir}/poms/${jar.name}-scratchpad-${version.id}.pom" 
-        >
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${version.id}" />
-                    <token key="ARTIFICAT" value="poi-scratchpad" />
-                </replacetokens>
-                <tokenfilter>
-                    <replaceregex pattern="..-- START_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
-                    <replaceregex pattern="..-- END_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
-                </tokenfilter>
-            </filterchain>
-        </copy>
+		<!-- Build the main pom -->
+		<copy 
+			file="poi.pom" 
+			tofile="${mavendist.oap.dir}/poms/${jar.name}-${version.id}.pom" 
+		>
+			<filterchain>
+				<replacetokens>
+					<token key="VERSION" value="${version.id}" />
+					<token key="ARTIFICAT" value="poi" />
+				</replacetokens>
+				<tokenfilter>
+					<filetokenizer/>
+					<replaceregex pattern="START_NON_MAIN.*END_NON_MAIN_DEPENDENCY" replace="No POI dependency on the main jar" flags="s" />
+				</tokenfilter>
+			</filterchain>
+		</copy>
+		<!-- And the contrib pom -->
+		<copy 
+			file="poi.pom" 
+			tofile="${mavendist.oap.dir}/poms/${jar.name}-contrib-${version.id}.pom" 
+		>
+			<filterchain>
+				<replacetokens>
+					<token key="VERSION" value="${version.id}" />
+					<token key="ARTIFICAT" value="poi-contrib" />
+				</replacetokens>
+				<tokenfilter>
+					<replaceregex pattern="..-- START_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
+					<replaceregex pattern="..-- END_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
+				</tokenfilter>
+			</filterchain>
+		</copy>
+		<!-- And the scratchpad pom -->
+		<copy 
+			file="poi.pom" 
+			tofile="${mavendist.oap.dir}/poms/${jar.name}-scratchpad-${version.id}.pom" 
+		>
+			<filterchain>
+				<replacetokens>
+					<token key="VERSION" value="${version.id}" />
+					<token key="ARTIFICAT" value="poi-scratchpad" />
+				</replacetokens>
+				<tokenfilter>
+					<replaceregex pattern="..-- START_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
+					<replaceregex pattern="..-- END_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
+				</tokenfilter>
+			</filterchain>
+		</copy>
 
-        <!-- Build the poi => org.apache.poi redirect poms -->
-        <!-- Copy from the base file, substituting in the version+artifact -->
-        <copy 
-            file="poi-redirect.pom" 
-            tofile="${mavendist.poi.dir}/poms/${jar.name}-${version.id}.pom" 
-        >
-            <filterchain><replacetokens>
-                <token key="VERSION" value="${version.id}" />
-                <token key="ARTIFICAT" value="poi" />
-            </replacetokens></filterchain>
-        </copy>
-        <copy 
-            file="poi-redirect.pom" 
-            tofile="${mavendist.poi.dir}/poms/${jar.name}-contrib-${version.id}.pom" 
-        >
-            <filterchain><replacetokens>
-                <token key="VERSION" value="${version.id}" />
-                <token key="ARTIFICAT" value="poi-contrib" />
-            </replacetokens></filterchain>
-        </copy>
-        <copy 
-            file="poi-redirect.pom" 
-            tofile="${mavendist.poi.dir}/poms/${jar.name}-scratchpad-${version.id}.pom" 
-        >
-            <filterchain><replacetokens>
-                <token key="VERSION" value="${version.id}" />
-                <token key="ARTIFICAT" value="poi-scratchpad" />
-            </replacetokens></filterchain>
-        </copy>
+		<!-- Build the poi => org.apache.poi redirect poms -->
+		<!-- Copy from the base file, substituting in the version+artifact -->
+		<copy 
+			file="poi-redirect.pom" 
+			tofile="${mavendist.poi.dir}/poms/${jar.name}-${version.id}.pom" 
+		>
+			<filterchain><replacetokens>
+				<token key="VERSION" value="${version.id}" />
+				<token key="ARTIFICAT" value="poi" />
+			</replacetokens></filterchain>
+		</copy>
+		<copy 
+			file="poi-redirect.pom" 
+			tofile="${mavendist.poi.dir}/poms/${jar.name}-contrib-${version.id}.pom" 
+		>
+			<filterchain><replacetokens>
+				<token key="VERSION" value="${version.id}" />
+				<token key="ARTIFICAT" value="poi-contrib" />
+			</replacetokens></filterchain>
+		</copy>
+		<copy 
+			file="poi-redirect.pom" 
+			tofile="${mavendist.poi.dir}/poms/${jar.name}-scratchpad-${version.id}.pom" 
+		>
+			<filterchain><replacetokens>
+				<token key="VERSION" value="${version.id}" />
+				<token key="ARTIFICAT" value="poi-scratchpad" />
+			</replacetokens></filterchain>
+		</copy>
 
-        <!-- And that's it for maven -->
-    </target>
+		<!-- And that's it for maven -->
+	</target>
 
     <target name="jar-14" depends="compile-main-14" description="Creates the jdk 1.4 only jar file">
         <jar destfile="${dist.dir}/${jar.name}-jdk14-${version.id}-${DSTAMP}.jar">
-            <fileset dir="${main14.output.dir}" />
-            <fileset dir="legal/" />
+			<fileset dir="${main14.output.dir}" />
+			<fileset dir="legal/" />
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Specification-Title" value="Apache POI"/>
@@ -1184,11 +1184,11 @@ FORREST_HOME environment variable!</echo>
                 <attribute name="Implementation-Vendor" value="Apache"/>
             </manifest>        
         </jar>
-    </target>
+	</target>
     <target name="jar" depends="compile, jar-14" description="Creates jar files for distribution">
         <jar destfile="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar">
-            <fileset dir="${main.output.dir}" />
-            <fileset dir="legal/" />
+			<fileset dir="${main.output.dir}" />
+			<fileset dir="legal/" />
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Specification-Title" value="Apache POI"/>
@@ -1200,8 +1200,8 @@ FORREST_HOME environment variable!</echo>
             </manifest>        
         </jar>
         <jar destfile="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar">
-            <fileset dir="${contrib.output.dir}" />
-            <fileset dir="legal/" />
+			<fileset dir="${contrib.output.dir}" />
+			<fileset dir="legal/" />
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Specification-Title" value="Apache POI"/>
@@ -1213,8 +1213,8 @@ FORREST_HOME environment variable!</echo>
             </manifest>        
         </jar>
         <jar destfile="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar">
-            <fileset dir="${scratchpad.output.dir}" />
-            <fileset dir="legal/" />
+			<fileset dir="${scratchpad.output.dir}" />
+			<fileset dir="legal/" />
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Specification-Title" value="Apache POI"/>
@@ -1228,8 +1228,8 @@ FORREST_HOME environment variable!</echo>
     </target>
     <target name="jar-ooxml" depends="compile-ooxml" description="Creates the ooxml jar files for distribution">
         <jar destfile="${dist.dir}/${jar.name}-ooxml-${version.id}-${DSTAMP}.jar">
-            <fileset dir="${ooxml.output.dir}" />
-            <fileset dir="legal/" />
+			<fileset dir="${ooxml.output.dir}" />
+			<fileset dir="legal/" />
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Specification-Title" value="Apache POI"/>
@@ -1245,7 +1245,7 @@ FORREST_HOME environment variable!</echo>
   <target name="dist" depends="clean, fail-unless-tools-are-available, compile, site, jar"
     description="Creates the entire distribution into build/dist, from scratch">
 
-    <property name="zipdir" value="${jar.name}-${version.id}" />
+	<property name="zipdir" value="${jar.name}-${version.id}" />
 
     <zip destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.zip">
       <zipfileset dir="legal/" prefix="${zipdir}" />
