@@ -570,6 +570,27 @@ public class TestXSSFSheet extends TestCase {
     	assertEquals(1, sheet.getNumMergedRegions());
     }
     
+    public void testRemoveMergedRegion() {
+    	Workbook workbook = new XSSFWorkbook();
+    	CTSheet ctSheet = CTSheet.Factory.newInstance();
+    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
+    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+    	Region region_1 = new Region("A1:B2");
+    	Region region_2 = new Region("C3:D4");
+    	Region region_3 = new Region("E5:F6");
+    	sheet.addMergedRegion(region_1);
+    	sheet.addMergedRegion(region_2);
+    	sheet.addMergedRegion(region_3);
+    	assertEquals("C3:D4", ctWorksheet.getMergeCells().getMergeCellArray(1).getRef());
+    	assertEquals(3, sheet.getNumMergedRegions());
+    	sheet.removeMergedRegion(1);
+    	assertEquals("E5:F6", ctWorksheet.getMergeCells().getMergeCellArray(1).getRef());
+    	assertEquals(2, sheet.getNumMergedRegions());
+    	sheet.removeMergedRegion(1);
+    	sheet.removeMergedRegion(0);
+    	assertEquals(0, sheet.getNumMergedRegions());
+    }
+    
 
 	private XSSFSheet createSheet(XSSFWorkbook workbook, String name) {
         XSSFSheet sheet = (XSSFSheet) workbook.createSheet(name);
