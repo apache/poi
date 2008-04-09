@@ -88,7 +88,7 @@ public final class HSSFFontFormatting
 	 *
 	 * @return fontheight (in points/20); or -1 if not modified
 	 */
-	public short getFontHeight()
+	public int getFontHeight()
 	{
 		return fontFormatting.getFontHeight();
 	}
@@ -308,7 +308,7 @@ public final class HSSFFontFormatting
 	 * @param height
 	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setFontHeight(short)
 	 */
-	public void setFontHeight(short height)
+	public void setFontHeight(int height)
 	{
 		fontFormatting.setFontHeight(height);
 	}
