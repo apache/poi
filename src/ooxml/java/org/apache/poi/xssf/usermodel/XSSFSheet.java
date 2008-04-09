@@ -65,7 +65,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
 
 
 public class XSSFSheet implements Sheet {
@@ -645,8 +644,16 @@ public class XSSFSheet implements Sheet {
     }
 
     public void removeMergedRegion(int index) {
-        // TODO Auto-generated method stub
-
+    	CTMergeCell[] mergeCellsArray = new CTMergeCell[getMergedCells().sizeOfMergeCellArray() - 1];
+    	for (int i = 0 ; i < getMergedCells().sizeOfMergeCellArray() ; i++) {
+    		if (i < index) {
+    			mergeCellsArray[i] = getMergedCells().getMergeCellArray(i);
+    		}
+    		else if (i > index) {
+    			mergeCellsArray[i - 1] = getMergedCells().getMergeCellArray(i);
+    		}
+    	}
+    	getMergedCells().setMergeCellArray(mergeCellsArray);
     }
 
     public void removeRow(Row row) {
