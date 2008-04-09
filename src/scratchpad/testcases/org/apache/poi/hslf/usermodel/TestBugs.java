@@ -350,4 +350,14 @@ public class TestBugs extends TestCase {
         assertEquals(Picture.JPEG, pict.getType());
     }
 
+    /**
+     * Bug 44770: java.lang.RuntimeException: Couldn't instantiate the class for type with id 1036 on class class org.apache.poi.hslf.record.PPDrawing
+     */
+    public void test44770() throws Exception {
+        FileInputStream is = new FileInputStream(new File(cwd, "44770.ppt"));
+        SlideShow ppt = new SlideShow(is);
+        is.close();
+
+        assertTrue("No Exceptions while reading file", true);
+    }
 }

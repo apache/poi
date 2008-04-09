@@ -119,6 +119,9 @@ public class PPDrawing extends RecordAtom
 	 * Tree walking way of finding Escher Child Records
 	 */
 	private void findEscherChildren(DefaultEscherRecordFactory erf, byte[] source, int startPos, int lenToGo, Vector found) {
+
+        int escherBytes = LittleEndian.getInt( source, startPos + 4 ) + 8;
+
 		// Find the record
 		EscherRecord r = erf.createRecord(source,startPos);
 		// Fill it in
@@ -131,6 +134,17 @@ public class PPDrawing extends RecordAtom
 		if(size < 8) {
 			logger.log(POILogger.WARN, "Hit short DDF record at " + startPos + " - " + size);
 		}
+
+        /**
+         * Sanity check. Always advance the cursor by the correct value.
+         *
+         * getRecordSize() must return exatcly the same number of bytes that was written in fillFields.
+         * Sometimes it is not so, see an example in bug #44770. Most likely reason is that one of ddf records calculates wrong size. 
+         */
+        if(size != escherBytes){
+            logger.log(POILogger.WARN, "Record length=" + escherBytes + " but getRecordSize() returned " + r.getRecordSize() + "; record: " + r.getClass());
+            size = escherBytes;
+        }
 		startPos += size;
 		lenToGo -= size;
 		if(lenToGo >= 8) {
