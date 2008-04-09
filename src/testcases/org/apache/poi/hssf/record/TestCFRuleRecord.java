@@ -230,7 +230,7 @@ public final class TestCFRuleRecord extends TestCase
 		fontFormatting.setFontColorIndex((short)10);
 		assertEquals(10,fontFormatting.getFontColorIndex());
 
-		fontFormatting.setFontHeight((short)100);
+		fontFormatting.setFontHeight(100);
 		assertEquals(100,fontFormatting.getFontHeight());
 
 		fontFormatting.setFontOutlineModified(false);
