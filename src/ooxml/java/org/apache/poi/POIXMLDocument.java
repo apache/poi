@@ -32,9 +32,6 @@ import org.openxml4j.opc.PackageRelationship;
 import org.openxml4j.opc.PackageRelationshipCollection;
 import org.openxml4j.opc.PackageRelationshipTypes;
 import org.openxml4j.opc.PackagingURIHelper;
-import org.openxml4j.opc.internal.PackagePropertiesPart;
-import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties;
-import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument;
 
 public abstract class POIXMLDocument {
 
@@ -47,6 +44,12 @@ public abstract class POIXMLDocument {
 
     /** The OPC core Package Part */
     private PackagePart corePart;
+    
+    /**
+     * The properties of the OPC package, opened as needed
+     */
+    private POIXMLProperties properties;
+    
     
     protected POIXMLDocument() {}
     
@@ -178,28 +181,13 @@ public abstract class POIXMLDocument {
     }
 
 	/**
-	 * Get the core document properties (core ooxml properties).
-	 * TODO: Replace with nice usermodel wrapper
-	 * @deprecated To be replaced with a proper user-model style view of the properties
+	 * Get the document properties. This gives you access to the
+	 *  core ooxml properties, and the extended ooxml properties.
 	 */
-	public PackagePropertiesPart getCoreProperties() throws OpenXML4JException, IOException {
-		PackagePart propsPart = getSinglePartByRelationType(CORE_PROPERTIES_REL_TYPE);
-		if(propsPart == null) {
-			return null;
+	public POIXMLProperties getProperties() throws OpenXML4JException, IOException, XmlException {
+		if(properties == null) {
+			properties = new POIXMLProperties(pkg);
 		}
-		return (PackagePropertiesPart)propsPart;
-	}
-	
-	/**
-	 * Get the extended document properties (extended ooxml properties)
-	 * TODO: Replace with nice usermodel wrapper
-	 * @deprecated To be replaced with a proper user-model style view of the properties
-	 */
-	public CTProperties getExtendedProperties() throws OpenXML4JException, XmlException, IOException {
-		PackagePart propsPart = getSinglePartByRelationType(EXTENDED_PROPERTIES_REL_TYPE);
-		
-		PropertiesDocument props = PropertiesDocument.Factory.parse(
-				propsPart.getInputStream());
-		return props.getProperties();
+		return properties;
 	}
 }

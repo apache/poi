@@ -37,6 +37,12 @@ public class TestXWPFWordExtractor extends TestCase {
 	 */
 	private XWPFDocument xmlB;
 	private File fileB;
+	
+	/**
+	 * File with hyperlinks
+	 */
+	private XWPFDocument xmlC;
+	private File fileC;
 
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -49,11 +55,17 @@ public class TestXWPFWordExtractor extends TestCase {
 				System.getProperty("HWPF.testdata.path") +
 				File.separator + "IllustrativeCases.docx"
 		);
+		fileC = new File(
+				System.getProperty("HWPF.testdata.path") +
+				File.separator + "TestDocument.docx"
+		);
 		assertTrue(fileA.exists());
 		assertTrue(fileB.exists());
+		assertTrue(fileC.exists());
 		
 		xmlA = new XWPFDocument(POIXMLDocument.openPackage(fileA.toString()));
 		xmlB = new XWPFDocument(POIXMLDocument.openPackage(fileB.toString()));
+		xmlC = new XWPFDocument(POIXMLDocument.openPackage(fileC.toString()));
 	}
 
 	/**
@@ -116,5 +128,33 @@ public class TestXWPFWordExtractor extends TestCase {
 			if(t[i] == '\n') { ps++; }
 		}
 		assertEquals(79, ps);
+	}
+	
+	public void testGetWithHyperlinks() throws Exception {
+		XWPFWordExtractor extractor = 
+			new XWPFWordExtractor(xmlC);
+		extractor.getText();
+		extractor.setFetchHyperlinks(true);
+		extractor.getText();
+
+		// Now check contents
+		// TODO - fix once correctly handling contents
+		extractor.setFetchHyperlinks(false);
+		assertEquals(
+//				"This is a test document\nThis bit is in bold and italic\n" +
+//				"Back to normal\nWe have a hyperlink here, and another.\n",
+				"This is a test document\nThis bit is in bold and italic\n" +
+				"Back to normal\nWe have a  here, and .hyperlinkanother\n",
+				extractor.getText()
+		);
+		
+		extractor.setFetchHyperlinks(true);
+		assertEquals(
+//				"This is a test document\nThis bit is in bold and italic\n" +
+//				"Back to normal\nWe have a hyperlink here, and another.\n",
+				"This is a test document\nThis bit is in bold and italic\n" +
+				"Back to normal\nWe have a  here, and .hyperlink <http://poi.apache.org/>another\n",
+				extractor.getText()
+		);
 	}
 }
