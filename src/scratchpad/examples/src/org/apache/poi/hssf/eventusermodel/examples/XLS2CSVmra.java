@@ -29,6 +29,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hssf.eventusermodel.FormatTrackingHSSFListener;
 import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
 import org.apache.poi.hssf.eventusermodel.HSSFListener;
 import org.apache.poi.hssf.eventusermodel.HSSFRequest;
@@ -70,8 +71,7 @@ public class XLS2CSVmra implements HSSFListener {
 	
 	// Records we pick up as we process
 	private SSTRecord sstRecord;
-	private Map customFormatRecords = new Hashtable();
-	private List xfRecords = new ArrayList();
+	private FormatTrackingHSSFListener formatListener;
 
 	/**
 	 * Creates a new XLS -> CSV converter
@@ -104,9 +104,11 @@ public class XLS2CSVmra implements HSSFListener {
 	 */
 	public void process() throws IOException {
 		MissingRecordAwareHSSFListener listener = new MissingRecordAwareHSSFListener(this);
+		formatListener = new FormatTrackingHSSFListener(listener); 
+		
 		HSSFEventFactory factory = new HSSFEventFactory();
 		HSSFRequest request = new HSSFRequest();
-		request.addListenerForAllRecords(listener);
+		request.addListenerForAllRecords(formatListener);
 		
 		factory.processWorkbookEvents(request, fs);
 	}
@@ -124,14 +126,6 @@ public class XLS2CSVmra implements HSSFListener {
         {
 		case SSTRecord.sid:
 			sstRecord = (SSTRecord) record;
-			break;
-		case FormatRecord.sid:
-			FormatRecord fr = (FormatRecord) record;
-			customFormatRecords.put(new Integer(fr.getIndexCode()), fr);
-			break;
-		case ExtendedFormatRecord.sid:
-			ExtendedFormatRecord xr = (ExtendedFormatRecord) record;
-			xfRecords.add(xr);
 			break;
 			
         case BlankRecord.sid:
@@ -259,41 +253,32 @@ public class XLS2CSVmra implements HSSFListener {
 	 */
 	private String formatNumberDateCell(CellValueRecordInterface cell, double value) {
         // Get the built in format, if there is one
-        ExtendedFormatRecord xfr = (ExtendedFormatRecord)
-        	xfRecords.get(cell.getXFIndex());
-        if(xfr == null) {
-        	System.err.println("Cell " + cell.getRow() + "," + cell.getColumn() + " uses XF with index " + cell.getXFIndex() + ", but we don't have that");
+		int formatIndex = formatListener.getFormatIndex(cell);
+		String formatString = formatListener.getFormatString(cell);
+		
+		if(formatString == null) {
             return Double.toString(value);
         } else {
-        	int formatIndex = xfr.getFormatIndex();
-        	String format;
-        	if(formatIndex >= HSSFDataFormat.getNumberOfBuiltinBuiltinFormats()) {
-        		FormatRecord tfr = (FormatRecord)customFormatRecords.get(new Integer(formatIndex));
-        		format = tfr.getFormatString();
-        	} else {
-            	format = HSSFDataFormat.getBuiltinFormat(xfr.getFormatIndex());
-        	}
-        	
         	// Is it a date?
-        	if(HSSFDateUtil.isADateFormat(formatIndex,format) &&
+        	if(HSSFDateUtil.isADateFormat(formatIndex,formatString) &&
         			HSSFDateUtil.isValidExcelDate(value)) {
         		// Java wants M not m for month
-        		format = format.replace('m','M');
+        		formatString = formatString.replace('m','M');
         		// Change \- into -, if it's there
-        		format = format.replaceAll("\\\\-","-");
+        		formatString = formatString.replaceAll("\\\\-","-");
         		
         		// Format as a date
         		Date d = HSSFDateUtil.getJavaDate(value, false);
-        		DateFormat df = new SimpleDateFormat(format);
+        		DateFormat df = new SimpleDateFormat(formatString);
 	            return df.format(d);
         	} else {
-        		if(format == "General") {
+        		if(formatString == "General") {
         			// Some sort of wierd default
         			return Double.toString(value);
         		}
         		
         		// Format as a number
-	            DecimalFormat df = new DecimalFormat(format);
+	            DecimalFormat df = new DecimalFormat(formatString);
 	            return df.format(value);
         	}
         }
