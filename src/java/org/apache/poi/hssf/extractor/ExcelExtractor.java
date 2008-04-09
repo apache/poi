@@ -18,7 +18,7 @@ package org.apache.poi.hssf.extractor;
 
 import java.io.IOException;
 
-import org.apache.poi.POITextExtractor;
+import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -35,7 +35,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  the XLS2CSVmra example
  * @see org.apache.poi.hssf.eventusermodel.examples.XLS2CSVmra
  */
-public class ExcelExtractor extends POITextExtractor{
+public class ExcelExtractor extends POIOLE2TextExtractor {
 	private HSSFWorkbook wb;
 	private boolean includeSheetNames = true;
 	private boolean formulasNotResults = false;

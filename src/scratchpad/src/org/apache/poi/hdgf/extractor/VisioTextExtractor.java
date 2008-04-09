@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import org.apache.poi.POITextExtractor;
+import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hdgf.HDGFDiagram;
 import org.apache.poi.hdgf.chunks.Chunk;
 import org.apache.poi.hdgf.chunks.Chunk.Command;
@@ -35,7 +35,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * Can opperate on the command line (outputs to stdout), or
  *  can return the text for you (eg for use with Lucene).
  */
-public class VisioTextExtractor extends POITextExtractor {
+public class VisioTextExtractor extends POIOLE2TextExtractor {
 	private HDGFDiagram hdgf;
 	private POIFSFileSystem fs;
 
