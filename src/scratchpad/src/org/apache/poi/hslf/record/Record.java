@@ -185,13 +185,13 @@ public abstract class Record
 			// Instantiate
 			toReturn = (Record)(con.newInstance(new Object[] { b, new Integer(start), new Integer(len) }));
 		} catch(InstantiationException ie) {
-			throw new RuntimeException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ie);
+			throw new RuntimeException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ie, ie);
 		} catch(java.lang.reflect.InvocationTargetException ite) {
-			throw new RuntimeException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ite + "\nCause was : " + ite.getCause());
+			throw new RuntimeException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ite + "\nCause was : " + ite.getCause(), ite);
 		} catch(IllegalAccessException iae) {
-			throw new RuntimeException("Couldn't access the constructor for type with id " + type + " on class " + c + " : " + iae);
+			throw new RuntimeException("Couldn't access the constructor for type with id " + type + " on class " + c + " : " + iae, iae);
 		} catch(NoSuchMethodException nsme) {
-			throw new RuntimeException("Couldn't access the constructor for type with id " + type + " on class " + c + " : " + nsme);
+			throw new RuntimeException("Couldn't access the constructor for type with id " + type + " on class " + c + " : " + nsme, nsme);
 		}
 
 		// Handling for special kinds of records follow
