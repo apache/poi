@@ -29,6 +29,7 @@ import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackageRelationshipCollection;
 
+import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLTextExtractor;
@@ -104,7 +105,7 @@ public class ExtractorFactory {
 		throw new IllegalArgumentException("No supported documents found in the OOXML package");
 	}
 	
-	public static POITextExtractor createExtractor(POIFSFileSystem fs) throws IOException {
+	public static POIOLE2TextExtractor createExtractor(POIFSFileSystem fs) throws IOException {
 		// Look for certain entries in the stream, to figure it
 		//  out from
 		for(Iterator entries = fs.getRoot().getEntries(); entries.hasNext(); ) {
