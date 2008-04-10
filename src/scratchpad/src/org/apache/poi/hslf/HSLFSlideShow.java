@@ -124,7 +124,7 @@ public class HSLFSlideShow extends POIDocument
 	 */
 	public HSLFSlideShow(POIFSFileSystem filesystem) throws IOException
 	{
-		this.filesystem = filesystem;
+		super(filesystem);
 		
 		// First up, grab the "Current User" stream
 		// We need this before we can detect Encrypted Documents

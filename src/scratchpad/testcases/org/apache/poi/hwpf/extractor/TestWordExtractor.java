@@ -23,6 +23,8 @@ import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.TextPiece;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import junit.framework.TestCase;
 
@@ -54,12 +56,16 @@ public class TestWordExtractor extends TestCase {
 	private WordExtractor extractor;
 	// Corrupted document - can't do paragraph based stuff
 	private WordExtractor extractor2;
+	// A word doc embeded in an excel file
+	private String filename3;
 	
     protected void setUp() throws Exception {
 		String dirname = System.getProperty("HWPF.testdata.path");
+		String pdirname = System.getProperty("POIFS.testdata.path");
 		
 		String filename = dirname + "/test2.doc";
 		String filename2 = dirname + "/test.doc";
+		filename3 = pdirname + "/excel_with_embeded.xls";
 		extractor = new WordExtractor(new FileInputStream(filename));
 		extractor2 = new WordExtractor(new FileInputStream(filename2));
 		
@@ -100,5 +106,26 @@ public class TestWordExtractor extends TestCase {
     public void testExtractFromTextPieces() throws Exception {
     	String text = extractor.getTextFromPieces();
     	assertEquals(p_text1_block, text);
+    }
+    
+    
+    /**
+     * Test that we can get data from an
+     *  embeded word document
+     * @throws Exception
+     */
+    public void testExtractFromEmbeded() throws Exception {
+    	POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(filename3));
+    	DirectoryNode dir = (DirectoryNode)
+    		fs.getRoot().getEntry("MBD03F25D8D");
+    	// Should have WordDocument and 1Table
+    	assertNotNull(dir.getEntry("1Table"));
+    	assertNotNull(dir.getEntry("WordDocument"));
+    	
+    	HWPFDocument doc = new HWPFDocument(dir, fs);
+    	WordExtractor extractor3 = new WordExtractor(doc);
+		
+    	assertNotNull(extractor3.getText());
+    	assertTrue(extractor3.getText().length() > 20);
     }
 }

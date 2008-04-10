@@ -139,6 +139,7 @@ public class HSSFWorkbook extends POIDocument
 
     protected HSSFWorkbook( Workbook book )
     {
+    	super(null, null);
         workbook = book;
         sheets = new ArrayList( INITIAL_CAPACITY );
         names = new ArrayList( INITIAL_CAPACITY );
@@ -164,8 +165,8 @@ public class HSSFWorkbook extends POIDocument
     public HSSFWorkbook(POIFSFileSystem fs, boolean preserveNodes)
             throws IOException
     {
+    	super(fs);
         this.preserveNodes = preserveNodes;
-        this.filesystem = fs;
         
         // If we're not preserving nodes, don't track the
         //  POIFS any more
