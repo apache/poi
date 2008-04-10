@@ -287,7 +287,7 @@ public class POIFSFileSystem
     {
         return getRoot().createDirectory(name);
     }
-
+    
     /**
      * Write the filesystem out
      *
@@ -422,7 +422,7 @@ public class POIFSFileSystem
      * @return the root entry
      */
 
-    public DirectoryEntry getRoot()
+    public DirectoryNode getRoot()
     {
         if (_root == null)
         {
@@ -446,14 +446,7 @@ public class POIFSFileSystem
             final String documentName)
         throws IOException
     {
-        Entry document = getRoot().getEntry(documentName);
-
-        if (!document.isDocumentEntry())
-        {
-            throw new IOException("Entry '" + documentName
-                                  + "' is not a DocumentEntry");
-        }
-        return new DocumentInputStream(( DocumentEntry ) document);
+    	return getRoot().createDocumentInputStream(documentName);
     }
 
     /**
