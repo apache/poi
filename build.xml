@@ -220,6 +220,7 @@ under the License.
     <path id="ooxml.classpath">
         <path refid="main.classpath"/>
         <path refid="scratchpad.classpath"/>
+        <pathelement location="${scratchpad.output.dir}"/>
         <fileset dir="${ooxml.lib}">
 			<include name="*.jar" />
 		</fileset>

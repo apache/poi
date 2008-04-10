@@ -23,7 +23,7 @@ package org.apache.poi.hslf.extractor;
 import java.io.*;
 import java.util.HashSet;
 
-import org.apache.poi.POITextExtractor;
+import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.model.*;
@@ -36,7 +36,7 @@ import org.apache.poi.hslf.usermodel.*;
  * @author Nick Burch
  */
 
-public class PowerPointExtractor extends POITextExtractor
+public class PowerPointExtractor extends POIOLE2TextExtractor
 {
 	private HSLFSlideShow _hslfshow;
 	private SlideShow _show;
