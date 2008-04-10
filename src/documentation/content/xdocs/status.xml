@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.0.3-beta1" date="2008-04-??">
+           <action dev="POI-DEVELOPERS" type="fix">44792 - fixed encode/decode problems in ExternalNameRecord and CRNRecord.</action>
            <action dev="POI-DEVELOPERS" type="fix">43670, 44501 - Fix how HDGF deals with trailing data in the list of chunk headers</action>
            <action dev="POI-DEVELOPERS" type="add">30311 - More work on Conditional Formatting</action>
            <action dev="POI-DEVELOPERS" type="fix">refactored all junits' usage of HSSF.testdata.path to one place</action>

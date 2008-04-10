@@ -60,7 +60,7 @@ public final class CRNRecord extends Record {
 		field_3_row_index = in.readShort();
 		int nValues = field_1_last_column_index - field_2_first_column_index + 1;
 		field_4_constant_values = ConstantValueParser.parse(in, nValues);
-	 }
+	}
 
 
 	public String toString() {
@@ -83,6 +83,7 @@ public final class CRNRecord extends Record {
 		LittleEndian.putByte(data, 4 + offset, field_1_last_column_index);
 		LittleEndian.putByte(data, 5 + offset, field_2_first_column_index);
 		LittleEndian.putShort(data, 6 + offset, (short) field_3_row_index);
+		ConstantValueParser.encode(data, 8 + offset, field_4_constant_values);
 		return getRecordSize();
 	}
 
