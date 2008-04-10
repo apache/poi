@@ -77,6 +77,8 @@ public class RecordFactory
                 NoteRecord.class, ObjectProtectRecord.class, ScenarioProtectRecord.class, 
                 FileSharingRecord.class, ChartTitleFormatRecord.class,
                 DVRecord.class, DVALRecord.class, UncalcedRecord.class,
+                ChartRecord.class, LegendRecord.class, ChartTitleFormatRecord.class, 
+                SeriesRecord.class, SeriesTextRecord.class,
                 HyperlinkRecord.class,
                 ExternalNameRecord.class, // TODO - same changes in non-@deprecated version of this class
                 SupBookRecord.class,

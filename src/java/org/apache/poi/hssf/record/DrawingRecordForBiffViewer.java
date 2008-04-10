@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record;
 
+import java.io.ByteArrayInputStream;
+
 /**
  * This is purely for the biff viewer.  During normal operations we don't want
  * to be seeing this.
@@ -33,6 +35,21 @@ public class DrawingRecordForBiffViewer
     public DrawingRecordForBiffViewer( RecordInputStream in)
     {
         super(in);
+    }
+
+    public DrawingRecordForBiffViewer(DrawingRecord r)
+    {
+    	super(convertToInputStream(r));
+    	convertRawBytesToEscherRecords();
+    }
+    private static RecordInputStream convertToInputStream(DrawingRecord r)
+    {
+    	byte[] data = r.serialize();
+    	RecordInputStream rinp = new RecordInputStream(
+    			new ByteArrayInputStream(data)
+    	);
+    	rinp.nextRecord();
+    	return rinp;
     }
 
     protected String getRecordName()
