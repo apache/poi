@@ -19,11 +19,15 @@ package org.apache.poi.xssf.usermodel.helpers;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 
 public class TestColumnHelper extends TestCase {
 
@@ -53,8 +57,8 @@ public class TestColumnHelper extends TestCase {
         assertEquals(1, worksheet.sizeOfColsArray());
         count = countColumns(worksheet);
         assertEquals(16375, count);
-        assertEquals((double) 88, helper.getColumn(1).getWidth());
-        assertTrue(helper.getColumn(1).getHidden());
+        assertEquals((double) 88, helper.getColumn(1, false).getWidth());
+        assertTrue(helper.getColumn(1, false).getHidden());
     }
 
     public void testSortColumns() {
@@ -196,11 +200,12 @@ public class TestColumnHelper extends TestCase {
         col4.setMax(6);
 
         ColumnHelper helper = new ColumnHelper(worksheet);
-        assertNotNull(helper.getColumn(1));
-        assertEquals((double) 88, helper.getColumn(1).getWidth());
-        assertTrue(helper.getColumn(1).getHidden());
-        assertFalse(helper.getColumn(2).getHidden());
-        assertNull(helper.getColumn(99));
+        assertNotNull(helper.getColumn(1, false));
+        assertEquals((double) 88, helper.getColumn(1, false).getWidth());
+        assertTrue(helper.getColumn(1, false).getHidden());
+        assertFalse(helper.getColumn(2, false).getHidden());
+        assertNull(helper.getColumn(99, false));
+        assertNotNull(helper.getColumn(5, false));
     }
 
     public void testSetColumnAttributes() {
@@ -221,13 +226,44 @@ public class TestColumnHelper extends TestCase {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
         ColumnHelper columnHelper = sheet.getColumnHelper();
-        CTCol col = columnHelper.getOrCreateColumn(3);
+        CTCol col = columnHelper.getOrCreateColumn(3, false);
         assertNotNull(col);
-        assertNotNull(columnHelper.getColumn(3));
+        assertNotNull(columnHelper.getColumn(3, false));
 
-        CTCol col2 = columnHelper.getOrCreateColumn(30);
+        CTCol col2 = columnHelper.getOrCreateColumn(30, false);
         assertNotNull(col2);
-        assertNotNull(columnHelper.getColumn(30));
+        assertNotNull(columnHelper.getColumn(30, false));
+    }
+    
+    public void testGetSetColDefaultStyle() {
+    	XSSFWorkbook workbook = new XSSFWorkbook();
+    	CTSheet ctSheet = CTSheet.Factory.newInstance();
+    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
+    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+        ColumnHelper columnHelper = sheet.getColumnHelper();
+        CTCol col = columnHelper.getOrCreateColumn(3, false);
+        assertNotNull(col);
+        assertNotNull(columnHelper.getColumn(3, false));
+        columnHelper.setColDefaultStyle(3, 2);
+        assertEquals(2, columnHelper.getColDefaultStyle(3));
+        assertEquals(-1, columnHelper.getColDefaultStyle(4));
+        StylesTable stylesTable = (StylesTable) workbook.getStylesSource();
+        CTXf cellXf = CTXf.Factory.newInstance();
+        cellXf.setFontId(0);
+        cellXf.setFillId(0);
+        cellXf.setBorderId(0);
+        cellXf.setNumFmtId(0);
+        cellXf.setXfId(0);
+        stylesTable.putCellXf(cellXf);
+        CTCol col_2 = ctWorksheet.getColsArray(0).addNewCol();
+        col_2.setMin(10);
+        col_2.setMax(12);
+        col_2.setStyle(1);
+        assertEquals(1, columnHelper.getColDefaultStyle(11));
+        XSSFCellStyle cellStyle = new XSSFCellStyle(0, 0, stylesTable);
+        columnHelper.setColDefaultStyle(11, cellStyle);
+        assertEquals(0, col_2.getStyle());
+        assertEquals(1, columnHelper.getColDefaultStyle(10));
     }
 
     private int countColumns(CTWorksheet worksheet) {

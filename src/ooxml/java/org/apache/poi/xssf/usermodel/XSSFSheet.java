@@ -313,7 +313,7 @@ public class XSSFSheet implements Sheet {
 	}
 
     public short getColumnWidth(short column) {
-        return (short) columnHelper.getColumn(column).getWidth();
+        return (short) columnHelper.getColumn(column, false).getWidth();
     }
 
     public short getDefaultColumnWidth() {
@@ -592,7 +592,7 @@ public class XSSFSheet implements Sheet {
     }
 
     public boolean isColumnHidden(short column) {
-        return columnHelper.getColumn(column).getHidden();
+        return columnHelper.getColumn(column, false).getHidden();
     }
 
     public boolean isDisplayFormulas() {
@@ -724,8 +724,7 @@ public class XSSFSheet implements Sheet {
     }
 
     public void setDefaultColumnStyle(short column, CellStyle style) {
-        // TODO Auto-generated method stub
-
+    	columnHelper.setColDefaultStyle(column, style);
     }
 
     public void setDefaultColumnWidth(short width) {

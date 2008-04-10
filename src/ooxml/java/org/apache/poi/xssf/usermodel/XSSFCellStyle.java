@@ -36,6 +36,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment;
 
 
 public class XSSFCellStyle implements CellStyle {
+	private int cellXfId;
+	private int cellStyleXfId;
 	private StylesSource stylesSource;
 	private CTXf cellXf;
 	private CTXf cellStyleXf;
@@ -50,10 +52,12 @@ public class XSSFCellStyle implements CellStyle {
 	 * @param cellStyleXf Optional, style xf
 	 * @param stylesSource Styles Source to work off
 	 */
-	public XSSFCellStyle(CTXf cellXf, CTXf cellStyleXf, StylesSource stylesSource) {
+	public XSSFCellStyle(int cellXfId, int cellStyleXfId, StylesTable stylesSource) {
+		this.cellXfId = cellXfId;
+		this.cellStyleXfId = cellStyleXfId;
 		this.stylesSource = stylesSource;
-		this.cellXf = cellXf;
-		this.cellStyleXf = cellStyleXf;
+		this.cellXf = stylesSource.getCellXfAt(this.cellXfId);
+		this.cellStyleXf = stylesSource.getCellStyleXfAt(this.cellStyleXfId);
 	}
 	
 	/**
@@ -168,8 +172,7 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public short getIndex() {
-		// TODO Auto-generated method stub
-		return 0;
+		return (short) this.cellXfId;
 	}
 
 	public short getLeftBorderColor() {

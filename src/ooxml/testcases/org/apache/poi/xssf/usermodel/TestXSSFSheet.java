@@ -25,12 +25,15 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.Region;
 import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
 
@@ -338,10 +341,10 @@ public class TestXSSFSheet extends TestCase {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
         ColumnHelper columnHelper = sheet.getColumnHelper();
-        CTCol col = columnHelper.getColumn(13);
+        CTCol col = columnHelper.getColumn(13, false);
         assertNull(col);
         sheet.autoSizeColumn((short)13);
-        col = columnHelper.getColumn(13);
+        col = columnHelper.getColumn(13, false);
         assertNotNull(col);
         assertTrue(col.getBestFit());	
     }
@@ -589,6 +592,35 @@ public class TestXSSFSheet extends TestCase {
     	sheet.removeMergedRegion(1);
     	sheet.removeMergedRegion(0);
     	assertEquals(0, sheet.getNumMergedRegions());
+    }
+    
+    public void testSetDefaultColumnStyle() {
+    	XSSFWorkbook workbook = new XSSFWorkbook();
+    	CTSheet ctSheet = CTSheet.Factory.newInstance();
+    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
+    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+    	StylesTable stylesTable = (StylesTable) workbook.getStylesSource();
+    	XSSFFont font = new XSSFFont();
+    	font.setFontName("Cambria");
+    	stylesTable.putFont(font);
+    	CTXf cellStyleXf = CTXf.Factory.newInstance();
+    	cellStyleXf.setFontId(1);
+    	cellStyleXf.setFillId(0);
+    	cellStyleXf.setBorderId(0);
+    	cellStyleXf.setNumFmtId(0);
+    	stylesTable.putCellStyleXf(cellStyleXf);
+    	CTXf cellXf = CTXf.Factory.newInstance();
+    	cellXf.setXfId(1);
+    	stylesTable.putCellXf(cellXf);
+    	XSSFCellStyle cellStyle = new XSSFCellStyle(1, 1, stylesTable);
+    	assertEquals(1, cellStyle.getFontIndex());
+    	
+    	sheet.setDefaultColumnStyle((short) 3, cellStyle);
+    	assertEquals(1, ctWorksheet.getColsArray(0).getColArray(0).getStyle());
+    	XSSFRow row = (XSSFRow) sheet.createRow(0);
+    	XSSFCell cell = (XSSFCell) sheet.getRow(0).createCell(3);
+    	System.out.println(cell.getCellStyle());
+    	
     }
     
 
