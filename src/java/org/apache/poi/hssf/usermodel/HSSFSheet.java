@@ -1554,18 +1554,14 @@ public final class HSSFSheet {
     }
 
     /**
-     * Returns the top-level drawing patriach, if there is
-     *  one.
-     * This will hold any graphics or charts for the sheet.
+     * Returns the agregate escher records for this sheet,
+     *  it there is one.
      * WARNING - calling this will trigger a parsing of the
      *  associated escher records. Any that aren't supported
      *  (such as charts and complex drawing types) will almost
-     *  certainly be lost or corrupted when written out. Only
-     *  use this with simple drawings, otherwise call
-     *  {@link HSSFSheet#createDrawingPatriarch()} and
-     *  start from scratch!
+     *  certainly be lost or corrupted when written out.
      */
-    public HSSFPatriarch getDrawingPatriarch() {
+    public EscherAggregate getDrawingEscherAggregate() {
         book.findDrawingGroup();
 
         // If there's now no drawing manager, then there's
@@ -1584,6 +1580,25 @@ public final class HSSFSheet {
 
         // Grab our aggregate record, and wire it up
         EscherAggregate agg = (EscherAggregate) sheet.findFirstRecordBySid(EscherAggregate.sid);
+        return agg;
+    }
+    
+    /**
+     * Returns the top-level drawing patriach, if there is
+     *  one.
+     * This will hold any graphics or charts for the sheet.
+     * WARNING - calling this will trigger a parsing of the
+     *  associated escher records. Any that aren't supported
+     *  (such as charts and complex drawing types) will almost
+     *  certainly be lost or corrupted when written out. Only
+     *  use this with simple drawings, otherwise call
+     *  {@link HSSFSheet#createDrawingPatriarch()} and
+     *  start from scratch!
+     */
+    public HSSFPatriarch getDrawingPatriarch() {
+    	EscherAggregate agg = getDrawingEscherAggregate();
+    	if(agg == null) return null;
+    	
         HSSFPatriarch patriarch = new HSSFPatriarch(this, agg);
         agg.setPatriarch(patriarch);
 
