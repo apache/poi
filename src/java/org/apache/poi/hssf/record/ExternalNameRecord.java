@@ -30,10 +30,12 @@ import org.apache.poi.util.StringUtil;
  */
 public final class ExternalNameRecord extends Record {
 
+	private static final Ptg[] EMPTY_PTG_ARRAY = { };
+
 	public final static short sid = 0x23; // as per BIFF8. (some old versions used 0x223)
 
 	private static final int OPT_BUILTIN_NAME          = 0x0001;
-	private static final int OPT_AUTOMATIC_LINK        = 0x0002;
+	private static final int OPT_AUTOMATIC_LINK        = 0x0002; // m$ doc calls this fWantAdvise 
 	private static final int OPT_PICTURE_LINK          = 0x0004;
 	private static final int OPT_STD_DOCUMENT_NAME     = 0x0008;
 	private static final int OPT_OLE_LINK              = 0x0010;
@@ -51,8 +53,8 @@ public final class ExternalNameRecord extends Record {
 		super(in);
 	}
 
- 	/**
- 	 * Convenience Function to determine if the name is a built-in name
+	/**
+	 * Convenience Function to determine if the name is a built-in name
 	 */
 	public boolean isBuiltInName() {
 		return (field_1_option_flag & OPT_BUILTIN_NAME) != 0;
@@ -102,9 +104,12 @@ public final class ExternalNameRecord extends Record {
 	}
 
 	private int getDataSize(){
-		return 3 * 2  // 3 short fields
-			+ 2 + field_4_name.length() // nameLen and name
-			+ 2 + getNameDefinitionSize(); // nameDefLen and nameDef
+		int result = 3 * 2  // 3 short fields
+			+ 2 + field_4_name.length(); // nameLen and name
+		if(hasFormula()) {
+			result += 2 + getNameDefinitionSize(); // nameDefLen and nameDef
+		}
+		return result;
 	}
 
 	/**
@@ -127,9 +132,11 @@ public final class ExternalNameRecord extends Record {
 		short nameLen = (short) field_4_name.length();
 		LittleEndian.putShort( data, 10 + offset, nameLen );
 		StringUtil.putCompressedUnicode( field_4_name, data, 12 + offset );
-		short defLen = (short) getNameDefinitionSize();
-		LittleEndian.putShort( data, 12 + nameLen + offset, defLen );
-		Ptg.serializePtgStack(toStack(field_5_name_definition), data, 14 + nameLen + offset );
+		if(hasFormula()) {
+			short defLen = (short) getNameDefinitionSize();
+			LittleEndian.putShort( data, 12 + nameLen + offset, defLen );
+			Ptg.serializePtgStack(toStack(field_5_name_definition), data, 14 + nameLen + offset );
+		}
 		return dataSize + 4;
 	}
 
@@ -149,12 +156,57 @@ public final class ExternalNameRecord extends Record {
 
 	protected void fillFields(RecordInputStream in) {
 		field_1_option_flag = in.readShort();
-		field_2_index	   = in.readShort();
-		field_3_not_used	= in.readShort();
-		short nameLength	= in.readShort();
-		field_4_name		= in.readCompressedUnicode(nameLength);
-		short formulaLen	= in.readShort();
+		field_2_index       = in.readShort();
+		field_3_not_used    = in.readShort();
+		short nameLength    = in.readShort();
+		field_4_name = in.readCompressedUnicode(nameLength);
+		if(!hasFormula()) {
+			if(in.remaining() > 0) {
+				throw readFail("Some unread data (is formula present?)");
+			}
+			field_5_name_definition = EMPTY_PTG_ARRAY;
+			return;
+		}
+		if(in.remaining() <= 0) {
+			throw readFail("Ran out of record data trying to read formula.");
+		}
+		short formulaLen = in.readShort();
 		field_5_name_definition = toPtgArray(Ptg.createParsedExpressionTokens(formulaLen, in));
+	}
+	/*
+	 * Makes better error messages (while hasFormula() is not reliable) 
+	 * Remove this when hasFormula() is stable.
+	 */
+	private RuntimeException readFail(String msg) {
+		String fullMsg = msg + " fields: (option=" + field_1_option_flag + " index=" + field_2_index 
+		+ " not_used=" + field_3_not_used + " name='" + field_4_name + "')";
+		return new RuntimeException(fullMsg);
+	}
+
+	private boolean hasFormula() {
+		// TODO - determine exact conditions when formula is present
+		if (false) {
+			// "Microsoft Office Excel 97-2007 Binary File Format (.xls) Specification"
+			// m$'s document suggests logic like this, but bugzilla 44774 att 21790 seems to disagree
+			if (isStdDocumentNameIdentifier()) {
+				if (isOLELink()) {
+					// seems to be not possible according to m$ document
+					throw new IllegalStateException(
+							"flags (std-doc-name and ole-link) cannot be true at the same time");
+				}
+				return false;
+			}
+			if (isOLELink()) {
+				return false;
+			}
+			return true;
+		}
+
+		// This was derived by trial and error, but doesn't seem quite right
+		if (isAutomaticLink()) {
+			return false;
+		}
+		return true;
 	}
 
 	private static Ptg[] toPtgArray(Stack s) {
@@ -169,7 +221,7 @@ public final class ExternalNameRecord extends Record {
 		}
 		return result;
 	}
- 
+
 	public short getSid() {
 		return sid;
 	}

@@ -22,6 +22,7 @@ import junit.framework.TestSuite;
 
 import org.apache.poi.hssf.record.aggregates.AllRecordAggregateTests;
 import org.apache.poi.hssf.record.cf.TestCellRange;
+import org.apache.poi.hssf.record.constant.TestConstantValueParser;
 import org.apache.poi.hssf.record.formula.AllFormulaTests;
 
 /**
@@ -105,6 +106,7 @@ public final class AllRecordTests {
 		result.addTestSuite(TestUnitsRecord.class);
 		result.addTestSuite(TestValueRangeRecord.class);
 		result.addTestSuite(TestCellRange.class);
+		result.addTestSuite(TestConstantValueParser.class);
 		return result;
 	}
 }
