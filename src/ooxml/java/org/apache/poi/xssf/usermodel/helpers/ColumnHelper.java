@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel.helpers;
 
 import java.util.Arrays;
 
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.xssf.util.CTColComparator;
 import org.apache.poi.xssf.util.NumericRanges;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
@@ -69,10 +70,22 @@ public class ColumnHelper {
         return newCol;
     }
 
-    public CTCol getColumn(long index) {
-        for (int i = 0; i < worksheet.getColsArray(0).sizeOfColArray(); i++) {
-            if (worksheet.getColsArray(0).getColArray(i).getMin() == index) {
-                return worksheet.getColsArray(0).getColArray(i);
+    public CTCol getColumn(long index, boolean splitColumns) {
+        CTCols colsArray = worksheet.getColsArray(0);
+		for (int i = 0; i < colsArray.sizeOfColArray(); i++) {
+            CTCol colArray = colsArray.getColArray(i);
+			if (colArray.getMin() <= index && colArray.getMax() >= index) {
+				if (splitColumns) {
+					if (colArray.getMin() < index) {
+						insertCol(colsArray, colArray.getMin(), (index - 1), new CTCol[]{colArray});
+					}
+					if (colArray.getMax() > index) {
+						insertCol(colsArray, (index + 1), colArray.getMax(), new CTCol[]{colArray});
+					}
+					colArray.setMin(index);
+					colArray.setMax(index);
+				}
+                return colArray;
             }
         }
         return null;
@@ -169,34 +182,29 @@ public class ColumnHelper {
     }
 
     public void setColumnAttributes(CTCol fromCol, CTCol toCol) {
-        if (fromCol.getWidth() != 0) {
-            toCol.setWidth(fromCol.getWidth());
-        }
-        if (fromCol.getHidden()) {
-            toCol.setHidden(true);
-        }
-        if (fromCol.getBestFit()) {
-            toCol.setBestFit(true);
-        }
+    	toCol.setWidth(fromCol.getWidth());
+    	toCol.setHidden(fromCol.getHidden());
+    	toCol.setBestFit(fromCol.getBestFit());
+        toCol.setStyle(fromCol.getStyle());
     }
 
     public void setColBestFit(long index, boolean bestFit) {
-        CTCol col = getOrCreateColumn(index);
+        CTCol col = getOrCreateColumn(index, false);
         col.setBestFit(bestFit);
     }
 
     public void setColWidth(long index, double width) {
-        CTCol col = getOrCreateColumn(index);
+        CTCol col = getOrCreateColumn(index, false);
         col.setWidth(width);
     }
 
     public void setColHidden(long index, boolean hidden) {
-        CTCol col = getOrCreateColumn(index);
+        CTCol col = getOrCreateColumn(index, false);
         col.setHidden(hidden);
     }
 
-    protected CTCol getOrCreateColumn(long index) {
-        CTCol col = getColumn(index);
+    protected CTCol getOrCreateColumn(long index, boolean splitColumns) {
+        CTCol col = getColumn(index, splitColumns);
         if (col == null) {
             col = worksheet.getColsArray(0).addNewCol();
             col.setMin(index);
@@ -204,5 +212,22 @@ public class ColumnHelper {
         }
         return col;
     }
+
+	public void setColDefaultStyle(long index, CellStyle style) {
+		setColDefaultStyle(index, style.getIndex());
+	}
+	
+	public void setColDefaultStyle(long index, int styleId) {
+		CTCol col = getOrCreateColumn(index, true);
+		col.setStyle(styleId);
+	}
+	
+	// Returns -1 if no column is found for the given index
+	public int getColDefaultStyle(long index) {
+		if (getColumn(index, false) != null) {
+			return (int) getColumn(index, false).getStyle();
+		}
+		return -1;
+	}
 
 }

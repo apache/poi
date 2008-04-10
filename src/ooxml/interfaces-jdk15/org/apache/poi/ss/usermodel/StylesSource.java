@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
+
+
 public interface StylesSource {
     public String getNumberFormatAt(long idx);
     public long putNumberFormat(String fmt);

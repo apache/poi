@@ -168,15 +168,14 @@ public class StylesTable implements StylesSource, XSSFModel {
     }
     
 	public CellStyle getStyleAt(long idx) {
-    	CTXf mainXf = xfs.get((int)idx);
-    	CTXf styleXf = null;
+    	int styleXfId = 0;
     	
     	// 0 is the empty default
-    	if(mainXf.getXfId() > 0) {
-    		styleXf = styleXfs.get((int)mainXf.getXfId());
+    	if(xfs.get((int) idx).getXfId() > 0) {
+    		styleXfId = (int) xfs.get((int) idx).getXfId();
     	}
     	
-		return new XSSFCellStyle(mainXf, styleXf, this);
+		return new XSSFCellStyle((int) idx, styleXfId, this);
 	}
     public synchronized long putStyle(CellStyle style) {
     	XSSFCellStyle xStyle = (XSSFCellStyle)style;
@@ -200,6 +199,22 @@ public class StylesTable implements StylesSource, XSSFModel {
 	}
 	public long putFill(XSSFCellFill fill) {
 		return putFill(fill, fills);
+	}
+	
+	public CTXf getCellXfAt(long idx) {
+		return xfs.get((int) idx);
+	}
+	public long putCellXf(CTXf cellXf) {
+		xfs.add(cellXf);
+		return xfs.size();
+	}
+	
+	public CTXf getCellStyleXfAt(long idx) {
+		return styleXfs.get((int) idx);
+	}
+	public long putCellStyleXf(CTXf cellStyleXf) {
+		styleXfs.add(cellStyleXf);
+		return styleXfs.size();
 	}
 	/**
      * For unit testing only
