@@ -53,7 +53,7 @@ public class HDGFDiagram extends POIDocument {
 	private PointerFactory ptrFactory;
 	
 	public HDGFDiagram(POIFSFileSystem fs) throws IOException {
-		filesystem = fs;
+		super(fs);
 		
 		DocumentEntry docProps =
 			(DocumentEntry)filesystem.getRoot().getEntry("VisioDocument");

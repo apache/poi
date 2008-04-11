@@ -17,12 +17,15 @@
 
 package org.apache.poi.hssf.extractor;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 /**
  * 
@@ -117,5 +120,73 @@ public final class TestExcelExtractor extends TestCase {
 		extractor.setFormulasNotResults(true);
 		
 		assertEquals("Sheet1\nUPPER(\"xyz\")\nSheet2\nSheet3\n", extractor.getText());
+	}
+	
+	/**
+	 * Embded in a non-excel file
+	 */
+	public void testWithEmbeded() throws Exception {
+		String pdirname = System.getProperty("POIFS.testdata.path");
+		String filename = pdirname + "/word_with_embeded.doc";
+		POIFSFileSystem fs = new POIFSFileSystem(
+				new FileInputStream(filename)
+		);
+		
+		DirectoryNode objPool = (DirectoryNode)
+			fs.getRoot().getEntry("ObjectPool");
+		DirectoryNode dirA = (DirectoryNode)
+			objPool.getEntry("_1269427460");
+		DirectoryNode dirB = (DirectoryNode)
+			objPool.getEntry("_1269427461");
+
+		HSSFWorkbook wbA = new HSSFWorkbook(dirA, fs, true);
+		HSSFWorkbook wbB = new HSSFWorkbook(dirB, fs, true);
+		
+		ExcelExtractor exA = new ExcelExtractor(wbA);
+		ExcelExtractor exB = new ExcelExtractor(wbB);
+		
+		assertEquals("Sheet1\nTest excel file\nThis is the first file\nSheet2\nSheet3\n", 
+				exA.getText());
+		assertEquals("Sample Excel", exA.getSummaryInformation().getTitle());
+		
+		assertEquals("Sheet1\nAnother excel file\nThis is the second file\nSheet2\nSheet3\n", 
+				exB.getText());
+		assertEquals("Sample Excel 2", exB.getSummaryInformation().getTitle());
+	}
+
+	/**
+	 * Excel embeded in excel
+	 */
+	public void testWithEmbededInOwn() throws Exception {
+		String pdirname = System.getProperty("POIFS.testdata.path");
+		String filename = pdirname + "/excel_with_embeded.xls";
+		POIFSFileSystem fs = new POIFSFileSystem(
+				new FileInputStream(filename)
+		);
+		
+    	DirectoryNode dirA = (DirectoryNode)
+			fs.getRoot().getEntry("MBD0000A3B5");
+		DirectoryNode dirB = (DirectoryNode)
+			fs.getRoot().getEntry("MBD0000A3B4");
+		
+		HSSFWorkbook wbA = new HSSFWorkbook(dirA, fs, true);
+		HSSFWorkbook wbB = new HSSFWorkbook(dirB, fs, true);
+		
+		ExcelExtractor exA = new ExcelExtractor(wbA);
+		ExcelExtractor exB = new ExcelExtractor(wbB);
+		
+		assertEquals("Sheet1\nTest excel file\nThis is the first file\nSheet2\nSheet3\n", 
+				exA.getText());
+		assertEquals("Sample Excel", exA.getSummaryInformation().getTitle());
+		
+		assertEquals("Sheet1\nAnother excel file\nThis is the second file\nSheet2\nSheet3\n", 
+				exB.getText());
+		assertEquals("Sample Excel 2", exB.getSummaryInformation().getTitle());
+		
+		// And the base file too
+		ExcelExtractor ex = new ExcelExtractor(fs);
+		assertEquals("Sheet1\nI have lots of embeded files in me\nSheet2\nSheet3\n",
+				ex.getText());
+		assertEquals("Excel With Embeded", ex.getSummaryInformation().getTitle());
 	}
 }

@@ -29,6 +29,7 @@ import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.Entry;
@@ -50,12 +51,23 @@ public abstract class POIDocument {
 	protected DocumentSummaryInformation dsInf;
 	/** The open POIFS FileSystem that contains our document */
 	protected POIFSFileSystem filesystem;
+	/**	The directory that our document lives in */
+	protected DirectoryNode directory;
 	
 	/** For our own logging use */
 	protected POILogger logger = POILogFactory.getLogger(this.getClass());
 
     /* Have the property streams been read yet? (Only done on-demand) */
     protected boolean initialized = false;
+    
+
+    protected POIDocument(DirectoryNode dir, POIFSFileSystem fs) {
+    	this.filesystem = fs;
+    	this.directory = dir;
+    }
+    protected POIDocument(POIFSFileSystem fs) {
+    	this(fs.getRoot(), fs);
+    }
 
 	/**
 	 * Fetch the Document Summary Information of the document
@@ -110,7 +122,7 @@ public abstract class POIDocument {
 		DocumentInputStream dis;
 		try {
 			// Find the entry, and get an input stream for it
-			dis = filesystem.createDocumentInputStream(setName);
+			dis = directory.createDocumentInputStream(setName);
 		} catch(IOException ie) {
 			// Oh well, doesn't exist
 			logger.log(POILogger.WARN, "Error getting property set with name " + setName + "\n" + ie);

@@ -62,6 +62,7 @@ import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.util.POILogFactory;
@@ -155,6 +156,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
     protected HSSFWorkbook( Workbook book )
     {
+    	super(null, null);
         workbook = book;
         sheets = new ArrayList( INITIAL_CAPACITY );
         names = new ArrayList( INITIAL_CAPACITY );
@@ -176,17 +178,37 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
      * @exception IOException if the stream cannot be read
      */
-
     public HSSFWorkbook(POIFSFileSystem fs, boolean preserveNodes)
             throws IOException
     {
+    	this(fs.getRoot(), fs, preserveNodes);
+    }
+    
+    /**
+     * given a POI POIFSFileSystem object, and a specific directory
+     *  within it, read in its Workbook and populate the high and
+     *  low level models.  If you're reading in a workbook...start here.
+     *
+     * @param directory the POI filesystem directory to process from
+     * @param fs the POI filesystem that contains the Workbook stream.
+     * @param preserveNodes whether to preseve other nodes, such as
+     *        macros.  This takes more memory, so only say yes if you
+     *        need to. If set, will store all of the POIFSFileSystem
+     *        in memory
+     * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
+     * @exception IOException if the stream cannot be read
+     */
+    public HSSFWorkbook(DirectoryNode directory, POIFSFileSystem fs, boolean preserveNodes)
+            throws IOException
+    {
+    	super(directory, fs);
         this.preserveNodes = preserveNodes;
-        this.filesystem = fs;
         
         // If we're not preserving nodes, don't track the
         //  POIFS any more
         if(! preserveNodes) {
            this.filesystem = null;
+           this.directory = null;
         }
 
         sheets = new ArrayList(INITIAL_CAPACITY);
@@ -197,13 +219,13 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         //  put theirs in one called "WORKBOOK"
         String workbookName = "Workbook";
         try {
-        	fs.getRoot().getEntry(workbookName);
+        	directory.getEntry(workbookName);
         	// Is the default name
         } catch(FileNotFoundException fe) {
         	// Try the upper case form
         	try {
         		workbookName = "WORKBOOK";
-        		fs.getRoot().getEntry(workbookName);
+        		directory.getEntry(workbookName);
         	} catch(FileNotFoundException wfe) {
         		// Doesn't contain it in either form
         		throw new IllegalArgumentException("The supplied POIFSFileSystem contained neither a 'Workbook' entry, nor a 'WORKBOOK' entry. Is it really an excel file?");
@@ -213,7 +235,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         
         // Grab the data from the workbook stream, however
         //  it happens to be spelt.
-        InputStream stream = fs.createDocumentInputStream(workbookName);
+        InputStream stream = directory.createDocumentInputStream(workbookName);
 
         EventRecordFactory factory = new EventRecordFactory();
 

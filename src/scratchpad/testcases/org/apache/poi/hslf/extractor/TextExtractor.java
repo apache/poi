@@ -21,6 +21,12 @@
 package org.apache.poi.hslf.extractor;
 
 
+import java.io.FileInputStream;
+
+import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+
 import junit.framework.TestCase;
 
 /**
@@ -35,6 +41,8 @@ public class TextExtractor extends TestCase {
 	private PowerPointExtractor ppe2;
 	/** Where to go looking for our test files */
 	private String dirname;
+	/** Where our embeded files live */
+	private String pdirname;
 
     public TextExtractor() throws Exception {
 		dirname = System.getProperty("HSLF.testdata.path");
@@ -42,6 +50,8 @@ public class TextExtractor extends TestCase {
 		ppe = new PowerPointExtractor(filename);
 		String filename2 = dirname + "/with_textbox.ppt";
 		ppe2 = new PowerPointExtractor(filename2);
+		
+		pdirname = System.getProperty("POIFS.testdata.path");
     }
 
     public void testReadSheetText() throws Exception {
@@ -123,9 +133,87 @@ public class TextExtractor extends TestCase {
 		char[] expC = exp.toCharArray();
 		char[] actC = act.toCharArray();
 		for(int i=0; i<expC.length; i++) {
-			System.out.println(i + "\t" + expC[i] + " " + actC[i]);
-			assertEquals(expC[i],actC[i]);
+			assertEquals("Char " + i, expC[i], actC[i]);
 		}
 		assertEquals(exp,act);
+    }
+    
+    public void testExtractFromEmbeded() throws Exception {
+    	String filename3 = pdirname + "/excel_with_embeded.xls";
+    	POIFSFileSystem fs = new POIFSFileSystem(
+    			new FileInputStream(filename3)
+    	);
+    	HSLFSlideShow ss;
+    	
+    	DirectoryNode dirA = (DirectoryNode)
+    		fs.getRoot().getEntry("MBD0000A3B6");
+		DirectoryNode dirB = (DirectoryNode)
+			fs.getRoot().getEntry("MBD0000A3B3");
+		
+		assertNotNull(dirA.getEntry("PowerPoint Document"));
+		assertNotNull(dirB.getEntry("PowerPoint Document"));
+    	
+		// Check the first file
+    	ss = new HSLFSlideShow(dirA, fs);
+		ppe = new PowerPointExtractor(ss);
+		assertEquals("Sample PowerPoint file\nThis is the 1st file\nNot much too it\n",
+				ppe.getText(true, false)
+		);
+
+		// And the second
+    	ss = new HSLFSlideShow(dirB, fs);
+		ppe = new PowerPointExtractor(ss);
+		assertEquals("Sample PowerPoint file\nThis is the 2nd file\nNot much too it either\n",
+				ppe.getText(true, false)
+		);
+    }
+
+    /**
+     * A powerpoint file with embeded powerpoint files
+     * TODO - figure out how to handle this, as ppt
+     *  appears to embed not as ole2 streams
+     */
+    public void DISABLEDtestExtractFromOwnEmbeded() throws Exception {
+    	String filename3 = pdirname + "/ppt_with_embeded.ppt";
+    	POIFSFileSystem fs = new POIFSFileSystem(
+    			new FileInputStream(filename3)
+    	);
+    	HSLFSlideShow ss;
+    	
+    	DirectoryNode dirA = (DirectoryNode)
+    		fs.getRoot().getEntry("MBD0000A3B6");
+		DirectoryNode dirB = (DirectoryNode)
+			fs.getRoot().getEntry("MBD0000A3B3");
+		
+		assertNotNull(dirA.getEntry("PowerPoint Document"));
+		assertNotNull(dirB.getEntry("PowerPoint Document"));
+    	
+		// Check the first file
+    	ss = new HSLFSlideShow(dirA, fs);
+		ppe = new PowerPointExtractor(ss);
+		assertEquals("Sample PowerPoint file\nThis is the 1st file\nNot much too it\n",
+				ppe.getText(true, false)
+		);
+
+		// And the second
+    	ss = new HSLFSlideShow(dirB, fs);
+		ppe = new PowerPointExtractor(ss);
+		assertEquals("Sample PowerPoint file\nThis is the 2nd file\nNot much too it either\n",
+				ppe.getText(true, false)
+		);
+		
+		
+		// Check the master doc two ways
+    	ss = new HSLFSlideShow(fs.getRoot(), fs);
+		ppe = new PowerPointExtractor(ss);
+		assertEquals("I have embeded files in me\n",
+				ppe.getText(true, false)
+		);
+		
+    	ss = new HSLFSlideShow(fs);
+		ppe = new PowerPointExtractor(ss);
+		assertEquals("I have embeded files in me\n",
+				ppe.getText(true, false)
+		);
     }
 }

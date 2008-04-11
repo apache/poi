@@ -19,13 +19,57 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.record.formula.Area3DPtg;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
+
+import org.apache.poi.hssf.record.AreaFormatRecord;
+import org.apache.poi.hssf.record.AxisLineFormatRecord;
+import org.apache.poi.hssf.record.AxisOptionsRecord;
+import org.apache.poi.hssf.record.AxisParentRecord;
+import org.apache.poi.hssf.record.AxisRecord;
+import org.apache.poi.hssf.record.AxisUsedRecord;
+import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.BarRecord;
+import org.apache.poi.hssf.record.BeginRecord;
+import org.apache.poi.hssf.record.CategorySeriesAxisRecord;
+import org.apache.poi.hssf.record.ChartFormatRecord;
+import org.apache.poi.hssf.record.ChartRecord;
+import org.apache.poi.hssf.record.ChartTitleFormatRecord;
+import org.apache.poi.hssf.record.DataFormatRecord;
+import org.apache.poi.hssf.record.DefaultDataLabelTextPropertiesRecord;
+import org.apache.poi.hssf.record.DimensionsRecord;
+import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.EndRecord;
+import org.apache.poi.hssf.record.FontBasisRecord;
+import org.apache.poi.hssf.record.FontIndexRecord;
+import org.apache.poi.hssf.record.FooterRecord;
+import org.apache.poi.hssf.record.FrameRecord;
+import org.apache.poi.hssf.record.HCenterRecord;
+import org.apache.poi.hssf.record.HeaderRecord;
+import org.apache.poi.hssf.record.LegendRecord;
+import org.apache.poi.hssf.record.LineFormatRecord;
+import org.apache.poi.hssf.record.LinkedDataFormulaField;
+import org.apache.poi.hssf.record.LinkedDataRecord;
+import org.apache.poi.hssf.record.PlotAreaRecord;
+import org.apache.poi.hssf.record.PlotGrowthRecord;
+import org.apache.poi.hssf.record.PrintSetupRecord;
+import org.apache.poi.hssf.record.ProtectRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.SCLRecord;
+import org.apache.poi.hssf.record.SeriesIndexRecord;
+import org.apache.poi.hssf.record.SeriesRecord;
+import org.apache.poi.hssf.record.SeriesTextRecord;
+import org.apache.poi.hssf.record.SeriesToChartGroupRecord;
+import org.apache.poi.hssf.record.SheetPropertiesRecord;
+import org.apache.poi.hssf.record.TextRecord;
+import org.apache.poi.hssf.record.TickRecord;
+import org.apache.poi.hssf.record.UnitsRecord;
+import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.VCenterRecord;
+import org.apache.poi.hssf.record.ValueRangeRecord;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
 
 /**
  * Has methods for construction of a chart object.
@@ -35,10 +79,12 @@ import java.util.Stack;
 public class HSSFChart
 {
 	private ChartRecord chartRecord;
-	private SeriesRecord seriesRecord;
 	
+	private LegendRecord legendRecord;
 	private ChartTitleFormatRecord chartTitleFormat;
 	private SeriesTextRecord chartTitleText;
+	
+	private List series = new ArrayList();
 	
 	private HSSFChart(ChartRecord chartRecord) {
 		this.chartRecord = chartRecord;
@@ -121,8 +167,8 @@ public class HSSFChart
     /**
      * Returns all the charts for the given sheet.
      * 
-     * NOTE:  Does not yet work...  checking it in just so others
-     * can take a look.
+     * NOTE: You won't be able to do very much with
+     *  these charts yet, as this is very limited support
      */
     public static HSSFChart[] getSheetCharts(HSSFSheet sheet) {
     	List charts = new ArrayList();
@@ -132,33 +178,49 @@ public class HSSFChart
     	List records = sheet.getSheet().getRecords();
     	for(Iterator it = records.iterator(); it.hasNext();) {
     		Record r = (Record)it.next();
-    		System.err.println(r);
-    		
-    		if(r instanceof DrawingRecord) {
-    			DrawingRecord dr = (DrawingRecord)r;
-    		}
     		
     		if(r instanceof ChartRecord) {
     			lastChart = new HSSFChart((ChartRecord)r);
     			charts.add(lastChart);
     		}
+    		if(r instanceof LegendRecord) {
+    			lastChart.legendRecord = (LegendRecord)r;
+    		}
     		if(r instanceof SeriesRecord) {
-    			lastChart.seriesRecord = (SeriesRecord)r;
+    			HSSFSeries series = lastChart.new HSSFSeries( (SeriesRecord)r );
+    			lastChart.series.add(series);
     		}
     		if(r instanceof ChartTitleFormatRecord) {
     			lastChart.chartTitleFormat =
     				(ChartTitleFormatRecord)r;
     		}
     		if(r instanceof SeriesTextRecord) {
-    			lastChart.chartTitleText =
-    				(SeriesTextRecord)r;
+    			// Applies to a series, unless we've seen
+    			//  a legend already
+    			SeriesTextRecord str = (SeriesTextRecord)r;
+    			if(lastChart.legendRecord == null &&
+    					lastChart.series.size() > 0) {
+    				HSSFSeries series = (HSSFSeries)
+    					lastChart.series.get(lastChart.series.size()-1);
+    				series.seriesTitleText = str;
+    			} else {
+    				lastChart.chartTitleText = str;
+    			}
     		}
     	}
     	
     	return (HSSFChart[])
     		charts.toArray( new HSSFChart[charts.size()] );
     }
+
     
+    /**
+     * Returns the series of the chart
+     */
+    public HSSFSeries[] getSeries() {
+    	return (HSSFSeries[])
+    		series.toArray(new HSSFSeries[series.size()]);
+    }
     
     /**
      * Returns the chart's title, if there is one,
@@ -183,7 +245,6 @@ public class HSSFChart
     		throw new IllegalStateException("No chart title found to change");
     	}
     }
-    
     
 
     private EOFRecord createEOFRecord()
@@ -857,5 +918,52 @@ public class HSSFChart
         UnitsRecord r = new UnitsRecord();
         r.setUnits( (short) 0 );
         return r;
+    }
+
+    
+    /**
+     * A series in a chart
+     */
+    public class HSSFSeries {
+    	private SeriesRecord series;
+    	private SeriesTextRecord seriesTitleText;
+    	
+    	private HSSFSeries(SeriesRecord series) {
+    		this.series = series;
+    	}
+    	
+    	public short getNumValues() {
+    		return series.getNumValues();
+    	}
+    	/**
+    	 * See {@link SeriesRecord}
+    	 */
+    	public short getValueType() {
+    		return series.getValuesDataType();
+    	}
+    	
+        /**
+         * Returns the series' title, if there is one,
+         *  or null if not
+         */
+        public String getSeriesTitle() {
+        	if(seriesTitleText != null) {
+        		return seriesTitleText.getText();
+        	}
+        	return null;
+        }
+        
+        /**
+         * Changes the series' title, but only if there 
+         *  was one already.
+         * TODO - add in the records if not
+         */
+        public void setSeriesTitle(String title) {
+        	if(seriesTitleText != null) {
+        		seriesTitleText.setText(title);
+        	} else {
+        		throw new IllegalStateException("No series title found to change");
+        	}
+        }
     }
 }
