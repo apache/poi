@@ -93,9 +93,15 @@ public class CurrentUserAtom
 	 * Find the Current User in the filesystem, and create from that
 	 */
 	public CurrentUserAtom(POIFSFileSystem fs) throws IOException {
+		this(fs.getRoot());
+	}
+	/** 
+	 * Find the Current User in the filesystem, and create from that
+	 */
+	public CurrentUserAtom(DirectoryNode dir) throws IOException {
 		// Decide how big it is
 		DocumentEntry docProps =
-			(DocumentEntry)fs.getRoot().getEntry("Current User");
+			(DocumentEntry)dir.getEntry("Current User");
 		_contents = new byte[docProps.getSize()];
 
 		// Check it's big enough - if it's not at least 28 bytes long, then
@@ -105,7 +111,7 @@ public class CurrentUserAtom
 		}
 
 		// Grab the contents
-		InputStream in = fs.createDocumentInputStream("Current User");
+		InputStream in = dir.createDocumentInputStream("Current User");
 		in.read(_contents);
 
 		// Set everything up

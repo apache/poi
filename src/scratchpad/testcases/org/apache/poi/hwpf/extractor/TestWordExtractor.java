@@ -17,16 +17,12 @@
 package org.apache.poi.hwpf.extractor;
 
 import java.io.FileInputStream;
-import java.util.Iterator;
-
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.model.TextPiece;
-import org.apache.poi.hwpf.usermodel.Paragraph;
-import org.apache.poi.hwpf.usermodel.Range;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Test the different routes to extracting text
@@ -110,22 +106,47 @@ public class TestWordExtractor extends TestCase {
     
     
     /**
-     * Test that we can get data from an
-     *  embeded word document
+     * Test that we can get data from two different
+     *  embeded word documents
      * @throws Exception
      */
     public void testExtractFromEmbeded() throws Exception {
     	POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(filename3));
-    	DirectoryNode dir = (DirectoryNode)
-    		fs.getRoot().getEntry("MBD03F25D8D");
-    	// Should have WordDocument and 1Table
-    	assertNotNull(dir.getEntry("1Table"));
-    	assertNotNull(dir.getEntry("WordDocument"));
+    	HWPFDocument doc;
+    	WordExtractor extractor3;
     	
-    	HWPFDocument doc = new HWPFDocument(dir, fs);
-    	WordExtractor extractor3 = new WordExtractor(doc);
+    	DirectoryNode dirA = (DirectoryNode)
+			fs.getRoot().getEntry("MBD0000A3B7");
+    	DirectoryNode dirB = (DirectoryNode)
+    		fs.getRoot().getEntry("MBD0000A3B2");
+    	
+    	// Should have WordDocument and 1Table
+    	assertNotNull(dirA.getEntry("1Table"));
+    	assertNotNull(dirA.getEntry("WordDocument"));
+    	
+    	assertNotNull(dirB.getEntry("1Table"));
+    	assertNotNull(dirB.getEntry("WordDocument"));
+    	
+    	// Check each in turn
+    	doc = new HWPFDocument(dirA, fs);
+    	extractor3 = new WordExtractor(doc);
 		
     	assertNotNull(extractor3.getText());
     	assertTrue(extractor3.getText().length() > 20);
+    	assertEquals("I am a sample document\r\nNot much on me\r\nI am document 1\r\n",
+    			extractor3.getText());
+    	assertEquals("Sample Doc 1", extractor3.getSummaryInformation().getTitle());
+    	assertEquals("Sample Test", extractor3.getSummaryInformation().getSubject());
+
+    	
+    	doc = new HWPFDocument(dirB, fs);
+    	extractor3 = new WordExtractor(doc);
+		
+    	assertNotNull(extractor3.getText());
+    	assertTrue(extractor3.getText().length() > 20);
+    	assertEquals("I am another sample document\r\nNot much on me\r\nI am document 2\r\n", 
+    			extractor3.getText());
+    	assertEquals("Sample Doc 2", extractor3.getSummaryInformation().getTitle());
+    	assertEquals("Another Sample Test", extractor3.getSummaryInformation().getSubject());
     }
 }
