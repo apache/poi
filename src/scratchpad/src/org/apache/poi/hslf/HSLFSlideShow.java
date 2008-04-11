@@ -45,6 +45,7 @@ import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.hslf.usermodel.ObjectData;
 import org.apache.poi.hslf.usermodel.PictureData;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -124,7 +125,21 @@ public class HSLFSlideShow extends POIDocument
 	 */
 	public HSLFSlideShow(POIFSFileSystem filesystem) throws IOException
 	{
-		this.filesystem = filesystem;
+		this(filesystem.getRoot(), filesystem);
+	}
+	
+	/**
+	 * Constructs a Powerpoint document from a specific point in a 
+	 *  POIFS Filesystem. Parses the document and places all the
+	 *  important stuff into data structures.
+	 *
+	 * @param dir the POIFS directory to read from
+	 * @param filesystem the POIFS FileSystem to read from
+	 * @throws IOException if there is a problem while parsing the document.
+	 */
+	public HSLFSlideShow(DirectoryNode dir, POIFSFileSystem filesystem) throws IOException
+	{
+		super(dir, filesystem);
 		
 		// First up, grab the "Current User" stream
 		// We need this before we can detect Encrypted Documents
@@ -186,11 +201,11 @@ public class HSLFSlideShow extends POIDocument
 	{
 		// Get the main document stream
 		DocumentEntry docProps =
-			(DocumentEntry)filesystem.getRoot().getEntry("PowerPoint Document");
+			(DocumentEntry)directory.getEntry("PowerPoint Document");
 
 		// Grab the document stream
 		_docstream = new byte[docProps.getSize()];
-		filesystem.createDocumentInputStream("PowerPoint Document").read(_docstream);
+		directory.createDocumentInputStream("PowerPoint Document").read(_docstream);
 	}
 	
 	/**
@@ -272,7 +287,7 @@ public class HSLFSlideShow extends POIDocument
 	 */
 	private void readCurrentUserStream() {
 		try {
-			currentUser = new CurrentUserAtom(filesystem);
+			currentUser = new CurrentUserAtom(directory);
 		} catch(IOException ie) {
 			logger.log(POILogger.ERROR, "Error finding Current User Atom:\n" + ie);
 			currentUser = new CurrentUserAtom();
@@ -293,9 +308,9 @@ public class HSLFSlideShow extends POIDocument
 		byte[] pictstream;
 
 		try {
-			DocumentEntry entry = (DocumentEntry)filesystem.getRoot().getEntry("Pictures");
+			DocumentEntry entry = (DocumentEntry)directory.getEntry("Pictures");
 			pictstream = new byte[entry.getSize()];
-			DocumentInputStream is = filesystem.createDocumentInputStream("Pictures");
+			DocumentInputStream is = directory.createDocumentInputStream("Pictures");
 			is.read(pictstream);
 		} catch (FileNotFoundException e){
 			// Silently catch exceptions if the presentation doesn't 

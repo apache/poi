@@ -105,6 +105,31 @@ public class DirectoryNode
     {
         return _path;
     }
+    
+    /**
+     * open a document in the directory's entry's list of entries
+     *
+     * @param documentName the name of the document to be opened
+     *
+     * @return a newly opened DocumentInputStream
+     *
+     * @exception IOException if the document does not exist or the
+     *            name is that of a DirectoryEntry
+     */
+
+    public DocumentInputStream createDocumentInputStream(
+            final String documentName)
+        throws IOException
+    {
+        Entry document = getEntry(documentName);
+
+        if (!document.isDocumentEntry())
+        {
+            throw new IOException("Entry '" + documentName
+                                  + "' is not a DocumentEntry");
+        }
+        return new DocumentInputStream(( DocumentEntry ) document);
+    }
 
     /**
      * create a new DocumentEntry

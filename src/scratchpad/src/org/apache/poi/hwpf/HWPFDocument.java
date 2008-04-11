@@ -29,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 
 import org.apache.poi.POIDocument;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.common.POIFSConstants;
@@ -95,7 +96,7 @@ public class HWPFDocument extends POIDocument
 
   protected HWPFDocument()
   {
-
+     super(null, null);
   }
 
   /**
@@ -132,7 +133,7 @@ public class HWPFDocument extends POIDocument
     //do Ole stuff
     this( verifyAndBuildPOIFS(istream) );
   }
-
+  
   /**
    * This constructor loads a Word document from a POIFSFileSystem
    *
@@ -142,15 +143,30 @@ public class HWPFDocument extends POIDocument
    */
   public HWPFDocument(POIFSFileSystem pfilesystem) throws IOException
   {
+	this(pfilesystem.getRoot(), pfilesystem);
+  }
+  
+  /**
+   * This constructor loads a Word document from a specific point
+   *  in a POIFSFileSystem, probably not the default.
+   * Used typically to open embeded documents.
+   *
+   * @param pfilesystem The POIFSFileSystem that contains the Word document.
+   * @throws IOException If there is an unexpected IOException from the passed
+   *         in POIFSFileSystem.
+   */
+  public HWPFDocument(DirectoryNode directory, POIFSFileSystem pfilesystem) throws IOException
+  {
     // Sort out the hpsf properties
-    filesystem = pfilesystem;
+	super(directory, pfilesystem);
     readProperties();
     
     // read in the main stream.
-    DocumentEntry documentProps =
-       (DocumentEntry)filesystem.getRoot().getEntry("WordDocument");
+    DocumentEntry documentProps = (DocumentEntry)
+       directory.getEntry("WordDocument");
     _mainStream = new byte[documentProps.getSize()];
-    filesystem.createDocumentInputStream("WordDocument").read(_mainStream);
+    
+    directory.createDocumentInputStream("WordDocument").read(_mainStream);
 
     // use the fib to determine the name of the table stream.
     _fib = new FileInformationBlock(_mainStream);
@@ -165,14 +181,14 @@ public class HWPFDocument extends POIDocument
     DocumentEntry tableProps;
 	try {
 		tableProps =
-			(DocumentEntry)filesystem.getRoot().getEntry(name);
+			(DocumentEntry)directory.getEntry(name);
 	} catch(FileNotFoundException fnfe) {
 		throw new IllegalStateException("Table Stream '" + name + "' wasn't found - Either the document is corrupt, or is Word95 (or earlier)");
 	}
 
     // read in the table stream.
     _tableStream = new byte[tableProps.getSize()];
-    filesystem.createDocumentInputStream(name).read(_tableStream);
+    directory.createDocumentInputStream(name).read(_tableStream);
 
     _fib.fillVariableFields(_mainStream, _tableStream);
 
@@ -180,7 +196,7 @@ public class HWPFDocument extends POIDocument
     try
     {
       DocumentEntry dataProps =
-          (DocumentEntry) filesystem.getRoot().getEntry("Data");
+          (DocumentEntry)directory.getEntry("Data");
       _dataStream = new byte[dataProps.getSize()];
       filesystem.createDocumentInputStream("Data").read(_dataStream);
     }

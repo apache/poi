@@ -577,6 +577,8 @@ under the License.
         file="${main.src.test}/org/apache/poi/hwpf/data"/> 
       <sysproperty key="HPSF.testdata.path"
         file="${main.src.test}/org/apache/poi/hpsf/data"/> 
+      <sysproperty key="POIFS.testdata.path"
+        file="${main.src.test}/org/apache/poi/poifs/data"/> 
       <sysproperty key="java.awt.headless" value="true"/>
       <formatter type="plain"/>
       <formatter type="xml"/>
@@ -612,6 +614,8 @@ under the License.
         file="${main.src.test}/org/apache/poi/hpsf/data"/>
       <sysproperty key="HWPF.testdata.path"
         file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
+      <sysproperty key="POIFS.testdata.path"
+        file="${main.src.test}/org/apache/poi/poifs/data"/> 
       <sysproperty key="java.awt.headless" value="true"/>
       <formatter type="plain" usefile="no"/>
       <batchtest todir="${main.reports.test}">
@@ -641,6 +645,7 @@ under the License.
             <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
             <sysproperty key="HSMF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hsmf/data"/>
             <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
+            <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/> 
                 <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain" usefile="no"/>
             <formatter type="xml"/>
@@ -657,6 +662,7 @@ under the License.
             <classpath refid="test.classpath"/>
             <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
+            <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/> 
             <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain" usefile="no"/>
             <test name="${testcase}"/>
@@ -695,6 +701,7 @@ under the License.
             <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
             <sysproperty key="HSMF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hsmf/data"/>
             <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
+            <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/> 
             <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain"/>
             <formatter type="xml"/>
@@ -729,6 +736,7 @@ under the License.
                 <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
                 <sysproperty key="HSMF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hsmf/data"/>
                 <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
+                <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/> 
 	            <sysproperty key="java.awt.headless" value="true"/>
 	            <sysproperty key="java.awt.headless" value="true"/>
 	            <formatter type="plain" usefile="no"/>

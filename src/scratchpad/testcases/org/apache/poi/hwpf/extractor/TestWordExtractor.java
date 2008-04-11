@@ -17,14 +17,12 @@
 package org.apache.poi.hwpf.extractor;
 
 import java.io.FileInputStream;
-import java.util.Iterator;
-
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.model.TextPiece;
-import org.apache.poi.hwpf.usermodel.Paragraph;
-import org.apache.poi.hwpf.usermodel.Range;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Test the different routes to extracting text
@@ -54,12 +52,16 @@ public class TestWordExtractor extends TestCase {
 	private WordExtractor extractor;
 	// Corrupted document - can't do paragraph based stuff
 	private WordExtractor extractor2;
+	// A word doc embeded in an excel file
+	private String filename3;
 	
     protected void setUp() throws Exception {
 		String dirname = System.getProperty("HWPF.testdata.path");
+		String pdirname = System.getProperty("POIFS.testdata.path");
 		
 		String filename = dirname + "/test2.doc";
 		String filename2 = dirname + "/test.doc";
+		filename3 = pdirname + "/excel_with_embeded.xls";
 		extractor = new WordExtractor(new FileInputStream(filename));
 		extractor2 = new WordExtractor(new FileInputStream(filename2));
 		
@@ -100,5 +102,51 @@ public class TestWordExtractor extends TestCase {
     public void testExtractFromTextPieces() throws Exception {
     	String text = extractor.getTextFromPieces();
     	assertEquals(p_text1_block, text);
+    }
+    
+    
+    /**
+     * Test that we can get data from two different
+     *  embeded word documents
+     * @throws Exception
+     */
+    public void testExtractFromEmbeded() throws Exception {
+    	POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(filename3));
+    	HWPFDocument doc;
+    	WordExtractor extractor3;
+    	
+    	DirectoryNode dirA = (DirectoryNode)
+			fs.getRoot().getEntry("MBD0000A3B7");
+    	DirectoryNode dirB = (DirectoryNode)
+    		fs.getRoot().getEntry("MBD0000A3B2");
+    	
+    	// Should have WordDocument and 1Table
+    	assertNotNull(dirA.getEntry("1Table"));
+    	assertNotNull(dirA.getEntry("WordDocument"));
+    	
+    	assertNotNull(dirB.getEntry("1Table"));
+    	assertNotNull(dirB.getEntry("WordDocument"));
+    	
+    	// Check each in turn
+    	doc = new HWPFDocument(dirA, fs);
+    	extractor3 = new WordExtractor(doc);
+		
+    	assertNotNull(extractor3.getText());
+    	assertTrue(extractor3.getText().length() > 20);
+    	assertEquals("I am a sample document\r\nNot much on me\r\nI am document 1\r\n",
+    			extractor3.getText());
+    	assertEquals("Sample Doc 1", extractor3.getSummaryInformation().getTitle());
+    	assertEquals("Sample Test", extractor3.getSummaryInformation().getSubject());
+
+    	
+    	doc = new HWPFDocument(dirB, fs);
+    	extractor3 = new WordExtractor(doc);
+		
+    	assertNotNull(extractor3.getText());
+    	assertTrue(extractor3.getText().length() > 20);
+    	assertEquals("I am another sample document\r\nNot much on me\r\nI am document 2\r\n", 
+    			extractor3.getText());
+    	assertEquals("Sample Doc 2", extractor3.getSummaryInformation().getTitle());
+    	assertEquals("Another Sample Test", extractor3.getSummaryInformation().getSubject());
     }
 }
