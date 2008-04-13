@@ -30,6 +30,7 @@
   <menu label="POIFS">
     <menu-item label="Overview" href="index.html"/>
     <menu-item label="How To" href="how-to.html"/>
+    <menu-item label="Embeded Documents" href="embeded.html"/>
     <menu-item label="File System Documentation" href="fileformat.html"/>
     <menu-item label="Use Cases" href="usecases.html"/>
   </menu>

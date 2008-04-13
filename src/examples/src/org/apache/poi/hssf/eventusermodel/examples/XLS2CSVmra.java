@@ -23,11 +23,7 @@ import java.io.PrintStream;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.poi.hssf.eventusermodel.FormatTrackingHSSFListener;
 import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
@@ -36,11 +32,10 @@ import org.apache.poi.hssf.eventusermodel.HSSFRequest;
 import org.apache.poi.hssf.eventusermodel.MissingRecordAwareHSSFListener;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.LastCellOfRowDummyRecord;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.MissingCellDummyRecord;
+import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.BoolErrRecord;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.ExtendedFormatRecord;
-import org.apache.poi.hssf.record.FormatRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.LabelRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
@@ -49,7 +44,7 @@ import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.RKRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SSTRecord;
-import org.apache.poi.hssf.usermodel.HSSFDataFormat;
+import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
@@ -72,6 +67,11 @@ public class XLS2CSVmra implements HSSFListener {
 	// Records we pick up as we process
 	private SSTRecord sstRecord;
 	private FormatTrackingHSSFListener formatListener;
+	
+	// For handling formulas with string results
+	private int nextRow;
+	private int nextColumn;
+	private boolean outputNextStringRecord;
 
 	/**
 	 * Creates a new XLS -> CSV converter
@@ -142,6 +142,7 @@ public class XLS2CSVmra implements HSSFListener {
             thisColumn = berec.getColumn();
             thisStr = "";
             break;
+            
         case FormulaRecord.sid:
         	FormulaRecord frec = (FormulaRecord) record;
         	
@@ -149,12 +150,31 @@ public class XLS2CSVmra implements HSSFListener {
         	thisColumn = frec.getColumn();
         	
         	if(outputFormulaValues) {
-                thisStr = formatNumberDateCell(frec, frec.getValue());
+        		if(Double.isNaN( frec.getValue() )) {
+        			// Formula result is a string
+        			// This is stored in the next record
+        			outputNextStringRecord = true;
+    	        	nextRow = frec.getRow();
+    	        	nextColumn = frec.getColumn();
+        		} else {
+        			thisStr = formatNumberDateCell(frec, frec.getValue());
+        		}
         	} else {
-        		// TODO: Output the formula string
-        		thisStr = '"' + frec.toString() + '"';
+        		thisStr = '"' + 
+        			FormulaParser.toFormulaString(null, frec.getParsedExpression()) + '"';
         	}
             break;
+        case StringRecord.sid:
+        	if(outputNextStringRecord) {
+        		// String for formula
+        		StringRecord srec = (StringRecord)record;
+        		thisStr = srec.getString(); 
+        		thisRow = nextRow;
+        		thisColumn = nextColumn;
+        		outputNextStringRecord = false;
+        	}
+            break;
+            
         case LabelRecord.sid:
         	LabelRecord lrec = (LabelRecord) record;
         	
