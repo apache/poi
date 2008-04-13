@@ -122,6 +122,52 @@ public final class TestExcelExtractor extends TestCase {
 		assertEquals("Sheet1\nUPPER(\"xyz\")\nSheet2\nSheet3\n", extractor.getText());
 	}
 	
+	
+	public void testEventExtractor() throws Exception {
+		EventBasedExcelExtractor extractor;
+		
+		// First up, a simple file with string
+		//  based formulas in it
+		extractor = new EventBasedExcelExtractor(
+				new POIFSFileSystem(
+						HSSFTestDataSamples.openSampleFileStream("SimpleWithFormula.xls")
+				)
+		);
+		extractor.setIncludeSheetNames(true);
+		
+		String text = extractor.getText();
+		// TODO
+		assertEquals("Sheet1\nreplaceme\nreplaceme\n(todo - string formulas)\nSheet2\nSheet3\n", text);
+//		assertEquals("Sheet1\nreplaceme\nreplaceme\nreplacemereplaceme\nSheet2\nSheet3\n", text);
+		
+		extractor.setIncludeSheetNames(false);
+		extractor.setFormulasNotResults(true);
+		
+		text = extractor.getText();
+		assertEquals("replaceme\nreplaceme\nCONCATENATE(A1,A2)\n", text);
+
+		
+		// Now, a slightly longer file with numeric formulas
+		extractor = new EventBasedExcelExtractor(
+				new POIFSFileSystem(
+						HSSFTestDataSamples.openSampleFileStream("sumifformula.xls")
+				)
+		);
+		extractor.setIncludeSheetNames(false);
+		extractor.setFormulasNotResults(true);
+
+		text = extractor.getText();
+		assertEquals(
+				"1000.0\t1.0\tSUMIF(A1:A5,\">4000\",B1:B5)\n" +
+				"2000.0\t2.0\n" +	
+				"3000.0\t3.0\n" +
+				"4000.0\t4.0\n" + 
+				"5000.0\t5.0\n",
+				text
+		);
+	}
+	
+	
 	/**
 	 * Embded in a non-excel file
 	 */
