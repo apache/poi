@@ -42,6 +42,7 @@ import org.apache.poi.hssf.record.NoteRecord;
 import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SSTRecord;
+import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
@@ -142,6 +143,9 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 		private int sheetNum = -1;
 		private int rowNum;
 		
+		private boolean outputNextStringValue = false;
+		private int nextRow = -1;
+		
 		public void processRecord(Record record) {
 			String thisText = null;
 			int thisRow = -1;
@@ -175,10 +179,22 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 	        		thisText = FormulaParser.toFormulaString(null, frec.getParsedExpression());
 	        	} else {
 	        		if(Double.isNaN( frec.getValue() )) {
-	        			thisText = "(todo - string formulas)";
+	        			// Formula result is a string
+	        			// This is stored in the next record
+	        			outputNextStringValue = true;
+	    	        	nextRow = frec.getRow();
 	        		} else {
 	        			thisText = formatNumberDateCell(frec, frec.getValue());
 	        		}
+	        	}
+	            break;
+	        case StringRecord.sid:
+	        	if(outputNextStringValue) {
+	        		// String for formula
+	        		StringRecord srec = (StringRecord)record;
+	        		thisText = srec.getString(); 
+	        		thisRow = nextRow;
+	        		outputNextStringValue = false;
 	        	}
 	            break;
 	        case LabelRecord.sid:

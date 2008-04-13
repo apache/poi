@@ -136,9 +136,7 @@ public final class TestExcelExtractor extends TestCase {
 		extractor.setIncludeSheetNames(true);
 		
 		String text = extractor.getText();
-		// TODO
-		assertEquals("Sheet1\nreplaceme\nreplaceme\n(todo - string formulas)\nSheet2\nSheet3\n", text);
-//		assertEquals("Sheet1\nreplaceme\nreplaceme\nreplacemereplaceme\nSheet2\nSheet3\n", text);
+		assertEquals("Sheet1\nreplaceme\nreplaceme\nreplacemereplaceme\nSheet2\nSheet3\n", text);
 		
 		extractor.setIncludeSheetNames(false);
 		extractor.setFormulasNotResults(true);
