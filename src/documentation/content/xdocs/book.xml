@@ -43,6 +43,7 @@
         <menu-item label="HDGF" href="hdgf/index.html"/>
 		<menu-item label="POI-Ruby" href="poi-ruby.html"/>
         <menu-item label="POI-Utils" href="utils/index.html"/>
+        <menu-item label="Text Extraction" href="text-extraction.html"/>
         <menu-item label="Download" href="ext:download"/>
     </menu>
 
