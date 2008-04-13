@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "./dtd/document-v13.dtd">
+
+<document>
+  <header>
+    <title>POI Text Extraction</title>
+    <authors>
+      <person id="NB" name="Nick Burch" email="nick@apache.org"/>
+    </authors>
+  </header>
+  
+  <body>
+    <section><title>Overview</title>
+      <p>POI provides text extraction for all the supported file
+       formats. In addition, it provides access to the metadata
+       associated with a given file, such as title and author.</p>
+      <p>In addition to providing direct text extraction classes,
+       POI works closely with the 
+       <link href="http://incubator.apache.org/tika/">Apache Tika</link>
+       text extraction library. Users may wish to simply utilise 
+       the functionality provided by Tika.</p>
+    </section>
+
+    <section><title>Common functionality</title>
+     <p>All of the POI text extractors extend from
+      <em>org.apache.poi.POITextExtractor</em>. This provides a common
+      method across all extractors, getText(). For many cases, the text
+      returned will be all you need. However, many extractors do provide
+      more targetted text extraction methods, so you may wish to use
+      these in some cases.</p>
+     <p>All POIFS / OLE 2 based text extractors also extend from
+      <em>org.apache.poi.POIOLE2TextExtractor</em>. This additionally
+      provides common methods to get at the <link href="hpfs/">HPFS
+      document metadata</link>.</p>
+     <p>All OOXML based text extractors (available in POI 3.5 and later) 
+      also extend from
+      <em>org.apache.poi.POIOOXMLTextExtractor</em>. This additionally
+      provides common methods to get at the OOXML metadata.</p>
+    </section>
+
+    <section><title>Text Extractor Factory - POI 3.5 or later</title>
+     <p>A new class in POI 3.5, 
+      <em>org.apache.poi.extractor.ExtractorFactory</em> provides a
+      similar function to WorkbookFactory. You simply pass it an
+      InputStream, a file, a POIFSFileSystem or a OOXML Package. It
+      figures out the correct text extractor for you, and returns it.</p>
+    </section>
+
+    <section><title>Excel</title>
+     <p>For .xls files, there is 
+      <em>org.apache.poi.hssf.extractor.ExcelExtractor</em>, which will 
+      return text, optionally with formulas instead of their contents. 
+      Those using POI 3.5 can also use 
+      <em>org.apache.poi.xssf.extractor.XSSFExcelExtractor</em>, to perform
+      a similar task for .xlsx files.</p>
+     <p>In addition, there is a second text extractor for .xls files,
+      <em>org.apache.poi.hssf.extractor.EventBasedExcelExtractor</em>. This
+      is based on the streaming EventUserModel code, and will generally
+      deliver a lower memory footprint for extraction. However, it will
+      have problems correctly outputting more complex formulas, as it 
+      works with records as they pass, and so doesn't have access to all
+      parts of complex and shared formulas.</p>
+    </section>
+
+    <section><title>Word</title>
+     <p>For .doc files, in scratchpad there is 
+      <em>org.apache.poi.hwpf.extractor.WordExtractor</em>, which will 
+      return text for your document. Those using POI 3.5 can also use 
+      <em>org.apache.poi.xwpf.extractor.XPFFWordExtractor</em>, to perform
+      a similar task for .docx files.</p>
+    </section>
+
+    <section><title>PowerPoint</title>
+     <p>For .ppt files, in scratchpad there is 
+      <em>org.apache.poi.hslf.extractor.PowerPointExtractor</em>, which 
+      will return text for your slideshow, optionally restricted to just
+      slides text or notes text. Those using POI 3.5 can also use 
+      <em>org.apache.poi.xslf.extractor.XSLFPowerPointExtractor</em>, to 
+      perform a similar task for .pptx files.</p>
+    </section>
+
+    <section><title>Visio</title>
+     <p>For .vsd files, in scratchpad there is 
+      <em>org.apache.poi.hdgf.extractor.VisioTextExtractor</em>, which 
+      will return text for your file.</p>
+    </section>
+  </body>
+
+  <footer>
+    <legal>
+      Copyright 2005 The Apache Software Foundation or its licensors, as applicable.
+      $Revision: 639487 $ $Date: 2008-03-20 22:31:15 +0000 (Thu, 20 Mar 2008) $
+    </legal>
+  </footer>
+</document>
