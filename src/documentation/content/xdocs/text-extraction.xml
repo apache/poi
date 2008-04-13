@@ -71,6 +71,13 @@
       Those using POI 3.5 can also use 
       <em>org.apache.poi.xssf.extractor.XSSFExcelExtractor</em>, to perform
       a similar task for .xlsx files.</p>
+     <p>In addition, there is a second text extractor for .xls files,
+      <em>org.apache.poi.hssf.extractor.EventBasedExcelExtractor</em>. This
+      is based on the streaming EventUserModel code, and will generally
+      deliver a lower memory footprint for extraction. However, it will
+      have problems correctly outputting more complex formulas, as it 
+      works with records as they pass, and so doesn't have access to all
+      parts of complex and shared formulas.</p>
     </section>
 
     <section><title>Word</title>
