@@ -31,8 +31,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.poifs.property.DirectoryProperty;
@@ -51,6 +49,8 @@ import org.apache.poi.poifs.storage.SmallBlockTableReader;
 import org.apache.poi.poifs.storage.SmallBlockTableWriter;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LongField;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * This is the main class of the POIFS system; it manages the entire
@@ -62,7 +62,8 @@ import org.apache.poi.util.LongField;
 public class POIFSFileSystem
     implements POIFSViewable
 {
-    private static final Log _logger = LogFactory.getLog(POIFSFileSystem.class);
+	private static final POILogger _logger =
+		POILogFactory.getLogger(POIFSFileSystem.class);
     
     private static final class CloseIgnoringInputStream extends InputStream {
 
@@ -190,7 +191,7 @@ public class POIFSFileSystem
                     + "This will be a problem for the caller if the stream will still be used.  "
                     + "If that is the case the caller should wrap the input stream to avoid this close logic.  "
                     + "This warning is only temporary and will not be present in future versions of POI.";
-            _logger.warn(msg);
+            _logger.log(POILogger.WARN, msg);
         }
         try {
             stream.close();
