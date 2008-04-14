@@ -18,9 +18,6 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
-
 import java.io.*;
 import java.util.*;
 
@@ -49,7 +46,7 @@ public class FontCollection extends RecordContainer {
 	            FontEntityAtom atom = (FontEntityAtom)_children[i];
 	            fonts.add(atom.getFontName());
 			} else {
-				logger.log(POILogger.WARN, "Warning: FontCollection child wasn't a FontEntityAtom, was " + _children[i]);
+				logger.warn("Warning: FontCollection child wasn't a FontEntityAtom, was " + _children[i]);
 			}
 		}
 	}
