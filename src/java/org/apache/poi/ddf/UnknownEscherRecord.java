@@ -170,7 +170,7 @@ public class UnknownEscherRecord extends EscherRecord
         {
             if (thedata.length != 0)
             {
-                theDumpHex = "  Extra Data:" + nl;
+                theDumpHex = "  Extra Data("+thedata.length+"):" + nl;
                 theDumpHex += HexDump.dump(thedata, 0, 0);
             }
         }
