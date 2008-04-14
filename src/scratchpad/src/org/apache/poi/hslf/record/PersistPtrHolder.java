@@ -20,6 +20,7 @@
 package org.apache.poi.hslf.record;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -194,8 +195,8 @@ public class PersistPtrHolder extends PositionDependentRecordAtom
 			Integer newPos = (Integer)oldToNewReferencesLookup.get(oldPos);
 
 			if(newPos == null) {
-				logger.warn("Couldn't find the new location of the \"slide\" with id " + id + " that used to be at " + oldPos);
-				logger.warn("Not updating the position of it, you probably won't be able to find it any more (if you ever could!)");
+				logger.log(POILogger.WARN, "Couldn't find the new location of the \"slide\" with id " + id + " that used to be at " + oldPos);
+				logger.log(POILogger.WARN, "Not updating the position of it, you probably won't be able to find it any more (if you ever could!)");
 				newPos = oldPos;
 			}
 

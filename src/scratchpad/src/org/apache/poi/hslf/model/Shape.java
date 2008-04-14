@@ -19,8 +19,8 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.model.ShapeTypes;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 
 import java.util.Iterator;
 import java.awt.*;
@@ -45,7 +45,7 @@ import java.awt.geom.Rectangle2D;
 public abstract class Shape {
 
     // For logging
-    protected Log log = LogFactory.getLog(this.getClass());
+    protected POILogger logger = POILogFactory.getLogger(this.getClass());
 
     /**
      * In Escher absolute distances are specified in

@@ -24,10 +24,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Vector;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 
 /**
  * This abstract class represents a record in the PowerPoint document.
@@ -40,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
 public abstract class Record
 {
     // For logging
-    protected Log logger = LogFactory.getLog(this.getClass());
+    protected POILogger logger = POILogFactory.getLogger(this.getClass());
 
 	/**
 	 * Is this record type an Atom record (only has data),

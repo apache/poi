@@ -52,8 +52,7 @@ import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * This class contains the main functionality for the Powerpoint file 
@@ -65,7 +64,7 @@ import org.apache.commons.logging.LogFactory;
 public class HSLFSlideShow extends POIDocument
 {
     // For logging
-    private static final Log logger = LogFactory.getLog(HSLFSlideShow.class);
+    private POILogger logger = POILogFactory.getLogger(this.getClass());
 
 	private InputStream istream;
 
@@ -291,7 +290,7 @@ public class HSLFSlideShow extends POIDocument
 		try {
 			currentUser = new CurrentUserAtom(directory);
 		} catch(IOException ie) {
-			logger.error("Error finding Current User Atom:\n" + ie);
+			logger.log(POILogger.ERROR, "Error finding Current User Atom:\n" + ie);
 			currentUser = new CurrentUserAtom();
 		}
 	}
@@ -346,8 +345,8 @@ public class HSLFSlideShow extends POIDocument
 
 			// If they type (including the bonus 0xF018) is 0, skip it
 			if(type == 0) {
-				logger.error("Problem reading picture: Invalid image type 0, on picture with length " + imgsize + ".\nYou document will probably become corrupted if you save it!");
-				logger.error("" + pos);
+				logger.log(POILogger.ERROR, "Problem reading picture: Invalid image type 0, on picture with length " + imgsize + ".\nYou document will probably become corrupted if you save it!");
+				logger.log(POILogger.ERROR, "" + pos);
 			} else {
 	            // Copy the data, ready to pass to PictureData
 	            byte[] imgdata = new byte[imgsize];
@@ -362,7 +361,7 @@ public class HSLFSlideShow extends POIDocument
 					pict.setOffset(offset);
 					p.add(pict);
 				} catch(IllegalArgumentException e) {
-					logger.error("Problem reading picture: " + e + "\nYou document will probably become corrupted if you save it!");
+					logger.log(POILogger.ERROR, "Problem reading picture: " + e + "\nYou document will probably become corrupted if you save it!");
 				}
 			}
             

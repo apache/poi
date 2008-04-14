@@ -248,6 +248,10 @@ public class TextObjectRecord
 
         buffer.append( "    .string = " ).append(str).append('\n');
 
+        for (int i = 0; i < str.numFormattingRuns(); i++) {
+            buffer.append( "    .textrun = " ).append(str.getFontOfFormattingRun(i)).append('\n');
+
+        }
         buffer.append( "[/TXO]\n" );
         return buffer.toString();
     }

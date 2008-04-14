@@ -22,6 +22,7 @@ import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.util.POILogger;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
@@ -479,7 +480,7 @@ public class TextBox extends SimpleShape {
                 }
             }
             if(_txtrun == null) {
-                log.warn("text run not found for OutlineTextRefAtom.TextIndex=" + idx);
+                logger.log(POILogger.WARN, "text run not found for OutlineTextRefAtom.TextIndex=" + idx);
             }
         } else {
             int shapeId = _escherContainer.getChildById(EscherSpRecord.RECORD_ID).getShapeId();
