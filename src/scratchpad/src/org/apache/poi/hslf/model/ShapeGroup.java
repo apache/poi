@@ -18,7 +18,6 @@ package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +70,7 @@ public class ShapeGroup extends Shape{
         	} else {
         		// Should we do anything special with these non
         		//  Container records?
-        		logger.log(POILogger.ERROR, "Shape contained non container escher record, was " + r.getClass().getName());
+        		log.error("Shape contained non container escher record, was " + r.getClass().getName());
         	}
         }
         
