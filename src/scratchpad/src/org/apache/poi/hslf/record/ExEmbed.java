@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.io.IOException;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
 
 /**
  * This data represents an embedded object in the document.
@@ -93,14 +94,14 @@ public class ExEmbed extends RecordContainer {
         if(_children[0] instanceof ExEmbedAtom) {
             embedAtom = (ExEmbedAtom)_children[0];
         } else {
-            logger.error("First child record wasn't a ExEmbedAtom, was of type " + _children[0].getRecordType());
+            logger.log(POILogger.ERROR, "First child record wasn't a ExEmbedAtom, was of type " + _children[0].getRecordType());
         }
 
         // Second child should be the ExOleObjAtom
         if (_children[1] instanceof ExOleObjAtom) {
             oleObjAtom = (ExOleObjAtom)_children[1];
         } else {
-            logger.error("Second child record wasn't a ExOleObjAtom, was of type " + _children[1].getRecordType());
+            logger.log(POILogger.ERROR, "Second child record wasn't a ExOleObjAtom, was of type " + _children[1].getRecordType());
         }
 
         for (int i = 2; i < _children.length; i++) {
@@ -109,7 +110,7 @@ public class ExEmbed extends RecordContainer {
                 else if (progId == null) progId = (CString)_children[i];
                 else if (clipboardName == null) clipboardName = (CString)_children[i];
             } else {
-                logger.error("Record after atoms wasn't a CString, was of type " + _children[i].getRecordType());
+                logger.log(POILogger.ERROR, "Record after atoms wasn't a CString, was of type " + _children[i].getRecordType());
             }
         }
     }

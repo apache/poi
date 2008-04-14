@@ -103,6 +103,11 @@ public class TextboxShape
         opt.addEscherProperty( new EscherSimpleProperty( EscherProperties.TEXT__TEXTRIGHT, shape.getMarginRight() ) );
         opt.addEscherProperty( new EscherSimpleProperty( EscherProperties.TEXT__TEXTBOTTOM, shape.getMarginBottom() ) );
         opt.addEscherProperty( new EscherSimpleProperty( EscherProperties.TEXT__TEXTTOP, shape.getMarginTop() ) );
+
+        opt.addEscherProperty( new EscherSimpleProperty( EscherProperties.TEXT__WRAPTEXT, 0 ) );
+        opt.addEscherProperty( new EscherSimpleProperty( EscherProperties.TEXT__ANCHORTEXT, 0 ) );
+        opt.addEscherProperty( new EscherSimpleProperty( EscherProperties.GROUPSHAPE__PRINT, 0x00080000 ) );
+
         addStandardOptions( shape, opt );
         HSSFAnchor userAnchor = shape.getAnchor();
         //        if (userAnchor.isHorizontallyFlipped())
