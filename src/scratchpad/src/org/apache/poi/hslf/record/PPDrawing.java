@@ -20,7 +20,6 @@
 package org.apache.poi.hslf.record;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.model.ShapeTypes;
@@ -132,7 +131,7 @@ public class PPDrawing extends RecordAtom
 		// Wind on
 		int size = r.getRecordSize();
 		if(size < 8) {
-			logger.log(POILogger.WARN, "Hit short DDF record at " + startPos + " - " + size);
+			logger.warn("Hit short DDF record at " + startPos + " - " + size);
 		}
 
         /**
@@ -142,7 +141,7 @@ public class PPDrawing extends RecordAtom
          * Sometimes it is not so, see an example in bug #44770. Most likely reason is that one of ddf records calculates wrong size. 
          */
         if(size != escherBytes){
-            logger.log(POILogger.WARN, "Record length=" + escherBytes + " but getRecordSize() returned " + r.getRecordSize() + "; record: " + r.getClass());
+            logger.warn("Record length=" + escherBytes + " but getRecordSize() returned " + r.getRecordSize() + "; record: " + r.getClass());
             size = escherBytes;
         }
 		startPos += size;

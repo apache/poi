@@ -37,8 +37,8 @@ import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.util.ArrayUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class is a friendly wrapper on top of the more scary HSLFSlideShow.
@@ -80,7 +80,7 @@ public class SlideShow
   private FontCollection _fonts;
 
   // For logging
-  private POILogger logger = POILogFactory.getLogger(this.getClass());
+  private static final Log logger = LogFactory.getLog(SlideShow.class);
 
   
   /* ===============================================================
@@ -275,7 +275,7 @@ public class SlideShow
 			Record r = _mostRecentCoreRecords[coreRecordId.intValue()];
 			return r;
 		} else {
-			logger.log(POILogger.ERROR, "We tried to look up a reference to a core record, but there was no core ID for reference ID " + refID);
+			logger.error("We tried to look up a reference to a core record, but there was no core ID for reference ID " + refID);
 			return null;
 		}
 	}
@@ -378,7 +378,7 @@ public class SlideShow
                 Integer slideId = new Integer(spa.getSlideIdentifier());
                 slideIdToNotes.put(slideId, new Integer(i));
 			} else {
-				logger.log(POILogger.ERROR, "A Notes SlideAtomSet at " + i + " said its record was at refID " + notesSets[i].getSlidePersistAtom().getRefID() + ", but that was actually a " + r);
+				logger.error("A Notes SlideAtomSet at " + i + " said its record was at refID " + notesSets[i].getSlidePersistAtom().getRefID() + ", but that was actually a " + r);
 			}
 		}
 		notesRecords = new org.apache.poi.hslf.record.Notes[notesRecordsL.size()];
@@ -404,7 +404,7 @@ public class SlideShow
 			if(r instanceof org.apache.poi.hslf.record.Slide) {
 				slidesRecords[i] = (org.apache.poi.hslf.record.Slide)r;
 			} else {
-				logger.log(POILogger.ERROR, "A Slide SlideAtomSet at " + i + " said its record was at refID " + slidesSets[i].getSlidePersistAtom().getRefID() + ", but that was actually a " + r);
+				logger.error("A Slide SlideAtomSet at " + i + " said its record was at refID " + slidesSets[i].getSlidePersistAtom().getRefID() + ", but that was actually a " + r);
 			}
 		}
 	}
@@ -429,7 +429,7 @@ public class SlideShow
         if (noteId != 0){
             Integer notesPos = (Integer)slideIdToNotes.get(new Integer(noteId));
             if (notesPos != null) notes = _notes[notesPos.intValue()];
-            else logger.log(POILogger.ERROR, "Notes not found for noteId=" + noteId);
+            else logger.error("Notes not found for noteId=" + noteId);
         }
 
 		// Now, build our slide
@@ -622,7 +622,7 @@ public class SlideShow
   		System.arraycopy(_slides, 0, s, 0, _slides.length);
   		s[_slides.length] = slide;
   		_slides = s;
-  		logger.log(POILogger.INFO, "Added slide " + _slides.length + " with ref " + sp.getRefID() + " and identifier " + sp.getSlideIdentifier());
+  		logger.info("Added slide " + _slides.length + " with ref " + sp.getRefID() + " and identifier " + sp.getSlideIdentifier());
   		
   		// Add the core records for this new Slide to the record tree
   		org.apache.poi.hslf.record.Slide slideRecord = slide.getSlideRecord();
@@ -658,7 +658,7 @@ public class SlideShow
   		// (Also need to tell it where it is)
 		slideRecord.setLastOnDiskOffset(slideOffset);
 		ptr.addSlideLookup(sp.getRefID(), slideOffset);
-		logger.log(POILogger.INFO, "New slide ended up at " + slideOffset);
+		logger.info("New slide ended up at " + slideOffset);
 
 		// Last view is now of the slide
   		usr.setLastViewType((short)UserEditAtom.LAST_VIEW_SLIDE_VIEW);
