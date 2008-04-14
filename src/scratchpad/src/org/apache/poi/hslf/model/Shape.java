@@ -19,8 +19,8 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.model.ShapeTypes;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.Iterator;
 import java.awt.*;
@@ -45,7 +45,7 @@ import java.awt.geom.Rectangle2D;
 public abstract class Shape {
 
     // For logging
-    protected POILogger logger = POILogFactory.getLogger(this.getClass());
+    protected Log log = LogFactory.getLog(this.getClass());
 
     /**
      * In Escher absolute distances are specified in
@@ -88,6 +88,11 @@ public abstract class Shape {
      * The <code>Sheet</code> this shape belongs to
      */
     protected Sheet _sheet;
+
+    /**
+     * Fill
+     */
+    protected Fill _fill;
 
     /**
      * Create a Shape object. This constructor is used when an existing Shape is read from from a PowerPoint document.
@@ -344,7 +349,8 @@ public abstract class Shape {
      * @return fill properties of this shape
      */
     public Fill getFill(){
-        return new Fill(this);
+        if(_fill == null) _fill = new Fill(this);
+        return _fill;
     }
 
 
