@@ -18,6 +18,7 @@ package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
 
 import java.awt.geom.*;
 import java.util.ArrayList;
@@ -96,7 +97,7 @@ public class Freeform extends AutoShape {
                     segInfo.add(new byte[]{0x01, 0x20 });
                     break;
                 case PathIterator.SEG_QUADTO:
-                    System.err.println("SEG_QUADTO is not supported");
+                    logger.log(POILogger.WARN, "SEG_QUADTO is not supported");
                     break;
                 case PathIterator.SEG_CLOSE:
                     pntInfo.add(pntInfo.get(0));

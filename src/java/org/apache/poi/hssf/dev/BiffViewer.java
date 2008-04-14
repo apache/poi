@@ -122,7 +122,7 @@ public class BiffViewer {
 
     private static void dumpNormal(Record record, int startloc, short rectype, short recsize)
     {
-        System.out.println("Offset 0x" + Integer.toHexString(startloc) + " (" + startloc + ")");
+        //System.out.println("Offset 0x" + Integer.toHexString(startloc) + " (" + startloc + ")");
         System.out.println( "recordid = 0x" + Integer.toHexString( rectype ) + ", size = " + recsize );
         System.out.println( record.toString() );
 

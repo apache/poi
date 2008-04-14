@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
 
 /**
  * This class represents the data of a link in the document. 
@@ -107,7 +108,7 @@ public class ExHyperlink extends RecordContainer {
 		if(_children[0] instanceof ExHyperlinkAtom) {
 			linkAtom = (ExHyperlinkAtom)_children[0];
 		} else {
-			logger.error("First child record wasn't a ExHyperlinkAtom, was of type " + _children[0].getRecordType());
+			logger.log(POILogger.ERROR, "First child record wasn't a ExHyperlinkAtom, was of type " + _children[0].getRecordType());
 		}
 
         for (int i = 1; i < _children.length; i++) {
@@ -115,7 +116,7 @@ public class ExHyperlink extends RecordContainer {
                 if ( linkDetailsA == null) linkDetailsA = (CString)_children[i];
                 else linkDetailsB = (CString)_children[i];
             } else {
-                logger.error("Record after ExHyperlinkAtom wasn't a CString, was of type " + _children[1].getRecordType());
+                logger.log(POILogger.ERROR, "Record after ExHyperlinkAtom wasn't a CString, was of type " + _children[1].getRecordType());
             }
 
         }

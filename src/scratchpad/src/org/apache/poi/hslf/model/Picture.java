@@ -21,6 +21,7 @@ import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.blip.Bitmap;
+import org.apache.poi.util.POILogger;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -178,7 +179,7 @@ public class Picture extends SimpleShape {
         List lst = bstore.getChildRecords();
         int idx = getPictureIndex();
         if (idx == 0){
-            log.error("no reference to picture data found ");
+            logger.log(POILogger.ERROR, "no reference to picture data found ");
         } else {
             EscherBSERecord bse = (EscherBSERecord)lst.get(idx-1);
             for ( int i = 0; i < pict.length; i++ ) {
@@ -186,7 +187,7 @@ public class Picture extends SimpleShape {
                     return pict[i];
                 }
             }
-            log.error("no picture found for our BSE offset " + bse.getOffset());
+            logger.log(POILogger.ERROR, "no picture found for our BSE offset " + bse.getOffset());
         }
         return null;
     }
