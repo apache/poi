@@ -83,7 +83,7 @@ public class TestPPGraphics2D extends TestCase {
 
         group = (ShapeGroup)shape[0];
         shape = group.getShapes();
-        assertEquals(shape.length, 7);
+        assertEquals(shape.length, 3);
     }
 
 }

@@ -187,26 +187,7 @@ public class SimpleShape extends Shape {
      * The color used to fill this shape.
      */
     public Color getFillColor(){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
-        EscherSimpleProperty p1 = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.FILL__FILLCOLOR);
-        EscherSimpleProperty p2= (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
-
-        int p2val = p2 == null ? 0 : p2.getPropertyValue();
-
-        Color clr = null;
-        if (p1 != null && (p2val  & 0x10) != 0){
-            int rgb = p1.getPropertyValue();
-            if (rgb >= 0x8000000) {
-                int idx = rgb % 0x8000000;
-                if(getSheet() != null) {
-                    ColorSchemeAtom ca = getSheet().getColorScheme();
-                    rgb = ca.getColor(idx);
-                }
-            }
-            Color tmp = new Color(rgb, true);
-            clr = new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed());
-        }
-        return clr;
+        return getFill().getForegroundColor();
     }
 
     /**
@@ -215,14 +196,7 @@ public class SimpleShape extends Shape {
      * @param color the background color
      */
     public void setFillColor(Color color){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
-        if(color == null) {
-            setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150000);
-        } else {
-            int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 0).getRGB();
-            setEscherProperty(opt, EscherProperties.FILL__FILLCOLOR, rgb);
-            setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150011);
-        }
+        getFill().setForegroundColor(color);
     }
 
 }

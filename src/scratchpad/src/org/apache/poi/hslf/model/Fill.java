@@ -23,8 +23,8 @@ import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.awt.*;
 import java.util.*;
@@ -36,7 +36,7 @@ import java.util.*;
  */
 public class Fill {
     // For logging
-    protected POILogger logger = POILogFactory.getLogger(this.getClass());
+    protected Log log = LogFactory.getLog(this.getClass());
 
     /**
      *  Fill with a solid color
@@ -154,8 +154,7 @@ public class Fill {
     public void setForegroundColor(Color color){
         EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);
         if (color == null) {
-            Shape.setEscherProperty(opt, EscherProperties.FILL__FILLCOLOR, -1);
-            Shape.setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150010);
+            Shape.setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150000);
         }
         else {
             int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 0).getRGB();
@@ -214,7 +213,7 @@ public class Fill {
         java.util.List lst = bstore.getChildRecords();
         int idx = p.getPropertyValue();
         if (idx == 0){
-            logger.log(POILogger.ERROR, "no reference to picture data found ");
+            log.error("no reference to picture data found ");
         } else {
             EscherBSERecord bse = (EscherBSERecord)lst.get(idx - 1);
             for ( int i = 0; i < pict.length; i++ ) {
