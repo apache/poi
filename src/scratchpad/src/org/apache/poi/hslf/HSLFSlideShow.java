@@ -45,13 +45,15 @@ import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.hslf.usermodel.ObjectData;
 import org.apache.poi.hslf.usermodel.PictureData;
+import org.apache.poi.hslf.model.Shape;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class contains the main functionality for the Powerpoint file 
@@ -63,7 +65,7 @@ import org.apache.poi.util.POILogger;
 public class HSLFSlideShow extends POIDocument
 {
     // For logging
-    protected POILogger logger = POILogFactory.getLogger(this.getClass());
+    private static final Log logger = LogFactory.getLog(HSLFSlideShow.class);
 
 	private InputStream istream;
 
@@ -289,7 +291,7 @@ public class HSLFSlideShow extends POIDocument
 		try {
 			currentUser = new CurrentUserAtom(directory);
 		} catch(IOException ie) {
-			logger.log(POILogger.ERROR, "Error finding Current User Atom:\n" + ie);
+			logger.error("Error finding Current User Atom:\n" + ie);
 			currentUser = new CurrentUserAtom();
 		}
 	}
@@ -344,8 +346,8 @@ public class HSLFSlideShow extends POIDocument
 
 			// If they type (including the bonus 0xF018) is 0, skip it
 			if(type == 0) {
-				logger.log(POILogger.ERROR, "Problem reading picture: Invalid image type 0, on picture with length " + imgsize + ".\nYou document will probably become corrupted if you save it!");
-				logger.log(POILogger.ERROR, "" + pos);
+				logger.error("Problem reading picture: Invalid image type 0, on picture with length " + imgsize + ".\nYou document will probably become corrupted if you save it!");
+				logger.error("" + pos);
 			} else {
 	            // Copy the data, ready to pass to PictureData
 	            byte[] imgdata = new byte[imgsize];
@@ -360,7 +362,7 @@ public class HSLFSlideShow extends POIDocument
 					pict.setOffset(offset);
 					p.add(pict);
 				} catch(IllegalArgumentException e) {
-					logger.log(POILogger.ERROR, "Problem reading picture: " + e + "\nYou document will probably become corrupted if you save it!");
+					logger.error("Problem reading picture: " + e + "\nYou document will probably become corrupted if you save it!");
 				}
 			}
             

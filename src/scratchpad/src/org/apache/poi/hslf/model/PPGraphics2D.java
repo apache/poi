@@ -54,11 +54,6 @@ public class PPGraphics2D extends Graphics2D implements Cloneable {
     private RenderingHints hints;
 
     /**
-     * the maximum distance that the line segments used to approximate the curved segments
-     */
-    public static final float FLATNESS = 0.1f;
-
-    /**
      * Construct Java Graphics object which translates graphic calls in ppt drawing layer.
      *
      * @param group           The shape group to write the graphics calls into.
@@ -218,29 +213,12 @@ public class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see #setComposite
      */
     public void draw(Shape shape){
-
-        PathIterator it = shape.getPathIterator(transform, FLATNESS);
-        double[] prev = null;
-        double[] coords = new double[6];
-        double[] first = new double[6];
-        if(!it.isDone()) it.currentSegment(first); //first point
-        while(!it.isDone()){
-            int type = it.currentSegment(coords);
-            if (prev != null ){
-                Line line = new Line(group);
-                applyPaint(line);
-                applyStroke(line);
-                if (type == PathIterator.SEG_LINETO) {
-                    line.setAnchor(new Rectangle2D.Double(prev[0],  prev[1], (coords[0] - prev[0]), (coords[1] - prev[1])));
-                } else if (type == PathIterator.SEG_CLOSE){
-                    line.setAnchor(new Rectangle2D.Double(coords[0],  coords[1], (first[0] - coords[0]), (first[1] - coords[1])));
-                }
-                group.addShape(line);
-            }
-            prev = new double[]{coords[0],  coords[1]};
-            it.next();
-        }
-
+        GeneralPath path = new GeneralPath(transform.createTransformedShape(shape));
+        Freeform p = new Freeform(group);
+        p.setPath(path);
+        p.getFill().setForegroundColor(null);
+        applyStroke(p);
+        group.addShape(p);
     }
 
     /**
@@ -299,7 +277,7 @@ public class PPGraphics2D extends Graphics2D implements Cloneable {
          * Even if top and bottom margins are set to 0 PowerPoint
          * always sets extra space between the text and its bounding box.
          *
-         * Approximation height = ascent*2 works good enough in most cases
+         * The approximation height = ascent*2 works good enough in most cases
          */
         float height = ascent * 2;
 
@@ -335,28 +313,12 @@ public class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see #setClip
      */
     public void fill(Shape shape){
-        PathIterator it = shape.getPathIterator(transform, FLATNESS);
-        ArrayList pnt = new ArrayList();
-        double[] coords = new double[6];
-        while(!it.isDone()){
-            int type = it.currentSegment(coords);
-            if (type != PathIterator.SEG_CLOSE) {
-                pnt.add(new Point2D.Double(coords[0], coords[1]));
-            }
-            it.next();
-        }
-        if(pnt.size() > 0){
-            Point2D[] points = (Point2D[])pnt.toArray(new Point2D[pnt.size()]);
-            Polygon p = new Polygon(group);
-            p.setPoints(points);
-            applyPaint(p);
-
-            p.setLineColor(null);   //Fills must be "No Line"
-
-            Rectangle2D bounds = transform.createTransformedShape(shape).getBounds2D();
-            p.setAnchor(bounds);
-            group.addShape(p);
-        }
+        GeneralPath path = new GeneralPath(transform.createTransformedShape(shape));
+        Freeform p = new Freeform(group);
+        p.setPath(path);
+        applyPaint(p);
+        p.setLineColor(null);   //Fills must be "No Line"
+        group.addShape(p);
     }
 
     /**
@@ -459,11 +421,8 @@ public class PPGraphics2D extends Graphics2D implements Cloneable {
      */
     public void drawRoundRect(int x, int y, int width, int height,
                               int arcWidth, int arcHeight){
-        AutoShape shape = new AutoShape(ShapeTypes.RoundRectangle, group);
-        shape.setFillColor(null);
-        applyStroke(shape);
-        shape.setAnchor(new Rectangle2D.Double(x,  y, width, height));
-        group.addShape(shape);
+        RoundRectangle2D rect = new RoundRectangle2D.Float(x, y, width, height, arcWidth, arcHeight);
+        draw(rect);
      }
 
     /**
@@ -493,11 +452,8 @@ public class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see         java.awt.Graphics#drawOval
      */
     public void fillOval(int x, int y, int width, int height){
-        AutoShape shape = new AutoShape(ShapeTypes.Ellipse, group);
-        applyPaint(shape);
-        applyStroke(shape);
-        shape.setAnchor(new Rectangle2D.Double(x,  y, width, height));
-        group.addShape(shape);
+        Ellipse2D oval = new Ellipse2D.Float(x, y, width, height);
+        fill(oval);
     }
 
     /**
@@ -518,11 +474,9 @@ public class PPGraphics2D extends Graphics2D implements Cloneable {
      */
     public void fillRoundRect(int x, int y, int width, int height,
                               int arcWidth, int arcHeight){
-        AutoShape shape = new AutoShape(ShapeTypes.RoundRectangle, group);
-        applyPaint(shape);
-        applyStroke(shape);
-        shape.setAnchor(new Rectangle2D.Double(x,  y, width, height));
-        group.addShape(shape);
+
+        RoundRectangle2D rect = new RoundRectangle2D.Float(x, y, width, height, arcWidth, arcHeight);
+        fill(rect);
     }
 
     /**
@@ -563,11 +517,8 @@ public class PPGraphics2D extends Graphics2D implements Cloneable {
      */
     public void fillArc(int x, int y, int width, int height,
                         int startAngle, int arcAngle){
-        AutoShape shape = new AutoShape(ShapeTypes.Arc, group);
-        applyPaint(shape);
-        applyStroke(shape);
-        shape.setAnchor(new Rectangle2D.Double(x,  y, width, height));
-        group.addShape(shape);
+        Arc2D arc = new Arc2D.Float(x, y, width, height, startAngle, arcAngle, Arc2D.PIE);
+        fill(arc);
     }
 
     /**
@@ -609,11 +560,8 @@ public class PPGraphics2D extends Graphics2D implements Cloneable {
      */
     public void drawArc(int x, int y, int width, int height,
                         int startAngle, int arcAngle) {
-        AutoShape shape = new AutoShape(ShapeTypes.Arc, group);
-        shape.setFillColor(null);
-        applyStroke(shape);
-        shape.setAnchor(new Rectangle2D.Double(x,  y, width, height));
-        group.addShape(shape);
+        Arc2D arc = new Arc2D.Float(x, y, width, height, startAngle, arcAngle, Arc2D.OPEN);
+        draw(arc);
     }
 
 
@@ -659,11 +607,8 @@ public class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see         java.awt.Graphics#fillOval
      */
     public void drawOval(int x, int y, int width, int height){
-        AutoShape shape = new AutoShape(ShapeTypes.Ellipse, group);
-        shape.setFillColor(null);
-        applyStroke(shape);
-        shape.setAnchor(new Rectangle2D.Double(x,  y, width, height));
-        group.addShape(shape);
+        Ellipse2D oval = new Ellipse2D.Float(x, y, width, height);
+        draw(oval);
     }
 
     /**
@@ -998,11 +943,8 @@ public class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see           java.awt.Graphics#drawRect
      */
     public void fillRect(int x, int y, int width, int height){
-        AutoShape shape = new AutoShape(ShapeTypes.Rectangle, group);
-        applyPaint(shape);
-        applyStroke(shape);
-        shape.setAnchor(new Rectangle2D.Double(x,  y, width, height));
-        group.addShape(shape);
+        Rectangle rect = new Rectangle(x, y, width, height);
+        fill(rect);
     }
 
     /**
@@ -1022,12 +964,8 @@ public class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see          java.awt.Graphics#clearRect
      */
     public void drawRect(int x, int y, int width, int height) {
-        AutoShape shape = new AutoShape(ShapeTypes.Rectangle, group);
-        shape.setFillColor(null);
-        applyStroke(shape);
-        shape.setAnchor(new Rectangle2D.Double(x,  y, width, height));
-        group.addShape(shape);
-
+        Rectangle rect = new Rectangle(x, y, width, height);
+        draw(rect);
     }
 
     /**
