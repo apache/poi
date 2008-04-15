@@ -92,7 +92,7 @@ public class RecordTypes {
     public static final Type TextBookmarkAtom = new Type(4007,null);
     public static final Type TextBytesAtom = new Type(4008,TextBytesAtom.class);
     public static final Type TxSIStyleAtom = new Type(4009,null);
-    public static final Type TextSpecInfoAtom = new Type(4010,null);
+    public static final Type TextSpecInfoAtom = new Type(4010, TextSpecInfoAtom.class);
     public static final Type DefaultRulerAtom = new Type(4011,null);
     public static final Type FontEntityAtom = new Type(4023,FontEntityAtom.class);
     public static final Type FontEmbeddedData = new Type(4024,null);
