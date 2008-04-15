@@ -61,7 +61,7 @@ public class FontEntityAtom extends RecordAtom {
     /**
      * Create a new instance of <code>FontEntityAtom</code>
      */
-    protected FontEntityAtom() {
+    public FontEntityAtom() {
         _recdata = new byte[68];
 
         _header = new byte[8];
@@ -124,15 +124,100 @@ public class FontEntityAtom extends RecordAtom {
         }
     }
 
-    protected void setFontIndex(int idx){
+    public void setFontIndex(int idx){
         LittleEndian.putShort(_header, 0, (short)idx);
     }
 
-    protected int getFontIndex(){
-        return LittleEndian.getShort(_header, 0);
+    public int getFontIndex(){
+        return LittleEndian.getShort(_header, 0) >> 4;
     }
 
-	/**
+    /**
+     * set the character set
+     *
+     * @param charset - characterset
+     */
+    public void setCharSet(int charset){
+        _recdata[64] = (byte)charset;
+    }
+
+    /**
+     * get the character set
+     *
+     * @return charset - characterset
+     */
+    public int getCharSet(){
+        return _recdata[64];
+    }
+
+    /**
+     * set the font flags
+     * Bit 1: If set, font is subsetted
+     *
+     * @param flags - the font flags
+     */
+    public void setFontFlags(int flags){
+        _recdata[65] = (byte)flags;
+    }
+
+    /**
+     * get the character set
+     * Bit 1: If set, font is subsetted
+     *
+     * @return the font flags
+     */
+    public int getFontFlags(){
+        return _recdata[65];
+    }
+
+    /**
+     * set the font type
+     * <p>
+     * Bit 1: Raster Font
+     * Bit 2: Device Font
+     * Bit 3: TrueType Font
+     * </p>
+     *
+     * @param type - the font type
+     */
+    public void setFontType(int type){
+        _recdata[66] = (byte)type;
+    }
+
+    /**
+     * get the font type
+     * <p>
+     * Bit 1: Raster Font
+     * Bit 2: Device Font
+     * Bit 3: TrueType Font
+     * </p>
+     *
+     * @return the font type
+     */
+    public int getFontType(){
+        return _recdata[66];
+    }
+
+    /**
+     * set lfPitchAndFamily
+     *
+     *
+     * @param val - Corresponds to the lfPitchAndFamily field of the Win32 API LOGFONT structure
+     */
+    public void setPitchAndFamily(int val){
+        _recdata[67] = (byte)val;
+    }
+
+    /**
+     * get lfPitchAndFamily
+     *
+     * @return corresponds to the lfPitchAndFamily field of the Win32 API LOGFONT structure
+     */
+    public int getPitchAndFamily(){
+        return _recdata[67];
+    }
+
+    /**
 	 * Write the contents of the record back, so it can be written to disk
 	 */
 	public void writeOut(OutputStream out) throws IOException {
