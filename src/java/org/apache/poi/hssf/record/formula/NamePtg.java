@@ -18,7 +18,8 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFName;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
 
@@ -48,26 +49,24 @@ public class NamePtg
      * in the workbook.  The search for the name record is case insensitive.  If it is not found, 
      * it gets created.
      */
-    public NamePtg(String name, Workbook book) {
+    public NamePtg(String name, HSSFWorkbook book) {
         field_1_label_index = (short)(1+getOrCreateNameRecord(book, name)); // convert to 1-based
     }
     /**
      * @return zero based index of the found or newly created defined name record. 
      */
-    private static final int getOrCreateNameRecord(Workbook book, String name) {
-        // perhaps this logic belongs in Workbook
-        int countNames = book.getNumNames();
-        NameRecord rec;
+    private static final int getOrCreateNameRecord(HSSFWorkbook book, String name) {
+        // perhaps this logic belongs in Workbook?
+        int countNames = book.getNumberOfNames();
         for (int i = 0; i < countNames; i++) {
-            rec = book.getNameRecord(i);
-            if (name.equalsIgnoreCase(rec.getNameText())) {
+            if(name.equalsIgnoreCase( book.getNameName(i) )) {
                 return i; 
             }
         }
-        rec = new NameRecord();
-        rec.setNameText(name);
-        rec.setNameTextLength((byte) name.length());
-        book.addName(rec);
+        
+        HSSFName nameObj = book.createName();
+        nameObj.setNameName(name);
+        
         return countNames;
     }
 
@@ -100,10 +99,9 @@ public class NamePtg
         return SIZE;
     }
 
-    public String toFormulaString(Workbook book)
+    public String toFormulaString(HSSFWorkbook book)
     {
-        NameRecord rec = book.getNameRecord(field_1_label_index - 1);
-        return rec.getNameText();
+    	return book.getNameName(field_1_label_index - 1);
     }
     
     public byte getDefaultOperandClass() {return Ptg.CLASS_REF;}

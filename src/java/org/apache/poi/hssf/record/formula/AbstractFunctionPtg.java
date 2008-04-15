@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 
@@ -73,7 +73,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         return field_2_fnc_index == FUNCTION_INDEX_EXTERNAL;
     }
 
-    public String toFormulaString(Workbook book) {
+    public String toFormulaString(HSSFWorkbook book) {
         return getName();
     }
 

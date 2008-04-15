@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
@@ -70,7 +70,7 @@ public class BoolPtg
         return SIZE;
     }
 
-    public String toFormulaString(Workbook book)
+    public String toFormulaString(HSSFWorkbook book)
     {
         return field_1_value ? "TRUE" : "FALSE";
     }

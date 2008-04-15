@@ -17,6 +17,10 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
+
+import java.util.List;
 
 /**
  * Create a <code>Shape</code> object depending on its type
@@ -24,27 +28,53 @@ import org.apache.poi.ddf.*;
  * @author Yegor Kozlov
  */
 public class ShapeFactory {
+    // For logging
+    protected static POILogger logger = POILogFactory.getLogger(ShapeFactory.class);
 
     /**
      * Create a new shape from the data provided.  
      */
     public static Shape createShape(EscherContainerRecord spContainer, Shape parent){
         if (spContainer.getRecordId() == EscherContainerRecord.SPGR_CONTAINER){
-            return new ShapeGroup(spContainer, parent);
+            return createShapeGroup(spContainer, parent);
+        } else {
+            return createSimpeShape(spContainer, parent);
+
+        }
+    }
+
+    public static ShapeGroup createShapeGroup(EscherContainerRecord spContainer, Shape parent){
+        ShapeGroup group = null;
+        UnknownEscherRecord opt = (UnknownEscherRecord)Shape.getEscherChild((EscherContainerRecord)spContainer.getChild(0), (short)0xF122);
+        if(opt != null){
+            try {
+                EscherPropertyFactory f = new EscherPropertyFactory();
+                List props = f.createProperties( opt.getData(), 0, opt.getInstance() );
+                EscherSimpleProperty p = (EscherSimpleProperty)props.get(0);
+                if(p.getPropertyNumber() == 0x39F && p.getPropertyValue() == 1){
+                    group = new ShapeGroup(spContainer, parent);
+                } else {
+                    group = new ShapeGroup(spContainer, parent);
+                }
+            } catch (Exception e){
+                logger.log(POILogger.WARN, e.getMessage());
+                group = new ShapeGroup(spContainer, parent);
+            }
+        }  else {
+            group = new ShapeGroup(spContainer, parent);
         }
 
+        return group;
+     }
+
+    public static Shape createSimpeShape(EscherContainerRecord spContainer, Shape parent){
         Shape shape;
         EscherSpRecord spRecord = spContainer.getChildById(EscherSpRecord.RECORD_ID);
 
         int type = spRecord.getOptions() >> 4;
         switch (type){
             case ShapeTypes.TextBox:
-            case ShapeTypes.Rectangle:
-                EscherTextboxRecord txtbox = (EscherTextboxRecord)Shape.getEscherChild(spContainer, EscherTextboxRecord.RECORD_ID);
-                if (txtbox == null)
-                    shape = new AutoShape(spContainer, parent);
-                else
-                    shape = new TextBox(spContainer, parent);
+                shape = new TextBox(spContainer, parent);
                 break;
             case ShapeTypes.PictureFrame:
                 shape = new Picture(spContainer, parent);
@@ -53,16 +83,21 @@ public class ShapeFactory {
                 shape = new Line(spContainer, parent);
                 break;
             case ShapeTypes.NotPrimitive:
-                if ((spRecord.getFlags() & EscherSpRecord.FLAG_GROUP) != 0)
-                     shape = new ShapeGroup(spContainer, parent);
-                else
+                EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(spContainer, EscherOptRecord.RECORD_ID);
+                EscherProperty prop = Shape.getEscherProperty(opt, EscherProperties.GEOMETRY__VERTICES);
+                if(prop != null)
+                    shape = new Freeform(spContainer, parent);
+                else {
+
+                    logger.log(POILogger.WARN, "Creating AutoShape for a NotPrimitive shape");
                     shape = new AutoShape(spContainer, parent);
+                }
                 break;
             default:
                 shape = new AutoShape(spContainer, parent);
                 break;
         }
         return shape;
-    }
 
+    }
 }

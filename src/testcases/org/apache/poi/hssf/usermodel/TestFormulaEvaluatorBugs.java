@@ -203,7 +203,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		assertEquals(2, ptg.getLastColumn());
 		assertEquals(0, ptg.getFirstRow());
 		assertEquals(65535, ptg.getLastRow());
-		assertEquals("C:C", ptg.toFormulaString(wb.getWorkbook()));
+		assertEquals("C:C", ptg.toFormulaString(wb));
 
 		// Will show as C:C, but won't know how many
 		//  rows it covers as we don't have the sheet

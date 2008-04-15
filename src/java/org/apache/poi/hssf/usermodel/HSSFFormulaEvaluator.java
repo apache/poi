@@ -20,12 +20,8 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.record.formula.OperationPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.FormulaEvaluator.CellValue;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -44,7 +40,7 @@ public class HSSFFormulaEvaluator extends FormulaEvaluator {
      *  formula evaluated. 
      */
     public static FormulaParser getUnderlyingParser(HSSFWorkbook workbook, String formula) {
-        return new FormulaParser(formula, workbook.getWorkbook());
+        return new FormulaParser(formula, workbook);
     }
     
 
@@ -57,7 +53,7 @@ public class HSSFFormulaEvaluator extends FormulaEvaluator {
      */
     void inspectPtgs(String formula) {
     	HSSFWorkbook hssfWb = (HSSFWorkbook)workbook;
-        FormulaParser fp = new FormulaParser(formula, hssfWb.getWorkbook());
+        FormulaParser fp = new FormulaParser(formula, hssfWb);
         fp.parse();
         Ptg[] ptgs = fp.getRPNPtg();
         System.out.println("<ptg-group>");

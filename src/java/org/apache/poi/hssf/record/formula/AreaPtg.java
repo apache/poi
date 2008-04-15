@@ -24,7 +24,7 @@ import org.apache.poi.util.BitFieldFactory;
 
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
@@ -303,11 +303,11 @@ public class AreaPtg
         field_4_last_column = column;
     }
     
-    public String toFormulaString(Workbook book)
+    public String toFormulaString(HSSFWorkbook book)
     {
     	return toFormulaString(this, book);
     }
-    protected static String toFormulaString(AreaI area, Workbook book) {
+    protected static String toFormulaString(AreaI area, HSSFWorkbook book) {
     	CellReference topLeft = new CellReference(area.getFirstRow(),area.getFirstColumn(),!area.isFirstRowRelative(),!area.isFirstColRelative());
     	CellReference botRight = new CellReference(area.getLastRow(),area.getLastColumn(),!area.isLastRowRelative(),!area.isLastColRelative());
     	

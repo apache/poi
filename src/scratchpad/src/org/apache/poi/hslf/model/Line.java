@@ -106,14 +106,14 @@ public class Line extends SimpleShape {
     }
 
     protected EscherContainerRecord createSpContainer(boolean isChild){
-        EscherContainerRecord spcont = super.createSpContainer(isChild);
+        _escherContainer = super.createSpContainer(isChild);
 
-        EscherSpRecord spRecord = spcont.getChildById(EscherSpRecord.RECORD_ID);
+        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
         short type = (ShapeTypes.Line << 4) | 0x2;
         spRecord.setOptions(type);
   
         //set default properties for a line
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(spcont, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
 
         //default line properties
         setEscherProperty(opt, EscherProperties.GEOMETRY__SHAPEPATH, 4);
@@ -123,7 +123,7 @@ public class Line extends SimpleShape {
         setEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0xA0008);
         setEscherProperty(opt, EscherProperties.SHADOWSTYLE__COLOR, 0x8000002);
 
-        return spcont;
+        return _escherContainer;
     }
 
 }

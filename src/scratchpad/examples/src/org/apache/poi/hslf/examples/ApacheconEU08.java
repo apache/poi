@@ -459,6 +459,7 @@ public class ApacheconEU08 {
         TextBox box2 = new TextBox();
         TextRun tr2 = box2.getTextRun();
         tr2.setRunType(TextHeaderAtom.BODY_TYPE);
+        tr2.getRichTextRuns()[0].setFontSize(32);
         tr2.setText(
                 "Support for more PowerPoint functionality\r" +
                 "Rendering slides into java.awt.Graphics2D");
@@ -477,6 +478,7 @@ public class ApacheconEU08 {
         TextBox box4 = new TextBox();
         TextRun tr4 = box4.getTextRun();
         tr4.setRunType(TextHeaderAtom.BODY_TYPE);
+        tr4.getRichTextRuns()[0].setFontSize(32);
         tr4.setText(
                 "Integration with Apache FOP - Formatting Objects Processor");
         box4.setAnchor(new Rectangle(36, 290, 648, 90));

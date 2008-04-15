@@ -19,7 +19,7 @@ package org.apache.poi.hssf.record.formula;
 
 import java.util.List;
 
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
@@ -69,7 +69,7 @@ public class UnaryPlusPtg extends OperationPtg
     }
     
     /** Implementation of method from Ptg */
-    public String toFormulaString(Workbook book)
+    public String toFormulaString(HSSFWorkbook book)
     {
         return "+";
     }

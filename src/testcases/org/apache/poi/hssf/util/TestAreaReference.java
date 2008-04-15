@@ -211,12 +211,12 @@ public final class TestAreaReference extends TestCase {
         Area3DPtg ptgB = (Area3DPtg)def.get(1);
         Area3DPtg ptgC = (Area3DPtg)def.get(2);
         UnionPtg ptgD = (UnionPtg)def.get(3);
-        assertEquals("", ptgA.toFormulaString(workbook));
-        assertEquals(refA, ptgB.toFormulaString(workbook));
-        assertEquals(refB, ptgC.toFormulaString(workbook));
-        assertEquals(",", ptgD.toFormulaString(workbook));
+        assertEquals("", ptgA.toFormulaString(wb));
+        assertEquals(refA, ptgB.toFormulaString(wb));
+        assertEquals(refB, ptgC.toFormulaString(wb));
+        assertEquals(",", ptgD.toFormulaString(wb));
 
-        assertEquals(ref, nr.getAreaReference(workbook));
+        assertEquals(ref, nr.getAreaReference(wb));
 
         // Check the high level definition
         int idx = wb.getNameIndex("test");

@@ -29,7 +29,7 @@ import org.apache.poi.ss.usermodel.Name;
  */
 
 public class HSSFName implements Name {
-    private Workbook         book;
+    private HSSFWorkbook         book;
     private NameRecord       name;
     
     /** Creates new HSSFName   - called by HSSFWorkbook to create a sheet from
@@ -40,7 +40,7 @@ public class HSSFName implements Name {
      * @param book lowlevel Workbook object associated with the sheet.
      */
     
-    protected HSSFName(Workbook book, NameRecord name) {
+    protected HSSFName(HSSFWorkbook book, NameRecord name) {
         this.book = book;
         this.name = name;
     }
@@ -53,7 +53,7 @@ public class HSSFName implements Name {
         String result ;
         short indexToExternSheet = name.getExternSheetNumber();
         
-        result = book.findSheetNameFromExternSheet(indexToExternSheet);
+        result = book.getWorkbook().findSheetNameFromExternSheet(indexToExternSheet);
         
         return result;
     }
@@ -77,11 +77,12 @@ public class HSSFName implements Name {
     public void setNameName(String nameName){
         name.setNameText(nameName);
         name.setNameTextLength((byte)nameName.length());
+        Workbook wb = book.getWorkbook();
         
         //Check to ensure no other names have the same case-insensitive name
-        for ( int i = book.getNumNames()-1; i >=0; i-- )
+        for ( int i = wb.getNumNames()-1; i >=0; i-- )
         {
-        	NameRecord rec = book.getNameRecord(i);
+        	NameRecord rec = wb.getNameRecord(i);
         	if (rec != name) {
         		if (rec.getNameText().equalsIgnoreCase(getNameName()))
         			throw new IllegalArgumentException("The workbook already contains this name (case-insensitive)");
@@ -111,7 +112,7 @@ public class HSSFName implements Name {
     private void setSheetName(String sheetName){
         int sheetNumber = book.getSheetIndex(sheetName);
 
-        short externSheetNumber = book.checkExternSheet(sheetNumber);
+        short externSheetNumber = book.getExternalSheetIndex(sheetNumber);
         name.setExternSheetNumber(externSheetNumber);
 //        name.setIndexToSheet(externSheetNumber);
 
