@@ -24,12 +24,7 @@ import java.util.LinkedList;
 import java.util.Vector;
 
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.RecordContainer;
-import org.apache.poi.hslf.record.StyleTextPropAtom;
-import org.apache.poi.hslf.record.TextBytesAtom;
-import org.apache.poi.hslf.record.TextCharsAtom;
-import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.util.StringUtil;
@@ -50,6 +45,7 @@ public class TextRun
 	protected TextBytesAtom  _byteAtom;
 	protected TextCharsAtom  _charAtom;
 	protected StyleTextPropAtom _styleAtom;
+    protected TextSpecInfoAtom  _specAtom;
 	protected boolean _isUnicode;
 	protected RichTextRun[] _rtRuns;
 	private SlideShow slideShow;
@@ -477,6 +473,18 @@ public class TextRun
 			// Recreate rich text run with no styling
 			_rtRuns[0] = new RichTextRun(this,0,s.length());
 		}
+
+        /**
+         * If TextSpecInfoAtom is present, we must update the text size,
+         * otherwise the ppt will be corrupted
+         */
+        if(_records != null) for (int i = 0; i < _records.length; i++) {
+            if(_records[i] instanceof TextSpecInfoAtom){
+                TextSpecInfoAtom specAtom = (TextSpecInfoAtom)_records[i];
+                specAtom.setTextSize(s.length());
+            }
+
+        }
 	}
 
 	/**
