@@ -293,7 +293,8 @@ public final class TestCFRuleRecord extends TestCase
 		int flags = LittleEndian.getInt(data, 10);
 		assertEquals("unused flags should be 111", 0x00380000, flags & 0x00380000);
 		assertEquals("undocumented flags should be 0000", 0, flags & 0x03C00000); // Otherwise Excel gets unhappy
-		assertEquals(0xA03FFFFF, flags);
+		// check all remaining flag bits (some are not well understood yet)
+		assertEquals(0x203FFFFF, flags);
 	}
 
 

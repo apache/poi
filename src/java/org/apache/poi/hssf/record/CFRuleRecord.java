@@ -30,6 +30,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Conditional Formatting Rule Record.
@@ -63,7 +64,7 @@ public final class CFRuleRecord extends Record
 
 	private int   field_5_options;
 
-	private static final BitField modificationBits = bf(0x83FFFFFF); // Bits: font,align,bord,patt,prot
+	private static final BitField modificationBits = bf(0x003FFFFF); // Bits: font,align,bord,patt,prot
 	private static final BitField alignHor      = bf(0x00000001); // 0 = Horizontal alignment modified
 	private static final BitField alignVer      = bf(0x00000002); // 0 = Vertical alignment modified
 	private static final BitField alignWrap     = bf(0x00000004); // 0 = Text wrapped flag modified
@@ -608,6 +609,8 @@ public final class CFRuleRecord extends Record
 	{
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("[CFRULE]\n");
+		buffer.append("    OPTION FLAGS=0x"+Integer.toHexString(getOptions()));
+		/*
 		if( containsFontFormattingBlock())
 		{
 			buffer.append(fontFormatting.toString());
@@ -620,7 +623,7 @@ public final class CFRuleRecord extends Record
 		{
 			buffer.append(patternFormatting.toString());
 		}
-		buffer.append("[/CFRULE]\n");
+		buffer.append("[/CFRULE]\n");*/
 		return buffer.toString();
 	}
 	

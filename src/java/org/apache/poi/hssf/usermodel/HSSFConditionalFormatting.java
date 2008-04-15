@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
@@ -50,52 +49,46 @@ import org.apache.poi.hssf.util.Region;
  * To create a new Conditional Formatting set use the following approach:
  * 
  * <PRE>
+ * 
+ * // Define a Conditional Formatting rule, which triggers formatting
+ * // when cell's value is greater or equal than 100.0 and
+ * // applies patternFormatting defined below.
+ * HSSFConditionalFormattingRule rule = sheet.createConditionalFormattingRule(
+ *     ComparisonOperator.GE, 
+ *     "100.0", // 1st formula 
+ *     null     // 2nd formula is not used for comparison operator GE
+ * );
+ * 
  * // Create pattern with red background
- * HSSFPatternFormatting patternFormatting = new HSSFPatternFormatting();
+ * HSSFPatternFormatting patternFmt = rule.cretePatternFormatting();
  * patternFormatting.setFillBackgroundColor(HSSFColor.RED.index);
  * 
+ * // Define a region containing first column
  * Region [] regions =
  * {
- *     // Define a region containing first column
  *     new Region(1,(short)1,-1,(short)1)
  * };
  *     
- * HSSFConditionalFormattingRule[] rules = 
- * {
- *     // Define a Conditional Formatting rule, which triggers formatting
- *     // when cell's value is greater or equal than 100.0 and
- *     // applies patternFormatting defined above.
- *         
- *     sheet.createConditionalFormattingRule(
- *             HSSFConditionalFormattingRule.COMPARISON_OPERATOR_GE, 
- *             "100.0", // 1st formula 
- *             null,    // 2nd formula is not used for comparison operator GE
- *             null,    // do not override Font Formatting
- *             null,    // do not override Border Formatting
- *             patternFormatting
- *     )
- * };
- *     
- * // Apply Conditional Formatting rules defined above to the regions  
- * sheet.addConditionalFormatting(regions, rules);
+ * // Apply Conditional Formatting rule defined above to the regions  
+ * sheet.addConditionalFormatting(regions, rule);
  * </PRE>
  * 
  * @author Dmitriy Kumshayev
  */
 public final class HSSFConditionalFormatting
 {
-	private final HSSFWorkbook workbook;
+	private final HSSFWorkbook _workbook;
 	private final CFRecordsAggregate cfAggregate;
 
-	HSSFConditionalFormatting(HSSFSheet sheet, CFRecordsAggregate cfAggregate)
+	HSSFConditionalFormatting(HSSFWorkbook workbook, CFRecordsAggregate cfAggregate)
 	{
-		if(sheet == null) {
-			throw new IllegalArgumentException("sheet must not be null");
+		if(workbook == null) {
+			throw new IllegalArgumentException("workbook must not be null");
 		}
 		if(cfAggregate == null) {
 			throw new IllegalArgumentException("cfAggregate must not be null");
 		}
-		workbook = sheet.workbook;
+		_workbook = workbook;
 		this.cfAggregate = cfAggregate;
 	}
 	CFRecordsAggregate getCFRecordsAggregate() {
@@ -141,7 +134,7 @@ public final class HSSFConditionalFormatting
 	public HSSFConditionalFormattingRule getRule(int idx)
 	{
 		CFRuleRecord ruleRecord = cfAggregate.getRule(idx);
-		return new HSSFConditionalFormattingRule(workbook, ruleRecord);
+		return new HSSFConditionalFormattingRule(_workbook, ruleRecord);
 	}
 
 	/**

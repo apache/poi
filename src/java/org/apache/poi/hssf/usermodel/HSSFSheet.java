@@ -17,35 +17,33 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.hssf.model.FormulaParser;
-import org.apache.poi.hssf.model.Sheet;
-import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.ReferencePtg;
-import org.apache.poi.hssf.util.HSSFCellRangeAddress;
-import org.apache.poi.hssf.util.HSSFDataValidation;
-import org.apache.poi.hssf.util.Region;
-import org.apache.poi.hssf.util.PaneInformation;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
 import java.io.PrintWriter;
+import java.text.AttributedString;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 import java.util.TreeMap;
-import java.text.AttributedString;
-import java.text.NumberFormat;
-import java.text.DecimalFormat;
-import java.awt.font.TextLayout;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextAttribute;
 
-import java.awt.geom.AffineTransform;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.hssf.model.FormulaParser;
+import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.ReferencePtg;
+import org.apache.poi.hssf.util.HSSFCellRangeAddress;
+import org.apache.poi.hssf.util.HSSFDataValidation;
+import org.apache.poi.hssf.util.PaneInformation;
+import org.apache.poi.hssf.util.Region;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * High level representation of a worksheet.
@@ -1839,135 +1837,7 @@ public final class HSSFSheet {
         return null;
     }
 
-
-     /**
-      * A factory method allowing to create a conditional formatting rule
-      * with a cell comparison operator and
-      * formatting rules such as font format, border format and pattern format
-      *
-      * @param comparisonOperation - a constant value from
-      *         <tt>{@link HSSFConditionalFormattingRule.ComparisonOperator}</tt>: <p>
-      * <ul>
-      *         <li>BETWEEN</li>
-      *         <li>NOT_BETWEEN</li>
-      *         <li>EQUAL</li>
-      *         <li>NOT_EQUAL</li>
-      *         <li>GT</li>
-      *         <li>LT</li>
-      *         <li>GE</li>
-      *         <li>LE</li>
-      * </ul>
-      * </p>
-      * @param formula1 - formula for the valued, compared with the cell
-      * @param formula2 - second formula (only used with
-      * {@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_BETWEEN}) and
-      * {@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_BETWEEN} operations)
-      * @param fontFmt - font formatting rules (may be <code>null</code>)
-      * @param bordFmt - border formatting rules (may be <code>null</code>)
-      * @param patternFmt - pattern formatting rules (may be <code>null</code>)
-      */
-     public HSSFConditionalFormattingRule createConditionalFormattingRule(
-             byte comparisonOperation,
-             String formula1,
-             String formula2,
-             HSSFFontFormatting fontFmt,
-             HSSFBorderFormatting bordFmt,
-             HSSFPatternFormatting patternFmt) {
-    	 
-        CFRuleRecord rr = CFRuleRecord.create(workbook, comparisonOperation, formula1, formula2);
-        return new HSSFConditionalFormattingRule(workbook, rr, fontFmt, bordFmt, patternFmt);
-     }
-
-     /**
-      * A factory method allowing to create a conditional formatting rule with a formula
-      * and formatting rules such as font format, border format and pattern format. <br>
-      *
-      * The formatting rules are applied by Excel when the value of the formula not equal to 0.
-      *
-      * @param formula - formula for the valued, compared with the cell
-      * @param fontFmt - font formatting rules (may be <code>null</code>)
-      * @param bordFmt - border formatting rules (may be <code>null</code>)
-      * @param patternFmt - pattern formatting rules (may be <code>null</code>)
-      */
-     public HSSFConditionalFormattingRule createConditionalFormattingRule(
-             String formula,
-             HSSFFontFormatting fontFmt,
-             HSSFBorderFormatting bordFmt,
-             HSSFPatternFormatting patternFmt) {
-         CFRuleRecord rr = CFRuleRecord.create(workbook, formula);
-         return new HSSFConditionalFormattingRule(workbook, rr, fontFmt, bordFmt, patternFmt);
-     }
-
-     /**
-      * Adds a copy of HSSFConditionalFormatting object to the sheet
-      * <p>This method could be used to copy HSSFConditionalFormatting object
-      * from one sheet to another. For example:
-      * <pre>
-      * HSSFConditionalFormatting cf = sheet.getConditionalFormattingAt(index);
-      * newSheet.addConditionalFormatting(cf);
-      * </pre>
-      *
-      * @param cf HSSFConditionalFormatting object
-      * @return index of the new Conditional Formatting object
-      */
-     public int addConditionalFormatting( HSSFConditionalFormatting cf ) {
-         CFRecordsAggregate cfraClone = cf.getCFRecordsAggregate().cloneCFAggregate();
-
-         return sheet.addConditionalFormatting(cfraClone);
-     }
-
-     /**
-      * Allows to add a new Conditional Formatting set to the sheet.
-      *
-      * @param regions - list of rectangular regions to apply conditional formatting rules
-      * @param hcfRules - set of up to three conditional formatting rules
-      *
-      * @return index of the newly created Conditional Formatting object
-      */
-
-    public int addConditionalFormatting(Region [] regions, HSSFConditionalFormattingRule [] hcfRules) {
-        if (regions == null) {
-            throw new IllegalArgumentException("regions must not be null");
-        }
-        if (hcfRules == null) {
-            throw new IllegalArgumentException("hcfRules must not be null");
-        }
-
-        CFRuleRecord[] rules = new CFRuleRecord[hcfRules.length];
-        for (int i = 0; i != hcfRules.length; i++) {
-            rules[i] = hcfRules[i].getCfRuleRecord();
-        }
-        CFRecordsAggregate cfra = new CFRecordsAggregate(regions, rules);
-        return sheet.addConditionalFormatting(cfra);
-     }
-
-    /**
-     * gets Conditional Formatting object at a particular index
-     * 
-     * @param index
-     *            of the Conditional Formatting object to fetch
-     * @return Conditional Formatting object
-     */
-    public HSSFConditionalFormatting getConditionalFormattingAt(int index) {
-        CFRecordsAggregate cf = sheet.getCFRecordsAggregateAt(index);
-        if (cf == null) {
-            return null;
-        }
-        return new HSSFConditionalFormatting(this,cf);
-    }
-
-    /**
-     * @return number of Conditional Formatting objects of the sheet
-     */
-    public int getNumConditionalFormattings() {
-        return sheet.getNumConditionalFormattings();
-    }
-
-    /**
-     * removes a Conditional Formatting object by index
-     * @param index of a Conditional Formatting object to remove
-     */
-    public void removeConditionalFormatting(int index) {
-        sheet.removeConditionalFormatting(index);
+    public HSSFSheetConditionalFormatting getSheetConditionalFormatting() {
+        return new HSSFSheetConditionalFormatting(workbook, sheet);
     }
 }
