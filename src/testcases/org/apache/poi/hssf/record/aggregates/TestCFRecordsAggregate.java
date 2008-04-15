@@ -24,12 +24,12 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
 import org.apache.poi.hssf.record.cf.CellRange;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Tests the serialization and deserialization of the CFRecordsAggregate
@@ -42,7 +42,7 @@ public final class TestCFRecordsAggregate extends TestCase
 
 	public void testCFRecordsAggregate() 
 	{
-		Workbook workbook = Workbook.createWorkbook();
+		HSSFWorkbook workbook = new HSSFWorkbook();
 		List recs = new ArrayList();
 		CFHeaderRecord header = new CFHeaderRecord();
 		CFRuleRecord rule1 = CFRuleRecord.create(workbook, "7");

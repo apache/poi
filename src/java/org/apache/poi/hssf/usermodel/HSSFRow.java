@@ -55,7 +55,7 @@ public final class HSSFRow implements Comparable, Row {
      * reference to containing low level Workbook
      */
 
-    private Workbook book;
+    private HSSFWorkbook book;
 
     /**
      * reference to containing Sheet
@@ -77,7 +77,7 @@ public final class HSSFRow implements Comparable, Row {
      */
 
     //protected HSSFRow(Workbook book, Sheet sheet, short rowNum)
-    protected HSSFRow(Workbook book, Sheet sheet, int rowNum)
+    protected HSSFRow(HSSFWorkbook book, Sheet sheet, int rowNum)
     {
         this.rowNum = rowNum;
         this.book = book;
@@ -101,7 +101,7 @@ public final class HSSFRow implements Comparable, Row {
      * @see org.apache.poi.hssf.usermodel.HSSFSheet#createRow(int)
      */
 
-    protected HSSFRow(Workbook book, Sheet sheet, RowRecord record)
+    protected HSSFRow(HSSFWorkbook book, Sheet sheet, RowRecord record)
     {
         this.book = book;
         this.sheet = sheet;

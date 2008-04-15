@@ -48,19 +48,19 @@ public class SimpleShape extends Shape {
      * @return the record container which holds this shape
      */
     protected EscherContainerRecord createSpContainer(boolean isChild) {
-        EscherContainerRecord spContainer = new EscherContainerRecord();
-        spContainer.setRecordId( EscherContainerRecord.SP_CONTAINER );
-        spContainer.setOptions((short)15);
+        _escherContainer = new EscherContainerRecord();
+        _escherContainer.setRecordId( EscherContainerRecord.SP_CONTAINER );
+        _escherContainer.setOptions((short)15);
 
         EscherSpRecord sp = new EscherSpRecord();
         int flags = EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HASSHAPETYPE;
         if (isChild) flags |= EscherSpRecord.FLAG_CHILD;
         sp.setFlags(flags);
-        spContainer.addChildRecord(sp);
+        _escherContainer.addChildRecord(sp);
 
         EscherOptRecord opt = new EscherOptRecord();
         opt.setRecordId(EscherOptRecord.RECORD_ID);
-        spContainer.addChildRecord(opt);
+        _escherContainer.addChildRecord(opt);
 
         EscherRecord anchor;
         if(isChild) anchor = new EscherChildAnchorRecord();
@@ -75,9 +75,9 @@ public class SimpleShape extends Shape {
             LittleEndian.putInt(header, 4, 8);
             anchor.fillFields(header, 0, null);
         }
-        spContainer.addChildRecord(anchor);
+        _escherContainer.addChildRecord(anchor);
 
-        return spContainer;
+        return _escherContainer;
     }
 
     /**

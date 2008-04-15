@@ -19,11 +19,11 @@ package org.apache.poi.hssf.record;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.util.LittleEndian;
 
@@ -38,7 +38,7 @@ public final class TestCFRuleRecord extends TestCase
 
 	public void testCreateCFRuleRecord () 
 	{
-		Workbook workbook = Workbook.createWorkbook();
+		HSSFWorkbook workbook = new HSSFWorkbook();
 		CFRuleRecord record = CFRuleRecord.create(workbook, "7");
 		testCFRuleRecord(record);
 
@@ -278,7 +278,7 @@ public final class TestCFRuleRecord extends TestCase
 	}
 
 	public void testWrite() {
-		Workbook workbook = Workbook.createWorkbook();
+		HSSFWorkbook workbook = new HSSFWorkbook();
 		CFRuleRecord rr = CFRuleRecord.create(workbook, ComparisonOperator.BETWEEN, "5", "10");
 
 		PatternFormatting patternFormatting = new PatternFormatting();
@@ -293,7 +293,8 @@ public final class TestCFRuleRecord extends TestCase
 		int flags = LittleEndian.getInt(data, 10);
 		assertEquals("unused flags should be 111", 0x00380000, flags & 0x00380000);
 		assertEquals("undocumented flags should be 0000", 0, flags & 0x03C00000); // Otherwise Excel gets unhappy
-		assertEquals(0xA03FFFFF, flags);
+		// check all remaining flag bits (some are not well understood yet)
+		assertEquals(0x203FFFFF, flags);
 	}
 
 

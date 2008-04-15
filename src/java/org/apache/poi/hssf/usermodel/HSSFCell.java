@@ -118,7 +118,7 @@ public class HSSFCell implements Cell
     private int                      cellType;
     private HSSFRichTextString       stringValue;
     private short                    encoding = ENCODING_UNCHANGED;
-    private Workbook                 book;
+    private HSSFWorkbook             book;
     private Sheet                    sheet;
     private CellValueRecordInterface record;
     private HSSFComment              comment;
@@ -141,7 +141,7 @@ public class HSSFCell implements Cell
      */
 
     //protected HSSFCell(Workbook book, Sheet sheet, short row, short col)
-    protected HSSFCell(Workbook book, Sheet sheet, int row, short col)
+    protected HSSFCell(HSSFWorkbook book, Sheet sheet, int row, short col)
     {
         checkBounds(col);
         stringValue  = null;
@@ -170,7 +170,7 @@ public class HSSFCell implements Cell
      */
 
     //protected HSSFCell(Workbook book, Sheet sheet, short row, short col,
-    protected HSSFCell(Workbook book, Sheet sheet, int row, short col,
+    protected HSSFCell(HSSFWorkbook book, Sheet sheet, int row, short col,
                        int type)
     {
         checkBounds(col);
@@ -193,7 +193,7 @@ public class HSSFCell implements Cell
      */
 
     //protected HSSFCell(Workbook book, Sheet sheet, short row,
-    protected HSSFCell(Workbook book, Sheet sheet, int row,
+    protected HSSFCell(HSSFWorkbook book, Sheet sheet, int row,
                        CellValueRecordInterface cval)
     {
         record      = cval;
@@ -204,7 +204,7 @@ public class HSSFCell implements Cell
         switch (cellType)
         {
             case CELL_TYPE_STRING :
-                stringValue = new HSSFRichTextString(book, (LabelSSTRecord ) cval);
+                stringValue = new HSSFRichTextString(book.getWorkbook(), (LabelSSTRecord ) cval);
                 break;
 
             case CELL_TYPE_BLANK :
@@ -214,7 +214,7 @@ public class HSSFCell implements Cell
                 stringValue=new HSSFRichTextString(((FormulaRecordAggregate) cval).getStringValue());
                 break;
         }
-        ExtendedFormatRecord xf = book.getExFormatAt(cval.getXFIndex());
+        ExtendedFormatRecord xf = book.getWorkbook().getExFormatAt(cval.getXFIndex());
 
         setCellStyle(new HSSFCellStyle(( short ) cval.getXFIndex(), xf, book));
     }
@@ -270,7 +270,7 @@ public class HSSFCell implements Cell
      * @return
      */
     protected Workbook getBoundWorkbook() {
-    	return book;
+    	return book.getWorkbook();
     }
 
     /**
@@ -416,9 +416,9 @@ public class HSSFCell implements Cell
 //                      jmh                        {
 //                      jmh                            str.setUncompressedUnicode();
 //                      jmh                        }
-                        sst = book.addSSTString(str);
+                        sst = book.getWorkbook().addSSTString(str);
                         lrec.setSSTIndex(sst);
-                        getRichStringCellValue().setUnicodeString(book.getSSTString(sst));
+                        getRichStringCellValue().setUnicodeString(book.getWorkbook().getSSTString(sst));
                     }
                 }
                 record = lrec;
@@ -545,7 +545,7 @@ public class HSSFCell implements Cell
      */
     public void setCellValue(Date value)
     {
-        setCellValue(HSSFDateUtil.getExcelDate(value, this.book.isUsing1904DateWindowing()));
+        setCellValue(HSSFDateUtil.getExcelDate(value, this.book.getWorkbook().isUsing1904DateWindowing()));
     }
 
     /**
@@ -565,7 +565,7 @@ public class HSSFCell implements Cell
      */
     public void setCellValue(Calendar value)
     {
-        setCellValue( HSSFDateUtil.getExcelDate(value, this.book.isUsing1904DateWindowing()) );
+        setCellValue( HSSFDateUtil.getExcelDate(value, this.book.getWorkbook().isUsing1904DateWindowing()) );
     }
 
     /**
@@ -623,11 +623,11 @@ public class HSSFCell implements Cell
         int index = 0;
 
         UnicodeString str = hvalue.getUnicodeString();
-        index = book.addSSTString(str);
+        index = book.getWorkbook().addSSTString(str);
         (( LabelSSTRecord ) record).setSSTIndex(index);
         stringValue = hvalue;
-        stringValue.setWorkbookReferences(book, (( LabelSSTRecord ) record));
-        stringValue.setUnicodeString(book.getSSTString(index));
+        stringValue.setWorkbookReferences(book.getWorkbook(), (( LabelSSTRecord ) record));
+        stringValue.setUnicodeString(book.getWorkbook().getSSTString(index));
     }
 
     public void setCellFormula(String formula) {
@@ -737,7 +737,7 @@ public class HSSFCell implements Cell
                 "You cannot get a date value from an error cell");
         }
         double value=this.getNumericCellValue();
-        if (book.isUsing1904DateWindowing()) {
+        if (book.getWorkbook().isUsing1904DateWindowing()) {
             return HSSFDateUtil.getJavaDate(value,true);
         }
         else {
@@ -922,7 +922,7 @@ public class HSSFCell implements Cell
     public HSSFCellStyle getCellStyle()
     {
       short styleIndex=record.getXFIndex();
-      ExtendedFormatRecord xf = book.getExFormatAt(styleIndex);
+      ExtendedFormatRecord xf = book.getWorkbook().getExFormatAt(styleIndex);
       return new HSSFCellStyle(styleIndex, xf, book);
     }
 

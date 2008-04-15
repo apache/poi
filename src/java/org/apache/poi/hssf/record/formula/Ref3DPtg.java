@@ -18,7 +18,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.util.RangeAddress;
@@ -162,8 +162,8 @@ public class Ref3DPtg extends Ptg {
     }
 
     // TODO - find a home for this method
-    // There is already a method on Workbook called getSheetName but it seems to do something different.
-	static String getSheetName(Workbook book, int externSheetIndex) {
+    // There is already a method on HSSFWorkbook called getSheetName but it seems to do something different.
+	static String getSheetName(HSSFWorkbook book, int externSheetIndex) {
         // TODO - there are 3 ways this method can return null. Is each valid?
         if (book == null) {
             return null;
@@ -179,7 +179,7 @@ public class Ref3DPtg extends Ptg {
      * @return text representation of this cell reference that can be used in text 
      * formulas. The sheet name will get properly delimited if required.
      */
-    public String toFormulaString(Workbook book)
+    public String toFormulaString(HSSFWorkbook book)
     {
         StringBuffer retval = new StringBuffer();
         String sheetName = getSheetName(book, field_1_index_extern_sheet);

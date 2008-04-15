@@ -120,20 +120,20 @@ public class Picture extends SimpleShape {
      * @return the create Picture object
      */
     protected EscherContainerRecord createSpContainer(int idx, boolean isChild) {
-        EscherContainerRecord spContainer = super.createSpContainer(isChild);
-        spContainer.setOptions((short)15);
+        _escherContainer = super.createSpContainer(isChild);
+        _escherContainer.setOptions((short)15);
 
-        EscherSpRecord spRecord = spContainer.getChildById(EscherSpRecord.RECORD_ID);
+        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setOptions((short)((ShapeTypes.PictureFrame << 4) | 0x2));
 
         //set default properties for a picture
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(spContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
         setEscherProperty(opt, EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 8388736);
 
         //another weird feature of powerpoint: for picture id we must add 0x4000.
         setEscherProperty(opt, (short)(EscherProperties.BLIP__BLIPTODISPLAY + 0x4000), idx);
 
-        return spContainer;
+        return _escherContainer;
     }
 
     /**

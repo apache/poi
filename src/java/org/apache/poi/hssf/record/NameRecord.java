@@ -18,12 +18,17 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
-import java.util.Iterator;
 
-import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.formula.*;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
+import org.apache.poi.hssf.record.formula.DeletedRef3DPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.Ref3DPtg;
+import org.apache.poi.hssf.record.formula.UnionPtg;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.RangeAddress;
 import org.apache.poi.util.HexDump;
@@ -645,7 +650,7 @@ public class NameRecord extends Record {
     /** gets the reference , the area only (range)
      * @return area reference
      */
-    public String getAreaReference(Workbook book){
+    public String getAreaReference(HSSFWorkbook book){
         if (field_13_name_definition == null || field_13_name_definition.isEmpty()) return "Error";
         Ptg ptg = (Ptg) field_13_name_definition.peek();
         String result = "";
@@ -679,7 +684,7 @@ public class NameRecord extends Record {
      *  return an empty string if nothing is possible
      *  for it.
      */
-    private String getAreaRefString(Ptg ptg,Workbook book) {
+    private String getAreaRefString(Ptg ptg,HSSFWorkbook book) {
         if (ptg.getClass() == Area3DPtg.class){
             return ptg.toFormulaString(book);
         } else if (ptg.getClass() == Ref3DPtg.class){

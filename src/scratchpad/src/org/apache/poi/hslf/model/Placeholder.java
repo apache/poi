@@ -49,15 +49,15 @@ public class Placeholder extends TextBox {
      * @return the created <code>EscherContainerRecord</code> which holds shape data
      */
     protected EscherContainerRecord createSpContainer(boolean isChild){
-        EscherContainerRecord spcont = super.createSpContainer(isChild);
+        _escherContainer = super.createSpContainer(isChild);
 
-        EscherSpRecord spRecord = spcont.getChildById(EscherSpRecord.RECORD_ID);
+        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setFlags(EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HAVEMASTER);
 
         EscherClientDataRecord cldata = new EscherClientDataRecord();
         cldata.setOptions((short)15);
 
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(spcont, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
 
         //Placeholders can't be grouped
         setEscherProperty(opt, EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 262144);
@@ -86,7 +86,7 @@ public class Placeholder extends TextBox {
         cldata.setRemainingData(out.toByteArray());
 
         //append placeholder container before EscherTextboxRecord
-        List lst = spcont.getChildRecords();
+        List lst = _escherContainer.getChildRecords();
         for (int i = 0; i < lst.size(); i++) {
               EscherRecord rec = (EscherRecord)lst.get(i);
               if(rec.getRecordId() == EscherTextboxRecord.RECORD_ID){
@@ -94,6 +94,6 @@ public class Placeholder extends TextBox {
               }
         }
 
-        return spcont;
+        return _escherContainer;
     }
 }

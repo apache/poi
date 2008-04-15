@@ -18,7 +18,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Tests for Area3DPtg
@@ -35,7 +35,7 @@ public final class TestArea3DPtg extends AbstractPtgTestCase {
 		Area3DPtg target = new Area3DPtg("A1:B1", (short)0);
 		
 		String sheetName = "my sheet";
-		Workbook book = createWorkbookWithSheet(sheetName);
+		HSSFWorkbook book = createWorkbookWithSheet(sheetName);
 		assertEquals("'my sheet'!A1:B1", target.toFormulaString(book));
 		
         book.setSheetName(0, "Sheet1");
@@ -44,7 +44,4 @@ public final class TestArea3DPtg extends AbstractPtgTestCase {
         book.setSheetName(0, "C64");
         assertEquals("'C64'!A1:B1", target.toFormulaString(book));
 	}
-
-
-
 }

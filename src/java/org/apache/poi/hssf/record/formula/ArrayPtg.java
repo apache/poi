@@ -23,7 +23,7 @@ import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.StringUtil;
 
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.SSTRecord;
@@ -198,7 +198,7 @@ public class ArrayPtg extends Ptg
         return size;
     }
 
-    public String toFormulaString(Workbook book)
+    public String toFormulaString(HSSFWorkbook book)
     {
     	StringBuffer b = new StringBuffer();
     	b.append("{");

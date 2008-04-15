@@ -18,7 +18,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Tests for Ref3DPtg
@@ -31,7 +31,7 @@ public final class TestRef3DPtg extends AbstractPtgTestCase {
 		
 		Ref3DPtg target = new Ref3DPtg("A1", (short)0);
 		
-		Workbook book = createWorkbookWithSheet("my sheet");
+		HSSFWorkbook book = createWorkbookWithSheet("my sheet");
 		
 		assertEquals("'my sheet'!A1", target.toFormulaString(book));
 

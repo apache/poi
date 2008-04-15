@@ -29,7 +29,7 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Specifies a rectangular area of cells A1:A4 for instance.
@@ -58,7 +58,7 @@ public class AreaNAPtg
       return "AreaNAPtg";
     }
 
-    public String toFormulaString(Workbook book)
+    public String toFormulaString(HSSFWorkbook book)
     {
       throw new RuntimeException("Coding Error: This method should never be called. This ptg should be converted");
     }

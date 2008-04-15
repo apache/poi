@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
@@ -61,7 +61,7 @@ public final class NameXPtg extends Ptg {
         return SIZE;
     }
 
-    public String toFormulaString(Workbook book)
+    public String toFormulaString(HSSFWorkbook book)
     {
         // -1 to convert definedNameIndex from 1-based to zero-based
         return book.resolveNameXText(field_1_ixals, field_2_ilbl-1); 
