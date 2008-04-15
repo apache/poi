@@ -20,10 +20,10 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.*;
 import org.apache.poi.util.LittleEndian;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Iterator;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
 /**
  * Represents a table in a PowerPoint presentation
@@ -142,6 +142,54 @@ public class Table extends ShapeGroup {
             }
         }
 
+    }
+
+    protected void initTable(){
+        Shape[] sh = getShapes();
+        Arrays.sort(sh, new Comparator(){
+            public int compare( Object o1, Object o2 ) {
+                Rectangle anchor1 = ((Shape)o1).getAnchor();
+                Rectangle anchor2 = ((Shape)o2).getAnchor();
+                int delta = anchor1.y - anchor2.y;
+                if(delta == 0) delta = anchor1.x - anchor2.y;
+                return delta;
+            }
+        });
+        int y0 = -1;
+        int maxrowlen = 0;
+        ArrayList lst = new ArrayList();
+        ArrayList row = null;
+        for (int i = 0; i < sh.length; i++) {
+            if(sh[i] instanceof TextShape){
+                Rectangle anchor = sh[i].getAnchor();
+                if(anchor.y != y0){
+                    y0 = anchor.y;
+                    if(row != null) maxrowlen = Math.max(maxrowlen, row.size());
+                    row = new ArrayList();
+                    lst.add(row);
+                }
+                row.add(sh[i]);
+            }
+        }
+        cells = new TableCell[lst.size()][maxrowlen];
+        for (int i = 0; i < lst.size(); i++) {
+            row = (ArrayList)lst.get(i);
+            for (int j = 0; j < row.size(); j++) {
+                TextShape tx = (TextShape)row.get(j);
+                cells[i][j] = new TableCell(tx.getSpContainer(), getParent());
+                cells[i][j].setSheet(tx.getSheet());
+            }
+        }
+    }
+
+    /**
+     * Assign the <code>SlideShow</code> this shape belongs to
+     *
+     * @param sheet owner of this shape
+     */
+    public void setSheet(Sheet sheet){
+        super.setSheet(sheet);
+        if(cells == null) initTable();
     }
 
     /**
