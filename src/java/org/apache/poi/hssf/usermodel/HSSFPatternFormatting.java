@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
 
 /**
@@ -66,15 +67,13 @@ public class HSSFPatternFormatting
 	/**  Least Dots */
 	public final static short LEAST_DOTS 			=  PatternFormatting.LEAST_DOTS;
 
-	private PatternFormatting patternFormatting;
+	private final CFRuleRecord cfRuleRecord;
+	private final PatternFormatting patternFormatting;
 	
-	public HSSFPatternFormatting()
+	protected HSSFPatternFormatting(CFRuleRecord cfRuleRecord)
 	{
-		patternFormatting = new PatternFormatting();
-	}
-	protected HSSFPatternFormatting(PatternFormatting patternFormatting)
-	{
-		this.patternFormatting = patternFormatting;
+		this.cfRuleRecord = cfRuleRecord; 
+		this.patternFormatting = cfRuleRecord.getPatternFormatting();
 	}
 
 	protected PatternFormatting getPatternFormattingBlock()
@@ -116,6 +115,10 @@ public class HSSFPatternFormatting
 	public void setFillBackgroundColor(short bg)
 	{
 		patternFormatting.setFillBackgroundColor(bg);
+		if( bg != 0)
+		{
+			cfRuleRecord.setPatternBackgroundColorModified(true);
+		}
 	}
 
 	/**
@@ -125,6 +128,10 @@ public class HSSFPatternFormatting
 	public void setFillForegroundColor(short fg)
 	{
 		patternFormatting.setFillForegroundColor(fg);
+		if( fg != 0)
+		{
+			cfRuleRecord.setPatternColorModified(true);
+		}
 	}
 
 	/**
@@ -134,5 +141,9 @@ public class HSSFPatternFormatting
 	public void setFillPattern(short fp)
 	{
 		patternFormatting.setFillPattern(fp);
+		if( fp != 0)
+		{
+			cfRuleRecord.setPatternStyleModified(true);
+		}
 	}
 }

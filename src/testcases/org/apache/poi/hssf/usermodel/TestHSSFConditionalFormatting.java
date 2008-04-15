@@ -34,22 +34,26 @@ public final class TestHSSFConditionalFormatting extends TestCase
 		HSSFSheet sheet = workbook.createSheet();
 		String formula = "7";
 
-		HSSFFontFormatting fontFmt = new HSSFFontFormatting();
+		HSSFSheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
+		
+		HSSFConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule(formula);
+		HSSFFontFormatting fontFmt = rule1.createFontFormatting();
 		fontFmt.setFontStyle(true, false);
 
-		HSSFBorderFormatting bordFmt = new HSSFBorderFormatting();
+		HSSFBorderFormatting bordFmt = rule1.createBorderFormatting();
 		bordFmt.setBorderBottom(HSSFBorderFormatting.BORDER_THIN);
 		bordFmt.setBorderTop(HSSFBorderFormatting.BORDER_THICK);
 		bordFmt.setBorderLeft(HSSFBorderFormatting.BORDER_DASHED);
 		bordFmt.setBorderRight(HSSFBorderFormatting.BORDER_DOTTED);
 
-		HSSFPatternFormatting patternFmt = new HSSFPatternFormatting();
-		patternFmt.setFillBackgroundColor(HSSFColor.RED.index);
+		HSSFPatternFormatting patternFmt = rule1.createPatternFormatting();
+		patternFmt.setFillBackgroundColor(HSSFColor.YELLOW.index);
 
+		
+		HSSFConditionalFormattingRule rule2 = sheetCF.createConditionalFormattingRule(ComparisonOperator.BETWEEN, "1", "2");
 		HSSFConditionalFormattingRule [] cfRules =
 		{
-			sheet.createConditionalFormattingRule(formula, fontFmt, bordFmt, patternFmt),
-			sheet.createConditionalFormattingRule(ComparisonOperator.BETWEEN, "1", "2", fontFmt, bordFmt, patternFmt)
+			rule1, rule2
 		};
 
 		short col = 1;
@@ -58,14 +62,14 @@ public final class TestHSSFConditionalFormatting extends TestCase
 			new Region(0,col,65535,col)
 		};
 
-		sheet.addConditionalFormatting(regions, cfRules);
-		sheet.addConditionalFormatting(regions, cfRules);
+		sheetCF.addConditionalFormatting(regions, cfRules);
+		sheetCF.addConditionalFormatting(regions, cfRules);
 
 		// Verification
-		assertEquals(2, sheet.getNumConditionalFormattings());
-		sheet.removeConditionalFormatting(1);
-		assertEquals(1, sheet.getNumConditionalFormattings());
-		HSSFConditionalFormatting cf = sheet.getConditionalFormattingAt(0);
+		assertEquals(2, sheetCF.getNumConditionalFormattings());
+		sheetCF.removeConditionalFormatting(1);
+		assertEquals(1, sheetCF.getNumConditionalFormattings());
+		HSSFConditionalFormatting cf = sheetCF.getConditionalFormattingAt(0);
 		assertNotNull(cf);
 
 		regions = cf.getFormattingRegions();
@@ -79,7 +83,7 @@ public final class TestHSSFConditionalFormatting extends TestCase
 
 		assertEquals(2, cf.getNumberOfRules());
 
-		HSSFConditionalFormattingRule rule1 = cf.getRule(0);
+		rule1 = cf.getRule(0);
 		assertEquals("7",rule1.getFormula1()); 
 		assertNull(rule1.getFormula2());
 		
@@ -98,11 +102,10 @@ public final class TestHSSFConditionalFormatting extends TestCase
 
 		HSSFPatternFormatting r1pf = rule1.getPatternFormatting();
 		assertNotNull(r1pf);
-		assertEquals(HSSFColor.RED.index,r1pf.getFillBackgroundColor());		
+		assertEquals(HSSFColor.YELLOW.index,r1pf.getFillBackgroundColor());		
 
-		HSSFConditionalFormattingRule rule2 = cf.getRule(1);
+		rule2 = cf.getRule(1);
 		assertEquals("2",rule2.getFormula2()); 
 		assertEquals("1",rule2.getFormula1()); 
 	}
-	
 }
