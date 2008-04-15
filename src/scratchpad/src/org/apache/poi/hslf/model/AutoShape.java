@@ -20,11 +20,15 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.*;
 
 /**
- * Represents a autoshape in a PowerPoint drawing
+ * Represents an AutoShape.
+ * <p>
+ * AutoShapes are drawing objects with a particular shape that may be customized through smart resizing and adjustments.
+ * See {@link ShapeTypes}
+ * </p>
  *
  *  @author Yegor Kozlov
  */
-public class AutoShape extends SimpleShape {
+public class AutoShape extends TextShape {
 
     protected AutoShape(EscherContainerRecord escherRecord, Shape parent){
         super(escherRecord, parent);
@@ -40,23 +44,62 @@ public class AutoShape extends SimpleShape {
     }
 
     protected EscherContainerRecord createSpContainer(int shapeType, boolean isChild){
-        EscherContainerRecord spcont = super.createSpContainer(isChild);
+        _escherContainer = super.createSpContainer(isChild);
 
-        EscherSpRecord spRecord = spcont.getChildById(EscherSpRecord.RECORD_ID);
-        short type = (short)((shapeType << 4) | 0x2);
-        spRecord.setOptions(type);
+        setShapeType(shapeType);
 
         //set default properties for an autoshape
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(spcont, EscherOptRecord.RECORD_ID);
+        setEscherProperty(EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 0x40000);
+        setEscherProperty(EscherProperties.FILL__FILLCOLOR, 0x8000004);
+        setEscherProperty(EscherProperties.FILL__FILLCOLOR, 0x8000004);
+        setEscherProperty(EscherProperties.FILL__FILLBACKCOLOR, 0x8000000);
+        setEscherProperty(EscherProperties.FILL__NOFILLHITTEST, 0x100010);
+        setEscherProperty(EscherProperties.LINESTYLE__COLOR, 0x8000001);
+        setEscherProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x80008);
+        setEscherProperty(EscherProperties.SHADOWSTYLE__COLOR, 0x8000002);
 
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.FILL__FILLCOLOR, 0x8000004));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.FILL__FILLBACKCOLOR, 0x8000000));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.FILL__NOFILLHITTEST, 0x100010));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__COLOR, 0x8000001));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x80008));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.SHADOWSTYLE__COLOR, 0x8000002));
-
-        return spcont;
+        return _escherContainer;
     }
 
+    protected void setDefaultTextProperties(TextRun _txtrun){
+        setVerticalAlignment(TextBox.AnchorMiddle);
+        setHorizontalAlignment(TextBox.AlignCenter);
+        setWordWrap(TextBox.WrapNone);
+    }
+
+    /**
+     * Gets adjust value which controls smart resizing of the auto-shape.
+     *
+     * <p>
+     * The adjustment values are given in shape coordinates:
+     * the origin is at the top-left, positive-x is to the right, positive-y is down.
+     * The region from (0,0) to (S,S) maps to the geometry box of the shape (S=21600 is a constant).
+     * </p>
+     *
+     * @param idx the adjust index in the [0, 9] range
+     * @return the adjustment value
+     */
+    public int getAdjustmentValue(int idx){
+        if(idx < 0 || idx > 9) throw new IllegalArgumentException("The index of an adjustment value must be in the [0, 9] range");
+
+        return getEscherProperty((short)(EscherProperties.GEOMETRY__ADJUSTVALUE + idx));
+    }
+
+    /**
+     * Sets adjust value which controls smart resizing of the auto-shape.
+     *
+     * <p>
+     * The adjustment values are given in shape coordinates:
+     * the origin is at the top-left, positive-x is to the right, positive-y is down.
+     * The region from (0,0) to (S,S) maps to the geometry box of the shape (S=21600 is a constant).
+     * </p>
+     *
+     * @param idx the adjust index in the [0, 9] range
+     * @param val the adjustment value
+     */
+    public void setAdjustmentValue(int idx, int val){
+        if(idx < 0 || idx > 9) throw new IllegalArgumentException("The index of an adjustment value must be in the [0, 9] range");
+
+        setEscherProperty((short)(EscherProperties.GEOMETRY__ADJUSTVALUE + idx), val);
+    }
 }

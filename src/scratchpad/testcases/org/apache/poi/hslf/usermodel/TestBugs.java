@@ -316,8 +316,8 @@ public class TestBugs extends TestCase {
         ArrayList lst = new ArrayList();
         Shape[] shape = slide.getShapes();
         for (int i = 0; i < shape.length; i++) {
-            if( shape[i] instanceof TextBox){
-                TextRun textRun = ((TextBox)shape[i]).getTextRun();
+            if( shape[i] instanceof TextShape){
+                TextRun textRun = ((TextShape)shape[i]).getTextRun();
                 if(textRun != null) lst.add(textRun);
             }
 

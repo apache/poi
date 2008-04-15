@@ -19,6 +19,7 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.*;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.hslf.record.EscherTextboxWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -154,9 +155,10 @@ public class ShapeGroup extends Shape{
         shape.setSheet(sheet);
         shape.afterInsert(sheet);
 
-        if(shape instanceof TextBox) {
-            TextBox tbox = (TextBox)shape;
-            getSheet().getPPDrawing().addTextboxWrapper(tbox._txtbox);
+        if (shape instanceof TextShape) {
+            TextShape tbox = (TextShape) shape;
+            EscherTextboxWrapper txWrapper = tbox.getEscherTextboxWrapper();
+            if(txWrapper != null) getSheet().getPPDrawing().addTextboxWrapper(txWrapper);
         }
     }
 
