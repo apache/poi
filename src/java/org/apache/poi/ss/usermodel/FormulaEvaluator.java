@@ -60,7 +60,6 @@ import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -333,16 +332,8 @@ public class FormulaEvaluator {
     private static ValueEval evaluateCell(Workbook workbook, Sheet sheet, 
             int srcRowNum, short srcColNum, String cellFormulaText) {
     	
-    	FormulaParser parser;
-    	if(workbook instanceof HSSFWorkbook) {
-    		parser = HSSFFormulaEvaluator.getUnderlyingParser(
-    				(HSSFWorkbook)workbook,
-    				cellFormulaText
-    		);
-    	} else {
-    		// Hope for the best...
-    		parser = new FormulaParser(cellFormulaText, null);
-    	}
+    	FormulaParser parser =
+    		new FormulaParser(cellFormulaText, workbook);
     	
         parser.parse();
         Ptg[] ptgs = parser.getRPNPtg();

@@ -18,7 +18,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 
 import org.apache.poi.util.LittleEndian;
@@ -209,11 +209,11 @@ public final class AttrPtg extends OperationPtg {
         if(space.isSet(field_1_options)) {
             return operands[ 0 ];
         } else if (optiIf.isSet(field_1_options)) {
-            return toFormulaString((HSSFWorkbook)null) + "(" + operands[ 0 ]             +")";
+            return toFormulaString((Workbook)null) + "(" + operands[ 0 ]             +")";
         } else if (optGoto.isSet(field_1_options)) {
-            return toFormulaString((HSSFWorkbook)null) + operands[0];   //goto isn't a real formula element should not show up
+            return toFormulaString((Workbook)null) + operands[0];   //goto isn't a real formula element should not show up
         } else {
-            return toFormulaString((HSSFWorkbook)null) + "(" + operands[ 0 ] + ")";
+            return toFormulaString((Workbook)null) + "(" + operands[ 0 ] + ")";
         }
     }
   
@@ -228,7 +228,7 @@ public final class AttrPtg extends OperationPtg {
         return -1;
     }
         
-   public String toFormulaString(HSSFWorkbook book) {
+   public String toFormulaString(Workbook book) {
       if(semiVolatile.isSet(field_1_options)) {
         return "ATTR(semiVolatile)";
       }

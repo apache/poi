@@ -17,11 +17,10 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.usermodel.HSSFName;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.LittleEndian;
 
 /**
  *
@@ -49,13 +48,13 @@ public class NamePtg
      * in the workbook.  The search for the name record is case insensitive.  If it is not found, 
      * it gets created.
      */
-    public NamePtg(String name, HSSFWorkbook book) {
+    public NamePtg(String name, Workbook book) {
         field_1_label_index = (short)(1+getOrCreateNameRecord(book, name)); // convert to 1-based
     }
     /**
      * @return zero based index of the found or newly created defined name record. 
      */
-    private static final int getOrCreateNameRecord(HSSFWorkbook book, String name) {
+    private static final int getOrCreateNameRecord(Workbook book, String name) {
         // perhaps this logic belongs in Workbook?
         int countNames = book.getNumberOfNames();
         for (int i = 0; i < countNames; i++) {
@@ -64,7 +63,7 @@ public class NamePtg
             }
         }
         
-        HSSFName nameObj = book.createName();
+        Name nameObj = book.createName();
         nameObj.setNameName(name);
         
         return countNames;
@@ -99,7 +98,7 @@ public class NamePtg
         return SIZE;
     }
 
-    public String toFormulaString(HSSFWorkbook book)
+    public String toFormulaString(Workbook book)
     {
     	return book.getNameName(field_1_label_index - 1);
     }

@@ -548,7 +548,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * Used by some of the more obscure formula and 
      *  named range things.
      */
-    public short getExternalSheetIndex(int internalSheetIndex) {
+    public int getExternalSheetIndex(int internalSheetIndex) {
     	return workbook.checkExternSheet(internalSheetIndex);
     }
 
