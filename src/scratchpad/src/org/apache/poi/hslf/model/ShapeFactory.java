@@ -39,12 +39,7 @@ public class ShapeFactory {
         int type = spRecord.getOptions() >> 4;
         switch (type){
             case ShapeTypes.TextBox:
-            case ShapeTypes.Rectangle:
-                EscherTextboxRecord txtbox = (EscherTextboxRecord)Shape.getEscherChild(spContainer, EscherTextboxRecord.RECORD_ID);
-                if (txtbox == null)
-                    shape = new AutoShape(spContainer, parent);
-                else
-                    shape = new TextBox(spContainer, parent);
+                shape = new TextBox(spContainer, parent);
                 break;
             case ShapeTypes.PictureFrame:
                 shape = new Picture(spContainer, parent);
@@ -54,9 +49,13 @@ public class ShapeFactory {
                 break;
             case ShapeTypes.NotPrimitive:
                 if ((spRecord.getFlags() & EscherSpRecord.FLAG_GROUP) != 0)
-                     shape = new ShapeGroup(spContainer, parent);
-                else
+                    //TODO: check if the shape group is a Table 
+                    shape = new ShapeGroup(spContainer, parent);
+                else {
+                    //TODO: check if the shape has GEOMETRY__VERTICES or GEOMETRY__SEGMENTINFO properties.
+                    //if it does, then return Freeform or Polygon
                     shape = new AutoShape(spContainer, parent);
+                }
                 break;
             default:
                 shape = new AutoShape(spContainer, parent);

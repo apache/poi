@@ -218,8 +218,8 @@ public class TestShapes extends TestCase {
             ArrayList lst2 = new ArrayList();
             Shape[] sh = sl[k].getShapes();
             for (int i = 0; i < sh.length; i++) {
-                if (sh[i] instanceof TextBox){
-                    TextBox tbox = (TextBox)sh[i];
+                if (sh[i] instanceof TextShape){
+                    TextShape tbox = (TextShape)sh[i];
                     lst2.add(tbox.getText());
                 }
             }

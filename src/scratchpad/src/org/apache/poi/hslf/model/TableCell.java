@@ -63,15 +63,15 @@ public class TableCell extends TextBox {
     }
 
     protected EscherContainerRecord createSpContainer(boolean isChild){
-        EscherContainerRecord spContainer = super.createSpContainer(isChild);
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(spContainer, EscherOptRecord.RECORD_ID);
+        _escherContainer = super.createSpContainer(isChild);
+        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
         setEscherProperty(opt, EscherProperties.TEXT__TEXTID, 0);
         setEscherProperty(opt, EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 0x20000);
         setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150001);
         setEscherProperty(opt, EscherProperties.SHADOWSTYLE__SHADOWOBSURED, 0x20000);
         setEscherProperty(opt, EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 0x40000);
 
-        return spContainer;
+        return _escherContainer;
     }
 
     protected void anchorBorder(int type, Line line){
