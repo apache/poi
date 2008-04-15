@@ -75,16 +75,20 @@ public class FontCollection extends RecordContainer {
      * @return zero based index of the font in the collection
      */
     public int addFont(String name) {
-        for (int i = 0; i < fonts.size(); i++) {
-            if(fonts.get(i).equals(name)){
-                //if the font is already present return its index
-                return i;
-            }
-        }
+        int idx = getFontIndex(name);
+        if(idx != -1) return idx;
 
+        return addFont(name, 0, 0, 4, 34);
+    }
+
+    public int addFont(String name, int charset, int flags, int type, int pitch) {
         FontEntityAtom fnt = new FontEntityAtom();
         fnt.setFontIndex(fonts.size() << 4);
         fnt.setFontName(name);
+        fnt.setCharSet(charset);
+        fnt.setFontFlags(flags);
+        fnt.setFontType(type);
+        fnt.setPitchAndFamily(pitch);
         fonts.add(name);
 
         // Append new child to the end
@@ -92,8 +96,25 @@ public class FontCollection extends RecordContainer {
 
         return fonts.size()-1; //the added font is the last in the list
     }
-    
-	/**
+
+    /**
+     * @return zero based index of the font in the collection or -1 if not found
+     */
+    public int getFontIndex(String name) {
+        for (int i = 0; i < fonts.size(); i++) {
+            if(fonts.get(i).equals(name)){
+                //if the font is already present return its index
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int getNumberOfFonts() {
+        return fonts.size();
+    }
+
+    /**
 	 * Get the name of the font at the given ID, or null if there is
 	 *  no font at that ID.
 	 * @param id

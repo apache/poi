@@ -757,4 +757,50 @@ public class SlideShow
         }
         return addPicture(data, format);
     }
+
+    /**
+     * Add a font in this presentation
+     *
+     * @param font the font to add
+     * @return 0-based index of the font
+     */
+    public int addFont(PPFont font) {
+        FontCollection fonts = getDocumentRecord().getEnvironment().getFontCollection();
+        int idx = fonts.getFontIndex(font.getFontName());
+        if(idx == -1){
+            idx = fonts.addFont(font.getFontName(), font.getCharSet(), font.getFontFlags(), font.getFontType(), font.getPitchAndFamily());
+        }
+        return idx;
+    }
+
+    /**
+     * Get a font by index
+     *
+     * @param idx 0-based index of the font
+     * @return of an instance of <code>PPFont</code> or <code>null</code> if not found
+     */
+    public PPFont getFont(int idx) {
+        PPFont font = null;
+        FontCollection fonts = getDocumentRecord().getEnvironment().getFontCollection();
+        Record[] ch = fonts.getChildRecords();
+        for (int i = 0; i < ch.length; i++) {
+            if(ch[i] instanceof FontEntityAtom) {
+                FontEntityAtom atom = (FontEntityAtom)ch[i];
+                if(atom.getFontIndex() == idx){
+                    font = new PPFont(atom);
+                    break;
+                }
+            }
+        }
+        return font;
+    }
+
+    /**
+     * get the number of fonts in the presentation
+     *
+     * @return number of fonts
+     */
+    public int getNumberOfFonts() {
+        return getDocumentRecord().getEnvironment().getFontCollection().getNumberOfFonts();
+    }
 }
