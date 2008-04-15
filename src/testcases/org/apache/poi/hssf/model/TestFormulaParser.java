@@ -142,7 +142,7 @@ public final class TestFormulaParser extends TestCase {
         assertEquals(true, flag.getValue());
         assertEquals("Y", y.getValue());
         assertEquals("N", n.getValue());
-        assertEquals("IF", funif.toFormulaString((Workbook) null));
+        assertEquals("IF", funif.toFormulaString((HSSFWorkbook) null));
         assertTrue("Goto ptg exists", goto1.isGoto());
     }
 
@@ -283,7 +283,7 @@ public final class TestFormulaParser extends TestCase {
 	}
 	
     public void testMacroFunction() {
-        Workbook w = Workbook.createWorkbook();
+    	HSSFWorkbook w = new HSSFWorkbook();
         FormulaParser fp = new FormulaParser("FOO()", w);
         fp.parse();
         Ptg[] ptg = fp.getRPNPtg();
@@ -589,8 +589,7 @@ public final class TestFormulaParser extends TestCase {
      * a formula consisting of a single no-arg function got rendered without the function braces
      */
     public void testToFormulaStringZeroArgFunction() {
-
-        Workbook book = Workbook.createWorkbook(); // not really used in this test
+    	HSSFWorkbook book = new HSSFWorkbook();
 
         Ptg[] ptgs = {
                 new FuncPtg(10, 0),
@@ -889,7 +888,7 @@ public final class TestFormulaParser extends TestCase {
         }
     }
     public void testFuncPtgSelection() {
-        Workbook book = Workbook.createWorkbook();
+    	HSSFWorkbook book = new HSSFWorkbook();
         Ptg[] ptgs;
         ptgs = FormulaParser.parse("countif(A1:A2, 1)", book);
         assertEquals(3, ptgs.length);

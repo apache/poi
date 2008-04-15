@@ -19,7 +19,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 
@@ -70,7 +70,7 @@ public final class ErrPtg extends Ptg {
         array[offset + 1] = (byte)field_1_error_code;
     }
 
-    public String toFormulaString(Workbook book) {
+    public String toFormulaString(HSSFWorkbook book) {
         return HSSFErrorConstants.getText(field_1_error_code);
     }
 

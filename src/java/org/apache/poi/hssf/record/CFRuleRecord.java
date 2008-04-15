@@ -26,6 +26,7 @@ import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
@@ -152,7 +153,7 @@ public final class CFRuleRecord extends Record
 	/**
 	 * Creates a new comparison operation rule
 	 */
-	public static CFRuleRecord create(Workbook workbook, String formulaText) {
+	public static CFRuleRecord create(HSSFWorkbook workbook, String formulaText) {
 		Ptg[] formula1 = parseFormula(formulaText, workbook);
 		return new CFRuleRecord(CONDITION_TYPE_FORMULA, ComparisonOperator.NO_COMPARISON,
 				formula1, null);
@@ -160,7 +161,7 @@ public final class CFRuleRecord extends Record
 	/**
 	 * Creates a new comparison operation rule
 	 */
-	public static CFRuleRecord create(Workbook workbook, byte comparisonOperation,
+	public static CFRuleRecord create(HSSFWorkbook workbook, byte comparisonOperation,
 			String formulaText1, String formulaText2) {
 		Ptg[] formula1 = parseFormula(formulaText1, workbook);
 		Ptg[] formula2 = parseFormula(formulaText2, workbook);
@@ -651,7 +652,7 @@ public final class CFRuleRecord extends Record
 	/**
 	 * @return <code>null</code> if <tt>formula</tt> was null.
 	 */
-	private static Ptg[] parseFormula(String formula, Workbook workbook)
+	private static Ptg[] parseFormula(String formula, HSSFWorkbook workbook)
 	{
 		if(formula == null) {
 			return null;

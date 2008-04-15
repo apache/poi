@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
@@ -273,7 +273,7 @@ public class Area3DPtg extends Ptg implements AreaI
 	 * @return text representation of this area reference that can be used in text
 	 *  formulas. The sheet name will get properly delimited if required.
 	 */
-	public String toFormulaString(Workbook book)
+	public String toFormulaString(HSSFWorkbook book)
 	{
 		// First do the sheet name
 		StringBuffer retval = new StringBuffer();

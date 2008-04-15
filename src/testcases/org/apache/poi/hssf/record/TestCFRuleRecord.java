@@ -19,11 +19,11 @@ package org.apache.poi.hssf.record;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.util.LittleEndian;
 
@@ -38,7 +38,7 @@ public final class TestCFRuleRecord extends TestCase
 
 	public void testCreateCFRuleRecord () 
 	{
-		Workbook workbook = Workbook.createWorkbook();
+		HSSFWorkbook workbook = new HSSFWorkbook();
 		CFRuleRecord record = CFRuleRecord.create(workbook, "7");
 		testCFRuleRecord(record);
 
@@ -278,7 +278,7 @@ public final class TestCFRuleRecord extends TestCase
 	}
 
 	public void testWrite() {
-		Workbook workbook = Workbook.createWorkbook();
+		HSSFWorkbook workbook = new HSSFWorkbook();
 		CFRuleRecord rr = CFRuleRecord.create(workbook, ComparisonOperator.BETWEEN, "5", "10");
 
 		PatternFormatting patternFormatting = new PatternFormatting();
