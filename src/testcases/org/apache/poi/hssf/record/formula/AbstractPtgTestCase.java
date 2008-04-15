@@ -51,13 +51,9 @@ public abstract class AbstractPtgTestCase extends TestCase {
     /**
      * Creates a new Workbook and adds one sheet with the specified name
      */
-    protected static final Workbook createWorkbookWithSheet(String sheetName) {
-        
-        Workbook book = Workbook.createWorkbook();
-        // this creates sheet if it doesn't exist
-        book.checkExternSheet(0);
-        // TODO - this call alone does not create the sheet even though the javadoc says it does
-        book.setSheetName(0, sheetName); 
+    protected static final HSSFWorkbook createWorkbookWithSheet(String sheetName) {
+        HSSFWorkbook book = new HSSFWorkbook();
+        book.createSheet(sheetName);
         return book;
     }
 }

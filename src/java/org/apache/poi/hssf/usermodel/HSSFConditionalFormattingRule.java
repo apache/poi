@@ -40,13 +40,13 @@ public final class HSSFConditionalFormattingRule
     private static final byte CELL_COMPARISON = CFRuleRecord.CONDITION_TYPE_CELL_VALUE_IS;
 
 	private final CFRuleRecord cfRuleRecord;
-	private final Workbook workbook;
+	private final HSSFWorkbook workbook;
 
-	HSSFConditionalFormattingRule(Workbook pWorkbook, CFRuleRecord pRuleRecord) {
+	HSSFConditionalFormattingRule(HSSFWorkbook pWorkbook, CFRuleRecord pRuleRecord) {
 		workbook = pWorkbook;
 		cfRuleRecord = pRuleRecord;
 	}
-	HSSFConditionalFormattingRule(Workbook pWorkbook, CFRuleRecord pRuleRecord, 
+	HSSFConditionalFormattingRule(HSSFWorkbook pWorkbook, CFRuleRecord pRuleRecord, 
 			HSSFFontFormatting fontFmt, HSSFBorderFormatting bordFmt, HSSFPatternFormatting patternFmt) {
 		this(pWorkbook, pRuleRecord);
 		setFontFormatting(fontFmt);

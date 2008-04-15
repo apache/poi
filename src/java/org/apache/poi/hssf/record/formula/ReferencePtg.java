@@ -22,7 +22,7 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
@@ -176,7 +176,7 @@ public class ReferencePtg extends Ptg {
         return SIZE;
     }
 
-    public String toFormulaString(Workbook book)
+    public String toFormulaString(HSSFWorkbook book)
     {
         //TODO -- should we store a cellreference instance in this ptg?? but .. memory is an issue, i believe!
         return (new CellReference(getRowAsInt(),getColumn(),!isRowRelative(),!isColRelative())).formatAsString();

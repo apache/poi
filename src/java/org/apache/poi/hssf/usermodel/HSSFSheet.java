@@ -194,7 +194,7 @@ public final class HSSFSheet {
      */
     public HSSFRow createRow(int rownum)
     {
-        HSSFRow row = new HSSFRow(book, sheet, rownum);
+        HSSFRow row = new HSSFRow(workbook, sheet, rownum);
 
         addRow(row, true);
         return row;
@@ -209,7 +209,7 @@ public final class HSSFSheet {
 
     private HSSFRow createRowFromRecord(RowRecord row)
     {
-        HSSFRow hrow = new HSSFRow(book, sheet, row);
+        HSSFRow hrow = new HSSFRow(workbook, sheet, row);
 
         addRow(hrow, false);
         return hrow;
@@ -394,7 +394,7 @@ public final class HSSFSheet {
 
        //formula fields ( size and data )
        String str_formula = obj_validation.getFirstFormula();
-       FormulaParser fp = new FormulaParser(str_formula, book);
+       FormulaParser fp = new FormulaParser(str_formula, workbook);
        fp.parse();
        Stack ptg_arr = new Stack();
        Ptg[] ptg  = fp.getRPNPtg();
@@ -418,7 +418,7 @@ public final class HSSFSheet {
        if ( obj_validation.getSecondFormula() != null )
        {
          str_formula = obj_validation.getSecondFormula();
-         fp = new FormulaParser(str_formula, book);
+         fp = new FormulaParser(str_formula, workbook);
          fp.parse();
          ptg_arr = new Stack();
          ptg  = fp.getRPNPtg();
@@ -1264,7 +1264,7 @@ public final class HSSFSheet {
                     // Since it's a formula cell, process the
                     //  formula string, and look to see if
                     //  it contains any references
-                    FormulaParser fp = new FormulaParser(c.getCellFormula(), workbook.getWorkbook());
+                    FormulaParser fp = new FormulaParser(c.getCellFormula(), workbook);
                     fp.parse();
 
                     // Look for references, and update if needed
@@ -1874,9 +1874,8 @@ public final class HSSFSheet {
              HSSFBorderFormatting bordFmt,
              HSSFPatternFormatting patternFmt) {
     	 
-        Workbook wb = workbook.getWorkbook();
-        CFRuleRecord rr = CFRuleRecord.create(wb, comparisonOperation, formula1, formula2);
-        return new HSSFConditionalFormattingRule(wb, rr, fontFmt, bordFmt, patternFmt);
+        CFRuleRecord rr = CFRuleRecord.create(workbook, comparisonOperation, formula1, formula2);
+        return new HSSFConditionalFormattingRule(workbook, rr, fontFmt, bordFmt, patternFmt);
      }
 
      /**
@@ -1895,9 +1894,8 @@ public final class HSSFSheet {
              HSSFFontFormatting fontFmt,
              HSSFBorderFormatting bordFmt,
              HSSFPatternFormatting patternFmt) {
-         Workbook wb = workbook.getWorkbook();
-         CFRuleRecord rr = CFRuleRecord.create(wb, formula);
-         return new HSSFConditionalFormattingRule(wb, rr, fontFmt, bordFmt, patternFmt);
+         CFRuleRecord rr = CFRuleRecord.create(workbook, formula);
+         return new HSSFConditionalFormattingRule(workbook, rr, fontFmt, bordFmt, patternFmt);
      }
 
      /**

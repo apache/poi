@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.0.3-beta1" date="2008-04-??">
+           <action dev="POI-DEVELOPERS" type="fix">Update the formula parser code to use a HSSFWorkbook, rather than the low level model.Workbook, to make things cleaner and make supporting XSSF formulas in future much easier</action>
            <action dev="POI-DEVELOPERS" type="fix">Fix the logger used by POIFSFileSystem, so that commons-logging isn't required when not used</action>
            <action dev="POI-DEVELOPERS" type="add">Update HSLFSlideShow and HSSFWorkbook to take advantage of POIFS updates, and allow reading embeded documents</action>
            <action dev="POI-DEVELOPERS" type="add">Improve how POIFS works with directory entries, and update HWPFDocument to support reading an embeded word document</action>

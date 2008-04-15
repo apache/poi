@@ -84,7 +84,7 @@ import org.apache.poi.hssf.util.Region;
  */
 public final class HSSFConditionalFormatting
 {
-	private final Workbook workbook;
+	private final HSSFWorkbook workbook;
 	private final CFRecordsAggregate cfAggregate;
 
 	HSSFConditionalFormatting(HSSFSheet sheet, CFRecordsAggregate cfAggregate)
@@ -95,7 +95,7 @@ public final class HSSFConditionalFormatting
 		if(cfAggregate == null) {
 			throw new IllegalArgumentException("cfAggregate must not be null");
 		}
-		workbook = sheet.workbook.getWorkbook();
+		workbook = sheet.workbook;
 		this.cfAggregate = cfAggregate;
 	}
 	CFRecordsAggregate getCFRecordsAggregate() {

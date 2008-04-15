@@ -115,7 +115,7 @@ public class HSSFFormulaEvaluator {
      *  formula evaluated. 
      */
     public static FormulaParser getUnderlyingParser(HSSFWorkbook workbook, String formula) {
-        return new FormulaParser(formula, workbook.getWorkbook());
+        return new FormulaParser(formula, workbook);
     }
     
     /**
@@ -343,7 +343,7 @@ public class HSSFFormulaEvaluator {
     }
     private static ValueEval evaluateCell(HSSFWorkbook workbook, HSSFSheet sheet, 
             int srcRowNum, short srcColNum, String cellFormulaText) {
-        FormulaParser parser = new FormulaParser(cellFormulaText, workbook.getWorkbook());
+        FormulaParser parser = new FormulaParser(cellFormulaText, workbook);
         parser.parse();
         Ptg[] ptgs = parser.getRPNPtg();
         // -- parsing over --
@@ -760,7 +760,7 @@ public class HSSFFormulaEvaluator {
      * @param workbook
      */
     void inspectPtgs(String formula) {
-        FormulaParser fp = new FormulaParser(formula, workbook.getWorkbook());
+        FormulaParser fp = new FormulaParser(formula, workbook);
         fp.parse();
         Ptg[] ptgs = fp.getRPNPtg();
         System.out.println("<ptg-group>");

@@ -36,6 +36,7 @@ import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.hssf.util.SheetReferences;
 import org.apache.poi.poifs.filesystem.*;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -249,7 +250,7 @@ public class HSSFWorkbook extends POIDocument
         }
 
         for (int i = 0 ; i < workbook.getNumNames() ; ++i){
-            HSSFName name = new HSSFName(workbook, workbook.getNameRecord(i));
+            HSSFName name = new HSSFName(this, workbook.getNameRecord(i));
             names.add(name);
         }
     }
@@ -522,6 +523,17 @@ public class HSSFWorkbook extends POIDocument
     	}
     	return -1;
     }
+    
+    /**
+     * Returns the external sheet index of the sheet
+     *  with the given internal index, creating one
+     *  if needed.
+     * Used by some of the more obscure formula and 
+     *  named range things.
+     */
+    public short getExternalSheetIndex(int internalSheetIndex) {
+    	return workbook.checkExternSheet(internalSheetIndex);
+    }
 
     /**
      * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and returns
@@ -646,6 +658,10 @@ public class HSSFWorkbook extends POIDocument
             }
         }
         return retval;
+    }
+    
+    public SheetReferences getSheetReferences() {
+    	return workbook.getSheetReferences();
     }
 
     /**
@@ -790,7 +806,7 @@ public class HSSFWorkbook extends POIDocument
 
         if (isNewRecord)
         {
-            HSSFName newName = new HSSFName(workbook, nameRecord);
+            HSSFName newName = new HSSFName(this, nameRecord);
             names.add(newName);
         }
 
@@ -1101,6 +1117,17 @@ public class HSSFWorkbook extends POIDocument
 
         return result;
     }
+    
+    /**
+     * TODO - make this less cryptic / move elsewhere
+     * @param refIndex Index to REF entry in EXTERNSHEET record in the Link Table
+     * @param definedNameIndex zero-based to DEFINEDNAME or EXTERNALNAME record
+     * @return the string representation of the defined or external name
+     */
+    public String resolveNameXText(int refIndex, int definedNameIndex) {
+    	return workbook.resolveNameXText(refIndex, definedNameIndex);
+    }
+
 
 	/**
 	 * Sets the printarea for the sheet provided
@@ -1159,7 +1186,7 @@ public class HSSFWorkbook extends POIDocument
 		if (name == null) return null;
 		//adding one here because 0 indicates a global named region; doesnt make sense for print areas
 
-		return name.getAreaReference(workbook);
+		return name.getAreaReference(this);
 	}
 
     /**
@@ -1176,7 +1203,7 @@ public class HSSFWorkbook extends POIDocument
     public HSSFName createName(){
         NameRecord nameRecord = workbook.createName();
 
-        HSSFName newName = new HSSFName(workbook, nameRecord);
+        HSSFName newName = new HSSFName(this, nameRecord);
 
         names.add(newName);
 

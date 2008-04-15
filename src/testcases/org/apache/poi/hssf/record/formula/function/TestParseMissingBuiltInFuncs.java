@@ -26,6 +26,7 @@ import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.FuncPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 /**
  * Tests parsing of some built-in functions that were not properly
  * registered in POI as bug #44675, #44733 (March/April 2008).
@@ -35,7 +36,7 @@ import org.apache.poi.hssf.record.formula.Ptg;
 public final class TestParseMissingBuiltInFuncs extends TestCase {
 
 	private static Ptg[] parse(String formula) {
-		Workbook book = Workbook.createWorkbook();
+		HSSFWorkbook book = new HSSFWorkbook();
 		return FormulaParser.parse(formula, book);
 	}
 	private static void confirmFunc(String formula, int expPtgArraySize, boolean isVarArgFunc, int funcIx) {
@@ -57,7 +58,7 @@ public final class TestParseMissingBuiltInFuncs extends TestCase {
 		assertEquals(expCls, ptgF.getClass());
 		
 		// check that parsed Ptg array converts back to formula text OK
-		Workbook book = Workbook.createWorkbook();
+		HSSFWorkbook book = new HSSFWorkbook();
 		String reRenderedFormula = FormulaParser.toFormulaString(book, ptgs);
 		assertEquals(formula, reRenderedFormula);
 	}
