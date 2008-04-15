@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 import org.apache.poi.hssf.record.formula.*;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * This class parses a formula string into a List of tokens in RPN order.
@@ -87,7 +87,7 @@ public final class FormulaParser {
      */
     private char look;
 
-    private HSSFWorkbook book;
+    private Workbook book;
 
 
     /**
@@ -102,14 +102,14 @@ public final class FormulaParser {
      *  model.Workbook, then use the convenience method on
      *  usermodel.HSSFFormulaEvaluator
      */
-    public FormulaParser(String formula, HSSFWorkbook book){
+    public FormulaParser(String formula, Workbook book){
         formulaString = formula;
         pointer=0;
         this.book = book;
         formulaLength = formulaString.length();
     }
 
-    public static Ptg[] parse(String formula, HSSFWorkbook book) {
+    public static Ptg[] parse(String formula, Workbook book) {
         FormulaParser fp = new FormulaParser(formula, book);
         fp.parse();
         return fp.getRPNPtg();
@@ -252,7 +252,7 @@ public final class FormulaParser {
             Match('!');
             String sheetName = name;
             String first = GetName();
-            short externIdx = book.getExternalSheetIndex(book.getSheetIndex(sheetName));
+            short externIdx = (short)book.getExternalSheetIndex(book.getSheetIndex(sheetName));
             if (look == ':') {
                 Match(':');
                 String second=GetName();
@@ -927,7 +927,7 @@ end;
      * @param lptgs  list of Ptg, can be null or empty
      * @return a human readable String
      */
-    public static String toFormulaString(HSSFWorkbook book, List lptgs) {
+    public static String toFormulaString(Workbook book, List lptgs) {
         String retval = null;
         if (lptgs == null || lptgs.size() == 0) return "#NAME";
         Ptg[] ptgs = new Ptg[lptgs.size()];
@@ -953,7 +953,7 @@ end;
      * @param ptgs  array of Ptg, can be null or empty
      * @return a human readable String
      */
-    public static String toFormulaString(HSSFWorkbook book, Ptg[] ptgs) {
+    public static String toFormulaString(Workbook book, Ptg[] ptgs) {
         if (ptgs == null || ptgs.length == 0) {
             // TODO - what is the justification for returning "#NAME" (which is not "#NAME?", btw)
             return "#NAME";

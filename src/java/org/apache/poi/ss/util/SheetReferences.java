@@ -15,55 +15,32 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.formula;
+package org.apache.poi.ss.util;
 
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.hssf.record.RecordInputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Missing Function Arguments
+ * Holds a collection of Sheet names and their associated
+ * reference numbers.
  *
- * Avik Sengupta &lt;avik at apache.org&gt;
- * @author Jason Height (jheight at chariot dot net dot au)
+ * @author Andrew C. Oliver (acoliver at apache dot org)
+ *
  */
-public class MissingArgPtg
-    extends  Ptg
+public class SheetReferences
 {
-   
-    private final static int SIZE = 1;
-    public final static byte sid  = 0x16;
-   
-    public MissingArgPtg()
+    Map map;
+    public SheetReferences()
     {
+      map = new HashMap(5);
     }
+ 
+    public void addSheetReference(String sheetName, int number) {
+       map.put(new Integer(number), sheetName);
+    } 
 
-    public MissingArgPtg(RecordInputStream in)
-    {
-       // doesn't need anything
-    }
-    
-  
-     
-    public void writeBytes(byte [] array, int offset)
-    {
-        array[ offset + 0 ] = sid;
-    }
-
-    public int getSize()
-    {
-        return SIZE;
-    }
-
-   
-    public String toFormulaString(Workbook book)
-    {
-        return " ";
-    }
-    
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
-        
-    public Object clone() {
-      return new MissingArgPtg();
+    public String getSheetName(int number) {
+       return (String)map.get(new Integer(number));
     }
 
 }

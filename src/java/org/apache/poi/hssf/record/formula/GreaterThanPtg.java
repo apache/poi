@@ -25,7 +25,7 @@ package org.apache.poi.hssf.record.formula;
 
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
@@ -97,7 +97,7 @@ public class GreaterThanPtg
      * Implementation of method from Ptg 
      * @param book the Sheet References
      */
-    public String toFormulaString(HSSFWorkbook book)
+    public String toFormulaString(Workbook book)
     {
         return this.GREATERTHAN;
     }

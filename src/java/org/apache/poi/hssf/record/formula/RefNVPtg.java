@@ -23,7 +23,7 @@ import org.apache.poi.util.BitField;
 
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * RefNVPtg
@@ -54,7 +54,7 @@ public class RefNVPtg extends ReferencePtg
     return "RefNVPtg";
   }
 
-  public String toFormulaString(HSSFWorkbook book)
+  public String toFormulaString(Workbook book)
   {
     throw new RuntimeException("Coding Error: This method should never be called. This ptg should be converted");
   }

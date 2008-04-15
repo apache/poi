@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
@@ -72,7 +72,7 @@ public final class IntPtg extends Ptg {
         return SIZE;
     }
 
-    public String toFormulaString(HSSFWorkbook book) {
+    public String toFormulaString(Workbook book) {
         return String.valueOf(getValue());
     }
     public byte getDefaultOperandClass() {

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
@@ -418,7 +418,7 @@ public abstract class Ptg
     /**
      * return a string representation of this token alone
      */
-    public abstract String toFormulaString(HSSFWorkbook book);
+    public abstract String toFormulaString(Workbook book);
     /**
      * dump a debug representation (hexdump) to a string
      */

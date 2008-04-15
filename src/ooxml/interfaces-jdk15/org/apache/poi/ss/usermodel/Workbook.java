@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.poi.ss.util.SheetReferences;
+
 public interface Workbook {
 
     /**
@@ -142,6 +144,15 @@ public interface Workbook {
     int getSheetIndex(Sheet sheet);
 
     /**
+     * Returns the external sheet index of the sheet
+     *  with the given internal index, creating one
+     *  if needed.
+     * Used by some of the more obscure formula and 
+     *  named range things.
+     */
+    int getExternalSheetIndex(int internalSheetIndex);
+    
+    /**
      * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and returns
      * the high level representation.  Use this to create new sheets.
      *
@@ -206,6 +217,8 @@ public interface Workbook {
 
     void removeSheetAt(int index);
 
+    SheetReferences getSheetReferences();
+    
     /**
      * determine whether the Excel GUI will backup the workbook when saving.
      *
@@ -351,6 +364,14 @@ public interface Workbook {
      * @return named range name
      */
     String getNameName(int index);
+
+    /**
+     * TODO - make this less cryptic / move elsewhere
+     * @param refIndex Index to REF entry in EXTERNSHEET record in the Link Table
+     * @param definedNameIndex zero-based to DEFINEDNAME or EXTERNALNAME record
+     * @return the string representation of the defined or external name
+     */
+    String resolveNameXText(int refIndex, int definedNameIndex);
 
     /**
      * Sets the printarea for the sheet provided

@@ -39,6 +39,7 @@ import org.apache.poi.ss.usermodel.SharedStringSource;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.StylesSource;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.SheetReferences;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.CommentsTable;
@@ -498,8 +499,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     	}
     	return -1;
     }
+    
+    /**
+     * TODO - figure out what the hell this methods does in
+     *  HSSF...
+     */
+    public String resolveNameXText(int refIndex, int definedNameIndex) {
+		// TODO Replace with something proper
+		return null;
+	}
 
-    public short getNumCellStyles() {
+	public short getNumCellStyles() {
         // TODO Auto-generated method stub
         return 0;
     }
@@ -573,12 +583,33 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public int getSheetIndex(Sheet sheet) {
         return this.sheets.indexOf(sheet);
     }
+    
+    /**
+     * Returns the external sheet index of the sheet
+     *  with the given internal index, creating one
+     *  if needed.
+     * Used by some of the more obscure formula and 
+     *  named range things.
+     * Fairly easy on XSSF (we think...) since the
+     *  internal and external indicies are the same
+     */
+    public int getExternalSheetIndex(int internalSheetIndex) {
+    	return internalSheetIndex;
+    }
 
     public String getSheetName(int sheet) {
         return this.workbook.getSheets().getSheetArray(sheet).getName();
     }
+    
+    public SheetReferences getSheetReferences() {
+    	SheetReferences sr = new SheetReferences();
+    	for(int i=0; i<getNumberOfSheets(); i++) {
+    		sr.addSheetReference(getSheetName(i), i);
+    	}
+    	return sr;
+	}
 
-    public void insertChartRecord() {
+	public void insertChartRecord() {
         // TODO Auto-generated method stub
 
     }

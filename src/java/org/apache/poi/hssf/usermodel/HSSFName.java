@@ -112,7 +112,8 @@ public class HSSFName implements Name {
     private void setSheetName(String sheetName){
         int sheetNumber = book.getSheetIndex(sheetName);
 
-        short externSheetNumber = book.getExternalSheetIndex(sheetNumber);
+        short externSheetNumber = (short)
+        	book.getExternalSheetIndex(sheetNumber);
         name.setExternSheetNumber(externSheetNumber);
 //        name.setIndexToSheet(externSheetNumber);
 
