@@ -81,6 +81,9 @@ public class HSSFTextbox
      */
     public void setString( HSSFRichTextString string )
     {
+        //if font is not set we must set the default one
+        if (string.numFormattingRuns() == 0) string.applyFont((short)0);
+
         this.string = string;
     }
 
