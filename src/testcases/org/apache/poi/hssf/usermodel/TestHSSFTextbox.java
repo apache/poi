@@ -49,4 +49,23 @@ public final class TestHSSFTextbox extends TestCase{
         assertEquals(HSSFTextbox.VERTICAL_ALIGNMENT_CENTER, textbox.getVerticalAlignment());
     }
 
+    /**
+     * Excel requires at least one format run in HSSFTextbox.
+     * When inserting text make sure that if font is not set we must set the default one.
+     */
+    public void testSetDeafultTextFormat() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+
+        HSSFTextbox textbox1 = patriarch.createTextbox(new HSSFClientAnchor(0,0,0,0,(short)1,1,(short)3,3));
+        HSSFRichTextString rt1 = new HSSFRichTextString("Hello, World!");
+        assertEquals(0, rt1.numFormattingRuns());
+        textbox1.setString(rt1);
+
+        HSSFRichTextString rt2 = textbox1.getString();
+        assertEquals(1, rt2.numFormattingRuns());
+        assertEquals(HSSFRichTextString.NO_FONT, rt2.getFontOfFormattingRun(0));
+    }
+
  }
