@@ -487,7 +487,13 @@ public class SlideShow
 	public PictureData[] getPictureData() {
 		return _hslfSlideShow.getPictures();
 	}
-	
+
+    /**
+     * Returns the data of all the embedded OLE object in the SlideShow
+     */
+    public ObjectData[] getEmbeddedObjects() {
+        return _hslfSlideShow.getEmbeddedObjects();
+    }
 	/**
 	 * Return the current page size
 	 */
