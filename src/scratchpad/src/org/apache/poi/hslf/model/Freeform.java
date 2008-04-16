@@ -19,9 +19,11 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.*;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.HexDump;
 
 import java.awt.geom.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * A "Freeform" shape.
@@ -33,6 +35,16 @@ import java.util.ArrayList;
  * @author Yegor Kozlov
  */
 public class Freeform extends AutoShape {
+
+    public static final byte[] SEGMENTINFO_MOVETO   = new byte[]{0x00, 0x40};
+    public static final byte[] SEGMENTINFO_LINETO   = new byte[]{0x00, (byte)0xAC};
+    public static final byte[] SEGMENTINFO_ESCAPE   = new byte[]{0x01, 0x00};
+    public static final byte[] SEGMENTINFO_ESCAPE2  = new byte[]{0x01, 0x20};
+    public static final byte[] SEGMENTINFO_CUBICTO  = new byte[]{0x00, (byte)0xAD};
+    public static final byte[] SEGMENTINFO_CUBICTO2 = new byte[]{0x00, (byte)0xB3}; //OpenOffice inserts 0xB3 instead of 0xAD.
+    public static final byte[] SEGMENTINFO_CLOSE    = new byte[]{0x01, (byte)0x60};
+    public static final byte[] SEGMENTINFO_END      = new byte[]{0x00, (byte)0x80};
+
     /**
      * Create a Freeform object and initialize it from the supplied Record container.
      *
@@ -82,36 +94,37 @@ public class Freeform extends AutoShape {
             switch (type) {
                 case PathIterator.SEG_MOVETO:
                     pntInfo.add(new Point2D.Double(vals[0], vals[1]));
-                    segInfo.add(new byte[]{0x00, 0x40});
+                    segInfo.add(SEGMENTINFO_MOVETO);
                     break;
                 case PathIterator.SEG_LINETO:
                     pntInfo.add(new Point2D.Double(vals[0], vals[1]));
-                    segInfo.add(new byte[]{0x00, (byte)0xAC});
-                    segInfo.add(new byte[]{0x01, 0x00 });
+                    segInfo.add(SEGMENTINFO_LINETO);
+                    segInfo.add(SEGMENTINFO_ESCAPE);
                     break;
                 case PathIterator.SEG_CUBICTO:
                     pntInfo.add(new Point2D.Double(vals[0], vals[1]));
                     pntInfo.add(new Point2D.Double(vals[2], vals[3]));
                     pntInfo.add(new Point2D.Double(vals[4], vals[5]));
-                    segInfo.add(new byte[]{0x00, (byte)0xAD});
-                    segInfo.add(new byte[]{0x01, 0x20 });
+                    segInfo.add(SEGMENTINFO_CUBICTO);
+                    segInfo.add(SEGMENTINFO_ESCAPE2);
                     break;
                 case PathIterator.SEG_QUADTO:
+                    //TODO: figure out how to convert SEG_QUADTO into SEG_CUBICTO  
                     logger.log(POILogger.WARN, "SEG_QUADTO is not supported");
                     break;
                 case PathIterator.SEG_CLOSE:
                     pntInfo.add(pntInfo.get(0));
-                    segInfo.add(new byte[]{0x00, (byte)0xAC});
-                    segInfo.add(new byte[]{0x01, 0x00 });
-                    segInfo.add(new byte[]{0x00, (byte)0xAC});
-                    segInfo.add(new byte[]{0x01, (byte)0x60});
+                    segInfo.add(SEGMENTINFO_LINETO);
+                    segInfo.add(SEGMENTINFO_ESCAPE);
+                    segInfo.add(SEGMENTINFO_LINETO);
+                    segInfo.add(SEGMENTINFO_CLOSE);
                     isClosed = true;
                     break;
             }
 
             it.next();
         }
-        if(!isClosed) segInfo.add(new byte[]{0x00, (byte)0xAC});
+        if(!isClosed) segInfo.add(SEGMENTINFO_LINETO);
         segInfo.add(new byte[]{0x00, (byte)0x80});
 
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
@@ -146,5 +159,82 @@ public class Freeform extends AutoShape {
         opt.sortProperties();
 
         setAnchor(bounds);
+    }
+
+    /**
+     * Gets the freeform path
+     *
+     * @return the freeform path
+     */
+     public GeneralPath getPath(){
+        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__SHAPEPATH, 0x4));
+
+        EscherArrayProperty verticesProp = (EscherArrayProperty)getEscherProperty(opt, (short)(EscherProperties.GEOMETRY__VERTICES + 0x4000));
+        if(verticesProp == null) verticesProp = (EscherArrayProperty)getEscherProperty(opt, (short)(EscherProperties.GEOMETRY__VERTICES));
+
+        EscherArrayProperty segmentsProp = (EscherArrayProperty)getEscherProperty(opt, (short)(EscherProperties.GEOMETRY__SEGMENTINFO + 0x4000));
+        if(segmentsProp == null) segmentsProp = (EscherArrayProperty)getEscherProperty(opt, (short)(EscherProperties.GEOMETRY__SEGMENTINFO));
+
+        //sanity check
+        if(verticesProp == null) {
+            logger.log(POILogger.WARN, "Freeform is missing GEOMETRY__VERTICES ");
+            return null;
+        }
+        if(segmentsProp == null) {
+            logger.log(POILogger.WARN, "Freeform is missing GEOMETRY__SEGMENTINFO ");
+            return null;
+        }
+
+        Rectangle2D bounds = getAnchor2D();
+        float right = (float)bounds.getX();
+        float bottom = (float)bounds.getY();
+
+        GeneralPath path = new GeneralPath();
+        int numPoints = verticesProp.getNumberOfElementsInArray();
+        int numSegments = segmentsProp.getNumberOfElementsInArray();
+        for (int i = 0, j = 0; i < numSegments && j < numPoints; i++) {
+            byte[] elem = segmentsProp.getElement(i);
+            if(Arrays.equals(elem, SEGMENTINFO_MOVETO)){
+                byte[] p = verticesProp.getElement(j++);
+                short x = LittleEndian.getShort(p, 0);
+                short y = LittleEndian.getShort(p, 2);
+                path.moveTo(
+                        ((float)x*POINT_DPI/MASTER_DPI + right),
+                        ((float)y*POINT_DPI/MASTER_DPI + bottom));
+            } else if (Arrays.equals(elem, SEGMENTINFO_CUBICTO) || Arrays.equals(elem, SEGMENTINFO_CUBICTO2)){
+                i++;
+                byte[] p1 = verticesProp.getElement(j++);
+                short x1 = LittleEndian.getShort(p1, 0);
+                short y1 = LittleEndian.getShort(p1, 2);
+                byte[] p2 = verticesProp.getElement(j++);
+                short x2 = LittleEndian.getShort(p2, 0);
+                short y2 = LittleEndian.getShort(p2, 2);
+                byte[] p3 = verticesProp.getElement(j++);
+                short x3 = LittleEndian.getShort(p3, 0);
+                short y3 = LittleEndian.getShort(p3, 2);
+                path.curveTo(
+                        ((float)x1*POINT_DPI/MASTER_DPI + right), ((float)y1*POINT_DPI/MASTER_DPI + bottom),
+                        ((float)x2*POINT_DPI/MASTER_DPI + right), ((float)y2*POINT_DPI/MASTER_DPI + bottom),
+                        ((float)x3*POINT_DPI/MASTER_DPI + right), ((float)y3*POINT_DPI/MASTER_DPI + bottom));
+
+            } else if (Arrays.equals(elem, SEGMENTINFO_LINETO)){
+                i++;
+                byte[] pnext = segmentsProp.getElement(i);
+                if(Arrays.equals(pnext, SEGMENTINFO_ESCAPE)){
+                    if(j + 1 < numPoints){
+                        byte[] p = verticesProp.getElement(j++);
+                        short x = LittleEndian.getShort(p, 0);
+                        short y = LittleEndian.getShort(p, 2);
+                        path.lineTo(
+                                ((float)x*POINT_DPI/MASTER_DPI + right), ((float)y*POINT_DPI/MASTER_DPI + bottom));
+                    }
+                } else if (Arrays.equals(pnext, SEGMENTINFO_CLOSE)){
+                    path.closePath();
+                }
+            }
+        }
+
+        return path;
     }
 }
