@@ -37,6 +37,9 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.0.3-beta1" date="2008-04-??">
+           <action dev="POI-DEVELOPERS" type="add">HSLF: Implemented more methods in PPGraphics2D</action>
+           <action dev="POI-DEVELOPERS" type="add">HSLF: Added Freeform shape which can contain both lines and Bezier curves</action>
+           <action dev="POI-DEVELOPERS" type="fix">41071 - Improved text extraction in HSLF</action>
            <action dev="POI-DEVELOPERS" type="add">30311 - Conditional Formatting - improved API, added HSSFSheetConditionalFormatting</action>
            <action dev="POI-DEVELOPERS" type="fix">Update the formula parser code to use a HSSFWorkbook, rather than the low level model.Workbook, to make things cleaner and make supporting XSSF formulas in future much easier</action>
            <action dev="POI-DEVELOPERS" type="fix">Fix the logger used by POIFSFileSystem, so that commons-logging isn't required when not used</action>

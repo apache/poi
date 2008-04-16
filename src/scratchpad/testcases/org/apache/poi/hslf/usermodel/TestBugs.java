@@ -360,4 +360,24 @@ public class TestBugs extends TestCase {
 
         assertTrue("No Exceptions while reading file", true);
     }
+
+    /**
+     * Bug 41071: Will not extract text from Powerpoint TextBoxes
+     */
+    public void test41071() throws Exception {
+        FileInputStream is = new FileInputStream(new File(cwd, "41071.ppt"));
+        SlideShow ppt = new SlideShow(is);
+        is.close();
+
+        Slide slide = ppt.getSlides()[0];
+        Shape[] sh = slide.getShapes();
+        assertEquals(1, sh.length);
+        assertTrue(sh[0] instanceof TextShape);
+        TextShape tx = (TextShape)sh[0];
+        assertEquals("Fundera, planera och involvera.", tx.getTextRun().getText());
+
+        TextRun[] run = slide.getTextRuns();
+        assertEquals(1, run.length);
+        assertEquals("Fundera, planera och involvera.", run[0].getText());
+    }
 }
