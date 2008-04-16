@@ -294,7 +294,7 @@ public abstract class Shape {
    public int getEscherProperty(short propId){
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
         EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, propId);
-        return prop == null ? 0 : prop.getPropertyNumber();
+        return prop == null ? 0 : prop.getPropertyValue();
     }
 
     /**
