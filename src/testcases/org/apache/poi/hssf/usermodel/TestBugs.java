@@ -877,4 +877,15 @@ public final class TestBugs extends TestCase {
         }
         assertEquals(713, rowsSeen);
     }
+
+    /**
+     * Bug 28774: Excel will crash when opening xls-files with images.
+     */
+    public void test28774() {
+
+        HSSFWorkbook wb = openSample("28774.xls");
+        assertTrue("no errors reading sample xls", true);
+        writeOutAndReadBack(wb);
+        assertTrue("no errors writing sample xls", true);
+    }
 }
