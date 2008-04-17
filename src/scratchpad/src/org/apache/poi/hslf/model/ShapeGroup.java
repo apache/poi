@@ -24,6 +24,7 @@ import org.apache.poi.hslf.record.EscherTextboxWrapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.geom.Rectangle2D;
+import java.awt.*;
 
 /**
  *  Represents a group of shapes.
@@ -222,5 +223,11 @@ public class ShapeGroup extends Shape{
      public Hyperlink getHyperlink(){
         return null;
     }
-    
+
+    public void draw(Graphics2D graphics){
+        Shape[] sh = getShapes();
+        for (int i = 0; i < sh.length; i++) {
+            sh[i].draw(graphics);
+        }
+    }
 }

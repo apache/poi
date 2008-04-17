@@ -513,4 +513,12 @@ public abstract class TextShape extends SimpleShape {
             }
         }
     }
+
+    public void draw(Graphics2D graphics){
+        AffineTransform at = graphics.getTransform();
+        ShapePainter.paint(this, graphics);
+        new TextPainter(this).paint(graphics);
+        graphics.setTransform(at);
+    }
+
 }

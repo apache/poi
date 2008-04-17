@@ -26,6 +26,7 @@ import org.apache.poi.util.POILogger;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
@@ -202,4 +203,22 @@ public class Picture extends SimpleShape {
         }
     }
 
+    public void draw(Graphics2D graphics){
+        PictureData data = getPictureData();
+        if (data  instanceof Bitmap){
+            BufferedImage img = null;
+            try {
+               	img = ImageIO.read(new ByteArrayInputStream(data.getData()));
+            }
+            catch (Exception e){
+                logger.log(POILogger.WARN, "ImageIO failed to create image. image.type: " + data.getType());
+                return;
+            }
+            Rectangle anchor = getAnchor();
+            Image scaledImg = img.getScaledInstance(anchor.width, anchor.height, Image.SCALE_SMOOTH);
+            graphics.drawImage(scaledImg, anchor.x, anchor.y, null);
+        } else {
+            logger.log(POILogger.WARN, "Rendering of metafiles is not yet supported. image.type: " + data.getType());
+        }
+    }
 }

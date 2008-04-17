@@ -22,6 +22,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 
 /**
  *  An abstract simple (non-group) shape.
@@ -199,4 +200,41 @@ public class SimpleShape extends Shape {
         getFill().setForegroundColor(color);
     }
 
+    /**
+     * Whether the shape is horizontally flipped
+     *
+     * @return whether the shape is horizontally flipped
+     */
+     public boolean getFlipHorizontal(){
+        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        return (spRecord.getFlags()& EscherSpRecord.FLAG_FLIPHORIZ) != 0;
+    }
+
+    /**
+     * Whether the shape is vertically flipped
+     *
+     * @return whether the shape is vertically flipped
+     */
+    public boolean getFlipVertical(){
+        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        return (spRecord.getFlags()& EscherSpRecord.FLAG_FLIPVERT) != 0;
+    }
+
+    /**
+     * Rotation angle in degrees
+     *
+     * @return rotation angle in degrees
+     */
+    public int getRotation(){
+        int rot = getEscherProperty(EscherProperties.TRANSFORM__ROTATION);
+        int angle = (rot >> 16) % 360;
+
+        return angle;
+    }
+
+    public void draw(Graphics2D graphics){
+        AffineTransform at = graphics.getTransform();
+        ShapePainter.paint(this, graphics);
+        graphics.setTransform(at);
+    }
 }

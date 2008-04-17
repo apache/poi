@@ -17,23 +17,12 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.usermodel.ObjectData;
-import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.ExObjList;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.ExEmbed;
-import org.apache.poi.hslf.blip.Bitmap;
 import org.apache.poi.util.POILogger;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.awt.*;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.Arrays;
 
 
 /**

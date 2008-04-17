@@ -18,9 +18,7 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.record.EscherTextboxWrapper;
 import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.usermodel.RichTextRun;
 
 import java.awt.*;
 

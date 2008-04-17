@@ -22,12 +22,10 @@ import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
 
 import java.awt.*;
-import java.util.*;
 
 /**
  * Represents functionality provided by the 'Fill Effects' dialog in PowerPoint.
@@ -137,13 +135,15 @@ public class Fill {
         EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);
         EscherSimpleProperty p1 = (EscherSimpleProperty)Shape.getEscherProperty(opt, EscherProperties.FILL__FILLCOLOR);
         EscherSimpleProperty p2 = (EscherSimpleProperty)Shape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
+        EscherSimpleProperty p3 = (EscherSimpleProperty)Shape.getEscherProperty(opt, EscherProperties.FILL__FILLOPACITY);
 
         int p2val = p2 == null ? 0 : p2.getPropertyValue();
+        int alpha =  p3 == null ? 255 : ((p3.getPropertyValue() >> 8) & 0xFF);
 
         Color clr = null;
         if (p1 != null && (p2val  & 0x10) != 0){
             int rgb = p1.getPropertyValue();
-            clr = shape.getColor(rgb);
+            clr = shape.getColor(rgb, alpha);
         }
         return clr;
     }
@@ -176,7 +176,7 @@ public class Fill {
         Color clr = null;
         if (p1 != null && (p2val  & 0x10) != 0){
             int rgb = p1.getPropertyValue();
-            clr = shape.getColor(rgb);
+            clr = shape.getColor(rgb, 255);
         }
         return clr;
     }

@@ -17,6 +17,8 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.hslf.record.SheetContainer;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 
 /**
@@ -37,4 +39,32 @@ public abstract class MasterSheet extends Sheet {
      */
     public abstract TextProp getStyleAttribute(int txtype, int level, String name, boolean isCharacter) ;
 
+
+    /**
+     * Checks if the shape is a placeholder.
+     * (placeholders aren't normal shapes, they are visible only in the Edit Master mode)
+     *
+     *
+     * @return true if the shape is a placeholder
+     */
+    public static boolean isPlaceholder(Shape shape){
+        if(!(shape instanceof TextShape)) return false;
+
+        TextShape tx = (TextShape)shape;
+        TextRun run = tx.getTextRun();
+        if(run == null) return false;
+
+        Record[] records = run._records;
+        for (int i = 0; i < records.length; i++) {
+            int type = (int)records[i].getRecordType();
+            if (type == RecordTypes.BaseTextPropAtom.typeID ||
+                type == RecordTypes.DateTimeMCAtom.typeID ||
+                type == RecordTypes.GenericDateMCAtom.typeID ||
+                type == RecordTypes.FooterMCAtom.typeID ||
+                type == RecordTypes.SlideNumberMCAtom.typeID
+                    ) return true;
+
+        }
+        return false;
+    }
 }
