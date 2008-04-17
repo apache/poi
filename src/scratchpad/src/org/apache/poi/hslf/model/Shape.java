@@ -17,7 +17,6 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.model.ShapeTypes;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
@@ -298,6 +297,17 @@ public abstract class Shape {
     }
 
     /**
+     * Get the value of a simple escher property for this shape.
+     *
+     * @param propId    The id of the property. One of the constants defined in EscherOptRecord.
+     */
+   public int getEscherProperty(short propId, int defaultValue){
+        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, propId);
+        return prop == null ? defaultValue : prop.getPropertyValue();
+    }
+
+    /**
      * @return  The shape container and it's children that can represent this
      *          shape.
      */
@@ -333,14 +343,14 @@ public abstract class Shape {
         _sheet = sheet;
     }
 
-    protected Color getColor(int rgb){
+    protected Color getColor(int rgb, int alpha){
         if (rgb >= 0x8000000) {
             int idx = rgb - 0x8000000;
             ColorSchemeAtom ca = getSheet().getColorScheme();
             if(idx >= 0 && idx <= 7) rgb = ca.getColor(idx);
         }
         Color tmp = new Color(rgb, true);
-        return new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed());
+        return new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed(), alpha);
     }
 
     /**
@@ -364,4 +374,16 @@ public abstract class Shape {
         return Hyperlink.find(this);
     }
 
+    public void draw(Graphics2D graphics){
+        logger.log(POILogger.INFO, "Rendering " + getShapeName());
+    }
+
+    /**
+     * Return shape outline as a java.awt.Shape object
+     *
+     * @return the shape outline
+     */
+    public java.awt.Shape getOutline(){
+        return getAnchor2D();
+    }
 }

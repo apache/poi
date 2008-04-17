@@ -18,6 +18,9 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
+import org.apache.poi.util.POILogger;
+
+import java.awt.geom.Rectangle2D;
 
 /**
  * Represents an AutoShape.
@@ -102,4 +105,17 @@ public class AutoShape extends TextShape {
 
         setEscherProperty((short)(EscherProperties.GEOMETRY__ADJUSTVALUE + idx), val);
     }
+
+    public java.awt.Shape getOutline(){
+        ShapeOutline outline = AutoShapes.getShapeOutline(getShapeType());
+        Rectangle2D anchor = getAnchor2D();
+        if(outline == null){
+            logger.log(POILogger.WARN, "getOutline() is not implemented for " + ShapeTypes.typeName(getShapeType()));
+            return anchor;
+        } else {
+            java.awt.Shape shape = outline.getOutline(this);
+            return AutoShapes.transform(shape, anchor);
+        }
+    }
+
 }

@@ -534,6 +534,10 @@ public class TextRun
 		// The messes things up on everything but a Mac, so translate
 		//  them to \n
 		String text = rawText.replace('\r','\n');
+
+        //0xB acts like cariage return in page titles
+        text = text.replace((char) 0x0B, '\n');
+
 		return text;
 	}
 

@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.awt.*;
 
 /**
  * This class defines the common format of "Sheets" in a powerpoint
@@ -329,4 +330,7 @@ public abstract class Sheet {
         return _background;
     }
 
+    public void draw(Graphics2D graphics){
+
+    }
 }

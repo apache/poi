@@ -44,6 +44,7 @@
                     <li><link href="#OLE">How to retrieve embedded OLE objects</link></li>
                     <li><link href="#Freeform">How to create shapes of arbitrary geometry</link></li>
                     <li><link href="#Graphics2D">Shapes and Graphics2D</link></li>
+                    <li><link href="#Render">How to convert slides into images</link></li>
                 </ul>
             </section>
             <section><title>Features</title>
@@ -549,7 +550,54 @@
 
                    </source>
                   </section>
-    
+
+                <anchor id="Render"/>
+                <section><title>Export PowerPoint slides into java.awt.Graphics2D</title>
+                  <p>
+                    HSLF provides a way to export slides into images. You can capture slides into java.awt.Graphics2D object (or any other) 
+                    and serialize it into a PNG or JPEG format. Please note, although HSLF attempts to render slides as close to PowerPoint as possible, 
+                    the output might look differently from PowerPoint due to the following reasons: 
+                  </p>
+            <ul>
+              <li>Java2D renders fonts differently vs PowerPoint. There are always some differences in the way the font glyphs are painted</li>   
+              <li>HSLF uses java.awt.font.LineBreakMeasurer to break text into lines. PowerPoint may do it in a different way.</li>
+              <li>If a font from the presentation is not avaiable, then the JDK default font will be used.</li>
+            </ul>
+            <p>
+            Current Limitations:
+            </p>
+            <ul>
+              <li>Some types of shapes are not yet supported (WordArt, complex auto-shapes)</li>
+              <li>Only Bitmap images (PNG, JPEG, DIB) can be rendered in Java</li>  
+            </ul>
+                  <source>
+        FileInputStream is = new FileInputStream("slideshow.ppt");
+        SlideShow ppt = new SlideShow(is);
+        is.close();
+        
+        Dimension pgsize = ppt.getPageSize();
+
+        Slide[] slide = ppt.getSlides();
+        for (int i = 0; i &lt; slide.length; i++) {
+
+            BufferedImage img = new BufferedImage(pgsize.width, pgsize.height, BufferedImage.TYPE_INT_RGB);
+            Graphics2D graphics = img.createGraphics();
+            //clear the drawing area
+            graphics.setPaint(Color.white);
+            graphics.fill(new Rectangle2D.Float(0, 0, pgsize.width, pgsize.height));
+
+            //render
+            slide[i].draw(graphics);
+
+            //save the output
+            FileOutputStream out = new FileOutputStream("slide-"  + (i+1) + ".png");
+            javax.imageio.ImageIO.write(img, "png", out);
+            out.close();
+        }
+
+                  </source>
+                  </section>
+                  
                 </section>
         </section>
     </body>

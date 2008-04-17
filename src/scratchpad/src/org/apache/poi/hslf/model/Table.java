@@ -23,7 +23,6 @@ import org.apache.poi.util.LittleEndian;
 import java.util.*;
 import java.util.List;
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 
 /**
  * Represents a table in a PowerPoint presentation

@@ -27,7 +27,6 @@ import java.awt.image.renderable.RenderableImage;
 import java.awt.geom.*;
 import java.text.AttributedCharacterIterator;
 import java.util.Map;
-import java.util.ArrayList;
 import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.util.POILogger;
