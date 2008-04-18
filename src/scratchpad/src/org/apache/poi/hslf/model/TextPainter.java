@@ -102,7 +102,12 @@ public class TextPainter {
         while (measurer.getPosition() < paragraphEnd) {
             int startIndex = measurer.getPosition();
             int nextBreak = text.indexOf('\n', measurer.getPosition() + 1);
-            RichTextRun rt = getRichTextRunAt(startIndex + 1);
+
+            int rtIdx = startIndex == 0 ? 0 : startIndex + 1;
+            if(startIndex == 0 || startIndex == text.length() - 1) rtIdx = startIndex;
+            else rtIdx = startIndex + 1;
+
+            RichTextRun rt = getRichTextRunAt(rtIdx);
             if(rt == null) {
                 logger.log(POILogger.WARN,  "RichTextRun not found at pos" + (startIndex + 1) + "; text.length: " + text.length());
                 break;
@@ -161,11 +166,11 @@ public class TextPainter {
                 }
             }
 
-            textHeight += textLayout.getAscent() + textLayout.getLeading();
+            textHeight += textLayout.getAscent() + textLayout.getDescent();
 
             int lineSpacing = rt.getLineSpacing();
-            if(lineSpacing != 0) el._spacing = textLayout.getDescent()*lineSpacing/100;
-            else el._spacing = textLayout.getDescent();
+            if(lineSpacing != 0) el._spacing = textLayout.getLeading()*lineSpacing/100;
+            else el._spacing = textLayout.getLeading();
 
             textHeight += el._spacing;
 
