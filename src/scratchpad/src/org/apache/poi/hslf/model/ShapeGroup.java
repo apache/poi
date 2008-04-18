@@ -24,6 +24,7 @@ import org.apache.poi.hslf.record.EscherTextboxWrapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.AffineTransform;
 import java.awt.*;
 
 /**
@@ -115,6 +116,47 @@ public class ShapeGroup extends Shape{
     }
 
     /**
+     * Sets the coordinate space of this group.  All children are constrained
+     * to these coordinates.
+     *
+     * @param anchor the coordinate space of this group
+     */
+    public void setCoordinates(Rectangle2D anchor){
+        EscherContainerRecord spContainer = (EscherContainerRecord)_escherContainer.getChildRecords().get(0);
+        EscherSpgrRecord spgr = (EscherSpgrRecord)getEscherChild(spContainer, EscherSpgrRecord.RECORD_ID);
+
+        int x1 = (int)Math.round(anchor.getX()*MASTER_DPI/POINT_DPI);
+        int y1 = (int)Math.round(anchor.getY()*MASTER_DPI/POINT_DPI);
+        int x2 = (int)Math.round((anchor.getX() + anchor.getWidth())*MASTER_DPI/POINT_DPI);
+        int y2 = (int)Math.round((anchor.getY() + anchor.getHeight())*MASTER_DPI/POINT_DPI);
+
+        spgr.setRectX1(x1);
+        spgr.setRectY1(y1);
+        spgr.setRectX2(x2);
+        spgr.setRectY2(y2);
+
+    }
+
+    /**
+     * Gets the coordinate space of this group.  All children are constrained
+     * to these coordinates.
+     *
+     * @return the coordinate space of this group
+     */
+    public Rectangle2D getCoordinates(){
+        EscherContainerRecord spContainer = (EscherContainerRecord)_escherContainer.getChildRecords().get(0);
+        EscherSpgrRecord spgr = (EscherSpgrRecord)getEscherChild(spContainer, EscherSpgrRecord.RECORD_ID);
+
+        Rectangle2D.Float anchor = new Rectangle2D.Float();
+        anchor.x = (float)spgr.getRectX1()*POINT_DPI/MASTER_DPI;
+        anchor.y = (float)spgr.getRectY1()*POINT_DPI/MASTER_DPI;
+        anchor.width = (float)(spgr.getRectX2() - spgr.getRectX1())*POINT_DPI/MASTER_DPI;
+        anchor.height = (float)(spgr.getRectY2() - spgr.getRectY1())*POINT_DPI/MASTER_DPI;
+
+        return anchor;
+    }
+
+    /**
      * Create a new ShapeGroup and create an instance of <code>EscherSpgrContainer</code> which represents a group of shapes
      */
     protected EscherContainerRecord createSpContainer(boolean isChild) {
@@ -191,14 +233,13 @@ public class ShapeGroup extends Shape{
      * @return the anchor of this shape group
      */
     public Rectangle2D getAnchor2D(){
-        EscherContainerRecord groupInfoContainer = (EscherContainerRecord)_escherContainer.getChild(0);
-        EscherSpgrRecord spgr = (EscherSpgrRecord)getEscherChild(groupInfoContainer, EscherSpgrRecord.RECORD_ID);
-        Rectangle2D anchor = new Rectangle2D.Float(
-            (float)spgr.getRectX1()*POINT_DPI/MASTER_DPI,
-            (float)spgr.getRectY1()*POINT_DPI/MASTER_DPI,
-            (float)(spgr.getRectX2() - spgr.getRectX1())*POINT_DPI/MASTER_DPI,
-            (float)(spgr.getRectY2() - spgr.getRectY1())*POINT_DPI/MASTER_DPI
-        );
+        EscherContainerRecord spContainer = (EscherContainerRecord)_escherContainer.getChildRecords().get(0);
+        EscherClientAnchorRecord clientAnchor = (EscherClientAnchorRecord)getEscherChild(spContainer, EscherClientAnchorRecord.RECORD_ID);
+        Rectangle2D.Float anchor = new Rectangle2D.Float();
+        anchor.x = (float)clientAnchor.getCol1()*POINT_DPI/MASTER_DPI;
+        anchor.y = (float)clientAnchor.getFlag()*POINT_DPI/MASTER_DPI;
+        anchor.width = (float)(clientAnchor.getDx1() - clientAnchor.getCol1())*POINT_DPI/MASTER_DPI ;
+        anchor.height = (float)(clientAnchor.getRow1() - clientAnchor.getFlag())*POINT_DPI/MASTER_DPI;
 
         return anchor;
     }
@@ -225,9 +266,25 @@ public class ShapeGroup extends Shape{
     }
 
     public void draw(Graphics2D graphics){
+        Rectangle2D anchor = getAnchor2D();
+        Rectangle2D coords = getCoordinates();
+
+        //transform coordinates
+        AffineTransform at = graphics.getTransform();
+
+        if(!anchor.equals(coords)){
+            graphics.scale(coords.getWidth()/anchor.getWidth(), coords.getHeight()/anchor.getHeight());
+
+            graphics.translate(
+                    anchor.getX()*coords.getWidth()/anchor.getWidth() - coords.getX(),
+                    anchor.getY()*coords.getHeight()/anchor.getHeight() - coords.getY());
+        }
+
         Shape[] sh = getShapes();
         for (int i = 0; i < sh.length; i++) {
             sh[i].draw(graphics);
         }
+
+        graphics.setTransform(at);
     }
 }
