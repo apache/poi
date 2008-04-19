@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.0.3-beta1" date="2008-04-??">
+           <action dev="POI-DEVELOPERS" type="add">HSLF: Support for getting embedded sounds from slide show </action>
            <action dev="POI-DEVELOPERS" type="add">HSLF: Initial support for rendering slides into images</action>
            <action dev="POI-DEVELOPERS" type="add">HSLF: Support for getting OLE object data from slide show </action>
            <action dev="POI-DEVELOPERS" type="add">HSLF: Implemented more methods in PPGraphics2D</action>
