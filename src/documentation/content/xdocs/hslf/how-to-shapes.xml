@@ -42,6 +42,7 @@
                     <li><link href="#Tables">Tables</link></li>
                     <li><link href="#RemoveShape">How to remove shapes</link></li>
                     <li><link href="#OLE">How to retrieve embedded OLE objects</link></li>
+                    <li><link href="#Sound">How to retrieve embedded sounds</link></li>
                     <li><link href="#Freeform">How to create shapes of arbitrary geometry</link></li>
                     <li><link href="#Graphics2D">Shapes and Graphics2D</link></li>
                     <li><link href="#Render">How to convert slides into images</link></li>
@@ -474,6 +475,26 @@
                     </source>
                   </section>
 
+                <anchor id="Sound"/>
+                <section><title>How to retrieve embedded sounds</title>
+                  <source>
+
+        FileInputStream is = new FileInputStream(args[0]);
+        SlideShow ppt = new SlideShow(is);
+        is.close();
+
+        SoundData[] sound = ppt.getSoundData();
+        for (int i = 0; i &lt; sound.length; i++) {
+            //save *WAV sounds on disk
+            if(sound[i].getSoundType().equals(".WAV")){
+                FileOutputStream out = new FileOutputStream(sound[i].getSoundName());
+                out.write(sound[i].getData());
+                out.close();
+            }
+        }
+                    </source>
+                  </section>
+                  
                 <anchor id="Freeform"/>
                 <section><title>How to create shapes of arbitrary geometry</title>
                   <source>
@@ -556,7 +577,7 @@
                   <p>
                     HSLF provides a way to export slides into images. You can capture slides into java.awt.Graphics2D object (or any other) 
                     and serialize it into a PNG or JPEG format. Please note, although HSLF attempts to render slides as close to PowerPoint as possible, 
-                    the output might look differently from PowerPoint due to the following reasons: 
+                    the output may look differently from PowerPoint due to the following reasons: 
                   </p>
             <ul>
               <li>Java2D renders fonts differently vs PowerPoint. There are always some differences in the way the font glyphs are painted</li>   
