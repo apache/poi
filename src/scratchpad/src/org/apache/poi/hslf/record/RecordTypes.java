@@ -70,9 +70,10 @@ public class RecordTypes {
     public static final Type List = new Type(2000,null);
     public static final Type FontCollection = new Type(2005,FontCollection.class);
     public static final Type BookmarkCollection = new Type(2019,null);
+    public static final Type SoundCollection = new Type(2020,SoundCollection.class);
     public static final Type SoundCollAtom = new Type(2021,null);
-    public static final Type Sound = new Type(2022,null);
-    public static final Type SoundData = new Type(2023,null);
+    public static final Type Sound = new Type(2022,Sound.class);
+    public static final Type SoundData = new Type(2023,SoundData.class);
     public static final Type BookmarkSeedAtom = new Type(2025,null);
     public static final Type ColorSchemeAtom = new Type(2032,ColorSchemeAtom.class);
     public static final Type ExObjRefAtom = new Type(3009,null);
