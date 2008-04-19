@@ -197,6 +197,7 @@ public class Picture extends SimpleShape {
      * By default set the orininal image size
      */
     protected void afterInsert(Sheet sh){
+        super.afterInsert(sh);
         java.awt.Rectangle anchor = getAnchor();
         if (anchor.equals(new java.awt.Rectangle())){
             setDefaultSize();
