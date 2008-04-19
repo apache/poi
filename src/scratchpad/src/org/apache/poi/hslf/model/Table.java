@@ -112,6 +112,8 @@ public class Table extends ShapeGroup {
     }
 
     protected void afterInsert(Sheet sh){
+        super.afterInsert(sh);
+
         EscherContainerRecord spCont = (EscherContainerRecord) getSpContainer().getChild(0);
         List lst = spCont.getChildRecords();
         EscherOptRecord opt = (EscherOptRecord)lst.get(lst.size()-2);

@@ -184,6 +184,8 @@ public abstract class TextShape extends SimpleShape {
      * @param sh the sheet we are adding to
      */
     protected void afterInsert(Sheet sh){
+        super.afterInsert(sh);
+
         EscherTextboxWrapper _txtbox = getEscherTextboxWrapper();
         if(_txtbox != null){
             PPDrawing ppdrawing = sh.getPPDrawing();
