@@ -716,6 +716,31 @@ public class RichTextRun {
         int val = getParaTextPropVal("spacebefore");
         return val == -1 ? 0 : val;
     }
+
+    /**
+     * Sets spacing after a paragraph.
+     * <p>
+     * If spaceafter >= 0, then spaceafter is a percentage of normal line height.
+     * If spaceafter < 0, the absolute value of spaceafter is the spacing in master coordinates.
+     * </p>
+     */
+    public void setSpaceAfter(int val) {
+        setParaTextPropVal("spaceafter", val);
+    }
+
+    /**
+     * Returns spacing after a paragraph
+     * <p>
+     * If spaceafter >= 0, then spaceafter is a percentage of normal line height.
+     * If spaceafter < 0, the absolute value of spaceafter is the spacing in master coordinates.
+     * </p>
+     *
+     * @return the spacing before a paragraph
+     */
+    public int getSpaceAfter() {
+        int val = getParaTextPropVal("spaceafter");
+        return val == -1 ? 0 : val;
+    }
 	// --------------- Internal HSLF methods, not intended for end-user use! -------
 	
 	/**

@@ -103,13 +103,12 @@ public class TextPainter {
             int startIndex = measurer.getPosition();
             int nextBreak = text.indexOf('\n', measurer.getPosition() + 1);
 
-            int rtIdx = startIndex == 0 ? 0 : startIndex + 1;
-            if(startIndex == 0 || startIndex == text.length() - 1) rtIdx = startIndex;
-            else rtIdx = startIndex + 1;
+            boolean prStart = text.charAt(startIndex) == '\n';
+            if(prStart) measurer.setPosition(startIndex++);
 
-            RichTextRun rt = getRichTextRunAt(rtIdx);
+            RichTextRun rt = getRichTextRunAt(startIndex);
             if(rt == null) {
-                logger.log(POILogger.WARN,  "RichTextRun not found at pos" + (startIndex + 1) + "; text.length: " + text.length());
+                logger.log(POILogger.WARN,  "RichTextRun not found at pos" + startIndex + "; text.length: " + text.length());
                 break;
             }
 
@@ -135,21 +134,24 @@ public class TextPainter {
             int endIndex = measurer.getPosition();
 
             TextElement el = new TextElement();
+            el.ascent = textLayout.getAscent();
             el._startIndex = startIndex;
             el._endIndex = endIndex;
             el._align = rt.getAlignment();
             el._text = textLayout;
             el._textOffset = rt.getTextOffset();
 
-            boolean prStart = text.charAt(startIndex) == '\n' || startIndex == 0;
-            if (text.charAt(startIndex) == '\n'){
+            textHeight += textLayout.getAscent();
+            if (prStart || startIndex == 0){
                 int spaceBefore = rt.getSpaceBefore();
                 if (spaceBefore != 0) {
-                    float val = (textLayout.getAscent() + textLayout.getDescent()) * spaceBefore/100;
+                    float val = (float)(textLayout.getAscent() + textLayout.getDescent())* spaceBefore/100;
                     textHeight += val;
+                    el.ascent += val;
                 }
             }
-            if(rt.isBullet() && prStart){
+
+            if(rt.isBullet() && (prStart || startIndex == 0)){
                 it.setIndex(startIndex);
 
                 AttributedString bat = new AttributedString(Character.toString(rt.getBulletChar()), it.getAttributes());
@@ -166,13 +168,22 @@ public class TextPainter {
                 }
             }
 
-            textHeight += textLayout.getAscent() + textLayout.getDescent();
 
+            float descent = textLayout.getDescent();
             int lineSpacing = rt.getLineSpacing();
-            if(lineSpacing != 0) el._spacing = textLayout.getLeading()*lineSpacing/100;
-            else el._spacing = textLayout.getLeading();
+            if(lineSpacing != 0) descent += textLayout.getLeading()*lineSpacing/100;
+            else descent = textLayout.getLeading();
+            textHeight += descent;
 
-            textHeight += el._spacing;
+            el.descent = descent;
+            if (prStart){
+                int spaceAfter = rt.getSpaceAfter();
+                if (spaceAfter != 0) {
+                    float val = (float)(textLayout.getAscent() + textLayout.getDescent())* spaceAfter/100;
+                    textHeight += val;
+                    el.descent += val;
+                }
+            }
 
             lines.add(el);
         }
@@ -180,15 +191,15 @@ public class TextPainter {
         int valign = _shape.getVerticalAlignment();
         double y0 = anchor.getY();
         switch (valign){
-            case TextBox.AnchorTopBaseline:
-            case TextBox.AnchorTop:
+            case TextShape.AnchorTopBaseline:
+            case TextShape.AnchorTop:
                 y0 += _shape.getMarginTop();
                 break;
-            case TextBox.AnchorBottom:
+            case TextShape.AnchorBottom:
                 y0 += anchor.getHeight() - textHeight - _shape.getMarginBottom();
                 break;
             default:
-            case TextBox.AnchorMiddle:
+            case TextShape.AnchorMiddle:
                 float delta =  (float)anchor.getHeight() - textHeight - _shape.getMarginTop() - _shape.getMarginBottom();
                 y0 += _shape.getMarginTop()  + delta/2;
                 break;
@@ -197,11 +208,12 @@ public class TextPainter {
         //finally draw the text fragments
         for (int i = 0; i < lines.size(); i++) {
             TextElement elem = (TextElement)lines.get(i);
-            y0 += elem._text.getAscent();
+            y0 += elem.ascent;
 
             Point2D.Double pen = new Point2D.Double();
             pen.y = y0;
             switch (elem._align) {
+                default:
                 case TextShape.AlignLeft:
                     pen.x = anchor.getX() + _shape.getMarginLeft();
                     break;
@@ -213,24 +225,18 @@ public class TextPainter {
                     pen.x = anchor.getX() + _shape.getMarginLeft() +
                             (anchor.getWidth() - elem._text.getAdvance() - _shape.getMarginLeft() - _shape.getMarginRight());
                     break;
-                default:
-                    pen.x = anchor.getX() + _shape.getMarginLeft();
-                    break;
             }
             if(elem._bullet != null){
                 elem._bullet.draw(graphics, (float)(pen.x + elem._bulletOffset), (float)pen.y);
             }
             elem._text.draw(graphics, (float)(pen.x + elem._textOffset), (float)pen.y);
 
-            y0 += elem._text.getDescent();
-            y0 += elem._text.getLeading();
-
-            y0 += elem._spacing;
+            y0 += elem.descent;
         }
     }
 
 
-    public static class TextElement {
+    static class TextElement {
         public TextLayout _text;
         public int _textOffset;
         public TextLayout _bullet;
@@ -239,5 +245,6 @@ public class TextPainter {
         public int _startIndex;
         public int _endIndex;
         public float _spacing;
+        public float ascent, descent;
     }
 }

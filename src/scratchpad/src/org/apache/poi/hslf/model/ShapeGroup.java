@@ -273,7 +273,7 @@ public class ShapeGroup extends Shape{
         AffineTransform at = graphics.getTransform();
 
         if(!anchor.equals(coords)){
-            graphics.scale(coords.getWidth()/anchor.getWidth(), coords.getHeight()/anchor.getHeight());
+            graphics.scale(anchor.getWidth()/coords.getWidth(), anchor.getHeight()/coords.getHeight());
 
             graphics.translate(
                     anchor.getX()*coords.getWidth()/anchor.getWidth() - coords.getX(),
