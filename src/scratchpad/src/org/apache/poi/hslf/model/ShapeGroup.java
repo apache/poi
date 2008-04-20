@@ -236,10 +236,21 @@ public class ShapeGroup extends Shape{
         EscherContainerRecord spContainer = (EscherContainerRecord)_escherContainer.getChildRecords().get(0);
         EscherClientAnchorRecord clientAnchor = (EscherClientAnchorRecord)getEscherChild(spContainer, EscherClientAnchorRecord.RECORD_ID);
         Rectangle2D.Float anchor = new Rectangle2D.Float();
-        anchor.x = (float)clientAnchor.getCol1()*POINT_DPI/MASTER_DPI;
-        anchor.y = (float)clientAnchor.getFlag()*POINT_DPI/MASTER_DPI;
-        anchor.width = (float)(clientAnchor.getDx1() - clientAnchor.getCol1())*POINT_DPI/MASTER_DPI ;
-        anchor.height = (float)(clientAnchor.getRow1() - clientAnchor.getFlag())*POINT_DPI/MASTER_DPI;
+        if(clientAnchor == null){
+            logger.log(POILogger.WARN, "EscherClientAnchorRecord was not found for the shape group");
+            EscherChildAnchorRecord rec = (EscherChildAnchorRecord)getEscherChild(spContainer, EscherChildAnchorRecord.RECORD_ID);
+            anchor = new Rectangle2D.Float(
+                (float)rec.getDx1()*POINT_DPI/MASTER_DPI,
+                (float)rec.getDy1()*POINT_DPI/MASTER_DPI,
+                (float)(rec.getDx2()-rec.getDx1())*POINT_DPI/MASTER_DPI,
+                (float)(rec.getDy2()-rec.getDy1())*POINT_DPI/MASTER_DPI
+            );
+        } else {
+            anchor.x = (float)clientAnchor.getCol1()*POINT_DPI/MASTER_DPI;
+            anchor.y = (float)clientAnchor.getFlag()*POINT_DPI/MASTER_DPI;
+            anchor.width = (float)(clientAnchor.getDx1() - clientAnchor.getCol1())*POINT_DPI/MASTER_DPI ;
+            anchor.height = (float)(clientAnchor.getRow1() - clientAnchor.getFlag())*POINT_DPI/MASTER_DPI;
+        }
 
         return anchor;
     }

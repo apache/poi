@@ -166,12 +166,24 @@ public abstract class Shape {
         if ((flags & EscherSpRecord.FLAG_CHILD) != 0){
             EscherChildAnchorRecord rec = (EscherChildAnchorRecord)getEscherChild(_escherContainer, EscherChildAnchorRecord.RECORD_ID);
             anchor = new java.awt.Rectangle();
-            anchor = new Rectangle2D.Float(
-                (float)rec.getDx1()*POINT_DPI/MASTER_DPI,
-                (float)rec.getDy1()*POINT_DPI/MASTER_DPI,
-                (float)(rec.getDx2()-rec.getDx1())*POINT_DPI/MASTER_DPI,
-                (float)(rec.getDy2()-rec.getDy1())*POINT_DPI/MASTER_DPI
-            );
+            if(rec == null){
+                logger.log(POILogger.WARN, "EscherSpRecord.FLAG_CHILD is set but EscherChildAnchorRecord was not found");
+                EscherClientAnchorRecord clrec = (EscherClientAnchorRecord)getEscherChild(_escherContainer, EscherClientAnchorRecord.RECORD_ID);
+                anchor = new java.awt.Rectangle();
+                anchor = new Rectangle2D.Float(
+                    (float)clrec.getCol1()*POINT_DPI/MASTER_DPI,
+                    (float)clrec.getFlag()*POINT_DPI/MASTER_DPI,
+                    (float)(clrec.getDx1()-clrec.getCol1())*POINT_DPI/MASTER_DPI,
+                    (float)(clrec.getRow1()-clrec.getFlag())*POINT_DPI/MASTER_DPI
+                );
+            } else {
+                anchor = new Rectangle2D.Float(
+                    (float)rec.getDx1()*POINT_DPI/MASTER_DPI,
+                    (float)rec.getDy1()*POINT_DPI/MASTER_DPI,
+                    (float)(rec.getDx2()-rec.getDx1())*POINT_DPI/MASTER_DPI,
+                    (float)(rec.getDy2()-rec.getDy1())*POINT_DPI/MASTER_DPI
+                );
+            }
         }
         else {
             EscherClientAnchorRecord rec = (EscherClientAnchorRecord)getEscherChild(_escherContainer, EscherClientAnchorRecord.RECORD_ID);
@@ -245,7 +257,7 @@ public abstract class Shape {
      * @return escher property or <code>null</code> if not found.
      */
      public static EscherProperty getEscherProperty(EscherOptRecord opt, int propId){
-        for ( Iterator iterator = opt.getEscherProperties().iterator(); iterator.hasNext(); )
+        if(opt != null) for ( Iterator iterator = opt.getEscherProperties().iterator(); iterator.hasNext(); )
         {
             EscherProperty prop = (EscherProperty) iterator.next();
             if (prop.getPropertyNumber() == propId)

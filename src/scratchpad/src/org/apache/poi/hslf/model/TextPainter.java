@@ -44,6 +44,9 @@ public class TextPainter {
         _shape = shape;
     }
 
+    /**
+     * Convert the underlying set of rich text runs into java.text.AttributedString
+     */
     public AttributedString getAttributedString(TextRun txrun){
         String text = txrun.getText();
         AttributedString at = new AttributedString(text);
@@ -68,16 +71,6 @@ public class TextPainter {
 
         }
         return at;
-    }
-
-    protected RichTextRun getRichTextRunAt(int pos){
-        RichTextRun[] rt = _shape.getTextRun().getRichTextRuns();
-        for (int i = 0; i < rt.length; i++) {
-            int start = rt[i].getStartIndex();
-            int end = rt[i].getEndIndex();
-            if(pos >= start && pos < end) return rt[i];
-        }
-        return null;
     }
 
     public void paint(Graphics2D graphics){
@@ -106,7 +99,7 @@ public class TextPainter {
             boolean prStart = text.charAt(startIndex) == '\n';
             if(prStart) measurer.setPosition(startIndex++);
 
-            RichTextRun rt = getRichTextRunAt(startIndex);
+            RichTextRun rt = run.getRichTextRunAt(startIndex == text.length() ? (startIndex-1) : startIndex);
             if(rt == null) {
                 logger.log(POILogger.WARN,  "RichTextRun not found at pos" + startIndex + "; text.length: " + text.length());
                 break;
@@ -133,33 +126,58 @@ public class TextPainter {
             }
             int endIndex = measurer.getPosition();
 
+            float lineHeight = (float)textLayout.getBounds().getHeight();
+            int linespacing = rt.getLineSpacing();
+            if(linespacing == 0) linespacing = 100;
+
             TextElement el = new TextElement();
-            el.ascent = textLayout.getAscent();
-            el._startIndex = startIndex;
-            el._endIndex = endIndex;
+            if(linespacing >= 0){
+                el.ascent = textLayout.getAscent()*linespacing/100;
+            } else {
+                el.ascent = -linespacing*Shape.POINT_DPI/Shape.MASTER_DPI;
+            }
+
             el._align = rt.getAlignment();
             el._text = textLayout;
             el._textOffset = rt.getTextOffset();
 
-            textHeight += textLayout.getAscent();
-            if (prStart || startIndex == 0){
-                int spaceBefore = rt.getSpaceBefore();
-                if (spaceBefore != 0) {
-                    float val = (float)(textLayout.getAscent() + textLayout.getDescent())* spaceBefore/100;
-                    textHeight += val;
-                    el.ascent += val;
+            if (prStart){
+                int sp = rt.getSpaceBefore();
+                float spaceBefore;
+                if(sp >= 0){
+                    spaceBefore = lineHeight * sp/100;
+                } else {
+                    spaceBefore = -sp*Shape.POINT_DPI/Shape.MASTER_DPI;
                 }
+                el.ascent += spaceBefore;
             }
+
+            float descent;
+            if(linespacing >= 0){
+                descent = (textLayout.getDescent() + textLayout.getLeading())*linespacing/100;
+            } else {
+                descent = -linespacing*Shape.POINT_DPI/Shape.MASTER_DPI;
+            }
+            if (prStart){
+                int sp = rt.getSpaceAfter();
+                float spaceAfter;
+                if(sp >= 0){
+                    spaceAfter = lineHeight * sp/100;
+                } else {
+                    spaceAfter = -sp*Shape.POINT_DPI/Shape.MASTER_DPI;
+                }
+                el.ascent += spaceAfter;
+            }
+            el.descent = descent;
+
+            textHeight += el.ascent + el.descent;
 
             if(rt.isBullet() && (prStart || startIndex == 0)){
                 it.setIndex(startIndex);
 
                 AttributedString bat = new AttributedString(Character.toString(rt.getBulletChar()), it.getAttributes());
-                int bulletSize = rt.getBulletSize();
-                if (bulletSize != -1){
-                    Float sz =  (Float)bat.getIterator().getAttribute(TextAttribute.SIZE);
-                    if(sz != null) bat.addAttribute(TextAttribute.SIZE, new Float(sz.floatValue()*bulletSize/100));
-                }
+                Color clr = rt.getBulletColor();
+                if (clr != null) bat.addAttribute(TextAttribute.FOREGROUND, clr);
 
                 TextLayout bulletLayout = new TextLayout(bat.getIterator(), graphics.getFontRenderContext());
                 if(text.substring(startIndex, endIndex).length() > 1){
@@ -167,24 +185,6 @@ public class TextPainter {
                     el._bulletOffset = rt.getBulletOffset();
                 }
             }
-
-
-            float descent = textLayout.getDescent();
-            int lineSpacing = rt.getLineSpacing();
-            if(lineSpacing != 0) descent += textLayout.getLeading()*lineSpacing/100;
-            else descent = textLayout.getLeading();
-            textHeight += descent;
-
-            el.descent = descent;
-            if (prStart){
-                int spaceAfter = rt.getSpaceAfter();
-                if (spaceAfter != 0) {
-                    float val = (float)(textLayout.getAscent() + textLayout.getDescent())* spaceAfter/100;
-                    textHeight += val;
-                    el.descent += val;
-                }
-            }
-
             lines.add(el);
         }
 
@@ -242,9 +242,6 @@ public class TextPainter {
         public TextLayout _bullet;
         public int _bulletOffset;
         public int _align;
-        public int _startIndex;
-        public int _endIndex;
-        public float _spacing;
         public float ascent, descent;
     }
 }

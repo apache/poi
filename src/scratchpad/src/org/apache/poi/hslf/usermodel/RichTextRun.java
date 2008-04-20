@@ -642,13 +642,14 @@ public class RichTextRun {
      * Returns the bullet color
      */
     public Color getBulletColor() {
-        int rgb = getCharTextPropVal("bullet.color");
-        if (rgb >= 0x8000000) {
-            int idx = rgb % 0x8000000;
-            ColorSchemeAtom ca = parentRun.getSheet().getColorScheme();
-            if(idx >= 0 && idx <= 7) rgb = ca.getColor(idx);
-        }
+        int rgb = getParaTextPropVal("bullet.color");
+        if(rgb == -1) return getFontColor();
 
+        int cidx = rgb >> 24;
+        if (rgb % 0x1000000 == 0){
+            ColorSchemeAtom ca = parentRun.getSheet().getColorScheme();
+            if(cidx >= 0 && cidx <= 7) rgb = ca.getColor(cidx);
+        }
         Color tmp = new Color(rgb, true);
         return new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed());
     }

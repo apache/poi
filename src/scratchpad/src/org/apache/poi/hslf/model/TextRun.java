@@ -639,4 +639,20 @@ public class TextRun
     public Hyperlink[] getHyperlinks(){
         return Hyperlink.find(this);
     }
+
+    /**
+     * Fetch RichTextRun at a given position
+     *
+     * @param pos 0-based index in the text
+     * @return RichTextRun or null if not found
+     */
+    public RichTextRun getRichTextRunAt(int pos){
+        for (int i = 0; i < _rtRuns.length; i++) {
+            int start = _rtRuns[i].getStartIndex();
+            int end = _rtRuns[i].getEndIndex();
+            if(pos >= start && pos < end) return _rtRuns[i];
+        }
+        return null;
+    }
+
 }

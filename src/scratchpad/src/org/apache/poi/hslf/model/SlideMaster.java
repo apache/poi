@@ -101,8 +101,6 @@ public class SlideMaster extends MasterSheet {
                     default:
                         return null;
                 }
-                return null;
-
             }
             prop = getStyleAttribute(txtype, level, name, isCharacter);
         }
