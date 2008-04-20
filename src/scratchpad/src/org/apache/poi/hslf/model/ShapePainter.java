@@ -17,6 +17,9 @@
 package org.apache.poi.hslf.model;
 
 
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
+
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
@@ -26,6 +29,7 @@ import java.awt.geom.Rectangle2D;
  * @author Yegor Kozlov
  */
 public class ShapePainter {
+    protected static POILogger logger = POILogFactory.getLogger(ShapePainter.class);
 
     public static void paint(SimpleShape shape, Graphics2D graphics){
         Rectangle2D anchor = shape.getAnchor2D();
@@ -59,6 +63,7 @@ public class ShapePainter {
         //fill
         Color fillColor = shape.getFill().getForegroundColor();
         if (fillColor != null) {
+            //TODO: implement gradient and texture fill patterns
             graphics.setPaint(fillColor);
             graphics.fill(outline);
         }
@@ -68,12 +73,24 @@ public class ShapePainter {
         if (lineColor != null){
             graphics.setPaint(lineColor);
             float width = (float)shape.getLineWidth();
+            if(width == 0) width = 0.75f;
+
             int dashing = shape.getLineDashing();
             //TODO: implement more dashing styles
             float[] dashptrn = null;
             switch(dashing){
+                case Line.PEN_SOLID:
+                    dashptrn = null;
+                    break;
                 case Line.PEN_PS_DASH:
-                    dashptrn = new float[]{2, 2};
+                    dashptrn = new float[]{width, width};
+                    break;
+                case Line.PEN_DOTGEL:
+                    dashptrn = new float[]{width*4, width*3};
+                    break;
+               default:
+                    logger.log(POILogger.WARN, "unsupported dashing: " + dashing);
+                    dashptrn = new float[]{width, width};
                     break;
             }
 
