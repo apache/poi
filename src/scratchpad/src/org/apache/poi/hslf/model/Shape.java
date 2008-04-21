@@ -198,6 +198,10 @@ public abstract class Shape {
         return anchor;
     }
 
+    public Rectangle2D getLogicalAnchor2D(){
+        return getAnchor2D();
+    }
+
     /**
      * Sets the anchor (the bounding box rectangle) of this shape.
      * All coordinates should be expressed in points (72 dpi).
@@ -466,6 +470,6 @@ public abstract class Shape {
      * @return the shape outline
      */
     public java.awt.Shape getOutline(){
-        return getAnchor2D();
+        return getLogicalAnchor2D();
     }
 }

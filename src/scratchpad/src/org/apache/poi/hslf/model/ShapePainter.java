@@ -32,7 +32,7 @@ public class ShapePainter {
     protected static POILogger logger = POILogFactory.getLogger(ShapePainter.class);
 
     public static void paint(SimpleShape shape, Graphics2D graphics){
-        Rectangle2D anchor = shape.getAnchor2D();
+        Rectangle2D anchor = shape.getLogicalAnchor2D();
         java.awt.Shape outline = shape.getOutline();
 
         //flip vertical

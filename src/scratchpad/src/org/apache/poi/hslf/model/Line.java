@@ -130,7 +130,7 @@ public class Line extends SimpleShape {
     }
 
     public java.awt.Shape getOutline(){
-        Rectangle2D anchor = getAnchor2D();
+        Rectangle2D anchor = getLogicalAnchor2D();
         return new Line2D.Double(anchor.getX(), anchor.getY(), anchor.getX() + anchor.getWidth(), anchor.getY() + anchor.getHeight());
     }
 }
