@@ -288,6 +288,86 @@ public class AutoShapes {
                 return path;
             }
         };
-    }
 
+        shapes[ShapeTypes.Can] = new ShapeOutline(){
+            public java.awt.Shape getOutline(Shape shape){
+                //m10800,qx0@1l0@2qy10800,21600,21600@2l21600@1qy10800,xem0@1qy10800@0,21600@1nfe
+                int adjval = shape.getEscherProperty(EscherProperties.GEOMETRY__ADJUSTVALUE, 5400);
+
+                GeneralPath path = new GeneralPath();
+
+                path.append(new Arc2D.Float(0, 0, 21600, adjval, 0, 180, Arc2D.OPEN), false);
+                path.moveTo(0, adjval/2);
+
+                path.lineTo(0, 21600 - adjval/2);
+                path.closePath();
+
+                path.append(new Arc2D.Float(0, 21600 - adjval, 21600, adjval, 180, 180, Arc2D.OPEN), false);
+                path.moveTo(21600, 21600 - adjval/2);
+
+                path.lineTo(21600, adjval/2);
+                path.append(new Arc2D.Float(0, 0, 21600, adjval, 180, 180, Arc2D.OPEN), false);
+                path.moveTo(0, adjval/2);
+                path.closePath();
+                return path;
+            }
+        };
+
+        shapes[ShapeTypes.LeftBrace] = new ShapeOutline(){
+            public java.awt.Shape getOutline(Shape shape){
+                //m21600,qx10800@0l10800@2qy0@11,10800@3l10800@1qy21600,21600e
+                int adjval = shape.getEscherProperty(EscherProperties.GEOMETRY__ADJUSTVALUE, 1800);
+                int adjval2 = shape.getEscherProperty(EscherProperties.GEOMETRY__ADJUST2VALUE, 10800);
+
+                GeneralPath path = new GeneralPath();
+                path.moveTo(21600, 0);
+
+                path.append(new Arc2D.Float(10800, 0, 21600, adjval*2, 90, 90, Arc2D.OPEN), false);
+                path.moveTo(10800, adjval);
+
+                path.lineTo(10800, adjval2 - adjval);
+
+                path.append(new Arc2D.Float(-10800, adjval2 - 2*adjval, 21600, adjval*2, 270, 90, Arc2D.OPEN), false);
+                path.moveTo(0, adjval2);
+
+                path.append(new Arc2D.Float(-10800, adjval2, 21600, adjval*2, 0, 90, Arc2D.OPEN), false);
+                path.moveTo(10800, adjval2 + adjval);
+
+                path.lineTo(10800, 21600 - adjval);
+
+                path.append(new Arc2D.Float(10800, 21600 - 2*adjval, 21600, adjval*2, 180, 90, Arc2D.OPEN), false);
+
+                return path;
+            }
+        };
+
+        shapes[ShapeTypes.RightBrace] = new ShapeOutline(){
+            public java.awt.Shape getOutline(Shape shape){
+                //m,qx10800@0 l10800@2qy21600@11,10800@3l10800@1qy,21600e
+                int adjval = shape.getEscherProperty(EscherProperties.GEOMETRY__ADJUSTVALUE, 1800);
+                int adjval2 = shape.getEscherProperty(EscherProperties.GEOMETRY__ADJUST2VALUE, 10800);
+
+                GeneralPath path = new GeneralPath();
+                path.moveTo(0, 0);
+
+                path.append(new Arc2D.Float(-10800, 0, 21600, adjval*2, 0, 90, Arc2D.OPEN), false);
+                path.moveTo(10800, adjval);
+
+                path.lineTo(10800, adjval2 - adjval);
+
+                path.append(new Arc2D.Float(10800, adjval2 - 2*adjval, 21600, adjval*2, 180, 90, Arc2D.OPEN), false);
+                path.moveTo(21600, adjval2);
+
+                path.append(new Arc2D.Float(10800, adjval2, 21600, adjval*2, 90, 90, Arc2D.OPEN), false);
+                path.moveTo(10800, adjval2 + adjval);
+
+                path.lineTo(10800, 21600 - adjval);
+
+                path.append(new Arc2D.Float(-10800, 21600 - 2*adjval, 21600, adjval*2, 270, 90, Arc2D.OPEN), false);
+
+                return path;
+            }
+        };
+
+    }
 }

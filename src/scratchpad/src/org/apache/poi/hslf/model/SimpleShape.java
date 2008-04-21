@@ -23,6 +23,7 @@ import org.apache.poi.hslf.record.ColorSchemeAtom;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 
 /**
  *  An abstract simple (non-group) shape.
@@ -230,6 +231,52 @@ public class SimpleShape extends Shape {
         int angle = (rot >> 16) % 360;
 
         return angle;
+    }
+
+    public Rectangle2D getLogicalAnchor2D(){
+        Rectangle2D anchor = getAnchor2D();
+
+        //if it is a groupped shape see if we need to transform the coordinates
+        if (_parent != null){
+            Shape top = _parent;
+            while(top.getParent() != null) top = top.getParent();
+
+            Rectangle2D clientAnchor = top.getAnchor2D();
+            Rectangle2D spgrAnchor = ((ShapeGroup)top).getCoordinates();
+
+            double scalex = (double)spgrAnchor.getWidth()/clientAnchor.getWidth();
+            double scaley = (double)spgrAnchor.getHeight()/clientAnchor.getHeight();
+
+            double x = clientAnchor.getX() + (anchor.getX() - spgrAnchor.getX())/scalex;
+            double y = clientAnchor.getY() + (anchor.getY() - spgrAnchor.getY())/scaley;
+            double width = anchor.getWidth()/scalex;
+            double height = anchor.getHeight()/scaley;
+
+            anchor = new Rectangle2D.Double(x, y, width, height);
+
+        }
+
+        int angle = getRotation();
+        if(angle != 0){
+            double centerX = anchor.getX() + anchor.getWidth()/2;
+            double centerY = anchor.getY() + anchor.getHeight()/2;
+
+            AffineTransform trans = new AffineTransform();
+            trans.translate(centerX, centerY);
+            trans.rotate(Math.toRadians(angle));
+            trans.translate(-centerX, -centerY);
+
+            Rectangle2D rect = trans.createTransformedShape(anchor).getBounds2D();
+            if((anchor.getWidth() < anchor.getHeight() && rect.getWidth() > rect.getHeight()) ||
+                (anchor.getWidth() > anchor.getHeight() && rect.getWidth() < rect.getHeight())    ){
+                trans = new AffineTransform();
+                trans.translate(centerX, centerY);
+                trans.rotate(Math.PI/2);
+                trans.translate(-centerX, -centerY);
+                anchor = trans.createTransformedShape(anchor).getBounds2D();
+            }
+        }
+        return anchor;
     }
 
     public void draw(Graphics2D graphics){

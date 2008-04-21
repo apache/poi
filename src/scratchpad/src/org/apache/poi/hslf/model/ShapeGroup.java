@@ -237,7 +237,7 @@ public class ShapeGroup extends Shape{
         EscherClientAnchorRecord clientAnchor = (EscherClientAnchorRecord)getEscherChild(spContainer, EscherClientAnchorRecord.RECORD_ID);
         Rectangle2D.Float anchor = new Rectangle2D.Float();
         if(clientAnchor == null){
-            logger.log(POILogger.WARN, "EscherClientAnchorRecord was not found for the shape group");
+            logger.log(POILogger.INFO, "EscherClientAnchorRecord was not found for shape group. Searching for EscherChildAnchorRecord.");
             EscherChildAnchorRecord rec = (EscherChildAnchorRecord)getEscherChild(spContainer, EscherChildAnchorRecord.RECORD_ID);
             anchor = new Rectangle2D.Float(
                 (float)rec.getDx1()*POINT_DPI/MASTER_DPI,
@@ -282,7 +282,7 @@ public class ShapeGroup extends Shape{
 
         //transform coordinates
         AffineTransform at = graphics.getTransform();
-
+        /*
         if(!anchor.equals(coords)){
             graphics.scale(anchor.getWidth()/coords.getWidth(), anchor.getHeight()/coords.getHeight());
 
@@ -290,7 +290,7 @@ public class ShapeGroup extends Shape{
                     anchor.getX()*coords.getWidth()/anchor.getWidth() - coords.getX(),
                     anchor.getY()*coords.getHeight()/anchor.getHeight() - coords.getY());
         }
-
+        */
         Shape[] sh = getShapes();
         for (int i = 0; i < sh.length; i++) {
             sh[i].draw(graphics);

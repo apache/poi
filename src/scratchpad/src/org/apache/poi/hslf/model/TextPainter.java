@@ -54,7 +54,10 @@ public class TextPainter {
         for (int i = 0; i < rt.length; i++) {
             int start = rt[i].getStartIndex();
             int end = rt[i].getEndIndex();
-            if(start == end) continue;
+            if(start == end) {
+                logger.log(POILogger.INFO,  "Skipping RichTextRun with zero length");
+                continue;
+            }
 
             at.addAttribute(TextAttribute.FAMILY, rt[i].getFontName(), start, end);
             at.addAttribute(TextAttribute.SIZE, new Float(rt[i].getFontSize()), start, end);
@@ -86,7 +89,7 @@ public class TextPainter {
         int paragraphStart = it.getBeginIndex();
         int paragraphEnd = it.getEndIndex();
 
-        Rectangle2D anchor = _shape.getAnchor2D();
+        Rectangle2D anchor = _shape.getLogicalAnchor2D();
 
         float textHeight = 0;
         ArrayList lines = new ArrayList();
@@ -115,7 +118,7 @@ public class TextPainter {
             TextLayout textLayout = measurer.nextLayout(wrappingWidth + 1,
                     nextBreak == -1 ? paragraphEnd : nextBreak, true);
             if (textLayout == null) {
-                textLayout = measurer.nextLayout(wrappingWidth,
+                textLayout = measurer.nextLayout((float)anchor.getWidth(),
                     nextBreak == -1 ? paragraphEnd : nextBreak, false);
             }
             if(textLayout == null){
@@ -175,9 +178,12 @@ public class TextPainter {
             if(rt.isBullet() && (prStart || startIndex == 0)){
                 it.setIndex(startIndex);
 
-                AttributedString bat = new AttributedString(Character.toString(rt.getBulletChar()), it.getAttributes());
+                AttributedString bat = new AttributedString(Character.toString(rt.getBulletChar()));
                 Color clr = rt.getBulletColor();
                 if (clr != null) bat.addAttribute(TextAttribute.FOREGROUND, clr);
+                else bat.addAttribute(TextAttribute.FOREGROUND, it.getAttribute(TextAttribute.FOREGROUND));
+                bat.addAttribute(TextAttribute.FAMILY, it.getAttribute(TextAttribute.FAMILY));
+                bat.addAttribute(TextAttribute.SIZE, it.getAttribute(TextAttribute.SIZE));
 
                 TextLayout bulletLayout = new TextLayout(bat.getIterator(), graphics.getFontRenderContext());
                 if(text.substring(startIndex, endIndex).length() > 1){
