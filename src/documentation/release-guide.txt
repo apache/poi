@@ -1,0 +1,135 @@
+POI Release Guide
+
+
+(I) Prerequisites
+
+   1. You should read the <a href="http://apache.org/dev/release.html">Apache Release FAQ</a>
+   2. You must have shell access to people.apache.org
+   3. Release manager must have his public key appended to the KEYS file checked in to SVN and the key published on one of the public key servers.
+      More info can be found here: <a href="http://www.apache.org/dev/release-signing.html">http://www.apache.org/dev/release-signing.html</a>
+   4. You must have <a href="java.sun.com">JDK 1.4 / 1.5</a>
+   5. You must have the following utilities installed on your local machine and available in your path:
+          * <a href="www.openssh.com">ssh</a>
+          * <a href="www.gnupg.org">gnupg</a>
+          * <a href="www.openssl.org">openssl</a>
+      For Windows users, install Cygwin and make sure you have the above utilities
+   6. The POI build system requires two components to perform a build
+          * <a href="ant.apache.org">Ant</a>  
+          * <a href="http://forrest.apache.org/">Forrest</a>. 
+  POI 3.0.2 and 3.1 were built using Ant 1.6.2 and Forrest 0.5
+
+(II) Making release artefacts
+  1. Update version id in build.xml. 
+  2. Tag current version. Include the current revision number in the comment
+
+{code}
+$ svn cp https://svn.apache.org/repos/asf/poi/trunk \
+https://svn.apache.org/repos/asf/poi/tags/$TAG \
+-m "tag r649911 as 3.1-beta1"
+{code}
+
+where $TAG is the release tag, for example, REL_3_1_BETA1
+
+  3. Checkout the tagged version
+{code}
+cd tags
+svn checkout https://svn.apache.org/repos/asf/poi/tags/TAG
+{code}
+
+  4. Merge (if required)
+
+{code}
+cd $TAG
+$ svn merge https://svn.apache.org/repos/asf/poi/tags/TAG \
+https://svn.apache.org/repos/asf/poi/trunk
+{code}
+
+  5. Start a new section in sites.xml and status.xml. 
+
+  6. Build as if the vote had passed. The buid date must be +7 days from current.
+{code}
+ant build
+{code}
+After build you should have the following files in the build/dist:
+
+{code}
+poi-$TAG-$DATE.jar
+poi-bin-$TAG-$DATE.tar.gz
+poi-bin-$TAG-$DATE.zip
+poi-contrib-$TAG-$DATE.jar
+poi-scratchpad-$TAG-$DATE.jar
+poi-src-$TAG-$DATE.tar.gz
+poi-src-$TAG-$DATE.zip
+{code}
+
+where $TAG is the release tag specified in build.xml in the version.id property, $DATE is the release date (typically +7 days from the actual build date). 
+  7. Build Mavn POM files
+{code}
+ant maven-dist
+{code}
+
+  8. Signing the release artifacts:
+{code}
+cd build/dist
+for i in *.zip ; do 
+  gpg --armor --output $i.asc --detach-sig $i; 
+done
+for i in *.gz ; do 
+  gpg --armor --output $i.asc --detach-sig $i; 
+done
+{code}
+
+Verify the signatures:
+
+{code}
+gpg --multifile --verify *.asc
+{code}
+
+   9. Create MD5 checksums for all artifacts to be published:
+
+{code}
+for i in *.zip ; do 
+  openssl md5 < $i > $i.md5
+done
+for i in *.gz ; do 
+  openssl md5 < $i > $i.md5
+done
+{code}
+
+   10. Upload to your area at people.apache.org.
+There should be two directories:
+main
+maven
+
+Make sure that the all files have read permission. 
+
+ (III) After the vote:
+
+Log-in on people.apache.org
+
+1. Go to ~/POI-3.1-BETA1
+
+cd ~/POI-3.1-BETA1/main
+
+BETA and ALPHA releases:
+cp *-src-* /www/www.apache.org/dist/poi/dev/src
+cp *-bin-* /www/www.apache.org/dist/poi/dev/bin
+
+FINAL release:
+cp *-src-* /www/www.apache.org/dist/poi/release/src
+cp *-bin-* /www/www.apache.org/dist/poi/release/bin
+
+cd ~/POI-3.1-BETA1/maven
+
+cp -r org.apache.poi /www/people.apache.org/repo/m1-ibiblio-rsync-repository/
+cp -r poi/poms      /www/people.apache.org/repo/m1-ibiblio-rsync-repository/poi
+
+
+2. Make sure that the files are owned by the unix group apcvs and that they are writable by this group. 
+
+3. Wait for the distributions to appear on your favourite mirror
+
+4. Send announcements:
+ - to poi-user and poi-dev lists
+ - send announcements to announcement@apache.org, announcements@jakarta.apache.org
+
