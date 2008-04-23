@@ -18,6 +18,7 @@
 package org.apache.poi.ss.usermodel;
 
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.util.SheetReferences;
 
 /**
  * This is a JDK 1.4 compatible interface for HSSFWorkbook.
@@ -29,14 +30,20 @@ public interface Workbook {
     short getNumberOfFonts();
     int getNumberOfNames();
 
+    HSSFName createName();
     HSSFName getNameAt(int index);
     String getNameName(int index);
+    String resolveNameXText(int refIndex, int definedNameIndex);
 
     String getSheetName(int sheet);
     HSSFSheet getSheetAt(int index);
-    int getSheetIndex(String name);
-    int getSheetIndex(Sheet sheet);
-    int getSheetIndexFromExternSheetIndex(int externSheetNumber);
+    SheetReferences getSheetReferences();
+    short getSheetIndex(String name);
+    short getSheetIndex(Sheet sheet);
+    short getSheetIndexFromExternSheetIndex(int externSheetNumber);
+    short getSheetIndexFromExternSheetIndex(short externSheetNumber);
+	short getExternalSheetIndex(int internalSheetIndex);
+    short getExternalSheetIndex(short internalSheetIndex);
 
     CreationHelper getCreationHelper();
 }

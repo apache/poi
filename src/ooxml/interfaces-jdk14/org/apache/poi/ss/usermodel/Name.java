@@ -17,4 +17,6 @@
 
 package org.apache.poi.ss.usermodel;
 
-public interface Name {}
+public interface Name {
+    void setNameName(String nameName);
+}
