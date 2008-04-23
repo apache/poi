@@ -37,6 +37,8 @@ public class PPDrawingGroup extends RecordAtom {
 
     private byte[] _header;
     private EscherContainerRecord dggContainer;
+    //cached dgg
+    private EscherDggRecord dgg;
 
     protected PPDrawingGroup(byte[] source, int start, int len) {
         // Get the header
@@ -115,5 +117,18 @@ public class PPDrawingGroup extends RecordAtom {
 
     public EscherContainerRecord getDggContainer(){
         return dggContainer;
+    }
+
+    public EscherDggRecord getEscherDggRecord(){
+        if(dgg == null){
+            for(Iterator it = dggContainer.getChildRecords().iterator(); it.hasNext();){
+                EscherRecord r = (EscherRecord) it.next();
+                if(r instanceof EscherDggRecord){
+                    dgg = (EscherDggRecord)r;
+                    break;
+                }
+            }
+        }
+        return dgg;
     }
 }

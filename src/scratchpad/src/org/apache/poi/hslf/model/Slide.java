@@ -21,17 +21,12 @@
 package org.apache.poi.hslf.model;
 
 import java.util.Vector;
-import java.util.List;
-import java.util.Iterator;
-import java.util.ArrayList;
+import java.awt.*;
 
-import org.apache.poi.hslf.record.PPDrawing;
 import org.apache.poi.hslf.record.SlideAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherRecord;
 
 /**
  * This class represents a slide in a PowerPoint Document. It allows 
@@ -263,10 +258,85 @@ public class Slide extends Sheet
         return sa.getFollowMasterBackground();
     }
 
-    public Background getBackground() {
+    /**
+     * Sets whether this slide draws master sheet objects
+     *
+     * @param flag  <code>true</code> if the slide draws master sheet objects,
+     * <code>false</code> otherwise
+     */
+    public void setFollowMasterObjects(boolean flag){
+        SlideAtom sa = getSlideRecord().getSlideAtom();
+        sa.setFollowMasterObjects(flag);
+    }
+
+    /**
+     * Whether this slide follows master color scheme
+     *
+     * @return <code>true</code> if the slide follows master color scheme,
+     * <code>false</code> otherwise
+     */
+    public boolean getFollowMasterScheme(){
+        SlideAtom sa = getSlideRecord().getSlideAtom();
+        return sa.getFollowMasterScheme();
+    }
+
+    /**
+     * Sets whether this slide draws master color scheme
+     *
+     * @param flag  <code>true</code> if the slide draws master color scheme,
+     * <code>false</code> otherwise
+     */
+    public void setFollowMasterScheme(boolean flag){
+        SlideAtom sa = getSlideRecord().getSlideAtom();
+        sa.setFollowMasterScheme(flag);
+    }
+
+    /**
+     * Whether this slide draws master sheet objects
+     *
+     * @return <code>true</code> if the slide draws master sheet objects,
+     * <code>false</code> otherwise
+     */
+    public boolean getFollowMasterObjects(){
+        SlideAtom sa = getSlideRecord().getSlideAtom();
+        return sa.getFollowMasterObjects();
+    }
+
+    /**
+     * Background for this slide.
+     */
+     public Background getBackground() {
         if(getFollowMasterBackground())
             return getMasterSheet().getBackground();
         else
             return super.getBackground();
     }
+
+    /**
+     * Color scheme for this slide.
+     */
+    public ColorSchemeAtom getColorScheme() {
+        if(getFollowMasterScheme()){
+            return getMasterSheet().getColorScheme();
+        }
+        return super.getColorScheme();
+    }
+
+    public void draw(Graphics2D graphics){
+        MasterSheet master = getMasterSheet();
+        if(getFollowMasterBackground()) master.getBackground().draw(graphics);
+        if(getFollowMasterObjects()){
+            Shape[] sh = master.getShapes();
+            for (int i = 0; i < sh.length; i++) {
+                if(MasterSheet.isPlaceholder(sh[i])) continue;
+
+                sh[i].draw(graphics);
+            }
+        }
+        Shape[] sh = getShapes();
+        for (int i = 0; i < sh.length; i++) {
+            sh[i].draw(graphics);
+        }
+    }
+
 }

@@ -83,7 +83,12 @@ public class HSSFTextbox
      */
     public void setString( RichTextString string )
     {
-        this.string = (HSSFRichTextString) string;
+        HSSFRichTextString rtr = (HSSFRichTextString)string;
+
+        // If font is not set we must set the default one
+        if (rtr.numFormattingRuns() == 0) rtr.applyFont((short)0);
+
+        this.string = rtr;
     }
 
     /**

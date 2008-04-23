@@ -26,6 +26,7 @@
         <authors>
             <person name="Avik Sengupta" email="avik at apache dot org"/>
             <person name="Nick Burch" email="nick at apache dot org"/>
+            <person name="Yegor Kozlov" email="yegor at apache dot org"/>
         </authors>
     </header>
 
@@ -37,9 +38,12 @@
 			Powerpoint '97(-2007) file format. It <em>does not</em> support
 			the new PowerPoint 2007 .pptx file format, which is not OLE2 
 			based.</p>
-            <p>HSLF provides a way to read powerpoint presentations, and extract text from it.
-            It also provides some (currently limited) edit capabilities.
+    <p>HSLF provides a way to read, create or modify PowerPoint  presentations. In particular, it provides:
             </p>
+            <ul>
+                <li>api for data extraction (text, pictures, embedded objects, sounds)</li>
+                <li>usermodel api for creating, reading and modifying ppt files</li>
+            </ul>
             <note> 
                 This code currently lives the 
                 <link href="http://svn.apache.org/viewcvs.cgi/poi/trunk/src/scratchpad/">scratchpad area</link> 

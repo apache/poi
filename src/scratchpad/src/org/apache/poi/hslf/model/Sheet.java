@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.awt.*;
 
 /**
  * This class defines the common format of "Sheets" in a powerpoint
@@ -246,14 +247,6 @@ public abstract class Sheet {
         EscherContainerRecord spgr = (EscherContainerRecord) Shape.getEscherChild(dgContainer, EscherContainerRecord.SPGR_CONTAINER);
         spgr.addChildRecord(shape.getSpContainer());
 
-        EscherDgRecord dg = (EscherDgRecord) Shape.getEscherChild(dgContainer, EscherDgRecord.RECORD_ID);
-        dg.setNumShapes(dg.getNumShapes() + 1);
-
-        int shapeId = dg.getLastMSOSPID()+1;
-        dg.setLastMSOSPID(shapeId);
-
-        EscherSpRecord sp = shape.getSpContainer().getChildById(EscherSpRecord.RECORD_ID);
-        if(sp != null) sp.setShapeId(shapeId);
         shape.setSheet(this);
         shape.afterInsert(this);
 
@@ -329,4 +322,7 @@ public abstract class Sheet {
         return _background;
     }
 
+    public void draw(Graphics2D graphics){
+
+    }
 }

@@ -48,4 +48,13 @@ public class ObjectData {
     public InputStream getData() {
         return storage.getData();
     }
+
+    /**
+     * Return the record that contains the object data.
+     *
+     * @return the record that contains the object data.
+     */
+    public ExOleObjStg getExOleObjStg() {
+        return storage;
+    }
 }

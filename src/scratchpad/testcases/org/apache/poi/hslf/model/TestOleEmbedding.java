@@ -21,10 +21,19 @@
 package org.apache.poi.hslf.model;
 
 import java.io.*;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.ObjectData;
 import org.apache.poi.hslf.usermodel.PictureData;
+import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.usermodel.Range;
+import org.apache.poi.hwpf.usermodel.Paragraph;
 
 import junit.framework.TestCase;
 
@@ -58,5 +67,42 @@ public class TestOleEmbedding extends TestCase
         {
             slideShow.close();
         }
+    }
+
+    public void testOLEShape() throws Exception {
+        String dirname = System.getProperty("HSLF.testdata.path");
+        File file = new File(dirname, "ole2-embedding-2003.ppt");
+        FileInputStream is = new FileInputStream(file);
+        SlideShow ppt = new SlideShow(is);
+        is.close();
+
+        Slide slide = ppt.getSlides()[0];
+        Shape[] sh = slide.getShapes();
+        int cnt = 0;
+        for (int i = 0; i < sh.length; i++) {
+            if(sh[i] instanceof OLEShape){
+                cnt++;
+                OLEShape ole = (OLEShape)sh[i];
+                ObjectData data = ole.getObjectData();
+                if("Worksheet".equals(ole.getInstanceName())){
+                    //Voila! we created a workbook from the embedded OLE data
+                    HSSFWorkbook wb = new HSSFWorkbook(data.getData());
+                    HSSFSheet sheet = wb.getSheetAt(0);
+                    //verify we can access the xls data
+                    assertEquals(1, sheet.getRow(0).getCell((short)0).getNumericCellValue(), 0);
+                    assertEquals(1, sheet.getRow(1).getCell((short)0).getNumericCellValue(), 0);
+                    assertEquals(2, sheet.getRow(2).getCell((short)0).getNumericCellValue(), 0);
+                    assertEquals(3, sheet.getRow(3).getCell((short)0).getNumericCellValue(), 0);
+                    assertEquals(8, sheet.getRow(5).getCell((short)0).getNumericCellValue(), 0);
+                } else if ("Document".equals(ole.getInstanceName())){
+                    //creating a HWPF document 
+                    HWPFDocument doc = new HWPFDocument(data.getData());
+                    String txt = doc.getRange().getParagraph(0).text();
+                    assertEquals("OLE embedding is thoroughly unremarkable.\r", txt);
+                }
+            }
+
+        }
+        assertEquals("Expected 2 OLE shapes", 2, cnt);
     }
 }

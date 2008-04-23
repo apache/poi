@@ -21,12 +21,6 @@ import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.record.StyleTextPropAtom.*;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherRecord;
-
-import java.util.List;
-import java.util.Iterator;
 
 /**
  * SlideMaster determines the graphics, layout, and formatting for all the slides in a given presentation.
@@ -82,17 +76,31 @@ public class SlideMaster extends MasterSheet {
             if (prop != null) break;
         }
         if (prop == null) {
-            switch (txtype) {
-                case TextHeaderAtom.CENTRE_BODY_TYPE:
-                case TextHeaderAtom.HALF_BODY_TYPE:
-                case TextHeaderAtom.QUARTER_BODY_TYPE:
-                    txtype = TextHeaderAtom.BODY_TYPE;
-                    break;
-                case TextHeaderAtom.CENTER_TITLE_TYPE:
-                    txtype = TextHeaderAtom.TITLE_TYPE;
-                    break;
-                default:
-                    return null;
+            if(isCharacter) {
+                switch (txtype) {
+                    case TextHeaderAtom.CENTRE_BODY_TYPE:
+                    case TextHeaderAtom.HALF_BODY_TYPE:
+                    case TextHeaderAtom.QUARTER_BODY_TYPE:
+                        txtype = TextHeaderAtom.BODY_TYPE;
+                        break;
+                    case TextHeaderAtom.CENTER_TITLE_TYPE:
+                        txtype = TextHeaderAtom.TITLE_TYPE;
+                        break;
+                    default:
+                        return null;
+                }
+            } else {
+                switch (txtype) {
+                    case TextHeaderAtom.CENTRE_BODY_TYPE:
+                    case TextHeaderAtom.QUARTER_BODY_TYPE:
+                        txtype = TextHeaderAtom.BODY_TYPE;
+                        break;
+                    case TextHeaderAtom.CENTER_TITLE_TYPE:
+                        txtype = TextHeaderAtom.TITLE_TYPE;
+                        break;
+                    default:
+                        return null;
+                }
             }
             prop = getStyleAttribute(txtype, level, name, isCharacter);
         }
@@ -118,5 +126,35 @@ public class SlideMaster extends MasterSheet {
                 _txmaster[txrec[i].getTextType()] = txrec[i];
             }
         }
+    }
+
+    /**
+     * Checks if the shape is a placeholder.
+     * (placeholders aren't normal shapes, they are visible only in the Edit Master mode)
+     *
+     *
+     * @return true if the shape is a placeholder
+     */
+    public static boolean isPlaceholder(Shape shape){
+        if(!(shape instanceof TextShape)) return false;
+
+        TextShape tx = (TextShape)shape;
+        TextRun run = tx.getTextRun();
+        if(run == null) return false;
+
+        Record[] records = run._records;
+        for (int i = 0; i < records.length; i++) {
+            int type = (int)records[i].getRecordType();
+            if (type == RecordTypes.OEPlaceholderAtom.typeID ||
+                    type == RecordTypes.SlideNumberMCAtom.typeID ||
+                    type == RecordTypes.DateTimeMCAtom.typeID ||
+                    type == RecordTypes.GenericDateMCAtom.typeID ||
+                    type == RecordTypes.FooterMCAtom.typeID ){
+                return true;
+
+            }
+
+        }
+        return false;
     }
 }

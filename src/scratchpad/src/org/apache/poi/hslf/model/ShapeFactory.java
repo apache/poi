@@ -76,13 +76,19 @@ public class ShapeFactory {
             case ShapeTypes.TextBox:
                 shape = new TextBox(spContainer, parent);
                 break;
-            case ShapeTypes.PictureFrame:
-                shape = new Picture(spContainer, parent);
+            case ShapeTypes.PictureFrame: {
+                EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(spContainer, EscherOptRecord.RECORD_ID);
+                EscherProperty prop = Shape.getEscherProperty(opt, EscherProperties.BLIP__PICTUREID);
+                if(prop != null)
+                    shape = new OLEShape(spContainer, parent); //presence of BLIP__PICTUREID indicates it is an embedded object 
+                else
+                    shape = new Picture(spContainer, parent);
                 break;
+            }
             case ShapeTypes.Line:
                 shape = new Line(spContainer, parent);
                 break;
-            case ShapeTypes.NotPrimitive:
+            case ShapeTypes.NotPrimitive: {
                 EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(spContainer, EscherOptRecord.RECORD_ID);
                 EscherProperty prop = Shape.getEscherProperty(opt, EscherProperties.GEOMETRY__VERTICES);
                 if(prop != null)
@@ -93,6 +99,7 @@ public class ShapeFactory {
                     shape = new AutoShape(spContainer, parent);
                 }
                 break;
+            }
             default:
                 shape = new AutoShape(spContainer, parent);
                 break;
