@@ -1259,8 +1259,13 @@ FORREST_HOME environment variable!</echo>
 
     <zip destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.zip">
       <zipfileset dir="legal/" prefix="${zipdir}" />
+      <zipfileset dir="lib/" prefix="${zipdir}/lib" />
+      <zipfileset dir="ooxml-lib/" prefix="${zipdir}/ooxml-lib">
+          <exclude name="*.zip"/>
+      </zipfileset>
       <zipfileset dir="${build.site}" prefix="${zipdir}/docs"/>
       <zipfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
+      <zipfileset file="${dist.dir}/${jar.name}-jdk14-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
       <zipfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
       <zipfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
     </zip>
@@ -1281,8 +1286,13 @@ FORREST_HOME environment variable!</echo>
     <tar destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.tar.gz"
       compression="gzip">
       <tarfileset dir="legal/" prefix="${zipdir}" />
+      <tarfileset dir="lib/" prefix="${zipdir}/lib" />
+      <tarfileset dir="ooxml-lib/" prefix="${zipdir}/ooxml-lib">
+          <exclude name="*.zip"/>
+      </tarfileset>
       <tarfileset dir="${build.site}" prefix="${zipdir}/docs"/>
       <tarfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
+      <tarfileset file="${dist.dir}/${jar.name}-jdk14-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
       <tarfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
       <tarfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
     </tar>
