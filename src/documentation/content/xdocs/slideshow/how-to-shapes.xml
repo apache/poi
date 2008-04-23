@@ -40,6 +40,12 @@
                     <li><link href="#Bullets">How to create bulleted lists</link></li>
                     <li><link href="#Hyperlinks">Hyperlinks</link></li>
                     <li><link href="#Tables">Tables</link></li>
+                    <li><link href="#RemoveShape">How to remove shapes</link></li>
+                    <li><link href="#OLE">How to retrieve embedded OLE objects</link></li>
+                    <li><link href="#Sound">How to retrieve embedded sounds</link></li>
+                    <li><link href="#Freeform">How to create shapes of arbitrary geometry</link></li>
+                    <li><link href="#Graphics2D">Shapes and Graphics2D</link></li>
+                    <li><link href="#Render">How to convert slides into images</link></li>
                 </ul>
             </section>
             <section><title>Features</title>
@@ -80,14 +86,8 @@
                 </section>
                 <anchor id="GetShapes"/>
                 <section><title>How to get shapes contained in a particular slide</title>
-                  <p>The superclass of all shapes in HSLF is the Shape class - the elemental object that composes a drawing.
-                    The following pictute shows the class tree of HSLF shapes:
-                  </p>
                   <p>
-			  <img src="images/hslf_shapes.gif" alt="Class Tree of HSLF Shapes" width="611" height="412"/>
-                  </p>
-                  <p>
-                    The following fragment demonstrates how to iterate over shapes for each slide.
+                    The following code demonstrates how to iterate over shapes for each slide.
                   </p>
                     <source>
   SlideShow ppt = new SlideShow(new HSLFSlideShow("slideshow.ppt"));
@@ -440,7 +440,186 @@
                     </source>
                 </section>
                   
-            </section>
+                <anchor id="RemoveShape"/>
+                <section><title>How to remove shapes from a slide</title>
+                  <source>
+
+        Shape[] shape = slide.getShapes();
+        for (int i = 0; i &lt; shape.length; i++) {
+    
+            //remove the shape
+            boolean ok = slide.removeShape(shape[i]);
+            if(ok){
+              //the shape was removed. Do something.
+            }
+        }
+                    </source>
+                  </section>
+                <anchor id="OLE"/>
+                <section><title>How to retrieve embedded OLE objects</title>
+                  <source>
+
+        Shape[] shape = slide.getShapes();
+        for (int i = 0; i &lt; shape.length; i++) {
+            if (shape[i] instanceof OLEShape) {
+                OLEShape ole = (OLEShape) shape[i];
+                ObjectData data = ole.getObjectData();
+                String name = ole.getInstanceName();
+                if ("Worksheet".equals(name)) {
+                    HSSFWorkbook wb = new HSSFWorkbook(data.getData());
+                } else if ("Document".equals(name)) {
+                    HWPFDocument doc = new HWPFDocument(data.getData());
+                }
+            }
+        }
+                    </source>
+                  </section>
+
+                <anchor id="Sound"/>
+                <section><title>How to retrieve embedded sounds</title>
+                  <source>
+
+        FileInputStream is = new FileInputStream(args[0]);
+        SlideShow ppt = new SlideShow(is);
+        is.close();
+
+        SoundData[] sound = ppt.getSoundData();
+        for (int i = 0; i &lt; sound.length; i++) {
+            //save *WAV sounds on disk
+            if(sound[i].getSoundType().equals(".WAV")){
+                FileOutputStream out = new FileOutputStream(sound[i].getSoundName());
+                out.write(sound[i].getData());
+                out.close();
+            }
+        }
+                    </source>
+                  </section>
+                  
+                <anchor id="Freeform"/>
+                <section><title>How to create shapes of arbitrary geometry</title>
+                  <source>
+
+        SlideShow ppt = new SlideShow();
+        Slide slide = ppt.createSlide();
+
+        java.awt.geom.GeneralPath path = new java.awt.geom.GeneralPath();
+        path.moveTo(100, 100);
+        path.lineTo(200, 100);
+        path.curveTo(50, 45, 134, 22, 78, 133);
+        path.curveTo(10, 45, 134, 56, 78, 100);
+        path.lineTo(100, 200);
+        path.closePath();
+        
+        Freeform shape = new Freeform();
+        shape.setPath(path);
+        slide.addShape(shape);
+                    </source>
+                  </section>
+
+                <anchor id="Graphics2D"/>
+                <section><title>How to draw into a slide using Graphics2D</title>
+                  <warning>
+                   Current implementation of the PowerPoint Graphics2D driver is not fully compliant with the java.awt.Graphics2D specification.
+                   Some features like clipping, drawing of images are not yet supported. 
+                  </warning>
+                  <source>
+        SlideShow ppt = new SlideShow();
+        Slide slide = ppt.createSlide();
+
+        //draw a simple bar graph
+        //bar chart data. The first value is the bar color, the second is the width
+        Object[] def = new Object[]{
+            Color.yellow, new Integer(100),
+            Color.green, new Integer(150),
+            Color.gray, new Integer(75),
+            Color.red, new Integer(200),
+        };
+
+        //all objects are drawn into a shape group so we need to create one
+
+        ShapeGroup group = new ShapeGroup();
+        //define position of the drawing in the slide
+        Rectangle bounds = new java.awt.Rectangle(200, 100, 350, 300);
+        //if you want to draw in the entire slide area then define the anchor as follows:
+        //Dimension pgsize = ppt.getPageSize();
+        //java.awt.Rectangle bounds = new java.awt.Rectangle(0, 0, pgsize.width, pgsize.height);
+
+        group.setAnchor(bounds);
+        slide.addShape(group);
+
+        //draw a simple bar chart
+        Graphics2D graphics = new PPGraphics2D(group);
+        int x = bounds.x + 50, y = bounds.y + 50;
+        graphics.setFont(new Font("Arial", Font.BOLD, 10));
+        for (int i = 0, idx = 1; i &lt; def.length; i+=2, idx++) {
+            graphics.setColor(Color.black);
+            int width = ((Integer)def[i+1]).intValue();
+            graphics.drawString("Q" + idx, x-20, y+20);
+            graphics.drawString(width + "%", x + width + 10, y + 20);
+            graphics.setColor((Color)def[i]);
+            graphics.fill(new Rectangle(x, y, width, 30));
+            y += 40;
+        }
+        graphics.setColor(Color.black);
+        graphics.setFont(new Font("Arial", Font.BOLD, 14));
+        graphics.draw(bounds);
+        graphics.drawString("Performance", x + 70, y + 40);
+
+        FileOutputStream out = new FileOutputStream("hslf-graphics2d.ppt");
+        ppt.write(out);
+        out.close();
+
+                   </source>
+                  </section>
+
+                <anchor id="Render"/>
+                <section><title>Export PowerPoint slides into java.awt.Graphics2D</title>
+                  <p>
+                    HSLF provides a way to export slides into images. You can capture slides into java.awt.Graphics2D object (or any other) 
+                    and serialize it into a PNG or JPEG format. Please note, although HSLF attempts to render slides as close to PowerPoint as possible, 
+                    the output may look differently from PowerPoint due to the following reasons: 
+                  </p>
+            <ul>
+              <li>Java2D renders fonts differently vs PowerPoint. There are always some differences in the way the font glyphs are painted</li>   
+              <li>HSLF uses java.awt.font.LineBreakMeasurer to break text into lines. PowerPoint may do it in a different way.</li>
+              <li>If a font from the presentation is not avaiable, then the JDK default font will be used.</li>
+            </ul>
+            <p>
+            Current Limitations:
+            </p>
+            <ul>
+              <li>Some types of shapes are not yet supported (WordArt, complex auto-shapes)</li>
+              <li>Only Bitmap images (PNG, JPEG, DIB) can be rendered in Java</li>  
+            </ul>
+                  <source>
+        FileInputStream is = new FileInputStream("slideshow.ppt");
+        SlideShow ppt = new SlideShow(is);
+        is.close();
+        
+        Dimension pgsize = ppt.getPageSize();
+
+        Slide[] slide = ppt.getSlides();
+        for (int i = 0; i &lt; slide.length; i++) {
+
+            BufferedImage img = new BufferedImage(pgsize.width, pgsize.height, BufferedImage.TYPE_INT_RGB);
+            Graphics2D graphics = img.createGraphics();
+            //clear the drawing area
+            graphics.setPaint(Color.white);
+            graphics.fill(new Rectangle2D.Float(0, 0, pgsize.width, pgsize.height));
+
+            //render
+            slide[i].draw(graphics);
+
+            //save the output
+            FileOutputStream out = new FileOutputStream("slide-"  + (i+1) + ".png");
+            javax.imageio.ImageIO.write(img, "png", out);
+            out.close();
+        }
+
+                  </source>
+                  </section>
+                  
+                </section>
         </section>
     </body>
 </document>

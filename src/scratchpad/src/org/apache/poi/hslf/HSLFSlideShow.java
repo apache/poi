@@ -27,22 +27,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.apache.poi.POIDocument;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.record.CurrentUserAtom;
-import org.apache.poi.hslf.record.ExOleObjStg;
-import org.apache.poi.hslf.record.PersistPtrHolder;
-import org.apache.poi.hslf.record.PositionDependentRecord;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.UserEditAtom;
+import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.ObjectData;
 import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.hslf.model.Shape;
@@ -253,6 +244,7 @@ public class HSLFSlideShow extends POIDocument
 
     private Record[] read(byte[] docstream, int usrOffset){
         ArrayList lst = new ArrayList();
+        HashMap offset2id = new HashMap(); 
         while (usrOffset != 0){
             UserEditAtom usr = (UserEditAtom) Record.buildRecordAtOffset(docstream, usrOffset);
             lst.add(new Integer(usrOffset));
@@ -266,6 +258,7 @@ public class HSLFSlideShow extends POIDocument
                 Integer offset = (Integer)entries.get(id);
 
                 lst.add(offset);
+                offset2id.put(offset, id);
             }
 
             usrOffset = usr.getLastUserEditAtomOffset();
@@ -278,6 +271,11 @@ public class HSLFSlideShow extends POIDocument
         for (int i = 0; i < a.length; i++) {
             Integer offset = (Integer)a[i];
             rec[i] = (Record)Record.buildRecordAtOffset(docstream, offset.intValue());
+            if(rec[i] instanceof PersistRecord) {
+                PersistRecord psr = (PersistRecord)rec[i];
+                Integer id = (Integer)offset2id.get(offset);
+                psr.setPersistId(id.intValue());
+            }
         }
 
         return rec;

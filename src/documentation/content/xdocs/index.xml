@@ -136,8 +136,7 @@
         </section>
         <section><title>HSLF for PowerPoint Documents</title>
 	<p>HSLF is our port of the Microsoft PowerPoint 97(-2003) file format to pure
-	  Java. It supports read and write capabilities of some, but not yet all
-      of the core records. Please see <link
+	  Java. It supports read and write capabilities. Please see <link
 	    href="./slideshow/index.html">the HSLF project page for more
 	    information</link>.</p>
         </section>

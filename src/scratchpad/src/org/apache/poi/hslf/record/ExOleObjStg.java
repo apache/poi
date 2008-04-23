@@ -30,7 +30,10 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Daniel Noll
  */
-public class ExOleObjStg extends RecordAtom {
+public class ExOleObjStg extends RecordAtom implements PersistRecord {
+
+    private int _persistId; // Found from PersistPtrHolder
+
     /**
      * Record header.
      */
@@ -108,5 +111,20 @@ public class ExOleObjStg extends RecordAtom {
     public void writeOut(OutputStream out) throws IOException {
         out.write(_header);
         out.write(_data);
+    }
+
+    /**
+     * Fetch our sheet ID, as found from a PersistPtrHolder.
+     * Should match the RefId of our matching SlidePersistAtom
+     */
+    public int getPersistId() {
+        return _persistId;
+    }
+
+    /**
+     * Set our sheet ID, as found from a PersistPtrHolder
+     */
+    public void setPersistId(int id) {
+        _persistId = id;
     }
 }

@@ -307,4 +307,22 @@ public class TestShapes extends TestCase {
         sl = ppt.getSlides()[0];
         assertEquals("expected 0 shaped in " + file, 0, sl.getShapes().length);
     }
+
+    public void testShapeId() throws IOException {
+        SlideShow ppt = new SlideShow();
+        Slide slide = ppt.createSlide();
+        Shape shape;
+
+        shape = new Line();
+        assertEquals(0, shape.getShapeId());
+        slide.addShape(shape);
+        assertTrue(shape.getShapeId() > 0);
+
+        int shapeId = shape.getShapeId();
+
+        shape = new Line();
+        assertEquals(0, shape.getShapeId());
+        slide.addShape(shape);
+        assertEquals(shapeId + 1, shape.getShapeId());
+    }
 }

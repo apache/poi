@@ -40,7 +40,13 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling PowerPoint files, irrespective of if they are .ppt or .pptx</action>
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
-        <release version="3.0.3-beta1" date="2008-04-??">
+        <release version="3.1-beta1" date="2008-04-??">
+           <action dev="POI-DEVELOPERS" type="add">HSLF: Support for getting embedded sounds from slide show </action>
+           <action dev="POI-DEVELOPERS" type="add">HSLF: Initial support for rendering slides into images</action>
+           <action dev="POI-DEVELOPERS" type="add">HSLF: Support for getting OLE object data from slide show </action>
+           <action dev="POI-DEVELOPERS" type="add">HSLF: Implemented more methods in PPGraphics2D</action>
+           <action dev="POI-DEVELOPERS" type="add">HSLF: Added Freeform shape which can contain both lines and Bezier curves</action>
+           <action dev="POI-DEVELOPERS" type="fix">41071 - Improved text extraction in HSLF</action>
            <action dev="POI-DEVELOPERS" type="add">30311 - Conditional Formatting - improved API, added HSSFSheetConditionalFormatting</action>
            <action dev="POI-DEVELOPERS" type="fix">Update the formula parser code to use a HSSFWorkbook, rather than the low level model.Workbook, to make things cleaner and make supporting XSSF formulas in future much easier</action>
            <action dev="POI-DEVELOPERS" type="fix">Fix the logger used by POIFSFileSystem, so that commons-logging isn't required when not used</action>

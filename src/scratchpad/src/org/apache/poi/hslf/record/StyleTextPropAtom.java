@@ -150,7 +150,7 @@ public class StyleTextPropAtom extends RecordAtom
                 new TextProp(2, 0x800000, "symbol"),
 				new TextProp(2, 0x20000, "font.size"),
 				new TextProp(4, 0x40000, "font.color"),
-				new TextProp(2, 0x80000, "offset"),
+				new TextProp(2, 0x80000, "superscript"),
 				new TextProp(2, 0x100000, "char_unknown_1"),
 				new TextProp(2, 0x1000000, "char_unknown_3"),
 				new TextProp(2, 0x2000000, "char_unknown_4"),

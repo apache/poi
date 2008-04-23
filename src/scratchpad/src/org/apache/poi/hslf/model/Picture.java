@@ -21,13 +21,16 @@ import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.blip.Bitmap;
+import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.util.POILogger;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Arrays;
 
@@ -128,7 +131,7 @@ public class Picture extends SimpleShape {
 
         //set default properties for a picture
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
-        setEscherProperty(opt, EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 8388736);
+        setEscherProperty(opt, EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 0x800080);
 
         //another weird feature of powerpoint: for picture id we must add 0x4000.
         setEscherProperty(opt, (short)(EscherProperties.BLIP__BLIPTODISPLAY + 0x4000), idx);
@@ -193,13 +196,69 @@ public class Picture extends SimpleShape {
     }
 
     /**
+     * Name of this picture.
+     *
+     * @return name of this picture
+     */
+    public String getPictureName(){
+        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherComplexProperty prop = (EscherComplexProperty)getEscherProperty(opt, EscherProperties.BLIP__BLIPFILENAME);
+        String name = null;
+        if(prop != null){
+            try {
+                name = new String(prop.getComplexData(), "UTF-16LE");
+                int idx = name.indexOf('\u0000');
+                return idx == -1 ? name : name.substring(0, idx);
+            } catch (UnsupportedEncodingException e){
+                throw new HSLFException(e);
+            }
+        }
+        return name;
+    }
+
+    /**
+     * Name of this picture.
+     *
+     * @param name of this picture
+     */
+    public void setPictureName(String name){
+        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        try {
+            byte[] data = (name + '\u0000').getBytes("UTF-16LE");
+            EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.BLIP__BLIPFILENAME, false, data);
+            opt.addEscherProperty(prop);
+        } catch (UnsupportedEncodingException e){
+            throw new HSLFException(e);
+        }
+    }
+
+    /**
      * By default set the orininal image size
      */
     protected void afterInsert(Sheet sh){
+        super.afterInsert(sh);
         java.awt.Rectangle anchor = getAnchor();
         if (anchor.equals(new java.awt.Rectangle())){
             setDefaultSize();
         }
     }
 
+    public void draw(Graphics2D graphics){
+        PictureData data = getPictureData();
+        if (data  instanceof Bitmap){
+            BufferedImage img = null;
+            try {
+               	img = ImageIO.read(new ByteArrayInputStream(data.getData()));
+            }
+            catch (Exception e){
+                logger.log(POILogger.WARN, "ImageIO failed to create image. image.type: " + data.getType());
+                return;
+            }
+            Rectangle anchor = getAnchor();
+            Image scaledImg = img.getScaledInstance(anchor.width, anchor.height, Image.SCALE_SMOOTH);
+            graphics.drawImage(scaledImg, anchor.x, anchor.y, null);
+        } else {
+            logger.log(POILogger.WARN, "Rendering of metafiles is not yet supported. image.type: " + (data == null ? "NA" : data.getClass().getName()));
+        }
+    }
 }

@@ -534,6 +534,10 @@ public class TextRun
 		// The messes things up on everything but a Mac, so translate
 		//  them to \n
 		String text = rawText.replace('\r','\n');
+
+        //0xB acts like cariage return in page titles
+        text = text.replace((char) 0x0B, '\n');
+
 		return text;
 	}
 
@@ -635,4 +639,20 @@ public class TextRun
     public Hyperlink[] getHyperlinks(){
         return Hyperlink.find(this);
     }
+
+    /**
+     * Fetch RichTextRun at a given position
+     *
+     * @param pos 0-based index in the text
+     * @return RichTextRun or null if not found
+     */
+    public RichTextRun getRichTextRunAt(int pos){
+        for (int i = 0; i < _rtRuns.length; i++) {
+            int start = _rtRuns[i].getStartIndex();
+            int end = _rtRuns[i].getEndIndex();
+            if(pos >= start && pos < end) return _rtRuns[i];
+        }
+        return null;
+    }
+
 }

@@ -17,12 +17,12 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.model.ShapeTypes;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.hslf.record.PPDrawing;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
 
-import java.util.Iterator;
+import java.util.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
@@ -166,12 +166,24 @@ public abstract class Shape {
         if ((flags & EscherSpRecord.FLAG_CHILD) != 0){
             EscherChildAnchorRecord rec = (EscherChildAnchorRecord)getEscherChild(_escherContainer, EscherChildAnchorRecord.RECORD_ID);
             anchor = new java.awt.Rectangle();
-            anchor = new Rectangle2D.Float(
-                (float)rec.getDx1()*POINT_DPI/MASTER_DPI,
-                (float)rec.getDy1()*POINT_DPI/MASTER_DPI,
-                (float)(rec.getDx2()-rec.getDx1())*POINT_DPI/MASTER_DPI,
-                (float)(rec.getDy2()-rec.getDy1())*POINT_DPI/MASTER_DPI
-            );
+            if(rec == null){
+                logger.log(POILogger.WARN, "EscherSpRecord.FLAG_CHILD is set but EscherChildAnchorRecord was not found");
+                EscherClientAnchorRecord clrec = (EscherClientAnchorRecord)getEscherChild(_escherContainer, EscherClientAnchorRecord.RECORD_ID);
+                anchor = new java.awt.Rectangle();
+                anchor = new Rectangle2D.Float(
+                    (float)clrec.getCol1()*POINT_DPI/MASTER_DPI,
+                    (float)clrec.getFlag()*POINT_DPI/MASTER_DPI,
+                    (float)(clrec.getDx1()-clrec.getCol1())*POINT_DPI/MASTER_DPI,
+                    (float)(clrec.getRow1()-clrec.getFlag())*POINT_DPI/MASTER_DPI
+                );
+            } else {
+                anchor = new Rectangle2D.Float(
+                    (float)rec.getDx1()*POINT_DPI/MASTER_DPI,
+                    (float)rec.getDy1()*POINT_DPI/MASTER_DPI,
+                    (float)(rec.getDx2()-rec.getDx1())*POINT_DPI/MASTER_DPI,
+                    (float)(rec.getDy2()-rec.getDy1())*POINT_DPI/MASTER_DPI
+                );
+            }
         }
         else {
             EscherClientAnchorRecord rec = (EscherClientAnchorRecord)getEscherChild(_escherContainer, EscherClientAnchorRecord.RECORD_ID);
@@ -184,6 +196,10 @@ public abstract class Shape {
             );
         }
         return anchor;
+    }
+
+    public Rectangle2D getLogicalAnchor2D(){
+        return getAnchor2D();
     }
 
     /**
@@ -245,7 +261,7 @@ public abstract class Shape {
      * @return escher property or <code>null</code> if not found.
      */
      public static EscherProperty getEscherProperty(EscherOptRecord opt, int propId){
-        for ( Iterator iterator = opt.getEscherProperties().iterator(); iterator.hasNext(); )
+        if(opt != null) for ( Iterator iterator = opt.getEscherProperties().iterator(); iterator.hasNext(); )
         {
             EscherProperty prop = (EscherProperty) iterator.next();
             if (prop.getPropertyNumber() == propId)
@@ -294,7 +310,18 @@ public abstract class Shape {
    public int getEscherProperty(short propId){
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
         EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, propId);
-        return prop == null ? 0 : prop.getPropertyNumber();
+        return prop == null ? 0 : prop.getPropertyValue();
+    }
+
+    /**
+     * Get the value of a simple escher property for this shape.
+     *
+     * @param propId    The id of the property. One of the constants defined in EscherOptRecord.
+     */
+   public int getEscherProperty(short propId, int defaultValue){
+        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, propId);
+        return prop == null ? defaultValue : prop.getPropertyValue();
     }
 
     /**
@@ -314,7 +341,58 @@ public abstract class Shape {
      * @param sh - owning shape
      */
     protected void afterInsert(Sheet sh){
+        PPDrawing ppdrawing = sh.getPPDrawing();
 
+        EscherContainerRecord dgContainer = (EscherContainerRecord) ppdrawing.getEscherRecords()[0];
+
+        EscherDgRecord dg = (EscherDgRecord) Shape.getEscherChild(dgContainer, EscherDgRecord.RECORD_ID);
+
+        int id = allocateShapeId(dg);
+        setShapeId(id);
+    }
+
+    /**
+     * Allocates new shape id for the new drawing group id.
+     *
+     * @param dg  EscherDgRecord of the sheet that owns the shape being created
+     *
+     * @return a new shape id.
+     */
+    protected int allocateShapeId(EscherDgRecord dg)
+    {
+        EscherDggRecord dgg = _sheet.getSlideShow().getDocumentRecord().getPPDrawingGroup().getEscherDggRecord();
+        if(dgg == null){
+            logger.log(POILogger.ERROR, "EscherDggRecord not found");
+            return 0;
+        }
+
+        dgg.setNumShapesSaved( dgg.getNumShapesSaved() + 1 );
+
+        // Add to existing cluster if space available
+        for (int i = 0; i < dgg.getFileIdClusters().length; i++)
+        {
+            EscherDggRecord.FileIdCluster c = dgg.getFileIdClusters()[i];
+            if (c.getDrawingGroupId() == dg.getDrawingGroupId() && c.getNumShapeIdsUsed() != 1024)
+            {
+                int result = c.getNumShapeIdsUsed() + (1024 * (i+1));
+                c.incrementShapeId();
+                dg.setNumShapes( dg.getNumShapes() + 1 );
+                dg.setLastMSOSPID( result );
+                if (result >= dgg.getShapeIdMax())
+                    dgg.setShapeIdMax( result + 1 );
+                return result;
+            }
+        }
+
+        // Create new cluster
+        dgg.addCluster( dg.getDrawingGroupId(), 0 );
+        dgg.getFileIdClusters()[dgg.getFileIdClusters().length-1].incrementShapeId();
+        dg.setNumShapes( dg.getNumShapes() + 1 );
+        int result = (1024 * dgg.getFileIdClusters().length);
+        dg.setLastMSOSPID( result );
+        if (result >= dgg.getShapeIdMax())
+            dgg.setShapeIdMax( result + 1 );
+        return result;
     }
 
     /**
@@ -333,14 +411,32 @@ public abstract class Shape {
         _sheet = sheet;
     }
 
-    protected Color getColor(int rgb){
+    protected Color getColor(int rgb, int alpha){
         if (rgb >= 0x8000000) {
             int idx = rgb - 0x8000000;
             ColorSchemeAtom ca = getSheet().getColorScheme();
             if(idx >= 0 && idx <= 7) rgb = ca.getColor(idx);
         }
         Color tmp = new Color(rgb, true);
-        return new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed());
+        return new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed(), alpha);
+    }
+
+    /**
+     * @return id for the shape.
+     */
+    public int getShapeId(){
+        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        return spRecord == null ? 0 : spRecord.getShapeId();
+    }
+
+    /**
+     * Sets shape ID
+     *
+     * @param id of the shape
+     */
+    public void setShapeId(int id){
+        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        if(spRecord != null) spRecord.setShapeId(id);
     }
 
     /**
@@ -364,4 +460,16 @@ public abstract class Shape {
         return Hyperlink.find(this);
     }
 
+    public void draw(Graphics2D graphics){
+        logger.log(POILogger.INFO, "Rendering " + getShapeName());
+    }
+
+    /**
+     * Return shape outline as a java.awt.Shape object
+     *
+     * @return the shape outline
+     */
+    public java.awt.Shape getOutline(){
+        return getLogicalAnchor2D();
+    }
 }

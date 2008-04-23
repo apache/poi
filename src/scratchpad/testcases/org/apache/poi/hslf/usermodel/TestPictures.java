@@ -437,4 +437,33 @@ public class TestPictures extends TestCase{
         assertTrue(pdata instanceof WMF);
         assertEquals(Picture.WMF, pdata.getType());
 	}
+
+    public void testGetPictureName() throws Exception {
+        SlideShow ppt = new SlideShow(new HSLFSlideShow(new File(cwd, "ppt_with_png.ppt").getPath()));
+        Slide slide = ppt.getSlides()[0];
+
+        Picture p = (Picture)slide.getShapes()[0]; //the first slide contains JPEG
+        assertEquals("test", p.getPictureName());
+    }
+
+    public void testSetPictureName() throws Exception {
+        SlideShow ppt = new SlideShow();
+
+        Slide slide = ppt.createSlide();
+        File img = new File(cwd, "tomcat.png");
+        int idx = ppt.addPicture(img, Picture.PNG);
+        Picture pict = new Picture(idx);
+        pict.setPictureName("tomcat.png");
+        slide.addShape(pict);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ppt.write(out);
+        out.close();
+
+        ppt = new SlideShow(new ByteArrayInputStream(out.toByteArray()));
+
+        Picture p = (Picture)ppt.getSlides()[0].getShapes()[0];
+        assertEquals("tomcat.png", p.getPictureName());
+    }
 }

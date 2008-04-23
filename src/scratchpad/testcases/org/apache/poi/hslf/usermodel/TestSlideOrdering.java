@@ -141,7 +141,7 @@ public class TestSlideOrdering extends TestCase {
                     "ROMANCE: AN ANALYSIS",
                     "AGENDA",
                     "You are an important supplier of various items that I need",
-                    (char)0x0B + "Although The Psycho set back my relationship process, recovery is luckily enough under way",
+                    '\n' + "Although The Psycho set back my relationship process, recovery is luckily enough under way",
                     "Since the time that we seriously go out together, you rank highly among existing relationships",
                     "Although our personal interests are mostly compatible, the greatest gap exists in Sex and Shopping",
                     "Your physical characteristics are strong when compared with your competition",
