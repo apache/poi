@@ -17,6 +17,9 @@
 package org.apache.poi.xwpf;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Iterator;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.xmlbeans.XmlException;
@@ -24,12 +27,22 @@ import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
+import org.openxml4j.opc.PackageRelationship;
 import org.openxml4j.opc.PackageRelationshipCollection;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBody;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocument1;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTComment;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.DocumentDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CommentsDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
+
+import org.apache.poi.xwpf.usermodel.XWPFHyperlink;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFComment;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
 
 /**
  * Experimental class to do low level processing
@@ -48,15 +61,59 @@ public class XWPFDocument extends POIXMLDocument {
 	public static final String HEADER_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml";
 	public static final String STYLES_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml";
 	public static final String STYLES_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles";
-	public static final String HYPERLINK_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink"; 
+	public static final String HYPERLINK_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink";
+	public static final String COMMENT_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments";
 	
 	private DocumentDocument wordDoc;
+	protected List<XWPFComment> comments;
+	protected List<XWPFHyperlink> hyperlinks;
+	protected List<XWPFParagraph> paragraphs;
+	protected List<XWPFTable> tables;
 	
 	public XWPFDocument(Package container) throws OpenXML4JException, IOException, XmlException {
 		super(container);
+
+		hyperlinks = new LinkedList<XWPFHyperlink>();
+		comments = new LinkedList<XWPFComment>();
+		paragraphs = new LinkedList<XWPFParagraph>();
+		tables= new LinkedList<XWPFTable>();
 		
 		wordDoc =
 			DocumentDocument.Factory.parse(getCorePart().getInputStream());
+		
+		// filling paragraph list
+		for (CTP p : getDocumentBody().getPArray())	{
+			paragraphs.add(new XWPFParagraph(p, this));
+		}
+
+		// Get the hyperlinks 
+		// TODO: make me optional/separated in private function
+		try	{
+			Iterator <PackageRelationship> relIter = 
+				getCorePart().getRelationshipsByType(HYPERLINK_RELATION_TYPE).iterator();
+			while(relIter.hasNext()) {
+				PackageRelationship rel = relIter.next();
+				hyperlinks.add(new XWPFHyperlink(rel.getId(), rel.getTargetURI().toString()));
+			}
+		} catch(Exception e) {
+			throw new OpenXML4JException(e.getLocalizedMessage());
+		}
+
+		// Get the comments, if there are any
+		PackageRelationshipCollection commentsRel = getCmntRelations();
+		if(commentsRel != null && commentsRel.size() > 0) {
+			PackagePart commentsPart = getTargetPart(commentsRel.getRelationship(0));
+			CommentsDocument cmntdoc = CommentsDocument.Factory.parse(commentsPart.getInputStream());
+			for(CTComment ctcomment : cmntdoc.getComments().getCommentArray())
+			{
+				comments.add(new XWPFComment(ctcomment));
+			}
+			
+			for(CTTbl table : getDocumentBody().getTblArray())
+			{
+				tables.add(new XWPFTable(table));
+			}
+		}
 	}
 	
 	/**
@@ -64,6 +121,42 @@ public class XWPFDocument extends POIXMLDocument {
 	 */
 	public CTDocument1 getDocument() {
 		return wordDoc.getDocument();
+	}
+	
+	public Iterator<XWPFParagraph> getParagraphsIterator()
+	{
+		return paragraphs.iterator();
+	}
+	
+	public Iterator<XWPFTable> getTablesIterator()
+	{
+		return tables.iterator();
+	}
+	
+	public XWPFHyperlink getHyperlinkByID(String id)
+	{
+		Iterator<XWPFHyperlink> iter = hyperlinks.iterator();
+		while(iter.hasNext())
+		{
+			XWPFHyperlink link = iter.next();
+			if(link.getId().equals(id))
+				return link; 
+		}
+		
+		return null;
+	}
+	
+	public XWPFComment getCommentByID(String id)
+	{
+		Iterator<XWPFComment> iter = comments.iterator();
+		while(iter.hasNext())
+		{
+			XWPFComment comment = iter.next();
+			if(comment.getId().equals(id))
+				return comment; 
+		}
+		
+		return null;
 	}
 	
 	/**
@@ -91,18 +184,10 @@ public class XWPFDocument extends POIXMLDocument {
 			StylesDocument.Factory.parse(parts[0].getInputStream());
 		return sd.getStyles();
 	}
-	
-	/**
-	 * Returns all the hyperlink relations for the file.
-	 * You'll generally want to get the target to get
-	 *  the destination of the hyperlink
-	 */
-	public PackageRelationshipCollection getHyperlinks() {
-		try {
-			return getCorePart().getRelationshipsByType(HYPERLINK_RELATION_TYPE); 
-		} catch(InvalidFormatException e) {
-			// Should never happen
-			throw new IllegalStateException(e);
-		}
+
+	protected PackageRelationshipCollection getCmntRelations() throws InvalidFormatException
+	{
+		return getCorePart().getRelationshipsByType(COMMENT_RELATION_TYPE);
 	}
 }
+
