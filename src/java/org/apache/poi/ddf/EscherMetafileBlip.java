@@ -83,8 +83,11 @@ public class EscherMetafileBlip
         field_6_fCompression = data[pos]; pos++;
         field_7_fFilter = data[pos]; pos++;
 
-        raw_pictureData = new byte[field_5_cbSave];
-        System.arraycopy( data, pos, raw_pictureData, 0, field_5_cbSave );
+        // Bit of a snag - trusting field_5_cbSave results in inconsistent
+        //  record size in some cases. So, just check the data left
+        int remainingBytes = bytesAfterHeader - 50;
+        raw_pictureData = new byte[remainingBytes];
+        System.arraycopy( data, pos, raw_pictureData, 0, remainingBytes );
 
         // 0 means DEFLATE compression
         // 0xFE means no compression
