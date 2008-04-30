@@ -19,7 +19,11 @@ POI Release Guide
   POI 3.0.2 and 3.1 were built using Ant 1.6.2 and Forrest 0.5
 
 (II) Making release artefacts
-  1. Update version id in build.xml. 
+  1. Update version id in build.xml
+{code:xml}
+  <property name="version.id" value="3.1-beta1"/>
+{code}
+
   2. Tag current version. Include the current revision number in the comment
 
 {code}
@@ -46,7 +50,7 @@ https://svn.apache.org/repos/asf/poi/trunk
 
   5. Start a new section in sites.xml and status.xml. 
 
-  6. Build as if the vote had passed. The buid date must be +7 days from current.
+  6. Build as if the vote had passed. The build date must be +7 days from current.
 {code}
 ant build
 {code}
@@ -109,27 +113,68 @@ Log-in on people.apache.org
 
 1. Go to ~/POI-3.1-BETA1
 
+zap previous version first.
+
+{code}
 cd ~/POI-3.1-BETA1/main
+{code}
 
 BETA and ALPHA releases:
+
+{code}
 cp *-src-* /www/www.apache.org/dist/poi/dev/src
 cp *-bin-* /www/www.apache.org/dist/poi/dev/bin
+{code}
 
 FINAL release:
+{code}
 cp *-src-* /www/www.apache.org/dist/poi/release/src
 cp *-bin-* /www/www.apache.org/dist/poi/release/bin
+{code}
 
+{code}
 cd ~/POI-3.1-BETA1/maven
-
 cp -r org.apache.poi /www/people.apache.org/repo/m1-ibiblio-rsync-repository/
 cp -r poi/poms      /www/people.apache.org/repo/m1-ibiblio-rsync-repository/poi
-
+{code}
 
 2. Make sure that the files are owned by the unix group apcvs and that they are writable by this group. 
 
 3. Wait for the distributions to appear on your favourite mirror
 
-4. Send announcements:
+4. test maven
+create a simple project and make sure the release artifacts are accessible by maven:
+
+{code}
+$ mvn archetype:create -DgroupId=org.apache.poi.scratchpad -DartifactId=maven-test
+cd maven-test
+{code}
+edit pom.xml and add the release artefacts to the project dependencies: 
+
+{code:xml}
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>3.1-beta1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-scratchpad</artifactId>
+      <version>3.1-beta1</version>
+    </dependency>
+{code}
+
+{code}
+mvn compile 
+{code}
+
+You should see [INFO] BUILD SUCCESSFUL in the end.
+
+5. Don't forget to upload the latest version of the site and javadocs
+
+6. Send announcements:
  - to poi-user and poi-dev lists
- - send announcements to announcement@apache.org, announcements@jakarta.apache.org
+ - to announcement@apache.org, announcements@jakarta.apache.org
+
+Note, announcements should be sent from your @apache.org e-mail address.
 
