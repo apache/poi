@@ -41,9 +41,20 @@ public class EscherMetafileBlip
     public static final short RECORD_ID_WMF = (short) 0xF018 + 3;
     public static final short RECORD_ID_PICT = (short) 0xF018 + 4;
 
+    /**
+     * BLIP signatures as defined in the escher spec
+     */
+    public static final short SIGNATURE_EMF  = 0x3D40;
+    public static final short SIGNATURE_WMF  = 0x2160;
+    public static final short SIGNATURE_PICT = 0x5420;
+
     private static final int HEADER_SIZE = 8;
 
     private byte[] field_1_UID;
+    /**
+     * The primary UID is only saved to disk if (blip_instance ^ blip_signature == 1)
+     */
+    private byte[] field_2_UID;
     private int field_2_cb;
     private int field_3_rcBounds_x1;
     private int field_3_rcBounds_y1;
@@ -72,6 +83,12 @@ public class EscherMetafileBlip
 
         field_1_UID = new byte[16];
         System.arraycopy( data, pos, field_1_UID, 0, 16 ); pos += 16;
+
+        if((getOptions() ^ getSignature()) == 0x10){
+            field_2_UID = new byte[16];
+            System.arraycopy( data, pos, field_2_UID, 0, 16 ); pos += 16;
+        }
+
         field_2_cb = LittleEndian.getInt( data, pos ); pos += 4;
         field_3_rcBounds_x1 = LittleEndian.getInt( data, pos ); pos += 4;
         field_3_rcBounds_y1 = LittleEndian.getInt( data, pos ); pos += 4;
@@ -83,11 +100,8 @@ public class EscherMetafileBlip
         field_6_fCompression = data[pos]; pos++;
         field_7_fFilter = data[pos]; pos++;
 
-        // Bit of a snag - trusting field_5_cbSave results in inconsistent
-        //  record size in some cases. So, just check the data left
-        int remainingBytes = bytesAfterHeader - 50;
-        raw_pictureData = new byte[remainingBytes];
-        System.arraycopy( data, pos, raw_pictureData, 0, remainingBytes );
+        raw_pictureData = new byte[field_5_cbSave];
+        System.arraycopy( data, pos, raw_pictureData, 0, field_5_cbSave );
 
         // 0 means DEFLATE compression
         // 0xFE means no compression
@@ -121,9 +135,12 @@ public class EscherMetafileBlip
         int pos = offset;
         LittleEndian.putShort( data, pos, getOptions() ); pos += 2;
         LittleEndian.putShort( data, pos, getRecordId() ); pos += 2;
-        LittleEndian.putInt( data, getRecordSize() - HEADER_SIZE ); pos += 4;
+        LittleEndian.putInt( data, pos, getRecordSize() - HEADER_SIZE ); pos += 4;
 
-        System.arraycopy( field_1_UID, 0, data, pos, 16 ); pos += 16;
+        System.arraycopy( field_1_UID, 0, data, pos, field_1_UID.length ); pos += field_1_UID.length;
+        if((getOptions() ^ getSignature()) == 0x10){
+            System.arraycopy( field_2_UID, 0, data, pos, field_2_UID.length ); pos += field_2_UID.length;
+        }
         LittleEndian.putInt( data, pos, field_2_cb ); pos += 4;
         LittleEndian.putInt( data, pos, field_3_rcBounds_x1 ); pos += 4;
         LittleEndian.putInt( data, pos, field_3_rcBounds_y1 ); pos += 4;
@@ -138,7 +155,7 @@ public class EscherMetafileBlip
         System.arraycopy( raw_pictureData, 0, data, pos, raw_pictureData.length );
 
         listener.afterRecordSerialize(offset + getRecordSize(), getRecordId(), getRecordSize(), this);
-        return HEADER_SIZE + 16 + 1 + raw_pictureData.length;
+        return getRecordSize();
     }
 
     /**
@@ -164,7 +181,7 @@ public class EscherMetafileBlip
         }
         catch ( IOException e )
         {
-            log.log(POILogger.INFO, "Possibly corrupt compression or non-compressed data", e);
+            log.log(POILogger.WARN, "Possibly corrupt compression or non-compressed data", e);
             return data;
         }
     }
@@ -176,7 +193,11 @@ public class EscherMetafileBlip
      */
     public int getRecordSize()
     {
-        return 8 + 50 + raw_pictureData.length;
+        int size = 8 + 50 + raw_pictureData.length;
+        if((getOptions() ^ getSignature()) == 0x10){
+            size += field_2_UID.length;
+        }
+        return size;
     }
 
     public byte[] getUID()
@@ -187,6 +208,16 @@ public class EscherMetafileBlip
     public void setUID( byte[] field_1_UID )
     {
         this.field_1_UID = field_1_UID;
+    }
+
+    public byte[] getPrimaryUID()
+    {
+        return field_2_UID;
+    }
+
+    public void setPrimaryUID( byte[] field_2_UID )
+    {
+        this.field_2_UID = field_2_UID;
     }
 
     public int getUncompressedSize()
@@ -267,6 +298,7 @@ public class EscherMetafileBlip
                 "  RecordId: 0x" + HexDump.toHex( getRecordId() ) + nl +
                 "  Options: 0x" + HexDump.toHex( getOptions() ) + nl +
                 "  UID: 0x" + HexDump.toHex( field_1_UID ) + nl +
+                (field_2_UID == null ? "" : ("  UID2: 0x" + HexDump.toHex( field_2_UID ) + nl)) +
                 "  Uncompressed Size: " + HexDump.toHex( field_2_cb ) + nl +
                 "  Bounds: " + getBounds() + nl +
                 "  Size in EMU: " + getSizeEMU() + nl +
@@ -276,4 +308,19 @@ public class EscherMetafileBlip
                 "  Extra Data:" + nl + extraData;
     }
 
+    /**
+     * Return the blip signature
+     *
+     * @return the blip signature
+     */
+    public short getSignature(){
+        short sig = 0;
+        switch(getRecordId()){
+            case RECORD_ID_EMF: sig = SIGNATURE_EMF; break;
+            case RECORD_ID_WMF: sig = SIGNATURE_WMF; break;
+            case RECORD_ID_PICT: sig = SIGNATURE_PICT; break;
+            default: log.log(POILogger.WARN, "Unknown metafile: " + getRecordId()); break;
+        }
+        return sig;
+    }
 }
