@@ -341,58 +341,7 @@ public abstract class Shape {
      * @param sh - owning shape
      */
     protected void afterInsert(Sheet sh){
-        PPDrawing ppdrawing = sh.getPPDrawing();
 
-        EscherContainerRecord dgContainer = (EscherContainerRecord) ppdrawing.getEscherRecords()[0];
-
-        EscherDgRecord dg = (EscherDgRecord) Shape.getEscherChild(dgContainer, EscherDgRecord.RECORD_ID);
-
-        int id = allocateShapeId(dg);
-        setShapeId(id);
-    }
-
-    /**
-     * Allocates new shape id for the new drawing group id.
-     *
-     * @param dg  EscherDgRecord of the sheet that owns the shape being created
-     *
-     * @return a new shape id.
-     */
-    protected int allocateShapeId(EscherDgRecord dg)
-    {
-        EscherDggRecord dgg = _sheet.getSlideShow().getDocumentRecord().getPPDrawingGroup().getEscherDggRecord();
-        if(dgg == null){
-            logger.log(POILogger.ERROR, "EscherDggRecord not found");
-            return 0;
-        }
-
-        dgg.setNumShapesSaved( dgg.getNumShapesSaved() + 1 );
-
-        // Add to existing cluster if space available
-        for (int i = 0; i < dgg.getFileIdClusters().length; i++)
-        {
-            EscherDggRecord.FileIdCluster c = dgg.getFileIdClusters()[i];
-            if (c.getDrawingGroupId() == dg.getDrawingGroupId() && c.getNumShapeIdsUsed() != 1024)
-            {
-                int result = c.getNumShapeIdsUsed() + (1024 * (i+1));
-                c.incrementShapeId();
-                dg.setNumShapes( dg.getNumShapes() + 1 );
-                dg.setLastMSOSPID( result );
-                if (result >= dgg.getShapeIdMax())
-                    dgg.setShapeIdMax( result + 1 );
-                return result;
-            }
-        }
-
-        // Create new cluster
-        dgg.addCluster( dg.getDrawingGroupId(), 0 );
-        dgg.getFileIdClusters()[dgg.getFileIdClusters().length-1].incrementShapeId();
-        dg.setNumShapes( dg.getNumShapes() + 1 );
-        int result = (1024 * dgg.getFileIdClusters().length);
-        dg.setLastMSOSPID( result );
-        if (result >= dgg.getShapeIdMax())
-            dgg.setShapeIdMax( result + 1 );
-        return result;
     }
 
     /**

@@ -28,6 +28,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.AffineTransform;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -244,6 +245,9 @@ public class Picture extends SimpleShape {
     }
 
     public void draw(Graphics2D graphics){
+        AffineTransform at = graphics.getTransform();
+        ShapePainter.paint(this, graphics);
+
         PictureData data = getPictureData();
         if (data  instanceof Bitmap){
             BufferedImage img = null;
@@ -260,5 +264,6 @@ public class Picture extends SimpleShape {
         } else {
             logger.log(POILogger.WARN, "Rendering of metafiles is not yet supported. image.type: " + (data == null ? "NA" : data.getClass().getName()));
         }
+        graphics.setTransform(at);
     }
 }

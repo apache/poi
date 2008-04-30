@@ -52,7 +52,7 @@ public class TestFreeform extends TestCase {
         Freeform p = new Freeform();
         p.setPath(path1);
 
-        GeneralPath path2 = p.getPath();
+        java.awt.Shape path2 = p.getOutline();
         assertTrue(new Area(path1).equals(new Area(path2)));
     }
 
@@ -63,7 +63,7 @@ public class TestFreeform extends TestCase {
         Freeform p = new Freeform();
         p.setPath(path1);
 
-        GeneralPath path2 = p.getPath();
+        java.awt.Shape path2 = p.getOutline();
         assertTrue(new Area(path1).equals(new Area(path2)));
     }
 
@@ -74,7 +74,7 @@ public class TestFreeform extends TestCase {
         Freeform p = new Freeform();
         p.setPath(path1);
 
-        GeneralPath path2 = p.getPath();
+        java.awt.Shape path2 = p.getOutline();
         assertTrue(new Area(path1).equals(new Area(path2)));
-    }
+   }
 }

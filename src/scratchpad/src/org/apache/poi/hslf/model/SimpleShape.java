@@ -126,8 +126,8 @@ public class SimpleShape extends Shape {
         EscherSimpleProperty p2 = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH);
         int p2val = p2 == null ? 0 : p2.getPropertyValue();
         Color clr = null;
-        if (p1 != null && (p2val  & 0x8) != 0){
-            int rgb = p1.getPropertyValue();
+        if ((p2val  & 0x8) != 0 || (p2val  & 0x10) != 0){
+            int rgb = p1 == null ? 0 : p1.getPropertyValue();
             if (rgb >= 0x8000000) {
                 int idx = rgb % 0x8000000;
                 if(getSheet() != null) {
