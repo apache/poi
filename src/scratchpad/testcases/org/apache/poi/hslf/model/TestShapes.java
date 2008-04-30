@@ -20,6 +20,8 @@ import junit.framework.TestCase;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.ddf.EscherDggRecord;
+import org.apache.poi.ddf.EscherDgRecord;
 
 import java.awt.*;
 import java.awt.Rectangle;
@@ -311,18 +313,49 @@ public class TestShapes extends TestCase {
     public void testShapeId() throws IOException {
         SlideShow ppt = new SlideShow();
         Slide slide = ppt.createSlide();
-        Shape shape;
+        Shape shape = null;
 
-        shape = new Line();
-        assertEquals(0, shape.getShapeId());
-        slide.addShape(shape);
-        assertTrue(shape.getShapeId() > 0);
+        //EscherDgg is a document-level record which keeps track of the drawing groups
+        EscherDggRecord dgg = ppt.getDocumentRecord().getPPDrawingGroup().getEscherDggRecord();
+        EscherDgRecord dg = slide.getSheetContainer().getPPDrawing().getEscherDgRecord();
 
-        int shapeId = shape.getShapeId();
+        int dggShapesUsed = dgg.getNumShapesSaved();   //total number of shapes in the ppt
+        int dggMaxId = dgg.getShapeIdMax();            //max number of shapeId
 
-        shape = new Line();
-        assertEquals(0, shape.getShapeId());
-        slide.addShape(shape);
-        assertEquals(shapeId + 1, shape.getShapeId());
+        int dgMaxId = dg.getLastMSOSPID();   //max shapeId in the slide
+        int dgShapesUsed = dg.getNumShapes();          // number of shapes in the slide
+        //insert 3 shapes and make sure the Ids are properly incremented
+        for (int i = 0; i < 3; i++) {
+            shape = new Line();
+            assertEquals(0, shape.getShapeId());
+            slide.addShape(shape);
+            assertTrue(shape.getShapeId() > 0);
+
+            //check that EscherDgRecord is updated
+            assertEquals(shape.getShapeId(), dg.getLastMSOSPID());
+            assertEquals(dgMaxId + 1, dg.getLastMSOSPID());
+            assertEquals(dgShapesUsed + 1, dg.getNumShapes());
+
+            //check that EscherDggRecord is updated
+            assertEquals(shape.getShapeId() + 1, dgg.getShapeIdMax());
+            assertEquals(dggMaxId + 1, dgg.getShapeIdMax());
+            assertEquals(dggShapesUsed + 1, dgg.getNumShapesSaved());
+
+            dggShapesUsed = dgg.getNumShapesSaved();
+            dggMaxId = dgg.getShapeIdMax();
+            dgMaxId = dg.getLastMSOSPID();
+            dgShapesUsed = dg.getNumShapes();
+        }
+
+
+        //For each drawing group PPT allocates clusters with size=1024
+        //if the number of shapes is greater that 1024 a new cluster is allocated
+        //make sure it is so
+        int numClusters = dgg.getNumIdClusters();
+        for (int i = 0; i < 1025; i++) {
+            shape = new Line();
+            slide.addShape(shape);
+        }
+        assertEquals(numClusters + 1, dgg.getNumIdClusters());
     }
 }

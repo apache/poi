@@ -535,9 +535,13 @@ public class TextRun
 		//  them to \n
 		String text = rawText.replace('\r','\n');
 
-        //0xB acts like cariage return in page titles
-        text = text.replace((char) 0x0B, '\n');
-
+        int type = _headerAtom == null ? 0 : _headerAtom.getTextType();
+        if(type == TextHeaderAtom.TITLE_TYPE || type == TextHeaderAtom.CENTER_TITLE_TYPE){
+            //0xB acts like cariage return in page titles and like blank in the others
+            text = text.replace((char) 0x0B, '\n');
+        } else {
+            text = text.replace((char) 0x0B, ' ');
+        }
 		return text;
 	}
 
@@ -655,4 +659,11 @@ public class TextRun
         return null;
     }
 
+    public TextRulerAtom getTextRuler(){
+        for (int i = 0; i < _records.length; i++) {
+            if(_records[i] instanceof TextRulerAtom) return (TextRulerAtom)_records[i];
+        }
+        return null;
+
+    }
 }

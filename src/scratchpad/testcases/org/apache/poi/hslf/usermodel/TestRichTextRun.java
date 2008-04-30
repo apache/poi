@@ -90,9 +90,11 @@ public class TestRichTextRun extends TestCase {
 		
 		// Now set it to not bold
 		rtr.setBold(false);
-		assertNotNull(rtr._getRawCharacterStyle());
-		assertNotNull(rtr._getRawParagraphStyle());
-		assertFalse(rtr.isBold());
+		//setting bold=false doesn't change the internal state
+        assertNull(rtr._getRawCharacterStyle());
+		assertNull(rtr._getRawParagraphStyle());
+
+        assertFalse(rtr.isBold());
 		
 		// And now make it bold
 		rtr.setBold(true);

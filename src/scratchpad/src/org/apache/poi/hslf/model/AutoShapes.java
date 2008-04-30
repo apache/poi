@@ -369,5 +369,12 @@ public class AutoShapes {
             }
         };
 
+        shapes[ShapeTypes.StraightConnector1] = new ShapeOutline(){
+            public java.awt.Shape getOutline(Shape shape){
+                return new Line2D.Float(0, 0, 21600, 21600);
+            }
+        };
+
+
     }
 }
