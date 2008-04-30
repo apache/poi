@@ -36,7 +36,11 @@
     </devs>
 
 		<!-- Don't forget to update status.xml too! -->
-        <release version="3.1-beta1" date="2008-04-??">
+        <release version="3.1-beta2" date="2008-05-??">
+           <action dev="POI-DEVELOPERS" type="fix">44886] - Correctly process PICT metafile in EscherMetafileBlip</action>
+           <action dev="POI-DEVELOPERS" type="fix">44893 - Correctly handle merged regions in HSSFSheet.autoSizeColumn</action>
+        </release>
+        <release version="3.1-beta1" date="2008-04-28">
            <action dev="POI-DEVELOPERS" type="fix">44857 - Avoid OOM on unknown escher records when EscherMetafileBlip is incorrect</action>
            <action dev="POI-DEVELOPERS" type="add">HSLF: Support for getting embedded sounds from slide show </action>
            <action dev="POI-DEVELOPERS" type="add">HSLF: Initial support for rendering slides into images</action>
