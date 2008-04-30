@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -251,5 +252,30 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 			fail("Identified bug 44508");
 		}
 		assertEquals(true, cell.getBooleanCellValue());
+	}
+	
+	public void testClassCast_bug44861() throws Exception {
+		HSSFWorkbook wb = HSSFTestDataSamples.
+			openSampleWorkbook("44861.xls");
+		
+		// Check direct
+		HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+		
+		// And via calls
+		int numSheets = wb.getNumberOfSheets();
+		for(int i=0; i<numSheets; i++) {
+			HSSFSheet s = wb.getSheetAt(i);
+			HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(s,wb);
+			
+			for(Iterator rows = s.rowIterator(); rows.hasNext();) {
+		        HSSFRow r = (HSSFRow)rows.next();
+		        eval.setCurrentRow(r);
+		        
+		        for(Iterator cells = r.cellIterator(); cells.hasNext();) {
+		        	HSSFCell c = (HSSFCell)cells.next();
+		        	eval.evaluateFormulaCell(c);
+		        }
+			}
+		}
 	}
 }
