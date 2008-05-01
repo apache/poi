@@ -172,4 +172,28 @@ public final class HSSFTestDataSamples {
 			throw new RuntimeException(e);
 		}
 	}
+
+	/**
+	 * @return byte array of sample file content from file found in standard hssf test data dir 
+	 */
+	public static byte[] getTestDataFileContent(String fileName) {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+		try {
+			InputStream fis = HSSFTestDataSamples.openSampleFileStream(fileName);
+
+			byte[] buf = new byte[512];
+			while (true) {
+				int bytesRead = fis.read(buf);
+				if (bytesRead < 1) {
+					break;
+				}
+				bos.write(buf, 0, bytesRead);
+			}
+			fis.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return bos.toByteArray();
+	}
 }
