@@ -16,10 +16,6 @@
 */
 package org.apache.poi.hssf.usermodel;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -36,7 +32,7 @@ public final class TestHSSFPicture extends TestCase{
         HSSFSheet sh1 = wb.createSheet();
         HSSFPatriarch p1 = sh1.createDrawingPatriarch();
 
-        byte[] pictureData = getTestDataFileContent("logoKarmokar4.png");
+        byte[] pictureData = HSSFTestDataSamples.getTestDataFileContent("logoKarmokar4.png");
         int idx1 = wb.addPicture( pictureData, HSSFWorkbook.PICTURE_TYPE_PNG );
         HSSFPicture picture1 = p1.createPicture(new HSSFClientAnchor(), idx1);
         HSSFClientAnchor anchor1 = picture1.getPreferredSize();
@@ -51,28 +47,4 @@ public final class TestHSSFPicture extends TestCase{
         assertEquals(848, anchor1.getDx2());
         assertEquals(240, anchor1.getDy2());
     }
-
-    /**
-     * Copied from org.apache.poi.hssf.usermodel.examples.OfficeDrawing
-     */
-     private static byte[] getTestDataFileContent(String fileName) {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-        try {
-            InputStream fis = HSSFTestDataSamples.openSampleFileStream(fileName);
-
-            byte[] buf = new byte[512];
-            while(true) {
-                int bytesRead = fis.read(buf);
-                if(bytesRead < 1) {
-                    break;
-                }
-                bos.write(buf, 0, bytesRead);
-            }
-            fis.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return bos.toByteArray();
-     }
 }

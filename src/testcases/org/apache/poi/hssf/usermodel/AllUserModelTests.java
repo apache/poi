@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-       
+
 package org.apache.poi.hssf.usermodel;
 
 import junit.framework.Test;
@@ -46,6 +46,7 @@ public class AllUserModelTests {
 		result.addTestSuite(TestHSSFHeaderFooter.class);
 		result.addTestSuite(TestHSSFHyperlink.class);
 		result.addTestSuite(TestHSSFPalette.class);
+		result.addTestSuite(TestHSSFPatriarch.class);
 		result.addTestSuite(TestHSSFPicture.class);
 		result.addTestSuite(TestHSSFPictureData.class);
 		result.addTestSuite(TestHSSFRichTextString.class);
