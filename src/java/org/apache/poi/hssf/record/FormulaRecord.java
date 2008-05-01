@@ -40,7 +40,7 @@ import org.apache.poi.util.LittleEndian;
  * @version 2.0-pre
  */
 
-public class FormulaRecord
+public final class FormulaRecord
     extends Record
     implements CellValueRecordInterface, Comparable
 {
@@ -107,6 +107,11 @@ public class FormulaRecord
           field_8_parsed_expr    = Ptg.createParsedExpressionTokens(field_7_expression_len, in);
         } catch (java.lang.UnsupportedOperationException uoe)  {
           throw new RecordFormatException(uoe);
+        }
+        if (in.remaining() == 10) {
+            // TODO - this seems to occur when IntersectionPtg is present
+            // 10 extra bytes are just 0x01 and 0x00
+            // This causes POI stderr: "WARN. Unread 10 bytes of record 0x6"
         }
     }
 
