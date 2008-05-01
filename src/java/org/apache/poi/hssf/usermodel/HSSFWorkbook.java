@@ -600,6 +600,8 @@ public class HSSFWorkbook extends POIDocument
      *
      * @param sheetname     sheetname to set for the sheet.
      * @return HSSFSheet representing the new sheet.
+     * @throws IllegalArgumentException if there is already a sheet present with a case-insensitive
+     *  match for the specified name.
      */
 
     public HSSFSheet createSheet(String sheetname)
@@ -639,9 +641,9 @@ public class HSSFWorkbook extends POIDocument
     }
 
     /**
-     * Get sheet with the given name
+     * Get sheet with the given name (case insensitive match)
      * @param name of the sheet
-     * @return HSSFSheet with the name provided or null if it does not exist
+     * @return HSSFSheet with the name provided or <code>null</code> if it does not exist
      */
 
     public HSSFSheet getSheet(String name)
@@ -652,7 +654,7 @@ public class HSSFWorkbook extends POIDocument
         {
             String sheetname = workbook.getSheetName(k);
 
-            if (sheetname.equals(name))
+            if (sheetname.equalsIgnoreCase(name))
             {
                 retval = (HSSFSheet) sheets.get(k);
             }

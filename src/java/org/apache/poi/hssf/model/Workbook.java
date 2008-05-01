@@ -476,9 +476,9 @@ public class Workbook implements Model
     }
 
     /**
-     * Determines whether a workbook contains the privided sheet name.
+     * Determines whether a workbook contains the provided sheet name.
      *
-     * @param name the name to test
+     * @param name the name to test (case insensitive match)
      * @param excludeSheetIdx the sheet to exclude from the check or -1 to include all sheets in the check.
      * @return true if the sheet contains the name, false otherwise.
      */
@@ -487,7 +487,7 @@ public class Workbook implements Model
         for ( int i = 0; i < boundsheets.size(); i++ )
         {
             BoundSheetRecord boundSheetRecord = (BoundSheetRecord) boundsheets.get( i );
-            if (excludeSheetIdx != i && name.equals(boundSheetRecord.getSheetname()))
+            if (excludeSheetIdx != i && name.equalsIgnoreCase(boundSheetRecord.getSheetname()))
                 return true;
         }
         return false;
