@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1-beta2" date="2008-05-??">
+           <action dev="POI-DEVELOPERS" type="fix">44892 - made HSSFWorkbook.getSheet(String) case insensitive</action>
            <action dev="POI-DEVELOPERS" type="fix">44886] - Correctly process PICT metafile in EscherMetafileBlip</action>
            <action dev="POI-DEVELOPERS" type="fix">44893 - Correctly handle merged regions in HSSFSheet.autoSizeColumn</action>
         </release>
