@@ -33,7 +33,7 @@ import org.apache.poi.hssf.record.formula.*;
  * @author Danny Mui at apache dot org
  */
 public final class SharedFormulaRecord extends Record {
-	 public final static short   sid = 0x4BC;
+    public final static short   sid = 0x4BC;
     
     private int               field_1_first_row;
     private int               field_2_last_row;
@@ -186,6 +186,16 @@ public final class SharedFormulaRecord extends Record {
      * counter part
      */
     protected static Stack convertSharedFormulas(Stack ptgs, int formulaRow, int formulaColumn) {
+        if(false) {
+            /*
+             * TODO - (May-2008) Stop converting relative ref Ptgs in shared formula records. 
+             * If/when POI writes out the workbook, this conversion makes an unnecessary diff in the BIFF records.
+             * Disabling this code breaks one existing junit.
+             * Some fix-up will be required to make Ptg.toFormulaString(HSSFWorkbook) work properly.
+             * That method will need 2 extra params: rowIx and colIx.
+             */
+            return ptgs;
+        }
         Stack newPtgStack = new Stack();
 
         if (ptgs != null)
@@ -265,7 +275,7 @@ public final class SharedFormulaRecord extends Record {
         throw new RuntimeException("Shared Formula Conversion: Coding Error");
       }
     }
-    
+
     private static int fixupRelativeColumn(int currentcolumn, int column, boolean relative) {
         if(relative) {
             // mask out upper bits to produce 'wrapping' at column 256 ("IV")

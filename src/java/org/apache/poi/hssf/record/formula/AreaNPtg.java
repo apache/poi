@@ -36,8 +36,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 
-public class AreaNPtg
-    extends AreaPtg
+public final class AreaNPtg extends AreaPtg
 {
   public final static short sid  = 0x2D;
 
@@ -50,23 +49,16 @@ public class AreaNPtg
     super(in);
   }
 
-  public void writeBytes(byte [] array, int offset) {
-    super.writeBytes(array,offset);
-    //this should be a warning...there doesn't seem to be any rationale to throwing an exception here...
-    //this excpeiton appears to break user defined named ranges...
-    //throw new RuntimeException("Coding Error: This method should never be called. This ptg should be converted");
-  }
-
   public String getAreaPtgName() {
     return "AreaNPtg";
   }
 
   public String toFormulaString(HSSFWorkbook book)
   {
-    throw new RuntimeException("Coding Error: This method should never be called. This ptg should be converted");
+    throw notImplemented();
   }
 
   public Object clone() {
-    throw new RuntimeException("Coding Error: This method should never be called. This ptg should be converted");
+    throw notImplemented();
   }
 }
