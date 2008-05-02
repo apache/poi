@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
@@ -32,10 +31,15 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author  andy
  * @author Jason Height (jheight at chariot dot net dot au)
  */
+public class AreaPtg extends Ptg implements AreaI {
+    /**
+     * TODO - (May-2008) fix subclasses of AreaPtg 'AreaN~' which are used in shared formulas.
+     * see similar comment in ReferencePtg
+     */
+    protected final RuntimeException notImplemented() {
+          return new RuntimeException("Coding Error: This method should never be called. This ptg should be converted");
+    }
 
-public class AreaPtg
-    extends Ptg implements AreaI
-{
     public final static short sid  = 0x25;
     private final static int  SIZE = 9;
     /** zero based, unsigned 16 bit */

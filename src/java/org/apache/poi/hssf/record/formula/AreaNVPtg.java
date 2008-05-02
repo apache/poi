@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,19 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-/*
- * AreaPtg.java
- *
- * Created on November 17, 2001, 9:30 PM
- */
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.BitField;
-
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.hssf.util.AreaReference;
-import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
@@ -36,10 +25,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  * @author  andy
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-
-public class AreaNVPtg
-    extends AreaPtg
-{
+public final class AreaNVPtg extends AreaPtg {
   public final static short sid  = 0x4D;
 
   protected AreaNVPtg() {
@@ -51,20 +37,16 @@ public class AreaNVPtg
     super(in);
   }
 
-  public void writeBytes(byte [] array, int offset) {
-    throw new RuntimeException("Coding Error: This method should never be called. This ptg should be converted");
-  }
-
   public String getAreaPtgName() {
     return "AreaNVPtg";
   }
 
   public String toFormulaString(HSSFWorkbook book)
   {
-    throw new RuntimeException("Coding Error: This method should never be called. This ptg should be converted");
+    throw notImplemented();
   }
 
   public Object clone() {
-    throw new RuntimeException("Coding Error: This method should never be called. This ptg should be converted");
+    throw notImplemented();
   }
 }

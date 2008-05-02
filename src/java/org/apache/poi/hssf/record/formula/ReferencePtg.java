@@ -30,8 +30,20 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author  Andrew C. Oliver (acoliver@apache.org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-
 public class ReferencePtg extends Ptg {
+    /**
+     * TODO - (May-2008) fix subclasses of ReferencePtg 'RefN~' which are used in shared formulas.
+     * (See bugzilla 44921)
+     * The 'RefN~' instances do not work properly, and are expected to be converted by 
+     * SharedFormulaRecord.convertSharedFormulas().  
+     * This conversion currently does not take place for formulas of named ranges, conditional 
+     * format rules and data validation rules.  
+     * Furthermore, conversion is probably not appropriate in those instances.
+     */
+    protected final RuntimeException notImplemented() {
+        return new RuntimeException("Coding Error: This method should never be called. This ptg should be converted");
+    }
+
     private final static int SIZE = 5;
     public final static byte sid  = 0x24;
     private final static int MAX_ROW_NUMBER = 65536;             
