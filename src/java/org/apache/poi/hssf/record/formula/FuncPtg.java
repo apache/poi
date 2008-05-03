@@ -57,10 +57,12 @@ public final class FuncPtg extends AbstractFunctionPtg {
         }
         numParams = fm.getMinParams();
     }
-    public FuncPtg(int functionIndex, int numberOfParameters) {
+    public FuncPtg(int functionIndex) {
         field_2_fnc_index = (short) functionIndex;
-        numParams = numberOfParameters;
-        paramClass = new byte[] { Ptg.CLASS_VALUE, }; // TODO
+        FunctionMetadata fm = FunctionMetadataRegistry.getFunctionByIndex(functionIndex);
+        numParams = fm.getMinParams(); // same as max since these are not var-arg funcs
+        returnClass = fm.getReturnClassCode();
+        paramClass = fm.getParameterClassCodes();
     }
 
     public void writeBytes(byte[] array, int offset) {
