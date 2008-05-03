@@ -592,7 +592,7 @@ public final class TestFormulaParser extends TestCase {
     	HSSFWorkbook book = new HSSFWorkbook();
 
         Ptg[] ptgs = {
-                new FuncPtg(10, 0),
+                new FuncPtg(10),
         };
         assertEquals("NA()", FormulaParser.toFormulaString(book, ptgs));
     }
@@ -899,5 +899,22 @@ public final class TestFormulaParser extends TestCase {
         ptgs = FormulaParser.parse("sin(1)", book);
         assertEquals(2, ptgs.length);
         assertEquals(FuncPtg.class, ptgs[1].getClass());
+    }
+    
+    public void testWrongNumberOfFunctionArgs() {
+        confirmArgCountMsg("sin()", "Too few arguments to function 'SIN'. Expected 1 but got 0.");
+        confirmArgCountMsg("countif(1, 2, 3, 4)", "Too many arguments to function 'COUNTIF'. Expected 2 but got 4.");
+        confirmArgCountMsg("index(1, 2, 3, 4, 5, 6)", "Too many arguments to function 'INDEX'. At most 4 were expected but got 6.");
+        confirmArgCountMsg("vlookup(1, 2)", "Too few arguments to function 'VLOOKUP'. At least 3 were expected but got 2.");
+    }
+
+    private static void confirmArgCountMsg(String formula, String expectedMessage) {
+        HSSFWorkbook book = new HSSFWorkbook();
+        try {
+            FormulaParser.parse(formula, book);
+            throw new AssertionFailedError("Didn't get parse exception as expected");
+        } catch (FormulaParseException e) {
+            assertEquals(expectedMessage, e.getMessage());
+        }
     }
 }
