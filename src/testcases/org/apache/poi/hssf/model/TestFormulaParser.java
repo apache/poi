@@ -887,6 +887,14 @@ public final class TestFormulaParser extends TestCase {
             assertTrue(e.getMessage().startsWith("Too few arguments suppled to operation token"));
         }
     }
+    /**
+     * Make sure that POI uses the right Func Ptg when encoding formulas.  Functions with variable
+     * number of args should get FuncVarPtg, functions with fixed args should get FuncPtg.<p/>
+     * 
+     * Prior to the fix for bug 44675 POI would encode FuncVarPtg for all functions.  In many cases
+     * Excel tolerates the wrong Ptg and evaluates the formula OK (e.g. SIN), but in some cases 
+     * (e.g. COUNTIF) Excel fails to evaluate the formula, giving '#VALUE!' instead. 
+     */
     public void testFuncPtgSelection() {
     	HSSFWorkbook book = new HSSFWorkbook();
         Ptg[] ptgs;
