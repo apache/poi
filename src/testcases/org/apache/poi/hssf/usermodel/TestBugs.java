@@ -898,4 +898,16 @@ public final class TestBugs extends TestCase {
         writeOutAndReadBack(wb);
         assertTrue("no errors writing sample xls", true);
     }
+
+    /**
+     * Bug 44235: Ms Excel can't open save as excel file
+     *
+     * Works fine with poi-3.1-beta1.
+     */
+    public void test44235() throws Exception {
+    	HSSFWorkbook wb = openSample("44235.xls");
+        assertTrue("no errors reading sample xls", true);
+        writeOutAndReadBack(wb);
+        assertTrue("no errors writing sample xls", true);
+    }
 }
