@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
-/*
- * ColumnInfoRecord.java
- *
- * Created on December 8, 2001, 8:44 AM
- */
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndian;
@@ -29,29 +22,28 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 
 /**
- * Title: ColumnInfo Record<P>
- * Description:  Defines with width and formatting for a range of columns<P>
- * REFERENCE:  PG 293 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
+ * Title: COLINFO Record<p/>
+ * Description:  Defines with width and formatting for a range of columns<p/>
+ * REFERENCE:  PG 293 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @version 2.0-pre
  */
-
-public class ColumnInfoRecord
-    extends Record
-{
+public final class ColumnInfoRecord extends Record {
     public static final short     sid = 0x7d;
     private short                 field_1_first_col;
     private short                 field_2_last_col;
     private short                 field_3_col_width;
     private short                 field_4_xf_index;
     private short                 field_5_options;
-    static final private BitField hidden    = BitFieldFactory.getInstance(0x01);
-    static final private BitField outlevel  = BitFieldFactory.getInstance(0x0700);
-    static final private BitField collapsed = BitFieldFactory.getInstance(0x1000);
+    private static final BitField hidden    = BitFieldFactory.getInstance(0x01);
+    private static final BitField outlevel  = BitFieldFactory.getInstance(0x0700);
+    private static final BitField collapsed = BitFieldFactory.getInstance(0x1000);
+    // Excel seems write values 2, 10, and 260, even though spec says "must be zero"
     private short                 field_6_reserved;
 
     public ColumnInfoRecord()
     {
+        field_6_reserved = 2; // seems to be the most common value
     }
 
     /**
@@ -71,7 +63,18 @@ public class ColumnInfoRecord
         field_3_col_width = in.readShort();
         field_4_xf_index  = in.readShort();
         field_5_options   = in.readShort();
-        field_6_reserved  = in.readShort();
+        switch(in.remaining()) {
+            case 2: // usual case
+                field_6_reserved  = in.readShort();
+                break;
+            case 1:
+                // often COLINFO gets encoded 1 byte short
+                // shouldn't matter because this field is unused
+                field_6_reserved  = in.readByte(); 
+                break;
+            default:
+                throw new RuntimeException("Unusual record size remaining=(" + in.remaining() + ")");
+        }
     }
 
     protected void validateSid(short id)

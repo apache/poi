@@ -21,12 +21,17 @@
 package org.apache.poi.hslf.model;
 
 import java.util.Vector;
+import java.util.Iterator;
 import java.awt.*;
 
 import org.apache.poi.hslf.record.SlideAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
+import org.apache.poi.ddf.EscherDggRecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherDgRecord;
+import org.apache.poi.ddf.EscherSpRecord;
 
 /**
  * This class represents a slide in a PowerPoint Document. It allows 
@@ -126,6 +131,42 @@ public class Slide extends Sheet
 		_slideNo = newSlideNumber;
 	}
   
+    /**
+     * Called by SlideShow ater a new slide is created.
+     * <p>
+     * For Slide we need to do the following:
+     *  <li> set id of the drawing group.
+     *  <li> set shapeId for the container descriptor and background
+     * </p>
+     */
+    public void onCreate(){
+        //initialize drawing group id
+        EscherDggRecord dgg = getSlideShow().getDocumentRecord().getPPDrawingGroup().getEscherDggRecord();
+        EscherContainerRecord dgContainer = (EscherContainerRecord)getSheetContainer().getPPDrawing().getEscherRecords()[0];
+        EscherDgRecord dg = (EscherDgRecord) Shape.getEscherChild(dgContainer, EscherDgRecord.RECORD_ID);
+        int dgId = dgg.getMaxDrawingGroupId() + 1;
+        dg.setOptions((short)(dgId << 4));
+        dgg.setDrawingsSaved(dgg.getDrawingsSaved() + 1);
+
+        for (Iterator it = dgContainer.getChildContainers().iterator(); it.hasNext(); ) {
+            EscherContainerRecord c = (EscherContainerRecord)it.next();
+            EscherSpRecord spr = null;
+            switch(c.getRecordId()){
+                case EscherContainerRecord.SPGR_CONTAINER:
+                    EscherContainerRecord dc = (EscherContainerRecord)c.getChildRecords().get(0);
+                    spr = dc.getChildById(EscherSpRecord.RECORD_ID);
+                    break;
+                case EscherContainerRecord.SP_CONTAINER:
+                    spr = c.getChildById(EscherSpRecord.RECORD_ID);
+                    break;
+            }
+            if(spr != null) spr.setShapeId(allocateShapeId());
+        }
+
+        //PPT doen't increment the number of saved shapes for group descriptor and background 
+        dg.setNumShapes(1);
+    }
+
 	/**
 	 * Create a <code>TextBox</code> object that represents the slide's title.
 	 *

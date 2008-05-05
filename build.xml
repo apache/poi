@@ -74,7 +74,6 @@ under the License.
   <property name="main.output.dir" location="build/classes"/>
   <property name="main.output.test.dir" location="build/test-classes"/>
   <property name="main.lib" location="lib"/>
-  <property name="ooxml.lib" location="ooxml-lib"/>
   <property name="main.reports.test" location="build/test-results"/>
   <property name="main.jar1.dir" location="${main.lib}/commons-logging-1.1.jar"/>
   <property name="main.jar1.url" value="${repository}/commons-logging/jars/commons-logging-1.1.jar"/>
@@ -124,33 +123,6 @@ under the License.
   <property name="examples.jar3.url" value="${repository}/commons-lang/jars/commons-lang-2.1.jar"/>
   <property name="examples.testokfile" location="build/examples-testokfile.txt"/>
 
-  <!-- Experimental OOXML support: -->
-  <property name="ooxml.src" location="src/scratchpad/ooxml-src"/>
-  <property name="ooxml.src.test" location="src/scratchpad/ooxml-testcases"/>
-  <property name="ooxml.reports.test" location="build/ooxml-test-results"/>
-  <property name="ooxml.output.dir" location="build/ooxml-classes"/>
-  <property name="ooxml.output.test.dir" location="build/ooxml-test-classes"/>
-  <property name="ooxml.testokfile" location="build/ooxml-testokfile.txt"/>
-
-  <property name="ooxml.jar1.dir" location="${ooxml.lib}/dom4j-1.6.1.jar"/>
-  <property name="ooxml.jar1.url" value="${repository}/dom4j/jars/dom4j-1.6.1.jar"/>
-  <property name="ooxml.jar2.dir" location="${ooxml.lib}/jaxen-1.1.jar"/>
-  <property name="ooxml.jar2.url" value="${repository}/jaxen/jars/jaxen-1.1.jar"/>
-  <property name="ooxml.jar3.dir" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
-  <property name="ooxml.jar3.url" value="${repository}/org.apache.xmlbeans/jars/xmlbeans-2.3.0.jar"/>
-  <property name="ooxml.jar4.dir" location="${ooxml.lib}/jsr173_1.0_api.jar"/>
-  <property name="ooxml.jar4.url" value="${repository}/xmlbeans/jars/jsr173_1.0_api.jar"/>
-  <!-- No official release of openxml4j yet -->
-  <property name="ooxml.jar5.dir" location="${ooxml.lib}/openxml4j-bin-alpha-080124.jar"/>
-  <property name="ooxml.jar5.url" value="http://people.apache.org/~nick/openxml4j-bin-prealpha-071224.jar"/>
-
-  <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
-  <!-- "Copy these file(s), free of charge" -->
-  <property name="ooxml.xsds.ozip" location="${ooxml.lib}/OfficeOpenXML-Part4.zip"/>
-  <property name="ooxml.xsds.izip" location="${ooxml.lib}/OfficeOpenXML-XMLSchema.zip"/>
-  <property name="ooxml.xsds.url" value="http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%20Part%204%20(DOCX).zip" />
-  <property name="ooxml.xsds.jar" location="${ooxml.lib}/ooxml-schemas.jar"/>
-
   <property name="build.site" location="build/tmp/site/build/site"/>
   <property name="build.site.src" location="build/tmp/site"/>
   <property name="junit.report.dir" location="${build.site}/junit"/>
@@ -163,7 +135,7 @@ under the License.
   <property name="mavendist.poi.dir" location="build/maven-dist/poi"/>
   <property name="mavendist.oap.dir" location="build/maven-dist/org.apache.poi"/>
   <property name="jar.name" value="poi"/>
-  <property name="version.id" value="3.1-beta1"/>
+  <property name="version.id" value="3.1-beta2"/>
   <property name="halt.on.test.failure" value="true"/>
   <property name="jdk.version.source" value="1.3"
     description="JDK version of source code"/>
@@ -194,15 +166,6 @@ under the License.
         <pathelement location="${contrib.output.dir}"/>
         <pathelement location="${contrib.output.test.dir}"/>
     </path>
-
-    <path id="ooxml.classpath">
-        <path refid="main.classpath"/>
-        <path refid="scratchpad.classpath"/>
-        <fileset dir="${ooxml.lib}">
-			<include name="*.jar" />
-		</fileset>
-    </path>
-
 
   <path id="examples.classpath">
     <path refid="main.classpath"/>
@@ -268,15 +231,12 @@ under the License.
         <mkdir dir="${scratchpad.output.dir}"/>
         <mkdir dir="${contrib.output.dir}"/>
         <mkdir dir="${examples.output.dir}"/>
-        <mkdir dir="${ooxml.output.dir}"/>
         <mkdir dir="${main.output.test.dir}"/>
         <mkdir dir="${contrib.output.test.dir}"/>
         <mkdir dir="${scratchpad.output.test.dir}"/>
-        <mkdir dir="${ooxml.output.test.dir}"/>
         <mkdir dir="${main.reports.test}"/>
         <mkdir dir="${scratchpad.reports.test}"/>
         <mkdir dir="${contrib.reports.test}"/>
-        <mkdir dir="${ooxml.reports.test}"/>
         <mkdir dir="${junit.report.dir}"/>
         <mkdir dir="${jdepend.report.dir}"/>
         <mkdir dir="${jdepend.report.out.dir}"/>
@@ -311,11 +271,6 @@ under the License.
                     <available file="${contrib.jar2.dir}"/>
                     <available file="${contrib.jar3.dir}"/>
                     <available file="${junit.jar1.dir}"/>
-                    <available file="${ooxml.jar1.dir}"/>
-                    <available file="${ooxml.jar2.dir}"/>
-                    <available file="${ooxml.jar3.dir}"/>
-                    <available file="${ooxml.jar4.dir}"/>
-                    <available file="${ooxml.jar5.dir}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -330,66 +285,7 @@ under the License.
         <get src="${contrib.jar2.url}" dest="${contrib.jar2.dir}"/>
         <get src="${contrib.jar3.url}" dest="${contrib.jar3.dir}"/>
         <get src="${junit.jar1.url}" dest="${junit.jar1.dir}"/>
-
-        <get src="${ooxml.jar1.url}" dest="${ooxml.jar1.dir}"/>
-        <get src="${ooxml.jar2.url}" dest="${ooxml.jar2.dir}"/>
-        <get src="${ooxml.jar3.url}" dest="${ooxml.jar3.dir}"/>
-        <get src="${ooxml.jar4.url}" dest="${ooxml.jar4.dir}"/>
-        <get src="${ooxml.jar5.url}" dest="${ooxml.jar5.dir}"/>
     </target>
-
-	<target name="check-ooxml-xsds">
-        <condition property="ooxml-xsds.present">
-            <or>
-                <and>
-                    <available file="${ooxml.xsds.izip}"/>
-                </and>
-                <isset property="disconnected"/>
-            </or>
-        </condition>
-	</target>
-    <target name="fetch-ooxml-xsds" unless="ooxml-xsds.present"
-     description="Fetches needed OOXML xsd files from the Internet">
-        <get src="${ooxml.xsds.url}" dest="${ooxml.xsds.ozip}"/>
-		<unzip src="${ooxml.xsds.ozip}" dest="${ooxml.lib}">
-			<patternset>
-				<include name="OfficeOpenXML-XMLSchema.zip" />
-			</patternset>
-		</unzip>
-	</target>
-	<target name="check-compiled-ooxml-xsds">
-        <condition property="ooxml-compiled-xsds.present">
-            <or>
-                <and>
-                    <available file="${ooxml.xsds.jar}"/>
-                </and>
-                <isset property="disconnected"/>
-            </or>
-        </condition>
-	</target>
-	<target name="compile-ooxml-xsds" unless="ooxml-compiled-xsds.present"
-	 depends="check-jars,fetch-jars,check-ooxml-xsds,fetch-ooxml-xsds,check-compiled-ooxml-xsds"
-	 description="Unpacks the OOXML xsd files, and compiles them into XmlBeans">
-		<taskdef name="xmlbean"
-			classname="org.apache.xmlbeans.impl.tool.XMLBean"
-			classpath="${ooxml.jar3.dir}:${ooxml.jar4.dir}" />
-
-		<unzip src="${ooxml.xsds.izip}" dest="build/ooxml-xsds/" />
-		<!--
-			schema="build/ooxml-xsds/"
-			schema="build/ooxml-xsds/sml-workbook.xsd"
-		-->
-		<xmlbean
-			schema="build/ooxml-xsds/"
-			destfile="${ooxml.xsds.jar}"
-			javasource="1.4"
-			failonerror="false"
-			fork="true"
-			memoryMaximumSize="512m"
-		>
-			<classpath refid="ooxml.classpath"/>
-		</xmlbean>
-	</target>
 
   <target name="compile" depends="init, compile-main, compile-scratchpad,
     compile-contrib, compile-examples"
@@ -473,24 +369,6 @@ under the License.
     </javac>
   </target>
 
-  <target name="compile-ooxml" depends="init, check-ooxml-xsds, fetch-ooxml-xsds, compile-ooxml-xsds, compile-main">
-	<!-- openxml4j requires java 1.5, so so must we, for now -->
-    <javac target="1.5" source="1.5"
-      destdir="${ooxml.output.dir}" debug="on" srcdir="${ooxml.src}">
-      <classpath refid="ooxml.classpath"/>
-    </javac>
-
-    <javac target="1.5" source="1.5"
-      failonerror="true" destdir="${ooxml.output.test.dir}" debug="on"
-      fork="yes" srcdir="${ooxml.src.test}">
-      <classpath>
-        <path refid="ooxml.classpath"/>
-        <pathelement location="${ooxml.output.dir}"/>
-        <pathelement location="${junit.jar1.dir}"/>
-      </classpath>
-    </javac>
-  </target>
-
   <target name="test" depends="test-main,test-scratchpad,test-contrib"
     description="Tests main, contrib and scratchpad"/>
 
@@ -523,6 +401,8 @@ under the License.
         file="${main.src.test}/org/apache/poi/hpsf/data"/> 
       <sysproperty key="POIFS.testdata.path"
         file="${main.src.test}/org/apache/poi/poifs/data"/> 
+      <sysproperty key="DDF.testdata.path"
+        file="${main.src.test}/org/apache/poi/ddf/data"/> 
       <sysproperty key="java.awt.headless" value="true"/>
       <formatter type="plain"/>
       <formatter type="xml"/>
@@ -723,43 +603,6 @@ under the License.
 
     <target name="-test-contrib-write-testfile" unless="contrib.test.failed">
         <echo file="${contrib.testokfile}" append="false" message="testok"/>
-    </target>
-
-    <target name="-test-ooxml-check">
-        <uptodate property="ooxml.test.notRequired" targetfile="${ooxml.testokfile}">
-            <srcfiles dir="${ooxml.src}"/>
-            <srcfiles dir="${ooxml.src.test}"/>
-        </uptodate>
-    </target>
-
-    <target name="test-ooxml" depends="compile-main,compile-ooxml,-test-ooxml-check" unless="ooxml.test.notRequired">
-        <junit printsummary="yes" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="ooxml.test.failed">
-            <classpath>
-                <path refid="ooxml.classpath"/>
-                <pathelement location="${main.output.dir}"/>
-                <pathelement location="${ooxml.output.dir}"/>
-                <pathelement location="${ooxml.output.test.dir}"/>
-                <pathelement location="${junit.jar1.dir}"/>
-            </classpath>
-            <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
-            <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
-            <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
-            <sysproperty key="java.awt.headless" value="true"/>
-            <formatter type="plain"/>
-            <formatter type="xml"/>
-            <batchtest todir="${ooxml.reports.test}">
-                <fileset dir="${ooxml.src.test}">
-                    <include name="**/Test*.java"/>
-                    <exclude name="**/AllTests.java"/>
-                </fileset>
-            </batchtest>
-        </junit>
-        <delete file="${ooxml.testokfile}"/>
-        <antcall target="-test-ooxml-write-testfile"/>
-    </target>
-
-    <target name="-test-ooxml-write-testfile" unless="ooxml.test.failed">
-        <echo file="${ooxml.testokfile}" append="false" message="testok"/>
     </target>
 
     <target name="-check-docs">
@@ -1148,21 +991,6 @@ FORREST_HOME environment variable!</echo>
             </manifest>        
         </jar>
     </target>
-    <target name="jar-ooxml" depends="compile-ooxml" description="Creates the ooxml jar files for distribution">
-        <jar destfile="${dist.dir}/${jar.name}-ooxml-${version.id}-${DSTAMP}.jar">
-			<fileset dir="${ooxml.output.dir}" />
-			<fileset dir="legal/" />
-            <manifest>
-                <attribute name="Built-By" value="${user.name}"/>
-                <attribute name="Specification-Title" value="Apache POI"/>
-                <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
-                <attribute name="Specification-Vendor" value="Apache"/>
-                <attribute name="Implementation-Title" value="Apache POI"/>
-                <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
-                <attribute name="Implementation-Vendor" value="Apache"/>
-            </manifest>        
-        </jar>
-    </target>
 
   <target name="dist" depends="clean, fail-unless-tools-are-available, compile, site, jar"
     description="Creates the entire distribution into build/dist, from scratch">
@@ -1171,6 +999,7 @@ FORREST_HOME environment variable!</echo>
 
     <zip destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.zip">
       <zipfileset dir="legal/" prefix="${zipdir}" />
+      <zipfileset dir="lib/" prefix="${zipdir}/lib" />
       <zipfileset dir="${build.site}" prefix="${zipdir}/docs"/>
       <zipfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
       <zipfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
@@ -1193,6 +1022,7 @@ FORREST_HOME environment variable!</echo>
     <tar destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.tar.gz"
       compression="gzip">
       <tarfileset dir="legal/" prefix="${zipdir}" />
+      <tarfileset dir="lib/" prefix="${zipdir}/lib" />
       <tarfileset dir="${build.site}" prefix="${zipdir}/docs"/>
       <tarfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
       <tarfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />

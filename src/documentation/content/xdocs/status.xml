@@ -33,7 +33,17 @@
 
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
-        <release version="3.1-beta1" date="2008-04-??">
+        <release version="3.1-beta2" date="2008-05-??">
+           <action dev="POI-DEVELOPERS" type="fix">44929 - Improved error handling in HSSFWorkbook when attempting to read a BIFF5 file</action>
+           <action dev="POI-DEVELOPERS" type="fix">44675 - Parameter operand classes (function metadata) required to encode SUM() etc properly. Added parse validation for number of parameters</action>
+           <action dev="POI-DEVELOPERS" type="fix">44921 - allow Ptg.writeBytes() to be called on relative ref Ptgs (RefN* and AreaN*)</action>
+           <action dev="POI-DEVELOPERS" type="fix">44914 - Fix/suppress warning message "WARN. Unread n bytes of record 0xNN"</action>
+           <action dev="POI-DEVELOPERS" type="fix">44892 - made HSSFWorkbook.getSheet(String) case insensitive</action>
+           <action dev="POI-DEVELOPERS" type="fix">44886] - Correctly process PICT metafile in EscherMetafileBlip</action>
+           <action dev="POI-DEVELOPERS" type="fix">44893 - Take into account indentation in HSSFSheet.autoSizeColumn</action>
+        </release>
+        <release version="3.1-beta1" date="2008-04-28">
+           <action dev="POI-DEVELOPERS" type="fix">44857 - Avoid OOM on unknown escher records when EscherMetafileBlip is incorrect</action>
            <action dev="POI-DEVELOPERS" type="add">HSLF: Support for getting embedded sounds from slide show </action>
            <action dev="POI-DEVELOPERS" type="add">HSLF: Initial support for rendering slides into images</action>
            <action dev="POI-DEVELOPERS" type="add">HSLF: Support for getting OLE object data from slide show </action>

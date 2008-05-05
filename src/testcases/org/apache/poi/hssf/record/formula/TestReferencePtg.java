@@ -1,4 +1,3 @@
-        
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -18,20 +17,22 @@
 
 package org.apache.poi.hssf.record.formula;
 
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Tests for {@link ReferencePtg}.
  */
-public class TestReferencePtg extends AbstractPtgTestCase
-{
+public final class TestReferencePtg extends TestCase {
     /**
      * Tests reading a file containing this ptg.
      */
-    public void testReading() throws Exception
-    {
-        HSSFWorkbook workbook = loadWorkbook("ReferencePtg.xls");
+    public void testReading() {
+        HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("ReferencePtg.xls");
         HSSFSheet sheet = workbook.getSheetAt(0);
 
         // First row
@@ -72,6 +73,18 @@ public class TestReferencePtg extends AbstractPtgTestCase
         assertEquals("Wrong formula string for reference", "A32770",
                 sheet.getRow(32769).getCell((short) 1).getCellFormula());
     }
+    
+    public void testBug44921() {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex44921-21902.xls");
+        
+        try {
+            HSSFTestDataSamples.writeOutAndReadBack(wb);
+        } catch (RuntimeException e) {
+            if(e.getMessage().equals("Coding Error: This method should never be called. This ptg should be converted")) {
+                throw new AssertionFailedError("Identified bug 44921");
+            }
+            throw e;
+        }
+    }
 }
-
 

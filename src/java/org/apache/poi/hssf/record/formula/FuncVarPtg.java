@@ -54,8 +54,8 @@ public final class FuncVarPtg extends AbstractFunctionPtg{
             returnClass = Ptg.CLASS_VALUE;
             paramClass = new byte[] {Ptg.CLASS_VALUE};
         } else {
-            returnClass = Ptg.CLASS_VALUE;
-            paramClass = new byte[] {Ptg.CLASS_VALUE};
+            returnClass = fm.getReturnClassCode();
+            paramClass = fm.getParameterClassCodes();
         }
     }
 

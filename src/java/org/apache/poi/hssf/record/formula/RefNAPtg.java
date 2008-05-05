@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,26 +15,16 @@
    limitations under the License.
 ==================================================================== */
 
-/*
- * ValueReferencePtg.java
- *
- * Created on November 21, 2001, 5:27 PM
- */
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.BitField;
-
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * RefNAPtg
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-
-public class RefNAPtg extends ReferencePtg
+public final class RefNAPtg extends ReferencePtg
 {
     public final static byte sid  = 0x6C;
 
@@ -48,21 +37,16 @@ public class RefNAPtg extends ReferencePtg
       super(in);
     }
 
-    public void writeBytes(byte [] array, int offset)
-    {
-      throw new RuntimeException("Coding Error: This method should never be called. This ptg should be converted");
-    }
-
     public String getRefPtgName() {
       return "RefNAPtg";
     }
 
     public String toFormulaString(HSSFWorkbook book)
     {
-      throw new RuntimeException("Coding Error: This method should never be called. This ptg should be converted");
+      throw notImplemented();
     }
 
     public Object clone() {
-      throw new RuntimeException("Coding Error: This method should never be called. This ptg should be converted");
+        throw notImplemented();
     }
 }

@@ -19,6 +19,7 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.*;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.HexDump;
 
 import java.awt.geom.*;
 import java.util.ArrayList;
@@ -185,10 +186,6 @@ public class Freeform extends AutoShape {
             return null;
         }
 
-        Rectangle2D bounds = getAnchor2D();
-        float right = (float)bounds.getX();
-        float bottom = (float)bounds.getY();
-
         GeneralPath path = new GeneralPath();
         int numPoints = verticesProp.getNumberOfElementsInArray();
         int numSegments = segmentsProp.getNumberOfElementsInArray();
@@ -199,8 +196,8 @@ public class Freeform extends AutoShape {
                 short x = LittleEndian.getShort(p, 0);
                 short y = LittleEndian.getShort(p, 2);
                 path.moveTo(
-                        ((float)x*POINT_DPI/MASTER_DPI + right),
-                        ((float)y*POINT_DPI/MASTER_DPI + bottom));
+                        ((float)x*POINT_DPI/MASTER_DPI),
+                        ((float)y*POINT_DPI/MASTER_DPI));
             } else if (Arrays.equals(elem, SEGMENTINFO_CUBICTO) || Arrays.equals(elem, SEGMENTINFO_CUBICTO2)){
                 i++;
                 byte[] p1 = verticesProp.getElement(j++);
@@ -213,9 +210,9 @@ public class Freeform extends AutoShape {
                 short x3 = LittleEndian.getShort(p3, 0);
                 short y3 = LittleEndian.getShort(p3, 2);
                 path.curveTo(
-                        ((float)x1*POINT_DPI/MASTER_DPI + right), ((float)y1*POINT_DPI/MASTER_DPI + bottom),
-                        ((float)x2*POINT_DPI/MASTER_DPI + right), ((float)y2*POINT_DPI/MASTER_DPI + bottom),
-                        ((float)x3*POINT_DPI/MASTER_DPI + right), ((float)y3*POINT_DPI/MASTER_DPI + bottom));
+                        ((float)x1*POINT_DPI/MASTER_DPI), ((float)y1*POINT_DPI/MASTER_DPI),
+                        ((float)x2*POINT_DPI/MASTER_DPI), ((float)y2*POINT_DPI/MASTER_DPI),
+                        ((float)x3*POINT_DPI/MASTER_DPI), ((float)y3*POINT_DPI/MASTER_DPI));
 
             } else if (Arrays.equals(elem, SEGMENTINFO_LINETO)){
                 i++;
@@ -226,18 +223,26 @@ public class Freeform extends AutoShape {
                         short x = LittleEndian.getShort(p, 0);
                         short y = LittleEndian.getShort(p, 2);
                         path.lineTo(
-                                ((float)x*POINT_DPI/MASTER_DPI + right), ((float)y*POINT_DPI/MASTER_DPI + bottom));
+                                ((float)x*POINT_DPI/MASTER_DPI), ((float)y*POINT_DPI/MASTER_DPI));
                     }
                 } else if (Arrays.equals(pnext, SEGMENTINFO_CLOSE)){
                     path.closePath();
                 }
             }
         }
-
         return path;
     }
 
     public java.awt.Shape getOutline(){
-        return getPath();
+        GeneralPath path =  getPath();
+        Rectangle2D anchor = getAnchor2D();
+        Rectangle2D bounds = path.getBounds2D();
+        AffineTransform at = new AffineTransform();
+        at.translate(anchor.getX(), anchor.getY());
+        at.scale(
+                anchor.getWidth()/bounds.getWidth(),
+                anchor.getHeight()/bounds.getHeight()
+        );
+        return at.createTransformedShape(path);
     }
 }

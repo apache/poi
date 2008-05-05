@@ -18,13 +18,24 @@
         
 package org.apache.poi.ddf;
 
+import java.io.File;
+import java.io.FileInputStream;
+
 import junit.framework.TestCase;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.IOUtils;
 
 public class TestEscherContainerRecord extends TestCase
 {
-    public void testFillFields() throws Exception
+	private String ESCHER_DATA_PATH;
+	
+	protected void setUp() throws Exception {
+		super.setUp();
+		ESCHER_DATA_PATH = System.getProperty("DDF.testdata.path");
+	}
+
+	public void testFillFields() throws Exception
     {
         EscherRecordFactory f = new DefaultEscherRecordFactory();
         byte[] data = HexRead.readFromString( "0F 02 11 F1 00 00 00 00" );
@@ -137,4 +148,19 @@ public class TestEscherContainerRecord extends TestCase
         assertEquals(18, r.getRecordSize());
     }
 
+    /**
+     * We were having problems with reading too much data on an UnknownEscherRecord,
+     *  but hopefully we now read the correct size.
+     */
+    public void testBug44857() throws Exception {
+    	File f = new File(ESCHER_DATA_PATH, "Container.dat");
+    	assertTrue(f.exists());
+    	
+    	FileInputStream finp = new FileInputStream(f);
+    	byte[] data = IOUtils.toByteArray(finp);
+    	
+    	// This used to fail with an OutOfMemory
+    	EscherContainerRecord record = new EscherContainerRecord();
+    	record.fillFields(data, 0, new DefaultEscherRecordFactory());
+    }
 }

@@ -261,17 +261,28 @@ public abstract class TextShape extends SimpleShape {
     public int getVerticalAlignment(){
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
         EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.TEXT__ANCHORTEXT);
-        int valign;
+        int valign = TextShape.AnchorTop;
         if (prop == null){
+            /**
+             * If vertical alignment was not found in the shape properties then try to
+             * fetch the master shape and search for the align property there.
+             */
             int type = getTextRun().getRunType();
-            switch (type){
-                case TextHeaderAtom.TITLE_TYPE:
-                case TextHeaderAtom.CENTER_TITLE_TYPE:
-                    valign = TextShape.AnchorMiddle;
-                    break;
-                default:
-                    valign = TextShape.AnchorTop;
-                    break;
+            MasterSheet master = getSheet().getMasterSheet();
+            if(master != null){
+                TextShape masterShape = master.getPlaceholder(type);
+                if(masterShape != null) valign = masterShape.getVerticalAlignment();
+            } else {
+                //not found in the master sheet. Use the hardcoded defaults.
+                switch (type){
+                     case TextHeaderAtom.TITLE_TYPE:
+                     case TextHeaderAtom.CENTER_TITLE_TYPE:
+                         valign = TextShape.AnchorMiddle;
+                         break;
+                     default:
+                         valign = TextShape.AnchorTop;
+                         break;
+                 }
             }
         } else {
             valign = prop.getPropertyValue();

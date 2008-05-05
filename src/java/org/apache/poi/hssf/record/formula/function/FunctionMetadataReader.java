@@ -26,6 +26,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.poi.hssf.record.formula.Ptg;
+
 /**
  * Converts the text meta-data file into a <tt>FunctionMetadataRegistry</tt>
  * 
@@ -36,6 +38,12 @@ final class FunctionMetadataReader {
 	private static final String METADATA_FILE_NAME = "functionMetadata.txt";
 
 	private static final Pattern TAB_DELIM_PATTERN = Pattern.compile("\t");
+	private static final Pattern SPACE_DELIM_PATTERN = Pattern.compile(" ");
+	private static final byte[] EMPTY_BYTE_ARRAY = { };
+
+	// special characters from the ooo document
+	private static final int CHAR_ELLIPSIS_8230 = 8230;
+	private static final int CHAR_NDASH_8211 = 8211;
 	
 	private static final String[] DIGIT_ENDING_FUNCTION_NAMES = {
 		// Digits at the end of a function might be due to a left-over footnote marker.
@@ -86,14 +94,66 @@ final class FunctionMetadataReader {
 		String functionName = parts[1];
 		int minParams = parseInt(parts[2]);
 		int maxParams = parseInt(parts[3]);
-		// 4 returnClass
-		// 5 parameterClasses
+		byte returnClassCode = parseReturnTypeCode(parts[4]);
+		byte[] parameterClassCodes = parseOperandTypeCodes(parts[5]);
 		// 6 isVolatile
 		boolean hasNote = parts[7].length() > 0;
 
 		validateFunctionName(functionName);
-		// TODO - make POI use returnClass, parameterClasses, isVolatile
-		fdb.add(functionIndex, functionName, minParams, maxParams, hasNote);
+		// TODO - make POI use isVolatile
+		fdb.add(functionIndex, functionName, minParams, maxParams, 
+				returnClassCode, parameterClassCodes, hasNote);
+	}
+	
+
+	private static byte parseReturnTypeCode(String code) {
+		if(code.length() == 0) {
+			return Ptg.CLASS_REF; // happens for GETPIVOTDATA
+		}
+		return parseOperandTypeCode(code);
+	}
+
+	private static byte[] parseOperandTypeCodes(String codes) {
+		if(codes.length() < 1) {
+			return EMPTY_BYTE_ARRAY; // happens for GETPIVOTDATA
+		}
+		if(isDash(codes)) {
+			// '-' means empty:
+			return EMPTY_BYTE_ARRAY;
+		}
+		String[] array = SPACE_DELIM_PATTERN.split(codes);
+		int nItems = array.length;
+		if(array[nItems-1].charAt(0) == CHAR_ELLIPSIS_8230) {
+			nItems --;
+		}
+		byte[] result = new byte[nItems];
+		for (int i = 0; i < nItems; i++) {
+			result[i] = parseOperandTypeCode(array[i]);
+		}
+		return result;
+	}
+
+	private static boolean isDash(String codes) {
+		if(codes.length() == 1) {
+			switch (codes.charAt(0)) {
+				case '-':
+				case CHAR_NDASH_8211: // this is what the ooo doc has
+					return true;
+			}
+		}
+		return false;
+	}
+
+	private static byte parseOperandTypeCode(String code) {
+		if(code.length() != 1) {
+			throw new RuntimeException("Bad operand type code format '" + code  + "' expected single char");
+		}
+		switch(code.charAt(0)) {
+			case 'V': return Ptg.CLASS_VALUE;
+			case 'R': return Ptg.CLASS_REF;
+			case 'A': return Ptg.CLASS_ARRAY;
+		}
+		throw new IllegalArgumentException("Unexpected operand type code '" + code + "'");
 	}
 
 	/**

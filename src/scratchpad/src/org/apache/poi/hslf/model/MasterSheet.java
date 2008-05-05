@@ -67,4 +67,21 @@ public abstract class MasterSheet extends Sheet {
         }
         return false;
     }
+
+    /**
+     * Return placeholder by text type
+     */
+    public TextShape getPlaceholder(int type){
+        Shape[] shape = getShapes();
+        for (int i = 0; i < shape.length; i++) {
+            if(shape[i] instanceof TextShape){
+                TextShape tx = (TextShape)shape[i];
+                TextRun run = tx.getTextRun();
+                if(run != null && run.getRunType() == type){
+                    return tx;
+                }
+            }
+        }
+        return null;
+    }
 }
