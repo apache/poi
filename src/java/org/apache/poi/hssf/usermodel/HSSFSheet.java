@@ -1710,6 +1710,8 @@ public final class HSSFSheet {
 
             HSSFCellStyle style = cell.getCellStyle();
             HSSFFont font = wb.getFontAt(style.getFontIndex());
+            //the number of spaces to indent the text in the cell
+            int indention = style.getIndention();
 
             if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
                 HSSFRichTextString rt = cell.getRichStringCellValue();
@@ -1742,9 +1744,9 @@ public final class HSSFSheet {
                         trans.concatenate(
                         AffineTransform.getScaleInstance(1, fontHeightMultiple)
                         );
-                        width = Math.max(width, layout.getOutline(trans).getBounds().getWidth() / defaultCharWidth);
+                        width = Math.max(width, layout.getOutline(trans).getBounds().getWidth() / defaultCharWidth + indention);
                     } else {
-                        width = Math.max(width, layout.getBounds().getWidth() / defaultCharWidth);
+                        width = Math.max(width, layout.getBounds().getWidth() / defaultCharWidth + indention);
                     }
                 }
             } else {
@@ -1787,15 +1789,15 @@ public final class HSSFSheet {
                         trans.concatenate(
                         AffineTransform.getScaleInstance(1, fontHeightMultiple)
                         );
-                        width = Math.max(width, layout.getOutline(trans).getBounds().getWidth() / defaultCharWidth);
+                        width = Math.max(width, layout.getOutline(trans).getBounds().getWidth() / defaultCharWidth + indention);
                     } else {
-                        width = Math.max(width, layout.getBounds().getWidth() / defaultCharWidth);
+                        width = Math.max(width, layout.getBounds().getWidth() / defaultCharWidth + indention);
                     }
                 }
             }
 
             if (width != -1) {
-                if (width > Short.MAX_VALUE) { //width can be bigger that Short.MAX_VALUE!
+                if (width > Short.MAX_VALUE) { //calculated width can be greater that Short.MAX_VALUE!
                      width = Short.MAX_VALUE;
                 }
                 sheet.setColumnWidth(column, (short) (width * 256));
