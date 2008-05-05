@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1-beta2" date="2008-05-??">
+           <action dev="POI-DEVELOPERS" type="fix">Follow-on from 28754 - StringPtg.toFormulaString() should escape double quotes</action>
            <action dev="POI-DEVELOPERS" type="fix">44929 - Improved error handling in HSSFWorkbook when attempting to read a BIFF5 file</action>
            <action dev="POI-DEVELOPERS" type="fix">44675 - Parameter operand classes (function metadata) required to encode SUM() etc properly. Added parse validation for number of parameters</action>
            <action dev="POI-DEVELOPERS" type="fix">44921 - allow Ptg.writeBytes() to be called on relative ref Ptgs (RefN* and AreaN*)</action>
