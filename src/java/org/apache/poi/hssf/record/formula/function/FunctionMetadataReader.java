@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -58,7 +59,10 @@ final class FunctionMetadataReader {
 			throw new RuntimeException("resource '" + METADATA_FILE_NAME + "' not found");
 		}
 
-		BufferedReader br = new BufferedReader(new InputStreamReader(is));
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
+		} catch(UnsupportedEncodingException e) { /* never happens */ }
 		FunctionDataBuilder fdb = new FunctionDataBuilder(400);
 
 		try {
@@ -153,7 +157,7 @@ final class FunctionMetadataReader {
 			case 'R': return Ptg.CLASS_REF;
 			case 'A': return Ptg.CLASS_ARRAY;
 		}
-		throw new IllegalArgumentException("Unexpected operand type code '" + code + "'");
+		throw new IllegalArgumentException("Unexpected operand type code '" + code + "' (" + (int)code.charAt(0) + ")");
 	}
 
 	/**
