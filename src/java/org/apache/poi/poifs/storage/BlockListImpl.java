@@ -102,7 +102,8 @@ class BlockListImpl
         catch (ArrayIndexOutOfBoundsException ignored)
         {
             throw new IOException("Cannot remove block[ " + index
-                                  + " ]; out of range");
+                                  + " ]; out of range[ 0 - " + 
+                                  (_blocks.length-1) + " ]");
         }
         return result;
     }

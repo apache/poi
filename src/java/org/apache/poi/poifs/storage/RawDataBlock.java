@@ -81,8 +81,9 @@ public class RawDataBlock
             log.log(POILogger.ERROR,
             		"Unable to read entire block; " + count
                      + type + " read before EOF; expected "
-                     + blockSize + " bytes. Your document"
-                     + " has probably been truncated!"
+                     + blockSize + " bytes. Your document "
+                     + "was either written by software that "
+                     + "ignores the spec, or has been truncated!"
             );
         }
         else {

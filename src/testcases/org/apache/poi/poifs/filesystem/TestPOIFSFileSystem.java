@@ -17,6 +17,9 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -114,6 +117,40 @@ public final class TestPOIFSFileSystem extends TestCase {
 		}
 		assertTrue("input stream was not closed", testIS.isClosed()); // but still should close
 		
+	}
+	
+	/**
+	 * Test for bug # 48898 - problem opening an OLE2
+	 *  file where the last block is short (i.e. not a full
+	 *  multiple of 512 bytes)
+	 *  
+	 * As yet, this problem remains. One school of thought is
+	 *  not not issue an EOF when we discover the last block
+	 *  is short, but this seems a bit wrong.
+	 * The other is to fix the handling of the last block in
+	 *  POIFS, since it seems to be slight wrong
+	 */
+	public void DISABLEDtestShortLastBlock() throws Exception {
+		String[] files = new String[] {
+			"ShortLastBlock.qwp", "ShortLastBlock.wps"	
+		};
+		String pdirname = System.getProperty("POIFS.testdata.path");
+
+		for(int i=0; i<files.length; i++) {
+			File f = new File(pdirname, files[i]);
+			assertTrue(f.exists());
+			
+			// Open the file up
+			POIFSFileSystem fs = new POIFSFileSystem(
+					new FileInputStream(f)
+			);
+			
+			// Write it into a temp output array
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			fs.writeFilesystem(baos);
+			
+			// Check sizes
+		}
 	}
 
 	private static InputStream openSampleStream(String sampleFileName) {
