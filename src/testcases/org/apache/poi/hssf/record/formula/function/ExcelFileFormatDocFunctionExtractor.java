@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -354,13 +355,19 @@ public final class ExcelFileFormatDocFunctionExtractor {
 	}
 
 	private static void extractFunctionData(FunctionDataCollector fdc, InputStream is) {
-		System.setProperty("org.xml.sax.driver", "org.apache.crimson.parser.XMLReaderImpl");
-		
 		XMLReader xr;
+		
 		try {
+			// First up, try the default one
 			xr = XMLReaderFactory.createXMLReader();
 		} catch (SAXException e) {
-			throw new RuntimeException(e);
+			// Try one for java 1.4
+			System.setProperty("org.xml.sax.driver", "org.apache.crimson.parser.XMLReaderImpl");
+			try {
+				xr = XMLReaderFactory.createXMLReader();
+			} catch (SAXException e2) {
+				throw new RuntimeException(e2);
+			}
 		}
 		xr.setContentHandler(new EFFDocHandler(fdc));
 
@@ -383,7 +390,11 @@ public final class ExcelFileFormatDocFunctionExtractor {
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
 		}
-		PrintStream ps = new PrintStream(os);
+		PrintStream ps = null;
+		try {
+			ps = new PrintStream(os,true, "UTF-8");
+		} catch(UnsupportedEncodingException e) {}
+		
 		outputLicenseHeader(ps);
 		Class genClass = ExcelFileFormatDocFunctionExtractor.class;
 		ps.println("# Created by (" + genClass.getName() + ")");
