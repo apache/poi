@@ -24,11 +24,13 @@ import org.apache.poi.util.POILogger;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.model.ShapeTypes;
+import org.apache.poi.hslf.model.Shape;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Vector;
+import java.util.Iterator;
 
 /**
  * These are actually wrappers onto Escher drawings. Make use of
@@ -52,6 +54,8 @@ public class PPDrawing extends RecordAtom
 	private EscherRecord[] childRecords;
 	private EscherTextboxWrapper[] textboxWrappers;
 
+    //cached EscherDgRecord
+    private EscherDgRecord dg;
 
 	/**
 	 * Get access to the underlying Escher Records
@@ -296,4 +300,24 @@ public class PPDrawing extends RecordAtom
 		tw[textboxWrappers.length] = txtbox;
 		textboxWrappers = tw;
 	}
+
+    /**
+     * Return EscherDgRecord which keeps track of the number of shapes and shapeId in this drawing group
+     *
+     * @return EscherDgRecord
+     */
+    public EscherDgRecord getEscherDgRecord(){
+        if(dg == null){
+            EscherContainerRecord dgContainer = (EscherContainerRecord)childRecords[0];
+            for(Iterator it = dgContainer.getChildRecords().iterator(); it.hasNext();){
+                EscherRecord r = (EscherRecord) it.next();
+                if(r instanceof EscherDgRecord){
+                    dg = (EscherDgRecord)r;
+                    break;
+                }
+            }
+        }
+        return dg;
+    }
+
 }

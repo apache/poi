@@ -42,6 +42,7 @@ public final class AllPOIDDFTests {
         result.addTestSuite(TestEscherSplitMenuColorsRecord.class);
         result.addTestSuite(TestEscherSpRecord.class);
         result.addTestSuite(TestUnknownEscherRecord.class);
+        result.addTestSuite(TestEscherBlipRecord.class);
         return result;
     }
 }

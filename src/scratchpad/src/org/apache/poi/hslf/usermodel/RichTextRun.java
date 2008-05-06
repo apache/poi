@@ -32,6 +32,8 @@ import org.apache.poi.hslf.model.textproperties.ParagraphFlagsTextProp;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 
 
 /**
@@ -39,6 +41,8 @@ import org.apache.poi.hslf.record.ColorSchemeAtom;
  * 
  */
 public class RichTextRun {
+    protected POILogger logger = POILogFactory.getLogger(this.getClass());
+
 	/** The TextRun we belong to */
 	private TextRun parentRun;
 	/** The SlideShow we belong to */
@@ -199,10 +203,15 @@ public class RichTextRun {
         }
         if (prop == null){
             Sheet sheet = parentRun.getSheet();
-            int txtype = parentRun.getRunType();
-            MasterSheet master = sheet.getMasterSheet();
-            if (master != null)
-                prop = (BitMaskTextProp)master.getStyleAttribute(txtype, getIndentLevel(), propname, isCharacter);
+            if(sheet != null){
+                int txtype = parentRun.getRunType();
+                MasterSheet master = sheet.getMasterSheet();
+                if (master != null){
+                    prop = (BitMaskTextProp)master.getStyleAttribute(txtype, getIndentLevel(), propname, isCharacter);
+                }
+            } else {
+                logger.log(POILogger.WARN, "MasterSheet is not available");
+            }
         }
 
         return prop == null ? false : prop.getSubValue(index);
@@ -213,7 +222,7 @@ public class RichTextRun {
 	 *  it if required. 
 	 */
 	private void setCharFlagsTextPropVal(int index, boolean value) {
-        setFlag(true, index, value);
+        if(getFlag(true, index) != value) setFlag(true, index, value);
 	}
 
     public void setFlag(boolean isCharacter, int index, boolean value) {
@@ -281,10 +290,14 @@ public class RichTextRun {
 	 */
 	private int getParaTextPropVal(String propName) {
         TextProp prop = null;
+        boolean hardAttribute = false;
         if (paragraphStyle != null){
             prop = paragraphStyle.findByName(propName);
+
+            BitMaskTextProp maskProp = (BitMaskTextProp)paragraphStyle.findByName(ParagraphFlagsTextProp.NAME);
+            hardAttribute = maskProp != null && maskProp.getValue() == 0;
         }
-        if (prop == null){
+        if (prop == null && !hardAttribute){
             Sheet sheet = parentRun.getSheet();
             int txtype = parentRun.getRunType();
             MasterSheet master = sheet.getMasterSheet();
@@ -571,6 +584,13 @@ public class RichTextRun {
      * Returns whether this rich text run has bullets
      */
     public boolean isBullet() {
+        return getFlag(false, ParagraphFlagsTextProp.BULLET_IDX);
+    }
+
+    /**
+     * Returns whether this rich text run has bullets
+     */
+    public boolean isBulletHard() {
         return getFlag(false, ParagraphFlagsTextProp.BULLET_IDX);
     }
 

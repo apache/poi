@@ -182,9 +182,45 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     public HSSFWorkbook(POIFSFileSystem fs, boolean preserveNodes)
             throws IOException
     {
-    	this(fs.getRoot(), fs, preserveNodes);
+        this(fs.getRoot(), fs, preserveNodes);
     }
-    
+
+    /**
+     * Normally, the Workbook will be in a POIFS Stream
+     * called "Workbook". However, some weird XLS generators use "WORKBOOK"
+     */
+    private static final String[] WORKBOOK_DIR_ENTRY_NAMES = {
+        "Workbook", // as per BIFF8 spec
+        "WORKBOOK",
+    };
+
+
+    private static String getWorkbookDirEntryName(DirectoryNode directory) {
+
+        String[] potentialNames = WORKBOOK_DIR_ENTRY_NAMES;
+        for (int i = 0; i < potentialNames.length; i++) {
+            String wbName = potentialNames[i];
+            try {
+                directory.getEntry(wbName);
+                return wbName;
+            } catch (FileNotFoundException e) {
+                // continue - to try other options
+            }
+        }
+
+        // check for previous version of file format
+        try {
+            directory.getEntry("Book");
+            throw new IllegalArgumentException("The supplied spreadsheet seems to be Excel 5.0/7.0 (BIFF5) format. "
+                    + "POI only supports BIFF8 format (from Excel versions 97/2000/XP/2003)");
+        } catch (FileNotFoundException e) {
+            // fall through
+        }
+
+        throw new IllegalArgumentException("The supplied POIFSFileSystem does not contain a BIFF8 'Workbook' entry. "
+            + "Is it really an excel file?");
+    }
+
     /**
      * given a POI POIFSFileSystem object, and a specific directory
      *  within it, read in its Workbook and populate the high and
@@ -202,9 +238,11 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     public HSSFWorkbook(DirectoryNode directory, POIFSFileSystem fs, boolean preserveNodes)
             throws IOException
     {
-    	super(directory, fs);
+        super(directory, fs);
+        String workbookName = getWorkbookDirEntryName(directory);
+
         this.preserveNodes = preserveNodes;
-        
+
         // If we're not preserving nodes, don't track the
         //  POIFS any more
         if(! preserveNodes) {
@@ -214,28 +252,9 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
         sheets = new ArrayList(INITIAL_CAPACITY);
         names  = new ArrayList(INITIAL_CAPACITY);
-        
-        // Normally, the Workbook will be in a POIFS Stream
-        //  called "Workbook". However, some wierd XLS generators
-        //  put theirs in one called "WORKBOOK"
-        String workbookName = "Workbook";
-        try {
-        	directory.getEntry(workbookName);
-        	// Is the default name
-        } catch(FileNotFoundException fe) {
-        	// Try the upper case form
-        	try {
-        		workbookName = "WORKBOOK";
-        		directory.getEntry(workbookName);
-        	} catch(FileNotFoundException wfe) {
-        		// Doesn't contain it in either form
-        		throw new IllegalArgumentException("The supplied POIFSFileSystem contained neither a 'Workbook' entry, nor a 'WORKBOOK' entry. Is it really an excel file?");
-        	}
-        }
 
-        
         // Grab the data from the workbook stream, however
-        //  it happens to be spelt.
+        //  it happens to be spelled.
         InputStream stream = directory.createDocumentInputStream(workbookName);
 
         EventRecordFactory factory = new EventRecordFactory();
@@ -248,7 +267,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         int sheetNum = 0;
 
         // convert all LabelRecord records to LabelSSTRecord
-        convertLabelRecords(records, recOffset);        
+        convertLabelRecords(records, recOffset);
         while (recOffset < records.size())
         {
             Sheet sheet = Sheet.createSheet(records, sheetNum++, recOffset );
@@ -305,7 +324,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
         // none currently
     }
-    
+
     /**
       * This is basically a kludge to deal with the now obsolete Label records.  If
       * you have to read in a sheet that contains Label records, be aware that the rest
@@ -321,7 +340,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
       * @see org.apache.poi.hssf.record.LabelSSTRecord
       * @see org.apache.poi.hssf.record.SSTRecord
       */
- 
+
      private void convertLabelRecords(List records, int offset)
      {
          if (log.check( POILogger.DEBUG ))
@@ -349,7 +368,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
          if (log.check( POILogger.DEBUG ))
              log.log(POILogger.DEBUG, "convertLabelRecords exit");
      }
-    
+
 
     /**
      * sets the order of appearance for a given sheet.
@@ -362,7 +381,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         sheets.add(pos,sheets.remove(getSheetIndex(sheetname)));
         workbook.setSheetOrder(sheetname, pos);
     }
-    
+
     /**
      * sets the tab whose data is actually seen when the sheet is opened.
      * This may be different from the "selected sheet" since excel seems to
@@ -374,7 +393,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     public void setSelectedTab(short index) {
         workbook.getWindowOne().setSelectedTab(index);
     }
-    
+
     /**
      * gets the tab whose data is actually seen when the sheet is opened.
      * This may be different from the "selected sheet" since excel seems to
@@ -385,7 +404,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     public short getSelectedTab() {
         return workbook.getWindowOne().getSelectedTab();
     }
-    
+
     /**
      * sets the first tab that is displayed in the list of tabs
      * in excel.
@@ -394,7 +413,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     public void setDisplayedTab(short index) {
         workbook.getWindowOne().setDisplayedTab(index);
     }
-    
+
     /**
      * sets the first tab that is displayed in the list of tabs
      * in excel.
@@ -416,7 +435,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
 
     /**
-     * set the sheet name. 
+     * set the sheet name.
      * Will throw IllegalArgumentException if the name is greater than 31 chars
      * or contains /\?*[]
      * @param sheet number (0 based)
@@ -430,19 +449,19 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         {
             throw new RuntimeException("Sheet out of bounds");
         }
-        
+
         workbook.setSheetName( sheet, name);
     }
 
-    
+
     /**
      * set the sheet name forcing the encoding. Forcing the encoding IS A BAD IDEA!!!
      * @deprecated 3-Jan-2006 POI now automatically detects unicode and sets the encoding
-     * appropriately. Simply use setSheetName(int sheet, String encoding) 
+     * appropriately. Simply use setSheetName(int sheet, String encoding)
      * @throws IllegalArgumentException if the name is greater than 31 chars
      * or contains /\?*[]
      * @param sheet number (0 based)
-     */    
+     */
     public void setSheetName( int sheet, String name, short encoding )
     {
         if (workbook.doesContainsSheetName( name, sheet ))
@@ -497,7 +516,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
     /**
      * Hide or unhide a sheet
-     * 
+     *
      * @param sheetnum The sheet number
      * @param hidden True to mark the sheet as hidden, false otherwise
      */
@@ -509,7 +528,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         }
         workbook.setSheetHidden(sheet,hidden);
     }
-    
+
     /*
      * get the sheet's index
      * @param name  sheet name
@@ -533,23 +552,23 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      */
     public int getSheetIndex(org.apache.poi.ss.usermodel.Sheet sheet)
     {
-    	for(int i=0; i<sheets.size(); i++) {
-    		if(sheets.get(i) == sheet) {
-    			return i;
-    		}
-    	}
-    	return -1;
+        for(int i=0; i<sheets.size(); i++) {
+            if(sheets.get(i) == sheet) {
+                return i;
+            }
+        }
+        return -1;
     }
-    
+
     /**
      * Returns the external sheet index of the sheet
      *  with the given internal index, creating one
      *  if needed.
-     * Used by some of the more obscure formula and 
+     * Used by some of the more obscure formula and
      *  named range things.
      */
     public int getExternalSheetIndex(int internalSheetIndex) {
-    	return workbook.checkExternSheet(internalSheetIndex);
+        return workbook.checkExternSheet(internalSheetIndex);
     }
 
     /**
@@ -593,18 +612,18 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         sheets.add(clonedSheet);
         int i=1;
         while (true) {
-        	//Try and find the next sheet name that is unique
-        	String name = srcName;
-        	String index = Integer.toString(i++);
-        	if (name.length()+index.length()+2<31)
-        	  name = name + "("+index+")";
-        	else name = name.substring(0, 31-index.length()-2)+"("+index+")";
-        	
-        	//If the sheet name is unique, then set it otherwise move on to the next number.
-        	if (workbook.getSheetIndex(name) == -1) {
+            //Try and find the next sheet name that is unique
+            String name = srcName;
+            String index = Integer.toString(i++);
+            if (name.length()+index.length()+2<31)
+              name = name + "("+index+")";
+            else name = name.substring(0, 31-index.length()-2)+"("+index+")";
+
+            //If the sheet name is unique, then set it otherwise move on to the next number.
+            if (workbook.getSheetIndex(name) == -1) {
               workbook.setSheetName(sheets.size()-1, name);
               break;
-        	}
+            }
         }
         return clonedSheet;
       }
@@ -617,6 +636,8 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      *
      * @param sheetname     sheetname to set for the sheet.
      * @return HSSFSheet representing the new sheet.
+     * @throws IllegalArgumentException if there is already a sheet present with a case-insensitive
+     *  match for the specified name.
      */
 
     public HSSFSheet createSheet(String sheetname)
@@ -660,9 +681,9 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     }
 
     /**
-     * Get sheet with the given name
+     * Get sheet with the given name (case insensitive match)
      * @param name of the sheet
-     * @return HSSFSheet with the name provided or null if it does not exist
+     * @return HSSFSheet with the name provided or <code>null</code> if it does not exist
      */
 
     public HSSFSheet getSheet(String name)
@@ -673,16 +694,16 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         {
             String sheetname = workbook.getSheetName(k);
 
-            if (sheetname.equals(name))
+            if (sheetname.equalsIgnoreCase(name))
             {
                 retval = (HSSFSheet) sheets.get(k);
             }
         }
         return retval;
     }
-    
+
     public SheetReferences getSheetReferences() {
-    	return workbook.getSheetReferences();
+        return workbook.getSheetReferences();
     }
 
     /**
@@ -860,7 +881,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
                 {
                     return index;
                 }
-            } 
+            }
             index++;
         }
 
@@ -1010,21 +1031,21 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         // For tracking what we've written out, used if we're
         //  going to be preserving nodes
         List excepts = new ArrayList(1);
-        
+
         // Write out the Workbook stream
         fs.createDocument(new ByteArrayInputStream(bytes), "Workbook");
-        
+
         // Write out our HPFS properties, if we have them
         writeProperties(fs, excepts);
 
         if (preserveNodes) {
-			// Don't write out the old Workbook, we'll be doing our new one
+            // Don't write out the old Workbook, we'll be doing our new one
             excepts.add("Workbook");
-			// If the file had WORKBOOK instead of Workbook, we'll write it
-			//  out correctly shortly, so don't include the old one
+            // If the file had WORKBOOK instead of Workbook, we'll write it
+            //  out correctly shortly, so don't include the old one
             excepts.add("WORKBOOK");
 
-			// Copy over all the other nodes to our new poifs
+            // Copy over all the other nodes to our new poifs
             copyNodes(this.filesystem,fs,excepts);
         }
         fs.writeFilesystem(stream);
@@ -1138,7 +1159,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
         return result;
     }
-    
+
     /**
      * TODO - make this less cryptic / move elsewhere
      * @param refIndex Index to REF entry in EXTERNSHEET record in the Link Table
@@ -1146,76 +1167,76 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * @return the string representation of the defined or external name
      */
     public String resolveNameXText(int refIndex, int definedNameIndex) {
-    	return workbook.resolveNameXText(refIndex, definedNameIndex);
+        return workbook.resolveNameXText(refIndex, definedNameIndex);
     }
 
 
-	/**
-	 * Sets the printarea for the sheet provided
-	 * <p>
-	 * i.e. Reference = $A$1:$B$2
-	 * @param sheetIndex Zero-based sheet index (0 Represents the first sheet to keep consistent with java)
-	 * @param reference Valid name Reference for the Print Area
-	 */
-	public void setPrintArea(int sheetIndex, String reference)
-	{
-		NameRecord name = workbook.getSpecificBuiltinRecord(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
+    /**
+     * Sets the printarea for the sheet provided
+     * <p>
+     * i.e. Reference = $A$1:$B$2
+     * @param sheetIndex Zero-based sheet index (0 Represents the first sheet to keep consistent with java)
+     * @param reference Valid name Reference for the Print Area
+     */
+    public void setPrintArea(int sheetIndex, String reference)
+    {
+        NameRecord name = workbook.getSpecificBuiltinRecord(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
 
 
-		if (name == null)
-			name = workbook.createBuiltInName(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
+        if (name == null)
+            name = workbook.createBuiltInName(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
        //adding one here because 0 indicates a global named region; doesnt make sense for print areas
 
-	    short externSheetIndex = getWorkbook().checkExternSheet(sheetIndex);
-		name.setExternSheetNumber(externSheetIndex);
-		name.setAreaReference(reference);
+        short externSheetIndex = getWorkbook().checkExternSheet(sheetIndex);
+        name.setExternSheetNumber(externSheetIndex);
+        name.setAreaReference(reference);
 
 
-	}
+    }
 
-	/**
-	 * For the Convenience of Java Programmers maintaining pointers.
-	 * @see #setPrintArea(int, String)
-	 * @param sheetIndex Zero-based sheet index (0 = First Sheet)
-	 * @param startColumn Column to begin printarea
-	 * @param endColumn Column to end the printarea
-	 * @param startRow Row to begin the printarea
-	 * @param endRow Row to end the printarea
-	 */
-	public void setPrintArea(int sheetIndex, int startColumn, int endColumn,
-							  int startRow, int endRow) {
+    /**
+     * For the Convenience of Java Programmers maintaining pointers.
+     * @see #setPrintArea(int, String)
+     * @param sheetIndex Zero-based sheet index (0 = First Sheet)
+     * @param startColumn Column to begin printarea
+     * @param endColumn Column to end the printarea
+     * @param startRow Row to begin the printarea
+     * @param endRow Row to end the printarea
+     */
+    public void setPrintArea(int sheetIndex, int startColumn, int endColumn,
+                              int startRow, int endRow) {
 
-		//using absolute references because they don't get copied and pasted anyway
-		CellReference cell = new CellReference(startRow, startColumn, true, true);
-		String reference = cell.formatAsString();
+        //using absolute references because they don't get copied and pasted anyway
+        CellReference cell = new CellReference(startRow, startColumn, true, true);
+        String reference = cell.formatAsString();
 
-		cell = new CellReference(endRow, endColumn, true, true);
-		reference = reference+":"+cell.formatAsString();
+        cell = new CellReference(endRow, endColumn, true, true);
+        reference = reference+":"+cell.formatAsString();
 
-		setPrintArea(sheetIndex, reference);
-	}
+        setPrintArea(sheetIndex, reference);
+    }
 
 
-	/**
-	 * Retrieves the reference for the printarea of the specified sheet, the sheet name is appended to the reference even if it was not specified.
-	 * @param sheetIndex Zero-based sheet index (0 Represents the first sheet to keep consistent with java)
-	 * @return String Null if no print area has been defined
-	 */
-	public String getPrintArea(int sheetIndex)
-	{
-		NameRecord name = workbook.getSpecificBuiltinRecord(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
-		if (name == null) return null;
-		//adding one here because 0 indicates a global named region; doesnt make sense for print areas
+    /**
+     * Retrieves the reference for the printarea of the specified sheet, the sheet name is appended to the reference even if it was not specified.
+     * @param sheetIndex Zero-based sheet index (0 Represents the first sheet to keep consistent with java)
+     * @return String Null if no print area has been defined
+     */
+    public String getPrintArea(int sheetIndex)
+    {
+        NameRecord name = workbook.getSpecificBuiltinRecord(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
+        if (name == null) return null;
+        //adding one here because 0 indicates a global named region; doesnt make sense for print areas
 
-		return name.getAreaReference(this);
-	}
+        return name.getAreaReference(this);
+    }
 
     /**
      * Delete the printarea for the sheet specified
      * @param sheetIndex Zero-based sheet index (0 = First Sheet)
      */
     public void removePrintArea(int sheetIndex) {
-    	getWorkbook().removeBuiltinRecord(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
+        getWorkbook().removeBuiltinRecord(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
     }
 
     /** creates a new named range and add it to the model
@@ -1234,7 +1255,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     /** gets the named range index by his name
      * <i>Note:</i>Excel named ranges are case-insensitive and
      * this method performs a case-insensitive search.
-     * 
+     *
      * @param name named range name
      * @return named range index
      */
@@ -1271,9 +1292,9 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * @see org.apache.poi.hssf.record.Record
      */
     public HSSFDataFormat createDataFormat() {
-	if (formatter == null)
-	    formatter = new HSSFDataFormat(workbook);
-	return formatter;
+    if (formatter == null)
+        formatter = new HSSFDataFormat(workbook);
+    return formatter;
     }
 
     /** remove the named range by his name
@@ -1452,9 +1473,9 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * Is the workbook protected with a password (not encrypted)?
      */
     public boolean isWriteProtected() {
-    	return this.workbook.isWriteProtected();
+        return this.workbook.isWriteProtected();
     }
-    
+
     /**
      * protect a workbook with a password (not encypted, just sets writeprotect
      * flags and the password.

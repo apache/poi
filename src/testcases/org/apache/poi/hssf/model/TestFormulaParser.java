@@ -65,6 +65,7 @@ public final class TestFormulaParser extends TestCase {
      * @return parsed token array already confirmed not <code>null</code>
      */
     private static Ptg[] parseFormula(String s) {
+    	// TODO - replace multiple copies of this code with calls to this method
         FormulaParser fp = new FormulaParser(s, null);
         fp.parse();
         Ptg[] result = fp.getRPNPtg();
@@ -86,7 +87,6 @@ public final class TestFormulaParser extends TestCase {
         assertTrue("",(ptgs[0] instanceof IntPtg));
         assertTrue("",(ptgs[1] instanceof IntPtg));
         assertTrue("",(ptgs[2] instanceof AddPtg));
-
     }
 
     public void testFormulaWithSpace2() {
@@ -169,8 +169,6 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals("If FALSE offset", (short)7, ifPtg.getData());
 		
 		FuncVarPtg funcPtg = (FuncVarPtg)asts[8];
-		
-		
 	}
 
 	/**
@@ -190,8 +188,6 @@ public final class TestFormulaParser extends TestCase {
 		assertTrue("It is not an if", ifFunc.isOptimizedIf());
 		
 		assertTrue("Average Function set correctly", (asts[5] instanceof FuncVarPtg));
-		
-				    	
 	}
 	
 	public void testIfSingleCondition(){
@@ -213,8 +209,6 @@ public final class TestFormulaParser extends TestCase {
 		assertTrue("Ptg is not a Variable Function", (asts[6] instanceof FuncVarPtg));
 		FuncVarPtg funcPtg = (FuncVarPtg)asts[6];
 		assertEquals("Arguments", 2, funcPtg.getNumberOfOperands());
-		
-		
 	}
 
 	public void testSumIf() {
@@ -223,7 +217,6 @@ public final class TestFormulaParser extends TestCase {
 		fp.parse();
 		Ptg[] asts = fp.getRPNPtg();
 		assertEquals("4 Ptgs expected", 4, asts.length);
-		
 	}
 	
 	/**
@@ -235,51 +228,35 @@ public final class TestFormulaParser extends TestCase {
 		String currencyCell = "F3";
 		String function="\"TOTAL[\"&"+currencyCell+"&\"]\"";
 
-		FormulaParser fp = new FormulaParser(function, null);
-		fp.parse();
-		Ptg[] asts = fp.getRPNPtg();
+		Ptg[] asts = parseFormula(function);
 		assertEquals("5 ptgs expected", 5, asts.length);
 		assertTrue ("Ptg[0] is a string", (asts[0] instanceof StringPtg));
 		StringPtg firstString = (StringPtg)asts[0];		
 		
 		assertEquals("TOTAL[", firstString.getValue());
 		//the PTG order isn't 100% correct but it still works - dmui
-		
-					
 	}
 
 	public void testSimpleLogical() {
-		FormulaParser fp=new FormulaParser("IF(A1<A2,B1,B2)",null);
-		fp.parse();
-      Ptg[] ptgs = fp.getRPNPtg();
-      assertTrue("Ptg array should not be null", ptgs !=null);
+      Ptg[] ptgs = parseFormula("IF(A1<A2,B1,B2)");
       assertEquals("Ptg array length", 9, ptgs.length);
-      assertEquals("3rd Ptg is less than",LessThanPtg.class,ptgs[2].getClass());
-
-
+      assertEquals("3rd Ptg is less than", LessThanPtg.class, ptgs[2].getClass());
 	}
 	
 	public void testParenIf() {
-		FormulaParser fp=new FormulaParser("IF((A1+A2)<=3,\"yes\",\"no\")",null);
-		fp.parse();
-		Ptg[] ptgs = fp.getRPNPtg();
-		assertTrue("Ptg array should not be null", ptgs !=null);
+		Ptg[] ptgs = parseFormula("IF((A1+A2)<=3,\"yes\",\"no\")");
 		assertEquals("Ptg array length", 12, ptgs.length);
 		assertEquals("6th Ptg is less than equal",LessEqualPtg.class,ptgs[5].getClass());
 		assertEquals("11th Ptg is not a goto (Attr) ptg",AttrPtg.class,ptgs[10].getClass());
 	}
 	
 	public void testEmbeddedIf() {
-		FormulaParser fp=new FormulaParser("IF(3>=1,\"*\",IF(4<>1,\"first\",\"second\"))",null);
-		fp.parse();
-		Ptg[] ptgs = fp.getRPNPtg();
-		assertTrue("Ptg array should not be null", ptgs !=null);
+		Ptg[] ptgs = parseFormula("IF(3>=1,\"*\",IF(4<>1,\"first\",\"second\"))");
 		assertEquals("Ptg array length", 17, ptgs.length);
 		
 		assertEquals("6th Ptg is not a goto (Attr) ptg",AttrPtg.class,ptgs[5].getClass());
 		assertEquals("9th Ptg is not a not equal ptg",NotEqualPtg.class,ptgs[8].getClass());
 		assertEquals("15th Ptg is not the inner IF variable function ptg",FuncVarPtg.class,ptgs[14].getClass());
-		
 	}
 	
     public void testMacroFunction() {
@@ -302,16 +279,15 @@ public final class TestFormulaParser extends TestCase {
         Ptg[] ptg = fp.getRPNPtg();
         assertTrue("first ptg is string",ptg[0] instanceof StringPtg);
         assertTrue("second ptg is string",ptg[1] instanceof StringPtg);
-
     }
 
-    public void testConcatenate(){
-         FormulaParser fp = new FormulaParser("CONCATENATE(\"first\",\"second\")",null);
-         fp.parse();
-         Ptg[] ptg = fp.getRPNPtg();
-        assertTrue("first ptg is string",ptg[0] instanceof StringPtg);
-        assertTrue("second ptg is string",ptg[1] instanceof StringPtg);
-    }
+    public void testConcatenate() {
+		FormulaParser fp = new FormulaParser("CONCATENATE(\"first\",\"second\")", null);
+		fp.parse();
+		Ptg[] ptg = fp.getRPNPtg();
+		assertTrue("first ptg is string", ptg[0] instanceof StringPtg);
+		assertTrue("second ptg is string", ptg[1] instanceof StringPtg);
+	}
 
     public void testWorksheetReferences()
     {
@@ -395,16 +371,16 @@ public final class TestFormulaParser extends TestCase {
 
 	/** bug 33160, testcase by Amol Deshmukh*/
 	public void testSimpleLongFormula() {
-		        FormulaParser fp = new FormulaParser("40000/2", null);
-		        fp.parse();
-		        Ptg[] ptgs = fp.getRPNPtg();
-		        assertTrue("three tokens expected, got "+ptgs.length,ptgs.length == 3);
-		        assertTrue("IntPtg",(ptgs[0] instanceof IntPtg));
-		        assertTrue("IntPtg",(ptgs[1] instanceof IntPtg));
-		        assertTrue("DividePtg",(ptgs[2] instanceof DividePtg));
+		FormulaParser fp = new FormulaParser("40000/2", null);
+		fp.parse();
+		Ptg[] ptgs = fp.getRPNPtg();
+		assertTrue("three tokens expected, got " + ptgs.length, ptgs.length == 3);
+		assertTrue("IntPtg", (ptgs[0] instanceof IntPtg));
+		assertTrue("IntPtg", (ptgs[1] instanceof IntPtg));
+		assertTrue("DividePtg", (ptgs[2] instanceof DividePtg));
 	}
 	
-	/** bug 35027, underscore in sheet name*/
+	/** bug 35027, underscore in sheet name */
 	public void testUnderscore() {
 		HSSFWorkbook wb = new HSSFWorkbook();
     	
@@ -592,7 +568,7 @@ public final class TestFormulaParser extends TestCase {
     	HSSFWorkbook book = new HSSFWorkbook();
 
         Ptg[] ptgs = {
-                new FuncPtg(10, 0),
+                new FuncPtg(10),
         };
         assertEquals("NA()", FormulaParser.toFormulaString(book, ptgs));
     }
@@ -775,8 +751,34 @@ public final class TestFormulaParser extends TestCase {
         StringPtg sp = (StringPtg) parseSingleToken(formula, StringPtg.class);
         assertEquals(expectedValue, sp.getValue());
     }
+    public void testParseStringLiterals_bug28754() {
 
-    public void testPaseStringLiterals() {
+        StringPtg sp;
+        try {
+            sp = (StringPtg) parseSingleToken("\"test\"\"ing\"", StringPtg.class);
+        } catch (RuntimeException e) {
+            if(e.getMessage().startsWith("Cannot Parse")) {
+                throw new AssertionFailedError("Identified bug 28754a");
+            }
+            throw e;
+        }
+        assertEquals("test\"ing", sp.getValue());
+
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        wb.setSheetName(0, "Sheet1");
+
+        HSSFRow row = sheet.createRow(0);
+        HSSFCell cell = row.createCell((short)0);
+        cell.setCellFormula("right(\"test\"\"ing\", 3)");
+        String actualCellFormula = cell.getCellFormula();
+        if("RIGHT(\"test\"ing\",3)".equals(actualCellFormula)) {
+            throw new AssertionFailedError("Identified bug 28754b");
+        }
+        assertEquals("RIGHT(\"test\"\"ing\",3)", actualCellFormula);
+    }
+
+    public void testParseStringLiterals() {
         confirmStringParse("goto considered harmful");
 
         confirmStringParse("goto 'considered' harmful");
@@ -810,10 +812,8 @@ public final class TestFormulaParser extends TestCase {
         parseExpectedException("#DIV/ 0+2");
 
 
-        if (false) { // TODO - add functionality to detect func arg count mismatch
-            parseExpectedException("IF(TRUE)");
-            parseExpectedException("countif(A1:B5, C1, D1)");
-        }
+        parseExpectedException("IF(TRUE)");
+        parseExpectedException("countif(A1:B5, C1, D1)");
     }
 
     private static void parseExpectedException(String formula) {
@@ -887,8 +887,16 @@ public final class TestFormulaParser extends TestCase {
             assertTrue(e.getMessage().startsWith("Too few arguments suppled to operation token"));
         }
     }
+    /**
+     * Make sure that POI uses the right Func Ptg when encoding formulas.  Functions with variable
+     * number of args should get FuncVarPtg, functions with fixed args should get FuncPtg.<p/>
+     * 
+     * Prior to the fix for bug 44675 POI would encode FuncVarPtg for all functions.  In many cases
+     * Excel tolerates the wrong Ptg and evaluates the formula OK (e.g. SIN), but in some cases 
+     * (e.g. COUNTIF) Excel fails to evaluate the formula, giving '#VALUE!' instead. 
+     */
     public void testFuncPtgSelection() {
-    	HSSFWorkbook book = new HSSFWorkbook();
+        HSSFWorkbook book = new HSSFWorkbook();
         Ptg[] ptgs;
         ptgs = FormulaParser.parse("countif(A1:A2, 1)", book);
         assertEquals(3, ptgs.length);
@@ -899,5 +907,22 @@ public final class TestFormulaParser extends TestCase {
         ptgs = FormulaParser.parse("sin(1)", book);
         assertEquals(2, ptgs.length);
         assertEquals(FuncPtg.class, ptgs[1].getClass());
+    }
+    
+    public void testWrongNumberOfFunctionArgs() {
+        confirmArgCountMsg("sin()", "Too few arguments to function 'SIN'. Expected 1 but got 0.");
+        confirmArgCountMsg("countif(1, 2, 3, 4)", "Too many arguments to function 'COUNTIF'. Expected 2 but got 4.");
+        confirmArgCountMsg("index(1, 2, 3, 4, 5, 6)", "Too many arguments to function 'INDEX'. At most 4 were expected but got 6.");
+        confirmArgCountMsg("vlookup(1, 2)", "Too few arguments to function 'VLOOKUP'. At least 3 were expected but got 2.");
+    }
+
+    private static void confirmArgCountMsg(String formula, String expectedMessage) {
+        HSSFWorkbook book = new HSSFWorkbook();
+        try {
+            FormulaParser.parse(formula, book);
+            throw new AssertionFailedError("Didn't get parse exception as expected");
+        } catch (FormulaParseException e) {
+            assertEquals(expectedMessage, e.getMessage());
+        }
     }
 }

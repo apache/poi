@@ -27,12 +27,17 @@ public final class FunctionMetadata {
 	private final String _name;
 	private final int _minParams;
 	private final int _maxParams;
+	private final byte _returnClassCode;
+	private final byte[] _parameterClassCodes;
 
-	/* package */ FunctionMetadata(int index, String name, int minParams, int maxParams) {
+	/* package */ FunctionMetadata(int index, String name, int minParams, int maxParams,
+			byte returnClassCode, byte[] parameterClassCodes) {
 		_index = index;
 		_name = name;
 		_minParams = minParams;
 		_maxParams = maxParams;
+		_returnClassCode = returnClassCode;
+		_parameterClassCodes = parameterClassCodes;
 	}
 	public int getIndex() {
 		return _index;
@@ -48,6 +53,12 @@ public final class FunctionMetadata {
 	}
 	public boolean hasFixedArgsLength() {
 		return _minParams == _maxParams;
+	}
+	public byte getReturnClassCode() {
+		return _returnClassCode;
+	}
+	public byte[] getParameterClassCodes() {
+		return (byte[]) _parameterClassCodes.clone();
 	}
 	public String toString() {
 		StringBuffer sb = new StringBuffer(64);

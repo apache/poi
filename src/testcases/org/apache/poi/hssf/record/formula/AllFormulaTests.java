@@ -40,9 +40,11 @@ public final class AllFormulaTests {
 		result.addTestSuite(TestArea3DPtg.class);
 		result.addTestSuite(TestAreaErrPtg.class);
 		result.addTestSuite(TestAreaPtg.class);
+		result.addTestSuite(TestArrayPtg.class);
 		result.addTestSuite(TestErrPtg.class);
 		result.addTestSuite(TestExternalFunctionFormulas.class);
 		result.addTestSuite(TestFuncPtg.class);
+		result.addTestSuite(TestFuncVarPtg.class);
 		result.addTestSuite(TestIntersectionPtg.class);
 		result.addTestSuite(TestPercentPtg.class);
 		result.addTestSuite(TestRangePtg.class);

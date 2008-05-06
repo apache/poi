@@ -17,7 +17,9 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.ddf.EscherBitmapBlip;
 import org.apache.poi.ddf.EscherBlipRecord;
+import org.apache.poi.ddf.EscherMetafileBlip;
 import org.apache.poi.ss.usermodel.PictureData;
 
 /**
@@ -65,19 +67,19 @@ public class HSSFPictureData implements PictureData
      */
     public String suggestFileExtension()
     {
-        switch (blip.getOptions() & FORMAT_MASK)
+        switch (blip.getRecordId())
         {
-            case MSOBI_WMF:
+            case EscherMetafileBlip.RECORD_ID_WMF:
                 return "wmf";
-            case MSOBI_EMF:
+            case EscherMetafileBlip.RECORD_ID_EMF:
                 return "emf";
-            case MSOBI_PICT:
+            case EscherMetafileBlip.RECORD_ID_PICT:
                 return "pict";
-            case MSOBI_PNG:
+            case EscherBitmapBlip.RECORD_ID_PNG:
                 return "png";
-            case MSOBI_JPEG:
+            case EscherBitmapBlip.RECORD_ID_JPEG:
                 return "jpeg";
-            case MSOBI_DIB:
+            case EscherBitmapBlip.RECORD_ID_DIB:
                 return "dib";
             default:
                 return "";

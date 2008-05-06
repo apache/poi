@@ -196,13 +196,8 @@ public class ShapeGroup extends Shape{
 
         Sheet sheet = getSheet();
         shape.setSheet(sheet);
+        shape.setShapeId(sheet.allocateShapeId());
         shape.afterInsert(sheet);
-
-        if (shape instanceof TextShape) {
-            TextShape tbox = (TextShape) shape;
-            EscherTextboxWrapper txWrapper = tbox.getEscherTextboxWrapper();
-            if(txWrapper != null) getSheet().getPPDrawing().addTextboxWrapper(txWrapper);
-        }
     }
 
     /**
@@ -277,20 +272,9 @@ public class ShapeGroup extends Shape{
     }
 
     public void draw(Graphics2D graphics){
-        Rectangle2D anchor = getAnchor2D();
-        Rectangle2D coords = getCoordinates();
 
-        //transform coordinates
         AffineTransform at = graphics.getTransform();
-        /*
-        if(!anchor.equals(coords)){
-            graphics.scale(anchor.getWidth()/coords.getWidth(), anchor.getHeight()/coords.getHeight());
 
-            graphics.translate(
-                    anchor.getX()*coords.getWidth()/anchor.getWidth() - coords.getX(),
-                    anchor.getY()*coords.getHeight()/anchor.getHeight() - coords.getY());
-        }
-        */
         Shape[] sh = getShapes();
         for (int i = 0; i < sh.length; i++) {
             sh[i].draw(graphics);

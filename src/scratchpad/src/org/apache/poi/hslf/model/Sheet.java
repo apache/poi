@@ -18,12 +18,10 @@
 
 package org.apache.poi.hslf.model;
 
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherDgRecord;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.util.POILogger;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -248,15 +246,47 @@ public abstract class Sheet {
         spgr.addChildRecord(shape.getSpContainer());
 
         shape.setSheet(this);
+        shape.setShapeId(allocateShapeId());
         shape.afterInsert(this);
+    }
 
-        // If it's a TextShape, we need to tell the PPDrawing, as it has to
-        //  track TextboxWrappers specially
-        if (shape instanceof TextShape) {
-            TextShape tbox = (TextShape) shape;
-            EscherTextboxWrapper txWrapper = tbox.getEscherTextboxWrapper();
-            if(txWrapper != null) ppdrawing.addTextboxWrapper(txWrapper);
+    /**
+     * Allocates new shape id for the new drawing group id.
+     *
+     * @return a new shape id.
+     */
+    public int allocateShapeId()
+    {
+        EscherDggRecord dgg = _slideShow.getDocumentRecord().getPPDrawingGroup().getEscherDggRecord();
+        EscherDgRecord dg = _container.getPPDrawing().getEscherDgRecord();
+
+        dgg.setNumShapesSaved( dgg.getNumShapesSaved() + 1 );
+
+        // Add to existing cluster if space available
+        for (int i = 0; i < dgg.getFileIdClusters().length; i++)
+        {
+            EscherDggRecord.FileIdCluster c = dgg.getFileIdClusters()[i];
+            if (c.getDrawingGroupId() == dg.getDrawingGroupId() && c.getNumShapeIdsUsed() != 1024)
+            {
+                int result = c.getNumShapeIdsUsed() + (1024 * (i+1));
+                c.incrementShapeId();
+                dg.setNumShapes( dg.getNumShapes() + 1 );
+                dg.setLastMSOSPID( result );
+                if (result >= dgg.getShapeIdMax())
+                    dgg.setShapeIdMax( result + 1 );
+                return result;
+            }
         }
+
+        // Create new cluster
+        dgg.addCluster( dg.getDrawingGroupId(), 0, false );
+        dgg.getFileIdClusters()[dgg.getFileIdClusters().length-1].incrementShapeId();
+        dg.setNumShapes( dg.getNumShapes() + 1 );
+        int result = (1024 * dgg.getFileIdClusters().length);
+        dg.setLastMSOSPID( result );
+        if (result >= dgg.getShapeIdMax())
+            dgg.setShapeIdMax( result + 1 );
+        return result;
     }
 
     /**
@@ -282,6 +312,13 @@ public abstract class Sheet {
 
         List lst = spgr.getChildRecords();
         return lst.remove(shape.getSpContainer());
+    }
+
+    /**
+     * Called by SlideShow ater a new sheet is created
+     */
+    public void onCreate(){
+
     }
 
     /**

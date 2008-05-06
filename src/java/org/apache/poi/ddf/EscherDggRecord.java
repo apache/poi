@@ -38,6 +38,7 @@ public class EscherDggRecord
     private int field_3_numShapesSaved;
     private int field_4_drawingsSaved;
     private FileIdCluster[] field_5_fileIdClusters;
+    private int maxDgId;
 
     public static class FileIdCluster
     {
@@ -87,6 +88,7 @@ public class EscherDggRecord
         for (int i = 0; i < field_5_fileIdClusters.length; i++)
         {
             field_5_fileIdClusters[i] = new FileIdCluster(LittleEndian.getInt( data, pos + size ), LittleEndian.getInt( data, pos + size + 4 ));
+            maxDgId = Math.max(maxDgId, field_5_fileIdClusters[i].getDrawingGroupId());
             size += 8;
         }
         bytesRemaining         -= size;
@@ -229,7 +231,14 @@ public class EscherDggRecord
         this.field_4_drawingsSaved = field_4_drawingsSaved;
     }
 
-    public FileIdCluster[] getFileIdClusters()
+    /**
+     * @return The maximum drawing group ID
+     */
+    public int getMaxDrawingGroupId(){
+        return maxDgId;
+    }
+
+     public FileIdCluster[] getFileIdClusters()
     {
         return field_5_fileIdClusters;
     }
@@ -241,9 +250,22 @@ public class EscherDggRecord
 
     public void addCluster( int dgId, int numShapedUsed )
     {
+        addCluster(dgId, numShapedUsed, true);
+    }
+
+    /**
+     * Add a new cluster
+     *
+     * @param dgId  id of the drawing group (stored in the record options)
+     * @param numShapedUsed initial value of the numShapedUsed field
+     * @param sort if true then sort clusters by drawing group id.(
+     *  In Excel the clusters are sorted but in PPT they are not)
+     */
+    public void addCluster( int dgId, int numShapedUsed, boolean sort )
+    {
         List clusters = new ArrayList(Arrays.asList(field_5_fileIdClusters));
         clusters.add(new FileIdCluster(dgId, numShapedUsed));
-        Collections.sort(clusters, new Comparator()
+        if(sort) Collections.sort(clusters, new Comparator()
         {
             public int compare( Object o1, Object o2 )
             {
@@ -257,6 +279,7 @@ public class EscherDggRecord
                     return +1;
             }
         } );
+        maxDgId = Math.min(maxDgId, dgId);
         field_5_fileIdClusters = (FileIdCluster[]) clusters.toArray( new FileIdCluster[clusters.size()] );
     }
 }

@@ -24,10 +24,7 @@ import java.util.*;
 import java.awt.Dimension;
 import java.io.*;
 
-import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.model.*;
 import org.apache.poi.hslf.model.Notes;
@@ -66,9 +63,7 @@ public class SlideShow
   // Lookup between the PersitPtr "sheet" IDs, and the position
   //  in the mostRecentCoreRecords array
   private Hashtable _sheetIdToCoreRecordsLookup;
-  // Used when adding new core records
-  private int _highestSheetId;
-  
+
   // Records that are interesting
   private Document _documentRecord;
 
@@ -203,8 +198,6 @@ public class SlideShow
 	for(int i=0; i<allIDs.length; i++) {
 		_sheetIdToCoreRecordsLookup.put(new Integer(allIDs[i]), new Integer(i));
 	}
-	// Capture the ID of the highest sheet
-	_highestSheetId = allIDs[(allIDs.length-1)];
 
 	// Now convert the byte offsets back into record offsets
 	for(int i=0; i<_records.length; i++) {
@@ -612,37 +605,34 @@ public class SlideShow
   				}
   			}
   		}
-  		
-  		// Set up a new  SlidePersistAtom for this slide 
+
+  		// Set up a new  SlidePersistAtom for this slide
   		SlidePersistAtom sp = new SlidePersistAtom();
 
-  		// Reference is the 1-based index of the slide container in 
-  		//  the PersistPtr root.
-  		// It always starts with 3 (1 is Document, 2 is MainMaster, 3 is 
-  		//  the first slide), but quicksaves etc can leave gaps
-  		_highestSheetId++;
-  		sp.setRefID(_highestSheetId);
   		// First slideId is always 256
   		sp.setSlideIdentifier(prev == null ? 256 : (prev.getSlideIdentifier() + 1));
-  		
+
   		// Add this new SlidePersistAtom to the SlideListWithText
   		slist.addSlidePersistAtom(sp);
-  		
-  		
+
+
   		// Create a new Slide
   		Slide slide = new Slide(sp.getSlideIdentifier(), sp.getRefID(), _slides.length+1);
+        slide.setSlideShow(this);
+        slide.onCreate();
+
   		// Add in to the list of Slides
   		Slide[] s = new Slide[_slides.length+1];
   		System.arraycopy(_slides, 0, s, 0, _slides.length);
   		s[_slides.length] = slide;
   		_slides = s;
   		logger.log(POILogger.INFO, "Added slide " + _slides.length + " with ref " + sp.getRefID() + " and identifier " + sp.getSlideIdentifier());
-  		
+
   		// Add the core records for this new Slide to the record tree
   		org.apache.poi.hslf.record.Slide slideRecord = slide.getSlideRecord();
-  		slideRecord.setSheetId(sp.getRefID());
   		int slideRecordPos = _hslfSlideShow.appendRootLevelRecord(slideRecord);
   		_records = _hslfSlideShow.getRecords();
+
 
   		// Add the new Slide into the PersistPtr stuff
   		int offset = 0;
@@ -653,7 +643,7 @@ public class SlideShow
   			Record record = _records[i];
   			ByteArrayOutputStream out = new ByteArrayOutputStream();
   			record.writeOut(out);
-  			
+
   			// Grab interesting records as they come past
   			if(_records[i].getRecordType() == RecordTypes.PersistPtrIncrementalBlock.typeID){
   				ptr = (PersistPtrHolder)_records[i];
@@ -661,25 +651,29 @@ public class SlideShow
   			if(_records[i].getRecordType() == RecordTypes.UserEditAtom.typeID) {
   				usr = (UserEditAtom)_records[i];
   			}
-  			
+
   			if(i == slideRecordPos) {
   				slideOffset = offset;
   			}
   			offset += out.size();
   		}
-  		
+
+        // persist ID is UserEditAtom.maxPersistWritten + 1
+        int psrId = usr.getMaxPersistWritten() + 1;
+        sp.setRefID(psrId);
+        slideRecord.setSheetId(psrId);
+
+        // Last view is now of the slide
+        usr.setLastViewType((short)UserEditAtom.LAST_VIEW_SLIDE_VIEW);
+        usr.setMaxPersistWritten(psrId);    //increment the number of persit objects
+
 		// Add the new slide into the last PersistPtr
   		// (Also need to tell it where it is)
 		slideRecord.setLastOnDiskOffset(slideOffset);
 		ptr.addSlideLookup(sp.getRefID(), slideOffset);
 		logger.log(POILogger.INFO, "New slide ended up at " + slideOffset);
 
-		// Last view is now of the slide
-  		usr.setLastViewType((short)UserEditAtom.LAST_VIEW_SLIDE_VIEW);
-  		usr.setMaxPersistWritten(_highestSheetId);
-
   		// All done and added
-  		slide.setSlideShow(this);
   		return slide;
 	}
 

@@ -92,6 +92,7 @@ public class SlideMaster extends MasterSheet {
             } else {
                 switch (txtype) {
                     case TextHeaderAtom.CENTRE_BODY_TYPE:
+                    case TextHeaderAtom.HALF_BODY_TYPE:
                     case TextHeaderAtom.QUARTER_BODY_TYPE:
                         txtype = TextHeaderAtom.BODY_TYPE;
                         break;

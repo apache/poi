@@ -42,8 +42,10 @@ final class FunctionDataBuilder {
 		_mutatingFunctionIndexes = new HashSet();
 	}
 
-	public void add(int functionIndex, String functionName, int minParams, int maxParams, boolean hasFootnote) {
-		FunctionMetadata fm = new FunctionMetadata(functionIndex, functionName, minParams, maxParams);
+	public void add(int functionIndex, String functionName, int minParams, int maxParams,
+			byte returnClassCode, byte[] parameterClassCodes, boolean hasFootnote) {
+		FunctionMetadata fm = new FunctionMetadata(functionIndex, functionName, minParams, maxParams,
+				returnClassCode, parameterClassCodes);
 		
 		Integer indexKey = new Integer(functionIndex);
 		
