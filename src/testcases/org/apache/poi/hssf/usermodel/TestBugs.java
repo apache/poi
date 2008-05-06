@@ -732,7 +732,7 @@ public final class TestBugs extends TestCase {
      *  with the NameRecord, once you get past the BOFRecord
      *  issue.
      */
-    public void DISABLEDtest42564Alt() {
+    public void test42564Alt() {
         HSSFWorkbook wb = openSample("42564-2.xls");
         writeOutAndReadBack(wb);
     }
