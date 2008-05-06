@@ -699,6 +699,7 @@ public final class HSSFSheet {
     /**
      * @return an iterator of the PHYSICAL rows.  Meaning the 3rd element may not
      * be the third row if say for instance the second row is undefined.
+     * Call getRowNum() on each row if you care which one it is.
      */
     public Iterator rowIterator()
     {
