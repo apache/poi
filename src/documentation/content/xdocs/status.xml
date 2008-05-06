@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1-beta2" date="2008-05-??">
+           <action dev="POI-DEVELOPERS" type="fix">42570 - fixed LabelRecord to use empty string instead of null when the length is zero.</action>
            <action dev="POI-DEVELOPERS" type="fix">42564 - fixed ArrayPtg to use ConstantValueParser.  Fixed a few other ArrayPtg encoding issues.</action>
            <action dev="POI-DEVELOPERS" type="fix">Follow-on from 28754 - StringPtg.toFormulaString() should escape double quotes</action>
            <action dev="POI-DEVELOPERS" type="fix">44929 - Improved error handling in HSSFWorkbook when attempting to read a BIFF5 file</action>

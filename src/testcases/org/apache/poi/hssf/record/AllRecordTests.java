@@ -67,6 +67,7 @@ public final class AllRecordTests {
 		result.addTestSuite(TestFormulaRecord.class);
 		result.addTestSuite(TestFrameRecord.class);
 		result.addTestSuite(TestHyperlinkRecord.class);
+		result.addTestSuite(TestLabelRecord.class);
 		result.addTestSuite(TestLegendRecord.class);
 		result.addTestSuite(TestLineFormatRecord.class);
 		result.addTestSuite(TestLinkedDataRecord.class);
