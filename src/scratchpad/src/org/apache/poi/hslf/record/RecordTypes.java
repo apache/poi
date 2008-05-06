@@ -89,7 +89,7 @@ public class RecordTypes {
     public static final Type TxMasterStyleAtom = new Type(4003,TxMasterStyleAtom.class);
     public static final Type TxCFStyleAtom = new Type(4004,null);
     public static final Type TxPFStyleAtom = new Type(4005,null);
-    public static final Type TextRulerAtom = new Type(4006,null);
+    public static final Type TextRulerAtom = new Type(4006,TextRulerAtom.class);
     public static final Type TextBookmarkAtom = new Type(4007,null);
     public static final Type TextBytesAtom = new Type(4008,TextBytesAtom.class);
     public static final Type TxSIStyleAtom = new Type(4009,null);

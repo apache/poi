@@ -14,31 +14,26 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Title:        FileSharing<P>
+ * Title:        FILESHARING<P>
  * Description:  stores the encrypted readonly for a workbook (write protect) 
- * REFERENCE:  PG 314 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
+ * This functionality is accessed from the options dialog box available when performing 'Save As'.<p/>
+ * REFERENCE:  PG 314 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  */
+public final class FileSharingRecord extends Record {
 
-public class FileSharingRecord extends Record {
-    private static POILogger logger = POILogFactory.getLogger(FileSharingRecord.class);
-    	
     public final static short sid = 0x5b;
     private short             field_1_readonly;
     private short             field_2_password;
-    private byte              field_3_username_length;
-    private short             field_4_unknown; // not documented
-    private String            field_5_username;
+    private byte              field_3_username_unicode_options;
+    private String            field_3_username_value;
 
     public FileSharingRecord() {}
     
@@ -61,23 +56,15 @@ public class FileSharingRecord extends Record {
     protected void fillFields(RecordInputStream in) {
         field_1_readonly = in.readShort();
         field_2_password = in.readShort();
-        field_3_username_length = in.readByte();
         
-        // Is this really correct? The latest docs
-        //  seem to hint there's nothing between the
-        //  username length and the username string
-        field_4_unknown = in.readShort();
+        int nameLen = in.readShort();
         
-        // Ensure we don't try to read more data than
-        //  there actually is
-        if(field_3_username_length > in.remaining()) {
-        	logger.log(POILogger.WARN, "FileSharingRecord defined a username of length " + field_3_username_length + ", but only " + in.remaining() + " bytes were left, truncating");
-        	field_3_username_length = (byte)in.remaining();
-        }
-        if(field_3_username_length > 0) {
-        	field_5_username = in.readCompressedUnicode(field_3_username_length);
+        if(nameLen > 0) {
+            // TODO - Current examples(3) from junits only have zero length username. 
+            field_3_username_unicode_options = in.readByte();
+            field_3_username_value = in.readCompressedUnicode(nameLen);
         } else {
-        	field_5_username = "";
+            field_3_username_value = "";
         }
     }
 
@@ -135,45 +122,24 @@ public class FileSharingRecord extends Record {
     /**
      * @returns byte representing the length of the username field
      */
-    public byte getUsernameLength() {
-        return field_3_username_length ;
-    }
-
-    /**
-     * @param byte representing the length of the username field
-     */
-    public void setUsernameLength(byte length) {
-        this.field_3_username_length = length;
+    public short getUsernameLength() {
+        return (short) field_3_username_value.length();
     }
 
     /**
      * @returns username of the user that created the file
      */
     public String getUsername() {
-        return this.field_5_username;
+        return field_3_username_value;
     }
 
     /**
      * @param username of the user that created the file
      */
     public void setUsername(String username) {
-        this.field_5_username = username;
-        this.field_3_username_length = (byte)username.length();
+        field_3_username_value = username;
     }
 
-    /**
-     * @return short value of a "bonus field" in Excel that was not doc'd
-     */
-    public short getUnknown() {
-        return field_4_unknown;
-    }
-
-    /**
-     * @param unknown field value to set (bonus field that is not doc'd)
-     */
-    public void setUnknown(short unk) {
-        field_4_unknown = unk;
-    }
 
     public String toString() {
         StringBuffer buffer = new StringBuffer();
@@ -183,10 +149,6 @@ public class FileSharingRecord extends Record {
             .append(getReadOnly() == 1 ? "true" : "false").append("\n");
         buffer.append("    .password       = ")
             .append(Integer.toHexString(getPassword())).append("\n");
-        buffer.append("    .userlen        = ")
-            .append(Integer.toHexString(getUsernameLength())).append("\n");
-        buffer.append("    .unknown        = ")
-            .append(Integer.toHexString(getUnknown())).append("\n");
         buffer.append("    .username       = ")
             .append(getUsername()).append("\n");
         buffer.append("[/FILESHARING]\n");
@@ -194,18 +156,25 @@ public class FileSharingRecord extends Record {
     }
 
     public int serialize(int offset, byte [] data) {
+        // TODO - junit
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize()-4));
         LittleEndian.putShort(data, 4 + offset, getReadOnly());
         LittleEndian.putShort(data, 6 + offset, getPassword());
-        data[ 8 + offset ] =  getUsernameLength();
-        LittleEndian.putShort(data, 9 + offset, getUnknown());
-        StringUtil.putCompressedUnicode( getUsername(), data, 11 + offset );
+        LittleEndian.putShort(data, 8 + offset, getUsernameLength());
+        if(getUsernameLength() > 0) {
+            LittleEndian.putByte(data, 10 + offset, field_3_username_unicode_options);
+            StringUtil.putCompressedUnicode( getUsername(), data, 11 + offset );
+        }
         return getRecordSize();
     }
 
     public int getRecordSize() {
-        return 11+getUsernameLength();
+        short nameLen = getUsernameLength();
+        if (nameLen < 1) {
+            return 10;
+        }
+        return 11+nameLen;
     }
 
     public short getSid() {
@@ -219,10 +188,7 @@ public class FileSharingRecord extends Record {
       FileSharingRecord clone = new FileSharingRecord();
       clone.setReadOnly(field_1_readonly);
       clone.setPassword(field_2_password);
-      clone.setUsernameLength(field_3_username_length);
-      clone.setUnknown(field_4_unknown);
-      clone.setUsername(field_5_username);
+      clone.setUsername(field_3_username_value);
       return clone;
     }
-
 }

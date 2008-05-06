@@ -733,7 +733,7 @@ public final class TestBugs extends TestCase {
      *  with the NameRecord, once you get past the BOFRecord
      *  issue.
      */
-    public void DISABLEDtest42564Alt() {
+    public void test42564Alt() {
         HSSFWorkbook wb = openSample("42564-2.xls");
         writeOutAndReadBack(wb);
     }
@@ -883,8 +883,30 @@ public final class TestBugs extends TestCase {
      * Bug 28774: Excel will crash when opening xls-files with images.
      */
     public void test28774() {
-
         HSSFWorkbook wb = openSample("28774.xls");
+        assertTrue("no errors reading sample xls", true);
+        writeOutAndReadBack(wb);
+        assertTrue("no errors writing sample xls", true);
+    }
+    
+    /**
+     * Had a problem apparently, not sure what as it
+     *  works just fine...
+     */
+    public void test44891() throws Exception {
+    	HSSFWorkbook wb = openSample("44891.xls");
+        assertTrue("no errors reading sample xls", true);
+        writeOutAndReadBack(wb);
+        assertTrue("no errors writing sample xls", true);
+    }
+
+    /**
+     * Bug 44235: Ms Excel can't open save as excel file
+     *
+     * Works fine with poi-3.1-beta1.
+     */
+    public void test44235() throws Exception {
+    	HSSFWorkbook wb = openSample("44235.xls");
         assertTrue("no errors reading sample xls", true);
         writeOutAndReadBack(wb);
         assertTrue("no errors writing sample xls", true);

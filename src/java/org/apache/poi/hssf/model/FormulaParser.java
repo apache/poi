@@ -380,12 +380,13 @@ public final class FormulaParser {
         } else {
             isVarArgs = !fm.hasFixedArgsLength();
             funcIx = fm.getIndex();
+            validateNumArgs(numArgs, fm);
         }
         AbstractFunctionPtg retval;
         if(isVarArgs) {
             retval = new FuncVarPtg(name, (byte)numArgs);
         } else {
-            retval = new FuncPtg(funcIx, (byte)numArgs);
+            retval = new FuncPtg(funcIx);
         }
         if (!name.equals(AbstractFunctionPtg.FUNCTION_NAME_IF)) {
             // early return for everything else besides IF()
@@ -445,6 +446,29 @@ public final class FormulaParser {
         goto1Ptg.setData((short)(ptgCount-1));
 
         return retval;
+    }
+
+    private void validateNumArgs(int numArgs, FunctionMetadata fm) {
+        if(numArgs < fm.getMinParams()) {
+            String msg = "Too few arguments to function '" + fm.getName() + "'. ";
+            if(fm.hasFixedArgsLength()) {
+                msg += "Expected " + fm.getMinParams();
+            } else {
+                msg += "At least " + fm.getMinParams() + " were expected";
+            }
+            msg += " but got " + numArgs + ".";
+            throw new FormulaParseException(msg);
+         }
+        if(numArgs > fm.getMaxParams()) {
+            String msg = "Too many arguments to function '" + fm.getName() + "'. ";
+            if(fm.hasFixedArgsLength()) {
+                msg += "Expected " + fm.getMaxParams();
+            } else {
+                msg += "At most " + fm.getMaxParams() + " were expected";
+            }
+            msg += " but got " + numArgs + ".";
+            throw new FormulaParseException(msg);
+       }
     }
 
     private static boolean isArgumentDelimiter(char ch) {

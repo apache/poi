@@ -17,6 +17,7 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.hslf.usermodel.RichTextRun;
+import org.apache.poi.hslf.record.TextRulerAtom;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
 
@@ -38,6 +39,13 @@ import java.util.ArrayList;
 public class TextPainter {
     protected POILogger logger = POILogFactory.getLogger(this.getClass());
 
+    /**
+     * Display unicode square if a bullet char can't be displayed,
+     * for example, if Wingdings font is used.
+     * TODO: map Wingdngs and Symbol to unicode Arial
+     */
+    protected static final char DEFAULT_BULLET_CHAR = '\u25a0';
+
     protected TextShape _shape;
 
     public TextPainter(TextShape shape){
@@ -49,6 +57,10 @@ public class TextPainter {
      */
     public AttributedString getAttributedString(TextRun txrun){
         String text = txrun.getText();
+        //TODO: properly process tabs
+        text = text.replace('\t', ' ');
+        text = text.replace((char)160, ' ');
+
         AttributedString at = new AttributedString(text);
         RichTextRun[] rt = txrun.getRichTextRuns();
         for (int i = 0; i < rt.length; i++) {
@@ -109,7 +121,24 @@ public class TextPainter {
             }
 
             float wrappingWidth = (float)anchor.getWidth() - _shape.getMarginLeft() - _shape.getMarginRight();
-            wrappingWidth -= rt.getTextOffset();
+            int bulletOffset = rt.getBulletOffset();
+            int textOffset = rt.getTextOffset();
+            int indent = rt.getIndentLevel();
+
+            TextRulerAtom ruler = run.getTextRuler();
+            if(ruler != null) {
+                int bullet_val = ruler.getBulletOffsets()[indent]*Shape.POINT_DPI/Shape.MASTER_DPI;
+                int text_val = ruler.getTextOffsets()[indent]*Shape.POINT_DPI/Shape.MASTER_DPI;
+                if(bullet_val > text_val){
+                    int a = bullet_val;
+                    bullet_val = text_val;
+                    text_val = a;
+                }
+                if(bullet_val != 0 ) bulletOffset = bullet_val;
+                if(text_val != 0) textOffset = text_val;
+            }
+
+            wrappingWidth -= textOffset;
 
             if (_shape.getWordWrap() == TextShape.WrapNone) {
                 wrappingWidth = _shape.getSheet().getSlideShow().getPageSize().width;
@@ -141,8 +170,9 @@ public class TextPainter {
             }
 
             el._align = rt.getAlignment();
-            el._text = textLayout;
-            el._textOffset = rt.getTextOffset();
+            el.advance = textLayout.getAdvance();
+            el._textOffset = textOffset;
+            el._text = new AttributedString(it, startIndex, endIndex);
 
             if (prStart){
                 int sp = rt.getSpaceBefore();
@@ -182,13 +212,25 @@ public class TextPainter {
                 Color clr = rt.getBulletColor();
                 if (clr != null) bat.addAttribute(TextAttribute.FOREGROUND, clr);
                 else bat.addAttribute(TextAttribute.FOREGROUND, it.getAttribute(TextAttribute.FOREGROUND));
-                bat.addAttribute(TextAttribute.FAMILY, it.getAttribute(TextAttribute.FAMILY));
-                bat.addAttribute(TextAttribute.SIZE, it.getAttribute(TextAttribute.SIZE));
 
-                TextLayout bulletLayout = new TextLayout(bat.getIterator(), graphics.getFontRenderContext());
+                int fontIdx = rt.getBulletFont();
+                if(fontIdx == -1) fontIdx = rt.getFontIndex();
+                PPFont bulletFont = _shape.getSheet().getSlideShow().getFont(fontIdx);
+                bat.addAttribute(TextAttribute.FAMILY, bulletFont.getFontName());
+
+                int bulletSize = rt.getBulletSize();
+                int fontSize = rt.getFontSize();
+                if(bulletSize != -1) fontSize = Math.round(fontSize*bulletSize*0.01f);
+                bat.addAttribute(TextAttribute.SIZE, new Float(fontSize));
+
+                if(!new Font(bulletFont.getFontName(), Font.PLAIN, 1).canDisplay(rt.getBulletChar())){
+                    bat.addAttribute(TextAttribute.FAMILY, "Arial");
+                    bat = new AttributedString("" + DEFAULT_BULLET_CHAR, bat.getIterator().getAttributes());
+                }
+
                 if(text.substring(startIndex, endIndex).length() > 1){
-                    el._bullet = bulletLayout;
-                    el._bulletOffset = rt.getBulletOffset();
+                    el._bullet = bat;
+                    el._bulletOffset = bulletOffset;
                 }
             }
             lines.add(el);
@@ -225,29 +267,32 @@ public class TextPainter {
                     break;
                 case TextShape.AlignCenter:
                     pen.x = anchor.getX() + _shape.getMarginLeft() +
-                            (anchor.getWidth() - elem._text.getAdvance() - _shape.getMarginLeft() - _shape.getMarginRight()) / 2;
+                            (anchor.getWidth() - elem.advance - _shape.getMarginLeft() - _shape.getMarginRight()) / 2;
                     break;
                 case TextShape.AlignRight:
                     pen.x = anchor.getX() + _shape.getMarginLeft() +
-                            (anchor.getWidth() - elem._text.getAdvance() - _shape.getMarginLeft() - _shape.getMarginRight());
+                            (anchor.getWidth() - elem.advance - _shape.getMarginLeft() - _shape.getMarginRight());
                     break;
             }
             if(elem._bullet != null){
-                elem._bullet.draw(graphics, (float)(pen.x + elem._bulletOffset), (float)pen.y);
+                graphics.drawString(elem._bullet.getIterator(), (float)(pen.x + elem._bulletOffset), (float)pen.y);
             }
-            elem._text.draw(graphics, (float)(pen.x + elem._textOffset), (float)pen.y);
-
+            AttributedCharacterIterator chIt = elem._text.getIterator();
+            if(chIt.getEndIndex() > chIt.getBeginIndex()) {
+                graphics.drawString(chIt, (float)(pen.x + elem._textOffset), (float)pen.y);
+            }
             y0 += elem.descent;
         }
     }
 
 
-    static class TextElement {
-        public TextLayout _text;
+    public static class TextElement {
+        public AttributedString _text;
         public int _textOffset;
-        public TextLayout _bullet;
+        public AttributedString _bullet;
         public int _bulletOffset;
         public int _align;
         public float ascent, descent;
+        public float advance;
     }
 }

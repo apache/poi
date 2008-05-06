@@ -147,10 +147,12 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     }
 
     public byte getParameterClass(int index) {
-        try {
-            return paramClass[index];
-        } catch (ArrayIndexOutOfBoundsException aioobe) {
+        if (index >= paramClass.length) {
+            // For var-arg (and other?) functions, the metadata does not list all the parameter
+            // operand classes.  In these cases, all extra parameters are assumed to have the 
+            // same operand class as the last one specified.
             return paramClass[paramClass.length - 1];
         }
+        return paramClass[index];
     }
 }
