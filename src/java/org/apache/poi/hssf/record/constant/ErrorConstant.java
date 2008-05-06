@@ -47,18 +47,31 @@ public class ErrorConstant {
 	public int getErrorCode() {
 		return _errorCode;
 	}
+	public String getText() {
+		if(HSSFErrorConstants.isValidCode(_errorCode)) {
+			return HSSFErrorConstants.getText(_errorCode);
+		}
+		return "unknown error code (" + _errorCode + ")";
+	}
 
 	public static ErrorConstant valueOf(int errorCode) {
 		switch (errorCode) {
-    		case HSSFErrorConstants.ERROR_NULL:  return NULL;
-    		case HSSFErrorConstants.ERROR_DIV_0: return DIV_0;
-    		case HSSFErrorConstants.ERROR_VALUE: return VALUE;
-    		case HSSFErrorConstants.ERROR_REF:   return REF;
-    		case HSSFErrorConstants.ERROR_NAME:  return NAME;
-    		case HSSFErrorConstants.ERROR_NUM:   return NUM;
-    		case HSSFErrorConstants.ERROR_NA:    return NA;
+			case HSSFErrorConstants.ERROR_NULL:  return NULL;
+			case HSSFErrorConstants.ERROR_DIV_0: return DIV_0;
+			case HSSFErrorConstants.ERROR_VALUE: return VALUE;
+			case HSSFErrorConstants.ERROR_REF:   return REF;
+			case HSSFErrorConstants.ERROR_NAME:  return NAME;
+			case HSSFErrorConstants.ERROR_NUM:   return NUM;
+			case HSSFErrorConstants.ERROR_NA:	return NA;
 		}
 		System.err.println("Warning - unexpected error code (" + errorCode + ")");
 		return new ErrorConstant(errorCode);
+	}
+	public String toString() {
+		StringBuffer sb = new StringBuffer(64);
+		sb.append(getClass().getName()).append(" [");
+		sb.append(getText());
+		sb.append("]");
+		return sb.toString();
 	}
 }
