@@ -37,15 +37,14 @@ import org.apache.poi.hssf.record.formula.Ptg;
 final class FunctionMetadataReader {
 
 	private static final String METADATA_FILE_NAME = "functionMetadata.txt";
+	
+	/** plain ASCII text metadata file uses three dots for ellipsis */
+	private static final String ELLIPSIS = "...";
 
 	private static final Pattern TAB_DELIM_PATTERN = Pattern.compile("\t");
 	private static final Pattern SPACE_DELIM_PATTERN = Pattern.compile(" ");
 	private static final byte[] EMPTY_BYTE_ARRAY = { };
 
-	// special characters from the ooo document
-	private static final int CHAR_ELLIPSIS_8230 = 8230;
-	private static final int CHAR_NDASH_8211 = 8211;
-	
 	private static final String[] DIGIT_ENDING_FUNCTION_NAMES = {
 		// Digits at the end of a function might be due to a left-over footnote marker.
 		// except in these cases
@@ -59,10 +58,12 @@ final class FunctionMetadataReader {
 			throw new RuntimeException("resource '" + METADATA_FILE_NAME + "' not found");
 		}
 
-		BufferedReader br = null;
+		BufferedReader br;
 		try {
 			br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
-		} catch(UnsupportedEncodingException e) { /* never happens */ }
+		} catch(UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
 		FunctionDataBuilder fdb = new FunctionDataBuilder(400);
 
 		try {
@@ -127,7 +128,9 @@ final class FunctionMetadataReader {
 		}
 		String[] array = SPACE_DELIM_PATTERN.split(codes);
 		int nItems = array.length;
-		if(array[nItems-1].charAt(0) == CHAR_ELLIPSIS_8230) {
+		if(ELLIPSIS.equals(array[nItems-1])) {
+			// final ellipsis is optional, and ignored
+			// (all unspecified params are assumed to be the same as the last)
 			nItems --;
 		}
 		byte[] result = new byte[nItems];
@@ -141,7 +144,6 @@ final class FunctionMetadataReader {
 		if(codes.length() == 1) {
 			switch (codes.charAt(0)) {
 				case '-':
-				case CHAR_NDASH_8211: // this is what the ooo doc has
 					return true;
 			}
 		}
