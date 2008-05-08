@@ -75,11 +75,9 @@ public final class FuncPtg extends AbstractFunctionPtg {
     }
 
     public Object clone() {
-      FuncPtg ptg = new FuncPtg();
-      //ptg.field_1_num_args = field_1_num_args;
-      ptg.field_2_fnc_index = field_2_fnc_index;
-      ptg.setClass(ptgClass);
-     return ptg;
+        FuncPtg ptg = new FuncPtg(field_2_fnc_index);
+        ptg.setClass(ptgClass);
+        return ptg;
     }
 
     public int getSize() {
