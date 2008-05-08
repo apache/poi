@@ -14,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record.formula.functions;
 
@@ -33,10 +32,6 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  */
 public final class TestIndex extends TestCase {
 
-	public TestIndex(String testName) {
-		super(testName);
-	}
-	
 	private static final double[] TEST_VALUES0 = {
 			1, 2,
 			3, 4,
@@ -44,7 +39,6 @@ public final class TestIndex extends TestCase {
 			7, 8,
 			9, 10,
 			11, 12,
-//			13, // excess array element. TODO - Area2DEval currently has no validation to ensure correct size of values array
 	};
 	
 	/**
