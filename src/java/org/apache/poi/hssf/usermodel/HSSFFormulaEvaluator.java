@@ -232,8 +232,7 @@ public class HSSFFormulaEvaluator {
                     cell.setCellValue(cv.getBooleanValue());
                     break;
                 case HSSFCell.CELL_TYPE_ERROR:
-                    cell.setCellType(HSSFCell.CELL_TYPE_ERROR);
-                    cell.setCellValue(cv.getErrorValue());
+                    cell.setCellErrorValue(cv.getErrorValue());
                     break;
                 case HSSFCell.CELL_TYPE_NUMERIC:
                     cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);

@@ -38,10 +38,12 @@ public class AllUserModelTests {
 		result.addTestSuite(TestEscherGraphics2d.class);
 		result.addTestSuite(TestFontDetails.class);
 		result.addTestSuite(TestFormulas.class);
+		result.addTestSuite(TestFormulaEvaluatorBugs.class);
+		result.addTestSuite(TestFormulaEvaluatorDocs.class);
 		result.addTestSuite(TestHSSFCell.class);
 		result.addTestSuite(TestHSSFClientAnchor.class);
-		result.addTestSuite(TestHSSFConditionalFormatting.class);
 		result.addTestSuite(TestHSSFComment.class);
+		result.addTestSuite(TestHSSFConditionalFormatting.class);
 		result.addTestSuite(TestHSSFDateUtil.class);
 		result.addTestSuite(TestHSSFHeaderFooter.class);
 		result.addTestSuite(TestHSSFHyperlink.class);
@@ -54,17 +56,19 @@ public class AllUserModelTests {
 		result.addTestSuite(TestHSSFSheet.class);
 		result.addTestSuite(TestHSSFSheetOrder.class);
 		result.addTestSuite(TestHSSFSheetSetOrder.class);
+		result.addTestSuite(TestHSSFTextbox.class);
 		result.addTestSuite(TestHSSFWorkbook.class);
 		result.addTestSuite(TestNamedRange.class);
 		result.addTestSuite(TestOLE2Embeding.class);
+		result.addTestSuite(TestPOIFSProperties.class);
 		result.addTestSuite(TestReadWriteChart.class);
 		result.addTestSuite(TestSanityChecker.class);
 		result.addTestSuite(TestSheetHiding.class);
 		result.addTestSuite(TestSheetShiftRows.class);
 		if (false) { // deliberately avoiding this one
-            result.addTestSuite(TestUnfixedBugs.class);
-        }
-        result.addTestSuite(TestUnicodeWorkbook.class);
+			result.addTestSuite(TestUnfixedBugs.class);
+		}
+		result.addTestSuite(TestUnicodeWorkbook.class);
 		result.addTestSuite(TestUppercaseWorkbook.class);
 		result.addTestSuite(TestWorkbook.class);		
 		

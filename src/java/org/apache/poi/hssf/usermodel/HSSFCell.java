@@ -817,8 +817,7 @@ public class HSSFCell
         int row=record.getRow();
         short col=record.getColumn();
         short styleIndex=record.getXFIndex();
-        if ((cellType != CELL_TYPE_ERROR) && (cellType != CELL_TYPE_FORMULA))
-        {
+        if (cellType != CELL_TYPE_ERROR) {
             setCellType(CELL_TYPE_ERROR, false, row, col, styleIndex);
         }
         (( BoolErrRecord ) record).setValue(value);

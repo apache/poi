@@ -44,7 +44,7 @@ public final class TestIndex extends TestCase {
 			7, 8,
 			9, 10,
 			11, 12,
-			13, // excess array element. TODO - Area2DEval currently has no validation to ensure correct size of values array
+//			13, // excess array element. TODO - Area2DEval currently has no validation to ensure correct size of values array
 	};
 	
 	/**
