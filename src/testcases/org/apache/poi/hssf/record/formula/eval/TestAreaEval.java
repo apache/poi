@@ -17,25 +17,46 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
+
+import org.apache.poi.hssf.record.formula.Area3DPtg;
 
 /**
- * Collects all tests the package <tt>org.apache.poi.hssf.record.formula.eval</tt>.
- * 
+ * Tests for <tt>AreaEval</tt>
+ *  
  * @author Josh Micich
  */
-public class AllFormulaEvalTests {
-	
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllFormulaEvalTests.class.getName());
-		result.addTestSuite(TestAreaEval.class);
-		result.addTestSuite(TestCircularReferences.class);
-		result.addTestSuite(TestExternalFunction.class);
-		result.addTestSuite(TestFormulaBugs.class);
-		result.addTestSuite(TestFormulasFromSpreadsheet.class);
-		result.addTestSuite(TestPercentEval.class);
-		result.addTestSuite(TestUnaryPlusEval.class);
-		return result;
+public final class TestAreaEval extends TestCase {
+
+	public void testGetValue_bug44950() {
+		
+		Area3DPtg ptg = new Area3DPtg("B2:D3", (short)0);
+		NumberEval one = new NumberEval(1);
+		ValueEval[] values = {
+				one,	
+				new NumberEval(2),	
+				new NumberEval(3),	
+				new NumberEval(4),	
+				new NumberEval(5),	
+				new NumberEval(6),	
+		};
+		AreaEval ae = new Area3DEval(ptg, values);
+		if (one == ae.getValueAt(1, 2)) {
+			throw new AssertionFailedError("Identified bug 44950 a");
+		}
+		confirm(1, ae, 1, 1);
+		confirm(2, ae, 1, 2);
+		confirm(3, ae, 1, 3);
+		confirm(4, ae, 2, 1);
+		confirm(5, ae, 2, 2);
+		confirm(6, ae, 2, 3);
+		
 	}
+
+	private static void confirm(int expectedValue, AreaEval ae, int row, int col) {
+		NumberEval v = (NumberEval) ae.getValueAt(row, col);
+		assertEquals(expectedValue, v.getNumberValue(), 0.0);
+	}
+
 }
