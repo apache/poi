@@ -31,7 +31,7 @@
             <const name="lower right" value="0"/>
             <const name="upper right" value="1"/>
             <const name="lower left" value="2"/>
-            <const name="uper left" value="3"/>
+            <const name="upper left" value="3"/>
         </field>
     </fields>
 </record>
