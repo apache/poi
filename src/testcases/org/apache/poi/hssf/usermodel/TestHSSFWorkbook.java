@@ -147,9 +147,10 @@ public final class TestHSSFWorkbook extends TestCase {
         // Single chart, two sheets
         b = openSample("44010-SingleChart.xls");
         assertEquals(2, b.getNumberOfSheets());
+        assertEquals("Graph2", b.getSheetName(1));
         s = b.getSheetAt(1);
         assertEquals(0, s.getFirstRowNum());
-        assertEquals(0, s.getLastRowNum());
+        assertEquals(8, s.getLastRowNum());
         
         // Has chart on 1st sheet??
         // FIXME
@@ -166,7 +167,7 @@ public final class TestHSSFWorkbook extends TestCase {
         assertEquals(2, b.getNumberOfSheets());
         s = b.getSheetAt(1);
         assertEquals(0, s.getFirstRowNum());
-        assertEquals(0, s.getLastRowNum());
+        assertEquals(8, s.getLastRowNum());
 
         
         // Two charts, three sheets
@@ -175,10 +176,10 @@ public final class TestHSSFWorkbook extends TestCase {
         
         s = b.getSheetAt(1);
         assertEquals(0, s.getFirstRowNum());
-        assertEquals(0, s.getLastRowNum());
+        assertEquals(8, s.getLastRowNum());
         s = b.getSheetAt(2);
         assertEquals(0, s.getFirstRowNum());
-        assertEquals(0, s.getLastRowNum());
+        assertEquals(8, s.getLastRowNum());
         
         // Has chart on 1st sheet??
         // FIXME
@@ -197,13 +198,13 @@ public final class TestHSSFWorkbook extends TestCase {
         
         s = b.getSheetAt(1);
         assertEquals(0, s.getFirstRowNum());
-        assertEquals(0, s.getLastRowNum());
+        assertEquals(8, s.getLastRowNum());
         s = b.getSheetAt(2);
         assertEquals(0, s.getFirstRowNum());
-        assertEquals(0, s.getLastRowNum());
+        assertEquals(8, s.getLastRowNum());
     }
     
     private static HSSFWorkbook writeRead(HSSFWorkbook b) {
-    	return HSSFTestDataSamples.writeOutAndReadBack(b);
+        return HSSFTestDataSamples.writeOutAndReadBack(b);
     }
 }

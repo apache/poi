@@ -143,8 +143,9 @@ public final class TestHSSFRow extends TestCase {
       try {
         sheet.createRow(-1);
         fail("IndexOutOfBoundsException should have been thrown");
-      } catch (IndexOutOfBoundsException ex) {
+      } catch (IllegalArgumentException e) {
         // expected during successful test
+        assertEquals("Invalid row number (-1) outside allowable range (0..65535)", e.getMessage());
       }
 
       //Test high row bound
@@ -153,8 +154,9 @@ public final class TestHSSFRow extends TestCase {
       try {
         sheet.createRow(65536);
         fail("IndexOutOfBoundsException should have been thrown");
-      } catch (IndexOutOfBoundsException ex) {
+      } catch (IllegalArgumentException e) {
         // expected during successful test
+        assertEquals("Invalid row number (65536) outside allowable range (0..65535)", e.getMessage());
       }
     }
 

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -31,20 +29,18 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-
-public class RowRecord
-    extends Record
-    implements Comparable
-{
-    public final static short sid = 0x208;
+public final class RowRecord extends Record implements Comparable {
+	public final static short sid = 0x208;
     
-    /** The maximum row number that excel can handle (zero bazed) ie 65536 rows is
+    private static final int OPTION_BITS_ALWAYS_SET = 0x0100;
+    private static final int DEFAULT_HEIGHT_BIT = 0x8000;
+
+    /** The maximum row number that excel can handle (zero based) ie 65536 rows is
      *  max number of rows.
      */
     public final static int MAX_ROW_NUMBER = 65535;
     
-    //private short             field_1_row_number;
-    private int             field_1_row_number;
+    private int               field_1_row_number;
     private short             field_2_first_col;
     private short             field_3_last_col;   // plus 1
     private short             field_4_height;
@@ -52,7 +48,8 @@ public class RowRecord
 
     // for generated sheets.
     private short             field_6_reserved;
-    private short             field_7_option_flags;
+    /** 16 bit options flags */
+    private int             field_7_option_flags;
     private static final BitField          outlineLevel  = BitFieldFactory.getInstance(0x07);
 
     // bit 3 reserved
@@ -62,8 +59,17 @@ public class RowRecord
     private static final BitField          formatted     = BitFieldFactory.getInstance(0x80);
     private short             field_8_xf_index;   // only if isFormatted
 
-    public RowRecord()
-    {
+    public RowRecord(int rowNumber) {
+        field_1_row_number = rowNumber;
+        field_2_first_col = -1;
+        field_3_last_col = -1;
+        field_4_height = (short)DEFAULT_HEIGHT_BIT;
+        field_4_height = (short)DEFAULT_HEIGHT_BIT;
+        field_5_optimize = ( short ) 0;
+        field_6_reserved = ( short ) 0;
+        field_7_option_flags = OPTION_BITS_ALWAYS_SET; // seems necessary for outlining
+
+        field_8_xf_index = ( short ) 0xf;
     }
 
     /**
@@ -86,7 +92,6 @@ public class RowRecord
 
     protected void fillFields(RecordInputStream in)
     {
-        //field_1_row_number   = LittleEndian.getShort(data, 0 + offset);
         field_1_row_number   = in.readUShort();
         field_2_first_col    = in.readShort();
         field_3_last_col     = in.readShort();
@@ -156,7 +161,7 @@ public class RowRecord
 
     public void setOptionFlags(short options)
     {
-        field_7_option_flags = options;
+        field_7_option_flags = options | OPTION_BITS_ALWAYS_SET;
     }
 
     // option bitfields
@@ -169,20 +174,18 @@ public class RowRecord
 
     public void setOutlineLevel(short ol)
     {
-        field_7_option_flags =
-            outlineLevel.setShortValue(field_7_option_flags, ol);
+        field_7_option_flags = outlineLevel.setValue(field_7_option_flags, ol);
     }
 
     /**
-     * set whether or not to colapse this row
-     * @param c - colapse or not
+     * set whether or not to collapse this row
+     * @param c - collapse or not
      * @see #setOptionFlags(short)
      */
 
     public void setColapsed(boolean c)
     {
-        field_7_option_flags = colapsed.setShortBoolean(field_7_option_flags,
-                c);
+        field_7_option_flags = colapsed.setBoolean(field_7_option_flags, c);
     }
 
     /**
@@ -193,8 +196,7 @@ public class RowRecord
 
     public void setZeroHeight(boolean z)
     {
-        field_7_option_flags =
-            zeroHeight.setShortBoolean(field_7_option_flags, z);
+        field_7_option_flags = zeroHeight.setBoolean(field_7_option_flags, z);
     }
 
     /**
@@ -205,8 +207,7 @@ public class RowRecord
 
     public void setBadFontHeight(boolean f)
     {
-        field_7_option_flags =
-            badFontHeight.setShortBoolean(field_7_option_flags, f);
+        field_7_option_flags = badFontHeight.setBoolean(field_7_option_flags, f);
     }
 
     /**
@@ -217,8 +218,7 @@ public class RowRecord
 
     public void setFormatted(boolean f)
     {
-        field_7_option_flags = formatted.setShortBoolean(field_7_option_flags,
-                f);
+        field_7_option_flags = formatted.setBoolean(field_7_option_flags, f);
     }
 
     // end bitfields
@@ -293,7 +293,7 @@ public class RowRecord
 
     public short getOptionFlags()
     {
-        return field_7_option_flags;
+        return (short)field_7_option_flags;
     }
 
     // option bitfields
@@ -306,7 +306,7 @@ public class RowRecord
 
     public short getOutlineLevel()
     {
-        return outlineLevel.getShortValue(field_7_option_flags);
+        return (short)outlineLevel.getValue(field_7_option_flags);
     }
 
     /**
@@ -410,7 +410,6 @@ public class RowRecord
     {
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, ( short ) 16);
-        //LittleEndian.putShort(data, 4 + offset, getRowNumber());
         LittleEndian.putShort(data, 4 + offset, ( short ) getRowNumber());
         LittleEndian.putShort(data, 6 + offset, getFirstCol() == -1 ? (short)0 : getFirstCol());
         LittleEndian.putShort(data, 8 + offset, getLastCol() == -1 ? (short)0 : getLastCol());
@@ -419,7 +418,6 @@ public class RowRecord
         LittleEndian.putShort(data, 14 + offset, field_6_reserved);
         LittleEndian.putShort(data, 16 + offset, getOptionFlags());
 
-//    LittleEndian.putShort(data,18,getOutlineLevel());
         LittleEndian.putShort(data, 18 + offset, getXFIndex());
         return getRecordSize();
     }
@@ -469,8 +467,7 @@ public class RowRecord
     }
 
     public Object clone() {
-      RowRecord rec = new RowRecord();
-      rec.field_1_row_number = field_1_row_number;
+      RowRecord rec = new RowRecord(field_1_row_number);
       rec.field_2_first_col = field_2_first_col;
       rec.field_3_last_col = field_3_last_col;
       rec.field_4_height = field_4_height;

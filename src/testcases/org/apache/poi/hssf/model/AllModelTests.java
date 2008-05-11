@@ -15,27 +15,26 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.aggregates;
+package org.apache.poi.hssf.model;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.hssf.record.RowRecord;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
+ * Collects all tests for <tt>org.apache.poi.hssf.model</tt>.
  * 
+ * @author Josh Micich
  */
-public final class TestRowRecordsAggregate extends TestCase {
-    
-    public void testRowGet() {
-        RowRecordsAggregate rra = new RowRecordsAggregate();
-        RowRecord rr = new RowRecord(4);
-        rra.insertRow(rr);
-        rra.insertRow(new RowRecord(1));
-        
-        RowRecord rr1 = rra.getRow(4);
-        
-        assertNotNull(rr1);
-        assertEquals("Row number is 1", 4, rr1.getRowNumber());
-        assertTrue("Row record retrieved is identical ", rr1 == rr);
-    }
+public final class AllModelTests {
+	
+	public static Test suite() {
+		TestSuite result = new TestSuite(AllModelTests.class.getName());
+		result.addTestSuite(TestDrawingManager.class);
+		result.addTestSuite(TestDrawingManager2.class);
+		result.addTestSuite(TestFormulaParser.class);
+		result.addTestSuite(TestFormulaParserEval.class);
+		result.addTestSuite(TestSheet.class);
+		result.addTestSuite(TestSheetAdditional.class);
+		return result;
+	}
 }

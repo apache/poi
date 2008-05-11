@@ -35,19 +35,17 @@ import java.util.TreeMap;
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 
-public class RowRecordsAggregate
-    extends Record
-{
-    int     firstrow = -1;
-    int     lastrow  = -1;
-    Map records  = null;
-    int     size     = 0;
+public final class RowRecordsAggregate extends Record {
+    private int     firstrow = -1;
+    private int     lastrow  = -1;
+    private Map records  = null; // TODO - use a proper key in this map
+    private int     size     = 0;
 
     /** Creates a new instance of ValueRecordsAggregate */
 
     public RowRecordsAggregate()
     {
-        records = new TreeMap();
+        records = new TreeMap();  
     }
 
     public void insertRow(RowRecord row)
@@ -74,15 +72,13 @@ public class RowRecordsAggregate
         records.remove(row);
     }
 
-    public RowRecord getRow(int rownum)
-    {
-		// Row must be between 0 and 65535
-		if(rownum < 0 || rownum > 65535) {
-			throw new IllegalArgumentException("The row number must be between 0 and 65535");
-		}
+    public RowRecord getRow(int rownum) {
+        // Row must be between 0 and 65535
+        if(rownum < 0 || rownum > 65535) {
+            throw new IllegalArgumentException("The row number must be between 0 and 65535");
+        }
 
-        RowRecord row = new RowRecord();
-        row.setRowNumber(rownum);
+        RowRecord row = new RowRecord(rownum);
         return ( RowRecord ) records.get(row);
     }
 
@@ -333,7 +329,7 @@ public class RowRecordsAggregate
 
         // Find the start of the group.
         int startRow = findStartOfRowOutlineGroup( rowNumber );
-        RowRecord rowRecord = (RowRecord) getRow( startRow );
+        RowRecord rowRecord = getRow( startRow );
 
         // Hide all the columns until the end of the group
         int lastRow = writeHidden( rowRecord, startRow, true );
@@ -358,17 +354,8 @@ public class RowRecordsAggregate
      * @return RowRecord created for the passed in row number
      * @see org.apache.poi.hssf.record.RowRecord
      */
-    public static RowRecord createRow(int row)
-    {
-        RowRecord rowrec = new RowRecord();
-
-        //rowrec.setRowNumber(( short ) row);
-        rowrec.setRowNumber(row);
-        rowrec.setHeight(( short ) 0xff);
-        rowrec.setOptimize(( short ) 0x0);
-        rowrec.setOptionFlags(( short ) 0x100);  // seems necessary for outlining
-        rowrec.setXFIndex(( short ) 0xf);
-        return rowrec;
+    public static RowRecord createRow(int rowNumber) {
+        return new RowRecord(rowNumber);
     }
 
     public boolean isRowGroupCollapsed( int row )
@@ -399,12 +386,12 @@ public class RowRecordsAggregate
         int endIdx = findEndOfRowOutlineGroup( idx );
 
         // expand:
-        // colapsed bit must be unset
+        // collapsed bit must be unset
         // hidden bit gets unset _if_ surrounding groups are expanded you can determine
         //   this by looking at the hidden bit of the enclosing group.  You will have
         //   to look at the start and the end of the current group to determine which
         //   is the enclosing group
-        // hidden bit only is altered for this outline level.  ie.  don't uncollapse contained groups
+        // hidden bit only is altered for this outline level.  ie.  don't un-collapse contained groups
         if ( !isRowGroupHiddenByParent( idx ) )
         {
             for ( int i = startIdx; i <= endIdx; i++ )
