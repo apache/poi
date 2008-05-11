@@ -1685,6 +1685,23 @@ public final class HSSFSheet {
      * @param column the column index
      */
     public void autoSizeColumn(short column) {
+    	autoSizeColumn(column, false);
+    }
+    
+    /**
+     * Adjusts the column width to fit the contents.
+     *
+     * This process can be relatively slow on large sheets, so this should
+     *  normally only be called once per column, at the end of your
+     *  processing.
+     *
+     * You can specify whether the content of merged cells should be considered or ignored.  
+     *  Default is to ignore merged cells.
+     *   
+     * @param column the column index
+     * @param useMergedCells whether to use the contents of merged cells when calculating the width of the column
+     */
+    public void autoSizeColumn(short column, boolean useMergedCells) {
         AttributedString str;
         TextLayout layout;
         /**
@@ -1693,13 +1710,13 @@ public final class HSSFSheet {
          * '0' looks to be a good choice.
          */
         char defaultChar = '0';
-
+       
         /**
          * This is the multiple that the font height is scaled by when determining the
          * boundary of rotated text.
          */
         double fontHeightMultiple = 2.0;
-
+       
         FontRenderContext frc = new FontRenderContext(null, true, true);
 
         HSSFWorkbook wb = new HSSFWorkbook(book);
@@ -1711,21 +1728,27 @@ public final class HSSFSheet {
         int defaultCharWidth = (int)layout.getAdvance();
 
         double width = -1;
+        rows:
         for (Iterator it = rowIterator(); it.hasNext();) {
             HSSFRow row = (HSSFRow) it.next();
             HSSFCell cell = row.getCell(column);
 
-            boolean isCellInMergedRegion = false;
-            for (int i = 0 ; i < getNumMergedRegions() && ! isCellInMergedRegion; i++) {
-                isCellInMergedRegion = getMergedRegionAt(i).contains(row.getRowNum(), column);
-            }
+            if (cell == null) continue;
 
-            if (cell == null | isCellInMergedRegion) continue;
+            int colspan = 1;
+            for (int i = 0 ; i < getNumMergedRegions(); i++) {
+                if (getMergedRegionAt(i).contains(row.getRowNum(), column)) {
+                	if (!useMergedCells) {
+                    	// If we're not using merged cells, skip this one and move on to the next. 
+                		continue rows;
+                	}
+                	cell = row.getCell(getMergedRegionAt(i).getColumnFrom());
+                	colspan = 1+ getMergedRegionAt(i).getColumnTo() - getMergedRegionAt(i).getColumnFrom();
+                }
+            }
 
             HSSFCellStyle style = cell.getCellStyle();
             HSSFFont font = wb.getFontAt(style.getFontIndex());
-            //the number of spaces to indent the text in the cell
-            int indention = style.getIndention();
 
             if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
                 HSSFRichTextString rt = cell.getRichStringCellValue();
@@ -1758,9 +1781,9 @@ public final class HSSFSheet {
                         trans.concatenate(
                         AffineTransform.getScaleInstance(1, fontHeightMultiple)
                         );
-                        width = Math.max(width, layout.getOutline(trans).getBounds().getWidth() / defaultCharWidth + indention);
+                        width = Math.max(width, ((layout.getOutline(trans).getBounds().getWidth() / colspan) / defaultCharWidth) + cell.getCellStyle().getIndention());
                     } else {
-                        width = Math.max(width, layout.getBounds().getWidth() / defaultCharWidth + indention);
+                        width = Math.max(width, ((layout.getBounds().getWidth() / colspan) / defaultCharWidth) + cell.getCellStyle().getIndention());
                     }
                 }
             } else {
@@ -1803,19 +1826,19 @@ public final class HSSFSheet {
                         trans.concatenate(
                         AffineTransform.getScaleInstance(1, fontHeightMultiple)
                         );
-                        width = Math.max(width, layout.getOutline(trans).getBounds().getWidth() / defaultCharWidth + indention);
+                        width = Math.max(width, ((layout.getOutline(trans).getBounds().getWidth() / colspan) / defaultCharWidth) + cell.getCellStyle().getIndention());
                     } else {
-                        width = Math.max(width, layout.getBounds().getWidth() / defaultCharWidth + indention);
+                        width = Math.max(width, ((layout.getBounds().getWidth() / colspan) / defaultCharWidth) + cell.getCellStyle().getIndention());
                     }
                 }
             }
 
-            if (width != -1) {
-                if (width > Short.MAX_VALUE) { //calculated width can be greater that Short.MAX_VALUE!
-                     width = Short.MAX_VALUE;
-                }
-                sheet.setColumnWidth(column, (short) (width * 256));
+        }
+        if (width != -1) {
+            if (width > Short.MAX_VALUE) { //width can be bigger that Short.MAX_VALUE!
+            	width = Short.MAX_VALUE;
             }
+            sheet.setColumnWidth(column, (short) (width * 256));
         }
     }
 
