@@ -17,10 +17,9 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
 import junit.framework.TestCase;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
 
 /**
  * Test HSSFRow is okay.
@@ -32,7 +31,7 @@ public final class TestHSSFRow extends TestCase {
     public void testLastAndFirstColumns() {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
-        HSSFRow row = sheet.createRow((short) 0);
+        HSSFRow row = sheet.createRow(0);
         assertEquals(-1, row.getFirstCellNum());
         assertEquals(-1, row.getLastCellNum());
 
@@ -50,7 +49,35 @@ public final class TestHSSFRow extends TestCase {
         assertEquals(4, row.getLastCellNum());
     }
 
-    public void testRemoveCell() throws Exception {
+    /**
+     * Make sure that there is no cross-talk between rows especially with getFirstCellNum and getLastCellNum
+     * This test was added in response to bug report 44987.
+     */
+    public void testBoundsInMultipleRows() {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet();
+        HSSFRow rowA = sheet.createRow(0);
+
+        rowA.createCell((short) 10);
+        rowA.createCell((short) 5);
+        assertEquals(5, rowA.getFirstCellNum());
+        assertEquals(11, rowA.getLastCellNum());
+
+        HSSFRow rowB = sheet.createRow(1);
+        rowB.createCell((short) 15);
+        rowB.createCell((short) 30);
+        assertEquals(15, rowB.getFirstCellNum());
+        assertEquals(31, rowB.getLastCellNum());
+
+        assertEquals(5, rowA.getFirstCellNum());
+        assertEquals(11, rowA.getLastCellNum());
+        rowA.createCell((short) 50);
+        assertEquals(51, rowA.getLastCellNum());
+
+        assertEquals(31, rowB.getLastCellNum());
+    }
+
+    public void testRemoveCell() {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
         HSSFRow row = sheet.createRow((short) 0);
@@ -76,16 +103,11 @@ public final class TestHSSFRow extends TestCase {
         assertEquals(0, data[6]);
         assertEquals(0, data[8]);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        workbook.write(baos);
-        baos.close();
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(baos.toByteArray());
-        workbook = new HSSFWorkbook(inputStream);
+        workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
         sheet = workbook.getSheetAt(0);
-        inputStream.close();
 
-        assertEquals(-1, sheet.getRow((short) 0).getLastCellNum());
-        assertEquals(-1, sheet.getRow((short) 0).getFirstCellNum());
+        assertEquals(-1, sheet.getRow(0).getLastCellNum());
+        assertEquals(-1, sheet.getRow(0).getFirstCellNum());
     }
 
     public void testMoveCell() {
