@@ -318,9 +318,9 @@ public class TextRun
 	 *  touch the stylings. 
 	 */
 	private void storeText(String s) {
-		// Remove a single trailing \n, as there is an implicit one at the
+		// Remove a single trailing \r, as there is an implicit one at the
 		//  end of every record
-		if(s.endsWith("\n")) {
+		if(s.endsWith("\r")) {
 			s = s.substring(0, s.length()-1);
 		}
 		
@@ -457,7 +457,7 @@ public class TextRun
 	 *  as the the first character has. 
 	 * If you care about styling, do setText on a RichTextRun instead 
 	 */
-	public synchronized void setText(String s) {
+	public synchronized void setRawText(String s) {
 		// Save the new text to the atoms
 		storeText(s);
 		RichTextRun fst = _rtRuns[0];
@@ -487,7 +487,16 @@ public class TextRun
 
 	}
 
-	/**
+    /**
+     * Changes the text.
+     * Converts '\r' into '\n'
+     */
+    public synchronized void setText(String s) {
+        String text = normalize(s);
+        setRawText(text);
+    }
+
+    /**
 	 * Ensure a StyleTextPropAtom is present for this run, 
 	 *  by adding if required. Normally for internal TextRun use.
 	 */
@@ -665,5 +674,13 @@ public class TextRun
         }
         return null;
 
+    }
+
+    /**
+     * Returns a new string with line breaks converted into internal ppt representation
+     */
+    public String normalize(String s){
+        String ns = s.replaceAll("\\r?\\n", "\r");
+        return ns;
     }
 }

@@ -37,14 +37,14 @@ where $TAG is the release tag, for example, REL_3_1_BETA1
   3. Checkout the tagged version
 {code}
 cd tags
-svn checkout https://svn.apache.org/repos/asf/poi/tags/TAG
+svn checkout https://svn.apache.org/repos/asf/poi/tags/$TAG
 {code}
 
   4. Merge (if required)
 
 {code}
 cd $TAG
-$ svn merge https://svn.apache.org/repos/asf/poi/tags/TAG \
+$ svn merge https://svn.apache.org/repos/asf/poi/tags/$TAG \
 https://svn.apache.org/repos/asf/poi/trunk
 {code}
 
