@@ -20,6 +20,7 @@ import org.apache.poi.util.LittleEndian;
 
 import java.io.OutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * The special info runs contained in this text.
@@ -81,5 +82,119 @@ public class TextSpecInfoAtom extends RecordAtom {
      */
     public void setTextSize(int size){
         LittleEndian.putInt(_data, 0, size);
+    }
+
+    /**
+     * Reset the content to one info run with the default values
+     * @param size  the site of parent text
+     */
+    public void reset(int size){
+        _data = new byte[10];
+        // 01 00 00 00
+        LittleEndian.putInt(_data, 0, size);
+        // 01 00 00 00
+        LittleEndian.putInt(_data, 4, 1); //mask
+        // 00 00
+        LittleEndian.putShort(_data, 8, (short)0); //langId
+
+        // Update the size (header bytes 5-8)
+        LittleEndian.putInt(_header, 4, _data.length);
+    }
+
+    /**
+     * Get the number of characters covered by this records
+     *
+     * @return the number of characters covered by this records
+     */
+    public int getCharactersCovered(){
+        int covered = 0;
+        TextSpecInfoRun[] runs = getTextSpecInfoRuns();
+        for (int i = 0; i < runs.length; i++) covered += runs[i].len;
+        return covered;
+    }
+
+    public TextSpecInfoRun[] getTextSpecInfoRuns(){
+        ArrayList lst = new ArrayList();
+        int pos = 0;
+        int[] bits = {1, 0, 2};
+        while(pos < _data.length) {
+            TextSpecInfoRun run = new TextSpecInfoRun();
+            run.len = LittleEndian.getInt(_data, pos); pos += 4;
+            run.mask = LittleEndian.getInt(_data, pos); pos += 4;
+            for (int i = 0; i < bits.length; i++) {
+                if((run.mask & 1 << bits[i]) != 0){
+                    switch (bits[i]){
+                        case 0:
+                            run.spellInfo = LittleEndian.getShort(_data, pos); pos += 2;
+                            break;
+                        case 1:
+                            run.langId = LittleEndian.getShort(_data, pos); pos += 2;
+                            break;
+                        case 2:
+                            run.altLangId = LittleEndian.getShort(_data, pos); pos += 2;
+                            break;
+                    }
+                }
+            }
+            lst.add(run);
+        }
+        return (TextSpecInfoRun[])lst.toArray(new TextSpecInfoRun[lst.size()]);
+
+    }
+
+    public static class TextSpecInfoRun {
+        //Length of special info run.
+        protected int len;
+
+        //Special info mask of this run;
+        protected int mask;
+
+        // info fields as indicated by the mask.
+        // -1 means the bit is not set
+        protected short spellInfo = -1;
+        protected short langId = -1;
+        protected short altLangId = -1;
+
+        /**
+         * Spelling status of this text. See Spell Info table below.
+         *
+         * <p>Spell Info Types:</p>
+         * <li>0    Unchecked
+         * <li>1    Previously incorrect, needs rechecking
+         * <li>2    Correct
+         * <li>3    Incorrect
+         *
+         * @return Spelling status of this text
+         */
+        public short getSpellInfo(){
+            return spellInfo;
+        }
+
+        /**
+         * Windows LANGID for this text.
+         *
+         * @return Windows LANGID for this text.
+         */
+        public short getLangId(){
+            return spellInfo;
+        }
+
+        /**
+         * Alternate Windows LANGID of this text;
+         * must be a valid non-East Asian LANGID if the text has an East Asian language,
+         * otherwise may be an East Asian LANGID or language neutral (zero).
+         *
+         * @return  Alternate Windows LANGID of this text
+         */
+        public short getAltLangId(){
+            return altLangId;
+        }
+
+        /**
+         * @return Length of special info run.
+         */
+        public int length(){
+            return len;
+        }
     }
 }

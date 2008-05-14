@@ -45,7 +45,6 @@ public class TextRun
 	protected TextBytesAtom  _byteAtom;
 	protected TextCharsAtom  _charAtom;
 	protected StyleTextPropAtom _styleAtom;
-    protected TextSpecInfoAtom  _specAtom;
 	protected boolean _isUnicode;
 	protected RichTextRun[] _rtRuns;
 	private SlideShow slideShow;
@@ -361,6 +360,18 @@ public class TextRun
 				_isUnicode = true;
 			}
 		}
+        /**
+         * If TextSpecInfoAtom is present, we must update the text size in it,
+         * otherwise the ppt will be corrupted
+         */
+        if(_records != null) for (int i = 0; i < _records.length; i++) {
+            if(_records[i] instanceof TextSpecInfoAtom){
+                TextSpecInfoAtom specAtom = (TextSpecInfoAtom)_records[i];
+                if((s.length() + 1) != specAtom.getCharactersCovered()){
+                    specAtom.reset(s.length() + 1);
+                }
+            }
+        }
 	}
 	
 	/**
@@ -474,17 +485,6 @@ public class TextRun
 			_rtRuns[0] = new RichTextRun(this,0,s.length());
 		}
 
-        /**
-         * If TextSpecInfoAtom is present, we must update the text size,
-         * otherwise the ppt will be corrupted
-         */
-        if(_records != null) for (int i = 0; i < _records.length; i++) {
-            if(_records[i] instanceof TextSpecInfoAtom){
-                TextSpecInfoAtom specAtom = (TextSpecInfoAtom)_records[i];
-                specAtom.setTextSize(s.length());
-            }
-
-        }
 	}
 
 	/**
