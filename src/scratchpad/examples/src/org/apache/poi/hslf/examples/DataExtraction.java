@@ -69,16 +69,9 @@ public class DataExtraction {
                     String name = ole.getInstanceName();
                     if ("Worksheet".equals(name)) {
 
-                        //save xls on disk
-                        FileOutputStream out = new FileOutputStream(name + "-("+(j)+").xls");
-                        InputStream dis = data.getData();
-                        byte[] chunk = new byte[2048];
-                        int count;
-                        while ((count = dis.read(chunk)) >= 0) {
-                          out.write(chunk,0,count);
-                        }
-                        is.close();
-                        out.close();
+                        //read xls
+                        HSSFWorkbook wb = new HSSFWorkbook(data.getData());
+
                     } else if ("Document".equals(name)) {
                         HWPFDocument doc = new HWPFDocument(data.getData());
                         //read the word document
@@ -93,7 +86,15 @@ public class DataExtraction {
                         doc.write(out);
                         out.close();
                      }  else {
-                        System.err.println("Processing " + name);
+                        FileOutputStream out = new FileOutputStream(ole.getProgID() + "-"+(j+1)+".dat");
+                        InputStream dis = data.getData();
+                        byte[] chunk = new byte[2048];
+                        int count;
+                        while ((count = dis.read(chunk)) >= 0) {
+                          out.write(chunk,0,count);
+                        }
+                        is.close();
+                        out.close();
                     }
                 }
 
