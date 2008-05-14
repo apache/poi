@@ -119,7 +119,7 @@ public class RecordTypes {
     public static final Type RecolorInfoAtom = new Type(4071,null);
     public static final Type ExQuickTimeMovie = new Type(4074,null);
     public static final Type ExQuickTimeMovieData = new Type(4075,null);
-    public static final Type ExControl = new Type(4078,null);
+    public static final Type ExControl = new Type(4078,ExControl.class);
     public static final Type SlideListWithText = new Type(4080,SlideListWithText.class);
     public static final Type InteractiveInfo = new Type(4082,InteractiveInfo.class);
     public static final Type InteractiveInfoAtom = new Type(4083,InteractiveInfoAtom.class);

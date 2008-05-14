@@ -36,7 +36,7 @@ public class ExEmbed extends RecordContainer {
     private byte[] _header;
 
     // Links to our more interesting children
-    private ExEmbedAtom embedAtom;
+    private RecordAtom embedAtom;
     private ExOleObjAtom oleObjAtom;
     private CString menuName;
     private CString progId;
@@ -91,11 +91,7 @@ public class ExEmbed extends RecordContainer {
     private void findInterestingChildren() {
 
         // First child should be the ExHyperlinkAtom
-        if(_children[0] instanceof ExEmbedAtom) {
-            embedAtom = (ExEmbedAtom)_children[0];
-        } else {
-            logger.log(POILogger.ERROR, "First child record wasn't a ExEmbedAtom, was of type " + _children[0].getRecordType());
-        }
+        embedAtom = getEmbedAtom(_children);
 
         // Second child should be the ExOleObjAtom
         if (_children[1] instanceof ExOleObjAtom) {
@@ -115,6 +111,16 @@ public class ExEmbed extends RecordContainer {
         }
     }
 
+    protected RecordAtom getEmbedAtom(Record[] children){
+        RecordAtom atom = null;
+        if(_children[0] instanceof ExEmbedAtom) {
+            atom = (ExEmbedAtom)_children[0];
+        } else {
+            logger.log(POILogger.ERROR, "First child record wasn't a ExEmbedAtom, was of type " + _children[0].getRecordType());
+        }
+        return atom;
+    }
+
     /**
      * Gets the {@link ExEmbedAtom}.
      *
@@ -122,7 +128,7 @@ public class ExEmbed extends RecordContainer {
      */
     public ExEmbedAtom getExEmbedAtom()
     {
-        return embedAtom;
+        return (ExEmbedAtom)embedAtom;
     }
 
     /**

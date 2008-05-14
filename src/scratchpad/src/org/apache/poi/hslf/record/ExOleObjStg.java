@@ -17,11 +17,9 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.zip.InflaterInputStream;
+import java.util.zip.DeflaterOutputStream;
 
 import org.apache.poi.util.LittleEndian;
 
@@ -90,6 +88,15 @@ public class ExOleObjStg extends RecordAtom implements PersistRecord {
     public InputStream getData() {
         InputStream compressedStream = new ByteArrayInputStream(_data, 4, _data.length);
         return new InflaterInputStream(compressedStream);
+    }
+
+    public void setData(byte[] data) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream(data.length);
+        DeflaterOutputStream def = new DeflaterOutputStream(out);
+        def.write(data, 0, data.length);
+        def.finish();
+        _data = out.toByteArray();
+        LittleEndian.putInt(_header, 4, _data.length);
     }
 
     /**
