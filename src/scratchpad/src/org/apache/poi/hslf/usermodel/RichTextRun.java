@@ -162,10 +162,18 @@ public class RichTextRun {
 	 * Change the text
 	 */
 	public void setText(String text) {
-		length = text.length();
-		parentRun.changeTextInRichTextRun(this,text);
+        String s = parentRun.normalize(text);
+        setRawText(s);
 	}
 	
+    /**
+     * Change the text
+     */
+    public void setRawText(String text) {
+        length = text.length();
+        parentRun.changeTextInRichTextRun(this,text);
+    }
+
 	/**
 	 * Tells the RichTextRun its new position in the parent TextRun
 	 * @param startAt
