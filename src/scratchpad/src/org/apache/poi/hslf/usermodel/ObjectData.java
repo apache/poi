@@ -17,6 +17,7 @@
 package org.apache.poi.hslf.usermodel;
 
 import java.io.InputStream;
+import java.io.IOException;
 
 import org.apache.poi.hslf.record.ExOleObjStg;
 
@@ -47,6 +48,15 @@ public class ObjectData {
      */
     public InputStream getData() {
         return storage.getData();
+    }
+
+    /**
+     * Sets the embedded data.
+     *
+     * @param data the embedded data.
+     */
+     public void setData(byte[] data) throws IOException {
+        storage.setData(data);    
     }
 
     /**

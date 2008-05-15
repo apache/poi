@@ -90,8 +90,18 @@ public class ExOleObjStg extends RecordAtom implements PersistRecord {
         return new InflaterInputStream(compressedStream);
     }
 
-    public void setData(byte[] data) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream(data.length);
+    /**
+     * Sets the embedded data.
+     *
+     * @param data the embedded data.
+     */
+     public void setData(byte[] data) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        //first four bytes is the length of the raw data
+        byte[] b = new byte[4];
+        LittleEndian.putInt(b, data.length);
+        out.write(b);
+
         DeflaterOutputStream def = new DeflaterOutputStream(out);
         def.write(data, 0, data.length);
         def.finish();
