@@ -2131,6 +2131,9 @@ public final class Sheet implements Model {
     return header;
     }
 
+    public WindowTwoRecord getWindowTwo() {
+        return windowTwo;
+    }
     /**
      * Sets the HeaderRecord.
      * @param newHeader The new HeaderRecord for the sheet.

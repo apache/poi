@@ -978,12 +978,33 @@ public final class HSSFSheet {
     }
 
     /**
+     * Note - this is not the same as whether the sheet is focused (isActive)
+     * @return <code>true</code> if this sheet is currently selected
+     */
+    public boolean isSelected() {
+        return getSheet().getWindowTwo().getSelected();
+    }
+    /**
      * Sets whether sheet is selected.
      * @param sel Whether to select the sheet or deselect the sheet.
      */
     public void setSelected( boolean sel )
     {
-        getSheet().setSelected( sel );
+        getSheet().getWindowTwo().setSelected(sel);
+    }
+    /**
+     * @return <code>true</code> if this sheet is currently focused
+     */
+    public boolean isActive() {
+        return getSheet().getWindowTwo().isActive();
+    }
+    /**
+     * Sets whether sheet is selected.
+     * @param sel Whether to select the sheet or deselect the sheet.
+     */
+    public void setActive(boolean sel )
+    {
+        getSheet().getWindowTwo().setActive(sel);
     }
 
     /**
