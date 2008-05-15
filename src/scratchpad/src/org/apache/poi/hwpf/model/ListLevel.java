@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,22 +15,20 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hwpf.model;
+
+import java.util.Arrays;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
 
-import org.apache.poi.hwpf.usermodel.CharacterProperties;
-import org.apache.poi.hwpf.usermodel.ParagraphProperties;
-
-import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
-import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
-
-import java.util.Arrays;
-
-public class ListLevel
+/**
+ * 
+ */
+public final class ListLevel
 {
+  private static final int RGBXCH_NUMS_SIZE = 9;
+
   private int _iStartAt;
   private byte _nfc;
   private byte _info;
@@ -70,7 +67,7 @@ public class ListLevel
     _grpprlPapx = new byte[0];
     _grpprlChpx = new byte[0];
     _numberText = new char[0];
-    _rgbxchNums = new byte[9];
+    _rgbxchNums = new byte[RGBXCH_NUMS_SIZE];
 
     if (numbered)
     {
@@ -90,12 +87,11 @@ public class ListLevel
     _nfc = buf[offset++];
     _info = buf[offset++];
 
-    _rgbxchNums = new byte[9];
-    for (int x = 0; x < 9; x++)
-    {
-      _rgbxchNums[x] = buf[offset++];
-    }
-    _ixchFollow = buf[offset++];
+    _rgbxchNums = new byte[RGBXCH_NUMS_SIZE];
+    System.arraycopy(buf, offset, _rgbxchNums, 0, RGBXCH_NUMS_SIZE);
+    offset += RGBXCH_NUMS_SIZE;
+  
+   _ixchFollow = buf[offset++];
     _dxaSpace = LittleEndian.getInt(buf, offset);
     offset += LittleEndian.INT_SIZE;
     _dxaIndent = LittleEndian.getInt(buf, offset);
@@ -207,8 +203,8 @@ public class ListLevel
     offset += LittleEndian.INT_SIZE;
     buf[offset++] = _nfc;
     buf[offset++] = _info;
-    System.arraycopy(_rgbxchNums, 0, buf, offset, _rgbxchNums.length);
-    offset += _rgbxchNums.length;
+    System.arraycopy(_rgbxchNums, 0, buf, offset, RGBXCH_NUMS_SIZE);
+    offset += RGBXCH_NUMS_SIZE;
     buf[offset++] = _ixchFollow;
     LittleEndian.putInt(buf, offset, _dxaSpace);
     offset += LittleEndian.INT_SIZE;
@@ -225,23 +221,33 @@ public class ListLevel
     System.arraycopy(_grpprlPapx, 0, buf, offset, _cbGrpprlPapx);
     offset += _cbGrpprlPapx;
 
-    LittleEndian.putShort(buf, offset, (short)_numberText.length);
-    offset += LittleEndian.SHORT_SIZE;
-    for (int x = 0; x < _numberText.length; x++)
-    {
-      LittleEndian.putShort(buf, offset, (short)_numberText[x]);
+    if (_numberText == null) {
+      // TODO - write junit to test this flow
+      LittleEndian.putUShort(buf, offset, 0);
+    } else {
+      LittleEndian.putUShort(buf, offset, _numberText.length);
       offset += LittleEndian.SHORT_SIZE;
+      for (int x = 0; x < _numberText.length; x++)
+      {
+        LittleEndian.putUShort(buf, offset, _numberText[x]);
+        offset += LittleEndian.SHORT_SIZE;
+      }
     }
     return buf;
   }
   public int getSizeInBytes()
   {
-      if (_numberText!=null)
-      {
-            return 28 + _cbGrpprlChpx + _cbGrpprlPapx + (_numberText.length * LittleEndian.SHORT_SIZE) + 2;
-      } else {
-          return 28 + _cbGrpprlChpx + _cbGrpprlPapx  + 2;
-      }
+    int result =
+        6 // int byte byte
+        + RGBXCH_NUMS_SIZE
+        + 13 // byte int int byte byte short
+        + _cbGrpprlChpx 
+        + _cbGrpprlPapx
+        + 2; // numberText length
+    if (_numberText != null) {
+      result += _numberText.length * LittleEndian.SHORT_SIZE;
+    }
+    return result;
   }
 
 }
