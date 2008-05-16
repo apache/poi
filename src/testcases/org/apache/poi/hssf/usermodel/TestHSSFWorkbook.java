@@ -232,11 +232,11 @@ public final class TestHSSFWorkbook extends TestCase {
         // Demonstrate bug 44525:
         // Well... not quite, since isActive + isSelected were also added in the same bug fix
         if (sheet1.isSelected()) {
-            throw new AssertionFailedError("Identified bug 44525 a");
+            throw new AssertionFailedError("Identified bug 44523 a");
         }
         wb.setActiveSheet(1);
         if (sheet1.isActive()) {
-            throw new AssertionFailedError("Identified bug 44525 b");
+            throw new AssertionFailedError("Identified bug 44523 b");
         }
 
         confirmActiveSelected(sheet1, false);
