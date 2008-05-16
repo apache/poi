@@ -140,7 +140,7 @@ public class HSSFWorkbook extends POIDocument
 
     protected HSSFWorkbook( Workbook book )
     {
-    	super(null, null);
+        super(null, null);
         workbook = book;
         sheets = new ArrayList( INITIAL_CAPACITY );
         names = new ArrayList( INITIAL_CAPACITY );
@@ -754,14 +754,54 @@ public class HSSFWorkbook extends POIDocument
     }
 
     /**
-     * removes sheet at the given index
+     * Removes sheet at the given index.<p/>
+     * 
+     * Care must be taken if the removed sheet is the currently active or only selected sheet in 
+     * the workbook. There are a few situations when Excel must have a selection and/or active 
+     * sheet. (For example when printing - see Bug 40414).<br/>
+     * 
+     * This method makes sure that if the removed sheet was active, another sheet will become
+     * active in its place.  Furthermore, if the removed sheet was the only selected sheet, another
+     * sheet will become selected.  The newly active/selected sheet will have the same index, or 
+     * one less if the removed sheet was the last in the workbook.
+     * 
      * @param index of the sheet  (0-based)
      */
+    public void removeSheetAt(int index) {
+        validateSheetIndex(index);
+        boolean wasActive = getSheetAt(index).isActive();
+        boolean wasSelected = getSheetAt(index).isSelected();
 
-    public void removeSheetAt(int index)
-    {
         sheets.remove(index);
         workbook.removeSheet(index);
+
+        // set the remaining active/selected sheet
+        int nSheets = sheets.size();
+        if (nSheets < 1) {
+            // nothing more to do if there are no sheets left
+            return;
+        }
+        // the index of the closest remaining sheet to the one just deleted
+        int newSheetIndex = index;
+        if (newSheetIndex >= nSheets) {
+            newSheetIndex = nSheets-1;
+        }
+        if (wasActive) {
+            setActiveSheet(newSheetIndex);
+        }
+
+        if (wasSelected) {
+            boolean someOtherSheetIsStillSelected = false;
+            for (int i =0; i < nSheets; i++) {
+                if (getSheetAt(i).isSelected()) {
+                    someOtherSheetIsStillSelected = true;
+                    break;
+                }
+            }
+            if (!someOtherSheetIsStillSelected) {
+                setSelectedTab(newSheetIndex);
+            }
+        }
     }
 
     /**
