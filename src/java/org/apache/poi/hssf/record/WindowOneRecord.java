@@ -57,8 +57,8 @@ public class WindowOneRecord
         BitFieldFactory.getInstance(0x20);                                        // display tabs at the bottom
 
     // all the rest are "reserved"
-    private short                 field_6_selected_tab;
-    private short                 field_7_displayed_tab;
+    private int                   field_6_active_sheet;
+    private int                   field_7_first_visible_tab;
     private short                 field_8_num_selected_tabs;
     private short                 field_9_tab_width_ratio;
 
@@ -91,8 +91,8 @@ public class WindowOneRecord
         field_3_width             = in.readShort();
         field_4_height            = in.readShort();
         field_5_options           = in.readShort();
-        field_6_selected_tab      = in.readShort();
-        field_7_displayed_tab     = in.readShort();
+        field_6_active_sheet      = in.readShort();
+        field_7_first_visible_tab     = in.readShort();
         field_8_num_selected_tabs = in.readShort();
         field_9_tab_width_ratio   = in.readShort();
     }
@@ -202,24 +202,33 @@ public class WindowOneRecord
 
     // end bitfields
 
+    public void setActiveSheetIndex(int index) {
+    	field_6_active_sheet = index;
+	}
     /**
-     * set the selected tab number
-     * @param s  tab number
+     * deprecated May 2008
+     * @deprecated - Misleading name - use setActiveSheetIndex() 
      */
-
     public void setSelectedTab(short s)
     {
-        field_6_selected_tab = s;
+        setActiveSheetIndex(s);
     }
 
     /**
-     * set the displayed tab number
-     * @param t  tab number
+     * Sets the first visible sheet in the worksheet tab-bar.  This method does <b>not</b>
+     *  hide, select or focus sheets.  It just sets the scroll position in the tab-bar.
+     * @param t the sheet index of the tab that will become the first in the tab-bar
      */
+    public void setFirstVisibleTab(int t) {
+        field_7_first_visible_tab = t;
+    }
 
-    public void setDisplayedTab(short t)
-    {
-        field_7_displayed_tab = t;
+    /**
+     * deprecated May 2008
+     * @deprecated - Misleading name - use setFirstVisibleTab() 
+     */
+    public void setDisplayedTab(short t) {
+        setFirstVisibleTab(t);
     }
 
     /**
@@ -347,24 +356,36 @@ public class WindowOneRecord
 
     // end options bitfields
 
+    
     /**
-     * get the selected tab number
-     * @return Tab number
+     * @return the index of the currently displayed sheet 
      */
-
+    public int getActiveSheetIndex() {
+    	return field_6_active_sheet;
+    }
+    /**
+     * deprecated May 2008
+     * @deprecated - Misleading name - use getActiveSheetIndex() 
+     */
     public short getSelectedTab()
     {
-        return field_6_selected_tab;
+        return (short) getActiveSheetIndex();
     }
 
     /**
-     * get the displayed tab number
-     * @return Tab number
+     * @return the first visible sheet in the worksheet tab-bar. 
+     * I.E. the scroll position of the tab-bar.
      */
-
+    public int getFirstVisibleTab() {
+        return field_7_first_visible_tab;
+    }
+    /**
+     * deprecated May 2008
+     * @deprecated - Misleading name - use getFirstVisibleTab() 
+     */
     public short getDisplayedTab()
     {
-        return field_7_displayed_tab;
+        return (short) getFirstVisibleTab();
     }
 
     /**
@@ -412,10 +433,10 @@ public class WindowOneRecord
             .append(getDisplayVerticalScrollbar()).append("\n");
         buffer.append("        .tabs        = ").append(getDisplayTabs())
             .append("\n");
-        buffer.append("    .selectedtab     = ")
-            .append(Integer.toHexString(getSelectedTab())).append("\n");
-        buffer.append("    .displayedtab    = ")
-            .append(Integer.toHexString(getDisplayedTab())).append("\n");
+        buffer.append("    .activeSheet     = ")
+            .append(Integer.toHexString(getActiveSheetIndex())).append("\n");
+        buffer.append("    .firstVisibleTab    = ")
+            .append(Integer.toHexString(getFirstVisibleTab())).append("\n");
         buffer.append("    .numselectedtabs = ")
             .append(Integer.toHexString(getNumSelectedTabs())).append("\n");
         buffer.append("    .tabwidthratio   = ")
@@ -434,8 +455,8 @@ public class WindowOneRecord
         LittleEndian.putShort(data, 8 + offset, getWidth());
         LittleEndian.putShort(data, 10 + offset, getHeight());
         LittleEndian.putShort(data, 12 + offset, getOptions());
-        LittleEndian.putShort(data, 14 + offset, getSelectedTab());
-        LittleEndian.putShort(data, 16 + offset, getDisplayedTab());
+        LittleEndian.putUShort(data, 14 + offset, getActiveSheetIndex());
+        LittleEndian.putUShort(data, 16 + offset, getFirstVisibleTab());
         LittleEndian.putShort(data, 18 + offset, getNumSelectedTabs());
         LittleEndian.putShort(data, 20 + offset, getTabWidthRatio());
         return getRecordSize();

@@ -67,7 +67,7 @@ public final class TestCountFuncs extends TestCase {
 		args = new Eval[] {
 			EvalFactory.createAreaEval("D1:F5", 3, 5),	// 15
 			EvalFactory.createRefEval("A1"),	
-			EvalFactory.createAreaEval("A1:F6", 7, 6),	// 42
+			EvalFactory.createAreaEval("A1:G6", 7, 6),	// 42
 			new NumberEval(0),
 		};
 		confirmCountA(59, args);
@@ -87,7 +87,7 @@ public final class TestCountFuncs extends TestCase {
 				BoolEval.TRUE,
 				BlankEval.INSTANCE,
 		};
-		range = createAreaEval("A1:B2", values);
+		range = createAreaEval("A1:B3", values);
 		confirmCountIf(2, range, BoolEval.TRUE);
 		
 		// when criteria is numeric
@@ -98,9 +98,8 @@ public final class TestCountFuncs extends TestCase {
 				new NumberEval(2),	
 				new NumberEval(2),	
 				BoolEval.TRUE,
-				BlankEval.INSTANCE,
 		};
-		range = createAreaEval("A1:B2", values);
+		range = createAreaEval("A1:B3", values);
 		confirmCountIf(3, range, new NumberEval(2));
 		// note - same results when criteria is a string that parses as the number with the same value
 		confirmCountIf(3, range, new StringEval("2.00"));

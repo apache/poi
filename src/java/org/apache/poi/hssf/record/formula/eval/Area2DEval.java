@@ -22,79 +22,11 @@ import org.apache.poi.hssf.record.formula.Ptg;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *   
+ * 
  */
-public final class Area2DEval implements AreaEval {
-// TODO -refactor with Area3DEval
-    private final AreaPtg _delegate;
+public final class Area2DEval extends AreaEvalBase {
 
-    private final ValueEval[] _values;
-
-    public Area2DEval(Ptg ptg, ValueEval[] values) {
-        if(ptg == null) {
-            throw new IllegalArgumentException("ptg must not be null");
-        }
-        if(values == null) {
-            throw new IllegalArgumentException("values must not be null");
-        }
-        for(int i=values.length-1; i>=0; i--) {
-            if(values[i] == null) {
-                throw new IllegalArgumentException("value array elements must not be null");
-            }
-        }
-        // TODO - check size of array vs size of AreaPtg
-        _delegate = (AreaPtg) ptg;
-        _values = values;
-    }
-
-    public int getFirstColumn() {
-        return _delegate.getFirstColumn();
-    }
-
-    public int getFirstRow() {
-        return _delegate.getFirstRow();
-    }
-
-    public int getLastColumn() {
-        return _delegate.getLastColumn();
-    }
-
-    public int getLastRow() {
-        return _delegate.getLastRow();
-    }
-
-    public ValueEval[] getValues() {
-        return _values;
-    }
-    
-    public ValueEval getValueAt(int row, int col) {
-        ValueEval retval;
-        int index = ((row-getFirstRow())*(getLastColumn()-getFirstColumn()+1))+(col-getFirstColumn());
-        if (index <0 || index >= _values.length)
-            retval = ErrorEval.VALUE_INVALID;
-        else 
-            retval = _values[index];
-        return retval;
-    }
-    
-    public boolean contains(int row, int col) {
-        return (getFirstRow() <= row) && (getLastRow() >= row) 
-            && (getFirstColumn() <= col) && (getLastColumn() >= col);
-    }
-    
-    public boolean containsRow(int row) {
-        return (getFirstRow() <= row) && (getLastRow() >= row);
-    }
-    
-    public boolean containsColumn(short col) {
-        return (getFirstColumn() <= col) && (getLastColumn() >= col);
-    }
-    
-    public boolean isColumn() {
-        return _delegate.getFirstColumn() == _delegate.getLastColumn();
-    }
-
-    public boolean isRow() {
-        return _delegate.getFirstRow() == _delegate.getLastRow();
-    }
+	public Area2DEval(Ptg ptg, ValueEval[] values) {
+		super((AreaPtg) ptg, values);
+	}
 }

@@ -76,6 +76,7 @@ public class ShapeFactory {
             case ShapeTypes.TextBox:
                 shape = new TextBox(spContainer, parent);
                 break;
+            case ShapeTypes.HostControl: 
             case ShapeTypes.PictureFrame: {
                 EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(spContainer, EscherOptRecord.RECORD_ID);
                 EscherProperty prop = Shape.getEscherProperty(opt, EscherProperties.BLIP__PICTUREID);

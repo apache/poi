@@ -220,8 +220,7 @@ public class FormulaEvaluator {
                     cell.setCellValue(cv.getBooleanValue());
                     break;
                 case Cell.CELL_TYPE_ERROR:
-                    cell.setCellType(Cell.CELL_TYPE_ERROR);
-                    cell.setCellValue(cv.getErrorValue());
+                    cell.setCellErrorValue(cv.getErrorValue());
                     break;
                 case Cell.CELL_TYPE_NUMERIC:
                     cell.setCellType(Cell.CELL_TYPE_NUMERIC);

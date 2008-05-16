@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.apache.poi.hssf.model.Sheet;
-import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.ss.usermodel.Cell;
@@ -39,11 +38,9 @@ public final class HSSFRow implements Comparable, Row {
 
     // used for collections
     public final static int INITIAL_CAPACITY = 5;
-    //private short rowNum;
+
     private int rowNum;
     private HSSFCell[] cells=new HSSFCell[INITIAL_CAPACITY];
-//    private short firstcell = -1;
-//    private short lastcell = -1;
 
     /**
      * reference to low level representation
@@ -63,7 +60,8 @@ public final class HSSFRow implements Comparable, Row {
 
     private Sheet sheet;
 
-    protected HSSFRow()
+    // TODO - ditch this constructor
+    HSSFRow()
     {
     }
 
@@ -75,18 +73,12 @@ public final class HSSFRow implements Comparable, Row {
      * @param rowNum the row number of this row (0 based)
      * @see org.apache.poi.hssf.usermodel.HSSFSheet#createRow(int)
      */
-
-    //protected HSSFRow(Workbook book, Sheet sheet, short rowNum)
-    protected HSSFRow(HSSFWorkbook book, Sheet sheet, int rowNum)
+    HSSFRow(HSSFWorkbook book, Sheet sheet, int rowNum)
     {
         this.rowNum = rowNum;
         this.book = book;
         this.sheet = sheet;
-        row = new RowRecord();
-        row.setOptionFlags( (short)0x100 );   // seems necessary for outlining to work.  
-        row.setHeight((short) 0xff);
-        row.setLastCol((short) -1);
-        row.setFirstCol((short) -1);
+        row = new RowRecord(rowNum);
 
         setRowNum(rowNum);
     }
@@ -100,8 +92,7 @@ public final class HSSFRow implements Comparable, Row {
      * @param record the low level api object this row should represent
      * @see org.apache.poi.hssf.usermodel.HSSFSheet#createRow(int)
      */
-
-    protected HSSFRow(HSSFWorkbook book, Sheet sheet, RowRecord record)
+    HSSFRow(HSSFWorkbook book, Sheet sheet, RowRecord record)
     {
         this.book = book;
         this.sheet = sheet;
@@ -219,12 +210,11 @@ public final class HSSFRow implements Comparable, Row {
      * @param rowNum  the row number (0-based)
      * @throws IndexOutOfBoundsException if the row number is not within the range 0-65535.
      */
-
-    //public void setRowNum(short rowNum)
-    public void setRowNum(int rowNum)
-    {
-        if ((rowNum < 0) || (rowNum > RowRecord.MAX_ROW_NUMBER))
-          throw new IndexOutOfBoundsException("Row number must be between 0 and "+RowRecord.MAX_ROW_NUMBER+", was <"+rowNum+">");
+    public void setRowNum(int rowNum) {
+        if ((rowNum < 0) || (rowNum > RowRecord.MAX_ROW_NUMBER)) {
+          throw new IllegalArgumentException("Invalid row number (" + rowNum 
+                  + ") outside allowable range (0.." + RowRecord.MAX_ROW_NUMBER + ")");
+        }
         this.rowNum = rowNum;
         if (row != null)
         {
@@ -236,8 +226,6 @@ public final class HSSFRow implements Comparable, Row {
      * get row number this row represents
      * @return the row number (0 based)
      */
-
-    //public short getRowNum()
     public int getRowNum()
     {
         return rowNum;

@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -193,17 +194,29 @@ public final class TestHSSFSheet extends TestCase {
 	public void testCloneSheet() {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet("Test Clone");
-		HSSFRow row = sheet.createRow((short) 0);
+		HSSFRow row = sheet.createRow(0);
 		HSSFCell cell = row.createCell((short) 0);
-		cell.setCellValue("clone_test"); 
-		HSSFSheet cloned = workbook.cloneSheet(0);
-  
+		HSSFCell cell2 = row.createCell((short) 1);
+		cell.setCellValue(new HSSFRichTextString("clone_test")); 
+		cell2.setCellFormula("sin(1)"); 
+
+		HSSFSheet clonedSheet = workbook.cloneSheet(0);
+		HSSFRow clonedRow = clonedSheet.getRow(0);
+
 		//Check for a good clone
-		assertEquals(cloned.getRow((short)0).getCell((short)0).getStringCellValue(), "clone_test");
+		assertEquals(clonedRow.getCell(0).getRichStringCellValue().getString(), "clone_test");
 
 		//Check that the cells are not somehow linked
-		cell.setCellValue("Difference Check");
-		assertEquals(cloned.getRow((short)0).getCell((short)0).getStringCellValue(), "clone_test");
+		cell.setCellValue(new HSSFRichTextString("Difference Check"));
+		cell2.setCellFormula("cos(2)");
+		if ("Difference Check".equals(clonedRow.getCell(0).getRichStringCellValue().getString())) {
+			fail("string cell not properly cloned");
+		}
+		if ("COS(2)".equals(clonedRow.getCell(1).getCellFormula())) {
+			fail("formula cell not properly cloned");
+		}
+		assertEquals(clonedRow.getCell(0).getRichStringCellValue().getString(), "clone_test");
+		assertEquals(clonedRow.getCell(1).getCellFormula(), "SIN(1)");
 	}
 
 	/** tests that the sheet name for multiple clones of the same sheet is unique
@@ -214,7 +227,7 @@ public final class TestHSSFSheet extends TestCase {
 		HSSFSheet sheet = workbook.createSheet("Test Clone");
 		HSSFRow row = sheet.createRow((short) 0);
 		HSSFCell cell = row.createCell((short) 0);
-		cell.setCellValue("clone_test");
+		cell.setCellValue(new HSSFRichTextString("clone_test"));
 		//Clone the sheet multiple times
 		workbook.cloneSheet(0);
 		workbook.cloneSheet(0);
@@ -517,11 +530,11 @@ public final class TestHSSFSheet extends TestCase {
 		HSSFSheet sheet = wb.createSheet();
 		HSSFRow row = sheet.createRow(0);
 		HSSFCell cell = row.createCell((short)0);
-		cell.setCellValue("first row, first cell");
+		cell.setCellValue(new HSSFRichTextString("first row, first cell"));
 
 		row = sheet.createRow(1);
 		cell = row.createCell((short)1);
-		cell.setCellValue("second row, second cell");
+		cell.setCellValue(new HSSFRichTextString("second row, second cell"));
 
 		Region region = new Region(1, (short)0, 1, (short)1);   
 		sheet.addMergedRegion(region);
@@ -643,28 +656,28 @@ public final class TestHSSFSheet extends TestCase {
 
 	/** cell with formula becomes null on cloning a sheet*/
 	 public void test35084() {
-   
-   	HSSFWorkbook wb = new HSSFWorkbook();
-   	HSSFSheet s =wb.createSheet("Sheet1");
-   	HSSFRow r = s.createRow(0);
-   	r.createCell((short)0).setCellValue(1);
-   	r.createCell((short)1).setCellFormula("A1*2");
-   	HSSFSheet s1 = wb.cloneSheet(0);
-   	r=s1.getRow(0);
-   	assertEquals("double" ,r.getCell((short)0).getNumericCellValue(),(double)1,0); //sanity check
-   	assertNotNull(r.getCell((short)1)); 
-   	assertEquals("formula", r.getCell((short)1).getCellFormula(), "A1*2");
-   }
+
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet s = wb.createSheet("Sheet1");
+		HSSFRow r = s.createRow(0);
+		r.createCell((short) 0).setCellValue(1);
+		r.createCell((short) 1).setCellFormula("A1*2");
+		HSSFSheet s1 = wb.cloneSheet(0);
+		r = s1.getRow(0);
+		assertEquals("double", r.getCell((short) 0).getNumericCellValue(), 1, 0); // sanity check
+		assertNotNull(r.getCell((short) 1));
+		assertEquals("formula", r.getCell((short) 1).getCellFormula(), "A1*2");
+	}
 
 	/** test that new default column styles get applied */
 	public void testDefaultColumnStyle() {
-	HSSFWorkbook wb = new HSSFWorkbook();
-	HSSFCellStyle style = wb.createCellStyle();
-	HSSFSheet s = wb.createSheet();
-	s.setDefaultColumnStyle((short)0, style);
-	HSSFRow r = s.createRow(0);
-	HSSFCell c = r.createCell((short)0);
-	assertEquals("style should match", style.getIndex(), c.getCellStyle().getIndex());
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFCellStyle style = wb.createCellStyle();
+		HSSFSheet s = wb.createSheet();
+		s.setDefaultColumnStyle((short) 0, style);
+		HSSFRow r = s.createRow(0);
+		HSSFCell c = r.createCell((short) 0);
+		assertEquals("style should match", style.getIndex(), c.getCellStyle().getIndex());
 	}
 
 
@@ -814,11 +827,6 @@ public final class TestHSSFSheet extends TestCase {
 		assertTrue(wb3.getSheetAt(3).getForceFormulaRecalculation());
 	}
 
-
-	public static void main(java.lang.String[] args) {
-		 junit.textui.TestRunner.run(TestHSSFSheet.class);
-	}
-
 	public void testColumnWidth() throws Exception {
 		//check we can correctly read column widths from a reference workbook
 		HSSFWorkbook wb = openSample("colwidth.xls");
@@ -870,11 +878,33 @@ public final class TestHSSFSheet extends TestCase {
 		assertEquals(256*10, sh.getColumnWidth((short)0));
 		assertEquals(256*10, sh.getColumnWidth((short)1));
 		assertEquals(256*10, sh.getColumnWidth((short)2));
-		//columns D-F have custom wodth
+		//columns D-F have custom width
 		for (char i = 'D'; i <= 'F'; i++) {
 			short w = (short)(256*12);
 			assertEquals(w, sh.getColumnWidth((short)i));
 		}
+	}
+	
+	/**
+	 * Some utilities write Excel files without the ROW records.
+	 * Excel, ooo, and google docs are OK with this.
+	 * Now POI is too.
+	 */
+	public void testMissingRowRecords_bug41187() {
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex41187-19267.xls");
 
+		HSSFSheet sheet = wb.getSheetAt(0);
+		HSSFRow row = sheet.getRow(0);
+		if(row == null) {
+			throw new AssertionFailedError("Identified bug 41187 a");
+		}
+		if (row.getHeight() == 0) {
+			throw new AssertionFailedError("Identified bug 41187 b");
+		}
+		assertEquals("Hi Excel!", row.getCell(0).getRichStringCellValue().getString());
+		// check row height for 'default' flag
+		assertEquals((short)0x8000, row.getHeight());
+		
+		HSSFTestDataSamples.writeOutAndReadBack(wb);
 	}
 }
