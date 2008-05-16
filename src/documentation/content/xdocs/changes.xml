@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1-beta2" date="2008-05-??">
+           <action dev="POI-DEVELOPERS" type="fix">40414 - fixed selected/active sheet after removing sheet from workbook</action>
            <action dev="POI-DEVELOPERS" type="fix">44523 - fixed workbook sheet selection and focus</action>
            <action dev="POI-DEVELOPERS" type="fix">45000 - Fixed NPE in ListLevel when numberText is null</action>
            <action dev="POI-DEVELOPERS" type="fix">44985 - Properly update TextSpecInfoAtom when the parent text is changed</action>
