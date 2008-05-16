@@ -54,7 +54,7 @@ public class WindowTwoRecord
     private BitField          displayGuts             = BitFieldFactory.getInstance(0x80);
     private BitField          freezePanesNoSplit      = BitFieldFactory.getInstance(0x100);
     private BitField          selected                = BitFieldFactory.getInstance(0x200);
-    private BitField          paged                   = BitFieldFactory.getInstance(0x400);
+    private BitField          active                  = BitFieldFactory.getInstance(0x400);
     private BitField          savedInPageBreakPreview = BitFieldFactory.getInstance(0x800);
 
     // 4-7 reserved
@@ -222,12 +222,16 @@ public class WindowTwoRecord
      * is the sheet currently displayed in the window
      * @param p  displayed or not
      */
-
-    public void setPaged(boolean p)
-    {
-        field_1_options = paged.setShortBoolean(field_1_options, p);
+    public void setActive(boolean p) {
+        field_1_options = active.setShortBoolean(field_1_options, p);
     }
-
+    /**
+     * deprecated May 2008
+     * @deprecated use setActive()
+     */
+    public void setPaged(boolean p) {
+    	setActive(p);
+    }
     /**
      * was the sheet saved in page break view
      * @param p  pagebreaksaved or not
@@ -416,9 +420,15 @@ public class WindowTwoRecord
      * @return displayed or not
      */
 
-    public boolean getPaged()
-    {
-        return paged.isSet(field_1_options);
+    public boolean isActive() {
+        return active.isSet(field_1_options);
+    }
+    /**
+     * deprecated May 2008
+     * @deprecated use isActive()
+     */
+    public boolean getPaged() {
+        return isActive();
     }
 
     /**
@@ -520,7 +530,7 @@ public class WindowTwoRecord
             .append(getFreezePanesNoSplit()).append("\n");
         buffer.append("       .selected    = ").append(getSelected())
             .append("\n");
-        buffer.append("       .paged       = ").append(getPaged())
+        buffer.append("       .active       = ").append(isActive())
             .append("\n");
         buffer.append("       .svdinpgbrkpv= ")
             .append(getSavedInPageBreakPreview()).append("\n");

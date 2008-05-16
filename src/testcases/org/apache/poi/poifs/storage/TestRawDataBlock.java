@@ -152,7 +152,7 @@ public class TestRawDataBlock
 	            }
 	            
 	            assertEquals(
-	            		"7 - Unable to read entire block; "+bts+" read before EOF; expected 512 bytes. Your document has probably been truncated!", 
+	            		"7 - Unable to read entire block; "+bts+" read before EOF; expected 512 bytes. Your document was either written by software that ignores the spec, or has been truncated!", 
 	            		(String)(logger.logged.get(0))
 	            );
             } else {

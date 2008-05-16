@@ -78,8 +78,10 @@ public interface Cell {
     int getCellType();
     short getCellNum();
 
-    byte getErrorCellValue();
     String getCellFormula();
+
+    byte getErrorCellValue();
+    void setCellErrorValue(byte value);
 
     HSSFCellStyle getCellStyle();
 

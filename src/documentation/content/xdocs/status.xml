@@ -41,6 +41,11 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
         <release version="3.1-beta2" date="2008-05-??">
+           <action dev="POI-DEVELOPERS" type="fix">44523 - fixed workbook sheet selection and focus</action>
+           <action dev="POI-DEVELOPERS" type="fix">45000 - Fixed NPE in ListLevel when numberText is null</action>
+           <action dev="POI-DEVELOPERS" type="fix">44985 - Properly update TextSpecInfoAtom when the parent text is changed</action>
+           <action dev="POI-DEVELOPERS" type="fix">41187 - fixed HSSFSheet to properly read xls files without ROW records</action>
+           <action dev="POI-DEVELOPERS" type="fix">44950 - fixed HSSFFormulaEvaluator.evaluateInCell() and Area3DEval.getValue() also added validation for number of elements in AreaEvals</action>
            <action dev="POI-DEVELOPERS" type="fix">42570 - fixed LabelRecord to use empty string instead of null when the length is zero.</action>
            <action dev="POI-DEVELOPERS" type="fix">42564 - fixed ArrayPtg to use ConstantValueParser.  Fixed a few other ArrayPtg encoding issues.</action>
            <action dev="POI-DEVELOPERS" type="fix">Follow-on from 28754 - StringPtg.toFormulaString() should escape double quotes</action>
