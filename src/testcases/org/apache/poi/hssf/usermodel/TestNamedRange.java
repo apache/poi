@@ -533,4 +533,28 @@ public final class TestNamedRange extends TestCase {
 		String contents = c.getStringCellValue();
 		assertEquals("Contents of cell retrieved by its named reference", contents, cvalue);
 	}
+
+    public void testDeletedReference() throws Exception {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("24207.xls");
+        assertEquals(2, wb.getNumberOfNames());
+
+        HSSFName name1 = wb.getNameAt(0);
+        assertEquals("a", name1.getNameName());
+        assertEquals("Sheet1!$A$1", name1.getReference());
+        AreaReference ref1 = new AreaReference(name1.getReference());
+        assertTrue("Successfully constructed first reference", true);
+
+        HSSFName name2 = wb.getNameAt(1);
+        assertEquals("b", name2.getNameName());
+        assertEquals("#REF!", name2.getReference());
+        assertTrue(name2.isDeleted());
+        try {
+            AreaReference ref2 = new AreaReference(name2.getReference());
+            fail("attempt to supply an invalid reference to AreaReference constructor results in exception");
+        } catch (Exception e){
+            ;
+        }
+
+    }
+
 }
