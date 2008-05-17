@@ -910,4 +910,45 @@ public final class TestBugs extends TestCase {
         writeOutAndReadBack(wb);
         assertTrue("no errors writing sample xls", true);
     }
+
+    /**
+     * Bug 21334: "File error: data may have been lost" with a file
+     * that contains macros and this formula:
+     * {=SUM(IF(FREQUENCY(IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),""),IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),""))>0,1))}
+     */
+    public void test21334() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sh = wb.createSheet();
+        HSSFCell cell = sh.createRow(0).createCell((short)0);
+        String formula = "SUM(IF(FREQUENCY(IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),\"\"),IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),\"\"))>0,1))";
+        cell.setCellFormula(formula);
+
+        HSSFWorkbook wb_sv = writeOutAndReadBack(wb);
+        HSSFCell cell_sv = wb_sv.getSheetAt(0).getRow(0).getCell((short)0);
+        assertEquals(formula, cell_sv.getCellFormula());
+    }
+
+    public void test36947() throws Exception {
+    	HSSFWorkbook wb = openSample("36947.xls");
+        assertTrue("no errors reading sample xls", true);
+        writeOutAndReadBack(wb);
+        assertTrue("no errors writing sample xls", true);
+    }
+
+    /**
+     * Bug 42448: Can't parse SUMPRODUCT(A!C7:A!C67, B8:B68) / B69
+     */
+    public void test42448(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCell cell = wb.createSheet().createRow(0).createCell((short)0);
+        cell.setCellFormula("SUMPRODUCT(A!C7:A!C67, B8:B68) / B69");
+        assertTrue("no errors parsing formula", true);
+    }
+
+    public void test39634() throws Exception {
+    	HSSFWorkbook wb = openSample("39634.xls");
+        assertTrue("no errors reading sample xls", true);
+        writeOutAndReadBack(wb);
+        assertTrue("no errors writing sample xls", true);
+    }
 }
