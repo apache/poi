@@ -140,4 +140,13 @@ public class HSSFName implements Name {
 
     }
 
+    /**
+     * Tests if this name points to a cell that no longer exists
+     *
+     * @return true if the name refers to a deleted cell, false otherwise
+     */
+    public boolean isDeleted(){
+        String ref = getReference();
+        return "#REF!".endsWith(ref);
+    }
 }
