@@ -1286,6 +1286,20 @@ Examples:
         }
     }
             </source>
+            <p>
+            Note, when a cell is deleted, Excel does not delete the 
+            attached named range. As result, workbook can contain 
+            named ranges that point to cells that no longer exist.
+            You should check the validity of a reference before 
+            constructing AreaReference  
+            </p>
+            <source>
+    if(hssfName.isDeleted()){
+      //named range points to a deleted cell. 
+    } else {
+      AreaReference ref = new AreaReference(hssfName.getReference());
+    }
+            </source>
         </section>
         <anchor id="CellComments"/>
         <section><title>Cell Comments - HSSF and XSSF (slight differences though)</title>

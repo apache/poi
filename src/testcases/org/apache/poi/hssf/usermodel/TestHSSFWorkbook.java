@@ -232,11 +232,11 @@ public final class TestHSSFWorkbook extends TestCase {
         // Demonstrate bug 44525:
         // Well... not quite, since isActive + isSelected were also added in the same bug fix
         if (sheet1.isSelected()) {
-            throw new AssertionFailedError("Identified bug 44525 a");
+            throw new AssertionFailedError("Identified bug 44523 a");
         }
         wb.setActiveSheet(1);
         if (sheet1.isActive()) {
-            throw new AssertionFailedError("Identified bug 44525 b");
+            throw new AssertionFailedError("Identified bug 44523 b");
         }
 
         confirmActiveSelected(sheet1, false);
@@ -299,8 +299,81 @@ public final class TestHSSFWorkbook extends TestCase {
         }
     }
 
+
+    public void testActiveSheetAfterDelete_bug40414() {
+        HSSFWorkbook wb=new HSSFWorkbook();
+        HSSFSheet sheet0 = wb.createSheet("Sheet0");
+        HSSFSheet sheet1 = wb.createSheet("Sheet1");
+        HSSFSheet sheet2 = wb.createSheet("Sheet2");
+        HSSFSheet sheet3 = wb.createSheet("Sheet3");
+        HSSFSheet sheet4 = wb.createSheet("Sheet4");
+
+        // confirm default activation/selection
+        confirmActiveSelected(sheet0, true);
+        confirmActiveSelected(sheet1, false);
+        confirmActiveSelected(sheet2, false);
+        confirmActiveSelected(sheet3, false);
+        confirmActiveSelected(sheet4, false);
+
+        wb.setActiveSheet(3);
+        wb.setSelectedTab(3);
+
+        confirmActiveSelected(sheet0, false);
+        confirmActiveSelected(sheet1, false);
+        confirmActiveSelected(sheet2, false);
+        confirmActiveSelected(sheet3, true);
+        confirmActiveSelected(sheet4, false);
+
+        wb.removeSheetAt(3);
+        // after removing the only active/selected sheet, another should be active/selected in its place
+        if (!sheet4.isSelected()) {
+            throw new AssertionFailedError("identified bug 40414 a");
+        }
+        if (!sheet4.isActive()) {
+            throw new AssertionFailedError("identified bug 40414 b");
+        }
+
+        confirmActiveSelected(sheet0, false);
+        confirmActiveSelected(sheet1, false);
+        confirmActiveSelected(sheet2, false);
+        confirmActiveSelected(sheet4, true);
+
+        sheet3 = sheet4; // re-align local vars in this test case
+
+        // Some more cases of removing sheets
+
+        // Starting with a multiple selection, and different active sheet
+        wb.setSelectedTabs(new int[] { 1, 3, });
+        wb.setActiveSheet(2);
+        confirmActiveSelected(sheet0, false, false);
+        confirmActiveSelected(sheet1, false, true);
+        confirmActiveSelected(sheet2, true,  false);
+        confirmActiveSelected(sheet3, false, true);
+
+        // removing a sheet that is not active, and not the only selected sheet
+        wb.removeSheetAt(3);
+        confirmActiveSelected(sheet0, false, false);
+        confirmActiveSelected(sheet1, false, true);
+        confirmActiveSelected(sheet2, true,  false);
+
+        // removing the only selected sheet
+        wb.removeSheetAt(1);
+        confirmActiveSelected(sheet0, false, false);
+        confirmActiveSelected(sheet2, true,  true);
+
+        // The last remaining sheet should always be active+selected
+        wb.removeSheetAt(1);
+        confirmActiveSelected(sheet0, true,  true);
+    }
+
     private static void confirmActiveSelected(HSSFSheet sheet, boolean expected) {
-        assertEquals(expected, sheet.isActive());
-        assertEquals(expected, sheet.isSelected());
+        confirmActiveSelected(sheet, expected, expected);
+    }
+
+
+    private static void confirmActiveSelected(HSSFSheet sheet,
+            boolean expectedActive, boolean expectedSelected) {
+        assertEquals("active", expectedActive, sheet.isActive());
+        assertEquals("selected", expectedSelected, sheet.isSelected());
     }
 }
