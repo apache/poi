@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1-beta2" date="2008-05-??">
+           <action dev="POI-DEVELOPERS" type="fix">44306 - fixed reading/writing of AttrPtg(type=choose) and method toFormulaString() for CHOOSE formulas</action>
            <action dev="POI-DEVELOPERS" type="fix">24207 - added HSSFName.isDeleted() to check if the name points to cell that no longer exists</action>
            <action dev="POI-DEVELOPERS" type="fix">40414 - fixed selected/active sheet after removing sheet from workbook</action>
            <action dev="POI-DEVELOPERS" type="fix">44523 - fixed workbook sheet selection and focus</action>
