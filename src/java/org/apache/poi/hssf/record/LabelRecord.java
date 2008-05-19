@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
-/*
- * LabelRecord.java
- *
- * Created on November 11, 2001, 12:51 PM
- */
 package org.apache.poi.hssf.record;
 
 /**
@@ -33,14 +26,10 @@ package org.apache.poi.hssf.record;
  * @version 2.0-pre
  * @see org.apache.poi.hssf.record.LabelSSTRecord
  */
-
-public class LabelRecord
-    extends Record
-    implements CellValueRecordInterface
-{
+public final class LabelRecord extends Record implements CellValueRecordInterface {
     public final static short sid = 0x204;
-    //private short             field_1_row;
-    private int             field_1_row;
+
+    private int               field_1_row;
     private short             field_2_column;
     private short             field_3_xf_index;
     private short             field_4_string_len;
@@ -85,35 +74,30 @@ public class LabelRecord
 
     protected void fillFields(RecordInputStream in)
     {
-        //field_1_row          = LittleEndian.getShort(data, 0 + offset);
         field_1_row          = in.readUShort();
         field_2_column       = in.readShort();
         field_3_xf_index     = in.readShort();
         field_4_string_len   = in.readShort();
         field_5_unicode_flag = in.readByte();
         if (field_4_string_len > 0) {
-          if (isUnCompressedUnicode()) {
-            field_6_value = in.readUnicodeLEString(field_4_string_len);
-          } else {
-            field_6_value = in.readCompressedUnicode(field_4_string_len);
+            if (isUnCompressedUnicode()) {
+                field_6_value = in.readUnicodeLEString(field_4_string_len);
+            } else {
+                field_6_value = in.readCompressedUnicode(field_4_string_len);
+            }
+        } else {
+            field_6_value = "";
         }
-        } else field_6_value = null;
     }
 
-/* READ ONLY ACCESS... THIS IS FOR COMPATIBILITY ONLY...USE LABELSST!
-      public void setRow(short row) {
-        field_1_row = row;
-      }
-
-      public void setColumn(short col) {
-        field_2_column = col;
-      }
-
-      public void setXFIndex(short index) {
-        field_3_xf_index = index;
-      }
-  */
-    //public short getRow()
+/*
+ * READ ONLY ACCESS... THIS IS FOR COMPATIBILITY ONLY...USE LABELSST! public
+ * void setRow(short row) { field_1_row = row; }
+ * 
+ * public void setColumn(short col) { field_2_column = col; }
+ * 
+ * public void setXFIndex(short index) { field_3_xf_index = index; }
+ */
     public int getRow()
     {
         return field_1_row;

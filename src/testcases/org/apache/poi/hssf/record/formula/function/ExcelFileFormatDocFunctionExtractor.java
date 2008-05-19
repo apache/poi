@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -60,7 +61,32 @@ public final class ExcelFileFormatDocFunctionExtractor {
 
 	private static final String SOURCE_DOC_FILE_NAME = "excelfileformat.odt";
 
+	/**
+	 * For simplicity, the output file is strictly simple ASCII.
+	 * This method detects any unexpected characters. 
+	 */
+	/* package */ static boolean isSimpleAscii(char c) {
+		
+		if (c>=0x21 && c<=0x7E) {
+			// everything from '!' to '~' (includes letters, digits, punctuation
+			return true;
+		}
+		// some specific whitespace chars below 0x21:
+		switch(c) {
+			case ' ':
+			case '\t':
+			case '\r':
+			case '\n':
+				return true;
+		}
+		return false;
+	}
+	
+	
 	private static final class FunctionData {
+		// special characters from the ooo document
+		private static final int CHAR_ELLIPSIS_8230 = 8230;
+		private static final int CHAR_NDASH_8211 = 8211;
 
 		private final int _index;
 		private final boolean _hasFootnote;
@@ -78,9 +104,29 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			_name = funcName;
 			_minParams = minParams;
 			_maxParams = maxParams;
-			_returnClass = returnClass;
-			_paramClasses = paramClasses;
+			_returnClass = convertSpecialChars(returnClass);
+			_paramClasses = convertSpecialChars(paramClasses);
 			_isVolatile = isVolatile;
+		}
+		private static String convertSpecialChars(String ss) {
+			StringBuffer sb = new StringBuffer(ss.length() + 4);
+			for(int i=0; i<ss.length(); i++) {
+				char c = ss.charAt(i);
+				if (isSimpleAscii(c)) {
+					sb.append(c);
+					continue;
+				}
+				switch (c) {
+					case CHAR_NDASH_8211:
+						sb.append('-');
+						continue;
+					case CHAR_ELLIPSIS_8230:
+						sb.append("...");
+						continue;
+				}
+				throw new RuntimeException("bad char (" + ((int)c) + ") in string '" + ss + "'");
+			}
+			return sb.toString();
 		}
 		public int getIndex() {
 			return _index;
@@ -354,13 +400,19 @@ public final class ExcelFileFormatDocFunctionExtractor {
 	}
 
 	private static void extractFunctionData(FunctionDataCollector fdc, InputStream is) {
-		System.setProperty("org.xml.sax.driver", "org.apache.crimson.parser.XMLReaderImpl");
-		
 		XMLReader xr;
+		
 		try {
+			// First up, try the default one
 			xr = XMLReaderFactory.createXMLReader();
 		} catch (SAXException e) {
-			throw new RuntimeException(e);
+			// Try one for java 1.4
+			System.setProperty("org.xml.sax.driver", "org.apache.crimson.parser.XMLReaderImpl");
+			try {
+				xr = XMLReaderFactory.createXMLReader();
+			} catch (SAXException e2) {
+				throw new RuntimeException(e2);
+			}
 		}
 		xr.setContentHandler(new EFFDocHandler(fdc));
 
@@ -375,6 +427,33 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			throw new RuntimeException(e);
 		}
 	}
+	/**
+	 * To be sure that no tricky unicode chars make it through to the output file.
+	 */
+	private static final class SimpleAsciiOutputStream extends OutputStream {
+
+		private final OutputStream _os;
+
+		public SimpleAsciiOutputStream(OutputStream os) {
+			_os = os;
+		}
+		public void write(int b) throws IOException {
+			checkByte(b);
+			_os.write(b);
+		}
+		private static void checkByte(int b) {
+			if (!isSimpleAscii((char)b)) {
+				throw new RuntimeException("Encountered char (" + b + ") which was not simple ascii as expected");
+			}
+		}
+		public void write(byte[] b, int off, int len) throws IOException {
+			for (int i = 0; i < len; i++) {
+				checkByte(b[i + off]);
+				
+			}
+			_os.write(b, off, len);
+		}
+	}
 
 	private static void processFile(File effDocFile, File outFile) {
 		OutputStream os;
@@ -383,7 +462,14 @@ public final class ExcelFileFormatDocFunctionExtractor {
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
 		}
-		PrintStream ps = new PrintStream(os);
+		os = new SimpleAsciiOutputStream(os);
+		PrintStream ps;
+		try {
+			ps = new PrintStream(os, true, "UTF-8");
+		} catch(UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+		
 		outputLicenseHeader(ps);
 		Class genClass = ExcelFileFormatDocFunctionExtractor.class;
 		ps.println("# Created by (" + genClass.getName() + ")");

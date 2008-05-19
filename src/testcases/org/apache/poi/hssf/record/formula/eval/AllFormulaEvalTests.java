@@ -28,7 +28,8 @@ import junit.framework.TestSuite;
 public class AllFormulaEvalTests {
 	
 	public static Test suite() {
-		TestSuite result = new TestSuite("Tests for org.apache.poi.hssf.record.formula.eval");
+		TestSuite result = new TestSuite(AllFormulaEvalTests.class.getName());
+		result.addTestSuite(TestAreaEval.class);
 		result.addTestSuite(TestCircularReferences.class);
 		result.addTestSuite(TestExternalFunction.class);
 		result.addTestSuite(TestFormulaBugs.class);

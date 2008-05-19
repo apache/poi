@@ -22,12 +22,14 @@ import java.io.FileOutputStream;
 import java.util.Iterator;
 import java.util.List;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
+
 /**
  * 
  */
@@ -51,42 +53,41 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 	 */
 	public void test44636() throws Exception {
 		// Open the existing file, tweak one value and
-		//  re-calculate
+		// re-calculate
 
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("44636.xls");
-		HSSFSheet sheet = wb.getSheetAt (0);
-		HSSFRow row = sheet.getRow (0);
+		HSSFSheet sheet = wb.getSheetAt(0);
+		HSSFRow row = sheet.getRow(0);
 
-		row.getCell((short)0).setCellValue(4.2);
-		row.getCell((short)2).setCellValue(25);
+		row.getCell((short) 0).setCellValue(4.2);
+		row.getCell((short) 2).setCellValue(25);
 
 		HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
-		assertEquals(4.2*25, row.getCell((short)3).getNumericCellValue(), 0.0001);
+		assertEquals(4.2 * 25, row.getCell((short) 3).getNumericCellValue(), 0.0001);
 
 		// Save
-		File existing = new File(tmpDirName,"44636-existing.xls");
+		File existing = new File(tmpDirName, "44636-existing.xls");
 		FileOutputStream out = new FileOutputStream(existing);
 		wb.write(out);
 		out.close();
 		System.err.println("Existing file for bug #44636 written to " + existing.toString());
-
 
 		// Now, do a new file from scratch
 		wb = new HSSFWorkbook();
 		sheet = wb.createSheet();
 
 		row = sheet.createRow(0);
-		row.createCell((short)0).setCellValue(1.2);
-		row.createCell((short)1).setCellValue(4.2);
+		row.createCell((short) 0).setCellValue(1.2);
+		row.createCell((short) 1).setCellValue(4.2);
 
 		row = sheet.createRow(1);
-		row.createCell((short)0).setCellFormula("SUM(A1:B1)");
+		row.createCell((short) 0).setCellFormula("SUM(A1:B1)");
 
 		HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
-		assertEquals(5.4, row.getCell((short)0).getNumericCellValue(), 0.0001);
+		assertEquals(5.4, row.getCell((short) 0).getNumericCellValue(), 0.0001);
 
 		// Save
-		File scratch = new File(tmpDirName,"44636-scratch.xls");
+		File scratch = new File(tmpDirName, "44636-scratch.xls");
 		out = new FileOutputStream(scratch);
 		wb.write(out);
 		out.close();
@@ -105,62 +106,62 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("44297.xls");
 
 		HSSFRow row;
-		HSSFCell  cell;
+		HSSFCell cell;
 
-		HSSFSheet sheet   = wb.getSheetAt(0);
+		HSSFSheet sheet = wb.getSheetAt(0);
 
 		HSSFFormulaEvaluator eva = new HSSFFormulaEvaluator(sheet, wb);
 
 		row = sheet.getRow(0);
-		cell = row.getCell((short)0);
+		cell = row.getCell((short) 0);
 		assertEquals("31+46", cell.getCellFormula());
 		eva.setCurrentRow(row);
 		assertEquals(77, eva.evaluate(cell).getNumberValue(), 0);
 
 		row = sheet.getRow(1);
-		cell = row.getCell((short)0);
+		cell = row.getCell((short) 0);
 		assertEquals("30+53", cell.getCellFormula());
 		eva.setCurrentRow(row);
 		assertEquals(83, eva.evaluate(cell).getNumberValue(), 0);
 
 		row = sheet.getRow(2);
-		cell = row.getCell((short)0);
+		cell = row.getCell((short) 0);
 		assertEquals("SUM(A1:A2)", cell.getCellFormula());
 		eva.setCurrentRow(row);
 		assertEquals(160, eva.evaluate(cell).getNumberValue(), 0);
 
 		row = sheet.getRow(4);
-		cell = row.getCell((short)0);
+		cell = row.getCell((short) 0);
 		assertEquals("32767+32768", cell.getCellFormula());
 		eva.setCurrentRow(row);
 		assertEquals(65535, eva.evaluate(cell).getNumberValue(), 0);
 
 		row = sheet.getRow(7);
-		cell = row.getCell((short)0);
+		cell = row.getCell((short) 0);
 		assertEquals("32744+42333", cell.getCellFormula());
 		eva.setCurrentRow(row);
 		assertEquals(75077, eva.evaluate(cell).getNumberValue(), 0);
 
 		row = sheet.getRow(8);
-		cell = row.getCell((short)0);
+		cell = row.getCell((short) 0);
 		assertEquals("327680.0/32768", cell.getCellFormula());
 		eva.setCurrentRow(row);
 		assertEquals(10, eva.evaluate(cell).getNumberValue(), 0);
 
 		row = sheet.getRow(9);
-		cell = row.getCell((short)0);
+		cell = row.getCell((short) 0);
 		assertEquals("32767+32769", cell.getCellFormula());
 		eva.setCurrentRow(row);
 		assertEquals(65536, eva.evaluate(cell).getNumberValue(), 0);
 
 		row = sheet.getRow(10);
-		cell = row.getCell((short)0);
+		cell = row.getCell((short) 0);
 		assertEquals("35000+36000", cell.getCellFormula());
 		eva.setCurrentRow(row);
 		assertEquals(71000, eva.evaluate(cell).getNumberValue(), 0);
 
 		row = sheet.getRow(11);
-		cell = row.getCell((short)0);
+		cell = row.getCell((short) 0);
 		assertEquals("-1000000.0-3000000.0", cell.getCellFormula());
 		eva.setCurrentRow(row);
 		assertEquals(-4000000, eva.evaluate(cell).getNumberValue(), 0);
@@ -176,30 +177,29 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SingleLetterRanges.xls");
 
-		HSSFSheet sheet   = wb.getSheetAt(0);
+		HSSFSheet sheet = wb.getSheetAt(0);
 
 		HSSFFormulaEvaluator eva = new HSSFFormulaEvaluator(sheet, wb);
 
-		// =index(C:C,2,1)   -> 2
+		// =index(C:C,2,1) -> 2
 		HSSFRow rowIDX = sheet.getRow(3);
-		// =sum(C:C)		 -> 6
+		// =sum(C:C) -> 6
 		HSSFRow rowSUM = sheet.getRow(4);
-		// =sum(C:D)		 -> 66
+		// =sum(C:D) -> 66
 		HSSFRow rowSUM2D = sheet.getRow(5);
 
 		// Test the sum
-		HSSFCell cellSUM = rowSUM.getCell((short)0);
+		HSSFCell cellSUM = rowSUM.getCell((short) 0);
 
-		FormulaRecordAggregate frec = 
-			(FormulaRecordAggregate)cellSUM.getCellValueRecord();
+		FormulaRecordAggregate frec = (FormulaRecordAggregate) cellSUM.getCellValueRecord();
 		List ops = frec.getFormulaRecord().getParsedExpression();
 		assertEquals(2, ops.size());
 		assertEquals(AreaPtg.class, ops.get(0).getClass());
 		assertEquals(FuncVarPtg.class, ops.get(1).getClass());
 
-		// Actually stored as C1 to C65536 
-		//  (last row is -1 === 65535)
-		AreaPtg ptg = (AreaPtg)ops.get(0);
+		// Actually stored as C1 to C65536
+		// (last row is -1 === 65535)
+		AreaPtg ptg = (AreaPtg) ops.get(0);
 		assertEquals(2, ptg.getFirstColumn());
 		assertEquals(2, ptg.getLastColumn());
 		assertEquals(0, ptg.getFirstRow());
@@ -207,26 +207,25 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		assertEquals("C:C", ptg.toFormulaString(wb));
 
 		// Will show as C:C, but won't know how many
-		//  rows it covers as we don't have the sheet
-		//  to hand when turning the Ptgs into a string
+		// rows it covers as we don't have the sheet
+		// to hand when turning the Ptgs into a string
 		assertEquals("SUM(C:C)", cellSUM.getCellFormula());
 		eva.setCurrentRow(rowSUM);
 
 		// But the evaluator knows the sheet, so it
-		//  can do it properly
+		// can do it properly
 		assertEquals(6, eva.evaluate(cellSUM).getNumberValue(), 0);
-
 
 		// Test the index
 		// Again, the formula string will be right but
-		//  lacking row count, evaluated will be right
-		HSSFCell cellIDX = rowIDX.getCell((short)0);
+		// lacking row count, evaluated will be right
+		HSSFCell cellIDX = rowIDX.getCell((short) 0);
 		assertEquals("INDEX(C:C,2,1)", cellIDX.getCellFormula());
 		eva.setCurrentRow(rowIDX);
 		assertEquals(2, eva.evaluate(cellIDX).getNumberValue(), 0);
 
 		// Across two colums
-		HSSFCell cellSUM2D = rowSUM2D.getCell((short)0);
+		HSSFCell cellSUM2D = rowSUM2D.getCell((short) 0);
 		assertEquals("SUM(C:D)", cellSUM2D.getCellFormula());
 		eva.setCurrentRow(rowSUM2D);
 		assertEquals(66, eva.evaluate(cellSUM2D).getNumberValue(), 0);
@@ -240,7 +239,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		HSSFSheet sheet = wb.createSheet();
 		wb.setSheetName(0, "Sheet1");
 		HSSFRow row = sheet.createRow(0);
-		HSSFCell cell = row.createCell((short)0);
+		HSSFCell cell = row.createCell((short) 0);
 
 		cell.setCellFormula("1=1");
 
@@ -253,29 +252,46 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		}
 		assertEquals(true, cell.getBooleanCellValue());
 	}
-	
+
 	public void testClassCast_bug44861() throws Exception {
-		HSSFWorkbook wb = HSSFTestDataSamples.
-			openSampleWorkbook("44861.xls");
-		
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("44861.xls");
+
 		// Check direct
 		HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
-		
+
 		// And via calls
 		int numSheets = wb.getNumberOfSheets();
-		for(int i=0; i<numSheets; i++) {
+		for (int i = 0; i < numSheets; i++) {
 			HSSFSheet s = wb.getSheetAt(i);
-			HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(s,wb);
-			
-			for(Iterator rows = s.rowIterator(); rows.hasNext();) {
-		        HSSFRow r = (HSSFRow)rows.next();
-		        eval.setCurrentRow(r);
-		        
-		        for(Iterator cells = r.cellIterator(); cells.hasNext();) {
-		        	HSSFCell c = (HSSFCell)cells.next();
-		        	eval.evaluateFormulaCell(c);
-		        }
+			HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(s, wb);
+
+			for (Iterator rows = s.rowIterator(); rows.hasNext();) {
+				HSSFRow r = (HSSFRow) rows.next();
+				eval.setCurrentRow(r);
+
+				for (Iterator cells = r.cellIterator(); cells.hasNext();) {
+					HSSFCell c = (HSSFCell) cells.next();
+					eval.evaluateFormulaCell(c);
+				}
 			}
+		}
+	}
+
+	public void testEvaluateInCellWithErrorCode_bug44950() {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet("Sheet1");
+		HSSFRow row = sheet.createRow(1);
+		HSSFCell cell = row.createCell((short) 0);
+		cell.setCellFormula("na()"); // this formula evaluates to an Excel error code '#N/A'
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
+		fe.setCurrentRow(row);
+		try {
+			fe.evaluateInCell(cell);
+		} catch (NumberFormatException e) {
+			if (e.getMessage().equals("You cannot get an error value from a non-error cell")) {
+				throw new AssertionFailedError("Identified bug 44950 b");
+			}
+			throw e;
 		}
 	}
 }

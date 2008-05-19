@@ -32,18 +32,6 @@ public final class FuncPtg extends AbstractFunctionPtg {
     public final static int  SIZE = 3;
     private int numParams=0;
 
-    /**
-     * FuncPtgs are defined to be 4 bytes but the actual FuncPtg uses only 2 bytes.
-     * If we have leftOvers that are read from the file we should serialize them back out.
-     * <p>
-     * If the leftovers are removed, a prompt "Warning: Data may have been lost occurs in Excel"
-     */
-	//protected byte[] leftOvers = null;
-
-    private FuncPtg() {
-      //Required for clone methods
-    }
-
     /**Creates new function pointer from a byte array
      * usually called while reading an excel file.
      */
@@ -75,11 +63,9 @@ public final class FuncPtg extends AbstractFunctionPtg {
     }
 
     public Object clone() {
-      FuncPtg ptg = new FuncPtg();
-      //ptg.field_1_num_args = field_1_num_args;
-      ptg.field_2_fnc_index = field_2_fnc_index;
-      ptg.setClass(ptgClass);
-     return ptg;
+        FuncPtg ptg = new FuncPtg(field_2_fnc_index);
+        ptg.setClass(ptgClass);
+        return ptg;
     }
 
     public int getSize() {

@@ -136,6 +136,7 @@ public final class HSSFSheet {
     {
         int sloc = sheet.getLoc();
         RowRecord row = sheet.getNextRow();
+        boolean rowRecordsAlreadyPresent = row!=null;
 
         while (row != null)
         {
@@ -160,6 +161,18 @@ public final class HSSFSheet {
             if ( ( lastrow == null ) || ( lastrow.getRowNum() != cval.getRow() ) )
             {
                 hrow = getRow( cval.getRow() );
+                if (hrow == null) {
+                    // Some tools (like Perl module Spreadsheet::WriteExcel - bug 41187) skip the RowRecords 
+                    // Excel, OpenOffice.org and GoogleDocs are all OK with this, so POI should be too.
+                    if (rowRecordsAlreadyPresent) {
+                        // if at least one row record is present, all should be present.
+                        throw new RuntimeException("Unexpected missing row when some rows already present");
+                    }
+                    // create the row record on the fly now.
+                    RowRecord rowRec = new RowRecord(cval.getRow());
+                    sheet.addRow(rowRec);
+                    hrow = createRowFromRecord(rowRec);
+                }
             }
             if ( hrow != null )
             {
@@ -699,6 +712,7 @@ public final class HSSFSheet {
     /**
      * @return an iterator of the PHYSICAL rows.  Meaning the 3rd element may not
      * be the third row if say for instance the second row is undefined.
+     * Call getRowNum() on each row if you care which one it is.
      */
     public Iterator rowIterator()
     {
@@ -964,12 +978,33 @@ public final class HSSFSheet {
     }
 
     /**
+     * Note - this is not the same as whether the sheet is focused (isActive)
+     * @return <code>true</code> if this sheet is currently selected
+     */
+    public boolean isSelected() {
+        return getSheet().getWindowTwo().getSelected();
+    }
+    /**
      * Sets whether sheet is selected.
      * @param sel Whether to select the sheet or deselect the sheet.
      */
     public void setSelected( boolean sel )
     {
-        getSheet().setSelected( sel );
+        getSheet().getWindowTwo().setSelected(sel);
+    }
+    /**
+     * @return <code>true</code> if this sheet is currently focused
+     */
+    public boolean isActive() {
+        return getSheet().getWindowTwo().isActive();
+    }
+    /**
+     * Sets whether sheet is selected.
+     * @param sel Whether to select the sheet or deselect the sheet.
+     */
+    public void setActive(boolean sel )
+    {
+        getSheet().getWindowTwo().setActive(sel);
     }
 
     /**
@@ -1671,6 +1706,23 @@ public final class HSSFSheet {
      * @param column the column index
      */
     public void autoSizeColumn(short column) {
+    	autoSizeColumn(column, false);
+    }
+    
+    /**
+     * Adjusts the column width to fit the contents.
+     *
+     * This process can be relatively slow on large sheets, so this should
+     *  normally only be called once per column, at the end of your
+     *  processing.
+     *
+     * You can specify whether the content of merged cells should be considered or ignored.  
+     *  Default is to ignore merged cells.
+     *   
+     * @param column the column index
+     * @param useMergedCells whether to use the contents of merged cells when calculating the width of the column
+     */
+    public void autoSizeColumn(short column, boolean useMergedCells) {
         AttributedString str;
         TextLayout layout;
         /**
@@ -1679,13 +1731,13 @@ public final class HSSFSheet {
          * '0' looks to be a good choice.
          */
         char defaultChar = '0';
-
+       
         /**
          * This is the multiple that the font height is scaled by when determining the
          * boundary of rotated text.
          */
         double fontHeightMultiple = 2.0;
-
+       
         FontRenderContext frc = new FontRenderContext(null, true, true);
 
         HSSFWorkbook wb = new HSSFWorkbook(book);
@@ -1697,21 +1749,27 @@ public final class HSSFSheet {
         int defaultCharWidth = (int)layout.getAdvance();
 
         double width = -1;
+        rows:
         for (Iterator it = rowIterator(); it.hasNext();) {
             HSSFRow row = (HSSFRow) it.next();
             HSSFCell cell = row.getCell(column);
 
-            boolean isCellInMergedRegion = false;
-            for (int i = 0 ; i < getNumMergedRegions() && ! isCellInMergedRegion; i++) {
-                isCellInMergedRegion = getMergedRegionAt(i).contains(row.getRowNum(), column);
-            }
+            if (cell == null) continue;
 
-            if (cell == null | isCellInMergedRegion) continue;
+            int colspan = 1;
+            for (int i = 0 ; i < getNumMergedRegions(); i++) {
+                if (getMergedRegionAt(i).contains(row.getRowNum(), column)) {
+                	if (!useMergedCells) {
+                    	// If we're not using merged cells, skip this one and move on to the next. 
+                		continue rows;
+                	}
+                	cell = row.getCell(getMergedRegionAt(i).getColumnFrom());
+                	colspan = 1+ getMergedRegionAt(i).getColumnTo() - getMergedRegionAt(i).getColumnFrom();
+                }
+            }
 
             HSSFCellStyle style = cell.getCellStyle();
             HSSFFont font = wb.getFontAt(style.getFontIndex());
-            //the number of spaces to indent the text in the cell
-            int indention = style.getIndention();
 
             if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
                 HSSFRichTextString rt = cell.getRichStringCellValue();
@@ -1744,9 +1802,9 @@ public final class HSSFSheet {
                         trans.concatenate(
                         AffineTransform.getScaleInstance(1, fontHeightMultiple)
                         );
-                        width = Math.max(width, layout.getOutline(trans).getBounds().getWidth() / defaultCharWidth + indention);
+                        width = Math.max(width, ((layout.getOutline(trans).getBounds().getWidth() / colspan) / defaultCharWidth) + cell.getCellStyle().getIndention());
                     } else {
-                        width = Math.max(width, layout.getBounds().getWidth() / defaultCharWidth + indention);
+                        width = Math.max(width, ((layout.getBounds().getWidth() / colspan) / defaultCharWidth) + cell.getCellStyle().getIndention());
                     }
                 }
             } else {
@@ -1789,19 +1847,19 @@ public final class HSSFSheet {
                         trans.concatenate(
                         AffineTransform.getScaleInstance(1, fontHeightMultiple)
                         );
-                        width = Math.max(width, layout.getOutline(trans).getBounds().getWidth() / defaultCharWidth + indention);
+                        width = Math.max(width, ((layout.getOutline(trans).getBounds().getWidth() / colspan) / defaultCharWidth) + cell.getCellStyle().getIndention());
                     } else {
-                        width = Math.max(width, layout.getBounds().getWidth() / defaultCharWidth + indention);
+                        width = Math.max(width, ((layout.getBounds().getWidth() / colspan) / defaultCharWidth) + cell.getCellStyle().getIndention());
                     }
                 }
             }
 
-            if (width != -1) {
-                if (width > Short.MAX_VALUE) { //calculated width can be greater that Short.MAX_VALUE!
-                     width = Short.MAX_VALUE;
-                }
-                sheet.setColumnWidth(column, (short) (width * 256));
+        }
+        if (width != -1) {
+            if (width > Short.MAX_VALUE) { //width can be bigger that Short.MAX_VALUE!
+            	width = Short.MAX_VALUE;
             }
+            sheet.setColumnWidth(column, (short) (width * 256));
         }
     }
 

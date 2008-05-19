@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,34 +14,28 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.record.aggregates;
 
-import org.apache.poi.hssf.record.*;
+import junit.framework.TestCase;
 
-public class TestRowRecordsAggregate extends junit.framework.TestCase {
-    public TestRowRecordsAggregate(String name) {
-        super (name);
-    }
+import org.apache.poi.hssf.record.RowRecord;
+
+/**
+ * 
+ */
+public final class TestRowRecordsAggregate extends TestCase {
     
     public void testRowGet() {
         RowRecordsAggregate rra = new RowRecordsAggregate();
-        RowRecord rr = new RowRecord();
-        rr.setRowNumber(( short ) 4);
+        RowRecord rr = new RowRecord(4);
         rra.insertRow(rr);
-        RowRecord rr2 = new RowRecord(); rr2.setRowNumber((short) 1);
-        rra.insertRow(rr2);
+        rra.insertRow(new RowRecord(1));
         
         RowRecord rr1 = rra.getRow(4);
         
-        assertTrue("Row Record should not be null", rr1!=null);
-        assertTrue("Row number is 1",rr1.getRowNumber() == 4);
+        assertNotNull(rr1);
+        assertEquals("Row number is 1", 4, rr1.getRowNumber());
         assertTrue("Row record retrieved is identical ", rr1 == rr);
-    }
-    
-     public static void main(String [] args) {
-        System.out
-        .println("Testing org.apache.poi.hssf.record.aggregates.RowRecordAggregate");
-        junit.textui.TestRunner.run(TestRowRecordsAggregate.class);
     }
 }

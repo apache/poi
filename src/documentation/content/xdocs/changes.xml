@@ -37,6 +37,17 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1-beta2" date="2008-05-??">
+           <action dev="POI-DEVELOPERS" type="fix">44306 - fixed reading/writing of AttrPtg(type=choose) and method toFormulaString() for CHOOSE formulas</action>
+           <action dev="POI-DEVELOPERS" type="fix">24207 - added HSSFName.isDeleted() to check if the name points to cell that no longer exists</action>
+           <action dev="POI-DEVELOPERS" type="fix">40414 - fixed selected/active sheet after removing sheet from workbook</action>
+           <action dev="POI-DEVELOPERS" type="fix">44523 - fixed workbook sheet selection and focus</action>
+           <action dev="POI-DEVELOPERS" type="fix">45000 - Fixed NPE in ListLevel when numberText is null</action>
+           <action dev="POI-DEVELOPERS" type="fix">44985 - Properly update TextSpecInfoAtom when the parent text is changed</action>
+           <action dev="POI-DEVELOPERS" type="fix">41187 - fixed HSSFSheet to properly read xls files without ROW records</action>
+           <action dev="POI-DEVELOPERS" type="fix">44950 - fixed HSSFFormulaEvaluator.evaluateInCell() and Area3DEval.getValue() also added validation for number of elements in AreaEvals</action>
+           <action dev="POI-DEVELOPERS" type="fix">42570 - fixed LabelRecord to use empty string instead of null when the length is zero.</action>
+           <action dev="POI-DEVELOPERS" type="fix">42564 - fixed ArrayPtg to use ConstantValueParser.  Fixed a few other ArrayPtg encoding issues.</action>
+           <action dev="POI-DEVELOPERS" type="fix">Follow-on from 28754 - StringPtg.toFormulaString() should escape double quotes</action>
            <action dev="POI-DEVELOPERS" type="fix">44929 - Improved error handling in HSSFWorkbook when attempting to read a BIFF5 file</action>
            <action dev="POI-DEVELOPERS" type="fix">44675 - Parameter operand classes (function metadata) required to encode SUM() etc properly. Added parse validation for number of parameters</action>
            <action dev="POI-DEVELOPERS" type="fix">44921 - allow Ptg.writeBytes() to be called on relative ref Ptgs (RefN* and AreaN*)</action>

@@ -140,7 +140,7 @@ public class HSSFWorkbook extends POIDocument
 
     protected HSSFWorkbook( Workbook book )
     {
-    	super(null, null);
+        super(null, null);
         workbook = book;
         sheets = new ArrayList( INITIAL_CAPACITY );
         names = new ArrayList( INITIAL_CAPACITY );
@@ -365,16 +365,66 @@ public class HSSFWorkbook extends POIDocument
         workbook.setSheetOrder(sheetname, pos);
     }
 
+    private void validateSheetIndex(int index) {
+        int lastSheetIx = sheets.size() - 1;
+        if (index < 0 || index > lastSheetIx) {
+            throw new IllegalArgumentException("Sheet index (" 
+                    + index +") is out of range (0.." +    lastSheetIx + ")");
+        }
+    }
+    
     /**
-     * sets the tab whose data is actually seen when the sheet is opened.
-     * This may be different from the "selected sheet" since excel seems to
-     * allow you to show the data of one sheet when another is seen "selected"
-     * in the tabs (at the bottom).
-     * @see org.apache.poi.hssf.usermodel.HSSFSheet#setSelected(boolean)
-     * @param index
+     * Selects a single sheet. This may be different to
+     * the 'active' sheet (which is the sheet with focus).  
+     */
+    public void setSelectedTab(int index) {
+        
+        validateSheetIndex(index);
+        int nSheets = sheets.size();
+        for (int i=0; i<nSheets; i++) {
+               getSheetAt(i).setSelected(i == index);
+        }
+        workbook.getWindowOne().setNumSelectedTabs((short)1);
+    }
+    /**
+     * deprecated May 2008
+     * @deprecated use setSelectedTab(int)
      */
     public void setSelectedTab(short index) {
-        workbook.getWindowOne().setSelectedTab(index);
+        setSelectedTab((int)index);
+    }
+    public void setSelectedTabs(int[] indexes) {
+        
+        for (int i = 0; i < indexes.length; i++) {
+            validateSheetIndex(indexes[i]);
+        }
+        int nSheets = sheets.size();
+        for (int i=0; i<nSheets; i++) {
+            boolean bSelect = false;
+            for (int j = 0; j < indexes.length; j++) {
+                if (indexes[j] == i) {
+                    bSelect = true;
+                    break;
+                }
+                
+            }
+               getSheetAt(i).setSelected(bSelect);
+        }
+        workbook.getWindowOne().setNumSelectedTabs((short)indexes.length);
+    }
+    /**
+     * Convenience method to set the active sheet.  The active sheet is is the sheet
+     * which is currently displayed when the workbook is viewed in Excel.
+     * 'Selected' sheet(s) is a distinct concept.
+     */
+    public void setActiveSheet(int index) {
+        
+        validateSheetIndex(index);
+        int nSheets = sheets.size();
+        for (int i=0; i<nSheets; i++) {
+             getSheetAt(i).setActive(i == index);
+        }
+        workbook.getWindowOne().setActiveSheetIndex(index);
     }
 
     /**
@@ -384,25 +434,46 @@ public class HSSFWorkbook extends POIDocument
      * in the tabs (at the bottom).
      * @see org.apache.poi.hssf.usermodel.HSSFSheet#setSelected(boolean)
      */
+    public int getActiveSheetIndex() {
+        return workbook.getWindowOne().getActiveSheetIndex();
+    }
+    /**
+     * deprecated May 2008
+     * @deprecated - Misleading name - use getActiveSheetIndex() 
+     */
     public short getSelectedTab() {
-        return workbook.getWindowOne().getSelectedTab();
+        return (short) getActiveSheetIndex();
     }
 
+    
     /**
      * sets the first tab that is displayed in the list of tabs
      * in excel.
      * @param index
      */
+    public void setFirstVisibleTab(int index) {
+        workbook.getWindowOne().setFirstVisibleTab(index);
+    }
+    /**
+     * deprecated May 2008
+     * @deprecated - Misleading name - use setFirstVisibleTab() 
+     */
     public void setDisplayedTab(short index) {
-        workbook.getWindowOne().setDisplayedTab(index);
+       setFirstVisibleTab(index);
     }
 
     /**
-     * sets the first tab that is displayed in the list of tabs
-     * in excel.
+     * sets the first tab that is displayed in the list of tabs in excel.
+     */
+    public int getFirstVisibleTab() {
+        return workbook.getWindowOne().getFirstVisibleTab();
+    }
+    /**
+     * deprecated May 2008
+     * @deprecated - Misleading name - use getFirstVisibleTab() 
      */
     public short getDisplayedTab() {
-        return workbook.getWindowOne().getDisplayedTab();
+        return (short) getFirstVisibleTab();
     }
 
     /**
@@ -563,17 +634,13 @@ public class HSSFWorkbook extends POIDocument
 
     public HSSFSheet createSheet()
     {
-
-//        if (getNumberOfSheets() == 3)
-//            throw new RuntimeException("You cannot have more than three sheets in HSSF 1.0");
         HSSFSheet sheet = new HSSFSheet(this);
 
         sheets.add(sheet);
-        workbook.setSheetName(sheets.size() - 1,
-                "Sheet" + (sheets.size() - 1));
-        WindowTwoRecord windowTwo = (WindowTwoRecord) sheet.getSheet().findFirstRecordBySid(WindowTwoRecord.sid);
-        windowTwo.setSelected(sheets.size() == 1);
-        windowTwo.setPaged(sheets.size() == 1);
+        workbook.setSheetName(sheets.size() - 1, "Sheet" + (sheets.size() - 1));
+        boolean isOnlySheet = sheets.size() == 1;
+        sheet.setSelected(isOnlySheet);
+        sheet.setActive(isOnlySheet);
         return sheet;
     }
 
@@ -584,23 +651,24 @@ public class HSSFWorkbook extends POIDocument
      */
 
     public HSSFSheet cloneSheet(int sheetNum) {
-      HSSFSheet srcSheet = (HSSFSheet)sheets.get(sheetNum);
-      String srcName = workbook.getSheetName(sheetNum);
-      if (srcSheet != null) {
+        validateSheetIndex(sheetNum);
+        HSSFSheet srcSheet = (HSSFSheet) sheets.get(sheetNum);
+        String srcName = workbook.getSheetName(sheetNum);
         HSSFSheet clonedSheet = srcSheet.cloneSheet(this);
-        WindowTwoRecord windowTwo = (WindowTwoRecord) clonedSheet.getSheet().findFirstRecordBySid(WindowTwoRecord.sid);
-        windowTwo.setSelected(sheets.size() == 1);
-        windowTwo.setPaged(sheets.size() == 1);
+        clonedSheet.setSelected(false);
+        clonedSheet.setActive(false);
 
         sheets.add(clonedSheet);
-        int i=1;
+        int i = 1;
         while (true) {
-            //Try and find the next sheet name that is unique
+            // Try and find the next sheet name that is unique
             String name = srcName;
             String index = Integer.toString(i++);
-            if (name.length()+index.length()+2<31)
-              name = name + "("+index+")";
-            else name = name.substring(0, 31-index.length()-2)+"("+index+")";
+            if (name.length() + index.length() + 2 < 31) {
+                name = name + "(" + index + ")";
+            } else {
+                name = name.substring(0, 31 - index.length() - 2) + "(" + index + ")";
+            }
 
             //If the sheet name is unique, then set it otherwise move on to the next number.
             if (workbook.getSheetIndex(name) == -1) {
@@ -609,18 +677,18 @@ public class HSSFWorkbook extends POIDocument
             }
         }
         return clonedSheet;
-      }
-      return null;
     }
 
     /**
-     * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and returns
-     * the high level representation.  Use this to create new sheets.
-     *
-     * @param sheetname     sheetname to set for the sheet.
+     * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and
+     * returns the high level representation. Use this to create new sheets.
+     * 
+     * @param sheetname
+     *            sheetname to set for the sheet.
      * @return HSSFSheet representing the new sheet.
-     * @throws IllegalArgumentException if there is already a sheet present with a case-insensitive
-     *  match for the specified name.
+     * @throws IllegalArgumentException
+     *             if there is already a sheet present with a case-insensitive
+     *             match for the specified name.
      */
 
     public HSSFSheet createSheet(String sheetname)
@@ -632,9 +700,9 @@ public class HSSFWorkbook extends POIDocument
 
         sheets.add(sheet);
         workbook.setSheetName(sheets.size() - 1, sheetname);
-        WindowTwoRecord windowTwo = (WindowTwoRecord) sheet.getSheet().findFirstRecordBySid(WindowTwoRecord.sid);
-        windowTwo.setSelected(sheets.size() == 1);
-        windowTwo.setPaged(sheets.size() == 1);
+        boolean isOnlySheet = sheets.size() == 1;
+        sheet.setSelected(isOnlySheet);
+        sheet.setActive(isOnlySheet);
         return sheet;
     }
 
@@ -686,14 +754,54 @@ public class HSSFWorkbook extends POIDocument
     }
 
     /**
-     * removes sheet at the given index
+     * Removes sheet at the given index.<p/>
+     * 
+     * Care must be taken if the removed sheet is the currently active or only selected sheet in 
+     * the workbook. There are a few situations when Excel must have a selection and/or active 
+     * sheet. (For example when printing - see Bug 40414).<br/>
+     * 
+     * This method makes sure that if the removed sheet was active, another sheet will become
+     * active in its place.  Furthermore, if the removed sheet was the only selected sheet, another
+     * sheet will become selected.  The newly active/selected sheet will have the same index, or 
+     * one less if the removed sheet was the last in the workbook.
+     * 
      * @param index of the sheet  (0-based)
      */
+    public void removeSheetAt(int index) {
+        validateSheetIndex(index);
+        boolean wasActive = getSheetAt(index).isActive();
+        boolean wasSelected = getSheetAt(index).isSelected();
 
-    public void removeSheetAt(int index)
-    {
         sheets.remove(index);
         workbook.removeSheet(index);
+
+        // set the remaining active/selected sheet
+        int nSheets = sheets.size();
+        if (nSheets < 1) {
+            // nothing more to do if there are no sheets left
+            return;
+        }
+        // the index of the closest remaining sheet to the one just deleted
+        int newSheetIndex = index;
+        if (newSheetIndex >= nSheets) {
+            newSheetIndex = nSheets-1;
+        }
+        if (wasActive) {
+            setActiveSheet(newSheetIndex);
+        }
+
+        if (wasSelected) {
+            boolean someOtherSheetIsStillSelected = false;
+            for (int i =0; i < nSheets; i++) {
+                if (getSheetAt(i).isSelected()) {
+                    someOtherSheetIsStillSelected = true;
+                    break;
+                }
+            }
+            if (!someOtherSheetIsStillSelected) {
+                setSelectedTab(newSheetIndex);
+            }
+        }
     }
 
     /**
@@ -834,8 +942,7 @@ public class HSSFWorkbook extends POIDocument
         HSSFPrintSetup printSetup = sheet.getPrintSetup();
         printSetup.setValidSettings(false);
 
-        WindowTwoRecord w2 = (WindowTwoRecord) sheet.getSheet().findFirstRecordBySid(WindowTwoRecord.sid);
-        w2.setPaged(true);
+        sheet.setActive(true);
     }
 
     private NameRecord findExistingRowColHeaderNameRecord( int sheetIndex )

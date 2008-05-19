@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.model;
 
@@ -34,8 +32,7 @@ import java.util.List;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestSheet extends TestCase
-{
+public final class TestSheet extends TestCase {
     public void testCreateSheet() throws Exception
     {
         // Check we're adding row and cell aggregates
@@ -76,6 +73,21 @@ public class TestSheet extends TestCase
         if ((regionsToAdd % 1027) != 0)
             recordsExpected++;
         assertTrue("The " + regionsToAdd + " merged regions should have been spread out over " + recordsExpected + " records, not " + recordsAdded, recordsAdded == recordsExpected);
+        // Check we can't add one with invalid date
+        try {
+            sheet.addMergedRegion(10, (short)10, 9, (short)12);
+            fail("Expected an exception to occur");
+        } catch(IllegalArgumentException e) {
+            // occurs during successful test
+            assertEquals("The 'to' row (9) must not be less than the 'from' row (10)", e.getMessage());
+        }
+        try {
+            sheet.addMergedRegion(10, (short)10, 12, (short)9);
+            fail("Expected an exception to occur");
+        } catch(IllegalArgumentException e) {
+            // occurs during successful test
+            assertEquals("The 'to' col (9) must not be less than the 'from' col (10)", e.getMessage());
+        }
     }
 
     public void testRemoveMergedRegion()
@@ -113,9 +125,9 @@ public class TestSheet extends TestCase
 
         MergeCellsRecord merged = new MergeCellsRecord();
         merged.addArea(0, (short)0, 1, (short)2);
-        records.add(new RowRecord());
-        records.add(new RowRecord());
-        records.add(new RowRecord());
+        records.add(new RowRecord(0));
+        records.add(new RowRecord(1));
+        records.add(new RowRecord(2));
         records.add(merged);
 
         Sheet sheet = Sheet.createSheet(records, 0);
@@ -142,20 +154,11 @@ public class TestSheet extends TestCase
      */
     public void testRowAggregation() {
         List records = new ArrayList();
-        RowRecord row = new RowRecord();
-        row.setRowNumber(0);
-        records.add(row);
 
-        row = new RowRecord();
-        row.setRowNumber(1);
-        records.add(row);
-
+        records.add(new RowRecord(0));
+        records.add(new RowRecord(1));
         records.add(new StringRecord());
-
-        row = new RowRecord();
-        row.setRowNumber(2);
-        records.add(row);
-
+        records.add(new RowRecord(2));
 
         Sheet sheet = Sheet.createSheet(records, 0);
         assertNotNull("Row [2] was skipped", sheet.getRow(2));
@@ -197,9 +200,9 @@ public class TestSheet extends TestCase
         Iterator iterator = sheet.getRowBreaks();
         while (iterator.hasNext()) {
             PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
-            int main = (int)breakItem.main;
+            int main = breakItem.main;
             if (main != 0 && main != 10 && main != 11) fail("Invalid page break");
-            if (main == 0) 	is0 = true;
+            if (main == 0)     is0 = true;
             if (main == 10) is10= true;
             if (main == 11) is11 = true;
         }
@@ -216,8 +219,6 @@ public class TestSheet extends TestCase
         assertFalse("row should be removed", sheet.isRowBroken(10));
 
         assertEquals("no more breaks", 0, sheet.getNumRowBreaks());
-
-
     }
 
     /**
@@ -256,10 +257,10 @@ public class TestSheet extends TestCase
         Iterator iterator = sheet.getColumnBreaks();
         while (iterator.hasNext()) {
             PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
-            int main = (int)breakItem.main;
+            int main = breakItem.main;
             if (main != 0 && main != 1 && main != 10 && main != 15) fail("Invalid page break");
-            if (main == 0) 	is0 = true;
-            if (main == 1) 	is1 = true;
+            if (main == 0)  is0 = true;
+            if (main == 1)  is1 = true;
             if (main == 10) is10= true;
             if (main == 15) is15 = true;
         }
@@ -286,72 +287,69 @@ public class TestSheet extends TestCase
      * works as designed.
      */
     public void testXFIndexForColumn() {
-        try{
-            final short TEST_IDX = 10;
-            final short DEFAULT_IDX = 0xF; // 15
-            short xfindex = Short.MIN_VALUE;
-            Sheet sheet = Sheet.createSheet();
-            
-            // without ColumnInfoRecord
-            xfindex = sheet.getXFIndexForColAt((short) 0);
-            assertEquals(DEFAULT_IDX, xfindex);
-            xfindex = sheet.getXFIndexForColAt((short) 1);
-            assertEquals(DEFAULT_IDX, xfindex);
-            
-            ColumnInfoRecord nci = ( ColumnInfoRecord ) sheet.createColInfo();
-            sheet.columns.insertColumn(nci);
-            
-            // single column ColumnInfoRecord
-            nci.setFirstColumn((short) 2);
-            nci.setLastColumn((short) 2);
-            nci.setXFIndex(TEST_IDX);            
-            xfindex = sheet.getXFIndexForColAt((short) 0);
-            assertEquals(DEFAULT_IDX, xfindex);
-            xfindex = sheet.getXFIndexForColAt((short) 1);
-            assertEquals(DEFAULT_IDX, xfindex);
-            xfindex = sheet.getXFIndexForColAt((short) 2);
-            assertEquals(TEST_IDX, xfindex);
-            xfindex = sheet.getXFIndexForColAt((short) 3);
-            assertEquals(DEFAULT_IDX, xfindex);
+        final short TEST_IDX = 10;
+        final short DEFAULT_IDX = 0xF; // 15
+        short xfindex = Short.MIN_VALUE;
+        Sheet sheet = Sheet.createSheet();
+        
+        // without ColumnInfoRecord
+        xfindex = sheet.getXFIndexForColAt((short) 0);
+        assertEquals(DEFAULT_IDX, xfindex);
+        xfindex = sheet.getXFIndexForColAt((short) 1);
+        assertEquals(DEFAULT_IDX, xfindex);
+        
+        ColumnInfoRecord nci = ( ColumnInfoRecord ) sheet.createColInfo();
+        sheet.columns.insertColumn(nci);
+        
+        // single column ColumnInfoRecord
+        nci.setFirstColumn((short) 2);
+        nci.setLastColumn((short) 2);
+        nci.setXFIndex(TEST_IDX);            
+        xfindex = sheet.getXFIndexForColAt((short) 0);
+        assertEquals(DEFAULT_IDX, xfindex);
+        xfindex = sheet.getXFIndexForColAt((short) 1);
+        assertEquals(DEFAULT_IDX, xfindex);
+        xfindex = sheet.getXFIndexForColAt((short) 2);
+        assertEquals(TEST_IDX, xfindex);
+        xfindex = sheet.getXFIndexForColAt((short) 3);
+        assertEquals(DEFAULT_IDX, xfindex);
 
-            // ten column ColumnInfoRecord
-            nci.setFirstColumn((short) 2);
-            nci.setLastColumn((short) 11);
-            nci.setXFIndex(TEST_IDX);            
-            xfindex = sheet.getXFIndexForColAt((short) 1);
-            assertEquals(DEFAULT_IDX, xfindex);
-            xfindex = sheet.getXFIndexForColAt((short) 2);
-            assertEquals(TEST_IDX, xfindex);
-            xfindex = sheet.getXFIndexForColAt((short) 6);
-            assertEquals(TEST_IDX, xfindex);
-            xfindex = sheet.getXFIndexForColAt((short) 11);
-            assertEquals(TEST_IDX, xfindex);
-            xfindex = sheet.getXFIndexForColAt((short) 12);
-            assertEquals(DEFAULT_IDX, xfindex);
+        // ten column ColumnInfoRecord
+        nci.setFirstColumn((short) 2);
+        nci.setLastColumn((short) 11);
+        nci.setXFIndex(TEST_IDX);            
+        xfindex = sheet.getXFIndexForColAt((short) 1);
+        assertEquals(DEFAULT_IDX, xfindex);
+        xfindex = sheet.getXFIndexForColAt((short) 2);
+        assertEquals(TEST_IDX, xfindex);
+        xfindex = sheet.getXFIndexForColAt((short) 6);
+        assertEquals(TEST_IDX, xfindex);
+        xfindex = sheet.getXFIndexForColAt((short) 11);
+        assertEquals(TEST_IDX, xfindex);
+        xfindex = sheet.getXFIndexForColAt((short) 12);
+        assertEquals(DEFAULT_IDX, xfindex);
 
-            // single column ColumnInfoRecord starting at index 0
-            nci.setFirstColumn((short) 0);
-            nci.setLastColumn((short) 0);
-            nci.setXFIndex(TEST_IDX);            
-            xfindex = sheet.getXFIndexForColAt((short) 0);
-            assertEquals(TEST_IDX, xfindex);
-            xfindex = sheet.getXFIndexForColAt((short) 1);
-            assertEquals(DEFAULT_IDX, xfindex);
+        // single column ColumnInfoRecord starting at index 0
+        nci.setFirstColumn((short) 0);
+        nci.setLastColumn((short) 0);
+        nci.setXFIndex(TEST_IDX);            
+        xfindex = sheet.getXFIndexForColAt((short) 0);
+        assertEquals(TEST_IDX, xfindex);
+        xfindex = sheet.getXFIndexForColAt((short) 1);
+        assertEquals(DEFAULT_IDX, xfindex);
 
-            // ten column ColumnInfoRecord starting at index 0
-            nci.setFirstColumn((short) 0);
-            nci.setLastColumn((short) 9);
-            nci.setXFIndex(TEST_IDX);            
-            xfindex = sheet.getXFIndexForColAt((short) 0);
-            assertEquals(TEST_IDX, xfindex);
-            xfindex = sheet.getXFIndexForColAt((short) 7);
-            assertEquals(TEST_IDX, xfindex);
-            xfindex = sheet.getXFIndexForColAt((short) 9);
-            assertEquals(TEST_IDX, xfindex);
-            xfindex = sheet.getXFIndexForColAt((short) 10);
-            assertEquals(DEFAULT_IDX, xfindex);
-        }
-        catch(Exception e){e.printStackTrace();fail(e.getMessage());}
+        // ten column ColumnInfoRecord starting at index 0
+        nci.setFirstColumn((short) 0);
+        nci.setLastColumn((short) 9);
+        nci.setXFIndex(TEST_IDX);            
+        xfindex = sheet.getXFIndexForColAt((short) 0);
+        assertEquals(TEST_IDX, xfindex);
+        xfindex = sheet.getXFIndexForColAt((short) 7);
+        assertEquals(TEST_IDX, xfindex);
+        xfindex = sheet.getXFIndexForColAt((short) 9);
+        assertEquals(TEST_IDX, xfindex);
+        xfindex = sheet.getXFIndexForColAt((short) 10);
+        assertEquals(DEFAULT_IDX, xfindex);
     }
-
 }
+

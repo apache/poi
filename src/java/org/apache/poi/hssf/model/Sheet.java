@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-
 
 package org.apache.poi.hssf.model;
 
@@ -57,9 +55,7 @@ import java.util.List;   // normally I don't do this, buy we literally mean ALL
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
  * @version 1.0-pre
  */
-
-public class Sheet implements Model
-{
+public final class Sheet implements Model {
     public static final short   LeftMargin = 0;
     public static final short   RightMargin = 1;
     public static final short   TopMargin = 2;
@@ -97,9 +93,9 @@ public class Sheet implements Model
     protected ObjectProtectRecord        objprotect        =     null;
     protected ScenarioProtectRecord      scenprotect       =     null;
     protected PasswordRecord             password          =     null;
-    protected List                       condFormatting    =     new ArrayList();;
+    protected List                       condFormatting    =     new ArrayList();
 
-    /** Add an UncalcedRecord if not true indicating formulas have not been calculated */ 
+    /** Add an UncalcedRecord if not true indicating formulas have not been calculated */
     protected boolean uncalced = false;
 	
     public static final byte PANE_LOWER_RIGHT = (byte)0;
@@ -108,7 +104,7 @@ public class Sheet implements Model
     public static final byte PANE_UPPER_LEFT = (byte)3;
 
     /**
-     * Creates new Sheet with no intialization --useless at this point
+     * Creates new Sheet with no initialization --useless at this point
      * @see #createSheet(List,int,int)
      */
     public Sheet()
@@ -166,7 +162,7 @@ public class Sheet implements Model
                 }
             }
             else if (rec.getSid() == UncalcedRecord.sid) {
-            	retval.uncalced = true; 
+                retval.uncalced = true;
             }
             else if (rec.getSid() == DimensionsRecord.sid)
             {
@@ -188,14 +184,14 @@ public class Sheet implements Model
             }
             else if ( rec.getSid() == CFHeaderRecord.sid )
             {
-            	CFRecordsAggregate cfAgg = CFRecordsAggregate.createCFAggregate(recs, k);
-            	retval.condFormatting.add(cfAgg);
-            	rec = cfAgg;
+                CFRecordsAggregate cfAgg = CFRecordsAggregate.createCFAggregate(recs, k);
+                retval.condFormatting.add(cfAgg);
+                rec = cfAgg;
             }
             else if ( rec.getSid() == CFRuleRecord.sid )
             {
-            	// Skip it since it is processed by CFRecordsAggregate
-            	rec = null;
+                // Skip it since it is processed by CFRecordsAggregate
+                rec = null;
             }
             else if (rec.getSid() == ColumnInfoRecord.sid)
             {
@@ -244,7 +240,7 @@ public class Sheet implements Model
                 if ( isfirstrow )
                 {
                     retval.rows = new RowRecordsAggregate();
-                    rec = retval.rows;                    
+                    rec = retval.rows;
                     isfirstrow = false;
                 }
                 retval.rows.insertRow(row);
@@ -256,7 +252,7 @@ public class Sheet implements Model
             else if ( rec.getSid() == GridsetRecord.sid )
             {
                 retval.gridset = (GridsetRecord) rec;
-            }            
+            }
             else if ( rec.getSid() == HeaderRecord.sid && bofEofNestingLevel == 1)
             {
                 retval.header = (HeaderRecord) rec;
@@ -301,32 +297,32 @@ public class Sheet implements Model
             {
                 rec = null;
             }
-            
-			else if ( rec.getSid() == ProtectRecord.sid )
-			{
-				retval.protect = (ProtectRecord) rec;
-			} 
-			else if ( rec.getSid() == ObjectProtectRecord.sid )
-			{
-				retval.objprotect = (ObjectProtectRecord) rec;
-			} 
-			else if ( rec.getSid() == ScenarioProtectRecord.sid )
-			{
-				retval.scenprotect = (ScenarioProtectRecord) rec;
-			} 
-			else if ( rec.getSid() == PasswordRecord.sid )
-			{
-				retval.password = (PasswordRecord) rec;
-			} 
-			else if (rec.getSid() == PageBreakRecord.HORIZONTAL_SID) 
-			{	
-				retval.rowBreaks = (PageBreakRecord)rec;				
-			}
-			else if (rec.getSid() == PageBreakRecord.VERTICAL_SID) 
-			{	
-				retval.colBreaks = (PageBreakRecord)rec;				
-			}
-            
+
+            else if ( rec.getSid() == ProtectRecord.sid )
+            {
+                retval.protect = (ProtectRecord) rec;
+            }
+            else if ( rec.getSid() == ObjectProtectRecord.sid )
+            {
+                retval.objprotect = (ObjectProtectRecord) rec;
+            }
+            else if ( rec.getSid() == ScenarioProtectRecord.sid )
+            {
+                retval.scenprotect = (ScenarioProtectRecord) rec;
+            }
+            else if ( rec.getSid() == PasswordRecord.sid )
+            {
+                retval.password = (PasswordRecord) rec;
+            }
+            else if (rec.getSid() == PageBreakRecord.HORIZONTAL_SID)
+            {
+                retval.rowBreaks = (PageBreakRecord)rec;
+            }
+            else if (rec.getSid() == PageBreakRecord.VERTICAL_SID)
+            {
+                retval.colBreaks = (PageBreakRecord)rec;
+            }
+
             if (rec != null)
             {
                 records.add(rec);
@@ -351,9 +347,9 @@ public class Sheet implements Model
     /**
      * Clones the low level records of this sheet and returns the new sheet instance.
      * This method is implemented by adding methods for deep cloning to all records that
-     * can be added to a sheet. The <b>Record</b> object does not implement cloneable. 
+     * can be added to a sheet. The <b>Record</b> object does not implement cloneable.
      * When adding a new record, implement a public clone method if and only if the record
-     * belongs to a sheet. 
+     * belongs to a sheet.
      */
     public Sheet cloneSheet()
     {
@@ -374,7 +370,7 @@ public class Sheet implements Model
           ValueRecordsAggregate vrAgg = (ValueRecordsAggregate)rec;
           for (Iterator cellIter = vrAgg.getIterator();cellIter.hasNext();) {
             Record valRec = (Record)cellIter.next();
-            
+
             if (valRec instanceof FormulaRecordAggregate) {
                 FormulaRecordAggregate fmAgg = (FormulaRecordAggregate)valRec;
                 Record fmAggRec = fmAgg.getFormulaRecord();
@@ -459,9 +455,9 @@ public class Sheet implements Model
         records.add(retval.rowBreaks);
         retval.colBreaks = new PageBreakRecord(PageBreakRecord.VERTICAL_SID);
         records.add(retval.colBreaks);
-        
+
         retval.header = (HeaderRecord) retval.createHeader();
-        records.add( retval.header );        
+        records.add( retval.header );
         retval.footer = (FooterRecord) retval.createFooter();
         records.add( retval.footer );
         records.add( retval.createHCenter() );
@@ -479,11 +475,11 @@ public class Sheet implements Model
         retval.dimsloc = records.size()-1;
         records.add(retval.windowTwo = retval.createWindowTwo());
         retval.setLoc(records.size() - 1);
-        retval.selection = 
+        retval.selection =
                 (SelectionRecord) retval.createSelection();
         records.add(retval.selection);
-		retval.protect = (ProtectRecord) retval.createProtect();
-		records.add(retval.protect);
+        retval.protect = (ProtectRecord) retval.createProtect();
+        records.add(retval.protect);
         records.add(retval.createEOF());
 
 
@@ -511,26 +507,25 @@ public class Sheet implements Model
         }
     }
 
-    //public int addMergedRegion(short rowFrom, short colFrom, short rowTo,
-    public int addMergedRegion(int rowFrom, short colFrom, int rowTo,
-                               short colTo)
-    {
-    	// Validate input
-    	if(rowTo < rowFrom) {
-    		throw new IllegalArgumentException("The row to ("+rowTo+") must be >= the row from ("+rowFrom+")");
-    	}
-    	if(colTo < colFrom) {
-    		throw new IllegalArgumentException("The col to ("+colTo+") must be >= the col from ("+colFrom+")");
-    	}
-    	
+    public int addMergedRegion(int rowFrom, short colFrom, int rowTo, short colTo) {
+        // Validate input
+        if (rowTo < rowFrom) {
+            throw new IllegalArgumentException("The 'to' row (" + rowTo
+                    + ") must not be less than the 'from' row (" + rowFrom + ")");
+        }
+        if (colTo < colFrom) {
+            throw new IllegalArgumentException("The 'to' col (" + colTo
+                    + ") must not be less than the 'from' col (" + colFrom + ")");
+        }
+
         if (merged == null || merged.getNumAreas() == 1027)
         {
             merged = ( MergeCellsRecord ) createMergedCells();
-            mergedRecords.add(merged);            
+            mergedRecords.add(merged);
             records.add(records.size() - 1, merged);
         }
         merged.addArea(rowFrom, colFrom, rowTo, colTo);
-        return numMergedRegions++; 
+        return numMergedRegions++;
     }
 
     public void removeMergedRegion(int index)
@@ -538,59 +533,10 @@ public class Sheet implements Model
         //safety checks
         if (index >= numMergedRegions || mergedRecords.size() == 0)
            return;
-            
+
         int pos = 0;
         int startNumRegions = 0;
-        
-        //optimisation for current record
-        if (numMergedRegions - index < merged.getNumAreas())
-        {
-            pos = mergedRecords.size() - 1;
-            startNumRegions = numMergedRegions - merged.getNumAreas(); 
-        }
-        else
-        {
-            for (int n = 0; n < mergedRecords.size(); n++)
-            {
-                MergeCellsRecord record = (MergeCellsRecord) mergedRecords.get(n);
-                if (startNumRegions + record.getNumAreas() > index)
-                {
-                    pos = n;
-                    break;
-                }
-                startNumRegions += record.getNumAreas(); 
-            }
-        }
 
-        MergeCellsRecord rec = (MergeCellsRecord) mergedRecords.get(pos);
-        rec.removeAreaAt(index - startNumRegions);
-        numMergedRegions--;
-        if (rec.getNumAreas() == 0)
-        {
-			mergedRecords.remove(pos);
-			//get rid of the record from the sheet
-			records.remove(merged);            
-            if (merged == rec) {
-            	//pull up the LAST record for operations when we finally
-            	//support continue records for mergedRegions
-            	if (mergedRecords.size() > 0) {
-            		merged = (MergeCellsRecord) mergedRecords.get(mergedRecords.size() - 1);
-            	} else {
-            		merged = null;
-            	}
-            }
-        }
-    }
-
-    public MergeCellsRecord.MergedRegion getMergedRegionAt(int index)
-    {
-        //safety checks
-        if (index >= numMergedRegions || mergedRecords.size() == 0)
-            return null;
-            
-        int pos = 0;
-        int startNumRegions = 0;
-        
         //optimisation for current record
         if (numMergedRegions - index < merged.getNumAreas())
         {
@@ -607,7 +553,56 @@ public class Sheet implements Model
                     pos = n;
                     break;
                 }
-                startNumRegions += record.getNumAreas(); 
+                startNumRegions += record.getNumAreas();
+            }
+        }
+
+        MergeCellsRecord rec = (MergeCellsRecord) mergedRecords.get(pos);
+        rec.removeAreaAt(index - startNumRegions);
+        numMergedRegions--;
+        if (rec.getNumAreas() == 0)
+        {
+            mergedRecords.remove(pos);
+            //get rid of the record from the sheet
+            records.remove(merged);
+            if (merged == rec) {
+                //pull up the LAST record for operations when we finally
+                //support continue records for mergedRegions
+                if (mergedRecords.size() > 0) {
+                    merged = (MergeCellsRecord) mergedRecords.get(mergedRecords.size() - 1);
+                } else {
+                    merged = null;
+                }
+            }
+        }
+    }
+
+    public MergeCellsRecord.MergedRegion getMergedRegionAt(int index)
+    {
+        //safety checks
+        if (index >= numMergedRegions || mergedRecords.size() == 0)
+            return null;
+
+        int pos = 0;
+        int startNumRegions = 0;
+
+        //optimisation for current record
+        if (numMergedRegions - index < merged.getNumAreas())
+        {
+            pos = mergedRecords.size() - 1;
+            startNumRegions = numMergedRegions - merged.getNumAreas();
+        }
+        else
+        {
+            for (int n = 0; n < mergedRecords.size(); n++)
+            {
+                MergeCellsRecord record = (MergeCellsRecord) mergedRecords.get(n);
+                if (startNumRegions + record.getNumAreas() > index)
+                {
+                    pos = n;
+                    break;
+                }
+                startNumRegions += record.getNumAreas();
             }
         }
         return ((MergeCellsRecord) mergedRecords.get(pos)).getAreaAt(index - startNumRegions);
@@ -620,62 +615,62 @@ public class Sheet implements Model
     // Find correct position to add new CF record
     private int findConditionalFormattingPosition()
     {
-    	// This is default. 
-    	// If the algorithm does not find the right position,
-    	// this one will be used (this is a position before EOF record)
-    	int index = records.size()-2;
-    	
-    	for( int i=index; i>=0; i-- )
-    	{
-    		Record rec = (Record)records.get(i);
-    		short sid = rec.getSid();
-    		
-    		// CFRecordsAggregate records already exist, just add to the end
-    		if (rec instanceof CFRecordsAggregate)	{ return i+1; }
-    		
-    		if( sid == (short)0x00ef )				{ return i+1; }// PHONETICPR
-    		if( sid == (short)0x015f )				{ return i+1; }// LABELRANGES
-    		if( sid == MergeCellsRecord.sid )		{ return i+1; }
-    		if( sid == (short)0x0099 )				{ return i+1; }// STANDARDWIDTH
-    		if( sid == SelectionRecord.sid )		{ return i+1; }
-    		if( sid == PaneRecord.sid )				{ return i+1; }
-    		if( sid == SCLRecord.sid ) 				{ return i+1; }
-    		if( sid == WindowTwoRecord.sid )		{ return i+1; }
-    	}
-    	
-    	return index;
+        // This is default.
+        // If the algorithm does not find the right position,
+        // this one will be used (this is a position before EOF record)
+        int index = records.size()-2;
+
+        for( int i=index; i>=0; i-- )
+        {
+            Record rec = (Record)records.get(i);
+            short sid = rec.getSid();
+
+            // CFRecordsAggregate records already exist, just add to the end
+            if (rec instanceof CFRecordsAggregate)    { return i+1; }
+
+            if( sid == (short)0x00ef )                { return i+1; }// PHONETICPR
+            if( sid == (short)0x015f )                { return i+1; }// LABELRANGES
+            if( sid == MergeCellsRecord.sid )        { return i+1; }
+            if( sid == (short)0x0099 )                { return i+1; }// STANDARDWIDTH
+            if( sid == SelectionRecord.sid )        { return i+1; }
+            if( sid == PaneRecord.sid )                { return i+1; }
+            if( sid == SCLRecord.sid )                 { return i+1; }
+            if( sid == WindowTwoRecord.sid )        { return i+1; }
+        }
+
+        return index;
     }
 
     public int addConditionalFormatting(CFRecordsAggregate cfAggregate)
     {
-    	int index = findConditionalFormattingPosition();
-    	records.add(index, cfAggregate);
-    	condFormatting.add(cfAggregate);
-    	return condFormatting.size()-1;
+        int index = findConditionalFormattingPosition();
+        records.add(index, cfAggregate);
+        condFormatting.add(cfAggregate);
+        return condFormatting.size()-1;
     }
 
     public void removeConditionalFormatting(int index)
     {
         if (index >= 0 && index <= condFormatting.size()-1 )
         {
-        	CFRecordsAggregate cfAggregate = getCFRecordsAggregateAt(index);
-        	records.remove(cfAggregate);
-        	condFormatting.remove(index);
+            CFRecordsAggregate cfAggregate = getCFRecordsAggregateAt(index);
+            records.remove(cfAggregate);
+            condFormatting.remove(index);
         }
     }
-    
+
     public CFRecordsAggregate getCFRecordsAggregateAt(int index)
     {
         if (index >= 0 && index <= condFormatting.size()-1 )
         {
-        	return (CFRecordsAggregate) condFormatting.get(index);
+            return (CFRecordsAggregate) condFormatting.get(index);
         }
         return null;
     }
-    
+
     public int getNumConditionalFormattings()
     {
-    	return condFormatting.size();
+        return condFormatting.size();
     }
 
     /**
@@ -711,8 +706,6 @@ public class Sheet implements Model
      *
      * @see org.apache.poi.hssf.record.DimensionsRecord
      */
-
-    //public void setDimensions(short firstrow, short firstcol, short lastrow,
     public void setDimensions(int firstrow, short firstcol, int lastrow,
                               short lastcol)
     {
@@ -735,7 +728,7 @@ public class Sheet implements Model
 
     /**
      * set the locator for where we should look for the next value record.  The
-     * algorythm will actually start here and find the correct location so you
+     * algorithm will actually start here and find the correct location so you
      * can set this to 0 and watch performance go down the tubes but it will work.
      * After a value is set this is automatically advanced.  Its also set by the
      * create method.  So you probably shouldn't mess with this unless you have
@@ -813,13 +806,13 @@ public class Sheet implements Model
         for (int k = 0; k < records.size(); k++)
         {
             Record record = (( Record ) records.get(k));
-            
+
             // Don't write out UncalcedRecord entries, as
             //  we handle those specially just below
             if (record instanceof UncalcedRecord) {
-            	continue;
+                continue;
             }
-            
+
             // Once the rows have been found in the list of records, start
             //  writing out the blocked row information. This includes the DBCell references
             if (record instanceof RowRecordsAggregate) {
@@ -829,13 +822,13 @@ public class Sheet implements Model
             } else {
               pos += record.serialize(pos, data );   // rec.length;
             }
-            
+
             // If the BOF record was just serialized then add the IndexRecord
             if (record.getSid() == BOFRecord.sid) {
               // Add an optional UncalcedRecord
               if (uncalced) {
-            	  UncalcedRecord rec = new UncalcedRecord();
-            	  pos += rec.serialize(pos, data);
+                  UncalcedRecord rec = new UncalcedRecord();
+                  pos += rec.serialize(pos, data);
               }
               //Can there be more than one BOF for a sheet? If not then we can
               //remove this guard. So be safe it is left here.
@@ -871,7 +864,7 @@ public class Sheet implements Model
             log.log(POILogger.DEBUG, "Sheet.serialize returning ");
         return pos-offset;
     }
-    
+
     private int serializeIndexRecord(final int BOFRecordIndex, final int offset, byte[] data) {
       IndexRecord index = new IndexRecord();
       index.setFirstRow(rows.getFirstRowNum());
@@ -906,7 +899,7 @@ public class Sheet implements Model
       }
       return index.serialize(offset, data);
     }
-    
+
 
     /**
      * Create a row record.  (does not add it to the records contained in this sheet)
@@ -930,8 +923,6 @@ public class Sheet implements Model
      * @return LabelSSTRecord newly created containing your SST Index, row,col.
      * @see org.apache.poi.hssf.record.SSTRecord
      */
-
-    //public LabelSSTRecord createLabelSST(short row, short col, int index)
     public LabelSSTRecord createLabelSST(int row, short col, int index)
     {
         log.logFormatted(POILogger.DEBUG, "create labelsst row,col,index %,%,%",
@@ -957,8 +948,6 @@ public class Sheet implements Model
      *
      * @return NumberRecord for that row, col containing that value as added to the sheet
      */
-
-    //public NumberRecord createNumber(short row, short col, double value)
     public NumberRecord createNumber(int row, short col, double value)
     {
         log.logFormatted(POILogger.DEBUG, "create number row,col,value %,%,%",
@@ -968,7 +957,6 @@ public class Sheet implements Model
         });
         NumberRecord rec = new NumberRecord();
 
-        //rec.setRow(( short ) row);
         rec.setRow(row);
         rec.setColumn(col);
         rec.setValue(value);
@@ -982,18 +970,14 @@ public class Sheet implements Model
      * @param row - the row the BlankRecord is a member of
      * @param col - the column the BlankRecord is a member of
      */
-
-    //public BlankRecord createBlank(short row, short col)
     public BlankRecord createBlank(int row, short col)
     {
-        //log.logFormatted(POILogger.DEBUG, "create blank row,col %,%", new short[]
         log.logFormatted(POILogger.DEBUG, "create blank row,col %,%", new int[]
         {
             row, col
         });
         BlankRecord rec = new BlankRecord();
 
-        //rec.setRow(( short ) row);
         rec.setRow(row);
         rec.setColumn(col);
         rec.setXFIndex(( short ) 0x0f);
@@ -1009,12 +993,9 @@ public class Sheet implements Model
      * @param formula - a String representing the formula.  To be parsed to PTGs
      * @return bogus/useless formula record
      */
-
-    //public FormulaRecord createFormula(short row, short col, String formula)
     public FormulaRecord createFormula(int row, short col, String formula)
     {
         log.logFormatted(POILogger.DEBUG, "create formula row,col,formula %,%,%",
-                         //new short[]
                          new int[]
         {
             row, col
@@ -1052,8 +1033,6 @@ public class Sheet implements Model
      * @param row the row to add the cell value to
      * @param col the cell value record itself.
      */
-
-    //public void addValueRecord(short row, CellValueRecordInterface col)
     public void addValueRecord(int row, CellValueRecordInterface col)
     {
         checkCells();
@@ -1075,29 +1054,6 @@ public class Sheet implements Model
             d.setFirstCol(col.getColumn());
         }
         cells.insertCell(col);
-
-        /*
-         * for (int k = loc; k < records.size(); k++)
-         * {
-         *   Record rec = ( Record ) records.get(k);
-         *
-         *   if (rec.getSid() == RowRecord.sid)
-         *   {
-         *       RowRecord rowrec = ( RowRecord ) rec;
-         *
-         *       if (rowrec.getRowNumber() == col.getRow())
-         *       {
-         *           records.add(k + 1, col);
-         *           loc = k;
-         *           if (rowrec.getLastCol() <= col.getColumn())
-         *           {
-         *               rowrec.setLastCol((( short ) (col.getColumn() + 1)));
-         *           }
-         *           break;
-         *       }
-         *   }
-         * }
-         */
     }
 
     /**
@@ -1109,8 +1065,6 @@ public class Sheet implements Model
      * @param col - a record supporting the CellValueRecordInterface.
      * @see org.apache.poi.hssf.record.CellValueRecordInterface
      */
-
-    //public void removeValueRecord(short row, CellValueRecordInterface col)
     public void removeValueRecord(int row, CellValueRecordInterface col)
     {
         checkCells();
@@ -1118,27 +1072,6 @@ public class Sheet implements Model
                          new int[]{row, dimsloc} );
         loc = dimsloc;
         cells.removeCell(col);
-
-        /*
-         * for (int k = loc; k < records.size(); k++)
-         * {
-         *   Record rec = ( Record ) records.get(k);
-         *
-         *   // checkDimsLoc(rec,k);
-         *   if (rec.isValue())
-         *   {
-         *       CellValueRecordInterface cell =
-         *           ( CellValueRecordInterface ) rec;
-         *
-         *       if ((cell.getRow() == col.getRow())
-         *               && (cell.getColumn() == col.getColumn()))
-         *       {
-         *           records.remove(k);
-         *           break;
-         *       }
-         *   }
-         * }
-         */
     }
 
     /**
@@ -1160,26 +1093,10 @@ public class Sheet implements Model
         //The ValueRecordsAggregate use a tree map underneath.
         //The tree Map uses the CellValueRecordInterface as both the
         //key and the value, if we dont do a remove, then
-        //the previous instance of the key is retained, effectively using 
+        //the previous instance of the key is retained, effectively using
         //double the memory
         cells.removeCell(newval);
         cells.insertCell(newval);
-
-        /*
-         * CellValueRecordInterface oldval = getNextValueRecord();
-         *
-         * while (oldval != null)
-         * {
-         *   if (oldval.isEqual(newval))
-         *   {
-         *       records.set(( short ) (getLoc() - 1), newval);
-         *       return;
-         *   }
-         *   oldval = getNextValueRecord();
-         * }
-         * addValueRecord(newval.getRow(), newval);
-         * setLoc(dimsloc);
-         */
     }
 
     /**
@@ -1218,41 +1135,6 @@ public class Sheet implements Model
 
         rows.insertRow(row);
 
-        /*
-         * for (int k = loc; k < records.size(); k++)
-         * {
-         *   Record rec = ( Record ) records.get(k);
-         *
-         *   if (rec.getSid() == IndexRecord.sid)
-         *   {
-         *       index = ( IndexRecord ) rec;
-         *   }
-         *   if (rec.getSid() == RowRecord.sid)
-         *   {
-         *       RowRecord rowrec = ( RowRecord ) rec;
-         *
-         *       if (rowrec.getRowNumber() > row.getRowNumber())
-         *       {
-         *           records.add(k, row);
-         *           loc = k;
-         *           break;
-         *       }
-         *   }
-         *   if (rec.getSid() == WindowTwoRecord.sid)
-         *   {
-         *       records.add(k, row);
-         *       loc = k;
-         *       break;
-         *   }
-         * }
-         * if (index != null)
-         * {
-         *   if (index.getLastRowAdd1() <= row.getRowNumber())
-         *   {
-         *       index.setLastRowAdd1(row.getRowNumber() + 1);
-         *   }
-         * }
-         */
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "exit addRow");
     }
@@ -1268,33 +1150,9 @@ public class Sheet implements Model
     public void removeRow(RowRecord row)
     {
         checkRows();
-        // IndexRecord index = null;
 
         setLoc(getDimsLoc());
         rows.removeRow(row);
-
-        /*
-         * for (int k = loc; k < records.size(); k++)
-         * {
-         *   Record rec = ( Record ) records.get(k);
-         *
-         *   // checkDimsLoc(rec,k);
-         *   if (rec.getSid() == RowRecord.sid)
-         *   {
-         *       RowRecord rowrec = ( RowRecord ) rec;
-         *
-         *       if (rowrec.getRowNumber() == row.getRowNumber())
-         *       {
-         *           records.remove(k);
-         *           break;
-         *       }
-         *   }
-         *   if (rec.getSid() == WindowTwoRecord.sid)
-         *   {
-         *       break;
-         *   }
-         * }
-         */
     }
 
     /**
@@ -1325,65 +1183,7 @@ public class Sheet implements Model
             return null;
         }
         return ( CellValueRecordInterface ) valueRecIterator.next();
-
-        /*
-         *      if (this.getLoc() < records.size())
-         *     {
-         *         for (int k = getLoc(); k < records.size(); k++)
-         *         {
-         *             Record rec = ( Record ) records.get(k);
-         *
-         *             this.setLoc(k + 1);
-         *             if (rec instanceof CellValueRecordInterface)
-         *             {
-         *                 return ( CellValueRecordInterface ) rec;
-         *             }
-         *         }
-         *     }
-         *     return null;
-         */
     }
-
-    /**
-     * get the NEXT RowRecord or CellValueRecord(from LOC).  The first record that
-     * is a Row record or CellValueRecord(starting at LOC) will be returned.
-     * <P>
-     * This method is "loc" sensitive.  Meaning you need to set LOC to where you
-     * want it to start searching.  If you don't know do this: setLoc(getDimsLoc).
-     * When adding several rows you can just start at the last one by leaving loc
-     * at what this sets it to.  For this method, set loc to dimsloc to start with.
-     * subsequent calls will return rows in (physical) sequence or NULL when you get to the end.
-     *
-     * @return RowRecord representing the next row record or CellValueRecordInterface
-     *  representing the next cellvalue or NULL if there are no more
-     * @see #setLoc(int)
-     *
-     */
-
-/*    public Record getNextRowOrValue()
-    {
-        POILogger.DEBUG((new StringBuffer("getNextRow loc= ")).append(loc)
-            .toString());
-        if (this.getLoc() < records.size())
-        {
-            for (int k = this.getLoc(); k < records.size(); k++)
-            {
-                Record rec = ( Record ) records.get(k);
-
-                this.setLoc(k + 1);
-                if (rec.getSid() == RowRecord.sid)
-                {
-                    return rec;
-                }
-                else if (rec.isValue())
-                {
-                    return rec;
-                }
-            }
-        }
-        return null;
-    }
- */
 
     /**
      * get the NEXT RowRecord (from LOC).  The first record that is a Row record
@@ -1413,20 +1213,6 @@ public class Sheet implements Model
             return null;
         }
         return ( RowRecord ) rowRecIterator.next();
-
-/*        if (this.getLoc() < records.size())
-        {
-            for (int k = this.getLoc(); k < records.size(); k++)
-            {
-                Record rec = ( Record ) records.get(k);
-
-                this.setLoc(k + 1);
-                if (rec.getSid() == RowRecord.sid)
-                {
-                    return ( RowRecord ) rec;
-                }
-            }
-        }*/
     }
 
     /**
@@ -1445,34 +1231,10 @@ public class Sheet implements Model
      * @see #setLoc(int)
      *
      */
-
-    //public RowRecord getRow(short rownum)
-    public RowRecord getRow(int rownum)
-    {
+    public RowRecord getRow(int rownum) {
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "getNextRow loc= " + loc);
         return rows.getRow(rownum);
-
-        /*
-         * if (this.getLoc() < records.size())
-         * {
-         *   for (int k = this.getLoc(); k < records.size(); k++)
-         *   {
-         *       Record rec = ( Record ) records.get(k);
-         *
-         *       this.setLoc(k + 1);
-         *       if (rec.getSid() == RowRecord.sid)
-         *       {
-         *           if ((( RowRecord ) rec).getRowNumber() == rownum)
-         *           {
-         *               return ( RowRecord ) rec;
-         *           }
-         *       }
-         *   }
-         * }
-         */
-
-        // return null;
     }
 
     /**
@@ -1489,7 +1251,6 @@ public class Sheet implements Model
         retval.setVersion(( short ) 0x600);
         retval.setType(( short ) 0x010);
 
-        // retval.setBuild((short)0x10d3);
         retval.setBuild(( short ) 0x0dbb);
         retval.setBuildYear(( short ) 1996);
         retval.setHistoryBitMask(0xc1);
@@ -1807,7 +1568,7 @@ public class Sheet implements Model
      * @see org.apache.poi.hssf.record.ColumnInfoRecord
      * @return record containing a ColumnInfoRecord
      */
-
+    // TODO change return type to ColumnInfoRecord 
     protected Record createColInfo()
     {
         return ColumnInfoRecordsAggregate.createColInfo();
@@ -1830,12 +1591,12 @@ public class Sheet implements Model
 
     public boolean isGridsPrinted()
     {
-    	if (gridset == null) {
-    		gridset = (GridsetRecord)createGridset();
-    		//Insert the newlycreated Gridset record at the end of the record (just before the EOF)
-    		int loc = findFirstRecordLocBySid(EOFRecord.sid);
-    		records.add(loc, gridset);     		
-    	}
+        if (gridset == null) {
+            gridset = (GridsetRecord)createGridset();
+            //Insert the newlycreated Gridset record at the end of the record (just before the EOF)
+            int loc = findFirstRecordLocBySid(EOFRecord.sid);
+            records.add(loc, gridset);
+        }
         return !gridset.getGridset();
     }
 
@@ -1918,16 +1679,16 @@ public class Sheet implements Model
         }
         return retval;
     }
-    
+
     /**
-     * get the index to the ExtendedFormatRecord "associated" with 
-     * the column at specified 0-based index. (In this case, an 
-     * ExtendedFormatRecord index is actually associated with a 
+     * get the index to the ExtendedFormatRecord "associated" with
+     * the column at specified 0-based index. (In this case, an
+     * ExtendedFormatRecord index is actually associated with a
      * ColumnInfoRecord which spans 1 or more columns)
      * <br/>
      * Returns the index to the default ExtendedFormatRecord (0xF)
      * if no ColumnInfoRecord exists that includes the column
-     * index specified. 
+     * index specified.
      * @param column
      * @return index of ExtendedFormatRecord associated with
      * ColumnInfoRecord that includes the column index or the
@@ -2116,38 +1877,38 @@ public class Sheet implements Model
         retval.setNumRefs(( short ) 0x0);
         return retval;
     }
-    
-    public short getTopRow() 
+
+    public short getTopRow()
     {
-    	return (windowTwo==null) ? (short) 0 : windowTwo.getTopRow();
+        return (windowTwo==null) ? (short) 0 : windowTwo.getTopRow();
     }
-    
-    public void setTopRow(short topRow) 
+
+    public void setTopRow(short topRow)
     {
-    	if (windowTwo!=null) 
-    	{
-    		windowTwo.setTopRow(topRow);
-    	}
+        if (windowTwo!=null)
+        {
+            windowTwo.setTopRow(topRow);
+        }
     }
-   
+
     /**
      * Sets the left column to show in desktop window pane.
      * @param leftCol the left column to show in desktop window pane
      */
         public void setLeftCol(short leftCol){
-        	if (windowTwo!=null) 
-        	{   
-        	windowTwo.setLeftCol(leftCol);
-        	}
+            if (windowTwo!=null)
+            {
+            windowTwo.setLeftCol(leftCol);
+            }
         }
-        
-        public short getLeftCol() 
+
+        public short getLeftCol()
         {
-        	return (windowTwo==null) ? (short) 0 : windowTwo.getLeftCol();
+            return (windowTwo==null) ? (short) 0 : windowTwo.getLeftCol();
         }
-        
-        
-    
+
+
+
     /**
      * Returns the active row
      *
@@ -2162,7 +1923,7 @@ public class Sheet implements Model
         }
         return selection.getActiveCellRow();
     }
-    
+
     /**
      * Sets the active row
      *
@@ -2177,7 +1938,7 @@ public class Sheet implements Model
             selection.setActiveCellRow(row);
         }
     }
-    
+
     /**
      * Returns the active column
      *
@@ -2192,7 +1953,7 @@ public class Sheet implements Model
         }
         return selection.getActiveCellCol();
     }
-    
+
     /**
      * Sets the active column
      *
@@ -2278,9 +2039,9 @@ public class Sheet implements Model
         }
         // Add space for UncalcedRecord
         if (uncalced) {
-        	retval += UncalcedRecord.getStaticRecordSize();
+            retval += UncalcedRecord.getStaticRecordSize();
         }
-        
+
         return retval;
     }
 
@@ -2367,16 +2128,19 @@ public class Sheet implements Model
      */
     public HeaderRecord getHeader ()
     {
-	return header;
+    return header;
     }
 
+    public WindowTwoRecord getWindowTwo() {
+        return windowTwo;
+    }
     /**
      * Sets the HeaderRecord.
      * @param newHeader The new HeaderRecord for the sheet.
      */
     public void setHeader (HeaderRecord newHeader)
     {
-    	header = newHeader;
+        header = newHeader;
     }
 
     /**
@@ -2385,7 +2149,7 @@ public class Sheet implements Model
      */
     public FooterRecord getFooter ()
     {
-	    return footer;
+        return footer;
     }
 
     /**
@@ -2394,7 +2158,7 @@ public class Sheet implements Model
      */
     public void setFooter (FooterRecord newFooter)
     {
-	    footer = newFooter;
+        footer = newFooter;
     }
 
     /**
@@ -2403,7 +2167,7 @@ public class Sheet implements Model
      */
     public PrintSetupRecord getPrintSetup ()
     {
-	    return printSetup;
+        return printSetup;
     }
 
     /**
@@ -2412,7 +2176,7 @@ public class Sheet implements Model
      */
     public void setPrintSetup (PrintSetupRecord newPrintSetup)
     {
-	    printSetup = newPrintSetup;
+        printSetup = newPrintSetup;
     }
 
     /**
@@ -2421,7 +2185,7 @@ public class Sheet implements Model
      */
     public PrintGridlinesRecord getPrintGridlines ()
     {
-	    return printGridlines;
+        return printGridlines;
     }
 
     /**
@@ -2430,7 +2194,7 @@ public class Sheet implements Model
      */
     public void setPrintGridlines (PrintGridlinesRecord newPrintGridlines)
     {
-	    printGridlines = newPrintGridlines;
+        printGridlines = newPrintGridlines;
     }
 
     /**
@@ -2447,23 +2211,23 @@ public class Sheet implements Model
       * @return the size of the margin
       */
     public double getMargin(short margin) {
-	if (getMargins()[margin] != null)
-	    return margins[margin].getMargin();
-	else {
-	    switch ( margin )
-		{
-		case LeftMargin:
-		    return .75;
-		case RightMargin:
-		    return .75;
-		case TopMargin:
-		    return 1.0;
-		case BottomMargin:
-		    return 1.0;
-		default :
-		    throw new RuntimeException( "Unknown margin constant:  " + margin );
-		}
-	}
+    if (getMargins()[margin] != null)
+        return margins[margin].getMargin();
+    else {
+        switch ( margin )
+        {
+        case LeftMargin:
+            return .75;
+        case RightMargin:
+            return .75;
+        case TopMargin:
+            return 1.0;
+        case BottomMargin:
+            return 1.0;
+        default :
+            throw new RuntimeException( "Unknown margin constant:  " + margin );
+        }
+    }
     }
 
      /**
@@ -2472,32 +2236,32 @@ public class Sheet implements Model
       * @param size the size of the margin
       */
     public void setMargin(short margin, double size) {
-	Margin m = getMargins()[margin];
-	if (m  == null) {
-	    switch ( margin )
-		{
-		case LeftMargin:
-		    m = new LeftMarginRecord();
-		    records.add( getDimsLoc() + 1, m );
-		    break;
-		case RightMargin:
-		    m = new RightMarginRecord();
-		    records.add( getDimsLoc() + 1, m );
-		    break;
-		case TopMargin:
-		    m = new TopMarginRecord();
-		    records.add( getDimsLoc() + 1, m );
-		    break;
-		case BottomMargin:
-		    m = new BottomMarginRecord();
-		    records.add( getDimsLoc() + 1, m );
-		    break;
-		default :
-		    throw new RuntimeException( "Unknown margin constant:  " + margin );
-		}
-	    margins[margin] = m;
-	}
-	m.setMargin( size );
+    Margin m = getMargins()[margin];
+    if (m  == null) {
+        switch ( margin )
+        {
+        case LeftMargin:
+            m = new LeftMarginRecord();
+            records.add( getDimsLoc() + 1, m );
+            break;
+        case RightMargin:
+            m = new RightMarginRecord();
+            records.add( getDimsLoc() + 1, m );
+            break;
+        case TopMargin:
+            m = new TopMarginRecord();
+            records.add( getDimsLoc() + 1, m );
+            break;
+        case BottomMargin:
+            m = new BottomMarginRecord();
+            records.add( getDimsLoc() + 1, m );
+            break;
+        default :
+            throw new RuntimeException( "Unknown margin constant:  " + margin );
+        }
+        margins[margin] = m;
+    }
+    m.setMargin( size );
     }
 
     public int getEofLoc()
@@ -2514,10 +2278,10 @@ public class Sheet implements Model
      */
     public void createFreezePane(int colSplit, int rowSplit, int topRow, int leftmostColumn )
     {
-    	int paneLoc = findFirstRecordLocBySid(PaneRecord.sid);
-    	if (paneLoc != -1)
-    		records.remove(paneLoc);
-    	
+        int paneLoc = findFirstRecordLocBySid(PaneRecord.sid);
+        if (paneLoc != -1)
+            records.remove(paneLoc);
+
         int loc = findFirstRecordLocBySid(WindowTwoRecord.sid);
         PaneRecord pane = new PaneRecord();
         pane.setX((short)colSplit);
@@ -2563,10 +2327,10 @@ public class Sheet implements Model
      */
     public void createSplitPane(int xSplitPos, int ySplitPos, int topRow, int leftmostColumn, int activePane )
     {
-    	int paneLoc = findFirstRecordLocBySid(PaneRecord.sid);
-    	if (paneLoc != -1)
-    		records.remove(paneLoc);
-    	
+        int paneLoc = findFirstRecordLocBySid(PaneRecord.sid);
+        if (paneLoc != -1)
+            records.remove(paneLoc);
+
         int loc = findFirstRecordLocBySid(WindowTwoRecord.sid);
         PaneRecord r = new PaneRecord();
         r.setX((short)xSplitPos);
@@ -2583,7 +2347,7 @@ public class Sheet implements Model
         sel.setPane(PANE_LOWER_RIGHT);
 
     }
-    
+
     /**
      * Returns the information regarding the currently configured pane (split or freeze).
      * @return null if no pane configured, or the pane information.
@@ -2592,9 +2356,9 @@ public class Sheet implements Model
       PaneRecord rec = (PaneRecord)findFirstRecordBySid(PaneRecord.sid);
       if (rec == null)
         return null;
-        
+
       return new PaneInformation(rec.getX(), rec.getY(), rec.getTopRow(),
-    		                     rec.getLeftColumn(), (byte)rec.getActivePane(), windowTwo.getFreezePanes());      
+                                 rec.getLeftColumn(), (byte)rec.getActivePane(), windowTwo.getFreezePanes());
     }
 
     public SelectionRecord getSelection()
@@ -2660,12 +2424,12 @@ public class Sheet implements Model
      */
     public ProtectRecord getProtect()
     {
-    	if (protect == null) {
-    		protect = (ProtectRecord)createProtect();
-    		//Insert the newlycreated protect record at the end of the record (just before the EOF)
-    		int loc = findFirstRecordLocBySid(EOFRecord.sid);
-    		records.add(loc, protect);    		
-    	}
+        if (protect == null) {
+            protect = (ProtectRecord)createProtect();
+            //Insert the newlycreated protect record at the end of the record (just before the EOF)
+            int loc = findFirstRecordLocBySid(EOFRecord.sid);
+            records.add(loc, protect);
+        }
         return protect;
     }
 
@@ -2674,12 +2438,12 @@ public class Sheet implements Model
      */
     public PasswordRecord getPassword()
     {
-    	if (password == null) {
-    		password = createPassword();
-    		//Insert the newly created password record at the end of the record (just before the EOF)
-    		int loc = findFirstRecordLocBySid(EOFRecord.sid);
-    		records.add(loc, password);    		
-    	}
+        if (password == null) {
+            password = createPassword();
+            //Insert the newly created password record at the end of the record (just before the EOF)
+            int loc = findFirstRecordLocBySid(EOFRecord.sid);
+            records.add(loc, password);
+        }
         return password;
     }
 
@@ -2714,7 +2478,7 @@ public class Sheet implements Model
      * @return whether gridlines are displayed
      */
     public boolean isDisplayGridlines() {
-	return windowTwo.getDisplayGridlines();
+    return windowTwo.getDisplayGridlines();
     }
 
     /**
@@ -2730,7 +2494,7 @@ public class Sheet implements Model
      * @return whether formulas are displayed
      */
     public boolean isDisplayFormulas() {
-	return windowTwo.getDisplayFormulas();
+    return windowTwo.getDisplayFormulas();
     }
 
     /**
@@ -2746,24 +2510,24 @@ public class Sheet implements Model
      * @return whether RowColHeadings are displayed
      */
     public boolean isDisplayRowColHeadings() {
-	    return windowTwo.getDisplayRowColHeadings();
+        return windowTwo.getDisplayRowColHeadings();
     }
-    
+
 
     /**
-	 * @return whether an uncalced record must be inserted or not at generation
-	 */
-	public boolean getUncalced() {
-		return uncalced;
-	}
-	/**
-	 * @param uncalced whether an uncalced record must be inserted or not at generation
-	 */
-	public void setUncalced(boolean uncalced) {
-		this.uncalced = uncalced;
-	}
+     * @return whether an uncalced record must be inserted or not at generation
+     */
+    public boolean getUncalced() {
+        return uncalced;
+    }
+    /**
+     * @param uncalced whether an uncalced record must be inserted or not at generation
+     */
+    public void setUncalced(boolean uncalced) {
+        this.uncalced = uncalced;
+    }
 
-	/**
+    /**
      * Returns the array of margins.  If not created, will create.
      *
      * @return the array of marings.
@@ -2771,7 +2535,7 @@ public class Sheet implements Model
     protected Margin[] getMargins() {
         if (margins == null)
             margins = new Margin[4];
-    	return margins;
+        return margins;
     }
 
     /**
@@ -2789,11 +2553,11 @@ public class Sheet implements Model
         boolean noDrawingRecordsFound = (loc == -1);
         if (noDrawingRecordsFound)
         {
-        	if(!createIfMissing) {
-        		// None found, and not allowed to add in
-        		return -1;
-        	}
-        	
+            if(!createIfMissing) {
+                // None found, and not allowed to add in
+                return -1;
+            }
+
             EscherAggregate aggregate = new EscherAggregate( drawingManager );
             loc = findFirstRecordLocBySid(EscherAggregate.sid);
             if (loc == -1)
@@ -2847,43 +2611,43 @@ public class Sheet implements Model
      * @param breaks The page record to be shifted
      * @param start Starting "main" value to shift breaks
      * @param stop Ending "main" value to shift breaks
-     * @param count number of units (rows/columns) to shift by 
+     * @param count number of units (rows/columns) to shift by
      */
     public void shiftBreaks(PageBreakRecord breaks, short start, short stop, int count) {
-   	
-    	if(rowBreaks == null)
-    		return;
-    	Iterator iterator = breaks.getBreaksIterator();
-    	List shiftedBreak = new ArrayList();
-    	while(iterator.hasNext()) 
-    	{
-    		PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
-    		short breakLocation = breakItem.main;
-    		boolean inStart = (breakLocation >= start);
-    		boolean inEnd = (breakLocation <= stop);
-    		if(inStart && inEnd)
-    			shiftedBreak.add(breakItem);
-    	}
-    	
-    	iterator = shiftedBreak.iterator();
-    	while (iterator.hasNext()) {    		
-			PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
-    		breaks.removeBreak(breakItem.main);
-    		breaks.addBreak((short)(breakItem.main+count), breakItem.subFrom, breakItem.subTo);
-    	}
+
+        if(rowBreaks == null)
+            return;
+        Iterator iterator = breaks.getBreaksIterator();
+        List shiftedBreak = new ArrayList();
+        while(iterator.hasNext())
+        {
+            PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
+            short breakLocation = breakItem.main;
+            boolean inStart = (breakLocation >= start);
+            boolean inEnd = (breakLocation <= stop);
+            if(inStart && inEnd)
+                shiftedBreak.add(breakItem);
+        }
+
+        iterator = shiftedBreak.iterator();
+        while (iterator.hasNext()) {
+            PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
+            breaks.removeBreak(breakItem.main);
+            breaks.addBreak((short)(breakItem.main+count), breakItem.subFrom, breakItem.subTo);
+        }
     }
-    
+
     /**
      * Sets a page break at the indicated row
      * @param row
      */
-    public void setRowBreak(int row, short fromCol, short toCol) { 
-    	if (rowBreaks == null) {
+    public void setRowBreak(int row, short fromCol, short toCol) {
+        if (rowBreaks == null) {
             int loc = findFirstRecordLocBySid(WindowTwoRecord.sid);
             rowBreaks = new PageBreakRecord(PageBreakRecord.HORIZONTAL_SID);
             records.add(loc, rowBreaks);
-    	}
-    	rowBreaks.addBreak((short)row, fromCol, toCol);
+        }
+        rowBreaks.addBreak((short)row, fromCol, toCol);
     }
 
     /**
@@ -2891,9 +2655,9 @@ public class Sheet implements Model
      * @param row
      */
     public void removeRowBreak(int row) {
-    	if (rowBreaks == null)
-    		throw new IllegalArgumentException("Sheet does not define any row breaks");
-    	rowBreaks.removeBreak((short)row);
+        if (rowBreaks == null)
+            throw new IllegalArgumentException("Sheet does not define any row breaks");
+        rowBreaks.removeBreak((short)row);
     }
 
     /**
@@ -2902,7 +2666,7 @@ public class Sheet implements Model
      * @return true if the specified row has a page break
      */
     public boolean isRowBroken(int row) {
-    	return (rowBreaks == null) ? false : rowBreaks.getBreak((short)row) != null;
+        return (rowBreaks == null) ? false : rowBreaks.getBreak((short)row) != null;
     }
 
     /**
@@ -2910,12 +2674,12 @@ public class Sheet implements Model
      *
      */
     public void setColumnBreak(short column, short fromRow, short toRow) {
-    	if (colBreaks == null) {
+        if (colBreaks == null) {
             int loc = findFirstRecordLocBySid(WindowTwoRecord.sid);
             colBreaks = new PageBreakRecord(PageBreakRecord.VERTICAL_SID);
             records.add(loc, colBreaks);
-    	}    	
-    	colBreaks.addBreak(column, fromRow, toRow);
+        }
+        colBreaks.addBreak(column, fromRow, toRow);
     }
 
     /**
@@ -2923,10 +2687,10 @@ public class Sheet implements Model
      *
      */
     public void removeColumnBreak(short column) {
-    	if (colBreaks == null)
-    		throw new IllegalArgumentException("Sheet does not define any column breaks");
-    	
-    	colBreaks.removeBreak(column);
+        if (colBreaks == null)
+            throw new IllegalArgumentException("Sheet does not define any column breaks");
+
+        colBreaks.removeBreak(column);
     }
 
     /**
@@ -2935,9 +2699,9 @@ public class Sheet implements Model
      * @return true if the specified column has a page break
      */
     public boolean isColumnBroken(short column) {
-    	return (colBreaks == null) ? false : colBreaks.getBreak(column) != null;
+        return (colBreaks == null) ? false : colBreaks.getBreak(column) != null;
     }
-    
+
     /**
      * Shifts the horizontal page breaks for the indicated count
      * @param startingRow
@@ -2945,7 +2709,7 @@ public class Sheet implements Model
      * @param count
      */
     public void shiftRowBreaks(int startingRow, int endingRow, int count) {
-    	shiftBreaks(rowBreaks, (short)startingRow, (short)endingRow, (short)count);
+        shiftBreaks(rowBreaks, (short)startingRow, (short)endingRow, (short)count);
     }
 
     /**
@@ -2955,39 +2719,39 @@ public class Sheet implements Model
      * @param count
      */
     public void shiftColumnBreaks(short startingCol, short endingCol, short count) {
-    	shiftBreaks(colBreaks, startingCol, endingCol, count);
+        shiftBreaks(colBreaks, startingCol, endingCol, count);
     }
-    
+
     /**
      * Returns all the row page breaks
      * @return all the row page breaks
      */
     public Iterator getRowBreaks() {
-    	return rowBreaks.getBreaksIterator();
+        return rowBreaks.getBreaksIterator();
     }
-    
+
     /**
      * Returns the number of row page breaks
      * @return the number of row page breaks
      */
     public int getNumRowBreaks(){
-    	return (rowBreaks == null) ? 0 : (int)rowBreaks.getNumBreaks();
+        return (rowBreaks == null) ? 0 : (int)rowBreaks.getNumBreaks();
     }
-    
+
     /**
      * Returns all the column page breaks
      * @return all the column page breaks
      */
     public Iterator getColumnBreaks(){
-    	return colBreaks.getBreaksIterator();
+        return colBreaks.getBreaksIterator();
     }
-    
+
     /**
      * Returns the number of column page breaks
      * @return the number of column page breaks
      */
     public int getNumColumnBreaks(){
-    	return (colBreaks == null) ? 0 : (int)colBreaks.getNumBreaks();
+        return (colBreaks == null) ? 0 : (int)colBreaks.getNumBreaks();
     }
 
     public void setColumnGroupCollapsed( short columnNumber, boolean collapsed )
@@ -3030,213 +2794,40 @@ public class Sheet implements Model
             records.add(protIdx+2,srec);
             scenprotect = srec;
         }
-    }    
+    }
 
     /**
-     * unprotect objects in the sheet (will not protect them, but any set to false are 
+     * unprotect objects in the sheet (will not protect them, but any set to false are
      * unprotected.
      * @param sheet is unprotected (false = unprotect)
      * @param objects are unprotected (false = unprotect)
      * @param scenarios are unprotected (false = unprotect)
      */
     public void unprotectSheet( boolean sheet, boolean objects, boolean scenarios ) {
-        int protIdx = -1;
+
         if (!sheet) {
            ProtectRecord prec = getProtect();
            prec.setProtect(sheet);
            PasswordRecord pass = getPassword();
            pass.setPassword((short)00);
-        } 
+        }
         if(objprotect != null && !objects) {
             objprotect.setProtect(false);
         }
         if(scenprotect != null && !scenarios) {
             scenprotect.setProtect(false);
         }
-    }    
+    }
 
     /**
      * @return {sheet is protected, objects are proteced, scenarios are protected}
      */
     public boolean[] isProtected() {
-        return new boolean[] { (protect != null && protect.getProtect()), 
+        return new boolean[] { (protect != null && protect.getProtect()),
                              (objprotect != null && objprotect.getProtect()),
                              (scenprotect != null && scenprotect.getProtect())};
     }
- 
-//    private void collapseColumn( short columnNumber )
-//    {
-//        int idx = findColumnIdx( columnNumber, 0 );
-//        if (idx == -1)
-//            return;
-//
-//        // Find the start of the group.
-//        ColumnInfoRecord columnInfo = (ColumnInfoRecord) columnSizes.get( findStartOfColumnOutlineGroup( idx ) );
-//
-//        // Hide all the columns until the end of the group
-//        columnInfo = writeHidden( columnInfo, idx, true );
-//
-//        // Write collapse field
-//        setColumn( (short) ( columnInfo.getLastColumn() + 1 ), null, null, null, Boolean.TRUE);
-//    }
 
-//    private void expandColumn( short columnNumber )
-//    {
-//        int idx = findColumnIdx( columnNumber, 0 );
-//        if (idx == -1)
-//            return;
-//
-//        // If it is already exapanded do nothing.
-//        if (!isColumnGroupCollapsed(idx))
-//            return;
-//
-//        // Find the start of the group.
-//        int startIdx = findStartOfColumnOutlineGroup( idx );
-//        ColumnInfoRecord columnInfo = getColInfo( startIdx );
-//
-//        // Find the end of the group.
-//        int endIdx = findEndOfColumnOutlineGroup( idx );
-//        ColumnInfoRecord endColumnInfo = getColInfo( endIdx );
-//
-//        // expand:
-//        // colapsed bit must be unset
-//        // hidden bit gets unset _if_ surrounding groups are expanded you can determine
-//        //   this by looking at the hidden bit of the enclosing group.  You will have
-//        //   to look at the start and the end of the current group to determine which
-//        //   is the enclosing group
-//        // hidden bit only is altered for this outline level.  ie.  don't uncollapse contained groups
-//        if (!isColumnGroupHiddenByParent( idx ))
-//        {
-//            for (int i = startIdx; i <= endIdx; i++)
-//            {
-//                if (columnInfo.getOutlineLevel() == getColInfo(i).getOutlineLevel())
-//                    getColInfo(i).setHidden( false );
-//            }
-//        }
-//
-//        // Write collapse field
-//        setColumn( (short) ( columnInfo.getLastColumn() + 1 ), null, null, null, Boolean.FALSE);
-//    }
-
-//    private boolean isColumnGroupCollapsed( int idx )
-//    {
-//        int endOfOutlineGroupIdx = findEndOfColumnOutlineGroup( idx );
-//        if (endOfOutlineGroupIdx >= columnSizes.size())
-//            return false;
-//        if (getColInfo(endOfOutlineGroupIdx).getLastColumn() + 1 != getColInfo(endOfOutlineGroupIdx + 1).getFirstColumn())
-//            return false;
-//        else
-//            return getColInfo(endOfOutlineGroupIdx+1).getCollapsed();
-//    }
-
-//    private boolean isColumnGroupHiddenByParent( int idx )
-//    {
-//        // Look out outline details of end
-//        int endLevel;
-//        boolean endHidden;
-//        int endOfOutlineGroupIdx = findEndOfColumnOutlineGroup( idx );
-//        if (endOfOutlineGroupIdx >= columnSizes.size())
-//        {
-//            endLevel = 0;
-//            endHidden = false;
-//        }
-//        else if (getColInfo(endOfOutlineGroupIdx).getLastColumn() + 1 != getColInfo(endOfOutlineGroupIdx + 1).getFirstColumn())
-//        {
-//            endLevel = 0;
-//            endHidden = false;
-//        }
-//        else
-//        {
-//            endLevel = getColInfo( endOfOutlineGroupIdx + 1).getOutlineLevel();
-//            endHidden = getColInfo( endOfOutlineGroupIdx + 1).getHidden();
-//        }
-//
-//        // Look out outline details of start
-//        int startLevel;
-//        boolean startHidden;
-//        int startOfOutlineGroupIdx = findStartOfColumnOutlineGroup( idx );
-//        if (startOfOutlineGroupIdx <= 0)
-//        {
-//            startLevel = 0;
-//            startHidden = false;
-//        }
-//        else if (getColInfo(startOfOutlineGroupIdx).getFirstColumn() - 1 != getColInfo(startOfOutlineGroupIdx - 1).getLastColumn())
-//        {
-//            startLevel = 0;
-//            startHidden = false;
-//        }
-//        else
-//        {
-//            startLevel = getColInfo( startOfOutlineGroupIdx - 1).getOutlineLevel();
-//            startHidden = getColInfo( startOfOutlineGroupIdx - 1 ).getHidden();
-//        }
-//
-//        if (endLevel > startLevel)
-//        {
-//            return endHidden;
-//        }
-//        else
-//        {
-//            return startHidden;
-//        }
-//    }
-
-//    private ColumnInfoRecord getColInfo(int idx)
-//    {
-//        return columns.getColInfo( idx );
-//    }
-
-//    private int findStartOfColumnOutlineGroup(int idx)
-//    {
-//        // Find the start of the group.
-//        ColumnInfoRecord columnInfo = (ColumnInfoRecord) columnSizes.get( idx );
-//        int level = columnInfo.getOutlineLevel();
-//        while (idx != 0)
-//        {
-//            ColumnInfoRecord prevColumnInfo = (ColumnInfoRecord) columnSizes.get( idx - 1 );
-//            if (columnInfo.getFirstColumn() - 1 == prevColumnInfo.getLastColumn())
-//            {
-//                if (prevColumnInfo.getOutlineLevel() < level)
-//                {
-//                    break;
-//                }
-//                idx--;
-//                columnInfo = prevColumnInfo;
-//            }
-//            else
-//            {
-//                break;
-//            }
-//        }
-//
-//        return idx;
-//    }
-
-//    private int findEndOfColumnOutlineGroup(int idx)
-//    {
-//        // Find the end of the group.
-//        ColumnInfoRecord columnInfo = (ColumnInfoRecord) columnSizes.get( idx );
-//        int level = columnInfo.getOutlineLevel();
-//        while (idx < columnSizes.size() - 1)
-//        {
-//            ColumnInfoRecord nextColumnInfo = (ColumnInfoRecord) columnSizes.get( idx + 1 );
-//            if (columnInfo.getLastColumn() + 1 == nextColumnInfo.getFirstColumn())
-//            {
-//                if (nextColumnInfo.getOutlineLevel() < level)
-//                {
-//                    break;
-//                }
-//                idx++;
-//                columnInfo = nextColumnInfo;
-//            }
-//            else
-//            {
-//                break;
-//            }
-//        }
-//
-//        return idx;
-//    }
 
     public void groupRowRange(int fromRow, int toRow, boolean indent)
     {
@@ -3272,8 +2863,8 @@ public class Sheet implements Model
         // Grab the guts record, adding if needed
         GutsRecord guts = (GutsRecord) findFirstRecordBySid( GutsRecord.sid );
         if(guts == null) {
-        	guts = new GutsRecord();
-        	records.add(guts);
+            guts = new GutsRecord();
+            records.add(guts);
         }
         // Set the levels onto it
         guts.setRowLevelMax( (short) ( maxLevel + 1 ) );
@@ -3291,126 +2882,4 @@ public class Sheet implements Model
             rows.expandRow( row );
         }
     }
-
-
-//    private void collapseRow( int rowNumber )
-//    {
-//
-//        // Find the start of the group.
-//        int startRow = rows.findStartOfRowOutlineGroup( rowNumber );
-//        RowRecord rowRecord = (RowRecord) rows.getRow( startRow );
-//
-//        // Hide all the columns until the end of the group
-//        int lastRow = rows.writeHidden( rowRecord, startRow, true );
-//
-//        // Write collapse field
-//        if (getRow(lastRow + 1) != null)
-//        {
-//            getRow(lastRow + 1).setColapsed( true );
-//        }
-//        else
-//        {
-//            RowRecord row = createRow( lastRow + 1);
-//            row.setColapsed( true );
-//            rows.insertRow( row );
-//        }
-//    }
-
-//    private int findStartOfRowOutlineGroup(int row)
-//    {
-//        // Find the start of the group.
-//        RowRecord rowRecord = rows.getRow( row );
-//        int level = rowRecord.getOutlineLevel();
-//        int currentRow = row;
-//        while (rows.getRow( currentRow ) != null)
-//        {
-//            rowRecord = rows.getRow( currentRow );
-//            if (rowRecord.getOutlineLevel() < level)
-//                return currentRow + 1;
-//            currentRow--;
-//        }
-//
-//        return currentRow + 1;
-//    }
-
-//    private int writeHidden( RowRecord rowRecord, int row, boolean hidden )
-//    {
-//        int level = rowRecord.getOutlineLevel();
-//        while (rowRecord != null && rows.getRow(row).getOutlineLevel() >= level)
-//        {
-//            rowRecord.setZeroHeight( hidden );
-//            row++;
-//            rowRecord = rows.getRow( row );
-//        }
-//        return row - 1;
-//    }
-
-//    private int findEndOfRowOutlineGroup( int row )
-//    {
-//        int level = getRow( row ).getOutlineLevel();
-//        int currentRow;
-//        for (currentRow = row; currentRow < rows.getLastRowNum(); currentRow++)
-//        {
-//            if (getRow(currentRow) == null || getRow(currentRow).getOutlineLevel() < level)
-//            {
-//                break;
-//            }
-//        }
-//
-//        return currentRow-1;
-//    }
-
-//    private boolean isRowGroupCollapsed( int row )
-//    {
-//        int collapseRow = rows.findEndOfRowOutlineGroup( row ) + 1;
-//
-//        if (getRow(collapseRow) == null)
-//            return false;
-//        else
-//            return getRow( collapseRow ).getColapsed();
-//    }
-
-
-//    private boolean isRowGroupHiddenByParent( int row )
-//    {
-//        // Look out outline details of end
-//        int endLevel;
-//        boolean endHidden;
-//        int endOfOutlineGroupIdx = rows.findEndOfRowOutlineGroup( row );
-//        if (getRow( endOfOutlineGroupIdx + 1 ) == null)
-//        {
-//            endLevel = 0;
-//            endHidden = false;
-//        }
-//        else
-//        {
-//            endLevel = getRow( endOfOutlineGroupIdx + 1).getOutlineLevel();
-//            endHidden = getRow( endOfOutlineGroupIdx + 1).getZeroHeight();
-//        }
-//
-//        // Look out outline details of start
-//        int startLevel;
-//        boolean startHidden;
-//        int startOfOutlineGroupIdx = rows.findStartOfRowOutlineGroup( row );
-//        if (startOfOutlineGroupIdx - 1 < 0 || getRow(startOfOutlineGroupIdx - 1) == null)
-//        {
-//            startLevel = 0;
-//            startHidden = false;
-//        }
-//        else
-//        {
-//            startLevel = getRow( startOfOutlineGroupIdx - 1).getOutlineLevel();
-//            startHidden = getRow( startOfOutlineGroupIdx - 1 ).getZeroHeight();
-//        }
-//
-//        if (endLevel > startLevel)
-//        {
-//            return endHidden;
-//        }
-//        else
-//        {
-//            return startHidden;
-//        }
-//    }
-
 }

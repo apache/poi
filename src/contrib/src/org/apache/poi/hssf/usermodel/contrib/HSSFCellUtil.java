@@ -55,10 +55,10 @@ public class HSSFCellUtil
      */
     public static HSSFRow getRow( int rowCounter, HSSFSheet sheet )
     {
-        HSSFRow row = sheet.getRow( (short) rowCounter );
+        HSSFRow row = sheet.getRow( rowCounter );
         if ( row == null )
         {
-            row = sheet.createRow( (short) rowCounter );
+            row = sheet.createRow( rowCounter );
         }
 
         return row;
@@ -66,7 +66,8 @@ public class HSSFCellUtil
 
 
     /**
-     *  Get a specific cell from a row. If the cell doesn't exist, then create it.
+     * Get a specific cell from a row. If the cell doesn't exist, 
+     *  then create it.
      *
      *@param  row     The row that the cell is part of
      *@param  column  The column index that the cell is in.
@@ -74,11 +75,11 @@ public class HSSFCellUtil
      */
     public static HSSFCell getCell( HSSFRow row, int column )
     {
-        HSSFCell cell = row.getCell( (short) column );
+        HSSFCell cell = row.getCell( column );
 
         if ( cell == null )
         {
-            cell = row.createCell( (short) column );
+            cell = row.createCell( (short)column );
         }
         return cell;
     }
@@ -98,7 +99,7 @@ public class HSSFCellUtil
     {
         HSSFCell cell = getCell( row, column );
 
-        cell.setCellValue( value );
+        cell.setCellValue(new HSSFRichTextString(value));
         if ( style != null )
         {
             cell.setCellStyle( style );
@@ -222,7 +223,7 @@ public class HSSFCellUtil
     public static HSSFCell translateUnicodeValues( HSSFCell cell )
     {
 
-        String s = cell.getStringCellValue();
+        String s = cell.getRichStringCellValue().getString(); 
         boolean foundUnicode = false;
 
         for ( Iterator i = unicodeMappings.entrySet().iterator(); i.hasNext(); )

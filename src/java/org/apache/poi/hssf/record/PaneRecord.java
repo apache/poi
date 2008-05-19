@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
 
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Describes the frozen and unfozen panes.
@@ -30,9 +28,7 @@ import org.apache.poi.util.*;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class PaneRecord
-    extends Record
-{
+public final class PaneRecord extends Record {
     public final static short      sid                             = 0x41;
     private  short      field_1_x;
     private  short      field_2_y;
@@ -42,7 +38,10 @@ public class PaneRecord
     public final static short       ACTIVE_PANE_LOWER_RIGHT        = 0;
     public final static short       ACTIVE_PANE_UPPER_RIGHT        = 1;
     public final static short       ACTIVE_PANE_LOWER_LEFT         = 2;
+    // TODO - remove obsolete field (it was deprecated May-2008 v3.1)
+    /** @deprecated use ACTIVE_PANE_UPPER_LEFT */
     public final static short       ACTIVE_PANE_UPER_LEFT          = 3;
+    public final static short       ACTIVE_PANE_UPPER_LEFT         = 3;
 
 
     public PaneRecord()
@@ -82,7 +81,6 @@ public class PaneRecord
         field_3_topRow                 = in.readShort();
         field_4_leftColumn             = in.readShort();
         field_5_activePane             = in.readShort();
-
     }
 
     public String toString()
@@ -229,7 +227,7 @@ public class PaneRecord
      *        ACTIVE_PANE_LOWER_RIGHT
      *        ACTIVE_PANE_UPPER_RIGHT
      *        ACTIVE_PANE_LOWER_LEFT
-     *        ACTIVE_PANE_UPER_LEFT
+     *        ACTIVE_PANE_UPPER_LEFT
      */
     public short getActivePane()
     {
@@ -244,16 +242,10 @@ public class PaneRecord
      *        ACTIVE_PANE_LOWER_RIGHT
      *        ACTIVE_PANE_UPPER_RIGHT
      *        ACTIVE_PANE_LOWER_LEFT
-     *        ACTIVE_PANE_UPER_LEFT
+     *        ACTIVE_PANE_UPPER_LEFT
      */
     public void setActivePane(short field_5_activePane)
     {
         this.field_5_activePane = field_5_activePane;
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

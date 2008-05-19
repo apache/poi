@@ -22,9 +22,7 @@ import junit.framework.TestSuite;
 
 import org.apache.poi.hssf.eventmodel.TestEventRecordFactory;
 import org.apache.poi.hssf.eventmodel.TestModelFactory;
-import org.apache.poi.hssf.model.TestDrawingManager;
-import org.apache.poi.hssf.model.TestFormulaParser;
-import org.apache.poi.hssf.model.TestSheet;
+import org.apache.poi.hssf.model.AllModelTests;
 import org.apache.poi.hssf.record.AllRecordTests;
 import org.apache.poi.hssf.usermodel.AllUserModelTests;
 import org.apache.poi.hssf.util.TestAreaReference;
@@ -50,10 +48,10 @@ public final class HSSFTests {
         TestSuite suite = new TestSuite("Tests for org.apache.poi.hssf");
         // $JUnit-BEGIN$
 
+        suite.addTest(AllModelTests.suite());
         suite.addTest(AllUserModelTests.suite());
         suite.addTest(AllRecordTests.suite());
 
-        suite.addTest(new TestSuite(TestFormulaParser.class));
         suite.addTest(new TestSuite(TestAreaReference.class));
         suite.addTest(new TestSuite(TestCellReference.class));
         suite.addTest(new TestSuite(TestRangeAddress.class));
@@ -61,8 +59,6 @@ public final class HSSFTests {
         suite.addTest(new TestSuite(TestSheetReferences.class));
         suite.addTest(new TestSuite(TestEventRecordFactory.class));
         suite.addTest(new TestSuite(TestModelFactory.class));
-        suite.addTest(new TestSuite(TestDrawingManager.class));
-        suite.addTest(new TestSuite(TestSheet.class));
         // $JUnit-END$
         return suite;
     }

@@ -17,16 +17,17 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Iterator;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.util.TempFile;
-
-import java.io.*;
-import java.util.Iterator;
 
 /**
  * Testcases for bugs entered in bugzilla
@@ -80,13 +81,7 @@ public final class TestBugs extends TestCase {
         HSSFRow r = s.createRow(0);
         HSSFCell c = r.createCell((short)0);
         c.setCellValue(10);
-        try {
-            writeOutAndReadBack(wb);
-        } catch (RecordFormatException e) {
-            if (false) { // TODO (Apr-2008) this file does not read back ok.  create bugzilla bug & fix.
-                throw new AssertionFailedError("Identified bug XXXX");
-            }
-        }
+        writeOutAndReadBack(wb);
     }
     /**Test writing a hyperlink
      * Open resulting sheet in Excel and check that A1 contains a hyperlink*/
@@ -732,7 +727,7 @@ public final class TestBugs extends TestCase {
      *  with the NameRecord, once you get past the BOFRecord
      *  issue.
      */
-    public void DISABLEDtest42564Alt() {
+    public void test42564Alt() {
         HSSFWorkbook wb = openSample("42564-2.xls");
         writeOutAndReadBack(wb);
     }
@@ -757,9 +752,13 @@ public final class TestBugs extends TestCase {
         HSSFCell c2 = r2.getCell((short)1);
         assertEquals(25, (int)c2.getNumericCellValue());
 
-        if (false) { // TODO (Apr-2008) This will blow up with IllegalStateException (stack underflow)
-            // excel function "CHOOSE" probably needs some special handling in FormulaParser.toFormulaString()
-            assertEquals("=CHOOSE(2,A2,A3,A4)", c2.getCellFormula());
+        try {
+            assertEquals("CHOOSE(2,A2,A3,A4)", c2.getCellFormula());
+        } catch (IllegalStateException e) {
+            if (e.getMessage().startsWith("Too few arguments")
+                    && e.getMessage().indexOf("ConcatPtg") > 0) {
+                throw new AssertionFailedError("identified bug 44306");
+            }
         }
     }
 
@@ -887,13 +886,66 @@ public final class TestBugs extends TestCase {
         writeOutAndReadBack(wb);
         assertTrue("no errors writing sample xls", true);
     }
-    
+
     /**
      * Had a problem apparently, not sure what as it
      *  works just fine...
      */
     public void test44891() throws Exception {
-    	HSSFWorkbook wb = openSample("44891.xls");
+        HSSFWorkbook wb = openSample("44891.xls");
+        assertTrue("no errors reading sample xls", true);
+        writeOutAndReadBack(wb);
+        assertTrue("no errors writing sample xls", true);
+    }
+
+    /**
+     * Bug 44235: Ms Excel can't open save as excel file
+     *
+     * Works fine with poi-3.1-beta1.
+     */
+    public void test44235() throws Exception {
+        HSSFWorkbook wb = openSample("44235.xls");
+        assertTrue("no errors reading sample xls", true);
+        writeOutAndReadBack(wb);
+        assertTrue("no errors writing sample xls", true);
+    }
+
+    /**
+     * Bug 21334: "File error: data may have been lost" with a file
+     * that contains macros and this formula:
+     * {=SUM(IF(FREQUENCY(IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),""),IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),""))>0,1))}
+     */
+    public void test21334() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sh = wb.createSheet();
+        HSSFCell cell = sh.createRow(0).createCell((short)0);
+        String formula = "SUM(IF(FREQUENCY(IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),\"\"),IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),\"\"))>0,1))";
+        cell.setCellFormula(formula);
+
+        HSSFWorkbook wb_sv = writeOutAndReadBack(wb);
+        HSSFCell cell_sv = wb_sv.getSheetAt(0).getRow(0).getCell((short)0);
+        assertEquals(formula, cell_sv.getCellFormula());
+    }
+
+    public void test36947() throws Exception {
+        HSSFWorkbook wb = openSample("36947.xls");
+        assertTrue("no errors reading sample xls", true);
+        writeOutAndReadBack(wb);
+        assertTrue("no errors writing sample xls", true);
+    }
+
+    /**
+     * Bug 42448: Can't parse SUMPRODUCT(A!C7:A!C67, B8:B68) / B69
+     */
+    public void test42448(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCell cell = wb.createSheet().createRow(0).createCell((short)0);
+        cell.setCellFormula("SUMPRODUCT(A!C7:A!C67, B8:B68) / B69");
+        assertTrue("no errors parsing formula", true);
+    }
+
+    public void test39634() throws Exception {
+        HSSFWorkbook wb = openSample("39634.xls");
         assertTrue("no errors reading sample xls", true);
         writeOutAndReadBack(wb);
         assertTrue("no errors writing sample xls", true);

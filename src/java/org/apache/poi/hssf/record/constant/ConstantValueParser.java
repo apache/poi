@@ -24,9 +24,8 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * To support Constant Values (2.5.7) as required by the CRN record.
- * This class should probably also be used for two dimensional arrays which are encoded by 
+ * This class is also used for two dimensional arrays which are encoded by 
  * EXTERNALNAME (5.39) records and Array tokens.<p/>
- * TODO - code in ArrayPtg should be merged with this code.  It currently supports only 2 of the constant types
  * 
  * @author Josh Micich
  */
