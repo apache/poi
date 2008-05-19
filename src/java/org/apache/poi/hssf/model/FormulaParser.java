@@ -134,7 +134,10 @@ public final class FormulaParser {
 
     /** Report What Was Expected */
     private RuntimeException expected(String s) {
-        return new FormulaParseException(s + " Expected");
+        String msg = "Parse error near char " + (pointer-1) + "'" + look + "'" 
+            + " in specified formula '" + formulaString + "'. Expected "
+            + s;
+        return new FormulaParseException(msg);
     }
 
 
