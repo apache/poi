@@ -130,7 +130,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 	 * The other is to fix the handling of the last block in
 	 *  POIFS, since it seems to be slight wrong
 	 */
-	public void DISABLEDtestShortLastBlock() throws Exception {
+	public void testShortLastBlock() throws Exception {
 		String[] files = new String[] {
 			"ShortLastBlock.qwp", "ShortLastBlock.wps"	
 		};

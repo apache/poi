@@ -37,7 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1-final" date="2008-06-??">
-          <action dev="POI-DEVELOPERS" type="add"><!-- to keep XML validator quiet  --></action>
+           <action dev="POI-DEVELOPERS" type="fix">44898 - Correctly handle short last blocks in POIFS</action>
         </release>  
         <release version="3.1-beta2" date="2008-05-26">
            <action dev="POI-DEVELOPERS" type="fix">44306 - fixed reading/writing of AttrPtg(type=choose) and method toFormulaString() for CHOOSE formulas</action>

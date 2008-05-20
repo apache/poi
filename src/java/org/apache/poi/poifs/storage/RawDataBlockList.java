@@ -51,12 +51,16 @@ public class RawDataBlockList
         while (true)
         {
             RawDataBlock block = new RawDataBlock(stream, bigBlockSize);
+            
+            // If there was data, add the block to the list
+            if(block.hasData()) {
+            	blocks.add(block);
+            }
 
-            if (block.eof())
-            {
+            // If the stream is now at the End Of File, we're done
+            if (block.eof()) {
                 break;
             }
-            blocks.add(block);
         }
         setBlocks(( RawDataBlock [] ) blocks.toArray(new RawDataBlock[ 0 ]));
     }
