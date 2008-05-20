@@ -28,6 +28,7 @@ import org.apache.poi.hdgf.streams.PointerContainingStream;
 import org.apache.poi.hdgf.streams.Stream;
 import org.apache.poi.hdgf.streams.StringsStream;
 import org.apache.poi.hdgf.streams.TrailerStream;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
@@ -54,14 +55,17 @@ public class HDGFDiagram extends POIDocument {
 	private PointerFactory ptrFactory;
 	
 	public HDGFDiagram(POIFSFileSystem fs) throws IOException {
-		super(fs);
+		this(fs.getRoot(), fs);
+	}
+	public HDGFDiagram(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
+		super(dir, fs);
 		
 		DocumentEntry docProps =
-			(DocumentEntry)filesystem.getRoot().getEntry("VisioDocument");
+			(DocumentEntry)dir.getEntry("VisioDocument");
 
 		// Grab the document stream
 		_docstream = new byte[docProps.getSize()];
-		filesystem.createDocumentInputStream("VisioDocument").read(_docstream);
+		dir.createDocumentInputStream("VisioDocument").read(_docstream);
 		
 		// Read in the common POI streams
 		readProperties();
