@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1-final" date="2008-06-??">
+           <action dev="POI-DEVELOPERS" type="add">44937 - Partial support for extracting Escher images from HWPF files</action>
            <action dev="POI-DEVELOPERS" type="fix">44824 - Avoid an infinite loop when reading some HWPF pictures</action>
            <action dev="POI-DEVELOPERS" type="fix">44898 - Correctly handle short last blocks in POIFS</action>
         </release>  

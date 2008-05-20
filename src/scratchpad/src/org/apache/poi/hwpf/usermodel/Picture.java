@@ -98,6 +98,15 @@ public class Picture
       fillImageContent();
     }
   }
+  
+  public Picture(byte[] _dataStream)
+  {
+      this._dataStream = _dataStream;
+      this.dataBlockStartOfsset = 0;
+      this.dataBlockSize = _dataStream.length;
+      this.pictureBytesStartOffset = 0;
+      this.size = _dataStream.length;
+  }
 
   private void fillWidthHeight()
   {

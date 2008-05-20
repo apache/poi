@@ -308,6 +308,26 @@ public class FileInformationBlock extends FIBAbstractType
     {
       return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFFLDMOM);
     }
+    
+    public int getFcPlcspaMom()
+    {
+        return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCSPAMOM);
+    }
+    
+    public int getLcbPlcspaMom()
+    {
+        return _fieldHandler.getFieldSize(FIBFieldHandler.PLCSPAMOM);
+    }
+    
+    public int getFcDggInfo()
+    {
+        return _fieldHandler.getFieldOffset(FIBFieldHandler.DGGINFO);
+    }
+    
+    public int getLcbDggInfo()
+    {
+        return _fieldHandler.getFieldSize(FIBFieldHandler.DGGINFO);
+    }
 
     public void writeTo (byte[] mainStream, HWPFOutputStream tableStream)
       throws IOException
