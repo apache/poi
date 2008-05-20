@@ -18,6 +18,7 @@ package org.apache.poi.hdgf;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.poi.POIDocument;
 import org.apache.poi.hdgf.chunks.ChunkFactory;
@@ -147,6 +148,10 @@ public class HDGFDiagram extends POIDocument {
 				System.err.println("\t\t" + ss._getContentsLength());
 			}
 		}
+	}
+	
+	public void write(OutputStream out) {
+		throw new IllegalStateException("Writing is not yet implemented, see http://poi.apache.org/hdgf/");
 	}
 	
 	/**
