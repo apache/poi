@@ -37,6 +37,7 @@ public class RawDataBlock
 {
     private byte[]  _data;
     private boolean _eof;
+    private boolean _hasData;
     private static POILogger log = POILogFactory.getLogger(RawDataBlock.class);
 
     /**
@@ -66,6 +67,7 @@ public class RawDataBlock
     		throws IOException {
         _data = new byte[ blockSize ];
         int count = IOUtils.readFully(stream, _data);
+        _hasData = (count > 0);
 
         if (count == -1) {
             _eof = true;
@@ -94,15 +96,20 @@ public class RawDataBlock
     /**
      * When we read the data, did we hit end of file?
      *
-     * @return true if no data was read because we were at the end of
-     *         the file, else false
-     *
-     * @exception IOException
+     * @return true if the EoF was hit during this block, or
+     *  false if not. If you have a dodgy short last block, then
+     *  it's possible to both have data, and also hit EoF...
      */
-    public boolean eof()
-        throws IOException
-    {
+    public boolean eof() {
         return _eof;
+    }
+    /**
+     * Did we actually find any data to read? It's possible,
+     *  in the event of a short last block, to both have hit
+     *  the EoF, but also to have data
+     */
+    public boolean hasData() {
+    	return _hasData;
     }
 
     /* ********** START implementation of ListManagedBlock ********** */
@@ -117,7 +124,7 @@ public class RawDataBlock
     public byte [] getData()
         throws IOException
     {
-        if (eof())
+        if (! hasData())
         {
             throw new IOException("Cannot return empty data");
         }

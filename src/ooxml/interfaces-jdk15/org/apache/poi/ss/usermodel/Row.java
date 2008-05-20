@@ -88,9 +88,20 @@ public interface Row extends Iterable<Cell> {
      * ask for a cell that is not defined....you get a null.
      *
      * @param cellnum  0 based column number
-     * @return HSSFCell representing that column or null if undefined.
+     * @return Cell representing that column or null if undefined.
      */
     Cell getCell(int cellnum);
+    
+    /**
+     * Get the hssfcell representing a given column (logical cell)
+     *  0-based.  If you ask for a cell that is not defined, then
+     *  your supplied policy says what to do
+     *
+     * @param cellnum  0 based column number
+     * @param policy Policy on blank / missing cells
+     * @return representing that column or null if undefined + policy allows.
+     */
+    public Cell getCell(int cellnum, MissingCellPolicy policy);
 
     /**
      * get the number of the first cell contained in this row.
@@ -170,4 +181,22 @@ public interface Row extends Iterable<Cell> {
 
     boolean equals(Object obj);
 
+    
+    /**
+     * Used to specify the different possible policies
+     *  if for the case of null and blank cells
+     */
+    public static class MissingCellPolicy {
+    	private static int NEXT_ID = 1;
+    	public final int id;
+    	private MissingCellPolicy() {
+    		this.id = NEXT_ID++;
+    	}
+    }
+    /** Missing cells are returned as null, Blank cells are returned as normal */
+    public static final MissingCellPolicy RETURN_NULL_AND_BLANK = new MissingCellPolicy();
+    /** Missing cells are returned as null, as are blank cells */
+    public static final MissingCellPolicy RETURN_BLANK_AS_NULL = new MissingCellPolicy();
+    /** A new, blank cell is created for missing cells. Blank cells are returned as normal */
+    public static final MissingCellPolicy CREATE_NULL_AS_BLANK = new MissingCellPolicy();
 }

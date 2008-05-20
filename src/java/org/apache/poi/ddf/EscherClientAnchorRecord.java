@@ -65,20 +65,27 @@ public class EscherClientAnchorRecord
         int size           = 0;
 
         // Always find 4 two byte entries. Sometimes find 9
-        field_1_flag   =  LittleEndian.getShort( data, pos + size );     size += 2;
-        field_2_col1   =  LittleEndian.getShort( data, pos + size );     size += 2;
-        field_3_dx1    =  LittleEndian.getShort( data, pos + size );     size += 2;
-        field_4_row1   =  LittleEndian.getShort( data, pos + size );     size += 2;
-        if(bytesRemaining >= 18) {
-		    field_5_dy1    =  LittleEndian.getShort( data, pos + size );     size += 2;
-		    field_6_col2   =  LittleEndian.getShort( data, pos + size );     size += 2;
-		    field_7_dx2    =  LittleEndian.getShort( data, pos + size );     size += 2;
-		    field_8_row2   =  LittleEndian.getShort( data, pos + size );     size += 2;
-		    field_9_dy2    =  LittleEndian.getShort( data, pos + size );     size += 2;
-			shortRecord = false;
-        } else {
-			shortRecord = true;
-		}
+        if (bytesRemaining == 4) // Word format only 4 bytes
+        {
+            // Not sure exactly what the format is quite yet, likely a reference to a PLC
+        }
+        else
+        {
+            field_1_flag   =  LittleEndian.getShort( data, pos + size );     size += 2;
+            field_2_col1   =  LittleEndian.getShort( data, pos + size );     size += 2;
+            field_3_dx1    =  LittleEndian.getShort( data, pos + size );     size += 2;
+            field_4_row1   =  LittleEndian.getShort( data, pos + size );     size += 2;
+            if(bytesRemaining >= 18) {
+                field_5_dy1    =  LittleEndian.getShort( data, pos + size );     size += 2;
+                field_6_col2   =  LittleEndian.getShort( data, pos + size );     size += 2;
+                field_7_dx2    =  LittleEndian.getShort( data, pos + size );     size += 2;
+                field_8_row2   =  LittleEndian.getShort( data, pos + size );     size += 2;
+                field_9_dy2    =  LittleEndian.getShort( data, pos + size );     size += 2;
+                shortRecord = false;
+            } else {
+                shortRecord = true;
+            }
+        }
         bytesRemaining -= size;
         remainingData  =  new byte[bytesRemaining];
         System.arraycopy( data, pos + size, remainingData, 0, bytesRemaining );

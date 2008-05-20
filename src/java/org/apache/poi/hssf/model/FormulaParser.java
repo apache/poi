@@ -134,7 +134,10 @@ public final class FormulaParser {
 
     /** Report What Was Expected */
     private RuntimeException expected(String s) {
-        return new FormulaParseException(s + " Expected");
+        String msg = "Parse error near char " + (pointer-1) + "'" + look + "'" 
+            + " in specified formula '" + formulaString + "'. Expected "
+            + s;
+        return new FormulaParseException(msg);
     }
 
 
@@ -1000,7 +1003,7 @@ end;
 
             if (ptg instanceof AttrPtg) {
                 AttrPtg attrPtg = ((AttrPtg) ptg);
-                if (attrPtg.isOptimizedIf()) {
+                if (attrPtg.isOptimizedIf() || attrPtg.isOptimizedChoose() || attrPtg.isGoto()) {
                     continue;
                 }
                 if (attrPtg.isSpace()) {
@@ -1013,6 +1016,9 @@ end;
                 if (attrPtg.isSemiVolatile()) {
                     // similar to tAttrSpace - RPN is violated
                     continue;
+                }
+                if (!attrPtg.isSum()) {
+                    throw new RuntimeException("Unexpected tAttr: " + attrPtg.toString());
                 }
             }
 

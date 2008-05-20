@@ -319,6 +319,36 @@ public final class HSSFRow implements Comparable, Row {
         if(cellnum<0||cellnum>=cells.length) return null;
         return cells[cellnum];
     }
+    
+    /**
+     * Get the hssfcell representing a given column (logical cell)
+     *  0-based.  If you ask for a cell that is not defined, then
+     *  your supplied policy says what to do
+     *
+     * @param cellnum  0 based column number
+     * @param policy Policy on blank / missing cells
+     * @return representing that column or null if undefined + policy allows.
+     */
+    public HSSFCell getCell(int cellnum, MissingCellPolicy policy) {
+    	HSSFCell cell = getCell(cellnum);
+    	if(policy == RETURN_NULL_AND_BLANK) {
+    		return cell;
+    	}
+    	if(policy == RETURN_BLANK_AS_NULL) {
+    		if(cell == null) return cell;
+    		if(cell.getCellType() == HSSFCell.CELL_TYPE_BLANK) {
+    			return null;
+    		}
+    		return cell;
+    	}
+    	if(policy == CREATE_NULL_AS_BLANK) {
+    		if(cell == null) {
+    			return createCell((short)cellnum, HSSFCell.CELL_TYPE_BLANK);
+    		}
+    		return cell;
+    	}
+    	throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
+    }
 
     /**
      * get the number of the first cell contained in this row.
@@ -485,6 +515,7 @@ public final class HSSFRow implements Comparable, Row {
         return cellnum;
     }
 
+
     /**
      * @return cell iterator of the physically defined cells. 
      * Note that the 4th element might well not be cell 4, as the iterator
@@ -503,6 +534,9 @@ public final class HSSFRow implements Comparable, Row {
        return cellIterator();
     }
     
+    /**
+     * An iterator over the (physical) cells in the row.
+     */
     private class CellIterator implements Iterator
     {
       int thisId=-1;

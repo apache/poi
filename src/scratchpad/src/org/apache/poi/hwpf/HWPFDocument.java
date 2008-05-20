@@ -53,10 +53,10 @@ public class HWPFDocument extends POIDocument
   protected FileInformationBlock _fib;
 
   /** main document stream buffer*/
-  private byte[] _mainStream;
+  protected byte[] _mainStream;
 
   /** table stream buffer*/
-  private byte[] _tableStream;
+  protected byte[] _tableStream;
 
   /** data stream buffer*/
   protected byte[] _dataStream;
@@ -93,6 +93,12 @@ public class HWPFDocument extends POIDocument
   
   /** Holds pictures table */
   protected PicturesTable _pictures;
+  
+  /** Holds FSBA (shape) information */
+  protected FSPATable _fspa;
+  
+  /** Escher Drawing Group information */
+  protected EscherRecordHolder _dgg;
 
   protected HWPFDocument()
   {
@@ -204,9 +210,6 @@ public class HWPFDocument extends POIDocument
     {
         _dataStream = new byte[0];
     }
-    
-    // read in the pictures stream
-    _pictures = new PicturesTable(this, _dataStream);
 
     // get the start of text in the main stream
     int fcMin = _fib.getFcMin();
@@ -226,6 +229,20 @@ public class HWPFDocument extends POIDocument
       _cbt.adjustForDelete(0, 0, cpMin);
       _pbt.adjustForDelete(0, 0, cpMin);
     }
+    
+    // Read FSPA and Escher information
+    _fspa = new FSPATable(_tableStream, _fib.getFcPlcspaMom(), _fib.getLcbPlcspaMom(), getTextTable().getTextPieces());
+    
+    if (_fib.getFcDggInfo() != 0)
+    {
+        _dgg = new EscherRecordHolder(_tableStream, _fib.getFcDggInfo(), _fib.getLcbDggInfo());
+    } else
+    {
+        _dgg = new EscherRecordHolder();
+    }
+    
+    // read in the pictures stream
+    _pictures = new PicturesTable(this, _dataStream, _mainStream, _fspa, _dgg);
 
     _st = new SectionTable(_mainStream, _tableStream, _fib.getFcPlcfsed(), _fib.getLcbPlcfsed(), fcMin, getTextTable().getTextPieces());
     _ss = new StyleSheet(_tableStream, _fib.getFcStshf());

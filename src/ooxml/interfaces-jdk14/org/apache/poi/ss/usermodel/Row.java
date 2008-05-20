@@ -33,4 +33,22 @@ public interface Row {
     HSSFCell getCell(int cellnum);
 
     Iterator cellIterator();
+
+    /**
+     * Used to specify the different possible policies
+     *  if for the case of null and blank cells
+     */
+    public static class MissingCellPolicy {
+    	private static int NEXT_ID = 1;
+    	public final int id;
+    	private MissingCellPolicy() {
+    		this.id = NEXT_ID++;
+    	}
+    }
+    /** Missing cells are returned as null, Blank cells are returned as normal */
+    public static final MissingCellPolicy RETURN_NULL_AND_BLANK = new MissingCellPolicy();
+    /** Missing cells are returned as null, as are blank cells */
+    public static final MissingCellPolicy RETURN_BLANK_AS_NULL = new MissingCellPolicy();
+    /** A new, blank cell is created for missing cells. Blank cells are returned as normal */
+    public static final MissingCellPolicy CREATE_NULL_AS_BLANK = new MissingCellPolicy();
 }

@@ -39,6 +39,11 @@ public final class AttrPtg extends OperationPtg {
     private byte              field_1_options;
     private short             field_2_data;
     
+    /** only used for tAttrChoose: table of offsets to starts of args */
+    private final int[] _jumpTable;
+    /** only used for tAttrChoose: offset to the tFuncVar for CHOOSE() */
+    private final int   _chooseFuncOffset;
+    
     // flags 'volatile' and 'space', can be combined.  
     // OOO spec says other combinations are theoretically possible but not likely to occur.
     private static final BitField semiVolatile = BitFieldFactory.getInstance(0x01);
@@ -63,7 +68,7 @@ public final class AttrPtg extends OperationPtg {
         /** 03H = Carriage returns before opening parenthesis (only allowed before tParen token) */
         public static final int CR_BEFORE_OPEN_PAREN = 0x03;
         /** 04H = Spaces before closing parenthesis (only allowed before tParen, tFunc, and tFuncVar tokens) */
-        public static final int SPACE_BEFORE_CLOSE_PAERN = 0x04;
+        public static final int SPACE_BEFORE_CLOSE_PAREN = 0x04;
         /** 05H = Carriage returns before closing parenthesis (only allowed before tParen, tFunc, and tFuncVar tokens) */
         public static final int CR_BEFORE_CLOSE_PAREN = 0x05;
         /** 06H = Spaces following the equality sign (only in macro sheets) */
@@ -71,16 +76,33 @@ public final class AttrPtg extends OperationPtg {
     }
 
     public AttrPtg() {
+        _jumpTable = null;
+        _chooseFuncOffset = -1;
     }
     
     public AttrPtg(RecordInputStream in)
     {
         field_1_options = in.readByte();
         field_2_data    = in.readShort();
+        if (isOptimizedChoose()) {
+            int nCases = field_2_data;
+            int[] jumpTable = new int[nCases];
+            for (int i = 0; i < jumpTable.length; i++) {
+                jumpTable[i] = in.readUShort();
+            }
+            _jumpTable = jumpTable;
+            _chooseFuncOffset = in.readUShort();
+        } else {
+            _jumpTable = null;
+            _chooseFuncOffset = -1;
+        }
+        
     }
-    private AttrPtg(int options, int data) {
+    private AttrPtg(int options, int data, int[] jt, int chooseFuncOffset) {
         field_1_options = (byte) options;
         field_2_data = (short) data;
+        _jumpTable = jt;
+        _chooseFuncOffset = chooseFuncOffset;
     }
     
     /**
@@ -89,7 +111,7 @@ public final class AttrPtg extends OperationPtg {
      */
     public static AttrPtg createSpace(int type, int count) {
         int data = type & 0x00FF | (count << 8) & 0x00FFFF;
-        return new AttrPtg(space.set(0), data);
+        return new AttrPtg(space.set(0), data, null, -1);
     }
 
     public void setOptions(byte options)
@@ -136,14 +158,14 @@ public final class AttrPtg extends OperationPtg {
         field_1_options=optiIf.setByteBoolean(field_1_options,bif);
     }
 
-	/**
-	 * Flags this ptg as a goto/jump 
-	 * @param isGoto
-	 */
-	public void setGoto(boolean isGoto) {
-		field_1_options=optGoto.setByteBoolean(field_1_options, isGoto);
-	}
-	
+    /**
+     * Flags this ptg as a goto/jump 
+     * @param isGoto
+     */
+    public void setGoto(boolean isGoto) {
+        field_1_options=optGoto.setByteBoolean(field_1_options, isGoto);
+    }
+    
     // lets hope no one uses this anymore
     public boolean isBaxcel()
     {
@@ -181,7 +203,7 @@ public final class AttrPtg extends OperationPtg {
         if(isOptimizedIf()) {
             sb.append("if dist=").append(getData());
         } else if(isOptimizedChoose()) {
-            sb.append("choose dist=").append(getData());
+            sb.append("choose nCases=").append(getData());
         } else if(isGoto()) {
             sb.append("skip dist=").append(getData()); 
         } else if(isSum()) {
@@ -195,13 +217,28 @@ public final class AttrPtg extends OperationPtg {
 
     public void writeBytes(byte [] array, int offset)
     {
-        array[offset]=sid;
-        array[offset+1]=field_1_options;
-        LittleEndian.putShort(array,offset+2,field_2_data);                
+        LittleEndian.putByte(array, offset+0, sid);
+        LittleEndian.putByte(array, offset+1, field_1_options);
+        LittleEndian.putShort(array,offset+2, field_2_data);
+        int[] jt = _jumpTable;
+        if (jt != null) {
+            int joff = offset+4; 
+            LittleEndian.putUShort(array, joff, _chooseFuncOffset);
+            joff+=2;
+            for (int i = 0; i < jt.length; i++) {
+                LittleEndian.putUShort(array, joff, jt[i]);
+                joff+=2;
+            }
+            LittleEndian.putUShort(array, joff, _chooseFuncOffset);
+        }
+        
     }
 
     public int getSize()
     {
+        if (_jumpTable != null) {
+            return SIZE + (_jumpTable.length + 1) * LittleEndian.SHORT_SIZE;
+        }
         return SIZE;
     }
 
@@ -255,12 +292,17 @@ public final class AttrPtg extends OperationPtg {
     
     
  
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
+    public byte getDefaultOperandClass() {
+        return Ptg.CLASS_VALUE;
+    }
 
     public Object clone() {
-      AttrPtg ptg = new AttrPtg();
-      ptg.field_1_options = field_1_options;
-      ptg.field_2_data = field_2_data;
-      return ptg;
+        int[] jt;
+        if (_jumpTable == null) {
+            jt = null;
+        } else {
+            jt = (int[]) _jumpTable.clone();
+        }
+        return new AttrPtg(field_1_options, field_2_data, jt, _chooseFuncOffset);
     }
 }
