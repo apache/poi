@@ -294,6 +294,16 @@ public class FileInformationBlock extends FIBAbstractType
       _longHandler.setLong(FIBLongHandler.CBMAC, cbMac);
     }
 
+	public int getCcpText()
+	{
+	  return _longHandler.getLong(FIBLongHandler.CCPTEXT);
+	}
+
+	public void setCcpText(int ccpText)
+	{
+	  _longHandler.setLong(FIBLongHandler.CCPTEXT, ccpText);
+	}
+
     public void clearOffsetsSizes()
     {
       _fieldHandler.clearFields();
