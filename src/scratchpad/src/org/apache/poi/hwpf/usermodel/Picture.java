@@ -363,6 +363,7 @@ public class Picture
       do {
         firstByte = _dataStream[pointer];
         secondByte = _dataStream[pointer+1];
+        pointer += 2;
       } while (!(firstByte==(byte)0xFF) && pointer<endOfPicture-1);
 
       if (firstByte==((byte)0xFF) && pointer<endOfPicture-1) {
