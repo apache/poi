@@ -266,6 +266,8 @@ public class TestHSSFDateUtil extends TestCase {
         formats = new String[] {
                 "yyyy-mm-dd hh:mm:ss", "yyyy/mm/dd HH:MM:SS", 
                 "mm/dd HH:MM", "yy/mmm/dd SS",
+                "mm/dd HH:MM AM", "mm/dd HH:MM am",
+                "mm/dd HH:MM PM", "mm/dd HH:MM pm" 
         };
         for(int i=0; i<formats.length; i++) {
             assertTrue( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
