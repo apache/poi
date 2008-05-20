@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
@@ -137,6 +138,27 @@ public class XSSFRow implements Row {
         	}
         }
         return null;
+    }
+    
+    public Cell getCell(int cellnum, MissingCellPolicy policy) {
+    	Cell cell = getCell(cellnum);
+    	if(policy == RETURN_NULL_AND_BLANK) {
+    		return cell;
+    	}
+    	if(policy == RETURN_BLANK_AS_NULL) {
+    		if(cell == null) return cell;
+    		if(cell.getCellType() == HSSFCell.CELL_TYPE_BLANK) {
+    			return null;
+    		}
+    		return cell;
+    	}
+    	if(policy == CREATE_NULL_AS_BLANK) {
+    		if(cell == null) {
+    			return createCell((short)cellnum, HSSFCell.CELL_TYPE_BLANK);
+    		}
+    		return cell;
+    	}
+    	throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
     }
 
     public short getFirstCellNum() {

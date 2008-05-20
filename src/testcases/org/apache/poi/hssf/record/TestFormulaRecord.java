@@ -19,16 +19,14 @@ package org.apache.poi.hssf.record;
 
 
 import java.io.ByteArrayInputStream;
-
-import org.apache.poi.hssf.record.formula.AttrPtg;
-import org.apache.poi.hssf.record.formula.ConcatPtg;
-import org.apache.poi.hssf.record.formula.FuncVarPtg;
-import org.apache.poi.hssf.record.formula.IntPtg;
-import org.apache.poi.hssf.record.formula.RangePtg;
-import org.apache.poi.hssf.record.formula.ReferencePtg;
-import org.apache.poi.hssf.record.formula.UnknownPtg;
+import java.util.List;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.hssf.record.formula.AttrPtg;
+import org.apache.poi.hssf.record.formula.FuncVarPtg;
+import org.apache.poi.hssf.record.formula.IntPtg;
+import org.apache.poi.hssf.record.formula.ReferencePtg;
 
 /**
  * Tests the serialization and deserialization of the FormulaRecord
@@ -57,7 +55,7 @@ public final class TestFormulaRecord extends TestCase {
 	 */
 	public void testCheckNanPreserve() {
 		byte[] formulaByte = new byte[29];
-		for (int i = 0; i < formulaByte.length; i++) formulaByte[i] = (byte)0;
+
 		formulaByte[4] = (byte)0x0F;
 		formulaByte[6] = (byte)0x02;
 		formulaByte[8] = (byte)0x07;
@@ -91,8 +89,6 @@ public final class TestFormulaRecord extends TestCase {
 	public void testExpFormula() {
 		byte[] formulaByte = new byte[27];
 		
-		for (int i = 0; i < formulaByte.length; i++) formulaByte[i] = (byte)0;
-		
 		formulaByte[4] =(byte)0x0F;
 		formulaByte[14]=(byte)0x08;
 		formulaByte[18]=(byte)0xE0;
@@ -109,15 +105,14 @@ public final class TestFormulaRecord extends TestCase {
 	
 	public void testWithConcat()  throws Exception {
 		// =CHOOSE(2,A2,A3,A4)
-		byte[] data = new byte[] {
+		byte[] data = {
 				6, 0, 68, 0,
 				1, 0, 1, 0, 15, 0, 0, 0, 0, 0, 0, 0, 57,
 				64, 0, 0, 12, 0, 12, -4, 46, 0, 
 				30, 2, 0,	// Int - 2
 				25, 4, 3, 0, // Attr
-				8, 0,		// Concat 
-				17, 0,	   // Range 
-				26, 0, 35, 0, // Bit like an attr
+					8, 0, 17, 0, 26, 0, // jumpTable
+					35, 0, // chooseOffset
 				36, 1, 0, 0, -64, // Ref - A2
 				25, 8, 21, 0, // Attr
 				36, 2, 0, 0, -64, // Ref - A3
@@ -126,30 +121,24 @@ public final class TestFormulaRecord extends TestCase {
 				25, 8, 3, 0,  // Attr 
 				66, 4, 100, 0 // CHOOSE
 		};
-		RecordInputStream inp = new RecordInputStream(
-				new ByteArrayInputStream(data)
-		);
+		RecordInputStream inp = new RecordInputStream( new ByteArrayInputStream(data));
 		inp.nextRecord();
 		
 		FormulaRecord fr = new FormulaRecord(inp);
 		
-		assertEquals(14, fr.getNumberOfExpressionTokens());
-		assertEquals(IntPtg.class,	   fr.getParsedExpression().get(0).getClass());
-		assertEquals(AttrPtg.class,	  fr.getParsedExpression().get(1).getClass());
-		assertEquals(ConcatPtg.class,	fr.getParsedExpression().get(2).getClass());
-		assertEquals(UnknownPtg.class,   fr.getParsedExpression().get(3).getClass());
-		assertEquals(RangePtg.class,	 fr.getParsedExpression().get(4).getClass());
-		assertEquals(UnknownPtg.class,   fr.getParsedExpression().get(5).getClass());
-		assertEquals(AttrPtg.class,	  fr.getParsedExpression().get(6).getClass());
-		assertEquals(ReferencePtg.class, fr.getParsedExpression().get(7).getClass());
-		assertEquals(AttrPtg.class,	  fr.getParsedExpression().get(8).getClass());
-		assertEquals(ReferencePtg.class, fr.getParsedExpression().get(9).getClass());
-		assertEquals(AttrPtg.class,	  fr.getParsedExpression().get(10).getClass());
-		assertEquals(ReferencePtg.class, fr.getParsedExpression().get(11).getClass());
-		assertEquals(AttrPtg.class,	  fr.getParsedExpression().get(12).getClass());
-		assertEquals(FuncVarPtg.class,   fr.getParsedExpression().get(13).getClass());
+		List ptgs = fr.getParsedExpression();
+		assertEquals(9, ptgs.size());
+		assertEquals(IntPtg.class,	   ptgs.get(0).getClass());
+		assertEquals(AttrPtg.class,	  ptgs.get(1).getClass());
+		assertEquals(ReferencePtg.class, ptgs.get(2).getClass());
+		assertEquals(AttrPtg.class,	  ptgs.get(3).getClass());
+		assertEquals(ReferencePtg.class, ptgs.get(4).getClass());
+		assertEquals(AttrPtg.class,	  ptgs.get(5).getClass());
+		assertEquals(ReferencePtg.class, ptgs.get(6).getClass());
+		assertEquals(AttrPtg.class,	  ptgs.get(7).getClass());
+		assertEquals(FuncVarPtg.class,   ptgs.get(8).getClass());
 		
-		FuncVarPtg choose = (FuncVarPtg)fr.getParsedExpression().get(13);
+		FuncVarPtg choose = (FuncVarPtg)ptgs.get(8);
 		assertEquals("CHOOSE", choose.getName());
 	}
 	

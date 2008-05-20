@@ -98,6 +98,15 @@ public class Picture
       fillImageContent();
     }
   }
+  
+  public Picture(byte[] _dataStream)
+  {
+      this._dataStream = _dataStream;
+      this.dataBlockStartOfsset = 0;
+      this.dataBlockSize = _dataStream.length;
+      this.pictureBytesStartOffset = 0;
+      this.size = _dataStream.length;
+  }
 
   private void fillWidthHeight()
   {
@@ -363,6 +372,7 @@ public class Picture
       do {
         firstByte = _dataStream[pointer];
         secondByte = _dataStream[pointer+1];
+        pointer += 2;
       } while (!(firstByte==(byte)0xFF) && pointer<endOfPicture-1);
 
       if (firstByte==((byte)0xFF) && pointer<endOfPicture-1) {

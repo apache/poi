@@ -17,17 +17,18 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Iterator;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.util.Region;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.util.TempFile;
-
-import java.io.*;
-import java.util.Iterator;
 
 /**
  * Testcases for bugs entered in bugzilla
@@ -81,13 +82,7 @@ public final class TestBugs extends TestCase {
         HSSFRow r = s.createRow(0);
         HSSFCell c = r.createCell((short)0);
         c.setCellValue(10);
-        try {
-            writeOutAndReadBack(wb);
-        } catch (RecordFormatException e) {
-            if (false) { // TODO (Apr-2008) this file does not read back ok.  create bugzilla bug & fix.
-                throw new AssertionFailedError("Identified bug XXXX");
-            }
-        }
+        writeOutAndReadBack(wb);
     }
     /**Test writing a hyperlink
      * Open resulting sheet in Excel and check that A1 contains a hyperlink*/
@@ -758,9 +753,13 @@ public final class TestBugs extends TestCase {
         HSSFCell c2 = r2.getCell((short)1);
         assertEquals(25, (int)c2.getNumericCellValue());
 
-        if (false) { // TODO (Apr-2008) This will blow up with IllegalStateException (stack underflow)
-            // excel function "CHOOSE" probably needs some special handling in FormulaParser.toFormulaString()
-            assertEquals("=CHOOSE(2,A2,A3,A4)", c2.getCellFormula());
+        try {
+            assertEquals("CHOOSE(2,A2,A3,A4)", c2.getCellFormula());
+        } catch (IllegalStateException e) {
+            if (e.getMessage().startsWith("Too few arguments")
+                    && e.getMessage().indexOf("ConcatPtg") > 0) {
+                throw new AssertionFailedError("identified bug 44306");
+            }
         }
     }
 
@@ -888,13 +887,13 @@ public final class TestBugs extends TestCase {
         writeOutAndReadBack(wb);
         assertTrue("no errors writing sample xls", true);
     }
-    
+
     /**
      * Had a problem apparently, not sure what as it
      *  works just fine...
      */
     public void test44891() throws Exception {
-    	HSSFWorkbook wb = openSample("44891.xls");
+        HSSFWorkbook wb = openSample("44891.xls");
         assertTrue("no errors reading sample xls", true);
         writeOutAndReadBack(wb);
         assertTrue("no errors writing sample xls", true);
@@ -906,7 +905,7 @@ public final class TestBugs extends TestCase {
      * Works fine with poi-3.1-beta1.
      */
     public void test44235() throws Exception {
-    	HSSFWorkbook wb = openSample("44235.xls");
+        HSSFWorkbook wb = openSample("44235.xls");
         assertTrue("no errors reading sample xls", true);
         writeOutAndReadBack(wb);
         assertTrue("no errors writing sample xls", true);
@@ -930,7 +929,7 @@ public final class TestBugs extends TestCase {
     }
 
     public void test36947() throws Exception {
-    	HSSFWorkbook wb = openSample("36947.xls");
+        HSSFWorkbook wb = openSample("36947.xls");
         assertTrue("no errors reading sample xls", true);
         writeOutAndReadBack(wb);
         assertTrue("no errors writing sample xls", true);
@@ -947,7 +946,7 @@ public final class TestBugs extends TestCase {
     }
 
     public void test39634() throws Exception {
-    	HSSFWorkbook wb = openSample("39634.xls");
+        HSSFWorkbook wb = openSample("39634.xls");
         assertTrue("no errors reading sample xls", true);
         writeOutAndReadBack(wb);
         assertTrue("no errors writing sample xls", true);
