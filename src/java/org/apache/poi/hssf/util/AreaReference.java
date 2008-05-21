@@ -15,11 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.util;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+
+import org.apache.poi.hssf.record.formula.AreaI;
 
 public final class AreaReference {
 
@@ -50,13 +51,13 @@ public final class AreaReference {
         
         // Special handling for whole-column references
         if(parts.length == 2 && parts[0].length() == 1 &&
-        		parts[1].length() == 1 && 
-        		parts[0].charAt(0) >= 'A' && parts[0].charAt(0) <= 'Z' &&
-        		parts[1].charAt(0) >= 'A' && parts[1].charAt(0) <= 'Z') {
-        	// Represented internally as x$1 to x$65536
-        	//  which is the maximum range of rows
-        	parts[0] = parts[0] + "$1";
-        	parts[1] = parts[1] + "$65536";
+                parts[1].length() == 1 && 
+                parts[0].charAt(0) >= 'A' && parts[0].charAt(0) <= 'Z' &&
+                parts[1].charAt(0) >= 'A' && parts[1].charAt(0) <= 'Z') {
+            // Represented internally as x$1 to x$65536
+            //  which is the maximum range of rows
+            parts[0] = parts[0] + "$1";
+            parts[1] = parts[1] + "$65536";
         }
         
         _firstCell = new CellReference(parts[0]);
@@ -74,9 +75,9 @@ public final class AreaReference {
      * Creates an area ref from a pair of Cell References.
      */
     public AreaReference(CellReference topLeft, CellReference botRight) {
-    	_firstCell = topLeft;
-    	_lastCell = botRight;
-    	_isSingleCell = false;
+        _firstCell = topLeft;
+        _lastCell = botRight;
+        _isSingleCell = false;
     }
 
     /**
@@ -98,17 +99,17 @@ public final class AreaReference {
      *  such as C:C or D:G ?
      */
     public static boolean isWholeColumnReference(CellReference topLeft, CellReference botRight) {
-    	// These are represented as something like
-    	//   C$1:C$65535 or D$1:F$0
-    	// i.e. absolute from 1st row to 0th one
-    	if(topLeft.getRow() == 0 && topLeft.isRowAbsolute() &&
-    		botRight.getRow() == 65535 && botRight.isRowAbsolute()) {
-    		return true;
-    	}
-    	return false;
+        // These are represented as something like
+        //   C$1:C$65535 or D$1:F$0
+        // i.e. absolute from 1st row to 0th one
+        if(topLeft.getRow() == 0 && topLeft.isRowAbsolute() &&
+            botRight.getRow() == 65535 && botRight.isRowAbsolute()) {
+            return true;
+        }
+        return false;
     }
     public boolean isWholeColumnReference() {
-    	return isWholeColumnReference(_firstCell, _lastCell);
+        return isWholeColumnReference(_firstCell, _lastCell);
     }
 
     /**
@@ -155,26 +156,26 @@ public final class AreaReference {
      * Returns a reference to every cell covered by this area
      */
     public CellReference[] getAllReferencedCells() {
-    	// Special case for single cell reference
-    	if(_isSingleCell) {
-    		return  new CellReference[] { _firstCell, };
-    	}
+        // Special case for single cell reference
+        if(_isSingleCell) {
+            return  new CellReference[] { _firstCell, };
+        }
  
-    	// Interpolate between the two
+        // Interpolate between the two
         int minRow = Math.min(_firstCell.getRow(), _lastCell.getRow());
-    	int maxRow = Math.max(_firstCell.getRow(), _lastCell.getRow());
-    	int minCol = Math.min(_firstCell.getCol(), _lastCell.getCol());
-    	int maxCol = Math.max(_firstCell.getCol(), _lastCell.getCol());
+        int maxRow = Math.max(_firstCell.getRow(), _lastCell.getRow());
+        int minCol = Math.min(_firstCell.getCol(), _lastCell.getCol());
+        int maxCol = Math.max(_firstCell.getCol(), _lastCell.getCol());
         String sheetName = _firstCell.getSheetName();
-    	
-    	ArrayList refs = new ArrayList();
-    	for(int row=minRow; row<=maxRow; row++) {
-    		for(int col=minCol; col<=maxCol; col++) {
-    			CellReference ref = new CellReference(sheetName, row, col, _firstCell.isRowAbsolute(), _firstCell.isColAbsolute());
-    			refs.add(ref);
-    		}
-    	}
-    	return (CellReference[])refs.toArray(new CellReference[refs.size()]);
+        
+        ArrayList refs = new ArrayList();
+        for(int row=minRow; row<=maxRow; row++) {
+            for(int col=minCol; col<=maxCol; col++) {
+                CellReference ref = new CellReference(sheetName, row, col, _firstCell.isRowAbsolute(), _firstCell.isColAbsolute());
+                refs.add(ref);
+            }
+        }
+        return (CellReference[])refs.toArray(new CellReference[refs.size()]);
     }
 
     /**
@@ -189,14 +190,14 @@ public final class AreaReference {
      * @return the text representation of this area reference as it would appear in a formula.
      */
     public String formatAsString() {
-    	// Special handling for whole-column references
-    	if(isWholeColumnReference()) {
-    		return
-    			CellReference.convertNumToColString(_firstCell.getCol())
-    			+ ":" +
-    			CellReference.convertNumToColString(_lastCell.getCol());
-    	}
-    	
+        // Special handling for whole-column references
+        if(isWholeColumnReference()) {
+            return
+                CellReference.convertNumToColString(_firstCell.getCol())
+                + ":" +
+                CellReference.convertNumToColString(_lastCell.getCol());
+        }
+        
         StringBuffer sb = new StringBuffer(32);
         sb.append(_firstCell.formatAsString());
         if(!_isSingleCell) {
@@ -209,6 +210,18 @@ public final class AreaReference {
             }
         }
         return sb.toString();
+    }
+    /**
+     * Formats a 2-D area as it would appear in a formula.  See formatAsString() (no-arg)
+     */
+    public static String formatAsString(AreaI area) {
+        CellReference topLeft = new CellReference(area.getFirstRow(),area.getFirstColumn(),!area.isFirstRowRelative(),!area.isFirstColRelative());
+        CellReference botRight = new CellReference(area.getLastRow(),area.getLastColumn(),!area.isLastRowRelative(),!area.isLastColRelative());
+        
+        if(isWholeColumnReference(topLeft, botRight)) {
+            return (new AreaReference(topLeft, botRight)).formatAsString();
+        }
+        return topLeft.formatAsString() + ":" + botRight.formatAsString(); 
     }
     public String toString() {
         StringBuffer sb = new StringBuffer(64);

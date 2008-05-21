@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndian;
 
 
 /**
- * Title:        Area 3D Ptg - 3D referecnce (Sheet + Area)<P>
+ * Title:        Area 3D Ptg - 3D reference (Sheet + Area)<P>
  * Description:  Defined a area in Extern Sheet. <P>
  * REFERENCE:  <P>
  * @author Libin Roman (Vista Portal LDT. Developer)
@@ -35,7 +35,6 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 1.0-pre
  */
-
 public class Area3DPtg extends Ptg implements AreaI
 {
 	public final static byte sid = 0x3b;
@@ -84,23 +83,15 @@ public class Area3DPtg extends Ptg implements AreaI
 		  setExternSheetIndex(externalSheetIndex);
 	}
 
-	public String toString()
-	{
-		StringBuffer buffer = new StringBuffer();
-
-		buffer.append( "AreaPtg\n" );
-		buffer.append( "Index to Extern Sheet = " + getExternSheetIndex() ).append( "\n" );
-		buffer.append( "firstRow = " + getFirstRow() ).append( "\n" );
-		buffer.append( "lastRow  = " + getLastRow() ).append( "\n" );
-		buffer.append( "firstCol = " + getFirstColumn() ).append( "\n" );
-		buffer.append( "lastCol  = " + getLastColumn() ).append( "\n" );
-		buffer.append( "firstColRel= "
-				+ isFirstRowRelative() ).append( "\n" );
-		buffer.append( "lastColRowRel = "
-				+ isLastRowRelative() ).append( "\n" );
-		buffer.append( "firstColRel   = " + isFirstColRelative() ).append( "\n" );
-		buffer.append( "lastColRel	= " + isLastColRelative() ).append( "\n" );
-		return buffer.toString();
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(getClass().getName());
+		sb.append(" [");
+		sb.append("sheetIx=").append(getExternSheetIndex());
+		sb.append(" ! ");
+		sb.append(AreaReference.formatAsString(this));
+		sb.append("]");
+		return sb.toString();
 	}
 
 	public void writeBytes( byte[] array, int offset )
@@ -284,7 +275,7 @@ public class Area3DPtg extends Ptg implements AreaI
 		}
 		
 		// Now the normal area bit
-		retval.append( AreaPtg.toFormulaString(this, book) );
+		retval.append(AreaReference.formatAsString(this));
 		
 		// All done
 		return retval.toString();
@@ -326,6 +317,7 @@ public class Area3DPtg extends Ptg implements AreaI
 
 	public int hashCode()
 	{
+		// TODO - hashCode seems to be unused
 		int result;
 		result = (int) field_1_index_extern_sheet;
 		result = 29 * result + (int) field_2_first_row;
