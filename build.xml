@@ -170,6 +170,7 @@ under the License.
   <path id="examples.classpath">
     <path refid="main.classpath"/>
     <pathelement location="${main.output.dir}"/>
+    <pathelement location="${scratchpad.output.dir}"/>
   </path>
 
 
