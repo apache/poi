@@ -14,11 +14,9 @@
 # limitations under the License.
 
 # Created by (org.apache.poi.hssf.record.formula.function.ExcelFileFormatDocFunctionExtractor)
-# from source file 'excelfileformat.odt' (size=355750, crc=0x2FAEA65A)
+# from source file 'excelfileformat.odt' (size=356107, md5=0x8f789cb6e75594caf068f8e193004ef4)
 #
 #Columns: (index, name, minParams, maxParams, returnClass, paramClasses, isVolatile, hasFootnote )
-#
-# + some manual edits !
 
 # Built-In Sheet Functions in BIFF2
 0	COUNT	0	30	V	R		
@@ -186,7 +184,7 @@
 244	INFO	1	1	V	V		
 # New Built-In Sheet Functions in BIFF4
 14	FIXED	2	3	V	V V V		x
-204	USDOLLAR	1	1	V	V		x
+204	USDOLLAR	1	2	V	V V		x
 215	DBCS	1	1	V	V		x
 216	RANK	2	3	V	V R V		
 247	DB	4	5	V	V V V V V		
