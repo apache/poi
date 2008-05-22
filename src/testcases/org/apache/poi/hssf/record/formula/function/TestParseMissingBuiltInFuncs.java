@@ -21,7 +21,6 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.model.FormulaParser;
-import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.FuncPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
@@ -29,7 +28,7 @@ import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 /**
  * Tests parsing of some built-in functions that were not properly
- * registered in POI as bug #44675, #44733 (March/April 2008).
+ * registered in POI as of bug #44675, #44733 (March/April 2008).
  * 
  * @author Josh Micich
  */
@@ -76,7 +75,7 @@ public final class TestParseMissingBuiltInFuncs extends TestCase {
 	}
 	
 	public void testUsdollar() {
-		confirmFunc("USDOLLAR(1)", 2, false, 204);
+		confirmFunc("USDOLLAR(1)", 2, true, 204);
 	}
 
 	public void testDBCS() {
