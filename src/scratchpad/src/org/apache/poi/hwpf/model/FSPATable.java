@@ -21,17 +21,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class holds all the FSPA (File Shape Address) structures.
  * 
  * @author Squeeself
  */
-public class FSPATable 
+public final class FSPATable 
 {
-    protected ArrayList shapes = new ArrayList();
-    protected HashMap cps = new HashMap();
-    protected List _text;
+    private final List _shapes = new ArrayList();
+    private final Map _shapeIndexesByPropertyStart = new HashMap();
+    private final List _text;
     
     public FSPATable(byte[] tableStream, int fcPlcspa, int lcbPlcspa, List tpt)
     {
@@ -46,32 +47,35 @@ public class FSPATable
             GenericPropertyNode property = plex.getProperty(i);
             FSPA fspa = new FSPA(property.getBytes(), 0);
             
-            shapes.add(fspa);
-            cps.put(Integer.valueOf(property.getStart()), Integer.valueOf(i));
+            _shapes.add(fspa);
+            _shapeIndexesByPropertyStart.put(new Integer(property.getStart()), new Integer(i));
         }
     }
     
     public FSPA getFspaFromCp(int cp)
     {
-        Integer idx = (Integer)cps.get(Integer.valueOf(cp));
-        if (idx == null)
+        Integer idx = (Integer)_shapeIndexesByPropertyStart.get(new Integer(cp));
+        if (idx == null) {
             return null;
-        return (FSPA)shapes.get(idx.intValue());
+        }
+        return (FSPA)_shapes.get(idx.intValue());
     }
     
-    public List getShapes()
+    public FSPA[] getShapes()
     {
-        return shapes;
+        FSPA[] result = new FSPA[_shapes.size()];
+        _shapes.toArray(result);
+        return result;
     }
     
     public String toString()
     {
         StringBuffer buf = new StringBuffer();
-        buf.append("[FPSA PLC size=").append(shapes.size()).append("]\n");
-        for (Iterator it = cps.keySet().iterator(); it.hasNext(); )
+        buf.append("[FPSA PLC size=").append(_shapes.size()).append("]\n");
+        for (Iterator it = _shapeIndexesByPropertyStart.keySet().iterator(); it.hasNext(); )
         {
             Integer i = (Integer) it.next();
-            FSPA fspa = (FSPA) shapes.get(((Integer)cps.get(i)).intValue());
+            FSPA fspa = (FSPA) _shapes.get(((Integer)_shapeIndexesByPropertyStart.get(i)).intValue());
             buf.append("  [FC: ").append(i.toString()).append("] ");
             buf.append(fspa.toString());
             buf.append("\n");
