@@ -58,7 +58,7 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
 	public static void main(String[] args) throws Exception {
 		if(args.length < 1) {
 			System.err.println("Use:");
-			System.err.println("  HXFWordExtractor <filename.xlsx>");
+			System.err.println("  HXFWordExtractor <filename.docx>");
 			System.exit(1);
 		}
 		POIXMLTextExtractor extractor = 

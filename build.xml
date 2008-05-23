@@ -562,6 +562,7 @@ under the License.
         <uptodate property="main.test.notRequired" targetfile="${main.testokfile}">
             <srcfiles dir="${main.src}"/>
             <srcfiles dir="${main.src.test}"/>
+            <srcfiles dir="${ooxml.src}"/>
         </uptodate>
     </target>
 
