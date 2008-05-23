@@ -51,7 +51,6 @@ import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.record.SSTRecord;
 import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.record.UnknownRecord;
-import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
@@ -60,6 +59,7 @@ import org.apache.poi.hssf.util.SheetReferences;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -119,6 +119,13 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * someplace else.
      */
     private HSSFDataFormat formatter;
+    
+    /**
+     * The policy to apply in the event of missing or
+     *  blank cells when fetching from a row.
+     * See {@link MissingCellPolicy}
+     */
+    private MissingCellPolicy missingCellPolicy = HSSFRow.RETURN_NULL_AND_BLANK;
 
 
     /** Extended windows meta file */
@@ -362,8 +369,28 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
              log.log(POILogger.DEBUG, "convertLabelRecords exit");
      }
 
+	/**
+	 * Retrieves the current policy on what to do when
+	 *  getting missing or blank cells from a row.
+	 * The default is to return blank and null cells.
+	 *  {@link MissingCellPolicy}
+	 */
+	public MissingCellPolicy getMissingCellPolicy() {
+		return missingCellPolicy;
+	}
 
-    /**
+	/**
+	 * Sets the policy on what to do when
+	 *  getting missing or blank cells from a row.
+	 * This will then apply to all calls to 
+	 *  {@link Row.getCell()}. See
+	 *  {@link MissingCellPolicy}
+	 */
+	public void setMissingCellPolicy(MissingCellPolicy missingCellPolicy) {
+		this.missingCellPolicy = missingCellPolicy;
+	}
+
+	/**
      * sets the order of appearance for a given sheet.
      *
      * @param sheetname the name of the sheet to reorder
