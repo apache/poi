@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -29,10 +27,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height
  * @version 2.0-pre
  */
-
-public class DBCellRecord
-    extends Record
-{
+public final class DBCellRecord extends Record {
     public final static int BLOCK_SIZE = 32;
     public final static short sid = 0xd7;
     private int               field_1_row_offset;
@@ -46,7 +41,6 @@ public class DBCellRecord
      * Constructs a DBCellRecord and sets its fields appropriately
      * @param in the RecordInputstream to read the record from
      */
-
     public DBCellRecord(RecordInputStream in)
     {
         super(in);
@@ -78,7 +72,6 @@ public class DBCellRecord
      *
      * @param offset    offset to the start of the first cell in the next DBCell block
      */
-
     public void setRowOffset(int offset)
     {
         field_1_row_offset = offset;
@@ -108,7 +101,6 @@ public class DBCellRecord
      *
      * @return rowoffset to the start of the first cell in the next DBCell block
      */
-
     public int getRowOffset()
     {
         return field_1_row_offset;
@@ -120,7 +112,6 @@ public class DBCellRecord
      * @param index of the cell offset to retrieve
      * @return celloffset from the celloffset array
      */
-
     public short getCellOffsetAt(int index)
     {
         return field_2_cell_offsets[ index ];
@@ -131,7 +122,6 @@ public class DBCellRecord
      *
      * @return number of cell offsets
      */
-
     public int getNumCellOffsets()
     {
         return field_2_cell_offsets.length;
@@ -175,9 +165,15 @@ public class DBCellRecord
         return 8 + (getNumCellOffsets() * 2);
     }
     
-    /** Returns the size of a DBCellRecord when it needs to reference a certain number of rows*/
-    public static int getRecordSizeForRows(int rows) {
-      return 8 + (rows * 2);
+    /**
+     *  @returns the size of the group of <tt>DBCellRecord</tt>s needed to encode
+     *  the specified number of blocks and rows
+     */
+    public static int calculateSizeOfRecords(int nBlocks, int nRows) {
+        // One DBCell per block.
+        // 8 bytes per DBCell (non variable section)
+        // 2 bytes per row reference
+        return nBlocks * 8 + nRows * 2;
     }
 
     public short getSid()
