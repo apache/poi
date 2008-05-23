@@ -165,6 +165,28 @@ public final class TestExcelExtractor extends TestCase {
 		);
 	}
 	
+	public void testWithComments() throws Exception {
+		ExcelExtractor extractor = createExtractor("SimpleWithComments.xls");
+		extractor.setIncludeSheetNames(false);
+
+		// Check without comments
+		assertEquals(
+				"1.0\tone\n" +
+				"2.0\ttwo\n" + 
+				"3.0\tthree\n", 
+				extractor.getText()
+		);
+		
+		// Now with
+		extractor.setIncludeCellComments(true);
+		assertEquals(
+				"1.0\tone Comment by Yegor Kozlov: Yegor Kozlov: first cell\n" +
+				"2.0\ttwo Comment by Yegor Kozlov: Yegor Kozlov: second cell\n" + 
+				"3.0\tthree Comment by Yegor Kozlov: Yegor Kozlov: third cell\n", 
+				extractor.getText()
+		);
+	}
+	
 	
 	/**
 	 * Embded in a non-excel file
