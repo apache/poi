@@ -191,12 +191,11 @@ public class Workbook implements Model
                 case ExternSheetRecord.sid :
                     throw new RuntimeException("Extern sheet is part of LinkTable");
                 case NameRecord.sid :
-                    throw new RuntimeException("DEFINEDNAME is part of LinkTable");
                 case SupBookRecord.sid :
+                    // LinkTable can start with either of these
                     if (log.check( POILogger.DEBUG ))
                         log.log(DEBUG, "found SupBook record at " + k);
                     retval.linkTable = new LinkTable(recs, k, retval.records);
-                    //                    retval.records.supbookpos = k;
                     k+=retval.linkTable.getRecordCount() - 1;
                     continue;
                 case FormatRecord.sid :

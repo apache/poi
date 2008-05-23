@@ -28,7 +28,7 @@ import junit.framework.TestSuite;
 public class AllUserModelTests {
 	
 	public static Test suite() {
-		TestSuite result = new TestSuite("Tests for org.apache.poi.hssf.usermodel");
+		TestSuite result = new TestSuite(AllUserModelTests.class.getName());
 		
 		result.addTestSuite(TestBugs.class);
 		result.addTestSuite(TestCellStyle.class);
@@ -58,6 +58,7 @@ public class AllUserModelTests {
 		result.addTestSuite(TestHSSFSheetSetOrder.class);
 		result.addTestSuite(TestHSSFTextbox.class);
 		result.addTestSuite(TestHSSFWorkbook.class);
+		result.addTestSuite(TestLinkTable.class);
 		result.addTestSuite(TestNamedRange.class);
 		result.addTestSuite(TestOLE2Embeding.class);
 		result.addTestSuite(TestPOIFSProperties.class);
