@@ -276,8 +276,23 @@ public final class HSSFRow implements Comparable {
 
     /**
      * Get the hssfcell representing a given column (logical cell)
-     *  0-based.  If you ask for a cell that is not defined....
+     *  0-based. If you ask for a cell that is not defined, then
      *  you get a null.
+     * This is the basic call, with no policies applied
+     *
+     * @param cellnum  0 based column number
+     * @return HSSFCell representing that column or null if undefined.
+     */
+    private HSSFCell retrieveCell(int cellnum) {
+        if(cellnum<0||cellnum>=cells.length) return null;
+        return cells[cellnum];
+    }
+    
+    /**
+     * Get the hssfcell representing a given column (logical cell)
+     *  0-based.  If you ask for a cell that is not defined then
+     *  you get a null, unless you have set a different
+     *  {@link MissingCellPolicy} on the base workbook.
      * Short method signature provided to retain binary
      *  compatibility.
      *
@@ -288,17 +303,18 @@ public final class HSSFRow implements Comparable {
         int ushortCellNum = cellnum & 0x0000FFFF; // avoid sign extension
         return getCell(ushortCellNum);
     }
+    
     /**
      * Get the hssfcell representing a given column (logical cell)
-     *  0-based.  If you ask for a cell that is not defined....
-     *  you get a null.
+     *  0-based.  If you ask for a cell that is not defined then
+     *  you get a null, unless you have set a different
+     *  {@link MissingCellPolicy} on the base workbook.
      *
      * @param cellnum  0 based column number
      * @return HSSFCell representing that column or null if undefined.
      */
     public HSSFCell getCell(int cellnum) {
-        if(cellnum<0||cellnum>=cells.length) return null;
-        return cells[cellnum];
+    	return getCell(cellnum, book.getMissingCellPolicy());
     }
     
     /**
@@ -311,7 +327,7 @@ public final class HSSFRow implements Comparable {
      * @return representing that column or null if undefined + policy allows.
      */
     public HSSFCell getCell(int cellnum, MissingCellPolicy policy) {
-    	HSSFCell cell = getCell(cellnum);
+    	HSSFCell cell = retrieveCell(cellnum);
     	if(policy == RETURN_NULL_AND_BLANK) {
     		return cell;
     	}
@@ -335,7 +351,6 @@ public final class HSSFRow implements Comparable {
      * get the number of the first cell contained in this row.
      * @return short representing the first logical cell in the row, or -1 if the row does not contain any cells.
      */
-
     public short getFirstCellNum()
     {
         if (getPhysicalNumberOfCells() == 0)
