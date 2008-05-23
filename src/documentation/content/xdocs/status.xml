@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1-final" date="2008-06-??">
+           <action dev="POI-DEVELOPERS" type="add">45041 - improved FormulaParser parse error messages</action>
            <action dev="POI-DEVELOPERS" type="add">45046 - allowed EXTERNALBOOK(0x01AE) to be optional in the LinkTable</action>
            <action dev="POI-DEVELOPERS" type="add">45066 - fixed sheet encoding size mismatch problems</action>
            <action dev="POI-DEVELOPERS" type="add">45003 - Support embeded HDGF visio documents</action>
