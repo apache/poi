@@ -96,8 +96,8 @@ public final class Sheet implements Model {
     protected List                       condFormatting    =     new ArrayList();
 
     /** Add an UncalcedRecord if not true indicating formulas have not been calculated */
-    protected boolean uncalced = false;
-	
+    protected boolean _isUncalced = false;
+    
     public static final byte PANE_LOWER_RIGHT = (byte)0;
     public static final byte PANE_UPPER_RIGHT = (byte)1;
     public static final byte PANE_LOWER_LEFT = (byte)2;
@@ -162,7 +162,7 @@ public final class Sheet implements Model {
                 }
             }
             else if (rec.getSid() == UncalcedRecord.sid) {
-                retval.uncalced = true;
+                retval._isUncalced = true;
             }
             else if (rec.getSid() == DimensionsRecord.sid)
             {
@@ -329,16 +329,8 @@ public final class Sheet implements Model {
             }
         }
         retval.records = records;
-//        if (retval.rows == null)
-//        {
-//            retval.rows = new RowRecordsAggregate();
-//        }
         retval.checkCells();
         retval.checkRows();
-//        if (retval.cells == null)
-//        {
-//            retval.cells = new ValueRecordsAggregate();
-//        }
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "sheet createSheet (existing file) exited");
         return retval;
@@ -816,17 +808,17 @@ public final class Sheet implements Model {
             // Once the rows have been found in the list of records, start
             //  writing out the blocked row information. This includes the DBCell references
             if (record instanceof RowRecordsAggregate) {
-              pos += ((RowRecordsAggregate)record).serialize(pos, data, cells);   // rec.length;
+              pos += ((RowRecordsAggregate)record).serialize(pos, data, cells);
             } else if (record instanceof ValueRecordsAggregate) {
               //Do nothing here. The records were serialized during the RowRecordAggregate block serialization
             } else {
-              pos += record.serialize(pos, data );   // rec.length;
+              pos += record.serialize(pos, data );
             }
 
             // If the BOF record was just serialized then add the IndexRecord
             if (record.getSid() == BOFRecord.sid) {
               // Add an optional UncalcedRecord
-              if (uncalced) {
+              if (_isUncalced) {
                   UncalcedRecord rec = new UncalcedRecord();
                   pos += rec.serialize(pos, data);
               }
@@ -837,31 +829,10 @@ public final class Sheet implements Model {
                 pos += serializeIndexRecord(k, pos, data);
               }
             }
-
-            //// uncomment to test record sizes ////
-//            System.out.println( record.getClass().getName() );
-//            byte[] data2 = new byte[record.getRecordSize()];
-//            record.serialize(0, data2 );   // rec.length;
-//            if (LittleEndian.getUShort(data2, 2) != record.getRecordSize() - 4
-//                    && record instanceof RowRecordsAggregate == false
-//                    && record instanceof ValueRecordsAggregate == false
-//                    && record instanceof EscherAggregate == false)
-//            {
-//                throw new RuntimeException("Blah!!!  Size off by " + ( LittleEndian.getUShort(data2, 2) - record.getRecordSize() - 4) + " records.");
-//            }
-
-//asd:            int len = record.serialize(pos + offset, data );
-
-            /////  DEBUG BEGIN /////
-//asd:            if (len != record.getRecordSize())
-//asd:                throw new IllegalStateException("Record size does not match serialized bytes.  Serialized size = " + len + " but getRecordSize() returns " + record.getRecordSize() + ". Record object is " + record.getClass());
-            /////  DEBUG END /////
-
-//asd:            pos += len;   // rec.length;
-
         }
-        if (log.check( POILogger.DEBUG ))
+        if (log.check( POILogger.DEBUG )) {
             log.log(POILogger.DEBUG, "Sheet.serialize returning ");
+        }
         return pos-offset;
     }
 
@@ -875,9 +846,16 @@ public final class Sheet implements Model {
       for (int j = BOFRecordIndex+1; j < records.size(); j++)
       {
         Record tmpRec = (( Record ) records.get(j));
-        if (tmpRec instanceof RowRecordsAggregate)
-          break;
+        if (tmpRec instanceof UncalcedRecord) {
+            continue;
+        }
+        if (tmpRec instanceof RowRecordsAggregate) {
+            break;
+        }
         sheetRecSize+= tmpRec.getRecordSize();
+      }
+      if (_isUncalced) {
+          sheetRecSize += UncalcedRecord.getStaticRecordSize();
       }
       //Add the references to the DBCells in the IndexRecord (one for each block)
       int blockCount = rows.getRowBlockCount();
@@ -2017,31 +1995,33 @@ public final class Sheet implements Model {
     {
         int retval = 0;
 
-        for ( int k = 0; k < records.size(); k++ )
-        {
-            retval += ( (Record) records.get( k ) ).getRecordSize();
-        }
-        //Add space for the IndexRecord
-        if (rows != null) {
-            final int blocks = rows.getRowBlockCount();
-            retval += IndexRecord.getRecordSizeForBlockCount(blocks);
-
-            //Add space for the DBCell records
-            //Once DBCell per block.
-            //8 bytes per DBCell (non variable section)
-            //2 bytes per row reference
-            retval += (8 * blocks);
-            for (Iterator itr = rows.getIterator(); itr.hasNext();) {
-                RowRecord row = (RowRecord)itr.next();
-                if (cells != null && cells.rowHasCells(row.getRowNumber()))
-                    retval += 2;
+        for ( int k = 0; k < records.size(); k++) {
+            Record record = (Record) records.get(k);
+            if (record instanceof UncalcedRecord) {
+                // skip the UncalcedRecord if present, it's only encoded if the isUncalced flag is set
+                continue;
             }
+            retval += record.getRecordSize();
+        }
+        if (rows != null) {
+            // Add space for the IndexRecord and DBCell records
+            final int nBlocks = rows.getRowBlockCount();
+            int nRows = 0;
+            if (cells != null) {
+                for (Iterator itr = rows.getIterator(); itr.hasNext();) {
+                    RowRecord row = (RowRecord)itr.next();
+                    if (cells.rowHasCells(row.getRowNumber())) {
+                        nRows++;
+                    }
+                }
+            }
+            retval += IndexRecord.getRecordSizeForBlockCount(nBlocks);
+            retval += DBCellRecord.calculateSizeOfRecords(nBlocks, nRows);
         }
         // Add space for UncalcedRecord
-        if (uncalced) {
+        if (_isUncalced) {
             retval += UncalcedRecord.getStaticRecordSize();
         }
-
         return retval;
     }
 
@@ -2518,13 +2498,13 @@ public final class Sheet implements Model {
      * @return whether an uncalced record must be inserted or not at generation
      */
     public boolean getUncalced() {
-        return uncalced;
+        return _isUncalced;
     }
     /**
      * @param uncalced whether an uncalced record must be inserted or not at generation
      */
     public void setUncalced(boolean uncalced) {
-        this.uncalced = uncalced;
+        this._isUncalced = uncalced;
     }
 
     /**
