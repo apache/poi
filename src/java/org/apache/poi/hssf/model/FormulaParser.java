@@ -140,28 +140,20 @@ public final class FormulaParser {
         return new FormulaParseException(msg);
     }
 
-
-
     /** Recognize an Alpha Character */
     private boolean IsAlpha(char c) {
         return Character.isLetter(c) || c == '$' || c=='_';
     }
 
-
-
     /** Recognize a Decimal Digit */
     private boolean IsDigit(char c) {
-        //System.out.println("Checking digit for"+c);
         return Character.isDigit(c);
     }
-
-
 
     /** Recognize an Alphanumeric */
     private boolean  IsAlNum(char c) {
         return  (IsAlpha(c) || IsDigit(c));
     }
-
 
     /** Recognize White Space */
     private boolean IsWhite( char c) {
@@ -217,7 +209,6 @@ public final class FormulaParser {
         }
         return Token.toString();
     }
-
 
     /** Get a Number */
     private String GetNum() {
@@ -564,9 +555,6 @@ public final class FormulaParser {
                 return new ParenthesisPtg();
             case '"':
                 return parseStringLiteral();
-            case ',':
-            case ')':
-                return new MissingArgPtg(); // TODO - not quite the right place to recognise a missing arg
         }
         if (IsAlpha(look) || look == '\''){
             return parseIdent();
@@ -710,8 +698,7 @@ public final class FormulaParser {
     }
 
 
-    private StringPtg parseStringLiteral()
-    {
+    private StringPtg parseStringLiteral() {
         Match('"');
 
         StringBuffer token = new StringBuffer();
@@ -841,8 +828,9 @@ end;
      **/
 
 
-    /** API call to execute the parsing of the formula
-     *
+    /**
+     *  API call to execute the parsing of the formula
+     * @deprecated use Ptg[] FormulaParser.parse(String, HSSFWorkbook) directly
      */
     public void parse() {
         pointer=0;
@@ -866,11 +854,12 @@ end;
      * a result of the parsing
      */
     public Ptg[] getRPNPtg() {
-     return getRPNPtg(FORMULA_TYPE_CELL);
+        return getRPNPtg(FORMULA_TYPE_CELL);
     }
 
     public Ptg[] getRPNPtg(int formulaType) {
         Node node = createTree();
+        // RVA is for 'operand class': 'reference', 'value', 'array'
         setRootLevelRVA(node, formulaType);
         setParameterRVA(node,formulaType);
         return (Ptg[]) tokens.toArray(new Ptg[0]);
@@ -951,7 +940,7 @@ end;
         }
      }
     /**
-     * Convience method which takes in a list then passes it to the
+     * Convenience method which takes in a list then passes it to the
      *  other toFormulaString signature.
      * @param book   workbook for 3D and named references
      * @param lptgs  list of Ptg, can be null or empty
@@ -966,7 +955,7 @@ end;
         return retval;
     }
     /**
-     * Convience method which takes in a list then passes it to the
+     * Convenience method which takes in a list then passes it to the
      *  other toFormulaString signature. Works on the current
      *  workbook for 3D and named references
      * @param lptgs  list of Ptg, can be null or empty
