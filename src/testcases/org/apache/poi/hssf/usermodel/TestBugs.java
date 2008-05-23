@@ -18,14 +18,17 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.util.TempFile;
 
@@ -949,5 +952,41 @@ public final class TestBugs extends TestCase {
         assertTrue("no errors reading sample xls", true);
         writeOutAndReadBack(wb);
         assertTrue("no errors writing sample xls", true);
+    }
+    
+    /**
+     * Problems with extracting check boxes from
+     *  HSSFObjectData
+     * @throws Exception
+     */
+    public void test44840() throws Exception {
+        HSSFWorkbook wb = openSample("WithCheckBoxes.xls");
+
+        // Take a look at the embeded objects
+        List objects = wb.getAllEmbeddedObjects();
+        assertEquals(1, objects.size());
+        
+        HSSFObjectData obj = (HSSFObjectData)objects.get(0);
+        assertNotNull(obj);
+        
+        // Peek inside the underlying record
+        EmbeddedObjectRefSubRecord rec = obj.findObjectRecord();
+        assertNotNull(rec);
+        
+        assertEquals(32, rec.field_1_stream_id_offset);
+        assertEquals(0, rec.field_6_stream_id); // WRONG!
+        assertEquals("Forms.CheckBox.1", rec.field_5_ole_classname);
+        assertEquals(12, rec.remainingBytes.length);
+        
+        // Doesn't have a directory
+        assertFalse(obj.hasDirectoryEntry());
+        assertNotNull(obj.getObjectData());
+        assertEquals(12, obj.getObjectData().length);
+        assertEquals("Forms.CheckBox.1", obj.getOLE2ClassName());
+        
+        try {
+        	obj.getDirectory();
+        	fail();
+        } catch(FileNotFoundException e) {}
     }
 }
