@@ -55,9 +55,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Test the low level formula parser functionality. High level tests are to
- *  be done via usermodel/HSSFCell.setFormulaValue() .
- * Some tests are also done in scratchpad, if they need
- *  HSSFFormulaEvaluator, which is there
+ * be done via usermodel/HSSFCell.setFormulaValue().
  */
 public final class TestFormulaParser extends TestCase {
 
@@ -76,6 +74,7 @@ public final class TestFormulaParser extends TestCase {
 		Ptg[] ptgs = parseFormula("2+2");
 		assertEquals(3, ptgs.length);
 	}
+
 	public void testFormulaWithSpace1() {
 		Ptg[] ptgs = parseFormula(" 2 + 2 ");
 		assertEquals(3, ptgs.length);
