@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.SheetReferences;
 
@@ -44,4 +45,20 @@ public interface Workbook {
 	int getExternalSheetIndex(int internalSheetIndex);
 
     CreationHelper getCreationHelper();
+
+	/**
+	 * Retrieves the current policy on what to do when
+	 *  getting missing or blank cells from a row.
+	 * The default is to return blank and null cells.
+	 *  {@link MissingCellPolicy}
+	 */
+	MissingCellPolicy getMissingCellPolicy();
+	/**
+	 * Sets the policy on what to do when
+	 *  getting missing or blank cells from a row.
+	 * This will then apply to all calls to 
+	 *  {@link Row.getCell()}. See
+	 *  {@link MissingCellPolicy}
+	 */
+	void setMissingCellPolicy(MissingCellPolicy missingCellPolicy);
 }

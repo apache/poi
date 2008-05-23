@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.SheetReferences;
 
 public interface Workbook {
@@ -405,6 +406,22 @@ public interface Workbook {
      * @param sheetIndex Zero-based sheet index (0 = First Sheet)
      */
     void removePrintArea(int sheetIndex);
+
+	/**
+	 * Retrieves the current policy on what to do when
+	 *  getting missing or blank cells from a row.
+	 * The default is to return blank and null cells.
+	 *  {@link MissingCellPolicy}
+	 */
+	MissingCellPolicy getMissingCellPolicy();
+	/**
+	 * Sets the policy on what to do when
+	 *  getting missing or blank cells from a row.
+	 * This will then apply to all calls to 
+	 *  {@link Row.getCell()}. See
+	 *  {@link MissingCellPolicy}
+	 */
+	void setMissingCellPolicy(MissingCellPolicy missingCellPolicy);
 
     /** creates a new named range and add it to the model
      * @return named range high level

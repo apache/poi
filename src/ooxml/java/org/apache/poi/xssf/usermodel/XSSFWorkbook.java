@@ -35,10 +35,12 @@ import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Palette;
 import org.apache.poi.ss.usermodel.PictureData;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.SharedStringSource;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.StylesSource;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.SheetReferences;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -220,6 +222,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     
     private SharedStringSource sharedStringSource;
     private StylesSource stylesSource;
+    
+    private MissingCellPolicy missingCellPolicy = Row.RETURN_NULL_AND_BLANK;
 
     private static POILogger log = POILogFactory.getLogger(XSSFWorkbook.class);
     
@@ -634,6 +638,26 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         this.workbook.getSheets().removeSheet(index);
     }
 
+	/**
+	 * Retrieves the current policy on what to do when
+	 *  getting missing or blank cells from a row.
+	 * The default is to return blank and null cells.
+	 *  {@link MissingCellPolicy}
+	 */
+	public MissingCellPolicy getMissingCellPolicy() {
+		return missingCellPolicy;
+	}
+	/**
+	 * Sets the policy on what to do when
+	 *  getting missing or blank cells from a row.
+	 * This will then apply to all calls to 
+	 *  {@link Row.getCell()}. See
+	 *  {@link MissingCellPolicy}
+	 */
+	public void setMissingCellPolicy(MissingCellPolicy missingCellPolicy) {
+		this.missingCellPolicy = missingCellPolicy;
+	}
+	
     public void setBackupFlag(boolean backupValue) {
         // TODO Auto-generated method stub
 

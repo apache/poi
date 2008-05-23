@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5.1-alpha1" date="2008-04-??">
+           <action dev="POI-DEVELOPERS" type="add">Port support for setting a policy on missing / blank cells when fetching, to XSSF too</action>
            <action dev="POI-DEVELOPERS" type="add">Common text extraction factory, which returns the correct POITextExtractor for the supplied data</action>
            <action dev="POI-DEVELOPERS" type="add">Text Extraction support for the new OOXML files (.xlsx, .docx and .pptx)</action>
            <action dev="POI-DEVELOPERS" type="add">Initial support for processing OOXML Excel files (.xlsx), both directly through XSSF, and also through the new common UserModel</action>
@@ -44,9 +45,10 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
         <release version="3.1-final" date="2008-06-??">
-           <action dev="POI-DEVELOPERS" type="add">45025 - improved FormulaParser parse error messages</action>
-           <action dev="POI-DEVELOPERS" type="add">45046 - allowed EXTERNALBOOK(0x01AE) to be optional in the LinkTable</action>
-           <action dev="POI-DEVELOPERS" type="add">45066 - fixed sheet encoding size mismatch problems</action>
+           <action dev="POI-DEVELOPERS" type="add">Extend the support for specifying a policy to HSSF on missing / blank cells when fetching, to be able to specify the policy at the HSSFWorkbook level</action>
+           <action dev="POI-DEVELOPERS" type="fix">45025 - improved FormulaParser parse error messages</action>
+           <action dev="POI-DEVELOPERS" type="fix">45046 - allowed EXTERNALBOOK(0x01AE) to be optional in the LinkTable</action>
+           <action dev="POI-DEVELOPERS" type="fix">45066 - fixed sheet encoding size mismatch problems</action>
            <action dev="POI-DEVELOPERS" type="add">45003 - Support embeded HDGF visio documents</action>
            <action dev="POI-DEVELOPERS" type="fix">45001 - Partial fix for HWPF Range.insertBefore() and Range.delete() with unicode characters</action>
            <action dev="POI-DEVELOPERS" type="fix">44977 - Support for AM/PM in excel date formats</action>
