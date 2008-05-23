@@ -20,6 +20,7 @@ package org.apache.poi;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -191,6 +192,11 @@ public abstract class POIDocument {
 			System.err.println("Couldn't write property set with name " + name + " as not supported by HPSF yet");
 		}
 	}
+	
+	/**
+	 * Writes the document out to the specified output stream
+	 */
+	public abstract void write(OutputStream out) throws IOException;
 
 	/**
 	 * Copies nodes from one POIFS to the other minus the excepts

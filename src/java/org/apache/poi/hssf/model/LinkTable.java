@@ -41,7 +41,7 @@ import org.apache.poi.hssf.record.SupBookRecord;
  *
  *  In BIFF8 the Link Table consists of
  *  <ul>
- *  <li>one or more EXTERNALBOOK Blocks<p/>
+ *  <li>zero or more EXTERNALBOOK Blocks<p/>
  *  	each consisting of
  *  	<ul>
  *  	<li>exactly one EXTERNALBOOK (0x01AE) record</li>
@@ -55,7 +55,7 @@ import org.apache.poi.hssf.record.SupBookRecord;
  *  	</li>
  *  	</ul>
  *  </li>
- *  <li>exactly one EXTERNSHEET (0x0017) record</li>
+ *  <li>zero or one EXTERNSHEET (0x0017) record</li>
  *  <li>zero or more DEFINEDNAME (0x0018) records</li>
  *  </ul>
  *
@@ -63,6 +63,7 @@ import org.apache.poi.hssf.record.SupBookRecord;
  * @author Josh Micich
  */
 final class LinkTable {
+	// TODO make this class into a record aggregate
 
 	private static final class CRNBlock {
 
@@ -79,8 +80,8 @@ final class LinkTable {
 			_crns = crns;
 		}
 		public CRNRecord[] getCrns() {
-            return (CRNRecord[]) _crns.clone();
-        }
+			return (CRNRecord[]) _crns.clone();
+		}
 	}
 
 	private static final class ExternalBookBlock {
@@ -136,16 +137,19 @@ final class LinkTable {
 		while(rs.peekNextClass() == SupBookRecord.class) {
 		   temp.add(new ExternalBookBlock(rs));
 		}
-		if(temp.size() < 1) {
-			throw new RuntimeException("Need at least one EXTERNALBOOK blocks");
-		}
+		
 		_externalBookBlocks = new ExternalBookBlock[temp.size()];
 		temp.toArray(_externalBookBlocks);
 		temp.clear();
-
-		// If link table is present, there is always 1 of ExternSheetRecord
-		Record next = rs.getNext();
-		_externSheetRecord = (ExternSheetRecord)next;
+		
+		if (_externalBookBlocks.length > 0) {
+			// If any ExternalBookBlock present, there is always 1 of ExternSheetRecord
+			Record next = rs.getNext();
+			_externSheetRecord = (ExternSheetRecord) next;
+		} else {
+			_externSheetRecord = null;
+		}
+		
 		_definedNames = new ArrayList();
 		// collect zero or more DEFINEDNAMEs id=0x18
 		while(rs.peekNextClass() == NameRecord.class) {
@@ -222,7 +226,7 @@ final class LinkTable {
 	public void addName(NameRecord name) {
 		_definedNames.add(name);
 
-	   // TODO - this is messy
+		// TODO - this is messy
 		// Not the most efficient way but the other way was causing too many bugs
 		int idx = findFirstRecordLocBySid(ExternSheetRecord.sid);
 		if (idx == -1) idx = findFirstRecordLocBySid(SupBookRecord.sid);
@@ -242,8 +246,8 @@ final class LinkTable {
 
 	public int getSheetIndexFromExternSheetIndex(int externSheetNumber) {
 		if (externSheetNumber >= _externSheetRecord.getNumOfREFStructures()) {
-            return -1;
-        }
+			return -1;
+		}
 		return _externSheetRecord.getREFRecordAt(externSheetNumber).getIndexToFirstSupBook();
 	}
 
@@ -265,7 +269,7 @@ final class LinkTable {
 			ExternSheetSubRecord esr = _externSheetRecord.getREFRecordAt(i);
 
 			if (esr.getIndexToFirstSupBook() ==  sheetNumber
-			        && esr.getIndexToLastSupBook() == sheetNumber){
+					&& esr.getIndexToLastSupBook() == sheetNumber){
 				return i;
 			}
 		}

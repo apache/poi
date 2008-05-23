@@ -17,22 +17,18 @@
 
 package org.apache.poi.hssf.record.formula.function;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 /**
  * Tests reading from a sample spreadsheet some built-in functions that were not properly
- * registered in POI as bug #44675, #44733 (March/April 2008).
+ * registered in POI as of bug #44675, #44733 (March/April 2008).
  * 
  * @author Josh Micich
  */

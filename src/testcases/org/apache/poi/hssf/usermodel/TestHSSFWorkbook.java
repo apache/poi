@@ -20,12 +20,16 @@ package org.apache.poi.hssf.usermodel;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.TempFile;
 /**
  *
@@ -376,4 +380,49 @@ public final class TestHSSFWorkbook extends TestCase {
         assertEquals("active", expectedActive, sheet.isActive());
         assertEquals("selected", expectedSelected, sheet.isSelected());
     }
-}
+    
+    /**
+     * If Sheet.getSize() returns a different result to Sheet.serialize(), this will cause the BOF
+     * records to be written with invalid offset indexes.  Excel does not like this, and such 
+     * errors are particularly hard to track down.  This test ensures that HSSFWorkbook throws
+     * a specific exception as soon as the situation is detected. See bugzilla 45066
+     */
+    public void testSheetSerializeSizeMismatch_bug45066() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet("Sheet1").getSheet();
+        List sheetRecords = sheet.getRecords();
+        // one way (of many) to cause the discrepancy is with a badly behaved record:
+        sheetRecords.add(new BadlyBehavedRecord());
+        // There is also much logic inside Sheet that (if buggy) might also cause the discrepancy
+        try {
+            wb.getBytes();
+            throw new AssertionFailedError("Identified bug 45066 a");
+        } catch (IllegalStateException e) {
+            // Expected badly behaved sheet record to cause exception
+            assertTrue(e.getMessage().startsWith("Actual serialized sheet size"));
+        }
+    }
+    /**
+     * result returned by getRecordSize() differs from result returned by serialize()
+     */
+    private static final class BadlyBehavedRecord extends Record {
+        public BadlyBehavedRecord() {
+            // 
+        }
+        protected void fillFields(RecordInputStream in) {
+            throw new RuntimeException("Should not be called");
+        }
+        public short getSid() {
+            return 0x777;
+        }
+        public int serialize(int offset, byte[] data) {
+            return 4;
+        }
+        protected void validateSid(short id) {
+            throw new RuntimeException("Should not be called");
+        }
+        public int getRecordSize() {
+            return 8;
+        }
+    }
+ }
