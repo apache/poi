@@ -55,7 +55,7 @@ public final class FormulaParser {
      */
     static final class FormulaParseException extends RuntimeException {
         // This class was given package scope until it would become clear that it is useful to
-        // general client code. 
+        // general client code.
         public FormulaParseException(String msg) {
             super(msg);
         }
@@ -127,41 +127,33 @@ public final class FormulaParser {
             // Just return if so and reset 'look' to something to keep
             // SkipWhitespace from spinning
             look = (char)0;
-        }    
+        }
         pointer++;
         //System.out.println("Got char: "+ look);
     }
 
     /** Report What Was Expected */
     private RuntimeException expected(String s) {
-        String msg = "Parse error near char " + (pointer-1) + "'" + look + "'" 
+        String msg = "Parse error near char " + (pointer-1) + " '" + look + "'"
             + " in specified formula '" + formulaString + "'. Expected "
             + s;
         return new FormulaParseException(msg);
     }
-
-
 
     /** Recognize an Alpha Character */
     private boolean IsAlpha(char c) {
         return Character.isLetter(c) || c == '$' || c=='_';
     }
 
-
-
     /** Recognize a Decimal Digit */
     private boolean IsDigit(char c) {
-        //System.out.println("Checking digit for"+c);
         return Character.isDigit(c);
     }
-
-
 
     /** Recognize an Alphanumeric */
     private boolean  IsAlNum(char c) {
         return  (IsAlpha(c) || IsDigit(c));
     }
-
 
     /** Recognize White Space */
     private boolean IsWhite( char c) {
@@ -178,7 +170,7 @@ public final class FormulaParser {
     /**
      *  Consumes the next input character if it is equal to the one specified otherwise throws an
      *  unchecked exception. This method does <b>not</b> consume whitespace (before or after the
-     *  matched character). 
+     *  matched character).
      */
     private void Match(char x) {
         if (look != x) {
@@ -217,7 +209,6 @@ public final class FormulaParser {
         }
         return Token.toString();
     }
-
 
     /** Get a Number */
     private String GetNum() {
@@ -281,18 +272,18 @@ public final class FormulaParser {
         // This can be either a cell ref or a named range
         // Try to spot which it is
         boolean cellRef = CELL_REFERENCE_PATTERN.matcher(name).matches();
- 
+
         if (cellRef) {
             return new ReferencePtg(name);
         }
 
         for(int i = 0; i < book.getNumberOfNames(); i++) {
             // named range name matching is case insensitive
-        	if(book.getNameAt(i).getNameName().equalsIgnoreCase(name)) {
+            if(book.getNameAt(i).getNameName().equalsIgnoreCase(name)) {
                 return new NamePtg(name, book);
             }
         }
-        throw new FormulaParseException("Found reference to named range \"" 
+        throw new FormulaParseException("Found reference to named range \""
                     + name + "\", but that named range wasn't defined!");
     }
 
@@ -307,19 +298,19 @@ public final class FormulaParser {
     /**
      * Note - Excel function names are 'case aware but not case sensitive'.  This method may end
      * up creating a defined name record in the workbook if the specified name is not an internal
-     * Excel function, and has not been encountered before. 
-     * 
-     * @param name case preserved function name (as it was entered/appeared in the formula). 
+     * Excel function, and has not been encountered before.
+     *
+     * @param name case preserved function name (as it was entered/appeared in the formula).
      */
     private Ptg function(String name) {
         int numArgs =0 ;
-        // Note regarding parameter - 
+        // Note regarding parameter -
         if(!AbstractFunctionPtg.isInternalFunctionName(name)) {
             // external functions get a Name token which points to a defined name record
             NamePtg nameToken = new NamePtg(name, this.book);
-            
+
             // in the token tree, the name is more or less the first argument
-            numArgs++;  
+            numArgs++;
             tokens.add(nameToken);
         }
         //average 2 args per function
@@ -477,26 +468,25 @@ public final class FormulaParser {
     private static boolean isArgumentDelimiter(char ch) {
         return ch ==  ',' || ch == ')';
     }
-    
+
     /** get arguments to a function */
     private int Arguments(List argumentPointers) {
         SkipWhite();
         if(look == ')') {
             return 0;
         }
-        
+
         boolean missedPrevArg = true;
-        
         int numArgs = 0;
-        while(true) {
+        while (true) {
             SkipWhite();
-            if(isArgumentDelimiter(look)) {
-                if(missedPrevArg) {
+            if (isArgumentDelimiter(look)) {
+                if (missedPrevArg) {
                     tokens.add(new MissingArgPtg());
                     addArgumentPointer(argumentPointers);
                     numArgs++;
                 }
-                if(look == ')') {
+                if (look == ')') {
                     break;
                 }
                 Match(',');
@@ -507,6 +497,10 @@ public final class FormulaParser {
             addArgumentPointer(argumentPointers);
             numArgs++;
             missedPrevArg = false;
+            SkipWhite();
+            if (!isArgumentDelimiter(look)) {
+                throw expected("',' or ')'");
+            }
         }
         return numArgs;
     }
@@ -524,7 +518,7 @@ public final class FormulaParser {
             tokens.add(new PowerPtg());
         }
     }
-    
+
     private void percentFactor() {
         tokens.add(parseSimpleFactor());
         while(true) {
@@ -536,8 +530,8 @@ public final class FormulaParser {
             tokens.add(new PercentPtg());
         }
     }
-    
-    
+
+
     /**
      * factors (without ^ or % )
      */
@@ -561,9 +555,6 @@ public final class FormulaParser {
                 return new ParenthesisPtg();
             case '"':
                 return parseStringLiteral();
-            case ',':
-            case ')':
-                return new MissingArgPtg(); // TODO - not quite the right place to recognise a missing arg
         }
         if (IsAlpha(look) || look == '\''){
             return parseIdent();
@@ -707,10 +698,9 @@ public final class FormulaParser {
     }
 
 
-    private StringPtg parseStringLiteral()
-    {
+    private StringPtg parseStringLiteral() {
         Match('"');
-        
+
         StringBuffer token = new StringBuffer();
         while (true) {
             if (look == '"') {
@@ -745,7 +735,7 @@ public final class FormulaParser {
             return; // finished with Term
         }
     }
-    
+
     private void comparisonExpression() {
         concatExpression();
         while (true) {
@@ -787,7 +777,7 @@ public final class FormulaParser {
         }
         return new LessThanPtg();
     }
-    
+
 
     private void concatExpression() {
         additiveExpression();
@@ -801,7 +791,7 @@ public final class FormulaParser {
             tokens.add(new ConcatPtg());
         }
     }
-    
+
 
     /** Parse and Translate an Expression */
     private void additiveExpression() {
@@ -838,8 +828,9 @@ end;
      **/
 
 
-    /** API call to execute the parsing of the formula
-     *
+    /**
+     *  API call to execute the parsing of the formula
+     * @deprecated use Ptg[] FormulaParser.parse(String, HSSFWorkbook) directly
      */
     public void parse() {
         pointer=0;
@@ -847,8 +838,8 @@ end;
         comparisonExpression();
 
         if(pointer <= formulaLength) {
-            String msg = "Unused input [" + formulaString.substring(pointer-1) 
-                + "] after attempting to parse the formula [" + formulaString + "]"; 
+            String msg = "Unused input [" + formulaString.substring(pointer-1)
+                + "] after attempting to parse the formula [" + formulaString + "]";
             throw new FormulaParseException(msg);
         }
     }
@@ -863,11 +854,12 @@ end;
      * a result of the parsing
      */
     public Ptg[] getRPNPtg() {
-     return getRPNPtg(FORMULA_TYPE_CELL);
+        return getRPNPtg(FORMULA_TYPE_CELL);
     }
 
     public Ptg[] getRPNPtg(int formulaType) {
         Node node = createTree();
+        // RVA is for 'operand class': 'reference', 'value', 'array'
         setRootLevelRVA(node, formulaType);
         setParameterRVA(node,formulaType);
         return (Ptg[]) tokens.toArray(new Ptg[0]);
@@ -948,7 +940,7 @@ end;
         }
      }
     /**
-     * Convience method which takes in a list then passes it to the
+     * Convenience method which takes in a list then passes it to the
      *  other toFormulaString signature.
      * @param book   workbook for 3D and named references
      * @param lptgs  list of Ptg, can be null or empty
@@ -963,7 +955,7 @@ end;
         return retval;
     }
     /**
-     * Convience method which takes in a list then passes it to the
+     * Convenience method which takes in a list then passes it to the
      *  other toFormulaString signature. Works on the current
      *  workbook for 3D and named references
      * @param lptgs  list of Ptg, can be null or empty
@@ -1011,7 +1003,7 @@ end;
                     continue;
                     // but if it ever did, care must be taken:
                     // tAttrSpace comes *before* the operand it applies to, which may be consistent
-                    // with how the formula text appears but is against the RPN ordering assumed here 
+                    // with how the formula text appears but is against the RPN ordering assumed here
                 }
                 if (attrPtg.isSemiVolatile()) {
                     // similar to tAttrSpace - RPN is violated
@@ -1038,7 +1030,7 @@ end;
             stack.push(o.toFormulaString(operands));
         }
         if(stack.isEmpty()) {
-            // inspection of the code above reveals that every stack.pop() is followed by a 
+            // inspection of the code above reveals that every stack.pop() is followed by a
             // stack.push(). So this is either an internal error or impossible.
             throw new IllegalStateException("Stack underflow");
         }

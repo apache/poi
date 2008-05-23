@@ -114,23 +114,13 @@ public class AreaPtg extends Ptg implements AreaI {
       return "AreaPtg";
     }    
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append(getAreaPtgName());
-        buffer.append("\n");
-        buffer.append("firstRow = " + getFirstRow()).append("\n");
-        buffer.append("lastRow  = " + getLastRow()).append("\n");
-        buffer.append("firstCol = " + getFirstColumn()).append("\n");
-        buffer.append("lastCol  = " + getLastColumn()).append("\n");
-        buffer.append("firstColRowRel= "
-                      + isFirstRowRelative()).append("\n");
-        buffer.append("lastColRowRel = "
-                      + isLastRowRelative()).append("\n");
-        buffer.append("firstColRel   = " + isFirstColRelative()).append("\n");
-        buffer.append("lastColRel    = " + isLastColRelative()).append("\n");
-        return buffer.toString();
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName());
+        sb.append(" [");
+        sb.append(AreaReference.formatAsString(this));
+        sb.append("]");
+        return sb.toString();
     }
 
     public void writeBytes(byte [] array, int offset) {
@@ -307,19 +297,8 @@ public class AreaPtg extends Ptg implements AreaI {
         field_4_last_column = column;
     }
     
-    public String toFormulaString(Workbook book)
-    {
-    	return toFormulaString(this, book);
-    }
-    protected static String toFormulaString(AreaI area, Workbook book) {
-    	CellReference topLeft = new CellReference(area.getFirstRow(),area.getFirstColumn(),!area.isFirstRowRelative(),!area.isFirstColRelative());
-    	CellReference botRight = new CellReference(area.getLastRow(),area.getLastColumn(),!area.isLastRowRelative(),!area.isLastColRelative());
-    	
-    	if(AreaReference.isWholeColumnReference(topLeft, botRight)) {
-    		return (new AreaReference(topLeft, botRight)).formatAsString();
-    	} else {
-    		return topLeft.formatAsString() + ":" + botRight.formatAsString(); 
-    	}
+    public String toFormulaString(Workbook book) {
+        return AreaReference.formatAsString(this);
     }
 
     public byte getDefaultOperandClass() {

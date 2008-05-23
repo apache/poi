@@ -15,16 +15,16 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.util;
 
+import java.lang.reflect.Field;
 import java.util.Hashtable;
 
 import org.apache.poi.ss.usermodel.Color;
 
 /**
  * Intends to provide support for the very evil index to triplet issue and
- * will likely replace the color contants interface for HSSF 2.0.
+ * will likely replace the color constants interface for HSSF 2.0.
  * This class contains static inner class members for representing colors.
  * Each color has an index (for the standard palette in Excel (tm) ),
  * native (RGB) triplet and string triplet.  The string triplet is as the
@@ -35,14 +35,10 @@ import org.apache.poi.ss.usermodel.Color;
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Brian Sanders (bsanders at risklabs dot com) - full default color palette
  */
-
-public class HSSFColor implements Color
-{
-    private final static int PALETTE_SIZE = 56;
-    private final static int DISTINCT_COLOR_COUNT = 46;
+public class HSSFColor implements Color {
+    // TODO make subclass instances immutable
 
     /** Creates a new instance of HSSFColor */
-
     public HSSFColor()
     {
     }
@@ -54,87 +50,86 @@ public class HSSFColor implements Color
      * it takes to create it once per request but you will not hold onto it
      * if you have none of those requests.
      *
-     * @return a hashtable containing all colors mapped to their excel-style 
-     * pallette index
+     * @return a hashtable containing all colors keyed by <tt>Integer</tt> excel-style palette indexes
      */
     public final static Hashtable getIndexHash() {
 
-        Hashtable hash = new Hashtable(PALETTE_SIZE);
+        return createColorsByIndexMap();
+    }
 
-        hash.put(new Integer(HSSFColor.BLACK.index), new HSSFColor.BLACK());
-        hash.put(new Integer(HSSFColor.BROWN.index), new HSSFColor.BROWN());
-        hash.put(new Integer(HSSFColor.OLIVE_GREEN.index),
-                 new HSSFColor.OLIVE_GREEN());
-        hash.put(new Integer(HSSFColor.DARK_GREEN.index), new HSSFColor.DARK_GREEN());
-        hash.put(new Integer(HSSFColor.DARK_TEAL.index), new HSSFColor.DARK_TEAL());
-        hash.put(new Integer(HSSFColor.DARK_BLUE.index), new HSSFColor.DARK_BLUE());
-        hash.put(new Integer(HSSFColor.DARK_BLUE.index2), new HSSFColor.DARK_BLUE());
-        hash.put(new Integer(HSSFColor.INDIGO.index), new HSSFColor.INDIGO());
-        hash.put(new Integer(HSSFColor.GREY_80_PERCENT.index),
-                 new HSSFColor.GREY_80_PERCENT());
-        hash.put(new Integer(HSSFColor.ORANGE.index), new HSSFColor.ORANGE());
-        hash.put(new Integer(HSSFColor.DARK_YELLOW.index),
-                 new HSSFColor.DARK_YELLOW());
-        hash.put(new Integer(HSSFColor.GREEN.index), new HSSFColor.GREEN());
-        hash.put(new Integer(HSSFColor.TEAL.index), new HSSFColor.TEAL());
-        hash.put(new Integer(HSSFColor.TEAL.index2), new HSSFColor.TEAL());
-        hash.put(new Integer(HSSFColor.BLUE.index), new HSSFColor.BLUE());
-        hash.put(new Integer(HSSFColor.BLUE.index2), new HSSFColor.BLUE());
-        hash.put(new Integer(HSSFColor.BLUE_GREY.index), new HSSFColor.BLUE_GREY());
-        hash.put(new Integer(HSSFColor.GREY_50_PERCENT.index),
-                 new HSSFColor.GREY_50_PERCENT());
-        hash.put(new Integer(HSSFColor.RED.index), new HSSFColor.RED());
-        hash.put(new Integer(HSSFColor.LIGHT_ORANGE.index),
-                 new HSSFColor.LIGHT_ORANGE());
-        hash.put(new Integer(HSSFColor.LIME.index), new HSSFColor.LIME());
-        hash.put(new Integer(HSSFColor.SEA_GREEN.index), new HSSFColor.SEA_GREEN());
-        hash.put(new Integer(HSSFColor.AQUA.index), new HSSFColor.AQUA());
-        hash.put(new Integer(HSSFColor.LIGHT_BLUE.index), new HSSFColor.LIGHT_BLUE());
-        hash.put(new Integer(HSSFColor.VIOLET.index), new HSSFColor.VIOLET());
-        hash.put(new Integer(HSSFColor.VIOLET.index2), new HSSFColor.VIOLET());
-        hash.put(new Integer(HSSFColor.GREY_40_PERCENT.index),
-                 new HSSFColor.GREY_40_PERCENT());
-        hash.put(new Integer(HSSFColor.PINK.index), new HSSFColor.PINK());
-        hash.put(new Integer(HSSFColor.PINK.index2), new HSSFColor.PINK());
-        hash.put(new Integer(HSSFColor.GOLD.index), new HSSFColor.GOLD());
-        hash.put(new Integer(HSSFColor.YELLOW.index), new HSSFColor.YELLOW());
-        hash.put(new Integer(HSSFColor.YELLOW.index2), new HSSFColor.YELLOW());
-        hash.put(new Integer(HSSFColor.BRIGHT_GREEN.index),
-                 new HSSFColor.BRIGHT_GREEN());
-        hash.put(new Integer(HSSFColor.BRIGHT_GREEN.index2),
-                 new HSSFColor.BRIGHT_GREEN());
-        hash.put(new Integer(HSSFColor.TURQUOISE.index), new HSSFColor.TURQUOISE());
-        hash.put(new Integer(HSSFColor.TURQUOISE.index2), new HSSFColor.TURQUOISE());
-        hash.put(new Integer(HSSFColor.DARK_RED.index), new HSSFColor.DARK_RED());
-        hash.put(new Integer(HSSFColor.DARK_RED.index2), new HSSFColor.DARK_RED());
-        hash.put(new Integer(HSSFColor.SKY_BLUE.index), new HSSFColor.SKY_BLUE());
-        hash.put(new Integer(HSSFColor.PLUM.index), new HSSFColor.PLUM());
-        hash.put(new Integer(HSSFColor.PLUM.index2), new HSSFColor.PLUM());
-        hash.put(new Integer(HSSFColor.GREY_25_PERCENT.index),
-                 new HSSFColor.GREY_25_PERCENT());
-        hash.put(new Integer(HSSFColor.ROSE.index), new HSSFColor.ROSE());
-        hash.put(new Integer(HSSFColor.LIGHT_YELLOW.index),
-                 new HSSFColor.LIGHT_YELLOW());
-        hash.put(new Integer(HSSFColor.LIGHT_GREEN.index),
-                 new HSSFColor.LIGHT_GREEN());
-        hash.put(new Integer(HSSFColor.LIGHT_TURQUOISE.index),
-                 new HSSFColor.LIGHT_TURQUOISE());
-        hash.put(new Integer(HSSFColor.LIGHT_TURQUOISE.index2),
-                 new HSSFColor.LIGHT_TURQUOISE());
-        hash.put(new Integer(HSSFColor.PALE_BLUE.index), new HSSFColor.PALE_BLUE());
-        hash.put(new Integer(HSSFColor.LAVENDER.index), new HSSFColor.LAVENDER());
-        hash.put(new Integer(HSSFColor.WHITE.index), new HSSFColor.WHITE());
-        hash.put(new Integer(HSSFColor.CORNFLOWER_BLUE.index),
-                 new HSSFColor.CORNFLOWER_BLUE());
-        hash.put(new Integer(HSSFColor.LEMON_CHIFFON.index),
-                 new HSSFColor.LEMON_CHIFFON());
-        hash.put(new Integer(HSSFColor.MAROON.index), new HSSFColor.MAROON());
-        hash.put(new Integer(HSSFColor.ORCHID.index), new HSSFColor.ORCHID());
-        hash.put(new Integer(HSSFColor.CORAL.index), new HSSFColor.CORAL());
-        hash.put(new Integer(HSSFColor.ROYAL_BLUE.index), new HSSFColor.ROYAL_BLUE());
-        hash.put(new Integer(HSSFColor.LIGHT_CORNFLOWER_BLUE.index),
-                 new HSSFColor.LIGHT_CORNFLOWER_BLUE());
-	return hash;
+    private static Hashtable createColorsByIndexMap() {
+        HSSFColor[] colors = getAllColors();
+        Hashtable result = new Hashtable(colors.length * 3 / 2);
+
+        for (int i = 0; i < colors.length; i++) {
+            HSSFColor color = colors[i];
+
+            Integer index1 = new Integer(color.getIndex());
+            if (result.containsKey(index1)) {
+                HSSFColor prevColor = (HSSFColor)result.get(index1);
+                throw new RuntimeException("Dup color index (" + index1
+                        + ") for colors (" + prevColor.getClass().getName()
+                        + "),(" + color.getClass().getName() + ")");
+            }
+            result.put(index1, color);
+        }
+
+        for (int i = 0; i < colors.length; i++) {
+            HSSFColor color = colors[i];
+            Integer index2 = getIndex2(color);
+            if (index2 == null) {
+                // most colors don't have a second index
+                continue;
+            }
+            if (result.containsKey(index2)) {
+                if (false) { // Many of the second indexes clash
+                    HSSFColor prevColor = (HSSFColor)result.get(index2);
+                    throw new RuntimeException("Dup color index (" + index2
+                            + ") for colors (" + prevColor.getClass().getName()
+                            + "),(" + color.getClass().getName() + ")");
+                }
+            }
+            result.put(index2, color);
+        }
+        return result;
+    }
+
+    private static Integer getIndex2(HSSFColor color) {
+
+        Field f;
+        try {
+            f = color.getClass().getDeclaredField("index2");
+        } catch (NoSuchFieldException e) {
+            // can happen because not all colors have a second index
+            return null;
+        }
+
+        Short s;
+        try {
+            s = (Short) f.get(color);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return new Integer(s.intValue());
+    }
+
+    private static HSSFColor[] getAllColors() {
+
+        return new HSSFColor[] {
+                new BLACK(), new BROWN(), new OLIVE_GREEN(), new DARK_GREEN(),
+                new DARK_TEAL(), new DARK_BLUE(), new INDIGO(), new GREY_80_PERCENT(),
+                new ORANGE(), new DARK_YELLOW(), new GREEN(), new TEAL(), new BLUE(),
+                new BLUE_GREY(), new GREY_50_PERCENT(), new RED(), new LIGHT_ORANGE(), new LIME(),
+                new SEA_GREEN(), new AQUA(), new LIGHT_BLUE(), new VIOLET(), new GREY_40_PERCENT(),
+                new PINK(), new GOLD(), new YELLOW(), new BRIGHT_GREEN(), new TURQUOISE(),
+                new DARK_RED(), new SKY_BLUE(), new PLUM(), new GREY_25_PERCENT(), new ROSE(),
+                new LIGHT_YELLOW(), new LIGHT_GREEN(), new LIGHT_TURQUOISE(), new PALE_BLUE(),
+                new LAVENDER(), new WHITE(), new CORNFLOWER_BLUE(), new LEMON_CHIFFON(),
+                new MAROON(), new ORCHID(), new CORAL(), new ROYAL_BLUE(),
+                new LIGHT_CORNFLOWER_BLUE(), new TAN(),
+        };
     }
 
     /**
@@ -144,73 +139,28 @@ public class HSSFColor implements Color
      * it takes to create it once per request but you will not hold onto it
      * if you have none of those requests.
      *
-     * @return a hashtable containing all colors mapped to their gnumeric-like
-     * triplet string
+     * @return a hashtable containing all colors keyed by String gnumeric-like triplets
      */
-
     public final static Hashtable getTripletHash()
     {
-        Hashtable hash = new Hashtable(DISTINCT_COLOR_COUNT);
+        return createColorsByHexStringMap();
+    }
 
-        hash.put(HSSFColor.BLACK.hexString, new HSSFColor.BLACK());
-        hash.put(HSSFColor.BROWN.hexString, new HSSFColor.BROWN());
-        hash.put(HSSFColor.OLIVE_GREEN.hexString,
-                 new HSSFColor.OLIVE_GREEN());
-        hash.put(HSSFColor.DARK_GREEN.hexString, new HSSFColor.DARK_GREEN());
-        hash.put(HSSFColor.DARK_TEAL.hexString, new HSSFColor.DARK_TEAL());
-        hash.put(HSSFColor.DARK_BLUE.hexString, new HSSFColor.DARK_BLUE());
-        hash.put(HSSFColor.INDIGO.hexString, new HSSFColor.INDIGO());
-        hash.put(HSSFColor.GREY_80_PERCENT.hexString,
-                 new HSSFColor.GREY_80_PERCENT());
-        hash.put(HSSFColor.ORANGE.hexString, new HSSFColor.ORANGE());
-        hash.put(HSSFColor.DARK_YELLOW.hexString,
-                 new HSSFColor.DARK_YELLOW());
-        hash.put(HSSFColor.GREEN.hexString, new HSSFColor.GREEN());
-        hash.put(HSSFColor.TEAL.hexString, new HSSFColor.TEAL());
-        hash.put(HSSFColor.BLUE.hexString, new HSSFColor.BLUE());
-        hash.put(HSSFColor.BLUE_GREY.hexString, new HSSFColor.BLUE_GREY());
-        hash.put(HSSFColor.GREY_50_PERCENT.hexString,
-                 new HSSFColor.GREY_50_PERCENT());
-        hash.put(HSSFColor.RED.hexString, new HSSFColor.RED());
-        hash.put(HSSFColor.LIGHT_ORANGE.hexString,
-                 new HSSFColor.LIGHT_ORANGE());
-        hash.put(HSSFColor.LIME.hexString, new HSSFColor.LIME());
-        hash.put(HSSFColor.SEA_GREEN.hexString, new HSSFColor.SEA_GREEN());
-        hash.put(HSSFColor.AQUA.hexString, new HSSFColor.AQUA());
-        hash.put(HSSFColor.LIGHT_BLUE.hexString, new HSSFColor.LIGHT_BLUE());
-        hash.put(HSSFColor.VIOLET.hexString, new HSSFColor.VIOLET());
-        hash.put(HSSFColor.GREY_40_PERCENT.hexString,
-                 new HSSFColor.GREY_40_PERCENT());
-        hash.put(HSSFColor.PINK.hexString, new HSSFColor.PINK());
-        hash.put(HSSFColor.GOLD.hexString, new HSSFColor.GOLD());
-        hash.put(HSSFColor.YELLOW.hexString, new HSSFColor.YELLOW());
-        hash.put(HSSFColor.BRIGHT_GREEN.hexString,
-                 new HSSFColor.BRIGHT_GREEN());
-        hash.put(HSSFColor.TURQUOISE.hexString, new HSSFColor.TURQUOISE());
-        hash.put(HSSFColor.DARK_RED.hexString, new HSSFColor.DARK_RED());
-        hash.put(HSSFColor.SKY_BLUE.hexString, new HSSFColor.SKY_BLUE());
-        hash.put(HSSFColor.PLUM.hexString, new HSSFColor.PLUM());
-        hash.put(HSSFColor.GREY_25_PERCENT.hexString,
-                 new HSSFColor.GREY_25_PERCENT());
-        hash.put(HSSFColor.ROSE.hexString, new HSSFColor.ROSE());
-        hash.put(HSSFColor.LIGHT_YELLOW.hexString,
-                 new HSSFColor.LIGHT_YELLOW());
-        hash.put(HSSFColor.LIGHT_GREEN.hexString,
-                 new HSSFColor.LIGHT_GREEN());
-        hash.put(HSSFColor.LIGHT_TURQUOISE.hexString,
-                 new HSSFColor.LIGHT_TURQUOISE());
-        hash.put(HSSFColor.PALE_BLUE.hexString, new HSSFColor.PALE_BLUE());
-        hash.put(HSSFColor.LAVENDER.hexString, new HSSFColor.LAVENDER());
-        hash.put(HSSFColor.WHITE.hexString, new HSSFColor.WHITE());
-        hash.put(HSSFColor.CORNFLOWER_BLUE.hexString, new HSSFColor.CORNFLOWER_BLUE());
-        hash.put(HSSFColor.LEMON_CHIFFON.hexString, new HSSFColor.LEMON_CHIFFON());
-        hash.put(HSSFColor.MAROON.hexString, new HSSFColor.MAROON());
-        hash.put(HSSFColor.ORCHID.hexString, new HSSFColor.ORCHID());
-        hash.put(HSSFColor.CORAL.hexString, new HSSFColor.CORAL());
-        hash.put(HSSFColor.ROYAL_BLUE.hexString, new HSSFColor.ROYAL_BLUE());
-        hash.put(HSSFColor.LIGHT_CORNFLOWER_BLUE.hexString,
-                 new HSSFColor.LIGHT_CORNFLOWER_BLUE());
-        return hash;
+    private static Hashtable createColorsByHexStringMap() {
+        HSSFColor[] colors = getAllColors();
+        Hashtable result = new Hashtable(colors.length * 3 / 2);
+
+        for (int i = 0; i < colors.length; i++) {
+            HSSFColor color = colors[i];
+
+            String hexString = color.getHexString();
+            if (result.containsKey(hexString)) {
+                throw new RuntimeException("Dup color hexString (" + hexString
+                        + ") for color (" + color.getClass().getName() + ")");
+            }
+            result.put(hexString, color);
+        }
+        return result;
     }
 
     /**
@@ -1492,7 +1442,7 @@ public class HSSFColor implements Color
             return hexString;
         }
     }
-    
+
     /**
      * Class CORNFLOWER_BLUE
      */
@@ -1521,8 +1471,8 @@ public class HSSFColor implements Color
             return hexString;
         }
     }
-    
-    
+
+
     /**
      * Class LEMON_CHIFFON
      */
@@ -1551,7 +1501,7 @@ public class HSSFColor implements Color
             return hexString;
         }
     }
-    
+
     /**
      * Class MAROON
      */
@@ -1580,7 +1530,7 @@ public class HSSFColor implements Color
             return hexString;
         }
     }
-    
+
     /**
      * Class ORCHID
      */
@@ -1609,7 +1559,7 @@ public class HSSFColor implements Color
             return hexString;
         }
     }
-    
+
     /**
      * Class CORAL
      */
@@ -1638,7 +1588,7 @@ public class HSSFColor implements Color
             return hexString;
         }
     }
-    
+
     /**
      * Class ROYAL_BLUE
      */
@@ -1667,7 +1617,7 @@ public class HSSFColor implements Color
             return hexString;
         }
     }
-    
+
     /**
      * Class LIGHT_CORNFLOWER_BLUE
      */
@@ -1696,19 +1646,19 @@ public class HSSFColor implements Color
             return hexString;
         }
     }
-    
+
     /**
      * Special Default/Normal/Automatic color.
      * <p><i>Note:</i> This class is NOT in the default HashTables returned by HSSFColor.
      * The index is a special case which is interpreted in the various setXXXColor calls.
-     * 
+     *
      * @author Jason
      *
      */
     public final static class AUTOMATIC extends HSSFColor
     {
-    	private static HSSFColor instance = new AUTOMATIC();
-    	
+        private static HSSFColor instance = new AUTOMATIC();
+
         public final static short   index     = 0x40;
 
         public short getIndex()
@@ -1725,7 +1675,7 @@ public class HSSFColor implements Color
         {
             return BLACK.hexString;
         }
-        
+
         public static HSSFColor getInstance() {
           return instance;
         }

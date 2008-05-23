@@ -226,7 +226,9 @@ public class DateUtil
     	
     	// Otherwise, check it's only made up, in any case, of:
     	//  y m d h s - / , . :
-    	if(fs.matches("^[yYmMdDhHsS\\-/,. :]+$")) {
+    	// optionally followed by AM/PM
+    	// optionally followed by AM/PM
+    	if(fs.matches("^[yYmMdDhHsS\\-/,. :]+[ampAMP]*$")) {
     		return true;
     	}
     	

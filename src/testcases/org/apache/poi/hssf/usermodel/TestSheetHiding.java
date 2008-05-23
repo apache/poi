@@ -45,8 +45,8 @@ public final class TestSheetHiding extends TestCase {
 	 */
 	public void testTextSheets() throws Exception {
 		// Both should have two sheets
-		assertEquals(2, wbH.sheets.size());
-		assertEquals(2, wbU.sheets.size());
+		assertEquals(2, wbH.getNumberOfSheets());
+		assertEquals(2, wbU.getNumberOfSheets());
 
 		// All sheets should have one row
 		assertEquals(0, wbH.getSheetAt(0).getLastRowNum());

@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.model;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
@@ -350,6 +351,26 @@ public final class TestSheet extends TestCase {
         assertEquals(TEST_IDX, xfindex);
         xfindex = sheet.getXFIndexForColAt((short) 10);
         assertEquals(DEFAULT_IDX, xfindex);
+    }
+
+    /**
+     * Prior to bug 45066, POI would get the estimated sheet size wrong 
+     * when an <tt>UncalcedRecord</tt> was present.<p/>
+     */
+    public void testUncalcSize_bug45066() {
+
+        List records = new ArrayList();
+        records.add(new BOFRecord());
+        records.add(new UncalcedRecord());
+        records.add(new EOFRecord());
+        Sheet sheet = Sheet.createSheet( records, 0, 0 );
+
+        int estimatedSize = sheet.getSize();
+        int serializedSize = sheet.serialize(0, new byte[estimatedSize]);
+        if (serializedSize != estimatedSize) {
+            throw new AssertionFailedError("Identified bug 45066 b");
+        }
+        assertEquals(50, serializedSize);
     }
 }
 
