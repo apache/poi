@@ -19,6 +19,8 @@ package org.apache.poi;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IOUtils;
@@ -39,6 +41,8 @@ public abstract class POIXMLDocument {
     
     public static final String EXTENDED_PROPERTIES_REL_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties";
     
+    public static final String OLE_OBJECT_REL_TYPE="http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject";
+    
     /** The OPC Package */
     private Package pkg;
 
@@ -50,6 +54,10 @@ public abstract class POIXMLDocument {
      */
     private POIXMLProperties properties;
     
+	/**
+	 * The embedded OLE2 files in the OPC package
+	 */
+    private List<PackagePart> embedds;
     
     protected POIXMLDocument() {}
     
@@ -62,6 +70,12 @@ public abstract class POIXMLDocument {
 	    
 	        // Get core part
 	        this.corePart = this.pkg.getPart(coreDocRelationship);
+	        
+			// Get any embedded OLE2 documents
+	        this.embedds = new LinkedList<PackagePart>();
+	        for(PackageRelationship rel : corePart.getRelationshipsByType(OLE_OBJECT_REL_TYPE)) {
+	            embedds.add(getTargetPart(rel));
+	        }
         } catch (OpenXML4JException e) {
             throw new IOException(e.toString());
     	}
@@ -190,4 +204,12 @@ public abstract class POIXMLDocument {
 		}
 		return properties;
 	}
+	
+    /**
+     * Get the document's embedded files.
+     */
+    public List<PackagePart> getAllEmbedds() throws OpenXML4JException
+    {
+        return embedds;
+    }
 }

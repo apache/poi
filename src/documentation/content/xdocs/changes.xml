@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5.1-alpha1" date="2008-04-??">
+           <action dev="POI-DEVELOPERS" type="add">45018 - Support for fetching embeded documents from within an OOXML file</action>
            <action dev="POI-DEVELOPERS" type="add">Port support for setting a policy on missing / blank cells when fetching, to XSSF too</action>
            <action dev="POI-DEVELOPERS" type="add">Common text extraction factory, which returns the correct POITextExtractor for the supplied data</action>
            <action dev="POI-DEVELOPERS" type="add">Text Extraction support for the new OOXML files (.xlsx, .docx and .pptx)</action>
