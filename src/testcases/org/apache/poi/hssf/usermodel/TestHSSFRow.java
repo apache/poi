@@ -20,6 +20,7 @@ package org.apache.poi.hssf.usermodel;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFRow.MissingCellPolicy;
 
 /**
  * Test HSSFRow is okay.
@@ -224,7 +225,7 @@ public final class TestHSSFRow extends TestCase {
         row.createCell((short)4, HSSFCell.CELL_TYPE_BLANK);
         row.createCell((short)5).setCellValue(4);
         
-        // First up, no policy
+        // First up, no policy given, uses default
         assertEquals(HSSFCell.CELL_TYPE_STRING,  row.getCell(0).getCellType());
         assertEquals(HSSFCell.CELL_TYPE_NUMERIC, row.getCell(1).getCellType());
         assertEquals(null, row.getCell(2));
@@ -263,5 +264,17 @@ public final class TestHSSFRow extends TestCase {
         assertEquals((short)3, row.getCell(3, HSSFRow.CREATE_NULL_AS_BLANK).getCellNum());
         assertEquals((short)4, row.getCell(4, HSSFRow.CREATE_NULL_AS_BLANK).getCellNum());
         assertEquals((short)5, row.getCell(5, HSSFRow.CREATE_NULL_AS_BLANK).getCellNum());
+        
+        
+        // Now change the cell policy on the workbook, check
+        //  that that is now used if no policy given
+        book.setMissingCellPolicy(HSSFRow.RETURN_BLANK_AS_NULL);
+        
+        assertEquals(HSSFCell.CELL_TYPE_STRING,  row.getCell(0).getCellType());
+        assertEquals(HSSFCell.CELL_TYPE_NUMERIC, row.getCell(1).getCellType());
+        assertEquals(null, row.getCell(2));
+        assertEquals(null, row.getCell(3));
+        assertEquals(null, row.getCell(4));
+        assertEquals(HSSFCell.CELL_TYPE_NUMERIC, row.getCell(5).getCellType());
     }
 }

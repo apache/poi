@@ -34,9 +34,10 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1-final" date="2008-06-??">
-           <action dev="POI-DEVELOPERS" type="add">45025 - improved FormulaParser parse error messages</action>
-           <action dev="POI-DEVELOPERS" type="add">45046 - allowed EXTERNALBOOK(0x01AE) to be optional in the LinkTable</action>
-           <action dev="POI-DEVELOPERS" type="add">45066 - fixed sheet encoding size mismatch problems</action>
+           <action dev="POI-DEVELOPERS" type="add">Extend the support for specifying a policy to HSSF on missing / blank cells when fetching, to be able to specify the policy at the HSSFWorkbook level</action>
+           <action dev="POI-DEVELOPERS" type="fix">45025 - improved FormulaParser parse error messages</action>
+           <action dev="POI-DEVELOPERS" type="fix">45046 - allowed EXTERNALBOOK(0x01AE) to be optional in the LinkTable</action>
+           <action dev="POI-DEVELOPERS" type="fix">45066 - fixed sheet encoding size mismatch problems</action>
            <action dev="POI-DEVELOPERS" type="add">45003 - Support embeded HDGF visio documents</action>
            <action dev="POI-DEVELOPERS" type="fix">45001 - Partial fix for HWPF Range.insertBefore() and Range.delete() with unicode characters</action>
            <action dev="POI-DEVELOPERS" type="fix">44977 - Support for AM/PM in excel date formats</action>

@@ -29,6 +29,7 @@ import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
+import org.apache.poi.hssf.usermodel.HSSFRow.MissingCellPolicy;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.util.SheetReferences;
 import org.apache.poi.poifs.filesystem.*;
@@ -102,6 +103,13 @@ public class HSSFWorkbook extends POIDocument
      * someplace else.
      */
     private HSSFDataFormat formatter;
+    
+    /**
+     * The policy to apply in the event of missing or
+     *  blank cells when fetching from a row.
+     * See {@link MissingCellPolicy}
+     */
+    private MissingCellPolicy missingCellPolicy = HSSFRow.RETURN_NULL_AND_BLANK;
 
 
     /** Extended windows meta file */
@@ -345,8 +353,28 @@ public class HSSFWorkbook extends POIDocument
              log.log(POILogger.DEBUG, "convertLabelRecords exit");
      }
 
+	/**
+	 * Retrieves the current policy on what to do when
+	 *  getting missing or blank cells from a row.
+	 * The default is to return blank and null cells.
+	 *  {@link MissingCellPolicy}
+	 */
+	public MissingCellPolicy getMissingCellPolicy() {
+		return missingCellPolicy;
+	}
 
-    /**
+	/**
+	 * Sets the policy on what to do when
+	 *  getting missing or blank cells from a row.
+	 * This will then apply to all calls to 
+	 *  {@link HSSFRow.getCell()}. See
+	 *  {@link MissingCellPolicy}
+	 */
+	public void setMissingCellPolicy(MissingCellPolicy missingCellPolicy) {
+		this.missingCellPolicy = missingCellPolicy;
+	}
+
+	/**
      * sets the order of appearance for a given sheet.
      *
      * @param sheetname the name of the sheet to reorder
