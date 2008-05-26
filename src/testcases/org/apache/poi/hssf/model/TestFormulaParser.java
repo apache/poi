@@ -33,12 +33,9 @@ import org.apache.poi.hssf.record.formula.ErrPtg;
 import org.apache.poi.hssf.record.formula.FuncPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.IntPtg;
-import org.apache.poi.hssf.record.formula.LessEqualPtg;
-import org.apache.poi.hssf.record.formula.LessThanPtg;
 import org.apache.poi.hssf.record.formula.MissingArgPtg;
 import org.apache.poi.hssf.record.formula.MultiplyPtg;
 import org.apache.poi.hssf.record.formula.NamePtg;
-import org.apache.poi.hssf.record.formula.NotEqualPtg;
 import org.apache.poi.hssf.record.formula.NumberPtg;
 import org.apache.poi.hssf.record.formula.PercentPtg;
 import org.apache.poi.hssf.record.formula.PowerPtg;
@@ -62,10 +59,8 @@ public final class TestFormulaParser extends TestCase {
 	/**
 	 * @return parsed token array already confirmed not <code>null</code>
 	 */
-	private static Ptg[] parseFormula(String s) {
-		FormulaParser fp = new FormulaParser(s, null);
-		fp.parse();
-		Ptg[] result = fp.getRPNPtg();
+	/* package */ static Ptg[] parseFormula(String formula) {
+		Ptg[] result = FormulaParser.parse(formula, null);
 		assertNotNull("Ptg array should not be null", result);
 		return result;
 	}
@@ -105,83 +100,6 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals(true, flag.getValue());
 	}
 
-	public void testYN() {
-		Ptg[] ptgs = parseFormula("IF(TRUE,\"Y\",\"N\")");
-		assertEquals(7, ptgs.length);
-
-		BoolPtg flag  = (BoolPtg) ptgs[0];
-		AttrPtg funif = (AttrPtg) ptgs[1];
-		StringPtg y = (StringPtg) ptgs[2];
-		AttrPtg goto1 = (AttrPtg) ptgs[3];
-		StringPtg n = (StringPtg) ptgs[4];
-
-
-		assertEquals(true, flag.getValue());
-		assertEquals("Y", y.getValue());
-		assertEquals("N", n.getValue());
-		assertEquals("IF", funif.toFormulaString((HSSFWorkbook) null));
-		assertTrue("Goto ptg exists", goto1.isGoto());
-	}
-
-	public void testSimpleIf() {
-		String formula = "IF(1=1,0,1)";
-
-		Class[] expectedClasses = {
-			IntPtg.class,
-			IntPtg.class,
-			EqualPtg.class,
-			AttrPtg.class,
-			IntPtg.class,
-			AttrPtg.class,
-			IntPtg.class,
-			AttrPtg.class,
-			FuncVarPtg.class,
-		};
-		confirmTokenClasses(formula, expectedClasses);
-		
-		Ptg[] ptgs = parseFormula(formula);
-
-		AttrPtg ifPtg = (AttrPtg) ptgs[3];
-		AttrPtg ptgGoto= (AttrPtg) ptgs[5];
-		assertEquals("Goto 1 Length", 10, ptgGoto.getData());
-
-		AttrPtg ptgGoto2 = (AttrPtg) ptgs[7];
-		assertEquals("Goto 2 Length", 3, ptgGoto2.getData());
-		assertEquals("If FALSE offset", 7, ifPtg.getData());
-	}
-
-	/**
-	 * Make sure the ptgs are generated properly with two functions embedded
-	 *
-	 */
-	public void testNestedFunctionIf() {
-		Ptg[] ptgs = parseFormula("IF(A1=B1,AVERAGE(A1:B1),AVERAGE(A2:B2))");
-		assertEquals(11, ptgs.length);
-
-		assertTrue("IF Attr set correctly", (ptgs[3] instanceof AttrPtg));
-		AttrPtg ifFunc = (AttrPtg)ptgs[3];
-		assertTrue("It is not an if", ifFunc.isOptimizedIf());
-
-		assertTrue("Average Function set correctly", (ptgs[5] instanceof FuncVarPtg));
-	}
-
-	public void testIfSingleCondition(){
-		Ptg[] ptgs = parseFormula("IF(1=1,10)");
-		assertEquals(7, ptgs.length);
-
-		assertTrue("IF Attr set correctly", (ptgs[3] instanceof AttrPtg));
-		AttrPtg ifFunc = (AttrPtg)ptgs[3];
-		assertTrue("It is not an if", ifFunc.isOptimizedIf());
-
-		assertTrue("Single Value is not an IntPtg", (ptgs[4] instanceof IntPtg));
-		IntPtg intPtg = (IntPtg)ptgs[4];
-		assertEquals("Result", (short)10, intPtg.getValue());
-
-		assertTrue("Ptg is not a Variable Function", (ptgs[6] instanceof FuncVarPtg));
-		FuncVarPtg funcPtg = (FuncVarPtg)ptgs[6];
-		assertEquals("Arguments", 2, funcPtg.getNumberOfOperands());
-	}
-
 	public void testSumIf() {
 		Ptg[] ptgs = parseFormula("SUMIF(A1:A5,\">4000\",B1:B5)");
 		assertEquals(4, ptgs.length);
@@ -203,33 +121,9 @@ public final class TestFormulaParser extends TestCase {
 		//the PTG order isn't 100% correct but it still works - dmui
 	}
 
-	public void testSimpleLogical() {
-	 Ptg[] ptgs = parseFormula("IF(A1<A2,B1,B2)");
-	 assertEquals(9, ptgs.length);
-	 assertEquals("3rd Ptg is less than", LessThanPtg.class, ptgs[2].getClass());
-	}
-
-	public void testParenIf() {
-		Ptg[] ptgs = parseFormula("IF((A1+A2)<=3,\"yes\",\"no\")");
-		assertEquals(12, ptgs.length);
-		assertEquals("6th Ptg is less than equal",LessEqualPtg.class,ptgs[5].getClass());
-		assertEquals("11th Ptg is not a goto (Attr) ptg",AttrPtg.class,ptgs[10].getClass());
-	}
-
-	public void testEmbeddedIf() {
-		Ptg[] ptgs = parseFormula("IF(3>=1,\"*\",IF(4<>1,\"first\",\"second\"))");
-		assertEquals(17, ptgs.length);
-
-		assertEquals("6th Ptg is not a goto (Attr) ptg",AttrPtg.class,ptgs[5].getClass());
-		assertEquals("9th Ptg is not a not equal ptg",NotEqualPtg.class,ptgs[8].getClass());
-		assertEquals("15th Ptg is not the inner IF variable function ptg",FuncVarPtg.class,ptgs[14].getClass());
-	}
-
 	public void testMacroFunction() {
 		HSSFWorkbook w = new HSSFWorkbook();
-		FormulaParser fp = new FormulaParser("FOO()", w);
-		fp.parse();
-		Ptg[] ptg = fp.getRPNPtg();
+		Ptg[] ptg = FormulaParser.parse("FOO()", w);
 
 		// the name gets encoded as the first arg
 		NamePtg tname = (NamePtg) ptg[0];
@@ -597,7 +491,7 @@ public final class TestFormulaParser extends TestCase {
 		confirmTokenClasses("2^200%", expClss);
 	}
 
-	private static void confirmTokenClasses(String formula, Class[] expectedClasses) {
+	/* package */ static Ptg[] confirmTokenClasses(String formula, Class[] expectedClasses) {
 		Ptg[] ptgs = parseFormula(formula);
 		assertEquals(expectedClasses.length, ptgs.length);
 		for (int i = 0; i < expectedClasses.length; i++) {
@@ -607,6 +501,7 @@ public final class TestFormulaParser extends TestCase {
 					+ ptgs[i].getClass().getName() + ")");
 			}
 		}
+		return ptgs;
 	}
 
 	public void testPower() {
