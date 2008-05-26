@@ -47,7 +47,7 @@ public class ArrayPtg extends Ptg {
 	protected Object[] token_3_arrayValues;
 
 	protected ArrayPtg() {
-	  //Required for clone methods
+		//Required for clone methods
 	}
 
 	public ArrayPtg(RecordInputStream in)
@@ -89,12 +89,16 @@ public class ArrayPtg extends Ptg {
 		for (int x=0;x<getColumnCount();x++) {
 			for (int y=0;y<getRowCount();y++) {
 				Object o = token_3_arrayValues[getValueIndex(x, y)];
-	   			buffer.append("[").append(x).append("][").append(y).append("] = ").append(o).append("\n"); 
+				buffer.append("[").append(x).append("][").append(y).append("] = ").append(o).append("\n"); 
 			}
 		}
 		return buffer.toString();
 	}
 
+	/**
+	 * Note - (2D) array elements are stored column by column 
+	 * @return the index into the internal 1D array for the specified column and row
+	 */
 	/* package */ int getValueIndex(int colIx, int rowIx) {
 		if(colIx < 0 || colIx >= token_1_columns) {
 			throw new IllegalArgumentException("Specified colIx (" + colIx 
@@ -104,7 +108,7 @@ public class ArrayPtg extends Ptg {
 			throw new IllegalArgumentException("Specified rowIx (" + rowIx 
 					+ ") is outside the allowed range (0.." + (token_2_rows-1) + ")");
 		}
-		return rowIx * token_1_columns + colIx;
+		return rowIx + token_2_rows * colIx;
 	}
 
 	public void writeBytes(byte[] data, int offset) {
@@ -137,22 +141,21 @@ public class ArrayPtg extends Ptg {
 		return size;
 	}
 
-	public String toFormulaString(HSSFWorkbook book)
-	{
+	public String toFormulaString(HSSFWorkbook book) {
 		StringBuffer b = new StringBuffer();
 		b.append("{");
-		for (int x=0;x<getColumnCount();x++) {
-		  	if (x > 0) {
+		for (int x = 0; x < getColumnCount(); x++) {
+			if (x > 0) {
 				b.append(";");
 			}
-		  	for (int y=0;y<getRowCount();y++) {
+			for (int y = 0; y < getRowCount(); y++) {
 				if (y > 0) {
 					b.append(",");
 				}
-		  		Object o = token_3_arrayValues[getValueIndex(x, y)];
-		  		b.append(getConstantText(o));
-		  	}
-		  }
+				Object o = token_3_arrayValues[getValueIndex(x, y)];
+				b.append(getConstantText(o));
+			}
+		}
 		b.append("}");
 		return b.toString();
 	}
@@ -166,6 +169,7 @@ public class ArrayPtg extends Ptg {
 			return "\"" + ((UnicodeString)o).getString() + "\"";
 		}
 		if (o instanceof Double) {
+			// TODO - numeric array elements need default Excel number formatting
 			return ((Double)o).toString();
 		}
 		if (o instanceof Boolean) {
@@ -182,13 +186,13 @@ public class ArrayPtg extends Ptg {
 	}
 	
 	public Object clone() {
-	  ArrayPtg ptg = new ArrayPtg();
-	  ptg.field_1_reserved = (byte[]) field_1_reserved.clone();
-	  
-	  ptg.token_1_columns = token_1_columns;
-	  ptg.token_2_rows = token_2_rows;
-	  ptg.token_3_arrayValues = (Object[]) token_3_arrayValues.clone();
-	  ptg.setClass(ptgClass);
-	  return ptg;
+		ArrayPtg ptg = new ArrayPtg();
+		ptg.field_1_reserved = (byte[]) field_1_reserved.clone();
+
+		ptg.token_1_columns = token_1_columns;
+		ptg.token_2_rows = token_2_rows;
+		ptg.token_3_arrayValues = (Object[]) token_3_arrayValues.clone();
+		ptg.setClass(ptgClass);
+		return ptg;
 	}
 }
