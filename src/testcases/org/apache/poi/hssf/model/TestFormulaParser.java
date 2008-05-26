@@ -644,8 +644,16 @@ public final class TestFormulaParser extends TestCase {
 
 		Class[] expClss;
 
-		expClss = new Class[] { ReferencePtg.class, MissingArgPtg.class, ReferencePtg.class,
-				FuncVarPtg.class, };
+		expClss = new Class[] { 
+				ReferencePtg.class, 
+				AttrPtg.class, // tAttrIf
+				MissingArgPtg.class, 
+				AttrPtg.class, // tAttrSkip
+				ReferencePtg.class,
+				AttrPtg.class, // tAttrSkip
+				FuncVarPtg.class, 
+		};
+
 		confirmTokenClasses("if(A1, ,C1)", expClss);
 
 		expClss = new Class[] { MissingArgPtg.class, AreaPtg.class, MissingArgPtg.class,
@@ -814,7 +822,7 @@ public final class TestFormulaParser extends TestCase {
 			fail("Expected exception was not thrown");
 		} catch (IllegalStateException e) {
 			// expected during successful test
-			assertTrue(e.getMessage().startsWith("Too few arguments suppled to operation token"));
+			assertTrue(e.getMessage().startsWith("Too few arguments supplied to operation"));
 		}
 	}
 	/**
