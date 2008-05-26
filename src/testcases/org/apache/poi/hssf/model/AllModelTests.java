@@ -33,6 +33,7 @@ public final class AllModelTests {
 		result.addTestSuite(TestDrawingManager2.class);
 		result.addTestSuite(TestFormulaParser.class);
 		result.addTestSuite(TestFormulaParserEval.class);
+		result.addTestSuite(TestFormulaParserIf.class);
 		result.addTestSuite(TestSheet.class);
 		result.addTestSuite(TestSheetAdditional.class);
 		return result;
