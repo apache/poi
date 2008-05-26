@@ -382,7 +382,7 @@ public final class FormulaParser {
         } else {
             retval = new FuncPtg(funcIx);
         }
-        if (!name.equals(AbstractFunctionPtg.FUNCTION_NAME_IF)) {
+        if (!name.equalsIgnoreCase(AbstractFunctionPtg.FUNCTION_NAME_IF)) {
             // early return for everything else besides IF()
             return retval;
         }
@@ -1014,19 +1014,8 @@ end;
                 }
             }
 
-            final OperationPtg o = (OperationPtg) ptg;
-            int nOperands = o.getNumberOfOperands();
-            final String[] operands = new String[nOperands];
-
-            for (int j = nOperands-1; j >= 0; j--) { // reverse iteration because args were pushed in-order
-                if(stack.isEmpty()) {
-                   String msg = "Too few arguments suppled to operation token ("
-                        + o.getClass().getName() + "). Expected (" + nOperands
-                        + ") operands but got (" + (nOperands - j - 1) + ")";
-                    throw new IllegalStateException(msg);
-                }
-                operands[j] = (String) stack.pop();
-            }
+            OperationPtg o = (OperationPtg) ptg;
+            String[] operands = getOperands(stack, o.getNumberOfOperands());
             stack.push(o.toFormulaString(operands));
         }
         if(stack.isEmpty()) {
@@ -1041,6 +1030,20 @@ end;
             throw new IllegalStateException("too much stuff left on the stack");
         }
         return result;
+    }
+    
+    private static String[] getOperands(Stack stack, int nOperands) {
+        String[] operands = new String[nOperands];
+
+        for (int j = nOperands-1; j >= 0; j--) { // reverse iteration because args were pushed in-order
+            if(stack.isEmpty()) {
+               String msg = "Too few arguments supplied to operation. Expected (" + nOperands
+                    + ") operands but got (" + (nOperands - j - 1) + ")";
+                throw new IllegalStateException(msg);
+            }
+            operands[j] = (String) stack.pop();
+        }
+        return operands;
     }
     /**
      * Static method to convert an array of Ptgs in RPN order
