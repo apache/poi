@@ -28,10 +28,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author  andy
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-
-public class NamePtg
-    extends Ptg
-{
+public final class NamePtg extends OperandPtg {
     public final static short sid  = 0x23;
     private final static int  SIZE = 5;
     /** one-based index to defined name record */

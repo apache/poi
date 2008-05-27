@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -25,10 +24,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  *
  * @author  andy
  */
-
-public class EqualPtg
-    extends OperationPtg
-{
+public final class EqualPtg extends ValueOperatorPtg {
     public final static int  SIZE = 1;
     public final static byte sid  = 0x0b;
 

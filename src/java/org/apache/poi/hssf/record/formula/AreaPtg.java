@@ -31,7 +31,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author  andy
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public class AreaPtg extends Ptg implements AreaI {
+public class AreaPtg extends OperandPtg implements AreaI {
     /**
      * TODO - (May-2008) fix subclasses of AreaPtg 'AreaN~' which are used in shared formulas.
      * see similar comment in ReferencePtg

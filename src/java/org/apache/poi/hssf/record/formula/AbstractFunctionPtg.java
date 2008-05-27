@@ -44,6 +44,10 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     protected byte field_1_num_args;
     protected short field_2_fnc_index;
 
+    public final boolean isBaseToken() {
+    	return false;
+    }
+    
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
         sb.append(getClass().getName()).append(" [");

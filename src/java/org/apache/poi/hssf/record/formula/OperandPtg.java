@@ -18,22 +18,14 @@
 package org.apache.poi.hssf.record.formula;
 
 /**
- * Common superclass for 
- * tExp
- * tTbl
- * tParen
- * tNlr
- * tAttr
- * tSheet
- * tEndSheet
+ * @author Josh Micich
  */
-public abstract class ControlPtg extends Ptg {
-	
-	public boolean isBaseToken() {
-		return true;
+public abstract class OperandPtg extends Ptg {
+
+	/**
+	 * All Operand <tt>Ptg</tt>s are classifed ('relative', 'value', 'array')  
+	 */
+	public final boolean isBaseToken() {
+		return false;
 	}
-	public final byte getDefaultOperandClass() {
-// TODO		throw new IllegalStateException("Control tokens are not classified");
-		return Ptg.CLASS_VALUE;
-    }
 }

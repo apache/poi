@@ -35,8 +35,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 1.0-pre
  */
-public class Area3DPtg extends Ptg implements AreaI
-{
+public class Area3DPtg extends OperandPtg implements AreaI {
 	public final static byte sid = 0x3b;
 	private final static int SIZE = 11; // 10 + 1 for Ptg
 	private short field_1_index_extern_sheet;

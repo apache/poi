@@ -32,9 +32,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author Daniel Noll (daniel at nuix.com.au)
  */
 
-public class PercentPtg
-    extends OperationPtg
-{
+public final class PercentPtg extends ValueOperatorPtg {
     public final static int  SIZE = 1;
     public final static byte sid  = 0x14;
     
@@ -88,8 +86,6 @@ public class PercentPtg
         return buffer.toString();
     }
     
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
-           
     public Object clone() {
       return new PercentPtg();
     }

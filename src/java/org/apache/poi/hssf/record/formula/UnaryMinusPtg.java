@@ -28,8 +28,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author Avik Sengupta
  */
 
-public class UnaryMinusPtg extends OperationPtg
-{
+public final class UnaryMinusPtg extends ValueOperatorPtg {
     public final static int  SIZE = 1;
     public final static byte sid  = 0x13;
     
@@ -82,8 +81,6 @@ public class UnaryMinusPtg extends OperationPtg
         return buffer.toString();
     }
     
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
-           
     public Object clone() {
       return new UnaryPlusPtg();
     }

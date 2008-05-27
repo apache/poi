@@ -23,8 +23,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
 /**
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class UnionPtg extends OperationPtg
-{
+public final class UnionPtg extends OperationPtg {
     public final static byte sid  = 0x10;
 
 
@@ -37,6 +36,9 @@ public class UnionPtg extends OperationPtg
         // doesn't need anything
     }
 
+    public final boolean isBaseToken() {
+        return true;
+    }
 
     public int getSize()
     {

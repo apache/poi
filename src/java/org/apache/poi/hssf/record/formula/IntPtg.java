@@ -27,7 +27,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class IntPtg extends Ptg {
+public final class IntPtg extends ScalarConstantPtg {
     // 16 bit unsigned integer
     private static final int MIN_VALUE = 0x0000;
     private static final int MAX_VALUE = 0xFFFF;
@@ -74,9 +74,6 @@ public final class IntPtg extends Ptg {
 
     public String toFormulaString(HSSFWorkbook book) {
         return String.valueOf(getValue());
-    }
-    public byte getDefaultOperandClass() {
-        return Ptg.CLASS_VALUE;
     }
 
     public Object clone() {
