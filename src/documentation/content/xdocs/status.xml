@@ -43,6 +43,7 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
         <release version="3.1-final" date="2008-06-??">
+           <action dev="POI-DEVELOPERS" type="add">45043 - Support for getting excel cell comments when extracting text</action>
            <action dev="POI-DEVELOPERS" type="add">Extend the support for specifying a policy to HSSF on missing / blank cells when fetching, to be able to specify the policy at the HSSFWorkbook level</action>
            <action dev="POI-DEVELOPERS" type="fix">45025 - improved FormulaParser parse error messages</action>
            <action dev="POI-DEVELOPERS" type="fix">45046 - allowed EXTERNALBOOK(0x01AE) to be optional in the LinkTable</action>

@@ -16,25 +16,20 @@
 ==================================================================== */
 package org.apache.poi.xssf.extractor;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
 import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.Package;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 /**
  * Helper class to extract text from an OOXML Excel file
@@ -43,6 +38,7 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor {
 	private Workbook workbook;
 	private boolean includeSheetNames = true;
 	private boolean formulasNotResults = false;
+	private boolean includeCellComments = false;
 	
 	public XSSFExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {
 		this(new XSSFWorkbook(path));
@@ -79,6 +75,12 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor {
 	public void setFormulasNotResults(boolean formulasNotResults) {
 		this.formulasNotResults = formulasNotResults;
 	}
+	/**
+     * Should cell comments be included? Default is true
+     */
+    public void setIncludeCellComments(boolean includeCellComments) {
+        this.includeCellComments = includeCellComments;
+    }
 	
 	/**
 	 * Retreives the text contents of the file
@@ -94,8 +96,8 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor {
 			
 			for (Object rawR : sheet) {
 				Row row = (Row)rawR;
-				for(Iterator ri = row.cellIterator(); ri.hasNext();) {
-					Cell cell = (Cell)ri.next();
+				for(Iterator<Cell> ri = row.cellIterator(); ri.hasNext();) {
+					Cell cell = ri.next();
 					
 					// Is it a formula one?
 					if(cell.getCellType() == Cell.CELL_TYPE_FORMULA && formulasNotResults) {
@@ -105,6 +107,15 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor {
 					} else {
 						XSSFCell xc = (XSSFCell)cell;
 						text.append(xc.getRawValue());
+					}
+					
+					// Output the comment, if requested and exists
+				    Comment comment = cell.getCellComment();
+					if(includeCellComments && comment != null) {
+					    // Replace any newlines with spaces, otherwise it
+					    //  breaks the output
+					    String commentText = comment.getString().getString().replace('\n', ' ');
+					    text.append(" Comment by "+comment.getAuthor()+": "+commentText);
 					}
 					
 					if(ri.hasNext())
