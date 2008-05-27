@@ -18,22 +18,20 @@
 package org.apache.poi.hssf.record.formula;
 
 /**
- * Common superclass for 
- * tExp
- * tTbl
- * tParen
- * tNlr
- * tAttr
- * tSheet
- * tEndSheet
+ * Common superclass of all value operators.
+ * Subclasses include all unary and binary operators except for the reference operators (IntersectionPtg, RangePtg, UnionPtg) 
+ * 
+ * @author Josh Micich
  */
-public abstract class ControlPtg extends Ptg {
-	
-	public boolean isBaseToken() {
+public abstract class ValueOperatorPtg extends OperationPtg {
+
+	/**
+	 * All Operator <tt>Ptg</tt>s are base tokens (i.e. are not RVA classifed)  
+	 */
+	public final boolean isBaseToken() {
 		return true;
 	}
 	public final byte getDefaultOperandClass() {
-// TODO		throw new IllegalStateException("Control tokens are not classified");
 		return Ptg.CLASS_VALUE;
-    }
+	}
 }

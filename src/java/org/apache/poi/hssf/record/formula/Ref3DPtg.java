@@ -35,8 +35,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 1.0-pre
  */
-
-public class Ref3DPtg extends Ptg {
+public class Ref3DPtg extends OperandPtg {
     public final static byte sid  = 0x3a;
     private final static int  SIZE = 7; // 6 + 1 for Ptg
     private short             field_1_index_extern_sheet;

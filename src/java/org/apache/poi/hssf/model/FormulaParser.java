@@ -931,6 +931,10 @@ end;
 
      private void setClass(Node n, byte theClass) {
         Ptg p = n.getValue();
+        if (p.isBaseToken()) {
+            return;
+        }
+        
         if (p instanceof AbstractFunctionPtg || !(p instanceof OperationPtg)) {
             p.setClass(theClass);
         } else {
@@ -988,11 +992,11 @@ end;
                 // TODO - put comment and throw exception in toFormulaString() of these classes
                 continue;
             }
-            if (! (ptg instanceof OperationPtg)) {
-                stack.push(ptg.toFormulaString(book));
+            if (ptg instanceof ParenthesisPtg) {
+                String contents = (String)stack.pop();
+                stack.push ("(" + contents + ")");
                 continue;
             }
-
             if (ptg instanceof AttrPtg) {
                 AttrPtg attrPtg = ((AttrPtg) ptg);
                 if (attrPtg.isOptimizedIf() || attrPtg.isOptimizedChoose() || attrPtg.isGoto()) {
@@ -1009,9 +1013,17 @@ end;
                     // similar to tAttrSpace - RPN is violated
                     continue;
                 }
-                if (!attrPtg.isSum()) {
-                    throw new RuntimeException("Unexpected tAttr: " + attrPtg.toString());
+                if (attrPtg.isSum()) {
+                    String[] operands = getOperands(stack, attrPtg.getNumberOfOperands());
+                    stack.push(attrPtg.toFormulaString(operands));
+                    continue;
                 }
+                throw new RuntimeException("Unexpected tAttr: " + attrPtg.toString());
+            }
+
+            if (! (ptg instanceof OperationPtg)) {
+                stack.push(ptg.toFormulaString(book));
+                continue;
             }
 
             OperationPtg o = (OperationPtg) ptg;

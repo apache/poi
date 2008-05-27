@@ -15,18 +15,8 @@
    limitations under the License.
 ==================================================================== */
 
-
-/*
- * LessThanPtg.java
- *
- * Created on January 23, 2003, 9:47 AM
- */
 package org.apache.poi.hssf.record.formula;
 
-//JDK
-import java.util.List;
-
-//POI
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 
@@ -36,9 +26,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * Table 3.5.7
  * @author Cameron Riley (criley at ekmail.com)
  */
-public class LessThanPtg
-    extends OperationPtg
-{
+public final class LessThanPtg extends ValueOperatorPtg {
     /** the size of the Ptg  */
     public final static int SIZE = 1;
 
@@ -123,15 +111,6 @@ public class LessThanPtg
         buffer.append(this.LESSTHAN);
         buffer.append(operands[ 1 ]);
         return buffer.toString();
-    }
-    
-    /**
-     * Get the default operands class value
-     * @return byte the Ptg Class Value as a byte from the Ptg Parent object
-     */
-    public byte getDefaultOperandClass() 
-    {
-        return Ptg.CLASS_VALUE;
     }
     
     /**

@@ -25,9 +25,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 
-public class MultiplyPtg
-    extends OperationPtg
-{
+public final class MultiplyPtg extends ValueOperatorPtg {
     public final static int  SIZE = 1;
     public final static byte sid  = 0x05;
 

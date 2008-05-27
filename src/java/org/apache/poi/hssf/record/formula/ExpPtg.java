@@ -31,9 +31,7 @@ import org.apache.poi.util.LittleEndian;
  * @author dmui (save existing implementation)
  */
 
-public class ExpPtg
-    extends Ptg
-{
+public final class ExpPtg extends ControlPtg {
     private final static int  SIZE = 5;
     public final static short sid  = 0x1;
     private short            field_1_first_row;
@@ -52,7 +50,7 @@ public class ExpPtg
       field_1_first_row = in.readShort();
       field_2_first_col = in.readShort();
     }
-
+    
     public void writeBytes(byte [] array, int offset)
     {
       array[offset+0]= (byte) (sid);
@@ -85,8 +83,6 @@ public class ExpPtg
         buffer.append("col = ").append(getColumn()).append("\n");
         return buffer.toString();
     }    
-    
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
     
     public Object clone() {
 	ExpPtg result = new ExpPtg();

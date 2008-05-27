@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -32,8 +31,7 @@ import org.apache.poi.util.BitFieldFactory;
  * @author  andy
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-
-public final class AttrPtg extends OperationPtg {
+public final class AttrPtg extends ControlPtg {
     public final static byte sid  = 0x19;
     private final static int  SIZE = 4;
     private byte              field_1_options;
@@ -289,12 +287,6 @@ public final class AttrPtg extends OperationPtg {
       }
       return "UNKNOWN ATTRIBUTE";
      }
-    
-    
- 
-    public byte getDefaultOperandClass() {
-        return Ptg.CLASS_VALUE;
-    }
 
     public Object clone() {
         int[] jt;

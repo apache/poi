@@ -23,8 +23,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
 /**
  * @author Daniel Noll (daniel at nuix dot com dot au)
  */
-public class RangePtg extends OperationPtg
-{
+public final class RangePtg  extends OperationPtg {
     public final static int  SIZE = 1;
     public final static byte sid  = 0x11;
 
@@ -35,6 +34,10 @@ public class RangePtg extends OperationPtg
     public RangePtg(RecordInputStream in)
     {
     	// No contents
+    }
+
+    public final boolean isBaseToken() {
+        return true;
     }
 
 

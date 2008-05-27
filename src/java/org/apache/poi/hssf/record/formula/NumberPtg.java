@@ -28,10 +28,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author  Avik Sengupta
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-
-public class NumberPtg
-    extends Ptg
-{
+public final class NumberPtg extends ScalarConstantPtg {
     public final static int  SIZE = 9;
     public final static byte sid  = 0x1f;
     private double            field_1_value;
@@ -82,7 +79,6 @@ public class NumberPtg
     {
         return "" + getValue();
     }
-       public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
 
     public Object clone() {
       NumberPtg ptg = new NumberPtg();

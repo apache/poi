@@ -30,8 +30,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
 /**
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class MemFuncPtg extends ControlPtg
-{
+public class MemFuncPtg extends OperandPtg {
 
     public final static byte sid = 0x29;
     private short field_1_len_ref_subexpression = 0;

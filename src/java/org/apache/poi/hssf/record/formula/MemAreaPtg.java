@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,12 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
-/*
- * MemAreaPtg.java
- *
- * Created on November 21, 2001, 8:46 AM
- */
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
@@ -31,9 +24,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
 /**
  * @author Daniel Noll (daniel at nuix dot com dot au)
  */
-public class MemAreaPtg
-    extends Ptg
-{
+public class MemAreaPtg extends OperandPtg {
     public final static short sid  = 0x26;
     private final static int  SIZE = 7;
     private int               field_1_reserved;
