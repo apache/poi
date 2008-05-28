@@ -31,7 +31,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @author Bernard Chesnoy
  */
-public final class StringPtg extends Ptg {
+public final class StringPtg extends ScalarConstantPtg {
     public final static int SIZE = 9;
     public final static byte sid = 0x17;
     private static final BitField fHighByte = BitFieldFactory.getInstance(0x01);
@@ -122,10 +122,6 @@ public final class StringPtg extends Ptg {
 
         sb.append(FORMULA_DELIMITER);
         return sb.toString();
-    }
-
-    public byte getDefaultOperandClass() {
-        return Ptg.CLASS_VALUE;
     }
 
     public Object clone() {

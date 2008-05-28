@@ -30,14 +30,14 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author  Andrew C. Oliver (acoliver@apache.org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public class ReferencePtg extends Ptg {
+public class ReferencePtg extends OperandPtg {
     /**
      * TODO - (May-2008) fix subclasses of ReferencePtg 'RefN~' which are used in shared formulas.
      * (See bugzilla 44921)
-     * The 'RefN~' instances do not work properly, and are expected to be converted by 
-     * SharedFormulaRecord.convertSharedFormulas().  
-     * This conversion currently does not take place for formulas of named ranges, conditional 
-     * format rules and data validation rules.  
+     * The 'RefN~' instances do not work properly, and are expected to be converted by
+     * SharedFormulaRecord.convertSharedFormulas().
+     * This conversion currently does not take place for formulas of named ranges, conditional
+     * format rules and data validation rules.
      * Furthermore, conversion is probably not appropriate in those instances.
      */
     protected final RuntimeException notImplemented() {
@@ -46,14 +46,14 @@ public class ReferencePtg extends Ptg {
 
     private final static int SIZE = 5;
     public final static byte sid  = 0x24;
-    private final static int MAX_ROW_NUMBER = 65536;             
+    private final static int MAX_ROW_NUMBER = 65536;
 
    /** The row index - zero based unsigned 16 bit value */
     private int            field_1_row;
-    /** Field 2 
-     * - lower 8 bits is the zero based unsigned byte column index 
+    /** Field 2
+     * - lower 8 bits is the zero based unsigned byte column index
      * - bit 16 - isRowRelative
-     * - bit 15 - isColumnRelative 
+     * - bit 15 - isColumnRelative
      */
     private int            field_2_col;
     private static final BitField         rowRelative = BitFieldFactory.getInstance(0x8000);
@@ -63,9 +63,9 @@ public class ReferencePtg extends Ptg {
     protected ReferencePtg() {
       //Required for clone methods
     }
-    
+
     /**
-     * Takes in a String represnetation of a cell reference and fills out the 
+     * Takes in a String represnetation of a cell reference and fills out the
      * numeric fields.
      */
     public ReferencePtg(String cellref) {
@@ -75,13 +75,13 @@ public class ReferencePtg extends Ptg {
         setColRelative(!c.isColAbsolute());
         setRowRelative(!c.isRowAbsolute());
     }
-    
+
     public ReferencePtg(int row, int column, boolean isRowRelative, boolean isColumnRelative) {
       setRow(row);
       setColumn(column);
       setRowRelative(isRowRelative);
       setColRelative(isColumnRelative);
-    }    
+    }
 
     /** Creates new ValueReferencePtg */
 
@@ -90,22 +90,19 @@ public class ReferencePtg extends Ptg {
         field_1_row = in.readUShort();
         field_2_col = in.readUShort();
     }
-    
+
     public String getRefPtgName() {
       return "ReferencePtg";
-    }    
+    }
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer("[");
-        buffer.append(getRefPtgName());
-        buffer.append("]\n");
-
-        buffer.append("row = ").append(getRow()).append("\n");
-        buffer.append("col = ").append(getColumn()).append("\n");
-        buffer.append("rowrelative = ").append(isRowRelative()).append("\n");
-        buffer.append("colrelative = ").append(isColRelative()).append("\n");
-        return buffer.toString();
+    public String toString() {
+        CellReference cr = new CellReference(getRow(), getColumn(), !isRowRelative(),!isColRelative());
+        StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName());
+        sb.append(" [");
+        sb.append(cr.formatAsString());
+        sb.append("]");
+        return sb.toString();
     }
 
     public void writeBytes(byte [] array, int offset)
@@ -147,16 +144,16 @@ public class ReferencePtg extends Ptg {
     {
         return rowRelative.isSet(field_2_col);
     }
-    
+
     public void setRowRelative(boolean rel) {
         field_2_col=rowRelative.setBoolean(field_2_col,rel);
     }
-    
+
     public boolean isColRelative()
     {
         return colRelative.isSet(field_2_col);
     }
-    
+
     public void setColRelative(boolean rel) {
         field_2_col=colRelative.setBoolean(field_2_col,rel);
     }
@@ -193,11 +190,11 @@ public class ReferencePtg extends Ptg {
         //TODO -- should we store a cellreference instance in this ptg?? but .. memory is an issue, i believe!
         return (new CellReference(getRowAsInt(),getColumn(),!isRowRelative(),!isColRelative())).formatAsString();
     }
-    
+
     public byte getDefaultOperandClass() {
         return Ptg.CLASS_REF;
     }
-    
+
     public Object clone() {
       ReferencePtg ptg = new ReferencePtg();
       ptg.field_1_row = field_1_row;

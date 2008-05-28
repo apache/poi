@@ -28,9 +28,8 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * RefError - handles deleted cell reference
  * @author Jason Height (jheight at chariot dot net dot au)
  */
+public final class RefErrorPtg extends OperandPtg {
 
-public class RefErrorPtg extends Ptg
-{
     private final static int SIZE = 5;
     public final static byte sid  = 0x2a;
     private int              field_1_reserved;

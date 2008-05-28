@@ -25,7 +25,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  *
  * @author  aviks
  */
-public final class NameXPtg extends Ptg {
+public final class NameXPtg extends OperandPtg {
     public final static short sid  = 0x39;
     private final static int  SIZE = 7;
     private short             field_1_ixals;   // index to REF entry in externsheet record

@@ -108,7 +108,10 @@ public class EmbeddedObjectRefSubRecord
             in.readByte(); // discard
         }
 
-        field_6_stream_id              = in.readInt();
+        // Fetch the stream ID
+        field_6_stream_id = in.readInt();
+        
+        // Store what's left
         remainingBytes = in.readRemainder();
     }
 

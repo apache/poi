@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 import java.util.regex.Pattern;
@@ -61,17 +60,17 @@ public final class FormulaParser {
         }
     }
 
-    public static int FORMULA_TYPE_CELL = 0;
-    public static int FORMULA_TYPE_SHARED = 1;
-    public static int FORMULA_TYPE_ARRAY =2;
-    public static int FORMULA_TYPE_CONDFOMRAT = 3;
-    public static int FORMULA_TYPE_NAMEDRANGE = 4;
+    public static final int FORMULA_TYPE_CELL = 0;
+    public static final int FORMULA_TYPE_SHARED = 1;
+    public static final int FORMULA_TYPE_ARRAY =2;
+    public static final int FORMULA_TYPE_CONDFOMRAT = 3;
+    public static final int FORMULA_TYPE_NAMEDRANGE = 4;
 
     private final String formulaString;
     private final int formulaLength;
     private int pointer;
 
-    private final List tokens = new Stack();
+    private ParseNode _rootNode;
 
     /**
      * Used for spotting if we have a cell reference,
@@ -221,14 +220,15 @@ public final class FormulaParser {
         return value.length() == 0 ? null : value.toString();
     }
 
-    /** Parse and Translate a String Identifier */
-    private Ptg parseIdent() {
-        String name;
-        name = GetName();
+    private ParseNode parseFunctionOrIdentifier() {
+        String name = GetName();
         if (look == '('){
             //This is a function
             return function(name);
         }
+        return new ParseNode(parseIdentifier(name));
+    }
+    private Ptg parseIdentifier(String name) {
 
         if (look == ':' || look == '.') { // this is a AreaReference
             GetChar();
@@ -288,72 +288,29 @@ public final class FormulaParser {
     }
 
     /**
-     * Adds a pointer to the last token to the latest function argument list.
-     * @param obj
-     */
-    private void addArgumentPointer(List argumentPointers) {
-        argumentPointers.add(tokens.get(tokens.size()-1));
-    }
-
-    /**
      * Note - Excel function names are 'case aware but not case sensitive'.  This method may end
      * up creating a defined name record in the workbook if the specified name is not an internal
      * Excel function, and has not been encountered before.
      *
      * @param name case preserved function name (as it was entered/appeared in the formula).
      */
-    private Ptg function(String name) {
-        int numArgs =0 ;
+    private ParseNode function(String name) {
+        NamePtg nameToken = null;
         // Note regarding parameter -
         if(!AbstractFunctionPtg.isInternalFunctionName(name)) {
             // external functions get a Name token which points to a defined name record
-            NamePtg nameToken = new NamePtg(name, this.book);
+            nameToken = new NamePtg(name, this.book);
 
             // in the token tree, the name is more or less the first argument
-            numArgs++;
-            tokens.add(nameToken);
         }
-        //average 2 args per function
-        List argumentPointers = new ArrayList(2);
 
         Match('(');
-        numArgs += Arguments(argumentPointers);
+        ParseNode[] args = Arguments();
         Match(')');
 
-        return getFunction(name, numArgs, argumentPointers);
+        return getFunction(name, nameToken, args);
     }
 
-    /**
-     * Adds the size of all the ptgs after the provided index (inclusive).
-     * <p>
-     * Initially used to count a goto
-     * @param index
-     * @return int
-     */
-    private int getPtgSize(int index) {
-        int count = 0;
-
-        Iterator ptgIterator = tokens.listIterator(index);
-        while (ptgIterator.hasNext()) {
-            Ptg ptg = (Ptg)ptgIterator.next();
-            count+=ptg.getSize();
-        }
-
-        return count;
-    }
-
-    private int getPtgSize(int start, int end) {
-        int count = 0;
-        int index = start;
-        Iterator ptgIterator = tokens.listIterator(index);
-        while (ptgIterator.hasNext() && index <= end) {
-            Ptg ptg = (Ptg)ptgIterator.next();
-            count+=ptg.getSize();
-            index++;
-        }
-
-        return count;
-    }
     /**
      * Generates the variable function ptg for the formula.
      * <p>
@@ -362,84 +319,35 @@ public final class FormulaParser {
      * @param numArgs
      * @return Ptg a null is returned if we're in an IF formula, it needs extreme manipulation and is handled in this function
      */
-    private AbstractFunctionPtg getFunction(String name, int numArgs, List argumentPointers) {
+    private ParseNode getFunction(String name, NamePtg namePtg, ParseNode[] args) {
 
-        boolean isVarArgs;
-        int funcIx;
         FunctionMetadata fm = FunctionMetadataRegistry.getFunctionByName(name.toUpperCase());
+        int numArgs = args.length;
         if(fm == null) {
+        	if (namePtg == null) {
+        		throw new IllegalStateException("NamePtg must be supplied for external functions");
+        	}
             // must be external function
-            isVarArgs = true;
-            funcIx = FunctionMetadataRegistry.FUNCTION_INDEX_EXTERNAL;
-        } else {
-            isVarArgs = !fm.hasFixedArgsLength();
-            funcIx = fm.getIndex();
-            validateNumArgs(numArgs, fm);
+            ParseNode[] allArgs = new ParseNode[numArgs+1];
+            allArgs[0] = new ParseNode(namePtg);
+            System.arraycopy(args, 0, allArgs, 1, numArgs);
+            return new ParseNode(new FuncVarPtg(name, (byte)(numArgs+1)), allArgs);
         }
+
+        if (namePtg != null) {
+    		throw new IllegalStateException("NamePtg no applicable to internal functions");
+    	}
+        boolean isVarArgs = !fm.hasFixedArgsLength();
+        int funcIx = fm.getIndex();
+        validateNumArgs(args.length, fm);
+
         AbstractFunctionPtg retval;
         if(isVarArgs) {
             retval = new FuncVarPtg(name, (byte)numArgs);
         } else {
             retval = new FuncPtg(funcIx);
         }
-        if (!name.equals(AbstractFunctionPtg.FUNCTION_NAME_IF)) {
-            // early return for everything else besides IF()
-            return retval;
-        }
-
-
-        AttrPtg ifPtg = new AttrPtg();
-        ifPtg.setData((short)7); //mirroring excel output
-        ifPtg.setOptimizedIf(true);
-
-        if (argumentPointers.size() != 2  && argumentPointers.size() != 3) {
-            throw new IllegalArgumentException("["+argumentPointers.size()+"] Arguments Found - An IF formula requires 2 or 3 arguments. IF(CONDITION, TRUE_VALUE, FALSE_VALUE [OPTIONAL]");
-        }
-
-        //Biffview of an IF formula record indicates the attr ptg goes after the condition ptgs and are
-        //tracked in the argument pointers
-        //The beginning first argument pointer is the last ptg of the condition
-        int ifIndex = tokens.indexOf(argumentPointers.get(0))+1;
-        tokens.add(ifIndex, ifPtg);
-
-        //we now need a goto ptgAttr to skip to the end of the formula after a true condition
-        //the true condition is should be inserted after the last ptg in the first argument
-
-        int gotoIndex = tokens.indexOf(argumentPointers.get(1))+1;
-
-        AttrPtg goto1Ptg = new AttrPtg();
-        goto1Ptg.setGoto(true);
-
-
-        tokens.add(gotoIndex, goto1Ptg);
-
-
-        if (numArgs > 2) { //only add false jump if there is a false condition
-
-            //second goto to skip past the function ptg
-            AttrPtg goto2Ptg = new AttrPtg();
-            goto2Ptg.setGoto(true);
-            goto2Ptg.setData((short)(retval.getSize()-1));
-            //Page 472 of the Microsoft Excel Developer's kit states that:
-            //The b(or w) field specifies the number byes (or words to skip, minus 1
-
-            tokens.add(goto2Ptg); //this goes after all the arguments are defined
-        }
-
-        //data portion of the if ptg points to the false subexpression (Page 472 of MS Excel Developer's kit)
-        //count the number of bytes after the ifPtg to the False Subexpression
-        //doesn't specify -1 in the documentation
-        ifPtg.setData((short)(getPtgSize(ifIndex+1, gotoIndex)));
-
-        //count all the additional (goto) ptgs but dont count itself
-        int ptgCount = this.getPtgSize(gotoIndex)-goto1Ptg.getSize()+retval.getSize();
-        if (ptgCount > Short.MAX_VALUE) {
-            throw new RuntimeException("Ptg Size exceeds short when being specified for a goto ptg in an if");
-        }
-
-        goto1Ptg.setData((short)(ptgCount-1));
-
-        return retval;
+        return new ParseNode(retval, args);
     }
 
     private void validateNumArgs(int numArgs, FunctionMetadata fm) {
@@ -470,10 +378,12 @@ public final class FormulaParser {
     }
 
     /** get arguments to a function */
-    private int Arguments(List argumentPointers) {
+    private ParseNode[] Arguments() {
+        //average 2 args per function
+        List temp = new ArrayList(2);
         SkipWhite();
         if(look == ')') {
-            return 0;
+            return ParseNode.EMPTY_ARRAY;
         }
 
         boolean missedPrevArg = true;
@@ -482,8 +392,7 @@ public final class FormulaParser {
             SkipWhite();
             if (isArgumentDelimiter(look)) {
                 if (missedPrevArg) {
-                    tokens.add(new MissingArgPtg());
-                    addArgumentPointer(argumentPointers);
+                	temp.add(new ParseNode(new MissingArgPtg()));
                     numArgs++;
                 }
                 if (look == ')') {
@@ -493,8 +402,7 @@ public final class FormulaParser {
                 missedPrevArg = true;
                 continue;
             }
-            comparisonExpression();
-            addArgumentPointer(argumentPointers);
+            temp.add(comparisonExpression());
             numArgs++;
             missedPrevArg = false;
             SkipWhite();
@@ -502,32 +410,34 @@ public final class FormulaParser {
                 throw expected("',' or ')'");
             }
         }
-        return numArgs;
+        ParseNode[] result = new ParseNode[temp.size()];
+        temp.toArray(result);
+        return result;
     }
 
    /** Parse and Translate a Math Factor  */
-    private void powerFactor() {
-        percentFactor();
+    private ParseNode powerFactor() {
+    	ParseNode result = percentFactor();
         while(true) {
             SkipWhite();
             if(look != '^') {
-                return;
+                return result;
             }
             Match('^');
-            percentFactor();
-            tokens.add(new PowerPtg());
+            ParseNode other = percentFactor();
+            result = new ParseNode(new PowerPtg(), result, other);
         }
     }
 
-    private void percentFactor() {
-        tokens.add(parseSimpleFactor());
+    private ParseNode percentFactor() {
+    	ParseNode result = parseSimpleFactor();
         while(true) {
             SkipWhite();
             if(look != '%') {
-                return;
+                return result;
             }
             Match('%');
-            tokens.add(new PercentPtg());
+            result = new ParseNode(new PercentPtg(), result);
         }
     }
 
@@ -535,32 +445,30 @@ public final class FormulaParser {
     /**
      * factors (without ^ or % )
      */
-    private Ptg parseSimpleFactor() {
+    private ParseNode parseSimpleFactor() {
         SkipWhite();
         switch(look) {
             case '#':
-                return parseErrorLiteral();
+                return new ParseNode(parseErrorLiteral());
             case '-':
                 Match('-');
-                powerFactor();
-                return new UnaryMinusPtg();
+                return new ParseNode(new UnaryMinusPtg(), powerFactor());
             case '+':
                 Match('+');
-                powerFactor();
-                return new UnaryPlusPtg();
+                return new ParseNode(new UnaryPlusPtg(), powerFactor());
             case '(':
                 Match('(');
-                comparisonExpression();
+                ParseNode inside = comparisonExpression();
                 Match(')');
-                return new ParenthesisPtg();
+                return new ParseNode(new ParenthesisPtg(), inside);
             case '"':
-                return parseStringLiteral();
+                return new ParseNode(parseStringLiteral());
         }
         if (IsAlpha(look) || look == '\''){
-            return parseIdent();
+            return parseFunctionOrIdentifier();
         }
         // else - assume number
-        return parseNumber();
+        return new ParseNode(parseNumber());
     }
 
 
@@ -716,28 +624,30 @@ public final class FormulaParser {
     }
 
     /** Parse and Translate a Math Term */
-    private void  Term() {
-        powerFactor();
+    private ParseNode  Term() {
+    	ParseNode result = powerFactor();
         while(true) {
             SkipWhite();
+            Ptg operator;
             switch(look) {
                 case '*':
                     Match('*');
-                    powerFactor();
-                    tokens.add(new MultiplyPtg());
-                    continue;
+                    operator = new MultiplyPtg();
+                    break;
                 case '/':
                     Match('/');
-                    powerFactor();
-                    tokens.add(new DividePtg());
-                    continue;
+                    operator = new DividePtg();
+                    break;
+                default:
+                    return result; // finished with Term
             }
-            return; // finished with Term
+            ParseNode other = powerFactor();
+            result = new ParseNode(operator, result, other);
         }
     }
 
-    private void comparisonExpression() {
-        concatExpression();
+    private ParseNode comparisonExpression() {
+    	ParseNode result = concatExpression();
         while (true) {
             SkipWhite();
             switch(look) {
@@ -745,11 +655,11 @@ public final class FormulaParser {
                 case '>':
                 case '<':
                     Ptg comparisonToken = getComparisonToken();
-                    concatExpression();
-                    tokens.add(comparisonToken);
+                    ParseNode other = concatExpression();
+                    result = new ParseNode(comparisonToken, result, other);
                     continue;
             }
-            return; // finished with predicate expression
+            return result; // finished with predicate expression
         }
     }
 
@@ -779,38 +689,41 @@ public final class FormulaParser {
     }
 
 
-    private void concatExpression() {
-        additiveExpression();
+    private ParseNode concatExpression() {
+        ParseNode result = additiveExpression();
         while (true) {
             SkipWhite();
             if(look != '&') {
                 break; // finished with concat expression
             }
             Match('&');
-            additiveExpression();
-            tokens.add(new ConcatPtg());
+            ParseNode other = additiveExpression();
+            result = new ParseNode(new ConcatPtg(), result, other);
         }
+        return result;
     }
 
 
     /** Parse and Translate an Expression */
-    private void additiveExpression() {
-        Term();
+    private ParseNode additiveExpression() {
+    	ParseNode result = Term();
         while (true) {
             SkipWhite();
+            Ptg operator;
             switch(look) {
                 case '+':
                     Match('+');
-                    Term();
-                    tokens.add(new AddPtg());
-                    continue;
+                    operator = new AddPtg();
+                    break;
                 case '-':
                     Match('-');
-                    Term();
-                    tokens.add(new SubtractPtg());
-                    continue;
+                    operator = new SubtractPtg();
+                    break;
+                default:
+                    return result; // finished with additive expression
             }
-            return; // finished with additive expression
+            ParseNode other = Term();
+            result = new ParseNode(operator, result, other);
         }
     }
 
@@ -835,7 +748,7 @@ end;
     public void parse() {
         pointer=0;
         GetChar();
-        comparisonExpression();
+        _rootNode = comparisonExpression();
 
         if(pointer <= formulaLength) {
             String msg = "Unused input [" + formulaString.substring(pointer-1)
@@ -858,87 +771,12 @@ end;
     }
 
     public Ptg[] getRPNPtg(int formulaType) {
-        Node node = createTree();
+    	OperandClassTransformer oct = new OperandClassTransformer(formulaType);
         // RVA is for 'operand class': 'reference', 'value', 'array'
-        setRootLevelRVA(node, formulaType);
-        setParameterRVA(node,formulaType);
-        return (Ptg[]) tokens.toArray(new Ptg[0]);
+    	oct.transformFormula(_rootNode);
+        return ParseNode.toTokenArray(_rootNode);
     }
 
-    private void setRootLevelRVA(Node n, int formulaType) {
-        //Pg 16, excelfileformat.pdf @ openoffice.org
-        Ptg p = n.getValue();
-            if (formulaType == FormulaParser.FORMULA_TYPE_NAMEDRANGE) {
-                if (p.getDefaultOperandClass() == Ptg.CLASS_REF) {
-                    setClass(n,Ptg.CLASS_REF);
-                } else {
-                    setClass(n,Ptg.CLASS_ARRAY);
-                }
-            } else {
-                setClass(n,Ptg.CLASS_VALUE);
-            }
-
-    }
-
-    private void setParameterRVA(Node n, int formulaType) {
-        Ptg p = n.getValue();
-        int numOperands = n.getNumChildren();
-        if (p instanceof AbstractFunctionPtg) {
-            for (int i =0;i<numOperands;i++) {
-                setParameterRVA(n.getChild(i),((AbstractFunctionPtg)p).getParameterClass(i),formulaType);
-//                if (n.getChild(i).getValue() instanceof AbstractFunctionPtg) {
-//                    setParameterRVA(n.getChild(i),formulaType);
-//                }
-                setParameterRVA(n.getChild(i),formulaType);
-            }
-        } else {
-            for (int i =0;i<numOperands;i++) {
-                setParameterRVA(n.getChild(i),formulaType);
-            }
-        }
-    }
-    private void setParameterRVA(Node n, int expectedClass,int formulaType) {
-        Ptg p = n.getValue();
-        if (expectedClass == Ptg.CLASS_REF) { //pg 15, table 1
-            if (p.getDefaultOperandClass() == Ptg.CLASS_REF ) {
-                setClass(n, Ptg.CLASS_REF);
-            }
-            if (p.getDefaultOperandClass() == Ptg.CLASS_VALUE) {
-                if (formulaType==FORMULA_TYPE_CELL || formulaType == FORMULA_TYPE_SHARED) {
-                    setClass(n,Ptg.CLASS_VALUE);
-                } else {
-                    setClass(n,Ptg.CLASS_ARRAY);
-                }
-            }
-            if (p.getDefaultOperandClass() == Ptg.CLASS_ARRAY ) {
-                setClass(n, Ptg.CLASS_ARRAY);
-            }
-        } else if (expectedClass == Ptg.CLASS_VALUE) { //pg 15, table 2
-            if (formulaType == FORMULA_TYPE_NAMEDRANGE) {
-                setClass(n,Ptg.CLASS_ARRAY) ;
-            } else {
-                setClass(n,Ptg.CLASS_VALUE);
-            }
-        } else { //Array class, pg 16.
-            if (p.getDefaultOperandClass() == Ptg.CLASS_VALUE &&
-                 (formulaType==FORMULA_TYPE_CELL || formulaType == FORMULA_TYPE_SHARED)) {
-                 setClass(n,Ptg.CLASS_VALUE);
-            } else {
-                setClass(n,Ptg.CLASS_ARRAY);
-            }
-        }
-    }
-
-     private void setClass(Node n, byte theClass) {
-        Ptg p = n.getValue();
-        if (p instanceof AbstractFunctionPtg || !(p instanceof OperationPtg)) {
-            p.setClass(theClass);
-        } else {
-            for (int i =0;i<n.getNumChildren();i++) {
-                setClass(n.getChild(i),theClass);
-            }
-        }
-     }
     /**
      * Convenience method which takes in a list then passes it to the
      *  other toFormulaString signature.
@@ -988,11 +826,11 @@ end;
                 // TODO - put comment and throw exception in toFormulaString() of these classes
                 continue;
             }
-            if (! (ptg instanceof OperationPtg)) {
-                stack.push(ptg.toFormulaString(book));
+            if (ptg instanceof ParenthesisPtg) {
+                String contents = (String)stack.pop();
+                stack.push ("(" + contents + ")");
                 continue;
             }
-
             if (ptg instanceof AttrPtg) {
                 AttrPtg attrPtg = ((AttrPtg) ptg);
                 if (attrPtg.isOptimizedIf() || attrPtg.isOptimizedChoose() || attrPtg.isGoto()) {
@@ -1009,24 +847,21 @@ end;
                     // similar to tAttrSpace - RPN is violated
                     continue;
                 }
-                if (!attrPtg.isSum()) {
-                    throw new RuntimeException("Unexpected tAttr: " + attrPtg.toString());
+                if (attrPtg.isSum()) {
+                    String[] operands = getOperands(stack, attrPtg.getNumberOfOperands());
+                    stack.push(attrPtg.toFormulaString(operands));
+                    continue;
                 }
+                throw new RuntimeException("Unexpected tAttr: " + attrPtg.toString());
             }
 
-            final OperationPtg o = (OperationPtg) ptg;
-            int nOperands = o.getNumberOfOperands();
-            final String[] operands = new String[nOperands];
-
-            for (int j = nOperands-1; j >= 0; j--) { // reverse iteration because args were pushed in-order
-                if(stack.isEmpty()) {
-                   String msg = "Too few arguments suppled to operation token ("
-                        + o.getClass().getName() + "). Expected (" + nOperands
-                        + ") operands but got (" + (nOperands - j - 1) + ")";
-                    throw new IllegalStateException(msg);
-                }
-                operands[j] = (String) stack.pop();
+            if (! (ptg instanceof OperationPtg)) {
+                stack.push(ptg.toFormulaString(book));
+                continue;
             }
+
+            OperationPtg o = (OperationPtg) ptg;
+            String[] operands = getOperands(stack, o.getNumberOfOperands());
             stack.push(o.toFormulaString(operands));
         }
         if(stack.isEmpty()) {
@@ -1042,6 +877,20 @@ end;
         }
         return result;
     }
+    
+    private static String[] getOperands(Stack stack, int nOperands) {
+        String[] operands = new String[nOperands];
+
+        for (int j = nOperands-1; j >= 0; j--) { // reverse iteration because args were pushed in-order
+            if(stack.isEmpty()) {
+               String msg = "Too few arguments supplied to operation. Expected (" + nOperands
+                    + ") operands but got (" + (nOperands - j - 1) + ")";
+                throw new IllegalStateException(msg);
+            }
+            operands[j] = (String) stack.pop();
+        }
+        return operands;
+    }
     /**
      * Static method to convert an array of Ptgs in RPN order
      *  to a human readable string format in infix mode. Works
@@ -1051,60 +900,5 @@ end;
      */
     public String toFormulaString(Ptg[] ptgs) {
         return toFormulaString(book, ptgs);
-    }
-
-
-    /** Create a tree representation of the RPN token array
-     *used to run the class(RVA) change algo
-     */
-    private Node createTree() {
-        Stack stack = new Stack();
-        int numPtgs = tokens.size();
-        OperationPtg o;
-        int numOperands;
-        Node[] operands;
-        for (int i=0;i<numPtgs;i++) {
-            if (tokens.get(i) instanceof OperationPtg) {
-
-                o = (OperationPtg) tokens.get(i);
-                numOperands = o.getNumberOfOperands();
-                operands = new Node[numOperands];
-                for (int j=0;j<numOperands;j++) {
-                    operands[numOperands-j-1] = (Node) stack.pop();
-                }
-                Node result = new Node(o);
-                result.setChildren(operands);
-                stack.push(result);
-            } else {
-                stack.push(new Node((Ptg)tokens.get(i)));
-            }
-        }
-        return (Node) stack.pop();
-    }
-
-    /** toString on the parser instance returns the RPN ordered list of tokens
-     *   Useful for testing
-     */
-    public String toString() {
-        StringBuffer buf = new StringBuffer();
-           for (int i=0;i<tokens.size();i++) {
-            buf.append( ( (Ptg)tokens.get(i)).toFormulaString(book));
-            buf.append(' ');
-        }
-        return buf.toString();
-    }
-
-    /** Private helper class, used to create a tree representation of the formula*/
-    private static final class Node {
-        private Ptg value=null;
-        private Node[] children=new Node[0];
-        private int numChild=0;
-        public Node(Ptg val) {
-            value = val;
-        }
-        public void setChildren(Node[] child) {children = child;numChild=child.length;}
-        public int getNumChildren() {return numChild;}
-        public Node getChild(int number) {return children[number];}
-        public Ptg getValue() {return value;}
     }
 }

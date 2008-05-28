@@ -220,9 +220,13 @@ public class DateUtil
     	//  switching stuff, which we can ignore
     	fs = fs.replaceAll(";@", "");
     	
-    	// If it starts with [$-...], then it is a date, but
+    	// If it starts with [$-...], then could be a date, but
     	//  who knows what that starting bit is all about
-    	fs = fs.replaceAll("\\[\\$\\-.*?\\]", "");
+    	fs = fs.replaceAll("^\\[\\$\\-.*?\\]", "");
+    	
+    	// If it starts with something like [Black] or [Yellow],
+    	//  then it could be a date
+    	fs = fs.replaceAll("^\\[[a-zA-Z]+\\]", "");
     	
     	// Otherwise, check it's only made up, in any case, of:
     	//  y m d h s - / , . :

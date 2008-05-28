@@ -53,6 +53,12 @@ public class TestHSSFChart extends TestCase {
 		assertEquals("1st Column", charts[0].getSeries()[0].getSeriesTitle());
 		assertEquals("2nd Column", charts[0].getSeries()[1].getSeriesTitle());
 		assertEquals(null, charts[0].getChartTitle());
+		
+		// Check x, y, width, height
+		assertEquals(0, charts[0].getChartX());
+		assertEquals(0, charts[0].getChartY());
+		assertEquals(26492928, charts[0].getChartWidth());
+		assertEquals(15040512, charts[0].getChartHeight());
 	}
 
 	public void testTwoCharts() throws Exception {

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,11 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-/*
- * AddPtg.java
- *
- * Created on October 29, 2001, 7:48 PM
- */
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.ss.usermodel.Workbook;
@@ -32,10 +26,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author  Andrew C. Oliver (acoliver@apache.org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-
-public class AddPtg
-    extends OperationPtg
-{
+public final class AddPtg extends ValueOperatorPtg {
     public final static int  SIZE = 1;
     public final static byte sid  = 0x03;
     
@@ -89,8 +80,6 @@ public class AddPtg
         buffer.append(operands[ 1 ]);
         return buffer.toString();
     }
-    
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
            
     public Object clone() {
       return new AddPtg();

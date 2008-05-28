@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.ss.usermodel.Workbook;
@@ -26,10 +25,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author  Andrew C. Oliver acoliver at apache dot org
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-
-public class DividePtg
-    extends OperationPtg
-{
+public final class DividePtg extends ValueOperatorPtg {
     public final static int  SIZE = 1;
     public final static byte sid  = 0x06;
 

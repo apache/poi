@@ -23,8 +23,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
 /**
  * @author Daniel Noll (daniel at nuix dot com dot au)
  */
-public class IntersectionPtg extends OperationPtg
-{
+public final class IntersectionPtg extends OperationPtg {
     public final static byte sid  = 0x0f;
 
 
@@ -37,6 +36,9 @@ public class IntersectionPtg extends OperationPtg
         // doesn't need anything
     }
 
+    public final boolean isBaseToken() {
+        return true;
+    }
 
     public int getSize()
     {

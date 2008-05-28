@@ -40,6 +40,15 @@ public final class FuncVarPtg extends AbstractFunctionPtg{
     public FuncVarPtg(RecordInputStream in) {
         field_1_num_args = in.readByte();
         field_2_fnc_index  = in.readShort();
+        FunctionMetadata fm = FunctionMetadataRegistry.getFunctionByIndex(field_2_fnc_index);
+        if(fm == null) {
+            // Happens only as a result of a call to FormulaParser.parse(), with a non-built-in function name
+            returnClass = Ptg.CLASS_VALUE;
+            paramClass = new byte[] {Ptg.CLASS_VALUE};
+        } else {
+            returnClass = fm.getReturnClassCode();
+            paramClass = fm.getParameterClassCodes();
+        }
     }
 
     /**

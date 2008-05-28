@@ -59,6 +59,10 @@ public class ArrayPtg extends Ptg {
 		}
 	}
 	
+	public boolean isBaseToken() {
+		return false;
+	}
+	
 	/** 
 	 * Read in the actual token (array) values. This occurs 
 	 * AFTER the last Ptg in the expression.
@@ -95,6 +99,10 @@ public class ArrayPtg extends Ptg {
 		return buffer.toString();
 	}
 
+	/**
+	 * Note - (2D) array elements are stored column by column 
+	 * @return the index into the internal 1D array for the specified column and row
+	 */
 	/* package */ int getValueIndex(int colIx, int rowIx) {
 		if(colIx < 0 || colIx >= token_1_columns) {
 			throw new IllegalArgumentException("Specified colIx (" + colIx 
@@ -104,7 +112,7 @@ public class ArrayPtg extends Ptg {
 			throw new IllegalArgumentException("Specified rowIx (" + rowIx 
 					+ ") is outside the allowed range (0.." + (token_2_rows-1) + ")");
 		}
-		return rowIx * token_1_columns + colIx;
+		return rowIx + token_2_rows * colIx;
 	}
 
 	public void writeBytes(byte[] data, int offset) {

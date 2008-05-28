@@ -330,31 +330,27 @@ public class FormulaEvaluator {
     }
     private static ValueEval evaluateCell(Workbook workbook, Sheet sheet, 
             int srcRowNum, short srcColNum, String cellFormulaText) {
-    	
-    	FormulaParser parser =
-    		new FormulaParser(cellFormulaText, workbook);
-    	
-        parser.parse();
-        Ptg[] ptgs = parser.getRPNPtg();
-        // -- parsing over --
-        
+        Ptg[] ptgs = FormulaParser.parse(cellFormulaText, workbook);
 
         Stack stack = new Stack();
         for (int i = 0, iSize = ptgs.length; i < iSize; i++) {
 
             // since we don't know how to handle these yet :(
             Ptg ptg = ptgs[i];
-            if (ptg instanceof ControlPtg) { continue; }
+            if (ptg instanceof ControlPtg) {
+                // skip Parentheses, Attr, etc
+                continue;
+            }
             if (ptg instanceof MemErrPtg) { continue; }
             if (ptg instanceof MissingArgPtg) { continue; }
             if (ptg instanceof NamePtg) { 
-            	// named ranges, macro functions
+                // named ranges, macro functions
                 NamePtg namePtg = (NamePtg) ptg;
                 stack.push(new NameEval(namePtg.getIndex()));
                 continue; 
             }
             if (ptg instanceof NameXPtg) {
-            	// TODO - external functions
+                // TODO - external functions
                 continue;
             }
             if (ptg instanceof UnknownPtg) { continue; }
@@ -362,9 +358,6 @@ public class FormulaEvaluator {
             if (ptg instanceof OperationPtg) {
                 OperationPtg optg = (OperationPtg) ptg;
 
-                // parens can be ignored since we have RPN tokens
-                if (optg instanceof ParenthesisPtg) { continue; }
-                if (optg instanceof AttrPtg) { continue; }
                 if (optg instanceof UnionPtg) { continue; }
 
                 OperationEval operation = OperationEvaluatorFactory.create(optg);

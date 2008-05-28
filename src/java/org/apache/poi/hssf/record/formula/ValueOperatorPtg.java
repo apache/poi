@@ -15,29 +15,23 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.model;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+package org.apache.poi.hssf.record.formula;
 
 /**
- * Collects all tests for <tt>org.apache.poi.hssf.model</tt>.
+ * Common superclass of all value operators.
+ * Subclasses include all unary and binary operators except for the reference operators (IntersectionPtg, RangePtg, UnionPtg) 
  * 
  * @author Josh Micich
  */
-public final class AllModelTests {
-	
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllModelTests.class.getName());
-		result.addTestSuite(TestDrawingManager.class);
-		result.addTestSuite(TestDrawingManager2.class);
-		result.addTestSuite(TestFormulaParser.class);
-		result.addTestSuite(TestFormulaParserEval.class);
-		result.addTestSuite(TestFormulaParserIf.class);
-		result.addTestSuite(TestOperandClassTransformer.class);
-		result.addTestSuite(TestRVA.class);
-		result.addTestSuite(TestSheet.class);
-		result.addTestSuite(TestSheetAdditional.class);
-		return result;
+public abstract class ValueOperatorPtg extends OperationPtg {
+
+	/**
+	 * All Operator <tt>Ptg</tt>s are base tokens (i.e. are not RVA classifed)  
+	 */
+	public final boolean isBaseToken() {
+		return true;
+	}
+	public final byte getDefaultOperandClass() {
+		return Ptg.CLASS_VALUE;
 	}
 }

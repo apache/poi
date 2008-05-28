@@ -44,6 +44,8 @@ public final class FuncPtg extends AbstractFunctionPtg {
             throw new RuntimeException("Invalid built-in function index (" + field_2_fnc_index + ")");
         }
         numParams = fm.getMinParams();
+        returnClass = fm.getReturnClassCode();
+        paramClass = fm.getParameterClassCodes();
     }
     public FuncPtg(int functionIndex) {
         field_2_fnc_index = (short) functionIndex;
