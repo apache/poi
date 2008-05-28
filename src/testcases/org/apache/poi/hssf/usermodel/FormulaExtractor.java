@@ -15,29 +15,35 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.model;
+package org.apache.poi.hssf.usermodel;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.List;
+
+import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
+import org.apache.poi.hssf.record.formula.Ptg;
 
 /**
- * Collects all tests for <tt>org.apache.poi.hssf.model</tt>.
+ * Test utility class to get <tt>Ptg</tt> arrays out of formula cells
  * 
  * @author Josh Micich
  */
-public final class AllModelTests {
+public final class FormulaExtractor {
+
+	private FormulaExtractor() {
+		// no instances of this class
+	}
 	
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllModelTests.class.getName());
-		result.addTestSuite(TestDrawingManager.class);
-		result.addTestSuite(TestDrawingManager2.class);
-		result.addTestSuite(TestFormulaParser.class);
-		result.addTestSuite(TestFormulaParserEval.class);
-		result.addTestSuite(TestFormulaParserIf.class);
-		result.addTestSuite(TestOperandClassTransformer.class);
-		result.addTestSuite(TestRVA.class);
-		result.addTestSuite(TestSheet.class);
-		result.addTestSuite(TestSheetAdditional.class);
+	public static Ptg[] getPtgs(HSSFCell cell) {
+		CellValueRecordInterface vr = cell.getCellValueRecord();
+		if (!(vr instanceof FormulaRecordAggregate)) {
+			throw new IllegalArgumentException("Not a formula cell");
+		}
+		FormulaRecordAggregate fra = (FormulaRecordAggregate) vr;
+		List tokens = fra.getFormulaRecord().getParsedExpression();
+		Ptg[] result = new Ptg[tokens.size()];
+		tokens.toArray(result);
 		return result;
 	}
+
 }

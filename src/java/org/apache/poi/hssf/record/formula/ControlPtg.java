@@ -28,12 +28,11 @@ package org.apache.poi.hssf.record.formula;
  * tEndSheet
  */
 public abstract class ControlPtg extends Ptg {
-	
+
 	public boolean isBaseToken() {
 		return true;
 	}
 	public final byte getDefaultOperandClass() {
-// TODO		throw new IllegalStateException("Control tokens are not classified");
-		return Ptg.CLASS_VALUE;
-    }
+		throw new IllegalStateException("Control tokens are not classified");
+	}
 }

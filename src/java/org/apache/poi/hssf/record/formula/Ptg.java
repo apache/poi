@@ -341,7 +341,9 @@ public abstract class Ptg
         ptgClass = thePtgClass;
     }
 
-    /** returns the class (REF/VALUE/ARRAY) for this Ptg */
+    /**
+     *  @return the 'operand class' (REF/VALUE/ARRAY) for this Ptg
+     */
     public byte getPtgClass() {
         return ptgClass;
     }
