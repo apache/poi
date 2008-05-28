@@ -27,10 +27,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-
-public class BoolPtg
-    extends Ptg
-{
+public final class BoolPtg extends ScalarConstantPtg {
     public final static int  SIZE = 2;
     public final static byte sid  = 0x1d;
     private boolean          field_1_value;
@@ -74,8 +71,6 @@ public class BoolPtg
     {
         return field_1_value ? "TRUE" : "FALSE";
     }
-
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
 
     public Object clone() {
         BoolPtg ptg = new BoolPtg();

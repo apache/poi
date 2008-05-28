@@ -15,15 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-
-/*
- * GreaterThanPtg.java
- *
- * Created on January 23, 2003, 9:47 AM
- */
 package org.apache.poi.hssf.record.formula;
-
-import java.util.List;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
@@ -32,9 +24,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * Greater than operator PTG ">"
  * @author  Cameron Riley (criley at ekmail.com)
  */
-public class GreaterThanPtg
-    extends OperationPtg
-{
+public final class GreaterThanPtg extends ValueOperatorPtg {
     public final static int  SIZE = 1;
     public final static byte sid  = 0x0D;    
     private final static String GREATERTHAN = ">";
@@ -117,15 +107,6 @@ public class GreaterThanPtg
         return buffer.toString();
     }
     
-    /**
-     * Get the default operands class value
-     * @return byte the Ptg Class Value as a byte from the Ptg Parent object
-     */
-    public byte getDefaultOperandClass() 
-    {
-        return Ptg.CLASS_VALUE;
-    }
-           
     /**
      * Implementation of clone method from Object
      * @return Object a clone of this class as an Object

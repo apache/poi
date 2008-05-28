@@ -15,6 +15,7 @@
 
 # Created by (org.apache.poi.hssf.record.formula.function.ExcelFileFormatDocFunctionExtractor)
 # from source file 'excelfileformat.odt' (size=356107, md5=0x8f789cb6e75594caf068f8e193004ef4)
+#  ! + some manual edits !
 #
 #Columns: (index, name, minParams, maxParams, returnClass, paramClasses, isVolatile, hasFootnote )
 
@@ -78,8 +79,8 @@
 58	NPER	3	5	V	V V V V V		
 59	PMT	3	5	V	V V V V V		
 60	RATE	3	6	V	V V V V V V		
-61	MIRR	3	3	V	R V V		
-62	IRR	1	2	V	R V		
+61	MIRR	3	3	V	A V V		
+62	IRR	1	2	V	A V		
 63	RAND	0	0	V	-	x	
 64	MATCH	2	3	V	V R R		
 65	DATE	3	3	V	V V V		
@@ -93,8 +94,8 @@
 73	SECOND	1	1	V	V		
 74	NOW	0	0	V	-	x	
 75	AREAS	1	1	V	R		
-76	ROWS	1	1	V	R		
-77	COLUMNS	1	1	V	R		
+76	ROWS	1	1	V	A		
+77	COLUMNS	1	1	V	A		
 78	OFFSET	3	5	R	R V V V V	x	
 82	SEARCH	2	3	V	V V V		
 83	TRANSPOSE	1	1	A	A		

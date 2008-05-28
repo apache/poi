@@ -24,10 +24,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author  andy
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-
-public class UnknownPtg
-    extends Ptg
-{
+public class UnknownPtg extends Ptg {
     private short size = 1;
 
     /** Creates new UnknownPtg */
@@ -36,12 +33,13 @@ public class UnknownPtg
     {
     }
 
-    public UnknownPtg(RecordInputStream in)
-    {
-
+    public UnknownPtg(RecordInputStream in) {
         // doesn't need anything
     }
 
+    public boolean isBaseToken() {
+    	return true;
+    }
     public void writeBytes(byte [] array, int offset)
     {
     }

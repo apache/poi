@@ -15,29 +15,17 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.model;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+package org.apache.poi.hssf.record.formula;
 
 /**
- * Collects all tests for <tt>org.apache.poi.hssf.model</tt>.
- * 
  * @author Josh Micich
  */
-public final class AllModelTests {
-	
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllModelTests.class.getName());
-		result.addTestSuite(TestDrawingManager.class);
-		result.addTestSuite(TestDrawingManager2.class);
-		result.addTestSuite(TestFormulaParser.class);
-		result.addTestSuite(TestFormulaParserEval.class);
-		result.addTestSuite(TestFormulaParserIf.class);
-		result.addTestSuite(TestOperandClassTransformer.class);
-		result.addTestSuite(TestRVA.class);
-		result.addTestSuite(TestSheet.class);
-		result.addTestSuite(TestSheetAdditional.class);
-		return result;
+public abstract class OperandPtg extends Ptg {
+
+	/**
+	 * All Operand <tt>Ptg</tt>s are classifed ('relative', 'value', 'array')  
+	 */
+	public final boolean isBaseToken() {
+		return false;
 	}
 }

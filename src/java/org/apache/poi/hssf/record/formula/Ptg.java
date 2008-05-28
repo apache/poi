@@ -119,254 +119,14 @@ public abstract class Ptg
         return stack;
     }
 
-    public static Ptg createPtg(RecordInputStream in)
-    {
-        byte id     = in.readByte();
-        Ptg  retval = null;
-
-        switch (id)
-        {
-             case ExpPtg.sid :                  // 0x01
-                 retval = new ExpPtg(in);
-                 break;
-
-             case AddPtg.sid :                  // 0x03
-                 retval = new AddPtg(in);
-                 break;
-
-             case SubtractPtg.sid :             // 0x04
-                 retval = new SubtractPtg(in);
-                 break;
-
-             case MultiplyPtg.sid :             // 0x05
-                 retval = new MultiplyPtg(in);
-                 break;
-
-             case DividePtg.sid :               // 0x06
-                  retval = new DividePtg(in);
-                  break;
-
-             case PowerPtg.sid :                // 0x07
-                 retval = new PowerPtg(in);
-                 break;
-
-             case ConcatPtg.sid :               // 0x08
-                 retval = new ConcatPtg(in);
-                              break;
-
-             case LessThanPtg.sid:              // 0x09
-                 retval = new LessThanPtg(in);
-                              break;
-
-              case LessEqualPtg.sid :            // 0x0a
-                 retval = new LessEqualPtg(in);
-                              break;
-
-             case EqualPtg.sid :                // 0x0b
-                 retval = new EqualPtg(in);
-                              break;
-
-             case GreaterEqualPtg.sid :         // 0x0c
-                 retval = new GreaterEqualPtg(in);
-                              break;
-
-             case GreaterThanPtg.sid :          // 0x0d
-                 retval = new GreaterThanPtg(in);
-                              break;
-
-             case NotEqualPtg.sid :             // 0x0e
-                 retval = new NotEqualPtg(in);
-                              break;
-
-             case IntersectionPtg.sid :         // 0x0f
-                 retval = new IntersectionPtg(in);
-                              break;
-              case UnionPtg.sid :                // 0x10
-                 retval = new UnionPtg(in);
-                              break;
-
-             case RangePtg.sid :                // 0x11
-                 retval = new RangePtg(in);
-                              break;
-
-             case UnaryPlusPtg.sid :            // 0x12
-                 retval = new UnaryPlusPtg(in);
-                              break;
-
-             case UnaryMinusPtg.sid :           // 0x13
-                 retval = new UnaryMinusPtg(in);
-                              break;
-
-             case PercentPtg.sid :              // 0x14
-                 retval = new PercentPtg(in);
-                              break;
-
-             case ParenthesisPtg.sid :          // 0x15
-                 retval = new ParenthesisPtg(in);
-                              break;
-
-             case MissingArgPtg.sid :           // 0x16
-                 retval = new MissingArgPtg(in);
-                              break;
-
-             case StringPtg.sid :               // 0x17
-                retval = new StringPtg(in);
-                break;
-
-             case AttrPtg.sid :                 // 0x19
-             case 0x1a :
-                 retval = new AttrPtg(in);
-                              break;
-
-             case ErrPtg.sid :                  // 0x1c
-                 retval = new ErrPtg(in);
-                              break;
-
-             case BoolPtg.sid :                 // 0x1d
-                retval = new BoolPtg(in);
-                break;
-
-             case IntPtg.sid :                  // 0x1e
-                 retval = new IntPtg(in);
-                              break;
-
-             case NumberPtg.sid :               // 0x1f
-                  retval = new NumberPtg(in);
-                  break;
-
-             case ArrayPtg.sid :                // 0x20
-                 retval = new ArrayPtg(in);
-                 break;
-             case ArrayPtgV.sid :               // 0x40
-                 retval = new ArrayPtgV(in);
-                 break;
-             case ArrayPtgA.sid :               // 0x60
-                 retval = new ArrayPtgA(in);
-                 break;
-
-             case FuncPtg.sid :                 // 0x21
-             case FuncPtg.sid + 0x20 :          // 0x41
-             case FuncPtg.sid + 0x40 :          // 0x61
-                 retval = new FuncPtg(in);
-                 break;
-
-             case FuncVarPtg.sid :              // 0x22
-             case FuncVarPtg.sid + 0x20 :       // 0x42
-             case FuncVarPtg.sid + 0x40 :       // 0x62
-                 retval = new FuncVarPtg(in);
-                              break;
-
-             case ReferencePtg.sid :            // 0x24
-                 retval = new ReferencePtg(in);
-                              break;
-             case RefAPtg.sid :                 // 0x64
-                 retval = new RefAPtg(in);
-                 break;
-             case RefVPtg.sid :                 // 0x44
-                 retval = new RefVPtg(in);
-                 break;
-             case RefNAPtg.sid :                // 0x6C
-                 retval = new RefNAPtg(in);
-                 break;
-             case RefNPtg.sid :                 // 0x2C
-                 retval = new RefNPtg(in);
-                 break;
-             case RefNVPtg.sid :                // 0x4C
-                 retval = new RefNVPtg(in);
-                 break;
-
-             case AreaPtg.sid :                 // 0x25
-                 retval = new AreaPtg(in);
-                              break;
-             case AreaVPtg.sid:                 // 0x45
-                 retval = new AreaVPtg(in);
-                 break;
-             case AreaAPtg.sid:                 // 0x65
-                 retval = new AreaAPtg(in);
-                 break;
-             case AreaNAPtg.sid :               // 0x6D
-                 retval = new AreaNAPtg(in);
-                  break;
-             case AreaNPtg.sid :                // 0x2D
-                 retval = new AreaNPtg(in);
-                 break;
-             case AreaNVPtg.sid :               // 0x4D
-                retval = new AreaNVPtg(in);
-                break;
-
-             case MemAreaPtg.sid :              // 0x26
-             case MemAreaPtg.sid + 0x40 :       // 0x46
-             case MemAreaPtg.sid + 0x20 :       // 0x66
-                 retval = new MemAreaPtg(in);
-                 break;
-
-             case MemErrPtg.sid :               // 0x27
-             case MemErrPtg.sid + 0x20 :        // 0x47
-             case MemErrPtg.sid + 0x40 :        // 0x67
-                 retval = new MemErrPtg(in);
-                              break;
-
-             case MemFuncPtg.sid :              // 0x29
-                 retval = new MemFuncPtg(in);
-                 break;
-
-             case RefErrorPtg.sid :             // 0x2a
-             case RefErrorPtg.sid + 0x20 :      // 0x4a
-             case RefErrorPtg.sid + 0x40 :      // 0x6a
-                 retval = new RefErrorPtg(in);
-                              break;
-
-             case AreaErrPtg.sid :              // 0x2b
-             case AreaErrPtg.sid + 0x20 :       // 0x4b
-             case AreaErrPtg.sid + 0x40 :       // 0x6b
-                 retval = new AreaErrPtg(in);
-                              break;
-
-             case NamePtg.sid :                 // 0x23
-             case NamePtg.sid + 0x20 :          // 0x43
-             case NamePtg.sid + 0x40 :          // 0x63
-                 retval = new NamePtg(in);
-                 break;
-
-             case NameXPtg.sid :                // 0x39
-             case NameXPtg.sid + 0x20 :         // 0x45
-             case NameXPtg.sid + 0x40 :         // 0x79
-                 retval = new NameXPtg(in);
-                              break;
-
-             case Area3DPtg.sid :               // 0x3b
-             case Area3DPtg.sid + 0x20 :        // 0x5b
-             case Area3DPtg.sid + 0x40 :        // 0x7b
-                 retval = new Area3DPtg(in);
-                              break;
-
-             case Ref3DPtg.sid :                // 0x3a
-             case Ref3DPtg.sid + 0x20:          // 0x5a
-             case Ref3DPtg.sid + 0x40:          // 0x7a
-                 retval = new Ref3DPtg(in);
-                              break;
-
-             case DeletedRef3DPtg.sid:          // 0x3c
-             case DeletedRef3DPtg.sid + 0x20:   // 0x5c
-             case DeletedRef3DPtg.sid + 0x40:   // 0x7c
-                 retval = new DeletedRef3DPtg(in);
-                              break;
-
-             case DeletedArea3DPtg.sid :        // 0x3d
-             case DeletedArea3DPtg.sid + 0x20 : // 0x5d
-             case DeletedArea3DPtg.sid + 0x40 : // 0x7d
-                 retval = new DeletedArea3DPtg(in);
-                 break;
-
-             case 0x00:
-                 retval = new UnknownPtg();
-                 break;
-
-            default :
-                 //retval = new UnknownPtg();
-                 throw new java.lang.UnsupportedOperationException(" Unknown Ptg in Formula: 0x"+
-                        Integer.toHexString(( int ) id) + " (" + ( int ) id + ")");
+    public static Ptg createPtg(RecordInputStream in) {
+        byte id = in.readByte();
+        
+        if (id < 0x20) {
+        	return createBasePtg(id, in);
         }
+        
+        Ptg  retval = createClassifiedPtg(id, in);
 
         if (id > 0x60) {
             retval.setClass(CLASS_ARRAY);
@@ -379,6 +139,118 @@ public abstract class Ptg
        return retval;
 
     }
+
+	private static Ptg createClassifiedPtg(byte id, RecordInputStream in) {
+		
+		int baseId = id & 0x1F | 0x20;
+		
+        switch (baseId) {
+             case FuncPtg.sid:     return new FuncPtg(in);     // 0x21, 0x41, 0x61
+             case FuncVarPtg.sid:  return new FuncVarPtg(in);  // 0x22, 0x42, 0x62
+             case NamePtg.sid:     return new NamePtg(in);     // 0x23, 0x43, 0x63
+
+             case MemAreaPtg.sid:  return new MemAreaPtg(in);  // 0x26, 0x46, 0x66
+             case MemErrPtg.sid:   return new MemErrPtg(in);   // 0x27, 0x47, 0x67
+             case MemFuncPtg.sid:  return new MemFuncPtg(in);  // 0x29, 0x49, 0x69
+             case RefErrorPtg.sid: return  new RefErrorPtg(in);// 0x2a, 0x4a, 0x6a
+             case AreaErrPtg.sid:  return new AreaErrPtg(in);  // 0x2b, 0x4b, 0x6b
+
+             case NameXPtg.sid:    return new NameXPtg(in);    // 0x39, 0x49, 0x79
+             case Ref3DPtg.sid:    return  new Ref3DPtg(in);   // 0x3a, 0x5a, 0x7a
+             case Area3DPtg.sid:   return new Area3DPtg(in);   // 0x3b, 0x5b, 0x7b
+             case DeletedRef3DPtg.sid:  return new DeletedRef3DPtg(in);   // 0x3c, 0x5c, 0x7c
+             case DeletedArea3DPtg.sid: return  new DeletedArea3DPtg(in); // 0x3d, 0x5d, 0x7d
+        }
+        
+        
+        switch (id) {
+        // TODO - why are specific subclasses needed for these Ptgs?
+            case ArrayPtg.sid:     return new ArrayPtg(in);    // 0x20
+            case ArrayPtgV.sid:    return new ArrayPtgV(in);   // 0x40
+            case ArrayPtgA.sid:    return new ArrayPtgA(in);   // 0x60
+
+            case ReferencePtg.sid: return new ReferencePtg(in);// 0x24
+            case RefAPtg.sid:      return new RefAPtg(in);     // 0x64
+            case RefVPtg.sid:      return new RefVPtg(in);     // 0x44
+
+            case RefNAPtg.sid:     return new RefNAPtg(in);    // 0x6C
+            case RefNPtg.sid:      return new RefNPtg(in);     // 0x2C
+            case RefNVPtg.sid:     return new RefNVPtg(in);    // 0x4C
+
+            case AreaPtg.sid:      return new AreaPtg(in);     // 0x25
+            case AreaVPtg.sid:      return new AreaVPtg(in);   // 0x45
+            case AreaAPtg.sid:      return new AreaAPtg(in);   // 0x65
+
+            case AreaNAPtg.sid:    return new AreaNAPtg(in);   // 0x6D
+            case AreaNPtg.sid:     return new AreaNPtg(in);    // 0x2D
+            case AreaNVPtg.sid:    return new AreaNVPtg(in);   // 0x4D
+        
+        }
+        throw new UnsupportedOperationException(" Unknown Ptg in Formula: 0x"+
+                   Integer.toHexString(id) + " (" + ( int ) id + ")");
+	}
+
+	private static Ptg createBasePtg(byte id, RecordInputStream in) {
+		switch(id) {
+		    case 0x00:                return new UnknownPtg(); // TODO - not a real Ptg
+    		case ExpPtg.sid:          return new ExpPtg(in);         // 0x01
+    		case AddPtg.sid:          return new AddPtg(in);         // 0x03
+    		case SubtractPtg.sid:     return new SubtractPtg(in);    // 0x04
+    		case MultiplyPtg.sid:     return new MultiplyPtg(in);    // 0x05
+    		case DividePtg.sid:       return new DividePtg(in);      // 0x06
+    		case PowerPtg.sid:        return new PowerPtg(in);       // 0x07
+    		case ConcatPtg.sid:       return new ConcatPtg(in);      // 0x08
+    		case LessThanPtg.sid:     return new LessThanPtg(in);    // 0x09
+    		case LessEqualPtg.sid:    return new LessEqualPtg(in);   // 0x0a
+    		case EqualPtg.sid:        return new EqualPtg(in);       // 0x0b
+    		case GreaterEqualPtg.sid: return new GreaterEqualPtg(in);// 0x0c
+    		case GreaterThanPtg.sid:  return new GreaterThanPtg(in); // 0x0d
+    		case NotEqualPtg.sid:     return new NotEqualPtg(in);    // 0x0e
+    		case IntersectionPtg.sid: return new IntersectionPtg(in);// 0x0f
+    		case UnionPtg.sid:        return new UnionPtg(in);       // 0x10
+    		case RangePtg.sid:        return new RangePtg(in);       // 0x11
+    		case UnaryPlusPtg.sid:    return new UnaryPlusPtg(in);   // 0x12
+    		case UnaryMinusPtg.sid:   return new UnaryMinusPtg(in);  // 0x13
+    		case PercentPtg.sid:      return new PercentPtg(in);     // 0x14
+    		case ParenthesisPtg.sid:  return new ParenthesisPtg(in); // 0x15
+    		case MissingArgPtg.sid:   return new MissingArgPtg(in);  // 0x16
+    		case StringPtg.sid:       return new StringPtg(in);      // 0x17
+    		case AttrPtg.sid:                
+    		case 0x1a:        return new AttrPtg(in); // 0x19
+    		case ErrPtg.sid:          return new ErrPtg(in);         // 0x1c
+    		case BoolPtg.sid:         return new BoolPtg(in);        // 0x1d
+    		case IntPtg.sid:          return new IntPtg(in);         // 0x1e
+    		case NumberPtg.sid:       return new NumberPtg(in);      // 0x1f
+		}
+		throw new RuntimeException("Unexpected base token id (" + id + ")");
+	}
+    /**
+     * 
+     * 
+     */
+	public static int getEncodedSize(Stack ptgs) {
+		return getEncodedSize(toPtgArray(ptgs));
+	}
+	private static Ptg[] toPtgArray(List l) {
+		Ptg[] result = new Ptg[l.size()];
+		l.toArray(result);
+		return result;
+	}
+    private static Stack createStack(Ptg[] formulaTokens) {
+		Stack result = new Stack();
+		for (int i = 0; i < formulaTokens.length; i++) {
+			result.add(formulaTokens[i]);
+		} 
+		return result;
+	}
+	// TODO - several duplicates of this code should be refactored here
+	public static int getEncodedSize(Ptg[] ptgs) {
+		int result = 0;
+		for (int i = 0; i < ptgs.length; i++) {
+			result += ptgs[i].getSize();
+		}
+		return result;
+	}
 
     public static int serializePtgStack(Stack expression, byte[] array, int offset) {
         int pos = 0;
@@ -408,7 +280,15 @@ public abstract class Ptg
         return pos;
     }
 
+    /**
+     * @return the encoded length of this Ptg, including the initial Ptg type identifier byte. 
+     */
     public abstract int getSize();
+    
+    /**
+     * @return the encoded length of this Ptg, not including the initial Ptg type identifier byte. 
+     */
+//    public abstract int getDataSize();
 
     public final byte [] getBytes()
     {
@@ -455,10 +335,15 @@ public abstract class Ptg
     protected byte ptgClass = CLASS_REF; //base ptg
 
     public void setClass(byte thePtgClass) {
+    	if (isBaseToken()) {
+    		throw new RuntimeException("setClass should not be called on a base token");
+    	}
         ptgClass = thePtgClass;
     }
 
-    /** returns the class (REF/VALUE/ARRAY) for this Ptg */
+    /**
+     *  @return the 'operand class' (REF/VALUE/ARRAY) for this Ptg
+     */
     public byte getPtgClass() {
         return ptgClass;
     }
@@ -468,5 +353,8 @@ public abstract class Ptg
     public abstract Object clone();
 
 
-
+    /**
+     * @return <code>false</code> if this token is classified as 'reference', 'value', or 'array'
+     */
+    public abstract boolean isBaseToken();
 }
