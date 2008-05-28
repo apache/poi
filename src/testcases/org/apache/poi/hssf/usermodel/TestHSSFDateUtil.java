@@ -257,9 +257,15 @@ public class TestHSSFDateUtil extends TestCase {
                 // (who knows what they mean though...)
                 "[$-F800]dddd\\,\\ mmm\\ dd\\,\\ yyyy",
                 "[$-F900]ddd/mm/yyy",
+                // These ones specify colours, who knew that was allowed?
+                "[BLACK]dddd/mm/yy",
+                "[yeLLow]yyyy-mm-dd"
         };
         for(int i=0; i<formats.length; i++) {
-            assertTrue( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
+            assertTrue(
+            		formats[i] + " is a date format", 
+            		HSSFDateUtil.isADateFormat(formatId, formats[i])
+            );
         }
         
         // Then time based ones too
@@ -270,7 +276,10 @@ public class TestHSSFDateUtil extends TestCase {
                 "mm/dd HH:MM PM", "mm/dd HH:MM pm" 
         };
         for(int i=0; i<formats.length; i++) {
-            assertTrue( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
+            assertTrue(
+            		formats[i] + " is a datetime format", 
+            		HSSFDateUtil.isADateFormat(formatId, formats[i])
+            );
         }
         
         // Then invalid ones
@@ -278,10 +287,14 @@ public class TestHSSFDateUtil extends TestCase {
                 "yyyy*mm*dd", 
                 "0.0", "0.000",
                 "0%", "0.0%",
+                "[]Foo", "[BLACK]0.00%",
                 "", null
         };
         for(int i=0; i<formats.length; i++) {
-            assertFalse( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
+            assertFalse( 
+            		formats[i] + " is not a date or datetime format",
+            		HSSFDateUtil.isADateFormat(formatId, formats[i])
+            );
         }
         
         // And these are ones we probably shouldn't allow,
