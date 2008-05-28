@@ -114,6 +114,15 @@ public class XWPFDocument extends POIXMLDocument {
 				tables.add(new XWPFTable(table));
 			}
 		}
+		
+        this.embedds = new LinkedList<PackagePart>();
+        for(PackageRelationship rel : getCorePart().getRelationshipsByType(OLE_OBJECT_REL_TYPE)) {
+            embedds.add(getTargetPart(rel));
+        }
+        
+        for(PackageRelationship rel : getCorePart().getRelationshipsByType(PACK_OBJECT_REL_TYPE)) {
+            embedds.add(getTargetPart(rel));
+        }
 	}
 	
 	/**

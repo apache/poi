@@ -24,6 +24,7 @@ import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
+import org.openxml4j.opc.PackageRelationship;
 import org.openxml4j.opc.PackageRelationshipCollection;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesSlide;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPresentation;
@@ -63,6 +64,17 @@ public class XSLFSlideShow extends POIXMLDocument {
 		
 		presentationDoc =
 			PresentationDocument.Factory.parse(getCorePart().getInputStream());
+		
+		for (CTSlideIdListEntry ctSlide : getSlideReferences().getSldIdArray()) {
+	          PackagePart slidePart =
+	                getTargetPart(getCorePart().getRelationship(ctSlide.getId2()));
+	          
+	          for(PackageRelationship rel : slidePart.getRelationshipsByType(OLE_OBJECT_REL_TYPE))
+	              embedds.add(getTargetPart(rel)); // TODO: Add this reference to each slide as well
+	          
+	          for(PackageRelationship rel : slidePart.getRelationshipsByType(PACK_OBJECT_REL_TYPE))
+                  embedds.add(getTargetPart(rel));
+		}
 	}
 	public XSLFSlideShow(String file) throws OpenXML4JException, IOException, XmlException {
 		this(openPackage(file));

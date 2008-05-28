@@ -49,7 +49,7 @@ public class TestEmbeded extends TestCase
 		assertTrue(f.exists());
 		
 		POIXMLDocument doc = new XSSFWorkbook(Package.open(f.toString()));
-		test(doc, 0);
+		test(doc, 4);
 	}
 
 	public void testWord() throws Exception {
@@ -57,7 +57,7 @@ public class TestEmbeded extends TestCase
 		assertTrue(f.exists());
 		
 		POIXMLDocument doc = new XWPFDocument(Package.open(f.toString()));
-		test(doc, 4);
+		test(doc, 5);
 	}
 
 	public void testPowerPoint() throws Exception {
@@ -65,7 +65,7 @@ public class TestEmbeded extends TestCase
 		assertTrue(f.exists());
 		
 		POIXMLDocument doc = new XSLFSlideShow(Package.open(f.toString()));
-		test(doc, 0);
+		test(doc, 4);
 	}
 	
 	private void test(POIXMLDocument doc, int expectedCount) throws Exception {
