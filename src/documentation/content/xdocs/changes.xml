@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1-final" date="2008-06-??">
+           <action dev="POI-DEVELOPERS" type="fix">45087 - Correctly detect date formats like [Black]YYYY as being date based</action>
            <action dev="POI-DEVELOPERS" type="add">45060 - Improved token class transformation during formula parsing</action>
            <action dev="POI-DEVELOPERS" type="add">44840 - Improved handling of HSSFObjectData, especially for entries with data held not in POIFS</action>
            <action dev="POI-DEVELOPERS" type="add">45043 - Support for getting excel cell comments when extracting text</action>
