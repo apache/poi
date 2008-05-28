@@ -31,9 +31,9 @@
   </header>
 
   <body>
-    <section><title>POI 3.1-BETA1 Released (2008-04028)</title>
+    <section><title>POI 3.1-BETA2 Released (2008-05-28)</title>
       <p>
-        The POI team is pleased to announce the release of 3.1 BETA1 which is one of the final steps before 3.1 FINAL.
+        The POI team is pleased to announce the release of 3.1 BETA2 which is one of the final steps before 3.1 FINAL.
         The status of this release is a beta, meaning that we encourage users to try it out.
         If you find any bugs, please report them to the POI <link href="https://issues.apache.org/bugzilla/buglist.cgi?product=POI">bug database</link> or to
         the <link href="./mailinglists.html">POI Developer List</link>.
@@ -45,7 +45,7 @@
       </p>
       <p>
         The release is also available from the central Maven repository 
-        under Group ID "org.apache.poi" and Version "3.1-beta1".
+        under Group ID "org.apache.poi" and Version "3.1-beta2".
       </p>  
     </section>
     <section><title>POI 3.0.2 Released</title>
