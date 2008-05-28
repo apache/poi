@@ -121,7 +121,21 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 		    null,
 		    null
 	);
-    
+	public static final XSSFRelation OLEEMBEDDINGS = new XSSFRelation(
+	        null,
+	        OLE_OBJECT_REL_TYPE,
+	        null,
+	        null
+	);
+	
+	public static final XSSFRelation PACKEMBEDDINGS = new XSSFRelation(
+            null,
+            PACK_OBJECT_REL_TYPE,
+            null,
+            null
+    );
+	
+   
 	public static class XSSFRelation {
 		private String TYPE;
 		private String REL;
@@ -292,6 +306,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 PackageRelationshipCollection hyperlinkRels =
                 	part.getRelationshipsByType(SHEET_HYPERLINKS.REL);
                 sheet.initHyperlinks(hyperlinkRels);
+                
+                // Get the embeddings for the workbook
+                for(PackageRelationship rel : part.getRelationshipsByType(OLEEMBEDDINGS.REL))
+                    embedds.add(getTargetPart(rel)); // TODO: Add this reference to each sheet as well
+                
+                for(PackageRelationship rel : part.getRelationshipsByType(PACKEMBEDDINGS.REL))
+                    embedds.add(getTargetPart(rel));
             }
         } catch (XmlException e) {
             throw new IOException(e.toString());

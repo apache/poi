@@ -41,7 +41,11 @@ public abstract class POIXMLDocument {
     
     public static final String EXTENDED_PROPERTIES_REL_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties";
     
+    // OLE embeddings relation name
     public static final String OLE_OBJECT_REL_TYPE="http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject";
+    
+    // Embedded OPC documents relation name
+    public static final String PACK_OBJECT_REL_TYPE="http://schemas.openxmlformats.org/officeDocument/2006/relationships/package";
     
     /** The OPC Package */
     private Package pkg;
@@ -57,7 +61,7 @@ public abstract class POIXMLDocument {
 	/**
 	 * The embedded OLE2 files in the OPC package
 	 */
-    private List<PackagePart> embedds;
+    protected List<PackagePart> embedds = new LinkedList<PackagePart>();
     
     protected POIXMLDocument() {}
     
@@ -70,16 +74,12 @@ public abstract class POIXMLDocument {
 	    
 	        // Get core part
 	        this.corePart = this.pkg.getPart(coreDocRelationship);
-	        
-			// Get any embedded OLE2 documents
-	        this.embedds = new LinkedList<PackagePart>();
-	        for(PackageRelationship rel : corePart.getRelationshipsByType(OLE_OBJECT_REL_TYPE)) {
-	            embedds.add(getTargetPart(rel));
-	        }
+
         } catch (OpenXML4JException e) {
             throw new IOException(e.toString());
     	}
     }
+    
     protected POIXMLDocument(String path) throws IOException {
    		this(openPackage(path));
     }
