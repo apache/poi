@@ -37,7 +37,7 @@ import java.util.List;
 public final class ValueRecordsAggregate
     extends Record
 {
-    public final static short sid       = -1000;
+    public final static short sid       = -1001; // 1000 clashes with RowRecordsAggregate
     int                       firstcell = -1;
     int                       lastcell  = -1;
   CellValueRecordInterface[][] records;
