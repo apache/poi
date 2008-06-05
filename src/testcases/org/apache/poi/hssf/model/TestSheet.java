@@ -19,11 +19,15 @@ package org.apache.poi.hssf.model;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+
+import org.apache.poi.hssf.eventmodel.ERFListener;
+import org.apache.poi.hssf.eventmodel.EventRecordFactory;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,8 +38,7 @@ import java.util.List;
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class TestSheet extends TestCase {
-    public void testCreateSheet() throws Exception
-    {
+    public void testCreateSheet() {
         // Check we're adding row and cell aggregates
         List records = new ArrayList();
         records.add( new BOFRecord() );
@@ -52,8 +55,7 @@ public final class TestSheet extends TestCase {
         assertTrue( sheet.records.get(pos++) instanceof EOFRecord );
     }
 
-    public void testAddMergedRegion()
-    {
+    public void testAddMergedRegion() {
         Sheet sheet = Sheet.createSheet();
         int regionsToAdd = 4096;
         int startRecords = sheet.getRecords().size();
@@ -91,8 +93,7 @@ public final class TestSheet extends TestCase {
         }
     }
 
-    public void testRemoveMergedRegion()
-    {
+    public void testRemoveMergedRegion() {
         Sheet sheet = Sheet.createSheet();
         int regionsToAdd = 4096;
 
@@ -139,13 +140,11 @@ public final class TestSheet extends TestCase {
         assertEquals("Should be no more merged regions", 0, sheet.getNumMergedRegions());
     }
 
-    public void testGetMergedRegionAt()
-    {
+    public void testGetMergedRegionAt() {
         //TODO
     }
 
-    public void testGetNumMergedRegions()
-    {
+    public void testGetNumMergedRegions() {
         //TODO
     }
 
@@ -163,14 +162,13 @@ public final class TestSheet extends TestCase {
 
         Sheet sheet = Sheet.createSheet(records, 0);
         assertNotNull("Row [2] was skipped", sheet.getRow(2));
-
     }
 
     /**
      * Make sure page break functionality works (in memory)
      *
      */
-    public void testRowPageBreaks(){
+    public void testRowPageBreaks() {
         short colFrom = 0;
         short colTo = 255;
 
@@ -226,7 +224,7 @@ public final class TestSheet extends TestCase {
      * Make sure column pag breaks works properly (in-memory)
      *
      */
-    public void testColPageBreaks(){
+    public void testColPageBreaks() {
         short rowFrom = 0;
         short rowTo = (short)65535;
 
@@ -292,20 +290,20 @@ public final class TestSheet extends TestCase {
         final short DEFAULT_IDX = 0xF; // 15
         short xfindex = Short.MIN_VALUE;
         Sheet sheet = Sheet.createSheet();
-        
+
         // without ColumnInfoRecord
         xfindex = sheet.getXFIndexForColAt((short) 0);
         assertEquals(DEFAULT_IDX, xfindex);
         xfindex = sheet.getXFIndexForColAt((short) 1);
         assertEquals(DEFAULT_IDX, xfindex);
-        
+
         ColumnInfoRecord nci = ( ColumnInfoRecord ) sheet.createColInfo();
         sheet.columns.insertColumn(nci);
-        
+
         // single column ColumnInfoRecord
         nci.setFirstColumn((short) 2);
         nci.setLastColumn((short) 2);
-        nci.setXFIndex(TEST_IDX);            
+        nci.setXFIndex(TEST_IDX);
         xfindex = sheet.getXFIndexForColAt((short) 0);
         assertEquals(DEFAULT_IDX, xfindex);
         xfindex = sheet.getXFIndexForColAt((short) 1);
@@ -318,7 +316,7 @@ public final class TestSheet extends TestCase {
         // ten column ColumnInfoRecord
         nci.setFirstColumn((short) 2);
         nci.setLastColumn((short) 11);
-        nci.setXFIndex(TEST_IDX);            
+        nci.setXFIndex(TEST_IDX);
         xfindex = sheet.getXFIndexForColAt((short) 1);
         assertEquals(DEFAULT_IDX, xfindex);
         xfindex = sheet.getXFIndexForColAt((short) 2);
@@ -333,7 +331,7 @@ public final class TestSheet extends TestCase {
         // single column ColumnInfoRecord starting at index 0
         nci.setFirstColumn((short) 0);
         nci.setLastColumn((short) 0);
-        nci.setXFIndex(TEST_IDX);            
+        nci.setXFIndex(TEST_IDX);
         xfindex = sheet.getXFIndexForColAt((short) 0);
         assertEquals(TEST_IDX, xfindex);
         xfindex = sheet.getXFIndexForColAt((short) 1);
@@ -342,7 +340,7 @@ public final class TestSheet extends TestCase {
         // ten column ColumnInfoRecord starting at index 0
         nci.setFirstColumn((short) 0);
         nci.setLastColumn((short) 9);
-        nci.setXFIndex(TEST_IDX);            
+        nci.setXFIndex(TEST_IDX);
         xfindex = sheet.getXFIndexForColAt((short) 0);
         assertEquals(TEST_IDX, xfindex);
         xfindex = sheet.getXFIndexForColAt((short) 7);
@@ -354,7 +352,7 @@ public final class TestSheet extends TestCase {
     }
 
     /**
-     * Prior to bug 45066, POI would get the estimated sheet size wrong 
+     * Prior to bug 45066, POI would get the estimated sheet size wrong
      * when an <tt>UncalcedRecord</tt> was present.<p/>
      */
     public void testUncalcSize_bug45066() {
@@ -363,7 +361,7 @@ public final class TestSheet extends TestCase {
         records.add(new BOFRecord());
         records.add(new UncalcedRecord());
         records.add(new EOFRecord());
-        Sheet sheet = Sheet.createSheet( records, 0, 0 );
+        Sheet sheet = Sheet.createSheet(records, 0, 0);
 
         int estimatedSize = sheet.getSize();
         int serializedSize = sheet.serialize(0, new byte[estimatedSize]);
@@ -371,6 +369,74 @@ public final class TestSheet extends TestCase {
             throw new AssertionFailedError("Identified bug 45066 b");
         }
         assertEquals(50, serializedSize);
+    }
+
+    /**
+     * Prior to bug 45145 <tt>RowRecordsAggregate</tt> and <tt>ValueRecordsAggregate</tt> could
+     * sometimes occur in reverse order.  This test reproduces one of those situations and makes
+     * sure that RRA comes before VRA.<br/>
+     *
+     * The code here represents a normal POI use case where a spreadsheet is created from scratch.
+     */
+    public void testRowValueAggregatesOrder_bug45145() {
+
+        Sheet sheet = Sheet.createSheet();
+
+        RowRecord rr = new RowRecord(5);
+        sheet.addRow(rr);
+
+        CellValueRecordInterface cvr = new BlankRecord();
+        cvr.setColumn((short)0);
+        cvr.setRow(5);
+        sheet.addValueRecord(5, cvr);
+
+
+        int dbCellRecordPos = getDbCellRecordPos(sheet);
+        if (dbCellRecordPos == 264) {
+            // The overt symptom of the bug
+            // DBCELL record pos is calculated wrong if VRA comes before RRA
+            throw new AssertionFailedError("Identified  bug 45145");
+        }
+
+        // make sure that RRA and VRA are in the right place
+        int rraIx = sheet.getDimsLoc()+1;
+        List recs = sheet.getRecords();
+        assertEquals(RowRecordsAggregate.class, recs.get(rraIx).getClass());
+        assertEquals(ValueRecordsAggregate.class, recs.get(rraIx+1).getClass());
+
+        assertEquals(254, dbCellRecordPos);
+    }
+
+    /**
+     * @return the value calculated for the position of the first DBCELL record for this sheet.
+     * That value is found on the IndexRecord.
+     */
+    private static int getDbCellRecordPos(Sheet sheet) {
+        int size = sheet.getSize();
+        byte[] data = new byte[size];
+        sheet.serialize(0, data);
+        EventRecordFactory erf = new EventRecordFactory();
+        MyIndexRecordListener myIndexListener = new MyIndexRecordListener();
+        erf.registerListener(myIndexListener, new short[] { IndexRecord.sid, });
+        erf.processRecords(new ByteArrayInputStream(data));
+        IndexRecord indexRecord = myIndexListener.getIndexRecord();
+        int dbCellRecordPos = indexRecord.getDbcellAt(0);
+        return dbCellRecordPos;
+    }
+
+    private static final class MyIndexRecordListener implements ERFListener {
+
+        private IndexRecord _indexRecord;
+        public MyIndexRecordListener() {
+            // no-arg constructor
+        }
+        public boolean processRecord(Record rec) {
+            _indexRecord = (IndexRecord)rec;
+            return true;
+        }
+        public IndexRecord getIndexRecord() {
+            return _indexRecord;
+        }
     }
 }
 
