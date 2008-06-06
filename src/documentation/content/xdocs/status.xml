@@ -43,6 +43,9 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
         <release version="3.1-final" date="2008-06-??">
+           <action dev="POI-DEVELOPERS" type="fix">45133 - Fixed OBJ Record (5Dh) to pad the sub-record data to a 4-byte boundary</action>
+           <action dev="POI-DEVELOPERS" type="fix">45145 - Fixed Sheet to always enforce RowRecordsAggregate before ValueRecordsAggregate</action>
+           <action dev="POI-DEVELOPERS" type="fix">45123 - Fixed SharedFormulaRecord.convertSharedFormulas() to propagate token operand classes</action>
            <action dev="POI-DEVELOPERS" type="fix">45087 - Correctly detect date formats like [Black]YYYY as being date based</action>
            <action dev="POI-DEVELOPERS" type="add">45060 - Improved token class transformation during formula parsing</action>
            <action dev="POI-DEVELOPERS" type="add">44840 - Improved handling of HSSFObjectData, especially for entries with data held not in POIFS</action>

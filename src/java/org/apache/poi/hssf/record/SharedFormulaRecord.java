@@ -201,6 +201,10 @@ public final class SharedFormulaRecord extends Record {
         if (ptgs != null)
           for (int k = 0; k < ptgs.size(); k++) {
             Ptg ptg = (Ptg) ptgs.get(k);
+            byte originalOperandClass = -1;
+            if (!ptg.isBaseToken()) {
+                originalOperandClass = ptg.getPtgClass();
+            }
             if (ptg instanceof RefNPtg) {
               RefNPtg refNPtg = (RefNPtg)ptg;
               ptg = new ReferencePtg(fixupRelativeRow(formulaRow,refNPtg.getRow(),refNPtg.isRowRelative()),
@@ -249,7 +253,11 @@ public final class SharedFormulaRecord extends Record {
                                 areaNAPtg.isLastRowRelative(),
                                 areaNAPtg.isFirstColRelative(),
                                 areaNAPtg.isLastColRelative());
-            } 
+            }
+            if (!ptg.isBaseToken()) {
+                ptg.setClass(originalOperandClass);
+            }
+            
             newPtgStack.add(ptg);
         }
         return newPtgStack;
