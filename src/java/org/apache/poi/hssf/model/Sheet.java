@@ -66,7 +66,7 @@ public final class Sheet implements Model {
     protected ArrayList                  records           =     null;
               int                        preoffset         =     0;            // offset of the sheet in a new file
               int                        loc               =     0;
-    protected int                        dimsloc           =     0;
+    protected int                        dimsloc           =     -1;  // TODO - is it legal for dims record to be missing?
     protected DimensionsRecord           dims;
     protected DefaultColWidthRecord      defaultcolwidth   =     null;
     protected DefaultRowHeightRecord     defaultrowheight  =     null;
@@ -295,6 +295,8 @@ public final class Sheet implements Model {
             }
             else if ( rec.getSid() == IndexRecord.sid )
             {
+                // ignore INDEX record because it is only needed by Excel, 
+                // and POI always re-calculates its contents 
                 rec = null;
             }
 
@@ -329,8 +331,8 @@ public final class Sheet implements Model {
             }
         }
         retval.records = records;
-        retval.checkCells();
         retval.checkRows();
+        retval.checkCells();
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "sheet createSheet (existing file) exited");
         return retval;
@@ -486,7 +488,15 @@ public final class Sheet implements Model {
         if (cells == null)
         {
             cells = new ValueRecordsAggregate();
-            records.add(getDimsLoc() + 1, cells);
+            // In the worksheet stream, the row records always occur before the cell (value) 
+            // records. Therefore POI's aggregates (RowRecordsAggregate, ValueRecordsAggregate) 
+            // should follow suit. Some methods in this class tolerate either order, while 
+            // others have been found to fail (see bug 45145).
+            int rraIndex = getDimsLoc() + 1;
+            if (records.get(rraIndex).getClass() != RowRecordsAggregate.class) {
+                throw new IllegalStateException("Cannot create value records before row records exist");
+            }
+            records.add(rraIndex+1, cells);
         }
     }
 
@@ -836,46 +846,61 @@ public final class Sheet implements Model {
         return pos-offset;
     }
 
-    private int serializeIndexRecord(final int BOFRecordIndex, final int offset, byte[] data) {
-      IndexRecord index = new IndexRecord();
-      index.setFirstRow(rows.getFirstRowNum());
-      index.setLastRowAdd1(rows.getLastRowNum()+1);
-      //Calculate the size of the records from the end of the BOF
-      //and up to the RowRecordsAggregate...
-      int sheetRecSize = 0;
-      for (int j = BOFRecordIndex+1; j < records.size(); j++)
-      {
-        Record tmpRec = (( Record ) records.get(j));
-        if (tmpRec instanceof UncalcedRecord) {
-            continue;
-        }
-        if (tmpRec instanceof RowRecordsAggregate) {
-            break;
-        }
-        sheetRecSize+= tmpRec.getRecordSize();
-      }
-      if (_isUncalced) {
-          sheetRecSize += UncalcedRecord.getStaticRecordSize();
-      }
-      //Add the references to the DBCells in the IndexRecord (one for each block)
-      int blockCount = rows.getRowBlockCount();
-      //Calculate the size of this IndexRecord
-      int indexRecSize = IndexRecord.getRecordSizeForBlockCount(blockCount);
+    /**
+     * @param indexRecordOffset also happens to be the end of the BOF record
+     * @return the size of the serialized INDEX record
+     */
+    private int serializeIndexRecord(final int bofRecordIndex, final int indexRecordOffset,
+            byte[] data) {
+        IndexRecord index = new IndexRecord();
+        index.setFirstRow(rows.getFirstRowNum());
+        index.setLastRowAdd1(rows.getLastRowNum() + 1);
+        // Calculate the size of the records from the end of the BOF
+        // and up to the RowRecordsAggregate...
 
-      int rowBlockOffset = 0;
-      int cellBlockOffset = 0;
-      int dbCellOffset = 0;
-      for (int block=0;block<blockCount;block++) {
-        rowBlockOffset += rows.getRowBlockSize(block);
-        cellBlockOffset += null == cells ? 0 : cells.getRowCellBlockSize(rows.getStartRowNumberForBlock(block),
-                                                     rows.getEndRowNumberForBlock(block));
-        //Note: The offsets are relative to the Workbook BOF. Assume that this is
-        //0 for now.....
-        index.addDbcell(offset + indexRecSize + sheetRecSize + dbCellOffset + rowBlockOffset + cellBlockOffset);
-        //Add space required to write the dbcell record(s) (whose references were just added).
-        dbCellOffset += (8 + (rows.getRowCountForBlock(block) * 2));
-      }
-      return index.serialize(offset, data);
+        // 'initial sheet records' are between INDEX and first ROW record.
+        int sizeOfInitialSheetRecords = 0;
+        // start just after BOF record (INDEX is not present in this list)
+        for (int j = bofRecordIndex + 1; j < records.size(); j++) {
+            Record tmpRec = ((Record) records.get(j));
+            if (tmpRec instanceof UncalcedRecord) {
+                continue;
+            }
+            if (tmpRec instanceof RowRecordsAggregate) {
+                break;
+            }
+            sizeOfInitialSheetRecords += tmpRec.getRecordSize();
+        }
+        if (_isUncalced) {
+            sizeOfInitialSheetRecords += UncalcedRecord.getStaticRecordSize();
+        }
+
+        // Add the references to the DBCells in the IndexRecord (one for each block)
+        // Note: The offsets are relative to the Workbook BOF. Assume that this is
+        // 0 for now.....
+
+        int blockCount = rows.getRowBlockCount();
+        // Calculate the size of this IndexRecord
+        int indexRecSize = IndexRecord.getRecordSizeForBlockCount(blockCount);
+
+        int currentOffset = indexRecordOffset + indexRecSize + sizeOfInitialSheetRecords;
+
+        for (int block = 0; block < blockCount; block++) {
+            // each row-block has a DBCELL record.
+            // The offset of each DBCELL record needs to be updated in the INDEX record
+
+            // account for row records in this row-block
+            currentOffset += rows.getRowBlockSize(block);
+            // account for cell value records after those
+            currentOffset += null == cells ? 0 : cells.getRowCellBlockSize(rows
+                    .getStartRowNumberForBlock(block), rows.getEndRowNumberForBlock(block));
+
+            // currentOffset is now the location of the DBCELL record for this row-block
+            index.addDbcell(currentOffset);
+            // Add space required to write the DBCELL record (whose reference was just added).
+            currentOffset += (8 + (rows.getRowCountForBlock(block) * 2));
+        }
+        return index.serialize(indexRecordOffset, data);
     }
 
 

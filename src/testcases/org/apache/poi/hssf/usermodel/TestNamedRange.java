@@ -17,19 +17,11 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.util.TempFile;
 
 /**
  * 
@@ -49,9 +41,7 @@ public final class TestNamedRange extends TestCase {
 	}
 
 	/** Test of TestCase method, of class test.RangeTest. */
-	public void testNamedRange() 
-		throws IOException
-	{
+	public void testNamedRange() {
 		HSSFWorkbook wb = openSample("Simple.xls");
 
 		//Creating new Named Range
@@ -64,7 +54,7 @@ public final class TestNamedRange extends TestCase {
 		newNamedRange.setNameName("RangeTest");
 		//Setting its reference
 		newNamedRange.setReference(sheetName + "!$D$4:$E$8");
-  
+
 		//Getting NAmed Range
 		HSSFName namedRange1 = wb.getNameAt(0);
 		//Getting it sheet name
@@ -76,22 +66,10 @@ public final class TestNamedRange extends TestCase {
 		SanityChecker c = new SanityChecker();
 		c.checkHSSFWorkbook(wb);
 
-		File file = TempFile.createTempFile("testNamedRange", ".xls");
-
-		FileOutputStream fileOut = new FileOutputStream(file);
-		wb.write(fileOut);
-
-		fileOut.close();
-
-		assertTrue("file exists",file.exists());
-
-		FileInputStream in = new FileInputStream(file);
-		wb = new HSSFWorkbook(in);
+		wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
 		HSSFName nm =wb.getNameAt(wb.getNameIndex("RangeTest"));
 		assertTrue("Name is "+nm.getNameName(),"RangeTest".equals(nm.getNameName()));
 		assertEquals(wb.getSheetName(0)+"!$D$4:$E$8", nm.getReference());
-
-
 	}
 	 
 	/**
@@ -143,13 +121,11 @@ public final class TestNamedRange extends TestCase {
 	/**
 	 * Test that multiple named ranges can be added written and read
 	 */
-	public void testMultipleNamedWrite() 
-		throws IOException
-	{
+	public void testMultipleNamedWrite() {
 		HSSFWorkbook wb	 = new HSSFWorkbook();
 		 
 
-		HSSFSheet sheet = wb.createSheet("testSheet1");
+		wb.createSheet("testSheet1");
 		String sheetName = wb.getSheetName(0);
 
 		assertEquals("testSheet1", sheetName);
@@ -170,18 +146,7 @@ public final class TestNamedRange extends TestCase {
 		HSSFName namedRange1 = wb.getNameAt(0);
 		String referece = namedRange1.getReference();
 
-		File file = TempFile.createTempFile("testMultiNamedRange", ".xls");
- 
-		FileOutputStream fileOut = new FileOutputStream(file);
-		wb.write(fileOut);
-		fileOut.close();
-
-		 
-		assertTrue("file exists",file.exists());
-
-
-		FileInputStream in = new FileInputStream(file);
-		wb = new HSSFWorkbook(in);
+		wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
 		HSSFName nm =wb.getNameAt(wb.getNameIndex("RangeTest"));
 		assertTrue("Name is "+nm.getNameName(),"RangeTest".equals(nm.getNameName()));
 		assertTrue("Reference is "+nm.getReference(),(wb.getSheetName(0)+"!$D$4:$E$8").equals(nm.getReference()));
@@ -189,19 +154,14 @@ public final class TestNamedRange extends TestCase {
 		nm = wb.getNameAt(wb.getNameIndex("AnotherTest"));
 		assertTrue("Name is "+nm.getNameName(),"AnotherTest".equals(nm.getNameName()));
 		assertTrue("Reference is "+nm.getReference(),newNamedRange2.getReference().equals(nm.getReference()));
-
-
 	}
 
 	/**
 	 * Test case provided by czhang@cambian.com (Chun Zhang)
 	 * <p>
 	 * Addresses Bug <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13775" target="_bug">#13775</a>
-	 * @throws IOException
 	 */
-	public void testMultiNamedRange() 
-		 throws IOException
-	 {
+	public void testMultiNamedRange() {
 
 		 // Create a new workbook
 		 HSSFWorkbook wb = new HSSFWorkbook ();
@@ -234,16 +194,8 @@ public final class TestNamedRange extends TestCase {
 		 namedRange2.setReference("sheet2" + "!$A$1:$O$21");
  
 		 // Write the workbook to a file
-		 File file = TempFile.createTempFile("testMuiltipletNamedRanges", ".xls");
-		 FileOutputStream fileOut = new FileOutputStream(file);
-		 wb.write(fileOut);
-		 fileOut.close();
-
-		 assertTrue("file exists",file.exists());
-
 		 // Read the Excel file and verify its content
-		 FileInputStream in = new FileInputStream(file);
-		 wb = new HSSFWorkbook(in);
+		 wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
 		 HSSFName nm1 =wb.getNameAt(wb.getNameIndex("RangeTest1"));
 		 assertTrue("Name is "+nm1.getNameName(),"RangeTest1".equals(nm1.getNameName()));
 		 assertTrue("Reference is "+nm1.getReference(),(wb.getSheetName(0)+"!$A$1:$L$41").equals(nm1.getReference()));
@@ -253,17 +205,15 @@ public final class TestNamedRange extends TestCase {
 		 assertTrue("Reference is "+nm2.getReference(),(wb.getSheetName(1)+"!$A$1:$O$21").equals(nm2.getReference()));
 	 }	   
 
-	public void testUnicodeNamedRange() throws Exception {
+	public void testUnicodeNamedRange() {
 		HSSFWorkbook workBook = new HSSFWorkbook();
-		HSSFSheet sheet = workBook.createSheet("Test");
+		workBook.createSheet("Test");
 		HSSFName name = workBook.createName();
 		name.setNameName("\u03B1");
 		name.setReference("Test!$D$3:$E$8");
 
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		workBook.write(out);
 
-		HSSFWorkbook workBook2 = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+		HSSFWorkbook workBook2 = HSSFTestDataSamples.writeOutAndReadBack(workBook);
 		HSSFName name2 = workBook2.getNameAt(0);
 
 		assertEquals("\u03B1", name2.getNameName());
@@ -286,7 +236,6 @@ public final class TestNamedRange extends TestCase {
 
 	 	 assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);
 		 assertEquals("'" + sheetName + "'!$A$1:$B$1", retrievedPrintArea);
-		 
 	 }
 
 	 /**
@@ -305,9 +254,7 @@ public final class TestNamedRange extends TestCase {
 
 		 assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);
 		 assertEquals("'" + sheetName + "'!" + reference, retrievedPrintArea);
-		 
 	 }
-
 
 	 /**
 	  * Test to see if the print area can be retrieved from an excel created file
@@ -321,88 +268,71 @@ public final class TestNamedRange extends TestCase {
 		assertEquals(reference, workbook.getPrintArea(0));
 	}
 
-
 	 /**
 	  * Test to see if the print area made it to the file
 	  */
-	 public void testPrintAreaFile()
-	 throws IOException
-	 {
+	 public void testPrintAreaFile() {
 	 	HSSFWorkbook workbook = new HSSFWorkbook();
-	 	HSSFSheet sheet = workbook.createSheet("Test Print Area");
+	 	workbook.createSheet("Test Print Area");
 	 	String sheetName = workbook.getSheetName(0);
 		 
 	 
 	 	String reference = sheetName+"!$A$1:$B$1";
 	 	workbook.setPrintArea(0, reference);
 		 
-		File file = TempFile.createTempFile("testPrintArea",".xls");
-		 
-		FileOutputStream fileOut = new FileOutputStream(file);
-		workbook.write(fileOut);
-		fileOut.close();
-		 
-		assertTrue("file exists",file.exists());
-		 
-		FileInputStream in = new FileInputStream(file);
-		workbook = new HSSFWorkbook(in);
+		workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
 		 
 	 	String retrievedPrintArea = workbook.getPrintArea(0);	   
 	 	assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);
 	 	assertEquals("References Match", "'" + sheetName + "'!$A$1:$B$1", retrievedPrintArea);
-		 
 	}
 
 	/**
 	 * Test to see if multiple print areas made it to the file
 	 */
-	public void testMultiplePrintAreaFile()
-	throws IOException
-	{
+	public void testMultiplePrintAreaFile() {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 
-		HSSFSheet sheet = workbook.createSheet("Sheet1");
-		sheet = workbook.createSheet("Sheet2");
-		sheet = workbook.createSheet("Sheet3");
-
-		String sheetName = workbook.getSheetName(0);
-		String reference = null;
-
-		reference = sheetName+"!$A$1:$B$1";
-		workbook.setPrintArea(0, reference); 
-
-		sheetName = workbook.getSheetName(1);
-		String reference2 = sheetName+"!$B$2:$D$5";
+		workbook.createSheet("Sheet1");
+		workbook.createSheet("Sheet2");
+		workbook.createSheet("Sheet3");
+		String reference1 = "Sheet1!$A$1:$B$1";
+		String reference2 = "Sheet2!$B$2:$D$5";
+		String reference3 = "Sheet3!$D$2:$F$5";
+		
+		workbook.setPrintArea(0, reference1); 
 		workbook.setPrintArea(1, reference2);
-
-		sheetName = workbook.getSheetName(2);
-		String reference3 = sheetName+"!$D$2:$F$5";
 		workbook.setPrintArea(2, reference3);
 
-		File file = TempFile.createTempFile("testMultiPrintArea",".xls");
-
-		FileOutputStream fileOut = new FileOutputStream(file);
-		workbook.write(fileOut);
-		fileOut.close();
-
-		assertTrue("file exists",file.exists());
-
-		FileInputStream in = new FileInputStream(file);
-		workbook = new HSSFWorkbook(in);
-
-		String retrievedPrintArea = workbook.getPrintArea(0);
+		//Check created print areas
+		String retrievedPrintArea;
+		
+		retrievedPrintArea = workbook.getPrintArea(0);
 		assertNotNull("Print Area Not Found (Sheet 1)", retrievedPrintArea);
-		assertEquals(reference, retrievedPrintArea);
+		assertEquals(reference1, retrievedPrintArea);
 
-		String retrievedPrintArea2 = workbook.getPrintArea(1);
-		assertNotNull("Print Area Not Found (Sheet 2)", retrievedPrintArea2);
-		assertEquals(reference2, retrievedPrintArea2);
+		retrievedPrintArea = workbook.getPrintArea(1);
+		assertNotNull("Print Area Not Found (Sheet 2)", retrievedPrintArea);
+		assertEquals(reference2, retrievedPrintArea);
 
-		String retrievedPrintArea3 = workbook.getPrintArea(2);
-		assertNotNull("Print Area Not Found (Sheet 3)", retrievedPrintArea3);
-		assertEquals(reference3, retrievedPrintArea3);
+		retrievedPrintArea = workbook.getPrintArea(2);
+		assertNotNull("Print Area Not Found (Sheet 3)", retrievedPrintArea);
+		assertEquals(reference3, retrievedPrintArea);
 
+		// Check print areas after re-reading workbook
+		workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
 
+		retrievedPrintArea = workbook.getPrintArea(0);
+		assertNotNull("Print Area Not Found (Sheet 1)", retrievedPrintArea);
+		assertEquals(reference1, retrievedPrintArea);
+
+		retrievedPrintArea = workbook.getPrintArea(1);
+		assertNotNull("Print Area Not Found (Sheet 2)", retrievedPrintArea);
+		assertEquals(reference2, retrievedPrintArea);
+
+		retrievedPrintArea = workbook.getPrintArea(2);
+		assertNotNull("Print Area Not Found (Sheet 3)", retrievedPrintArea);
+		assertEquals(reference3, retrievedPrintArea);
 	}
 
 	/**
@@ -530,31 +460,29 @@ public final class TestNamedRange extends TestCase {
 		HSSFSheet s = wb.getSheet(cref.getSheetName());
 		HSSFRow r = sheet.getRow(cref.getRow());
 		HSSFCell c = r.getCell(cref.getCol());
-		String contents = c.getStringCellValue();
+		String contents = c.getRichStringCellValue().getString();
 		assertEquals("Contents of cell retrieved by its named reference", contents, cvalue);
 	}
 
-    public void testDeletedReference() throws Exception {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("24207.xls");
-        assertEquals(2, wb.getNumberOfNames());
+	public void testDeletedReference() throws Exception {
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("24207.xls");
+		assertEquals(2, wb.getNumberOfNames());
 
-        HSSFName name1 = wb.getNameAt(0);
-        assertEquals("a", name1.getNameName());
-        assertEquals("Sheet1!$A$1", name1.getReference());
-        AreaReference ref1 = new AreaReference(name1.getReference());
-        assertTrue("Successfully constructed first reference", true);
+		HSSFName name1 = wb.getNameAt(0);
+		assertEquals("a", name1.getNameName());
+		assertEquals("Sheet1!$A$1", name1.getReference());
+		AreaReference ref1 = new AreaReference(name1.getReference());
+		assertTrue("Successfully constructed first reference", true);
 
-        HSSFName name2 = wb.getNameAt(1);
-        assertEquals("b", name2.getNameName());
-        assertEquals("#REF!", name2.getReference());
-        assertTrue(name2.isDeleted());
-        try {
-            AreaReference ref2 = new AreaReference(name2.getReference());
-            fail("attempt to supply an invalid reference to AreaReference constructor results in exception");
-        } catch (Exception e){
-            ;
-        }
-
-    }
-
+		HSSFName name2 = wb.getNameAt(1);
+		assertEquals("b", name2.getNameName());
+		assertEquals("#REF!", name2.getReference());
+		assertTrue(name2.isDeleted());
+		try {
+			AreaReference ref2 = new AreaReference(name2.getReference());
+			fail("attempt to supply an invalid reference to AreaReference constructor results in exception");
+		} catch (StringIndexOutOfBoundsException e) { // TODO - use a different exception for this condition
+			// expected during successful test
+		}
+   }
 }

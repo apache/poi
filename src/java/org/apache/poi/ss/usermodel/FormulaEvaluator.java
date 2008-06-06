@@ -337,10 +337,17 @@ public class FormulaEvaluator {
 
             // since we don't know how to handle these yet :(
             Ptg ptg = ptgs[i];
+<<<<<<< .mine
+            if (ptg instanceof ControlPtg) {
+               // skip Parentheses, Attr, etc
+               continue;
+			}
+=======
             if (ptg instanceof ControlPtg) {
                 // skip Parentheses, Attr, etc
                 continue;
             }
+>>>>>>> .r663896
             if (ptg instanceof MemErrPtg) { continue; }
             if (ptg instanceof MissingArgPtg) { continue; }
             if (ptg instanceof NamePtg) { 

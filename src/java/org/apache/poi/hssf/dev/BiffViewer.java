@@ -87,7 +87,8 @@ public final class BiffViewer {
                         records.add(record);
                         if (activeRecord != null)
                             activeRecord.dump(ps);
-                        activeRecord = new RecordDetails(recStream.getSid(), recStream.getLength(), (int)recStream.getPos(), record);
+                        int startPos = (int)(recStream.getPos()-recStream.getLength() - 4);
+                        activeRecord = new RecordDetails(recStream.getSid(), recStream.getLength(), startPos, record);
                     }
                     if (dump) {
                         recStream.dumpBytes(ps);

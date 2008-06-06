@@ -95,6 +95,7 @@ public final class AllRecordTests {
 		result.addTestSuite(TestSeriesTextRecord.class);
 		result.addTestSuite(TestSeriesToChartGroupRecord.class);
 		result.addTestSuite(TestSheetPropertiesRecord.class);
+		result.addTestSuite(TestSharedFormulaRecord.class);
 		result.addTestSuite(TestStringRecord.class);
 		result.addTestSuite(TestSubRecord.class);
 		result.addTestSuite(TestSupBookRecord.class);
