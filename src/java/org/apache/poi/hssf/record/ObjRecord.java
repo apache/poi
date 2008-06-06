@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,27 +15,21 @@
    limitations under the License.
 ==================================================================== */
         
-
-
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
-
 import java.io.ByteArrayInputStream;
-import java.util.List;
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.poi.util.LittleEndian;
 
 /**
  * The obj record is used to hold various graphic objects and controls.
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class ObjRecord
-    extends Record
-{
+public final class ObjRecord extends Record {
     public final static short      sid                             = 0x5D;
     private List subrecords;
 
@@ -47,6 +40,7 @@ public class ObjRecord
     public ObjRecord()
     {
         subrecords = new ArrayList(2);
+        // TODO - ensure 2 sub-records (ftCmo  15h, and ftEnd  00h) are always created
     }
 
     /**
@@ -80,6 +74,7 @@ public class ObjRecord
         //following wont work properly
         int subSize = 0;
         byte[] subRecordData = in.readRemainder();
+
         RecordInputStream subRecStream = new RecordInputStream(new ByteArrayInputStream(subRecordData));
         while(subRecStream.hasNextRecord()) {
           subRecStream.nextRecord();
@@ -89,28 +84,19 @@ public class ObjRecord
         }
 
         /**
-         * Check if the RecordInputStream skipped EndSubRecord,
-         * if it did then append it explicitly.
-         * See Bug 41242 for details.
+         * Add the EndSubRecord explicitly.
+         * 
+         * TODO - the reason the EndSubRecord is always skipped is because its 'sid' is zero and
+         * that causes subRecStream.hasNextRecord() to return false.
+         * There may be more than the size of EndSubRecord left-over, if there is any padding 
+         * after that record.  The content of the EndSubRecord and the padding is all zeros.
+         * So there's not much to look at past the last substantial record.
+         * 
+         * See Bugs 41242/45133 for details.
          */
-        if (subRecordData.length - subSize == 4){
+        if (subRecordData.length - subSize >= 4) {
             subrecords.add(new EndSubRecord());
         }
-
-        /* JMH the size present/not present in the code below
-           needs to be considered in the RecordInputStream??
-        int pos = offset;
-        while (pos - offset <= size-2) // atleast one "short" must be present
-        {
-            short subRecordSid = LittleEndian.getShort(data, pos);
-            short subRecordSize = -1; // set default to "< 0"
-            if (pos-offset <= size-4) { // see if size info is present, else default to -1
-                subRecordSize = LittleEndian.getShort(data, pos + 2);
-            }
-            Record subRecord = SubRecord.createSubRecord(subRecordSid, subRecordSize, data, pos + 4);
-            subrecords.add(subRecord);
-            pos += subRecord.getRecordSize();
-        }*/
     }
 
     public String toString()
@@ -140,6 +126,8 @@ public class ObjRecord
             Record record = (Record) iterator.next();
             pos += record.serialize(pos, data);
         }
+        // assume padding (if present) does not need to be written.
+        // it is probably zero already, and it probably doesn't matter anyway
 
         return getRecordSize();
     }
@@ -155,7 +143,9 @@ public class ObjRecord
             Record record = (Record) iterator.next();
             size += record.getRecordSize();
         }
-        return 4  + size;
+        int oddBytes = size & 0x03;
+        int padding = oddBytes == 0 ? 0 : 4 - oddBytes;
+        return 4  + size + padding;
     }
 
     public short getSid()
@@ -192,9 +182,4 @@ public class ObjRecord
 
         return rec;
     }
-
-}  // END OF CLASS
-
-
-
-
+}
