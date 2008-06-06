@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -18,10 +17,11 @@
 
 package org.apache.poi.hssf.record;
 
-import junit.framework.*;
-
 import java.util.Arrays;
 import java.util.List;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 
 /**
  * Tests the serialization and deserialization of the ObjRecord class works correctly.
@@ -29,7 +29,7 @@ import java.util.List;
  *
  * @author Yegor Kozlov
  */
-public class TestObjRecord extends TestCase {
+public final class TestObjRecord extends TestCase {
     /**
      * OBJ record data containing two sub-records.
      * The data taken directly from a real Excel file.
@@ -38,22 +38,27 @@ public class TestObjRecord extends TestCase {
      *     [ftCmo]
      *     [ftEnd]
      */
-    public static byte[] recdata = {
+    private static final byte[] recdata = {
         0x15, 0x00, 0x12, 0x00, 0x06, 0x00, 0x01, 0x00, 0x11, 0x60,
         (byte)0xF4, 0x02, 0x41, 0x01, 0x14, 0x10, 0x1F, 0x02, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        // TODO - this data seems to require two extra bytes padding. not sure where original file is.
+        // it's not bug 38607 attachment 17639
     };
 
+    private static final byte[] recdataNeedingPadding = {
+    	21, 0, 18, 0, 0, 0, 1, 0, 17, 96, 0, 0, 0, 0, 56, 111, -52, 3, 0, 0, 0, 0, 6, 0, 2, 0, 0, 0, 0, 0, 0, 0
+    };
 
-    public void testLoad() throws Exception {
+    public void testLoad() {
         ObjRecord record = new ObjRecord(new TestcaseRecordInputStream(ObjRecord.sid, (short)recdata.length, recdata));
 
-        assertEquals( recdata.length, record.getRecordSize() - 4);
+        assertEquals(28, record.getRecordSize() - 4);
 
         List subrecords = record.getSubRecords();
-        assertEquals( 2, subrecords.size() );
-        assertTrue( subrecords.get(0) instanceof CommonObjectDataSubRecord);
-        assertTrue( subrecords.get(1) instanceof EndSubRecord );
+        assertEquals(2, subrecords.size() );
+        assertTrue(subrecords.get(0) instanceof CommonObjectDataSubRecord);
+        assertTrue(subrecords.get(1) instanceof EndSubRecord );
 
     }
 
@@ -61,8 +66,8 @@ public class TestObjRecord extends TestCase {
         ObjRecord record = new ObjRecord(new TestcaseRecordInputStream(ObjRecord.sid, (short)recdata.length, recdata));
 
         byte [] recordBytes = record.serialize();
-        assertEquals(recdata.length, recordBytes.length - 4);
-        byte[] subData = new byte[recordBytes.length - 4];
+        assertEquals(28, recordBytes.length - 4);
+        byte[] subData = new byte[recdata.length];
         System.arraycopy(recordBytes, 4, subData, 0, subData.length);
         assertTrue(Arrays.equals(recdata, subData));
     }
@@ -91,5 +96,21 @@ public class TestObjRecord extends TestCase {
         assertEquals( 2, subrecords.size() );
         assertTrue( subrecords.get(0) instanceof CommonObjectDataSubRecord);
         assertTrue( subrecords.get(1) instanceof EndSubRecord );
+    }
+    
+    public void testReadWriteWithPadding_bug45133() {
+        ObjRecord record = new ObjRecord(new TestcaseRecordInputStream(ObjRecord.sid, (short)recdataNeedingPadding.length, recdataNeedingPadding));
+        
+        if (record.getRecordSize() == 34) {
+        	throw new AssertionFailedError("Identified bug 45133");
+        }
+
+        assertEquals(36, record.getRecordSize());
+
+        List subrecords = record.getSubRecords();
+        assertEquals(3, subrecords.size() );
+        assertEquals(CommonObjectDataSubRecord.class, subrecords.get(0).getClass());
+        assertEquals(GroupMarkerSubRecord.class, subrecords.get(1).getClass());
+        assertEquals(EndSubRecord.class, subrecords.get(2).getClass());
     }
 }
