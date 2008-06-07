@@ -54,12 +54,12 @@ public final class TestArrayPtg extends TestCase {
 	 */
 	public void testReadWriteTokenValueBytes() {
 		
-		ArrayPtg ptg = new ArrayPtgV(new TestcaseRecordInputStream(ArrayPtgV.sid, ENCODED_PTG_DATA));
+		ArrayPtg ptg = new ArrayPtg(new TestcaseRecordInputStream(ArrayPtg.sid, ENCODED_PTG_DATA));
 		
 		ptg.readTokenValues(new TestcaseRecordInputStream(0, ENCODED_CONSTANT_DATA));
 		assertEquals(3, ptg.getColumnCount());
 		assertEquals(2, ptg.getRowCount());
-		Object[] values = ptg.token_3_arrayValues;
+		Object[] values = ptg.getTokenArrayValues();
 		assertEquals(6, values.length);
 		
 		
@@ -82,7 +82,7 @@ public final class TestArrayPtg extends TestCase {
 	 * Excel stores array elements column by column.  This test makes sure POI does the same.
 	 */
 	public void testElementOrdering() {
-		ArrayPtg ptg = new ArrayPtgV(new TestcaseRecordInputStream(ArrayPtgV.sid, ENCODED_PTG_DATA));
+		ArrayPtg ptg = new ArrayPtg(new TestcaseRecordInputStream(ArrayPtg.sid, ENCODED_PTG_DATA));
 		ptg.readTokenValues(new TestcaseRecordInputStream(0, ENCODED_CONSTANT_DATA));
 		assertEquals(3, ptg.getColumnCount());
 		assertEquals(2, ptg.getRowCount());

@@ -15,12 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
-/*
- * Ptg.java
- *
- * Created on October 28, 2001, 6:30 PM
- */
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
@@ -30,25 +24,23 @@ import org.apache.poi.hssf.record.RecordInputStream;
 /**
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class MemFuncPtg extends OperandPtg {
+public final class MemFuncPtg extends OperandPtg {
 
     public final static byte sid = 0x29;
-    private short field_1_len_ref_subexpression = 0;
-
-    public MemFuncPtg()
-    {
-        //Required for clone methods
-    }
+    private final int field_1_len_ref_subexpression;
 
     /**Creates new function pointer from a byte array
      * usually called while reading an excel file.
      */
-    public MemFuncPtg( RecordInputStream in )
-    {
-        field_1_len_ref_subexpression = in.readShort();
+    public MemFuncPtg(RecordInputStream in) {
+        this(in.readUShort());
     }
 
-    public int getSize()
+    public MemFuncPtg(int subExprLen) {
+    	field_1_len_ref_subexpression = subExprLen;
+	}
+
+	public int getSize()
     {
         return 3;
     }
@@ -56,7 +48,7 @@ public class MemFuncPtg extends OperandPtg {
     public void writeBytes( byte[] array, int offset )
     {
         array[offset + 0] =  sid ;
-        LittleEndian.putShort( array, offset + 1, (short)field_1_len_ref_subexpression );
+        LittleEndian.putUShort( array, offset + 1, field_1_len_ref_subexpression );
     }
 
     public String toFormulaString(HSSFWorkbook book)
@@ -66,7 +58,7 @@ public class MemFuncPtg extends OperandPtg {
 
     public byte getDefaultOperandClass()
     {
-        return 0;
+        return Ptg.CLASS_REF;
     }
 
     public int getNumberOfOperands()
@@ -74,21 +66,8 @@ public class MemFuncPtg extends OperandPtg {
         return field_1_len_ref_subexpression;
     }
 
-    public Object clone()
-    {
-        MemFuncPtg ptg = new MemFuncPtg();
-        ptg.field_1_len_ref_subexpression = this.field_1_len_ref_subexpression;
-        return ptg;
-    }
-
     public int getLenRefSubexpression()
     {
         return field_1_len_ref_subexpression;
     }
-
-    public void setLenRefSubexpression(int len)
-    {
-        field_1_len_ref_subexpression = (short)len;
-    }
-
 }

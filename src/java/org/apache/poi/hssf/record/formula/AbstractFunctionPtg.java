@@ -56,12 +56,6 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         return sb.toString();
     }
 
-    public int getType() {
-        return -1;
-    }
-
-
-
     public short getFunctionIndex() {
         return field_2_fnc_index;
     }

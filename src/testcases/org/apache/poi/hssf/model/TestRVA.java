@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.ReferencePtg;
+import org.apache.poi.hssf.record.formula.RefPtgBase;
 import org.apache.poi.hssf.usermodel.FormulaExtractor;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -102,7 +102,7 @@ public final class TestRVA extends TestCase {
 		for (int i = 0; i < nExcelTokens; i++) {
 			Ptg poiPtg = poiPtgs[i];
 			Ptg excelPtg = excelPtgs[i];
-			if (!areTokenClassesSame(poiPtg, excelPtg)) {
+			if (excelPtg.getClass() != poiPtg.getClass()) {
 				hasMismatch = true;
 				sb.append("  mismatch token type[" + i + "] " + getShortClassName(excelPtg) + " "
 						+ getOperandClassName(excelPtg) + " - " + getShortClassName(poiPtg) + " "
@@ -125,17 +125,6 @@ public final class TestRVA extends TestCase {
 		if (hasMismatch) {
 			throw new AssertionFailedError(sb.toString());
 		}
-	}
-
-	private boolean areTokenClassesSame(Ptg poiPtg, Ptg excelPtg) {
-		if (excelPtg.getClass() == poiPtg.getClass()) {
-			return true;
-		}
-		if (poiPtg.getClass() == ReferencePtg.class) {
-			// TODO - remove funny subclasses of ReferencePtg
-			return excelPtg instanceof ReferencePtg;
-		}
-		return false;
 	}
 
 	private String getShortClassName(Object o) {

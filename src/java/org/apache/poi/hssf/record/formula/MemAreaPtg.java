@@ -64,7 +64,7 @@ public class MemAreaPtg extends OperandPtg {
 
     public void writeBytes(byte [] array, int offset)
     {
-        array[offset] = (byte) (sid + ptgClass);
+        array[offset] = (byte) (sid + getPtgClass());
         LittleEndian.putInt(array, offset + 1, field_1_reserved);
         LittleEndian.putShort(array, offset + 5, field_2_subex_len);
     }
@@ -79,12 +79,7 @@ public class MemAreaPtg extends OperandPtg {
         return ""; // TODO: Not sure how to format this. -- DN
     }
 
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
-
-    public Object clone() {
-      MemAreaPtg ptg = new MemAreaPtg();
-      ptg.field_1_reserved = field_1_reserved;
-      ptg.field_2_subex_len = field_2_subex_len;
-      return ptg;
+    public byte getDefaultOperandClass() {
+    	return Ptg.CLASS_VALUE;
     }
 }

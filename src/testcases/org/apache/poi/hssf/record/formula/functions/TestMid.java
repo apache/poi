@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.AreaPtg;
-import org.apache.poi.hssf.record.formula.ReferencePtg;
+import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.eval.Area2DEval;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
@@ -77,7 +77,7 @@ public final class TestMid extends TestCase {
 		
 		// startPos is 1x1 area ref, numChars is cell ref
 		AreaEval aeStart = new Area2DEval(new AreaPtg("A1:A1"), new ValueEval[] { new NumberEval(2), } );
-		RefEval reNumChars = new Ref2DEval(new ReferencePtg("B1"), new NumberEval(3));
+		RefEval reNumChars = new Ref2DEval(new RefPtg("B1"), new NumberEval(3));
 		confirmMid(new StringEval("galactic"), aeStart, reNumChars, "ala");
 
 		confirmMid(new StringEval("galactic"), new NumberEval(3.1), BlankEval.INSTANCE, "");

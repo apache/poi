@@ -40,7 +40,7 @@ import org.apache.poi.hssf.record.formula.OperationPtg;
 import org.apache.poi.hssf.record.formula.ParenthesisPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
-import org.apache.poi.hssf.record.formula.ReferencePtg;
+import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.StringPtg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.hssf.record.formula.UnknownPtg;
@@ -386,8 +386,8 @@ public class HSSFFormulaEvaluator {
                 Eval opresult = invokeOperation(operation, ops, srcRowNum, srcColNum, workbook, sheet);
                 stack.push(opresult);
             }
-            else if (ptg instanceof ReferencePtg) {
-                ReferencePtg refPtg = (ReferencePtg) ptg;
+            else if (ptg instanceof RefPtg) {
+                RefPtg refPtg = (RefPtg) ptg;
                 int colIx = refPtg.getColumn();
                 int rowIx = refPtg.getRow();
                 HSSFRow row = sheet.getRow(rowIx);
@@ -549,7 +549,7 @@ public class HSSFFormulaEvaluator {
                 Constructor constructor = clazz.getConstructor(AREA3D_CONSTRUCTOR_CLASS_ARRAY);
                 retval = (OperationEval) constructor.newInstance(new Ptg[] { ptg });
             }
-            else if (ptg instanceof ReferencePtg) {
+            else if (ptg instanceof RefPtg) {
                 Constructor constructor = clazz.getConstructor(REFERENCE_CONSTRUCTOR_CLASS_ARRAY);
                 retval = (OperationEval) constructor.newInstance(new Ptg[] { ptg });
             }
@@ -607,7 +607,7 @@ public class HSSFFormulaEvaluator {
      * Creates a Ref2DEval for ReferencePtg.
      * Non existent cells are treated as RefEvals containing BlankEval.
      */
-    private static Ref2DEval createRef2DEval(ReferencePtg ptg, HSSFCell cell, 
+    private static Ref2DEval createRef2DEval(RefPtg ptg, HSSFCell cell, 
             HSSFRow row, HSSFSheet sheet, HSSFWorkbook workbook) {
         if (cell == null) {
             return new Ref2DEval(ptg, BlankEval.INSTANCE);

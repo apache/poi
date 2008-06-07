@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.IntPtg;
-import org.apache.poi.hssf.record.formula.ReferencePtg;
+import org.apache.poi.hssf.record.formula.RefPtg;
 
 /**
  * Tests the serialization and deserialization of the FormulaRecord
@@ -130,11 +130,11 @@ public final class TestFormulaRecord extends TestCase {
 		assertEquals(9, ptgs.size());
 		assertEquals(IntPtg.class,	   ptgs.get(0).getClass());
 		assertEquals(AttrPtg.class,	  ptgs.get(1).getClass());
-		assertEquals(ReferencePtg.class, ptgs.get(2).getClass());
+		assertEquals(RefPtg.class, ptgs.get(2).getClass());
 		assertEquals(AttrPtg.class,	  ptgs.get(3).getClass());
-		assertEquals(ReferencePtg.class, ptgs.get(4).getClass());
+		assertEquals(RefPtg.class, ptgs.get(4).getClass());
 		assertEquals(AttrPtg.class,	  ptgs.get(5).getClass());
-		assertEquals(ReferencePtg.class, ptgs.get(6).getClass());
+		assertEquals(RefPtg.class, ptgs.get(6).getClass());
 		assertEquals(AttrPtg.class,	  ptgs.get(7).getClass());
 		assertEquals(FuncVarPtg.class,   ptgs.get(8).getClass());
 		

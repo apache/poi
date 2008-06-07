@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1-final" date="2008-06-??">
+           <action dev="POI-DEVELOPERS" type="fix">45091 - Fixed serialization of RefN~ tokens.  Simplified Ptg class hierarchy</action>
            <action dev="POI-DEVELOPERS" type="fix">45133 - Fixed OBJ Record (5Dh) to pad the sub-record data to a 4-byte boundary</action>
            <action dev="POI-DEVELOPERS" type="fix">45145 - Fixed Sheet to always enforce RowRecordsAggregate before ValueRecordsAggregate</action>
            <action dev="POI-DEVELOPERS" type="fix">45123 - Fixed SharedFormulaRecord.convertSharedFormulas() to propagate token operand classes</action>
