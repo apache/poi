@@ -17,14 +17,37 @@
 
 package org.apache.poi.hssf.record.formula;
 
+import org.apache.poi.hssf.record.RecordInputStream;
+
 /**
- * @author Josh Micich
+ * ReferencePtg - handles references (such as A1, A2, IA4)
+ * @author  Andrew C. Oliver (acoliver@apache.org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
-abstract class ScalarConstantPtg extends Ptg {
-	public boolean isBaseToken() {
-		return true;
-	}
-    public final byte getDefaultOperandClass() {
-        return Ptg.CLASS_VALUE;
+public final class RefPtg extends RefPtgBase {
+    public final static byte sid  = 0x24;
+
+    /**
+     * Takes in a String representation of a cell reference and fills out the
+     * numeric fields.
+     */
+    public RefPtg(String cellref) {
+    	super(cellref);
     }
+
+    public RefPtg(int row, int column, boolean isRowRelative, boolean isColumnRelative) {
+      setRow(row);
+      setColumn(column);
+      setRowRelative(isRowRelative);
+      setColRelative(isColumnRelative);
+    }
+
+    public RefPtg(RecordInputStream in) {
+        super(in);
+    }
+
+	protected byte getSid() {
+		return sid;
+	}
+    
 }

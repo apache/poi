@@ -17,15 +17,19 @@
 
 package org.apache.poi.hssf.record.formula;
 
+import java.util.Arrays;
+import java.util.Stack;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
- * Tests for {@link ReferencePtg}.
+ * Tests for {@link RefPtg}.
  */
 public final class TestReferencePtg extends TestCase {
     /**
@@ -85,6 +89,19 @@ public final class TestReferencePtg extends TestCase {
             }
             throw e;
         }
+    }
+    private static final byte[] tRefN_data = {
+    	0x2C, 33, 44, 55, 66,
+    };
+    public void testReadWrite_tRefN_bug45091() {
+        TestcaseRecordInputStream in = new TestcaseRecordInputStream(-1, tRefN_data);
+        Stack ptgs = Ptg.createParsedExpressionTokens((short)tRefN_data.length, in);
+        byte[] outData = new byte[5];
+        Ptg.serializePtgStack(ptgs, outData, 0);
+        if (outData[0] == 0x24) {
+            throw new AssertionFailedError("Identified bug 45091");
+        }
+        assertTrue(Arrays.equals(tRefN_data, outData));
     }
 }
 

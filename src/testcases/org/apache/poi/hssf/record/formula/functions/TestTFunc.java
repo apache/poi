@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.ReferencePtg;
+import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
@@ -50,7 +50,7 @@ public final class TestTFunc extends TestCase {
 	 * where cell A1 has the specified innerValue
 	 */
 	private Eval invokeTWithReference(ValueEval innerValue) {
-		Eval arg = new Ref2DEval(new ReferencePtg((short)1, (short)1, false, false), innerValue);
+		Eval arg = new Ref2DEval(new RefPtg((short)1, (short)1, false, false), innerValue);
 		return invokeT(arg);
 	}
 	

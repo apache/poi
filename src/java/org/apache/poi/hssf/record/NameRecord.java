@@ -737,7 +737,7 @@ public class NameRecord extends Record {
         	}
         	// And then a union if we had more than one area
         	if(refs.length > 1) {
-        		ptg = new UnionPtg();
+        		ptg = UnionPtg.instance;
                 field_13_name_definition.push(ptg);
 	            this.setDefinitionTextLength( (short)(getDefinitionLength() + ptg.getSize()) );
         	}

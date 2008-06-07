@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,17 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-
-/*
- * MemErrPtg.java
- *
- * Created on November 21, 2001, 8:46 AM
- */
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  *
@@ -35,9 +27,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author Daniel Noll (daniel at nuix dot com dot au)
  */
 
-public class MemErrPtg
-    extends MemAreaPtg
-{
+public final class MemErrPtg extends MemAreaPtg {
     public final static short sid  = 0x27;
 
     /** Creates new MemErrPtg */
@@ -46,26 +36,17 @@ public class MemErrPtg
     {
     }
 
-    public MemErrPtg(RecordInputStream in)
-    {
+    public MemErrPtg(RecordInputStream in) {
         super(in);
     }
 
-    public void writeBytes(byte [] array, int offset)
-    {
+    public void writeBytes(byte [] array, int offset) {
         super.writeBytes(array, offset);
-        array[offset] = (byte) (sid + ptgClass);
+        array[offset] = (byte) (sid + getPtgClass());
     }
 
     public String toFormulaString(HSSFWorkbook book)
     {
         return "ERR#";
-    }
-
-    public Object clone() {
-      MemErrPtg ptg = new MemErrPtg();
-      ptg.setReserved(getReserved());
-      ptg.setSubexpressionLength(getSubexpressionLength());
-      return ptg;
     }
 }

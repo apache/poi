@@ -43,12 +43,11 @@ public final class IntPtg extends ScalarConstantPtg {
 
     public final static int  SIZE = 3;
     public final static byte sid  = 0x1e;
-    private int            field_1_value;
+    private final int field_1_value;
   
     public IntPtg(RecordInputStream in) {
         this(in.readUShort());
     }
-
 
     public IntPtg(int value) {
         if(!isInRange(value)) {
@@ -60,7 +59,6 @@ public final class IntPtg extends ScalarConstantPtg {
     public int getValue() {
         return field_1_value;
     }
-
 
     public void writeBytes(byte [] array, int offset)
     {
@@ -76,9 +74,6 @@ public final class IntPtg extends ScalarConstantPtg {
         return String.valueOf(getValue());
     }
 
-    public Object clone() {
-     return new IntPtg(field_1_value);
-    }
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
         sb.append(getClass().getName()).append(" [");

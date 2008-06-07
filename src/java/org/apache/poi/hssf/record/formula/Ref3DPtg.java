@@ -82,7 +82,7 @@ public class Ref3DPtg extends OperandPtg {
     }
 
     public void writeBytes(byte [] array, int offset) {
-        array[ 0 + offset ] = (byte) (sid + ptgClass);
+        array[ 0 + offset ] = (byte) (sid + getPtgClass());
         LittleEndian.putShort(array, 1 + offset , getExternSheetIndex());
         LittleEndian.putShort(array, 3 + offset , (short)getRow());
         LittleEndian.putShort(array, 5 + offset , (short)getColumnRaw());
@@ -190,14 +190,7 @@ public class Ref3DPtg extends OperandPtg {
         return retval.toString();
     }
 
-   public byte getDefaultOperandClass() {return Ptg.CLASS_REF;}
-
-   public Object clone() {
-     Ref3DPtg ptg = new Ref3DPtg();
-     ptg.field_1_index_extern_sheet = field_1_index_extern_sheet;
-     ptg.field_2_row = field_2_row;
-     ptg.field_3_column = field_3_column;
-     ptg.setClass(ptgClass);
-     return ptg;
-   }
+   public byte getDefaultOperandClass() {
+		return Ptg.CLASS_REF;
+	}
 }

@@ -95,7 +95,7 @@ public class Area3DPtg extends OperandPtg implements AreaI {
 
 	public void writeBytes( byte[] array, int offset )
 	{
-		array[0 + offset] = (byte) ( sid + ptgClass );
+		array[0 + offset] = (byte) ( sid + getPtgClass() );
 		LittleEndian.putShort( array, 1 + offset, getExternSheetIndex() );
 		LittleEndian.putShort( array, 3 + offset, (short)getFirstRow() );
 		LittleEndian.putShort( array, 5 + offset, (short)getLastRow() );
@@ -280,24 +280,10 @@ public class Area3DPtg extends OperandPtg implements AreaI {
 		return retval.toString();
 	}
 
-	public byte getDefaultOperandClass()
-	{
+	public byte getDefaultOperandClass() {
 		return Ptg.CLASS_REF;
 	}
-
-	public Object clone()
-	{
-		Area3DPtg ptg = new Area3DPtg();
-		ptg.field_1_index_extern_sheet = field_1_index_extern_sheet;
-		ptg.field_2_first_row = field_2_first_row;
-		ptg.field_3_last_row = field_3_last_row;
-		ptg.field_4_first_column = field_4_first_column;
-		ptg.field_5_last_column = field_5_last_column;
-		ptg.setClass(ptgClass);
-		return ptg;
-	}
-
-
+	// TODO - one junit relies on this. remove
 	public boolean equals( Object o )
 	{
 		if ( this == o ) return true;
@@ -313,18 +299,4 @@ public class Area3DPtg extends OperandPtg implements AreaI {
 
 		return true;
 	}
-
-	public int hashCode()
-	{
-		// TODO - hashCode seems to be unused
-		int result;
-		result = (int) field_1_index_extern_sheet;
-		result = 29 * result + (int) field_2_first_row;
-		result = 29 * result + (int) field_3_last_row;
-		result = 29 * result + (int) field_4_first_column;
-		result = 29 * result + (int) field_5_last_column;
-		return result;
-	}
-
-
 }

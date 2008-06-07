@@ -14,83 +14,37 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.record.RecordInputStream;
+package org.apache.poi.hssf.record.formula;
 
 /**
  * Implements the standard mathmatical multiplication - *
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-
 public final class MultiplyPtg extends ValueOperatorPtg {
-    public final static int  SIZE = 1;
     public final static byte sid  = 0x05;
 
-    /** Creates new AddPtg */
+    public static final ValueOperatorPtg instance = new MultiplyPtg();
 
-    public MultiplyPtg()
-    {
-    }
-
-    public MultiplyPtg(RecordInputStream in)
-    {
-
-        // doesn't need anything
+    private MultiplyPtg() {
+    	// enforce singleton
     }
     
-    public void writeBytes(byte [] array, int offset)
-    {
-        array[ offset + 0 ] = sid;
+    protected byte getSid() {
+    	return sid;
     }
 
-    public int getSize()
-    {
-        return SIZE;
-    }
-
-    public int getType()
-    {
-        return TYPE_BINARY;
-    }
-
-    public int getNumberOfOperands()
-    {
+    public int getNumberOfOperands() {
         return 2;
-    }
-
-    public int getStringLength() {
-        return 1;
-    }
-    
-
-    public String toFormulaString(HSSFWorkbook book)
-    {
-        return "*";
-    }
-
-    public String toFormulaString(Ptg [] operands)
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append(operands[ 0 ].toFormulaString((HSSFWorkbook)null));
-        buffer.append("*");
-        buffer.append(operands[ 1 ].toFormulaString((HSSFWorkbook)null));
-        return buffer.toString();
     }
     
     public String toFormulaString(String[] operands) {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append(operands[ 0 ]);
-        buffer.append(toFormulaString((HSSFWorkbook)null));
+        buffer.append("*");
         buffer.append(operands[ 1 ]);
         return buffer.toString();
     }                  
-
-    public Object clone() {
-      return new MultiplyPtg();
-    }
 }

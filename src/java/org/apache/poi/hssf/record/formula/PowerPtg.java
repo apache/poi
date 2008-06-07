@@ -17,53 +17,26 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.record.RecordInputStream;
-
 /**
  *
  * @author  andy
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class PowerPtg extends ValueOperatorPtg {
-    public final static int  SIZE = 1;
     public final static byte sid  = 0x07;
 
-    /** Creates new AddPtg */
+    public static final ValueOperatorPtg instance = new PowerPtg();
 
-   public PowerPtg()
-    {
+    private PowerPtg() {
+    	// enforce singleton
+    }
+    
+    protected byte getSid() {
+    	return sid;
     }
 
-    public PowerPtg(RecordInputStream in)
-    {
-
-        // doesn't need anything
-    }
-
-    public void writeBytes(byte [] array, int offset)
-    {
-        array[ offset + 0 ] = sid;
-    }
-
-    public int getSize()
-    {
-        return SIZE;
-    }
-
-    public int getType()
-    {
-        return TYPE_BINARY;
-    }
-
-    public int getNumberOfOperands()
-    {
-        return 2;
-    }
-
-    public String toFormulaString(HSSFWorkbook book)
-    {
-        return "^";
+    public int getNumberOfOperands() {
+        return 2; // TODO - 2 seems wrong (Jun 2008).  Maybe this method is not relevant
     }
  
     public String toFormulaString(String[] operands) {
@@ -71,13 +44,8 @@ public final class PowerPtg extends ValueOperatorPtg {
 
         
         buffer.append(operands[ 0 ]);
-        buffer.append(toFormulaString((HSSFWorkbook)null));
+        buffer.append("^");
         buffer.append(operands[ 1 ]);
         return buffer.toString();
     }       
-
-    public Object clone() {
-      return new PowerPtg();
-    }
-
 }

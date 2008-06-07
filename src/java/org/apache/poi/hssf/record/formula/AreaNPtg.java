@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,49 +15,22 @@
    limitations under the License.
 ==================================================================== */
 
-/*
- * AreaPtg.java
- *
- * Created on November 17, 2001, 9:30 PM
- */
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.BitField;
-
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.hssf.util.AreaReference;
-import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Specifies a rectangular area of cells A1:A4 for instance.
  * @author Jason Height (jheight at chariot dot net dot au)
  */
+public final class AreaNPtg extends AreaPtgBase {
+	public final static short sid = 0x2D;
 
-public final class AreaNPtg extends AreaPtg
-{
-  public final static short sid  = 0x2D;
+	public AreaNPtg(RecordInputStream in) {
+		super(in);
+	}
 
-  protected AreaNPtg() {
-    //Required for clone methods
-  }
-
-  public AreaNPtg(RecordInputStream in)
-  {
-    super(in);
-  }
-
-  public String getAreaPtgName() {
-    return "AreaNPtg";
-  }
-
-  public String toFormulaString(HSSFWorkbook book)
-  {
-    throw notImplemented();
-  }
-
-  public Object clone() {
-    throw notImplemented();
-  }
+	protected byte getSid() {
+		return sid;
+	}
 }

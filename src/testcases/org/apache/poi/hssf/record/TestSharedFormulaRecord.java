@@ -25,7 +25,7 @@ import junit.framework.ComparisonFailure;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.RefAPtg;
+import org.apache.poi.hssf.record.formula.RefPtg;
 
 /**
  * @author Josh Micich
@@ -68,7 +68,7 @@ public final class TestSharedFormulaRecord extends TestCase {
 		
 		Stack convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 100, 200);
 		
-		RefAPtg refPtg = (RefAPtg) convertedFormula.get(1);
+		RefPtg refPtg = (RefPtg) convertedFormula.get(1);
 		assertEquals("$C101", refPtg.toFormulaString(null));
 		if (refPtg.getPtgClass() == Ptg.CLASS_REF) {
 			throw new AssertionFailedError("Identified bug 45123");
