@@ -734,7 +734,7 @@ public class SlideShow
         else if (format == Picture.WMF) bse.setBlipTypeMacOS((byte)Picture.PICT);
         else if (format == Picture.PICT) bse.setBlipTypeWin32((byte)Picture.WMF);
 
-        bse.setRef(1);
+        bse.setRef(0);
         bse.setOffset(offset);
 
         bstore.addChildRecord(bse);

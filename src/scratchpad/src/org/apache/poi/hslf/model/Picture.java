@@ -176,16 +176,11 @@ public class Picture extends SimpleShape {
     public PictureData getPictureData(){
         SlideShow ppt = getSheet().getSlideShow();
         PictureData[] pict = ppt.getPictureData();
-        Document doc = ppt.getDocumentRecord();
-        EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
-        EscherContainerRecord bstore = (EscherContainerRecord)Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
 
-        List lst = bstore.getChildRecords();
-        int idx = getPictureIndex();
-        if (idx == 0){
+        EscherBSERecord bse = getEscherBSERecord();
+        if (bse == null){
             logger.log(POILogger.ERROR, "no reference to picture data found ");
         } else {
-            EscherBSERecord bse = (EscherBSERecord)lst.get(idx-1);
             for ( int i = 0; i < pict.length; i++ ) {
                 if (pict[i].getOffset() ==  bse.getOffset()){
                     return pict[i];
@@ -194,6 +189,21 @@ public class Picture extends SimpleShape {
             logger.log(POILogger.ERROR, "no picture found for our BSE offset " + bse.getOffset());
         }
         return null;
+    }
+
+    protected EscherBSERecord getEscherBSERecord(){
+        SlideShow ppt = getSheet().getSlideShow();
+        Document doc = ppt.getDocumentRecord();
+        EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
+        EscherContainerRecord bstore = (EscherContainerRecord)Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
+
+        List lst = bstore.getChildRecords();
+        int idx = getPictureIndex();
+        if (idx == 0){
+            return null;
+        } else {
+            return (EscherBSERecord)lst.get(idx-1);
+        }
     }
 
     /**
@@ -238,6 +248,10 @@ public class Picture extends SimpleShape {
      */
     protected void afterInsert(Sheet sh){
         super.afterInsert(sh);
+
+        EscherBSERecord bse = getEscherBSERecord();
+        bse.setRef(bse.getRef() + 1);
+
         java.awt.Rectangle anchor = getAnchor();
         if (anchor.equals(new java.awt.Rectangle())){
             setDefaultSize();
@@ -249,21 +263,8 @@ public class Picture extends SimpleShape {
         ShapePainter.paint(this, graphics);
 
         PictureData data = getPictureData();
-        if (data  instanceof Bitmap){
-            BufferedImage img = null;
-            try {
-               	img = ImageIO.read(new ByteArrayInputStream(data.getData()));
-            }
-            catch (Exception e){
-                logger.log(POILogger.WARN, "ImageIO failed to create image. image.type: " + data.getType());
-                return;
-            }
-            Rectangle anchor = getAnchor();
-            Image scaledImg = img.getScaledInstance(anchor.width, anchor.height, Image.SCALE_SMOOTH);
-            graphics.drawImage(scaledImg, anchor.x, anchor.y, null);
-        } else {
-            logger.log(POILogger.WARN, "Rendering of metafiles is not yet supported. image.type: " + (data == null ? "NA" : data.getClass().getName()));
-        }
+        data.draw(graphics, this);
+
         graphics.setTransform(at);
     }
 }
