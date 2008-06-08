@@ -30,6 +30,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.io.IOException;
+import java.util.Iterator;
 
 /**
  * A common superclass of all shapes that can hold text.
@@ -224,26 +225,24 @@ public abstract class TextShape extends SimpleShape {
         String fntname = rt.getFontName();
         Font font = new Font(fntname, style, size);
 
-        float width = 0, height = 0;
-        String[] lines = txt.split("\r");
+        float width = 0, height = 0, leading = 0;        
+        String[] lines = txt.split("\n");        
         for (int i = 0; i < lines.length; i++) {
             if(lines[i].length() == 0) continue;
-
+            
             TextLayout layout = new TextLayout(lines[i], font, _frc);
-
+            
+            leading = Math.max(leading, layout.getLeading());           
             width = Math.max(width, layout.getAdvance());
-
-            /**
-             * Even if top and bottom margins are set to 0 PowerPoint
-             * always sets extra space between the text and its bounding box.
-             *
-             * The approximation height = ascent*2 works good enough in most cases
-             */
-            height = Math.max(height, 2*layout.getAscent());
-        }
-
-        width += getMarginLeft() + getMarginRight();
-        height += getMarginTop() + getMarginBottom();
+            height = Math.max(height, (height + (layout.getDescent() + layout.getAscent())));
+        } 	
+    	
+        // add one character to width
+        Rectangle2D charBounds = font.getMaxCharBounds(_frc);                
+        width += getMarginLeft() + getMarginRight() + charBounds.getWidth();
+        
+        // add leading to height        
+        height += getMarginTop() + getMarginBottom() + leading;
 
         Rectangle2D anchor = getAnchor2D();
         anchor.setRect(anchor.getX(), anchor.getY(), width, height);
@@ -532,6 +531,15 @@ public abstract class TextShape extends SimpleShape {
         ShapePainter.paint(this, graphics);
         new TextPainter(this).paint(graphics);
         graphics.setTransform(at);
+    }
+
+    /**
+     * Return <code>OEPlaceholderAtom</code>, the atom that describes a placeholder.
+     *
+     * @return <code>OEPlaceholderAtom</code> or <code>null</code> if not found
+     */
+    public OEPlaceholderAtom getPlaceholderAtom(){
+        return (OEPlaceholderAtom)getClientDataRecord(RecordTypes.OEPlaceholderAtom.typeID);
     }
 
 }
