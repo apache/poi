@@ -238,6 +238,10 @@ public class EscherDggRecord
         return maxDgId;
     }
 
+    public void setMaxDrawingGroupId(int id){
+        maxDgId = id;
+    }
+
      public FileIdCluster[] getFileIdClusters()
     {
         return field_5_fileIdClusters;
