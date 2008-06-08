@@ -20,10 +20,12 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.*;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.hslf.record.Record;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.util.Iterator;
 
 /**
  *  An abstract simple (non-group) shape.
@@ -284,4 +286,28 @@ public class SimpleShape extends Shape {
         ShapePainter.paint(this, graphics);
         graphics.setTransform(at);
     }
+
+    /**
+     *  Find a record in the underlying EscherClientDataRecord
+     *
+     * @param recordType type of the record to search
+     */
+    protected Record getClientDataRecord(int recordType) {
+        Record oep = null;
+        EscherContainerRecord spContainer = getSpContainer();
+        for (Iterator it = spContainer.getChildRecords().iterator(); it.hasNext();) {
+            EscherRecord obj = (EscherRecord) it.next();
+            if (obj.getRecordId() == EscherClientDataRecord.RECORD_ID) {
+                byte[] data = obj.serialize();
+                Record[] records = Record.findChildRecords(data, 8, data.length - 8);
+                for (int j = 0; j < records.length; j++) {
+                    if (records[j].getRecordType() == recordType) {
+                        return records[j];
+                    }
+                }
+            }
+        }
+        return oep;
+    }
+
 }
