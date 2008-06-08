@@ -54,7 +54,7 @@ import java.awt.*;
  * PictureData.setImagePainter(Picture.WMF, new WMFPaiter());
  * ...
  * </code>
- * Subsequenet calls of Slide.draw(Graphics gr) will use WMFPaiter for WMF images.
+ * Subsequent calls of Slide.draw(Graphics gr) will use WMFPaiter for WMF images.
  *
  * @author  Yegor Kozlov.
  */
