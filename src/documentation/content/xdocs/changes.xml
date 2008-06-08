@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1-final" date="2008-06-??">
+           <action dev="POI-DEVELOPERS" type="fix">44692 - Fixed HSSFPicture.resize() to properly resize pictures if the underlying columns/rows have modified size</action>
            <action dev="POI-DEVELOPERS" type="add">Support custom image renderers in HSLF</action>
            <action dev="POI-DEVELOPERS" type="fix">Correctly increment the reference count of a blip when a picture is inserted</action>
            <action dev="POI-DEVELOPERS" type="fix">45110 - Fixed TextShape.resizeToFitText() to properly resize TextShape</action>
