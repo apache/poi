@@ -37,6 +37,9 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1-final" date="2008-06-??">
+           <action dev="POI-DEVELOPERS" type="add">Support custom image renderers in HSLF</action>
+           <action dev="POI-DEVELOPERS" type="fix">Correctly increment the reference count of a blip when a picture is inserted</action>
+           <action dev="POI-DEVELOPERS" type="fix">45110 - Fixed TextShape.resizeToFitText() to properly resize TextShape</action>
            <action dev="POI-DEVELOPERS" type="fix">45091 - Fixed serialization of RefN~ tokens.  Simplified Ptg class hierarchy</action>
            <action dev="POI-DEVELOPERS" type="fix">45133 - Fixed OBJ Record (5Dh) to pad the sub-record data to a 4-byte boundary</action>
            <action dev="POI-DEVELOPERS" type="fix">45145 - Fixed Sheet to always enforce RowRecordsAggregate before ValueRecordsAggregate</action>
