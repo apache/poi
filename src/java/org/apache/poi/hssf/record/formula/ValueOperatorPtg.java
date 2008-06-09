@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record.formula;
 
+import org.apache.poi.ss.usermodel.Workbook;
+
 /**
  * Common superclass of all value operators.
  * Subclasses include all unary and binary operators except for the reference operators (IntersectionPtg, RangePtg, UnionPtg) 
@@ -26,12 +28,27 @@ package org.apache.poi.hssf.record.formula;
 public abstract class ValueOperatorPtg extends OperationPtg {
 
 	/**
-	 * All Operator <tt>Ptg</tt>s are base tokens (i.e. are not RVA classifed)  
+	 * All Operator <tt>Ptg</tt>s are base tokens (i.e. are not RVA classified)  
 	 */
 	public final boolean isBaseToken() {
 		return true;
 	}
+
 	public final byte getDefaultOperandClass() {
 		return Ptg.CLASS_VALUE;
+	}
+
+	public final void writeBytes(byte[] array, int offset) {
+		array[offset + 0] = getSid();
+	}
+
+	protected abstract byte getSid();
+
+	public final int getSize() {
+		return 1;
+	}
+    public final String toFormulaString(Workbook book) {
+    	// TODO - prune this method out of the hierarchy
+    	throw new RuntimeException("toFormulaString(String[] operands) should be used for subclasses of OperationPtgs");
 	}
 }

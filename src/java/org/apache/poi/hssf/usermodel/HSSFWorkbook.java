@@ -930,9 +930,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
         if (settingRowAndColumn)
         {
-            MemFuncPtg memFuncPtg = new MemFuncPtg();
-            memFuncPtg.setLenRefSubexpression(23);
-            ptgs.add(memFuncPtg);
+            ptgs.add(new MemFuncPtg(23)); // TODO - where did constant '23' come from?
         }
         if (startColumn >= 0)
         {
@@ -956,8 +954,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         }
         if (settingRowAndColumn)
         {
-            UnionPtg unionPtg = new UnionPtg();
-            ptgs.add(unionPtg);
+            ptgs.add(UnionPtg.instance);
         }
         nameRecord.setNameDefinition(ptgs);
 

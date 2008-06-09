@@ -31,16 +31,12 @@ import org.apache.poi.hssf.record.RecordInputStream;
 public final class NumberPtg extends ScalarConstantPtg {
     public final static int  SIZE = 9;
     public final static byte sid  = 0x1f;
-    private double            field_1_value;
-
-    private NumberPtg() {
-      //Required for clone methods
-    }
+    private final double field_1_value;
         
     /** Create a NumberPtg from a byte array read from disk */
     public NumberPtg(RecordInputStream in)
     {
-        setValue(in.readDouble());
+        field_1_value = in.readDouble();
     }
     
     /** Create a NumberPtg from a string representation of  the number
@@ -49,13 +45,7 @@ public final class NumberPtg extends ScalarConstantPtg {
      *  @param value : String representation of a floating point number
      */
     public NumberPtg(String value) {
-        setValue(Double.parseDouble(value));
-    }
-    
-    
-    public void setValue(double value)
-    {
-        field_1_value = value;
+        field_1_value = Double.parseDouble(value);
     }
     
     
@@ -78,11 +68,5 @@ public final class NumberPtg extends ScalarConstantPtg {
     public String toFormulaString(Workbook book)
     {
         return "" + getValue();
-    }
-
-    public Object clone() {
-      NumberPtg ptg = new NumberPtg();
-      ptg.field_1_value = field_1_value;
-      return ptg;
     }
 }

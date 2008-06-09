@@ -1,4 +1,3 @@
-        
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -18,70 +17,36 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.hssf.record.RecordInputStream;
-
 /**
  * Ptg class to implement not equal
  *
  * @author fred at stsci dot edu
  */
 public final class NotEqualPtg extends ValueOperatorPtg {
-    public final static int SIZE = 1;
     public final static byte sid = 0x0e;
 
-    /**
-     * Creates new NotEqualPtg
-     */
-    public NotEqualPtg()
-    {
+    public static final ValueOperatorPtg instance = new NotEqualPtg();
+
+    private NotEqualPtg() {
+    	// enforce singleton
+    }
+    
+    protected byte getSid() {
+    	return sid;
     }
 
-    public NotEqualPtg( RecordInputStream in )
-    {
-        // doesn't need anything
-    }
-
-    public void writeBytes( byte[] array, int offset )
-    {
-        array[offset + 0] = sid;
-    }
-
-    public int getSize()
-    {
-        return SIZE;
-    }
-
-    public int getType()
-    {
-        return TYPE_BINARY;
-    }
-
-    public int getNumberOfOperands()
-    {
+    public int getNumberOfOperands() {
         return 2;
     }
 
-    public String toFormulaString( Workbook book )
-    {
-        return "<>";
-    }
-
-    public String toFormulaString( String[] operands )
-    {
+    public String toFormulaString(String[] operands) {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append( operands[0] );
 
-        buffer.append( toFormulaString( (Workbook) null ) );
+        buffer.append("<>");
         buffer.append( operands[1] );
 
         return buffer.toString();
     }
-
-    public Object clone()
-    {
-        return new NotEqualPtg();
-    }
-
 }

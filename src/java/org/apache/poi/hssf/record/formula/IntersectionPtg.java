@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * @author Daniel Noll (daniel at nuix dot com dot au)
@@ -26,14 +25,10 @@ import org.apache.poi.hssf.record.RecordInputStream;
 public final class IntersectionPtg extends OperationPtg {
     public final static byte sid  = 0x0f;
 
+    public static final OperationPtg instance = new IntersectionPtg();
 
-    public IntersectionPtg()
-    {
-    }
-
-    public IntersectionPtg(RecordInputStream in)
-    {
-        // doesn't need anything
+    private IntersectionPtg() {
+    	// enforce singleton
     }
 
     public final boolean isBaseToken() {
@@ -48,16 +43,6 @@ public final class IntersectionPtg extends OperationPtg {
     public void writeBytes( byte[] array, int offset )
     {
         array[ offset + 0 ] = sid;
-    }
-
-    public Object clone()
-    {
-        return new IntersectionPtg();
-    }
-
-    public int getType()
-    {
-        return TYPE_BINARY;
     }
 
     /** Implementation of method from Ptg */

@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
-import org.apache.poi.hssf.record.formula.ReferencePtg;
+import org.apache.poi.hssf.record.formula.RefPtg;
 
 /**
  * @author adeshmukh
@@ -26,9 +26,9 @@ import org.apache.poi.hssf.record.formula.ReferencePtg;
 public final class Ref2DEval implements RefEval {
 
     private final ValueEval value;
-    private final ReferencePtg delegate;
+    private final RefPtg delegate;
     
-    public Ref2DEval(ReferencePtg ptg, ValueEval ve) {
+    public Ref2DEval(RefPtg ptg, ValueEval ve) {
         if(ve == null) {
             throw new IllegalArgumentException("ve must not be null");
         }

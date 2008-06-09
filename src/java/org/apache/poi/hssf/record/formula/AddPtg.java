@@ -17,9 +17,6 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.hssf.record.RecordInputStream;
-
 /**
  * Addition operator PTG the "+" binomial operator.  If you need more 
  * explanation than that then well...We really can't help you here.
@@ -27,48 +24,22 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class AddPtg extends ValueOperatorPtg {
-    public final static int  SIZE = 1;
     public final static byte sid  = 0x03;
     
     private final static String ADD = "+";
 
-    /** Creates new AddPtg */
+    public static final ValueOperatorPtg instance = new AddPtg();
 
-    public AddPtg()
-    {
-    }
-
-    public AddPtg(RecordInputStream in)
-    {
-
-        // doesn't need anything
+    private AddPtg() {
+    	// enforce singleton
     }
     
-   
-    public void writeBytes(byte [] array, int offset)
-    {
-        array[ offset + 0 ] = sid;
+    protected byte getSid() {
+    	return sid;
     }
 
-    public int getSize()
-    {
-        return SIZE;
-    }
-
-    public int getType()
-    {
-        return TYPE_BINARY;
-    }
-
-    public int getNumberOfOperands()
-    {
+    public int getNumberOfOperands() {
         return 2;
-    }
-    
-    /** Implementation of method from Ptg */
-    public String toFormulaString(Workbook book)
-    {
-        return "+";
     }
        
    /** implementation of method from OperationsPtg*/  
@@ -80,9 +51,4 @@ public final class AddPtg extends ValueOperatorPtg {
         buffer.append(operands[ 1 ]);
         return buffer.toString();
     }
-           
-    public Object clone() {
-      return new AddPtg();
-    }
-
 }

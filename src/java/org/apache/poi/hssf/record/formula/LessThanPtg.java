@@ -17,9 +17,6 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.hssf.record.RecordInputStream;
-
 /**
  * Less than operator PTG "<". The SID is taken from the 
  * Openoffice.orgs Documentation of the Excel File Format,
@@ -27,79 +24,31 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author Cameron Riley (criley at ekmail.com)
  */
 public final class LessThanPtg extends ValueOperatorPtg {
-    /** the size of the Ptg  */
-    public final static int SIZE = 1;
-
     /** the sid for the less than operator as hex */
     public final static byte sid  = 0x09;    
 
     /** identifier for LESS THAN char */
     private final static String LESSTHAN = "<";
 
-    /** 
-     * Constructor. Creates new LessThanPtg 
-     */
-    public LessThanPtg()
-    {
-        //deliberately empty
-    }
+    public static final ValueOperatorPtg instance = new LessThanPtg();
 
-    /**
-     * Constructor. Create a new LessThanPtg.
-     * @param in the RecordInputstream to read the record from
-     */
-    public LessThanPtg(RecordInputStream in)
-    {
-        //deliberately empty
+    private LessThanPtg() {
+    	// enforce singleton
     }
     
-    /**
-     * Write the sid to an array
-     * @param array the array of bytes to write the sid to
-     * @param offset the offset to add the sid to
-     */
-    public void writeBytes(byte[] array, int offset)
-    {
-        array[ offset + 0 ] = sid;
-    }
-
-    /**
-     * Get the size of the sid
-     * @return int the size of the sid in terms of byte additions to an array
-     */
-    public int getSize()
-    {
-        return SIZE;
-    }
-
-    /**
-     * Get the type of PTG for Less Than
-     * @return int the identifier for the type
-     */
-    public int getType()
-    {
-        return TYPE_BINARY;
+    protected byte getSid() {
+    	return sid;
     }
 
     /**
      * Get the number of operands for the Less than operator
      * @return int the number of operands
      */
-    public int getNumberOfOperands()
-    {
+    public int getNumberOfOperands() {
         return 2;
     }
     
-    /** 
-     * Implementation of method from Ptg 
-     * @param book the Sheet References
-     */
-    public String toFormulaString(Workbook book)
-    {
-        return this.LESSTHAN;
-    }
-       
-    /** 
+     /** 
      * Implementation of method from OperationsPtg
      * @param operands a String array of operands
      * @return String the Formula as a String
@@ -108,18 +57,8 @@ public final class LessThanPtg extends ValueOperatorPtg {
     {
         StringBuffer buffer = new StringBuffer();
         buffer.append(operands[ 0 ]);
-        buffer.append(this.LESSTHAN);
+        buffer.append(LESSTHAN);
         buffer.append(operands[ 1 ]);
         return buffer.toString();
     }
-    
-    /**
-     * Implementation of clone method from Object
-     * @return Object a clone of this class as an Object
-     */       
-    public Object clone() 
-    {
-        return new LessThanPtg();
-    }
-
 }

@@ -50,7 +50,7 @@ import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.ReferencePtg;
+import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.util.HSSFCellRangeAddress;
 import org.apache.poi.hssf.util.HSSFDataValidation;
 import org.apache.poi.hssf.util.PaneInformation;
@@ -1322,8 +1322,8 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
                     Ptg[] ptgs = fp.getRPNPtg();
                     boolean changed = false;
                     for(int i=0; i<ptgs.length; i++) {
-                        if(ptgs[i] instanceof ReferencePtg) {
-                            ReferencePtg rptg = (ReferencePtg)ptgs[i];
+                        if(ptgs[i] instanceof RefPtg) {
+                            RefPtg rptg = (RefPtg)ptgs[i];
                             if(startRow <= rptg.getRowAsInt() &&
                                     rptg.getRowAsInt() <= endRow) {
                                 // References a row that moved

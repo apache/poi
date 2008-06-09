@@ -42,15 +42,11 @@ public final class StringPtg extends ScalarConstantPtg {
      * NOTE: OO doc says 16bit length, but BiffViewer says 8 Book says something
      * totally different, so don't look there!
      */
-    private int field_1_length;
-    private byte field_2_options;
-    private String field_3_string;
+    private final int field_1_length;
+    private final byte field_2_options;
+    private final String field_3_string;
 
-    private StringPtg() {
-        // Required for clone methods
-    }
-
-    /** Create a StringPtg from a byte array read from disk */
+    /** Create a StringPtg from a stream */
     public StringPtg(RecordInputStream in) {
         field_1_length = in.readUByte();
         field_2_options = in.readByte();
@@ -76,9 +72,7 @@ public final class StringPtg extends ScalarConstantPtg {
             throw new IllegalArgumentException(
                     "String literals in formulas can't be bigger than 255 characters ASCII");
         }
-        field_2_options = 0;
-        field_2_options = (byte) fHighByte.setBoolean(field_2_options, StringUtil
-                .hasMultibyte(value));
+        field_2_options = (byte) fHighByte.setBoolean(0, StringUtil.hasMultibyte(value));
         field_3_string = value;
         field_1_length = value.length(); // for the moment, we support only ASCII strings in formulas we create
     }
@@ -122,14 +116,6 @@ public final class StringPtg extends ScalarConstantPtg {
 
         sb.append(FORMULA_DELIMITER);
         return sb.toString();
-    }
-
-    public Object clone() {
-        StringPtg ptg = new StringPtg();
-        ptg.field_1_length = field_1_length;
-        ptg.field_2_options = field_2_options;
-        ptg.field_3_string = field_3_string;
-        return ptg;
     }
 
     public String toString() {
