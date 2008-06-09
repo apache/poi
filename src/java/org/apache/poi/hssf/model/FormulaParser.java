@@ -97,7 +97,7 @@ public final class FormulaParser {
      *  parse results.
      * This class is recommended only for single threaded use.
      *
-     * If you only have a usermodel.HSSFWorkbook, and not a
+     * If you only have a usermodel.Workbook, and not a
      *  model.Workbook, then use the convenience method on
      *  usermodel.HSSFFormulaEvaluator
      */
@@ -274,7 +274,7 @@ public final class FormulaParser {
         boolean cellRef = CELL_REFERENCE_PATTERN.matcher(name).matches();
 
         if (cellRef) {
-            return new ReferencePtg(name);
+            return new RefPtg(name);
         }
 
         for(int i = 0; i < book.getNumberOfNames(); i++) {
@@ -324,9 +324,9 @@ public final class FormulaParser {
         FunctionMetadata fm = FunctionMetadataRegistry.getFunctionByName(name.toUpperCase());
         int numArgs = args.length;
         if(fm == null) {
-        	if (namePtg == null) {
-        		throw new IllegalStateException("NamePtg must be supplied for external functions");
-        	}
+            if (namePtg == null) {
+                throw new IllegalStateException("NamePtg must be supplied for external functions");
+            }
             // must be external function
             ParseNode[] allArgs = new ParseNode[numArgs+1];
             allArgs[0] = new ParseNode(namePtg);
@@ -335,8 +335,8 @@ public final class FormulaParser {
         }
 
         if (namePtg != null) {
-    		throw new IllegalStateException("NamePtg no applicable to internal functions");
-    	}
+            throw new IllegalStateException("NamePtg no applicable to internal functions");
+        }
         boolean isVarArgs = !fm.hasFixedArgsLength();
         int funcIx = fm.getIndex();
         validateNumArgs(args.length, fm);
@@ -392,7 +392,7 @@ public final class FormulaParser {
             SkipWhite();
             if (isArgumentDelimiter(look)) {
                 if (missedPrevArg) {
-                	temp.add(new ParseNode(new MissingArgPtg()));
+                    temp.add(new ParseNode(MissingArgPtg.instance));
                     numArgs++;
                 }
                 if (look == ')') {
@@ -417,7 +417,7 @@ public final class FormulaParser {
 
    /** Parse and Translate a Math Factor  */
     private ParseNode powerFactor() {
-    	ParseNode result = percentFactor();
+        ParseNode result = percentFactor();
         while(true) {
             SkipWhite();
             if(look != '^') {
@@ -425,19 +425,19 @@ public final class FormulaParser {
             }
             Match('^');
             ParseNode other = percentFactor();
-            result = new ParseNode(new PowerPtg(), result, other);
+            result = new ParseNode(PowerPtg.instance, result, other);
         }
     }
 
     private ParseNode percentFactor() {
-    	ParseNode result = parseSimpleFactor();
+        ParseNode result = parseSimpleFactor();
         while(true) {
             SkipWhite();
             if(look != '%') {
                 return result;
             }
             Match('%');
-            result = new ParseNode(new PercentPtg(), result);
+            result = new ParseNode(PercentPtg.instance, result);
         }
     }
 
@@ -452,15 +452,15 @@ public final class FormulaParser {
                 return new ParseNode(parseErrorLiteral());
             case '-':
                 Match('-');
-                return new ParseNode(new UnaryMinusPtg(), powerFactor());
+                return new ParseNode(UnaryMinusPtg.instance, powerFactor());
             case '+':
                 Match('+');
-                return new ParseNode(new UnaryPlusPtg(), powerFactor());
+                return new ParseNode(UnaryPlusPtg.instance, powerFactor());
             case '(':
                 Match('(');
                 ParseNode inside = comparisonExpression();
                 Match(')');
-                return new ParseNode(new ParenthesisPtg(), inside);
+                return new ParseNode(ParenthesisPtg.instance, inside);
             case '"':
                 return new ParseNode(parseStringLiteral());
         }
@@ -625,18 +625,18 @@ public final class FormulaParser {
 
     /** Parse and Translate a Math Term */
     private ParseNode  Term() {
-    	ParseNode result = powerFactor();
+        ParseNode result = powerFactor();
         while(true) {
             SkipWhite();
             Ptg operator;
             switch(look) {
                 case '*':
                     Match('*');
-                    operator = new MultiplyPtg();
+                    operator = MultiplyPtg.instance;
                     break;
                 case '/':
                     Match('/');
-                    operator = new DividePtg();
+                    operator = DividePtg.instance;
                     break;
                 default:
                     return result; // finished with Term
@@ -647,7 +647,7 @@ public final class FormulaParser {
     }
 
     private ParseNode comparisonExpression() {
-    	ParseNode result = concatExpression();
+        ParseNode result = concatExpression();
         while (true) {
             SkipWhite();
             switch(look) {
@@ -666,26 +666,26 @@ public final class FormulaParser {
     private Ptg getComparisonToken() {
         if(look == '=') {
             Match(look);
-            return new EqualPtg();
+            return EqualPtg.instance;
         }
         boolean isGreater = look == '>';
         Match(look);
         if(isGreater) {
             if(look == '=') {
                 Match('=');
-                return new GreaterEqualPtg();
+                return GreaterEqualPtg.instance;
             }
-            return new GreaterThanPtg();
+            return GreaterThanPtg.instance;
         }
         switch(look) {
             case '=':
                 Match('=');
-                return new LessEqualPtg();
+                return LessEqualPtg.instance;
             case '>':
                 Match('>');
-                return new NotEqualPtg();
+                return NotEqualPtg.instance;
         }
-        return new LessThanPtg();
+        return LessThanPtg.instance;
     }
 
 
@@ -698,7 +698,7 @@ public final class FormulaParser {
             }
             Match('&');
             ParseNode other = additiveExpression();
-            result = new ParseNode(new ConcatPtg(), result, other);
+            result = new ParseNode(ConcatPtg.instance, result, other);
         }
         return result;
     }
@@ -706,18 +706,18 @@ public final class FormulaParser {
 
     /** Parse and Translate an Expression */
     private ParseNode additiveExpression() {
-    	ParseNode result = Term();
+        ParseNode result = Term();
         while (true) {
             SkipWhite();
             Ptg operator;
             switch(look) {
                 case '+':
                     Match('+');
-                    operator = new AddPtg();
+                    operator = AddPtg.instance;
                     break;
                 case '-':
                     Match('-');
-                    operator = new SubtractPtg();
+                    operator = SubtractPtg.instance;
                     break;
                 default:
                     return result; // finished with additive expression
@@ -743,7 +743,7 @@ end;
 
     /**
      *  API call to execute the parsing of the formula
-     * @deprecated use Ptg[] FormulaParser.parse(String, HSSFWorkbook) directly
+     * @deprecated use Ptg[] FormulaParser.parse(String, Workbook) directly
      */
     public void parse() {
         pointer=0;
@@ -771,9 +771,9 @@ end;
     }
 
     public Ptg[] getRPNPtg(int formulaType) {
-    	OperandClassTransformer oct = new OperandClassTransformer(formulaType);
+        OperandClassTransformer oct = new OperandClassTransformer(formulaType);
         // RVA is for 'operand class': 'reference', 'value', 'array'
-    	oct.transformFormula(_rootNode);
+        oct.transformFormula(_rootNode);
         return ParseNode.toTokenArray(_rootNode);
     }
 

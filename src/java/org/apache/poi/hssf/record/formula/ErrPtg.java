@@ -47,7 +47,7 @@ public final class ErrPtg extends ScalarConstantPtg {
     
     public static final short sid  = 0x1c;
     private static final int  SIZE = 2;
-    private int              field_1_error_code;
+    private final int field_1_error_code;
 
     /** Creates new ErrPtg */
 
@@ -64,7 +64,7 @@ public final class ErrPtg extends ScalarConstantPtg {
 
     public void writeBytes(byte [] array, int offset)
     {
-        array[offset] = (byte) (sid + ptgClass);
+        array[offset] = (byte) (sid + getPtgClass());
         array[offset + 1] = (byte)field_1_error_code;
     }
 
@@ -74,10 +74,6 @@ public final class ErrPtg extends ScalarConstantPtg {
 
     public int getSize() {
         return SIZE;
-    }
-
-    public Object clone() {
-        return new ErrPtg(field_1_error_code);
     }
 
     public int getErrorCode() {

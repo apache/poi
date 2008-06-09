@@ -31,7 +31,7 @@ import org.apache.poi.hssf.record.formula.LessThanPtg;
 import org.apache.poi.hssf.record.formula.MultiplyPtg;
 import org.apache.poi.hssf.record.formula.NotEqualPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.ReferencePtg;
+import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.StringPtg;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
@@ -61,7 +61,7 @@ public final class TestFormulaParserIf extends TestCase {
 		Class[] expClss;
 
 		expClss = new Class[] {
-				ReferencePtg.class,
+				RefPtg.class,
 				AttrPtg.class, // tAttrIf
 				IntPtg.class,
 				AttrPtg.class, // tAttrSkip
@@ -82,9 +82,9 @@ public final class TestFormulaParserIf extends TestCase {
 		Class[] expClss;
 
 		expClss = new Class[] {
-				ReferencePtg.class,
+				RefPtg.class,
 				AttrPtg.class, // tAttrIf
-				ReferencePtg.class,
+				RefPtg.class,
 				AttrPtg.class, // tAttrSkip
 				FuncVarPtg.class,
 		};
@@ -100,20 +100,20 @@ public final class TestFormulaParserIf extends TestCase {
 		Class[] expClss;
 
 		expClss = new Class[] {
-				ReferencePtg.class,
+				RefPtg.class,
 				AttrPtg.class, // tAttrIf
 
-				ReferencePtg.class,
+				RefPtg.class,
 				IntPtg.class,
 				MultiplyPtg.class,
-				ReferencePtg.class,
+				RefPtg.class,
 				IntPtg.class,
 				AddPtg.class,
 				FuncPtg.class,
 				AttrPtg.class, // tAttrSkip
 				
-				ReferencePtg.class,
-				ReferencePtg.class,
+				RefPtg.class,
+				RefPtg.class,
 				FuncPtg.class,
 				
 				AttrPtg.class, // tAttrSkip
@@ -133,9 +133,9 @@ public final class TestFormulaParserIf extends TestCase {
 
 		expClss = new Class[] {
 
-				ReferencePtg.class,
+				RefPtg.class,
 				AttrPtg.class,	  // A tAttrIf
-				ReferencePtg.class,
+				RefPtg.class,
 				AttrPtg.class,    //   B tAttrIf
 				IntPtg.class,
 				AttrPtg.class,    //   B tAttrSkip
@@ -143,7 +143,7 @@ public final class TestFormulaParserIf extends TestCase {
 				AttrPtg.class,    //   B tAttrSkip
 				FuncVarPtg.class,
 				AttrPtg.class,    // A tAttrSkip
-				ReferencePtg.class,
+				RefPtg.class,
 				AttrPtg.class,    //   C tAttrIf
 				IntPtg.class,
 				AttrPtg.class,    //   C tAttrSkip

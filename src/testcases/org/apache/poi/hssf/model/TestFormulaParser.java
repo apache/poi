@@ -40,7 +40,7 @@ import org.apache.poi.hssf.record.formula.NumberPtg;
 import org.apache.poi.hssf.record.formula.PercentPtg;
 import org.apache.poi.hssf.record.formula.PowerPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.ReferencePtg;
+import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.StringPtg;
 import org.apache.poi.hssf.record.formula.SubtractPtg;
 import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
@@ -165,14 +165,14 @@ public final class TestFormulaParser extends TestCase {
 	public void testUnaryMinus() {
 		Ptg[] ptgs = parseFormula("-A1");
 		assertEquals(2, ptgs.length);
-		assertTrue("first ptg is reference",ptgs[0] instanceof ReferencePtg);
+		assertTrue("first ptg is reference",ptgs[0] instanceof RefPtg);
 		assertTrue("second ptg is Minus",ptgs[1] instanceof UnaryMinusPtg);
 	}
 
 	public void testUnaryPlus() {
 		Ptg[] ptgs = parseFormula("+A1");
 		assertEquals(2, ptgs.length);
-		assertTrue("first ptg is reference",ptgs[0] instanceof ReferencePtg);
+		assertTrue("first ptg is reference",ptgs[0] instanceof RefPtg);
 		assertTrue("second ptg is Plus",ptgs[1] instanceof UnaryPlusPtg);
 	}
 
@@ -540,11 +540,11 @@ public final class TestFormulaParser extends TestCase {
 		Class[] expClss;
 
 		expClss = new Class[] { 
-				ReferencePtg.class, 
+				RefPtg.class, 
 				AttrPtg.class, // tAttrIf
 				MissingArgPtg.class, 
 				AttrPtg.class, // tAttrSkip
-				ReferencePtg.class,
+				RefPtg.class,
 				AttrPtg.class, // tAttrSkip
 				FuncVarPtg.class, 
 		};
@@ -696,7 +696,7 @@ public final class TestFormulaParser extends TestCase {
 		// FormulaParser strips spaces anyway
 		assertEquals("4", formulaString);
 
-		ptgs = new Ptg[] { new IntPtg(3), spacePtg, new IntPtg(4), spacePtg, new AddPtg()};
+		ptgs = new Ptg[] { new IntPtg(3), spacePtg, new IntPtg(4), spacePtg, AddPtg.instance, };
 		formulaString = FormulaParser.toFormulaString(null, ptgs);
 		assertEquals("3+4", formulaString);
 	}
@@ -710,7 +710,7 @@ public final class TestFormulaParser extends TestCase {
 		Ptg[] ptgs = {
 				// Excel would probably have put tMissArg here
 				new IntPtg(1),
-				new DividePtg(),
+				DividePtg.instance,
 		};
 		try {
 			FormulaParser.toFormulaString(null, ptgs);

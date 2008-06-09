@@ -39,7 +39,7 @@ import org.apache.poi.hssf.record.formula.OperationPtg;
 import org.apache.poi.hssf.record.formula.ParenthesisPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
-import org.apache.poi.hssf.record.formula.ReferencePtg;
+import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.StringPtg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.hssf.record.formula.UnknownPtg;
@@ -337,17 +337,10 @@ public class FormulaEvaluator {
 
             // since we don't know how to handle these yet :(
             Ptg ptg = ptgs[i];
-<<<<<<< .mine
             if (ptg instanceof ControlPtg) {
                // skip Parentheses, Attr, etc
                continue;
 			}
-=======
-            if (ptg instanceof ControlPtg) {
-                // skip Parentheses, Attr, etc
-                continue;
-            }
->>>>>>> .r663896
             if (ptg instanceof MemErrPtg) { continue; }
             if (ptg instanceof MissingArgPtg) { continue; }
             if (ptg instanceof NamePtg) { 
@@ -380,8 +373,8 @@ public class FormulaEvaluator {
                 Eval opresult = invokeOperation(operation, ops, srcRowNum, srcColNum, workbook, sheet);
                 stack.push(opresult);
             }
-            else if (ptg instanceof ReferencePtg) {
-                ReferencePtg refPtg = (ReferencePtg) ptg;
+            else if (ptg instanceof RefPtg) {
+                RefPtg refPtg = (RefPtg) ptg;
                 int colIx = refPtg.getColumn();
                 int rowIx = refPtg.getRow();
                 Row row = sheet.getRow(rowIx);
@@ -526,7 +519,7 @@ public class FormulaEvaluator {
 
     /**
      * returns an appropriate Eval impl instance for the Ptg. The Ptg must be
-     * one of: Area3DPtg, AreaPtg, ReferencePtg, Ref3DPtg, IntPtg, NumberPtg,
+     * one of: Area3DPtg, AreaPtg, RefPtg, Ref3DPtg, IntPtg, NumberPtg,
      * StringPtg, BoolPtg <br/>special Note: OperationPtg subtypes cannot be
      * passed here!
      * 
@@ -545,7 +538,7 @@ public class FormulaEvaluator {
                 Constructor constructor = clazz.getConstructor(AREA3D_CONSTRUCTOR_CLASS_ARRAY);
                 retval = (OperationEval) constructor.newInstance(new Ptg[] { ptg });
             }
-            else if (ptg instanceof ReferencePtg) {
+            else if (ptg instanceof RefPtg) {
                 Constructor constructor = clazz.getConstructor(REFERENCE_CONSTRUCTOR_CLASS_ARRAY);
                 retval = (OperationEval) constructor.newInstance(new Ptg[] { ptg });
             }
@@ -600,10 +593,10 @@ public class FormulaEvaluator {
     }
 
     /**
-     * Creates a Ref2DEval for ReferencePtg.
+     * Creates a Ref2DEval for RefPtg.
      * Non existent cells are treated as RefEvals containing BlankEval.
      */
-    private static Ref2DEval createRef2DEval(ReferencePtg ptg, Cell cell, 
+    private static Ref2DEval createRef2DEval(RefPtg ptg, Cell cell, 
             Row row, Sheet sheet, Workbook workbook) {
         if (cell == null) {
             return new Ref2DEval(ptg, BlankEval.INSTANCE);

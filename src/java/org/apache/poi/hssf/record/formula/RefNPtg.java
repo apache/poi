@@ -18,37 +18,21 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * RefNPtg
  * @author Jason Height (jheight at apache dot com)
  */
-public final class RefNPtg extends ReferencePtg
-{
+public final class RefNPtg extends RefPtgBase {
     public final static byte sid  = 0x2C;
-
-    protected RefNPtg() {
-      //Required for clone methods
-    }
 
     /** Creates new ValueReferencePtg */
 
-    public RefNPtg(RecordInputStream in)
-    {
+    public RefNPtg(RecordInputStream in) {
       super(in);
     }
-
-    public String getRefPtgName() {
-      return "RefNPtg";
-    }
-
-    public String toFormulaString(Workbook book)
-    {
-        throw notImplemented();
-    }
-
-    public Object clone() {
-        throw notImplemented();
+    
+    protected byte getSid() {
+    	return sid;
     }
 }

@@ -33,12 +33,6 @@ public final class NamePtg extends OperandPtg {
     /** one-based index to defined name record */
     private short             field_1_label_index;
     private short             field_2_zero;   // reserved must be 0
-    boolean xtra=false;
-
-
-    private NamePtg() {
-      //Required for clone methods
-    }
 
     /**
      * Creates new NamePtg and sets its name index to that of the corresponding defined name record
@@ -68,12 +62,9 @@ public final class NamePtg extends OperandPtg {
 
     /** Creates new NamePtg */
 
-    public NamePtg(RecordInputStream in)
-    {
-        //field_1_ixti        = LittleEndian.getShort(data, offset);
+    public NamePtg(RecordInputStream in) {
         field_1_label_index = in.readShort();
         field_2_zero        = in.readShort();
-        //if (data[offset+6]==0) xtra=true;
     }
     
     /**
@@ -83,15 +74,13 @@ public final class NamePtg extends OperandPtg {
         return field_1_label_index-1; // convert to zero based
     }
 
-    public void writeBytes(byte [] array, int offset)
-    {
-        array[offset+0]= (byte) (sid + ptgClass);
+    public void writeBytes(byte [] array, int offset) {
+        array[offset+0]= (byte) (sid + getPtgClass());
         LittleEndian.putShort(array,offset+1,field_1_label_index);
         LittleEndian.putShort(array,offset+3, field_2_zero);
     }
 
-    public int getSize()
-    {
+    public int getSize() {
         return SIZE;
     }
 
@@ -100,12 +89,7 @@ public final class NamePtg extends OperandPtg {
     	return book.getNameName(field_1_label_index - 1);
     }
     
-    public byte getDefaultOperandClass() {return Ptg.CLASS_REF;}
-
-    public Object clone() {
-      NamePtg ptg = new NamePtg();
-      ptg.field_1_label_index = field_1_label_index;
-      ptg.field_2_zero = field_2_zero;
-      return ptg;
-    }
+    public byte getDefaultOperandClass() {
+		return Ptg.CLASS_REF;
+	}
 }

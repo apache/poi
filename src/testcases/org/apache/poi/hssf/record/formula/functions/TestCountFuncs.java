@@ -21,7 +21,7 @@ package org.apache.poi.hssf.record.formula.functions;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.AreaPtg;
-import org.apache.poi.hssf.record.formula.ReferencePtg;
+import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.eval.Area2DEval;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
@@ -124,7 +124,7 @@ public final class TestCountFuncs extends TestCase {
 		};
 		Area2DEval arg0 = new Area2DEval(new AreaPtg("C1:C6"), values);
 		
-		Ref2DEval criteriaArg = new Ref2DEval(new ReferencePtg("A1"), new NumberEval(25));
+		Ref2DEval criteriaArg = new Ref2DEval(new RefPtg("A1"), new NumberEval(25));
 		Eval[] args=  { arg0, criteriaArg, };
 		
 		double actual = NumericFunctionInvoker.invoke(new Countif(), args);

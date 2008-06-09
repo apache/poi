@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * @author Glen Stampoultzis (glens at apache.org)
@@ -26,14 +25,10 @@ import org.apache.poi.hssf.record.RecordInputStream;
 public final class UnionPtg extends OperationPtg {
     public final static byte sid  = 0x10;
 
+    public static final OperationPtg instance = new UnionPtg();
 
-    public UnionPtg()
-    {
-    }
-
-    public UnionPtg(RecordInputStream in)
-    {
-        // doesn't need anything
+    private UnionPtg() {
+    	// enforce singleton
     }
 
     public final boolean isBaseToken() {
@@ -50,17 +45,6 @@ public final class UnionPtg extends OperationPtg {
         array[ offset + 0 ] = sid;
     }
 
-    public Object clone()
-    {
-        return new UnionPtg();
-    }
-
-    public int getType()
-    {
-        return TYPE_BINARY;
-    }
-
-    /** Implementation of method from Ptg */
     public String toFormulaString(Workbook book)
     {
         return ",";

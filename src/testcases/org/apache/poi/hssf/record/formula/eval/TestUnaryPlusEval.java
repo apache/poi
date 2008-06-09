@@ -36,7 +36,7 @@ public final class TestUnaryPlusEval extends TestCase {
 	 * The code for handling column operands had been copy-pasted from the row handling code. 
 	 */
 	public void testColumnOperand() {
-		
+
 		short firstRow = (short)8;
 		short lastRow = (short)12;
 		short colNum = (short)5;
@@ -52,10 +52,9 @@ public final class TestUnaryPlusEval extends TestCase {
 		Eval[] args = { 
 			areaEval,	
 		};
-		
-		double result = NumericFunctionInvoker.invoke(new UnaryPlusEval(new UnaryPlusPtg()), args, 10, (short)20);
-		
+
+		double result = NumericFunctionInvoker.invoke(new UnaryPlusEval(UnaryPlusPtg.instance), args, 10, (short)20);
+
 		assertEquals(35, result, 0);
 	}
-
 }

@@ -17,62 +17,30 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import java.util.List;
-
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.hssf.record.RecordInputStream;
-
 /**
  * Unary Plus operator
  * does not have any effect on the operand
  * @author Avik Sengupta
  */
-
 public final class UnaryMinusPtg extends ValueOperatorPtg {
-    public final static int  SIZE = 1;
     public final static byte sid  = 0x13;
     
     private final static String MINUS = "-";
 
-    /** Creates new AddPtg */
+    public static final ValueOperatorPtg instance = new UnaryMinusPtg();
 
-    public UnaryMinusPtg()
-    {
-    }
-
-    public UnaryMinusPtg(RecordInputStream in)
-    {
-
-        // doesn't need anything
+    private UnaryMinusPtg() {
+    	// enforce singleton
     }
     
-   
-    public void writeBytes(byte [] array, int offset)
-    {
-        array[ offset + 0 ] = sid;
+    protected byte getSid() {
+    	return sid;
     }
 
-    public int getSize()
-    {
-        return SIZE;
-    }
-
-    public int getType()
-    {
-        return this.TYPE_UNARY;
-    }
-
-    public int getNumberOfOperands()
-    {
+    public int getNumberOfOperands() {
         return 1;
     }
     
-    /** Implementation of method from Ptg */
-    public String toFormulaString(Workbook book)
-    {
-        return "+";
-    }
-       
    /** implementation of method from OperationsPtg*/  
     public String toFormulaString(String[] operands) {
         StringBuffer buffer = new StringBuffer();
@@ -80,9 +48,4 @@ public final class UnaryMinusPtg extends ValueOperatorPtg {
         buffer.append(operands[ 0]);
         return buffer.toString();
     }
-    
-    public Object clone() {
-      return new UnaryPlusPtg();
-    }
-
 }

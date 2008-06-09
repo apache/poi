@@ -683,4 +683,13 @@ public class TextRun
         String ns = s.replaceAll("\\r?\\n", "\r");
         return ns;
     }
+
+    /**
+     * Returns records that make up this text run
+     *
+     * @return text run records
+     */
+    public Record[] getRecords(){
+        return _records;
+    }
 }

@@ -46,6 +46,11 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
         <release version="3.1-final" date="2008-06-??">
+           <action dev="POI-DEVELOPERS" type="fix">44692 - Fixed HSSFPicture.resize() to properly resize pictures if the underlying columns/rows have modified size</action>
+           <action dev="POI-DEVELOPERS" type="add">Support custom image renderers in HSLF</action>
+           <action dev="POI-DEVELOPERS" type="fix">Correctly increment the reference count of a blip when a picture is inserted</action>
+           <action dev="POI-DEVELOPERS" type="fix">45110 - Fixed TextShape.resizeToFitText() to properly resize TextShape</action>
+           <action dev="POI-DEVELOPERS" type="fix">45091 - Fixed serialization of RefN~ tokens.  Simplified Ptg class hierarchy</action>
            <action dev="POI-DEVELOPERS" type="fix">45133 - Fixed OBJ Record (5Dh) to pad the sub-record data to a 4-byte boundary</action>
            <action dev="POI-DEVELOPERS" type="fix">45145 - Fixed Sheet to always enforce RowRecordsAggregate before ValueRecordsAggregate</action>
            <action dev="POI-DEVELOPERS" type="fix">45123 - Fixed SharedFormulaRecord.convertSharedFormulas() to propagate token operand classes</action>
