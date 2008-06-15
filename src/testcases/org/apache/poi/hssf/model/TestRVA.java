@@ -23,7 +23,6 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.RefPtgBase;
 import org.apache.poi.hssf.usermodel.FormulaExtractor;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -60,7 +59,7 @@ public final class TestRVA extends TestCase {
 			}
 			String formula = cell.getCellFormula();
 			try {
-				confirmCell(cell, formula);
+				confirmCell(cell, formula, wb);
 			} catch (AssertionFailedError e) {
 				System.err.println("Problem with row[" + rowIx + "] formula '" + formula + "'");
 				System.err.println(e.getMessage());
@@ -79,9 +78,9 @@ public final class TestRVA extends TestCase {
 		}
 	}
 
-	private void confirmCell(HSSFCell formulaCell, String formula) {
+	private void confirmCell(HSSFCell formulaCell, String formula, HSSFWorkbook wb) {
 		Ptg[] excelPtgs = FormulaExtractor.getPtgs(formulaCell);
-		Ptg[] poiPtgs = FormulaParser.parse(formula, null);
+		Ptg[] poiPtgs = FormulaParser.parse(formula, wb);
 		int nExcelTokens = excelPtgs.length;
 		int nPoiTokens = poiPtgs.length;
 		if (nExcelTokens != nPoiTokens) {
@@ -121,6 +120,10 @@ public final class TestRVA extends TestCase {
 				sb.append(" - was " + getOperandClassName(poiPtg));
 			}
 			sb.append(NEW_LINE);
+		}
+		if (false) { // set 'true' to see trace of RVA values
+			System.out.println(formula);
+			System.out.println(sb.toString());
 		}
 		if (hasMismatch) {
 			throw new AssertionFailedError(sb.toString());
