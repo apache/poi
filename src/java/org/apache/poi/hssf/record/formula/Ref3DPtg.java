@@ -15,12 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.util.RangeAddress;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.SheetReferences;
 import org.apache.poi.util.BitField;
@@ -69,16 +68,15 @@ public class Ref3DPtg extends OperandPtg {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append("Ref3dPtg\n");
-        buffer.append("Index to Extern Sheet = " + getExternSheetIndex()).append("\n");
-        buffer.append("Row = " + getRow()).append("\n");
-        buffer.append("Col  = " + getColumn()).append("\n");
-        buffer.append("ColRowRel= "
-        + isRowRelative()).append("\n");
-        buffer.append("ColRel   = " + isColRelative()).append("\n");
-        return buffer.toString();
+        CellReference cr = new CellReference(getRow(), getColumn(), !isRowRelative(),!isColRelative());
+        StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName());
+        sb.append(" [");
+        sb.append("sheetIx=").append(getExternSheetIndex());
+        sb.append(" ! ");
+        sb.append(cr.formatAsString());
+        sb.append("]");
+        return sb.toString();
     }
 
     public void writeBytes(byte [] array, int offset) {
