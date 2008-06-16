@@ -355,7 +355,7 @@ public abstract class TextShape extends SimpleShape {
      */
     public float getMarginLeft(){
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
-        EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.TEXT__TEXTBOTTOM);
+        EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.TEXT__TEXTLEFT);
         int val = prop == null ? EMU_PER_INCH/10 : prop.getPropertyValue();
         return (float)val/EMU_PER_POINT;
     }
