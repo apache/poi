@@ -269,8 +269,15 @@ public class Area3DPtg extends OperandPtg implements AreaI {
 		StringBuffer retval = new StringBuffer();
 		String sheetName = Ref3DPtg.getSheetName(book, field_1_index_extern_sheet);
 		if(sheetName != null) {
-			SheetNameFormatter.appendFormat(retval, sheetName);
-			retval.append( '!' );
+			if(sheetName.length() == 0) {
+				// What excel does if sheet has been deleted
+				sheetName = "#REF";
+				retval.append(sheetName);
+			} else {
+				// Normal
+				SheetNameFormatter.appendFormat(retval, sheetName);
+				retval.append( '!' );
+			}
 		}
 		
 		// Now the normal area bit

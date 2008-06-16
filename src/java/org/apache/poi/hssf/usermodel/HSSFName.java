@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.BoundSheetRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.util.RangeAddress;
 
