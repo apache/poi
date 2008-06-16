@@ -632,6 +632,50 @@ public class Range
     return (ListEntry)insertAfter(props, styleIndex);
   }
 
+  /**
+   * Replace (one instance of) a piece of text with another...
+   *
+   * @param pPlaceHolder    The text to be replaced (e.g., "${company}")
+   * @param pValue          The replacement text (e.g., "Cognocys, Inc.")
+   * @param pDocument       The <code>HWPFDocument</code> in which the placeholder was found
+   * @param pStartOffset    The offset or index where the <code>CharacterRun</code> begins
+   * @param pPlaceHolderIndex   The offset or index of the placeholder, 
+   *  relative to the <code>CharacterRun</code> where 
+   *  <code>pPlaceHolder</code> was found
+   */
+  protected void replaceText(String pPlaceHolder, String pValue, 
+        int pStartOffset, int pPlaceHolderIndex, HWPFDocument pDocument) {
+    int absPlaceHolderIndex = pStartOffset + pPlaceHolderIndex;
+    Range subRange = new Range(
+                absPlaceHolderIndex, 
+                (absPlaceHolderIndex + pPlaceHolder.length()), pDocument
+    );
+    if (subRange.usesUnicode()) {
+            absPlaceHolderIndex = pStartOffset + (pPlaceHolderIndex * 2);
+            subRange = new Range(
+                      absPlaceHolderIndex, 
+                      (absPlaceHolderIndex + (pPlaceHolder.length() * 2)), 
+                      pDocument
+            );
+    }
+
+    subRange.insertBefore(pValue);
+
+    // re-create the sub-range so we can delete it
+    subRange = new Range(
+            (absPlaceHolderIndex + pValue.length()),
+            (absPlaceHolderIndex + pPlaceHolder.length() + pValue.length()), 
+            pDocument
+    );
+    if (subRange.usesUnicode())
+            subRange = new Range(
+                      (absPlaceHolderIndex + (pValue.length() * 2)),
+                      (absPlaceHolderIndex + (pPlaceHolder.length() * 2) + 
+                      (pValue.length() * 2)), pDocument
+            );
+
+    subRange.delete();
+  }
 
   /**
    * Gets the character run at index. The index is relative to this range.
