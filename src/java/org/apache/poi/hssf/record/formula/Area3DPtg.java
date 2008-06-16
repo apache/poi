@@ -276,8 +276,8 @@ public class Area3DPtg extends OperandPtg implements AreaI {
 			} else {
 				// Normal
 				SheetNameFormatter.appendFormat(retval, sheetName);
-				retval.append( '!' );
 			}
+			retval.append( '!' );
 		}
 		
 		// Now the normal area bit
