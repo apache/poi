@@ -30,6 +30,7 @@ import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.util.TempFile;
 /**
  *
@@ -402,6 +403,92 @@ public final class TestHSSFWorkbook extends TestCase {
             assertTrue(e.getMessage().startsWith("Actual serialized sheet size"));
         }
     }
+    
+    /**
+     * Checks that us and HSSFName play nicely with named ranges
+     *  that point to deleted sheets
+     */
+    public void testNamesToDeleteSheets() throws Exception {
+    	HSSFWorkbook b = openSample("30978-deleted.xls");
+    	assertEquals(3, b.getNumberOfNames());
+    	
+    	// Sheet 2 is deleted
+    	assertEquals("Sheet1", b.getSheetName(0));
+    	assertEquals("Sheet3", b.getSheetName(1));
+    	
+    	Area3DPtg ptg;
+    	NameRecord nr;
+    	HSSFName n;
+    	
+    	/* ======= Name pointing to deleted sheet ====== */
+    	
+    	// First at low level
+    	nr = b.getWorkbook().getNameRecord(0);
+    	assertEquals("On2", nr.getNameText());
+    	assertEquals(0, nr.getIndexToSheet());
+    	assertEquals(1, nr.getExternSheetNumber());
+    	assertEquals(1, nr.getNameDefinition().size());
+    	
+    	ptg = (Area3DPtg)nr.getNameDefinition().get(0);
+    	assertEquals(1, ptg.getExternSheetIndex());
+    	assertEquals(0, ptg.getFirstColumn());
+    	assertEquals(0, ptg.getFirstRow());
+    	assertEquals(0, ptg.getLastColumn());
+    	assertEquals(2, ptg.getLastRow());
+    	
+    	// Now at high level
+    	n = b.getNameAt(0);
+    	assertEquals("On2", n.getNameName());
+    	assertEquals("", n.getSheetName());
+    	assertEquals("#REF!$A$1:$A$3", n.getReference());
+    	
+    	
+    	/* ======= Name pointing to 1st sheet ====== */
+    	
+    	// First at low level
+    	nr = b.getWorkbook().getNameRecord(1);
+    	assertEquals("OnOne", nr.getNameText());
+    	assertEquals(0, nr.getIndexToSheet());
+    	assertEquals(0, nr.getExternSheetNumber());
+    	assertEquals(1, nr.getNameDefinition().size());
+    	
+    	ptg = (Area3DPtg)nr.getNameDefinition().get(0);
+    	assertEquals(0, ptg.getExternSheetIndex());
+    	assertEquals(0, ptg.getFirstColumn());
+    	assertEquals(2, ptg.getFirstRow());
+    	assertEquals(0, ptg.getLastColumn());
+    	assertEquals(3, ptg.getLastRow());
+    	
+    	// Now at high level
+    	n = b.getNameAt(1);
+    	assertEquals("OnOne", n.getNameName());
+    	assertEquals("Sheet1", n.getSheetName());
+    	assertEquals("Sheet1!$A$3:$A$4", n.getReference());
+    	
+    	
+    	/* ======= Name pointing to 3rd sheet ====== */
+    	
+    	// First at low level
+    	nr = b.getWorkbook().getNameRecord(2);
+    	assertEquals("OnSheet3", nr.getNameText());
+    	assertEquals(0, nr.getIndexToSheet());
+    	assertEquals(2, nr.getExternSheetNumber());
+    	assertEquals(1, nr.getNameDefinition().size());
+    	
+    	ptg = (Area3DPtg)nr.getNameDefinition().get(0);
+    	assertEquals(2, ptg.getExternSheetIndex());
+    	assertEquals(0, ptg.getFirstColumn());
+    	assertEquals(0, ptg.getFirstRow());
+    	assertEquals(0, ptg.getLastColumn());
+    	assertEquals(1, ptg.getLastRow());
+    	
+    	// Now at high level
+    	n = b.getNameAt(2);
+    	assertEquals("OnSheet3", n.getNameName());
+    	assertEquals("Sheet3", n.getSheetName());
+    	assertEquals("Sheet3!$A$1:$A$2", n.getReference());
+    }
+    
     /**
      * result returned by getRecordSize() differs from result returned by serialize()
      */
