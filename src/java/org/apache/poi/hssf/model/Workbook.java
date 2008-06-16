@@ -603,6 +603,9 @@ public class Workbook implements Model
             boundsheets.remove(sheetnum);
             fixTabIdRecord();
         }
+        
+        // If we decide that we need to fix up
+        //  NameRecords, do it here
     }
 
     /**

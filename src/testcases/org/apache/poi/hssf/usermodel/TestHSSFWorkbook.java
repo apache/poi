@@ -30,6 +30,7 @@ import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.util.TempFile;
 /**
  *
@@ -402,6 +403,39 @@ public final class TestHSSFWorkbook extends TestCase {
             assertTrue(e.getMessage().startsWith("Actual serialized sheet size"));
         }
     }
+    
+    /**
+     * Checks that us and HSSFName play nicely with named ranges
+     *  that point to deleted sheets
+     */
+    public void testNamesToDeleteSheets() throws Exception {
+    	HSSFWorkbook b = openSample("30978-deleted.xls");
+    	assertEquals(1, b.getNumberOfNames());
+    	
+    	// Sheet 2 deleted
+    	assertEquals("Sheet1", b.getSheetName(0));
+    	assertEquals("Sheet3", b.getSheetName(1));
+    	
+    	// First at low level
+    	NameRecord nr = b.getWorkbook().getNameRecord(0);
+    	assertEquals("On2", nr.getNameText());
+    	assertEquals(1, nr.getExternSheetNumber());
+    	assertEquals(1, nr.getNameDefinition().size());
+    	
+    	Area3DPtg ptg = (Area3DPtg)nr.getNameDefinition().get(0);
+    	assertEquals(1, ptg.getExternSheetIndex());
+    	assertEquals(0, ptg.getFirstColumn());
+    	assertEquals(0, ptg.getFirstRow());
+    	assertEquals(0, ptg.getLastColumn());
+    	assertEquals(2, ptg.getLastRow());
+    	
+    	// Now at high level
+    	HSSFName n = b.getNameAt(0);
+    	assertEquals("On2", n.getNameName());
+    	assertEquals("", n.getSheetName());
+    	assertEquals("#REF$A$1:$A$3", n.getReference());
+    }
+    
     /**
      * result returned by getRecordSize() differs from result returned by serialize()
      */
