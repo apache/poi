@@ -28,7 +28,10 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
+import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.util.TempFile;
 
@@ -988,5 +991,64 @@ public final class TestBugs extends TestCase {
         	obj.getDirectory();
         	fail();
         } catch(FileNotFoundException e) {}
+    }
+    
+    /**
+     * Test that we can delete sheets without
+     *  breaking the build in named ranges
+     *  used for printing stuff.
+     * Currently broken, as we change the Ptg
+     */
+    public void BROKENtest30978() throws Exception {
+        HSSFWorkbook wb = openSample("30978-alt.xls");
+        assertEquals(1, wb.getNumberOfNames());
+        assertEquals(3, wb.getNumberOfSheets());
+        
+        // Check all names fit within range, and use
+        //  DeletedArea3DPtg
+        Workbook w = wb.getWorkbook();
+        for(int i=0; i<w.getNumNames(); i++) {
+        	NameRecord r = w.getNameRecord(i);
+        	assertTrue(r.getIndexToSheet() <= wb.getNumberOfSheets());
+        	
+        	List nd = r.getNameDefinition();
+        	assertEquals(1, nd.size());
+        	assertTrue(nd.get(0) instanceof DeletedArea3DPtg);
+        }
+        
+        
+        // Delete the 2nd sheet
+        wb.removeSheetAt(1);
+        
+        
+        // Re-check
+        assertEquals(1, wb.getNumberOfNames());
+        assertEquals(2, wb.getNumberOfSheets());
+        
+        for(int i=0; i<w.getNumNames(); i++) {
+        	NameRecord r = w.getNameRecord(i);
+        	assertTrue(r.getIndexToSheet() <= wb.getNumberOfSheets());
+        	
+        	List nd = r.getNameDefinition();
+        	assertEquals(1, nd.size());
+        	assertTrue(nd.get(0) instanceof DeletedArea3DPtg);
+        }
+        
+        
+        // Save and re-load
+        wb = writeOutAndReadBack(wb);
+        w = wb.getWorkbook();
+        
+        assertEquals(1, wb.getNumberOfNames());
+        assertEquals(2, wb.getNumberOfSheets());
+        
+        for(int i=0; i<w.getNumNames(); i++) {
+        	NameRecord r = w.getNameRecord(i);
+        	assertTrue(r.getIndexToSheet() <= wb.getNumberOfSheets());
+        	
+        	List nd = r.getNameDefinition();
+        	assertEquals(1, nd.size());
+        	assertTrue(nd.get(0) instanceof DeletedArea3DPtg);
+        }
     }
 }
