@@ -635,27 +635,24 @@ public class Range
   /**
    * Replace (one instance of) a piece of text with another...
    *
-   * @param pPlaceHolder    The text to be replaced (e.g., "${company}")
-   * @param pValue          The replacement text (e.g., "Cognocys, Inc.")
-   * @param pDocument       The <code>HWPFDocument</code> in which the placeholder was found
-   * @param pStartOffset    The offset or index where the <code>CharacterRun</code> begins
-   * @param pPlaceHolderIndex   The offset or index of the placeholder, 
-   *  relative to the <code>CharacterRun</code> where 
-   *  <code>pPlaceHolder</code> was found
+   * @param pPlaceHolder    The text to be replaced (e.g., "${organization}")
+   * @param pValue          The replacement text (e.g., "Apache Software Foundation")
+   * @param pOffset         The offset or index where the text to be replaced begins
+   *                        (relative to/within this <code>Range</code>)
    */
-  protected void replaceText(String pPlaceHolder, String pValue, 
-        int pStartOffset, int pPlaceHolderIndex, HWPFDocument pDocument) {
-    int absPlaceHolderIndex = pStartOffset + pPlaceHolderIndex;
+  public void replaceText(String pPlaceHolder, String pValue, int pOffset)
+  {
+	int absPlaceHolderIndex = getStartOffset() + pOffset;
     Range subRange = new Range(
                 absPlaceHolderIndex, 
-                (absPlaceHolderIndex + pPlaceHolder.length()), pDocument
+				(absPlaceHolderIndex + pPlaceHolder.length()), getDocument()
     );
     if (subRange.usesUnicode()) {
-            absPlaceHolderIndex = pStartOffset + (pPlaceHolderIndex * 2);
+			absPlaceHolderIndex = getStartOffset() + (pOffset * 2);
             subRange = new Range(
                       absPlaceHolderIndex, 
                       (absPlaceHolderIndex + (pPlaceHolder.length() * 2)), 
-                      pDocument
+					  getDocument()
             );
     }
 
@@ -665,13 +662,13 @@ public class Range
     subRange = new Range(
             (absPlaceHolderIndex + pValue.length()),
             (absPlaceHolderIndex + pPlaceHolder.length() + pValue.length()), 
-            pDocument
+			getDocument()
     );
     if (subRange.usesUnicode())
             subRange = new Range(
                       (absPlaceHolderIndex + (pValue.length() * 2)),
                       (absPlaceHolderIndex + (pPlaceHolder.length() * 2) + 
-                      (pValue.length() * 2)), pDocument
+					  (pValue.length() * 2)), getDocument()
             );
 
     subRange.delete();
@@ -941,5 +938,10 @@ public class Range
 	public int getEndOffset() {
 
 		return _end;
+	}
+
+	protected HWPFDocument getDocument() {
+
+		return _doc;
 	}
 }
