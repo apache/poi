@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1-final" date="2008-06-??">
+           <action dev="POI-DEVELOPERS" type="fix">30978 - Fixed re-serialization of tRefErr3d and tAreaErr3d</action>
            <action dev="POI-DEVELOPERS" type="fix">45234 - Removed incorrect shared formula conversion in CFRuleRecord</action>
            <action dev="POI-DEVELOPERS" type="fix">45001 - Improved HWPF Range.replaceText()</action>
            <action dev="POI-DEVELOPERS" type="fix">44692 - Fixed HSSFPicture.resize() to properly resize pictures if the underlying columns/rows have modified size</action>
