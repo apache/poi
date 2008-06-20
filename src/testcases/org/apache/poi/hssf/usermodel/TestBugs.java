@@ -999,7 +999,7 @@ public final class TestBugs extends TestCase {
      *  used for printing stuff.
      * Currently broken, as we change the Ptg
      */
-    public void BROKENtest30978() throws Exception {
+    public void test30978() throws Exception {
         HSSFWorkbook wb = openSample("30978-alt.xls");
         assertEquals(1, wb.getNumberOfNames());
         assertEquals(3, wb.getNumberOfSheets());

@@ -15,11 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.record.formula;
 
 
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Title:        Deleted Reference 3D Ptg <P>
@@ -28,16 +30,29 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author Patrick Luby
  * @version 1.0-pre
  */
+public final class DeletedRef3DPtg extends OperandPtg {
+	public final static byte sid  = 0x3c;
+	private final int field_1_index_extern_sheet;
+	private final int unused1;
 
-public class DeletedRef3DPtg extends Ref3DPtg {
-    public final static byte sid  = 0x3c;
+	/** Creates new DeletedRef3DPtg */
+	public DeletedRef3DPtg(RecordInputStream in) {
+		field_1_index_extern_sheet = in.readUShort();
+		unused1 = in.readInt();
+	}
 
-    /** Creates new DeletedRef3DPtg */
-    public DeletedRef3DPtg(RecordInputStream in) {
-        super(in);
-    }
-
-    public DeletedRef3DPtg(String cellref, short externIdx ) {
-        super(cellref, externIdx);
-    }
+	public String toFormulaString(HSSFWorkbook book) {
+		return HSSFErrorConstants.getText(HSSFErrorConstants.ERROR_REF);
+	}
+	public byte getDefaultOperandClass() {
+		return Ptg.CLASS_REF;
+	}
+	public int getSize() {
+		return 7;
+	}
+	public void writeBytes(byte[] data, int offset) {
+		LittleEndian.putByte(data, 0 + offset, sid + getPtgClass());
+		LittleEndian.putUShort(data, 1 + offset, field_1_index_extern_sheet);
+		LittleEndian.putInt(data, 3 + offset, unused1);
+	}
 }
