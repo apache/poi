@@ -18,25 +18,22 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class UnionPtg extends OperationPtg
-{
+public final class UnionPtg extends OperationPtg {
     public final static byte sid  = 0x10;
 
+    public static final OperationPtg instance = new UnionPtg();
 
-    public UnionPtg()
-    {
+    private UnionPtg() {
+    	// enforce singleton
     }
 
-    public UnionPtg(RecordInputStream in)
-    {
-        // doesn't need anything
+    public final boolean isBaseToken() {
+        return true;
     }
-
 
     public int getSize()
     {
@@ -48,17 +45,6 @@ public class UnionPtg extends OperationPtg
         array[ offset + 0 ] = sid;
     }
 
-    public Object clone()
-    {
-        return new UnionPtg();
-    }
-
-    public int getType()
-    {
-        return TYPE_BINARY;
-    }
-
-    /** Implementation of method from Ptg */
     public String toFormulaString(HSSFWorkbook book)
     {
         return ",";

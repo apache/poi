@@ -15,43 +15,35 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.formula;
+package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.RecordInputStream;
+import java.util.List;
+
+import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
+import org.apache.poi.hssf.record.formula.Ptg;
 
 /**
- * RefVPtg
- * @author Jason Height (jheight at chariot dot net dot au)
+ * Test utility class to get <tt>Ptg</tt> arrays out of formula cells
+ * 
+ * @author Josh Micich
  */
-public final class RefVPtg extends ReferencePtg {
-  public final static byte sid  = 0x44;
+public final class FormulaExtractor {
 
-  protected RefVPtg() {
-    super();
-  }
+	private FormulaExtractor() {
+		// no instances of this class
+	}
+	
+	public static Ptg[] getPtgs(HSSFCell cell) {
+		CellValueRecordInterface vr = cell.getCellValueRecord();
+		if (!(vr instanceof FormulaRecordAggregate)) {
+			throw new IllegalArgumentException("Not a formula cell");
+		}
+		FormulaRecordAggregate fra = (FormulaRecordAggregate) vr;
+		List tokens = fra.getFormulaRecord().getParsedExpression();
+		Ptg[] result = new Ptg[tokens.size()];
+		tokens.toArray(result);
+		return result;
+	}
 
-  public RefVPtg(int row, int column, boolean isRowRelative, boolean isColumnRelative) {
-    super(row, column, isRowRelative, isColumnRelative);
-    setClass(CLASS_VALUE);
-  }
-
-
-  /** Creates new ValueReferencePtg */
-
-  public RefVPtg(RecordInputStream in)
-  {
-    super(in);
-  }
-
-  public String getRefPtgName() {
-    return "RefVPtg";
-  }
-
-  public Object clone() {
-    RefVPtg ptg = new RefVPtg();
-    ptg.setRow(getRow());
-    ptg.setColumnRaw(getColumnRaw());
-    ptg.setClass(ptgClass);
-    return ptg;
-  }
 }

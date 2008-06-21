@@ -90,12 +90,20 @@ public class TextPiece extends PropertyNode implements Comparable
 
    public void adjustForDelete(int start, int length)
    {
+
+	   if (usesUnicode()) {
+
+		   start /= 2;
+		   length /= 2;
+	   }
+
 	   int myStart = getStart();
 	   int myEnd = getEnd();
 	   int end = start + length;
 
 	   /* do we have to delete from this text piece? */
 	   if (start <= myEnd && end >= myStart) {
+
 		   /* find where the deleted area overlaps with this text piece */
 		   int overlapStart = Math.max(myStart, start);
 		   int overlapEnd = Math.min(myEnd, end);

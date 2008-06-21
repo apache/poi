@@ -18,14 +18,20 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
+import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.util.TempFile;
 
@@ -949,5 +955,100 @@ public final class TestBugs extends TestCase {
         assertTrue("no errors reading sample xls", true);
         writeOutAndReadBack(wb);
         assertTrue("no errors writing sample xls", true);
+    }
+    
+    /**
+     * Problems with extracting check boxes from
+     *  HSSFObjectData
+     * @throws Exception
+     */
+    public void test44840() throws Exception {
+        HSSFWorkbook wb = openSample("WithCheckBoxes.xls");
+
+        // Take a look at the embeded objects
+        List objects = wb.getAllEmbeddedObjects();
+        assertEquals(1, objects.size());
+        
+        HSSFObjectData obj = (HSSFObjectData)objects.get(0);
+        assertNotNull(obj);
+        
+        // Peek inside the underlying record
+        EmbeddedObjectRefSubRecord rec = obj.findObjectRecord();
+        assertNotNull(rec);
+        
+        assertEquals(32, rec.field_1_stream_id_offset);
+        assertEquals(0, rec.field_6_stream_id); // WRONG!
+        assertEquals("Forms.CheckBox.1", rec.field_5_ole_classname);
+        assertEquals(12, rec.remainingBytes.length);
+        
+        // Doesn't have a directory
+        assertFalse(obj.hasDirectoryEntry());
+        assertNotNull(obj.getObjectData());
+        assertEquals(12, obj.getObjectData().length);
+        assertEquals("Forms.CheckBox.1", obj.getOLE2ClassName());
+        
+        try {
+        	obj.getDirectory();
+        	fail();
+        } catch(FileNotFoundException e) {}
+    }
+    
+    /**
+     * Test that we can delete sheets without
+     *  breaking the build in named ranges
+     *  used for printing stuff.
+     * Currently broken, as we change the Ptg
+     */
+    public void test30978() throws Exception {
+        HSSFWorkbook wb = openSample("30978-alt.xls");
+        assertEquals(1, wb.getNumberOfNames());
+        assertEquals(3, wb.getNumberOfSheets());
+        
+        // Check all names fit within range, and use
+        //  DeletedArea3DPtg
+        Workbook w = wb.getWorkbook();
+        for(int i=0; i<w.getNumNames(); i++) {
+        	NameRecord r = w.getNameRecord(i);
+        	assertTrue(r.getIndexToSheet() <= wb.getNumberOfSheets());
+        	
+        	List nd = r.getNameDefinition();
+        	assertEquals(1, nd.size());
+        	assertTrue(nd.get(0) instanceof DeletedArea3DPtg);
+        }
+        
+        
+        // Delete the 2nd sheet
+        wb.removeSheetAt(1);
+        
+        
+        // Re-check
+        assertEquals(1, wb.getNumberOfNames());
+        assertEquals(2, wb.getNumberOfSheets());
+        
+        for(int i=0; i<w.getNumNames(); i++) {
+        	NameRecord r = w.getNameRecord(i);
+        	assertTrue(r.getIndexToSheet() <= wb.getNumberOfSheets());
+        	
+        	List nd = r.getNameDefinition();
+        	assertEquals(1, nd.size());
+        	assertTrue(nd.get(0) instanceof DeletedArea3DPtg);
+        }
+        
+        
+        // Save and re-load
+        wb = writeOutAndReadBack(wb);
+        w = wb.getWorkbook();
+        
+        assertEquals(1, wb.getNumberOfNames());
+        assertEquals(2, wb.getNumberOfSheets());
+        
+        for(int i=0; i<w.getNumNames(); i++) {
+        	NameRecord r = w.getNameRecord(i);
+        	assertTrue(r.getIndexToSheet() <= wb.getNumberOfSheets());
+        	
+        	List nd = r.getNameDefinition();
+        	assertEquals(1, nd.size());
+        	assertTrue(nd.get(0) instanceof DeletedArea3DPtg);
+        }
     }
 }

@@ -14,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -22,9 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
+import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
-import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
-import org.apache.poi.hssf.record.formula.DeletedRef3DPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
@@ -44,8 +42,7 @@ import org.apache.poi.util.StringUtil;
  * @author Glen Stampoultzis (glens at apache.org)
  * @version 1.0-pre
  */
-
-public class NameRecord extends Record {
+public final class NameRecord extends Record {
     /**
      */
     public final static short sid = 0x18; //Docs says that it is 0x218
@@ -650,50 +647,9 @@ public class NameRecord extends Record {
     /** gets the reference , the area only (range)
      * @return area reference
      */
-    public String getAreaReference(HSSFWorkbook book){
-        if (field_13_name_definition == null || field_13_name_definition.isEmpty()) return "Error";
-        Ptg ptg = (Ptg) field_13_name_definition.peek();
-        String result = "";
-
-        // If it's a union, descend in and process
-        if (ptg.getClass() == UnionPtg.class) {
-            Iterator it =field_13_name_definition.iterator();
-            while( it.hasNext() ) {
-                Ptg p = (Ptg)it.next();
-
-                String thisRes = getAreaRefString(p, book);
-                if(thisRes.length() > 0) {
-                    // Add a comma to the end if needed
-                    if(result.length() > 0 && !result.endsWith(",")) {
-                        result += ",";
-                    }
-                    // And add the string it corresponds to
-                    result += thisRes;
-                }
-            }
-        } else {
-            // Otherwise just get the string
-            result = getAreaRefString(ptg, book);
-        }
-
-        return result;
-    }
-
-    /**
-     * Turn the given ptg into a string, or
-     *  return an empty string if nothing is possible
-     *  for it.
-     */
-    private String getAreaRefString(Ptg ptg,HSSFWorkbook book) {
-        if (ptg.getClass() == Area3DPtg.class){
-            return ptg.toFormulaString(book);
-        } else if (ptg.getClass() == Ref3DPtg.class){
-            return ptg.toFormulaString(book);
-        } else if (ptg.getClass() == DeletedArea3DPtg.class || ptg.getClass() == DeletedRef3DPtg.class) {
-        	return "#REF!";
-        }
-        return "";
-    }
+	public String getAreaReference(HSSFWorkbook book){
+		return FormulaParser.toFormulaString(book, field_13_name_definition);
+	}
 
     /** sets the reference , the area only (range)
      * @param ref area reference
@@ -737,7 +693,7 @@ public class NameRecord extends Record {
         	}
         	// And then a union if we had more than one area
         	if(refs.length > 1) {
-        		ptg = new UnionPtg();
+        		ptg = UnionPtg.instance;
                 field_13_name_definition.push(ptg);
 	            this.setDefinitionTextLength( (short)(getDefinitionLength() + ptg.getSize()) );
         	}

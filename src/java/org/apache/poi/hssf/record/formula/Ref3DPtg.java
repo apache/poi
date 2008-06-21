@@ -15,11 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.util.RangeAddress;
 import org.apache.poi.hssf.util.SheetReferences;
@@ -35,8 +34,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 1.0-pre
  */
-
-public class Ref3DPtg extends Ptg {
+public final class Ref3DPtg extends OperandPtg {
     public final static byte sid  = 0x3a;
     private final static int  SIZE = 7; // 6 + 1 for Ptg
     private short             field_1_index_extern_sheet;
@@ -70,20 +68,19 @@ public class Ref3DPtg extends Ptg {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append("Ref3dPtg\n");
-        buffer.append("Index to Extern Sheet = " + getExternSheetIndex()).append("\n");
-        buffer.append("Row = " + getRow()).append("\n");
-        buffer.append("Col  = " + getColumn()).append("\n");
-        buffer.append("ColRowRel= "
-        + isRowRelative()).append("\n");
-        buffer.append("ColRel   = " + isColRelative()).append("\n");
-        return buffer.toString();
+        CellReference cr = new CellReference(getRow(), getColumn(), !isRowRelative(),!isColRelative());
+        StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName());
+        sb.append(" [");
+        sb.append("sheetIx=").append(getExternSheetIndex());
+        sb.append(" ! ");
+        sb.append(cr.formatAsString());
+        sb.append("]");
+        return sb.toString();
     }
 
     public void writeBytes(byte [] array, int offset) {
-        array[ 0 + offset ] = (byte) (sid + ptgClass);
+        array[ 0 + offset ] = (byte) (sid + getPtgClass());
         LittleEndian.putShort(array, 1 + offset , getExternSheetIndex());
         LittleEndian.putShort(array, 3 + offset , (short)getRow());
         LittleEndian.putShort(array, 5 + offset , (short)getColumnRaw());
@@ -191,14 +188,7 @@ public class Ref3DPtg extends Ptg {
         return retval.toString();
     }
 
-   public byte getDefaultOperandClass() {return Ptg.CLASS_REF;}
-
-   public Object clone() {
-     Ref3DPtg ptg = new Ref3DPtg();
-     ptg.field_1_index_extern_sheet = field_1_index_extern_sheet;
-     ptg.field_2_row = field_2_row;
-     ptg.field_3_column = field_3_column;
-     ptg.setClass(ptgClass);
-     return ptg;
-   }
+   public byte getDefaultOperandClass() {
+		return Ptg.CLASS_REF;
+	}
 }

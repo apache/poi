@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -30,29 +29,18 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @author dmui (save existing implementation)
  */
-
-public class ExpPtg
-    extends Ptg
-{
+public final class ExpPtg extends ControlPtg {
     private final static int  SIZE = 5;
     public final static short sid  = 0x1;
-    private short            field_1_first_row;
-    private short            field_2_first_col;
-
-    /** Creates new ExpPtg */
-
-    public ExpPtg()
-    {
-    }
-
-    /** Creates new ExpPtg */
+    private final short            field_1_first_row;
+    private final short            field_2_first_col;
 
     public ExpPtg(RecordInputStream in)
     {
       field_1_first_row = in.readShort();
       field_2_first_col = in.readShort();
     }
-
+    
     public void writeBytes(byte [] array, int offset)
     {
       array[offset+0]= (byte) (sid);
@@ -85,14 +73,4 @@ public class ExpPtg
         buffer.append("col = ").append(getColumn()).append("\n");
         return buffer.toString();
     }    
-    
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
-    
-    public Object clone() {
-	ExpPtg result = new ExpPtg();
-        result.field_1_first_row = field_1_first_row;
-        result.field_2_first_col = field_2_first_col;        
-        return result;
-    }
-
 }

@@ -18,6 +18,9 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Title:        Deleted Area 3D Ptg - 3D referecnce (Sheet + Area)<P>
@@ -26,19 +29,30 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author Patrick Luby
  * @version 1.0-pre
  */
-
-public class DeletedArea3DPtg extends Area3DPtg
-{
+public final class DeletedArea3DPtg extends OperandPtg {
 	public final static byte sid = 0x3d;
+	private final int field_1_index_extern_sheet;
+	private final int unused1;
+	private final int unused2;
 
-    /** Creates new DeletedArea3DPtg */
-    public DeletedArea3DPtg( String arearef, short externIdx )
-    {
-        super(arearef, externIdx);
-    }
-
-    public DeletedArea3DPtg( RecordInputStream in)
-    {
-        super(in);
-    }
+	public DeletedArea3DPtg( RecordInputStream in) {
+		field_1_index_extern_sheet = in.readUShort();
+		unused1 = in.readInt();
+		unused2 = in.readInt();
+	}
+	public String toFormulaString(HSSFWorkbook book) {
+		return HSSFErrorConstants.getText(HSSFErrorConstants.ERROR_REF);
+	}
+	public byte getDefaultOperandClass() {
+		return Ptg.CLASS_REF;
+	}
+	public int getSize() {
+		return 11;
+	}
+	public void writeBytes(byte[] data, int offset) {
+		LittleEndian.putByte(data, 0 + offset, sid + getPtgClass());
+		LittleEndian.putUShort(data, 1 + offset, field_1_index_extern_sheet);
+		LittleEndian.putInt(data, 3 + offset, unused1);
+		LittleEndian.putInt(data, 7 + offset, unused2);
+	}
 }

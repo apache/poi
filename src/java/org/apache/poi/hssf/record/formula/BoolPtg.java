@@ -27,17 +27,10 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-
-public class BoolPtg
-    extends Ptg
-{
+public final class BoolPtg extends ScalarConstantPtg {
     public final static int  SIZE = 2;
     public final static byte sid  = 0x1d;
-    private boolean          field_1_value;
-
-    private BoolPtg() {
-      //Required for clone methods
-    }
+    private final boolean field_1_value;
 
     public BoolPtg(RecordInputStream in)
     {
@@ -47,11 +40,6 @@ public class BoolPtg
 
     public BoolPtg(String formulaToken) {
         field_1_value = (formulaToken.equals("TRUE"));
-    }
-
-    public void setValue(boolean value)
-    {
-        field_1_value = value;
     }
 
     public boolean getValue()
@@ -73,13 +61,5 @@ public class BoolPtg
     public String toFormulaString(HSSFWorkbook book)
     {
         return field_1_value ? "TRUE" : "FALSE";
-    }
-
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
-
-    public Object clone() {
-        BoolPtg ptg = new BoolPtg();
-        ptg.field_1_value = field_1_value;
-        return ptg;
     }
 }

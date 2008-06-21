@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * Missing Function Arguments
@@ -26,23 +25,15 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * Avik Sengupta &lt;avik at apache.org&gt;
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public class MissingArgPtg
-    extends  Ptg
-{
+public final class MissingArgPtg extends ScalarConstantPtg {
    
     private final static int SIZE = 1;
     public final static byte sid  = 0x16;
    
-    public MissingArgPtg()
+    public static final Ptg instance = new MissingArgPtg();
+    private MissingArgPtg()
     {
     }
-
-    public MissingArgPtg(RecordInputStream in)
-    {
-       // doesn't need anything
-    }
-    
-  
      
     public void writeBytes(byte [] array, int offset)
     {
@@ -53,17 +44,9 @@ public class MissingArgPtg
     {
         return SIZE;
     }
-
    
     public String toFormulaString(HSSFWorkbook book)
     {
         return " ";
     }
-    
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
-        
-    public Object clone() {
-      return new MissingArgPtg();
-    }
-
 }

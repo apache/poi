@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,12 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
-/*
- * MemAreaPtg.java
- *
- * Created on November 21, 2001, 8:46 AM
- */
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
@@ -31,9 +24,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
 /**
  * @author Daniel Noll (daniel at nuix dot com dot au)
  */
-public class MemAreaPtg
-    extends Ptg
-{
+public class MemAreaPtg extends OperandPtg {
     public final static short sid  = 0x26;
     private final static int  SIZE = 7;
     private int               field_1_reserved;
@@ -73,7 +64,7 @@ public class MemAreaPtg
 
     public void writeBytes(byte [] array, int offset)
     {
-        array[offset] = (byte) (sid + ptgClass);
+        array[offset] = (byte) (sid + getPtgClass());
         LittleEndian.putInt(array, offset + 1, field_1_reserved);
         LittleEndian.putShort(array, offset + 5, field_2_subex_len);
     }
@@ -88,12 +79,7 @@ public class MemAreaPtg
         return ""; // TODO: Not sure how to format this. -- DN
     }
 
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
-
-    public Object clone() {
-      MemAreaPtg ptg = new MemAreaPtg();
-      ptg.field_1_reserved = field_1_reserved;
-      ptg.field_2_subex_len = field_2_subex_len;
-      return ptg;
+    public byte getDefaultOperandClass() {
+    	return Ptg.CLASS_VALUE;
     }
 }

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,70 +15,33 @@
    limitations under the License.
 ==================================================================== */
 
-/*
- * PercentPtg.java
- *
- * Created on March 29, 2006, 9:23 PM
- */
 package org.apache.poi.hssf.record.formula;
-
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * Percent PTG.
  *
  * @author Daniel Noll (daniel at nuix.com.au)
  */
-
-public class PercentPtg
-    extends OperationPtg
-{
+public final class PercentPtg extends ValueOperatorPtg {
     public final static int  SIZE = 1;
     public final static byte sid  = 0x14;
     
     private final static String PERCENT = "%";
 
-    /** Creates new PercentPtg */
+    public static final ValueOperatorPtg instance = new PercentPtg();
 
-    public PercentPtg()
-    {
-    }
-
-    public PercentPtg(RecordInputStream in)
-    {
-
-        // doesn't need anything
+    private PercentPtg() {
+    	// enforce singleton
     }
     
-   
-    public void writeBytes(byte [] array, int offset)
-    {
-        array[ offset + 0 ] = sid;
+    protected byte getSid() {
+    	return sid;
     }
 
-    public int getSize()
-    {
-        return SIZE;
-    }
-
-    public int getType()
-    {
-        return TYPE_UNARY;
-    }
-
-    public int getNumberOfOperands()
-    {
+    public int getNumberOfOperands() {
         return 1;
     }
-    
-    /** Implementation of method from Ptg */
-    public String toFormulaString(HSSFWorkbook book)
-    {
-        return "%";
-    }
        
-   /** implementation of method from OperationsPtg*/  
     public String toFormulaString(String[] operands) {
         StringBuffer buffer = new StringBuffer();
 
@@ -87,11 +49,4 @@ public class PercentPtg
         buffer.append(PERCENT);
         return buffer.toString();
     }
-    
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
-           
-    public Object clone() {
-      return new PercentPtg();
-    }
-
 }

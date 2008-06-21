@@ -19,7 +19,7 @@
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.AreaPtg;
-import org.apache.poi.hssf.record.formula.ReferencePtg;
+import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.eval.Area2DEval;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
@@ -58,6 +58,6 @@ final class EvalFactory {
 	 * Creates a single RefEval (with value zero)
 	 */
 	public static RefEval createRefEval(String refStr) {
-		return new Ref2DEval(new ReferencePtg(refStr), ZERO);
+		return new Ref2DEval(new RefPtg(refStr), ZERO);
 	}
 }

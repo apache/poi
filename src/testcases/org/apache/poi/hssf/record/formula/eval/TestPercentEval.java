@@ -41,7 +41,7 @@ public final class TestPercentEval extends TestCase {
 			arg,	
 		};
 		
-		PercentEval opEval = new PercentEval(new PercentPtg());
+		PercentEval opEval = new PercentEval(PercentPtg.instance);
 		double result = NumericFunctionInvoker.invoke(opEval, args, -1, (short)-1);
 		
 		assertEquals(expectedResult, result, 0);

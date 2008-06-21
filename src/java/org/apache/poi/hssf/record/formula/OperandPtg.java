@@ -17,39 +17,15 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
-
 /**
- * RefNAPtg
- * @author Jason Height (jheight at chariot dot net dot au)
+ * @author Josh Micich
  */
+public abstract class OperandPtg extends Ptg {
 
-public final class RefAPtg extends ReferencePtg {
-    public final static byte sid  = 0x64;
-
-    protected RefAPtg() {
-      super();
-    }
-
-    public RefAPtg(int row, int column, boolean isRowRelative, boolean isColumnRelative) {
-      super(row, column, isRowRelative, isColumnRelative);
-    }
-
-    public RefAPtg(RecordInputStream in)
-    {
-      super(in);
-    }
-
-
-    public String getRefPtgName() {
-      return "RefAPtg";
-    }
-
-    public Object clone() {
-      RefAPtg ptg = new RefAPtg();
-      ptg.setRow(getRow());
-      ptg.setColumnRaw(getColumnRaw());
-      ptg.setClass(ptgClass);
-      return ptg;
-    }
+	/**
+	 * All Operand <tt>Ptg</tt>s are classifed ('relative', 'value', 'array')  
+	 */
+	public final boolean isBaseToken() {
+		return false;
+	}
 }

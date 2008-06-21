@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.ReferencePtg;
+import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
@@ -50,7 +50,7 @@ public final class TestSumproduct extends TestCase {
 
 	public void testScalarSimple() {
 		
-		RefEval refEval = new Ref2DEval(new ReferencePtg("A1"), new NumberEval(3));
+		RefEval refEval = new Ref2DEval(new RefPtg("A1"), new NumberEval(3));
 		Eval[] args = {
 			refEval, 
 			new NumberEval(2),

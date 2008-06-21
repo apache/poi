@@ -19,8 +19,10 @@ package org.apache.poi.hssf.record.formula;
 
 import java.util.Arrays;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.record.UnicodeString;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -52,12 +54,12 @@ public final class TestArrayPtg extends TestCase {
 	 */
 	public void testReadWriteTokenValueBytes() {
 		
-		ArrayPtg ptg = new ArrayPtgV(new TestcaseRecordInputStream(ArrayPtgV.sid, ENCODED_PTG_DATA));
+		ArrayPtg ptg = new ArrayPtg(new TestcaseRecordInputStream(ArrayPtg.sid, ENCODED_PTG_DATA));
 		
 		ptg.readTokenValues(new TestcaseRecordInputStream(0, ENCODED_CONSTANT_DATA));
 		assertEquals(3, ptg.getColumnCount());
 		assertEquals(2, ptg.getRowCount());
-		Object[] values = ptg.token_3_arrayValues;
+		Object[] values = ptg.getTokenArrayValues();
 		assertEquals(6, values.length);
 		
 		
@@ -77,19 +79,36 @@ public final class TestArrayPtg extends TestCase {
 	}
 
 	/**
-	 * make sure constant elements are stored row by row 
+	 * Excel stores array elements column by column.  This test makes sure POI does the same.
 	 */
 	public void testElementOrdering() {
-		ArrayPtg ptg = new ArrayPtgV(new TestcaseRecordInputStream(ArrayPtgV.sid, ENCODED_PTG_DATA));
+		ArrayPtg ptg = new ArrayPtg(new TestcaseRecordInputStream(ArrayPtg.sid, ENCODED_PTG_DATA));
 		ptg.readTokenValues(new TestcaseRecordInputStream(0, ENCODED_CONSTANT_DATA));
 		assertEquals(3, ptg.getColumnCount());
 		assertEquals(2, ptg.getRowCount());
 		
 		assertEquals(0, ptg.getValueIndex(0, 0));
-		assertEquals(1, ptg.getValueIndex(1, 0));
-		assertEquals(2, ptg.getValueIndex(2, 0));
-		assertEquals(3, ptg.getValueIndex(0, 1));
-		assertEquals(4, ptg.getValueIndex(1, 1));
+		assertEquals(2, ptg.getValueIndex(1, 0));
+		assertEquals(4, ptg.getValueIndex(2, 0));
+		assertEquals(1, ptg.getValueIndex(0, 1));
+		assertEquals(3, ptg.getValueIndex(1, 1));
 		assertEquals(5, ptg.getValueIndex(2, 1));
+	}
+	
+	/**
+	 * Test for a bug which was temporarily introduced by the fix for bug 42564.
+	 * A spreadsheet was added to make the ordering clearer.
+	 */
+	public void testElementOrderingInSpreadsheet() {
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex42564-elementOrder.xls");
+
+		// The formula has an array with 3 rows and 5 column 
+		String formula = wb.getSheetAt(0).getRow(0).getCell((short)0).getCellFormula();
+		// TODO - These number literals should not have '.0'. Excel has different number rendering rules
+
+		if (formula.equals("SUM({1.0,6.0,11.0;2.0,7.0,12.0;3.0,8.0,13.0;4.0,9.0,14.0;5.0,10.0,15.0})")) {
+			throw new AssertionFailedError("Identified bug 42564 b");
+		}
+		assertEquals("SUM({1.0,2.0,3.0;4.0,5.0,6.0;7.0,8.0,9.0;10.0,11.0,12.0;13.0,14.0,15.0})", formula);
 	}
 }

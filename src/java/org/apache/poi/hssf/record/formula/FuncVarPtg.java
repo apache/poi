@@ -30,16 +30,21 @@ public final class FuncVarPtg extends AbstractFunctionPtg{
     public final static byte sid  = 0x22;
     private final static int  SIZE = 4;
 
-    private FuncVarPtg() {
-      //Required for clone methods
-    }
-
- /**Creates new function pointer from a byte array
+    /**Creates new function pointer from a byte array
      * usually called while reading an excel file.
      */
     public FuncVarPtg(RecordInputStream in) {
         field_1_num_args = in.readByte();
         field_2_fnc_index  = in.readShort();
+        FunctionMetadata fm = FunctionMetadataRegistry.getFunctionByIndex(field_2_fnc_index);
+        if(fm == null) {
+            // Happens only as a result of a call to FormulaParser.parse(), with a non-built-in function name
+            returnClass = Ptg.CLASS_VALUE;
+            paramClass = new byte[] {Ptg.CLASS_VALUE};
+        } else {
+            returnClass = fm.getReturnClassCode();
+            paramClass = fm.getParameterClassCodes();
+        }
     }
 
     /**
@@ -60,21 +65,13 @@ public final class FuncVarPtg extends AbstractFunctionPtg{
     }
 
      public void writeBytes(byte[] array, int offset) {
-        array[offset+0]=(byte) (sid + ptgClass);
+        array[offset+0]=(byte) (sid + getPtgClass());
         array[offset+1]=field_1_num_args;
         LittleEndian.putShort(array,offset+2,field_2_fnc_index);
     }
 
      public int getNumberOfOperands() {
         return field_1_num_args;
-    }
-
-    public Object clone() {
-      FuncVarPtg ptg = new FuncVarPtg();
-      ptg.field_1_num_args = field_1_num_args;
-      ptg.field_2_fnc_index = field_2_fnc_index;
-      ptg.setClass(ptgClass);
-      return ptg;
     }
 
     public int getSize() {

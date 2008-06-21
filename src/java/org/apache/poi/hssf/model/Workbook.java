@@ -191,12 +191,11 @@ public class Workbook implements Model
                 case ExternSheetRecord.sid :
                     throw new RuntimeException("Extern sheet is part of LinkTable");
                 case NameRecord.sid :
-                    throw new RuntimeException("DEFINEDNAME is part of LinkTable");
                 case SupBookRecord.sid :
+                    // LinkTable can start with either of these
                     if (log.check( POILogger.DEBUG ))
                         log.log(DEBUG, "found SupBook record at " + k);
                     retval.linkTable = new LinkTable(recs, k, retval.records);
-                    //                    retval.records.supbookpos = k;
                     k+=retval.linkTable.getRecordCount() - 1;
                     continue;
                 case FormatRecord.sid :
@@ -603,6 +602,29 @@ public class Workbook implements Model
 //            records.bspos--;
             boundsheets.remove(sheetnum);
             fixTabIdRecord();
+        }
+        
+        // Within NameRecords, it's ok to have the formula
+        //  part point at deleted sheets. It's also ok to
+        //  have the ExternSheetNumber point at deleted
+        //  sheets. 
+        // However, the sheet index must be adjusted, or
+        //  excel will break. (Sheet index is either 0 for
+        //  global, or 1 based index to sheet)
+        int sheetNum1Based = sheetnum + 1;
+        for(int i=0; i<getNumNames(); i++) {
+        	NameRecord nr = getNameRecord(i);
+        	
+        	if(nr.getIndexToSheet() == sheetNum1Based) {
+        		// Excel re-writes these to point to no sheet
+        		nr.setEqualsToIndexToSheet((short)0);
+        	} else if(nr.getIndexToSheet() > sheetNum1Based) {
+        		// Bump down by one, so still points
+        		//  at the same sheet
+        		nr.setEqualsToIndexToSheet((short)(
+        				nr.getEqualsToIndexToSheet()-1
+        		));
+        	}
         }
     }
 

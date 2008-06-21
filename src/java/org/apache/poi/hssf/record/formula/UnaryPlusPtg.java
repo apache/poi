@@ -17,63 +17,30 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import java.util.List;
-
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.record.RecordInputStream;
-
 /**
  * Unary Plus operator
  * does not have any effect on the operand
  * @author Avik Sengupta
  */
-
-public class UnaryPlusPtg extends OperationPtg
-{
-    public final static int  SIZE = 1;
+public final class UnaryPlusPtg extends ValueOperatorPtg {
     public final static byte sid  = 0x12;
     
     private final static String ADD = "+";
 
-    /** Creates new AddPtg */
+    public static final ValueOperatorPtg instance = new UnaryPlusPtg();
 
-    public UnaryPlusPtg()
-    {
-    }
-
-    public UnaryPlusPtg(RecordInputStream in)
-    {
-
-        // doesn't need anything
+    private UnaryPlusPtg() {
+    	// enforce singleton
     }
     
-   
-    public void writeBytes(byte [] array, int offset)
-    {
-        array[ offset + 0 ] = sid;
+    protected byte getSid() {
+    	return sid;
     }
 
-    public int getSize()
-    {
-        return SIZE;
-    }
-
-    public int getType()
-    {
-        return this.TYPE_UNARY;
-    }
-
-    public int getNumberOfOperands()
-    {
+    public int getNumberOfOperands() {
         return 1;
     }
     
-    /** Implementation of method from Ptg */
-    public String toFormulaString(HSSFWorkbook book)
-    {
-        return "+";
-    }
-       
    /** implementation of method from OperationsPtg*/  
     public String toFormulaString(String[] operands) {
         StringBuffer buffer = new StringBuffer();
@@ -81,11 +48,4 @@ public class UnaryPlusPtg extends OperationPtg
         buffer.append(operands[ 0]);
         return buffer.toString();
     }
-    
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
-           
-    public Object clone() {
-      return new UnaryPlusPtg();
-    }
-
 }

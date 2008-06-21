@@ -58,6 +58,30 @@ public final class TestHSSFCell extends TestCase {
         }
     }
     
+    public void testSetValues() throws Exception {
+        HSSFWorkbook book = new HSSFWorkbook();
+        HSSFSheet sheet = book.createSheet("test");
+        HSSFRow row = sheet.createRow(0);
+
+        HSSFCell cell = row.createCell((short)0);
+        
+        cell.setCellValue(1.2);
+        assertEquals(1.2, cell.getNumericCellValue(), 0.0001);
+        assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cell.getCellType());
+        
+        cell.setCellValue(false);
+        assertEquals(false, cell.getBooleanCellValue());
+        assertEquals(HSSFCell.CELL_TYPE_BOOLEAN, cell.getCellType());
+        
+        cell.setCellValue(new HSSFRichTextString("Foo"));
+        assertEquals("Foo", cell.getRichStringCellValue().getString());
+        assertEquals(HSSFCell.CELL_TYPE_STRING, cell.getCellType());
+        
+        cell.setCellValue(new HSSFRichTextString("345"));
+        assertEquals("345", cell.getRichStringCellValue().getString());
+        assertEquals(HSSFCell.CELL_TYPE_STRING, cell.getCellType());
+    }
+    
     /**
      * test that Boolean and Error types (BoolErrRecord) are supported properly.
      */

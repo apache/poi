@@ -276,8 +276,23 @@ public final class HSSFRow implements Comparable {
 
     /**
      * Get the hssfcell representing a given column (logical cell)
-     *  0-based.  If you ask for a cell that is not defined....
+     *  0-based. If you ask for a cell that is not defined, then
      *  you get a null.
+     * This is the basic call, with no policies applied
+     *
+     * @param cellnum  0 based column number
+     * @return HSSFCell representing that column or null if undefined.
+     */
+    private HSSFCell retrieveCell(int cellnum) {
+        if(cellnum<0||cellnum>=cells.length) return null;
+        return cells[cellnum];
+    }
+    
+    /**
+     * Get the hssfcell representing a given column (logical cell)
+     *  0-based.  If you ask for a cell that is not defined then
+     *  you get a null, unless you have set a different
+     *  {@link MissingCellPolicy} on the base workbook.
      * Short method signature provided to retain binary
      *  compatibility.
      *
@@ -288,24 +303,54 @@ public final class HSSFRow implements Comparable {
         int ushortCellNum = cellnum & 0x0000FFFF; // avoid sign extension
         return getCell(ushortCellNum);
     }
+    
     /**
      * Get the hssfcell representing a given column (logical cell)
-     *  0-based.  If you ask for a cell that is not defined....
-     *  you get a null.
+     *  0-based.  If you ask for a cell that is not defined then
+     *  you get a null, unless you have set a different
+     *  {@link MissingCellPolicy} on the base workbook.
      *
      * @param cellnum  0 based column number
      * @return HSSFCell representing that column or null if undefined.
      */
     public HSSFCell getCell(int cellnum) {
-        if(cellnum<0||cellnum>=cells.length) return null;
-        return cells[cellnum];
+    	return getCell(cellnum, book.getMissingCellPolicy());
+    }
+    
+    /**
+     * Get the hssfcell representing a given column (logical cell)
+     *  0-based.  If you ask for a cell that is not defined, then
+     *  your supplied policy says what to do
+     *
+     * @param cellnum  0 based column number
+     * @param policy Policy on blank / missing cells
+     * @return representing that column or null if undefined + policy allows.
+     */
+    public HSSFCell getCell(int cellnum, MissingCellPolicy policy) {
+    	HSSFCell cell = retrieveCell(cellnum);
+    	if(policy == RETURN_NULL_AND_BLANK) {
+    		return cell;
+    	}
+    	if(policy == RETURN_BLANK_AS_NULL) {
+    		if(cell == null) return cell;
+    		if(cell.getCellType() == HSSFCell.CELL_TYPE_BLANK) {
+    			return null;
+    		}
+    		return cell;
+    	}
+    	if(policy == CREATE_NULL_AS_BLANK) {
+    		if(cell == null) {
+    			return createCell((short)cellnum, HSSFCell.CELL_TYPE_BLANK);
+    		}
+    		return cell;
+    	}
+    	throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
     }
 
     /**
      * get the number of the first cell contained in this row.
      * @return short representing the first logical cell in the row, or -1 if the row does not contain any cells.
      */
-
     public short getFirstCellNum()
     {
         if (getPhysicalNumberOfCells() == 0)
@@ -467,6 +512,26 @@ public final class HSSFRow implements Comparable {
     }
 
     /**
+     * Used to specify the different possible policies
+     *  if for the case of null and blank cells
+     */
+    public static class MissingCellPolicy {
+    	private static int NEXT_ID = 1;
+    	private final int id;
+    	private MissingCellPolicy() {
+    		this.id = NEXT_ID++;
+    	}
+    }
+
+    /** Missing cells are returned as null, Blank cells are returned as normal */
+    public static final MissingCellPolicy RETURN_NULL_AND_BLANK = new MissingCellPolicy();
+    /** Missing cells are returned as null, as are blank cells */
+    public static final MissingCellPolicy RETURN_BLANK_AS_NULL = new MissingCellPolicy();
+    /** A new, blank cell is created for missing cells. Blank cells are returned as normal */
+    public static final MissingCellPolicy CREATE_NULL_AS_BLANK = new MissingCellPolicy();
+    
+
+    /**
      * @return cell iterator of the physically defined cells. 
      * Note that the 4th element might well not be cell 4, as the iterator
      *  will not return un-defined (null) cells.
@@ -484,6 +549,9 @@ public final class HSSFRow implements Comparable {
        return cellIterator();
     }
     
+    /**
+     * An iterator over the (physical) cells in the row.
+     */
     private class CellIterator implements Iterator
     {
       int thisId=-1;

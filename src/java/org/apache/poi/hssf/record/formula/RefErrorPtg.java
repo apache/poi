@@ -17,28 +17,20 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.BitField;
-
-import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * RefError - handles deleted cell reference
  * @author Jason Height (jheight at chariot dot net dot au)
  */
+public final class RefErrorPtg extends OperandPtg {
 
-public class RefErrorPtg extends Ptg
-{
     private final static int SIZE = 5;
     public final static byte sid  = 0x2a;
     private int              field_1_reserved;
 
-    private RefErrorPtg() {
-      //Required for clone methods
-    }
-    
     public RefErrorPtg(RecordInputStream in)
     {
         field_1_reserved = in.readInt();
@@ -55,7 +47,7 @@ public class RefErrorPtg extends Ptg
 
     public void writeBytes(byte [] array, int offset)
     {
-        array[offset] = (byte) (sid + ptgClass);
+        array[offset] = (byte) (sid + getPtgClass());
         LittleEndian.putInt(array,offset+1,field_1_reserved);
     }
 
@@ -82,12 +74,5 @@ public class RefErrorPtg extends Ptg
     
     public byte getDefaultOperandClass() {
         return Ptg.CLASS_REF;
-    }
-    
-    public Object clone() {
-      RefErrorPtg ptg = new RefErrorPtg();
-      ptg.field_1_reserved = field_1_reserved;
-      ptg.setClass(ptgClass);
-      return ptg;
     }
 }

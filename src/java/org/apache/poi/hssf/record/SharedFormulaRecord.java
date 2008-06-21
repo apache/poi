@@ -201,24 +201,16 @@ public final class SharedFormulaRecord extends Record {
         if (ptgs != null)
           for (int k = 0; k < ptgs.size(); k++) {
             Ptg ptg = (Ptg) ptgs.get(k);
+            byte originalOperandClass = -1;
+            if (!ptg.isBaseToken()) {
+                originalOperandClass = ptg.getPtgClass();
+            }
             if (ptg instanceof RefNPtg) {
               RefNPtg refNPtg = (RefNPtg)ptg;
-              ptg = new ReferencePtg(fixupRelativeRow(formulaRow,refNPtg.getRow(),refNPtg.isRowRelative()),
+              ptg = new RefPtg(fixupRelativeRow(formulaRow,refNPtg.getRow(),refNPtg.isRowRelative()),
                                      fixupRelativeColumn(formulaColumn,refNPtg.getColumn(),refNPtg.isColRelative()),
                                      refNPtg.isRowRelative(),
                                      refNPtg.isColRelative());
-            } else if (ptg instanceof RefNVPtg) {
-              RefNVPtg refNVPtg = (RefNVPtg)ptg;
-              ptg = new RefVPtg(fixupRelativeRow(formulaRow,refNVPtg.getRow(),refNVPtg.isRowRelative()),
-                                fixupRelativeColumn(formulaColumn,refNVPtg.getColumn(),refNVPtg.isColRelative()),
-                                refNVPtg.isRowRelative(),
-                                refNVPtg.isColRelative());
-            } else if (ptg instanceof RefNAPtg) {
-              RefNAPtg refNAPtg = (RefNAPtg)ptg;
-              ptg = new RefAPtg( fixupRelativeRow(formulaRow,refNAPtg.getRow(),refNAPtg.isRowRelative()),
-                                 fixupRelativeColumn(formulaColumn,refNAPtg.getColumn(),refNAPtg.isColRelative()),
-                                 refNAPtg.isRowRelative(),
-                                 refNAPtg.isColRelative());
             } else if (ptg instanceof AreaNPtg) {
               AreaNPtg areaNPtg = (AreaNPtg)ptg;
               ptg = new AreaPtg(fixupRelativeRow(formulaRow,areaNPtg.getFirstRow(),areaNPtg.isFirstRowRelative()),
@@ -229,27 +221,11 @@ public final class SharedFormulaRecord extends Record {
                                 areaNPtg.isLastRowRelative(),
                                 areaNPtg.isFirstColRelative(),
                                 areaNPtg.isLastColRelative());
-            } else if (ptg instanceof AreaNVPtg) {
-              AreaNVPtg areaNVPtg = (AreaNVPtg)ptg;
-              ptg = new AreaVPtg(fixupRelativeRow(formulaRow,areaNVPtg.getFirstRow(),areaNVPtg.isFirstRowRelative()),
-                                fixupRelativeRow(formulaRow,areaNVPtg.getLastRow(),areaNVPtg.isLastRowRelative()),
-                                fixupRelativeColumn(formulaColumn,areaNVPtg.getFirstColumn(),areaNVPtg.isFirstColRelative()),
-                                fixupRelativeColumn(formulaColumn,areaNVPtg.getLastColumn(),areaNVPtg.isLastColRelative()),
-                                areaNVPtg.isFirstRowRelative(),
-                                areaNVPtg.isLastRowRelative(),
-                                areaNVPtg.isFirstColRelative(),
-                                areaNVPtg.isLastColRelative());
-            } else if (ptg instanceof AreaNAPtg) {
-              AreaNAPtg areaNAPtg = (AreaNAPtg)ptg;
-              ptg = new AreaAPtg(fixupRelativeRow(formulaRow,areaNAPtg.getFirstRow(),areaNAPtg.isFirstRowRelative()),
-                                fixupRelativeRow(formulaRow,areaNAPtg.getLastRow(),areaNAPtg.isLastRowRelative()),
-                                fixupRelativeColumn(formulaColumn,areaNAPtg.getFirstColumn(),areaNAPtg.isFirstColRelative()),
-                                fixupRelativeColumn(formulaColumn,areaNAPtg.getLastColumn(),areaNAPtg.isLastColRelative()),
-                                areaNAPtg.isFirstRowRelative(),
-                                areaNAPtg.isLastRowRelative(),
-                                areaNAPtg.isFirstColRelative(),
-                                areaNAPtg.isLastColRelative());
-            } 
+            }
+            if (!ptg.isBaseToken()) {
+                ptg.setClass(originalOperandClass);
+            }
+            
             newPtgStack.add(ptg);
         }
         return newPtgStack;

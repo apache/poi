@@ -227,6 +227,25 @@ public class Range
   }
 
   /**
+   * Does any <code>TextPiece</code> in this Range use unicode?
+   *
+   *	@return	true if it does and false if it doesn't
+   */
+  public boolean usesUnicode() {
+
+	initText();
+
+	for (int i = _textStart; i < _textEnd; i++)
+	{
+	  TextPiece piece = (TextPiece)_text.get(i);
+	  if (piece.usesUnicode())
+		  return true;
+	}
+
+	return false;
+  }
+
+  /**
    * Gets the text that this Range contains.
    *
    * @return The text for this range.
@@ -306,12 +325,18 @@ public class Range
     // Since this is the first item in our list, it is safe to assume that
     // _start >= tp.getStart()
     int insertIndex = _start - tp.getStart();
+	if (tp.usesUnicode())
+		insertIndex /= 2;
     sb.insert(insertIndex, text);
+
     int adjustedLength = _doc.getTextTable().adjustForInsert(_textStart, text.length());
     _doc.getCharacterTable().adjustForInsert(_charStart, adjustedLength);
     _doc.getParagraphTable().adjustForInsert(_parStart, adjustedLength);
     _doc.getSectionTable().adjustForInsert(_sectionStart, adjustedLength);
     adjustForInsert(text.length());
+
+	// update the FIB.CCPText field
+	adjustFIB(text.length());
 
     return getCharacterRun(0);
   }
@@ -489,6 +514,7 @@ public class Range
 
   public void delete()
   {
+
     initAll();
 
     int numSections = _sections.size();
@@ -519,6 +545,12 @@ public class Range
     	TextPiece piece = (TextPiece)_text.get(x);
     	piece.adjustForDelete(_start, _end - _start);
     }
+
+	// update the FIB.CCPText field
+	if (usesUnicode())
+		adjustFIB(-((_end - _start) / 2));
+	else
+		adjustFIB(-(_end - _start));
   }
 
   /**
@@ -600,6 +632,47 @@ public class Range
     return (ListEntry)insertAfter(props, styleIndex);
   }
 
+  /**
+   * Replace (one instance of) a piece of text with another...
+   *
+   * @param pPlaceHolder    The text to be replaced (e.g., "${organization}")
+   * @param pValue          The replacement text (e.g., "Apache Software Foundation")
+   * @param pOffset         The offset or index where the text to be replaced begins
+   *                        (relative to/within this <code>Range</code>)
+   */
+  public void replaceText(String pPlaceHolder, String pValue, int pOffset)
+  {
+	int absPlaceHolderIndex = getStartOffset() + pOffset;
+    Range subRange = new Range(
+                absPlaceHolderIndex, 
+				(absPlaceHolderIndex + pPlaceHolder.length()), getDocument()
+    );
+    if (subRange.usesUnicode()) {
+			absPlaceHolderIndex = getStartOffset() + (pOffset * 2);
+            subRange = new Range(
+                      absPlaceHolderIndex, 
+                      (absPlaceHolderIndex + (pPlaceHolder.length() * 2)), 
+					  getDocument()
+            );
+    }
+
+    subRange.insertBefore(pValue);
+
+    // re-create the sub-range so we can delete it
+    subRange = new Range(
+            (absPlaceHolderIndex + pValue.length()),
+            (absPlaceHolderIndex + pPlaceHolder.length() + pValue.length()), 
+			getDocument()
+    );
+    if (subRange.usesUnicode())
+            subRange = new Range(
+                      (absPlaceHolderIndex + (pValue.length() * 2)),
+                      (absPlaceHolderIndex + (pPlaceHolder.length() * 2) + 
+					  (pValue.length() * 2)), getDocument()
+            );
+
+    subRange.delete();
+  }
 
   /**
    * Gets the character run at index. The index is relative to this range.
@@ -828,12 +901,26 @@ public class Range
   }
 
   /**
+   *	Adjust the value of <code>FIB.CCPText</code> after an insert or a delete...
+   *
+   *	@param	adjustment	The (signed) value that should be added to <code>FIB.CCPText</code>
+   */
+  protected void adjustFIB(int adjustment) {
+
+	// update the FIB.CCPText field (this should happen once per adjustment, so we don't want it in
+	// adjustForInsert() or it would get updated multiple times if the range has a parent)
+	// without this, OpenOffice.org (v. 2.2.x) does not see all the text in the document
+	_doc.getFileInformationBlock().setCcpText(_doc.getFileInformationBlock().getCcpText() + adjustment);
+  }
+
+  /**
    * adjust this range after an insert happens.
    * @param length the length to adjust for
    */
   private void adjustForInsert(int length)
   {
     _end += length;
+
     reset();
     Range parent = (Range)_parent.get();
     if (parent != null)
@@ -842,4 +929,19 @@ public class Range
     }
   }
 
+
+	public int getStartOffset() {
+
+		return _start;
+	}
+
+	public int getEndOffset() {
+
+		return _end;
+	}
+
+	protected HWPFDocument getDocument() {
+
+		return _doc;
+	}
 }

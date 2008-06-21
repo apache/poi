@@ -17,32 +17,38 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
- * ArrayPtgA - handles arrays
- *  
- * @author Jason Height (jheight at chariot dot net dot au)
+ * Common superclass of all value operators.
+ * Subclasses include all unary and binary operators except for the reference operators (IntersectionPtg, RangePtg, UnionPtg) 
+ * 
+ * @author Josh Micich
  */
-public final class ArrayPtgA extends ArrayPtg {
-    public final static byte sid  = 0x60;
+public abstract class ValueOperatorPtg extends OperationPtg {
 
-    private ArrayPtgA() {
-      //Required for clone methods
-    }
+	/**
+	 * All Operator <tt>Ptg</tt>s are base tokens (i.e. are not RVA classified)  
+	 */
+	public final boolean isBaseToken() {
+		return true;
+	}
 
-    public ArrayPtgA(RecordInputStream in) {
-    	super(in);
-    }
-        
-    public Object clone() {
-      ArrayPtgA ptg = new ArrayPtgA();
-      ptg.field_1_reserved = (byte[]) field_1_reserved.clone();
-      
-      ptg.token_1_columns = token_1_columns;
-      ptg.token_2_rows = token_2_rows;
-      ptg.token_3_arrayValues = (Object[]) token_3_arrayValues.clone();
-      ptg.setClass(ptgClass);
-      return ptg;
-    }
+	public final byte getDefaultOperandClass() {
+		return Ptg.CLASS_VALUE;
+	}
+
+	public final void writeBytes(byte[] array, int offset) {
+		array[offset + 0] = getSid();
+	}
+
+	protected abstract byte getSid();
+
+	public final int getSize() {
+		return 1;
+	}
+    public final String toFormulaString(HSSFWorkbook book) {
+    	// TODO - prune this method out of the hierarchy
+    	throw new RuntimeException("toFormulaString(String[] operands) should be used for subclasses of OperationPtgs");
+	}
 }

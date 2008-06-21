@@ -35,10 +35,12 @@ public class TestHWPFPictures extends TestCase {
 	private String docAFile;
 	private String docBFile;
 	private String docCFile;
+    private String docDFile;
 	
 	private String imgAFile;
 	private String imgBFile;
 	private String imgCFile;
+    private String imgDFile;
 	
 	protected void setUp() throws Exception {
 		String dirname = System.getProperty("HWPF.testdata.path");
@@ -46,10 +48,12 @@ public class TestHWPFPictures extends TestCase {
 		docAFile = dirname + "/testPictures.doc";
 		docBFile = dirname + "/two_images.doc";
 		docCFile = dirname + "/vector_image.doc";
+        docDFile = dirname + "/GaiaTest.doc";
 		
 		imgAFile = dirname + "/simple_image.jpg";
 		imgBFile = dirname + "/simple_image.png";
 		imgCFile = dirname + "/vector_image.emf";
+        imgDFile = dirname + "/GaiaTestImg.png";
 	}
 	
 	/**
@@ -126,7 +130,26 @@ public class TestHWPFPictures extends TestCase {
 		assertEquals(picBytes.length, pic.getContent().length);
 		assertBytesSame(picBytes, pic.getContent());
 	}
-	
+    
+	/**
+	 * Pending the missing files being uploaded to
+	 *  bug #44937
+	 */
+    public void BROKENtestEscherDrawing() throws Exception
+    {
+        HWPFDocument docD = new HWPFDocument(new FileInputStream(docDFile));
+        List allPictures = docD.getPicturesTable().getAllPictures();
+        
+        assertEquals(1, allPictures.size());
+        
+        Picture pic = (Picture) allPictures.get(0);
+        assertNotNull(pic);
+        byte[] picD = readFile(imgDFile);
+        
+        assertEquals(picD.length, pic.getContent().length);
+        
+        assertBytesSame(picD, pic.getContent());
+    }
 	
 	private void assertBytesSame(byte[] a, byte[] b) {
 		assertEquals(a.length, b.length);

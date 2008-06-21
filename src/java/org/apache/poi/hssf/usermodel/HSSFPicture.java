@@ -26,6 +26,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Iterator;
@@ -45,6 +46,20 @@ public class HSSFPicture
     public static final int PICTURE_TYPE_JPEG = HSSFWorkbook.PICTURE_TYPE_JPEG;              // JFIF
     public static final int PICTURE_TYPE_PNG = HSSFWorkbook.PICTURE_TYPE_PNG;                // PNG
     public static final int PICTURE_TYPE_DIB = HSSFWorkbook.PICTURE_TYPE_DIB;                // Windows DIB
+
+    /**
+     * width of 1px in columns with default width in units of 1/256 of a character width
+     */
+    private static final float PX_DEFAULT = 32.00f;
+    /**
+     * width of 1px in columns with overridden width in units of 1/256 of a character width
+     */
+    private static final float PX_MODIFIED = 36.56f;
+
+    /**
+     * Height of 1px of a row
+     */
+    private static final int PX_ROW = 15;
 
     int pictureIndex;
     HSSFPatriarch patriarch;
@@ -100,57 +115,75 @@ public class HSSFPicture
      * @since POI 3.0.2
      */
     public HSSFClientAnchor getPreferredSize(){
-        HSSFClientAnchor anchor = new HSSFClientAnchor();
+        HSSFClientAnchor anchor = (HSSFClientAnchor)getAnchor();
 
-        EscherBSERecord bse = (EscherBSERecord)patriarch.sheet.book.getBSERecord(pictureIndex);
-        byte[] data = bse.getBlipRecord().getPicturedata();
-        int type = bse.getBlipTypeWin32();
-        switch (type){
-            //we can calculate the preferred size only for JPEG and PNG
-            //other formats like WMF, EMF and PICT are not supported in Java
-            case HSSFWorkbook.PICTURE_TYPE_JPEG:
-            case HSSFWorkbook.PICTURE_TYPE_PNG:
-                BufferedImage img = null;
-                ImageReader r = null;
-                try {
-                    //read the image using javax.imageio.*
-                    ImageInputStream iis = ImageIO.createImageInputStream( new ByteArrayInputStream(data) );
-                    Iterator i = ImageIO.getImageReaders( iis );
-                    r = (ImageReader) i.next();
-                    r.setInput( iis );
-                    img = r.read(0);
+        Dimension size = getImageDimension();
 
-                    int[] dpi = getResolution(r);
-                    int imgWidth = img.getWidth()*96/dpi[0];
-                    int imgHeight = img.getHeight()*96/dpi[1];
+        float w = 0;
 
-                    //Excel measures cells in units of 1/256th of a character width.
-                    //The cell width calculated based on this info is always "off".
-                    //A better approach seems to be to use empirically obtained cell width and row height
-                    int cellwidth = 64;
-                    int rowheight = 17;
+        //space in the leftmost cell
+        w += getColumnWidthInPixels(anchor.col1)*(1 - anchor.dx1/1024);
+        short col2 = (short)(anchor.col1 + 1);
+        int dx2 = 0;
 
-                    int col2 = imgWidth/cellwidth;
-                    int row2 = imgHeight/rowheight;
-
-                    int dx2 = (int)((float)(imgWidth % cellwidth)/cellwidth * 1024);
-                    int dy2 = (int)((float)(imgHeight % rowheight)/rowheight * 256);
-
-                    anchor.setCol2((short)col2);
-                    anchor.setDx2(dx2);
-
-                    anchor.setRow2(row2);
-                    anchor.setDy2(dy2);
-
-                } catch (IOException e){
-                    //silently return if ImageIO failed to read the image
-                    log.log(POILogger.WARN, e);
-                    img = null;
-                }
-
-                break;
+        while(w < size.width){
+            w += getColumnWidthInPixels(col2++);
         }
+
+        if(w > size.width) {
+            //calculate dx2, offset in the rightmost cell
+            col2--;
+            float cw = getColumnWidthInPixels(col2);
+            float delta = w - size.width;
+            dx2 = (int)((cw-delta)/cw*1024);
+        }
+        anchor.col2 = col2;
+        anchor.dx2 = dx2;
+
+        float h = 0;
+        h += (1 - anchor.dy1/256)* getRowHeightInPixels(anchor.row1);
+        int row2 = anchor.row1 + 1;
+        int dy2 = 0;
+
+        while(h < size.height){
+            h += getRowHeightInPixels(row2++);
+        }
+        if(h > size.height) {
+            row2--;
+            float ch = getRowHeightInPixels(row2);
+            float delta = h - size.height;
+            dy2 = (int)((ch-delta)/ch*256);
+        }
+        anchor.row2 = row2;
+        anchor.dy2 = dy2;
+
         return anchor;
+    }
+
+    private float getColumnWidthInPixels(short column){
+
+        short cw = patriarch.sheet.getColumnWidth(column);
+        float px = getPixelWidth(column);
+
+        return cw/px;
+    }
+
+    private float getRowHeightInPixels(int i){
+
+        HSSFRow row = patriarch.sheet.getRow(i);
+        float height;
+        if(row != null) height = row.getHeight();
+        else height = patriarch.sheet.getDefaultRowHeight();
+
+        return height/PX_ROW;
+    }
+
+    private float getPixelWidth(short column){
+
+        int def = patriarch.sheet.getDefaultColumnWidth()*256;
+        short cw = patriarch.sheet.getColumnWidth(column);
+
+        return cw == def ? PX_DEFAULT : PX_MODIFIED;
     }
 
     /**
@@ -176,4 +209,42 @@ public class HSSFPicture
         return new int[]{hdpi, vdpi};
     }
 
+    /**
+     * Return the dimension of this image
+     *
+     * @return image dimension
+     */
+    public Dimension getImageDimension(){
+        EscherBSERecord bse = patriarch.sheet.book.getBSERecord(pictureIndex);
+        byte[] data = bse.getBlipRecord().getPicturedata();
+        int type = bse.getBlipTypeWin32();
+        Dimension size = new Dimension();
+
+        switch (type){
+            //we can calculate the preferred size only for JPEG and PNG
+            //other formats like WMF, EMF and PICT are not supported in Java
+            case HSSFWorkbook.PICTURE_TYPE_JPEG:
+            case HSSFWorkbook.PICTURE_TYPE_PNG:
+            case HSSFWorkbook.PICTURE_TYPE_DIB:
+                try {
+                    //read the image using javax.imageio.*
+                    ImageInputStream iis = ImageIO.createImageInputStream( new ByteArrayInputStream(data) );
+                    Iterator i = ImageIO.getImageReaders( iis );
+                    ImageReader r = (ImageReader) i.next();
+                    r.setInput( iis );
+                    BufferedImage img = r.read(0);
+
+                    int[] dpi = getResolution(r);
+                    size.width = img.getWidth()*96/dpi[0];
+                    size.height = img.getHeight()*96/dpi[1];
+
+                } catch (IOException e){
+                    //silently return if ImageIO failed to read the image
+                    log.log(POILogger.WARN, e);
+                }
+
+                break;
+        }
+        return size;
+    }
 }

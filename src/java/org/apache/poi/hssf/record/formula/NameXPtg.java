@@ -25,7 +25,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  *
  * @author  aviks
  */
-public final class NameXPtg extends Ptg {
+public final class NameXPtg extends OperandPtg {
     public final static short sid  = 0x39;
     private final static int  SIZE = 7;
     private short             field_1_ixals;   // index to REF entry in externsheet record
@@ -33,31 +33,20 @@ public final class NameXPtg extends Ptg {
     private short            field_3_reserved;   // reserved must be 0
 
 
-    private NameXPtg() {
-      //Required for clone methods
-    }
-
-    /** Creates new NamePtg */
-
-    public NameXPtg(RecordInputStream in)
-    {
+    public NameXPtg(RecordInputStream in) {
         field_1_ixals        = in.readShort();
         field_2_ilbl        = in.readShort();
         field_3_reserved = in.readShort();
-        
-        //field_2_reserved = LittleEndian.getByteArray(data, offset + 12,12);
     }
 
-    public void writeBytes(byte [] array, int offset)
-    {
-        array[ offset + 0 ] = (byte)(sid + ptgClass);
+    public void writeBytes(byte [] array, int offset) {
+        array[ offset + 0 ] = (byte)(sid + getPtgClass());
         LittleEndian.putShort(array, offset + 1, field_1_ixals);
         LittleEndian.putShort(array,offset+3, field_2_ilbl);
         LittleEndian.putShort(array, offset + 5, field_3_reserved);
     }
 
-    public int getSize()
-    {
+    public int getSize() {
         return SIZE;
     }
 
@@ -67,14 +56,7 @@ public final class NameXPtg extends Ptg {
         return book.resolveNameXText(field_1_ixals, field_2_ilbl-1); 
     }
     
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
-
-    public Object clone() {
-      NameXPtg ptg = new NameXPtg();
-      ptg.field_1_ixals = field_1_ixals;
-      ptg.field_3_reserved = field_3_reserved;
-      ptg.field_2_ilbl = field_2_ilbl;
-      ptg.setClass(ptgClass);
-      return ptg;
-    }
+    public byte getDefaultOperandClass() {
+		return Ptg.CLASS_VALUE;
+	}
 }

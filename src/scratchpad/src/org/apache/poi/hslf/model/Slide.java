@@ -147,6 +147,7 @@ public class Slide extends Sheet
         int dgId = dgg.getMaxDrawingGroupId() + 1;
         dg.setOptions((short)(dgId << 4));
         dgg.setDrawingsSaved(dgg.getDrawingsSaved() + 1);
+        dgg.setMaxDrawingGroupId(dgId);
 
         for (Iterator it = dgContainer.getChildContainers().iterator(); it.hasNext(); ) {
             EscherContainerRecord c = (EscherContainerRecord)it.next();

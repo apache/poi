@@ -17,32 +17,22 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.LittleEndian;
 
 /**
  *
  * @author  andy
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-
-public class NamePtg
-    extends Ptg
-{
+public final class NamePtg extends OperandPtg {
     public final static short sid  = 0x23;
     private final static int  SIZE = 5;
     /** one-based index to defined name record */
     private short             field_1_label_index;
     private short             field_2_zero;   // reserved must be 0
-    boolean xtra=false;
-
-
-    private NamePtg() {
-      //Required for clone methods
-    }
 
     /**
      * Creates new NamePtg and sets its name index to that of the corresponding defined name record
@@ -72,12 +62,9 @@ public class NamePtg
 
     /** Creates new NamePtg */
 
-    public NamePtg(RecordInputStream in)
-    {
-        //field_1_ixti        = LittleEndian.getShort(data, offset);
+    public NamePtg(RecordInputStream in) {
         field_1_label_index = in.readShort();
         field_2_zero        = in.readShort();
-        //if (data[offset+6]==0) xtra=true;
     }
     
     /**
@@ -87,15 +74,13 @@ public class NamePtg
         return field_1_label_index-1; // convert to zero based
     }
 
-    public void writeBytes(byte [] array, int offset)
-    {
-        array[offset+0]= (byte) (sid + ptgClass);
+    public void writeBytes(byte [] array, int offset) {
+        array[offset+0]= (byte) (sid + getPtgClass());
         LittleEndian.putShort(array,offset+1,field_1_label_index);
         LittleEndian.putShort(array,offset+3, field_2_zero);
     }
 
-    public int getSize()
-    {
+    public int getSize() {
         return SIZE;
     }
 
@@ -104,12 +89,7 @@ public class NamePtg
     	return book.getNameName(field_1_label_index - 1);
     }
     
-    public byte getDefaultOperandClass() {return Ptg.CLASS_REF;}
-
-    public Object clone() {
-      NamePtg ptg = new NamePtg();
-      ptg.field_1_label_index = field_1_label_index;
-      ptg.field_2_zero = field_2_zero;
-      return ptg;
-    }
+    public byte getDefaultOperandClass() {
+		return Ptg.CLASS_REF;
+	}
 }

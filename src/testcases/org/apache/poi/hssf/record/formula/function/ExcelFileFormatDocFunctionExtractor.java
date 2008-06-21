@@ -26,9 +26,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import java.util.zip.CRC32;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
@@ -149,7 +151,6 @@ public final class ExcelFileFormatDocFunctionExtractor {
 	
 	private static final class FunctionDataCollector {
 
-
 		private final Map _allFunctionsByIndex;
 		private final Map _allFunctionsByName;
 		private final Set _groupFunctionIndexes;
@@ -184,25 +185,29 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			_allFunctionsByName.put(funcName, fd);
 		}
 
+		/**
+		 * Some extra validation here.
+		 * Any function which changes definition will have a footnote in the source document
+		 */
 		private void checkRedefinedFunction(boolean hasNote, String funcName, Integer funcIxKey) {
 			FunctionData fdPrev;
+			// check by index
 			fdPrev = (FunctionData) _allFunctionsByIndex.get(funcIxKey);
 			if(fdPrev != null) {
-				if(fdPrev.hasFootnote() && hasNote) {
-					// func def can change if both have a foot-note
-					_allFunctionsByName.remove(fdPrev.getName());
-				} else {
-					throw new RuntimeException("changing function definition without foot-note");
+				if(!fdPrev.hasFootnote() || !hasNote) {
+					throw new RuntimeException("changing function [" 
+							+ funcIxKey + "] definition without foot-note");
 				}
+				_allFunctionsByName.remove(fdPrev.getName());
 			}
+			// check by name
 			fdPrev = (FunctionData) _allFunctionsByName.get(funcName);
 			if(fdPrev != null) {
-				if(fdPrev.hasFootnote() && hasNote) {
-					// func def can change if both have a foot-note
-					_allFunctionsByIndex.remove(new Integer(fdPrev.getIndex()));
-				} else {
-					throw new RuntimeException("changing function definition without foot-note");
+				if(!fdPrev.hasFootnote() || !hasNote) {
+					throw new RuntimeException("changing function '" 
+							+ funcName + "' definition without foot-note");
 				}
+				_allFunctionsByIndex.remove(new Integer(fdPrev.getIndex()));
 			}
 		}
 
@@ -237,8 +242,12 @@ public final class ExcelFileFormatDocFunctionExtractor {
 		private static final String[] TABLE_CELL_RELPATH_NAMES = {
 			"table:table-row", "table:table-cell", "text:p",	
 		};
-		private static final String[] NOTE_REF_RELPATH_NAMES = {
+		// after May 2008 there was one more style applied to the footnotes
+		private static final String[] NOTE_REF_RELPATH_NAMES_OLD = { 
 			"table:table-row", "table:table-cell", "text:p", "text:span", "text:note-ref",
+		};
+		private static final String[] NOTE_REF_RELPATH_NAMES = {
+			"table:table-row", "table:table-cell", "text:p", "text:span", "text:span", "text:note-ref",
 		};
 
 
@@ -368,6 +377,8 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			} else if(matchesRelPath(TABLE_CELL_RELPATH_NAMES)) {
 				_textNodeBuffer.setLength(0);
 				_cellHasNote = false;
+			} else if(matchesRelPath(NOTE_REF_RELPATH_NAMES_OLD)) {
+				_cellHasNote = true;
 			} else if(matchesRelPath(NOTE_REF_RELPATH_NAMES)) {
 				_cellHasNote = true;
 			}
@@ -456,6 +467,9 @@ public final class ExcelFileFormatDocFunctionExtractor {
 	}
 
 	private static void processFile(File effDocFile, File outFile) {
+		if(!effDocFile.exists()) {
+			throw new RuntimeException("file '" + effDocFile.getAbsolutePath() + "' does not exist");
+		}
 		OutputStream os;
 		try {
 			os = new FileOutputStream(outFile);
@@ -475,7 +489,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 		ps.println("# Created by (" + genClass.getName() + ")");
 		// identify the source file
 		ps.print("# from source file '" + SOURCE_DOC_FILE_NAME + "'");
-		ps.println(" (size=" + effDocFile.length() + ", crc=" + getFileCRC(effDocFile) + ")");
+		ps.println(" (size=" + effDocFile.length() + ", md5=" + getFileMD5(effDocFile) + ")");
 		ps.println("#");
 		ps.println("#Columns: (index, name, minParams, maxParams, returnClass, paramClasses, isVolatile, hasFootnote )");
 		ps.println("");
@@ -490,6 +504,14 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			throw new RuntimeException(e);
 		}
 		ps.close();
+		
+		String canonicalOutputFileName;
+		try {
+			canonicalOutputFileName = outFile.getCanonicalPath();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		System.out.println("Successfully output to '" + canonicalOutputFileName + "'");
 	}
 
 	private static void outputLicenseHeader(PrintStream ps) {
@@ -519,8 +541,14 @@ public final class ExcelFileFormatDocFunctionExtractor {
 	/**
 	 * Helps identify the source file
 	 */
-	private static String getFileCRC(File f) {
-		CRC32 crc = new CRC32();
+	private static String getFileMD5(File f) {
+		MessageDigest m;
+		try {
+			m = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+
 		byte[]buf = new byte[2048];
 		try {
 			InputStream is = new FileInputStream(f);
@@ -529,21 +557,17 @@ public final class ExcelFileFormatDocFunctionExtractor {
 				if(bytesRead<1) { 
 					break;
 				}
-				crc.update(buf, 0, bytesRead);
+				m.update(buf, 0, bytesRead);
 			}
 			is.close();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		return "0x" + Long.toHexString(crc.getValue()).toUpperCase();
+		
+		return "0x" + new BigInteger(1, m.digest()).toString(16);
 	}
 
-	private static File getSourceFile() {
-		if (false) {
-			File dir = new File("c:/temp");
-			File effDocFile = new File(dir, SOURCE_DOC_FILE_NAME);
-			return effDocFile;
-		}
+	private static File downloadSourceFile() {
 		URL url;
 		try {
 			url = new URL("http://sc.openoffice.org/" + SOURCE_DOC_FILE_NAME);
@@ -557,7 +581,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			URLConnection conn = url.openConnection();
 			InputStream is = conn.getInputStream();
 			System.out.println("downloading " + url.toExternalForm());
-			result = File.createTempFile("excelfileformat", "odt");
+			result = File.createTempFile("excelfileformat", ".odt");
 			OutputStream os = new FileOutputStream(result);
 			while(true) {
 				int bytesRead = is.read(buf);
@@ -577,12 +601,17 @@ public final class ExcelFileFormatDocFunctionExtractor {
 
 	public static void main(String[] args) {
 
-		File effDocFile = getSourceFile();
-		if(!effDocFile.exists()) {
-			throw new RuntimeException("file '" + effDocFile.getAbsolutePath() + "' does not exist");
-		}
-
 		File outFile = new File("functionMetadata-asGenerated.txt");
-		processFile(effDocFile, outFile);
+
+		if (false) { // set true to use local file
+			File dir = new File("c:/temp");
+			File effDocFile = new File(dir, SOURCE_DOC_FILE_NAME);
+			processFile(effDocFile, outFile);
+			return;
+		}
+		
+		File tempEFFDocFile = downloadSourceFile();
+		processFile(tempEFFDocFile, outFile);
+		tempEFFDocFile.delete();
 	}
 }

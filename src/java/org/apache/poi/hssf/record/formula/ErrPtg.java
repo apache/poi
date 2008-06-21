@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -26,7 +24,7 @@ import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 /**
  * @author Daniel Noll (daniel at nuix dot com dot au)
  */
-public final class ErrPtg extends Ptg {
+public final class ErrPtg extends ScalarConstantPtg {
     
     // convenient access to namespace
     private static final HSSFErrorConstants EC = null;
@@ -49,7 +47,7 @@ public final class ErrPtg extends Ptg {
     
     public static final short sid  = 0x1c;
     private static final int  SIZE = 2;
-    private int              field_1_error_code;
+    private final int field_1_error_code;
 
     /** Creates new ErrPtg */
 
@@ -66,7 +64,7 @@ public final class ErrPtg extends Ptg {
 
     public void writeBytes(byte [] array, int offset)
     {
-        array[offset] = (byte) (sid + ptgClass);
+        array[offset] = (byte) (sid + getPtgClass());
         array[offset + 1] = (byte)field_1_error_code;
     }
 
@@ -76,14 +74,6 @@ public final class ErrPtg extends Ptg {
 
     public int getSize() {
         return SIZE;
-    }
-
-    public byte getDefaultOperandClass() {
-        return Ptg.CLASS_VALUE;
-    }
-
-    public Object clone() {
-        return new ErrPtg(field_1_error_code);
     }
 
     public int getErrorCode() {

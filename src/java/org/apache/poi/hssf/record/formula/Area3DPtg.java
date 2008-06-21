@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndian;
 
 
 /**
- * Title:        Area 3D Ptg - 3D referecnce (Sheet + Area)<P>
+ * Title:        Area 3D Ptg - 3D reference (Sheet + Area)<P>
  * Description:  Defined a area in Extern Sheet. <P>
  * REFERENCE:  <P>
  * @author Libin Roman (Vista Portal LDT. Developer)
@@ -35,9 +35,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 1.0-pre
  */
-
-public class Area3DPtg extends Ptg implements AreaI
-{
+public final class Area3DPtg extends OperandPtg implements AreaI {
 	public final static byte sid = 0x3b;
 	private final static int SIZE = 11; // 10 + 1 for Ptg
 	private short field_1_index_extern_sheet;
@@ -84,28 +82,20 @@ public class Area3DPtg extends Ptg implements AreaI
 		  setExternSheetIndex(externalSheetIndex);
 	}
 
-	public String toString()
-	{
-		StringBuffer buffer = new StringBuffer();
-
-		buffer.append( "AreaPtg\n" );
-		buffer.append( "Index to Extern Sheet = " + getExternSheetIndex() ).append( "\n" );
-		buffer.append( "firstRow = " + getFirstRow() ).append( "\n" );
-		buffer.append( "lastRow  = " + getLastRow() ).append( "\n" );
-		buffer.append( "firstCol = " + getFirstColumn() ).append( "\n" );
-		buffer.append( "lastCol  = " + getLastColumn() ).append( "\n" );
-		buffer.append( "firstColRel= "
-				+ isFirstRowRelative() ).append( "\n" );
-		buffer.append( "lastColRowRel = "
-				+ isLastRowRelative() ).append( "\n" );
-		buffer.append( "firstColRel   = " + isFirstColRelative() ).append( "\n" );
-		buffer.append( "lastColRel	= " + isLastColRelative() ).append( "\n" );
-		return buffer.toString();
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(getClass().getName());
+		sb.append(" [");
+		sb.append("sheetIx=").append(getExternSheetIndex());
+		sb.append(" ! ");
+		sb.append(AreaReference.formatAsString(this));
+		sb.append("]");
+		return sb.toString();
 	}
 
 	public void writeBytes( byte[] array, int offset )
 	{
-		array[0 + offset] = (byte) ( sid + ptgClass );
+		array[0 + offset] = (byte) ( sid + getPtgClass() );
 		LittleEndian.putShort( array, 1 + offset, getExternSheetIndex() );
 		LittleEndian.putShort( array, 3 + offset, (short)getFirstRow() );
 		LittleEndian.putShort( array, 5 + offset, (short)getLastRow() );
@@ -279,35 +269,28 @@ public class Area3DPtg extends Ptg implements AreaI
 		StringBuffer retval = new StringBuffer();
 		String sheetName = Ref3DPtg.getSheetName(book, field_1_index_extern_sheet);
 		if(sheetName != null) {
-			SheetNameFormatter.appendFormat(retval, sheetName);
+			if(sheetName.length() == 0) {
+				// What excel does if sheet has been deleted
+				sheetName = "#REF";
+				retval.append(sheetName);
+			} else {
+				// Normal
+				SheetNameFormatter.appendFormat(retval, sheetName);
+			}
 			retval.append( '!' );
 		}
 		
 		// Now the normal area bit
-		retval.append( AreaPtg.toFormulaString(this, book) );
+		retval.append(AreaReference.formatAsString(this));
 		
 		// All done
 		return retval.toString();
 	}
 
-	public byte getDefaultOperandClass()
-	{
+	public byte getDefaultOperandClass() {
 		return Ptg.CLASS_REF;
 	}
-
-	public Object clone()
-	{
-		Area3DPtg ptg = new Area3DPtg();
-		ptg.field_1_index_extern_sheet = field_1_index_extern_sheet;
-		ptg.field_2_first_row = field_2_first_row;
-		ptg.field_3_last_row = field_3_last_row;
-		ptg.field_4_first_column = field_4_first_column;
-		ptg.field_5_last_column = field_5_last_column;
-		ptg.setClass(ptgClass);
-		return ptg;
-	}
-
-
+	// TODO - one junit relies on this. remove
 	public boolean equals( Object o )
 	{
 		if ( this == o ) return true;
@@ -323,17 +306,4 @@ public class Area3DPtg extends Ptg implements AreaI
 
 		return true;
 	}
-
-	public int hashCode()
-	{
-		int result;
-		result = (int) field_1_index_extern_sheet;
-		result = 29 * result + (int) field_2_first_row;
-		result = 29 * result + (int) field_3_last_row;
-		result = 29 * result + (int) field_4_first_column;
-		result = 29 * result + (int) field_5_last_column;
-		return result;
-	}
-
-
 }

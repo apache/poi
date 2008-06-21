@@ -44,6 +44,8 @@ public final class FuncPtg extends AbstractFunctionPtg {
             throw new RuntimeException("Invalid built-in function index (" + field_2_fnc_index + ")");
         }
         numParams = fm.getMinParams();
+        returnClass = fm.getReturnClassCode();
+        paramClass = fm.getParameterClassCodes();
     }
     public FuncPtg(int functionIndex) {
         field_2_fnc_index = (short) functionIndex;
@@ -54,18 +56,12 @@ public final class FuncPtg extends AbstractFunctionPtg {
     }
 
     public void writeBytes(byte[] array, int offset) {
-        array[offset+0]= (byte) (sid + ptgClass);
+        array[offset+0]= (byte) (sid + getPtgClass());
         LittleEndian.putShort(array,offset+1,field_2_fnc_index);
     }
 
     public int getNumberOfOperands() {
         return numParams;
-    }
-
-    public Object clone() {
-        FuncPtg ptg = new FuncPtg(field_2_fnc_index);
-        ptg.setClass(ptgClass);
-        return ptg;
     }
 
     public int getSize() {

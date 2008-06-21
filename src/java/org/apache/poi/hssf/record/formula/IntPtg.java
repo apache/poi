@@ -27,7 +27,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class IntPtg extends Ptg {
+public final class IntPtg extends ScalarConstantPtg {
     // 16 bit unsigned integer
     private static final int MIN_VALUE = 0x0000;
     private static final int MAX_VALUE = 0xFFFF;
@@ -43,12 +43,11 @@ public final class IntPtg extends Ptg {
 
     public final static int  SIZE = 3;
     public final static byte sid  = 0x1e;
-    private int            field_1_value;
+    private final int field_1_value;
   
     public IntPtg(RecordInputStream in) {
         this(in.readUShort());
     }
-
 
     public IntPtg(int value) {
         if(!isInRange(value)) {
@@ -60,7 +59,6 @@ public final class IntPtg extends Ptg {
     public int getValue() {
         return field_1_value;
     }
-
 
     public void writeBytes(byte [] array, int offset)
     {
@@ -75,13 +73,7 @@ public final class IntPtg extends Ptg {
     public String toFormulaString(HSSFWorkbook book) {
         return String.valueOf(getValue());
     }
-    public byte getDefaultOperandClass() {
-        return Ptg.CLASS_VALUE;
-    }
 
-    public Object clone() {
-     return new IntPtg(field_1_value);
-    }
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
         sb.append(getClass().getName()).append(" [");

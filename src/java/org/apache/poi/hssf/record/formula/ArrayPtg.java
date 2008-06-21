@@ -35,28 +35,31 @@ import org.apache.poi.util.LittleEndian;
  *  
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public class ArrayPtg extends Ptg {
+public final class ArrayPtg extends Ptg {
 	public static final byte sid  = 0x20;
 
 	private static final int RESERVED_FIELD_LEN = 7;
 	// TODO - fix up field visibility and subclasses
-	protected byte[] field_1_reserved;
+	private byte[] field_1_reserved;
+	
 	// data from these fields comes after the Ptg data of all tokens in current formula
-	protected short  token_1_columns;
-	protected short token_2_rows;
-	protected Object[] token_3_arrayValues;
+	private short  token_1_columns;
+	private short token_2_rows;
+	private Object[] token_3_arrayValues;
 
-	protected ArrayPtg() {
-	  //Required for clone methods
-	}
-
-	public ArrayPtg(RecordInputStream in)
-	{
+	public ArrayPtg(RecordInputStream in) {
 		field_1_reserved = new byte[RESERVED_FIELD_LEN];
 		// TODO - add readFully method to RecordInputStream
 		for(int i=0; i< RESERVED_FIELD_LEN; i++) {
 			field_1_reserved[i] = in.readByte();
 		}
+	}
+	public Object[] getTokenArrayValues() {
+		return (Object[]) token_3_arrayValues.clone();
+	}
+	
+	public boolean isBaseToken() {
+		return false;
 	}
 	
 	/** 
@@ -95,6 +98,10 @@ public class ArrayPtg extends Ptg {
 		return buffer.toString();
 	}
 
+	/**
+	 * Note - (2D) array elements are stored column by column 
+	 * @return the index into the internal 1D array for the specified column and row
+	 */
 	/* package */ int getValueIndex(int colIx, int rowIx) {
 		if(colIx < 0 || colIx >= token_1_columns) {
 			throw new IllegalArgumentException("Specified colIx (" + colIx 
@@ -104,12 +111,12 @@ public class ArrayPtg extends Ptg {
 			throw new IllegalArgumentException("Specified rowIx (" + rowIx 
 					+ ") is outside the allowed range (0.." + (token_2_rows-1) + ")");
 		}
-		return rowIx * token_1_columns + colIx;
+		return rowIx + token_2_rows * colIx;
 	}
 
 	public void writeBytes(byte[] data, int offset) {
 		
-		LittleEndian.putByte(data, offset + 0, sid + ptgClass);
+		LittleEndian.putByte(data, offset + 0, sid + getPtgClass());
 		System.arraycopy(field_1_reserved, 0, data, offset+1, RESERVED_FIELD_LEN);
 	}
 
@@ -182,13 +189,9 @@ public class ArrayPtg extends Ptg {
 	}
 	
 	public Object clone() {
-	  ArrayPtg ptg = new ArrayPtg();
+	  ArrayPtg ptg = (ArrayPtg) super.clone();
 	  ptg.field_1_reserved = (byte[]) field_1_reserved.clone();
-	  
-	  ptg.token_1_columns = token_1_columns;
-	  ptg.token_2_rows = token_2_rows;
 	  ptg.token_3_arrayValues = (Object[]) token_3_arrayValues.clone();
-	  ptg.setClass(ptgClass);
 	  return ptg;
 	}
 }

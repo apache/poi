@@ -44,6 +44,10 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     protected byte field_1_num_args;
     protected short field_2_fnc_index;
 
+    public final boolean isBaseToken() {
+    	return false;
+    }
+    
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
         sb.append(getClass().getName()).append(" [");
@@ -51,12 +55,6 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         sb.append("]");
         return sb.toString();
     }
-
-    public int getType() {
-        return -1;
-    }
-
-
 
     public short getFunctionIndex() {
         return field_2_fnc_index;

@@ -36,6 +36,34 @@
     </devs>
 
 		<!-- Don't forget to update status.xml too! -->
+        <release version="3.1-final" date="2008-06-??">
+           <action dev="POI-DEVELOPERS" type="fix">30978 - Fixed re-serialization of tRefErr3d and tAreaErr3d</action>
+           <action dev="POI-DEVELOPERS" type="fix">45234 - Removed incorrect shared formula conversion in CFRuleRecord</action>
+           <action dev="POI-DEVELOPERS" type="fix">45001 - Improved HWPF Range.replaceText()</action>
+           <action dev="POI-DEVELOPERS" type="fix">44692 - Fixed HSSFPicture.resize() to properly resize pictures if the underlying columns/rows have modified size</action>
+           <action dev="POI-DEVELOPERS" type="add">Support custom image renderers in HSLF</action>
+           <action dev="POI-DEVELOPERS" type="fix">Correctly increment the reference count of a blip when a picture is inserted</action>
+           <action dev="POI-DEVELOPERS" type="fix">45110 - Fixed TextShape.resizeToFitText() to properly resize TextShape</action>
+           <action dev="POI-DEVELOPERS" type="fix">45091 - Fixed serialization of RefN~ tokens.  Simplified Ptg class hierarchy</action>
+           <action dev="POI-DEVELOPERS" type="fix">45133 - Fixed OBJ Record (5Dh) to pad the sub-record data to a 4-byte boundary</action>
+           <action dev="POI-DEVELOPERS" type="fix">45145 - Fixed Sheet to always enforce RowRecordsAggregate before ValueRecordsAggregate</action>
+           <action dev="POI-DEVELOPERS" type="fix">45123 - Fixed SharedFormulaRecord.convertSharedFormulas() to propagate token operand classes</action>
+           <action dev="POI-DEVELOPERS" type="fix">45087 - Correctly detect date formats like [Black]YYYY as being date based</action>
+           <action dev="POI-DEVELOPERS" type="add">45060 - Improved token class transformation during formula parsing</action>
+           <action dev="POI-DEVELOPERS" type="add">44840 - Improved handling of HSSFObjectData, especially for entries with data held not in POIFS</action>
+           <action dev="POI-DEVELOPERS" type="add">45043 - Support for getting excel cell comments when extracting text</action>
+           <action dev="POI-DEVELOPERS" type="add">Extend the support for specifying a policy to HSSF on missing / blank cells when fetching, to be able to specify the policy at the HSSFWorkbook level</action>
+           <action dev="POI-DEVELOPERS" type="fix">45025 - improved FormulaParser parse error messages</action>
+           <action dev="POI-DEVELOPERS" type="fix">45046 - allowed EXTERNALBOOK(0x01AE) to be optional in the LinkTable</action>
+           <action dev="POI-DEVELOPERS" type="fix">45066 - fixed sheet encoding size mismatch problems</action>
+           <action dev="POI-DEVELOPERS" type="add">45003 - Support embeded HDGF visio documents</action>
+           <action dev="POI-DEVELOPERS" type="fix">45001 - Partial fix for HWPF Range.insertBefore() and Range.delete() with unicode characters</action>
+           <action dev="POI-DEVELOPERS" type="fix">44977 - Support for AM/PM in excel date formats</action>
+           <action dev="POI-DEVELOPERS" type="add">Support for specifying a policy to HSSF on missing / blank cells when fetching</action>
+           <action dev="POI-DEVELOPERS" type="add">44937 - Partial support for extracting Escher images from HWPF files</action>
+           <action dev="POI-DEVELOPERS" type="fix">44824 - Avoid an infinite loop when reading some HWPF pictures</action>
+           <action dev="POI-DEVELOPERS" type="fix">44898 - Correctly handle short last blocks in POIFS</action>
+        </release>  
         <release version="3.1-beta2" date="2008-05-26">
            <action dev="POI-DEVELOPERS" type="fix">44306 - fixed reading/writing of AttrPtg(type=choose) and method toFormulaString() for CHOOSE formulas</action>
            <action dev="POI-DEVELOPERS" type="fix">24207 - added HSSFName.isDeleted() to check if the name points to cell that no longer exists</action>

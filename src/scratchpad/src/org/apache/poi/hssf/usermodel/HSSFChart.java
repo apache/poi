@@ -213,6 +213,23 @@ public class HSSFChart
     		charts.toArray( new HSSFChart[charts.size()] );
     }
 
+    /** Get the X offset of the chart */
+    public int getChartX() { return chartRecord.getX(); }
+    /** Get the Y offset of the chart */
+    public int getChartY() { return chartRecord.getY(); }
+    /** Get the width of the chart. {@link ChartRecord} */
+    public int getChartWidth() { return chartRecord.getWidth(); }
+    /** Get the height of the chart. {@link ChartRecord} */
+    public int getChartHeight() { return chartRecord.getHeight(); }
+
+    /** Sets the X offset of the chart */
+    public void setChartX(int x) { chartRecord.setX(x); }
+    /** Sets the Y offset of the chart */
+    public void setChartY(int y) { chartRecord.setY(y); }
+    /** Sets the width of the chart. {@link ChartRecord} */
+    public void setChartWidth(int width) { chartRecord.setWidth(width); }
+    /** Sets the height of the chart. {@link ChartRecord} */
+    public void setChartHeight(int height) { chartRecord.setHeight(height); }
     
     /**
      * Returns the series of the chart

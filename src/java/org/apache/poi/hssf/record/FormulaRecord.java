@@ -557,7 +557,7 @@ public final class FormulaRecord
       if (field_8_parsed_expr != null)
         size = field_8_parsed_expr.size();
       for (int i=0; i< size; i++) {
-        Ptg ptg = (Ptg)((Ptg)field_8_parsed_expr.get(i)).clone();        
+        Ptg ptg = ((Ptg)field_8_parsed_expr.get(i)).copy();        
         rec.field_8_parsed_expr.add(i, ptg);
       }
       rec.value_data = value_data;

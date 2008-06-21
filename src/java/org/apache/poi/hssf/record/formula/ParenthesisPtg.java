@@ -32,24 +32,15 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public class ParenthesisPtg
-    extends OperationPtg
-{
+public final class ParenthesisPtg extends ControlPtg {
    
     private final static int SIZE = 1;
     public final static byte sid  = 0x15;
    
-    public ParenthesisPtg()
-    {
+    public static final ControlPtg instance = new ParenthesisPtg();
+    private ParenthesisPtg() {
+    	// enforce singleton
     }
-
-    public ParenthesisPtg(RecordInputStream in)
-    {
-
-        // doesn't need anything
-    }
-    
-  
     
     public void writeBytes(byte [] array, int offset)
     {
@@ -61,16 +52,6 @@ public class ParenthesisPtg
         return SIZE;
     }
 
-    public int getType()
-    {
-        return TYPE_BINARY;
-    }
-
-    public int getNumberOfOperands()
-    {
-        return 1;
-    }
-
     public String toFormulaString(HSSFWorkbook book)
     {
         return "()";
@@ -80,11 +61,4 @@ public class ParenthesisPtg
     public String toFormulaString(String[] operands) {
         return "("+operands[0]+")";
     }  
-    
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
-        
-    public Object clone() {
-      return new ParenthesisPtg();
-    }
-
 }

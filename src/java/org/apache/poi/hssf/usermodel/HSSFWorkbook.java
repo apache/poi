@@ -15,12 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
-/*
- * HSSFWorkbook.java
- *
- * Created on September 30, 2001, 3:37 PM
- */
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.POIDocument;
@@ -35,6 +29,7 @@ import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
+import org.apache.poi.hssf.usermodel.HSSFRow.MissingCellPolicy;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.util.SheetReferences;
 import org.apache.poi.poifs.filesystem.*;
@@ -64,7 +59,6 @@ import java.util.Stack;
  * @author  Shawn Laubach (slaubach at apache dot org)
  * @version 2.0-pre
  */
-
 public class HSSFWorkbook extends POIDocument
 {
     private static final int DEBUG = POILogger.DEBUG;
@@ -88,7 +82,7 @@ public class HSSFWorkbook extends POIDocument
      * this holds the HSSFSheet objects attached to this workbook
      */
 
-    protected ArrayList sheets;
+    protected List _sheets;
 
     /**
      * this holds the HSSFName objects attached to this workbook
@@ -109,6 +103,13 @@ public class HSSFWorkbook extends POIDocument
      * someplace else.
      */
     private HSSFDataFormat formatter;
+    
+    /**
+     * The policy to apply in the event of missing or
+     *  blank cells when fetching from a row.
+     * See {@link MissingCellPolicy}
+     */
+    private MissingCellPolicy missingCellPolicy = HSSFRow.RETURN_NULL_AND_BLANK;
 
 
     /** Extended windows meta file */
@@ -142,7 +143,7 @@ public class HSSFWorkbook extends POIDocument
     {
         super(null, null);
         workbook = book;
-        sheets = new ArrayList( INITIAL_CAPACITY );
+        _sheets = new ArrayList( INITIAL_CAPACITY );
         names = new ArrayList( INITIAL_CAPACITY );
     }
 
@@ -233,7 +234,7 @@ public class HSSFWorkbook extends POIDocument
            this.directory = null;
         }
 
-        sheets = new ArrayList(INITIAL_CAPACITY);
+        _sheets = new ArrayList(INITIAL_CAPACITY);
         names  = new ArrayList(INITIAL_CAPACITY);
 
         // Grab the data from the workbook stream, however
@@ -263,7 +264,7 @@ public class HSSFWorkbook extends POIDocument
 
             HSSFSheet hsheet = new HSSFSheet(this, sheet);
 
-            sheets.add(hsheet);
+            _sheets.add(hsheet);
 
             // workbook.setSheetName(sheets.size() -1, "Sheet"+sheets.size());
         }
@@ -352,8 +353,28 @@ public class HSSFWorkbook extends POIDocument
              log.log(POILogger.DEBUG, "convertLabelRecords exit");
      }
 
+	/**
+	 * Retrieves the current policy on what to do when
+	 *  getting missing or blank cells from a row.
+	 * The default is to return blank and null cells.
+	 *  {@link MissingCellPolicy}
+	 */
+	public MissingCellPolicy getMissingCellPolicy() {
+		return missingCellPolicy;
+	}
 
-    /**
+	/**
+	 * Sets the policy on what to do when
+	 *  getting missing or blank cells from a row.
+	 * This will then apply to all calls to 
+	 *  {@link HSSFRow.getCell()}. See
+	 *  {@link MissingCellPolicy}
+	 */
+	public void setMissingCellPolicy(MissingCellPolicy missingCellPolicy) {
+		this.missingCellPolicy = missingCellPolicy;
+	}
+
+	/**
      * sets the order of appearance for a given sheet.
      *
      * @param sheetname the name of the sheet to reorder
@@ -361,12 +382,12 @@ public class HSSFWorkbook extends POIDocument
      */
 
     public void setSheetOrder(String sheetname, int pos ) {
-        sheets.add(pos,sheets.remove(getSheetIndex(sheetname)));
+        _sheets.add(pos,_sheets.remove(getSheetIndex(sheetname)));
         workbook.setSheetOrder(sheetname, pos);
     }
 
     private void validateSheetIndex(int index) {
-        int lastSheetIx = sheets.size() - 1;
+        int lastSheetIx = _sheets.size() - 1;
         if (index < 0 || index > lastSheetIx) {
             throw new IllegalArgumentException("Sheet index (" 
                     + index +") is out of range (0.." +    lastSheetIx + ")");
@@ -380,7 +401,7 @@ public class HSSFWorkbook extends POIDocument
     public void setSelectedTab(int index) {
         
         validateSheetIndex(index);
-        int nSheets = sheets.size();
+        int nSheets = _sheets.size();
         for (int i=0; i<nSheets; i++) {
                getSheetAt(i).setSelected(i == index);
         }
@@ -398,7 +419,7 @@ public class HSSFWorkbook extends POIDocument
         for (int i = 0; i < indexes.length; i++) {
             validateSheetIndex(indexes[i]);
         }
-        int nSheets = sheets.size();
+        int nSheets = _sheets.size();
         for (int i=0; i<nSheets; i++) {
             boolean bSelect = false;
             for (int j = 0; j < indexes.length; j++) {
@@ -420,7 +441,7 @@ public class HSSFWorkbook extends POIDocument
     public void setActiveSheet(int index) {
         
         validateSheetIndex(index);
-        int nSheets = sheets.size();
+        int nSheets = _sheets.size();
         for (int i=0; i<nSheets; i++) {
              getSheetAt(i).setActive(i == index);
         }
@@ -492,19 +513,15 @@ public class HSSFWorkbook extends POIDocument
      * set the sheet name.
      * Will throw IllegalArgumentException if the name is greater than 31 chars
      * or contains /\?*[]
-     * @param sheet number (0 based)
+     * @param sheetIx number (0 based)
      */
-    public void setSheetName(int sheet, String name)
+    public void setSheetName(int sheetIx, String name)
     {
-        if (workbook.doesContainsSheetName( name, sheet ))
+        if (workbook.doesContainsSheetName( name, sheetIx )) {
             throw new IllegalArgumentException( "The workbook already contains a sheet with this name" );
-
-        if (sheet > (sheets.size() - 1))
-        {
-            throw new RuntimeException("Sheet out of bounds");
         }
-
-        workbook.setSheetName( sheet, name);
+        validateSheetIndex(sheetIx);
+        workbook.setSheetName(sheetIx, name);
     }
 
 
@@ -516,15 +533,12 @@ public class HSSFWorkbook extends POIDocument
      * or contains /\?*[]
      * @param sheet number (0 based)
      */
-    public void setSheetName( int sheet, String name, short encoding )
+    public void setSheetName(int sheetIx, String name, short encoding)
     {
-        if (workbook.doesContainsSheetName( name, sheet ))
+        if (workbook.doesContainsSheetName( name, sheetIx )) {
             throw new IllegalArgumentException( "The workbook already contains a sheet with this name" );
-
-        if (sheet > (sheets.size() - 1))
-        {
-            throw new RuntimeException("Sheet out of bounds");
         }
+        validateSheetIndex(sheetIx);
 
         switch ( encoding ) {
         case ENCODING_COMPRESSED_UNICODE:
@@ -536,51 +550,39 @@ public class HSSFWorkbook extends POIDocument
             throw new RuntimeException( "Unsupported encoding" );
         }
 
-        workbook.setSheetName( sheet, name, encoding );
+        workbook.setSheetName( sheetIx, name, encoding );
     }
 
     /**
      * get the sheet name
-     * @param sheet Number
+     * @param sheetIx Number
      * @return Sheet name
      */
-
-    public String getSheetName(int sheet)
+    public String getSheetName(int sheetIx)
     {
-        if (sheet > (sheets.size() - 1))
-        {
-            throw new RuntimeException("Sheet out of bounds");
-        }
-        return workbook.getSheetName(sheet);
+        validateSheetIndex(sheetIx);
+        return workbook.getSheetName(sheetIx);
     }
 
     /**
      * check whether a sheet is hidden
-     * @param sheet Number
+     * @param sheetIx Number
      * @return True if sheet is hidden
      */
-
-    public boolean isSheetHidden(int sheet) {
-        if (sheet > (sheets.size() - 1))
-        {
-            throw new RuntimeException("Sheet out of bounds");
-        }
-        return workbook.isSheetHidden(sheet);
+    public boolean isSheetHidden(int sheetIx) {
+        validateSheetIndex(sheetIx);
+        return workbook.isSheetHidden(sheetIx);
     }
 
     /**
      * Hide or unhide a sheet
      *
-     * @param sheetnum The sheet number
+     * @param sheetIx The sheet index
      * @param hidden True to mark the sheet as hidden, false otherwise
      */
-
-    public void setSheetHidden(int sheet, boolean hidden) {
-        if (sheet > (sheets.size() - 1))
-        {
-            throw new RuntimeException("Sheet out of bounds");
-        }
-        workbook.setSheetHidden(sheet,hidden);
+    public void setSheetHidden(int sheetIx, boolean hidden) {
+        validateSheetIndex(sheetIx);
+        workbook.setSheetHidden(sheetIx, hidden);
     }
 
     /*
@@ -602,12 +604,12 @@ public class HSSFWorkbook extends POIDocument
 
     /** Returns the index of the given sheet
      * @param sheet the sheet to look up
-     * @return index of the sheet (0 based)
+     * @return index of the sheet (0 based). <tt>-1</tt> if not found
      */
     public int getSheetIndex(HSSFSheet sheet)
     {
-        for(int i=0; i<sheets.size(); i++) {
-            if(sheets.get(i) == sheet) {
+        for(int i=0; i<_sheets.size(); i++) {
+            if(_sheets.get(i) == sheet) {
                 return i;
             }
         }
@@ -636,9 +638,9 @@ public class HSSFWorkbook extends POIDocument
     {
         HSSFSheet sheet = new HSSFSheet(this);
 
-        sheets.add(sheet);
-        workbook.setSheetName(sheets.size() - 1, "Sheet" + (sheets.size() - 1));
-        boolean isOnlySheet = sheets.size() == 1;
+        _sheets.add(sheet);
+        workbook.setSheetName(_sheets.size() - 1, "Sheet" + (_sheets.size() - 1));
+        boolean isOnlySheet = _sheets.size() == 1;
         sheet.setSelected(isOnlySheet);
         sheet.setActive(isOnlySheet);
         return sheet;
@@ -652,13 +654,13 @@ public class HSSFWorkbook extends POIDocument
 
     public HSSFSheet cloneSheet(int sheetNum) {
         validateSheetIndex(sheetNum);
-        HSSFSheet srcSheet = (HSSFSheet) sheets.get(sheetNum);
+        HSSFSheet srcSheet = (HSSFSheet) _sheets.get(sheetNum);
         String srcName = workbook.getSheetName(sheetNum);
         HSSFSheet clonedSheet = srcSheet.cloneSheet(this);
         clonedSheet.setSelected(false);
         clonedSheet.setActive(false);
 
-        sheets.add(clonedSheet);
+        _sheets.add(clonedSheet);
         int i = 1;
         while (true) {
             // Try and find the next sheet name that is unique
@@ -672,7 +674,7 @@ public class HSSFWorkbook extends POIDocument
 
             //If the sheet name is unique, then set it otherwise move on to the next number.
             if (workbook.getSheetIndex(name) == -1) {
-              workbook.setSheetName(sheets.size()-1, name);
+              workbook.setSheetName(_sheets.size()-1, name);
               break;
             }
         }
@@ -693,14 +695,14 @@ public class HSSFWorkbook extends POIDocument
 
     public HSSFSheet createSheet(String sheetname)
     {
-        if (workbook.doesContainsSheetName( sheetname, sheets.size() ))
+        if (workbook.doesContainsSheetName( sheetname, _sheets.size() ))
             throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
 
         HSSFSheet sheet = new HSSFSheet(this);
 
-        sheets.add(sheet);
-        workbook.setSheetName(sheets.size() - 1, sheetname);
-        boolean isOnlySheet = sheets.size() == 1;
+        _sheets.add(sheet);
+        workbook.setSheetName(_sheets.size() - 1, sheetname);
+        boolean isOnlySheet = _sheets.size() == 1;
         sheet.setSelected(isOnlySheet);
         sheet.setActive(isOnlySheet);
         return sheet;
@@ -713,9 +715,14 @@ public class HSSFWorkbook extends POIDocument
 
     public int getNumberOfSheets()
     {
-        return sheets.size();
+        return _sheets.size();
     }
 
+    private HSSFSheet[] getSheets() {
+        HSSFSheet[] result = new HSSFSheet[_sheets.size()];
+        _sheets.toArray(result);
+        return result;
+    }
     /**
      * Get the HSSFSheet object at the given index.
      * @param index of the sheet number (0-based physical & logical)
@@ -724,7 +731,7 @@ public class HSSFWorkbook extends POIDocument
 
     public HSSFSheet getSheetAt(int index)
     {
-        return (HSSFSheet) sheets.get(index);
+        return (HSSFSheet) _sheets.get(index);
     }
 
     /**
@@ -737,13 +744,13 @@ public class HSSFWorkbook extends POIDocument
     {
         HSSFSheet retval = null;
 
-        for (int k = 0; k < sheets.size(); k++)
+        for (int k = 0; k < _sheets.size(); k++)
         {
             String sheetname = workbook.getSheetName(k);
 
             if (sheetname.equalsIgnoreCase(name))
             {
-                retval = (HSSFSheet) sheets.get(k);
+                retval = (HSSFSheet) _sheets.get(k);
             }
         }
         return retval;
@@ -772,11 +779,11 @@ public class HSSFWorkbook extends POIDocument
         boolean wasActive = getSheetAt(index).isActive();
         boolean wasSelected = getSheetAt(index).isSelected();
 
-        sheets.remove(index);
+        _sheets.remove(index);
         workbook.removeSheet(index);
 
         // set the remaining active/selected sheet
-        int nSheets = sheets.size();
+        int nSheets = _sheets.size();
         if (nSheets < 1) {
             // nothing more to do if there are no sheets left
             return;
@@ -902,9 +909,7 @@ public class HSSFWorkbook extends POIDocument
 
         if (settingRowAndColumn)
         {
-            MemFuncPtg memFuncPtg = new MemFuncPtg();
-            memFuncPtg.setLenRefSubexpression(23);
-            ptgs.add(memFuncPtg);
+            ptgs.add(new MemFuncPtg(23)); // TODO - where did constant '23' come from?
         }
         if (startColumn >= 0)
         {
@@ -928,8 +933,7 @@ public class HSSFWorkbook extends POIDocument
         }
         if (settingRowAndColumn)
         {
-            UnionPtg unionPtg = new UnionPtg();
-            ptgs.add(unionPtg);
+            ptgs.add(UnionPtg.instance);
         }
         nameRecord.setNameDefinition(ptgs);
 
@@ -1152,48 +1156,47 @@ public class HSSFWorkbook extends POIDocument
 
     public byte[] getBytes()
     {
-        if (log.check( POILogger.DEBUG ))
+        if (log.check( POILogger.DEBUG )) {
             log.log(DEBUG, "HSSFWorkbook.getBytes()");
+        }
+        
+        HSSFSheet[] sheets = getSheets();
+        int nSheets = sheets.length;
 
         // before getting the workbook size we must tell the sheets that
         // serialization is about to occur.
-        for (int k = 0; k < sheets.size(); k++)
-            ((HSSFSheet) sheets.get(k)).getSheet().preSerialize();
+        for (int i = 0; i < nSheets; i++) {
+            sheets[i].getSheet().preSerialize();
+        }
 
-        int wbsize = workbook.getSize();
+        int totalsize = workbook.getSize();
 
-        // log.debug("REMOVEME: old sizing method "+workbook.serialize().length);
-        // ArrayList sheetbytes = new ArrayList(sheets.size());
-        int totalsize = wbsize;
-
-        for (int k = 0; k < sheets.size(); k++)
-        {
+        // pre-calculate all the sheet sizes and set BOF indexes
+        int[] estimatedSheetSizes = new int[nSheets];
+        for (int k = 0; k < nSheets; k++) {
             workbook.setSheetBof(k, totalsize);
-            totalsize += ((HSSFSheet) sheets.get(k)).getSheet().getSize();
+            int sheetSize = sheets[k].getSheet().getSize();
+            estimatedSheetSizes[k] = sheetSize;
+            totalsize += sheetSize;
         }
 
 
-/*        if (totalsize < 4096)
-        {
-            totalsize = 4096;
-        }*/
         byte[] retval = new byte[totalsize];
         int pos = workbook.serialize(0, retval);
 
-        // System.arraycopy(wb, 0, retval, 0, wb.length);
-        for (int k = 0; k < sheets.size(); k++)
-        {
-
-            // byte[] sb = (byte[])sheetbytes.get(k);
-            // System.arraycopy(sb, 0, retval, pos, sb.length);
-            int len = ((HSSFSheet) sheets.get(k)).getSheet().serialize(pos,
-                                retval);
-            pos += len;   // sb.length;
+        for (int k = 0; k < nSheets; k++) {
+            int serializedSize = sheets[k].getSheet().serialize(pos, retval);
+            if (serializedSize != estimatedSheetSizes[k]) {
+                // Wrong offset values have been passed in the call to setSheetBof() above.
+                // For books with more than one sheet, this discrepancy would cause excel 
+                // to report errors and loose data while reading the workbook
+                throw new IllegalStateException("Actual serialized sheet size (" + serializedSize 
+                        + ") differs from pre-calculated size (" + estimatedSheetSizes[k] 
+                        + ") for sheet (" + k + ")");
+                // TODO - add similar sanity check to ensure that Sheet.serializeIndexRecord() does not write mis-aligned offsets either
+            }
+            pos += serializedSize;
         }
-/*        for (int k = pos; k < totalsize; k++)
-        {
-            retval[k] = 0;
-        }*/
         return retval;
     }
 

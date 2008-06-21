@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFComment;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -39,6 +40,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor {
 	private HSSFWorkbook wb;
 	private boolean includeSheetNames = true;
 	private boolean formulasNotResults = false;
+	private boolean includeCellComments = false;
 	
 	public ExcelExtractor(HSSFWorkbook wb) {
 		super(wb);
@@ -62,6 +64,12 @@ public class ExcelExtractor extends POIOLE2TextExtractor {
 	public void setFormulasNotResults(boolean formulasNotResults) {
 		this.formulasNotResults = formulasNotResults;
 	}
+	/**
+     * Should cell comments be included? Default is true
+     */
+    public void setIncludeCellComments(boolean includeCellComments) {
+        this.includeCellComments = includeCellComments;
+    }
 	
 	/**
 	 * Retreives the text contents of the file
@@ -126,6 +134,15 @@ public class ExcelExtractor extends POIOLE2TextExtractor {
 							}
 							outputContents = true;
 							break;
+					}
+					
+					// Output the comment, if requested and exists
+				    HSSFComment comment = cell.getCellComment();
+					if(includeCellComments && comment != null) {
+					    // Replace any newlines with spaces, otherwise it
+					    //  breaks the output
+					    String commentText = comment.getString().getString().replace('\n', ' ');
+					    text.append(" Comment by "+comment.getAuthor()+": "+commentText);
 					}
 					
 					// Output a tab if we're not on the last cell

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,15 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-/*
- * AddPtg.java
- *
- * Created on October 29, 2001, 7:48 PM
- */
 package org.apache.poi.hssf.record.formula;
-
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * Addition operator PTG the "+" binomial operator.  If you need more 
@@ -32,52 +23,23 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author  Andrew C. Oliver (acoliver@apache.org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-
-public class AddPtg
-    extends OperationPtg
-{
-    public final static int  SIZE = 1;
+public final class AddPtg extends ValueOperatorPtg {
     public final static byte sid  = 0x03;
     
     private final static String ADD = "+";
 
-    /** Creates new AddPtg */
+    public static final ValueOperatorPtg instance = new AddPtg();
 
-    public AddPtg()
-    {
-    }
-
-    public AddPtg(RecordInputStream in)
-    {
-
-        // doesn't need anything
+    private AddPtg() {
+    	// enforce singleton
     }
     
-   
-    public void writeBytes(byte [] array, int offset)
-    {
-        array[ offset + 0 ] = sid;
+    protected byte getSid() {
+    	return sid;
     }
 
-    public int getSize()
-    {
-        return SIZE;
-    }
-
-    public int getType()
-    {
-        return TYPE_BINARY;
-    }
-
-    public int getNumberOfOperands()
-    {
+    public int getNumberOfOperands() {
         return 2;
-    }
-    
-    /** Implementation of method from Ptg */
-    public String toFormulaString(HSSFWorkbook book)
-    {
-        return "+";
     }
        
    /** implementation of method from OperationsPtg*/  
@@ -89,11 +51,4 @@ public class AddPtg
         buffer.append(operands[ 1 ]);
         return buffer.toString();
     }
-    
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
-           
-    public Object clone() {
-      return new AddPtg();
-    }
-
 }

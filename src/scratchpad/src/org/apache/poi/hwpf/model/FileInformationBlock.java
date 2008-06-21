@@ -294,6 +294,16 @@ public class FileInformationBlock extends FIBAbstractType
       _longHandler.setLong(FIBLongHandler.CBMAC, cbMac);
     }
 
+	public int getCcpText()
+	{
+	  return _longHandler.getLong(FIBLongHandler.CCPTEXT);
+	}
+
+	public void setCcpText(int ccpText)
+	{
+	  _longHandler.setLong(FIBLongHandler.CCPTEXT, ccpText);
+	}
+
     public void clearOffsetsSizes()
     {
       _fieldHandler.clearFields();
@@ -307,6 +317,26 @@ public class FileInformationBlock extends FIBAbstractType
     public int getLcbPlcffldMom()
     {
       return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFFLDMOM);
+    }
+    
+    public int getFcPlcspaMom()
+    {
+        return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCSPAMOM);
+    }
+    
+    public int getLcbPlcspaMom()
+    {
+        return _fieldHandler.getFieldSize(FIBFieldHandler.PLCSPAMOM);
+    }
+    
+    public int getFcDggInfo()
+    {
+        return _fieldHandler.getFieldOffset(FIBFieldHandler.DGGINFO);
+    }
+    
+    public int getLcbDggInfo()
+    {
+        return _fieldHandler.getFieldSize(FIBFieldHandler.DGGINFO);
     }
 
     public void writeTo (byte[] mainStream, HWPFOutputStream tableStream)

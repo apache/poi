@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.record.TextHeaderAtom;
@@ -157,4 +158,46 @@ public class TestTextShape extends TestCase {
         assertEquals("Testing TextShape", shape1.getTextRun().getText());
     }
 
+    public void testMargins() throws IOException {
+        FileInputStream is = new FileInputStream(new File(cwd, "text-margins.ppt"));
+        SlideShow ppt = new SlideShow(is);
+        is.close();
+
+        Slide slide = ppt.getSlides()[0];
+
+        HashMap map = new HashMap();
+        Shape[] shape = slide.getShapes();
+        for (int i = 0; i < shape.length; i++) {
+            if(shape[i] instanceof TextShape){
+                TextShape tx = (TextShape)shape[i];
+                map.put(tx.getText(), tx);
+            }
+        }
+
+        TextShape tx;
+
+        tx = (TextShape)map.get("TEST1");
+        assertEquals(0.1, tx.getMarginLeft()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+        assertEquals(0.1, tx.getMarginRight()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+        assertEquals(0.39, tx.getMarginTop()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+        assertEquals(0.05, tx.getMarginBottom()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+
+        tx = (TextShape)map.get("TEST2");
+        assertEquals(0.1, tx.getMarginLeft()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+        assertEquals(0.1, tx.getMarginRight()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+        assertEquals(0.05, tx.getMarginTop()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+        assertEquals(0.39, tx.getMarginBottom()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+
+        tx = (TextShape)map.get("TEST3");
+        assertEquals(0.39, tx.getMarginLeft()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+        assertEquals(0.1, tx.getMarginRight()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+        assertEquals(0.05, tx.getMarginTop()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+        assertEquals(0.05, tx.getMarginBottom()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+
+        tx = (TextShape)map.get("TEST4");
+        assertEquals(0.1, tx.getMarginLeft()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+        assertEquals(0.39, tx.getMarginRight()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+        assertEquals(0.05, tx.getMarginTop()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+        assertEquals(0.05, tx.getMarginBottom()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+    }
 }

@@ -26,7 +26,12 @@ import org.apache.poi.hwpf.usermodel.Range;
 
 import java.util.List;
 import java.util.ArrayList;
-
+import java.util.Iterator;
+import org.apache.poi.ddf.DefaultEscherRecordFactory;
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherBlipRecord;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherRecordFactory;
 
 /**
  * Holds information about all pictures embedded in Word Document either via "Insert -> Picture -> From File" or via
@@ -57,6 +62,9 @@ public class PicturesTable
 
   private HWPFDocument _document;
   private byte[] _dataStream;
+  private byte[] _mainStream;
+  private FSPATable _fspa;
+  private EscherRecordHolder _dgg;
 
   /** @link dependency
    * @stereotype instantiate*/
@@ -67,10 +75,13 @@ public class PicturesTable
    * @param document 
    * @param _dataStream
    */
-  public PicturesTable(HWPFDocument _document, byte[] _dataStream)
+  public PicturesTable(HWPFDocument _document, byte[] _dataStream, byte[] _mainStream, FSPATable fspa, EscherRecordHolder dgg)
   {
-	this._document = _document;
+    this._document = _document;
     this._dataStream = _dataStream;
+    this._mainStream = _mainStream;
+    this._fspa = fspa;
+    this._dgg = dgg;
   }
 
   /**
@@ -80,6 +91,13 @@ public class PicturesTable
   public boolean hasPicture(CharacterRun run) {
     if (run.isSpecialCharacter() && !run.isObj() && !run.isOle2() && !run.isData() && "\u0001".equals(run.text())) {
       return isBlockContainsImage(run.getPicOffset());
+    }
+    return false;
+  }
+  
+  public boolean hasEscherPicture(CharacterRun run) {
+    if (run.isSpecialCharacter() && !run.isObj() && !run.isOle2() && !run.isData() && run.text().startsWith("\u0008")) {
+      return true;
     }
     return false;
   }
@@ -122,6 +140,46 @@ public class PicturesTable
     }
     return null;
   }
+  
+  /**
+     * Performs a recursive search for pictures in the given list of escher records.
+     *
+     * @param escherRecords the escher records.
+     * @param pictures the list to populate with the pictures.
+     */
+    private void searchForPictures(List escherRecords, List pictures)
+    {
+        Iterator recordIter = escherRecords.iterator();
+        while (recordIter.hasNext())
+        {
+            Object obj = recordIter.next();
+            if (obj instanceof EscherRecord)
+            {
+                EscherRecord escherRecord = (EscherRecord) obj;
+
+                if (escherRecord instanceof EscherBSERecord)
+                {
+                    EscherBSERecord bse = (EscherBSERecord) escherRecord;
+                    EscherBlipRecord blip = bse.getBlipRecord();
+                    if (blip != null)
+                    {
+                        pictures.add(new Picture(blip.getPicturedata()));
+                    }
+                    else if (bse.getOffset() > 0)
+                    {
+                        // Blip stored in delay stream, which in a word doc, is the main stream
+                        EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
+                        blip = (EscherBlipRecord) recordFactory.createRecord(_mainStream, bse.getOffset());
+                        blip.fillFields(_mainStream, bse.getOffset(), recordFactory);
+                        pictures.add(new Picture(blip.getPicturedata()));
+                    }
+                }
+
+                // Recursive call.
+                searchForPictures(escherRecord.getChildRecords(), pictures);
+            }
+        }
+    }
 
   /**
    * Not all documents have all the images concatenated in the data stream
@@ -136,12 +194,13 @@ public class PicturesTable
     for (int i = 0; i < range.numCharacterRuns(); i++) {
     	CharacterRun run = range.getCharacterRun(i);
     	String text = run.text();
-    	int j = text.charAt(0);
     	Picture picture = extractPicture(run, false);
     	if (picture != null) {
     		pictures.add(picture);
     	}
 	}
+    
+    searchForPictures(_dgg.getEscherRecords(), pictures);
 
     return pictures;
   }
