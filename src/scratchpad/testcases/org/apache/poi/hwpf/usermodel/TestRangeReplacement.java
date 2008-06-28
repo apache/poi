@@ -39,8 +39,9 @@ public class TestRangeReplacement extends TestCase {
 		"It is used to confirm that text replacement works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.  Everybody should be thankful to the ${organization} and all the POI contributors for their assistance in this matter.\r";
 	private String searchText = "${organization}";
 	private String replacementText = "Apache Software Foundation";
-	private String expectedText =
+	private String expectedText2 =
 		"It is used to confirm that text replacement works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.  Everybody should be thankful to the Apache Software Foundation and all the POI contributors for their assistance in this matter.\r";
+	private String expectedText3 = "Thank you, Apache Software Foundation!\r";
 
 	private String illustrativeDocFile;
 
@@ -84,7 +85,7 @@ public class TestRangeReplacement extends TestCase {
 	/**
 	 * Test that we can replace text in our Range with Unicode text.
 	 */
-	public void testRangeReplacement() throws Exception {
+	public void testRangeReplacementOne() throws Exception {
 
 		HWPFDocument daDoc = new HWPFDocument(new FileInputStream(illustrativeDocFile));
 
@@ -104,16 +105,46 @@ public class TestRangeReplacement extends TestCase {
 
 		para.replaceText(searchText, replacementText, offset);
 
-		// we need to let the model re-calculate the Range before we evaluate it
-		range = daDoc.getRange();
-
 		assertEquals(1, range.numSections());
 		section = range.getSection(0);
 
-		assertEquals(5, section.numParagraphs());
+		assertEquals(4, section.numParagraphs());
 		para = section.getParagraph(2);
 
 		text = para.text();
-		assertEquals(expectedText, text);
+		assertEquals(expectedText2, text);
+	}
+
+	/**
+	 * Test that we can replace text in our Range with Unicode text.
+	 */
+	public void testRangeReplacementAll() throws Exception {
+
+		HWPFDocument daDoc = new HWPFDocument(new FileInputStream(illustrativeDocFile));
+
+		Range range = daDoc.getRange();
+		assertEquals(1, range.numSections());
+
+		Section section = range.getSection(0);
+		assertEquals(5, section.numParagraphs());
+
+		Paragraph para = section.getParagraph(2);
+
+		String text = para.text();
+		assertEquals(originalText, text);
+
+		range.replaceText(searchText, replacementText);
+
+		assertEquals(1, range.numSections());
+		section = range.getSection(0);
+		assertEquals(5, section.numParagraphs());
+
+		para = section.getParagraph(2);
+		text = para.text();
+		assertEquals(expectedText2, text);
+
+		para = section.getParagraph(3);
+		text = para.text();
+		assertEquals(expectedText3, text);
 	}
 }

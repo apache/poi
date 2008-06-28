@@ -333,7 +333,7 @@ public class Range
     _doc.getCharacterTable().adjustForInsert(_charStart, adjustedLength);
     _doc.getParagraphTable().adjustForInsert(_parStart, adjustedLength);
     _doc.getSectionTable().adjustForInsert(_sectionStart, adjustedLength);
-    adjustForInsert(text.length());
+	adjustForInsert(adjustedLength);
 
 	// update the FIB.CCPText field
 	adjustFIB(text.length());
@@ -656,7 +656,14 @@ public class Range
             );
     }
 
+	// this Range isn't a proper parent of the subRange() so we'll have to keep
+	// track of an updated endOffset on our own
+	int previousEndOffset = subRange.getEndOffset();
+
     subRange.insertBefore(pValue);
+
+	if (subRange.getEndOffset() != previousEndOffset)
+		_end += (subRange.getEndOffset() - previousEndOffset);
 
     // re-create the sub-range so we can delete it
     subRange = new Range(
@@ -671,7 +678,28 @@ public class Range
 					  (pValue.length() * 2)), getDocument()
             );
 
+	// deletes are automagically propagated
     subRange.delete();
+  }
+
+  /**
+   * Replace (all instances of) a piece of text with another...
+   *
+   * @param pPlaceHolder    The text to be replaced (e.g., "${organization}")
+   * @param pValue          The replacement text (e.g., "Apache Software Foundation")
+   */
+  public void replaceText(String pPlaceHolder, String pValue)
+  {
+		boolean keepLooking = true;
+		while (keepLooking) {
+
+			String text = text();
+			int offset = text.indexOf(pPlaceHolder);
+			if (offset >= 0)
+				replaceText(pPlaceHolder, pValue, offset);
+			else
+				keepLooking = false;
+		}
   }
 
   /**
@@ -915,7 +943,7 @@ public class Range
 
   /**
    * adjust this range after an insert happens.
-   * @param length the length to adjust for
+   * @param length the length to adjust for (expected to be a count of code-points, not necessarily chars)
    */
   private void adjustForInsert(int length)
   {
