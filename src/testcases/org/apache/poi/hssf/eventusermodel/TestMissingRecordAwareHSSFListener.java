@@ -353,9 +353,6 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 	public void testNoExtraNewLines() throws Exception {
 		// Load a different file
 		openAlt();
-		for(int i=0; i<r.length; i++) {
-			System.err.println(r[i]);
-		}
 		
 		
 		// This file has has something in lines 1-33
