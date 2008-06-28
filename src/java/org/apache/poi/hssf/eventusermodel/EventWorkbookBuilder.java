@@ -26,6 +26,7 @@ import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.ExternSheetRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SSTRecord;
+import org.apache.poi.hssf.record.SupBookRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
@@ -84,15 +85,18 @@ public class EventWorkbookBuilder {
 			wbRecords.add(sst);
 		}
 		
-		// Next we need an EoF record
-		wbRecords.add(new EOFRecord());
-		
-		// Now e can have the ExternSheetRecords
+		// Now we can have the ExternSheetRecords,
+		//  preceded by a SupBookRecord
 		if(externs != null) {
+			wbRecords.add(SupBookRecord.createInternalReferences(
+					(short)externs.length));
 			for(int i=0; i<externs.length; i++) {
 				wbRecords.add(externs[i]);
 			}
 		}
+		
+		// Finally we need an EoF record
+		wbRecords.add(new EOFRecord());
 		
 		return Workbook.createWorkbook(wbRecords);
 	}
