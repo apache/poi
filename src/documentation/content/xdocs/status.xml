@@ -33,8 +33,8 @@
 
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
-        <release version="3.2-alpha1" date="2008-??-??">
-          <action dev="POI-DEVELOPERS" type="add"><!-- to keep forrest dtd quiet--></action>
+        <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">Support for parsing formulas during EventUserModel processing, via the new EventWorkbookBuilder</action>
         </release>
         <release version="3.1-final" date="2008-06-29">
            <action dev="POI-DEVELOPERS" type="fix">30978 - Fixed re-serialization of tRefErr3d and tAreaErr3d</action>
