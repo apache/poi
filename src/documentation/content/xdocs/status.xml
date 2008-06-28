@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">45001 - Further fix for HWPF Range.delete() and unicode characters</action>
            <action dev="POI-DEVELOPERS" type="add">45175 - Support for variable length operands in org.apache.poi.hwpf.sprm.SprmOperation</action>
            <action dev="POI-DEVELOPERS" type="fix">Avoid spurious missing lines with the MissingRecordAware event code, and odd files that contain RowRecords in the middle of the cell Records.</action>
            <action dev="POI-DEVELOPERS" type="add">Support for parsing formulas during EventUserModel processing, via the new EventWorkbookBuilder</action>
