@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">Avoid spurious missing lines with the MissingRecordAware event code, and odd files that contain RowRecords in the middle of the cell Records.</action>
            <action dev="POI-DEVELOPERS" type="add">Support for parsing formulas during EventUserModel processing, via the new EventWorkbookBuilder</action>
         </release>
         <release version="3.1-final" date="2008-06-29">
