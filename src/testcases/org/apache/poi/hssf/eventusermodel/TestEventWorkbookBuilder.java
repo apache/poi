@@ -29,7 +29,9 @@ import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.SheetReferences;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 /**
  * Tests for {@link EventWorkbookBuilder}
@@ -60,14 +62,25 @@ public final class TestEventWorkbookBuilder extends TestCase {
 		assertNotNull(listener.getExternSheetRecords());
 	}
 	
-	public void testGetStubWorkbook() throws Exception {
+	public void testGetStubWorkbooks() throws Exception {
 		assertNotNull(listener.getStubWorkbook());
+		assertNotNull(listener.getStubHSSFWorkbook());
+		
+		assertNotNull(listener.getStubWorkbook().getSheetReferences());
+		assertNotNull(listener.getStubHSSFWorkbook().getSheetReferences());
 	}
 	
 	public void testContents() throws Exception {
 		assertEquals(2, listener.getSSTRecord().getNumStrings());
 		assertEquals(3, listener.getBoundSheetRecords().length);
 		assertEquals(1, listener.getExternSheetRecords().length);
+		
+		assertEquals(3, listener.getStubWorkbook().getNumSheets());
+		
+		SheetReferences ref = listener.getStubWorkbook().getSheetReferences();
+		assertEquals("Sh3", ref.getSheetName(0));
+		assertEquals("Sheet1", ref.getSheetName(1));
+		assertEquals("S2", ref.getSheetName(2));
 	}
 	
 	public void testFormulas() throws Exception {
@@ -92,6 +105,16 @@ public final class TestEventWorkbookBuilder extends TestCase {
 			FormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression());
 		}
 		
+		// Peer into just one formula, and check that
+		//  all the ptgs give back the right things
+		List ptgs = ((FormulaRecord)mockListen._frecs.get(0)).getParsedExpression();
+		assertEquals(1, ptgs.size());
+		assertTrue(ptgs.get(0) instanceof Ref3DPtg);
+		
+		Ref3DPtg ptg = (Ref3DPtg)ptgs.get(0);
+		assertEquals("Sheet1!A1", ptg.toFormulaString(stubHSSF));
+		
+		
 		// Now check we get the right formula back for
 		//  a few sample ones
 		
@@ -99,22 +122,19 @@ public final class TestEventWorkbookBuilder extends TestCase {
 		fr = (FormulaRecord)mockListen._frecs.get(0);
 		assertEquals(1, fr.getRow());
 		assertEquals(0, fr.getColumn());
-		// TODO - why not Sheet1!A1 ?
-		assertEquals("A1", FormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
+		assertEquals("Sheet1!A1", FormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
 		
 		// Sheet 1 A5 is to another sheet
 		fr = (FormulaRecord)mockListen._frecs.get(3);
 		assertEquals(4, fr.getRow());
 		assertEquals(0, fr.getColumn());
-		// TODO - why not 'S2'!A1 ?
-		assertEquals("A1", FormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
+		assertEquals("'S2'!A1", FormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
 		
 		// Sheet 1 A7 is to another sheet, range
 		fr = (FormulaRecord)mockListen._frecs.get(5);
 		assertEquals(6, fr.getRow());
 		assertEquals(0, fr.getColumn());
-		// TODO - why not SUM('Sh3'!A1:A4) ?
-		assertEquals("SUM(A1:A4)", FormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
+		assertEquals("SUM('Sh3'!A1:A4)", FormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
 		
 		
 		// Now, load via Usermodel and re-check
