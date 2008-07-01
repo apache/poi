@@ -31,26 +31,11 @@
   </header>
 
   <body>
-    <section><title>POI 3.1-BETA2 Released (2008-05-28)</title>
+    <section><title>POI 3.1-FINAL Released (2008-06-29)</title>
       <p>
-        The POI team is pleased to announce the release of 3.1 BETA2 which is one of the final steps before 3.1 FINAL.
-        The status of this release is a beta, meaning that we encourage users to try it out.
-        If you find any bugs, please report them to the POI <link href="https://issues.apache.org/bugzilla/buglist.cgi?product=POI">bug database</link> or to
-        the <link href="./mailinglists.html">POI Developer List</link>.
-        </p><p>  A full list of changes	is available in
-      <link href="./changes.html">the changelog</link>, and 
-		<link href="http://www.apache.org/dyn/closer.cgi/poi/dev/">download</link>
-		the source and binaries from your
-    <link href="http://www.apache.org/dyn/closer.cgi/poi/dev/">local mirror</link>.
-      </p>
-      <p>
-        The release is also available from the central Maven repository 
-        under Group ID "org.apache.poi" and Version "3.1-beta2".
-      </p>  
-    </section>
-    <section><title>POI 3.0.2 Released</title>
-      <p>The POI team is pleased to announce POI 3.0.2, the latest release of Apache POI.
-        There have been many important bug fixes since the 3.0.1 release and a lot of new features.  A full list of changes	is available in 
+        The POI team is pleased to announce the release of 3.1 FINAL, the latest release of Apache POI.
+        There have been many important bug fixes since the 3.0.2 release and a lot of new features. 
+       </p><p>  A full list of changes	is available in
       <link href="./changes.html">the changelog</link>, and 
 		<link href="http://www.apache.org/dyn/closer.cgi/poi/release/">download</link>
 		the source and binaries from your
@@ -58,13 +43,8 @@
       </p>
       <p>
         The release is also available from the central Maven repository 
-        under Group ID "org.apache.poi" and Version "3.0.2-FINAL".
+        under Group ID "org.apache.poi" and Version "3.1-FINAL".
       </p>  
-      <p>We would also like to confirm that versions 3.0.1 and 3.0.2 of 
-        Apache POI do
-		<em>not</em> contain any viruses. Users of broken virus checkers
-		which do detect a 94 byte file, sci_cec.db, as containing one are
-		advised to contact their vendor for a fix.</p>
     </section>
     <section><title>ApacheCon Europe Coming Soon</title>
       <p><img src="images/ApacheConEu08.jpg" width="234" height="60" 
