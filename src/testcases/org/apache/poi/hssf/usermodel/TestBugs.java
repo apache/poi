@@ -1051,4 +1051,88 @@ public final class TestBugs extends TestCase {
         	assertTrue(nd.get(0) instanceof DeletedArea3DPtg);
         }
     }
+    
+    /**
+     * Test that fonts get added properly
+     */
+    public void test45338() throws Exception {
+    	HSSFWorkbook wb = new HSSFWorkbook();
+    	assertEquals(4, wb.getNumberOfFonts());
+    	
+    	HSSFSheet s = wb.createSheet();
+    	s.createRow(0);
+    	s.createRow(1);
+    	HSSFCell c1 = s.getRow(0).createCell((short)0);
+    	HSSFCell c2 = s.getRow(1).createCell((short)0);
+    	
+    	assertEquals(4, wb.getNumberOfFonts());
+    	
+    	HSSFFont f1 = wb.getFontAt((short)0);
+    	assertEquals(400, f1.getBoldweight());
+    	
+    	// Check that asking for the same font
+    	//  multiple times gives you the same thing.
+    	// Otherwise, our tests wouldn't work!
+    	assertEquals(
+    			wb.getFontAt((short)0),
+    			wb.getFontAt((short)0)
+    	);
+    	assertEquals(
+    			wb.getFontAt((short)2),
+    			wb.getFontAt((short)2)
+    	);
+    	assertTrue(
+    			wb.getFontAt((short)0)
+    			!=
+    			wb.getFontAt((short)2)
+    	);
+    	
+    	// Look for a new font we have
+    	//  yet to add
+    	assertNull(
+    		wb.findFont(
+    			(short)11, (short)123, (short)22, 
+    			"Thingy", false, true, (short)2, (byte)2
+    		)
+    	);
+    	
+    	HSSFFont nf = wb.createFont();
+    	assertEquals(5, wb.getNumberOfFonts());
+    	
+    	assertEquals(5, nf.getIndex());
+    	assertEquals(nf, wb.getFontAt((short)5));
+    	
+    	nf.setBoldweight((short)11);
+    	nf.setColor((short)123);
+    	nf.setFontHeight((short)22);
+    	nf.setFontName("Thingy");
+    	nf.setItalic(false);
+    	nf.setStrikeout(true);
+    	nf.setTypeOffset((short)2);
+    	nf.setUnderline((byte)2);
+    	
+    	assertEquals(5, wb.getNumberOfFonts());
+    	assertEquals(nf, wb.getFontAt((short)5));
+    	
+    	// Find it now
+    	assertNotNull(
+    		wb.findFont(
+    			(short)11, (short)123, (short)22, 
+    			"Thingy", false, true, (short)2, (byte)2
+    		)
+    	);
+    	assertEquals(
+    		5,
+    		wb.findFont(
+       			(short)11, (short)123, (short)22, 
+       			"Thingy", false, true, (short)2, (byte)2
+       		).getIndex()
+    	);
+    	assertEquals(nf,
+       		wb.findFont(
+       			(short)11, (short)123, (short)22, 
+       			"Thingy", false, true, (short)2, (byte)2
+       		)
+    	);
+    }
 }
