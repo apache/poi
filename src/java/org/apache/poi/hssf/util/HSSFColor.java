@@ -155,8 +155,12 @@ public class HSSFColor implements Color {
 
             String hexString = color.getHexString();
             if (result.containsKey(hexString)) {
-                throw new RuntimeException("Dup color hexString (" + hexString
-                        + ") for color (" + color.getClass().getName() + ")");
+            	HSSFColor other = (HSSFColor)result.get(hexString);
+                throw new RuntimeException(
+                		"Dup color hexString (" + hexString
+                        + ") for color (" + color.getClass().getName() + ") - "
+                        + " already taken by (" + other.getClass().getName() + ")"
+                );
             }
             result.put(hexString, color);
         }
@@ -1511,9 +1515,9 @@ public class HSSFColor implements Color {
         public final static short   index     = 0x19;
         public final static short[] triplet   =
         {
-            153, 51, 102
+            127, 0, 0
         };
-        public final static String  hexString = "9999:3333:6666";
+        public final static String  hexString = "8000:0:0";
 
         public short getIndex()
         {

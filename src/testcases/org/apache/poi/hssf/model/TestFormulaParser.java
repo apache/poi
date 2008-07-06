@@ -759,7 +759,7 @@ public final class TestFormulaParser extends TestCase {
 		}
 	}
 
-	public void testParseErrorExpecteMsg() {
+	public void testParseErrorExpectedMsg() {
 
 		try {
 			parseFormula("round(3.14;2)");
@@ -768,4 +768,27 @@ public final class TestFormulaParser extends TestCase {
 			assertEquals("Parse error near char 10 ';' in specified formula 'round(3.14;2)'. Expected ',' or ')'", e.getMessage());
 		}
 	}
+	
+	/**
+	 * this function name has a dot in it.
+	 */
+	public void testParseErrorTypeFunction() {
+
+		Ptg[] ptgs;
+		try {
+			ptgs = parseFormula("error.type(A1)");
+			
+			
+		} catch (IllegalArgumentException e) {
+			if (e.getMessage().equals("Invalid Formula cell reference: 'error'")) {
+				throw new AssertionFailedError("Identified bug 45334");
+			}
+			throw e;
+		}
+		assertEquals(2, ptgs.length);
+		assertEquals(FuncPtg.class, ptgs[1].getClass());
+		FuncPtg funcPtg = (FuncPtg) ptgs[1];
+		assertEquals("ERROR.TYPE", funcPtg.getName());
+	}
+	
 }

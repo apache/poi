@@ -33,7 +33,7 @@
 
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
-        <release version="3.5.1-alpha1" date="2008-04-??">
+        <release version="3.5.1-beta1" date="2008-07-11">
            <action dev="POI-DEVELOPERS" type="add">45018 - Support for fetching embeded documents from within an OOXML file</action>
            <action dev="POI-DEVELOPERS" type="add">Port support for setting a policy on missing / blank cells when fetching, to XSSF too</action>
            <action dev="POI-DEVELOPERS" type="add">Common text extraction factory, which returns the correct POITextExtractor for the supplied data</action>
@@ -42,8 +42,15 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling PowerPoint files, irrespective of if they are .ppt or .pptx</action>
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
-        <release version="3.2-alpha1" date="2008-??-??">
-          <action dev="POI-DEVELOPERS" type="add"><!-- to keep forrest dtd quiet--></action>
+        <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">45338 - Fix HSSFWorkbook to give you the same HSSFFont every time, and then fix it to find newly added fonts</action>
+           <action dev="POI-DEVELOPERS" type="fix">45336 - Fix HSSFColor.getTripletHash()</action>
+           <action dev="POI-DEVELOPERS" type="fix">45334 - Fixed formula parser to handle dots in identifiers</action>
+           <action dev="POI-DEVELOPERS" type="fix">45252 - Improvement for HWPF Range.replaceText()</action>
+           <action dev="POI-DEVELOPERS" type="fix">45001 - Further fix for HWPF Range.delete() and unicode characters</action>
+           <action dev="POI-DEVELOPERS" type="add">45175 - Support for variable length operands in org.apache.poi.hwpf.sprm.SprmOperation</action>
+           <action dev="POI-DEVELOPERS" type="fix">Avoid spurious missing lines with the MissingRecordAware event code, and odd files that contain RowRecords in the middle of the cell Records.</action>
+           <action dev="POI-DEVELOPERS" type="add">Support for parsing formulas during EventUserModel processing, via the new EventWorkbookBuilder</action>
         </release>
         <release version="3.1-final" date="2008-06-29">
            <action dev="POI-DEVELOPERS" type="fix">30978 - Fixed re-serialization of tRefErr3d and tAreaErr3d</action>

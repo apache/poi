@@ -91,15 +91,18 @@ public class TextPiece extends PropertyNode implements Comparable
    public void adjustForDelete(int start, int length)
    {
 
+	   // length is expected to be the number of code-points,
+	   // not the number of characters
+	   int numChars = length;
 	   if (usesUnicode()) {
 
 		   start /= 2;
-		   length /= 2;
+		   numChars = (length / 2);
 	   }
 
 	   int myStart = getStart();
 	   int myEnd = getEnd();
-	   int end = start + length;
+	   int end = start + numChars;
 
 	   /* do we have to delete from this text piece? */
 	   if (start <= myEnd && end >= myStart) {
@@ -108,9 +111,14 @@ public class TextPiece extends PropertyNode implements Comparable
 		   int overlapStart = Math.max(myStart, start);
 		   int overlapEnd = Math.min(myEnd, end);
 		   ((StringBuffer)_buf).delete(overlapStart, overlapEnd);
-		   
-		   super.adjustForDelete(start, length);
 	   }
+
+	   // We need to invoke this even if text from this piece is not being
+	   // deleted because the adjustment must propagate to all subsequent
+	   // text pieces i.e., if text from tp[n] is being deleted, then
+	   // tp[n + 1], tp[n + 2], etc. will need to be adjusted.
+	   // The superclass is expected to use a separate sentry for this.
+	   super.adjustForDelete(start, length);
    }
 
    public int characterLength()

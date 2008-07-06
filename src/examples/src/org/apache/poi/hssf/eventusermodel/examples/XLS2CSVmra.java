@@ -30,9 +30,11 @@ import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
 import org.apache.poi.hssf.eventusermodel.HSSFListener;
 import org.apache.poi.hssf.eventusermodel.HSSFRequest;
 import org.apache.poi.hssf.eventusermodel.MissingRecordAwareHSSFListener;
+import org.apache.poi.hssf.eventusermodel.EventWorkbookBuilder.SheetRecordCollectingListener;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.LastCellOfRowDummyRecord;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.MissingCellDummyRecord;
 import org.apache.poi.hssf.model.FormulaParser;
+import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.BoolErrRecord;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
@@ -46,6 +48,7 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SSTRecord;
 import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -63,6 +66,10 @@ public class XLS2CSVmra implements HSSFListener {
 	
 	/** Should we output the formula, or the value it has? */
 	private boolean outputFormulaValues = true;
+	
+	/** For parsing Formulas */
+	private SheetRecordCollectingListener workbookBuildingListener;
+	private HSSFWorkbook stubWorkbook;
 	
 	// Records we pick up as we process
 	private SSTRecord sstRecord;
@@ -108,7 +115,13 @@ public class XLS2CSVmra implements HSSFListener {
 		
 		HSSFEventFactory factory = new HSSFEventFactory();
 		HSSFRequest request = new HSSFRequest();
-		request.addListenerForAllRecords(formatListener);
+		
+		if(outputFormulaValues) {
+			request.addListenerForAllRecords(formatListener);
+		} else {
+			workbookBuildingListener = new SheetRecordCollectingListener(formatListener);
+			request.addListenerForAllRecords(workbookBuildingListener);
+		}
 		
 		factory.processWorkbookEvents(request, fs);
 	}
@@ -124,6 +137,16 @@ public class XLS2CSVmra implements HSSFListener {
 		
 		switch (record.getSid())
         {
+		case BOFRecord.sid:
+			BOFRecord br = (BOFRecord)record;
+			if(br.getType() == BOFRecord.TYPE_WORKSHEET) {
+				// Create sub workbook if required
+				if(workbookBuildingListener != null && stubWorkbook == null) {
+					stubWorkbook = workbookBuildingListener.getStubHSSFWorkbook();
+				}
+			}
+			break;
+		
 		case SSTRecord.sid:
 			sstRecord = (SSTRecord) record;
 			break;
@@ -161,7 +184,7 @@ public class XLS2CSVmra implements HSSFListener {
         		}
         	} else {
         		thisStr = '"' + 
-        			FormulaParser.toFormulaString(null, frec.getParsedExpression()) + '"';
+        			FormulaParser.toFormulaString(stubWorkbook, frec.getParsedExpression()) + '"';
         	}
             break;
         case StringRecord.sid:
