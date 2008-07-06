@@ -41,9 +41,12 @@ public class ChunkFactory {
 	 * Key is a Chunk's type, value is an array of its CommandDefinitions
 	 */
 	private Hashtable chunkCommandDefinitions = new Hashtable();
-	/** What the name is of the chunk table */
+	/** 
+	 * What the name is of the chunk table definitions file? 
+	 * This file comes from the scratchpad resources directory.
+	 */
 	private static String chunkTableName = 
-		"/org/apache/poi/hdgf/chunks/chunks_parse_cmds.tbl";
+		"/org/apache/poi/hdgf/chunks_parse_cmds.tbl";
 	
 	/** For logging problems we spot with the file */
 	private POILogger logger = POILogFactory.getLogger(ChunkFactory.class);
