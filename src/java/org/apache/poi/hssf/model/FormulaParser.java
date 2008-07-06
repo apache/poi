@@ -22,11 +22,13 @@ import java.util.List;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
-//import PTG's .. since we need everything, import *
+//import PTGs .. since we need everything, import *
 import org.apache.poi.hssf.record.formula.*;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.hssf.util.AreaReference;
+import org.apache.poi.hssf.util.CellReference;
 
 /**
  * This class parses a formula string into a List of tokens in RPN order.
@@ -178,8 +180,14 @@ public final class FormulaParser {
         GetChar();
     }
 
-    /** Get an Identifier */
-    private String GetName() {
+    /**
+     * Parses a sheet name, named range name, or simple cell reference.<br/>
+     * Note - identifiers in Excel can contain dots, so this method may return a String
+     * which may need to be converted to an area reference.  For example, this method 
+     * may return a value like "A1..B2", in which case the caller must convert it to 
+     * an area reference like "A1:B2"
+     */
+    private String parseIdentifier() {
         StringBuffer Token = new StringBuffer();
         if (!IsAlpha(look) && look != '\'') {
             throw expected("Name");
@@ -201,7 +209,9 @@ public final class FormulaParser {
         }
         else
         {
-            while (IsAlNum(look)) {
+            // allow for any sequence of dots and identifier chars
+            // special case of two consecutive dots is best treated in the calling code
+            while (IsAlNum(look) || look == '.') {
                 Token.append(look);
                 GetChar();
             }
@@ -220,15 +230,22 @@ public final class FormulaParser {
         return value.length() == 0 ? null : value.toString();
     }
 
-    private ParseNode parseFunctionOrIdentifier() {
-        String name = GetName();
+    private ParseNode parseFunctionReferenceOrName() {
+        String name = parseIdentifier();
         if (look == '('){
             //This is a function
             return function(name);
         }
-        return new ParseNode(parseIdentifier(name));
+        return new ParseNode(parseNameOrReference(name));
     }
-    private Ptg parseIdentifier(String name) {
+
+    private Ptg parseNameOrReference(String name) {
+        
+        AreaReference areaRef = parseArea(name);
+        if (areaRef != null) {
+            // will happen if dots are used instead of colon
+            return new AreaPtg(areaRef.formatAsString());
+        }
 
         if (look == ':' || look == '.') { // this is a AreaReference
             GetChar();
@@ -238,23 +255,28 @@ public final class FormulaParser {
             }
 
             String first = name;
-            String second = GetName();
+            String second = parseIdentifier();
             return new AreaPtg(first+":"+second);
         }
 
         if (look == '!') {
             Match('!');
             String sheetName = name;
-            String first = GetName();
+            String first = parseIdentifier();
             short externIdx = (short)book.getExternalSheetIndex(book.getSheetIndex(sheetName));
+            areaRef = parseArea(name);
+            if (areaRef != null) {
+                // will happen if dots are used instead of colon
+                return new Area3DPtg(areaRef.formatAsString(), externIdx);
+            }
             if (look == ':') {
                 Match(':');
-                String second=GetName();
+                String second=parseIdentifier();
                 if (look == '!') {
                     //The sheet name was included in both of the areas. Only really
                     //need it once
                     Match('!');
-                    String third=GetName();
+                    String third=parseIdentifier();
 
                     if (!sheetName.equals(second))
                         throw new RuntimeException("Unhandled double sheet reference.");
@@ -271,9 +293,7 @@ public final class FormulaParser {
 
         // This can be either a cell ref or a named range
         // Try to spot which it is
-        boolean cellRef = CELL_REFERENCE_PATTERN.matcher(name).matches();
-
-        if (cellRef) {
+        if (isValidCellReference(name)) {
             return new RefPtg(name);
         }
 
@@ -287,6 +307,41 @@ public final class FormulaParser {
                     + name + "\", but that named range wasn't defined!");
     }
 
+    /**
+     * @return <code>null</code> if name cannot be split at a dot
+     */
+    private AreaReference parseArea(String name) {
+        int dotPos = name.indexOf('.');
+        if (dotPos < 0) {
+            return null;
+        }
+        int dotCount = 1;
+        while (dotCount<name.length() && name.charAt(dotPos+dotCount) == '.') {
+            dotCount++;
+            if (dotCount>3) {
+                // four or more consecutive dots does not convert to ':'
+                return null;
+            }
+        }
+        String partA = name.substring(0, dotPos);
+        if (!isValidCellReference(partA)) {
+            return null;
+        }
+        String partB = name.substring(dotPos+dotCount);
+        if (!isValidCellReference(partB)) {
+            return null;
+        }
+        CellReference topLeft = new CellReference(partA);
+        CellReference bottomRight = new CellReference(partB);
+        return new AreaReference(topLeft, bottomRight);
+    }
+
+    private static boolean isValidCellReference(String str) {
+        // TODO - exact rules for recognising cell references may be too complicated for regex 
+        return CELL_REFERENCE_PATTERN.matcher(str).matches();
+    }
+    
+    
     /**
      * Note - Excel function names are 'case aware but not case sensitive'.  This method may end
      * up creating a defined name record in the workbook if the specified name is not an internal
@@ -465,7 +520,7 @@ public final class FormulaParser {
                 return new ParseNode(parseStringLiteral());
         }
         if (IsAlpha(look) || look == '\''){
-            return parseFunctionOrIdentifier();
+            return parseFunctionReferenceOrName();
         }
         // else - assume number
         return new ParseNode(parseNumber());
@@ -510,7 +565,7 @@ public final class FormulaParser {
 
     private ErrPtg parseErrorLiteral() {
         Match('#');
-        String part1 = GetName().toUpperCase();
+        String part1 = parseIdentifier().toUpperCase();
 
         switch(part1.charAt(0)) {
             case 'V':

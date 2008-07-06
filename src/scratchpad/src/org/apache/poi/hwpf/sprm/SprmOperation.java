@@ -101,7 +101,14 @@ public class SprmOperation
       case 3:
         return LittleEndian.getInt(_grpprl, _gOffset);
       case 6:
-        throw new UnsupportedOperationException("This SPRM contains a variable length operand");
+          byte operandLength = _grpprl[_gOffset + 1];   //surely shorter than an int...
+    	  
+          byte [] codeBytes = new byte[LittleEndian.INT_SIZE]; //initialized to zeros by JVM
+          for(int i = 0; i < operandLength; i++)
+              if(_gOffset + i < _grpprl.length)
+    			  codeBytes[i] = _grpprl[_gOffset + 1 + i];
+
+          return LittleEndian.getInt(codeBytes, 0);
       case 7:
         byte threeByteInt[] = new byte[4];
         threeByteInt[0] = _grpprl[_gOffset];

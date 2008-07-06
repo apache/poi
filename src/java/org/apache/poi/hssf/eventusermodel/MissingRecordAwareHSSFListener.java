@@ -46,8 +46,14 @@ import org.apache.poi.hssf.record.RowRecord;
  */
 public class MissingRecordAwareHSSFListener implements HSSFListener {
 	private HSSFListener childListener;
-	private int lastSeenRow = -1;
-	private int lastSeenColumn = -1;
+	
+	// Need to have different counters for cell rows and
+	//  row rows, as you sometimes get a RowRecord in the
+	//  middle of some cells, and that'd break everything
+	private int lastRowRow = -1;
+	
+	private int lastCellRow = -1;
+	private int lastCellColumn = -1;
 	
 	/**
 	 * Constructs a new MissingRecordAwareHSSFListener, which
@@ -71,14 +77,16 @@ public class MissingRecordAwareHSSFListener implements HSSFListener {
                 if (bof.getType() == bof.TYPE_WORKBOOK)
                 {
                 	// Reset the row and column counts - new workbook
-                	lastSeenRow = -1;
-                	lastSeenColumn = -1;
+                	lastRowRow = -1;
+                	lastCellRow = -1;
+                	lastCellColumn = -1;
                     //System.out.println("Encountered workbook");
                 } else if (bof.getType() == bof.TYPE_WORKSHEET)
                 {
                 	// Reset the row and column counts - new sheet
-                	lastSeenRow = -1;
-                	lastSeenColumn = -1;
+                	lastRowRow = -1;
+                	lastCellRow = -1;
+                	lastCellColumn = -1;
                     //System.out.println("Encountered sheet reference");
                 }
                 break;
@@ -92,15 +100,15 @@ public class MissingRecordAwareHSSFListener implements HSSFListener {
                 //        + rowrec.getFirstCol() + " last column at " + rowrec.getLastCol());
                 
                 // If there's a jump in rows, fire off missing row records
-                if(lastSeenRow+1 < rowrec.getRowNumber()) {
-                	for(int i=(lastSeenRow+1); i<rowrec.getRowNumber(); i++) {
+                if(lastRowRow+1 < rowrec.getRowNumber()) {
+                	for(int i=(lastRowRow+1); i<rowrec.getRowNumber(); i++) {
                 		MissingRowDummyRecord dr = new MissingRowDummyRecord(i);
                 		childListener.processRecord(dr);
                 	}
                 }
                 
                 // Record this as the last row we saw
-                lastSeenRow = rowrec.getRowNumber();
+                lastRowRow = rowrec.getRowNumber();
                 break;
                 
                 
@@ -157,45 +165,49 @@ public class MissingRecordAwareHSSFListener implements HSSFListener {
             	break;
         }
 		
-		// Do we need to fire dummy end-of-row records?
-		if(thisRow != lastSeenRow) {
-			for(int i=lastSeenRow; i<thisRow; i++) {
+		// If we're on cells, and this cell isn't in the same
+		//  row as the last one, then fire the 
+		//  dummy end-of-row records?
+		if(thisRow != lastCellRow && lastCellRow > -1) {
+			for(int i=lastCellRow; i<thisRow; i++) {
 				int cols = -1;
-				if(i == lastSeenRow) {
-					cols = lastSeenColumn;
+				if(i == lastCellRow) {
+					cols = lastCellColumn;
 				}
 				LastCellOfRowDummyRecord r = new LastCellOfRowDummyRecord(i, cols);
 				childListener.processRecord(r);
 			}
 		}
-		// If we've finished with the columns, then fire the final
-		//  dummy end-of-row record
-		if(lastSeenRow != -1 && lastSeenColumn != -1 && thisRow == -1) {
-			LastCellOfRowDummyRecord r = new LastCellOfRowDummyRecord(lastSeenRow, lastSeenColumn);
+		
+		// If we've just finished with the cells, then fire the
+		//  final dummy end-of-row record
+		if(lastCellRow != -1 && lastCellColumn != -1 && thisRow == -1) {
+			LastCellOfRowDummyRecord r = new LastCellOfRowDummyRecord(lastCellRow, lastCellColumn);
 			childListener.processRecord(r);
 			
-			lastSeenRow = -1;
-			lastSeenColumn = -1;
+			lastCellRow = -1;
+			lastCellColumn = -1;
 		}
 		
 		// If we've moved onto a new row, the ensure we re-set
 		//  the column counter
-		if(thisRow != lastSeenRow) {
-			lastSeenColumn = -1;
+		if(thisRow != lastCellRow) {
+			lastCellColumn = -1;
 		}
 		
-		// Do we need to fire dummy cell records?
-		if(lastSeenColumn != (thisColumn-1)) {
-			for(int i=lastSeenColumn+1; i<thisColumn; i++) {
+		// If there's a gap in the cells, then fire
+		//  the dummy cell records?
+		if(lastCellColumn != (thisColumn-1)) {
+			for(int i=lastCellColumn+1; i<thisColumn; i++) {
 				MissingCellDummyRecord r = new MissingCellDummyRecord(thisRow, i);
 				childListener.processRecord(r);
 			}
 		}
 		
-		// Update cell and row counts if doing cells
+		// Update cell and row counts as needed
 		if(thisColumn != -1) {
-			lastSeenRow = thisRow;
-			lastSeenColumn = thisColumn;
+			lastCellColumn = thisColumn;
+			lastCellRow = thisRow;
 		}
 		
 		childListener.processRecord(record);

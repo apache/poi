@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
@@ -105,6 +106,12 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      */
 
     private ArrayList names;
+    
+    /**
+     * this holds the HSSFFont objects attached to this workbook.
+     * We only create these from the low level records as required.
+     */
+    private Hashtable fonts;
 
     /**
      * holds whether or not to preserve other nodes in the POIFS.  Used
@@ -1021,9 +1028,10 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         if(fontindex == Short.MAX_VALUE){
             throw new IllegalArgumentException("Maximum number of fonts was exceeded");
         }
-        HSSFFont retval = new HSSFFont(fontindex, font);
-
-        return retval;
+        
+        // Ask getFontAt() to build it for us,
+        //  so it gets properly cached
+        return getFontAt(fontindex);
     }
 
     /**
@@ -1033,15 +1041,11 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
                              String name, boolean italic, boolean strikeout,
                              short typeOffset, byte underline)
     {
-//        System.out.println( boldWeight + ", " + color + ", " + fontHeight + ", " + name + ", " + italic + ", " + strikeout + ", " + typeOffset + ", " + underline );
-        for (short i = 0; i < workbook.getNumberOfFontRecords(); i++)
-        {
-            if (i == 4)
-                continue;
-
-            FontRecord font = workbook.getFontRecordAt(i);
-            HSSFFont hssfFont = new HSSFFont(i, font);
-//            System.out.println( hssfFont.getBoldweight() + ", " + hssfFont.getColor() + ", " + hssfFont.getFontHeight() + ", " + hssfFont.getFontName() + ", " + hssfFont.getItalic() + ", " + hssfFont.getStrikeout() + ", " + hssfFont.getTypeOffset() + ", " + hssfFont.getUnderline() );
+    	for (short i=0; i<=getNumberOfFonts(); i++) {
+    		// Remember - there is no 4!
+    		if(i == 4) continue;
+    		
+    		HSSFFont hssfFont = getFontAt(i);
             if (hssfFont.getBoldweight() == boldWeight
                     && hssfFont.getColor() == color
                     && hssfFont.getFontHeight() == fontHeight
@@ -1051,12 +1055,10 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
                     && hssfFont.getTypeOffset() == typeOffset
                     && hssfFont.getUnderline() == underline)
             {
-//                System.out.println( "Found font" );
                 return hssfFont;
             }
         }
 
-//        System.out.println( "No font found" );
         return null;
     }
 
@@ -1071,15 +1073,26 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     }
 
     /**
-     * get the font at the given index number
+     * Get the font at the given index number
      * @param idx  index number
      * @return HSSFFont at the index
      */
 
     public HSSFFont getFontAt(short idx)
     {
+    	if(fonts == null) fonts = new Hashtable();
+    	
+    	// So we don't confuse users, give them back
+    	//  the same object every time, but create
+    	//  them lazily
+    	Short sIdx = Short.valueOf(idx);
+    	if(fonts.containsKey(sIdx)) {
+    		return (HSSFFont)fonts.get(sIdx);
+    	}
+    	
         FontRecord font = workbook.getFontRecordAt(idx);
         HSSFFont retval = new HSSFFont(idx, font);
+        fonts.put(sIdx, retval);
 
         return retval;
     }

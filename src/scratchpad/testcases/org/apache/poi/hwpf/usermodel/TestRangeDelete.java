@@ -29,19 +29,19 @@ import org.apache.poi.hwpf.usermodel.Picture;
 import junit.framework.TestCase;
 
 /**
- *	Test to see if Range.replaceText() works even if the Range contains a
+ *	Test to see if Range.delete() works even if the Range contains a
  *	CharacterRun that uses Unicode characters.
  */
-public class TestRangeReplacement extends TestCase {
+public class TestRangeDelete extends TestCase {
 
 	// u201c and u201d are "smart-quotes"
 	private String originalText =
-		"It is used to confirm that text replacement works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.  Everybody should be thankful to the ${organization} and all the POI contributors for their assistance in this matter.\r";
-	private String searchText = "${organization}";
-	private String replacementText = "Apache Software Foundation";
+		"It is used to confirm that text delete works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.  Everybody should be thankful to the ${organization} ${delete} and all the POI contributors for their assistance in this matter.\r";
+	private String searchText = "${delete}";
+	private String expectedText1 = " This is an MS-Word 97 formatted document created using NeoOffice v. 2.2.4 Patch 0 (OpenOffice.org v. 2.2.1).\r";
 	private String expectedText2 =
-		"It is used to confirm that text replacement works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.  Everybody should be thankful to the Apache Software Foundation and all the POI contributors for their assistance in this matter.\r";
-	private String expectedText3 = "Thank you, Apache Software Foundation!\r";
+		"It is used to confirm that text delete works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.  Everybody should be thankful to the ${organization}  and all the POI contributors for their assistance in this matter.\r";
+	private String expectedText3 = "Thank you, ${organization} !\r";
 
 	private String illustrativeDocFile;
 
@@ -49,7 +49,7 @@ public class TestRangeReplacement extends TestCase {
 
 		String dirname = System.getProperty("HWPF.testdata.path");
 
-		illustrativeDocFile = dirname + "/testRangeReplacement.doc";
+		illustrativeDocFile = dirname + "/testRangeDelete.doc";
 	}
 
 	/**
@@ -76,16 +76,14 @@ public class TestRangeReplacement extends TestCase {
 		Paragraph para = section.getParagraph(2);
 
 		assertEquals(5, para.numCharacterRuns());
-		String text = para.getCharacterRun(0).text() + para.getCharacterRun(1).text() +
-			para.getCharacterRun(2).text() + para.getCharacterRun(3).text() + para.getCharacterRun(4).text();
 
-		assertEquals(originalText, text);
+		assertEquals(originalText, para.text());
 	}
 
 	/**
-	 * Test that we can replace text in our Range with Unicode text.
+	 * Test that we can delete text (one instance) from our Range with Unicode text.
 	 */
-	public void testRangeReplacementOne() throws Exception {
+	public void testRangeDeleteOne() throws Exception {
 
 		HWPFDocument daDoc = new HWPFDocument(new FileInputStream(illustrativeDocFile));
 
@@ -101,24 +99,42 @@ public class TestRangeReplacement extends TestCase {
 		assertEquals(originalText, text);
 
 		int offset = text.indexOf(searchText);
-		assertEquals(181, offset);
+		assertEquals(192, offset);
 
-		para.replaceText(searchText, replacementText, offset);
+		int absOffset = para.getStartOffset() + offset;
+		if (para.usesUnicode())
+			absOffset = para.getStartOffset() + (offset * 2);
+
+		Range subRange = new Range(absOffset, (absOffset + searchText.length()), para.getDocument());
+		if (subRange.usesUnicode())
+			subRange = new Range(absOffset, (absOffset + (searchText.length() * 2)), para.getDocument());
+
+		assertEquals(searchText, subRange.text());
+
+		subRange.delete();
+
+		// we need to let the model re-calculate the Range before we evaluate it
+		range = daDoc.getRange();
 
 		assertEquals(1, range.numSections());
 		section = range.getSection(0);
 
-		assertEquals(4, section.numParagraphs());
+		assertEquals(5, section.numParagraphs());
 		para = section.getParagraph(2);
 
 		text = para.text();
 		assertEquals(expectedText2, text);
+
+		// this can lead to a StringBufferOutOfBoundsException, so we will add it
+		// even though we don't have an assertion for it
+		Range daRange = daDoc.getRange();
+		daRange.text();
 	}
 
 	/**
-	 * Test that we can replace text in our Range with Unicode text.
+	 * Test that we can delete text (all instances of) from our Range with Unicode text.
 	 */
-	public void testRangeReplacementAll() throws Exception {
+	public void testRangeDeleteAll() throws Exception {
 
 		HWPFDocument daDoc = new HWPFDocument(new FileInputStream(illustrativeDocFile));
 
@@ -133,11 +149,41 @@ public class TestRangeReplacement extends TestCase {
 		String text = para.text();
 		assertEquals(originalText, text);
 
-		range.replaceText(searchText, replacementText);
+		boolean keepLooking = true;
+		while (keepLooking) {
+
+			int offset = range.text().indexOf(searchText);
+			if (offset >= 0) {
+
+				int absOffset = range.getStartOffset() + offset;
+				if (range.usesUnicode())
+					absOffset = range.getStartOffset() + (offset * 2);
+
+				Range subRange = new Range(
+					absOffset, (absOffset + searchText.length()), range.getDocument());
+				if (subRange.usesUnicode())
+					subRange = new Range(
+						absOffset, (absOffset + (searchText.length() * 2)), range.getDocument());
+
+				assertEquals(searchText, subRange.text());
+
+				subRange.delete();
+
+			} else
+				keepLooking = false;
+		}
+
+		// we need to let the model re-calculate the Range before we use it
+		range = daDoc.getRange();
 
 		assertEquals(1, range.numSections());
 		section = range.getSection(0);
+
 		assertEquals(5, section.numParagraphs());
+
+		para = section.getParagraph(1);
+		text = para.text();
+		assertEquals(expectedText1, text);
 
 		para = section.getParagraph(2);
 		text = para.text();
