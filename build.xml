@@ -90,6 +90,7 @@ under the License.
   <property name="junit.jar1.url" value="${repository}/junit/jars/junit-3.8.1.jar"/>
 
   <!-- Scratchpad: -->
+  <property name="scratchpad.resource1.dir" value="src/resources/scratchpad"/>
   <property name="scratchpad.src" location="src/scratchpad/src"/>
   <property name="scratchpad.src.test" location="src/scratchpad/testcases"/>
   <property name="scratchpad.lib" location="src/scratchpad/lib"/>
@@ -202,6 +203,7 @@ under the License.
     <path id="scratchpad.classpath">
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
+        <pathelement location="${scratchpad.resource1.dir}"/>
     </path>
 
     <path id="contrib.classpath">
@@ -498,12 +500,9 @@ under the License.
 	</copy>
 
 	<!-- Copy HDGF Resources over -->
-	<property name="hdgf.chunks" value="org/apache/poi/hdgf/chunks" />
-	<copy todir="${scratchpad.output.dir}/${hdgf.chunks}">
-		<fileset dir="${scratchpad.src}/${hdgf.chunks}">
-			<include name="*.tbl" />
-		</fileset>
-	</copy>
+    <copy todir="${scratchpad.output.dir}">
+      <fileset dir="${scratchpad.resource1.dir}"/>
+    </copy>
   </target>
 
   <target name="compile-contrib" depends="init">

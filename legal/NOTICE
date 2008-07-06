@@ -11,8 +11,19 @@ Common Public License Version 1.0:
 See http://www.junit.org/
 
 
-The Office Open XML experimental support had additional dependencies,
-with their own licensing:
+A single resource file of the POI scratchpad component HDGF is taken from 
+ VSDump, and is under the GNU General Public Licence version 3 (GPL v3):
+	http://gplv3.fsf.org/
+Since this is a data file, and has no compiled version (the original
+ file is distributed in both source and binary versions of POI), there should
+ be little difference in licencing requirements compared to the ASL.
+For those wishing to avoid this component, the HDGF part of the POI 
+ scratchpad should be omitted.
+See http://www.gnome.ru/projects/vsdump_en.html
+
+
+The Office Open XML support had additional dependencies, with their 
+own licensing:
  * XML Beans - http://xmlbeans.apache.org/
       Apache Licence Version 2.0 - http://www.apache.org/licenses/LICENSE-2.0
  * DOM4J - http://www.dom4j.org/
