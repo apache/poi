@@ -86,7 +86,7 @@
         </section>
         <section><title>HSSF</title>
              <p>HSSF es nuestra adaptación del formato de fichero de Microsoft Excel 97(-2002) (BIFF8) a Java puro. Soporta lectura y
-	     escritura. Por favor, vea <link href="../../hssf/index.html">la página del proyecto HSSF [EN]</link> para más información.</p>
+	     escritura. Por favor, vea <link href="../../spreadsheet/index.html">la página del proyecto HSSF [EN]</link> para más información.</p>
         </section>
         <section><title>HWPF</title>
              <p>HWPF es nuestra adaptación del formato de fichero de Microsoft Word 97 a Java puro. Soporta lectura y escritura.
