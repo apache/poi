@@ -50,7 +50,7 @@
       
       <section><title>HSSF</title>
         <p>
-          <link href="../../hssf/index.html">HSSF [EN]</link> es el conjunto de APIs para la lectura y
+          <link href="../../spreadsheet/index.html">HSSF [EN]</link> es el conjunto de APIs para la lectura y
 	  escritura de hojas de cálculo de Microsoft Excel 97(-XP) utilizando (únicamente) Java.
         </p>
       </section>

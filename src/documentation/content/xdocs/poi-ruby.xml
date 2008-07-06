@@ -110,7 +110,7 @@
 	h.write(File.new("test.xls","w"))
       </source>
       <p>  The <em>tc_base_tests.rb</em> file in the <em>tests</em> sub directory of the source distribution
-      contains examples of simple uses of the API. The <link href="hssf/quick-guide.html">quick quide </link> is the best
+      contains examples of simple uses of the API. The <link href="spreadsheet/quick-guide.html">quick quide </link> is the best
       place to learn HSSF API use. (Note however that none of the Drawing features are implemented in the Ruby binding.)
        See also the <link href="apidocs/overview-summary.html">POI API documentation</link>  for more details. 
        </p>

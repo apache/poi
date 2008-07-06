@@ -154,7 +154,7 @@
           HSSF ist unsere Portierung des Microsoft Excel 97(-2002)
           Dateiformats in reinem Java. Es unterstützt Lesen und
           Schreiben. Mehr Informationen gibt es auf der
-          <link href="../../hssf/index.html">HSSF-Seite</link>.
+          <link href="../../spreadsheet/index.html">HSSF-Seite</link>.
         </p>
       </section>
       <section><title>HWPF</title>

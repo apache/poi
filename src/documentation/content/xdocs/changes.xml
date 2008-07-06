@@ -36,6 +36,10 @@
     </devs>
 
 		<!-- Don't forget to update status.xml too! -->
+<!--
+        <release version="3.5.1-beta2" date="2008-??-??">
+		</release>
+-->
         <release version="3.5.1-beta1" date="2008-07-11">
            <action dev="POI-DEVELOPERS" type="add">45018 - Support for fetching embeded documents from within an OOXML file</action>
            <action dev="POI-DEVELOPERS" type="add">Port support for setting a policy on missing / blank cells when fetching, to XSSF too</action>
