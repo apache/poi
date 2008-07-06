@@ -604,8 +604,28 @@ public class Workbook implements Model
             fixTabIdRecord();
         }
         
-        // If we decide that we need to fix up
-        //  NameRecords, do it here
+        // Within NameRecords, it's ok to have the formula
+        //  part point at deleted sheets. It's also ok to
+        //  have the ExternSheetNumber point at deleted
+        //  sheets. 
+        // However, the sheet index must be adjusted, or
+        //  excel will break. (Sheet index is either 0 for
+        //  global, or 1 based index to sheet)
+        int sheetNum1Based = sheetnum + 1;
+        for(int i=0; i<getNumNames(); i++) {
+        	NameRecord nr = getNameRecord(i);
+        	
+        	if(nr.getIndexToSheet() == sheetNum1Based) {
+        		// Excel re-writes these to point to no sheet
+        		nr.setEqualsToIndexToSheet((short)0);
+        	} else if(nr.getIndexToSheet() > sheetNum1Based) {
+        		// Bump down by one, so still points
+        		//  at the same sheet
+        		nr.setEqualsToIndexToSheet((short)(
+        				nr.getEqualsToIndexToSheet()-1
+        		));
+        	}
+        }
     }
 
     /**
