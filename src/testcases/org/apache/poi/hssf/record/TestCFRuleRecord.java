@@ -17,12 +17,16 @@
 
 package org.apache.poi.hssf.record;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.RefNPtg;
+import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.util.LittleEndian;
@@ -296,7 +300,57 @@ public final class TestCFRuleRecord extends TestCase
 		// check all remaining flag bits (some are not well understood yet)
 		assertEquals(0x203FFFFF, flags);
 	}
+	
+	private static final byte[] DATA_REFN = {
+		// formula extracted from bugzilla 45234 att 22141
+		1, 3, 
+		9, // formula 1 length 
+		0, 0, 0, -1, -1, 63, 32, 2, -128, 0, 0, 0, 5,
+		// formula 1: "=B3=1" (formula is relative to B4)
+		76, -1, -1, 0, -64, // tRefN(B1)
+		30, 1, 0,	
+		11,	
+	};
 
+	/**
+	 * tRefN and tAreaN tokens must be preserved when re-serializing conditional format formulas
+	 */
+	public void testReserializeRefNTokens() {
+		
+		RecordInputStream is = new TestcaseRecordInputStream(CFRuleRecord.sid, DATA_REFN);
+		CFRuleRecord rr = new CFRuleRecord(is);
+		Ptg[] ptgs = rr.getParsedExpression1();
+		assertEquals(3, ptgs.length);
+		if (ptgs[0] instanceof RefPtg) {
+			throw new AssertionFailedError("Identified bug 45234");
+		}
+		assertEquals(RefNPtg.class, ptgs[0].getClass());
+		RefNPtg refNPtg = (RefNPtg) ptgs[0];
+		assertTrue(refNPtg.isColRelative());
+		assertTrue(refNPtg.isRowRelative());
+		
+		byte[] data = rr.serialize();
+		
+		if (!compareArrays(DATA_REFN, 0, data, 4, DATA_REFN.length)) {
+			fail("Did not re-serialize correctly");
+		}
+	}
+
+	private static boolean compareArrays(byte[] arrayA, int offsetA, byte[] arrayB, int offsetB, int length) {
+		
+		if (offsetA + length > arrayA.length) {
+			return false;
+		}
+		if (offsetB + length > arrayB.length) {
+			return false;
+		}
+		for (int i = 0; i < length; i++) {
+			if (arrayA[i+offsetA] != arrayB[i+offsetB]) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	public static void main(String[] ignored_args)
 	{
