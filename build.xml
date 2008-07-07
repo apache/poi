@@ -174,7 +174,7 @@ under the License.
   <property name="mavendist.poi.dir" location="build/maven-dist/poi"/>
   <property name="mavendist.oap.dir" location="build/maven-dist/org.apache.poi"/>
   <property name="jar.name" value="poi"/>
-  <property name="version.id" value="3.5-alpha2"/>
+  <property name="version.id" value="3.5-beta2"/>
   <property name="halt.on.test.failure" value="true"/>
 
   <property name="jdk.version.source" value="1.5"
@@ -1084,7 +1084,7 @@ FORREST_HOME environment variable!</echo>
       description="Generates POI's website's contents"/>
 
 
-    <target name="maven-dist" depends="jar" description="Builds the POM files for a maven distribution, and copies these and the jars to the appropriate locations">
+    <target name="maven-dist" depends="jar,jar-ooxml" description="Builds the POM files for a maven distribution, and copies these and the jars to the appropriate locations">
 		<!-- Copy the jar files into the maven jar directory -->
 		<!-- Same jars as for the main release, only lacking the datestamp -->
 		<copy
@@ -1257,7 +1257,7 @@ FORREST_HOME environment variable!</echo>
         </jar>
     </target>
 
-  <target name="dist" depends="clean, fail-unless-tools-are-available, compile, site, jar"
+  <target name="dist" depends="clean, fail-unless-tools-are-available, compile, site, jar, jar-ooxml"
     description="Creates the entire distribution into build/dist, from scratch">
 
 	<property name="zipdir" value="${jar.name}-${version.id}" />
@@ -1273,6 +1273,7 @@ FORREST_HOME environment variable!</echo>
       <zipfileset file="${dist.dir}/${jar.name}-jdk14-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
       <zipfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
       <zipfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
+      <zipfileset file="${dist.dir}/${jar.name}-ooxml-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
     </zip>
 
     <zip destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.zip">
@@ -1300,6 +1301,7 @@ FORREST_HOME environment variable!</echo>
       <tarfileset file="${dist.dir}/${jar.name}-jdk14-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
       <tarfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
       <tarfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
+      <tarfileset file="${dist.dir}/${jar.name}-ooxml-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
     </tar>
 
     <tar destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.tar.gz"
