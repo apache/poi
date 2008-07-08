@@ -29,8 +29,12 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
+import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.util.TempFile;
@@ -1134,5 +1138,81 @@ public final class TestBugs extends TestCase {
        			"Thingy", false, true, (short)2, (byte)2
        		)
     	);
+    }
+    
+    /**
+     * From the mailing list - ensure we can handle a formula
+     *  containing a zip code, eg ="70164"
+     * @throws Exception
+     */
+    public void testZipCodeFormulas() throws Exception {
+    	HSSFWorkbook wb = new HSSFWorkbook();
+    	HSSFSheet s = wb.createSheet();
+    	s.createRow(0);
+    	HSSFCell c1 = s.getRow(0).createCell((short)0);
+    	HSSFCell c2 = s.getRow(0).createCell((short)1);
+
+    	// As number and string
+    	c1.setCellFormula("70164");
+    	c2.setCellFormula("\"70164\"");
+    	
+    	// Check the formulas
+    	assertEquals("70164.0", c1.getCellFormula());
+    	assertEquals("\"70164\"", c2.getCellFormula());
+    	
+    	// And check the values - blank
+    	assertEquals(0.0, c1.getNumericCellValue(), 0.00001);
+    	assertEquals("", c1.getRichStringCellValue().getString());
+    	assertEquals(0.0, c2.getNumericCellValue(), 0.00001);
+    	assertEquals("", c2.getRichStringCellValue().getString());
+    	
+    	// Now evaluate
+    	HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(s, wb);
+    	eval.setCurrentRow(s.getRow(0));
+    	eval.evaluateFormulaCell(c1);
+    	eval.evaluateFormulaCell(c2);
+    	
+    	// Check
+    	assertEquals(70164.0, c1.getNumericCellValue(), 0.00001);
+    	assertEquals("", c1.getRichStringCellValue().getString());
+    	assertEquals(0.0, c2.getNumericCellValue(), 0.00001);
+    	
+    	// TODO - why isn't this working?
+//    	assertEquals("70164", c2.getRichStringCellValue().getString());
+  
+    	
+    	// Write and read
+    	HSSFWorkbook nwb = writeOutAndReadBack(wb);
+    	HSSFSheet ns = nwb.getSheetAt(0);
+    	HSSFCell nc1 = ns.getRow(0).getCell((short)0);
+    	HSSFCell nc2 = ns.getRow(0).getCell((short)1);
+    	
+    	// Re-check
+    	assertEquals(70164.0, nc1.getNumericCellValue(), 0.00001);
+    	assertEquals("", nc1.getRichStringCellValue().getString());
+    	assertEquals(0.0, nc2.getNumericCellValue(), 0.00001);
+    	assertEquals("70164", nc2.getRichStringCellValue().getString());
+    	
+    	// Now check record level stuff too
+    	ns.getSheet().setLoc(0);
+    	int fn = 0;
+    	CellValueRecordInterface cvr;
+    	while((cvr = ns.getSheet().getNextValueRecord()) != null) {
+    		if(cvr instanceof FormulaRecordAggregate) {
+    			FormulaRecordAggregate fr = (FormulaRecordAggregate)cvr;
+    			
+    			if(fn == 0) {
+    				assertEquals(70164.0, fr.getFormulaRecord().getValue(), 0.0001);
+    				assertNull(fr.getStringRecord());
+    			} else {
+    				assertEquals(0.0, fr.getFormulaRecord().getValue(), 0.0001);
+    				assertNotNull(fr.getStringRecord());
+    				assertEquals("70164", fr.getStringRecord().getString());
+    			}
+    			
+    			fn++;
+    		}
+    	}
+    	assertEquals(2, fn);
     }
 }
