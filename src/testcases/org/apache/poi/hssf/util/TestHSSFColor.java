@@ -14,13 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.util;
 
 import java.util.Hashtable;
 
 import junit.framework.TestCase;
-
+/**
+ * @author Nick Burch
+ */
 public final class TestHSSFColor extends TestCase {
 	public void testBasics() {
 		assertNotNull(HSSFColor.YELLOW.class);
