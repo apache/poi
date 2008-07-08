@@ -14,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record.formula;
 
@@ -76,7 +75,9 @@ public final class TestSheetNameFormatter extends TestCase {
 	}
 	
 	private static void confirmCellRange(String text, int numberOfPrefixLetters, boolean expected) {
-		assertEquals(expected, SheetNameFormatter.cellReferenceIsWithinRange(text, numberOfPrefixLetters));
+		String prefix = text.substring(0, numberOfPrefixLetters);
+		String suffix = text.substring(numberOfPrefixLetters);
+		assertEquals(expected, SheetNameFormatter.cellReferenceIsWithinRange(prefix, suffix));
 	}
 	
 	/**
@@ -93,7 +94,7 @@ public final class TestSheetNameFormatter extends TestCase {
 		confirmCellRange("AAA1", 3, false);
 		confirmCellRange("a111", 1, true);
 		confirmCellRange("Sheet1", 6, false);
-        confirmCellRange("iV65536", 2, true);  // max cell in Excel 97-2003
-        confirmCellRange("IW65537", 2, false);
+		confirmCellRange("iV65536", 2, true);  // max cell in Excel 97-2003
+		confirmCellRange("IW65537", 2, false);
 	}
 }

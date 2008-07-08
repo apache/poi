@@ -46,6 +46,7 @@ import org.apache.poi.hssf.record.formula.SubtractPtg;
 import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
 import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -791,4 +792,37 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals("ERROR.TYPE", funcPtg.getName());
 	}
 	
+	public void testNamedRangeThatLooksLikeCell() {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet("Sheet1");
+		HSSFName name = wb.createName();
+		name.setReference("Sheet1!B1");
+		name.setNameName("pfy1");
+
+		Ptg[] ptgs;
+		try {
+			ptgs = FormulaParser.parse("count(pfy1)", wb);
+		} catch (IllegalArgumentException e) {
+			if (e.getMessage().equals("Specified colIx (1012) is out of range")) {
+				throw new AssertionFailedError("Identified bug 45354");
+			}
+			throw e;
+		}
+		assertEquals(2, ptgs.length);
+		assertEquals(NamePtg.class, ptgs[0].getClass());
+
+		HSSFCell cell = sheet.createRow(0).createCell((short)0);
+		cell.setCellFormula("count(pfy1)");
+		assertEquals("COUNT(pfy1)", cell.getCellFormula());
+		try {
+			cell.setCellFormula("count(pf1)");
+			throw new AssertionFailedError("Expected formula parse execption");
+		} catch (FormulaParseException e) {
+			if (!e.getMessage().equals("Specified named range 'pf1' does not exist in the current workbook.")) {
+				throw e;
+			}
+		}
+		cell.setCellFormula("count(fp1)"); // plain cell ref, col is in range
+		
+	}
 }

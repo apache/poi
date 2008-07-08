@@ -14,12 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record.formula;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.poi.hssf.util.CellReference;
 
 /**
  * Formats sheet names for use in formula expressions.
@@ -28,14 +29,12 @@ import java.util.regex.Pattern;
  */
 public final class SheetNameFormatter {
 	
-	private static final String BIFF8_LAST_COLUMN = "IV";
-	private static final int BIFF8_LAST_COLUMN_TEXT_LEN = BIFF8_LAST_COLUMN.length();
-	private static final String BIFF8_LAST_ROW = String.valueOf(0x10000);
-	private static final int BIFF8_LAST_ROW_TEXT_LEN = BIFF8_LAST_ROW.length();
-
 	private static final char DELIMITER = '\'';
 	
-	private static final Pattern CELL_REF_PATTERN = Pattern.compile("([A-Za-z])+[0-9]+");
+	/**
+	 * Matches a single cell ref with no absolute ('$') markers
+	 */
+	private static final Pattern CELL_REF_PATTERN = Pattern.compile("([A-Za-z]+)([0-9]+)");
 
 	private SheetNameFormatter() {
 		// no instances of this class
@@ -105,27 +104,27 @@ public final class SheetNameFormatter {
 		return false;
 	}
 	
-    /**
-     * @return <code>true</code> if the presence of the specified character in a sheet name would 
-     * require the sheet name to be delimited in formulas.  This includes every non-alphanumeric 
-     * character besides underscore '_'.
-     */
-    /* package */ static boolean isSpecialChar(char ch) {
-        // note - Character.isJavaIdentifierPart() would allow dollars '$'
-        if(Character.isLetterOrDigit(ch)) {
-            return false;
-        }
-        switch(ch) {
-            case '_': // underscore is ok
-                return false;
-            case '\n':
-            case '\r':
-            case '\t':
-                throw new RuntimeException("Illegal character (0x" 
-                        + Integer.toHexString(ch) + ") found in sheet name");
-        }
-        return true;
-    }
+	/**
+	 * @return <code>true</code> if the presence of the specified character in a sheet name would 
+	 * require the sheet name to be delimited in formulas.  This includes every non-alphanumeric 
+	 * character besides underscore '_'.
+	 */
+	/* package */ static boolean isSpecialChar(char ch) {
+		// note - Character.isJavaIdentifierPart() would allow dollars '$'
+		if(Character.isLetterOrDigit(ch)) {
+			return false;
+		}
+		switch(ch) {
+			case '_': // underscore is ok
+				return false;
+			case '\n':
+			case '\r':
+			case '\t':
+				throw new RuntimeException("Illegal character (0x" 
+						+ Integer.toHexString(ch) + ") found in sheet name");
+		}
+		return true;
+	}
 	
 
 	/**
@@ -149,64 +148,11 @@ public final class SheetNameFormatter {
 	 * <p/>
 	 * For better or worse this implementation attempts to replicate Excel's formula renderer.
 	 * Excel uses range checking on the apparent 'row' and 'column' components.  Note however that
-	 * the maximum sheet size varies across versions:
-	 * <p/>
-	 * <blockquote><table border="0" cellpadding="1" cellspacing="0" 
-	 *                 summary="Notable cases.">
-	 *   <tr><th>Version&nbsp;&nbsp;</th><th>File Format&nbsp;&nbsp;</th>
-	 *   	<th>Last Column&nbsp;&nbsp;</th><th>Last Row</th></tr>
-	 *   <tr><td>97-2003</td><td>BIFF8</td><td>"IV" (2^8)</td><td>65536 (2^14)</td></tr>
-	 *   <tr><td>2007</td><td>BIFF12</td><td>"XFD" (2^14)</td><td>1048576 (2^20)</td></tr>
-	 * </table></blockquote>
-	 * POI currently targets BIFF8 (Excel 97-2003), so the following behaviour can be observed for
-	 * this method:
-	 * <blockquote><table border="0" cellpadding="1" cellspacing="0" 
-	 *                 summary="Notable cases.">
-	 *   <tr><th>Input&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-	 *   	<th>Result&nbsp;</th></tr>
-	 *   <tr><td>"A1", 1</td><td>true</td></tr>
-	 *   <tr><td>"a111", 1</td><td>true</td></tr>
-	 *   <tr><td>"A65536", 1</td><td>true</td></tr>
-	 *   <tr><td>"A65537", 1</td><td>false</td></tr>
-	 *   <tr><td>"iv1", 2</td><td>true</td></tr>
-	 *   <tr><td>"IW1", 2</td><td>false</td></tr>
-	 *   <tr><td>"AAA1", 3</td><td>false</td></tr>
-	 *   <tr><td>"a111", 1</td><td>true</td></tr>
-	 *   <tr><td>"Sheet1", 6</td><td>false</td></tr>
-	 * </table></blockquote>
+	 * the maximum sheet size varies across versions.
+	 * @see org.apache.poi.hssf.util.CellReference
 	 */
-	/* package */ static boolean cellReferenceIsWithinRange(String rawSheetName, int numberOfLetters) {
-		
-		if(numberOfLetters > BIFF8_LAST_COLUMN_TEXT_LEN) {
-			// "Sheet1" case etc
-			return false; // that was easy
-		}
-		int nDigits = rawSheetName.length() - numberOfLetters;
-		if(nDigits > BIFF8_LAST_ROW_TEXT_LEN) {
-			return false; 
-		}
-		if(numberOfLetters == BIFF8_LAST_COLUMN_TEXT_LEN) {
-			String colStr = rawSheetName.substring(0, BIFF8_LAST_COLUMN_TEXT_LEN).toUpperCase();
-			if(colStr.compareTo(BIFF8_LAST_COLUMN) > 0) {
-				return false;
-			}
-		} else {
-			// apparent column name has less chars than max
-			// no need to check range
-		}
-		
-		if(nDigits == BIFF8_LAST_ROW_TEXT_LEN) {
-			String colStr = rawSheetName.substring(numberOfLetters);
-			// ASCII comparison is valid if digit count is same
-			if(colStr.compareTo(BIFF8_LAST_ROW) > 0) {
-				return false;
-			}
-		} else {
-			// apparent row has less chars than max
-			// no need to check range
-		}
-		
-		return true;
+	/* package */ static boolean cellReferenceIsWithinRange(String lettersPrefix, String numbersSuffix) {
+		return CellReference.cellReferenceIsWithinRange(lettersPrefix, numbersSuffix);
 	}
 
 	/**
@@ -239,7 +185,7 @@ public final class SheetNameFormatter {
 		
 		// rawSheetName == "Sheet1" gets this far.
 		String lettersPrefix = matcher.group(1);
-		return cellReferenceIsWithinRange(rawSheetName, lettersPrefix.length());
+		String numbersSuffix = matcher.group(2);
+		return cellReferenceIsWithinRange(lettersPrefix, numbersSuffix);
 	}
-
 }

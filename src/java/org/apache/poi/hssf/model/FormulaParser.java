@@ -29,6 +29,7 @@ import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.hssf.util.CellReference.NameType;
 
 /**
  * This class parses a formula string into a List of tokens in RPN order.
@@ -293,8 +294,13 @@ public final class FormulaParser {
 
         // This can be either a cell ref or a named range
         // Try to spot which it is
-        if (isValidCellReference(name)) {
+        int nameType = CellReference.classifyCellReference(name);
+        if (nameType == NameType.CELL) {
             return new RefPtg(name);
+        }
+        if (nameType != NameType.NAMED_RANGE) {
+            new FormulaParseException("Name '" + name
+                + "' does not look like a cell reference or named range");
         }
 
         for(int i = 0; i < book.getNumberOfNames(); i++) {
@@ -303,11 +309,12 @@ public final class FormulaParser {
                 return new NamePtg(name, book);
             }
         }
-        throw new FormulaParseException("Found reference to named range \""
-                    + name + "\", but that named range wasn't defined!");
+        throw new FormulaParseException("Specified named range '"
+                    + name + "' does not exist in the current workbook.");
     }
 
     /**
+     * @param name an 'identifier' like string (i.e. contains alphanums, and dots)
      * @return <code>null</code> if name cannot be split at a dot
      */
     private AreaReference parseArea(String name) {
@@ -323,6 +330,8 @@ public final class FormulaParser {
                 return null;
             }
         }
+        // This expression is only valid as an area ref, if the LHS and RHS of the dot(s) are both
+        // cell refs.  Otherwise, this expression must be a named range name
         String partA = name.substring(0, dotPos);
         if (!isValidCellReference(partA)) {
             return null;
@@ -336,12 +345,14 @@ public final class FormulaParser {
         return new AreaReference(topLeft, bottomRight);
     }
 
+    /**
+     * @return <code>true</code> if the specified name is a valid cell reference
+     */
     private static boolean isValidCellReference(String str) {
-        // TODO - exact rules for recognising cell references may be too complicated for regex 
-        return CELL_REFERENCE_PATTERN.matcher(str).matches();
+        return CellReference.classifyCellReference(str) == NameType.CELL;
     }
-    
-    
+
+
     /**
      * Note - Excel function names are 'case aware but not case sensitive'.  This method may end
      * up creating a defined name record in the workbook if the specified name is not an internal
