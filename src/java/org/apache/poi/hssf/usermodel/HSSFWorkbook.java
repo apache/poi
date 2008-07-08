@@ -360,28 +360,28 @@ public class HSSFWorkbook extends POIDocument
              log.log(POILogger.DEBUG, "convertLabelRecords exit");
      }
 
-	/**
-	 * Retrieves the current policy on what to do when
-	 *  getting missing or blank cells from a row.
-	 * The default is to return blank and null cells.
-	 *  {@link MissingCellPolicy}
-	 */
-	public MissingCellPolicy getMissingCellPolicy() {
-		return missingCellPolicy;
-	}
+    /**
+     * Retrieves the current policy on what to do when
+     *  getting missing or blank cells from a row.
+     * The default is to return blank and null cells.
+     *  {@link MissingCellPolicy}
+     */
+    public MissingCellPolicy getMissingCellPolicy() {
+        return missingCellPolicy;
+    }
 
-	/**
-	 * Sets the policy on what to do when
-	 *  getting missing or blank cells from a row.
-	 * This will then apply to all calls to 
-	 *  {@link HSSFRow.getCell()}. See
-	 *  {@link MissingCellPolicy}
-	 */
-	public void setMissingCellPolicy(MissingCellPolicy missingCellPolicy) {
-		this.missingCellPolicy = missingCellPolicy;
-	}
+    /**
+     * Sets the policy on what to do when
+     *  getting missing or blank cells from a row.
+     * This will then apply to all calls to 
+     *  {@link HSSFRow.getCell()}. See
+     *  {@link MissingCellPolicy}
+     */
+    public void setMissingCellPolicy(MissingCellPolicy missingCellPolicy) {
+        this.missingCellPolicy = missingCellPolicy;
+    }
 
-	/**
+    /**
      * sets the order of appearance for a given sheet.
      *
      * @param sheetname the name of the sheet to reorder
@@ -1020,11 +1020,11 @@ public class HSSFWorkbook extends POIDocument
                              String name, boolean italic, boolean strikeout,
                              short typeOffset, byte underline)
     {
-    	for (short i=0; i<=getNumberOfFonts(); i++) {
-    		// Remember - there is no 4!
-    		if(i == 4) continue;
-    		
-    		HSSFFont hssfFont = getFontAt(i);
+        for (short i=0; i<=getNumberOfFonts(); i++) {
+            // Remember - there is no 4!
+            if(i == 4) continue;
+            
+            HSSFFont hssfFont = getFontAt(i);
             if (hssfFont.getBoldweight() == boldWeight
                     && hssfFont.getColor() == color
                     && hssfFont.getFontHeight() == fontHeight
@@ -1056,19 +1056,17 @@ public class HSSFWorkbook extends POIDocument
      * @param idx  index number
      * @return HSSFFont at the index
      */
+    public HSSFFont getFontAt(short idx) {
+        if(fonts == null) fonts = new Hashtable();
 
-    public HSSFFont getFontAt(short idx)
-    {
-    	if(fonts == null) fonts = new Hashtable();
-    	
-    	// So we don't confuse users, give them back
-    	//  the same object every time, but create
-    	//  them lazily
-    	Short sIdx = Short.valueOf(idx);
-    	if(fonts.containsKey(sIdx)) {
-    		return (HSSFFont)fonts.get(sIdx);
-    	}
-    	
+        // So we don't confuse users, give them back
+        //  the same object every time, but create
+        //  them lazily
+        Short sIdx = new Short(idx);
+        if(fonts.containsKey(sIdx)) {
+            return (HSSFFont)fonts.get(sIdx);
+        }
+
         FontRecord font = workbook.getFontRecordAt(idx);
         HSSFFont retval = new HSSFFont(idx, font);
         fonts.put(sIdx, retval);
