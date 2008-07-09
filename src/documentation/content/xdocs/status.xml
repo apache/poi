@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">45348 - Tweaks to RVA formula logic</action>
            <action dev="POI-DEVELOPERS" type="fix">45354 - Fixed recognition of named ranges within formulas</action>
            <action dev="POI-DEVELOPERS" type="fix">45338 - Fix HSSFWorkbook to give you the same HSSFFont every time, and then fix it to find newly added fonts</action>
            <action dev="POI-DEVELOPERS" type="fix">45336 - Fix HSSFColor.getTripletHash()</action>
