@@ -262,18 +262,19 @@ public final class HSSFSheet {
     /**
      * used internally to refresh the "last row" when the last row is removed.
      */
-
-    private int findLastRow(int lastrow)
-    {
+    private int findLastRow(int lastrow) {
+        if (lastrow < 1) {
+            return -1;
+        }
         int rownum = lastrow - 1;
         HSSFRow r = getRow(rownum);
 
-        while (r == null && rownum > 0)
-        {
+        while (r == null && rownum > 0) {
             r = getRow(--rownum);
         }
-        if (r == null)
-          return -1;
+        if (r == null) {
+            return -1;
+        }
         return rownum;
     }
 
