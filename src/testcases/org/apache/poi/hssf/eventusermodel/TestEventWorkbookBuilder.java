@@ -134,7 +134,7 @@ public final class TestEventWorkbookBuilder extends TestCase {
 		fr = (FormulaRecord)mockListen._frecs.get(5);
 		assertEquals(6, fr.getRow());
 		assertEquals(0, fr.getColumn());
-		assertEquals("SUM('Sh3'!A1:A4)", FormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
+		assertEquals("SUM(Sh3!A1:A4)", FormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
 		
 		
 		// Now, load via Usermodel and re-check
@@ -142,7 +142,7 @@ public final class TestEventWorkbookBuilder extends TestCase {
 		POIFSFileSystem fs = new POIFSFileSystem(is);
 		HSSFWorkbook wb = new HSSFWorkbook(fs);
 		assertEquals("Sheet1!A1", wb.getSheetAt(0).getRow(1).getCell(0).getCellFormula());
-		assertEquals("SUM('Sh3'!A1:A4)", wb.getSheetAt(0).getRow(6).getCell(0).getCellFormula());
+		assertEquals("SUM(Sh3!A1:A4)", wb.getSheetAt(0).getRow(6).getCell(0).getCellFormula());
 	}
 	
 	private static final class MockHSSFListener implements HSSFListener {
