@@ -22,6 +22,7 @@ import junit.framework.TestSuite;
 
 import org.apache.poi.hssf.eventmodel.TestEventRecordFactory;
 import org.apache.poi.hssf.eventmodel.TestModelFactory;
+import org.apache.poi.hssf.eventusermodel.AllEventUserModelTests;
 import org.apache.poi.hssf.model.AllModelTests;
 import org.apache.poi.hssf.record.AllRecordTests;
 import org.apache.poi.hssf.usermodel.AllUserModelTests;
@@ -48,6 +49,7 @@ public final class HSSFTests {
         TestSuite suite = new TestSuite("Tests for org.apache.poi.hssf");
         // $JUnit-BEGIN$
 
+        suite.addTest(AllEventUserModelTests.suite());
         suite.addTest(AllModelTests.suite());
         suite.addTest(AllUserModelTests.suite());
         suite.addTest(AllRecordTests.suite());

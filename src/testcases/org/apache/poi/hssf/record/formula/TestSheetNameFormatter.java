@@ -71,6 +71,7 @@ public final class TestSheetNameFormatter extends TestCase {
 		confirmCellNameMatch("aa1", true);
 		confirmCellNameMatch("A1A", false);
 		confirmCellNameMatch("A1A1", false);
+		confirmCellNameMatch("Sh3", false);
 		confirmCellNameMatch("SALES20080101", false); // out of range
 	}
 	
