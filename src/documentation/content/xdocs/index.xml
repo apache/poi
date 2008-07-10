@@ -31,7 +31,7 @@
   </header>
 
   <body>
-    <section><title>POI 3.5.1 beta 1, and Office Open XML Support (2008-07-11)</title>
+    <section><title>POI 3.5.1 beta 1, and Office Open XML Support (2008-07-18)</title>
       <p>We are currently working to support the new Office Open XML
        file formats, such as XLSX and PPTX, which were introduced in
        Office 2007.</p>
