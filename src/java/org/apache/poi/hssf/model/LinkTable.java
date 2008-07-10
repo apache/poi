@@ -63,6 +63,8 @@ import org.apache.poi.hssf.record.SupBookRecord;
  * @author Josh Micich
  */
 final class LinkTable {
+	
+	
 	// TODO make this class into a record aggregate
 
 	private static final class CRNBlock {
@@ -233,13 +235,39 @@ final class LinkTable {
 		if (idx == -1) idx = findFirstRecordLocBySid(CountryRecord.sid);
 		int countNames = _definedNames.size();
 		_workbookRecordList.add(idx+countNames, name);
-
 	}
 
 	public void removeName(int namenum) {
 		_definedNames.remove(namenum);
 	}
 
+    /**
+     * checks if the given name is already included in the linkTable
+     */
+    public boolean nameAlreadyExists(NameRecord name)
+    {
+    	// Check to ensure no other names have the same case-insensitive name
+    	for ( int i = getNumNames()-1; i >=0; i-- ) {
+    		NameRecord rec = getNameRecord(i);
+    		if (rec != name) {
+    			if (isDuplicatedNames(name, rec))
+    				return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    private boolean isDuplicatedNames(NameRecord firstName, NameRecord lastName)
+    {
+    	return lastName.getNameText().equalsIgnoreCase(firstName.getNameText()) 
+    		&& isSameSheetNames(firstName, lastName);
+    }
+    private boolean isSameSheetNames(NameRecord firstName, NameRecord lastName)
+    {
+    	return lastName.getEqualsToIndexToSheet() == firstName.getEqualsToIndexToSheet();
+    }
+
+    
 	public short getIndexToSheet(short num) {
 		return _externSheetRecord.getREFRecordAt(num).getIndexToFirstSupBook();
 	}
