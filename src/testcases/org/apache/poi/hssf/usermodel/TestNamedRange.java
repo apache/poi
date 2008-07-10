@@ -17,11 +17,17 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * 
@@ -485,4 +491,57 @@ public final class TestNamedRange extends TestCase {
 			// expected during successful test
 		}
    }
+	
+	public void testRepeatingRowsAndColumsNames() throws Exception {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet();
+		
+		for (int rowItem = 0; rowItem < 10; rowItem++) {
+			HSSFRow r = sheet.createRow(rowItem);
+			for (int column = 0; column < 2; column++) {
+				HSSFCell cellItem = r.createCell((short) column);
+				cellItem.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cellItem.setCellValue(new HSSFRichTextString("Some value here"));
+				if (rowItem == 2) {
+					wb.setRepeatingRowsAndColumns(0, 0, 0, 0, 3 - 1);
+					sheet.createFreezePane(0, 3);
+				} 
+			}
+		}
+
+		assertEquals(2, wb.getNumberOfNames());
+		HSSFName nr1 = wb.getNameAt(0);
+		HSSFName nr2 = wb.getNameAt(1);
+		
+		assertEquals("Print_Titles", nr1.getNameName());
+		assertEquals("Sheet0!$A$1:$A$0,Sheet0!$A$1:$IV$3", nr1.getReference());
+		
+		assertEquals("Excel_Name_Record_Titles_1_1", nr2.getNameName());
+		assertEquals("Sheet0!$A$1:$A$0,Sheet0!$A$1:$IV$3", nr2.getReference());
+		
+		// Save and re-open
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		wb.write(baos);
+		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+		HSSFWorkbook nwb = new HSSFWorkbook(new POIFSFileSystem(bais));
+
+		assertEquals(2, nwb.getNumberOfNames());
+		nr1 = nwb.getNameAt(0);
+		nr2 = nwb.getNameAt(1);
+		
+		// TODO -
+		//  should these references really have been corrected?
+		//  and if so, why not also above?
+		assertEquals("Print_Titles", nr1.getNameName());
+		assertEquals("Sheet0!A:A,Sheet0!$A$1:$IV$3", nr1.getReference());
+		
+		assertEquals("Excel_Name_Record_Titles_1_1", nr2.getNameName());
+		assertEquals("Sheet0!A:A,Sheet0!$A$1:$IV$3", nr2.getReference());
+		
+		// In case you fancy checking in excel, to ensure it
+		//  won't complain about the file now
+		FileOutputStream fout = new FileOutputStream(File.createTempFile("POI-45126-", ".xls"));
+		wb.write(fout);
+		fout.close();
+	}
 }
