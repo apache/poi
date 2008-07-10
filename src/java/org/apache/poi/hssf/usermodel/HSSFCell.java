@@ -601,13 +601,28 @@ public class HSSFCell
             // Set the 'pre-evaluated result' for the formula 
             // note - formulas do not preserve text formatting.
             FormulaRecordAggregate fr = (FormulaRecordAggregate) record;
-            // must make new sr because fr.getStringRecord() may be null
-            StringRecord sr = new StringRecord(); 
-            sr.setString(value.getString()); // looses format
-            fr.setStringRecord(sr);
+            
+            // Save the string into a String Record, creating
+            //  one if required
+            StringRecord sr = fr.getStringRecord();
+            if(sr == null) {
+            	// Wasn't a string before, need a new one
+            	sr = new StringRecord();
+                fr.setStringRecord(sr);
+            }
+            
+            // Save, loosing the formatting
+            sr.setString(value.getString());
+            // Update our local cache to the un-formatted version
+            stringValue = new HSSFRichTextString(sr.getString());
+            
+            // All done
             return;
         }
 
+        // If we get here, we're not dealing with a formula,
+        //  so handle things as a normal rich text cell
+        
         if (cellType != CELL_TYPE_STRING) {
             setCellType(CELL_TYPE_STRING, false, row, col, styleIndex);
         }

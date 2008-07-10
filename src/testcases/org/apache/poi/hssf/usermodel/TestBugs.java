@@ -31,9 +31,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
-import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
 import org.apache.poi.hssf.util.Region;
@@ -1151,10 +1149,12 @@ public final class TestBugs extends TestCase {
     	s.createRow(0);
     	HSSFCell c1 = s.getRow(0).createCell((short)0);
     	HSSFCell c2 = s.getRow(0).createCell((short)1);
+    	HSSFCell c3 = s.getRow(0).createCell((short)2);
 
     	// As number and string
     	c1.setCellFormula("70164");
     	c2.setCellFormula("\"70164\"");
+    	c3.setCellFormula("\"90210\"");
     	
     	// Check the formulas
     	assertEquals("70164.0", c1.getCellFormula());
@@ -1165,20 +1165,31 @@ public final class TestBugs extends TestCase {
     	assertEquals("", c1.getRichStringCellValue().getString());
     	assertEquals(0.0, c2.getNumericCellValue(), 0.00001);
     	assertEquals("", c2.getRichStringCellValue().getString());
+    	assertEquals(0.0, c3.getNumericCellValue(), 0.00001);
+    	assertEquals("", c3.getRichStringCellValue().getString());
     	
-    	// Now evaluate
+    	// Try changing the cached value on one of the string
+    	//  formula cells, so we can see it updates properly
+    	c3.setCellValue(new HSSFRichTextString("test"));
+    	assertEquals(0.0, c3.getNumericCellValue(), 0.00001);
+    	assertEquals("test", c3.getRichStringCellValue().getString());
+    	
+    	
+    	// Now evaluate, they should all be changed
     	HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(s, wb);
     	eval.setCurrentRow(s.getRow(0));
     	eval.evaluateFormulaCell(c1);
     	eval.evaluateFormulaCell(c2);
+    	eval.evaluateFormulaCell(c3);
     	
-    	// Check
+    	// Check that the cells now contain
+    	//  the correct values
     	assertEquals(70164.0, c1.getNumericCellValue(), 0.00001);
     	assertEquals("", c1.getRichStringCellValue().getString());
     	assertEquals(0.0, c2.getNumericCellValue(), 0.00001);
-    	
-    	// TODO - why isn't this working?
-//    	assertEquals("70164", c2.getRichStringCellValue().getString());
+    	assertEquals("70164", c2.getRichStringCellValue().getString());
+    	assertEquals(0.0, c3.getNumericCellValue(), 0.00001);
+    	assertEquals("90210", c3.getRichStringCellValue().getString());
   
     	
     	// Write and read
@@ -1186,12 +1197,15 @@ public final class TestBugs extends TestCase {
     	HSSFSheet ns = nwb.getSheetAt(0);
     	HSSFCell nc1 = ns.getRow(0).getCell((short)0);
     	HSSFCell nc2 = ns.getRow(0).getCell((short)1);
+    	HSSFCell nc3 = ns.getRow(0).getCell((short)2);
     	
     	// Re-check
     	assertEquals(70164.0, nc1.getNumericCellValue(), 0.00001);
     	assertEquals("", nc1.getRichStringCellValue().getString());
     	assertEquals(0.0, nc2.getNumericCellValue(), 0.00001);
     	assertEquals("70164", nc2.getRichStringCellValue().getString());
+    	assertEquals(0.0, nc3.getNumericCellValue(), 0.00001);
+    	assertEquals("90210", nc3.getRichStringCellValue().getString());
     	
     	// Now check record level stuff too
     	ns.getSheet().setLoc(0);
@@ -1204,15 +1218,27 @@ public final class TestBugs extends TestCase {
     			if(fn == 0) {
     				assertEquals(70164.0, fr.getFormulaRecord().getValue(), 0.0001);
     				assertNull(fr.getStringRecord());
-    			} else {
+    			} else if (fn == 1) {
     				assertEquals(0.0, fr.getFormulaRecord().getValue(), 0.0001);
     				assertNotNull(fr.getStringRecord());
     				assertEquals("70164", fr.getStringRecord().getString());
+    			} else {
+    				assertEquals(0.0, fr.getFormulaRecord().getValue(), 0.0001);
+    				assertNotNull(fr.getStringRecord());
+    				assertEquals("90210", fr.getStringRecord().getString());
     			}
     			
     			fn++;
     		}
     	}
-    	assertEquals(2, fn);
+    	assertEquals(3, fn);
+    }
+    
+    /**
+     * Problem with "Vector Rows"
+     * @throws Exception
+     */
+    public void test43623() throws Exception {
+    	
     }
 }
