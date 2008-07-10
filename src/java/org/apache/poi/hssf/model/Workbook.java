@@ -105,6 +105,8 @@ public class Workbook implements Model
 
     private static POILogger   log = POILogFactory.getLogger(Workbook.class);
 
+    protected static final String EXCEL_REPEATING_NAME_PREFIX_ = "Excel_Name_Record_Titles_";
+
     /**
      * Creates new Workbook with no intitialization --useless right now
      * @see #createWorkbook(List)
@@ -1918,13 +1920,20 @@ public class Workbook implements Model
      */
     public NameRecord addName(NameRecord name)
     {
-        
-        getOrCreateLinkTable().addName(name);
+    	
+        LinkTable linkTable = getOrCreateLinkTable();
+        if(linkTable.nameAlreadyExists(name)) {
+        	throw new IllegalArgumentException(
+                "You are trying to assign a duplicated name record: "
+                + name.getNameText());
+        }
+        linkTable.addName(name);
 
         return name;
     }
-
-    /**Generates a NameRecord to represent a built-in region
+    
+    /**
+     * Generates a NameRecord to represent a built-in region
      * @return a new NameRecord unless the index is invalid
      */
     public NameRecord createBuiltInName(byte builtInName, int index)
@@ -1933,9 +1942,21 @@ public class Workbook implements Model
             throw new IllegalArgumentException("Index is not valid ["+index+"]");
         
         NameRecord name = new NameRecord(builtInName, (short)(index));
-                
-        addName(name);
         
+        String prefix = EXCEL_REPEATING_NAME_PREFIX_ + index + "_";
+        int cont = 0;
+        while(linkTable.nameAlreadyExists(name)) {
+        	cont++;
+        	String altNameName = prefix + cont;
+        	
+        	// It would be better to set a different builtInName here.
+        	// It does not seem possible, so we create it as a 
+        	//  non built-in name from this point on
+        	name = new NameRecord();
+        	name.setNameText(altNameName);
+            name.setNameTextLength((byte)altNameName.length());
+        }
+        addName(name);
         return name;
     }
 

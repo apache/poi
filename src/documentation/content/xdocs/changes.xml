@@ -50,6 +50,8 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">45126 - Avoid generating multiple NamedRanges with the same name, which Excel dislikes</action>
+           <action dev="POI-DEVELOPERS" type="fix">Fix cell.getRichStringCellValue() for formula cells with string results</action>
            <action dev="POI-DEVELOPERS" type="fix">45365 - Handle more excel number formatting rules in FormatTrackingHSSFListener / XLS2CSVmra</action>
            <action dev="POI-DEVELOPERS" type="fix">45373 - Improve the performance of HSSFSheet.shiftRows</action>
            <action dev="POI-DEVELOPERS" type="fix">45367 - Fixed bug when last row removed from sheet is row zero</action>
