@@ -347,18 +347,25 @@ public final class HSSFSheet {
     }
 
     /**
-     * gets the first row on the sheet
-     * @return the number of the first logical row on the sheet
+     * Gets the first row on the sheet
+     * @return the number of the first logical row on the sheet, zero based
      */
-
     public int getFirstRowNum()
     {
         return firstrow;
     }
 
     /**
-     * gets the last row on the sheet
-     * @return last row contained n this sheet.
+     * Gets the number last row on the sheet.
+     * Owing to idiosyncrasies in the excel file
+     *  format, if the result of calling this method
+     *  is zero, you can't tell if that means there 
+     *  are zero rows on the sheet, or one at
+     *  position zero. For that case, additionally
+     *  call {@link #getPhysicalNumberOfRows()} to
+     *  tell if there is a row at position zero
+     *  or not. 
+     * @return the number of the last row contained in this sheet, zero based.
      */
 
     public int getLastRowNum()
