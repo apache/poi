@@ -92,6 +92,13 @@ public final class CellReference {
         _rowIndex = Integer.parseInt(rowRef)-1; // -1 to convert 1-based to zero-based
     }
 
+    public CellReference(int pRow, int pCol) {
+    	this(pRow, pCol, false, false);
+    }
+    public CellReference(int pRow, short pCol) {
+    	this(pRow, (int)pCol, false, false);
+    }
+
     public CellReference(int pRow, int pCol, boolean pAbsRow, boolean pAbsCol) {
         this(null, pRow, pCol, pAbsRow, pAbsCol);
     }
@@ -128,20 +135,19 @@ public final class CellReference {
      * ALPHA-26 number format to 0-based base 10.
      */
     private int convertColStringToNum(String ref) {
-        int lastIx = ref.length()-1;
-        int retval=0;
-        int pos = 0;
-
-        for (int k = lastIx; k > -1; k--) {
-            char thechar = ref.charAt(k);
-            if ( pos == 0) {
-                retval += (Character.getNumericValue(thechar)-9);
-            } else {
-                retval += (Character.getNumericValue(thechar)-9) * (pos * 26);
-            }
-            pos++;
-        }
-        return retval-1;
+		int lastIx = ref.length()-1;
+		int retval=0;
+		int pos = 0;
+		
+		for (int k = lastIx; k > -1; k--) {
+			char thechar = ref.charAt(k);
+			// Character.getNumericValue() returns the values
+			//  10-35 for the letter A-Z
+			int shift = (int)Math.pow(26, pos);
+			retval += (Character.getNumericValue(thechar)-9) * shift;
+			pos++;
+		}
+		return retval-1;
     }
 
     /**
@@ -349,19 +355,24 @@ public final class CellReference {
      * eg column #3 -> D
      */
     protected static String convertNumToColString(int col) {
-        String retval = null;
-        int mod = col % 26;
-        int div = col / 26;
-        char small=(char)(mod + 65);
-        char big = (char)(div + 64);
-
-        if (div == 0) {
-            retval = ""+small;
-        } else {
-            retval = ""+big+""+small;
-        }
-
-        return retval;
+		// Excel counts column A as the 1st column, we
+		//  treat it as the 0th one
+		int excelColNum = col + 1;
+		
+		String colRef = "";
+		int colRemain = excelColNum;
+		
+		while(colRemain > 0) {
+			int thisPart = colRemain % 26;
+			if(thisPart == 0) { thisPart = 26; }
+			colRemain = (colRemain - thisPart) / 26;
+			
+			// The letter A is at 65
+			char colChar = (char)(thisPart+64);
+			colRef = colChar + colRef;
+		}
+		
+		return colRef;
     }
 
     /**
@@ -391,6 +402,22 @@ public final class CellReference {
         sb.append("]");
         return sb.toString();
     }
+
+	/**
+	 * Returns the three parts of the cell reference, the
+	 *  Sheet name (or null if none supplied), the 1 based
+	 *  row number, and the A based column letter.
+	 * This will not include any markers for absolute
+	 *  references, so use {@link #formatAsString()}
+	 *  to properly turn references into strings. 
+	 */
+	public String[] getCellRefParts() {
+		return new String[] {
+				_sheetName,
+				Integer.toString(_rowIndex+1),
+				convertNumToColString(_colIndex)
+		};
+	}
 
     /**
      * Appends cell reference with '$' markers for absolute values as required.
