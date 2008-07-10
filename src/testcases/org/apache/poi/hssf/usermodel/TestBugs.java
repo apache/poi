@@ -1235,10 +1235,41 @@ public final class TestBugs extends TestCase {
     }
     
     /**
-     * Problem with "Vector Rows"
-     * @throws Exception
+     * Problem with "Vector Rows", eg a whole
+     *  column which is set to the result of
+     *  {=sin(B1:B9)}(9,1), so that each cell is
+     *  shown to have the contents
+     *  {=sin(B1:B9){9,1)[rownum][0]
+     * In this sample file, the vector column
+     *  is C, and the data column is B.
+     *  
+     * For now, blows up with an exception from ExtPtg
+     *  Expected ExpPtg to be converted from Shared to Non-Shared...
      */
-    public void test43623() throws Exception {
-    	
+    public void DISABLEDtest43623() throws Exception {
+        HSSFWorkbook wb = openSample("43623.xls");
+        assertEquals(1, wb.getNumberOfSheets());
+        
+        HSSFSheet s1 = wb.getSheetAt(0);
+        
+        HSSFCell c1 = s1.getRow(0).getCell(2);
+        HSSFCell c2 = s1.getRow(1).getCell(2);
+        HSSFCell c3 = s1.getRow(2).getCell(2);
+        
+        // These formula contents are a guess...
+        assertEquals("{=sin(B1:B9){9,1)[0][0]", c1.getCellFormula());
+        assertEquals("{=sin(B1:B9){9,1)[1][0]", c2.getCellFormula());
+        assertEquals("{=sin(B1:B9){9,1)[2][0]", c3.getCellFormula());
+        
+        // Save and re-open, ensure it still works
+    	HSSFWorkbook nwb = writeOutAndReadBack(wb);
+    	HSSFSheet ns1 = nwb.getSheetAt(0);
+        HSSFCell nc1 = ns1.getRow(0).getCell(2);
+        HSSFCell nc2 = ns1.getRow(1).getCell(2);
+        HSSFCell nc3 = ns1.getRow(2).getCell(2);
+        
+        assertEquals("{=sin(B1:B9){9,1)[0][0]", nc1.getCellFormula());
+        assertEquals("{=sin(B1:B9){9,1)[1][0]", nc2.getCellFormula());
+        assertEquals("{=sin(B1:B9){9,1)[2][0]", nc3.getCellFormula());
     }
 }
