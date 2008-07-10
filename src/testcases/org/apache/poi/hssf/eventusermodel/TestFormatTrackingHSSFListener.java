@@ -24,6 +24,9 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 /**
@@ -31,16 +34,17 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  */
 public final class TestFormatTrackingHSSFListener extends TestCase {
 	private FormatTrackingHSSFListener listener;
-	
-	public void setUp() {
+	private MockHSSFListener mockListen;
+
+	private void processFile(String filename) throws Exception {
 		HSSFRequest req = new HSSFRequest();
-		MockHSSFListener mockListen = new MockHSSFListener();
+		mockListen = new MockHSSFListener();
 		listener = new FormatTrackingHSSFListener(mockListen);
 		req.addListenerForAllRecords(listener);
 		
 		HSSFEventFactory factory = new HSSFEventFactory();
 		try {
-			InputStream is = HSSFTestDataSamples.openSampleFileStream("MissingBits.xls");
+			InputStream is = HSSFTestDataSamples.openSampleFileStream(filename);
 			POIFSFileSystem fs = new POIFSFileSystem(is);
 			factory.processWorkbookEvents(req, fs);
 		} catch (IOException e) {
@@ -49,9 +53,40 @@ public final class TestFormatTrackingHSSFListener extends TestCase {
 	} 
 	
 	public void testFormats() throws Exception {
+		processFile("MissingBits.xls");
+		
 		assertEquals("_(*#,##0_);_(*(#,##0);_(* \"-\"_);_(@_)", listener.getFormatString(41));
 		assertEquals("_($*#,##0_);_($*(#,##0);_($* \"-\"_);_(@_)", listener.getFormatString(42));
 		assertEquals("_(*#,##0.00_);_(*(#,##0.00);_(*\"-\"??_);_(@_)", listener.getFormatString(43));
+	}
+	
+	/**
+	 * Ensure that all number and formula records can be
+	 *  turned into strings without problems
+	 */
+	public void testTurnToString() throws Exception {
+		processFile("45365.xls");
+		
+		for(int i=0; i<mockListen._records.size(); i++) {
+			Record r = (Record)mockListen._records.get(i);
+			CellValueRecordInterface cvr = null;
+			
+			if(r instanceof NumberRecord) {
+				cvr = (CellValueRecordInterface)r;
+			}
+			if(r instanceof FormulaRecord) {
+				cvr = (CellValueRecordInterface)r;
+			}
+			
+			if(cvr != null) {
+				// Should always give us a string 
+				String s = listener.formatNumberDateCell(cvr);
+				assertNotNull(s);
+				assertTrue(s.length() > 0);
+			}
+		}
+		
+		// TODO - test some specific format strings
 	}
 	
 	private static final class MockHSSFListener implements HSSFListener {
