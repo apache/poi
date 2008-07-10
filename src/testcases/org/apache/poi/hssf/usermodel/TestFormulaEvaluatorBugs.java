@@ -294,4 +294,70 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 			throw e;
 		}
 	}
+	
+	/**
+	 * Apparently, each subsequent call takes longer, which is very
+	 *  odd.
+	 * We think it's because the formulas are recursive and crazy
+	 */
+	public void DISABLEDtestSlowEvaluate45376() throws Exception {
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("45376.xls");
+		
+		final String SHEET_NAME = "Eingabe";
+        final int row = 6;
+        final HSSFSheet sheet = wb.getSheet(SHEET_NAME);
+        
+        int firstCol = 4;
+        int lastCol = 14;
+        long[] timings = new long[lastCol-firstCol+1];
+        long[] rtimings = new long[lastCol-firstCol+1];
+        
+        long then, now;
+
+        final HSSFRow excelRow = sheet.getRow(row);
+        for(int i = firstCol; i <= lastCol; i++) {
+             final HSSFCell excelCell = excelRow.getCell(i);
+             final HSSFFormulaEvaluator evaluator = new
+                 HSSFFormulaEvaluator(sheet, wb);
+
+             evaluator.setCurrentRow(excelRow);
+             
+             now = System.currentTimeMillis();
+             evaluator.evaluate(excelCell);
+             then = System.currentTimeMillis();
+             timings[i-firstCol] = (then-now);
+             System.err.println("Col " + i + " took " + (then-now) + "ms");
+        }
+        for(int i = lastCol; i >= firstCol; i--) {
+            final HSSFCell excelCell = excelRow.getCell(i);
+            final HSSFFormulaEvaluator evaluator = new
+                HSSFFormulaEvaluator(sheet, wb);
+
+            evaluator.setCurrentRow(excelRow);
+            
+            now = System.currentTimeMillis();
+            evaluator.evaluate(excelCell);
+            then = System.currentTimeMillis();
+            rtimings[i-firstCol] = (then-now);
+            System.err.println("Col " + i + " took " + (then-now) + "ms");
+       }
+        
+        // The timings for each should be about the same
+        long avg = 0;
+        for(int i=0; i<timings.length; i++) {
+        	avg += timings[i];
+        }
+        avg = (long)( ((double)avg) / timings.length );
+        
+        // Warn if any took more then 1.5 the average
+        // TODO - replace with assert or similar
+        for(int i=0; i<timings.length; i++) {
+        	if(timings[i] > 1.5*avg) {
+        		System.err.println("Doing col " + (i+firstCol) + 
+        				" took " + timings[i] + "ms, vs avg " + 
+        				avg + "ms"
+        		);
+        	}
+        }
+	}
 }
