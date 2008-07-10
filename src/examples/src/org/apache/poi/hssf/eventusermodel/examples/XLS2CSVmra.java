@@ -20,10 +20,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.apache.poi.hssf.eventusermodel.FormatTrackingHSSFListener;
 import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
@@ -37,7 +33,6 @@ import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.BoolErrRecord;
-import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.LabelRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
@@ -47,7 +42,6 @@ import org.apache.poi.hssf.record.RKRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SSTRecord;
 import org.apache.poi.hssf.record.StringRecord;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
@@ -180,7 +174,7 @@ public class XLS2CSVmra implements HSSFListener {
     	        	nextRow = frec.getRow();
     	        	nextColumn = frec.getColumn();
         		} else {
-        			thisStr = formatNumberDateCell(frec, frec.getValue());
+        			thisStr = formatListener.formatNumberDateCell(frec);
         		}
         	} else {
         		thisStr = '"' + 
@@ -231,7 +225,7 @@ public class XLS2CSVmra implements HSSFListener {
             thisColumn = numrec.getColumn();
             
             // Format
-            thisStr = formatNumberDateCell(numrec, numrec.getValue());
+            thisStr = formatListener.formatNumberDateCell(numrec);
             break;
         case RKRecord.sid:
         	RKRecord rkrec = (RKRecord) record;
@@ -289,44 +283,6 @@ public class XLS2CSVmra implements HSSFListener {
 			output.println();
 		}
 	}
-	
-	/**
-	 * Formats a number or date cell, be that a real number, or the 
-	 *  answer to a formula
-	 */
-	private String formatNumberDateCell(CellValueRecordInterface cell, double value) {
-        // Get the built in format, if there is one
-		int formatIndex = formatListener.getFormatIndex(cell);
-		String formatString = formatListener.getFormatString(cell);
-		
-		if(formatString == null) {
-            return Double.toString(value);
-        } else {
-        	// Is it a date?
-        	if(HSSFDateUtil.isADateFormat(formatIndex,formatString) &&
-        			HSSFDateUtil.isValidExcelDate(value)) {
-        		// Java wants M not m for month
-        		formatString = formatString.replace('m','M');
-        		// Change \- into -, if it's there
-        		formatString = formatString.replaceAll("\\\\-","-");
-        		
-        		// Format as a date
-        		Date d = HSSFDateUtil.getJavaDate(value, false);
-        		DateFormat df = new SimpleDateFormat(formatString);
-	            return df.format(d);
-        	} else {
-        		if(formatString == "General") {
-        			// Some sort of wierd default
-        			return Double.toString(value);
-        		}
-        		
-        		// Format as a number
-	            DecimalFormat df = new DecimalFormat(formatString);
-	            return df.format(value);
-        	}
-        }
-	}
-
 	
 	public static void main(String[] args) throws Exception {
 		if(args.length < 1) {
