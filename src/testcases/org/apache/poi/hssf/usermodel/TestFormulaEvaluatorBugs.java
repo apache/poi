@@ -297,7 +297,8 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 	
 	/**
 	 * Apparently, each subsequent call takes longer, which is very
-	 *  odd
+	 *  odd.
+	 * We think it's because the formulas are recursive and crazy
 	 */
 	public void DISABLEDtestSlowEvaluate45376() throws Exception {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("45376.xls");
@@ -309,7 +310,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
         int firstCol = 4;
         int lastCol = 14;
         long[] timings = new long[lastCol-firstCol+1];
-        long[] stimings = new long[lastCol-firstCol+1];
+        long[] rtimings = new long[lastCol-firstCol+1];
         
         long then, now;
 
@@ -327,6 +328,19 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
              timings[i-firstCol] = (then-now);
              System.err.println("Col " + i + " took " + (then-now) + "ms");
         }
+        for(int i = lastCol; i >= firstCol; i--) {
+            final HSSFCell excelCell = excelRow.getCell(i);
+            final HSSFFormulaEvaluator evaluator = new
+                HSSFFormulaEvaluator(sheet, wb);
+
+            evaluator.setCurrentRow(excelRow);
+            
+            now = System.currentTimeMillis();
+            evaluator.evaluate(excelCell);
+            then = System.currentTimeMillis();
+            rtimings[i-firstCol] = (then-now);
+            System.err.println("Col " + i + " took " + (then-now) + "ms");
+       }
         
         // The timings for each should be about the same
         long avg = 0;
