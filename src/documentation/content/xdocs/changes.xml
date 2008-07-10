@@ -50,6 +50,11 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">45365 - Handle more excel number formatting rules in FormatTrackingHSSFListener / XLS2CSVmra</action>
+           <action dev="POI-DEVELOPERS" type="fix">45373 - Improve the performance of HSSFSheet.shiftRows</action>
+           <action dev="POI-DEVELOPERS" type="fix">45367 - Fixed bug when last row removed from sheet is row zero</action>
+           <action dev="POI-DEVELOPERS" type="fix">45348 - Tweaks to RVA formula logic</action>
+           <action dev="POI-DEVELOPERS" type="fix">45354 - Fixed recognition of named ranges within formulas</action>
            <action dev="POI-DEVELOPERS" type="fix">45338 - Fix HSSFWorkbook to give you the same HSSFFont every time, and then fix it to find newly added fonts</action>
            <action dev="POI-DEVELOPERS" type="fix">45336 - Fix HSSFColor.getTripletHash()</action>
            <action dev="POI-DEVELOPERS" type="fix">45334 - Fixed formula parser to handle dots in identifiers</action>

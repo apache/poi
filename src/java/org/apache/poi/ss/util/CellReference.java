@@ -17,17 +17,26 @@
 
 package org.apache.poi.ss.util;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.poi.hssf.record.formula.SheetNameFormatter;
 
 /**
- * Common convertion functions between Excel style A1, C27 style
- *  cell references, and POI usermodel style row=0, column=0
- *  style references.
- * Applys for both HSSF and XSSF.
+ *
  * @author  Avik Sengupta
  * @author  Dennis Doubleday (patch to seperateRowColumns())
  */
 public class CellReference {
+	/**
+	 * Used to classify identifiers found in formulas as cell references or not.
+	 */
+	public static final class NameType {
+		public static final int CELL = 1;
+		public static final int NAMED_RANGE = 2;
+		public static final int BAD_CELL_OR_NAMED_RANGE = -1;
+	}
+
     /** The character ($) that signifies a row or column value is absolute instead of relative */ 
     private static final char ABSOLUTE_REFERENCE_MARKER = '$';
     /** The character (!) that separates sheet names from cell references */ 
@@ -35,6 +44,20 @@ public class CellReference {
     /** The character (') used to quote sheet names when they contain special characters */
     private static final char SPECIAL_NAME_DELIMITER = '\'';
     
+    /**
+     * Matches a run of letters followed by a run of digits.  The run of letters is group 1 and the
+     * run of digits is group 2.  Each group may optionally be prefixed with a single '$'.
+     */
+	private static final Pattern CELL_REF_PATTERN = Pattern.compile("\\$?([A-Za-z]+)\\$?([0-9]+)");
+	/**
+	 * Named range names must start with a letter or underscore.  Subsequent characters may include
+	 * digits or dot.  (They can even end in dot).
+	 */
+	private static final Pattern NAMED_RANGE_NAME_PATTERN = Pattern.compile("[_A-Za-z][_.A-Za-z0-9]*");
+	private static final String BIFF8_LAST_COLUMN = "IV";
+	private static final int BIFF8_LAST_COLUMN_TEXT_LEN = BIFF8_LAST_COLUMN.length();
+	private static final String BIFF8_LAST_ROW = String.valueOf(0x10000);
+	private static final int BIFF8_LAST_ROW_TEXT_LEN = BIFF8_LAST_ROW.length();
 
     private final int _rowIndex;
     private final int _colIndex;
@@ -70,13 +93,13 @@ public class CellReference {
         _rowIndex = Integer.parseInt(rowRef)-1; // -1 to convert 1-based to zero-based
     }
 
-    /**
-     * Creates a cell reference for the given row and cell.
-     * Assumes these references are relative
-     */
-    public CellReference(int row, int col) {
-    	this(row, col, false, false);
+    public CellReference(int pRow, int pCol) {
+    	this(pRow, pCol, false, false);
     }
+    public CellReference(int pRow, short pCol) {
+    	this(pRow, (int)pCol, false, false);
+    }
+
     public CellReference(int pRow, int pCol, boolean pAbsRow, boolean pAbsCol) {
         this(null, pRow, pCol, pAbsRow, pAbsCol);
     }
@@ -97,7 +120,7 @@ public class CellReference {
     }
 
     public int getRow(){return _rowIndex;}
-    public int getCol(){return _colIndex;}
+    public short getCol(){return (short) _colIndex;}
     public boolean isRowAbsolute(){return _isRowAbs;}
     public boolean isColAbsolute(){return _isColAbs;}
     /**
@@ -111,27 +134,148 @@ public class CellReference {
     /**
      * takes in a column reference portion of a CellRef and converts it from
      * ALPHA-26 number format to 0-based base 10.
-     * ALPHA-26 goes A to Z, then AA to AZ, BA to BZ, ..., ZA to ZZ, 
-     *  AAA to AAZ, ABA to ABZ, ..., AZA to AZZ, BAA to BAZ etc
      */
     private int convertColStringToNum(String ref) {
-        int lastIx = ref.length()-1;
-        int retval=0;
-        int pos = 0;
-
-        for (int k = lastIx; k > -1; k--) {
-            char thechar = ref.charAt(k);
-            // Character.getNumericValue() returns the values
-            //  10-35 for the letter A-Z
-            int shift = (int)Math.pow(26, pos);
-            retval += (Character.getNumericValue(thechar)-9) * shift;
-            pos++;
-        }
-        return retval-1;
+		int lastIx = ref.length()-1;
+		int retval=0;
+		int pos = 0;
+		
+		for (int k = lastIx; k > -1; k--) {
+			char thechar = ref.charAt(k);
+			// Character.getNumericValue() returns the values
+			//  10-35 for the letter A-Z
+			int shift = (int)Math.pow(26, pos);
+			retval += (Character.getNumericValue(thechar)-9) * shift;
+			pos++;
+		}
+		return retval-1;
     }
 
-
     /**
+     * Classifies an identifier as either a simple (2D) cell reference or a named range name
+     * @return one of the values from <tt>NameType</tt> 
+     */
+    public static int classifyCellReference(String str) {
+    	int len = str.length();
+    	if (len < 1) {
+    		throw new IllegalArgumentException("Empty string not allowed");
+    	}
+    	char firstChar = str.charAt(0);
+    	switch (firstChar) {
+        	case ABSOLUTE_REFERENCE_MARKER:
+        	case '.':
+        	case '_':
+        		break;
+        	default:
+        		if (!Character.isLetter(firstChar)) {
+            		throw new IllegalArgumentException("Invalid first char (" + firstChar 
+            				+ ") of cell reference or named range.  Letter expected");
+            	}
+    	}
+    	if (!Character.isDigit(str.charAt(len-1))) {
+    		// no digits at end of str
+    		return validateNamedRangeName(str);
+    	}
+    	Matcher cellRefPatternMatcher = CELL_REF_PATTERN.matcher(str);
+    	if (!cellRefPatternMatcher.matches()) {
+    		return validateNamedRangeName(str);
+    	}
+    	String lettersGroup = cellRefPatternMatcher.group(1);
+    	String digitsGroup = cellRefPatternMatcher.group(2);
+    	if (cellReferenceIsWithinRange(lettersGroup, digitsGroup)) {
+    		// valid cell reference
+    		return NameType.CELL;
+    	}
+    	// If str looks like a cell reference, but is out of (row/col) range, it is a valid
+    	// named range name
+    	// This behaviour is a little weird.  For example, "IW123" is a valid named range name
+    	// because the column "IW" is beyond the maximum "IV".  Note - this behaviour is version
+    	// dependent.  In Excel 2007, "IW123" is not a valid named range name.
+    	if (str.indexOf(ABSOLUTE_REFERENCE_MARKER) >= 0) {
+    		// Of course, named range names cannot have '$'
+    		return NameType.BAD_CELL_OR_NAMED_RANGE;
+    	}
+    	return NameType.NAMED_RANGE;
+    }
+
+    private static int validateNamedRangeName(String str) {
+		if (!NAMED_RANGE_NAME_PATTERN.matcher(str).matches()) {
+			return NameType.BAD_CELL_OR_NAMED_RANGE;
+		}
+		return NameType.NAMED_RANGE;
+		
+	}
+    
+    
+	/**
+	 * Used to decide whether a name of the form "[A-Z]*[0-9]*" that appears in a formula can be 
+	 * interpreted as a cell reference.  Names of that form can be also used for sheets and/or
+	 * named ranges, and in those circumstances, the question of whether the potential cell 
+	 * reference is valid (in range) becomes important.
+	 * <p/>
+	 * Note - that the maximum sheet size varies across Excel versions:
+	 * <p/>
+	 * <blockquote><table border="0" cellpadding="1" cellspacing="0" 
+	 *                 summary="Notable cases.">
+	 *   <tr><th>Version&nbsp;&nbsp;</th><th>File Format&nbsp;&nbsp;</th>
+	 *   	<th>Last Column&nbsp;&nbsp;</th><th>Last Row</th></tr>
+	 *   <tr><td>97-2003</td><td>BIFF8</td><td>"IV" (2^8)</td><td>65536 (2^14)</td></tr>
+	 *   <tr><td>2007</td><td>BIFF12</td><td>"XFD" (2^14)</td><td>1048576 (2^20)</td></tr>
+	 * </table></blockquote>
+	 * POI currently targets BIFF8 (Excel 97-2003), so the following behaviour can be observed for
+	 * this method:
+	 * <blockquote><table border="0" cellpadding="1" cellspacing="0" 
+	 *                 summary="Notable cases.">
+	 *   <tr><th>Input&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+	 *   	<th>Result&nbsp;</th></tr>
+	 *   <tr><td>"A", "1"</td><td>true</td></tr>
+	 *   <tr><td>"a", "111"</td><td>true</td></tr>
+	 *   <tr><td>"A", "65536"</td><td>true</td></tr>
+	 *   <tr><td>"A", "65537"</td><td>false</td></tr>
+	 *   <tr><td>"iv", "1"</td><td>true</td></tr>
+	 *   <tr><td>"IW", "1"</td><td>false</td></tr>
+	 *   <tr><td>"AAA", "1"</td><td>false</td></tr>
+	 *   <tr><td>"a", "111"</td><td>true</td></tr>
+	 *   <tr><td>"Sheet", "1"</td><td>false</td></tr>
+	 * </table></blockquote>
+	 * 
+	 * @param colStr a string of only letter characters
+	 * @param rowStr a string of only digit characters
+	 * @return <code>true</code> if the row and col parameters are within range of a BIFF8 spreadsheet.
+	 */
+	public static boolean cellReferenceIsWithinRange(String colStr, String rowStr) {
+		int numberOfLetters = colStr.length();
+		if(numberOfLetters > BIFF8_LAST_COLUMN_TEXT_LEN) {
+			// "Sheet1" case etc
+			return false; // that was easy
+		}
+		int nDigits = rowStr.length();
+		if(nDigits > BIFF8_LAST_ROW_TEXT_LEN) {
+			return false; 
+		}
+		if(numberOfLetters == BIFF8_LAST_COLUMN_TEXT_LEN) {
+			if(colStr.toUpperCase().compareTo(BIFF8_LAST_COLUMN) > 0) {
+				return false;
+			}
+		} else {
+			// apparent column name has less chars than max
+			// no need to check range
+		}
+		
+		if(nDigits == BIFF8_LAST_ROW_TEXT_LEN) {
+			// ASCII comparison is valid if digit count is same
+			if(rowStr.compareTo(BIFF8_LAST_ROW) > 0) {
+				return false;
+			}
+		} else {
+			// apparent row has less chars than max
+			// no need to check range
+		}
+		
+		return true;
+	}
+
+	/**
      * Separates the row from the columns and returns an array of three Strings.  The first element
      * is the sheet name. Only the first element may be null.  The second element in is the column 
      * name still in ALPHA-26 number format.  The third element is the row.
@@ -212,24 +356,24 @@ public class CellReference {
      * eg column #3 -> D
      */
     protected static String convertNumToColString(int col) {
-    	// Excel counts column A as the 1st column, we
-    	//  treat it as the 0th one
-        int excelColNum = col + 1;
-        
-        String colRef = "";
-        int colRemain = excelColNum;
-        
-        while(colRemain > 0) {
-        	int thisPart = colRemain % 26;
-        	if(thisPart == 0) { thisPart = 26; }
-        	colRemain = (colRemain - thisPart) / 26;
-        	
-        	// The letter A is at 65
-        	char colChar = (char)(thisPart+64);
-        	colRef = colChar + colRef; 
-        }
-
-        return colRef;
+		// Excel counts column A as the 1st column, we
+		//  treat it as the 0th one
+		int excelColNum = col + 1;
+		
+		String colRef = "";
+		int colRemain = excelColNum;
+		
+		while(colRemain > 0) {
+			int thisPart = colRemain % 26;
+			if(thisPart == 0) { thisPart = 26; }
+			colRemain = (colRemain - thisPart) / 26;
+			
+			// The letter A is at 65
+			char colChar = (char)(thisPart+64);
+			colRef = colChar + colRef;
+		}
+		
+		return colRef;
     }
 
     /**
@@ -260,21 +404,21 @@ public class CellReference {
         return sb.toString();
     }
     
-    /**
-     * Returns the three parts of the cell reference, the
-     *  Sheet name (or null if none supplied), the 1 based
-     *  row number, and the A based column letter.
-     * This will not include any markers for absolute
-     *  references, so use {@link #formatAsString()}
-     *  to properly turn references into strings. 
-     */
-    public String[] getCellRefParts() {
-    	return new String[] {
-    		_sheetName,
-    		Integer.toString(_rowIndex+1),
-    		convertNumToColString(_colIndex)
-    	};
-    }
+	/**
+	 * Returns the three parts of the cell reference, the
+	 *  Sheet name (or null if none supplied), the 1 based
+	 *  row number, and the A based column letter.
+	 * This will not include any markers for absolute
+	 *  references, so use {@link #formatAsString()}
+	 *  to properly turn references into strings. 
+	 */
+	public String[] getCellRefParts() {
+		return new String[] {
+				_sheetName,
+				Integer.toString(_rowIndex+1),
+				convertNumToColString(_colIndex)
+		};
+	}
 
     /**
      * Appends cell reference with '$' markers for absolute values as required.

@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.util;
 
 import junit.framework.Test;
@@ -28,12 +28,13 @@ import junit.framework.TestSuite;
 public class AllHSSFUtilTests {
 	
 	public static Test suite() {
-		TestSuite result = new TestSuite("Tests for org.apache.poi.hssf.util");
-        result.addTestSuite(TestAreaReference.class);
-        result.addTestSuite(TestCellReference.class);
-        result.addTestSuite(TestRangeAddress.class);
-        result.addTestSuite(TestRKUtil.class);
-        result.addTestSuite(TestSheetReferences.class);
+		TestSuite result = new TestSuite(AllHSSFUtilTests.class.getName());
+		result.addTestSuite(TestAreaReference.class);
+		result.addTestSuite(TestCellReference.class);
+		result.addTestSuite(TestHSSFColor.class);
+		result.addTestSuite(TestRangeAddress.class);
+		result.addTestSuite(TestRKUtil.class);
+		result.addTestSuite(TestSheetReferences.class);
 		return result;
 	}
 }

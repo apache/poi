@@ -187,6 +187,19 @@ public final class HSSFRow implements Comparable, Row {
             row.setFirstCol(findFirstCell(row.getFirstCol()));
         }
     }
+    
+    /**
+     * Removes all the cells from the row, and their
+     *  records too.
+     */
+    protected void removeAllCells() {
+    	for(int i=0; i<cells.length; i++) {
+    		if(cells[i] != null) {
+    			removeCell(cells[i], true);
+    		}
+    	}
+    	cells=new HSSFCell[INITIAL_CAPACITY];
+    }
 
     /**
      * create a high level HSSFCell object from an existing low level record.  Should

@@ -71,11 +71,16 @@ final class OperandClassTransformer {
 						+ _formulaType + ") not supported yet");
 		
 		}
-		transformNode(rootNode, rootNodeOperandClass, false);
+		transformNode(rootNode, rootNodeOperandClass, false, false);
 	}
 
+	/**
+	 * @param callerForceArrayFlag <code>true</code> if one of the current node's parents is a 
+	 * function Ptg which has been changed from default 'V' to 'A' type (due to requirements on
+	 * the function return value).
+	 */
 	private void transformNode(ParseNode node, byte desiredOperandClass,
-			boolean callerForceArrayFlag) {
+			boolean callerForceArrayFlag, boolean isDirectChildOfValueOperator) {
 		Ptg token = node.getToken();
 		ParseNode[] children = node.getChildren();
 		if (token instanceof ValueOperatorPtg || token instanceof ControlPtg) {
@@ -84,7 +89,7 @@ final class OperandClassTransformer {
 			// but any child nodes are processed according to desiredOperandClass and callerForceArrayFlag
 			for (int i = 0; i < children.length; i++) {
 				ParseNode child = children[i];
-				transformNode(child, desiredOperandClass, callerForceArrayFlag);
+				transformNode(child, desiredOperandClass, callerForceArrayFlag, true);
 			}
 			return;
 		}
@@ -101,22 +106,34 @@ final class OperandClassTransformer {
 			// nothing to do
 			return;
 		}
-        if (callerForceArrayFlag) {
-        	switch (desiredOperandClass) {
-        		case Ptg.CLASS_VALUE:
-        		case Ptg.CLASS_ARRAY:
-        			token.setClass(Ptg.CLASS_ARRAY); 
-        			break;
-        		case Ptg.CLASS_REF:
-        			token.setClass(Ptg.CLASS_REF); 
-        			break;
-        		default:
-        			throw new IllegalStateException("Unexpected operand class ("
-        					+ desiredOperandClass + ")");
-        	}
-        } else {
-        	token.setClass(desiredOperandClass);
-        }
+		if (isDirectChildOfValueOperator) {
+			// As per OOO documentation Sec 3.2.4 "Token Class Transformation", "Step 1"
+			// All direct operands of value operators that are initially 'R' type will 
+			// be converted to 'V' type.
+			if (token.getPtgClass() == Ptg.CLASS_REF) {
+				token.setClass(Ptg.CLASS_VALUE); 
+			}
+		}
+		token.setClass(transformClass(token.getPtgClass(), desiredOperandClass, callerForceArrayFlag));
+	}
+
+	private byte transformClass(byte currentOperandClass, byte desiredOperandClass,
+			boolean callerForceArrayFlag) {
+		switch (desiredOperandClass) {
+			case Ptg.CLASS_VALUE:
+				if (!callerForceArrayFlag) {
+					return Ptg.CLASS_VALUE;
+				}
+				// else fall through
+			case Ptg.CLASS_ARRAY:
+				return Ptg.CLASS_ARRAY; 
+			case Ptg.CLASS_REF:
+				if (!callerForceArrayFlag) {
+					return currentOperandClass;
+				}
+				return Ptg.CLASS_REF; 
+		}
+		throw new IllegalStateException("Unexpected operand class (" + desiredOperandClass + ")");
 	}
 
 	private void transformFunctionNode(AbstractFunctionPtg afp, ParseNode[] children,
@@ -200,7 +217,7 @@ final class OperandClassTransformer {
 		for (int i = 0; i < children.length; i++) {
 			ParseNode child = children[i];
 			byte paramOperandClass = afp.getParameterClass(i);
-			transformNode(child, paramOperandClass, localForceArrayFlag);
+			transformNode(child, paramOperandClass, localForceArrayFlag, false);
 		}
 	}
 }

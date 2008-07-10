@@ -169,6 +169,20 @@ public final class TestHSSFSheet extends TestCase {
 		sheet.removeRow(row);
 	}
 
+	public void testRemoveZeroRow() {
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		HSSFSheet sheet = workbook.createSheet("Sheet1");
+		HSSFRow row = sheet.createRow(0);
+		try {
+			sheet.removeRow(row);
+		} catch (IllegalArgumentException e) {
+			if (e.getMessage().equals("Invalid row number (-1) outside allowable range (0..65535)")) {
+				throw new AssertionFailedError("Identified bug 45367");
+			}
+			throw e;
+		}
+	}
+
 	public void testCloneSheet() {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet("Test Clone");

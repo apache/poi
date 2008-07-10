@@ -20,6 +20,8 @@ package org.apache.poi.hssf.util;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.util.CellReference.NameType;
+
 
 public final class TestCellReference extends TestCase {
     
@@ -75,7 +77,6 @@ public final class TestCellReference extends TestCase {
         confirmCell(cf, "Amazing!", 0, 0, false, false, "'Amazing!'!A1");
     }
 
-    
     /* package */ static void confirmCell(CellReference cf, String expSheetName, int expRow, 
             int expCol, boolean expIsRowAbs, boolean expIsColAbs, String expText) {
         
@@ -87,8 +88,22 @@ public final class TestCellReference extends TestCase {
         assertEquals("text is wrong", expText, cf.formatAsString());
     }
 
-    public static void main(String [] args) {
-        System.out.println("Testing org.apache.poi.hssf.util.TestCellReference");
-        junit.textui.TestRunner.run(TestCellReference.class);
+    public void testClassifyCellReference() {
+        confirmNameType("a1", NameType.CELL);
+        confirmNameType("pfy1", NameType.NAMED_RANGE);
+        confirmNameType("pf1", NameType.NAMED_RANGE); // (col) out of cell range
+        confirmNameType("fp1", NameType.CELL);
+        confirmNameType("pf$1", NameType.BAD_CELL_OR_NAMED_RANGE);
+        confirmNameType("_A1", NameType.NAMED_RANGE);
+        confirmNameType("A_1", NameType.NAMED_RANGE);
+        confirmNameType("A1_", NameType.NAMED_RANGE);
+        confirmNameType(".A1", NameType.BAD_CELL_OR_NAMED_RANGE);
+        confirmNameType("A.1", NameType.NAMED_RANGE);
+        confirmNameType("A1.", NameType.NAMED_RANGE);
+    }
+    
+    private void confirmNameType(String ref, int expectedResult) {
+        int actualResult = CellReference.classifyCellReference(ref);
+        assertEquals(expectedResult, actualResult);
     }
 }
