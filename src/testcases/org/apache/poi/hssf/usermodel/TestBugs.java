@@ -1273,4 +1273,53 @@ public final class TestBugs extends TestCase {
         assertEquals("{=sin(B1:B9){9,1)[1][0]", nc2.getCellFormula());
         assertEquals("{=sin(B1:B9){9,1)[2][0]", nc3.getCellFormula());
     }
+    
+    /**
+     * People are all getting confused about the last
+     *  row and cell number
+     */
+    public void test30635() throws Exception {
+    	HSSFWorkbook wb = new HSSFWorkbook();
+    	HSSFSheet s = wb.createSheet();
+    	
+    	// No rows, everything is 0
+    	assertEquals(0, s.getFirstRowNum());
+    	assertEquals(0, s.getLastRowNum());
+    	assertEquals(0, s.getPhysicalNumberOfRows());
+    	
+    	// One row, most things are 0, physical is 1
+    	s.createRow(0);
+    	assertEquals(0, s.getFirstRowNum());
+    	assertEquals(0, s.getLastRowNum());
+    	assertEquals(1, s.getPhysicalNumberOfRows());
+    	
+    	// And another, things change
+    	s.createRow(4);
+    	assertEquals(0, s.getFirstRowNum());
+    	assertEquals(4, s.getLastRowNum());
+    	assertEquals(2, s.getPhysicalNumberOfRows());
+    	
+    	
+    	// Now start on cells
+    	HSSFRow r = s.getRow(0);
+    	assertEquals(-1, r.getFirstCellNum());
+    	assertEquals(-1, r.getLastCellNum());
+    	assertEquals(0, r.getPhysicalNumberOfCells());
+    	
+    	// Add a cell, things move off -1
+    	r.createCell((short)0);
+    	assertEquals(0, r.getFirstCellNum());
+    	assertEquals(1, r.getLastCellNum()); // last cell # + 1
+    	assertEquals(1, r.getPhysicalNumberOfCells());
+    	
+    	r.createCell((short)1);
+    	assertEquals(0, r.getFirstCellNum());
+    	assertEquals(2, r.getLastCellNum()); // last cell # + 1
+    	assertEquals(2, r.getPhysicalNumberOfCells());
+    	
+    	r.createCell((short)4);
+    	assertEquals(0, r.getFirstCellNum());
+    	assertEquals(5, r.getLastCellNum()); // last cell # + 1
+    	assertEquals(3, r.getPhysicalNumberOfCells());
+    }
 }
