@@ -57,6 +57,31 @@ public final class TestOperandClassTransformer extends TestCase {
 		confirmFuncClass(ptgs, 2, "INDEX", Ptg.CLASS_VALUE);
 	}
 
+	/**
+	 * Even though count expects args of type R, because A1 is a direct operand of a
+	 * value operator it must get type V
+	 */
+	public void testDirectOperandOfValueOperator() {
+		String formula = "COUNT(A1*1)";
+		Ptg[] ptgs = FormulaParser.parse(formula, null);
+		if (ptgs[0].getPtgClass() == Ptg.CLASS_REF) {
+			throw new AssertionFailedError("Identified bug 45348");
+		}
+
+		confirmTokenClass(ptgs, 0, Ptg.CLASS_VALUE);
+		confirmTokenClass(ptgs, 3, Ptg.CLASS_VALUE);
+	}
+	
+	/**
+	 * A cell ref passed to a function expecting type V should be converted to type V
+	 */
+	public void testRtoV() {
+
+		String formula = "lookup(A1, A3:A52, B3:B52)";
+		Ptg[] ptgs = FormulaParser.parse(formula, null);
+		confirmTokenClass(ptgs, 0, Ptg.CLASS_VALUE);
+	}
+	
 	public void testComplexIRR_bug45041() {
 		String formula = "(1+IRR(SUMIF(A:A,ROW(INDIRECT(MIN(A:A)&\":\"&MAX(A:A))),B:B),0))^365-1";
 		Ptg[] ptgs = FormulaParser.parse(formula, null);
@@ -89,8 +114,11 @@ public final class TestOperandClassTransformer extends TestCase {
 
 	private void confirmTokenClass(Ptg[] ptgs, int i, byte operandClass) {
 		Ptg ptg = ptgs[i];
+		if (ptg.isBaseToken()) {
+			throw new AssertionFailedError("ptg[" + i + "] is a base token");
+		}
 		if (operandClass != ptg.getPtgClass()) {
-			throw new AssertionFailedError("Wrong operand class for function ptg ("
+			throw new AssertionFailedError("Wrong operand class for ptg ("
 					+ ptg.toString() + "). Expected " + getOperandClassName(operandClass)
 					+ " but got " + getOperandClassName(ptg.getPtgClass()));
 		}

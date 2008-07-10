@@ -280,18 +280,19 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
     /**
      * used internally to refresh the "last row" when the last row is removed.
      */
-
-    private int findLastRow(int lastrow)
-    {
+    private int findLastRow(int lastrow) {
+        if (lastrow < 1) {
+            return -1;
+        }
         int rownum = lastrow - 1;
         HSSFRow r = getRow(rownum);
 
-        while (r == null && rownum > 0)
-        {
+        while (r == null && rownum > 0) {
             r = getRow(--rownum);
         }
-        if (r == null)
-          return -1;
+        if (r == null) {
+            return -1;
+        }
         return rownum;
     }
 
@@ -1225,6 +1226,28 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      */
     public void shiftRows( int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight)
     {
+    	shiftRows(startRow, endRow, n, copyRowHeight, resetOriginalRowHeight, true);
+    }
+    
+    /**
+     * Shifts rows between startRow and endRow n number of rows.
+     * If you use a negative number, it will shift rows up.
+     * Code ensures that rows don't wrap around
+     *
+     * <p>
+     * Additionally shifts merged regions that are completely defined in these
+     * rows (ie. merged 2 cells on a row to be shifted).
+     * <p>
+     * TODO Might want to add bounds checking here
+     * @param startRow the row to start shifting
+     * @param endRow the row to end shifting
+     * @param n the number of rows to shift
+     * @param copyRowHeight whether to copy the row height during the shift
+     * @param resetOriginalRowHeight whether to set the original row's height to the default
+     * @param moveComments whether to move comments at the same time as the cells they are attached to
+     */
+    public void shiftRows( int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight, boolean moveComments)
+    {
         int s, e, inc;
         if ( n < 0 )
         {
@@ -1250,44 +1273,55 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
                 row2Replace = createRow( rowNum + n );
 
             HSSFCell cell;
+            
+            // Remove all the old cells from the row we'll
+            //  be writing too, before we start overwriting 
+            //  any cells. This avoids issues with cells 
+            //  changing type, and records not being correctly
+            //  overwritten
+            row2Replace.removeAllCells();
 
+            // If this row doesn't exist, nothing needs to
+            //  be done for the now empty destination row
+            if (row == null) continue; // Nothing to do for this row
 
+            // Fetch the first and last columns of the
+            //  row now, so we still have them to hand
+            //  once we start removing cells
+        	short firstCol = row.getFirstCellNum();
+        	short lastCol = row.getLastCellNum();
 
-
-        // Removes the cells before over writting them.
-            for ( short col = row2Replace.getFirstCellNum(); col <= row2Replace.getLastCellNum(); col++ )
-            {
-                cell = row2Replace.getCell( col );
-                if ( cell != null )
-                    row2Replace.removeCell( cell );
+            // Fix up row heights if required
+            if (copyRowHeight) {
+                row2Replace.setHeight(row.getHeight());
             }
-        if (row == null) continue; // Nothing to do for this row
-        else {
-        if (copyRowHeight) {
-            row2Replace.setHeight(row.getHeight());
-        }
+            if (resetOriginalRowHeight) {
+                row.setHeight((short)0xff);
+            }
 
-        if (resetOriginalRowHeight) {
-            row.setHeight((short)0xff);
-        }
-        }
-            for ( short col = row.getFirstCellNum(); col <= row.getLastCellNum(); col++ )
-            {
-                cell = row.getCell( col );
-                if ( cell != null )
-                {
-                    row.removeCell( cell );
-                    CellValueRecordInterface cellRecord = cell.getCellValueRecord();
-                    cellRecord.setRow( rowNum + n );
-                    row2Replace.createCellFromRecord( cellRecord );
-                    sheet.addValueRecord( rowNum + n, cellRecord );
-                }
-
-                // move comments if exist (can exist even if cell is null)
-                HSSFComment comment = getCellComment(rowNum, col);
-                if (comment != null) {
-                   comment.setRow(rowNum + n);
-                }
+            // Copy each cell from the source row to
+            //  the destination row
+            for(Iterator cells = row.cellIterator(); cells.hasNext(); ) {
+            	cell = (HSSFCell)cells.next();
+                row.removeCell( cell );
+                CellValueRecordInterface cellRecord = cell.getCellValueRecord();
+                cellRecord.setRow( rowNum + n );
+                row2Replace.createCellFromRecord( cellRecord );
+                sheet.addValueRecord( rowNum + n, cellRecord );
+            }
+            // Now zap all the cells in the source row
+            row.removeAllCells();
+            
+            // Move comments from the source row to the
+            //  destination row. Note that comments can
+            //  exist for cells which are null
+            if(moveComments) {
+	            for( short col = firstCol; col <= lastCol; col++ ) {
+	                HSSFComment comment = getCellComment(rowNum, col);
+	                if (comment != null) {
+	                   comment.setRow(rowNum + n);
+	                }
+	            }
             }
         }
         if ( endRow == lastrow || endRow + n > lastrow ) lastrow = Math.min( endRow + n, 65535 );

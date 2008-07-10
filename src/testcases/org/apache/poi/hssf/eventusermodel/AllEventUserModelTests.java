@@ -15,40 +15,24 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.util;
+package org.apache.poi.hssf.eventusermodel;
 
-import java.util.Hashtable;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
-import junit.framework.TestCase;
 /**
- * @author Nick Burch
+ * Collects all tests for <tt>org.apache.poi.hssf.eventusermodel</tt>.
+ * 
+ * @author Josh Micich
  */
-public final class TestHSSFColor extends TestCase {
-	public void testBasics() {
-		assertNotNull(HSSFColor.YELLOW.class);
-		assertTrue(HSSFColor.YELLOW.index > 0);
-		assertTrue(HSSFColor.YELLOW.index2 > 0);
-	}
+public class AllEventUserModelTests {
 	
-	public void testContents() {
-		assertEquals(3, HSSFColor.YELLOW.triplet.length);
-		assertEquals(255, HSSFColor.YELLOW.triplet[0]);
-		assertEquals(255, HSSFColor.YELLOW.triplet[1]);
-		assertEquals(0, HSSFColor.YELLOW.triplet[2]);
-		
-		assertEquals("FFFF:FFFF:0", HSSFColor.YELLOW.hexString);
-	}
-	
-	public void testTrippletHash() {
-		Hashtable tripplets = HSSFColor.getTripletHash();
-		
-		assertEquals(
-				HSSFColor.MAROON.class,
-				tripplets.get(HSSFColor.MAROON.hexString).getClass()
-		);
-		assertEquals(
-				HSSFColor.YELLOW.class,
-				tripplets.get(HSSFColor.YELLOW.hexString).getClass()
-		);
+	public static Test suite() {
+		TestSuite result = new TestSuite(AllEventUserModelTests.class.getName());
+		result.addTestSuite(TestEventWorkbookBuilder.class);
+		result.addTestSuite(TestFormatTrackingHSSFListener.class);
+		result.addTestSuite(TestHSSFEventFactory.class);
+		result.addTestSuite(TestMissingRecordAwareHSSFListener.class);
+		return result;
 	}
 }

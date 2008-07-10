@@ -16,7 +16,11 @@
 ==================================================================== */
 package org.apache.poi.hssf.eventusermodel;
 
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +28,11 @@ import java.util.Map;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.FormatRecord;
+import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 
 /**
  * A proxy HSSFListener that keeps track of the document
@@ -67,6 +74,61 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 			ExtendedFormatRecord xr = (ExtendedFormatRecord) record;
 			xfRecords.add(xr);
 		}
+	}
+	
+	/**
+	 * Formats the given numeric of date Cell's contents
+	 *  as a String, in as close as we can to the way 
+	 *  that Excel would do so.
+	 * Uses the various format records to manage this.
+	 * 
+	 * TODO - move this to a central class in such a
+	 *  way that hssf.usermodel can make use of it too
+	 */
+	public String formatNumberDateCell(CellValueRecordInterface cell) {
+		double value;
+		if(cell instanceof NumberRecord) {
+			value = ((NumberRecord)cell).getValue();
+		} else if(cell instanceof FormulaRecord) {
+			value = ((FormulaRecord)cell).getValue();
+		} else {
+			throw new IllegalArgumentException("Unsupported CellValue Record passed in " + cell);
+		}
+		
+        // Get the built in format, if there is one
+		int formatIndex = getFormatIndex(cell);
+		String formatString = getFormatString(cell);
+		
+		if(formatString == null) {
+            return Double.toString(value);
+        } else {
+        	// Is it a date?
+        	if(HSSFDateUtil.isADateFormat(formatIndex,formatString) &&
+        			HSSFDateUtil.isValidExcelDate(value)) {
+        		// Java wants M not m for month
+        		formatString = formatString.replace('m','M');
+        		// Change \- into -, if it's there
+        		formatString = formatString.replaceAll("\\\\-","-");
+        		
+        		// Format as a date
+        		Date d = HSSFDateUtil.getJavaDate(value, false);
+        		DateFormat df = new SimpleDateFormat(formatString);
+	            return df.format(d);
+        	} else {
+        		if(formatString == "General") {
+        			// Some sort of wierd default
+        			return Double.toString(value);
+        		}
+        		if(formatString == "0.00E+00") {
+        			// This seems to mean output as a normal double
+        			return Double.toString(value);
+        		}
+        		
+        		// Format as a number
+	            DecimalFormat df = new DecimalFormat(formatString);
+	            return df.format(value);
+        	}
+        }
 	}
 	
 	/**
