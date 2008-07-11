@@ -15,14 +15,17 @@
 * limitations under the License.
 */
 
-
 package org.apache.poi.hssf.record.formula.functions;
 
+import java.util.regex.Pattern;
+
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
+import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
@@ -40,85 +43,288 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  * @author Josh Micich
  */
 public final class Countif implements Function {
-	
+
+	private static final class CmpOp {
+		public static final int NONE = 0;
+		public static final int EQ = 1;
+		public static final int NE = 2;
+		public static final int LE = 3;
+		public static final int LT = 4;
+		public static final int GT = 5;
+		public static final int GE = 6;
+
+		public static final CmpOp OP_NONE = op("", NONE);
+		public static final CmpOp OP_EQ = op("=", EQ);
+		public static final CmpOp OP_NE = op("<>", NE);
+		public static final CmpOp OP_LE = op("<=", LE);
+		public static final CmpOp OP_LT = op("<", LT);
+		public static final CmpOp OP_GT = op(">", GT);
+		public static final CmpOp OP_GE = op(">=", GE);
+		private final String _representation;
+		private final int _code;
+
+		private static CmpOp op(String rep, int code) {
+			return new CmpOp(rep, code);
+		}
+		private CmpOp(String representation, int code) {
+			_representation = representation;
+			_code = code;
+		}
+		/**
+		 * @return number of characters used to represent this operator
+		 */
+		public int getLength() {
+			return _representation.length();
+		}
+		public int getCode() {
+			return _code;
+		}
+		public static CmpOp getOperator(String value) {
+			int len = value.length();
+			if (len < 1) {
+				return OP_NONE;
+			}
+
+			char firstChar = value.charAt(0);
+
+			switch(firstChar) {
+				case '=':
+					return OP_EQ;
+				case '>':
+					if (len > 1) {
+						switch(value.charAt(1)) {
+							case '=':
+								return OP_GE;
+						}
+					}
+					return OP_GT;
+				case '<':
+					if (len > 1) {
+						switch(value.charAt(1)) {
+							case '=':
+								return OP_LE;
+							case '>':
+								return OP_NE;
+						}
+					}
+					return OP_LT;
+			}
+			return OP_NONE;
+		}
+		public boolean evaluate(boolean cmpResult) {
+			switch (_code) {
+				case NONE:
+				case EQ:
+					return cmpResult;
+				case NE:
+					return !cmpResult;
+			}
+			throw new RuntimeException("Cannot call boolean evaluate on non-equality operator '" 
+					+ _representation + "'");
+		}
+		public boolean evaluate(int cmpResult) {
+			switch (_code) {
+				case NONE:
+				case EQ:
+					return cmpResult == 0;
+				case NE: return cmpResult == 0;
+				case LT: return cmpResult <  0;
+				case LE: return cmpResult <= 0;
+				case GT: return cmpResult >  0;
+				case GE: return cmpResult <= 0;
+			}
+			throw new RuntimeException("Cannot call boolean evaluate on non-equality operator '" 
+					+ _representation + "'");
+		}
+		public String toString() {
+			StringBuffer sb = new StringBuffer(64);
+			sb.append(getClass().getName());
+			sb.append(" [").append(_representation).append("]");
+			return sb.toString();
+		}
+	}
+
 	/**
 	 * Common interface for the matching criteria.
 	 */
-	private interface I_MatchPredicate {
+	/* package */ interface I_MatchPredicate {
 		boolean matches(Eval x);
 	}
-	
+
 	private static final class NumberMatcher implements I_MatchPredicate {
 
 		private final double _value;
+		private final CmpOp _operator;
 
-		public NumberMatcher(double value) {
+		public NumberMatcher(double value, CmpOp operator) {
 			_value = value;
+			_operator = operator;
 		}
 
 		public boolean matches(Eval x) {
+			double testValue;
 			if(x instanceof StringEval) {
 				// if the target(x) is a string, but parses as a number
 				// it may still count as a match
 				StringEval se = (StringEval)x;
-				Double val = parseDouble(se.getStringValue());
+				Double val = OperandResolver.parseDouble(se.getStringValue());
 				if(val == null) {
 					// x is text that is not a number
 					return false;
 				}
-				return val.doubleValue() == _value;
-			}
-			if(!(x instanceof NumberEval)) {
+				testValue = val.doubleValue();
+			} else if((x instanceof NumberEval)) {
+				NumberEval ne = (NumberEval) x;
+				testValue = ne.getNumberValue();
+			} else {
 				return false;
 			}
-			NumberEval ne = (NumberEval) x;
-			return ne.getNumberValue() == _value;
+			return _operator.evaluate(Double.compare(testValue, _value));
 		}
 	}
 	private static final class BooleanMatcher implements I_MatchPredicate {
 
-		private final boolean _value;
+		private final int _value;
+		private final CmpOp _operator;
 
-		public BooleanMatcher(boolean value) {
-			_value = value;
+		public BooleanMatcher(boolean value, CmpOp operator) {
+			_value = boolToInt(value);
+			_operator = operator;
+		}
+
+		private static int boolToInt(boolean value) {
+			return value ? 1 : 0;
 		}
 
 		public boolean matches(Eval x) {
+			int testValue;
 			if(x instanceof StringEval) {
+				if (true) { // change to false to observe more intuitive behaviour
+					// Note - Unlike with numbers, it seems that COUNTIF never matches 
+					// boolean values when the target(x) is a string
+					return false;
+				}
 				StringEval se = (StringEval)x;
 				Boolean val = parseBoolean(se.getStringValue());
 				if(val == null) {
 					// x is text that is not a boolean
 					return false;
 				}
-				if (true) { // change to false to observe more intuitive behaviour
-					// Note - Unlike with numbers, it seems that COUNTA never matches 
-					// boolean values when the target(x) is a string
-					return false;
-				}
-				return val.booleanValue() == _value;
-			}
-			if(!(x instanceof BoolEval)) {
+				testValue = boolToInt(val.booleanValue());
+			} else if((x instanceof BoolEval)) {
+				BoolEval be = (BoolEval) x;
+				testValue = boolToInt(be.getBooleanValue());
+			} else {
 				return false;
 			}
-			BoolEval be = (BoolEval) x;
-			return be.getBooleanValue() == _value;
+			return _operator.evaluate(testValue - _value);
 		}
 	}
 	private static final class StringMatcher implements I_MatchPredicate {
 
 		private final String _value;
+		private final CmpOp _operator;
+		private final Pattern _pattern;
 
-		public StringMatcher(String value) {
+		public StringMatcher(String value, CmpOp operator) {
 			_value = value;
+			_operator = operator;
+			switch(operator.getCode()) {
+				case CmpOp.NONE:
+				case CmpOp.EQ:
+				case CmpOp.NE:
+					_pattern = getWildCardPattern(value);
+					break;
+				default:
+					_pattern = null;
+			}
 		}
 
 		public boolean matches(Eval x) {
-			if(!(x instanceof StringEval)) {
+			if (x instanceof BlankEval) {
+				switch(_operator.getCode()) {
+					case CmpOp.NONE:
+					case CmpOp.EQ:
+						return _value.length() == 0;
+				}
+				// no other criteria matches a blank cell
 				return false;
 			}
-			StringEval se = (StringEval) x;
-			return se.getStringValue() == _value;
+			if(!(x instanceof StringEval)) {
+				// must always be string
+				// even if match str is wild, but contains only digits
+				// e.g. '4*7', NumberEval(4567) does not match
+				return false;
+			}
+			String testedValue = ((StringEval) x).getStringValue();
+			if (testedValue.length() < 1 && _value.length() < 1) {
+				// odd case: criteria '=' behaves differently to criteria ''
+
+				switch(_operator.getCode()) {
+					case CmpOp.NONE: return true;
+					case CmpOp.EQ:   return false;
+					case CmpOp.NE:   return true;
+				}
+				return false;
+			}
+			if (_pattern != null) {
+				return _operator.evaluate(_pattern.matcher(testedValue).matches());
+			}
+			return _operator.evaluate(testedValue.compareTo(_value));
+		}
+		/**
+		 * Translates Excel countif wildcard strings into java regex strings
+		 * @return <code>null</code> if the specified value contains no special wildcard characters.
+		 */
+		private static Pattern getWildCardPattern(String value) {
+			int len = value.length();
+			StringBuffer sb = new StringBuffer(len);
+			boolean hasWildCard = false;
+			for(int i=0; i<len; i++) {
+				char ch = value.charAt(i);
+				switch(ch) {
+					case '?':
+						hasWildCard = true;
+						// match exactly one character
+						sb.append('.');
+						continue;
+					case '*':
+						hasWildCard = true;
+						// match one or more occurrences of any character
+						sb.append(".*");
+						continue;
+					case '~':
+						if (i+1<len) {
+							ch = value.charAt(i+1);
+							switch (ch) {
+								case '?':
+								case '*':
+									hasWildCard = true;
+									sb.append('[').append(ch).append(']');
+									i++; // Note - incrementing loop variable here
+									continue;
+							}
+						}
+						// else not '~?' or '~*'
+						sb.append('~'); // just plain '~'
+						continue;
+					case '.':
+					case '$':
+					case '^':
+					case '[':
+					case ']':
+					case '(':
+					case ')':
+						// escape literal characters that would have special meaning in regex 
+						sb.append("\\").append(ch);
+						continue;
+				}
+				sb.append(ch);
+			}
+			if (hasWildCard) {
+				return Pattern.compile(sb.toString());
+			}
+			return null;
 		}
 	}
 
@@ -132,8 +338,7 @@ public final class Countif implements Function {
 				// perhaps this should be an exception
 				return ErrorEval.VALUE_INVALID;
 		}
-		
-		AreaEval range = (AreaEval) args[0];
+
 		Eval criteriaArg = args[1];
 		if(criteriaArg instanceof RefEval) {
 			// criteria is not a literal value, but a cell reference
@@ -144,31 +349,47 @@ public final class Countif implements Function {
 			// other non literal tokens such as function calls, have been fully evaluated
 			// for example COUNTIF(B2:D4, COLUMN(E1))
 		}
+		if(criteriaArg instanceof BlankEval) {
+			// If the criteria arg is a reference to a blank cell, countif always returns zero.
+			return NumberEval.ZERO;
+		}
 		I_MatchPredicate mp = createCriteriaPredicate(criteriaArg);
-		return countMatchingCellsInArea(range, mp);
+		return countMatchingCellsInArea(args[0], mp);
 	}
 	/**
 	 * @return the number of evaluated cells in the range that match the specified criteria
 	 */
-	private Eval countMatchingCellsInArea(AreaEval range, I_MatchPredicate criteriaPredicate) {
-		ValueEval[] values = range.getValues();
+	private Eval countMatchingCellsInArea(Eval rangeArg, I_MatchPredicate criteriaPredicate) {
 		int result = 0;
-		for (int i = 0; i < values.length; i++) {
-			if(criteriaPredicate.matches(values[i])) {
+		if (rangeArg instanceof RefEval) {
+			RefEval refEval = (RefEval) rangeArg;
+			if(criteriaPredicate.matches(refEval.getInnerValueEval())) {
 				result++;
 			}
+		} else if (rangeArg instanceof AreaEval) {
+
+			AreaEval range = (AreaEval) rangeArg;
+			ValueEval[] values = range.getValues();
+			for (int i = 0; i < values.length; i++) {
+				if(criteriaPredicate.matches(values[i])) {
+					result++;
+				}
+			}
+		} else {
+			throw new IllegalArgumentException("Bad range arg type (" + rangeArg.getClass().getName() + ")");
 		}
 		return new NumberEval(result);
 	}
-	
-	private static I_MatchPredicate createCriteriaPredicate(Eval evaluatedCriteriaArg) {
+
+	/* package */ static I_MatchPredicate createCriteriaPredicate(Eval evaluatedCriteriaArg) {
+
 		if(evaluatedCriteriaArg instanceof NumberEval) {
-			return new NumberMatcher(((NumberEval)evaluatedCriteriaArg).getNumberValue());
+			return new NumberMatcher(((NumberEval)evaluatedCriteriaArg).getNumberValue(), CmpOp.OP_NONE);
 		}
 		if(evaluatedCriteriaArg instanceof BoolEval) {
-			return new BooleanMatcher(((BoolEval)evaluatedCriteriaArg).getBooleanValue());
+			return new BooleanMatcher(((BoolEval)evaluatedCriteriaArg).getBooleanValue(), CmpOp.OP_NONE);
 		}
-		
+
 		if(evaluatedCriteriaArg instanceof StringEval) {
 			return createGeneralMatchPredicate((StringEval)evaluatedCriteriaArg);
 		}
@@ -181,50 +402,29 @@ public final class Countif implements Function {
 	 */
 	private static I_MatchPredicate createGeneralMatchPredicate(StringEval stringEval) {
 		String value = stringEval.getStringValue();
-		char firstChar = value.charAt(0);
+		CmpOp operator = CmpOp.getOperator(value);
+		value = value.substring(operator.getLength());
+
 		Boolean booleanVal = parseBoolean(value);
 		if(booleanVal != null) {
-			return new BooleanMatcher(booleanVal.booleanValue());
+			return new BooleanMatcher(booleanVal.booleanValue(), operator);
 		}
-		
-		Double doubleVal = parseDouble(value);
-		if(doubleVal != null) {
-			return new NumberMatcher(doubleVal.doubleValue());
-		}
-		switch(firstChar) {
-			case '>':
-			case '<':
-			case '=':
-				throw new RuntimeException("Incomplete code - criteria expressions such as '"
-						+ value + "' not supported yet");
-		}
-		
-		//else - just a plain string with no interpretation.
-		return new StringMatcher(value);
-	}
 
-	/**
-	 * Under certain circumstances COUNTA will equate a plain number with a string representation of that number
-	 */
-	/* package */ static Double parseDouble(String strRep) {
-		if(!Character.isDigit(strRep.charAt(0))) {
-			// avoid using NumberFormatException to tell when string is not a number
-			return null;
+		Double doubleVal = OperandResolver.parseDouble(value);
+		if(doubleVal != null) {
+			return new NumberMatcher(doubleVal.doubleValue(), operator);
 		}
-		// TODO - support notation like '1E3' (==1000)
-		
-		double val;
-		try {
-			val = Double.parseDouble(strRep);
-		} catch (NumberFormatException e) {
-			return null;
-		}
-		return new Double(val);
+
+		//else - just a plain string with no interpretation.
+		return new StringMatcher(value, operator);
 	}
 	/**
 	 * Boolean literals ('TRUE', 'FALSE') treated similarly but NOT same as numbers. 
 	 */
 	/* package */ static Boolean parseBoolean(String strRep) {
+		if (strRep.length() < 1) {
+			return null;
+		}
 		switch(strRep.charAt(0)) {
 			case 't':
 			case 'T':
