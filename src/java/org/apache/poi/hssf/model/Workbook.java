@@ -408,6 +408,24 @@ public class Workbook implements Model
 
         return retval;
     }
+    
+    /**
+     * Retrieves the index of the given font
+     */
+    public int getFontIndex(FontRecord font) {
+    	for(int i=0; i<=numfonts; i++) {
+            FontRecord thisFont =
+                ( FontRecord ) records.get((records.getFontpos() - (numfonts - 1)) + i);
+            if(thisFont == font) {
+            	// There is no 4!
+            	if(i > 3) {
+            		return (i+1);
+            	}
+            	return i;
+            }
+    	}
+    	throw new IllegalArgumentException("Could not find that font!"); 
+    }
 
     /**
      * creates a new font record and adds it to the "font table".  This causes the
