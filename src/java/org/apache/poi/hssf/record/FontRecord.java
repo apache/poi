@@ -531,12 +531,33 @@ public class FontRecord
 
     public int getRecordSize()
     {
+    	// Note - no matter the original, we always
+    	//  re-serialise the font name as unicode
         return (getFontNameLength() * 2) + 20;
     }
 
     public short getSid()
     {
         return sid;
+    }
+    
+    /**
+     * Clones all the font style information from another
+     *  FontRecord, onto this one. This 
+     *  will then hold all the same font style options.
+     */
+    public void cloneStyleFrom(FontRecord source) {
+        field_1_font_height         = source.field_1_font_height; 
+        field_2_attributes          = source.field_2_attributes;
+        field_3_color_palette_index = source.field_3_color_palette_index;
+        field_4_bold_weight         = source.field_4_bold_weight;
+        field_5_super_sub_script    = source.field_5_super_sub_script;
+        field_6_underline           = source.field_6_underline;
+        field_7_family              = source.field_7_family;
+        field_8_charset             = source.field_8_charset;
+        field_9_zero                = source.field_9_zero;
+        field_10_font_name_len      = source.field_10_font_name_len;
+        field_11_font_name          = source.field_11_font_name;
     }
 
 	public int hashCode() {
