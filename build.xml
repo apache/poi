@@ -369,6 +369,29 @@ under the License.
     </javac>
   </target>
 
+  <target name="compile-version" depends="init"
+        description="Compiles the version class">
+	<!-- Generate the .java file -->
+	<property name="version.java" value="${main.output.dir}/org/apache/poi/Version.java" />
+	<delete file="${version.java}" />
+	<copy 
+		file="src/resources/version/Version.java.template"
+		tofile="${version.java}">
+		<filterset>
+			<filter token="VERSION" value="${version.id}" />
+			<filter token="DSTAMP" value="${DSTAMP}" />
+		</filterset>
+	</copy>
+
+	<!-- Compile -->
+    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      failonerror="true" destdir="${main.output.dir}" debug="on" fork="yes"
+      srcdir="${main.output.dir}" />
+
+	<!-- Tidy up -->
+	<delete file="${version.java}" />
+  </target>
+
   <target name="test" depends="test-main,test-scratchpad,test-contrib"
     description="Tests main, contrib and scratchpad"/>
 
@@ -950,7 +973,7 @@ FORREST_HOME environment variable!</echo>
 		<!-- And that's it for maven -->
 	</target>
 
-    <target name="jar" depends="compile" description="Creates jar files for distribution">
+    <target name="jar" depends="compile,compile-version" description="Creates jar files for distribution">
         <jar destfile="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar">
 			<fileset dir="${main.output.dir}" />
 			<fileset dir="legal/" />
