@@ -915,6 +915,10 @@ public class HSSFCell
 
     public void setCellStyle(HSSFCellStyle style)
     {
+        // Verify it really does belong to our workbook
+        style.verifyBelongsToWorkbook(book);
+
+        // Change our cell record to use this style
         record.setXFIndex(style.getIndex());
     }
 

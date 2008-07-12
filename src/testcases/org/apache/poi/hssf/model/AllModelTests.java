@@ -38,6 +38,7 @@ public final class AllModelTests {
 		result.addTestSuite(TestRVA.class);
 		result.addTestSuite(TestSheet.class);
 		result.addTestSuite(TestSheetAdditional.class);
+		result.addTestSuite(TestWorkbook.class);
 		return result;
 	}
 }

@@ -229,6 +229,80 @@ public class TestCellStyle
 
         // assert((s.getLastRowNum() == 99));
     }
+    
+    /**
+     * Cloning one HSSFCellStyle onto Another, same
+     *  HSSFWorkbook
+     */
+    public void testCloneStyleSameWB() throws Exception {
+    	HSSFWorkbook wb = new HSSFWorkbook();
+    	HSSFFont fnt = wb.createFont();
+    	fnt.setFontName("TestingFont");
+    	assertEquals(5, wb.getNumberOfFonts());
+    	
+    	HSSFCellStyle orig = wb.createCellStyle();
+    	orig.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+    	orig.setFont(fnt);
+    	orig.setDataFormat((short)18);
+    	
+    	assertTrue(HSSFCellStyle.ALIGN_RIGHT == orig.getAlignment());
+    	assertTrue(fnt == orig.getFont(wb));
+    	assertTrue(18 == orig.getDataFormat());
+    	
+    	HSSFCellStyle clone = wb.createCellStyle();
+    	assertFalse(HSSFCellStyle.ALIGN_RIGHT == clone.getAlignment());
+    	assertFalse(fnt == clone.getFont(wb));
+    	assertFalse(18 == clone.getDataFormat());
+    	
+    	clone.cloneStyleFrom(orig);
+    	assertTrue(HSSFCellStyle.ALIGN_RIGHT == clone.getAlignment());
+    	assertTrue(fnt == clone.getFont(wb));
+    	assertTrue(18 == clone.getDataFormat());
+    	assertEquals(5, wb.getNumberOfFonts());
+    }
+    
+    /**
+     * Cloning one HSSFCellStyle onto Another, across
+     *  two different HSSFWorkbooks
+     */
+    public void testCloneStyleDiffWB() throws Exception {
+    	HSSFWorkbook wbOrig = new HSSFWorkbook();
+    	
+    	HSSFFont fnt = wbOrig.createFont();
+    	fnt.setFontName("TestingFont");
+    	assertEquals(5, wbOrig.getNumberOfFonts());
+    	
+    	HSSFDataFormat fmt = wbOrig.createDataFormat();
+    	fmt.getFormat("MadeUpOne");
+    	fmt.getFormat("MadeUpTwo");
+    	
+    	HSSFCellStyle orig = wbOrig.createCellStyle();
+    	orig.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+    	orig.setFont(fnt);
+    	orig.setDataFormat(fmt.getFormat("Test##"));
+    	
+    	assertTrue(HSSFCellStyle.ALIGN_RIGHT == orig.getAlignment());
+    	assertTrue(fnt == orig.getFont(wbOrig));
+    	assertTrue(fmt.getFormat("Test##") == orig.getDataFormat());
+    	
+    	// Now a style on another workbook
+    	HSSFWorkbook wbClone = new HSSFWorkbook();
+    	assertEquals(4, wbClone.getNumberOfFonts());
+    	HSSFDataFormat fmtClone = wbClone.createDataFormat();
+    	
+    	HSSFCellStyle clone = wbClone.createCellStyle();
+    	assertEquals(4, wbClone.getNumberOfFonts());
+    	
+    	assertFalse(HSSFCellStyle.ALIGN_RIGHT == clone.getAlignment());
+    	assertFalse("TestingFont" == clone.getFont(wbClone).getFontName());
+    	
+    	clone.cloneStyleFrom(orig);
+    	assertTrue(HSSFCellStyle.ALIGN_RIGHT == clone.getAlignment());
+    	assertTrue("TestingFont" == clone.getFont(wbClone).getFontName());
+    	assertTrue(fmtClone.getFormat("Test##") == clone.getDataFormat());
+    	assertFalse(fmtClone.getFormat("Test##") == fmt.getFormat("Test##"));
+    	assertEquals(5, wbClone.getNumberOfFonts());
+    }
 
     public static void main(String [] ignored_args)
     {
