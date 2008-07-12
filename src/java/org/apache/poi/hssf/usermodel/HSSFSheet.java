@@ -614,8 +614,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * @param region (rowfrom/colfrom-rowto/colto) to merge
      * @return index of this region
      */
-
-    public int addMergedRegion(Region region)
+    public int addMergedRegion(org.apache.poi.ss.util.Region region)
     {
         //return sheet.addMergedRegion((short) region.getRowFrom(),
         return sheet.addMergedRegion( region.getRowFrom(),
