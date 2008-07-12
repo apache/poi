@@ -56,7 +56,7 @@ import org.apache.poi.hssf.util.HSSFDataValidation;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.util.Region;
+import org.apache.poi.hssf.util.Region;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 

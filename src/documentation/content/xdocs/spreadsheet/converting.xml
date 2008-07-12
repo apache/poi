@@ -40,6 +40,14 @@
         <em>org.apache.poi.ss.usermodel.FormulaEvaluator.CellValue</em>
        </p>
     </section>
+    <section><title>org.apache.poi.hssf.usermodel.HSSFRow.MissingCellPolicy</title></section>
+       <p>Annoyingly, java will not let you access a static inner class via
+        a child of the parent one. So, all references to
+        <em>org.apache.poi.hssf.usermodel.HSSFRow.MissingCellPolicy</em>
+        will need to be changed to
+        <em>org.apache.poi.ss.usermodel.Row.MissingCellPolicy</em>
+       </p>
+    </section>
 </section>
 <section><title>Converting existing HSSF Usermodel code to SS Usermodel (for XSSF and HSSF)</title>
 

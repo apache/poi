@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.poi.ss.util.Region;
+import org.apache.poi.hssf.util.Region;
 
 /**
  * 
