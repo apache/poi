@@ -21,7 +21,7 @@
 
 <document>
     <header>
-        <title>Converting existing HSSF Usermodel code to SS Usermodel (for XSSF and HSSF)</title>
+        <title>Upgrading to POI 3.5, including converting existing HSSF Usermodel code to SS Usermodel (for XSSF and HSSF)</title>
         <authors>
             <person email="nick@apache.org" name="Nick Burch" id="NB"/>
         </authors>
@@ -40,7 +40,7 @@
         <em>org.apache.poi.ss.usermodel.FormulaEvaluator.CellValue</em>
        </p>
     </section>
-    <section><title>org.apache.poi.hssf.usermodel.HSSFRow.MissingCellPolicy</title></section>
+    <section><title>org.apache.poi.hssf.usermodel.HSSFRow.MissingCellPolicy</title>
        <p>Annoyingly, java will not let you access a static inner class via
         a child of the parent one. So, all references to
         <em>org.apache.poi.hssf.usermodel.HSSFRow.MissingCellPolicy</em>
@@ -48,8 +48,8 @@
         <em>org.apache.poi.ss.usermodel.Row.MissingCellPolicy</em>
        </p>
     </section>
-</section>
-<section><title>Converting existing HSSF Usermodel code to SS Usermodel (for XSSF and HSSF)</title>
+  </section>
+  <section><title>Converting existing HSSF Usermodel code to SS Usermodel (for XSSF and HSSF)</title>
 
         <section><title>Why change?</title>
             <p>If you have existing HSSF usermodel code that works just
@@ -86,9 +86,9 @@
             otherwise remain the same, and it should all then work for
             both XSSF and HSSF.</p>
         </section>
-</section>
-<section><title>Worked Examples</title>
-	<section><title>Old HSSF Code</title>
+  </section>
+  <section><title>Worked Examples</title>
+      <section><title>Old HSSF Code</title>
 <source><![CDATA[
 // import org.apache.poi.hssf.usermodel.*;
 
