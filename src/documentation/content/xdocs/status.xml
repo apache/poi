@@ -47,6 +47,7 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">35583 - Include a version class, org.apache.poi.Version, to allow easy introspection of the POI version</action>
            <action dev="POI-DEVELOPERS" type="add">Allow the cloning of one HSSFCellStyle onto another, including cloning styles from one HSSFWorkbook onto another</action>
            <action dev="POI-DEVELOPERS" type="fix">45289 - finished support for special comparison operators in COUNTIF</action>
            <action dev="POI-DEVELOPERS" type="fix">45126 - Avoid generating multiple NamedRanges with the same name, which Excel dislikes</action>
