@@ -1814,6 +1814,27 @@ public class ExtendedFormatRecord
     {
         return sid;
     }
+    
+    /**
+     * Clones all the style information from another
+     *  ExtendedFormatRecord, onto this one. This 
+     *  will then hold all the same style options.
+     *  
+     * If The source ExtendedFormatRecord comes from
+     *  a different Workbook, you will need to sort
+     *  out the font and format indicies yourself!
+     */
+    public void cloneStyleFrom(ExtendedFormatRecord source) {
+        field_1_font_index           = source.field_1_font_index;
+        field_2_format_index         = source.field_2_format_index;
+        field_3_cell_options         = source.field_3_cell_options;
+        field_4_alignment_options    = source.field_4_alignment_options;
+        field_5_indention_options    = source.field_5_indention_options;
+        field_6_border_options       = source.field_6_border_options;
+        field_7_palette_options      = source.field_7_palette_options;
+        field_8_adtl_palette_options = source.field_8_adtl_palette_options;
+        field_9_fill_palette_options = source.field_9_fill_palette_options;
+    }
 
 	public int hashCode() {
 		final int prime = 31;

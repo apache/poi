@@ -84,6 +84,43 @@ public class XSSFCellStyle implements CellStyle {
 		cellXf = CTXf.Factory.newInstance();
     	cellStyleXf = null;
 	}
+
+	/**
+	 * Verifies that this style belongs to the supplied Workbook
+	 *  Styles Source.
+	 * Will throw an exception if it belongs to a different one.
+	 * This is normally called when trying to assign a style to a
+	 *  cell, to ensure the cell and the style are from the same
+	 *  workbook (if they're not, it won't work)
+	 * @throws IllegalArgumentException if there's a workbook mis-match
+	 */
+	public void verifyBelongsToStylesSource(StylesSource src) {
+		if(this.stylesSource != src) {
+			throw new IllegalArgumentException("This Style does not belong to the supplied Workbook Stlyes Source. Are you trying to assign a style from one workbook to the cell of a differnt workbook?");
+		}
+	}
+
+    /**
+     * Clones all the style information from another
+     *  XSSFCellStyle, onto this one. This 
+     *  XSSFCellStyle will then have all the same
+     *  properties as the source, but the two may
+     *  be edited independently.
+     * Any stylings on this XSSFCellStyle will be lost! 
+     *  
+     * The source XSSFCellStyle could be from another
+     *  XSSFWorkbook if you like. This allows you to
+     *  copy styles from one XSSFWorkbook to another.
+     */
+    public void cloneStyleFrom(CellStyle source) {
+		if(source instanceof XSSFCellStyle) {
+			this.cloneStyleFrom((XSSFCellStyle)source);
+		}
+		throw new IllegalArgumentException("Can only clone from one XSSFCellStyle to another, not between HSSFCellStyle and XSSFCellStyle");
+	}
+    public void cloneStyleFrom(XSSFCellStyle source) {
+		throw new IllegalStateException("TODO");
+	}
 	
 	public short getAlignment() {
 		return (short)getAlignmentEnum().intValue();

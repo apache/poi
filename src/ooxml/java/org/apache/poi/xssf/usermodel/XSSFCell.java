@@ -333,8 +333,13 @@ public final class XSSFCell implements Cell {
         if(style == null) {
             this.cell.setS(0);
         } else {
+			XSSFCellStyle xStyle = (XSSFCellStyle)style;
+			xStyle.verifyBelongsToStylesSource(
+				row.getSheet().getWorkbook().getStylesSource()
+			);
+
             this.cell.setS(
-                row.getSheet().getWorkbook().getStylesSource().putStyle(style)
+                row.getSheet().getWorkbook().getStylesSource().putStyle(xStyle)
             );
         }
     }

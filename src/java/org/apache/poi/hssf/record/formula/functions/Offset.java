@@ -25,7 +25,9 @@ import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
+import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.Ref3DEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
@@ -55,21 +57,6 @@ public final class Offset implements FreeRefFunction {
 	private static final int LAST_VALID_COLUMN_INDEX = 0xFF;
 	
 
-	/**
-	 * Exceptions are used within this class to help simplify flow control when error conditions
-	 * are encountered 
-	 */
-	private static final class EvalEx extends Exception {
-		private final ErrorEval _error;
-
-		public EvalEx(ErrorEval error) {
-			_error = error;
-		}
-		public ErrorEval getError() {
-			return _error;
-		}
-	}
-	
 	/** 
 	 * A one dimensional base + offset.  Represents either a row range or a column range.
 	 * Two instances of this class together specify an area range.
@@ -133,8 +120,7 @@ public final class Offset implements FreeRefFunction {
 			return sb.toString();
 		}
 	}
-	
-	
+
 	/**
 	 * Encapsulates either an area or cell reference which may be 2d or 3d.
 	 */
@@ -175,19 +161,15 @@ public final class Offset implements FreeRefFunction {
 		public int getWidth() {
 			return _width;
 		}
-
 		public int getHeight() {
 			return _height;
 		}
-
 		public int getFirstRowIndex() {
 			return _firstRowIndex;
 		}
-
 		public int getFirstColumnIndex() {
 			return _firstColumnIndex;
 		}
-
 		public boolean isIs3d() {
 			return _externalSheetIndex > 0;
 		}
@@ -198,7 +180,6 @@ public final class Offset implements FreeRefFunction {
 			}
 			return (short) _externalSheetIndex;
 		}
-
 	}
 	
 	public ValueEval evaluate(Eval[] args, int srcCellRow, short srcCellCol, Workbook workbook, Sheet sheet) {
@@ -206,7 +187,6 @@ public final class Offset implements FreeRefFunction {
 		if(args.length < 3 || args.length > 5) {
 			return ErrorEval.VALUE_INVALID;
 		}
-		
 		
 		try {
 			BaseRef baseRef = evaluateBaseRef(args[0]);
@@ -227,24 +207,23 @@ public final class Offset implements FreeRefFunction {
 			LinearOffsetRange rowOffsetRange = new LinearOffsetRange(rowOffset, height);
 			LinearOffsetRange colOffsetRange = new LinearOffsetRange(columnOffset, width);
 			return createOffset(baseRef, rowOffsetRange, colOffsetRange, workbook, sheet);
-		} catch (EvalEx e) {
-			return e.getError();
+		} catch (EvaluationException e) {
+			return e.getErrorEval();
 		}
 	}
 
-
 	private static AreaEval createOffset(BaseRef baseRef, 
 			LinearOffsetRange rowOffsetRange, LinearOffsetRange colOffsetRange, 
-			Workbook workbook, Sheet sheet) throws EvalEx {
+			Workbook workbook, Sheet sheet) throws EvaluationException {
 
 		LinearOffsetRange rows = rowOffsetRange.normaliseAndTranslate(baseRef.getFirstRowIndex());
 		LinearOffsetRange cols = colOffsetRange.normaliseAndTranslate(baseRef.getFirstColumnIndex());
 		
 		if(rows.isOutOfBounds(0, LAST_VALID_ROW_INDEX)) {
-			throw new EvalEx(ErrorEval.REF_INVALID);
+			throw new EvaluationException(ErrorEval.REF_INVALID);
 		}
 		if(cols.isOutOfBounds(0, LAST_VALID_COLUMN_INDEX)) {
-			throw new EvalEx(ErrorEval.REF_INVALID);
+			throw new EvaluationException(ErrorEval.REF_INVALID);
 		}
 		if(baseRef.isIs3d()) {
 			Area3DPtg a3dp = new Area3DPtg(rows.getFirstIndex(), rows.getLastIndex(), 
@@ -260,8 +239,7 @@ public final class Offset implements FreeRefFunction {
 		return HSSFFormulaEvaluator.evaluateAreaPtg(sheet, workbook, ap);
 	}
 
-
-	private static BaseRef evaluateBaseRef(Eval eval) throws EvalEx {
+	private static BaseRef evaluateBaseRef(Eval eval) throws EvaluationException {
 		
 		if(eval instanceof RefEval) {
 			return new BaseRef((RefEval)eval);
@@ -270,16 +248,15 @@ public final class Offset implements FreeRefFunction {
 			return new BaseRef((AreaEval)eval);
 		}
 		if (eval instanceof ErrorEval) {
-			throw new EvalEx((ErrorEval) eval);
+			throw new EvaluationException((ErrorEval) eval);
 		}
-		throw new EvalEx(ErrorEval.VALUE_INVALID);
+		throw new EvaluationException(ErrorEval.VALUE_INVALID);
 	}
-
 
 	/**
 	 * OFFSET's numeric arguments (2..5) have similar processing rules
 	 */
-	private static int evaluateIntArg(Eval eval, int srcCellRow, short srcCellCol) throws EvalEx {
+	private static int evaluateIntArg(Eval eval, int srcCellRow, short srcCellCol) throws EvaluationException {
 
 		double d = evaluateDoubleArg(eval, srcCellRow, srcCellCol);
 		return convertDoubleToInt(d);
@@ -295,18 +272,17 @@ public final class Offset implements FreeRefFunction {
 		return (int)Math.floor(d);
 	}
 	
-	
-	private static double evaluateDoubleArg(Eval eval, int srcCellRow, short srcCellCol) throws EvalEx {
-		ValueEval ve = evaluateSingleValue(eval, srcCellRow, srcCellCol);
+	private static double evaluateDoubleArg(Eval eval, int srcCellRow, short srcCellCol) throws EvaluationException {
+		ValueEval ve = OperandResolver.getSingleValue(eval, srcCellRow, srcCellCol);
 		
 		if (ve instanceof NumericValueEval) {
 			return ((NumericValueEval) ve).getNumberValue();
 		}
 		if (ve instanceof StringEval) {
 			StringEval se = (StringEval) ve;
-			Double d = parseDouble(se.getStringValue());
+			Double d = OperandResolver.parseDouble(se.getStringValue());
 			if(d == null) {
-				throw new EvalEx(ErrorEval.VALUE_INVALID);
+				throw new EvaluationException(ErrorEval.VALUE_INVALID);
 			}
 			return d.doubleValue();
 		}
@@ -318,45 +294,5 @@ public final class Offset implements FreeRefFunction {
 			return 0;
 		}
 		throw new RuntimeException("Unexpected eval type (" + ve.getClass().getName() + ")");
-	}
-	
-	private static Double parseDouble(String s) {
-		// TODO - find a home for this method
-		// TODO - support various number formats: sign char, dollars, commas
-		// OFFSET and COUNTIF seem to handle these
-		return Countif.parseDouble(s);
-	}
-	
-	private static ValueEval evaluateSingleValue(Eval eval, int srcCellRow, short srcCellCol) throws EvalEx {
-		if(eval instanceof RefEval) {
-			return ((RefEval)eval).getInnerValueEval();
-		}
-		if(eval instanceof AreaEval) {
-			return chooseSingleElementFromArea((AreaEval)eval, srcCellRow, srcCellCol);
-		}
-		if (eval instanceof ValueEval) {
-			return (ValueEval) eval;
-		}
-		throw new RuntimeException("Unexpected eval type (" + eval.getClass().getName() + ")");
-	}
-
-	// TODO - this code seems to get repeated a bit
-	private static ValueEval chooseSingleElementFromArea(AreaEval ae, int srcCellRow, short srcCellCol) throws EvalEx {
-		if (ae.isColumn()) {
-			if (ae.isRow()) {
-				return ae.getValues()[0];
-			}
-			if (!ae.containsRow(srcCellRow)) {
-				throw new EvalEx(ErrorEval.VALUE_INVALID);
-			}
-			return ae.getValueAt(srcCellRow, ae.getFirstColumn());
-		}
-		if (!ae.isRow()) {
-			throw new EvalEx(ErrorEval.VALUE_INVALID);
-		}
-		if (!ae.containsColumn(srcCellCol)) {
-			throw new EvalEx(ErrorEval.VALUE_INVALID);
-		}
-		return ae.getValueAt(ae.getFirstRow(), srcCellCol);
 	}
 }

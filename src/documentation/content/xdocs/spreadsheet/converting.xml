@@ -27,7 +27,21 @@
         </authors>
     </header>
   <body>
-    <section><title>Converting existing HSSF Usermodel code to SS Usermodel (for XSSF and HSSF)</title>
+<section><title>Things that have to be changed when upgrading to POI 3.5</title>
+	<p>Wherever possible, we have tried to ensure that you can use your
+     existing POI code with POI 3.5 without requiring any changes. However,
+     Java doesn't always make that easy, and unfortunately there are a 
+     few changes that may be required for some users.</p>
+    <section><title>org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.CellValue</title>
+       <p>Annoyingly, java will not let you access a static inner class via
+        a child of the parent one. So, all references to
+        <em>org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.CellValue</em>
+        will need to be changed to
+        <em>org.apache.poi.ss.usermodel.FormulaEvaluator.CellValue</em>
+       </p>
+    </section>
+</section>
+<section><title>Converting existing HSSF Usermodel code to SS Usermodel (for XSSF and HSSF)</title>
 
         <section><title>Why change?</title>
             <p>If you have existing HSSF usermodel code that works just

@@ -61,7 +61,9 @@ public final class AllRecordTests {
 		result.addTestSuite(TestEmbeddedObjectRefSubRecord.class);
 		result.addTestSuite(TestEndSubRecord.class);
 		result.addTestSuite(TestEscherAggregate.class);
+		result.addTestSuite(TestExtendedFormatRecord.class);
 		result.addTestSuite(TestExternalNameRecord.class);
+		result.addTestSuite(TestFontRecord.class);
 		result.addTestSuite(TestFontBasisRecord.class);
 		result.addTestSuite(TestFontIndexRecord.class);
 		result.addTestSuite(TestFormulaRecord.class);
