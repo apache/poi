@@ -20,6 +20,7 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.FontRecord;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -292,6 +293,16 @@ public class HSSFCellStyle implements CellStyle
      */
     public String getDataFormatString(org.apache.poi.ss.usermodel.Workbook workbook) {
     	HSSFDataFormat format = new HSSFDataFormat( ((HSSFWorkbook)workbook).getWorkbook() );
+    	
+        return format.getFormat(getDataFormat());
+    }
+    /**
+     * Get the contents of the format string, by looking up
+     *  the DataFormat against the supplied low level workbook
+     * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
+     */
+    public String getDataFormatString(org.apache.poi.hssf.model.Workbook workbook) {
+    	HSSFDataFormat format = new HSSFDataFormat( workbook );
     	
         return format.getFormat(getDataFormat());
     }
@@ -930,6 +941,69 @@ public class HSSFCellStyle implements CellStyle
         return format.getFillForeground();
     }
 
+    /**
+     * Verifies that this style belongs to the supplied Workbook.
+     * Will throw an exception if it belongs to a different one.
+     * This is normally called when trying to assign a style to a
+     *  cell, to ensure the cell and the style are from the same
+     *  workbook (if they're not, it won't work)
+     * @throws IllegalArgumentException if there's a workbook mis-match
+     */
+    public void verifyBelongsToWorkbook(HSSFWorkbook wb) {
+		if(wb.getWorkbook() != workbook) {
+			throw new IllegalArgumentException("This Style does not belong to the supplied Workbook. Are you trying to assign a style from one workbook to the cell of a differnt workbook?");
+		}
+	}
+    
+    /**
+     * Clones all the style information from another
+     *  HSSFCellStyle, onto this one. This 
+     *  HSSFCellStyle will then have all the same
+     *  properties as the source, but the two may
+     *  be edited independently.
+     * Any stylings on this HSSFCellStyle will be lost! 
+     *  
+     * The source HSSFCellStyle could be from another
+     *  HSSFWorkbook if you like. This allows you to
+     *  copy styles from one HSSFWorkbook to another.
+     */
+    public void cloneStyleFrom(CellStyle source) {
+		if(source instanceof HSSFCellStyle) {
+			this.cloneStyleFrom((HSSFCellStyle)source);
+		}
+		throw new IllegalArgumentException("Can only clone from one HSSFCellStyle to another, not between HSSFCellStyle and XSSFCellStyle");
+	}
+    public void cloneStyleFrom(HSSFCellStyle source) {
+    	// First we need to clone the extended format
+    	//  record
+    	format.cloneStyleFrom(source.format);
+    	
+    	// Handle matching things if we cross workbooks
+    	if(workbook != source.workbook) {
+			// Then we need to clone the format string,
+			//  and update the format record for this
+    		short fmt = workbook.createFormat(
+    				source.getDataFormatString()
+    		);
+    		setDataFormat(fmt);
+			
+			// Finally we need to clone the font,
+			//  and update the format record for this
+    		FontRecord fr = workbook.createNewFont();
+    		fr.cloneStyleFrom(
+    				source.workbook.getFontRecordAt(
+    						source.getFontIndex()
+    				)
+    		);
+    		
+    		HSSFFont font = new HSSFFont(
+    				(short)workbook.getFontIndex(fr), fr
+    		);
+    		setFont(font);
+    	}    	
+    }
+
+    
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;

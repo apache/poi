@@ -705,4 +705,21 @@ public interface CellStyle {
      */
     short getFillForegroundColor();
 
+    /**
+     * Clones all the style information from another
+     *  CellStyle, onto this one. This 
+     *  CellStyle will then have all the same
+     *  properties as the source, but the two may
+     *  be edited independently.
+     * Any stylings on this CellStyle will be lost! 
+     *  
+     * The source CellStyle could be from another
+     *  Workbook if you like. This allows you to
+     *  copy styles from one Workbook to another.
+     *
+     * However, both of the CellStyles will need
+     *  to be of the same type (HSSFCellStyle or
+     *  XSSFCellStyle)
+     */
+    public void cloneStyleFrom(CellStyle source);
 }

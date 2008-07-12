@@ -273,4 +273,17 @@ public class TestXSSFCellStyle extends TestCase {
 		cellStyle.setWrapText(false);
 		assertFalse(cellXf.getAlignment().getWrapText());
 	}
+
+	/**
+	 * Cloning one XSSFCellStyle onto Another, same XSSFWorkbook
+	 */
+	public void testCloneStyleSameWB() throws Exception {
+		// TODO
+	}
+	/**
+	 * Cloning one XSSFCellStyle onto Another, different XSSFWorkbooks
+	 */
+	public void testCloneStyleDiffWB() throws Exception {
+		// TODO
+	}
 }

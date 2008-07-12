@@ -342,4 +342,41 @@ public class TestXSSFCell extends TestCase {
         XSSFRow row = new XSSFRow(sheet);
         return row;
     }
+
+    /**
+     * Test to ensure we can only assign cell styles that belong
+     *  to our workbook, and not those from other workbooks.
+     */
+    public void testCellStyleWorkbookMatch() throws Exception {
+    	XSSFWorkbook wbA = new XSSFWorkbook();
+    	XSSFWorkbook wbB = new XSSFWorkbook();
+    	
+    	XSSFCellStyle styA = (XSSFCellStyle)wbA.createCellStyle();
+    	XSSFCellStyle styB = (XSSFCellStyle)wbB.createCellStyle();
+    	
+    	styA.verifyBelongsToStylesSource(wbA.getStylesSource());
+    	styB.verifyBelongsToStylesSource(wbB.getStylesSource());
+    	try {
+    		styA.verifyBelongsToStylesSource(wbB.getStylesSource());
+    		fail();
+    	} catch(IllegalArgumentException e) {}
+    	try {
+    		styB.verifyBelongsToStylesSource(wbA.getStylesSource());
+    		fail();
+    	} catch(IllegalArgumentException e) {}
+    	
+    	Cell cellA = wbA.createSheet().createRow(0).createCell((short)0);
+    	Cell cellB = wbB.createSheet().createRow(0).createCell((short)0);
+    	
+    	cellA.setCellStyle(styA);
+    	cellB.setCellStyle(styB);
+    	try {
+        	cellA.setCellStyle(styB);
+    		fail();
+    	} catch(IllegalArgumentException e) {}
+    	try {
+        	cellB.setCellStyle(styA);
+    		fail();
+    	} catch(IllegalArgumentException e) {}
+    }
 }

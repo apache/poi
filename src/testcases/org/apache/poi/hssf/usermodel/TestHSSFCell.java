@@ -381,6 +381,43 @@ public final class TestHSSFCell extends TestCase {
             throw new AssertionFailedError("Identified bug 44606");
         }
     }
+
+    /**
+     * Test to ensure we can only assign cell styles that belong
+     *  to our workbook, and not those from other workbooks.
+     */
+    public void testCellStyleWorkbookMatch() throws Exception {
+    	HSSFWorkbook wbA = new HSSFWorkbook();
+    	HSSFWorkbook wbB = new HSSFWorkbook();
+    	
+    	HSSFCellStyle styA = wbA.createCellStyle();
+    	HSSFCellStyle styB = wbB.createCellStyle();
+    	
+    	styA.verifyBelongsToWorkbook(wbA);
+    	styB.verifyBelongsToWorkbook(wbB);
+    	try {
+    		styA.verifyBelongsToWorkbook(wbB);
+    		fail();
+    	} catch(IllegalArgumentException e) {}
+    	try {
+    		styB.verifyBelongsToWorkbook(wbA);
+    		fail();
+    	} catch(IllegalArgumentException e) {}
+    	
+    	HSSFCell cellA = wbA.createSheet().createRow(0).createCell((short)0);
+    	HSSFCell cellB = wbB.createSheet().createRow(0).createCell((short)0);
+    	
+    	cellA.setCellStyle(styA);
+    	cellB.setCellStyle(styB);
+    	try {
+        	cellA.setCellStyle(styB);
+    		fail();
+    	} catch(IllegalArgumentException e) {}
+    	try {
+        	cellB.setCellStyle(styA);
+    		fail();
+    	} catch(IllegalArgumentException e) {}
+    }
     
     public static void main(String [] args) {
         junit.textui.TestRunner.run(TestHSSFCell.class);

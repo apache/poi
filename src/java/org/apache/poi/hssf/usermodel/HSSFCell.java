@@ -924,7 +924,13 @@ public class HSSFCell implements Cell
 
     public void setCellStyle(CellStyle style)
     {
-        record.setXFIndex(((HSSFCellStyle) style).getIndex());
+		HSSFCellStyle hStyle = (HSSFCellStyle)style;
+
+        // Verify it really does belong to our workbook
+        hStyle.verifyBelongsToWorkbook(book);
+
+        // Change our cell record to use this style
+        record.setXFIndex(hStyle.getIndex());
     }
 
     /**
