@@ -33,6 +33,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
+import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
@@ -1321,5 +1322,36 @@ public final class TestBugs extends TestCase {
     	assertEquals(0, r.getFirstCellNum());
     	assertEquals(5, r.getLastCellNum()); // last cell # + 1
     	assertEquals(3, r.getPhysicalNumberOfCells());
+    }
+    
+    /**
+     * Data Tables - ptg 0x2
+     */
+    public void test44958() throws Exception {
+        HSSFWorkbook wb = openSample("44958.xls");
+        HSSFSheet s;
+        HSSFRow r;
+        HSSFCell c;
+    	
+        // Check the contents of the formulas
+        
+        // E4 to G9 of sheet 4 make up the table
+        s = wb.getSheet("OneVariable Table Completed");
+        r = s.getRow(3);
+        c = r.getCell(4);
+        assertEquals(HSSFCell.CELL_TYPE_FORMULA, c.getCellType());
+        
+        // TODO - check the formula once tables and
+        //  arrays are properly supported
+
+        
+        // E4 to H9 of sheet 5 make up the table
+        s = wb.getSheet("TwoVariable Table Example");
+        r = s.getRow(3);
+        c = r.getCell(4);
+        assertEquals(HSSFCell.CELL_TYPE_FORMULA, c.getCellType());
+        
+        // TODO - check the formula once tables and
+        //  arrays are properly supported
     }
 }

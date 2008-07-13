@@ -42,7 +42,7 @@ public final class CFHeaderRecord extends Record
 	{
 		field_4_cell_ranges = EMPTY_CELL_RANGE_ARRAY;
 	}
-	public CFHeaderRecord(Region[] regions)
+	public CFHeaderRecord(org.apache.poi.ss.util.Region[] regions)
 	{
 		CellRange[] unmergedRanges = CellRange.convertRegionsToCellRanges(regions);
 		CellRange[] mergeCellRanges = CellRange.mergeCellRanges(unmergedRanges);

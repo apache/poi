@@ -78,7 +78,7 @@ public final class CellRange
 		return _firstColumn == 0 && _lastColumn == LAST_COLUMN_INDEX;
 	}
 	
-	private static CellRange createFromRegion(Region r) {
+	private static CellRange createFromRegion(org.apache.poi.ss.util.Region r) {
 		return new CellRange(r.getRowFrom(), r.getRowTo(), r.getColumnFrom(), r.getColumnTo());
 	}
 
@@ -353,7 +353,7 @@ public final class CellRange
 	 * @param regions
 	 * @return List of CellRange objects
 	 */
-	public static CellRange[] convertRegionsToCellRanges(Region[] regions)
+	public static CellRange[] convertRegionsToCellRanges(org.apache.poi.ss.util.Region[] regions)
 	{
 		CellRange[] result = new CellRange[regions.length];
 		for( int i=0; i<regions.length; i++)

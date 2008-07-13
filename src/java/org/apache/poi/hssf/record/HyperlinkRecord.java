@@ -248,6 +248,8 @@ public class HyperlinkRecord extends Record {
      */
     public String getLabel()
     {
+    	if(label == null) return null;
+    	
         int idx = label.indexOf('\u0000');
         return idx == -1 ? label : label.substring(0, idx);
     }
@@ -269,6 +271,8 @@ public class HyperlinkRecord extends Record {
      */
     public String getAddress()
     {
+    	if(address == null) return null;
+    	
         int idx = address.indexOf('\u0000');
         return idx == -1 ? address : address.substring(0, idx);
     }
