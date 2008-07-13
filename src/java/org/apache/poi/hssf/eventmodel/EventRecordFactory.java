@@ -96,6 +96,7 @@ import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.record.StyleRecord;
 import org.apache.poi.hssf.record.TabIdRecord;
+import org.apache.poi.hssf.record.TableRecord;
 import org.apache.poi.hssf.record.TopMarginRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.UseSelFSRecord;
@@ -160,7 +161,7 @@ public class EventRecordFactory
                 TopMarginRecord.class, BottomMarginRecord.class,
                 PaletteRecord.class, StringRecord.class, SharedFormulaRecord.class, 
                 WriteProtectRecord.class, FilePassRecord.class, PaneRecord.class,
-                NoteRecord.class
+                NoteRecord.class, TableRecord.class
             };
        
     }

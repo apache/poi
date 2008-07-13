@@ -365,6 +365,8 @@ public final class BiffViewer {
                 return new FileSharingRecord( in );
             case HyperlinkRecord.sid:
                 return new HyperlinkRecord( in );
+            case TableRecord.sid:
+            	return new TableRecord( in );
         }
         return new UnknownRecord( in );
     }
