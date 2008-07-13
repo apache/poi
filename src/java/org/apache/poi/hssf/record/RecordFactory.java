@@ -86,6 +86,7 @@ public class RecordFactory
                 CRNRecord.class,
                 CFHeaderRecord.class,
                 CFRuleRecord.class,
+                TableRecord.class
             };
     }
     private static Map           recordsMap  = recordsToMap(records);

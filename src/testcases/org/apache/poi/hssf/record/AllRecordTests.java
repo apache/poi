@@ -101,6 +101,7 @@ public final class AllRecordTests {
 		result.addTestSuite(TestStringRecord.class);
 		result.addTestSuite(TestSubRecord.class);
 		result.addTestSuite(TestSupBookRecord.class);
+		result.addTestSuite(TestTableRecord.class);
 		result.addTestSuite(TestTextObjectBaseRecord.class);
 		result.addTestSuite(TestTextObjectRecord.class);
 		result.addTestSuite(TestTextRecord.class);
