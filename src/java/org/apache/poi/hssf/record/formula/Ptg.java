@@ -188,6 +188,7 @@ public abstract class Ptg implements Cloneable {
 		switch(id) {
 			case 0x00:                return new UnknownPtg(); // TODO - not a real Ptg
 			case ExpPtg.sid:          return new ExpPtg(in);          // 0x01
+			case TblPtg.sid:          return new TblPtg(in);          // 0x02
 			case AddPtg.sid:          return AddPtg.instance;         // 0x03
 			case SubtractPtg.sid:     return SubtractPtg.instance;    // 0x04
 			case MultiplyPtg.sid:     return MultiplyPtg.instance;    // 0x05
