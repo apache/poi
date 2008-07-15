@@ -121,4 +121,21 @@ public class TestFontRecord
         for (int i = 0; i < data.length; i++)
             assertEquals("At offset " + i, data[i], recordBytes[i+4]);
     }
+    
+    public void testSameProperties() throws Exception {
+        FontRecord f1 = new FontRecord(new TestcaseRecordInputStream((short)0x31, (short)data.length, data));
+        FontRecord f2 = new FontRecord(new TestcaseRecordInputStream((short)0x31, (short)data.length, data));
+    	
+        assertTrue(f1.sameProperties(f2));
+        
+        f2.setFontName("Arial2");
+        assertFalse(f1.sameProperties(f2));
+        f2.setFontName("Arial");
+        assertTrue(f1.sameProperties(f2));
+        
+        f2.setFontHeight((short)11);
+        assertFalse(f1.sameProperties(f2));
+        f2.setFontHeight((short)0xc8);
+        assertTrue(f1.sameProperties(f2));
+    }
 }

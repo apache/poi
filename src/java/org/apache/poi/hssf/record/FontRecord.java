@@ -579,6 +579,31 @@ public class FontRecord
 		result = prime * result + field_10_font_name_len;
 		return result;
 	}
+	
+	/**
+	 * Does this FontRecord have all the same font
+	 *  properties as the supplied FontRecord?
+	 * Note that {@link #equals(Object)} will check
+	 *  for exact objects, while this will check
+	 *  for exact contents, because normally the
+	 *  font record's position makes a big
+	 *  difference too.  
+	 */
+	public boolean sameProperties(FontRecord other) {
+		return 
+		field_1_font_height         == other.field_1_font_height &&
+		field_2_attributes          == other.field_2_attributes &&
+		field_3_color_palette_index == other.field_3_color_palette_index &&
+		field_4_bold_weight         == other.field_4_bold_weight &&
+		field_5_super_sub_script    == other.field_5_super_sub_script &&
+		field_6_underline           == other.field_6_underline &&
+		field_7_family              == other.field_7_family &&
+		field_8_charset             == other.field_8_charset &&
+		field_9_zero                == other.field_9_zero &&
+		field_10_font_name_len      == other.field_10_font_name_len &&
+		field_11_font_name.equals(other.field_11_font_name)
+		;
+	}
 
 	/**
 	 * Only returns two for the same exact object -
