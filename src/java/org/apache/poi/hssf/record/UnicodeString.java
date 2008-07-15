@@ -439,6 +439,23 @@ public class UnicodeString
       this.field_5_ext_rst = ext_rst;
     }
 
+
+    /**
+     * Swaps all use in the string of one font index 
+     *  for use of a different font index.
+     * Normally only called when fonts have been
+     *  removed / re-ordered
+     */
+    public void swapFontUse(short oldFontIndex, short newFontIndex) {
+    	Iterator i = field_4_format_runs.iterator();
+    	while(i.hasNext()) {
+    		FormatRun run = (FormatRun)i.next();
+    		if(run.fontIndex == oldFontIndex) {
+    			run.fontIndex = newFontIndex;
+    		}
+    	}
+    }
+    
     /**
      * unlike the real records we return the same as "getString()" rather than debug info
      * @see #getDebugInfo()
