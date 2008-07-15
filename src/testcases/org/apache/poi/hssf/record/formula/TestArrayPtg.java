@@ -102,7 +102,7 @@ public final class TestArrayPtg extends TestCase {
 	public void testElementOrderingInSpreadsheet() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex42564-elementOrder.xls");
 
-		// The formula has an array with 3 rows and 5 column 
+		// The formula has an array with 3 rows and 5 columns 
 		String formula = wb.getSheetAt(0).getRow(0).getCell((short)0).getCellFormula();
 		// TODO - These number literals should not have '.0'. Excel has different number rendering rules
 
@@ -110,5 +110,22 @@ public final class TestArrayPtg extends TestCase {
 			throw new AssertionFailedError("Identified bug 42564 b");
 		}
 		assertEquals("SUM({1.0,2.0,3.0;4.0,5.0,6.0;7.0,8.0,9.0;10.0,11.0,12.0;13.0,14.0,15.0})", formula);
+	}
+
+	public void testToFormulaString() {
+		ArrayPtg ptg = new ArrayPtg(new TestcaseRecordInputStream(ArrayPtg.sid, ENCODED_PTG_DATA));
+		
+		ptg.readTokenValues(new TestcaseRecordInputStream(0, ENCODED_CONSTANT_DATA));
+		
+		String actualFormula;
+		try {
+			actualFormula = ptg.toFormulaString(null);
+		} catch (IllegalArgumentException e) {
+			if (e.getMessage().equals("Unexpected constant class (java.lang.Boolean)")) {
+				throw new AssertionFailedError("Identified bug 45380");
+			}
+			throw e;
+		}
+		assertEquals("{TRUE,\"ABCD\";\"E\",0.0;FALSE,\"FG\"}", actualFormula);
 	}
 }
