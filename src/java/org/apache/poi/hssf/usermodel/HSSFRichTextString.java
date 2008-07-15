@@ -67,7 +67,7 @@ public class HSSFRichTextString
     
     /** Called whenever the unicode string is modified. When it is modified
      *  we need to create a new SST index, so that other LabelSSTRecords will not
-     *  be affected by changes tat we make to this string.
+     *  be affected by changes that we make to this string.
      */
     private UnicodeString cloneStringIfRequired() {
       if (book == null)
@@ -167,9 +167,24 @@ public class HSSFRichTextString
         return string.getString();
     }
 
-    /** Used internally by the HSSFCell to get the internal string value*/
+    /** 
+     * Used internally by the HSSFCell to get the internal 
+     * string value.
+     * Will ensure the string is not shared
+     */
     UnicodeString getUnicodeString() {
       return cloneStringIfRequired();
+    }
+    
+    /**
+     * Returns the raw, probably shared Unicode String. 
+     * Used when tweaking the styles, eg updating font 
+     *  positions.
+     * Changes to this string may well effect
+     *  other RichTextStrings too! 
+     */
+    UnicodeString getRawUnicodeString() {
+    	return string;
     }
 
     /** Used internally by the HSSFCell to set the internal string value*/
