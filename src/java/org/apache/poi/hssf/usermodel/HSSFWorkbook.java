@@ -1094,6 +1094,16 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
         return retval;
     }
+    
+    /**
+     * Reset the fonts cache, causing all new calls
+     *  to getFontAt() to create new objects.
+     * Should only be called after deleting fonts,
+     *  and that's not something you should normally do
+     */
+    protected void resetFontCache() {
+    	fonts = new Hashtable();
+    }
 
     /**
      * create a new Cell style and add it to the workbook's style table

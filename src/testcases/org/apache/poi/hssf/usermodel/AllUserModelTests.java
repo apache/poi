@@ -47,6 +47,7 @@ public class AllUserModelTests {
 		result.addTestSuite(TestHSSFDateUtil.class);
 		result.addTestSuite(TestHSSFHeaderFooter.class);
 		result.addTestSuite(TestHSSFHyperlink.class);
+		result.addTestSuite(TestHSSFOptimiser.class);
 		result.addTestSuite(TestHSSFPalette.class);
 		result.addTestSuite(TestHSSFPatriarch.class);
 		result.addTestSuite(TestHSSFPicture.class);
