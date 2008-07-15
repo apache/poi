@@ -927,14 +927,13 @@ public class HSSFCell
      * object.
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(short)
      */
-
     public HSSFCellStyle getCellStyle()
     {
       short styleIndex=record.getXFIndex();
       ExtendedFormatRecord xf = book.getWorkbook().getExFormatAt(styleIndex);
       return new HSSFCellStyle(styleIndex, xf, book);
     }
-
+    
     /**
      * used for internationalization, currently -1 for unchanged, 0 for compressed unicode or 1 for 16-bit
      *

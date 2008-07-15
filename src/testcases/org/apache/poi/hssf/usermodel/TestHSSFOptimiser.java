@@ -15,6 +15,8 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.hssf.model.Workbook;
+
 import junit.framework.TestCase;
 
 public class TestHSSFOptimiser extends TestCase {
@@ -38,7 +40,7 @@ public class TestHSSFOptimiser extends TestCase {
 		assertEquals(f, s.getFont(wb));
 		
 		// Optimise styles
-//		HSSFOptimiser.optimiseCellStyles(wb);
+		HSSFOptimiser.optimiseCellStyles(wb);
 		
 		assertEquals(5, wb.getNumberOfFonts());
 		assertEquals(22, wb.getNumCellStyles());
@@ -77,6 +79,8 @@ public class TestHSSFOptimiser extends TestCase {
 		
 		
 		// Use all three of the four in cell styles
+		assertEquals(21, wb.getNumCellStyles());
+		
 		HSSFCellStyle cs1 = wb.createCellStyle();
 		cs1.setFont(f1);
 		assertEquals(5, cs1.getFontIndex());
@@ -92,6 +96,8 @@ public class TestHSSFOptimiser extends TestCase {
 		HSSFCellStyle cs4 = wb.createCellStyle();
 		cs4.setFont(f6);
 		assertEquals(10, cs4.getFontIndex());
+		
+		assertEquals(25, wb.getNumCellStyles());
 		
 		
 		// And three in rich text
@@ -143,5 +149,92 @@ public class TestHSSFOptimiser extends TestCase {
 		assertEquals(6, r.getCell(1).getRichStringCellValue().getFontAtIndex(4));
 		assertEquals(8, r.getCell(1).getRichStringCellValue().getFontAtIndex(6));
 		assertEquals(8, r.getCell(1).getRichStringCellValue().getFontAtIndex(7));
+	}
+	
+	public void testOptimiseStyles() throws Exception {
+		HSSFWorkbook wb = new HSSFWorkbook();
+
+		// Two fonts
+		assertEquals(4, wb.getNumberOfFonts());
+		
+		HSSFFont f1 = wb.createFont();
+		f1.setFontHeight((short)11);
+		f1.setFontName("Testing");
+		
+		HSSFFont f2 = wb.createFont();
+		f2.setFontHeight((short)22);
+		f2.setFontName("Also Testing");
+
+		assertEquals(6, wb.getNumberOfFonts());
+	
+		
+		// Several styles
+		assertEquals(21, wb.getNumCellStyles());
+		
+		HSSFCellStyle cs1 = wb.createCellStyle();
+		cs1.setFont(f1);
+		
+		HSSFCellStyle cs2 = wb.createCellStyle();
+		cs2.setFont(f2);
+		
+		HSSFCellStyle cs3 = wb.createCellStyle();
+		cs3.setFont(f1);
+		
+		HSSFCellStyle cs4 = wb.createCellStyle();
+		cs4.setFont(f1);
+		cs4.setAlignment((short)22);
+		
+		HSSFCellStyle cs5 = wb.createCellStyle();
+		cs5.setFont(f2);
+		cs5.setAlignment((short)111);
+		
+		HSSFCellStyle cs6 = wb.createCellStyle();
+		cs6.setFont(f2);
+		
+		assertEquals(27, wb.getNumCellStyles());
+		
+		
+		// Use them
+		HSSFSheet s = wb.createSheet();
+		HSSFRow r = s.createRow(0);
+		
+		r.createCell((short)0).setCellStyle(cs1);
+		r.createCell((short)1).setCellStyle(cs2);
+		r.createCell((short)2).setCellStyle(cs3);
+		r.createCell((short)3).setCellStyle(cs4);
+		r.createCell((short)4).setCellStyle(cs5);
+		r.createCell((short)5).setCellStyle(cs6);
+		r.createCell((short)6).setCellStyle(cs1);
+		r.createCell((short)7).setCellStyle(cs2);
+		
+		assertEquals(21, r.getCell(0).getCellValueRecord().getXFIndex());
+		assertEquals(26, r.getCell(5).getCellValueRecord().getXFIndex());
+		assertEquals(21, r.getCell(6).getCellValueRecord().getXFIndex());
+		
+		
+		// Optimise
+		HSSFOptimiser.optimiseCellStyles(wb);
+		
+		
+		// Check
+		assertEquals(6, wb.getNumberOfFonts());
+		assertEquals(25, wb.getNumCellStyles());
+		
+		// cs1 -> 21
+		assertEquals(21, r.getCell(0).getCellValueRecord().getXFIndex());
+		// cs2 -> 22
+		assertEquals(22, r.getCell(1).getCellValueRecord().getXFIndex());
+		// cs3 = cs1 -> 21
+		assertEquals(21, r.getCell(2).getCellValueRecord().getXFIndex());
+		// cs4 --> 24 -> 23
+		assertEquals(23, r.getCell(3).getCellValueRecord().getXFIndex());
+		// cs5 --> 25 -> 24
+		assertEquals(24, r.getCell(4).getCellValueRecord().getXFIndex());
+		// cs6 = cs2 -> 22
+		assertEquals(22, r.getCell(5).getCellValueRecord().getXFIndex());
+		// cs1 -> 21
+		assertEquals(21, r.getCell(6).getCellValueRecord().getXFIndex());
+		// cs2 -> 22
+		assertEquals(22, r.getCell(7).getCellValueRecord().getXFIndex());
 	}
 }

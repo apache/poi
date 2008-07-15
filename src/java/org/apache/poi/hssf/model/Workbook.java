@@ -713,6 +713,18 @@ public class Workbook implements Model
 
         return retval;
     }
+    
+    /**
+     * Removes the given ExtendedFormatRecord record from the
+     *  file's list. This will make all 
+     *  subsequent font indicies drop by one,
+     *  so you'll need to update those yourself!
+     */
+    public void removeExFormatRecord(ExtendedFormatRecord rec) {
+    	records.remove(rec); // this updates XfPos for us
+        numxfs--;
+    }
+
 
     /**
      * creates a new Cell-type Extneded Format Record and adds it to the end of
