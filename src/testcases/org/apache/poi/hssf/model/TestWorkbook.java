@@ -32,6 +32,7 @@ public final class TestWorkbook extends TestCase {
 		Workbook wb = (new HW()).getWorkbook();
 		
 		assertEquals(4, wb.getNumberOfFontRecords());
+		assertEquals(68, wb.getRecords().size());
 		
 		FontRecord f1 = wb.getFontRecordAt(0);
 		FontRecord f4 = wb.getFontRecordAt(3);
@@ -45,9 +46,41 @@ public final class TestWorkbook extends TestCase {
 		// There is no 4! new ones go in at 5
 		
 		FontRecord n = wb.createNewFont();
+		assertEquals(69, wb.getRecords().size());
 		assertEquals(5, wb.getNumberOfFontRecords());
 		assertEquals(5, wb.getFontIndex(n));
 		assertEquals(n, wb.getFontRecordAt(5));
+		
+		// And another
+		FontRecord n6 = wb.createNewFont();
+		assertEquals(70, wb.getRecords().size());
+		assertEquals(6, wb.getNumberOfFontRecords());
+		assertEquals(6, wb.getFontIndex(n6));
+		assertEquals(n6, wb.getFontRecordAt(6));
+		
+		
+		// Now remove the one formerly at 5
+		assertEquals(70, wb.getRecords().size());
+		wb.removeFontRecord(n);
+
+		// Check that 6 has gone to 5
+		assertEquals(69, wb.getRecords().size());
+		assertEquals(5, wb.getNumberOfFontRecords());
+		assertEquals(5, wb.getFontIndex(n6));
+		assertEquals(n6, wb.getFontRecordAt(5));
+		
+		// Check that the earlier ones are unchanged
+		assertEquals(0, wb.getFontIndex(f1));
+		assertEquals(3, wb.getFontIndex(f4));
+		assertEquals(f1, wb.getFontRecordAt(0));
+		assertEquals(f4, wb.getFontRecordAt(3));
+		
+		// Finally, add another one
+		FontRecord n7 = wb.createNewFont();
+		assertEquals(70, wb.getRecords().size());
+		assertEquals(6, wb.getNumberOfFontRecords());
+		assertEquals(6, wb.getFontIndex(n7));
+		assertEquals(n7, wb.getFontRecordAt(6));
 	}
 	
 	private class HW extends HSSFWorkbook {
