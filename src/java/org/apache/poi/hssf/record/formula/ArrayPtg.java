@@ -176,7 +176,7 @@ public final class ArrayPtg extends Ptg {
 			return ((Double)o).toString();
 		}
 		if (o instanceof Boolean) {
-			((Boolean)o).toString();
+			return ((Boolean)o).booleanValue() ? "TRUE" : "FALSE";
 		}
 		if (o instanceof ErrorConstant) {
 			return ((ErrorConstant)o).getText();

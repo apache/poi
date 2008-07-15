@@ -1868,9 +1868,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
             } else {
                 String sval = null;
                 if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
-                    HSSFDataFormat dataformat = wb.createDataFormat();
-                    short idx = style.getDataFormat();
-                    String format = dataformat.getFormat(idx).replaceAll("\"", "");
+                    String format = style.getDataFormatString().replaceAll("\"", "");
                     double value = cell.getNumericCellValue();
                     try {
                         NumberFormat fmt;

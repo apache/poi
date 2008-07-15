@@ -1354,4 +1354,13 @@ public final class TestBugs extends TestCase {
         // TODO - check the formula once tables and
         //  arrays are properly supported
     }
+
+    /**
+     * 45322: HSSFSheet.autoSizeColumn fails when style.getDataFormat() returns -1
+     */
+    public void test45322() throws Exception {
+        HSSFWorkbook wb = openSample("44958.xls");
+        HSSFSheet sh = wb.getSheetAt(0);
+        for(short i=0; i < 30; i++) sh.autoSizeColumn(i);
+     }
 }
