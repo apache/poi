@@ -443,6 +443,17 @@ public class Workbook implements Model
         numfonts++;
         return rec;
     }
+    
+    /**
+     * Removes the given font record from the
+     *  file's list. This will make all 
+     *  subsequent font indicies drop by one,
+     *  so you'll need to update those yourself!
+     */
+    public void removeFontRecord(FontRecord rec) {
+    	records.remove(rec); // this updates FontPos for us
+        numfonts--;
+    }
 
     /**
      * gets the number of font records
