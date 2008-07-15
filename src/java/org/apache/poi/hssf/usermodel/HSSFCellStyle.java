@@ -278,21 +278,23 @@ public class HSSFCellStyle
      * Get the contents of the format string, by looking up
      *  the DataFormat against the bound workbook
      * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
+     * @return the format string or "General" if not found
      */
     public String getDataFormatString() {
-    	HSSFDataFormat format = new HSSFDataFormat(workbook);
-    	
-        return format.getFormat(getDataFormat());
+        return getDataFormatString(workbook);
     }
     /**
      * Get the contents of the format string, by looking up
      *  the DataFormat against the supplied workbook
      * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
+     *
+     * @return the format string or "General" if not found
      */
     public String getDataFormatString(Workbook workbook) {
     	HSSFDataFormat format = new HSSFDataFormat(workbook);
     	
-        return format.getFormat(getDataFormat());
+        int idx = getDataFormat();
+        return idx == -1 ? "General" : format.getFormat(getDataFormat());
     }
 
     /**

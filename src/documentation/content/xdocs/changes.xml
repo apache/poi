@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">45322 - Fixed NPE in HSSFSheet.autoSizeColumn() when cell number format was not found</action>
            <action dev="POI-DEVELOPERS" type="add">45380 - Missing return keyword in ArrayPtg.toFormulaString()</action>
            <action dev="POI-DEVELOPERS" type="add">44958 - Record level support for Data Tables. (No formula parser support though)</action>
            <action dev="POI-DEVELOPERS" type="add">35583 - Include a version class, org.apache.poi.Version, to allow easy introspection of the POI version</action>
