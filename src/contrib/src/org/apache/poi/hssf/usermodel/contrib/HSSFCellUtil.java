@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,19 +14,20 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.usermodel.contrib;
 
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.NestableException;
-import org.apache.poi.hssf.usermodel.*;
-
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  *  Various utility functions that make working with a cells and rows easier.  The various
@@ -39,12 +39,46 @@ import java.util.Map;
  *
  *@author     Eric Pugh epugh@upstate.com
  */
-
-public class HSSFCellUtil
+public final class HSSFCellUtil
 {
 
-    private static HashMap unicodeMappings = new HashMap();
+    public static final String ALIGNMENT = "alignment";
+    public static final String BORDER_BOTTOM = "borderBottom";
+    public static final String BORDER_LEFT = "borderLeft";
+    public static final String BORDER_RIGHT = "borderRight";
+    public static final String BORDER_TOP = "borderTop";
+    public static final String BOTTOM_BORDER_COLOR = "bottomBorderColor";
+    public static final String DATA_FORMAT = "dataFormat";
+    public static final String FILL_BACKGROUND_COLOR = "fillBackgroundColor";
+    public static final String FILL_FOREGROUND_COLOR = "fillForegroundColor";
+    public static final String FILL_PATTERN = "fillPattern";
+    public static final String FONT = "font";
+    public static final String HIDDEN = "hidden";
+    public static final String INDENTION = "indention";
+    public static final String LEFT_BORDER_COLOR = "leftBorderColor";
+    public static final String LOCKED = "locked";
+    public static final String RIGHT_BORDER_COLOR = "rightBorderColor";
+    public static final String ROTATION = "rotation";
+    public static final String TOP_BORDER_COLOR = "topBorderColor";
+    public static final String VERTICAL_ALIGNMENT = "verticalAlignment";
+    public static final String WRAP_TEXT = "wrapText";
 
+    private static UnicodeMapping unicodeMappings[];
+
+    private static final class UnicodeMapping {
+
+        public final String entityName;
+        public final String resolvedValue;
+
+        public UnicodeMapping(String pEntityName, String pResolvedValue) {
+            entityName = "&" + pEntityName + ";";
+            resolvedValue = pResolvedValue;
+        }
+    }
+
+    private HSSFCellUtil() {
+        // no instances of this class
+    }
 
     /**
      *  Get a row from the spreadsheet, and create it if it doesn't exist.
@@ -94,7 +128,6 @@ public class HSSFCellUtil
      * @param  style   If the style is not null, then set
      * @return         A new HSSFCell
      */
-
     public static HSSFCell createCell( HSSFRow row, int column, String value, HSSFCellStyle style )
     {
         HSSFCell cell = getCell( row, column );
@@ -129,13 +162,12 @@ public class HSSFCellUtil
      *@param  cell     the cell to set the alignment for
      *@param  workbook               The workbook that is being worked with.
      *@param  align  the column alignment to use.
-     *@exception  NestableException  Thrown if an error happens.
      *
      * @see HSSFCellStyle for alignment options
      */
-    public static void setAlignment( HSSFCell cell, HSSFWorkbook workbook, short align ) throws NestableException
+    public static void setAlignment( HSSFCell cell, HSSFWorkbook workbook, short align )
     {
-        setCellStyleProperty( cell, workbook, "alignment", new Short( align ) );
+        setCellStyleProperty( cell, workbook, ALIGNMENT, new Short( align ) );
     }
 
     /**
@@ -144,18 +176,17 @@ public class HSSFCellUtil
      *@param  cell     the cell to set the alignment for
      *@param  workbook               The workbook that is being worked with.
      *@param  font  The HSSFFont that you want to set...
-     *@exception  NestableException  Thrown if an error happens.
      */
-    public static void setFont( HSSFCell cell, HSSFWorkbook workbook, HSSFFont font ) throws NestableException
+    public static void setFont( HSSFCell cell, HSSFWorkbook workbook, HSSFFont font )
     {
-        setCellStyleProperty( cell, workbook, "font", font );
+        setCellStyleProperty( cell, workbook, FONT, font );
     }
 
     /**
      *  This method attempt to find an already existing HSSFCellStyle that matches
      *  what you want the style to be. If it does not find the style, then it
-     *  creates a new one. If it does create a new one, then it applyies the
-     *  propertyName and propertyValue to the style. This is nessasary because
+     *  creates a new one. If it does create a new one, then it applies the
+     *  propertyName and propertyValue to the style. This is necessary because
      *  Excel has an upper limit on the number of Styles that it supports.
      *
      *@param  workbook               The workbook that is being worked with.
@@ -167,15 +198,11 @@ public class HSSFCellUtil
      *@exception  NestableException  Thrown if an error happens.
      */
     public static void setCellStyleProperty( HSSFCell cell, HSSFWorkbook workbook, String propertyName, Object propertyValue )
-            throws NestableException
     {
-        try
-        {
             HSSFCellStyle originalStyle = cell.getCellStyle();
             HSSFCellStyle newStyle = null;
-            Map values = PropertyUtils.describe( originalStyle );
+            Map values = getFormatProperties( originalStyle );
             values.put( propertyName, propertyValue );
-            values.remove( "index" );
 
             // index seems like what  index the cellstyle is in the list of styles for a workbook.
             // not good to compare on!
@@ -184,8 +211,7 @@ public class HSSFCellUtil
             for ( short i = 0; i < numberCellStyles; i++ )
             {
                 HSSFCellStyle wbStyle = workbook.getCellStyleAt( i );
-                Map wbStyleMap = PropertyUtils.describe( wbStyle );
-                wbStyleMap.remove( "index" );
+                Map wbStyleMap = getFormatProperties( wbStyle );
 
                 if ( wbStyleMap.equals( values ) )
                 {
@@ -197,21 +223,131 @@ public class HSSFCellUtil
             if ( newStyle == null )
             {
                 newStyle = workbook.createCellStyle();
-                newStyle.setFont( workbook.getFontAt( originalStyle.getFontIndex() ) );
-                PropertyUtils.copyProperties( newStyle, originalStyle );
-                PropertyUtils.setProperty( newStyle, propertyName, propertyValue );
+                setFormatProperties( newStyle, workbook, values );
             }
 
             cell.setCellStyle( newStyle );
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
+    }
 
-            throw new NestableException( "Couldn't setCellStyleProperty.", e );
+    /**
+     * Returns a map containing the format properties of the given cell style.
+     *
+     * @param style cell style
+     * @return map of format properties (String -> Object)
+     * @see #setFormatProperties(HSSFCellStyle, Map)
+     */
+    private static Map getFormatProperties(HSSFCellStyle style) {
+        Map properties = new HashMap();
+        putShort( properties, ALIGNMENT, style.getAlignment() );
+        putShort( properties, BORDER_BOTTOM, style.getBorderBottom() );
+        putShort( properties, BORDER_LEFT, style.getBorderLeft() );
+        putShort( properties, BORDER_RIGHT, style.getBorderRight() );
+        putShort( properties, BORDER_TOP, style.getBorderTop() );
+        putShort( properties, BOTTOM_BORDER_COLOR, style.getBottomBorderColor() );
+        putShort( properties, DATA_FORMAT, style.getDataFormat() );
+        putShort( properties, FILL_BACKGROUND_COLOR, style.getFillBackgroundColor() );
+        putShort( properties, FILL_FOREGROUND_COLOR, style.getFillForegroundColor() );
+        putShort( properties, FILL_PATTERN, style.getFillPattern() );
+        putShort( properties, FONT, style.getFontIndex() );
+        putBoolean( properties, HIDDEN, style.getHidden() );
+        putShort( properties, INDENTION, style.getIndention() );
+        putShort( properties, LEFT_BORDER_COLOR, style.getLeftBorderColor() );
+        putBoolean( properties, LOCKED, style.getLocked() );
+        putShort( properties, RIGHT_BORDER_COLOR, style.getRightBorderColor() );
+        putShort( properties, ROTATION, style.getRotation() );
+        putShort( properties, TOP_BORDER_COLOR, style.getTopBorderColor() );
+        putShort( properties, VERTICAL_ALIGNMENT, style.getVerticalAlignment() );
+        putBoolean( properties, WRAP_TEXT, style.getWrapText() );
+        return properties;
+    }
+
+    /**
+     * Sets the format properties of the given style based on the given map.
+     *
+     * @param style cell style
+     * @param workbook parent workbook
+     * @param properties map of format properties (String -> Object)
+     * @see #getFormatProperties(HSSFCellStyle)
+     */
+    private static void setFormatProperties(
+            HSSFCellStyle style, HSSFWorkbook workbook, Map properties) {
+        style.setAlignment( getShort( properties, ALIGNMENT ) );
+        style.setBorderBottom( getShort( properties, BORDER_BOTTOM ) );
+        style.setBorderLeft( getShort( properties, BORDER_LEFT ) );
+        style.setBorderRight( getShort( properties, BORDER_RIGHT ) );
+        style.setBorderTop( getShort( properties, BORDER_TOP ) );
+        style.setBottomBorderColor( getShort( properties, BOTTOM_BORDER_COLOR ) );
+        style.setDataFormat( getShort( properties, DATA_FORMAT ) );
+        style.setFillBackgroundColor( getShort( properties, FILL_BACKGROUND_COLOR ) );
+        style.setFillForegroundColor( getShort( properties, FILL_FOREGROUND_COLOR ) );
+        style.setFillPattern( getShort( properties, FILL_PATTERN ) );
+        style.setFont( workbook.getFontAt( getShort( properties, FONT ) ) );
+        style.setHidden( getBoolean( properties, HIDDEN ) );
+        style.setIndention( getShort( properties, INDENTION ) );
+        style.setLeftBorderColor( getShort( properties, LEFT_BORDER_COLOR ) );
+        style.setLocked( getBoolean( properties, LOCKED ) );
+        style.setRightBorderColor( getShort( properties, RIGHT_BORDER_COLOR ) );
+        style.setRotation( getShort( properties, ROTATION ) );
+        style.setTopBorderColor( getShort( properties, TOP_BORDER_COLOR ) );
+        style.setVerticalAlignment( getShort( properties, VERTICAL_ALIGNMENT ) );
+        style.setWrapText( getBoolean( properties, WRAP_TEXT ) );
+    }
+
+    /**
+     * Utility method that returns the named short value form the given map.
+     * Returns zero if the property does not exist, or is not a {@link Short}.
+     *
+     * @param properties map of named properties (String -> Object)
+     * @param name property name
+     * @return property value, or zero
+     */
+    private static short getShort(Map properties, String name) {
+        Object value = properties.get( name );
+        if ( value instanceof Short ) {
+            return ((Short) value).shortValue();
+        } else {
+            return 0;
         }
     }
 
+    /**
+     * Utility method that returns the named boolean value form the given map.
+     * Returns false if the property does not exist, or is not a {@link Boolean}.
+     *
+     * @param properties map of properties (String -> Object)
+     * @param name property name
+     * @return property value, or false
+     */
+    private static boolean getBoolean(Map properties, String name) {
+        Object value = properties.get( name );
+        if ( value instanceof Boolean ) {
+            return ((Boolean) value).booleanValue();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Utility method that puts the named short value to the given map.
+     *
+     * @param properties map of properties (String -> Object)
+     * @param name property name
+     * @param value property value
+     */
+    private static void putShort(Map properties, String name, short value) {
+        properties.put( name, new Short( value ) );
+    }
+
+    /**
+     * Utility method that puts the named boolean value to the given map.
+     *
+     * @param properties map of properties (String -> Object)
+     * @param name property name
+     * @param value property value
+     */
+    private static void putBoolean(Map properties, String name, boolean value) {
+        properties.put( name, new Boolean( value ) );
+    }
 
     /**
      *  Looks for text in the cell that should be unicode, like &alpha; and provides the
@@ -225,42 +361,45 @@ public class HSSFCellUtil
 
         String s = cell.getRichStringCellValue().getString(); 
         boolean foundUnicode = false;
+        String lowerCaseStr = s.toLowerCase();
 
-        for ( Iterator i = unicodeMappings.entrySet().iterator(); i.hasNext(); )
-        {
-            Map.Entry entry = (Map.Entry) i.next();
-            String key = (String) entry.getKey();
-            if ( s.toLowerCase().indexOf( key ) != -1 )
+        for (int i = 0; i < unicodeMappings.length; i++) {
+            UnicodeMapping entry = unicodeMappings[i];
+            String key = entry.entityName;
+            if ( lowerCaseStr.indexOf( key ) != -1 )
             {
-                s = StringUtils.replace( s, key, "" + entry.getValue().toString() + "" );
+                s =  s.replaceAll(key, entry.resolvedValue);
                 foundUnicode = true;
             }
         }
         if ( foundUnicode )
         {
-            cell.setEncoding( HSSFCell.ENCODING_UTF_16 );
-            cell.setCellValue( s );
+            cell.setCellValue(new HSSFRichTextString(s));
         }
         return cell;
     }
 
-    
     static {
-        unicodeMappings.put( "&alpha;",   "\u03B1" );
-        unicodeMappings.put( "&beta;",    "\u03B2" );
-        unicodeMappings.put( "&gamma;",   "\u03B3" );
-        unicodeMappings.put( "&delta;",   "\u03B4" );
-        unicodeMappings.put( "&epsilon;", "\u03B5" );
-        unicodeMappings.put( "&zeta;",    "\u03B6" );
-        unicodeMappings.put( "&eta;",     "\u03B7" );
-        unicodeMappings.put( "&theta;",   "\u03B8" );
-        unicodeMappings.put( "&iota;",    "\u03B9" );
-        unicodeMappings.put( "&kappa;",   "\u03BA" );
-        unicodeMappings.put( "&lambda;",  "\u03BB" );
-        unicodeMappings.put( "&mu;",      "\u03BC" );
-        unicodeMappings.put( "&nu;",      "\u03BD" );
-        unicodeMappings.put( "&xi;",      "\u03BE" );
-        unicodeMappings.put( "&omicron;", "\u03BF" );
+        unicodeMappings = new UnicodeMapping[] {
+            um("alpha",   "\u03B1" ),
+            um("beta",    "\u03B2" ),
+            um("gamma",   "\u03B3" ),
+            um("delta",   "\u03B4" ),
+            um("epsilon", "\u03B5" ),
+            um("zeta",    "\u03B6" ),
+            um("eta",     "\u03B7" ),
+            um("theta",   "\u03B8" ),
+            um("iota",    "\u03B9" ),
+            um("kappa",   "\u03BA" ),
+            um("lambda",  "\u03BB" ),
+            um("mu",      "\u03BC" ),
+            um("nu",      "\u03BD" ),
+            um("xi",      "\u03BE" ),
+            um("omicron", "\u03BF" ),
+        };
     }
 
+    private static UnicodeMapping um(String entityName, String resolvedValue) {
+        return new UnicodeMapping(entityName, resolvedValue);
+    }
 }
