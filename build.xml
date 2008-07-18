@@ -105,18 +105,7 @@ under the License.
 
   <!-- Examples: -->
   <property name="examples.src" location="src/examples/src"/>
-  <property name="examples.src.test" location="src/examples/testcases"/>
-  <property name="examples.lib" location="src/examples/lib"/>
-  <property name="examples.reports.test" location="build/examples-test-results"/>
   <property name="examples.output.dir" location="build/examples-classes"/>
-  <property name="examples.output.test.dir" location="build/examples-test-classes"/>
-  <property name="examples.jar1.dir" location="${examples.lib}/commons-beanutils-1.7.0.jar"/>
-  <property name="examples.jar1.url" value="${repository}/commons-beanutils/jars/commons-beanutils-1.7.0.jar"/>
-  <property name="examples.jar2.dir" location="${examples.lib}/commons-collections-3.2.jar"/>
-  <property name="examples.jar2.url" value="${repository}/commons-collections/jars/commons-collections-3.2.jar"/>
-  <property name="examples.jar3.dir" location="${examples.lib}/commons-lang-2.1.jar"/>
-  <property name="examples.jar3.url" value="${repository}/commons-lang/jars/commons-lang-2.1.jar"/>
-  <property name="examples.testokfile" location="build/examples-testokfile.txt"/>
 
   <property name="build.site" location="build/tmp/site/build/site"/>
   <property name="build.site.src" location="build/tmp/site"/>
