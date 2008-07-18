@@ -46,24 +46,19 @@
         under Group ID "org.apache.poi" and Version "3.1-FINAL".
       </p>  
     </section>
-    <section><title>ApacheCon Europe Coming Soon</title>
-      <p><img src="images/ApacheConEu08.jpg" width="234" height="60" 
-        alt="ApacheCon Europe 2008 banner" class="ontheright" />
-       ApacheCon Europe 2008 will once again be held at the Mövenpick 
-       Hotel in Amsterdam, April 7-11. This year, there will be a number
-       of POI sessions, including a tutorial covering the new Office Open
-       XML support.</p>
-      <p>For further information, see the ApacheCon Europe Web site at
-       <link href="http://www.eu.apachecon.com/">www.eu.apachecon.com</link></p>
-    </section>
-    <section><title>Office Open XML Support</title>
+    <section><title>Office Open XML Support - POI 3.5</title>
       <p>We are currently working to support the new Office Open XML
        file formats, such as XLSX and PPTX, which were introduced in
        Office 2007.</p>
-      <p>Support for these is currently only available in an svn branch,
-       but we hope to have a full release including it by the summer.
-       People interested should follow the
-       <link href="mailinglists.html">dev list</link> to track progress.</p>
+      <p>Support for these is currently only available in the 3.5 series,
+       which is in a svn branch (not trunk). POI 3.5.1 beta 1 was released
+       on 2008-07-18, and is our first release including the OOXML support.
+       It is available to download from your favourite
+       <link href="http://www.apache.org/dyn/closer.cgi/poi/dev/">local mirror</link>.
+      </p>
+      <p>Please note that the documentation on the website is for the
+       3.1 series of POI. Documentation on the new OOXML support is
+       included in the 3.5.1 beta 1 distribution.</p>
     </section>
 
     <section><title>Purpose</title>
