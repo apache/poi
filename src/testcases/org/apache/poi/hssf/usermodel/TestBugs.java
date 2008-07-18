@@ -1362,4 +1362,24 @@ public final class TestBugs extends TestCase {
         HSSFSheet sh = wb.getSheetAt(0);
         for(short i=0; i < 30; i++) sh.autoSizeColumn(i);
      }
+    
+    /**
+     * We used to add too many UncalcRecords to sheets
+     *  with diagrams on. Don't any more
+     */
+    public void test45414() throws Exception {
+    	HSSFWorkbook wb = openSample("WithThreeCharts.xls");
+    	wb.getSheetAt(0).setForceFormulaRecalculation(true);
+    	wb.getSheetAt(1).setForceFormulaRecalculation(false);
+    	wb.getSheetAt(2).setForceFormulaRecalculation(true);
+    	
+    	// Write out and back in again
+    	// This used to break
+    	HSSFWorkbook nwb = writeOutAndReadBack(wb);
+    	
+    	// Check now set as it should be
+    	assertTrue(nwb.getSheetAt(0).getForceFormulaRecalculation());
+    	assertFalse(nwb.getSheetAt(1).getForceFormulaRecalculation());
+    	assertTrue(nwb.getSheetAt(2).getForceFormulaRecalculation());
+    }
 }
