@@ -36,6 +36,7 @@ public final class AllXSSFUsermodelTests {
 	public static Test suite() {
 		TestSuite result = new TestSuite(AllXSSFUsermodelTests.class.getName());
 		result.addTestSuite(TestXSSFBorder.class);
+		result.addTestSuite(TestXSSFBugs.class);
 		result.addTestSuite(TestXSSFCellFill.class);
 		result.addTestSuite(TestXSSFHeaderFooter.class);
 		result.addTestSuite(TestXSSFSheetComments.class);

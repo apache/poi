@@ -33,10 +33,9 @@
 
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
-<!--
         <release version="3.5.1-beta2" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">45430 - Correct named range sheet reporting when no local sheet id is given in the xml</action>
 		</release>
--->
         <release version="3.5.1-beta1" date="2008-07-18">
            <action dev="POI-DEVELOPERS" type="add">45018 - Support for fetching embeded documents from within an OOXML file</action>
            <action dev="POI-DEVELOPERS" type="add">Port support for setting a policy on missing / blank cells when fetching, to XSSF too</action>

@@ -57,10 +57,21 @@ public class XSSFName implements Name {
 	}
 	
 	public String getSheetName() {
-		long sheetId = ctName.getLocalSheetId();
-		if(sheetId >= 0) {
-			return workbook.getSheetName((int)sheetId);
+		if(ctName.isSetLocalSheetId()) {
+			// Given as explicit sheet id
+			long sheetId = ctName.getLocalSheetId();
+			if(sheetId >= 0) {
+				return workbook.getSheetName((int)sheetId);
+			}
+		} else {
+			// Is it embeded in the reference itself?
+			int excl = getReference().indexOf('!');
+			if(excl > -1) {
+				return getReference().substring(0, excl);
+			}
 		}
+		
+		// Not given at all
 		return null;
 	}
 
