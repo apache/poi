@@ -44,6 +44,7 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.SheetReferences;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.xssf.model.BinaryPart;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
@@ -125,14 +126,19 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 	        null,
 	        OLE_OBJECT_REL_TYPE,
 	        null,
-	        null
+	        BinaryPart.class
 	);
-	
 	public static final XSSFRelation PACKEMBEDDINGS = new XSSFRelation(
             null,
             PACK_OBJECT_REL_TYPE,
             null,
-            null
+            BinaryPart.class
+    );
+	public static final XSSFRelation VBA_MACROS = new XSSFRelation(
+            "application/vnd.ms-office.vbaProject",
+            "http://schemas.microsoft.com/office/2006/relationships/vbaProject",
+            "/xl/vbaProject.bin",
+	        BinaryPart.class
     );
 	
    
@@ -150,6 +156,26 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 		public String getContentType() { return TYPE; }
 		public String getRelation() { return REL; }
 		public String getDefaultFileName() { return DEFAULT_NAME; }
+		
+		/**
+		 * Does one of these exist for the given core
+		 *  package part?
+		 */
+		public boolean exists(PackagePart corePart) throws IOException, InvalidFormatException {
+			if(corePart == null) {
+				// new file, can't exist
+				return false;
+			}
+			
+            PackageRelationshipCollection prc =
+            	corePart.getRelationshipsByType(REL);
+            Iterator<PackageRelationship> it = prc.iterator();
+            if(it.hasNext()) {
+            	return true;
+            } else {
+            	return false;
+            }
+		}
 		
 		/**
 		 * Returns the filename for the nth one of these, 
@@ -811,6 +837,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             } else {
             	if(workbook.isSetDefinedNames()) {
             		workbook.setDefinedNames(null);
+            	}
+            }
+            
+            // VBA Macros
+            if(VBA_MACROS.exists( getCorePart() )) {
+            	// Copy over
+            	try {
+	            	XSSFModel vba = VBA_MACROS.load(getCorePart());
+	            	VBA_MACROS.save(vba, corePart);
+            	} catch(Exception e) {
+            		throw new RuntimeException("Unable to copy vba macros over", e);
             	}
             }
 

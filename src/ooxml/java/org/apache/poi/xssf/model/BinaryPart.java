@@ -16,22 +16,52 @@
 ==================================================================== */
 package org.apache.poi.xssf.model;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.poi.xssf.usermodel.XSSFWorkbook.XSSFRelation;
-
 /**
- * Common interface for XSSF models, which deal with
- *  parts of the xssf file.
- * These should also implement a constructor of
- *  (InputStream is), so they can be used with
- *  {@link XSSFRelation}
+ * An implementation of XSSFModel for binary parts of
+ *  the file, eg images or vba macros
  */
-public interface XSSFModel {
-	/** Read from the given InputStream */
-	public void readFrom(InputStream is) throws IOException;
-	/** Write to the supplied OutputStream, with default options */
-	public void writeTo(OutputStream out) throws IOException;
+public class BinaryPart implements XSSFModel {
+	private byte[] data;
+	
+	public BinaryPart(InputStream in) throws IOException {
+		readFrom(in);
+	}
+	
+	/**
+	 * Fetch the contents of the binary part
+	 */
+	public byte[] getContents() {
+		return data;
+	}
+	/**
+	 * Changes the contents of the binary part
+	 */
+	public void setContents(byte[] data) {
+		this.data = data;
+	}
+	
+	/**
+	 * Reads the contents of the binary part in.
+	 */
+	public void readFrom(InputStream is) throws IOException {
+		int read = 0;
+		byte[] buffer = new byte[4096];
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
+		while( (read = is.read(buffer)) != -1 ) {
+			if(read > 0) {
+				baos.write(buffer, 0, read);
+			}
+		}
+		data = baos.toByteArray();
+	}
+	
+	public void writeTo(OutputStream out) throws IOException {
+		out.write(data);
+	}
 }
