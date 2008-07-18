@@ -17,7 +17,14 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+
+import org.openxml4j.opc.Package;
+import org.openxml4j.opc.PackagePart;
+import org.openxml4j.opc.PackagingURIHelper;
 
 import junit.framework.TestCase;
 
@@ -30,6 +37,16 @@ public class TestXSSFBugs extends TestCase {
 		assertTrue(xml.exists());
 		
 		return xml.toString();
+	}
+	
+	private Package saveAndOpen(XSSFWorkbook wb) throws Exception {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		wb.write(baos);
+		ByteArrayInputStream inp = new ByteArrayInputStream(
+				baos.toByteArray()
+		);
+		Package pkg = Package.open(inp);
+		return pkg;
 	}
 	
 	/**
@@ -54,5 +71,39 @@ public class TestXSSFBugs extends TestCase {
 		assertFalse(wb.getNameAt(2).getCTName().isSetLocalSheetId());
 		assertEquals("SheetC!$A$1", wb.getNameAt(2).getReference());
 		assertEquals("SheetC", wb.getNameAt(2).getSheetName());
+	}
+	
+	/**
+	 * We should carry vba macros over after save
+	 */
+	public void test45431() throws Exception {
+		Package pkg = Package.open(getFilePath("45431.xlsm"));
+		XSSFWorkbook wb = new XSSFWorkbook(pkg);
+		
+		PackagePart vba = pkg.getPart(
+				PackagingURIHelper.createPartName("/xl/vbaProject.bin")
+		);
+		assertNotNull(vba);
+		
+		// Save and re-open, is still there
+		Package nPkg = saveAndOpen(wb);
+		XSSFWorkbook nwb = new XSSFWorkbook(nPkg);
+		vba = nPkg.getPart(
+				PackagingURIHelper.createPartName("/xl/vbaProject.bin")
+		);
+		assertNotNull(vba);
+		
+		// And again, just to be sure
+		nPkg = saveAndOpen(nwb);
+		nwb = new XSSFWorkbook(nPkg);
+		vba = nPkg.getPart(
+				PackagingURIHelper.createPartName("/xl/vbaProject.bin")
+		);
+		assertNotNull(vba);
+		
+		// For testing with excel
+//		FileOutputStream fout = new FileOutputStream("/tmp/foo.xlsm");
+//		nwb.write(fout);
+//		fout.close();
 	}
 }
