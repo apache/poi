@@ -273,7 +273,8 @@ public class TestHSSFDateUtil extends TestCase {
                 "yyyy-mm-dd hh:mm:ss", "yyyy/mm/dd HH:MM:SS", 
                 "mm/dd HH:MM", "yy/mmm/dd SS",
                 "mm/dd HH:MM AM", "mm/dd HH:MM am",
-                "mm/dd HH:MM PM", "mm/dd HH:MM pm" 
+                "mm/dd HH:MM PM", "mm/dd HH:MM pm",
+                "m/d/yy h:mm AM/PM"
         };
         for(int i=0; i<formats.length; i++) {
             assertTrue(
