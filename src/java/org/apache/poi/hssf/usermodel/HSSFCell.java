@@ -921,16 +921,15 @@ public class HSSFCell implements Cell
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createCellStyle()
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(short)
      */
-
-    public void setCellStyle(CellStyle style)
-    {
-		HSSFCellStyle hStyle = (HSSFCellStyle)style;
-
+    public void setCellStyle(CellStyle style) {
+		setCellStyle( (HSSFCellStyle)style );
+    }
+    public void setCellStyle(HSSFCellStyle style) {
         // Verify it really does belong to our workbook
-        hStyle.verifyBelongsToWorkbook(book);
+        style.verifyBelongsToWorkbook(book);
 
         // Change our cell record to use this style
-        record.setXFIndex(hStyle.getIndex());
+        record.setXFIndex(style.getIndex());
     }
 
     /**
