@@ -32,6 +32,7 @@ import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
+import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 
 /**
@@ -41,6 +42,7 @@ import org.apache.poi.hssf.usermodel.HSSFDateUtil;
  */
 public class FormatTrackingHSSFListener implements HSSFListener {
 	private HSSFListener childListener;
+	private HSSFDataFormatter formatter = new HSSFDataFormatter();
 	private Map customFormatRecords = new Hashtable();
 	private List xfRecords = new ArrayList();
 
@@ -102,32 +104,9 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 		if(formatString == null) {
             return Double.toString(value);
         } else {
-        	// Is it a date?
-        	if(HSSFDateUtil.isADateFormat(formatIndex,formatString) &&
-        			HSSFDateUtil.isValidExcelDate(value)) {
-        		// Java wants M not m for month
-        		formatString = formatString.replace('m','M');
-        		// Change \- into -, if it's there
-        		formatString = formatString.replaceAll("\\\\-","-");
-        		
-        		// Format as a date
-        		Date d = HSSFDateUtil.getJavaDate(value, false);
-        		DateFormat df = new SimpleDateFormat(formatString);
-	            return df.format(d);
-        	} else {
-        		if(formatString == "General") {
-        			// Some sort of wierd default
-        			return Double.toString(value);
-        		}
-        		if(formatString == "0.00E+00") {
-        			// This seems to mean output as a normal double
-        			return Double.toString(value);
-        		}
-        		
-        		// Format as a number
-	            DecimalFormat df = new DecimalFormat(formatString);
-	            return df.format(value);
-        	}
+        	// Format, using the nice new
+        	//  HSSFDataFormatter to do the work for us 
+        	return formatter.formatRawCellContents(value, formatIndex, formatString);
         }
 	}
 	
