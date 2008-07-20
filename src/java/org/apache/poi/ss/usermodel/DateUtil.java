@@ -232,7 +232,7 @@ public class DateUtil
     	//  y m d h s - / , . :
     	// optionally followed by AM/PM
     	// optionally followed by AM/PM
-    	if(fs.matches("^[yYmMdDhHsS\\-/,. :]+[ampAMP]*$")) {
+    	if(fs.matches("^[yYmMdDhHsS\\-/,. :]+[ampAMP/]*$")) {
     		return true;
     	}
     	

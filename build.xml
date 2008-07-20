@@ -106,28 +106,11 @@ under the License.
   <property name="contrib.reports.test" location="build/contrib-test-results"/>
   <property name="contrib.output.dir" location="build/contrib-classes"/>
   <property name="contrib.output.test.dir" location="build/contrib-test-classes"/>
-  <property name="contrib.jar1.dir" location="${contrib.lib}/commons-beanutils-1.7.0.jar"/>
-  <property name="contrib.jar1.url" value="${repository}/commons-beanutils/jars/commons-beanutils-1.7.0.jar"/>
-  <property name="contrib.jar2.dir" location="${contrib.lib}/commons-collections-3.2.jar"/>
-  <property name="contrib.jar2.url" value="${repository}/commons-collections/jars/commons-collections-3.2.jar"/>
-  <property name="contrib.jar3.dir" location="${contrib.lib}/commons-lang-2.1.jar"/>
-  <property name="contrib.jar3.url" value="${repository}/commons-lang/jars/commons-lang-2.1.jar"/>
   <property name="contrib.testokfile" location="build/contrib-testokfile.txt"/>
 
   <!-- Examples: -->
   <property name="examples.src" location="src/examples/src"/>
-  <property name="examples.src.test" location="src/examples/testcases"/>
-  <property name="examples.lib" location="src/examples/lib"/>
-  <property name="examples.reports.test" location="build/examples-test-results"/>
   <property name="examples.output.dir" location="build/examples-classes"/>
-  <property name="examples.output.test.dir" location="build/examples-test-classes"/>
-  <property name="examples.jar1.dir" location="${examples.lib}/commons-beanutils-1.7.0.jar"/>
-  <property name="examples.jar1.url" value="${repository}/commons-beanutils/jars/commons-beanutils-1.7.0.jar"/>
-  <property name="examples.jar2.dir" location="${examples.lib}/commons-collections-3.2.jar"/>
-  <property name="examples.jar2.url" value="${repository}/commons-collections/jars/commons-collections-3.2.jar"/>
-  <property name="examples.jar3.dir" location="${examples.lib}/commons-lang-2.1.jar"/>
-  <property name="examples.jar3.url" value="${repository}/commons-lang/jars/commons-lang-2.1.jar"/>
-  <property name="examples.testokfile" location="build/examples-testokfile.txt"/>
 
   <!-- Common interfaces for ole2 and ooxml classes -->
   <property name="interfaces.jdk14.src" location="src/ooxml/interfaces-jdk14"/>
@@ -208,9 +191,6 @@ under the License.
 
     <path id="contrib.classpath">
         <path refid="main.classpath"/>
-        <pathelement location="${contrib.jar1.dir}"/>
-        <pathelement location="${contrib.jar2.dir}"/>
-        <pathelement location="${contrib.jar3.dir}"/>
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${main.output.test.dir}"/>
         <pathelement location="${scratchpad.output.dir}"/>
@@ -351,9 +331,6 @@ under the License.
                 <and>
                     <available file="${main.jar1.dir}"/>
                     <available file="${main.jar2.dir}"/>
-                    <available file="${contrib.jar1.dir}"/>
-                    <available file="${contrib.jar2.dir}"/>
-                    <available file="${contrib.jar3.dir}"/>
                     <available file="${junit.jar1.dir}"/>
                     <available file="${ooxml.jar1.dir}"/>
                     <available file="${ooxml.jar2.dir}"/>
@@ -371,9 +348,6 @@ under the License.
      description="Fetches needed JAR files from the Internet">
         <get src="${main.jar1.url}" dest="${main.jar1.dir}"/>
         <get src="${main.jar2.url}" dest="${main.jar2.dir}"/>
-        <get src="${contrib.jar1.url}" dest="${contrib.jar1.dir}"/>
-        <get src="${contrib.jar2.url}" dest="${contrib.jar2.dir}"/>
-        <get src="${contrib.jar3.url}" dest="${contrib.jar3.dir}"/>
         <get src="${junit.jar1.url}" dest="${junit.jar1.dir}"/>
 
         <get src="${ooxml.jar1.url}" dest="${ooxml.jar1.dir}"/>

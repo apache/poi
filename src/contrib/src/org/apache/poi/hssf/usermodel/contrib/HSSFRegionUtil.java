@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.usermodel.contrib;
 
@@ -26,33 +24,31 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import org.apache.poi.ss.util.Region;
 
-import org.apache.commons.lang.exception.NestableException;
-
 /**
  *  Various utility functions that make working with a region of cells easier.
  *
  *@author     Eric Pugh epugh@upstate.com
  *@since      July 29, 2002
  */
-
-public class HSSFRegionUtil
+public final class HSSFRegionUtil
 {
 
   /**  Constructor for the HSSFRegionUtil object */
-  private HSSFRegionUtil() { }
+  private HSSFRegionUtil() {
+      // no instances of this class
+  }
 
   /**
    *  Sets the left border for a region of cells by manipulating the cell style
-   *  of the indidual cells on the left
+   *  of the individual cells on the left
    *
    *@param  border                 The new border
    *@param  region                 The region that should have the border
    *@param  workbook               The workbook that the region is on.
    *@param  sheet                  The sheet that the region is on.
-   *@exception  NestableException  Thrown if the CellStyle can't be changed
    */
   public static void setBorderLeft( short border, Region region, HSSFSheet sheet, HSSFWorkbook workbook )
-    throws NestableException {
+  {
     int rowStart = region.getRowFrom();
     int rowEnd = region.getRowTo();
     int column = region.getColumnFrom();
@@ -60,7 +56,8 @@ public class HSSFRegionUtil
     for ( int i = rowStart; i <= rowEnd; i++ ) {
       HSSFRow row = HSSFCellUtil.getRow( i, sheet );
       HSSFCell cell = HSSFCellUtil.getCell( row, column );
-      HSSFCellUtil.setCellStyleProperty( cell, workbook, "borderLeft", new Short( border ) );
+      HSSFCellUtil.setCellStyleProperty(
+          cell, workbook, HSSFCellUtil.BORDER_LEFT, new Short( border ) );
     }
   }
 
@@ -71,11 +68,9 @@ public class HSSFRegionUtil
    *@param  region                 The region that should have the border
    *@param  workbook               The workbook that the region is on.
    *@param  sheet                  The sheet that the region is on.
-   *@exception  NestableException  Thrown if the CellStyle can't be changed
-   *      properly.
    */
   public static void setLeftBorderColor( short color, Region region, HSSFSheet sheet, HSSFWorkbook workbook )
-    throws NestableException {
+  {
     int rowStart = region.getRowFrom();
     int rowEnd = region.getRowTo();
     int column = region.getColumnFrom();
@@ -83,7 +78,8 @@ public class HSSFRegionUtil
     for ( int i = rowStart; i <= rowEnd; i++ ) {
       HSSFRow row = HSSFCellUtil.getRow( i, sheet );
       HSSFCell cell = HSSFCellUtil.getCell( row, column );
-      HSSFCellUtil.setCellStyleProperty( cell, workbook, "leftBorderColor", new Short( color ) );
+      HSSFCellUtil.setCellStyleProperty(
+          cell, workbook, HSSFCellUtil.LEFT_BORDER_COLOR, new Short( color ) );
     }
   }
 
@@ -94,10 +90,9 @@ public class HSSFRegionUtil
    *@param  region                 The region that should have the border
    *@param  workbook               The workbook that the region is on.
    *@param  sheet                  The sheet that the region is on.
-   *@exception  NestableException  Thrown if the CellStyle can't be changed
    */
   public static void setBorderRight( short border, Region region, HSSFSheet sheet, HSSFWorkbook workbook )
-    throws NestableException {
+  {
     int rowStart = region.getRowFrom();
     int rowEnd = region.getRowTo();
     int column = region.getColumnTo();
@@ -106,7 +101,8 @@ public class HSSFRegionUtil
       HSSFRow row = HSSFCellUtil.getRow( i, sheet );
       HSSFCell cell = HSSFCellUtil.getCell( row, column );
 
-      HSSFCellUtil.setCellStyleProperty( cell, workbook, "borderRight", new Short( border ) );
+      HSSFCellUtil.setCellStyleProperty(
+          cell, workbook, HSSFCellUtil.BORDER_RIGHT, new Short( border ) );
     }
   }
 
@@ -117,11 +113,9 @@ public class HSSFRegionUtil
    *@param  region                 The region that should have the border
    *@param  workbook               The workbook that the region is on.
    *@param  sheet                  The sheet that the region is on.
-   *@exception  NestableException  Thrown if the CellStyle can't be changed
-   *      properly.
    */
   public static void setRightBorderColor( short color, Region region, HSSFSheet sheet, HSSFWorkbook workbook )
-    throws NestableException {
+  {
     int rowStart = region.getRowFrom();
     int rowEnd = region.getRowTo();
     int column = region.getColumnTo();
@@ -129,7 +123,8 @@ public class HSSFRegionUtil
     for ( int i = rowStart; i <= rowEnd; i++ ) {
       HSSFRow row = HSSFCellUtil.getRow( i, sheet );
       HSSFCell cell = HSSFCellUtil.getCell( row, column );
-      HSSFCellUtil.setCellStyleProperty( cell, workbook, "rightBorderColor", new Short( color ) );
+      HSSFCellUtil.setCellStyleProperty(
+          cell, workbook, HSSFCellUtil.RIGHT_BORDER_COLOR, new Short( color ) );
     }
   }
 
@@ -140,10 +135,9 @@ public class HSSFRegionUtil
    *@param  region                 The region that should have the border
    *@param  workbook               The workbook that the region is on.
    *@param  sheet                  The sheet that the region is on.
-   *@exception  NestableException  Thrown if the CellStyle can't be changed
    */
   public static void setBorderBottom( short border, Region region, HSSFSheet sheet, HSSFWorkbook workbook )
-    throws NestableException {
+  {
     int colStart = region.getColumnFrom();
     int colEnd = region.getColumnTo();
     int rowIndex = region.getRowTo();
@@ -151,7 +145,8 @@ public class HSSFRegionUtil
     for ( int i = colStart; i <= colEnd; i++ ) {
 
       HSSFCell cell = HSSFCellUtil.getCell( row, i );
-      HSSFCellUtil.setCellStyleProperty( cell, workbook, "borderBottom", new Short( border ) );
+      HSSFCellUtil.setCellStyleProperty(
+          cell, workbook, HSSFCellUtil.BORDER_BOTTOM, new Short( border ) );
     }
   }
 
@@ -162,21 +157,19 @@ public class HSSFRegionUtil
    *@param  region                 The region that should have the border
    *@param  workbook               The workbook that the region is on.
    *@param  sheet                  The sheet that the region is on.
-   *@exception  NestableException  Thrown if the CellStyle can't be changed
-   *      properly.
    */
   public static void setBottomBorderColor( short color, Region region, HSSFSheet sheet, HSSFWorkbook workbook )
-    throws NestableException {
+  {
     int colStart = region.getColumnFrom();
     int colEnd = region.getColumnTo();
     int rowIndex = region.getRowTo();
     HSSFRow row = HSSFCellUtil.getRow( rowIndex, sheet );
     for ( int i = colStart; i <= colEnd; i++ ) {
       HSSFCell cell = HSSFCellUtil.getCell( row, i );
-      HSSFCellUtil.setCellStyleProperty( cell, workbook, "bottomBorderColor", new Short( color ) );
+      HSSFCellUtil.setCellStyleProperty(
+          cell, workbook, HSSFCellUtil.BOTTOM_BORDER_COLOR, new Short( color ) );
     }
   }
-
 
   /**
    *  Sets the borderBottom attribute of the HSSFRegionUtil object
@@ -185,10 +178,9 @@ public class HSSFRegionUtil
    *@param  region                 The region that should have the border
    *@param  workbook               The workbook that the region is on.
    *@param  sheet                  The sheet that the region is on.
-   *@exception  NestableException  Thrown if the CellStyle can't be changed
    */
   public static void setBorderTop( short border, Region region, HSSFSheet sheet, HSSFWorkbook workbook )
-    throws NestableException {
+  {
     int colStart = region.getColumnFrom();
     int colEnd = region.getColumnTo();
     int rowIndex = region.getRowFrom();
@@ -196,7 +188,8 @@ public class HSSFRegionUtil
     for ( int i = colStart; i <= colEnd; i++ ) {
 
       HSSFCell cell = HSSFCellUtil.getCell( row, i );
-      HSSFCellUtil.setCellStyleProperty( cell, workbook, "borderTop", new Short( border ) );
+      HSSFCellUtil.setCellStyleProperty(
+          cell, workbook, HSSFCellUtil.BORDER_TOP, new Short( border ) );
     }
   }
 
@@ -207,21 +200,18 @@ public class HSSFRegionUtil
    *@param  region                 The region that should have the border
    *@param  workbook               The workbook that the region is on.
    *@param  sheet                  The sheet that the region is on.
-   *@exception  NestableException  Thrown if the CellStyle can't be changed
-   *      properly.
    */
   public static void setTopBorderColor( short color, Region region, HSSFSheet sheet, HSSFWorkbook workbook )
-    throws NestableException {
+  {
     int colStart = region.getColumnFrom();
     int colEnd = region.getColumnTo();
     int rowIndex = region.getRowFrom();
     HSSFRow row = HSSFCellUtil.getRow( rowIndex, sheet );
     for ( int i = colStart; i <= colEnd; i++ ) {
       HSSFCell cell = HSSFCellUtil.getCell( row, i );
-      HSSFCellUtil.setCellStyleProperty( cell, workbook, "topBorderColor", new Short( color ) );
-
+      HSSFCellUtil.setCellStyleProperty(
+          cell, workbook, HSSFCellUtil.TOP_BORDER_COLOR, new Short( color ) );
     }
   }
-
 }
 
