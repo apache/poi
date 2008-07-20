@@ -690,10 +690,13 @@ public class HSSFCell implements Cell
 
 
     /**
-     * get the value of the cell as a number.  For strings we throw an exception.
+     * Get the value of the cell as a number.  
+     * For strings we throw an exception.
      * For blank cells we return a 0.
+     * See {@link HSSFDataFormatter} for turning this
+     *  number into a string similar to that which
+     *  Excel would render this number as. 
      */
-
     public double getNumericCellValue()
     {
         if (cellType == CELL_TYPE_BLANK)
@@ -727,8 +730,11 @@ public class HSSFCell implements Cell
     }
 
     /**
-     * get the value of the cell as a date.  For strings we throw an exception.
+     * Get the value of the cell as a date.  
+     * For strings we throw an exception.
      * For blank cells we return a null.
+     * See {@link HSSFDataFormatter} for formatting
+     *  this date into a string similar to how excel does.
      */
     public Date getDateCellValue()
     {

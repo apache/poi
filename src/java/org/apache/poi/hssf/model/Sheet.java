@@ -827,16 +827,21 @@ public final class Sheet implements Model {
 
             // If the BOF record was just serialized then add the IndexRecord
             if (record.getSid() == BOFRecord.sid) {
-              // Add an optional UncalcedRecord
-              if (_isUncalced) {
-                  UncalcedRecord rec = new UncalcedRecord();
-                  pos += rec.serialize(pos, data);
-              }
-              //Can there be more than one BOF for a sheet? If not then we can
-              //remove this guard. So be safe it is left here.
-              if (rows != null && !haveSerializedIndex) {
+              if (!haveSerializedIndex) {
                 haveSerializedIndex = true;
-                pos += serializeIndexRecord(k, pos, data);
+                // Add an optional UncalcedRecord. However, we should add
+                //  it in only the once, after the sheet's own BOFRecord.
+                // If there are diagrams, they have their own BOFRecords,
+                //  and one shouldn't go in after that!
+                if (_isUncalced) {
+                    UncalcedRecord rec = new UncalcedRecord();
+                    pos += rec.serialize(pos, data);
+                }
+                //Can there be more than one BOF for a sheet? If not then we can
+                //remove this guard. So be safe it is left here.
+                if (rows != null) {
+                  pos += serializeIndexRecord(k, pos, data);
+                }
               }
             }
         }

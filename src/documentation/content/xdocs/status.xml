@@ -47,6 +47,10 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">45404 - New class, hssf.usermodel.HSSFDataFormatter, for formatting numbers and dates in the same way that Excel does</action>
+           <action dev="POI-DEVELOPERS" type="fix">45414 - Don't add too many UncalcedRecords to sheets with charts in them</action>
+           <action dev="POI-DEVELOPERS" type="fix">45398 - Support detecting date formats containing "am/pm" as date times</action>
+           <action dev="POI-DEVELOPERS" type="fix">45410 - Removed dependency from contrib on commons beanutils,collections and lang</action>
            <action dev="POI-DEVELOPERS" type="add">New helper, HSSFOptimiser, which handles removing duplicated font and style records, to avoid going over the limits in Excel</action>
            <action dev="POI-DEVELOPERS" type="fix">45322 - Fixed NPE in HSSFSheet.autoSizeColumn() when cell number format was not found</action>
            <action dev="POI-DEVELOPERS" type="add">45380 - Missing return keyword in ArrayPtg.toFormulaString()</action>
