@@ -20,7 +20,7 @@ package org.apache.poi.ddf;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.record.RecordFormatException;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * A list of the most recently used colours for the drawings contained in
