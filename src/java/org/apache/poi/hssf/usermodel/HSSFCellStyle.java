@@ -315,11 +315,12 @@ public class HSSFCellStyle implements CellStyle
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createFont()
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
      */
-
-    public void setFont(Font font)
-    {
+    public void setFont(Font font) {
+		setFont((HSSFFont)font);
+	}
+	public void setFont(HSSFFont font) {
         format.setIndentNotParentFont(true);
-        short fontindex = ((HSSFFont) font).getIndex();
+        short fontindex = font.getIndex();
         format.setFontIndex(fontindex);
     }
 
