@@ -14,17 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hslf.exceptions;
+package org.apache.poi;
 
-import org.apache.poi.EncryptedDocumentException;
-
-/**
- * This exception is thrown when we try to open a PowerPoint file, and
- *  discover that it is encrypted
- */
-public class EncryptedPowerPointFileException extends EncryptedDocumentException
+public class EncryptedDocumentException extends IllegalStateException
 {
-	public EncryptedPowerPointFileException(String s) {
+	public EncryptedDocumentException(String s) {
 		super(s);
 	}
 }
