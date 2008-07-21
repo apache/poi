@@ -18,7 +18,7 @@
         
 package org.apache.poi.ddf;
 
-import org.apache.poi.hssf.record.RecordFormatException;
+import org.apache.poi.util.RecordFormatException;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;

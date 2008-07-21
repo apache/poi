@@ -17,15 +17,15 @@
 ==================================================================== */
         
 
-package org.apache.poi.hssf.record;
+package org.apache.poi.util;
 
 /**
- * Title:     Record Format Exception
- * Description: Used by records to indicate invalid format/data.<P>
+ * A common exception thrown by our binary format parsers
+ *  (especially HSSF and DDF), when they hit invalid
+ *  format or data when processing a record.
  */
-
 public class RecordFormatException
-    extends org.apache.poi.util.RecordFormatException
+    extends RuntimeException
 {
     public RecordFormatException(String exception)
     {
