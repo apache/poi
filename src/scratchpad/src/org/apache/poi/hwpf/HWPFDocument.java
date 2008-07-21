@@ -28,6 +28,7 @@ import java.io.ByteArrayInputStream;
 
 import java.util.Iterator;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDocument;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -174,9 +175,13 @@ public class HWPFDocument extends POIDocument
     
     directory.createDocumentInputStream("WordDocument").read(_mainStream);
 
-    // use the fib to determine the name of the table stream.
+    // Create our FIB, and check for the doc being encrypted
     _fib = new FileInformationBlock(_mainStream);
+    if(_fib.isFEncrypted()) {
+    	throw new EncryptedDocumentException("Cannot process encrypted word files!");
+    }
 
+    // use the fib to determine the name of the table stream.
     String name = "0Table";
     if (_fib.isFWhichTblStm())
     {
