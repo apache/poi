@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.StyleSheet;
 
@@ -137,5 +138,19 @@ public class TestProblems extends TestCase {
 		}
 		
 		assertEquals(newLength, totalLength - deletedLength);
+	}
+	
+	/**
+	 * With an encrypted file, we should give a suitable
+	 *  exception, and not OOM
+	 */
+	public void testEncryptedFile() throws Exception {
+		try {
+			new HWPFDocument(new FileInputStream(
+    			new File(dirname, "PasswordProtected.doc")));
+			fail();
+		} catch(EncryptedDocumentException e) {
+			// Good
+		}
 	}
 }
