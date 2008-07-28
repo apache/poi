@@ -159,4 +159,13 @@ public class HSSFComment extends HSSFTextbox {
         }
         super.setString(string);
     }
+    
+    /**
+     * Returns the underlying Note record
+     */
+    protected NoteRecord getNoteRecord() { return note; }
+    /**
+     * Returns the underlying Text record
+     */
+    protected TextObjectRecord getTextObjectRecord() { return txo; }
 }

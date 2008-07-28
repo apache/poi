@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import java.text.DecimalFormat;
 import java.text.Format;
+import java.util.Date;
 import java.util.Iterator;
 
 import junit.framework.TestCase;
