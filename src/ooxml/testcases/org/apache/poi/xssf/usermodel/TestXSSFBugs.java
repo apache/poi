@@ -20,13 +20,12 @@ package org.apache.poi.xssf.usermodel;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
+
+import junit.framework.TestCase;
 
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackagingURIHelper;
-
-import junit.framework.TestCase;
 
 public class TestXSSFBugs extends TestCase {
 	private String getFilePath(String file) {
@@ -71,6 +70,12 @@ public class TestXSSFBugs extends TestCase {
 		assertFalse(wb.getNameAt(2).getCTName().isSetLocalSheetId());
 		assertEquals("SheetC!$A$1", wb.getNameAt(2).getReference());
 		assertEquals("SheetC", wb.getNameAt(2).getSheetName());
+		
+		// Save and re-load, still there
+		Package nPkg = saveAndOpen(wb);
+		XSSFWorkbook nwb = new XSSFWorkbook(nPkg);
+		assertEquals(3, nwb.getNumberOfNames());
+		assertEquals("SheetA!$A$1", nwb.getNameAt(0).getReference());
 	}
 	
 	/**

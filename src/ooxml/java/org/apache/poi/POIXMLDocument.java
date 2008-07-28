@@ -75,6 +75,10 @@ public abstract class POIXMLDocument {
 	        // Get core part
 	        this.corePart = this.pkg.getPart(coreDocRelationship);
 
+	        // Verify it's there
+	        if(corePart == null) {
+	        	throw new IllegalArgumentException("No core part found for this document! Nothing with " + coreDocRelationship.getRelationshipType() + " present as a relation.");
+	        }
         } catch (OpenXML4JException e) {
             throw new IOException(e.toString());
     	}
