@@ -202,10 +202,12 @@ public class HSSFDataFormatter {
 		// remove color formatting if present
 		String formatStr = sFormat.replaceAll("\\[[a-zA-Z]*\\]", "");
 		
-		// try to extract special characters like currency
-		Matcher m = specialPatternGroup.matcher(formatStr);		
+		// Try to extract special characters like currency
+		// Need to re-create the matcher each time, as the string
+		//  will potentially change on each pass
+		Matcher m;
 		try {
-			while(m.find()) {
+			while((m = specialPatternGroup.matcher(formatStr)).find()) {
 				String match = m.group();
 				String symbol = match.substring(match.indexOf('$') + 1, match.indexOf('-'));
 				if (symbol.indexOf('$') > -1) {
