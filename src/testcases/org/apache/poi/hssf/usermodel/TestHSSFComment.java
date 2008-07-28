@@ -156,4 +156,37 @@ public final class TestHSSFComment extends TestCase {
         }
 
      }
+    
+    public void testDeleteComments() throws Exception {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithComments.xls");
+        HSSFSheet sheet = wb.getSheetAt(0);
+        
+        // Zap from rows 1 and 3
+        assertNotNull(sheet.getRow(0).getCell(1).getCellComment());
+        assertNotNull(sheet.getRow(1).getCell(1).getCellComment());
+        assertNotNull(sheet.getRow(2).getCell(1).getCellComment());
+        
+        sheet.getRow(0).getCell(1).removeCellComment();
+        sheet.getRow(2).getCell(1).setCellComment(null);
+        
+        // Check gone so far
+        assertNull(sheet.getRow(0).getCell(1).getCellComment());
+        assertNotNull(sheet.getRow(1).getCell(1).getCellComment());
+        assertNull(sheet.getRow(2).getCell(1).getCellComment());
+        
+        // Save and re-load
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+
+        // Check
+        assertNull(sheet.getRow(0).getCell(1).getCellComment());
+        assertNotNull(sheet.getRow(1).getCell(1).getCellComment());
+        assertNull(sheet.getRow(2).getCell(1).getCellComment());
+        
+//        FileOutputStream fout = new FileOutputStream("/tmp/c.xls");
+//        wb.write(fout);
+//        fout.close();
+    }
 }
