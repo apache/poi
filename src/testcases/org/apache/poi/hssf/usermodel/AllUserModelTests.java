@@ -44,6 +44,7 @@ public class AllUserModelTests {
 		result.addTestSuite(TestHSSFClientAnchor.class);
 		result.addTestSuite(TestHSSFComment.class);
 		result.addTestSuite(TestHSSFConditionalFormatting.class);
+		result.addTestSuite(TestHSSFDataFormatter.class);
 		result.addTestSuite(TestHSSFDateUtil.class);
 		result.addTestSuite(TestHSSFHeaderFooter.class);
 		result.addTestSuite(TestHSSFHyperlink.class);
