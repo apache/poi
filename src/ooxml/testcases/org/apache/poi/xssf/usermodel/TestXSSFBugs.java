@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 
 import junit.framework.TestCase;
 
@@ -85,6 +86,7 @@ public class TestXSSFBugs extends TestCase {
 		Package pkg = Package.open(getFilePath("45431.xlsm"));
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
 		
+		// Check the various macro related bits can be found
 		PackagePart vba = pkg.getPart(
 				PackagingURIHelper.createPartName("/xl/vbaProject.bin")
 		);
@@ -105,6 +107,10 @@ public class TestXSSFBugs extends TestCase {
 				PackagingURIHelper.createPartName("/xl/vbaProject.bin")
 		);
 		assertNotNull(vba);
+		
+		FileOutputStream fout = new FileOutputStream("/tmp/foo.xlsm");
+		nwb.write(fout);
+		fout.close();
 		
 		// For testing with excel
 //		FileOutputStream fout = new FileOutputStream("/tmp/foo.xlsm");

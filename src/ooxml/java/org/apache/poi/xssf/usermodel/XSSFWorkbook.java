@@ -80,6 +80,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 			"/xl/workbook.xml",
 			null
 	);
+	public static final XSSFRelation MACROS_WORKBOOK = new XSSFRelation(
+			"application/vnd.ms-excel.sheet.macroEnabled.main+xml",
+			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument",
+			"/xl/workbook.xml",
+			null
+	);
 	public static final XSSFRelation WORKSHEET = new XSSFRelation(
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet",
@@ -254,6 +260,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             return rel.getId();
 		}
 	}
+
+	/** Are we a normal workbook, or a macro enabled one? */
+	private boolean isMacroEnabled = false;
 	
     private CTWorkbook workbook;
     
@@ -287,6 +296,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         try {
             WorkbookDocument doc = WorkbookDocument.Factory.parse(getCorePart().getInputStream());
             this.workbook = doc.getWorkbook();
+            
+            // Are we macro enabled, or just normal?
+            isMacroEnabled = 
+            		getCorePart().getContentType().equals(MACROS_WORKBOOK.getContentType());
             
             try {
 	            // Load shared strings
@@ -659,6 +672,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     	}
     	return sr;
 	}
+    
+    /**
+     * Are we a normal workbook (.xlsx), or a 
+     *  macro enabled workbook (.xlsm)?
+     */
+    public boolean isMacroEnabled() {
+    	return isMacroEnabled;
+    }
 
 	public void insertChartRecord() {
         // TODO Auto-generated method stub
@@ -764,16 +785,21 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     public void write(OutputStream stream) throws IOException {
+    	// What kind of workbook are we?
+    	XSSFRelation workbookRelation = WORKBOOK;
+    	if(isMacroEnabled) {
+    		workbookRelation = MACROS_WORKBOOK;
+    	}
 
         try {
             // Create a package referring the temp file.
             Package pkg = Package.create(stream);
             // Main part
-            PackagePartName corePartName = PackagingURIHelper.createPartName("/xl/workbook.xml");
+            PackagePartName corePartName = PackagingURIHelper.createPartName(workbookRelation.getDefaultFileName());
             // Create main part relationship
             pkg.addRelationship(corePartName, TargetMode.INTERNAL, PackageRelationshipTypes.CORE_DOCUMENT, "rId1");
             // Create main document part
-            PackagePart corePart = pkg.createPart(corePartName, WORKBOOK.getContentType());
+            PackagePart corePart = pkg.createPart(corePartName, workbookRelation.getContentType());
             OutputStream out;
 
             XmlOptions xmlOptions = new XmlOptions();
@@ -840,15 +866,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             	}
             }
             
-            // VBA Macros
-            if(VBA_MACROS.exists( getCorePart() )) {
-            	// Copy over
-            	try {
-	            	XSSFModel vba = VBA_MACROS.load(getCorePart());
-	            	VBA_MACROS.save(vba, corePart);
-            	} catch(Exception e) {
-            		throw new RuntimeException("Unable to copy vba macros over", e);
-            	}
+            // Macro related bits
+            if(isMacroEnabled) {
+	            // Copy VBA Macros if present
+	            if(VBA_MACROS.exists( getCorePart() )) {
+	            	try {
+		            	XSSFModel vba = VBA_MACROS.load(getCorePart());
+		            	VBA_MACROS.save(vba, corePart);
+	            	} catch(Exception e) {
+	            		throw new RuntimeException("Unable to copy vba macros over", e);
+	            	}
+	            }
             }
 
             // Now we can write out the main Workbook, with
