@@ -55,6 +55,7 @@ public class TestXSSFBugs extends TestCase {
 	 */
 	public void test45430() throws Exception {
 		XSSFWorkbook wb = new XSSFWorkbook(getFilePath("45430.xlsx"));
+		assertFalse(wb.isMacroEnabled());
 		assertEquals(3, wb.getNumberOfNames());
 		
 		assertEquals(0, wb.getNameAt(0).getCTName().getLocalSheetId());
@@ -85,6 +86,7 @@ public class TestXSSFBugs extends TestCase {
 	public void test45431() throws Exception {
 		Package pkg = Package.open(getFilePath("45431.xlsm"));
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
+		assertTrue(wb.isMacroEnabled());
 		
 		// Check the various macro related bits can be found
 		PackagePart vba = pkg.getPart(
@@ -95,6 +97,7 @@ public class TestXSSFBugs extends TestCase {
 		// Save and re-open, is still there
 		Package nPkg = saveAndOpen(wb);
 		XSSFWorkbook nwb = new XSSFWorkbook(nPkg);
+		assertTrue(nwb.isMacroEnabled());
 		vba = nPkg.getPart(
 				PackagingURIHelper.createPartName("/xl/vbaProject.bin")
 		);

@@ -22,6 +22,7 @@ package org.apache.poi.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 public class IOUtils
 {
@@ -84,4 +85,19 @@ public class IOUtils
             }
         }
     }
+
+    /**
+     * Copies all the data from the given InputStream to the
+     *  OutputStream. It leaves both streams open, so you
+     *  will still need to close them once done.
+     */
+	public static void copy(InputStream inp, OutputStream out) throws IOException {
+		byte[] buff = new byte[4096];
+		int count;
+		while( (count = inp.read(buff)) != -1 ) {
+			if(count > 0) {
+				out.write(buff, 0, count);
+			}
+		}
+	}
 }

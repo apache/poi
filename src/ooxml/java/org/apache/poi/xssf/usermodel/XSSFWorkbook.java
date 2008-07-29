@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,6 +47,8 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.BinaryPart;
 import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.xssf.model.Control;
+import org.apache.poi.xssf.model.Drawing;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.XSSFModel;
@@ -110,10 +113,16 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 			"/xl/drawings/drawing#.xml",
 			null
 	);
+	public static final XSSFRelation VML_DRAWINGS = new XSSFRelation(
+			"application/vnd.openxmlformats-officedocument.vmlDrawing",
+			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing",
+			"/xl/drawings/vmlDrawing#.vml",
+			null
+	);
     public static final XSSFRelation IMAGES = new XSSFRelation(
-    		null, // TODO
-    		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-    		"/xl/image#.xml",
+    		"image/x-emf", // TODO
+     		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+    		"/xl/media/image#.emf",
     		null
     );
 	public static final XSSFRelation SHEET_COMMENTS = new XSSFRelation(
@@ -140,12 +149,25 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             null,
             BinaryPart.class
     );
+
 	public static final XSSFRelation VBA_MACROS = new XSSFRelation(
             "application/vnd.ms-office.vbaProject",
             "http://schemas.microsoft.com/office/2006/relationships/vbaProject",
             "/xl/vbaProject.bin",
 	        BinaryPart.class
     );
+	public static final XSSFRelation ACTIVEX_CONTROLS = new XSSFRelation(
+			"application/vnd.ms-office.activeX+xml",
+			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/control",
+			"/xl/activeX/activeX#.xml",
+			null
+	);
+	public static final XSSFRelation ACTIVEX_BINS = new XSSFRelation(
+			"application/vnd.ms-office.activeX",
+			"http://schemas.microsoft.com/office/2006/relationships/activeXControlBinary",
+			"/xl/activeX/activeX#.bin",
+	        BinaryPart.class
+	);	
 	
    
 	public static class XSSFRelation {
@@ -335,9 +357,27 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 	comments = new CommentsTable(commentsPart.getInputStream());
                 }
                 
+                // Get the drawings for the sheet, if there are any
+                ArrayList<Drawing> drawings = new ArrayList<Drawing>();
+                for(PackageRelationship rel : part.getRelationshipsByType(VML_DRAWINGS.REL)) {
+                	PackagePart drawingPart = getTargetPart(rel);
+                	Drawing drawing = new Drawing(drawingPart.getInputStream(), rel.getId());
+                	drawing.findChildren(drawingPart);
+                	drawings.add(drawing);
+                }
+                
+                // Get the activeX controls for the sheet, if there are any
+                ArrayList<Control> controls = new ArrayList<Control>();
+                for(PackageRelationship rel : part.getRelationshipsByType(ACTIVEX_CONTROLS.REL)) {
+                	PackagePart controlPart = getTargetPart(rel);
+                	Control control = new Control(controlPart.getInputStream(), rel.getId());
+                	control.findChildren(controlPart);
+                	controls.add(control);
+                }
+                
                 // Now create the sheet
                 WorksheetDocument worksheetDoc = WorksheetDocument.Factory.parse(part.getInputStream());
-                XSSFSheet sheet = new XSSFSheet(ctSheet, worksheetDoc.getWorksheet(), this, comments);
+                XSSFSheet sheet = new XSSFSheet(ctSheet, worksheetDoc.getWorksheet(), this, comments, drawings, controls);
                 this.sheets.add(sheet);
                 
                 // Process external hyperlinks for the sheet,
@@ -838,6 +878,40 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                     out = ctPart.getOutputStream();
                     ct.writeTo(out);
                     out.close();
+                }
+                
+                // If our sheet has drawings, then write out those
+                if(sheet.getDrawings() != null) {
+                	int drawingIndex = 1;
+                	for(Drawing drawing : sheet.getDrawings()) {
+                        PackagePartName drName = PackagingURIHelper.createPartName(
+                        		VML_DRAWINGS.getFileName(drawingIndex));
+                        part.addRelationship(drName, TargetMode.INTERNAL, VML_DRAWINGS.getRelation(), drawing.getOriginalId());
+                        PackagePart drPart = pkg.createPart(drName, VML_DRAWINGS.getContentType());
+                        
+                        drawing.writeChildren(drPart);
+                        out = drPart.getOutputStream();
+                        drawing.writeTo(out);
+                        out.close();
+                		drawingIndex++;
+                	}
+                }
+                
+                // If our sheet has controls, then write out those
+                if(sheet.getControls() != null) {
+                	int controlIndex = 1;
+                	for(Control control : sheet.getControls()) {
+                        PackagePartName crName = PackagingURIHelper.createPartName(
+                        		ACTIVEX_CONTROLS.getFileName(controlIndex));
+                        part.addRelationship(crName, TargetMode.INTERNAL, ACTIVEX_CONTROLS.getRelation(), control.getOriginalId());
+                        PackagePart crPart = pkg.createPart(crName, ACTIVEX_CONTROLS.getContentType());
+                        
+                        control.writeChildren(crPart);
+                        out = crPart.getOutputStream();
+                        control.writeTo(out);
+                        out.close();
+                		controlIndex++;
+                	}
                 }
             }
              
