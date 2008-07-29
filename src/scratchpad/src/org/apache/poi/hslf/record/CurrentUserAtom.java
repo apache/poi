@@ -25,6 +25,7 @@ import org.apache.poi.poifs.filesystem.*;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
+import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 
 
 /**
@@ -39,14 +40,15 @@ public class CurrentUserAtom
 {
 	/** Standard Atom header */
 	public static final byte[] atomHeader = new byte[] { 0, 0, -10, 15 };
-	/** The Powerpoint magic numer */
-	public static final byte[] magicNumber = new byte[] { 95, -64, -111, -29 };
+	/** The PowerPoint magic number for a non-encrypted file */
+	public static final byte[] headerToken = new byte[] { 95, -64, -111, -29 };
+	/** The PowerPoint magic number for an encrytpted file */ 
+	public static final byte[] encHeaderToken = new byte[] { -33, -60, -47, -13 };
 	/** The Powerpoint 97 version, major and minor numbers */
 	public static final byte[] ppt97FileVer = new byte[] { 8, 00, -13, 03, 03, 00 };
 
 	/** The version, major and minor numbers */
-	private int docFinalVersionA;
-	private int docFinalVersionB;
+	private int docFinalVersion;
 	private byte docMajorNo;
 	private byte docMinorNo;
 
@@ -54,7 +56,7 @@ public class CurrentUserAtom
     private long currentEditOffset;
 	/** The Username of the last person to edit the file */
 	private String lastEditUser;
-	/** The document release version */
+	/** The document release version. Almost always 8 */
 	private long releaseVersion;
 
 	/** Only correct after reading in or writing out */
@@ -63,8 +65,7 @@ public class CurrentUserAtom
 
 	/* ********************* getter/setter follows *********************** */
 
-	public int  getDocFinalVersionA() { return docFinalVersionA; }
-	public int  getDocFinalVersionB() { return docFinalVersionB; }
+	public int  getDocFinalVersion() { return docFinalVersion; }
 	public byte getDocMajorNo()       { return docMajorNo; }
 	public byte getDocMinorNo()       { return docMinorNo; }
 
@@ -86,7 +87,14 @@ public class CurrentUserAtom
 	 */
 	public CurrentUserAtom() {
 		_contents = new byte[0];
-		throw new RuntimeException("Creation support for Current User Atom not complete");
+
+		// Initialise to empty
+		docFinalVersion = 0x03f4;
+		docMajorNo = 3;
+		docMinorNo = 0;
+		releaseVersion = 8;
+		currentEditOffset = 0;
+		lastEditUser = "Apache POI";
 	}
 
 	/** 
@@ -130,12 +138,20 @@ public class CurrentUserAtom
 	 * Actually do the creation from a block of bytes
 	 */
 	private void init() {
+		// First up is the size, in 4 bytes, which is fixed
+		// Then is the header - check for encrypted
+		if(_contents[12] == encHeaderToken[0] && 
+			_contents[13] == encHeaderToken[1] &&
+			_contents[14] == encHeaderToken[2] &&
+			_contents[15] == encHeaderToken[3]) {
+			throw new EncryptedPowerPointFileException("The CurrentUserAtom specifies that the document is encrypted");
+		}
+		
 		// Grab the edit offset
 		currentEditOffset = LittleEndian.getUInt(_contents,16);
 
 		// Grab the versions
-		docFinalVersionA = LittleEndian.getUShort(_contents,20);
-		docFinalVersionB = LittleEndian.getUShort(_contents,22);
+		docFinalVersion = LittleEndian.getUShort(_contents,22);
 		docMajorNo = _contents[24];
 		docMinorNo = _contents[25];
 
@@ -194,15 +210,22 @@ public class CurrentUserAtom
 		// Now we have the size of the details, which is 20
 		LittleEndian.putInt(_contents,8,20);
 
-		// Now the ppt magic number (4 bytes)
-		System.arraycopy(magicNumber,0,_contents,12,4);
+		// Now the ppt un-encrypted header token (4 bytes)
+		System.arraycopy(headerToken,0,_contents,12,4);
 
 		// Now the current edit offset
 		LittleEndian.putInt(_contents,16,(int)currentEditOffset);
 
-		// Now the file versions, 2+2+1+1
-		LittleEndian.putShort(_contents,20,(short)docFinalVersionA);
-		LittleEndian.putShort(_contents,22,(short)docFinalVersionB);
+		// The username gets stored twice, once as US 
+		//  ascii, and again as unicode laster on
+		byte[] asciiUN = new byte[lastEditUser.length()];
+		StringUtil.putCompressedUnicode(lastEditUser,asciiUN,0);
+		
+		// Now we're able to do the length of the last edited user
+		LittleEndian.putShort(_contents,20,(short)asciiUN.length);
+		
+		// Now the file versions, 2+1+1
+		LittleEndian.putShort(_contents,22,(short)docFinalVersion);
 		_contents[24] = docMajorNo;
 		_contents[25] = docMinorNo;
 
@@ -210,9 +233,7 @@ public class CurrentUserAtom
 		_contents[26] = 0;
 		_contents[27] = 0;
 
-		// username in bytes in us ascii
-		byte[] asciiUN = new byte[lastEditUser.length()];
-		StringUtil.putCompressedUnicode(lastEditUser,asciiUN,0);
+		// At this point we have the username as us ascii
 		System.arraycopy(asciiUN,0,_contents,28,asciiUN.length);
 
 		// 4 byte release version
