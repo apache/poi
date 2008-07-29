@@ -38,6 +38,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.Region;
 import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.xssf.model.Control;
+import org.apache.poi.xssf.model.Drawing;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxml4j.opc.PackagePart;
@@ -77,6 +79,8 @@ public class XSSFSheet implements Sheet {
     protected XSSFWorkbook workbook;
     protected CommentsSource sheetComments;
     protected CTMergeCells ctMergeCells;
+    protected ArrayList<Drawing> drawings;
+    protected ArrayList<Control> controls;
 
     public static final short LeftMargin = 0;
     public static final short RightMargin = 1;
@@ -85,6 +89,22 @@ public class XSSFSheet implements Sheet {
     public static final short HeaderMargin = 4;
     public static final short FooterMargin = 5;
 
+	public XSSFSheet(CTSheet sheet, CTWorksheet worksheet, XSSFWorkbook workbook, CommentsSource sheetComments, ArrayList<Drawing> drawings, ArrayList<Control> controls) {
+		this(sheet, worksheet, workbook, sheetComments);
+		this.drawings = drawings;
+		this.controls = controls;
+	}
+	
+	public ArrayList<Drawing> getDrawings()
+	{
+		return drawings;
+	}
+	
+	public ArrayList<Control> getControls()
+	{
+		return controls;
+	}
+	
 	public XSSFSheet(CTSheet sheet, CTWorksheet worksheet, XSSFWorkbook workbook, CommentsSource sheetComments) {
 		this(sheet, worksheet, workbook);
 		this.sheetComments = sheetComments;
