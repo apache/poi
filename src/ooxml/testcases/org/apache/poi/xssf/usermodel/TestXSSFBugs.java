@@ -93,23 +93,40 @@ public class TestXSSFBugs extends TestCase {
 				PackagingURIHelper.createPartName("/xl/vbaProject.bin")
 		);
 		assertNotNull(vba);
+		// And the drawing bit
+		PackagePart drw = pkg.getPart(
+				PackagingURIHelper.createPartName("/xl/drawings/vmlDrawing1.vml")
+		);
+		assertNotNull(drw);
 		
-		// Save and re-open, is still there
+		
+		// Save and re-open, both still there
 		Package nPkg = saveAndOpen(wb);
 		XSSFWorkbook nwb = new XSSFWorkbook(nPkg);
 		assertTrue(nwb.isMacroEnabled());
+		
 		vba = nPkg.getPart(
 				PackagingURIHelper.createPartName("/xl/vbaProject.bin")
 		);
 		assertNotNull(vba);
+		drw = nPkg.getPart(
+				PackagingURIHelper.createPartName("/xl/drawings/vmlDrawing1.vml")
+		);
+		assertNotNull(drw);
 		
 		// And again, just to be sure
 		nPkg = saveAndOpen(nwb);
 		nwb = new XSSFWorkbook(nPkg);
+		assertTrue(nwb.isMacroEnabled());
+		
 		vba = nPkg.getPart(
 				PackagingURIHelper.createPartName("/xl/vbaProject.bin")
 		);
 		assertNotNull(vba);
+		drw = nPkg.getPart(
+				PackagingURIHelper.createPartName("/xl/drawings/vmlDrawing1.vml")
+		);
+		assertNotNull(drw);
 		
 		FileOutputStream fout = new FileOutputStream("/tmp/foo.xlsm");
 		nwb.write(fout);

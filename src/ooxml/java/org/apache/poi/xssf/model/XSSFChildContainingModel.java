@@ -28,11 +28,20 @@ import org.openxml4j.opc.PackagePart;
  *  raw images associated with it. 
  */
 public interface XSSFChildContainingModel extends XSSFModel {
-	/** 
-	 * Find any children associated with the {@link XSSFModel}.
-	 * @param modelPart The PackagePart of this model 
+	/**
+	 * Returns the relationship type of any children we
+	 *  expect
 	 */
-	public void findChildren(PackagePart modelPart) throws IOException, InvalidFormatException;
+	public String[] getChildrenRelationshipTypes();
+	/**
+	 * Called for each matching child, so that the 
+	 *  appropriate model or usermodel thing can be 
+	 *  created for it.
+	 * @param childPart The PackagePart of the child
+	 * @param childId the ID of the relationship the child comes from
+	 */
+	public void generateChild(PackagePart childPart, String childRelId);
+	
 	/** 
 	 * Writes out any children associated with the {@link XSSFModel},
 	 *  along with the required relationship stuff.

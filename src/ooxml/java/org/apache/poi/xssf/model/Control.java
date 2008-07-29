@@ -12,7 +12,6 @@ import org.apache.xmlbeans.XmlOptions;
 import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackagePartName;
-import org.openxml4j.opc.PackageRelationship;
 import org.openxml4j.opc.PackagingURIHelper;
 import org.openxml4j.opc.TargetMode;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTControl;
@@ -62,17 +61,24 @@ public class Control implements XSSFChildContainingModel {
         options.setSavePrettyPrint();
         control.save(out, options);
 	}
+
+	/**
+	 * We expect active x binary parts
+	 */
+	public String[] getChildrenRelationshipTypes() {
+		return new String[] {
+				XSSFWorkbook.ACTIVEX_BINS.getRelation()
+		};
+	}
 	
 	/**
-	 * Finds our XSSFActiveXData children
+	 * Generates and adds XSSFActiveXData children
 	 */
-	public void findChildren(PackagePart modelPart) throws IOException, InvalidFormatException {
-		for(PackageRelationship rel : modelPart.getRelationshipsByType(XSSFWorkbook.ACTIVEX_BINS.getRelation())) {
-			PackagePart binPart = XSSFWorkbook.getTargetPart(modelPart.getPackage(), rel);
-			XSSFActiveXData actX = new XSSFActiveXData(binPart, rel.getId());
-			activexBins.add(actX);
-		}
+	public void generateChild(PackagePart childPart, String childRelId) {
+		XSSFActiveXData actX = new XSSFActiveXData(childPart, childRelId);
+		activexBins.add(actX);
 	}
+
 	/**
 	 * Writes back out our XSSFPictureData children
 	 */

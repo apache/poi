@@ -51,6 +51,7 @@ import org.apache.poi.xssf.model.Control;
 import org.apache.poi.xssf.model.Drawing;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.model.XSSFChildContainingModel;
 import org.apache.poi.xssf.model.XSSFModel;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -235,6 +236,20 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             	return null;
             }
 		}
+		
+		/**
+		 * Finds all the XSSFModels of this type which are
+		 *  defined as relationships of the given parent part
+		 */
+		public ArrayList<? extends XSSFModel> findAll(PackagePart parentPart) throws Exception {
+			ArrayList<XSSFModel> found = new ArrayList<XSSFModel>();
+			for(PackageRelationship rel : parentPart.getRelationshipsByType(REL)) {
+				PackagePart part = getTargetPart(parentPart.getPackage(), rel);
+				found.add(load(part));
+			}
+			return found;
+		}
+		
 		/**
 		 * Load, off the specified core part
 		 */
@@ -250,6 +265,19 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 	inp.close();
                 }
             }
+			
+			// Do children, if required
+			if(model instanceof XSSFChildContainingModel) {
+				XSSFChildContainingModel ccm = 
+					(XSSFChildContainingModel)model;
+				for(String relType : ccm.getChildrenRelationshipTypes()) {
+					for(PackageRelationship rel : corePart.getRelationshipsByType(relType)) {
+						PackagePart childPart = getTargetPart(corePart.getPackage(), rel);
+						ccm.generateChild(childPart, rel.getId());
+					}
+				}
+			}
+			
             return model;
 		}
 		
@@ -347,32 +375,24 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                     continue;
                 }
                 
-                // Get the comments for the sheet, if there are any
+                // Load child streams of the sheet
+                ArrayList<? extends XSSFModel> childModels;
                 CommentsSource comments = null;
-                PackageRelationshipCollection commentsRel =
-                	part.getRelationshipsByType(SHEET_COMMENTS.REL);
-                if(commentsRel != null && commentsRel.size() > 0) {
-                	PackagePart commentsPart = 
-                		getTargetPart(commentsRel.getRelationship(0));
-                	comments = new CommentsTable(commentsPart.getInputStream());
-                }
-                
-                // Get the drawings for the sheet, if there are any
-                ArrayList<Drawing> drawings = new ArrayList<Drawing>();
-                for(PackageRelationship rel : part.getRelationshipsByType(VML_DRAWINGS.REL)) {
-                	PackagePart drawingPart = getTargetPart(rel);
-                	Drawing drawing = new Drawing(drawingPart.getInputStream(), rel.getId());
-                	drawing.findChildren(drawingPart);
-                	drawings.add(drawing);
-                }
-                
-                // Get the activeX controls for the sheet, if there are any
-                ArrayList<Control> controls = new ArrayList<Control>();
-                for(PackageRelationship rel : part.getRelationshipsByType(ACTIVEX_CONTROLS.REL)) {
-                	PackagePart controlPart = getTargetPart(rel);
-                	Control control = new Control(controlPart.getInputStream(), rel.getId());
-                	control.findChildren(controlPart);
-                	controls.add(control);
+                ArrayList<Drawing> drawings;
+                ArrayList<Control> controls;
+                try {
+                	// Get the comments for the sheet, if there are any
+                	childModels = SHEET_COMMENTS.findAll(part);
+                	if(childModels.size() > 0) {
+                		comments = (CommentsSource)childModels.get(0);
+                	}
+                	
+	                // Get the drawings for the sheet, if there are any
+	                drawings = (ArrayList<Drawing>)VML_DRAWINGS.findAll(part);
+	                // Get the activeX controls for the sheet, if there are any
+	                controls = (ArrayList<Control>)ACTIVEX_CONTROLS.findAll(part);
+                } catch(Exception e) {
+                	throw new RuntimeException("Unable to construct child part",e);
                 }
                 
                 // Now create the sheet
