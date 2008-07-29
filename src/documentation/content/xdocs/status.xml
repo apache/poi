@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">Support for creating new HSLF CurrentUserAtoms</action>
            <action dev="POI-DEVELOPERS" type="add">45466 - Partial support for removing excel comments (won't work for all excel versions yet)</action>
            <action dev="POI-DEVELOPERS" type="fix">45437 - Detect encrypted word documents, and throw an EncryptedDocumentException instead of a OOM</action>
            <action dev="POI-DEVELOPERS" type="add">45404 - New class, hssf.usermodel.HSSFDataFormatter, for formatting numbers and dates in the same way that Excel does</action>
