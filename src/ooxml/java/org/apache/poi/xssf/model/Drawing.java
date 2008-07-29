@@ -12,7 +12,6 @@ import org.apache.xmlbeans.XmlOptions;
 import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackagePartName;
-import org.openxml4j.opc.PackageRelationship;
 import org.openxml4j.opc.PackagingURIHelper;
 import org.openxml4j.opc.TargetMode;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDrawing;
@@ -66,15 +65,22 @@ public class Drawing implements XSSFChildContainingModel {
 	}
 	
 	/**
-	 * Finds our XSSFPictureData children
+	 * We expect image parts
 	 */
-	public void findChildren(PackagePart modelPart) throws IOException, InvalidFormatException {
-		for(PackageRelationship rel : modelPart.getRelationshipsByType(XSSFWorkbook.IMAGES.getRelation())) {
-			PackagePart imagePart = XSSFWorkbook.getTargetPart(modelPart.getPackage(), rel);
-			XSSFPictureData pd = new XSSFPictureData(imagePart, rel.getId());
-			pictures.add(pd);
-		}
+	public String[] getChildrenRelationshipTypes() {
+		return new String[] {
+				XSSFWorkbook.IMAGES.getRelation()
+		};
 	}
+	
+	/**
+	 * Generates and adds XSSFActiveXData children
+	 */
+	public void generateChild(PackagePart childPart, String childRelId) {
+		XSSFPictureData pd = new XSSFPictureData(childPart, childRelId);
+		pictures.add(pd);
+	}
+
 	/**
 	 * Writes back out our XSSFPictureData children
 	 */
