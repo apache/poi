@@ -18,6 +18,7 @@ package org.apache.poi.xssf.model;
 
 import java.io.IOException;
 
+import org.apache.poi.xssf.usermodel.XSSFWorkbook.XSSFRelation;
 import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.opc.PackagePart;
 
@@ -41,11 +42,29 @@ public interface XSSFChildContainingModel extends XSSFModel {
 	 * @param childId the ID of the relationship the child comes from
 	 */
 	public void generateChild(PackagePart childPart, String childRelId);
-	
-	/** 
-	 * Writes out any children associated with the {@link XSSFModel},
-	 *  along with the required relationship stuff.
-	 * @param modelPart The new PackagePart of this model 
+
+	/**
+	 * Returns the number of children contained, which
+	 *  will need to be written out.
 	 */
-	public void writeChildren(PackagePart modelPart) throws IOException, InvalidFormatException;
+	public int getNumberOfChildren();
+	/**
+	 * Called for each child in turn when writing out, 
+	 *  which returns a WritableChild for the child in
+	 *  that position. The WritableChild has enough
+	 *  information to be able to write it out.  
+	 * @param index A zero based index of this child
+	 */
+	public WritableChild getChildForWriting(int index); 
+	
+	static class WritableChild {
+		private XSSFWritableModel model;
+		private XSSFRelation relation;
+		public WritableChild(XSSFWritableModel model, XSSFRelation rel) {
+			this.model = model;
+			this.relation = rel;
+		}
+		public XSSFWritableModel getModel() { return model; }
+		public XSSFRelation getRelation() { return relation; }
+	}
 }

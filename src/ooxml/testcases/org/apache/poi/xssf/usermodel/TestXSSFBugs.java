@@ -128,10 +128,6 @@ public class TestXSSFBugs extends TestCase {
 		);
 		assertNotNull(drw);
 		
-		FileOutputStream fout = new FileOutputStream("/tmp/foo.xlsm");
-		nwb.write(fout);
-		fout.close();
-		
 		// For testing with excel
 //		FileOutputStream fout = new FileOutputStream("/tmp/foo.xlsm");
 //		nwb.write(fout);

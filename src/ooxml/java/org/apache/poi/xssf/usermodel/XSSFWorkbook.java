@@ -53,6 +53,7 @@ import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.XSSFChildContainingModel;
 import org.apache.poi.xssf.model.XSSFModel;
+import org.apache.poi.xssf.model.XSSFWritableModel;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -118,7 +119,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 			"application/vnd.openxmlformats-officedocument.vmlDrawing",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing",
 			"/xl/drawings/vmlDrawing#.vml",
-			null
+			Drawing.class
 	);
     public static final XSSFRelation IMAGES = new XSSFRelation(
     		"image/x-emf", // TODO
@@ -161,7 +162,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 			"application/vnd.ms-office.activeX+xml",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/control",
 			"/xl/activeX/activeX#.xml",
-			null
+			Control.class
 	);
 	public static final XSSFRelation ACTIVEX_BINS = new XSSFRelation(
 			"application/vnd.ms-office.activeX",
@@ -220,7 +221,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
 		/**
 		 * Fetches the InputStream to read the contents, based
-		 *  of the specified core part
+		 *  of the specified core part, for which we are defined
+		 *  as a suitable relationship
 		 */
 		public InputStream getContents(PackagePart corePart) throws IOException, InvalidFormatException {
             PackageRelationshipCollection prc =
@@ -238,45 +240,81 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 		}
 		
 		/**
-		 * Finds all the XSSFModels of this type which are
+		 * Loads all the XSSFModels of this type which are
 		 *  defined as relationships of the given parent part
 		 */
-		public ArrayList<? extends XSSFModel> findAll(PackagePart parentPart) throws Exception {
+		public ArrayList<? extends XSSFModel> loadAll(PackagePart parentPart) throws Exception {
 			ArrayList<XSSFModel> found = new ArrayList<XSSFModel>();
 			for(PackageRelationship rel : parentPart.getRelationshipsByType(REL)) {
 				PackagePart part = getTargetPart(parentPart.getPackage(), rel);
-				found.add(load(part));
+				found.add(create(part, rel));
 			}
 			return found;
 		}
 		
 		/**
-		 * Load, off the specified core part
+		 * Load a single Model, which is defined as a suitable
+		 *  relationship from the specified core (parent) 
+		 *  package part.
 		 */
 		public XSSFModel load(PackagePart corePart) throws Exception {
-			Constructor<? extends XSSFModel> c = CLASS.getConstructor(InputStream.class);
+            PackageRelationshipCollection prc =
+            	corePart.getRelationshipsByType(REL);
+            Iterator<PackageRelationship> it = prc.iterator();
+            if(it.hasNext()) {
+                PackageRelationship rel = it.next();
+                PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
+                PackagePart part = corePart.getPackage().getPart(relName);
+                return create(part, rel);
+            } else {
+            	log.log(POILogger.WARN, "No part " + DEFAULT_NAME + " found");
+            	return null;
+            }
+		}
+		
+		/**
+		 * Does the actual Model creation
+		 */
+		private XSSFModel create(PackagePart thisPart, PackageRelationship rel) throws Exception {
 			XSSFModel model = null;
 			
-			InputStream inp = getContents(corePart);
+			Constructor<? extends XSSFModel> c;
+			boolean withString = false;
+			
+			// Find the right constructor 
+			try {
+				c = CLASS.getConstructor(InputStream.class, String.class);
+				withString = true;
+			} catch(NoSuchMethodException e) {
+				c = CLASS.getConstructor(InputStream.class);
+			}
+			
+			// Instantiate, if we can
+			InputStream inp = thisPart.getInputStream();
 			if(inp != null) {
                 try {
-                	model = c.newInstance(inp);
+                	if(withString) {
+                		model = c.newInstance(inp, rel.getId());
+                	} else {
+                		model = c.newInstance(inp);
+                	}
                 } finally {
                 	inp.close();
                 }
+                
+    			// Do children, if required
+    			if(model instanceof XSSFChildContainingModel) {
+    				XSSFChildContainingModel ccm = 
+    					(XSSFChildContainingModel)model;
+    				for(String relType : ccm.getChildrenRelationshipTypes()) {
+    					for(PackageRelationship cRel : thisPart.getRelationshipsByType(relType)) {
+    						PackagePart childPart = getTargetPart(thisPart.getPackage(), cRel);
+    						ccm.generateChild(childPart, cRel.getId());
+    					}
+    				}
+    			}
             }
 			
-			// Do children, if required
-			if(model instanceof XSSFChildContainingModel) {
-				XSSFChildContainingModel ccm = 
-					(XSSFChildContainingModel)model;
-				for(String relType : ccm.getChildrenRelationshipTypes()) {
-					for(PackageRelationship rel : corePart.getRelationshipsByType(relType)) {
-						PackagePart childPart = getTargetPart(corePart.getPackage(), rel);
-						ccm.generateChild(childPart, rel.getId());
-					}
-				}
-			}
 			
             return model;
 		}
@@ -285,19 +323,26 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 		 * Save, with the default name
 		 * @return The internal reference ID it was saved at, normally then used as an r:id
 		 */
-		private String save(XSSFModel model, PackagePart corePart) throws IOException {
+		private String save(XSSFWritableModel model, PackagePart corePart) throws IOException {
 			return save(model, corePart, DEFAULT_NAME);
+		}
+		/**
+		 * Save, with the name generated by the given index
+		 * @return The internal reference ID it was saved at, normally then used as an r:id
+		 */
+		private String save(XSSFWritableModel model, PackagePart corePart, int index) throws IOException {
+			return save(model, corePart, getFileName(index));
 		}
 		/**
 		 * Save, with the specified name
 		 * @return The internal reference ID it was saved at, normally then used as an r:id
 		 */
-		private String save(XSSFModel model, PackagePart corePart, String name) throws IOException {
+		private String save(XSSFWritableModel model, PackagePart corePart, String name) throws IOException {
             PackagePartName ppName = null;
             try {
             	ppName = PackagingURIHelper.createPartName(name);
             } catch(InvalidFormatException e) {
-            	throw new IllegalStateException(e);
+            	throw new IllegalStateException("Can't create part with name " + name + " for " + model, e);
             }
             PackageRelationship rel =
             	corePart.addRelationship(ppName, TargetMode.INTERNAL, REL);
@@ -306,6 +351,23 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             OutputStream out = part.getOutputStream();
             model.writeTo(out);
             out.close();
+            
+			// Do children, if required
+			if(model instanceof XSSFChildContainingModel) {
+				XSSFChildContainingModel ccm = 
+					(XSSFChildContainingModel)model;
+				// Loop over each child, writing it out
+				int numChildren = ccm.getNumberOfChildren();
+				for(int i=0; i<numChildren; i++) {
+					XSSFChildContainingModel.WritableChild child =
+						ccm.getChildForWriting(i);
+					child.getRelation().save(
+							child.getModel(),
+							part, 
+							(i+1)
+					);
+				}
+			}
             
             return rel.getId();
 		}
@@ -382,15 +444,15 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 ArrayList<Control> controls;
                 try {
                 	// Get the comments for the sheet, if there are any
-                	childModels = SHEET_COMMENTS.findAll(part);
+                	childModels = SHEET_COMMENTS.loadAll(part);
                 	if(childModels.size() > 0) {
                 		comments = (CommentsSource)childModels.get(0);
                 	}
                 	
 	                // Get the drawings for the sheet, if there are any
-	                drawings = (ArrayList<Drawing>)VML_DRAWINGS.findAll(part);
+	                drawings = (ArrayList<Drawing>)VML_DRAWINGS.loadAll(part);
 	                // Get the activeX controls for the sheet, if there are any
-	                controls = (ArrayList<Control>)ACTIVEX_CONTROLS.findAll(part);
+	                controls = (ArrayList<Control>)ACTIVEX_CONTROLS.loadAll(part);
                 } catch(Exception e) {
                 	throw new RuntimeException("Unable to construct child part",e);
                 }
@@ -890,29 +952,18 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 // If our sheet has comments, then write out those
                 if(sheet.hasComments()) {
                 	CommentsTable ct = (CommentsTable)sheet.getCommentsSourceIfExists();
-                    PackagePartName ctName = PackagingURIHelper.createPartName(
-                    		SHEET_COMMENTS.getFileName(sheetNumber));
-                    part.addRelationship(ctName, TargetMode.INTERNAL, SHEET_COMMENTS.getRelation(), "rComments");
-                    PackagePart ctPart = pkg.createPart(ctName, SHEET_COMMENTS.getContentType());
-                    
-                    out = ctPart.getOutputStream();
-                    ct.writeTo(out);
-                    out.close();
+                	SHEET_COMMENTS.save(ct, part, sheetNumber);
                 }
                 
                 // If our sheet has drawings, then write out those
                 if(sheet.getDrawings() != null) {
                 	int drawingIndex = 1;
                 	for(Drawing drawing : sheet.getDrawings()) {
-                        PackagePartName drName = PackagingURIHelper.createPartName(
-                        		VML_DRAWINGS.getFileName(drawingIndex));
-                        part.addRelationship(drName, TargetMode.INTERNAL, VML_DRAWINGS.getRelation(), drawing.getOriginalId());
-                        PackagePart drPart = pkg.createPart(drName, VML_DRAWINGS.getContentType());
-                        
-                        drawing.writeChildren(drPart);
-                        out = drPart.getOutputStream();
-                        drawing.writeTo(out);
-                        out.close();
+                		VML_DRAWINGS.save(
+                				drawing,
+                				part,
+                				drawingIndex
+                		);
                 		drawingIndex++;
                 	}
                 }
@@ -921,15 +972,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 if(sheet.getControls() != null) {
                 	int controlIndex = 1;
                 	for(Control control : sheet.getControls()) {
-                        PackagePartName crName = PackagingURIHelper.createPartName(
-                        		ACTIVEX_CONTROLS.getFileName(controlIndex));
-                        part.addRelationship(crName, TargetMode.INTERNAL, ACTIVEX_CONTROLS.getRelation(), control.getOriginalId());
-                        PackagePart crPart = pkg.createPart(crName, ACTIVEX_CONTROLS.getContentType());
-                        
-                        control.writeChildren(crPart);
-                        out = crPart.getOutputStream();
-                        control.writeTo(out);
-                        out.close();
+                		ACTIVEX_CONTROLS.save(
+                				control,
+                				part,
+                				controlIndex
+                		);
                 		controlIndex++;
                 	}
                 }
