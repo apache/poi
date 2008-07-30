@@ -17,18 +17,21 @@
 package org.apache.poi.xssf.model;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook.XSSFRelation;
 
 /**
- * Common interface for XSSF models, which deal with
- *  parts of the xssf file.
- * These should also implement a constructor of
- *  (InputStream is), so they can be used with
- *  {@link XSSFRelation}
+ * A very stripped down XSSF models interface,
+ *  which only allows writing out. Normally only
+ *  used with the children of a
+ *  {@link XSSFChildContainingModel}.
+ * Most proper models will go for {@link XSSFModel}
+ *  instead of this one.
+ * {@link XSSFRelation} needs classes to implement
+ *  this, so that it can write them out.
  */
-public interface XSSFModel extends XSSFWritableModel {
-	/** Read from the given InputStream */
-	public void readFrom(InputStream is) throws IOException;
+public interface XSSFWritableModel {
+	/** Write to the supplied OutputStream, with default options */
+	public void writeTo(OutputStream out) throws IOException;
 }

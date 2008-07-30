@@ -9,11 +9,7 @@ import org.apache.poi.xssf.usermodel.XSSFActiveXData;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.opc.PackagePart;
-import org.openxml4j.opc.PackagePartName;
-import org.openxml4j.opc.PackagingURIHelper;
-import org.openxml4j.opc.TargetMode;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTControl;
 
 /**
@@ -71,6 +67,10 @@ public class Control implements XSSFChildContainingModel {
 		};
 	}
 	
+	public int getNumberOfChildren() {
+		return activexBins.size();
+	}
+	
 	/**
 	 * Generates and adds XSSFActiveXData children
 	 */
@@ -79,24 +79,16 @@ public class Control implements XSSFChildContainingModel {
 		activexBins.add(actX);
 	}
 
-	/**
-	 * Writes back out our XSSFPictureData children
-	 */
-	public void writeChildren(PackagePart modelPart) throws IOException, InvalidFormatException {
-		int binIndex = 1;
-		OutputStream out;
-		
-		for(XSSFActiveXData actX : activexBins) {
-			PackagePartName binPartName = PackagingURIHelper.createPartName(XSSFWorkbook.ACTIVEX_BINS.getFileName(binIndex));
-			modelPart.addRelationship(binPartName, TargetMode.INTERNAL, XSSFWorkbook.ACTIVEX_BINS.getRelation(), getOriginalId());
-			PackagePart imagePart = modelPart.getPackage().createPart(binPartName, XSSFWorkbook.ACTIVEX_BINS.getContentType());                     
-			out = imagePart.getOutputStream();
-			actX.writeTo(out);
-			out.close();
-			binIndex++;
+	public WritableChild getChildForWriting(int index) {
+		if(index >= activexBins.size()) {
+			throw new IllegalArgumentException("Can't get child at " + index + " when size is " + getNumberOfChildren());
 		}
+		return new WritableChild(
+				activexBins.get(index),
+				XSSFWorkbook.ACTIVEX_BINS
+		);
 	}
-
+	
 	public ArrayList<XSSFActiveXData> getData()	{
 		return this.activexBins;
 	}

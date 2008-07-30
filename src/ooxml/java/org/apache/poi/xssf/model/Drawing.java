@@ -9,11 +9,7 @@ import org.apache.poi.xssf.usermodel.XSSFPictureData;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.opc.PackagePart;
-import org.openxml4j.opc.PackagePartName;
-import org.openxml4j.opc.PackagingURIHelper;
-import org.openxml4j.opc.TargetMode;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDrawing;
 
 /**
@@ -73,6 +69,10 @@ public class Drawing implements XSSFChildContainingModel {
 		};
 	}
 	
+	public int getNumberOfChildren() {
+		return pictures.size();
+	}
+	
 	/**
 	 * Generates and adds XSSFActiveXData children
 	 */
@@ -81,22 +81,14 @@ public class Drawing implements XSSFChildContainingModel {
 		pictures.add(pd);
 	}
 
-	/**
-	 * Writes back out our XSSFPictureData children
-	 */
-	public void writeChildren(PackagePart modelPart) throws IOException, InvalidFormatException {
-		int pictureIndex = 1;
-		OutputStream out;
-		
-		for(XSSFPictureData picture : pictures) {
-			PackagePartName imagePartName = PackagingURIHelper.createPartName(XSSFWorkbook.IMAGES.getFileName(pictureIndex));
-			modelPart.addRelationship(imagePartName, TargetMode.INTERNAL, XSSFWorkbook.IMAGES.getRelation(), getOriginalId());
-			PackagePart imagePart = modelPart.getPackage().createPart(imagePartName, XSSFWorkbook.IMAGES.getContentType());                     
-			out = imagePart.getOutputStream();
-			picture.writeTo(out);
-			out.close();
-			pictureIndex++;
+	public WritableChild getChildForWriting(int index) {
+		if(index >= pictures.size()) {
+			throw new IllegalArgumentException("Can't get child at " + index + " when size is " + getNumberOfChildren());
 		}
+		return new WritableChild(
+				pictures.get(index),
+				XSSFWorkbook.IMAGES
+		);
 	}
 	
 	public ArrayList<XSSFPictureData> getPictures()
