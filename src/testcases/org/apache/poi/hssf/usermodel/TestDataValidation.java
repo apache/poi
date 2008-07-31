@@ -16,13 +16,25 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.util.*;
-
-import java.io.*;
-import java.util.*;
-import java.text.SimpleDateFormat;
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.eventmodel.ERFListener;
+import org.apache.poi.hssf.eventmodel.EventRecordFactory;
+import org.apache.poi.hssf.record.DVRecord;
+import org.apache.poi.hssf.record.RecordFormatException;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFDataValidation;
+import org.apache.poi.hssf.util.Region;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * <p>Title: TestDataValidation</p>
@@ -34,19 +46,6 @@ import java.text.SimpleDateFormat;
  */
 public class TestDataValidation extends TestCase
 {
-  public TestDataValidation(String name)
-  {
-    super(name);
-  }
-
-  protected void setUp()
-  {
-    String filename = System.getProperty("HSSF.testdata.path");
-    if (filename == null)
-    {
-       System.setProperty("HSSF.testdata.path", "src/testcases/org/apache/poi/hssf/data");
-    }
-  }
 
   public void testDataValidation() throws Exception
   {
@@ -903,8 +902,88 @@ public class TestDataValidation extends TestCase
      cell.setCellValue(strStettings);
   }
 
-  public static void main(String[] args)
-  {
-    junit.textui.TestRunner.run(TestDataValidation.class);
-  }
+  
+	public void testAddToExistingSheet() {
+
+		// dvEmpty.xls is a simple one sheet workbook.  With a DataValidations header record but no 
+		// DataValidations.  It's important that the example has one SHEETPROTECTION record.
+		// Such a workbook can be created in Excel (2007) by adding datavalidation for one cell
+		// and then deleting the row that contains the cell.
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("dvEmpty.xls");  
+		int dvRow = 0;
+		HSSFSheet sheet = wb.getSheetAt(0);
+		sheet.createRow(dvRow).createCell((short)0);
+		HSSFDataValidation dv = new HSSFDataValidation((short)dvRow, (short)0, (short)dvRow, (short)0);
+		
+		dv.setDataValidationType(HSSFDataValidation.DATA_TYPE_INTEGER);
+		dv.setEmptyCellAllowed(false);
+		dv.setOperator(HSSFDataValidation.OPERATOR_EQUAL);
+		dv.setFirstFormula("42");
+		dv.setErrorStyle(HSSFDataValidation.ERROR_STYLE_STOP);
+		dv.setShowPromptBox(true);
+		dv.createErrorBox("Error", "The value is wrong");
+		dv.setSurppressDropDownArrow(true);
+
+		sheet.addValidationData(dv);
+		wb.toString();
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			wb.write(baos);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		
+		byte[] wbData = baos.toByteArray();
+		
+		if (false) { // TODO (Jul 2008) fix EventRecordFactory to process unknown records, (and DV records for that matter)
+			EventRecordFactory erf = new EventRecordFactory();
+			ERFListener erfListener = null; // new MyERFListener();
+			erf.registerListener(erfListener, null);
+			try {
+				POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
+				erf.processRecords(fs.createDocumentInputStream("Workbook"));
+			} catch (RecordFormatException e) {
+				throw new RuntimeException(e);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		// else verify record ordering by navigating the raw bytes
+		
+		byte[] dvHeaderRecStart= { (byte)0xB2, 0x01, 0x12, 0x00, };
+		int dvHeaderOffset = findIndex(wbData, dvHeaderRecStart);
+		assertTrue(dvHeaderOffset > 0);
+		int nextRecIndex = dvHeaderOffset + 22;
+		int nextSid 
+			= ((wbData[nextRecIndex + 0] << 0) & 0x00FF) 
+			+ ((wbData[nextRecIndex + 1] << 8) & 0xFF00)
+			;
+		// nextSid should be for a DVRecord.  If anything comes between the DV header record 
+		// and the DV records, Excel will not be able to open the workbook without error.
+		
+		if (nextSid == 0x0867) {
+			throw new AssertionFailedError("Identified bug XXXX");
+		}
+		assertEquals(DVRecord.sid, nextSid);
+	}
+	private int findIndex(byte[] largeData, byte[] searchPattern) {
+		byte firstByte = searchPattern[0];
+		for (int i = 0; i < largeData.length; i++) {
+			if(largeData[i] != firstByte) {
+				continue;
+			}
+			boolean match = true;
+			for (int j = 1; j < searchPattern.length; j++) {
+				if(searchPattern[j] != largeData[i+j]) {
+					match = false;
+					break;
+				}
+			}
+			if (match) {
+				return i;
+			}
+		}
+		return -1;
+	}
 }

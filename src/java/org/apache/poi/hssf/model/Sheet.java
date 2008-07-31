@@ -17,13 +17,13 @@
 
 package org.apache.poi.hssf.model;
 
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.*; // normally I don't do this, buy we literally mean ALL
 import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
+import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
-import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.util.PaneInformation;
 
 import org.apache.poi.util.POILogFactory;
@@ -31,7 +31,7 @@ import org.apache.poi.util.POILogger;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;   // normally I don't do this, buy we literally mean ALL
+import java.util.List;   
 
 /**
  * Low level model implementation of a Sheet (one workbook contains many sheets)
@@ -90,6 +90,7 @@ public final class Sheet implements Model {
     protected ProtectRecord              protect           =     null;
     protected PageBreakRecord            rowBreaks         =     null;
     protected PageBreakRecord            colBreaks         =     null;
+    private   DataValidityTable          _dataValidityTable=     null;
     protected ObjectProtectRecord        objprotect        =     null;
     protected ScenarioProtectRecord      scenprotect       =     null;
     protected PasswordRecord             password          =     null;
@@ -299,7 +300,12 @@ public final class Sheet implements Model {
                 // and POI always re-calculates its contents 
                 rec = null;
             }
-
+            else if ( rec.getSid() == DVALRecord.sid) {
+                RecordStream rs = new RecordStream(recs, k);
+                retval._dataValidityTable = new DataValidityTable(rs);
+                k += rs.getCountRead() - 1; // TODO - convert this method result to be zero based
+                rec = retval._dataValidityTable;
+            }
             else if ( rec.getSid() == ProtectRecord.sid )
             {
                 retval.protect = (ProtectRecord) rec;
@@ -425,56 +431,56 @@ public final class Sheet implements Model {
         Sheet     retval  = new Sheet();
         ArrayList records = new ArrayList(30);
 
-        records.add(retval.createBOF());
+        records.add(createBOF());
 
         // records.add(retval.createIndex());
-        records.add(retval.createCalcMode());
-        records.add(retval.createCalcCount() );
-        records.add( retval.createRefMode() );
-        records.add( retval.createIteration() );
-        records.add( retval.createDelta() );
-        records.add( retval.createSaveRecalc() );
-        records.add( retval.createPrintHeaders() );
-        retval.printGridlines = (PrintGridlinesRecord) retval.createPrintGridlines();
+        records.add(createCalcMode());
+        records.add(createCalcCount() );
+        records.add(createRefMode() );
+        records.add(createIteration() );
+        records.add(createDelta() );
+        records.add(createSaveRecalc() );
+        records.add(createPrintHeaders() );
+        retval.printGridlines = createPrintGridlines();
         records.add( retval.printGridlines );
-        retval.gridset = (GridsetRecord) retval.createGridset();
+        retval.gridset = createGridset();
         records.add( retval.gridset );
         records.add( retval.createGuts() );
-        retval.defaultrowheight =
-                (DefaultRowHeightRecord) retval.createDefaultRowHeight();
+        retval.defaultrowheight = createDefaultRowHeight();
         records.add( retval.defaultrowheight );
         records.add( retval.createWSBool() );
-
+        
+        // 'Page Settings Block'
         retval.rowBreaks = new PageBreakRecord(PageBreakRecord.HORIZONTAL_SID);
         records.add(retval.rowBreaks);
         retval.colBreaks = new PageBreakRecord(PageBreakRecord.VERTICAL_SID);
         records.add(retval.colBreaks);
 
-        retval.header = (HeaderRecord) retval.createHeader();
+        retval.header = createHeader();
         records.add( retval.header );
-        retval.footer = (FooterRecord) retval.createFooter();
+        retval.footer = createFooter();
         records.add( retval.footer );
-        records.add( retval.createHCenter() );
-        records.add( retval.createVCenter() );
-        retval.printSetup = (PrintSetupRecord) retval.createPrintSetup();
+        records.add(createHCenter() );
+        records.add(createVCenter() );
+        retval.printSetup = createPrintSetup();
         records.add( retval.printSetup );
-        retval.defaultcolwidth =
-                (DefaultColWidthRecord) retval.createDefaultColWidth();
+
+        // 'Worksheet Protection Block' (after 'Page Settings Block' and before DEFCOLWIDTH)
+        // PROTECT record normally goes here, don't add yet since the flag is initially false
+        
+        retval.defaultcolwidth = createDefaultColWidth();
         records.add( retval.defaultcolwidth);
         ColumnInfoRecordsAggregate columns = new ColumnInfoRecordsAggregate();
         records.add( columns );
         retval.columns = columns;
-        retval.dims    = ( DimensionsRecord ) retval.createDimensions();
+        retval.dims    =  createDimensions();
         records.add(retval.dims);
         retval.dimsloc = records.size()-1;
         records.add(retval.windowTwo = retval.createWindowTwo());
         retval.setLoc(records.size() - 1);
-        retval.selection =
-                (SelectionRecord) retval.createSelection();
+        retval.selection = createSelection();
         records.add(retval.selection);
-        retval.protect = (ProtectRecord) retval.createProtect();
-        records.add(retval.protect);
-        records.add(retval.createEOF());
+        records.add(new EOFRecord());
 
 
         retval.records = records;
@@ -522,7 +528,7 @@ public final class Sheet implements Model {
 
         if (merged == null || merged.getNumAreas() == 1027)
         {
-            merged = ( MergeCellsRecord ) createMergedCells();
+            merged = createMergedCells();
             mergedRecords.add(merged);
             records.add(records.size() - 1, merged);
         }
@@ -911,122 +917,9 @@ public final class Sheet implements Model {
 
     /**
      * Create a row record.  (does not add it to the records contained in this sheet)
-     *
-     * @param row number
-     * @return RowRecord created for the passed in row number
-     * @see org.apache.poi.hssf.record.RowRecord
      */
-
-    public RowRecord createRow(int row)
-    {
+    private static RowRecord createRow(int row) {
         return RowRecordsAggregate.createRow( row );
-    }
-
-    /**
-     * Create a LABELSST Record (does not add it to the records contained in this sheet)
-     *
-     * @param row the row the LabelSST is a member of
-     * @param col the column the LabelSST defines
-     * @param index the index of the string within the SST (use workbook addSSTString method)
-     * @return LabelSSTRecord newly created containing your SST Index, row,col.
-     * @see org.apache.poi.hssf.record.SSTRecord
-     */
-    public LabelSSTRecord createLabelSST(int row, short col, int index)
-    {
-        log.logFormatted(POILogger.DEBUG, "create labelsst row,col,index %,%,%",
-                         new int[]
-        {
-            row, col, index
-        });
-        LabelSSTRecord rec = new LabelSSTRecord();
-
-        rec.setRow(row);
-        rec.setColumn(col);
-        rec.setSSTIndex(index);
-        rec.setXFIndex(( short ) 0x0f);
-        return rec;
-    }
-
-    /**
-     * Create a NUMBER Record (does not add it to the records contained in this sheet)
-     *
-     * @param row the row the NumberRecord is a member of
-     * @param col the column the NumberRecord defines
-     * @param value for the number record
-     *
-     * @return NumberRecord for that row, col containing that value as added to the sheet
-     */
-    public NumberRecord createNumber(int row, short col, double value)
-    {
-        log.logFormatted(POILogger.DEBUG, "create number row,col,value %,%,%",
-                         new double[]
-        {
-            row, col, value
-        });
-        NumberRecord rec = new NumberRecord();
-
-        rec.setRow(row);
-        rec.setColumn(col);
-        rec.setValue(value);
-        rec.setXFIndex(( short ) 0x0f);
-        return rec;
-    }
-
-    /**
-     * create a BLANK record (does not add it to the records contained in this sheet)
-     *
-     * @param row - the row the BlankRecord is a member of
-     * @param col - the column the BlankRecord is a member of
-     */
-    public BlankRecord createBlank(int row, short col)
-    {
-        log.logFormatted(POILogger.DEBUG, "create blank row,col %,%", new int[]
-        {
-            row, col
-        });
-        BlankRecord rec = new BlankRecord();
-
-        rec.setRow(row);
-        rec.setColumn(col);
-        rec.setXFIndex(( short ) 0x0f);
-        return rec;
-    }
-
-    /**
-     * Attempts to parse the formula into PTGs and create a formula record
-     * DOES NOT WORK YET
-     *
-     * @param row - the row for the formula record
-     * @param col - the column of the formula record
-     * @param formula - a String representing the formula.  To be parsed to PTGs
-     * @return bogus/useless formula record
-     */
-    public FormulaRecord createFormula(int row, short col, String formula)
-    {
-        log.logFormatted(POILogger.DEBUG, "create formula row,col,formula %,%,%",
-                         new int[]
-        {
-            row, col
-        }, formula);
-        FormulaRecord rec = new FormulaRecord();
-
-        rec.setRow(row);
-        rec.setColumn(col);
-        rec.setOptions(( short ) 2);
-        rec.setValue(0);
-        rec.setXFIndex(( short ) 0x0f);
-        FormulaParser fp = new FormulaParser(formula,null); //fix - do we need this method?
-        fp.parse();
-        Ptg[] ptg  = fp.getRPNPtg();
-        int   size = 0;
-
-        for (int k = 0; k < ptg.length; k++)
-        {
-            size += ptg[ k ].getSize();
-            rec.pushExpressionToken(ptg[ k ]);
-        }
-        rec.setExpressionLength(( short ) size);
-        return rec;
     }
 
     /**
@@ -1247,13 +1140,8 @@ public final class Sheet implements Model {
 
     /**
      * creates the BOF record
-     * @see org.apache.poi.hssf.record.BOFRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a BOFRecord
      */
-
-    protected Record createBOF()
-    {
+    private static BOFRecord createBOF() {
         BOFRecord retval = new BOFRecord();
 
         retval.setVersion(( short ) 0x600);
@@ -1267,30 +1155,9 @@ public final class Sheet implements Model {
     }
 
     /**
-     * creates the Index record  - not currently used
-     * @see org.apache.poi.hssf.record.IndexRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a IndexRecord
-     */
-
-    protected Record createIndex()
-    {
-        IndexRecord retval = new IndexRecord();
-
-        retval.setFirstRow(0);   // must be set explicitly
-        retval.setLastRowAdd1(0);
-        return retval;
-    }
-
-    /**
      * creates the CalcMode record and sets it to 1 (automatic formula caculation)
-     * @see org.apache.poi.hssf.record.CalcModeRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a CalcModeRecord
      */
-
-    protected Record createCalcMode()
-    {
+    private static CalcModeRecord createCalcMode() {
         CalcModeRecord retval = new CalcModeRecord();
 
         retval.setCalcMode(( short ) 1);
@@ -1298,29 +1165,19 @@ public final class Sheet implements Model {
     }
 
     /**
-     * creates the CalcCount record and sets it to 0x64 (default number of iterations)
-     * @see org.apache.poi.hssf.record.CalcCountRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a CalcCountRecord
+     * creates the CalcCount record and sets it to 100 (default number of iterations)
      */
-
-    protected Record createCalcCount()
-    {
+    private static CalcCountRecord createCalcCount() {
         CalcCountRecord retval = new CalcCountRecord();
 
-        retval.setIterations(( short ) 0x64);   // default 64 iterations
+        retval.setIterations(( short ) 100);   // default 100 iterations
         return retval;
     }
 
     /**
      * creates the RefMode record and sets it to A1 Mode (default reference mode)
-     * @see org.apache.poi.hssf.record.RefModeRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a RefModeRecord
      */
-
-    protected Record createRefMode()
-    {
+    private static RefModeRecord createRefMode() {
         RefModeRecord retval = new RefModeRecord();
 
         retval.setMode(RefModeRecord.USE_A1_MODE);
@@ -1329,13 +1186,8 @@ public final class Sheet implements Model {
 
     /**
      * creates the Iteration record and sets it to false (don't iteratively calculate formulas)
-     * @see org.apache.poi.hssf.record.IterationRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a IterationRecord
      */
-
-    protected Record createIteration()
-    {
+    private static IterationRecord createIteration() {
         IterationRecord retval = new IterationRecord();
 
         retval.setIteration(false);
@@ -1344,13 +1196,8 @@ public final class Sheet implements Model {
 
     /**
      * creates the Delta record and sets it to 0.0010 (default accuracy)
-     * @see org.apache.poi.hssf.record.DeltaRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a DeltaRecord
      */
-
-    protected Record createDelta()
-    {
+    private static DeltaRecord createDelta() {
         DeltaRecord retval = new DeltaRecord();
 
         retval.setMaxChange(0.0010);
@@ -1359,13 +1206,8 @@ public final class Sheet implements Model {
 
     /**
      * creates the SaveRecalc record and sets it to true (recalculate before saving)
-     * @see org.apache.poi.hssf.record.SaveRecalcRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a SaveRecalcRecord
      */
-
-    protected Record createSaveRecalc()
-    {
+    private static SaveRecalcRecord createSaveRecalc() {
         SaveRecalcRecord retval = new SaveRecalcRecord();
 
         retval.setRecalc(true);
@@ -1374,13 +1216,8 @@ public final class Sheet implements Model {
 
     /**
      * creates the PrintHeaders record and sets it to false (we don't create headers yet so why print them)
-     * @see org.apache.poi.hssf.record.PrintHeadersRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a PrintHeadersRecord
      */
-
-    protected Record createPrintHeaders()
-    {
+    private static PrintHeadersRecord createPrintHeaders() {
         PrintHeadersRecord retval = new PrintHeadersRecord();
 
         retval.setPrintHeaders(false);
@@ -1390,14 +1227,8 @@ public final class Sheet implements Model {
     /**
      * creates the PrintGridlines record and sets it to false (that makes for ugly sheets).  As far as I can
      * tell this does the same thing as the GridsetRecord
-     *
-     * @see org.apache.poi.hssf.record.PrintGridlinesRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a PrintGridlinesRecord
      */
-
-    protected Record createPrintGridlines()
-    {
+    private static PrintGridlinesRecord createPrintGridlines() {
         PrintGridlinesRecord retval = new PrintGridlinesRecord();
 
         retval.setPrintGridlines(false);
@@ -1406,13 +1237,8 @@ public final class Sheet implements Model {
 
     /**
      * creates the Gridset record and sets it to true (user has mucked with the gridlines)
-     * @see org.apache.poi.hssf.record.GridsetRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a GridsetRecord
      */
-
-    protected Record createGridset()
-    {
+    private static GridsetRecord createGridset() {
         GridsetRecord retval = new GridsetRecord();
 
         retval.setGridset(true);
@@ -1421,13 +1247,8 @@ public final class Sheet implements Model {
 
     /**
      * creates the Guts record and sets leftrow/topcol guttter and rowlevelmax/collevelmax to 0
-     * @see org.apache.poi.hssf.record.GutsRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a GutsRecordRecord
-     */
-
-    protected Record createGuts()
-    {
+      */
+    private static GutsRecord createGuts() {
         GutsRecord retval = new GutsRecord();
 
         retval.setLeftRowGutter(( short ) 0);
@@ -1439,13 +1260,8 @@ public final class Sheet implements Model {
 
     /**
      * creates the DefaultRowHeight Record and sets its options to 0 and rowheight to 0xff
-     * @see org.apache.poi.hssf.record.DefaultRowHeightRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a DefaultRowHeightRecord
      */
-
-    protected Record createDefaultRowHeight()
-    {
+    private static DefaultRowHeightRecord createDefaultRowHeight() {
         DefaultRowHeightRecord retval = new DefaultRowHeightRecord();
 
         retval.setOptionFlags(( short ) 0);
@@ -1455,13 +1271,8 @@ public final class Sheet implements Model {
 
     /**
      * creates the WSBoolRecord and sets its values to defaults
-     * @see org.apache.poi.hssf.record.WSBoolRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a WSBoolRecord
      */
-
-    protected Record createWSBool()
-    {
+    private static WSBoolRecord createWSBool() {
         WSBoolRecord retval = new WSBoolRecord();
 
         retval.setWSBool1(( byte ) 0x4);
@@ -1471,13 +1282,8 @@ public final class Sheet implements Model {
 
     /**
      * creates the Header Record and sets it to nothing/0 length
-     * @see org.apache.poi.hssf.record.HeaderRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a HeaderRecord
      */
-
-    protected Record createHeader()
-    {
+    private static HeaderRecord createHeader() {
         HeaderRecord retval = new HeaderRecord();
 
         retval.setHeaderLength(( byte ) 0);
@@ -1487,13 +1293,8 @@ public final class Sheet implements Model {
 
     /**
      * creates the Footer Record and sets it to nothing/0 length
-     * @see org.apache.poi.hssf.record.FooterRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a FooterRecord
      */
-
-    protected Record createFooter()
-    {
+    private static FooterRecord createFooter() {
         FooterRecord retval = new FooterRecord();
 
         retval.setFooterLength(( byte ) 0);
@@ -1503,13 +1304,8 @@ public final class Sheet implements Model {
 
     /**
      * creates the HCenter Record and sets it to false (don't horizontally center)
-     * @see org.apache.poi.hssf.record.HCenterRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a HCenterRecord
      */
-
-    protected Record createHCenter()
-    {
+    private static HCenterRecord createHCenter() {
         HCenterRecord retval = new HCenterRecord();
 
         retval.setHCenter(false);
@@ -1518,13 +1314,8 @@ public final class Sheet implements Model {
 
     /**
      * creates the VCenter Record and sets it to false (don't horizontally center)
-     * @see org.apache.poi.hssf.record.VCenterRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a VCenterRecord
-     */
-
-    protected Record createVCenter()
-    {
+    */
+    private static VCenterRecord createVCenter() {
         VCenterRecord retval = new VCenterRecord();
 
         retval.setVCenter(false);
@@ -1537,9 +1328,7 @@ public final class Sheet implements Model {
      * @see org.apache.poi.hssf.record.Record
      * @return record containing a PrintSetupRecord
      */
-
-    protected Record createPrintSetup()
-    {
+    private static PrintSetupRecord createPrintSetup() {
         PrintSetupRecord retval = new PrintSetupRecord();
 
         retval.setPaperSize(( short ) 1);
@@ -1558,28 +1347,11 @@ public final class Sheet implements Model {
 
     /**
      * creates the DefaultColWidth Record and sets it to 8
-     * @see org.apache.poi.hssf.record.DefaultColWidthRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a DefaultColWidthRecord
-     */
-
-    protected Record createDefaultColWidth()
-    {
+      */
+    private static DefaultColWidthRecord createDefaultColWidth() {
         DefaultColWidthRecord retval = new DefaultColWidthRecord();
-
         retval.setColWidth(( short ) 8);
         return retval;
-    }
-
-    /**
-     * creates the ColumnInfo Record and sets it to a default column/width
-     * @see org.apache.poi.hssf.record.ColumnInfoRecord
-     * @return record containing a ColumnInfoRecord
-     */
-    // TODO change return type to ColumnInfoRecord 
-    protected Record createColInfo()
-    {
-        return ColumnInfoRecordsAggregate.createColInfo();
     }
 
     /**
@@ -1600,7 +1372,7 @@ public final class Sheet implements Model {
     public boolean isGridsPrinted()
     {
         if (gridset == null) {
-            gridset = (GridsetRecord)createGridset();
+            gridset = createGridset();
             //Insert the newlycreated Gridset record at the end of the record (just before the EOF)
             int loc = findFirstRecordLocBySid(EOFRecord.sid);
             records.add(loc, gridset);
@@ -1816,22 +1588,18 @@ public final class Sheet implements Model {
 
         GutsRecord guts = (GutsRecord) findFirstRecordBySid( GutsRecord.sid );
         guts.setColLevelMax( (short) ( maxLevel+1 ) );
-        if (maxLevel == 0)
+        if (maxLevel == 0) {
             guts.setTopColGutter( (short)0 );
-        else
+        } else {
             guts.setTopColGutter( (short) ( 29 + (12 * (maxLevel-1)) ) );
+        }
     }
 
     /**
      * creates the Dimensions Record and sets it to bogus values (you should set this yourself
      * or let the high level API do it for you)
-     * @see org.apache.poi.hssf.record.DimensionsRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a DimensionsRecord
      */
-
-    protected Record createDimensions()
-    {
+    private static DimensionsRecord createDimensions() {
         DimensionsRecord retval = new DimensionsRecord();
 
         retval.setFirstCol(( short ) 0);
@@ -1849,13 +1617,8 @@ public final class Sheet implements Model {
      * headercolor    = 0x40 <P>
      * pagebreakzoom  = 0x0 <P>
      * normalzoom     = 0x0 <p>
-     * @see org.apache.poi.hssf.record.WindowTwoRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a WindowTwoRecord
      */
-
-    protected WindowTwoRecord createWindowTwo()
-    {
+    private static WindowTwoRecord createWindowTwo() {
         WindowTwoRecord retval = new WindowTwoRecord();
 
         retval.setOptions(( short ) 0x6b6);
@@ -1869,14 +1632,8 @@ public final class Sheet implements Model {
 
     /**
      * Creates the Selection record and sets it to nothing selected
-     *
-     * @see org.apache.poi.hssf.record.SelectionRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a SelectionRecord
-     */
-
-    protected Record createSelection()
-    {
+    */
+    private static SelectionRecord createSelection() {
         SelectionRecord retval = new SelectionRecord();
 
         retval.setPane(( byte ) 0x3);
@@ -1903,19 +1660,15 @@ public final class Sheet implements Model {
      * Sets the left column to show in desktop window pane.
      * @param leftCol the left column to show in desktop window pane
      */
-        public void setLeftCol(short leftCol){
-            if (windowTwo!=null)
-            {
+    public void setLeftCol(short leftCol){
+        if (windowTwo!=null) {
             windowTwo.setLeftCol(leftCol);
-            }
         }
+    }
 
-        public short getLeftCol()
-        {
-            return (windowTwo==null) ? (short) 0 : windowTwo.getLeftCol();
-        }
-
-
+    public short getLeftCol() {
+        return (windowTwo==null) ? (short) 0 : windowTwo.getLeftCol();
+    }
 
     /**
      * Returns the active row
@@ -1977,23 +1730,10 @@ public final class Sheet implements Model {
         }
     }
 
-    protected Record createMergedCells()
-    {
+    private static  MergeCellsRecord createMergedCells() {
         MergeCellsRecord retval = new MergeCellsRecord();
         retval.setNumAreas(( short ) 0);
         return retval;
-    }
-
-    /**
-     * creates the EOF record
-     * @see org.apache.poi.hssf.record.EOFRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a EOFRecord
-     */
-
-    protected Record createEOF()
-    {
-        return new EOFRecord();
     }
 
     /**
@@ -2383,28 +2123,20 @@ public final class Sheet implements Model {
 
     /**
      * creates a Protect record with protect set to false.
-     * @see org.apache.poi.hssf.record.ProtectRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return a ProtectRecord
      */
-    protected Record createProtect()
-    {
-        if (log.check( POILogger.DEBUG ))
+    private static ProtectRecord createProtect() {
+        if (log.check( POILogger.DEBUG )) {
             log.log(POILogger.DEBUG, "create protect record with protection disabled");
-        ProtectRecord retval = new ProtectRecord();
-
-        retval.setProtect(false);
+        }
+        ProtectRecord retval = new ProtectRecord(); 
+        retval.setProtect(false); // TODO - supply param to constructor
         return retval;
     }
 
     /**
      * creates an ObjectProtect record with protect set to false.
-     * @see org.apache.poi.hssf.record.ObjectProtectRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return an ObjectProtectRecord
      */
-    protected ObjectProtectRecord createObjectProtect()
-    {
+    private static ObjectProtectRecord createObjectProtect() {
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "create protect record with protection disabled");
         ObjectProtectRecord retval = new ObjectProtectRecord();
@@ -2415,12 +2147,8 @@ public final class Sheet implements Model {
 
     /**
      * creates a ScenarioProtect record with protect set to false.
-     * @see org.apache.poi.hssf.record.ScenarioProtectRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return a ScenarioProtectRecord
      */
-    protected ScenarioProtectRecord createScenarioProtect()
-    {
+    private static ScenarioProtectRecord createScenarioProtect() {
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "create protect record with protection disabled");
         ScenarioProtectRecord retval = new ScenarioProtectRecord();
@@ -2435,9 +2163,9 @@ public final class Sheet implements Model {
     public ProtectRecord getProtect()
     {
         if (protect == null) {
-            protect = (ProtectRecord)createProtect();
-            //Insert the newlycreated protect record at the end of the record (just before the EOF)
-            int loc = findFirstRecordLocBySid(EOFRecord.sid);
+            protect = createProtect();
+            // Insert the newly created protect record just before DefaultColWidthRecord
+            int loc = findFirstRecordLocBySid(DefaultColWidthRecord.sid);
             records.add(loc, protect);
         }
         return protect;
@@ -2459,14 +2187,11 @@ public final class Sheet implements Model {
 
     /**
      * creates a Password record with password set to 00.
-     * @see org.apache.poi.hssf.record.PasswordRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return a PasswordRecord
      */
-    protected PasswordRecord createPassword()
-    {
-        if (log.check( POILogger.DEBUG ))
-            log.log(POILogger.DEBUG, "create password record with 00 password");
+    private static PasswordRecord createPassword() {
+        if (log.check( POILogger.DEBUG )) {
+			log.log(POILogger.DEBUG, "create password record with 00 password");
+		}
         PasswordRecord retval = new PasswordRecord();
 
         retval.setPassword((short)00);
@@ -2891,5 +2616,11 @@ public final class Sheet implements Model {
         {
             rows.expandRow( row );
         }
+    }
+    public DataValidityTable getOrCreateDataValidityTable() {
+        if (_dataValidityTable == null) {
+            _dataValidityTable = DataValidityTable.createForSheet(records);
+        }
+        return _dataValidityTable;
     }
 }

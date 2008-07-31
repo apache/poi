@@ -23,6 +23,7 @@ import java.util.Stack;
 
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.util.HSSFCellRangeAddress;
+import org.apache.poi.hssf.util.HSSFCellRangeAddress.AddrStructure;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
@@ -114,7 +115,7 @@ public final class DVRecord extends Record
     private BitField          opt_error_style                  = new BitField(0x00000070);
     private BitField          opt_string_list_formula          = new BitField(0x00000080);
     private BitField          opt_empty_cell_allowed           = new BitField(0x00000100);
-    private BitField          opt_surppres_dropdown_arrow      = new BitField(0x00000200);
+    private BitField          opt_suppress_dropdown_arrow      = new BitField(0x00000200);
     private BitField          opt_show_prompt_on_cell_selected = new BitField(0x00040000);
     private BitField          opt_show_error_on_invalid_value  = new BitField(0x00080000);
     private BitField          opt_condition_operator           = new BitField(0x00F00000);
@@ -283,25 +284,37 @@ public final class DVRecord extends Record
     {
        return (this.opt_empty_cell_allowed.isSet(this.field_option_flags));
     }
-
     /**
-     * set if drop down arrow should be surppressed when list validation is used
-     * @param type - true if drop down arrow should be surppressed when list validation is used, false otherwise
-     * @see org.apache.poi.hssf.util.HSSFDataValidation utility class
-     */
-    public void setSurppresDropdownArrow(boolean surppress)
-    {
-        this.field_option_flags =  this.opt_surppres_dropdown_arrow.setBoolean(this.field_option_flags, surppress);
+     * @deprecated - (Jul-2008) use setSuppressDropDownArrow
+      */
+    public void setSurppresDropdownArrow(boolean suppress) {
+        setSuppressDropdownArrow(suppress);
+    }
+    /**
+     * @deprecated - (Jul-2008) use getSuppressDropDownArrow
+      */
+    public boolean getSurppresDropdownArrow() {
+        return getSuppressDropdownArrow();
     }
 
     /**
-     * return true if drop down arrow should be surppressed when list validation is used, false otherwise
-     * @return if drop down arrow should be surppressed when list validation is used, false otherwise
+     * set if drop down arrow should be suppressed when list validation is used
+     * @param type - true if drop down arrow should be suppressed when list validation is used, false otherwise
      * @see org.apache.poi.hssf.util.HSSFDataValidation utility class
      */
-    public boolean getSurppresDropdownArrow()
+    public void setSuppressDropdownArrow(boolean suppress)
     {
-       return (this.opt_surppres_dropdown_arrow.isSet(this.field_option_flags));
+        this.field_option_flags =  this.opt_suppress_dropdown_arrow.setBoolean(this.field_option_flags, suppress);
+    }
+
+    /**
+     * return true if drop down arrow should be suppressed when list validation is used, false otherwise
+     * @return if drop down arrow should be suppressed when list validation is used, false otherwise
+     * @see org.apache.poi.hssf.util.HSSFDataValidation utility class
+     */
+    public boolean getSuppressDropdownArrow()
+    {
+       return (this.opt_suppress_dropdown_arrow.isSet(this.field_option_flags));
     }
 
     /**
@@ -433,9 +446,40 @@ public final class DVRecord extends Record
     public String toString()
     {
       /** @todo DVRecord string representation */
-        StringBuffer buffer = new StringBuffer();
+        StringBuffer sb = new StringBuffer();
+        sb.append("[DV]\n");
+        sb.append(" options=").append(Integer.toHexString(field_option_flags));
+        sb.append(" title-prompt=").append(field_title_prompt);
+        sb.append(" title-error=").append(field_title_error);
+        sb.append(" text-prompt=").append(field_text_prompt);
+        sb.append(" text-error=").append(field_text_error);
+        sb.append("\n");
+        appendFormula(sb, "Formula 1:",  field_rpn_token_1);
+        appendFormula(sb, "Formula 2:",  field_rpn_token_2);
+        int nRegions = field_regions.getADDRStructureNumber();
+        for(int i=0; i<nRegions; i++) {
+            AddrStructure addr = field_regions.getADDRStructureAt(i);
+            sb.append('(').append(addr.getFirstRow()).append(',').append(addr.getLastRow());
+            sb.append(',').append(addr.getFirstColumn()).append(',').append(addr.getLastColumn()).append(')');
+        }
+        sb.append("\n");
+        sb.append("[/DV]");
 
-        return buffer.toString();
+        return sb.toString();
+    }
+
+    private void appendFormula(StringBuffer sb, String label, Stack stack) {
+        sb.append(label);
+        if (stack.isEmpty()) {
+            sb.append("<empty>\n");
+            return;
+        }
+        sb.append("\n");
+        Ptg[] ptgs = new Ptg[stack.size()];
+        stack.toArray(ptgs);
+        for (int i = 0; i < ptgs.length; i++) {
+            sb.append('\t').append(ptgs[i].toString()).append('\n');
+        }
     }
 
     public int serialize(int offset, byte [] data)
@@ -506,7 +550,7 @@ public final class DVRecord extends Record
      *  contents are somewhat complex
      */
     public Object clone() {
-    	return cloneViaReserialise();
+        return cloneViaReserialise();
     }
 
     /**@todo DVRecord = Serializare */
@@ -535,7 +579,7 @@ public final class DVRecord extends Record
             this._string_unicode_flag = in.readByte(); 
             if (this._string_unicode_flag == 1)
             {
-            	this._string_data = in.readUnicodeLEString(this._string_length);
+                this._string_data = in.readUnicodeLEString(this._string_length);
             }
             else
             {
