@@ -105,7 +105,7 @@ public class HeaderBlockReader
 					_data[1] == OOXML_FILE_HEADER[1] && 
 					_data[2] == OOXML_FILE_HEADER[2] &&
 					_data[3] == OOXML_FILE_HEADER[3]) {
-				throw new OfficeXmlFileException("The supplied data appears to be in the Office 2007+ XML. POI only supports OLE2 Office documents");
+				throw new OfficeXmlFileException("The supplied data appears to be in the Office 2007+ XML. You are calling the part of POI that deals with OLE2 Office Documents. You need to call a different part of POI to process this data (eg XSSF instead of HSSF)");
 			}
 
 			// Give a generic error
