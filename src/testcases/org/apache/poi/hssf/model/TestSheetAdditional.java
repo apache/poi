@@ -17,13 +17,10 @@
 
 package org.apache.poi.hssf.model;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.ColumnInfoRecord;
+import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 
 /**
  * @author Tony Poppleton
@@ -32,7 +29,8 @@ public final class TestSheetAdditional extends TestCase {
 	
 	public void testGetCellWidth() {
 		Sheet sheet = Sheet.createSheet();
-		ColumnInfoRecord nci = ( ColumnInfoRecord ) sheet.createColInfo();
+		// TODO change return type to ColumnInfoRecord 
+		ColumnInfoRecord nci = (ColumnInfoRecord)ColumnInfoRecordsAggregate.createColInfo();
 
 		// Prepare test model
 		nci.setFirstColumn((short)5);

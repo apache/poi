@@ -297,7 +297,8 @@ public final class TestSheet extends TestCase {
         xfindex = sheet.getXFIndexForColAt((short) 1);
         assertEquals(DEFAULT_IDX, xfindex);
 
-        ColumnInfoRecord nci = ( ColumnInfoRecord ) sheet.createColInfo();
+        // TODO change return type to ColumnInfoRecord 
+        ColumnInfoRecord nci = (ColumnInfoRecord)ColumnInfoRecordsAggregate.createColInfo();
         sheet.columns.insertColumn(nci);
 
         // single column ColumnInfoRecord

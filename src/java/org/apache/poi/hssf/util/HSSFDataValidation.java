@@ -218,13 +218,25 @@ public class HSSFDataValidation
   {
      return this._empty_cell_allowed ;
   }
+  /**
+   * @deprecated - (Jul-2008) use setSuppressDropDownArrow
+    */
+  public void setSurppressDropDownArrow( boolean suppress ) {
+    setSuppressDropDownArrow(suppress);
+  }
+  /**
+   * @deprecated - (Jul-2008) use getSuppressDropDownArrow
+    */
+  public boolean getSurppressDropDownArrow( ) {
+    return getSuppressDropDownArrow();
+  }
 
   /**
    * Useful for list validation objects .
    * @param surppres True if a list should display the values into a drop down list , false otherwise .
    *                 In other words , if a list should display the arrow sign on its right side
    */
-  public void setSurppressDropDownArrow( boolean surppres )
+  public void setSuppressDropDownArrow( boolean surppres )
   {
      this._surpress_dropdown_arrow = surppres;
   }
@@ -235,7 +247,7 @@ public class HSSFDataValidation
    * @return True if a list should display the values into a drop down list , false otherwise .
    * @see setDataValidationType( int data_type )
    */
-  public boolean getSurppressDropDownArrow( )
+  public boolean getSuppressDropDownArrow( )
   {
      if ( this._data_type != HSSFDataValidation.DATA_TYPE_LIST )
      {
