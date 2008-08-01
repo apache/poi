@@ -963,7 +963,7 @@ public class TestDataValidation extends TestCase
 		// and the DV records, Excel will not be able to open the workbook without error.
 		
 		if (nextSid == 0x0867) {
-			throw new AssertionFailedError("Identified bug XXXX");
+			throw new AssertionFailedError("Identified bug 45519");
 		}
 		assertEquals(DVRecord.sid, nextSid);
 	}
