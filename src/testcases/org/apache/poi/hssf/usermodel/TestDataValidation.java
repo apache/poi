@@ -45,11 +45,11 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 public final class TestDataValidation extends TestCase {
 
 	/** Convenient access to ERROR_STYLE constants */
-	private static final HSSFDataValidation.ErrorStyle ES = null;
+	/*package*/ static final HSSFDataValidation.ErrorStyle ES = null;
 	/** Convenient access to OPERATOR constants */
-	private static final DVConstraint.ValidationType VT = null;
+	/*package*/ static final DVConstraint.ValidationType VT = null;
 	/** Convenient access to OPERATOR constants */
-	private static final DVConstraint.OperatorType OP = null;
+	/*package*/ static final DVConstraint.OperatorType OP = null;
 
 	private static void log(String msg) {
 		if (false) { // successful tests should be silent
@@ -130,7 +130,7 @@ public final class TestDataValidation extends TestCase {
 				return DVConstraint.createDateConstraint(operatorType, firstFormula, secondFormula, null);
 			}
 			if (_validationType == VT.FORMULA) {
-				return DVConstraint.createFormulaConstraint(firstFormula);
+				return DVConstraint.createCustomFormulaConstraint(firstFormula);
 			}
 			return DVConstraint.createNumericConstraint(_validationType, operatorType, firstFormula, secondFormula);
 		}
@@ -573,23 +573,8 @@ public final class TestDataValidation extends TestCase {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("dvEmpty.xls");  
 		int dvRow = 0;
 		HSSFSheet sheet = wb.getSheetAt(0);
-		sheet.createRow(dvRow).createCell((short)0);
-		DVConstraint dc = DVConstraint.createNumericConstraint(VT.INTEGER, OP.EQUAL, "402", null);
-		HSSFDataValidation dv = new HSSFDataValidation(new CellRangeAddressList(dvRow, 0, dvRow, 0), dc);
-
-		
-		dv.setEmptyCellAllowed(false);
-		dv.setErrorStyle(ES.STOP);
-		dv.setShowPromptBox(true);
-		dv.createErrorBox("Error", "The value is wrong");
-		dv.setSuppressDropDownArrow(true);
-
-	//	sheet.addValidationData(dv);
-
-		
-		dc = DVConstraint.createNumericConstraint(VT.INTEGER, OP.EQUAL, "42", null);
-		dv = new HSSFDataValidation(new CellRangeAddressList(0, 0, 0, 0), dc);
-
+		DVConstraint dc = DVConstraint.createNumericConstraint(VT.INTEGER, OP.EQUAL, "42", null);
+		HSSFDataValidation dv = new HSSFDataValidation(new CellRangeAddressList(dvRow, dvRow, 0, 0), dc);
 		
 		dv.setEmptyCellAllowed(false);
 		dv.setErrorStyle(ES.STOP);
@@ -598,8 +583,6 @@ public final class TestDataValidation extends TestCase {
 		dv.setSuppressDropDownArrow(true);
 
 		sheet.addValidationData(dv);
-		
-		
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
@@ -637,22 +620,9 @@ public final class TestDataValidation extends TestCase {
 		// and the DV records, Excel will not be able to open the workbook without error.
 		
 		if (nextSid == 0x0867) {
-			throw new AssertionFailedError("Identified bug XXXX");
+			throw new AssertionFailedError("Identified bug 45519");
 		}
 		assertEquals(DVRecord.sid, nextSid);
-		
-		
-		
-		File tempDir = new File("c:/josh/temp");
-		File generatedFile = new File(tempDir, "dvEx2.xls");
-		try {
-			FileOutputStream fileOut = new FileOutputStream(generatedFile);
-			wb.write(fileOut);
-			fileOut.close();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		
 	}
 	private int findIndex(byte[] largeData, byte[] searchPattern) {
 		byte firstByte = searchPattern[0];
