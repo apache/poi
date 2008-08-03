@@ -66,20 +66,17 @@ public final class FormulaParser {
     public static final int FORMULA_TYPE_CELL = 0;
     public static final int FORMULA_TYPE_SHARED = 1;
     public static final int FORMULA_TYPE_ARRAY =2;
-    public static final int FORMULA_TYPE_CONDFOMRAT = 3;
+    public static final int FORMULA_TYPE_CONDFORMAT = 3;
     public static final int FORMULA_TYPE_NAMEDRANGE = 4;
+    // this constant is currently very specific.  The exact differences from general data 
+    // validation formulas or conditional format formulas is not known yet
+    public static final int FORMULA_TYPE_DATAVALIDATION_LIST = 5;    
 
     private final String formulaString;
     private final int formulaLength;
     private int pointer;
 
     private ParseNode _rootNode;
-
-    /**
-     * Used for spotting if we have a cell reference,
-     *  or a named range
-     */
-    private final static Pattern CELL_REFERENCE_PATTERN = Pattern.compile("(?:('?)[^:\\\\/\\?\\*\\[\\]]+\\1!)?\\$?[A-Za-z]+\\$?[\\d]+");
 
     private static char TAB = '\t';
 
@@ -112,9 +109,13 @@ public final class FormulaParser {
     }
 
     public static Ptg[] parse(String formula, HSSFWorkbook book) {
-        FormulaParser fp = new FormulaParser(formula, book);
+        return parse(formula, book, FORMULA_TYPE_CELL);
+    }
+
+    public static Ptg[] parse(String formula, HSSFWorkbook workbook, int formulaType) {
+        FormulaParser fp = new FormulaParser(formula, workbook);
         fp.parse();
-        return fp.getRPNPtg();
+        return fp.getRPNPtg(formulaType);
     }
 
     /** Read New Character From Input Stream */

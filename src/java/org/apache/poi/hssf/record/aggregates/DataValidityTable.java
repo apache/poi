@@ -19,9 +19,7 @@ package org.apache.poi.hssf.record.aggregates;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
-import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.hssf.record.CFRuleRecord;
@@ -34,10 +32,6 @@ import org.apache.poi.hssf.record.PaneRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFCellRangeAddress;
-import org.apache.poi.hssf.util.HSSFDataValidation;
 
 /**
  * Manages the DVALRecord and DVRecords for a single sheet<br/>
@@ -177,63 +171,7 @@ public final class DataValidityTable extends RecordAggregate {
 		return false;
 	}
 
-	public void addDataValidation(HSSFDataValidation dataValidation, HSSFWorkbook workbook) {
-
-		DVRecord dvRecord = new DVRecord();
-
-		// dv record's option flags
-		dvRecord.setDataType(dataValidation.getDataValidationType());
-		dvRecord.setErrorStyle(dataValidation.getErrorStyle());
-		dvRecord.setEmptyCellAllowed(dataValidation.getEmptyCellAllowed());
-		dvRecord.setSuppressDropdownArrow(dataValidation.getSuppressDropDownArrow());
-		dvRecord.setShowPromptOnCellSelected(dataValidation.getShowPromptBox());
-		dvRecord.setShowErrorOnInvalidValue(dataValidation.getShowErrorBox());
-		dvRecord.setConditionOperator(dataValidation.getOperator());
-
-		// string fields
-		dvRecord.setStringField(DVRecord.STRING_PROMPT_TITLE, dataValidation.getPromptBoxTitle());
-		dvRecord.setStringField(DVRecord.STRING_PROMPT_TEXT, dataValidation.getPromptBoxText());
-		dvRecord.setStringField(DVRecord.STRING_ERROR_TITLE, dataValidation.getErrorBoxTitle());
-		dvRecord.setStringField(DVRecord.STRING_ERROR_TEXT, dataValidation.getErrorBoxText());
-
-		// formula fields ( size and data )
-		Stack ptg_arr = new Stack();
-		Ptg[] ptg = FormulaParser.parse(dataValidation.getFirstFormula(), workbook);
-		int size = 0;
-		for (int k = 0; k < ptg.length; k++) {
-			if (ptg[k] instanceof org.apache.poi.hssf.record.formula.AreaPtg) {
-				// we should set ptgClass to Ptg.CLASS_REF and explicit formula
-				// string to false
-				// ptg[k].setClass(Ptg.CLASS_REF);
-				// obj_validation.setExplicitListFormula(false);
-			}
-			size += ptg[k].getSize();
-			ptg_arr.push(ptg[k]);
-		}
-		dvRecord.setFirstFormulaRPN(ptg_arr);
-		dvRecord.setFirstFormulaSize((short) size);
-
-		dvRecord.setListExplicitFormula(dataValidation.getExplicitListFormula());
-
-		if (dataValidation.getSecondFormula() != null) {
-
-			ptg_arr = new Stack();
-			ptg = FormulaParser.parse(dataValidation.getSecondFormula(), workbook);
-			size = 0;
-			for (int k = 0; k < ptg.length; k++) {
-				size += ptg[k].getSize();
-				ptg_arr.push(ptg[k]);
-			}
-			dvRecord.setSecFormulaRPN(ptg_arr);
-			dvRecord.setSecFormulaSize((short) size);
-		}
-
-		// dv records cell range field
-		HSSFCellRangeAddress cell_range = new HSSFCellRangeAddress();
-		cell_range.addADDRStructure(dataValidation.getFirstRow(), dataValidation.getFirstColumn(),
-				dataValidation.getLastRow(), dataValidation.getLastColumn());
-		dvRecord.setCellRangeAddress(cell_range);
-
+	public void addDataValidation(DVRecord dvRecord) {
 		_validationList.add(dvRecord);
 		_headerRec.setDVRecNo(_validationList.size());
 	}

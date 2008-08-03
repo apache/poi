@@ -66,6 +66,9 @@ final class OperandClassTransformer {
 			case FormulaParser.FORMULA_TYPE_CELL:
 				rootNodeOperandClass = Ptg.CLASS_VALUE;
 				break;
+			case FormulaParser.FORMULA_TYPE_DATAVALIDATION_LIST:
+				rootNodeOperandClass = Ptg.CLASS_REF;
+				break;
 			default:
 				throw new RuntimeException("Incomplete code - formula type (" 
 						+ _formulaType + ") not supported yet");
