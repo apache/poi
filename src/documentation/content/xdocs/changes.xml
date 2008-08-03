@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">44953 - Extensive fixes for data validation</action>
            <action dev="POI-DEVELOPERS" type="fix">45519 - Fixed to keep datavalidation records together</action>
            <action dev="POI-DEVELOPERS" type="add">Support for creating new HSLF CurrentUserAtoms</action>
            <action dev="POI-DEVELOPERS" type="add">45466 - Partial support for removing excel comments (won't work for all excel versions yet)</action>

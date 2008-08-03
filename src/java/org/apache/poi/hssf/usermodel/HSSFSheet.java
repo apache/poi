@@ -38,7 +38,6 @@ import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RefPtg;
-import org.apache.poi.hssf.util.HSSFDataValidation;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.util.POILogFactory;
@@ -382,7 +381,8 @@ public final class HSSFSheet {
        }
        DataValidityTable dvt = sheet.getOrCreateDataValidityTable();
 
-       dvt.addDataValidation(dataValidation, workbook);
+       DVRecord dvRecord = dataValidation.createDVRecord(workbook);
+       dvt.addDataValidation(dvRecord);
     }
 
 

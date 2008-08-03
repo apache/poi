@@ -41,6 +41,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 public abstract class Ptg implements Cloneable {
+	public static final Ptg[] EMPTY_PTG_ARRAY = { }; 
 
 	/* convert infix order ptg list to rpn order ptg list
 	 * @return List ptgs in RPN order
@@ -250,6 +251,9 @@ public abstract class Ptg implements Cloneable {
 		}
 	}
 	private static Ptg[] toPtgArray(List l) {
+		if (l.isEmpty()) {
+			return EMPTY_PTG_ARRAY;
+		}
 		Ptg[] result = new Ptg[l.size()];
 		l.toArray(result);
 		return result;
