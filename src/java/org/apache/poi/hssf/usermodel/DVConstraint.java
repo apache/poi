@@ -37,22 +37,22 @@ public class DVConstraint {
 		private ValidationType() {
 			// no instances of this class
 		}
-    	/** 'Any value' type - value not restricted */
-    	public static final int ANY         = 0x00;
-    	/** Integer ('Whole number') type */
-    	public static final int INTEGER     = 0x01;
-    	/** Decimal type */
-    	public static final int DECIMAL     = 0x02;
-    	/** List type ( combo box type ) */
-    	public static final int LIST        = 0x03;
-    	/** Date type */
-    	public static final int DATE        = 0x04;
-    	/** Time type */
-    	public static final int TIME        = 0x05;
-    	/** String length type */
-    	public static final int TEXT_LENGTH = 0x06;
-    	/** Formula ( 'Custom' ) type */
-    	public static final int FORMULA     = 0x07;
+		/** 'Any value' type - value not restricted */
+		public static final int ANY         = 0x00;
+		/** Integer ('Whole number') type */
+		public static final int INTEGER     = 0x01;
+		/** Decimal type */
+		public static final int DECIMAL     = 0x02;
+		/** List type ( combo box type ) */
+		public static final int LIST        = 0x03;
+		/** Date type */
+		public static final int DATE        = 0x04;
+		/** Time type */
+		public static final int TIME        = 0x05;
+		/** String length type */
+		public static final int TEXT_LENGTH = 0x06;
+		/** Formula ( 'Custom' ) type */
+		public static final int FORMULA     = 0x07;
 	}
 	/**
 	 * Condition operator enum
@@ -312,7 +312,7 @@ public class DVConstraint {
 		return new Double(HSSFDateUtil.getExcelDate(dateVal));
 	}
 
-	public static DVConstraint createFormulaConstraint(String formula) {
+	public static DVConstraint createCustomFormulaConstraint(String formula) {
 		if (formula == null) {
 			throw new IllegalArgumentException("formula must be supplied");
 		}
@@ -329,8 +329,8 @@ public class DVConstraint {
 			formula1 = createListFormula(workbook);
 			formula2 = Ptg.EMPTY_PTG_ARRAY;
 		} else {
-    		formula1 = convertDoubleFormula(_formula1, _value1, workbook);
-    		formula2 = convertDoubleFormula(_formula2, _value2, workbook);
+			formula1 = convertDoubleFormula(_formula1, _value1, workbook);
+			formula2 = convertDoubleFormula(_formula2, _value2, workbook);
 		}
 		return new FormulaPair(formula1, formula2);
 	}
