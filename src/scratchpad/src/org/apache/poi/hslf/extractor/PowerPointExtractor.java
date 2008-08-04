@@ -27,6 +27,8 @@ import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.model.*;
+import org.apache.poi.hslf.record.Comment2000;
+import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.usermodel.*;
 
 /**
@@ -44,6 +46,7 @@ public class PowerPointExtractor extends POIOLE2TextExtractor
 	
 	private boolean slidesByDefault = true;
 	private boolean notesByDefault = false;
+	private boolean commentsByDefault = false;
 
   /**
    * Basic extractor. Returns all the text, and optionally all the notes
@@ -57,16 +60,20 @@ public class PowerPointExtractor extends POIOLE2TextExtractor
 	}
 
 	boolean notes = false;
+	boolean comments = false;
 	String file;
 	if(args.length > 1) {
 		notes = true;
 		file = args[1];
+		if(args.length > 2) {
+			comments = true;
+		}
 	} else {
 		file = args[0];
 	}
 
 	PowerPointExtractor ppe = new PowerPointExtractor(file);
-	System.out.println(ppe.getText(true,notes));
+	System.out.println(ppe.getText(true,notes,comments));
 	ppe.close();
   }
 
@@ -127,6 +134,13 @@ public class PowerPointExtractor extends POIOLE2TextExtractor
 	public void setNotesByDefault(boolean notesByDefault) {
 		this.notesByDefault = notesByDefault;
 	}
+	/**
+	 * Should a call to getText() return comments text?
+	 * Default is no
+	 */
+	public void setCommentsByDefault(boolean commentsByDefault) {
+		this.commentsByDefault = commentsByDefault;
+	}
 
 	/**
 	 * Fetches all the slide text from the slideshow, 
@@ -135,7 +149,7 @@ public class PowerPointExtractor extends POIOLE2TextExtractor
 	 *  to change this
 	 */
 	public String getText() {
-		return getText(slidesByDefault,notesByDefault);
+		return getText(slidesByDefault,notesByDefault,commentsByDefault);
 	}
 
 	/**
@@ -153,6 +167,9 @@ public class PowerPointExtractor extends POIOLE2TextExtractor
    * @param getNoteText fetch note text
    */
   public String getText(boolean getSlideText, boolean getNoteText) {
+	  return getText(getSlideText, getNoteText, commentsByDefault);
+  }
+  public String getText(boolean getSlideText, boolean getNoteText, boolean getCommentText) {
 	StringBuffer ret = new StringBuffer(); 
 
 	if(getSlideText) {
@@ -167,6 +184,18 @@ public class PowerPointExtractor extends POIOLE2TextExtractor
 					if(! text.endsWith("\n")) {
 						ret.append("\n");
 					}
+				}
+			}
+			
+			if(getCommentText) {
+				Comment[] comments = slide.getComments();
+				for(int j=0; j<comments.length; j++) {
+					ret.append(
+							comments[j].getAuthor() + 
+							" - " +
+							comments[j].getText() + 
+							"\n"
+					);
 				}
 			}
 		}
