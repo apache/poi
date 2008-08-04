@@ -32,7 +32,7 @@ import org.apache.poi.hssf.record.HeaderRecord;
  *
  * @author Shawn Laubach (slaubach at apache dot org)
  */
-public class HSSFHeader
+public class HSSFHeader implements HeaderFooter
 {
 
     HeaderRecord headerRecord;

@@ -32,7 +32,7 @@ import org.apache.poi.hssf.record.FooterRecord;
  * <P>
  * @author Shawn Laubach (slaubach at apache dot org)
  */
-public class HSSFFooter extends Object {
+public class HSSFFooter extends Object implements HeaderFooter {
 
     FooterRecord footerRecord;
     String left;
