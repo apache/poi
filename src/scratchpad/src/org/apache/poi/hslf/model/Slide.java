@@ -361,6 +361,59 @@ public class Slide extends Sheet
         }
         return super.getColorScheme();
     }
+    
+    /**
+     * Get the comment(s) for this slide.
+     * Note - for now, only works on PPT 2000 and 
+     *  PPT 2003 files. Doesn't work for PPT 97
+     *  ones, as they do their comments oddly.
+     */
+    public Comment[] getComments() {
+    	// If there are any, they're in
+    	//  ProgTags -> ProgBinaryTag -> BinaryTagData
+    	RecordContainer progTags = (RecordContainer)
+    			getSheetContainer().findFirstOfType(
+    						RecordTypes.ProgTags.typeID
+    	);
+    	if(progTags != null) {
+    		RecordContainer progBinaryTag = (RecordContainer)
+    			progTags.findFirstOfType(
+    					RecordTypes.ProgBinaryTag.typeID
+    		);
+    		if(progBinaryTag != null) {
+    			RecordContainer binaryTags = (RecordContainer)
+    				progBinaryTag.findFirstOfType(
+    						RecordTypes.BinaryTagData.typeID
+    			);
+    			if(binaryTags != null) {
+    				// This is where they'll be
+    				int count = 0;
+    				for(int i=0; i<binaryTags.getChildRecords().length; i++) {
+    					if(binaryTags.getChildRecords()[i] instanceof Comment2000) {
+    						count++;
+    					}
+    				}
+    				
+    				// Now build
+    				Comment[] comments = new Comment[count];
+    				count = 0;
+    				for(int i=0; i<binaryTags.getChildRecords().length; i++) {
+    					if(binaryTags.getChildRecords()[i] instanceof Comment2000) {
+    						comments[i] = new Comment(
+    								(Comment2000)binaryTags.getChildRecords()[i]
+    						);
+    						count++;
+    					}
+    				}
+    				
+    				return comments;
+    			}
+    		}
+    	}
+    	
+    	// None found
+    	return new Comment[0];
+    }
 
     public void draw(Graphics2D graphics){
         MasterSheet master = getMasterSheet();
