@@ -136,8 +136,8 @@ public class ExHyperlink extends RecordContainer {
 		// Setup our child records
 		CString csa = new CString();
 		CString csb = new CString();
-		csa.setCount(0x00);
-		csb.setCount(0x10);
+		csa.setOptions(0x00);
+		csb.setOptions(0x10);
 		_children[0] = new ExHyperlinkAtom();
 		_children[1] = csa;
 		_children[2] = csb;

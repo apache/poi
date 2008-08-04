@@ -111,8 +111,8 @@ public class RecordTypes {
     public static final Type ExHyperlinkAtom = new Type(4051,ExHyperlinkAtom.class);
     public static final Type ExHyperlink = new Type(4055,ExHyperlink.class);
     public static final Type SlideNumberMCAtom = new Type(4056,null);
-    public static final Type HeadersFooters = new Type(4057,null);
-    public static final Type HeadersFootersAtom = new Type(4058,null);
+    public static final Type HeadersFooters = new Type(4057,HeadersFootersContainer.class);
+    public static final Type HeadersFootersAtom = new Type(4058,HeadersFootersAtom.class);
     public static final Type TxInteractiveInfoAtom = new Type(4063,TxInteractiveInfoAtom.class);
     public static final Type CharFormatAtom = new Type(4066,null);
     public static final Type ParaFormatAtom = new Type(4067,null);
