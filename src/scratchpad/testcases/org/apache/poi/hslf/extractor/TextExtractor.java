@@ -216,4 +216,36 @@ public class TextExtractor extends TestCase {
 				ppe.getText(true, false)
 		);
     }
+    
+    /**
+     * From bug #45543
+     */
+    public void testWithComments() throws Exception {
+		String filename;
+		
+		// New file
+		filename = dirname + "/WithComments.ppt";
+		ppe = new PowerPointExtractor(filename);
+
+		String text = ppe.getText();
+		assertFalse("Comments not in by default", text.contains("This is a test comment"));
+		
+		ppe.setCommentsByDefault(true);
+		
+		text = ppe.getText();
+		assertTrue("Unable to find expected word in text\n" + text, text.contains("This is a test comment"));
+
+		
+		// And another file
+		filename = dirname + "/45543.ppt";
+		ppe = new PowerPointExtractor(filename);
+
+		text = ppe.getText();
+		assertFalse("Comments not in by default", text.contains("testdoc"));
+		
+		ppe.setCommentsByDefault(true);
+		
+		text = ppe.getText();
+		assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
+    }
 }

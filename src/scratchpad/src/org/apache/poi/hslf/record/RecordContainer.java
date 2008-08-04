@@ -123,6 +123,20 @@ public abstract class RecordContainer extends Record
 	}
 	
 	
+	/**
+	 * Finds the first child record of the given type,
+	 *  or null if none of the child records are of the
+	 *  given type. Does not descend.
+	 */
+	public Record findFirstOfType(long type) {
+		for(int i=0; i<_children.length; i++) {
+			if(_children[i].getRecordType() == type) {
+				return _children[i];
+			}
+		}
+		return null;
+	}
+	
 	/* ===============================================================
 	 *                   External Move Methods
 	 * ===============================================================
