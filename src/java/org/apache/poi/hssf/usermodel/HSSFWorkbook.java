@@ -22,7 +22,6 @@ import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBitmapBlip;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherBlipRecord;
-import org.apache.poi.hssf.eventmodel.EventRecordFactory;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.*;
@@ -247,8 +246,6 @@ public class HSSFWorkbook extends POIDocument
         // Grab the data from the workbook stream, however
         //  it happens to be spelled.
         InputStream stream = directory.createDocumentInputStream(workbookName);
-
-        EventRecordFactory factory = new EventRecordFactory();
 
         List records = RecordFactory.createRecords(stream);
 

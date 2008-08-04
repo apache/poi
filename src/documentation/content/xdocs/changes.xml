@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">44894 - refactor duplicate logic from EventRecordFactory to RecordFactory</action>
            <action dev="POI-DEVELOPERS" type="add">Support for Headers / Footers in HSLF</action>
            <action dev="POI-DEVELOPERS" type="fix">44953 - Extensive fixes for data validation</action>
            <action dev="POI-DEVELOPERS" type="fix">45519 - Fixed to keep datavalidation records together</action>

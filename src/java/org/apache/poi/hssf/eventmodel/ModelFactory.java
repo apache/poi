@@ -65,8 +65,7 @@ public class ModelFactory implements ERFListener
      * Start processing the Workbook stream into Model events.
      */
     public void run(InputStream stream) {
-        EventRecordFactory factory = new EventRecordFactory(true);
-        factory.registerListener(this,null);
+        EventRecordFactory factory = new EventRecordFactory(this,null);
         lastEOF = true;
         factory.processRecords(stream);
     }
