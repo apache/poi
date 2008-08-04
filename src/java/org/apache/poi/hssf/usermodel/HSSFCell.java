@@ -34,7 +34,24 @@ import java.util.Iterator;
 import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.BlankRecord;
+import org.apache.poi.hssf.record.BoolErrRecord;
+import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
+import org.apache.poi.hssf.record.DrawingRecord;
+import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.HyperlinkRecord;
+import org.apache.poi.hssf.record.LabelSSTRecord;
+import org.apache.poi.hssf.record.NoteRecord;
+import org.apache.poi.hssf.record.NumberRecord;
+import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.StringRecord;
+import org.apache.poi.hssf.record.SubRecord;
+import org.apache.poi.hssf.record.TextObjectRecord;
+import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
@@ -1055,11 +1072,18 @@ public class HSSFCell implements Cell
     }
 
     /**
-     * Assign a comment to this cell
+     * Assign a comment to this cell. If the supplied
+     *  comment is null, the comment for this cell
+     *  will be removed.
      *
      * @param comment comment associated with this cell
      */
     public void setCellComment(Comment comment){
+    	if(comment == null) {
+    		removeCellComment();
+    		return;
+    	}
+
         this.comment = (HSSFComment) comment;
         this.comment.setRow((short)record.getRow());
         this.comment.setColumn(record.getColumn());
@@ -1075,6 +1099,49 @@ public class HSSFCell implements Cell
             comment = findCellComment(sheet, record.getRow(), record.getColumn());
         }
         return comment;
+    }
+     
+    /**
+     * Removes the comment for this cell, if
+     *  there is one.
+     * WARNING - some versions of excel will loose
+     *  all comments after performing this action!
+     */
+    public void removeCellComment() {
+    	HSSFComment comment = findCellComment(sheet, record.getRow(), record.getColumn());
+		this.comment = null;
+    	
+    	if(comment == null) {
+    		// Nothing to do
+    		return;
+    	}
+    	
+    	// Zap the underlying NoteRecord
+    	sheet.getRecords().remove(comment.getNoteRecord());
+    	
+    	// If we have a TextObjectRecord, is should
+    	//  be proceeed by:
+    	// MSODRAWING with container
+    	// OBJ
+    	// MSODRAWING with EscherTextboxRecord
+    	if(comment.getTextObjectRecord() != null) {
+    		TextObjectRecord txo = comment.getTextObjectRecord();
+    		int txoAt = sheet.getRecords().indexOf(txo);
+    		
+    		if(sheet.getRecords().get(txoAt-3) instanceof DrawingRecord &&
+    			sheet.getRecords().get(txoAt-2) instanceof ObjRecord &&
+    			sheet.getRecords().get(txoAt-1) instanceof DrawingRecord) {
+    			// Zap these, in reverse order
+    			sheet.getRecords().remove(txoAt-1);
+    			sheet.getRecords().remove(txoAt-2);
+    			sheet.getRecords().remove(txoAt-3);
+    		} else {
+    			throw new IllegalStateException("Found the wrong records before the TextObjectRecord, can't remove comment");
+    		}
+    		
+    		// Now remove the text record
+    		sheet.getRecords().remove(txo);
+    	}
     }
 
     /**

@@ -32,6 +32,7 @@ import org.apache.poi.hssf.record.LabelSSTRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.Region;
 import org.apache.poi.util.TempFile;
 
@@ -42,7 +43,7 @@ import org.apache.poi.util.TempFile;
  * @author Greg Merrill
  * @author Siggi Cherem
  */
-public class TestWorkbook extends TestCase {
+public final class TestWorkbook extends TestCase {
     private static final String LAST_NAME_KEY        = "lastName";
     private static final String FIRST_NAME_KEY       = "firstName";
     private static final String SSN_KEY              = "ssn";
@@ -260,10 +261,10 @@ public class TestWorkbook extends TestCase {
         HSSFWorkbook workbook = openSample("Employee.xls");
         HSSFSheet       sheet    = workbook.getSheetAt(0);
 
-        assertEquals(EMPLOYEE_INFORMATION, sheet.getRow(1).getCell(1).getStringCellValue());
-        assertEquals(LAST_NAME_KEY, sheet.getRow(3).getCell(2).getStringCellValue());
-        assertEquals(FIRST_NAME_KEY, sheet.getRow(4).getCell(2).getStringCellValue());
-        assertEquals(SSN_KEY, sheet.getRow(5).getCell(2).getStringCellValue());
+        assertEquals(EMPLOYEE_INFORMATION, sheet.getRow(1).getCell(1).getRichStringCellValue().getString());
+        assertEquals(LAST_NAME_KEY, sheet.getRow(3).getCell(2).getRichStringCellValue().getString());
+        assertEquals(FIRST_NAME_KEY, sheet.getRow(4).getCell(2).getRichStringCellValue().getString());
+        assertEquals(SSN_KEY, sheet.getRow(5).getCell(2).getRichStringCellValue().getString());
     }
 
     /**
@@ -318,13 +319,13 @@ public class TestWorkbook extends TestCase {
 
         sheet    = workbook.getSheetAt(0);
         cell     = sheet.getRow(0).getCell(1);
-        assertEquals(REPLACED, cell.getStringCellValue());
+        assertEquals(REPLACED, cell.getRichStringCellValue().getString());
         cell = sheet.getRow(0).getCell(0);
-        assertEquals(DO_NOT_REPLACE, cell.getStringCellValue());
+        assertEquals(DO_NOT_REPLACE, cell.getRichStringCellValue().getString());
         cell = sheet.getRow(1).getCell(0);
-        assertEquals(REPLACED, cell.getStringCellValue());
+        assertEquals(REPLACED, cell.getRichStringCellValue().getString());
         cell = sheet.getRow(1).getCell(1);
-        assertEquals(DO_NOT_REPLACE, cell.getStringCellValue());
+        assertEquals(DO_NOT_REPLACE, cell.getRichStringCellValue().getString());
     }
 
     /**
@@ -388,10 +389,10 @@ public class TestWorkbook extends TestCase {
 
         workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
         sheet    = workbook.getSheetAt(0);
-        assertEquals(EMPLOYEE_INFORMATION, sheet.getRow(1).getCell(1).getStringCellValue());
-        assertEquals(LAST_NAME_VALUE, sheet.getRow(3).getCell(2).getStringCellValue());
-        assertEquals(FIRST_NAME_VALUE, sheet.getRow(4).getCell(2).getStringCellValue());
-        assertEquals(SSN_VALUE, sheet.getRow(5).getCell(2).getStringCellValue());
+        assertEquals(EMPLOYEE_INFORMATION, sheet.getRow(1).getCell(1).getRichStringCellValue().getString());
+        assertEquals(LAST_NAME_VALUE, sheet.getRow(3).getCell(2).getRichStringCellValue().getString());
+        assertEquals(FIRST_NAME_VALUE, sheet.getRow(4).getCell(2).getRichStringCellValue().getString());
+        assertEquals(SSN_VALUE, sheet.getRow(5).getCell(2).getRichStringCellValue().getString());
     }
 
     /**
@@ -421,26 +422,17 @@ public class TestWorkbook extends TestCase {
      *             HSSFSheet last row or first row is incorrect.             <P>
      *
      */
-
-    public void testWriteModifySheetMerged()
-        throws IOException
-    {
-        File             file = TempFile.createTempFile("testWriteSheetMerged",
-                                                    ".xls");
-        FileOutputStream out  = new FileOutputStream(file);
-        FileInputStream  in   = null;
+    public void testWriteModifySheetMerged() {
         HSSFWorkbook     wb   = new HSSFWorkbook();
         HSSFSheet        s    = wb.createSheet();
-        HSSFRow          r    = null;
-        HSSFCell         c    = null;
 
         for (short rownum = ( short ) 0; rownum < 100; rownum++)
         {
-            r = s.createRow(rownum);
+            HSSFRow r = s.createRow(rownum);
 
             for (short cellnum = ( short ) 0; cellnum < 50; cellnum += 2)
             {
-                c = r.createCell(cellnum);
+                HSSFCell c = r.createCell(cellnum);
                 c.setCellValue(rownum * 10000 + cellnum
                                + ((( double ) rownum / 1000)
                                   + (( double ) cellnum / 10000)));
@@ -448,33 +440,27 @@ public class TestWorkbook extends TestCase {
                 c.setCellValue(new HSSFRichTextString("TEST"));
             }
         }
-        s.addMergedRegion(new Region(( short ) 0, ( short ) 0, ( short ) 10,
-                                     ( short ) 10));
-        s.addMergedRegion(new Region(( short ) 30, ( short ) 5, ( short ) 40,
-                                     ( short ) 15));
-        wb.write(out);
-        out.close();
+        s.addMergedRegion(new CellRangeAddress(0, 10, 0, 10));
+        s.addMergedRegion(new CellRangeAddress(30, 40, 5, 15));
         sanityChecker.checkHSSFWorkbook(wb);
-        in = new FileInputStream(file);
-        wb = new HSSFWorkbook(new POIFSFileSystem(in));
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        
         s  = wb.getSheetAt(0);
-        Region r1 = s.getMergedRegionAt(0);
-        Region r2 = s.getMergedRegionAt(1);
+        CellRangeAddress r1 = s.getMergedRegion(0);
+        CellRangeAddress r2 = s.getMergedRegion(1);
 
-        in.close();
-
-        // System.out.println(file.length());
-        // assertEquals("FILE LENGTH == 87552",file.length(), 87552);
-        // System.out.println(s.getLastRowNum());
-        assertEquals("REGION1 = 0,0,10,10", 0,
-                     new Region(( short ) 0, ( short ) 0, ( short ) 10,
-                                ( short ) 10).compareTo(r1));
-        assertEquals("REGION2 == 30,5,40,15", 0,
-                     new Region(( short ) 30, ( short ) 5, ( short ) 40,
-                                ( short ) 15).compareTo(r2));
+        confirmRegion(new CellRangeAddress(0, 10, 0, 10), r1);
+        confirmRegion(new CellRangeAddress(30, 40,5, 15), r2);
     }
 
-    /**
+    private static void confirmRegion(CellRangeAddress ra, CellRangeAddress rb) {
+		assertEquals(ra.getFirstRow(), rb.getFirstRow());
+		assertEquals(ra.getLastRow(), rb.getLastRow());
+		assertEquals(ra.getFirstColumn(), rb.getFirstColumn());
+		assertEquals(ra.getLastColumn(), rb.getLastColumn());
+	}
+
+	/**
      * Test the backup field gets set as expected.
      */
 

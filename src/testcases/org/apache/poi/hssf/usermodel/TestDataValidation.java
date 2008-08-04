@@ -16,896 +16,631 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.util.*;
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.eventmodel.ERFListener;
+import org.apache.poi.hssf.eventmodel.EventRecordFactory;
+import org.apache.poi.hssf.record.DVRecord;
+import org.apache.poi.hssf.record.RecordFormatException;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.Region;
 
-import java.io.*;
-import java.util.*;
-import java.text.SimpleDateFormat;
-
 /**
- * <p>Title: TestDataValidation</p>
- * <p>Description: Class for testing Excel's data validation mechanism
- *    Second test :
- *        -
- * </p>
+ * Class for testing Excel's data validation mechanism
+ *
  * @author Dragos Buleandra ( dragos.buleandra@trade2b.ro )
  */
-public class TestDataValidation extends TestCase
-{
-  public TestDataValidation(String name)
-  {
-    super(name);
+public final class TestDataValidation extends TestCase {
+
+	/** Convenient access to ERROR_STYLE constants */
+	/*package*/ static final HSSFDataValidation.ErrorStyle ES = null;
+	/** Convenient access to OPERATOR constants */
+	/*package*/ static final DVConstraint.ValidationType VT = null;
+	/** Convenient access to OPERATOR constants */
+	/*package*/ static final DVConstraint.OperatorType OP = null;
+
+	private static void log(String msg) {
+		if (false) { // successful tests should be silent
+			System.out.println(msg);
+		}      
+	}
+  
+	private static final class ValidationAdder {
+	  
+		private final HSSFCellStyle _style_1;
+		private final HSSFCellStyle _style_2;
+		private  final int _validationType;
+		private final HSSFSheet _sheet;
+		private int _currentRowIndex;
+		private final HSSFCellStyle _cellStyle;
+
+		public ValidationAdder(HSSFSheet fSheet, HSSFCellStyle style_1, HSSFCellStyle style_2,
+				HSSFCellStyle cellStyle, int validationType) {
+			_sheet = fSheet;
+			_style_1 = style_1;
+			_style_2 = style_2;
+			_cellStyle = cellStyle;
+			_validationType = validationType;
+			_currentRowIndex = fSheet.getPhysicalNumberOfRows();
+		}
+		public void addValidation(int operatorType, String firstFormula, String secondFormula,
+				int errorStyle, String ruleDescr, String promptDescr, 
+				boolean allowEmpty, boolean inputBox, boolean errorBox) {
+			String[] explicitListValues = null;
+			
+			addValidationInternal(operatorType, firstFormula, secondFormula, errorStyle, ruleDescr,
+					promptDescr, allowEmpty, inputBox, errorBox, true,
+					explicitListValues);
+		}
+
+		private void addValidationInternal(int operatorType, String firstFormula,
+				String secondFormula, int errorStyle, String ruleDescr, String promptDescr,
+				boolean allowEmpty, boolean inputBox, boolean errorBox, boolean suppressDropDown,
+				String[] explicitListValues) {
+			int rowNum = _currentRowIndex++;
+
+			DVConstraint dc = createConstraint(operatorType, firstFormula, secondFormula, explicitListValues);
+
+			HSSFDataValidation dv = new HSSFDataValidation(new CellRangeAddressList(rowNum, rowNum, 0, 0), dc);
+			
+			dv.setEmptyCellAllowed(allowEmpty);
+			dv.setErrorStyle(errorStyle);
+			dv.createErrorBox("Invalid Input", "Something is wrong - check condition!");
+			dv.createPromptBox("Validated Cell", "Allowable values have been restricted");
+
+			dv.setShowPromptBox(inputBox);
+			dv.setShowErrorBox(errorBox);
+			dv.setSuppressDropDownArrow(suppressDropDown);
+			
+			
+			_sheet.addValidationData(dv);
+			writeDataValidationSettings(_sheet, _style_1, _style_2, ruleDescr, allowEmpty,
+					inputBox, errorBox);
+			if (_cellStyle != null) {
+				HSSFRow row = _sheet.getRow(_sheet.getPhysicalNumberOfRows() - 1);
+				HSSFCell cell = row.createCell((short) 0);
+				cell.setCellStyle(_cellStyle);
+			}
+			writeOtherSettings(_sheet, _style_1, promptDescr);
+		}
+		private DVConstraint createConstraint(int operatorType, String firstFormula,
+				String secondFormula, String[] explicitListValues) {
+			if (_validationType == VT.LIST) {
+				if (explicitListValues != null) {
+					return DVConstraint.createExplicitListConstraint(explicitListValues);
+				}
+				return DVConstraint.createFormulaListConstraint(firstFormula);
+			}
+			if (_validationType == VT.TIME) {
+				return DVConstraint.createTimeConstraint(operatorType, firstFormula, secondFormula);
+			}
+			if (_validationType == VT.DATE) {
+				return DVConstraint.createDateConstraint(operatorType, firstFormula, secondFormula, null);
+			}
+			if (_validationType == VT.FORMULA) {
+				return DVConstraint.createCustomFormulaConstraint(firstFormula);
+			}
+			return DVConstraint.createNumericConstraint(_validationType, operatorType, firstFormula, secondFormula);
+		}
+		/**
+		 * writes plain text values into cells in a tabular format to form comments readable from within 
+		 * the spreadsheet.
+		 */
+		private static void writeDataValidationSettings(HSSFSheet sheet, HSSFCellStyle style_1,
+				HSSFCellStyle style_2, String strCondition, boolean allowEmpty, boolean inputBox,
+				boolean errorBox) {
+			HSSFRow row = sheet.createRow(sheet.getPhysicalNumberOfRows());
+			// condition's string
+			HSSFCell cell = row.createCell((short) 1);
+			cell.setCellStyle(style_1);
+			setCellValue(cell, strCondition);
+			// allow empty cells
+			cell = row.createCell((short) 2);
+			cell.setCellStyle(style_2);
+			setCellValue(cell, ((allowEmpty) ? "yes" : "no"));
+			// show input box
+			cell = row.createCell((short) 3);
+			cell.setCellStyle(style_2);
+			setCellValue(cell, ((inputBox) ? "yes" : "no"));
+			// show error box
+			cell = row.createCell((short) 4);
+			cell.setCellStyle(style_2);
+			setCellValue(cell, ((errorBox) ? "yes" : "no"));
+		}
+		private static void writeOtherSettings(HSSFSheet sheet, HSSFCellStyle style,
+				String strStettings) {
+			HSSFRow row = sheet.getRow(sheet.getPhysicalNumberOfRows() - 1);
+			HSSFCell cell = row.createCell((short) 5);
+			cell.setCellStyle(style);
+			setCellValue(cell, strStettings);
+		}
+		public void addListValidation(String[] explicitListValues, String listFormula, String listValsDescr,
+				boolean allowEmpty, boolean suppressDropDown) {
+			String promptDescr = (allowEmpty ? "empty ok" : "not empty") 
+					+ ", " + (suppressDropDown ? "no drop-down" : "drop-down"); 
+			addValidationInternal(VT.LIST, listFormula, null, ES.STOP, listValsDescr, promptDescr, 
+					allowEmpty, false, true, suppressDropDown, explicitListValues);
+		}
+	}
+
+	/**
+	 * Manages the cell styles used for formatting the output spreadsheet
+	 */
+	private static final class WorkbookFormatter {
+
+		private final HSSFWorkbook _wb;
+		private final HSSFCellStyle _style_1;
+		private final HSSFCellStyle _style_2;
+		private final HSSFCellStyle _style_3;
+		private final HSSFCellStyle _style_4;
+		private HSSFSheet _currentSheet;
+
+		public WorkbookFormatter(HSSFWorkbook wb) {
+			_wb = wb;
+			_style_1 = createStyle( wb, HSSFCellStyle.ALIGN_LEFT );
+			_style_2 = createStyle( wb, HSSFCellStyle.ALIGN_CENTER );
+			_style_3 = createStyle( wb, HSSFCellStyle.ALIGN_CENTER, HSSFColor.GREY_25_PERCENT.index, true );
+			_style_4 = createHeaderStyle(wb);
+		}
+		
+		private static HSSFCellStyle createStyle(HSSFWorkbook wb, short h_align, short color,
+				boolean bold) {
+			HSSFFont font = wb.createFont();
+			if (bold) {
+				font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+			}
+
+			HSSFCellStyle cellStyle = wb.createCellStyle();
+			cellStyle.setFont(font);
+			cellStyle.setFillForegroundColor(color);
+			cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+			cellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+			cellStyle.setAlignment(h_align);
+			cellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+			cellStyle.setLeftBorderColor(HSSFColor.BLACK.index);
+			cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+			cellStyle.setTopBorderColor(HSSFColor.BLACK.index);
+			cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+			cellStyle.setRightBorderColor(HSSFColor.BLACK.index);
+			cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+			cellStyle.setBottomBorderColor(HSSFColor.BLACK.index);
+
+			return cellStyle;
+		}
+
+		private static HSSFCellStyle createStyle(HSSFWorkbook wb, short h_align) {
+			return createStyle(wb, h_align, HSSFColor.WHITE.index, false);
+		}
+		private static HSSFCellStyle createHeaderStyle(HSSFWorkbook wb) {
+			HSSFFont font = wb.createFont();
+			font.setColor( HSSFColor.WHITE.index );
+			font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+			
+			HSSFCellStyle cellStyle = wb.createCellStyle();
+			cellStyle.setFillForegroundColor(HSSFColor.BLUE_GREY.index);
+			cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+			cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+			cellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+			cellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+			cellStyle.setLeftBorderColor(HSSFColor.WHITE.index);
+			cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+			cellStyle.setTopBorderColor(HSSFColor.WHITE.index);
+			cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+			cellStyle.setRightBorderColor(HSSFColor.WHITE.index);
+			cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+			cellStyle.setBottomBorderColor(HSSFColor.WHITE.index);
+			cellStyle.setFont(font);
+			return cellStyle;
+		}
+		
+
+		public HSSFSheet createSheet(String sheetName) {
+			_currentSheet = _wb.createSheet(sheetName);
+			return _currentSheet;
+		}
+		public void createDVTypeRow(String strTypeDescription) {
+			HSSFSheet sheet = _currentSheet;
+			HSSFRow row = sheet.createRow(sheet.getPhysicalNumberOfRows());
+			row = sheet.createRow(sheet.getPhysicalNumberOfRows());
+			sheet.addMergedRegion(new CellRangeAddress(sheet.getPhysicalNumberOfRows()-1, sheet.getPhysicalNumberOfRows()-1, 0, 5));
+			HSSFCell cell = row.createCell((short) 0);
+			setCellValue(cell, strTypeDescription);
+			cell.setCellStyle(_style_3);
+			row = sheet.createRow(sheet.getPhysicalNumberOfRows());
+		}
+		
+		public void createHeaderRow() {
+			HSSFSheet sheet = _currentSheet;
+			HSSFRow row = sheet.createRow(sheet.getPhysicalNumberOfRows());
+			row.setHeight((short) 400);
+			for (int i = 0; i < 6; i++) {
+				row.createCell((short) i).setCellStyle(_style_4);
+				if (i == 2 || i == 3 || i == 4) {
+					sheet.setColumnWidth((short) i, (short) 3500);
+				} else if (i == 5) {
+					sheet.setColumnWidth((short) i, (short) 10000);
+				} else {
+					sheet.setColumnWidth((short) i, (short) 8000);
+				}
+			}
+			HSSFCell cell = row.getCell((short) 0);
+			setCellValue(cell, "Data validation cells");
+			cell = row.getCell((short) 1);
+			setCellValue(cell, "Condition");
+			cell = row.getCell((short) 2);
+			setCellValue(cell, "Allow blank");
+			cell = row.getCell((short) 3);
+			setCellValue(cell, "Prompt box");
+			cell = row.getCell((short) 4);
+			setCellValue(cell, "Error box");
+			cell = row.getCell((short) 5);
+			setCellValue(cell, "Other settings");
+		}
+
+		public ValidationAdder createValidationAdder(HSSFCellStyle cellStyle, int dataValidationType) {
+			return new ValidationAdder(_currentSheet, _style_1, _style_2, cellStyle, dataValidationType);
+		}
+
+		public void createDVDescriptionRow(String strTypeDescription) {
+			HSSFSheet sheet = _currentSheet;
+			HSSFRow row = sheet.getRow(sheet.getPhysicalNumberOfRows()-1);
+			sheet.addMergedRegion(new CellRangeAddress(sheet.getPhysicalNumberOfRows()-1, sheet.getPhysicalNumberOfRows()-1, 0, 5));
+			HSSFCell cell = row.createCell((short)0);
+			setCellValue(cell, strTypeDescription);
+			cell.setCellStyle(_style_3);
+			row = sheet.createRow(sheet.getPhysicalNumberOfRows());
+		}
+	}
+	
+  
+	private void addCustomValidations(WorkbookFormatter wf) {
+		wf.createSheet("Custom");
+		wf.createHeaderRow();
+
+		ValidationAdder va = wf.createValidationAdder(null, VT.FORMULA);
+		va.addValidation(OP.BETWEEN, "ISNUMBER($A2)", null, ES.STOP, "ISNUMBER(A2)", "Error box type = STOP", true, true, true);
+		va.addValidation(OP.BETWEEN, "IF(SUM(A2:A3)=5,TRUE,FALSE)", null, ES.WARNING, "IF(SUM(A2:A3)=5,TRUE,FALSE)", "Error box type = WARNING", false, false, true);
+	}
+
+	private static void addSimpleNumericValidations(WorkbookFormatter wf) {
+		// data validation's number types
+		wf.createSheet("Numbers");
+
+		// "Whole number" validation type
+		wf.createDVTypeRow("Whole number");
+		wf.createHeaderRow();
+
+		ValidationAdder va = wf.createValidationAdder(null, VT.INTEGER);
+		va.addValidation(OP.BETWEEN, "2", "6", ES.STOP, "Between 2 and 6 ", "Error box type = STOP", true, true, true);
+		va.addValidation(OP.NOT_BETWEEN, "2", "6", ES.INFO, "Not between 2 and 6 ", "Error box type = INFO", false, true, true);
+		va.addValidation(OP.EQUAL, "=3+2", null, ES.WARNING, "Equal to (3+2)", "Error box type = WARNING", false, false, true);
+		va.addValidation(OP.NOT_EQUAL, "3", null, ES.WARNING, "Not equal to 3", "-", false, false, false);
+		va.addValidation(OP.GREATER_THAN, "3", null, ES.WARNING, "Greater than 3", "-", true, false, false);
+		va.addValidation(OP.LESS_THAN, "3", null, ES.WARNING, "Less than 3", "-", true, true, false);
+		va.addValidation(OP.GREATER_OR_EQUAL, "4", null, ES.STOP, "Greater than or equal to 4", "Error box type = STOP", true, false, true);
+		va.addValidation(OP.LESS_OR_EQUAL, "4", null, ES.STOP, "Less than or equal to 4", "-", false, true, false);
+
+		// "Decimal" validation type
+		wf.createDVTypeRow("Decimal");
+		wf.createHeaderRow();
+
+		va = wf.createValidationAdder(null, VT.DECIMAL);
+		va.addValidation(OP.BETWEEN, "2", "6", ES.STOP, "Between 2 and 6 ", "Error box type = STOP", true, true, true);
+		va.addValidation(OP.NOT_BETWEEN, "2", "6", ES.INFO, "Not between 2 and 6 ", "Error box type = INFO", false, true, true);
+		va.addValidation(OP.EQUAL, "3", null, ES.WARNING, "Equal to 3", "Error box type = WARNING", false, false, true);
+		va.addValidation(OP.NOT_EQUAL, "3", null, ES.WARNING, "Not equal to 3", "-", false, false, false);
+		va.addValidation(OP.GREATER_THAN, "=12/6", null, ES.WARNING, "Greater than (12/6)", "-", true, false, false);
+		va.addValidation(OP.LESS_THAN, "3", null, ES.WARNING, "Less than 3", "-", true, true, false);
+		va.addValidation(OP.GREATER_OR_EQUAL, "4", null, ES.STOP, "Greater than or equal to 4", "Error box type = STOP", true, false, true);
+		va.addValidation(OP.LESS_OR_EQUAL, "4", null, ES.STOP, "Less than or equal to 4", "-", false, true, false);
+	}
+	
+	private static void addListValidations(WorkbookFormatter wf, HSSFWorkbook wb) {
+		final String cellStrValue 
+		 = "a b c d e f g h i j k l m n o p r s t u v x y z w 0 1 2 3 4 "
+		+ "a b c d e f g h i j k l m n o p r s t u v x y z w 0 1 2 3 4 "
+		+ "a b c d e f g h i j k l m n o p r s t u v x y z w 0 1 2 3 4 "
+		+ "a b c d e f g h i j k l m n o p r s t u v x y z w 0 1 2 3 4 ";
+		final String dataSheetName = "list_data";
+		// "List" Data Validation type
+		HSSFSheet fSheet = wf.createSheet("Lists");
+		HSSFSheet dataSheet = wb.createSheet(dataSheetName);
+
+
+		wf.createDVTypeRow("Explicit lists - list items are explicitly provided");
+		wf.createDVDescriptionRow("Disadvantage - sum of item's length should be less than 255 characters");
+		wf.createHeaderRow();
+
+		ValidationAdder va = wf.createValidationAdder(null, VT.LIST);
+		String listValsDescr = "POIFS,HSSF,HWPF,HPSF";
+		String[] listVals = listValsDescr.split(",");
+		va.addListValidation(listVals, null, listValsDescr, false, false);
+		va.addListValidation(listVals, null, listValsDescr, false, true);
+		va.addListValidation(listVals, null, listValsDescr, true, false);
+		va.addListValidation(listVals, null, listValsDescr, true, true);
+		
+		
+		
+		wf.createDVTypeRow("Reference lists - list items are taken from others cells");
+		wf.createDVDescriptionRow("Advantage - no restriction regarding the sum of item's length");
+		wf.createHeaderRow();
+		va = wf.createValidationAdder(null, VT.LIST);
+		String strFormula = "$A$30:$A$39";
+		va.addListValidation(null, strFormula, strFormula, false, false);
+		
+		strFormula = dataSheetName + "!$A$1:$A$10";
+		va.addListValidation(null, strFormula, strFormula, false, false);
+		HSSFName namedRange = wb.createName();
+		namedRange.setNameName("myName");
+		namedRange.setReference(dataSheetName + "!$A$2:$A$7");
+		strFormula = "myName";
+		va.addListValidation(null, strFormula, strFormula, false, false);
+		strFormula = "offset(myName, 2, 1, 4, 2)"; // Note about last param '2': 
+		// - Excel expects single row or single column when entered in UI, but process this OK otherwise
+		va.addListValidation(null, strFormula, strFormula, false, false);
+		
+		// add list data on same sheet
+		for (int i = 0; i < 10; i++) {
+			HSSFRow currRow = fSheet.createRow(i + 29);
+			setCellValue(currRow.createCell((short) 0), cellStrValue);
+		}
+		// add list data on another sheet
+		for (int i = 0; i < 10; i++) {
+			HSSFRow currRow = dataSheet.createRow(i + 0);
+			setCellValue(currRow.createCell((short) 0), "Data a" + i);
+			setCellValue(currRow.createCell((short) 1), "Data b" + i);
+			setCellValue(currRow.createCell((short) 2), "Data c" + i);
+		}
+	}
+
+	private static void addDateTimeValidations(WorkbookFormatter wf, HSSFWorkbook wb) {
+		wf.createSheet("Dates and Times");
+
+		HSSFDataFormat dataFormat = wb.createDataFormat();
+		short fmtDate = dataFormat.getFormat("m/d/yyyy");
+		short fmtTime = dataFormat.getFormat("h:mm");
+		HSSFCellStyle cellStyle_date = wb.createCellStyle();
+		cellStyle_date.setDataFormat(fmtDate);
+		HSSFCellStyle cellStyle_time = wb.createCellStyle();
+		cellStyle_time.setDataFormat(fmtTime);
+
+		wf.createDVTypeRow("Date ( cells are already formated as date - m/d/yyyy)");
+		wf.createHeaderRow();
+
+		ValidationAdder va = wf.createValidationAdder(cellStyle_date, VT.DATE);
+		va.addValidation(OP.BETWEEN,     "2004/01/02", "2004/01/06", ES.STOP, "Between 1/2/2004 and 1/6/2004 ", "Error box type = STOP", true, true, true);
+		va.addValidation(OP.NOT_BETWEEN, "2004/01/01", "2004/01/06", ES.INFO, "Not between 1/2/2004 and 1/6/2004 ", "Error box type = INFO", false, true, true);
+		va.addValidation(OP.EQUAL,       "2004/03/02", null,       ES.WARNING, "Equal to 3/2/2004", "Error box type = WARNING", false, false, true);
+		va.addValidation(OP.NOT_EQUAL,   "2004/03/02", null,       ES.WARNING, "Not equal to 3/2/2004", "-", false, false, false);
+		va.addValidation(OP.GREATER_THAN,"=DATEVALUE(\"4-Jul-2001\")", null,       ES.WARNING, "Greater than DATEVALUE('4-Jul-2001')", "-", true, false, false);
+		va.addValidation(OP.LESS_THAN,   "2004/03/02", null,       ES.WARNING, "Less than 3/2/2004", "-", true, true, false);
+		va.addValidation(OP.GREATER_OR_EQUAL, "2004/03/02", null,       ES.STOP, "Greater than or equal to 3/2/2004", "Error box type = STOP", true, false, true);
+		va.addValidation(OP.LESS_OR_EQUAL, "2004/03/04", null,       ES.STOP, "Less than or equal to 3/4/2004", "-", false, true, false);
+
+		// "Time" validation type
+		wf.createDVTypeRow("Time ( cells are already formated as time - h:mm)");
+		wf.createHeaderRow();
+
+		va = wf.createValidationAdder(cellStyle_time, VT.TIME);
+		va.addValidation(OP.BETWEEN,     "12:00", "16:00", ES.STOP, "Between 12:00 and 16:00 ", "Error box type = STOP", true, true, true);
+		va.addValidation(OP.NOT_BETWEEN, "12:00", "16:00", ES.INFO, "Not between 12:00 and 16:00 ", "Error box type = INFO", false, true, true);
+		va.addValidation(OP.EQUAL,       "13:35", null,    ES.WARNING, "Equal to 13:35", "Error box type = WARNING", false, false, true);
+		va.addValidation(OP.NOT_EQUAL,   "13:35", null,    ES.WARNING, "Not equal to 13:35", "-", false, false, false);
+		va.addValidation(OP.GREATER_THAN,"12:00", null,    ES.WARNING, "Greater than 12:00", "-", true, false, false);
+		va.addValidation(OP.LESS_THAN,   "=1/2", null,    ES.WARNING, "Less than (1/2) -> 12:00", "-", true, true, false);
+		va.addValidation(OP.GREATER_OR_EQUAL, "14:00", null,    ES.STOP, "Greater than or equal to 14:00", "Error box type = STOP", true, false, true);
+		va.addValidation(OP.LESS_OR_EQUAL,"14:00", null,    ES.STOP, "Less than or equal to 14:00", "-", false, true, false);
+	}
+
+	private static void addTextLengthValidations(WorkbookFormatter wf) {
+		wf.createSheet("Text lengths");
+		wf.createHeaderRow();
+
+		ValidationAdder va = wf.createValidationAdder(null, VT.TEXT_LENGTH);
+		va.addValidation(OP.BETWEEN, "2", "6", ES.STOP, "Between 2 and 6 ", "Error box type = STOP", true, true, true);
+		va.addValidation(OP.NOT_BETWEEN, "2", "6", ES.INFO, "Not between 2 and 6 ", "Error box type = INFO", false, true, true);
+		va.addValidation(OP.EQUAL, "3", null, ES.WARNING, "Equal to 3", "Error box type = WARNING", false, false, true);
+		va.addValidation(OP.NOT_EQUAL, "3", null, ES.WARNING, "Not equal to 3", "-", false, false, false);
+		va.addValidation(OP.GREATER_THAN, "3", null, ES.WARNING, "Greater than 3", "-", true, false, false);
+		va.addValidation(OP.LESS_THAN, "3", null, ES.WARNING, "Less than 3", "-", true, true, false);
+		va.addValidation(OP.GREATER_OR_EQUAL, "4", null, ES.STOP, "Greater than or equal to 4", "Error box type = STOP", true, false, true);
+		va.addValidation(OP.LESS_OR_EQUAL, "4", null, ES.STOP, "Less than or equal to 4", "-", false, true, false);
+	}
+	
+	public void testDataValidation() {
+		log("\nTest no. 2 - Test Excel's Data validation mechanism");
+		HSSFWorkbook wb = new HSSFWorkbook();
+		WorkbookFormatter wf = new WorkbookFormatter(wb);
+
+		log("    Create sheet for Data Validation's number types ... ");
+		addSimpleNumericValidations(wf);
+		log("done !");
+
+		log("    Create sheet for 'List' Data Validation type ... ");
+		addListValidations(wf, wb);
+		log("done !");
+		
+		log("    Create sheet for 'Date' and 'Time' Data Validation types ... ");
+		addDateTimeValidations(wf, wb);
+		log("done !");
+
+		log("    Create sheet for 'Text length' Data Validation type... ");
+		addTextLengthValidations(wf);
+		log("done !");
+
+		// Custom Validation type
+		log("    Create sheet for 'Custom' Data Validation type ... ");
+		addCustomValidations(wf);
+		log("done !");
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream(22000);
+		try {
+			wb.write(baos);
+			baos.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		byte[] generatedContent = baos.toByteArray();
+		boolean isSame;
+		if (false) {
+			// TODO - add proof spreadsheet and compare
+			InputStream proofStream = HSSFTestDataSamples.openSampleFileStream("TestDataValidation.xls");
+			isSame = compareStreams(proofStream, generatedContent);
+		}
+		isSame = true;
+		
+		if (isSame) {
+			return;
+		}
+		File tempDir = new File(System.getProperty("java.io.tmpdir"));
+		File generatedFile = new File(tempDir, "GeneratedTestDataValidation.xls");
+		try {
+			FileOutputStream fileOut = new FileOutputStream(generatedFile);
+			fileOut.write(generatedContent);
+			fileOut.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	
+		PrintStream ps = System.out;
+	
+		ps.println("This test case has failed because the generated file differs from proof copy '" 
+				); // TODO+ proofFile.getAbsolutePath() + "'.");
+		ps.println("The cause is usually a change to this test, or some common spreadsheet generation code.  "
+				+ "The developer has to decide whether the changes were wanted or unwanted.");
+		ps.println("If the changes to the generated version were unwanted, "
+				+ "make the fix elsewhere (do not modify this test or the proof spreadsheet to get the test working).");
+		ps.println("If the changes were wanted, make sure to open the newly generated file in Excel "
+				+ "and verify it manually.  The new proof file should be submitted after it is verified to be correct.");
+		ps.println("");
+		ps.println("One other possible (but less likely) cause of a failed test is a problem in the "
+				+ "comparison logic used here. Perhaps some extra file regions need to be ignored.");
+		ps.println("The generated file has been saved to '" + generatedFile.getAbsolutePath() + "' for manual inspection.");
+	
+		fail("Generated file differs from proof copy.  See sysout comments for details on how to fix.");
+		
+	}
+	
+	private static boolean compareStreams(InputStream isA, byte[] generatedContent) {
+
+		InputStream isB = new ByteArrayInputStream(generatedContent);
+
+		// The allowable regions where the generated file can differ from the 
+		// proof should be small (i.e. much less than 1K)
+		int[] allowableDifferenceRegions = { 
+				0x0228, 16,  // a region of the file containing the OS username
+				0x506C, 8,   // See RootProperty (super fields _seconds_2 and _days_2)
+		};
+		int[] diffs = StreamUtility.diffStreams(isA, isB, allowableDifferenceRegions);
+		if (diffs == null) {
+			return true;
+		}
+		System.err.println("Diff from proof: ");
+		for (int i = 0; i < diffs.length; i++) {
+			System.err.println("diff at offset: 0x" + Integer.toHexString(diffs[i]));
+		}
+		return false;
+	}
+  
+
+
+
+
+  /* package */ static void setCellValue(HSSFCell cell, String text) {
+	  cell.setCellValue(new HSSFRichTextString(text));
+	  
   }
-
-  protected void setUp()
-  {
-    String filename = System.getProperty("HSSF.testdata.path");
-    if (filename == null)
-    {
-       System.setProperty("HSSF.testdata.path", "src/testcases/org/apache/poi/hssf/data");
-    }
-  }
-
-  public void testDataValidation() throws Exception
-  {
-    System.out.println("\nTest no. 2 - Test Excel's Data validation mechanism");
-    String resultFile   = System.getProperty("java.io.tmpdir")+File.separator+"TestDataValidation.xls";
-    HSSFWorkbook wb = new HSSFWorkbook();
-
-    HSSFCellStyle style_1 = this.createStyle( wb, HSSFCellStyle.ALIGN_LEFT );
-    HSSFCellStyle style_2 = this.createStyle( wb, HSSFCellStyle.ALIGN_CENTER );
-    HSSFCellStyle style_3 = this.createStyle( wb, HSSFCellStyle.ALIGN_CENTER, HSSFColor.GREY_25_PERCENT.index, true );
-    HSSFCellStyle style_4 = this.createHeaderStyle(wb);
-    HSSFDataValidation data_validation = null;
-
-    //data validation's number types
-    System.out.print("    Create sheet for Data Validation's number types ... ");
-    HSSFSheet fSheet = wb.createSheet("Number types");
-
-    //"Whole number" validation type
-    this.createDVTypeRow( wb, 0, style_3, "Whole number");
-    this.createHeaderRow( wb, 0, style_4 );
-
-    short start_row = (short)fSheet.getPhysicalNumberOfRows();
-    data_validation = new HSSFDataValidation((short)(start_row),(short)0,(short)(start_row),(short)0);
-    data_validation.setDataValidationType(HSSFDataValidation.DATA_TYPE_INTEGER);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_BETWEEN);
-    data_validation.setFirstFormula("2");
-    data_validation.setSecondFormula("6");
-    data_validation.createErrorBox("Invalid input !", "Something is wrong ; check condition !");
-    data_validation.createPromptBox("Hi , dear user !", "So , you just selected me ! Thanks !");
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Between 2 and 6 ", true, true, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = STOP" );
-
-    data_validation.setFirstRow((short)(start_row+1));
-    data_validation.setLastRow((short)(start_row+1));
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_NOT_BETWEEN);
-    data_validation.setErrorStyle(HSSFDataValidation.ERROR_STYLE_INFO);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Not between 2 and 6 ", false, true, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = INFO" );
-
-    data_validation.setFirstRow((short)(start_row+2));
-    data_validation.setLastRow((short)(start_row+2));
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setShowPromptBox(false);
-    data_validation.setFirstFormula("3");
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_EQUAL);
-    data_validation.setErrorStyle(HSSFDataValidation.ERROR_STYLE_WARNING);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Equal to 3", false, false, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = WARNING" );
-
-    data_validation.setFirstRow((short)(start_row+3));
-    data_validation.setLastRow((short)(start_row+3));
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setShowPromptBox(false);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula("3");
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_NOT_EQUAL);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Not equal to 3", false, false, false );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-
-    data_validation.setFirstRow((short)(start_row+4));
-    data_validation.setLastRow((short)(start_row+4));
-    data_validation.setEmptyCellAllowed(true);
-    data_validation.setShowPromptBox(false);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula("3");
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_GREATER_THAN);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Greater than 3", true, false, false );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-
-    data_validation.setFirstRow((short)(start_row+5));
-    data_validation.setLastRow((short)(start_row+5));
-    data_validation.setEmptyCellAllowed(true);
-    data_validation.setShowPromptBox(true);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula("3");
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_LESS_THAN);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Less than 3", true, true, false );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-
-    data_validation.setFirstRow((short)(start_row+6));
-    data_validation.setLastRow((short)(start_row+6));
-    data_validation.setEmptyCellAllowed(true);
-    data_validation.setShowPromptBox(false);
-    data_validation.setErrorStyle(HSSFDataValidation.ERROR_STYLE_STOP);
-    data_validation.setShowErrorBox(true);
-    data_validation.setFirstFormula("4");
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_GREATER_OR_EQUAL);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Greater than or equal to 4", true, false, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = STOP" );
-
-    data_validation.setFirstRow((short)(start_row+7));
-    data_validation.setLastRow((short)(start_row+7));
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setShowPromptBox(true);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula("4");
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_LESS_OR_EQUAL);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Less than or equal to 4", false, true, false );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-
-    //"Decimal" validation type
-    this.createDVTypeRow( wb, 0, style_3, "Decimal");
-    this.createHeaderRow( wb, 0, style_4 );
-
-    start_row += (short)(8+4);
-    data_validation = new HSSFDataValidation((short)(start_row),(short)0,(short)(start_row),(short)0);
-    data_validation.setDataValidationType(HSSFDataValidation.DATA_TYPE_DECIMAL);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_BETWEEN);
-    data_validation.setFirstFormula("2");
-    data_validation.setSecondFormula("6");
-    data_validation.createErrorBox("Invalid input !", "Something is wrong ; check condition !");
-    data_validation.createPromptBox("Hi , dear user !", "So , you just selected me ! Thanks !");
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Between 2 and 6 ", true, true, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = STOP" );
-
-    data_validation.setFirstRow((short)(start_row+1));
-    data_validation.setLastRow((short)(start_row+1));
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_NOT_BETWEEN);
-    data_validation.setErrorStyle(HSSFDataValidation.ERROR_STYLE_INFO);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Not between 2 and 6 ", false, true, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = INFO" );
-
-    data_validation.setFirstRow((short)(start_row+2));
-    data_validation.setLastRow((short)(start_row+2));
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setShowPromptBox(false);
-    data_validation.setFirstFormula("3");
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_EQUAL);
-    data_validation.setErrorStyle(HSSFDataValidation.ERROR_STYLE_WARNING);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Equal to 3", false, false, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = WARNING" );
-
-    data_validation.setFirstRow((short)(start_row+3));
-    data_validation.setLastRow((short)(start_row+3));
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setShowPromptBox(false);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula("3");
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_NOT_EQUAL);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Not equal to 3", false, false, false );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-
-    data_validation.setFirstRow((short)(start_row+4));
-    data_validation.setLastRow((short)(start_row+4));
-    data_validation.setEmptyCellAllowed(true);
-    data_validation.setShowPromptBox(false);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula("3");
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_GREATER_THAN);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Greater than 3", true, false, false );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-
-    data_validation.setFirstRow((short)(start_row+5));
-    data_validation.setLastRow((short)(start_row+5));
-    data_validation.setEmptyCellAllowed(true);
-    data_validation.setShowPromptBox(true);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula("3");
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_LESS_THAN);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Less than 3", true, true, false );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-
-    data_validation.setFirstRow((short)(start_row+6));
-    data_validation.setLastRow((short)(start_row+6));
-    data_validation.setEmptyCellAllowed(true);
-    data_validation.setShowPromptBox(false);
-    data_validation.setErrorStyle(HSSFDataValidation.ERROR_STYLE_STOP);
-    data_validation.setShowErrorBox(true);
-    data_validation.setFirstFormula("4");
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_GREATER_OR_EQUAL);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Greater than or equal to 4", true, false, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = STOP" );
-
-    data_validation.setFirstRow((short)(start_row+7));
-    data_validation.setLastRow((short)(start_row+7));
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setShowPromptBox(true);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula("4");
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_LESS_OR_EQUAL);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Less than or equal to 4", false, true, false );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-
-    System.out.println("done !");
-
-    //"List" Data Validation type
-    /** @todo  List*/
-    System.out.print("    Create sheet for 'List' Data Validation type ... ");
-    fSheet = wb.createSheet("Lists");
-
-    this.createDVTypeRow( wb, 1, style_3, "Explicit lists - list items are explicitly provided");
-    this.createDVDeescriptionRow( wb, 1, style_3, "Disadvantage - sum of item's length should be less than 255 characters");
-    this.createHeaderRow( wb, 1, style_4 );
-
-    start_row = (short)fSheet.getPhysicalNumberOfRows();
-    data_validation = new HSSFDataValidation((short)(start_row),(short)0,(short)(start_row),(short)0);
-    data_validation.setDataValidationType(HSSFDataValidation.DATA_TYPE_LIST);
-    data_validation.setFirstFormula("1+2+3");
-    data_validation.setSecondFormula(null);
-    data_validation.setSurppressDropDownArrow(false);
-    data_validation.createErrorBox("Invalid input !", "Something is wrong ; check condition !");
-    data_validation.createPromptBox("Hi , dear user !", "So , you just selected me ! Thanks !");
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "POIFS,HSSF,HWPF,HPSF", true, true, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type=STOP ; In-cell dropdown=yes" );
-
-    data_validation = new HSSFDataValidation((short)(start_row+1),(short)0,(short)(start_row+1),(short)0);
-    data_validation.setDataValidationType(HSSFDataValidation.DATA_TYPE_LIST);
-    data_validation.setFirstFormula("4+5+6+7");
-    data_validation.setSecondFormula(null);
-    data_validation.setSurppressDropDownArrow(false);
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setShowPromptBox(false);
-    data_validation.createErrorBox("Invalid input !", "Something is wrong ; check condition !");
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "POIFS,HSSF,HWPF,HPSF", false, false, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type=STOP ; In-cell dropdown=yes" );
-
-    data_validation = new HSSFDataValidation((short)(start_row+2),(short)0,(short)(start_row+2),(short)0);
-    data_validation.setDataValidationType(HSSFDataValidation.DATA_TYPE_LIST);
-    data_validation.setFirstFormula("7+21");
-    data_validation.setSecondFormula(null);
-    data_validation.setSurppressDropDownArrow(true);
-    data_validation.createErrorBox("Invalid input !", "Something is wrong ; check condition !");
-    data_validation.createPromptBox("Hi , dear user !", "So , you just selected me ! Thanks !");
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "POIFS,HSSF,HWPF,HPSF", true, true, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type=STOP ; In-cell dropdown=no" );
-
-    data_validation = new HSSFDataValidation((short)(start_row+3),(short)0,(short)(start_row+3),(short)0);
-    data_validation.setDataValidationType(HSSFDataValidation.DATA_TYPE_LIST);
-    data_validation.setFirstFormula("8/2");
-    data_validation.setSecondFormula(null);
-    data_validation.setSurppressDropDownArrow(true);
-    data_validation.createErrorBox("Invalid input !", "Something is wrong ; check condition !");
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setShowPromptBox(false);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "POIFS,HSSF,HWPF,HPSF", false, false, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type=STOP ; In-cell dropdown=no" );
-
-    this.createDVTypeRow( wb, 1, style_3, "Reference lists - list items are taken from others cells");
-    this.createDVDeescriptionRow( wb, 1, style_3, "Advantage - no restriction regarding the sum of item's length");
-    this.createHeaderRow( wb, 1, style_4 );
-
-    start_row += (short)(4+5);
-    String cellStrValue = "a b c d e f g h i j k l m n o p r s t u v x y z w 0 1 2 3 4 "+
-                          "a b c d e f g h i j k l m n o p r s t u v x y z w 0 1 2 3 4 "+
-                          "a b c d e f g h i j k l m n o p r s t u v x y z w 0 1 2 3 4 "+
-                          "a b c d e f g h i j k l m n o p r s t u v x y z w 0 1 2 3 4 ";
-
-    String strFormula = "$A$100:$A$120";
-    data_validation = new HSSFDataValidation((short)(start_row),(short)0,(short)(start_row),(short)0);
-    data_validation.setDataValidationType(HSSFDataValidation.DATA_TYPE_LIST);
-    data_validation.setFirstFormula(strFormula);
-    data_validation.setSecondFormula(null);
-    data_validation.setSurppressDropDownArrow(false);
-    data_validation.createErrorBox("Invalid input !", "Something is wrong ; check condition !");
-    data_validation.createPromptBox("Hi , dear user !", "So , you just selected me ! Thanks !");
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, strFormula, true, true, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type=STOP ; In-cell dropdown=yes" );
-
-    data_validation = new HSSFDataValidation((short)(start_row+1),(short)0,(short)(start_row+1),(short)0);
-    data_validation.setDataValidationType(HSSFDataValidation.DATA_TYPE_LIST);
-    data_validation.setFirstFormula(strFormula);
-    data_validation.setSecondFormula(null);
-    data_validation.setSurppressDropDownArrow(false);
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setShowPromptBox(false);
-    data_validation.createErrorBox("Invalid input !", "Something is wrong ; check condition !");
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, strFormula, false, false, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type=STOP ; In-cell dropdown=yes" );
-
-    data_validation = new HSSFDataValidation((short)(start_row+2),(short)0,(short)(start_row+2),(short)0);
-    data_validation.setDataValidationType(HSSFDataValidation.DATA_TYPE_LIST);
-    data_validation.setFirstFormula(strFormula);
-    data_validation.setSecondFormula(null);
-    data_validation.setSurppressDropDownArrow(true);
-    data_validation.createErrorBox("Invalid input !", "Something is wrong ; check condition !");
-    data_validation.createPromptBox("Hi , dear user !", "So , you just selected me ! Thanks !");
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, strFormula, true, true, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type=STOP ; In-cell dropdown=no" );
-
-    data_validation = new HSSFDataValidation((short)(start_row+3),(short)0,(short)(start_row+3),(short)0);
-    data_validation.setDataValidationType(HSSFDataValidation.DATA_TYPE_LIST);
-    data_validation.setFirstFormula(strFormula);
-    data_validation.setSecondFormula(null);
-    data_validation.setSurppressDropDownArrow(true);
-    data_validation.createErrorBox("Invalid input !", "Something is wrong ; check condition !");
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setShowPromptBox(false);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, strFormula, false, false, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type=STOP ; In-cell dropdown=no" );
-
-    for (int i=100; i<=120; i++)
-    {
-       HSSFRow currRow = fSheet.createRow(i);
-       currRow.createCell((short)0).setCellValue(cellStrValue);
-//       currRow.hide( true );
-    }
-
-    System.out.println("done !");
-
-    //Date/Time Validation type
-    System.out.print("    Create sheet for 'Date' and 'Time' Data Validation types ... ");
-    fSheet = wb.createSheet("Date_Time");
-    SimpleDateFormat df = new SimpleDateFormat("m/d/yyyy");
-    HSSFDataFormat dataFormat = wb.createDataFormat();
-    short fmtDate = dataFormat.getFormat("m/d/yyyy");
-    short fmtTime = dataFormat.getFormat("h:mm");
-    HSSFCellStyle cellStyle_data = wb.createCellStyle();
-    cellStyle_data.setDataFormat(fmtDate);
-    HSSFCellStyle cellStyle_time = wb.createCellStyle();
-    cellStyle_time.setDataFormat(fmtTime);
-
-    this.createDVTypeRow( wb, 2, style_3, "Date ( cells are already formated as date - m/d/yyyy)");
-    this.createHeaderRow( wb, 2, style_4 );
-
-    start_row = (short)fSheet.getPhysicalNumberOfRows();
-    data_validation = new HSSFDataValidation((short)(start_row),(short)0,(short)(start_row),(short)0);
-    data_validation.setDataValidationType(HSSFDataValidation.DATA_TYPE_DATE);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_BETWEEN);
-
-    data_validation.setFirstFormula( String.valueOf((int)HSSFDateUtil.getExcelDate(df.parse("1/2/2004"))) );
-    data_validation.setSecondFormula( String.valueOf((int)HSSFDateUtil.getExcelDate(df.parse("1/6/2004"))) );
-
-    data_validation.createErrorBox("Invalid input !", "Something is wrong ; check condition !");
-    data_validation.createPromptBox("Hi , dear user !", "So , you just selected me ! Thanks !");
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Between 1/2/2004 and 1/6/2004 ", true, true, true );
-    this.setCellFormat( fSheet, cellStyle_data );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = STOP" );
-
-    data_validation.setFirstRow((short)(start_row+1));
-    data_validation.setLastRow((short)(start_row+1));
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_NOT_BETWEEN);
-    data_validation.setErrorStyle(HSSFDataValidation.ERROR_STYLE_INFO);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Not between 1/2/2004 and 1/6/2004 ", false, true, true );
-    this.setCellFormat( fSheet, cellStyle_data );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = INFO" );
-
-    data_validation.setFirstRow((short)(start_row+2));
-    data_validation.setLastRow((short)(start_row+2));
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setShowPromptBox(false);
-    data_validation.setFirstFormula(String.valueOf((int)HSSFDateUtil.getExcelDate(df.parse("3/2/2004"))));
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_EQUAL);
-    data_validation.setErrorStyle(HSSFDataValidation.ERROR_STYLE_WARNING);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Equal to 3/2/2004", false, false, true );
-    this.setCellFormat( fSheet, cellStyle_data );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = WARNING" );
-
-    data_validation.setFirstRow((short)(start_row+3));
-    data_validation.setLastRow((short)(start_row+3));
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setShowPromptBox(false);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula(String.valueOf((int)HSSFDateUtil.getExcelDate(df.parse("3/2/2004"))));
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_NOT_EQUAL);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Not equal to 3/2/2004", false, false, false );
-    this.setCellFormat( fSheet, cellStyle_data );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-
-    data_validation.setFirstRow((short)(start_row+4));
-    data_validation.setLastRow((short)(start_row+4));
-    data_validation.setEmptyCellAllowed(true);
-    data_validation.setShowPromptBox(false);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula(String.valueOf((int)HSSFDateUtil.getExcelDate(df.parse("3/2/2004"))));
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_GREATER_THAN);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Greater than 3/2/2004", true, false, false );
-    this.setCellFormat( fSheet, cellStyle_data );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-
-    data_validation.setFirstRow((short)(start_row+5));
-    data_validation.setLastRow((short)(start_row+5));
-    data_validation.setEmptyCellAllowed(true);
-    data_validation.setShowPromptBox(true);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula(String.valueOf((int)HSSFDateUtil.getExcelDate(df.parse("3/2/2004"))));
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_LESS_THAN);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Less than 3/2/2004", true, true, false );
-    this.setCellFormat( fSheet, cellStyle_data );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-
-    data_validation.setFirstRow((short)(start_row+6));
-    data_validation.setLastRow((short)(start_row+6));
-    data_validation.setEmptyCellAllowed(true);
-    data_validation.setShowPromptBox(false);
-    data_validation.setErrorStyle(HSSFDataValidation.ERROR_STYLE_STOP);
-    data_validation.setShowErrorBox(true);
-    data_validation.setFirstFormula(String.valueOf((int)HSSFDateUtil.getExcelDate(df.parse("3/2/2004"))));
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_GREATER_OR_EQUAL);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Greater than or equal to 3/2/2004", true, false, true );
-    this.setCellFormat( fSheet, cellStyle_data );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = STOP" );
-
-    data_validation.setFirstRow((short)(start_row+7));
-    data_validation.setLastRow((short)(start_row+7));
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setShowPromptBox(true);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula(String.valueOf((int)HSSFDateUtil.getExcelDate(df.parse("3/4/2004"))));
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_LESS_OR_EQUAL);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Less than or equal to 3/4/2004", false, true, false );
-    this.setCellFormat( fSheet, cellStyle_data );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-
-    //"Time" validation type
-    this.createDVTypeRow( wb, 2, style_3, "Time ( cells are already formated as time - h:mm)");
-    this.createHeaderRow( wb, 2, style_4 );
-
-    df = new SimpleDateFormat("hh:mm");
-
-    start_row += (short)(8+4);
-    data_validation = new HSSFDataValidation((short)(start_row),(short)0,(short)(start_row),(short)0);
-    data_validation.setDataValidationType(HSSFDataValidation.DATA_TYPE_TIME);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_BETWEEN);
-    data_validation.setFirstFormula(String.valueOf(HSSFDateUtil.getExcelDate(df.parse("12:00"))));
-    data_validation.setSecondFormula(String.valueOf(HSSFDateUtil.getExcelDate(df.parse("16:00"))));
-    data_validation.createErrorBox("Invalid input !", "Something is wrong ; check condition !");
-    data_validation.createPromptBox("Hi , dear user !", "So , you just selected me ! Thanks !");
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Between 12:00 and 16:00 ", true, true, true );
-    this.setCellFormat( fSheet, cellStyle_time );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = STOP" );
-
-    data_validation.setFirstRow((short)(start_row+1));
-    data_validation.setLastRow((short)(start_row+1));
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_NOT_BETWEEN);
-    data_validation.setErrorStyle(HSSFDataValidation.ERROR_STYLE_INFO);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Not between 12:00 and 16:00 ", false, true, true );
-    this.setCellFormat( fSheet, cellStyle_time );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = INFO" );
-
-    data_validation.setFirstRow((short)(start_row+2));
-    data_validation.setLastRow((short)(start_row+2));
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setShowPromptBox(false);
-    data_validation.setFirstFormula(String.valueOf((int)HSSFDateUtil.getExcelDate(df.parse("13:35"))));
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_EQUAL);
-    data_validation.setErrorStyle(HSSFDataValidation.ERROR_STYLE_WARNING);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Equal to 13:35", false, false, true );
-    this.setCellFormat( fSheet, cellStyle_time );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = WARNING" );
-
-    data_validation.setFirstRow((short)(start_row+3));
-    data_validation.setLastRow((short)(start_row+3));
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setShowPromptBox(false);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula(String.valueOf(HSSFDateUtil.getExcelDate(df.parse("13:35"))));
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_NOT_EQUAL);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Not equal to 13:35", false, false, false );
-    this.setCellFormat( fSheet, cellStyle_time );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-
-    data_validation.setFirstRow((short)(start_row+4));
-    data_validation.setLastRow((short)(start_row+4));
-    data_validation.setEmptyCellAllowed(true);
-    data_validation.setShowPromptBox(false);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula(String.valueOf(HSSFDateUtil.getExcelDate(df.parse("12:00"))));
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_GREATER_THAN);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Greater than 12:00", true, false, false );
-    this.setCellFormat( fSheet, cellStyle_time );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-
-    data_validation.setFirstRow((short)(start_row+5));
-    data_validation.setLastRow((short)(start_row+5));
-    data_validation.setEmptyCellAllowed(true);
-    data_validation.setShowPromptBox(true);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula(String.valueOf(HSSFDateUtil.getExcelDate(df.parse("12:00"))));
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_LESS_THAN);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Less than 12:00", true, true, false );
-    this.setCellFormat( fSheet, cellStyle_time );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-
-    data_validation.setFirstRow((short)(start_row+6));
-    data_validation.setLastRow((short)(start_row+6));
-    data_validation.setEmptyCellAllowed(true);
-    data_validation.setShowPromptBox(false);
-    data_validation.setErrorStyle(HSSFDataValidation.ERROR_STYLE_STOP);
-    data_validation.setShowErrorBox(true);
-    data_validation.setFirstFormula(String.valueOf(HSSFDateUtil.getExcelDate(df.parse("14:00"))));
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_GREATER_OR_EQUAL);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Greater than or equal to 14:00", true, false, true );
-    this.setCellFormat( fSheet, cellStyle_time );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = STOP" );
-
-    data_validation.setFirstRow((short)(start_row+7));
-    data_validation.setLastRow((short)(start_row+7));
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setShowPromptBox(true);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula(String.valueOf(HSSFDateUtil.getExcelDate(df.parse("14:00"))));
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_LESS_OR_EQUAL);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Less than or equal to 14:00", false, true, false );
-    this.setCellFormat( fSheet, cellStyle_time );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-
-    System.out.println("done !");
-
-    //"Text length" validation type
-    System.out.print("    Create sheet for 'Text length' Data Validation type... ");
-    fSheet = wb.createSheet("Text length");
-    this.createHeaderRow( wb, 3, style_4 );
-
-    data_validation = new HSSFDataValidation((short)1,(short)0,(short)1,(short)0);
-    data_validation.setDataValidationType(HSSFDataValidation.DATA_TYPE_TEXT_LENGTH);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_BETWEEN);
-    data_validation.setFirstFormula("2");
-    data_validation.setSecondFormula("6");
-    data_validation.createErrorBox("Invalid input !", "Something is wrong ; check condition !");
-    data_validation.createPromptBox("Hi , dear user !", "So , you just selected me ! Thanks !");
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Between 2 and 6 ", true, true, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = STOP" );
-
-    data_validation.setFirstRow((short)2);
-    data_validation.setLastRow((short)2);
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_NOT_BETWEEN);
-    data_validation.setErrorStyle(HSSFDataValidation.ERROR_STYLE_INFO);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Not between 2 and 6 ", false, true, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = INFO" );
-
-    data_validation.setFirstRow((short)3);
-    data_validation.setLastRow((short)3);
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setShowPromptBox(false);
-    data_validation.setFirstFormula("3");
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_EQUAL);
-    data_validation.setErrorStyle(HSSFDataValidation.ERROR_STYLE_WARNING);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Equal to 3", false, false, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = WARNING" );
-
-    data_validation.setFirstRow((short)4);
-    data_validation.setLastRow((short)4);
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setShowPromptBox(false);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula("3");
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_NOT_EQUAL);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Not equal to 3", false, false, false );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-
-    data_validation.setFirstRow((short)5);
-    data_validation.setLastRow((short)5);
-    data_validation.setEmptyCellAllowed(true);
-    data_validation.setShowPromptBox(false);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula("3");
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_GREATER_THAN);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Greater than 3", true, false, false );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-
-    data_validation.setFirstRow((short)6);
-    data_validation.setLastRow((short)6);
-    data_validation.setEmptyCellAllowed(true);
-    data_validation.setShowPromptBox(true);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula("3");
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_LESS_THAN);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Less than 3", true, true, false );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-
-    data_validation.setFirstRow((short)7);
-    data_validation.setLastRow((short)7);
-    data_validation.setEmptyCellAllowed(true);
-    data_validation.setShowPromptBox(false);
-    data_validation.setErrorStyle(HSSFDataValidation.ERROR_STYLE_STOP);
-    data_validation.setShowErrorBox(true);
-    data_validation.setFirstFormula("4");
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_GREATER_OR_EQUAL);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Greater than or equal to 4", true, false, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = STOP" );
-
-    data_validation.setFirstRow((short)8);
-    data_validation.setLastRow((short)8);
-    data_validation.setEmptyCellAllowed(false);
-    data_validation.setShowPromptBox(true);
-    data_validation.setShowErrorBox(false);
-    data_validation.setFirstFormula("4");
-    data_validation.setSecondFormula(null);
-    data_validation.setOperator(HSSFDataValidation.OPERATOR_LESS_OR_EQUAL);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "Less than or equal to 4", false, true, false );
-    this.writeOtherSettings( fSheet, style_1, "-" );
-    System.out.println("done !");
-
-    //Custom Validation type
-    System.out.print("    Create sheet for 'Custom' Data Validation type ... ");
-    fSheet = wb.createSheet("Custom");
-    this.createHeaderRow( wb, 4, style_4 );
-
-    data_validation = new HSSFDataValidation((short)1,(short)0,(short)1,(short)0);
-    data_validation.setDataValidationType(HSSFDataValidation.DATA_TYPE_FORMULA);
-    data_validation.setFirstFormula("ISNUMBER($A2)");
-    data_validation.setSecondFormula(null);
-    data_validation.setShowPromptBox(true);
-    data_validation.setShowErrorBox(true);
-    data_validation.createErrorBox("Invalid input !", "Something is wrong ; check condition !");
-    data_validation.createPromptBox("Hi , dear user !", "So , you just selected me ! Thanks !");
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "ISNUMBER(A2)", true, true, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = STOP" );
-
-    data_validation = new HSSFDataValidation((short)2,(short)0,(short)2,(short)0);
-    data_validation.setDataValidationType(HSSFDataValidation.DATA_TYPE_FORMULA);
-    data_validation.setFirstFormula("IF(SUM(A2:A3)=5,TRUE,FALSE)");
-    data_validation.setSecondFormula(null);
-    data_validation.setShowPromptBox(false);
-    data_validation.setShowErrorBox(true);
-    data_validation.setErrorStyle(HSSFDataValidation.ERROR_STYLE_WARNING);
-    data_validation.createErrorBox("Invalid input !", "Something is wrong ; check condition !");
-    data_validation.setEmptyCellAllowed(false);
-    fSheet.addValidationData(data_validation);
-    this.writeDataValidationSettings( fSheet, style_1, style_2, "IF(SUM(A2:A3)=5,TRUE,FALSE)", false, false, true );
-    this.writeOtherSettings( fSheet, style_1, "Error box type = WARNING" );
-
-    System.out.println("done !");
-
-    //so , everything it's ok for now ; it remains for you to open the file
-    System.out.println("\n    Everything it's ok since we've got so far -:) !\n"+
-                       "    In order to complete the test , it remains for you to open the file \n"+
-                       "    and see if there are four sheets , as described !");
-    System.out.println("        File was saved in \""+resultFile+"\"");
-
-    FileOutputStream fileOut = new FileOutputStream(resultFile);
-    wb.write(fileOut);
-    fileOut.close();
-  }
-
-  private void createDVTypeRow(  HSSFWorkbook wb, int sheetNo , HSSFCellStyle cellStyle, String strTypeDescription)
-  {
-    HSSFSheet sheet = wb.getSheetAt(sheetNo);
-    HSSFRow row = sheet.createRow(sheet.getPhysicalNumberOfRows());
-    row = sheet.createRow(sheet.getPhysicalNumberOfRows());
-    sheet.addMergedRegion(new Region((short)(sheet.getPhysicalNumberOfRows()-1),(short)0,(short)(sheet.getPhysicalNumberOfRows()-1),(short)5));
-    HSSFCell cell = row.createCell((short)0);
-    cell.setCellValue(strTypeDescription);
-    cell.setCellStyle(cellStyle);
-    row = sheet.createRow(sheet.getPhysicalNumberOfRows());
-  }
-
-  private void createDVDeescriptionRow(  HSSFWorkbook wb, int sheetNo , HSSFCellStyle cellStyle, String strTypeDescription )
-  {
-    HSSFSheet sheet = wb.getSheetAt(sheetNo);
-    HSSFRow row = sheet.getRow(sheet.getPhysicalNumberOfRows()-1);
-    sheet.addMergedRegion(new Region((short)(sheet.getPhysicalNumberOfRows()-1),(short)0,(short)(sheet.getPhysicalNumberOfRows()-1),(short)5));
-    HSSFCell cell = row.createCell((short)0);
-    cell.setCellValue(strTypeDescription);
-    cell.setCellStyle(cellStyle);
-    row = sheet.createRow(sheet.getPhysicalNumberOfRows());
-  }
-
-  private void createHeaderRow( HSSFWorkbook wb, int sheetNo , HSSFCellStyle cellStyle )
-  {
-      HSSFSheet sheet = wb.getSheetAt(sheetNo);
-      HSSFRow row = sheet.createRow(sheet.getPhysicalNumberOfRows());
-      row.setHeight((short)400);
-      for ( int i=0; i<6; i++ )
-      {
-         row.createCell((short)i).setCellStyle( cellStyle );
-         if ( i==2 || i==3 || i==4 )
-         {
-            sheet.setColumnWidth( (short) i, (short) 3500);
-         }
-         else if ( i== 5)
-         {
-            sheet.setColumnWidth( (short) i, (short) 10000);
-         }
-         else
-         {
-            sheet.setColumnWidth( (short) i, (short) 8000);
-         }
-      }
-      HSSFCell cell = row.getCell((short)0);
-      cell.setCellValue("Data validation cells");
-      cell = row.getCell((short)1);
-      cell.setCellValue("Condition");
-      cell = row.getCell((short)2);
-      cell.setCellValue("Allow blank");
-      cell = row.getCell((short)3);
-      cell.setCellValue("Prompt box");
-      cell = row.getCell((short)4);
-      cell.setCellValue("Error box");
-      cell = row.getCell((short)5);
-      cell.setCellValue("Other settings");
-  }
-
-  private HSSFCellStyle createHeaderStyle(HSSFWorkbook wb)
-  {
-    HSSFFont font = wb.createFont();
-    font.setColor( HSSFColor.WHITE.index );
-    font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-
-    HSSFCellStyle cellStyle = wb.createCellStyle();
-    cellStyle.setFillForegroundColor(HSSFColor.BLUE_GREY.index);
-    cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-    cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-    cellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
-    cellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-    cellStyle.setLeftBorderColor(HSSFColor.WHITE.index);
-    cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-    cellStyle.setTopBorderColor(HSSFColor.WHITE.index);
-    cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
-    cellStyle.setRightBorderColor(HSSFColor.WHITE.index);
-    cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-    cellStyle.setBottomBorderColor(HSSFColor.WHITE.index);
-    cellStyle.setFont(font);
-    return cellStyle;
-  }
-
-  private HSSFCellStyle createStyle( HSSFWorkbook wb, short h_align, short color, boolean bold )
-  {
-    HSSFFont font = wb.createFont();
-    if ( bold )
-    {
-      font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-    }
-
-    HSSFCellStyle cellStyle = wb.createCellStyle();
-    cellStyle.setFont(font);
-    cellStyle.setFillForegroundColor(color);
-    cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-    cellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
-    cellStyle.setAlignment(h_align);
-    cellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-    cellStyle.setLeftBorderColor(HSSFColor.BLACK.index);
-    cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-    cellStyle.setTopBorderColor(HSSFColor.BLACK.index);
-    cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
-    cellStyle.setRightBorderColor(HSSFColor.BLACK.index);
-    cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-    cellStyle.setBottomBorderColor(HSSFColor.BLACK.index);
-
-    return cellStyle;
-  }
-
-  private HSSFCellStyle createStyle( HSSFWorkbook wb, short h_align )
-  {
-     return this.createStyle(wb, h_align, HSSFColor.WHITE.index, false);
-  }
-
-  private void writeDataValidationSettings( HSSFSheet sheet, HSSFCellStyle style_1, HSSFCellStyle style_2, String strCondition, boolean allowEmpty, boolean inputBox, boolean errorBox  )
-  {
-    HSSFRow row = sheet.createRow( sheet.getPhysicalNumberOfRows() );
-    //condition's string
-    HSSFCell cell = row.createCell((short)1);
-    cell.setCellStyle(style_1);
-    cell.setCellValue(strCondition);
-    //allow empty cells
-    cell = row.createCell((short)2);
-    cell.setCellStyle(style_2);
-    cell.setCellValue( ((allowEmpty) ? "yes" : "no") );
-    //show input box
-    cell = row.createCell((short)3);
-    cell.setCellStyle(style_2);
-    cell.setCellValue( ((inputBox) ? "yes" : "no") );
-    //show error box
-    cell = row.createCell((short)4);
-    cell.setCellStyle(style_2);
-    cell.setCellValue( ((errorBox) ? "yes" : "no") );
-  }
-
-  private void setCellFormat( HSSFSheet sheet, HSSFCellStyle cell_style )
-  {
-    HSSFRow row = sheet.getRow( sheet.getPhysicalNumberOfRows() -1 );
-    HSSFCell cell = row.createCell((short)0);
-    cell.setCellStyle(cell_style);
-  }
-
-  private void writeOtherSettings( HSSFSheet sheet, HSSFCellStyle style, String strStettings )
-  {
-     HSSFRow row = sheet.getRow( sheet.getPhysicalNumberOfRows() -1 );
-     HSSFCell cell = row.createCell((short)5);
-     cell.setCellStyle(style);
-     cell.setCellValue(strStettings);
-  }
-
-  public static void main(String[] args)
-  {
-    junit.textui.TestRunner.run(TestDataValidation.class);
-  }
+  
+	public void testAddToExistingSheet() {
+
+		// dvEmpty.xls is a simple one sheet workbook.  With a DataValidations header record but no 
+		// DataValidations.  It's important that the example has one SHEETPROTECTION record.
+		// Such a workbook can be created in Excel (2007) by adding datavalidation for one cell
+		// and then deleting the row that contains the cell.
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("dvEmpty.xls");  
+		int dvRow = 0;
+		HSSFSheet sheet = wb.getSheetAt(0);
+		DVConstraint dc = DVConstraint.createNumericConstraint(VT.INTEGER, OP.EQUAL, "42", null);
+		HSSFDataValidation dv = new HSSFDataValidation(new CellRangeAddressList(dvRow, dvRow, 0, 0), dc);
+		
+		dv.setEmptyCellAllowed(false);
+		dv.setErrorStyle(ES.STOP);
+		dv.setShowPromptBox(true);
+		dv.createErrorBox("Xxx", "Yyy");
+		dv.setSuppressDropDownArrow(true);
+
+		sheet.addValidationData(dv);
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			wb.write(baos);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		
+		byte[] wbData = baos.toByteArray();
+		
+		if (false) { // TODO (Jul 2008) fix EventRecordFactory to process unknown records, (and DV records for that matter)
+			EventRecordFactory erf = new EventRecordFactory();
+			ERFListener erfListener = null; // new MyERFListener();
+			erf.registerListener(erfListener, null);
+			try {
+				POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
+				erf.processRecords(fs.createDocumentInputStream("Workbook"));
+			} catch (RecordFormatException e) {
+				throw new RuntimeException(e);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		// else verify record ordering by navigating the raw bytes
+		
+		byte[] dvHeaderRecStart= { (byte)0xB2, 0x01, 0x12, 0x00, };
+		int dvHeaderOffset = findIndex(wbData, dvHeaderRecStart);
+		assertTrue(dvHeaderOffset > 0);
+		int nextRecIndex = dvHeaderOffset + 22;
+		int nextSid 
+			= ((wbData[nextRecIndex + 0] << 0) & 0x00FF) 
+			+ ((wbData[nextRecIndex + 1] << 8) & 0xFF00)
+			;
+		// nextSid should be for a DVRecord.  If anything comes between the DV header record 
+		// and the DV records, Excel will not be able to open the workbook without error.
+		
+		if (nextSid == 0x0867) {
+			throw new AssertionFailedError("Identified bug 45519");
+		}
+		assertEquals(DVRecord.sid, nextSid);
+	}
+	private int findIndex(byte[] largeData, byte[] searchPattern) {
+		byte firstByte = searchPattern[0];
+		for (int i = 0; i < largeData.length; i++) {
+			if(largeData[i] != firstByte) {
+				continue;
+			}
+			boolean match = true;
+			for (int j = 1; j < searchPattern.length; j++) {
+				if(searchPattern[j] != largeData[i+j]) {
+					match = false;
+					break;
+				}
+			}
+			if (match) {
+				return i;
+			}
+		}
+		return -1;
+	}
 }

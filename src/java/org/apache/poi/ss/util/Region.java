@@ -15,10 +15,8 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.ss.util;
 
-import org.apache.poi.hssf.record.MergeCellsRecord.MergedRegion;
 
 /**
  * Represents a from/to row/col square.  This is a object primitive
@@ -26,11 +24,9 @@ import org.apache.poi.hssf.record.MergeCellsRecord.MergedRegion;
  * to represent a string of characters.  Its really only useful for HSSF though.
  *
  * @author  Andrew C. Oliver acoliver at apache dot org
+ * @deprecated (Aug-2008) use {@link CellRangeAddress}
  */
-
-public class Region
-    implements Comparable
-{
+public class Region implements Comparable {
     private int   rowFrom;
     private short colFrom;
     private int   rowTo;
@@ -52,16 +48,6 @@ public class Region
         this.colTo   = colTo;
     }
 
-    /**
-     * special constructor (I know this is bad but it is so wrong that its right
-     * okay) that makes a region from a mergedcells's region subrecord.
-     */
-
-    public Region(MergedRegion region)
-    {
-        this(region.row_from, region.col_from, region.row_to, region.col_to);
-    }
-
     public Region(String ref) {
     	CellReference cellReferenceFrom = new CellReference(ref.substring(0, ref.indexOf(":")));
     	CellReference cellReferenceTo = new CellReference(ref.substring(ref.indexOf(":") + 1));
@@ -71,7 +57,8 @@ public class Region
     	this.colTo = (short) cellReferenceTo.getCol();
 	}
 
-	/**
+
+    /**
      * get the upper left hand corner column number
      *
      * @return column number for the upper left hand corner
@@ -159,6 +146,7 @@ public class Region
         this.rowTo = rowTo;
     }
 
+
     /**
      * Answers: "is the row/column inside this range?"
      *
@@ -218,16 +206,51 @@ public class Region
         return compareTo(( Region ) o);
     }
 
-    /**
-     * @return the area contained by this region (number of cells)
-     */
+	/**
+	 * Convert a List of CellRange objects to an array of regions 
+	 *  
+	 * @param List of CellRange objects
+	 * @return regions
+	 */
+	public static Region[] convertCellRangesToRegions(CellRangeAddress[] cellRanges) {
+		int size = cellRanges.length;
+		if(size < 1) {
+			return new Region[0];
+		}
+		
+		Region[] result = new Region[size];
 
-    public int getArea()
-    {
-        return ((1 + (getRowTo() - getRowFrom()))
-                * (1 + (getColumnTo() - getColumnFrom())));
-    }
-    
+		for (int i = 0; i != size; i++) {
+			result[i] = convertToRegion(cellRanges[i]);
+		}
+		return result;
+	}
+
+
+		
+	private static Region convertToRegion(CellRangeAddress cr) {
+		
+		return new Region(cr.getFirstRow(), (short)cr.getFirstColumn(), cr.getLastRow(), (short)cr.getLastColumn());
+	}
+
+	public static CellRangeAddress[] convertRegionsToCellRanges(Region[] regions) {
+		int size = regions.length;
+		if(size < 1) {
+			return new CellRangeAddress[0];
+		}
+		
+		CellRangeAddress[] result = new CellRangeAddress[size];
+
+		for (int i = 0; i != size; i++) {
+			result[i] = convertToCellRangeAddress(regions[i]);
+		}
+		return result;
+	}
+
+	public static CellRangeAddress convertToCellRangeAddress(Region r) {
+		return new CellRangeAddress(r.getRowFrom(), r.getRowTo(), r.getColumnFrom(), r.getColumnTo());
+	}
+
     /**
      * @return the string reference for this region
      */

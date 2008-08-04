@@ -56,7 +56,7 @@ public class CString extends RecordAtom {
 	 * Grabs the count, from the first two bytes of the header.
 	 * The meaning of the count is specific to the type of the parent record 
 	 */
-	public int getCount() {
+	public int getOptions() {
 		return (int)LittleEndian.getShort(_header);
 	}
 	
@@ -64,7 +64,7 @@ public class CString extends RecordAtom {
 	 * Sets the count
 	 * The meaning of the count is specific to the type of the parent record 
 	 */
-	public void setCount(int count) {
+	public void setOptions(int count) {
 		LittleEndian.putShort(_header, (short)count);
 	}
 

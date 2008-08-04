@@ -39,7 +39,7 @@ import org.apache.poi.hssf.model.Workbook;
  * @author Alex Jacoby (ajacoby at gmail.com)
  * @version %I%, %G%
  */
-public class TestHSSFDateUtil extends TestCase {
+public final class TestHSSFDateUtil extends TestCase {
 
     public static final int CALENDAR_JANUARY = 0;
     public static final int CALENDAR_FEBRUARY = 1;
@@ -47,11 +47,6 @@ public class TestHSSFDateUtil extends TestCase {
     public static final int CALENDAR_APRIL = 3;
     public static final int CALENDAR_JULY = 6;
     public static final int CALENDAR_OCTOBER = 9;
-    
-    public TestHSSFDateUtil(String s)
-    {
-        super(s);
-    }
 
     /**
      * Checks the date conversion functions in the HSSFDateUtil class.
@@ -193,14 +188,13 @@ public class TestHSSFDateUtil extends TestCase {
     }
     
     /**
-     * Tests that we deal with timezones properly
+     * Tests that we deal with time-zones properly
      */
     public void testCalendarConversion() {
         GregorianCalendar date = new GregorianCalendar(2002, 0, 1, 12, 1, 1);
         Date expected = date.getTime();
-        double expectedExcel = HSSFDateUtil.getExcelDate(expected);
 
-        // Iteratating over the hours exposes any rounding issues.
+        // Iterating over the hours exposes any rounding issues.
         for (int hour = -12; hour <= 12; hour++)
         {
             String id = "GMT" + (hour < 0 ? "" : "+") + hour + ":00";
@@ -209,7 +203,7 @@ public class TestHSSFDateUtil extends TestCase {
             double excelDate = HSSFDateUtil.getExcelDate(date, false);
             Date javaDate = HSSFDateUtil.getJavaDate(excelDate);
 
-            // Should match despite timezone
+            // Should match despite time-zone
             assertEquals("Checking timezone " + id, expected.getTime(), javaDate.getTime());
         }
     }
@@ -402,7 +396,11 @@ public class TestHSSFDateUtil extends TestCase {
         assertEquals(34519.0, HSSFDateUtil.getExcelDate(createDate(1998, CALENDAR_JULY, 5), true), 0.00001);
     }
     
-    private Date createDate(int year, int month, int day) {
+    /**
+     * @param month zero based 
+     * @param day one based
+     */
+    private static Date createDate(int year, int month, int day) {
         Calendar c = new GregorianCalendar();
         c.set(year, month, day, 0, 0, 0);
         c.set(Calendar.MILLISECOND, 0);
@@ -420,10 +418,18 @@ public class TestHSSFDateUtil extends TestCase {
         calendar = new GregorianCalendar(1901, 0, 1);
         assertEquals("Checking absolute day (1 Jan 1901)", 366, HSSFDateUtil.absoluteDay(calendar, false));
     }
+
+    public void testConvertTime() {
+    	
+        final double delta = 1E-7; // a couple of digits more accuracy than strictly required
+        assertEquals(0.5, HSSFDateUtil.convertTime("12:00"), delta);
+        assertEquals(2.0/3, HSSFDateUtil.convertTime("16:00"), delta);
+        assertEquals(0.0000116, HSSFDateUtil.convertTime("0:00:01"), delta);
+        assertEquals(0.7330440, HSSFDateUtil.convertTime("17:35:35"), delta);
+    }
     
-    public static void main(String [] args) {
-        System.out
-                .println("Testing org.apache.poi.hssf.usermodel.TestHSSFDateUtil");
-        junit.textui.TestRunner.run(TestHSSFDateUtil.class);
+    public void testParseDate() {
+        assertEquals(createDate(2008, Calendar.AUGUST, 3), HSSFDateUtil.parseYYYYMMDDDate("2008/08/03"));
+        assertEquals(createDate(1994, Calendar.MAY, 1), HSSFDateUtil.parseYYYYMMDDDate("1994/05/01"));
     }
 }

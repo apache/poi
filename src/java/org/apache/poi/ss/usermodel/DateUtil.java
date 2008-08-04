@@ -16,17 +16,12 @@
 ==================================================================== */
 
 
-
-/*
- * DateUtil.java
- *
- * Created on January 19, 2002, 9:30 AM
- */
 package org.apache.poi.ss.usermodel;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.regex.Pattern;
 
 /**
  * Contains methods for dealing with Excel dates.
@@ -38,17 +33,20 @@ import java.util.GregorianCalendar;
  * @author  Alex Jacoby (ajacoby at gmail.com)
  * @author  Pavel Krupets (pkrupets at palmtreebusiness dot com)
  */
-
-public class DateUtil
-{
-    protected DateUtil()
-    {
+public class DateUtil {
+    protected DateUtil() {
+        // no instances of this class
     }
+    private static final int SECONDS_PER_MINUTE = 60;
+    private static final int MINUTES_PER_HOUR = 60;
+    private static final int HOURS_PER_DAY = 24;
+    private static final int SECONDS_PER_DAY = (HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE);
 
-    private static final int    BAD_DATE         =
-        -1;   // used to specify that date is invalid
-    private static final long   DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
-    
+    private static final int    BAD_DATE         = -1;   // used to specify that date is invalid
+    private static final long   DAY_MILLISECONDS = SECONDS_PER_DAY * 1000L;
+
+    private static final Pattern TIME_SEPARATOR_PATTERN = Pattern.compile(":");
+
     /**
      * Given a Date, converts it into a double representing its internal Excel representation,
      *   which is the number of days since 1/1/1900. Fractional days represent hours, minutes, and seconds.
@@ -57,7 +55,7 @@ public class DateUtil
      * @param  date the Date
      */
     public static double getExcelDate(Date date) {
-    	return getExcelDate(date, false);
+        return getExcelDate(date, false);
     }
     /**
      * Given a Date, converts it into a double representing its internal Excel representation,
@@ -74,8 +72,8 @@ public class DateUtil
     }
     /**
      * Given a Date in the form of a Calendar, converts it into a double
-     *  representing its internal Excel representation, which is the 
-     *  number of days since 1/1/1900. Fractional days represent hours, 
+     *  representing its internal Excel representation, which is the
+     *  number of days since 1/1/1900. Fractional days represent hours,
      *  minutes, and seconds.
      *
      * @return Excel representation of Date (-1 if error - test for error by checking for less than 0.1)
@@ -83,41 +81,40 @@ public class DateUtil
      * @param use1904windowing Should 1900 or 1904 date windowing be used?
      */
     public static double getExcelDate(Calendar date, boolean use1904windowing) {
-    	// Don't alter the supplied Calendar as we do our work
-    	return internalGetExcelDate( (Calendar)date.clone(), use1904windowing );
+        // Don't alter the supplied Calendar as we do our work
+        return internalGetExcelDate( (Calendar)date.clone(), use1904windowing );
     }
     private static double internalGetExcelDate(Calendar date, boolean use1904windowing) {
-        if ((!use1904windowing && date.get(Calendar.YEAR) < 1900) || 
-            (use1904windowing && date.get(Calendar.YEAR) < 1904)) 
+        if ((!use1904windowing && date.get(Calendar.YEAR) < 1900) ||
+            (use1904windowing && date.get(Calendar.YEAR) < 1904))
         {
             return BAD_DATE;
-        } else {
-	    // Because of daylight time saving we cannot use
-	    //     date.getTime() - calStart.getTimeInMillis()
-	    // as the difference in milliseconds between 00:00 and 04:00
-	    // can be 3, 4 or 5 hours but Excel expects it to always
-	    // be 4 hours.
-	    // E.g. 2004-03-28 04:00 CEST - 2004-03-28 00:00 CET is 3 hours
-	    // and 2004-10-31 04:00 CET - 2004-10-31 00:00 CEST is 5 hours
-            double fraction = (((date.get(Calendar.HOUR_OF_DAY) * 60
-                                 + date.get(Calendar.MINUTE)
-                                ) * 60 + date.get(Calendar.SECOND)
-                               ) * 1000 + date.get(Calendar.MILLISECOND)
-                              ) / ( double ) DAY_MILLISECONDS;
-            Calendar calStart = dayStart(date);
-            
-            double value = fraction + absoluteDay(calStart, use1904windowing);
-            
-            if (!use1904windowing && value >= 60) {
-                value++;
-            } else if (use1904windowing) {
-                value--;
-            }
-            
-            return value;
         }
+        // Because of daylight time saving we cannot use
+        //     date.getTime() - calStart.getTimeInMillis()
+        // as the difference in milliseconds between 00:00 and 04:00
+        // can be 3, 4 or 5 hours but Excel expects it to always
+        // be 4 hours.
+        // E.g. 2004-03-28 04:00 CEST - 2004-03-28 00:00 CET is 3 hours
+        // and 2004-10-31 04:00 CET - 2004-10-31 00:00 CEST is 5 hours
+        double fraction = (((date.get(Calendar.HOUR_OF_DAY) * 60
+                             + date.get(Calendar.MINUTE)
+                            ) * 60 + date.get(Calendar.SECOND)
+                           ) * 1000 + date.get(Calendar.MILLISECOND)
+                          ) / ( double ) DAY_MILLISECONDS;
+        Calendar calStart = dayStart(date);
+
+        double value = fraction + absoluteDay(calStart, use1904windowing);
+
+        if (!use1904windowing && value >= 60) {
+            value++;
+        } else if (use1904windowing) {
+            value--;
+        }
+
+        return value;
     }
-    
+
     /**
      *  Given an Excel date with using 1900 date windowing, and
      *   converts it to a java.util.Date.
@@ -130,13 +127,13 @@ public class DateUtil
      *  <code>Europe/Copenhagen</code>, on 2004-03-28 the minute after
      *  01:59 CET is 03:00 CEST, if the excel date represents a time between
      *  02:00 and 03:00 then it is converted to past 03:00 summer time
-     *  
+     *
      *  @param date  The Excel date.
      *  @return Java representation of the date, or null if date is not a valid Excel date
      *  @see java.util.TimeZone
      */
     public static Date getJavaDate(double date) {
-    	return getJavaDate(date, false);
+        return getJavaDate(date, false);
     }
     /**
      *  Given an Excel date with either 1900 or 1904 date windowing,
@@ -158,95 +155,90 @@ public class DateUtil
      *  @see java.util.TimeZone
      */
     public static Date getJavaDate(double date, boolean use1904windowing) {
-        if (isValidExcelDate(date)) {
-            int startYear = 1900;
-            int dayAdjust = -1; // Excel thinks 2/29/1900 is a valid date, which it isn't
-            int wholeDays = (int)Math.floor(date);
-            if (use1904windowing) {
-                startYear = 1904;
-                dayAdjust = 1; // 1904 date windowing uses 1/2/1904 as the first day
-            }
-            else if (wholeDays < 61) {
-                // Date is prior to 3/1/1900, so adjust because Excel thinks 2/29/1900 exists
-                // If Excel date == 2/29/1900, will become 3/1/1900 in Java representation
-                dayAdjust = 0;
-            }
-            GregorianCalendar calendar = new GregorianCalendar(startYear,0,
-                                                     wholeDays + dayAdjust);
-            int millisecondsInDay = (int)((date - Math.floor(date)) * 
-                                          DAY_MILLISECONDS + 0.5);
-            calendar.set(GregorianCalendar.MILLISECOND, millisecondsInDay);
-            return calendar.getTime();
-        }
-        else {
+        if (!isValidExcelDate(date)) {
             return null;
         }
+        int startYear = 1900;
+        int dayAdjust = -1; // Excel thinks 2/29/1900 is a valid date, which it isn't
+        int wholeDays = (int)Math.floor(date);
+        if (use1904windowing) {
+            startYear = 1904;
+            dayAdjust = 1; // 1904 date windowing uses 1/2/1904 as the first day
+        }
+        else if (wholeDays < 61) {
+            // Date is prior to 3/1/1900, so adjust because Excel thinks 2/29/1900 exists
+            // If Excel date == 2/29/1900, will become 3/1/1900 in Java representation
+            dayAdjust = 0;
+        }
+        GregorianCalendar calendar = new GregorianCalendar(startYear,0,
+                                                 wholeDays + dayAdjust);
+        int millisecondsInDay = (int)((date - Math.floor(date)) *
+                                      DAY_MILLISECONDS + 0.5);
+        calendar.set(GregorianCalendar.MILLISECOND, millisecondsInDay);
+        return calendar.getTime();
     }
-    
+
     /**
      * Given a format ID and its format String, will check to see if the
      *  format represents a date format or not.
      * Firstly, it will check to see if the format ID corresponds to an
-     *  internal excel date format (eg most US date formats) 
+     *  internal excel date format (eg most US date formats)
      * If not, it will check to see if the format string only contains
      *  date formatting characters (ymd-/), which covers most
      *  non US date formats.
-     *  
+     *
      * @param formatIndex The index of the format, eg from ExtendedFormatRecord.getFormatIndex
      * @param formatString The format string, eg from FormatRecord.getFormatString
      * @see #isInternalDateFormat(int)
      */
     public static boolean isADateFormat(int formatIndex, String formatString) {
-    	// First up, is this an internal date format?
-    	if(isInternalDateFormat(formatIndex)) {
-    		return true;
-    	}
-    	
-    	// If we didn't get a real string, it can't be
-    	if(formatString == null || formatString.length() == 0) {
-    		return false;
-    	}
-    	
-    	String fs = formatString;
-    	
-    	// Translate \- into just -, before matching
-    	fs = fs.replaceAll("\\\\-","-");
-    	// And \, into ,
-    	fs = fs.replaceAll("\\\\,",",");
-    	// And '\ ' into ' '
-    	fs = fs.replaceAll("\\\\ "," ");
-    	
-    	// If it end in ;@, that's some crazy dd/mm vs mm/dd
-    	//  switching stuff, which we can ignore
-    	fs = fs.replaceAll(";@", "");
-    	
-    	// If it starts with [$-...], then could be a date, but
-    	//  who knows what that starting bit is all about
-    	fs = fs.replaceAll("^\\[\\$\\-.*?\\]", "");
-    	
-    	// If it starts with something like [Black] or [Yellow],
-    	//  then it could be a date
-    	fs = fs.replaceAll("^\\[[a-zA-Z]+\\]", "");
-    	
-    	// Otherwise, check it's only made up, in any case, of:
-    	//  y m d h s - / , . :
-    	// optionally followed by AM/PM
-    	// optionally followed by AM/PM
-    	if(fs.matches("^[yYmMdDhHsS\\-/,. :]+[ampAMP/]*$")) {
-    		return true;
-    	}
-    	
-    	return false;
+        // First up, is this an internal date format?
+        if(isInternalDateFormat(formatIndex)) {
+            return true;
+        }
+
+        // If we didn't get a real string, it can't be
+        if(formatString == null || formatString.length() == 0) {
+            return false;
+        }
+
+        String fs = formatString;
+
+        // Translate \- into just -, before matching
+        fs = fs.replaceAll("\\\\-","-");
+        // And \, into ,
+        fs = fs.replaceAll("\\\\,",",");
+        // And '\ ' into ' '
+        fs = fs.replaceAll("\\\\ "," ");
+
+        // If it end in ;@, that's some crazy dd/mm vs mm/dd
+        //  switching stuff, which we can ignore
+        fs = fs.replaceAll(";@", "");
+
+        // If it starts with [$-...], then could be a date, but
+        //  who knows what that starting bit is all about
+        fs = fs.replaceAll("^\\[\\$\\-.*?\\]", "");
+
+        // If it starts with something like [Black] or [Yellow],
+        //  then it could be a date
+        fs = fs.replaceAll("^\\[[a-zA-Z]+\\]", "");
+
+        // Otherwise, check it's only made up, in any case, of:
+        //  y m d h s - / , . :
+        // optionally followed by AM/PM
+        if(fs.matches("^[yYmMdDhHsS\\-/,. :]+[ampAMP/]*$")) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
      * Given a format ID this will check whether the format represents
      *  an internal excel date format or not.
-     * @see #isADateFormat(int, java.lang.String)  
+     * @see #isADateFormat(int, java.lang.String)
      */
     public static boolean isInternalDateFormat(int format) {
-      boolean retval =false;
-
             switch(format) {
                 // Internal Date Formats as described on page 427 in
                 // Microsoft Excel Dev's Kit...
@@ -262,32 +254,25 @@ public class DateUtil
                 case 0x2d:
                 case 0x2e:
                 case 0x2f:
-                    retval = true;
-                    break;
-                    
-                default:
-                    retval = false;
-                    break;
+                    return true;
             }
-       return retval;
+       return false;
     }
 
     /**
      *  Check if a cell contains a date
-     *  Since dates are stored internally in Excel as double values 
-     *  we infer it is a date if it is formatted as such. 
+     *  Since dates are stored internally in Excel as double values
+     *  we infer it is a date if it is formatted as such.
      *  @see #isADateFormat(int, String)
      *  @see #isInternalDateFormat(int)
      */
     public static boolean isCellDateFormatted(Cell cell) {
         if (cell == null) return false;
         boolean bDate = false;
-        
+
         double d = cell.getNumericCellValue();
         if ( DateUtil.isValidExcelDate(d) ) {
             CellStyle style = cell.getCellStyle();
-            if(style == null) return false;
-            
             int i = style.getDataFormat();
             String f = style.getDataFormatString();
             bDate = isADateFormat(i, f);
@@ -305,7 +290,7 @@ public class DateUtil
     public static boolean isCellInternalDateFormatted(Cell cell) {
         if (cell == null) return false;
         boolean bDate = false;
-        
+
         double d = cell.getNumericCellValue();
         if ( DateUtil.isValidExcelDate(d) ) {
             CellStyle style = cell.getCellStyle();
@@ -335,7 +320,6 @@ public class DateUtil
      * @param  cal the Calendar
      * @exception IllegalArgumentException if date is invalid
      */
-
     protected static int absoluteDay(Calendar cal, boolean use1904windowing)
     {
         return cal.get(Calendar.DAY_OF_YEAR)
@@ -347,7 +331,7 @@ public class DateUtil
      *
      * @return    days  number of days in years prior to yr.
      * @param     yr    a year (1900 < yr < 4000)
-     * @param use1904windowing 
+     * @param use1904windowing
      * @exception IllegalArgumentException if year is outside of range.
      */
 
@@ -356,16 +340,16 @@ public class DateUtil
         if ((!use1904windowing && yr < 1900) || (use1904windowing && yr < 1900)) {
             throw new IllegalArgumentException("'year' must be 1900 or greater");
         }
-        
+
         int yr1  = yr - 1;
         int leapDays =   yr1 / 4   // plus julian leap days in prior years
                        - yr1 / 100 // minus prior century years
-                       + yr1 / 400 // plus years divisible by 400 
+                       + yr1 / 400 // plus years divisible by 400
                        - 460;      // leap days in previous 1900 years
-        
+
         return 365 * (yr - (use1904windowing ? 1904 : 1900)) + leapDays;
     }
-    
+
     // set HH:MM:SS fields of cal to 00:00:00:000
     private static Calendar dayStart(final Calendar cal)
     {
@@ -380,5 +364,95 @@ public class DateUtil
         return cal;
     }
 
-    // ---------------------------------------------------------------------------------------------------------
+
+    private static final class FormatException extends Exception {
+        public FormatException(String msg) {
+            super(msg);
+        }
+    }
+
+    /**
+     * Converts a string of format "HH:MM" or "HH:MM:SS" to its (Excel) numeric equivalent
+     *
+     * @return a double between 0 and 1 representing the fraction of the day
+     */
+    public static double convertTime(String timeStr) {
+        try {
+            return convertTimeInternal(timeStr);
+        } catch (FormatException e) {
+            String msg = "Bad time format '" + timeStr
+                + "' expected 'HH:MM' or 'HH:MM:SS' - " + e.getMessage();
+            throw new IllegalArgumentException(msg);
+        }
+    }
+    private static double convertTimeInternal(String timeStr) throws FormatException {
+        int len = timeStr.length();
+        if (len < 4 || len > 8) {
+            throw new FormatException("Bad length");
+        }
+        String[] parts = TIME_SEPARATOR_PATTERN.split(timeStr);
+
+        String secStr;
+        switch (parts.length) {
+            case 2: secStr = "00"; break;
+            case 3: secStr = parts[2]; break;
+            default:
+                throw new FormatException("Expected 2 or 3 fields but got (" + parts.length + ")");
+        }
+        String hourStr = parts[0];
+        String minStr = parts[1];
+        int hours = parseInt(hourStr, "hour", HOURS_PER_DAY);
+        int minutes = parseInt(minStr, "minute", MINUTES_PER_HOUR);
+        int seconds = parseInt(secStr, "second", SECONDS_PER_MINUTE);
+
+        double totalSeconds = seconds + (minutes + (hours) * 60) * 60;
+        return totalSeconds / (SECONDS_PER_DAY);
+    }
+    /**
+     * Converts a string of format "YYYY/MM/DD" to its (Excel) numeric equivalent
+     *
+     * @return a double representing the (integer) number of days since the start of the Excel epoch
+     */
+    public static Date parseYYYYMMDDDate(String dateStr) {
+        try {
+            return parseYYYYMMDDDateInternal(dateStr);
+        } catch (FormatException e) {
+            String msg = "Bad time format " + dateStr
+                + " expected 'YYYY/MM/DD' - " + e.getMessage();
+            throw new IllegalArgumentException(msg);
+        }
+    }
+    private static Date parseYYYYMMDDDateInternal(String timeStr) throws FormatException {
+        if(timeStr.length() != 10) {
+            throw new FormatException("Bad length");
+        }
+
+        String yearStr = timeStr.substring(0, 4);
+        String monthStr = timeStr.substring(5, 7);
+        String dayStr = timeStr.substring(8, 10);
+        int year = parseInt(yearStr, "year", Short.MIN_VALUE, Short.MAX_VALUE);
+        int month = parseInt(monthStr, "month", 1, 12);
+        int day = parseInt(dayStr, "day", 1, 31);
+
+        Calendar cal = new GregorianCalendar(year, month-1, day, 0, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
+    }
+    private static int parseInt(String strVal, String fieldName, int rangeMax) throws FormatException {
+        return parseInt(strVal, fieldName, 0, rangeMax-1);
+    }
+
+    private static int parseInt(String strVal, String fieldName, int lowerLimit, int upperLimit) throws FormatException {
+        int result;
+        try {
+            result = Integer.parseInt(strVal);
+        } catch (NumberFormatException e) {
+            throw new FormatException("Bad int format '" + strVal + "' for " + fieldName + " field");
+        }
+        if (result < lowerLimit || result > upperLimit) {
+            throw new FormatException(fieldName + " value (" + result
+                    + ") is outside the allowable range(0.." + upperLimit + ")");
+        }
+        return result;
+    }
 }

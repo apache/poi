@@ -28,6 +28,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.util.Region;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.Workbook;
@@ -302,15 +303,14 @@ public final class TestBugs extends TestCase {
 
     /**
      * Merged regions were being removed from the parent in cloned sheets
-     * @throws Exception
      */
     public void test22720() {
        HSSFWorkbook workBook = new HSSFWorkbook();
        workBook.createSheet("TEST");
        HSSFSheet template = workBook.getSheetAt(0);
 
-       template.addMergedRegion(new Region(0, (short)0, 1, (short)2));
-       template.addMergedRegion(new Region(1, (short)0, 2, (short)2));
+       template.addMergedRegion(new CellRangeAddress(0, 1, 0, 2));
+       template.addMergedRegion(new CellRangeAddress(1, 2, 0, 2));
 
        HSSFSheet clone = workBook.cloneSheet(0);
        int originalMerged = template.getNumMergedRegions();
@@ -318,20 +318,20 @@ public final class TestBugs extends TestCase {
 
 //        remove merged regions from clone
        for (int i=template.getNumMergedRegions()-1; i>=0; i--) {
-         clone.removeMergedRegion(i);
+           clone.removeMergedRegion(i);
        }
 
       assertEquals("Original Sheet's Merged Regions were removed", originalMerged, template.getNumMergedRegions());
 //        check if template's merged regions are OK
        if (template.getNumMergedRegions()>0) {
-          // fetch the first merged region...EXCEPTION OCCURS HERE
-          template.getMergedRegionAt(0);
+            // fetch the first merged region...EXCEPTION OCCURS HERE
+            template.getMergedRegion(0);
        }
        //make sure we dont exception
 
     }
 
-    /*Tests read and write of Unicode strings in formula results
+    /**Tests read and write of Unicode strings in formula results
      * bug and testcase submitted by Sompop Kumnoonsate
      * The file contains THAI unicode characters.
      */

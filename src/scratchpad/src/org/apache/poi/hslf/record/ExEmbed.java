@@ -74,8 +74,8 @@ public class ExEmbed extends RecordContainer {
         CString cs1 = new CString();
         CString cs2 = new CString();
         CString cs3 = new CString();
-//        cs1.setCount(0x00);
-//        cs2.setCount(0x10);
+//        cs1.setOptions(0x00);
+//        cs2.setOptions(0x10);
         _children[0] = new ExEmbedAtom();
         _children[1] = new ExOleObjAtom();
         _children[2] = cs1;

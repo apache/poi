@@ -18,8 +18,6 @@
 
 package org.apache.poi.hssf.util;
 
-import org.apache.poi.hssf.record.MergeCellsRecord.MergedRegion;
-
 /**
  * Represents a from/to row/col square.  This is a object primitive
  * that can be used to represent row,col - row,col just as one would use String
@@ -41,16 +39,6 @@ public class Region extends org.apache.poi.ss.util.Region
     public Region(int rowFrom, short colFrom, int rowTo, short colTo)
     {
 		super(rowFrom, colFrom, rowTo, colTo);
-    }
-
-    /**
-     * special constructor (I know this is bad but it is so wrong that its right
-     * okay) that makes a region from a mergedcells's region subrecord.
-     */
-
-    public Region(MergedRegion region)
-    {
-        super(region);
     }
 
     public Region(String ref) {
