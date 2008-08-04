@@ -33,8 +33,7 @@ import org.apache.poi.ss.usermodel.Footer;
  * <P>
  * @author Shawn Laubach (slaubach at apache dot org)
  */
-public class HSSFFooter implements Footer {
-
+public class HSSFFooter implements Footer, HeaderFooter {
     FooterRecord footerRecord;
     String left;
     String center;

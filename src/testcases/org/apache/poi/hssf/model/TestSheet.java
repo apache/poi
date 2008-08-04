@@ -416,9 +416,9 @@ public final class TestSheet extends TestCase {
         int size = sheet.getSize();
         byte[] data = new byte[size];
         sheet.serialize(0, data);
-        EventRecordFactory erf = new EventRecordFactory();
+
         MyIndexRecordListener myIndexListener = new MyIndexRecordListener();
-        erf.registerListener(myIndexListener, new short[] { IndexRecord.sid, });
+        EventRecordFactory erf = new EventRecordFactory(myIndexListener, new short[] { IndexRecord.sid, });
         erf.processRecords(new ByteArrayInputStream(data));
         IndexRecord indexRecord = myIndexListener.getIndexRecord();
         int dbCellRecordPos = indexRecord.getDbcellAt(0);
