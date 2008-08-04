@@ -33,7 +33,7 @@ import org.apache.poi.ss.usermodel.Header;
  *
  * @author Shawn Laubach (slaubach at apache dot org)
  */
-public class HSSFHeader implements Header
+public class HSSFHeader implements Header, HeaderFooter
 {
 
     HeaderRecord headerRecord;
