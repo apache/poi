@@ -52,6 +52,7 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">45543 - Optionally extract comment text with PowerPointExtractor, and initial hslf model support for comments</action>
            <action dev="POI-DEVELOPERS" type="fix">45538 - Include excel headers and footers in the output of ExcelExtractor</action>
            <action dev="POI-DEVELOPERS" type="fix">44894 - refactor duplicate logic from EventRecordFactory to RecordFactory</action>
            <action dev="POI-DEVELOPERS" type="add">Support for Headers / Footers in HSLF</action>
