@@ -38,6 +38,7 @@ import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RefPtg;
+import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.util.POILogFactory;
@@ -517,19 +518,27 @@ public final class HSSFSheet {
     }
 
     /**
-     * adds a merged region of cells (hence those cells form one)
-     * @param region (rowfrom/colfrom-rowto/colto) to merge
-     * @return index of this region
+     * @deprecated (Aug-2008) use <tt>CellRangeAddress</tt> instead of <tt>Region</tt>
      */
-
     public int addMergedRegion(Region region)
     {
-        //return sheet.addMergedRegion((short) region.getRowFrom(),
         return sheet.addMergedRegion( region.getRowFrom(),
                 region.getColumnFrom(),
                 //(short) region.getRowTo(),
                 region.getRowTo(),
                 region.getColumnTo());
+    }
+    /**
+     * adds a merged region of cells (hence those cells form one)
+     * @param region (rowfrom/colfrom-rowto/colto) to merge
+     * @return index of this region
+     */
+    public int addMergedRegion(CellRangeAddress region)
+    {
+        return sheet.addMergedRegion( region.getFirstRow(),
+                region.getFirstColumn(),
+                region.getLastRow(),
+                region.getLastColumn());
     }
 
     /**
@@ -567,7 +576,7 @@ public final class HSSFSheet {
 
     /**
      * TODO: Boolean not needed, remove after next release
-     * @deprecated use getVerticallyCenter() instead
+     * @deprecated (Mar-2008) use getVerticallyCenter() instead
      */
     public boolean getVerticallyCenter(boolean value) {
         return getVerticallyCenter();
@@ -632,14 +641,19 @@ public final class HSSFSheet {
     }
 
     /**
-     * gets the region at a particular index
-     * @param index of the region to fetch
-     * @return the merged region (simple eh?)
+     * @deprecated (Aug-2008) use {@link HSSFSheet#getMergedRegion(int)}
      */
-
-    public Region getMergedRegionAt(int index)
-    {
-        return new Region(sheet.getMergedRegionAt(index));
+    public Region getMergedRegionAt(int index) {
+        CellRangeAddress cra = getMergedRegion(index);
+        
+		return new Region(cra.getFirstRow(), (short)cra.getFirstColumn(), 
+				cra.getLastRow(), (short)cra.getLastColumn());
+    }
+    /**
+     * @return the merged region at the specified index
+     */
+    public CellRangeAddress getMergedRegion(int index) {
+        return sheet.getMergedRegionAt(index);
     }
 
     /**
@@ -1072,36 +1086,43 @@ public final class HSSFSheet {
     protected void shiftMerged(int startRow, int endRow, int n, boolean isRow) {
         List shiftedRegions = new ArrayList();
         //move merged regions completely if they fall within the new region boundaries when they are shifted
-        for (int i = 0; i < this.getNumMergedRegions(); i++) {
-             Region merged = this.getMergedRegionAt(i);
+        for (int i = 0; i < getNumMergedRegions(); i++) {
+             CellRangeAddress merged = getMergedRegion(i);
 
-             boolean inStart = (merged.getRowFrom() >= startRow || merged.getRowTo() >= startRow);
-             boolean inEnd =  (merged.getRowTo() <= endRow || merged.getRowFrom() <= endRow);
+             boolean inStart= (merged.getFirstRow() >= startRow || merged.getLastRow() >= startRow);
+             boolean inEnd  = (merged.getFirstRow() <= endRow   || merged.getLastRow() <= endRow);
 
-             //dont check if it's not within the shifted area
-             if (! (inStart && inEnd)) continue;
+             //don't check if it's not within the shifted area
+             if (!inStart || !inEnd) {
+				continue;
+			 }
 
              //only shift if the region outside the shifted rows is not merged too
-             if (!merged.contains(startRow-1, (short)0) && !merged.contains(endRow+1, (short)0)){
-                 merged.setRowFrom(merged.getRowFrom()+n);
-                 merged.setRowTo(merged.getRowTo()+n);
+             if (!containsCell(merged, startRow-1, 0) && !containsCell(merged, endRow+1, 0)){
+                 merged.setFirstRow(merged.getFirstRow()+n);
+                 merged.setLastRow(merged.getLastRow()+n);
                  //have to remove/add it back
                  shiftedRegions.add(merged);
-                 this.removeMergedRegion(i);
+                 removeMergedRegion(i);
                  i = i -1; // we have to back up now since we removed one
-
              }
-
         }
 
-        //readd so it doesn't get shifted again
+        //read so it doesn't get shifted again
         Iterator iterator = shiftedRegions.iterator();
         while (iterator.hasNext()) {
-            Region region = (Region)iterator.next();
+        	CellRangeAddress region = (CellRangeAddress)iterator.next();
 
             this.addMergedRegion(region);
         }
-
+    }
+    private static boolean containsCell(CellRangeAddress cr, int rowIx, int colIx) {
+        if (cr.getFirstRow() <= rowIx && cr.getLastRow() >= rowIx
+                && cr.getFirstColumn() <= colIx && cr.getLastColumn() >= colIx)
+        {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -1720,17 +1741,20 @@ public final class HSSFSheet {
             HSSFRow row = (HSSFRow) it.next();
             HSSFCell cell = row.getCell(column);
 
-            if (cell == null) continue;
+            if (cell == null) {
+				continue;
+			}
 
             int colspan = 1;
             for (int i = 0 ; i < getNumMergedRegions(); i++) {
-                if (getMergedRegionAt(i).contains(row.getRowNum(), column)) {
+                CellRangeAddress region = getMergedRegion(i);
+				if (containsCell(region, row.getRowNum(), column)) {
                 	if (!useMergedCells) {
                     	// If we're not using merged cells, skip this one and move on to the next. 
                 		continue rows;
                 	}
-                	cell = row.getCell(getMergedRegionAt(i).getColumnFrom());
-                	colspan = 1+ getMergedRegionAt(i).getColumnTo() - getMergedRegionAt(i).getColumnFrom();
+                	cell = row.getCell(region.getFirstColumn());
+                	colspan = 1 + region.getLastColumn() - region.getFirstColumn();
                 }
             }
 

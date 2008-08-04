@@ -17,6 +17,8 @@ limitations under the License.
 
 package org.apache.poi.hssf.record.cf;
 
+import org.apache.poi.hssf.util.CellRangeAddress;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
@@ -25,15 +27,15 @@ import junit.framework.TestCase;
  */
 public final class TestCellRange extends TestCase
 {
-	private static final CellRange biggest     = createCR( 0, -1, 0,-1);
-	private static final CellRange tenthColumn = createCR( 0, -1,10,10);
-	private static final CellRange tenthRow    = createCR(10, 10, 0,-1);
-	private static final CellRange box10x10    = createCR( 0, 10, 0,10);
-	private static final CellRange box9x9      = createCR( 0,  9, 0, 9);
-	private static final CellRange box10to20c  = createCR( 0, 10,10,20);
-	private static final CellRange oneCell     = createCR(10, 10,10,10);
+	private static final CellRangeAddress biggest     = createCR( 0, -1, 0,-1);
+	private static final CellRangeAddress tenthColumn = createCR( 0, -1,10,10);
+	private static final CellRangeAddress tenthRow    = createCR(10, 10, 0,-1);
+	private static final CellRangeAddress box10x10    = createCR( 0, 10, 0,10);
+	private static final CellRangeAddress box9x9      = createCR( 0,  9, 0, 9);
+	private static final CellRangeAddress box10to20c  = createCR( 0, 10,10,20);
+	private static final CellRangeAddress oneCell     = createCR(10, 10,10,10);
 
-	private static final CellRange[] sampleRanges = {
+	private static final CellRangeAddress[] sampleRanges = {
 		biggest, tenthColumn, tenthRow, box10x10, box9x9, box10to20c, oneCell,
 	};
 	
@@ -54,9 +56,9 @@ public final class TestCellRange extends TestCase
 	 * @param lastRow pass -1 for max row index 
 	 * @param lastCol pass -1 for max col index
 	 */
-	private static CellRange createCR(int firstRow, int lastRow, int firstCol, int lastCol) {
+	private static CellRangeAddress createCR(int firstRow, int lastRow, int firstCol, int lastCol) {
 		// max row & max col limit as per BIFF8
-		return new CellRange(
+		return new CellRangeAddress(
 				firstRow, 
 				lastRow == -1 ? 0xFFFF : lastRow, 
 				firstCol,
@@ -65,89 +67,89 @@ public final class TestCellRange extends TestCase
 	
 	public void testContainsMethod()
 	{
-		CellRange [] ranges = sampleRanges;
+		CellRangeAddress [] ranges = sampleRanges;
 		for(int i=0; i!=ranges.length;i++)
 		{
 			for(int j=0; j!=ranges.length;j++)
 			{
 				boolean expectedResult = containsExpectedResults[i][j];
-				assertEquals("("+i+","+j+"): ", expectedResult, ranges[i].contains(ranges[j]));
+				assertEquals("("+i+","+j+"): ", expectedResult, CellRangeUtil.contains(ranges[i], ranges[j]));
 			}
 		}
 	}
 
-	private static final CellRange col1     = createCR( 0, -1, 1,1);
-	private static final CellRange col2     = createCR( 0, -1, 2,2);
-	private static final CellRange row1     = createCR( 1,  1, 0,-1);
-	private static final CellRange row2     = createCR( 2,  2, 0,-1);
+	private static final CellRangeAddress col1     = createCR( 0, -1, 1,1);
+	private static final CellRangeAddress col2     = createCR( 0, -1, 2,2);
+	private static final CellRangeAddress row1     = createCR( 1,  1, 0,-1);
+	private static final CellRangeAddress row2     = createCR( 2,  2, 0,-1);
 
-	private static final CellRange box0     = createCR( 0, 2, 0,2);
-	private static final CellRange box1     = createCR( 0, 1, 0,1);
-	private static final CellRange box2     = createCR( 0, 1, 2,3);
-	private static final CellRange box3     = createCR( 2, 3, 0,1);
-	private static final CellRange box4     = createCR( 2, 3, 2,3);
-	private static final CellRange box5     = createCR( 1, 3, 1,3);
+	private static final CellRangeAddress box0     = createCR( 0, 2, 0,2);
+	private static final CellRangeAddress box1     = createCR( 0, 1, 0,1);
+	private static final CellRangeAddress box2     = createCR( 0, 1, 2,3);
+	private static final CellRangeAddress box3     = createCR( 2, 3, 0,1);
+	private static final CellRangeAddress box4     = createCR( 2, 3, 2,3);
+	private static final CellRangeAddress box5     = createCR( 1, 3, 1,3);
 
 	public void testHasSharedBorderMethod()
 	{
-		assertFalse(col1.hasExactSharedBorder(col1));
-		assertFalse(col2.hasExactSharedBorder(col2));
-		assertTrue(col1.hasExactSharedBorder(col2));
-		assertTrue(col2.hasExactSharedBorder(col1));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(col1, col1));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(col2, col2));
+		assertTrue(CellRangeUtil.hasExactSharedBorder(col1, col2));
+		assertTrue(CellRangeUtil.hasExactSharedBorder(col2, col1));
 
-		assertFalse(row1.hasExactSharedBorder(row1));
-		assertFalse(row2.hasExactSharedBorder(row2));
-		assertTrue(row1.hasExactSharedBorder(row2));
-		assertTrue(row2.hasExactSharedBorder(row1));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(row1, row1));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(row2, row2));
+		assertTrue(CellRangeUtil.hasExactSharedBorder(row1, row2));
+		assertTrue(CellRangeUtil.hasExactSharedBorder(row2, row1));
 		
-		assertFalse(row1.hasExactSharedBorder(col1));
-		assertFalse(row1.hasExactSharedBorder(col2));
-		assertFalse(col1.hasExactSharedBorder(row1));
-		assertFalse(col2.hasExactSharedBorder(row1));
-		assertFalse(row2.hasExactSharedBorder(col1));
-		assertFalse(row2.hasExactSharedBorder(col2));
-		assertFalse(col1.hasExactSharedBorder(row2));
-		assertFalse(col2.hasExactSharedBorder(row2));
-		assertTrue(col2.hasExactSharedBorder(col1));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(row1, col1));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(row1, col2));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(col1, row1));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(col2, row1));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(row2, col1));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(row2, col2));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(col1, row2));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(col2, row2));
+		assertTrue(CellRangeUtil.hasExactSharedBorder(col2, col1));
 		
-		assertFalse(box1.hasExactSharedBorder(box1));
-		assertTrue(box1.hasExactSharedBorder(box2));
-		assertTrue(box1.hasExactSharedBorder(box3));
-		assertFalse(box1.hasExactSharedBorder(box4));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(box1, box1));
+		assertTrue(CellRangeUtil.hasExactSharedBorder(box1, box2));
+		assertTrue(CellRangeUtil.hasExactSharedBorder(box1, box3));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(box1, box4));
 		
-		assertTrue(box2.hasExactSharedBorder(box1));
-		assertFalse(box2.hasExactSharedBorder(box2));
-		assertFalse(box2.hasExactSharedBorder(box3));
-		assertTrue(box2.hasExactSharedBorder(box4));
+		assertTrue(CellRangeUtil.hasExactSharedBorder(box2, box1));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(box2, box2));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(box2, box3));
+		assertTrue(CellRangeUtil.hasExactSharedBorder(box2, box4));
 		
-		assertTrue(box3.hasExactSharedBorder(box1));
-		assertFalse(box3.hasExactSharedBorder(box2));
-		assertFalse(box3.hasExactSharedBorder(box3));
-		assertTrue(box3.hasExactSharedBorder(box4));
+		assertTrue(CellRangeUtil.hasExactSharedBorder(box3, box1));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(box3, box2));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(box3, box3));
+		assertTrue(CellRangeUtil.hasExactSharedBorder(box3, box4));
 		
-		assertFalse(box4.hasExactSharedBorder(box1));
-		assertTrue(box4.hasExactSharedBorder(box2));
-		assertTrue(box4.hasExactSharedBorder(box3));
-		assertFalse(box4.hasExactSharedBorder(box4));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(box4, box1));
+		assertTrue(CellRangeUtil.hasExactSharedBorder(box4, box2));
+		assertTrue(CellRangeUtil.hasExactSharedBorder(box4, box3));
+		assertFalse(CellRangeUtil.hasExactSharedBorder(box4, box4));
 	}
 
 	public void testIntersectMethod()
 	{
-		assertEquals(CellRange.OVERLAP,box0.intersect(box5));
-		assertEquals(CellRange.OVERLAP,box5.intersect(box0));
-		assertEquals(CellRange.NO_INTERSECTION,box1.intersect(box4));
-		assertEquals(CellRange.NO_INTERSECTION,box4.intersect(box1));
-		assertEquals(CellRange.NO_INTERSECTION,box2.intersect(box3));
-		assertEquals(CellRange.NO_INTERSECTION,box3.intersect(box2));
-		assertEquals(CellRange.INSIDE,box0.intersect(box1));
-		assertEquals(CellRange.INSIDE,box0.intersect(box0));
-		assertEquals(CellRange.ENCLOSES,box1.intersect(box0));
-		assertEquals(CellRange.INSIDE,tenthColumn.intersect(oneCell));
-		assertEquals(CellRange.ENCLOSES,oneCell.intersect(tenthColumn));
-		assertEquals(CellRange.OVERLAP,tenthColumn.intersect(tenthRow));
-		assertEquals(CellRange.OVERLAP,tenthRow.intersect(tenthColumn));
-		assertEquals(CellRange.INSIDE,tenthColumn.intersect(tenthColumn));
-		assertEquals(CellRange.INSIDE,tenthRow.intersect(tenthRow));
+		assertEquals(CellRangeUtil.OVERLAP, CellRangeUtil.intersect(box0, box5));
+		assertEquals(CellRangeUtil.OVERLAP, CellRangeUtil.intersect(box5, box0));
+		assertEquals(CellRangeUtil.NO_INTERSECTION, CellRangeUtil.intersect(box1, box4));
+		assertEquals(CellRangeUtil.NO_INTERSECTION, CellRangeUtil.intersect(box4, box1));
+		assertEquals(CellRangeUtil.NO_INTERSECTION, CellRangeUtil.intersect(box2, box3));
+		assertEquals(CellRangeUtil.NO_INTERSECTION, CellRangeUtil.intersect(box3, box2));
+		assertEquals(CellRangeUtil.INSIDE, CellRangeUtil.intersect(box0, box1));
+		assertEquals(CellRangeUtil.INSIDE, CellRangeUtil.intersect(box0, box0));
+		assertEquals(CellRangeUtil.ENCLOSES, CellRangeUtil.intersect(box1, box0));
+		assertEquals(CellRangeUtil.INSIDE, CellRangeUtil.intersect(tenthColumn, oneCell));
+		assertEquals(CellRangeUtil.ENCLOSES, CellRangeUtil.intersect(oneCell, tenthColumn));
+		assertEquals(CellRangeUtil.OVERLAP, CellRangeUtil.intersect(tenthColumn, tenthRow));
+		assertEquals(CellRangeUtil.OVERLAP, CellRangeUtil.intersect(tenthRow, tenthColumn));
+		assertEquals(CellRangeUtil.INSIDE, CellRangeUtil.intersect(tenthColumn, tenthColumn));
+		assertEquals(CellRangeUtil.INSIDE, CellRangeUtil.intersect(tenthRow, tenthRow));
 	}
 	
 	/**
@@ -155,7 +157,7 @@ public final class TestCellRange extends TestCase
 	 * =$C:$IV,$B$1:$B$8,$B$10:$B$65536,$A:$A
 	 */
 	public void testCreate() {
-		CellRange cr;
+		CellRangeAddress cr;
 		
 		cr = createCR(0, -1, 2, 255); // $C:$IV
 		confirmRange(cr, false, true);
@@ -172,7 +174,7 @@ public final class TestCellRange extends TestCase
 		cr = createCR(0, -1, 0, 0); // $A:$A
 	}
 
-	private static void confirmRange(CellRange cr, boolean isFullRow, boolean isFullColumn) {
+	private static void confirmRange(CellRangeAddress cr, boolean isFullRow, boolean isFullColumn) {
 		assertEquals("isFullRowRange", isFullRow, cr.isFullRowRange());
 		assertEquals("isFullColumnRange", isFullColumn, cr.isFullColumnRange());
 	}

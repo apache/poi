@@ -17,37 +17,71 @@
 package org.apache.poi.hssf.util;
 
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'
+ * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p/>
  * 
+ * Note - {@link SelectionRecord} uses the BIFF5 version of this structure
  * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
  */
 public final class CellRangeAddress {
-	private static final int ENCODED_SIZE = 8;
+	/*
+	 * TODO - replace  org.apache.poi.hssf.util.Region
+	 */
+	public static final int ENCODED_SIZE = 8;
 
+	/** max 65536 rows in BIFF8 */
+	private static final int LAST_ROW_INDEX = 0x00FFFF; 
+	/** max 256 columns in BIFF8 */
+	private static final int LAST_COLUMN_INDEX = 0x00FF;
+	
+	
 	private int _firstRow;
 	private int _firstCol;
 	private int _lastRow;
 	private int _lastCol;
 
-	/*
-	 * TODO - replace other incarnations of 'Cell Range Address' throughout POI:
-	 * org.apache.poi.hssf.util.CellRange
-	 * org.apache.poi.hssf.record.cf.CellRange
-	 * org.apache.poi.hssf.util.HSSFCellRangeAddress.AddrStructure
-	 * org.apache.poi.hssf.record.MergeCellsRecord.MergedRegion
-	 * org.apache.poi.hssf.record.SelectionRecord.Reference
-	 * 
-	 */
-	
 	public CellRangeAddress(int firstRow, int lastRow, int firstCol, int lastCol) {
+		if(!isValid(firstRow, lastRow, firstCol, lastCol)) {
+			throw new IllegalArgumentException("invalid cell range (" + firstRow + ", " + lastRow 
+					+ ", " + firstCol + ", " + lastCol + ")");
+		}
 		_firstRow = firstRow;
-		_lastRow = lastRow;
+		_lastRow = convertM1ToMax(lastRow, LAST_ROW_INDEX);
 		_firstCol = firstCol;
-		_lastCol = lastCol;
+		_lastCol = convertM1ToMax(lastCol, LAST_COLUMN_INDEX);
 	}
+	private static boolean isValid(int firstRow, int lastRow, int firstColumn, int lastColumn)
+	{
+		if(lastRow < 0 || lastRow > LAST_ROW_INDEX) {
+			return false;
+		}
+		if(firstRow < 0 || firstRow > LAST_ROW_INDEX) {
+			return false;
+		}
+		
+		if(lastColumn < 0 || lastColumn > LAST_COLUMN_INDEX) {
+			return false;
+		}
+		if(firstColumn < 0 || firstColumn > LAST_COLUMN_INDEX) {
+			return false;
+		}
+		return true;
+	}
+	/** 
+	 * Range arithmetic is easier when using a large positive number for 'max row or column' 
+	 * instead of <tt>-1</tt>. 
+	 */
+	private static int convertM1ToMax(int lastIx, int maxIndex) {
+		if(lastIx < 0) {
+			return maxIndex;
+		}
+		return lastIx;
+	}
+
+	
 
 	public CellRangeAddress(RecordInputStream in) {
 		if (in.remaining() < ENCODED_SIZE) {
@@ -58,6 +92,12 @@ public final class CellRangeAddress {
 		_lastRow = in.readUShort();
 		_firstCol = in.readUShort();
 		_lastCol = in.readUShort();
+	}
+	public boolean isFullColumnRange() {
+		return _firstRow == 0 && _lastRow == LAST_ROW_INDEX;
+	}
+	public boolean isFullRowRange() {
+		return _firstCol == 0 && _lastCol == LAST_COLUMN_INDEX;
 	}
 
 	/**
@@ -116,15 +156,23 @@ public final class CellRangeAddress {
 		_lastRow = lastRow;
 	}
 
-	/* package */ int serialize(byte[] data, int offset) {
+	public int serialize(int offset, byte[] data) {
 		LittleEndian.putUShort(data, offset + 0, _firstRow);
 		LittleEndian.putUShort(data, offset + 2, _lastRow);
 		LittleEndian.putUShort(data, offset + 4, _firstCol);
 		LittleEndian.putUShort(data, offset + 6, _lastCol);
 		return ENCODED_SIZE;
 	}
+	
+	public CellRangeAddress copy() {
+		return new CellRangeAddress(_firstRow, _lastRow, _firstCol, _lastCol);
+	}
 
 	public static int getEncodedSize(int numberOfItems) {
 		return numberOfItems * ENCODED_SIZE;
+	}
+	
+	public String toString() {
+		return getClass().getName() + " ["+_firstRow+", "+_lastRow+", "+_firstCol+", "+_lastCol+"]";
 	}
 }

@@ -227,7 +227,7 @@ public final class DVRecord extends Record {
 		appendFormula(sb, "Formula 1:",  _formula1);
 		appendFormula(sb, "Formula 2:",  _formula2);
 		sb.append("Regions: ");
-		int nRegions = _regions.getADDRStructureNumber();
+		int nRegions = _regions.countRanges();
 		for(int i=0; i<nRegions; i++) {
 			if (i>0) {
 				sb.append(", ");

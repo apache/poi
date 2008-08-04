@@ -20,8 +20,8 @@ package org.apache.poi.hssf.usermodel;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
+import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.hssf.util.Region;
 /**
  * 
  * @author Dmitriy Kumshayev
@@ -57,9 +57,8 @@ public final class TestHSSFConditionalFormatting extends TestCase
 		};
 
 		short col = 1;
-		Region [] regions =
-		{
-			new Region(0,col,65535,col)
+		CellRangeAddress [] regions = {
+			new CellRangeAddress(0, 65535, col, col)
 		};
 
 		sheetCF.addConditionalFormatting(regions, cfRules);
@@ -72,14 +71,14 @@ public final class TestHSSFConditionalFormatting extends TestCase
 		HSSFConditionalFormatting cf = sheetCF.getConditionalFormattingAt(0);
 		assertNotNull(cf);
 
-		regions = cf.getFormattingRegions();
+		regions = cf.getFormattingRanges();
 		assertNotNull(regions);
 		assertEquals(1, regions.length);
-		Region r = regions[0];
-		assertEquals(1, r.getColumnFrom());
-		assertEquals(1, r.getColumnTo());
-		assertEquals(0, r.getRowFrom());
-		assertEquals(65535, r.getRowTo());
+		CellRangeAddress r = regions[0];
+		assertEquals(1, r.getFirstColumn());
+		assertEquals(1, r.getLastColumn());
+		assertEquals(0, r.getFirstRow());
+		assertEquals(65535, r.getLastRow());
 
 		assertEquals(2, cf.getNumberOfRules());
 

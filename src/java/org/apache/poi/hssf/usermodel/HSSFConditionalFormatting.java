@@ -16,10 +16,9 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
-import org.apache.poi.hssf.record.cf.CellRange;
+import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.hssf.util.Region;
 
 /**
@@ -96,13 +95,18 @@ public final class HSSFConditionalFormatting
 	}
 
 	/**
-	 * @return array of <tt>Region</tt>s. never <code>null</code> 
+	 * @deprecated (Aug-2008) use {@link HSSFConditionalFormatting#getFormattingRanges()}
 	 */
 	public Region[] getFormattingRegions()
 	{
-		CFHeaderRecord cfh = cfAggregate.getHeader();
-		CellRange[] cellRanges = cfh.getCellRanges();
-		return CellRange.convertCellRangesToRegions(cellRanges);
+		CellRangeAddress[] cellRanges = getFormattingRanges();
+		return Region.convertCellRangesToRegions(cellRanges);
+	}
+	/**
+	 * @return array of <tt>CellRangeAddress</tt>s. never <code>null</code> 
+	 */
+	public CellRangeAddress[] getFormattingRanges() {
+		return cfAggregate.getHeader().getCellRanges();
 	}
 
 	/**

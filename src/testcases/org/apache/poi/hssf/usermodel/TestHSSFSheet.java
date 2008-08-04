@@ -35,7 +35,7 @@ import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
-import org.apache.poi.hssf.util.Region;
+import org.apache.poi.hssf.util.CellRangeAddress;
 
 /**
  * Tests HSSFSheet.  This test case is very incomplete at the moment.
@@ -476,15 +476,15 @@ public final class TestHSSFSheet extends TestCase {
 	public void testRemoveMerged() {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet();
-		Region region = new Region(0, (short)0, 1, (short)1);
+		CellRangeAddress region = new CellRangeAddress(0, 1, 0, 1);
 		sheet.addMergedRegion(region);
-		region = new Region(1, (short)0, 2, (short)1);
+		region = new CellRangeAddress(1, 2, 0, 1);
 		sheet.addMergedRegion(region);
 
 		sheet.removeMergedRegion(0);
 
-		region = sheet.getMergedRegionAt(0);
-		assertEquals("Left over region should be starting at row 1", 1, region.getRowFrom());
+		region = sheet.getMergedRegion(0);
+		assertEquals("Left over region should be starting at row 1", 1, region.getFirstRow());
 
 		sheet.removeMergedRegion(0);
 
@@ -496,15 +496,15 @@ public final class TestHSSFSheet extends TestCase {
 		sheet.removeMergedRegion(0);
 		assertEquals("there should now be zero merged regions!", 0, sheet.getNumMergedRegions());
 		//add it again!
-		region.setRowTo(4);
+		region.setLastRow(4);
 
 		sheet.addMergedRegion(region);
 		assertEquals("there should now be one merged region!", 1, sheet.getNumMergedRegions());
 
 		//should exist now!
 		assertTrue("there isn't more than one merged region in there", 1 <= sheet.getNumMergedRegions());
-		region = sheet.getMergedRegionAt(0);
-		assertEquals("the merged row to doesnt match the one we put in ", 4, region.getRowTo());
+		region = sheet.getMergedRegion(0);
+		assertEquals("the merged row to doesnt match the one we put in ", 4, region.getLastRow());
 	}
 
 	public void testShiftMerged() {
@@ -518,13 +518,13 @@ public final class TestHSSFSheet extends TestCase {
 		cell = row.createCell((short)1);
 		cell.setCellValue(new HSSFRichTextString("second row, second cell"));
 
-		Region region = new Region(1, (short)0, 1, (short)1);
+		CellRangeAddress region = new CellRangeAddress(1, 1, 0, 1);
 		sheet.addMergedRegion(region);
 
 		sheet.shiftRows(1, 1, 1);
 
-		region = sheet.getMergedRegionAt(0);
-		assertEquals("Merged region not moved over to row 2", 2, region.getRowFrom());
+		region = sheet.getMergedRegion(0);
+		assertEquals("Merged region not moved over to row 2", 2, region.getFirstRow());
 	}
 
 	/**
@@ -683,7 +683,7 @@ public final class TestHSSFSheet extends TestCase {
 		assertTrue("Column autosized with only one row: wrong width", sheet.getColumnWidth((short)0) <= maxWithRow1And2);
 
 		//create a region over the 2nd row and auto size the first column
-		sheet.addMergedRegion(new Region(1,(short)0,1,(short)1));
+		sheet.addMergedRegion(new CellRangeAddress(1,1,0,1));
 		sheet.autoSizeColumn((short)0);
 		HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb);
 

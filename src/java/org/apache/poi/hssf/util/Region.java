@@ -15,10 +15,8 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.util;
 
-import org.apache.poi.hssf.record.MergeCellsRecord.MergedRegion;
 
 /**
  * Represents a from/to row/col square.  This is a object primitive
@@ -26,11 +24,9 @@ import org.apache.poi.hssf.record.MergeCellsRecord.MergedRegion;
  * to represent a string of characters.  Its really only useful for HSSF though.
  *
  * @author  Andrew C. Oliver acoliver at apache dot org
+ * @deprecated (Aug-2008) use {@link CellRangeAddress}
  */
-
-public class Region
-    implements Comparable
-{
+public class Region {
     private int   rowFrom;
     private short colFrom;
     private int   rowTo;
@@ -52,15 +48,6 @@ public class Region
         this.colTo   = colTo;
     }
 
-    /**
-     * special constructor (I know this is bad but it is so wrong that its right
-     * okay) that makes a region from a mergedcells's region subrecord.
-     */
-
-    public Region(MergedRegion region)
-    {
-        this(region.row_from, region.col_from, region.row_to, region.col_to);
-    }
 
     /**
      * get the upper left hand corner column number
@@ -150,72 +137,49 @@ public class Region
         this.rowTo = rowTo;
     }
 
-    /**
-     * Answers: "is the row/column inside this range?"
-     *
-     * @return <code>true</code> if the cell is in the range and
-     * <code>false</code> if it is not
-     */
 
-    public boolean contains(int row, short col)
-    {
-        if ((this.rowFrom <= row) && (this.rowTo >= row)
-                && (this.colFrom <= col) && (this.colTo >= col))
-        {
+	/**
+	 * Convert a List of CellRange objects to an array of regions 
+	 *  
+	 * @param List of CellRange objects
+	 * @return regions
+	 */
+	public static Region[] convertCellRangesToRegions(CellRangeAddress[] cellRanges) {
+		int size = cellRanges.length;
+		if(size < 1) {
+			return new Region[0];
+		}
+		
+		Region[] result = new Region[size];
 
-//                System.out.println("Region ("+rowFrom+","+colFrom+","+rowTo+","+ 
-//                                   colTo+") does contain "+row+","+col);
-            return true;
-        }
-        return false;
-    }
+		for (int i = 0; i != size; i++) {
+			result[i] = convertToRegion(cellRanges[i]);
+		}
+		return result;
+	}
 
-    public boolean equals(Region r)
-    {
-        return (compareTo(r) == 0);
-    }
 
-    /**
-     * Compares that the given region is the same less than or greater than this
-     * region.  If any regional coordiant passed in is less than this regions
-     * coordinants then a positive integer is returned.  Otherwise a negative
-     * integer is returned.
-     *
-     * @param r  region
-     * @see #compareTo(Object)
-     */
+		
+	private static Region convertToRegion(CellRangeAddress cr) {
+		
+		return new Region(cr.getFirstRow(), (short)cr.getFirstColumn(), cr.getLastRow(), (short)cr.getLastColumn());
+	}
 
-    public int compareTo(Region r)
-    {
-        if ((this.getRowFrom() == r.getRowFrom())
-                && (this.getColumnFrom() == r.getColumnFrom())
-                && (this.getRowTo() == r.getRowTo())
-                && (this.getColumnTo() == r.getColumnTo()))
-        {
-            return 0;
-        }
-        if ((this.getRowFrom() < r.getRowFrom())
-                || (this.getColumnFrom() < r.getColumnFrom())
-                || (this.getRowTo() < r.getRowTo())
-                || (this.getColumnTo() < r.getColumnTo()))
-        {
-            return 1;
-        }
-        return -1;
-    }
+	public static CellRangeAddress[] convertRegionsToCellRanges(Region[] regions) {
+		int size = regions.length;
+		if(size < 1) {
+			return new CellRangeAddress[0];
+		}
+		
+		CellRangeAddress[] result = new CellRangeAddress[size];
 
-    public int compareTo(Object o)
-    {
-        return compareTo(( Region ) o);
-    }
+		for (int i = 0; i != size; i++) {
+			result[i] = convertToCellRangeAddress(regions[i]);
+		}
+		return result;
+	}
 
-    /**
-     * @return the area contained by this region (number of cells)
-     */
-
-    public int getArea()
-    {
-        return ((1 + (getRowTo() - getRowFrom()))
-                * (1 + (getColumnTo() - getColumnFrom())));
-    }
+	public static CellRangeAddress convertToCellRangeAddress(Region r) {
+		return new CellRangeAddress(r.getRowFrom(), r.getRowTo(), r.getColumnFrom(), r.getColumnTo());
+	}
 }

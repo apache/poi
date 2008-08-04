@@ -74,12 +74,12 @@ public final class CellRangeAddressList {
 	 * 
 	 * @return number of ADDR structures
 	 */
-	public int getADDRStructureNumber() {
+	public int countRanges() {
 		return _list.size();
 	}
 
 	/**
-	 * Add an ADDR structure .
+	 * Add a cell range structure.
 	 * 
 	 * @param firstRow - the upper left hand corner's row
 	 * @param firstCol - the upper left hand corner's col
@@ -89,7 +89,20 @@ public final class CellRangeAddressList {
 	 */
 	public void addCellRangeAddress(int firstRow, int firstCol, int lastRow, int lastCol) {
 		CellRangeAddress region = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
-		_list.add(region);
+		addCellRangeAddress(region);
+	}
+	public void addCellRangeAddress(CellRangeAddress cra) {
+		_list.add(cra);
+	}
+	public CellRangeAddress remove(int rangeIndex) {
+		if (_list.isEmpty()) {
+			throw new RuntimeException("List is empty");
+		}
+		if (rangeIndex < 0 || rangeIndex >= _list.size()) {
+			throw new RuntimeException("Range index (" + rangeIndex 
+					+ ") is outside allowable range (0.." + (_list.size()-1) + ")");
+		}
+		return (CellRangeAddress) _list.remove(rangeIndex);
 	}
 
 	/**
@@ -106,12 +119,27 @@ public final class CellRangeAddressList {
 		LittleEndian.putUShort(data, offset, nItems);
 		for (int k = 0; k < nItems; k++) {
 			CellRangeAddress region = (CellRangeAddress) _list.get(k);
-			pos += region.serialize(data, offset + pos);
+			pos += region.serialize(offset + pos, data);
 		}
 		return getSize();
 	}
 
 	public int getSize() {
 		return 2 + CellRangeAddress.getEncodedSize(_list.size());
+	}
+	public CellRangeAddressList copy() {
+		CellRangeAddressList result = new CellRangeAddressList();
+		
+		int nItems = _list.size();
+		for (int k = 0; k < nItems; k++) {
+			CellRangeAddress region = (CellRangeAddress) _list.get(k);
+			result.addCellRangeAddress(region.copy());
+		}
+		return result;
+	}
+	public CellRangeAddress[] getCellRangeAddresses() {
+		CellRangeAddress[] result = new CellRangeAddress[_list.size()];
+		_list.toArray(result);
+		return result;
 	}
 }

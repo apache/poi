@@ -20,6 +20,8 @@
 package org.apache.poi.hssf.usermodel;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.hssf.util.Region;
 
 /**
@@ -28,23 +30,15 @@ import org.apache.poi.hssf.util.Region;
  *  add that record to the sheet in the testCloneSheetBasic method. 
  * @author  avik
  */
-public class TestCloneSheet extends TestCase {
+public final class TestCloneSheet extends TestCase {
 
-	public TestCloneSheet(String arg0) {
-		super(arg0);
-	}
-	
 	public void testCloneSheetBasic(){
-		try{
-			HSSFWorkbook b = new HSSFWorkbook();
-			HSSFSheet s = b.createSheet("Test");
-			s.addMergedRegion(new Region((short)0,(short)0,(short)1,(short)1));
-			HSSFSheet clonedSheet = b.cloneSheet(0);
-			
-			assertEquals("One merged area", 1, clonedSheet.getNumMergedRegions());
-
-		}
-		catch(Exception e){e.printStackTrace();fail(e.getMessage());}
+		HSSFWorkbook b = new HSSFWorkbook();
+		HSSFSheet s = b.createSheet("Test");
+		s.addMergedRegion(new CellRangeAddress(0, 1, 0, 1));
+		HSSFSheet clonedSheet = b.cloneSheet(0);
+		
+		assertEquals("One merged area", 1, clonedSheet.getNumMergedRegions());
 	}
 
    /**
@@ -65,5 +59,4 @@ public class TestCloneSheet extends TestCase {
       
       assertTrue("Row 3 still should be broken", clone.isRowBroken(3));
    }
-   
 }
