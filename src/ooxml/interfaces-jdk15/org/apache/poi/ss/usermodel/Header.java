@@ -17,8 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
-public interface Header {
-
+public interface Header extends HeaderFooter {
     /**
      * Get the left side of the header.
      *
@@ -60,5 +59,4 @@ public interface Header {
      * @param newRight The string to set as the right side.
      */
     void setRight(String newRight);
-
 }

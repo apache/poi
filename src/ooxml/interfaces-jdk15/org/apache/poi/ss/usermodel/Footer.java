@@ -17,8 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
-public interface Footer {
-
+public interface Footer extends HeaderFooter {
     /**
      * Get the left side of the footer.
      * @return The string representing the left side.
@@ -54,5 +53,4 @@ public interface Footer {
      * @param newRight The string to set as the right side.
      */
     void setRight(String newRight);
-
 }
