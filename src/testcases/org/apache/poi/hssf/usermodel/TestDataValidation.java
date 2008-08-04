@@ -594,9 +594,9 @@ public final class TestDataValidation extends TestCase {
 		byte[] wbData = baos.toByteArray();
 		
 		if (false) { // TODO (Jul 2008) fix EventRecordFactory to process unknown records, (and DV records for that matter)
-			EventRecordFactory erf = new EventRecordFactory();
+
 			ERFListener erfListener = null; // new MyERFListener();
-			erf.registerListener(erfListener, null);
+			EventRecordFactory erf = new EventRecordFactory(erfListener, null);
 			try {
 				POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
 				erf.processRecords(fs.createDocumentInputStream("Workbook"));
