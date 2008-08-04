@@ -68,7 +68,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor {
 		this.formulasNotResults = formulasNotResults;
 	}
 	/**
-     * Should cell comments be included? Default is true
+     * Should cell comments be included? Default is false
      */
     public void setIncludeCellComments(boolean includeCellComments) {
         this.includeCellComments = includeCellComments;
