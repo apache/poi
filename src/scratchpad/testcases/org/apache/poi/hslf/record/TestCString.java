@@ -46,12 +46,12 @@ public class TestCString extends TestCase {
 	}
 	public void testCount() throws Exception {
 		CString ca = new CString(data_a, 0, data_a.length);
-		assertEquals(0, ca.getCount());
+		assertEquals(0, ca.getOptions());
 		CString cb = new CString(data_b, 0, data_a.length);
-		assertEquals(0x10, cb.getCount());
+		assertEquals(0x10, cb.getOptions());
 		
-		ca.setCount(28);
-		assertEquals(28, ca.getCount());
+		ca.setOptions(28);
+		assertEquals(28, ca.getOptions());
 	}
 	
 	public void testText() throws Exception {
@@ -90,7 +90,7 @@ public class TestCString extends TestCase {
 	public void testChange() throws Exception {
 		CString ca = new CString(data_a, 0, data_a.length);
 		ca.setText("Comments");
-		ca.setCount(0x10);
+		ca.setOptions(0x10);
 		
 		try {
 			for(int i=0; i<data_a.length; i++) {

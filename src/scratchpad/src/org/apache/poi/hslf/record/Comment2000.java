@@ -140,9 +140,9 @@ public class Comment2000 extends RecordContainer {
 		CString csa = new CString();
 		CString csb = new CString();
 		CString csc = new CString();
-		csa.setCount(0x00);
-		csb.setCount(0x10);
-		csc.setCount(0x20);
+		csa.setOptions(0x00);
+		csb.setOptions(0x10);
+		csc.setOptions(0x20);
 		_children[0] = csa;
 		_children[1] = csb;
 		_children[2] = csc;

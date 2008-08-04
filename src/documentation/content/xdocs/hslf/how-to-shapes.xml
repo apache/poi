@@ -46,6 +46,7 @@
                     <li><link href="#Freeform">How to create shapes of arbitrary geometry</link></li>
                     <li><link href="#Graphics2D">Shapes and Graphics2D</link></li>
                     <li><link href="#Render">How to convert slides into images</link></li>
+                    <li><link href="#HeadersFooters">Headers / Footers</link></li>
                 </ul>
             </section>
             <section><title>Features</title>
@@ -620,6 +621,48 @@
                   </section>
                   
                 </section>
+            <anchor id="HeadersFooters"/>
+            <section><title>How to extract Headers / Footers from an existing presentation</title>
+              <source>
+
+          FileInputStream is = new FileInputStream("slideshow.ppt");
+          SlideShow ppt = new SlideShow(is);
+          is.close();
+          Slide[] slides = ppt.getSlides();
+
+          //presentation-scope headers / footers
+          HeadersFooters hdd = ppt.getSlideHeadersFooters();
+          if(hdd.isFooterVisible()) {
+              String footerText = hdd.getFooterText();
+          }
+
+          //per-slide headers / footers
+          for (int i=0; i &lt; slides.length; i++){
+              HeadersFooters hdd2 = slides[i].getHeadersFooters();
+              if(hdd2.isFooterVisible()) {
+                  String footerText = hdd2.getFooterText();
+              }
+              if(hdd2.isUserDateVisible()) {
+                 String customDate = hdd2.getDateTimeText();
+              }
+              if(hdd2.isSlideNumberVisible()){
+                  int slideNUm = slides[i].getSlideNumber();
+              }
+
+          }
+                </source>
+              </section>
+            <section><title>How to set Headers / Footers</title>
+              <source>
+
+          SlideShow ppt = new SlideShow();
+
+          //presentation-scope headers / footers
+          HeadersFooters hdd = ppt.getSlideHeadersFooters();
+          hdd.setSlideNumberVisible(true);
+          hdd.setFootersText("Created by POI-HSLF");
+                </source>
+              </section>
         </section>
     </body>
 </document>
