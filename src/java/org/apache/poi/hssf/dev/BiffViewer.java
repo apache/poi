@@ -113,262 +113,138 @@ public final class BiffViewer {
     {
         switch ( in.getSid() )
         {
-            case ChartRecord.sid:
-                return new ChartRecord( in );
-            case ChartFormatRecord.sid:
-                return new ChartFormatRecord( in );
-            case SeriesRecord.sid:
-                return new SeriesRecord( in );
-            case BeginRecord.sid:
-                return new BeginRecord( in );
-            case EndRecord.sid:
-                return new EndRecord( in );
-            case BOFRecord.sid:
-                return new BOFRecord( in );
-            case InterfaceHdrRecord.sid:
-                return new InterfaceHdrRecord( in );
-            case MMSRecord.sid:
-                return new MMSRecord( in );
-            case InterfaceEndRecord.sid:
-                return new InterfaceEndRecord( in );
-            case WriteAccessRecord.sid:
-                return new WriteAccessRecord( in );
-            case CodepageRecord.sid:
-                return new CodepageRecord( in );
-            case DSFRecord.sid:
-                return new DSFRecord( in );
-            case TabIdRecord.sid:
-                return new TabIdRecord( in );
-            case FnGroupCountRecord.sid:
-                return new FnGroupCountRecord( in );
-            case WindowProtectRecord.sid:
-                return new WindowProtectRecord( in );
-            case ProtectRecord.sid:
-                return new ProtectRecord( in );
-            case PasswordRecord.sid:
-                return new PasswordRecord( in );
-            case ProtectionRev4Record.sid:
-                return new ProtectionRev4Record( in );
-            case PasswordRev4Record.sid:
-                return new PasswordRev4Record( in );
-            case WindowOneRecord.sid:
-                return new WindowOneRecord( in );
-            case BackupRecord.sid:
-                return new BackupRecord( in );
-            case HideObjRecord.sid:
-                return new HideObjRecord( in );
-            case DateWindow1904Record.sid:
-                return new DateWindow1904Record( in );
-            case PrecisionRecord.sid:
-                return new PrecisionRecord( in );
-            case RefreshAllRecord.sid:
-                return new RefreshAllRecord( in );
-            case BookBoolRecord.sid:
-                return new BookBoolRecord( in );
-            case FontRecord.sid:
-                return new FontRecord( in );
-            case FormatRecord.sid:
-                return new FormatRecord( in );
-            case ExtendedFormatRecord.sid:
-                return new ExtendedFormatRecord( in );
-            case StyleRecord.sid:
-                return new StyleRecord( in );
-            case UseSelFSRecord.sid:
-                return new UseSelFSRecord( in );
-            case BoundSheetRecord.sid:
-                return new BoundSheetRecord( in );
-            case CountryRecord.sid:
-                return new CountryRecord( in );
-            case SSTRecord.sid:
-                return new SSTRecord( in );
-            case ExtSSTRecord.sid:
-                return new ExtSSTRecord( in );
-            case EOFRecord.sid:
-                return new EOFRecord( in );
-            case IndexRecord.sid:
-                return new IndexRecord( in );
-            case CalcModeRecord.sid:
-                return new CalcModeRecord( in );
-            case CalcCountRecord.sid:
-                return new CalcCountRecord( in );
-            case RefModeRecord.sid:
-                return new RefModeRecord( in );
-            case IterationRecord.sid:
-                return new IterationRecord( in );
-            case DeltaRecord.sid:
-                return new DeltaRecord( in );
-            case SaveRecalcRecord.sid:
-                return new SaveRecalcRecord( in );
-            case PrintHeadersRecord.sid:
-                return new PrintHeadersRecord( in );
-            case PrintGridlinesRecord.sid:
-                return new PrintGridlinesRecord( in );
-            case GridsetRecord.sid:
-                return new GridsetRecord( in );
-            case DrawingGroupRecord.sid:
-                return new DrawingGroupRecord( in );
-            case DrawingRecordForBiffViewer.sid:
-                return new DrawingRecordForBiffViewer( in );
-            case DrawingSelectionRecord.sid:
-                return new DrawingSelectionRecord( in );
-            case GutsRecord.sid:
-                return new GutsRecord( in );
-            case DefaultRowHeightRecord.sid:
-                return new DefaultRowHeightRecord( in );
-            case WSBoolRecord.sid:
-                return new WSBoolRecord( in );
-            case HeaderRecord.sid:
-                return new HeaderRecord( in );
-            case FooterRecord.sid:
-                return new FooterRecord( in );
-            case HCenterRecord.sid:
-                return new HCenterRecord( in );
-            case VCenterRecord.sid:
-                return new VCenterRecord( in );
-            case PrintSetupRecord.sid:
-                return new PrintSetupRecord( in );
-            case DefaultColWidthRecord.sid:
-                return new DefaultColWidthRecord( in );
-            case DimensionsRecord.sid:
-                return new DimensionsRecord( in );
-            case RowRecord.sid:
-                return new RowRecord( in );
-            case LabelSSTRecord.sid:
-                return new LabelSSTRecord( in );
-            case RKRecord.sid:
-                return new RKRecord( in );
-            case NumberRecord.sid:
-                return new NumberRecord( in );
-            case DBCellRecord.sid:
-                return new DBCellRecord( in );
-            case WindowTwoRecord.sid:
-                return new WindowTwoRecord( in );
-            case SelectionRecord.sid:
-                return new SelectionRecord( in );
-            case ContinueRecord.sid:
-                return new ContinueRecord( in );
-            case LabelRecord.sid:
-                return new LabelRecord( in );
-            case MulRKRecord.sid:
-                return new MulRKRecord( in );
-            case MulBlankRecord.sid:
-                return new MulBlankRecord( in );
-            case BlankRecord.sid:
-                return new BlankRecord( in );
-            case BoolErrRecord.sid:
-                return new BoolErrRecord( in );
-            case ColumnInfoRecord.sid:
-                return new ColumnInfoRecord( in );
-            case MergeCellsRecord.sid:
-                return new MergeCellsRecord( in );
-            case AreaRecord.sid:
-                return new AreaRecord( in );
-            case DataFormatRecord.sid:
-                return new DataFormatRecord( in );
-            case BarRecord.sid:
-                return new BarRecord( in );
-            case DatRecord.sid:
-                return new DatRecord( in );
-            case PlotGrowthRecord.sid:
-                return new PlotGrowthRecord( in );
-            case UnitsRecord.sid:
-                return new UnitsRecord( in );
-            case FrameRecord.sid:
-                return new FrameRecord( in );
-            case ValueRangeRecord.sid:
-                return new ValueRangeRecord( in );
-            case SeriesListRecord.sid:
-                return new SeriesListRecord( in );
-            case FontBasisRecord.sid:
-                return new FontBasisRecord( in );
-            case FontIndexRecord.sid:
-                return new FontIndexRecord( in );
-            case LineFormatRecord.sid:
-                return new LineFormatRecord( in );
-            case AreaFormatRecord.sid:
-                return new AreaFormatRecord( in );
-            case LinkedDataRecord.sid:
-                return new LinkedDataRecord( in );
-            case FormulaRecord.sid:
-                return new FormulaRecord( in );
-            case SheetPropertiesRecord.sid:
-                return new SheetPropertiesRecord( in );
-            case DefaultDataLabelTextPropertiesRecord.sid:
-                return new DefaultDataLabelTextPropertiesRecord( in );
-            case TextRecord.sid:
-                return new TextRecord( in );
-            case AxisParentRecord.sid:
-                return new AxisParentRecord( in );
-            case AxisLineFormatRecord.sid:
-                return new AxisLineFormatRecord( in );
-            case SupBookRecord.sid:
-                return new SupBookRecord( in );
-            case ExternSheetRecord.sid:
-                return new ExternSheetRecord( in );
-            case SCLRecord.sid:
-                return new SCLRecord( in );
-            case SeriesToChartGroupRecord.sid:
-                return new SeriesToChartGroupRecord( in );
-            case AxisUsedRecord.sid:
-                return new AxisUsedRecord( in );
-            case AxisRecord.sid:
-                return new AxisRecord( in );
-            case CategorySeriesAxisRecord.sid:
-                return new CategorySeriesAxisRecord( in );
-            case AxisOptionsRecord.sid:
-                return new AxisOptionsRecord( in );
-            case TickRecord.sid:
-                return new TickRecord( in );
-            case SeriesTextRecord.sid:
-                return new SeriesTextRecord( in );
-            case ObjectLinkRecord.sid:
-                return new ObjectLinkRecord( in );
-            case PlotAreaRecord.sid:
-                return new PlotAreaRecord( in );
-            case SeriesIndexRecord.sid:
-                return new SeriesIndexRecord( in );
-            case LegendRecord.sid:
-                return new LegendRecord( in );
-            case LeftMarginRecord.sid:
-                return new LeftMarginRecord( in );
-            case RightMarginRecord.sid:
-                return new RightMarginRecord( in );
-            case TopMarginRecord.sid:
-                return new TopMarginRecord( in );
-            case BottomMarginRecord.sid:
-                return new BottomMarginRecord( in );
-            case PaletteRecord.sid:
-                return new PaletteRecord( in );
-            case StringRecord.sid:
-                return new StringRecord( in );
-            case NameRecord.sid:
-                return new NameRecord( in );
-            case PaneRecord.sid:
-                return new PaneRecord( in );
-            case SharedFormulaRecord.sid:
-            	 return new SharedFormulaRecord( in);
-            case ObjRecord.sid:
-            	 return new ObjRecord( in);
-            case TextObjectRecord.sid:
-            	 return new TextObjectRecord( in);
-            case HorizontalPageBreakRecord.sid:
-                return new HorizontalPageBreakRecord( in);
-            case VerticalPageBreakRecord.sid:
-                return new VerticalPageBreakRecord( in);
-            case WriteProtectRecord.sid:
-            	return new WriteProtectRecord( in);
-            case FilePassRecord.sid:
-            	return new FilePassRecord(in);
-            case NoteRecord.sid:
-                return new NoteRecord( in );
-            case FileSharingRecord.sid:
-                return new FileSharingRecord( in );
-            case HyperlinkRecord.sid:
-                return new HyperlinkRecord( in );
-            case TableRecord.sid:
-            	return new TableRecord( in );
+            case AreaFormatRecord.sid:     return new AreaFormatRecord(in);
+            case AreaRecord.sid:           return new AreaRecord(in);
+            case AxisLineFormatRecord.sid: return new AxisLineFormatRecord(in);
+            case AxisOptionsRecord.sid:    return new AxisOptionsRecord(in);
+            case AxisParentRecord.sid:     return new AxisParentRecord(in);
+            case AxisRecord.sid:           return new AxisRecord(in);
+            case AxisUsedRecord.sid:       return new AxisUsedRecord(in);
+            case BOFRecord.sid:            return new BOFRecord(in);
+            case BackupRecord.sid:         return new BackupRecord(in);
+            case BarRecord.sid:            return new BarRecord(in);
+            case BeginRecord.sid:          return new BeginRecord(in);
+            case BlankRecord.sid:          return new BlankRecord(in);
+            case BookBoolRecord.sid:       return new BookBoolRecord(in);
+            case BoolErrRecord.sid:        return new BoolErrRecord(in);
+            case BottomMarginRecord.sid:   return new BottomMarginRecord(in);
+            case BoundSheetRecord.sid:     return new BoundSheetRecord(in);
+            case CalcCountRecord.sid:      return new CalcCountRecord(in);
+            case CalcModeRecord.sid:       return new CalcModeRecord(in);
+            case CategorySeriesAxisRecord.sid: return new CategorySeriesAxisRecord(in);
+            case ChartFormatRecord.sid:    return new ChartFormatRecord(in);
+            case ChartRecord.sid:          return new ChartRecord(in);
+            case CodepageRecord.sid:       return new CodepageRecord(in);
+            case ColumnInfoRecord.sid:     return new ColumnInfoRecord(in);
+            case ContinueRecord.sid:       return new ContinueRecord(in);
+            case CountryRecord.sid:        return new CountryRecord(in);
+            case DBCellRecord.sid:         return new DBCellRecord(in);
+            case DSFRecord.sid:            return new DSFRecord(in);
+            case DatRecord.sid:            return new DatRecord(in);
+            case DataFormatRecord.sid:     return new DataFormatRecord(in);
+            case DateWindow1904Record.sid: return new DateWindow1904Record(in);
+            case DefaultColWidthRecord.sid:return new DefaultColWidthRecord(in);
+            case DefaultDataLabelTextPropertiesRecord.sid: return new DefaultDataLabelTextPropertiesRecord(in);
+            case DefaultRowHeightRecord.sid: return new DefaultRowHeightRecord(in);
+            case DeltaRecord.sid:          return new DeltaRecord(in);
+            case DimensionsRecord.sid:     return new DimensionsRecord(in);
+            case DrawingGroupRecord.sid:   return new DrawingGroupRecord(in);
+            case DrawingRecordForBiffViewer.sid: return new DrawingRecordForBiffViewer(in);
+            case DrawingSelectionRecord.sid: return new DrawingSelectionRecord(in);
+            case DVRecord.sid:             return new DVRecord(in);
+            case DVALRecord.sid:           return new DVALRecord(in);
+            case EOFRecord.sid:            return new EOFRecord(in);
+            case EndRecord.sid:            return new EndRecord(in);
+            case ExtSSTRecord.sid:         return new ExtSSTRecord(in);
+            case ExtendedFormatRecord.sid: return new ExtendedFormatRecord(in);
+            case ExternSheetRecord.sid:    return new ExternSheetRecord(in);
+            case FilePassRecord.sid:       return new FilePassRecord(in);
+            case FileSharingRecord.sid:    return new FileSharingRecord(in);
+            case FnGroupCountRecord.sid:   return new FnGroupCountRecord(in);
+            case FontBasisRecord.sid:      return new FontBasisRecord(in);
+            case FontIndexRecord.sid:      return new FontIndexRecord(in);
+            case FontRecord.sid:           return new FontRecord(in);
+            case FooterRecord.sid:         return new FooterRecord(in);
+            case FormatRecord.sid:         return new FormatRecord(in);
+            case FormulaRecord.sid:        return new FormulaRecord(in);
+            case FrameRecord.sid:          return new FrameRecord(in);
+            case GridsetRecord.sid:        return new GridsetRecord(in);
+            case GutsRecord.sid:           return new GutsRecord(in);
+            case HCenterRecord.sid:        return new HCenterRecord(in);
+            case HeaderRecord.sid:         return new HeaderRecord(in);
+            case HideObjRecord.sid:        return new HideObjRecord(in);
+            case HorizontalPageBreakRecord.sid: return new HorizontalPageBreakRecord(in);
+            case HyperlinkRecord.sid:      return new HyperlinkRecord(in);
+            case IndexRecord.sid:          return new IndexRecord(in);
+            case InterfaceEndRecord.sid:   return new InterfaceEndRecord(in);
+            case InterfaceHdrRecord.sid:   return new InterfaceHdrRecord(in);
+            case IterationRecord.sid:      return new IterationRecord(in);
+            case LabelRecord.sid:          return new LabelRecord(in);
+            case LabelSSTRecord.sid:       return new LabelSSTRecord(in);
+            case LeftMarginRecord.sid:     return new LeftMarginRecord(in);
+            case LegendRecord.sid:         return new LegendRecord(in);
+            case LineFormatRecord.sid:     return new LineFormatRecord(in);
+            case LinkedDataRecord.sid:     return new LinkedDataRecord(in);
+            case MMSRecord.sid:            return new MMSRecord(in);
+            case MergeCellsRecord.sid:     return new MergeCellsRecord(in);
+            case MulBlankRecord.sid:       return new MulBlankRecord(in);
+            case MulRKRecord.sid:          return new MulRKRecord(in);
+            case NameRecord.sid:           return new NameRecord(in);
+            case NoteRecord.sid:           return new NoteRecord(in);
+            case NumberRecord.sid:         return new NumberRecord(in);
+            case ObjRecord.sid:            return new ObjRecord(in);
+            case ObjectLinkRecord.sid:     return new ObjectLinkRecord(in);
+            case PaletteRecord.sid:        return new PaletteRecord(in);
+            case PaneRecord.sid:           return new PaneRecord(in);
+            case PasswordRecord.sid:       return new PasswordRecord(in);
+            case PasswordRev4Record.sid:   return new PasswordRev4Record(in);
+            case PlotAreaRecord.sid:       return new PlotAreaRecord(in);
+            case PlotGrowthRecord.sid:     return new PlotGrowthRecord(in);
+            case PrecisionRecord.sid:      return new PrecisionRecord(in);
+            case PrintGridlinesRecord.sid: return new PrintGridlinesRecord(in);
+            case PrintHeadersRecord.sid:   return new PrintHeadersRecord(in);
+            case PrintSetupRecord.sid:     return new PrintSetupRecord(in);
+            case ProtectRecord.sid:        return new ProtectRecord(in);
+            case ProtectionRev4Record.sid: return new ProtectionRev4Record(in);
+            case RKRecord.sid:             return new RKRecord(in);
+            case RefModeRecord.sid:        return new RefModeRecord(in);
+            case RefreshAllRecord.sid:     return new RefreshAllRecord(in);
+            case RightMarginRecord.sid:    return new RightMarginRecord(in);
+            case RowRecord.sid:            return new RowRecord(in);
+            case SCLRecord.sid:            return new SCLRecord(in);
+            case SSTRecord.sid:            return new SSTRecord(in);
+            case SaveRecalcRecord.sid:     return new SaveRecalcRecord(in);
+            case SelectionRecord.sid:      return new SelectionRecord(in);
+            case SeriesIndexRecord.sid:    return new SeriesIndexRecord(in);
+            case SeriesListRecord.sid:     return new SeriesListRecord(in);
+            case SeriesRecord.sid:         return new SeriesRecord(in);
+            case SeriesTextRecord.sid:     return new SeriesTextRecord(in);
+            case SeriesToChartGroupRecord.sid: return new SeriesToChartGroupRecord(in);
+            case SharedFormulaRecord.sid:  return new SharedFormulaRecord(in);
+            case SheetPropertiesRecord.sid:return new SheetPropertiesRecord(in);
+            case StringRecord.sid:         return new StringRecord(in);
+            case StyleRecord.sid:          return new StyleRecord(in);
+            case SupBookRecord.sid:        return new SupBookRecord(in);
+            case TabIdRecord.sid:          return new TabIdRecord(in);
+            case TableRecord.sid:          return new TableRecord(in);
+            case TextObjectRecord.sid:     return new TextObjectRecord(in);
+            case TextRecord.sid:           return new TextRecord(in);
+            case TickRecord.sid:           return new TickRecord(in);
+            case TopMarginRecord.sid:      return new TopMarginRecord(in);
+            case UnitsRecord.sid:          return new UnitsRecord(in);
+            case UseSelFSRecord.sid:       return new UseSelFSRecord(in);
+            case VCenterRecord.sid:        return new VCenterRecord(in);
+            case ValueRangeRecord.sid:     return new ValueRangeRecord(in);
+            case VerticalPageBreakRecord.sid: return new VerticalPageBreakRecord(in);
+            case WSBoolRecord.sid:         return new WSBoolRecord(in);
+            case WindowOneRecord.sid:      return new WindowOneRecord(in);
+            case WindowProtectRecord.sid:  return new WindowProtectRecord(in);
+            case WindowTwoRecord.sid:      return new WindowTwoRecord(in);
+            case WriteAccessRecord.sid:    return new WriteAccessRecord(in);
+            case WriteProtectRecord.sid:   return new WriteProtectRecord(in);        
+        
         }
-        return new UnknownRecord( in );
+        return new UnknownRecord(in);
     }
 
 

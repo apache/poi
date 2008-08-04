@@ -25,7 +25,7 @@ import org.apache.poi.hssf.record.Record;
  *
  * @author Josh Micich
  */
-final class RecordStream {
+public final class RecordStream {
 
 	private final List _list;
 	private int _nextIndex;

@@ -36,7 +36,7 @@ public final class NumberPtg extends ScalarConstantPtg {
     /** Create a NumberPtg from a byte array read from disk */
     public NumberPtg(RecordInputStream in)
     {
-        field_1_value = in.readDouble();
+        this(in.readDouble());
     }
     
     /** Create a NumberPtg from a string representation of  the number
@@ -45,9 +45,12 @@ public final class NumberPtg extends ScalarConstantPtg {
      *  @param value : String representation of a floating point number
      */
     public NumberPtg(String value) {
-        field_1_value = Double.parseDouble(value);
+        this(Double.parseDouble(value));
     }
     
+    public NumberPtg(double value) {
+        field_1_value = value;
+    }
     
     public double getValue()
     {
@@ -67,6 +70,15 @@ public final class NumberPtg extends ScalarConstantPtg {
 
     public String toFormulaString(Workbook book)
     {
-        return "" + getValue();
+        // TODO - java's rendering of double values is not quite same as excel's
+        return String.valueOf(field_1_value);
+    }
+    
+    public String toString() {
+        StringBuffer sb = new StringBuffer(64);
+        sb.append(getClass().getName()).append(" [");
+        sb.append(field_1_value);
+        sb.append("]");
+        return sb.toString();
     }
 }

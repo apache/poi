@@ -20,7 +20,7 @@ package org.apache.poi.hssf.record;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.cf.CellRange;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * Tests the serialization and deserialization of the TestCFHeaderRecord
@@ -34,18 +34,18 @@ public final class TestCFHeaderRecord extends TestCase
 	public void testCreateCFHeaderRecord () 
 	{
 		CFHeaderRecord record = new CFHeaderRecord();
-		CellRange[] ranges = {
-			new CellRange(0,0xFFFF,5,5),
-			new CellRange(0,0xFFFF,6,6),
-			new CellRange(0,1,0,1),
-			new CellRange(0,1,2,3),
-			new CellRange(2,3,0,1),
-			new CellRange(2,3,2,3),
+		CellRangeAddress[] ranges = {
+			new CellRangeAddress(0,0xFFFF,5,5),
+			new CellRangeAddress(0,0xFFFF,6,6),
+			new CellRangeAddress(0,1,0,1),
+			new CellRangeAddress(0,1,2,3),
+			new CellRangeAddress(2,3,0,1),
+			new CellRangeAddress(2,3,2,3),
 		};
 		record.setCellRanges(ranges);
 		ranges = record.getCellRanges();
 		assertEquals(6,ranges.length);
-		CellRange enclosingCellRange = record.getEnclosingCellRange();
+		CellRangeAddress enclosingCellRange = record.getEnclosingCellRange();
 		assertEquals(0, enclosingCellRange.getFirstRow());
 		assertEquals(65535, enclosingCellRange.getLastRow());
 		assertEquals(0, enclosingCellRange.getFirstColumn());
@@ -95,7 +95,7 @@ public final class TestCFHeaderRecord extends TestCase
 		assertEquals("#CFRULES", 3, record.getNumberOfConditionalFormats());
 		assertTrue(record.getNeedRecalculation());
 		confirm(record.getEnclosingCellRange(), 0, 3, 0, 3);
-		CellRange[] ranges = record.getCellRanges();
+		CellRangeAddress[] ranges = record.getCellRanges();
 		assertEquals(4, ranges.length);
 		confirm(ranges[0], 0, 1, 0, 1);
 		confirm(ranges[1], 0, 1, 2, 3);
@@ -154,7 +154,7 @@ public final class TestCFHeaderRecord extends TestCase
 		assertEquals("#CFRULES", 19, record.getNumberOfConditionalFormats());
 		assertFalse(record.getNeedRecalculation());
 		confirm(record.getEnclosingCellRange(), 0, 65535, 0, 255);
-		CellRange[] ranges = record.getCellRanges();
+		CellRangeAddress[] ranges = record.getCellRanges();
 		assertEquals(3, ranges.length);
 		confirm(ranges[0], 40000, 50000, 2, 2);
 		confirm(ranges[1], 0, 65535, 5, 5);
@@ -168,18 +168,11 @@ public final class TestCFHeaderRecord extends TestCase
 			assertEquals("CFHeaderRecord doesn't match", recordData[i], output[i+4]);
 		}
 	}
-	
 
-	private static void confirm(CellRange cr, int expFirstRow, int expLastRow, int expFirstCol, int expLastColumn) {
+	private static void confirm(CellRangeAddress cr, int expFirstRow, int expLastRow, int expFirstCol, int expLastColumn) {
 		assertEquals("first row", expFirstRow, cr.getFirstRow());
 		assertEquals("last row", expLastRow, cr.getLastRow());
 		assertEquals("first column", expFirstCol, cr.getFirstColumn());
 		assertEquals("last column", expLastColumn, cr.getLastColumn());
-	}
-
-	public static void main(String[] ignored_args)
-	{
-		System.out.println("Testing org.apache.poi.hssf.record.CFHeaderRecord");
-		junit.textui.TestRunner.run(TestCFHeaderRecord.class);
 	}
 }

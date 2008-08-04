@@ -811,4 +811,50 @@ public class SlideShow
     public int getNumberOfFonts() {
         return getDocumentRecord().getEnvironment().getFontCollection().getNumberOfFonts();
     }
+
+    /**
+     * Return  Header / Footer settings for slides
+     *
+     * @return Header / Footer settings for slides
+     */
+    public HeadersFooters getSlideHeadersFooters(){
+        HeadersFootersContainer hdd = null;
+        Record[] ch = _documentRecord.getChildRecords();
+        for (int i = 0; i < ch.length; i++) {
+            if(ch[i] instanceof HeadersFootersContainer &&
+                    ((HeadersFootersContainer)ch[i]).getOptions() == HeadersFootersContainer.SlideHeadersFootersContainer){
+                hdd = (HeadersFootersContainer)ch[i];
+                break;
+            }
+        }
+        boolean newRecord = false;
+        if(hdd == null) {
+            hdd = new HeadersFootersContainer(HeadersFootersContainer.SlideHeadersFootersContainer);
+            newRecord = true;
+        }
+        return new HeadersFooters(hdd, this, newRecord);
+    }
+
+    /**
+     * Return  Header / Footer settings for notes
+     *
+     * @return Header / Footer settings for notes
+     */
+    public HeadersFooters getNotesHeadersFooters(){
+        HeadersFootersContainer hdd = null;
+        Record[] ch = _documentRecord.getChildRecords();
+        for (int i = 0; i < ch.length; i++) {
+            if(ch[i] instanceof HeadersFootersContainer &&
+                    ((HeadersFootersContainer)ch[i]).getOptions() == HeadersFootersContainer.NotesHeadersFootersContainer){
+                hdd = (HeadersFootersContainer)ch[i];
+                break;
+            }
+        }
+        boolean newRecord = false;
+        if(hdd == null) {
+            hdd = new HeadersFootersContainer(HeadersFootersContainer.NotesHeadersFootersContainer);
+            newRecord = true;
+        }
+        return new HeadersFooters(hdd, this, newRecord);
+    }
 }

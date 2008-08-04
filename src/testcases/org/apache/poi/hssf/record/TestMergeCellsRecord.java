@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,19 +14,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.record;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.MergeCellsRecord.MergedRegion;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * Make sure the merge cells record behaves
  * @author Danny Mui (dmui at apache dot org)
  *
  */
-public class TestMergeCellsRecord extends TestCase {
+public final class TestMergeCellsRecord extends TestCase {
    
    /**
     * Make sure when a clone is called, we actually clone it.
@@ -40,13 +39,13 @@ public class TestMergeCellsRecord extends TestCase {
       
       assertNotSame("Merged and cloned objects are the same", merge, clone);
       
-      MergedRegion mergeRegion = merge.getAreaAt(0);
-      MergedRegion cloneRegion = clone.getAreaAt(0);
+      CellRangeAddress mergeRegion = merge.getAreaAt(0);
+      CellRangeAddress cloneRegion = clone.getAreaAt(0);
       assertNotSame("Should not point to same objects when cloning", mergeRegion, cloneRegion);
-      assertEquals("New Clone Row From doesnt match", mergeRegion.row_from, cloneRegion.row_from);
-      assertEquals("New Clone Row To doesnt match", mergeRegion.row_to, cloneRegion.row_to);
-      assertEquals("New Clone Col From doesnt match", mergeRegion.col_from, cloneRegion.col_from);
-      assertEquals("New Clone Col To doesnt match", mergeRegion.col_to, cloneRegion.col_to);      
+      assertEquals("New Clone Row From doesnt match", mergeRegion.getFirstRow(), cloneRegion.getFirstRow());
+      assertEquals("New Clone Row To doesnt match", mergeRegion.getLastRow(), cloneRegion.getLastRow());
+      assertEquals("New Clone Col From doesnt match", mergeRegion.getFirstColumn(), cloneRegion.getFirstColumn());
+      assertEquals("New Clone Col To doesnt match", mergeRegion.getLastColumn(), cloneRegion.getLastColumn());      
       
       merge.removeAreaAt(0);
       assertNotNull("Clone's item not removed", clone.getAreaAt(0));

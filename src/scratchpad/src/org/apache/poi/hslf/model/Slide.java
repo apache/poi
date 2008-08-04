@@ -24,9 +24,7 @@ import java.util.Vector;
 import java.util.Iterator;
 import java.awt.*;
 
-import org.apache.poi.hslf.record.SlideAtom;
-import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 import org.apache.poi.ddf.EscherDggRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -381,4 +379,22 @@ public class Slide extends Sheet
         }
     }
 
+    /**
+     * Header / Footer settings for this slide.  
+     *
+     * @return Header / Footer settings for this slide
+     */
+     public HeadersFooters getHeadersFooters(){
+        HeadersFootersContainer hdd = null;
+        Record[] ch = getSheetContainer().getChildRecords();
+        for (int i = 0; i < ch.length; i++) {
+            if(ch[i] instanceof HeadersFootersContainer){
+                hdd = (HeadersFootersContainer)ch[i];
+                break;
+            }
+        }
+        boolean newRecord = false;
+        if(hdd == null) return getSlideShow().getSlideHeadersFooters();
+        else return new HeadersFooters(hdd, getSlideShow(), newRecord);
+    }
 }

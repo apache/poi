@@ -28,7 +28,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 import java.util.TreeMap;
 
 import org.apache.poi.ddf.EscherRecord;
@@ -49,13 +48,13 @@ import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RefPtg;
-import org.apache.poi.hssf.util.HSSFCellRangeAddress;
-import org.apache.poi.hssf.util.HSSFDataValidation;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -393,91 +392,18 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
 
     /**
      * Creates a data validation object
-     * @param obj_validation The Data validation object settings
+     * @param dataValidation The Data validation object settings
      */
-    public void addValidationData(HSSFDataValidation obj_validation)
-    {
-       if ( obj_validation == null )
-       {
-         return;
+    public void addValidationData(HSSFDataValidation dataValidation) {
+       if (dataValidation == null) {
+           throw new IllegalArgumentException("objValidation must not be null");
        }
-       DVALRecord dvalRec = (DVALRecord)sheet.findFirstRecordBySid( DVALRecord.sid );
-       int eofLoc = sheet.findFirstRecordLocBySid( EOFRecord.sid );
-       if ( dvalRec == null )
-       {
-          dvalRec = new DVALRecord();
-          sheet.getRecords().add( eofLoc, dvalRec );
-       }
-       int curr_dvRecNo = dvalRec.getDVRecNo();
-       dvalRec.setDVRecNo(curr_dvRecNo+1);
+       DataValidityTable dvt = sheet.getOrCreateDataValidityTable();
 
-       //create dv record
-       DVRecord dvRecord = new DVRecord();
-
-       //dv record's option flags
-       dvRecord.setDataType( obj_validation.getDataValidationType() );
-       dvRecord.setErrorStyle(obj_validation.getErrorStyle());
-       dvRecord.setEmptyCellAllowed(obj_validation.getEmptyCellAllowed());
-       dvRecord.setSurppresDropdownArrow(obj_validation.getSurppressDropDownArrow());
-       dvRecord.setShowPromptOnCellSelected(obj_validation.getShowPromptBox());
-       dvRecord.setShowErrorOnInvalidValue(obj_validation.getShowErrorBox());
-       dvRecord.setConditionOperator(obj_validation.getOperator());
-
-       //string fields
-       dvRecord.setStringField( DVRecord.STRING_PROMPT_TITLE,obj_validation.getPromptBoxTitle());
-       dvRecord.setStringField( DVRecord.STRING_PROMPT_TEXT, obj_validation.getPromptBoxText());
-       dvRecord.setStringField( DVRecord.STRING_ERROR_TITLE, obj_validation.getErrorBoxTitle());
-       dvRecord.setStringField( DVRecord.STRING_ERROR_TEXT, obj_validation.getErrorBoxText());
-
-       //formula fields ( size and data )
-       String str_formula = obj_validation.getFirstFormula();
-       FormulaParser fp = new FormulaParser(str_formula, workbook);
-       fp.parse();
-       Stack ptg_arr = new Stack();
-       Ptg[] ptg  = fp.getRPNPtg();
-       int size = 0;
-       for (int k = 0; k < ptg.length; k++)
-       {
-           if ( ptg[k] instanceof org.apache.poi.hssf.record.formula.AreaPtg )
-           {
-              //we should set ptgClass to Ptg.CLASS_REF and explicit formula string to false
-              ptg[k].setClass(Ptg.CLASS_REF);
-              obj_validation.setExplicitListFormula(false);
-           }
-           size += ptg[k].getSize();
-           ptg_arr.push(ptg[k]);
-       }
-       dvRecord.setFirstFormulaRPN(ptg_arr);
-       dvRecord.setFirstFormulaSize((short)size);
-
-       dvRecord.setListExplicitFormula(obj_validation.getExplicitListFormula());
-
-       if ( obj_validation.getSecondFormula() != null )
-       {
-         str_formula = obj_validation.getSecondFormula();
-         fp = new FormulaParser(str_formula, workbook);
-         fp.parse();
-         ptg_arr = new Stack();
-         ptg  = fp.getRPNPtg();
-         size = 0;
-         for (int k = 0; k < ptg.length; k++)
-         {
-             size += ptg[k].getSize();
-             ptg_arr.push(ptg[k]);
-         }
-         dvRecord.setSecFormulaRPN(ptg_arr);
-         dvRecord.setSecFormulaSize((short)size);
-       }
-
-       //dv records cell range field
-       HSSFCellRangeAddress cell_range = new HSSFCellRangeAddress();
-       cell_range.addADDRStructure(obj_validation.getFirstRow(), obj_validation.getFirstColumn(), obj_validation.getLastRow(), obj_validation.getLastColumn());
-       dvRecord.setCellRangeAddress(cell_range);
-
-       //add dv record
-       eofLoc = sheet.findFirstRecordLocBySid( EOFRecord.sid );
-       sheet.getRecords().add( eofLoc, dvRecord );
+       DVRecord dvRecord = dataValidation.createDVRecord(workbook);
+       dvt.addDataValidation(dvRecord);
     }
+
 
     /**
      * Get the visibility state for a given column.
@@ -610,18 +536,27 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
     }
 
     /**
-     * adds a merged region of cells (hence those cells form one)
-     * @param region (rowfrom/colfrom-rowto/colto) to merge
-     * @return index of this region
+     * @deprecated (Aug-2008) use <tt>CellRangeAddress</tt> instead of <tt>Region</tt>
      */
     public int addMergedRegion(org.apache.poi.ss.util.Region region)
     {
-        //return sheet.addMergedRegion((short) region.getRowFrom(),
         return sheet.addMergedRegion( region.getRowFrom(),
                 region.getColumnFrom(),
                 //(short) region.getRowTo(),
                 region.getRowTo(),
                 region.getColumnTo());
+    }
+    /**
+     * adds a merged region of cells (hence those cells form one)
+     * @param region (rowfrom/colfrom-rowto/colto) to merge
+     * @return index of this region
+     */
+    public int addMergedRegion(CellRangeAddress region)
+    {
+        return sheet.addMergedRegion( region.getFirstRow(),
+                region.getFirstColumn(),
+                region.getLastRow(),
+                region.getLastColumn());
     }
 
     /**
@@ -659,7 +594,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
 
     /**
      * TODO: Boolean not needed, remove after next release
-     * @deprecated use getVerticallyCenter() instead
+     * @deprecated (Mar-2008) use getVerticallyCenter() instead
      */
     public boolean getVerticallyCenter(boolean value) {
         return getVerticallyCenter();
@@ -724,14 +659,19 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
     }
 
     /**
-     * gets the region at a particular index
-     * @param index of the region to fetch
-     * @return the merged region (simple eh?)
+     * @deprecated (Aug-2008) use {@link HSSFSheet#getMergedRegion(int)}
      */
-
-    public Region getMergedRegionAt(int index)
-    {
-        return new Region(sheet.getMergedRegionAt(index));
+    public Region getMergedRegionAt(int index) {
+        CellRangeAddress cra = getMergedRegion(index);
+        
+		return new Region(cra.getFirstRow(), (short)cra.getFirstColumn(), 
+				cra.getLastRow(), (short)cra.getLastColumn());
+    }
+    /**
+     * @return the merged region at the specified index
+     */
+    public CellRangeAddress getMergedRegion(int index) {
+        return (CellRangeAddress)sheet.getMergedRegionAt(index);
     }
 
     /**
@@ -1164,36 +1104,43 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
     protected void shiftMerged(int startRow, int endRow, int n, boolean isRow) {
         List shiftedRegions = new ArrayList();
         //move merged regions completely if they fall within the new region boundaries when they are shifted
-        for (int i = 0; i < this.getNumMergedRegions(); i++) {
-             Region merged = this.getMergedRegionAt(i);
+        for (int i = 0; i < getNumMergedRegions(); i++) {
+             CellRangeAddress merged = getMergedRegion(i);
 
-             boolean inStart = (merged.getRowFrom() >= startRow || merged.getRowTo() >= startRow);
-             boolean inEnd =  (merged.getRowTo() <= endRow || merged.getRowFrom() <= endRow);
+             boolean inStart= (merged.getFirstRow() >= startRow || merged.getLastRow() >= startRow);
+             boolean inEnd  = (merged.getFirstRow() <= endRow   || merged.getLastRow() <= endRow);
 
-             //dont check if it's not within the shifted area
-             if (! (inStart && inEnd)) continue;
+             //don't check if it's not within the shifted area
+             if (!inStart || !inEnd) {
+				continue;
+			 }
 
              //only shift if the region outside the shifted rows is not merged too
-             if (!merged.contains(startRow-1, (short)0) && !merged.contains(endRow+1, (short)0)){
-                 merged.setRowFrom(merged.getRowFrom()+n);
-                 merged.setRowTo(merged.getRowTo()+n);
+             if (!containsCell(merged, startRow-1, 0) && !containsCell(merged, endRow+1, 0)){
+                 merged.setFirstRow(merged.getFirstRow()+n);
+                 merged.setLastRow(merged.getLastRow()+n);
                  //have to remove/add it back
                  shiftedRegions.add(merged);
-                 this.removeMergedRegion(i);
+                 removeMergedRegion(i);
                  i = i -1; // we have to back up now since we removed one
-
              }
-
         }
 
-        //readd so it doesn't get shifted again
+        //read so it doesn't get shifted again
         Iterator iterator = shiftedRegions.iterator();
         while (iterator.hasNext()) {
-            Region region = (Region)iterator.next();
+        	CellRangeAddress region = (CellRangeAddress)iterator.next();
 
             this.addMergedRegion(region);
         }
-
+    }
+    private static boolean containsCell(CellRangeAddress cr, int rowIx, int colIx) {
+        if (cr.getFirstRow() <= rowIx && cr.getLastRow() >= rowIx
+                && cr.getFirstColumn() <= colIx && cr.getLastColumn() >= colIx)
+        {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -1812,17 +1759,20 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
             HSSFRow row = (HSSFRow) it.next();
             HSSFCell cell = row.getCell(column);
 
-            if (cell == null) continue;
+            if (cell == null) {
+				continue;
+			}
 
             int colspan = 1;
             for (int i = 0 ; i < getNumMergedRegions(); i++) {
-                if (getMergedRegionAt(i).contains(row.getRowNum(), column)) {
+                CellRangeAddress region = getMergedRegion(i);
+				if (containsCell(region, row.getRowNum(), column)) {
                 	if (!useMergedCells) {
                     	// If we're not using merged cells, skip this one and move on to the next. 
                 		continue rows;
                 	}
-                	cell = row.getCell(getMergedRegionAt(i).getColumnFrom());
-                	colspan = 1+ getMergedRegionAt(i).getColumnTo() - getMergedRegionAt(i).getColumnFrom();
+                	cell = row.getCell(region.getFirstColumn());
+                	colspan = 1 + region.getLastColumn() - region.getFirstColumn();
                 }
             }
 
