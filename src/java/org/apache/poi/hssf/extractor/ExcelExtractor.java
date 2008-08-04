@@ -19,8 +19,11 @@ package org.apache.poi.hssf.extractor;
 import java.io.IOException;
 
 import org.apache.poi.POIOLE2TextExtractor;
+import org.apache.poi.hssf.usermodel.HeaderFooter;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFComment;
+import org.apache.poi.hssf.usermodel.HSSFFooter;
+import org.apache.poi.hssf.usermodel.HSSFHeader;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -89,6 +92,13 @@ public class ExcelExtractor extends POIOLE2TextExtractor {
 				}
 			}
 			
+			// Header text, if there is any
+			if(sheet.getHeader() != null) {
+				text.append(
+						extractHeaderFooter(sheet.getHeader())
+				);
+			}
+			
 			int firstRow = sheet.getFirstRowNum();
 			int lastRow = sheet.getLastRowNum();
 			for(int j=firstRow;j<=lastRow;j++) {
@@ -154,7 +164,36 @@ public class ExcelExtractor extends POIOLE2TextExtractor {
 				// Finish off the row
 				text.append("\n");
 			}
+			
+			// Finally Feader text, if there is any
+			if(sheet.getFooter() != null) {
+				text.append(
+						extractHeaderFooter(sheet.getFooter())
+				);
+			}
 		}
+		
+		return text.toString();
+	}
+	
+	private String extractHeaderFooter(HeaderFooter hf) {
+		StringBuffer text = new StringBuffer();
+		
+		if(hf.getLeft() != null) {
+			text.append(hf.getLeft());
+		}
+		if(hf.getCenter() != null) {
+			if(text.length() > 0)
+				text.append("\t");
+			text.append(hf.getCenter());
+		}
+		if(hf.getRight() != null) {
+			if(text.length() > 0)
+				text.append("\t");
+			text.append(hf.getRight());
+		}
+		if(text.length() > 0)
+			text.append("\n");
 		
 		return text.toString();
 	}

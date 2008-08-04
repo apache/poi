@@ -255,4 +255,20 @@ public final class TestExcelExtractor extends TestCase {
 				ex.getText());
 		assertEquals("Excel With Embeded", ex.getSummaryInformation().getTitle());
 	}
+	
+	/**
+	 * Test that we get text from headers and footers
+	 */
+	public void test45538() throws Exception {
+		String[] files = new String[] {
+			"45538_classic_Footer.xls", "45538_form_Footer.xls",    
+			"45538_classic_Header.xls", "45538_form_Header.xls"
+		};
+		for(int i=0; i<files.length; i++) {
+			ExcelExtractor extractor = createExtractor(files[i]);
+			String text = extractor.getText();
+			assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
+			assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+		}
+	}
 }
