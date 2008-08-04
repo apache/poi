@@ -28,8 +28,8 @@ import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
-import org.apache.poi.hssf.record.cf.CellRange;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.CellRangeAddress;
 
 /**
  * Tests the serialization and deserialization of the CFRecordsAggregate
@@ -49,9 +49,9 @@ public final class TestCFRecordsAggregate extends TestCase
 		CFRuleRecord rule2 = CFRuleRecord.create(workbook, ComparisonOperator.BETWEEN, "2", "5");
 		CFRuleRecord rule3 = CFRuleRecord.create(workbook, ComparisonOperator.GE, "100", null);
 		header.setNumberOfConditionalFormats(3);
-		CellRange[] cellRanges = {
-				new CellRange(0,1,0,0),
-				new CellRange(0,1,2,2),
+		CellRangeAddress[] cellRanges = {
+				new CellRangeAddress(0,1,0,0),
+				new CellRangeAddress(0,1,2,2),
 		};
 		header.setCellRanges(cellRanges);
 		recs.add(header);
@@ -97,11 +97,4 @@ public final class TestCFRecordsAggregate extends TestCase
 		assertEquals(2, cellRanges.length);
 		assertEquals(3, header.getNumberOfConditionalFormats());
 	}
-
-	public static void main(String[] ignored_args)
-	{
-		System.out.println("Testing org.apache.poi.hssf.record.aggregates.CFRecordsAggregate");
-		junit.textui.TestRunner.run(TestCFRecordsAggregate.class);
-	}
-	
 }

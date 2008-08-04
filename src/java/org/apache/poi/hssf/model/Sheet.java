@@ -24,6 +24,7 @@ import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
+import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.hssf.util.PaneInformation;
 
 import org.apache.poi.util.POILogFactory;
@@ -515,7 +516,7 @@ public final class Sheet implements Model {
         }
     }
 
-    public int addMergedRegion(int rowFrom, short colFrom, int rowTo, short colTo) {
+    public int addMergedRegion(int rowFrom, int colFrom, int rowTo, int colTo) {
         // Validate input
         if (rowTo < rowFrom) {
             throw new IllegalArgumentException("The 'to' row (" + rowTo
@@ -585,7 +586,7 @@ public final class Sheet implements Model {
         }
     }
 
-    public MergeCellsRecord.MergedRegion getMergedRegionAt(int index)
+    public CellRangeAddress getMergedRegionAt(int index)
     {
         //safety checks
         if (index >= numMergedRegions || mergedRecords.size() == 0)
@@ -1634,13 +1635,7 @@ public final class Sheet implements Model {
      * Creates the Selection record and sets it to nothing selected
     */
     private static SelectionRecord createSelection() {
-        SelectionRecord retval = new SelectionRecord();
-
-        retval.setPane(( byte ) 0x3);
-        retval.setActiveCellCol(( short ) 0x0);
-        retval.setActiveCellRow(( short ) 0x0);
-        retval.setNumRefs(( short ) 0x0);
-        return retval;
+        return new SelectionRecord(0, 0);
     }
 
     public short getTopRow()
@@ -1701,18 +1696,14 @@ public final class Sheet implements Model {
     }
 
     /**
-     * Returns the active column
-     *
      * @see org.apache.poi.hssf.record.SelectionRecord
-     * @return row the active column index
+     * @return column of the active cell
      */
-    public short getActiveCellCol()
-    {
-        if (selection == null)
-        {
-            return (short) 0;
+    public short getActiveCellCol() {
+        if (selection == null) {
+            return 0;
         }
-        return selection.getActiveCellCol();
+        return (short)selection.getActiveCellCol();
     }
 
     /**
@@ -1731,9 +1722,7 @@ public final class Sheet implements Model {
     }
 
     private static  MergeCellsRecord createMergedCells() {
-        MergeCellsRecord retval = new MergeCellsRecord();
-        retval.setNumAreas(( short ) 0);
-        return retval;
+        return new MergeCellsRecord();
     }
 
     /**

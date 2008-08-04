@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,70 +14,80 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
-
-import java.util.*;
 
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Title:        Selection Record<P>
+ * Title:        Selection Record (0x001D)<P>
  * Description:  shows the user's selection on the sheet
  *               for write set num refs to 0<P>
  *
- * TODO :  Fully implement reference subrecords.
  * REFERENCE:  PG 291 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  * @author Glen Stampoultzis (glens at apache.org)
  */
+public final class SelectionRecord extends Record {
+    public final static short sid = 0x001D;
+    private byte        field_1_pane;
+    private int         field_2_row_active_cell;
+    private int         field_3_col_active_cell;
+    private int         field_4_active_cell_ref_index;
+    private Reference[] field_6_refs;
 
-public class SelectionRecord
-    extends Record
-{
-    public final static short sid = 0x1d;
-    private byte              field_1_pane;
-    //private short             field_2_row_active_cell;
-    private int             field_2_row_active_cell;
-    private short             field_3_col_active_cell;
-    private short             field_4_ref_active_cell;
-    private short             field_5_num_refs;
-    private ArrayList         field_6_refs;     // not used yet
-
+    /**
+     *  Note - column values are 8-bit so cannot use <tt>CellRangeAddressList</tt>
+     */
     public class Reference {
-      private short field_1_first_row;
-      private short field_2_last_row;
-      private byte field_3_first_column;
-      private byte field_4_last_column;
+        /* package */ static final int ENCODED_SIZE = 6;
+        private int _firstRow;
+		private int _lastRow;
+		private int _firstCol;
+		private int _lastCol;
       
-      Reference(RecordInputStream in) {
-        field_1_first_row = in.readShort();
-        field_2_last_row = in.readShort();
-        field_3_first_column = in.readByte();
-        field_4_last_column = in.readByte();
-      }
-      
-      public short getFirstRow() {
-    	  return field_1_first_row;
-      }
-      
-      public short getLastRow() {
-    	  return field_2_last_row;
-      }
-      
-      public byte getFirstColumn() {
-    	  return field_3_first_column;
-      }
-      
-      public byte getLastColumn() {
-    	  return field_4_last_column;
-      }
+		/* package */ Reference(int firstRow, int lastRow, int firstColumn, int lastColumn) {
+			_firstRow = firstRow;
+			_lastRow = lastRow;
+			_firstCol = firstColumn;
+			_lastCol = lastColumn;
+		}
+		/* package */ Reference(RecordInputStream in) {
+		    this(in.readUShort(), in.readUShort(), in.readUByte(), in.readUByte());
+		}
+		public void serialize(int offset, byte[] data) {
+			LittleEndian.putUShort(data, offset + 0, _firstRow);
+			LittleEndian.putUShort(data, offset + 2, _lastRow);
+			LittleEndian.putByte(data, offset + 4, _firstCol);
+			LittleEndian.putByte(data, offset + 6, _lastCol);
+		}
+
+		public int getFirstRow() {
+		    return _firstRow;
+		}
+ 		public int getLastRow() {
+ 		    return _lastRow;
+ 		}
+ 		public int getFirstColumn() {
+ 		    return _firstCol;
+ 		}
+ 		public int getLastColumn() {
+ 		    return _lastCol;
+ 		}
     }
 
-    public SelectionRecord()
-    {
+    /**
+     * Creates a default selection record (cell A1, in pane ID 3)
+     */
+    public SelectionRecord(int activeCellRow, int activeCellCol) {
+    	field_1_pane = 3; // pane id 3 is always present.  see OOO sec 5.75 'PANE'
+    	field_2_row_active_cell = activeCellRow;
+    	field_3_col_active_cell = activeCellCol;
+    	field_4_active_cell_ref_index = 0;
+    	field_6_refs = new Reference[] {
+    		new Reference(activeCellRow, activeCellRow, activeCellCol, activeCellCol),
+    	};
     }
 
     /**
@@ -86,41 +95,33 @@ public class SelectionRecord
      * @param in the RecordInputstream to read the record from
      */
 
-    public SelectionRecord(RecordInputStream in)
-    {
+    public SelectionRecord(RecordInputStream in) {
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
+    protected void validateSid(short id) {
+        if (id != sid) {
             throw new RecordFormatException("NOT A valid Selection RECORD");
         }
     }
 
-    protected void fillFields(RecordInputStream in)
-    {
+    protected void fillFields(RecordInputStream in) {
         field_1_pane            = in.readByte();
-        //field_2_row_active_cell = LittleEndian.getShort(data, 1 + offset);
         field_2_row_active_cell = in.readUShort();
         field_3_col_active_cell = in.readShort();
-        field_4_ref_active_cell = in.readShort();
-        field_5_num_refs        = in.readShort();
+        field_4_active_cell_ref_index = in.readShort();
+        int field_5_num_refs    = in.readUShort();
         
-        field_6_refs = new ArrayList(field_5_num_refs);
-        for (int i=0; i<field_5_num_refs; i++) {
-          field_6_refs.add(new Reference(in));
-        }
+        field_6_refs = new Reference[field_5_num_refs];
+        for (int i = 0; i < field_6_refs.length; i++) {
+        	field_6_refs[i] = new Reference(in);
+		}
     }
 
     /**
      * set which window pane this is for
-     * @param pane
      */
-
-    public void setPane(byte pane)
-    {
+    public void setPane(byte pane) {
         field_1_pane = pane;
     }
 
@@ -128,10 +129,7 @@ public class SelectionRecord
      * set the active cell's row
      * @param row number of active cell
      */
-
-    //public void setActiveCellRow(short row)
-    public void setActiveCellRow(int row)
-    {
+    public void setActiveCellRow(int row) {
         field_2_row_active_cell = row;
     }
 
@@ -139,9 +137,7 @@ public class SelectionRecord
      * set the active cell's col
      * @param col number of active cell
      */
-
-    public void setActiveCellCol(short col)
-    {
+    public void setActiveCellCol(short col) {
         field_3_col_active_cell = col;
     }
 
@@ -149,29 +145,14 @@ public class SelectionRecord
      * set the active cell's reference number
      * @param ref number of active cell
      */
-
-    public void setActiveCellRef(short ref)
-    {
-        field_4_ref_active_cell = ref;
+    public void setActiveCellRef(short ref) {
+        field_4_active_cell_ref_index = ref;
     }
 
     /**
-     * set the number of cell refs (we don't support selection so set to 0
-     * @param refs - number of references
+     * @return the pane ID which window pane this is for
      */
-
-    public void setNumRefs(short refs)
-    {
-        field_5_num_refs = refs;
-    }
-
-    /**
-     * get which window pane this is for
-     * @return pane
-     */
-
-    public byte getPane()
-    {
+    public byte getPane() {
         return field_1_pane;
     }
 
@@ -179,10 +160,7 @@ public class SelectionRecord
      * get the active cell's row
      * @return row number of active cell
      */
-
-    //public short getActiveCellRow()
-    public int getActiveCellRow()
-    {
+    public int getActiveCellRow() {
         return field_2_row_active_cell;
     }
 
@@ -190,9 +168,7 @@ public class SelectionRecord
      * get the active cell's col
      * @return col number of active cell
      */
-
-    public short getActiveCellCol()
-    {
+    public int getActiveCellCol() {
         return field_3_col_active_cell;
     }
 
@@ -200,20 +176,8 @@ public class SelectionRecord
      * get the active cell's reference number
      * @return ref number of active cell
      */
-
-    public short getActiveCellRef()
-    {
-        return field_4_ref_active_cell;
-    }
-
-    /**
-     * get the number of cell refs (we don't support selection so set to 0
-     * @return refs - number of references
-     */
-
-    public short getNumRefs()
-    {
-        return field_5_num_refs;
+    public int getActiveCellRef() {
+        return (short)field_4_active_cell_ref_index;
     }
 
     public String toString()
@@ -230,47 +194,44 @@ public class SelectionRecord
         buffer.append("    .activecellref   = ")
             .append(Integer.toHexString(getActiveCellRef())).append("\n");
         buffer.append("    .numrefs         = ")
-            .append(Integer.toHexString(getNumRefs())).append("\n");
+            .append(Integer.toHexString(field_6_refs.length)).append("\n");
         buffer.append("[/SELECTION]\n");
         return buffer.toString();
     }
-
-//hacked to provide one cell reference to 0,0 - 0,0
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 15);
-        data[ 4 + offset ] = getPane();
-        //LittleEndian.putShort(data, 5 + offset, getActiveCellRow());
-        LittleEndian.putShort(data, 5 + offset, ( short ) getActiveCellRow());
-        LittleEndian.putShort(data, 7 + offset, getActiveCellCol());
-        LittleEndian.putShort(data, 9 + offset, getActiveCellRef());
-        LittleEndian.putShort(data, 11 + offset, ( short ) 1);
-        LittleEndian.putShort(data, 13 + offset, ( short ) getActiveCellRow());
-        LittleEndian.putShort(data, 15 + offset, ( short ) getActiveCellRow());
-        data[ 17 + offset ] = (byte)getActiveCellCol();
-        data[ 18 + offset ] = (byte)getActiveCellCol();
-        return getRecordSize();
+    private int getDataSize() {
+    	return 9 // 1 byte + 4 shorts 
+    		+ field_6_refs.length * Reference.ENCODED_SIZE;
+    }
+    public int serialize(int offset, byte [] data) {
+    	int dataSize = getDataSize();
+        LittleEndian.putUShort(data, 0 + offset, sid);
+        LittleEndian.putUShort(data, 2 + offset, dataSize);
+        LittleEndian.putByte(data, 4 + offset,  getPane());
+        LittleEndian.putUShort(data, 5 + offset, getActiveCellRow());
+        LittleEndian.putUShort(data, 7 + offset, getActiveCellCol());
+        LittleEndian.putUShort(data, 9 + offset, getActiveCellRef());
+        int nRefs = field_6_refs.length;
+        LittleEndian.putUShort(data, 11 + offset, nRefs);
+        for (int i = 0; i < field_6_refs.length; i++) {
+			Reference r = field_6_refs[i];
+			r.serialize(offset + 13 + i * Reference.ENCODED_SIZE, data);
+		}
+        return 4 + dataSize;
     }
 
-    public int getRecordSize()
-    {
-        return 19;
+    public int getRecordSize() {
+        return 4 + getDataSize();
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 
     public Object clone() {
-      SelectionRecord rec = new SelectionRecord();
-      rec.field_1_pane = field_1_pane;
-      rec.field_2_row_active_cell = field_2_row_active_cell;
-      rec.field_3_col_active_cell = field_3_col_active_cell;
-      rec.field_4_ref_active_cell = field_4_ref_active_cell;
-      rec.field_5_num_refs = field_5_num_refs;
-      rec.field_6_refs = field_6_refs;
-      return rec;
+        SelectionRecord rec = new SelectionRecord(field_2_row_active_cell, field_3_col_active_cell);
+        rec.field_1_pane = field_1_pane;
+        rec.field_4_active_cell_ref_index = field_4_active_cell_ref_index;
+        rec.field_6_refs = field_6_refs;
+        return rec;
     }
 }

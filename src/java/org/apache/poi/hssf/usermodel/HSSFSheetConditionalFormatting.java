@@ -20,6 +20,7 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
+import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.hssf.util.Region;
 
 /**
@@ -100,7 +101,12 @@ public final class HSSFSheetConditionalFormatting {
 
 		return _sheet.addConditionalFormatting(cfraClone);
 	}
-
+	/**
+	 * @deprecated use <tt>CellRangeAddress</tt> instead of <tt>Region</tt>
+	 */
+	public int addConditionalFormatting(Region[] regions, HSSFConditionalFormattingRule[] cfRules) {
+		return addConditionalFormatting(Region.convertRegionsToCellRanges(regions), cfRules);
+	}
 	/**
 	 * Allows to add a new Conditional Formatting set to the sheet.
 	 *
@@ -109,8 +115,7 @@ public final class HSSFSheetConditionalFormatting {
 	 *
 	 * @return index of the newly created Conditional Formatting object
 	 */
-
-	public int addConditionalFormatting(Region[] regions, HSSFConditionalFormattingRule[] cfRules) {
+	public int addConditionalFormatting(CellRangeAddress[] regions, HSSFConditionalFormattingRule[] cfRules) {
 		if (regions == null) {
 			throw new IllegalArgumentException("regions must not be null");
 		}
@@ -132,7 +137,7 @@ public final class HSSFSheetConditionalFormatting {
 		return _sheet.addConditionalFormatting(cfra);
 	}
 
-	public int addConditionalFormatting(Region[] regions,
+	public int addConditionalFormatting(CellRangeAddress[] regions,
 			HSSFConditionalFormattingRule rule1)
 	{
 		return addConditionalFormatting(regions,
@@ -142,7 +147,7 @@ public final class HSSFSheetConditionalFormatting {
 				});
 	}
 
-	public int addConditionalFormatting(Region[] regions,
+	public int addConditionalFormatting(CellRangeAddress[] regions,
 			HSSFConditionalFormattingRule rule1,
 			HSSFConditionalFormattingRule rule2)
 	{
@@ -150,18 +155,6 @@ public final class HSSFSheetConditionalFormatting {
 				new HSSFConditionalFormattingRule[]
 				{
 						rule1, rule2
-				});
-	}
-
-	public int addConditionalFormatting(Region[] regions,
-			HSSFConditionalFormattingRule rule1,
-			HSSFConditionalFormattingRule rule2,
-			HSSFConditionalFormattingRule rule3)
-	{
-		return addConditionalFormatting(regions,
-				new HSSFConditionalFormattingRule[]
-				{
-						rule1, rule2, rule3
 				});
 	}
 

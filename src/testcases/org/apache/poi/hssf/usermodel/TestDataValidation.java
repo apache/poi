@@ -32,6 +32,7 @@ import org.apache.poi.hssf.eventmodel.ERFListener;
 import org.apache.poi.hssf.eventmodel.EventRecordFactory;
 import org.apache.poi.hssf.record.DVRecord;
 import org.apache.poi.hssf.record.RecordFormatException;
+import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.hssf.util.CellRangeAddressList;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.Region;
@@ -254,8 +255,7 @@ public final class TestDataValidation extends TestCase {
 			HSSFSheet sheet = _currentSheet;
 			HSSFRow row = sheet.createRow(sheet.getPhysicalNumberOfRows());
 			row = sheet.createRow(sheet.getPhysicalNumberOfRows());
-			sheet.addMergedRegion(new Region((short) (sheet.getPhysicalNumberOfRows() - 1),
-					(short) 0, (short) (sheet.getPhysicalNumberOfRows() - 1), (short) 5));
+			sheet.addMergedRegion(new CellRangeAddress(sheet.getPhysicalNumberOfRows()-1, sheet.getPhysicalNumberOfRows()-1, 0, 5));
 			HSSFCell cell = row.createCell((short) 0);
 			setCellValue(cell, strTypeDescription);
 			cell.setCellStyle(_style_3);
@@ -297,7 +297,7 @@ public final class TestDataValidation extends TestCase {
 		public void createDVDescriptionRow(String strTypeDescription) {
 			HSSFSheet sheet = _currentSheet;
 			HSSFRow row = sheet.getRow(sheet.getPhysicalNumberOfRows()-1);
-			sheet.addMergedRegion(new Region((short)(sheet.getPhysicalNumberOfRows()-1),(short)0,(short)(sheet.getPhysicalNumberOfRows()-1),(short)5));
+			sheet.addMergedRegion(new CellRangeAddress(sheet.getPhysicalNumberOfRows()-1, sheet.getPhysicalNumberOfRows()-1, 0, 5));
 			HSSFCell cell = row.createCell((short)0);
 			setCellValue(cell, strTypeDescription);
 			cell.setCellStyle(_style_3);

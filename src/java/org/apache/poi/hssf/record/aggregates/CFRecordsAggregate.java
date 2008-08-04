@@ -24,7 +24,7 @@ import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.hssf.util.Region;
+import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -68,7 +68,7 @@ public final class CFRecordsAggregate extends Record
 		}
 	}
 
-	public CFRecordsAggregate(Region[] regions, CFRuleRecord[] rules) {
+	public CFRecordsAggregate(CellRangeAddress[] regions, CFRuleRecord[] rules) {
 		this(new CFHeaderRecord(regions), rules);
 	}
 

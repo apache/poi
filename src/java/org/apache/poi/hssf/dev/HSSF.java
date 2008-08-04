@@ -18,13 +18,20 @@
 
 package org.apache.poi.hssf.dev;
 
-import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.*;
 
 /**
  * File for HSSF testing/examples
@@ -126,7 +133,7 @@ public class HSSF
                 }
                 c = r.createCell(( short ) (cellnum + 1),
                                  HSSFCell.CELL_TYPE_STRING);
-                c.setCellValue("TEST");
+                c.setCellValue(new HSSFRichTextString("TEST"));
                 s.setColumnWidth(( short ) (cellnum + 1),
                                  ( short ) ((50 * 8) / (( double ) 1 / 20)));
                 if ((rownum % 2) == 0)
@@ -148,10 +155,8 @@ public class HSSF
             // c.setCellValue(0);
             c.setCellStyle(cs3);
         }
-        s.addMergedRegion(new Region(( short ) 0, ( short ) 0, ( short ) 3,
-                                     ( short ) 3));
-        s.addMergedRegion(new Region(( short ) 100, ( short ) 100,
-                                     ( short ) 110, ( short ) 110));
+        s.addMergedRegion(new CellRangeAddress(0, 3, 0, 3));
+        s.addMergedRegion(new CellRangeAddress(100, 110, 100, 110));
 
         // end draw thick black border
         // create a sheet, set its title then delete it
