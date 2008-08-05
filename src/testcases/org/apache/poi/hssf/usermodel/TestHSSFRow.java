@@ -277,4 +277,29 @@ public final class TestHSSFRow extends TestCase {
         assertEquals(null, row.getCell(4));
         assertEquals(HSSFCell.CELL_TYPE_NUMERIC, row.getCell(5).getCellType());
     }
+
+    public void testRowHeight() {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet();
+        HSSFRow row1 = sheet.createRow( (short) 0);
+
+        assertEquals(0xFF, row1.getHeight());
+        assertEquals(sheet.getDefaultRowHeight(), row1.getHeight());
+
+        HSSFRow row2 = sheet.createRow( (short) 1);
+        row2.setHeight((short)400);
+
+        assertEquals(400, row2.getHeight());
+
+        workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
+        sheet = workbook.getSheetAt(0);
+
+        row1 = sheet.getRow(0);
+        assertEquals(0xFF, row1.getHeight());
+        assertEquals(sheet.getDefaultRowHeight(), row1.getHeight());
+
+        row2 = sheet.getRow(1);
+        assertEquals(400, row2.getHeight());
+    }
+
 }
