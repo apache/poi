@@ -24,21 +24,21 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
 public abstract class XSSFHeaderFooter implements HeaderFooter {
     private HeaderFooterHelper helper;
     private CTHeaderFooter headerFooter;
-    private String value;
 
     public XSSFHeaderFooter(CTHeaderFooter headerFooter) {
        this.headerFooter = headerFooter;
-       this.value = getText();
-       this.value = this.value != null ? this.value : "";
        this.helper = new HeaderFooterHelper();
     }
     
     public CTHeaderFooter getHeaderFooter() {
         return this.headerFooter;
     }
-    
+
     public String getValue() {
-        return this.value;
+        String value = getText();
+        if(value == null)
+        	return "";
+        return value;
     }
     
     public abstract String getText();

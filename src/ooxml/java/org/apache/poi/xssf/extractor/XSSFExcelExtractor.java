@@ -25,9 +25,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.HeaderFooter;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.OpenXML4JException;
@@ -37,7 +36,7 @@ import org.openxml4j.opc.Package;
  * Helper class to extract text from an OOXML Excel file
  */
 public class XSSFExcelExtractor extends POIXMLTextExtractor {
-	private Workbook workbook;
+	private XSSFWorkbook workbook;
 	private boolean includeSheetNames = true;
 	private boolean formulasNotResults = false;
 	private boolean includeCellComments = false;
@@ -91,18 +90,23 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor {
 		StringBuffer text = new StringBuffer();
 		
 		for(int i=0; i<workbook.getNumberOfSheets(); i++) {
-			Sheet sheet = workbook.getSheetAt(i);
+			XSSFSheet sheet = (XSSFSheet)workbook.getSheetAt(i);
 			if(includeSheetNames) {
 				text.append(workbook.getSheetName(i) + "\n");
 			}
 			
-			// Header, if present
-			if(sheet.getHeader() != null) {
-				text.append(
-						extractHeaderFooter(sheet.getHeader())
-				);
-			}
-			
+			// Header(s), if present
+			text.append(
+					extractHeaderFooter(sheet.getFirstHeader())
+			);
+			text.append(
+					extractHeaderFooter(sheet.getOddHeader())
+			);
+			text.append(
+					extractHeaderFooter(sheet.getEvenHeader())
+			);
+
+			// Rows and cells
 			for (Object rawR : sheet) {
 				Row row = (Row)rawR;
 				for(Iterator<Cell> ri = row.cellIterator(); ri.hasNext();) {
@@ -133,12 +137,16 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor {
 				text.append("\n");
 			}
 			
-			// Finally footer, if present
-			if(sheet.getFooter() != null) {
-				text.append(
-						extractHeaderFooter(sheet.getFooter())
-				);
-			}
+			// Finally footer(s), if present
+			text.append(
+					extractHeaderFooter(sheet.getFirstFooter())
+			);
+			text.append(
+					extractHeaderFooter(sheet.getOddFooter())
+			);
+			text.append(
+					extractHeaderFooter(sheet.getEvenFooter())
+			);
 		}
 		
 		return text.toString();
