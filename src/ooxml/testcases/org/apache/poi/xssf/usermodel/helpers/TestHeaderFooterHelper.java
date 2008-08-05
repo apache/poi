@@ -21,14 +21,20 @@ import junit.framework.TestCase;
 
 import org.apache.poi.xssf.usermodel.helpers.HeaderFooterHelper;
 
-
+/**
+ * Test the header and footer helper.
+ * As we go through XmlBeans, should always use &,
+ *  and not &amp;
+ */
 public class TestHeaderFooterHelper extends TestCase {
     
     public void testGetCenterLeftRightSection() {
         HeaderFooterHelper helper = new HeaderFooterHelper();
-        String headerFooter = "&amp;CTest the center section";
+        
+        String headerFooter = "&CTest the center section";
         assertEquals("Test the center section", helper.getCenterSection(headerFooter));
-        headerFooter = "&amp;CTest the center section&amp;LThe left one&amp;RAnd the right one";
+        
+        headerFooter = "&CTest the center section&LThe left one&RAnd the right one";
         assertEquals("Test the center section", helper.getCenterSection(headerFooter));
         assertEquals("The left one", helper.getLeftSection(headerFooter));
         assertEquals("And the right one", helper.getRightSection(headerFooter));
@@ -44,15 +50,15 @@ public class TestHeaderFooterHelper extends TestCase {
 
         headerFooter = helper.setRightSection(headerFooter, "First right");
         assertEquals("First right", helper.getRightSection(headerFooter));
-        assertEquals("&amp;CFirst added center section&amp;LFirst left&amp;RFirst right", headerFooter);
+        assertEquals("&CFirst added center section&LFirst left&RFirst right", headerFooter);
 
-        headerFooter = helper.setRightSection(headerFooter, "First right&amp");
-        assertEquals("First right&amp", helper.getRightSection(headerFooter));
-        assertEquals("&amp;CFirst added center section&amp;LFirst left&amp;RFirst right&amp", headerFooter);
+        headerFooter = helper.setRightSection(headerFooter, "First right&F");
+        assertEquals("First right&F", helper.getRightSection(headerFooter));
+        assertEquals("&CFirst added center section&LFirst left&RFirst right&F", headerFooter);
         
-        headerFooter = helper.setRightSection(headerFooter, "First right&amp;");
-        assertEquals("First right", helper.getRightSection(headerFooter));
-        assertEquals("&amp;CFirst added center section&amp;LFirst left&amp;RFirst right&amp;", headerFooter);
+        headerFooter = helper.setRightSection(headerFooter, "First right&");
+        assertEquals("First right&", helper.getRightSection(headerFooter));
+        assertEquals("&CFirst added center section&LFirst left&RFirst right&", headerFooter);
     }
     
 }

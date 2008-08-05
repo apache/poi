@@ -192,10 +192,10 @@ public class TestXSSFExcelExtractor extends TestCase {
 	/**
 	 * From bug #45540
 	 */
-	public void BROKENtestHeaderFooter() throws Exception {
+	public void testHeaderFooter() throws Exception {
 		String[] files = new String[] {
+			"45540_classic_Header.xlsx", "45540_form_Header.xlsx",
 			"45540_classic_Footer.xlsx", "45540_form_Footer.xlsx",
-			"45540_classic_Header.xlsx", "45540_form_Header.xlsx"
 		};
 		for(String file : files) {
 			File xml = new File(
@@ -208,8 +208,8 @@ public class TestXSSFExcelExtractor extends TestCase {
 				new XSSFExcelExtractor(new XSSFWorkbook(xml.toString()));
 			String text = extractor.getText();
 			
-			assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
-	         assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase")); 
+			assertTrue("Unable to find expected word in text from " + file + "\n" + text, text.contains("testdoc"));
+	        assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase")); 
 		}
 	}
 }

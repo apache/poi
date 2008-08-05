@@ -17,6 +17,9 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.Iterator;
 import junit.framework.TestCase;
 import org.apache.poi.ss.usermodel.Cell;
@@ -27,6 +30,7 @@ import org.apache.poi.ss.util.Region;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
+import org.openxml4j.opc.Package;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
@@ -289,6 +293,74 @@ public class TestXSSFSheet extends TestCase {
         // Default is odd footer
         assertNotNull(sheet.getOddFooter());
         assertEquals("test center footer", sheet.getOddFooter().getCenter());
+    }
+    
+    public void testExistingHeaderFooter() throws Exception {
+		File xml = new File(
+				System.getProperty("HSSF.testdata.path") +
+				File.separator + "45540_classic_Header.xlsx"
+		);
+		assertTrue(xml.exists());
+    	
+		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
+		XSSFOddHeader hdr;
+		XSSFOddFooter ftr;
+		
+		// Sheet 1 has a header with center and right text
+		XSSFSheet s1 = (XSSFSheet)workbook.getSheetAt(0);
+		assertNotNull(s1.getHeader());
+		assertNotNull(s1.getFooter());
+		hdr = (XSSFOddHeader)s1.getHeader(); 
+		ftr = (XSSFOddFooter)s1.getFooter(); 
+		
+		assertEquals("&Ctestdoc&Rtest phrase", hdr.getText());
+		assertEquals(null, ftr.getText());
+		
+		assertEquals("", hdr.getLeft());
+		assertEquals("testdoc", hdr.getCenter());
+		assertEquals("test phrase", hdr.getRight());
+		
+		assertEquals("", ftr.getLeft());
+		assertEquals("", ftr.getCenter());
+		assertEquals("", ftr.getRight());
+		
+		
+		// Sheet 2 has a footer, but it's empty
+		XSSFSheet s2 = (XSSFSheet)workbook.getSheetAt(1);
+		assertNotNull(s2.getHeader());
+		assertNotNull(s2.getFooter());
+		hdr = (XSSFOddHeader)s2.getHeader(); 
+		ftr = (XSSFOddFooter)s2.getFooter(); 
+		
+		assertEquals(null, hdr.getText());
+		assertEquals("&L&F", ftr.getText());
+		
+		assertEquals("", hdr.getLeft());
+		assertEquals("", hdr.getCenter());
+		assertEquals("", hdr.getRight());
+		
+		assertEquals("&F", ftr.getLeft());
+		assertEquals("", ftr.getCenter());
+		assertEquals("", ftr.getRight());
+		
+		
+		// Save and reload
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		workbook.write(baos);
+		XSSFWorkbook wb = new XSSFWorkbook(Package.open(
+				new ByteArrayInputStream(baos.toByteArray())
+		));
+		
+		hdr = (XSSFOddHeader)wb.getSheetAt(0).getHeader();
+		ftr = (XSSFOddFooter)wb.getSheetAt(0).getFooter(); 
+		
+		assertEquals("", hdr.getLeft());
+		assertEquals("testdoc", hdr.getCenter());
+		assertEquals("test phrase", hdr.getRight());
+		
+		assertEquals("", ftr.getLeft());
+		assertEquals("", ftr.getCenter());
+		assertEquals("", ftr.getRight());
     }
     
     public void testGetAllHeadersFooters() {
@@ -626,7 +698,7 @@ public class TestXSSFSheet extends TestCase {
     	assertEquals(1, ctWorksheet.getColsArray(0).getColArray(0).getStyle());
     	XSSFRow row = (XSSFRow) sheet.createRow(0);
     	XSSFCell cell = (XSSFCell) sheet.getRow(0).createCell(3);
-    	System.out.println(cell.getCellStyle());
+    	//System.out.println(cell.getCellStyle());
     	
     }
     
