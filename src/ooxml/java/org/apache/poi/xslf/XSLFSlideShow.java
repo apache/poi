@@ -26,6 +26,7 @@ import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackageRelationship;
 import org.openxml4j.opc.PackageRelationshipCollection;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesSlide;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPresentation;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
@@ -34,6 +35,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMaster;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
+import org.openxmlformats.schemas.presentationml.x2006.main.CmLstDocument;
 import org.openxmlformats.schemas.presentationml.x2006.main.NotesDocument;
 import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldDocument;
@@ -56,6 +58,7 @@ public class XSLFSlideShow extends POIXMLDocument {
 	public static final String SLIDE_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.presentationml.slide+xml";
 	public static final String SLIDE_LAYOUT_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout";
 	public static final String NOTES_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/notesSlide";
+	public static final String COMMENT_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments";
 
 	private PresentationDocument presentationDoc;
 	
@@ -106,49 +109,55 @@ public class XSLFSlideShow extends POIXMLDocument {
 		return getPresentation().getSldMasterIdLst();
 	}
 	
+	public PackagePart getSlideMasterPart(CTSlideMasterIdListEntry master) throws IOException, XmlException {
+		try {
+			return getTargetPart(
+				getCorePart().getRelationship(master.getId2())
+			);
+		} catch(InvalidFormatException e) {
+			throw new XmlException(e);
+		}
+	}
 	/**
 	 * Returns the low level slide master object from
 	 *  the supplied slide master reference
 	 */
 	public CTSlideMaster getSlideMaster(CTSlideMasterIdListEntry master) throws IOException, XmlException {
+		PackagePart masterPart = getSlideMasterPart(master);
+		SldMasterDocument masterDoc =
+			SldMasterDocument.Factory.parse(masterPart.getInputStream());
+		return masterDoc.getSldMaster();
+	}
+
+	public PackagePart getSlidePart(CTSlideIdListEntry slide) throws IOException, XmlException {
 		try {
-			PackagePart masterPart =
-				getTargetPart(getCorePart().getRelationship(master.getId2()));
-				
-			SldMasterDocument masterDoc =
-				SldMasterDocument.Factory.parse(masterPart.getInputStream());
-			return masterDoc.getSldMaster();
+			return getTargetPart(
+					getCorePart().getRelationship(slide.getId2())
+			);
 		} catch(InvalidFormatException e) {
 			throw new XmlException(e);
 		}
 	}
-	
 	/**
 	 * Returns the low level slide object from
 	 *  the supplied slide reference
 	 */
 	public CTSlide getSlide(CTSlideIdListEntry slide) throws IOException, XmlException {
-		try {
-			PackagePart slidePart =
-				getTargetPart(getCorePart().getRelationship(slide.getId2()));
-			SldDocument slideDoc =
-				SldDocument.Factory.parse(slidePart.getInputStream());
-			return slideDoc.getSld();
-		} catch(InvalidFormatException e) {
-			throw new XmlException(e);
-		}
+		PackagePart slidePart = getSlidePart(slide);
+		SldDocument slideDoc =
+			SldDocument.Factory.parse(slidePart.getInputStream());
+		return slideDoc.getSld();
 	}
-	
+
 	/**
-	 * Returns the low level notes object for the given
-	 *  slide, as found from the supplied slide reference
+	 * Gets the PackagePart of the notes for the
+	 *  given slide, or null if there isn't one.
 	 */
-	public CTNotesSlide getNotes(CTSlideIdListEntry slide) throws IOException, XmlException {
+	public PackagePart getNodesPart(CTSlideIdListEntry parentSlide) throws IOException, XmlException {
 		PackageRelationshipCollection notes;
-		try {
-			PackagePart slidePart =
-				getTargetPart(getCorePart().getRelationship(slide.getId2()));
+		PackagePart slidePart = getSlidePart(parentSlide);
 		
+		try {
 			notes = slidePart.getRelationshipsByType(NOTES_RELATION_TYPE);
 		} catch(InvalidFormatException e) {
 			throw new IllegalStateException(e);
@@ -163,12 +172,54 @@ public class XSLFSlideShow extends POIXMLDocument {
 		}
 		
 		try {
-			PackagePart notesPart =
-				getTargetPart(notes.getRelationship(0));
-			NotesDocument notesDoc =
-				NotesDocument.Factory.parse(notesPart.getInputStream());
-			
-			return notesDoc.getNotes();
+			return getTargetPart(notes.getRelationship(0));
+		} catch(InvalidFormatException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+	/**
+	 * Returns the low level notes object for the given
+	 *  slide, as found from the supplied slide reference
+	 */
+	public CTNotesSlide getNotes(CTSlideIdListEntry slide) throws IOException, XmlException {
+		PackagePart notesPart = getNodesPart(slide);
+		if(notesPart == null)
+			return null;
+		
+		NotesDocument notesDoc =
+			NotesDocument.Factory.parse(notesPart.getInputStream());
+		
+		return notesDoc.getNotes();
+	}
+	
+	/**
+	 * Returns all the comments for the given slide
+	 */
+	public CTCommentList getSlideComments(CTSlideIdListEntry slide) throws IOException, XmlException {
+		PackageRelationshipCollection commentRels;
+		PackagePart slidePart = getSlidePart(slide);
+		
+		try {
+			commentRels = slidePart.getRelationshipsByType(COMMENT_RELATION_TYPE);
+		} catch(InvalidFormatException e) {
+			throw new IllegalStateException(e);
+		}
+		
+		if(commentRels.size() == 0) {
+			// No comments for this slide
+			return null;
+		}
+		if(commentRels.size() > 1) {
+			throw new IllegalStateException("Expecting 0 or 1 comments for a slide, but found " + commentRels.size());
+		}
+		
+		try {
+			PackagePart cPart = getTargetPart(
+					commentRels.getRelationship(0)
+			);
+			CmLstDocument commDoc = 
+				CmLstDocument.Factory.parse(cPart.getInputStream());
+			return commDoc.getCmLst();
 		} catch(InvalidFormatException e) {
 			throw new IllegalStateException(e);
 		}
