@@ -24,6 +24,7 @@ package org.apache.poi.hslf.extractor;
 import java.io.FileInputStream;
 
 import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
@@ -247,5 +248,39 @@ public class TextExtractor extends TestCase {
 		
 		text = ppe.getText();
 		assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
+    }
+    
+    /**
+     * From bug #45537
+     */
+    public void DISABLEDtestHeaderFooter() throws Exception {
+		String filename, text;
+		
+		// With a header
+		filename = dirname + "/45537_Header.ppt";
+		HSLFSlideShow hslf = new HSLFSlideShow(new FileInputStream(filename));
+		SlideShow ss = new SlideShow(hslf);
+		assertNotNull(ss.getSlides()[0].getHeadersFooters());
+		assertEquals("testdoc test phrase", ss.getSlides()[0].getHeadersFooters().getHeaderText());
+		
+		ppe = new PowerPointExtractor(hslf);
+
+		text = ppe.getText();
+		assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
+        assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+
+        
+		// And with a footer
+		filename = dirname + "/45537_Footer.ppt";
+		hslf = new HSLFSlideShow(new FileInputStream(filename));
+		ss = new SlideShow(hslf);
+		assertNotNull(ss.getSlides()[0].getHeadersFooters());
+		assertEquals("testdoc test phrase", ss.getSlides()[0].getHeadersFooters().getFooterText());
+		
+		ppe = new PowerPointExtractor(filename);
+
+		text = ppe.getText();
+		assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
+        assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
     }
 }
