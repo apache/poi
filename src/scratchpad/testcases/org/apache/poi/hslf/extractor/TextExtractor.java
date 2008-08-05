@@ -253,32 +253,42 @@ public class TextExtractor extends TestCase {
     /**
      * From bug #45537
      */
-    public void DISABLEDtestHeaderFooter() throws Exception {
+    public void testHeaderFooter() throws Exception {
 		String filename, text;
 		
-		// With a header
+		// With a header on the notes
 		filename = dirname + "/45537_Header.ppt";
 		HSLFSlideShow hslf = new HSLFSlideShow(new FileInputStream(filename));
 		SlideShow ss = new SlideShow(hslf);
-		assertNotNull(ss.getSlides()[0].getHeadersFooters());
-		assertEquals("testdoc test phrase", ss.getSlides()[0].getHeadersFooters().getHeaderText());
+		assertNotNull(ss.getNotesHeadersFooters());
+		assertEquals("testdoc test phrase", ss.getNotesHeadersFooters().getHeaderText());
 		
 		ppe = new PowerPointExtractor(hslf);
 
+		text = ppe.getText();
+		assertFalse("Unable to find expected word in text\n" + text, text.contains("testdoc"));
+        assertFalse("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+        
+        ppe.setNotesByDefault(true);
 		text = ppe.getText();
 		assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
         assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
 
         
-		// And with a footer
+		// And with a footer, also on notes
 		filename = dirname + "/45537_Footer.ppt";
 		hslf = new HSLFSlideShow(new FileInputStream(filename));
 		ss = new SlideShow(hslf);
-		assertNotNull(ss.getSlides()[0].getHeadersFooters());
-		assertEquals("testdoc test phrase", ss.getSlides()[0].getHeadersFooters().getFooterText());
+		assertNotNull(ss.getNotesHeadersFooters());
+		assertEquals("testdoc test phrase", ss.getNotesHeadersFooters().getFooterText());
 		
 		ppe = new PowerPointExtractor(filename);
 
+		text = ppe.getText();
+		assertFalse("Unable to find expected word in text\n" + text, text.contains("testdoc"));
+        assertFalse("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+
+        ppe.setNotesByDefault(true);
 		text = ppe.getText();
 		assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
         assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
