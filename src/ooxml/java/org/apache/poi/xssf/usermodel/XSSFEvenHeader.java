@@ -32,7 +32,11 @@ public class XSSFEvenHeader extends XSSFHeaderFooter implements Header{
     }
     
     public void setText(String text) {
-        getHeaderFooter().setEvenHeader(text);
+    	if(text == null) {
+    		getHeaderFooter().unsetEvenHeader();
+    	} else {
+    		getHeaderFooter().setEvenHeader(text);
+    	}
     }
 
 }

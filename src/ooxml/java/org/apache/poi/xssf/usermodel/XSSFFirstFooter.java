@@ -32,7 +32,10 @@ public class XSSFFirstFooter extends XSSFHeaderFooter implements Footer{
     }
     
     public void setText(String text) {
-        getHeaderFooter().setFirstFooter(text);
+    	if(text == null) {
+    		getHeaderFooter().unsetFirstFooter();
+    	} else {
+    		getHeaderFooter().setFirstFooter(text);
+    	}
     }
-
 }

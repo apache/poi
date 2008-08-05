@@ -281,10 +281,14 @@ public class TestXSSFSheet extends TestCase {
     
     public void testGetFooter() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Sheet 1");
+        XSSFSheet sheet = (XSSFSheet)workbook.createSheet("Sheet 1");
         assertNotNull(sheet.getFooter());
         sheet.getFooter().setCenter("test center footer");
         assertEquals("test center footer", sheet.getFooter().getCenter());
+        
+        // Default is odd footer
+        assertNotNull(sheet.getOddFooter());
+        assertEquals("test center footer", sheet.getOddFooter().getCenter());
     }
     
     public void testGetAllHeadersFooters() {
@@ -321,6 +325,9 @@ public class TestXSSFSheet extends TestCase {
         sheet.getOddHeader().setCenter("odd header center");
         assertEquals("odd header center", sheet.getOddHeader().getCenter());
 
+        // Defaults are odd
+        assertEquals("odd footer left", sheet.getFooter().getLeft());
+        assertEquals("odd header center", sheet.getHeader().getCenter());
     }
     
     public void testGetSetColumnWidth() {
