@@ -22,6 +22,8 @@ import org.apache.poi.hslf.usermodel.SlideShow;
 
 /**
  * Header / Footer settings.
+ * 
+ * You can get these on slides, or across all notes
  *
  * @author Yegor Kozlov
  */
