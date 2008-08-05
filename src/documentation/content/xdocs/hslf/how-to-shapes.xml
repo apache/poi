@@ -620,7 +620,6 @@
                   </source>
                   </section>
                   
-                </section>
             <anchor id="HeadersFooters"/>
             <section><title>How to extract Headers / Footers from an existing presentation</title>
               <source>
@@ -663,6 +662,7 @@
           hdd.setFootersText("Created by POI-HSLF");
                 </source>
               </section>
+                </section>
         </section>
     </body>
 </document>
