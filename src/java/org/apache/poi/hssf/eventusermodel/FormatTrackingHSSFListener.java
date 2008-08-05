@@ -16,11 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hssf.eventusermodel;
 
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +29,6 @@ import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 
 /**
  * A proxy HSSFListener that keeps track of the document
@@ -48,6 +43,13 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 
 	public FormatTrackingHSSFListener(HSSFListener childListener) {
 		this.childListener = childListener;
+	}
+	
+	protected int getNumberOfCustomFormats() {
+		return customFormatRecords.size();
+	}
+	protected int getNumberOfExtendedFormats() {
+		return xfRecords.size();
 	}
 	
 	/**

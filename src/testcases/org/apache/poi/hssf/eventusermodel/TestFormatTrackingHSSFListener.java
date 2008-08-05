@@ -62,31 +62,45 @@ public final class TestFormatTrackingHSSFListener extends TestCase {
 	
 	/**
 	 * Ensure that all number and formula records can be
-	 *  turned into strings without problems
+	 *  turned into strings without problems.
+	 * For now, we're just looking to get text back, no
+	 *  exceptions thrown, but in future we might also
+	 *  want to check the exact strings!
 	 */
 	public void testTurnToString() throws Exception {
-		processFile("45365.xls");
-		
-		for(int i=0; i<mockListen._records.size(); i++) {
-			Record r = (Record)mockListen._records.get(i);
-			CellValueRecordInterface cvr = null;
+		String[] files = new String[] { 
+				"45365.xls", "45365-2.xls", "MissingBits.xls" 
+		};
+		for(int k=0; k<files.length; k++) {
+			processFile(files[k]);
 			
-			if(r instanceof NumberRecord) {
-				cvr = (CellValueRecordInterface)r;
-			}
-			if(r instanceof FormulaRecord) {
-				cvr = (CellValueRecordInterface)r;
+			// Check we found our formats
+			assertTrue(listener.getNumberOfCustomFormats() > 5);
+			assertTrue(listener.getNumberOfExtendedFormats() > 5);
+			
+			// Now check we can turn all the numeric
+			//  cells into strings without error
+			for(int i=0; i<mockListen._records.size(); i++) {
+				Record r = (Record)mockListen._records.get(i);
+				CellValueRecordInterface cvr = null;
+				
+				if(r instanceof NumberRecord) {
+					cvr = (CellValueRecordInterface)r;
+				}
+				if(r instanceof FormulaRecord) {
+					cvr = (CellValueRecordInterface)r;
+				}
+				
+				if(cvr != null) {
+					// Should always give us a string 
+					String s = listener.formatNumberDateCell(cvr);
+					assertNotNull(s);
+					assertTrue(s.length() > 0);
+				}
 			}
 			
-			if(cvr != null) {
-				// Should always give us a string 
-				String s = listener.formatNumberDateCell(cvr);
-				assertNotNull(s);
-				assertTrue(s.length() > 0);
-			}
+			// TODO - test some specific format strings
 		}
-		
-		// TODO - test some specific format strings
 	}
 	
 	private static final class MockHSSFListener implements HSSFListener {
