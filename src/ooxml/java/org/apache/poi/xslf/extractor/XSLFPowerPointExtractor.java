@@ -16,18 +16,20 @@
 ==================================================================== */
 package org.apache.poi.xslf.extractor;
 
-import java.io.File;
 import java.io.IOException;
 
-import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.xslf.XSLFSlideShow;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.Package;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTComment;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesSlide;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
@@ -35,16 +37,19 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 
 public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
-	private XSLFSlideShow slideshow;
+	private XMLSlideShow slideshow;
 	private boolean slidesByDefault = true;
 	private boolean notesByDefault = false;
 	
+	public XSLFPowerPointExtractor(XMLSlideShow slideshow) {
+		super(slideshow._getXSLFSlideShow());
+		this.slideshow = slideshow;
+	}
+	public XSLFPowerPointExtractor(XSLFSlideShow slideshow) throws XmlException, IOException {
+		this(new XMLSlideShow(slideshow));
+	}
 	public XSLFPowerPointExtractor(Package container) throws XmlException, OpenXML4JException, IOException {
 		this(new XSLFSlideShow(container));
-	}
-	public XSLFPowerPointExtractor(XSLFSlideShow slideshow) {
-		super(slideshow);
-		this.slideshow = slideshow;
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -88,18 +93,32 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
 	 */
 	public String getText(boolean slideText, boolean notesText) {
 		StringBuffer text = new StringBuffer();
-		
-		CTSlideIdListEntry[] slideRefs =
-			slideshow.getSlideReferences().getSldIdArray();
-		for (int i = 0; i < slideRefs.length; i++) {
+
+		XSLFSlide[] slides = slideshow.getSlides();
+		for(int i = 0; i < slides.length; i++) {
+			CTSlide rawSlide = slides[i]._getCTSlide();
+			CTSlideIdListEntry slideId = slides[i]._getCTSlideId();
+			
 			try {
-				CTSlide slide =
-					slideshow.getSlide(slideRefs[i]);
+				// For now, still very low level
 				CTNotesSlide notes = 
-					slideshow.getNotes(slideRefs[i]);
+					slideshow._getXSLFSlideShow().getNotes(slideId);
+				CTCommentList comments =
+					slideshow._getXSLFSlideShow().getSlideComments(slideId);
 				
 				if(slideText) {
-					extractText(slide.getCSld().getSpTree(), text);
+					extractText(rawSlide.getCSld().getSpTree(), text);
+					
+					// Comments too for the slide
+					if(comments != null) {
+						for(CTComment comment : comments.getCmArray()) {
+							// TODO - comment authors too
+							// (They're in another stream)
+							text.append(
+									comment.getText() + "\n"
+							);
+						}
+					}
 				}
 				if(notesText && notes != null) {
 					extractText(notes.getCSld().getSpTree(), text);
