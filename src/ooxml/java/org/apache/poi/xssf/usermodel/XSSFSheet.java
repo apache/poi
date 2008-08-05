@@ -381,14 +381,7 @@ public class XSSFSheet implements Sheet {
         return getSheetTypePageSetUpPr().getFitToPage();
     }
 
-    public Footer getFooter() {
-        return getOddFooter();
-    }
     
-    public Footer getOddFooter() {
-        return new XSSFOddFooter(getSheetTypeHeaderFooter());
-    }
-
 	protected CTHeaderFooter getSheetTypeHeaderFooter() {
 		if (worksheet.getHeaderFooter() == null) {
 			worksheet.setHeaderFooter(CTHeaderFooter.Factory.newInstance());
@@ -396,31 +389,80 @@ public class XSSFSheet implements Sheet {
 		return worksheet.getHeaderFooter();
 	}
     
+    /**
+     * Returns the default footer for the sheet,
+     *  creating one as needed.
+     * You may also want to look at 
+     *  {@link #getFirstFooter()},
+     *  {@link #getOddFooter()} and
+     *  {@link #getEvenFooter()}
+     */
+    public Footer getFooter() {
+    	// The default footer is an odd footer
+        return getOddFooter();
+    }
+
+    /**
+     * Returns the default header for the sheet,
+     *  creating one as needed.
+     * You may also want to look at
+     *  {@link #getFirstHeader()},
+     *  {@link #getOddHeader()} and
+     *  {@link #getEvenHeader()}
+     */
+    public Header getHeader() {
+    	// The default header is an odd header
+        return getOddHeader();
+    }
+    
+    /**
+     * Returns the odd footer. Used on all pages unless
+     *  other footers also present, when used on only
+     *  odd pages.
+     */
+    public Footer getOddFooter() {
+        return new XSSFOddFooter(getSheetTypeHeaderFooter());
+    }
+    /**
+     * Returns the even footer. Not there by default, but
+     *  when set, used on even pages. 
+     */
     public Footer getEvenFooter() {
         return new XSSFEvenFooter(getSheetTypeHeaderFooter());
     }
-    
+    /**
+     * Returns the first page footer. Not there by
+     *  default, but when set, used on the first page.
+     */
     public Footer getFirstFooter() {
         return new XSSFFirstFooter(getSheetTypeHeaderFooter());
     }
 
-    public Header getHeader() {
-        return getOddHeader();
-    }
-    
+    /**
+     * Returns the odd header. Used on all pages unless
+     *  other headers also present, when used on only
+     *  odd pages.
+     */
     public Header getOddHeader() {
         return new XSSFOddHeader(getSheetTypeHeaderFooter());
     }
-    
+    /**
+     * Returns the even header. Not there by default, but
+     *  when set, used on even pages. 
+     */
     public Header getEvenHeader() {
         return new XSSFEvenHeader(getSheetTypeHeaderFooter()
 );
     }
-    
+    /**
+     * Returns the first page header. Not there by
+     *  default, but when set, used on the first page.
+     */
     public Header getFirstHeader() {
         return new XSSFFirstHeader(getSheetTypeHeaderFooter());
     }
 
+    
     public boolean getHorizontallyCenter() {
     	return getSheetTypePrintOptions().getHorizontalCentered();
     }

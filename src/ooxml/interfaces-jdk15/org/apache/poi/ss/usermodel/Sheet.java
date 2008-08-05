@@ -392,13 +392,17 @@ public interface Sheet extends Iterable<Row> {
     PrintSetup getPrintSetup();
 
     /**
-     * Gets the user model for the document header.
+     * Gets the user model for the default document header.
+     * Note that XSSF offers more kinds of document
+     *  headers than HSSF does
      * @return The Document header.
      */
     Header getHeader();
 
     /**
-     * Gets the user model for the document footer.
+     * Gets the user model for the default document footer.
+     * Note that XSSF offers more kinds of document
+     *  footers than HSSF does.
      * @return The Document footer.
      */
     Footer getFooter();
