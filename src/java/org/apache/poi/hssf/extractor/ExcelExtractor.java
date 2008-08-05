@@ -37,7 +37,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  the XLS2CSVmra example
  * @see org.apache.poi.hssf.eventusermodel.examples.XLS2CSVmra
  */
-public class ExcelExtractor extends POIOLE2TextExtractor {
+public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.poi.ss.extractor.ExcelExtractor {
 	private HSSFWorkbook wb;
 	private boolean includeSheetNames = true;
 	private boolean formulasNotResults = false;

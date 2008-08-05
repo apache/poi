@@ -35,7 +35,7 @@ import org.openxml4j.opc.Package;
 /**
  * Helper class to extract text from an OOXML Excel file
  */
-public class XSSFExcelExtractor extends POIXMLTextExtractor {
+public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apache.poi.ss.extractor.ExcelExtractor {
 	private XSSFWorkbook workbook;
 	private boolean includeSheetNames = true;
 	private boolean formulasNotResults = false;
