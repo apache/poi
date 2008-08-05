@@ -20,8 +20,10 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.apache.poi.POIXMLTextExtractor;
+import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.HeaderFooter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -94,6 +96,13 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor {
 				text.append(workbook.getSheetName(i) + "\n");
 			}
 			
+			// Header, if present
+			if(sheet.getHeader() != null) {
+				text.append(
+						extractHeaderFooter(sheet.getHeader())
+				);
+			}
+			
 			for (Object rawR : sheet) {
 				Row row = (Row)rawR;
 				for(Iterator<Cell> ri = row.cellIterator(); ri.hasNext();) {
@@ -123,8 +132,19 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor {
 				}
 				text.append("\n");
 			}
+			
+			// Finally footer, if present
+			if(sheet.getFooter() != null) {
+				text.append(
+						extractHeaderFooter(sheet.getFooter())
+				);
+			}
 		}
 		
 		return text.toString();
+	}
+	
+	private String extractHeaderFooter(HeaderFooter hf) {
+		return ExcelExtractor._extractHeaderFooter(hf);
 	}
 }

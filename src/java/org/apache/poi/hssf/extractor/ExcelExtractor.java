@@ -19,11 +19,9 @@ package org.apache.poi.hssf.extractor;
 import java.io.IOException;
 
 import org.apache.poi.POIOLE2TextExtractor;
-import org.apache.poi.hssf.usermodel.HeaderFooter;
+import org.apache.poi.ss.usermodel.HeaderFooter;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFComment;
-import org.apache.poi.hssf.usermodel.HSSFFooter;
-import org.apache.poi.hssf.usermodel.HSSFHeader;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -95,7 +93,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor {
 			// Header text, if there is any
 			if(sheet.getHeader() != null) {
 				text.append(
-						extractHeaderFooter(sheet.getHeader())
+						_extractHeaderFooter(sheet.getHeader())
 				);
 			}
 			
@@ -168,7 +166,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor {
 			// Finally Feader text, if there is any
 			if(sheet.getFooter() != null) {
 				text.append(
-						extractHeaderFooter(sheet.getFooter())
+						_extractHeaderFooter(sheet.getFooter())
 				);
 			}
 		}
@@ -176,7 +174,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor {
 		return text.toString();
 	}
 	
-	private String extractHeaderFooter(HeaderFooter hf) {
+	public static String _extractHeaderFooter(HeaderFooter hf) {
 		StringBuffer text = new StringBuffer();
 		
 		if(hf.getLeft() != null) {

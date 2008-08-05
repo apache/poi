@@ -17,12 +17,11 @@
 
 package org.apache.poi.xssf.usermodel.extensions;
 
-import org.apache.poi.ss.usermodel.Footer;
+import org.apache.poi.ss.usermodel.HeaderFooter;
 import org.apache.poi.xssf.usermodel.helpers.HeaderFooterHelper;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
 
-public abstract class XSSFHeaderFooter implements Footer{
-    
+public abstract class XSSFHeaderFooter implements HeaderFooter {
     private HeaderFooterHelper helper;
     private CTHeaderFooter headerFooter;
     private String value;
