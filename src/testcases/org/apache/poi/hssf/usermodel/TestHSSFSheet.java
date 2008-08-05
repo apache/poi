@@ -847,8 +847,8 @@ public final class TestHSSFSheet extends TestCase {
 		}
 		assertEquals("Hi Excel!", row.getCell(0).getRichStringCellValue().getString());
 		// check row height for 'default' flag
-		assertEquals((short)0x8000, row.getHeight());
-		
+		assertEquals((short)0xFF, row.getHeight());
+
 		HSSFTestDataSamples.writeOutAndReadBack(wb);
 	}
 }

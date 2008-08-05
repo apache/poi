@@ -63,8 +63,7 @@ public final class RowRecord extends Record implements Comparable {
         field_1_row_number = rowNumber;
         field_2_first_col = -1;
         field_3_last_col = -1;
-        field_4_height = (short)DEFAULT_HEIGHT_BIT;
-        field_4_height = (short)DEFAULT_HEIGHT_BIT;
+        field_4_height = (short)0xFF;
         field_5_optimize = ( short ) 0;
         field_6_reserved = ( short ) 0;
         field_7_option_flags = OPTION_BITS_ALWAYS_SET; // seems necessary for outlining
