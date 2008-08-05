@@ -176,11 +176,13 @@ public class PowerPointExtractor extends POIOLE2TextExtractor
 		for(int i=0; i<_slides.length; i++) {
 			Slide slide = _slides[i];
 			
+			// Slide header, if set
 			HeadersFooters hf = slide.getHeadersFooters();
-			if(hf != null && hf.getHeaderText() != null) {
+			if(hf != null && hf.isHeaderVisible() && hf.getHeaderText() != null) {
 				ret.append(hf.getHeaderText() + "\n");
 			}
 			
+			// Slide text
 			TextRun[] runs = slide.getTextRuns();
 			for(int j=0; j<runs.length; j++) {
 				TextRun run = runs[j];
@@ -193,10 +195,12 @@ public class PowerPointExtractor extends POIOLE2TextExtractor
 				}
 			}
 			
-			if(hf != null && hf.getFooterText() != null) {
+			// Slide footer, if set
+			if(hf != null && hf.isFooterVisible() && hf.getFooterText() != null) {
 				ret.append(hf.getFooterText() + "\n");
 			}
 			
+			// Comments, if requested and present
 			if(getCommentText) {
 				Comment[] comments = slide.getComments();
 				for(int j=0; j<comments.length; j++) {
@@ -219,13 +223,21 @@ public class PowerPointExtractor extends POIOLE2TextExtractor
 		//  master sheets in. Grab Slide list, then work from there,
 		//  but ensure no duplicates
 		HashSet seenNotes = new HashSet();
+		HeadersFooters hf = _show.getNotesHeadersFooters();
+		
 		for(int i=0; i<_slides.length; i++) {
 			Notes notes = _slides[i].getNotesSheet();
 			if(notes == null) { continue; }
 			Integer id = new Integer(notes._getSheetNumber());
 			if(seenNotes.contains(id)) { continue; }
 			seenNotes.add(id);
+			
+			// Repeat the Notes header, if set
+			if(hf != null && hf.isHeaderVisible() && hf.getHeaderText() != null) {
+				ret.append(hf.getHeaderText() + "\n");
+			}
 
+			// Notes text
 			TextRun[] runs = notes.getTextRuns();
 			if(runs != null && runs.length > 0) {
 				for(int j=0; j<runs.length; j++) {
@@ -236,6 +248,11 @@ public class PowerPointExtractor extends POIOLE2TextExtractor
 						ret.append("\n");
 					}
 				}
+			}
+			
+			// Repeat the notes footer, if set
+			if(hf != null && hf.isFooterVisible() && hf.getFooterText() != null) {
+				ret.append(hf.getFooterText() + "\n");
 			}
 		}
 	}
