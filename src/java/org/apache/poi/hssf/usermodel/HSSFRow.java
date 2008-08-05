@@ -484,7 +484,14 @@ public final class HSSFRow implements Comparable, Row {
 
     public short getHeight()
     {
-        return row.getHeight();
+        short height = row.getHeight();
+
+        //The low-order 15 bits contain the row height.
+        //The 0x8000 bit indicates that the row is standard height (optional) 
+        if ((height & 0x8000) != 0) height = sheet.getDefaultRowHeight();
+        else height &= 0x7FFF;
+
+        return height;
     }
 
     /**
@@ -494,7 +501,7 @@ public final class HSSFRow implements Comparable, Row {
 
     public float getHeightInPoints()
     {
-        return (row.getHeight() / 20);
+        return ((float)getHeight() / 20);
     }
 
     /**
