@@ -188,4 +188,28 @@ public class TestXSSFExcelExtractor extends TestCase {
 			assertTrue(m.matches());			
 		}
 	}
+	
+	/**
+	 * From bug #45540
+	 */
+	public void BROKENtestHeaderFooter() throws Exception {
+		String[] files = new String[] {
+			"45540_classic_Footer.xlsx", "45540_form_Footer.xlsx",
+			"45540_classic_Header.xlsx", "45540_form_Header.xlsx"
+		};
+		for(String file : files) {
+			File xml = new File(
+					System.getProperty("HSSF.testdata.path") +
+					File.separator + file
+			);
+			assertTrue(xml.exists());
+			
+			XSSFExcelExtractor extractor = 
+				new XSSFExcelExtractor(new XSSFWorkbook(xml.toString()));
+			String text = extractor.getText();
+			
+			assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
+	         assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase")); 
+		}
+	}
 }
