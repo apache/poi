@@ -175,6 +175,12 @@ public class PowerPointExtractor extends POIOLE2TextExtractor
 	if(getSlideText) {
 		for(int i=0; i<_slides.length; i++) {
 			Slide slide = _slides[i];
+			
+			HeadersFooters hf = slide.getHeadersFooters();
+			if(hf != null && hf.getHeaderText() != null) {
+				ret.append(hf.getHeaderText() + "\n");
+			}
+			
 			TextRun[] runs = slide.getTextRuns();
 			for(int j=0; j<runs.length; j++) {
 				TextRun run = runs[j];
@@ -185,6 +191,10 @@ public class PowerPointExtractor extends POIOLE2TextExtractor
 						ret.append("\n");
 					}
 				}
+			}
+			
+			if(hf != null && hf.getFooterText() != null) {
+				ret.append(hf.getFooterText() + "\n");
 			}
 			
 			if(getCommentText) {
