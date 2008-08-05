@@ -108,4 +108,22 @@ public class TestXSLFPowerPointExtractor extends TestCase {
 				"\n\n\n\n", text
 		);
 	}
+	
+	public void testGetComments() throws Exception {
+		File file = new File(
+				System.getProperty("HSLF.testdata.path") +
+				File.separator + "45545_Comment.pptx"
+		);
+		assertTrue(file.exists());
+		
+		xmlA = new XSLFSlideShow(file.toString());
+		XSLFPowerPointExtractor extractor = 
+			new XSLFPowerPointExtractor(xmlA);
+		
+		String text = extractor.getText();
+		assertTrue(text.length() > 0);
+		
+		// Check comments are there
+		assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
+	}
 }
