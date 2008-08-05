@@ -212,4 +212,29 @@ public class TestXSSFExcelExtractor extends TestCase {
 	        assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase")); 
 		}
 	}
+
+	/**
+	 * From bug #45544
+	 */
+	public void testComments() throws Exception {
+		File xml = new File(
+				System.getProperty("HSSF.testdata.path") +
+				File.separator + "45544.xlsx"
+		);
+		assertTrue(xml.exists());
+		
+		XSSFExcelExtractor extractor = 
+			new XSSFExcelExtractor(new XSSFWorkbook(xml.toString()));
+		String text = extractor.getText();
+
+		// No comments there yet
+		assertFalse("Unable to find expected word in text\n" + text, text.contains("testdoc"));
+		assertFalse("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+
+		// Turn on comment extraction, will then be
+		extractor.setIncludeCellComments(true);
+		text = extractor.getText();
+		assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
+		assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+	}
 }
