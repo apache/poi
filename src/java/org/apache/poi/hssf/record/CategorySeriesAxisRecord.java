@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * This record refers to a category or series axis and is used to specify label/tickmark frequency.
@@ -30,17 +29,17 @@ import org.apache.poi.util.*;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class CategorySeriesAxisRecord
-    extends Record
-{
-    public final static short      sid                             = 0x1020;
+public final class CategorySeriesAxisRecord extends Record {
+    public final static short sid = 0x1020;
+
+    private static final BitField valueAxisCrossing = BitFieldFactory.getInstance(0x1);
+    private static final BitField crossesFarRight   = BitFieldFactory.getInstance(0x2);
+    private static final BitField reversed          = BitFieldFactory.getInstance(0x4);
+    
     private  short      field_1_crossingPoint;
     private  short      field_2_labelFrequency;
     private  short      field_3_tickMarkFrequency;
     private  short      field_4_options;
-    private  BitField   valueAxisCrossing                           = BitFieldFactory.getInstance(0x1);
-    private  BitField   crossesFarRight                             = BitFieldFactory.getInstance(0x2);
-    private  BitField   reversed                                    = BitFieldFactory.getInstance(0x4);
 
 
     public CategorySeriesAxisRecord()
@@ -268,10 +267,4 @@ public class CategorySeriesAxisRecord
     {
         return reversed.isSet(field_4_options);
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

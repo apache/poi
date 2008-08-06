@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Describes a line format record.  The line format record controls how a line on a chart appears.
@@ -30,10 +29,13 @@ import org.apache.poi.util.*;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class LineFormatRecord
-    extends Record
-{
-    public final static short      sid                             = 0x1007;
+public final class LineFormatRecord extends Record {
+    public final static short sid = 0x1007;
+
+    private static final BitField auto      = BitFieldFactory.getInstance(0x1);
+    private static final BitField drawTicks = BitFieldFactory.getInstance(0x4);
+    private static final BitField unknown   = BitFieldFactory.getInstance(0x4);
+
     private  int        field_1_lineColor;
     private  short      field_2_linePattern;
     public final static short       LINE_PATTERN_SOLID             = 0;
@@ -51,9 +53,6 @@ public class LineFormatRecord
     public final static short       WEIGHT_MEDIUM                  = 1;
     public final static short       WEIGHT_WIDE                    = 2;
     private  short      field_4_format;
-    private  BitField   auto                                        = BitFieldFactory.getInstance(0x1);
-    private  BitField   drawTicks                                   = BitFieldFactory.getInstance(0x4);
-    private  BitField   unknown                                     = BitFieldFactory.getInstance(0x4);
     private  short      field_5_colourPaletteIndex;
 
 
@@ -342,10 +341,4 @@ public class LineFormatRecord
     {
         return unknown.isSet(field_4_format);
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

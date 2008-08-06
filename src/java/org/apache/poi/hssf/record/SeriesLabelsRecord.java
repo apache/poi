@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * The series label record defines the type of label associated with the data format record.
@@ -30,18 +29,17 @@ import org.apache.poi.util.*;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class SeriesLabelsRecord
-    extends Record
-{
-    public final static short      sid                             = 0x100c;
-    private  short      field_1_formatFlags;
-    private  BitField   showActual                                  = BitFieldFactory.getInstance(0x1);
-    private  BitField   showPercent                                 = BitFieldFactory.getInstance(0x2);
-    private  BitField   labelAsPercentage                           = BitFieldFactory.getInstance(0x4);
-    private  BitField   smoothedLine                                = BitFieldFactory.getInstance(0x8);
-    private  BitField   showLabel                                   = BitFieldFactory.getInstance(0x10);
-    private  BitField   showBubbleSizes                             = BitFieldFactory.getInstance(0x20);
+public final class SeriesLabelsRecord extends Record {
+    public final static short      sid = 0x100c;
 
+    private static final BitField showActual        = BitFieldFactory.getInstance(0x01);
+    private static final BitField showPercent       = BitFieldFactory.getInstance(0x02);
+    private static final BitField labelAsPercentage = BitFieldFactory.getInstance(0x04);
+    private static final BitField smoothedLine      = BitFieldFactory.getInstance(0x08);
+    private static final BitField showLabel         = BitFieldFactory.getInstance(0x10);
+    private static final BitField showBubbleSizes   = BitFieldFactory.getInstance(0x20);
+
+    private  short      field_1_formatFlags;
 
     public SeriesLabelsRecord()
     {
@@ -256,10 +254,4 @@ public class SeriesLabelsRecord
     {
         return showBubbleSizes.isSet(field_1_formatFlags);
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

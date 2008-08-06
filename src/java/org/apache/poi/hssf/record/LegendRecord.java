@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Defines a legend for a chart.
@@ -30,10 +29,16 @@ import org.apache.poi.util.*;
 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public class LegendRecord
-    extends Record
-{
-    public final static short      sid                             = 0x1015;
+public final class LegendRecord extends Record {
+    public final static short sid = 0x1015;
+
+    private static final BitField autoPosition     = BitFieldFactory.getInstance(0x01);
+    private static final BitField autoSeries       = BitFieldFactory.getInstance(0x02);
+    private static final BitField autoXPositioning = BitFieldFactory.getInstance(0x04);
+    private static final BitField autoYPositioning = BitFieldFactory.getInstance(0x08);
+    private static final BitField vertical         = BitFieldFactory.getInstance(0x10);
+    private static final BitField dataTable        = BitFieldFactory.getInstance(0x20);
+
     private  int        field_1_xAxisUpperLeft;
     private  int        field_2_yAxisUpperLeft;
     private  int        field_3_xSize;
@@ -50,12 +55,6 @@ public class LegendRecord
     public final static byte        SPACING_MEDIUM                 = 1;
     public final static byte        SPACING_OPEN                   = 2;
     private  short      field_7_options;
-    private  BitField   autoPosition                                = BitFieldFactory.getInstance(0x1);
-    private  BitField   autoSeries                                  = BitFieldFactory.getInstance(0x2);
-    private  BitField   autoXPositioning                            = BitFieldFactory.getInstance(0x4);
-    private  BitField   autoYPositioning                            = BitFieldFactory.getInstance(0x8);
-    private  BitField   vertical                                    = BitFieldFactory.getInstance(0x10);
-    private  BitField   dataTable                                   = BitFieldFactory.getInstance(0x20);
 
 
     public LegendRecord()
@@ -437,10 +436,4 @@ public class LegendRecord
     {
         return dataTable.isSet(field_7_options);
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

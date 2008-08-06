@@ -32,25 +32,25 @@ import org.apache.poi.util.*;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TextObjectBaseRecord
-    extends Record
-{
+public class TextObjectBaseRecord extends Record {
     public final static short      sid                             = 0x1B6;
+    
+    private static final BitField reserved1               = BitFieldFactory.getInstance(0x0001);
+    private static final BitField HorizontalTextAlignment = BitFieldFactory.getInstance(0x000E);
+    private static final BitField VerticalTextAlignment   = BitFieldFactory.getInstance(0x0070);
+    private static final BitField reserved2               = BitFieldFactory.getInstance(0x0180);
+    private static final BitField textLocked              = BitFieldFactory.getInstance(0x0200);
+    private static final BitField reserved3               = BitFieldFactory.getInstance(0xFC00);
+    
     private  short      field_1_options;
-    private  BitField   reserved1                                   = BitFieldFactory.getInstance(0x1);
-    private BitField   HorizontalTextAlignment                    = BitFieldFactory.getInstance(0x000E);
     public final static short  HORIZONTAL_TEXT_ALIGNMENT_LEFT_ALIGNED = 1;
     public final static short  HORIZONTAL_TEXT_ALIGNMENT_CENTERED = 2;
     public final static short  HORIZONTAL_TEXT_ALIGNMENT_RIGHT_ALIGNED = 3;
     public final static short  HORIZONTAL_TEXT_ALIGNMENT_JUSTIFIED = 4;
-    private BitField   VerticalTextAlignment                      = BitFieldFactory.getInstance(0x0070);
     public final static short  VERTICAL_TEXT_ALIGNMENT_TOP    = 1;
     public final static short  VERTICAL_TEXT_ALIGNMENT_CENTER = 2;
     public final static short  VERTICAL_TEXT_ALIGNMENT_BOTTOM = 3;
     public final static short  VERTICAL_TEXT_ALIGNMENT_JUSTIFY = 4;
-    private BitField   reserved2                                  = BitFieldFactory.getInstance(0x0180);
-    private  BitField   textLocked                                  = BitFieldFactory.getInstance(0x200);
-    private BitField   reserved3                                  = BitFieldFactory.getInstance(0xFC00);
     private  short      field_2_textOrientation;
     public final static short       TEXT_ORIENTATION_NONE          = 0;
     public final static short       TEXT_ORIENTATION_TOP_TO_BOTTOM = 1;
@@ -452,10 +452,4 @@ public class TextObjectBaseRecord
     {
         return reserved3.getShortValue(field_1_options);
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

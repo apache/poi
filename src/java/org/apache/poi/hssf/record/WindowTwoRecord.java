@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -31,34 +29,27 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-
-public class WindowTwoRecord
-    extends Record
-{
-    public final static short sid = 0x23e;
-    private short             field_1_options;
+public final class WindowTwoRecord extends Record {
+    public final static short sid = 0x023E;
 
     // bitfields
-    private BitField          displayFormulas         = BitFieldFactory.getInstance(0x01);
-    private BitField          displayGridlines        = BitFieldFactory.getInstance(0x02);
-    private BitField          displayRowColHeadings   = BitFieldFactory.getInstance(0x04);
-    private BitField          freezePanes             = BitFieldFactory.getInstance(0x08);
-    private BitField          displayZeros            = BitFieldFactory.getInstance(0x10);
-    private BitField          defaultHeader           =
-        BitFieldFactory.getInstance(0x20);   // if false use color in field 4
-
-    // if true use default foreground
-    // for headers
-    private BitField          arabic                  =
-        BitFieldFactory.getInstance(0x40);   // for our desert dwelling friends
-    private BitField          displayGuts             = BitFieldFactory.getInstance(0x80);
-    private BitField          freezePanesNoSplit      = BitFieldFactory.getInstance(0x100);
-    private BitField          selected                = BitFieldFactory.getInstance(0x200);
-    private BitField          active                  = BitFieldFactory.getInstance(0x400);
-    private BitField          savedInPageBreakPreview = BitFieldFactory.getInstance(0x800);
-
+    private static final BitField displayFormulas         = BitFieldFactory.getInstance(0x01);
+    private static final BitField displayGridlines        = BitFieldFactory.getInstance(0x02);
+    private static final BitField displayRowColHeadings   = BitFieldFactory.getInstance(0x04);
+    private static final BitField freezePanes             = BitFieldFactory.getInstance(0x08);
+    private static final BitField displayZeros            = BitFieldFactory.getInstance(0x10);
+    /**  if false use color in field 4 if true use default foreground for headers */
+    private static final BitField defaultHeader           = BitFieldFactory.getInstance(0x20);   
+    private static final BitField arabic                  = BitFieldFactory.getInstance(0x040);
+    private static final BitField displayGuts             = BitFieldFactory.getInstance(0x080);
+    private static final BitField freezePanesNoSplit      = BitFieldFactory.getInstance(0x100);
+    private static final BitField selected                = BitFieldFactory.getInstance(0x200);
+    private static final BitField active                  = BitFieldFactory.getInstance(0x400);
+    private static final BitField savedInPageBreakPreview = BitFieldFactory.getInstance(0x800);
     // 4-7 reserved
     // end bitfields
+
+    private short             field_1_options;
     private short             field_2_top_row;
     private short             field_3_left_col;
     private int               field_4_header_color;
