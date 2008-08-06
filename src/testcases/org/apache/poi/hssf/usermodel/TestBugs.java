@@ -659,7 +659,7 @@ public final class TestBugs extends TestCase {
 
             HSSFSheet sheet = wb.getSheetAt( 0 );
             int[] breaks = sheet.getRowBreaks();
-            assertNull(breaks);
+            assertEquals(0, breaks.length);
 
             //add 3 row breaks
             for (int j = 1; j <= 3; j++) {

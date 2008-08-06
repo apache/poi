@@ -33,8 +33,8 @@ public final class TestMergeCellsRecord extends TestCase {
     * @throws Exception
     */
    public void testCloneReferences() throws Exception {
-      MergeCellsRecord merge = new MergeCellsRecord();
-      merge.addArea(0, (short)0, 1, (short)2);
+      CellRangeAddress[] cras = { new CellRangeAddress(0, 1, 0, 2), };
+      MergeCellsRecord merge = new MergeCellsRecord(cras, 0, cras.length);
       MergeCellsRecord clone = (MergeCellsRecord)merge.clone();
       
       assertNotSame("Merged and cloned objects are the same", merge, clone);
@@ -47,7 +47,6 @@ public final class TestMergeCellsRecord extends TestCase {
       assertEquals("New Clone Col From doesnt match", mergeRegion.getFirstColumn(), cloneRegion.getFirstColumn());
       assertEquals("New Clone Col To doesnt match", mergeRegion.getLastColumn(), cloneRegion.getLastColumn());      
       
-      merge.removeAreaAt(0);
-      assertNotNull("Clone's item not removed", clone.getAreaAt(0));
+      assertFalse(merge.getAreaAt(0) == clone.getAreaAt(0));
    }
 }
