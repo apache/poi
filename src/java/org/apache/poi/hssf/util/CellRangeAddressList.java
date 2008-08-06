@@ -125,7 +125,14 @@ public final class CellRangeAddressList {
 	}
 
 	public int getSize() {
-		return 2 + CellRangeAddress.getEncodedSize(_list.size());
+		return getEncodedSize(_list.size());
+	}
+	/**
+	 * @return the total size of for the specified number of ranges,
+	 *  including the initial 2 byte range count
+	 */
+	public static int getEncodedSize(int numberOfRanges) {
+		return 2 + CellRangeAddress.getEncodedSize(numberOfRanges);
 	}
 	public CellRangeAddressList copy() {
 		CellRangeAddressList result = new CellRangeAddressList();

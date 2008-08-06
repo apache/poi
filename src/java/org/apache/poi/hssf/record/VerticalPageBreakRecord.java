@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,46 +14,53 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.record;
 
+import java.util.Iterator;
+
 /**
- * VerticalPageBreak record that stores page breaks at columns
- * <p>
- * This class is just used so that SID compares work properly in the RecordFactory
+ * VerticalPageBreak (0x001A) record that stores page breaks at columns<p/>
+ * 
  * @see PageBreakRecord
- * @author Danny Mui (dmui at apache dot org) 
+ * @author Danny Mui (dmui at apache dot org)
  */
-public class VerticalPageBreakRecord extends PageBreakRecord {
-	
-    public static final short sid = PageBreakRecord.VERTICAL_SID;
-    
+public final class VerticalPageBreakRecord extends PageBreakRecord {
+
+	public static final short sid = 0x001A;
+
 	/**
-	 * 
+	 * Creates an empty vertical page break record
 	 */
 	public VerticalPageBreakRecord() {
-		super();
+
 	}
 
 	/**
-	 * @param sid
-	 */
-	public VerticalPageBreakRecord(short sid) {
-		super(sid);
-	}
-
-	/**
-     * @param in the RecordInputstream to read the record from
+	 * @param in the RecordInputstream to read the record from
 	 */
 	public VerticalPageBreakRecord(RecordInputStream in) {
 		super(in);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.record.Record#getSid()
-	 */
+	protected void validateSid(short id) {
+		if (id != getSid()) {
+			throw new RecordFormatException(
+					"NOT A HorizontalPageBreak or VerticalPageBreak RECORD!! " + id);
+		}
+	}
+
 	public short getSid() {
 		return sid;
 	}
 
+	public Object clone() {
+		PageBreakRecord result = new VerticalPageBreakRecord();
+		Iterator iterator = getBreaksIterator();
+		while (iterator.hasNext()) {
+			Break original = (Break) iterator.next();
+			result.addBreak(original.main, original.subFrom, original.subTo);
+		}
+		return result;
+	}
 }

@@ -14,19 +14,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hssf.record.aggregates;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.util.CellRangeAddress;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * CFRecordsAggregate - aggregates Conditional Formatting records CFHeaderRecord 
@@ -36,14 +36,11 @@ import org.apache.poi.util.POILogger;
  * @author Dmitriy Kumshayev
  *
  */
-public final class CFRecordsAggregate extends Record
-{
+public final class CFRecordsAggregate extends Record {
 	/** Excel allows up to 3 conditional formating rules */
 	private static final int MAX_CONDTIONAL_FORMAT_RULES = 3;
 
 	public final static short sid = -2008; // not a real BIFF record
-
-	private static POILogger log = POILogFactory.getLogger(CFRecordsAggregate.class);
 
 	private final CFHeaderRecord header;
 
@@ -78,9 +75,8 @@ public final class CFRecordsAggregate extends Record
 	 * @param offset - position of {@link CFHeaderRecord} object in the list of Record objects
 	 * @return CFRecordsAggregate object
 	 */
-	public static CFRecordsAggregate createCFAggregate(List recs, int pOffset)
-	{
-		Record rec = ( Record ) recs.get(pOffset);
+	public static CFRecordsAggregate createCFAggregate(RecordStream rs) {
+		Record rec = rs.getNext();
 		if (rec.getSid() != CFHeaderRecord.sid) {
 			throw new IllegalStateException("next record sid was " + rec.getSid() 
 					+ " instead of " + CFHeaderRecord.sid + " as expected");
@@ -90,35 +86,10 @@ public final class CFRecordsAggregate extends Record
 		int nRules = header.getNumberOfConditionalFormats();
 
 		CFRuleRecord[] rules = new CFRuleRecord[nRules];
-		int offset = pOffset;
-		int countFound = 0;
-		while (countFound < rules.length) {
-			offset++;
-			if(offset>=recs.size()) {
-				break;
-			}
-			rec = (Record)recs.get(offset);
-			if(rec instanceof CFRuleRecord) {
-				rules[countFound] = (CFRuleRecord) rec;
-				countFound++;
-			} else {
-				break;
-			}
+		for (int i = 0; i < rules.length; i++) {
+			rules[i] = (CFRuleRecord) rs.getNext();
 		}
-
-		if (countFound < nRules)
-		{ // TODO -(MAR-2008) can this ever happen? write junit 
-			
-			if (log.check(POILogger.DEBUG))
-			{
-				log.log(POILogger.DEBUG, "Expected  " + nRules + " Conditional Formats, "
-						+ "but found " + countFound + " rules");
-			}
-			header.setNumberOfConditionalFormats(nRules);
-			CFRuleRecord[] lessRules = new CFRuleRecord[countFound];
-			System.arraycopy(rules, 0, lessRules, 0, countFound);
-			rules = lessRules;
-		}
+		
 		return new CFRecordsAggregate(header, rules);
 	}
 

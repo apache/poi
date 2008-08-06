@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record.aggregates;
 
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
@@ -27,15 +28,66 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * 
  * @author Josh Micich
  */
-public abstract class RecordAggregate extends Record {
-	// TODO - convert existing aggregate classes to proper subclasses of this one
+public abstract class RecordAggregate extends RecordBase {
+	// TODO - delete these methods when all subclasses have been converted
 	protected final void validateSid(short id) {
-		// TODO - break class hierarchy and make separate from Record
 		throw new RuntimeException("Should not be called");
 	}
 	protected final void fillFields(RecordInputStream in) {
 		throw new RuntimeException("Should not be called");
 	}
-	// force subclassses to provide better implementation than default
-	public abstract int getRecordSize();
+    public final short getSid() {
+		throw new RuntimeException("Should not be called");
+    }
+
+	public abstract void visitContainedRecords(RecordVisitor rv);
+	
+	public final int serialize(int offset, byte[] data) {
+		SerializingRecordVisitor srv = new SerializingRecordVisitor(data, offset);
+		visitContainedRecords(srv);
+		return srv.countBytesWritten();
+	}
+	public int getRecordSize() {
+		RecordSizingVisitor rsv = new RecordSizingVisitor();
+		visitContainedRecords(rsv);
+		return rsv.getTotalSize();
+	}
+	
+	public interface RecordVisitor {
+		void visitRecord(Record r);
+	}
+	
+	private static final class SerializingRecordVisitor implements RecordVisitor {
+
+		private final byte[] _data;
+		private final int _startOffset;
+		private int _countBytesWritten;
+
+		public SerializingRecordVisitor(byte[] data, int startOffset) {
+			_data = data;
+			_startOffset = startOffset;
+			_countBytesWritten = 0;
+		}
+		public int countBytesWritten() {
+			return _countBytesWritten;
+		}
+		public void visitRecord(Record r) {
+			int currentOffset = _startOffset + _countBytesWritten;
+			_countBytesWritten += r.serialize(currentOffset, _data);
+		}
+	}
+	private static final class RecordSizingVisitor implements RecordVisitor {
+
+		private int _totalSize;
+		
+		public RecordSizingVisitor() {
+			_totalSize = 0;
+		}
+		public int getTotalSize() {
+			return _totalSize;
+		}
+		public void visitRecord(Record r) {
+			_totalSize += r.getRecordSize();
+		}
+	}
 }

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,11 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.record;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -38,13 +36,12 @@ import org.apache.poi.util.LittleEndian;
  * @see VerticalPageBreakRecord
  * @author Danny Mui (dmui at apache dot org)
  */
-public class PageBreakRecord extends Record {
-   public static final short HORIZONTAL_SID = (short)0x1B;
-   public static final short VERTICAL_SID = (short)0x1A;
-   public short sid;
-   private short numBreaks;
-   private List breaks;
-   private Map BreakMap;
+public abstract class PageBreakRecord extends Record {
+	private static final boolean IS_EMPTY_RECORD_WRITTEN = false; //TODO - flip
+    private static final int[] EMPTY_INT_ARRAY = { };
+   
+    private List _breaks;
+    private Map _breakMap;
       
     /**
      * Since both records store 2byte integers (short), no point in 
@@ -53,116 +50,105 @@ public class PageBreakRecord extends Record {
      * The subs (rows or columns, don't seem to be able to set but excel sets
      * them automatically)
      */
-    public class Break
-    {
+    public class Break {
 
-        public short main;
-        public short subFrom;
-        public short subTo;
+        public static final int ENCODED_SIZE = 6;
+		public int main;
+        public int subFrom;
+        public int subTo;
 
-        public Break(short main, short subFrom, short subTo)
+        public Break(int main, int subFrom, int subTo)
         {
             this.main = main;
             this.subFrom = subFrom;
             this.subTo = subTo;
         }
+        
+        public Break(RecordInputStream in) {
+        	main = in.readUShort() - 1;
+        	subFrom = in.readUShort();
+        	subTo = in.readUShort();
+        }
+        
+        public int serialize(int offset, byte[] data) {
+            LittleEndian.putUShort(data, offset + 0, main + 1);
+            LittleEndian.putUShort(data, offset + 2, subFrom);
+            LittleEndian.putUShort(data, offset + 4, subTo);
+            return ENCODED_SIZE;
+        }
     }
 
-    public PageBreakRecord()
-    {
-
+    protected PageBreakRecord() {
+        _breaks = new ArrayList();
+        _breakMap = new HashMap();
     }
 
-    /**
-     * 
-     * @param sid
-     */
-    public PageBreakRecord(short sid) {
-       super();
-       this.sid = sid;
-    }
-
-    public PageBreakRecord(RecordInputStream in)
-    {
+    protected PageBreakRecord(RecordInputStream in) {
         super(in);
-        this.sid = in.getSid();
     }
 
     protected void fillFields(RecordInputStream in)
     {
-        short loadedBreaks = in.readShort();
-        setNumBreaks(loadedBreaks);
-        for(int k = 0; k < loadedBreaks; k++)
-        {
-            addBreak((short)(in.readShort()-1), in.readShort(), in.readShort());
+        int nBreaks = in.readShort();
+        _breaks = new ArrayList(nBreaks + 2);
+        _breakMap = new HashMap();
+        
+        for(int k = 0; k < nBreaks; k++) {
+        	Break br = new Break(in);
+			_breaks.add(br);
+            _breakMap.put(new Integer(br.main), br);
         }
 
     }
-
-    public short getSid()
-    {
-        return sid;
+    
+    private int getDataSize() {
+    	return 2 + _breaks.size() * Break.ENCODED_SIZE;
+    }
+    public int getRecordSize() {
+        int nBreaks = _breaks.size();
+        if (!IS_EMPTY_RECORD_WRITTEN && nBreaks < 1) {
+        	return 0;
+        }
+        return 4 + getDataSize();
     }
 
-    public int serialize(int offset, byte data[])
-    {
-        int recordsize = getRecordSize();
+
+    public final int serialize(int offset, byte data[]) {
+        int nBreaks = _breaks.size();
+        if (!IS_EMPTY_RECORD_WRITTEN && nBreaks < 1) {
+        	return 0;
+        }
+    	int dataSize = getDataSize();
+        LittleEndian.putUShort(data, offset + 0, getSid());
+        LittleEndian.putUShort(data, offset + 2, dataSize);
+        LittleEndian.putUShort(data, offset + 4, nBreaks);
         int pos = 6;
-        LittleEndian.putShort(data, offset + 0, getSid());
-        LittleEndian.putShort(data, offset + 2, (short)(recordsize - 4));
-        LittleEndian.putShort(data, offset + 4, getNumBreaks());
-        for(Iterator iterator = getBreaksIterator(); iterator.hasNext();)
-        {
-            Break Break = (Break)iterator.next();
-            LittleEndian.putShort(data, offset + pos, (short)(Break.main + 1));
-            pos += 2;
-            LittleEndian.putShort(data, offset + pos, Break.subFrom);
-            pos += 2;
-            LittleEndian.putShort(data, offset + pos, Break.subTo);
-            pos += 2;
+        for (int i=0; i<nBreaks; i++) {
+            Break br = (Break)_breaks.get(i);
+            pos += br.serialize(offset+pos, data);
         }
 
-        return recordsize;
+        return 4 + dataSize;
     }
 
-    protected void validateSid(short id)
-    {
-        if(id != HORIZONTAL_SID && id != VERTICAL_SID)
-            throw new RecordFormatException("NOT A HorizontalPageBreak or VerticalPageBreak RECORD!! " + id);
-        else
-            return;
+    public int getNumBreaks() {
+        return _breaks.size();
     }
 
-    public short getNumBreaks()
-    {
-        return breaks != null ? (short)breaks.size() : numBreaks;
-    }
-
-    public void setNumBreaks(short numBreaks)
-    {
-        this.numBreaks = numBreaks;
-    }
-
-    public Iterator getBreaksIterator()
-    {
-        if(breaks == null)
-            return Collections.EMPTY_LIST.iterator();
-        else
-            return breaks.iterator();
+    public final Iterator getBreaksIterator() {
+        return _breaks.iterator();
     }
 
     public String toString()
     {
         StringBuffer retval = new StringBuffer();
         
-        if (getSid() != HORIZONTAL_SID && getSid()!= VERTICAL_SID) 
-            return "[INVALIDPAGEBREAK]\n     .sid ="+getSid()+"[INVALIDPAGEBREAK]";
-        
+       
         String label;
         String mainLabel;
         String subLabel;
         
-        if (getSid() == HORIZONTAL_SID) {
+        if (getSid() == HorizontalPageBreakRecord.sid) {
            label = "HORIZONTALPAGEBREAK";
            mainLabel = "row";
            subLabel = "col";
@@ -192,46 +178,33 @@ public class PageBreakRecord extends Record {
    /**
     * Adds the page break at the specified parameters
     * @param main Depending on sid, will determine row or column to put page break (zero-based)
-    * @param subFrom No user-interface to set (defaults to minumum, 0)
+    * @param subFrom No user-interface to set (defaults to minimum, 0)
     * @param subTo No user-interface to set
     */
-    public void addBreak(short main, short subFrom, short subTo)
-    {
-        if(breaks == null)
-        {
-            breaks = new ArrayList(getNumBreaks() + 10);
-            BreakMap = new HashMap();
-        }
+    public void addBreak(int main, int subFrom, int subTo) {
+
         Integer key = new Integer(main);
-        Break region = (Break)BreakMap.get(key);
-        if(region != null)
-        {
+        Break region = (Break)_breakMap.get(key);
+        if(region == null) {
+            region = new Break(main, subFrom, subTo);
+            _breakMap.put(key, region);
+            _breaks.add(region);
+        } else {
             region.main = main;
             region.subFrom = subFrom;
             region.subTo = subTo;
-        } else
-        {
-            region = new Break(main, subFrom, subTo);
-            breaks.add(region);
         }
-        BreakMap.put(key, region);
     }
 
     /**
      * Removes the break indicated by the parameter
      * @param main (zero-based)
      */
-    public void removeBreak(short main)
-    {
+    public final void removeBreak(int main) {
         Integer rowKey = new Integer(main);
-        Break region = (Break)BreakMap.get(rowKey);
-        breaks.remove(region);
-        BreakMap.remove(rowKey);
-    }
-
-    public int getRecordSize()
-    {
-        return 6 + getNumBreaks() * 6;
+        Break region = (Break)_breakMap.get(rowKey);
+        _breaks.remove(region);
+        _breakMap.remove(rowKey);
     }
 
     /**
@@ -239,26 +212,22 @@ public class PageBreakRecord extends Record {
      * @param main FIXME: Document this!
      * @return The Break or null if no break exists at the row/col specified.
      */
-    public Break getBreak(short main)
-    {
-    	if (BreakMap == null)
-    		return null;
+    public final Break getBreak(int main) {
         Integer rowKey = new Integer(main);
-        return (Break)BreakMap.get(rowKey);
+        return (Break)_breakMap.get(rowKey);
     }
 
-   /* Clones the page break record 
-    * @see java.lang.Object#clone()
-    */
-   public Object clone() {
-      PageBreakRecord record = new PageBreakRecord(getSid());      
-      Iterator iterator = getBreaksIterator();
-      while (iterator.hasNext()) {
-         Break original = (Break)iterator.next();
-         record.addBreak(original.main, original.subFrom, original.subTo);
-      }
-      return record;
-   }
 
-    
+    public final int[] getBreaks() {
+    	int count = getNumBreaks();
+    	if (count < 1) {
+    		return EMPTY_INT_ARRAY;
+    	}
+        int[] result = new int[count];
+        for (int i=0; i<count; i++) {
+            Break breakItem = (Break)_breaks.get(i);
+            result[i] = breakItem.main;
+        }
+        return result;
+    }
 }

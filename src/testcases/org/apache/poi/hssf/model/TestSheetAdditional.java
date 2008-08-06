@@ -29,8 +29,7 @@ public final class TestSheetAdditional extends TestCase {
 	
 	public void testGetCellWidth() {
 		Sheet sheet = Sheet.createSheet();
-		// TODO change return type to ColumnInfoRecord 
-		ColumnInfoRecord nci = (ColumnInfoRecord)ColumnInfoRecordsAggregate.createColInfo();
+		ColumnInfoRecord nci = ColumnInfoRecordsAggregate.createColInfo();
 
 		// Prepare test model
 		nci.setFirstColumn((short)5);
@@ -38,7 +37,7 @@ public final class TestSheetAdditional extends TestCase {
 		nci.setColumnWidth((short)100);
 		
 		
-		sheet.columns.insertColumn(nci);
+		sheet._columnInfos.insertColumn(nci);
 
 		assertEquals((short)100,sheet.getColumnWidth((short)5));
 		assertEquals((short)100,sheet.getColumnWidth((short)6));
@@ -58,6 +57,3 @@ public final class TestSheetAdditional extends TestCase {
 	}
 
 }
-
-
-

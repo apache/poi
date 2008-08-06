@@ -17,20 +17,31 @@
 
 package org.apache.poi.hssf.model;
 
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.eventmodel.ERFListener;
 import org.apache.poi.hssf.eventmodel.EventRecordFactory;
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.BlankRecord;
+import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.ColumnInfoRecord;
+import org.apache.poi.hssf.record.DimensionsRecord;
+import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.IndexRecord;
+import org.apache.poi.hssf.record.MergeCellsRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.hssf.record.StringRecord;
+import org.apache.poi.hssf.record.UncalcedRecord;
 import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate;
-
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import org.apache.poi.hssf.util.CellRangeAddress;
 
 /**
  * Unit test for the Sheet class.
@@ -55,10 +66,24 @@ public final class TestSheet extends TestCase {
         assertTrue( sheet.records.get(pos++) instanceof EOFRecord );
     }
 
+    private static final class MergedCellListener implements ERFListener {
+
+        private int _count;
+        public MergedCellListener() {
+            _count = 0;
+        }
+        public boolean processRecord(Record rec) {
+            _count++;
+            return true;
+        }
+        public int getCount() {
+            return _count;
+        }
+    }
+    
     public void testAddMergedRegion() {
         Sheet sheet = Sheet.createSheet();
         int regionsToAdd = 4096;
-        int startRecords = sheet.getRecords().size();
 
         //simple test that adds a load of regions
         for (int n = 0; n < regionsToAdd; n++)
@@ -71,11 +96,18 @@ public final class TestSheet extends TestCase {
         assertTrue(sheet.getNumMergedRegions() == regionsToAdd);
 
         //test that the regions were spread out over the appropriate number of records
-        int recordsAdded    = sheet.getRecords().size() - startRecords;
+        byte[] sheetData = new byte[sheet.getSize()];
+        sheet.serialize(0, sheetData);
+        MergedCellListener mcListener = new MergedCellListener();
+        EventRecordFactory erf = new EventRecordFactory(mcListener, new short[] { MergeCellsRecord.sid, });
+//        POIFSFileSystem poifs = new POIFSFileSystem(new ByteArrayInputStream(sheetData));
+        erf.processRecords(new ByteArrayInputStream(sheetData));
+        int recordsAdded    = mcListener.getCount();
         int recordsExpected = regionsToAdd/1027;
         if ((regionsToAdd % 1027) != 0)
             recordsExpected++;
-        assertTrue("The " + regionsToAdd + " merged regions should have been spread out over " + recordsExpected + " records, not " + recordsAdded, recordsAdded == recordsExpected);
+        assertTrue("The " + regionsToAdd + " merged regions should have been spread out over " 
+                + recordsExpected + " records, not " + recordsAdded, recordsAdded == recordsExpected);
         // Check we can't add one with invalid date
         try {
             sheet.addMergedRegion(10, (short)10, 9, (short)12);
@@ -97,22 +129,23 @@ public final class TestSheet extends TestCase {
         Sheet sheet = Sheet.createSheet();
         int regionsToAdd = 4096;
 
-        for (int n = 0; n < regionsToAdd; n++)
-            sheet.addMergedRegion(0, (short) 0, 1, (short) 1);
+        for (int n = 0; n < regionsToAdd; n++) {
+            sheet.addMergedRegion(n, 0, n, 1);
+        }
 
-        int records = sheet.getRecords().size();
+        int nSheetRecords = sheet.getRecords().size();
 
         //remove a third from the beginning
         for (int n = 0; n < regionsToAdd/3; n++)
         {
             sheet.removeMergedRegion(0);
             //assert they have been deleted
-            assertTrue("Num of regions should be " + (regionsToAdd - n - 1) + " not " + sheet.getNumMergedRegions(), sheet.getNumMergedRegions() == regionsToAdd - n - 1);
+            assertEquals("Num of regions", regionsToAdd - n - 1, sheet.getNumMergedRegions());
         }
-
-        //assert any record removing was done
-        int recordsRemoved = (regionsToAdd/3)/1027; //doesn't work for particular values of regionsToAdd
-        assertTrue("Expected " + recordsRemoved + " record to be removed from the starting " + records + ".  Currently there are " + sheet.getRecords().size() + " records", records - sheet.getRecords().size() == recordsRemoved);
+        
+        // merge records are removed from within the MergedCellsTable, 
+        // so the sheet record count should not change 
+        assertEquals("Sheet Records", nSheetRecords, sheet.getRecords().size());
     }
 
     /**
@@ -125,8 +158,11 @@ public final class TestSheet extends TestCase {
     public void testMovingMergedRegion() {
         List records = new ArrayList();
 
-        MergeCellsRecord merged = new MergeCellsRecord();
-        merged.addArea(0, (short)0, 1, (short)2);
+        CellRangeAddress[] cras = {
+            new CellRangeAddress(0, 1, 0, 2),
+        };
+        MergeCellsRecord merged = new MergeCellsRecord(cras, 0, cras.length);
+        records.add(new DimensionsRecord());
         records.add(new RowRecord(0));
         records.add(new RowRecord(1));
         records.add(new RowRecord(2));
@@ -155,6 +191,7 @@ public final class TestSheet extends TestCase {
     public void testRowAggregation() {
         List records = new ArrayList();
 
+        records.add(new DimensionsRecord());
         records.add(new RowRecord(0));
         records.add(new RowRecord(1));
         records.add(new StringRecord());
@@ -196,10 +233,9 @@ public final class TestSheet extends TestCase {
         boolean is0 = false;
         boolean is11 = false;
 
-        Iterator iterator = sheet.getRowBreaks();
-        while (iterator.hasNext()) {
-            PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
-            int main = breakItem.main;
+        int[] rowBreaks = sheet.getRowBreaks();
+        for (int i = 0; i < rowBreaks.length; i++) {
+            int main = rowBreaks[i];
             if (main != 0 && main != 10 && main != 11) fail("Invalid page break");
             if (main == 0)     is0 = true;
             if (main == 10) is10= true;
@@ -253,10 +289,9 @@ public final class TestSheet extends TestCase {
         boolean is1 = false;
         boolean is15 = false;
 
-        Iterator iterator = sheet.getColumnBreaks();
-        while (iterator.hasNext()) {
-            PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
-            int main = breakItem.main;
+        int[] colBreaks = sheet.getColumnBreaks();
+        for (int i = 0; i < colBreaks.length; i++) {
+            int main = colBreaks[i];
             if (main != 0 && main != 1 && main != 10 && main != 15) fail("Invalid page break");
             if (main == 0)  is0 = true;
             if (main == 1)  is1 = true;
@@ -297,9 +332,8 @@ public final class TestSheet extends TestCase {
         xfindex = sheet.getXFIndexForColAt((short) 1);
         assertEquals(DEFAULT_IDX, xfindex);
 
-        // TODO change return type to ColumnInfoRecord 
-        ColumnInfoRecord nci = (ColumnInfoRecord)ColumnInfoRecordsAggregate.createColInfo();
-        sheet.columns.insertColumn(nci);
+        ColumnInfoRecord nci = ColumnInfoRecordsAggregate.createColInfo();
+        sheet._columnInfos.insertColumn(nci);
 
         // single column ColumnInfoRecord
         nci.setFirstColumn((short) 2);
@@ -361,6 +395,7 @@ public final class TestSheet extends TestCase {
         List records = new ArrayList();
         records.add(new BOFRecord());
         records.add(new UncalcedRecord());
+        records.add(new DimensionsRecord());
         records.add(new EOFRecord());
         Sheet sheet = Sheet.createSheet(records, 0, 0);
 
@@ -369,7 +404,7 @@ public final class TestSheet extends TestCase {
         if (serializedSize != estimatedSize) {
             throw new AssertionFailedError("Identified bug 45066 b");
         }
-        assertEquals(50, serializedSize);
+        assertEquals(68, serializedSize);
     }
 
     /**
@@ -393,7 +428,7 @@ public final class TestSheet extends TestCase {
 
 
         int dbCellRecordPos = getDbCellRecordPos(sheet);
-        if (dbCellRecordPos == 264) {
+        if (dbCellRecordPos == 252) {
             // The overt symptom of the bug
             // DBCELL record pos is calculated wrong if VRA comes before RRA
             throw new AssertionFailedError("Identified  bug 45145");
@@ -405,7 +440,7 @@ public final class TestSheet extends TestCase {
         assertEquals(RowRecordsAggregate.class, recs.get(rraIx).getClass());
         assertEquals(ValueRecordsAggregate.class, recs.get(rraIx+1).getClass());
 
-        assertEquals(254, dbCellRecordPos);
+        assertEquals(242, dbCellRecordPos);
     }
 
     /**

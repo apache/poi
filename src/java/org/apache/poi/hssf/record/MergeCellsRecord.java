@@ -32,68 +32,51 @@ import org.apache.poi.util.LittleEndian;
  */
 public final class MergeCellsRecord extends Record {
     public final static short sid = 0x00E5;
-    private CellRangeAddressList _regions;
+    /** sometimes the regions array is shared with other MergedCellsRecords */ 
+    private CellRangeAddress[] _regions;
+    private final int _startIndex;
+    private final int _numberOfRegions;
 
-    /** 
-     * Creates an empty <tt>MergedCellsRecord</tt>
-     */
-    public MergeCellsRecord() {
-    	_regions = new CellRangeAddressList();
+    public MergeCellsRecord(CellRangeAddress[] regions, int startIndex, int numberOfRegions) {
+		_regions = regions;
+		_startIndex = startIndex;
+		_numberOfRegions = numberOfRegions;
     }
-
     /**
      * Constructs a MergedCellsRecord and sets its fields appropriately
      * @param in the RecordInputstream to read the record from
      */
     public MergeCellsRecord(RecordInputStream in) {
-        super(in);
+     	int nRegions = in.readUShort();
+    	CellRangeAddress[] cras = new CellRangeAddress[nRegions];
+    	for (int i = 0; i < nRegions; i++) {
+			cras[i] = new CellRangeAddress(in);
+		}
+    	_numberOfRegions = nRegions;
+    	_startIndex = 0;
+    	_regions = cras;
     }
-
     protected void fillFields(RecordInputStream in) {
-    	_regions = new CellRangeAddressList(in);
+    	throw new RuntimeException("obsolete");
     }
-
     /**
      * get the number of merged areas.  If this drops down to 0 you should just go
      * ahead and delete the record.
      * @return number of areas
      */
     public short getNumAreas() {
-        return (short)_regions.countRanges();
-    }
-
-    /**
-     * Add an area to consider a merged cell.  The index returned is only gauranteed to
-     * be correct provided you do not add ahead of or remove ahead of it  (in which case
-     * you should increment or decrement appropriately....in other words its an arrayList)
-     *
-     * @param firstRow - the upper left hand corner's row
-     * @param firstCol - the upper left hand corner's col
-     * @param lastRow - the lower right hand corner's row
-     * @param lastCol - the lower right hand corner's col
-     * @return new index of said area (don't depend on it if you add/remove)
-     */
-    public void addArea(int firstRow, int firstCol, int lastRow, int lastCol) {
-    	_regions.addCellRangeAddress(firstRow, firstCol, lastRow, lastCol);
-    }
-
-    /**
-     * essentially unmerge the cells in the "area" stored at the passed in index
-     * @param areaIndex
-     */
-    public void removeAreaAt(int areaIndex) {
-        _regions.remove(areaIndex);
+        return (short)_numberOfRegions;
     }
 
     /**
      * @return MergedRegion at the given index representing the area that is Merged (r1,c1 - r2,c2)
      */
     public CellRangeAddress getAreaAt(int index) {
-        return _regions.getCellRangeAddress(index);
+        return _regions[_startIndex + index];
     }
 
     public int getRecordSize() {
-    	return 4 + _regions.getSize();
+    	return 4 + CellRangeAddressList.getEncodedSize(_numberOfRegions);
     }
 
     public short getSid() {
@@ -101,11 +84,16 @@ public final class MergeCellsRecord extends Record {
     }
 
     public int serialize(int offset, byte [] data) {
-        int dataSize = _regions.getSize();
+        int dataSize = CellRangeAddressList.getEncodedSize(_numberOfRegions);
 
-        LittleEndian.putShort(data, offset + 0, sid);
+        LittleEndian.putUShort(data, offset + 0, sid);
         LittleEndian.putUShort(data, offset + 2, dataSize);
-        _regions.serialize(offset + 4, data);
+        int nItems = _numberOfRegions;
+        LittleEndian.putUShort(data, offset + 4, nItems);
+        int pos = 6;
+        for (int i = 0; i < _numberOfRegions; i++) {
+			pos += _regions[_startIndex + i].serialize(offset+pos, data);
+		}
         return 4 + dataSize;
     }
 
@@ -113,17 +101,16 @@ public final class MergeCellsRecord extends Record {
         StringBuffer retval = new StringBuffer();
 
         retval.append("[MERGEDCELLS]").append("\n");
-        retval.append("     .sid        =").append(sid).append("\n");
         retval.append("     .numregions =").append(getNumAreas())
             .append("\n");
-        for (int k = 0; k < _regions.countRanges(); k++) {
-            CellRangeAddress region = _regions.getCellRangeAddress(k);
+        for (int k = 0; k < _numberOfRegions; k++) {
+            CellRangeAddress region = _regions[_startIndex + k];
 
             retval.append("     .rowfrom    =").append(region.getFirstRow())
                 .append("\n");
-            retval.append("     .colfrom    =").append(region.getFirstColumn())
-                .append("\n");
             retval.append("     .rowto      =").append(region.getLastRow())
+            	.append("\n");
+            retval.append("     .colfrom    =").append(region.getFirstColumn())
                 .append("\n");
             retval.append("     .colto      =").append(region.getLastColumn())
                 .append("\n");
@@ -140,13 +127,11 @@ public final class MergeCellsRecord extends Record {
     }
 
     public Object clone() {
-        MergeCellsRecord rec = new MergeCellsRecord();        
-        for (int k = 0; k < _regions.countRanges(); k++) {
-            CellRangeAddress oldRegion = _regions.getCellRangeAddress(k);
-           rec.addArea(oldRegion.getFirstRow(), oldRegion.getFirstColumn(), 
-        		   oldRegion.getLastRow(), oldRegion.getLastColumn());
-        }
-        
-        return rec;
+    	int nRegions = _numberOfRegions;
+    	CellRangeAddress[] clonedRegions = new CellRangeAddress[nRegions];
+		for (int i = 0; i < clonedRegions.length; i++) {
+			clonedRegions[i] = _regions[_startIndex + i].copy();
+		}
+        return new MergeCellsRecord(clonedRegions, 0, nRegions);
     }
 }
