@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,63 +14,64 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * The common object data record is used to store all common preferences for an excel object.
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
  *       remove the record in src/records/definitions.
-
+ *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class CommonObjectDataSubRecord
-    extends SubRecord
-{
-    public final static short      sid                             = 0x15;
+public final class CommonObjectDataSubRecord extends SubRecord {
+    public final static short sid = 0x0015;
+
+    private static final BitField locked    = BitFieldFactory.getInstance(0x0001);
+    private static final BitField printable = BitFieldFactory.getInstance(0x0010);
+    private static final BitField autofill  = BitFieldFactory.getInstance(0x2000);
+    private static final BitField autoline  = BitFieldFactory.getInstance(0x4000);
+
+    public final static short OBJECT_TYPE_GROUP              = 0;
+    public final static short OBJECT_TYPE_LINE               = 1;
+    public final static short OBJECT_TYPE_RECTANGLE          = 2;
+    public final static short OBJECT_TYPE_OVAL               = 3;
+    public final static short OBJECT_TYPE_ARC                = 4;
+    public final static short OBJECT_TYPE_CHART              = 5;
+    public final static short OBJECT_TYPE_TEXT               = 6;
+    public final static short OBJECT_TYPE_BUTTON             = 7;
+    public final static short OBJECT_TYPE_PICTURE            = 8;
+    public final static short OBJECT_TYPE_POLYGON            = 9;
+    public final static short OBJECT_TYPE_RESERVED1          = 10;
+    public final static short OBJECT_TYPE_CHECKBOX           = 11;
+    public final static short OBJECT_TYPE_OPTION_BUTTON      = 12;
+    public final static short OBJECT_TYPE_EDIT_BOX           = 13;
+    public final static short OBJECT_TYPE_LABEL              = 14;
+    public final static short OBJECT_TYPE_DIALOG_BOX         = 15;
+    public final static short OBJECT_TYPE_SPINNER            = 16;
+    public final static short OBJECT_TYPE_SCROLL_BAR         = 17;
+    public final static short OBJECT_TYPE_LIST_BOX           = 18;
+    public final static short OBJECT_TYPE_GROUP_BOX          = 19;
+    public final static short OBJECT_TYPE_COMBO_BOX          = 20;
+    public final static short OBJECT_TYPE_RESERVED2          = 21;
+    public final static short OBJECT_TYPE_RESERVED3          = 22;
+    public final static short OBJECT_TYPE_RESERVED4          = 23;
+    public final static short OBJECT_TYPE_RESERVED5          = 24;
+    public final static short OBJECT_TYPE_COMMENT            = 25;
+    public final static short OBJECT_TYPE_RESERVED6          = 26;
+    public final static short OBJECT_TYPE_RESERVED7          = 27;
+    public final static short OBJECT_TYPE_RESERVED8          = 28;
+    public final static short OBJECT_TYPE_RESERVED9          = 29;
+    public final static short OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 30;
+    
     private  short      field_1_objectType;
-    public final static short       OBJECT_TYPE_GROUP              = 0;
-    public final static short       OBJECT_TYPE_LINE               = 1;
-    public final static short       OBJECT_TYPE_RECTANGLE          = 2;
-    public final static short       OBJECT_TYPE_OVAL               = 3;
-    public final static short       OBJECT_TYPE_ARC                = 4;
-    public final static short       OBJECT_TYPE_CHART              = 5;
-    public final static short       OBJECT_TYPE_TEXT               = 6;
-    public final static short       OBJECT_TYPE_BUTTON             = 7;
-    public final static short       OBJECT_TYPE_PICTURE            = 8;
-    public final static short       OBJECT_TYPE_POLYGON            = 9;
-    public final static short       OBJECT_TYPE_RESERVED1          = 10;
-    public final static short       OBJECT_TYPE_CHECKBOX           = 11;
-    public final static short       OBJECT_TYPE_OPTION_BUTTON      = 12;
-    public final static short       OBJECT_TYPE_EDIT_BOX           = 13;
-    public final static short       OBJECT_TYPE_LABEL              = 14;
-    public final static short       OBJECT_TYPE_DIALOG_BOX         = 15;
-    public final static short       OBJECT_TYPE_SPINNER            = 16;
-    public final static short       OBJECT_TYPE_SCROLL_BAR         = 17;
-    public final static short       OBJECT_TYPE_LIST_BOX           = 18;
-    public final static short       OBJECT_TYPE_GROUP_BOX          = 19;
-    public final static short       OBJECT_TYPE_COMBO_BOX          = 20;
-    public final static short       OBJECT_TYPE_RESERVED2          = 21;
-    public final static short       OBJECT_TYPE_RESERVED3          = 22;
-    public final static short       OBJECT_TYPE_RESERVED4          = 23;
-    public final static short       OBJECT_TYPE_RESERVED5          = 24;
-    public final static short       OBJECT_TYPE_COMMENT            = 25;
-    public final static short       OBJECT_TYPE_RESERVED6          = 26;
-    public final static short       OBJECT_TYPE_RESERVED7          = 27;
-    public final static short       OBJECT_TYPE_RESERVED8          = 28;
-    public final static short       OBJECT_TYPE_RESERVED9          = 29;
-    public final static short       OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 30;
     private  short      field_2_objectId;
     private  short      field_3_option;
-    private  BitField   locked                                      = BitFieldFactory.getInstance(0x1);
-    private  BitField   printable                                   = BitFieldFactory.getInstance(0x10);
-    private  BitField   autofill                                    = BitFieldFactory.getInstance(0x2000);
-    private  BitField   autoline                                    = BitFieldFactory.getInstance(0x4000);
     private  int        field_4_reserved1;
     private  int        field_5_reserved2;
     private  int        field_6_reserved3;
@@ -431,8 +431,4 @@ public class CommonObjectDataSubRecord
     {
         return autoline.isSet(field_3_option);
     }
-
-
-}  // END OF CLASS
-
-
+}

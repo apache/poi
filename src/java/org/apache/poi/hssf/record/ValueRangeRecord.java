@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * The value range record defines the range of the value axis.
@@ -30,25 +29,25 @@ import org.apache.poi.util.*;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class ValueRangeRecord
-    extends Record
-{
-    public final static short      sid                             = 0x101f;
+public final class ValueRangeRecord extends Record {
+    public final static short sid = 0x101f;
+    
+    private static final BitField automaticMinimum           = BitFieldFactory.getInstance(0x0001);
+    private static final BitField automaticMaximum           = BitFieldFactory.getInstance(0x0002);
+    private static final BitField automaticMajor             = BitFieldFactory.getInstance(0x0004);
+    private static final BitField automaticMinor             = BitFieldFactory.getInstance(0x0008);
+    private static final BitField automaticCategoryCrossing  = BitFieldFactory.getInstance(0x0010);
+    private static final BitField logarithmicScale           = BitFieldFactory.getInstance(0x0020);
+    private static final BitField valuesInReverse            = BitFieldFactory.getInstance(0x0040);
+    private static final BitField crossCategoryAxisAtMaximum = BitFieldFactory.getInstance(0x0080);
+    private static final BitField reserved                   = BitFieldFactory.getInstance(0x0100);
+    
     private  double     field_1_minimumAxisValue;
     private  double     field_2_maximumAxisValue;
     private  double     field_3_majorIncrement;
     private  double     field_4_minorIncrement;
     private  double     field_5_categoryAxisCross;
     private  short      field_6_options;
-    private  BitField   automaticMinimum                            = BitFieldFactory.getInstance(0x1);
-    private  BitField   automaticMaximum                            = BitFieldFactory.getInstance(0x2);
-    private  BitField   automaticMajor                              = BitFieldFactory.getInstance(0x4);
-    private  BitField   automaticMinor                              = BitFieldFactory.getInstance(0x8);
-    private  BitField   automaticCategoryCrossing                   = BitFieldFactory.getInstance(0x10);
-    private  BitField   logarithmicScale                            = BitFieldFactory.getInstance(0x20);
-    private  BitField   valuesInReverse                             = BitFieldFactory.getInstance(0x40);
-    private  BitField   crossCategoryAxisAtMaximum                  = BitFieldFactory.getInstance(0x80);
-    private  BitField   reserved                                    = BitFieldFactory.getInstance(0x100);
 
 
     public ValueRangeRecord()
@@ -432,10 +431,4 @@ public class ValueRangeRecord
     {
         return reserved.isSet(field_6_options);
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

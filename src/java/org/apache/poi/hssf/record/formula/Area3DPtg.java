@@ -25,7 +25,6 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 
-
 /**
  * Title:        Area 3D Ptg - 3D reference (Sheet + Area)<P>
  * Description:  Defined a area in Extern Sheet. <P>
@@ -38,14 +37,16 @@ import org.apache.poi.util.LittleEndian;
 public final class Area3DPtg extends OperandPtg implements AreaI {
 	public final static byte sid = 0x3b;
 	private final static int SIZE = 11; // 10 + 1 for Ptg
+	
+	private static final BitField rowRelative = BitFieldFactory.getInstance(0x8000);
+	private static final BitField colRelative = BitFieldFactory.getInstance(0x4000);
+	
 	private short field_1_index_extern_sheet;
 	private int field_2_first_row;
 	private int field_3_last_row;
 	private int field_4_first_column;
 	private int field_5_last_column;
 
-	private BitField rowRelative = BitFieldFactory.getInstance( 0x8000 );
-	private BitField colRelative = BitFieldFactory.getInstance( 0x4000 );
 
 	/** Creates new AreaPtg */
 	public Area3DPtg()

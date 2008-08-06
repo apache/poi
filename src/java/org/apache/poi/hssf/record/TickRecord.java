@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * The Tick record defines how tick marks and label positioning/formatting
@@ -30,10 +29,14 @@ import org.apache.poi.util.*;
 
  * @author Andrew C. Oliver(acoliver at apache.org)
  */
-public class TickRecord
-    extends Record
-{
-    public final static short      sid                             = 0x101e;
+public final class TickRecord extends Record {
+    public final static short sid = 0x101E;
+    
+    private static final BitField autoTextColor      = BitFieldFactory.getInstance(0x1);
+    private static final BitField autoTextBackground = BitFieldFactory.getInstance(0x2);
+    private static final BitField rotation           = BitFieldFactory.getInstance(0x1c);
+    private static final BitField autorotate         = BitFieldFactory.getInstance(0x20);
+    
     private  byte       field_1_majorTickType;
     private  byte       field_2_minorTickType;
     private  byte       field_3_labelPosition;
@@ -44,10 +47,6 @@ public class TickRecord
     private  int        field_8_zero3;
     private  int        field_9_zero4;
     private  short      field_10_options;
-    private  BitField   autoTextColor                               = BitFieldFactory.getInstance(0x1);
-    private  BitField   autoTextBackground                          = BitFieldFactory.getInstance(0x2);
-    private BitField   rotation                                   = BitFieldFactory.getInstance(0x1c);
-    private  BitField   autorotate                                  = BitFieldFactory.getInstance(0x20);
     private  short      field_11_tickColor;
     private  short      field_12_zero5;
 
@@ -442,10 +441,4 @@ public class TickRecord
     {
         return autorotate.isSet(field_10_options);
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}
