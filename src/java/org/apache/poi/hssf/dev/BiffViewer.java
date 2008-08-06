@@ -129,6 +129,8 @@ public final class BiffViewer {
             case BoolErrRecord.sid:        return new BoolErrRecord(in);
             case BottomMarginRecord.sid:   return new BottomMarginRecord(in);
             case BoundSheetRecord.sid:     return new BoundSheetRecord(in);
+            case CFHeaderRecord.sid:       return new CFHeaderRecord(in);
+            case CFRuleRecord.sid:         return new CFRuleRecord(in);
             case CalcCountRecord.sid:      return new CalcCountRecord(in);
             case CalcModeRecord.sid:       return new CalcModeRecord(in);
             case CategorySeriesAxisRecord.sid: return new CategorySeriesAxisRecord(in);
@@ -288,10 +290,10 @@ public final class BiffViewer {
             }
             PrintStream ps;
             if (false) { // set to true to output to file
-            	OutputStream os = new FileOutputStream(inFileName + ".out");
-            	ps = new PrintStream(os);
+                OutputStream os = new FileOutputStream(inFileName + ".out");
+                ps = new PrintStream(os);
             } else {
-            	ps = System.out;
+                ps = System.out;
             }
             BiffViewer viewer = new BiffViewer(inputFile, ps);
 
