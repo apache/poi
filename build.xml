@@ -299,6 +299,7 @@ under the License.
       fork="yes" srcdir="${scratchpad.src.test}">
       <classpath>
         <path refid="scratchpad.classpath"/>
+        <pathelement location="${main.output.test.dir}"/>
         <pathelement location="${scratchpad.output.dir}"/>
         <pathelement location="${junit.jar1.dir}"/>
       </classpath>
@@ -511,6 +512,7 @@ under the License.
             <classpath>
                 <path refid="scratchpad.classpath"/>
                 <pathelement location="${main.output.dir}"/>
+                <pathelement location="${main.output.test.dir}"/>
                 <pathelement location="${scratchpad.output.dir}"/>
                 <pathelement location="${scratchpad.output.test.dir}"/>
                 <pathelement location="${junit.jar1.dir}"/>
