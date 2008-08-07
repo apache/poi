@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,19 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.dev;
 
-import java.util.*;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.record.*;
-
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.record.Record;
 
 /**
  * This class provides a way to view the contents of a powerpoint file.
@@ -36,9 +30,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Nick Burch
  */
-
-public class SlideShowRecordDumper
-{
+public final class SlideShowRecordDumper {
   private HSLFSlideShow doc;
 
   /**
@@ -57,7 +49,6 @@ public class SlideShowRecordDumper
 	SlideShowRecordDumper foo = new SlideShowRecordDumper(filename);
 
 	foo.printDump();
-	foo.close();
   }
 
 
@@ -71,19 +62,6 @@ public class SlideShowRecordDumper
   public SlideShowRecordDumper(String fileName) throws IOException
   {
 	doc = new HSLFSlideShow(fileName);
-  }
-
-  /**
-   * Shuts things down. Closes underlying streams etc
-   *
-   * @throws IOException
-   */
-  public void close() throws IOException
-  {
-	if(doc != null) {
-		doc.close();
-	}
-	doc = null;
   }
 
 

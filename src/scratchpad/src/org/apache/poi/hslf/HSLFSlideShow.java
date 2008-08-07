@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf;
 
@@ -27,7 +24,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.POIDocument;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
@@ -36,7 +38,6 @@ import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.ObjectData;
 import org.apache.poi.hslf.usermodel.PictureData;
-import org.apache.poi.hslf.model.Shape;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
@@ -51,13 +52,9 @@ import org.apache.poi.util.POILogger;
  *
  * @author Nick Burch
  */
-
-public class HSLFSlideShow extends POIDocument
-{
+public final class HSLFSlideShow extends POIDocument {
     // For logging
     private POILogger logger = POILogFactory.getLogger(this.getClass());
-
-	private InputStream istream;
 
 	// Holds metadata on where things are in our document
 	private CurrentUserAtom currentUser;
@@ -101,11 +98,9 @@ public class HSLFSlideShow extends POIDocument
 	 * @param inputStream the source of the data
 	 * @throws IOException if there is a problem while parsing the document.
 	 */
-	public HSLFSlideShow(InputStream inputStream) throws IOException
-	{
+	public HSLFSlideShow(InputStream inputStream) throws IOException {
 		//do Ole stuff
 		this(new POIFSFileSystem(inputStream));
-		istream = inputStream;
 	}
 
 	/**
@@ -160,28 +155,20 @@ public class HSLFSlideShow extends POIDocument
 		// Look for Picture Streams:
 		readPictures();
 	}
-
 	/**
 	 * Constructs a new, empty, Powerpoint document.
 	 */
-	public HSLFSlideShow() throws IOException 
-	{
-		this(HSLFSlideShow.class.getResourceAsStream("/org/apache/poi/hslf/data/empty.ppt"));
-	}
-
-	/**
-	 * Shuts things down. Closes underlying streams etc
-	 *
-	 * @throws IOException
-	 */
-	public void close() throws IOException
-	{
-		if(istream != null) {
-			istream.close();
+	public static final HSLFSlideShow create() {
+		InputStream is = HSLFSlideShow.class.getResourceAsStream("data/empty.ppt");
+		if (is == null) {
+			throw new RuntimeException("Missing resource 'empty.ppt'");
 		}
-		filesystem = null;
+		try {
+			return new HSLFSlideShow(is);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
-
 
 	/**
 	 * Extracts the main PowerPoint document stream from the 

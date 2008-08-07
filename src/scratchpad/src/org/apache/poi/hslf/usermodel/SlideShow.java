@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,24 +14,53 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.usermodel;
 
-import java.util.*;
 import java.awt.Dimension;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.model.Notes;
-import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.record.SlideListWithText.*;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.hslf.model.HeadersFooters;
+import org.apache.poi.hslf.model.Notes;
+import org.apache.poi.hslf.model.PPFont;
+import org.apache.poi.hslf.model.Picture;
+import org.apache.poi.hslf.model.Shape;
+import org.apache.poi.hslf.model.Slide;
+import org.apache.poi.hslf.model.SlideMaster;
+import org.apache.poi.hslf.model.TitleMaster;
+import org.apache.poi.hslf.record.Document;
+import org.apache.poi.hslf.record.DocumentAtom;
+import org.apache.poi.hslf.record.FontCollection;
+import org.apache.poi.hslf.record.FontEntityAtom;
+import org.apache.poi.hslf.record.HeadersFootersContainer;
+import org.apache.poi.hslf.record.ParentAwareRecord;
+import org.apache.poi.hslf.record.PersistPtrHolder;
+import org.apache.poi.hslf.record.PositionDependentRecord;
+import org.apache.poi.hslf.record.PositionDependentRecordContainer;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordContainer;
+import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.record.SlideListWithText;
+import org.apache.poi.hslf.record.SlidePersistAtom;
+import org.apache.poi.hslf.record.UserEditAtom;
+import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -48,9 +76,7 @@ import org.apache.poi.util.POILogger;
  * @author Nick Burch
  * @author Yegor kozlov
  */
-
-public class SlideShow
-{
+public final class SlideShow {
   // What we're based on
   private HSLFSlideShow _hslfSlideShow;
 
@@ -90,8 +116,7 @@ public class SlideShow
    *
    * @param hslfSlideShow the HSLFSlideShow to base on
    */
-  public SlideShow(HSLFSlideShow hslfSlideShow) throws IOException
-  {
+  public SlideShow(HSLFSlideShow hslfSlideShow) {
 	// Get useful things from our base slideshow
     _hslfSlideShow = hslfSlideShow;
 	_records = _hslfSlideShow.getRecords();
@@ -111,8 +136,8 @@ public class SlideShow
   /**
    * Constructs a new, empty, Powerpoint document.
    */
-  public SlideShow() throws IOException {
-	this(new HSLFSlideShow());
+  public SlideShow() {
+	this(HSLFSlideShow.create());
   }
 
     /**
