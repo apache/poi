@@ -14,8 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
+package org.apache.poi.hssf.record;
+
+import org.apache.poi.hssf.record.formula.TblPtg;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.LittleEndian;
 /**
  * TableRecord - The record specifies a data table.
  * This record is preceded by a single Formula record that
@@ -24,15 +29,18 @@
  * 
  * See p536 of the June 08 binary docs
  */
-package org.apache.poi.hssf.record;
-
-import org.apache.poi.hssf.record.formula.TblPtg;
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndian;
-
-public class TableRecord extends Record {
+public final class TableRecord extends Record {
     public static final short sid = 566;
+    
+    private static final BitField alwaysCalc      = BitFieldFactory.getInstance(0x0001);
+    private static final BitField reserved1       = BitFieldFactory.getInstance(0x0002);
+    private static final BitField rowOrColInpCell = BitFieldFactory.getInstance(0x0004);
+    private static final BitField oneOrTwoVar     = BitFieldFactory.getInstance(0x0008);
+    private static final BitField rowDeleted      = BitFieldFactory.getInstance(0x0010);
+    private static final BitField colDeleted      = BitFieldFactory.getInstance(0x0020);
+    private static final BitField reserved2       = BitFieldFactory.getInstance(0x0040);
+    private static final BitField reserved3       = BitFieldFactory.getInstance(0x0080);
+    
     private short field_1_ref_rowFirst;
     private short field_2_ref_rowLast;
     private short field_3_ref_colFirst;
@@ -45,14 +53,6 @@ public class TableRecord extends Record {
     private short field_9_rowInputCol;
     private short field_10_colInputCol;
     
-    private BitField alwaysCalc      = BitFieldFactory.getInstance(0x0001);
-    private BitField reserved1       = BitFieldFactory.getInstance(0x0002);
-    private BitField rowOrColInpCell = BitFieldFactory.getInstance(0x0004);
-    private BitField oneOrTwoVar     = BitFieldFactory.getInstance(0x0008);
-    private BitField rowDeleted      = BitFieldFactory.getInstance(0x0010);
-    private BitField colDeleted      = BitFieldFactory.getInstance(0x0020);
-    private BitField reserved2       = BitFieldFactory.getInstance(0x0040);
-    private BitField reserved3       = BitFieldFactory.getInstance(0x0080);
 
 	protected void fillFields(RecordInputStream in) {
 		field_1_ref_rowFirst = in.readShort();

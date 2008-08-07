@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Class ChartFormatRecord
@@ -30,11 +28,10 @@ import org.apache.poi.util.BitFieldFactory;
  * @author Glen Stampoultzis (glens at apache.org)
  * @version %I%, %G%
  */
-
-public class ChartFormatRecord
-    extends Record
-{
+public final class ChartFormatRecord extends Record {
     public static final short sid = 0x1014;
+
+    private static final BitField varyDisplayPattern = BitFieldFactory.getInstance(0x01);
 
     // ignored?
     private int               field1_x_position;   // lower left
@@ -42,7 +39,6 @@ public class ChartFormatRecord
     private int               field3_width;
     private int               field4_height;
     private short             field5_grbit;
-    private BitField          varyDisplayPattern = BitFieldFactory.getInstance(0x01);
 
     public ChartFormatRecord()
     {

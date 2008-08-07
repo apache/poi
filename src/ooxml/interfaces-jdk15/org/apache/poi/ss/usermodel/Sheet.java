@@ -631,7 +631,7 @@ public interface Sheet extends Iterable<Row> {
      * Retrieves all the vertical page breaks
      * @return all the vertical page breaks, or null if there are no column page breaks
      */
-    short[] getColumnBreaks();
+    int[] getColumnBreaks();
 
     /**
      * Sets a page break at the indicated column

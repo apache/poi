@@ -32,7 +32,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  */
 public final class TestExcelExtractor extends TestCase {
 
-	private static final ExcelExtractor createExtractor(String sampleFileName) {
+	private static ExcelExtractor createExtractor(String sampleFileName) {
 		
 		InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleFileName);
 		
@@ -192,18 +192,16 @@ public final class TestExcelExtractor extends TestCase {
 	 * Embded in a non-excel file
 	 */
 	public void testWithEmbeded() throws Exception {
+		// TODO - encapsulate sys prop 'POIFS.testdata.path' similar to HSSFTestDataSamples
 		String pdirname = System.getProperty("POIFS.testdata.path");
 		String filename = pdirname + "/word_with_embeded.doc";
 		POIFSFileSystem fs = new POIFSFileSystem(
 				new FileInputStream(filename)
 		);
 		
-		DirectoryNode objPool = (DirectoryNode)
-			fs.getRoot().getEntry("ObjectPool");
-		DirectoryNode dirA = (DirectoryNode)
-			objPool.getEntry("_1269427460");
-		DirectoryNode dirB = (DirectoryNode)
-			objPool.getEntry("_1269427461");
+		DirectoryNode objPool = (DirectoryNode) fs.getRoot().getEntry("ObjectPool");
+		DirectoryNode dirA = (DirectoryNode) objPool.getEntry("_1269427460");
+		DirectoryNode dirB = (DirectoryNode) objPool.getEntry("_1269427461");
 
 		HSSFWorkbook wbA = new HSSFWorkbook(dirA, fs, true);
 		HSSFWorkbook wbB = new HSSFWorkbook(dirB, fs, true);
@@ -224,16 +222,15 @@ public final class TestExcelExtractor extends TestCase {
 	 * Excel embeded in excel
 	 */
 	public void testWithEmbededInOwn() throws Exception {
+		// TODO - encapsulate sys prop 'POIFS.testdata.path' similar to HSSFTestDataSamples
 		String pdirname = System.getProperty("POIFS.testdata.path");
 		String filename = pdirname + "/excel_with_embeded.xls";
 		POIFSFileSystem fs = new POIFSFileSystem(
 				new FileInputStream(filename)
 		);
 		
-    	DirectoryNode dirA = (DirectoryNode)
-			fs.getRoot().getEntry("MBD0000A3B5");
-		DirectoryNode dirB = (DirectoryNode)
-			fs.getRoot().getEntry("MBD0000A3B4");
+		DirectoryNode dirA = (DirectoryNode) fs.getRoot().getEntry("MBD0000A3B5");
+		DirectoryNode dirB = (DirectoryNode) fs.getRoot().getEntry("MBD0000A3B4");
 		
 		HSSFWorkbook wbA = new HSSFWorkbook(dirA, fs, true);
 		HSSFWorkbook wbB = new HSSFWorkbook(dirB, fs, true);
@@ -260,15 +257,15 @@ public final class TestExcelExtractor extends TestCase {
 	 * Test that we get text from headers and footers
 	 */
 	public void test45538() throws Exception {
-		String[] files = new String[] {
+		String[] files = {
 			"45538_classic_Footer.xls", "45538_form_Footer.xls",    
 			"45538_classic_Header.xls", "45538_form_Header.xls"
 		};
 		for(int i=0; i<files.length; i++) {
 			ExcelExtractor extractor = createExtractor(files[i]);
 			String text = extractor.getText();
-			assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
-			assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+			assertTrue("Unable to find expected word in text\n" + text, text.indexOf("testdoc") >=0);
+			assertTrue("Unable to find expected word in text\n" + text, text.indexOf("test phrase") >= 0);
 		}
 	}
 }

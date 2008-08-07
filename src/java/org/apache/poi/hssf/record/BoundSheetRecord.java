@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,10 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
@@ -33,12 +32,10 @@ import org.apache.poi.util.StringUtil;
  * @author Sergei Kozello (sergeikozello at mail.ru)
  * @version 2.0-pre
  */
+public final class BoundSheetRecord extends Record {
+    public final static short sid = 0x0085;
 
-public class BoundSheetRecord
-        extends Record
-{
-    private static final short HIDDEN_FLAG_MASK = 0x01;
-    public final static short sid = 0x85;
+	private static final BitField hiddenFlag = BitFieldFactory.getInstance(0x01);
     private int field_1_position_of_BOF;
     private short field_2_option_flags;
     private byte field_3_sheetname_length;
@@ -305,10 +302,10 @@ public class BoundSheetRecord
     }
 
     public boolean isHidden() {
-	    return BitFieldFactory.getInstance(HIDDEN_FLAG_MASK).isSet(field_2_option_flags);
+	    return hiddenFlag.isSet(field_2_option_flags);
     }
 
     public void setHidden(boolean hidden) {
-	    field_2_option_flags = BitFieldFactory.getInstance(HIDDEN_FLAG_MASK).setShortBoolean(field_2_option_flags, hidden);
+	    field_2_option_flags = hiddenFlag.setShortBoolean(field_2_option_flags, hidden);
     }
 }

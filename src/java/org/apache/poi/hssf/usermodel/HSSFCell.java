@@ -48,6 +48,7 @@ import org.apache.poi.hssf.record.NoteRecord;
 import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.record.SubRecord;
 import org.apache.poi.hssf.record.TextObjectRecord;
@@ -1154,7 +1155,7 @@ public class HSSFCell implements Cell
         HSSFComment comment = null;
         HashMap txshapes = new HashMap(); //map shapeId and TextObjectRecord
         for (Iterator it = sheet.getRecords().iterator(); it.hasNext(); ) {
-           Record rec = ( Record ) it.next();
+           RecordBase rec = (RecordBase) it.next();
            if (rec instanceof NoteRecord){
                NoteRecord note = (NoteRecord)rec;
                if (note.getRow() == row && note.getColumn() == column){
@@ -1196,7 +1197,7 @@ public class HSSFCell implements Cell
      */
     public HSSFHyperlink getHyperlink(){
         for (Iterator it = sheet.getRecords().iterator(); it.hasNext(); ) {
-            Record rec = ( Record ) it.next();
+            RecordBase rec = (RecordBase) it.next();
             if (rec instanceof HyperlinkRecord){
                 HyperlinkRecord link = (HyperlinkRecord)rec;
                 if(link.getFirstColumn() == record.getColumn() && link.getFirstRow() == record.getRow()){

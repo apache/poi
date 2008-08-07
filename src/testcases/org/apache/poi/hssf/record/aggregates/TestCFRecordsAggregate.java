@@ -24,6 +24,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.RecordFactory;
@@ -59,7 +60,7 @@ public final class TestCFRecordsAggregate extends TestCase
 		recs.add(rule2);
 		recs.add(rule3);
 		CFRecordsAggregate record;
-		record = CFRecordsAggregate.createCFAggregate(recs, 0);
+		record = CFRecordsAggregate.createCFAggregate(new RecordStream(recs, 0));
 
 		// Serialize
 		byte [] serializedRecord = record.serialize();
@@ -81,7 +82,7 @@ public final class TestCFRecordsAggregate extends TestCase
 		assertEquals(2, cellRanges.length);
 		assertEquals(3, header.getNumberOfConditionalFormats());
 
-		record = CFRecordsAggregate.createCFAggregate(recs, 0);
+		record = CFRecordsAggregate.createCFAggregate(new RecordStream(recs, 0));
 
 		record = record.cloneCFAggregate();
 

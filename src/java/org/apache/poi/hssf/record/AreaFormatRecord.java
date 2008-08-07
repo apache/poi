@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * The area format record is used to define the colours and patterns for an area.
@@ -30,16 +29,16 @@ import org.apache.poi.util.*;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class AreaFormatRecord
-    extends Record
-{
-    public final static short      sid                             = 0x100a;
+public final class AreaFormatRecord extends Record {
+    public final static short sid = 0x100A;
+    
+    private static final BitField automatic = BitFieldFactory.getInstance(0x1);
+    private static final BitField invert    = BitFieldFactory.getInstance(0x2);
+    
     private  int        field_1_foregroundColor;
     private  int        field_2_backgroundColor;
     private  short      field_3_pattern;
     private  short      field_4_formatFlags;
-    private  BitField   automatic                                   = BitFieldFactory.getInstance(0x1);
-    private  BitField   invert                                      = BitFieldFactory.getInstance(0x2);
     private  short      field_5_forecolorIndex;
     private  short      field_6_backcolorIndex;
 
@@ -297,10 +296,4 @@ public class AreaFormatRecord
     {
         return invert.isSet(field_4_formatFlags);
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

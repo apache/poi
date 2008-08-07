@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * The axis options record provides unit information and other various tidbits about the axis.
@@ -30,27 +29,27 @@ import org.apache.poi.util.*;
 
  * @author Andrew C. Oliver(acoliver at apache.org)
  */
-public class AxisOptionsRecord
-    extends Record
-{
-    public final static short      sid                             = 0x1062;
-    private  short      field_1_minimumCategory;
-    private  short      field_2_maximumCategory;
-    private  short      field_3_majorUnitValue;
-    private  short      field_4_majorUnit;
-    private  short      field_5_minorUnitValue;
-    private  short      field_6_minorUnit;
-    private  short      field_7_baseUnit;
-    private  short      field_8_crossingPoint;
-    private  short      field_9_options;
-    private  BitField   defaultMinimum                              = BitFieldFactory.getInstance(0x1);
-    private  BitField   defaultMaximum                              = BitFieldFactory.getInstance(0x2);
-    private  BitField   defaultMajor                                = BitFieldFactory.getInstance(0x4);
-    private  BitField   defaultMinorUnit                            = BitFieldFactory.getInstance(0x8);
-    private  BitField   isDate                                      = BitFieldFactory.getInstance(0x10);
-    private  BitField   defaultBase                                 = BitFieldFactory.getInstance(0x20);
-    private  BitField   defaultCross                                = BitFieldFactory.getInstance(0x40);
-    private  BitField   defaultDateSettings                         = BitFieldFactory.getInstance(0x80);
+public final class AxisOptionsRecord extends Record {
+    public final static short sid = 0x1062;
+
+    private static final BitField defaultMinimum      = BitFieldFactory.getInstance(0x01);
+    private static final BitField defaultMaximum      = BitFieldFactory.getInstance(0x02);
+    private static final BitField defaultMajor        = BitFieldFactory.getInstance(0x04);
+    private static final BitField defaultMinorUnit    = BitFieldFactory.getInstance(0x08);
+    private static final BitField isDate              = BitFieldFactory.getInstance(0x10);
+    private static final BitField defaultBase         = BitFieldFactory.getInstance(0x20);
+    private static final BitField defaultCross        = BitFieldFactory.getInstance(0x40);
+    private static final BitField defaultDateSettings = BitFieldFactory.getInstance(0x80);
+
+    private short field_1_minimumCategory;
+    private short field_2_maximumCategory;
+    private short field_3_majorUnitValue;
+    private short field_4_majorUnit;
+    private short field_5_minorUnitValue;
+    private short field_6_minorUnit;
+    private short field_7_baseUnit;
+    private short field_8_crossingPoint;
+    private short field_9_options;
 
 
     public AxisOptionsRecord()
@@ -488,10 +487,4 @@ public class AxisOptionsRecord
     {
         return defaultDateSettings.isSet(field_9_options);
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

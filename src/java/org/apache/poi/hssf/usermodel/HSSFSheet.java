@@ -1464,43 +1464,19 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
     }
 
     /**
-     * Retrieves all the horizontal page breaks
-     * @return all the horizontal page breaks, or null if there are no row page breaks
+     * @return row indexes of all the horizontal page breaks, never <code>null</code>
      */
     public int[] getRowBreaks(){
         //we can probably cache this information, but this should be a sparsely used function
-        int count = sheet.getNumRowBreaks();
-        if (count > 0) {
-          int[] returnValue = new int[count];
-          Iterator iterator = sheet.getRowBreaks();
-          int i = 0;
-          while (iterator.hasNext()) {
-            PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
-            returnValue[i++] = breakItem.main;
-          }
-          return returnValue;
-        }
-        return null;
+        return sheet.getRowBreaks();
     }
 
     /**
-     * Retrieves all the vertical page breaks
-     * @return all the vertical page breaks, or null if there are no column page breaks
+     * @return column indexes of all the vertical page breaks, never <code>null</code>
      */
-    public short[] getColumnBreaks(){
+    public int[] getColumnBreaks(){
         //we can probably cache this information, but this should be a sparsely used function
-        int count = sheet.getNumColumnBreaks();
-        if (count > 0) {
-          short[] returnValue = new short[count];
-          Iterator iterator = sheet.getColumnBreaks();
-          int i = 0;
-          while (iterator.hasNext()) {
-            PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
-            returnValue[i++] = breakItem.main;
-          }
-          return returnValue;
-        }
-        return null;
+        return sheet.getColumnBreaks();
     }
 
 

@@ -1,72 +1,52 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.hssf.record.aggregates;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.ColumnInfoRecord;
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordInputStream;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author Glen Stampoultzis
  * @version $Id$
  */
-public class ColumnInfoRecordsAggregate
-    extends Record
-{
-//    int     size     = 0;
-    List records = null;
+public final class ColumnInfoRecordsAggregate extends RecordAggregate {
+	private final List records;
 
-    public ColumnInfoRecordsAggregate()
-    {
-        records = new ArrayList();
-    }
-
-    /** You never fill an aggregate */
-    protected void fillFields(RecordInputStream in)
-    {
-    }
-
-    /** Not required by an aggregate */
-    protected void validateSid(short id)
-    {
-    }
-
-    /** It's an aggregate... just made something up */
-    public short getSid()
-    {
-        return -1012;
-    }
-
-    public int getRecordSize()
-    {
-        int size = 0;
-        for ( Iterator iterator = records.iterator(); iterator.hasNext(); )
-            size += ( (ColumnInfoRecord) iterator.next() ).getRecordSize();
-        return size;
-    }
-
-    public Iterator getIterator()
-    {
-        return records.iterator();
-    }
+	/**
+	 * Creates an empty aggregate
+	 */
+	public ColumnInfoRecordsAggregate() {
+		records = new ArrayList();
+	}
+    public ColumnInfoRecordsAggregate(RecordStream rs) {
+        this();
+        
+        while(rs.peekNextClass() == ColumnInfoRecord.class) {
+        	records.add(rs.getNext());
+        }
+        if (records.size() < 1) {
+        	throw new RuntimeException("No column info records found");
+        }
+   }
 
     /**
      * Performs a deep clone of the record
@@ -105,25 +85,14 @@ public class ColumnInfoRecordsAggregate
         return records.size();
     }
 
-    /**
-     * called by the class that is responsible for writing this sucker.
-     * Subclasses should implement this so that their data is passed back in a
-     * byte array.
-     *
-     * @param offset    offset to begin writing at
-     * @param data      byte array containing instance data
-     * @return          number of bytes written
-     */
-    public int serialize(int offset, byte [] data)
-    {
-        Iterator itr = records.iterator();
-        int      pos = offset;
-
-        while (itr.hasNext())
-        {
-            pos += (( Record ) itr.next()).serialize(pos, data);
-        }
-        return pos - offset;
+    public void visitContainedRecords(RecordVisitor rv) {
+    	int nItems = records.size();
+    	if (nItems < 1) {
+    		return;
+    	}
+    	for(int i=0; i<nItems; i++) {
+    		rv.visitRecord((Record)records.get(i));
+    	}
     }
 
     public int findStartOfColumnOutlineGroup(int idx)
@@ -178,8 +147,7 @@ public class ColumnInfoRecordsAggregate
         return idx;
     }
 
-    public ColumnInfoRecord getColInfo(int idx)
-    {
+    private ColumnInfoRecord getColInfo(int idx) {
         return (ColumnInfoRecord) records.get( idx );
     }
 
@@ -191,7 +159,7 @@ public class ColumnInfoRecordsAggregate
             columnInfo.setHidden( hidden );
             if (idx + 1 < records.size())
             {
-                ColumnInfoRecord nextColumnInfo = (ColumnInfoRecord) records.get( idx + 1 );
+                ColumnInfoRecord nextColumnInfo = getColInfo(idx + 1);
                 if (columnInfo.getLastColumn() + 1 == nextColumnInfo.getFirstColumn())
                 {
                     if (nextColumnInfo.getOutlineLevel() < level)
@@ -279,7 +247,7 @@ public class ColumnInfoRecordsAggregate
             return;
 
         // Find the start of the group.
-        ColumnInfoRecord columnInfo = (ColumnInfoRecord) records.get( findStartOfColumnOutlineGroup( idx ) );
+        ColumnInfoRecord columnInfo = getColInfo( findStartOfColumnOutlineGroup( idx ) );
 
         // Hide all the columns until the end of the group
         columnInfo = writeHidden( columnInfo, idx, true );
@@ -331,7 +299,7 @@ public class ColumnInfoRecordsAggregate
      * @see org.apache.poi.hssf.record.ColumnInfoRecord
      * @return record containing a ColumnInfoRecord
      */
-    public static Record createColInfo()
+    public static ColumnInfoRecord createColInfo()
     {
         ColumnInfoRecord retval = new ColumnInfoRecord();
 
@@ -452,7 +420,7 @@ public class ColumnInfoRecordsAggregate
             ci.setCollapsed( collapsed.booleanValue() );
     }
 
-    public int findColumnIdx(int column, int fromIdx)
+    private int findColumnIdx(int column, int fromIdx)
     {
         if (column < 0)
             throw new IllegalArgumentException( "column parameter out of range: " + column );
@@ -462,7 +430,7 @@ public class ColumnInfoRecordsAggregate
         ColumnInfoRecord ci;
         for (int k = fromIdx; k < records.size(); k++)
         {
-            ci = ( ColumnInfoRecord ) records.get(k);
+            ci = getColInfo(k);
             if ((ci.getFirstColumn() <= column)
                     && (column <= ci.getLastColumn()))
             {
@@ -477,8 +445,8 @@ public class ColumnInfoRecordsAggregate
     {
         if (columnIdx == 0)
             return;
-        ColumnInfoRecord previousCol = (ColumnInfoRecord) records.get( columnIdx - 1);
-        ColumnInfoRecord currentCol = (ColumnInfoRecord) records.get( columnIdx );
+        ColumnInfoRecord previousCol = getColInfo( columnIdx - 1);
+        ColumnInfoRecord currentCol = getColInfo( columnIdx );
         boolean adjacentColumns = previousCol.getLastColumn() == currentCol.getFirstColumn() - 1;
         if (!adjacentColumns)
             return;
@@ -513,7 +481,7 @@ public class ColumnInfoRecordsAggregate
             int columnIdx = findColumnIdx( i, Math.max(0,fromIdx) );
             if (columnIdx != -1)
             {
-                level = ((ColumnInfoRecord)records.get( columnIdx )).getOutlineLevel();
+                level = getColInfo(columnIdx).getOutlineLevel();
                 if (indent) level++; else level--;
                 level = Math.max(0, level);
                 level = Math.min(7, level);
@@ -525,6 +493,30 @@ public class ColumnInfoRecordsAggregate
         }
 
     }
+    /**
+     * Finds the <tt>ColumnInfoRecord</tt> which contains the specified columnIndex
+     * @param columnIndex index of the column (not the index of the ColumnInfoRecord)
+     * @return <code>null</code> if no column info found for the specified column
+     */
+	public ColumnInfoRecord findColumnInfo(int columnIndex) {
+		int nInfos = records.size();
+		for(int i=0; i< nInfos; i++) {
+			ColumnInfoRecord ci = getColInfo(i);
+			if (ci.getFirstColumn() <= columnIndex && columnIndex <= ci.getLastColumn()) {
+				return ci;
+			}
+		}
+		return null;
+	}
+	public int getMaxOutlineLevel() {
+        int result = 0;
+        int count=records.size();
+        for (int i=0; i<count; i++) {
+            ColumnInfoRecord columnInfoRecord = getColInfo(i);
+            result = Math.max(columnInfoRecord.getOutlineLevel(), result);
+        }
+        return result;
+	}
 
 
 }

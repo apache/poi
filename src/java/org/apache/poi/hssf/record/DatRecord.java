@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * The dat record is used to store options for the chart.
@@ -30,15 +29,15 @@ import org.apache.poi.util.*;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class DatRecord
-    extends Record
-{
-    public final static short      sid                             = 0x1063;
+public final class DatRecord extends Record {
+    public final static short sid = 0x1063;
+
+    private static final BitField horizontalBorder = BitFieldFactory.getInstance(0x1);
+    private static final BitField verticalBorder   = BitFieldFactory.getInstance(0x2);
+    private static final BitField border           = BitFieldFactory.getInstance(0x4);
+    private static final BitField showSeriesKey    = BitFieldFactory.getInstance(0x8);
+
     private  short      field_1_options;
-    private  BitField   horizontalBorder                            = BitFieldFactory.getInstance(0x1);
-    private  BitField   verticalBorder                              = BitFieldFactory.getInstance(0x2);
-    private  BitField   border                                      = BitFieldFactory.getInstance(0x4);
-    private  BitField   showSeriesKey                               = BitFieldFactory.getInstance(0x8);
 
 
     public DatRecord()
@@ -216,10 +215,4 @@ public class DatRecord
     {
         return showSeriesKey.isSet(field_1_options);
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

@@ -19,42 +19,39 @@ package org.apache.poi.hssf.record.aggregates;
 
 import junit.framework.TestCase;
 import org.apache.poi.hssf.record.ColumnInfoRecord;
+import org.apache.poi.hssf.record.RecordBase;
 
 /**
  * @author Glen Stampoultzis
  */
-public final class TestColumnInfoRecordsAggregate extends TestCase
-{
-    ColumnInfoRecordsAggregate columnInfoRecordsAggregate;
+public final class TestColumnInfoRecordsAggregate extends TestCase {
 
-    public void testGetRecordSize() throws Exception
-    {
-        columnInfoRecordsAggregate = new ColumnInfoRecordsAggregate();
-        columnInfoRecordsAggregate.insertColumn( createColumn( (short)1, (short)3 ));
-        columnInfoRecordsAggregate.insertColumn( createColumn( (short)4, (short)7 ));
-        columnInfoRecordsAggregate.insertColumn( createColumn( (short)8, (short)8 ));
-//        columnInfoRecordsAggregate.setColumn( (short)2, new Short( (short)200 ), new Integer( 1 ), new Boolean( true ), null);
-        columnInfoRecordsAggregate.groupColumnRange( (short)2, (short)5, true );
-        assertEquals(6, columnInfoRecordsAggregate.getNumColumns());
+	public void testGetRecordSize() {
+		ColumnInfoRecordsAggregate agg = new ColumnInfoRecordsAggregate();
+		agg.insertColumn(createColumn(1, 3));
+		agg.insertColumn(createColumn(4, 7));
+		agg.insertColumn(createColumn(8, 8));
+		agg.groupColumnRange((short) 2, (short) 5, true);
+		assertEquals(6, agg.getNumColumns());
 
-        assertEquals(columnInfoRecordsAggregate.getRecordSize(), columnInfoRecordsAggregate.serialize().length);
+		confirmSerializedSize(agg);
 
-        columnInfoRecordsAggregate = new ColumnInfoRecordsAggregate();
-        columnInfoRecordsAggregate.groupColumnRange( (short)3, (short)6, true );
+		agg = new ColumnInfoRecordsAggregate();
+		agg.groupColumnRange((short) 3, (short) 6, true);
+		confirmSerializedSize(agg);
+	}
 
-        assertEquals(columnInfoRecordsAggregate.getRecordSize(), serializedSize());
-    }
+	private static void confirmSerializedSize(RecordBase cirAgg) {
+		int estimatedSize = cirAgg.getRecordSize();
+		byte[] buf = new byte[estimatedSize];
+		int serializedSize = cirAgg.serialize(0, buf);
+		assertEquals(estimatedSize, serializedSize);
+	}
 
-    private int serializedSize()
-    {
-        return columnInfoRecordsAggregate.serialize(0, new byte[columnInfoRecordsAggregate.getRecordSize()]);
-    }
-
-    private ColumnInfoRecord createColumn( short firstCol, short lastCol )
-    {
-        ColumnInfoRecord columnInfoRecord = new ColumnInfoRecord( );
-        columnInfoRecord.setFirstColumn(firstCol);
-        columnInfoRecord.setLastColumn(lastCol);
-        return columnInfoRecord;
-    }
+	private static ColumnInfoRecord createColumn(int firstCol, int lastCol) {
+		ColumnInfoRecord columnInfoRecord = new ColumnInfoRecord();
+		columnInfoRecord.setFirstColumn((short) firstCol);
+		columnInfoRecord.setLastColumn((short) lastCol);
+		return columnInfoRecord;
+	}
 }
