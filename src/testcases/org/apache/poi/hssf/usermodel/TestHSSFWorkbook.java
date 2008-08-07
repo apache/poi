@@ -1,19 +1,19 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
 
 package org.apache.poi.hssf.usermodel;
 
@@ -29,8 +29,10 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.TempFile;
 /**
  *
@@ -512,4 +514,17 @@ public final class TestHSSFWorkbook extends TestCase {
             return 8;
         }
     }
- }
+    
+    /**
+     * The sample file provided with bug 45582 seems to have one extra byte after the EOFRecord
+     */
+    public void testExtraDataAfterEOFRecord() {
+    	try {
+    		HSSFTestDataSamples.openSampleWorkbook("ex45582-22397.xls");
+    	} catch (RecordFormatException e) {
+    		if (e.getCause() instanceof LittleEndian.BufferUnderrunException) {
+    			throw new AssertionFailedError("Identified bug 45582");
+    		}
+    	}
+	}
+}

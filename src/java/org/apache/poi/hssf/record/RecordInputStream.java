@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndian;
@@ -31,16 +29,15 @@ import java.io.ByteArrayOutputStream;
  *
  * @author Jason Height (jheight @ apache dot org)
  */
-
-public class RecordInputStream extends InputStream
-{
+public class RecordInputStream extends InputStream {
   /** Maximum size of a single record (minus the 4 byte header) without a continue*/
   public final static short MAX_RECORD_DATA_SIZE = 8224;
-
+  private static final int INVALID_SID_VALUE = -1;
+  
   private InputStream in;
   protected short currentSid;
   protected short currentLength = -1;
-  protected short nextSid = -1;
+  protected short nextSid;
 
   protected byte[] data = new byte[MAX_RECORD_DATA_SIZE];
   protected short recordOffset;
@@ -60,7 +57,7 @@ public class RecordInputStream extends InputStream
   }
   
   /** This method will read a byte from the current record*/
-  public int read() throws IOException {
+  public int read() {
     checkRecordPosition();
 
     byte result = data[recordOffset];
@@ -86,7 +83,7 @@ public class RecordInputStream extends InputStream
   }
 
   public boolean hasNextRecord() {
-    return (nextSid != 0);
+    return nextSid != INVALID_SID_VALUE;
   }
   
   /** Moves to the next record in the stream.
@@ -110,7 +107,20 @@ public class RecordInputStream extends InputStream
       in.read(data, 0, currentLength);
 
       //Read the Sid of the next record
-      nextSid = LittleEndian.readShort(in);
+      if (in.available() < EOFRecord.ENCODED_SIZE) {
+          if (in.available() > 0) {
+              // some scrap left over?
+              // ex45582-22397.xls has one extra byte after the last record
+              // Excel reads that file OK
+          }
+          nextSid = INVALID_SID_VALUE;  
+      } else {
+          nextSid = LittleEndian.readShort(in);
+          if (nextSid == INVALID_SID_VALUE) {
+              throw new RecordFormatException("Found sid " + nextSid + " after record with sid 0x"
+                      + Integer.toHexString(currentSid).toUpperCase());
+          }
+      }      
     } catch (IOException ex) {
       throw new RecordFormatException("Error reading bytes", ex);
     }
@@ -179,11 +189,11 @@ public class RecordInputStream extends InputStream
    * Reads an 8 bit, unsigned value
    */
   public short readUByte() {
-	  short s = readByte();
-	  if(s < 0) {
-		  s += 256;
-	  }
-	  return s;
+      short s = readByte();
+      if(s < 0) {
+          s += 256;
+      }
+      return s;
   }
 
   /**
@@ -266,9 +276,9 @@ public class RecordInputStream extends InputStream
   }
     
   public String readCompressedUnicode(int length) {
-	if(length == 0) {
-		return "";
-	}
+    if(length == 0) {
+        return "";
+    }
     if ((length < 0) || ((remaining() < length) && !isContinueNext())) {
             throw new IllegalArgumentException("Illegal length " + length);
     }
