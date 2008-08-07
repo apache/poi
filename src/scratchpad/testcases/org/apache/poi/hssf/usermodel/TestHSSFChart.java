@@ -14,26 +14,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hssf.usermodel;
-
-import java.io.File;
-import java.io.FileInputStream;
-
-import org.apache.poi.hssf.record.SeriesRecord;
 
 import junit.framework.TestCase;
 
-public class TestHSSFChart extends TestCase {
-	private String dirName;
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.SeriesRecord;
 
-	protected void setUp() throws Exception {
-		dirName = System.getProperty("HSSF.testdata.path");
-	}
+public final class TestHSSFChart extends TestCase {
 
 	public void testSingleChart() throws Exception {
-		HSSFWorkbook wb = new HSSFWorkbook(
-				new FileInputStream(new File(dirName, "WithChart.xls"))
-		);
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithChart.xls");
 		
 		HSSFSheet s1 = wb.getSheetAt(0);
 		HSSFSheet s2 = wb.getSheetAt(1);
@@ -62,9 +54,7 @@ public class TestHSSFChart extends TestCase {
 	}
 
 	public void testTwoCharts() throws Exception {
-		HSSFWorkbook wb = new HSSFWorkbook(
-				new FileInputStream(new File(dirName, "WithTwoCharts.xls"))
-		);
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithTwoCharts.xls");
 		
 		HSSFSheet s1 = wb.getSheetAt(0);
 		HSSFSheet s2 = wb.getSheetAt(1);
@@ -96,9 +86,7 @@ public class TestHSSFChart extends TestCase {
 	}
 	
 	public void testThreeCharts() throws Exception {
-		HSSFWorkbook wb = new HSSFWorkbook(
-				new FileInputStream(new File(dirName, "WithThreeCharts.xls"))
-		);
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithThreeCharts.xls");
 		
 		HSSFSheet s1 = wb.getSheetAt(0);
 		HSSFSheet s2 = wb.getSheetAt(1);

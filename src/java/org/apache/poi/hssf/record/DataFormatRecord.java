@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,30 +14,30 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * The data format record is used to index into a series.
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
  *       remove the record in src/records/definitions.
-
+ *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class DataFormatRecord
-    extends Record
-{
-    public final static short      sid                             = 0x1006;
-    private  short      field_1_pointNumber;
-    private  short      field_2_seriesIndex;
-    private  short      field_3_seriesNumber;
-    private  short      field_4_formatFlags;
-    private  BitField   useExcel4Colors                             = BitFieldFactory.getInstance(0x1);
+public final class DataFormatRecord extends Record {
+    public final static short sid = 0x1006;
+
+    private static final BitField useExcel4Colors = BitFieldFactory.getInstance(0x1);
+
+    private short field_1_pointNumber;
+    private short field_2_seriesIndex;
+    private short field_3_seriesNumber;
+    private short field_4_formatFlags;
 
 
     public DataFormatRecord()
@@ -228,10 +227,4 @@ public class DataFormatRecord
     {
         return useExcel4Colors.isSet(field_4_formatFlags);
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

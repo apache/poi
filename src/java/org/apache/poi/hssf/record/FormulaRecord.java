@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
-/*
- * FormulaRecord.java
- *
- * Created on October 28, 2001, 5:44 PM
- */
 package org.apache.poi.hssf.record;
 
 import java.util.List;
@@ -39,24 +32,22 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-
 public final class FormulaRecord
     extends Record
     implements CellValueRecordInterface, Comparable
 {
     
-    public static final short sid =
-        0x06;   // docs say 406...because of a bug Microsoft support site article #Q184647)
-    
-    //private short             field_1_row;
+    public static final short sid = 0x0006;   // docs say 406...because of a bug Microsoft support site article #Q184647)
+
+    private static final BitField alwaysCalc = BitFieldFactory.getInstance(0x0001);
+    private static final BitField calcOnLoad = BitFieldFactory.getInstance(0x0002);
+    private static final BitField sharedFormula = BitFieldFactory.getInstance(0x0008);    
+
     private int             field_1_row;
     private short             field_2_column;
     private short             field_3_xf;
     private double            field_4_value;
     private short             field_5_options;
-    private BitField          alwaysCalc = BitFieldFactory.getInstance(0x0001);
-    private BitField          calcOnLoad = BitFieldFactory.getInstance(0x0002);
-    private BitField          sharedFormula = BitFieldFactory.getInstance(0x0008);    
     private int               field_6_zero;
     private short             field_7_expression_len;
     private Stack             field_8_parsed_expr;

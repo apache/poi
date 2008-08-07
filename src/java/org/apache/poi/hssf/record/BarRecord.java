@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * The bar record is used to define a bar chart.
@@ -30,17 +29,17 @@ import org.apache.poi.util.*;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class BarRecord
-    extends Record
-{
-    public final static short      sid                             = 0x1017;
+public final class BarRecord extends Record {
+    public final static short sid = 0x1017;
+
+    private static final BitField   horizontal          = BitFieldFactory.getInstance(0x1);
+    private static final BitField   stacked             = BitFieldFactory.getInstance(0x2);
+    private static final BitField   displayAsPercentage = BitFieldFactory.getInstance(0x4);
+    private static final BitField   shadow              = BitFieldFactory.getInstance(0x8);
+
     private  short      field_1_barSpace;
     private  short      field_2_categorySpace;
     private  short      field_3_formatFlags;
-    private  BitField   horizontal                                  = BitFieldFactory.getInstance(0x1);
-    private  BitField   stacked                                     = BitFieldFactory.getInstance(0x2);
-    private  BitField   displayAsPercentage                         = BitFieldFactory.getInstance(0x4);
-    private  BitField   shadow                                      = BitFieldFactory.getInstance(0x8);
 
 
     public BarRecord()
@@ -264,10 +263,4 @@ public class BarRecord
     {
         return shadow.isSet(field_3_formatFlags);
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

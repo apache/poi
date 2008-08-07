@@ -36,6 +36,10 @@ import org.apache.poi.util.LittleEndian;
  */
 public final class Ref3DPtg extends OperandPtg {
     public final static byte sid  = 0x3a;
+
+    private static final BitField rowRelative = BitFieldFactory.getInstance(0x8000);
+    private static final BitField colRelative = BitFieldFactory.getInstance(0x4000);
+
     private final static int  SIZE = 7; // 6 + 1 for Ptg
     private short             field_1_index_extern_sheet;
     /** The row index - zero based unsigned 16 bit value */
@@ -46,8 +50,6 @@ public final class Ref3DPtg extends OperandPtg {
      * - bit 15 - isColumnRelative 
      */
     private int             field_3_column;
-    private BitField         rowRelative = BitFieldFactory.getInstance(0x8000);
-    private BitField         colRelative = BitFieldFactory.getInstance(0x4000);
 
     /** Creates new AreaPtg */
     public Ref3DPtg() {}

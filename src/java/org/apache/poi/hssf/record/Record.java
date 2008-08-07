@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -32,15 +30,13 @@ import java.io.ByteArrayInputStream;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-
-public abstract class Record
-{
+public abstract class Record extends RecordBase {
 
     /**
      * instantiates a blank record strictly for ID matching
      */
 
-    public Record()
+    protected Record()
     {
     }
 
@@ -49,7 +45,7 @@ public abstract class Record
      *
      * @param in the RecordInputstream to read the record from
      */
-    public Record(RecordInputStream in)
+    protected Record(RecordInputStream in)
     {
         validateSid(in.getSid());
         fillFields(in);
@@ -89,17 +85,6 @@ public abstract class Record
         return retval;
     }
 
-    /**
-     * called by the class that is responsible for writing this sucker.
-     * Subclasses should implement this so that their data is passed back in a
-     * byte array.
-     *
-     * @param offset to begin writing at
-     * @param data byte array containing instance data
-     * @return number of bytes written
-     */
-
-    public abstract int serialize(int offset, byte [] data);
 
     /**
      * gives the current serialized size of the record. Should include the sid and reclength (4 bytes).

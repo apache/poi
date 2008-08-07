@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Describes a linked data record.  This record referes to the series data or text.
@@ -30,10 +29,11 @@ import org.apache.poi.util.*;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class LinkedDataRecord
-    extends Record
-{
-    public final static short      sid                             = 0x1051;
+public final class LinkedDataRecord extends Record {
+    public final static short sid  = 0x1051;
+
+    private static final BitField customNumberFormat= BitFieldFactory.getInstance(0x1);
+    
     private  byte       field_1_linkType;
     public final static byte        LINK_TYPE_TITLE_OR_TEXT        = 0;
     public final static byte        LINK_TYPE_VALUES               = 1;
@@ -45,7 +45,6 @@ public class LinkedDataRecord
     public final static byte        REFERENCE_TYPE_NOT_USED        = 3;
     public final static byte        REFERENCE_TYPE_ERROR_REPORTED  = 4;
     private  short      field_3_options;
-    private  BitField   customNumberFormat                          = BitFieldFactory.getInstance(0x1);
     private  short      field_4_indexNumberFmtRecord;
     private  LinkedDataFormulaField field_5_formulaOfLink;
 
@@ -86,7 +85,7 @@ public class LinkedDataRecord
         field_2_referenceType          = in.readByte();
         field_3_options                = in.readShort();
         field_4_indexNumberFmtRecord   = in.readShort();
-        field_5_formulaOfLink = new org.apache.poi.hssf.record.LinkedDataFormulaField();
+        field_5_formulaOfLink = new LinkedDataFormulaField();
         field_5_formulaOfLink.fillField(in);
     }
 
@@ -156,7 +155,7 @@ public class LinkedDataRecord
         rec.field_2_referenceType = field_2_referenceType;
         rec.field_3_options = field_3_options;
         rec.field_4_indexNumberFmtRecord = field_4_indexNumberFmtRecord;
-        rec.field_5_formulaOfLink = ((org.apache.poi.hssf.record.LinkedDataFormulaField)field_5_formulaOfLink.clone());;
+        rec.field_5_formulaOfLink = ((LinkedDataFormulaField)field_5_formulaOfLink.clone());;
         return rec;
     }
 
@@ -286,10 +285,4 @@ public class LinkedDataRecord
     {
         return customNumberFormat.isSet(field_3_options);
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

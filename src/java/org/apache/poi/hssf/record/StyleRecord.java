@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,14 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Title:        Style Record<P>
@@ -32,11 +30,11 @@ import org.apache.poi.util.BitFieldFactory;
  * @author aviks : string fixes for UserDefined Style
  * @version 2.0-pre
  */
+public final class StyleRecord extends Record {
+    public final static short sid = 0x0293;
 
-public class StyleRecord
-    extends Record
-{
-    public final static short sid                = 0x293;
+    private static final BitField fHighByte = BitFieldFactory.getInstance(0x01);
+
     public final static short STYLE_USER_DEFINED = 0;
     public final static short STYLE_BUILT_IN     = 1;
 
@@ -50,7 +48,6 @@ public class StyleRecord
     // only for user defined styles
     private short              field_2_name_length; //OO doc says 16 bit length, so we believe
     private byte               field_3_string_options;
-    private BitField fHighByte;
     private String             field_4_name;
 
     public StyleRecord()
@@ -77,8 +74,6 @@ public class StyleRecord
 
     protected void fillFields(RecordInputStream in)
     {
-        fHighByte = BitFieldFactory.getInstance(0x01); //have to init here, since we are being called
-                                        //from super, and class level init hasnt been done. 
         field_1_xf_index = in.readShort();
         if (getType() == STYLE_BUILT_IN)
         {

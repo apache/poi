@@ -312,15 +312,15 @@ public class XSSFSheet implements Sheet {
     	return null;
     }
 
-    public short[] getColumnBreaks() {
+    public int[] getColumnBreaks() {
         CTBreak[] brkArray = getSheetTypeColumnBreaks().getBrkArray();
         if (brkArray.length == 0) {
             return null;
         }
-        short[] breaks = new short[brkArray.length];
+        int[] breaks = new int[brkArray.length];
         for (int i = 0 ; i < brkArray.length ; i++) {
             CTBreak brk = brkArray[i];
-            breaks[i] = (short) brk.getId();
+            breaks[i] = (int)brk.getId();
         }
         return breaks;
     }

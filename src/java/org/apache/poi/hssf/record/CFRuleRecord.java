@@ -31,8 +31,7 @@ import org.apache.poi.util.LittleEndian;
  * Conditional Formatting Rule Record.
  * @author Dmitriy Kumshayev
  */
-public final class CFRuleRecord extends Record
-{
+public final class CFRuleRecord extends Record {
 
 	public static final short sid = 0x01B1;
 
