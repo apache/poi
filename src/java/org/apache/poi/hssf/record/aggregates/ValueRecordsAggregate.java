@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,14 +15,19 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.record.aggregates;
 
-import org.apache.poi.hssf.record.*;
-
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.SharedFormulaRecord;
+import org.apache.poi.hssf.record.StringRecord;
+import org.apache.poi.hssf.record.UnknownRecord;
 
 /**
  *
@@ -33,20 +37,16 @@ import java.util.List;
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-
-public final class ValueRecordsAggregate
-    extends Record
-{
-    public final static short sid       = -1001; // 1000 clashes with RowRecordsAggregate
-    int                       firstcell = -1;
-    int                       lastcell  = -1;
-  CellValueRecordInterface[][] records;
+public final class ValueRecordsAggregate {
+    private int                       firstcell = -1;
+    private int                       lastcell  = -1;
+    private CellValueRecordInterface[][] records;
 
     /** Creates a new instance of ValueRecordsAggregate */
 
     public ValueRecordsAggregate()
     {
-    records = new CellValueRecordInterface[30][]; // We start with 30 Rows.
+        records = new CellValueRecordInterface[30][]; // We start with 30 Rows.
     }
 
   public void insertCell(CellValueRecordInterface cell) {
@@ -85,18 +85,33 @@ public final class ValueRecordsAggregate
     }
   }
 
-    public void removeCell(CellValueRecordInterface cell)
-    {
-    	if (cell != null) {
-          short column = cell.getColumn();
-          int row = cell.getRow();
-          if(row>=records.length) return;
-          CellValueRecordInterface[] rowCells=records[row];
-          if(rowCells==null) return;
-          if(column>=rowCells.length) return;
-          rowCells[column]=null;
-    	}
+    public void removeCell(CellValueRecordInterface cell) {
+        if (cell == null) {
+        	throw new IllegalArgumentException("cell must not be null");
+        }
+        int row = cell.getRow();
+        if (row >= records.length) {
+        	throw new RuntimeException("cell row is out of range");
+        }
+        CellValueRecordInterface[] rowCells = records[row];
+        if (rowCells == null) {
+        	throw new RuntimeException("cell row is already empty");
+        }
+        short column = cell.getColumn();
+        if (column >= rowCells.length) {
+        	throw new RuntimeException("cell column is out of range");
+        }
+        rowCells[column] = null;
     }
+
+    public void removeAllCellsValuesForRow(int rowIndex) {
+        if (rowIndex >= records.length) {
+            throw new IllegalArgumentException("Specified rowIndex " + rowIndex 
+                    + " is outside the allowable range (0.." +records.length + ")");
+        }
+        records[rowIndex] = null;
+    }
+    
 
     public int getPhysicalNumberOfCells()
     {
@@ -133,7 +148,7 @@ public final class ValueRecordsAggregate
         {
             Record rec = ( Record ) records.get(k);
             if (rec instanceof SharedFormulaRecord) {
-            	sharedFormulas.add(rec);
+                sharedFormulas.add(rec);
             }
             if(rec instanceof EOFRecord) {
                 // End of current sheet. Ignore all subsequent shared formula records (Bugzilla 44449)
@@ -150,30 +165,30 @@ public final class ValueRecordsAggregate
             {
                 break;
             } else if (rec instanceof SharedFormulaRecord) {
-            	// Already handled, not to worry
+                // Already handled, not to worry
             } else if (rec instanceof FormulaRecord)
             {
               FormulaRecord formula = (FormulaRecord)rec;
               if (formula.isSharedFormula()) {
                 // Traverse the list of shared formulas in
-            	//  reverse order, and try to find the correct one
+                //  reverse order, and try to find the correct one
                 //  for us
                 boolean found = false;
                 for (int i=sharedFormulas.size()-1;i>=0;i--) {
                     // TODO - there is no junit test case to justify this reversed loop
                     // perhaps it could just run in the normal direction?
-                	SharedFormulaRecord shrd = (SharedFormulaRecord)sharedFormulas.get(i);
-                	if (shrd.isFormulaInShared(formula)) {
-                		shrd.convertSharedFormulaRecord(formula);
-                		found = true;
-                		break;
-                	}
+                    SharedFormulaRecord shrd = (SharedFormulaRecord)sharedFormulas.get(i);
+                    if (shrd.isFormulaInShared(formula)) {
+                        shrd.convertSharedFormulaRecord(formula);
+                        found = true;
+                        break;
+                    }
                 }
                 if (!found) {
                     handleMissingSharedFormulaRecord(formula);
                 }
               }
-            	
+                
               lastFormulaAggregate = new FormulaRecordAggregate((FormulaRecord)rec, null);
               insertCell( lastFormulaAggregate );
             }
@@ -206,21 +221,6 @@ public final class ValueRecordsAggregate
     private static void handleMissingSharedFormulaRecord(FormulaRecord formula) {
         // could log an info message here since this is a fairly unusual occurrence.
     }
-
-    /**
-     * called by the class that is responsible for writing this sucker.
-     * Subclasses should implement this so that their data is passed back in a
-     * byte array.
-     *
-     * @param offset to begin writing at
-     * @param data byte array containing instance data
-     * @return number of bytes written
-     */
-
-    public int serialize(int offset, byte [] data)
-    {
-      throw new RuntimeException("This method shouldnt be called. ValueRecordsAggregate.serializeCellRow() should be called from RowRecordsAggregate.");
-    }
     
     /** Tallies a count of the size of the cell records
      *  that are attached to the rows in the range specified.
@@ -241,8 +241,8 @@ public final class ValueRecordsAggregate
 
     /** Returns true if the row has cells attached to it */
     public boolean rowHasCells(int row) {
-    	if (row > records.length-1) //previously this said row > records.length which means if 
-    		return false;  // if records.length == 60 and I pass "60" here I get array out of bounds
+        if (row > records.length-1) //previously this said row > records.length which means if 
+            return false;  // if records.length == 60 and I pass "60" here I get array out of bounds
       CellValueRecordInterface[] rowCells=records[row]; //because a 60 length array has the last index = 59
       if(rowCells==null) return false;
       for(int col=0;col<rowCells.length;col++) {
@@ -267,46 +267,26 @@ public final class ValueRecordsAggregate
         return pos - offset;
     }
 
-    
-    /**
-     * You never fill an aggregate
-     */
-    protected void fillFields(RecordInputStream in)
-    {
-    }
-
-    /**
-     * called by constructor, should throw runtime exception in the event of a
-     * record passed with a differing ID.
-     *
-     * @param id alleged id for this record
-     */
-
-    protected void validateSid(short id)
-    {
-    }
-
-    /**
-     * return the non static version of the id for this record.
-     */
-
-    public short getSid()
-    {
-        return sid;
-    }
-
-    public int getRecordSize() {
-    
-        int size = 0;
-    Iterator irecs = this.getIterator();
+    public CellValueRecordInterface[] getValueRecords() {
+        List temp = new ArrayList();
         
-        while (irecs.hasNext()) {
-                size += (( Record ) irecs.next()).getRecordSize();
+        for (int i = 0; i < records.length; i++) {
+            CellValueRecordInterface[] rowCells = records[i];
+            if (rowCells == null) {
+                continue;
+            }
+            for (int j = 0; j < rowCells.length; j++) {
+                CellValueRecordInterface cell = rowCells[j];
+                if (cell != null) {
+                    temp.add(cell);
+                }
+            }
         }
-
-        return size;
+        
+        CellValueRecordInterface[] result = new CellValueRecordInterface[temp.size()];
+        temp.toArray(result);
+        return result;
     }
-
     public Iterator getIterator()
     {
     return new MyIterator();

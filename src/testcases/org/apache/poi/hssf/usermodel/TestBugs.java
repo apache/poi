@@ -31,12 +31,10 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
-import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
 import org.apache.poi.hssf.util.CellRangeAddress;
-import org.apache.poi.hssf.util.Region;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -991,8 +989,8 @@ public final class TestBugs extends TestCase {
         assertEquals("Forms.CheckBox.1", obj.getOLE2ClassName());
         
         try {
-        	obj.getDirectory();
-        	fail();
+            obj.getDirectory();
+            fail();
         } catch(FileNotFoundException e) {}
     }
     
@@ -1011,12 +1009,12 @@ public final class TestBugs extends TestCase {
         //  DeletedArea3DPtg
         Workbook w = wb.getWorkbook();
         for(int i=0; i<w.getNumNames(); i++) {
-        	NameRecord r = w.getNameRecord(i);
-        	assertTrue(r.getIndexToSheet() <= wb.getNumberOfSheets());
-        	
-        	List nd = r.getNameDefinition();
-        	assertEquals(1, nd.size());
-        	assertTrue(nd.get(0) instanceof DeletedArea3DPtg);
+            NameRecord r = w.getNameRecord(i);
+            assertTrue(r.getIndexToSheet() <= wb.getNumberOfSheets());
+            
+            List nd = r.getNameDefinition();
+            assertEquals(1, nd.size());
+            assertTrue(nd.get(0) instanceof DeletedArea3DPtg);
         }
         
         
@@ -1029,12 +1027,12 @@ public final class TestBugs extends TestCase {
         assertEquals(2, wb.getNumberOfSheets());
         
         for(int i=0; i<w.getNumNames(); i++) {
-        	NameRecord r = w.getNameRecord(i);
-        	assertTrue(r.getIndexToSheet() <= wb.getNumberOfSheets());
-        	
-        	List nd = r.getNameDefinition();
-        	assertEquals(1, nd.size());
-        	assertTrue(nd.get(0) instanceof DeletedArea3DPtg);
+            NameRecord r = w.getNameRecord(i);
+            assertTrue(r.getIndexToSheet() <= wb.getNumberOfSheets());
+            
+            List nd = r.getNameDefinition();
+            assertEquals(1, nd.size());
+            assertTrue(nd.get(0) instanceof DeletedArea3DPtg);
         }
         
         
@@ -1046,12 +1044,12 @@ public final class TestBugs extends TestCase {
         assertEquals(2, wb.getNumberOfSheets());
         
         for(int i=0; i<w.getNumNames(); i++) {
-        	NameRecord r = w.getNameRecord(i);
-        	assertTrue(r.getIndexToSheet() <= wb.getNumberOfSheets());
-        	
-        	List nd = r.getNameDefinition();
-        	assertEquals(1, nd.size());
-        	assertTrue(nd.get(0) instanceof DeletedArea3DPtg);
+            NameRecord r = w.getNameRecord(i);
+            assertTrue(r.getIndexToSheet() <= wb.getNumberOfSheets());
+            
+            List nd = r.getNameDefinition();
+            assertEquals(1, nd.size());
+            assertTrue(nd.get(0) instanceof DeletedArea3DPtg);
         }
     }
     
@@ -1059,84 +1057,84 @@ public final class TestBugs extends TestCase {
      * Test that fonts get added properly
      */
     public void test45338() throws Exception {
-    	HSSFWorkbook wb = new HSSFWorkbook();
-    	assertEquals(4, wb.getNumberOfFonts());
-    	
-    	HSSFSheet s = wb.createSheet();
-    	s.createRow(0);
-    	s.createRow(1);
-    	HSSFCell c1 = s.getRow(0).createCell((short)0);
-    	HSSFCell c2 = s.getRow(1).createCell((short)0);
-    	
-    	assertEquals(4, wb.getNumberOfFonts());
-    	
-    	HSSFFont f1 = wb.getFontAt((short)0);
-    	assertEquals(400, f1.getBoldweight());
-    	
-    	// Check that asking for the same font
-    	//  multiple times gives you the same thing.
-    	// Otherwise, our tests wouldn't work!
-    	assertEquals(
-    			wb.getFontAt((short)0),
-    			wb.getFontAt((short)0)
-    	);
-    	assertEquals(
-    			wb.getFontAt((short)2),
-    			wb.getFontAt((short)2)
-    	);
-    	assertTrue(
-    			wb.getFontAt((short)0)
-    			!=
-    			wb.getFontAt((short)2)
-    	);
-    	
-    	// Look for a new font we have
-    	//  yet to add
-    	assertNull(
-    		wb.findFont(
-    			(short)11, (short)123, (short)22, 
-    			"Thingy", false, true, (short)2, (byte)2
-    		)
-    	);
-    	
-    	HSSFFont nf = wb.createFont();
-    	assertEquals(5, wb.getNumberOfFonts());
-    	
-    	assertEquals(5, nf.getIndex());
-    	assertEquals(nf, wb.getFontAt((short)5));
-    	
-    	nf.setBoldweight((short)11);
-    	nf.setColor((short)123);
-    	nf.setFontHeight((short)22);
-    	nf.setFontName("Thingy");
-    	nf.setItalic(false);
-    	nf.setStrikeout(true);
-    	nf.setTypeOffset((short)2);
-    	nf.setUnderline((byte)2);
-    	
-    	assertEquals(5, wb.getNumberOfFonts());
-    	assertEquals(nf, wb.getFontAt((short)5));
-    	
-    	// Find it now
-    	assertNotNull(
-    		wb.findFont(
-    			(short)11, (short)123, (short)22, 
-    			"Thingy", false, true, (short)2, (byte)2
-    		)
-    	);
-    	assertEquals(
-    		5,
-    		wb.findFont(
-       			(short)11, (short)123, (short)22, 
-       			"Thingy", false, true, (short)2, (byte)2
-       		).getIndex()
-    	);
-    	assertEquals(nf,
-       		wb.findFont(
-       			(short)11, (short)123, (short)22, 
-       			"Thingy", false, true, (short)2, (byte)2
-       		)
-    	);
+        HSSFWorkbook wb = new HSSFWorkbook();
+        assertEquals(4, wb.getNumberOfFonts());
+        
+        HSSFSheet s = wb.createSheet();
+        s.createRow(0);
+        s.createRow(1);
+        HSSFCell c1 = s.getRow(0).createCell((short)0);
+        HSSFCell c2 = s.getRow(1).createCell((short)0);
+        
+        assertEquals(4, wb.getNumberOfFonts());
+        
+        HSSFFont f1 = wb.getFontAt((short)0);
+        assertEquals(400, f1.getBoldweight());
+        
+        // Check that asking for the same font
+        //  multiple times gives you the same thing.
+        // Otherwise, our tests wouldn't work!
+        assertEquals(
+                wb.getFontAt((short)0),
+                wb.getFontAt((short)0)
+        );
+        assertEquals(
+                wb.getFontAt((short)2),
+                wb.getFontAt((short)2)
+        );
+        assertTrue(
+                wb.getFontAt((short)0)
+                !=
+                wb.getFontAt((short)2)
+        );
+        
+        // Look for a new font we have
+        //  yet to add
+        assertNull(
+            wb.findFont(
+                (short)11, (short)123, (short)22, 
+                "Thingy", false, true, (short)2, (byte)2
+            )
+        );
+        
+        HSSFFont nf = wb.createFont();
+        assertEquals(5, wb.getNumberOfFonts());
+        
+        assertEquals(5, nf.getIndex());
+        assertEquals(nf, wb.getFontAt((short)5));
+        
+        nf.setBoldweight((short)11);
+        nf.setColor((short)123);
+        nf.setFontHeight((short)22);
+        nf.setFontName("Thingy");
+        nf.setItalic(false);
+        nf.setStrikeout(true);
+        nf.setTypeOffset((short)2);
+        nf.setUnderline((byte)2);
+        
+        assertEquals(5, wb.getNumberOfFonts());
+        assertEquals(nf, wb.getFontAt((short)5));
+        
+        // Find it now
+        assertNotNull(
+            wb.findFont(
+                (short)11, (short)123, (short)22, 
+                "Thingy", false, true, (short)2, (byte)2
+            )
+        );
+        assertEquals(
+            5,
+            wb.findFont(
+                   (short)11, (short)123, (short)22, 
+                   "Thingy", false, true, (short)2, (byte)2
+               ).getIndex()
+        );
+        assertEquals(nf,
+               wb.findFont(
+                   (short)11, (short)123, (short)22, 
+                   "Thingy", false, true, (short)2, (byte)2
+               )
+        );
     }
     
     /**
@@ -1145,94 +1143,90 @@ public final class TestBugs extends TestCase {
      * @throws Exception
      */
     public void testZipCodeFormulas() throws Exception {
-    	HSSFWorkbook wb = new HSSFWorkbook();
-    	HSSFSheet s = wb.createSheet();
-    	s.createRow(0);
-    	HSSFCell c1 = s.getRow(0).createCell((short)0);
-    	HSSFCell c2 = s.getRow(0).createCell((short)1);
-    	HSSFCell c3 = s.getRow(0).createCell((short)2);
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet s = wb.createSheet();
+        s.createRow(0);
+        HSSFCell c1 = s.getRow(0).createCell((short)0);
+        HSSFCell c2 = s.getRow(0).createCell((short)1);
+        HSSFCell c3 = s.getRow(0).createCell((short)2);
 
-    	// As number and string
-    	c1.setCellFormula("70164");
-    	c2.setCellFormula("\"70164\"");
-    	c3.setCellFormula("\"90210\"");
-    	
-    	// Check the formulas
-    	assertEquals("70164.0", c1.getCellFormula());
-    	assertEquals("\"70164\"", c2.getCellFormula());
-    	
-    	// And check the values - blank
-    	assertEquals(0.0, c1.getNumericCellValue(), 0.00001);
-    	assertEquals("", c1.getRichStringCellValue().getString());
-    	assertEquals(0.0, c2.getNumericCellValue(), 0.00001);
-    	assertEquals("", c2.getRichStringCellValue().getString());
-    	assertEquals(0.0, c3.getNumericCellValue(), 0.00001);
-    	assertEquals("", c3.getRichStringCellValue().getString());
-    	
-    	// Try changing the cached value on one of the string
-    	//  formula cells, so we can see it updates properly
-    	c3.setCellValue(new HSSFRichTextString("test"));
-    	assertEquals(0.0, c3.getNumericCellValue(), 0.00001);
-    	assertEquals("test", c3.getRichStringCellValue().getString());
-    	
-    	
-    	// Now evaluate, they should all be changed
-    	HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(s, wb);
-    	eval.setCurrentRow(s.getRow(0));
-    	eval.evaluateFormulaCell(c1);
-    	eval.evaluateFormulaCell(c2);
-    	eval.evaluateFormulaCell(c3);
-    	
-    	// Check that the cells now contain
-    	//  the correct values
-    	assertEquals(70164.0, c1.getNumericCellValue(), 0.00001);
-    	assertEquals("", c1.getRichStringCellValue().getString());
-    	assertEquals(0.0, c2.getNumericCellValue(), 0.00001);
-    	assertEquals("70164", c2.getRichStringCellValue().getString());
-    	assertEquals(0.0, c3.getNumericCellValue(), 0.00001);
-    	assertEquals("90210", c3.getRichStringCellValue().getString());
+        // As number and string
+        c1.setCellFormula("70164");
+        c2.setCellFormula("\"70164\"");
+        c3.setCellFormula("\"90210\"");
+        
+        // Check the formulas
+        assertEquals("70164.0", c1.getCellFormula());
+        assertEquals("\"70164\"", c2.getCellFormula());
+        
+        // And check the values - blank
+        assertEquals(0.0, c1.getNumericCellValue(), 0.00001);
+        assertEquals("", c1.getRichStringCellValue().getString());
+        assertEquals(0.0, c2.getNumericCellValue(), 0.00001);
+        assertEquals("", c2.getRichStringCellValue().getString());
+        assertEquals(0.0, c3.getNumericCellValue(), 0.00001);
+        assertEquals("", c3.getRichStringCellValue().getString());
+        
+        // Try changing the cached value on one of the string
+        //  formula cells, so we can see it updates properly
+        c3.setCellValue(new HSSFRichTextString("test"));
+        assertEquals(0.0, c3.getNumericCellValue(), 0.00001);
+        assertEquals("test", c3.getRichStringCellValue().getString());
+        
+        
+        // Now evaluate, they should all be changed
+        HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(s, wb);
+        eval.setCurrentRow(s.getRow(0));
+        eval.evaluateFormulaCell(c1);
+        eval.evaluateFormulaCell(c2);
+        eval.evaluateFormulaCell(c3);
+        
+        // Check that the cells now contain
+        //  the correct values
+        assertEquals(70164.0, c1.getNumericCellValue(), 0.00001);
+        assertEquals("", c1.getRichStringCellValue().getString());
+        assertEquals(0.0, c2.getNumericCellValue(), 0.00001);
+        assertEquals("70164", c2.getRichStringCellValue().getString());
+        assertEquals(0.0, c3.getNumericCellValue(), 0.00001);
+        assertEquals("90210", c3.getRichStringCellValue().getString());
   
-    	
-    	// Write and read
-    	HSSFWorkbook nwb = writeOutAndReadBack(wb);
-    	HSSFSheet ns = nwb.getSheetAt(0);
-    	HSSFCell nc1 = ns.getRow(0).getCell((short)0);
-    	HSSFCell nc2 = ns.getRow(0).getCell((short)1);
-    	HSSFCell nc3 = ns.getRow(0).getCell((short)2);
-    	
-    	// Re-check
-    	assertEquals(70164.0, nc1.getNumericCellValue(), 0.00001);
-    	assertEquals("", nc1.getRichStringCellValue().getString());
-    	assertEquals(0.0, nc2.getNumericCellValue(), 0.00001);
-    	assertEquals("70164", nc2.getRichStringCellValue().getString());
-    	assertEquals(0.0, nc3.getNumericCellValue(), 0.00001);
-    	assertEquals("90210", nc3.getRichStringCellValue().getString());
-    	
-    	// Now check record level stuff too
-    	ns.getSheet().setLoc(0);
-    	int fn = 0;
-    	CellValueRecordInterface cvr;
-    	while((cvr = ns.getSheet().getNextValueRecord()) != null) {
-    		if(cvr instanceof FormulaRecordAggregate) {
-    			FormulaRecordAggregate fr = (FormulaRecordAggregate)cvr;
-    			
-    			if(fn == 0) {
-    				assertEquals(70164.0, fr.getFormulaRecord().getValue(), 0.0001);
-    				assertNull(fr.getStringRecord());
-    			} else if (fn == 1) {
-    				assertEquals(0.0, fr.getFormulaRecord().getValue(), 0.0001);
-    				assertNotNull(fr.getStringRecord());
-    				assertEquals("70164", fr.getStringRecord().getString());
-    			} else {
-    				assertEquals(0.0, fr.getFormulaRecord().getValue(), 0.0001);
-    				assertNotNull(fr.getStringRecord());
-    				assertEquals("90210", fr.getStringRecord().getString());
-    			}
-    			
-    			fn++;
-    		}
-    	}
-    	assertEquals(3, fn);
+        
+        // Write and read
+        HSSFWorkbook nwb = writeOutAndReadBack(wb);
+        HSSFSheet ns = nwb.getSheetAt(0);
+        HSSFCell nc1 = ns.getRow(0).getCell((short)0);
+        HSSFCell nc2 = ns.getRow(0).getCell((short)1);
+        HSSFCell nc3 = ns.getRow(0).getCell((short)2);
+        
+        // Re-check
+        assertEquals(70164.0, nc1.getNumericCellValue(), 0.00001);
+        assertEquals("", nc1.getRichStringCellValue().getString());
+        assertEquals(0.0, nc2.getNumericCellValue(), 0.00001);
+        assertEquals("70164", nc2.getRichStringCellValue().getString());
+        assertEquals(0.0, nc3.getNumericCellValue(), 0.00001);
+        assertEquals("90210", nc3.getRichStringCellValue().getString());
+        
+        CellValueRecordInterface[] cvrs = ns.getSheet().getValueRecords();
+        for (int i = 0; i < cvrs.length; i++) {
+            CellValueRecordInterface cvr = cvrs[i];
+            if(cvr instanceof FormulaRecordAggregate) {
+                FormulaRecordAggregate fr = (FormulaRecordAggregate)cvr;
+                
+                if(i == 0) {
+                    assertEquals(70164.0, fr.getFormulaRecord().getValue(), 0.0001);
+                    assertNull(fr.getStringRecord());
+                } else if (i == 1) {
+                    assertEquals(0.0, fr.getFormulaRecord().getValue(), 0.0001);
+                    assertNotNull(fr.getStringRecord());
+                    assertEquals("70164", fr.getStringRecord().getString());
+                } else {
+                    assertEquals(0.0, fr.getFormulaRecord().getValue(), 0.0001);
+                    assertNotNull(fr.getStringRecord());
+                    assertEquals("90210", fr.getStringRecord().getString());
+                }
+            }
+        }
+        assertEquals(3, cvrs.length);
     }
     
     /**
@@ -1263,8 +1257,8 @@ public final class TestBugs extends TestCase {
         assertEquals("{=sin(B1:B9){9,1)[2][0]", c3.getCellFormula());
         
         // Save and re-open, ensure it still works
-    	HSSFWorkbook nwb = writeOutAndReadBack(wb);
-    	HSSFSheet ns1 = nwb.getSheetAt(0);
+        HSSFWorkbook nwb = writeOutAndReadBack(wb);
+        HSSFSheet ns1 = nwb.getSheetAt(0);
         HSSFCell nc1 = ns1.getRow(0).getCell(2);
         HSSFCell nc2 = ns1.getRow(1).getCell(2);
         HSSFCell nc3 = ns1.getRow(2).getCell(2);
@@ -1279,48 +1273,48 @@ public final class TestBugs extends TestCase {
      *  row and cell number
      */
     public void test30635() throws Exception {
-    	HSSFWorkbook wb = new HSSFWorkbook();
-    	HSSFSheet s = wb.createSheet();
-    	
-    	// No rows, everything is 0
-    	assertEquals(0, s.getFirstRowNum());
-    	assertEquals(0, s.getLastRowNum());
-    	assertEquals(0, s.getPhysicalNumberOfRows());
-    	
-    	// One row, most things are 0, physical is 1
-    	s.createRow(0);
-    	assertEquals(0, s.getFirstRowNum());
-    	assertEquals(0, s.getLastRowNum());
-    	assertEquals(1, s.getPhysicalNumberOfRows());
-    	
-    	// And another, things change
-    	s.createRow(4);
-    	assertEquals(0, s.getFirstRowNum());
-    	assertEquals(4, s.getLastRowNum());
-    	assertEquals(2, s.getPhysicalNumberOfRows());
-    	
-    	
-    	// Now start on cells
-    	HSSFRow r = s.getRow(0);
-    	assertEquals(-1, r.getFirstCellNum());
-    	assertEquals(-1, r.getLastCellNum());
-    	assertEquals(0, r.getPhysicalNumberOfCells());
-    	
-    	// Add a cell, things move off -1
-    	r.createCell((short)0);
-    	assertEquals(0, r.getFirstCellNum());
-    	assertEquals(1, r.getLastCellNum()); // last cell # + 1
-    	assertEquals(1, r.getPhysicalNumberOfCells());
-    	
-    	r.createCell((short)1);
-    	assertEquals(0, r.getFirstCellNum());
-    	assertEquals(2, r.getLastCellNum()); // last cell # + 1
-    	assertEquals(2, r.getPhysicalNumberOfCells());
-    	
-    	r.createCell((short)4);
-    	assertEquals(0, r.getFirstCellNum());
-    	assertEquals(5, r.getLastCellNum()); // last cell # + 1
-    	assertEquals(3, r.getPhysicalNumberOfCells());
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet s = wb.createSheet();
+        
+        // No rows, everything is 0
+        assertEquals(0, s.getFirstRowNum());
+        assertEquals(0, s.getLastRowNum());
+        assertEquals(0, s.getPhysicalNumberOfRows());
+        
+        // One row, most things are 0, physical is 1
+        s.createRow(0);
+        assertEquals(0, s.getFirstRowNum());
+        assertEquals(0, s.getLastRowNum());
+        assertEquals(1, s.getPhysicalNumberOfRows());
+        
+        // And another, things change
+        s.createRow(4);
+        assertEquals(0, s.getFirstRowNum());
+        assertEquals(4, s.getLastRowNum());
+        assertEquals(2, s.getPhysicalNumberOfRows());
+        
+        
+        // Now start on cells
+        HSSFRow r = s.getRow(0);
+        assertEquals(-1, r.getFirstCellNum());
+        assertEquals(-1, r.getLastCellNum());
+        assertEquals(0, r.getPhysicalNumberOfCells());
+        
+        // Add a cell, things move off -1
+        r.createCell((short)0);
+        assertEquals(0, r.getFirstCellNum());
+        assertEquals(1, r.getLastCellNum()); // last cell # + 1
+        assertEquals(1, r.getPhysicalNumberOfCells());
+        
+        r.createCell((short)1);
+        assertEquals(0, r.getFirstCellNum());
+        assertEquals(2, r.getLastCellNum()); // last cell # + 1
+        assertEquals(2, r.getPhysicalNumberOfCells());
+        
+        r.createCell((short)4);
+        assertEquals(0, r.getFirstCellNum());
+        assertEquals(5, r.getLastCellNum()); // last cell # + 1
+        assertEquals(3, r.getPhysicalNumberOfCells());
     }
     
     /**
@@ -1331,7 +1325,7 @@ public final class TestBugs extends TestCase {
         HSSFSheet s;
         HSSFRow r;
         HSSFCell c;
-    	
+        
         // Check the contents of the formulas
         
         // E4 to G9 of sheet 4 make up the table
@@ -1368,18 +1362,18 @@ public final class TestBugs extends TestCase {
      *  with diagrams on. Don't any more
      */
     public void test45414() throws Exception {
-    	HSSFWorkbook wb = openSample("WithThreeCharts.xls");
-    	wb.getSheetAt(0).setForceFormulaRecalculation(true);
-    	wb.getSheetAt(1).setForceFormulaRecalculation(false);
-    	wb.getSheetAt(2).setForceFormulaRecalculation(true);
-    	
-    	// Write out and back in again
-    	// This used to break
-    	HSSFWorkbook nwb = writeOutAndReadBack(wb);
-    	
-    	// Check now set as it should be
-    	assertTrue(nwb.getSheetAt(0).getForceFormulaRecalculation());
-    	assertFalse(nwb.getSheetAt(1).getForceFormulaRecalculation());
-    	assertTrue(nwb.getSheetAt(2).getForceFormulaRecalculation());
+        HSSFWorkbook wb = openSample("WithThreeCharts.xls");
+        wb.getSheetAt(0).setForceFormulaRecalculation(true);
+        wb.getSheetAt(1).setForceFormulaRecalculation(false);
+        wb.getSheetAt(2).setForceFormulaRecalculation(true);
+        
+        // Write out and back in again
+        // This used to break
+        HSSFWorkbook nwb = writeOutAndReadBack(wb);
+        
+        // Check now set as it should be
+        assertTrue(nwb.getSheetAt(0).getForceFormulaRecalculation());
+        assertFalse(nwb.getSheetAt(1).getForceFormulaRecalculation());
+        assertTrue(nwb.getSheetAt(2).getForceFormulaRecalculation());
     }
 }

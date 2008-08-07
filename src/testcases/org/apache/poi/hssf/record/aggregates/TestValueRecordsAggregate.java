@@ -106,9 +106,7 @@ public class TestValueRecordsAggregate extends TestCase
         assertTrue( iterator.hasNext() );
     }
 
-    public void testRemoveCell()
-            throws Exception
-    {
+    public void testRemoveCell() {
         BlankRecord blankRecord1 = newBlankRecord();
         valueRecord.insertCell( blankRecord1 );
         BlankRecord blankRecord2 = newBlankRecord();
@@ -118,10 +116,6 @@ public class TestValueRecordsAggregate extends TestCase
 
         // removing an already empty cell just falls through
         valueRecord.removeCell( blankRecord2 );
-
-        // even trying to remove null just falls through silently.
-        valueRecord.removeCell( null );
-
     }
 
     public void testGetPhysicalNumberOfCells() throws Exception
@@ -204,22 +198,6 @@ public class TestValueRecordsAggregate extends TestCase
         return blankRecord;
     }
 
-    public void testGetRecordSize() throws Exception
-    {
-        List records = testData();
-        valueRecord.construct( 0, records );
-        assertEquals( 36, valueRecord.getRecordSize() );
-    }
-
-    public void testClone() throws Exception
-    {
-        List records = testData();
-        valueRecord.construct( 0, records );
-        valueRecord = (ValueRecordsAggregate) valueRecord.clone();
-        assertEquals( 36, valueRecord.getRecordSize() );
-    }
-
-    
     /**
      * Sometimes the 'shared formula' flag (<tt>FormulaRecord.isSharedFormula()</tt>) is set when 
      * there is no corresponding SharedFormulaRecord available. SharedFormulaRecord definitions do

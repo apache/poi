@@ -40,7 +40,6 @@ import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.record.UncalcedRecord;
 import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
-import org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate;
 import org.apache.poi.hssf.util.CellRangeAddress;
 
 /**
@@ -62,7 +61,6 @@ public final class TestSheet extends TestCase {
         assertTrue( sheet.records.get(pos++) instanceof ColumnInfoRecordsAggregate );
         assertTrue( sheet.records.get(pos++) instanceof DimensionsRecord );
         assertTrue( sheet.records.get(pos++) instanceof RowRecordsAggregate );
-        assertTrue( sheet.records.get(pos++) instanceof ValueRecordsAggregate );
         assertTrue( sheet.records.get(pos++) instanceof EOFRecord );
     }
 
@@ -434,12 +432,12 @@ public final class TestSheet extends TestCase {
             throw new AssertionFailedError("Identified  bug 45145");
         }
 
-        // make sure that RRA and VRA are in the right place
-        int rraIx = sheet.getDimsLoc()+1;
-        List recs = sheet.getRecords();
-        assertEquals(RowRecordsAggregate.class, recs.get(rraIx).getClass());
-        assertEquals(ValueRecordsAggregate.class, recs.get(rraIx+1).getClass());
-
+        if (false) {
+            // make sure that RRA and VRA are in the right place
+            // (Aug 2008) since the VRA is now part of the RRA, there is much less chance that
+        	// they could get out of order. Still, one could write serialize the sheet here, 
+        	// and read back with EventRecordFactory to make sure...
+        }
         assertEquals(242, dbCellRecordPos);
     }
 
