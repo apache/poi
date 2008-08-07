@@ -22,15 +22,17 @@ import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Title:        Row Record<P>
- * Description:  stores the row information for the sheet. <P>
+ * Title:        Row Record (0x0208)<P/>
+ * Description:  stores the row information for the sheet. <P/>
  * REFERENCE:  PG 379 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 public final class RowRecord extends Record implements Comparable {
-	public final static short sid = 0x208;
+    public final static short sid = 0x0208;
+
+    public static final int ENCODED_SIZE = 20;
     
     private static final int OPTION_BITS_ALWAYS_SET = 0x0100;
     private static final int DEFAULT_HEIGHT_BIT = 0x8000;
@@ -407,23 +409,23 @@ public final class RowRecord extends Record implements Comparable {
 
     public int serialize(int offset, byte [] data)
     {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 16);
-        LittleEndian.putShort(data, 4 + offset, ( short ) getRowNumber());
-        LittleEndian.putShort(data, 6 + offset, getFirstCol() == -1 ? (short)0 : getFirstCol());
-        LittleEndian.putShort(data, 8 + offset, getLastCol() == -1 ? (short)0 : getLastCol());
-        LittleEndian.putShort(data, 10 + offset, getHeight());
-        LittleEndian.putShort(data, 12 + offset, getOptimize());
-        LittleEndian.putShort(data, 14 + offset, field_6_reserved);
-        LittleEndian.putShort(data, 16 + offset, getOptionFlags());
+        LittleEndian.putUShort(data, 0 + offset, sid);
+        LittleEndian.putUShort(data, 2 + offset, ENCODED_SIZE - 4);
+        LittleEndian.putUShort(data, 4 + offset, getRowNumber());
+        LittleEndian.putUShort(data, 6 + offset, getFirstCol() == -1 ? (short)0 : getFirstCol());
+        LittleEndian.putUShort(data, 8 + offset, getLastCol() == -1 ? (short)0 : getLastCol());
+        LittleEndian.putUShort(data, 10 + offset, getHeight());
+        LittleEndian.putUShort(data, 12 + offset, getOptimize());
+        LittleEndian.putUShort(data, 14 + offset, field_6_reserved);
+        LittleEndian.putUShort(data, 16 + offset, getOptionFlags());
 
-        LittleEndian.putShort(data, 18 + offset, getXFIndex());
-        return getRecordSize();
+        LittleEndian.putUShort(data, 18 + offset, getXFIndex());
+        return ENCODED_SIZE;
     }
 
     public int getRecordSize()
     {
-        return 20;
+        return ENCODED_SIZE;
     }
 
     public short getSid()

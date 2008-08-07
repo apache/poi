@@ -81,7 +81,7 @@ public final class HSSFSheet {
      */
 
     private Sheet sheet;
-    private TreeMap rows;
+    private TreeMap rows; // TODO - use simple key into this map
     protected Workbook book;
     protected HSSFWorkbook workbook;
     private int firstrow;
@@ -130,21 +130,18 @@ public final class HSSFSheet {
     /**
      * used internally to set the properties given a Sheet object
      */
+    private void setPropertiesFromSheet(Sheet sheet) {
 
-    private void setPropertiesFromSheet(Sheet sheet)
-    {
-        int sloc = sheet.getLoc();
         RowRecord row = sheet.getNextRow();
         boolean rowRecordsAlreadyPresent = row!=null;
 
-        while (row != null)
-        {
+        while (row != null) {
             createRowFromRecord(row);
 
             row = sheet.getNextRow();
         }
-        sheet.setLoc(sloc);
-        CellValueRecordInterface cval = sheet.getNextValueRecord();
+
+        CellValueRecordInterface[] cvals = sheet.getValueRecords();
         long timestart = System.currentTimeMillis();
 
         if (log.check( POILogger.DEBUG ))
@@ -152,14 +149,16 @@ public final class HSSFSheet {
                 new Long(timestart));
         HSSFRow lastrow = null;
 
-        while (cval != null)
-        {
+        // Add every cell to its row
+        for (int i = 0; i < cvals.length; i++) {
+            CellValueRecordInterface cval = cvals[i];
+
             long cellstart = System.currentTimeMillis();
             HSSFRow hrow = lastrow;
 
-            if ( ( lastrow == null ) || ( lastrow.getRowNum() != cval.getRow() ) )
-            {
+            if (hrow == null || hrow.getRowNum() != cval.getRow()) {
                 hrow = getRow( cval.getRow() );
+                lastrow = hrow;
                 if (hrow == null) {
                     // Some tools (like Perl module Spreadsheet::WriteExcel - bug 41187) skip the RowRecords 
                     // Excel, OpenOffice.org and GoogleDocs are all OK with this, so POI should be too.
@@ -173,21 +172,13 @@ public final class HSSFSheet {
                     hrow = createRowFromRecord(rowRec);
                 }
             }
-            if ( hrow != null )
-            {
-                lastrow = hrow;
-                if (log.check( POILogger.DEBUG ))
-                    log.log( DEBUG, "record id = " + Integer.toHexString( ( (Record) cval ).getSid() ) );
-                hrow.createCellFromRecord( cval );
-                cval = sheet.getNextValueRecord();
-                if (log.check( POILogger.DEBUG ))
-                    log.log( DEBUG, "record took ",
-                        new Long( System.currentTimeMillis() - cellstart ) );
-            }
-            else
-            {
-                cval = null;
-            }
+            if (log.check( POILogger.DEBUG ))
+                log.log( DEBUG, "record id = " + Integer.toHexString( ( (Record) cval ).getSid() ) );
+            hrow.createCellFromRecord( cval );
+            if (log.check( POILogger.DEBUG ))
+                log.log( DEBUG, "record took ",
+                    new Long( System.currentTimeMillis() - cellstart ) );
+            
         }
         if (log.check( POILogger.DEBUG ))
             log.log(DEBUG, "total sheet cell creation took ",
@@ -230,10 +221,7 @@ public final class HSSFSheet {
      *
      * @param row   representing a row to remove.
      */
-
-    public void removeRow(HSSFRow row)
-    {
-        sheet.setLoc(sheet.getDimsLoc());
+    public void removeRow(HSSFRow row) {
         if (rows.size() > 0)
         {
             rows.remove(row);
@@ -244,15 +232,6 @@ public final class HSSFSheet {
             if (row.getRowNum() == getFirstRowNum())
             {
                 firstrow = findFirstRow(firstrow);
-            }
-            Iterator iter = row.cellIterator();
-
-            while (iter.hasNext())
-            {
-                HSSFCell cell = (HSSFCell) iter.next();
-
-                sheet.removeValueRecord(row.getRowNum(),
-                        cell.getCellValueRecord());
             }
             sheet.removeRow(row.getRowRecord());
         }
@@ -646,8 +625,8 @@ public final class HSSFSheet {
     public Region getMergedRegionAt(int index) {
         CellRangeAddress cra = getMergedRegion(index);
         
-		return new Region(cra.getFirstRow(), (short)cra.getFirstColumn(), 
-				cra.getLastRow(), (short)cra.getLastColumn());
+        return new Region(cra.getFirstRow(), (short)cra.getFirstColumn(), 
+                cra.getLastRow(), (short)cra.getLastColumn());
     }
     /**
      * @return the merged region at the specified index
@@ -1094,8 +1073,8 @@ public final class HSSFSheet {
 
              //don't check if it's not within the shifted area
              if (!inStart || !inEnd) {
-				continue;
-			 }
+                continue;
+             }
 
              //only shift if the region outside the shifted rows is not merged too
              if (!containsCell(merged, startRow-1, 0) && !containsCell(merged, endRow+1, 0)){
@@ -1111,7 +1090,7 @@ public final class HSSFSheet {
         //read so it doesn't get shifted again
         Iterator iterator = shiftedRegions.iterator();
         while (iterator.hasNext()) {
-        	CellRangeAddress region = (CellRangeAddress)iterator.next();
+            CellRangeAddress region = (CellRangeAddress)iterator.next();
 
             this.addMergedRegion(region);
         }
@@ -1161,7 +1140,7 @@ public final class HSSFSheet {
      */
     public void shiftRows( int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight)
     {
-    	shiftRows(startRow, endRow, n, copyRowHeight, resetOriginalRowHeight, true);
+        shiftRows(startRow, endRow, n, copyRowHeight, resetOriginalRowHeight, true);
     }
     
     /**
@@ -1223,8 +1202,8 @@ public final class HSSFSheet {
             // Fetch the first and last columns of the
             //  row now, so we still have them to hand
             //  once we start removing cells
-        	short firstCol = row.getFirstCellNum();
-        	short lastCol = row.getLastCellNum();
+            short firstCol = row.getFirstCellNum();
+            short lastCol = row.getLastCellNum();
 
             // Fix up row heights if required
             if (copyRowHeight) {
@@ -1237,7 +1216,7 @@ public final class HSSFSheet {
             // Copy each cell from the source row to
             //  the destination row
             for(Iterator cells = row.cellIterator(); cells.hasNext(); ) {
-            	cell = (HSSFCell)cells.next();
+                cell = (HSSFCell)cells.next();
                 row.removeCell( cell );
                 CellValueRecordInterface cellRecord = cell.getCellValueRecord();
                 cellRecord.setRow( rowNum + n );
@@ -1251,12 +1230,12 @@ public final class HSSFSheet {
             //  destination row. Note that comments can
             //  exist for cells which are null
             if(moveComments) {
-	            for( short col = firstCol; col <= lastCol; col++ ) {
-	                HSSFComment comment = getCellComment(rowNum, col);
-	                if (comment != null) {
-	                   comment.setRow(rowNum + n);
-	                }
-	            }
+                for( short col = firstCol; col <= lastCol; col++ ) {
+                    HSSFComment comment = getCellComment(rowNum, col);
+                    if (comment != null) {
+                       comment.setRow(rowNum + n);
+                    }
+                }
             }
         }
         if ( endRow == lastrow || endRow + n > lastrow ) lastrow = Math.min( endRow + n, 65535 );
@@ -1592,9 +1571,9 @@ public final class HSSFSheet {
      *  start from scratch!
      */
     public HSSFPatriarch getDrawingPatriarch() {
-    	EscherAggregate agg = getDrawingEscherAggregate();
-    	if(agg == null) return null;
-    	
+        EscherAggregate agg = getDrawingEscherAggregate();
+        if(agg == null) return null;
+        
         HSSFPatriarch patriarch = new HSSFPatriarch(this, agg);
         agg.setPatriarch(patriarch);
 
@@ -1669,7 +1648,7 @@ public final class HSSFSheet {
      * @param column the column index
      */
     public void autoSizeColumn(short column) {
-    	autoSizeColumn(column, false);
+        autoSizeColumn(column, false);
     }
     
     /**
@@ -1718,19 +1697,19 @@ public final class HSSFSheet {
             HSSFCell cell = row.getCell(column);
 
             if (cell == null) {
-				continue;
-			}
+                continue;
+            }
 
             int colspan = 1;
             for (int i = 0 ; i < getNumMergedRegions(); i++) {
                 CellRangeAddress region = getMergedRegion(i);
-				if (containsCell(region, row.getRowNum(), column)) {
-                	if (!useMergedCells) {
-                    	// If we're not using merged cells, skip this one and move on to the next. 
-                		continue rows;
-                	}
-                	cell = row.getCell(region.getFirstColumn());
-                	colspan = 1 + region.getLastColumn() - region.getFirstColumn();
+                if (containsCell(region, row.getRowNum(), column)) {
+                    if (!useMergedCells) {
+                        // If we're not using merged cells, skip this one and move on to the next. 
+                        continue rows;
+                    }
+                    cell = row.getCell(region.getFirstColumn());
+                    colspan = 1 + region.getLastColumn() - region.getFirstColumn();
                 }
             }
 
@@ -1821,7 +1800,7 @@ public final class HSSFSheet {
         }
         if (width != -1) {
             if (width > Short.MAX_VALUE) { //width can be bigger that Short.MAX_VALUE!
-            	width = Short.MAX_VALUE;
+                width = Short.MAX_VALUE;
             }
             sheet.setColumnWidth(column, (short) (width * 256));
         }

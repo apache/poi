@@ -30,7 +30,7 @@ import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.BackupRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate;
+import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.TempFile;
@@ -93,7 +93,7 @@ public final class TestWorkbook extends TestCase {
                                + ((( double ) rownum / 1000)
                                   + (( double ) cellnum / 10000)));
                 c = r.createCell(( short ) (cellnum + 1));
-                c.setCellValue("TEST");
+                c.setCellValue(new HSSFRichTextString("TEST"));
             }
         }
         wb.write(out);
@@ -139,7 +139,7 @@ public final class TestWorkbook extends TestCase {
                                + ((( double ) rownum / 1000)
                                   + (( double ) cellnum / 10000)));
                 c = r.createCell(( short ) (cellnum + 1));
-                c.setCellValue("TEST");
+                c.setCellValue(new HSSFRichTextString("TEST"));
             }
         }
         for (short rownum = ( short ) 0; rownum < 25; rownum++)
@@ -310,9 +310,9 @@ public final class TestWorkbook extends TestCase {
         HSSFSheet sheet = workbook.getSheetAt(0);
         HSSFCell cell = sheet.getRow(0).getCell(1);
 
-        cell.setCellValue(REPLACED);
+        cell.setCellValue(new HSSFRichTextString(REPLACED));
         cell = sheet.getRow(1).getCell(0);
-        cell.setCellValue(REPLACED);
+        cell.setCellValue(new HSSFRichTextString(REPLACED));
 
         workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
 
@@ -380,11 +380,11 @@ public final class TestWorkbook extends TestCase {
         HSSFSheet       sheet    = workbook.getSheetAt(0);
         HSSFCell        cell     = sheet.getRow(3).getCell(2);
 
-        cell.setCellValue(LAST_NAME_VALUE);
+        cell.setCellValue(new HSSFRichTextString(LAST_NAME_VALUE));
         cell = sheet.getRow(4).getCell(2);
-        cell.setCellValue(FIRST_NAME_VALUE);
+        cell.setCellValue(new HSSFRichTextString(FIRST_NAME_VALUE));
         cell = sheet.getRow(5).getCell(2);
-        cell.setCellValue(SSN_VALUE);
+        cell.setCellValue(new HSSFRichTextString(SSN_VALUE));
 
         workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
         sheet    = workbook.getSheetAt(0);
@@ -494,11 +494,11 @@ public final class TestWorkbook extends TestCase {
         cell = row.createCell(( short ) 2);
 
         // workbook.write(new FileOutputStream("/a2.xls"));
-        ValueRecordsAggregate valueAggregate =
-            ( ValueRecordsAggregate ) sheet.getSheet()
-                .findFirstRecordBySid(ValueRecordsAggregate.sid);
+        RowRecordsAggregate rra = (RowRecordsAggregate) 
+            sheet.getSheet().findFirstRecordBySid((short)-1000);
+        
         int                   sstRecords     = 0;
-        Iterator              iterator       = valueAggregate.getIterator();
+        Iterator              iterator       = rra.getAllRecordsIterator();
 
         while (iterator.hasNext())
         {
@@ -511,16 +511,11 @@ public final class TestWorkbook extends TestCase {
     }
 
 
-    public void testManyRows()
-        throws Exception
-    {
-        String testName = "TestManyRows";
-        File file = TempFile.createTempFile(testName, ".xls");
-        FileOutputStream out  = new FileOutputStream(file);
+    public void testManyRows() {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
-        HSSFRow row = null;
-        HSSFCell cell = null;
+        HSSFRow row;
+        HSSFCell cell;
         int i, j;
         for ( i = 0, j = 32771; j > 0; i++, j-- )
         {
@@ -528,22 +523,17 @@ public final class TestWorkbook extends TestCase {
             cell = row.createCell((short) 0);
             cell.setCellValue(i);
         }
-        workbook.write(out);
-        out.close();
         sanityChecker.checkHSSFWorkbook(workbook);
         assertEquals("LAST ROW == 32770", 32770, sheet.getLastRowNum());
+        cell = sheet.getRow(32770).getCell(0);
         double lastVal = cell.getNumericCellValue();
 
-        FileInputStream in      = new FileInputStream(file);
-        POIFSFileSystem fs       = new POIFSFileSystem(in);
-        HSSFWorkbook    wb = new HSSFWorkbook(fs);
+        HSSFWorkbook    wb = HSSFTestDataSamples.writeOutAndReadBack(workbook);
         HSSFSheet       s    = wb.getSheetAt(0);
         row = s.getRow(32770);
-        cell = row.getCell(( short ) 0);
+        cell = row.getCell(0);
         assertEquals("Value from last row == 32770", lastVal, cell.getNumericCellValue(), 0);
         assertEquals("LAST ROW == 32770", 32770, s.getLastRowNum());
-        in.close();
-        file.deleteOnExit();
     }
 
     /**
@@ -569,11 +559,5 @@ public final class TestWorkbook extends TestCase {
         fileOut.close();
 
         assertTrue("file exists",file.exists());
-    }
-
-
-    public static void main(String [] ignored_args)
-    {
-        junit.textui.TestRunner.run(TestWorkbook.class);
     }
 }
