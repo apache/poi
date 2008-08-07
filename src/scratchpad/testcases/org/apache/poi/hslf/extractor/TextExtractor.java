@@ -229,12 +229,12 @@ public class TextExtractor extends TestCase {
 		ppe = new PowerPointExtractor(filename);
 
 		String text = ppe.getText();
-		assertFalse("Comments not in by default", text.contains("This is a test comment"));
+		assertFalse("Comments not in by default", contains(text, "This is a test comment"));
 		
 		ppe.setCommentsByDefault(true);
 		
 		text = ppe.getText();
-		assertTrue("Unable to find expected word in text\n" + text, text.contains("This is a test comment"));
+		assertTrue("Unable to find expected word in text\n" + text, contains(text, "This is a test comment"));
 
 		
 		// And another file
@@ -242,12 +242,12 @@ public class TextExtractor extends TestCase {
 		ppe = new PowerPointExtractor(filename);
 
 		text = ppe.getText();
-		assertFalse("Comments not in by default", text.contains("testdoc"));
+		assertFalse("Comments not in by default", contains(text, "testdoc"));
 		
 		ppe.setCommentsByDefault(true);
 		
 		text = ppe.getText();
-		assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
+		assertTrue("Unable to find expected word in text\n" + text, contains(text, "testdoc"));
     }
     
     /**
@@ -266,13 +266,13 @@ public class TextExtractor extends TestCase {
 		ppe = new PowerPointExtractor(hslf);
 
 		text = ppe.getText();
-		assertFalse("Unable to find expected word in text\n" + text, text.contains("testdoc"));
-        assertFalse("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+		assertFalse("Unable to find expected word in text\n" + text, contains(text, "testdoc"));
+        assertFalse("Unable to find expected word in text\n" + text, contains(text, "test phrase"));
         
         ppe.setNotesByDefault(true);
 		text = ppe.getText();
-		assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
-        assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+		assertTrue("Unable to find expected word in text\n" + text, contains(text, "testdoc"));
+        assertTrue("Unable to find expected word in text\n" + text, contains(text, "test phrase"));
 
         
 		// And with a footer, also on notes
@@ -285,12 +285,16 @@ public class TextExtractor extends TestCase {
 		ppe = new PowerPointExtractor(filename);
 
 		text = ppe.getText();
-		assertFalse("Unable to find expected word in text\n" + text, text.contains("testdoc"));
-        assertFalse("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+		assertFalse("Unable to find expected word in text\n" + text, contains(text, "testdoc"));
+        assertFalse("Unable to find expected word in text\n" + text, contains(text, "test phrase"));
 
         ppe.setNotesByDefault(true);
 		text = ppe.getText();
-		assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
-        assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+		assertTrue("Unable to find expected word in text\n" + text, contains(text, "testdoc"));
+        assertTrue("Unable to find expected word in text\n" + text, contains(text, "test phrase"));
     }
+
+	private static boolean contains(String text, String searchString) {
+		return text.indexOf(searchString) >=0;
+	}
 }

@@ -153,7 +153,7 @@ public final class HSSFChart {
 		records.add( createSeriesIndexRecord(2) );
 		records.add( createSeriesIndexRecord(1) );
 		records.add( createSeriesIndexRecord(3) );
-		records.add( createEOFRecord() );
+		records.add(EOFRecord.instance);
 
 
 
@@ -258,12 +258,6 @@ public final class HSSFChart {
 		} else {
 			throw new IllegalStateException("No chart title found to change");
 		}
-	}
-	
-
-	private EOFRecord createEOFRecord()
-	{
-		return new EOFRecord();
 	}
 
 	private SeriesIndexRecord createSeriesIndexRecord( int index )

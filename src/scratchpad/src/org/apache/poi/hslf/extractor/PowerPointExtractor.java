@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,21 +14,23 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.extractor;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 
 import org.apache.poi.POIOLE2TextExtractor;
+import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.model.Comment;
+import org.apache.poi.hslf.model.HeadersFooters;
+import org.apache.poi.hslf.model.Notes;
+import org.apache.poi.hslf.model.Slide;
+import org.apache.poi.hslf.model.TextRun;
+import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.record.Comment2000;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.usermodel.*;
 
 /**
  * This class can be used to extract text from a PowerPoint file.
@@ -37,9 +38,7 @@ import org.apache.poi.hslf.usermodel.*;
  *
  * @author Nick Burch
  */
-
-public class PowerPointExtractor extends POIOLE2TextExtractor
-{
+public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	private HSLFSlideShow _hslfshow;
 	private SlideShow _show;
 	private Slide[] _slides;
@@ -74,7 +73,6 @@ public class PowerPointExtractor extends POIOLE2TextExtractor
 
 	PowerPointExtractor ppe = new PowerPointExtractor(file);
 	System.out.println(ppe.getText(true,notes,comments));
-	ppe.close();
   }
 
 	/**
@@ -108,16 +106,6 @@ public class PowerPointExtractor extends POIOLE2TextExtractor
 		_hslfshow = ss;
 		_show = new SlideShow(_hslfshow);
 		_slides = _show.getSlides();
-	}
-
-	/**
-	 * Shuts down the underlying streams
-	 */
-	public void close() throws IOException {
-		_hslfshow.close();
-		_hslfshow = null;
-		_show = null;
-		_slides = null;
 	}
 
 	/**
