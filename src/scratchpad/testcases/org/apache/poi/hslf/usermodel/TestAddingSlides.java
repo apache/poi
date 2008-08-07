@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.usermodel;
 
@@ -36,7 +33,7 @@ import org.apache.poi.hslf.model.*;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestAddingSlides extends TestCase {
+public final class TestAddingSlides extends TestCase {
 	// An empty SlideShow
 	private HSLFSlideShow hss_empty;
 	private SlideShow ss_empty;
@@ -53,7 +50,7 @@ public class TestAddingSlides extends TestCase {
 	 * Create/open the slideshows
 	 */
 	public void setUp() throws Exception {
-		hss_empty = new HSLFSlideShow();
+		hss_empty = HSLFSlideShow.create();
 		ss_empty = new SlideShow(hss_empty);
 		
 		String dirname = System.getProperty("HSLF.testdata.path");
@@ -82,8 +79,8 @@ public class TestAddingSlides extends TestCase {
         Record[] _records = hss_empty.getRecords();
         for (int i = 0; i < _records.length; i++) {
             Record record = _records[i];
-            if(_records[i].getRecordType() == RecordTypes.UserEditAtom.typeID) {
-                usredit = (UserEditAtom)_records[i];
+            if(record.getRecordType() == RecordTypes.UserEditAtom.typeID) {
+                usredit = (UserEditAtom)record;
             }
        }
        assertNotNull(usredit);
