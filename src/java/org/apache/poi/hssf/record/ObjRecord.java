@@ -30,7 +30,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class ObjRecord extends Record {
-    public final static short      sid                             = 0x5D;
+    public final static short      sid                             = 0x005D;
     private List subrecords;
 
     //00000000 15 00 12 00 01 00 01 00 11 60 00 00 00 00 00 0D .........`......
@@ -69,18 +69,27 @@ public final class ObjRecord extends Record {
 
     protected void fillFields(RecordInputStream in)
     {
+    	// TODO - problems with OBJ sub-records stream
+    	// MS spec says first sub-records is always CommonObjectDataSubRecord, and last is 
+    	// always EndSubRecord.  OOO spec does not mention ObjRecord(0x005D).
+    	// Existing POI test data seems to violate that rule.  Some test data seems to contain
+    	// garbage, and a crash is only averted by stopping at what looks like the 'EndSubRecord'
+    	
         subrecords = new ArrayList();
         //Check if this can be continued, if so then the
         //following wont work properly
         int subSize = 0;
         byte[] subRecordData = in.readRemainder();
-
+        
         RecordInputStream subRecStream = new RecordInputStream(new ByteArrayInputStream(subRecordData));
         while(subRecStream.hasNextRecord()) {
           subRecStream.nextRecord();
           Record subRecord = SubRecord.createSubRecord(subRecStream);
           subSize += subRecord.getRecordSize();
           subrecords.add(subRecord);
+          if (subRecord instanceof EndSubRecord) {
+        	  break;
+          }
         }
 
         /**

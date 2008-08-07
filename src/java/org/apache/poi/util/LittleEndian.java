@@ -19,7 +19,6 @@ package org.apache.poi.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 /**
  *  a utility class for handling little-endian numbers, which the 80x86 world is
@@ -29,16 +28,11 @@ import java.util.Arrays;
  *@author     Marc Johnson (mjohnson at apache dot org)
  *@author     Andrew Oliver (acoliver at apache dot org)
  */
+public final class LittleEndian implements LittleEndianConsts {
 
-public class LittleEndian
-         implements LittleEndianConsts {
-
-    // all methods are static, so an accessible constructor makes no
-    // sense
-    /**
-     *  Constructor for the LittleEndian object
-     */
-    private LittleEndian() { }
+    private LittleEndian() {
+    	// no instances of this class
+    }
 
 
     /**
@@ -385,12 +379,7 @@ public class LittleEndian
      *@author     Marc Johnson (mjohnson at apache dot org)
      */
 
-    public static class BufferUnderrunException
-             extends IOException {
-
-        /**
-         *  simple constructor
-         */
+    public static final class BufferUnderrunException extends IOException {
 
         BufferUnderrunException() {
             super("buffer underrun");
@@ -408,12 +397,21 @@ public class LittleEndian
      *@exception  BufferUnderrunException  if the stream cannot provide enough
      *      bytes
      */
+    public static short readShort(InputStream stream) throws IOException, BufferUnderrunException {
 
-    public static short readShort(final InputStream stream)
-             throws IOException, BufferUnderrunException {
-        return getShort(readFromStream(stream, SHORT_SIZE));
-    }
+		return (short) readUShort(stream);
+	}
 
+	public static int readUShort(InputStream stream) throws IOException, BufferUnderrunException {
+
+		int ch1 = stream.read();
+		int ch2 = stream.read();
+		if ((ch1 | ch2) < 0) {
+			throw new BufferUnderrunException();
+		}
+		return ((ch2 << 8) + (ch1 << 0));
+	}
+    
 
     /**
      *  get an int value from an InputStream
@@ -425,10 +423,16 @@ public class LittleEndian
      *@exception  BufferUnderrunException  if the stream cannot provide enough
      *      bytes
      */
-
     public static int readInt(final InputStream stream)
              throws IOException, BufferUnderrunException {
-        return getInt(readFromStream(stream, INT_SIZE));
+		int ch1 = stream.read();
+		int ch2 = stream.read();
+		int ch3 = stream.read();
+		int ch4 = stream.read();
+		if ((ch1 | ch2 | ch3 | ch4) < 0) {
+			throw new BufferUnderrunException();
+		}
+		return ((ch4 << 24) + (ch3<<16) + (ch2 << 8) + (ch1 << 0));
     }
 
 
@@ -445,45 +449,28 @@ public class LittleEndian
 
     public static long readLong(final InputStream stream)
              throws IOException, BufferUnderrunException {
-        return getLong(readFromStream(stream, LONG_SIZE));
+		int ch1 = stream.read();
+		int ch2 = stream.read();
+		int ch3 = stream.read();
+		int ch4 = stream.read();
+		int ch5 = stream.read();
+		int ch6 = stream.read();
+		int ch7 = stream.read();
+		int ch8 = stream.read();
+		if ((ch1 | ch2 | ch3 | ch4 | ch5 | ch6 | ch7 | ch8) < 0) {
+			throw new BufferUnderrunException();
+		}
+		
+		return 
+			((long)ch8 << 56) +
+            ((long)ch7 << 48) +
+            ((long)ch6 << 40) +
+            ((long)ch5 << 32) +
+            ((long)ch4 << 24) + // cast to long to preserve bit 31 (sign bit for ints)
+                  (ch3 << 16) +
+                  (ch2 <<  8) +
+                  (ch1 <<  0);
     }
-
-    /**
-     *  Read the appropriate number of bytes from the stream and return them to
-     *  the caller. <p>
-     *
-     *  However, for the purposes of the POI project, this risk is deemed
-     *  negligible. It is, however, so noted.
-     *
-     *@param  stream                       the InputStream we're reading from
-     *@param  size                         the number of bytes to read; in
-     *      99.99% of cases, this will be SHORT_SIZE, INT_SIZE, or LONG_SIZE --
-     *      but it doesn't have to be.
-     *@return                              the byte array containing the
-     *      required number of bytes. The array will contain all zero's on end
-     *      of stream
-     *@exception  IOException              will be propagated back to the caller
-     *@exception  BufferUnderrunException  if the stream cannot provide enough
-     *      bytes
-     */
-
-    public static byte[] readFromStream(final InputStream stream,
-            final int size)
-             throws IOException, BufferUnderrunException {
-        byte[] buffer = new byte[size];
-
-        int count = stream.read(buffer);
-
-        if (count == -1) {
-
-            // return a zero-filled buffer
-            Arrays.fill(buffer, (byte) 0);
-        } else if (count != size) {
-            throw new BufferUnderrunException();
-        }
-        return buffer;
-    }
-
 
     /**
      *  Gets the number attribute of the LittleEndian class

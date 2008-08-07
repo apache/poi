@@ -550,7 +550,7 @@ public final class Sheet implements Model {
         retval.setLoc(records.size() - 1);
         retval.selection = createSelection();
         records.add(retval.selection);
-        records.add(new EOFRecord());
+        records.add(EOFRecord.instance);
 
 
         retval.records = records;

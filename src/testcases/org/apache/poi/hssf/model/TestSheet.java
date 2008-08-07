@@ -54,7 +54,7 @@ public final class TestSheet extends TestCase {
         List records = new ArrayList();
         records.add( new BOFRecord() );
         records.add( new DimensionsRecord() );
-        records.add( new EOFRecord() );
+        records.add(EOFRecord.instance);
         Sheet sheet = Sheet.createSheet( records, 0, 0 );
 
         int pos = 0;
@@ -396,7 +396,7 @@ public final class TestSheet extends TestCase {
         records.add(new BOFRecord());
         records.add(new UncalcedRecord());
         records.add(new DimensionsRecord());
-        records.add(new EOFRecord());
+        records.add(EOFRecord.instance);
         Sheet sheet = Sheet.createSheet(records, 0, 0);
 
         int estimatedSize = sheet.getSize();
