@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.usermodel;
 
 import junit.framework.TestCase;
@@ -27,27 +26,20 @@ import java.util.ArrayList;
 import org.apache.poi.hssf.record.*;
 
 /**
+ * A Test case for a test utility class.<br/>
  * Okay, this may seem strange but I need to test my test logic.
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestSanityChecker
-        extends TestCase
-{
-    public TestSanityChecker( String s )
-    {
-        super( s );
-    }
+public final class TestSanityChecker extends TestCase {
 
-    public void testCheckRecordOrder()
-            throws Exception
-    {
+    public void testCheckRecordOrder() {
         final SanityChecker c = new SanityChecker();
         List records = new ArrayList();
         records.add(new BOFRecord());
         records.add(new InterfaceHdrRecord());
         records.add(new BoundSheetRecord());
-        records.add(new EOFRecord());
+        records.add(EOFRecord.instance);
         final SanityChecker.CheckRecord[] check = {
             new SanityChecker.CheckRecord(BOFRecord.class, '1'),
             new SanityChecker.CheckRecord(InterfaceHdrRecord.class, '0'),
@@ -74,7 +66,7 @@ public class TestSanityChecker
                 records.add(new BOFRecord());
                 records.add(new BoundSheetRecord());
                 records.add(new InterfaceHdrRecord());
-                records.add(new EOFRecord());
+                records.add(EOFRecord.instance);
                 c.checkRecordOrder(records, check);
             }
         });
@@ -88,7 +80,7 @@ public class TestSanityChecker
                 records.add(new InterfaceHdrRecord());
                 records.add(new BoundSheetRecord());
                 records.add(new InterfaceHdrRecord());
-                records.add(new EOFRecord());
+                records.add(EOFRecord.instance);
                 c.checkRecordOrder(records, check);
             }
         });
@@ -101,7 +93,7 @@ public class TestSanityChecker
                 records.add(new BOFRecord());
                 records.add(new BoundSheetRecord());
                 records.add(new NameRecord());
-                records.add(new EOFRecord());
+                records.add(EOFRecord.instance);
                 records.add(new NameRecord());
                 c.checkRecordOrder(records, check);
             }
@@ -114,7 +106,7 @@ public class TestSanityChecker
                 List records = new ArrayList();
                 records.add(new InterfaceHdrRecord());
                 records.add(new BoundSheetRecord());
-                records.add(new EOFRecord());
+                records.add(EOFRecord.instance);
                 c.checkRecordOrder(records, check);
             }
         });
@@ -126,7 +118,7 @@ public class TestSanityChecker
                 List records = new ArrayList();
                 records.add(new BOFRecord());
                 records.add(new InterfaceHdrRecord());
-                records.add(new EOFRecord());
+                records.add(EOFRecord.instance);
                 c.checkRecordOrder(records, check);
             }
         });
@@ -139,7 +131,7 @@ public class TestSanityChecker
                 records.add(new InterfaceHdrRecord());
                 records.add(new BoundSheetRecord());
                 records.add(new BOFRecord());
-                records.add(new EOFRecord());
+                records.add(EOFRecord.instance);
                 c.checkRecordOrder(records, check);
             }
         });
@@ -152,7 +144,7 @@ public class TestSanityChecker
                 records.add(new BOFRecord());
                 records.add(new BoundSheetRecord());
                 records.add(new InterfaceHdrRecord());
-                records.add(new EOFRecord());
+                records.add(EOFRecord.instance);
                 c.checkRecordOrder(records, check);
             }
         });

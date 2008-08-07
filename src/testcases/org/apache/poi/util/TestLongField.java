@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
 
@@ -28,30 +26,12 @@ import java.io.*;
  *
  * @author  Marc Johnson (mjohnson at apache dot org)
  */
-
-public class TestLongField
-    extends TestCase
-{
-
-    /**
-     * Constructor
-     *
-     * @param name
-     */
-
-    public TestLongField(String name)
-    {
-        super(name);
-    }
+public final class TestLongField extends TestCase {
 
     static private final long[] _test_array =
     {
         Long.MIN_VALUE, -1L, 0L, 1L, Long.MAX_VALUE
     };
-
-    /**
-     * Test constructors.
-     */
 
     public void testConstructors()
     {
@@ -121,10 +101,6 @@ public class TestLongField
         }
     }
 
-    /**
-     * Test set() methods
-     */
-
     public void testSet()
     {
         LongField field = new LongField(0);
@@ -163,10 +139,6 @@ public class TestLongField
         }
     }
 
-    /**
-     * Test readFromBytes
-     */
-
     public void testReadFromBytes()
     {
         LongField field = new LongField(1);
@@ -198,12 +170,6 @@ public class TestLongField
         }
     }
 
-    /**
-     * Test readFromStream
-     *
-     * @exception IOException
-     */
-
     public void testReadFromStream()
         throws IOException
     {
@@ -212,8 +178,8 @@ public class TestLongField
 
         for (int j = 0; j < _test_array.length; j++)
         {
-            buffer[ (j * 8) + 0 ] = ( byte ) (_test_array[ j ] % 256);
-            buffer[ (j * 8) + 1 ] = ( byte ) ((_test_array[ j ] >> 8) % 256);
+            buffer[ (j * 8) + 0 ] = ( byte ) ((_test_array[ j ] >>  0) % 256);
+            buffer[ (j * 8) + 1 ] = ( byte ) ((_test_array[ j ] >>  8) % 256);
             buffer[ (j * 8) + 2 ] = ( byte ) ((_test_array[ j ] >> 16) % 256);
             buffer[ (j * 8) + 3 ] = ( byte ) ((_test_array[ j ] >> 24) % 256);
             buffer[ (j * 8) + 4 ] = ( byte ) ((_test_array[ j ] >> 32) % 256);
@@ -229,10 +195,6 @@ public class TestLongField
             assertEquals("Testing " + j, _test_array[ j ], field.get());
         }
     }
-
-    /**
-     * test writeToBytes
-     */
 
     public void testWriteToBytes()
     {
@@ -255,17 +217,5 @@ public class TestLongField
             val += (array[ 0 ] & 0x00000000000000FFL);
             assertEquals("testing ", _test_array[ j ], val);
         }
-    }
-
-    /**
-     * Main
-     *
-     * @param args
-     */
-
-    public static void main(String [] args)
-    {
-        System.out.println("Testing util.LongField functionality");
-        junit.textui.TestRunner.run(TestLongField.class);
     }
 }

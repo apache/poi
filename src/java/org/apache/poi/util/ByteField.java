@@ -22,6 +22,7 @@ package org.apache.poi.util;
 import org.apache.poi.util.LittleEndian.BufferUnderrunException;
 
 import java.io.*;
+import java.nio.BufferUnderflowException;
 
 /**
  * representation of a byte (8-bit) field at a fixed location within a
@@ -183,9 +184,12 @@ public class ByteField
     public void readFromStream(final InputStream stream)
         throws IOException, BufferUnderrunException
     {
-        _value =
-            (LittleEndian.readFromStream(stream,
-                                         LittleEndianConsts.BYTE_SIZE))[ 0 ];
+    	// TODO - are these ~Field used / necessary
+    	int ib = stream.read();
+    	if (ib < 0) {
+    		throw new BufferUnderflowException();
+    	}
+        _value = (byte) ib;
     }
 
     /**

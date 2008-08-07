@@ -351,7 +351,7 @@ public class Workbook implements Model
         records.add( retval.sst );
         records.add( retval.createExtendedSST() );
 
-        records.add( retval.createEOF() );
+        records.add(EOFRecord.instance);
         if (log.check( POILogger.DEBUG ))
             log.log( DEBUG, "exit create new workbook from scratch" );
         return retval;
@@ -1856,17 +1856,6 @@ public class Workbook implements Model
 
         retval.setNumStringsPerBucket(( short ) 0x8);
         return retval;
-    }
-
-    /**
-     * creates the EOF record
-     * @see org.apache.poi.hssf.record.EOFRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a EOFRecord
-     */
-
-    protected Record createEOF() {
-        return new EOFRecord();
     }
     
     /**

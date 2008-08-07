@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -31,14 +29,14 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-
-public class EOFRecord
-    extends Record
-{
+public final class EOFRecord extends Record {
     public final static short sid = 0x0A;
+	public static final int ENCODED_SIZE = 4;
 
-    public EOFRecord()
-    {
+	public static final EOFRecord instance = new EOFRecord();
+	
+    private EOFRecord() {
+    	// no data fields
     }
 
     /**
@@ -82,7 +80,7 @@ public class EOFRecord
 
     public int getRecordSize()
     {
-        return 4;
+        return ENCODED_SIZE;
     }
 
     public short getSid()
@@ -91,7 +89,6 @@ public class EOFRecord
     }
 
     public Object clone() {
-      EOFRecord rec = new EOFRecord();
-      return rec;
+      return instance;
     }
 }

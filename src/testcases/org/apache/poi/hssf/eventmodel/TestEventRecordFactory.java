@@ -63,7 +63,7 @@ public final class TestEventRecordFactory extends TestCase {
         bof.setVersion((short)0x06);
         bof.setHistoryBitMask(BOFRecord.HISTORY_MASK);
         
-        EOFRecord eof = new EOFRecord();
+        EOFRecord eof = EOFRecord.instance;
     	byte[] bytes = new byte[bof.getRecordSize() + eof.getRecordSize()];
         int offset = 0;
         offset = bof.serialize(offset,bytes);

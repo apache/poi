@@ -96,7 +96,7 @@ public class EventWorkbookBuilder {
 		}
 		
 		// Finally we need an EoF record
-		wbRecords.add(new EOFRecord());
+		wbRecords.add(EOFRecord.instance);
 		
 		return Workbook.createWorkbook(wbRecords);
 	}

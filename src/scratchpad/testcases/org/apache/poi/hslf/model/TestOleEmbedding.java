@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,58 +14,43 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.model;
 
-import java.io.*;
-import java.util.List;
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileInputStream;
+
+import junit.framework.TestCase;
 
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.ObjectData;
 import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.usermodel.Range;
-import org.apache.poi.hwpf.usermodel.Paragraph;
 
-import junit.framework.TestCase;
-
-public class TestOleEmbedding extends TestCase
-{
+public final class TestOleEmbedding extends TestCase {
     /**
      * Tests support for OLE objects.
      *
      * @throws Exception if an error occurs.
      */
-    public void testOleEmbedding2003() throws Exception
-    {
+    public void testOleEmbedding2003() throws Exception {
         String dirname = System.getProperty("HSLF.testdata.path");
         File file = new File(dirname, "ole2-embedding-2003.ppt");
         HSLFSlideShow slideShow = new HSLFSlideShow(new FileInputStream(file));
-        try
-        {
-            // Placeholder EMFs for clients that don't support the OLE components.
-            PictureData[] pictures = slideShow.getPictures();
-            assertEquals("Should be two pictures", 2, pictures.length);
-            //assertDigestEquals("Wrong data for picture 1", "8d1fbadf4814f321bb1ccdd056e3c788", pictures[0].getData());
-            //assertDigestEquals("Wrong data for picture 2", "987a698e83559cf3d38a0deeba1cc63b", pictures[1].getData());
+        // Placeholder EMFs for clients that don't support the OLE components.
+        PictureData[] pictures = slideShow.getPictures();
+        assertEquals("Should be two pictures", 2, pictures.length);
+        //assertDigestEquals("Wrong data for picture 1", "8d1fbadf4814f321bb1ccdd056e3c788", pictures[0].getData());
+        //assertDigestEquals("Wrong data for picture 2", "987a698e83559cf3d38a0deeba1cc63b", pictures[1].getData());
 
-            // Actual embedded objects.
-            ObjectData[] objects = slideShow.getEmbeddedObjects();
-            assertEquals("Should be two objects", 2, objects.length);
-            //assertDigestEquals("Wrong data for objecs 1", "0d1fcc61a83de5c4894dc0c88e9a019d", objects[0].getData());
-            //assertDigestEquals("Wrong data for object 2", "b323604b2003a7299c77c2693b641495", objects[1].getData());
-        }
-        finally
-        {
-            slideShow.close();
-        }
+        // Actual embedded objects.
+        ObjectData[] objects = slideShow.getEmbeddedObjects();
+        assertEquals("Should be two objects", 2, objects.length);
+        //assertDigestEquals("Wrong data for objecs 1", "0d1fcc61a83de5c4894dc0c88e9a019d", objects[0].getData());
+        //assertDigestEquals("Wrong data for object 2", "b323604b2003a7299c77c2693b641495", objects[1].getData());
     }
 
     public void testOLEShape() throws Exception {
