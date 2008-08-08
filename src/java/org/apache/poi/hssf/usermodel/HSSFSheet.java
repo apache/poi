@@ -547,10 +547,7 @@ public final class HSSFSheet {
 
     public void setVerticallyCenter(boolean value)
     {
-        VCenterRecord record =
-                (VCenterRecord) sheet.findFirstRecordBySid(VCenterRecord.sid);
-
-        record.setVCenter(value);
+        sheet.getPageSettings().getVCenter().setVCenter(value);
     }
 
     /**
@@ -566,10 +563,7 @@ public final class HSSFSheet {
      */
     public boolean getVerticallyCenter()
     {
-        VCenterRecord record =
-                (VCenterRecord) sheet.findFirstRecordBySid(VCenterRecord.sid);
-
-        return record.getVCenter();
+        return sheet.getPageSettings().getVCenter().getVCenter();
     }
 
     /**
@@ -579,10 +573,7 @@ public final class HSSFSheet {
 
     public void setHorizontallyCenter(boolean value)
     {
-        HCenterRecord record =
-                (HCenterRecord) sheet.findFirstRecordBySid(HCenterRecord.sid);
-
-        record.setHCenter(value);
+    	sheet.getPageSettings().getHCenter().setHCenter(value);
     }
 
     /**
@@ -591,10 +582,8 @@ public final class HSSFSheet {
 
     public boolean getHorizontallyCenter()
     {
-        HCenterRecord record =
-                (HCenterRecord) sheet.findFirstRecordBySid(HCenterRecord.sid);
 
-        return record.getHCenter();
+        return sheet.getPageSettings().getHCenter().getHCenter();
     }
 
 

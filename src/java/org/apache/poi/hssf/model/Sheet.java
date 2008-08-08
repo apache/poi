@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.hssf.record.BOFRecord;
-import org.apache.poi.hssf.record.BottomMarginRecord;
 import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.hssf.record.CalcCountRecord;
 import org.apache.poi.hssf.record.CalcModeRecord;
@@ -40,17 +39,12 @@ import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.FooterRecord;
 import org.apache.poi.hssf.record.GridsetRecord;
 import org.apache.poi.hssf.record.GutsRecord;
-import org.apache.poi.hssf.record.HCenterRecord;
 import org.apache.poi.hssf.record.HeaderRecord;
-import org.apache.poi.hssf.record.HorizontalPageBreakRecord;
 import org.apache.poi.hssf.record.IndexRecord;
 import org.apache.poi.hssf.record.IterationRecord;
-import org.apache.poi.hssf.record.LeftMarginRecord;
-import org.apache.poi.hssf.record.Margin;
 import org.apache.poi.hssf.record.MergeCellsRecord;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.record.ObjectProtectRecord;
-import org.apache.poi.hssf.record.PageBreakRecord;
 import org.apache.poi.hssf.record.PaneRecord;
 import org.apache.poi.hssf.record.PasswordRecord;
 import org.apache.poi.hssf.record.PrintGridlinesRecord;
@@ -60,17 +54,13 @@ import org.apache.poi.hssf.record.ProtectRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.RefModeRecord;
-import org.apache.poi.hssf.record.RightMarginRecord;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.SaveRecalcRecord;
 import org.apache.poi.hssf.record.ScenarioProtectRecord;
 import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.hssf.record.StringRecord;
-import org.apache.poi.hssf.record.TopMarginRecord;
 import org.apache.poi.hssf.record.UncalcedRecord;
-import org.apache.poi.hssf.record.VCenterRecord;
-import org.apache.poi.hssf.record.VerticalPageBreakRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
@@ -78,6 +68,7 @@ import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.aggregates.MergedCellsTable;
+import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
@@ -119,32 +110,31 @@ public final class Sheet implements Model {
     protected ArrayList                  records           =     null;
               int                        preoffset         =     0;            // offset of the sheet in a new file
     protected int                        dimsloc           =     -1;  // TODO - is it legal for dims record to be missing?
-    protected DimensionsRecord           dims;
-    protected DefaultColWidthRecord      defaultcolwidth   =     null;
-    protected DefaultRowHeightRecord     defaultrowheight  =     null;
+    protected PrintGridlinesRecord       printGridlines    =     null;
     protected GridsetRecord              gridset           =     null;
     private   GutsRecord                 _gutsRecord;
-    protected PrintSetupRecord           printSetup        =     null;
-    protected HeaderRecord               header            =     null;
-    protected FooterRecord               footer            =     null;
-    protected PrintGridlinesRecord       printGridlines    =     null;
-    protected WindowTwoRecord            windowTwo         =     null;
-    protected Margin[]                   margins           =     null;
-    private   MergedCellsTable           _mergedCellsTable;
-    protected SelectionRecord            selection         =     null;
-    /** always present in this POI object, not always written to Excel file */
-    /*package*/ColumnInfoRecordsAggregate _columnInfos;
-    protected RowRecordsAggregate        _rowsAggregate              =     null;
-    private   Iterator                   rowRecIterator    =     null;
-    protected int                        eofLoc            =     0;
+    protected DefaultColWidthRecord      defaultcolwidth   =     null;
+    protected DefaultRowHeightRecord     defaultrowheight  =     null;
+    private PageSettingsBlock _psBlock;
+
+    // 'Worksheet Protection Block'
     protected ProtectRecord              protect           =     null;
-    protected PageBreakRecord            _rowBreaksRecord;
-    protected PageBreakRecord            _columnBreaksRecord;
-    private   DataValidityTable          _dataValidityTable=     null;
     protected ObjectProtectRecord        objprotect        =     null;
     protected ScenarioProtectRecord      scenprotect       =     null;
     protected PasswordRecord             password          =     null;
+    
+    protected WindowTwoRecord            windowTwo         =     null;
+    protected SelectionRecord            selection         =     null;
+    private   MergedCellsTable           _mergedCellsTable;
+    /** always present in this POI object, not always written to Excel file */
+    /*package*/ColumnInfoRecordsAggregate _columnInfos;
+    protected DimensionsRecord           dims;
+    protected RowRecordsAggregate        _rowsAggregate              =     null;
+    private   DataValidityTable          _dataValidityTable=     null;
     private   ConditionalFormattingTable condFormatting;
+
+    protected int                        eofLoc            =     0;
+    private   Iterator                   rowRecIterator    =     null;
 
     /** Add an UncalcedRecord if not true indicating formulas have not been calculated */
     protected boolean _isUncalced = false;
@@ -247,13 +237,28 @@ public final class Sheet implements Model {
                 }
                continue;
             }
-                       
+             
+            if (PageSettingsBlock.isComponentRecord(rec.getSid())) {
+                RecordStream rs = new RecordStream(recs, k);
+                PageSettingsBlock psb = new PageSettingsBlock(rs);
+                if (bofEofNestingLevel == 1) {
+                    if (retval._psBlock == null) {
+                        retval._psBlock = psb;
+                    } else {
+                        // more than one 'Page Settings Block' at nesting level 1 ?
+                        // apparently this happens in about 15 test sample files
+                    }
+                }
+                records.add(psb);
+                k += rs.getCountRead()-1;
+                continue;
+            }
             
             if (rec.getSid() == MergeCellsRecord.sid) {
                 RecordStream rs = new RecordStream(recs, k);
                 retval._mergedCellsTable = new MergedCellsTable(rs);
                 records.add(retval._mergedCellsTable);
-                continue; // TODO
+                continue;
             }
             
             if (rec.getSid() == BOFRecord.sid)
@@ -304,34 +309,6 @@ public final class Sheet implements Model {
             {
                 retval.gridset = (GridsetRecord) rec;
             }
-            else if ( rec.getSid() == HeaderRecord.sid && bofEofNestingLevel == 1)
-            {
-                retval.header = (HeaderRecord) rec;
-            }
-            else if ( rec.getSid() == FooterRecord.sid && bofEofNestingLevel == 1)
-            {
-                retval.footer = (FooterRecord) rec;
-            }
-            else if ( rec.getSid() == PrintSetupRecord.sid && bofEofNestingLevel == 1)
-            {
-                retval.printSetup = (PrintSetupRecord) rec;
-            }
-            else if ( rec.getSid() == LeftMarginRecord.sid)
-            {
-                retval.getMargins()[LeftMargin] = (LeftMarginRecord) rec;
-            }
-            else if ( rec.getSid() == RightMarginRecord.sid)
-            {
-                retval.getMargins()[RightMargin] = (RightMarginRecord) rec;
-            }
-            else if ( rec.getSid() == TopMarginRecord.sid)
-            {
-                retval.getMargins()[TopMargin] = (TopMarginRecord) rec;
-            }
-            else if ( rec.getSid() == BottomMarginRecord.sid)
-            {
-                retval.getMargins()[BottomMargin] = (BottomMarginRecord) rec;
-            }
             else if ( rec.getSid() == SelectionRecord.sid )
             {
                 retval.selection = (SelectionRecord) rec;
@@ -355,14 +332,6 @@ public final class Sheet implements Model {
             else if ( rec.getSid() == PasswordRecord.sid )
             {
                 retval.password = (PasswordRecord) rec;
-            }
-            else if (rec.getSid() == HorizontalPageBreakRecord.sid)
-            {
-                retval._rowBreaksRecord = (HorizontalPageBreakRecord)rec;
-            }
-            else if (rec.getSid() == VerticalPageBreakRecord.sid)
-            {
-                retval._columnBreaksRecord = (VerticalPageBreakRecord)rec;
             }
 
             records.add(rec);
@@ -463,20 +432,9 @@ public final class Sheet implements Model {
         records.add( retval.createWSBool() );
         
         // 'Page Settings Block'
-        retval._rowBreaksRecord = new HorizontalPageBreakRecord();
-        records.add(retval._rowBreaksRecord);
-        retval._columnBreaksRecord = new VerticalPageBreakRecord();
-        records.add(retval._columnBreaksRecord);
-
-        retval.header = createHeader();
-        records.add( retval.header );
-        retval.footer = createFooter();
-        records.add( retval.footer );
-        records.add(createHCenter() );
-        records.add(createVCenter() );
-        retval.printSetup = createPrintSetup();
-        records.add( retval.printSetup );
-
+        retval._psBlock = new PageSettingsBlock();
+        records.add(retval._psBlock);
+        
         // 'Worksheet Protection Block' (after 'Page Settings Block' and before DEFCOLWIDTH)
         // PROTECT record normally goes here, don't add yet since the flag is initially false
         
@@ -1061,70 +1019,6 @@ public final class Sheet implements Model {
         return retval;
     }
 
-    /**
-     * creates the Header Record and sets it to nothing/0 length
-     */
-    private static HeaderRecord createHeader() {
-        HeaderRecord retval = new HeaderRecord();
-
-        retval.setHeaderLength(( byte ) 0);
-        retval.setHeader(null);
-        return retval;
-    }
-
-    /**
-     * creates the Footer Record and sets it to nothing/0 length
-     */
-    private static FooterRecord createFooter() {
-        FooterRecord retval = new FooterRecord();
-
-        retval.setFooterLength(( byte ) 0);
-        retval.setFooter(null);
-        return retval;
-    }
-
-    /**
-     * creates the HCenter Record and sets it to false (don't horizontally center)
-     */
-    private static HCenterRecord createHCenter() {
-        HCenterRecord retval = new HCenterRecord();
-
-        retval.setHCenter(false);
-        return retval;
-    }
-
-    /**
-     * creates the VCenter Record and sets it to false (don't horizontally center)
-    */
-    private static VCenterRecord createVCenter() {
-        VCenterRecord retval = new VCenterRecord();
-
-        retval.setVCenter(false);
-        return retval;
-    }
-
-    /**
-     * creates the PrintSetup Record and sets it to defaults and marks it invalid
-     * @see org.apache.poi.hssf.record.PrintSetupRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a PrintSetupRecord
-     */
-    private static PrintSetupRecord createPrintSetup() {
-        PrintSetupRecord retval = new PrintSetupRecord();
-
-        retval.setPaperSize(( short ) 1);
-        retval.setScale(( short ) 100);
-        retval.setPageStart(( short ) 1);
-        retval.setFitWidth(( short ) 1);
-        retval.setFitHeight(( short ) 1);
-        retval.setOptions(( short ) 2);
-        retval.setHResolution(( short ) 300);
-        retval.setVResolution(( short ) 300);
-        retval.setHeaderMargin( 0.5);
-        retval.setFooterMargin( 0.5);
-        retval.setCopies(( short ) 0);
-        return retval;
-    }
 
     /**
      * creates the DefaultColWidth Record and sets it to 8
@@ -1563,7 +1457,7 @@ public final class Sheet implements Model {
      */
     public HeaderRecord getHeader ()
     {
-    return header;
+    return getPageSettings().getHeader();
     }
 
     public WindowTwoRecord getWindowTwo() {
@@ -1575,7 +1469,7 @@ public final class Sheet implements Model {
      */
     public void setHeader (HeaderRecord newHeader)
     {
-        header = newHeader;
+        getPageSettings().setHeader(newHeader);
     }
 
     /**
@@ -1584,7 +1478,7 @@ public final class Sheet implements Model {
      */
     public FooterRecord getFooter ()
     {
-        return footer;
+        return getPageSettings().getFooter();
     }
 
     /**
@@ -1593,7 +1487,7 @@ public final class Sheet implements Model {
      */
     public void setFooter (FooterRecord newFooter)
     {
-        footer = newFooter;
+        getPageSettings().setFooter(newFooter);
     }
 
     /**
@@ -1602,7 +1496,7 @@ public final class Sheet implements Model {
      */
     public PrintSetupRecord getPrintSetup ()
     {
-        return printSetup;
+        return getPageSettings().getPrintSetup();
     }
 
     /**
@@ -1611,7 +1505,7 @@ public final class Sheet implements Model {
      */
     public void setPrintSetup (PrintSetupRecord newPrintSetup)
     {
-        printSetup = newPrintSetup;
+        getPageSettings().setPrintSetup(newPrintSetup);
     }
 
     /**
@@ -1646,23 +1540,7 @@ public final class Sheet implements Model {
       * @return the size of the margin
       */
     public double getMargin(short margin) {
-    if (getMargins()[margin] != null)
-        return margins[margin].getMargin();
-    else {
-        switch ( margin )
-        {
-        case LeftMargin:
-            return .75;
-        case RightMargin:
-            return .75;
-        case TopMargin:
-            return 1.0;
-        case BottomMargin:
-            return 1.0;
-        default :
-            throw new RuntimeException( "Unknown margin constant:  " + margin );
-        }
-    }
+        return getPageSettings().getMargin(margin);
     }
 
      /**
@@ -1671,32 +1549,7 @@ public final class Sheet implements Model {
       * @param size the size of the margin
       */
     public void setMargin(short margin, double size) {
-    Margin m = getMargins()[margin];
-    if (m  == null) {
-        switch ( margin )
-        {
-        case LeftMargin:
-            m = new LeftMarginRecord();
-            records.add( getDimsLoc() + 1, m );
-            break;
-        case RightMargin:
-            m = new RightMarginRecord();
-            records.add( getDimsLoc() + 1, m );
-            break;
-        case TopMargin:
-            m = new TopMarginRecord();
-            records.add( getDimsLoc() + 1, m );
-            break;
-        case BottomMargin:
-            m = new BottomMarginRecord();
-            records.add( getDimsLoc() + 1, m );
-            break;
-        default :
-            throw new RuntimeException( "Unknown margin constant:  " + margin );
-        }
-        margins[margin] = m;
-    }
-    m.setMargin( size );
+        getPageSettings().setMargin(margin, size);
     }
 
     public int getEofLoc()
@@ -1948,17 +1801,6 @@ public final class Sheet implements Model {
     }
 
     /**
-     * Returns the array of margins.  If not created, will create.
-     *
-     * @return the array of marings.
-     */
-    protected Margin[] getMargins() {
-        if (margins == null)
-            margins = new Margin[4];
-        return margins;
-    }
-
-    /**
      * Finds the DrawingRecord for our sheet, and
      *  attaches it to the DrawingManager (which knows about
      *  the overall DrawingGroup for our workbook).
@@ -2026,60 +1868,22 @@ public final class Sheet implements Model {
         }
     }
 
-    /**
-     * Shifts all the page breaks in the range "count" number of rows/columns
-     * @param breaks The page record to be shifted
-     * @param start Starting "main" value to shift breaks
-     * @param stop Ending "main" value to shift breaks
-     * @param count number of units (rows/columns) to shift by
-     */
-    private static void shiftBreaks(PageBreakRecord breaks, int start, int stop, int count) {
-
-        Iterator iterator = breaks.getBreaksIterator();
-        List shiftedBreak = new ArrayList();
-        while(iterator.hasNext())
-        {
-            PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
-            int breakLocation = breakItem.main;
-            boolean inStart = (breakLocation >= start);
-            boolean inEnd = (breakLocation <= stop);
-            if(inStart && inEnd)
-                shiftedBreak.add(breakItem);
-        }
-
-        iterator = shiftedBreak.iterator();
-        while (iterator.hasNext()) {
-            PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
-            breaks.removeBreak(breakItem.main);
-            breaks.addBreak((short)(breakItem.main+count), breakItem.subFrom, breakItem.subTo);
-        }
-    }
-
-    private PageBreakRecord getRowBreaksRecord() {
-        if (_rowBreaksRecord == null) {
-            _rowBreaksRecord = new HorizontalPageBreakRecord();
-            RecordOrderer.addNewSheetRecord(records, _rowBreaksRecord);
+    
+    public PageSettingsBlock getPageSettings() {
+        if (_psBlock == null) {
+            _psBlock = new PageSettingsBlock();
+            RecordOrderer.addNewSheetRecord(records, _psBlock);
             dimsloc++;
         }
-        return _rowBreaksRecord;
+        return _psBlock;
     }
-    
-    private PageBreakRecord getColumnBreaksRecord() {
-        if (_columnBreaksRecord == null) {
-            _columnBreaksRecord = new VerticalPageBreakRecord();
-            RecordOrderer.addNewSheetRecord(records, _columnBreaksRecord);
-            dimsloc++;
-        }
-        return _columnBreaksRecord;
-    }
-    
-    
+
     /**
      * Sets a page break at the indicated row
      * @param row
      */
     public void setRowBreak(int row, short fromCol, short toCol) {
-        getRowBreaksRecord().addBreak((short)row, fromCol, toCol);
+        getPageSettings().setRowBreak(row, fromCol, toCol);
     }
 
     /**
@@ -2087,9 +1891,7 @@ public final class Sheet implements Model {
      * @param row
      */
     public void removeRowBreak(int row) {
-        if (getRowBreaks() == null)
-            throw new IllegalArgumentException("Sheet does not define any row breaks");
-        getRowBreaksRecord().removeBreak((short)row);
+        getPageSettings().removeRowBreak(row);
     }
 
     /**
@@ -2098,7 +1900,7 @@ public final class Sheet implements Model {
      * @return true if the specified row has a page break
      */
     public boolean isRowBroken(int row) {
-        return getRowBreaksRecord().getBreak(row) != null;
+        return getPageSettings().isRowBroken(row);
     }
 
     /**
@@ -2106,7 +1908,7 @@ public final class Sheet implements Model {
      *
      */
     public void setColumnBreak(short column, short fromRow, short toRow) {
-        getColumnBreaksRecord().addBreak(column, fromRow, toRow);
+        getPageSettings().setColumnBreak(column, fromRow, toRow);
     }
 
     /**
@@ -2114,7 +1916,7 @@ public final class Sheet implements Model {
      *
      */
     public void removeColumnBreak(short column) {
-        getColumnBreaksRecord().removeBreak(column);
+        getPageSettings().removeColumnBreak(column);
     }
 
     /**
@@ -2123,7 +1925,7 @@ public final class Sheet implements Model {
      * @return <code>true</code> if the specified column has a page break
      */
     public boolean isColumnBroken(short column) {
-        return getColumnBreaksRecord().getBreak(column) != null;
+        return getPageSettings().isColumnBroken(column);
     }
 
     /**
@@ -2133,7 +1935,7 @@ public final class Sheet implements Model {
      * @param count
      */
     public void shiftRowBreaks(int startingRow, int endingRow, int count) {
-        shiftBreaks(getRowBreaksRecord(), startingRow, endingRow, count);
+        getPageSettings().shiftRowBreaks(startingRow, endingRow, count);
     }
 
     /**
@@ -2143,35 +1945,35 @@ public final class Sheet implements Model {
      * @param count
      */
     public void shiftColumnBreaks(short startingCol, short endingCol, short count) {
-        shiftBreaks(getColumnBreaksRecord(), startingCol, endingCol, count);
+        getPageSettings().shiftColumnBreaks(startingCol, endingCol, count);
     }
 
     /**
      * @return all the horizontal page breaks, never <code>null</code>
      */
     public int[] getRowBreaks() {
-        return getRowBreaksRecord().getBreaks();
+        return getPageSettings().getRowBreaks();
     }
 
     /**
      * @return the number of row page breaks
      */
     public int getNumRowBreaks(){
-        return getRowBreaksRecord().getNumBreaks();
+        return getPageSettings().getNumRowBreaks();
     }
 
     /**
      * @return all the column page breaks, never <code>null</code>
      */
     public int[] getColumnBreaks(){
-        return getColumnBreaksRecord().getBreaks();
+        return getPageSettings().getColumnBreaks();
     }
 
     /**
      * @return the number of column page breaks
      */
     public int getNumColumnBreaks(){
-        return getColumnBreaksRecord().getNumBreaks();
+        return getPageSettings().getNumColumnBreaks();
     }
 
     public void setColumnGroupCollapsed( short columnNumber, boolean collapsed )
