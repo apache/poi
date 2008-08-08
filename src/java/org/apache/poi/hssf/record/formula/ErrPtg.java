@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 
@@ -68,7 +67,7 @@ public final class ErrPtg extends ScalarConstantPtg {
         array[offset + 1] = (byte)field_1_error_code;
     }
 
-    public String toFormulaString(HSSFWorkbook book) {
+    protected String toFormulaString() {
         return HSSFErrorConstants.getText(field_1_error_code);
     }
 

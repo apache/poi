@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
@@ -30,36 +29,30 @@ import org.apache.poi.hssf.record.RecordInputStream;
 public final class BoolPtg extends ScalarConstantPtg {
     public final static int  SIZE = 2;
     public final static byte sid  = 0x1d;
-    private final boolean field_1_value;
+    private final boolean _value;
 
-    public BoolPtg(RecordInputStream in)
-    {
-        field_1_value = (in.readByte() == 1);
+    public BoolPtg(RecordInputStream in) {
+        _value = (in.readByte() == 1);
     }
-
 
     public BoolPtg(String formulaToken) {
-        field_1_value = (formulaToken.equals("TRUE"));
+        _value = (formulaToken.equalsIgnoreCase("TRUE"));
     }
 
-    public boolean getValue()
-    {
-        return field_1_value;
+    public boolean getValue() {
+        return _value;
     }
 
-    public void writeBytes(byte [] array, int offset)
-    {
+    public void writeBytes(byte [] array, int offset) {
         array[ offset + 0 ] = sid;
-        array[ offset + 1 ] = (byte) (field_1_value ? 1 : 0);
+        array[ offset + 1 ] = (byte) (_value ? 1 : 0);
     }
 
-    public int getSize()
-    {
+    public int getSize() {
         return SIZE;
     }
 
-    public String toFormulaString(HSSFWorkbook book)
-    {
-        return field_1_value ? "TRUE" : "FALSE";
+    protected String toFormulaString() {
+        return _value ? "TRUE" : "FALSE";
     }
 }

@@ -17,9 +17,8 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Integer (unsigned short integer)
@@ -60,8 +59,7 @@ public final class IntPtg extends ScalarConstantPtg {
         return field_1_value;
     }
 
-    public void writeBytes(byte [] array, int offset)
-    {
+    public void writeBytes(byte [] array, int offset) {
         array[ offset + 0 ] = sid;
         LittleEndian.putUShort(array, offset + 1, getValue());
     }
@@ -70,15 +68,7 @@ public final class IntPtg extends ScalarConstantPtg {
         return SIZE;
     }
 
-    public String toFormulaString(HSSFWorkbook book) {
+    protected String toFormulaString() {
         return String.valueOf(getValue());
-    }
-
-    public String toString() {
-        StringBuffer sb = new StringBuffer(64);
-        sb.append(getClass().getName()).append(" [");
-        sb.append(field_1_value);
-        sb.append("]");
-        return sb.toString();
     }
 }
