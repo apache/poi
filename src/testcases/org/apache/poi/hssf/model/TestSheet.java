@@ -39,6 +39,7 @@ import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.record.UncalcedRecord;
 import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
+import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.apache.poi.hssf.util.CellRangeAddress;
 
@@ -207,7 +208,8 @@ public final class TestSheet extends TestCase {
         short colFrom = 0;
         short colTo = 255;
 
-        Sheet sheet = Sheet.createSheet();
+        Sheet worksheet = Sheet.createSheet();
+        PageSettingsBlock sheet = worksheet.getPageSettings();
         sheet.setRowBreak(0, colFrom, colTo);
 
         assertTrue("no row break at 0", sheet.isRowBroken(0));
@@ -262,24 +264,25 @@ public final class TestSheet extends TestCase {
         short rowFrom = 0;
         short rowTo = (short)65535;
 
-        Sheet sheet = Sheet.createSheet();
+        Sheet worksheet = Sheet.createSheet();
+        PageSettingsBlock sheet = worksheet.getPageSettings();
         sheet.setColumnBreak((short)0, rowFrom, rowTo);
 
-        assertTrue("no col break at 0", sheet.isColumnBroken((short)0));
+        assertTrue("no col break at 0", sheet.isColumnBroken(0));
         assertEquals("1 col break available", 1, sheet.getNumColumnBreaks());
 
         sheet.setColumnBreak((short)0, rowFrom, rowTo);
 
-        assertTrue("no col break at 0", sheet.isColumnBroken((short)0));
+        assertTrue("no col break at 0", sheet.isColumnBroken(0));
         assertEquals("1 col break available", 1, sheet.getNumColumnBreaks());
 
         sheet.setColumnBreak((short)1, rowFrom, rowTo);
         sheet.setColumnBreak((short)10, rowFrom, rowTo);
         sheet.setColumnBreak((short)15, rowFrom, rowTo);
 
-        assertTrue("no col break at 1", sheet.isColumnBroken((short)1));
-        assertTrue("no col break at 10", sheet.isColumnBroken((short)10));
-        assertTrue("no col break at 15", sheet.isColumnBroken((short)15));
+        assertTrue("no col break at 1", sheet.isColumnBroken(1));
+        assertTrue("no col break at 10", sheet.isColumnBroken(10));
+        assertTrue("no col break at 15", sheet.isColumnBroken(15));
         assertEquals("4 col break available", 4, sheet.getNumColumnBreaks());
 
         boolean is10 = false;
@@ -299,17 +302,17 @@ public final class TestSheet extends TestCase {
 
         assertTrue("one of the breaks didnt make it", is0 && is1 && is10 && is15);
 
-        sheet.removeColumnBreak((short)15);
-        assertFalse("column break should not be there", sheet.isColumnBroken((short)15));
+        sheet.removeColumnBreak(15);
+        assertFalse("column break should not be there", sheet.isColumnBroken(15));
 
-        sheet.removeColumnBreak((short)0);
-        assertFalse("column break should not be there", sheet.isColumnBroken((short)0));
+        sheet.removeColumnBreak(0);
+        assertFalse("column break should not be there", sheet.isColumnBroken(0));
 
-        sheet.removeColumnBreak((short)1);
-        assertFalse("column break should not be there", sheet.isColumnBroken((short)1));
+        sheet.removeColumnBreak(1);
+        assertFalse("column break should not be there", sheet.isColumnBroken(1));
 
-        sheet.removeColumnBreak((short)10);
-        assertFalse("column break should not be there", sheet.isColumnBroken((short)10));
+        sheet.removeColumnBreak(10);
+        assertFalse("column break should not be there", sheet.isColumnBroken(10));
 
         assertEquals("no more breaks", 0, sheet.getNumColumnBreaks());
     }

@@ -871,7 +871,7 @@ public final class HSSFSheet {
      */
     public HSSFPrintSetup getPrintSetup()
     {
-        return new HSSFPrintSetup( getSheet().getPrintSetup() );
+        return new HSSFPrintSetup( sheet.getPageSettings().getPrintSetup() );
     }
 
     /**
@@ -880,7 +880,7 @@ public final class HSSFSheet {
      */
     public HSSFHeader getHeader()
     {
-        return new HSSFHeader( getSheet().getHeader() );
+        return new HSSFHeader( sheet.getPageSettings().getHeader() );
     }
 
     /**
@@ -889,7 +889,7 @@ public final class HSSFSheet {
      */
     public HSSFFooter getFooter()
     {
-        return new HSSFFooter( getSheet().getFooter() );
+        return new HSSFFooter( sheet.getPageSettings().getFooter() );
     }
 
     /**
@@ -929,7 +929,7 @@ public final class HSSFSheet {
      */
     public double getMargin( short margin )
     {
-        return getSheet().getMargin( margin );
+        return sheet.getPageSettings().getMargin( margin );
     }
 
     /**
@@ -939,7 +939,7 @@ public final class HSSFSheet {
      */
     public void setMargin( short margin, double size )
     {
-        getSheet().setMargin( margin, size );
+        sheet.getPageSettings().setMargin( margin, size );
     }
 
     /**
@@ -1166,7 +1166,7 @@ public final class HSSFSheet {
         }
 
         shiftMerged(startRow, endRow, n, true);
-        sheet.shiftRowBreaks(startRow, endRow, n);
+        sheet.getPageSettings().shiftRowBreaks(startRow, endRow, n);
 
         for ( int rowNum = s; rowNum >= startRow && rowNum <= endRow && rowNum >= 0 && rowNum < 65536; rowNum += inc )
         {
@@ -1393,24 +1393,21 @@ public final class HSSFSheet {
      */
     public void setRowBreak(int row) {
         validateRow(row);
-        sheet.setRowBreak(row, (short)0, (short)255);
+        sheet.getPageSettings().setRowBreak(row, (short)0, (short)255);
     }
 
     /**
-     * Determines if there is a page break at the indicated row
-     * @param row FIXME: Document this!
-     * @return FIXME: Document this!
+     * @return <code>true</code> if there is a page break at the indicated row
      */
     public boolean isRowBroken(int row) {
-        return sheet.isRowBroken(row);
+        return sheet.getPageSettings().isRowBroken(row);
     }
 
     /**
      * Removes the page break at the indicated row
-     * @param row
      */
     public void removeRowBreak(int row) {
-        sheet.removeRowBreak(row);
+        sheet.getPageSettings().removeRowBreak(row);
     }
 
     /**
@@ -1418,7 +1415,7 @@ public final class HSSFSheet {
      */
     public int[] getRowBreaks(){
         //we can probably cache this information, but this should be a sparsely used function
-        return sheet.getRowBreaks();
+        return sheet.getPageSettings().getRowBreaks();
     }
 
     /**
@@ -1426,7 +1423,7 @@ public final class HSSFSheet {
      */
     public int[] getColumnBreaks(){
         //we can probably cache this information, but this should be a sparsely used function
-        return sheet.getColumnBreaks();
+        return sheet.getPageSettings().getColumnBreaks();
     }
 
 
@@ -1436,7 +1433,7 @@ public final class HSSFSheet {
      */
     public void setColumnBreak(short column) {
         validateColumn(column);
-        sheet.setColumnBreak(column, (short)0, (short)65535);
+        sheet.getPageSettings().setColumnBreak(column, (short)0, (short)65535);
     }
 
     /**
@@ -1445,7 +1442,7 @@ public final class HSSFSheet {
      * @return FIXME: Document this!
      */
     public boolean isColumnBroken(short column) {
-        return sheet.isColumnBroken(column);
+        return sheet.getPageSettings().isColumnBroken(column);
     }
 
     /**
@@ -1453,7 +1450,7 @@ public final class HSSFSheet {
      * @param column
      */
     public void removeColumnBreak(short column) {
-        sheet.removeColumnBreak(column);
+        sheet.getPageSettings().removeColumnBreak(column);
     }
 
     /**
