@@ -17,9 +17,8 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Number
@@ -34,8 +33,7 @@ public final class NumberPtg extends ScalarConstantPtg {
     private final double field_1_value;
         
     /** Create a NumberPtg from a byte array read from disk */
-    public NumberPtg(RecordInputStream in)
-    {
+    public NumberPtg(RecordInputStream in) {
         this(in.readDouble());
     }
     
@@ -52,33 +50,21 @@ public final class NumberPtg extends ScalarConstantPtg {
         field_1_value = value;
     }
     
-    public double getValue()
-    {
+    public double getValue() {
         return field_1_value;
     }
 
-    public void writeBytes(byte [] array, int offset)
-    {
+    public void writeBytes(byte [] array, int offset) {
         array[ offset + 0 ] = sid;
         LittleEndian.putDouble(array, offset + 1, getValue());
     }
 
-    public int getSize()
-    {
+    public int getSize() {
         return SIZE;
     }
 
-    public String toFormulaString(HSSFWorkbook book)
-    {
+    protected String toFormulaString() {
         // TODO - java's rendering of double values is not quite same as excel's
         return String.valueOf(field_1_value);
-    }
-    
-    public String toString() {
-        StringBuffer sb = new StringBuffer(64);
-        sb.append(getClass().getName()).append(" [");
-        sb.append(field_1_value);
-        sb.append("]");
-        return sb.toString();
     }
 }
