@@ -28,6 +28,7 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 
 /**
  *
@@ -87,19 +88,19 @@ public final class ValueRecordsAggregate {
 
     public void removeCell(CellValueRecordInterface cell) {
         if (cell == null) {
-        	throw new IllegalArgumentException("cell must not be null");
+            throw new IllegalArgumentException("cell must not be null");
         }
         int row = cell.getRow();
         if (row >= records.length) {
-        	throw new RuntimeException("cell row is out of range");
+            throw new RuntimeException("cell row is out of range");
         }
         CellValueRecordInterface[] rowCells = records[row];
         if (rowCells == null) {
-        	throw new RuntimeException("cell row is already empty");
+            throw new RuntimeException("cell row is already empty");
         }
         short column = cell.getColumn();
         if (column >= rowCells.length) {
-        	throw new RuntimeException("cell column is out of range");
+            throw new RuntimeException("cell column is out of range");
         }
         rowCells[column] = null;
     }
@@ -265,6 +266,35 @@ public final class ValueRecordsAggregate {
             pos += (( Record ) cell).serialize(pos, data);
         }
         return pos - offset;
+    }
+    
+    public int visitCellsForRow(int rowIndex, RecordVisitor rv) {
+        int result = 0;
+        CellValueRecordInterface[] cellRecs = records[rowIndex];
+        if (cellRecs != null) {
+            for (int i = 0; i < cellRecs.length; i++) {
+                CellValueRecordInterface cvr = cellRecs[i];
+                if (cvr == null) {
+                    continue;
+                }
+                if (cvr instanceof FormulaRecordAggregate) {
+                    FormulaRecordAggregate fmAgg = (FormulaRecordAggregate) cvr;
+                    Record fmAggRec = fmAgg.getFormulaRecord();
+                    rv.visitRecord(fmAggRec);
+                    result += fmAggRec.getRecordSize();
+                    fmAggRec = fmAgg.getStringRecord();
+                    if (fmAggRec != null) {
+                        rv.visitRecord(fmAggRec);
+                        result += fmAggRec.getRecordSize();
+                    }
+                } else {
+                    Record rec = (Record) cvr;
+                    rv.visitRecord(rec);
+                    result += rec.getRecordSize();
+                }
+            }
+        }
+        return result;
     }
 
     public CellValueRecordInterface[] getValueRecords() {

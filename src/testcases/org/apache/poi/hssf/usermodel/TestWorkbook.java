@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,6 +27,8 @@ import java.util.Iterator;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.eventmodel.ERFListener;
+import org.apache.poi.hssf.eventmodel.EventRecordFactory;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.BackupRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
@@ -453,13 +456,13 @@ public final class TestWorkbook extends TestCase {
     }
 
     private static void confirmRegion(CellRangeAddress ra, CellRangeAddress rb) {
-		assertEquals(ra.getFirstRow(), rb.getFirstRow());
-		assertEquals(ra.getLastRow(), rb.getLastRow());
-		assertEquals(ra.getFirstColumn(), rb.getFirstColumn());
-		assertEquals(ra.getLastColumn(), rb.getLastColumn());
-	}
+        assertEquals(ra.getFirstRow(), rb.getFirstRow());
+        assertEquals(ra.getLastRow(), rb.getLastRow());
+        assertEquals(ra.getFirstColumn(), rb.getFirstColumn());
+        assertEquals(ra.getLastColumn(), rb.getLastColumn());
+    }
 
-	/**
+    /**
      * Test the backup field gets set as expected.
      */
 
@@ -476,38 +479,44 @@ public final class TestWorkbook extends TestCase {
         assertEquals(1, record.getBackup());
     }
 
+    private static final class RecordCounter implements ERFListener {
+        private int _count;
+
+        public RecordCounter() {
+            _count=0;
+        }
+        public int getCount() {
+            return _count;
+        }
+        public boolean processRecord(Record rec) {
+            _count++;
+            return true;
+        }
+    }
+    
     /**
      * This tests is for bug [ #506658 ] Repeating output.
      *
      * We need to make sure only one LabelSSTRecord is produced.
      */
-
     public void testRepeatingBug()
         throws Exception
     {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet    sheet    = workbook.createSheet("Design Variants");
-        HSSFRow      row      = sheet.createRow(( short ) 2);
-        HSSFCell     cell     = row.createCell(( short ) 1);
+        HSSFRow      row      = sheet.createRow(2);
+        HSSFCell     cell     = row.createCell(1);
 
         cell.setCellValue(new HSSFRichTextString("Class"));
-        cell = row.createCell(( short ) 2);
+        cell = row.createCell(2);
 
-        // workbook.write(new FileOutputStream("/a2.xls"));
-        RowRecordsAggregate rra = (RowRecordsAggregate) 
-            sheet.getSheet().findFirstRecordBySid((short)-1000);
+        byte[] data = new byte[sheet.getSheet().getSize()];
+        sheet.getSheet().serialize(0, data);
+        RecordCounter rc = new RecordCounter();
+        EventRecordFactory erf = new EventRecordFactory(rc, new short[] { LabelSSTRecord.sid, });
+        erf.processRecords(new ByteArrayInputStream(data));
         
-        int                   sstRecords     = 0;
-        Iterator              iterator       = rra.getAllRecordsIterator();
-
-        while (iterator.hasNext())
-        {
-            if ((( Record ) iterator.next()).getSid() == LabelSSTRecord.sid)
-            {
-                sstRecords++;
-            }
-        }
-        assertEquals(1, sstRecords);
+        assertEquals(1, rc.getCount());
     }
 
 

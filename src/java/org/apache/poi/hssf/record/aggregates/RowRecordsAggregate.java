@@ -27,8 +27,6 @@ import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.DBCellRecord;
 import org.apache.poi.hssf.record.IndexRecord;
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordBase;
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.RowRecord;
 
 /**
@@ -36,7 +34,7 @@ import org.apache.poi.hssf.record.RowRecord;
  * @author  andy
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class RowRecordsAggregate extends Record {
+public final class RowRecordsAggregate extends RecordAggregate {
     private int _firstrow = -1;
     private int _lastrow  = -1;
     private final Map _rowRecords;
@@ -162,128 +160,64 @@ public final class RowRecordsAggregate extends Record {
       }
       return row.getRowNumber();
     }
-
-
-    /** Serializes a block of the rows */
-    private int serializeRowBlock(final int block, final int offset, byte[] data) {
-      final int startIndex = block*DBCellRecord.BLOCK_SIZE;
-      final int endIndex = startIndex + DBCellRecord.BLOCK_SIZE;
-
-      Iterator rowIterator = _rowRecords.values().iterator();
-      int pos = offset;
-
-      //Given that we basically iterate through the rows in order,
-      //For a performance improvement, it would be better to return an instance of
-      //an iterator and use that instance throughout, rather than recreating one and
-      //having to move it to the right position.
-      int i=0;
-      for (;i<startIndex;i++)
-        rowIterator.next();
-      while(rowIterator.hasNext() && (i++ < endIndex)) {
-        RowRecord row = (RowRecord)rowIterator.next();
-        pos += row.serialize(pos, data);
-      }
-      return pos - offset;
-    }
     
+    private int visitRowRecordsForBlock(int blockIndex, RecordVisitor rv) {
+        final int startIndex = blockIndex*DBCellRecord.BLOCK_SIZE;
+        final int endIndex = startIndex + DBCellRecord.BLOCK_SIZE;
 
-    /**
-     * called by the class that is responsible for writing this sucker.
-     * Subclasses should implement this so that their data is passed back in a
-     * byte array.
-     *
-     * @param offset    offset to begin writing at
-     * @param data      byte array containing instance data
-     * @return number of bytes written
-     */
-    public int serialize(int offset, byte [] data) {
+        Iterator rowIterator = _rowRecords.values().iterator();
+
+        //Given that we basically iterate through the rows in order,
+        //For a performance improvement, it would be better to return an instance of
+        //an iterator and use that instance throughout, rather than recreating one and
+        //having to move it to the right position.
+        int i=0;
+        for (;i<startIndex;i++)
+          rowIterator.next();
+        int result = 0;
+        while(rowIterator.hasNext() && (i++ < endIndex)) {
+          Record rec = (Record)rowIterator.next();
+          result += rec.getRecordSize();
+          rv.visitRecord(rec);
+        }
+        return result;
+      }
+    
+    public void visitContainedRecords(RecordVisitor rv) {
         ValueRecordsAggregate cells = _valuesAgg;
-        int pos = offset;
-
+       
         //DBCells are serialized before row records.
         final int blockCount = getRowBlockCount();
-        for (int block=0;block<blockCount;block++) {
-          //Serialize a block of rows.
-          //Hold onto the position of the first row in the block
-          final int rowStartPos = pos;
-          //Hold onto the size of this block that was serialized
-          final int rowBlockSize = serializeRowBlock(block, pos, data);
-          pos += rowBlockSize;
-          //Serialize a block of cells for those rows
-          final int startRowNumber = getStartRowNumberForBlock(block);
-          final int endRowNumber = getEndRowNumberForBlock(block);
-          DBCellRecord cellRecord = new DBCellRecord();
-          //Note: Cell references start from the second row...
-          int cellRefOffset = (rowBlockSize-RowRecord.ENCODED_SIZE);
-          for (int row=startRowNumber;row<=endRowNumber;row++) {
-            if (null != cells && cells.rowHasCells(row)) {
-              final int rowCellSize = cells.serializeCellRow(row, pos, data);
-              pos += rowCellSize;
-              //Add the offset to the first cell for the row into the DBCellRecord.
-              cellRecord.addCellOffset((short)cellRefOffset);
-              cellRefOffset = rowCellSize;
+        for (int blockIndex = 0; blockIndex < blockCount; blockIndex++) {
+            // Serialize a block of rows.
+            // Hold onto the position of the first row in the block
+            int pos=0;
+            // Hold onto the size of this block that was serialized
+            final int rowBlockSize = visitRowRecordsForBlock(blockIndex, rv);
+            pos += rowBlockSize;
+            // Serialize a block of cells for those rows
+            final int startRowNumber = getStartRowNumberForBlock(blockIndex);
+            final int endRowNumber = getEndRowNumberForBlock(blockIndex);
+            DBCellRecord cellRecord = new DBCellRecord();
+            // Note: Cell references start from the second row...
+            int cellRefOffset = (rowBlockSize - RowRecord.ENCODED_SIZE);
+            for (int row = startRowNumber; row <= endRowNumber; row++) {
+                if (cells.rowHasCells(row)) {
+                    final int rowCellSize = cells.visitCellsForRow(row, rv);
+                    pos += rowCellSize;
+                    // Add the offset to the first cell for the row into the
+                    // DBCellRecord.
+                    cellRecord.addCellOffset((short) cellRefOffset);
+                    cellRefOffset = rowCellSize;
+                }
             }
-          }
-          //Calculate Offset from the start of a DBCellRecord to the first Row
-          cellRecord.setRowOffset(pos - rowStartPos);
-          pos += cellRecord.serialize(pos, data);
-
+            // Calculate Offset from the start of a DBCellRecord to the first Row
+            cellRecord.setRowOffset(pos);
+            rv.visitRecord(cellRecord);
         }
-        return pos - offset;
     }
 
-    /**
-     * You never fill an aggregate
-     */
-    protected void fillFields(RecordInputStream in)
-    {
-    }
-
-    /**
-     * called by constructor, should throw runtime exception in the event of a
-     * record passed with a differing ID.
-     *
-     * @param id alleged id for this record
-     */
-
-    protected void validateSid(short id)
-    {
-    }
-
-    /**
-     * return the non static version of the id for this record.
-     */
-
-    public short getSid()
-    {
-        return -1000;
-    }
-
-    public int getRecordSize() {
-
-        int retval = this._rowRecords.size() * RowRecord.ENCODED_SIZE;
-        
-        for (Iterator itr = _valuesAgg.getIterator(); itr.hasNext();) {
-            RecordBase record = (RecordBase) itr.next();
-            retval += record.getRecordSize();
-        }
-
-        // Add space for the IndexRecord and DBCell records
-        final int nBlocks = getRowBlockCount();
-        int nRows = 0;
-        for (Iterator itr = getIterator(); itr.hasNext();) {
-            RowRecord row = (RowRecord)itr.next();
-            if (_valuesAgg.rowHasCells(row.getRowNumber())) {
-                nRows++;
-            }
-        }
-        retval += IndexRecord.getRecordSizeForBlockCount(nBlocks);
-        retval += DBCellRecord.calculateSizeOfRecords(nBlocks, nRows);
-        return retval;
-    }
-
-    public Iterator getIterator()
-    {
+    public Iterator getIterator() {
         return _rowRecords.values().iterator();
     }
     
@@ -297,23 +231,6 @@ public final class RowRecordsAggregate extends Record {
         }
         return result.iterator();
     }
-    /**
-     * Performs a deep clone of the record
-     */
-    public Object clone()
-    {
-        TreeMap rows = new TreeMap();
-
-        for ( Iterator rowIter = getIterator(); rowIter.hasNext(); )
-        {
-            //return the cloned Row Record & insert
-            RowRecord row = (RowRecord) ( (RowRecord) rowIter.next() ).clone();
-            rows.put(row, row);
-        }
-        ValueRecordsAggregate valuesAgg = (ValueRecordsAggregate) _valuesAgg.clone();
-        return new RowRecordsAggregate(rows, valuesAgg);
-    }
-
 
     public int findStartOfRowOutlineGroup(int row)
     {

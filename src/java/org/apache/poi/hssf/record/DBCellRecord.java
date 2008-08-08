@@ -35,6 +35,7 @@ public final class DBCellRecord extends Record {
 
     public DBCellRecord()
     {
+        field_2_cell_offsets = new short[0];
     }
 
     /**
@@ -184,5 +185,10 @@ public final class DBCellRecord extends Record {
     public boolean isInValueSection()
     {
         return true;
+    }
+    public Object clone() {
+        // TODO - make immutable.
+        // this should be safe because only the instantiating code mutates these objects
+        return this;
     }
 }
