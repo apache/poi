@@ -62,31 +62,31 @@ public final class PageSettingsBlock extends RecordAggregate {
 	private PrintSetupRecord printSetup;
 	private Record _bitmap;
 
-    public PageSettingsBlock(RecordStream rs) {
-    	while(true) {
-    		if (!readARecord(rs)) {
-    			break;
-    		}
-    	}
-    }
-
-    /**
-     * Creates a PageSettingsBlock with default settings
-     */
-    public PageSettingsBlock() {
-        _rowBreaksRecord = new HorizontalPageBreakRecord();
-        _columnBreaksRecord = new VerticalPageBreakRecord();
-        header = createHeader();
-        footer = createFooter();
-        _hCenter = createHCenter();
-        _vCenter = createVCenter();
-        printSetup = createPrintSetup();
+	public PageSettingsBlock(RecordStream rs) {
+		while(true) {
+			if (!readARecord(rs)) {
+				break;
+			}
+		}
 	}
 
-    /**
-     * @return <code>true</code> if the specified Record sid is one belonging to the 
-     * 'Page Settings Block'.
-     */
+	/**
+	 * Creates a PageSettingsBlock with default settings
+	 */
+	public PageSettingsBlock() {
+		_rowBreaksRecord = new HorizontalPageBreakRecord();
+		_columnBreaksRecord = new VerticalPageBreakRecord();
+		header = createHeader();
+		footer = createFooter();
+		_hCenter = createHCenter();
+		_vCenter = createVCenter();
+		printSetup = createPrintSetup();
+	}
+
+	/**
+	 * @return <code>true</code> if the specified Record sid is one belonging to the 
+	 * 'Page Settings Block'.
+	 */
 	public static boolean isComponentRecord(int sid) {
 		switch (sid) {
 			case HorizontalPageBreakRecord.sid:
@@ -105,8 +105,8 @@ public final class PageSettingsBlock extends RecordAggregate {
 				return true;
 		}
 		return false;
-    }
-    
+	}
+
 	private boolean readARecord(RecordStream rs) {
 		switch (rs.peekNextSid()) {
 			case HorizontalPageBreakRecord.sid:
@@ -155,365 +155,365 @@ public final class PageSettingsBlock extends RecordAggregate {
 		return true;
 	}
 
-    private PageBreakRecord getRowBreaksRecord() {
-        if (_rowBreaksRecord == null) {
-            _rowBreaksRecord = new HorizontalPageBreakRecord();
-        }
-        return _rowBreaksRecord;
-    }
-    
-    private PageBreakRecord getColumnBreaksRecord() {
-        if (_columnBreaksRecord == null) {
-            _columnBreaksRecord = new VerticalPageBreakRecord();
-        }
-        return _columnBreaksRecord;
-    }
-	
-	
-    /**
-     * Sets a page break at the indicated column
-     *
-     */
-    public void setColumnBreak(short column, short fromRow, short toRow) {
-        getColumnBreaksRecord().addBreak(column, fromRow, toRow);
-    }
+	private PageBreakRecord getRowBreaksRecord() {
+		if (_rowBreaksRecord == null) {
+			_rowBreaksRecord = new HorizontalPageBreakRecord();
+		}
+		return _rowBreaksRecord;
+	}
 
-    /**
-     * Removes a page break at the indicated column
-     *
-     */
-    public void removeColumnBreak(short column) {
-        getColumnBreaksRecord().removeBreak(column);
-    }
-	
-	
-	
+	private PageBreakRecord getColumnBreaksRecord() {
+		if (_columnBreaksRecord == null) {
+			_columnBreaksRecord = new VerticalPageBreakRecord();
+		}
+		return _columnBreaksRecord;
+	}
+
+
+	/**
+	 * Sets a page break at the indicated column
+	 *
+	 */
+	public void setColumnBreak(short column, short fromRow, short toRow) {
+		getColumnBreaksRecord().addBreak(column, fromRow, toRow);
+	}
+
+	/**
+	 * Removes a page break at the indicated column
+	 *
+	 */
+	public void removeColumnBreak(int column) {
+		getColumnBreaksRecord().removeBreak(column);
+	}
+
+
+
 
 	public void visitContainedRecords(RecordVisitor rv) {
-        visitIfPresent(_rowBreaksRecord, rv);
-        visitIfPresent(_columnBreaksRecord, rv);
-        visitIfPresent(header, rv);
-        visitIfPresent(footer, rv);
-        visitIfPresent(_hCenter, rv);
-        visitIfPresent(_vCenter, rv);
-        visitIfPresent(_leftMargin, rv);
-        visitIfPresent(_rightMargin, rv);
-        visitIfPresent(_topMargin, rv);
-        visitIfPresent(_bottomMargin, rv);
-        visitIfPresent(_pls, rv);
-        visitIfPresent(printSetup, rv);
-        visitIfPresent(_bitmap, rv);
+		visitIfPresent(_rowBreaksRecord, rv);
+		visitIfPresent(_columnBreaksRecord, rv);
+		visitIfPresent(header, rv);
+		visitIfPresent(footer, rv);
+		visitIfPresent(_hCenter, rv);
+		visitIfPresent(_vCenter, rv);
+		visitIfPresent(_leftMargin, rv);
+		visitIfPresent(_rightMargin, rv);
+		visitIfPresent(_topMargin, rv);
+		visitIfPresent(_bottomMargin, rv);
+		visitIfPresent(_pls, rv);
+		visitIfPresent(printSetup, rv);
+		visitIfPresent(_bitmap, rv);
 	}
 	private static void visitIfPresent(Record r, RecordVisitor rv) {
 		if (r != null) {
 			rv.visitRecord(r);
 		}
 	}
-	
-    /**
-     * creates the Header Record and sets it to nothing/0 length
-     */
-    private static HeaderRecord createHeader() {
-        HeaderRecord retval = new HeaderRecord();
 
-        retval.setHeaderLength(( byte ) 0);
-        retval.setHeader(null);
-        return retval;
-    }
+	/**
+	 * creates the Header Record and sets it to nothing/0 length
+	 */
+	private static HeaderRecord createHeader() {
+		HeaderRecord retval = new HeaderRecord();
 
-    /**
-     * creates the Footer Record and sets it to nothing/0 length
-     */
-    private static FooterRecord createFooter() {
-        FooterRecord retval = new FooterRecord();
+		retval.setHeaderLength(( byte ) 0);
+		retval.setHeader(null);
+		return retval;
+	}
 
-        retval.setFooterLength(( byte ) 0);
-        retval.setFooter(null);
-        return retval;
-    }
+	/**
+	 * creates the Footer Record and sets it to nothing/0 length
+	 */
+	private static FooterRecord createFooter() {
+		FooterRecord retval = new FooterRecord();
 
-    /**
-     * creates the HCenter Record and sets it to false (don't horizontally center)
-     */
-    private static HCenterRecord createHCenter() {
-        HCenterRecord retval = new HCenterRecord();
+		retval.setFooterLength(( byte ) 0);
+		retval.setFooter(null);
+		return retval;
+	}
 
-        retval.setHCenter(false);
-        return retval;
-    }
+	/**
+	 * creates the HCenter Record and sets it to false (don't horizontally center)
+	 */
+	private static HCenterRecord createHCenter() {
+		HCenterRecord retval = new HCenterRecord();
 
-    /**
-     * creates the VCenter Record and sets it to false (don't horizontally center)
-    */
-    private static VCenterRecord createVCenter() {
-        VCenterRecord retval = new VCenterRecord();
+		retval.setHCenter(false);
+		return retval;
+	}
 
-        retval.setVCenter(false);
-        return retval;
-    }
+	/**
+	 * creates the VCenter Record and sets it to false (don't horizontally center)
+	*/
+	private static VCenterRecord createVCenter() {
+		VCenterRecord retval = new VCenterRecord();
 
-    /**
-     * creates the PrintSetup Record and sets it to defaults and marks it invalid
-     * @see org.apache.poi.hssf.record.PrintSetupRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a PrintSetupRecord
-     */
-    private static PrintSetupRecord createPrintSetup() {
-        PrintSetupRecord retval = new PrintSetupRecord();
+		retval.setVCenter(false);
+		return retval;
+	}
 
-        retval.setPaperSize(( short ) 1);
-        retval.setScale(( short ) 100);
-        retval.setPageStart(( short ) 1);
-        retval.setFitWidth(( short ) 1);
-        retval.setFitHeight(( short ) 1);
-        retval.setOptions(( short ) 2);
-        retval.setHResolution(( short ) 300);
-        retval.setVResolution(( short ) 300);
-        retval.setHeaderMargin( 0.5);
-        retval.setFooterMargin( 0.5);
-        retval.setCopies(( short ) 0);
-        return retval;
-    }
-    
-    
-    /**
-     * Returns the HeaderRecord.
-     * @return HeaderRecord for the sheet.
-     */
-    public HeaderRecord getHeader ()
-    {
-    return header;
-    }
+	/**
+	 * creates the PrintSetup Record and sets it to defaults and marks it invalid
+	 * @see org.apache.poi.hssf.record.PrintSetupRecord
+	 * @see org.apache.poi.hssf.record.Record
+	 * @return record containing a PrintSetupRecord
+	 */
+	private static PrintSetupRecord createPrintSetup() {
+		PrintSetupRecord retval = new PrintSetupRecord();
 
-    /**
-     * Sets the HeaderRecord.
-     * @param newHeader The new HeaderRecord for the sheet.
-     */
-    public void setHeader (HeaderRecord newHeader)
-    {
-        header = newHeader;
-    }
+		retval.setPaperSize(( short ) 1);
+		retval.setScale(( short ) 100);
+		retval.setPageStart(( short ) 1);
+		retval.setFitWidth(( short ) 1);
+		retval.setFitHeight(( short ) 1);
+		retval.setOptions(( short ) 2);
+		retval.setHResolution(( short ) 300);
+		retval.setVResolution(( short ) 300);
+		retval.setHeaderMargin( 0.5);
+		retval.setFooterMargin( 0.5);
+		retval.setCopies(( short ) 0);
+		return retval;
+	}
 
-    /**
-     * Returns the FooterRecord.
-     * @return FooterRecord for the sheet.
-     */
-    public FooterRecord getFooter ()
-    {
-        return footer;
-    }
 
-    /**
-     * Sets the FooterRecord.
-     * @param newFooter The new FooterRecord for the sheet.
-     */
-    public void setFooter (FooterRecord newFooter)
-    {
-        footer = newFooter;
-    }
+	/**
+	 * Returns the HeaderRecord.
+	 * @return HeaderRecord for the sheet.
+	 */
+	public HeaderRecord getHeader ()
+	{
+	return header;
+	}
 
-    /**
-     * Returns the PrintSetupRecord.
-     * @return PrintSetupRecord for the sheet.
-     */
-    public PrintSetupRecord getPrintSetup ()
-    {
-        return printSetup;
-    }
+	/**
+	 * Sets the HeaderRecord.
+	 * @param newHeader The new HeaderRecord for the sheet.
+	 */
+	public void setHeader (HeaderRecord newHeader)
+	{
+		header = newHeader;
+	}
 
-    /**
-     * Sets the PrintSetupRecord.
-     * @param newPrintSetup The new PrintSetupRecord for the sheet.
-     */
-    public void setPrintSetup (PrintSetupRecord newPrintSetup)
-    {
-        printSetup = newPrintSetup;
-    }
+	/**
+	 * Returns the FooterRecord.
+	 * @return FooterRecord for the sheet.
+	 */
+	public FooterRecord getFooter ()
+	{
+		return footer;
+	}
 
-    
-    private Margin getMarginRec(int marginIndex) {
-        switch (marginIndex) {
-            case Sheet.LeftMargin:   return _leftMargin;
-            case Sheet.RightMargin:  return _rightMargin;
-            case Sheet.TopMargin:    return _topMargin;
-            case Sheet.BottomMargin: return _bottomMargin;
-        }
-        throw new RuntimeException( "Unknown margin constant:  " + marginIndex );
-    }
-    
+	/**
+	 * Sets the FooterRecord.
+	 * @param newFooter The new FooterRecord for the sheet.
+	 */
+	public void setFooter (FooterRecord newFooter)
+	{
+		footer = newFooter;
+	}
 
-    /**
-     * Gets the size of the margin in inches.
-     * @param margin which margin to get
-     * @return the size of the margin
-     */
+	/**
+	 * Returns the PrintSetupRecord.
+	 * @return PrintSetupRecord for the sheet.
+	 */
+	public PrintSetupRecord getPrintSetup ()
+	{
+		return printSetup;
+	}
+
+	/**
+	 * Sets the PrintSetupRecord.
+	 * @param newPrintSetup The new PrintSetupRecord for the sheet.
+	 */
+	public void setPrintSetup (PrintSetupRecord newPrintSetup)
+	{
+		printSetup = newPrintSetup;
+	}
+
+
+	private Margin getMarginRec(int marginIndex) {
+		switch (marginIndex) {
+			case Sheet.LeftMargin:   return _leftMargin;
+			case Sheet.RightMargin:  return _rightMargin;
+			case Sheet.TopMargin:    return _topMargin;
+			case Sheet.BottomMargin: return _bottomMargin;
+		}
+		throw new RuntimeException( "Unknown margin constant:  " + marginIndex );
+	}
+
+
+	/**
+	 * Gets the size of the margin in inches.
+	 * @param margin which margin to get
+	 * @return the size of the margin
+	 */
    public double getMargin(short margin) {
 	   Margin m = getMarginRec(margin);
 	   if (m != null) {
 		return m.getMargin();
 	} else {
-       switch ( margin )
-       {
-       case Sheet.LeftMargin:
-           return .75;
-       case Sheet.RightMargin:
-           return .75;
-       case Sheet.TopMargin:
-           return 1.0;
-       case Sheet.BottomMargin:
-           return 1.0;
-       }
-        throw new RuntimeException( "Unknown margin constant:  " + margin );
+	   switch ( margin )
+	   {
+	   case Sheet.LeftMargin:
+		   return .75;
+	   case Sheet.RightMargin:
+		   return .75;
+	   case Sheet.TopMargin:
+		   return 1.0;
+	   case Sheet.BottomMargin:
+		   return 1.0;
+	   }
+		throw new RuntimeException( "Unknown margin constant:  " + margin );
    }
    }
-    
-    /**
-     * Sets the size of the margin in inches.
-     * @param margin which margin to get
-     * @param size the size of the margin
-     */
+
+	/**
+	 * Sets the size of the margin in inches.
+	 * @param margin which margin to get
+	 * @param size the size of the margin
+	 */
    public void setMargin(short margin, double size) {
    Margin m = getMarginRec(margin);
    if (m  == null) {
-       switch ( margin )
-       {
-       case Sheet.LeftMargin:
-           _leftMargin = new LeftMarginRecord();
-           m = _leftMargin;
-           break;
-       case Sheet.RightMargin:
-           _rightMargin = new RightMarginRecord();
-           m = _rightMargin;
-           break;
-       case Sheet.TopMargin:
-           _topMargin = new TopMarginRecord();
-           m = _topMargin;
-           break;
-       case Sheet.BottomMargin:
-           _bottomMargin = new BottomMarginRecord();
-           m = _bottomMargin;
-           break;
-       default :
-           throw new RuntimeException( "Unknown margin constant:  " + margin );
-       }
+	   switch ( margin )
+	   {
+	   case Sheet.LeftMargin:
+		   _leftMargin = new LeftMarginRecord();
+		   m = _leftMargin;
+		   break;
+	   case Sheet.RightMargin:
+		   _rightMargin = new RightMarginRecord();
+		   m = _rightMargin;
+		   break;
+	   case Sheet.TopMargin:
+		   _topMargin = new TopMarginRecord();
+		   m = _topMargin;
+		   break;
+	   case Sheet.BottomMargin:
+		   _bottomMargin = new BottomMarginRecord();
+		   m = _bottomMargin;
+		   break;
+	   default :
+		   throw new RuntimeException( "Unknown margin constant:  " + margin );
+	   }
    }
    m.setMargin( size );
    }
-    
-    /**
-     * Shifts all the page breaks in the range "count" number of rows/columns
-     * @param breaks The page record to be shifted
-     * @param start Starting "main" value to shift breaks
-     * @param stop Ending "main" value to shift breaks
-     * @param count number of units (rows/columns) to shift by
-     */
-    private static void shiftBreaks(PageBreakRecord breaks, int start, int stop, int count) {
 
-        Iterator iterator = breaks.getBreaksIterator();
-        List shiftedBreak = new ArrayList();
-        while(iterator.hasNext())
-        {
-            PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
-            int breakLocation = breakItem.main;
-            boolean inStart = (breakLocation >= start);
-            boolean inEnd = (breakLocation <= stop);
-            if(inStart && inEnd)
-                shiftedBreak.add(breakItem);
-        }
+	/**
+	 * Shifts all the page breaks in the range "count" number of rows/columns
+	 * @param breaks The page record to be shifted
+	 * @param start Starting "main" value to shift breaks
+	 * @param stop Ending "main" value to shift breaks
+	 * @param count number of units (rows/columns) to shift by
+	 */
+	private static void shiftBreaks(PageBreakRecord breaks, int start, int stop, int count) {
 
-        iterator = shiftedBreak.iterator();
-        while (iterator.hasNext()) {
-            PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
-            breaks.removeBreak(breakItem.main);
-            breaks.addBreak((short)(breakItem.main+count), breakItem.subFrom, breakItem.subTo);
-        }
-    }
-    
-    
-    /**
-     * Sets a page break at the indicated row
-     * @param row
-     */
-    public void setRowBreak(int row, short fromCol, short toCol) {
-        getRowBreaksRecord().addBreak((short)row, fromCol, toCol);
-    }
+		Iterator iterator = breaks.getBreaksIterator();
+		List shiftedBreak = new ArrayList();
+		while(iterator.hasNext())
+		{
+			PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
+			int breakLocation = breakItem.main;
+			boolean inStart = (breakLocation >= start);
+			boolean inEnd = (breakLocation <= stop);
+			if(inStart && inEnd)
+				shiftedBreak.add(breakItem);
+		}
 
-    /**
-     * Removes a page break at the indicated row
-     * @param row
-     */
-    public void removeRowBreak(int row) {
-        if (getRowBreaksRecord().getBreaks().length < 1)
-            throw new IllegalArgumentException("Sheet does not define any row breaks");
-        getRowBreaksRecord().removeBreak((short)row);
-    }
-
-    /**
-     * Queries if the specified row has a page break
-     * @param row
-     * @return true if the specified row has a page break
-     */
-    public boolean isRowBroken(int row) {
-        return getRowBreaksRecord().getBreak(row) != null;
-    }
+		iterator = shiftedBreak.iterator();
+		while (iterator.hasNext()) {
+			PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
+			breaks.removeBreak(breakItem.main);
+			breaks.addBreak((short)(breakItem.main+count), breakItem.subFrom, breakItem.subTo);
+		}
+	}
 
 
-    /**
-     * Queries if the specified column has a page break
-     *
-     * @return <code>true</code> if the specified column has a page break
-     */
-    public boolean isColumnBroken(short column) {
-        return getColumnBreaksRecord().getBreak(column) != null;
-    }
+	/**
+	 * Sets a page break at the indicated row
+	 * @param row
+	 */
+	public void setRowBreak(int row, short fromCol, short toCol) {
+		getRowBreaksRecord().addBreak((short)row, fromCol, toCol);
+	}
 
-    /**
-     * Shifts the horizontal page breaks for the indicated count
-     * @param startingRow
-     * @param endingRow
-     * @param count
-     */
-    public void shiftRowBreaks(int startingRow, int endingRow, int count) {
-        shiftBreaks(getRowBreaksRecord(), startingRow, endingRow, count);
-    }
+	/**
+	 * Removes a page break at the indicated row
+	 * @param row
+	 */
+	public void removeRowBreak(int row) {
+		if (getRowBreaksRecord().getBreaks().length < 1)
+			throw new IllegalArgumentException("Sheet does not define any row breaks");
+		getRowBreaksRecord().removeBreak((short)row);
+	}
 
-    /**
-     * Shifts the vertical page breaks for the indicated count
-     * @param startingCol
-     * @param endingCol
-     * @param count
-     */
-    public void shiftColumnBreaks(short startingCol, short endingCol, short count) {
-        shiftBreaks(getColumnBreaksRecord(), startingCol, endingCol, count);
-    }
+	/**
+	 * Queries if the specified row has a page break
+	 * @param row
+	 * @return true if the specified row has a page break
+	 */
+	public boolean isRowBroken(int row) {
+		return getRowBreaksRecord().getBreak(row) != null;
+	}
 
-    /**
-     * @return all the horizontal page breaks, never <code>null</code>
-     */
-    public int[] getRowBreaks() {
-        return getRowBreaksRecord().getBreaks();
-    }
 
-    /**
-     * @return the number of row page breaks
-     */
-    public int getNumRowBreaks(){
-        return getRowBreaksRecord().getNumBreaks();
-    }
+	/**
+	 * Queries if the specified column has a page break
+	 *
+	 * @return <code>true</code> if the specified column has a page break
+	 */
+	public boolean isColumnBroken(int column) {
+		return getColumnBreaksRecord().getBreak(column) != null;
+	}
 
-    /**
-     * @return all the column page breaks, never <code>null</code>
-     */
-    public int[] getColumnBreaks(){
-        return getColumnBreaksRecord().getBreaks();
-    }
+	/**
+	 * Shifts the horizontal page breaks for the indicated count
+	 * @param startingRow
+	 * @param endingRow
+	 * @param count
+	 */
+	public void shiftRowBreaks(int startingRow, int endingRow, int count) {
+		shiftBreaks(getRowBreaksRecord(), startingRow, endingRow, count);
+	}
 
-    /**
-     * @return the number of column page breaks
-     */
-    public int getNumColumnBreaks(){
-        return getColumnBreaksRecord().getNumBreaks();
-    }
+	/**
+	 * Shifts the vertical page breaks for the indicated count
+	 * @param startingCol
+	 * @param endingCol
+	 * @param count
+	 */
+	public void shiftColumnBreaks(short startingCol, short endingCol, short count) {
+		shiftBreaks(getColumnBreaksRecord(), startingCol, endingCol, count);
+	}
+
+	/**
+	 * @return all the horizontal page breaks, never <code>null</code>
+	 */
+	public int[] getRowBreaks() {
+		return getRowBreaksRecord().getBreaks();
+	}
+
+	/**
+	 * @return the number of row page breaks
+	 */
+	public int getNumRowBreaks(){
+		return getRowBreaksRecord().getNumBreaks();
+	}
+
+	/**
+	 * @return all the column page breaks, never <code>null</code>
+	 */
+	public int[] getColumnBreaks(){
+		return getColumnBreaksRecord().getBreaks();
+	}
+
+	/**
+	 * @return the number of column page breaks
+	 */
+	public int getNumColumnBreaks(){
+		return getColumnBreaksRecord().getNumBreaks();
+	}
 
 	public VCenterRecord getVCenter() {
 		return _vCenter;
@@ -522,5 +522,4 @@ public final class PageSettingsBlock extends RecordAggregate {
 	public HCenterRecord getHCenter() {
 		return _hCenter;
 	}
-	
 }

@@ -36,10 +36,8 @@ import org.apache.poi.hssf.record.DimensionsRecord;
 import org.apache.poi.hssf.record.DrawingRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
-import org.apache.poi.hssf.record.FooterRecord;
 import org.apache.poi.hssf.record.GridsetRecord;
 import org.apache.poi.hssf.record.GutsRecord;
-import org.apache.poi.hssf.record.HeaderRecord;
 import org.apache.poi.hssf.record.IndexRecord;
 import org.apache.poi.hssf.record.IterationRecord;
 import org.apache.poi.hssf.record.MergeCellsRecord;
@@ -49,7 +47,6 @@ import org.apache.poi.hssf.record.PaneRecord;
 import org.apache.poi.hssf.record.PasswordRecord;
 import org.apache.poi.hssf.record.PrintGridlinesRecord;
 import org.apache.poi.hssf.record.PrintHeadersRecord;
-import org.apache.poi.hssf.record.PrintSetupRecord;
 import org.apache.poi.hssf.record.ProtectRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
@@ -1451,63 +1448,10 @@ public final class Sheet implements Model {
         return -1;
     }
 
-    /**
-     * Returns the HeaderRecord.
-     * @return HeaderRecord for the sheet.
-     */
-    public HeaderRecord getHeader ()
-    {
-    return getPageSettings().getHeader();
-    }
-
     public WindowTwoRecord getWindowTwo() {
         return windowTwo;
     }
-    /**
-     * Sets the HeaderRecord.
-     * @param newHeader The new HeaderRecord for the sheet.
-     */
-    public void setHeader (HeaderRecord newHeader)
-    {
-        getPageSettings().setHeader(newHeader);
-    }
-
-    /**
-     * Returns the FooterRecord.
-     * @return FooterRecord for the sheet.
-     */
-    public FooterRecord getFooter ()
-    {
-        return getPageSettings().getFooter();
-    }
-
-    /**
-     * Sets the FooterRecord.
-     * @param newFooter The new FooterRecord for the sheet.
-     */
-    public void setFooter (FooterRecord newFooter)
-    {
-        getPageSettings().setFooter(newFooter);
-    }
-
-    /**
-     * Returns the PrintSetupRecord.
-     * @return PrintSetupRecord for the sheet.
-     */
-    public PrintSetupRecord getPrintSetup ()
-    {
-        return getPageSettings().getPrintSetup();
-    }
-
-    /**
-     * Sets the PrintSetupRecord.
-     * @param newPrintSetup The new PrintSetupRecord for the sheet.
-     */
-    public void setPrintSetup (PrintSetupRecord newPrintSetup)
-    {
-        getPageSettings().setPrintSetup(newPrintSetup);
-    }
-
+ 
     /**
      * Returns the PrintGridlinesRecord.
      * @return PrintGridlinesRecord for the sheet.
@@ -1532,24 +1476,6 @@ public final class Sheet implements Model {
      */
     public void setSelected(boolean sel) {
         windowTwo.setSelected(sel);
-    }
-
-     /**
-      * Gets the size of the margin in inches.
-      * @param margin which margin to get
-      * @return the size of the margin
-      */
-    public double getMargin(short margin) {
-        return getPageSettings().getMargin(margin);
-    }
-
-     /**
-      * Sets the size of the margin in inches.
-      * @param margin which margin to get
-      * @param size the size of the margin
-      */
-    public void setMargin(short margin, double size) {
-        getPageSettings().setMargin(margin, size);
     }
 
     public int getEofLoc()
@@ -1878,103 +1804,6 @@ public final class Sheet implements Model {
         return _psBlock;
     }
 
-    /**
-     * Sets a page break at the indicated row
-     * @param row
-     */
-    public void setRowBreak(int row, short fromCol, short toCol) {
-        getPageSettings().setRowBreak(row, fromCol, toCol);
-    }
-
-    /**
-     * Removes a page break at the indicated row
-     * @param row
-     */
-    public void removeRowBreak(int row) {
-        getPageSettings().removeRowBreak(row);
-    }
-
-    /**
-     * Queries if the specified row has a page break
-     * @param row
-     * @return true if the specified row has a page break
-     */
-    public boolean isRowBroken(int row) {
-        return getPageSettings().isRowBroken(row);
-    }
-
-    /**
-     * Sets a page break at the indicated column
-     *
-     */
-    public void setColumnBreak(short column, short fromRow, short toRow) {
-        getPageSettings().setColumnBreak(column, fromRow, toRow);
-    }
-
-    /**
-     * Removes a page break at the indicated column
-     *
-     */
-    public void removeColumnBreak(short column) {
-        getPageSettings().removeColumnBreak(column);
-    }
-
-    /**
-     * Queries if the specified column has a page break
-     *
-     * @return <code>true</code> if the specified column has a page break
-     */
-    public boolean isColumnBroken(short column) {
-        return getPageSettings().isColumnBroken(column);
-    }
-
-    /**
-     * Shifts the horizontal page breaks for the indicated count
-     * @param startingRow
-     * @param endingRow
-     * @param count
-     */
-    public void shiftRowBreaks(int startingRow, int endingRow, int count) {
-        getPageSettings().shiftRowBreaks(startingRow, endingRow, count);
-    }
-
-    /**
-     * Shifts the vertical page breaks for the indicated count
-     * @param startingCol
-     * @param endingCol
-     * @param count
-     */
-    public void shiftColumnBreaks(short startingCol, short endingCol, short count) {
-        getPageSettings().shiftColumnBreaks(startingCol, endingCol, count);
-    }
-
-    /**
-     * @return all the horizontal page breaks, never <code>null</code>
-     */
-    public int[] getRowBreaks() {
-        return getPageSettings().getRowBreaks();
-    }
-
-    /**
-     * @return the number of row page breaks
-     */
-    public int getNumRowBreaks(){
-        return getPageSettings().getNumRowBreaks();
-    }
-
-    /**
-     * @return all the column page breaks, never <code>null</code>
-     */
-    public int[] getColumnBreaks(){
-        return getPageSettings().getColumnBreaks();
-    }
-
-    /**
-     * @return the number of column page breaks
-     */
-    public int getNumColumnBreaks(){
-        return getPageSettings().getNumColumnBreaks();
-    }
 
     public void setColumnGroupCollapsed( short columnNumber, boolean collapsed )
     {
