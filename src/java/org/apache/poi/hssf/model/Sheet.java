@@ -77,7 +77,6 @@ import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
-import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.MergedCellsTable;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
@@ -389,6 +388,7 @@ public final class Sheet implements Model {
             _destList.add(r.clone());
         }
     }
+
     /**
      * Clones the low level records of this sheet and returns the new sheet instance.
      * This method is implemented by adding methods for deep cloning to all records that
@@ -396,53 +396,18 @@ public final class Sheet implements Model {
      * When adding a new record, implement a public clone method if and only if the record
      * belongs to a sheet.
      */
-    public Sheet cloneSheet()
-    {
-      ArrayList clonedRecords = new ArrayList(this.records.size());
-      for (int i=0; i<this.records.size();i++) {
-        RecordBase rb = (RecordBase) this.records.get(i);
-        if (rb instanceof RecordAggregate) {
-            ((RecordAggregate)rb).visitContainedRecords(new RecordCloner(clonedRecords));
-            // TODO - make sure this logic works for the other RecordAggregates
-            continue;
+    public Sheet cloneSheet() {
+        ArrayList clonedRecords = new ArrayList(this.records.size());
+        for (int i = 0; i < this.records.size(); i++) {
+            RecordBase rb = (RecordBase) this.records.get(i);
+            if (rb instanceof RecordAggregate) {
+                ((RecordAggregate) rb).visitContainedRecords(new RecordCloner(clonedRecords));
+                continue;
+            }
+            Record rec = (Record) ((Record) rb).clone();
+            clonedRecords.add(rec);
         }
-        Record rec = (Record)((Record)rb).clone();
-        //Need to pull out the Row record and the Value records from their
-        //Aggregates.
-        //This is probably the best way to do it since we probably dont want the createSheet
-        //To cater for these artificial Record types
-        if (rec instanceof RowRecordsAggregate) {
-          RowRecordsAggregate rrAgg = (RowRecordsAggregate)rec;
-          for (Iterator rowIter = rrAgg.getAllRecordsIterator();rowIter.hasNext();) {
-            Record valRec = (Record)rowIter.next();
-
-            if (valRec instanceof FormulaRecordAggregate) {
-                FormulaRecordAggregate fmAgg = (FormulaRecordAggregate)valRec;
-                Record fmAggRec = fmAgg.getFormulaRecord();
-                if (fmAggRec != null) {
-                    clonedRecords.add(fmAggRec);
-                }
-                fmAggRec =   fmAgg.getStringRecord();
-                if (fmAggRec != null) {
-                    clonedRecords.add(fmAggRec);
-                }
-              } else {
-                clonedRecords.add(valRec);
-              }
-          }
-        } else if (rec instanceof FormulaRecordAggregate) {  //Is this required now??
-          FormulaRecordAggregate fmAgg = (FormulaRecordAggregate)rec;
-          Record fmAggRec = fmAgg.getFormulaRecord();
-          if (fmAggRec != null)
-            clonedRecords.add(fmAggRec);
-          fmAggRec =   fmAgg.getStringRecord();
-          if (fmAggRec != null)
-            clonedRecords.add(fmAggRec);
-        } else {
-          clonedRecords.add(rec);
-        }
-      }
-      return createSheet(clonedRecords, 0, 0);
+        return createSheet(clonedRecords, 0, 0);
     }
 
 
@@ -856,11 +821,12 @@ public final class Sheet implements Model {
         {
             d.setFirstRow(row.getRowNumber());
         }
-        //IndexRecord index = null;
-         //If the row exists remove it, so that any cells attached to the row are removed
-         RowRecord existingRow = _rowsAggregate.getRow(row.getRowNumber());
-         if (existingRow != null)
-           _rowsAggregate.removeRow(existingRow);
+
+        //If the row exists remove it, so that any cells attached to the row are removed
+        RowRecord existingRow = _rowsAggregate.getRow(row.getRowNumber());
+        if (existingRow != null) {
+            _rowsAggregate.removeRow(existingRow);
+        }
 
         _rowsAggregate.insertRow(row);
 
@@ -1507,6 +1473,11 @@ public final class Sheet implements Model {
                 continue;
             }
             retval += record.getRecordSize();
+        }
+        // add space for IndexRecord if needed
+        if (_rowsAggregate != null) {
+            // rowsAggregate knows how to make the index record
+            retval += IndexRecord.getRecordSizeForBlockCount(_rowsAggregate.getRowBlockCount());
         }
         // Add space for UncalcedRecord
         if (_isUncalced) {
