@@ -156,10 +156,10 @@ public final class TestFormulaParser extends TestCase {
 		HSSFRow row = sheet.createRow(0);
 		HSSFCell cell;
 
-		cell = row.createCell((short)0);
+		cell = row.createCell(0);
 		cell.setCellFormula("NoQuotesNeeded!A1");
 
-		cell = row.createCell((short)1);
+		cell = row.createCell(1);
 		cell.setCellFormula("'Quotes Needed Here &#$@'!A1");
 	}
 
@@ -226,7 +226,7 @@ public final class TestFormulaParser extends TestCase {
 		HSSFRow row = sheet.createRow(0);
 		HSSFCell cell;
 
-		cell = row.createCell((short)0);
+		cell = row.createCell(0);
 		cell.setCellFormula("Cash_Flow!A1");
 	}
 
@@ -259,7 +259,7 @@ public final class TestFormulaParser extends TestCase {
 
 		HSSFSheet sheet = wb.createSheet("Test");
 		HSSFRow row = sheet.createRow(0);
-		HSSFCell cell = row.createCell((short)0);
+		HSSFCell cell = row.createCell(0);
 		String formula = null;
 
 		cell.setCellFormula("1.3E21/3");
@@ -330,7 +330,7 @@ public final class TestFormulaParser extends TestCase {
 
 		HSSFSheet sheet = wb.createSheet("Test");
 		HSSFRow row = sheet.createRow(0);
-		HSSFCell cell = row.createCell((short)0);
+		HSSFCell cell = row.createCell(0);
 		String formula = null;
 
 		// starts from decimal point
@@ -369,7 +369,7 @@ public final class TestFormulaParser extends TestCase {
 
 		HSSFSheet sheet = wb.createSheet("Test");
 		HSSFRow row = sheet.createRow(0);
-		HSSFCell cell = row.createCell((short)0);
+		HSSFCell cell = row.createCell(0);
 		String formula = null;
 
 		cell.setCellFormula("A1.A2");
@@ -566,6 +566,7 @@ public final class TestFormulaParser extends TestCase {
 		confirmParseErrorLiteral(ErrPtg.NAME_INVALID, "#NAME?");
 		confirmParseErrorLiteral(ErrPtg.NUM_ERROR, "#NUM!");
 		confirmParseErrorLiteral(ErrPtg.N_A, "#N/A");
+		parseFormula("HLOOKUP(F7,#REF!,G7,#REF!)");
 	}
 
 	private static void confirmParseErrorLiteral(ErrPtg expectedToken, String formula) {
@@ -603,7 +604,7 @@ public final class TestFormulaParser extends TestCase {
 		wb.setSheetName(0, "Sheet1");
 
 		HSSFRow row = sheet.createRow(0);
-		HSSFCell cell = row.createCell((short)0);
+		HSSFCell cell = row.createCell(0);
 		cell.setCellFormula("right(\"test\"\"ing\", 3)");
 		String actualCellFormula = cell.getCellFormula();
 		if("RIGHT(\"test\"ing\",3)".equals(actualCellFormula)) {
@@ -670,7 +671,7 @@ public final class TestFormulaParser extends TestCase {
 		wb.setSheetName(0, "Sheet1");
 
 		HSSFRow row = sheet.createRow(0);
-		HSSFCell cell = row.createCell((short)0);
+		HSSFCell cell = row.createCell(0);
 		cell.setCellFormula("SUM(A32769:A32770)");
 		if("SUM(A-32767:A-32766)".equals(cell.getCellFormula())) {
 			fail("Identified bug 44539");
@@ -768,6 +769,13 @@ public final class TestFormulaParser extends TestCase {
 		} catch (FormulaParseException e) {
 			assertEquals("Parse error near char 10 ';' in specified formula 'round(3.14;2)'. Expected ',' or ')'", e.getMessage());
 		}
+
+		try {
+			parseFormula(" =2+2");
+			throw new AssertionFailedError("Didn't get parse exception as expected");
+		} catch (FormulaParseException e) {
+			assertEquals("The specified formula ' =2+2' starts with an equals sign which is not allowed.", e.getMessage());
+		}
 	}
 	
 	/**
@@ -811,7 +819,7 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals(2, ptgs.length);
 		assertEquals(NamePtg.class, ptgs[0].getClass());
 
-		HSSFCell cell = sheet.createRow(0).createCell((short)0);
+		HSSFCell cell = sheet.createRow(0).createCell(0);
 		cell.setCellFormula("count(pfy1)");
 		assertEquals("COUNT(pfy1)", cell.getCellFormula());
 		try {
@@ -823,6 +831,5 @@ public final class TestFormulaParser extends TestCase {
 			}
 		}
 		cell.setCellFormula("count(fp1)"); // plain cell ref, col is in range
-		
 	}
 }
