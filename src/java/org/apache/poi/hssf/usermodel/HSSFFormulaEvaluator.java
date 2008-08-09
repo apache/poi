@@ -1,19 +1,19 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
 
 package org.apache.poi.hssf.usermodel;
 
@@ -27,7 +27,6 @@ import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.AreaPtg;
-import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.BoolPtg;
 import org.apache.poi.hssf.record.formula.ControlPtg;
 import org.apache.poi.hssf.record.formula.IntPtg;
@@ -37,7 +36,6 @@ import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.record.formula.NumberPtg;
 import org.apache.poi.hssf.record.formula.OperationPtg;
-import org.apache.poi.hssf.record.formula.ParenthesisPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
@@ -93,17 +91,20 @@ public class HSSFFormulaEvaluator {
     }
 
     
-    protected HSSFRow row;
-    protected HSSFSheet sheet;
-    protected HSSFWorkbook workbook;
+    protected HSSFSheet _sheet;
+    protected HSSFWorkbook _workbook;
     
     public HSSFFormulaEvaluator(HSSFSheet sheet, HSSFWorkbook workbook) {
-        this.sheet = sheet;
-        this.workbook = workbook;
+        _sheet = sheet;
+        _workbook = workbook;
     }
     
+    /**
+     * Does nothing
+     * @deprecated - not needed, since the current row can be derived from the cell
+     */
     public void setCurrentRow(HSSFRow row) {
-        this.row = row;
+        // do nothing
     }
 
     
@@ -142,7 +143,7 @@ public class HSSFFormulaEvaluator {
                 retval.setErrorValue(cell.getErrorCellValue());
                 break;
             case HSSFCell.CELL_TYPE_FORMULA:
-                retval = getCellValueForEval(internalEvaluate(cell, row, sheet, workbook));
+                retval = getCellValueForEval(internalEvaluate(cell, _sheet, _workbook));
                 break;
             case HSSFCell.CELL_TYPE_NUMERIC:
                 retval = new CellValue(HSSFCell.CELL_TYPE_NUMERIC);
@@ -180,7 +181,7 @@ public class HSSFFormulaEvaluator {
         if (cell != null) {
             switch (cell.getCellType()) {
             case HSSFCell.CELL_TYPE_FORMULA:
-                CellValue cv = getCellValueForEval(internalEvaluate(cell, row, sheet, workbook));
+                CellValue cv = getCellValueForEval(internalEvaluate(cell, _sheet, _workbook));
                 switch (cv.getCellType()) {
                 case HSSFCell.CELL_TYPE_BOOLEAN:
                     cell.setCellValue(cv.getBooleanValue());
@@ -225,7 +226,7 @@ public class HSSFFormulaEvaluator {
         if (cell != null) {
             switch (cell.getCellType()) {
             case HSSFCell.CELL_TYPE_FORMULA:
-                CellValue cv = getCellValueForEval(internalEvaluate(cell, row, sheet, workbook));
+                CellValue cv = getCellValueForEval(internalEvaluate(cell, _sheet, _workbook));
                 switch (cv.getCellType()) {
                 case HSSFCell.CELL_TYPE_BOOLEAN:
                     cell.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
@@ -270,7 +271,6 @@ public class HSSFFormulaEvaluator {
 
 			for (Iterator rit = sheet.rowIterator(); rit.hasNext();) {
 				HSSFRow r = (HSSFRow)rit.next();
-				evaluator.setCurrentRow(r);
 
 				for (Iterator cit = r.cellIterator(); cit.hasNext();) {
 					HSSFCell c = (HSSFCell)cit.next();
@@ -324,8 +324,8 @@ public class HSSFFormulaEvaluator {
      * else a runtime exception will be thrown somewhere inside the method.
      * (Hence this is a private method.)
      */
-    private static ValueEval internalEvaluate(HSSFCell srcCell, HSSFRow srcRow, HSSFSheet sheet, HSSFWorkbook workbook) {
-        int srcRowNum = srcRow.getRowNum();
+    private static ValueEval internalEvaluate(HSSFCell srcCell, HSSFSheet sheet, HSSFWorkbook workbook) {
+        int srcRowNum = srcCell.getRowIndex();
         short srcColNum = srcCell.getCellNum();
         
         
@@ -392,7 +392,7 @@ public class HSSFFormulaEvaluator {
                 int rowIx = refPtg.getRow();
                 HSSFRow row = sheet.getRow(rowIx);
                 HSSFCell cell = (row != null) ? row.getCell(colIx) : null;
-                stack.push(createRef2DEval(refPtg, cell, row, sheet, workbook));
+                stack.push(createRef2DEval(refPtg, cell, sheet, workbook));
             }
             else if (ptg instanceof Ref3DPtg) {
                 Ref3DPtg refPtg = (Ref3DPtg) ptg;
@@ -402,7 +402,7 @@ public class HSSFFormulaEvaluator {
                 HSSFSheet xsheet = workbook.getSheetAt(wb.getSheetIndexFromExternSheetIndex(refPtg.getExternSheetIndex()));
                 HSSFRow row = xsheet.getRow(rowIx);
                 HSSFCell cell = (row != null) ? row.getCell(colIx) : null;
-                stack.push(createRef3DEval(refPtg, cell, row, xsheet, workbook));
+                stack.push(createRef3DEval(refPtg, cell, xsheet, workbook));
             }
             else if (ptg instanceof AreaPtg) {
                 AreaPtg ap = (AreaPtg) ptg;
@@ -592,7 +592,7 @@ public class HSSFFormulaEvaluator {
             case HSSFCell.CELL_TYPE_STRING:
                 return new StringEval(cell.getRichStringCellValue().getString());
             case HSSFCell.CELL_TYPE_FORMULA:
-                return internalEvaluate(cell, row, sheet, workbook);
+                return internalEvaluate(cell, sheet, workbook);
             case HSSFCell.CELL_TYPE_BOOLEAN:
                 return BoolEval.valueOf(cell.getBooleanCellValue());
             case HSSFCell.CELL_TYPE_BLANK:
@@ -608,7 +608,7 @@ public class HSSFFormulaEvaluator {
      * Non existent cells are treated as RefEvals containing BlankEval.
      */
     private static Ref2DEval createRef2DEval(RefPtg ptg, HSSFCell cell, 
-            HSSFRow row, HSSFSheet sheet, HSSFWorkbook workbook) {
+            HSSFSheet sheet, HSSFWorkbook workbook) {
         if (cell == null) {
             return new Ref2DEval(ptg, BlankEval.INSTANCE);
         }
@@ -619,7 +619,7 @@ public class HSSFFormulaEvaluator {
             case HSSFCell.CELL_TYPE_STRING:
                 return new Ref2DEval(ptg, new StringEval(cell.getRichStringCellValue().getString()));
             case HSSFCell.CELL_TYPE_FORMULA:
-                return new Ref2DEval(ptg, internalEvaluate(cell, row, sheet, workbook));
+                return new Ref2DEval(ptg, internalEvaluate(cell, sheet, workbook));
             case HSSFCell.CELL_TYPE_BOOLEAN:
                 return new Ref2DEval(ptg, BoolEval.valueOf(cell.getBooleanCellValue()));
             case HSSFCell.CELL_TYPE_BLANK:
@@ -634,7 +634,7 @@ public class HSSFFormulaEvaluator {
      * create a Ref3DEval for Ref3DPtg.
      */
     private static Ref3DEval createRef3DEval(Ref3DPtg ptg, HSSFCell cell, 
-            HSSFRow row, HSSFSheet sheet, HSSFWorkbook workbook) {
+            HSSFSheet sheet, HSSFWorkbook workbook) {
         if (cell == null) {
             return new Ref3DEval(ptg, BlankEval.INSTANCE);
         }
@@ -644,7 +644,7 @@ public class HSSFFormulaEvaluator {
             case HSSFCell.CELL_TYPE_STRING:
                 return new Ref3DEval(ptg, new StringEval(cell.getRichStringCellValue().getString()));
             case HSSFCell.CELL_TYPE_FORMULA:
-                return new Ref3DEval(ptg, internalEvaluate(cell, row, sheet, workbook));
+                return new Ref3DEval(ptg, internalEvaluate(cell, sheet, workbook));
             case HSSFCell.CELL_TYPE_BOOLEAN:
                 return new Ref3DEval(ptg, BoolEval.valueOf(cell.getBooleanCellValue()));
             case HSSFCell.CELL_TYPE_BLANK:
@@ -756,7 +756,7 @@ public class HSSFFormulaEvaluator {
      * @param workbook
      */
     void inspectPtgs(String formula) {
-        FormulaParser fp = new FormulaParser(formula, workbook);
+        FormulaParser fp = new FormulaParser(formula, _workbook);
         fp.parse();
         Ptg[] ptgs = fp.getRPNPtg();
         System.out.println("<ptg-group>");

@@ -32,8 +32,6 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.CellValue;
  */
 public final class TestIsBlank extends TestCase {
 
-	
-
 	public void test3DArea() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet();
@@ -41,13 +39,12 @@ public final class TestIsBlank extends TestCase {
         wb.createSheet();
         wb.setSheetName(1, "Sheet2");
         HSSFRow row = sheet1.createRow(0);
-        HSSFCell cell = row.createCell((short)0);
+        HSSFCell cell = row.createCell(0);
 
          
         cell.setCellFormula("isblank(Sheet2!A1:A1)");
         
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet1, wb);
-        fe.setCurrentRow(row);
         CellValue result = fe.evaluate(cell);
         assertEquals(HSSFCell.CELL_TYPE_BOOLEAN, result.getCellType());
         assertEquals(true, result.getBooleanValue());
@@ -57,6 +54,5 @@ public final class TestIsBlank extends TestCase {
         result = fe.evaluate(cell);
         assertEquals(HSSFCell.CELL_TYPE_BOOLEAN, result.getCellType());
         assertEquals(true, result.getBooleanValue());
-        
    }
 }

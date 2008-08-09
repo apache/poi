@@ -1,25 +1,22 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
 
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 
 import junit.framework.Assert;
@@ -70,10 +67,10 @@ public final class TestLookupFunctionsFromSpreadsheet extends TestCase {
 		/** Row (zero-based) in each sheet where the evaluation cases start.   */
 		public static final int START_TEST_CASES_ROW_INDEX = 4; // Row '5'
 		/**  Index of the column that contains the function names */
-		public static final short COLUMN_INDEX_MARKER = 0; // Column 'A'
-		public static final short COLUMN_INDEX_EVALUATION = 1; // Column 'B'
-		public static final short COLUMN_INDEX_EXPECTED_RESULT = 2; // Column 'C'
-		public static final short COLUMN_ROW_COMMENT = 3; // Column 'D'
+		public static final int COLUMN_INDEX_MARKER = 0; // Column 'A'
+		public static final int COLUMN_INDEX_EVALUATION = 1; // Column 'B'
+		public static final int COLUMN_INDEX_EXPECTED_RESULT = 2; // Column 'C'
+		public static final int COLUMN_ROW_COMMENT = 3; // Column 'D'
 	
 		/** Used to indicate when there are no more test cases on the current sheet   */
 		public static final String TEST_CASES_END_MARKER = "<end>";
@@ -240,7 +237,6 @@ public final class TestLookupFunctionsFromSpreadsheet extends TestCase {
 			if (c == null || c.getCellType() != HSSFCell.CELL_TYPE_FORMULA) {
 				continue;
 			}
-			evaluator.setCurrentRow(r);
 			CellValue actualValue = evaluator.evaluate(c);
 			HSSFCell expectedValueCell = r.getCell(SS.COLUMN_INDEX_EXPECTED_RESULT);
 			String rowComment = getRowCommentColumnValue(r);
@@ -307,9 +303,8 @@ public final class TestLookupFunctionsFromSpreadsheet extends TestCase {
 			throw new RuntimeException("First sheet's name was '" + firstSheetName + "' but expected '" + SS.README_SHEET_NAME + "'");
 		}
 		HSSFSheet sheet = workbook.getSheetAt(0);
-		String specifiedClassName = sheet.getRow(2).getCell((short)0).getRichStringCellValue().getString();
+		String specifiedClassName = sheet.getRow(2).getCell(0).getRichStringCellValue().getString();
 		assertEquals("Test class name in spreadsheet comment", getClass().getName(), specifiedClassName);
-		
 	}
 
 
@@ -362,7 +357,7 @@ public final class TestLookupFunctionsFromSpreadsheet extends TestCase {
 		if(r == null) {
 			return null;
 		}
-		HSSFCell cell = r.getCell((short) colIndex);
+		HSSFCell cell = r.getCell(colIndex);
 		if(cell == null) {
 			return null;
 		}

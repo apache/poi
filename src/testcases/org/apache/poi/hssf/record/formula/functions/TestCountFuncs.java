@@ -290,7 +290,6 @@ public final class TestCountFuncs extends TestCase {
 				continue;
 			}
 			HSSFCell cell = row.getCell(COL_IX_ACTUAL);
-			fe.setCurrentRow(row);
 			CellValue cv = fe.evaluate(cell);
 			double actualValue = cv.getNumberValue();
 			double expectedValue = row.getCell(COL_IX_EXPECTED).getNumericCellValue();

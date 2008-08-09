@@ -67,7 +67,6 @@ public final class TestFormulaBugs extends TestCase {
 
 		// We might as well evaluate the formula
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
-		fe.setCurrentRow(row);
 		CellValue cv = fe.evaluate(cell);
 
 		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
@@ -84,20 +83,20 @@ public final class TestFormulaBugs extends TestCase {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("input");
 		// input row 0
-		HSSFRow row = sheet.createRow((short) 0);
-		HSSFCell cell = row.createCell((short) 0);
-		cell = row.createCell((short) 1);
+		HSSFRow row = sheet.createRow(0);
+		HSSFCell cell = row.createCell(0);
+		cell = row.createCell(1);
 		cell.setCellValue(1); // B1
 		// input row 1
-		row = sheet.createRow((short) 1);
-		cell = row.createCell((short) 1);
+		row = sheet.createRow(1);
+		cell = row.createCell(1);
 		cell.setCellValue(999); // B2
 
 		int rno = 4;
 		row = sheet.createRow(rno);
-		cell = row.createCell((short) 1); // B5
+		cell = row.createCell(1); // B5
 		cell.setCellFormula("isnumber(b1)");
-		cell = row.createCell((short) 3); // D5
+		cell = row.createCell(3); // D5
 		cell.setCellFormula("IF(ISNUMBER(b1),b1,b2)");
 
 		if (false) { // set true to check excel file manually
@@ -113,7 +112,6 @@ public final class TestFormulaBugs extends TestCase {
 		
 		// use POI's evaluator as an extra sanity check
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
-		fe.setCurrentRow(row);
 		CellValue cv;
 		cv = fe.evaluate(cell);
 		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
@@ -132,7 +130,7 @@ public final class TestFormulaBugs extends TestCase {
 		HSSFSheet sheet1 = wb.createSheet("Sheet1");
 
 		HSSFRow row = sheet1.createRow(0);
-		HSSFCell cell = row.createCell((short) 0);
+		HSSFCell cell = row.createCell(0);
 
 		// it's important to create the referenced sheet first
 		HSSFSheet sheet2 = wb.createSheet("A"); // note name 'A'
@@ -165,7 +163,6 @@ public final class TestFormulaBugs extends TestCase {
 		double expectedResult = (4.0 * 8.0 + 5.0 * 9.0) / 10.0;
 
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet1, wb);
-		fe.setCurrentRow(row);
 		CellValue cv = fe.evaluate(cell);
 
 		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
@@ -174,6 +171,6 @@ public final class TestFormulaBugs extends TestCase {
 
 	private static void addCell(HSSFSheet sheet, int rowIx, int colIx,
 			double value) {
-		sheet.createRow(rowIx).createCell((short) colIx).setCellValue(value);
+		sheet.createRow(rowIx).createCell(colIx).setCellValue(value);
 	}
 }
