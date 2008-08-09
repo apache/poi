@@ -159,9 +159,13 @@ public class XWPFDocument extends POIXMLDocument {
 		return wordDoc.getDocument();
 	}
 	
-	public Iterator<XWPFParagraph> getParagraphsIterator()
-	{
+	public Iterator<XWPFParagraph> getParagraphsIterator() {
 		return paragraphs.iterator();
+	}
+	public XWPFParagraph[] getParagraphs() {
+		return paragraphs.toArray(
+			new XWPFParagraph[paragraphs.size()]
+		);
 	}
 	
 	public Iterator<XWPFTable> getTablesIterator()
