@@ -261,6 +261,27 @@ public class FileInformationBlock extends FIBAbstractType
       _fieldHandler.setFieldSize(FIBFieldHandler.STTBFFFN, lcbSttbFffn);
     }
 
+    /**
+     * Return the offset to the PlcfHdd, in the table stream,
+     * i.e. fcPlcfHdd
+     */
+    public int getPlcfHddOffset() {
+       return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCFHDD);
+    }
+    /**
+     * Return the size of the PlcfHdd, in the table stream,
+     * i.e. lcbPlcfHdd
+     */
+    public int getPlcfHddSize() {
+    	return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFHDD);
+    }
+    public void setPlcfHddOffset(int fcPlcfHdd) {
+    	_fieldHandler.setFieldOffset(FIBFieldHandler.PLCFHDD, fcPlcfHdd);
+    }
+    public void setPlcfHddSize(int lcbPlcfHdd) {
+    	_fieldHandler.setFieldSize(FIBFieldHandler.PLCFHDD, lcbPlcfHdd);
+    }
+
     public int getFcSttbSavedBy()
     {
         return _fieldHandler.getFieldOffset(FIBFieldHandler.STTBSAVEDBY);
@@ -300,7 +321,7 @@ public class FileInformationBlock extends FIBAbstractType
     {
       _fieldHandler.setFieldSize(FIBFieldHandler.PLFLFO, modifiedHigh);
     }
-
+    
     
     /**
      * How many bytes of the main stream contain real data.
