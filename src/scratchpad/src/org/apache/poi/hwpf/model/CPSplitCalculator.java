@@ -55,9 +55,8 @@ public class CPSplitCalculator {
 	 * Length comes from FibRgLw97.ccpFtn
 	 */
 	public int getFootnoteEnd() {
-		throw new IllegalStateException("Not yet finished!");
-//		return getFootnoteStart() +
-//			???;
+		return getFootnoteStart() +
+			fib.getCcpFtn();
 	}
 	
 	/**
@@ -72,8 +71,71 @@ public class CPSplitCalculator {
 	 * Length comes from FibRgLw97.ccpHdd
 	 */
 	public int getHeaderStoryEnd() {
-		throw new IllegalStateException("Not yet finished!");
-//		return getHeaderStoryStart() +
-//			???;
+		return getHeaderStoryStart() +
+			fib.getCcpHdd();
+	}
+	
+	/**
+	 * Where the Comment (Atn) text starts.
+	 * Follows straight on from the header stories.
+	 */
+	public int getCommentsStart() {
+		return getHeaderStoryEnd();
+	}
+	/**
+	 * Where the Comment (Atn) text ends.
+	 * Length comes from FibRgLw97.ccpAtn
+	 */
+	public int getCommentsEnd() {
+		return getCommentsStart() +
+			fib.getCcpCommentAtn();
+	}
+	
+	/**
+	 * Where the End Note text starts.
+	 * Follows straight on from the comments.
+	 */
+	public int getEndNoteStart() {
+		return getCommentsEnd();
+	}
+	/**
+	 * Where the End Note text ends.
+	 * Length comes from FibRgLw97.ccpEdn
+	 */
+	public int getEndNoteEnd() {
+		return getEndNoteStart() +
+			fib.getCcpEdn();
+	}
+	
+	/**
+	 * Where the Main Textbox text starts.
+	 * Follows straight on from the end note.
+	 */
+	public int getMainTextboxStart() {
+		return getEndNoteEnd();
+	}
+	/**
+	 * Where the Main textbox text ends.
+	 * Length comes from FibRgLw97.ccpTxBx
+	 */
+	public int getMainTextboxEnd() {
+		return getMainTextboxStart() +
+			fib.getCcpTxtBx();
+	}
+	
+	/**
+	 * Where the Header Textbox text starts.
+	 * Follows straight on from the main textbox.
+	 */
+	public int getHeaderTextboxStart() {
+		return getMainTextboxEnd();
+	}
+	/**
+	 * Where the Header textbox text ends.
+	 * Length comes from FibRgLw97.ccpHdrTxBx
+	 */
+	public int getHeaderTextboxEnd() {
+		return getHeaderTextboxStart() +
+			fib.getCcpHdrTxtBx();
 	}
 }
