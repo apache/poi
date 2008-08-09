@@ -43,25 +43,17 @@ public final class HSSFRow implements Comparable {
     /**
      * reference to low level representation
      */
-
     private RowRecord row;
 
     /**
      * reference to containing low level Workbook
      */
-
     private HSSFWorkbook book;
 
     /**
      * reference to containing Sheet
      */
-
     private Sheet sheet;
-
-    // TODO - ditch this constructor
-    HSSFRow()
-    {
-    }
 
     /**
      * Creates new HSSFRow from scratch. Only HSSFSheet should do this.
