@@ -78,10 +78,13 @@ public class TestHWPFRangeParts extends TestCase {
 	;
 	
 	private static final String u_header =
+		"\r\r" +
 		"This is a simple header, with a \u20ac euro symbol in it.\r"
 	;
 	private static final String u_footer =
-		"The footer, with Moli\u00e8re, has Unicode in it.\r"
+		"\r\r\r" +
+		"The footer, with Moli\u00e8re, has Unicode in it.\r" +
+		"\r\r\r\r"
 	;
 	
 	/**
