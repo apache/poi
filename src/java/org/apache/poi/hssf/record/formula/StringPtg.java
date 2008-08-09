@@ -17,11 +17,10 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.StringUtil;
-import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * String Stores a String value in a formula value stored in the format
@@ -55,8 +54,6 @@ public final class StringPtg extends ScalarConstantPtg {
         } else {
             field_3_string = in.readCompressedUnicode(field_1_length);
         }
-
-        // setValue(new String(data, offset+3, data[offset+1] + 256*data[offset+2]));
     }
 
     /**
@@ -100,7 +97,7 @@ public final class StringPtg extends ScalarConstantPtg {
         }
     }
 
-    public String toFormulaString(Workbook book) {
+    protected String toFormulaString() {
         String value = field_3_string;
         int len = value.length();
         StringBuffer sb = new StringBuffer(len + 4);
@@ -115,14 +112,6 @@ public final class StringPtg extends ScalarConstantPtg {
         }
 
         sb.append(FORMULA_DELIMITER);
-        return sb.toString();
-    }
-
-    public String toString() {
-        StringBuffer sb = new StringBuffer(64);
-        sb.append(getClass().getName()).append(" [");
-        sb.append(field_3_string);
-        sb.append("]");
         return sb.toString();
     }
 }

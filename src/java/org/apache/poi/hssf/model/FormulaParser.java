@@ -20,7 +20,6 @@ package org.apache.poi.hssf.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-import java.util.regex.Pattern;
 
 //import PTGs .. since we need everything, import *
 import org.apache.poi.hssf.record.formula.*;
@@ -138,9 +137,16 @@ public final class FormulaParser {
 
     /** Report What Was Expected */
     private RuntimeException expected(String s) {
-        String msg = "Parse error near char " + (pointer-1) + " '" + look + "'"
-            + " in specified formula '" + formulaString + "'. Expected "
-            + s;
+        String msg;
+        
+        if (look == '=' && formulaString.substring(0, pointer-1).trim().length() < 1) {
+            msg = "The specified formula '" + formulaString 
+                + "' starts with an equals sign which is not allowed.";
+        } else {
+            msg = "Parse error near char " + (pointer-1) + " '" + look + "'"
+                + " in specified formula '" + formulaString + "'. Expected "
+                + s;
+        }
         return new FormulaParseException(msg);
     }
 
