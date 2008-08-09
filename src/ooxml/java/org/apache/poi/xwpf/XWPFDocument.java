@@ -17,11 +17,16 @@
 package org.apache.poi.xwpf;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Iterator;
 
 import org.apache.poi.POIXMLDocument;
+import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
+import org.apache.poi.xwpf.usermodel.XWPFComment;
+import org.apache.poi.xwpf.usermodel.XWPFHyperlink;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.exceptions.OpenXML4JException;
@@ -30,23 +35,14 @@ import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackageRelationship;
 import org.openxml4j.opc.PackageRelationshipCollection;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBody;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTComment;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocument1;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTComment;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.DocumentDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.FtrDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.HdrDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CommentsDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
-
-import org.apache.poi.xwpf.usermodel.XWPFFooter;
-import org.apache.poi.xwpf.usermodel.XWPFHeader;
-import org.apache.poi.xwpf.usermodel.XWPFHyperlink;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFComment;
-import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CommentsDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.DocumentDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
 
 /**
  * Experimental class to do low level processing
@@ -75,10 +71,9 @@ public class XWPFDocument extends POIXMLDocument {
 	protected List<XWPFHyperlink> hyperlinks;
 	protected List<XWPFParagraph> paragraphs;
 	protected List<XWPFTable> tables;
-	/** Should only ever be zero or one of these, we think */
-	protected XWPFHeader header;
-	/** Should only ever be zero or one of these, we think */
-	protected XWPFFooter footer;
+	
+	/** Handles the joy of different headers/footers for different pages */
+	private XWPFHeaderFooterPolicy headerFooterPolicy;
 	
 	public XWPFDocument(Package container) throws OpenXML4JException, IOException, XmlException {
 		super(container);
@@ -133,23 +128,8 @@ public class XWPFDocument extends POIXMLDocument {
             embedds.add(getTargetPart(rel));
         }
         
-        // Fetch the header, if there's one
-        PackageRelationshipCollection headerRel = getCorePart().getRelationshipsByType(HEADER_RELATION_TYPE);
-		if(headerRel != null && headerRel.size() > 0) {
-			PackagePart headerPart = getTargetPart(headerRel.getRelationship(0));
-			header = new XWPFHeader(
-					HdrDocument.Factory.parse(headerPart.getInputStream()).getHdr()
-			);
-		}
-        
-        // Fetch the footer, if there's one
-        PackageRelationshipCollection footerRel = getCorePart().getRelationshipsByType(FOOTER_RELATION_TYPE);
-		if(footerRel != null && footerRel.size() > 0) {
-			PackagePart footerPart = getTargetPart(footerRel.getRelationship(0));
-			footer = new XWPFFooter(
-					FtrDocument.Factory.parse(footerPart.getInputStream()).getFtr()
-			);
-		}
+        // Sort out headers and footers
+        headerFooterPolicy = new XWPFHeaderFooterPolicy(this);
 	}
 	
 	/**
@@ -207,11 +187,26 @@ public class XWPFDocument extends POIXMLDocument {
 		);
 	}
 	
-	public XWPFHeader getDocumentHeader() {
-		return header;
+	/**
+	 * Get the document part that's defined as the
+	 *  given relationship of the core document.
+	 */
+	public PackagePart getPartById(String id) {
+		try {
+			return getTargetPart(
+					getCorePart().getRelationship(id)
+			);
+		} catch(InvalidFormatException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
-	public XWPFFooter getDocumentFooter() {
-		return footer;
+
+	/**
+	 * Returns the policy on headers and footers, which
+	 *  also provides a way to get at them.
+	 */
+	public XWPFHeaderFooterPolicy getHeaderFooterPolicy() {
+		return headerFooterPolicy;
 	}
 	
 	/**
