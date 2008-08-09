@@ -128,7 +128,7 @@ public class WordExtractor extends POIOLE2TextExtractor {
     		TextPiece piece = (TextPiece) textPieces.next();
 
     		String encoding = "Cp1252";
-    		if (piece.usesUnicode()) {
+    		if (piece.isUnicode()) {
     			encoding = "UTF-16LE";
     		}
     		try {

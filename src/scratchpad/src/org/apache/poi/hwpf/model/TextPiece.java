@@ -73,9 +73,9 @@ public class TextPiece extends PropertyNode implements Comparable
   }
   
   /**
-   * @return If this text piece uses unicode
+   * @return If this text piece is unicode
    */
-   public boolean usesUnicode()
+   public boolean isUnicode()
    {
       return _usesUnicode;
    }

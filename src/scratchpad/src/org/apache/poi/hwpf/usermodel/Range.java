@@ -239,7 +239,7 @@ public class Range
 	for (int i = _textStart; i < _textEnd; i++)
 	{
 	  TextPiece piece = (TextPiece)_text.get(i);
-	  if (piece.usesUnicode())
+	  if (piece.isUnicode())
 		  return true;
 	}
 
@@ -332,8 +332,6 @@ public class Range
     // Since this is the first item in our list, it is safe to assume that
     // _start >= tp.getStart()
     int insertIndex = _start - tp.getStart();
-	if (tp.usesUnicode())
-		insertIndex /= 2;
     sb.insert(insertIndex, text);
 
     int adjustedLength = _doc.getTextTable().adjustForInsert(_textStart, text.length());
