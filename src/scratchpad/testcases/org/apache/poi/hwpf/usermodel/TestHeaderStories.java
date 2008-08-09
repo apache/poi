@@ -103,6 +103,87 @@ public class TestHeaderStories extends TestCase {
 		assertEquals("\u0003\r\r", hs.getEndnoteSeparator());
 		assertEquals("\u0004\r\r", hs.getEndnoteContSeparator());
 		assertEquals("", hs.getEndnoteContNote());
+		
+		assertEquals("", hs.getFirstHeader());
+		assertEquals("", hs.getEvenHeader());
+		assertEquals("First header column!\tMid header Right header!\r\r", hs.getOddHeader());
 
+		
+		assertEquals("", hs.getFirstFooter());
+		assertEquals("", hs.getEvenFooter());
+		assertEquals("", hs.getOddFooter());
+    }
+    
+    public void testFooter() throws Exception {
+    	HeaderStories hs = new HeaderStories(footer);
+    	
+		assertEquals("", hs.getFirstHeader());
+		assertEquals("", hs.getEvenHeader());
+		assertEquals("\r\r", hs.getOddHeader());
+
+		
+		assertEquals("", hs.getFirstFooter());
+		assertEquals("", hs.getEvenFooter());
+		assertEquals("Footer Left\tFooter Middle Footer Right\r\r", hs.getOddFooter());
+    }
+    
+    public void testHeaderFooter() throws Exception {
+    	HeaderStories hs = new HeaderStories(headerFooter);
+    	
+		assertEquals("", hs.getFirstHeader());
+		assertEquals("", hs.getEvenHeader());
+		assertEquals("I am some simple header text here\r\r\r", hs.getOddHeader());
+
+		
+		assertEquals("", hs.getFirstFooter());
+		assertEquals("", hs.getEvenFooter());
+		assertEquals("Footer Left\tFooter Middle Footer Right\r\r", hs.getOddFooter());
+    }
+    
+    public void testOddEven() throws Exception {
+    	HeaderStories hs = new HeaderStories(oddEven);
+    	
+		assertEquals("", hs.getFirstHeader());
+		assertEquals("[This is an Even Page, with a Header]\u0007August 20, 2008\u0007\u0007\r\r", hs.getEvenHeader());
+		assertEquals("August 20, 2008\u0007[ODD Page Header text]\u0007\u0007\r\r", hs.getOddHeader());
+
+		
+		assertEquals("", hs.getFirstFooter());
+		assertEquals("\u0007Page \u0013 PAGE  \\* MERGEFORMAT \u00142\u0015\u0007\u0007\u0007\u0007\u0007\u0007\u0007This is a simple footer on the second page\r\r", hs.getEvenFooter());
+		assertEquals("Footer Left\tFooter Middle Footer Right\r\r", hs.getOddFooter());
+		
+		assertEquals("Footer Left\tFooter Middle Footer Right\r\r", hs.getFooter(1));
+		assertEquals("\u0007Page \u0013 PAGE  \\* MERGEFORMAT \u00142\u0015\u0007\u0007\u0007\u0007\u0007\u0007\u0007This is a simple footer on the second page\r\r", hs.getFooter(2));
+		assertEquals("Footer Left\tFooter Middle Footer Right\r\r", hs.getFooter(3));
+    }
+    
+    public void testFirst() throws Exception {
+    	HeaderStories hs = new HeaderStories(diffFirst);
+    	
+		assertEquals("I am the header on the first page, and I\u2019m nice and simple\r\r", hs.getFirstHeader());
+		assertEquals("", hs.getEvenHeader());
+		assertEquals("First header column!\tMid header Right header!\r\r", hs.getOddHeader());
+
+		
+		assertEquals("The footer of the first page\r\r", hs.getFirstFooter());
+		assertEquals("", hs.getEvenFooter());
+		assertEquals("Footer Left\tFooter Middle Footer Right\r\r", hs.getOddFooter());
+		
+		assertEquals("The footer of the first page\r\r", hs.getFooter(1));
+		assertEquals("Footer Left\tFooter Middle Footer Right\r\r", hs.getFooter(2));
+		assertEquals("Footer Left\tFooter Middle Footer Right\r\r", hs.getFooter(3));
+    }
+    
+    public void testUnicode() throws Exception {
+    	HeaderStories hs = new HeaderStories(unicode);
+    	
+		assertEquals("\r\r", hs.getFirstHeader());
+		assertEquals("\r\r", hs.getEvenHeader());
+		assertEquals("This is a simple header, with a \u20ac euro symbol in it.\r\r\r", hs.getOddHeader());
+
+		
+		assertEquals("\r\r", hs.getFirstFooter());
+		assertEquals("\r\r", hs.getEvenFooter());
+		assertEquals("The footer, with Moli\u00e8re, has Unicode in it.\r\r", hs.getOddFooter());
     }
 }
