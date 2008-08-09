@@ -100,6 +100,9 @@ public final class XSSFCell implements Cell {
     public short getCellNum() {
         return (short)this.cellNum;
     }
+	public int getRowIndex() {
+		return row.getRowNum();
+	}
 
     public CellStyle getCellStyle() {
         // Zero is the empty default

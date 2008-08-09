@@ -48,6 +48,7 @@ import org.apache.poi.hssf.record.TextObjectRecord;
 import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
@@ -73,59 +74,24 @@ import org.apache.poi.ss.usermodel.RichTextString;
  * @version 1.0-pre
  */
 public class HSSFCell implements Cell {
-    /**
-     * Numeric Cell type (0)
-     * @see #setCellType(int)
-     * @see #getCellType()
-     */
-
-    public final static int          CELL_TYPE_NUMERIC           = 0;
-
-    /**
-     * String Cell type (1)
-     * @see #setCellType(int)
-     * @see #getCellType()
-     */
-
-    public final static int          CELL_TYPE_STRING            = 1;
-
-    /**
-     * Formula Cell type (2)
-     * @see #setCellType(int)
-     * @see #getCellType()
-     */
-
-    public final static int          CELL_TYPE_FORMULA           = 2;
-
-    /**
-     * Blank Cell type (3)
-     * @see #setCellType(int)
-     * @see #getCellType()
-     */
-
-    public final static int          CELL_TYPE_BLANK             = 3;
-
-    /**
-     * Boolean Cell type (4)
-     * @see #setCellType(int)
-     * @see #getCellType()
-     */
-
-    public final static int          CELL_TYPE_BOOLEAN           = 4;
-
-    /**
-     * Error Cell type (5)
-     * @see #setCellType(int)
-     * @see #getCellType()
-     */
-
-    public final static int          CELL_TYPE_ERROR             = 5;
+    /** Numeric Cell type (0) @see #setCellType(int) @see #getCellType() */
+    public final static int CELL_TYPE_NUMERIC = 0;
+    /** String  Cell type (1) @see #setCellType(int) @see #getCellType() */
+    public final static int CELL_TYPE_STRING  = 1;
+    /** Formula Cell type (2) @see #setCellType(int) @see #getCellType() */
+    public final static int CELL_TYPE_FORMULA = 2;
+    /** Blank   Cell type (3) @see #setCellType(int) @see #getCellType() */
+    public final static int CELL_TYPE_BLANK   = 3;
+    /** Boolean Cell type (4) @see #setCellType(int) @see #getCellType() */
+    public final static int CELL_TYPE_BOOLEAN = 4;
+    /** Error   Cell type (5) @see #setCellType(int) @see #getCellType() */
+    public final static int CELL_TYPE_ERROR   = 5;
+    
     public final static short        ENCODING_UNCHANGED          = -1;
     public final static short        ENCODING_COMPRESSED_UNICODE = 0;
     public final static short        ENCODING_UTF_16             = 1;
     private int                      cellType;
     private HSSFRichTextString       stringValue;
-    private short                    encoding = ENCODING_UNCHANGED;
     private HSSFWorkbook             book;
     private Sheet                    sheet;
     private CellValueRecordInterface record;
@@ -195,9 +161,7 @@ public class HSSFCell implements Cell {
      * @param sheet - Sheet record of the sheet containing this cell
      * @param cval - the Cell Value Record we wish to represent
      */
-    protected HSSFCell(HSSFWorkbook book, Sheet sheet, int row,
-                       CellValueRecordInterface cval)
-    {
+    protected HSSFCell(HSSFWorkbook book, Sheet sheet, CellValueRecordInterface cval) {
         record      = cval;
         cellType    = determineType(cval);
         stringValue = null;
@@ -269,6 +233,12 @@ public class HSSFCell implements Cell {
     	return book.getWorkbook();
     }
 
+    /**
+     * @return the (zero based) index of the row containing this cell
+     */
+    public int getRowIndex() {
+        return record.getRow();
+    }
     /**
      * Set the cell's number within the row (0 based).
      * @param num  short the cell number
@@ -984,13 +954,13 @@ public class HSSFCell implements Cell {
      * Errors are displayed as #ERR&lt;errIdx&gt;
      */
     public String toString() {
-    	switch     (getCellType()) {
+    	switch (getCellType()) {
     		case CELL_TYPE_BLANK:
     			return "";
     		case CELL_TYPE_BOOLEAN:
     			return getBooleanCellValue()?"TRUE":"FALSE";
     		case CELL_TYPE_ERROR:
-    			return "#ERR"+getErrorCellValue();
+    			return ErrorEval.getText((( BoolErrRecord ) record).getErrorValue());
     		case CELL_TYPE_FORMULA:
     			return getCellFormula();
     		case CELL_TYPE_NUMERIC:
@@ -998,7 +968,7 @@ public class HSSFCell implements Cell {
     			if (HSSFDateUtil.isCellDateFormatted(this)) {
     				DateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
     				return sdf.format(getDateCellValue());
-    			}else {
+    			} else {
     				return  getNumericCellValue() + "";
     			}
     		case CELL_TYPE_STRING:

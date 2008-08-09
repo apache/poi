@@ -22,20 +22,22 @@ import java.util.Arrays;
 
 /**
  * Represents a lightweight node in the Trees used to store content
- * properties.
+ * properties. Works only in characters.
  *
  * @author Ryan Ackley
  */
 public abstract class PropertyNode implements Comparable, Cloneable
 {
   protected Object _buf;
+  /** The start, in characters */
   private int _cpStart;
+  /** The end, in characters */
   private int _cpEnd;
 
 
   /**
-   * @param fcStart The start of the text for this property.
-   * @param fcEnd The end of the text for this property.
+   * @param fcStart The start of the text for this property, in characters.
+   * @param fcEnd The end of the text for this property, in characters.
    * @param buf FIXME: Old documentation is: "grpprl The property description in compressed form."
    */
   protected PropertyNode(int fcStart, int fcEnd, Object buf)
@@ -43,11 +45,10 @@ public abstract class PropertyNode implements Comparable, Cloneable
       _cpStart = fcStart;
       _cpEnd = fcEnd;
       _buf = buf;
-
   }
 
   /**
-   * @return The offset of this property's text.
+   * @return The start offset of this property's text.
    */
   public int getStart()
   {
@@ -142,9 +143,4 @@ public abstract class PropertyNode implements Comparable, Cloneable
         return 1;
       }
   }
-
-
-
-
-
 }

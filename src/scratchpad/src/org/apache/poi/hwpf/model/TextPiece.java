@@ -22,6 +22,9 @@ package org.apache.poi.hwpf.model;
 import java.io.UnsupportedEncodingException;
 /**
  * Lightweight representation of a text piece.
+ * Works in the character domain, not the byte domain, so you
+ *  need to have turned byte references into character
+ *  references before getting here.
  *
  * @author Ryan Ackley
  */
@@ -32,25 +35,47 @@ public class TextPiece extends PropertyNode implements Comparable
 
   private PieceDescriptor _pd;
 
-  private int _cpStart;
-
   /**
-   * @param start Offset in main document stream.
+   * @param start Beginning offset in main document stream, in characters.
+   * @param end Ending offset in main document stream, in characters.
+   * @param text The raw bytes of our text
    */
-  public TextPiece(int start, int end, byte[] text, PieceDescriptor pd, int cpStart)
-    throws UnsupportedEncodingException
-  {
-     /** start - end is length on file. This is double the expected when its
-     * unicode.*/
-    super(start, end, new StringBuffer(new String(text, pd.isUnicode() ? "UTF-16LE" : "Cp1252")));
-    _usesUnicode = pd.isUnicode();
-    _pd = pd;
-    _cpStart = cpStart;
+  public TextPiece(int start, int end, byte[] text, PieceDescriptor pd, int cpStart) {
+	  super(start, end, buildInitSB(text, pd));
+	  _usesUnicode = pd.isUnicode();
+	  _pd = pd;
+	  
+	  // Validate
+	  int textLength = ((StringBuffer)_buf).length();
+	  if(end-start != textLength) {
+		  throw new IllegalStateException("Told we're for characters " + start + " -> " + end + ", but actually covers " + textLength + " characters!");
+	  }
+	  if(end < start) {
+		  throw new IllegalStateException("Told we're of negative size! start="+start + " end="+end);
+	  }
   }
+  
   /**
-   * @return If this text piece uses unicode
+   * Create the StringBuffer from the text and unicode flag
    */
-   public boolean usesUnicode()
+  private static StringBuffer buildInitSB(byte[] text, PieceDescriptor pd) {
+	  String str;
+	  try {
+		  if(pd.isUnicode()) {
+			  str = new String(text, "UTF-16LE");
+		  } else {
+			  str = new String(text, "Cp1252");
+		  }
+	  } catch(UnsupportedEncodingException e) {
+		  throw new RuntimeException("Your Java is broken! It doesn't know about basic, required character encodings!");
+	  }
+	  return new StringBuffer(str);
+  }
+  
+  /**
+   * @return If this text piece is unicode
+   */
+   public boolean isUnicode()
    {
       return _usesUnicode;
    }
@@ -67,38 +92,43 @@ public class TextPiece extends PropertyNode implements Comparable
 
    public byte[] getRawBytes()
    {
-     try
-     {
+     try {
        return ((StringBuffer)_buf).toString().getBytes(_usesUnicode ?
            "UTF-16LE" : "Cp1252");
+     } catch (UnsupportedEncodingException ignore) {
+		  throw new RuntimeException("Your Java is broken! It doesn't know about basic, required character encodings!");
      }
-     catch (UnsupportedEncodingException ignore)
-     {
-       // shouldn't ever happen considering we wouldn't have been able to
-       // create the StringBuffer w/o getting this exception
-       return ((StringBuffer)_buf).toString().getBytes();
-     }
-
    }
 
+   /**
+    * Returns part of the string. 
+    * Works only in characters, not in bytes!
+    * @param start Local start position, in characters
+    * @param end Local end position, in characters
+    * @return
+    */
    public String substring(int start, int end)
    {
-     int denominator = _usesUnicode ? 2 : 1;
-
-     return ((StringBuffer)_buf).substring(start/denominator, end/denominator);
+	   StringBuffer buf = (StringBuffer)_buf;
+	   
+	   // Validate
+	   if(start < 0) {
+		   throw new StringIndexOutOfBoundsException("Can't request a substring before 0 - asked for " + start);
+	   }
+	   if(end > buf.length()) {
+		   throw new StringIndexOutOfBoundsException("Index " + end + " out of range 0 -> " + buf.length());
+	   }
+	   return buf.substring(start, end);
    }
 
-   public void adjustForDelete(int start, int length)
-   {
-
-	   // length is expected to be the number of code-points,
-	   // not the number of characters
+   /**
+    * Adjusts the internal string for deletinging
+    *  some characters within this.
+    * @param start The start position for the delete, in characters
+    * @param length The number of characters to delete
+    */
+   public void adjustForDelete(int start, int length) {
 	   int numChars = length;
-	   if (usesUnicode()) {
-
-		   start /= 2;
-		   numChars = (length / 2);
-	   }
 
 	   int myStart = getStart();
 	   int myEnd = getEnd();
@@ -121,9 +151,18 @@ public class TextPiece extends PropertyNode implements Comparable
 	   super.adjustForDelete(start, length);
    }
 
+   /**
+    * Returns the length, in characters
+    */
    public int characterLength()
    {
-     return (getEnd() - getStart()) / (_usesUnicode ? 2 : 1);
+     return (getEnd() - getStart());
+   }
+   /**
+    * Returns the length, in bytes
+    */
+   public int bytesLength() {
+	   return (getEnd() - getStart()) * (_usesUnicode ? 2 : 1);
    }
 
    public boolean equals(Object o)
@@ -138,9 +177,11 @@ public class TextPiece extends PropertyNode implements Comparable
    }
 
 
+   /**
+    * Returns the character position we start at.
+    */
    public int getCP()
    {
-     return _cpStart;
+     return getStart();
    }
-
 }

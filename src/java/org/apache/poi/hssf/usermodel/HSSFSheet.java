@@ -98,7 +98,8 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      */
 
     private Sheet sheet;
-    private TreeMap rows; // TODO - use simple key into this map
+    /** stores <tt>HSSFRow</tt>s by <tt>Integer</tt> (zero-based row number) key */
+    private TreeMap rows;
     protected Workbook book;
     protected HSSFWorkbook workbook;
     private int firstrow;
@@ -116,7 +117,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
     protected HSSFSheet(HSSFWorkbook workbook)
     {
         sheet = Sheet.createSheet();
-        rows = new TreeMap();   // new ArrayList(INITIAL_CAPACITY);
+        rows = new TreeMap();
         this.workbook = workbook;
         this.book = workbook.getWorkbook();
     }
@@ -243,7 +244,14 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
         HSSFRow hrow = (HSSFRow) row;
         if (rows.size() > 0)
         {
-            rows.remove(row);
+            Integer key = new Integer(row.getRowNum());
+            HSSFRow removedRow = (HSSFRow) rows.remove(key);
+            if (removedRow != row) {
+                if (removedRow != null) {
+                    rows.put(key, removedRow);
+                }
+                throw new RuntimeException("Specified row does not belong to this sheet");
+            }
             if (hrow.getRowNum() == getLastRowNum())
             {
                 lastrow = findLastRow(lastrow);
@@ -303,7 +311,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
 
     private void addRow(HSSFRow row, boolean addLow)
     {
-        rows.put(row, row);
+        rows.put(new Integer(row.getRowNum()), row);
         if (addLow)
         {
             sheet.addRow(row.getRowRecord());
@@ -321,17 +329,11 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
     /**
      * Returns the logical row (not physical) 0-based.  If you ask for a row that is not
      * defined you get a null.  This is to say row 4 represents the fifth row on a sheet.
-     * @param rownum  row to get
+     * @param rowIndex  row to get
      * @return HSSFRow representing the rownumber or null if its not defined on the sheet
      */
-
-    public HSSFRow getRow(int rownum)
-    {
-        HSSFRow row = new HSSFRow();
-
-        //row.setRowNum((short) rownum);
-        row.setRowNum( rownum);
-        return (HSSFRow) rows.get(row);
+    public HSSFRow getRow(int rowIndex) {
+        return (HSSFRow) rows.get(new Integer(rowIndex));
     }
 
     /**
@@ -592,7 +594,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
 
     public void setHorizontallyCenter(boolean value)
     {
-    	sheet.getPageSettings().getHCenter().setHCenter(value);
+        sheet.getPageSettings().getHCenter().setHCenter(value);
     }
 
     /**

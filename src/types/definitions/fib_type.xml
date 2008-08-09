@@ -20,7 +20,7 @@
 <record fromfile="true" name="FIB" package="org.apache.poi.hwpf.model.types">
     <suffix>AbstractType</suffix>
     <extends>HDFType</extends>
-    <description>File information Block.</description>
+    <description>Base part of the File information Block (FibBase). Holds the core part of the FIB, from the first 32 bytes.</description>
     <author>Andrew C. Oliver</author>
     <fields>
 <!--        <field type="int" size="2" name="format flags">

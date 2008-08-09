@@ -55,6 +55,9 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">Include headers and footers int he extracted text from HWPF's WordExtractor</action>
+           <action dev="POI-DEVELOPERS" type="add">Added support to HWPF for headers and footers</action>
+           <action dev="POI-DEVELOPERS" type="fix">Improve how HWPF deals with unicode internally. Should avoid some odd behaviour when manipulating unicode text</action>
            <action dev="POI-DEVELOPERS" type="add">45577 - Added implementations for Excel functions NOW and TODAY</action>
            <action dev="POI-DEVELOPERS" type="fix">45582 - Fix for workbook streams with extra bytes trailing the EOFRecord</action>
            <action dev="POI-DEVELOPERS" type="add">45537 - Include headers and footers (of slides and notes) in the extracted text from HSLF</action>

@@ -26,7 +26,6 @@ import java.util.Stack;
 import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.AreaPtg;
-import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.BoolPtg;
 import org.apache.poi.hssf.record.formula.ControlPtg;
 import org.apache.poi.hssf.record.formula.IntPtg;
@@ -36,7 +35,6 @@ import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.record.formula.NumberPtg;
 import org.apache.poi.hssf.record.formula.OperationPtg;
-import org.apache.poi.hssf.record.formula.ParenthesisPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
@@ -93,18 +91,19 @@ public class FormulaEvaluator {
     }
 
     
-    protected Row row;
-    protected Sheet sheet;
-    protected Workbook workbook;
+    protected Sheet _sheet;
+    protected Workbook _workbook;
     
     public FormulaEvaluator(Sheet sheet, Workbook workbook) {
-        this.sheet = sheet;
-        this.workbook = workbook;
+        this._sheet = sheet;
+        this._workbook = workbook;
     }
     
-    public void setCurrentRow(Row row) {
-        this.row = row;
-    }
+    /**
+     * Does nothing
+     * @deprecated - not needed, since the current row can be derived from the cell
+     */
+    public void setCurrentRow(Row row) {}
 
     /**
      * If cell contains a formula, the formula is evaluated and returned,
@@ -119,25 +118,25 @@ public class FormulaEvaluator {
         if (cell != null) {
             switch (cell.getCellType()) {
             case Cell.CELL_TYPE_BLANK:
-                retval = new CellValue(Cell.CELL_TYPE_BLANK, workbook.getCreationHelper());
+                retval = new CellValue(Cell.CELL_TYPE_BLANK, _workbook.getCreationHelper());
                 break;
             case Cell.CELL_TYPE_BOOLEAN:
-                retval = new CellValue(Cell.CELL_TYPE_BOOLEAN, workbook.getCreationHelper());
+                retval = new CellValue(Cell.CELL_TYPE_BOOLEAN, _workbook.getCreationHelper());
                 retval.setBooleanValue(cell.getBooleanCellValue());
                 break;
             case Cell.CELL_TYPE_ERROR:
-                retval = new CellValue(Cell.CELL_TYPE_ERROR, workbook.getCreationHelper());
+                retval = new CellValue(Cell.CELL_TYPE_ERROR, _workbook.getCreationHelper());
                 retval.setErrorValue(cell.getErrorCellValue());
                 break;
             case Cell.CELL_TYPE_FORMULA:
-                retval = getCellValueForEval(internalEvaluate(cell, row, sheet, workbook), workbook.getCreationHelper());
+                retval = getCellValueForEval(internalEvaluate(cell, _sheet, _workbook), _workbook.getCreationHelper());
                 break;
             case Cell.CELL_TYPE_NUMERIC:
-                retval = new CellValue(Cell.CELL_TYPE_NUMERIC, workbook.getCreationHelper());
+                retval = new CellValue(Cell.CELL_TYPE_NUMERIC, _workbook.getCreationHelper());
                 retval.setNumberValue(cell.getNumericCellValue());
                 break;
             case Cell.CELL_TYPE_STRING:
-                retval = new CellValue(Cell.CELL_TYPE_STRING, workbook.getCreationHelper());
+                retval = new CellValue(Cell.CELL_TYPE_STRING, _workbook.getCreationHelper());
                 retval.setRichTextStringValue(cell.getRichStringCellValue());
                 break;
             }
@@ -168,7 +167,7 @@ public class FormulaEvaluator {
         if (cell != null) {
             switch (cell.getCellType()) {
             case Cell.CELL_TYPE_FORMULA:
-                CellValue cv = getCellValueForEval(internalEvaluate(cell, row, sheet, workbook), workbook.getCreationHelper());
+                CellValue cv = getCellValueForEval(internalEvaluate(cell, _sheet, _workbook), _workbook.getCreationHelper());
                 switch (cv.getCellType()) {
                 case Cell.CELL_TYPE_BOOLEAN:
                     cell.setCellValue(cv.getBooleanValue());
@@ -213,7 +212,7 @@ public class FormulaEvaluator {
         if (cell != null) {
             switch (cell.getCellType()) {
             case Cell.CELL_TYPE_FORMULA:
-                CellValue cv = getCellValueForEval(internalEvaluate(cell, row, sheet, workbook), workbook.getCreationHelper());
+                CellValue cv = getCellValueForEval(internalEvaluate(cell, _sheet, _workbook), _workbook.getCreationHelper());
                 switch (cv.getCellType()) {
                 case Cell.CELL_TYPE_BOOLEAN:
                     cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
@@ -258,7 +257,6 @@ public class FormulaEvaluator {
 
 			for (Iterator rit = sheet.rowIterator(); rit.hasNext();) {
 				Row r = (Row)rit.next();
-				evaluator.setCurrentRow(r);
 
 				for (Iterator cit = r.cellIterator(); cit.hasNext();) {
 					Cell c = (Cell)cit.next();
@@ -312,8 +310,8 @@ public class FormulaEvaluator {
      * else a runtime exception will be thrown somewhere inside the method.
      * (Hence this is a private method.)
      */
-    private static ValueEval internalEvaluate(Cell srcCell, Row srcRow, Sheet sheet, Workbook workbook) {
-        int srcRowNum = srcRow.getRowNum();
+    private static ValueEval internalEvaluate(Cell srcCell, Sheet sheet, Workbook workbook) {
+        int srcRowNum = srcCell.getRowIndex();
         short srcColNum = srcCell.getCellNum();
         
         
@@ -379,7 +377,7 @@ public class FormulaEvaluator {
                 int rowIx = refPtg.getRow();
                 Row row = sheet.getRow(rowIx);
                 Cell cell = (row != null) ? row.getCell(colIx) : null;
-                stack.push(createRef2DEval(refPtg, cell, row, sheet, workbook));
+                stack.push(createRef2DEval(refPtg, cell, sheet, workbook));
             }
             else if (ptg instanceof Ref3DPtg) {
                 Ref3DPtg refPtg = (Ref3DPtg) ptg;
@@ -390,7 +388,7 @@ public class FormulaEvaluator {
                 );
                 Row row = xsheet.getRow(rowIx);
                 Cell cell = (row != null) ? row.getCell(colIx) : null;
-                stack.push(createRef3DEval(refPtg, cell, row, xsheet, workbook));
+                stack.push(createRef3DEval(refPtg, cell, xsheet, workbook));
             }
             else if (ptg instanceof AreaPtg) {
                 AreaPtg ap = (AreaPtg) ptg;
@@ -581,7 +579,7 @@ public class FormulaEvaluator {
             case Cell.CELL_TYPE_STRING:
                 return new StringEval(cell.getRichStringCellValue().getString());
             case Cell.CELL_TYPE_FORMULA:
-                return internalEvaluate(cell, row, sheet, workbook);
+                return internalEvaluate(cell, sheet, workbook);
             case Cell.CELL_TYPE_BOOLEAN:
                 return BoolEval.valueOf(cell.getBooleanCellValue());
             case Cell.CELL_TYPE_BLANK:
@@ -597,7 +595,7 @@ public class FormulaEvaluator {
      * Non existent cells are treated as RefEvals containing BlankEval.
      */
     private static Ref2DEval createRef2DEval(RefPtg ptg, Cell cell, 
-            Row row, Sheet sheet, Workbook workbook) {
+            Sheet sheet, Workbook workbook) {
         if (cell == null) {
             return new Ref2DEval(ptg, BlankEval.INSTANCE);
         }
@@ -608,7 +606,7 @@ public class FormulaEvaluator {
             case Cell.CELL_TYPE_STRING:
                 return new Ref2DEval(ptg, new StringEval(cell.getRichStringCellValue().getString()));
             case Cell.CELL_TYPE_FORMULA:
-                return new Ref2DEval(ptg, internalEvaluate(cell, row, sheet, workbook));
+                return new Ref2DEval(ptg, internalEvaluate(cell, sheet, workbook));
             case Cell.CELL_TYPE_BOOLEAN:
                 return new Ref2DEval(ptg, BoolEval.valueOf(cell.getBooleanCellValue()));
             case Cell.CELL_TYPE_BLANK:
@@ -623,7 +621,7 @@ public class FormulaEvaluator {
      * create a Ref3DEval for Ref3DPtg.
      */
     private static Ref3DEval createRef3DEval(Ref3DPtg ptg, Cell cell, 
-            Row row, Sheet sheet, Workbook workbook) {
+            Sheet sheet, Workbook workbook) {
         if (cell == null) {
             return new Ref3DEval(ptg, BlankEval.INSTANCE);
         }
@@ -633,7 +631,7 @@ public class FormulaEvaluator {
             case Cell.CELL_TYPE_STRING:
                 return new Ref3DEval(ptg, new StringEval(cell.getRichStringCellValue().getString()));
             case Cell.CELL_TYPE_FORMULA:
-                return new Ref3DEval(ptg, internalEvaluate(cell, row, sheet, workbook));
+                return new Ref3DEval(ptg, internalEvaluate(cell, sheet, workbook));
             case Cell.CELL_TYPE_BOOLEAN:
                 return new Ref3DEval(ptg, BoolEval.valueOf(cell.getBooleanCellValue()));
             case Cell.CELL_TYPE_BLANK:

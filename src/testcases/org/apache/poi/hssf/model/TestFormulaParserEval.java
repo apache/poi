@@ -38,42 +38,34 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator.CellValue;
  */
 public final class TestFormulaParserEval extends TestCase {
 
-	public void testWithNamedRange() throws Exception {
+	public void testWithNamedRange() {
 		HSSFWorkbook workbook = new HSSFWorkbook();
-		FormulaParser fp;
 		Ptg[] ptgs;
 
 		HSSFSheet s = workbook.createSheet("Foo");
-		s.createRow(0).createCell((short)0).setCellValue(1.1);
-		s.createRow(1).createCell((short)0).setCellValue(2.3);
-		s.createRow(2).createCell((short)2).setCellValue(3.1);
+		s.createRow(0).createCell(0).setCellValue(1.1);
+		s.createRow(1).createCell(0).setCellValue(2.3);
+		s.createRow(2).createCell(2).setCellValue(3.1);
 
 		HSSFName name = workbook.createName();
 		name.setNameName("testName");
 		name.setReference("A1:A2");
 
-		fp = HSSFFormulaEvaluator.getUnderlyingParser(workbook, "SUM(testName)");
-		fp.parse();
-		ptgs = fp.getRPNPtg();
+		ptgs = FormulaParser.parse("SUM(testName)", workbook);
 		assertTrue("two tokens expected, got "+ptgs.length,ptgs.length == 2);
 		assertEquals(NamePtg.class, ptgs[0].getClass());
 		assertEquals(FuncVarPtg.class, ptgs[1].getClass());
 
 		// Now make it a single cell
 		name.setReference("C3");
-
-		fp = HSSFFormulaEvaluator.getUnderlyingParser(workbook, "SUM(testName)");
-		fp.parse();
-		ptgs = fp.getRPNPtg();
+		ptgs = FormulaParser.parse("SUM(testName)", workbook);
 		assertTrue("two tokens expected, got "+ptgs.length,ptgs.length == 2);
 		assertEquals(NamePtg.class, ptgs[0].getClass());
 		assertEquals(FuncVarPtg.class, ptgs[1].getClass());
 		
 		// And make it non-contiguous
 		name.setReference("A1:A2,C3");
-		fp = HSSFFormulaEvaluator.getUnderlyingParser(workbook, "SUM(testName)");
-		fp.parse();
-		ptgs = fp.getRPNPtg();
+		ptgs = FormulaParser.parse("SUM(testName)", workbook);
 		assertTrue("two tokens expected, got "+ptgs.length,ptgs.length == 2);
 		assertEquals(NamePtg.class, ptgs[0].getClass());
 		assertEquals(FuncVarPtg.class, ptgs[1].getClass());
@@ -86,15 +78,14 @@ public final class TestFormulaParserEval extends TestCase {
 		wb.setSheetName(0, "Sheet1");
 		
 		HSSFRow row = sheet.createRow(0);
-		HSSFCell cell = row.createCell((short)0);
+		HSSFCell cell = row.createCell(0);
 		cell.setCellFormula("SUM(A32769:A32770)");
 
 		// put some values in the cells to make the evaluation more interesting
-		sheet.createRow(32768).createCell((short)0).setCellValue(31);
-		sheet.createRow(32769).createCell((short)0).setCellValue(11);
+		sheet.createRow(32768).createCell(0).setCellValue(31);
+		sheet.createRow(32769).createCell(0).setCellValue(11);
 		
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
-		fe.setCurrentRow(row);
 		CellValue result;
 		try {
 			result = fe.evaluate(cell);
