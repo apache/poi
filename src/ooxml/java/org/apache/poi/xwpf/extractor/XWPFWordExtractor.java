@@ -23,6 +23,7 @@ import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.xwpf.XWPFDocument;
 import org.apache.poi.xwpf.model.XWPFCommentsDecorator;
+import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.model.XWPFHyperlinkDecorator;
 import org.apache.poi.xwpf.model.XWPFParagraphDecorator;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -70,19 +71,44 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
 	
 	public String getText() {
 		StringBuffer text = new StringBuffer();
+		XWPFHeaderFooterPolicy hfPolicy = document.getHeaderFooterPolicy();
 		
-			
+		// Start out with all headers
+		// TODO - put them in where they're needed
+		if(hfPolicy.getFirstPageHeader() != null) {
+			text.append( hfPolicy.getFirstPageHeader().getText() );
+		}
+		if(hfPolicy.getEvenPageHeader() != null) {
+			text.append( hfPolicy.getEvenPageHeader().getText() );
+		}
+		if(hfPolicy.getDefaultHeader() != null) {
+			text.append( hfPolicy.getDefaultHeader().getText() );
+		}
+		
+		// First up, all our paragraph based text
 		Iterator<XWPFParagraph> i = document.getParagraphsIterator();
 		while(i.hasNext()) {
 			XWPFParagraphDecorator decorator = new XWPFCommentsDecorator(
 					new XWPFHyperlinkDecorator(i.next(), null, fetchHyperlinks));
 			text.append(decorator.getText()+"\n");
 		}
-			
+
+		// Then our table based text
 		Iterator<XWPFTable> j = document.getTablesIterator();
-		while(j.hasNext())
-		{
+		while(j.hasNext()) {
 			text.append(j.next().getText()+"\n");
+		}
+		
+		// Finish up with all the footers
+		// TODO - put them in where they're needed
+		if(hfPolicy.getFirstPageFooter() != null) {
+			text.append( hfPolicy.getFirstPageFooter().getText() );
+		}
+		if(hfPolicy.getEvenPageFooter() != null) {
+			text.append( hfPolicy.getEvenPageFooter().getText() );
+		}
+		if(hfPolicy.getDefaultFooter() != null) {
+			text.append( hfPolicy.getDefaultFooter().getText() );
 		}
 		
 		return text.toString();

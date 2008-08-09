@@ -81,15 +81,21 @@ public abstract class XWPFHeaderFooter {
 		XWPFParagraph[] paras = getParagraphs();
 		for(int i=0; i<paras.length; i++) {
 			if(! paras[i].isEmpty()) {
-				t.append(paras[i].getText());
-				t.append('\n');
+				String text = paras[i].getText();
+				if(text != null && text.length() > 0) {
+					t.append(text);
+					t.append('\n');
+				}
 			}
 		}
 		
 		XWPFTable[] tables = getTables();
 		for(int i=0; i<tables.length; i++) {
-			t.append(tables[i].getText());
-			t.append('\n');
+			String text = tables[i].getText();
+			if(text != null && text.length() > 0) {
+				t.append(text);
+				t.append('\n');
+			}
 		}
 		
 		return t.toString(); 

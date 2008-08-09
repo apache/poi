@@ -37,12 +37,22 @@ public class TestXWPFWordExtractor extends TestCase {
 	 */
 	private XWPFDocument xmlB;
 	private File fileB;
+	/**
+	 * With a simplish header+footer
+	 */
+	private XWPFDocument xmlC;
+	private File fileC;
+	/**
+	 * With different header+footer on first/rest
+	 */
+	private XWPFDocument xmlD;
+	private File fileD;
 	
 	/**
 	 * File with hyperlinks
 	 */
-	private XWPFDocument xmlC;
-	private File fileC;
+	private XWPFDocument xmlE;
+	private File fileE;
 
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -57,15 +67,27 @@ public class TestXWPFWordExtractor extends TestCase {
 		);
 		fileC = new File(
 				System.getProperty("HWPF.testdata.path") +
+				File.separator + "ThreeColHeadFoot.docx"
+		);
+		fileD = new File(
+				System.getProperty("HWPF.testdata.path") +
+				File.separator + "DiffFirstPageHeadFoot.docx"
+		);
+		fileE = new File(
+				System.getProperty("HWPF.testdata.path") +
 				File.separator + "TestDocument.docx"
 		);
 		assertTrue(fileA.exists());
 		assertTrue(fileB.exists());
 		assertTrue(fileC.exists());
+		assertTrue(fileD.exists());
+		assertTrue(fileE.exists());
 		
 		xmlA = new XWPFDocument(POIXMLDocument.openPackage(fileA.toString()));
 		xmlB = new XWPFDocument(POIXMLDocument.openPackage(fileB.toString()));
 		xmlC = new XWPFDocument(POIXMLDocument.openPackage(fileC.toString()));
+		xmlD = new XWPFDocument(POIXMLDocument.openPackage(fileD.toString()));
+		xmlE = new XWPFDocument(POIXMLDocument.openPackage(fileE.toString()));
 	}
 
 	/**
@@ -135,7 +157,7 @@ public class TestXWPFWordExtractor extends TestCase {
 	
 	public void testGetWithHyperlinks() throws Exception {
 		XWPFWordExtractor extractor = 
-			new XWPFWordExtractor(xmlC);
+			new XWPFWordExtractor(xmlE);
 		extractor.getText();
 		extractor.setFetchHyperlinks(true);
 		extractor.getText();
@@ -157,6 +179,49 @@ public class TestXWPFWordExtractor extends TestCase {
 //				"Back to normal\nWe have a hyperlink here, and another.\n",
 				"This is a test document\nThis bit is in bold and italic\n" +
 				"Back to normal\nWe have a  here, and .hyperlink <http://poi.apache.org/>another\n",
+				extractor.getText()
+		);
+	}
+	
+	public void testHeadersFooters() throws Exception {
+		XWPFWordExtractor extractor = 
+			new XWPFWordExtractor(xmlC);
+		extractor.getText();
+		
+		assertEquals(
+				"First header column!\tMid header\tRight header!\n" +
+				"This is a sample word document. It has two pages. It has a three column heading, and a three column footer\n" +
+				"\n" +
+				"HEADING TEXT\n" + 
+				"\n" +
+				"More on page one\n" + 
+				"\n\n" + 
+				"End of page 1\n\n" +
+				"This is page two. It also has a three column heading, and a three column footer.\n" +
+				"Footer Left\tFooter Middle\tFooter Right\n",
+				extractor.getText()
+		);
+		
+		
+		// Now another file, expect multiple headers
+		//  and multiple footers
+		extractor = 
+			new XWPFWordExtractor(xmlD);
+		extractor.getText();
+		
+		assertEquals(
+				"I am the header on the first page, and I" + '\u2019' + "m nice and simple\n" +
+				"First header column!\tMid header\tRight header!\n" +
+				"This is a sample word document. It has two pages. It has a simple header and footer, which is different to all the other pages.\n" +
+				"\n" +
+				"HEADING TEXT\n" + 
+				"\n" +
+				"More on page one\n" + 
+				"\n\n" + 
+				"End of page 1\n\n" +
+				"This is page two. It also has a three column heading, and a three column footer.\n" +
+				"The footer of the first page\n" +
+				"Footer Left\tFooter Middle\tFooter Right\n",
 				extractor.getText()
 		);
 	}
