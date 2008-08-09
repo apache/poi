@@ -32,24 +32,26 @@ public class XWPFTable
 {
     protected StringBuffer text=new StringBuffer(); 
     
-    public XWPFTable(CTTbl table)
-    {
-        for(CTRow row : table.getTrArray())
-        {
-            for(CTTc cell : row.getTcArray())
-            {
-                for(CTP ctp : cell.getPArray())
-                {
+    public XWPFTable(CTTbl table) {
+        for(CTRow row : table.getTrArray()) {
+        	StringBuffer rowText = new StringBuffer();
+            for(CTTc cell : row.getTcArray()) {
+                for(CTP ctp : cell.getPArray()) {
                     XWPFParagraph p = new XWPFParagraph(ctp);
-                    this.text.append(p.getText()+"\t");
+                    if(rowText.length() > 0) {
+                    	rowText.append('\t');
+                    }
+                    rowText.append(p.getText());
                 }
             }
-            this.text.append("\n");
+            if(rowText.length() > 0) {
+            	this.text.append(rowText);
+            	this.text.append('\n');
+            }
         }
     }
     
-    public String getText()
-    {
+    public String getText() {
         return text.toString();
     }
 }

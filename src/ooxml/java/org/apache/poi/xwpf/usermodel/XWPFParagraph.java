@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import java.util.ArrayList;
+
 import org.apache.poi.xwpf.XWPFDocument;
 import org.apache.poi.xwpf.model.XMLParagraph;
 import org.apache.xmlbeans.XmlCursor;
@@ -24,6 +26,10 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPTab;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
@@ -43,15 +49,37 @@ public class XWPFParagraph extends XMLParagraph
     public XWPFParagraph(CTP prgrph, XWPFDocument docRef)
     {
         super(prgrph);
+        this.docRef = docRef;
         
-        this.docRef = docRef; 
-        CTR[] rs = paragraph.getRArray();
+        // All the runs to loop over
+        // TODO - replace this with some sort of XPath expression
+        //  to directly find all the CTRs, in the right order
+        ArrayList<CTR> rs = new ArrayList<CTR>();
+        CTR[] tmp;
+        
+        // Get the main text runs
+        tmp = paragraph.getRArray();
+        for(int i=0; i<tmp.length; i++) {
+        	rs.add(tmp[i]);
+        }
+        
+        // Not sure quite what these are, but they hold 
+        //  more text runs
+        CTSdtRun[] sdts = paragraph.getSdtArray();
+        for(int i=0; i<sdts.length; i++) {
+        	CTSdtContentRun run = sdts[i].getSdtContent();
+        	tmp = run.getRArray();
+            for(int j=0; j<tmp.length; j++) {
+            	rs.add(tmp[j]);
+            }
+        }
     
+        
         // Get text of the paragraph
-        for (int j = 0; j < rs.length; j++) {
+        for (int j = 0; j < rs.size(); j++) {
             // Grab the text and tabs of the paragraph
         	// Do so in a way that preserves the ordering
-        	XmlCursor c = rs[j].newCursor();
+        	XmlCursor c = rs.get(j).newCursor();
         	c.selectPath( "./*" );
         	while(c.toNextSelection()) {
         		XmlObject o = c.getObject();
@@ -65,7 +93,7 @@ public class XWPFParagraph extends XMLParagraph
         	
             // Loop over pictures inside our
             //  paragraph, looking for text in them
-            CTPicture[] picts = rs[j].getPictArray();
+            CTPicture[] picts = rs.get(j).getPictArray();
             for (int k = 0; k < picts.length; k++) {
                 XmlObject[] t = picts[k].selectPath("declare namespace w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' .//w:t");
                 for (int m = 0; m < t.length; m++) {
