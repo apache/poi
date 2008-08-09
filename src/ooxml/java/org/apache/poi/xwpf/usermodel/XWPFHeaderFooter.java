@@ -39,7 +39,8 @@ public abstract class XWPFHeaderFooter {
 	 * Returns the paragraph(s) that holds
 	 *  the text of the header or footer.
 	 * Normally there is only the one paragraph, but
-	 *  there could be more in certain cases.
+	 *  there could be more in certain cases, or 
+	 *  a table.
 	 */
 	public XWPFParagraph[] getParagraphs() {
 		XWPFParagraph[] paras = 
@@ -51,6 +52,24 @@ public abstract class XWPFHeaderFooter {
 		}
 		return paras;
 	}
+	/**
+	 * Return the table(s) that holds the text
+	 *  of the header or footer, for complex cases
+	 *  where a paragraph isn't used.
+	 * Normally there's just one paragraph, but some
+	 *  complex headers/footers have a table or two
+	 *  in addition. 
+	 */
+	public XWPFTable[] getTables() {
+		XWPFTable[] tables = 
+			new XWPFTable[headerFooter.getTblArray().length];
+		for(int i=0; i<tables.length; i++) {
+			tables[i] = new XWPFTable(
+					headerFooter.getTblArray(i)
+			);
+		}
+		return tables;
+	}
 	
 	/**
 	 * Returns the textual content of the header/footer,
@@ -58,11 +77,21 @@ public abstract class XWPFHeaderFooter {
 	 */
 	public String getText() {
 		StringBuffer t = new StringBuffer();
+		
 		XWPFParagraph[] paras = getParagraphs();
-		for (int i = 0; i < paras.length; i++) {
-			t.append(paras[i].getText());
+		for(int i=0; i<paras.length; i++) {
+			if(! paras[i].isEmpty()) {
+				t.append(paras[i].getText());
+				t.append('\n');
+			}
+		}
+		
+		XWPFTable[] tables = getTables();
+		for(int i=0; i<tables.length; i++) {
+			t.append(tables[i].getText());
 			t.append('\n');
 		}
+		
 		return t.toString(); 
 	}
 }

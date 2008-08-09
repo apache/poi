@@ -165,7 +165,7 @@ public class TestXWPFHeaderFooterPolicy extends TestCase {
 	public void testContents() throws Exception {
 		XWPFHeaderFooterPolicy policy;
 		
-		// Just test a few bits
+		// Test a few simple bits off a simple header
 		policy = diffFirst.getHeaderFooterPolicy();
 		
 		assertEquals(
@@ -175,6 +175,19 @@ public class TestXWPFHeaderFooterPolicy extends TestCase {
 		assertEquals(
 				"First header column!\tMid header\tRight header!\n", 
 				policy.getDefaultHeader().getText()
+		);
+		
+		
+		// And a few bits off a more complex header
+		policy = oddEven.getHeaderFooterPolicy();
+		
+		assertEquals(
+			"\n[]ODD Page Header text\n\n",
+			policy.getDefaultHeader().getText()
+		);
+		assertEquals(
+				"\n[This is an Even Page, with a Header]\n\n", 
+				policy.getEvenPageHeader().getText()
 		);
 	}
 }

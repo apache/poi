@@ -111,7 +111,7 @@ public class TestXWPFWordExtractor extends TestCase {
 		assertTrue(text.length() > 0);
 		
 		char euro = '\u20ac';
-//		System.err.println("'"+text.substring(text.length() - 20) + "'");
+//		System.err.println("'"+text.substring(text.length() - 40) + "'");
 		
 		// Check contents
 		assertTrue(text.startsWith(
@@ -121,7 +121,7 @@ public class TestXWPFWordExtractor extends TestCase {
 				"As well as gaining "+euro+"90 from child benefit increases, he will also receive the early childhood supplement of "+euro+"250 per quarter for Vincent for the full four quarters of the year.\n\n\n\n \n\n\n"
 		));
 		assertTrue(text.endsWith(
-				"11.4%\t\t90\t\t\t\t\t250\t\t1,310\t\t\n\n"
+				"11.4%\t\t90\t\t\t\t\t250\t\t1,310\t\n\n"
 		));
 		
 		// Check number of paragraphs
