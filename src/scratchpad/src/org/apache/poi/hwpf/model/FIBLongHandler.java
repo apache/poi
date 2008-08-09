@@ -22,8 +22,11 @@ import java.io.IOException;
 
 import org.apache.poi.util.LittleEndian;
 
-public class FIBLongHandler
-{
+/**
+ * Handles the fibRgLw / The FibRgLw97 part of
+ *  the FIB (File Information Block)
+ */
+public class FIBLongHandler {
   public static final int CBMAC = 0;
   public static final int PRODUCTCREATED = 1;
   public static final int PRODUCTREVISED = 2;
