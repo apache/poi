@@ -25,6 +25,7 @@ import java.util.Iterator;
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.TextPiece;
+import org.apache.poi.hwpf.usermodel.HeaderStories;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -116,6 +117,65 @@ public class WordExtractor extends POIOLE2TextExtractor {
 	}
 	
 	/**
+	 * Add the header/footer text, if it's not empty
+	 */
+	private void appendHeaderFooter(String text, StringBuffer out) {
+		if(text == null || text.length() == 0)
+			return;
+
+		text = text.replace('\r', '\n');
+		if(! text.endsWith("\n")) {
+			out.append(text);
+			out.append('\n');
+			return;
+		}
+		if(text.endsWith("\n\n")) {
+			out.append(text.substring(0, text.length()-1));
+			return;
+		}
+		out.append(text);
+		return;
+	}
+	/**
+	 * Grab the text from the headers
+	 */
+	public String getHeaderText() {
+		HeaderStories hs = new HeaderStories(doc);
+		
+		StringBuffer ret = new StringBuffer();
+		if(hs.getFirstHeader() != null) {
+			appendHeaderFooter(hs.getFirstHeader(), ret);
+		}
+		if(hs.getEvenHeader() != null) {
+			appendHeaderFooter(hs.getEvenHeader(), ret);
+		}
+		if(hs.getOddHeader() != null) {
+			appendHeaderFooter(hs.getOddHeader(), ret);
+		}
+		
+		return ret.toString();
+	}
+	/**
+	 * Grab the text from the footers
+	 */
+	public String getFooterText() {
+		HeaderStories hs = new HeaderStories(doc);
+		
+		StringBuffer ret = new StringBuffer();
+		if(hs.getFirstFooter() != null) {
+			appendHeaderFooter(hs.getFirstFooter(), ret);
+		}
+		if(hs.getEvenFooter() != null) {
+			appendHeaderFooter(hs.getEvenFooter(), ret);
+		}
+		if(hs.getOddFooter() != null) {
+			appendHeaderFooter(hs.getOddFooter(), ret);
+		}
+		
+		return ret.toString();
+	}
+	
+	/**
 	 * Grab the text out of the text pieces. Might also include various
 	 *  bits of crud, but will work in cases where the text piece -> paragraph
 	 *  mapping is broken. Fast too.
@@ -158,10 +218,16 @@ public class WordExtractor extends POIOLE2TextExtractor {
 	 */
 	public String getText() {
 		StringBuffer ret = new StringBuffer();
+		
+		ret.append(getHeaderText());
+		
 		String[] text = getParagraphText();
 		for(int i=0; i<text.length; i++) {
 			ret.append(text[i]);
 		}
+		
+		ret.append(getFooterText());
+		
 		return ret.toString();
 	}
 }

@@ -55,6 +55,11 @@ public class TestWordExtractor extends TestCase {
 	// A word doc embeded in an excel file
 	private String filename3;
 	
+	// With header and footer
+	private String filename4;
+	// With unicode header and footer
+	private String filename5;
+	
     protected void setUp() throws Exception {
 		String dirname = System.getProperty("HWPF.testdata.path");
 		String pdirname = System.getProperty("POIFS.testdata.path");
@@ -62,6 +67,9 @@ public class TestWordExtractor extends TestCase {
 		String filename = dirname + "/test2.doc";
 		String filename2 = dirname + "/test.doc";
 		filename3 = pdirname + "/excel_with_embeded.xls";
+		filename4 = dirname + "/ThreeColHeadFoot.doc";
+		filename5 = dirname + "/HeaderFooterUnicode.doc";
+		
 		extractor = new WordExtractor(new FileInputStream(filename));
 		extractor2 = new WordExtractor(new FileInputStream(filename2));
 		
@@ -148,5 +156,73 @@ public class TestWordExtractor extends TestCase {
     			extractor3.getText());
     	assertEquals("Sample Doc 2", extractor3.getSummaryInformation().getTitle());
     	assertEquals("Another Sample Test", extractor3.getSummaryInformation().getSubject());
+    }
+    
+    public void testWithHeader() throws Exception {
+    	// Non-unicode
+    	HWPFDocument doc = new HWPFDocument(
+    			new FileInputStream(filename4)
+    	);
+    	extractor = new WordExtractor(doc);
+    	
+    	assertEquals(
+    			"First header column!\tMid header Right header!\n",
+    			extractor.getHeaderText()
+    	);
+    	
+    	String text = extractor.getText();
+    	assertTrue(
+    			text.indexOf("First header column!") > -1
+    	);
+    	
+    	
+    	// Unicode
+    	doc = new HWPFDocument(
+    			new FileInputStream(filename5)
+    	);
+    	extractor = new WordExtractor(doc);
+    	
+    	assertEquals(
+    			"\n\nThis is a simple header, with a \u20ac euro symbol in it.\n\n",
+    			extractor.getHeaderText()
+    	);
+    	text = extractor.getText();
+    	assertTrue(
+    			text.indexOf("This is a simple header") > -1
+    	);
+    }
+    
+    public void testWithFooter() throws Exception {
+    	// Non-unicode
+    	HWPFDocument doc = new HWPFDocument(
+    			new FileInputStream(filename4)
+    	);
+    	extractor = new WordExtractor(doc);
+    	
+    	assertEquals(
+    			"Footer Left\tFooter Middle Footer Right\n",
+    			extractor.getFooterText()
+    	);
+    	
+    	String text = extractor.getText();
+    	assertTrue(
+    			text.indexOf("Footer Left") > -1
+    	);
+    	
+    	
+    	// Unicode
+    	doc = new HWPFDocument(
+    			new FileInputStream(filename5)
+    	);
+    	extractor = new WordExtractor(doc);
+    	
+    	assertEquals(
+    			"\n\nThe footer, with Moli\u00e8re, has Unicode in it.\n",
+    			extractor.getFooterText()
+    	);
+    	text = extractor.getText();
+    	assertTrue(
+    			text.indexOf("The footer, with") > -1
+    	);
     }
 }
