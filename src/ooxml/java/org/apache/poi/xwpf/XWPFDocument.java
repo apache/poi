@@ -104,22 +104,21 @@ public class XWPFDocument extends POIXMLDocument {
 		if(commentsRel != null && commentsRel.size() > 0) {
 			PackagePart commentsPart = getTargetPart(commentsRel.getRelationship(0));
 			CommentsDocument cmntdoc = CommentsDocument.Factory.parse(commentsPart.getInputStream());
-			for(CTComment ctcomment : cmntdoc.getComments().getCommentArray())
-			{
+			for(CTComment ctcomment : cmntdoc.getComments().getCommentArray()) {
 				comments.add(new XWPFComment(ctcomment));
-			}
-			
-			for(CTTbl table : getDocumentBody().getTblArray())
-			{
-				tables.add(new XWPFTable(table));
 			}
 		}
 		
+		// Get any tables
+		for(CTTbl table : getDocumentBody().getTblArray()) {
+			tables.add(new XWPFTable(table));
+		}
+		
+		/// Process embedded document parts
         this.embedds = new LinkedList<PackagePart>();
         for(PackageRelationship rel : getCorePart().getRelationshipsByType(OLE_OBJECT_REL_TYPE)) {
             embedds.add(getTargetPart(rel));
         }
-        
         for(PackageRelationship rel : getCorePart().getRelationshipsByType(PACK_OBJECT_REL_TYPE)) {
             embedds.add(getTargetPart(rel));
         }

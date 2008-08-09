@@ -17,8 +17,6 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.ss.usermodel.Workbook;
-
 /**
  * Missing Function Arguments
  *
@@ -31,22 +29,20 @@ public final class MissingArgPtg extends ScalarConstantPtg {
     public final static byte sid  = 0x16;
    
     public static final Ptg instance = new MissingArgPtg();
-    private MissingArgPtg()
-    {
+
+    private MissingArgPtg() {
+    	// enforce singleton
     }
      
-    public void writeBytes(byte [] array, int offset)
-    {
+    public void writeBytes(byte [] array, int offset) {
         array[ offset + 0 ] = sid;
     }
 
-    public int getSize()
-    {
+    public int getSize() {
         return SIZE;
     }
    
-    public String toFormulaString(Workbook book)
-    {
+    protected String toFormulaString() {
         return " ";
     }
 }

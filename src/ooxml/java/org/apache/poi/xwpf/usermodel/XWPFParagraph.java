@@ -18,9 +18,13 @@ package org.apache.poi.xwpf.usermodel;
 
 import org.apache.poi.xwpf.model.XMLParagraph;
 import org.apache.poi.xwpf.XWPFDocument;
+import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 /**
  * Sketch of XWPF paragraph class
@@ -32,6 +36,7 @@ public class XWPFParagraph extends XMLParagraph
      * TODO - replace with RichText String
      */
     private StringBuffer text = new StringBuffer();
+    private StringBuffer pictureText = new StringBuffer();
     
     public XWPFParagraph(CTP prgrph, XWPFDocument docRef)
     {
@@ -49,6 +54,21 @@ public class XWPFParagraph extends XMLParagraph
                         texts[k].getStringValue()
                 );
             }
+            
+            // Loop over pictures inside our
+            //  paragraph, looking for text in them
+            CTPicture[] picts = rs[j].getPictArray();
+            for (int k = 0; k < picts.length; k++) {
+                XmlObject[] t = picts[k].selectPath("declare namespace w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' .//w:t");
+                for (int m = 0; m < t.length; m++) {
+                    NodeList kids = t[m].getDomNode().getChildNodes();
+                    for (int n = 0; n < kids.getLength(); n++) {
+                        if (kids.item(n) instanceof Text) {
+                            pictureText.append("\n" + kids.item(n).getNodeValue());
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -64,6 +84,10 @@ public class XWPFParagraph extends XMLParagraph
         return docRef;
     }
     
+    /**
+     * Return the textual content of the paragraph, 
+     *  including text from pictures in it.
+     */
     public String getText() {
         return text.toString();
     }
