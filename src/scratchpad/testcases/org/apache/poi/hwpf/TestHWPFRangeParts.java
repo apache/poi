@@ -29,7 +29,18 @@ import junit.framework.TestCase;
  *  the different ranges
  */
 public class TestHWPFRangeParts extends TestCase {
-	private static final String page_1 =
+	private static final char page_break = (char)12;
+	private static final String headerDef = 
+		"\u0003\r\r" +
+		"\u0004\r\r" +
+		"\u0003\r\r" +
+		"\u0004\r\r"
+	;
+	private static final String footerDef = "\r";
+	private static final String endHeaderFooter = "\r\r";
+
+	
+	private static final String a_page_1 =
 		"This is a sample word document. It has two pages. It has a three column heading, and a three column footer\r" +
 		"\r" +
 		"HEADING TEXT\r" + 
@@ -38,37 +49,60 @@ public class TestHWPFRangeParts extends TestCase {
 		"\r\r" +
 		"End of page 1\r"
 	;
-	private static final char page_break = (char)12;
-	private static final String page_2 =
+	private static final String a_page_2 =
 		"This is page two. It also has a three column heading, and a three column footer.\r"
 	;
 	
-	private static final String headerDef = 
-		"\u0003\r\r" +
-		"\u0004\r\r" +
-		"\u0003\r\r" +
-		"\u0004\r\r"
-	;
-	private static final String header =
+	private static final String a_header =
 		"First header column!\tMid header Right header!\r"
 	;
-	private static final String footerDef = 
-		"\r"
-	;
-	private static final String footer =
+	private static final String a_footer =
 		"Footer Left\tFooter Middle Footer Right\r"
 	;
-	private static final String endHeaderFooter =
-		"\r\r"
+	
+	
+	private static final String u_page_1 =
+		"This is a fairly simple word document, over two pages, with headers and footers.\r" +
+		"The trick with this one is that it contains some Unicode based strings in it.\r" +
+		"Firstly, some currency symbols:\r" +
+		"\tGBP - \u00a3\r" +
+        "\tEUR - \u20ac\r" +
+        "Now, we\u2019ll have some French text, in bold and big:\r" +
+        "\tMoli\u00e8re\r" +
+        "And some normal French text:\r" +
+        "\tL'Avare ou l'\u00c9cole du mensonge\r" +
+        "That\u2019s it for page one\r"
+	;
+	private static final String u_page_2 =
+		"This is page two. Les Pr\u00e9cieuses ridicules. The end.\r"
 	;
 	
-	private HWPFDocument doc;
+	private static final String u_header =
+		"This is a simple header, with a \u20ac euro symbol in it.\r"
+	;
+	private static final String u_footer =
+		"The footer, with Moli\u00e8re, has Unicode in it.\r"
+	;
+	
+	/**
+	 * A document made up only of basic ASCII text
+	 */
+	private HWPFDocument docAscii;
+	/**
+	 * A document with some unicode in it too
+	 */
+	private HWPFDocument docUnicode;
 	
 	public void setUp() throws Exception {
-		String filename = System.getProperty("HWPF.testdata.path");
-		filename = filename + "/ThreeColHeadFoot.doc";
+		String dirname = System.getProperty("HWPF.testdata.path");
 		
-		doc = new HWPFDocument(
+		String filename = dirname + "/HeaderFooterUnicode.doc";
+		docUnicode = new HWPFDocument(
+				new FileInputStream(filename)
+		);
+		
+		filename = dirname + "/ThreeColHeadFoot.doc";
+		docAscii = new HWPFDocument(
 				new FileInputStream(filename)
 		);
 	}
@@ -77,32 +111,32 @@ public class TestHWPFRangeParts extends TestCase {
 		// First check the start and end bits
 		assertEquals(
 				0,
-				doc._cpSplit.getMainDocumentStart()
+				docAscii._cpSplit.getMainDocumentStart()
 		);
 		assertEquals(
-				page_1.length() +
+				a_page_1.length() +
 				2 + // page break
-				page_2.length(),
-				doc._cpSplit.getMainDocumentEnd()
+				a_page_2.length(),
+				docAscii._cpSplit.getMainDocumentEnd()
 		);
 		
 		assertEquals(
 				238,
-				doc._cpSplit.getFootnoteStart()
+				docAscii._cpSplit.getFootnoteStart()
 		);
 		assertEquals(
 				238,
-				doc._cpSplit.getFootnoteEnd()
+				docAscii._cpSplit.getFootnoteEnd()
 		);
 		
 		assertEquals(
 				238,
-				doc._cpSplit.getHeaderStoryStart()
+				docAscii._cpSplit.getHeaderStoryStart()
 		);
 		assertEquals(
-				238 + headerDef.length() + header.length() +
-				footerDef.length() + footer.length() + endHeaderFooter.length(),
-				doc._cpSplit.getHeaderStoryEnd()
+				238 + headerDef.length() + a_header.length() +
+				footerDef.length() + a_footer.length() + endHeaderFooter.length(),
+				docAscii._cpSplit.getHeaderStoryEnd()
 		);
 	}
 	
@@ -110,33 +144,104 @@ public class TestHWPFRangeParts extends TestCase {
 		Range r;
 		
 		// Now check the real ranges
-		r = doc.getRange();
+		r = docAscii.getRange();
 		assertEquals(
-				page_1 +
+				a_page_1 +
 				page_break + "\r" +
-				page_2,
+				a_page_2,
 				r.text()
 		);
 		
-		r = doc.getHeaderStoryRange();
+		r = docAscii.getHeaderStoryRange();
 		assertEquals(
 				headerDef +
-				header +
+				a_header +
 				footerDef +
-				footer + 
+				a_footer + 
 				endHeaderFooter,
 				r.text()
 		);
 		
-		r = doc.getOverallRange();
+		r = docAscii.getOverallRange();
 		assertEquals(
-				page_1 +
+				a_page_1 +
 				page_break + "\r" +
-				page_2 + 
+				a_page_2 + 
 				headerDef +
-				header +
+				a_header +
 				footerDef +
-				footer + 
+				a_footer + 
+				endHeaderFooter +
+				"\r",
+				r.text()
+		);
+	}
+	
+	public void testBasicsUnicode() throws Exception {
+		// First check the start and end bits
+		assertEquals(
+				0,
+				docUnicode._cpSplit.getMainDocumentStart()
+		);
+		assertEquals(
+				u_page_1.length() +
+				2 + // page break
+				u_page_2.length(),
+				docUnicode._cpSplit.getMainDocumentEnd()
+		);
+		
+		assertEquals(
+				408,
+				docUnicode._cpSplit.getFootnoteStart()
+		);
+		assertEquals(
+				408,
+				docUnicode._cpSplit.getFootnoteEnd()
+		);
+		
+		assertEquals(
+				408,
+				docUnicode._cpSplit.getHeaderStoryStart()
+		);
+		// TODO - fix this one
+		assertEquals(
+				408 + headerDef.length() + u_header.length() +
+				footerDef.length() + u_footer.length() + endHeaderFooter.length(),
+				docUnicode._cpSplit.getHeaderStoryEnd()
+		);
+	}
+	
+	public void testContentsUnicode() throws Exception {
+		Range r;
+		
+		// Now check the real ranges
+		r = docUnicode.getRange();
+		assertEquals(
+				u_page_1 +
+				page_break + "\r" +
+				u_page_2,
+				r.text()
+		);
+		
+		r = docUnicode.getHeaderStoryRange();
+		assertEquals(
+				headerDef +
+				u_header +
+				footerDef +
+				u_footer + 
+				endHeaderFooter,
+				r.text()
+		);
+		
+		r = docUnicode.getOverallRange();
+		assertEquals(
+				u_page_1 +
+				page_break + "\r" +
+				u_page_2 + 
+				headerDef +
+				u_header +
+				footerDef +
+				u_footer + 
 				endHeaderFooter +
 				"\r",
 				r.text()
