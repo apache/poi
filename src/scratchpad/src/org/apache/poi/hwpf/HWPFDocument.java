@@ -288,6 +288,10 @@ public class HWPFDocument extends POIDocument
   {
     return _fib;
   }
+  public CPSplitCalculator getCPSplitCalculator()
+  {
+	return _cpSplit;
+  }
 
   public DocumentProperties getDocProperties()
   {
