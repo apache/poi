@@ -137,7 +137,8 @@ public class Range
 
   /**
    * Used to construct a Range from a document. This is generally used to
-   * create a Range that spans the whole document.
+   * create a Range that spans the whole document, or at least one
+   * whole part of the document (eg main text, header, comment)
    *
    * @param start Starting character offset of the range.
    * @param end Ending character offset of the range.
@@ -259,15 +260,21 @@ public class Range
     for (int x = _textStart; x < _textEnd; x++)
     {
       TextPiece piece = (TextPiece)_text.get(x);
-      int start = _start > piece.getStart() ? _start - piece.getStart() : 0;
-      int end = _end <= piece.getEnd() ? _end - piece.getStart() : piece.getEnd() - piece.getStart();
-
-      if(piece.usesUnicode()) // convert the byte pointers to char pointers
-      {
-        start/=2;
-        end/=2;
+      
+      // Figure out where in this piece the text
+      //  we're after lives
+      int rStart = 0;
+      int rEnd = piece.characterLength();
+      if(_start > piece.getStart()) {
+    	  rStart = _start - piece.getStart();
       }
-      sb.append(piece.getStringBuffer().substring(start, end));
+      if(_end < piece.getEnd()) {
+    	  rEnd -= (piece.getEnd() - _end);
+      }
+      
+      // Luckily TextPieces work in characters, so we don't
+      //  need to worry about unicode here
+      sb.append(piece.substring(rStart, rEnd));
     }
     return sb.toString();
   }
@@ -929,9 +936,11 @@ public class Range
   }
 
   /**
-   *	Adjust the value of <code>FIB.CCPText</code> after an insert or a delete...
+   * Adjust the value of <code>FIB.CCPText</code> after an insert or a delete...
    *
-   *	@param	adjustment	The (signed) value that should be added to <code>FIB.CCPText</code>
+   * TODO - handle other kinds of text, eg Headers
+   *
+   * @param	adjustment	The (signed) value that should be added to <code>FIB.CCPText</code>
    */
   protected void adjustFIB(int adjustment) {
 
