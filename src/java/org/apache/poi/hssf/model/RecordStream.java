@@ -59,6 +59,13 @@ public final class RecordStream {
 		return _list.get(_nextIndex).getClass();
 	}
 
+	public int peekNextSid() {
+		if(_nextIndex >= _list.size()) {
+			return -1;
+		}
+		return ((Record)_list.get(_nextIndex)).getSid();
+	}
+
 	public int getCountRead() {
 		return _countRead;
 	}

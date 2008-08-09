@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -24,18 +22,15 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 
 /**
- * Title:        Print Setup Record<P>
- * Description:  Stores print setup options -- bogus for HSSF (and marked as such)<P>
- * REFERENCE:  PG 385 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
+ * Title:        PAGESETUP (0x00A1)<p/>
+ * Description:  Stores print setup options -- bogus for HSSF (and marked as such)<p/>
+ * REFERENCE:  PG 385 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-
-public class PrintSetupRecord
-    extends Record
-{
-    public final static short     sid = 0xa1;
+public class PrintSetupRecord extends Record {
+    public final static short     sid = 0x00A1;
     private short                 field_1_paper_size;
     private short                 field_2_scale;
     private short                 field_3_page_start;

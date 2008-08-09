@@ -54,7 +54,8 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
         <release version="3.1.1-alpha1" date="2008-??-??">
-           <action dev="POI-DEVELOPERS" type="add">45582 - Fix for workbook streams with extra bytes trailing the EOFRecord</action>
+           <action dev="POI-DEVELOPERS" type="add">45577 - Added implementations for Excel functions NOW and TODAY</action>
+           <action dev="POI-DEVELOPERS" type="fix">45582 - Fix for workbook streams with extra bytes trailing the EOFRecord</action>
            <action dev="POI-DEVELOPERS" type="add">45537 - Include headers and footers (of slides and notes) in the extracted text from HSLF</action>
            <action dev="POI-DEVELOPERS" type="fix">45472 - Fixed incorrect default row height in OpenOffice 2.3</action>
            <action dev="POI-DEVELOPERS" type="fix">44692 - HSSFPicture.resize() stretched image when there was a text next to it</action>

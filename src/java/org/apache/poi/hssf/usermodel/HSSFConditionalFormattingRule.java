@@ -26,17 +26,16 @@ import org.apache.poi.hssf.record.cf.PatternFormatting;
 import org.apache.poi.hssf.record.formula.Ptg;
 
 /**
- * 
+ *
  * High level representation of Conditional Formatting Rule.
  * It allows to specify formula based conditions for the Conditional Formatting
  * and the formatting settings such as font, border and pattern.
- * 
+ *
  * @author Dmitriy Kumshayev
  */
-
 public final class HSSFConditionalFormattingRule
 {
-    private static final byte CELL_COMPARISON = CFRuleRecord.CONDITION_TYPE_CELL_VALUE_IS;
+	private static final byte CELL_COMPARISON = CFRuleRecord.CONDITION_TYPE_CELL_VALUE_IS;
 
 	private final CFRuleRecord cfRuleRecord;
 	private final HSSFWorkbook workbook;
@@ -50,11 +49,11 @@ public final class HSSFConditionalFormattingRule
 	{
 		return cfRuleRecord;
 	}
-	
+
 	private HSSFFontFormatting getFontFormatting(boolean create)
 	{
 		FontFormatting fontFormatting = cfRuleRecord.getFontFormatting();
-		if ( fontFormatting != null) 
+		if ( fontFormatting != null)
 		{
 			cfRuleRecord.setFontFormatting(fontFormatting);
 			return new HSSFFontFormatting(cfRuleRecord);
@@ -70,7 +69,7 @@ public final class HSSFConditionalFormattingRule
 			return null;
 		}
 	}
-	
+
 	/**
 	 * @return - font formatting object  if defined,  <code>null</code> otherwise
 	 */
@@ -79,19 +78,19 @@ public final class HSSFConditionalFormattingRule
 		return getFontFormatting(false);
 	}
 	/**
-	 * create a new font formatting structure if it does not exist, 
+	 * create a new font formatting structure if it does not exist,
 	 * otherwise just return existing object.
-	 * @return - font formatting object, never returns <code>null</code>. 
+	 * @return - font formatting object, never returns <code>null</code>.
 	 */
 	public HSSFFontFormatting createFontFormatting()
 	{
 		return getFontFormatting(true);
 	}
-	
+
 	private HSSFBorderFormatting getBorderFormatting(boolean create)
 	{
 		BorderFormatting borderFormatting = cfRuleRecord.getBorderFormatting();
-		if ( borderFormatting != null) 
+		if ( borderFormatting != null)
 		{
 			cfRuleRecord.setBorderFormatting(borderFormatting);
 			return new HSSFBorderFormatting(cfRuleRecord);
@@ -115,19 +114,19 @@ public final class HSSFConditionalFormattingRule
 		return getBorderFormatting(false);
 	}
 	/**
-	 * create a new border formatting structure if it does not exist, 
+	 * create a new border formatting structure if it does not exist,
 	 * otherwise just return existing object.
-	 * @return - border formatting object, never returns <code>null</code>. 
+	 * @return - border formatting object, never returns <code>null</code>.
 	 */
 	public HSSFBorderFormatting createBorderFormatting()
 	{
 		return getBorderFormatting(true);
 	}
-	
+
 	private HSSFPatternFormatting getPatternFormatting(boolean create)
 	{
 		PatternFormatting patternFormatting = cfRuleRecord.getPatternFormatting();
-		if ( patternFormatting != null) 
+		if ( patternFormatting != null)
 		{
 			cfRuleRecord.setPatternFormatting(patternFormatting);
 			return new HSSFPatternFormatting(cfRuleRecord);
@@ -143,7 +142,7 @@ public final class HSSFConditionalFormattingRule
 			return null;
 		}
 	}
-	
+
 	/**
 	 * @return - pattern formatting object  if defined, <code>null</code> otherwise
 	 */
@@ -152,15 +151,29 @@ public final class HSSFConditionalFormattingRule
 		return getPatternFormatting(false);
 	}
 	/**
-	 * create a new pattern formatting structure if it does not exist, 
+	 * create a new pattern formatting structure if it does not exist,
 	 * otherwise just return existing object.
-	 * @return - pattern formatting object, never returns <code>null</code>. 
+	 * @return - pattern formatting object, never returns <code>null</code>.
 	 */
 	public HSSFPatternFormatting createPatternFormatting()
 	{
 		return getPatternFormatting(true);
 	}
-	
+
+	/**
+	 * @return -  the conditiontype for the cfrule
+	 */
+	public byte getConditionType() {
+		return cfRuleRecord.getConditionType();
+	}
+
+	/**
+	 * @return - the comparisionoperatation for the cfrule
+	 */
+	public byte getComparisonOperation() {
+		return cfRuleRecord.getComparisonOperation();
+	}
+
 	public String getFormula1()
 	{
 		return toFormulaString(cfRuleRecord.getParsedExpression1());

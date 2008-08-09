@@ -15,13 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
-
-/*
- * Cell.java
- *
- * Created on September 30, 2001, 3:46 PM
- */
 package org.apache.poi.hssf.usermodel;
 
 import java.text.DateFormat;
@@ -79,10 +72,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
  * @author  Yegor Kozlov cell comments support
  * @version 1.0-pre
  */
-
-public class HSSFCell implements Cell
-{
-
+public class HSSFCell implements Cell {
     /**
      * Numeric Cell type (0)
      * @see #setCellType(int)
@@ -157,8 +147,6 @@ public class HSSFCell implements Cell
      *
      * @see org.apache.poi.hssf.usermodel.HSSFRow#createCell(short)
      */
-
-    //protected HSSFCell(Workbook book, Sheet sheet, short row, short col)
     protected HSSFCell(HSSFWorkbook book, Sheet sheet, int row, short col)
     {
         checkBounds(col);
@@ -186,8 +174,6 @@ public class HSSFCell implements Cell
      *                Type of cell
      * @see org.apache.poi.hssf.usermodel.HSSFRow#createCell(short,int)
      */
-
-    //protected HSSFCell(Workbook book, Sheet sheet, short row, short col,
     protected HSSFCell(HSSFWorkbook book, Sheet sheet, int row, short col,
                        int type)
     {
@@ -209,8 +195,6 @@ public class HSSFCell implements Cell
      * @param sheet - Sheet record of the sheet containing this cell
      * @param cval - the Cell Value Record we wish to represent
      */
-
-    //protected HSSFCell(Workbook book, Sheet sheet, short row,
     protected HSSFCell(HSSFWorkbook book, Sheet sheet, int row,
                        CellValueRecordInterface cval)
     {
@@ -234,15 +218,9 @@ public class HSSFCell implements Cell
         }
         ExtendedFormatRecord xf = book.getWorkbook().getExFormatAt(cval.getXFIndex());
 
-        setCellStyle(new HSSFCellStyle(( short ) cval.getXFIndex(), xf, book));
+        setCellStyle(new HSSFCellStyle(cval.getXFIndex(), xf, book));
     }
 
-    /**
-     * private constructor to prevent blank construction
-     */
-    private HSSFCell()
-    {
-    }
 
     /**
      * used internally -- given a cell value record, figure out its type
@@ -351,11 +329,6 @@ public class HSSFCell implements Cell
     private void setCellType(int cellType, boolean setValue, int row,short col, short styleIndex)
     {
 
-        // if (cellType == CELL_TYPE_FORMULA)
-        // {
-        // throw new RuntimeException(
-        // "Formulas have not been implemented in this release");
-        // }
         if (cellType > CELL_TYPE_ERROR)
         {
             throw new RuntimeException("I have no idea what type that is!");
@@ -506,10 +479,7 @@ public class HSSFCell implements Cell
         if (cellType != this.cellType && 
             this.cellType!=-1 )  // Special Value to indicate an uninitialized Cell
         {
-            int loc = sheet.getLoc();
-
             sheet.replaceValueRecord(record);
-            sheet.setLoc(loc);
         }
         this.cellType = cellType;
     }
@@ -545,7 +515,7 @@ public class HSSFCell implements Cell
             setCellType(CELL_TYPE_NUMERIC, false, row, col, styleIndex);
         }
         
-        // Save into the apropriate record
+        // Save into the appropriate record
         if(record instanceof FormulaRecordAggregate) {
         	(( FormulaRecordAggregate ) record).getFormulaRecord().setValue(value);
         } else {
@@ -679,9 +649,7 @@ public class HSSFCell implements Cell
             
             //only set to default if there is no extended format index already set
             if (rec.getXFIndex() == (short)0) rec.setXFIndex(( short ) 0x0f);
-            FormulaParser fp = new FormulaParser(formula, book);
-            fp.parse();
-            Ptg[] ptg  = fp.getRPNPtg();
+            Ptg[] ptgs = FormulaParser.parse(formula, book);
             int   size = 0;
 
             // clear the Ptg Stack
@@ -690,9 +658,9 @@ public class HSSFCell implements Cell
             }
 
             // fill the Ptg Stack with Ptgs of new formula
-            for (int k = 0; k < ptg.length; k++) {
-                size += ptg[ k ].getSize();
-                frec.pushExpressionToken(ptg[ k ]);
+            for (int k = 0; k < ptgs.length; k++) {
+                size += ptgs[ k ].getSize();
+                frec.pushExpressionToken(ptgs[ k ]);
             }
             rec.getFormulaRecord().setExpressionLength(( short ) size);
             //Workbook.currentBook = null;
@@ -966,38 +934,6 @@ public class HSSFCell implements Cell
       short styleIndex=record.getXFIndex();
       ExtendedFormatRecord xf = book.getWorkbook().getExFormatAt(styleIndex);
       return new HSSFCellStyle(styleIndex, xf, book);
-    }
-    
-    /**
-     * used for internationalization, currently -1 for unchanged, 0 for compressed unicode or 1 for 16-bit
-     *
-     * @see #ENCODING_UNCHANGED
-     * @see #ENCODING_COMPRESSED_UNICODE
-     * @see #ENCODING_UTF_16
-     *
-     * @return -1, 1 or 0 for unchanged, compressed or uncompressed (used only with String type)
-     * 
-     * @deprecated As of 3-Jan-06 POI now automatically handles Unicode without forcing the encoding.
-     */
-    public short getEncoding()
-    {
-        return encoding;
-    }
-
-    /**
-     * set the encoding to either 8 or 16 bit. (US/UK use 8-bit, rest of the western world use 16bit)
-     *
-     * @see #ENCODING_UNCHANGED
-     * @see #ENCODING_COMPRESSED_UNICODE
-     * @see #ENCODING_UTF_16
-     *
-     * @param encoding either ENCODING_COMPRESSED_UNICODE (0) or ENCODING_UTF_16 (1)
-     * @deprecated As of 3-Jan-06 POI now automatically handles Unicode without forcing the encoding.
-     */
-
-    public void setEncoding(short encoding)
-    {
-        this.encoding = encoding;
     }
 
     /**

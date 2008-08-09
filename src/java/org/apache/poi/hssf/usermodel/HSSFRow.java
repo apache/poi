@@ -102,20 +102,17 @@ public final class HSSFRow implements Comparable, Row {
     }
 
     /**
-     * Use this to create new cells within the row and return it.
-     * <p>
-     * The cell that is returned is a CELL_TYPE_BLANK. The type can be changed
-     * either through calling <code>setCellValue</code> or <code>setCellType</code>.
-     *
-     * @param column - the column number this cell represents
-     *
-     * @return HSSFCell a high level representation of the created cell.
+     * @deprecated (Aug 2008) use {@link HSSFRow#createCell(int) }
      */
-    public HSSFCell createCell(short column)
-    {
-        return this.createCell(column,HSSFCell.CELL_TYPE_BLANK);
+    public HSSFCell createCell(short columnIndex) {
+        return createCell((int)columnIndex);
     }
-
+    /**
+     * @deprecated (Aug 2008) use {@link HSSFRow#createCell(int, int) }
+     */
+    public HSSFCell createCell(short columnIndex, int type) {
+        return createCell((int)columnIndex, type);
+    }
     /**
      * Use this to create new cells within the row and return it.
      * <p>
@@ -128,11 +125,7 @@ public final class HSSFRow implements Comparable, Row {
      */
     public HSSFCell createCell(int column)
     {
-    	short shortCellNum = (short)column;
-    	if(column > 0x7FFF) {
-    		shortCellNum = (short)(0xffff - column);
-    	}
-        return this.createCell(shortCellNum,HSSFCell.CELL_TYPE_BLANK);
+        return this.createCell(column,HSSFCell.CELL_TYPE_BLANK);
     }
 
     /**
@@ -141,14 +134,18 @@ public final class HSSFRow implements Comparable, Row {
      * The cell that is returned is a CELL_TYPE_BLANK. The type can be changed
      * either through calling setCellValue or setCellType.
      *
-     * @param column - the column number this cell represents
+     * @param columnIndex - the column number this cell represents
      *
      * @return HSSFCell a high level representation of the created cell.
      */
-    public HSSFCell createCell(short column, int type)
+    public HSSFCell createCell(int columnIndex, int type)
     {
-        HSSFCell cell = new HSSFCell(book, sheet, getRowNum(), column, type);
+    	short shortCellNum = (short)columnIndex;
+    	if(columnIndex > 0x7FFF) {
+    		shortCellNum = (short)(0xffff - columnIndex);
+    	}
 
+        HSSFCell cell = new HSSFCell(book, sheet, getRowNum(), shortCellNum, type);
         addCell(cell);
         sheet.addValueRecord(getRowNum(), cell.getCellValueRecord());
         return cell;
@@ -193,12 +190,12 @@ public final class HSSFRow implements Comparable, Row {
      *  records too.
      */
     protected void removeAllCells() {
-    	for(int i=0; i<cells.length; i++) {
-    		if(cells[i] != null) {
-    			removeCell(cells[i], true);
-    		}
-    	}
-    	cells=new HSSFCell[INITIAL_CAPACITY];
+        for(int i=0; i<cells.length; i++) {
+            if(cells[i] != null) {
+                removeCell(cells[i], true);
+            }
+        }
+        cells=new HSSFCell[INITIAL_CAPACITY];
     }
 
     /**
@@ -346,7 +343,7 @@ public final class HSSFRow implements Comparable, Row {
      * @return HSSFCell representing that column or null if undefined.
      */
     public HSSFCell getCell(int cellnum) {
-    	return getCell(cellnum, book.getMissingCellPolicy());
+        return getCell(cellnum, book.getMissingCellPolicy());
     }
     
     /**
@@ -359,24 +356,24 @@ public final class HSSFRow implements Comparable, Row {
      * @return representing that column or null if undefined + policy allows.
      */
     public HSSFCell getCell(int cellnum, MissingCellPolicy policy) {
-    	HSSFCell cell = retrieveCell(cellnum);
-    	if(policy == RETURN_NULL_AND_BLANK) {
-    		return cell;
-    	}
-    	if(policy == RETURN_BLANK_AS_NULL) {
-    		if(cell == null) return cell;
-    		if(cell.getCellType() == HSSFCell.CELL_TYPE_BLANK) {
-    			return null;
-    		}
-    		return cell;
-    	}
-    	if(policy == CREATE_NULL_AS_BLANK) {
-    		if(cell == null) {
-    			return createCell((short)cellnum, HSSFCell.CELL_TYPE_BLANK);
-    		}
-    		return cell;
-    	}
-    	throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
+        HSSFCell cell = retrieveCell(cellnum);
+        if(policy == RETURN_NULL_AND_BLANK) {
+            return cell;
+        }
+        if(policy == RETURN_BLANK_AS_NULL) {
+            if(cell == null) return cell;
+            if(cell.getCellType() == HSSFCell.CELL_TYPE_BLANK) {
+                return null;
+            }
+            return cell;
+        }
+        if(policy == CREATE_NULL_AS_BLANK) {
+            if(cell == null) {
+                return createCell((short)cellnum, HSSFCell.CELL_TYPE_BLANK);
+            }
+            return cell;
+        }
+        throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
     }
 
     /**
@@ -549,7 +546,6 @@ public final class HSSFRow implements Comparable, Row {
             return -1;
         return cellnum;
     }
-
 
     /**
      * @return cell iterator of the physically defined cells. 
