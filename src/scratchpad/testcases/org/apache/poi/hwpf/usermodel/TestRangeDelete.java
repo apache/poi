@@ -67,13 +67,27 @@ public class TestRangeDelete extends TestCase {
 
 		HWPFDocument daDoc = new HWPFDocument(new FileInputStream(illustrativeDocFile));
 
-		Range range = daDoc.getRange();
+		Range range = daDoc.getOverallRange();
 
 		assertEquals(1, range.numSections());
 		Section section = range.getSection(0);
 
 		assertEquals(5, section.numParagraphs());
 		Paragraph para = section.getParagraph(2);
+
+		assertEquals(5, para.numCharacterRuns());
+
+		assertEquals(originalText, para.text());
+		
+		
+		// Now check on just the main text
+		range = daDoc.getRange();
+		
+		assertEquals(1, range.numSections());
+		section = range.getSection(0);
+
+		assertEquals(5, section.numParagraphs());
+		para = section.getParagraph(2);
 
 		assertEquals(5, para.numCharacterRuns());
 
@@ -87,7 +101,7 @@ public class TestRangeDelete extends TestCase {
 
 		HWPFDocument daDoc = new HWPFDocument(new FileInputStream(illustrativeDocFile));
 
-		Range range = daDoc.getRange();
+		Range range = daDoc.getOverallRange();
 		assertEquals(1, range.numSections());
 
 		Section section = range.getSection(0);

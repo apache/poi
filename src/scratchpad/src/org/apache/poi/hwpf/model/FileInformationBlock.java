@@ -28,7 +28,19 @@ import org.apache.poi.hwpf.model.io.*;
 import org.apache.poi.hwpf.model.types.FIBAbstractType;
 
 /**
- *
+ * The File Information Block (FIB). Holds pointers
+ *  to various bits of the file, and lots of flags which
+ *  specify properties of the document.
+ * 
+ * The parent class, {@link FIBAbstractType}, holds the
+ *  first 32 bytes, which make up the FibBase.
+ * The next part, the fibRgW / FibRgW97, is handled
+ *  by {@link FIBShortHandler}.
+ * The next part, the fibRgLw / The FibRgLw97, is
+ *  handled by the {@link FIBLongHandler}.
+ * Finally, the rest of the fields are handled by
+ *  the {@link FIBFieldHandler}.
+ * 
  * @author  andy
  */
 public class FileInformationBlock extends FIBAbstractType

@@ -22,10 +22,11 @@ import java.io.IOException;
 
 import org.apache.poi.util.LittleEndian;
 
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
-
-class FIBShortHandler
-{
+/**
+ * Handles the fibRgW / FibRgW97 part of 
+ *  the FIB (File Information Block)
+ */
+public class FIBShortHandler {
   public final static int MAGICCREATED = 0;
   public final static int MAGICREVISED = 1;
   public final static int MAGICCREATEDPRIVATE = 2;
