@@ -51,7 +51,6 @@ public final class TestBug42464 extends TestCase {
 			Iterator it = s.rowIterator();
 			while(it.hasNext()) {
 				HSSFRow r = (HSSFRow)it.next();
-				eval.setCurrentRow(r);
 				process(r, eval);
 			}
 		}

@@ -1,19 +1,19 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
 
 package org.apache.poi.hssf.record.formula.eval;
 
@@ -69,7 +69,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 		/** 
 		 * Index of the column that contains the function names
 		 */
-		public static final short COLUMN_INDEX_FUNCTION_NAME = 1; // Column 'B'
+		public static final int COLUMN_INDEX_FUNCTION_NAME = 1; // Column 'B'
 	
 		/**
 		 * Used to indicate when there are no more functions left
@@ -96,7 +96,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	private int _evaluationFailureCount;
 	private int _evaluationSuccessCount;
 
-	private static final HSSFCell getExpectedValueCell(HSSFRow row, short columnIndex) {
+	private static final HSSFCell getExpectedValueCell(HSSFRow row, int columnIndex) {
 		if (row == null) {
 			return null;
 		}
@@ -238,10 +238,9 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 		
 		int result = Result.NO_EVALUATIONS_FOUND; // so far
 		short endcolnum = formulasRow.getLastCellNum();
-		evaluator.setCurrentRow(formulasRow);
 
 		// iterate across the row for all the evaluation cases
-		for (short colnum=SS.COLUMN_INDEX_FIRST_TEST_VALUE; colnum < endcolnum; colnum++) {
+		for (int colnum=SS.COLUMN_INDEX_FIRST_TEST_VALUE; colnum < endcolnum; colnum++) {
 			HSSFCell c = formulasRow.getCell(colnum);
 			if (c == null || c.getCellType() != HSSFCell.CELL_TYPE_FORMULA) {
 				continue;
@@ -297,7 +296,6 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 		for(int i=startIx; i<endIx; i++) {
 			ps.println("\tat " + stes[i].toString());
 		}
-		
 	}
 
 	/**

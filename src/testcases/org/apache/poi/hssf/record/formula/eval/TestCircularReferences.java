@@ -35,10 +35,9 @@ public final class TestCircularReferences extends TestCase {
 	/**
 	 * Translates StackOverflowError into AssertionFailedError
 	 */
-	private static CellValue evaluateWithCycles(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row, HSSFCell testCell)
+	private static CellValue evaluateWithCycles(HSSFWorkbook wb, HSSFSheet sheet, HSSFCell testCell)
 			throws AssertionFailedError {
 		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
-		evaluator.setCurrentRow(row);
 		try {
 			return evaluator.evaluate(testCell);
 		} catch (StackOverflowError e) {
@@ -63,12 +62,12 @@ public final class TestCircularReferences extends TestCase {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Sheet1");
 		
-		short colB = 1;
+		int colB = 1;
 		sheet.createRow(0).createCell(colB).setCellValue(1);
 		sheet.createRow(1).createCell(colB).setCellValue(2);
 		sheet.createRow(2).createCell(colB).setCellValue(3);
 		HSSFRow row4 = sheet.createRow(3);
-		HSSFCell testCell = row4.createCell((short)0);
+		HSSFCell testCell = row4.createCell(0);
 		// This formula should evaluate to the contents of B2,
 		testCell.setCellFormula("INDEX(A1:B4,2,2)");
 		// However the range A1:B4 also includes the current cell A4.  If the other parameters
@@ -76,7 +75,7 @@ public final class TestCircularReferences extends TestCase {
 		// arguments before invoking operators, POI must handle such potential cycles gracefully.
 		
 
-		CellValue cellValue = evaluateWithCycles(wb, sheet, row4, testCell);
+		CellValue cellValue = evaluateWithCycles(wb, sheet, testCell);
 		
 		assertTrue(cellValue.getCellType() == HSSFCell.CELL_TYPE_NUMERIC);
 		assertEquals(2, cellValue.getNumberValue(), 0);
@@ -91,12 +90,11 @@ public final class TestCircularReferences extends TestCase {
 		HSSFSheet sheet = wb.createSheet("Sheet1");
 		
 		HSSFRow row = sheet.createRow(0);
-		HSSFCell testCell = row.createCell((short)0);
+		HSSFCell testCell = row.createCell(0);
 		testCell.setCellFormula("A1");
 
 		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
-		evaluator.setCurrentRow(row);
-		CellValue cellValue = evaluateWithCycles(wb, sheet, row, testCell);
+		CellValue cellValue = evaluateWithCycles(wb, sheet, testCell);
 		
 		confirmCycleErrorCode(cellValue);
 	}
@@ -110,15 +108,14 @@ public final class TestCircularReferences extends TestCase {
 		HSSFSheet sheet = wb.createSheet("Sheet1");
 		
 		HSSFRow row = sheet.createRow(0);
-		row.createCell((short)0).setCellFormula("B1");
-		row.createCell((short)1).setCellFormula("C1");
-		row.createCell((short)2).setCellFormula("D1");
-		HSSFCell testCell = row.createCell((short)3);
+		row.createCell(0).setCellFormula("B1");
+		row.createCell(1).setCellFormula("C1");
+		row.createCell(2).setCellFormula("D1");
+		HSSFCell testCell = row.createCell(3);
 		testCell.setCellFormula("A1");
 
 		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
-		evaluator.setCurrentRow(row);
-		CellValue cellValue = evaluateWithCycles(wb, sheet, row, testCell);
+		CellValue cellValue = evaluateWithCycles(wb, sheet, testCell);
 		
 		confirmCycleErrorCode(cellValue);
 	}

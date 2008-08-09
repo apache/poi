@@ -25,6 +25,7 @@ import java.util.Stack;
 import org.apache.poi.hssf.record.formula.*;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
@@ -112,7 +113,7 @@ public final class FormulaParser {
     }
 
     public static Ptg[] parse(String formula, HSSFWorkbook workbook, int formulaType) {
-        FormulaParser fp = new FormulaParser(formula, workbook);
+        FormulaParser fp = HSSFFormulaEvaluator.getUnderlyingParser(workbook, formula);
         fp.parse();
         return fp.getRPNPtg(formulaType);
     }
@@ -816,7 +817,7 @@ end;
 
     /**
      *  API call to execute the parsing of the formula
-     * @deprecated use Ptg[] FormulaParser.parse(String, HSSFWorkbook) directly
+     * @deprecated use {@link #parse(String, HSSFWorkbook)} directly
      */
     public void parse() {
         pointer=0;
