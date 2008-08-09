@@ -117,8 +117,11 @@ public class TestXWPFWordExtractor extends TestCase {
 		assertTrue(text.startsWith(
 				"  \n(V) ILLUSTRATIVE CASES\n\n"
 		));
-		assertTrue(text.endsWith(
+		assertTrue(text.contains(
 				"As well as gaining "+euro+"90 from child benefit increases, he will also receive the early childhood supplement of "+euro+"250 per quarter for Vincent for the full four quarters of the year.\n\n\n\n \n\n\n"
+		));
+		assertTrue(text.endsWith(
+				"11.4%\t\t90\t\t\t\t\t250\t\t1,310\t\t\n\n"
 		));
 		
 		// Check number of paragraphs
@@ -127,7 +130,7 @@ public class TestXWPFWordExtractor extends TestCase {
 		for (int i = 0; i < t.length; i++) {
 			if(t[i] == '\n') { ps++; }
 		}
-		assertEquals(79, ps);
+		assertEquals(103, ps);
 	}
 	
 	public void testGetWithHyperlinks() throws Exception {
