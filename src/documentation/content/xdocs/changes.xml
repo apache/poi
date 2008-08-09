@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5.1-beta2" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">45592 - Improve XWPF text extraction to include tables always, and picture text where possible</action>
            <action dev="POI-DEVELOPERS" type="add">45545 - Improve XSLF usermodel support, and include XSLF comments in extracted text</action>
            <action dev="POI-DEVELOPERS" type="add">45540 - Fix XSSF header and footer support, and include headers and footers in the output of XSSFExcelExtractor</action>
            <action dev="POI-DEVELOPERS" type="add">45431 - Support for .xlsm files, sufficient for simple files to be loaded by excel without warning</action>

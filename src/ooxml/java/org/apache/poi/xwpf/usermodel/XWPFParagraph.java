@@ -89,6 +89,20 @@ public class XWPFParagraph extends XMLParagraph
      *  including text from pictures in it.
      */
     public String getText() {
+        return getParagraphText() + getPictureText();
+    }
+    /**
+     * Returns the text of the paragraph, but not
+     *  of any objects in the paragraph
+     */
+    public String getParagraphText() {
         return text.toString();
+    }
+    /**
+     * Returns any text from any suitable
+     *  pictures in the paragraph
+     */
+    public String getPictureText() {
+    	return pictureText.toString();
     }
 }
