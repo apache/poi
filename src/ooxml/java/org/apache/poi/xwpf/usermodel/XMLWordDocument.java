@@ -17,6 +17,7 @@
 package org.apache.poi.xwpf.usermodel;
 
 import org.apache.poi.xwpf.XWPFDocument;
+import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 
 /**
  * High level representation of a ooxml text document.
@@ -46,10 +47,7 @@ public class XMLWordDocument {
 		return xwpfXML.getComments();
 	}
 	
-	public XWPFHeader getHeader() {
-		return xwpfXML.getDocumentHeader();
-	}
-	public XWPFFooter getFooter() {
-		return xwpfXML.getDocumentFooter();
+	public XWPFHeaderFooterPolicy getHeaderFooterPolicy() {
+		return xwpfXML.getHeaderFooterPolicy();
 	}
 }

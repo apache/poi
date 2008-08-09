@@ -48,7 +48,7 @@ public class TestXWPFParagraph extends TestCase {
 	 * Check that we get the right paragraph from the header
 	 */
 	public void testHeaderParagraph() throws Exception {
-		XWPFHeader hdr = xml.getDocumentHeader();
+		XWPFHeader hdr = xml.getHeaderFooterPolicy().getDefaultHeader();
 		assertNotNull(hdr);
 		
 		XWPFParagraph[] ps = hdr.getParagraphs();
