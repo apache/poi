@@ -118,9 +118,9 @@ public class TestTextPieceTable extends TestCase {
 		TextPiece tpB = (TextPiece)tbl.getTextPieces().get(1);
 		TextPiece tpC = (TextPiece)tbl.getTextPieces().get(2);
 		
-		assertTrue(tpA.usesUnicode());
-		assertTrue(tpB.usesUnicode());
-		assertTrue(tpC.usesUnicode());
+		assertTrue(tpA.isUnicode());
+		assertTrue(tpB.isUnicode());
+		assertTrue(tpC.isUnicode());
 		
 		assertEquals(256, tpA.characterLength());
 		assertEquals(256, tpB.characterLength());
@@ -147,9 +147,9 @@ public class TestTextPieceTable extends TestCase {
 		tpB = (TextPiece)tbl.getTextPieces().get(1);
 		tpC = (TextPiece)tbl.getTextPieces().get(2);
 		
-		assertTrue(tpA.usesUnicode());
-		assertTrue(tpB.usesUnicode());
-		assertTrue(tpC.usesUnicode());
+		assertTrue(tpA.isUnicode());
+		assertTrue(tpB.isUnicode());
+		assertTrue(tpC.isUnicode());
 		
 		assertEquals(256, tpA.characterLength());
 		assertEquals(256, tpB.characterLength());

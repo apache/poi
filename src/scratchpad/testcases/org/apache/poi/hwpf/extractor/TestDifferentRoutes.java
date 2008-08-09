@@ -87,7 +87,7 @@ public class TestDifferentRoutes extends TestCase {
     		TextPiece piece = (TextPiece) textPieces.next();
 
     		String encoding = "Cp1252";
-    		if (piece.usesUnicode()) {
+    		if (piece.isUnicode()) {
     			encoding = "UTF-16LE";
     		}
     		String text = new String(piece.getRawBytes(), encoding);
