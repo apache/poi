@@ -29,7 +29,6 @@ import org.apache.poi.hssf.record.DimensionsRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.GridsetRecord;
 import org.apache.poi.hssf.record.GutsRecord;
-import org.apache.poi.hssf.record.HorizontalPageBreakRecord;
 import org.apache.poi.hssf.record.HyperlinkRecord;
 import org.apache.poi.hssf.record.IndexRecord;
 import org.apache.poi.hssf.record.IterationRecord;
@@ -44,11 +43,11 @@ import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.SaveRecalcRecord;
 import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.hssf.record.UncalcedRecord;
-import org.apache.poi.hssf.record.VerticalPageBreakRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.aggregates.MergedCellsTable;
+import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 
 /**
  * Finds correct insert positions for records in workbook streams<p/>
@@ -88,28 +87,25 @@ final class RecordOrderer {
 		if (recClass == GutsRecord.class) {
 			return getGutsRecordInsertPos(records);
 		}
-		if (recClass == HorizontalPageBreakRecord.class) {
-			return getPageBreakRecordInsertPos(records, true);
-		}
-		if (recClass == VerticalPageBreakRecord.class) {
-			return getPageBreakRecordInsertPos(records, false);
+		if (recClass == PageSettingsBlock.class) {
+			return getPageBreakRecordInsertPos(records);
 		}
 		throw new RuntimeException("Unexpected record class (" + recClass.getName() + ")");
 	}
 
-	private static int getPageBreakRecordInsertPos(List records, boolean isHorizonal) {
+	private static int getPageBreakRecordInsertPos(List records) {
 		int dimensionsIndex = getDimensionsIndex(records);
 		int i = dimensionsIndex-1;
 		while (i > 0) {
 			i--;
 			Object rb = records.get(i);
-			if (isPageBreakPriorRecord(rb, isHorizonal)) {
+			if (isPageBreakPriorRecord(rb)) {
 				return i+1;
 			}
 		}
 		throw new RuntimeException("Did not find insert point for GUTS");
 	}
-	private static boolean isPageBreakPriorRecord(Object rb, boolean newRecIsHorizontal) {
+	private static boolean isPageBreakPriorRecord(Object rb) {
 		if (rb instanceof Record) {
 			Record record = (Record) rb;
 			switch (record.getSid()) {
@@ -132,19 +128,7 @@ final class RecordOrderer {
 				case DefaultRowHeightRecord.sid:
 				case 0x0081: // SHEETPR
 					return true;
-			}
-			switch (record.getSid()) {
-				// page settings block
-				case HorizontalPageBreakRecord.sid:
-					if (!newRecIsHorizontal) {
-						return true;
-					}
-					return false;
-				case VerticalPageBreakRecord.sid:
-					return false;
-	   			// next is case HeaderRecord.sid: case FooterRecord.sid:
-				// then more records in page settings block	
-			
+				// next is the 'Worksheet Protection Block'
 			}
 		}
 		return false;

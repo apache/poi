@@ -272,21 +272,11 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
         // convert all LabelRecord records to LabelSSTRecord
         convertLabelRecords(records, recOffset);
-        while (recOffset < records.size())
-        {
+        while (recOffset < records.size()) {
             Sheet sheet = Sheet.createSheet(records, sheetNum++, recOffset );
 
-            recOffset = sheet.getEofLoc()+1;
-            if (recOffset == 1)
-            {
-                break;
-            }
-
-            HSSFSheet hsheet = new HSSFSheet(this, sheet);
-
-            _sheets.add(hsheet);
-
-            // workbook.setSheetName(sheets.size() -1, "Sheet"+sheets.size());
+            recOffset = sheet.getEofLoc()+1; // TODO - use better technique to keep track of the used records
+            _sheets.add(new HSSFSheet(this, sheet));
         }
 
         for (int i = 0 ; i < workbook.getNumNames() ; ++i){

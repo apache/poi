@@ -265,14 +265,14 @@ public final class TestFormulas extends TestCase {
         HSSFCell         c      = null;
 
         //get our minimum values
-        r = s.createRow((short)0);
-        c = r.createCell((short)1);
+        r = s.createRow(0);
+        c = r.createCell(1);
         c.setCellFormula("A2" + operator + "A3");
 
-        for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
-            r = s.createRow((short) x);
+        for (int x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
+            r = s.createRow(x);
 
-            for (short y = 1; y < 256 && y > 0; y++) {
+            for (int y = 1; y < 256 && y > 0; y++) {
 
                 String ref=null;
                 String ref2=null;
@@ -296,13 +296,13 @@ public final class TestFormulas extends TestCase {
                     refy2=(short)(y-3);
                 }
 
-                c = r.getCell((short) y);
+                c = r.getCell(y);
                 CellReference cr= new CellReference(refx1,refy1, false, false);
                 ref=cr.formatAsString();
                 cr=new CellReference(refx2,refy2, false, false);
                 ref2=cr.formatAsString();
 
-                c = r.createCell((short) y);
+                c = r.createCell(y);
                 c.setCellFormula("" + ref + operator + ref2);
 
 
@@ -312,8 +312,8 @@ public final class TestFormulas extends TestCase {
 
         //make sure we do the maximum value of the Int operator
         if (s.getLastRowNum() < Short.MAX_VALUE) {
-            r = s.createRow((short)0);
-            c = r.createCell((short)0);
+            r = s.getRow(0);
+            c = r.createCell(0);
             c.setCellFormula("" + "B1" + operator + "IV255");
         }
 
@@ -453,16 +453,16 @@ public final class TestFormulas extends TestCase {
         HSSFCell         c      = null;
 
         //get our minimum values
-        r = s.createRow((short)0);
-        c = r.createCell((short)1);
+        r = s.createRow(0);
+        c = r.createCell(1);
         c.setCellFormula(1 + operator + 1);
 
-        for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
-            r = s.createRow((short) x);
+        for (int x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
+            r = s.createRow(x);
 
-            for (short y = 1; y < 256 && y > 0; y++) {
+            for (int y = 1; y < 256 && y > 0; y++) {
 
-                c = r.createCell((short) y);
+                c = r.createCell(y);
                 c.setCellFormula("" + x + operator + y);
 
             }
@@ -470,8 +470,8 @@ public final class TestFormulas extends TestCase {
 
         //make sure we do the maximum value of the Int operator
         if (s.getLastRowNum() < Short.MAX_VALUE) {
-            r = s.createRow((short)0);
-            c = r.createCell((short)0);
+            r = s.getRow(0);
+            c = r.createCell(0);
             c.setCellFormula("" + Short.MAX_VALUE + operator + Short.MAX_VALUE);
         }
 

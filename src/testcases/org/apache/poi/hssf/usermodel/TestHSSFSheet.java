@@ -71,8 +71,7 @@ public final class TestHSSFSheet extends TestCase {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet s = wb.createSheet();
 		Sheet sheet = s.getSheet();
-		VCenterRecord record =
-				(VCenterRecord) sheet.findFirstRecordBySid(VCenterRecord.sid);
+		VCenterRecord record = sheet.getPageSettings().getVCenter();
 
 		assertEquals(false, record.getVCenter());
 		s.setVerticallyCenter(true);
@@ -88,8 +87,7 @@ public final class TestHSSFSheet extends TestCase {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet s = wb.createSheet();
 		Sheet sheet = s.getSheet();
-		HCenterRecord record =
-				(HCenterRecord) sheet.findFirstRecordBySid(HCenterRecord.sid);
+		HCenterRecord record = sheet.getPageSettings().getHCenter();
 
 		assertEquals(false, record.getHCenter());
 		s.setHorizontallyCenter(true);

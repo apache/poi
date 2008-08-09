@@ -59,8 +59,7 @@ public interface Row extends Iterable<Cell> {
      *
      * @return HSSFCell a high level representation of the created cell.
      */
-
-    Cell createCell(short column, int type);
+    Cell createCell(int column, int type);
 
     /**
      * remove the HSSFCell from this row.

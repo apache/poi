@@ -54,6 +54,10 @@ public abstract class RecordAggregate extends RecordBase {
 	}
 	
 	public interface RecordVisitor {
+		/**
+		 * Implementors may call non-mutating methods on Record r.
+		 * @param r must not be <code>null</code>
+		 */
 		void visitRecord(Record r);
 	}
 	

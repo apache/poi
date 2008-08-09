@@ -23,6 +23,7 @@ import junit.framework.Assert;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 
 import java.util.List;
 
@@ -106,7 +107,6 @@ public class SanityChecker
             }
 
             return matchOneOrMany( records, firstRecord );
-//            return matchOneOrMany( records, recordIdx );
         }
 
         private int matchRequired( int firstRecord, List records, int recordIdx )
@@ -117,7 +117,6 @@ public class SanityChecker
             }
 
             return matchOneOrMany( records, firstRecord );
-//            return matchOneOrMany( records, recordIdx );
         }
 
         private int matchOneOrMany( List records, int recordIdx )
@@ -204,11 +203,7 @@ public class SanityChecker
         new CheckRecord(GutsRecord.class, '1'),
         new CheckRecord(DefaultRowHeightRecord.class, '1'),
         new CheckRecord(WSBoolRecord.class, '1'),
-        new CheckRecord(HeaderRecord.class, '1'),
-        new CheckRecord(FooterRecord.class, '1'),
-        new CheckRecord(HCenterRecord.class, '1'),
-        new CheckRecord(VCenterRecord.class, '1'),
-        new CheckRecord(PrintSetupRecord.class, '1'),
+        new CheckRecord(PageSettingsBlock.class, '1'),
         new CheckRecord(DefaultColWidthRecord.class, '1'),
         new CheckRecord(DimensionsRecord.class, '1'),
         new CheckRecord(WindowTwoRecord.class, '1'),
@@ -275,7 +270,7 @@ public class SanityChecker
         }
     } */
 
-    private static int findFirstRecord( List records, Class record, int startIndex )
+    /* package */ static int findFirstRecord( List records, Class record, int startIndex )
     {
         for (int i = startIndex; i < records.size(); i++)
         {
@@ -284,11 +279,6 @@ public class SanityChecker
         }
         return -1;
     }
-
-//    private static int findFirstRecord( List records, Class record )
-//    {
-//        return findFirstRecord ( records, record, 0 );
-//    }
 
     void checkRecordOrder(List records, CheckRecord[] check)
     {
