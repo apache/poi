@@ -111,7 +111,7 @@ public class TestXWPFWordExtractor extends TestCase {
 		assertTrue(text.length() > 0);
 		
 		char euro = '\u20ac';
-		System.err.println("'"+text.substring(text.length() - 20) + "'");
+//		System.err.println("'"+text.substring(text.length() - 20) + "'");
 		
 		// Check contents
 		assertTrue(text.startsWith(

@@ -35,10 +35,14 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTComment;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.DocumentDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.FtrDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.HdrDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CommentsDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 
+import org.apache.poi.xwpf.usermodel.XWPFFooter;
+import org.apache.poi.xwpf.usermodel.XWPFHeader;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlink;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFComment;
@@ -57,8 +61,10 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
  */
 public class XWPFDocument extends POIXMLDocument {
 	public static final String MAIN_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml";
-	public static final String FOOTER_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml";
 	public static final String HEADER_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml";
+	public static final String HEADER_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/header";
+	public static final String FOOTER_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml";
+	public static final String FOOTER_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer";
 	public static final String STYLES_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml";
 	public static final String STYLES_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles";
 	public static final String HYPERLINK_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink";
@@ -69,6 +75,10 @@ public class XWPFDocument extends POIXMLDocument {
 	protected List<XWPFHyperlink> hyperlinks;
 	protected List<XWPFParagraph> paragraphs;
 	protected List<XWPFTable> tables;
+	/** Should only ever be zero or one of these, we think */
+	protected XWPFHeader header;
+	/** Should only ever be zero or one of these, we think */
+	protected XWPFFooter footer;
 	
 	public XWPFDocument(Package container) throws OpenXML4JException, IOException, XmlException {
 		super(container);
@@ -122,6 +132,24 @@ public class XWPFDocument extends POIXMLDocument {
         for(PackageRelationship rel : getCorePart().getRelationshipsByType(PACK_OBJECT_REL_TYPE)) {
             embedds.add(getTargetPart(rel));
         }
+        
+        // Fetch the header, if there's one
+        PackageRelationshipCollection headerRel = getCorePart().getRelationshipsByType(HEADER_RELATION_TYPE);
+		if(headerRel != null && headerRel.size() > 0) {
+			PackagePart headerPart = getTargetPart(headerRel.getRelationship(0));
+			header = new XWPFHeader(
+					HdrDocument.Factory.parse(headerPart.getInputStream()).getHdr()
+			);
+		}
+        
+        // Fetch the footer, if there's one
+        PackageRelationshipCollection footerRel = getCorePart().getRelationshipsByType(FOOTER_RELATION_TYPE);
+		if(footerRel != null && footerRel.size() > 0) {
+			PackagePart footerPart = getTargetPart(footerRel.getRelationship(0));
+			footer = new XWPFFooter(
+					FtrDocument.Factory.parse(footerPart.getInputStream()).getFtr()
+			);
+		}
 	}
 	
 	/**
@@ -141,8 +169,7 @@ public class XWPFDocument extends POIXMLDocument {
 		return tables.iterator();
 	}
 	
-	public XWPFHyperlink getHyperlinkByID(String id)
-	{
+	public XWPFHyperlink getHyperlinkByID(String id) {
 		Iterator<XWPFHyperlink> iter = hyperlinks.iterator();
 		while(iter.hasNext())
 		{
@@ -153,9 +180,13 @@ public class XWPFDocument extends POIXMLDocument {
 		
 		return null;
 	}
+	public XWPFHyperlink[] getHyperlinks() {
+		return hyperlinks.toArray(
+				new XWPFHyperlink[hyperlinks.size()]
+		);
+	}
 	
-	public XWPFComment getCommentByID(String id)
-	{
+	public XWPFComment getCommentByID(String id) {
 		Iterator<XWPFComment> iter = comments.iterator();
 		while(iter.hasNext())
 		{
@@ -165,6 +196,18 @@ public class XWPFDocument extends POIXMLDocument {
 		}
 		
 		return null;
+	}
+	public XWPFComment[] getComments() {
+		return comments.toArray(
+				new XWPFComment[comments.size()]
+		);
+	}
+	
+	public XWPFHeader getDocumentHeader() {
+		return header;
+	}
+	public XWPFFooter getDocumentFooter() {
+		return footer;
 	}
 	
 	/**

@@ -16,40 +16,17 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import org.apache.poi.xwpf.XWPFDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtr;
 
 /**
- * High level representation of a ooxml text document.
+ * Sketch of XWPF header class
  */
-public class XMLWordDocument {
-	private XWPFDocument xwpfXML;
-	
-	public XMLWordDocument(XWPFDocument xml) {
-		this.xwpfXML = xml;
+public class XWPFHeader extends XWPFHeaderFooter {
+	public XWPFHeader() {
+		super();
+	}
+	public XWPFHeader(CTHdrFtr hdrFtr) {
+		super(hdrFtr);
 	}
 	
-	public XWPFDocument _getXWPFXML() {
-		return xwpfXML;
-	}
-	
-	public XWPFHyperlink getHyperlinkByID(String id) {
-		return xwpfXML.getHyperlinkByID(id);
-	}
-	public XWPFHyperlink[] getHyperlinks() {
-		return xwpfXML.getHyperlinks();
-	}
-	
-	public XWPFComment getCommentByID(String id) {
-		return xwpfXML.getCommentByID(id);
-	}
-	public XWPFComment[] getComments() {
-		return xwpfXML.getComments();
-	}
-	
-	public XWPFHeader getHeader() {
-		return xwpfXML.getDocumentHeader();
-	}
-	public XWPFFooter getFooter() {
-		return xwpfXML.getDocumentFooter();
-	}
 }
