@@ -50,8 +50,10 @@ import org.apache.poi.hwpf.usermodel.*;
 public class HWPFDocument extends POIDocument
 //  implements Cloneable
 {
-  /** The FIB*/
+  /** The FIB */
   protected FileInformationBlock _fib;
+  /** And for making sense of CP lengths in the FIB */
+  protected CPSplitCalculator _cpSplit;
 
   /** main document stream buffer*/
   protected byte[] _mainStream;
@@ -177,6 +179,7 @@ public class HWPFDocument extends POIDocument
 
     // Create our FIB, and check for the doc being encrypted
     _fib = new FileInformationBlock(_mainStream);
+    _cpSplit = new CPSplitCalculator(_fib);
     if(_fib.isFEncrypted()) {
     	throw new EncryptedDocumentException("Cannot process encrypted word files!");
     }
@@ -290,14 +293,54 @@ public class HWPFDocument extends POIDocument
   {
     return _dop;
   }
+  
+  /**
+   * Returns the range that covers all text in the
+   *  file, including main text, footnotes, headers
+   *  and comments
+   */
+  public Range getOverallRange() {
+	  // hack to get the ending cp of the document, Have to revisit this.
+	  java.util.List text = _tpt.getTextPieces();
+	  PropertyNode p = (PropertyNode)text.get(text.size() - 1);
 
-  public Range getRange()
-  {
-    // hack to get the ending cp of the document, Have to revisit this.
-    java.util.List text = _tpt.getTextPieces();
-    PropertyNode p = (PropertyNode)text.get(text.size() - 1);
+      return new Range(0, p.getEnd(), this);
+  }
 
-    return new Range(0, p.getEnd(), this);
+  /**
+   * Returns the range which covers the whole of the
+   *  document, but excludes any headers and footers.
+   */
+  public Range getRange() {
+	  return new Range(
+			  _cpSplit.getMainDocumentStart(), 
+			  _cpSplit.getMainDocumentEnd(), 
+			  this
+      );
+  }
+  
+  /**
+   * Returns the range which covers all the Footnotes.
+   */
+  public Range getFootnoteRange() {
+	  return new Range(
+			  _cpSplit.getFootnoteStart(), 
+			  _cpSplit.getFootnoteEnd(), 
+			  this
+      );
+  }
+  
+  /**
+   * Returns the range which covers all "Header Stories".
+   * A header story contains a header, footer, end note
+   *  separators and footnote separators. 
+   */
+  public Range getHeaderStoryRange() {
+	  return new Range(
+			  _cpSplit.getHeaderStoryStart(), 
+			  _cpSplit.getHeaderStoryEnd(), 
+			  this
+      );
   }
 
   /**
