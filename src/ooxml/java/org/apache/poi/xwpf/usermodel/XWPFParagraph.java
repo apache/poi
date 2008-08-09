@@ -16,10 +16,12 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import org.apache.poi.xwpf.model.XMLParagraph;
 import org.apache.poi.xwpf.XWPFDocument;
+import org.apache.poi.xwpf.model.XMLParagraph;
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPTab;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
@@ -45,16 +47,22 @@ public class XWPFParagraph extends XMLParagraph
         this.docRef = docRef; 
         CTR[] rs = paragraph.getRArray();
     
-        // Get text
+        // Get text of the paragraph
         for (int j = 0; j < rs.length; j++) {
-            // Loop over text runs
-            CTText[] texts = rs[j].getTArray();
-            for (int k = 0; k < texts.length; k++) {
-                text.append(
-                        texts[k].getStringValue()
-                );
-            }
-            
+            // Grab the text and tabs of the paragraph
+        	// Do so in a way that preserves the ordering
+        	XmlCursor c = rs[j].newCursor();
+        	c.selectPath( "./*" );
+        	while(c.toNextSelection()) {
+        		XmlObject o = c.getObject();
+        		if(o instanceof CTText) {
+        			text.append( ((CTText)o).getStringValue() );
+        		}
+        		if(o instanceof CTPTab) {
+        			text.append("\t");
+        		}
+        	}
+        	
             // Loop over pictures inside our
             //  paragraph, looking for text in them
             CTPicture[] picts = rs[j].getPictArray();
@@ -79,6 +87,12 @@ public class XWPFParagraph extends XMLParagraph
     public XWPFParagraph(XMLParagraph paragraph) {
         this(paragraph.getCTP());
     }
+    
+    
+    public boolean isEmpty() {
+    	return !paragraph.getDomNode().hasChildNodes();
+    }
+    
     
     public XWPFDocument getDocRef() {
         return docRef;
