@@ -562,6 +562,10 @@ public class HWPFDocument extends POIDocument
   {
     return _dataStream;
   }
+  public byte[] getTableStream()
+  {
+	return _tableStream;
+  }
 
   public int registerList(HWPFList list)
   {
