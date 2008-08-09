@@ -80,7 +80,7 @@ public final class TestBugs extends TestCase {
         HSSFWorkbook wb = openSample("15228.xls");
         HSSFSheet s = wb.getSheetAt(0);
         HSSFRow r = s.createRow(0);
-        HSSFCell c = r.createCell((short)0);
+        HSSFCell c = r.createCell(0);
         c.setCellValue(10);
         writeTestOutputFileForViewing(wb, "test15228");
     }
@@ -89,7 +89,7 @@ public final class TestBugs extends TestCase {
         HSSFWorkbook wb = openSample("13796.xls");
         HSSFSheet s = wb.getSheetAt(0);
         HSSFRow r = s.createRow(0);
-        HSSFCell c = r.createCell((short)0);
+        HSSFCell c = r.createCell(0);
         c.setCellValue(10);
         writeOutAndReadBack(wb);
     }
@@ -99,7 +99,7 @@ public final class TestBugs extends TestCase {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet s = wb.createSheet();
         HSSFRow r = s.createRow(0);
-        r.createCell((short)0).setCellFormula("HYPERLINK( \"http://jakarta.apache.org\", \"Jakarta\" )");
+        r.createCell(0).setCellFormula("HYPERLINK( \"http://jakarta.apache.org\", \"Jakarta\" )");
 
         writeTestOutputFileForViewing(wb, "test23094");
     }
@@ -111,8 +111,8 @@ public final class TestBugs extends TestCase {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("My sheet");
 
-        HSSFRow row = sheet.createRow( (short) 0 );
-        HSSFCell cell = row.createCell( (short) 0 );
+        HSSFRow row = sheet.createRow( 0 );
+        HSSFCell cell = row.createCell( 0 );
         cell.setCellFormula("HYPERLINK(\"http://google.com\",\"Google\")");
 
         writeOutAndReadBack(wb);
@@ -144,9 +144,9 @@ public final class TestBugs extends TestCase {
         HSSFSheet sheet = wb.getSheetAt(0);
 
         HSSFRow row = sheet.getRow(5);
-        HSSFCell cell = row.getCell((short)3);
+        HSSFCell cell = row.getCell(3);
         if (cell == null)
-            cell = row.createCell((short)3);
+            cell = row.createCell(3);
 
         // Write test
         cell.setCellType(HSSFCell.CELL_TYPE_STRING);
@@ -155,9 +155,9 @@ public final class TestBugs extends TestCase {
         // change existing numeric cell value
 
         HSSFRow oRow = sheet.getRow(14);
-        HSSFCell oCell = oRow.getCell((short)4);
+        HSSFCell oCell = oRow.getCell(4);
         oCell.setCellValue(75);
-        oCell = oRow.getCell((short)5);
+        oCell = oRow.getCell(5);
         setCellText(oCell, "0.3");
 
         writeTestOutputFileForViewing(wb, "test15375");
@@ -179,13 +179,13 @@ public final class TestBugs extends TestCase {
             tmp2 = "Test2" + i;
             tmp3 = "Test3" + i;
 
-            HSSFRow row = sheet.createRow((short)i);
+            HSSFRow row = sheet.createRow(i);
 
-            HSSFCell cell = row.createCell((short)0);
+            HSSFCell cell = row.createCell(0);
             setCellText(cell, tmp1);
-            cell = row.createCell((short)1);
+            cell = row.createCell(1);
             setCellText(cell, tmp2);
-            cell = row.createCell((short)2);
+            cell = row.createCell(2);
             setCellText(cell, tmp3);
         }
         writeTestOutputFileForViewing(wb, "test15375-2");
@@ -205,16 +205,16 @@ public final class TestBugs extends TestCase {
 
         HSSFRow rw = null ;
         HSSFCell cell =null;
-        rw = sheet.createRow((short)0) ;
+        rw = sheet.createRow(0) ;
         //Header row
-        for(short j=0; j<col_cnt; j++){
+        for(int j=0; j<col_cnt; j++){
             cell = rw.createCell(j) ;
             setCellText(cell, "Col " + (j+1)) ;
         }
 
         for(int i=1; i<rw_cnt; i++){
-            rw = sheet.createRow((short)i) ;
-            for(short j=0; j<col_cnt; j++){
+            rw = sheet.createRow(i) ;
+            for(int j=0; j<col_cnt; j++){
                 cell = rw.createCell(j) ;
                 setCellText(cell, "Row:" + (i+1) + ",Column:" + (j+1)) ;
             }
@@ -279,7 +279,7 @@ public final class TestBugs extends TestCase {
                 HSSFRow row = sheet.getRow(rowIndex);
                 int cells = row.getLastCellNum();
 
-                for (short cellIndex = 0; cellIndex < cells; cellIndex++) {
+                for (int cellIndex = 0; cellIndex < cells; cellIndex++) {
                     row.getCell(cellIndex);
                 }
             }
@@ -291,12 +291,12 @@ public final class TestBugs extends TestCase {
         book.createSheet("TEST");
         HSSFSheet sheet = book.cloneSheet(0);
         book.setSheetName(1,"CLONE");
-        sheet.createRow(0).createCell((short)0).setCellValue(new HSSFRichTextString("Test"));
+        sheet.createRow(0).createCell(0).setCellValue(new HSSFRichTextString("Test"));
 
         book = writeOutAndReadBack(book);
         sheet = book.getSheet("CLONE");
         HSSFRow row = sheet.getRow(0);
-        HSSFCell cell = row.getCell((short)0);
+        HSSFCell cell = row.getCell(0);
         assertEquals("Test", cell.getRichStringCellValue().getString());
     }
 
@@ -338,14 +338,14 @@ public final class TestBugs extends TestCase {
 
         HSSFWorkbook w = openSample("25695.xls");
 
-        HSSFCell a1 = w.getSheetAt(0).getRow(0).getCell((short) 0);
-        HSSFCell a2 = w.getSheetAt(0).getRow(0).getCell((short) 1);
-        HSSFCell b1 = w.getSheetAt(0).getRow(1).getCell((short) 0);
-        HSSFCell b2 = w.getSheetAt(0).getRow(1).getCell((short) 1);
-        HSSFCell c1 = w.getSheetAt(0).getRow(2).getCell((short) 0);
-        HSSFCell c2 = w.getSheetAt(0).getRow(2).getCell((short) 1);
-        HSSFCell d1 = w.getSheetAt(0).getRow(3).getCell((short) 0);
-        HSSFCell d2 = w.getSheetAt(0).getRow(3).getCell((short) 1);
+        HSSFCell a1 = w.getSheetAt(0).getRow(0).getCell(0);
+        HSSFCell a2 = w.getSheetAt(0).getRow(0).getCell(1);
+        HSSFCell b1 = w.getSheetAt(0).getRow(1).getCell(0);
+        HSSFCell b2 = w.getSheetAt(0).getRow(1).getCell(1);
+        HSSFCell c1 = w.getSheetAt(0).getRow(2).getCell(0);
+        HSSFCell c2 = w.getSheetAt(0).getRow(2).getCell(1);
+        HSSFCell d1 = w.getSheetAt(0).getRow(3).getCell(0);
+        HSSFCell d2 = w.getSheetAt(0).getRow(3).getCell(1);
 
         if (false) {
             // THAI code page
@@ -368,14 +368,14 @@ public final class TestBugs extends TestCase {
 
         HSSFWorkbook rw = writeOutAndReadBack(w);
 
-        HSSFCell ra1 = rw.getSheetAt(0).getRow(0).getCell((short) 0);
-        HSSFCell ra2 = rw.getSheetAt(0).getRow(0).getCell((short) 1);
-        HSSFCell rb1 = rw.getSheetAt(0).getRow(1).getCell((short) 0);
-        HSSFCell rb2 = rw.getSheetAt(0).getRow(1).getCell((short) 1);
-        HSSFCell rc1 = rw.getSheetAt(0).getRow(2).getCell((short) 0);
-        HSSFCell rc2 = rw.getSheetAt(0).getRow(2).getCell((short) 1);
-        HSSFCell rd1 = rw.getSheetAt(0).getRow(3).getCell((short) 0);
-        HSSFCell rd2 = rw.getSheetAt(0).getRow(3).getCell((short) 1);
+        HSSFCell ra1 = rw.getSheetAt(0).getRow(0).getCell(0);
+        HSSFCell ra2 = rw.getSheetAt(0).getRow(0).getCell(1);
+        HSSFCell rb1 = rw.getSheetAt(0).getRow(1).getCell(0);
+        HSSFCell rb2 = rw.getSheetAt(0).getRow(1).getCell(1);
+        HSSFCell rc1 = rw.getSheetAt(0).getRow(2).getCell(0);
+        HSSFCell rc2 = rw.getSheetAt(0).getRow(2).getCell(1);
+        HSSFCell rd1 = rw.getSheetAt(0).getRow(3).getCell(0);
+        HSSFCell rd2 = rw.getSheetAt(0).getRow(3).getCell(1);
 
         confirmSameCellText(a1, ra1);
         confirmSameCellText(b1, rb1);
@@ -427,7 +427,7 @@ public final class TestBugs extends TestCase {
         wb.setSheetName(0, "Sheet1");
 
         HSSFRow row = sheet.createRow(0);
-        HSSFCell cell = row.createCell((short)0);
+        HSSFCell cell = row.createCell(0);
         String formulaText =
             "IF(ROUND(A2*B2*C2,2)>ROUND(B2*D2,2),ROUND(A2*B2*C2,2),ROUND(B2*D2,2))";
         cell.setCellFormula(formulaText);
@@ -489,7 +489,7 @@ public final class TestBugs extends TestCase {
         for(int i = 1; i < 400; i++) {
             HSSFRow row = sheet.getRow(i);
             if(row != null) {
-                row.getCell((short)0);
+                row.getCell(0);
             }
         }
 
@@ -499,7 +499,7 @@ public final class TestBugs extends TestCase {
         for(int i = 1; i < 400; i++) {
             HSSFRow row = sheet.getRow(i);
             if(row != null) {
-                row.getCell((short)0);
+                row.getCell(0);
             }
         }
     }
@@ -523,7 +523,7 @@ public final class TestBugs extends TestCase {
         for (int i = sheet.getFirstRowNum(); i <= sheet.getLastRowNum(); i++) {
             HSSFRow row =  sheet.getRow(i);
             if (row != null) {
-                HSSFCell cell = row .getCell((short)0);
+                HSSFCell cell = row .getCell(0);
                 assertEquals(HSSFCell.CELL_TYPE_STRING, cell.getCellType());
                 count++;
             }
@@ -632,11 +632,11 @@ public final class TestBugs extends TestCase {
         HSSFSheet workSheet = workBook.createSheet("Sheet1");
         HSSFCell cell;
         HSSFRow row = workSheet.createRow(0);
-        cell = row.createCell((short)0, HSSFCell.CELL_TYPE_NUMERIC);
+        cell = row.createCell(0, HSSFCell.CELL_TYPE_NUMERIC);
         cell.setCellValue(1.0);
-        cell = row.createCell((short)1, HSSFCell.CELL_TYPE_NUMERIC);
+        cell = row.createCell(1, HSSFCell.CELL_TYPE_NUMERIC);
         cell.setCellValue(2.0);
-        cell = row.createCell((short)2, HSSFCell.CELL_TYPE_FORMULA);
+        cell = row.createCell(2, HSSFCell.CELL_TYPE_FORMULA);
         cell.setCellFormula("SUM(A1:B1)");
 
         writeOutAndReadBack(wb);
@@ -753,12 +753,12 @@ public final class TestBugs extends TestCase {
 
         // Textual value
         HSSFRow r1 = s.getRow(0);
-        HSSFCell c1 = r1.getCell((short)1);
+        HSSFCell c1 = r1.getCell(1);
         assertEquals("=CHOOSE(2,A2,A3,A4)", c1.getRichStringCellValue().toString());
 
         // Formula Value
         HSSFRow r2 = s.getRow(1);
-        HSSFCell c2 = r2.getCell((short)1);
+        HSSFCell c2 = r2.getCell(1);
         assertEquals(25, (int)c2.getNumericCellValue());
 
         try {
@@ -900,7 +900,7 @@ public final class TestBugs extends TestCase {
      * Had a problem apparently, not sure what as it
      *  works just fine...
      */
-    public void test44891() throws Exception {
+    public void test44891() {
         HSSFWorkbook wb = openSample("44891.xls");
         assertTrue("no errors reading sample xls", true);
         writeOutAndReadBack(wb);
@@ -912,7 +912,7 @@ public final class TestBugs extends TestCase {
      *
      * Works fine with poi-3.1-beta1.
      */
-    public void test44235() throws Exception {
+    public void test44235() {
         HSSFWorkbook wb = openSample("44235.xls");
         assertTrue("no errors reading sample xls", true);
         writeOutAndReadBack(wb);
@@ -927,16 +927,16 @@ public final class TestBugs extends TestCase {
     public void test21334() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
-        HSSFCell cell = sh.createRow(0).createCell((short)0);
+        HSSFCell cell = sh.createRow(0).createCell(0);
         String formula = "SUM(IF(FREQUENCY(IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),\"\"),IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),\"\"))>0,1))";
         cell.setCellFormula(formula);
 
         HSSFWorkbook wb_sv = writeOutAndReadBack(wb);
-        HSSFCell cell_sv = wb_sv.getSheetAt(0).getRow(0).getCell((short)0);
+        HSSFCell cell_sv = wb_sv.getSheetAt(0).getRow(0).getCell(0);
         assertEquals(formula, cell_sv.getCellFormula());
     }
 
-    public void test36947() throws Exception {
+    public void test36947() {
         HSSFWorkbook wb = openSample("36947.xls");
         assertTrue("no errors reading sample xls", true);
         writeOutAndReadBack(wb);
@@ -948,12 +948,12 @@ public final class TestBugs extends TestCase {
      */
     public void test42448(){
         HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFCell cell = wb.createSheet().createRow(0).createCell((short)0);
+        HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
         cell.setCellFormula("SUMPRODUCT(A!C7:A!C67, B8:B68) / B69");
         assertTrue("no errors parsing formula", true);
     }
 
-    public void test39634() throws Exception {
+    public void test39634() {
         HSSFWorkbook wb = openSample("39634.xls");
         assertTrue("no errors reading sample xls", true);
         writeOutAndReadBack(wb);
@@ -965,7 +965,7 @@ public final class TestBugs extends TestCase {
      *  HSSFObjectData
      * @throws Exception
      */
-    public void test44840() throws Exception {
+    public void test44840() {
         HSSFWorkbook wb = openSample("WithCheckBoxes.xls");
 
         // Take a look at the embeded objects
@@ -993,7 +993,11 @@ public final class TestBugs extends TestCase {
         try {
             obj.getDirectory();
             fail();
-        } catch(FileNotFoundException e) {}
+        } catch(FileNotFoundException e) {
+        	// expectd during successful test
+        } catch (IOException e) {
+			throw new RuntimeException(e);
+		}
     }
     
     /**
@@ -1002,7 +1006,7 @@ public final class TestBugs extends TestCase {
      *  used for printing stuff.
      * Currently broken, as we change the Ptg
      */
-    public void test30978() throws Exception {
+    public void test30978() {
         HSSFWorkbook wb = openSample("30978-alt.xls");
         assertEquals(1, wb.getNumberOfNames());
         assertEquals(3, wb.getNumberOfSheets());
@@ -1058,15 +1062,15 @@ public final class TestBugs extends TestCase {
     /**
      * Test that fonts get added properly
      */
-    public void test45338() throws Exception {
+    public void test45338() {
         HSSFWorkbook wb = new HSSFWorkbook();
         assertEquals(4, wb.getNumberOfFonts());
         
         HSSFSheet s = wb.createSheet();
         s.createRow(0);
         s.createRow(1);
-        HSSFCell c1 = s.getRow(0).createCell((short)0);
-        HSSFCell c2 = s.getRow(1).createCell((short)0);
+        HSSFCell c1 = s.getRow(0).createCell(0);
+        HSSFCell c2 = s.getRow(1).createCell(0);
         
         assertEquals(4, wb.getNumberOfFonts());
         
@@ -1142,15 +1146,14 @@ public final class TestBugs extends TestCase {
     /**
      * From the mailing list - ensure we can handle a formula
      *  containing a zip code, eg ="70164"
-     * @throws Exception
      */
-    public void testZipCodeFormulas() throws Exception {
+    public void testZipCodeFormulas() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet s = wb.createSheet();
         s.createRow(0);
-        HSSFCell c1 = s.getRow(0).createCell((short)0);
-        HSSFCell c2 = s.getRow(0).createCell((short)1);
-        HSSFCell c3 = s.getRow(0).createCell((short)2);
+        HSSFCell c1 = s.getRow(0).createCell(0);
+        HSSFCell c2 = s.getRow(0).createCell(1);
+        HSSFCell c3 = s.getRow(0).createCell(2);
 
         // As number and string
         c1.setCellFormula("70164");
@@ -1178,7 +1181,6 @@ public final class TestBugs extends TestCase {
         
         // Now evaluate, they should all be changed
         HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(s, wb);
-        eval.setCurrentRow(s.getRow(0));
         eval.evaluateFormulaCell(c1);
         eval.evaluateFormulaCell(c2);
         eval.evaluateFormulaCell(c3);
@@ -1196,9 +1198,9 @@ public final class TestBugs extends TestCase {
         // Write and read
         HSSFWorkbook nwb = writeOutAndReadBack(wb);
         HSSFSheet ns = nwb.getSheetAt(0);
-        HSSFCell nc1 = ns.getRow(0).getCell((short)0);
-        HSSFCell nc2 = ns.getRow(0).getCell((short)1);
-        HSSFCell nc3 = ns.getRow(0).getCell((short)2);
+        HSSFCell nc1 = ns.getRow(0).getCell(0);
+        HSSFCell nc2 = ns.getRow(0).getCell(1);
+        HSSFCell nc3 = ns.getRow(0).getCell(2);
         
         // Re-check
         assertEquals(70164.0, nc1.getNumericCellValue(), 0.00001);
@@ -1243,7 +1245,7 @@ public final class TestBugs extends TestCase {
      * For now, blows up with an exception from ExtPtg
      *  Expected ExpPtg to be converted from Shared to Non-Shared...
      */
-    public void DISABLEDtest43623() throws Exception {
+    public void DISABLEDtest43623() {
         HSSFWorkbook wb = openSample("43623.xls");
         assertEquals(1, wb.getNumberOfSheets());
         
@@ -1274,7 +1276,7 @@ public final class TestBugs extends TestCase {
      * People are all getting confused about the last
      *  row and cell number
      */
-    public void test30635() throws Exception {
+    public void test30635() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet s = wb.createSheet();
         
@@ -1303,17 +1305,17 @@ public final class TestBugs extends TestCase {
         assertEquals(0, r.getPhysicalNumberOfCells());
         
         // Add a cell, things move off -1
-        r.createCell((short)0);
+        r.createCell(0);
         assertEquals(0, r.getFirstCellNum());
         assertEquals(1, r.getLastCellNum()); // last cell # + 1
         assertEquals(1, r.getPhysicalNumberOfCells());
         
-        r.createCell((short)1);
+        r.createCell(1);
         assertEquals(0, r.getFirstCellNum());
         assertEquals(2, r.getLastCellNum()); // last cell # + 1
         assertEquals(2, r.getPhysicalNumberOfCells());
         
-        r.createCell((short)4);
+        r.createCell(4);
         assertEquals(0, r.getFirstCellNum());
         assertEquals(5, r.getLastCellNum()); // last cell # + 1
         assertEquals(3, r.getPhysicalNumberOfCells());
@@ -1322,7 +1324,7 @@ public final class TestBugs extends TestCase {
     /**
      * Data Tables - ptg 0x2
      */
-    public void test44958() throws Exception {
+    public void test44958() {
         HSSFWorkbook wb = openSample("44958.xls");
         HSSFSheet s;
         HSSFRow r;
@@ -1353,7 +1355,7 @@ public final class TestBugs extends TestCase {
     /**
      * 45322: HSSFSheet.autoSizeColumn fails when style.getDataFormat() returns -1
      */
-    public void test45322() throws Exception {
+    public void test45322() {
         HSSFWorkbook wb = openSample("44958.xls");
         HSSFSheet sh = wb.getSheetAt(0);
         for(short i=0; i < 30; i++) sh.autoSizeColumn(i);
@@ -1363,7 +1365,7 @@ public final class TestBugs extends TestCase {
      * We used to add too many UncalcRecords to sheets
      *  with diagrams on. Don't any more
      */
-    public void test45414() throws Exception {
+    public void test45414() {
         HSSFWorkbook wb = openSample("WithThreeCharts.xls");
         wb.getSheetAt(0).setForceFormulaRecalculation(true);
         wb.getSheetAt(1).setForceFormulaRecalculation(false);

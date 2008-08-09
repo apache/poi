@@ -31,7 +31,7 @@ import org.apache.poi.hdf.model.hdftypes.HDFType;
 import org.apache.poi.hwpf.usermodel.*;
 
 /**
- * File information Block.
+ * Base part of the File information Block (FibBase). Holds the core part of the FIB, from the first 32 bytes.
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
  *       remove the record in src/records/definitions.
 

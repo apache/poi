@@ -39,7 +39,7 @@ public class HSSFFormulaEvaluator extends FormulaEvaluator {
      *  your needs are more complex than just having the
      *  formula evaluated. 
      */
-    public static FormulaParser getUnderlyingParser(HSSFWorkbook workbook, String formula) {
+    public static FormulaParser getUnderlyingParser(Workbook workbook, String formula) {
         return new FormulaParser(formula, workbook);
     }
     
@@ -52,7 +52,7 @@ public class HSSFFormulaEvaluator extends FormulaEvaluator {
      * @param workbook
      */
     void inspectPtgs(String formula) {
-    	HSSFWorkbook hssfWb = (HSSFWorkbook)workbook;
+    	HSSFWorkbook hssfWb = (HSSFWorkbook)_workbook;
         FormulaParser fp = new FormulaParser(formula, hssfWb);
         fp.parse();
         Ptg[] ptgs = fp.getRPNPtg();

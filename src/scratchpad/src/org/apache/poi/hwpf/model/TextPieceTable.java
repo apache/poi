@@ -28,6 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * The piece table for matching up character positions
+ *  to bits of text.
+ * This mostly works in bytes, but the TextPieces
+ *  themselves work in characters. This does the icky
+ *  convertion.
  * @author Ryan Ackley
  */
 public class TextPieceTable
@@ -36,8 +41,7 @@ public class TextPieceTable
   //int _multiple;
   int _cpMin;
 
-  public TextPieceTable()
-  {
+  public TextPieceTable() {
   }
 
   public TextPieceTable(byte[] documentStream, byte[] tableStream, int offset,
@@ -47,7 +51,6 @@ public class TextPieceTable
     // get our plex of PieceDescriptors
     PlexOfCps pieceTable = new PlexOfCps(tableStream, offset, size, PieceDescriptor.getSizeInBytes());
 
-    //_multiple = 2;
     int length = pieceTable.length();
     PieceDescriptor[] pieces = new PieceDescriptor[length];
 
@@ -57,11 +60,6 @@ public class TextPieceTable
     {
       GenericPropertyNode node = pieceTable.getProperty(x);
       pieces[x] = new PieceDescriptor(node.getBytes(), 0);
-
-//      if (!pieces[x].isUnicode())
-//      {
-//        _multiple = 1;
-//      }
     }
 
     int firstPieceFilePosition = pieces[0].getFilePosition();
@@ -72,26 +70,28 @@ public class TextPieceTable
     {
       int start = pieces[x].getFilePosition();
       PropertyNode node = pieceTable.getProperty(x);
-      int nodeStart = node.getStart();
-
-      // multiple will be 2 if there is only one piece and its unicode. Some
-      // type of optimization.
+      
+      // Grab the start and end, which are in characters
+      int nodeStartChars = node.getStart();
+      int nodeEndChars = node.getEnd();
+      
+      // What's the relationship between bytes and characters?
       boolean unicode = pieces[x].isUnicode();
-
       int multiple = 1;
-      if (unicode)
-      {
+      if (unicode) {
         multiple = 2;
       }
-      int nodeEnd = ((node.getEnd() - nodeStart) * multiple) + nodeStart;
-      int textSize = nodeEnd - nodeStart;
+      
+      // Figure out the length, in bytes and chars
+      int textSizeChars = (nodeEndChars - nodeStartChars);
+      int textSizeBytes = textSizeChars * multiple;
 
+      // Grab the data that makes up the piece
+      byte[] buf = new byte[textSizeBytes];
+      System.arraycopy(documentStream, start, buf, 0, textSizeBytes);
 
-      byte[] buf = new byte[textSize];
-      System.arraycopy(documentStream, start, buf, 0, textSize);
-
-      int startFilePosition = start - firstPieceFilePosition;
-      _textPieces.add(new TextPiece(startFilePosition, startFilePosition+textSize, buf, pieces[x], node.getStart()));
+      // And now build the piece
+      _textPieces.add(new TextPiece(nodeStartChars, nodeEndChars, buf, pieces[x], node.getStart()));
     }
   }
 
@@ -113,7 +113,6 @@ public class TextPieceTable
     //int fcMin = docStream.getOffset();
 
     int size = _textPieces.size();
-    int bumpDown = 0;
     for (int x = 0; x < size; x++)
     {
       TextPiece next = (TextPiece)_textPieces.get(x);
@@ -134,47 +133,43 @@ public class TextPieceTable
 
       // write the text to the docstream and save the piece descriptor to the
       // plex which will be written later to the tableStream.
-      //if (_multiple == 1 && pd.isUnicode() &&
       docStream.write(next.getRawBytes());
 
+      // The TextPiece is already in characters, which
+      //  makes our life much easier
       int nodeStart = next.getStart();
-      int multiple = 1;
-      if (pd.isUnicode())
-      {
-        multiple = 2;
-      }
-      textPlex.addProperty(new GenericPropertyNode(nodeStart - bumpDown,
-        ((next.getEnd() - nodeStart)/multiple + nodeStart) - bumpDown,
+      int nodeEnd = next.getEnd();
+      textPlex.addProperty(new GenericPropertyNode(nodeStart, nodeEnd,
         pd.toByteArray()));
-
-      if (pd.isUnicode())
-      {
-        bumpDown += ((next.getEnd() - nodeStart)/multiple);
-      }
-
-
     }
 
     return textPlex.toByteArray();
 
   }
 
-
-  public int adjustForInsert(int listIndex, int length)
-  {
+  /**
+   * Adjust all the text piece after inserting
+   *  some text into one of them
+   * @param listIndex The TextPiece that had characters inserted into
+   * @param length The number of characters inserted
+   */
+  public int adjustForInsert(int listIndex, int length) {
     int size = _textPieces.size();
 
     TextPiece tp = (TextPiece)_textPieces.get(listIndex);
-
-    //The text piece stores the length on file.
-    length = length * (tp.usesUnicode() ? 2 : 1);
+    
+    // Update with the new end
     tp.setEnd(tp.getEnd() + length);
+    
+    // Now change all subsequent ones
     for (int x = listIndex + 1; x < size; x++)
     {
       tp = (TextPiece)_textPieces.get(x);
       tp.setStart(tp.getStart() + length);
       tp.setEnd(tp.getEnd() + length);
     }
+    
+    // All done
     return length;
   }
 

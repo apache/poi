@@ -104,7 +104,6 @@ public class SectionTable
       }
       int FC = TP.getPieceDescriptor().getFilePosition();
       int offset = CP - TP.getCP();
-      if(TP.usesUnicode()) offset*=2;
       FC = FC+offset-((TextPiece)_text.get(0)).getPieceDescriptor().getFilePosition();
       return FC;
     }
@@ -120,12 +119,12 @@ public class SectionTable
 
        if (fc <= piece.getEnd())
        {
-         cp += ((fc - piece.getStart())/ (piece.usesUnicode() ? 2 : 1));
+         cp += (fc - piece.getStart());
          break;
        }
        else
        {
-         cp += ((piece.getEnd() - piece.getStart())/ (piece.usesUnicode() ? 2 : 1));
+         cp += (piece.getEnd() - piece.getStart());
        }
      }
      return cp;

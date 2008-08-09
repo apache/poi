@@ -17,12 +17,6 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -32,7 +26,6 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.util.TempFile;
 
 /**
  * Tests various functionity having to do with HSSFCell.  For instance support for
@@ -47,23 +40,15 @@ public final class TestHSSFCell extends TestCase {
         return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);
     }
     private static HSSFWorkbook writeOutAndReadBack(HSSFWorkbook original) {
-        
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
-            original.write(baos);
-            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-            return new HSSFWorkbook(bais);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return HSSFTestDataSamples.writeOutAndReadBack(original);
     }
     
-    public void testSetValues() throws Exception {
+    public void testSetValues() {
         HSSFWorkbook book = new HSSFWorkbook();
         HSSFSheet sheet = book.createSheet("test");
         HSSFRow row = sheet.createRow(0);
 
-        HSSFCell cell = row.createCell((short)0);
+        HSSFCell cell = row.createCell(0);
         
         cell.setCellValue(1.2);
         assertEquals(1.2, cell.getNumericCellValue(), 0.0001);
@@ -85,54 +70,42 @@ public final class TestHSSFCell extends TestCase {
     /**
      * test that Boolean and Error types (BoolErrRecord) are supported properly.
      */
-    public void testBoolErr()
-            throws java.io.IOException {
+    public void testBoolErr() {
 
-            File file = TempFile.createTempFile("testBoolErr",".xls");
-            FileOutputStream out    = new FileOutputStream(file);
-            HSSFWorkbook     wb     = new HSSFWorkbook();
-            HSSFSheet        s      = wb.createSheet("testSheet1");
-            HSSFRow          r      = null;
-            HSSFCell         c      = null;
-            r = s.createRow((short)0);
-            c=r.createCell((short)1);
-            //c.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
-            c.setCellValue(true);
+        HSSFWorkbook     wb     = new HSSFWorkbook();
+        HSSFSheet        s      = wb.createSheet("testSheet1");
+        HSSFRow          r      = null;
+        HSSFCell         c      = null;
+        r = s.createRow((short)0);
+        c=r.createCell(1);
+        //c.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
+        c.setCellValue(true);
 
-            c=r.createCell((short)2);
-            //c.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
-            c.setCellValue(false);
+        c=r.createCell(2);
+        //c.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
+        c.setCellValue(false);
 
-            r = s.createRow((short)1);
-            c=r.createCell((short)1);
-            //c.setCellType(HSSFCell.CELL_TYPE_ERROR);
-            c.setCellErrorValue((byte)0);
+        r = s.createRow((short)1);
+        c=r.createCell(1);
+        //c.setCellType(HSSFCell.CELL_TYPE_ERROR);
+        c.setCellErrorValue((byte)0);
 
-            c=r.createCell((short)2);
-            //c.setCellType(HSSFCell.CELL_TYPE_ERROR);
-            c.setCellErrorValue((byte)7);
+        c=r.createCell(2);
+        //c.setCellType(HSSFCell.CELL_TYPE_ERROR);
+        c.setCellErrorValue((byte)7);
 
-
-            wb.write(out);
-            out.close();
-
-            assertTrue("file exists",file.exists());
-
-            FileInputStream in = new FileInputStream(file);
-            wb = new HSSFWorkbook(in);
-            s = wb.getSheetAt(0);
-            r = s.getRow(0);
-            c = r.getCell((short)1);
-            assertTrue("boolean value 0,1 = true",c.getBooleanCellValue());
-            c = r.getCell((short)2);
-            assertTrue("boolean value 0,2 = false",c.getBooleanCellValue()==false);
-            r = s.getRow(1);
-            c = r.getCell((short)1);
-            assertTrue("boolean value 0,1 = 0",c.getErrorCellValue() == 0);
-            c = r.getCell((short)2);
-            assertTrue("boolean value 0,2 = 7",c.getErrorCellValue() == 7);
-
-            in.close();
+        wb = writeOutAndReadBack(wb);
+        s = wb.getSheetAt(0);
+        r = s.getRow(0);
+        c = r.getCell(1);
+        assertTrue("boolean value 0,1 = true",c.getBooleanCellValue());
+        c = r.getCell(2);
+        assertTrue("boolean value 0,2 = false",c.getBooleanCellValue()==false);
+        r = s.getRow(1);
+        c = r.getCell(1);
+        assertTrue("boolean value 0,1 = 0",c.getErrorCellValue() == 0);
+        c = r.getCell(2);
+        assertTrue("boolean value 0,2 = 7",c.getErrorCellValue() == 7);
     }
 
     /**
@@ -140,7 +113,7 @@ public final class TestHSSFCell extends TestCase {
      *  is working properly. Conversion of the date is also an issue,
      *  but there's a separate unit test for that.
      */
-     public void testDateWindowingRead() throws Exception {
+     public void testDateWindowingRead() {
          GregorianCalendar cal = new GregorianCalendar(2000,0,1); // Jan. 1, 2000
          Date date = cal.getTime();
 
@@ -150,7 +123,7 @@ public final class TestHSSFCell extends TestCase {
 
          assertEquals("Date from file using 1900 Date Windowing",
                          date.getTime(),
-                            sheet.getRow(0).getCell((short)0)
+                            sheet.getRow(0).getCell(0)
                                .getDateCellValue().getTime());
          
          // now check a file with 1904 Date Windowing
@@ -159,7 +132,7 @@ public final class TestHSSFCell extends TestCase {
 
          assertEquals("Date from file using 1904 Date Windowing",
                          date.getTime(),
-                            sheet.getRow(0).getCell((short)0)
+                            sheet.getRow(0).getCell(0)
                                .getDateCellValue().getTime());
      }
 
@@ -169,7 +142,7 @@ public final class TestHSSFCell extends TestCase {
       * previous test ({@link #testDateWindowingRead}) fails, the
       * results of this test are meaningless.
       */
-      public void testDateWindowingWrite() throws Exception {
+      public void testDateWindowingWrite() {
           GregorianCalendar cal = new GregorianCalendar(2000,0,1); // Jan. 1, 2000
           Date date = cal.getTime();
 
@@ -199,7 +172,7 @@ public final class TestHSSFCell extends TestCase {
           HSSFCell        cell     = row.getCell(colIdx);
           
           if (cell == null) {
-              cell = row.createCell((short)colIdx);
+              cell = row.createCell(colIdx);
           }
           cell.setCellValue(date);
       }
@@ -214,8 +187,7 @@ public final class TestHSSFCell extends TestCase {
     /**
      * Tests that the active cell can be correctly read and set
      */
-    public void testActiveCell() throws Exception
-    {
+    public void testActiveCell() {
         //read in sample
         HSSFWorkbook book = openSample("Simple.xls");
         
@@ -228,7 +200,7 @@ public final class TestHSSFCell extends TestCase {
             1, s.getActiveCellRow());
         
         //modify position through HSSFCell
-        HSSFCell cell = umSheet.createRow(3).createCell((short) 2);
+        HSSFCell cell = umSheet.createRow(3).createCell(2);
         cell.setAsActiveCell();
         assertEquals("After modify, active cell should be in col 2",
             (short) 2, s.getActiveCellCol());
@@ -270,14 +242,14 @@ public final class TestHSSFCell extends TestCase {
             cs.setBorderBottom((short)1);
             
             r = s.createRow((short)0);
-            c=r.createCell((short)0);
+            c=r.createCell(0);
             c.setCellStyle(cs);
             c.setCellFormula("2*3");
             
             wb = writeOutAndReadBack(wb);
             s = wb.getSheetAt(0);
             r = s.getRow(0);
-            c = r.getCell((short)0);
+            c = r.getCell(0);
             
             assertTrue("Formula Cell at 0,0", (c.getCellType()==c.CELL_TYPE_FORMULA));
             cs = c.getCellStyle();
@@ -298,7 +270,7 @@ public final class TestHSSFCell extends TestCase {
         HSSFWorkbook wb = openSample("WithHyperlink.xls");
 
         HSSFSheet sheet = wb.getSheetAt(0);
-        HSSFCell cell = sheet.getRow(4).getCell((short)0);
+        HSSFCell cell = sheet.getRow(4).getCell(0);
         HSSFHyperlink link = cell.getHyperlink();
         assertNotNull(link);
 
@@ -311,13 +283,13 @@ public final class TestHSSFCell extends TestCase {
     /**
      * Test reading hyperlinks
      */
-    public void testWithTwoHyperlinks() throws Exception {
+    public void testWithTwoHyperlinks() {
 
         HSSFWorkbook wb = openSample("WithTwoHyperLinks.xls");
         
         HSSFSheet sheet = wb.getSheetAt(0);
 
-        HSSFCell cell1 = sheet.getRow(4).getCell((short)0);
+        HSSFCell cell1 = sheet.getRow(4).getCell(0);
         HSSFHyperlink link1 = cell1.getHyperlink();
         assertNotNull(link1);
         assertEquals("Foo", link1.getLabel());
@@ -325,55 +297,46 @@ public final class TestHSSFCell extends TestCase {
         assertEquals(4, link1.getFirstRow());
         assertEquals(0, link1.getFirstColumn());
 
-        HSSFCell cell2 = sheet.getRow(8).getCell((short)1);
+        HSSFCell cell2 = sheet.getRow(8).getCell(1);
         HSSFHyperlink link2 = cell2.getHyperlink();
         assertNotNull(link2);
         assertEquals("Bar", link2.getLabel());
         assertEquals("http://poi.apache.org/hssf/", link2.getAddress());
         assertEquals(8, link2.getFirstRow());
         assertEquals(1, link2.getFirstColumn());
-
     }
     
     /*tests the toString() method of HSSFCell*/
-    public void testToString() throws Exception {
+    public void testToString() {
         HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet s = wb.createSheet("Sheet1");
-        HSSFRow r = s.createRow(0);
-        HSSFCell c;
-        c=r.createCell((short) 0); c.setCellValue(true);
-        assertEquals("Boolean", "TRUE", c.toString());
-        c=r.createCell((short) 1); c.setCellValue(1.5);
-        assertEquals("Numeric", "1.5", c.toString());
-        c=r.createCell((short)(2)); c.setCellValue(new HSSFRichTextString("Astring"));
-        assertEquals("String", "Astring", c.toString());
-        c=r.createCell((short) 3); c.setCellErrorValue((byte) 7);
-        assertEquals("Error", "#ERR7", c.toString());
-        c=r.createCell((short)4); c.setCellFormula("A1+B1");
-        assertEquals("Formula", "A1+B1", c.toString());
-        
+        HSSFRow r = wb.createSheet("Sheet1").createRow(0);
+
+        r.createCell(0).setCellValue(true);
+        r.createCell(1).setCellValue(1.5);
+        r.createCell(2).setCellValue(new HSSFRichTextString("Astring"));
+        r.createCell(3).setCellErrorValue((byte)HSSFErrorConstants.ERROR_DIV_0);
+        r.createCell(4).setCellFormula("A1+B1");
+
+        assertEquals("Boolean", "TRUE", r.getCell(0).toString());
+        assertEquals("Numeric", "1.5", r.getCell(1).toString());
+        assertEquals("String", "Astring", r.getCell(2).toString());
+        assertEquals("Error", "#DIV/0!", r.getCell(3).toString());
+        assertEquals("Formula", "A1+B1", r.getCell(4).toString());
+
         //Write out the file, read it in, and then check cell values
-        File f = File.createTempFile("testCellToString",".xls");
-        wb.write(new FileOutputStream(f));
-        wb = new HSSFWorkbook(new FileInputStream(f));
-        assertTrue("File exists and can be read", f.canRead());
-        
-        s = wb.getSheetAt(0);r=s.getRow(0);
-        c=r.getCell((short) 0);
-        assertEquals("Boolean", "TRUE", c.toString());
-        c=r.getCell((short) 1); 
-        assertEquals("Numeric", "1.5", c.toString());
-        c=r.getCell((short)(2)); 
-        assertEquals("String", "Astring", c.toString());
-        c=r.getCell((short) 3); 
-        assertEquals("Error", "#ERR7", c.toString());
-        c=r.getCell((short)4); 
-        assertEquals("Formula", "A1+B1", c.toString());
+        wb = writeOutAndReadBack(wb);
+
+        r = wb.getSheetAt(0).getRow(0);
+        assertEquals("Boolean", "TRUE", r.getCell(0).toString());
+        assertEquals("Numeric", "1.5", r.getCell(1).toString());
+        assertEquals("String", "Astring", r.getCell(2).toString());
+        assertEquals("Error", "#DIV/0!", r.getCell(3).toString());
+        assertEquals("Formula", "A1+B1", r.getCell(4).toString());
     }
     
     public void testSetStringInFormulaCell_bug44606() {
         HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFCell cell = wb.createSheet("Sheet1").createRow(0).createCell((short)0);
+        HSSFCell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
         cell.setCellFormula("B1&C1");
         try {
             cell.setCellValue(new HSSFRichTextString("hello"));
@@ -404,8 +367,8 @@ public final class TestHSSFCell extends TestCase {
     		fail();
     	} catch(IllegalArgumentException e) {}
     	
-    	HSSFCell cellA = wbA.createSheet().createRow(0).createCell((short)0);
-    	HSSFCell cellB = wbB.createSheet().createRow(0).createCell((short)0);
+    	HSSFCell cellA = wbA.createSheet().createRow(0).createCell(0);
+    	HSSFCell cellB = wbB.createSheet().createRow(0).createCell(0);
     	
     	cellA.setCellStyle(styA);
     	cellB.setCellStyle(styB);
@@ -417,10 +380,6 @@ public final class TestHSSFCell extends TestCase {
         	cellB.setCellStyle(styA);
     		fail();
     	} catch(IllegalArgumentException e) {}
-    }
-    
-    public static void main(String [] args) {
-        junit.textui.TestRunner.run(TestHSSFCell.class);
     }
 }
 

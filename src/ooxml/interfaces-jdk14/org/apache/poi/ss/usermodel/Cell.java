@@ -77,6 +77,7 @@ public interface Cell {
 
     int getCellType();
     short getCellNum();
+    int getRowIndex();
 
     String getCellFormula();
 

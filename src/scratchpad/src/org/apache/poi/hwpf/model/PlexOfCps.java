@@ -54,7 +54,9 @@ public class PlexOfCps
    */
   public PlexOfCps(byte[] buf, int start, int size, int sizeOfStruct)
   {
+	// Figure out the number we hold
     _count = (size - 4)/(4 + sizeOfStruct);
+    
     _sizeOfStruct = sizeOfStruct;
     _props = new ArrayList(_count);
 

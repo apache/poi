@@ -40,7 +40,7 @@ public final class TestExternalFunction extends TestCase {
         HSSFSheet sheet = wb.createSheet();
         wb.setSheetName(0, "Sheet1");
         HSSFRow row = sheet.createRow(0);
-        HSSFCell cell = row.createCell((short)0);
+        HSSFCell cell = row.createCell(0);
 
         HSSFName hssfName = wb.createName();
         hssfName.setNameName("myFunc");
@@ -50,7 +50,6 @@ public final class TestExternalFunction extends TestCase {
         assertEquals("myFunc()", actualFormula);
 		
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
-		fe.setCurrentRow(row);
 		CellValue evalResult = fe.evaluate(cell);
 		
 		// Check the return value from ExternalFunction.evaluate()

@@ -28,7 +28,19 @@ import org.apache.poi.hwpf.model.io.*;
 import org.apache.poi.hwpf.model.types.FIBAbstractType;
 
 /**
- *
+ * The File Information Block (FIB). Holds pointers
+ *  to various bits of the file, and lots of flags which
+ *  specify properties of the document.
+ * 
+ * The parent class, {@link FIBAbstractType}, holds the
+ *  first 32 bytes, which make up the FibBase.
+ * The next part, the fibRgW / FibRgW97, is handled
+ *  by {@link FIBShortHandler}.
+ * The next part, the fibRgLw / The FibRgLw97, is
+ *  handled by the {@link FIBLongHandler}.
+ * Finally, the rest of the fields are handled by
+ *  the {@link FIBFieldHandler}.
+ * 
  * @author  andy
  */
 public class FileInformationBlock extends FIBAbstractType
@@ -63,9 +75,9 @@ public class FileInformationBlock extends FIBAbstractType
 
 
       _shortHandler = new FIBShortHandler(mainDocument);
-      _longHandler = new FIBLongHandler(mainDocument, _shortHandler.START + _shortHandler.sizeInBytes());
+      _longHandler = new FIBLongHandler(mainDocument, FIBShortHandler.START + _shortHandler.sizeInBytes());
       _fieldHandler = new FIBFieldHandler(mainDocument,
-                                          _shortHandler.START + _shortHandler.sizeInBytes() + _longHandler.sizeInBytes(),
+                                          FIBShortHandler.START + _shortHandler.sizeInBytes() + _longHandler.sizeInBytes(),
                                           tableStream, fieldSet, true);
     }
 
@@ -249,6 +261,27 @@ public class FileInformationBlock extends FIBAbstractType
       _fieldHandler.setFieldSize(FIBFieldHandler.STTBFFFN, lcbSttbFffn);
     }
 
+    /**
+     * Return the offset to the PlcfHdd, in the table stream,
+     * i.e. fcPlcfHdd
+     */
+    public int getPlcfHddOffset() {
+       return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCFHDD);
+    }
+    /**
+     * Return the size of the PlcfHdd, in the table stream,
+     * i.e. lcbPlcfHdd
+     */
+    public int getPlcfHddSize() {
+    	return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFHDD);
+    }
+    public void setPlcfHddOffset(int fcPlcfHdd) {
+    	_fieldHandler.setFieldOffset(FIBFieldHandler.PLCFHDD, fcPlcfHdd);
+    }
+    public void setPlcfHddSize(int lcbPlcfHdd) {
+    	_fieldHandler.setFieldSize(FIBFieldHandler.PLCFHDD, lcbPlcfHdd);
+    }
+
     public int getFcSttbSavedBy()
     {
         return _fieldHandler.getFieldOffset(FIBFieldHandler.STTBSAVEDBY);
@@ -288,22 +321,117 @@ public class FileInformationBlock extends FIBAbstractType
     {
       _fieldHandler.setFieldSize(FIBFieldHandler.PLFLFO, modifiedHigh);
     }
-
-    public void setCbMac(int cbMac)
-    {
-      _longHandler.setLong(FIBLongHandler.CBMAC, cbMac);
+    
+    
+    /**
+     * How many bytes of the main stream contain real data.
+     */
+    public int getCbMac() {
+       return _longHandler.getLong(FIBLongHandler.CBMAC);
+    }
+    /**
+     * Updates the count of the number of bytes in the
+     * main stream which contain real data 
+     */
+    public void setCbMac(int cbMac) {
+       _longHandler.setLong(FIBLongHandler.CBMAC, cbMac);
     }
 
-	public int getCcpText()
-	{
-	  return _longHandler.getLong(FIBLongHandler.CCPTEXT);
-	}
+    /**
+     * The count of CPs in the main document
+     */
+    public int getCcpText() {
+       return _longHandler.getLong(FIBLongHandler.CCPTEXT);
+    }
+    /**
+     * Updates the count of CPs in the main document
+     */
+    public void setCcpText(int ccpText) {
+       _longHandler.setLong(FIBLongHandler.CCPTEXT, ccpText);
+    }
 
-	public void setCcpText(int ccpText)
-	{
-	  _longHandler.setLong(FIBLongHandler.CCPTEXT, ccpText);
-	}
+    /**
+     * The count of CPs in the footnote subdocument
+     */
+    public int getCcpFtn() {
+       return _longHandler.getLong(FIBLongHandler.CCPFTN);
+    }
+    /**
+     * Updates the count of CPs in the footnote subdocument
+     */
+    public void setCcpFtn(int ccpFtn) {
+       _longHandler.setLong(FIBLongHandler.CCPFTN, ccpFtn);
+    }
 
+    /**
+     * The count of CPs in the header story subdocument
+     */
+    public int getCcpHdd() {
+       return _longHandler.getLong(FIBLongHandler.CCPHDD);
+    }
+    /**
+     * Updates the count of CPs in the header story subdocument
+     */
+    public void setCcpHdd(int ccpHdd) {
+       _longHandler.setLong(FIBLongHandler.CCPHDD, ccpHdd);
+    }
+
+    /**
+     * The count of CPs in the comments (atn) subdocument
+     */
+    public int getCcpAtn() {
+       return _longHandler.getLong(FIBLongHandler.CCPATN);
+    }
+    public int getCcpCommentAtn() {
+       return getCcpAtn();
+    }
+    /**
+     * Updates the count of CPs in the comments (atn) story subdocument
+     */
+    public void setCcpAtn(int ccpAtn) {
+       _longHandler.setLong(FIBLongHandler.CCPATN, ccpAtn);
+    }
+
+    /**
+     * The count of CPs in the end note subdocument
+     */
+    public int getCcpEdn() {
+       return _longHandler.getLong(FIBLongHandler.CCPEDN);
+    }
+    /**
+     * Updates the count of CPs in the end note subdocument
+     */
+    public void setCcpEdn(int ccpEdn) {
+       _longHandler.setLong(FIBLongHandler.CCPEDN, ccpEdn);
+    }
+
+    /**
+     * The count of CPs in the main document textboxes
+     */
+    public int getCcpTxtBx() {
+       return _longHandler.getLong(FIBLongHandler.CCPTXBX);
+    }
+    /**
+     * Updates the count of CPs in the main document textboxes
+     */
+    public void setCcpTxtBx(int ccpTxtBx) {
+       _longHandler.setLong(FIBLongHandler.CCPTXBX, ccpTxtBx);
+    }
+
+    /**
+     * The count of CPs in the header textboxes
+     */
+    public int getCcpHdrTxtBx() {
+       return _longHandler.getLong(FIBLongHandler.CCPHDRTXBX);
+    }
+    /**
+     * Updates the count of CPs in the header textboxes
+     */
+    public void setCcpHdrTxtBx(int ccpTxtBx) {
+       _longHandler.setLong(FIBLongHandler.CCPHDRTXBX, ccpTxtBx);
+    }
+
+	
     public void clearOffsetsSizes()
     {
       _fieldHandler.clearFields();

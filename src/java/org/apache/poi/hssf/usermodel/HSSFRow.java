@@ -45,25 +45,17 @@ public final class HSSFRow implements Comparable, Row {
     /**
      * reference to low level representation
      */
-
     private RowRecord row;
 
     /**
      * reference to containing low level Workbook
      */
-
     private HSSFWorkbook book;
 
     /**
      * reference to containing Sheet
      */
-
     private Sheet sheet;
-
-    // TODO - ditch this constructor
-    HSSFRow()
-    {
-    }
 
     /**
      * Creates new HSSFRow from scratch. Only HSSFSheet should do this.
@@ -204,14 +196,10 @@ public final class HSSFRow implements Comparable, Row {
      * @param cell low level cell to create the high level representation from
      * @return HSSFCell representing the low level record passed in
      */
-
-    protected HSSFCell createCellFromRecord(CellValueRecordInterface cell)
-    {
-        HSSFCell hcell = new HSSFCell(book, sheet, getRowNum(), cell);
+    protected HSSFCell createCellFromRecord(CellValueRecordInterface cell) {
+        HSSFCell hcell = new HSSFCell(book, sheet, cell);
 
         addCell(hcell);
-
-        // sheet.addValueRecord(getRowNum(),cell.getCellValueRecord());
         return hcell;
     }
 
@@ -318,15 +306,7 @@ public final class HSSFRow implements Comparable, Row {
     }
     
     /**
-     * Get the hssfcell representing a given column (logical cell)
-     *  0-based.  If you ask for a cell that is not defined then
-     *  you get a null, unless you have set a different
-     *  {@link MissingCellPolicy} on the base workbook.
-     * Short method signature provided to retain binary
-     *  compatibility.
-     *
-     * @param cellnum  0 based column number
-     * @return HSSFCell representing that column or null if undefined.
+     * @deprecated (Aug 2008) use {@link #getCell(int)}
      */
     public HSSFCell getCell(short cellnum) {
         int ushortCellNum = cellnum & 0x0000FFFF; // avoid sign extension
