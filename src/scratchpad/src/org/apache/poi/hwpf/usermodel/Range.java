@@ -29,6 +29,8 @@ import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.hwpf.usermodel.Section;
 
+import org.apache.poi.hwpf.model.CPSplitCalculator;
+import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.PropertyNode;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.model.CHPX;
@@ -40,6 +42,8 @@ import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
 import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
+
+import sun.security.krb5.internal.aj;
 
 
 import java.util.List;
@@ -340,7 +344,7 @@ public class Range
     _doc.getSectionTable().adjustForInsert(_sectionStart, adjustedLength);
 	adjustForInsert(adjustedLength);
 
-	// update the FIB.CCPText field
+	// update the FIB.CCPText + friends fields
 	adjustFIB(text.length());
 
     return getCharacterRun(0);
@@ -551,11 +555,8 @@ public class Range
     	piece.adjustForDelete(_start, _end - _start);
     }
 
-	// update the FIB.CCPText field
-	if (usesUnicode())
-		adjustFIB(-((_end - _start) / 2));
-	else
-		adjustFIB(-(_end - _start));
+	// update the FIB.CCPText + friends field
+	adjustFIB(-(_end - _start));
   }
 
   /**
@@ -934,18 +935,44 @@ public class Range
   }
 
   /**
-   * Adjust the value of <code>FIB.CCPText</code> after an insert or a delete...
+   * Adjust the value of the various FIB character count fields,
+   *  eg <code>FIB.CCPText</code> after an insert or a delete...
+   *  
+   * Works on all CCP fields from this range onwards
    *
-   * TODO - handle other kinds of text, eg Headers
-   *
-   * @param	adjustment	The (signed) value that should be added to <code>FIB.CCPText</code>
+   * @param	adjustment	The (signed) value that should be added to the FIB CCP fields
    */
   protected void adjustFIB(int adjustment) {
-
 	// update the FIB.CCPText field (this should happen once per adjustment, so we don't want it in
 	// adjustForInsert() or it would get updated multiple times if the range has a parent)
 	// without this, OpenOffice.org (v. 2.2.x) does not see all the text in the document
-	_doc.getFileInformationBlock().setCcpText(_doc.getFileInformationBlock().getCcpText() + adjustment);
+
+	CPSplitCalculator cpS = _doc.getCPSplitCalculator();
+	FileInformationBlock fib = _doc.getFileInformationBlock();
+	
+	// Do for each affected part
+	if(_start < cpS.getMainDocumentEnd()) {
+		fib.setCcpText(fib.getCcpText() + adjustment);
+	}
+	
+	if(_start < cpS.getCommentsEnd()) {
+		fib.setCcpAtn(fib.getCcpAtn() + adjustment);
+	}
+	if(_start < cpS.getEndNoteEnd()) {
+		fib.setCcpEdn(fib.getCcpEdn() + adjustment);
+	}
+	if(_start < cpS.getFootnoteEnd()) {
+		fib.setCcpFtn(fib.getCcpFtn() + adjustment);
+	}
+	if(_start < cpS.getHeaderStoryEnd()) {
+		fib.setCcpHdd(fib.getCcpHdd() + adjustment);
+	}
+	if(_start < cpS.getHeaderTextboxEnd()) {
+		fib.setCcpHdrTxtBx(fib.getCcpHdrTxtBx() + adjustment);
+	}
+	if(_start < cpS.getMainTextboxEnd()) {
+		fib.setCcpTxtBx(fib.getCcpTxtBx() + adjustment);
+	}
   }
 
   /**
