@@ -43,9 +43,6 @@ import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
 import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 
-import sun.security.krb5.internal.aj;
-
-
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.lang.ref.WeakReference;
