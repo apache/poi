@@ -23,12 +23,6 @@ import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.util.Iterator;
 
-import org.openxml4j.exceptions.InvalidFormatException;
-import org.openxml4j.exceptions.OpenXML4JException;
-import org.openxml4j.opc.Package;
-import org.openxml4j.opc.PackagePart;
-import org.openxml4j.opc.PackageRelationshipCollection;
-
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.POIXMLDocument;
@@ -42,10 +36,15 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xwpf.XWPFDocument;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.xmlbeans.XmlException;
+import org.openxml4j.exceptions.InvalidFormatException;
+import org.openxml4j.exceptions.OpenXML4JException;
+import org.openxml4j.opc.Package;
+import org.openxml4j.opc.PackagePart;
+import org.openxml4j.opc.PackageRelationshipCollection;
 
 /**
  * Figures out the correct POITextExtractor for your supplied
@@ -93,7 +92,7 @@ public class ExtractorFactory {
 		}
 		
 		PackagePart corePart = pkg.getPart(core.getRelationship(0));
-		if(corePart.getContentType().equals(XSSFWorkbook.WORKBOOK.getContentType())) {
+		if(corePart.getContentType().equals(XSSFRelation.WORKBOOK.getContentType())) {
 			return new XSSFExcelExtractor(pkg);
 		}
 		if(corePart.getContentType().equals(XWPFDocument.MAIN_CONTENT_TYPE)) {

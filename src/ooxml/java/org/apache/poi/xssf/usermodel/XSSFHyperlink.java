@@ -99,7 +99,7 @@ public class XSSFHyperlink implements Hyperlink {
 		if(needsRelationToo()) {
 			// Generate the relation
 			PackageRelationship rel =
-				sheetPart.addExternalRelationship(location, XSSFWorkbook.SHEET_HYPERLINKS.getRelation());
+				sheetPart.addExternalRelationship(location, XSSFRelation.SHEET_HYPERLINKS.getRelation());
 			
 			// Update the r:id
 			ctHyperlink.setId(rel.getId());

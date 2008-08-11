@@ -19,7 +19,6 @@ package org.apache.poi.xssf.usermodel;
 import java.util.LinkedList;
 
 import org.apache.poi.ss.usermodel.Font;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 
 public class XSSFFont implements Font {

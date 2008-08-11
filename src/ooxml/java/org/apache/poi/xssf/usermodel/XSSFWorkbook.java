@@ -18,11 +18,8 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,15 +42,12 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.SheetReferences;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.xssf.model.BinaryPart;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.Control;
 import org.apache.poi.xssf.model.Drawing;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.XSSFChildContainingModel;
 import org.apache.poi.xssf.model.XSSFModel;
-import org.apache.poi.xssf.model.XSSFWritableModel;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -79,300 +73,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
 
 
 public class XSSFWorkbook extends POIXMLDocument implements Workbook {
-	public static final XSSFRelation WORKBOOK = new XSSFRelation(
-			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml",
-			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/workbook",
-			"/xl/workbook.xml",
-			null
-	);
-	public static final XSSFRelation MACROS_WORKBOOK = new XSSFRelation(
-			"application/vnd.ms-excel.sheet.macroEnabled.main+xml",
-			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument",
-			"/xl/workbook.xml",
-			null
-	);
-	public static final XSSFRelation WORKSHEET = new XSSFRelation(
-			"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml",
-			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet",
-			"/xl/worksheets/sheet#.xml",
-			null
-	);
-	public static final XSSFRelation SHARED_STRINGS = new XSSFRelation(
-			"application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml",
-			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings",
-			"/xl/sharedStrings.xml",
-			SharedStringsTable.class
-	);
-	public static final XSSFRelation STYLES = new XSSFRelation(
-		    "application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml",
-		    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles",
-		    "/xl/styles.xml",
-		    StylesTable.class
-	);
-	public static final XSSFRelation DRAWINGS = new XSSFRelation(
-			"application/vnd.openxmlformats-officedocument.drawingml.chart+xml",
-			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing",
-			"/xl/drawings/drawing#.xml",
-			null
-	);
-	public static final XSSFRelation VML_DRAWINGS = new XSSFRelation(
-			"application/vnd.openxmlformats-officedocument.vmlDrawing",
-			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing",
-			"/xl/drawings/vmlDrawing#.vml",
-			Drawing.class
-	);
-    public static final XSSFRelation IMAGES = new XSSFRelation(
-    		"image/x-emf", // TODO
-     		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-    		"/xl/media/image#.emf",
-    		null
-    );
-	public static final XSSFRelation SHEET_COMMENTS = new XSSFRelation(
-		    "application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml",
-		    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments",
-		    "/xl/comments#.xml",
-		    CommentsTable.class
-	);
-	public static final XSSFRelation SHEET_HYPERLINKS = new XSSFRelation(
-		    null,
-		    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
-		    null,
-		    null
-	);
-	public static final XSSFRelation OLEEMBEDDINGS = new XSSFRelation(
-	        null,
-	        OLE_OBJECT_REL_TYPE,
-	        null,
-	        BinaryPart.class
-	);
-	public static final XSSFRelation PACKEMBEDDINGS = new XSSFRelation(
-            null,
-            PACK_OBJECT_REL_TYPE,
-            null,
-            BinaryPart.class
-    );
-
-	public static final XSSFRelation VBA_MACROS = new XSSFRelation(
-            "application/vnd.ms-office.vbaProject",
-            "http://schemas.microsoft.com/office/2006/relationships/vbaProject",
-            "/xl/vbaProject.bin",
-	        BinaryPart.class
-    );
-	public static final XSSFRelation ACTIVEX_CONTROLS = new XSSFRelation(
-			"application/vnd.ms-office.activeX+xml",
-			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/control",
-			"/xl/activeX/activeX#.xml",
-			Control.class
-	);
-	public static final XSSFRelation ACTIVEX_BINS = new XSSFRelation(
-			"application/vnd.ms-office.activeX",
-			"http://schemas.microsoft.com/office/2006/relationships/activeXControlBinary",
-			"/xl/activeX/activeX#.bin",
-	        BinaryPart.class
-	);	
-	
-   
-	public static class XSSFRelation {
-		private String TYPE;
-		private String REL;
-		private String DEFAULT_NAME;
-		private Class<? extends XSSFModel> CLASS;
-		private XSSFRelation(String TYPE, String REL, String DEFAULT_NAME, Class<? extends XSSFModel> CLASS) {
-			this.TYPE = TYPE;
-			this.REL = REL;
-			this.DEFAULT_NAME = DEFAULT_NAME;
-			this.CLASS = CLASS;
-		}
-		public String getContentType() { return TYPE; }
-		public String getRelation() { return REL; }
-		public String getDefaultFileName() { return DEFAULT_NAME; }
-		
-		/**
-		 * Does one of these exist for the given core
-		 *  package part?
-		 */
-		public boolean exists(PackagePart corePart) throws IOException, InvalidFormatException {
-			if(corePart == null) {
-				// new file, can't exist
-				return false;
-			}
-			
-            PackageRelationshipCollection prc =
-            	corePart.getRelationshipsByType(REL);
-            Iterator<PackageRelationship> it = prc.iterator();
-            if(it.hasNext()) {
-            	return true;
-            } else {
-            	return false;
-            }
-		}
-		
-		/**
-		 * Returns the filename for the nth one of these, 
-		 *  eg /xl/comments4.xml
-		 */
-		public String getFileName(int index) {
-			if(DEFAULT_NAME.indexOf("#") == -1) {
-				// Generic filename in all cases
-				return getDefaultFileName();
-			}
-			return DEFAULT_NAME.replace("#", Integer.toString(index));
-		}
-
-		/**
-		 * Fetches the InputStream to read the contents, based
-		 *  of the specified core part, for which we are defined
-		 *  as a suitable relationship
-		 */
-		public InputStream getContents(PackagePart corePart) throws IOException, InvalidFormatException {
-            PackageRelationshipCollection prc =
-            	corePart.getRelationshipsByType(REL);
-            Iterator<PackageRelationship> it = prc.iterator();
-            if(it.hasNext()) {
-                PackageRelationship rel = it.next();
-                PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
-                PackagePart part = corePart.getPackage().getPart(relName);
-                return part.getInputStream();
-            } else {
-            	log.log(POILogger.WARN, "No part " + DEFAULT_NAME + " found");
-            	return null;
-            }
-		}
-		
-		/**
-		 * Loads all the XSSFModels of this type which are
-		 *  defined as relationships of the given parent part
-		 */
-		public ArrayList<? extends XSSFModel> loadAll(PackagePart parentPart) throws Exception {
-			ArrayList<XSSFModel> found = new ArrayList<XSSFModel>();
-			for(PackageRelationship rel : parentPart.getRelationshipsByType(REL)) {
-				PackagePart part = getTargetPart(parentPart.getPackage(), rel);
-				found.add(create(part, rel));
-			}
-			return found;
-		}
-		
-		/**
-		 * Load a single Model, which is defined as a suitable
-		 *  relationship from the specified core (parent) 
-		 *  package part.
-		 */
-		public XSSFModel load(PackagePart corePart) throws Exception {
-            PackageRelationshipCollection prc =
-            	corePart.getRelationshipsByType(REL);
-            Iterator<PackageRelationship> it = prc.iterator();
-            if(it.hasNext()) {
-                PackageRelationship rel = it.next();
-                PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
-                PackagePart part = corePart.getPackage().getPart(relName);
-                return create(part, rel);
-            } else {
-            	log.log(POILogger.WARN, "No part " + DEFAULT_NAME + " found");
-            	return null;
-            }
-		}
-		
-		/**
-		 * Does the actual Model creation
-		 */
-		private XSSFModel create(PackagePart thisPart, PackageRelationship rel) throws Exception {
-			XSSFModel model = null;
-			
-			Constructor<? extends XSSFModel> c;
-			boolean withString = false;
-			
-			// Find the right constructor 
-			try {
-				c = CLASS.getConstructor(InputStream.class, String.class);
-				withString = true;
-			} catch(NoSuchMethodException e) {
-				c = CLASS.getConstructor(InputStream.class);
-			}
-			
-			// Instantiate, if we can
-			InputStream inp = thisPart.getInputStream();
-			if(inp != null) {
-                try {
-                	if(withString) {
-                		model = c.newInstance(inp, rel.getId());
-                	} else {
-                		model = c.newInstance(inp);
-                	}
-                } finally {
-                	inp.close();
-                }
-                
-    			// Do children, if required
-    			if(model instanceof XSSFChildContainingModel) {
-    				XSSFChildContainingModel ccm = 
-    					(XSSFChildContainingModel)model;
-    				for(String relType : ccm.getChildrenRelationshipTypes()) {
-    					for(PackageRelationship cRel : thisPart.getRelationshipsByType(relType)) {
-    						PackagePart childPart = getTargetPart(thisPart.getPackage(), cRel);
-    						ccm.generateChild(childPart, cRel.getId());
-    					}
-    				}
-    			}
-            }
-			
-			
-            return model;
-		}
-		
-		/**
-		 * Save, with the default name
-		 * @return The internal reference ID it was saved at, normally then used as an r:id
-		 */
-		private String save(XSSFWritableModel model, PackagePart corePart) throws IOException {
-			return save(model, corePart, DEFAULT_NAME);
-		}
-		/**
-		 * Save, with the name generated by the given index
-		 * @return The internal reference ID it was saved at, normally then used as an r:id
-		 */
-		private String save(XSSFWritableModel model, PackagePart corePart, int index) throws IOException {
-			return save(model, corePart, getFileName(index));
-		}
-		/**
-		 * Save, with the specified name
-		 * @return The internal reference ID it was saved at, normally then used as an r:id
-		 */
-		private String save(XSSFWritableModel model, PackagePart corePart, String name) throws IOException {
-            PackagePartName ppName = null;
-            try {
-            	ppName = PackagingURIHelper.createPartName(name);
-            } catch(InvalidFormatException e) {
-            	throw new IllegalStateException("Can't create part with name " + name + " for " + model, e);
-            }
-            PackageRelationship rel =
-            	corePart.addRelationship(ppName, TargetMode.INTERNAL, REL);
-            PackagePart part = corePart.getPackage().createPart(ppName, TYPE);
-            
-            OutputStream out = part.getOutputStream();
-            model.writeTo(out);
-            out.close();
-            
-			// Do children, if required
-			if(model instanceof XSSFChildContainingModel) {
-				XSSFChildContainingModel ccm = 
-					(XSSFChildContainingModel)model;
-				// Loop over each child, writing it out
-				int numChildren = ccm.getNumberOfChildren();
-				for(int i=0; i<numChildren; i++) {
-					XSSFChildContainingModel.WritableChild child =
-						ccm.getChildForWriting(i);
-					child.getRelation().save(
-							child.getModel(),
-							part, 
-							(i+1)
-					);
-				}
-			}
-            
-            return rel.getId();
-		}
-	}
-
 	/** Are we a normal workbook, or a macro enabled one? */
 	private boolean isMacroEnabled = false;
 	
@@ -411,19 +111,19 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             
             // Are we macro enabled, or just normal?
             isMacroEnabled = 
-            		getCorePart().getContentType().equals(MACROS_WORKBOOK.getContentType());
+            		getCorePart().getContentType().equals(XSSFRelation.MACROS_WORKBOOK.getContentType());
             
             try {
 	            // Load shared strings
 	            this.sharedStringSource = (SharedStringSource)
-	            	SHARED_STRINGS.load(getCorePart());
+	            	XSSFRelation.SHARED_STRINGS.load(getCorePart());
             } catch(Exception e) {
             	throw new IOException("Unable to load shared strings - " + e.toString());
             }
             try {
 	            // Load styles source
 	            this.stylesSource = (StylesSource)
-	            	STYLES.load(getCorePart());
+	            	XSSFRelation.STYLES.load(getCorePart());
             } catch(Exception e) {
             	e.printStackTrace();
             	throw new IOException("Unable to load styles - " + e.toString());
@@ -444,15 +144,15 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 ArrayList<Control> controls;
                 try {
                 	// Get the comments for the sheet, if there are any
-                	childModels = SHEET_COMMENTS.loadAll(part);
+                	childModels = XSSFRelation.SHEET_COMMENTS.loadAll(part);
                 	if(childModels.size() > 0) {
                 		comments = (CommentsSource)childModels.get(0);
                 	}
                 	
 	                // Get the drawings for the sheet, if there are any
-	                drawings = (ArrayList<Drawing>)VML_DRAWINGS.loadAll(part);
+	                drawings = (ArrayList<Drawing>)XSSFRelation.VML_DRAWINGS.loadAll(part);
 	                // Get the activeX controls for the sheet, if there are any
-	                controls = (ArrayList<Control>)ACTIVEX_CONTROLS.loadAll(part);
+	                controls = (ArrayList<Control>)XSSFRelation.ACTIVEX_CONTROLS.loadAll(part);
                 } catch(Exception e) {
                 	throw new RuntimeException("Unable to construct child part",e);
                 }
@@ -465,14 +165,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 // Process external hyperlinks for the sheet,
                 //  if there are any
                 PackageRelationshipCollection hyperlinkRels =
-                	part.getRelationshipsByType(SHEET_HYPERLINKS.REL);
+                	part.getRelationshipsByType(XSSFRelation.SHEET_HYPERLINKS.getRelation());
                 sheet.initHyperlinks(hyperlinkRels);
                 
                 // Get the embeddings for the workbook
-                for(PackageRelationship rel : part.getRelationshipsByType(OLEEMBEDDINGS.REL))
+                for(PackageRelationship rel : part.getRelationshipsByType(XSSFRelation.OLEEMBEDDINGS.getRelation()))
                     embedds.add(getTargetPart(rel)); // TODO: Add this reference to each sheet as well
                 
-                for(PackageRelationship rel : part.getRelationshipsByType(PACKEMBEDDINGS.REL))
+                for(PackageRelationship rel : part.getRelationshipsByType(XSSFRelation.PACKEMBEDDINGS.getRelation()))
                     embedds.add(getTargetPart(rel));
             }
         } catch (XmlException e) {
@@ -624,10 +324,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 if (sheetPart == null) {
                     continue;
                 }
-                PackageRelationshipCollection prc = sheetPart.getRelationshipsByType(DRAWINGS.getRelation());
+                PackageRelationshipCollection prc = sheetPart.getRelationshipsByType(XSSFRelation.DRAWINGS.getRelation());
                 for (PackageRelationship rel : prc) {
                     PackagePart drawingPart = getTargetPart(rel);
-                    PackageRelationshipCollection prc2 = drawingPart.getRelationshipsByType(IMAGES.getRelation());
+                    PackageRelationshipCollection prc2 = drawingPart.getRelationshipsByType(XSSFRelation.IMAGES.getRelation());
                     for (PackageRelationship rel2 : prc2) {
                         PackagePart imagePart = getTargetPart(rel2);
                         XSSFPictureData pd = new XSSFPictureData(imagePart);
@@ -908,9 +608,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     public void write(OutputStream stream) throws IOException {
     	// What kind of workbook are we?
-    	XSSFRelation workbookRelation = WORKBOOK;
+    	XSSFRelation workbookRelation = XSSFRelation.WORKBOOK;
     	if(isMacroEnabled) {
-    		workbookRelation = MACROS_WORKBOOK;
+    		workbookRelation = XSSFRelation.MACROS_WORKBOOK;
     	}
 
         try {
@@ -936,10 +636,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             	int sheetNumber = (i+1);
             	XSSFSheet sheet = (XSSFSheet) this.getSheetAt(i);
                 PackagePartName partName = PackagingURIHelper.createPartName(
-                		WORKSHEET.getFileName(sheetNumber));
+                		XSSFRelation.WORKSHEET.getFileName(sheetNumber));
                 PackageRelationship rel =
-                	 corePart.addRelationship(partName, TargetMode.INTERNAL, WORKSHEET.getRelation(), "rSheet" + sheetNumber);
-                PackagePart part = pkg.createPart(partName, WORKSHEET.getContentType());
+                	 corePart.addRelationship(partName, TargetMode.INTERNAL, XSSFRelation.WORKSHEET.getRelation(), "rSheet" + sheetNumber);
+                PackagePart part = pkg.createPart(partName, XSSFRelation.WORKSHEET.getContentType());
                  
                 // XXX This should not be needed, but apparently the setSaveOuter call above does not work in XMLBeans 2.2
                 xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorksheet.type.getName().getNamespaceURI(), "worksheet"));
@@ -952,14 +652,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 // If our sheet has comments, then write out those
                 if(sheet.hasComments()) {
                 	CommentsTable ct = (CommentsTable)sheet.getCommentsSourceIfExists();
-                	SHEET_COMMENTS.save(ct, part, sheetNumber);
+                	XSSFRelation.SHEET_COMMENTS.save(ct, part, sheetNumber);
                 }
                 
                 // If our sheet has drawings, then write out those
                 if(sheet.getDrawings() != null) {
                 	int drawingIndex = 1;
                 	for(Drawing drawing : sheet.getDrawings()) {
-                		VML_DRAWINGS.save(
+                		XSSFRelation.VML_DRAWINGS.save(
                 				drawing,
                 				part,
                 				drawingIndex
@@ -972,7 +672,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 if(sheet.getControls() != null) {
                 	int controlIndex = 1;
                 	for(Control control : sheet.getControls()) {
-                		ACTIVEX_CONTROLS.save(
+                		XSSFRelation.ACTIVEX_CONTROLS.save(
                 				control,
                 				part,
                 				controlIndex
@@ -985,11 +685,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             // Write shared strings and styles
             if(sharedStringSource != null) {
 	             SharedStringsTable sst = (SharedStringsTable)sharedStringSource;
-	             SHARED_STRINGS.save(sst, corePart);
+	             XSSFRelation.SHARED_STRINGS.save(sst, corePart);
             }
             if(stylesSource != null) {
 	             StylesTable st = (StylesTable)stylesSource;
-	             STYLES.save(st, corePart);
+	             XSSFRelation.STYLES.save(st, corePart);
             }
             
             // Named ranges
@@ -1010,10 +710,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             // Macro related bits
             if(isMacroEnabled) {
 	            // Copy VBA Macros if present
-	            if(VBA_MACROS.exists( getCorePart() )) {
+	            if(XSSFRelation.VBA_MACROS.exists( getCorePart() )) {
 	            	try {
-		            	XSSFModel vba = VBA_MACROS.load(getCorePart());
-		            	VBA_MACROS.save(vba, corePart);
+		            	XSSFModel vba = XSSFRelation.VBA_MACROS.load(getCorePart());
+		            	XSSFRelation.VBA_MACROS.save(vba, corePart);
 	            	} catch(Exception e) {
 	            		throw new RuntimeException("Unable to copy vba macros over", e);
 	            	}

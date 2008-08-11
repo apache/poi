@@ -22,7 +22,7 @@ import java.util.Iterator;
 
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.Package;
@@ -82,7 +82,7 @@ public class XSSFReader {
 	 *  shared strings table.
 	 */
 	public InputStream getSharedStringsData() throws IOException, InvalidFormatException {
-		return XSSFWorkbook.SHARED_STRINGS.getContents(workbookPart);
+		return XSSFRelation.SHARED_STRINGS.getContents(workbookPart);
 	}
 	
 	/**
@@ -90,7 +90,7 @@ public class XSSFReader {
 	 *  styles table.
 	 */
 	public InputStream getStylesData() throws IOException, InvalidFormatException {
-		return XSSFWorkbook.STYLES.getContents(workbookPart);
+		return XSSFRelation.STYLES.getContents(workbookPart);
 	}
 	
 	/**
@@ -138,7 +138,7 @@ public class XSSFReader {
 			// Find all the sheets
 			PackageRelationshipCollection sheets =
 				workbookPart.getRelationshipsByType(
-					XSSFWorkbook.WORKSHEET.getRelation()
+						XSSFRelation.WORKSHEET.getRelation()
 			);
 			sheetRels = sheets.iterator();
 		}

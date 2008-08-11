@@ -19,7 +19,7 @@ package org.apache.poi.xssf.model;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.xssf.usermodel.XSSFWorkbook.XSSFRelation;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 
 /**
  * Common interface for XSSF models, which deal with
