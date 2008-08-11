@@ -39,14 +39,18 @@ public class PAPBinTable
   protected ArrayList _paragraphs = new ArrayList();
   byte[] _dataStream;
 
+  /** So we can know if things are unicode or not */
+  private TextPieceTable tpt;
+
   public PAPBinTable()
   {
   }
 
   public PAPBinTable(byte[] documentStream, byte[] tableStream, byte[] dataStream, int offset,
-                     int size, int fcMin)
+                     int size, int fcMin, TextPieceTable tpt)
   {
     PlexOfCps binTable = new PlexOfCps(tableStream, offset, size, 4);
+    this.tpt = tpt;
 
     int length = binTable.length();
     for (int x = 0; x < length; x++)
@@ -57,13 +61,14 @@ public class PAPBinTable
       int pageOffset = POIFSConstants.BIG_BLOCK_SIZE * pageNum;
 
       PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(documentStream,
-        dataStream, pageOffset, fcMin);
+        dataStream, pageOffset, fcMin, tpt);
 
       int fkpSize = pfkp.size();
 
       for (int y = 0; y < fkpSize; y++)
       {
-        _paragraphs.add(pfkp.getPAPX(y));
+    	PAPX papx = pfkp.getPAPX(y);
+        _paragraphs.add(papx);
       }
     }
     _dataStream = dataStream;
@@ -71,7 +76,14 @@ public class PAPBinTable
 
   public void insert(int listIndex, int cpStart, SprmBuffer buf)
   {
-    PAPX forInsert = new PAPX(cpStart, cpStart, buf, _dataStream);
+    boolean needsToBeUnicode = tpt.isUnicodeAt(cpStart);
+    
+    PAPX forInsert = new PAPX(0, 0, buf, _dataStream, needsToBeUnicode);
+    
+    // Ensure character offsets are really characters
+    forInsert.setStart(cpStart);
+    forInsert.setEnd(cpStart);
+    
     if (listIndex == _paragraphs.size())
     {
        _paragraphs.add(forInsert);
@@ -90,10 +102,21 @@ public class PAPBinTable
         {
           exc.printStackTrace();
         }
+        
+    	// Copy the properties of the one before to afterwards
+    	// Will go:
+    	//  Original, until insert at point
+    	//  New one
+    	//  Clone of original, on to the old end
+        PAPX clone = new PAPX(0, 0, clonedBuf, _dataStream, needsToBeUnicode);
+        // Again ensure contains character based offsets no matter what
+        clone.setStart(cpStart);
+        clone.setEnd(currentPap.getEnd());
+        
         currentPap.setEnd(cpStart);
-        PAPX splitPap = new PAPX(cpStart, currentPap.getEnd(), clonedBuf, _dataStream);
-        _paragraphs.add(++listIndex, forInsert);
-        _paragraphs.add(++listIndex, splitPap);
+
+        _paragraphs.add(listIndex + 1, forInsert);
+        _paragraphs.add(listIndex + 2, clone);
       }
       else
       {

@@ -18,15 +18,11 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.util.List;
-
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.model.PicturesTable;
-import org.apache.poi.hwpf.usermodel.Picture;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.hwpf.HWPFDocument;
 
 /**
  *	Test to see if Range.replaceText() works even if the Range contains a
@@ -34,7 +30,7 @@ import junit.framework.TestCase;
  *
  * TODO - re-enable me when unicode paragraph stuff is fixed!
  */
-public abstract class TestRangeReplacement extends TestCase {
+public class TestRangeReplacement extends TestCase {
 
 	// u201c and u201d are "smart-quotes"
 	private String originalText =

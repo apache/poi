@@ -22,7 +22,10 @@ import java.util.Arrays;
 
 /**
  * Represents a lightweight node in the Trees used to store content
- * properties. Works only in characters.
+ *  properties.
+ * This only ever works in characters. For the few odd cases when
+ *  the start and end aren't in characters (eg PAPX and CHPX), use
+ *  {@link BytePropertyNode} between you and this.
  *
  * @author Ryan Ackley
  */

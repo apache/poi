@@ -25,22 +25,26 @@ import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.sprm.CharacterSprmUncompressor;
 
 /**
- * Comment me
+ * DANGER - works in bytes!
+ * 
+ * Make sure you call getStart() / getEnd() when you want characters
+ *  (normal use), but getStartByte() / getEndByte() when you're 
+ *  reading in / writing out!
  *
  * @author Ryan Ackley
  */
 
-public class CHPX extends PropertyNode
+public class CHPX extends BytePropertyNode
 {
 
-  public CHPX(int fcStart, int fcEnd, byte[] grpprl)
+  public CHPX(int fcStart, int fcEnd, byte[] grpprl, boolean isUnicode)
   {
-    super(fcStart, fcEnd, new SprmBuffer(grpprl));
+    super(fcStart, fcEnd, new SprmBuffer(grpprl), isUnicode);
   }
 
-  public CHPX(int fcStart, int fcEnd, SprmBuffer buf)
+  public CHPX(int fcStart, int fcEnd, SprmBuffer buf, boolean isUnicode)
   {
-    super(fcStart, fcEnd, buf);
+    super(fcStart, fcEnd, buf, isUnicode);
   }
 
 
