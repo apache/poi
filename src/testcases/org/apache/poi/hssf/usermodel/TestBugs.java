@@ -415,6 +415,9 @@ public final class TestBugs extends TestCase {
         for(int i = 0 ; i < wb.getNumberOfNames(); i++){
           HSSFName name = wb.getNameAt(i);
           name.getNameName();
+          if (name.isFunctionName()) {
+              continue;
+          }
           name.getReference();
         }
     }

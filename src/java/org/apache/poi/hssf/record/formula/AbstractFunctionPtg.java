@@ -110,7 +110,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
      * @return <code>true</code> if the name specifies a standard worksheet function,
      *  <code>false</code> if the name should be assumed to be an external function.
      */
-    public static final boolean isInternalFunctionName(String name) {
+    public static final boolean isBuiltInFunctionName(String name) {
         short ix = FunctionMetadataRegistry.lookupIndexByName(name.toUpperCase());
         return ix >= 0;
     }

@@ -15,20 +15,69 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.model;
-
-import org.apache.poi.ddf.*;
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.hssf.util.SheetReferences;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherBoolProperty;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherDggRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherRGBProperty;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSplitMenuColorsRecord;
+import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.BackupRecord;
+import org.apache.poi.hssf.record.BookBoolRecord;
+import org.apache.poi.hssf.record.BoundSheetRecord;
+import org.apache.poi.hssf.record.CodepageRecord;
+import org.apache.poi.hssf.record.CountryRecord;
+import org.apache.poi.hssf.record.DSFRecord;
+import org.apache.poi.hssf.record.DateWindow1904Record;
+import org.apache.poi.hssf.record.DrawingGroupRecord;
+import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.ExtSSTRecord;
+import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.ExternSheetRecord;
+import org.apache.poi.hssf.record.FileSharingRecord;
+import org.apache.poi.hssf.record.FnGroupCountRecord;
+import org.apache.poi.hssf.record.FontRecord;
+import org.apache.poi.hssf.record.FormatRecord;
+import org.apache.poi.hssf.record.HideObjRecord;
+import org.apache.poi.hssf.record.HyperlinkRecord;
+import org.apache.poi.hssf.record.InterfaceEndRecord;
+import org.apache.poi.hssf.record.InterfaceHdrRecord;
+import org.apache.poi.hssf.record.MMSRecord;
+import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.PaletteRecord;
+import org.apache.poi.hssf.record.PasswordRecord;
+import org.apache.poi.hssf.record.PasswordRev4Record;
+import org.apache.poi.hssf.record.PrecisionRecord;
+import org.apache.poi.hssf.record.ProtectRecord;
+import org.apache.poi.hssf.record.ProtectionRev4Record;
+import org.apache.poi.hssf.record.RecalcIdRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RefreshAllRecord;
+import org.apache.poi.hssf.record.SSTRecord;
+import org.apache.poi.hssf.record.StyleRecord;
+import org.apache.poi.hssf.record.SupBookRecord;
+import org.apache.poi.hssf.record.TabIdRecord;
+import org.apache.poi.hssf.record.UnicodeString;
+import org.apache.poi.hssf.record.UseSelFSRecord;
+import org.apache.poi.hssf.record.WindowOneRecord;
+import org.apache.poi.hssf.record.WindowProtectRecord;
+import org.apache.poi.hssf.record.WriteAccessRecord;
+import org.apache.poi.hssf.record.WriteProtectRecord;
+import org.apache.poi.hssf.record.formula.NameXPtg;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Low level model implementation of a Workbook.  Provides creational methods
@@ -55,7 +104,7 @@ import java.util.Locale;
  * @version 1.0-pre
  */
 public final class Workbook implements Model {
-	private static final int   DEBUG       = POILogger.DEBUG;
+    private static final int   DEBUG       = POILogger.DEBUG;
 
     /**
      * constant used to set the "codepage" wherever "codepage" is set in records
@@ -461,17 +510,21 @@ public final class Workbook implements Model {
     /**
      * Sets the BOF for a given sheet
      *
-     * @param sheetnum the number of the sheet to set the positing of the bof for
+     * @param sheetIndex the number of the sheet to set the positing of the bof for
      * @param pos the actual bof position
      */
 
-    public void setSheetBof(int sheetnum, int pos) {
+    public void setSheetBof(int sheetIndex, int pos) {
         if (log.check( POILogger.DEBUG ))
-            log.log(DEBUG, "setting bof for sheetnum =", new Integer(sheetnum),
+            log.log(DEBUG, "setting bof for sheetnum =", new Integer(sheetIndex),
                 " at pos=", new Integer(pos));
-        checkSheets(sheetnum);
-        (( BoundSheetRecord ) boundsheets.get(sheetnum))
+        checkSheets(sheetIndex);
+        getBoundSheetRec(sheetIndex)
         .setPositionOfBof(pos);
+    }
+
+    private BoundSheetRecord getBoundSheetRec(int sheetIndex) {
+        return ((BoundSheetRecord) boundsheets.get(sheetIndex));
     }
 
     /**
@@ -509,7 +562,7 @@ public final class Workbook implements Model {
     {
         for ( int i = 0; i < boundsheets.size(); i++ )
         {
-            BoundSheetRecord boundSheetRecord = (BoundSheetRecord) boundsheets.get( i );
+            BoundSheetRecord boundSheetRecord = getBoundSheetRec(i);
             if (excludeSheetIdx != i && name.equalsIgnoreCase(boundSheetRecord.getSheetname()))
                 return true;
         }
@@ -526,7 +579,7 @@ public final class Workbook implements Model {
      */    
     public void setSheetName(int sheetnum, String sheetname, short encoding ) {
         checkSheets(sheetnum);
-        BoundSheetRecord sheet = (BoundSheetRecord)boundsheets.get( sheetnum );
+        BoundSheetRecord sheet = getBoundSheetRec(sheetnum);
         sheet.setSheetname(sheetname);
         sheet.setSheetnameLength( (byte)sheetname.length() );
         sheet.setCompressedUnicodeFlag( (byte)encoding );
@@ -548,13 +601,11 @@ public final class Workbook implements Model {
     /**
      * gets the name for a given sheet.
      *
-     * @param sheetnum the sheet number (0 based)
+     * @param sheetIndex the sheet number (0 based)
      * @return sheetname the name for the sheet
      */
-
-    public String getSheetName(int sheetnum) {
-        return (( BoundSheetRecord ) boundsheets.get(sheetnum))
-        .getSheetname();
+    public String getSheetName(int sheetIndex) {
+        return getBoundSheetRec(sheetIndex).getSheetname();
     }
 
     /**
@@ -565,8 +616,7 @@ public final class Workbook implements Model {
      */
 
     public boolean isSheetHidden(int sheetnum) {
-        BoundSheetRecord bsr = ( BoundSheetRecord ) boundsheets.get(sheetnum);
-        return bsr.isHidden();
+        return getBoundSheetRec(sheetnum).isHidden();
     }
 
     /**
@@ -577,8 +627,7 @@ public final class Workbook implements Model {
      */
     
     public void setSheetHidden(int sheetnum, boolean hidden) {
-        BoundSheetRecord bsr = ( BoundSheetRecord ) boundsheets.get(sheetnum);
-        bsr.setHidden(hidden);
+        getBoundSheetRec(sheetnum).setHidden(hidden);
     }
     /**
      * get the sheet's index
@@ -851,7 +900,7 @@ public final class Workbook implements Model {
                 if (record instanceof BoundSheetRecord) {
                      if(!wroteBoundSheets) {
                         for (int i = 0; i < boundsheets.size(); i++) {
-                            len+= ((BoundSheetRecord)boundsheets.get(i))
+                            len+= getBoundSheetRec(i)
                                              .serialize(pos+offset+len, data);
                         }
                         wroteBoundSheets = true;
@@ -1134,8 +1183,8 @@ public final class Workbook implements Model {
         retval.setWidth(( short ) 0x3a5c);
         retval.setHeight(( short ) 0x23be);
         retval.setOptions(( short ) 0x38);
-        retval.setSelectedTab(( short ) 0x0);
-        retval.setDisplayedTab(( short ) 0x0);
+        retval.setActiveSheetIndex( 0x0);
+        retval.setFirstVisibleTab(0x0);
         retval.setNumSelectedTabs(( short ) 1);
         retval.setTabWidthRatio(( short ) 0x258);
         return retval;
@@ -1882,15 +1931,15 @@ public final class Workbook implements Model {
      * @return sheet name
      */
     public String findSheetNameFromExternSheet(short num){
-        String result="";
 
-        short indexToSheet = linkTable.getIndexToSheet(num);
+        int indexToSheet = linkTable.getIndexToSheet(num);
         
-        if (indexToSheet>-1) { //error check, bail out gracefully!
-            result = getSheetName(indexToSheet);
+        if (indexToSheet < 0) {
+            // TODO - what does '-1' mean here?
+            //error check, bail out gracefully!
+            return "";
         }
-
-        return result;
+        return getSheetName(indexToSheet);
     }
 
     /**
@@ -2402,6 +2451,8 @@ public final class Workbook implements Model {
     public String resolveNameXText(int refIndex, int definedNameIndex) {
         return linkTable.resolveNameXText(refIndex, definedNameIndex);
     }
+
+    public NameXPtg getNameXPtg(String name) {
+        return getOrCreateLinkTable().getNameXPtg(name);
+    }
 }
-
-
