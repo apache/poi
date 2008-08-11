@@ -36,7 +36,7 @@ public class TestRangeInsertion extends TestCase {
 	private String originalText =
 		"It is used to confirm that text insertion works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.\r";
 	private String textToInsert = "Look at me!  I'm cool!  ";
-	private int insertionPoint = 244;
+	private int insertionPoint = 122;
 
 	private String illustrativeDocFile;
 
@@ -69,12 +69,21 @@ public class TestRangeInsertion extends TestCase {
 
 		assertEquals(3, section.numParagraphs());
 		Paragraph para = section.getParagraph(2);
+		assertEquals(originalText, para.text());
 
-		assertEquals(3, para.numCharacterRuns());
-		String text = para.getCharacterRun(0).text() + para.getCharacterRun(1).text() +
-			para.getCharacterRun(2).text();
+		assertEquals(6, para.numCharacterRuns());
+		String text = 
+			para.getCharacterRun(0).text() + 
+			para.getCharacterRun(1).text() +
+			para.getCharacterRun(2).text() +
+			para.getCharacterRun(3).text() +
+			para.getCharacterRun(4).text() +
+			para.getCharacterRun(5).text()
+		;
 
 		assertEquals(originalText, text);
+		
+		assertEquals(insertionPoint, para.getStartOffset());
 	}
 
 	/**
@@ -105,10 +114,17 @@ public class TestRangeInsertion extends TestCase {
 
 		assertEquals(3, section.numParagraphs());
 		Paragraph para = section.getParagraph(2);
+		assertEquals((textToInsert + originalText), para.text());
 
-		assertEquals(3, para.numCharacterRuns());
-		String text = para.getCharacterRun(0).text() + para.getCharacterRun(1).text() +
-			para.getCharacterRun(2).text();
+		assertEquals(6, para.numCharacterRuns());
+		String text = 
+			para.getCharacterRun(0).text() + 
+			para.getCharacterRun(1).text() +
+			para.getCharacterRun(2).text() +
+			para.getCharacterRun(3).text() +
+			para.getCharacterRun(4).text() +
+			para.getCharacterRun(5).text()
+		;
 
 		// System.out.println(text);
 

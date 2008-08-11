@@ -317,6 +317,11 @@ public class HWPFDocument extends POIDocument
    *  document, but excludes any headers and footers.
    */
   public Range getRange() {
+	  // First up, trigger a full-recalculate
+	  // Needed in case of deletes etc
+	  getOverallRange();
+	  
+	  // Now, return the real one
 	  return new Range(
 			  _cpSplit.getMainDocumentStart(), 
 			  _cpSplit.getMainDocumentEnd(), 

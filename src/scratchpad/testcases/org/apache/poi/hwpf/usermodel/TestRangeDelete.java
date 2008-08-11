@@ -27,12 +27,14 @@ import org.apache.poi.hwpf.HWPFDocument;
 /**
  *	Test to see if Range.delete() works even if the Range contains a
  *	CharacterRun that uses Unicode characters.
- *
- * TODO - re-enable me when unicode paragraph stuff is fixed!
  */
 public class TestRangeDelete extends TestCase {
 
 	// u201c and u201d are "smart-quotes"
+	private String introText = 
+		"Introduction\r";
+	private String fillerText = 
+		"${delete} This is an MS-Word 97 formatted document created using NeoOffice v. 2.2.4 Patch 0 (OpenOffice.org v. 2.2.1).\r";
 	private String originalText =
 		"It is used to confirm that text delete works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.  Everybody should be thankful to the ${organization} ${delete} and all the POI contributors for their assistance in this matter.\r";
 	private String searchText = "${delete}";
@@ -64,31 +66,34 @@ public class TestRangeDelete extends TestCase {
 	public void testDocStructure() throws Exception {
 
 		HWPFDocument daDoc = new HWPFDocument(new FileInputStream(illustrativeDocFile));
+		Range range;
+		Section section;
+		Paragraph para;
 
-		Range range = daDoc.getOverallRange();
-
+		// First, check overall
+		range = daDoc.getOverallRange();
 		assertEquals(1, range.numSections());
-		Section section = range.getSection(0);
-
-		assertEquals(5, section.numParagraphs());
-		Paragraph para = section.getParagraph(2);
-
-		assertEquals(5, para.numCharacterRuns());
-
-		assertEquals(originalText, para.text());
+		assertEquals(4, range.numParagraphs());
 		
 		
-		// Now check on just the main text
+		// Now, onto just the doc bit
 		range = daDoc.getRange();
-		
+
 		assertEquals(1, range.numSections());
 		section = range.getSection(0);
 
-		assertEquals(5, section.numParagraphs());
+		assertEquals(4, section.numParagraphs());
+		
+		para = section.getParagraph(0);
+		assertEquals(1, para.numCharacterRuns());
+		assertEquals(introText, para.text());
+		
+		para = section.getParagraph(1);
+		assertEquals(2, para.numCharacterRuns());
+		assertEquals(fillerText, para.text());
+		
 		para = section.getParagraph(2);
-
-		assertEquals(5, para.numCharacterRuns());
-
+		assertEquals(6, para.numCharacterRuns());
 		assertEquals(originalText, para.text());
 	}
 
@@ -103,7 +108,7 @@ public class TestRangeDelete extends TestCase {
 		assertEquals(1, range.numSections());
 
 		Section section = range.getSection(0);
-		assertEquals(5, section.numParagraphs());
+		assertEquals(4, section.numParagraphs());
 
 		Paragraph para = section.getParagraph(2);
 
@@ -114,12 +119,7 @@ public class TestRangeDelete extends TestCase {
 		assertEquals(192, offset);
 
 		int absOffset = para.getStartOffset() + offset;
-		if (para.usesUnicode())
-			absOffset = para.getStartOffset() + (offset * 2);
-
 		Range subRange = new Range(absOffset, (absOffset + searchText.length()), para.getDocument());
-		if (subRange.usesUnicode())
-			subRange = new Range(absOffset, (absOffset + (searchText.length() * 2)), para.getDocument());
 
 		assertEquals(searchText, subRange.text());
 
@@ -131,7 +131,7 @@ public class TestRangeDelete extends TestCase {
 		assertEquals(1, range.numSections());
 		section = range.getSection(0);
 
-		assertEquals(5, section.numParagraphs());
+		assertEquals(4, section.numParagraphs());
 		para = section.getParagraph(2);
 
 		text = para.text();
@@ -154,7 +154,7 @@ public class TestRangeDelete extends TestCase {
 		assertEquals(1, range.numSections());
 
 		Section section = range.getSection(0);
-		assertEquals(5, section.numParagraphs());
+		assertEquals(4, section.numParagraphs());
 
 		Paragraph para = section.getParagraph(2);
 
@@ -163,26 +163,23 @@ public class TestRangeDelete extends TestCase {
 
 		boolean keepLooking = true;
 		while (keepLooking) {
-
+			// Reload the range every time
+			range = daDoc.getRange();
 			int offset = range.text().indexOf(searchText);
 			if (offset >= 0) {
 
 				int absOffset = range.getStartOffset() + offset;
-				if (range.usesUnicode())
-					absOffset = range.getStartOffset() + (offset * 2);
 
 				Range subRange = new Range(
 					absOffset, (absOffset + searchText.length()), range.getDocument());
-				if (subRange.usesUnicode())
-					subRange = new Range(
-						absOffset, (absOffset + (searchText.length() * 2)), range.getDocument());
 
 				assertEquals(searchText, subRange.text());
 
 				subRange.delete();
 
-			} else
+			} else {
 				keepLooking = false;
+			}
 		}
 
 		// we need to let the model re-calculate the Range before we use it
@@ -191,7 +188,11 @@ public class TestRangeDelete extends TestCase {
 		assertEquals(1, range.numSections());
 		section = range.getSection(0);
 
-		assertEquals(5, section.numParagraphs());
+		assertEquals(4, section.numParagraphs());
+
+		para = section.getParagraph(0);
+		text = para.text();
+		assertEquals(introText, text);
 
 		para = section.getParagraph(1);
 		text = para.text();

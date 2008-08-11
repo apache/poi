@@ -650,14 +650,6 @@ public class Range
                 absPlaceHolderIndex, 
 				(absPlaceHolderIndex + pPlaceHolder.length()), getDocument()
     );
-    if (subRange.usesUnicode()) {
-			absPlaceHolderIndex = getStartOffset() + (pOffset * 2);
-            subRange = new Range(
-                      absPlaceHolderIndex, 
-                      (absPlaceHolderIndex + (pPlaceHolder.length() * 2)), 
-					  getDocument()
-            );
-    }
 
 	// this Range isn't a proper parent of the subRange() so we'll have to keep
 	// track of an updated endOffset on our own
@@ -674,12 +666,6 @@ public class Range
             (absPlaceHolderIndex + pPlaceHolder.length() + pValue.length()), 
 			getDocument()
     );
-    if (subRange.usesUnicode())
-            subRange = new Range(
-                      (absPlaceHolderIndex + (pValue.length() * 2)),
-                      (absPlaceHolderIndex + (pPlaceHolder.length() * 2) + 
-					  (pValue.length() * 2)), getDocument()
-            );
 
 	// deletes are automagically propagated
     subRange.delete();

@@ -85,18 +85,18 @@ public abstract class PropertyNode implements Comparable, Cloneable
   {
     int end = start + length;
 
-    if (_cpEnd > start)
-    {
-      if (_cpStart < end)
-      {
-        _cpEnd = end >= _cpEnd ? start : _cpEnd - length;
-        _cpStart = Math.min(start, _cpStart);
-      }
-      else
-      {
-        _cpEnd -= length;
-        _cpStart -= length;
-      }
+    if (_cpEnd > start) {
+        // The start of the change is before we end
+    	
+        if (_cpStart < end) {
+            // The delete was somewhere in the middle of us
+            _cpEnd = end >= _cpEnd ? start : _cpEnd - length;
+            _cpStart = Math.min(start, _cpStart);
+        } else {
+            // The delete was before us
+            _cpEnd -= length;
+            _cpStart -= length;
+        }
     }
   }
 

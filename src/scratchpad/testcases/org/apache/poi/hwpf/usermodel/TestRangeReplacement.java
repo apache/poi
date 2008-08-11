@@ -70,12 +70,18 @@ public class TestRangeReplacement extends TestCase {
 		assertEquals(1, range.numSections());
 		Section section = range.getSection(0);
 
-		assertEquals(5, section.numParagraphs());
+		assertEquals(4, section.numParagraphs());
 		Paragraph para = section.getParagraph(2);
 
-		assertEquals(5, para.numCharacterRuns());
-		String text = para.getCharacterRun(0).text() + para.getCharacterRun(1).text() +
-			para.getCharacterRun(2).text() + para.getCharacterRun(3).text() + para.getCharacterRun(4).text();
+		assertEquals(6, para.numCharacterRuns());
+		String text = 
+			para.getCharacterRun(0).text() + 
+			para.getCharacterRun(1).text() +
+			para.getCharacterRun(2).text() +
+			para.getCharacterRun(3).text() +
+			para.getCharacterRun(4).text() +
+			para.getCharacterRun(5).text()
+		;
 
 		assertEquals(originalText, text);
 	}
@@ -91,7 +97,7 @@ public class TestRangeReplacement extends TestCase {
 		assertEquals(1, range.numSections());
 
 		Section section = range.getSection(0);
-		assertEquals(5, section.numParagraphs());
+		assertEquals(4, section.numParagraphs());
 
 		Paragraph para = section.getParagraph(2);
 
@@ -124,7 +130,7 @@ public class TestRangeReplacement extends TestCase {
 		assertEquals(1, range.numSections());
 
 		Section section = range.getSection(0);
-		assertEquals(5, section.numParagraphs());
+		assertEquals(4, section.numParagraphs());
 
 		Paragraph para = section.getParagraph(2);
 
@@ -135,7 +141,7 @@ public class TestRangeReplacement extends TestCase {
 
 		assertEquals(1, range.numSections());
 		section = range.getSection(0);
-		assertEquals(5, section.numParagraphs());
+		assertEquals(4, section.numParagraphs());
 
 		para = section.getParagraph(2);
 		text = para.text();
