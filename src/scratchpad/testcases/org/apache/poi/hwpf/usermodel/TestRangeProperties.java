@@ -257,6 +257,91 @@ public class TestRangeProperties extends TestCase {
 		assertEquals(p2_parts[0] + "\r", r.getParagraph(11).text());
 	}
 	public void testUnicodeStyling() throws Exception {
-		// TODO
+		Range r = u.getRange();
+		String[] p1_parts = u_page_1.split("\r");
+		
+		Paragraph p1 = r.getParagraph(0);
+		Paragraph p7 = r.getParagraph(6);
+		
+		// Line ending in its own run each time!
+		assertEquals(2, p1.numCharacterRuns());
+		assertEquals(2, p7.numCharacterRuns());
+		
+		CharacterRun c1a = p1.getCharacterRun(0);
+		CharacterRun c1b = p1.getCharacterRun(1);
+		CharacterRun c7a = p7.getCharacterRun(0);
+		CharacterRun c7b = p7.getCharacterRun(1);
+		
+		assertEquals("Times New Roman", c1a.getFontName()); // No Calibri
+		assertEquals(22, c1a.getFontSize());
+		
+		assertEquals("Times New Roman", c1b.getFontName()); // No Calibri
+		assertEquals(22, c1b.getFontSize());
+		
+		assertEquals("Times New Roman", c7a.getFontName());
+		assertEquals(48, c7a.getFontSize());
+		
+		assertEquals("Times New Roman", c7b.getFontName());
+		assertEquals(48, c7b.getFontSize());
+		
+		// Now check where they crop up
+		assertEquals(
+				0, 
+				c1a.getStartOffset()
+		);
+		assertEquals(
+				p1_parts[0].length(), 
+				c1a.getEndOffset()
+		);
+		
+		assertEquals(
+				p1_parts[0].length(), 
+				c1b.getStartOffset()
+		);
+		assertEquals(
+				p1_parts[0].length()+1, 
+				c1b.getEndOffset()
+		);
+		
+		assertEquals(
+				p1_parts[0].length() + 1 + 
+				p1_parts[1].length() + 1 + 
+				p1_parts[2].length() + 1 + 
+				p1_parts[3].length() + 1 + 
+				p1_parts[4].length() + 1 + 
+				p1_parts[5].length() + 1, 
+				c7a.getStartOffset()
+		);
+		assertEquals(
+				p1_parts[0].length() + 1 + 
+				p1_parts[1].length() + 1 + 
+				p1_parts[2].length() + 1 + 
+				p1_parts[3].length() + 1 + 
+				p1_parts[4].length() + 1 + 
+				p1_parts[5].length() + 1 +
+				1,
+				c7a.getEndOffset()
+		);
+		
+		assertEquals(
+				p1_parts[0].length() + 1 + 
+				p1_parts[1].length() + 1 + 
+				p1_parts[2].length() + 1 + 
+				p1_parts[3].length() + 1 + 
+				p1_parts[4].length() + 1 + 
+				p1_parts[5].length() + 1 +
+				1, 
+				c7b.getStartOffset()
+		);
+		assertEquals(
+				p1_parts[0].length() + 1 + 
+				p1_parts[1].length() + 1 + 
+				p1_parts[2].length() + 1 + 
+				p1_parts[3].length() + 1 + 
+				p1_parts[4].length() + 1 + 
+				p1_parts[5].length() + 1 +
+				p1_parts[6].length() + 1,
+				c7b.getEndOffset()
+		);
 	}
 }

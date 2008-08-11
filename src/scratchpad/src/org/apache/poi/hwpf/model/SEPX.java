@@ -20,11 +20,14 @@
 
 package org.apache.poi.hwpf.model;
 
-import org.apache.poi.hwpf.sprm.SprmBuffer;
-import org.apache.poi.hwpf.sprm.SectionSprmUncompressor;
 import org.apache.poi.hwpf.sprm.SectionSprmCompressor;
+import org.apache.poi.hwpf.sprm.SectionSprmUncompressor;
 import org.apache.poi.hwpf.usermodel.SectionProperties;
 
+/**
+ * TODO - figure out if this works in characters, like most
+ *  things do, or in bytes as PAPX / CHPX does.
+ */
 public class SEPX extends PropertyNode
 {
 
