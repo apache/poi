@@ -219,24 +219,25 @@ public class HWPFDocument extends POIDocument
         _dataStream = new byte[0];
     }
 
-    // get the start of text in the main stream
-    int fcMin = _fib.getFcMin();
+    // Get the cp of the start of text in the main stream
+    // The latest spec doc says this is always zero!
+    int fcMin = 0;
+    //fcMin = _fib.getFcMin() 
 
-    // load up our standard structures.
+    // Start to load up our standard structures.
     _dop = new DocumentProperties(_tableStream, _fib.getFcDop());
     _cft = new ComplexFileTable(_mainStream, _tableStream, _fib.getFcClx(), fcMin);
     _tpt = _cft.getTextPieceTable();
-    _cbt = new CHPBinTable(_mainStream, _tableStream, _fib.getFcPlcfbteChpx(), _fib.getLcbPlcfbteChpx(), fcMin);
-    _pbt = new PAPBinTable(_mainStream, _tableStream, _dataStream, _fib.getFcPlcfbtePapx(), _fib.getLcbPlcfbtePapx(), fcMin);
-
-    // Word XP puts in a zero filled buffer in front of the text and it screws
-    // up my system for offsets. This is an adjustment.
+    
+    // Word XP and later all put in a zero filled buffer in
+    //  front of the text. This screws up the system for offsets,
+    //  which assume we always start at zero. This is an adjustment.
     int cpMin = _tpt.getCpMin();
-    if (cpMin > 0)
-    {
-      _cbt.adjustForDelete(0, 0, cpMin);
-      _pbt.adjustForDelete(0, 0, cpMin);
-    }
+    
+    // Now load the rest of the properties, which need to be adjusted
+    //  for where text really begin
+    _cbt = new CHPBinTable(_mainStream, _tableStream, _fib.getFcPlcfbteChpx(), _fib.getLcbPlcfbteChpx(), cpMin, _tpt);
+    _pbt = new PAPBinTable(_mainStream, _tableStream, _dataStream, _fib.getFcPlcfbtePapx(), _fib.getLcbPlcfbtePapx(), cpMin, _tpt);
     
     // Read FSPA and Escher information
     _fspa = new FSPATable(_tableStream, _fib.getFcPlcspaMom(), _fib.getLcbPlcspaMom(), getTextTable().getTextPieces());
@@ -252,7 +253,7 @@ public class HWPFDocument extends POIDocument
     // read in the pictures stream
     _pictures = new PicturesTable(this, _dataStream, _mainStream, _fspa, _dgg);
 
-    _st = new SectionTable(_mainStream, _tableStream, _fib.getFcPlcfsed(), _fib.getLcbPlcfsed(), fcMin, getTextTable().getTextPieces());
+    _st = new SectionTable(_mainStream, _tableStream, _fib.getFcPlcfsed(), _fib.getLcbPlcfsed(), fcMin, _tpt, _cpSplit);
     _ss = new StyleSheet(_tableStream, _fib.getFcStshf());
     _ft = new FontTable(_tableStream, _fib.getFcSttbfffn(), _fib.getLcbSttbfffn());
 
@@ -316,6 +317,11 @@ public class HWPFDocument extends POIDocument
    *  document, but excludes any headers and footers.
    */
   public Range getRange() {
+	  // First up, trigger a full-recalculate
+	  // Needed in case of deletes etc
+	  getOverallRange();
+	  
+	  // Now, return the real one
 	  return new Range(
 			  _cpSplit.getMainDocumentStart(), 
 			  _cpSplit.getMainDocumentEnd(), 

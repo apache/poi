@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,29 +14,85 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.poi.util.LittleEndian;
 
-import java.util.ArrayList;
-
 /**
- * Title:        Extern Sheet <P>
- * Description:  A List of Inndexes to SupBook <P>
- * REFERENCE:  <P>
+ * EXTERNSHEET (0x0017)<br/>
+ * A List of Indexes to  EXTERNALBOOK (supplemental book) Records <p/>
+ * 
  * @author Libin Roman (Vista Portal LDT. Developer)
- * @version 1.0-pre
  */
-
 public class ExternSheetRecord extends Record {
-    public final static short sid = 0x17;
-    private short             field_1_number_of_REF_sturcutres;
-    private ArrayList         field_2_REF_structures;
+    public final static short sid = 0x0017;
+    private List         _list;
+    
+    private final class RefSubRecord {
+    	public static final int ENCODED_SIZE = 6;
+
+    	/** index to External Book Block (which starts with a EXTERNALBOOK record) */
+        private int _extBookIndex;
+        private int _firstSheetIndex; // may be -1 (0xFFFF)
+        private int _lastSheetIndex;  // may be -1 (0xFFFF)
+        
+        
+        /** a Constructor for making new sub record
+         */
+        public RefSubRecord(int extBookIndex, int firstSheetIndex, int lastSheetIndex) {
+    		_extBookIndex = extBookIndex;
+    		_firstSheetIndex = firstSheetIndex;
+    		_lastSheetIndex = lastSheetIndex;
+        }
+        
+        /**
+         * @param in the RecordInputstream to read the record from
+         */
+        public RefSubRecord(RecordInputStream in) {
+            this(in.readShort(), in.readShort(), in.readShort());
+        }
+        public int getExtBookIndex(){
+            return _extBookIndex;
+        }
+        public int getFirstSheetIndex(){
+            return _firstSheetIndex;
+        }
+        public int getLastSheetIndex(){
+            return _lastSheetIndex;
+        }
+        
+        public String toString() {
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("extBook=").append(_extBookIndex);
+            buffer.append(" firstSheet=").append(_firstSheetIndex);
+            buffer.append(" lastSheet=").append(_lastSheetIndex);
+            return buffer.toString();
+        }
+        
+        /**
+         * called by the class that is responsible for writing this sucker.
+         * Subclasses should implement this so that their data is passed back in a
+         * byte array.
+         *
+         * @param offset to begin writing at
+         * @param data byte array containing instance data
+         * @return number of bytes written
+         */
+        public void serialize(int offset, byte [] data) {
+            LittleEndian.putUShort(data, 0 + offset, _extBookIndex);
+            LittleEndian.putUShort(data, 2 + offset, _firstSheetIndex);
+            LittleEndian.putUShort(data, 4 + offset, _lastSheetIndex);
+        }
+    }    
+    
+    
     
     public ExternSheetRecord() {
-        field_2_REF_structures = new ArrayList();
+        _list = new ArrayList();
     }
     
     /**
@@ -68,72 +123,60 @@ public class ExternSheetRecord extends Record {
      * @param in the RecordInputstream to read the record from
      */
     protected void fillFields(RecordInputStream in) {
-        field_2_REF_structures           = new ArrayList();
+        _list           = new ArrayList();
         
-        field_1_number_of_REF_sturcutres = in.readShort();
+        int nItems  = in.readShort();
         
-        for (int i = 0 ; i < field_1_number_of_REF_sturcutres ; ++i) {
-            ExternSheetSubRecord rec = new ExternSheetSubRecord(in);
+        for (int i = 0 ; i < nItems ; ++i) {
+            RefSubRecord rec = new RefSubRecord(in);
             
-            field_2_REF_structures.add( rec);
+            _list.add( rec);
         }
     }
     
-    /** 
-     * sets the number of the REF structors , that is in Excel file
-     * @param numStruct number of REF structs
-     */
-    public void setNumOfREFStructures(short numStruct) {
-        field_1_number_of_REF_sturcutres = numStruct;
-    }
-    
+
     /**  
-     * return the number of the REF structors , that is in Excel file
-     * @return number of REF structs
+     * @return number of REF structures
      */
-    public short getNumOfREFStructures() {
-        return field_1_number_of_REF_sturcutres;
+    public int getNumOfRefs() {
+        return _list.size();
     }
     
     /** 
      * adds REF struct (ExternSheetSubRecord)
      * @param rec REF struct
      */
-    public void addREFRecord(ExternSheetSubRecord rec) {
-        field_2_REF_structures.add(rec);
+    public void addREFRecord(RefSubRecord rec) {
+        _list.add(rec);
     }
     
     /** returns the number of REF Records, which is in model
      * @return number of REF records
      */
     public int getNumOfREFRecords() {
-        return field_2_REF_structures.size();
+        return _list.size();
     }
     
-    /** returns the REF record (ExternSheetSubRecord)
-     * @param elem index to place
-     * @return REF record
-     */
-    public ExternSheetSubRecord getREFRecordAt(int elem) {
-        ExternSheetSubRecord result = ( ExternSheetSubRecord ) field_2_REF_structures.get(elem);
-        
-        return result;
-    }
     
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        
-        buffer.append("[EXTERNSHEET]\n");
-        buffer.append("   numOfRefs     = ").append(getNumOfREFStructures()).append("\n");
-        for (int k=0; k < this.getNumOfREFRecords(); k++) {
-            buffer.append("refrec         #").append(k).append('\n');
-            buffer.append(getREFRecordAt(k).toString());
-            buffer.append("----refrec     #").append(k).append('\n');
+        StringBuffer sb = new StringBuffer();
+        int nItems = _list.size();
+        sb.append("[EXTERNSHEET]\n");
+        sb.append("   numOfRefs     = ").append(nItems).append("\n");
+        for (int i=0; i < nItems; i++) {
+            sb.append("refrec         #").append(i).append(": ");
+            sb.append(getRef(i).toString());
+            sb.append('\n');
         }
-        buffer.append("[/EXTERNSHEET]\n");
+        sb.append("[/EXTERNSHEET]\n");
         
         
-        return buffer.toString();
+        return sb.toString();
+    }
+    
+    
+    private int getDataSize() {
+    	return 2 + _list.size() * RefSubRecord.ENCODED_SIZE;
     }
     
     /**
@@ -146,24 +189,29 @@ public class ExternSheetRecord extends Record {
      * @return number of bytes written
      */
     public int serialize(int offset, byte [] data) {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,(short)(2 + (getNumOfREFRecords() *6)));
+        int dataSize = getDataSize();
         
-        LittleEndian.putShort(data, 4 + offset, getNumOfREFStructures());
+        int nItems = _list.size();
+
+        LittleEndian.putShort(data, 0 + offset, sid);
+		LittleEndian.putUShort(data, 2 + offset, dataSize);
+        LittleEndian.putUShort(data, 4 + offset, nItems);
         
         int pos = 6 ;
         
-        for (int k = 0; k < getNumOfREFRecords(); k++) {
-            ExternSheetSubRecord record = getREFRecordAt(k);
-            System.arraycopy(record.serialize(), 0, data, pos + offset, 6);
-            
+        for (int i = 0; i < nItems; i++) {
+            getRef(i).serialize(offset + pos, data);
             pos +=6;
         }
-        return getRecordSize();
+        return dataSize + 4;
     }
+
+	private RefSubRecord getRef(int i) {
+		return (RefSubRecord) _list.get(i);
+	}
     
     public int getRecordSize() {
-        return 4 + 2 + getNumOfREFRecords() * 6;
+        return 4 + getDataSize();
     }
     
     /**
@@ -172,4 +220,44 @@ public class ExternSheetRecord extends Record {
     public short getSid() {
         return sid;
     }
+
+	public int getExtbookIndexFromRefIndex(int refIndex) {
+        return getRef(refIndex).getExtBookIndex();
+	}
+
+	/**
+	 * @return -1 if not found
+	 */
+	public int findRefIndexFromExtBookIndex(int extBookIndex) {
+        int nItems = _list.size();
+        for (int i = 0; i < nItems; i++) {
+            if (getRef(i).getExtBookIndex() == extBookIndex) {
+            	return i;
+            }
+        }
+		return -1;
+	}
+
+	public int getFirstSheetIndexFromRefIndex(int extRefIndex) {
+		return getRef(extRefIndex).getFirstSheetIndex();
+	}
+
+	/**
+	 * @return index of newly added ref
+	 */
+	public int addRef(int extBookIndex, int firstSheetIndex, int lastSheetIndex) {
+		_list.add(new RefSubRecord(extBookIndex, firstSheetIndex, lastSheetIndex));
+		return _list.size() - 1;
+	}
+
+	public int getRefIxForSheet(int sheetIndex) {
+        int nItems = _list.size();
+        for (int i = 0; i < nItems; i++) {
+            RefSubRecord ref = getRef(i);
+			if (ref.getFirstSheetIndex() == sheetIndex && ref.getLastSheetIndex() == sheetIndex) {
+            	return i;
+            }
+        }
+		return -1;
+	}
 }

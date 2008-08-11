@@ -19,4 +19,5 @@ package org.apache.poi.ss.usermodel;
 
 public interface Name {
     void setNameName(String nameName);
+	boolean isFunctionName();
 }

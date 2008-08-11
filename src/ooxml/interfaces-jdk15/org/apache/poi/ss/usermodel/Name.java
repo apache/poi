@@ -53,4 +53,5 @@ public interface Name {
 
     void setReference(String ref);
 
+	boolean isFunctionName();
 }

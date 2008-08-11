@@ -37,6 +37,8 @@ public class CHPBinTable
   /** List of character properties.*/
   protected ArrayList _textRuns = new ArrayList();
 
+  /** So we can know if things are unicode or not */
+  private TextPieceTable tpt;
 
   public CHPBinTable()
   {
@@ -52,9 +54,10 @@ public class CHPBinTable
    * @param fcMin
    */
   public CHPBinTable(byte[] documentStream, byte[] tableStream, int offset,
-                     int size, int fcMin)
+                     int size, int fcMin, TextPieceTable tpt)
   {
     PlexOfCps binTable = new PlexOfCps(tableStream, offset, size, 4);
+    this.tpt = tpt;
 
     int length = binTable.length();
     for (int x = 0; x < length; x++)
@@ -65,7 +68,7 @@ public class CHPBinTable
       int pageOffset = POIFSConstants.BIG_BLOCK_SIZE * pageNum;
 
       CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage(documentStream,
-        pageOffset, fcMin);
+        pageOffset, fcMin, tpt);
 
       int fkpSize = cfkp.size();
 
@@ -116,7 +119,14 @@ public class CHPBinTable
 
   public void insert(int listIndex, int cpStart, SprmBuffer buf)
   {
-    CHPX insertChpx = new CHPX(cpStart, cpStart, buf);
+	boolean needsToBeUnicode = tpt.isUnicodeAtCharOffset(cpStart);
+	  
+    CHPX insertChpx = new CHPX(0, 0, buf, needsToBeUnicode);
+    
+    // Ensure character offsets are really characters
+    insertChpx.setStart(cpStart);
+    insertChpx.setEnd(cpStart);
+    
     if (listIndex == _textRuns.size())
     {
       _textRuns.add(insertChpx);
@@ -126,7 +136,16 @@ public class CHPBinTable
       CHPX chpx = (CHPX)_textRuns.get(listIndex);
       if (chpx.getStart() < cpStart)
       {
-        CHPX clone = new CHPX(cpStart, chpx.getEnd(), chpx.getSprmBuf());
+    	// Copy the properties of the one before to afterwards
+    	// Will go:
+    	//  Original, until insert at point
+    	//  New one
+    	//  Clone of original, on to the old end
+        CHPX clone = new CHPX(0, 0, chpx.getSprmBuf(), needsToBeUnicode);
+        // Again ensure contains character based offsets no matter what
+        clone.setStart(cpStart);
+        clone.setEnd(chpx.getEnd());
+        
         chpx.setEnd(cpStart);
 
         _textRuns.add(listIndex + 1, insertChpx);

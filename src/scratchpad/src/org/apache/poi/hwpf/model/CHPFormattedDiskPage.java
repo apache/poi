@@ -55,13 +55,14 @@ public class CHPFormattedDiskPage extends FormattedDiskPage
      * This constructs a CHPFormattedDiskPage from a raw fkp (512 byte array
      * read from a Word file).
      */
-    public CHPFormattedDiskPage(byte[] documentStream, int offset, int fcMin)
+    public CHPFormattedDiskPage(byte[] documentStream, int offset, int fcMin, TextPieceTable tpt)
     {
       super(documentStream, offset);
 
       for (int x = 0; x < _crun; x++)
       {
-        _chpxList.add(new CHPX(getStart(x) - fcMin, getEnd(x) - fcMin, getGrpprl(x)));
+    	boolean isUnicode = tpt.isUnicodeAtByteOffset( getStart(x) );
+        _chpxList.add(new CHPX(getStart(x) - fcMin, getEnd(x) - fcMin, getGrpprl(x), isUnicode));
       }
     }
 
@@ -157,7 +158,7 @@ public class CHPFormattedDiskPage extends FormattedDiskPage
         chpx = (CHPX)_chpxList.get(x);
         byte[] grpprl = chpx.getGrpprl();
 
-        LittleEndian.putInt(buf, fcOffset, chpx.getStart() + fcMin);
+        LittleEndian.putInt(buf, fcOffset, chpx.getStartBytes() + fcMin);
         grpprlOffset -= (1 + grpprl.length);
         grpprlOffset -= (grpprlOffset % 2);
         buf[offsetOffset] = (byte)(grpprlOffset/2);
@@ -168,7 +169,7 @@ public class CHPFormattedDiskPage extends FormattedDiskPage
         fcOffset += FC_SIZE;
       }
       // put the last chpx's end in
-      LittleEndian.putInt(buf, fcOffset, chpx.getEnd() + fcMin);
+      LittleEndian.putInt(buf, fcOffset, chpx.getEndBytes() + fcMin);
       return buf;
     }
 

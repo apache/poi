@@ -34,6 +34,9 @@ public class SectionTable
   protected ArrayList _sections = new ArrayList();
   protected List _text;
 
+  /** So we can know if things are unicode or not */
+  private TextPieceTable tpt;
+
   public SectionTable()
   {
   }
@@ -41,10 +44,11 @@ public class SectionTable
 
   public SectionTable(byte[] documentStream, byte[] tableStream, int offset,
                       int size, int fcMin,
-                      List tpt)
+                      TextPieceTable tpt, CPSplitCalculator cps)
   {
     PlexOfCps sedPlex = new PlexOfCps(tableStream, offset, size, SED_SIZE);
-    _text = tpt;
+    this.tpt = tpt;
+    this._text = tpt.getTextPieces();
 
     int length = sedPlex.length();
 
@@ -54,11 +58,16 @@ public class SectionTable
       SectionDescriptor sed = new SectionDescriptor(node.getBytes(), 0);
 
       int fileOffset = sed.getFc();
+      int startAt = CPtoFC(node.getStart());
+      int endAt = CPtoFC(node.getEnd());
+      
+      boolean isUnicodeAtStart = tpt.isUnicodeAtByteOffset( startAt );
+//      System.err.println(startAt + " -> " + endAt + " = " + isUnicodeAtStart);
 
       // check for the optimization
       if (fileOffset == 0xffffffff)
       {
-        _sections.add(new SEPX(sed, CPtoFC(node.getStart()), CPtoFC(node.getEnd()), new byte[0]));
+        _sections.add(new SEPX(sed, startAt, endAt, new byte[0], isUnicodeAtStart));
       }
       else
       {
@@ -67,8 +76,33 @@ public class SectionTable
         byte[] buf = new byte[sepxSize];
         fileOffset += LittleEndian.SHORT_SIZE;
         System.arraycopy(documentStream, fileOffset, buf, 0, buf.length);
-        _sections.add(new SEPX(sed, CPtoFC(node.getStart()), CPtoFC(node.getEnd()), buf));
+        _sections.add(new SEPX(sed, startAt, endAt, buf, isUnicodeAtStart));
       }
+    }
+    
+    // Some files seem to lie about their unicode status, which
+    //  is very very pesky. Try to work around these, but this
+    //  is getting on for black magic...
+    int mainEndsAt = cps.getMainDocumentEnd();
+    boolean matchAt = false;
+    boolean matchHalf = false;
+    for(int i=0; i<_sections.size(); i++) {
+    	SEPX s = (SEPX)_sections.get(i);
+    	if(s.getEnd() == mainEndsAt) {
+    		matchAt = true;
+    	} else if(s.getEndBytes() == mainEndsAt || s.getEndBytes() == mainEndsAt-1) {
+    		matchHalf = true;
+    	}
+    }
+    if(! matchAt && matchHalf) {
+    	System.err.println("Your document seemed to be mostly unicode, but the section definition was in bytes! Trying anyway, but things may well go wrong!");
+        for(int i=0; i<_sections.size(); i++) {
+        	SEPX s = (SEPX)_sections.get(i);
+            GenericPropertyNode node = sedPlex.getProperty(i);
+            
+        	s.setStart( CPtoFC(node.getStart()) );
+        	s.setEnd( CPtoFC(node.getEnd()) );
+        }
     }
   }
 
@@ -171,7 +205,7 @@ public class SectionTable
 
       // Line using Ryan's FCtoCP() conversion method -
       // unable to observe any effect on our testcases when using this code - piers
-      GenericPropertyNode property = new GenericPropertyNode(FCtoCP(sepx.getStart()), FCtoCP(sepx.getEnd()), sed.toByteArray());
+      GenericPropertyNode property = new GenericPropertyNode(FCtoCP(sepx.getStartBytes()), FCtoCP(sepx.getEndBytes()), sed.toByteArray());
 
 
       plex.addProperty(property);

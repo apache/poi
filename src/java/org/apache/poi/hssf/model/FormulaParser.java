@@ -25,6 +25,7 @@ import java.util.Stack;
 import org.apache.poi.hssf.record.formula.*;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
+import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -370,13 +371,32 @@ public final class FormulaParser {
      * @param name case preserved function name (as it was entered/appeared in the formula).
      */
     private ParseNode function(String name) {
-        NamePtg nameToken = null;
-        // Note regarding parameter -
-        if(!AbstractFunctionPtg.isInternalFunctionName(name)) {
-            // external functions get a Name token which points to a defined name record
-            nameToken = new NamePtg(name, this.book);
-
+        Ptg nameToken = null;
+        if(!AbstractFunctionPtg.isBuiltInFunctionName(name)) {
+        	// user defined function
             // in the token tree, the name is more or less the first argument
+        	
+        
+        	int nameIndex = book.getNameIndex(name);
+        	if (nameIndex >= 0) {
+        		Name hName = book.getNameAt(nameIndex);
+        		if (!hName.isFunctionName()) {
+        			throw new FormulaParseException("Attempt to use name '" + name 
+        					+ "' as a function, but defined name in workbook does not refer to a function");
+        		}
+        		
+        		// calls to user-defined functions within the workbook 
+        		// get a Name token which points to a defined name record
+        		nameToken = new NamePtg(name, this.book);
+        	} else {
+				if(book instanceof HSSFWorkbook) {
+					nameToken = ((HSSFWorkbook)book).getNameXPtg(name);
+				}
+        		if (nameToken == null) {
+        			throw new FormulaParseException("Name '" + name 
+        					+ "' is completely unknown in the current workbook");
+        		}
+        	}
         }
 
         Match('(');
@@ -390,11 +410,11 @@ public final class FormulaParser {
      * Generates the variable function ptg for the formula.
      * <p>
      * For IF Formulas, additional PTGs are added to the tokens
-     * @param name
+     * @param name a {@link NamePtg} or {@link NameXPtg} or <code>null</code>
      * @param numArgs
      * @return Ptg a null is returned if we're in an IF formula, it needs extreme manipulation and is handled in this function
      */
-    private ParseNode getFunction(String name, NamePtg namePtg, ParseNode[] args) {
+    private ParseNode getFunction(String name, Ptg namePtg, ParseNode[] args) {
 
         FunctionMetadata fm = FunctionMetadataRegistry.getFunctionByName(name.toUpperCase());
         int numArgs = args.length;

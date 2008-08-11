@@ -25,11 +25,11 @@ import org.apache.poi.hssf.record.CRNCountRecord;
 import org.apache.poi.hssf.record.CRNRecord;
 import org.apache.poi.hssf.record.CountryRecord;
 import org.apache.poi.hssf.record.ExternSheetRecord;
-import org.apache.poi.hssf.record.ExternSheetSubRecord;
 import org.apache.poi.hssf.record.ExternalNameRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SupBookRecord;
+import org.apache.poi.hssf.record.formula.NameXPtg;
 
 /**
  * Link Table (OOO pdf reference: 4.10.3 ) <p/>
@@ -122,6 +122,19 @@ final class LinkTable {
 		public String getNameText(int definedNameIndex) {
 			return _externalNameRecords[definedNameIndex].getText();
 		}
+
+		/**
+		 * Performs case-insensitive search
+		 * @return -1 if not found
+		 */
+		public int getIndexOfName(String name) {
+			for (int i = 0; i < _externalNameRecords.length; i++) {
+				if(_externalNameRecords[i].getText().equalsIgnoreCase(name)) {
+					return i;
+				}
+			}
+			return -1;
+		}
 	}
 
 	private final ExternalBookBlock[] _externalBookBlocks;
@@ -192,14 +205,18 @@ final class LinkTable {
 	}
 
 
-	public NameRecord getSpecificBuiltinRecord(byte name, int sheetIndex) {
+	/**
+	 * @param builtInCode a BUILTIN_~ constant from {@link NameRecord}
+	 * @param sheetNumber 1-based sheet number
+	 */
+	public NameRecord getSpecificBuiltinRecord(byte builtInCode, int sheetNumber) {
 
 		Iterator iterator = _definedNames.iterator();
 		while (iterator.hasNext()) {
 			NameRecord record = ( NameRecord ) iterator.next();
 
 			//print areas are one based
-			if (record.getBuiltInName() == name && record.getIndexToSheet() == sheetIndex) {
+			if (record.getBuiltInName() == builtInCode && record.getSheetNumber() == sheetNumber) {
 				return record;
 			}
 		}
@@ -241,69 +258,56 @@ final class LinkTable {
 		_definedNames.remove(namenum);
 	}
 
-    /**
-     * checks if the given name is already included in the linkTable
-     */
-    public boolean nameAlreadyExists(NameRecord name)
-    {
-    	// Check to ensure no other names have the same case-insensitive name
-    	for ( int i = getNumNames()-1; i >=0; i-- ) {
-    		NameRecord rec = getNameRecord(i);
-    		if (rec != name) {
-    			if (isDuplicatedNames(name, rec))
-    				return true;
-    		}
-    	}
-    	return false;
-    }
-    
-    private boolean isDuplicatedNames(NameRecord firstName, NameRecord lastName)
-    {
-    	return lastName.getNameText().equalsIgnoreCase(firstName.getNameText()) 
-    		&& isSameSheetNames(firstName, lastName);
-    }
-    private boolean isSameSheetNames(NameRecord firstName, NameRecord lastName)
-    {
-    	return lastName.getEqualsToIndexToSheet() == firstName.getEqualsToIndexToSheet();
-    }
-
-    
-	public short getIndexToSheet(short num) {
-		return _externSheetRecord.getREFRecordAt(num).getIndexToFirstSupBook();
-	}
-
-	public int getSheetIndexFromExternSheetIndex(int externSheetNumber) {
-		if (externSheetNumber >= _externSheetRecord.getNumOfREFStructures()) {
-			return -1;
-		}
-		return _externSheetRecord.getREFRecordAt(externSheetNumber).getIndexToFirstSupBook();
-	}
-
-	public short addSheetIndexToExternSheet(short sheetNumber) {
-
-		ExternSheetSubRecord record = new ExternSheetSubRecord();
-		record.setIndexToFirstSupBook(sheetNumber);
-		record.setIndexToLastSupBook(sheetNumber);
-		_externSheetRecord.addREFRecord(record);
-		_externSheetRecord.setNumOfREFStructures((short)(_externSheetRecord.getNumOfREFStructures() + 1));
-		return (short)(_externSheetRecord.getNumOfREFStructures() - 1);
-	}
-
-	public short checkExternSheet(int sheetNumber) {
-
-		//Trying to find reference to this sheet
-		int nESRs = _externSheetRecord.getNumOfREFStructures();
-		for(short i=0; i< nESRs; i++) {
-			ExternSheetSubRecord esr = _externSheetRecord.getREFRecordAt(i);
-
-			if (esr.getIndexToFirstSupBook() ==  sheetNumber
-					&& esr.getIndexToLastSupBook() == sheetNumber){
-				return i;
+	/**
+	 * checks if the given name is already included in the linkTable
+	 */
+	public boolean nameAlreadyExists(NameRecord name)
+	{
+		// Check to ensure no other names have the same case-insensitive name
+		for ( int i = getNumNames()-1; i >=0; i-- ) {
+			NameRecord rec = getNameRecord(i);
+			if (rec != name) {
+				if (isDuplicatedNames(name, rec))
+					return true;
 			}
 		}
+		return false;
+	}
+	
+	private static boolean isDuplicatedNames(NameRecord firstName, NameRecord lastName) {
+		return lastName.getNameText().equalsIgnoreCase(firstName.getNameText()) 
+			&& isSameSheetNames(firstName, lastName);
+	}
+	private static boolean isSameSheetNames(NameRecord firstName, NameRecord lastName) {
+		return lastName.getSheetNumber() == firstName.getSheetNumber();
+	}
 
+	
+	public int getIndexToSheet(int extRefIndex) {
+		return _externSheetRecord.getFirstSheetIndexFromRefIndex(extRefIndex);
+	}
+
+	public int getSheetIndexFromExternSheetIndex(int extRefIndex) {
+		if (extRefIndex >= _externSheetRecord.getNumOfRefs()) {
+			return -1;
+		}
+		return _externSheetRecord.getFirstSheetIndexFromRefIndex(extRefIndex);
+	}
+
+	public int addSheetIndexToExternSheet(int sheetNumber) {
+		// TODO - what about the first parameter (extBookIndex)?
+		return _externSheetRecord.addRef(0, sheetNumber, sheetNumber);
+	}
+
+	public short checkExternSheet(int sheetIndex) {
+
+		//Trying to find reference to this sheet
+		int i = _externSheetRecord.getRefIxForSheet(sheetIndex);
+		if (i>=0) {
+			return (short)i;
+		}
 		//We Haven't found reference to this sheet
-		return addSheetIndexToExternSheet((short) sheetNumber);
+		return (short)addSheetIndexToExternSheet((short) sheetIndex);
 	}
 
 
@@ -324,11 +328,31 @@ final class LinkTable {
 	}
 
 	public int getNumberOfREFStructures() {
-		return _externSheetRecord.getNumOfREFStructures();
+		return _externSheetRecord.getNumOfRefs();
 	}
 
 	public String resolveNameXText(int refIndex, int definedNameIndex) {
-		short extBookIndex = _externSheetRecord.getREFRecordAt(refIndex).getIndexToSupBook();
+		int extBookIndex = _externSheetRecord.getExtbookIndexFromRefIndex(refIndex);
 		return _externalBookBlocks[extBookIndex].getNameText(definedNameIndex);
+	}
+
+	public NameXPtg getNameXPtg(String name) {
+		// first find any external book block that contains the name:
+		for (int i = 0; i < _externalBookBlocks.length; i++) {
+			int definedNameIndex = _externalBookBlocks[i].getIndexOfName(name);
+			if (definedNameIndex < 0) {
+				continue;
+			}
+			// found it.
+			int sheetRefIndex = findRefIndexFromExtBookIndex(i); 
+			if (sheetRefIndex >= 0) {
+				return new NameXPtg(sheetRefIndex, definedNameIndex);
+			}
+		}
+		return null;
+	}
+
+	private int findRefIndexFromExtBookIndex(int extBookIndex) {
+		return _externSheetRecord.findRefIndexFromExtBookIndex(extBookIndex); 
 	}
 }

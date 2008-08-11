@@ -53,6 +53,7 @@ import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.MemFuncPtg;
+import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.util.SheetReferences;
@@ -77,6 +78,9 @@ import org.apache.poi.util.POILogger;
  */
 public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.usermodel.Workbook
 {
+    private static final int MAX_ROW = 0xFFFF;
+    private static final short MAX_COLUMN = (short)0x00FF;
+
     private static final int DEBUG = POILogger.DEBUG;
 
     /**
@@ -856,7 +860,8 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
     /**
      * Sets the repeating rows and columns for a sheet (as found in
-     * File->PageSetup->Sheet).  This is function is included in the workbook
+     * 2003:File->PageSetup->Sheet, 2007:Page Layout->Print Titles).
+     *   This is function is included in the workbook
      * because it creates/modifies name records which are stored at the
      * workbook level.
      * <p>
@@ -886,10 +891,10 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         // Check arguments
         if (startColumn == -1 && endColumn != -1) throw new IllegalArgumentException("Invalid column range specification");
         if (startRow == -1 && endRow != -1) throw new IllegalArgumentException("Invalid row range specification");
-        if (startColumn < -1 || startColumn >= 0xFF) throw new IllegalArgumentException("Invalid column range specification");
-        if (endColumn < -1 || endColumn >= 0xFF) throw new IllegalArgumentException("Invalid column range specification");
-        if (startRow < -1 || startRow > 65535) throw new IllegalArgumentException("Invalid row range specification");
-        if (endRow < -1 || endRow > 65535) throw new IllegalArgumentException("Invalid row range specification");
+        if (startColumn < -1 || startColumn >= MAX_COLUMN) throw new IllegalArgumentException("Invalid column range specification");
+        if (endColumn < -1 || endColumn >= MAX_COLUMN) throw new IllegalArgumentException("Invalid column range specification");
+        if (startRow < -1 || startRow > MAX_ROW) throw new IllegalArgumentException("Invalid row range specification");
+        if (endRow < -1 || endRow > MAX_ROW) throw new IllegalArgumentException("Invalid row range specification");
         if (startColumn > endColumn) throw new IllegalArgumentException("Invalid column range specification");
         if (startRow > endRow) throw new IllegalArgumentException("Invalid row range specification");
 
@@ -901,50 +906,60 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         boolean removingRange =
                 startColumn == -1 && endColumn == -1 && startRow == -1 && endRow == -1;
 
-        boolean isNewRecord = false;
-        NameRecord nameRecord;
-        nameRecord = findExistingRowColHeaderNameRecord(sheetIndex);
-        if (removingRange )
-        {
-            if (nameRecord != null)
-                workbook.removeName(findExistingRowColHeaderNameRecordIdx(sheetIndex+1));
+        int rowColHeaderNameIndex = findExistingRowColHeaderNameRecordIdx(sheetIndex);
+        if (removingRange) {
+            if (rowColHeaderNameIndex >= 0) {
+                workbook.removeName(rowColHeaderNameIndex);
+            }
             return;
         }
-        if ( nameRecord == null )
-        {
-            nameRecord = workbook.createBuiltInName(NameRecord.BUILTIN_PRINT_TITLE, sheetIndex+1);
+        boolean isNewRecord;
+        NameRecord nameRecord;
+        if (rowColHeaderNameIndex < 0) {
             //does a lot of the house keeping for builtin records, like setting lengths to zero etc
+            nameRecord = workbook.createBuiltInName(NameRecord.BUILTIN_PRINT_TITLE, sheetIndex+1);
             isNewRecord = true;
+        } else {
+            nameRecord = workbook.getNameRecord(rowColHeaderNameIndex);
+            isNewRecord = false;
         }
 
         short definitionTextLength = settingRowAndColumn ? (short)0x001a : (short)0x000b;
-        nameRecord.setDefinitionTextLength(definitionTextLength);
+        nameRecord.setDefinitionTextLength(definitionTextLength); // TODO - remove
 
         Stack ptgs = new Stack();
 
-        if (settingRowAndColumn)
-        {
-            ptgs.add(new MemFuncPtg(23)); // TODO - where did constant '23' come from?
+        if (settingRowAndColumn) {
+            final int exprsSize = 2 * 11 + 1; // Area3DPtg.SIZE + UnionPtg.SIZE
+            ptgs.add(new MemFuncPtg(exprsSize));
         }
         if (startColumn >= 0)
         {
-            Area3DPtg area3DPtg1 = new Area3DPtg();
-            area3DPtg1.setExternSheetIndex(externSheetIndex);
-            area3DPtg1.setFirstColumn((short)startColumn);
-            area3DPtg1.setLastColumn((short)endColumn);
-            area3DPtg1.setFirstRow((short)0);
-            area3DPtg1.setLastRow((short)0xFFFF);
-            ptgs.add(area3DPtg1);
+            Area3DPtg colArea = new Area3DPtg();
+            colArea.setExternSheetIndex(externSheetIndex);
+            colArea.setFirstColumn((short)startColumn);
+            colArea.setLastColumn((short)endColumn);
+            colArea.setFirstRow(0);
+            colArea.setLastRow(MAX_ROW);
+            colArea.setFirstColRelative(false);
+            colArea.setLastColRelative(false);
+            colArea.setFirstRowRelative(false);
+            colArea.setLastRowRelative(false);
+            ptgs.add(colArea);
         }
         if (startRow >= 0)
         {
-            Area3DPtg area3DPtg2 = new Area3DPtg();
-            area3DPtg2.setExternSheetIndex(externSheetIndex);
-            area3DPtg2.setFirstColumn((short)0);
-            area3DPtg2.setLastColumn((short)0x00FF);
-            area3DPtg2.setFirstRow((short)startRow);
-            area3DPtg2.setLastRow((short)endRow);
-            ptgs.add(area3DPtg2);
+            Area3DPtg rowArea = new Area3DPtg();
+            rowArea.setExternSheetIndex(externSheetIndex);
+            rowArea.setFirstColumn((short)0);
+            rowArea.setLastColumn(MAX_COLUMN);
+            rowArea.setFirstRow(startRow);
+            rowArea.setLastRow(endRow);
+            rowArea.setFirstColRelative(false);
+            rowArea.setLastColRelative(false);
+            rowArea.setFirstRowRelative(false);
+            rowArea.setLastRowRelative(false);
+            ptgs.add(rowArea);
         }
         if (settingRowAndColumn)
         {
@@ -964,38 +979,31 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         sheet.setActive(true);
     }
 
-    private NameRecord findExistingRowColHeaderNameRecord( int sheetIndex )
-    {
-        int index = findExistingRowColHeaderNameRecordIdx(sheetIndex);
-        if (index == -1)
-            return null;
-        else
-            return (NameRecord)workbook.findNextRecordBySid(NameRecord.sid, index);
-    }
 
-    private int findExistingRowColHeaderNameRecordIdx( int sheetIndex )
-    {
-        int index = 0;
-        NameRecord r = null;
-        while ((r = (NameRecord) workbook.findNextRecordBySid(NameRecord.sid, index)) != null)
-        {
-            int indexToSheet = r.getEqualsToIndexToSheet() -1;
-            if(indexToSheet > -1) { //ignore "GLOBAL" name records
-                int nameRecordSheetIndex = workbook.getSheetIndexFromExternSheetIndex(indexToSheet);
-                if (isRowColHeaderRecord( r ) && nameRecordSheetIndex == sheetIndex)
-                {
-                    return index;
-                }
+    private int findExistingRowColHeaderNameRecordIdx(int sheetIndex) {
+        for(int defNameIndex =0; defNameIndex<names.size(); defNameIndex++) {
+            NameRecord r = workbook.getNameRecord(defNameIndex);
+            if (r == null) {
+                throw new RuntimeException("Unable to find all defined names to iterate over");
             }
-            index++;
+            if (!isRowColHeaderRecord( r )) {
+                continue;
+            }
+            if(r.getSheetNumber() == 0) {
+                //ignore "GLOBAL" name records
+                continue;
+            }
+            int externIndex = r.getSheetNumber() -1;
+            int nameRecordSheetIndex = workbook.getSheetIndexFromExternSheetIndex(externIndex);
+            if (nameRecordSheetIndex == sheetIndex) {
+                return defNameIndex;
+            }
         }
-
         return -1;
     }
 
-    private boolean isRowColHeaderRecord( NameRecord r )
-    {
-        return r.getOptionFlag() == 0x20 && ("" + ((char)7)).equals(r.getNameText());
+    private static boolean isRowColHeaderRecord(NameRecord r) {
+        return r.isBuiltInName() && r.getBuiltInName() == NameRecord.BUILTIN_PRINT_TITLE;
     }
 
     /**
@@ -1089,7 +1097,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      *  and that's not something you should normally do
      */
     protected void resetFontCache() {
-    	fonts = new Hashtable();
+        fonts = new Hashtable();
     }
 
     /**
@@ -1658,9 +1666,16 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     	return new HSSFCreationHelper(this);
     }
 
-    private byte[] newUID()
-    {
-        byte[] bytes = new byte[16];
-        return bytes;
+    private static byte[] newUID() {
+        return new byte[16];
     }
+
+    /**
+     * Note - This method should only used by POI internally.  
+     * It may get deleted or change definition in future POI versions
+     */
+	public NameXPtg getNameXPtg(String name) {
+		return workbook.getNameXPtg(name);		
+	}
+
 }

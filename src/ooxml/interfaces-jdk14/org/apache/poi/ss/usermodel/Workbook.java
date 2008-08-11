@@ -33,6 +33,7 @@ public interface Workbook {
 
     HSSFName createName();
     HSSFName getNameAt(int index);
+    int getNameIndex(String name);
     String getNameName(int index);
     String resolveNameXText(int refIndex, int definedNameIndex);
 
