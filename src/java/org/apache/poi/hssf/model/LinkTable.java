@@ -192,14 +192,18 @@ final class LinkTable {
 	}
 
 
-	public NameRecord getSpecificBuiltinRecord(byte name, int sheetIndex) {
+	/**
+	 * @param builtInCode a BUILTIN_~ constant from {@link NameRecord}
+	 * @param sheetNumber 1-based sheet number
+	 */
+	public NameRecord getSpecificBuiltinRecord(byte builtInCode, int sheetNumber) {
 
 		Iterator iterator = _definedNames.iterator();
 		while (iterator.hasNext()) {
 			NameRecord record = ( NameRecord ) iterator.next();
 
 			//print areas are one based
-			if (record.getBuiltInName() == name && record.getIndexToSheet() == sheetIndex) {
+			if (record.getBuiltInName() == builtInCode && record.getSheetNumber() == sheetNumber) {
 				return record;
 			}
 		}
@@ -241,33 +245,31 @@ final class LinkTable {
 		_definedNames.remove(namenum);
 	}
 
-    /**
-     * checks if the given name is already included in the linkTable
-     */
-    public boolean nameAlreadyExists(NameRecord name)
-    {
-    	// Check to ensure no other names have the same case-insensitive name
-    	for ( int i = getNumNames()-1; i >=0; i-- ) {
-    		NameRecord rec = getNameRecord(i);
-    		if (rec != name) {
-    			if (isDuplicatedNames(name, rec))
-    				return true;
-    		}
-    	}
-    	return false;
-    }
-    
-    private boolean isDuplicatedNames(NameRecord firstName, NameRecord lastName)
-    {
-    	return lastName.getNameText().equalsIgnoreCase(firstName.getNameText()) 
-    		&& isSameSheetNames(firstName, lastName);
-    }
-    private boolean isSameSheetNames(NameRecord firstName, NameRecord lastName)
-    {
-    	return lastName.getEqualsToIndexToSheet() == firstName.getEqualsToIndexToSheet();
-    }
+	/**
+	 * checks if the given name is already included in the linkTable
+	 */
+	public boolean nameAlreadyExists(NameRecord name)
+	{
+		// Check to ensure no other names have the same case-insensitive name
+		for ( int i = getNumNames()-1; i >=0; i-- ) {
+			NameRecord rec = getNameRecord(i);
+			if (rec != name) {
+				if (isDuplicatedNames(name, rec))
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	private static boolean isDuplicatedNames(NameRecord firstName, NameRecord lastName) {
+		return lastName.getNameText().equalsIgnoreCase(firstName.getNameText()) 
+			&& isSameSheetNames(firstName, lastName);
+	}
+	private static boolean isSameSheetNames(NameRecord firstName, NameRecord lastName) {
+		return lastName.getSheetNumber() == firstName.getSheetNumber();
+	}
 
-    
+	
 	public short getIndexToSheet(short num) {
 		return _externSheetRecord.getREFRecordAt(num).getIndexToFirstSupBook();
 	}

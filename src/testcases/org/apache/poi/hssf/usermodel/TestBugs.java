@@ -1013,7 +1013,7 @@ public final class TestBugs extends TestCase {
         Workbook w = wb.getWorkbook();
         for(int i=0; i<w.getNumNames(); i++) {
             NameRecord r = w.getNameRecord(i);
-            assertTrue(r.getIndexToSheet() <= wb.getNumberOfSheets());
+            assertTrue(r.getSheetNumber() <= wb.getNumberOfSheets());
             
             List nd = r.getNameDefinition();
             assertEquals(1, nd.size());
@@ -1031,7 +1031,7 @@ public final class TestBugs extends TestCase {
         
         for(int i=0; i<w.getNumNames(); i++) {
             NameRecord r = w.getNameRecord(i);
-            assertTrue(r.getIndexToSheet() <= wb.getNumberOfSheets());
+            assertTrue(r.getSheetNumber() <= wb.getNumberOfSheets());
             
             List nd = r.getNameDefinition();
             assertEquals(1, nd.size());
@@ -1048,7 +1048,7 @@ public final class TestBugs extends TestCase {
         
         for(int i=0; i<w.getNumNames(); i++) {
             NameRecord r = w.getNameRecord(i);
-            assertTrue(r.getIndexToSheet() <= wb.getNumberOfSheets());
+            assertTrue(r.getSheetNumber() <= wb.getNumberOfSheets());
             
             List nd = r.getNameDefinition();
             assertEquals(1, nd.size());
