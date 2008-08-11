@@ -23,67 +23,57 @@ import org.apache.poi.hssf.util.RangeAddress;
 import org.apache.poi.ss.usermodel.Name;
 
 /**
- * Title:        High Level Represantion of Named Range <P>
- * REFERENCE:  <P>
+ * High Level Representation of a 'defined name' which could be a 'built-in' name, 
+ * 'named range' or name of a user defined function.
+ * 
  * @author Libin Roman (Vista Portal LDT. Developer)
  */
-
 public class HSSFName implements Name {
-    private HSSFWorkbook         book;
-    private NameRecord       name;
+    private HSSFWorkbook _book;
+    private NameRecord _definedNameRec;
     
     /** Creates new HSSFName   - called by HSSFWorkbook to create a sheet from
      * scratch.
      *
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createName()
      * @param name the Name Record
-     * @param book lowlevel Workbook object associated with the sheet.
+     * @param book workbook object associated with the sheet.
      */
-    
-    protected HSSFName(HSSFWorkbook book, NameRecord name) {
-        this.book = book;
-        this.name = name;
+    /* package */ HSSFName(HSSFWorkbook book, NameRecord name) {
+        _book = book;
+        _definedNameRec = name;
     }
     
     /** Get the sheets name which this named range is referenced to
-     * @return sheet name, which this named range refered to
+     * @return sheet name, which this named range referred to
      */    
-
     public String getSheetName() {
-        String result ;
-        short indexToExternSheet = name.getExternSheetNumber();
+        short indexToExternSheet = _definedNameRec.getExternSheetNumber();
         
-        result = book.getWorkbook().findSheetNameFromExternSheet(indexToExternSheet);
-        
-        return result;
+        return _book.getWorkbook().findSheetNameFromExternSheet(indexToExternSheet);
     }
     
     /** 
-     * gets the name of the named range
-     * @return named range name
+     * @return text name of this defined name
      */    
-
     public String getNameName(){
-        String result = name.getNameText();
-        
-        return result;
+        return _definedNameRec.getNameText();
     }
     
     /** 
      * sets the name of the named range
      * @param nameName named range name to set
      */    
-
     public void setNameName(String nameName){
-        name.setNameText(nameName);
-        name.setNameTextLength((byte)nameName.length());
-        Workbook wb = book.getWorkbook();
+        _definedNameRec.setNameText(nameName);
+        _definedNameRec.setNameTextLength((byte)nameName.length());
+        Workbook wb = _book.getWorkbook();
         
         //Check to ensure no other names have the same case-insensitive name
         for ( int i = wb.getNumNames()-1; i >=0; i-- )
         {
         	NameRecord rec = wb.getNameRecord(i);
-        	if (rec != name) {
+        	if (rec != _definedNameRec) {
         		if (rec.getNameText().equalsIgnoreCase(getNameName()))
         			throw new IllegalArgumentException("The workbook already contains this name (case-insensitive)");
         	}
@@ -91,32 +81,25 @@ public class HSSFName implements Name {
     }
 
     /** 
-     * gets the reference of the named range
-     * @return reference of the named range
+     * Note - this method only applies to named ranges
+     * @return the formula text defining the named range
      */    
-
     public String getReference() {
-        String result;
-        result = name.getAreaReference(book);
-
-        return result;
+    	if (_definedNameRec.isFunctionName()) {
+    		throw new IllegalStateException("Only applicable to named ranges");
+    	}
+        return _definedNameRec.getAreaReference(_book);
     }
-
-    
 
     /** 
      * sets the sheet name which this named range referenced to
      * @param sheetName the sheet name of the reference
      */    
-
     private void setSheetName(String sheetName){
-        int sheetNumber = book.getSheetIndex(sheetName);
-
+        int sheetNumber = _book.getSheetIndex(sheetName);
         short externSheetNumber = (short)
-        	book.getExternalSheetIndex(sheetNumber);
-        name.setExternSheetNumber(externSheetNumber);
-//        name.setIndexToSheet(externSheetNumber);
-
+			_book.getExternalSheetIndex(sheetNumber);
+        _definedNameRec.setExternSheetNumber(externSheetNumber);
     }
 
   
@@ -124,7 +107,6 @@ public class HSSFName implements Name {
      * sets the reference of this named range
      * @param ref the reference to set
      */    
-
     public void setReference(String ref){
 
         RangeAddress ra = new RangeAddress(ref);
@@ -136,8 +118,7 @@ public class HSSFName implements Name {
         }
 
 		//allow the poi utilities to parse it out
-        name.setAreaReference(ref);
-
+        _definedNameRec.setAreaReference(ref);
     }
 
     /**
@@ -148,5 +129,15 @@ public class HSSFName implements Name {
     public boolean isDeleted(){
         String ref = getReference();
         return "#REF!".endsWith(ref);
+    }
+    public boolean isFunctionName() {
+    	return _definedNameRec.isFunctionName();
+    }
+    public String toString() {
+        StringBuffer sb = new StringBuffer(64);
+        sb.append(getClass().getName()).append(" [");
+        sb.append(_definedNameRec.getNameText());
+        sb.append("]");
+        return sb.toString();
     }
 }

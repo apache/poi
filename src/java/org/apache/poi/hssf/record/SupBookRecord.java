@@ -22,7 +22,7 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * Title:        Sup Book (EXTERNALBOOK) <P>
- * Description:  A External Workbook Description (Suplemental Book)
+ * Description:  A External Workbook Description (Supplemental Book)
  *               Its only a dummy record for making new ExternSheet Record <P>
  * REFERENCE:  5.38<P>
  * @author Libin Roman (Vista Portal LDT. Developer)

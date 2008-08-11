@@ -22,7 +22,10 @@ import java.util.Arrays;
 
 /**
  * Represents a lightweight node in the Trees used to store content
- * properties. Works only in characters.
+ *  properties.
+ * This only ever works in characters. For the few odd cases when
+ *  the start and end aren't in characters (eg PAPX and CHPX), use
+ *  {@link BytePropertyNode} between you and this.
  *
  * @author Ryan Ackley
  */
@@ -45,6 +48,11 @@ public abstract class PropertyNode implements Comparable, Cloneable
       _cpStart = fcStart;
       _cpEnd = fcEnd;
       _buf = buf;
+      
+      if(_cpStart < 0) {
+    	  System.err.println("A property claimed to start before zero, at " + _cpStart + "! Resetting it to zero, and hoping for the best");
+    	  _cpStart = 0;
+      }
   }
 
   /**
@@ -82,18 +90,18 @@ public abstract class PropertyNode implements Comparable, Cloneable
   {
     int end = start + length;
 
-    if (_cpEnd > start)
-    {
-      if (_cpStart < end)
-      {
-        _cpEnd = end >= _cpEnd ? start : _cpEnd - length;
-        _cpStart = Math.min(start, _cpStart);
-      }
-      else
-      {
-        _cpEnd -= length;
-        _cpStart -= length;
-      }
+    if (_cpEnd > start) {
+        // The start of the change is before we end
+    	
+        if (_cpStart < end) {
+            // The delete was somewhere in the middle of us
+            _cpEnd = end >= _cpEnd ? start : _cpEnd - length;
+            _cpStart = Math.min(start, _cpStart);
+        } else {
+            // The delete was before us
+            _cpEnd -= length;
+            _cpStart -= length;
+        }
     }
   }
 

@@ -18,15 +18,11 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.util.List;
-
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.model.PicturesTable;
-import org.apache.poi.hwpf.usermodel.Picture;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.hwpf.HWPFDocument;
 
 /**
  *	Test to see if Range.insertBefore() works even if the Range contains a
@@ -34,13 +30,13 @@ import junit.framework.TestCase;
  *
  * TODO - re-enable me when unicode paragraph stuff is fixed!
  */
-public abstract class TestRangeInsertion extends TestCase {
+public class TestRangeInsertion extends TestCase {
 
 	// u201c and u201d are "smart-quotes"
 	private String originalText =
 		"It is used to confirm that text insertion works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.\r";
 	private String textToInsert = "Look at me!  I'm cool!  ";
-	private int insertionPoint = 244;
+	private int insertionPoint = 122;
 
 	private String illustrativeDocFile;
 
@@ -73,12 +69,18 @@ public abstract class TestRangeInsertion extends TestCase {
 
 		assertEquals(3, section.numParagraphs());
 		Paragraph para = section.getParagraph(2);
+		assertEquals(originalText, para.text());
 
 		assertEquals(3, para.numCharacterRuns());
-		String text = para.getCharacterRun(0).text() + para.getCharacterRun(1).text() +
-			para.getCharacterRun(2).text();
+		String text = 
+			para.getCharacterRun(0).text() + 
+			para.getCharacterRun(1).text() +
+			para.getCharacterRun(2).text()
+		;
 
 		assertEquals(originalText, text);
+		
+		assertEquals(insertionPoint, para.getStartOffset());
 	}
 
 	/**
@@ -109,10 +111,14 @@ public abstract class TestRangeInsertion extends TestCase {
 
 		assertEquals(3, section.numParagraphs());
 		Paragraph para = section.getParagraph(2);
+		assertEquals((textToInsert + originalText), para.text());
 
 		assertEquals(3, para.numCharacterRuns());
-		String text = para.getCharacterRun(0).text() + para.getCharacterRun(1).text() +
-			para.getCharacterRun(2).text();
+		String text = 
+			para.getCharacterRun(0).text() + 
+			para.getCharacterRun(1).text() +
+			para.getCharacterRun(2).text()
+		;
 
 		// System.out.println(text);
 

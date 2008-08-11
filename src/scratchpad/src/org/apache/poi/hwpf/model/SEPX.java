@@ -20,19 +20,20 @@
 
 package org.apache.poi.hwpf.model;
 
-import org.apache.poi.hwpf.sprm.SprmBuffer;
-import org.apache.poi.hwpf.sprm.SectionSprmUncompressor;
 import org.apache.poi.hwpf.sprm.SectionSprmCompressor;
+import org.apache.poi.hwpf.sprm.SectionSprmUncompressor;
 import org.apache.poi.hwpf.usermodel.SectionProperties;
 
-public class SEPX extends PropertyNode
+/**
+ */
+public class SEPX extends BytePropertyNode
 {
 
   SectionDescriptor _sed;
 
-  public SEPX(SectionDescriptor sed, int start, int end, byte[] grpprl)
+  public SEPX(SectionDescriptor sed, int start, int end, byte[] grpprl, boolean isUnicode)
   {
-    super(start, end, SectionSprmUncompressor.uncompressSEP(grpprl, 0));
+    super(start, end, SectionSprmUncompressor.uncompressSEP(grpprl, 0), isUnicode);
     _sed = sed;
   }
 

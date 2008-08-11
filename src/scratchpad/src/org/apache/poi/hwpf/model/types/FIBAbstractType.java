@@ -70,10 +70,10 @@ public abstract class FIBAbstractType
         private static BitField  fFutureSavedUndo = BitFieldFactory.getInstance(0x0008);
         private static BitField  fWord97Saved = BitFieldFactory.getInstance(0x0010);
         private static BitField  fSpare0 = BitFieldFactory.getInstance(0x00FE);
-    protected  int field_11_chs;
-    protected  int field_12_chsTables;
-    protected  int field_13_fcMin;
-    protected  int field_14_fcMac;
+    protected  int field_11_chs;       /** Latest docs say this is Reserved3! */
+    protected  int field_12_chsTables; /** Latest docs say this is Reserved4! */
+    protected  int field_13_fcMin;     /** Latest docs say this is Reserved5! */
+    protected  int field_14_fcMac;     /** Latest docs say this is Reserved6! */
 
 
     public FIBAbstractType()

@@ -32,6 +32,8 @@ public class TestCHPBinTable
 {
   private CHPBinTable _cHPBinTable = null;
   private HWPFDocFixture _hWPFDocFixture;
+  
+  private TextPieceTable fakeTPT = new TextPieceTable();
 
   public TestCHPBinTable(String name)
   {
@@ -46,7 +48,7 @@ public class TestCHPBinTable
     byte[] tableStream = _hWPFDocFixture._tableStream;
     int fcMin = fib.getFcMin();
 
-    _cHPBinTable = new CHPBinTable(mainStream, tableStream, fib.getFcPlcfbteChpx(), fib.getLcbPlcfbteChpx(), fcMin);
+    _cHPBinTable = new CHPBinTable(mainStream, tableStream, fib.getFcPlcfbteChpx(), fib.getLcbPlcfbteChpx(), fcMin, fakeTPT);
 
     HWPFFileSystem fileSys = new HWPFFileSystem();
 
@@ -57,7 +59,7 @@ public class TestCHPBinTable
     byte[] newTableStream = tableOut.toByteArray();
     byte[] newMainStream = mainOut.toByteArray();
 
-    CHPBinTable newBinTable = new CHPBinTable(newMainStream, newTableStream, 0, newTableStream.length, 0);
+    CHPBinTable newBinTable = new CHPBinTable(newMainStream, newTableStream, 0, newTableStream.length, 0, fakeTPT);
 
     ArrayList oldTextRuns = _cHPBinTable._textRuns;
     ArrayList newTextRuns = newBinTable._textRuns;

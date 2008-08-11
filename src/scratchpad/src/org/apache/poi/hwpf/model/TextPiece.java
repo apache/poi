@@ -118,6 +118,9 @@ public class TextPiece extends PropertyNode implements Comparable
 	   if(end > buf.length()) {
 		   throw new StringIndexOutOfBoundsException("Index " + end + " out of range 0 -> " + buf.length());
 	   }
+	   if(end < start) {
+		   throw new StringIndexOutOfBoundsException("Asked for text from " + start + " to " + end + ", which has an end before the start!");
+	   }
 	   return buf.substring(start, end);
    }
 

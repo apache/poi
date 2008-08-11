@@ -60,13 +60,17 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
     /**
      * Creates a PAPFormattedDiskPage from a 512 byte array
      */
-    public PAPFormattedDiskPage(byte[] documentStream, byte[] dataStream, int offset, int fcMin)
+    public PAPFormattedDiskPage(byte[] documentStream, byte[] dataStream, int offset, int fcMin, TextPieceTable tpt)
     {
       super(documentStream, offset);
 
-      for (int x = 0; x < _crun; x++)
-      {
-        _papxList.add(new PAPX(getStart(x) - fcMin, getEnd(x) - fcMin, getGrpprl(x), getParagraphHeight(x), dataStream));
+      for (int x = 0; x < _crun; x++) {
+         int startAt = getStart(x) - fcMin;
+         int endAt = getEnd(x) - fcMin;
+    	 boolean isUnicode = tpt.isUnicodeAtByteOffset(startAt);
+         //System.err.println(startAt + " -> " + endAt + " = " + isUnicode);
+    	 
+         _papxList.add(new PAPX(startAt, endAt, getGrpprl(x), getParagraphHeight(x), dataStream, isUnicode));
       }
       _fkp = null;
       _dataStream = dataStream;
@@ -110,7 +114,7 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
     }
 
     /**
-     * Gets the papx for the paragraph at index in this fkp.
+     * Gets the papx grpprl for the paragraph at index in this fkp.
      *
      * @param index The index of the papx to get.
      * @return a papx grpprl.
@@ -259,7 +263,7 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
           grpprlOffset -= (grpprl.length + (2 - grpprl.length % 2));
           grpprlOffset -= (grpprlOffset % 2);
         }
-        LittleEndian.putInt(buf, fcOffset, papx.getStart() + fcMin);
+        LittleEndian.putInt(buf, fcOffset, papx.getStartBytes() + fcMin);
         buf[bxOffset] = (byte)(grpprlOffset/2);
         System.arraycopy(phe, 0, buf, bxOffset + 1, phe.length);
 
@@ -287,7 +291,7 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
 
       }
 
-      LittleEndian.putInt(buf, fcOffset, papx.getEnd() + fcMin);
+      LittleEndian.putInt(buf, fcOffset, papx.getEndBytes() + fcMin);
       return buf;
     }
 

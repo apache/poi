@@ -17,11 +17,19 @@
 
 package org.apache.poi.hssf.record.formula;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.model.FormulaParser;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.FormulaEvaluator.CellValue;
 /**
  * Tests for functions from external workbooks (e.g. YEARFRAC).
  * 
@@ -30,17 +38,45 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  */
 public final class TestExternalFunctionFormulas extends TestCase {
 
-    
-    /**
-     * tests <tt>NameXPtg.toFormulaString(Workbook)</tt> and logic in Workbook below that   
-     */
-    public void testReadFormulaContainingExternalFunction() {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
-        
-        String expectedFormula = "YEARFRAC(B1,C1)";
-        HSSFSheet sht = wb.getSheetAt(0);
-        String cellFormula = sht.getRow(0).getCell((short)0).getCellFormula();
-        assertEquals(expectedFormula, cellFormula);
-    }
-    
+	/**
+	 * tests <tt>NameXPtg.toFormulaString(Workbook)</tt> and logic in Workbook below that   
+	 */
+	public void testReadFormulaContainingExternalFunction() {
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
+		
+		String expectedFormula = "YEARFRAC(B1,C1)";
+		HSSFSheet sht = wb.getSheetAt(0);
+		String cellFormula = sht.getRow(0).getCell(0).getCellFormula();
+		assertEquals(expectedFormula, cellFormula);
+	}
+	
+	public void testParse() {
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
+		Ptg[] ptgs = FormulaParser.parse("YEARFRAC(B1,C1)", wb);
+		assertEquals(4, ptgs.length);
+		assertEquals(NameXPtg.class, ptgs[0].getClass());
+		
+		wb.getSheetAt(0).getRow(0).createCell(6).setCellFormula("YEARFRAC(C1,B1)");
+		if (false) {
+			// In case you fancy checking in excel
+			try {
+				File tempFile = File.createTempFile("testExtFunc", ".xls");
+				FileOutputStream fout = new FileOutputStream(tempFile);
+				wb.write(fout);
+				fout.close();
+				System.out.println("check out " + tempFile.getAbsolutePath());
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+	
+	public void DISABLEDtestEvaluate() {
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
+		HSSFSheet sheet = wb.getSheetAt(0);
+		HSSFCell cell = sheet.getRow(0).getCell(0);
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
+		CellValue evalResult = fe.evaluate(cell);
+		evalResult.toString();
+	}
 }

@@ -417,6 +417,9 @@ public final class TestBugs extends TestCase {
         for(int i = 0 ; i < wb.getNumberOfNames(); i++){
           HSSFName name = wb.getNameAt(i);
           name.getNameName();
+          if (name.isFunctionName()) {
+              continue;
+          }
           name.getReference();
         }
     }
@@ -1004,7 +1007,6 @@ public final class TestBugs extends TestCase {
      * Test that we can delete sheets without
      *  breaking the build in named ranges
      *  used for printing stuff.
-     * Currently broken, as we change the Ptg
      */
     public void test30978() {
         HSSFWorkbook wb = openSample("30978-alt.xls");
@@ -1016,7 +1018,7 @@ public final class TestBugs extends TestCase {
         Workbook w = wb.getWorkbook();
         for(int i=0; i<w.getNumNames(); i++) {
             NameRecord r = w.getNameRecord(i);
-            assertTrue(r.getIndexToSheet() <= wb.getNumberOfSheets());
+            assertTrue(r.getSheetNumber() <= wb.getNumberOfSheets());
             
             List nd = r.getNameDefinition();
             assertEquals(1, nd.size());
@@ -1034,7 +1036,7 @@ public final class TestBugs extends TestCase {
         
         for(int i=0; i<w.getNumNames(); i++) {
             NameRecord r = w.getNameRecord(i);
-            assertTrue(r.getIndexToSheet() <= wb.getNumberOfSheets());
+            assertTrue(r.getSheetNumber() <= wb.getNumberOfSheets());
             
             List nd = r.getNameDefinition();
             assertEquals(1, nd.size());
@@ -1051,7 +1053,7 @@ public final class TestBugs extends TestCase {
         
         for(int i=0; i<w.getNumNames(); i++) {
             NameRecord r = w.getNameRecord(i);
-            assertTrue(r.getIndexToSheet() <= wb.getNumberOfSheets());
+            assertTrue(r.getSheetNumber() <= wb.getNumberOfSheets());
             
             List nd = r.getNameDefinition();
             assertEquals(1, nd.size());
