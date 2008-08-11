@@ -1002,7 +1002,6 @@ public final class TestBugs extends TestCase {
      * Test that we can delete sheets without
      *  breaking the build in named ranges
      *  used for printing stuff.
-     * Currently broken, as we change the Ptg
      */
     public void test30978() {
         HSSFWorkbook wb = openSample("30978-alt.xls");
