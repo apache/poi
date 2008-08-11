@@ -29,29 +29,32 @@ import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.sprm.SprmOperation;
 
 /**
- * Comment me
+ * DANGER - works in bytes!
+ * 
+ * Make sure you call getStart() / getEnd() when you want characters
+ *  (normal use), but getStartByte() / getEndByte() when you're 
+ *  reading in / writing out!
  *
  * @author Ryan Ackley
  */
 
-public class PAPX extends PropertyNode
-{
+public class PAPX extends BytePropertyNode {
 
   private ParagraphHeight _phe;
   private int _hugeGrpprlOffset = -1;
 
-  public PAPX(int fcStart, int fcEnd, byte[] papx, ParagraphHeight phe, byte[] dataStream)
+  public PAPX(int fcStart, int fcEnd, byte[] papx, ParagraphHeight phe, byte[] dataStream, boolean isUnicode)
   {
-    super(fcStart, fcEnd, new SprmBuffer(papx));
+    super(fcStart, fcEnd, new SprmBuffer(papx), isUnicode);
     _phe = phe;
     SprmBuffer buf = findHuge(new SprmBuffer(papx), dataStream);
     if(buf != null)
       _buf = buf;
   }
 
-  public PAPX(int fcStart, int fcEnd, SprmBuffer buf, byte[] dataStream)
+  public PAPX(int fcStart, int fcEnd, SprmBuffer buf, byte[] dataStream, boolean isUnicode)
   {
-    super(fcStart, fcEnd, buf);
+    super(fcStart, fcEnd, buf, isUnicode);
     _phe = new ParagraphHeight();
     buf = findHuge(buf, dataStream);
     if(buf != null)

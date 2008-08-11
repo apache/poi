@@ -32,6 +32,8 @@ public class TestPAPBinTable
   private PAPBinTable _pAPBinTable = null;
   private HWPFDocFixture _hWPFDocFixture;
 
+  private TextPieceTable fakeTPT = new TextPieceTable();
+
   public TestPAPBinTable(String name)
   {
     super(name);
@@ -45,7 +47,7 @@ public class TestPAPBinTable
     byte[] tableStream = _hWPFDocFixture._tableStream;
     int fcMin = fib.getFcMin();
 
-    _pAPBinTable = new PAPBinTable(mainStream, tableStream, null, fib.getFcPlcfbtePapx(), fib.getLcbPlcfbtePapx(), fcMin);
+    _pAPBinTable = new PAPBinTable(mainStream, tableStream, null, fib.getFcPlcfbtePapx(), fib.getLcbPlcfbtePapx(), fcMin, fakeTPT);
 
     HWPFFileSystem fileSys = new HWPFFileSystem();
 
@@ -56,7 +58,7 @@ public class TestPAPBinTable
     byte[] newTableStream = tableOut.toByteArray();
     byte[] newMainStream = mainOut.toByteArray();
 
-    PAPBinTable newBinTable = new PAPBinTable(newMainStream, newTableStream, null,0, newTableStream.length, 0);
+    PAPBinTable newBinTable = new PAPBinTable(newMainStream, newTableStream, null,0, newTableStream.length, 0, fakeTPT);
 
     ArrayList oldTextRuns = _pAPBinTable.getParagraphs();
     ArrayList newTextRuns = newBinTable.getParagraphs();

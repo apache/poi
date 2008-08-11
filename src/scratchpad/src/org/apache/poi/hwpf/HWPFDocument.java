@@ -219,24 +219,25 @@ public class HWPFDocument extends POIDocument
         _dataStream = new byte[0];
     }
 
-    // get the start of text in the main stream
-    int fcMin = _fib.getFcMin();
+    // Get the cp of the start of text in the main stream
+    // The latest spec doc says this is always zero!
+    int fcMin = 0;
+    //fcMin = _fib.getFcMin() 
 
-    // load up our standard structures.
+    // Start to load up our standard structures.
     _dop = new DocumentProperties(_tableStream, _fib.getFcDop());
     _cft = new ComplexFileTable(_mainStream, _tableStream, _fib.getFcClx(), fcMin);
     _tpt = _cft.getTextPieceTable();
-    _cbt = new CHPBinTable(_mainStream, _tableStream, _fib.getFcPlcfbteChpx(), _fib.getLcbPlcfbteChpx(), fcMin);
-    _pbt = new PAPBinTable(_mainStream, _tableStream, _dataStream, _fib.getFcPlcfbtePapx(), _fib.getLcbPlcfbtePapx(), fcMin);
-
-    // Word XP puts in a zero filled buffer in front of the text and it screws
-    // up my system for offsets. This is an adjustment.
+    
+    // Word XP and later all put in a zero filled buffer in
+    //  front of the text. This screws up the system for offsets,
+    //  which assume we always start at zero. This is an adjustment.
     int cpMin = _tpt.getCpMin();
-    if (cpMin > 0)
-    {
-      _cbt.adjustForDelete(0, 0, cpMin);
-      _pbt.adjustForDelete(0, 0, cpMin);
-    }
+    
+    // Now load the rest of the properties, which need to be adjusted
+    //  for where text really begin
+    _cbt = new CHPBinTable(_mainStream, _tableStream, _fib.getFcPlcfbteChpx(), _fib.getLcbPlcfbteChpx(), cpMin, _tpt);
+    _pbt = new PAPBinTable(_mainStream, _tableStream, _dataStream, _fib.getFcPlcfbtePapx(), _fib.getLcbPlcfbtePapx(), cpMin, _tpt);
     
     // Read FSPA and Escher information
     _fspa = new FSPATable(_tableStream, _fib.getFcPlcspaMom(), _fib.getLcbPlcspaMom(), getTextTable().getTextPieces());

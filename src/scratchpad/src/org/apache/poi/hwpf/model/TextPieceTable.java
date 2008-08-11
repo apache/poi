@@ -25,6 +25,7 @@ import org.apache.poi.poifs.common.POIFSConstants;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -62,8 +63,17 @@ public class TextPieceTable
       pieces[x] = new PieceDescriptor(node.getBytes(), 0);
     }
 
-    int firstPieceFilePosition = pieces[0].getFilePosition();
-    _cpMin = firstPieceFilePosition - fcMin;
+    
+    // Figure out the cp of the earliest text piece
+    // Note that text pieces don't have to be stored in order!
+    _cpMin = pieces[0].getFilePosition() - fcMin;
+    for (int x = 0; x < pieces.length; x++) {
+    	int start = pieces[x].getFilePosition() - fcMin;
+    	if(start < _cpMin) {
+    		_cpMin = start;
+    	}
+    }
+
 
     // using the PieceDescriptors, build our list of TextPieces.
     for (int x = 0; x < pieces.length; x++)
@@ -103,6 +113,35 @@ public class TextPieceTable
   public List getTextPieces()
   {
     return _textPieces;
+  }
+  
+  /**
+   * Is the text at the given Character offset
+   *  unicode, or plain old ascii?
+   * In a very evil fashion, you have to actually 
+   *  know this to make sense of character and
+   *  paragraph properties :(
+   * @param cp The character offset to check about
+   */
+  public boolean isUnicodeAt(int cp) {
+	  boolean lastWas = false;
+	  int lastAt = 0;
+	  
+	  Iterator it = _textPieces.iterator();
+	  while(it.hasNext()) {
+		  TextPiece tp = (TextPiece)it.next();
+		  // If the text piece covers the character, all good
+		  if(tp.getStart() <= cp && tp.getEnd() >= cp) {
+			  return tp.isUnicode();
+		  }
+		  // Otherwise keep track for the last one
+		  if(tp.getStart() > lastAt) {
+			  lastWas = tp.isUnicode();
+		  }
+	  }
+	  
+	  // If they ask off the end, just go with the last one...
+	  return lastWas;
   }
 
   public byte[] writeTo(HWPFOutputStream docStream)
