@@ -76,7 +76,7 @@ public class PAPBinTable
 
   public void insert(int listIndex, int cpStart, SprmBuffer buf)
   {
-    boolean needsToBeUnicode = tpt.isUnicodeAt(cpStart);
+    boolean needsToBeUnicode = tpt.isUnicodeAtCharOffset(cpStart);
     
     PAPX forInsert = new PAPX(0, 0, buf, _dataStream, needsToBeUnicode);
     

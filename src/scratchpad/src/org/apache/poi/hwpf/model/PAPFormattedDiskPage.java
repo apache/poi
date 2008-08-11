@@ -67,7 +67,8 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
       for (int x = 0; x < _crun; x++) {
          int startAt = getStart(x) - fcMin;
          int endAt = getEnd(x) - fcMin;
-    	 boolean isUnicode = tpt.isUnicodeAt(startAt);
+    	 boolean isUnicode = tpt.isUnicodeAtByteOffset(startAt);
+         //System.err.println(startAt + " -> " + endAt + " = " + isUnicode);
     	 
          _papxList.add(new PAPX(startAt, endAt, getGrpprl(x), getParagraphHeight(x), dataStream, isUnicode));
       }

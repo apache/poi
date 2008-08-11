@@ -253,7 +253,7 @@ public class HWPFDocument extends POIDocument
     // read in the pictures stream
     _pictures = new PicturesTable(this, _dataStream, _mainStream, _fspa, _dgg);
 
-    _st = new SectionTable(_mainStream, _tableStream, _fib.getFcPlcfsed(), _fib.getLcbPlcfsed(), fcMin, getTextTable().getTextPieces());
+    _st = new SectionTable(_mainStream, _tableStream, _fib.getFcPlcfsed(), _fib.getLcbPlcfsed(), fcMin, _tpt, _cpSplit);
     _ss = new StyleSheet(_tableStream, _fib.getFcStshf());
     _ft = new FontTable(_tableStream, _fib.getFcSttbfffn(), _fib.getLcbSttbfffn());
 

@@ -36,6 +36,7 @@ public abstract class BytePropertyNode extends PropertyNode {
 				generateCp(fcEnd, isUnicode),
 				buf
 		);
+		this.isUnicode = isUnicode;
 	}
 	private static int generateCp(int val, boolean isUnicode) {
 		if(isUnicode)

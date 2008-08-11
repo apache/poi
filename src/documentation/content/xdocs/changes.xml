@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">Big improvement in how HWPF handles unicode text, and more sanity checking of text ranges within HWPF</action>
            <action dev="POI-DEVELOPERS" type="add">Include headers and footers int he extracted text from HWPF's WordExtractor</action>
            <action dev="POI-DEVELOPERS" type="add">Added support to HWPF for headers and footers</action>
            <action dev="POI-DEVELOPERS" type="fix">Improve how HWPF deals with unicode internally. Should avoid some odd behaviour when manipulating unicode text</action>

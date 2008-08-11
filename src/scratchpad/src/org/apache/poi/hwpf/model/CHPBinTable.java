@@ -119,7 +119,7 @@ public class CHPBinTable
 
   public void insert(int listIndex, int cpStart, SprmBuffer buf)
   {
-	boolean needsToBeUnicode = tpt.isUnicodeAt(cpStart);
+	boolean needsToBeUnicode = tpt.isUnicodeAtCharOffset(cpStart);
 	  
     CHPX insertChpx = new CHPX(0, 0, buf, needsToBeUnicode);
     
