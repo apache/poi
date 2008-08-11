@@ -6,7 +6,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 import org.apache.poi.xssf.usermodel.XSSFPictureData;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxml4j.opc.PackagePart;
@@ -65,7 +65,7 @@ public class Drawing implements XSSFChildContainingModel {
 	 */
 	public String[] getChildrenRelationshipTypes() {
 		return new String[] {
-				XSSFWorkbook.IMAGES.getRelation()
+				XSSFRelation.IMAGES.getRelation()
 		};
 	}
 	
@@ -87,7 +87,7 @@ public class Drawing implements XSSFChildContainingModel {
 		}
 		return new WritableChild(
 				pictures.get(index),
-				XSSFWorkbook.IMAGES
+				XSSFRelation.IMAGES
 		);
 	}
 	

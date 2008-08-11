@@ -16,10 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xssf.model;
 
-import java.io.IOException;
-
-import org.apache.poi.xssf.usermodel.XSSFWorkbook.XSSFRelation;
-import org.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.openxml4j.opc.PackagePart;
 
 /**

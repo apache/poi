@@ -398,7 +398,7 @@ public class XSSFCellStyle implements CellStyle {
 
 	private CTCellProtection getCellProtection() {
 		if (cellXf.getProtection() == null) {
-			CTCellProtection protection = cellXf.addNewProtection();
+			cellXf.addNewProtection();
 		}
 		return cellXf.getProtection();
 	}

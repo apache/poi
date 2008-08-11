@@ -6,7 +6,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 import org.apache.poi.xssf.usermodel.XSSFActiveXData;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxml4j.opc.PackagePart;
@@ -63,7 +63,7 @@ public class Control implements XSSFChildContainingModel {
 	 */
 	public String[] getChildrenRelationshipTypes() {
 		return new String[] {
-				XSSFWorkbook.ACTIVEX_BINS.getRelation()
+				XSSFRelation.ACTIVEX_BINS.getRelation()
 		};
 	}
 	
@@ -85,7 +85,7 @@ public class Control implements XSSFChildContainingModel {
 		}
 		return new WritableChild(
 				activexBins.get(index),
-				XSSFWorkbook.ACTIVEX_BINS
+				XSSFRelation.ACTIVEX_BINS
 		);
 	}
 	
