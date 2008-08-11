@@ -22,41 +22,55 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
- *
- * @author  aviks
+ * 
+ * @author aviks
  */
 public final class NameXPtg extends OperandPtg {
-    public final static short sid  = 0x39;
-    private final static int  SIZE = 7;
-    private short             field_1_ixals;   // index to REF entry in externsheet record
-    private short             field_2_ilbl;    //index to defined name or externname table(1 based)
-    private short            field_3_reserved;   // reserved must be 0
+	public final static short sid = 0x39;
+	private final static int SIZE = 7;
 
+	/** index to REF entry in externsheet record */
+	private int _sheetRefIndex;
+	/** index to defined name or externname table(1 based) */
+	private int _nameNumber;
+	/** reserved must be 0 */
+	private int _reserved;
 
-    public NameXPtg(RecordInputStream in) {
-        field_1_ixals        = in.readShort();
-        field_2_ilbl        = in.readShort();
-        field_3_reserved = in.readShort();
-    }
+	private NameXPtg(int sheetRefIndex, int nameNumber, int reserved) {
+		_sheetRefIndex = sheetRefIndex;
+		_nameNumber = nameNumber;
+		_reserved = reserved;
+	}
 
-    public void writeBytes(byte [] array, int offset) {
-        array[ offset + 0 ] = (byte)(sid + getPtgClass());
-        LittleEndian.putShort(array, offset + 1, field_1_ixals);
-        LittleEndian.putShort(array,offset+3, field_2_ilbl);
-        LittleEndian.putShort(array, offset + 5, field_3_reserved);
-    }
+	/**
+	 * @param sheetRefIndex index to REF entry in externsheet record
+	 * @param nameIndex index to defined name or externname table
+	 */
+	public NameXPtg(int sheetRefIndex, int nameIndex) {
+		this(sheetRefIndex, nameIndex + 1, 0);
+	}
 
-    public int getSize() {
-        return SIZE;
-    }
+	public NameXPtg(RecordInputStream in) {
+		this(in.readUShort(), in.readUShort(), in.readUShort());
+	}
 
-    public String toFormulaString(HSSFWorkbook book)
-    {
-        // -1 to convert definedNameIndex from 1-based to zero-based
-        return book.resolveNameXText(field_1_ixals, field_2_ilbl-1); 
-    }
-    
-    public byte getDefaultOperandClass() {
+	public void writeBytes(byte[] array, int offset) {
+		LittleEndian.putByte(array, offset + 0, sid + getPtgClass());
+		LittleEndian.putUShort(array, offset + 1, _sheetRefIndex);
+		LittleEndian.putUShort(array, offset + 3, _nameNumber);
+		LittleEndian.putUShort(array, offset + 5, _reserved);
+	}
+
+	public int getSize() {
+		return SIZE;
+	}
+
+	public String toFormulaString(HSSFWorkbook book) {
+		// -1 to convert definedNameIndex from 1-based to zero-based
+		return book.resolveNameXText(_sheetRefIndex, _nameNumber - 1);
+	}
+
+	public byte getDefaultOperandClass() {
 		return Ptg.CLASS_VALUE;
 	}
 }

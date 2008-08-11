@@ -20,6 +20,7 @@ package org.apache.poi.hssf.model;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.FormulaParser.FormulaParseException;
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.AddPtg;
@@ -123,12 +124,15 @@ public final class TestFormulaParser extends TestCase {
 	}
 
 	public void testMacroFunction() {
-		HSSFWorkbook w = new HSSFWorkbook();
-		Ptg[] ptg = FormulaParser.parse("FOO()", w);
+		// testNames.xls contains a VB function called 'myFunc'
+		HSSFWorkbook w = HSSFTestDataSamples.openSampleWorkbook("testNames.xls");
+
+		Ptg[] ptg = FormulaParser.parse("myFunc()", w);
+		// myFunc() actually takes 1 parameter.  Don't know if POI will ever be able to detect this problem
 
 		// the name gets encoded as the first arg
 		NamePtg tname = (NamePtg) ptg[0];
-		assertEquals("FOO", tname.toFormulaString(w));
+		assertEquals("myFunc", tname.toFormulaString(w));
 
 		AbstractFunctionPtg tfunc = (AbstractFunctionPtg) ptg[1];
 		assertTrue(tfunc.isExternalFunction());

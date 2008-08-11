@@ -17,8 +17,11 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
+import java.io.IOException;
+
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFName;
@@ -34,20 +37,33 @@ public final class TestExternalFunction extends TestCase {
 
 	/**
 	 * Checks that an external function can get invoked from the formula evaluator. 
+	 * @throws IOException 
+
 	 */
 	public void testInvoke() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-        wb.setSheetName(0, "Sheet1");
-        HSSFRow row = sheet.createRow(0);
-        HSSFCell cell = row.createCell(0);
-
-        HSSFName hssfName = wb.createName();
-        hssfName.setNameName("myFunc");
-        
-        cell.setCellFormula("myFunc()");
-        String actualFormula=cell.getCellFormula();
-        assertEquals("myFunc()", actualFormula);
+		
+		HSSFWorkbook wb;
+		HSSFSheet sheet;
+		HSSFCell cell;
+		if (false) {
+			// TODO - this code won't work until we can create user-defined functions directly with POI
+			wb = new HSSFWorkbook();
+			sheet = wb.createSheet();
+			wb.setSheetName(0, "Sheet1");
+			HSSFName hssfName = wb.createName();
+			hssfName.setNameName("myFunc");
+			
+		} else {
+			// This sample spreadsheet already has a VB function called 'myFunc'
+			wb = HSSFTestDataSamples.openSampleWorkbook("testNames.xls");
+			sheet = wb.getSheetAt(0);
+			HSSFRow row = sheet.createRow(0);
+			cell = row.createCell(1);
+		}
+		
+		cell.setCellFormula("myFunc()");
+		String actualFormula=cell.getCellFormula();
+		assertEquals("myFunc()", actualFormula);
 		
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
 		CellValue evalResult = fe.evaluate(cell);
