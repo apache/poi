@@ -25,6 +25,8 @@ import org.apache.poi.poifs.common.POIFSConstants;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -103,6 +105,15 @@ public class TextPieceTable
       // And now build the piece
       _textPieces.add(new TextPiece(nodeStartChars, nodeEndChars, buf, pieces[x], node.getStart()));
     }
+    
+    // In the interest of our sanity, now sort the text pieces
+    //  into order, if they're not already
+    TextPiece[] tp = (TextPiece[])
+    	_textPieces.toArray(new TextPiece[_textPieces.size()]);
+    Arrays.sort(tp);
+    for(int i=0; i<tp.length; i++) {
+    	_textPieces.set(i, tp[i]);
+    }
   }
 
   public int getCpMin()
@@ -123,9 +134,8 @@ public class TextPieceTable
    *  paragraph properties :(
    * @param cp The character offset to check about
    */
-  public boolean isUnicodeAt(int cp) {
+  public boolean isUnicodeAtCharOffset(int cp) {
 	  boolean lastWas = false;
-	  int lastAt = 0;
 	  
 	  Iterator it = _textPieces.iterator();
 	  while(it.hasNext()) {
@@ -135,9 +145,37 @@ public class TextPieceTable
 			  return tp.isUnicode();
 		  }
 		  // Otherwise keep track for the last one
-		  if(tp.getStart() > lastAt) {
-			  lastWas = tp.isUnicode();
+		  lastWas = tp.isUnicode();
+	  }
+	  
+	  // If they ask off the end, just go with the last one...
+	  return lastWas;
+  }
+  /**
+   * Is the text at the given byte offset
+   *  unicode, or plain old ascii?
+   * In a very evil fashion, you have to actually 
+   *  know this to make sense of character and
+   *  paragraph properties :(
+   * @param cp The character offset to check about
+   */
+  public boolean isUnicodeAtByteOffset(int bytePos) {
+	  boolean lastWas = false;
+	  int curByte = 0;
+	  
+	  Iterator it = _textPieces.iterator();
+	  while(it.hasNext()) {
+		  TextPiece tp = (TextPiece)it.next();
+		  int nextByte = curByte + tp.bytesLength();
+		  
+		  // If the text piece covers the character, all good
+		  if(curByte <= bytePos && nextByte >= bytePos) {
+			  return tp.isUnicode();
 		  }
+		  // Otherwise keep track for the last one
+		  lastWas = tp.isUnicode();
+		  // Move along
+		  curByte = nextByte;
 	  }
 	  
 	  // If they ask off the end, just go with the last one...

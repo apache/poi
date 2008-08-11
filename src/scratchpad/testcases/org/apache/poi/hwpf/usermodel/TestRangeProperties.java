@@ -87,6 +87,16 @@ public class TestRangeProperties extends TestCase {
 				r.text()
 		);
 		
+		assertEquals(1, r.numSections());
+		assertEquals(1, a.getSectionTable().getSections().size());
+		Section s = r.getSection(0);
+		assertEquals(
+				a_page_1 +
+				page_break + "\r" + 
+				a_page_2,
+				s.text()
+		);
+		
 		assertEquals(
 				7,
 				r.numParagraphs()
@@ -161,6 +171,20 @@ public class TestRangeProperties extends TestCase {
 		assertEquals(
 				408, r.text().length()
 		);
+	
+		
+		assertEquals(1, r.numSections());
+		assertEquals(1, u.getSectionTable().getSections().size());
+		Section s = r.getSection(0);
+		assertEquals(
+				u_page_1 +
+				page_break + "\r" + 
+				u_page_2,
+				s.text()
+		);
+		assertEquals(0, s.getStartOffset());
+		assertEquals(408, s.getEndOffset());
+
 		
 		List pDefs = r._paragraphs;
 		assertEquals(35, pDefs.size());

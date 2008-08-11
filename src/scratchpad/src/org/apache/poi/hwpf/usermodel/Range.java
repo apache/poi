@@ -155,6 +155,8 @@ public class Range
     _characters = _doc.getCharacterTable().getTextRuns();
     _text = _doc.getTextTable().getTextPieces();
     _parent = new WeakReference(null);
+    
+    sanityCheckStartEnd();
   }
 
 
@@ -175,6 +177,8 @@ public class Range
     _characters = parent._characters;
     _text = parent._text;
     _parent = new WeakReference(parent);
+    
+    sanityCheckStartEnd();
   }
 
   /**
@@ -226,6 +230,22 @@ public class Range
         _textRangeFound = true;
         break;
     }
+    
+    sanityCheckStartEnd();
+  }
+  
+  /**
+   * Ensures that the start and end were were given
+   *  are actually valid, to avoid issues later on
+   *  if they're not
+   */
+  private void sanityCheckStartEnd() {
+	  if(_start < 0) {
+		  throw new IllegalArgumentException("Range start must not be negative. Given " + _start);
+	  }
+	  if(_end < _start) {
+		  throw new IllegalArgumentException("The end (" + _end + ") must not be before the start ("+_start+")");
+	  }
   }
 
   /**
@@ -537,13 +557,17 @@ public class Range
     for (int x = _parStart; x < numParagraphs; x++)
     {
       PAPX papx = (PAPX)_paragraphs.get(x);
+      //System.err.println("Paragraph " + x + " was " + papx.getStart() + " -> " + papx.getEnd());
       papx.adjustForDelete(_start, _end - _start);
+      //System.err.println("Paragraph " + x + " is now " + papx.getStart() + " -> " + papx.getEnd());
     }
 
     for (int x = _sectionStart; x < numSections; x++)
     {
       SEPX sepx = (SEPX)_sections.get(x);
+      //System.err.println("Section " + x + " was " + sepx.getStart() + " -> " + sepx.getEnd());
       sepx.adjustForDelete(_start, _end - _start);
+      //System.err.println("Section " + x + " is now " + sepx.getStart() + " -> " + sepx.getEnd());
     }
     
     for (int x = _textStart; x < numTextPieces; x++)
@@ -805,6 +829,10 @@ public class Range
     if (tableEnd > _parEnd)
     {
       throw new ArrayIndexOutOfBoundsException("The table's bounds fall outside of this Range");
+    }
+    if (tableEnd < 0)
+    {
+      throw new ArrayIndexOutOfBoundsException("The table's end is negative, which isn't allowed!");
     }
     return new Table(r._parStart, tableEnd, r._doc.getRange(), paragraph.getTableLevel());
   }

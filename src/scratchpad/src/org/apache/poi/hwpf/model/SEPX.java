@@ -25,17 +25,15 @@ import org.apache.poi.hwpf.sprm.SectionSprmUncompressor;
 import org.apache.poi.hwpf.usermodel.SectionProperties;
 
 /**
- * TODO - figure out if this works in characters, like most
- *  things do, or in bytes as PAPX / CHPX does.
  */
-public class SEPX extends PropertyNode
+public class SEPX extends BytePropertyNode
 {
 
   SectionDescriptor _sed;
 
-  public SEPX(SectionDescriptor sed, int start, int end, byte[] grpprl)
+  public SEPX(SectionDescriptor sed, int start, int end, byte[] grpprl, boolean isUnicode)
   {
-    super(start, end, SectionSprmUncompressor.uncompressSEP(grpprl, 0));
+    super(start, end, SectionSprmUncompressor.uncompressSEP(grpprl, 0), isUnicode);
     _sed = sed;
   }
 

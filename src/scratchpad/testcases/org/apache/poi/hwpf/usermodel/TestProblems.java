@@ -81,9 +81,16 @@ public class TestProblems extends TestCase {
     	HWPFDocument doc = new HWPFDocument(new FileInputStream(
     			new File(dirname, "Bug44292.doc")));
 		Range r = doc.getRange();
+		assertEquals(6, r.numParagraphs());
+		assertEquals(0, r.getStartOffset());
+		assertEquals(87, r.getEndOffset());
 			
-		//get the table
+		// Paragraph with table
 		Paragraph p = r.getParagraph(0);
+		assertEquals(0, p.getStartOffset());
+		assertEquals(20, p.getEndOffset());
+		
+		// Get the table
 		Table t = r.getTable(p);
 		
 		//get the only row
