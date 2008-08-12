@@ -269,7 +269,7 @@ public abstract class TextShape extends SimpleShape {
             int type = getTextRun().getRunType();
             MasterSheet master = getSheet().getMasterSheet();
             if(master != null){
-                TextShape masterShape = master.getPlaceholder(type);
+                TextShape masterShape = master.getPlaceholderByTextType(type);
                 if(masterShape != null) valign = masterShape.getVerticalAlignment();
             } else {
                 //not found in the master sheet. Use the hardcoded defaults.
