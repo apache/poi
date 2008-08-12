@@ -129,33 +129,15 @@ public class SlideMaster extends MasterSheet {
         }
     }
 
-    /**
-     * Checks if the shape is a placeholder.
-     * (placeholders aren't normal shapes, they are visible only in the Edit Master mode)
-     *
-     *
-     * @return true if the shape is a placeholder
-     */
-    public static boolean isPlaceholder(Shape shape){
-        if(!(shape instanceof TextShape)) return false;
+    protected void onAddTextShape(TextShape shape) {
+        TextRun run = shape.getTextRun();
 
-        TextShape tx = (TextShape)shape;
-        TextRun run = tx.getTextRun();
-        if(run == null) return false;
-
-        Record[] records = run._records;
-        for (int i = 0; i < records.length; i++) {
-            int type = (int)records[i].getRecordType();
-            if (type == RecordTypes.OEPlaceholderAtom.typeID ||
-                    type == RecordTypes.SlideNumberMCAtom.typeID ||
-                    type == RecordTypes.DateTimeMCAtom.typeID ||
-                    type == RecordTypes.GenericDateMCAtom.typeID ||
-                    type == RecordTypes.FooterMCAtom.typeID ){
-                return true;
-
-            }
-
+        if(_runs == null) _runs = new TextRun[]{run};
+        else {
+            TextRun[] tmp = new TextRun[_runs.length + 1];
+            System.arraycopy(_runs, 0, tmp, 0, _runs.length);
+            tmp[tmp.length-1] = run;
+            _runs = tmp;
         }
-        return false;
     }
 }

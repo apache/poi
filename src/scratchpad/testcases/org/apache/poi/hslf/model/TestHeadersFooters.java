@@ -77,6 +77,112 @@ public class TestHeadersFooters extends TestCase
         assertEquals("custom date format", hd2.getDateTimeText());
     }
 
+    /**
+     * If Headers / Footers are not set, all the getters should return <code>false</code> or <code>null</code>
+     */
+    public void testReadNoHeadersFooters() throws Exception
+    {
+        File file = new File(cwd, "basic_test_ppt_file.ppt");
+        FileInputStream is = new FileInputStream(file);
+        SlideShow ppt = new SlideShow(is);
+        is.close();
+
+        HeadersFooters slideHdd = ppt.getSlideHeadersFooters();
+        assertFalse(slideHdd.isFooterVisible());
+        assertNull(slideHdd.getFooterText());
+        assertFalse(slideHdd.isSlideNumberVisible());
+        assertFalse(slideHdd.isHeaderVisible());
+        assertNull(slideHdd.getHeaderText());
+        assertFalse(slideHdd.isUserDateVisible());
+        assertNull(slideHdd.getDateTimeText());
+
+
+        HeadersFooters notesHdd = ppt.getNotesHeadersFooters();
+        assertFalse(notesHdd.isFooterVisible());
+        assertNull(notesHdd.getFooterText());
+        assertFalse(notesHdd.isHeaderVisible());
+        assertNull(notesHdd.getHeaderText());
+        assertFalse(notesHdd.isUserDateVisible());
+        assertNull(notesHdd.getDateTimeText());
+
+        Slide[] slide = ppt.getSlides();
+        for(int i=0 ; i < slide.length; i++){
+            HeadersFooters hd1 = slide[i].getHeadersFooters();
+            assertFalse(hd1.isFooterVisible());
+            assertNull(hd1.getFooterText());
+            assertFalse(hd1.isHeaderVisible());
+            assertNull(hd1.getHeaderText());
+            assertFalse(hd1.isUserDateVisible());
+            assertNull(hd1.getDateTimeText());
+        }
+    }
+
+    /**
+     * Test extraction of headers / footers from PPTs saved in Office 2007
+     */
+    public void testRead2007() throws Exception
+    {
+        File file = new File(cwd, "headers_footers_2007.ppt");
+        FileInputStream is = new FileInputStream(file);
+        SlideShow ppt = new SlideShow(is);
+        is.close();
+
+        HeadersFooters slideHdd = ppt.getSlideHeadersFooters();
+        assertTrue(slideHdd.isFooterVisible());
+        assertEquals("THE FOOTER TEXT", slideHdd.getFooterText());
+        assertTrue(slideHdd.isSlideNumberVisible());
+        assertFalse(slideHdd.isHeaderVisible());
+        assertNull(slideHdd.getHeaderText());
+        assertTrue(slideHdd.isUserDateVisible());
+        assertEquals("Wednesday, August 06, 2008", slideHdd.getDateTimeText());
+
+
+        HeadersFooters notesHdd = ppt.getNotesHeadersFooters();
+        assertTrue(notesHdd.isFooterVisible());
+        assertEquals("THE NOTES FOOTER TEXT", notesHdd.getFooterText());
+        assertTrue(notesHdd.isHeaderVisible());
+        assertEquals("THE NOTES HEADER TEXT", notesHdd.getHeaderText());
+        assertTrue(notesHdd.isUserDateVisible());
+        assertTrue(notesHdd.isDateTimeVisible());
+        //TODO: depending on the formatId getDateTimeText() should return formatted date
+        //assertEquals("08/12/08", notesHdd.getDateTimeText());
+
+        //per-slide headers / footers
+        Slide[] slide = ppt.getSlides();
+        //the first slide uses presentation-scope headers / footers
+        HeadersFooters hd1 = slide[0].getHeadersFooters();
+        assertTrue(hd1.isFooterVisible());
+        assertEquals("THE FOOTER TEXT", hd1.getFooterText());
+        assertTrue(hd1.isSlideNumberVisible());
+        assertFalse(hd1.isHeaderVisible());
+        assertNull(hd1.getHeaderText());
+        assertTrue(hd1.isUserDateVisible());
+        assertTrue(hd1.isDateTimeVisible());
+        assertEquals("Wednesday, August 06, 2008", hd1.getDateTimeText());
+
+        //the second slide uses custom per-slide headers / footers
+        HeadersFooters hd2 = slide[1].getHeadersFooters();
+        assertTrue(hd2.isFooterVisible());
+        assertEquals("THE FOOTER TEXT FOR SLIDE 2", hd2.getFooterText());
+        assertTrue(hd2.isSlideNumberVisible());
+        assertFalse(hd2.isHeaderVisible());
+        assertNull(hd2.getHeaderText());
+        assertTrue(hd2.isUserDateVisible());
+        assertTrue(hd2.isDateTimeVisible());
+        assertEquals("August 06, 2008", hd2.getDateTimeText());
+
+        //the third slide uses per-slide headers / footers
+        HeadersFooters hd3 = slide[2].getHeadersFooters();
+        assertTrue(hd3.isFooterVisible());
+        assertEquals("THE FOOTER TEXT", hd3.getFooterText());
+        assertTrue(hd3.isSlideNumberVisible());
+        assertFalse(hd3.isHeaderVisible());
+        assertNull(hd3.getHeaderText());
+        assertTrue(hd3.isUserDateVisible());
+        assertTrue(hd3.isDateTimeVisible());
+        assertEquals("Wednesday, August 06, 2008", hd3.getDateTimeText());
+    }
+
     public void testCreateSlideFooters() throws Exception
     {
         SlideShow ppt = new SlideShow();

@@ -362,4 +362,92 @@ public abstract class Sheet {
     public void draw(Graphics2D graphics){
 
     }
+
+    /**
+     * Subclasses should call this method and update the array of text runs
+     * when a text shape is added
+     *
+     * @param shape
+     */
+    protected void onAddTextShape(TextShape shape) {
+    
+    }
+
+    /**
+     * Return placeholder by text type
+     *
+     * @param type  type of text, See {@link org.apache.poi.hslf.record.TextHeaderAtom}
+     * @return  <code>TextShape</code> or <code>null</code>
+     */
+    public TextShape getPlaceholderByTextType(int type){
+        Shape[] shape = getShapes();
+        for (int i = 0; i < shape.length; i++) {
+            if(shape[i] instanceof TextShape){
+                TextShape tx = (TextShape)shape[i];
+                TextRun run = tx.getTextRun();
+                if(run != null && run.getRunType() == type){
+                    return tx;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Search text placeholer by its type
+     *
+     * @param type  type of placeholder to search. See {@link org.apache.poi.hslf.record.OEPlaceholderAtom}
+     * @return  <code>TextShape</code> or <code>null</code>
+     */
+    public TextShape getPlaceholder(int type){
+        Shape[] shape = getShapes();
+        for (int i = 0; i < shape.length; i++) {
+            if(shape[i] instanceof TextShape){
+                TextShape tx = (TextShape)shape[i];
+                int placeholderId = 0;
+                OEPlaceholderAtom oep = tx.getPlaceholderAtom();
+                if(oep != null) {
+                    placeholderId = oep.getPlaceholderId();
+                } else {
+                    //special case for files saved in Office 2007
+                    RoundTripHFPlaceholder12 hldr = (RoundTripHFPlaceholder12)tx.getClientDataRecord(RecordTypes.RoundTripHFPlaceholder12.typeID);
+                    if(hldr != null) placeholderId = hldr.getPlaceholderId();
+                }
+                if(placeholderId == type){
+                    return tx;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Return programmable tag associated with this sheet, e.g. <code>___PPT12</code>.
+     *
+     * @return programmable tag associated with this sheet.
+     */
+    public String getProgrammableTag(){
+        String tag = null;
+        RecordContainer progTags = (RecordContainer)
+                getSheetContainer().findFirstOfType(
+                            RecordTypes.ProgTags.typeID
+        );
+        if(progTags != null) {
+            RecordContainer progBinaryTag = (RecordContainer)
+                progTags.findFirstOfType(
+                        RecordTypes.ProgBinaryTag.typeID
+            );
+            if(progBinaryTag != null) {
+                CString binaryTag = (CString)
+                    progBinaryTag.findFirstOfType(
+                            RecordTypes.CString.typeID
+                );
+                if(binaryTag != null) tag = binaryTag.getText();
+            }
+        }
+
+        return tag;
+
+    }
+
 }

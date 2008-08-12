@@ -445,4 +445,55 @@ public class TestTextRun extends TestCase {
 		assertEquals("Sdfsdfs\n" +
 		        "Sdfsdf\n", rt[1].getText());
 	}
+
+    /**
+     * Test creation of TextRun objects.
+     */
+    public void testAddTextRun() throws Exception{
+        SlideShow ppt = new SlideShow();
+        Slide slide = ppt.createSlide();
+
+        assertNull(slide.getTextRuns());
+
+        TextBox shape1 = new TextBox();
+        TextRun run1 = shape1.getTextRun();
+        assertSame(run1, shape1.createTextRun());
+        run1.setText("Text 1");
+        slide.addShape(shape1);
+
+        //The array of Slide's text runs must be updated when new text shapes are added.
+        TextRun[] runs = slide.getTextRuns();
+        assertNotNull(runs);
+        assertSame(run1, runs[0]);
+
+        TextBox shape2 = new TextBox();
+        TextRun run2 = shape2.getTextRun();
+        assertSame(run2, shape2.createTextRun());
+        run2.setText("Text 2");
+        slide.addShape(shape2);
+
+        runs = slide.getTextRuns();
+        assertEquals(2, runs.length);
+
+        assertSame(run1, runs[0]);
+        assertSame(run2, runs[1]);
+
+        //as getShapes()
+        Shape[] sh = slide.getShapes();
+        assertEquals(2, sh.length);
+        assertTrue(sh[0] instanceof TextBox);
+        TextBox box1 = (TextBox)sh[0];
+        assertSame(run1, box1.getTextRun());
+        TextBox box2 = (TextBox)sh[1];
+        assertSame(run2, box2.getTextRun());
+
+        //test Table - a complex group of shapes containing text objects
+        Slide slide2 = ppt.createSlide();
+        assertNull(slide2.getTextRuns());
+        Table table = new Table(2, 2);
+        slide2.addShape(table);
+        runs = slide2.getTextRuns();
+        assertNotNull(runs);
+        assertEquals(4, runs.length);
+    }
 }
