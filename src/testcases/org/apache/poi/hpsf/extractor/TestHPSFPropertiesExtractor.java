@@ -25,7 +25,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import junit.framework.TestCase;
 
-public class TestHPFSPropertiesExtractor extends TestCase {
+public class TestHPSFPropertiesExtractor extends TestCase {
 	private String dir;
 	
     protected void setUp() throws Exception {
@@ -37,7 +37,7 @@ public class TestHPFSPropertiesExtractor extends TestCase {
 		POIFSFileSystem fs = new POIFSFileSystem(
 				new FileInputStream(new File(dir, "TestMickey.doc"))
 		);
-		HPFSPropertiesExtractor ext = new HPFSPropertiesExtractor(fs);
+		HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs);
 		ext.getText();
 		
 		// Check each bit in turn
@@ -60,7 +60,7 @@ public class TestHPFSPropertiesExtractor extends TestCase {
 		POIFSFileSystem fs = new POIFSFileSystem(
 				new FileInputStream(new File(dir, "TestUnicode.xls"))
 		);
-		HPFSPropertiesExtractor ext = new HPFSPropertiesExtractor(fs);
+		HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs);
 		ext.getText();
 		
 		// Check each bit in turn
@@ -83,7 +83,7 @@ public class TestHPFSPropertiesExtractor extends TestCase {
 		POIFSFileSystem fs = new POIFSFileSystem(
 				new FileInputStream(new File(dir, "TestMickey.doc"))
 		);
-		HPFSPropertiesExtractor ext = new HPFSPropertiesExtractor(fs);
+		HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs);
 
 		// Custom properties are part of the document info stream
 		String dinfText = ext.getDocumentSummaryInformationText();
@@ -102,9 +102,9 @@ public class TestHPFSPropertiesExtractor extends TestCase {
 		HSSFWorkbook wb = new HSSFWorkbook(fs);
 		ExcelExtractor excelExt = new ExcelExtractor(wb);
 		
-		String fsText = (new HPFSPropertiesExtractor(fs)).getText();
-		String hwText = (new HPFSPropertiesExtractor(wb)).getText();
-		String eeText = (new HPFSPropertiesExtractor(excelExt)).getText();
+		String fsText = (new HPSFPropertiesExtractor(fs)).getText();
+		String hwText = (new HPSFPropertiesExtractor(wb)).getText();
+		String eeText = (new HPSFPropertiesExtractor(excelExt)).getText();
 		
 		assertEquals(fsText, hwText);
 		assertEquals(fsText, eeText);

@@ -18,6 +18,7 @@ package org.apache.poi;
 
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
+import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 
 /**
  * Common Parent for OLE2 based Text Extractors
@@ -49,5 +50,13 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
 	 */
 	public SummaryInformation getSummaryInformation() {
 		return document.getSummaryInformation();
+	}
+	
+	/**
+	 * Returns an HPSF powered text extractor for the 
+	 *  document properties metadata, such as title and author.
+	 */
+	public POITextExtractor getMetadataTextExtractor() {
+		return new HPSFPropertiesExtractor(this);
 	}
 }
