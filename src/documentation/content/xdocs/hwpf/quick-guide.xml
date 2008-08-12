@@ -55,13 +55,25 @@ can then get text and other properties.
 		</p>
 		</section>
 		
+		<section><title>Headers and Footers</title>
+		<p>To get at the headers and footers of a word document, first create a
+<code>org.apache.poi.hwpf.HWPFDocument</code>. Next, you need to create a
+<code>org.apache.poi.hwpf.usermodel.HeaderStores</code>, passing it your
+HWPFDocument. Finally, the HeaderStores gives you access to the headers and
+footers, including first / even / odd page ones if defined in your
+document. Additionally, HeaderStores provides a method for removing
+any macros in the text, which is helpful as many headers and footers
+do end up with macros in them.</p>
+		</section>
+		
 		<section><title>Changing Text</title>
 		<p>It is possible to change the text via 
 		<code>insertBefore()</code> and <code>insertAfter()</code>
 		on a <code>Range</code> object (either a <code>Range</code>,
 		<code>Paragraph</code> or <code>CharacterRun</code>).
-		It is also possible to delete a <code>Range</code>, but this
-		code is know to have bugs in it.
+		It is also possible to delete a <code>Range</code>.
+		This code will work in many, but not all cases, and patches to
+        improve it are gratefully received!
 		</p>
 		</section>
 
