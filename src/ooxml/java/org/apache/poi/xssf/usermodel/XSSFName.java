@@ -34,7 +34,11 @@ public class XSSFName implements Name {
 		this.workbook = workbook;
 		this.ctName = name;
 	}
-
+	
+	public boolean isFunctionName() {
+		// TODO Figure out how HSSF does this, and do the same!
+		return false;
+	}
 	/**
 	 * Returns the underlying named range object
 	 */
