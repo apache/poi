@@ -35,6 +35,7 @@ public class TestHeaderStories extends TestCase {
 	private HWPFDocument oddEven; 
 	private HWPFDocument diffFirst; 
 	private HWPFDocument unicode;
+	private HWPFDocument withFields;
 	
     protected void setUp() throws Exception {
 		String dirname = System.getProperty("HWPF.testdata.path");
@@ -59,6 +60,9 @@ public class TestHeaderStories extends TestCase {
 		);
 		unicode = new HWPFDocument(
 				new FileInputStream(new File(dirname, "HeaderFooterUnicode.doc"))
+		);
+		withFields = new HWPFDocument(
+				new FileInputStream(new File(dirname, "HeaderWithMacros.doc"))
 		);
     }
     
@@ -185,5 +189,16 @@ public class TestHeaderStories extends TestCase {
 		assertEquals("\r\r", hs.getFirstFooter());
 		assertEquals("\r\r", hs.getEvenFooter());
 		assertEquals("The footer, with Moli\u00e8re, has Unicode in it.\r\r", hs.getOddFooter());
+    }
+    
+    public void testWithFields() throws Exception {
+    	HeaderStories hs = new HeaderStories(withFields);
+    	assertFalse(hs.areFieldsStripped());
+    	
+    	assertEquals("HEADER GOES HERE. 8/12/2008 \u0013 AUTHOR   \\* MERGEFORMAT \u0014Eric Roch\u0015\r\r\r", hs.getOddHeader());
+    	
+    	// Now turn on stripping
+    	hs.setAreFieldsStripped(true);
+    	assertEquals("HEADER GOES HERE. 8/12/2008 Eric Roch\r\r\r", hs.getOddHeader());
     }
 }

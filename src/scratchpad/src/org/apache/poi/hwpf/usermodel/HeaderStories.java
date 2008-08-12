@@ -35,6 +35,8 @@ public class HeaderStories {
 	private Range headerStories;
 	private PlexOfCps plcfHdd;
 	
+	private boolean stripFields = false;
+	
 	public HeaderStories(HWPFDocument doc) {
 		this.headerStories = doc.getHeaderStoryRange();
 		FileInformationBlock fib = doc.getFileInformationBlock();
@@ -157,8 +159,15 @@ public class HeaderStories {
 			return "";
 		}
 		
-		// Return the contents
-		return headerStories.text().substring(prop.getStart(), prop.getEnd());
+		// Grab the contents
+		String text =
+			headerStories.text().substring(prop.getStart(), prop.getEnd());
+		
+		// Strip off fields and macros if requested
+		if(stripFields) {
+			return Range.stripFields(text);
+		}
+		return text;
 	}
 	
 	public Range getRange() {
@@ -166,5 +175,23 @@ public class HeaderStories {
 	}
 	protected PlexOfCps getPlcfHdd() {
 		return plcfHdd;
+	}
+	
+	/**
+	 * Are fields currently being stripped from
+	 *  the text that this {@link HeaderStories} returns?
+	 *  Default is false, but can be changed
+	 */
+	public boolean areFieldsStripped() {
+		return stripFields;
+	}
+	/**
+	 * Should fields (eg macros) be stripped from
+	 *  the text that this class returns?
+	 * Default is not to strip.
+	 * @param stripFields
+	 */
+	public void setAreFieldsStripped(boolean stripFields) {
+		this.stripFields = stripFields;
 	}
 }
