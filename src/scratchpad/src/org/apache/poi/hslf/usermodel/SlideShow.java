@@ -37,14 +37,7 @@ import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.model.HeadersFooters;
-import org.apache.poi.hslf.model.Notes;
-import org.apache.poi.hslf.model.PPFont;
-import org.apache.poi.hslf.model.Picture;
-import org.apache.poi.hslf.model.Shape;
-import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.model.SlideMaster;
-import org.apache.poi.hslf.model.TitleMaster;
+import org.apache.poi.hslf.model.*;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.DocumentAtom;
 import org.apache.poi.hslf.record.FontCollection;
@@ -843,6 +836,10 @@ public final class SlideShow {
      * @return Header / Footer settings for slides
      */
     public HeadersFooters getSlideHeadersFooters(){
+        //detect if this ppt was saved in Office2007
+        String tag = getSlidesMasters()[0].getProgrammableTag();
+        boolean ppt2007 = "___PPT12".equals(tag);
+
         HeadersFootersContainer hdd = null;
         Record[] ch = _documentRecord.getChildRecords();
         for (int i = 0; i < ch.length; i++) {
@@ -857,7 +854,7 @@ public final class SlideShow {
             hdd = new HeadersFootersContainer(HeadersFootersContainer.SlideHeadersFootersContainer);
             newRecord = true;
         }
-        return new HeadersFooters(hdd, this, newRecord);
+        return new HeadersFooters(hdd, this, newRecord, ppt2007);
     }
 
     /**
@@ -866,6 +863,10 @@ public final class SlideShow {
      * @return Header / Footer settings for notes
      */
     public HeadersFooters getNotesHeadersFooters(){
+        //detect if this ppt was saved in Office2007
+        String tag = getSlidesMasters()[0].getProgrammableTag();
+        boolean ppt2007 = "___PPT12".equals(tag);
+
         HeadersFootersContainer hdd = null;
         Record[] ch = _documentRecord.getChildRecords();
         for (int i = 0; i < ch.length; i++) {
@@ -873,13 +874,18 @@ public final class SlideShow {
                     ((HeadersFootersContainer)ch[i]).getOptions() == HeadersFootersContainer.NotesHeadersFootersContainer){
                 hdd = (HeadersFootersContainer)ch[i];
                 break;
-            }
+           }
         }
         boolean newRecord = false;
         if(hdd == null) {
             hdd = new HeadersFootersContainer(HeadersFootersContainer.NotesHeadersFootersContainer);
             newRecord = true;
         }
-        return new HeadersFooters(hdd, this, newRecord);
+        if(ppt2007 && _notes.length > 0){
+            return new HeadersFooters(hdd, _notes[0], newRecord, ppt2007);
+        } else {
+            return new HeadersFooters(hdd, this, newRecord, ppt2007);
+        }
     }
+
 }

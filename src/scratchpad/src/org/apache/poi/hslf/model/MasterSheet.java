@@ -19,6 +19,7 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.hslf.record.SheetContainer;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.record.OEPlaceholderAtom;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 
 /**
@@ -54,20 +55,4 @@ public abstract class MasterSheet extends Sheet {
         return tx.getPlaceholderAtom() != null;
     }
 
-    /**
-     * Return placeholder by text type
-     */
-    public TextShape getPlaceholder(int type){
-        Shape[] shape = getShapes();
-        for (int i = 0; i < shape.length; i++) {
-            if(shape[i] instanceof TextShape){
-                TextShape tx = (TextShape)shape[i];
-                TextRun run = tx.getTextRun();
-                if(run != null && run.getRunType() == type){
-                    return tx;
-                }
-            }
-        }
-        return null;
-    }
 }

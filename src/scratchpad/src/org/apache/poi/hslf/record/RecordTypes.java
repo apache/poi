@@ -162,6 +162,17 @@ public class RecordTypes {
     // Records ~12050 seem to be related to Document Encryption
     public static final Type DocumentEncryptionAtom = new Type(12052,DocumentEncryptionAtom.class);
 
+    public static final Type OriginalMainMasterId = new Type(1052,null);
+    public static final Type CompositeMasterId = new Type(1052,null);
+    public static final Type RoundTripContentMasterInfo12 = new Type(1054,null);
+    public static final Type RoundTripShapeId12 = new Type(1055,null);
+    public static final Type RoundTripHFPlaceholder12 = new Type(1056,RoundTripHFPlaceholder12.class);
+    public static final Type RoundTripContentMasterId = new Type(1058,null);
+    public static final Type RoundTripOArtTextStyles12 = new Type(1059,null);
+    public static final Type RoundTripShapeCheckSumForCustomLayouts12 = new Type(1062,null);
+    public static final Type RoundTripNotesMasterTextStyles12 = new Type(1063,null);
+    public static final Type RoundTripCustomTableStyles12 = new Type(1064,null);
+
     //records greater then 0xF000 belong to with Microsoft Office Drawing format also known as Escher
     public static final int EscherDggContainer = 0xf000;
     public static final int EscherDgg = 0xf006;

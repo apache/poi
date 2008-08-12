@@ -26,7 +26,7 @@ import java.io.OutputStream;
 /**
  * OEPlaceholderAtom (3011).
  * <p>
- *  Atom that describes the placeholder.
+ *  An atom record that specifies whether a shape is a placeholder shape.
  * </p>
  *
  * @author Yegor Kozlov
@@ -34,61 +34,169 @@ import java.io.OutputStream;
 
 public class OEPlaceholderAtom extends RecordAtom{
 
+    /**
+     * The full size of the master body text placeholder shape.
+     */
     public static final int PLACEHOLDER_FULLSIZE = 0;
+
+    /**
+     * Half of the size of the master body text placeholder shape.
+     */
     public static final int PLACEHOLDER_HALFSIZE = 1;
+
+    /**
+     * A quarter of the size of the master body text placeholder shape.
+     */
     public static final int PLACEHOLDER_QUARTSIZE = 2;
 
+    /**
+     * MUST NOT be used for this field.
+     */
     public static final byte None = 0;
 
+    /**
+     * The corresponding shape contains the master title text.
+     * The corresponding slide MUST be a main master slide.
+     */
     public static final byte MasterTitle = 1;
 
+    /**
+     * The corresponding shape contains the master body text.
+     * The corresponding slide MUST be a main master slide.
+     */
     public static final byte MasterBody = 2;
 
+    /**
+     * The corresponding shape contains the master center title text.
+     * The corresponding slide MUST be a title master slide.
+     */
     public static final byte MasterCenteredTitle = 3;
 
-    public static final byte MasterNotesSlideImage = 4;
+    /**
+     * The corresponding shape contains the master sub-title text.
+     * The corresponding slide MUST be a title master slide.
+     */
+    public static final byte MasterSubTitle = 4;
 
-    public static final byte MasterNotesBodyImage = 5;
+    /**
+     * The corresponding shape contains the shared properties for slide image shapes.
+     * The corresponding slide MUST be a notes master slide.
+     */
+    public static final byte MasterNotesSlideImage = 5;
 
-    public static final byte MasterDate = 6;
+    /**
+     * The corresponding shape contains the master body text.
+     * The corresponding slide MUST be a notes master slide.
+     */
+    public static final byte MasterNotesBody = 6;
 
-    public static final byte MasterSlideNumber = 7;
+    /**
+     * The corresponding shape contains the date text field.
+     * The corresponding slide MUST be a main master slide, title master slide, notes master slide, or handout master slide.
+     */
+    public static final byte MasterDate = 7;
 
-    public static final byte MasterFooter = 8;
+    /**
+     * The corresponding shape contains a slide number text field.
+     * The corresponding slide MUST be a main master slide, title master slide, notes master slide, or handout master slide.
+     */
+    public static final byte MasterSlideNumber = 8;
 
-    public static final byte MasterHeader = 9;
+    /**
+     * The corresponding shape contains a footer text field.
+     * The corresponding slide MUST be a main master slide, title master slide, notes master slide, or handout master slide.
+     */
+    public static final byte MasterFooter = 9;
 
-    public static final byte MasterSubtitle = 10;
+    /**
+     * The corresponding shape contains a header text field. 
+     * The corresponding slide must be a notes master slide or handout master slide.
+     */
+    public static final byte MasterHeader = 10;
 
-    public static final byte GenericTextObject = 11;
+    /**
+     * The corresponding shape contains a presentation slide image.
+     * The corresponding slide MUST be a notes slide.
+     */
+    public static final byte NotesSlideImage = 11;
 
-    public static final byte Title = 12;
+    /**
+     * The corresponding shape contains the notes text.
+     * The corresponding slide MUST be a notes slide.
+     */
+    public static final byte NotesBody = 12;
 
-    public static final byte Body = 13;
+    /**
+     *  The corresponding shape contains the title text.
+     *  The corresponding slide MUST be a presentation slide.
+     */
+    public static final byte Title = 13;
 
-    public static final byte NotesBody = 14;
+    /**
+     * The corresponding shape contains the body text.
+     * The corresponding slide MUST be a presentation slide.
+     */
+    public static final byte Body = 14;
 
+    /**
+     * The corresponding shape contains the title text.
+     * The corresponding slide MUST be a presentation slide.
+     */
     public static final byte CenteredTitle = 15;
 
+    /**
+     * The corresponding shape contains the sub-title text.
+     * The corresponding slide MUST be a presentation slide.
+     */
     public static final byte Subtitle = 16;
 
+    /**
+     * The corresponding shape contains the title text with vertical text flow.
+     * The corresponding slide MUST be a presentation slide.
+     */
     public static final byte VerticalTextTitle = 17;
 
+    /**
+     * The corresponding shape contains the body text with vertical text flow.
+     * The corresponding slide MUST be a presentation slide.
+     */
     public static final byte VerticalTextBody = 18;
 
-    public static final byte NotesSlideImage = 19;
+    /**
+     *  The corresponding shape contains a generic object.
+     *  The corresponding slide MUST be a presentation slide.
+     */
+    public static final byte Object = 19;
 
-    public static final byte Object = 20;
+    /**
+     * The corresponding shape contains a chart object.
+     * The corresponding slide MUST be a presentation slide.
+     */
+    public static final byte Graph = 20;
 
-    public static final byte Graph = 21;
+    /**
+     * The corresponding shape contains a table object.
+     * The corresponding slide MUST be a presentation slide.
+     */
+    public static final byte Table = 21;
 
-    public static final byte Table = 22;
+    /**
+     * The corresponding shape contains a clipart object.
+     * The corresponding slide MUST be a presentation slide.
+     */
+    public static final byte ClipArt = 22;
 
-    public static final byte ClipArt = 23;
+    /**
+     * The corresponding shape contains an organization chart object.
+     * The corresponding slide MUST be a presentation slide.
+     */
+    public static final byte OrganizationChart = 23;
 
-    public static final byte OrganizationChart = 24;
-
-    public static final byte MediaClip = 25;
+    /**
+     * The corresponding shape contains a media object.
+     * The corresponding slide MUST be a presentation slide.
+     */
+    public static final byte MediaClip = 24;
 
 	private byte[] _header;
 
@@ -116,11 +224,13 @@ public class OEPlaceholderAtom extends RecordAtom{
      */
 	protected OEPlaceholderAtom(byte[] source, int start, int len) {
 		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+        int offset = start;
+        System.arraycopy(source,start,_header,0,8);
+        offset += _header.length;
 
-        placementId = LittleEndian.getInt(source, start);
-        placeholderId = LittleEndian.getUnsignedByte(source, start+4);
-        placeholderSize = LittleEndian.getUnsignedByte(source, start+5);
+        placementId = LittleEndian.getInt(source, offset); offset += 4;
+        placeholderId = LittleEndian.getUnsignedByte(source, offset); offset++;
+        placeholderSize = LittleEndian.getUnsignedByte(source, offset); offset++;
 	}
 
     /**
@@ -130,6 +240,11 @@ public class OEPlaceholderAtom extends RecordAtom{
 
     /**
      * Returns the placement Id.
+     * <p>
+     * The placement Id is a number assigned to the placeholder. It goes from -1 to the number of placeholders.
+     * It SHOULD be unique among all PlacholderAtom records contained in the corresponding slide.
+     * The value 0xFFFFFFFF specifies that the corresponding shape is not a placeholder shape.
+     * </p>
      *
      * @return the placement Id.
      */
@@ -139,6 +254,11 @@ public class OEPlaceholderAtom extends RecordAtom{
 
     /**
      * Sets the placement Id.
+     * <p>
+     * The placement Id is a number assigned to the placeholder. It goes from -1 to the number of placeholders.
+     * It SHOULD be unique among all PlacholderAtom records contained in the corresponding slide.
+     * The value 0xFFFFFFFF specifies that the corresponding shape is not a placeholder shape.
+     * </p>
      *
      * @param id the placement Id.
      */
@@ -149,6 +269,11 @@ public class OEPlaceholderAtom extends RecordAtom{
     /**
      * Returns the placeholder Id.
      *
+     * <p>
+     * placeholder Id specifies the type of the placeholder shape.
+     * The value MUST be one of the static constants defined in this class
+     * </p>
+     *
      * @return the placeholder Id.
      */
     public int getPlaceholderId(){
@@ -158,6 +283,10 @@ public class OEPlaceholderAtom extends RecordAtom{
     /**
      * Sets the placeholder Id.
      *
+     * <p>
+     * placeholder Id specifies the type of the placeholder shape.
+     * The value MUST be one of the static constants defined in this class
+     * </p>
      * @param id the placeholder Id.
      */
     public void setPlaceholderId(byte id){
