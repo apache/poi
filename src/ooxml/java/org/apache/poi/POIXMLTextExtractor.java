@@ -47,6 +47,12 @@ public abstract class POIXMLTextExtractor extends POITextExtractor {
 	public ExtendedProperties getExtendedProperties() throws IOException, OpenXML4JException, XmlException {
 		return document.getProperties().getExtendedProperties();
 	}
+	/**
+	 * Returns the custom document properties
+	 */
+	public CustomProperties getCustomProperties() throws IOException, OpenXML4JException, XmlException {
+		return document.getProperties().getCustomProperties();
+	}
 
 	/**
 	 * Returns opened document 
