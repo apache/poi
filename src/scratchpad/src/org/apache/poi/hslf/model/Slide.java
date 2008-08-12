@@ -440,14 +440,24 @@ public class Slide extends Sheet
      public HeadersFooters getHeadersFooters(){
         HeadersFootersContainer hdd = null;
         Record[] ch = getSheetContainer().getChildRecords();
+        boolean ppt2007 = false;
         for (int i = 0; i < ch.length; i++) {
             if(ch[i] instanceof HeadersFootersContainer){
                 hdd = (HeadersFootersContainer)ch[i];
-                break;
+            } else if (ch[i].getRecordType() == RecordTypes.RoundTripContentMasterId.typeID){
+                ppt2007 = true;
             }
         }
         boolean newRecord = false;
-        if(hdd == null) return getSlideShow().getSlideHeadersFooters();
-        else return new HeadersFooters(hdd, getSlideShow(), newRecord);
+        if(hdd == null && !ppt2007) {
+            return getSlideShow().getSlideHeadersFooters();
+        }
+        else {
+            if(hdd == null) {
+                hdd = new HeadersFootersContainer(HeadersFootersContainer.SlideHeadersFootersContainer);
+                newRecord = true;
+            }
+            return new HeadersFooters(hdd, this, newRecord, ppt2007);
+        }
     }
 }
