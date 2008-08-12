@@ -37,6 +37,14 @@ public abstract class POITextExtractor {
 	public POITextExtractor(POIDocument document) {
 		this.document = document;
 	}
+	/**
+	 * Creates a new text extractor, using the same
+	 *  document as another text extractor. Normally
+	 *  only used by properties extractors.
+	 */
+	protected POITextExtractor(POITextExtractor otherExtractor) {
+		this.document = otherExtractor.document;
+	}
 	
 	/**
 	 * Retrieves all the text from the document.
@@ -46,4 +54,11 @@ public abstract class POITextExtractor {
 	 * @return All the text from the document
 	 */
 	public abstract String getText();
+	
+	/**
+	 * Returns another text extractor, which is able to
+	 *  output the textual content of the document
+	 *  metadata / properties, such as author and title.
+	 */
+	public abstract POITextExtractor getMetadataTextExtractor();
 }

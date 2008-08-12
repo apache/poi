@@ -58,6 +58,8 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">45622 - Support stripping HWPF fields (eg macros) out of text, via Range.stripFields(text)</action>
+           <action dev="POI-DEVELOPERS" type="add">New HPSF based TextExtractor for document metadata, org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor</action>
            <action dev="POI-DEVELOPERS" type="fix">Properly update the array of Slide's text runs in HSLF when new text shapes are added</action>
            <action dev="POI-DEVELOPERS" type="fix">45590 - Fix for Header/footer extraction for .ppt files saved in Office 2007</action>
            <action dev="POI-DEVELOPERS" type="fix">Big improvement in how HWPF handles unicode text, and more sanity checking of text ranges within HWPF</action>
