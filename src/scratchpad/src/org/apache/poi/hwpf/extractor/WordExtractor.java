@@ -230,4 +230,12 @@ public class WordExtractor extends POIOLE2TextExtractor {
 		
 		return ret.toString();
 	}
+	
+	/**
+	 * Removes any fields (eg macros, page markers etc)
+	 *  from the string.
+	 */
+	public static String stripFields(String text) {
+		return Range.stripFields(text);
+	}
 }
