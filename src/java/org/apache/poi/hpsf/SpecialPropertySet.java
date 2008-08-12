@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 
 /**
@@ -57,6 +58,11 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
  */
 public abstract class SpecialPropertySet extends MutablePropertySet
 {
+	/**
+	 * The id to name mapping of the properties
+	 *  in this set.
+	 */
+	public abstract PropertyIDMap getPropertySetIDMap();
 
     /**
      * <p>The "real" property set <code>SpecialPropertySet</code>

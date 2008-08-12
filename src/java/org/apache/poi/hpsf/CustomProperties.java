@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 
@@ -293,8 +294,18 @@ public class CustomProperties extends HashMap
         final CustomProperty cp = new CustomProperty(p, name);
         return put(cp);
     }
-
+    
     /**
+     * Returns a set of all the names of our
+     *  custom properties
+     */
+    public Set keySet() {
+    	return dictionaryNameToID.keySet();
+	}
+
+
+
+	/**
      * <p>Sets the codepage.</p>
      *
      * @param codepage the codepage

@@ -37,6 +37,14 @@ public abstract class POITextExtractor {
 	public POITextExtractor(POIDocument document) {
 		this.document = document;
 	}
+	/**
+	 * Creates a new text extractor, using the same
+	 *  document as another text extractor. Normally
+	 *  only used by properties extractors.
+	 */
+	protected POITextExtractor(POITextExtractor otherExtractor) {
+		this.document = otherExtractor.document;
+	}
 	
 	/**
 	 * Retrieves all the text from the document.
