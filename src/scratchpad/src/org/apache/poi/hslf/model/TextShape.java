@@ -199,6 +199,10 @@ public abstract class TextShape extends SimpleShape {
             }
             if(getAnchor().equals(new Rectangle()) && !"".equals(getText())) resizeToFitText();
         }
+        if(_txtrun != null) {
+            _txtrun.setShapeId(getShapeId());
+            sh.onAddTextShape(this);
+        }
     }
 
     protected EscherTextboxWrapper getEscherTextboxWrapper(){
