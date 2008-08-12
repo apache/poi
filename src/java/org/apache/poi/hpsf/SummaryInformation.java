@@ -40,6 +40,9 @@ public class SummaryInformation extends SpecialPropertySet
      */
     public static final String DEFAULT_STREAM_NAME = "\005SummaryInformation";
 
+    public PropertyIDMap getPropertySetIDMap() {
+    	return PropertyIDMap.getSummaryInformationProperties();
+    }
 
 
     /**

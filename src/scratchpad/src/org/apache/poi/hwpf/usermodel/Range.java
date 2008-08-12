@@ -299,6 +299,63 @@ public class Range
     }
     return sb.toString();
   }
+  
+  /**
+   * Removes any fields (eg macros, page markers etc)
+   *  from the string.
+   * Normally used to make some text suitable for showing
+   *  to humans, and the resultant text should not normally
+   *  be saved back into the document!
+   */
+  public static String stripFields(String text) {
+	  // First up, fields can be nested...
+	  // A field can be 0x13 [contents] 0x15
+	  // Or it can be 0x13 [contents] 0x14 [real text] 0x15
+	  
+	  // If there are no fields, all easy
+	  if(text.indexOf('\u0013') == -1) return text;
+	  
+	  // Loop over until they're all gone
+	  // That's when we're out of both 0x13s and 0x15s
+	  while( text.indexOf('\u0013') > -1 &&
+			   text.indexOf('\u0015') > -1) {
+		  int first13 = text.indexOf('\u0013');
+		  int next13 = text.indexOf('\u0013', first13+1);
+		  int first14 = text.indexOf('\u0014', first13+1);
+		  int last15 = text.lastIndexOf('\u0015');
+		  
+		  // If they're the wrong way around, give up
+		  if(last15 < first13) {
+			  break;
+		  }
+		  
+		  // If no more 13s and 14s, just zap
+		  if(next13 == -1 && first14 == -1) {
+			  text = text.substring(0, first13) +
+			  			text.substring(last15+1);
+			  break;
+		  }
+		  
+		  // If a 14 comes before the next 13, then
+		  //  zap from the 13 to the 14, and remove
+		  //  the 15
+		  if(first14 != -1 && (first14 < next13 || next13 == -1)) {
+			  text = text.substring(0, first13) +
+			  			text.substring(first14+1, last15) +
+			  			text.substring(last15+1);
+			  continue;
+		  }
+		  
+		  // Another 13 comes before the next 14.
+		  // This means there's nested stuff, so we
+		  //  can just zap the lot
+		  text = text.substring(0, first13) +
+			text.substring(last15+1);
+		  continue;
+	  }
+
+	  return text;
+  }
 
   /**
    * Used to get the number of sections in a range. If this range is smaller

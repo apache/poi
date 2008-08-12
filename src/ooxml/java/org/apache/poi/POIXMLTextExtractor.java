@@ -30,7 +30,7 @@ public abstract class POIXMLTextExtractor extends POITextExtractor {
 	 * Creates a new text extractor for the given document
 	 */
 	public POIXMLTextExtractor(POIXMLDocument document) {
-		super(null);
+		super((POIDocument)null);
 		
 		this.document = document;
 	}
@@ -53,5 +53,14 @@ public abstract class POIXMLTextExtractor extends POITextExtractor {
 	 */
 	public POIXMLDocument getDocument(){
 	    return document;
+	}
+	
+	
+	/**
+	 * Returns an OOXML properties text extractor for the 
+	 *  document properties metadata, such as title and author.
+	 */
+	public POITextExtractor getMetadataTextExtractor() {
+		throw new RuntimeException("Not yet supported for OOXML!");
 	}
 }

@@ -45,6 +45,9 @@ public class DocumentSummaryInformation extends SpecialPropertySet
     public static final String DEFAULT_STREAM_NAME =
         "\005DocumentSummaryInformation";
 
+    public PropertyIDMap getPropertySetIDMap() {
+    	return PropertyIDMap.getDocumentSummaryInformationProperties();
+    }
 
 
     /**

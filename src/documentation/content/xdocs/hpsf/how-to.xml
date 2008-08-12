@@ -92,6 +92,12 @@
      properties. Chances are that you will find here what you need and don't
      have to read the other sections.</note>
 
+    <p>If all you are interested in is getting the textual content of
+     all the document properties, such as for full text indexing, then
+     take a look at 
+     <code>org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor</code>. However,
+     if you want full access to the properties, please read on!</p>
+
     <p>The first thing you should understand is that a Microsoft Office file is
      not one large bunch of bytes but has an internal filesystem structure with
      files and directories. You can access these files and directories using
