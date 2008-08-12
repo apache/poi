@@ -364,6 +364,16 @@ public abstract class Sheet {
     }
 
     /**
+     * Subclasses should call this method and update the array of text runs
+     * when a text shape is added
+     *
+     * @param shape
+     */
+    protected void onAddTextShape(TextShape shape) {
+    
+    }
+
+    /**
      * Return placeholder by text type
      *
      * @param type  type of text, See {@link org.apache.poi.hslf.record.TextHeaderAtom}
@@ -439,6 +449,5 @@ public abstract class Sheet {
         return tag;
 
     }
-
 
 }

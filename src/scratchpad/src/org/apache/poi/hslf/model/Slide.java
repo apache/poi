@@ -460,4 +460,16 @@ public class Slide extends Sheet
             return new HeadersFooters(hdd, this, newRecord, ppt2007);
         }
     }
+
+    protected void onAddTextShape(TextShape shape) {
+        TextRun run = shape.getTextRun();
+
+        if(_runs == null) _runs = new TextRun[]{run};
+        else {
+            TextRun[] tmp = new TextRun[_runs.length + 1];
+            System.arraycopy(_runs, 0, tmp, 0, _runs.length);
+            tmp[tmp.length-1] = run;
+            _runs = tmp;
+        }
+    }
 }
