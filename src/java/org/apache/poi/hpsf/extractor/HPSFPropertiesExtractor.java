@@ -36,14 +36,14 @@ import org.apache.poi.util.LittleEndian;
  *  build in and custom, returning them in 
  *  textual form.
  */
-public class HPFSPropertiesExtractor extends POITextExtractor {
-	public HPFSPropertiesExtractor(POITextExtractor mainExtractor) {
+public class HPSFPropertiesExtractor extends POITextExtractor {
+	public HPSFPropertiesExtractor(POITextExtractor mainExtractor) {
 		super(mainExtractor);
 	}
-	public HPFSPropertiesExtractor(POIDocument doc) {
+	public HPSFPropertiesExtractor(POIDocument doc) {
 		super(doc);
 	}
-	public HPFSPropertiesExtractor(POIFSFileSystem fs) {
+	public HPSFPropertiesExtractor(POIFSFileSystem fs) {
 		super(new PropertiesOnlyDocument(fs));
 	}
 	
@@ -126,6 +126,13 @@ public class HPFSPropertiesExtractor extends POITextExtractor {
 	 */
 	public String getText() {
 		return getSummaryInformationText() + getDocumentSummaryInformationText();
+	}
+	
+	/**
+	 * Prevent recursion!
+	 */
+	public POITextExtractor getMetadataTextExtractor() {
+		throw new IllegalStateException("You already have the Metadata Text Extractor, not recursing!");
 	}
 
 	/**

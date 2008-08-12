@@ -54,4 +54,11 @@ public abstract class POITextExtractor {
 	 * @return All the text from the document
 	 */
 	public abstract String getText();
+	
+	/**
+	 * Returns another text extractor, which is able to
+	 *  output the textual content of the document
+	 *  metadata / properties, such as author and title.
+	 */
+	public abstract POITextExtractor getMetadataTextExtractor();
 }

@@ -34,7 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1.1-alpha1" date="2008-??-??">
-           <action dev="POI-DEVELOPERS" type="add">New HPSF based TextExtractor for document metadata, org.apache.poi.hpsf.extractor.HPFSPropertiesExtractor</action>
+           <action dev="POI-DEVELOPERS" type="add">New HPSF based TextExtractor for document metadata, org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor</action>
            <action dev="POI-DEVELOPERS" type="fix">Properly update the array of Slide's text runs in HSLF when new text shapes are added</action>
            <action dev="POI-DEVELOPERS" type="fix">45590 - Fix for Header/footer extraction for .ppt files saved in Office 2007</action>
            <action dev="POI-DEVELOPERS" type="fix">Big improvement in how HWPF handles unicode text, and more sanity checking of text ranges within HWPF</action>
