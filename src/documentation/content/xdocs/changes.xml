@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5.1-beta2" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">Add POIXMLPropertiesTextExtractor, which provides to the OOXML file formats a similar function to HPSF's HPSFPropertiesExtractor</action>
            <action dev="POI-DEVELOPERS" type="add">45539 - Improve XWPFWordExtractor to extract headers and footers</action>
            <action dev="POI-DEVELOPERS" type="fix">Improve how XWPF handles paragraph text</action>
            <action dev="POI-DEVELOPERS" type="add">Support in XWPF handles headers and footers</action>
