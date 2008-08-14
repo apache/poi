@@ -17,6 +17,13 @@
 
 package org.apache.poi.ss.usermodel;
 
+/**
+ * Common definition of a HSSF or XSSF page header.
+ * For a list of all the different fields that can be
+ *  placed into a header, such as page number,
+ *  bold, underline etc, see 
+ *  {@link org.apache.poi.hssf.usermodel.HeaderFooter}.
+ */
 public interface Header extends HeaderFooter {
     /**
      * Get the left side of the header.

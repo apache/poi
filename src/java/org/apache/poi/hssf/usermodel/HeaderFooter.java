@@ -265,7 +265,7 @@ public abstract class HeaderFooter implements org.apache.poi.ss.usermodel.Header
 	
 	/**
 	 * Are fields currently being stripped from
-	 *  the text that this {@link HeaderStories} returns?
+	 *  the text that this {@link HeaderFooter} returns?
 	 *  Default is false, but can be changed
 	 */
 	public boolean areFieldsStripped() {
