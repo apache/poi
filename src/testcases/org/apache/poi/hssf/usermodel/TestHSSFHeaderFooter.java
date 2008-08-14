@@ -17,11 +17,6 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -48,6 +43,46 @@ public final class TestHSSFHeaderFooter extends TestCase {
     	assertEquals("Top Left", head.getLeft());
     	assertEquals("Top Center", head.getCenter());
     	assertEquals("Top Right", head.getRight());
+	}
+	
+	public void testSpecialChars() {
+		assertEquals("&U", HSSFHeader.startUnderline());
+		assertEquals("&U", HSSFHeader.endUnderline());
+		assertEquals("&P", HSSFHeader.page());
+		
+		assertEquals("&22", HSSFFooter.fontSize((short)22));
+		assertEquals("&\"Arial,bold\"", HSSFFooter.font("Arial", "bold"));
+	}
+	
+	public void testStripFields() {
+		String simple = "I am a test header";
+		String withPage = "I am a&P test header";
+		String withLots = "I&A am&N a&P test&T header&U";
+		String withFont = "I&22 am a&\"Arial,bold\" test header";
+		String withOtherAnds = "I am a&P test header&Z";
+		
+		assertEquals(simple, HSSFHeader.stripFields(simple));
+		assertEquals(simple, HSSFHeader.stripFields(withPage));
+		assertEquals(simple, HSSFHeader.stripFields(withLots));
+		assertEquals(simple, HSSFHeader.stripFields(withFont));
+		assertEquals(simple + "&Z", HSSFHeader.stripFields(withOtherAnds));
+		
+		// Now test the default strip flag
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("EmbeddedChartHeaderTest.xls");
+		HSSFSheet s = wb.getSheetAt( 0 );
+    	HSSFHeader head = s.getHeader();
+    
+    	assertEquals("Top Left", head.getLeft());
+    	assertEquals("Top Center", head.getCenter());
+    	assertEquals("Top Right", head.getRight());
+    	
+    	head.setLeft("Top &P&F&D Left");
+    	assertEquals("Top &P&F&D Left", head.getLeft());
+    	assertFalse(head.areFieldsStripped());
+    	
+    	head.setAreFieldsStripped(true);
+    	assertEquals("Top  Left", head.getLeft());
+    	assertTrue(head.areFieldsStripped());
 	}
 
 	/**
