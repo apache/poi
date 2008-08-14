@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
+import java.util.ArrayList;
+
 /**
  * Common class for {@link HSSFHeader} and
  *  {@link HSSFFooter}.
@@ -24,6 +26,8 @@ public abstract class HeaderFooter {
 	protected String left;
 	protected String center;
 	protected String right;
+	
+	private boolean stripFields = false;
 	
 	protected HeaderFooter(String text) {
 		while (text != null && text.length() > 1) {
@@ -70,6 +74,8 @@ public abstract class HeaderFooter {
      * @return The string representing the left side.
      */
     public String getLeft() {
+    	if(stripFields)
+    		return stripFields(left);
 		return left;
 	}
     public abstract void setLeft( String newLeft );
@@ -79,6 +85,8 @@ public abstract class HeaderFooter {
      * @return The string representing the center.
      */
     public String getCenter() {
+    	if(stripFields)
+    		return stripFields(center);
     	return center;
     }
     public abstract void setCenter( String newCenter );
@@ -88,10 +96,13 @@ public abstract class HeaderFooter {
      * @return The string representing the right side.
      */
     public String getRight() {
+    	if(stripFields)
+    		return stripFields(right);
     	return right;
     }
     public abstract void setRight( String newRight );
 
+    
     
 
     /**
@@ -122,9 +133,8 @@ public abstract class HeaderFooter {
      *
      * @return The special string for page number
      */
-    public static String page()
-    {
-        return "&P";
+    public static String page() {
+    	return PAGE_FIELD.sequence;
     }
 
     /**
@@ -132,9 +142,8 @@ public abstract class HeaderFooter {
      *
      * @return The special string for the number of pages
      */
-    public static String numPages()
-    {
-        return "&N";
+    public static String numPages() {
+    	return NUM_PAGES_FIELD.sequence;
     }
 
     /**
@@ -142,9 +151,8 @@ public abstract class HeaderFooter {
      *
      * @return The special string for the date
      */
-    public static String date()
-    {
-        return "&D";
+    public static String date() {
+    	return DATE_FIELD.sequence;
     }
 
     /**
@@ -152,9 +160,8 @@ public abstract class HeaderFooter {
      *
      * @return The special string for the time
      */
-    public static String time()
-    {
-        return "&T";
+    public static String time() {
+    	return TIME_FIELD.sequence;
     }
 
     /**
@@ -162,9 +169,8 @@ public abstract class HeaderFooter {
      *
      * @return The special string for the file name
      */
-    public static String file()
-    {
-        return "&F";
+    public static String file() {
+    	return FILE_FIELD.sequence;
     }
 
     /**
@@ -172,9 +178,8 @@ public abstract class HeaderFooter {
      *
      * @return The special string for tab name
      */
-    public static String tab()
-    {
-        return "&A";
+    public static String tab() {
+    	return TAB_FIELD.sequence;
     }
 
     /**
@@ -182,9 +187,8 @@ public abstract class HeaderFooter {
      *
      * @return The special string for start underline
      */
-    public static String startUnderline()
-    {
-        return "&U";
+    public static String startUnderline() {
+    	return UNDERLINE_FIELD.sequence;
     }
 
     /**
@@ -192,9 +196,8 @@ public abstract class HeaderFooter {
      *
      * @return The special string for end underline
      */
-    public static String endUnderline()
-    {
-        return "&U";
+    public static String endUnderline() {
+    	return UNDERLINE_FIELD.sequence;
     }
 
     /**
@@ -202,9 +205,8 @@ public abstract class HeaderFooter {
      *
      * @return The special string for start double underline
      */
-    public static String startDoubleUnderline()
-    {
-        return "&E";
+    public static String startDoubleUnderline() {
+    	return DOUBLE_UNDERLINE_FIELD.sequence;
     }
 
     /**
@@ -212,8 +214,78 @@ public abstract class HeaderFooter {
      *
      * @return The special string for end double underline
      */
-    public static String endDoubleUnderline()
-    {
-        return "&E";
+    public static String endDoubleUnderline() {
+    	return DOUBLE_UNDERLINE_FIELD.sequence;
+    }
+    
+    
+    /**
+     * Removes any fields (eg macros, page markers etc)
+     *  from the string.
+     * Normally used to make some text suitable for showing
+     *  to humans, and the resultant text should not normally
+     *  be saved back into the document!
+     */
+    public static String stripFields(String text) {
+    	int pos;
+    	
+    	// Firstly, do the easy ones which are static
+    	for(int i=0; i<Field.ALL_FIELDS.size(); i++) {
+    		String seq = ((Field)Field.ALL_FIELDS.get(i)).sequence;
+    		while((pos = text.indexOf(seq)) > -1) {
+    			text = text.substring(0, pos) +
+    				text.substring(pos+seq.length());
+    		}
+    	}
+    	
+    	// Now do the tricky, dynamic ones
+    	text = text.replaceAll("\\&\\d+", "");
+    	text = text.replaceAll("\\&\".*?,.*?\"", "");
+    	
+    	// All done
+    	return text;
+    }
+    
+	
+	/**
+	 * Are fields currently being stripped from
+	 *  the text that this {@link HeaderStories} returns?
+	 *  Default is false, but can be changed
+	 */
+	public boolean areFieldsStripped() {
+		return stripFields;
+	}
+	/**
+	 * Should fields (eg macros) be stripped from
+	 *  the text that this class returns?
+	 * Default is not to strip.
+	 * @param stripFields
+	 */
+	public void setAreFieldsStripped(boolean stripFields) {
+		this.stripFields = stripFields;
+	}
+
+    
+    public static final Field TAB_FIELD = new Field("&A");
+    public static final Field DATE_FIELD = new Field("&D");
+    public static final Field FILE_FIELD = new Field("&F");
+    public static final Field PAGE_FIELD = new Field("&P");
+    public static final Field TIME_FIELD = new Field("&T");
+    public static final Field NUM_PAGES_FIELD = new Field("&N");
+    public static final Field UNDERLINE_FIELD = new Field("&U");
+    public static final Field DOUBLE_UNDERLINE_FIELD = new Field("&E");
+    
+    /**
+     * Represents a special field in a header or footer,
+     *  eg the page number
+     */
+    public static class Field {
+    	private static ArrayList ALL_FIELDS = new ArrayList();
+    	/** The character sequence that marks this field */
+    	public final String sequence;
+    	private Field(String sequence) {
+    		this.sequence = sequence;
+    		ALL_FIELDS.add(this);
+    	}
     }
 }
