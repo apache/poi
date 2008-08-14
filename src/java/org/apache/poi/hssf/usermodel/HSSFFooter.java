@@ -33,63 +33,16 @@ import org.apache.poi.ss.usermodel.Footer;
  * <P>
  * @author Shawn Laubach (slaubach at apache dot org)
  */
-public class HSSFFooter implements Footer, HeaderFooter {
-    FooterRecord footerRecord;
-    String left;
-    String center;
-    String right;
+public class HSSFFooter extends HeaderFooter implements Footer {
+    private FooterRecord footerRecord;
 
     /**
      * Constructor.  Creates a new footer interface from a footer record
      * @param footerRecord Footer record to create the footer with
      */
     protected HSSFFooter(FooterRecord footerRecord) {
-	this.footerRecord = footerRecord;
-	String foot = footerRecord.getFooter();
-	while (foot != null && foot.length() > 1) {
-	    int pos = foot.length();
-	    switch (foot.substring(1, 2).charAt(0)) {
-	    case 'L' :
-		if (foot.indexOf("&C") >= 0) {
-		    pos = Math.min(pos, foot.indexOf("&C"));
-		} 
-		if (foot.indexOf("&R") >= 0) {
-		    pos = Math.min(pos, foot.indexOf("&R"));
-		} 
-		left = foot.substring(2, pos);
-		foot = foot.substring(pos);
-		break;
-	    case 'C' : 
-		if (foot.indexOf("&L") >= 0) {
-		    pos = Math.min(pos, foot.indexOf("&L"));
-		} 
-		if (foot.indexOf("&R") >= 0) {
-		    pos = Math.min(pos, foot.indexOf("&R"));
-		} 
-		center = foot.substring(2, pos);
-		foot = foot.substring(pos);
-		break;
-	    case 'R' : 
-		if (foot.indexOf("&C") >= 0) {
-		    pos = Math.min(pos, foot.indexOf("&C"));
-		} 
-		if (foot.indexOf("&L") >= 0) {
-		    pos = Math.min(pos, foot.indexOf("&L"));
-		} 
-		right = foot.substring(2, pos);
-		foot = foot.substring(pos);
-		break;
-	    default : foot = null;
-	    }
-	}
-    }
-
-    /**
-     * Get the left side of the footer.
-     * @return The string representing the left side.
-     */
-    public String getLeft() {
-	return left;
+    	super(footerRecord.getFooter());
+    	this.footerRecord = footerRecord;
     }
 
     /**
@@ -102,28 +55,12 @@ public class HSSFFooter implements Footer, HeaderFooter {
     }
 
     /**
-     * Get the center of the footer.
-     * @return The string representing the center.
-     */
-    public String getCenter() {
-	return center;
-    }
-
-    /**
      * Sets the center string.
      * @param newCenter The string to set as the center.
      */
     public void setCenter(String newCenter) {
 	center = newCenter;
 	createFooterString();
-    }
-
-    /**
-     * Get the right side of the footer.
-     * @return The string representing the right side.
-     */
-    public String getRight() {
-	return right;
     }
 
     /**
@@ -145,113 +82,6 @@ public class HSSFFooter implements Footer, HeaderFooter {
 			       "&L" + (left == null ? "" : left) +
 			       "&R" + (right == null ? "" : right));
 	footerRecord.setFooterLength((byte)footerRecord.getFooter().length());
-    }
-
-    /**
-     * Returns the string that represents the change in font size.
-     * @param size the new font size
-     * @return The special string to represent a new font size
-     */
-    public static String fontSize(short size) {
-	return "&" + size;
-    }
-
-    /**
-     * Returns the string that represents the change in font.
-     * @param font the new font
-     * @param style the fonts style
-     * @return The special string to represent a new font size
-     */
-    public static String font(String font, String style) {
-	return "&\"" + font + "," + style + "\"";
-    }
-
-    /**
-     * Returns the string representing the current page number
-     * @return The special string for page number
-     */
-    public static String page() {
-	return "&P";
-    }
-
-    /**
-     * Returns the string representing the number of pages.
-     * @return The special string for the number of pages
-     */
-    public static String numPages() {
-	return "&N";
-    }
-
-    /**
-     * Returns the string representing the current date
-     * @return The special string for the date
-     */
-    public static String date() {
-	return "&D";
-    }
-
-    /**
-     * Returns the string representing the current time
-     * @return The special string for the time
-     */
-    public static String time() {
-	return "&T";
-    }
-
-    /**
-     * Returns the string representing the current file name
-     * @return The special string for the file name
-     */
-    public static String file() {
-	return "&F";
-    }
-
-    /**
-     * Returns the string representing the current tab (sheet) name
-     * @return The special string for tab name
-     */
-    public static String tab() {
-	return "&A";
-    }
-
-    /**
-     * Returns the string representing the start underline
-     *
-     * @return The special string for start underline
-     */
-    public static String startUnderline()
-    {
-        return "&U";
-    }
-
-    /**
-     * Returns the string representing the end underline
-     *
-     * @return The special string for end underline
-     */
-    public static String endUnderline()
-    {
-        return "&U";
-    }
-
-    /**
-     * Returns the string representing the start double underline
-     *
-     * @return The special string for start double underline
-     */
-    public static String startDoubleUnderline()
-    {
-        return "&E";
-    }
-
-    /**
-     * Returns the string representing the end double underline
-     *
-     * @return The special string for end double underline
-     */
-    public static String endDoubleUnderline()
-    {
-        return "&E";
     }
 }
 
