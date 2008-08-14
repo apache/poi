@@ -120,7 +120,7 @@ public abstract class HeaderFooter {
      * Returns the string that represents the change in font.
      *
      * @param font  the new font
-     * @param style the fonts style
+     * @param style the fonts style, one of regular, italic, bold, italic bold or bold italic
      * @return The special string to represent a new font size
      */
     public static String font( String font, String style )
@@ -179,7 +179,25 @@ public abstract class HeaderFooter {
      * @return The special string for tab name
      */
     public static String tab() {
-    	return TAB_FIELD.sequence;
+    	return SHEET_NAME_FIELD.sequence;
+    }
+
+    /**
+     * Returns the string representing the start bold
+     *
+     * @return The special string for start bold
+     */
+    public static String startBold() {
+    	return BOLD_FIELD.sequence;
+    }
+
+    /**
+     * Returns the string representing the end bold
+     *
+     * @return The special string for end bold
+     */
+    public static String endBold() {
+    	return BOLD_FIELD.sequence;
     }
 
     /**
@@ -266,14 +284,23 @@ public abstract class HeaderFooter {
 	}
 
     
-    public static final Field TAB_FIELD = new Field("&A");
+    public static final Field SHEET_NAME_FIELD = new Field("&A");
     public static final Field DATE_FIELD = new Field("&D");
     public static final Field FILE_FIELD = new Field("&F");
+    public static final Field FULL_FILE_FIELD = new Field("&Z");
     public static final Field PAGE_FIELD = new Field("&P");
     public static final Field TIME_FIELD = new Field("&T");
     public static final Field NUM_PAGES_FIELD = new Field("&N");
-    public static final Field UNDERLINE_FIELD = new Field("&U");
-    public static final Field DOUBLE_UNDERLINE_FIELD = new Field("&E");
+    
+    public static final Field PICTURE_FIELD = new Field("&P");
+    
+    public static final PairField BOLD_FIELD = new PairField("&B"); // PAID
+    public static final PairField ITALIC_FIELD = new PairField("&I");
+    public static final PairField STRIKETHROUGH_FIELD = new PairField("&S");
+    public static final PairField SUBSCRIPT_FIELD = new PairField("&Y");
+    public static final PairField SUPERSCRIPT_FIELD = new PairField("&X");
+    public static final PairField UNDERLINE_FIELD = new PairField("&U");
+    public static final PairField DOUBLE_UNDERLINE_FIELD = new PairField("&E");
     
     /**
      * Represents a special field in a header or footer,
@@ -286,6 +313,15 @@ public abstract class HeaderFooter {
     	private Field(String sequence) {
     		this.sequence = sequence;
     		ALL_FIELDS.add(this);
+    	}
+    }
+    /**
+     * A special field that normally comes in a pair, eg
+     *  turn on underline / turn off underline
+     */
+    public static class PairField extends Field {
+    	private PairField(String sequence) {
+    		super(sequence);
     	}
     }
 }

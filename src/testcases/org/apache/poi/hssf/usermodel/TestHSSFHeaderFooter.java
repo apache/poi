@@ -59,13 +59,15 @@ public final class TestHSSFHeaderFooter extends TestCase {
 		String withPage = "I am a&P test header";
 		String withLots = "I&A am&N a&P test&T header&U";
 		String withFont = "I&22 am a&\"Arial,bold\" test header";
-		String withOtherAnds = "I am a&P test header&Z";
+		String withOtherAnds = "I am a&P test header&&";
+		String withOtherAnds2 = "I am a&P test header&a&b";
 		
 		assertEquals(simple, HSSFHeader.stripFields(simple));
 		assertEquals(simple, HSSFHeader.stripFields(withPage));
 		assertEquals(simple, HSSFHeader.stripFields(withLots));
 		assertEquals(simple, HSSFHeader.stripFields(withFont));
-		assertEquals(simple + "&Z", HSSFHeader.stripFields(withOtherAnds));
+		assertEquals(simple + "&&", HSSFHeader.stripFields(withOtherAnds));
+		assertEquals(simple + "&a&b", HSSFHeader.stripFields(withOtherAnds2));
 		
 		// Now test the default strip flag
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("EmbeddedChartHeaderTest.xls");
@@ -83,6 +85,10 @@ public final class TestHSSFHeaderFooter extends TestCase {
     	head.setAreFieldsStripped(true);
     	assertEquals("Top  Left", head.getLeft());
     	assertTrue(head.areFieldsStripped());
+    	
+    	// Now even more complex
+    	head.setCenter("HEADER TEXT &P&N&D&T&Z&F&F&A&G");
+    	assertEquals("HEADER TEXT &G", head.getCenter());
 	}
 
 	/**
