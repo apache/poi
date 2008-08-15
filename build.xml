@@ -1014,10 +1014,13 @@ FORREST_HOME environment variable!</echo>
       <zipfileset dir="." prefix="${zipdir}">
         <exclude name="build/**"/>
         <exclude name="scripts/**"/>
+        <exclude name="TEST*"/>
         <exclude name="*.ipr"/>
         <exclude name="*.iml"/>
         <exclude name="*.iws"/>
         <exclude name="*.swp"/>
+        <exclude name=".classpath"/>
+        <exclude name=".project"/>
       </zipfileset>
     </zip>
 
@@ -1038,10 +1041,13 @@ FORREST_HOME environment variable!</echo>
       <tarfileset dir="." prefix="${zipdir}">
         <exclude name="build/**"/>
         <exclude name="scripts/**"/>
+        <exclude name="TEST*"/>
         <exclude name="*.ipr"/>
         <exclude name="*.iml"/>
         <exclude name="*.iws"/>
         <exclude name="*.swp"/>
+        <exclude name=".classpath"/>
+        <exclude name=".project"/>
       </tarfileset>
     </tar>
 
