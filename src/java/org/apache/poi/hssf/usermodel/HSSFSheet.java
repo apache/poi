@@ -641,8 +641,8 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
     /**
      * @return the merged region at the specified index
      */
-    public CellRangeAddress getMergedRegion(int index) {
-        return (CellRangeAddress)sheet.getMergedRegionAt(index);
+    public org.apache.poi.hssf.util.CellRangeAddress getMergedRegion(int index) {
+        return sheet.getMergedRegionAt(index);
     }
 
     /**
