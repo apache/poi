@@ -36,7 +36,11 @@
     </devs>
 
 		<!-- Don't forget to update status.xml too! -->
-        <release version="3.5.1-beta2" date="2008-??-??">
+<!--
+        <release version="3.5.1-beta3" date="2008-??-??">
+        </release>
+-->
+        <release version="3.5.1-beta2" date="2008-08-20">
            <action dev="POI-DEVELOPERS" type="add">Support stripping XSSF header and footer fields (eg page number) out of header and footer text if required</action>
            <action dev="POI-DEVELOPERS" type="add">Add POIXMLPropertiesTextExtractor, which provides to the OOXML file formats a similar function to HPSF's HPSFPropertiesExtractor</action>
            <action dev="POI-DEVELOPERS" type="add">45539 - Improve XWPFWordExtractor to extract headers and footers</action>
