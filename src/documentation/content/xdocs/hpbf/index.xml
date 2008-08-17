@@ -39,7 +39,7 @@
               after that if demand and developer interest warrant it.</p>
 			<p>At this time, there is no <em>usermodel</em> api or similar.</p>
             <p>Our current understanding of the file format is documented
-              <link href="file-format.html">here</a>.</p>
+              <link href="file-format.html">here</link>.</p>
             <note> 
                 This code currently lives the 
                 <link href="http://svn.apache.org/viewcvs.cgi/poi/trunk/src/scratchpad/">scratchpad area</link> 
