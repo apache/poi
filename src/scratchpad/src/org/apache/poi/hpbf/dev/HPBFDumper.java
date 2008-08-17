@@ -201,22 +201,28 @@ public class HPBFDumper {
 		//  18 00
 		System.out.println(
 				new String(data, 0, 8) +
-				dumpBytes(data, 8, 0x22-8)
+				dumpBytes(data, 8, 0x20-8)
 		);
 		
-		int pos = 0x22;
-		boolean sixNotTen = true;
+		int pos = 0x20;
+		boolean sixNotEight = true;
 		while(pos < 0x200) {
+			if(sixNotEight) {
+				System.out.println(
+						dumpBytes(data, pos, 2)
+				);
+				pos += 2;
+			}
 			String text = new String(data, pos, 4);
-			int blen = 10;
-			if(sixNotTen)
+			int blen = 8;
+			if(sixNotEight)
 				blen = 6;
 			System.out.println(
 					text + " " + dumpBytes(data, pos+4, blen)
 			);
 			
 			pos += 4 + blen;
-			sixNotTen = ! sixNotTen;
+			sixNotEight = ! sixNotEight;
 		}
 		
 		// Text from 0x200 onwards until we get
