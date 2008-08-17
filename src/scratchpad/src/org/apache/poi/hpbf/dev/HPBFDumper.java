@@ -175,20 +175,23 @@ public class HPBFDumper {
 		// 00 00 00 88 1E 00 00 00
 	}
 	
-	public void dumpCONTENTS(DirectoryNode dir) throws IOException {
+	public void dumpCONTENTSraw(DirectoryNode dir) throws IOException {
 		byte[] data = getData(dir, "CONTENTS");
 		
 		System.out.println("");
 		System.out.println("CONTENTS - " + data.length + " bytes long:");
 		
 		// Between the start and 0x200 we have
-		//  CHNKINK(space) + 24 bytes + 0x1800
+		//  CHNKINK(space) + 24 bytes
+		//  0x1800
 		//  TEXT + 6 bytes
-		//  TEXT + 8 bytes + 0x1800
+		//  TEXT + 8 bytes
+		//  0x1800
 		//  STSH + 6 bytes
-		//  STSH + 8 bytes + 0x1800
+		//  STSH + 8 bytes
+		//  0x1800
 		//  STSH + 6 bytes
-		//  STSH + 8 bytes + 0x1800
+		//  STSH + 8 bytes
 		// but towards 0x200 the pattern may
 		//  break down a little bit
 		
@@ -237,6 +240,73 @@ public class HPBFDumper {
 		// The hyperlinks may come before the fonts,
 		//  or slightly in front
 	}
+	public void dumpCONTENTSguessed(DirectoryNode dir) throws IOException {
+		byte[] data = getData(dir, "CONTENTS");
+		
+		System.out.println("");
+		System.out.println("CONTENTS - " + data.length + " bytes long:");
+		
+		String[] startType = new String[20];
+		String[] endType = new String[20];
+		int[] optA = new int[20];
+		int[] optB = new int[20];
+		int[] optC = new int[20];
+		int[] from = new int[20];
+		int[] len = new int[20];
+		
+		for(int i=0; i<20; i++) {
+			int offset = 0x20 + i*24;
+			if(data[offset] == 0x18 && data[offset+1] == 0x00) {
+				// Has data
+				startType[i] = new String(data, offset+2, 4);
+				optA[i] = LittleEndian.getUShort(data, offset+6);
+				optB[i] = LittleEndian.getUShort(data, offset+8);
+				optC[i] = LittleEndian.getUShort(data, offset+10);
+				endType[i] = new String(data, offset+12, 4);
+				from[i] = (int)LittleEndian.getUInt(data, offset+16);
+				len[i] = (int)LittleEndian.getUInt(data, offset+20);
+			} else {
+				// Doesn't have data
+			}
+		}
+		
+		String text = StringUtil.getFromUnicodeLE(
+				data, from[0], len[0]/2
+		);
+		
+		// Dump
+		for(int i=0; i<20; i++) {
+			String num = Integer.toString(i);
+			if(i < 10) {
+				num = "0" + i;
+			}
+			System.out.print(num + " ");
+			
+			if(startType[i] == null) {
+				System.out.println("(not present)");
+			} else {
+				System.out.println(
+						"\t" +
+						startType[i] + " " + 
+						optA[i] + " " + 
+						optB[i] + " " +
+						optC[i]
+				);
+				System.out.println(
+						"\t" +
+						endType[i] + " " +
+						"from: " +
+						Integer.toHexString(from[i]) +
+						" (" + from[i] + ")" + 
+						", len: " +
+						Integer.toHexString(len[i]) +
+						" (" + len[i] + ")"
+				);
+			}
+		}
+		System.out.println("");
+		System.out.println(text);
+	}
 	
 	protected void dump001CompObj(DirectoryNode dir) {
 		// TODO
@@ -249,6 +319,7 @@ public class HPBFDumper {
 			quillDir.getEntry("QuillSub");
 
 		dump001CompObj(quillSubDir);
-		dumpCONTENTS(quillSubDir);
+		dumpCONTENTSraw(quillSubDir);
+		dumpCONTENTSguessed(quillSubDir);
 	}
 }

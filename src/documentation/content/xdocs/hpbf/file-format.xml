@@ -71,5 +71,25 @@ Root Entry -
         <p>If you set the background colour of a textbox, but make
           no changes to the text,
 		</section>
+        <section><title>Structure of CONTENTS</title>
+        <p>First we have "CHNKINK ", followed by 24 bytes.</p>
+        <p>Next we have 20 sequences of 24 bytes each. If the first two bytes
+         at 0x1800, then that sequence entry exists, but if it's 0x0000 then
+         the entry doesn't exist. If it does exist, we then have 4 bytes of
+         upper case ASCII text, followed by three little endian shorts.
+         The first of these seems to be the count of that type, the second is
+         usually 1, the third is usually zero. The we have another 4 bytes of
+         upper case ASCII text, normally but not always the same as the first
+         text. Finally, we have an unsigned little endian 32 bit offset to
+         the start of the data for this, then an unsigned little endian
+         32 bit offset of the length of this section.</p>
+        <p>Normally, the first sequence entry is for TEXT, and the text data
+         will start at 0x200. After that is normally two or three STSH entries
+         (so the first short has values 0, then 1, then 2). After that it
+         seems to vary.</p>
+        <p>At 0x200 we have the text, stored as little endian 16 bit unicode.</p>
+        <p>After the text comes all sorts of other stuff, presumably as 
+         described by the sequences.</p>
+		</section>
 	</body>
 </document>
