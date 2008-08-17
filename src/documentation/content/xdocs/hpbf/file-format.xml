@@ -90,6 +90,79 @@ Root Entry -
         <p>At 0x200 we have the text, stored as little endian 16 bit unicode.</p>
         <p>After the text comes all sorts of other stuff, presumably as 
          described by the sequences.</p>
+        <p>For a contents stream of length 7168 / 0x1c00 bytes, the start 
+         looks something like:</p>
+<source>
+CHNKINK       // "CHNKINK "
+04 00 07 00   // Normally 04 00 07 00
+13 00 00 03   // Normally ## 00 00 03
+00 02 00 00   // Normally 00 ## 00 00
+00 1c 00 00   // Normally length of the stream
+f8 01 13 00   // Normally f8 01 11/13 00
+ff ff ff ff   // Normally seems to be ffffffff
+
+18 00 
+TEXT 00 00 01 00 00 00       // TEXT 0 1 0
+TEXT 00 02 00 00 d0 03 00 00 // TEXT from: 200 (512), len: 3d0 (976)
+18 00 
+STSH 00 00 01 00 00 00       // STSH 0 1 0
+STSH d0 05 00 00 1e 00 00 00 // STSH from: 5d0 (1488), len: 1e (30)
+18 00 
+STSH 01 00 01 00 00 00       // STSH 1 1 0
+STSH ee 05 00 00 b8 01 00 00 // STSH from: 5ee (1518), len: 1b8 (440)
+18 00 
+STSH 02 00 01 00 00 00       // STSH 2 1 0
+STSH a6 07 00 00 3c 00 00 00 // STSH from: 7a6 (1958), len: 3c (60)
+18 00 
+FDPP 00 00 01 00 00 00       // FDPP 0 1 0
+FDPP 00 08 00 00 00 02 00 00 // FDPP from: 800 (2048), len: 200 (512)
+18 00 
+FDPC 00 00 01 00 00 00       // FDPC 0 1 0
+FDPC 00 0a 00 00 00 02 00 00 // FDPC from: a00 (2560), len: 200 (512)
+18 00 
+FDPC 01 00 01 00 00 00       // FDPC 1 1 0
+FDPC 00 0c 00 00 00 02 00 00 // FDPC from: c00 (3072), len: 200 (512)
+18 00 
+SYID 00 00 01 00 00 00       // SYID 0 1 0
+SYID 00 0e 00 00 20 00 00 00 // SYID from: e00 (3584), len: 20 (32)
+18 00 
+SGP  00 00 01 00 00 00       // SGP  0 1 0
+SGP  20 0e 00 00 0a 00 00 00 // SGP  from: e20 (3616), len: a (10)
+18 00 
+INK  00 00 01 00 00 00       // INK  0 1 0
+INK  2a 0e 00 00 04 00 00 00 // INK  from: e2a (3626), len: 4 (4)
+18 00 
+BTEP 00 00 01 00 00 00       // BTEP 0 1 0
+PLC  2e 0e 00 00 18 00 00 00 // PLC  from: e2e (3630), len: 18 (24)
+18 00 
+BTEC 00 00 01 00 00 00       // BTEC 0 1 0
+PLC  46 0e 00 00 20 00 00 00 // PLC  from: e46 (3654), len: 20 (32)
+18 00 
+FONT 00 00 01 00 00 00       // FONT 0 1 0
+FONT 66 0e 00 00 48 03 00 00 // FONT from: e66 (3686), len: 348 (840)
+18 00 
+TCD  03 00 01 00 00 00       // TCD  3 1 0
+PLC  ae 11 00 00 24 00 00 00 // PLC  from: 11ae (4526), len: 24 (36)
+18 00 
+TOKN 04 00 01 00 00 00       // TOKN 4 1 0
+PLC  d2 11 00 00 0a 01 00 00 // PLC  from: 11d2 (4562), len: 10a (266)
+18 00 
+TOKN 05 00 01 00 00 00       // TOKN 5 1 0
+PLC  dc 12 00 00 2a 01 00 00 // PLC  from: 12dc (4828), len: 12a (298)
+18 00 
+STRS 00 00 01 00 00 00       // STRS 0 1 0
+PLC  06 14 00 00 46 00 00 00 // PLC  from: 1406 (5126), len: 46 (70)
+18 00 
+MCLD 00 00 01 00 00 00       // MCLD 0 1 0
+MCLD 4c 14 00 00 16 06 00 00 // MCLD from: 144c (5196), len: 616 (1558)
+18 00 
+PL   00 00 01 00 00 00       // PL   0 1 0
+PL   62 1a 00 00 48 00 00 00 // PL   from: 1a62 (6754), len: 48 (72)
+00 00                        // Blank entry follows
+00 00 00 00 00 00
+00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00
+</source>
 		</section>
 	</body>
 </document>
