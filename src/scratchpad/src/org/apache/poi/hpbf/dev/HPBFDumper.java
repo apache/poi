@@ -66,12 +66,12 @@ public class HPBFDumper {
 		dump.dumpContents();
 		dump.dumpEnvelope();
 		dump.dumpEscher();
+		dump.dump001CompObj(dump.fs.getRoot());
+		dump.dumpQuill();
 		
 		// Still to go:
 		//  (0x03)Internal
-		//  (0x01)CompObj
 		//  Objects
-		//  Quill
 	}
 	
 	/**
@@ -126,5 +126,55 @@ public class HPBFDumper {
 		
 		System.out.println("");
 		System.out.println("Contents - " + data.length + " bytes long:");
+		
+		// 8 bytes, always seems to be
+		// E8 AC 2C 00 E8 03 05 01 
+		// E8 AC 2C 00 E8 03 05 01  
+		
+		// 4 bytes - size of contents
+		// 13/15 00 00 01
+		
+		// ....
+		
+	    // E8 03 08 08 0C 20 03 00 00 00 00 88 16 00 00 00 ..... ..........
+		
+	    // 01 18 27 00 03 20 00 00 E8 03 08 08 0C 20 03 00 ..'.. ....... ..
+		
+		// 01 18 30 00 03 20 00 00 
+		// E8 03 06 08 07 08 08 08 09 10 01 00 0C 20 04 00
+		// 00 00 00 88 1E 00 00 00
+		
+		// 01 18 31 00 03 20 00 00
+		// E8 03 06 08 07 08 08 08 09 10 01 00 0C 20 04 00
+		// 00 00 00 88 1E 00 00 00
+		
+		// 01 18 32 00 03 20 00 00
+		// E8 03 06 08 07 08 08 08 09 10 01 00 0C 20 04 00
+		// 00 00 00 88 1E 00 00 00
+	}
+	
+	public void dumpCONTENTS(DirectoryNode dir) throws IOException {
+		byte[] data = getData(dir, "CONTENTS");
+		
+		System.out.println("");
+		System.out.println("CONTENTS - " + data.length + " bytes long:");
+		
+		// Dump out up to 0x200
+		
+		// Text from 0x200 onwards for a bit
+	}
+	
+	protected void dump001CompObj(DirectoryNode dir) {
+		// TODO
+	}
+	
+	public void dumpQuill() throws IOException {
+		DirectoryNode quillDir = (DirectoryNode) 
+			fs.getRoot().getEntry("Quill");
+		DirectoryNode quillSubDir = (DirectoryNode) 
+			quillDir.getEntry("QuillSub");
+
+		dump001CompObj(quillSubDir);
+		dumpCONTENTS(quillSubDir);
 	}
 }
