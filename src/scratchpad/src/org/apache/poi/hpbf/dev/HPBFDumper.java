@@ -25,6 +25,8 @@ import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
 
 /**
  * For dumping out the contents of HPBF (Publisher)
@@ -50,6 +52,26 @@ public class HPBFDumper {
 		
 		// All done
 		return d;
+	}
+	
+	/**
+	 * Dumps out the given number of bytes as hex,
+	 *  two chars
+	 */
+	private String dumpBytes(byte[] data, int offset, int len) {
+		StringBuffer ret = new StringBuffer();
+		for(int i=0; i<len; i++) {
+			int j = i + offset;
+			int b = data[j];
+			if(b < 0) { b += 256; }
+			
+			String bs = Integer.toHexString(b);
+			if(bs.length() == 1)
+				ret.append('0');
+			ret.append(bs);
+			ret.append(' ');
+		}
+		return ret.toString();
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -159,9 +181,61 @@ public class HPBFDumper {
 		System.out.println("");
 		System.out.println("CONTENTS - " + data.length + " bytes long:");
 		
-		// Dump out up to 0x200
+		// Between the start and 0x200 we have
+		//  CHNKINK(space) + 24 bytes + 0x1800
+		//  TEXT + 6 bytes
+		//  TEXT + 8 bytes + 0x1800
+		//  STSH + 6 bytes
+		//  STSH + 8 bytes + 0x1800
+		//  STSH + 6 bytes
+		//  STSH + 8 bytes + 0x1800
+		// but towards 0x200 the pattern may
+		//  break down a little bit
 		
-		// Text from 0x200 onwards for a bit
+		// After the second of a given type,
+		//  it seems to be 4 bytes giving the start,
+		//  then 4 bytes giving the length, then
+		//  18 00
+		System.out.println(
+				new String(data, 0, 8) +
+				dumpBytes(data, 8, 0x22-8)
+		);
+		
+		int pos = 0x22;
+		boolean sixNotTen = true;
+		while(pos < 0x200) {
+			String text = new String(data, pos, 4);
+			int blen = 10;
+			if(sixNotTen)
+				blen = 6;
+			System.out.println(
+					text + " " + dumpBytes(data, pos+4, blen)
+			);
+			
+			pos += 4 + blen;
+			sixNotTen = ! sixNotTen;
+		}
+		
+		// Text from 0x200 onwards until we get
+		//  to \r(00)\n(00)(00)(00)
+		int textStop = -1;
+		for(int i=0x200; i<data.length-2 && textStop == -1; i++) {
+			if(data[i] == 0 && data[i+1] == 0 && data[i+2] == 0) {
+				textStop = i;
+			}
+		}
+		if(textStop > 0) {
+			int len = (textStop - 0x200) / 2;
+			System.out.println("");
+			System.out.println(
+					StringUtil.getFromUnicodeLE(data, 0x200, len)
+			);
+		}
+		
+		// The font list comes slightly later
+		
+		// The hyperlinks may come before the fonts,
+		//  or slightly in front
 	}
 	
 	protected void dump001CompObj(DirectoryNode dir) {
