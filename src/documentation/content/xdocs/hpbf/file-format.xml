@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>POI-HPBF - A Guide to the Publisher File Format</title>
+        <subtitle>Overview</subtitle>
+        <authors>
+            <person name="Nick Burch" email="nick at torchbox dot com"/>
+        </authors>
+    </header>
+
+    <body>
+        <section><title>Document Streams</title>
+		<p>
+		The file is made up of a number of POIFS streams. A typical
+        file will be made up as follows:
+		</p>
+<source>
+Root Entry -
+  Objects -
+    (no children)
+  SummaryInformation <(0x05)SummaryInformation>
+  DocumentSummaryInformation <(0x05)DocumentSummaryInformation>
+  Escher -
+    EscherStm
+    EscherDelayStm
+  Quill -
+    QuillSub -
+      CONTENTS
+      CompObj <(0x01)CompObj>
+  Envelope
+  Contents
+  Internal <(0x03)Internal>
+  CompObj <(0x01)CompObj>
+  VBA -
+    (no children)
+</source>
+		</section>
+        <section><title>Changing Text</title>
+		<p>If you make a change to the text of a file, but not change
+          how much text there is, then the <em>CONTENTS</em> stream
+          will undergo a small change, and the <em>Contents</em> stream
+          will undergo a large change.</p>
+        <p>If you make a change to the text of a file, and change the
+          amount of text there is, then both the <em>Contents</em> and
+          the <em>CONTENTS</em> streams change.</p>
+		</section>
+        <section><title>Changing Shapes</title>
+        <p>If you alter the size of a textbox, but make no text changes,
+          then both <em>Contents</em> and <em>CONTENTS</em> streams
+          change. There are no changes to the Escher streams.</p>
+        <p>If you set the background colour of a textbox, but make
+          no changes to the text,
+		</section>
+	</body>
+</document>
