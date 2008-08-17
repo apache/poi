@@ -310,8 +310,30 @@ public class HPBFDumper {
 				);
 			}
 		}
+		
+		// Text
 		System.out.println("");
+		System.out.println("TEXT:");
 		System.out.println(text);
+		System.out.println("");
+		
+		// All the others
+		for(int i=0; i<20; i++) {
+			if(startType[i] == null) {
+				continue;
+			}
+			int start = from[i];
+			
+			System.out.println(
+					startType[i] + " -> " + endType[i] +
+					" @ " + Integer.toHexString(start) + 
+					" (" + start + ")"
+			);
+			System.out.println("\t" + dumpBytes(data, start, 4));
+			System.out.println("\t" + dumpBytes(data, start+4, 4));
+			System.out.println("\t" + dumpBytes(data, start+8, 4));
+			System.out.println("\t(etc)");
+		}
 	}
 	
 	protected void dump001CompObj(DirectoryNode dir) {

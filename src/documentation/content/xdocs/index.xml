@@ -146,6 +146,16 @@
 	    href="./hslf/index.html">the HSLF project page for more
 	    information</link>.</p>
         </section>
+        <section><title>HPSF for Document Properties</title>
+	<p>HPSF is our port of the OLE 2 property set format to pure
+	  Java. Property sets are mostly use to store a document's properties
+	  (title, author, date of last modification etc.), but they can be used
+	  for application-specific purposes as well.</p>
+
+	<p>HPSF supports both reading and writing of properties.</p>
+	<p>Please see <link href="./hpsf/index.html">the HPSF project
+	    page</link> for more information.</p>
+        </section>
         <section><title>HDGF for Visio Documents</title>
 	<p>HDGF is our port of the Microsoft Viso 97(-2003) file format to pure
 	  Java. It currently only supports reading at a very low level, and
@@ -153,19 +163,13 @@
 	    href="./hdgf/index.html">the HDGF project page for more
 	    information</link>.</p>
         </section>
-        <section><title>HPSF for Document Properties</title>
-	<p>HPSF is our port of the OLE 2 property set format to pure
-	  Java. Property sets are mostly use to store a document's properties
-	  (title, author, date of last modification etc.), but they can be used
-	  for application-specific purposes as well.</p>
-
-	<p>HPSF supports reading and writing of properties. However, you will
-      need to be using version 3.0 of POI to utilise the write support.</p>
-
-	<p>Please see <link href="./hpsf/index.html">the HPSF project
-	    page</link> for more information.</p>
+        <section><title>HPBF for Publisher Documents</title>
+	<p>HPBF is our port of the Microsoft Publisher 98(-2007) file format to pure
+	  Java. At the moment, we are still figuring out the file format, but we hope
+      to have simple text extraction shortly. Please see <link
+	    href="./hpbf/index.html">the HPBF project page for more
+	    information</link>.</p>
         </section>
-
      </section>
 
     <section><title>Contributing </title>

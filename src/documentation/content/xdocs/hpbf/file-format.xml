@@ -38,19 +38,19 @@
 Root Entry -
   Objects -
     (no children)
-  SummaryInformation <(0x05)SummaryInformation>
-  DocumentSummaryInformation <(0x05)DocumentSummaryInformation>
+  SummaryInformation &lt;(0x05)SummaryInformation&gt;
+  DocumentSummaryInformation &lt;(0x05)DocumentSummaryInformation&gt;
   Escher -
     EscherStm
     EscherDelayStm
   Quill -
     QuillSub -
       CONTENTS
-      CompObj <(0x01)CompObj>
+      CompObj &lt;(0x01)CompObj&gt;
   Envelope
   Contents
-  Internal <(0x03)Internal>
-  CompObj <(0x01)CompObj>
+  Internal &lt;(0x03)Internal&gt;
+  CompObj &lt;(0x01)CompObj&gt;
   VBA -
     (no children)
 </source>
@@ -69,7 +69,7 @@ Root Entry -
           then both <em>Contents</em> and <em>CONTENTS</em> streams
           change. There are no changes to the Escher streams.</p>
         <p>If you set the background colour of a textbox, but make
-          no changes to the text,
+          no changes to the text, (to finish off)</p>
 		</section>
         <section><title>Structure of CONTENTS</title>
         <p>First we have "CHNKINK ", followed by 24 bytes.</p>
@@ -162,6 +162,8 @@ PL   62 1a 00 00 48 00 00 00 // PL   from: 1a62 (6754), len: 48 (72)
 00 00 00 00 00 00
 00 00 00 00 00 00 00 00 
 00 00 00 00 00 00 00 00
+
+(the text will then start)
 </source>
 		</section>
 	</body>
