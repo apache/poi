@@ -32,6 +32,7 @@ import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.ColumnInfoRecord;
 import org.apache.poi.hssf.record.DimensionsRecord;
 import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.GutsRecord;
 import org.apache.poi.hssf.record.IndexRecord;
 import org.apache.poi.hssf.record.MergeCellsRecord;
 import org.apache.poi.hssf.record.Record;
@@ -41,6 +42,8 @@ import org.apache.poi.hssf.record.UncalcedRecord;
 import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellRangeAddress;
 
 /**
@@ -438,8 +441,8 @@ public final class TestSheet extends TestCase {
         if (false) {
             // make sure that RRA and VRA are in the right place
             // (Aug 2008) since the VRA is now part of the RRA, there is much less chance that
-        	// they could get out of order. Still, one could write serialize the sheet here, 
-        	// and read back with EventRecordFactory to make sure...
+            // they could get out of order. Still, one could write serialize the sheet here, 
+            // and read back with EventRecordFactory to make sure...
         }
         assertEquals(242, dbCellRecordPos);
     }
@@ -474,6 +477,30 @@ public final class TestSheet extends TestCase {
         public IndexRecord getIndexRecord() {
             return _indexRecord;
         }
+    }
+    
+    /**
+     * Checks for bug introduced around r682282-r683880 that caused a second GUTS records
+     * which in turn got the dimensions record out of alignment
+     */
+    public void testGutsRecord_bug45640() {
+        
+        Sheet sheet = Sheet.createSheet();
+        sheet.addRow(new RowRecord(0));
+        sheet.addRow(new RowRecord(1));
+        sheet.groupRowRange( 0, 1, true );
+        sheet.toString();
+        List recs = sheet.getRecords();
+        int count=0;
+        for(int i=0; i< recs.size(); i++) {
+            if (recs.get(i) instanceof GutsRecord) {
+                count++;
+            }
+        }
+        if (count == 2) {
+            throw new AssertionFailedError("Identified bug 45640");
+        }
+        assertEquals(1, count);
     }
 }
 
