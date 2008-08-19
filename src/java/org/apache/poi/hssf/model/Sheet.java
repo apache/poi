@@ -106,7 +106,7 @@ public final class Sheet implements Model {
 
     protected ArrayList                  records           =     null;
               int                        preoffset         =     0;            // offset of the sheet in a new file
-    protected int                        dimsloc           =     -1;  // TODO - is it legal for dims record to be missing?
+    protected int                        dimsloc           =     -1;  // TODO - remove dimsloc
     protected PrintGridlinesRecord       printGridlines    =     null;
     protected GridsetRecord              gridset           =     null;
     private   GutsRecord                 _gutsRecord;
@@ -125,7 +125,8 @@ public final class Sheet implements Model {
     private   MergedCellsTable           _mergedCellsTable;
     /** always present in this POI object, not always written to Excel file */
     /*package*/ColumnInfoRecordsAggregate _columnInfos;
-    protected DimensionsRecord           dims;
+    /** the DimensionsRecord is always present */
+    private DimensionsRecord             _dimensions;
     protected RowRecordsAggregate        _rowsAggregate              =     null;
     private   DataValidityTable          _dataValidityTable=     null;
     private   ConditionalFormattingTable condFormatting;
@@ -287,7 +288,7 @@ public final class Sheet implements Model {
                     records.add(retval._columnInfos);
                 }
 
-                retval.dims    = ( DimensionsRecord ) rec;
+                retval._dimensions    = ( DimensionsRecord ) rec;
                 retval.dimsloc = records.size();
             }
             else if (rec.getSid() == DefaultColWidthRecord.sid)
@@ -333,7 +334,7 @@ public final class Sheet implements Model {
 
             records.add(rec);
         }
-        if (retval.dimsloc < 0) {
+        if (retval._dimensions == null) {
             throw new RuntimeException("DimensionsRecord was not found");
         }
         retval.records = records;
@@ -404,6 +405,8 @@ public final class Sheet implements Model {
 
     public static Sheet createSheet()
     {
+         // TODO - convert this method to a constructor
+
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "Sheet createsheet from scratch called");
         Sheet     retval  = new Sheet();
@@ -423,7 +426,8 @@ public final class Sheet implements Model {
         records.add( retval.printGridlines );
         retval.gridset = createGridset();
         records.add( retval.gridset );
-        records.add( retval.createGuts() );
+        retval._gutsRecord = createGuts();
+        records.add( retval._gutsRecord );
         retval.defaultrowheight = createDefaultRowHeight();
         records.add( retval.defaultrowheight );
         records.add( retval.createWSBool() );
@@ -440,8 +444,8 @@ public final class Sheet implements Model {
         ColumnInfoRecordsAggregate columns = new ColumnInfoRecordsAggregate();
         records.add( columns );
         retval._columnInfos = columns;
-        retval.dims    =  createDimensions();
-        records.add(retval.dims);
+        retval._dimensions = createDimensions();
+        records.add(retval._dimensions);
         retval.dimsloc = records.size()-1;
         records.add(retval.windowTwo = retval.createWindowTwo());
         retval.selection = createSelection();
@@ -460,7 +464,7 @@ public final class Sheet implements Model {
         if (_rowsAggregate == null)
         {
             _rowsAggregate = new RowRecordsAggregate();
-            records.add(getDimsLoc() + 1, _rowsAggregate);
+            records.add(dimsloc + 1, _rowsAggregate);
         }
     }
     private MergedCellsTable getMergedRecords() {
@@ -556,10 +560,10 @@ public final class Sheet implements Model {
                         .append(lastrow).append("lastcol").append(lastcol)
                         .toString());
         }
-        dims.setFirstCol(firstcol);
-        dims.setFirstRow(firstrow);
-        dims.setLastCol(lastcol);
-        dims.setLastRow(lastrow);
+        _dimensions.setFirstCol(firstcol);
+        _dimensions.setFirstRow(firstrow);
+        _dimensions.setLastCol(lastcol);
+        _dimensions.setLastRow(lastrow);
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "Sheet.setDimensions exiting");
     }
@@ -696,7 +700,7 @@ public final class Sheet implements Model {
         if(log.check(POILogger.DEBUG)) {
           log.log(POILogger.DEBUG, "add value record  row" + row);
         }
-        DimensionsRecord d = ( DimensionsRecord ) records.get(getDimsLoc());
+        DimensionsRecord d = _dimensions;
 
         if (col.getColumn() > d.getLastCol())
         {
@@ -720,8 +724,8 @@ public final class Sheet implements Model {
      */
     public void removeValueRecord(int row, CellValueRecordInterface col) {
 
-        log.logFormatted(POILogger.DEBUG, "remove value record row,dimsloc %,%",
-                         new int[]{row, dimsloc} );
+        log.logFormatted(POILogger.DEBUG, "remove value record row %",
+                         new int[]{row } );
         _rowsAggregate.removeCell(col);
     }
 
@@ -766,7 +770,7 @@ public final class Sheet implements Model {
         checkRows();
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "addRow ");
-        DimensionsRecord d = ( DimensionsRecord ) records.get(getDimsLoc());
+        DimensionsRecord d = _dimensions;
 
         if (row.getRowNumber() >= d.getLastRow())
         {
@@ -1327,27 +1331,6 @@ public final class Sheet implements Model {
         if (selection != null)
         {
             selection.setActiveCellCol(col);
-        }
-    }
-
-    /**
-     * get the location of the DimensionsRecord (which is the last record before the value section)
-     * @return location in the array of records of the DimensionsRecord
-     */
-
-    public int getDimsLoc()
-    {
-        if (log.check( POILogger.DEBUG ))
-            log.log(POILogger.DEBUG, "getDimsLoc dimsloc= " + dimsloc);
-        return dimsloc;
-    }
-
-    /**
-     * in the event the record is a dimensions record, resets both the loc index and dimsloc index
-     */
-    public void checkDimsLoc(Record rec, int recloc) {
-        if (rec.getSid() == DimensionsRecord.sid) {
-            dimsloc = recloc;
         }
     }
 
