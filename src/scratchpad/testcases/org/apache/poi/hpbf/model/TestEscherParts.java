@@ -14,30 +14,37 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hpbf.model.qcbits;
+package org.apache.poi.hpbf.model;
 
-import org.apache.poi.util.StringUtil;
+import java.io.File;
+import java.io.FileInputStream;
 
-/**
- * A Text based bit of Quill Contents
- */
-public class QCTextBit extends QCBit {
-	public QCTextBit(String thingType, String bitType, byte[] data) {
-		super(thingType, bitType, data);
+import org.apache.poi.hpbf.HPBFDocument;
+
+import junit.framework.TestCase;
+
+public class TestEscherParts extends TestCase {
+	private String dir;
+
+	protected void setUp() throws Exception {
+		dir = System.getProperty("HPBF.testdata.path");
 	}
 
-	/**
-	 * Returns the text. Note that line endings
-	 *  are \r and not \n
-	 */
-	public String getText() {
-		return StringUtil.getFromUnicodeLE(
-				data, 0, data.length/2
+	public void testBasics() throws Exception {
+		File f = new File(dir, "Sample.pub");
+		HPBFDocument doc = new HPBFDocument(
+				new FileInputStream(f)
 		);
-	}
-	
-	public void setText(String text) {
-		data = new byte[text.length()*2];
-		StringUtil.putUnicodeLE(text, data, 0);
+
+		EscherStm es = doc.getEscherStm();
+		EscherDelayStm eds = doc.getEscherDelayStm();
+		
+		assertNotNull(es);
+		assertNotNull(eds);
+		
+		assertEquals(13, es.getEscherRecords().length);
+		assertEquals(0, eds.getEscherRecords().length);
+		
+		// TODO - check the contents
 	}
 }
