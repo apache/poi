@@ -649,6 +649,7 @@ under the License.
             <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
             <sysproperty key="HSMF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hsmf/data"/>
             <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
+            <sysproperty key="HPBF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpbf/data"/>
             <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/> 
             <sysproperty key="OOXML.testdata.path" file="${ooxml.src.test}/org/apache/poi/ooxml/data"/> 
                 <sysproperty key="java.awt.headless" value="true"/>
@@ -707,6 +708,7 @@ under the License.
             <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
             <sysproperty key="HSMF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hsmf/data"/>
             <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
+            <sysproperty key="HPBF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpbf/data"/>
             <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/> 
             <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain"/>
@@ -742,6 +744,7 @@ under the License.
                 <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
                 <sysproperty key="HSMF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hsmf/data"/>
                 <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
+                <sysproperty key="HPBF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpbf/data"/>
                 <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/> 
 	            <sysproperty key="java.awt.headless" value="true"/>
 	            <sysproperty key="java.awt.headless" value="true"/>
@@ -1284,10 +1287,13 @@ FORREST_HOME environment variable!</echo>
       <zipfileset dir="." prefix="${zipdir}">
         <exclude name="build/**"/>
         <exclude name="scripts/**"/>
+        <exclude name="TEST*"/>
         <exclude name="*.ipr"/>
         <exclude name="*.iml"/>
         <exclude name="*.iws"/>
         <exclude name="*.swp"/>
+        <exclude name=".classpath"/>
+        <exclude name=".project"/>
       </zipfileset>
     </zip>
 
@@ -1313,10 +1319,13 @@ FORREST_HOME environment variable!</echo>
       <tarfileset dir="." prefix="${zipdir}">
         <exclude name="build/**"/>
         <exclude name="scripts/**"/>
+        <exclude name="TEST*"/>
         <exclude name="*.ipr"/>
         <exclude name="*.iml"/>
         <exclude name="*.iws"/>
         <exclude name="*.swp"/>
+        <exclude name=".classpath"/>
+        <exclude name=".project"/>
       </tarfileset>
     </tar>
 
