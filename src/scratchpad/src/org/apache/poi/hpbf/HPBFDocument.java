@@ -18,9 +18,12 @@ package org.apache.poi.hpbf;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.poi.POIDocument;
+import org.apache.poi.hpbf.model.EscherDelayStm;
+import org.apache.poi.hpbf.model.EscherStm;
 import org.apache.poi.hpbf.model.MainContents;
 import org.apache.poi.hpbf.model.QuillContents;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -34,12 +37,17 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 public class HPBFDocument extends POIDocument {
 	private MainContents mainContents;
 	private QuillContents quillContents;
+	private EscherStm escherStm;
+	private EscherDelayStm escherDelayStm;
 	
 	/**
 	 * Opens a new publisher document
 	 */
 	public HPBFDocument(POIFSFileSystem fs) throws IOException {
 		this(fs.getRoot(), fs);
+	}
+	public HPBFDocument(InputStream inp) throws IOException {
+		this(new POIFSFileSystem(inp));
 	}
 	
 	/**
@@ -54,12 +62,24 @@ public class HPBFDocument extends POIDocument {
 		try {
 			mainContents = new MainContents(dir);
 		} catch(FileNotFoundException e) {
-			throw new IllegalArgumentException("File invalid - missing required main Contents part");
+			throw new IllegalArgumentException("File invalid - missing required main Contents part", e);
 		}
 		try {
 			quillContents = new QuillContents(dir);
 		} catch(FileNotFoundException e) {
-			throw new IllegalArgumentException("File invalid - missing required Quill CONTENTS part");
+			throw new IllegalArgumentException("File invalid - missing required Quill CONTENTS part", e);
+		}
+		
+		// Now the Escher bits
+		try {
+			escherStm = new EscherStm(dir);
+		} catch(FileNotFoundException e) {
+			throw new IllegalArgumentException("File invalid - missing required EscherStm part", e);
+		}
+		try {
+			escherDelayStm = new EscherDelayStm(dir);
+		} catch(FileNotFoundException e) {
+			throw new IllegalArgumentException("File invalid - missing required EscherDelayStm part", e);
 		}
 	}
 
@@ -69,7 +89,13 @@ public class HPBFDocument extends POIDocument {
 	public QuillContents getQuillContents() {
 		return quillContents;
 	}
-
+	public EscherStm getEscherStm() {
+		return escherStm;
+	}
+	public EscherDelayStm getEscherDelayStm() {
+		return escherDelayStm;
+	}
+	
 	public void write(OutputStream out) throws IOException {
 		throw new IllegalStateException("Writing is not yet implemented, see http://poi.apache.org/hpbf/");
 	}

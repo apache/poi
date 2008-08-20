@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hpbf.model;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -51,8 +52,32 @@ public abstract class HPBFPart {
 	}
 	
 	public void writeOut(DirectoryNode baseDir) throws IOException {
+		String[] path = getPath();
 		
+		// Ensure that all parent directories exist
+		DirectoryNode dir = baseDir;
+		for(int i=0; i<path.length-1; i++) {
+			try {
+				dir = (DirectoryNode)dir.getEntry(path[i]);
+			} catch(FileNotFoundException e) {
+				dir.createDirectory(path[i]);
+			}
+		}
+		
+		// Update the byte array with the latest data
+		generateData();
+		
+		// Write out
+		ByteArrayInputStream bais = new ByteArrayInputStream(data);
+		dir.createDocument(path[path.length-1], bais);
 	}
+	
+	/**
+	 * Called just before writing out, to trigger
+	 *  the data byte array to be updated with the
+	 *  latest contents.
+	 */
+	protected abstract void generateData();
 	
 	/**
 	 * Returns the raw data that makes up

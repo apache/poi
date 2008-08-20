@@ -33,4 +33,9 @@ public class MainContents extends HPBFPart {
 	public String[] getPath() {
 		return new String[] { "Contents" };
 	}
+
+	protected void generateData() {
+		// We don't parse the contents, so
+		//  nothing will have changed
+	}
 }

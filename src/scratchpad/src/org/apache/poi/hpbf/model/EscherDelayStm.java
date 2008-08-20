@@ -21,26 +21,15 @@ import java.io.IOException;
 
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 
-/**
- * Quill -> QuillSub -> CONTENTS
- */
-public class QuillContents extends HPBFPart {
-	public QuillContents(DirectoryNode baseDir)
-			throws FileNotFoundException, IOException {
+public class EscherDelayStm extends EscherPart {
+	public EscherDelayStm(DirectoryNode baseDir) throws FileNotFoundException,
+			IOException {
 		super(baseDir);
-		
-		// Now parse the first 512 bytes, and produce
-		//  all our bits
-	}
-	
-	protected void generateData() {
-		// TODO
-		throw new IllegalStateException("Not done yet!");
 	}
 
 	public String[] getPath() {
 		return new String[] {
-			"Quill", "QuillSub", "CONTENTS"
+				"Escher", "EscherDelayStm"
 		};
 	}
 }
