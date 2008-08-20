@@ -19,18 +19,66 @@ package org.apache.poi.hpbf.model;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.apache.poi.hpbf.model.qcbits.QCBit;
+import org.apache.poi.hpbf.model.qcbits.QCTextBit;
+import org.apache.poi.hpbf.model.qcbits.UnknownQCBit;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Quill -> QuillSub -> CONTENTS
  */
 public class QuillContents extends HPBFPart {
+	private QCBit[] bits;
+	
 	public QuillContents(DirectoryNode baseDir)
 			throws FileNotFoundException, IOException {
 		super(baseDir);
 		
 		// Now parse the first 512 bytes, and produce
 		//  all our bits
+		
+		// Check first 8 bytes
+		String f8 = new String(data, 0, 8);
+		if(! f8.equals("CHNKINK ")) {
+			throw new IllegalArgumentException("Expecting 'CHNKINK ' but was '"+f8+"'");
+		}
+		// Ignore the next 24, for now at least
+		
+		// Now, parse all our QC Bits
+		bits = new QCBit[20];
+		for(int i=0; i<20; i++) {
+			int offset = 0x20 + i*24;
+			if(data[offset] == 0x18 && data[offset+1] == 0x00) {
+				// Has some data
+				String thingType = new String(data, offset+2, 4);
+				int optA = LittleEndian.getUShort(data, offset+6);
+				int optB = LittleEndian.getUShort(data, offset+8);
+				int optC = LittleEndian.getUShort(data, offset+10);
+				String bitType = new String(data, offset+12, 4);
+				int from = (int)LittleEndian.getUInt(data, offset+16);
+				int len = (int)LittleEndian.getUInt(data, offset+20);
+				
+				byte[] bitData = new byte[len];
+				System.arraycopy(data, from, bitData, 0, len);
+				
+				// Create
+				if(bitType.equals("TEXT")) {
+					bits[i] = new QCTextBit(thingType, bitType, bitData);
+				} else {
+					bits[i] = new UnknownQCBit(thingType, bitType, bitData);
+				}
+				bits[i].setOptA(optA);
+				bits[i].setOptB(optB);
+				bits[i].setOptC(optC);
+			} else {
+				// Doesn't have data
+			}
+		}
+	}
+
+	public QCBit[] getBits() {
+		return bits;
 	}
 	
 	protected void generateData() {
