@@ -45,37 +45,54 @@ public class POIFSLister {
             System.exit(1);
         }
 
-        for (int j = 0; j < args.length; j++)
-        {
-            viewFile(args[ j ]);
+        boolean withSizes = false;
+        for (int j = 0; j < args.length; j++) {
+        	if(args[j].equalsIgnoreCase("-size") || 
+        			args[j].equalsIgnoreCase("-sizes")) {
+        		withSizes = true;
+        	} else {
+        		viewFile(args[j], withSizes);
+        	}
         }
     }
 
-    public static void viewFile(final String filename) throws IOException
+    public static void viewFile(final String filename, boolean withSizes) throws IOException
     {
     	POIFSFileSystem fs = new POIFSFileSystem(
     			new FileInputStream(filename)
     	);
-    	displayDirectory(fs.getRoot(), "");
+    	displayDirectory(fs.getRoot(), "", withSizes);
     }
     
-    public static void displayDirectory(DirectoryNode dir, String indent) {
+    public static void displayDirectory(DirectoryNode dir, String indent, boolean withSizes) {
     	System.out.println(indent + dir.getName() + " -");
     	String newIndent = indent + "  ";
     	
+    	boolean hadChildren = false;
     	for(Iterator it = dir.getEntries(); it.hasNext(); ) {
+    		hadChildren = true;
     		Object entry = it.next();
     		if(entry instanceof DirectoryNode) {
-    			displayDirectory((DirectoryNode)entry, newIndent);
+    			displayDirectory((DirectoryNode)entry, newIndent, withSizes);
     		} else {
     			DocumentNode doc = (DocumentNode)entry;
     			String name = doc.getName();
+    			String size = "";
     			if(name.charAt(0) < 10) {
     				String altname = "(0x0" + (int)name.charAt(0) + ")" + name.substring(1);
     				name = name.substring(1) + " <" + altname + ">";
     			}
-    			System.out.println(newIndent + name);
+    			if(withSizes) {
+    				size = " [" +
+    					doc.getSize() + " / 0x" +
+    					Integer.toHexString(doc.getSize()) +
+    					"]";
+    			}
+    			System.out.println(newIndent + name + size);
     		}
+    	}
+    	if(!hadChildren) {
+    		System.out.println(newIndent + "(no children)");
     	}
     }
 }

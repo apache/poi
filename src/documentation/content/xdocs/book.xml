@@ -41,6 +41,7 @@
         <menu-item label="HSLF" href="slideshow/index.html"/>
         <menu-item label="HSMF" href="hsmf/index.html"/>
         <menu-item label="HDGF" href="hdgf/index.html"/>
+        <menu-item label="HPBF" href="hpbf/index.html"/>
 		<menu-item label="POI-Ruby" href="poi-ruby.html"/>
         <menu-item label="POI-Utils" href="utils/index.html"/>
         <menu-item label="Text Extraction" href="text-extraction.html"/>
