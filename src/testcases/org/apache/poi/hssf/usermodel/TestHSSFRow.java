@@ -36,16 +36,16 @@ public final class TestHSSFRow extends TestCase {
         assertEquals(-1, row.getFirstCellNum());
         assertEquals(-1, row.getLastCellNum());
 
-        row.createCell((short) 2);
+        row.createCell(2);
         assertEquals(2, row.getFirstCellNum());
         assertEquals(3, row.getLastCellNum());
 
-        row.createCell((short) 1);
+        row.createCell(1);
         assertEquals(1, row.getFirstCellNum());
         assertEquals(3, row.getLastCellNum());
 
         // check the exact case reported in 'bug' 43901 - notice that the cellNum is '0' based
-        row.createCell((short) 3);
+        row.createCell(3);
         assertEquals(1, row.getFirstCellNum());
         assertEquals(4, row.getLastCellNum());
     }
@@ -59,20 +59,20 @@ public final class TestHSSFRow extends TestCase {
         HSSFSheet sheet = workbook.createSheet();
         HSSFRow rowA = sheet.createRow(0);
 
-        rowA.createCell((short) 10);
-        rowA.createCell((short) 5);
+        rowA.createCell(10);
+        rowA.createCell(5);
         assertEquals(5, rowA.getFirstCellNum());
         assertEquals(11, rowA.getLastCellNum());
 
         HSSFRow rowB = sheet.createRow(1);
-        rowB.createCell((short) 15);
-        rowB.createCell((short) 30);
+        rowB.createCell(15);
+        rowB.createCell(30);
         assertEquals(15, rowB.getFirstCellNum());
         assertEquals(31, rowB.getLastCellNum());
 
         assertEquals(5, rowA.getFirstCellNum());
         assertEquals(11, rowA.getLastCellNum());
-        rowA.createCell((short) 50);
+        rowA.createCell(50);
         assertEquals(51, rowA.getLastCellNum());
 
         assertEquals(31, rowB.getLastCellNum());
@@ -81,19 +81,19 @@ public final class TestHSSFRow extends TestCase {
     public void testRemoveCell() {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
-        HSSFRow row = sheet.createRow((short) 0);
+        HSSFRow row = sheet.createRow(0);
         assertEquals(-1, row.getLastCellNum());
         assertEquals(-1, row.getFirstCellNum());
-        row.createCell((short) 1);
+        row.createCell(1);
         assertEquals(2, row.getLastCellNum());
         assertEquals(1, row.getFirstCellNum());
-        row.createCell((short) 3);
+        row.createCell(3);
         assertEquals(4, row.getLastCellNum());
         assertEquals(1, row.getFirstCellNum());
-        row.removeCell(row.getCell((short) 3));
+        row.removeCell(row.getCell(3));
         assertEquals(2, row.getLastCellNum());
         assertEquals(1, row.getFirstCellNum());
-        row.removeCell(row.getCell((short) 1));
+        row.removeCell(row.getCell(1));
         assertEquals(-1, row.getLastCellNum());
         assertEquals(-1, row.getFirstCellNum());
 
@@ -114,18 +114,18 @@ public final class TestHSSFRow extends TestCase {
     public void testMoveCell() {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
-        HSSFRow row = sheet.createRow((short) 0);
-        HSSFRow rowB = sheet.createRow((short) 1);
+        HSSFRow row = sheet.createRow(0);
+        HSSFRow rowB = sheet.createRow(1);
 
-        HSSFCell cellA2 = rowB.createCell((short)0);
+        HSSFCell cellA2 = rowB.createCell(0);
         assertEquals(0, rowB.getFirstCellNum());
         assertEquals(0, rowB.getFirstCellNum());
 
         assertEquals(-1, row.getLastCellNum());
         assertEquals(-1, row.getFirstCellNum());
-        HSSFCell cellB2 = row.createCell((short) 1);
-        HSSFCell cellB3 = row.createCell((short) 2);
-        HSSFCell cellB4 = row.createCell((short) 3);
+        HSSFCell cellB2 = row.createCell(1);
+        HSSFCell cellB3 = row.createCell(2);
+        HSSFCell cellB4 = row.createCell(3);
 
         assertEquals(1, row.getFirstCellNum());
         assertEquals(4, row.getLastCellNum());
@@ -147,10 +147,10 @@ public final class TestHSSFRow extends TestCase {
         }
 
         // Move somewhere spare
-        assertNotNull(row.getCell((short)1));
+        assertNotNull(row.getCell(1));
         row.moveCell(cellB2, (short)5);
-        assertNull(row.getCell((short)1));
-        assertNotNull(row.getCell((short)5));
+        assertNull(row.getCell(1));
+        assertNotNull(row.getCell(5));
 
         assertEquals(5, cellB2.getCellNum());
         assertEquals(2, row.getFirstCellNum());
@@ -161,7 +161,7 @@ public final class TestHSSFRow extends TestCase {
       HSSFWorkbook workbook = new HSSFWorkbook();
       HSSFSheet sheet = workbook.createSheet();
       //Test low row bound
-      sheet.createRow( (short) 0);
+      sheet.createRow(0);
       //Test low row bound exception
       try {
         sheet.createRow(-1);
@@ -200,9 +200,9 @@ public final class TestHSSFRow extends TestCase {
 
         // Create two cells, will return one higher
         //  than that for the last number
-        row.createCell((short) 0);
+        row.createCell(0);
         assertEquals(1, row.getLastCellNum());
-        row.createCell((short) 255);
+        row.createCell(255);
         assertEquals(256, row.getLastCellNum());
     }
     
@@ -220,10 +220,10 @@ public final class TestHSSFRow extends TestCase {
         // 3 missing
         // 4 -> blank
         // 5 -> num
-        row.createCell((short)0).setCellValue(new HSSFRichTextString("test"));
-        row.createCell((short)1).setCellValue(3.2);
-        row.createCell((short)4, HSSFCell.CELL_TYPE_BLANK);
-        row.createCell((short)5).setCellValue(4);
+        row.createCell(0).setCellValue(new HSSFRichTextString("test"));
+        row.createCell(1).setCellValue(3.2);
+        row.createCell(4, HSSFCell.CELL_TYPE_BLANK);
+        row.createCell(5).setCellValue(4);
         
         // First up, no policy given, uses default
         assertEquals(HSSFCell.CELL_TYPE_STRING,  row.getCell(0).getCellType());
@@ -281,12 +281,12 @@ public final class TestHSSFRow extends TestCase {
     public void testRowHeight() {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
-        HSSFRow row1 = sheet.createRow( (short) 0);
+        HSSFRow row1 = sheet.createRow(0);
 
         assertEquals(0xFF, row1.getHeight());
         assertEquals(sheet.getDefaultRowHeight(), row1.getHeight());
 
-        HSSFRow row2 = sheet.createRow( (short) 1);
+        HSSFRow row2 = sheet.createRow(1);
         row2.setHeight((short)400);
 
         assertEquals(400, row2.getHeight());

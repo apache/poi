@@ -94,11 +94,11 @@ public final class TestHSSFPalette extends TestCase {
         
         HSSFPalette p = book.getCustomPalette();
         
-        HSSFCell cellA = book.getSheetAt(0).getRow(0).getCell((short)0);
-        HSSFCell cellB = book.getSheetAt(0).getRow(1).getCell((short)0);
-        HSSFCell cellC = book.getSheetAt(0).getRow(2).getCell((short)0);
-        HSSFCell cellD = book.getSheetAt(0).getRow(3).getCell((short)0);
-        HSSFCell cellE = book.getSheetAt(0).getRow(4).getCell((short)0);
+        HSSFCell cellA = book.getSheetAt(0).getRow(0).getCell(0);
+        HSSFCell cellB = book.getSheetAt(0).getRow(1).getCell(0);
+        HSSFCell cellC = book.getSheetAt(0).getRow(2).getCell(0);
+        HSSFCell cellD = book.getSheetAt(0).getRow(3).getCell(0);
+        HSSFCell cellE = book.getSheetAt(0).getRow(4).getCell(0);
         
         // Plain
         assertEquals("I'm plain", cellA.getStringCellValue());

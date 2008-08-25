@@ -34,7 +34,7 @@ public class TestAreaErrPtg extends AbstractPtgTestCase
     {
         HSSFWorkbook workbook = loadWorkbook("AreaErrPtg.xls");
         assertEquals("Wrong formula string for area error", "SUM(#REF!)",
-                     workbook.getSheetAt(0).getRow(0).getCell((short) 2).getCellFormula());
+                     workbook.getSheetAt(0).getRow(0).getCell(2).getCellFormula());
     }
 }
 

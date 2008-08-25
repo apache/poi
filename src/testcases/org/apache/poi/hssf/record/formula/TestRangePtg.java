@@ -34,7 +34,7 @@ public class TestRangePtg extends AbstractPtgTestCase
     public void testReading() throws Exception
     {
         HSSFWorkbook workbook = loadWorkbook("RangePtg.xls");
-        HSSFCell cell = workbook.getSheetAt(0).getRow(3).getCell((short) 1);
+        HSSFCell cell = workbook.getSheetAt(0).getRow(3).getCell(1);
         assertEquals("Wrong cell value", 10.0, cell.getNumericCellValue(), 0.0);
         assertEquals("Wrong cell formula", "SUM(pineapple:B2)", cell.getCellFormula());
     }

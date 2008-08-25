@@ -103,7 +103,7 @@ public final class TestArrayPtg extends TestCase {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex42564-elementOrder.xls");
 
 		// The formula has an array with 3 rows and 5 columns 
-		String formula = wb.getSheetAt(0).getRow(0).getCell((short)0).getCellFormula();
+		String formula = wb.getSheetAt(0).getRow(0).getCell(0).getCellFormula();
 		// TODO - These number literals should not have '.0'. Excel has different number rendering rules
 
 		if (formula.equals("SUM({1.0,6.0,11.0;2.0,7.0,12.0;3.0,8.0,13.0;4.0,9.0,14.0;5.0,10.0,15.0})")) {

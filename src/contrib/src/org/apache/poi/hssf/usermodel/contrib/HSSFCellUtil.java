@@ -113,7 +113,7 @@ public final class HSSFCellUtil
 
         if ( cell == null )
         {
-            cell = row.createCell( (short)column );
+            cell = row.createCell(column );
         }
         return cell;
     }

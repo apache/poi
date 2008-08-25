@@ -139,7 +139,7 @@ public class TestModelFactory extends TestCase
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         HSSFSheet sheet = book.createSheet("Test");
         HSSFRow   row   = sheet.createRow(0);
-        HSSFCell  cell  = row.createCell((short)0);
+        HSSFCell  cell  = row.createCell(0);
         cell.setCellValue(10.5);
         book.write(stream);
         return stream;
