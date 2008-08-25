@@ -17,14 +17,16 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
+import org.apache.poi.hssf.record.formula.atp.AnalysisToolPak;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 /**
  * 
- * Common entry point for all external functions (where 
+ * Common entry point for all user-defined (non-built-in) functions (where 
  * <tt>AbstractFunctionPtg.field_2_fnc_index</tt> == 255)
  * 
+ * TODO rename to UserDefinedFunction
  * @author Josh Micich
  */
 final class ExternalFunction implements FreeRefFunction {
@@ -36,27 +38,43 @@ final class ExternalFunction implements FreeRefFunction {
 			throw new RuntimeException("function name argument missing");
 		}
 		
-		if (!(args[0] instanceof NameEval)) {
-			throw new RuntimeException("First argument should be a NameEval, but got ("
-					+ args[0].getClass().getName() + ")");
-		}
-		NameEval functionNameEval = (NameEval) args[0];
-		
-		int nOutGoingArgs = nIncomingArgs -1;
-		Eval[] outGoingArgs = new Eval[nOutGoingArgs];
-		System.arraycopy(args, 1, outGoingArgs, 0, nOutGoingArgs);
-		
+		Eval nameArg = args[0];
 		FreeRefFunction targetFunc;
 		try {
-			targetFunc = findTargetFunction(workbook, functionNameEval);
+			if (nameArg instanceof NameEval) {
+				targetFunc = findInternalUserDefinedFunction(workbook, (NameEval) nameArg);
+			} else if (nameArg instanceof NameXEval) {
+				targetFunc = findExternalUserDefinedFunction(workbook, (NameXEval) nameArg);
+			} else {
+				throw new RuntimeException("First argument should be a NameEval, but got ("
+						+ nameArg.getClass().getName() + ")");
+			}
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
-		
+		int nOutGoingArgs = nIncomingArgs -1;
+		Eval[] outGoingArgs = new Eval[nOutGoingArgs];
+		System.arraycopy(args, 1, outGoingArgs, 0, nOutGoingArgs);
 		return targetFunc.evaluate(outGoingArgs, srcCellRow, srcCellCol, workbook, sheet);
 	}
 
-	private FreeRefFunction findTargetFunction(HSSFWorkbook workbook, NameEval functionNameEval) throws EvaluationException {
+	private FreeRefFunction findExternalUserDefinedFunction(HSSFWorkbook workbook,
+			NameXEval n) throws EvaluationException {
+		String functionName = workbook.resolveNameXText(n.getSheetRefIndex(), n.getNameNumber());
+
+		if(false) {
+			System.out.println("received call to external user defined function (" + functionName + ")");
+		}
+		// currently only looking for functions from the 'Analysis TookPak'
+		// not sure how much this logic would need to change to support other or multiple add-ins.
+		FreeRefFunction result = AnalysisToolPak.findFunction(functionName);
+		if (result != null) {
+			return result;
+		}
+		throw new EvaluationException(ErrorEval.FUNCTION_NOT_IMPLEMENTED);
+	}
+
+	private FreeRefFunction findInternalUserDefinedFunction(HSSFWorkbook workbook, NameEval functionNameEval) throws EvaluationException {
 
 		int numberOfNames = workbook.getNumberOfNames();
 		
@@ -68,7 +86,7 @@ final class ExternalFunction implements FreeRefFunction {
 		
 		String functionName = workbook.getNameName(nameIndex);
 		if(false) {
-			System.out.println("received call to external function index (" + functionName + ")");
+			System.out.println("received call to internal user defined function  (" + functionName + ")");
 		}
 		// TODO - detect if the NameRecord corresponds to a named range, function, or something undefined
 		// throw the right errors in these cases
@@ -77,5 +95,5 @@ final class ExternalFunction implements FreeRefFunction {
 		
 		throw new EvaluationException(ErrorEval.FUNCTION_NOT_IMPLEMENTED);
 	}
-
 }
+

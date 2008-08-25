@@ -30,11 +30,11 @@ public final class NameXPtg extends OperandPtg {
 	private final static int SIZE = 7;
 
 	/** index to REF entry in externsheet record */
-	private int _sheetRefIndex;
+	private final int _sheetRefIndex;
 	/** index to defined name or externname table(1 based) */
-	private int _nameNumber;
+	private final int _nameNumber;
 	/** reserved must be 0 */
-	private int _reserved;
+	private final int _reserved;
 
 	private NameXPtg(int sheetRefIndex, int nameNumber, int reserved) {
 		_sheetRefIndex = sheetRefIndex;
@@ -72,5 +72,12 @@ public final class NameXPtg extends OperandPtg {
 
 	public byte getDefaultOperandClass() {
 		return Ptg.CLASS_VALUE;
+	}
+
+	public int getSheetRefIndex() {
+		return _sheetRefIndex;
+	}
+	public int getNameIndex() {
+		return _nameNumber - 1;
 	}
 }

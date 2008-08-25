@@ -71,7 +71,7 @@ public final class TestExternalFunctionFormulas extends TestCase {
 		}
 	}
 	
-	public void DISABLEDtestEvaluate() {
+	public void testEvaluate() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
 		HSSFSheet sheet = wb.getSheetAt(0);
 		HSSFCell cell = sheet.getRow(0).getCell(0);
