@@ -54,6 +54,9 @@ public final class CFRecordsAggregate extends RecordAggregate {
 			throw new IllegalArgumentException("No more than " 
 					+ MAX_CONDTIONAL_FORMAT_RULES + " rules may be specified");
 		}
+		if (pRules.length != pHeader.getNumberOfConditionalFormats()) {
+			throw new RuntimeException("Mismatch number of rules");
+		}
 		header = pHeader;
 		rules = new ArrayList(3);
 		for (int i = 0; i < pRules.length; i++) {
@@ -62,7 +65,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
 	}
 
 	public CFRecordsAggregate(CellRangeAddress[] regions, CFRuleRecord[] rules) {
-		this(new CFHeaderRecord(regions), rules);
+		this(new CFHeaderRecord(regions, rules.length), rules);
 	}
 
 	/**
