@@ -39,14 +39,14 @@ public final class TestReadWriteChart extends TestCase {
         HSSFWorkbook workbook  = HSSFTestDataSamples.openSampleWorkbook("SimpleChart.xls");
         HSSFSheet       sheet     = workbook.getSheetAt(0);
         HSSFRow         firstRow  = sheet.getRow(0);
-        HSSFCell        firstCell = firstRow.getCell(( short ) 0);
+        HSSFCell        firstCell = firstRow.getCell(0);
 
         //System.out.println("first assertion for date");
         assertEquals(new GregorianCalendar(2000, 0, 1, 10, 51, 2).getTime(),
                      HSSFDateUtil
                          .getJavaDate(firstCell.getNumericCellValue(), false));
-        HSSFRow  row  = sheet.createRow(( short ) 15);
-        HSSFCell cell = row.createCell(( short ) 1);
+        HSSFRow  row  = sheet.createRow(15);
+        HSSFCell cell = row.createCell(1);
 
         cell.setCellValue(22);
         Sheet newSheet = workbook.getSheetAt(0).getSheet();

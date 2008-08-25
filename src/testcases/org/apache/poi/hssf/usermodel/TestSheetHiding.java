@@ -61,10 +61,10 @@ public final class TestSheetHiding extends TestCase {
 		assertEquals(1, wbU.getSheetAt(1).getRow(0).getLastCellNum());
 
 		// Text should be sheet based
-		assertEquals("Sheet1A1", wbH.getSheetAt(0).getRow(0).getCell((short)0).getRichStringCellValue().getString());
-		assertEquals("Sheet2A1", wbH.getSheetAt(1).getRow(0).getCell((short)0).getRichStringCellValue().getString());
-		assertEquals("Sheet1A1", wbU.getSheetAt(0).getRow(0).getCell((short)0).getRichStringCellValue().getString());
-		assertEquals("Sheet2A1", wbU.getSheetAt(1).getRow(0).getCell((short)0).getRichStringCellValue().getString());
+		assertEquals("Sheet1A1", wbH.getSheetAt(0).getRow(0).getCell(0).getRichStringCellValue().getString());
+		assertEquals("Sheet2A1", wbH.getSheetAt(1).getRow(0).getCell(0).getRichStringCellValue().getString());
+		assertEquals("Sheet1A1", wbU.getSheetAt(0).getRow(0).getCell(0).getRichStringCellValue().getString());
+		assertEquals("Sheet2A1", wbU.getSheetAt(1).getRow(0).getCell(0).getRichStringCellValue().getString());
 	}
 
 	/**

@@ -257,7 +257,7 @@ public class TestValueRecordsAggregate extends TestCase
         }
     }
     private static String getFormulaFromFirstCell(HSSFSheet s, int rowIx) {
-        return s.getRow(rowIx).getCell((short)0).getCellFormula();
+        return s.getRow(rowIx).getCell(0).getCellFormula();
     }
 
     /**

@@ -95,7 +95,7 @@ public final class TestWorkbook extends TestCase {
                 c.setCellValue(rownum * 10000 + cellnum
                                + ((( double ) rownum / 1000)
                                   + (( double ) cellnum / 10000)));
-                c = r.createCell(( short ) (cellnum + 1));
+                c = r.createCell(cellnum + 1);
                 c.setCellValue(new HSSFRichTextString("TEST"));
             }
         }
@@ -141,7 +141,7 @@ public final class TestWorkbook extends TestCase {
                 c.setCellValue(rownum * 10000 + cellnum
                                + ((( double ) rownum / 1000)
                                   + (( double ) cellnum / 10000)));
-                c = r.createCell(( short ) (cellnum + 1));
+                c = r.createCell(cellnum + 1);
                 c.setCellValue(new HSSFRichTextString("TEST"));
             }
         }
@@ -225,8 +225,8 @@ public final class TestWorkbook extends TestCase {
     short df = format.getFormat("0.0");
     cs.setDataFormat(df);
 
-    r = s.createRow((short)0);
-    c = r.createCell((short)0);
+    r = s.createRow(0);
+    c = r.createCell(0);
     c.setCellStyle(cs);
     c.setCellValue(1.25);
 
@@ -238,7 +238,7 @@ public final class TestWorkbook extends TestCase {
         HSSFWorkbook    workbook = new HSSFWorkbook(fs);
         HSSFSheet       sheet    = workbook.getSheetAt(0);
     HSSFCell    cell     =
-                     sheet.getRow(( short ) 0).getCell(( short ) 0);
+                     sheet.getRow(0).getCell(0);
     format = workbook.createDataFormat();
 
         assertEquals(1.25,cell.getNumericCellValue(), 1e-10);
@@ -349,7 +349,7 @@ public final class TestWorkbook extends TestCase {
 
         for (int k = 0; k < 4; k++)
         {
-            HSSFCell cell = sheet.getRow(( short ) k).getCell(( short ) 0);
+            HSSFCell cell = sheet.getRow(k).getCell(0);
 
             cell.setCellValue(new HSSFRichTextString(REPLACED));
         }
@@ -359,7 +359,7 @@ public final class TestWorkbook extends TestCase {
         sheet    = workbook.getSheetAt(0);
         for (int k = 0; k < 4; k++)
         {
-            HSSFCell cell = sheet.getRow(( short ) k).getCell(( short ) 0);
+            HSSFCell cell = sheet.getRow(k).getCell(0);
 
             assertEquals(REPLACED, cell.getRichStringCellValue().getString());
         }
@@ -438,7 +438,7 @@ public final class TestWorkbook extends TestCase {
                 c.setCellValue(rownum * 10000 + cellnum
                                + ((( double ) rownum / 1000)
                                   + (( double ) cellnum / 10000)));
-                c = r.createCell(( short ) (cellnum + 1));
+                c = r.createCell(cellnum + 1);
                 c.setCellValue(new HSSFRichTextString("TEST"));
             }
         }
@@ -529,7 +529,7 @@ public final class TestWorkbook extends TestCase {
         for ( i = 0, j = 32771; j > 0; i++, j-- )
         {
             row = sheet.createRow(i);
-            cell = row.createCell((short) 0);
+            cell = row.createCell(0);
             cell.setCellValue(i);
         }
         sanityChecker.checkHSSFWorkbook(workbook);
@@ -555,7 +555,7 @@ public final class TestWorkbook extends TestCase {
 
         HSSFRow row = sheet.createRow(0);
 
-        HSSFCell cell = row.createCell((short)1);
+        HSSFCell cell = row.createCell(1);
         cell.setCellValue(new HSSFRichTextString("hi"));
 
 

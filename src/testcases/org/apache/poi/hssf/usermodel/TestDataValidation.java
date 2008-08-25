@@ -111,7 +111,7 @@ public final class TestDataValidation extends TestCase {
 					inputBox, errorBox);
 			if (_cellStyle != null) {
 				HSSFRow row = _sheet.getRow(_sheet.getPhysicalNumberOfRows() - 1);
-				HSSFCell cell = row.createCell((short) 0);
+				HSSFCell cell = row.createCell(0);
 				cell.setCellStyle(_cellStyle);
 			}
 			writeOtherSettings(_sheet, _style_1, promptDescr);
@@ -144,26 +144,26 @@ public final class TestDataValidation extends TestCase {
 				boolean errorBox) {
 			HSSFRow row = sheet.createRow(sheet.getPhysicalNumberOfRows());
 			// condition's string
-			HSSFCell cell = row.createCell((short) 1);
+			HSSFCell cell = row.createCell(1);
 			cell.setCellStyle(style_1);
 			setCellValue(cell, strCondition);
 			// allow empty cells
-			cell = row.createCell((short) 2);
+			cell = row.createCell(2);
 			cell.setCellStyle(style_2);
 			setCellValue(cell, ((allowEmpty) ? "yes" : "no"));
 			// show input box
-			cell = row.createCell((short) 3);
+			cell = row.createCell(3);
 			cell.setCellStyle(style_2);
 			setCellValue(cell, ((inputBox) ? "yes" : "no"));
 			// show error box
-			cell = row.createCell((short) 4);
+			cell = row.createCell(4);
 			cell.setCellStyle(style_2);
 			setCellValue(cell, ((errorBox) ? "yes" : "no"));
 		}
 		private static void writeOtherSettings(HSSFSheet sheet, HSSFCellStyle style,
 				String strStettings) {
 			HSSFRow row = sheet.getRow(sheet.getPhysicalNumberOfRows() - 1);
-			HSSFCell cell = row.createCell((short) 5);
+			HSSFCell cell = row.createCell(5);
 			cell.setCellStyle(style);
 			setCellValue(cell, strStettings);
 		}
@@ -256,7 +256,7 @@ public final class TestDataValidation extends TestCase {
 			HSSFRow row = sheet.createRow(sheet.getPhysicalNumberOfRows());
 			row = sheet.createRow(sheet.getPhysicalNumberOfRows());
 			sheet.addMergedRegion(new CellRangeAddress(sheet.getPhysicalNumberOfRows()-1, sheet.getPhysicalNumberOfRows()-1, 0, 5));
-			HSSFCell cell = row.createCell((short) 0);
+			HSSFCell cell = row.createCell(0);
 			setCellValue(cell, strTypeDescription);
 			cell.setCellStyle(_style_3);
 			row = sheet.createRow(sheet.getPhysicalNumberOfRows());
@@ -267,7 +267,7 @@ public final class TestDataValidation extends TestCase {
 			HSSFRow row = sheet.createRow(sheet.getPhysicalNumberOfRows());
 			row.setHeight((short) 400);
 			for (int i = 0; i < 6; i++) {
-				row.createCell((short) i).setCellStyle(_style_4);
+				row.createCell(i).setCellStyle(_style_4);
 				if (i == 2 || i == 3 || i == 4) {
 					sheet.setColumnWidth((short) i, (short) 3500);
 				} else if (i == 5) {
@@ -276,17 +276,17 @@ public final class TestDataValidation extends TestCase {
 					sheet.setColumnWidth((short) i, (short) 8000);
 				}
 			}
-			HSSFCell cell = row.getCell((short) 0);
+			HSSFCell cell = row.getCell(0);
 			setCellValue(cell, "Data validation cells");
-			cell = row.getCell((short) 1);
+			cell = row.getCell(1);
 			setCellValue(cell, "Condition");
-			cell = row.getCell((short) 2);
+			cell = row.getCell(2);
 			setCellValue(cell, "Allow blank");
-			cell = row.getCell((short) 3);
+			cell = row.getCell(3);
 			setCellValue(cell, "Prompt box");
-			cell = row.getCell((short) 4);
+			cell = row.getCell(4);
 			setCellValue(cell, "Error box");
-			cell = row.getCell((short) 5);
+			cell = row.getCell(5);
 			setCellValue(cell, "Other settings");
 		}
 
@@ -298,7 +298,7 @@ public final class TestDataValidation extends TestCase {
 			HSSFSheet sheet = _currentSheet;
 			HSSFRow row = sheet.getRow(sheet.getPhysicalNumberOfRows()-1);
 			sheet.addMergedRegion(new CellRangeAddress(sheet.getPhysicalNumberOfRows()-1, sheet.getPhysicalNumberOfRows()-1, 0, 5));
-			HSSFCell cell = row.createCell((short)0);
+			HSSFCell cell = row.createCell(0);
 			setCellValue(cell, strTypeDescription);
 			cell.setCellStyle(_style_3);
 			row = sheet.createRow(sheet.getPhysicalNumberOfRows());
@@ -395,14 +395,14 @@ public final class TestDataValidation extends TestCase {
 		// add list data on same sheet
 		for (int i = 0; i < 10; i++) {
 			HSSFRow currRow = fSheet.createRow(i + 29);
-			setCellValue(currRow.createCell((short) 0), cellStrValue);
+			setCellValue(currRow.createCell(0), cellStrValue);
 		}
 		// add list data on another sheet
 		for (int i = 0; i < 10; i++) {
 			HSSFRow currRow = dataSheet.createRow(i + 0);
-			setCellValue(currRow.createCell((short) 0), "Data a" + i);
-			setCellValue(currRow.createCell((short) 1), "Data b" + i);
-			setCellValue(currRow.createCell((short) 2), "Data c" + i);
+			setCellValue(currRow.createCell(0), "Data a" + i);
+			setCellValue(currRow.createCell(1), "Data b" + i);
+			setCellValue(currRow.createCell(2), "Data c" + i);
 		}
 	}
 

@@ -96,7 +96,7 @@ public final class TestHSSFComment extends TestCase {
 
          for (int rownum = 0; rownum < 3; rownum++) {
              row = sheet.getRow(rownum);
-             cell = row.getCell((short)0);
+             cell = row.getCell(0);
              comment = cell.getCellComment();
              assertNull("Cells in the first column are not commented", comment);
              assertNull(sheet.getCellComment(rownum, 0));
@@ -104,7 +104,7 @@ public final class TestHSSFComment extends TestCase {
 
          for (int rownum = 0; rownum < 3; rownum++) {
              row = sheet.getRow(rownum);
-             cell = row.getCell((short)1);
+             cell = row.getCell(1);
              comment = cell.getCellComment();
              assertNotNull("Cells in the second column have comments", comment);
              assertNotNull("Cells in the second column have comments", sheet.getCellComment(rownum, 1));
@@ -133,7 +133,7 @@ public final class TestHSSFComment extends TestCase {
 
          for (int rownum = 0; rownum < 3; rownum++) {
              row = sheet.getRow(rownum);
-             cell = row.getCell((short)1);
+             cell = row.getCell(1);
              comment = cell.getCellComment();
              comment.setAuthor("Mofified["+rownum+"] by Yegor");
              comment.setString(new HSSFRichTextString("Modified comment at row " + rownum));
@@ -148,7 +148,7 @@ public final class TestHSSFComment extends TestCase {
 
         for (int rownum = 0; rownum < 3; rownum++) {
             row = sheet.getRow(rownum);
-            cell = row.getCell((short)1);
+            cell = row.getCell(1);
             comment = cell.getCellComment();
 
             assertEquals("Mofified["+rownum+"] by Yegor", comment.getAuthor());

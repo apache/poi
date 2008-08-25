@@ -131,7 +131,7 @@ public class HSSF
                 {
                     c.setCellStyle(cs);
                 }
-                c = r.createCell(( short ) (cellnum + 1),
+                c = r.createCell(cellnum + 1,
                                  HSSFCell.CELL_TYPE_STRING);
                 c.setCellValue(new HSSFRichTextString("TEST"));
                 s.setColumnWidth(( short ) (cellnum + 1),
@@ -346,7 +346,7 @@ public class HSSF
                     sheet.removeRow(row);
                 }
                 HSSFRow  row  = sheet.getRow(39);
-                HSSFCell cell = row.getCell(( short ) 3);
+                HSSFCell cell = row.getCell(3);
 
                 cell.setCellType(HSSFCell.CELL_TYPE_STRING);
                 cell.setCellValue("MODIFIED CELL!!!!!");

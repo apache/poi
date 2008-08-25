@@ -57,14 +57,14 @@ public class TestUnicodeWorkbook extends TestCase {
         f.setRight("\u20ac");                
 
         HSSFRow r = s.createRow(0);
-        HSSFCell c = r.createCell((short)1);
+        HSSFCell c = r.createCell(1);
         c.setCellValue(12.34);
         c.getCellStyle().setDataFormat(fmt);
         
-        HSSFCell c2 = r.createCell((short)2);
+        HSSFCell c2 = r.createCell(2);
         c.setCellValue(new HSSFRichTextString("\u20ac"));
 
-        HSSFCell c3 = r.createCell((short)3);
+        HSSFCell c3 = r.createCell(3);
         String formulaString = "TEXT(12.34,\"\u20ac###,##\")";
         c3.setCellFormula(formulaString);
 
@@ -95,16 +95,16 @@ public class TestUnicodeWorkbook extends TestCase {
 
         //Test the dataformat
         r = s.getRow(0);
-        c = r.getCell((short)1);
+        c = r.getCell(1);
         df = wb.createDataFormat();
         assertEquals(formatStr, df.getFormat(c.getCellStyle().getDataFormat()));
         
         //Test the cell string value
-        c2 = r.getCell((short)2);
+        c2 = r.getCell(2);
         assertEquals(c.getRichStringCellValue().getString(), "\u20ac");
         
         //Test the cell formula
-        c3 = r.getCell((short)3);
+        c3 = r.getCell(3);
         assertEquals(c3.getCellFormula(), formulaString);
     }
     
@@ -122,7 +122,7 @@ public class TestUnicodeWorkbook extends TestCase {
         HSSFSheet s = wb.createSheet("test");
         
         HSSFRow r = s.createRow(0);
-        HSSFCell c = r.createCell((short)1);
+        HSSFCell c = r.createCell(1);
         c.setCellValue(new HSSFRichTextString("\u00e4"));
         
         //Confirm that the sring will be compressed
@@ -140,7 +140,7 @@ public class TestUnicodeWorkbook extends TestCase {
         s = wb.getSheet("test");
         assertNotNull(s);
         
-        c = r.getCell((short)1);
+        c = r.getCell(1);
         assertEquals(c.getRichStringCellValue().getString(), "\u00e4");
     }    
 

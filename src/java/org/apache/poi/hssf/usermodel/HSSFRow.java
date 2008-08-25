@@ -343,7 +343,7 @@ public final class HSSFRow implements Comparable {
         }
         if(policy == CREATE_NULL_AS_BLANK) {
             if(cell == null) {
-                return createCell((short)cellnum, HSSFCell.CELL_TYPE_BLANK);
+                return createCell(cellnum, HSSFCell.CELL_TYPE_BLANK);
             }
             return cell;
         }

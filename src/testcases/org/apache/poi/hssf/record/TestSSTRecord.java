@@ -365,8 +365,8 @@ public final class TestSSTRecord extends TestCase {
     {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("duprich1.xls");
         HSSFSheet sheet = wb.getSheetAt( 1 );
-        assertEquals( "01/05 (Wed)", sheet.getRow( 0 ).getCell( (short) 8 ).getStringCellValue() );
-        assertEquals( "01/05 (Wed)", sheet.getRow( 1 ).getCell( (short) 8 ).getStringCellValue() );
+        assertEquals( "01/05 (Wed)", sheet.getRow( 0 ).getCell(8 ).getStringCellValue() );
+        assertEquals( "01/05 (Wed)", sheet.getRow( 1 ).getCell(8 ).getStringCellValue() );
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         wb.write( baos );
@@ -375,12 +375,12 @@ public final class TestSSTRecord extends TestCase {
         wb = HSSFTestDataSamples.openSampleWorkbook("duprich2.xls");
         sheet = wb.getSheetAt( 0 );
         int row = 0;
-        assertEquals( "Testing", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
-        assertEquals( "rich", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
-        assertEquals( "text", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
-        assertEquals( "strings", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
-        assertEquals( "Testing", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
-        assertEquals( "Testing", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
+        assertEquals( "Testing", sheet.getRow( row++ ).getCell(0 ).getStringCellValue() );
+        assertEquals( "rich", sheet.getRow( row++ ).getCell(0 ).getStringCellValue() );
+        assertEquals( "text", sheet.getRow( row++ ).getCell(0 ).getStringCellValue() );
+        assertEquals( "strings", sheet.getRow( row++ ).getCell(0 ).getStringCellValue() );
+        assertEquals( "Testing", sheet.getRow( row++ ).getCell(0 ).getStringCellValue() );
+        assertEquals( "Testing", sheet.getRow( row++ ).getCell(0 ).getStringCellValue() );
 
         wb.write( baos );
     }
