@@ -14,9 +14,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hpbf.model;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -34,9 +34,8 @@ public abstract class EscherPart extends HPBFPart {
 	 * Creates the Escher Part, and finds our child
 	 *  escher records
 	 */
-	public EscherPart(DirectoryNode baseDir) throws FileNotFoundException,
-			IOException {
-		super(baseDir);
+	public EscherPart(DirectoryNode baseDir, String[] parts) throws IOException {
+		super(baseDir, parts);
 		
 		// Now create our Escher children
 		DefaultEscherRecordFactory erf = 

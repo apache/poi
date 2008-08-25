@@ -30,23 +30,35 @@ import org.apache.poi.poifs.filesystem.DocumentEntry;
  */
 public abstract class HPBFPart {
 	protected byte[] data;
-	
-	public HPBFPart(DirectoryNode baseDir) throws FileNotFoundException, IOException {
-		String[] path = getPath(); 
+	/**
+	 * @param path  the path to the part, eg Contents or Quill, QuillSub, CONTENTS
+	 */
+	public HPBFPart(DirectoryNode baseDir, String[] path) throws IOException {
+		 
 		DirectoryNode dir = getDir(path, baseDir);
 		String name = path[path.length-1];
 		
-		DocumentEntry docProps =
-			(DocumentEntry)dir.getEntry(name);
+		DocumentEntry docProps;
+		try {
+			docProps = (DocumentEntry)dir.getEntry(name);
+		} catch (FileNotFoundException e) {
+			throw new IllegalArgumentException("File invalid - failed to find document entry '" 
+					+ name + "'");
+		}
 
 		// Grab the data from the part stream
 		data = new byte[docProps.getSize()];
 		dir.createDocumentInputStream(name).read(data);
 	}
-	private DirectoryNode getDir(String[] path, DirectoryNode baseDir) throws FileNotFoundException {
+	private DirectoryNode getDir(String[] path, DirectoryNode baseDir) {
 		DirectoryNode dir = baseDir;
 		for(int i=0; i<path.length-1; i++) {
-			dir = (DirectoryNode)dir.getEntry(path[i]);
+			try {
+				dir = (DirectoryNode)dir.getEntry(path[i]);
+			} catch (FileNotFoundException e) {
+				throw new IllegalArgumentException("File invalid - failed to find directory entry '" 
+						+ path[i] + "'");
+			}
 		}
 		return dir;
 	}
@@ -86,8 +98,7 @@ public abstract class HPBFPart {
 	public byte[] getData() { return data; }
 
 	/**
-	 * Returns the path to the part, eg Contents
-	 *  or Quill, QuillSub, CONTENTS
+	 * Returns
 	 */
-	public abstract String[] getPath();
+	public final String[] getPath() {return null;}
 }

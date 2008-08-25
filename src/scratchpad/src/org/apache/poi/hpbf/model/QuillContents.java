@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.hpbf.model;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.poi.hpbf.model.qcbits.QCBit;
@@ -28,12 +27,12 @@ import org.apache.poi.util.LittleEndian;
 /**
  * Quill -> QuillSub -> CONTENTS
  */
-public class QuillContents extends HPBFPart {
+public final class QuillContents extends HPBFPart {
+	private static final String[] PATH = { "Quill", "QuillSub", "CONTENTS", };
 	private QCBit[] bits;
 	
-	public QuillContents(DirectoryNode baseDir)
-			throws FileNotFoundException, IOException {
-		super(baseDir);
+	public QuillContents(DirectoryNode baseDir) throws IOException {
+		super(baseDir, PATH);
 		
 		// Now parse the first 512 bytes, and produce
 		//  all our bits
@@ -84,11 +83,5 @@ public class QuillContents extends HPBFPart {
 	protected void generateData() {
 		// TODO
 		throw new IllegalStateException("Not done yet!");
-	}
-
-	public String[] getPath() {
-		return new String[] {
-			"Quill", "QuillSub", "CONTENTS"
-		};
 	}
 }

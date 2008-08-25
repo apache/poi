@@ -14,22 +14,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hpbf.model;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 
-public class EscherStm extends EscherPart {
-	public EscherStm(DirectoryNode baseDir) throws FileNotFoundException,
-			IOException {
-		super(baseDir);
-	}
-
-	public String[] getPath() {
-		return new String[] {
-				"Escher", "EscherStm"
-		};
+public final class EscherStm extends EscherPart {
+	private static final String[] PATH = { "Escher", "EscherStm", };
+	public EscherStm(DirectoryNode baseDir) throws IOException {
+		super(baseDir, PATH);
 	}
 }

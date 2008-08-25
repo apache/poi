@@ -14,9 +14,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hpbf.model;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -24,14 +24,11 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 /**
  * The main Contents. Not yet understood
  */
-public class MainContents extends HPBFPart {
-	public MainContents(DirectoryNode baseDir)
-			throws FileNotFoundException, IOException {
-		super(baseDir);
-	}
-
-	public String[] getPath() {
-		return new String[] { "Contents" };
+public final class MainContents extends HPBFPart {
+	private static final String[] PATH = { "Contents", };
+	
+	public MainContents(DirectoryNode baseDir) throws IOException {
+		super(baseDir, PATH);
 	}
 
 	protected void generateData() {

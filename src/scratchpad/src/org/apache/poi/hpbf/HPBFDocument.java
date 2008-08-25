@@ -14,9 +14,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hpbf;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,7 +34,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  for HPBF, our implementation of the publisher
  *  file format. 
  */
-public class HPBFDocument extends POIDocument {
+public final class HPBFDocument extends POIDocument {
 	private MainContents mainContents;
 	private QuillContents quillContents;
 	private EscherStm escherStm;
@@ -59,28 +59,12 @@ public class HPBFDocument extends POIDocument {
 		
 		// Go looking for our interesting child
 		//  streams
-		try {
-			mainContents = new MainContents(dir);
-		} catch(FileNotFoundException e) {
-			throw new IllegalArgumentException("File invalid - missing required main Contents part", e);
-		}
-		try {
-			quillContents = new QuillContents(dir);
-		} catch(FileNotFoundException e) {
-			throw new IllegalArgumentException("File invalid - missing required Quill CONTENTS part", e);
-		}
+		mainContents = new MainContents(dir);
+		quillContents = new QuillContents(dir);
 		
 		// Now the Escher bits
-		try {
-			escherStm = new EscherStm(dir);
-		} catch(FileNotFoundException e) {
-			throw new IllegalArgumentException("File invalid - missing required EscherStm part", e);
-		}
-		try {
-			escherDelayStm = new EscherDelayStm(dir);
-		} catch(FileNotFoundException e) {
-			throw new IllegalArgumentException("File invalid - missing required EscherDelayStm part", e);
-		}
+		escherStm = new EscherStm(dir);
+		escherDelayStm = new EscherDelayStm(dir);
 	}
 
 	public MainContents getMainContents() {
