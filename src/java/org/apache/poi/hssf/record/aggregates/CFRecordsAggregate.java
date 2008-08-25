@@ -18,14 +18,12 @@
 package org.apache.poi.hssf.record.aggregates;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.util.CellRangeAddress;
 
 /**
@@ -36,11 +34,9 @@ import org.apache.poi.hssf.util.CellRangeAddress;
  * @author Dmitriy Kumshayev
  *
  */
-public final class CFRecordsAggregate extends Record {
+public final class CFRecordsAggregate extends RecordAggregate {
 	/** Excel allows up to 3 conditional formating rules */
 	private static final int MAX_CONDTIONAL_FORMAT_RULES = 3;
-
-	public final static short sid = -2008; // not a real BIFF record
 
 	private final CFHeaderRecord header;
 
@@ -107,45 +103,6 @@ public final class CFRecordsAggregate extends Record {
 		return new CFRecordsAggregate((CFHeaderRecord) header.clone(), newRecs);
 	}
 
-	protected void fillFields(RecordInputStream in)
-	{
-	     // You never fill an aggregate record
-	}
-
-	public short getSid()
-	{
-		return sid;
-	}
-
-	/**
-	 * called by the class that is responsible for writing this sucker.
-	 * Subclasses should implement this so that their data is passed back in a
-	 * byte array.
-	 *
-	 * @param offset to begin writing at
-	 * @param data byte array containing instance data
-	 * @return number of bytes written
-	 */
-
-	public int serialize(int offset, byte[] data)
-	{
-		int nRules = rules.size();
-		header.setNumberOfConditionalFormats(nRules);
-
-		int pos = offset;
-
-		pos += header.serialize(pos, data);
-		for(int i=0; i< nRules; i++) {
-			pos += getRule(i).serialize(pos, data);
-		}
-		return pos - offset;
-	}
-
-	protected void validateSid(short id)
-	{
-		// do nothing here
-	}
-
 	/**
 	 * @return the header. Never <code>null</code>.
 	 */
@@ -165,10 +122,16 @@ public final class CFRecordsAggregate extends Record {
 		return (CFRuleRecord) rules.get(idx);
 	}
 	public void setRule(int idx, CFRuleRecord r) {
+		if (r == null) {
+			throw new IllegalArgumentException("r must not be null");
+		}
 		checkRuleIndex(idx);
 		rules.set(idx, r);
 	}
 	public void addRule(CFRuleRecord r) {
+		if (r == null) {
+			throw new IllegalArgumentException("r must not be null");
+		}
 		if(rules.size() >= MAX_CONDTIONAL_FORMAT_RULES) {
 			throw new IllegalStateException("Cannot have more than " 
 					+ MAX_CONDTIONAL_FORMAT_RULES + " conditional format rules");
@@ -178,26 +141,6 @@ public final class CFRecordsAggregate extends Record {
 	}
 	public int getNumberOfRules() {
 		return rules.size();
-	}
-
-	/**
-	 *  @return sum of sizes of all aggregated records
-	 */
-	public int getRecordSize() 
-	{
-		int size = 0;
-		if( header != null)
-		{
-			size += header.getRecordSize();
-		}
-		if( rules != null)
-		{
-			for(Iterator irecs = rules.iterator(); irecs.hasNext(); )
-			{
-				size += (( Record ) irecs.next()).getRecordSize();
-			}
-		}
-		return size;
 	}
 
 	/**
@@ -215,12 +158,17 @@ public final class CFRecordsAggregate extends Record {
 		for(int i=0; i<rules.size(); i++)
 		{
 			CFRuleRecord cfRule = (CFRuleRecord)rules.get(i);
-			if(cfRule!=null)
-			{
-				buffer.append(cfRule.toString());
-			}
+			buffer.append(cfRule.toString());
 		}
 		buffer.append("[/CF]\n");
 		return buffer.toString();
+	}
+
+	public void visitContainedRecords(RecordVisitor rv) {
+		rv.visitRecord(header);
+		for(int i=0; i<rules.size(); i++) {
+			CFRuleRecord rule = (CFRuleRecord)rules.get(i);
+			rv.visitRecord(rule);
+		}
 	}
 }

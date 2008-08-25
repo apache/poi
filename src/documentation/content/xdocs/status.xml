@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">45682 - Fix for cloning of CFRecordsAggregate</action>
            <action dev="POI-DEVELOPERS" type="add">Initial support for evaluating external add-in functions like YEARFRAC</action>
            <action dev="POI-DEVELOPERS" type="fix">45672 - Fix for MissingRecordAwareHSSFListener to prevent multiple LastCellOfRowDummyRecords when shared formulas are present</action>
            <action dev="POI-DEVELOPERS" type="fix">45645 - Fix for HSSFSheet.autoSizeColumn() for widths exceeding Short.MAX_VALUE</action>

@@ -63,7 +63,8 @@ public final class TestCFRecordsAggregate extends TestCase
 		record = CFRecordsAggregate.createCFAggregate(new RecordStream(recs, 0));
 
 		// Serialize
-		byte [] serializedRecord = record.serialize();
+		byte [] serializedRecord = new byte[record.getRecordSize()];
+		record.serialize(0, serializedRecord);
 		InputStream in = new ByteArrayInputStream(serializedRecord);
 
 		//Parse
