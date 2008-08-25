@@ -158,9 +158,16 @@ public final class HSSFDateUtil {
         if (!isValidExcelDate(date)) {
             return null;
         }
+        int wholeDays = (int)Math.floor(date);
+        int millisecondsInDay = (int)((date - wholeDays) * DAY_MILLISECONDS + 0.5);
+        Calendar calendar = new GregorianCalendar(); // using default time-zone
+        setCalendar(calendar, wholeDays, millisecondsInDay, use1904windowing);
+        return calendar.getTime();
+    }
+    public static void setCalendar(Calendar calendar, int wholeDays, int millisecondsInDay,
+            boolean use1904windowing) {
         int startYear = 1900;
         int dayAdjust = -1; // Excel thinks 2/29/1900 is a valid date, which it isn't
-        int wholeDays = (int)Math.floor(date);
         if (use1904windowing) {
             startYear = 1904;
             dayAdjust = 1; // 1904 date windowing uses 1/2/1904 as the first day
@@ -170,12 +177,8 @@ public final class HSSFDateUtil {
             // If Excel date == 2/29/1900, will become 3/1/1900 in Java representation
             dayAdjust = 0;
         }
-        GregorianCalendar calendar = new GregorianCalendar(startYear,0,
-                                                 wholeDays + dayAdjust);
-        int millisecondsInDay = (int)((date - Math.floor(date)) *
-                                      DAY_MILLISECONDS + 0.5);
+        calendar.set(startYear,0, wholeDays + dayAdjust, 0, 0, 0);
         calendar.set(GregorianCalendar.MILLISECOND, millisecondsInDay);
-        return calendar.getTime();
     }
 
     /**

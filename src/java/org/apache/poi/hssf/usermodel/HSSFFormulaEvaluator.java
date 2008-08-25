@@ -51,6 +51,7 @@ import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.FunctionEval;
 import org.apache.poi.hssf.record.formula.eval.NameEval;
+import org.apache.poi.hssf.record.formula.eval.NameXEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.OperationEval;
 import org.apache.poi.hssf.record.formula.eval.Ref2DEval;
@@ -61,10 +62,10 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- * 
+ *
  */
 public class HSSFFormulaEvaluator {
-                
+
     // params to lookup the right constructor using reflection
     private static final Class[] VALUE_CONTRUCTOR_CLASS_ARRAY = new Class[] { Ptg.class };
 
@@ -78,8 +79,8 @@ public class HSSFFormulaEvaluator {
     private static final Map VALUE_EVALS_MAP = new HashMap();
 
     /*
-     * Following is the mapping between the Ptg tokens returned 
-     * by the FormulaParser and the *Eval classes that are used 
+     * Following is the mapping between the Ptg tokens returned
+     * by the FormulaParser and the *Eval classes that are used
      * by the FormulaEvaluator
      */
     static {
@@ -90,15 +91,15 @@ public class HSSFFormulaEvaluator {
 
     }
 
-    
+
     protected HSSFSheet _sheet;
     protected HSSFWorkbook _workbook;
-    
+
     public HSSFFormulaEvaluator(HSSFSheet sheet, HSSFWorkbook workbook) {
         _sheet = sheet;
         _workbook = workbook;
     }
-    
+
     /**
      * Does nothing
      * @deprecated - not needed, since the current row can be derived from the cell
@@ -107,24 +108,24 @@ public class HSSFFormulaEvaluator {
         // do nothing
     }
 
-    
+
     /**
      * Returns an underlying FormulaParser, for the specified
      *  Formula String and HSSFWorkbook.
      * This will allow you to generate the Ptgs yourself, if
      *  your needs are more complex than just having the
-     *  formula evaluated. 
+     *  formula evaluated.
      */
     public static FormulaParser getUnderlyingParser(HSSFWorkbook workbook, String formula) {
         return new FormulaParser(formula, workbook);
     }
-    
+
     /**
      * If cell contains a formula, the formula is evaluated and returned,
      * else the CellValue simply copies the appropriate cell value from
      * the cell and also its cell type. This method should be preferred over
      * evaluateInCell() when the call should not modify the contents of the
-     * original cell. 
+     * original cell.
      * @param cell
      */
     public CellValue evaluate(HSSFCell cell) {
@@ -157,17 +158,17 @@ public class HSSFFormulaEvaluator {
         }
         return retval;
     }
-    
-    
+
+
     /**
      * If cell contains formula, it evaluates the formula,
      *  and saves the result of the formula. The cell
      *  remains as a formula cell.
      * Else if cell does not contain formula, this method leaves
-     *  the cell unchanged. 
+     *  the cell unchanged.
      * Note that the type of the formula result is returned,
      *  so you know what kind of value is also stored with
-     *  the formula. 
+     *  the formula.
      * <pre>
      * int evaluatedCellType = evaluator.evaluateFormulaCell(cell);
      * </pre>
@@ -205,14 +206,14 @@ public class HSSFFormulaEvaluator {
         }
         return -1;
     }
-        
+
     /**
      * If cell contains formula, it evaluates the formula, and
      *  puts the formula result back into the cell, in place
      *  of the old formula.
      * Else if cell does not contain formula, this method leaves
-     *  the cell unchanged. 
-     * Note that the same instance of HSSFCell is returned to 
+     *  the cell unchanged.
+     * Note that the same instance of HSSFCell is returned to
      * allow chained calls like:
      * <pre>
      * int evaluatedCellType = evaluator.evaluateInCell(cell).getCellType();
@@ -252,7 +253,7 @@ public class HSSFFormulaEvaluator {
         }
         return cell;
     }
-    
+
     /**
      * Loops over all cells in all sheets of the supplied
      *  workbook.
@@ -261,7 +262,7 @@ public class HSSFFormulaEvaluator {
      *  remain as formula cells.
      * For cells that do not contain formulas, no changes
      *  are made.
-     * This is a helpful wrapper around looping over all 
+     * This is a helpful wrapper around looping over all
      *  cells, and calling evaluateFormulaCell on each one.
      */
 	public static void evaluateAllFormulaCells(HSSFWorkbook wb) {
@@ -280,8 +281,8 @@ public class HSSFFormulaEvaluator {
 			}
 		}
 	}
-        
-    
+
+
     /**
      * Returns a CellValue wrapper around the supplied ValueEval instance.
      * @param eval
@@ -318,19 +319,19 @@ public class HSSFFormulaEvaluator {
         }
         return retval;
     }
-    
+
     /**
-     * Dev. Note: Internal evaluate must be passed only a formula cell 
+     * Dev. Note: Internal evaluate must be passed only a formula cell
      * else a runtime exception will be thrown somewhere inside the method.
      * (Hence this is a private method.)
      */
     private static ValueEval internalEvaluate(HSSFCell srcCell, HSSFSheet sheet, HSSFWorkbook workbook) {
         int srcRowNum = srcCell.getRowIndex();
         short srcColNum = srcCell.getCellNum();
-        
-        
+
+
         EvaluationCycleDetector tracker = EvaluationCycleDetectorManager.getTracker();
-        
+
         if(!tracker.startEvaluate(workbook, sheet, srcRowNum, srcColNum)) {
             return ErrorEval.CIRCULAR_REF_ERROR;
         }
@@ -340,7 +341,7 @@ public class HSSFFormulaEvaluator {
             tracker.endEvaluate(workbook, sheet, srcRowNum, srcColNum);
         }
     }
-    private static ValueEval evaluateCell(HSSFWorkbook workbook, HSSFSheet sheet, 
+    private static ValueEval evaluateCell(HSSFWorkbook workbook, HSSFSheet sheet,
             int srcRowNum, short srcColNum, String cellFormulaText) {
 
     	Ptg[] ptgs = FormulaParser.parse(cellFormulaText, workbook);
@@ -350,20 +351,21 @@ public class HSSFFormulaEvaluator {
 
             // since we don't know how to handle these yet :(
             Ptg ptg = ptgs[i];
-            if (ptg instanceof ControlPtg) { 
+            if (ptg instanceof ControlPtg) {
                 // skip Parentheses, Attr, etc
-                continue; 
+                continue;
             }
             if (ptg instanceof MemErrPtg) { continue; }
             if (ptg instanceof MissingArgPtg) { continue; }
-            if (ptg instanceof NamePtg) { 
+            if (ptg instanceof NamePtg) {
                 // named ranges, macro functions
                 NamePtg namePtg = (NamePtg) ptg;
                 stack.push(new NameEval(namePtg.getIndex()));
-                continue; 
+                continue;
             }
             if (ptg instanceof NameXPtg) {
-                // TODO - external functions
+                NameXPtg nameXPtg = (NameXPtg) ptg;
+                stack.push(new NameXEval(nameXPtg.getSheetRefIndex(), nameXPtg.getNameIndex()));
                 continue;
             }
             if (ptg instanceof UnknownPtg) { continue; }
@@ -426,9 +428,9 @@ public class HSSFFormulaEvaluator {
         }
         value = dereferenceValue(value, srcRowNum, srcColNum);
         if (value instanceof BlankEval) {
-        	// Note Excel behaviour here. A blank final final value is converted to zero.  
+        	// Note Excel behaviour here. A blank final final value is converted to zero.
             return NumberEval.ZERO;
-            // Formulas _never_ evaluate to blank.  If a formula appears to have evaluated to 
+            // Formulas _never_ evaluate to blank.  If a formula appears to have evaluated to
             // blank, the actual value is empty string. This can be verified with ISBLANK().
         }
         return value;
@@ -472,13 +474,13 @@ public class HSSFFormulaEvaluator {
         }
         return operation.evaluate(ops, srcRowNum, srcColNum);
     }
-    
+
     public static AreaEval evaluateAreaPtg(HSSFSheet sheet, HSSFWorkbook workbook, AreaPtg ap) {
         int row0 = ap.getFirstRow();
         int col0 = ap.getFirstColumn();
         int row1 = ap.getLastRow();
         int col1 = ap.getLastColumn();
-        
+
         // If the last row is -1, then the
         //  reference is for the rest of the column
         // (eg C:C)
@@ -497,7 +499,7 @@ public class HSSFFormulaEvaluator {
     	int col1 = a3dp.getLastColumn();
         Workbook wb = workbook.getWorkbook();
         HSSFSheet xsheet = workbook.getSheetAt(wb.getSheetIndexFromExternSheetIndex(a3dp.getExternSheetIndex()));
-        
+
         // If the last row is -1, then the
         //  reference is for the rest of the column
         // (eg C:C)
@@ -505,12 +507,12 @@ public class HSSFFormulaEvaluator {
         if(row1 == -1 && row0 >= 0) {
             row1 = (short)xsheet.getLastRowNum();
         }
-        
+
         ValueEval[] values = evalArea(workbook, xsheet, row0, col0, row1, col1);
         return new Area3DEval(a3dp, values);
     }
-    
-    private static ValueEval[] evalArea(HSSFWorkbook workbook, HSSFSheet sheet, 
+
+    private static ValueEval[] evalArea(HSSFWorkbook workbook, HSSFSheet sheet,
     		int row0, int col0, int row1, int col1) {
         ValueEval[] values = new ValueEval[(row1 - row0 + 1) * (col1 - col0 + 1)];
         for (int x = row0; sheet != null && x < row1 + 1; x++) {
@@ -533,7 +535,7 @@ public class HSSFFormulaEvaluator {
      * one of: Area3DPtg, AreaPtg, ReferencePtg, Ref3DPtg, IntPtg, NumberPtg,
      * StringPtg, BoolPtg <br/>special Note: OperationPtg subtypes cannot be
      * passed here!
-     * 
+     *
      * @param ptg
      */
     protected static Eval getEvalForPtg(Ptg ptg) {
@@ -607,12 +609,12 @@ public class HSSFFormulaEvaluator {
      * Creates a Ref2DEval for ReferencePtg.
      * Non existent cells are treated as RefEvals containing BlankEval.
      */
-    private static Ref2DEval createRef2DEval(RefPtg ptg, HSSFCell cell, 
+    private static Ref2DEval createRef2DEval(RefPtg ptg, HSSFCell cell,
             HSSFSheet sheet, HSSFWorkbook workbook) {
         if (cell == null) {
             return new Ref2DEval(ptg, BlankEval.INSTANCE);
         }
-        
+
         switch (cell.getCellType()) {
             case HSSFCell.CELL_TYPE_NUMERIC:
                 return new Ref2DEval(ptg, new NumberEval(cell.getNumericCellValue()));
@@ -633,7 +635,7 @@ public class HSSFFormulaEvaluator {
     /**
      * create a Ref3DEval for Ref3DPtg.
      */
-    private static Ref3DEval createRef3DEval(Ref3DPtg ptg, HSSFCell cell, 
+    private static Ref3DEval createRef3DEval(Ref3DPtg ptg, HSSFCell cell,
             HSSFSheet sheet, HSSFWorkbook workbook) {
         if (cell == null) {
             return new Ref3DEval(ptg, BlankEval.INSTANCE);
@@ -654,9 +656,9 @@ public class HSSFFormulaEvaluator {
         }
         throw new RuntimeException("Unexpected cell type (" + cell.getCellType() + ")");
     }
-    
+
     /**
-     * Mimics the 'data view' of a cell. This allows formula evaluator 
+     * Mimics the 'data view' of a cell. This allows formula evaluator
      * to return a CellValue instead of precasting the value to String
      * or Number or boolean type.
      * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -667,7 +669,7 @@ public class HSSFFormulaEvaluator {
         private double numberValue;
         private boolean booleanValue;
         private byte errorValue;
-        
+
         /**
          * CellType should be one of the types defined in HSSFCell
          * @param cellType
@@ -750,7 +752,7 @@ public class HSSFFormulaEvaluator {
 
     /**
      * debug method
-     * 
+     *
      * @param formula
      * @param sheet
      * @param workbook
@@ -770,5 +772,4 @@ public class HSSFFormulaEvaluator {
         }
         System.out.println("</ptg-group>");
     }
-
 }
