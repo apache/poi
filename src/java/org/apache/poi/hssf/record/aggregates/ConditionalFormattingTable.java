@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.CFHeaderRecord;
-import org.apache.poi.hssf.record.Record;
 
 /**
  * Holds all the conditional formatting for a workbook sheet.<p/>
@@ -53,7 +52,8 @@ public final class ConditionalFormattingTable extends RecordAggregate {
 
 	public void visitContainedRecords(RecordVisitor rv) {
 		for (int i = 0; i < _cfHeaders.size(); i++) {
-			rv.visitRecord((Record) _cfHeaders.get(i));
+			CFRecordsAggregate subAgg = (CFRecordsAggregate) _cfHeaders.get(i);
+			subAgg.visitContainedRecords(rv);
 		}
 	}
 
