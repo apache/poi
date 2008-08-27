@@ -43,6 +43,7 @@ import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.SaveRecalcRecord;
 import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.hssf.record.UncalcedRecord;
+import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
@@ -57,8 +58,6 @@ import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
  * @author Josh Micich
  */
 final class RecordOrderer {
-	// TODO - add UninterpretedRecord as base class for many of these
-	// unimplemented sids
 	
 	// TODO - simplify logic using a generalised record ordering
 
@@ -126,7 +125,7 @@ final class RecordOrderer {
 				case PrintGridlinesRecord.sid:
 				case GridsetRecord.sid:
 				case DefaultRowHeightRecord.sid:
-				case 0x0081: // SHEETPR
+				case UnknownRecord.SHEETPR_0081:
 					return true;
 				// next is the 'Worksheet Protection Block'
 			}
@@ -149,10 +148,10 @@ final class RecordOrderer {
 				case SCLRecord.sid:
 				case PaneRecord.sid:
 				case SelectionRecord.sid:
-				case 0x0099:// STANDARDWIDTH
+				case UnknownRecord.STANDARDWIDTH_0099:
 				// MergedCellsTable usually here 
-				case 0x015f:// LABELRANGES
-				case 0x00ef:// PHONETICPR
+				case UnknownRecord.LABELRANGES_015F:
+				case UnknownRecord.PHONETICPR_00EF:
 					return i + 1;
 			}
 		}
@@ -168,7 +167,7 @@ final class RecordOrderer {
 				case SCLRecord.sid:
 				case PaneRecord.sid:
 				case SelectionRecord.sid:
-				case 0x0099:// STANDARDWIDTH
+				case UnknownRecord.STANDARDWIDTH_0099:
 					return i + 1;
 			}
 		}
@@ -229,16 +228,16 @@ final class RecordOrderer {
 		short sid = ((Record)rb).getSid();
 		switch(sid) {
 			case WindowTwoRecord.sid:
-			case 0x00A0: // SCL
+			case UnknownRecord.SCL_00A0:
 			case PaneRecord.sid:
 			case SelectionRecord.sid:
-			case 0x0099: // STANDARDWIDTH
+			case UnknownRecord.STANDARDWIDTH_0099:
 			// MergedCellsTable
-			case 0x015F: // LABELRANGES
-			case 0x00EF: // PHONETICPR
+			case UnknownRecord.LABELRANGES_015F:
+			case UnknownRecord.PHONETICPR_00EF:
 			// ConditionalFormattingTable
 			case HyperlinkRecord.sid:
-			case 0x0800: // QUICKTIP
+			case UnknownRecord.QUICKTIP_0800:
 				return true;
 		}
 		return false;
@@ -246,9 +245,9 @@ final class RecordOrderer {
 
 	private static boolean isDVTSubsequentRecord(short sid) {
 		switch(sid) {
-			case 0x0862: // SHEETLAYOUT
-			case 0x0867: // SHEETPROTECTION
-			case 0x0868: // RANGEPROTECTION
+			case UnknownRecord.SHEETEXT_0862:
+			case UnknownRecord.SHEETPROTECTION_0867:
+			case UnknownRecord.RANGEPROTECTION_0868:
 			case EOFRecord.sid:
 				return true;
 		}
