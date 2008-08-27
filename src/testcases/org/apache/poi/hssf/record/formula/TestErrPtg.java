@@ -34,7 +34,7 @@ public class TestErrPtg extends AbstractPtgTestCase
     public void testReading() throws Exception
     {
         HSSFWorkbook workbook = loadWorkbook("ErrPtg.xls");
-        HSSFCell cell = workbook.getSheetAt(0).getRow(3).getCell((short) 0);
+        HSSFCell cell = workbook.getSheetAt(0).getRow(3).getCell(0);
         assertEquals("Wrong cell value", 4.0, cell.getNumericCellValue(), 0.0);
         assertEquals("Wrong cell formula", "ERROR.TYPE(#REF!)", cell.getCellFormula());
     }

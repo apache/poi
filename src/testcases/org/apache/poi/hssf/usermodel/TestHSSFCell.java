@@ -76,7 +76,7 @@ public final class TestHSSFCell extends TestCase {
         HSSFSheet        s      = wb.createSheet("testSheet1");
         HSSFRow          r      = null;
         HSSFCell         c      = null;
-        r = s.createRow((short)0);
+        r = s.createRow(0);
         c=r.createCell(1);
         //c.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
         c.setCellValue(true);
@@ -85,7 +85,7 @@ public final class TestHSSFCell extends TestCase {
         //c.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
         c.setCellValue(false);
 
-        r = s.createRow((short)1);
+        r = s.createRow(1);
         c=r.createCell(1);
         //c.setCellType(HSSFCell.CELL_TYPE_ERROR);
         c.setCellErrorValue((byte)0);
@@ -241,7 +241,7 @@ public final class TestHSSFCell extends TestCase {
             cs.setBorderLeft((short)1);
             cs.setBorderBottom((short)1);
             
-            r = s.createRow((short)0);
+            r = s.createRow(0);
             c=r.createCell(0);
             c.setCellStyle(cs);
             c.setCellFormula("2*3");

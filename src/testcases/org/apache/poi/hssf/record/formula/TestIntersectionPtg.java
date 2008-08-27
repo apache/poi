@@ -34,7 +34,7 @@ public class TestIntersectionPtg extends AbstractPtgTestCase
     public void testReading() throws Exception
     {
         HSSFWorkbook workbook = loadWorkbook("IntersectionPtg.xls");
-        HSSFCell cell = workbook.getSheetAt(0).getRow(4).getCell((short) 2);
+        HSSFCell cell = workbook.getSheetAt(0).getRow(4).getCell(2);
         assertEquals("Wrong cell value", 5.0, cell.getNumericCellValue(), 0.0);
         assertEquals("Wrong cell formula", "SUM(A1:B2 B2:C3)", cell.getCellFormula());
     }

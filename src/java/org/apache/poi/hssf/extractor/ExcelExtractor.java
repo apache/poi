@@ -107,7 +107,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 				int firstCell = row.getFirstCellNum();
 				int lastCell = row.getLastCellNum();
 				for(int k=firstCell;k<lastCell;k++) {
-					HSSFCell cell = row.getCell((short)k);
+					HSSFCell cell = row.getCell(k);
 					boolean outputContents = false;
 					if(cell == null) { continue; }
 					

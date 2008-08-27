@@ -147,10 +147,10 @@ public final class TestHSSFSheet extends TestCase {
 	public void testReadBooleans() {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet("Test boolean");
-		HSSFRow row = sheet.createRow((short) 2);
-		HSSFCell cell = row.createCell((short) 9);
+		HSSFRow row = sheet.createRow(2);
+		HSSFCell cell = row.createCell(9);
 		cell.setCellValue(true);
-		cell = row.createCell((short) 11);
+		cell = row.createCell(11);
 		cell.setCellValue(true);
 		
 		workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
@@ -164,7 +164,7 @@ public final class TestHSSFSheet extends TestCase {
 	public void testRemoveRow() {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet("Test boolean");
-		HSSFRow row = sheet.createRow((short) 2);
+		HSSFRow row = sheet.createRow(2);
 		sheet.removeRow(row);
 	}
 
@@ -186,8 +186,8 @@ public final class TestHSSFSheet extends TestCase {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet("Test Clone");
 		HSSFRow row = sheet.createRow(0);
-		HSSFCell cell = row.createCell((short) 0);
-		HSSFCell cell2 = row.createCell((short) 1);
+		HSSFCell cell = row.createCell(0);
+		HSSFCell cell2 = row.createCell(1);
 		cell.setCellValue(new HSSFRichTextString("clone_test"));
 		cell2.setCellFormula("sin(1)");
 
@@ -216,8 +216,8 @@ public final class TestHSSFSheet extends TestCase {
 	public void testCloneSheetMultipleTimes() {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet("Test Clone");
-		HSSFRow row = sheet.createRow((short) 0);
-		HSSFCell cell = row.createCell((short) 0);
+		HSSFRow row = sheet.createRow(0);
+		HSSFCell cell = row.createCell(0);
 		cell.setCellValue(new HSSFRichTextString("clone_test"));
 		//Clone the sheet multiple times
 		workbook.cloneSheet(0);
@@ -510,11 +510,11 @@ public final class TestHSSFSheet extends TestCase {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet();
 		HSSFRow row = sheet.createRow(0);
-		HSSFCell cell = row.createCell((short)0);
+		HSSFCell cell = row.createCell(0);
 		cell.setCellValue(new HSSFRichTextString("first row, first cell"));
 
 		row = sheet.createRow(1);
-		cell = row.createCell((short)1);
+		cell = row.createCell(1);
 		cell.setCellValue(new HSSFRichTextString("second row, second cell"));
 
 		CellRangeAddress region = new CellRangeAddress(1, 1, 0, 1);
@@ -617,13 +617,13 @@ public final class TestHSSFSheet extends TestCase {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet s = wb.createSheet("Sheet1");
 		HSSFRow r = s.createRow(0);
-		r.createCell((short) 0).setCellValue(1);
-		r.createCell((short) 1).setCellFormula("A1*2");
+		r.createCell(0).setCellValue(1);
+		r.createCell(1).setCellFormula("A1*2");
 		HSSFSheet s1 = wb.cloneSheet(0);
 		r = s1.getRow(0);
-		assertEquals("double", r.getCell((short) 0).getNumericCellValue(), 1, 0); // sanity check
-		assertNotNull(r.getCell((short) 1));
-		assertEquals("formula", r.getCell((short) 1).getCellFormula(), "A1*2");
+		assertEquals("double", r.getCell(0).getNumericCellValue(), 1, 0); // sanity check
+		assertNotNull(r.getCell(1));
+		assertEquals("formula", r.getCell(1).getCellFormula(), "A1*2");
 	}
 
 	/** test that new default column styles get applied */
@@ -633,7 +633,7 @@ public final class TestHSSFSheet extends TestCase {
 		HSSFSheet s = wb.createSheet();
 		s.setDefaultColumnStyle((short) 0, style);
 		HSSFRow r = s.createRow(0);
-		HSSFCell c = r.createCell((short) 0);
+		HSSFCell c = r.createCell(0);
 		assertEquals("style should match", style.getIndex(), c.getCellStyle().getIndex());
 	}
 
@@ -710,8 +710,8 @@ public final class TestHSSFSheet extends TestCase {
 		HSSFSheet sheet = workbook.getSheetAt(0);
 		HSSFSheet sheet2 = workbook.getSheetAt(0);
 		HSSFRow row = sheet.getRow(0);
-		row.createCell((short) 0).setCellValue(5);
-		row.createCell((short) 1).setCellValue(8);
+		row.createCell(0).setCellValue(5);
+		row.createCell(1).setCellValue(8);
 		assertFalse(sheet.getForceFormulaRecalculation());
 		assertFalse(sheet2.getForceFormulaRecalculation());
 

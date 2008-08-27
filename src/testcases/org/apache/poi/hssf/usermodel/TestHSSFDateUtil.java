@@ -16,7 +16,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.usermodel;
 
 import java.util.Calendar;
@@ -52,9 +51,7 @@ public final class TestHSSFDateUtil extends TestCase {
      * Checks the date conversion functions in the HSSFDateUtil class.
      */
 
-    public void testDateConversion()
-            throws Exception
-    {
+    public void testDateConversion() {
 
         // Iteratating over the hours exposes any rounding issues.
         for (int hour = 0; hour < 23; hour++)
@@ -131,7 +128,7 @@ public final class TestHSSFDateUtil extends TestCase {
         for (int hour = 0; hour < 24; hour++, excelDate += oneHour) {
 
             // Skip 02:00 CET as that is the Daylight change time
-            // and Java converts it automatically to 03:00 CEST            
+            // and Java converts it automatically to 03:00 CEST
             if (hour == 2) {
                 continue;
             }
@@ -186,7 +183,7 @@ public final class TestHSSFDateUtil extends TestCase {
                     HSSFDateUtil.getExcelDate(javaDate, false), oneMinute);
         }
     }
-    
+
     /**
      * Tests that we deal with time-zones properly
      */
@@ -207,8 +204,7 @@ public final class TestHSSFDateUtil extends TestCase {
             assertEquals("Checking timezone " + id, expected.getTime(), javaDate.getTime());
         }
     }
-    
-    
+
     /**
      * Tests that we correctly detect date formats as such
      */
@@ -220,7 +216,7 @@ public final class TestHSSFDateUtil extends TestCase {
             assertTrue( HSSFDateUtil.isInternalDateFormat(builtins[i]) );
             assertTrue( HSSFDateUtil.isADateFormat(builtins[i],formatStr) );
         }
-        
+
         // Now try a few built-in non date formats
         builtins = new short[] { 0x01, 0x02, 0x17, 0x1f, 0x30 };
         for(int i=0; i<builtins.length; i++) {
@@ -228,14 +224,14 @@ public final class TestHSSFDateUtil extends TestCase {
             assertFalse( HSSFDateUtil.isInternalDateFormat(builtins[i]) );
             assertFalse( HSSFDateUtil.isADateFormat(builtins[i],formatStr) );
         }
-        
+
         // Now for some non-internal ones
         // These come after the real ones
         int numBuiltins = HSSFDataFormat.getNumberOfBuiltinBuiltinFormats();
         assertTrue(numBuiltins < 60);
         short formatId = 60;
         assertFalse( HSSFDateUtil.isInternalDateFormat(formatId) );
-        
+
         // Valid ones first
         String[] formats = new String[] {
                 "yyyy-mm-dd", "yyyy/mm/dd", "yy/mm/dd", "yy/mmm/dd",
@@ -243,7 +239,7 @@ public final class TestHSSFDateUtil extends TestCase {
                 "dd-mm-yy", "dd-mm-yyyy",
                 "DD-MM-YY", "DD-mm-YYYY",
                 "dd\\-mm\\-yy", // Sometimes escaped
-                
+
                 // These crazy ones are valid
                 "yyyy-mm-dd;@", "yyyy/mm/dd;@",
                 "dd-mm-yy;@", "dd-mm-yyyy;@",
@@ -257,14 +253,14 @@ public final class TestHSSFDateUtil extends TestCase {
         };
         for(int i=0; i<formats.length; i++) {
             assertTrue(
-            		formats[i] + " is a date format", 
-            		HSSFDateUtil.isADateFormat(formatId, formats[i])
+                    formats[i] + " is a date format",
+                    HSSFDateUtil.isADateFormat(formatId, formats[i])
             );
         }
-        
+
         // Then time based ones too
         formats = new String[] {
-                "yyyy-mm-dd hh:mm:ss", "yyyy/mm/dd HH:MM:SS", 
+                "yyyy-mm-dd hh:mm:ss", "yyyy/mm/dd HH:MM:SS",
                 "mm/dd HH:MM", "yy/mmm/dd SS",
                 "mm/dd HH:MM AM", "mm/dd HH:MM am",
                 "mm/dd HH:MM PM", "mm/dd HH:MM pm",
@@ -272,30 +268,30 @@ public final class TestHSSFDateUtil extends TestCase {
         };
         for(int i=0; i<formats.length; i++) {
             assertTrue(
-            		formats[i] + " is a datetime format", 
-            		HSSFDateUtil.isADateFormat(formatId, formats[i])
+                    formats[i] + " is a datetime format",
+                    HSSFDateUtil.isADateFormat(formatId, formats[i])
             );
         }
-        
+
         // Then invalid ones
         formats = new String[] {
-                "yyyy*mm*dd", 
+                "yyyy*mm*dd",
                 "0.0", "0.000",
                 "0%", "0.0%",
                 "[]Foo", "[BLACK]0.00%",
                 "", null
         };
         for(int i=0; i<formats.length; i++) {
-            assertFalse( 
-            		formats[i] + " is not a date or datetime format",
-            		HSSFDateUtil.isADateFormat(formatId, formats[i])
+            assertFalse(
+                    formats[i] + " is not a date or datetime format",
+                    HSSFDateUtil.isADateFormat(formatId, formats[i])
             );
         }
-        
+
         // And these are ones we probably shouldn't allow,
         //  but would need a better regexp
         formats = new String[] {
-                "yyyy:mm:dd", 
+                "yyyy:mm:dd",
         };
         for(int i=0; i<formats.length; i++) {
         //    assertFalse( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
@@ -306,63 +302,63 @@ public final class TestHSSFDateUtil extends TestCase {
      * Test that against a real, test file, we still do everything
      *  correctly
      */
-    public void testOnARealFile() throws Exception {
+    public void testOnARealFile() {
 
         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("DateFormats.xls");
         HSSFSheet sheet       = workbook.getSheetAt(0);
         Workbook wb           = workbook.getWorkbook();
-        
+
         HSSFRow  row;
         HSSFCell cell;
         HSSFCellStyle style;
-        
+
         double aug_10_2007 = 39304.0;
-        
+
         // Should have dates in 2nd column
         // All of them are the 10th of August
         // 2 US dates, 3 UK dates
         row  = sheet.getRow(0);
-        cell = row.getCell((short)1);
+        cell = row.getCell(1);
         style = cell.getCellStyle();
         assertEquals(aug_10_2007, cell.getNumericCellValue(), 0.0001);
         assertEquals("d-mmm-yy", style.getDataFormatString());
         assertTrue(HSSFDateUtil.isInternalDateFormat(style.getDataFormat()));
         assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString()));
         assertTrue(HSSFDateUtil.isCellDateFormatted(cell));
-        
+
         row  = sheet.getRow(1);
-        cell = row.getCell((short)1);
+        cell = row.getCell(1);
         style = cell.getCellStyle();
         assertEquals(aug_10_2007, cell.getNumericCellValue(), 0.0001);
         assertFalse(HSSFDateUtil.isInternalDateFormat(cell.getCellStyle().getDataFormat()));
         assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString()));
         assertTrue(HSSFDateUtil.isCellDateFormatted(cell));
-        
+
         row  = sheet.getRow(2);
-        cell = row.getCell((short)1);
+        cell = row.getCell(1);
         style = cell.getCellStyle();
         assertEquals(aug_10_2007, cell.getNumericCellValue(), 0.0001);
         assertTrue(HSSFDateUtil.isInternalDateFormat(cell.getCellStyle().getDataFormat()));
         assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString()));
         assertTrue(HSSFDateUtil.isCellDateFormatted(cell));
-        
+
         row  = sheet.getRow(3);
-        cell = row.getCell((short)1);
+        cell = row.getCell(1);
         style = cell.getCellStyle();
         assertEquals(aug_10_2007, cell.getNumericCellValue(), 0.0001);
         assertFalse(HSSFDateUtil.isInternalDateFormat(cell.getCellStyle().getDataFormat()));
         assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString()));
         assertTrue(HSSFDateUtil.isCellDateFormatted(cell));
-        
+
         row  = sheet.getRow(4);
-        cell = row.getCell((short)1);
+        cell = row.getCell(1);
         style = cell.getCellStyle();
         assertEquals(aug_10_2007, cell.getNumericCellValue(), 0.0001);
         assertFalse(HSSFDateUtil.isInternalDateFormat(cell.getCellStyle().getDataFormat()));
         assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString()));
         assertTrue(HSSFDateUtil.isCellDateFormatted(cell));
     }
-    
+
     public void testDateBug_2Excel() {
         assertEquals(59.0, HSSFDateUtil.getExcelDate(createDate(1900, CALENDAR_FEBRUARY, 28), false), 0.00001);
         assertEquals(61.0, HSSFDateUtil.getExcelDate(createDate(1900, CALENDAR_MARCH, 1), false), 0.00001);
@@ -372,41 +368,49 @@ public final class TestHSSFDateUtil extends TestCase {
         assertEquals(37257.00, HSSFDateUtil.getExcelDate(createDate(2002, CALENDAR_JANUARY, 1), false), 0.00001);
         assertEquals(38074.00, HSSFDateUtil.getExcelDate(createDate(2004, CALENDAR_MARCH, 28), false), 0.00001);
     }
-    
+
     public void testDateBug_2Java() {
         assertEquals(createDate(1900, CALENDAR_FEBRUARY, 28), HSSFDateUtil.getJavaDate(59.0, false));
         assertEquals(createDate(1900, CALENDAR_MARCH, 1), HSSFDateUtil.getJavaDate(61.0, false));
-        
+
         assertEquals(createDate(2002, CALENDAR_FEBRUARY, 28), HSSFDateUtil.getJavaDate(37315.00, false));
         assertEquals(createDate(2002, CALENDAR_MARCH, 1), HSSFDateUtil.getJavaDate(37316.00, false));
         assertEquals(createDate(2002, CALENDAR_JANUARY, 1), HSSFDateUtil.getJavaDate(37257.00, false));
         assertEquals(createDate(2004, CALENDAR_MARCH, 28), HSSFDateUtil.getJavaDate(38074.00, false));
     }
-    
+
     public void testDate1904() {
         assertEquals(createDate(1904, CALENDAR_JANUARY, 2), HSSFDateUtil.getJavaDate(1.0, true));
         assertEquals(createDate(1904, CALENDAR_JANUARY, 1), HSSFDateUtil.getJavaDate(0.0, true));
         assertEquals(0.0, HSSFDateUtil.getExcelDate(createDate(1904, CALENDAR_JANUARY, 1), true), 0.00001);
         assertEquals(1.0, HSSFDateUtil.getExcelDate(createDate(1904, CALENDAR_JANUARY, 2), true), 0.00001);
-        
+
         assertEquals(createDate(1998, CALENDAR_JULY, 5), HSSFDateUtil.getJavaDate(35981, false));
         assertEquals(createDate(1998, CALENDAR_JULY, 5), HSSFDateUtil.getJavaDate(34519, true));
-        
+
         assertEquals(35981.0, HSSFDateUtil.getExcelDate(createDate(1998, CALENDAR_JULY, 5), false), 0.00001);
         assertEquals(34519.0, HSSFDateUtil.getExcelDate(createDate(1998, CALENDAR_JULY, 5), true), 0.00001);
     }
-    
+
     /**
-     * @param month zero based 
+     * @param month zero based
      * @param day one based
      */
     private static Date createDate(int year, int month, int day) {
+        return createDate(year, month, day, 0, 0, 0);
+    }
+
+    /**
+     * @param month zero based
+     * @param day one based
+     */
+    private static Date createDate(int year, int month, int day, int hour, int minute, int second) {
         Calendar c = new GregorianCalendar();
-        c.set(year, month, day, 0, 0, 0);
+        c.set(year, month, day, hour, minute, second);
         c.set(Calendar.MILLISECOND, 0);
         return c.getTime();
     }
-    
+
     /**
      * Check if HSSFDateUtil.getAbsoluteDay works as advertised.
      */
@@ -420,16 +424,27 @@ public final class TestHSSFDateUtil extends TestCase {
     }
 
     public void testConvertTime() {
-    	
+
         final double delta = 1E-7; // a couple of digits more accuracy than strictly required
         assertEquals(0.5, HSSFDateUtil.convertTime("12:00"), delta);
         assertEquals(2.0/3, HSSFDateUtil.convertTime("16:00"), delta);
         assertEquals(0.0000116, HSSFDateUtil.convertTime("0:00:01"), delta);
         assertEquals(0.7330440, HSSFDateUtil.convertTime("17:35:35"), delta);
     }
-    
+
     public void testParseDate() {
         assertEquals(createDate(2008, Calendar.AUGUST, 3), HSSFDateUtil.parseYYYYMMDDDate("2008/08/03"));
         assertEquals(createDate(1994, Calendar.MAY, 1), HSSFDateUtil.parseYYYYMMDDDate("1994/05/01"));
+    }
+
+    /**
+     * Ensure that date values *with* a fractional portion get the right time of day
+     */
+    public void testConvertDateTime() {
+    	// Excel day 30000 is date 18-Feb-1982 
+        // 0.7 corresponds to time 16:48:00
+        Date actual = HSSFDateUtil.getJavaDate(30000.7);
+        Date expected = createDate(1982, 1, 18, 16, 48, 0);
+        assertEquals(expected, actual);
     }
 }

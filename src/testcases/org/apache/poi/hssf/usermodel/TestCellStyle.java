@@ -85,7 +85,7 @@ public class TestCellStyle
                 c.setCellValue(rownum * 10000 + cellnum
                                + ((( double ) rownum / 1000)
                                   + (( double ) cellnum / 10000)));
-                c = r.createCell(( short ) (cellnum + 1));
+                c = r.createCell(cellnum + 1);
                 c.setCellValue("TEST");
                 c.setCellStyle(cs);
             }
@@ -112,16 +112,16 @@ public class TestCellStyle
         HSSFWorkbook     wb   = new HSSFWorkbook();
         HSSFSheet        s    = wb.createSheet();
         HSSFCellStyle    cs   = wb.createCellStyle();
-        HSSFRow row = s.createRow((short)0);
+        HSSFRow row = s.createRow(0);
 
         // with Date:
-        HSSFCell cell = row.createCell((short)1);
+        HSSFCell cell = row.createCell(1);
         cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
         cell.setCellStyle(cs);
         cell.setCellValue(new Date());
 
         // with Calendar:
-        cell = row.createCell((short)2);
+        cell = row.createCell(2);
         cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
         cell.setCellStyle(cs);
         Calendar cal = Calendar.getInstance();
@@ -143,9 +143,9 @@ public class TestCellStyle
         HSSFSheet        s    = wb.createSheet();
         HSSFCellStyle    cs1  = wb.createCellStyle();
         HSSFCellStyle    cs2  = wb.createCellStyle();
-        HSSFRow row = s.createRow((short)0);
-        HSSFCell cell1 = row.createCell((short)1);
-        HSSFCell cell2 = row.createCell((short)2);
+        HSSFRow row = s.createRow(0);
+        HSSFCell cell1 = row.createCell(1);
+        HSSFCell cell2 = row.createCell(2);
         
         cs1.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
         cs2.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/dd/yy"));
@@ -215,7 +215,7 @@ public class TestCellStyle
                                + ((( double ) rownum / 1000)
                                   + (( double ) cellnum / 10000)));
                 c.setCellStyle(cs);
-                c = r.createCell(( short ) (cellnum + 1));
+                c = r.createCell(cellnum + 1);
                 c.setCellValue("TEST");
                 c.setCellStyle(cs2);
             }

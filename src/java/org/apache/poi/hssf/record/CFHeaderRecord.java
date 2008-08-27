@@ -40,11 +40,11 @@ public final class CFHeaderRecord extends Record {
 	{
 		field_4_cell_ranges = new CellRangeAddressList();
 	}
-	public CFHeaderRecord(CellRangeAddress[] regions)
-	{
+	public CFHeaderRecord(CellRangeAddress[] regions, int nRules) {
 		CellRangeAddress[] unmergedRanges = regions;
 		CellRangeAddress[] mergeCellRanges = CellRangeUtil.mergeCellRanges(unmergedRanges);
 		setCellRanges(mergeCellRanges);
+		field_1_numcf = nRules;
 	}
 
 	public CFHeaderRecord(RecordInputStream in)

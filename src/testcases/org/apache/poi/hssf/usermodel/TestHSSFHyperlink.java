@@ -42,14 +42,14 @@ public final class TestHSSFHyperlink extends TestCase {
         HSSFHyperlink link;
 
         sheet = wb.getSheet("WebLinks");
-        cell = sheet.getRow(4).getCell((short)0);
+        cell = sheet.getRow(4).getCell(0);
         link = cell.getHyperlink();
         assertNotNull(link);
         assertEquals("POI", link.getLabel());
         assertEquals("POI", cell.getRichStringCellValue().getString());
         assertEquals("http://poi.apache.org/", link.getAddress());
 
-        cell = sheet.getRow(8).getCell((short)0);
+        cell = sheet.getRow(8).getCell(0);
         link = cell.getHyperlink();
         assertNotNull(link);
         assertEquals("HSSF", link.getLabel());
@@ -57,7 +57,7 @@ public final class TestHSSFHyperlink extends TestCase {
         assertEquals("http://poi.apache.org/hssf/", link.getAddress());
 
         sheet = wb.getSheet("Emails");
-        cell = sheet.getRow(4).getCell((short)0);
+        cell = sheet.getRow(4).getCell(0);
         link = cell.getHyperlink();
         assertNotNull(link);
         assertEquals("dev", link.getLabel());
@@ -65,7 +65,7 @@ public final class TestHSSFHyperlink extends TestCase {
         assertEquals("mailto:dev@poi.apache.org", link.getAddress());
 
         sheet = wb.getSheet("Internal");
-        cell = sheet.getRow(4).getCell((short)0);
+        cell = sheet.getRow(4).getCell(0);
         link = cell.getHyperlink();
         assertNotNull(link);
         assertEquals("Link To First Sheet", link.getLabel());
@@ -81,7 +81,7 @@ public final class TestHSSFHyperlink extends TestCase {
         HSSFHyperlink link;
 
         sheet = wb.getSheet("WebLinks");
-        cell = sheet.getRow(4).getCell((short)0);
+        cell = sheet.getRow(4).getCell(0);
         link = cell.getHyperlink();
         //modify the link
         link.setAddress("www.apache.org");
@@ -92,7 +92,7 @@ public final class TestHSSFHyperlink extends TestCase {
 
         wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
         sheet = wb.getSheet("WebLinks");
-        cell = sheet.getRow(4).getCell((short)0);
+        cell = sheet.getRow(4).getCell(0);
         link = cell.getHyperlink();
         assertNotNull(link);
         assertEquals("www.apache.org", link.getAddress());
@@ -106,21 +106,21 @@ public final class TestHSSFHyperlink extends TestCase {
         HSSFSheet sheet = wb.createSheet("Hyperlinks");
 
         //URL
-        cell = sheet.createRow(0).createCell((short)0);
+        cell = sheet.createRow(0).createCell(0);
         cell.setCellValue("URL Link");
         HSSFHyperlink link = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
         link.setAddress("http://poi.apache.org/");
         cell.setHyperlink(link);
 
         //link to a file in the current directory
-        cell = sheet.createRow(1).createCell((short)0);
+        cell = sheet.createRow(1).createCell(0);
         cell.setCellValue("File Link");
         link = new HSSFHyperlink(HSSFHyperlink.LINK_FILE);
         link.setAddress("link1.xls");
         cell.setHyperlink(link);
 
         //e-mail link
-        cell = sheet.createRow(2).createCell((short)0);
+        cell = sheet.createRow(2).createCell(0);
         cell.setCellValue("Email Link");
         link = new HSSFHyperlink(HSSFHyperlink.LINK_EMAIL);
         //note, if subject contains white spaces, make sure they are url-encoded
@@ -131,9 +131,9 @@ public final class TestHSSFHyperlink extends TestCase {
 
         //create a target sheet and cell
         HSSFSheet sheet2 = wb.createSheet("Target Sheet");
-        sheet2.createRow(0).createCell((short)0).setCellValue("Target Cell");
+        sheet2.createRow(0).createCell(0).setCellValue("Target Cell");
 
-        cell = sheet.createRow(3).createCell((short)0);
+        cell = sheet.createRow(3).createCell(0);
         cell.setCellValue("Worksheet Link");
         link = new HSSFHyperlink(HSSFHyperlink.LINK_DOCUMENT);
         link.setAddress("'Target Sheet'!A1");
@@ -145,22 +145,22 @@ public final class TestHSSFHyperlink extends TestCase {
 
         wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
         sheet = wb.getSheet("Hyperlinks");
-        cell = sheet.getRow(0).getCell((short)0);
+        cell = sheet.getRow(0).getCell(0);
         link = cell.getHyperlink();
         assertNotNull(link);
         assertEquals("http://poi.apache.org/", link.getAddress());
 
-        cell = sheet.getRow(1).getCell((short)0);
+        cell = sheet.getRow(1).getCell(0);
         link = cell.getHyperlink();
         assertNotNull(link);
         assertEquals("link1.xls", link.getAddress());
 
-        cell = sheet.getRow(2).getCell((short)0);
+        cell = sheet.getRow(2).getCell(0);
         link = cell.getHyperlink();
         assertNotNull(link);
         assertEquals("mailto:poi@apache.org?subject=Hyperlinks", link.getAddress());
 
-        cell = sheet.getRow(3).getCell((short)0);
+        cell = sheet.getRow(3).getCell(0);
         link = cell.getHyperlink();
         assertNotNull(link);
         assertEquals("'Target Sheet'!A1", link.getAddress());
@@ -174,12 +174,12 @@ public final class TestHSSFHyperlink extends TestCase {
 
         HSSFSheet sheet = wb.cloneSheet(0);
 
-        cell = sheet.getRow(4).getCell((short)0);
+        cell = sheet.getRow(4).getCell(0);
         link = cell.getHyperlink();
         assertNotNull(link);
         assertEquals("http://poi.apache.org/", link.getAddress());
 
-        cell = sheet.getRow(8).getCell((short)0);
+        cell = sheet.getRow(8).getCell(0);
         link = cell.getHyperlink();
         assertNotNull(link);
         assertEquals("http://poi.apache.org/hssf/", link.getAddress());

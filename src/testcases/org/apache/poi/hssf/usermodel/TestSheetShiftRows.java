@@ -99,8 +99,8 @@ public final class TestSheetShiftRows extends TestCase {
     public void testShiftRow(){
        HSSFWorkbook b = new HSSFWorkbook();
        HSSFSheet s    = b.createSheet();
-       s.createRow(0).createCell((short)0).setCellValue("TEST1");
-       s.createRow(3).createCell((short)0).setCellValue("TEST2");
+       s.createRow(0).createCell(0).setCellValue("TEST1");
+       s.createRow(3).createCell(0).setCellValue("TEST2");
        s.shiftRows(0,4,1);
     }
 
@@ -112,8 +112,8 @@ public final class TestSheetShiftRows extends TestCase {
     public void testShiftRow0(){
        HSSFWorkbook b = new HSSFWorkbook();
        HSSFSheet s    = b.createSheet();
-       s.createRow(0).createCell((short)0).setCellValue("TEST1");
-       s.createRow(3).createCell((short)0).setCellValue("TEST2");
+       s.createRow(0).createCell(0).setCellValue("TEST1");
+       s.createRow(3).createCell(0).setCellValue("TEST2");
        s.shiftRows(0,4,1);
     }
 
@@ -125,7 +125,7 @@ public final class TestSheetShiftRows extends TestCase {
       HSSFWorkbook b = new HSSFWorkbook();
       HSSFSheet s    = b.createSheet();
       HSSFRow row = s.createRow(4);
-      row.createCell((short)0).setCellValue("test");
+      row.createCell(0).setCellValue("test");
       s.setRowBreak(4);
 
       s.shiftRows(4, 4, 2);
@@ -203,34 +203,34 @@ public final class TestSheetShiftRows extends TestCase {
         HSSFSheet sheet = wb.getSheet("Sheet1");
         assertEquals(19, sheet.getLastRowNum());
 
-        assertEquals("cell B1 (ref)", sheet.getRow(0).getCell((short)3).getRichStringCellValue().toString());
-        assertEquals("CONCATENATE(B1,\" (ref)\")", sheet.getRow(0).getCell((short)3).getCellFormula());
-        assertEquals("cell B2 (ref)", sheet.getRow(1).getCell((short)3).getRichStringCellValue().toString());
-        assertEquals("CONCATENATE(B2,\" (ref)\")", sheet.getRow(1).getCell((short)3).getCellFormula());
-        assertEquals("cell B3 (ref)", sheet.getRow(2).getCell((short)3).getRichStringCellValue().toString());
-        assertEquals("CONCATENATE(B3,\" (ref)\")", sheet.getRow(2).getCell((short)3).getCellFormula());
-        assertEquals("cell B2 (ref)", sheet.getRow(6).getCell((short)1).getRichStringCellValue().toString());
-        assertEquals("CONCATENATE(B2,\" (ref)\")", sheet.getRow(6).getCell((short)1).getCellFormula());
+        assertEquals("cell B1 (ref)", sheet.getRow(0).getCell(3).getRichStringCellValue().toString());
+        assertEquals("CONCATENATE(B1,\" (ref)\")", sheet.getRow(0).getCell(3).getCellFormula());
+        assertEquals("cell B2 (ref)", sheet.getRow(1).getCell(3).getRichStringCellValue().toString());
+        assertEquals("CONCATENATE(B2,\" (ref)\")", sheet.getRow(1).getCell(3).getCellFormula());
+        assertEquals("cell B3 (ref)", sheet.getRow(2).getCell(3).getRichStringCellValue().toString());
+        assertEquals("CONCATENATE(B3,\" (ref)\")", sheet.getRow(2).getCell(3).getCellFormula());
+        assertEquals("cell B2 (ref)", sheet.getRow(6).getCell(1).getRichStringCellValue().toString());
+        assertEquals("CONCATENATE(B2,\" (ref)\")", sheet.getRow(6).getCell(1).getCellFormula());
 
         sheet.shiftRows(1, 1, 10);
 
         // Row 1 => Row 11
         // So strings on row 11 unchanged, but reference in formula is
-        assertEquals("cell B1 (ref)", sheet.getRow(0).getCell((short)3).getRichStringCellValue().toString());
-        assertEquals("CONCATENATE(B1,\" (ref)\")", sheet.getRow(0).getCell((short)3).getCellFormula());
+        assertEquals("cell B1 (ref)", sheet.getRow(0).getCell(3).getRichStringCellValue().toString());
+        assertEquals("CONCATENATE(B1,\" (ref)\")", sheet.getRow(0).getCell(3).getCellFormula());
         assertEquals(0, sheet.getRow(1).getPhysicalNumberOfCells());
 
         // still save b2
-        assertEquals("cell B2 (ref)", sheet.getRow(11).getCell((short)3).getRichStringCellValue().toString());
+        assertEquals("cell B2 (ref)", sheet.getRow(11).getCell(3).getRichStringCellValue().toString());
         // but points to b12
-        assertEquals("CONCATENATE(B12,\" (ref)\")", sheet.getRow(11).getCell((short)3).getCellFormula());
+        assertEquals("CONCATENATE(B12,\" (ref)\")", sheet.getRow(11).getCell(3).getCellFormula());
 
-        assertEquals("cell B3 (ref)", sheet.getRow(2).getCell((short)3).getRichStringCellValue().toString());
-        assertEquals("CONCATENATE(B3,\" (ref)\")", sheet.getRow(2).getCell((short)3).getCellFormula());
+        assertEquals("cell B3 (ref)", sheet.getRow(2).getCell(3).getRichStringCellValue().toString());
+        assertEquals("CONCATENATE(B3,\" (ref)\")", sheet.getRow(2).getCell(3).getCellFormula());
 
         // one on a non-shifted row also updated
-        assertEquals("cell B2 (ref)", sheet.getRow(6).getCell((short)1).getRichStringCellValue().toString());
-        assertEquals("CONCATENATE(B12,\" (ref)\")", sheet.getRow(6).getCell((short)1).getCellFormula());
+        assertEquals("cell B2 (ref)", sheet.getRow(6).getCell(1).getRichStringCellValue().toString());
+        assertEquals("CONCATENATE(B12,\" (ref)\")", sheet.getRow(6).getCell(1).getCellFormula());
     }
 }
 

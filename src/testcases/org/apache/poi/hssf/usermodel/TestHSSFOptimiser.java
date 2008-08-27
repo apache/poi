@@ -107,13 +107,13 @@ public class TestHSSFOptimiser extends TestCase {
 		HSSFRichTextString rtr1 = new HSSFRichTextString("Test");
 		rtr1.applyFont(0, 2, f1);
 		rtr1.applyFont(3, 4, f2);
-		r.createCell((short)0).setCellValue(rtr1);
+		r.createCell(0).setCellValue(rtr1);
 		
 		HSSFRichTextString rtr2 = new HSSFRichTextString("AlsoTest");
 		rtr2.applyFont(0, 2, f3);
 		rtr2.applyFont(3, 5, f5);
 		rtr2.applyFont(6, 8, f6);
-		r.createCell((short)1).setCellValue(rtr2);
+		r.createCell(1).setCellValue(rtr2);
 		
 		
 		// Check what we have now
@@ -198,14 +198,14 @@ public class TestHSSFOptimiser extends TestCase {
 		HSSFSheet s = wb.createSheet();
 		HSSFRow r = s.createRow(0);
 		
-		r.createCell((short)0).setCellStyle(cs1);
-		r.createCell((short)1).setCellStyle(cs2);
-		r.createCell((short)2).setCellStyle(cs3);
-		r.createCell((short)3).setCellStyle(cs4);
-		r.createCell((short)4).setCellStyle(cs5);
-		r.createCell((short)5).setCellStyle(cs6);
-		r.createCell((short)6).setCellStyle(cs1);
-		r.createCell((short)7).setCellStyle(cs2);
+		r.createCell(0).setCellStyle(cs1);
+		r.createCell(1).setCellStyle(cs2);
+		r.createCell(2).setCellStyle(cs3);
+		r.createCell(3).setCellStyle(cs4);
+		r.createCell(4).setCellStyle(cs5);
+		r.createCell(5).setCellStyle(cs6);
+		r.createCell(6).setCellStyle(cs1);
+		r.createCell(7).setCellStyle(cs2);
 		
 		assertEquals(21, r.getCell(0).getCellValueRecord().getXFIndex());
 		assertEquals(26, r.getCell(5).getCellValueRecord().getXFIndex());
