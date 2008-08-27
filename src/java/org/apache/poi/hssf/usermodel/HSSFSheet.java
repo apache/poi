@@ -1836,7 +1836,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
         //  new HSSFComment instances, which is bad
         HSSFRow r = getRow(row);
         if(r != null) {
-            HSSFCell c = r.getCell((short)column);
+            HSSFCell c = r.getCell(column);
             if(c != null) {
                 return c.getCellComment();
             } else {

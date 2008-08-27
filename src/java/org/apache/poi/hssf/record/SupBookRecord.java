@@ -150,6 +150,7 @@ public final class SupBookRecord extends Record {
             sb.append("Internal References ");
             sb.append(" nSheets= ").append(field_1_number_of_sheets);
         }
+        sb.append("]");
         return sb.toString();
     }
     private int getDataSize() {

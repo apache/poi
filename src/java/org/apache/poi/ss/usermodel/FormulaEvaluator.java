@@ -50,6 +50,7 @@ import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.FunctionEval;
 import org.apache.poi.hssf.record.formula.eval.NameEval;
+import org.apache.poi.hssf.record.formula.eval.NameXEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.OperationEval;
 import org.apache.poi.hssf.record.formula.eval.Ref2DEval;
@@ -348,7 +349,8 @@ public class FormulaEvaluator {
                 continue; 
             }
             if (ptg instanceof NameXPtg) {
-                // TODO - external functions
+                NameXPtg nameXPtg = (NameXPtg) ptg;
+                stack.push(new NameXEval(nameXPtg.getSheetRefIndex(), nameXPtg.getNameIndex()));
                 continue;
             }
             if (ptg instanceof UnknownPtg) { continue; }

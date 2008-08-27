@@ -41,6 +41,12 @@ public final class HSSFConditionalFormattingRule
 	private final HSSFWorkbook workbook;
 
 	HSSFConditionalFormattingRule(HSSFWorkbook pWorkbook, CFRuleRecord pRuleRecord) {
+		if (pWorkbook == null) {
+			throw new IllegalArgumentException("pWorkbook must not be null");
+		}
+		if (pRuleRecord == null) {
+			throw new IllegalArgumentException("pRuleRecord must not be null");
+		}
 		workbook = pWorkbook;
 		cfRuleRecord = pRuleRecord;
 	}

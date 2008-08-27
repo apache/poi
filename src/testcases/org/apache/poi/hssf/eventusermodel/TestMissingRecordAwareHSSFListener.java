@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -31,6 +32,7 @@ import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 /**
  * Tests for MissingRecordAwareHSSFListener
@@ -39,44 +41,29 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 	
 	private Record[] r;
 
+	private void readRecords(String sampleFileName) {
+		HSSFRequest req = new HSSFRequest();
+		MockHSSFListener mockListen = new MockHSSFListener();
+		MissingRecordAwareHSSFListener listener = new MissingRecordAwareHSSFListener(mockListen);
+		req.addListenerForAllRecords(listener);
+		
+		HSSFEventFactory factory = new HSSFEventFactory();
+		try {
+			InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleFileName);
+			POIFSFileSystem fs = new POIFSFileSystem(is);
+			factory.processWorkbookEvents(req, fs);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		
+		r = mockListen.getRecords();
+		assertTrue(r.length > 100);
+	} 
 	public void openNormal() {
-		HSSFRequest req = new HSSFRequest();
-		MockHSSFListener mockListen = new MockHSSFListener();
-		MissingRecordAwareHSSFListener listener = new MissingRecordAwareHSSFListener(mockListen);
-		req.addListenerForAllRecords(listener);
-		
-		HSSFEventFactory factory = new HSSFEventFactory();
-		try {
-			InputStream is = HSSFTestDataSamples.openSampleFileStream("MissingBits.xls");
-			POIFSFileSystem fs = new POIFSFileSystem(is);
-			factory.processWorkbookEvents(req, fs);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		
-		r = mockListen.getRecords();
-		assertTrue(r.length > 100);
-	} 
-	public void openAlt() {
-		HSSFRequest req = new HSSFRequest();
-		MockHSSFListener mockListen = new MockHSSFListener();
-		MissingRecordAwareHSSFListener listener = new MissingRecordAwareHSSFListener(mockListen);
-		req.addListenerForAllRecords(listener);
-		
-		HSSFEventFactory factory = new HSSFEventFactory();
-		try {
-			InputStream is = HSSFTestDataSamples.openSampleFileStream("MRExtraLines.xls");
-			POIFSFileSystem fs = new POIFSFileSystem(is);
-			factory.processWorkbookEvents(req, fs);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		
-		r = mockListen.getRecords();
-		assertTrue(r.length > 100);
-	} 
+		readRecords("MissingBits.xls");
+	}
 	
-	public void testMissingRowRecords() throws Exception {
+	public void testMissingRowRecords() {
 		openNormal();
 		
 		// We have rows 0, 1, 2, 20 and 21
@@ -126,7 +113,7 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 		assertEquals(19, mr.getRowNumber());
 	}
 	
-	public void testEndOfRowRecords() throws Exception {
+	public void testEndOfRowRecords() {
 		openNormal();
 		
 		// Find the cell at 0,0
@@ -248,7 +235,7 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 	}
 	
 	
-	public void testMissingCellRecords() throws Exception {
+	public void testMissingCellRecords() {
 		openNormal();
 		
 		// Find the cell at 0,0
@@ -350,29 +337,21 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 	
 	// Make sure we don't put in any extra new lines
 	//  that aren't already there
-	public void testNoExtraNewLines() throws Exception {
+	public void testNoExtraNewLines() {
 		// Load a different file
-		openAlt();
-		
-		
 		// This file has has something in lines 1-33
-		List lcor = new ArrayList();
+		readRecords("MRExtraLines.xls");
+		
+		int rowCount=0;
 		for(int i=0; i<r.length; i++) {
-			if(r[i] instanceof LastCellOfRowDummyRecord)
-				lcor.add( (LastCellOfRowDummyRecord)r[i] );
+			if(r[i] instanceof LastCellOfRowDummyRecord) {
+				LastCellOfRowDummyRecord eor = (LastCellOfRowDummyRecord) r[i];
+				assertEquals(rowCount, eor.getRow());
+				rowCount++;
+			}
 		}
-		
 		// Check we got the 33 rows
-		assertEquals(33, lcor.size());
-		LastCellOfRowDummyRecord[] rowEnds = (LastCellOfRowDummyRecord[])
-			lcor.toArray(new LastCellOfRowDummyRecord[lcor.size()]);
-		assertEquals(33, rowEnds.length);
-		
-		// And check they have the right stuff in them,
-		//  no repeats
-		for(int i=0; i<rowEnds.length; i++) {
-			assertEquals(i, rowEnds[i].getRow());
-		}
+		assertEquals(33, rowCount);
 	}
 
 	private static final class MockHSSFListener implements HSSFListener {
@@ -417,5 +396,30 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 			_records.toArray(result);
 			return result;
 		}
+	}
+	
+	/**
+	 * Make sure that the presence of shared formulas does not cause extra 
+	 * end-of-row records.
+	 */
+	public void testEndOfRow_bug45672() {
+		readRecords("ex45672.xls");
+		Record[] rr = r;
+		int eorCount=0;
+		int sfrCount=0;
+		for (int i = 0; i < rr.length; i++) {
+			Record record = rr[i];
+			if (record instanceof SharedFormulaRecord) {
+				sfrCount++;
+			}
+			if (record instanceof LastCellOfRowDummyRecord) {
+				eorCount++;
+			}
+		}
+		if (eorCount == 2) {
+			throw new AssertionFailedError("Identified bug 45672");
+		}
+		assertEquals(1, eorCount);
+		assertEquals(1, sfrCount);
 	}
 }

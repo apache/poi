@@ -290,10 +290,10 @@ public final class TestHSSFWorkbook extends TestCase {
         assertEquals(true, sheet3.isActive());
 
         if (false) { // helpful if viewing this workbook in excel:
-            sheet1.createRow(0).createCell((short)0).setCellValue(new HSSFRichTextString("Sheet1"));
-            sheet2.createRow(0).createCell((short)0).setCellValue(new HSSFRichTextString("Sheet2"));
-            sheet3.createRow(0).createCell((short)0).setCellValue(new HSSFRichTextString("Sheet3"));
-            sheet4.createRow(0).createCell((short)0).setCellValue(new HSSFRichTextString("Sheet4"));
+            sheet1.createRow(0).createCell(0).setCellValue(new HSSFRichTextString("Sheet1"));
+            sheet2.createRow(0).createCell(0).setCellValue(new HSSFRichTextString("Sheet2"));
+            sheet3.createRow(0).createCell(0).setCellValue(new HSSFRichTextString("Sheet3"));
+            sheet4.createRow(0).createCell(0).setCellValue(new HSSFRichTextString("Sheet4"));
 
             try {
                 File fOut = TempFile.createTempFile("sheetMultiSelect", ".xls");

@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
@@ -108,5 +109,45 @@ public final class TestHSSFConditionalFormatting extends TestCase
 		rule2 = cf.getRule(1);
 		assertEquals("2",rule2.getFormula2()); 
 		assertEquals("1",rule2.getFormula1()); 
+	}
+	
+	public void testClone() {
+
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet();
+		String formula = "7";
+
+		HSSFSheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
+		
+		HSSFConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule(formula);
+		HSSFFontFormatting fontFmt = rule1.createFontFormatting();
+		fontFmt.setFontStyle(true, false);
+
+		HSSFPatternFormatting patternFmt = rule1.createPatternFormatting();
+		patternFmt.setFillBackgroundColor(HSSFColor.YELLOW.index);
+
+		
+		HSSFConditionalFormattingRule rule2 = sheetCF.createConditionalFormattingRule(ComparisonOperator.BETWEEN, "1", "2");
+		HSSFConditionalFormattingRule [] cfRules =
+		{
+			rule1, rule2
+		};
+
+		short col = 1;
+		CellRangeAddress [] regions = {
+			new CellRangeAddress(0, 65535, col, col)
+		};
+
+		sheetCF.addConditionalFormatting(regions, cfRules);
+			
+		try {
+			wb.cloneSheet(0);
+		} catch (RuntimeException e) {
+			if (e.getMessage().indexOf("needs to define a clone method") > 0) {
+				throw new AssertionFailedError("Indentified bug 45682");
+			}
+			throw e;
+		}
+		assertEquals(2, wb.getNumberOfSheets());
 	}
 }

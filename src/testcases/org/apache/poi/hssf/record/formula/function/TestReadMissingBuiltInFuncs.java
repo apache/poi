@@ -150,7 +150,7 @@ public final class TestReadMissingBuiltInFuncs extends TestCase {
 			// some other unexpected error
 			throw e;
 		}
-		String result = sheet.getRow(rowIx).getCell((short)0).getCellFormula();
+		String result = sheet.getRow(rowIx).getCell(0).getCellFormula();
 		if (false) {
 			System.err.println(result);
 		}

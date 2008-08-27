@@ -37,11 +37,11 @@ public class TestPercentPtg extends AbstractPtgTestCase
         HSSFSheet sheet = workbook.getSheetAt(0);
 
         assertEquals("Wrong numeric value for original number", 53000.0,
-                     sheet.getRow(0).getCell((short) 0).getNumericCellValue(), 0.0);
+                     sheet.getRow(0).getCell(0).getNumericCellValue(), 0.0);
         assertEquals("Wrong numeric value for percent formula result", 5300.0,
-                     sheet.getRow(1).getCell((short) 0).getNumericCellValue(), 0.0);
+                     sheet.getRow(1).getCell(0).getNumericCellValue(), 0.0);
         assertEquals("Wrong formula string for percent formula", "A1*10%",
-                     sheet.getRow(1).getCell((short) 0).getCellFormula());
+                     sheet.getRow(1).getCell(0).getCellFormula());
     }
 }
 

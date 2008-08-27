@@ -61,6 +61,9 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">45682 - Fix for cloning of CFRecordsAggregate</action>
+           <action dev="POI-DEVELOPERS" type="add">Initial support for evaluating external add-in functions like YEARFRAC</action>
+           <action dev="POI-DEVELOPERS" type="fix">45672 - Fix for MissingRecordAwareHSSFListener to prevent multiple LastCellOfRowDummyRecords when shared formulas are present</action>
            <action dev="POI-DEVELOPERS" type="fix">45645 - Fix for HSSFSheet.autoSizeColumn() for widths exceeding Short.MAX_VALUE</action>
            <action dev="POI-DEVELOPERS" type="add">45623 - Support for additional HSSF header and footer fields, including bold and full file path</action>
            <action dev="POI-DEVELOPERS" type="add">45623 - Support stripping HSSF header and footer fields (eg page number) out of header and footer text if required</action>

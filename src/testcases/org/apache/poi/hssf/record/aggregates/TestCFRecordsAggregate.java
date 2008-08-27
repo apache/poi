@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.model.RecordStream;
@@ -31,6 +32,7 @@ import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Tests the serialization and deserialization of the CFRecordsAggregate
@@ -63,7 +65,8 @@ public final class TestCFRecordsAggregate extends TestCase
 		record = CFRecordsAggregate.createCFAggregate(new RecordStream(recs, 0));
 
 		// Serialize
-		byte [] serializedRecord = record.serialize();
+		byte [] serializedRecord = new byte[record.getRecordSize()];
+		record.serialize(0, serializedRecord);
 		InputStream in = new ByteArrayInputStream(serializedRecord);
 
 		//Parse
@@ -97,5 +100,29 @@ public final class TestCFRecordsAggregate extends TestCase
 
 		assertEquals(2, cellRanges.length);
 		assertEquals(3, header.getNumberOfConditionalFormats());
+	}
+	
+	/**
+	 * Make sure that the CF Header record is properly updated with the number of rules
+	 */
+	public void testNRules() {
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		CellRangeAddress[] cellRanges = {
+				new CellRangeAddress(0,1,0,0),
+				new CellRangeAddress(0,1,2,2),
+		};
+		CFRuleRecord[] rules = {
+			CFRuleRecord.create(workbook, "7"),
+			CFRuleRecord.create(workbook, ComparisonOperator.BETWEEN, "2", "5"),
+		};
+		CFRecordsAggregate agg = new CFRecordsAggregate(cellRanges, rules);
+		byte[] serializedRecord = new byte[agg.getRecordSize()];
+		agg.serialize(0, serializedRecord);
+		
+		int nRules = LittleEndian.getUShort(serializedRecord, 4);
+		if (nRules == 0) {
+			throw new AssertionFailedError("Identified bug 45682 b");
+		}
+		assertEquals(rules.length, nRules);
 	}
 }
