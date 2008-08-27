@@ -25,63 +25,59 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * This ptg indicates a data table.
- * It only occurs in a FORMULA record, never in an 
- *  ARRAY or NAME record.  When ptgTbl occurs in a 
- *  formula, it is the only token in the formula.  
- * (TODO - check this when processing)
- * This indicates that the cell containing the 
- *  formula is an interior cell in a data table; 
+ * It only occurs in a FORMULA record, never in an
+ *  ARRAY or NAME record.  When ptgTbl occurs in a
+ *  formula, it is the only token in the formula.
+ *
+ * This indicates that the cell containing the
+ *  formula is an interior cell in a data table;
  *  the table description is found in a TABLE
- *  record. Rows and columns which contain input 
- *  values to be substituted in the table do 
+ *  record. Rows and columns which contain input
+ *  values to be substituted in the table do
  *  not contain ptgTbl.
  * See page 811 of the june 08 binary docs.
  */
 public final class TblPtg extends ControlPtg {
-    private final static int  SIZE = 4;
-    public final static short sid  = 0x2;
+    private final static int  SIZE = 5;
+    public final static short sid  = 0x02;
     /** The row number of the upper left corner */
-    private final short     field_1_first_row;
+    private final int field_1_first_row;
     /** The column number of the upper left corner */
-    private final short     field_2_first_col;
+    private final int field_2_first_col;
 
-    public TblPtg(RecordInputStream in)
-    {
-      field_1_first_row = in.readShort();
-      field_2_first_col = in.readUByte();
-    }
-    
-    public void writeBytes(byte [] array, int offset)
-    {
-      array[offset+0]= (byte) (sid);
-      LittleEndian.putShort(array,offset+1,field_1_first_row);
-      LittleEndian.putByte(array,offset+3,field_2_first_col);
+    public TblPtg(RecordInputStream in) {
+      field_1_first_row = in.readUShort();
+      field_2_first_col = in.readUShort();
     }
 
-    public int getSize()
-    {
+    public void writeBytes(byte [] array, int offset) {
+      LittleEndian.putByte(array, offset+0, sid);
+      LittleEndian.putUShort(array, offset+1, field_1_first_row);
+      LittleEndian.putUShort(array, offset+3, field_2_first_col);
+    }
+
+    public int getSize() {
         return SIZE;
     }
-    
-    public short getRow() {
+
+    public int getRow() {
       return field_1_first_row;
     }
 
-    public short getColumn() {
+    public int getColumn() {
       return field_2_first_col;
-    }    
+    }
 
     public String toFormulaString(HSSFWorkbook book)
     {
-    	// table(....)[][]
+        // table(....)[][]
         throw new RecordFormatException("Table and Arrays are not yet supported");
     }
-    
-    public String toString()
-    {
+
+    public String toString() {
         StringBuffer buffer = new StringBuffer("[Data Table - Parent cell is an interior cell in a data table]\n");
         buffer.append("top left row = ").append(getRow()).append("\n");
         buffer.append("top left col = ").append(getColumn()).append("\n");
         return buffer.toString();
-    }    
+    }
 }
