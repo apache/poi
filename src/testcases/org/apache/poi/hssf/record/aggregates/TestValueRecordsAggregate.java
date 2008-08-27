@@ -64,23 +64,9 @@ public class TestValueRecordsAggregate extends TestCase
 
     }
 
-    public void testUnknownRecordsIgnored()
-    {
-        List records = testData();
-        valueRecord.construct( 0, records );
-        Iterator iterator = valueRecord.getIterator();
-        Record record1 = (Record) iterator.next();
-        Record record2 = (Record) iterator.next();
-        assertNotNull( "No record found", record1 );
-        assertNotNull( "No record found", record2 );
-        assertFalse( iterator.hasNext() );
-
-    }
-
     private List testData(){
         List records = new ArrayList();
         FormulaRecord formulaRecord = new FormulaRecord();
-        UnknownRecord unknownRecord = new UnknownRecord();
         BlankRecord blankRecord = new BlankRecord();
         WindowOneRecord windowOneRecord = new WindowOneRecord();
         formulaRecord.setRow( 1 );
@@ -88,7 +74,6 @@ public class TestValueRecordsAggregate extends TestCase
         blankRecord.setRow( 2 );
         blankRecord.setColumn( (short) 2 );
         records.add( formulaRecord );
-        records.add( unknownRecord );
         records.add( blankRecord );
         records.add( windowOneRecord );
         return records;
