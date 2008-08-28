@@ -82,7 +82,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
             if (!rec.isValue()) {
                 throw new RuntimeException("Unexpected record type (" + rec.getClass().getName() + ")");
             }
-            i += _valuesAgg.construct(recs, i, endIx, sfh);
+            i += _valuesAgg.construct(recs, i, endIx, sfh)-1;
         }
         "".length();
     }

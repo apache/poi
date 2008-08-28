@@ -17,9 +17,12 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
+import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.StringRecord;
+import org.apache.poi.hssf.record.TableRecord;
 
 /**
  * The formula record aggregate is used to join together the formula record and it's
@@ -29,61 +32,67 @@ import org.apache.poi.hssf.record.StringRecord;
  */
 public final class FormulaRecordAggregate extends RecordAggregate implements CellValueRecordInterface {
 
-    private FormulaRecord _formulaRecord;
+    private final FormulaRecord _formulaRecord;
+    /** caches the calculated result of the formula */
     private StringRecord _stringRecord;
+    private TableRecord _tableRecord;
     
-    public FormulaRecordAggregate( FormulaRecord formulaRecord, StringRecord stringRecord )
-    {
+    public FormulaRecordAggregate(FormulaRecord formulaRecord) {
         _formulaRecord = formulaRecord;
-        _stringRecord = stringRecord;
+        _stringRecord = null;
+    }
+    public FormulaRecordAggregate(FormulaRecord formulaRecord, RecordStream rs) {
+        _formulaRecord = formulaRecord;
+        Class nextClass = rs.peekNextClass();
+        if (nextClass == SharedFormulaRecord.class) {
+            // For (text) shared formulas, the SharedFormulaRecord comes before the StringRecord.
+            // In any case it is OK to skip SharedFormulaRecords because they were collected 
+            // before constructing the ValueRecordsAggregate.
+            rs.getNext(); // skip the shared formula record
+            nextClass = rs.peekNextClass();
+        }
+        if (nextClass == StringRecord.class) {
+            _stringRecord = (StringRecord) rs.getNext();
+        } else if (nextClass == TableRecord.class) {
+            _tableRecord = (TableRecord) rs.getNext();
+        }
     }
 
-    public void setStringRecord( StringRecord stringRecord ) {
+    public void setStringRecord(StringRecord stringRecord) {
         _stringRecord = stringRecord;
-    }
-
-    public void setFormulaRecord( FormulaRecord formulaRecord )
-    {
-        _formulaRecord = formulaRecord;
+        _tableRecord = null; // probably can't have both present at the same time
+        // TODO - establish rules governing when each of these sub records may exist
     }
     
-    public FormulaRecord getFormulaRecord()
-    {
+    public FormulaRecord getFormulaRecord() {
         return _formulaRecord;
     }
 
-    public StringRecord getStringRecord()
-    {
+    public StringRecord getStringRecord() {
         return _stringRecord;
     }
     
-    public short getXFIndex()
-    {
+    public short getXFIndex() {
         return _formulaRecord.getXFIndex();
     }
 
-    public void setXFIndex(short xf)
-    {
-        _formulaRecord.setXFIndex( xf );
+    public void setXFIndex(short xf) {
+        _formulaRecord.setXFIndex(xf);
     }
 
-    public void setColumn(short col)
-    {
-        _formulaRecord.setColumn( col );
+    public void setColumn(short col) {
+        _formulaRecord.setColumn(col);
     }
 
-    public void setRow(int row)
-    {
-        _formulaRecord.setRow( row );
+    public void setRow(int row) {
+        _formulaRecord.setRow(row);
     }
 
-    public short getColumn()
-    {
+    public short getColumn() {
         return _formulaRecord.getColumn();
     }
 
-    public int getRow()
-    {
+    public int getRow() {
         return _formulaRecord.getRow();
     }
 
@@ -94,8 +103,11 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
     public void visitContainedRecords(RecordVisitor rv) {
          rv.visitRecord(_formulaRecord);
          if (_stringRecord != null) {
-              rv.visitRecord(_stringRecord);
+             rv.visitRecord(_stringRecord);
          }
+         if (_tableRecord != null) {
+             rv.visitRecord(_tableRecord);
+        }
     }
    
     public String getStringValue() {

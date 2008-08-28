@@ -39,6 +39,11 @@ public final class ArrayPtg extends Ptg {
 	public static final byte sid  = 0x20;
 
 	private static final int RESERVED_FIELD_LEN = 7;
+	/** 
+	 * The size of the plain tArray token written within the standard formula tokens
+	 * (not including the data which comes after all formula tokens)
+	 */
+	public static final int PLAIN_TOKEN_SIZE = 1+RESERVED_FIELD_LEN;
 	// TODO - fix up field visibility and subclasses
 	private byte[] field_1_reserved;
 	
@@ -123,7 +128,7 @@ public final class ArrayPtg extends Ptg {
 	public int writeTokenValueBytes(byte[] data, int offset) {
 
 		LittleEndian.putByte(data,  offset + 0, token_1_columns-1);
-		LittleEndian.putShort(data, offset + 1, (short)(token_2_rows-1));
+		LittleEndian.putUShort(data, offset + 1, token_2_rows-1);
 		ConstantValueParser.encode(data, offset + 3, token_3_arrayValues);
 		return 3 + ConstantValueParser.getEncodedSize(token_3_arrayValues);
 	}
@@ -137,11 +142,11 @@ public final class ArrayPtg extends Ptg {
 	}
 
 	/** This size includes the size of the array Ptg plus the Array Ptg Token value size*/
-	public int getSize()
-	{
-		int size = 1+7+1+2;
-		size += ConstantValueParser.getEncodedSize(token_3_arrayValues);
-		return size;
+	public int getSize() {
+		return PLAIN_TOKEN_SIZE 
+			// data written after the all tokens:
+			+ 1 + 2 // column, row
+			+ ConstantValueParser.getEncodedSize(token_3_arrayValues);
 	}
 
 	public String toFormulaString(HSSFWorkbook book)
