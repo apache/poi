@@ -30,19 +30,28 @@ public final class RecordStream {
 	private final List _list;
 	private int _nextIndex;
 	private int _countRead;
+	private final int _endIx;
 
-	public RecordStream(List inputList, int startIndex) {
+	/**
+	 * Creates a RecordStream bounded by startIndex and endIndex
+	 */
+	public RecordStream(List inputList, int startIndex, int endIx) {
 		_list = inputList;
 		_nextIndex = startIndex;
+		_endIx = endIx;
 		_countRead = 0;
 	}
 
+	public RecordStream(List records, int startIx) {
+		this(records, startIx, records.size());
+	}
+
 	public boolean hasNext() {
-		return _nextIndex < _list.size();
+		return _nextIndex < _endIx;
 	}
 
 	public Record getNext() {
-		if(_nextIndex >= _list.size()) {
+		if(!hasNext()) {
 			throw new RuntimeException("Attempt to read past end of record stream");
 		}
 		_countRead ++;
@@ -53,14 +62,17 @@ public final class RecordStream {
 	 * @return the {@link Class} of the next Record. <code>null</code> if this stream is exhausted.
 	 */
 	public Class peekNextClass() {
-		if(_nextIndex >= _list.size()) {
+		if(!hasNext()) {
 			return null;
 		}
 		return _list.get(_nextIndex).getClass();
 	}
 
+	/**
+	 * @return -1 if at end of records
+	 */
 	public int peekNextSid() {
-		if(_nextIndex >= _list.size()) {
+		if(!hasNext()) {
 			return -1;
 		}
 		return ((Record)_list.get(_nextIndex)).getSid();

@@ -35,7 +35,8 @@ public final class TestFormulaRecordAggregate extends junit.framework.TestCase {
         FormulaRecord f = new FormulaRecord();
         StringRecord s = new StringRecord();
         s.setString("abc");
-        FormulaRecordAggregate fagg = new FormulaRecordAggregate(f,s);
+        FormulaRecordAggregate fagg = new FormulaRecordAggregate(f);
+        fagg.setStringRecord(s);
         assertEquals("abc", fagg.getStringValue());
     }
 }

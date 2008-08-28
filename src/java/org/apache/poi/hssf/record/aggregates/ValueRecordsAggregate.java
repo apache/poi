@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.DBCellRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
@@ -111,12 +112,12 @@ public final class ValueRecordsAggregate {
 
     public void removeAllCellsValuesForRow(int rowIndex) {
         if (rowIndex >= records.length) {
-            throw new IllegalArgumentException("Specified rowIndex " + rowIndex 
+            throw new IllegalArgumentException("Specified rowIndex " + rowIndex
                     + " is outside the allowable range (0.." +records.length + ")");
         }
         records[rowIndex] = null;
     }
-    
+
 
     public int getPhysicalNumberOfCells()
     {
@@ -142,62 +143,48 @@ public final class ValueRecordsAggregate {
     }
 
     /**
-     * Processes a sequential group of cell value records.  Stops at endIx or the first 
+     * Processes a sequential group of cell value records.  Stops at endIx or the first
      * non-value record encountered.
      * @param sfh used to resolve any shared formulas for the current sheet
      * @return the number of records consumed
      */
     public int construct(List records, int offset, int endIx, SharedFormulaHolder sfh) {
-        int k = 0;
+        RecordStream rs = new RecordStream(records, offset, endIx);
 
-        FormulaRecordAggregate lastFormulaAggregate = null;
-        
         // Now do the main processing sweep
-        for (k = offset; k < endIx; k++) {
-            Record rec = ( Record ) records.get(k);
-
-            if (rec instanceof StringRecord) {
-                if (lastFormulaAggregate == null) {
-                    throw new RuntimeException("StringRecord found without preceding FormulaRecord");
-                }
-                if (lastFormulaAggregate.getStringRecord() != null) {
-                    throw new RuntimeException("Multiple StringRecords found after FormulaRecord");
-                }
-                lastFormulaAggregate.setStringRecord((StringRecord)rec);
-                lastFormulaAggregate = null;
-                continue;
-            }
-            
-            if (rec instanceof TableRecord) {
-                // TODO - don't loose this record
-                // DATATABLE probably belongs in formula record aggregate
-                if (lastFormulaAggregate == null) {
-                    throw new RuntimeException("No preceding formula record found");
-                }
-                lastFormulaAggregate = null;
-                continue; 
-            }
-            
-            if (rec instanceof SharedFormulaRecord) {
-                // Already handled, not to worry
-                continue;
+        while (rs.hasNext()) {
+            Class recClass = rs.peekNextClass();
+            if (recClass == StringRecord.class) {
+                throw new RuntimeException("Loose StringRecord found without preceding FormulaRecord");
             }
 
-            if (rec instanceof UnknownRecord) {
+            if (recClass == TableRecord.class) {
+                throw new RuntimeException("Loose TableRecord found without preceding FormulaRecord");
+            }
+
+            if (recClass == UnknownRecord.class) {
                 break;
             }
-            if (rec instanceof RowRecord) {
-                break; 
+            if (recClass == RowRecord.class) {
+                break;
             }
-            if (rec instanceof DBCellRecord) {
+            if (recClass == DBCellRecord.class) {
                 // end of 'Row Block'.  This record is ignored by POI
                 break;
             }
-            if (rec instanceof MergeCellsRecord) {
+
+            Record rec = rs.getNext();
+
+            if (recClass == SharedFormulaRecord.class) {
+                // Already handled, not to worry
+                continue;
+            }
+            if (recClass == MergeCellsRecord.class) {
                 // doesn't really belong here
                 // can safely be ignored, because it has been processed in a higher method
                 continue;
             }
+
             if (!rec.isValue()) {
                 throw new RuntimeException("bad record type");
             }
@@ -206,14 +193,13 @@ public final class ValueRecordsAggregate {
                 if (formula.isSharedFormula()) {
                     sfh.convertSharedFormulaRecord(formula);
                 }
-                
-                lastFormulaAggregate = new FormulaRecordAggregate((FormulaRecord)rec, null);
-                insertCell( lastFormulaAggregate );
+
+                insertCell(new FormulaRecordAggregate((FormulaRecord)rec, rs));
                 continue;
             }
             insertCell(( CellValueRecordInterface ) rec);
         }
-        return k - offset - 1;
+        return rs.getCountRead();
     }
 
     /** Tallies a count of the size of the cell records
@@ -235,7 +221,7 @@ public final class ValueRecordsAggregate {
 
     /** Returns true if the row has cells attached to it */
     public boolean rowHasCells(int row) {
-        if (row > records.length-1) //previously this said row > records.length which means if 
+        if (row > records.length-1) //previously this said row > records.length which means if
             return false;  // if records.length == 60 and I pass "60" here I get array out of bounds
       CellValueRecordInterface[] rowCells=records[row]; //because a 60 length array has the last index = 59
       if(rowCells==null) return false;
@@ -260,7 +246,7 @@ public final class ValueRecordsAggregate {
         }
         return pos - offset;
     }
-    
+
     public int visitCellsForRow(int rowIndex, RecordVisitor rv) {
         int result = 0;
         CellValueRecordInterface[] cellRecs = records[rowIndex];
@@ -292,7 +278,7 @@ public final class ValueRecordsAggregate {
 
     public CellValueRecordInterface[] getValueRecords() {
         List temp = new ArrayList();
-        
+
         for (int i = 0; i < records.length; i++) {
             CellValueRecordInterface[] rowCells = records[i];
             if (rowCells == null) {
@@ -305,7 +291,7 @@ public final class ValueRecordsAggregate {
                 }
             }
         }
-        
+
         CellValueRecordInterface[] result = new CellValueRecordInterface[temp.size()];
         temp.toArray(result);
         return result;
@@ -314,7 +300,7 @@ public final class ValueRecordsAggregate {
     {
     return new MyIterator();
     }
-  
+
   private final class MyIterator implements Iterator {
     short nextColumn=-1;
     int nextRow,lastRow;
@@ -325,7 +311,7 @@ public final class ValueRecordsAggregate {
       this.lastRow=records.length-1;
       findNext();
     }
-    
+
     public MyIterator(int firstRow,int lastRow)
     {
       this.nextRow=firstRow;

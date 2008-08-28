@@ -222,13 +222,6 @@ public abstract class Ptg implements Cloneable {
 		throw new RuntimeException("Unexpected base token id (" + id + ")");
 	}
 	/**
-	 * 
-	 * 
-	 */
-	public static int getEncodedSize(Stack ptgs) {
-		return getEncodedSize(toPtgArray(ptgs));
-	}
-	/**
 	 * @return a distinct copy of this <tt>Ptg</tt> if the class is mutable, or the same instance
 	 * if the class is immutable.
 	 */
@@ -265,11 +258,32 @@ public abstract class Ptg implements Cloneable {
 		} 
 		return result;
 	}
+	/**
+	 * This method will return the same result as {@link #getEncodedSizeWithoutArrayData(Ptg[])} 
+	 * if there are no array tokens present.
+	 * @return the full size taken to encode the specified <tt>Ptg</tt>s 
+	 */
 	// TODO - several duplicates of this code should be refactored here
 	public static int getEncodedSize(Ptg[] ptgs) {
 		int result = 0;
 		for (int i = 0; i < ptgs.length; i++) {
 			result += ptgs[i].getSize();
+		}
+		return result;
+	}
+	/**
+	 * Used to calculate value that should be encoded at the start of the encoded Ptg token array;
+	 * @return the size of the encoded Ptg tokens not including any trailing array data.
+	 */
+	public static int getEncodedSizeWithoutArrayData(Ptg[] ptgs) {
+		int result = 0;
+		for (int i = 0; i < ptgs.length; i++) {
+			Ptg ptg = ptgs[i];
+			if (ptg instanceof ArrayPtg) {
+				result += ArrayPtg.PLAIN_TOKEN_SIZE;
+			} else {
+				result += ptg.getSize();
+			}
 		}
 		return result;
 	}

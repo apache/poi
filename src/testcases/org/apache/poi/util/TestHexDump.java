@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,54 +14,26 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
 
-import junit.framework.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-import java.io.*;
+import junit.framework.TestCase;
 
 /**
  * @author Glen Stampoultzis (glens at apache.org)
  * @author Marc Johnson (mjohnson at apache dot org)
  */
+public final class TestHexDump extends TestCase {
 
-public class TestHexDump
-    extends TestCase
-{
 
-    /**
-     * Creates new TestHexDump
-     *
-     * @param name
-     */
-
-    public TestHexDump(String name)
-    {
-        super(name);
+    private static char toHex(int n) {
+        return Character.toUpperCase(Character.forDigit(n & 0x0F, 16));
     }
 
-    private char toHex(final int n)
-    {
-        char[] hexChars =
-        {
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C',
-            'D', 'E', 'F'
-        };
-
-        return hexChars[ n % 16 ];
-    }
-
-    /**
-     * test dump method
-     *
-     * @exception IOException
-     */
-
-    public void testDump()
-        throws IOException
-    {
+    public void testDump() throws IOException {
         byte[] testArray = new byte[ 256 ];
 
         for (int j = 0; j < 256; j++)
@@ -245,8 +216,7 @@ public class TestHexDump
         // verify proper behavior with negative index
         try
         {
-            HexDump.dump(testArray, 0x10000000, new ByteArrayOutputStream(),
-                         -1);
+            HexDump.dump(testArray, 0x10000000, new ByteArrayOutputStream(), -1);
             fail("should have caught ArrayIndexOutOfBoundsException on negative index");
         }
         catch (ArrayIndexOutOfBoundsException ignored_exception)
@@ -287,37 +257,33 @@ public class TestHexDump
 
     }
 
-    public void testToHex()
-            throws Exception
-    {
-        assertEquals( "000A", HexDump.toHex((short)0xA));
-        assertEquals( "0A", HexDump.toHex((byte)0xA));
-        assertEquals( "0000000A", HexDump.toHex(0xA));
+    public void testToHex() {
+        assertEquals("000A", HexDump.toHex((short)0xA));
+        assertEquals("0A", HexDump.toHex((byte)0xA));
+        assertEquals("0000000A", HexDump.toHex(0xA));
 
-        assertEquals( "FFFF", HexDump.toHex((short)0xFFFF));
-
+        assertEquals("FFFF", HexDump.toHex((short)0xFFFF));
+        
+        confirmStr("0xFE", HexDump.byteToHex(-2));
+        confirmStr("0x25", HexDump.byteToHex(37));
+        confirmStr("0xFFFE", HexDump.shortToHex(-2));
+        confirmStr("0x0005", HexDump.shortToHex(5));
+        confirmStr("0xFFFFFF9C", HexDump.intToHex(-100));
+        confirmStr("0x00001001", HexDump.intToHex(4097));
+        confirmStr("0xFFFFFFFFFFFF0006", HexDump.longToHex(-65530));
+        confirmStr("0x0000000000003FCD", HexDump.longToHex(16333));
     }
 
-    private char toAscii(final int c)
-    {
+    private static void confirmStr(String expected, char[] actualChars) {
+        assertEquals(expected, new String(actualChars));
+    }
+
+    private static char toAscii(int c) {
         char rval = '.';
 
-        if ((c >= 32) && (c <= 126))
-        {
+        if (c >= 32 && c <= 126) {
             rval = ( char ) c;
         }
         return rval;
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println("Testing util.HexDump functionality");
-        junit.textui.TestRunner.run(TestHexDump.class);
     }
 }

@@ -71,7 +71,7 @@ public final class TestBug42464 extends TestCase {
 			if(false && cellRef.equals("BP24")) { // TODO - replace System.out.println()s with asserts
 				System.out.print(cellRef);
 				System.out.println(" - has " + r.getNumberOfExpressionTokens() 
-				        + " ptgs over " + r.getExpressionLength()  + " tokens:");
+				        + " ptgs:");
 				for(int i=0; i<ptgs.size(); i++) {
 					String c = ptgs.get(i).getClass().toString();
 					System.out.println("\t" + c.substring(c.lastIndexOf('.')+1) );
