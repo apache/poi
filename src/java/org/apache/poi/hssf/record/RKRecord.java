@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -38,17 +36,12 @@ import org.apache.poi.hssf.util.RKUtil;
  * @version 2.0-pre
  * @see org.apache.poi.hssf.record.NumberRecord
  */
-
-public class RKRecord
-    extends Record
-    implements CellValueRecordInterface
-{
+public final class RKRecord extends Record implements CellValueRecordInterface {
     public final static short sid                      = 0x27e;
     public final static short RK_IEEE_NUMBER           = 0;
     public final static short RK_IEEE_NUMBER_TIMES_100 = 1;
     public final static short RK_INTEGER               = 2;
     public final static short RK_INTEGER_TIMES_100     = 3;
-    //private short             field_1_row;
     private int             field_1_row;
     private short             field_2_col;
     private short             field_3_xf_index;
@@ -214,50 +207,6 @@ public class RKRecord
     public short getSid()
     {
         return sid;
-    }
-
-    public boolean isBefore(CellValueRecordInterface i)
-    {
-        if (this.getRow() > i.getRow())
-        {
-            return false;
-        }
-        if ((this.getRow() == i.getRow())
-                && (this.getColumn() > i.getColumn()))
-        {
-            return false;
-        }
-        if ((this.getRow() == i.getRow())
-                && (this.getColumn() == i.getColumn()))
-        {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean isAfter(CellValueRecordInterface i)
-    {
-        if (this.getRow() < i.getRow())
-        {
-            return false;
-        }
-        if ((this.getRow() == i.getRow())
-                && (this.getColumn() < i.getColumn()))
-        {
-            return false;
-        }
-        if ((this.getRow() == i.getRow())
-                && (this.getColumn() == i.getColumn()))
-        {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean isEqual(CellValueRecordInterface i)
-    {
-        return ((this.getRow() == i.getRow())
-                && (this.getColumn() == i.getColumn()));
     }
 
     public boolean isInValueSection()

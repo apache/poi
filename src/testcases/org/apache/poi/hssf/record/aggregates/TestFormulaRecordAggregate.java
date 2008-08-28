@@ -29,23 +29,13 @@ import org.apache.poi.hssf.record.StringRecord;
  *
  * @author  avik
  */
-public class TestFormulaRecordAggregate extends junit.framework.TestCase {
+public final class TestFormulaRecordAggregate extends junit.framework.TestCase {
     
-    /** Creates a new instance of TestFormulaRecordAggregate */
-    public TestFormulaRecordAggregate(String arg) {
-        super(arg);
-    }
-    
-    public void testClone() {
+    public void testBasic() throws Exception {
         FormulaRecord f = new FormulaRecord();
         StringRecord s = new StringRecord();
+        s.setString("abc");
         FormulaRecordAggregate fagg = new FormulaRecordAggregate(f,s);
-        FormulaRecordAggregate newFagg = (FormulaRecordAggregate) fagg.clone();
-        assertTrue("objects are different", fagg!=newFagg);
-        assertTrue("deep clone", fagg.getFormulaRecord() != newFagg.getFormulaRecord());
-        assertTrue("deep clone",  fagg.getStringRecord() != newFagg.getStringRecord());
-
-        
+        assertEquals("abc", fagg.getStringValue());
     }
-    
 }

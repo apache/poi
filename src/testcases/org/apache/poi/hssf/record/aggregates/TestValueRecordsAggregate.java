@@ -30,7 +30,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -50,7 +50,7 @@ public final class TestValueRecordsAggregate extends TestCase {
 
         constructValueRecord(records);
         Iterator iterator = valueRecord.getIterator();
-        Record record = (Record) iterator.next();
+        RecordBase record = (RecordBase) iterator.next();
         assertNotNull( "Row contains a value", record );
         assertTrue( "First record is a FormulaRecordsAggregate", ( record instanceof FormulaRecordAggregate ) );
         //Ensure that the SharedFormulaRecord has been converted
