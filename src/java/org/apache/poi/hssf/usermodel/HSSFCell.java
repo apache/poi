@@ -185,40 +185,25 @@ public final class HSSFCell {
     /**
      * used internally -- given a cell value record, figure out its type
      */
-    private int determineType(CellValueRecordInterface cval)
-    {
+    private static int determineType(CellValueRecordInterface cval) {
+    	if (cval instanceof FormulaRecordAggregate) {
+    		return HSSFCell.CELL_TYPE_FORMULA;
+    	}
+    	// all others are plain BIFF records
         Record record = ( Record ) cval;
-        int    sid    = record.getSid();
-        int    retval = 0;
+        switch (record.getSid()) {
 
-        switch (sid)
-        {
-
-            case NumberRecord.sid :
-                retval = HSSFCell.CELL_TYPE_NUMERIC;
-                break;
-
-            case BlankRecord.sid :
-                retval = HSSFCell.CELL_TYPE_BLANK;
-                break;
-
-            case LabelSSTRecord.sid :
-                retval = HSSFCell.CELL_TYPE_STRING;
-                break;
-
-            case FormulaRecordAggregate.sid :
-                retval = HSSFCell.CELL_TYPE_FORMULA;
-                break;
-
+            case NumberRecord.sid :   return HSSFCell.CELL_TYPE_NUMERIC;
+            case BlankRecord.sid :    return HSSFCell.CELL_TYPE_BLANK;
+            case LabelSSTRecord.sid : return HSSFCell.CELL_TYPE_STRING;
             case BoolErrRecord.sid :
                 BoolErrRecord boolErrRecord = ( BoolErrRecord ) record;
 
-                retval = (boolErrRecord.isBoolean())
+                return boolErrRecord.isBoolean()
                          ? HSSFCell.CELL_TYPE_BOOLEAN
                          : HSSFCell.CELL_TYPE_ERROR;
-                break;
         }
-        return retval;
+        throw new RuntimeException("Bad cell value rec (" + cval.getClass().getName() + ")");
     }
     
     /**

@@ -26,6 +26,7 @@ import org.apache.poi.hssf.record.DBCellRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.MergeCellsRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.StringRecord;
@@ -227,7 +228,7 @@ public final class ValueRecordsAggregate {
         if (row > endRow)
           break;
         if ((row >=startRow) && (row <= endRow))
-          size += ((Record)cell).getRecordSize();
+          size += ((RecordBase)cell).getRecordSize();
       }
       return size;
     }
@@ -255,7 +256,7 @@ public final class ValueRecordsAggregate {
             CellValueRecordInterface cell = (CellValueRecordInterface)itr.next();
             if (cell.getRow() != row)
               break;
-            pos += (( Record ) cell).serialize(pos, data);
+            pos += (( RecordBase ) cell).serialize(pos, data);
         }
         return pos - offset;
     }
@@ -312,16 +313,6 @@ public final class ValueRecordsAggregate {
     public Iterator getIterator()
     {
     return new MyIterator();
-    }
-
-    /** Performs a deep clone of the record*/
-    public Object clone() {
-      ValueRecordsAggregate rec = new ValueRecordsAggregate();
-      for (Iterator valIter = getIterator(); valIter.hasNext();) {
-        CellValueRecordInterface val = (CellValueRecordInterface)((CellValueRecordInterface)valIter.next()).clone();
-        rec.insertCell(val);
-      }
-      return rec;
     }
   
   private final class MyIterator implements Iterator {

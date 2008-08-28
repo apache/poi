@@ -180,51 +180,6 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
         return buffer.toString();
     }
 
-
-    public boolean isBefore(CellValueRecordInterface i)
-    {
-        if (this.getRow() > i.getRow())
-        {
-            return false;
-        }
-        if ((this.getRow() == i.getRow())
-                && (this.getColumn() > i.getColumn()))
-        {
-            return false;
-        }
-        if ((this.getRow() == i.getRow())
-                && (this.getColumn() == i.getColumn()))
-        {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean isAfter(CellValueRecordInterface i)
-    {
-        if (this.getRow() < i.getRow())
-        {
-            return false;
-        }
-        if ((this.getRow() == i.getRow())
-                && (this.getColumn() < i.getColumn()))
-        {
-            return false;
-        }
-        if ((this.getRow() == i.getRow())
-                && (this.getColumn() == i.getColumn()))
-        {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean isEqual(CellValueRecordInterface i)
-    {
-        return ((this.getRow() == i.getRow())
-                && (this.getColumn() == i.getColumn()));
-    }
-
     public boolean isInValueSection()
     {
         return true;
