@@ -34,13 +34,8 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-
-public class BlankRecord
-    extends Record
-    implements CellValueRecordInterface, Comparable
-{
+public final class BlankRecord extends Record implements CellValueRecordInterface {
     public final static short sid = 0x201;
-    //private short             field_1_row;
     private int             field_1_row;
     private short             field_2_col;
     private short             field_3_xf;
@@ -152,50 +147,6 @@ public class BlankRecord
         field_2_col = col;
     }
 
-    public boolean isBefore(CellValueRecordInterface i)
-    {
-        if (this.getRow() > i.getRow())
-        {
-            return false;
-        }
-        if ((this.getRow() == i.getRow())
-                && (this.getColumn() > i.getColumn()))
-        {
-            return false;
-        }
-        if ((this.getRow() == i.getRow())
-                && (this.getColumn() == i.getColumn()))
-        {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean isAfter(CellValueRecordInterface i)
-    {
-        if (this.getRow() < i.getRow())
-        {
-            return false;
-        }
-        if ((this.getRow() == i.getRow())
-                && (this.getColumn() < i.getColumn()))
-        {
-            return false;
-        }
-        if ((this.getRow() == i.getRow())
-                && (this.getColumn() == i.getColumn()))
-        {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean isEqual(CellValueRecordInterface i)
-    {
-        return ((this.getRow() == i.getRow())
-                && (this.getColumn() == i.getColumn()));
-    }
-
     public boolean isInValueSection()
     {
         return true;
@@ -252,50 +203,6 @@ public class BlankRecord
     public int getRecordSize()
     {
         return 10;
-    }
-
-    public int compareTo(Object obj)
-    {
-        CellValueRecordInterface loc = ( CellValueRecordInterface ) obj;
-
-        if ((this.getRow() == loc.getRow())
-                && (this.getColumn() == loc.getColumn()))
-        {
-            return 0;
-        }
-        if (this.getRow() < loc.getRow())
-        {
-            return -1;
-        }
-        if (this.getRow() > loc.getRow())
-        {
-            return 1;
-        }
-        if (this.getColumn() < loc.getColumn())
-        {
-            return -1;
-        }
-        if (this.getColumn() > loc.getColumn())
-        {
-            return 1;
-        }
-        return -1;
-    }
-
-    public boolean equals(Object obj)
-    {
-        if (!(obj instanceof CellValueRecordInterface))
-        {
-            return false;
-        }
-        CellValueRecordInterface loc = ( CellValueRecordInterface ) obj;
-
-        if ((this.getRow() == loc.getRow())
-                && (this.getColumn() == loc.getColumn()))
-        {
-            return true;
-        }
-        return false;
     }
 
     public Object clone() {

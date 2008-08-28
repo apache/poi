@@ -122,7 +122,8 @@ public final class Sheet implements Model {
     
     protected WindowTwoRecord            windowTwo         =     null;
     protected SelectionRecord            selection         =     null;
-    private   MergedCellsTable           _mergedCellsTable;
+    /** java object always present, but if empty no BIFF records are written */
+    private final MergedCellsTable       _mergedCellsTable;
     /** always present in this POI object, not always written to Excel file */
     /*package*/ColumnInfoRecordsAggregate _columnInfos;
     /** the DimensionsRecord is always present */
@@ -146,8 +147,8 @@ public final class Sheet implements Model {
      * Creates new Sheet with no initialization --useless at this point
      * @see #createSheet(List,int,int)
      */
-    public Sheet()
-    {
+    public Sheet() {
+    	_mergedCellsTable = new MergedCellsTable();
     }
 
     /**
@@ -158,7 +159,7 @@ public final class Sheet implements Model {
      * to the passed in records and references to those records held. This function
      * is normally called via Workbook.
      *
-     * @param recs array containing those records in the sheet in sequence (normally obtained from RecordFactory)
+     * @param inRecs array containing those records in the sheet in sequence (normally obtained from RecordFactory)
      * @param sheetnum integer specifying the sheet's number (0,1 or 2 in this release)
      * @param offset of the sheet's BOF record
      *
@@ -167,19 +168,19 @@ public final class Sheet implements Model {
      * @see org.apache.poi.hssf.model.Workbook
      * @see org.apache.poi.hssf.record.Record
      */
-    public static Sheet createSheet(List recs, int sheetnum, int offset)
+    public static Sheet createSheet(List inRecs, int sheetnum, int offset)
     {
         if (log.check( POILogger.DEBUG ))
             log.logFormatted(POILogger.DEBUG,
                     "Sheet createSheet (existing file) with %",
-                    new Integer(recs.size()));
+                    new Integer(inRecs.size()));
         Sheet     retval             = new Sheet();
-        ArrayList records            = new ArrayList(recs.size() / 5);
-        boolean   isfirstcell        = true;
-        int       bofEofNestingLevel = 0;
+        ArrayList records            = new ArrayList(inRecs.size() / 5);
+        // TODO - take chart streams off into separate java objects
+        int       bofEofNestingLevel = 0;  // nesting level can only get to 2 (when charts are present)
 
-        for (int k = offset; k < recs.size(); k++) {
-            Record rec = ( Record ) recs.get(k);
+        for (int k = offset; k < inRecs.size(); k++) {
+            Record rec = ( Record ) inRecs.get(k);
             if ( rec.getSid() == DBCellRecord.sid ) {
                 continue;
             }
@@ -193,7 +194,7 @@ public final class Sheet implements Model {
             }
             
             if ( rec.getSid() == CFHeaderRecord.sid ) {
-                RecordStream rs = new RecordStream(recs, k);
+                RecordStream rs = new RecordStream(inRecs, k);
                 retval.condFormatting = new ConditionalFormattingTable(rs);
                 k += rs.getCountRead()-1;
                 records.add(retval.condFormatting);
@@ -201,43 +202,34 @@ public final class Sheet implements Model {
             }
             
             if (rec.getSid() == ColumnInfoRecord.sid) {
-                RecordStream rs = new RecordStream(recs, k);
+                RecordStream rs = new RecordStream(inRecs, k);
                 retval._columnInfos = new ColumnInfoRecordsAggregate(rs);
                 k += rs.getCountRead()-1;
                 records.add(retval._columnInfos);
                 continue;
             }
             if ( rec.getSid() == DVALRecord.sid) {
-                RecordStream rs = new RecordStream(recs, k);
+                RecordStream rs = new RecordStream(inRecs, k);
                 retval._dataValidityTable = new DataValidityTable(rs);
                 k += rs.getCountRead() - 1; // TODO - convert this method result to be zero based
                 records.add(retval._dataValidityTable);
                 continue;
             }
             // TODO construct RowRecordsAggregate from RecordStream
-            if ( rec.getSid() == RowRecord.sid ) {
-                RowRecord row = (RowRecord)rec;
-                if (retval._rowsAggregate == null) {
-                    retval._rowsAggregate = new RowRecordsAggregate();
-                    records.add(retval._rowsAggregate); //only add the aggregate once
+            if ((rec.getSid() == RowRecord.sid || rec.isValue()) && bofEofNestingLevel == 1 ) {
+                //only add the aggregate once
+                if (retval._rowsAggregate != null) {
+                    throw new RuntimeException("row/cell records found in the wrong place");
                 }
-                retval._rowsAggregate.insertRow(row);
+                int lastRowCellRec = findEndOfRowBlock(inRecs, k, retval._mergedCellsTable);
+                retval._rowsAggregate = new RowRecordsAggregate(inRecs, k, lastRowCellRec);
+                records.add(retval._rowsAggregate); //only add the aggregate once
+                k = lastRowCellRec -1;
                 continue;
-            }
-            if ( rec.isValue() && bofEofNestingLevel == 1 ) {
-                if (isfirstcell) {
-                    isfirstcell = false;
-                    if (retval._rowsAggregate == null) {
-                        retval._rowsAggregate = new RowRecordsAggregate();
-                        records.add(retval._rowsAggregate); //only add the aggregate once
-                    }
-                    retval._rowsAggregate.constructCellValues( k, recs );
-                }
-               continue;
             }
              
             if (PageSettingsBlock.isComponentRecord(rec.getSid())) {
-                RecordStream rs = new RecordStream(recs, k);
+                RecordStream rs = new RecordStream(inRecs, k);
                 PageSettingsBlock psb = new PageSettingsBlock(rs);
                 if (bofEofNestingLevel == 1) {
                     if (retval._psBlock == null) {
@@ -253,9 +245,10 @@ public final class Sheet implements Model {
             }
             
             if (rec.getSid() == MergeCellsRecord.sid) {
-                RecordStream rs = new RecordStream(recs, k);
-                retval._mergedCellsTable = new MergedCellsTable(rs);
-                records.add(retval._mergedCellsTable);
+            	// when the MergedCellsTable is found in the right place, we expect those records to be contiguous
+                RecordStream rs = new RecordStream(inRecs, k);
+                retval._mergedCellsTable.read(rs);
+                k += rs.getCountRead()-1;
                 continue;
             }
             
@@ -337,11 +330,36 @@ public final class Sheet implements Model {
         if (retval._dimensions == null) {
             throw new RuntimeException("DimensionsRecord was not found");
         }
+        if (retval.windowTwo == null) {
+            throw new RuntimeException("WINDOW2 was not found");
+        }
+        // put merged cells table in the right place (regardless of where the first MergedCellsRecord was found */
+        RecordOrderer.addNewSheetRecord(records, retval._mergedCellsTable);
         retval.records = records;
         retval.checkRows();
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "sheet createSheet (existing file) exited");
         return retval;
+    }
+
+    /**
+     * Also collects any rogue MergeCellRecords
+     * @return the index one after the last row/cell record
+     */
+    private static int findEndOfRowBlock(List recs, int startIx, MergedCellsTable mergedCellsTable) {
+        for(int i=startIx; i<recs.size(); i++) {
+            Record rec = (Record) recs.get(i);
+            if (RecordOrderer.isEndOfRowBlock(rec.getSid())) {
+                return i;
+            }
+            if (rec.getSid() == MergeCellsRecord.sid) {
+                    // Some apps scatter these records between the rows/cells but they are supposed to
+                    // be well after the row/cell records.  We collect them here 
+                    // see bug 45699
+                    mergedCellsTable.add((MergeCellsRecord) rec);
+            }
+        }
+        throw new RuntimeException("Failed to find end of row/cell records");
     }
 
     private static final class RecordCloner implements RecordVisitor {
@@ -447,9 +465,12 @@ public final class Sheet implements Model {
         retval._dimensions = createDimensions();
         records.add(retval._dimensions);
         retval.dimsloc = records.size()-1;
+        // 'Sheet View Settings'
         records.add(retval.windowTwo = retval.createWindowTwo());
         retval.selection = createSelection();
         records.add(retval.selection);
+
+        records.add(retval._mergedCellsTable); // MCT comes after 'Sheet View Settings' 
         records.add(EOFRecord.instance);
 
 
@@ -468,11 +489,7 @@ public final class Sheet implements Model {
         }
     }
     private MergedCellsTable getMergedRecords() {
-        if (_mergedCellsTable == null) {
-            MergedCellsTable mct = new MergedCellsTable();
-            RecordOrderer.addNewSheetRecord(records, mct);
-            _mergedCellsTable = mct;
-        }
+        // always present
         return _mergedCellsTable;
     }
 
@@ -872,7 +889,7 @@ public final class Sheet implements Model {
     /**
      * creates the BOF record
      */
-    private static BOFRecord createBOF() {
+    /* package */ static BOFRecord createBOF() {
         BOFRecord retval = new BOFRecord();
 
         retval.setVersion(( short ) 0x600);

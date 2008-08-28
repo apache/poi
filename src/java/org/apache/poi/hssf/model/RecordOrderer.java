@@ -22,16 +22,20 @@ import java.util.List;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.CalcCountRecord;
 import org.apache.poi.hssf.record.CalcModeRecord;
+import org.apache.poi.hssf.record.DVALRecord;
 import org.apache.poi.hssf.record.DateWindow1904Record;
 import org.apache.poi.hssf.record.DefaultRowHeightRecord;
 import org.apache.poi.hssf.record.DeltaRecord;
 import org.apache.poi.hssf.record.DimensionsRecord;
+import org.apache.poi.hssf.record.DrawingRecord;
+import org.apache.poi.hssf.record.DrawingSelectionRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.GridsetRecord;
 import org.apache.poi.hssf.record.GutsRecord;
 import org.apache.poi.hssf.record.HyperlinkRecord;
 import org.apache.poi.hssf.record.IndexRecord;
 import org.apache.poi.hssf.record.IterationRecord;
+import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.record.PaneRecord;
 import org.apache.poi.hssf.record.PrecisionRecord;
 import org.apache.poi.hssf.record.PrintGridlinesRecord;
@@ -42,7 +46,10 @@ import org.apache.poi.hssf.record.RefModeRecord;
 import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.SaveRecalcRecord;
 import org.apache.poi.hssf.record.SelectionRecord;
+import org.apache.poi.hssf.record.TextObjectRecord;
 import org.apache.poi.hssf.record.UncalcedRecord;
+import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.WindowOneRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
@@ -57,8 +64,6 @@ import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
  * @author Josh Micich
  */
 final class RecordOrderer {
-	// TODO - add UninterpretedRecord as base class for many of these
-	// unimplemented sids
 	
 	// TODO - simplify logic using a generalised record ordering
 
@@ -126,7 +131,7 @@ final class RecordOrderer {
 				case PrintGridlinesRecord.sid:
 				case GridsetRecord.sid:
 				case DefaultRowHeightRecord.sid:
-				case 0x0081: // SHEETPR
+				case UnknownRecord.SHEETPR_0081:
 					return true;
 				// next is the 'Worksheet Protection Block'
 			}
@@ -149,10 +154,10 @@ final class RecordOrderer {
 				case SCLRecord.sid:
 				case PaneRecord.sid:
 				case SelectionRecord.sid:
-				case 0x0099:// STANDARDWIDTH
+				case UnknownRecord.STANDARDWIDTH_0099:
 				// MergedCellsTable usually here 
-				case 0x015f:// LABELRANGES
-				case 0x00ef:// PHONETICPR
+				case UnknownRecord.LABELRANGES_015F:
+				case UnknownRecord.PHONETICPR_00EF:
 					return i + 1;
 			}
 		}
@@ -162,13 +167,20 @@ final class RecordOrderer {
 	private static int findInsertPosForNewMergedRecordTable(List records) {
 		for (int i = records.size() - 2; i >= 0; i--) { // -2 to skip EOF record
 			Object rb = records.get(i);
+			if (!(rb instanceof Record)) {
+				// DataValidityTable, ConditionalFormattingTable, 
+				// even PageSettingsBlock (which doesn't normally appear after 'View Settings')
+				continue; 
+			}
 			Record rec = (Record) rb;
 			switch (rec.getSid()) {
+				// 'View Settings' (4 records) 
 				case WindowTwoRecord.sid:
 				case SCLRecord.sid:
 				case PaneRecord.sid:
 				case SelectionRecord.sid:
-				case 0x0099:// STANDARDWIDTH
+
+				case UnknownRecord.STANDARDWIDTH_0099:
 					return i + 1;
 			}
 		}
@@ -229,16 +241,16 @@ final class RecordOrderer {
 		short sid = ((Record)rb).getSid();
 		switch(sid) {
 			case WindowTwoRecord.sid:
-			case 0x00A0: // SCL
+			case UnknownRecord.SCL_00A0:
 			case PaneRecord.sid:
 			case SelectionRecord.sid:
-			case 0x0099: // STANDARDWIDTH
+			case UnknownRecord.STANDARDWIDTH_0099:
 			// MergedCellsTable
-			case 0x015F: // LABELRANGES
-			case 0x00EF: // PHONETICPR
+			case UnknownRecord.LABELRANGES_015F:
+			case UnknownRecord.PHONETICPR_00EF:
 			// ConditionalFormattingTable
 			case HyperlinkRecord.sid:
-			case 0x0800: // QUICKTIP
+			case UnknownRecord.QUICKTIP_0800:
 				return true;
 		}
 		return false;
@@ -246,9 +258,9 @@ final class RecordOrderer {
 
 	private static boolean isDVTSubsequentRecord(short sid) {
 		switch(sid) {
-			case 0x0862: // SHEETLAYOUT
-			case 0x0867: // SHEETPROTECTION
-			case 0x0868: // RANGEPROTECTION
+			case UnknownRecord.SHEETEXT_0862:
+			case UnknownRecord.SHEETPROTECTION_0867:
+			case UnknownRecord.RANGEPROTECTION_0868:
 			case EOFRecord.sid:
 				return true;
 		}
@@ -306,5 +318,30 @@ final class RecordOrderer {
 			}
 		}
 		return false;
+	}
+	/**
+	 * @return <code>true</code> if the specified record ID terminates a sequence of Row block records
+	 * It is assumed that at least one row or cell value record has been found prior to the current 
+	 * record
+	 */
+	public static boolean isEndOfRowBlock(short sid) {
+		switch(sid) {
+			case DrawingRecord.sid:
+			case DrawingSelectionRecord.sid:
+			case ObjRecord.sid:
+			case TextObjectRecord.sid:
+
+			case WindowOneRecord.sid:
+				// should really be part of workbook stream, but some apps seem to put this before WINDOW2
+			case WindowTwoRecord.sid:
+				return true;
+
+			case DVALRecord.sid:
+				return true;
+			case EOFRecord.sid: 
+				// WINDOW2 should always be present, so shouldn't have got this far
+				throw new RuntimeException("Found EOFRecord before WindowTwoRecord was encountered");
+		}
+		return PageSettingsBlock.isComponentRecord(sid);
 	}
 }

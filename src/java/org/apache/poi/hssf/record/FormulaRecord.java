@@ -32,10 +32,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-public final class FormulaRecord
-    extends Record
-    implements CellValueRecordInterface, Comparable
-{
+public final class FormulaRecord extends Record implements CellValueRecordInterface {
     
     public static final short sid = 0x0006;   // docs say 406...because of a bug Microsoft support site article #Q184647)
 
@@ -380,50 +377,6 @@ public final class FormulaRecord
         return retval;
     }
 
-    public boolean isBefore(CellValueRecordInterface i)
-    {
-        if (this.getRow() > i.getRow())
-        {
-            return false;
-        }
-        if ((this.getRow() == i.getRow())
-                && (this.getColumn() > i.getColumn()))
-        {
-            return false;
-        }
-        if ((this.getRow() == i.getRow())
-                && (this.getColumn() == i.getColumn()))
-        {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean isAfter(CellValueRecordInterface i)
-    {
-        if (this.getRow() < i.getRow())
-        {
-            return false;
-        }
-        if ((this.getRow() == i.getRow())
-                && (this.getColumn() < i.getColumn()))
-        {
-            return false;
-        }
-        if ((this.getRow() == i.getRow())
-                && (this.getColumn() == i.getColumn()))
-        {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean isEqual(CellValueRecordInterface i)
-    {
-        return ((this.getRow() == i.getRow())
-                && (this.getColumn() == i.getColumn()));
-    }
-
     public boolean isInValueSection()
     {
         return true;
@@ -433,51 +386,6 @@ public final class FormulaRecord
     {
         return true;
     }
-
-    public int compareTo(Object obj)
-    {
-        CellValueRecordInterface loc = ( CellValueRecordInterface ) obj;
-
-        if ((this.getRow() == loc.getRow())
-                && (this.getColumn() == loc.getColumn()))
-        {
-            return 0;
-        }
-        if (this.getRow() < loc.getRow())
-        {
-            return -1;
-        }
-        if (this.getRow() > loc.getRow())
-        {
-            return 1;
-        }
-        if (this.getColumn() < loc.getColumn())
-        {
-            return -1;
-        }
-        if (this.getColumn() > loc.getColumn())
-        {
-            return 1;
-        }
-        return -1;
-    }
-
-    public boolean equals(Object obj)
-    {
-        if (!(obj instanceof CellValueRecordInterface))
-        {
-            return false;
-        }
-        CellValueRecordInterface loc = ( CellValueRecordInterface ) obj;
-
-        if ((this.getRow() == loc.getRow())
-                && (this.getColumn() == loc.getColumn()))
-        {
-            return true;
-        }
-        return false;
-    }
-    
     
     public String toString()
     {
