@@ -41,8 +41,12 @@ public final class MergedCellsTable extends RecordAggregate {
 		_mergedRegions = new ArrayList();
 	}
 
-	public MergedCellsTable(RecordStream rs) {
-		List temp = new ArrayList();
+	/**
+	 * reads zero or more consecutive {@link MergeCellsRecord}s
+	 * @param rs
+	 */
+	public void read(RecordStream rs) {
+		List temp = _mergedRegions;
 		while (rs.peekNextClass() == MergeCellsRecord.class) {
 			MergeCellsRecord mcr = (MergeCellsRecord) rs.getNext();
 			int nRegions = mcr.getNumAreas();
@@ -50,7 +54,6 @@ public final class MergedCellsTable extends RecordAggregate {
 				temp.add(mcr.getAreaAt(i));
 			}
 		}
-		_mergedRegions = temp;
 	}
 
 	public int getRecordSize() {
@@ -92,7 +95,10 @@ public final class MergedCellsTable extends RecordAggregate {
 	}
 
 	public void add(MergeCellsRecord mcr) {
-		_mergedRegions.add(mcr);
+		int nRegions = mcr.getNumAreas();
+		for (int i = 0; i < nRegions; i++) {
+			_mergedRegions.add(mcr.getAreaAt(i));
+		}
 	}
 
 	public CellRangeAddress get(int index) {
