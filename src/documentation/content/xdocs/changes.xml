@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">45698 - Fix LinkTable to tolerate multiple EXTERNSHEET records</action>
            <action dev="POI-DEVELOPERS" type="fix">45682 - Fix for cloning of CFRecordsAggregate</action>
            <action dev="POI-DEVELOPERS" type="add">Initial support for evaluating external add-in functions like YEARFRAC</action>
            <action dev="POI-DEVELOPERS" type="fix">45672 - Fix for MissingRecordAwareHSSFListener to prevent multiple LastCellOfRowDummyRecords when shared formulas are present</action>
