@@ -35,6 +35,7 @@ import org.apache.poi.hssf.record.PrintSetupRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RightMarginRecord;
 import org.apache.poi.hssf.record.TopMarginRecord;
+import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.VerticalPageBreakRecord;
 
@@ -99,9 +100,9 @@ public final class PageSettingsBlock extends RecordAggregate {
 			case RightMarginRecord.sid:
 			case TopMarginRecord.sid:
 			case BottomMarginRecord.sid:
-			case 0x004D: // PLS
+			case UnknownRecord.PLS_004D:
 			case PrintSetupRecord.sid:
-			case 0x00E9: // BITMAP
+			case UnknownRecord.BITMAP_00E9:
 				return true;
 		}
 		return false;

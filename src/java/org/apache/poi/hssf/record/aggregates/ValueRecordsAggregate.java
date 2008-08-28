@@ -22,11 +22,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.DBCellRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.MergeCellsRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordBase;
+import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.StringRecord;
+import org.apache.poi.hssf.record.TableRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 
@@ -39,8 +43,8 @@ import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class ValueRecordsAggregate {
-    private int                       firstcell = -1;
-    private int                       lastcell  = -1;
+    private int firstcell = -1;
+    private int lastcell  = -1;
     private CellValueRecordInterface[][] records;
 
     /** Creates a new instance of ValueRecordsAggregate */
@@ -137,92 +141,81 @@ public final class ValueRecordsAggregate {
         return lastcell;
     }
 
-    public int construct(int offset, List records)
-    {
+    /**
+     * Processes a sequential group of cell value records.  Stops at endIx or the first 
+     * non-value record encountered.
+     * @param sfh used to resolve any shared formulas for the current sheet
+     * @return the number of records consumed
+     */
+    public int construct(List records, int offset, int endIx, SharedFormulaHolder sfh) {
         int k = 0;
 
         FormulaRecordAggregate lastFormulaAggregate = null;
         
-        // First up, locate all the shared formulas for this sheet
-        List sharedFormulas = new java.util.ArrayList();
-        for (k = offset; k < records.size(); k++)
-        {
-            Record rec = ( Record ) records.get(k);
-            if (rec instanceof SharedFormulaRecord) {
-                sharedFormulas.add(rec);
-            }
-            if(rec instanceof EOFRecord) {
-                // End of current sheet. Ignore all subsequent shared formula records (Bugzilla 44449)
-                break;
-            }
-        }
-
         // Now do the main processing sweep
-        for (k = offset; k < records.size(); k++)
-        {
+        for (k = offset; k < endIx; k++) {
             Record rec = ( Record ) records.get(k);
 
-            if (rec instanceof StringRecord == false && !rec.isInValueSection() && !(rec instanceof UnknownRecord))
-            {
-                break;
-            } else if (rec instanceof SharedFormulaRecord) {
-                // Already handled, not to worry
-            } else if (rec instanceof FormulaRecord)
-            {
-              FormulaRecord formula = (FormulaRecord)rec;
-              if (formula.isSharedFormula()) {
-                // Traverse the list of shared formulas in
-                //  reverse order, and try to find the correct one
-                //  for us
-                boolean found = false;
-                for (int i=sharedFormulas.size()-1;i>=0;i--) {
-                    // TODO - there is no junit test case to justify this reversed loop
-                    // perhaps it could just run in the normal direction?
-                    SharedFormulaRecord shrd = (SharedFormulaRecord)sharedFormulas.get(i);
-                    if (shrd.isFormulaInShared(formula)) {
-                        shrd.convertSharedFormulaRecord(formula);
-                        found = true;
-                        break;
-                    }
+            if (rec instanceof StringRecord) {
+                if (lastFormulaAggregate == null) {
+                    throw new RuntimeException("StringRecord found without preceding FormulaRecord");
                 }
-                if (!found) {
-                    handleMissingSharedFormulaRecord(formula);
+                if (lastFormulaAggregate.getStringRecord() != null) {
+                    throw new RuntimeException("Multiple StringRecords found after FormulaRecord");
                 }
-              }
-                
-              lastFormulaAggregate = new FormulaRecordAggregate((FormulaRecord)rec, null);
-              insertCell( lastFormulaAggregate );
-            }
-            else if (rec instanceof StringRecord)
-            {
                 lastFormulaAggregate.setStringRecord((StringRecord)rec);
+                lastFormulaAggregate = null;
+                continue;
             }
-            else if (rec.isValue())
-            {
-                insertCell(( CellValueRecordInterface ) rec);
+            
+            if (rec instanceof TableRecord) {
+                // TODO - don't loose this record
+                // DATATABLE probably belongs in formula record aggregate
+                if (lastFormulaAggregate == null) {
+                    throw new RuntimeException("No preceding formula record found");
+                }
+                lastFormulaAggregate = null;
+                continue; 
             }
+            
+            if (rec instanceof SharedFormulaRecord) {
+                // Already handled, not to worry
+                continue;
+            }
+
+            if (rec instanceof UnknownRecord) {
+                break;
+            }
+            if (rec instanceof RowRecord) {
+                break; 
+            }
+            if (rec instanceof DBCellRecord) {
+                // end of 'Row Block'.  This record is ignored by POI
+                break;
+            }
+            if (rec instanceof MergeCellsRecord) {
+                // doesn't really belong here
+                // can safely be ignored, because it has been processed in a higher method
+                continue;
+            }
+            if (!rec.isValue()) {
+                throw new RuntimeException("bad record type");
+            }
+            if (rec instanceof FormulaRecord) {
+                FormulaRecord formula = (FormulaRecord)rec;
+                if (formula.isSharedFormula()) {
+                    sfh.convertSharedFormulaRecord(formula);
+                }
+                
+                lastFormulaAggregate = new FormulaRecordAggregate((FormulaRecord)rec, null);
+                insertCell( lastFormulaAggregate );
+                continue;
+            }
+            insertCell(( CellValueRecordInterface ) rec);
         }
-        return k;
+        return k - offset - 1;
     }
 
-    /**
-     * Sometimes the shared formula flag "seems" to be erroneously set, in which case there is no 
-     * call to <tt>SharedFormulaRecord.convertSharedFormulaRecord</tt> and hence the 
-     * <tt>parsedExpression</tt> field of this <tt>FormulaRecord</tt> will not get updated.<br/>
-     * As it turns out, this is not a problem, because in these circumstances, the existing value
-     * for <tt>parsedExpression</tt> is perfectly OK.<p/>
-     * 
-     * This method may also be used for setting breakpoints to help diagnose issues regarding the
-     * abnormally-set 'shared formula' flags. 
-     * (see TestValueRecordsAggregate.testSpuriousSharedFormulaFlag()).<p/>
-     * 
-     * The method currently does nothing but do not delete it without finding a nice home for this 
-     * comment.
-     */
-    private static void handleMissingSharedFormulaRecord(FormulaRecord formula) {
-        // could log an info message here since this is a fairly unusual occurrence.
-    }
-    
     /** Tallies a count of the size of the cell records
      *  that are attached to the rows in the range specified.
      */
@@ -235,7 +228,7 @@ public final class ValueRecordsAggregate {
         if (row > endRow)
           break;
         if ((row >=startRow) && (row <= endRow))
-          size += ((Record)cell).getRecordSize();
+          size += ((RecordBase)cell).getRecordSize();
       }
       return size;
     }
@@ -263,7 +256,7 @@ public final class ValueRecordsAggregate {
             CellValueRecordInterface cell = (CellValueRecordInterface)itr.next();
             if (cell.getRow() != row)
               break;
-            pos += (( Record ) cell).serialize(pos, data);
+            pos += (( RecordBase ) cell).serialize(pos, data);
         }
         return pos - offset;
     }
@@ -320,16 +313,6 @@ public final class ValueRecordsAggregate {
     public Iterator getIterator()
     {
     return new MyIterator();
-    }
-
-    /** Performs a deep clone of the record*/
-    public Object clone() {
-      ValueRecordsAggregate rec = new ValueRecordsAggregate();
-      for (Iterator valIter = getIterator(); valIter.hasNext();) {
-        CellValueRecordInterface val = (CellValueRecordInterface)((CellValueRecordInterface)valIter.next()).clone();
-        rec.insertCell(val);
-      }
-      return rec;
     }
   
   private final class MyIterator implements Iterator {

@@ -41,4 +41,19 @@ public final class TestLinkTable extends TestCase {
 		
 		assertEquals("ipcSummenproduktIntern($C5,N$2,$A$9,N$1)", formula);
 	}
+	
+	public void testMultipleExternSheetRecords_bug45698() {
+		HSSFWorkbook wb;
+
+		try {
+			wb = HSSFTestDataSamples.openSampleWorkbook("ex45698-22488.xls");
+		} catch (RuntimeException e) {
+			if ("Extern sheet is part of LinkTable".equals(e.getMessage())) {
+				throw new AssertionFailedError("Identified bug 45698");
+			}
+			throw e;
+		}
+		// some other sanity checks
+		assertEquals(7, wb.getNumberOfSheets());
+	}
 }
