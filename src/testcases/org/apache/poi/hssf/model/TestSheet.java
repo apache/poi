@@ -24,6 +24,7 @@ import java.util.List;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.eventmodel.ERFListener;
 import org.apache.poi.hssf.eventmodel.EventRecordFactory;
 import org.apache.poi.hssf.record.BOFRecord;
@@ -32,6 +33,7 @@ import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.ColumnInfoRecord;
 import org.apache.poi.hssf.record.DimensionsRecord;
 import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.GutsRecord;
 import org.apache.poi.hssf.record.IndexRecord;
 import org.apache.poi.hssf.record.MergeCellsRecord;
@@ -39,9 +41,13 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.record.UncalcedRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
+import org.apache.poi.hssf.record.aggregates.MergedCellsTable;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellRangeAddress;
@@ -57,6 +63,7 @@ public final class TestSheet extends TestCase {
         List records = new ArrayList();
         records.add( new BOFRecord() );
         records.add( new DimensionsRecord() );
+        records.add(createWindow2Record());
         records.add(EOFRecord.instance);
         Sheet sheet = Sheet.createSheet( records, 0, 0 );
 
@@ -65,7 +72,20 @@ public final class TestSheet extends TestCase {
         assertTrue( sheet.records.get(pos++) instanceof ColumnInfoRecordsAggregate );
         assertTrue( sheet.records.get(pos++) instanceof DimensionsRecord );
         assertTrue( sheet.records.get(pos++) instanceof RowRecordsAggregate );
+        assertTrue( sheet.records.get(pos++) instanceof WindowTwoRecord );
+        assertTrue( sheet.records.get(pos++) instanceof MergedCellsTable );
         assertTrue( sheet.records.get(pos++) instanceof EOFRecord );
+    }
+
+    private static Record createWindow2Record() {
+        WindowTwoRecord result = new WindowTwoRecord();
+        result.setOptions(( short ) 0x6b6);
+        result.setTopRow(( short ) 0);
+        result.setLeftCol(( short ) 0);
+        result.setHeaderColor(0x40);
+        result.setPageBreakZoom(( short ) 0);
+        result.setNormalZoom(( short ) 0);
+        return result;
     }
 
     private static final class MergedCellListener implements ERFListener {
@@ -168,6 +188,8 @@ public final class TestSheet extends TestCase {
         records.add(new RowRecord(0));
         records.add(new RowRecord(1));
         records.add(new RowRecord(2));
+        records.add(createWindow2Record());
+        records.add(EOFRecord.instance);
         records.add(merged);
 
         Sheet sheet = Sheet.createSheet(records, 0);
@@ -193,11 +215,15 @@ public final class TestSheet extends TestCase {
     public void testRowAggregation() {
         List records = new ArrayList();
 
+        records.add(Sheet.createBOF());
         records.add(new DimensionsRecord());
         records.add(new RowRecord(0));
         records.add(new RowRecord(1));
+        records.add(new FormulaRecord());
         records.add(new StringRecord());
         records.add(new RowRecord(2));
+        records.add(createWindow2Record());
+        records.add(EOFRecord.instance);
 
         Sheet sheet = Sheet.createSheet(records, 0);
         assertNotNull("Row [2] was skipped", sheet.getRow(2));
@@ -400,6 +426,7 @@ public final class TestSheet extends TestCase {
         records.add(new BOFRecord());
         records.add(new UncalcedRecord());
         records.add(new DimensionsRecord());
+        records.add(createWindow2Record());
         records.add(EOFRecord.instance);
         Sheet sheet = Sheet.createSheet(records, 0, 0);
 
@@ -408,7 +435,7 @@ public final class TestSheet extends TestCase {
         if (serializedSize != estimatedSize) {
             throw new AssertionFailedError("Identified bug 45066 b");
         }
-        assertEquals(68, serializedSize);
+        assertEquals(90, serializedSize);
     }
 
     /**
@@ -501,6 +528,18 @@ public final class TestSheet extends TestCase {
             throw new AssertionFailedError("Identified bug 45640");
         }
         assertEquals(1, count);
+    }
+    
+    public void testMisplacedMergedCellsRecords_bug45699() {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45698-22488.xls");
+        
+        HSSFSheet sheet = wb.getSheetAt(0);
+        HSSFRow row = sheet.getRow(3);
+        HSSFCell cell = row.getCell(4);
+        if (cell == null) {
+            throw new AssertionFailedError("Identified bug 45699");
+        }
+        assertEquals("Informations", cell.getRichStringCellValue().getString());
     }
 }
 

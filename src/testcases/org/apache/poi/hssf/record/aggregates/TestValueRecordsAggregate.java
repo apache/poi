@@ -17,8 +17,6 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -34,27 +32,23 @@ import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
-import org.apache.poi.hssf.record.UnknownRecord;
-import org.apache.poi.hssf.record.WindowOneRecord;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-public class TestValueRecordsAggregate extends TestCase
-{
+public final class TestValueRecordsAggregate extends TestCase {
     private static final String ABNORMAL_SHARED_FORMULA_FLAG_TEST_FILE = "AbnormalSharedFormulaFlag.xls";
-    ValueRecordsAggregate valueRecord = new ValueRecordsAggregate();
+    private final ValueRecordsAggregate valueRecord = new ValueRecordsAggregate();
 
     /**
      * Make sure the shared formula DOESNT makes it to the FormulaRecordAggregate when being parsed
      * as part of the value records
      */
-    public void testSharedFormula()
-    {
+    public void testSharedFormula() {
         List records = new ArrayList();
         records.add( new FormulaRecord() );
         records.add( new SharedFormulaRecord() );
 
-        valueRecord.construct( 0, records );
+        constructValueRecord(records);
         Iterator iterator = valueRecord.getIterator();
         Record record = (Record) iterator.next();
         assertNotNull( "Row contains a value", record );
@@ -64,24 +58,25 @@ public class TestValueRecordsAggregate extends TestCase
 
     }
 
-    private List testData(){
+    private void constructValueRecord(List records) {
+        SharedFormulaHolder sfrh = SharedFormulaHolder.create(records, 0, records.size());
+        valueRecord.construct(records, 0, records.size(), sfrh );
+    }
+
+    private static List testData() {
         List records = new ArrayList();
         FormulaRecord formulaRecord = new FormulaRecord();
         BlankRecord blankRecord = new BlankRecord();
-        WindowOneRecord windowOneRecord = new WindowOneRecord();
         formulaRecord.setRow( 1 );
         formulaRecord.setColumn( (short) 1 );
         blankRecord.setRow( 2 );
         blankRecord.setColumn( (short) 2 );
         records.add( formulaRecord );
         records.add( blankRecord );
-        records.add( windowOneRecord );
         return records;
     }
 
-    public void testInsertCell()
-            throws Exception
-    {
+    public void testInsertCell() {
         Iterator iterator = valueRecord.getIterator();
         assertFalse( iterator.hasNext() );
 
@@ -103,8 +98,7 @@ public class TestValueRecordsAggregate extends TestCase
         valueRecord.removeCell( blankRecord2 );
     }
 
-    public void testGetPhysicalNumberOfCells() throws Exception
-    {
+    public void testGetPhysicalNumberOfCells() {
         assertEquals(0, valueRecord.getPhysicalNumberOfCells());
         BlankRecord blankRecord1 = newBlankRecord();
         valueRecord.insertCell( blankRecord1 );
@@ -113,8 +107,7 @@ public class TestValueRecordsAggregate extends TestCase
         assertEquals(0, valueRecord.getPhysicalNumberOfCells());
     }
 
-    public void testGetFirstCellNum() throws Exception
-    {
+    public void testGetFirstCellNum() {
         assertEquals( -1, valueRecord.getFirstCellNum() );
         valueRecord.insertCell( newBlankRecord( 2, 2 ) );
         assertEquals( 2, valueRecord.getFirstCellNum() );
@@ -126,8 +119,7 @@ public class TestValueRecordsAggregate extends TestCase
         assertEquals( 2, valueRecord.getFirstCellNum() );
     }
 
-    public void testGetLastCellNum() throws Exception
-    {
+    public void testGetLastCellNum() {
         assertEquals( -1, valueRecord.getLastCellNum() );
         valueRecord.insertCell( newBlankRecord( 2, 2 ) );
         assertEquals( 2, valueRecord.getLastCellNum() );
@@ -140,8 +132,7 @@ public class TestValueRecordsAggregate extends TestCase
 
     }
 
-    public void testSerialize() throws Exception
-    {
+    public void testSerialize() {
         byte[] actualArray = new byte[36];
         byte[] expectedArray = new byte[]
         {
@@ -156,7 +147,7 @@ public class TestValueRecordsAggregate extends TestCase
             (byte)0x02, (byte)0x00, (byte)0x00, (byte)0x00,
         };
         List records = testData();
-        valueRecord.construct( 0, records );
+        constructValueRecord(records);
         int bytesWritten = valueRecord.serializeCellRow(1, 0, actualArray );
         bytesWritten += valueRecord.serializeCellRow(2, bytesWritten, actualArray );
         assertEquals( 36, bytesWritten );
@@ -164,18 +155,12 @@ public class TestValueRecordsAggregate extends TestCase
             assertEquals( expectedArray[i], actualArray[i] );
     }
 
-    public static void main( String[] args )
-    {
-        System.out.println( "Testing org.apache.poi.hssf.record.aggregates.TestValueRecordAggregate" );
-        junit.textui.TestRunner.run( TestValueRecordsAggregate.class );
-    }
-
-    private BlankRecord newBlankRecord()
+    private static BlankRecord newBlankRecord()
     {
         return newBlankRecord( 2, 2 );
     }
 
-    private BlankRecord newBlankRecord( int col, int row)
+    private static BlankRecord newBlankRecord( int col, int row)
     {
         BlankRecord blankRecord = new BlankRecord();
         blankRecord.setRow( row );
@@ -285,5 +270,4 @@ public class TestValueRecordsAggregate extends TestCase
         
         return crc.getValue();
     }
-
 }

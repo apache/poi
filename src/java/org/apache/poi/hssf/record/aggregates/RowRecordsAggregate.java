@@ -26,8 +26,10 @@ import java.util.TreeMap;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.DBCellRecord;
 import org.apache.poi.hssf.record.IndexRecord;
+import org.apache.poi.hssf.record.MergeCellsRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.hssf.record.UnknownRecord;
 
 /**
  *
@@ -39,6 +41,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
     private int _lastrow  = -1;
     private final Map _rowRecords;
     private final ValueRecordsAggregate _valuesAgg;
+    private final List _unknownRecords;
 
     /** Creates a new instance of ValueRecordsAggregate */
 
@@ -48,8 +51,54 @@ public final class RowRecordsAggregate extends RecordAggregate {
     private RowRecordsAggregate(TreeMap rowRecords, ValueRecordsAggregate valuesAgg) {
         _rowRecords = rowRecords;
         _valuesAgg = valuesAgg;
+        _unknownRecords = new ArrayList();
     }
 
+    public RowRecordsAggregate(List recs, int startIx, int endIx) {
+        this();
+        // First up, locate all the shared formulas for this sheet
+        SharedFormulaHolder sfh = SharedFormulaHolder.create(recs, startIx, endIx);
+        for(int i=startIx; i<endIx; i++) {
+            Record rec = (Record) recs.get(i);
+            switch (rec.getSid()) {
+                case MergeCellsRecord.sid:
+                    // Some apps scatter these records between the rows/cells but they are supposed to
+                    // be well after the row/cell records.  It is assumed such rogue MergeCellRecords 
+                    // have already been collected by the caller, and can safely be ignored here. 
+                    // see bug 45699
+                    continue;
+                case RowRecord.sid:
+                    insertRow((RowRecord) rec);
+                    continue;
+                case DBCellRecord.sid:
+                    // end of 'Row Block'.  Should only occur after cell records
+                    continue;
+            }
+            if (rec instanceof UnknownRecord) {
+                addUnknownRecord((UnknownRecord)rec);
+                // might need to keep track of where exactly these belong
+                continue;
+            }
+            if (!rec.isValue()) {
+                throw new RuntimeException("Unexpected record type (" + rec.getClass().getName() + ")");
+            }
+            i += _valuesAgg.construct(recs, i, endIx, sfh);
+        }
+        "".length();
+    }
+    /**
+     * Handles UnknownRecords which appear within the row/cell records
+     */
+    private void addUnknownRecord(UnknownRecord rec) {
+        // ony a few distinct record IDs are encountered by the existing POI test cases:
+        // 0x1065 // many
+        // 0x01C2 // several
+        // 0x0034 // few
+        // No documentation could be found for these
+        
+        // keep the unknown records for re-serialization
+        _unknownRecords.add(rec);
+    }
     public void insertRow(RowRecord row) {
         // Integer integer = new Integer(row.getRowNumber());
         _rowRecords.put(new Integer(row.getRowNumber()), row);
@@ -214,6 +263,10 @@ public final class RowRecordsAggregate extends RecordAggregate {
             // Calculate Offset from the start of a DBCellRecord to the first Row
             cellRecord.setRowOffset(pos);
             rv.visitRecord(cellRecord);
+        }
+        for (int i=0; i< _unknownRecords.size(); i++) {
+            // Potentially breaking the file here since we don't know exactly where to write these records
+            rv.visitRecord((Record) _unknownRecords.get(i));
         }
     }
 
@@ -438,9 +491,6 @@ public final class RowRecordsAggregate extends RecordAggregate {
             currentOffset += (8 + (getRowCountForBlock(block) * 2));
         }
         return result;
-    }
-    public void constructCellValues(int offset, List records) {
-        _valuesAgg.construct(offset, records);
     }
     public void insertCell(CellValueRecordInterface cvRec) {
         _valuesAgg.insertCell(cvRec);
