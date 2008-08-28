@@ -159,8 +159,7 @@ final class LinkTable {
 		
 		if (_externalBookBlocks.length > 0) {
 			// If any ExternalBookBlock present, there is always 1 of ExternSheetRecord
-			Record next = rs.getNext();
-			_externSheetRecord = (ExternSheetRecord) next;
+			_externSheetRecord = readExtSheetRecord(rs);
 		} else {
 			_externSheetRecord = null;
 		}
@@ -174,6 +173,28 @@ final class LinkTable {
 
 		_recordCount = rs.getCountRead();
 		_workbookRecordList.getRecords().addAll(inputList.subList(startIndex, startIndex + _recordCount));
+	}
+
+	private static ExternSheetRecord readExtSheetRecord(RecordStream rs) {
+		List temp = new ArrayList(2);
+		while(rs.peekNextClass() == ExternSheetRecord.class) {
+			temp.add(rs.getNext());
+		}
+		
+		int nItems = temp.size();
+		if (nItems < 1) {
+			throw new RuntimeException("Expected an EXTERNSHEET record but got (" 
+					+ rs.peekNextClass().getName() + ")");
+		}
+		if (nItems == 1) {
+			// this is the normal case. There should be just one ExternSheetRecord
+			return (ExternSheetRecord) temp.get(0);
+		}
+		// Some apps generate multiple ExternSheetRecords (see bug 45698).
+		// It seems like the best thing to do might be to combine these into one
+		ExternSheetRecord[] esrs = new ExternSheetRecord[nItems];
+		temp.toArray(esrs);
+		return ExternSheetRecord.combine(esrs);
 	}
 
 	public LinkTable(short numberOfSheets, WorkbookRecordList workbookRecordList) {
