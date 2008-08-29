@@ -48,6 +48,10 @@ public class TestTextRulerAtom extends TestCase {
         0x03, 0x69, 0x04, (byte)0xF6, 0x05, (byte)0xF6, 0x05
 	};
 
+    private byte[] data_2 = new byte[] {
+        0x00, 0x00, (byte)0xA6, 0x0F, 0x0A, 0x00, 0x00, 0x00,
+        0x10, 0x03, 0x00, 0x00, (byte)0xF9, 0x00, 0x41, 0x01, 0x41, 0x01
+    };
 
     public void testReadRuler() throws Exception {
 		TextRulerAtom ruler = new TextRulerAtom(data_1, 0, data_1.length);
@@ -73,4 +77,16 @@ public class TestTextRulerAtom extends TestCase {
         byte[] result = out.toByteArray();
         assertTrue(Arrays.equals(result, data_1));
 	}
+
+    public void testRead2() throws Exception {
+		TextRulerAtom ruler = TextRulerAtom.getParagraphInstance();
+        ruler.setParagraphIndent((short)249, (short)321);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ruler.writeOut(out);
+
+        byte[] result = out.toByteArray();
+        assertTrue(Arrays.equals(result, data_2));
+
+	}
+
 }

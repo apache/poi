@@ -23,9 +23,11 @@ import org.apache.poi.util.POILogFactory;
 
 import java.text.AttributedString;
 import java.text.AttributedCharacterIterator;
+import java.text.BreakIterator;
 import java.awt.font.TextAttribute;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextLayout;
+import java.awt.font.FontRenderContext;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Point2D;
@@ -89,11 +91,69 @@ public class TextPainter {
     }
 
     public void paint(Graphics2D graphics){
+        Rectangle2D anchor = _shape.getLogicalAnchor2D();
+        TextElement[] elem = getTextElements((float)anchor.getWidth(), graphics.getFontRenderContext());
+        if(elem == null) return;
+
+        float textHeight = 0;
+        for (int i = 0; i < elem.length; i++) {
+            textHeight += elem[i].ascent + elem[i].descent;
+        }
+
+        int valign = _shape.getVerticalAlignment();
+        double y0 = anchor.getY();
+        switch (valign){
+            case TextShape.AnchorTopBaseline:
+            case TextShape.AnchorTop:
+                y0 += _shape.getMarginTop();
+                break;
+            case TextShape.AnchorBottom:
+                y0 += anchor.getHeight() - textHeight - _shape.getMarginBottom();
+                break;
+            default:
+            case TextShape.AnchorMiddle:
+                float delta =  (float)anchor.getHeight() - textHeight - _shape.getMarginTop() - _shape.getMarginBottom();
+                y0 += _shape.getMarginTop()  + delta/2;
+                break;
+        }
+
+        //finally draw the text fragments
+        for (int i = 0; i < elem.length; i++) {
+            y0 += elem[i].ascent;
+
+            Point2D.Double pen = new Point2D.Double();
+            pen.y = y0;
+            switch (elem[i]._align) {
+                default:
+                case TextShape.AlignLeft:
+                    pen.x = anchor.getX() + _shape.getMarginLeft();
+                    break;
+                case TextShape.AlignCenter:
+                    pen.x = anchor.getX() + _shape.getMarginLeft() +
+                            (anchor.getWidth() - elem[i].advance - _shape.getMarginLeft() - _shape.getMarginRight()) / 2;
+                    break;
+                case TextShape.AlignRight:
+                    pen.x = anchor.getX() + _shape.getMarginLeft() +
+                            (anchor.getWidth() - elem[i].advance - _shape.getMarginLeft() - _shape.getMarginRight());
+                    break;
+            }
+            if(elem[i]._bullet != null){
+                graphics.drawString(elem[i]._bullet.getIterator(), (float)(pen.x + elem[i]._bulletOffset), (float)pen.y);
+            }
+            AttributedCharacterIterator chIt = elem[i]._text.getIterator();
+            if(chIt.getEndIndex() > chIt.getBeginIndex()) {
+                graphics.drawString(chIt, (float)(pen.x + elem[i]._textOffset), (float)pen.y);
+            }
+            y0 += elem[i].descent;
+        }
+    }
+
+    public TextElement[] getTextElements(float textWidth, FontRenderContext frc){
         TextRun run = _shape.getTextRun();
-        if (run == null) return;
+        if (run == null) return null;
 
         String text = run.getText();
-        if (text == null || text.equals("")) return;
+        if (text == null || text.equals("")) return null;
 
         AttributedString at = getAttributedString(run);
 
@@ -101,11 +161,8 @@ public class TextPainter {
         int paragraphStart = it.getBeginIndex();
         int paragraphEnd = it.getEndIndex();
 
-        Rectangle2D anchor = _shape.getLogicalAnchor2D();
-
-        float textHeight = 0;
         ArrayList lines = new ArrayList();
-        LineBreakMeasurer measurer = new LineBreakMeasurer(it, graphics.getFontRenderContext());
+        LineBreakMeasurer measurer = new LineBreakMeasurer(it, frc);
         measurer.setPosition(paragraphStart);
         while (measurer.getPosition() < paragraphEnd) {
             int startIndex = measurer.getPosition();
@@ -120,7 +177,7 @@ public class TextPainter {
                 break;
             }
 
-            float wrappingWidth = (float)anchor.getWidth() - _shape.getMarginLeft() - _shape.getMarginRight();
+            float wrappingWidth = textWidth - _shape.getMarginLeft() - _shape.getMarginRight();
             int bulletOffset = rt.getBulletOffset();
             int textOffset = rt.getTextOffset();
             int indent = rt.getIndentLevel();
@@ -138,7 +195,7 @@ public class TextPainter {
                 if(text_val != 0) textOffset = text_val;
             }
 
-            wrappingWidth -= textOffset;
+            if(bulletOffset > 0 || prStart || startIndex == 0) wrappingWidth -= textOffset;
 
             if (_shape.getWordWrap() == TextShape.WrapNone) {
                 wrappingWidth = _shape.getSheet().getSlideShow().getPageSize().width;
@@ -147,7 +204,7 @@ public class TextPainter {
             TextLayout textLayout = measurer.nextLayout(wrappingWidth + 1,
                     nextBreak == -1 ? paragraphEnd : nextBreak, true);
             if (textLayout == null) {
-                textLayout = measurer.nextLayout((float)anchor.getWidth(),
+                textLayout = measurer.nextLayout(textWidth,
                     nextBreak == -1 ? paragraphEnd : nextBreak, false);
             }
             if(textLayout == null){
@@ -173,6 +230,8 @@ public class TextPainter {
             el.advance = textLayout.getAdvance();
             el._textOffset = textOffset;
             el._text = new AttributedString(it, startIndex, endIndex);
+            el.textStartIndex = startIndex;
+            el.textEndIndex = endIndex;
 
             if (prStart){
                 int sp = rt.getSpaceBefore();
@@ -202,8 +261,6 @@ public class TextPainter {
                 el.ascent += spaceAfter;
             }
             el.descent = descent;
-
-            textHeight += el.ascent + el.descent;
 
             if(rt.isBullet() && (prStart || startIndex == 0)){
                 it.setIndex(startIndex);
@@ -236,55 +293,10 @@ public class TextPainter {
             lines.add(el);
         }
 
-        int valign = _shape.getVerticalAlignment();
-        double y0 = anchor.getY();
-        switch (valign){
-            case TextShape.AnchorTopBaseline:
-            case TextShape.AnchorTop:
-                y0 += _shape.getMarginTop();
-                break;
-            case TextShape.AnchorBottom:
-                y0 += anchor.getHeight() - textHeight - _shape.getMarginBottom();
-                break;
-            default:
-            case TextShape.AnchorMiddle:
-                float delta =  (float)anchor.getHeight() - textHeight - _shape.getMarginTop() - _shape.getMarginBottom();
-                y0 += _shape.getMarginTop()  + delta/2;
-                break;
-        }
-
         //finally draw the text fragments
-        for (int i = 0; i < lines.size(); i++) {
-            TextElement elem = (TextElement)lines.get(i);
-            y0 += elem.ascent;
-
-            Point2D.Double pen = new Point2D.Double();
-            pen.y = y0;
-            switch (elem._align) {
-                default:
-                case TextShape.AlignLeft:
-                    pen.x = anchor.getX() + _shape.getMarginLeft();
-                    break;
-                case TextShape.AlignCenter:
-                    pen.x = anchor.getX() + _shape.getMarginLeft() +
-                            (anchor.getWidth() - elem.advance - _shape.getMarginLeft() - _shape.getMarginRight()) / 2;
-                    break;
-                case TextShape.AlignRight:
-                    pen.x = anchor.getX() + _shape.getMarginLeft() +
-                            (anchor.getWidth() - elem.advance - _shape.getMarginLeft() - _shape.getMarginRight());
-                    break;
-            }
-            if(elem._bullet != null){
-                graphics.drawString(elem._bullet.getIterator(), (float)(pen.x + elem._bulletOffset), (float)pen.y);
-            }
-            AttributedCharacterIterator chIt = elem._text.getIterator();
-            if(chIt.getEndIndex() > chIt.getBeginIndex()) {
-                graphics.drawString(chIt, (float)(pen.x + elem._textOffset), (float)pen.y);
-            }
-            y0 += elem.descent;
-        }
+        TextElement[] elems = new TextElement[lines.size()];
+        return (TextElement[])lines.toArray(elems);
     }
-
 
     public static class TextElement {
         public AttributedString _text;
@@ -294,5 +306,6 @@ public class TextPainter {
         public int _align;
         public float ascent, descent;
         public float advance;
+        public int textStartIndex, textEndIndex;
     }
 }

@@ -89,7 +89,7 @@ public class Table extends ShapeGroup {
      * @param escherRecord <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent       the parent of the shape
      */
-    protected Table(EscherContainerRecord escherRecord, Shape parent) {
+    public Table(EscherContainerRecord escherRecord, Shape parent) {
         super(escherRecord, parent);
     }
 
