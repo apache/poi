@@ -94,9 +94,7 @@ abstract class AreaEvalBase implements AreaEval {
 			throw new IllegalArgumentException("Specified column index (" + col 
 					+ ") is outside the allowed range (" + _firstColumn + ".." + col + ")");
 		}
-
-		int index = rowOffsetIx * _nColumns + colOffsetIx;
-		return _values[index];
+		return getRelativeValue(rowOffsetIx, colOffsetIx);
 	}
 
 	public final boolean contains(int row, int col) {
@@ -118,5 +116,17 @@ abstract class AreaEvalBase implements AreaEval {
 
 	public final boolean isRow() {
 		return _firstRow == _lastRow;
+	}
+	public int getHeight() {
+		return _lastRow-_firstRow+1;
+	}
+
+	public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
+		int index = relativeRowIndex * _nColumns + relativeColumnIndex;
+		return _values[index];
+	}
+
+	public int getWidth() {
+		return _lastColumn-_firstColumn+1;
 	}
 }

@@ -49,7 +49,7 @@ public final class TestSumproduct extends TestCase {
 	}
 
 	public void testScalarSimple() {
-		
+
 		RefEval refEval = new Ref2DEval(new RefPtg("A1"), new NumberEval(3));
 		Eval[] args = {
 			refEval, 
@@ -59,19 +59,19 @@ public final class TestSumproduct extends TestCase {
 		confirmDouble(6D, result);
 	}
 
-
 	public void testAreaSimple() {
-		
-		AreaEval aeA = EvalFactory.createAreaEval("A1:A3", 1, 3);
-		AreaEval aeB = EvalFactory.createAreaEval("B1:B3", 1, 3);
-		ValueEval[] aValues = aeA.getValues();
-		ValueEval[] bValues = aeB.getValues();
-		aValues[0] = new NumberEval(2);
-		aValues[1] = new NumberEval(4);
-		aValues[2] = new NumberEval(5);
-		bValues[0] = new NumberEval(3);
-		bValues[1] = new NumberEval(6);
-		bValues[2] = new NumberEval(7);
+		ValueEval[] aValues = {
+			new NumberEval(2),
+			new NumberEval(4),
+			new NumberEval(5),
+		};
+		ValueEval[] bValues = {
+			new NumberEval(3),
+			new NumberEval(6),
+			new NumberEval(7),
+		};
+		AreaEval aeA = EvalFactory.createAreaEval("A1:A3", aValues);
+		AreaEval aeB = EvalFactory.createAreaEval("B1:B3", bValues);
 		
 		Eval[] args = { aeA, aeB, };
 		Eval result = invokeSumproduct(args);
@@ -82,10 +82,9 @@ public final class TestSumproduct extends TestCase {
 	 * For scalar products, the terms may be 1x1 area refs
 	 */
 	public void testOneByOneArea() {
-		
-		AreaEval ae = EvalFactory.createAreaEval("A1:A1", 1, 1);
-		ae.getValues()[0] = new NumberEval(7);
-		
+
+		AreaEval ae = EvalFactory.createAreaEval("A1:A1", new ValueEval[] { new NumberEval(7), });
+
 		Eval[] args = {
 				ae, 
 				new NumberEval(2),
@@ -94,27 +93,29 @@ public final class TestSumproduct extends TestCase {
 		confirmDouble(14D, result);
 	}
 
-	
 	public void testMismatchAreaDimensions() {
 		
-		AreaEval aeA = EvalFactory.createAreaEval("A1:A3", 1, 3);
-		AreaEval aeB = EvalFactory.createAreaEval("B1:D1", 3, 1);
-		
+		AreaEval aeA = EvalFactory.createAreaEval("A1:A3", new ValueEval[3]);
+		AreaEval aeB = EvalFactory.createAreaEval("B1:D1", new ValueEval[3]);
+
 		Eval[] args;
 		args = new Eval[] { aeA, aeB, };
 		assertEquals(ErrorEval.VALUE_INVALID, invokeSumproduct(args));
-		
+
 		args = new Eval[] { aeA, new NumberEval(5), };
 		assertEquals(ErrorEval.VALUE_INVALID, invokeSumproduct(args));
 	}
 	
 	public void testAreaWithErrorCell() {
-		AreaEval aeA = EvalFactory.createAreaEval("A1:A2", 1, 2);
-		AreaEval aeB = EvalFactory.createAreaEval("B1:B2", 1, 2);
+		ValueEval[] aValues = {
+			ErrorEval.REF_INVALID,
+			null,
+		};
+		AreaEval aeA = EvalFactory.createAreaEval("A1:A2", aValues);
+		AreaEval aeB = EvalFactory.createAreaEval("B1:B2", new ValueEval[2]);
 		aeB.getValues()[1] = ErrorEval.REF_INVALID;
-		
+
 		Eval[] args = { aeA, aeB, };
 		assertEquals(ErrorEval.REF_INVALID, invokeSumproduct(args));
 	}
-	
 }
