@@ -14,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record.formula.functions;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
  * Tests for ROW(), ROWS(), COLUMN(), COLUMNS()
@@ -29,10 +29,6 @@ import org.apache.poi.hssf.record.formula.eval.Eval;
  */
 public final class TestRowCol extends TestCase {
 
-	public TestRowCol(String testName) {
-		super(testName);
-	}
-	
 	public void testCol() {
 		Function target = new Column();
 		{
@@ -41,7 +37,7 @@ public final class TestRowCol extends TestCase {
 			assertEquals(3, actual, 0D);
 		}
 		{
-			Eval[] args = { EvalFactory.createAreaEval("E2:H12", 4, 11), };
+			Eval[] args = { EvalFactory.createAreaEval("E2:H12", new ValueEval[44]), };
 			double actual = NumericFunctionInvoker.invoke(target, args);
 			assertEquals(5, actual, 0D);
 		}
@@ -55,7 +51,7 @@ public final class TestRowCol extends TestCase {
 			assertEquals(5, actual, 0D);
 		}
 		{
-			Eval[] args = { EvalFactory.createAreaEval("E2:H12", 4, 11), };
+			Eval[] args = { EvalFactory.createAreaEval("E2:H12", new ValueEval[44]), };
 			double actual = NumericFunctionInvoker.invoke(target, args);
 			assertEquals(2, actual, 0D);
 		}
@@ -86,7 +82,7 @@ public final class TestRowCol extends TestCase {
 	}
 	
 	private static void confirmRowsFunc(String areaRefStr, int nCols, int nRows) {
-		Eval[] args = { EvalFactory.createAreaEval(areaRefStr, nCols, nRows), };
+		Eval[] args = { EvalFactory.createAreaEval(areaRefStr, new ValueEval[nCols * nRows]), };
 
 		double actual = NumericFunctionInvoker.invoke(new Rows(), args);
 		assertEquals(nRows, actual, 0D);
@@ -94,7 +90,7 @@ public final class TestRowCol extends TestCase {
 	
 
 	private static void confirmColumnsFunc(String areaRefStr, int nCols, int nRows) {
-		Eval[] args = { EvalFactory.createAreaEval(areaRefStr, nCols, nRows), };
+		Eval[] args = { EvalFactory.createAreaEval(areaRefStr, new ValueEval[nCols * nRows]), };
 
 		double actual = NumericFunctionInvoker.invoke(new Columns(), args);
 		assertEquals(nCols, actual, 0D);

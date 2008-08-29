@@ -687,6 +687,7 @@ public class RichTextRun {
      */
     public void setBulletFont(int idx) {
         setParaTextPropVal("bullet.font", idx);
+        setFlag(false, ParagraphFlagsTextProp.BULLET_HARDFONT_IDX, true);
     }
 
     /**

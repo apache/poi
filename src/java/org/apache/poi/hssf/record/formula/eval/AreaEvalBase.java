@@ -1,19 +1,19 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
 
 package org.apache.poi.hssf.record.formula.eval;
 
@@ -94,9 +94,7 @@ abstract class AreaEvalBase implements AreaEval {
 			throw new IllegalArgumentException("Specified column index (" + col 
 					+ ") is outside the allowed range (" + _firstColumn + ".." + col + ")");
 		}
-
-		int index = rowOffsetIx * _nColumns + colOffsetIx;
-		return _values[index];
+		return getRelativeValue(rowOffsetIx, colOffsetIx);
 	}
 
 	public final boolean contains(int row, int col) {
@@ -118,5 +116,21 @@ abstract class AreaEvalBase implements AreaEval {
 
 	public final boolean isRow() {
 		return _firstRow == _lastRow;
+	}
+	public int getHeight() {
+		return _lastRow-_firstRow+1;
+	}
+
+	public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
+		int index = relativeRowIndex * _nColumns + relativeColumnIndex;
+		ValueEval result = _values[index];
+		if (result == null) {
+			return BlankEval.INSTANCE;
+		}
+		return result;
+	}
+
+	public int getWidth() {
+		return _lastColumn-_firstColumn+1;
 	}
 }

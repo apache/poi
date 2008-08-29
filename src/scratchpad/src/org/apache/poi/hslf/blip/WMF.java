@@ -17,6 +17,7 @@
 package org.apache.poi.hslf.blip;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.hslf.model.Picture;
 import org.apache.poi.hslf.model.Shape;
 import org.apache.poi.hslf.exceptions.HSLFException;
@@ -76,7 +77,7 @@ public class WMF extends Metafile {
         Header header = new Header();
         header.wmfsize = data.length - aldus.getSize();
         header.bounds = new java.awt.Rectangle((short)aldus.left, (short)aldus.top, (short)aldus.right-(short)aldus.left, (short)aldus.bottom-(short)aldus.top);
-        //coefficiaent to translate from WMF dpi to 96pdi
+        //coefficient to translate from WMF dpi to 96pdi
         int coeff = 96*Shape.EMU_PER_POINT/aldus.inch;
         header.size = new java.awt.Dimension(header.bounds.width*coeff, header.bounds.height*coeff);
         header.zipsize = compressed.length;
@@ -119,7 +120,7 @@ public class WMF extends Metafile {
      *  <li>short  Checksum;       Checksum value for previous 10 shorts
      * </ul>
      */
-    public static class AldusHeader{
+    public class AldusHeader{
         public static final int APMHEADER_KEY = 0x9AC6CDD7;
 
         public int handle;
@@ -143,8 +144,9 @@ public class WMF extends Metafile {
             reserved = LittleEndian.getInt(data, pos); pos += LittleEndian.INT_SIZE;
 
             checksum = LittleEndian.getShort(data, pos); pos += LittleEndian.SHORT_SIZE;
-            if (checksum != getChecksum())
-                throw new HSLFException("WMF checksum does not match the header data");
+            if (checksum != getChecksum()){
+                logger.log(POILogger.WARN, "WMF checksum does not match the header data");
+            }
         }
 
         /**

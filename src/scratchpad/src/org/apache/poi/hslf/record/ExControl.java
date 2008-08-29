@@ -24,7 +24,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
 
 /**
- * Container for OLE Control object. It contains:
+ * A container record that specifies information about an ActiveX control. It contains:
  * <p>
  * 1. ExControlAtom (4091)
  * 2. ExOleObjAtom (4035)
@@ -39,9 +39,6 @@ import org.apache.poi.util.POILogger;
  * @author Yegor kozlov
  */
 public class ExControl extends ExEmbed {
-
-    // Links to our more interesting children
-    private ExControlAtom ctrlAtom;
 
     /**
      * Set things up, and find our more interesting children
@@ -60,7 +57,7 @@ public class ExControl extends ExEmbed {
     public ExControl() {
         super();
 
-        _children[0] = ctrlAtom = new ExControlAtom();
+        _children[0] = embedAtom = new ExControlAtom();
     }
 
     /**
@@ -70,7 +67,7 @@ public class ExControl extends ExEmbed {
      */
     public ExControlAtom getExControlAtom()
     {
-        return ctrlAtom;
+        return (ExControlAtom)_children[0];
     }
 
     /**
@@ -81,15 +78,5 @@ public class ExControl extends ExEmbed {
      */
     public long getRecordType() {
         return RecordTypes.ExControl.typeID;
-    }
-
-    protected RecordAtom getEmbedAtom(Record[] children){
-        RecordAtom atom = null;
-        if(_children[0] instanceof ExControlAtom) {
-            atom = (ExControlAtom)_children[0];
-        } else {
-            logger.log(POILogger.ERROR, "First child record wasn't a ExControlAtom, was of type " + _children[0].getRecordType());
-        }
-        return atom;
     }
 }

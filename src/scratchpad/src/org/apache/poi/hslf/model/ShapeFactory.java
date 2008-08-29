@@ -19,8 +19,10 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.*;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
+import org.apache.poi.hslf.record.*;
 
 import java.util.List;
+import java.util.Iterator;
 
 /**
  * Create a <code>Shape</code> object depending on its type
@@ -45,14 +47,14 @@ public class ShapeFactory {
 
     public static ShapeGroup createShapeGroup(EscherContainerRecord spContainer, Shape parent){
         ShapeGroup group = null;
-        UnknownEscherRecord opt = (UnknownEscherRecord)Shape.getEscherChild((EscherContainerRecord)spContainer.getChild(0), (short)0xF122);
+        EscherRecord opt = Shape.getEscherChild((EscherContainerRecord)spContainer.getChild(0), (short)0xF122);
         if(opt != null){
             try {
                 EscherPropertyFactory f = new EscherPropertyFactory();
-                List props = f.createProperties( opt.getData(), 0, opt.getInstance() );
+                List props = f.createProperties( opt.serialize(), 8, opt.getInstance() );
                 EscherSimpleProperty p = (EscherSimpleProperty)props.get(0);
                 if(p.getPropertyNumber() == 0x39F && p.getPropertyValue() == 1){
-                    group = new ShapeGroup(spContainer, parent);
+                    group = new Table(spContainer, parent);
                 } else {
                     group = new ShapeGroup(spContainer, parent);
                 }
@@ -68,7 +70,7 @@ public class ShapeFactory {
      }
 
     public static Shape createSimpeShape(EscherContainerRecord spContainer, Shape parent){
-        Shape shape;
+        Shape shape = null;
         EscherSpRecord spRecord = spContainer.getChildById(EscherSpRecord.RECORD_ID);
 
         int type = spRecord.getOptions() >> 4;
@@ -76,14 +78,26 @@ public class ShapeFactory {
             case ShapeTypes.TextBox:
                 shape = new TextBox(spContainer, parent);
                 break;
-            case ShapeTypes.HostControl: 
+            case ShapeTypes.HostControl:
             case ShapeTypes.PictureFrame: {
-                EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(spContainer, EscherOptRecord.RECORD_ID);
-                EscherProperty prop = Shape.getEscherProperty(opt, EscherProperties.BLIP__PICTUREID);
-                if(prop != null)
-                    shape = new OLEShape(spContainer, parent); //presence of BLIP__PICTUREID indicates it is an embedded object 
-                else
-                    shape = new Picture(spContainer, parent);
+                InteractiveInfo info = (InteractiveInfo)getClientDataRecord(spContainer, RecordTypes.InteractiveInfo.typeID);
+                OEShapeAtom oes = (OEShapeAtom)getClientDataRecord(spContainer, RecordTypes.OEShapeAtom.typeID);
+                if(info != null && info.getInteractiveInfoAtom() != null){
+                    switch(info.getInteractiveInfoAtom().getAction()){
+                        case InteractiveInfoAtom.ACTION_OLE:
+                            shape = new OLEShape(spContainer, parent);
+                            break;
+                        case InteractiveInfoAtom.ACTION_MEDIA:
+                            shape = new MovieShape(spContainer, parent);
+                            break;
+                        default:
+                            break;
+                    }
+                } else if (oes != null){
+                    shape = new OLEShape(spContainer, parent);
+                }
+                
+                if(shape == null) shape = new Picture(spContainer, parent);
                 break;
             }
             case ShapeTypes.Line:
@@ -108,4 +122,22 @@ public class ShapeFactory {
         return shape;
 
     }
+
+    protected static Record getClientDataRecord(EscherContainerRecord spContainer, int recordType) {
+        Record oep = null;
+        for (Iterator it = spContainer.getChildRecords().iterator(); it.hasNext();) {
+            EscherRecord obj = (EscherRecord) it.next();
+            if (obj.getRecordId() == EscherClientDataRecord.RECORD_ID) {
+                byte[] data = obj.serialize();
+                Record[] records = Record.findChildRecords(data, 8, data.length - 8);
+                for (int j = 0; j < records.length; j++) {
+                    if (records[j].getRecordType() == recordType) {
+                        return records[j];
+                    }
+                }
+            }
+        }
+        return oep;
+    }
+
 }

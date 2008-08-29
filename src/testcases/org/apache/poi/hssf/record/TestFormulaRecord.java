@@ -17,15 +17,14 @@
 
 package org.apache.poi.hssf.record;
 
-
 import java.io.ByteArrayInputStream;
-import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.IntPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RefPtg;
 
 /**
@@ -39,14 +38,12 @@ public final class TestFormulaRecord extends TestCase {
 	public void testCreateFormulaRecord () {
 		FormulaRecord record = new FormulaRecord();
 		record.setColumn((short)0);
-		//record.setRow((short)1);
 		record.setRow(1);
 		record.setXFIndex((short)4);
 		
-		assertEquals(record.getColumn(),(short)0);
-		//assertEquals(record.getRow(),(short)1);
-		assertEquals((short)record.getRow(),(short)1);
-		assertEquals(record.getXFIndex(),(short)4);
+		assertEquals(record.getColumn(),0);
+		assertEquals(record.getRow(), 1);
+		assertEquals(record.getXFIndex(),4);
 	}
 	
 	/**
@@ -103,7 +100,7 @@ public final class TestFormulaRecord extends TestCase {
 		assertEquals("Offset 22", 1, output[26]);
 	}
 	
-	public void testWithConcat()  throws Exception {
+	public void testWithConcat() {
 		// =CHOOSE(2,A2,A3,A4)
 		byte[] data = {
 				6, 0, 68, 0,
@@ -126,23 +123,19 @@ public final class TestFormulaRecord extends TestCase {
 		
 		FormulaRecord fr = new FormulaRecord(inp);
 		
-		List ptgs = fr.getParsedExpression();
-		assertEquals(9, ptgs.size());
-		assertEquals(IntPtg.class,	   ptgs.get(0).getClass());
-		assertEquals(AttrPtg.class,	  ptgs.get(1).getClass());
-		assertEquals(RefPtg.class, ptgs.get(2).getClass());
-		assertEquals(AttrPtg.class,	  ptgs.get(3).getClass());
-		assertEquals(RefPtg.class, ptgs.get(4).getClass());
-		assertEquals(AttrPtg.class,	  ptgs.get(5).getClass());
-		assertEquals(RefPtg.class, ptgs.get(6).getClass());
-		assertEquals(AttrPtg.class,	  ptgs.get(7).getClass());
-		assertEquals(FuncVarPtg.class,   ptgs.get(8).getClass());
+		Ptg[] ptgs = fr.getParsedExpression();
+		assertEquals(9, ptgs.length);
+		assertEquals(IntPtg.class,	   ptgs[0].getClass());
+		assertEquals(AttrPtg.class,	  ptgs[1].getClass());
+		assertEquals(RefPtg.class, ptgs[2].getClass());
+		assertEquals(AttrPtg.class,	  ptgs[3].getClass());
+		assertEquals(RefPtg.class, ptgs[4].getClass());
+		assertEquals(AttrPtg.class,	  ptgs[5].getClass());
+		assertEquals(RefPtg.class, ptgs[6].getClass());
+		assertEquals(AttrPtg.class,	  ptgs[7].getClass());
+		assertEquals(FuncVarPtg.class,   ptgs[8].getClass());
 		
-		FuncVarPtg choose = (FuncVarPtg)ptgs.get(8);
+		FuncVarPtg choose = (FuncVarPtg)ptgs[8];
 		assertEquals("CHOOSE", choose.getName());
-	}
-	
-	public static void main(String [] ignored_args) {
-		junit.textui.TestRunner.run(TestFormulaRecord.class);
 	}
 }

@@ -40,19 +40,6 @@ import org.apache.poi.hssf.record.formula.functions.LookupUtils.ValueVector;
  * @author Josh Micich
  */
 public final class Lookup implements Function {
-	private static final class SimpleValueVector implements ValueVector {
-		private final ValueEval[] _values;
-
-		public SimpleValueVector(ValueEval[] values) {
-			_values = values;
-		}
-		public ValueEval getItem(int index) {
-			return _values[index];
-		}
-		public int getSize() {
-			return _values.length;
-		}
-	}
 
 	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
 		switch(args.length) {
@@ -86,11 +73,11 @@ public final class Lookup implements Function {
 	}
 
 	private static ValueVector createVector(AreaEval ae) {
-		
-		if(!ae.isRow() && !ae.isColumn()) {
-			// extra complexity required to emulate the way LOOKUP can handles these abnormal cases.
-			throw new RuntimeException("non-vector lookup or result areas not supported yet");
+		ValueVector result = LookupUtils.createVector(ae);
+		if (result != null) {
+			return result;
 		}
-		return new SimpleValueVector(ae.getValues());
+		// extra complexity required to emulate the way LOOKUP can handles these abnormal cases.
+		throw new RuntimeException("non-vector lookup or result areas not supported yet");
 	}
 }

@@ -22,6 +22,7 @@ package org.apache.poi.hslf.model;
 
 import java.util.LinkedList;
 import java.util.Vector;
+import java.util.List;
 
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.*;
@@ -45,7 +46,8 @@ public class TextRun
 	protected TextBytesAtom  _byteAtom;
 	protected TextCharsAtom  _charAtom;
 	protected StyleTextPropAtom _styleAtom;
-	protected boolean _isUnicode;
+    protected TextRulerAtom _ruler;
+    protected boolean _isUnicode;
 	protected RichTextRun[] _rtRuns;
 	private SlideShow slideShow;
     private Sheet sheet;
@@ -103,155 +105,159 @@ public class TextRun
 			pStyles = _styleAtom.getParagraphStyles();
 			cStyles = _styleAtom.getCharacterStyles();
 		}
-
-		// Handle case of no current style, with a default
-		if(pStyles.size() == 0 || cStyles.size() == 0) { 
-			_rtRuns = new RichTextRun[1];
-			_rtRuns[0] = new RichTextRun(this, 0, runRawText.length());
-		} else {
-			// Build up Rich Text Runs, one for each 
-			//  character/paragraph style pair
-			Vector rtrs = new Vector();
-
-			int pos = 0;
-			
-			int curP = 0;
-			int curC = 0;
-			int pLenRemain = -1;
-			int cLenRemain = -1;
-			
-			// Build one for each run with the same style
-			while(pos <= runRawText.length() && curP < pStyles.size() && curC < cStyles.size()) {
-				// Get the Props to use
-				TextPropCollection pProps = (TextPropCollection)pStyles.get(curP);
-				TextPropCollection cProps = (TextPropCollection)cStyles.get(curC);
-				
-				int pLen = pProps.getCharactersCovered();
-				int cLen = cProps.getCharactersCovered();
-				
-				// Handle new pass
-				boolean freshSet = false;
-				if(pLenRemain == -1 && cLenRemain == -1) { freshSet = true; }
-				if(pLenRemain == -1) { pLenRemain = pLen; }
-				if(cLenRemain == -1) { cLenRemain = cLen; }
-				
-				// So we know how to build the eventual run
-				int runLen = -1;
-				boolean pShared = false;
-				boolean cShared = false;
-				
-				// Same size, new styles - neither shared
-				if(pLen == cLen && freshSet) {
-					runLen = cLen;
-					pShared = false;
-					cShared = false;
-					curP++;
-					curC++;
-					pLenRemain = -1;
-					cLenRemain = -1;
-				} else {
-					// Some sharing
-					
-					// See if we are already in a shared block
-					if(pLenRemain < pLen) {
-						// Existing shared p block
-						pShared = true;
-						
-						// Do we end with the c block, or either side of it?
-						if(pLenRemain == cLenRemain) {
-							// We end at the same time
-							cShared = false;
-							runLen = pLenRemain;
-							curP++;
-							curC++;
-							pLenRemain = -1;
-							cLenRemain = -1;
-						} else if(pLenRemain < cLenRemain) {
-							// We end before the c block
-							cShared = true;
-							runLen = pLenRemain;
-							curP++;
-							cLenRemain -= pLenRemain;
-							pLenRemain = -1;
-						} else {
-							// We end after the c block
-							cShared = false;
-							runLen = cLenRemain;
-							curC++;
-							pLenRemain -= cLenRemain;
-							cLenRemain = -1;
-						}
-					} else if(cLenRemain < cLen) {
-						// Existing shared c block
-						cShared = true;
-						
-						// Do we end with the p block, or either side of it?
-						if(pLenRemain == cLenRemain) {
-							// We end at the same time
-							pShared = false;
-							runLen = cLenRemain;
-							curP++;
-							curC++;
-							pLenRemain = -1;
-							cLenRemain = -1;
-						} else if(cLenRemain < pLenRemain) {
-							// We end before the p block
-							pShared = true;
-							runLen = cLenRemain;
-							curC++;
-							pLenRemain -= cLenRemain;
-							cLenRemain = -1;
-						} else {
-							// We end after the p block
-							pShared = false;
-							runLen = pLenRemain;
-							curP++;
-							cLenRemain -= pLenRemain;
-							pLenRemain = -1;
-						}
-					} else {
-						// Start of a shared block
-						if(pLenRemain < cLenRemain) {
-							// Shared c block
-							pShared = false;
-							cShared = true;
-							runLen = pLenRemain;
-							curP++;
-							cLenRemain -= pLenRemain;
-							pLenRemain = -1;
-						} else {
-							// Shared p block
-							pShared = true;
-							cShared = false;
-							runLen = cLenRemain;
-							curC++;
-							pLenRemain -= cLenRemain;
-							cLenRemain = -1;
-						}
-					}
-				}
-				
-				// Wind on
-				int prevPos = pos;
-				pos += runLen;
-				// Adjust for end-of-run extra 1 length
-				if(pos > runRawText.length()) {
-					runLen--; 
-				}
-				
-				// Save
-				RichTextRun rtr = new RichTextRun(this, prevPos, runLen, pProps, cProps, pShared, cShared);
-				rtrs.add(rtr);
-			}
-			
-			// Build the array
-			_rtRuns = new RichTextRun[rtrs.size()];
-			rtrs.copyInto(_rtRuns);
-		}
+        buildRichTextRuns(pStyles, cStyles, runRawText);
 	}
 	
-	
-	// Update methods follow
+	public void buildRichTextRuns(LinkedList pStyles, LinkedList cStyles, String runRawText){
+
+        // Handle case of no current style, with a default
+        if(pStyles.size() == 0 || cStyles.size() == 0) {
+            _rtRuns = new RichTextRun[1];
+            _rtRuns[0] = new RichTextRun(this, 0, runRawText.length());
+        } else {
+            // Build up Rich Text Runs, one for each
+            //  character/paragraph style pair
+            Vector rtrs = new Vector();
+
+            int pos = 0;
+
+            int curP = 0;
+            int curC = 0;
+            int pLenRemain = -1;
+            int cLenRemain = -1;
+
+            // Build one for each run with the same style
+            while(pos <= runRawText.length() && curP < pStyles.size() && curC < cStyles.size()) {
+                // Get the Props to use
+                TextPropCollection pProps = (TextPropCollection)pStyles.get(curP);
+                TextPropCollection cProps = (TextPropCollection)cStyles.get(curC);
+
+                int pLen = pProps.getCharactersCovered();
+                int cLen = cProps.getCharactersCovered();
+
+                // Handle new pass
+                boolean freshSet = false;
+                if(pLenRemain == -1 && cLenRemain == -1) { freshSet = true; }
+                if(pLenRemain == -1) { pLenRemain = pLen; }
+                if(cLenRemain == -1) { cLenRemain = cLen; }
+
+                // So we know how to build the eventual run
+                int runLen = -1;
+                boolean pShared = false;
+                boolean cShared = false;
+
+                // Same size, new styles - neither shared
+                if(pLen == cLen && freshSet) {
+                    runLen = cLen;
+                    pShared = false;
+                    cShared = false;
+                    curP++;
+                    curC++;
+                    pLenRemain = -1;
+                    cLenRemain = -1;
+                } else {
+                    // Some sharing
+
+                    // See if we are already in a shared block
+                    if(pLenRemain < pLen) {
+                        // Existing shared p block
+                        pShared = true;
+
+                        // Do we end with the c block, or either side of it?
+                        if(pLenRemain == cLenRemain) {
+                            // We end at the same time
+                            cShared = false;
+                            runLen = pLenRemain;
+                            curP++;
+                            curC++;
+                            pLenRemain = -1;
+                            cLenRemain = -1;
+                        } else if(pLenRemain < cLenRemain) {
+                            // We end before the c block
+                            cShared = true;
+                            runLen = pLenRemain;
+                            curP++;
+                            cLenRemain -= pLenRemain;
+                            pLenRemain = -1;
+                        } else {
+                            // We end after the c block
+                            cShared = false;
+                            runLen = cLenRemain;
+                            curC++;
+                            pLenRemain -= cLenRemain;
+                            cLenRemain = -1;
+                        }
+                    } else if(cLenRemain < cLen) {
+                        // Existing shared c block
+                        cShared = true;
+
+                        // Do we end with the p block, or either side of it?
+                        if(pLenRemain == cLenRemain) {
+                            // We end at the same time
+                            pShared = false;
+                            runLen = cLenRemain;
+                            curP++;
+                            curC++;
+                            pLenRemain = -1;
+                            cLenRemain = -1;
+                        } else if(cLenRemain < pLenRemain) {
+                            // We end before the p block
+                            pShared = true;
+                            runLen = cLenRemain;
+                            curC++;
+                            pLenRemain -= cLenRemain;
+                            cLenRemain = -1;
+                        } else {
+                            // We end after the p block
+                            pShared = false;
+                            runLen = pLenRemain;
+                            curP++;
+                            cLenRemain -= pLenRemain;
+                            pLenRemain = -1;
+                        }
+                    } else {
+                        // Start of a shared block
+                        if(pLenRemain < cLenRemain) {
+                            // Shared c block
+                            pShared = false;
+                            cShared = true;
+                            runLen = pLenRemain;
+                            curP++;
+                            cLenRemain -= pLenRemain;
+                            pLenRemain = -1;
+                        } else {
+                            // Shared p block
+                            pShared = true;
+                            cShared = false;
+                            runLen = cLenRemain;
+                            curC++;
+                            pLenRemain -= cLenRemain;
+                            cLenRemain = -1;
+                        }
+                    }
+                }
+
+                // Wind on
+                int prevPos = pos;
+                pos += runLen;
+                // Adjust for end-of-run extra 1 length
+                if(pos > runRawText.length()) {
+                    runLen--;
+                }
+
+                // Save
+                RichTextRun rtr = new RichTextRun(this, prevPos, runLen, pProps, cProps, pShared, cShared);
+                rtrs.add(rtr);
+            }
+
+            // Build the array
+            _rtRuns = new RichTextRun[rtrs.size()];
+            rtrs.copyInto(_rtRuns);
+        }
+
+    }
+
+    // Update methods follow
 	
 	/**
 	 * Adds the supplied text onto the end of the TextRun, 
@@ -379,7 +385,7 @@ public class TextRun
 	 * @param run
 	 * @param s
 	 */
-	public synchronized void changeTextInRichTextRun(RichTextRun run, String s) {
+	public void changeTextInRichTextRun(RichTextRun run, String s) {
 		// Figure out which run it is
 		int runID = -1;
 		for(int i=0; i<_rtRuns.length; i++) {
@@ -457,7 +463,7 @@ public class TextRun
 	 *  as the the first character has. 
 	 * If you care about styling, do setText on a RichTextRun instead 
 	 */
-	public synchronized void setRawText(String s) {
+	public void setRawText(String s) {
 		// Save the new text to the atoms
 		storeText(s);
 		RichTextRun fst = _rtRuns[0];
@@ -491,7 +497,7 @@ public class TextRun
      * Changes the text.
      * Converts '\r' into '\n'
      */
-    public synchronized void setText(String s) {
+    public void setText(String s) {
         String text = normalize(s);
         setRawText(text);
     }
@@ -500,7 +506,7 @@ public class TextRun
 	 * Ensure a StyleTextPropAtom is present for this run, 
 	 *  by adding if required. Normally for internal TextRun use.
 	 */
-	public synchronized void ensureStyleAtomPresent() {
+	public void ensureStyleAtomPresent() {
 		if(_styleAtom != null) {
 			// All there
 			return;
@@ -669,11 +675,26 @@ public class TextRun
     }
 
     public TextRulerAtom getTextRuler(){
-        for (int i = 0; i < _records.length; i++) {
-            if(_records[i] instanceof TextRulerAtom) return (TextRulerAtom)_records[i];
-        }
-        return null;
+        if(_ruler == null){
+            if(_records != null) for (int i = 0; i < _records.length; i++) {
+                if(_records[i] instanceof TextRulerAtom) {
+                    _ruler = (TextRulerAtom)_records[i];
+                    break;
+                }
+            }
 
+        }
+        return _ruler;
+
+    }
+
+    public TextRulerAtom createTextRuler(){
+        _ruler = getTextRuler();
+        if(_ruler == null){
+            _ruler = TextRulerAtom.getParagraphInstance();
+            _headerAtom.getParentRecord().appendChildRecord(_ruler);
+        }
+        return _ruler;
     }
 
     /**
@@ -692,4 +713,5 @@ public class TextRun
     public Record[] getRecords(){
         return _records;
     }
+
 }
