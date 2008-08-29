@@ -42,40 +42,6 @@ import org.apache.poi.hssf.record.formula.functions.LookupUtils.ValueVector;
  */
 public final class Vlookup implements Function {
 	
-	private static final class ColumnVector implements ValueVector {
-
-		private final AreaEval _tableArray;
-		private final int _size;
-		private final int _columnAbsoluteIndex;
-		private final int _firstRowAbsoluteIndex;
-
-		public ColumnVector(AreaEval tableArray, int columnIndex) {
-			_columnAbsoluteIndex = tableArray.getFirstColumn() + columnIndex;
-			if(!tableArray.containsColumn((short)_columnAbsoluteIndex)) {
-				int lastColIx =  tableArray.getLastColumn() -  tableArray.getFirstColumn();
-				throw new IllegalArgumentException("Specified column index (" + columnIndex 
-						+ ") is outside the allowed range (0.." + lastColIx + ")");
-			}
-			_tableArray = tableArray;
-			_size = tableArray.getLastRow() - tableArray.getFirstRow() + 1;
-			if(_size < 1) {
-				throw new RuntimeException("bad table array size zero");
-			}
-			_firstRowAbsoluteIndex = tableArray.getFirstRow();
-		}
-
-		public ValueEval getItem(int index) {
-			if(index>_size) {
-				throw new ArrayIndexOutOfBoundsException("Specified index (" + index 
-						+ ") is outside the allowed range (0.." + (_size-1) + ")");
-			}
-			return _tableArray.getValueAt(_firstRowAbsoluteIndex + index, (short)_columnAbsoluteIndex);
-		}
-		public int getSize() {
-			return _size;
-		}
-	}
-
 	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
 		Eval arg3 = null;
 		switch(args.length) {
@@ -93,7 +59,7 @@ public final class Vlookup implements Function {
 			ValueEval lookupValue = OperandResolver.getSingleValue(args[0], srcCellRow, srcCellCol);
 			AreaEval tableArray = LookupUtils.resolveTableArrayArg(args[1]);
 			boolean isRangeLookup = LookupUtils.resolveRangeLookupArg(arg3, srcCellRow, srcCellCol);
-			int rowIndex = LookupUtils.lookupIndexOfValue(lookupValue, new ColumnVector(tableArray, 0), isRangeLookup);
+			int rowIndex = LookupUtils.lookupIndexOfValue(lookupValue, LookupUtils.createColumnVector(tableArray, 0), isRangeLookup);
 			ValueEval veColIndex = OperandResolver.getSingleValue(args[2], srcCellRow, srcCellCol);
 			int colIndex = LookupUtils.resolveRowOrColIndexArg(veColIndex);
 			ValueVector resultCol = createResultColumnVector(tableArray, colIndex);
@@ -113,11 +79,9 @@ public final class Vlookup implements Function {
 		if(colIndex < 0) {
 			throw EvaluationException.invalidValue();
 		}
-		int nCols = tableArray.getLastColumn() - tableArray.getFirstColumn() + 1;
-		
-		if(colIndex >= nCols) {
+		if(colIndex >= tableArray.getWidth()) {
 			throw EvaluationException.invalidRef();
 		}
-		return new ColumnVector(tableArray, colIndex);
+		return LookupUtils.createColumnVector(tableArray, colIndex);
 	}
 }
