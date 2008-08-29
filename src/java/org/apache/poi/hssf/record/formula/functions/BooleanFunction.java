@@ -1,100 +1,108 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-/*
- * Created on May 15, 2005
- *
- */
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.BlankEval;
+import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
-import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
+import org.apache.poi.hssf.record.formula.eval.EvaluationException;
+import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
-import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
-
 /**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  * Here are the general rules concerning Boolean functions:
  * <ol>
- * <li> Blanks are not either true or false
- * <li> Strings are not either true or false (even strings "true" 
- * or "TRUE" or "0" etc.)
- * <li> Numbers: 0 is false. Any other number is TRUE.
- * <li> References are evaluated and above rules apply.
- * <li> Areas: Individual cells in area are evaluated and checked to 
- * see if they are blanks, strings etc.
+ * <li> Blanks are ignored (not either true or false) </li>
+ * <li> Strings are ignored if part of an area ref or cell ref, otherwise they must be 'true' or 'false'</li> 
+ * <li> Numbers: 0 is false. Any other number is TRUE </li>
+ * <li> Areas: *all* cells in area are evaluated according to the above rules</li>
  * </ol>
+ * 
+ * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
 public abstract class BooleanFunction implements Function {
 
-    protected ValueEval singleOperandEvaluate(Eval eval, int srcRow, short srcCol, boolean stringsAreBlanks) {
-        ValueEval retval;
-        
-        if (eval instanceof RefEval) {
-            RefEval re = (RefEval) eval;
-            ValueEval ve = re.getInnerValueEval();
-            retval = internalResolve(ve, true);
-        }
-        else {
-            retval = internalResolve(eval, stringsAreBlanks);
-        }
-        
-        return retval;
-    }
-    
-    private ValueEval internalResolve(Eval ve, boolean stringsAreBlanks) {
-        ValueEval retval = null;
-        
-        // blankeval is returned as is
-        if (ve instanceof BlankEval) {
-            retval = BlankEval.INSTANCE;
-        }
-        
-        // stringeval
-        else if (ve instanceof StringEval) {
-            retval = stringsAreBlanks ? (ValueEval) BlankEval.INSTANCE : (StringEval) ve;
-        }
-        
-        // bools are bools :)
-        else if (ve instanceof BoolEval) {
-            retval = (BoolEval) ve;
-        }
-        
-        // convert numbers to bool
-        else if (ve instanceof NumericValueEval) {
-            NumericValueEval ne = (NumericValueEval) ve;
-            double d = ne.getNumberValue();
-            retval = Double.isNaN(d) 
-                    ? (ValueEval) ErrorEval.VALUE_INVALID
-                    : (d != 0) 
-                        ? BoolEval.TRUE
-                        : BoolEval.FALSE;
-        }
-        
-        // since refevals
-        else {
-            retval = ErrorEval.VALUE_INVALID;
-        }
-        
-        return retval;
-        
-    }
+	public final Eval evaluate(Eval[] args, int srcRow, short srcCol) {
+		if (args.length < 1) {
+			return ErrorEval.VALUE_INVALID;
+		}
+		boolean boolResult;
+		try {
+			boolResult = calculate(args);
+		} catch (EvaluationException e) {
+			return e.getErrorEval();
+		}
+		return BoolEval.valueOf(boolResult);
+	}
+
+	private boolean calculate(Eval[] args) throws EvaluationException {
+
+		boolean result = getInitialResultValue();
+		boolean atleastOneNonBlank = false;
+		
+		/*
+		 * Note: no short-circuit boolean loop exit because any ErrorEvals will override the result
+		 */
+		for (int i=0, iSize=args.length; i<iSize; i++) {
+			Eval arg = args[i];
+			if (arg instanceof AreaEval) {
+				AreaEval ae = (AreaEval) arg;
+				int height = ae.getHeight();
+				int width = ae.getWidth();
+				for (int rrIx=0; rrIx<height; rrIx++) {
+					for (int rcIx=0; rcIx<width; rcIx++) {
+						ValueEval ve = ae.getRelativeValue(rrIx, rcIx);
+						Boolean tempVe = OperandResolver.coerceValueToBoolean(ve, true);
+						if (tempVe != null) {
+							result = partialEvaluate(result, tempVe.booleanValue());
+							atleastOneNonBlank = true;
+						}
+					}
+				}
+				continue;
+			}
+			Boolean tempVe;
+			if (arg instanceof RefEval) {
+				ValueEval ve = ((RefEval) arg).getInnerValueEval();
+				tempVe = OperandResolver.coerceValueToBoolean(ve, true);
+			} else if (arg instanceof ValueEval) {
+				ValueEval ve = (ValueEval) arg;
+				tempVe = OperandResolver.coerceValueToBoolean(ve, false);
+			} else {
+				throw new RuntimeException("Unexpected eval (" + arg.getClass().getName() + ")");
+			}
+			
+			
+			if (tempVe != null) {
+				result = partialEvaluate(result, tempVe.booleanValue());
+				atleastOneNonBlank = true;
+			}
+		}
+		
+		if (!atleastOneNonBlank) {
+			throw new EvaluationException(ErrorEval.VALUE_INVALID);
+		}
+		return result;
+	}
+	
+	
+	protected abstract boolean getInitialResultValue();
+	protected abstract boolean partialEvaluate(boolean cumulativeResult, boolean currentValue);
 }

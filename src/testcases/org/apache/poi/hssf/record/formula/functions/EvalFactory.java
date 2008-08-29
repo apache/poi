@@ -33,31 +33,35 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  * @author Josh Micich
  */
 final class EvalFactory {
-	private static final NumberEval ZERO = new NumberEval(0);
 
 	private EvalFactory() {
 		// no instances of this class
 	}
 
 	/**
-	 * Creates a dummy AreaEval (filled with zeros)
-	 * <p/>
-	 * nCols and nRows could have been derived
+	 * Creates a dummy AreaEval 
+	 * @param values empty (<code>null</code>) entries in this array will be converted to NumberEval.ZERO
 	 */
-	public static AreaEval createAreaEval(String areaRefStr, int nCols, int nRows) {
-		int nValues = nCols * nRows;
-		ValueEval[] values = new ValueEval[nValues];
-		for (int i = 0; i < nValues; i++) {
-			values[i] = ZERO;
+	public static AreaEval createAreaEval(String areaRefStr, ValueEval[] values) {
+		AreaPtg areaPtg = new AreaPtg(areaRefStr);
+		int nCols = areaPtg.getLastColumn() - areaPtg.getFirstColumn() + 1;
+		int nRows = areaPtg.getLastRow() - areaPtg.getFirstRow() + 1;
+		int nExpected = nRows * nCols;
+		if (values.length != nExpected) {
+			throw new RuntimeException("Expected " + nExpected + " values but got " + values.length);
 		}
-		
-		return new Area2DEval(new AreaPtg(areaRefStr), values);
+		for (int i = 0; i < nExpected; i++) {
+			if (values[i] == null) {
+				values[i] = NumberEval.ZERO;
+			}
+		}
+		return new Area2DEval(areaPtg, values);
 	}
 
 	/**
 	 * Creates a single RefEval (with value zero)
 	 */
 	public static RefEval createRefEval(String refStr) {
-		return new Ref2DEval(new RefPtg(refStr), ZERO);
+		return new Ref2DEval(new RefPtg(refStr), NumberEval.ZERO);
 	}
 }

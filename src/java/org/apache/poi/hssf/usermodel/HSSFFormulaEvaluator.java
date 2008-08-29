@@ -102,7 +102,7 @@ public class HSSFFormulaEvaluator {
 
     /**
      * Does nothing
-     * @deprecated - not needed, since the current row can be derived from the cell
+     * @deprecated (Aug 2008) - not needed, since the current row can be derived from the cell
      */
     public void setCurrentRow(HSSFRow row) {
         // do nothing
@@ -451,7 +451,7 @@ public class HSSFFormulaEvaluator {
             AreaEval ae = (AreaEval) evaluationResult;
             if (ae.isRow()) {
                 if(ae.isColumn()) {
-                    return ae.getValues()[0];
+                    return ae.getRelativeValue(0, 0);
                 }
                 return ae.getValueAt(ae.getFirstRow(), srcColNum);
             }
