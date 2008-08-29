@@ -17,8 +17,6 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.util.List;
-
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.Ptg;
@@ -40,10 +38,6 @@ public final class FormulaExtractor {
 			throw new IllegalArgumentException("Not a formula cell");
 		}
 		FormulaRecordAggregate fra = (FormulaRecordAggregate) vr;
-		List tokens = fra.getFormulaRecord().getParsedExpression();
-		Ptg[] result = new Ptg[tokens.size()];
-		tokens.toArray(result);
-		return result;
+		return fra.getFormulaRecord().getParsedExpression();
 	}
-
 }

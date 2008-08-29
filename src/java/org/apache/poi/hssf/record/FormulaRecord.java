@@ -180,18 +180,10 @@ public final class FormulaRecord extends Record implements CellValueRecordInterf
     }
 
     /**
-     * get the size of the stack
-     * @return size of the stack
+     * @return the formula tokens. never <code>null</code>
      */
-    public int getNumberOfExpressionTokens() {
-        return field_8_parsed_expr.length;
-    }
-
-    /**
-     * @return list of formula tokens. never <code>null</code>
-     */
-    public List getParsedExpression() {
-        return Arrays.asList(field_8_parsed_expr); // TODO - return array
+    public Ptg[] getParsedExpression() {
+        return (Ptg[]) field_8_parsed_expr.clone();
     }
 
     public void setParsedExpression(Ptg[] ptgs) {

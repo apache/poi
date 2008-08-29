@@ -15,25 +15,21 @@
    limitations under the License.
 ==================================================================== */
 
-
-/*
- * FormulaViewer.java - finds formulas in a BIFF8 file and attempts to parse them and
- * display info about them.
- *
- * Created on November 18, 2001, 7:58 AM
- */
 package org.apache.poi.hssf.dev;
 
 import java.io.FileInputStream;
-
-//import java.io.*;
 import java.util.List;
 
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.record.formula.*;
+import org.apache.poi.hssf.model.FormulaParser;
+import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordFactory;
+import org.apache.poi.hssf.record.formula.ExpPtg;
+import org.apache.poi.hssf.record.formula.FuncPtg;
+import org.apache.poi.hssf.record.formula.OperationPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.model.*;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * FormulaViewer - finds formulas in a BIFF8 file and attempts to read them/display
@@ -87,20 +83,21 @@ public class FormulaViewer
     
     private void listFormula(FormulaRecord record) {
         String sep="~";
-        List tokens= record.getParsedExpression();
-        int numptgs = record.getNumberOfExpressionTokens();
-        Ptg token = null;
-        String name,numArg;
-        if (tokens != null) {
-            token = (Ptg) tokens.get(numptgs-1);
+        Ptg[] tokens= record.getParsedExpression();
+        Ptg token;
+        int numptgs = tokens.length;
+        String numArg;
+            token = tokens[numptgs-1];
             if (token instanceof FuncPtg) {
                 numArg = String.valueOf(numptgs-1);
-            } else { numArg = String.valueOf(-1);}
+            } else { 
+            	numArg = String.valueOf(-1);
+            }
             
             StringBuffer buf = new StringBuffer();
             
             if (token instanceof ExpPtg) return;
-            buf.append(name=((OperationPtg) token).toFormulaString((HSSFWorkbook)null));
+            buf.append(((OperationPtg) token).toFormulaString((HSSFWorkbook)null));
             buf.append(sep);
             switch (token.getPtgClass()) {
                 case Ptg.CLASS_REF :
@@ -116,7 +113,7 @@ public class FormulaViewer
             
             buf.append(sep);
             if (numptgs>1) {
-                token = (Ptg) tokens.get(numptgs-2);
+                token = tokens[numptgs-2];
                 switch (token.getPtgClass()) {
                     case Ptg.CLASS_REF :
                         buf.append("REF");
@@ -134,9 +131,6 @@ public class FormulaViewer
             buf.append(sep);
             buf.append(numArg);
             System.out.println(buf.toString());
-        } else  {
-            System.out.println("#NAME");
-        }
     }
 
     /**
@@ -155,20 +149,18 @@ public class FormulaViewer
         System.out.println("value = " + record.getValue());
         System.out.print("xf = " + record.getXFIndex());
         System.out.print(", number of ptgs = "
-                           + record.getNumberOfExpressionTokens());
+                           + record.getParsedExpression().length);
         System.out.println(", options = " + record.getOptions());
         System.out.println("RPN List = "+formulaString(record));
         System.out.println("Formula text = "+ composeFormula(record));
     }
 
     private String formulaString(FormulaRecord record) {
-        StringBuffer formula = new StringBuffer("=");
-        int          numptgs = record.getNumberOfExpressionTokens();
-        List         tokens    = record.getParsedExpression();
-        Ptg token;
+
         StringBuffer buf = new StringBuffer();
-           for (int i=0;i<numptgs;i++) {
-           token = (Ptg) tokens.get(i);
+		Ptg[] tokens = record.getParsedExpression();
+		for (int i = 0; i < tokens.length; i++) {
+			Ptg token = tokens[i];
             buf.append( token.toFormulaString((HSSFWorkbook)null));
             switch (token.getPtgClass()) {
                 case Ptg.CLASS_REF :
@@ -187,9 +179,9 @@ public class FormulaViewer
     }
     
     
-    private String composeFormula(FormulaRecord record)
+    private static String composeFormula(FormulaRecord record)
     {
-       return  org.apache.poi.hssf.model.FormulaParser.toFormulaString((HSSFWorkbook)null,record.getParsedExpression());
+       return  FormulaParser.toFormulaString((HSSFWorkbook)null, record.getParsedExpression());
     }
 
     /**
