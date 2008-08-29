@@ -17,17 +17,16 @@
 
 package org.apache.poi.hssf.record;
 
-import java.util.List;
-import java.util.Stack;
-
 import org.apache.poi.hssf.record.formula.AreaNPtg;
 import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RefNPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
+import org.apache.poi.hssf.util.CellRangeAddress8Bit;
+import org.apache.poi.util.HexDump;
 
 /**
- * Title:        SharedFormulaRecord
+ * Title:        SHAREDFMLA (0x04BC) SharedFormulaRecord
  * Description:  Primarily used as an excel optimization so that multiple similar formulas
  *               are not written out too many times.  We should recognize this record and
  *               serialize as is since this is used when reading templates.
@@ -40,58 +39,46 @@ import org.apache.poi.hssf.record.formula.RefPtg;
 public final class SharedFormulaRecord extends Record {
     public final static short   sid = 0x04BC;
 
-    private int               field_1_first_row;
-    private int               field_2_last_row;
-    private short             field_3_first_column;
-    private short             field_4_last_column;
-    private int               field_5_reserved;
-    private short             field_6_expression_len;
-    private Stack             field_7_parsed_expr;
+    private CellRangeAddress8Bit _range;
+    private int field_5_reserved;
+    private Ptg[] field_7_parsed_expr;
 
-    public SharedFormulaRecord()
-    {
+    public SharedFormulaRecord() {
+    	_range = new CellRangeAddress8Bit(0, 0, 0, 0);
+    	field_7_parsed_expr = Ptg.EMPTY_PTG_ARRAY;
     }
 
     /**
      * @param in the RecordInputstream to read the record from
      */
-
-    public SharedFormulaRecord(RecordInputStream in)
-    {
+    public SharedFormulaRecord(RecordInputStream in) {
           super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != this.sid)
-        {
+    protected void validateSid(short id) {
+        if (id != this.sid) {
             throw new RecordFormatException("Not a valid SharedFormula");
         }
     }
 
     public int getFirstRow() {
-      return field_1_first_row;
+      return _range.getFirstRow();
     }
 
     public int getLastRow() {
-      return field_2_last_row;
+      return _range.getLastRow();
     }
 
     public short getFirstColumn() {
-      return field_3_first_column;
+      return (short) _range.getFirstColumn();
     }
 
     public short getLastColumn() {
-      return field_4_last_column;
-    }
-
-    public short getExpressionLength()
-    {
-        return field_6_expression_len;
+      return (short) _range.getLastColumn();
     }
 
     /**
-     * spit the record out AS IS.  no interperatation or identification
+     * spit the record out AS IS.  no interpretation or identification
      */
 
     public int serialize(int offset, byte [] data)
@@ -115,65 +102,28 @@ public final class SharedFormulaRecord extends Record {
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[SHARED FORMULA RECORD:" + Integer.toHexString(sid) + "]\n");
-        buffer.append("    .id        = ").append(Integer.toHexString(sid))
-            .append("\n");
-        buffer.append("    .first_row       = ")
-            .append(Integer.toHexString(getFirstRow())).append("\n");
-        buffer.append("    .last_row    = ")
-            .append(Integer.toHexString(getLastRow()))
-            .append("\n");
-        buffer.append("    .first_column       = ")
-            .append(Integer.toHexString(getFirstColumn())).append("\n");
-        buffer.append("    .last_column    = ")
-            .append(Integer.toHexString(getLastColumn()))
-            .append("\n");
-        buffer.append("    .reserved    = ")
-            .append(Integer.toHexString(field_5_reserved))
-            .append("\n");
-        buffer.append("    .expressionlength= ").append(getExpressionLength())
-            .append("\n");
+        buffer.append("[SHARED FORMULA (").append(HexDump.intToHex(sid)).append("]\n");
+        buffer.append("    .range      = ").append(_range.toString()).append("\n");
+        buffer.append("    .reserved    = ").append(HexDump.shortToHex(field_5_reserved)).append("\n");
 
-        buffer.append("    .numptgsinarray  = ").append(field_7_parsed_expr.size())
-              .append("\n");
-
-        for (int k = 0; k < field_7_parsed_expr.size(); k++ ) {
-           buffer.append("Formula ")
-                .append(k)
-                .append("\n")
-                .append(field_7_parsed_expr.get(k).toString())
-                .append("\n");
+        for (int k = 0; k < field_7_parsed_expr.length; k++ ) {
+           buffer.append("Formula[").append(k).append("]");
+           buffer.append(field_7_parsed_expr[k].toString()).append("\n");
         }
 
-        buffer.append("[/SHARED FORMULA RECORD]\n");
+        buffer.append("[/SHARED FORMULA]\n");
         return buffer.toString();
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 
-    protected void fillFields(RecordInputStream in)
-    {
-      field_1_first_row       = in.readUShort();
-      field_2_last_row        = in.readUShort();
-      field_3_first_column    = in.readUByte();
-      field_4_last_column     = in.readUByte();
-      field_5_reserved        = in.readShort();
-      field_6_expression_len = in.readShort();
-      field_7_parsed_expr    = getParsedExpressionTokens(in);
-    }
-
-    private Stack getParsedExpressionTokens(RecordInputStream in)
-    {
-        Stack stack = new Stack();
-
-        while (in.remaining() != 0) {
-            Ptg ptg = Ptg.createPtg(in);
-            stack.push(ptg);
-        }
-        return stack;
+    protected void fillFields(RecordInputStream in) {
+        _range = new CellRangeAddress8Bit(in);
+        field_5_reserved        = in.readShort();
+        int field_6_expression_len = in.readShort();
+        field_7_parsed_expr = Ptg.readTokens(field_6_expression_len, in);
     }
 
     /**
@@ -190,7 +140,7 @@ public final class SharedFormulaRecord extends Record {
      * Creates a non shared formula from the shared formula
      * counter part
      */
-    protected static Stack convertSharedFormulas(Stack ptgs, int formulaRow, int formulaColumn) {
+    protected static Ptg[] convertSharedFormulas(Ptg[] ptgs, int formulaRow, int formulaColumn) {
         if(false) {
             /*
              * TODO - (May-2008) Stop converting relative ref Ptgs in shared formula records.
@@ -201,11 +151,10 @@ public final class SharedFormulaRecord extends Record {
              */
             return ptgs;
         }
-        Stack newPtgStack = new Stack();
+        Ptg[] newPtgStack = new Ptg[ptgs.length];
 
-        if (ptgs != null)
-          for (int k = 0; k < ptgs.size(); k++) {
-            Ptg ptg = (Ptg) ptgs.get(k);
+        for (int k = 0; k < ptgs.length; k++) {
+            Ptg ptg = ptgs[k];
             byte originalOperandClass = -1;
             if (!ptg.isBaseToken()) {
                 originalOperandClass = ptg.getPtgClass();
@@ -226,12 +175,16 @@ public final class SharedFormulaRecord extends Record {
                                 areaNPtg.isLastRowRelative(),
                                 areaNPtg.isFirstColRelative(),
                                 areaNPtg.isLastColRelative());
+            } else {
+            	if (false) {// do we need a ptg clone here?
+            		ptg = ptg.copy();
+            	}
             }
             if (!ptg.isBaseToken()) {
                 ptg.setClass(originalOperandClass);
             }
 
-            newPtgStack.add(ptg);
+            newPtgStack[k] = ptg;
         }
         return newPtgStack;
     }
@@ -248,9 +201,7 @@ public final class SharedFormulaRecord extends Record {
         final int formulaRow = formula.getRow();
         final int formulaColumn = formula.getColumn();
 
-        List ptgList =  convertSharedFormulas(field_7_parsed_expr, formulaRow, formulaColumn);
-        Ptg[] ptgs = new Ptg[ptgList.size()];
-        ptgList.toArray(ptgs);
+        Ptg[] ptgs = convertSharedFormulas(field_7_parsed_expr, formulaRow, formulaColumn);
         formula.setParsedExpression(ptgs);
         //Now its not shared!
         formula.setSharedFormula(false);
