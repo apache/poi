@@ -20,6 +20,7 @@ package org.apache.poi.hslf.record;
 import java.io.*;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.DeflaterOutputStream;
+import java.util.Hashtable;
 
 import org.apache.poi.util.LittleEndian;
 
@@ -28,7 +29,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Daniel Noll
  */
-public class ExOleObjStg extends RecordAtom implements PersistRecord {
+public class ExOleObjStg extends RecordAtom implements PositionDependentRecord, PersistRecord {
 
     private int _persistId; // Found from PersistPtrHolder
 
@@ -45,10 +46,11 @@ public class ExOleObjStg extends RecordAtom implements PersistRecord {
     /**
      * Constructs a new empty storage container.
      */
-    protected ExOleObjStg() {
+    public ExOleObjStg() {
         _header = new byte[8];
         _data = new byte[0];
 
+        LittleEndian.putShort(_header, 0, (short)0x10);
         LittleEndian.putShort(_header, 2, (short)getRecordType());
         LittleEndian.putInt(_header, 4, _data.length);
     }
@@ -88,6 +90,10 @@ public class ExOleObjStg extends RecordAtom implements PersistRecord {
     public InputStream getData() {
         InputStream compressedStream = new ByteArrayInputStream(_data, 4, _data.length);
         return new InflaterInputStream(compressedStream);
+    }
+
+    public byte[] getRawData() {
+        return _data;
     }
 
     /**
@@ -144,4 +150,23 @@ public class ExOleObjStg extends RecordAtom implements PersistRecord {
     public void setPersistId(int id) {
         _persistId = id;
     }
+
+    /** Our location on the disk, as of the last write out */
+    protected int myLastOnDiskOffset;
+
+    /** Fetch our location on the disk, as of the last write out */
+    public int getLastOnDiskOffset() { return myLastOnDiskOffset; }
+
+    /**
+     * Update the Record's idea of where on disk it lives, after a write out.
+     * Use with care...
+     */
+    public void setLastOnDiskOffset(int offset) {
+        myLastOnDiskOffset = offset;
+    }
+
+    public void updateOtherRecordReferences(Hashtable oldToNewReferencesLookup) {
+        return;
+    }
+
 }

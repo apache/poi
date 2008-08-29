@@ -24,11 +24,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.*;
 
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -38,21 +34,9 @@ import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.record.Document;
-import org.apache.poi.hslf.record.DocumentAtom;
-import org.apache.poi.hslf.record.FontCollection;
-import org.apache.poi.hslf.record.FontEntityAtom;
-import org.apache.poi.hslf.record.HeadersFootersContainer;
-import org.apache.poi.hslf.record.ParentAwareRecord;
-import org.apache.poi.hslf.record.PersistPtrHolder;
-import org.apache.poi.hslf.record.PositionDependentRecord;
-import org.apache.poi.hslf.record.PositionDependentRecordContainer;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.RecordContainer;
-import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.hslf.record.SlideListWithText;
-import org.apache.poi.hslf.record.SlidePersistAtom;
-import org.apache.poi.hslf.record.UserEditAtom;
+import org.apache.poi.hslf.model.Notes;
+import org.apache.poi.hslf.model.Slide;
+import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.POILogFactory;
@@ -590,9 +574,8 @@ public final class SlideShow {
 	 * Create a blank <code>Slide</code>.
 	 *
 	 * @return  the created <code>Slide</code>
-	 * @throws IOException
 	 */
-  	public Slide createSlide() throws IOException {
+  	public Slide createSlide() {
   		SlideListWithText slist = null;
 
   		// We need to add the records to the SLWT that deals
@@ -660,9 +643,13 @@ public final class SlideShow {
   		for (int i = 0; i < _records.length; i++) {
   			Record record = _records[i];
   			ByteArrayOutputStream out = new ByteArrayOutputStream();
-  			record.writeOut(out);
+  			try {
+                record.writeOut(out);
+            } catch (IOException e){
+                throw new HSLFException(e);
+            }
 
-  			// Grab interesting records as they come past
+              // Grab interesting records as they come past
   			if(_records[i].getRecordType() == RecordTypes.PersistPtrIncrementalBlock.typeID){
   				ptr = (PersistPtrHolder)_records[i];
   			}
@@ -888,4 +875,72 @@ public final class SlideShow {
         }
     }
 
+    /**
+     * Add a movie in this presentation
+     *
+     * @param path the path or url to the movie
+     * @return 0-based index of the movie
+     */
+    public int addMovie(String path, int type) {
+        ExObjList lst = (ExObjList)_documentRecord.findFirstOfType(RecordTypes.ExObjList.typeID);
+        if(lst == null){
+            lst = new ExObjList();
+            _documentRecord.addChildAfter(lst, _documentRecord.getDocumentAtom());
+        }
+
+        ExObjListAtom objAtom = lst.getExObjListAtom();
+        //increment the object ID seed
+        int objectId = (int)objAtom.getObjectIDSeed() + 1;
+        objAtom.setObjectIDSeed(objectId);
+        ExMCIMovie mci;
+        switch (type){
+            case MovieShape.MOVIE_MPEG:
+                mci = new ExMCIMovie();
+                break;
+            case MovieShape.MOVIE_AVI:
+                mci = new ExAviMovie();
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported Movie: " + type);
+        }
+
+        lst.appendChildRecord(mci);
+        ExVideoContainer exVideo = mci.getExVideo();
+        exVideo.getExMediaAtom().setObjectId(objectId);
+        exVideo.getExMediaAtom().setMask(0xE80000);
+        exVideo.getPathAtom().setText(path);
+        return objectId;
+    }
+
+    /**
+     * Add a control in this presentation
+     *
+     * @param name   name of the control, e.g. "Shockwave Flash Object"
+     * @param progId OLE Programmatic Identifier, e.g. "ShockwaveFlash.ShockwaveFlash.9"
+     * @return 0-based index of the control
+     */
+    public int addControl(String name, String progId) {
+        ExObjList lst = _documentRecord.getExObjList();
+        if (lst == null) {
+            lst = new ExObjList();
+            _documentRecord.addChildAfter(lst, _documentRecord.getDocumentAtom());
+        }
+        ExObjListAtom objAtom = lst.getExObjListAtom();
+        //increment the object ID seed
+        int objectId = (int) objAtom.getObjectIDSeed() + 1;
+        objAtom.setObjectIDSeed(objectId);
+        ExControl ctrl = new ExControl();
+        ExOleObjAtom oleObj = ctrl.getExOleObjAtom();
+        oleObj.setObjID(objectId);
+        oleObj.setDrawAspect(ExOleObjAtom.DRAW_ASPECT_VISIBLE);
+        oleObj.setType(ExOleObjAtom.TYPE_CONTROL);
+        oleObj.setSubType(ExOleObjAtom.SUBTYPE_DEFAULT);
+
+        ctrl.setProgId(progId);
+        ctrl.setMenuName(name);
+        ctrl.setClipboardName(name);
+        lst.addChildAfter(ctrl, objAtom);
+
+        return objectId;
+    }
 }

@@ -133,6 +133,7 @@ public abstract class TextShape extends SimpleShape {
             _txtbox.appendChildRecord(sta);
 
             _txtrun = new TextRun(tha,tca,sta);
+            _txtrun._records = new Record[]{tha, tca, sta};
             _txtrun.setText("");
 
             _escherContainer.addChildRecord(_txtbox.getEscherRecord());

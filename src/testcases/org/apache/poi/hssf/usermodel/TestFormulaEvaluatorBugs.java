@@ -20,7 +20,6 @@ package org.apache.poi.hssf.usermodel;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Iterator;
-import java.util.List;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -29,6 +28,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
 
 /**
  * 
@@ -183,14 +183,14 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		HSSFCell cellSUM = rowSUM.getCell(0);
 
 		FormulaRecordAggregate frec = (FormulaRecordAggregate) cellSUM.getCellValueRecord();
-		List ops = frec.getFormulaRecord().getParsedExpression();
-		assertEquals(2, ops.size());
-		assertEquals(AreaPtg.class, ops.get(0).getClass());
-		assertEquals(FuncVarPtg.class, ops.get(1).getClass());
+		Ptg[] ops = frec.getFormulaRecord().getParsedExpression();
+		assertEquals(2, ops.length);
+		assertEquals(AreaPtg.class, ops[0].getClass());
+		assertEquals(FuncVarPtg.class, ops[1].getClass());
 
 		// Actually stored as C1 to C65536
 		// (last row is -1 === 65535)
-		AreaPtg ptg = (AreaPtg) ops.get(0);
+		AreaPtg ptg = (AreaPtg) ops[0];
 		assertEquals(2, ptg.getFirstColumn());
 		assertEquals(2, ptg.getLastColumn());
 		assertEquals(0, ptg.getFirstRow());

@@ -296,7 +296,7 @@ public class HSSFCell implements Cell {
 
                 if (cellType != this.cellType)
                 {
-                    frec = new FormulaRecordAggregate(new FormulaRecord(),null);
+                    frec = new FormulaRecordAggregate(new FormulaRecord());
                 }
                 else
                 {
@@ -592,41 +592,27 @@ public class HSSFCell implements Cell {
         int row=record.getRow();
         short col=record.getColumn();
         short styleIndex=record.getXFIndex();
-        //Workbook.currentBook=book;
+
         if (formula==null) {
-            setCellType(CELL_TYPE_BLANK,false,row,col,styleIndex);
-        } else {
-            setCellType(CELL_TYPE_FORMULA,false,row,col,styleIndex);
-            FormulaRecordAggregate rec = (FormulaRecordAggregate) record;
-            FormulaRecord frec = rec.getFormulaRecord();
-            frec.setOptions(( short ) 2);
-            frec.setValue(0);
-            
-            //only set to default if there is no extended format index already set
-            if (rec.getXFIndex() == (short)0) rec.setXFIndex(( short ) 0x0f);
-            Ptg[] ptgs = FormulaParser.parse(formula, book);
-            int   size = 0;
-
-            // clear the Ptg Stack
-            for (int i=0, iSize=frec.getNumberOfExpressionTokens(); i<iSize; i++) {
-                frec.popExpressionToken();
-            }
-
-            // fill the Ptg Stack with Ptgs of new formula
-            for (int k = 0; k < ptgs.length; k++) {
-                size += ptgs[ k ].getSize();
-                frec.pushExpressionToken(ptgs[ k ]);
-            }
-            rec.getFormulaRecord().setExpressionLength(( short ) size);
-            //Workbook.currentBook = null;
+            setCellType(CELL_TYPE_BLANK, false, row, col, styleIndex);
+            return;
         }
+        setCellType(CELL_TYPE_FORMULA, false, row, col, styleIndex);
+        FormulaRecordAggregate rec = (FormulaRecordAggregate) record;
+        FormulaRecord frec = rec.getFormulaRecord();
+        frec.setOptions((short) 2);
+        frec.setValue(0);
+        
+        //only set to default if there is no extended format index already set
+        if (rec.getXFIndex() == (short)0) {
+			rec.setXFIndex((short) 0x0f);
+		}
+        Ptg[] ptgs = FormulaParser.parse(formula, book);
+        frec.setParsedExpression(ptgs);
     }
 
     public String getCellFormula() {
-        //Workbook.currentBook=book;
-        String retval = FormulaParser.toFormulaString(book, ((FormulaRecordAggregate)record).getFormulaRecord().getParsedExpression());
-        //Workbook.currentBook=null;
-        return retval;
+        return FormulaParser.toFormulaString(book, ((FormulaRecordAggregate)record).getFormulaRecord().getParsedExpression());
     }
 
 

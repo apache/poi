@@ -1,19 +1,19 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
 
 package org.apache.poi.hssf.record.formula.functions;
 
@@ -28,7 +28,7 @@ import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.record.formula.functions.CountUtils.I_MatchPredicate;
 
 /**
  * Implementation for the function COUNTIF<p/>
@@ -144,12 +144,6 @@ public final class Countif implements Function {
 		}
 	}
 
-	/**
-	 * Common interface for the matching criteria.
-	 */
-	/* package */ interface I_MatchPredicate {
-		boolean matches(Eval x);
-	}
 
 	private static final class NumberMatcher implements I_MatchPredicate {
 
@@ -360,21 +354,12 @@ public final class Countif implements Function {
 	 * @return the number of evaluated cells in the range that match the specified criteria
 	 */
 	private Eval countMatchingCellsInArea(Eval rangeArg, I_MatchPredicate criteriaPredicate) {
-		int result = 0;
+		
+		int result;
 		if (rangeArg instanceof RefEval) {
-			RefEval refEval = (RefEval) rangeArg;
-			if(criteriaPredicate.matches(refEval.getInnerValueEval())) {
-				result++;
-			}
+			result = CountUtils.countMatchingCell((RefEval) rangeArg, criteriaPredicate);
 		} else if (rangeArg instanceof AreaEval) {
-
-			AreaEval range = (AreaEval) rangeArg;
-			ValueEval[] values = range.getValues();
-			for (int i = 0; i < values.length; i++) {
-				if(criteriaPredicate.matches(values[i])) {
-					result++;
-				}
-			}
+			result = CountUtils.countMatchingCellsInArea((AreaEval) rangeArg, criteriaPredicate);
 		} else {
 			throw new IllegalArgumentException("Bad range arg type (" + rangeArg.getClass().getName() + ")");
 		}

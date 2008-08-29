@@ -14,17 +14,22 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
- 
+
 package org.apache.poi.hssf.record;
 
+import java.util.List;
 import java.util.Stack;
 
-import org.apache.poi.hssf.record.formula.*;
+import org.apache.poi.hssf.record.formula.AreaNPtg;
+import org.apache.poi.hssf.record.formula.AreaPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.RefNPtg;
+import org.apache.poi.hssf.record.formula.RefPtg;
 
 /**
  * Title:        SharedFormulaRecord
  * Description:  Primarily used as an excel optimization so that multiple similar formulas
- * 				  are not written out too many times.  We should recognize this record and
+ *               are not written out too many times.  We should recognize this record and
  *               serialize as is since this is used when reading templates.
  * <p>
  * Note: the documentation says that the SID is BC where biffviewer reports 4BC.  The hex dump shows
@@ -33,15 +38,15 @@ import org.apache.poi.hssf.record.formula.*;
  * @author Danny Mui at apache dot org
  */
 public final class SharedFormulaRecord extends Record {
-    public final static short   sid = 0x4BC;
-    
+    public final static short   sid = 0x04BC;
+
     private int               field_1_first_row;
     private int               field_2_last_row;
     private short             field_3_first_column;
     private short             field_4_last_column;
     private int               field_5_reserved;
     private short             field_6_expression_len;
-    private Stack             field_7_parsed_expr;    
+    private Stack             field_7_parsed_expr;
 
     public SharedFormulaRecord()
     {
@@ -55,15 +60,15 @@ public final class SharedFormulaRecord extends Record {
     {
           super(in);
     }
-    
+
     protected void validateSid(short id)
     {
         if (id != this.sid)
         {
             throw new RecordFormatException("Not a valid SharedFormula");
-        }        
-    }    
-    
+        }
+    }
+
     public int getFirstRow() {
       return field_1_first_row;
     }
@@ -139,7 +144,7 @@ public final class SharedFormulaRecord extends Record {
                 .append(field_7_parsed_expr.get(k).toString())
                 .append("\n");
         }
-        
+
         buffer.append("[/SHARED FORMULA RECORD]\n");
         return buffer.toString();
     }
@@ -163,7 +168,7 @@ public final class SharedFormulaRecord extends Record {
     private Stack getParsedExpressionTokens(RecordInputStream in)
     {
         Stack stack = new Stack();
-        
+
         while (in.remaining() != 0) {
             Ptg ptg = Ptg.createPtg(in);
             stack.push(ptg);
@@ -180,15 +185,15 @@ public final class SharedFormulaRecord extends Record {
       return ((getFirstRow() <= formulaRow) && (getLastRow() >= formulaRow) &&
           (getFirstColumn() <= formulaColumn) && (getLastColumn() >= formulaColumn));
     }
-    
+
     /**
-     * Creates a non shared formula from the shared formula 
+     * Creates a non shared formula from the shared formula
      * counter part
      */
     protected static Stack convertSharedFormulas(Stack ptgs, int formulaRow, int formulaColumn) {
         if(false) {
             /*
-             * TODO - (May-2008) Stop converting relative ref Ptgs in shared formula records. 
+             * TODO - (May-2008) Stop converting relative ref Ptgs in shared formula records.
              * If/when POI writes out the workbook, this conversion makes an unnecessary diff in the BIFF records.
              * Disabling this code breaks one existing junit.
              * Some fix-up will be required to make Ptg.toFormulaString(HSSFWorkbook) work properly.
@@ -225,31 +230,30 @@ public final class SharedFormulaRecord extends Record {
             if (!ptg.isBaseToken()) {
                 ptg.setClass(originalOperandClass);
             }
-            
+
             newPtgStack.add(ptg);
         }
         return newPtgStack;
     }
 
-    /** 
-     * Creates a non shared formula from the shared formula 
+    /**
+     * Creates a non shared formula from the shared formula
      * counter part
      */
     public void convertSharedFormulaRecord(FormulaRecord formula) {
       //Sanity checks
-      final int formulaRow = formula.getRow();
-      final int formulaColumn = formula.getColumn();
-      if (isFormulaInShared(formula)) {
-        formula.setExpressionLength(getExpressionLength());
-        
-        Stack newPtgStack = 
-        	convertSharedFormulas(field_7_parsed_expr, formulaRow, formulaColumn);
-        formula.setParsedExpression(newPtgStack);
+        if (!isFormulaInShared(formula)) {
+            throw new RuntimeException("Shared Formula Conversion: Coding Error");
+        }
+        final int formulaRow = formula.getRow();
+        final int formulaColumn = formula.getColumn();
+
+        List ptgList =  convertSharedFormulas(field_7_parsed_expr, formulaRow, formulaColumn);
+        Ptg[] ptgs = new Ptg[ptgList.size()];
+        ptgList.toArray(ptgs);
+        formula.setParsedExpression(ptgs);
         //Now its not shared!
         formula.setSharedFormula(false);
-      } else {
-        throw new RuntimeException("Shared Formula Conversion: Coding Error");
-      }
     }
 
     private static int fixupRelativeColumn(int currentcolumn, int column, boolean relative) {

@@ -36,7 +36,7 @@ public class ExEmbed extends RecordContainer {
     private byte[] _header;
 
     // Links to our more interesting children
-    private RecordAtom embedAtom;
+    protected RecordAtom embedAtom;
     private ExOleObjAtom oleObjAtom;
     private CString menuName;
     private CString progId;
@@ -72,10 +72,11 @@ public class ExEmbed extends RecordContainer {
 
         // Setup our child records
         CString cs1 = new CString();
+        cs1.setOptions(0x1 << 4);
         CString cs2 = new CString();
+        cs2.setOptions(0x2 << 4);
         CString cs3 = new CString();
-//        cs1.setOptions(0x00);
-//        cs2.setOptions(0x10);
+        cs3.setOptions(0x3 << 4);
         _children[0] = new ExEmbedAtom();
         _children[1] = new ExOleObjAtom();
         _children[2] = cs1;
@@ -91,7 +92,11 @@ public class ExEmbed extends RecordContainer {
     private void findInterestingChildren() {
 
         // First child should be the ExHyperlinkAtom
-        embedAtom = getEmbedAtom(_children);
+        if(_children[0] instanceof ExEmbedAtom) {
+            embedAtom = (ExEmbedAtom)_children[0];
+        } else {
+            logger.log(POILogger.ERROR, "First child record wasn't a ExEmbedAtom, was of type " + _children[0].getRecordType());
+        }
 
         // Second child should be the ExOleObjAtom
         if (_children[1] instanceof ExOleObjAtom) {
@@ -102,23 +107,15 @@ public class ExEmbed extends RecordContainer {
 
         for (int i = 2; i < _children.length; i++) {
             if (_children[i] instanceof CString){
-                if (menuName == null) menuName = (CString)_children[i];
-                else if (progId == null) progId = (CString)_children[i];
-                else if (clipboardName == null) clipboardName = (CString)_children[i];
-            } else {
-                logger.log(POILogger.ERROR, "Record after atoms wasn't a CString, was of type " + _children[i].getRecordType());
+                CString cs = (CString)_children[i];
+                int opts = cs.getOptions() >> 4;
+                switch(opts){
+                    case 0x1: menuName = cs; break;
+                    case 0x2: progId = cs; break;
+                    case 0x3: clipboardName = cs; break;
+                }
             }
         }
-    }
-
-    protected RecordAtom getEmbedAtom(Record[] children){
-        RecordAtom atom = null;
-        if(_children[0] instanceof ExEmbedAtom) {
-            atom = (ExEmbedAtom)_children[0];
-        } else {
-            logger.log(POILogger.ERROR, "First child record wasn't a ExEmbedAtom, was of type " + _children[0].getRecordType());
-        }
-        return atom;
     }
 
     /**
@@ -151,6 +148,11 @@ public class ExEmbed extends RecordContainer {
         return menuName == null ? null : menuName.getText();
     }
 
+    public void setMenuName(String s)
+    {
+        if(menuName != null) menuName.setText(s);
+    }
+
     /**
      * Gets the OLE Programmatic Identifier.
      * 
@@ -161,6 +163,10 @@ public class ExEmbed extends RecordContainer {
         return progId == null ? null : progId.getText();
     }
 
+    public void setProgId(String s)
+    {
+        if(progId != null) progId.setText(s);
+    }
     /**
      * Gets the name that appears in the paste special dialog.
      *
@@ -171,6 +177,10 @@ public class ExEmbed extends RecordContainer {
         return clipboardName == null ? null : clipboardName.getText();
     }
 
+    public void setClipboardName(String s)
+    {
+        if(clipboardName != null) clipboardName.setText(s);
+    }
     /**
      * Returns the type (held as a little endian in bytes 3 and 4)
      * that this class handles.

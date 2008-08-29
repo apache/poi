@@ -53,7 +53,7 @@ public class TextRulerAtom extends RecordAtom {
     /**
      * Constructs a new empty ruler atom.
      */
-    protected TextRulerAtom() {
+    public TextRulerAtom() {
         _header = new byte[8];
         _data = new byte[0];
 
@@ -190,5 +190,20 @@ public class TextRulerAtom extends RecordAtom {
      */
     public int[] getBulletOffsets(){
         return bulletOffsets;
+    }
+
+    public static TextRulerAtom getParagraphInstance(){
+        byte[] data = new byte[] {
+            0x00, 0x00, (byte)0xA6, 0x0F, 0x0A, 0x00, 0x00, 0x00,
+            0x10, 0x03, 0x00, 0x00, (byte)0xF9, 0x00, 0x41, 0x01, 0x41, 0x01
+        };
+        TextRulerAtom ruler = new TextRulerAtom(data, 0, data.length);
+        return ruler;
+    }
+
+    public void setParagraphIndent(short tetxOffset, short bulletOffset){
+        LittleEndian.putShort(_data, 4, tetxOffset);
+        LittleEndian.putShort(_data, 6, bulletOffset);
+        LittleEndian.putShort(_data, 8, bulletOffset);
     }
 }

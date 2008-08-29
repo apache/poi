@@ -39,27 +39,39 @@ public class InteractiveInfoAtom extends RecordAtom
     /**
      * Action Table
      */
-    public static final int ACTION_NONE = 0;
-    public static final int ACTION_MACRO = 1;
-    public static final int ACTION_RUNPROGRAM = 2;
-    public static final int ACTION_JUMP = 3;
-    public static final int ACTION_HYPERLINK = 4;
-    public static final int ACTION_OLE = 5;
-    public static final int ACTION_MEDIA = 6;
-    public static final int ACTION_CUSTOMSHOW = 7;
+    public static final byte ACTION_NONE = 0;
+    public static final byte ACTION_MACRO = 1;
+    public static final byte ACTION_RUNPROGRAM = 2;
+    public static final byte ACTION_JUMP = 3;
+    public static final byte ACTION_HYPERLINK = 4;
+    public static final byte ACTION_OLE = 5;
+    public static final byte ACTION_MEDIA = 6;
+    public static final byte ACTION_CUSTOMSHOW = 7;
 
     /**
      *  Jump Table
      */
-    public static final int JUMP_NONE = 0;
-    public static final int JUMP_NEXTSLIDE = 1;
-    public static final int JUMP_PREVIOUSSLIDE = 2;
-    public static final int JUMP_FIRSTSLIDE = 3;
-    public static final int JUMP_LASTSLIDE = 4;
-    public static final int JUMP_LASTSLIDEVIEWED = 5;
-    public static final int JUMP_ENDSHOW = 6;
+    public static final byte JUMP_NONE = 0;
+    public static final byte JUMP_NEXTSLIDE = 1;
+    public static final byte JUMP_PREVIOUSSLIDE = 2;
+    public static final byte JUMP_FIRSTSLIDE = 3;
+    public static final byte JUMP_LASTSLIDE = 4;
+    public static final byte JUMP_LASTSLIDEVIEWED = 5;
+    public static final byte JUMP_ENDSHOW = 6;
 
-
+    /**
+     * Types of hyperlinks
+     */
+    public static final byte LINK_NextSlide = 0x00;
+    public static final byte LINK_PreviousSlide = 0x01;
+    public static final byte LINK_FirstSlide = 0x02;
+    public static final byte LINK_LastSlide = 0x03;
+    public static final byte LINK_CustomShow = 0x06;
+    public static final byte LINK_SlideNumber = 0x07;
+    public static final byte LINK_Url = 0x08;
+    public static final byte LINK_OtherPresentation = 0x09;
+    public static final byte LINK_OtherFile = 0x0A;
+    public static final byte LINK_NULL = (byte)0xFF;
 
     /**
      * Record header.

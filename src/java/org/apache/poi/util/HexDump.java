@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,11 +14,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.text.DecimalFormat;
 
 /**
@@ -29,27 +34,16 @@ import java.text.DecimalFormat;
  * @author Marc Johnson
  * @author Glen Stampoultzis  (glens at apache.org)
  */
-
-public class HexDump
-{
-    public static final String        EOL         =
-        System.getProperty("line.separator");
-//    private static final StringBuffer _lbuffer    = new StringBuffer(8);
-//    private static final StringBuffer _cbuffer    = new StringBuffer(2);
-    private static final char         _hexcodes[] =
-    {
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D',
-        'E', 'F'
-    };
-    private static final int          _shifts[]   =
+public class HexDump {
+    public static final String EOL = System.getProperty("line.separator");
+    private static final char _hexcodes[] = "0123456789ABCDEF".toCharArray();
+    private static final int _shifts[]   =
     {
         60, 56, 52, 48, 44, 40, 36, 32, 28, 24, 20, 16, 12, 8, 4, 0
     };
 
-
-    // all static methods, so no need for a public constructor
-    private HexDump()
-    {
+    private HexDump() {
+        // all static methods, so no need for a public constructor
     }
 
     /**
@@ -69,7 +63,7 @@ public class HexDump
      * @exception IllegalArgumentException if the output stream is
      *            null
      */
-    public synchronized static void dump(final byte [] data, final long offset,
+    public static void dump(final byte [] data, final long offset,
                             final OutputStream stream, final int index, final int length)
             throws IOException, ArrayIndexOutOfBoundsException,
                     IllegalArgumentException
@@ -412,6 +406,50 @@ public class HexDump
 
         byte[] data = buf.toByteArray();
         dump(data, 0, out, start, data.length);
+    }
+    /**
+     * @return char array of uppercase hex chars, zero padded and prefixed with '0x'
+     */
+    private static char[] toHexChars(long pValue, int nBytes) {
+        int charPos = 2 + nBytes*2;
+        // The return type is char array because most callers will probably append the value to a
+        // StringBuffer, or write it to a Stream / Writer so there is no need to create a String;
+        char[] result = new char[charPos];
+        
+        long value = pValue;
+        do {
+            result[--charPos] = _hexcodes[(int) (value & 0x0F)];
+            value >>>= 4;
+        } while (charPos > 1);
+    
+        // Prefix added to avoid ambiguity
+        result[0] = '0';
+        result[1] = 'x';
+        return result;
+    }
+    /**
+     * @return char array of 4 (zero padded) uppercase hex chars and prefixed with '0x'
+     */
+    public static char[] longToHex(long value) {
+        return toHexChars(value, 8);
+    }
+    /**
+     * @return char array of 4 (zero padded) uppercase hex chars and prefixed with '0x'
+     */
+    public static char[] intToHex(int value) {
+        return toHexChars(value, 4);
+    }
+    /**
+     * @return char array of 2 (zero padded) uppercase hex chars and prefixed with '0x'
+     */
+    public static char[] shortToHex(int value) {
+        return toHexChars(value, 2);
+    }
+    /**
+     * @return char array of 1 (zero padded) uppercase hex chars and prefixed with '0x'
+     */
+    public static char[] byteToHex(int value) {
+        return toHexChars(value, 1);
     }
 
     public static void main(String[] args) throws Exception {

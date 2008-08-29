@@ -77,7 +77,7 @@ public class RecordTypes {
     public static final Type BookmarkSeedAtom = new Type(2025,null);
     public static final Type ColorSchemeAtom = new Type(2032,ColorSchemeAtom.class);
     public static final Type ExObjRefAtom = new Type(3009,null);
-    public static final Type OEShapeAtom = new Type(3009,null);
+    public static final Type OEShapeAtom = new Type(3009,OEShapeAtom.class);
     public static final Type OEPlaceholderAtom = new Type(3011,OEPlaceholderAtom.class);
     public static final Type GPopublicintAtom = new Type(3024,null);
     public static final Type GRatioAtom = new Type(3031,null);
@@ -128,11 +128,11 @@ public class RecordTypes {
     public static final Type DateTimeMCAtom = new Type(4087,null);
     public static final Type GenericDateMCAtom = new Type(4088,null);
     public static final Type FooterMCAtom = new Type(4090,null);
-    public static final Type ExControlAtom = new Type(4091,null);
-    public static final Type ExMediaAtom = new Type(4100,null);
-    public static final Type ExVideo = new Type(4101,null);
-    public static final Type ExAviMovie = new Type(4102,null);
-    public static final Type ExMCIMovie = new Type(4103,null);
+    public static final Type ExControlAtom = new Type(4091,ExControlAtom.class);
+    public static final Type ExMediaAtom = new Type(4100,ExMediaAtom.class);
+    public static final Type ExVideoContainer = new Type(4101,ExVideoContainer.class);
+    public static final Type ExAviMovie = new Type(4102,ExAviMovie.class);
+    public static final Type ExMCIMovie = new Type(4103,ExMCIMovie.class);
     public static final Type ExMIDIAudio = new Type(4109,null);
     public static final Type ExCDAudio = new Type(4110,null);
     public static final Type ExWAVAudioEmbedded = new Type(4111,null);
@@ -140,7 +140,8 @@ public class RecordTypes {
     public static final Type ExOleObjStg = new Type(4113,ExOleObjStg.class);
     public static final Type ExCDAudioAtom = new Type(4114,null);
     public static final Type ExWAVAudioEmbeddedAtom = new Type(4115,null);
-    public static final Type AnimationInfoAtom = new Type(4116,null);
+    public static final Type AnimationInfo = new Type(4116,AnimationInfo.class);
+    public static final Type AnimationInfoAtom = new Type(4081,AnimationInfoAtom.class);
     public static final Type RTFDateTimeMCAtom = new Type(4117,null);
     public static final Type ProgTags = new Type(5000,DummyPositionSensitiveRecordWithChildren.class);
     public static final Type ProgStringTag = new Type(5001,null);

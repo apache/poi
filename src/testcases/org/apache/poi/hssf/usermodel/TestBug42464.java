@@ -18,13 +18,13 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.util.Iterator;
-import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
+import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.ss.usermodel.FormulaEvaluator.CellValue;
 import org.apache.poi.hssf.util.CellReference;
 
@@ -65,15 +65,14 @@ public final class TestBug42464 extends TestCase {
 			}
 			FormulaRecordAggregate record = (FormulaRecordAggregate) cell.getCellValueRecord();
 			FormulaRecord r = record.getFormulaRecord();
-			List ptgs = r.getParsedExpression();
+			Ptg[] ptgs = r.getParsedExpression();
 			
 			String cellRef = new CellReference(row.getRowNum(), cell.getCellNum(), false, false).formatAsString();
 			if(false && cellRef.equals("BP24")) { // TODO - replace System.out.println()s with asserts
 				System.out.print(cellRef);
-				System.out.println(" - has " + r.getNumberOfExpressionTokens() 
-				        + " ptgs over " + r.getExpressionLength()  + " tokens:");
-				for(int i=0; i<ptgs.size(); i++) {
-					String c = ptgs.get(i).getClass().toString();
+				System.out.println(" - has " + ptgs.length + " ptgs:");
+				for(int i=0; i<ptgs.length; i++) {
+					String c = ptgs[i].getClass().toString();
 					System.out.println("\t" + c.substring(c.lastIndexOf('.')+1) );
 				}
 				System.out.println("-> " + cell.getCellFormula());

@@ -27,7 +27,7 @@ public final class OperandResolver {
 	private OperandResolver() {
 		// no instances of this class
 	}
-	
+
 	/**
 	 * Retrieves a single value from a variety of different argument types according to standard
 	 * Excel rules.  Does not perform any type conversion.
@@ -113,17 +113,17 @@ public final class OperandResolver {
 		}
 		if (result instanceof ErrorEval) {
 			throw new EvaluationException((ErrorEval) result);
-			
+
 		}
 		return result;
 	}
-	
+
 	/**
 	 * @return possibly  <tt>ErrorEval</tt>, and <code>null</code> 
 	 */
 	private static ValueEval chooseSingleElementFromAreaInternal(AreaEval ae, 
 			int srcCellRow, short srcCellCol) throws EvaluationException {
-	
+
 		if(false) {
 			// this is too simplistic
 			if(ae.containsRow(srcCellRow) && ae.containsColumn(srcCellCol)) {
@@ -131,25 +131,25 @@ public final class OperandResolver {
 			}
 		/*
 		Circular references are not dealt with directly here, but it is worth noting some issues.
-		
+
 		ANY one of the return statements in this method could return a cell that is identical
 		to the one immediately being evaluated.  The evaluating cell is identified by srcCellRow,
 		srcCellRow AND sheet.  The sheet is not available in any nearby calling method, so that's
 		one reason why circular references are not easy to detect here. (The sheet of the returned
 		cell can be obtained from ae if it is an Area3DEval.)
-		
+
 		Another reason there's little value in attempting to detect circular references here is
 		that only direct circular references could be detected.  If the cycle involved two or more
 		cells this method could not detect it.  
-		
+
 		Logic to detect evaluation cycles of all kinds has been coded in EvaluationCycleDetector
 		(and HSSFFormulaEvaluator). 
 		 */
 		}
-		
+
 		if (ae.isColumn()) {
 			if(ae.isRow()) {
-				return ae.getValues()[0];
+				return ae.getRelativeValue(0, 0);
 			}
 			if(!ae.containsRow(srcCellRow)) {
 				throw EvaluationException.invalidValue();
@@ -199,20 +199,20 @@ public final class OperandResolver {
 	 */
 	public static double coerceValueToDouble(ValueEval ev) throws EvaluationException {
 
-	    if (ev instanceof NumericValueEval) {
-	    	// this also handles booleans
-	    	return ((NumericValueEval)ev).getNumberValue();
-	    }
-	    if (ev instanceof StringEval) {
-	    	Double dd = parseDouble(((StringEval) ev).getStringValue());
-	    	if (dd == null) {
-	    		throw EvaluationException.invalidValue();
-	    	}
-	    	return dd.doubleValue();
+		if (ev instanceof NumericValueEval) {
+			// this also handles booleans
+			return ((NumericValueEval)ev).getNumberValue();
+		}
+		if (ev instanceof StringEval) {
+			Double dd = parseDouble(((StringEval) ev).getStringValue());
+			if (dd == null) {
+				throw EvaluationException.invalidValue();
+			}
+			return dd.doubleValue();
 		}
 		throw new RuntimeException("Unexpected arg eval type (" + ev.getClass().getName() + ")");
 	}
-	
+
 	/**
 	 * Converts a string to a double using standard rules that Excel would use.<br/>
 	 * Tolerates currency prefixes, commas, leading and trailing spaces.<p/>
@@ -245,7 +245,7 @@ public final class OperandResolver {
 			return null;
 		}
 		// TODO - support notation like '1E3' (==1000)
-		
+
 		double val;
 		try {
 			val = Double.parseDouble(text);
@@ -254,7 +254,7 @@ public final class OperandResolver {
 		}
 		return new Double(isPositive ? +val : -val);
 	}
-	
+
 	/**
 	 * @param ve must be a <tt>NumberEval</tt>, <tt>StringEval</tt>, <tt>BoolEval</tt>, or <tt>BlankEval</tt>
 	 * @return the converted string value. never <code>null</code>
@@ -273,5 +273,52 @@ public final class OperandResolver {
 			return "";
 		}
 		throw new IllegalArgumentException("Unexpected eval class (" + ve.getClass().getName() + ")");
+	}
+
+	/**
+	 * @return <code>null</code> to represent blank values
+	 * @throws EvaluationException if ve is an ErrorEval, or if a string value cannot be converted
+	 */
+	public static Boolean coerceValueToBoolean(ValueEval ve, boolean stringsAreBlanks) throws EvaluationException {
+
+		if (ve == null || ve instanceof BlankEval) {
+			// TODO - remove 've == null' condition once AreaEval is fixed
+			return null;
+		}
+		if (ve instanceof BoolEval) {
+			return Boolean.valueOf(((BoolEval) ve).getBooleanValue());
+		}
+
+		if (ve instanceof BlankEval) {
+			return null;
+		}
+
+		if (ve instanceof StringEval) {
+			if (stringsAreBlanks) {
+				return null;
+			}
+			String str = ((StringEval) ve).getStringValue();
+			if (str.equalsIgnoreCase("true")) {
+				return Boolean.TRUE;
+			}
+			if (str.equalsIgnoreCase("false")) {
+				return Boolean.FALSE;
+			}
+			// else - string cannot be converted to boolean
+			throw new EvaluationException(ErrorEval.VALUE_INVALID);
+		}
+
+		if (ve instanceof NumericValueEval) {
+			NumericValueEval ne = (NumericValueEval) ve;
+			double d = ne.getNumberValue();
+			if (Double.isNaN(d)) {
+				throw new EvaluationException(ErrorEval.VALUE_INVALID);
+			}
+			return Boolean.valueOf(d != 0);
+		}
+		if (ve instanceof ErrorEval) {
+			throw new EvaluationException((ErrorEval) ve);
+		}
+		throw new RuntimeException("Unexpected eval (" + ve.getClass().getName() + ")");
 	}
 }

@@ -23,8 +23,7 @@ import java.io.OutputStream;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Contains a long integer, slideID, which stores the unique slide identifier of the slide
- * where this control resides.
+ * An atom record that specifies an ActiveX control.
  *
  * @author Yegor Kozlov
  */
@@ -67,8 +66,30 @@ public class ExControlAtom extends RecordAtom {
         _id = LittleEndian.getInt(source, start + 8);
     }
 
+    /**
+     * An integer that specifies which presentation slide is associated with the ActiveX control.
+     * <p>
+     * It MUST be 0x00000000 or equal to the value of the slideId field of a SlidePersistAtom record.
+     * The value 0x00000000 specifies a null reference.
+     * </p>
+     *
+     * @return an integer that specifies which presentation slide is associated with the ActiveX control
+     */
     public int getSlideId() {
         return _id;
+    }
+
+    /**
+     * Sets which presentation slide is associated with the ActiveX control.
+     *
+     * @param id an integer that specifies which presentation slide is associated with the ActiveX control
+     * <p>
+     * It MUST be 0x00000000 or equal to the value of the slideId field of a SlidePersistAtom record.
+     * The value 0x00000000 specifies a null reference.
+     * </p>
+     */
+    public void setSlideId(int id) {
+        _id = id;
     }
 
     /**

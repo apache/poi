@@ -367,8 +367,14 @@ public class StyleTextPropAtom extends RecordAtom
 
 		rawContents	= baos.toByteArray();
 	}
-	
-	/**
+
+    public void setRawContents(byte[] bytes) {
+        rawContents = bytes;
+        reserved = new byte[0];
+        initialised = false;
+    }
+
+    /**
 	 * Create a new Paragraph TextPropCollection, and add it to the list
 	 * @param charactersCovered The number of characters this TextPropCollection will cover
 	 * @return the new TextPropCollection, which will then be in the list
