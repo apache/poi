@@ -1,23 +1,20 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-/*
- * Created on May 8, 2005
- *
- */
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.hssf.record.formula.eval;
 
 /**
@@ -72,13 +69,9 @@ public interface AreaEval extends ValueEval {
     ValueEval[] getValues();
 
     /**
-     * returns the ValueEval from the values array at the specified
-     * row and col index. The specified indexes should be absolute indexes
-     * in the sheet and not relative indexes within the area. Also,
-     * if contains(row, col) evaluates to true, a null value will
-     * bre returned.
-     * @param row
-     * @param col
+     * @return the ValueEval from within this area at the specified row and col index. Never 
+     * <code>null</code> (possibly {@link BlankEval}).  The specified indexes should be absolute 
+     * indexes in the sheet and not relative indexes within the area.  
      */
     ValueEval getValueAt(int row, int col);
 
@@ -105,5 +98,10 @@ public interface AreaEval extends ValueEval {
 
     int getWidth();
     int getHeight();
+    /**
+     * @return the ValueEval from within this area at the specified relativeRowIndex and 
+     * relativeColumnIndex. Never <code>null</code> (possibly {@link BlankEval}). The
+     * specified indexes should relative to the top left corner of this area.  
+     */
     ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex);
 }
