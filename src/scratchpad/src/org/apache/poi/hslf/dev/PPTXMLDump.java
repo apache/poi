@@ -125,7 +125,7 @@ public class PPTXMLDump {
                 dump(data, pos, size, padding);
             } else {
                 //dump first 100 bytes of the atom data
-                dump(out, data, pos, Math.min(size, 100), padding, true);
+                dump(out, data, pos, size, padding, true);
             }
 			padding--;
             write(out, "</"+recname + ">" + CR, padding);

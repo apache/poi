@@ -65,11 +65,35 @@ import org.apache.poi.util.LittleEndian;
  */
 public class ExOleObjAtom extends RecordAtom {
 
+    /**
+     * The object) is displayed as an embedded object inside of a container,
+     */
     public static final int DRAW_ASPECT_VISIBLE = 1;
+    /**
+     *   The object is displayed as a thumbnail image.
+     */
+    public static final int DRAW_ASPECT_THUMBNAIL = 2;
+    /**
+     *   The object is displayed as an icon.
+     */
     public static final int DRAW_ASPECT_ICON = 4;
+    /**
+     *   The object is displayed on the screen as though it were printed to a printer.
+     */
+    public static final int DRAW_ASPECT_DOCPRINT = 8;
 
+    /**
+     * An embedded OLE object; the object is serialized and saved within the file.
+     */
     public static final int TYPE_EMBEDDED = 0;
+    /**
+     * A linked OLE object; the object is saved outside of the file.
+     */
     public static final int TYPE_LINKED = 1;
+    /**
+     * The OLE object is an ActiveX control.
+     */
+    public static final int TYPE_CONTROL = 2;
 
     public static final int SUBTYPE_DEFAULT = 0;
     public static final int SUBTYPE_CLIPART_GALLERY = 1;
@@ -101,14 +125,13 @@ public class ExOleObjAtom extends RecordAtom {
     /**
      * Constructs a brand new link related atom record.
      */
-    protected ExOleObjAtom() {
+    public ExOleObjAtom() {
         _header = new byte[8];
-        _data = new byte[18];
+        _data = new byte[24];
 
+        LittleEndian.putShort(_header, 0, (short)1); //MUST be 0x1
         LittleEndian.putShort(_header, 2, (short)getRecordType());
         LittleEndian.putInt(_header, 4, _data.length);
-
-        // I hope it is fine for the other values to be zero.
     }
 
     /**
@@ -145,12 +168,31 @@ public class ExOleObjAtom extends RecordAtom {
     }
 
     /**
+     * Sets whether the object can be completely seen, or if only the
+     * icon is visible.
+     *
+     * @param aspect the draw aspect, one of the {@code DRAW_ASPECT_*} constants.
+     */
+     public void setDrawAspect(int aspect) {
+        LittleEndian.putInt(_data, 0, aspect);
+    }
+
+    /**
      * Gets whether the object is embedded or linked.
      *
      * @return the type, one of the {@code TYPE_EMBEDDED_*} constants.
      */
     public int getType() {
         return LittleEndian.getInt(_data, 4);
+    }
+
+    /**
+     * Sets whether the object is embedded or linked.
+     *
+     * @param type the type, one of the {@code TYPE_EMBEDDED_*} constants.
+     */
+    public void setType(int type) {
+        LittleEndian.putInt(_data, 4, type);
     }
 
     /**
@@ -163,12 +205,30 @@ public class ExOleObjAtom extends RecordAtom {
     }
 
     /**
+     * Sets the unique identifier for the OLE object.
+     *
+     * @param id the object ID.
+     */
+    public void setObjID(int id) {
+        LittleEndian.putInt(_data, 8, id);
+    }
+
+    /**
      * Gets the type of OLE object.
      * 
      * @return the sub-type, one of the {@code SUBTYPE_*} constants.
      */
     public int getSubType() {
         return LittleEndian.getInt(_data, 12);
+    }
+
+    /**
+     * Sets the type of OLE object.
+     *
+     * @param type the sub-type, one of the {@code SUBTYPE_*} constants.
+     */
+    public void setSubType(int type) {
+        LittleEndian.putInt(_data, 12, type);
     }
 
     /**
@@ -182,6 +242,16 @@ public class ExOleObjAtom extends RecordAtom {
     }
 
     /**
+     * Sets the reference to the persistent object
+     *
+     * @param ref the reference to the persistent object, corresponds with an
+     *         {@code ExOleObjStg} storage container.
+     */
+    public void setObjStgDataRef(int ref) {
+        LittleEndian.putInt(_data, 16, ref);
+    }
+
+    /**
      * Gets whether the object's image is blank.
      *
      * @return {@code true} if the object's image is blank.
@@ -191,6 +261,24 @@ public class ExOleObjAtom extends RecordAtom {
         return LittleEndian.getInt(_data, 20) != 0;
     }
     
+    /**
+     * Gets misc options (the last four bytes in the atom).
+     *
+     * @return {@code true} if the object's image is blank.
+     */
+    public int getOptions() {
+        // Even though this is a mere boolean, KOffice's code says it's an int.
+        return LittleEndian.getInt(_data, 20);
+    }
+
+    /**
+     * Sets misc options (the last four bytes in the atom).
+     */
+    public void setOptions(int opts) {
+        // Even though this is a mere boolean, KOffice's code says it's an int.
+        LittleEndian.putInt(_data, 20, opts);
+    }
+
     /**
      * Returns the type (held as a little endian in bytes 3 and 4)
      * that this class handles.
@@ -209,5 +297,17 @@ public class ExOleObjAtom extends RecordAtom {
     public void writeOut(OutputStream out) throws IOException {
         out.write(_header);
         out.write(_data);
+    }
+
+    public String toString(){
+        StringBuffer buf = new StringBuffer();
+        buf.append("ExOleObjAtom\n");
+        buf.append("  drawAspect: " + getDrawAspect() + "\n");
+        buf.append("  type: " + getType() + "\n");
+        buf.append("  objID: " + getObjID() + "\n");
+        buf.append("  subType: " + getSubType() + "\n");
+        buf.append("  objStgDataRef: " + getObjStgDataRef() + "\n");
+        buf.append("  options: " + getOptions() + "\n");
+        return buf.toString();
     }
 }

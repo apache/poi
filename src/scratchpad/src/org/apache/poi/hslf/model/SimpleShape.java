@@ -21,11 +21,13 @@ import org.apache.poi.ddf.*;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.exceptions.HSLFException;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
+import java.io.ByteArrayOutputStream;
 
 /**
  *  An abstract simple (non-group) shape.
@@ -34,6 +36,12 @@ import java.util.Iterator;
  *  @author Yegor Kozlov
  */
 public class SimpleShape extends Shape {
+
+    /**
+     * Records stored in EscherClientDataRecord
+     */
+    protected Record[] _clientRecords;
+    protected EscherClientDataRecord _clientData;
 
     /**
      * Create a SimpleShape object and initialize it from the supplied Record container.
@@ -293,21 +301,46 @@ public class SimpleShape extends Shape {
      * @param recordType type of the record to search
      */
     protected Record getClientDataRecord(int recordType) {
-        Record oep = null;
-        EscherContainerRecord spContainer = getSpContainer();
-        for (Iterator it = spContainer.getChildRecords().iterator(); it.hasNext();) {
-            EscherRecord obj = (EscherRecord) it.next();
-            if (obj.getRecordId() == EscherClientDataRecord.RECORD_ID) {
-                byte[] data = obj.serialize();
-                Record[] records = Record.findChildRecords(data, 8, data.length - 8);
-                for (int j = 0; j < records.length; j++) {
-                    if (records[j].getRecordType() == recordType) {
-                        return records[j];
-                    }
-                }
+
+        Record[] records = getClientRecords();
+        if(records != null) for (int i = 0; i < records.length; i++) {
+            if(records[i].getRecordType() == recordType){
+                return records[i];
             }
         }
-        return oep;
+        return null;
     }
 
+    protected Record[] getClientRecords() {
+        if(_clientData == null){
+            EscherRecord r = Shape.getEscherChild(getSpContainer(), EscherClientDataRecord.RECORD_ID);
+            //ddf can return EscherContainerRecord with recordId=EscherClientDataRecord.RECORD_ID
+            //convert in to EscherClientDataRecord on the fly
+            if(!(r instanceof EscherClientDataRecord)){
+                byte[] data = r.serialize();
+                r = new EscherClientDataRecord();
+                r.fillFields(data, 0, new DefaultEscherRecordFactory());
+            }
+            _clientData = (EscherClientDataRecord)r;
+        }
+        if(_clientData != null && _clientRecords == null){
+            byte[] data = _clientData.getRemainingData();
+            _clientRecords = Record.findChildRecords(data, 0, data.length);
+        }
+        return _clientRecords;
+    }
+
+    protected void updateClientData() {
+        if(_clientData != null && _clientRecords != null){
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            try {
+                for (int i = 0; i < _clientRecords.length; i++) {
+                    _clientRecords[i].writeOut(out);
+                }
+            } catch(Exception e){
+                throw new HSLFException(e);
+            }
+            _clientData.setRemainingData(out.toByteArray());
+        }
+    }
 }

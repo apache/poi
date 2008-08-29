@@ -47,6 +47,7 @@
                     <li><link href="#Graphics2D">Shapes and Graphics2D</link></li>
                     <li><link href="#Render">How to convert slides into images</link></li>
                     <li><link href="#HeadersFooters">Headers / Footers</link></li>
+                    <li><link href="#Movies">How to embed movies</link></li>
                 </ul>
             </section>
             <section><title>Features</title>
@@ -660,6 +661,28 @@
           HeadersFooters hdd = ppt.getSlideHeadersFooters();
           hdd.setSlideNumberVisible(true);
           hdd.setFootersText("Created by POI-HSLF");
+                </source>
+              </section>
+            <anchor id="Movies"/>
+            <section><title>How to embed movies</title>
+              <source>
+
+        SlideShow ppt = new SlideShow();
+        Slide slide = ppt.createSlide();
+
+        //UNC or local Returns UNC or local path to a video file
+        String moviePath = "card.mpg";
+        int movieIdx = ppt.addMovie(moviePath, MovieShape.MOVIE_MPEG);
+
+        String thumbnailPath = "card.png";
+        int thumbnailIdx = ppt.addPicture(new File(thumbnailPath), Picture.PNG);
+        MovieShape shape = new MovieShape(movieIdx, thumbnailIdx);
+        shape.setAnchor(new Rectangle2D.Float(300,225,120,90));
+        slide.addShape(shape);
+
+        FileOutputStream out = new FileOutputStream("hslf-movie.ppt");
+        ppt.write(out);
+        out.close();
                 </source>
               </section>
                 </section>
