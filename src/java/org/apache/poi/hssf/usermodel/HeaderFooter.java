@@ -247,6 +247,11 @@ public abstract class HeaderFooter {
     public static String stripFields(String text) {
     	int pos;
     	
+    	// Check we really got something to work on
+    	if(text == null || text.length() == 0) {
+    		return text;
+    	}
+    	
     	// Firstly, do the easy ones which are static
     	for(int i=0; i<Field.ALL_FIELDS.size(); i++) {
     		String seq = ((Field)Field.ALL_FIELDS.get(i)).sequence;
@@ -257,6 +262,7 @@ public abstract class HeaderFooter {
     	}
     	
     	// Now do the tricky, dynamic ones
+    	// These are things like font sizes and font names
     	text = text.replaceAll("\\&\\d+", "");
     	text = text.replaceAll("\\&\".*?,.*?\"", "");
     	
@@ -292,9 +298,9 @@ public abstract class HeaderFooter {
     public static final Field TIME_FIELD = new Field("&T");
     public static final Field NUM_PAGES_FIELD = new Field("&N");
     
-    public static final Field PICTURE_FIELD = new Field("&P");
+    public static final Field PICTURE_FIELD = new Field("&G");
     
-    public static final PairField BOLD_FIELD = new PairField("&B"); // PAID
+    public static final PairField BOLD_FIELD = new PairField("&B");
     public static final PairField ITALIC_FIELD = new PairField("&I");
     public static final PairField STRIKETHROUGH_FIELD = new PairField("&S");
     public static final PairField SUBSCRIPT_FIELD = new PairField("&Y");
