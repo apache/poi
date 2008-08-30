@@ -59,11 +59,11 @@ public class TextPublisherTextExtractor extends TestCase {
 		
 		assertEquals(
 "This is some text on the first page\n" +
-"It’s in times new roman, font size 10, all normal\n" +
+"It\u2019s in times new roman, font size 10, all normal\n" +
 "" +
 "This is in bold and italic\n" +
-"It’s Arial, 20 point font\n" +
-"It’s in the second textbox on the first page\n" +
+"It\u2019s Arial, 20 point font\n" +
+"It\u2019s in the second textbox on the first page\n" +
 "" +
 "This is the second page\n\n" +
 "" +
@@ -101,5 +101,37 @@ public class TextPublisherTextExtractor extends TestCase {
 "0123456789abcdef0123456789abcdef0123456789abcdef\n"
 				, text
 		);
+	}
+	
+	/**
+	 * We have the same file saved for Publisher 98, Publisher
+	 *  2000 and Publisher 2007. Check they all agree.
+	 * @throws Exception
+	 */
+	public void testMultipleVersions() throws Exception {
+		File f;
+		HPBFDocument doc;
+		
+		f = new File(dir, "Sample.pub");
+		doc = new HPBFDocument(
+				new FileInputStream(f)
+		);
+		String s2007 = (new PublisherTextExtractor(doc)).getText();
+		
+		f = new File(dir, "Sample2000.pub");
+		doc = new HPBFDocument(
+				new FileInputStream(f)
+		);
+		String s2000 = (new PublisherTextExtractor(doc)).getText();
+		
+		f = new File(dir, "Sample98.pub");
+		doc = new HPBFDocument(
+				new FileInputStream(f)
+		);
+		String s98 = (new PublisherTextExtractor(doc)).getText();
+		
+		// Check they all agree
+		assertEquals(s2007, s2000);
+		assertEquals(s2007, s98);
 	}
 }

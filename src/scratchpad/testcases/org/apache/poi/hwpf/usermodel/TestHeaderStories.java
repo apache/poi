@@ -123,7 +123,7 @@ public class TestHeaderStories extends TestCase {
     	
 		assertEquals("", hs.getFirstHeader());
 		assertEquals("", hs.getEvenHeader());
-		assertEquals("\r\r", hs.getOddHeader());
+		assertEquals("", hs.getOddHeader()); // Was \r\r but gets emptied
 
 		
 		assertEquals("", hs.getFirstFooter());
@@ -181,13 +181,13 @@ public class TestHeaderStories extends TestCase {
     public void testUnicode() throws Exception {
     	HeaderStories hs = new HeaderStories(unicode);
     	
-		assertEquals("\r\r", hs.getFirstHeader());
-		assertEquals("\r\r", hs.getEvenHeader());
+		assertEquals("", hs.getFirstHeader());
+		assertEquals("", hs.getEvenHeader());
 		assertEquals("This is a simple header, with a \u20ac euro symbol in it.\r\r\r", hs.getOddHeader());
 
 		
-		assertEquals("\r\r", hs.getFirstFooter());
-		assertEquals("\r\r", hs.getEvenFooter());
+		assertEquals("", hs.getFirstFooter());
+		assertEquals("", hs.getEvenFooter());
 		assertEquals("The footer, with Moli\u00e8re, has Unicode in it.\r\r", hs.getOddFooter());
     }
     

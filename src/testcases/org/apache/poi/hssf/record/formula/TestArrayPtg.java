@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record.formula;
 import java.util.Arrays;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -127,5 +128,29 @@ public final class TestArrayPtg extends TestCase {
 			throw e;
 		}
 		assertEquals("{TRUE,\"ABCD\";\"E\",0.0;FALSE,\"FG\"}", actualFormula);
+	}
+	
+	/**
+	 * worth checking since AttrPtg.sid=0x20 and Ptg.CLASS_* = (0x00, 0x20, and 0x40)
+	 */
+	public void testOperandClassDecoding() {
+		confirmOperandClassDecoding(Ptg.CLASS_REF);
+		confirmOperandClassDecoding(Ptg.CLASS_VALUE);
+		confirmOperandClassDecoding(Ptg.CLASS_ARRAY);
+	}
+
+	private static void confirmOperandClassDecoding(byte operandClass) {
+		byte[] fullData = new byte[ENCODED_PTG_DATA.length + ENCODED_CONSTANT_DATA.length];
+		System.arraycopy(ENCODED_PTG_DATA, 0, fullData, 0, ENCODED_PTG_DATA.length);
+		System.arraycopy(ENCODED_CONSTANT_DATA, 0, fullData, ENCODED_PTG_DATA.length, ENCODED_CONSTANT_DATA.length);
+
+		// Force encoded operand class for tArray 
+		fullData[0] = (byte) (ArrayPtg.sid + operandClass);
+		
+		RecordInputStream in = new TestcaseRecordInputStream(ArrayPtg.sid, fullData);
+		
+		Ptg[] ptgs = Ptg.readTokens(ENCODED_PTG_DATA.length, in);
+		ArrayPtg aPtg = (ArrayPtg) ptgs[0];
+		assertEquals(operandClass, aPtg.getPtgClass());
 	}
 }

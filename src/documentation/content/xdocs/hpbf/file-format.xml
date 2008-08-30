@@ -165,6 +165,12 @@ PL   62 1a 00 00 48 00 00 00 // PL   from: 1a62 (6754), len: 48 (72)
 
 (the text will then start)
 </source>
+		<p>We think that the first 4 bytes of text describes the
+		 the function of the data at the offset. The first short is
+		 then the count of that type, eg the 2nd will have 1. We
+		 think that the second 4 bytes of text describes the format
+		 of data block at the offset. The format of the text block
+		 is easy, but we're still trying to figure out the others.</p>
 		</section>
 	</body>
 </document>

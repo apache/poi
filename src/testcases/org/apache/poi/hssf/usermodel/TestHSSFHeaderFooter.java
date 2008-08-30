@@ -87,8 +87,8 @@ public final class TestHSSFHeaderFooter extends TestCase {
     	assertTrue(head.areFieldsStripped());
     	
     	// Now even more complex
-    	head.setCenter("HEADER TEXT &P&N&D&T&Z&F&F&A&G");
-    	assertEquals("HEADER TEXT &G", head.getCenter());
+    	head.setCenter("HEADER TEXT &P&N&D&T&Z&F&F&A&G&X END");
+    	assertEquals("HEADER TEXT  END", head.getCenter());
 	}
 
 	/**

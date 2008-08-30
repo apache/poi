@@ -17,9 +17,6 @@
 
 package org.apache.poi.hssf.record;
 
-import java.util.List;
-import java.util.Stack;
-
 import junit.framework.AssertionFailedError;
 import junit.framework.ComparisonFailure;
 import junit.framework.TestCase;
@@ -63,18 +60,18 @@ public final class TestSharedFormulaRecord extends TestCase {
 	public void testConvertSharedFormulasOperandClasses_bug45123() {
 		
 		TestcaseRecordInputStream in = new TestcaseRecordInputStream(0, SHARED_FORMULA_WITH_REF_ARRAYS_DATA);
-		short encodedLen = in.readShort();
-		Stack sharedFormula = Ptg.createParsedExpressionTokens(encodedLen, in);
+		int encodedLen = in.readUShort();
+		Ptg[] sharedFormula = Ptg.readTokens(encodedLen, in);
 		
-		Stack convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 100, 200);
+		Ptg[] convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 100, 200);
 		
-		RefPtg refPtg = (RefPtg) convertedFormula.get(1);
+		RefPtg refPtg = (RefPtg) convertedFormula[1];
 		assertEquals("$C101", refPtg.toFormulaString(null));
 		if (refPtg.getPtgClass() == Ptg.CLASS_REF) {
 			throw new AssertionFailedError("Identified bug 45123");
 		}
 		
-		confirmOperandClasses(toPtgArray(sharedFormula), toPtgArray(convertedFormula));
+		confirmOperandClasses(sharedFormula, convertedFormula);
 	}
 
 	private static void confirmOperandClasses(Ptg[] originalPtgs, Ptg[] convertedPtgs) {
@@ -87,11 +84,5 @@ public final class TestSharedFormulaRecord extends TestCase {
 						String.valueOf(originalPtg.getPtgClass()), String.valueOf(convertedPtg.getPtgClass()));
 			}
 		}
-	}
-
-	private static Ptg[] toPtgArray(List list) {
-		Ptg[] result = new Ptg[list.size()];
-		list.toArray(result);
-		return result;
 	}
 }
