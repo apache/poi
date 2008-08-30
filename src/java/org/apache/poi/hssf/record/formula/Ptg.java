@@ -43,58 +43,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 public abstract class Ptg implements Cloneable {
 	public static final Ptg[] EMPTY_PTG_ARRAY = { }; 
 
-	/* convert infix order ptg list to rpn order ptg list
-	 * @return List ptgs in RPN order
-	 * @param infixPtgs List of ptgs in infix order
-	 */
-
-	/* DO NOT REMOVE
-	 *we keep this method in case we wish to change the way we parse
-	 *It needs a getPrecedence in OperationsPtg
-
-	public static List ptgsToRpn(List infixPtgs) {
-		java.util.Stack operands = new java.util.Stack();
-		java.util.List retval = new java.util.Stack();
-
-		java.util.ListIterator i = infixPtgs.listIterator();
-		Object p;
-		OperationPtg o ;
-		boolean weHaveABracket = false;
-		while (i.hasNext()) {
-			p=i.next();
-			if (p instanceof OperationPtg) {
-				if (p instanceof ParenthesisPtg) {
-					if (!weHaveABracket) {
-						operands.push(p);
-						weHaveABracket = true;
-					} else {
-						o = (OperationPtg) operands.pop();
-						while (!(o instanceof ParenthesisPtg)) {
-							retval.add(o);
-						}
-						weHaveABracket = false;
-					}
-				} else {
-
-					while  (!operands.isEmpty() && ((OperationPtg) operands.peek()).getPrecedence() >= ((OperationPtg) p).getPrecedence() ) { //TODO handle ^ since it is right associative
-						retval.add(operands.pop());
-					}
-					operands.push(p);
-				}
-			} else {
-				retval.add(p);
-			}
-		}
-		while (!operands.isEmpty()) {
-			if (operands.peek() instanceof ParenthesisPtg ){
-				//throw some error
-			} else {
-				retval.add(operands.pop());
-			}
-		}
-		return retval;
-	}
-	*/
 	
 	/**
 	 * Reads <tt>size</tt> bytes of the input stream, to create an array of <tt>Ptg</tt>s.
@@ -145,15 +93,15 @@ public abstract class Ptg implements Cloneable {
 		
 		Ptg  retval = createClassifiedPtg(id, in);
 
-		if (id > 0x60) {
+		if (id >= 0x60) { 
 			retval.setClass(CLASS_ARRAY);
-		} else if (id > 0x40) {
+		} else if (id >= 0x40) {
 			retval.setClass(CLASS_VALUE);
 		} else {
 			retval.setClass(CLASS_REF);
 		}
 
-	   return retval;
+		return retval;
 	}
 
 	private static Ptg createClassifiedPtg(byte id, RecordInputStream in) {
@@ -395,6 +343,22 @@ public abstract class Ptg implements Cloneable {
 	 */
 	public final byte getPtgClass() {
 		return ptgClass;
+	}
+	
+	/**
+	 * Debug / diagnostic method to get this token's 'operand class' type.
+	 * @return 'R' for 'reference', 'V' for 'value', 'A' for 'array' and '.' for base tokens
+	 */
+	public final char getRVAType() {
+		if (isBaseToken()) {
+			return '.';
+		}
+		switch (ptgClass) {
+			case Ptg.CLASS_REF:   return 'R';
+			case Ptg.CLASS_VALUE: return 'V';
+			case Ptg.CLASS_ARRAY: return 'A';
+		}
+		throw new RuntimeException("Unknown operand class (" + ptgClass + ")");
 	}
 
 	public abstract byte getDefaultOperandClass();
