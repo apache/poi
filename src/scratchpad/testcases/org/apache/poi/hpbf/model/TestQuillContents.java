@@ -21,6 +21,8 @@ import java.io.FileInputStream;
 
 import org.apache.poi.hpbf.HPBFDocument;
 import org.apache.poi.hpbf.model.qcbits.QCTextBit;
+import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type4;
+import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type8;
 
 import junit.framework.TestCase;
 
@@ -76,5 +78,66 @@ public class TestQuillContents extends TestCase {
 		String t = text.getText();
 		assertTrue(t.startsWith("This is some text on the first page"));
 		assertTrue(t.endsWith("Within doc to page 1\r"));
+	}
+	
+	public void testPLC() throws Exception {
+		File f = new File(dir, "Simple.pub");
+		HPBFDocument doc = new HPBFDocument(
+				new FileInputStream(f)
+		);
+		
+		QuillContents qc = doc.getQuillContents();
+		assertEquals(20, qc.getBits().length);
+		
+		assertTrue(qc.getBits()[9] instanceof Type4);
+		assertTrue(qc.getBits()[10] instanceof Type4);
+		assertTrue(qc.getBits()[12] instanceof Type8);
+		
+		Type4 plc9 = (Type4)qc.getBits()[9];
+		Type4 plc10 = (Type4)qc.getBits()[10];
+		Type8 plc12 = (Type8)qc.getBits()[12];
+		
+		
+		assertEquals(1, plc9.getNumberOfPLCs());
+		assertEquals(4, plc9.getPreData().length);
+		assertEquals(1, plc9.getPlcValA().length);
+		assertEquals(1, plc9.getPlcValB().length);
+		
+		assertEquals(0, plc9.getPreData()[0]);
+		assertEquals(0, plc9.getPreData()[1]);
+		assertEquals(0, plc9.getPreData()[2]);
+		assertEquals(0, plc9.getPreData()[3]);
+		assertEquals(0x356, plc9.getPlcValA()[0]);
+		assertEquals(0x600, plc9.getPlcValB()[0]);
+		
+		
+		assertEquals(1, plc10.getNumberOfPLCs());
+		assertEquals(4, plc10.getPreData().length);
+		assertEquals(1, plc10.getPlcValA().length);
+		assertEquals(1, plc10.getPlcValB().length);
+		
+		assertEquals(0, plc10.getPreData()[0]);
+		assertEquals(0, plc10.getPreData()[1]);
+		assertEquals(0, plc10.getPreData()[2]);
+		assertEquals(0, plc10.getPreData()[3]);
+		assertEquals(0x356, plc10.getPlcValA()[0]);
+		assertEquals(0x800, plc10.getPlcValB()[0]);
+		
+		assertEquals(2, plc12.getNumberOfPLCs());
+		assertEquals(7, plc12.getPreData().length);
+		assertEquals(2, plc12.getPlcValA().length);
+		assertEquals(2, plc12.getPlcValB().length);
+		
+		assertEquals(0xff, plc12.getPreData()[0]);
+		assertEquals(0, plc12.getPreData()[1]);
+		assertEquals(0x3d, plc12.getPreData()[2]);
+		assertEquals(0, plc12.getPreData()[3]);
+		assertEquals(0x6e, plc12.getPreData()[4]);
+		assertEquals(0, plc12.getPreData()[5]);
+		assertEquals(0, plc12.getPreData()[6]);
+		assertEquals(0xa0000, plc12.getPlcValA()[0]);
+		assertEquals(0x22000000, plc12.getPlcValB()[0]);
+		assertEquals(0x05, plc12.getPlcValA()[1]);
+		assertEquals(0x04, plc12.getPlcValB()[1]);
 	}
 }
