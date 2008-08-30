@@ -47,4 +47,38 @@ public class TestEscherParts extends TestCase {
 		
 		// TODO - check the contents
 	}
+	
+	public void testComplex() throws Exception {
+		File f = new File(dir, "SampleBrochure.pub");
+		HPBFDocument doc = new HPBFDocument(
+				new FileInputStream(f)
+		);
+
+		EscherStm es = doc.getEscherStm();
+		EscherDelayStm eds = doc.getEscherDelayStm();
+		
+		assertNotNull(es);
+		assertNotNull(eds);
+		
+		assertEquals(30, es.getEscherRecords().length);
+		assertEquals(19, eds.getEscherRecords().length);
+		
+		// TODO - check contents
+		
+		
+		// Now do another complex file
+		f = new File(dir, "SampleNewsletter.pub");
+		doc = new HPBFDocument(
+				new FileInputStream(f)
+		);
+
+		es = doc.getEscherStm();
+		eds = doc.getEscherDelayStm();
+		
+		assertNotNull(es);
+		assertNotNull(eds);
+		
+		assertEquals(51, es.getEscherRecords().length);
+		assertEquals(92, eds.getEscherRecords().length);
+	}
 }

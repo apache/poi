@@ -183,7 +183,7 @@ public class TestWordExtractor extends TestCase {
     	extractor = new WordExtractor(doc);
     	
     	assertEquals(
-    			"\n\nThis is a simple header, with a \u20ac euro symbol in it.\n\n",
+    			"This is a simple header, with a \u20ac euro symbol in it.\n\n",
     			extractor.getHeaderText()
     	);
     	text = extractor.getText();
@@ -217,7 +217,7 @@ public class TestWordExtractor extends TestCase {
     	extractor = new WordExtractor(doc);
     	
     	assertEquals(
-    			"\n\nThe footer, with Moli\u00e8re, has Unicode in it.\n",
+    			"The footer, with Moli\u00e8re, has Unicode in it.\n",
     			extractor.getFooterText()
     	);
     	text = extractor.getText();
