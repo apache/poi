@@ -17,26 +17,26 @@
 package org.apache.poi.hssf.util;
 
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.hssf.record.SelectionRecord;
+import org.apache.poi.ss.util.CellRangeAddressBase;
 import org.apache.poi.util.LittleEndian;
 
 /**
  * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p/>
  * 
- * Note - {@link SelectionRecord} uses the BIFF5 version of this structure
- * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
+ * Like {@link CellRangeAddress} except column fields are 8-bit.
+ * 
+ * @author Josh Micich
  */
-public class CellRangeAddress extends org.apache.poi.ss.util.CellRangeAddress {
-	/*
-	 * TODO - replace  org.apache.poi.hssf.util.Region
-	 */
-	public static final int ENCODED_SIZE = 8;
+public final class CellRangeAddress8Bit extends CellRangeAddressBase {
 
-	public CellRangeAddress(int firstRow, int lastRow, int firstCol, int lastCol) {
+	public static final int ENCODED_SIZE = 6;
+
+	public CellRangeAddress8Bit(int firstRow, int lastRow, int firstCol, int lastCol) {
 		super(firstRow, lastRow, firstCol, lastCol);
 	}
-	public CellRangeAddress(RecordInputStream in) {
-		super(readUShortAndCheck(in), in.readUShort(), in.readUShort(), in.readUShort());
+
+	public CellRangeAddress8Bit(RecordInputStream in) {
+		super(readUShortAndCheck(in), in.readUShort(), in.readUByte(), in.readUByte());
 	}
 
 	private static int readUShortAndCheck(RecordInputStream in) {
@@ -45,5 +45,21 @@ public class CellRangeAddress extends org.apache.poi.ss.util.CellRangeAddress {
 			throw new RuntimeException("Ran out of data reading CellRangeAddress");
 		}
 		return in.readUShort();
+	}
+
+	public int serialize(int offset, byte[] data) {
+		LittleEndian.putUShort(data, offset + 0, getFirstRow());
+		LittleEndian.putUShort(data, offset + 2, getLastRow());
+		LittleEndian.putByte(data, offset + 4, getFirstColumn());
+		LittleEndian.putByte(data, offset + 5, getLastColumn());
+		return ENCODED_SIZE;
+	}
+	
+	public CellRangeAddress8Bit copy() {
+		return new CellRangeAddress8Bit(getFirstRow(), getLastRow(), getFirstColumn(), getLastColumn());
+	}
+
+	public static int getEncodedSize(int numberOfItems) {
+		return numberOfItems * ENCODED_SIZE;
 	}
 }

@@ -167,6 +167,13 @@ public class HeaderStories {
 		if(stripFields) {
 			return Range.stripFields(text);
 		}
+		// If you create a header/footer, then remove it again, word
+		//  will leave \r\r. Turn these back into an empty string,
+		//  which is more what you'd expect
+		if(text.equals("\r\r")) {
+			return "";
+		}
+		
 		return text;
 	}
 	

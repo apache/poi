@@ -33,11 +33,20 @@
             <title>Overview</title>
 
             <p>HPBF is the POI Project's pure Java implementation of the Visio file format.</p>
-            <p>Currently, HPBF is in the experimental stage, while we try
-              to figure out the file format. Our initial aim is to provide
-              a text extractor for the format, with low level code following
-              after that if demand and developer interest warrant it.</p>
-			<p>At this time, there is no <em>usermodel</em> api or similar.</p>
+            <p>Currently, HPBF is in an early stage, whilst we try to
+              figure out the file format. So far, we have basic text
+              extraction support, and are able to read some parts within
+              the file. Writing is not yet supported, as we are unable
+              to make sense of the Contents stream, which we think has
+              lots of offsets to other parts of the file.</p>
+            <p>Our initial aim is to provude a text extractor for the format
+              (now done), and be able to extract hyperlinks from within
+              the document (not yet supported). Additional low level
+              code to process the file format may follow, if there
+              is demand and developer interest warrant it.</p>
+			<p>At this time, there is no <em>usermodel</em> api or similar.
+              There is only low level support for certain parts of
+              the file, but by no means all of it.</p>
             <p>Our current understanding of the file format is documented
               <link href="file-format.html">here</link>.</p>
             <note> 

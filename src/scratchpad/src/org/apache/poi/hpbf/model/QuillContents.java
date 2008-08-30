@@ -70,6 +70,7 @@ public final class QuillContents extends HPBFPart {
 				bits[i].setOptA(optA);
 				bits[i].setOptB(optB);
 				bits[i].setOptC(optC);
+				bits[i].setDataOffset(from);
 			} else {
 				// Doesn't have data
 			}

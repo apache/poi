@@ -61,6 +61,11 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">Impove empty header or footer handling in HWPF HeaderStories</action>
+           <action dev="POI-DEVELOPERS" type="fix">Avoid NPE in hssf.usermodel.HeaderFooter when stripping fields out</action>
+           <action dev="POI-DEVELOPERS" type="fix">Avoid NPE in EscherBSERecord on older escher records</action>
+           <action dev="POI-DEVELOPERS" type="add">Basic text extractraction support in HPBF</action>
+           <action dev="POI-DEVELOPERS" type="add">Initial, low level support for Publisher files, in the form of HPBF</action>
            <action dev="POI-DEVELOPERS" type="fix">45699 - Fix RowRecordsAggregate to tolerate intervening MERGEDCELLS records</action>
            <action dev="POI-DEVELOPERS" type="fix">45698 - Fix LinkTable to tolerate multiple EXTERNSHEET records</action>
            <action dev="POI-DEVELOPERS" type="fix">45682 - Fix for cloning of CFRecordsAggregate</action>

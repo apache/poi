@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,9 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 
 import junit.framework.TestCase;
 
@@ -26,48 +26,40 @@ import junit.framework.TestCase;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  */
-public class TestTableRecord
-        extends TestCase
-{
+public final class TestTableRecord extends TestCase {
 	byte[] header = new byte[] {
-    		0x36, 02, 0x10, 00, // sid=x236, 16 bytes long
+			0x36, 02, 0x10, 00, // sid=x236, 16 bytes long
 	};
-    byte[] data = new byte[] {
-    		03, 00,  // from row 3 
-    		8, 00,   // to row 8
-    		04,      // from col 4
-    		06,      // to col 6
-    		00, 00,  // no flags set
-    		04, 00,  // row inp row 4
-    		01, 00,  // col inp row 1
-    		0x76, 0x40, // row inp col 0x4076 (!)
-    		00, 00   // col inp col 0
-    };
+	byte[] data = new byte[] {
+			03, 00,  // from row 3 
+			8, 00,   // to row 8
+			04,      // from col 4
+			06,      // to col 6
+			00, 00,  // no flags set
+			04, 00,  // row inp row 4
+			01, 00,  // col inp row 1
+			0x76, 0x40, // row inp col 0x4076 (!)
+			00, 00   // col inp col 0
+	};
 
-    public TestTableRecord(String name)
-    {
-        super(name);
-    }
+	public void testLoad() {
 
-    public void testLoad()
-            throws Exception
-    {
+		TableRecord record = new TableRecord(new TestcaseRecordInputStream((short)0x236, (short)data.length, data));
 
-        TableRecord record = new TableRecord(new TestcaseRecordInputStream((short)0x236, (short)data.length, data));
+		CellRangeAddress8Bit range = record.getRange();
+		assertEquals(3, range.getFirstRow());
+		assertEquals(8, range.getLastRow());
+		assertEquals(4, range.getFirstColumn());
+		assertEquals(6, range.getLastColumn());
+		assertEquals(0, record.getFlags());
+		assertEquals(4, record.getRowInputRow());
+		assertEquals(1, record.getColInputRow());
+		assertEquals(0x4076, record.getRowInputCol());
+		assertEquals(0, record.getColInputCol());
 
-        assertEquals(3, record.getRowFirst());
-        assertEquals(8, record.getRowLast());
-        assertEquals(4, record.getColFirst());
-        assertEquals(6, record.getColLast());
-        assertEquals(0, record.getFlags());
-        assertEquals(4, record.getRowInputRow());
-        assertEquals(1, record.getColInputRow());
-        assertEquals(0x4076, record.getRowInputCol());
-        assertEquals(0, record.getColInputCol());
-
-        assertEquals( 16 + 4, record.getRecordSize() );
-        record.validateSid((short)0x236);
-    }
+		assertEquals( 16 + 4, record.getRecordSize() );
+		record.validateSid((short)0x236);
+	}
 
     public void testStore()
     {
@@ -87,21 +79,17 @@ public class TestTableRecord
 //    	    .col input col = 0
 //    	[/TABLE]
 
-    	TableRecord record = new TableRecord();
-    	record.setRowFirst((short)3);
-    	record.setRowLast((short)8);
-    	record.setColFirst((short)4);
-    	record.setColLast((short)6);
-    	record.setFlags((byte)0);
-    	record.setReserved((byte)0);
-    	record.setRowInputRow((short)4);
-    	record.setColInputRow((short)1);
-    	record.setRowInputCol((short)0x4076);
-    	record.setColInputCol((short)0);
+		CellRangeAddress8Bit crab = new CellRangeAddress8Bit(3, 8, 4, 6);
+		TableRecord record = new TableRecord(crab);
+		record.setFlags((byte)0);
+		record.setRowInputRow(4);
+		record.setColInputRow(1);
+		record.setRowInputCol(0x4076);
+		record.setColInputCol(0);
 
-        byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
-    }
+		byte [] recordBytes = record.serialize();
+		assertEquals(recordBytes.length - 4, data.length);
+		for (int i = 0; i < data.length; i++)
+			assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+	}
 }

@@ -28,6 +28,8 @@ public abstract class QCBit {
 	protected int optB;
 	protected int optC;
 	
+	protected int dataOffset;
+	
 	public QCBit(String thingType, String bitType, byte[] data) {
 		this.thingType = thingType;
 		this.bitType = bitType;
@@ -65,5 +67,16 @@ public abstract class QCBit {
 	}
 	public void setOptC(int optC) {
 		this.optC = optC;
+	}
+
+	public int getDataOffset() {
+		return dataOffset;
+	}
+	public void setDataOffset(int offset) {
+		this.dataOffset = offset;
+	}
+	
+	public int getLength() {
+		return data.length;
 	}
 }

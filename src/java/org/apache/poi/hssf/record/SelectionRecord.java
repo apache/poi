@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -35,66 +36,25 @@ public final class SelectionRecord extends Record {
     private int         field_2_row_active_cell;
     private int         field_3_col_active_cell;
     private int         field_4_active_cell_ref_index;
-    private Reference[] field_6_refs;
-
-    /**
-     *  Note - column values are 8-bit so cannot use <tt>CellRangeAddressList</tt>
-     */
-    public class Reference {
-        /* package */ static final int ENCODED_SIZE = 6;
-        private int _firstRow;
-		private int _lastRow;
-		private int _firstCol;
-		private int _lastCol;
-      
-		/* package */ Reference(int firstRow, int lastRow, int firstColumn, int lastColumn) {
-			_firstRow = firstRow;
-			_lastRow = lastRow;
-			_firstCol = firstColumn;
-			_lastCol = lastColumn;
-		}
-		/* package */ Reference(RecordInputStream in) {
-		    this(in.readUShort(), in.readUShort(), in.readUByte(), in.readUByte());
-		}
-		public void serialize(int offset, byte[] data) {
-			LittleEndian.putUShort(data, offset + 0, _firstRow);
-			LittleEndian.putUShort(data, offset + 2, _lastRow);
-			LittleEndian.putByte(data, offset + 4, _firstCol);
-			LittleEndian.putByte(data, offset + 6, _lastCol);
-		}
-
-		public int getFirstRow() {
-		    return _firstRow;
-		}
- 		public int getLastRow() {
- 		    return _lastRow;
- 		}
- 		public int getFirstColumn() {
- 		    return _firstCol;
- 		}
- 		public int getLastColumn() {
- 		    return _lastCol;
- 		}
-    }
+    private CellRangeAddress8Bit[] field_6_refs;
 
     /**
      * Creates a default selection record (cell A1, in pane ID 3)
      */
     public SelectionRecord(int activeCellRow, int activeCellCol) {
-    	field_1_pane = 3; // pane id 3 is always present.  see OOO sec 5.75 'PANE'
-    	field_2_row_active_cell = activeCellRow;
-    	field_3_col_active_cell = activeCellCol;
-    	field_4_active_cell_ref_index = 0;
-    	field_6_refs = new Reference[] {
-    		new Reference(activeCellRow, activeCellRow, activeCellCol, activeCellCol),
-    	};
+        field_1_pane = 3; // pane id 3 is always present.  see OOO sec 5.75 'PANE'
+        field_2_row_active_cell = activeCellRow;
+        field_3_col_active_cell = activeCellCol;
+        field_4_active_cell_ref_index = 0;
+        field_6_refs = new CellRangeAddress8Bit[] {
+            new CellRangeAddress8Bit(activeCellRow, activeCellRow, activeCellCol, activeCellCol),
+        };
     }
 
     /**
      * Constructs a Selection record and sets its fields appropriately.
      * @param in the RecordInputstream to read the record from
      */
-
     public SelectionRecord(RecordInputStream in) {
         super(in);
     }
@@ -112,10 +72,10 @@ public final class SelectionRecord extends Record {
         field_4_active_cell_ref_index = in.readShort();
         int field_5_num_refs    = in.readUShort();
         
-        field_6_refs = new Reference[field_5_num_refs];
+        field_6_refs = new CellRangeAddress8Bit[field_5_num_refs];
         for (int i = 0; i < field_6_refs.length; i++) {
-        	field_6_refs[i] = new Reference(in);
-		}
+            field_6_refs[i] = new CellRangeAddress8Bit(in);
+        }
     }
 
     /**
@@ -180,8 +140,7 @@ public final class SelectionRecord extends Record {
         return (short)field_4_active_cell_ref_index;
     }
 
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[SELECTION]\n");
@@ -199,11 +158,11 @@ public final class SelectionRecord extends Record {
         return buffer.toString();
     }
     private int getDataSize() {
-    	return 9 // 1 byte + 4 shorts 
-    		+ field_6_refs.length * Reference.ENCODED_SIZE;
+        return 9 // 1 byte + 4 shorts 
+            + CellRangeAddress8Bit.getEncodedSize(field_6_refs.length);
     }
     public int serialize(int offset, byte [] data) {
-    	int dataSize = getDataSize();
+        int dataSize = getDataSize();
         LittleEndian.putUShort(data, 0 + offset, sid);
         LittleEndian.putUShort(data, 2 + offset, dataSize);
         LittleEndian.putByte(data, 4 + offset,  getPane());
@@ -213,9 +172,9 @@ public final class SelectionRecord extends Record {
         int nRefs = field_6_refs.length;
         LittleEndian.putUShort(data, 11 + offset, nRefs);
         for (int i = 0; i < field_6_refs.length; i++) {
-			Reference r = field_6_refs[i];
-			r.serialize(offset + 13 + i * Reference.ENCODED_SIZE, data);
-		}
+            CellRangeAddress8Bit r = field_6_refs[i];
+            r.serialize(offset + 13 + i * CellRangeAddress8Bit.ENCODED_SIZE, data);
+        }
         return 4 + dataSize;
     }
 

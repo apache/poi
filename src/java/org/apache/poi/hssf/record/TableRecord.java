@@ -18,47 +18,46 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.record.formula.TblPtg;
+import org.apache.poi.hssf.util.CellRangeAddress8Bit;
+import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 /**
+ * DATATABLE (0x0236)<p/>
+ *
  * TableRecord - The record specifies a data table.
  * This record is preceded by a single Formula record that
  *  defines the first cell in the data table, which should
  *  only contain a single Ptg, {@link TblPtg}.
- * 
+ *
  * See p536 of the June 08 binary docs
  */
 public final class TableRecord extends Record {
-    public static final short sid = 566;
-    
-    private static final BitField alwaysCalc      = BitFieldFactory.getInstance(0x0001);
-    private static final BitField reserved1       = BitFieldFactory.getInstance(0x0002);
-    private static final BitField rowOrColInpCell = BitFieldFactory.getInstance(0x0004);
-    private static final BitField oneOrTwoVar     = BitFieldFactory.getInstance(0x0008);
-    private static final BitField rowDeleted      = BitFieldFactory.getInstance(0x0010);
-    private static final BitField colDeleted      = BitFieldFactory.getInstance(0x0020);
-    private static final BitField reserved2       = BitFieldFactory.getInstance(0x0040);
-    private static final BitField reserved3       = BitFieldFactory.getInstance(0x0080);
-    
-    private short field_1_ref_rowFirst;
-    private short field_2_ref_rowLast;
-    private short field_3_ref_colFirst;
-    private short field_4_ref_colLast;
-    
-    private byte field_5_flags;
-    private byte field_6_res;
-    private short field_7_rowInputRow;
-    private short field_8_colInputRow;
-    private short field_9_rowInputCol;
-    private short field_10_colInputCol;
-    
+	public static final short sid = 0x0236;
+
+	private static final BitField alwaysCalc      = BitFieldFactory.getInstance(0x0001);
+	private static final BitField reserved1       = BitFieldFactory.getInstance(0x0002);
+	private static final BitField rowOrColInpCell = BitFieldFactory.getInstance(0x0004);
+	private static final BitField oneOrTwoVar     = BitFieldFactory.getInstance(0x0008);
+	private static final BitField rowDeleted      = BitFieldFactory.getInstance(0x0010);
+	private static final BitField colDeleted      = BitFieldFactory.getInstance(0x0020);
+	private static final BitField reserved2       = BitFieldFactory.getInstance(0x0040);
+	private static final BitField reserved3       = BitFieldFactory.getInstance(0x0080);
+
+	private CellRangeAddress8Bit _range;
+
+	private int field_5_flags;
+	private int field_6_res;
+	private int field_7_rowInputRow;
+	private int field_8_colInputRow;
+	private int field_9_rowInputCol;
+	private int field_10_colInputCol;
+
 
 	protected void fillFields(RecordInputStream in) {
-		field_1_ref_rowFirst = in.readShort();
-		field_2_ref_rowLast  = in.readShort();
-		field_3_ref_colFirst = in.readUByte();
-		field_4_ref_colLast  = in.readUByte();
+		_range = new CellRangeAddress8Bit(in);
 		field_5_flags        = in.readByte();
 		field_6_res          = in.readByte();
 		field_7_rowInputRow  = in.readShort();
@@ -66,183 +65,146 @@ public final class TableRecord extends Record {
 		field_9_rowInputCol  = in.readShort();
 		field_10_colInputCol = in.readShort();
 	}
-	
-    public TableRecord(RecordInputStream in) {
-        super(in);
-    }
-    public TableRecord() {
-    	super();
-    }
-    
 
-	public short getRowFirst() {
-		return field_1_ref_rowFirst;
+	public TableRecord(RecordInputStream in) {
+		super(in);
 	}
-	public void setRowFirst(short field_1_ref_rowFirst) {
-		this.field_1_ref_rowFirst = field_1_ref_rowFirst;
+	public TableRecord(CellRangeAddress8Bit range) {
+		_range = range;
+		field_6_res = 0;
 	}
 
-	public short getRowLast() {
-		return field_2_ref_rowLast;
-	}
-	public void setRowLast(short field_2_ref_rowLast) {
-		this.field_2_ref_rowLast = field_2_ref_rowLast;
+	public CellRangeAddress8Bit getRange() {
+		return _range;
 	}
 
-	public short getColFirst() {
-		return field_3_ref_colFirst;
-	}
-	public void setColFirst(short field_3_ref_colFirst) {
-		this.field_3_ref_colFirst = field_3_ref_colFirst;
-	}
-
-	public short getColLast() {
-		return field_4_ref_colLast;
-	}
-	public void setColLast(short field_4_ref_colLast) {
-		this.field_4_ref_colLast = field_4_ref_colLast;
-	}
-
-	public byte getFlags() {
+	public int getFlags() {
 		return field_5_flags;
 	}
-	public void setFlags(byte field_5_flags) {
-		this.field_5_flags = field_5_flags;
+	public void setFlags(int flags) {
+		field_5_flags = flags;
 	}
 
-	public byte getReserved() {
-		return field_6_res;
-	}
-	public void setReserved(byte field_6_res) {
-		this.field_6_res = field_6_res;
-	}
-
-	public short getRowInputRow() {
+	public int getRowInputRow() {
 		return field_7_rowInputRow;
 	}
-	public void setRowInputRow(short field_7_rowInputRow) {
-		this.field_7_rowInputRow = field_7_rowInputRow;
+	public void setRowInputRow(int rowInputRow) {
+		field_7_rowInputRow = rowInputRow;
 	}
 
-	public short getColInputRow() {
+	public int getColInputRow() {
 		return field_8_colInputRow;
 	}
-	public void setColInputRow(short field_8_colInputRow) {
-		this.field_8_colInputRow = field_8_colInputRow;
+	public void setColInputRow(int colInputRow) {
+		field_8_colInputRow = colInputRow;
 	}
 
-	public short getRowInputCol() {
+	public int getRowInputCol() {
 		return field_9_rowInputCol;
 	}
-	public void setRowInputCol(short field_9_rowInputCol) {
-		this.field_9_rowInputCol = field_9_rowInputCol;
+	public void setRowInputCol(int rowInputCol) {
+		field_9_rowInputCol = rowInputCol;
 	}
 
-	public short getColInputCol() {
+	public int getColInputCol() {
 		return field_10_colInputCol;
 	}
-	public void setColInputCol(short field_10_colInputCol) {
-		this.field_10_colInputCol = field_10_colInputCol;
+	public void setColInputCol(int colInputCol) {
+		field_10_colInputCol = colInputCol;
 	}
-	
-	
+
+
 	public boolean isAlwaysCalc() {
 		return alwaysCalc.isSet(field_5_flags);
 	}
 	public void setAlwaysCalc(boolean flag) {
-		field_5_flags = alwaysCalc.setByteBoolean(field_5_flags, flag);
+		field_5_flags = alwaysCalc.setBoolean(field_5_flags, flag);
 	}
-	
+
 	public boolean isRowOrColInpCell() {
 		return rowOrColInpCell.isSet(field_5_flags);
 	}
 	public void setRowOrColInpCell(boolean flag) {
-		field_5_flags = rowOrColInpCell.setByteBoolean(field_5_flags, flag);
+		field_5_flags = rowOrColInpCell.setBoolean(field_5_flags, flag);
 	}
-	
+
 	public boolean isOneNotTwoVar() {
 		return oneOrTwoVar.isSet(field_5_flags);
 	}
 	public void setOneNotTwoVar(boolean flag) {
-		field_5_flags = oneOrTwoVar.setByteBoolean(field_5_flags, flag);
+		field_5_flags = oneOrTwoVar.setBoolean(field_5_flags, flag);
 	}
-	
+
 	public boolean isColDeleted() {
 		return colDeleted.isSet(field_5_flags);
 	}
 	public void setColDeleted(boolean flag) {
-		field_5_flags = colDeleted.setByteBoolean(field_5_flags, flag);
+		field_5_flags = colDeleted.setBoolean(field_5_flags, flag);
 	}
-	
+
 	public boolean isRowDeleted() {
 		return rowDeleted.isSet(field_5_flags);
 	}
 	public void setRowDeleted(boolean flag) {
-		field_5_flags = rowDeleted.setByteBoolean(field_5_flags, flag);
+		field_5_flags = rowDeleted.setBoolean(field_5_flags, flag);
 	}
 
-	
+
 	public short getSid() {
 		return sid;
 	}
 
 	public int serialize(int offset, byte[] data) {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) (16));
-        
-        LittleEndian.putShort(data, 4 + offset, field_1_ref_rowFirst);
-        LittleEndian.putShort(data, 6 + offset, field_2_ref_rowLast);
-        LittleEndian.putByte(data, 8 + offset, field_3_ref_colFirst);
-        LittleEndian.putByte(data, 9 + offset, field_4_ref_colLast);
-        LittleEndian.putByte(data, 10 + offset, field_5_flags);
-        LittleEndian.putByte(data, 11 + offset, field_6_res);
-        LittleEndian.putShort(data, 12 + offset, field_7_rowInputRow);
-        LittleEndian.putShort(data, 14 + offset, field_8_colInputRow);
-        LittleEndian.putShort(data, 16 + offset, field_9_rowInputCol);
-        LittleEndian.putShort(data, 18 + offset, field_10_colInputCol);
-        
-        return getRecordSize();
+		int dataSize = getDataSize();
+		LittleEndian.putShort(data, 0 + offset, sid);
+		LittleEndian.putUShort(data, 2 + offset, dataSize);
+
+		_range.serialize(4 + offset, data);
+		LittleEndian.putByte(data, 10 + offset, field_5_flags);
+		LittleEndian.putByte(data, 11 + offset, field_6_res);
+		LittleEndian.putUShort(data, 12 + offset, field_7_rowInputRow);
+		LittleEndian.putUShort(data, 14 + offset, field_8_colInputRow);
+		LittleEndian.putUShort(data, 16 + offset, field_9_rowInputCol);
+		LittleEndian.putUShort(data, 18 + offset, field_10_colInputCol);
+
+		return 4 + dataSize;
 	}
+	private int getDataSize() {
+		return CellRangeAddress8Bit.ENCODED_SIZE
+			+ 2 // 2 byte fields
+			+ 8; // 4 short fields
+	}
+
 	public int getRecordSize() {
-		return 4+16;
+		return 4+getDataSize();
 	}
-	
+
 	protected void validateSid(short id) {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A TABLE RECORD");
-        }
+		if (id != sid)
+		{
+			throw new RecordFormatException("NOT A TABLE RECORD");
+		}
 	}
-	
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("[TABLE]\n");
-        buffer.append("    .row from      = ")
-             .append(Integer.toHexString(field_1_ref_rowFirst)).append("\n");
-        buffer.append("    .row to        = ")
-            .append(Integer.toHexString(field_2_ref_rowLast)).append("\n");
-        buffer.append("    .column from   = ")
-            .append(Integer.toHexString(field_3_ref_colFirst)).append("\n");
-        buffer.append("    .column to     = ")
-            .append(Integer.toHexString(field_4_ref_colLast)).append("\n");
-        
-        buffer.append("    .flags         = ")
-            .append(Integer.toHexString(field_5_flags)).append("\n");
-        buffer.append("        .always calc     =")
-            .append(isAlwaysCalc()).append("\n");
-        
-        buffer.append("    .reserved      = ")
-            .append(Integer.toHexString(field_6_res)).append("\n");
-        buffer.append("    .row input row = ")
-            .append(Integer.toHexString(field_7_rowInputRow)).append("\n");
-        buffer.append("    .col input row = ")
-            .append(Integer.toHexString(field_8_colInputRow)).append("\n");
-        buffer.append("    .row input col = ")
-            .append(Integer.toHexString(field_9_rowInputCol)).append("\n");
-        buffer.append("    .col input col = ")
-            .append(Integer.toHexString(field_10_colInputCol)).append("\n");
-        buffer.append("[/TABLE]\n");
-        return buffer.toString();
-    }
+
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("[TABLE]\n");
+		buffer.append("    .range    = ").append(_range.toString()).append("\n");
+		buffer.append("    .flags    = ") .append(HexDump.byteToHex(field_5_flags)).append("\n");
+		buffer.append("    .alwaysClc= ").append(isAlwaysCalc()).append("\n");
+		buffer.append("    .reserved = ").append(HexDump.intToHex(field_6_res)).append("\n");
+		CellReference crRowInput = cr(field_7_rowInputRow, field_8_colInputRow);
+		CellReference crColInput = cr(field_9_rowInputCol, field_10_colInputCol);
+		buffer.append("    .rowInput = ").append(crRowInput.formatAsString()).append("\n");
+		buffer.append("    .colInput = ").append(crColInput.formatAsString()).append("\n");
+		buffer.append("[/TABLE]\n");
+		return buffer.toString();
+	}
+
+	private static CellReference cr(int rowIx, int colIxAndFlags) {
+		int colIx = colIxAndFlags & 0x00FF;
+		boolean isRowAbs = (colIxAndFlags & 0x8000) == 0;
+		boolean isColAbs = (colIxAndFlags & 0x4000) == 0;
+		return new CellReference(rowIx, colIx, isRowAbs, isColAbs);
+	}
 }

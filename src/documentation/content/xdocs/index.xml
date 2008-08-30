@@ -160,8 +160,8 @@
         </section>
         <section><title>HPBF for Publisher Documents</title>
 	<p>HPBF is our port of the Microsoft Publisher 98(-2007) file format to pure
-	  Java. At the moment, we are still figuring out the file format, but we hope
-      to have simple text extraction shortly. Please see <link
+	  Java. It currently only supports reading at a low level for around
+      half of the file parts, and simple text extraction.  Please see <link
 	    href="./hpbf/index.html">the HPBF project page for more
 	    information</link>.</p>
         </section>

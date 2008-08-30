@@ -87,9 +87,10 @@ public class EscherBSERecord
         field_10_unused2 = data[pos + 34];
         field_11_unused3 = data[pos + 35];
         bytesRemaining -= 36;
+        
         int bytesRead = 0;
-        if (bytesRemaining > 0)
-        {
+        if (bytesRemaining > 0) {
+        	// Some older escher formats skip this last record
             field_12_blipRecord = (EscherBlipRecord) recordFactory.createRecord( data, pos + 36 );
             bytesRead = field_12_blipRecord.fillFields( data, pos + 36, recordFactory );
         }
@@ -168,7 +169,16 @@ public class EscherBSERecord
      */
     public int getRecordSize()
     {
-        return 8 + 1 + 1 + 16 + 2 + 4 + 4 + 4 + 1 + 1 + 1 + 1 + field_12_blipRecord.getRecordSize() + (remainingData == null ? 0 : remainingData.length);
+    	int field_12_size = 0;
+    	if(field_12_blipRecord != null) {
+    		field_12_size = field_12_blipRecord.getRecordSize(); 
+    	}
+    	int remaining_size = 0;
+    	if(remainingData != null) {
+    		remaining_size = remainingData.length;
+    	}
+        return 8 + 1 + 1 + 16 + 2 + 4 + 4 + 4 + 1 + 1 +
+            1 + 1 + field_12_size + remaining_size;
     }
 
     /**
