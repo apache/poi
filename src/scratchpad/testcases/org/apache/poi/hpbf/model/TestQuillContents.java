@@ -21,6 +21,8 @@ import java.io.FileInputStream;
 
 import org.apache.poi.hpbf.HPBFDocument;
 import org.apache.poi.hpbf.model.qcbits.QCTextBit;
+import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type12;
+import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type0;
 import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type4;
 import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type8;
 
@@ -139,5 +141,107 @@ public class TestQuillContents extends TestCase {
 		assertEquals(0x22000000, plc12.getPlcValB()[0]);
 		assertEquals(0x05, plc12.getPlcValA()[1]);
 		assertEquals(0x04, plc12.getPlcValB()[1]);
+	}
+	
+	public void testComplexPLC() throws Exception {
+		File f = new File(dir, "Sample.pub");
+		HPBFDocument doc = new HPBFDocument(
+				new FileInputStream(f)
+		);
+		
+		QuillContents qc = doc.getQuillContents();
+		assertEquals(20, qc.getBits().length);
+		
+		assertTrue(qc.getBits()[10] instanceof Type4);
+		assertTrue(qc.getBits()[11] instanceof Type4);
+		assertTrue(qc.getBits()[13] instanceof Type0);
+		assertTrue(qc.getBits()[14] instanceof Type12);
+		assertTrue(qc.getBits()[15] instanceof Type12);
+		assertTrue(qc.getBits()[16] instanceof Type8);
+		
+		Type4 plc10 = (Type4)qc.getBits()[10];
+		Type4 plc11 = (Type4)qc.getBits()[11];
+		Type0 plc13 = (Type0)qc.getBits()[13];
+		Type12 plc14 = (Type12)qc.getBits()[14];
+		Type12 plc15 = (Type12)qc.getBits()[15];
+		Type8 plc16 = (Type8)qc.getBits()[16];
+		
+		
+		assertEquals(1, plc10.getNumberOfPLCs());
+		assertEquals(4, plc10.getPreData().length);
+		assertEquals(1, plc10.getPlcValA().length);
+		assertEquals(1, plc10.getPlcValB().length);
+		
+		assertEquals(0, plc10.getPreData()[0]);
+		assertEquals(0, plc10.getPreData()[1]);
+		assertEquals(0, plc10.getPreData()[2]);
+		assertEquals(0, plc10.getPreData()[3]);
+		assertEquals(0x5d0, plc10.getPlcValA()[0]);
+		assertEquals(0x800, plc10.getPlcValB()[0]);
+		
+		
+		assertEquals(2, plc11.getNumberOfPLCs());
+		assertEquals(4, plc11.getPreData().length);
+		assertEquals(2, plc11.getPlcValA().length);
+		assertEquals(2, plc11.getPlcValB().length);
+		
+		assertEquals(0, plc11.getPreData()[0]);
+		assertEquals(0, plc11.getPreData()[1]);
+		assertEquals(0, plc11.getPreData()[2]);
+		assertEquals(0, plc11.getPreData()[3]);
+		assertEquals(0x53a, plc11.getPlcValA()[0]);
+		assertEquals(0x5d0, plc11.getPlcValB()[0]);
+		assertEquals(0xa00, plc11.getPlcValA()[1]);
+		assertEquals(0xc00, plc11.getPlcValB()[1]);
+		
+		
+		assertEquals(5, plc13.getNumberOfPLCs());
+		assertEquals(4, plc13.getPreData().length);
+		assertEquals(5, plc13.getPlcValA().length);
+		assertEquals(5, plc13.getPlcValB().length);
+		
+		assertEquals(0xff00, plc13.getPreData()[0]);
+		assertEquals(0, plc13.getPreData()[1]);
+		assertEquals(0xf, plc13.getPreData()[2]);
+		assertEquals(0, plc13.getPreData()[3]);
+		assertEquals(0x19, plc13.getPlcValA()[0]);
+		assertEquals(0x00, plc13.getPlcValB()[0]);
+		assertEquals(0x27, plc13.getPlcValA()[1]);
+		assertEquals(0x00, plc13.getPlcValB()[1]);
+		assertEquals(0x36, plc13.getPlcValA()[2]);
+		assertEquals(0x00, plc13.getPlcValB()[2]);
+		assertEquals(0x42, plc13.getPlcValA()[3]);
+		assertEquals(0x00, plc13.getPlcValB()[3]);
+		assertEquals(0x50, plc13.getPlcValA()[4]);
+		assertEquals(0x00, plc13.getPlcValB()[4]);
+		
+		
+		// TODO - test the type 12s
+		
+		
+		assertEquals(6, plc16.getNumberOfPLCs());
+		assertEquals(7, plc16.getPreData().length);
+		assertEquals(6, plc16.getPlcValA().length);
+		assertEquals(6, plc16.getPlcValB().length);
+		
+		assertEquals(0xff, plc16.getPreData()[0]);
+		assertEquals(0, plc16.getPreData()[1]);
+		assertEquals(0x56, plc16.getPreData()[2]);
+		assertEquals(0, plc16.getPreData()[3]);
+		assertEquals(0x62, plc16.getPreData()[4]);
+		assertEquals(0, plc16.getPreData()[5]);
+		assertEquals(0x3e, plc16.getPreData()[6]);
+		assertEquals(0x500000, plc16.getPlcValA()[0]);
+		assertEquals(0x570000, plc16.getPlcValB()[0]);
+		assertEquals(0x4b0000, plc16.getPlcValA()[1]);
+		assertEquals(0x000000, plc16.getPlcValB()[1]);
+		assertEquals(0x0a0000, plc16.getPlcValA()[2]);
+		assertEquals(0x22000000, plc16.getPlcValB()[2]);
+		assertEquals(0x000005, plc16.getPlcValA()[3]);
+		assertEquals(0x000004, plc16.getPlcValB()[3]);
+		assertEquals(0x000004, plc16.getPlcValA()[4]);
+		assertEquals(0x000004, plc16.getPlcValB()[4]);
+		assertEquals(0x000004, plc16.getPlcValA()[5]);
+		assertEquals(0x000004, plc16.getPlcValB()[5]);
 	}
 }
