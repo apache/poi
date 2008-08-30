@@ -20,17 +20,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.ddf.DefaultEscherRecordFactory;
-import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hpbf.HPBFDocument;
 import org.apache.poi.hpbf.model.QuillContents;
 import org.apache.poi.hpbf.model.qcbits.QCBit;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
 
 /**
  * For dumping out the PLC contents of QC Bits of a
@@ -41,8 +35,8 @@ public class PLCDumper {
 	private HPBFDocument doc;
 	private QuillContents qc;
 	
-	public PLCDumper(HPBFDocument doc) {
-		this.doc = doc;
+	public PLCDumper(HPBFDocument hpbfDoc) {
+		doc = hpbfDoc;
 		qc = doc.getQuillContents();
 	}
 	public PLCDumper(POIFSFileSystem fs) throws IOException {
@@ -67,7 +61,6 @@ public class PLCDumper {
 	}
 	
 	private void dumpPLC() {	
-		QuillContents qc = doc.getQuillContents();
 		QCBit[] bits = qc.getBits();
 		
 		for(int i=0; i<bits.length; i++) {
@@ -82,8 +75,8 @@ public class PLCDumper {
 		System.out.println("");
 		System.out.println("Dumping " + bit.getBitType() + " bit at " + index);
 		System.out.println("  Is a " + bit.getThingType() + ", number is " + bit.getOptA());
-		System.out.println("  Starts at " + bit.getDataOffset() + " (" + Integer.toHexString(bit.getDataOffset()) + ")");
-		System.out.println("  Runs for  " + bit.getLength() + " (" + Integer.toHexString(bit.getLength()) + ")");
+		System.out.println("  Starts at " + bit.getDataOffset() + " (0x" + Integer.toHexString(bit.getDataOffset()) + ")");
+		System.out.println("  Runs for  " + bit.getLength() + " (0x" + Integer.toHexString(bit.getLength()) + ")");
 		
 		System.out.println(HexDump.dump(bit.getData(), 0, 0));
 	}

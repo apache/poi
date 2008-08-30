@@ -19,6 +19,7 @@ package org.apache.poi.hpbf.model;
 import java.io.IOException;
 
 import org.apache.poi.hpbf.model.qcbits.QCBit;
+import org.apache.poi.hpbf.model.qcbits.QCPLCBit;
 import org.apache.poi.hpbf.model.qcbits.QCTextBit;
 import org.apache.poi.hpbf.model.qcbits.UnknownQCBit;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -64,6 +65,8 @@ public final class QuillContents extends HPBFPart {
 				// Create
 				if(bitType.equals("TEXT")) {
 					bits[i] = new QCTextBit(thingType, bitType, bitData);
+				} else if(bitType.equals("PLC ")) {
+					bits[i] = QCPLCBit.createQCPLCBit(thingType, bitType, bitData);
 				} else {
 					bits[i] = new UnknownQCBit(thingType, bitType, bitData);
 				}
