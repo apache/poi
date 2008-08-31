@@ -134,4 +134,41 @@ public class TextPublisherTextExtractor extends TestCase {
 		assertEquals(s2007, s2000);
 		assertEquals(s2007, s98);
 	}
+	
+	/**
+	 * Test that the hyperlink extraction stuff works as well
+	 *  as we can hope it to.
+	 */
+	public void testWithHyperlinks() throws Exception {
+		File f = new File(dir, "LinkAt10.pub");
+		HPBFDocument doc = new HPBFDocument(
+				new FileInputStream(f)
+		);
+
+		PublisherTextExtractor ext = 
+			new PublisherTextExtractor(doc);
+		ext.getText();
+		
+		// Default is no hyperlinks
+		assertEquals("1234567890LINK\n", ext.getText());
+		
+		// Turn on
+		ext.setHyperlinksByDefault(true);
+		assertEquals("1234567890LINK\n<http://poi.apache.org/>\n", ext.getText());
+		
+		
+		// Now a much more complex document
+		f = new File(dir, "Sample.pub");
+		ext = new PublisherTextExtractor(new FileInputStream(f));
+		ext.setHyperlinksByDefault(true);
+		String text = ext.getText();
+		
+		assertTrue(text.endsWith(
+				"<http://poi.apache.org/>\n" +
+				"<C:\\Documents and Settings\\Nick\\My Documents\\Booleans.xlsx>\n" +
+				"<>\n" +
+				"<mailto:dev@poi.apache.org?subject=HPBF>\n" +
+				"<mailto:dev@poi.apache.org?subject=HPBF>\n"
+		));
+	}
 }

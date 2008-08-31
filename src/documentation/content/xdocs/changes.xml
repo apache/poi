@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">Support for HPBF Publisher hyperlinks, including during text extraction</action>
            <action dev="POI-DEVELOPERS" type="fix">26321 and 44958 - preserve position of ArrayRecords and TableRecords among cell value records</action>
            <action dev="POI-DEVELOPERS" type="fix">Impove empty header or footer handling in HWPF HeaderStories</action>
            <action dev="POI-DEVELOPERS" type="fix">Avoid NPE in hssf.usermodel.HeaderFooter when stripping fields out</action>

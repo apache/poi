@@ -167,6 +167,10 @@ public class QCPLCBit extends QCBit {
 	
 	/**
 	 * Type 12 holds hyperlinks, and is very complex.
+	 * There is normally one of these for each text
+	 *  area that contains at least one hyperlinks.
+	 * The character offsets are relative to the start
+	 *  of the text area that this applies to.
 	 */
 	public static class Type12 extends QCPLCBit {
 		private String[] hyperlinks;
@@ -249,6 +253,8 @@ public class QCPLCBit extends QCBit {
 		 * Returns where in the text (in characters) the
 		 *  hyperlink at the given index starts 
 		 *  applying to.
+		 * This position is relative to the text area that this
+		 *  PLCBit applies to.
 		 * @param number The hyperlink number, zero based
 		 */
 		public int getTextStartAt(int number) {
@@ -258,6 +264,8 @@ public class QCPLCBit extends QCBit {
 		 * Returns where in the text that this block
 		 *  of hyperlinks stops applying to. Normally,
 		 *  but not always the end of the text.
+		 * This position is relative to the text area that this
+		 *  PLCBit applies to.
 		 */
 		public int getAllTextEndAt() {
 			return preData[numberOfPLCs+1];
