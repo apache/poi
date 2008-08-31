@@ -171,6 +171,27 @@ PL   62 1a 00 00 48 00 00 00 // PL   from: 1a62 (6754), len: 48 (72)
 		 think that the second 4 bytes of text describes the format
 		 of data block at the offset. The format of the text block
 		 is easy, but we're still trying to figure out the others.</p>
+
+           <section><title>Structure of TEXT bit</title>
+           <p>This is very simple. All the text for the document is
+            stored in a single bit of the Quill CONTENTS. The text
+            is stored as little endian 16 bit unicode strings.</p>
+           </section>
+           <section><title>Structure of PLC bit</title>
+           <p>The first four bytes seem to hold the count of the 
+            entries in the bit, and the second four bytes seem to hold
+            the type. There is then some pre-data, and then data for
+            each of the entries, the exact format dependant on the type.</p>
+           <p>Type 0 has 4 2 byte unsigned ints, then a pair of 2 byte
+            unsigned ints for each entry.</p>
+           <p>Type 4 has 4 2 byte unsigned ints, then a pair of 4 byte
+            unsigned ints for each entry.</p>
+           <p>Type 8 has 7 2 byte unsigned ints, then a pair of 4 byte
+            unsigned ints for each entry.</p>
+           <p>Type 12 holds hyperlinks, and is very much more complex.
+            See <code>org.apache.poi.hpbf.model.qcbits.QCPLCBit</code>
+            for our best guess as to how the contents match up.</p>
+           </section>
 		</section>
 	</body>
 </document>
