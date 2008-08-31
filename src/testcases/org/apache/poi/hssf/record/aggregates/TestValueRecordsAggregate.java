@@ -28,10 +28,15 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.model.RecordStream;
+import org.apache.poi.hssf.model.RowBlocksReader;
 import org.apache.poi.hssf.record.BlankRecord;
+import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
@@ -47,6 +52,7 @@ public final class TestValueRecordsAggregate extends TestCase {
         List records = new ArrayList();
         records.add( new FormulaRecord() );
         records.add( new SharedFormulaRecord() );
+        records.add(new WindowTwoRecord());
 
         constructValueRecord(records);
         Iterator iterator = valueRecord.getIterator();
@@ -59,8 +65,13 @@ public final class TestValueRecordsAggregate extends TestCase {
     }
 
     private void constructValueRecord(List records) {
-        SharedFormulaHolder sfrh = SharedFormulaHolder.create(records, 0, records.size());
-        valueRecord.construct(records, 0, records.size(), sfrh );
+        RowBlocksReader rbr = new RowBlocksReader(records, 0);
+        SharedValueManager sfrh = rbr.getSharedFormulaManager();
+        RecordStream rs = rbr.getPlainRecordStream();
+        while(rs.hasNext()) {
+            Record rec = rs.getNext();
+            valueRecord.construct((CellValueRecordInterface)rec, rs, sfrh);
+        }
     }
 
     private static List testData() {
@@ -73,6 +84,7 @@ public final class TestValueRecordsAggregate extends TestCase {
         blankRecord.setColumn( (short) 2 );
         records.add( formulaRecord );
         records.add( blankRecord );
+        records.add(new WindowTwoRecord());
         return records;
     }
 

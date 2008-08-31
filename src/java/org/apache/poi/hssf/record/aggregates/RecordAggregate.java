@@ -36,10 +36,16 @@ public abstract class RecordAggregate extends RecordBase {
 	protected final void fillFields(RecordInputStream in) {
 		throw new RuntimeException("Should not be called");
 	}
-    public final short getSid() {
+	public final short getSid() {
 		throw new RuntimeException("Should not be called");
-    }
+	}
 
+	/**
+	 * Visit each of the atomic BIFF records contained in this {@link RecordAggregate} in the order
+	 * that they should be written to file.  Implementors may or may not return the actual 
+	 * {@link Record}s being used to manage POI's internal implementation.  Callers should not
+	 * assume either way, and therefore only attempt to modify those {@link Record}s after cloning
+	 */
 	public abstract void visitContainedRecords(RecordVisitor rv);
 	
 	public final int serialize(int offset, byte[] data) {
@@ -92,6 +98,29 @@ public abstract class RecordAggregate extends RecordBase {
 		}
 		public void visitRecord(Record r) {
 			_totalSize += r.getRecordSize();
+		}
+	}
+	/**
+	 * A wrapper for {@link RecordVisitor} which accumulates the sizes of all
+	 * records visited.
+	 */
+	public static final class PositionTrackingVisitor implements RecordVisitor {
+		private final RecordVisitor _rv;
+		private int _position;
+
+		public PositionTrackingVisitor(RecordVisitor rv, int initialPosition) {
+			_rv = rv;
+			_position = initialPosition;
+		}
+		public void visitRecord(Record r) {
+			_position += r.getRecordSize();
+			_rv.visitRecord(r);
+		}
+		public void setPosition(int position) {
+			_position = position;
+		}
+		public int getPosition() {
+			return _position;
 		}
 	}
 }

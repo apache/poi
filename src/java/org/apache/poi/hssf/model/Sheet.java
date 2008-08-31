@@ -27,7 +27,6 @@ import org.apache.poi.hssf.record.CalcCountRecord;
 import org.apache.poi.hssf.record.CalcModeRecord;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.ColumnInfoRecord;
-import org.apache.poi.hssf.record.DBCellRecord;
 import org.apache.poi.hssf.record.DVALRecord;
 import org.apache.poi.hssf.record.DefaultColWidthRecord;
 import org.apache.poi.hssf.record.DefaultRowHeightRecord;
@@ -56,7 +55,6 @@ import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.SaveRecalcRecord;
 import org.apache.poi.hssf.record.ScenarioProtectRecord;
 import org.apache.poi.hssf.record.SelectionRecord;
-import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.record.UncalcedRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
@@ -64,10 +62,12 @@ import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
+import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.MergedCellsTable;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
+import org.apache.poi.hssf.record.aggregates.RecordAggregate.PositionTrackingVisitor;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.hssf.util.PaneInformation;
@@ -105,7 +105,6 @@ public final class Sheet implements Model {
     private static POILogger            log              = POILogFactory.getLogger(Sheet.class);
 
     protected ArrayList                  records           =     null;
-              int                        preoffset         =     0;            // offset of the sheet in a new file
     protected int                        dimsloc           =     -1;  // TODO - remove dimsloc
     protected PrintGridlinesRecord       printGridlines    =     null;
     protected GridsetRecord              gridset           =     null;
@@ -148,7 +147,7 @@ public final class Sheet implements Model {
      * @see #createSheet(List,int,int)
      */
     public Sheet() {
-    	_mergedCellsTable = new MergedCellsTable();
+        _mergedCellsTable = new MergedCellsTable();
     }
 
     /**
@@ -181,18 +180,12 @@ public final class Sheet implements Model {
 
         for (int k = offset; k < inRecs.size(); k++) {
             Record rec = ( Record ) inRecs.get(k);
-            if ( rec.getSid() == DBCellRecord.sid ) {
-                continue;
-            }
             if ( rec.getSid() == IndexRecord.sid ) {
                 // ignore INDEX record because it is only needed by Excel, 
                 // and POI always re-calculates its contents 
                 continue;
             }
-            if ( rec.getSid() == StringRecord.sid ) {
-                continue;
-            }
-            
+
             if ( rec.getSid() == CFHeaderRecord.sid ) {
                 RecordStream rs = new RecordStream(inRecs, k);
                 retval.condFormatting = new ConditionalFormattingTable(rs);
@@ -221,10 +214,11 @@ public final class Sheet implements Model {
                 if (retval._rowsAggregate != null) {
                     throw new RuntimeException("row/cell records found in the wrong place");
                 }
-                int lastRowCellRec = findEndOfRowBlock(inRecs, k, retval._mergedCellsTable);
-                retval._rowsAggregate = new RowRecordsAggregate(inRecs, k, lastRowCellRec);
+                RowBlocksReader rbr = new RowBlocksReader(inRecs, k);
+                retval._mergedCellsTable.addRecords(rbr.getLooseMergedCells());
+                retval._rowsAggregate = new RowRecordsAggregate(rbr.getPlainRecordStream(), rbr.getSharedFormulaManager());
                 records.add(retval._rowsAggregate); //only add the aggregate once
-                k = lastRowCellRec -1;
+                k += rbr.getTotalNumberOfRecords() - 1;
                 continue;
             }
              
@@ -245,13 +239,18 @@ public final class Sheet implements Model {
             }
             
             if (rec.getSid() == MergeCellsRecord.sid) {
-            	// when the MergedCellsTable is found in the right place, we expect those records to be contiguous
+                // when the MergedCellsTable is found in the right place, we expect those records to be contiguous
                 RecordStream rs = new RecordStream(inRecs, k);
                 retval._mergedCellsTable.read(rs);
                 k += rs.getCountRead()-1;
                 continue;
             }
-            
+            if (rec.getSid() == UncalcedRecord.sid) {
+                // don't add UncalcedRecord to the list
+                retval._isUncalced = true; // this flag is enough
+                continue;
+            }
+
             if (rec.getSid() == BOFRecord.sid)
             {
                 bofEofNestingLevel++;
@@ -268,9 +267,6 @@ public final class Sheet implements Model {
                     retval.eofLoc = k;
                     break;
                 }
-            }
-            else if (rec.getSid() == UncalcedRecord.sid) {
-                retval._isUncalced = true;
             }
             else if (rec.getSid() == DimensionsRecord.sid)
             {
@@ -340,26 +336,6 @@ public final class Sheet implements Model {
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "sheet createSheet (existing file) exited");
         return retval;
-    }
-
-    /**
-     * Also collects any rogue MergeCellRecords
-     * @return the index one after the last row/cell record
-     */
-    private static int findEndOfRowBlock(List recs, int startIx, MergedCellsTable mergedCellsTable) {
-        for(int i=startIx; i<recs.size(); i++) {
-            Record rec = (Record) recs.get(i);
-            if (RecordOrderer.isEndOfRowBlock(rec.getSid())) {
-                return i;
-            }
-            if (rec.getSid() == MergeCellsRecord.sid) {
-                    // Some apps scatter these records between the rows/cells but they are supposed to
-                    // be well after the row/cell records.  We collect them here 
-                    // see bug 45699
-                    mergedCellsTable.add((MergeCellsRecord) rec);
-            }
-        }
-        throw new RuntimeException("Failed to find end of row/cell records");
     }
 
     private static final class RecordCloner implements RecordVisitor {
@@ -585,60 +561,22 @@ public final class Sheet implements Model {
             log.log(POILogger.DEBUG, "Sheet.setDimensions exiting");
     }
 
-    /**
-     * Set the preoffset when using DBCELL records (currently unused) - this is
-     * the position of this sheet within the whole file.
-     *
-     * @param offset the offset of the sheet's BOF within the file.
-     */
+    public void visitContainedRecords(RecordVisitor rv, int offset) {
 
-    public void setPreOffset(int offset)
-    {
-        this.preoffset = offset;
-    }
-
-    /**
-     * get the preoffset when using DBCELL records (currently unused) - this is
-     * the position of this sheet within the whole file.
-     *
-     * @return offset the offset of the sheet's BOF within the file.
-     */
-
-    public int getPreOffset()
-    {
-        return preoffset;
-    }
-
-    /**
-     * Serializes all records in the sheet into one big byte array.  Use this to write
-     * the sheet out.
-     *
-     * @param offset to begin write at
-     * @param data   array containing the binary representation of the records in this sheet
-     *
-     */
-
-    public int serialize(int offset, byte [] data)
-    {
-        if (log.check( POILogger.DEBUG ))
-            log.log(POILogger.DEBUG, "Sheet.serialize using offsets");
-
-        int pos       = offset;
+        PositionTrackingVisitor ptv = new PositionTrackingVisitor(rv, offset);
+        
         boolean haveSerializedIndex = false;
 
         for (int k = 0; k < records.size(); k++)
         {
             RecordBase record = (RecordBase) records.get(k);
 
-            // Don't write out UncalcedRecord entries, as
-            //  we handle those specially just below
-            if (record instanceof UncalcedRecord) {
-                continue;
+            if (record instanceof RecordAggregate) {
+                RecordAggregate agg = (RecordAggregate) record;
+                agg.visitContainedRecords(ptv);
+            } else {
+                ptv.visitRecord((Record) record);
             }
-
-            // Once the rows have been found in the list of records, start
-            //  writing out the blocked row information. This includes the DBCell references
-            pos += record.serialize(pos, data);
 
             // If the BOF record was just serialized then add the IndexRecord
             if (record instanceof BOFRecord) {
@@ -649,49 +587,41 @@ public final class Sheet implements Model {
                 // If there are diagrams, they have their own BOFRecords,
                 //  and one shouldn't go in after that!
                 if (_isUncalced) {
-                    UncalcedRecord rec = new UncalcedRecord();
-                    pos += rec.serialize(pos, data);
+                    ptv.visitRecord(new UncalcedRecord());
                 }
                 //Can there be more than one BOF for a sheet? If not then we can
                 //remove this guard. So be safe it is left here.
                 if (_rowsAggregate != null) {
-                  pos += serializeIndexRecord(k, pos, data);
+                    // find forward distance to first RowRecord
+                    int initRecsSize = getSizeOfInitialSheetRecords(k);
+                    int currentPos = ptv.getPosition();
+                    ptv.visitRecord(_rowsAggregate.createIndexRecord(currentPos, initRecsSize));
                 }
               }
             }
         }
-        if (log.check( POILogger.DEBUG )) {
-            log.log(POILogger.DEBUG, "Sheet.serialize returning ");
-        }
-        return pos-offset;
     }
-
     /**
-     * @param indexRecordOffset also happens to be the end of the BOF record
-     * @return the size of the serialized INDEX record
+     * 'initial sheet records' are between INDEX and the 'Row Blocks'
+     * @param bofRecordIndex index of record after which INDEX record is to be placed
+     * @return count of bytes from end of INDEX record to first ROW record.
      */
-    private int serializeIndexRecord(int bofRecordIndex, int indexRecordOffset, byte[] data) {
+    private int getSizeOfInitialSheetRecords(int bofRecordIndex) {
 
-        // 'initial sheet records' are between INDEX and first ROW record.
-        int sizeOfInitialSheetRecords = 0;
+        int result = 0;
         // start just after BOF record (INDEX is not present in this list)
         for (int j = bofRecordIndex + 1; j < records.size(); j++) {
-            RecordBase tmpRec = ((RecordBase) records.get(j));
-            if (tmpRec instanceof UncalcedRecord) {
-                continue;
-            }
+            RecordBase tmpRec = (RecordBase) records.get(j);
             if (tmpRec instanceof RowRecordsAggregate) {
                 break;
             }
-            sizeOfInitialSheetRecords += tmpRec.getRecordSize();
+            result += tmpRec.getRecordSize();
         }
         if (_isUncalced) {
-            sizeOfInitialSheetRecords += UncalcedRecord.getStaticRecordSize();
+            result += UncalcedRecord.getStaticRecordSize();
         }
-        IndexRecord index = _rowsAggregate.createIndexRecord(indexRecordOffset, sizeOfInitialSheetRecords);
-        return index.serialize(indexRecordOffset, data);
+        return result;
     }
-
 
     /**
      * Create a row record.  (does not add it to the records contained in this sheet)
@@ -1351,32 +1281,6 @@ public final class Sheet implements Model {
         }
     }
 
-    /**
-     * @return the serialized size of this sheet
-     */
-    public int getSize() {
-        int retval = 0;
-
-        for ( int k = 0; k < records.size(); k++) {
-            RecordBase record = (RecordBase) records.get(k);
-            if (record instanceof UncalcedRecord) {
-                // skip the UncalcedRecord if present, it's only encoded if the isUncalced flag is set
-                continue;
-            }
-            retval += record.getRecordSize();
-        }
-        // add space for IndexRecord if needed
-        if (_rowsAggregate != null) {
-            // rowsAggregate knows how to make the index record
-            retval += IndexRecord.getRecordSizeForBlockCount(_rowsAggregate.getRowBlockCount());
-        }
-        // Add space for UncalcedRecord
-        if (_isUncalced) {
-            retval += UncalcedRecord.getStaticRecordSize();
-        }
-        return retval;
-    }
-
     public List getRecords()
     {
         return records;
@@ -1936,5 +1840,9 @@ public final class Sheet implements Model {
             _dataValidityTable = result;
         }
         return _dataValidityTable;
+    }
+
+    public FormulaRecordAggregate createFormula(int row, int col) {
+        return _rowsAggregate.createFormula(row, col);
     }
 }
