@@ -244,4 +244,191 @@ public class TestQuillContents extends TestCase {
 		assertEquals(0x000004, plc16.getPlcValA()[5]);
 		assertEquals(0x000004, plc16.getPlcValB()[5]);
 	}
+	
+	public void testNoHyperlinks() throws Exception {
+		File f = new File(dir, "SampleNewsletter.pub");
+		HPBFDocument doc = new HPBFDocument(
+				new FileInputStream(f)
+		);
+		
+		QuillContents qc = doc.getQuillContents();
+		assertEquals(20, qc.getBits().length);
+		
+		Type12 plc18 = (Type12)qc.getBits()[18];
+		
+		assertEquals(1, plc18.getNumberOfPLCs());
+		assertEquals(0, plc18.getNumberOfHyperlinks());
+		assertEquals(0, plc18.getTextStartAt(0));
+		assertEquals(601, plc18.getAllTextEndAt());
+	}
+	
+	public void testSimpleHyperlink() throws Exception {
+		File f;
+		HPBFDocument doc;
+		QuillContents qc;
+		Type12 hlBit;
+		
+		// Link at 10
+		f = new File(dir, "LinkAt10.pub");
+		doc = new HPBFDocument(
+				new FileInputStream(f)
+		);
+		qc = doc.getQuillContents();
+		
+		hlBit = (Type12)qc.getBits()[12];
+		assertEquals(1, hlBit.getNumberOfPLCs());
+		assertEquals(1, hlBit.getNumberOfHyperlinks());
+		
+		assertEquals(10, hlBit.getTextStartAt(0));
+		assertEquals(15, hlBit.getAllTextEndAt());
+		assertEquals("http://poi.apache.org/", hlBit.getHyperlink(0));
+		
+		// Longer link at 10
+		f = new File(dir, "LinkAt10Longer.pub");
+		doc = new HPBFDocument(
+				new FileInputStream(f)
+		);
+		qc = doc.getQuillContents();
+		
+		hlBit = (Type12)qc.getBits()[12];
+		assertEquals(1, hlBit.getNumberOfPLCs());
+		assertEquals(1, hlBit.getNumberOfHyperlinks());
+		
+		assertEquals(10, hlBit.getTextStartAt(0));
+		assertEquals(15, hlBit.getAllTextEndAt());
+		assertEquals("http://poi.apache.org/hpbf/", hlBit.getHyperlink(0));
+		
+		// Link at 20
+		f = new File(dir, "LinkAt20.pub");
+		doc = new HPBFDocument(
+				new FileInputStream(f)
+		);
+		qc = doc.getQuillContents();
+		
+		hlBit = (Type12)qc.getBits()[12];
+		assertEquals(1, hlBit.getNumberOfPLCs());
+		assertEquals(1, hlBit.getNumberOfHyperlinks());
+		
+		assertEquals(20, hlBit.getTextStartAt(0));
+		assertEquals(25, hlBit.getAllTextEndAt());
+		assertEquals("http://poi.apache.org/", hlBit.getHyperlink(0));
+	}
+	
+	public void testManyHyperlinks() throws Exception {
+		File f;
+		HPBFDocument doc;
+		QuillContents qc;
+		Type12 hlBit;
+		
+		// Link at 10
+		f = new File(dir, "LinkAt10.pub");
+		doc = new HPBFDocument(
+				new FileInputStream(f)
+		);
+		qc = doc.getQuillContents();
+		
+		hlBit = (Type12)qc.getBits()[12];
+		assertEquals(1, hlBit.getNumberOfPLCs());
+		assertEquals(1, hlBit.getNumberOfHyperlinks());
+		
+		assertEquals(10, hlBit.getTextStartAt(0));
+		assertEquals(15, hlBit.getAllTextEndAt());
+		assertEquals("http://poi.apache.org/", hlBit.getHyperlink(0));
+		
+	}
+	
+	public void testHyperlinkDifferentVersions() throws Exception {
+		File f;
+		HPBFDocument doc;
+		QuillContents qc;
+		Type12 hlBitA;
+		Type12 hlBitB;
+		
+		// Latest version
+		f = new File(dir, "Sample.pub");
+		doc = new HPBFDocument(
+				new FileInputStream(f)
+		);
+		qc = doc.getQuillContents();
+		
+		hlBitA = (Type12)qc.getBits()[14];
+		assertEquals(2, hlBitA.getNumberOfPLCs());
+		assertEquals(2, hlBitA.getNumberOfHyperlinks());
+		
+		assertEquals(25, hlBitA.getTextStartAt(0));
+		assertEquals(72, hlBitA.getTextStartAt(1));
+		assertEquals(87, hlBitA.getAllTextEndAt());
+		assertEquals("http://poi.apache.org/", hlBitA.getHyperlink(0));
+		assertEquals("C:\\Documents and Settings\\Nick\\My Documents\\Booleans.xlsx", hlBitA.getHyperlink(1));
+		
+		hlBitB = (Type12)qc.getBits()[15];
+		assertEquals(3, hlBitB.getNumberOfPLCs());
+		assertEquals(3, hlBitB.getNumberOfHyperlinks());
+		
+		assertEquals(27, hlBitB.getTextStartAt(0));
+		assertEquals(37, hlBitB.getTextStartAt(1));
+		assertEquals(54, hlBitB.getTextStartAt(2));
+		assertEquals(75, hlBitB.getAllTextEndAt());
+		assertEquals("", hlBitB.getHyperlink(0));
+		assertEquals("mailto:dev@poi.apache.org?subject=HPBF", hlBitB.getHyperlink(1));
+		assertEquals("mailto:dev@poi.apache.org?subject=HPBF", hlBitB.getHyperlink(2));
+		
+		// 2000 version
+		f = new File(dir, "Sample2000.pub");
+		doc = new HPBFDocument(
+				new FileInputStream(f)
+		);
+		qc = doc.getQuillContents();
+		
+		hlBitA = (Type12)qc.getBits()[13];
+		assertEquals(2, hlBitA.getNumberOfPLCs());
+		assertEquals(2, hlBitA.getNumberOfHyperlinks());
+		
+		assertEquals(25, hlBitA.getTextStartAt(0));
+		assertEquals(72, hlBitA.getTextStartAt(1));
+		assertEquals(87, hlBitA.getAllTextEndAt());
+		assertEquals("http://poi.apache.org/", hlBitA.getHyperlink(0));
+		assertEquals("C:\\Documents and Settings\\Nick\\My Documents\\Booleans.xlsx", hlBitA.getHyperlink(1));
+		
+		hlBitB = (Type12)qc.getBits()[14];
+		assertEquals(3, hlBitB.getNumberOfPLCs());
+		assertEquals(3, hlBitB.getNumberOfHyperlinks());
+		
+		assertEquals(27, hlBitB.getTextStartAt(0));
+		assertEquals(37, hlBitB.getTextStartAt(1));
+		assertEquals(54, hlBitB.getTextStartAt(2));
+		assertEquals(75, hlBitB.getAllTextEndAt());
+		assertEquals("", hlBitB.getHyperlink(0));
+		assertEquals("mailto:dev@poi.apache.org?subject=HPBF", hlBitB.getHyperlink(1));
+		assertEquals("mailto:dev@poi.apache.org?subject=HPBF", hlBitB.getHyperlink(2));
+		
+		// 98 version
+		f = new File(dir, "Sample98.pub");
+		doc = new HPBFDocument(
+				new FileInputStream(f)
+		);
+		qc = doc.getQuillContents();
+		
+		hlBitA = (Type12)qc.getBits()[13];
+		assertEquals(2, hlBitA.getNumberOfPLCs());
+		assertEquals(2, hlBitA.getNumberOfHyperlinks());
+		
+		assertEquals(25, hlBitA.getTextStartAt(0));
+		assertEquals(72, hlBitA.getTextStartAt(1));
+		assertEquals(87, hlBitA.getAllTextEndAt());
+		assertEquals("http://poi.apache.org/", hlBitA.getHyperlink(0));
+		assertEquals("C:\\Documents and Settings\\Nick\\My Documents\\Booleans.xlsx", hlBitA.getHyperlink(1));
+		
+		hlBitB = (Type12)qc.getBits()[14];
+		assertEquals(3, hlBitB.getNumberOfPLCs());
+		assertEquals(3, hlBitB.getNumberOfHyperlinks());
+		
+		assertEquals(27, hlBitB.getTextStartAt(0));
+		assertEquals(37, hlBitB.getTextStartAt(1));
+		assertEquals(54, hlBitB.getTextStartAt(2));
+		assertEquals(75, hlBitB.getAllTextEndAt());
+		assertEquals("", hlBitB.getHyperlink(0));
+		assertEquals("mailto:dev@poi.apache.org?subject=HPBF", hlBitB.getHyperlink(1));
+		assertEquals("mailto:dev@poi.apache.org?subject=HPBF", hlBitB.getHyperlink(2));
+	}
 }

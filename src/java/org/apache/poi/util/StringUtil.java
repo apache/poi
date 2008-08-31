@@ -68,7 +68,7 @@ public class StringUtil {
 			throw new ArrayIndexOutOfBoundsException("Illegal offset");
 		}
 		if ((len < 0) || (((string.length - offset) / 2) < len)) {
-			throw new IllegalArgumentException("Illegal length");
+			throw new IllegalArgumentException("Illegal length " + len);
 		}
 
 		try {
