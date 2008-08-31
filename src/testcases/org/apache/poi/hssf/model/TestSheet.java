@@ -557,5 +557,23 @@ public final class TestSheet extends TestCase {
         }
         assertEquals("Informations", cell.getRichStringCellValue().getString());
     }
+    /**
+     * In 3.1, setting margins between creating first row and first cell caused an exception.
+     */
+    public void testSetMargins_bug45717() {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Vorschauliste");
+        HSSFRow row = sheet.createRow(0);
+
+        sheet.setMargin(HSSFSheet.LeftMargin, 0.3);
+        try {
+            row.createCell((short) 0);
+        } catch (IllegalStateException e) {
+            if (e.getMessage().equals("Cannot create value records before row records exist")) {
+                throw new AssertionFailedError("Identified bug 45717");
+            }
+            throw e;
+        }
+    }
 }
 
