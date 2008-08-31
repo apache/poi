@@ -113,7 +113,6 @@ public final class TestSumproduct extends TestCase {
 		};
 		AreaEval aeA = EvalFactory.createAreaEval("A1:A2", aValues);
 		AreaEval aeB = EvalFactory.createAreaEval("B1:B2", new ValueEval[2]);
-		aeB.getValues()[1] = ErrorEval.REF_INVALID;
 
 		Eval[] args = { aeA, aeB, };
 		assertEquals(ErrorEval.REF_INVALID, invokeSumproduct(args));

@@ -69,5 +69,11 @@ public class NumberEval implements NumericValueEval, StringValueEval {
             }
         }
     }
-    
+    public final String toString() {
+        StringBuffer sb = new StringBuffer(64);
+        sb.append(getClass().getName()).append(" [");
+        sb.append(getStringValue());
+        sb.append("]");
+        return sb.toString();
+    }
 }
