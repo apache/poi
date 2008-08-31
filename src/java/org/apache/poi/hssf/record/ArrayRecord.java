@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
@@ -29,13 +28,11 @@ import org.apache.poi.util.LittleEndian;
  * 
  * @author Josh Micich
  */		
-public final class ArrayRecord extends Record {
+public final class ArrayRecord extends SharedValueRecordBase {
 
 	public final static short sid = 0x0221;
 	private static final int OPT_ALWAYS_RECALCULATE = 0x0001;
 	private static final int OPT_CALCULATE_ON_OPEN  = 0x0002;
-
-	private CellRangeAddress8Bit _range;
 	
 	private int	_options;
 	private int _field3notUsed;
@@ -43,6 +40,10 @@ public final class ArrayRecord extends Record {
 
 	public ArrayRecord(RecordInputStream in) {
 		super(in);
+		_options = in.readUShort();
+		_field3notUsed = in.readInt();
+		int formulaLen = in.readUShort();
+		_formulaTokens = Ptg.readTokens(formulaLen, in);
 	}
 
 	public boolean isAlwaysRecalculate() {
@@ -52,27 +53,12 @@ public final class ArrayRecord extends Record {
 		return (_options & OPT_CALCULATE_ON_OPEN) != 0;
 	}
 
-	protected void validateSid(short id) {
-		if (id != sid) {
-			throw new RecordFormatException("NOT A valid Array RECORD");
-		}
+	protected int getExtraDataSize() {
+		return 2 + 4
+			+ 2 + Ptg.getEncodedSize(_formulaTokens);
 	}
-
-	private int getDataSize(){
-		return CellRangeAddress8Bit.ENCODED_SIZE 
-			+ 2 + 4
-			+ getFormulaSize();
-	}
-
-	public int serialize( int offset, byte[] data ) {
-		int dataSize = getDataSize();
-
-		LittleEndian.putShort(data, 0 + offset, sid);
-		LittleEndian.putUShort(data, 2 + offset, dataSize);
-
-		int pos = offset+4;
-		_range.serialize(pos, data);
-		pos += CellRangeAddress8Bit.ENCODED_SIZE;
+	protected void serializeExtraData(int offset, byte[] data) {
+		int pos = offset;
 		LittleEndian.putUShort(data, pos, _options);
 		pos+=2;
 		LittleEndian.putInt(data, pos, _field3notUsed);
@@ -81,29 +67,6 @@ public final class ArrayRecord extends Record {
 		LittleEndian.putUShort(data, pos, tokenSize);
 		pos+=2;
 		Ptg.serializePtgs(_formulaTokens, data, pos);
-		return dataSize + 4;
-	}
-
-	private int getFormulaSize() {
-		int result = 0;
-		for (int i = 0; i < _formulaTokens.length; i++) {
-			result += _formulaTokens[i].getSize();
-		}
-		return result;
-	}
-
-
-	public int getRecordSize(){
-		return 4 + getDataSize();
-	}
-
-
-	protected void fillFields(RecordInputStream in) {
-		_range = new CellRangeAddress8Bit(in);
-		_options = in.readUShort();
-		_field3notUsed = in.readInt();
-		int formulaLen = in.readUShort();
-		_formulaTokens = Ptg.readTokens(formulaLen, in);
 	}
 
 	public short getSid() {
@@ -113,12 +76,13 @@ public final class ArrayRecord extends Record {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(getClass().getName()).append(" [ARRAY]\n");
-		sb.append(" range=").append(_range.toString()).append("\n");
+		sb.append(" range=").append(getRange().toString()).append("\n");
 		sb.append(" options=").append(HexDump.shortToHex(_options)).append("\n");
 		sb.append(" notUsed=").append(HexDump.intToHex(_field3notUsed)).append("\n");
 		sb.append(" formula:").append("\n");
 		for (int i = 0; i < _formulaTokens.length; i++) {
-			sb.append(_formulaTokens[i].toString());
+			Ptg ptg = _formulaTokens[i];
+			sb.append(ptg.toString()).append(ptg.getRVAType()).append("\n");
 		}
 		sb.append("]");
 		return sb.toString();

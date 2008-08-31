@@ -17,9 +17,6 @@
 
 package org.apache.poi.hssf.record;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
@@ -27,7 +24,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Formula Record.
+ * Formula Record (0x0006).
  * REFERENCE:  PG 317/444 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
@@ -270,7 +267,8 @@ public final class FormulaRecord extends Record implements CellValueRecordInterf
 
         for (int k = 0; k < field_8_parsed_expr.length; k++ ) {
             sb.append("     Ptg[").append(k).append("]=");
-            sb.append(field_8_parsed_expr[k].toString()).append("\n");
+            Ptg ptg = field_8_parsed_expr[k];
+            sb.append(ptg.toString()).append(ptg.getRVAType()).append("\n");
         }
         sb.append("[/FORMULA]\n");
         return sb.toString();

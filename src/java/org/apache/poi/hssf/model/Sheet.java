@@ -27,7 +27,6 @@ import org.apache.poi.hssf.record.CalcCountRecord;
 import org.apache.poi.hssf.record.CalcModeRecord;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.ColumnInfoRecord;
-import org.apache.poi.hssf.record.DBCellRecord;
 import org.apache.poi.hssf.record.DVALRecord;
 import org.apache.poi.hssf.record.DefaultColWidthRecord;
 import org.apache.poi.hssf.record.DefaultRowHeightRecord;
@@ -56,7 +55,6 @@ import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.SaveRecalcRecord;
 import org.apache.poi.hssf.record.ScenarioProtectRecord;
 import org.apache.poi.hssf.record.SelectionRecord;
-import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.record.UncalcedRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
@@ -64,6 +62,7 @@ import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
+import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.MergedCellsTable;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate;
@@ -181,18 +180,12 @@ public final class Sheet implements Model {
 
         for (int k = offset; k < inRecs.size(); k++) {
             Record rec = ( Record ) inRecs.get(k);
-            if ( rec.getSid() == DBCellRecord.sid ) {
-                continue;
-            }
             if ( rec.getSid() == IndexRecord.sid ) {
                 // ignore INDEX record because it is only needed by Excel, 
                 // and POI always re-calculates its contents 
                 continue;
             }
-            if ( rec.getSid() == StringRecord.sid ) {
-                continue;
-            }
-            
+
             if ( rec.getSid() == CFHeaderRecord.sid ) {
                 RecordStream rs = new RecordStream(inRecs, k);
                 retval.condFormatting = new ConditionalFormattingTable(rs);
@@ -221,10 +214,11 @@ public final class Sheet implements Model {
                 if (retval._rowsAggregate != null) {
                     throw new RuntimeException("row/cell records found in the wrong place");
                 }
-                int lastRowCellRec = findEndOfRowBlock(inRecs, k, retval._mergedCellsTable);
-                retval._rowsAggregate = new RowRecordsAggregate(inRecs, k, lastRowCellRec);
+                RowBlocksReader rbr = new RowBlocksReader(inRecs, k);
+                retval._mergedCellsTable.addRecords(rbr.getLooseMergedCells());
+                retval._rowsAggregate = new RowRecordsAggregate(rbr.getPlainRecordStream(), rbr.getSharedFormulaManager());
                 records.add(retval._rowsAggregate); //only add the aggregate once
-                k = lastRowCellRec -1;
+                k += rbr.getTotalNumberOfRecords() - 1;
                 continue;
             }
              
@@ -342,26 +336,6 @@ public final class Sheet implements Model {
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "sheet createSheet (existing file) exited");
         return retval;
-    }
-
-    /**
-     * Also collects any rogue MergeCellRecords
-     * @return the index one after the last row/cell record
-     */
-    private static int findEndOfRowBlock(List recs, int startIx, MergedCellsTable mergedCellsTable) {
-        for(int i=startIx; i<recs.size(); i++) {
-            Record rec = (Record) recs.get(i);
-            if (RecordOrderer.isEndOfRowBlock(rec.getSid())) {
-                return i;
-            }
-            if (rec.getSid() == MergeCellsRecord.sid) {
-                    // Some apps scatter these records between the rows/cells but they are supposed to
-                    // be well after the row/cell records.  We collect them here 
-                    // see bug 45699
-                    mergedCellsTable.add((MergeCellsRecord) rec);
-            }
-        }
-        throw new RuntimeException("Failed to find end of row/cell records");
     }
 
     private static final class RecordCloner implements RecordVisitor {
@@ -618,7 +592,7 @@ public final class Sheet implements Model {
                 //Can there be more than one BOF for a sheet? If not then we can
                 //remove this guard. So be safe it is left here.
                 if (_rowsAggregate != null) {
-                	// find forward distance to first RowRecord
+                    // find forward distance to first RowRecord
                     int initRecsSize = getSizeOfInitialSheetRecords(k);
                     int currentPos = ptv.getPosition();
                     ptv.visitRecord(_rowsAggregate.createIndexRecord(currentPos, initRecsSize));
@@ -1866,5 +1840,9 @@ public final class Sheet implements Model {
             _dataValidityTable = result;
         }
         return _dataValidityTable;
+    }
+
+    public FormulaRecordAggregate createFormula(int row, int col) {
+        return _rowsAggregate.createFormula(row, col);
     }
 }

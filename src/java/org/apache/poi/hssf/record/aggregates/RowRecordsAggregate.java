@@ -23,12 +23,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.poi.hssf.model.RecordStream;
+import org.apache.poi.hssf.record.ArrayRecord;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.DBCellRecord;
+import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.IndexRecord;
 import org.apache.poi.hssf.record.MergeCellsRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.hssf.record.SharedFormulaRecord;
+import org.apache.poi.hssf.record.TableRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
 
 /**
@@ -42,36 +47,34 @@ public final class RowRecordsAggregate extends RecordAggregate {
     private final Map _rowRecords;
     private final ValueRecordsAggregate _valuesAgg;
     private final List _unknownRecords;
+    private final SharedValueManager _sharedValueManager;
 
     /** Creates a new instance of ValueRecordsAggregate */
-
     public RowRecordsAggregate() {
-        this(new TreeMap(), new ValueRecordsAggregate());
+        this(SharedValueManager.EMPTY);
     }
-    private RowRecordsAggregate(TreeMap rowRecords, ValueRecordsAggregate valuesAgg) {
-        _rowRecords = rowRecords;
-        _valuesAgg = valuesAgg;
+    private RowRecordsAggregate(SharedValueManager svm) {
+        _rowRecords = new TreeMap();
+        _valuesAgg = new ValueRecordsAggregate();
         _unknownRecords = new ArrayList();
+        _sharedValueManager = svm;
     }
 
-    public RowRecordsAggregate(List recs, int startIx, int endIx) {
-        this();
-        // First up, locate all the shared formulas for this sheet
-        SharedFormulaHolder sfh = SharedFormulaHolder.create(recs, startIx, endIx);
-        for(int i=startIx; i<endIx; i++) {
-            Record rec = (Record) recs.get(i);
+    /**
+     * @param rs record stream with all {@link SharedFormulaRecord}
+     * {@link ArrayRecord}, {@link TableRecord} {@link MergeCellsRecord} Records removed
+     */
+    public RowRecordsAggregate(RecordStream rs, SharedValueManager svm) {
+        this(svm);
+        while(rs.hasNext()) {
+            Record rec = rs.getNext();
             switch (rec.getSid()) {
-                case MergeCellsRecord.sid:
-                    // Some apps scatter these records between the rows/cells but they are supposed to
-                    // be well after the row/cell records.  It is assumed such rogue MergeCellRecords 
-                    // have already been collected by the caller, and can safely be ignored here. 
-                    // see bug 45699
-                    continue;
                 case RowRecord.sid:
                     insertRow((RowRecord) rec);
                     continue;
                 case DBCellRecord.sid:
                     // end of 'Row Block'.  Should only occur after cell records
+                    // ignore DBCELL records because POI generates them upon re-serialization
                     continue;
             }
             if (rec instanceof UnknownRecord) {
@@ -82,9 +85,8 @@ public final class RowRecordsAggregate extends RecordAggregate {
             if (!rec.isValue()) {
                 throw new RuntimeException("Unexpected record type (" + rec.getClass().getName() + ")");
             }
-            i += _valuesAgg.construct(recs, i, endIx, sfh)-1;
+            _valuesAgg.construct((CellValueRecordInterface)rec, rs, svm);
         }
-        "".length();
     }
     /**
      * Handles UnknownRecords which appear within the row/cell records
@@ -95,7 +97,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
         // 0x01C2 // several
         // 0x0034 // few
         // No documentation could be found for these
-        
+
         // keep the unknown records for re-serialization
         _unknownRecords.add(rec);
     }
@@ -147,7 +149,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
     {
         return _lastrow;
     }
-    
+
     /** Returns the number of row blocks.
      * <p/>The row blocks are goupings of rows that contain the DBCell record
      * after them
@@ -209,7 +211,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
       }
       return row.getRowNumber();
     }
-    
+
     private int visitRowRecordsForBlock(int blockIndex, RecordVisitor rv) {
         final int startIndex = blockIndex*DBCellRecord.BLOCK_SIZE;
         final int endIndex = startIndex + DBCellRecord.BLOCK_SIZE;
@@ -230,11 +232,11 @@ public final class RowRecordsAggregate extends RecordAggregate {
           rv.visitRecord(rec);
         }
         return result;
-      }
-    
+    }
+
     public void visitContainedRecords(RecordVisitor rv) {
-        ValueRecordsAggregate cells = _valuesAgg;
-       
+
+        PositionTrackingVisitor stv = new PositionTrackingVisitor(rv, 0);
         //DBCells are serialized before row records.
         final int blockCount = getRowBlockCount();
         for (int blockIndex = 0; blockIndex < blockCount; blockIndex++) {
@@ -251,8 +253,10 @@ public final class RowRecordsAggregate extends RecordAggregate {
             // Note: Cell references start from the second row...
             int cellRefOffset = (rowBlockSize - RowRecord.ENCODED_SIZE);
             for (int row = startRowNumber; row <= endRowNumber; row++) {
-                if (cells.rowHasCells(row)) {
-                    final int rowCellSize = cells.visitCellsForRow(row, rv);
+                if (_valuesAgg.rowHasCells(row)) {
+                    stv.setPosition(0);
+                    _valuesAgg.visitCellsForRow(row, stv);
+                    int rowCellSize = stv.getPosition();
                     pos += rowCellSize;
                     // Add the offset to the first cell for the row into the
                     // DBCellRecord.
@@ -273,8 +277,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
     public Iterator getIterator() {
         return _rowRecords.values().iterator();
     }
-    
-    
+
     public Iterator getAllRecordsIterator() {
         List result = new ArrayList(_rowRecords.size() * 2);
         result.addAll(_rowRecords.values());
@@ -498,5 +501,10 @@ public final class RowRecordsAggregate extends RecordAggregate {
     public void removeCell(CellValueRecordInterface cvRec) {
         _valuesAgg.removeCell(cvRec);
     }
+    public FormulaRecordAggregate createFormula(int row, int col) {
+        FormulaRecord fr = new FormulaRecord();
+        fr.setRow(row);
+        fr.setColumn((short) col);
+        return new FormulaRecordAggregate(fr, null, _sharedValueManager);
+    }
 }
-

@@ -15,13 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-/*
- * TestFormulaRecordAggregate.java
- *
- * Created on March 21, 2003, 12:32 AM
- */
-
 package org.apache.poi.hssf.record.aggregates;
+
+import junit.framework.TestCase;
+
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.StringRecord;
 
@@ -29,14 +26,13 @@ import org.apache.poi.hssf.record.StringRecord;
  *
  * @author  avik
  */
-public final class TestFormulaRecordAggregate extends junit.framework.TestCase {
+public final class TestFormulaRecordAggregate extends TestCase {
     
     public void testBasic() throws Exception {
         FormulaRecord f = new FormulaRecord();
         StringRecord s = new StringRecord();
         s.setString("abc");
-        FormulaRecordAggregate fagg = new FormulaRecordAggregate(f);
-        fagg.setStringRecord(s);
+        FormulaRecordAggregate fagg = new FormulaRecordAggregate(f, s, SharedValueManager.EMPTY);
         assertEquals("abc", fagg.getStringValue());
     }
 }
