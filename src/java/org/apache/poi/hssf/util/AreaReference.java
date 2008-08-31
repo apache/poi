@@ -20,8 +20,6 @@ package org.apache.poi.hssf.util;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import org.apache.poi.hssf.record.formula.AreaI;
-
 public final class AreaReference {
 
     /** The character (!) that separates sheet names from cell references */ 
@@ -211,18 +209,7 @@ public final class AreaReference {
         }
         return sb.toString();
     }
-    /**
-     * Formats a 2-D area as it would appear in a formula.  See formatAsString() (no-arg)
-     */
-    public static String formatAsString(AreaI area) {
-        CellReference topLeft = new CellReference(area.getFirstRow(),area.getFirstColumn(),!area.isFirstRowRelative(),!area.isFirstColRelative());
-        CellReference botRight = new CellReference(area.getLastRow(),area.getLastColumn(),!area.isLastRowRelative(),!area.isLastColRelative());
-        
-        if(isWholeColumnReference(topLeft, botRight)) {
-            return (new AreaReference(topLeft, botRight)).formatAsString();
-        }
-        return topLeft.formatAsString() + ":" + botRight.formatAsString(); 
-    }
+
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
         sb.append(getClass().getName()).append(" [");

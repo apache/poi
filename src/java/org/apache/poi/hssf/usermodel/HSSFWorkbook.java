@@ -925,35 +925,17 @@ public class HSSFWorkbook extends POIDocument
         Stack ptgs = new Stack();
 
         if (settingRowAndColumn) {
-            final int exprsSize = 2 * 11 + 1; // Area3DPtg.SIZE + UnionPtg.SIZE
+            final int exprsSize = 2 * 11 + 1; // 2 * Area3DPtg.SIZE + UnionPtg.SIZE
             ptgs.add(new MemFuncPtg(exprsSize));
         }
-        if (startColumn >= 0)
-        {
-            Area3DPtg colArea = new Area3DPtg();
-            colArea.setExternSheetIndex(externSheetIndex);
-            colArea.setFirstColumn((short)startColumn);
-            colArea.setLastColumn((short)endColumn);
-            colArea.setFirstRow(0);
-            colArea.setLastRow(MAX_ROW);
-            colArea.setFirstColRelative(false);
-            colArea.setLastColRelative(false);
-            colArea.setFirstRowRelative(false);
-            colArea.setLastRowRelative(false);
+        if (startColumn >= 0) {
+            Area3DPtg colArea = new Area3DPtg(0, MAX_ROW, startColumn, endColumn, 
+                    false, false, false, false, externSheetIndex);
             ptgs.add(colArea);
         }
-        if (startRow >= 0)
-        {
-            Area3DPtg rowArea = new Area3DPtg();
-            rowArea.setExternSheetIndex(externSheetIndex);
-            rowArea.setFirstColumn((short)0);
-            rowArea.setLastColumn(MAX_COLUMN);
-            rowArea.setFirstRow(startRow);
-            rowArea.setLastRow(endRow);
-            rowArea.setFirstColRelative(false);
-            rowArea.setLastColRelative(false);
-            rowArea.setFirstRowRelative(false);
-            rowArea.setLastRowRelative(false);
+        if (startRow >= 0) {
+            Area3DPtg rowArea = new Area3DPtg(startRow, endRow, 0, MAX_COLUMN, 
+                    false, false, false, false, externSheetIndex);
             ptgs.add(rowArea);
         }
         if (settingRowAndColumn)

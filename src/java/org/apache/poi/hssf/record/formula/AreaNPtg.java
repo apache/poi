@@ -23,7 +23,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * Specifies a rectangular area of cells A1:A4 for instance.
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class AreaNPtg extends AreaPtgBase {
+public final class AreaNPtg extends Area2DPtgBase {
 	public final static short sid = 0x2D;
 
 	public AreaNPtg(RecordInputStream in) {
