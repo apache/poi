@@ -40,21 +40,4 @@ public interface AreaI {
      * @return lastcolumn in the area
      */
     public int getLastColumn();
-    
-    /**
-     * @return isrelative first column to relative or not
-     */
-    public boolean isFirstColRelative();
-    /**
-     * @return lastcol relative or not
-     */
-    public boolean isLastColRelative();
-    /**
-     * @return whether or not the first row is a relative reference or not.
-     */
-    public boolean isFirstRowRelative();
-    /**
-     * @return last row relative or not
-     */
-    public boolean isLastRowRelative();
 }

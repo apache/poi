@@ -626,7 +626,7 @@ public final class NameRecord extends Record {
 	}
 
 	private Ptg createNewPtg(){
-		Ptg ptg = new Area3DPtg();
+		Ptg ptg = new Area3DPtg("A1", 0); // TODO - change to not be partially initialised
 		field_13_name_definition.push(ptg);
 
 		return ptg;
@@ -673,9 +673,7 @@ public final class NameRecord extends Record {
 
 			// Add the area reference(s) 
 			for(int i=0; i<refs.length; i++) {
-				ptg = new Area3DPtg();
-				((Area3DPtg) ptg).setExternSheetIndex(externSheetIndex);
-				((Area3DPtg) ptg).setArea(refs[i].formatAsString());
+				ptg = new Area3DPtg(refs[i].formatAsString(), externSheetIndex);
 				field_13_name_definition.push(ptg);
 				this.setDefinitionTextLength( (short)(getDefinitionLength() + ptg.getSize()) );
 			}
