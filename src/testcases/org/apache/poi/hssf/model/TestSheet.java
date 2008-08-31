@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.model;
 
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +24,6 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.eventmodel.ERFListener;
-import org.apache.poi.hssf.eventmodel.EventRecordFactory;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
@@ -46,6 +43,7 @@ import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.MergedCellsTable;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
+import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -88,15 +86,16 @@ public final class TestSheet extends TestCase {
         return result;
     }
 
-    private static final class MergedCellListener implements ERFListener {
+    private static final class MergedCellListener implements RecordVisitor {
 
         private int _count;
         public MergedCellListener() {
             _count = 0;
         }
-        public boolean processRecord(Record rec) {
-            _count++;
-            return true;
+        public void visitRecord(Record r) {
+            if (r instanceof MergeCellsRecord) {
+                _count++;
+            }
         }
         public int getCount() {
             return _count;
@@ -118,12 +117,8 @@ public final class TestSheet extends TestCase {
         assertTrue(sheet.getNumMergedRegions() == regionsToAdd);
 
         //test that the regions were spread out over the appropriate number of records
-        byte[] sheetData = new byte[sheet.getSize()];
-        sheet.serialize(0, sheetData);
         MergedCellListener mcListener = new MergedCellListener();
-        EventRecordFactory erf = new EventRecordFactory(mcListener, new short[] { MergeCellsRecord.sid, });
-//        POIFSFileSystem poifs = new POIFSFileSystem(new ByteArrayInputStream(sheetData));
-        erf.processRecords(new ByteArrayInputStream(sheetData));
+        sheet.visitContainedRecords(mcListener, 0);
         int recordsAdded    = mcListener.getCount();
         int recordsExpected = regionsToAdd/1027;
         if ((regionsToAdd % 1027) != 0)
@@ -416,6 +411,27 @@ public final class TestSheet extends TestCase {
         assertEquals(DEFAULT_IDX, xfindex);
     }
 
+    private static final class SizeCheckingRecordVisitor implements RecordVisitor {
+
+        private int _totalSize;
+        public SizeCheckingRecordVisitor() {
+            _totalSize = 0;
+        }
+        public void visitRecord(Record r) {
+
+            int estimatedSize=r.getRecordSize();
+            byte[] buf = new byte[estimatedSize];
+            int serializedSize = r.serialize(0, buf);
+            if (estimatedSize != serializedSize) {
+                throw new AssertionFailedError("serialized size mismatch for record (" 
+                        + r.getClass().getName() + ")");
+            }
+            _totalSize += estimatedSize;
+        }
+        public int getTotalSize() {
+            return _totalSize;
+        }
+    }
     /**
      * Prior to bug 45066, POI would get the estimated sheet size wrong
      * when an <tt>UncalcedRecord</tt> was present.<p/>
@@ -429,13 +445,13 @@ public final class TestSheet extends TestCase {
         records.add(createWindow2Record());
         records.add(EOFRecord.instance);
         Sheet sheet = Sheet.createSheet(records, 0, 0);
-
-        int estimatedSize = sheet.getSize();
-        int serializedSize = sheet.serialize(0, new byte[estimatedSize]);
-        if (serializedSize != estimatedSize) {
-            throw new AssertionFailedError("Identified bug 45066 b");
-        }
-        assertEquals(90, serializedSize);
+        
+        // The original bug was due to different logic for collecting records for sizing and 
+        // serialization. The code has since been refactored into a single method for visiting
+        // all contained records.  Now this test is much less interesting
+        SizeCheckingRecordVisitor scrv = new SizeCheckingRecordVisitor();
+        sheet.visitContainedRecords(scrv, 0);
+        assertEquals(90, scrv.getTotalSize());
     }
 
     /**
@@ -479,30 +495,30 @@ public final class TestSheet extends TestCase {
      * That value is found on the IndexRecord.
      */
     private static int getDbCellRecordPos(Sheet sheet) {
-        int size = sheet.getSize();
-        byte[] data = new byte[size];
-        sheet.serialize(0, data);
 
         MyIndexRecordListener myIndexListener = new MyIndexRecordListener();
-        EventRecordFactory erf = new EventRecordFactory(myIndexListener, new short[] { IndexRecord.sid, });
-        erf.processRecords(new ByteArrayInputStream(data));
+        sheet.visitContainedRecords(myIndexListener, 0);
         IndexRecord indexRecord = myIndexListener.getIndexRecord();
         int dbCellRecordPos = indexRecord.getDbcellAt(0);
         return dbCellRecordPos;
     }
 
-    private static final class MyIndexRecordListener implements ERFListener {
+    private static final class MyIndexRecordListener implements RecordVisitor {
 
         private IndexRecord _indexRecord;
         public MyIndexRecordListener() {
             // no-arg constructor
         }
-        public boolean processRecord(Record rec) {
-            _indexRecord = (IndexRecord)rec;
-            return true;
-        }
         public IndexRecord getIndexRecord() {
             return _indexRecord;
+        }
+        public void visitRecord(Record r) {
+            if (r instanceof IndexRecord) {
+                if (_indexRecord != null) {
+                    throw new RuntimeException("too many index records");
+                }
+                _indexRecord = (IndexRecord)r;
+            }
         }
     }
     
