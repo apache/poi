@@ -235,29 +235,20 @@ public final class Area3DPtg extends OperandPtg implements AreaI {
 		field_5_last_column = colRelative.setBoolean( field_5_last_column, rel );
 	}
 
-
-	/*public String getArea(){
-		RangeAddress ra = new RangeAddress( getFirstColumn(),getFirstRow() + 1, getLastColumn(), getLastRow() + 1);
-		String result = ra.getAddress();
-
-		return result;
-	}*/
-
-	public void setArea( String ref )
-	{
+	public void setArea( String ref ) {
 		AreaReference ar = new AreaReference( ref );
 		
 		CellReference frstCell = ar.getFirstCell();
 		CellReference lastCell = ar.getLastCell();
 
-		setFirstRow(	(short) frstCell.getRow() );
-		setFirstColumn(		 frstCell.getCol() );
-		setLastRow(	 (short) lastCell.getRow() );
-		setLastColumn(		  lastCell.getCol() );
-		setFirstColRelative( !frstCell.isColAbsolute() );
-		setLastColRelative(  !lastCell.isColAbsolute() );
-		setFirstRowRelative( !frstCell.isRowAbsolute() );
-		setLastRowRelative(  !lastCell.isRowAbsolute() );
+		setFirstRow(frstCell.getRow());
+		setFirstColumn(frstCell.getCol());
+		setLastRow(lastCell.getRow());
+		setLastColumn(lastCell.getCol());
+		setFirstColRelative(!frstCell.isColAbsolute());
+		setLastColRelative(!lastCell.isColAbsolute());
+		setFirstRowRelative(!frstCell.isRowAbsolute());
+		setLastRowRelative(!lastCell.isRowAbsolute());
 	}
 
 	/**
