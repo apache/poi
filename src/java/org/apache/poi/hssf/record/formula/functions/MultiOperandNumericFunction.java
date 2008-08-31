@@ -126,30 +126,34 @@ public abstract class MultiOperandNumericFunction extends NumericFunction {
         
         if (operand instanceof AreaEval) {
             AreaEval ae = (AreaEval) operand;
-            ValueEval[] values = ae.getValues();
             DoubleList retval = new DoubleList();
-            for (int j=0, jSize=values.length; j<jSize; j++) {
-                /*
-                 * TODO: For an AreaEval, we are constructing a RefEval
-                 * per element.
-                 * For now this is a tempfix solution since this may
-                 * require a more generic fix at the level of
-                 * HSSFFormulaEvaluator where we store an array
-                 * of RefEvals as the "values" array. 
-                 */
-                RefEval re = new Ref2DEval(null, values[j]);
-                ValueEval ve = singleOperandEvaluate(re, srcRow, srcCol);
-                
-                if (ve instanceof NumericValueEval) {
-                    NumericValueEval nve = (NumericValueEval) ve;
-                    retval.add(nve.getNumberValue());
-                }
-                else if (ve instanceof BlankEval) {
-                    // note - blanks are ignored, so returned array will be smaller.
-                } 
-                else {
-                    return null; // indicate to calling subclass that error occurred
-                }
+            int width = ae.getWidth();
+    		int height = ae.getHeight();
+    		for (int rrIx=0; rrIx<height; rrIx++) {
+    			for (int rcIx=0; rcIx<width; rcIx++) {
+    				ValueEval ve1 = ae.getRelativeValue(rrIx, rcIx);
+                     /*
+                     * TODO: For an AreaEval, we are constructing a RefEval
+                     * per element.
+                     * For now this is a tempfix solution since this may
+                     * require a more generic fix at the level of
+                     * HSSFFormulaEvaluator where we store an array
+                     * of RefEvals as the "values" array. 
+                     */
+                    RefEval re = new Ref2DEval(null, ve1);
+                    ValueEval ve = singleOperandEvaluate(re, srcRow, srcCol);
+                    
+                    if (ve instanceof NumericValueEval) {
+                        NumericValueEval nve = (NumericValueEval) ve;
+                        retval.add(nve.getNumberValue());
+                    }
+                    else if (ve instanceof BlankEval) {
+                        // note - blanks are ignored, so returned array will be smaller.
+                    } 
+                    else {
+                        return null; // indicate to calling subclass that error occurred
+                    }
+    			}
             }
             return retval.toArray();
         }

@@ -77,11 +77,6 @@ abstract class AreaEvalBase implements AreaEval {
 		return _lastRow;
 	}
 
-	public final ValueEval[] getValues() {
-		// TODO - clone() - but some junits rely on not cloning at the moment
-		return _values;
-	}
-
 	public final ValueEval getValueAt(int row, int col) {
 		int rowOffsetIx = row - _firstRow;
 		int colOffsetIx = col - _firstColumn;
