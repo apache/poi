@@ -17,12 +17,10 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
-import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.SharedFormulaRecord;
+import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.StringRecord;
-import org.apache.poi.hssf.record.TableRecord;
 
 /**
  * The formula record aggregate is used to join together the formula record and it's
@@ -33,35 +31,29 @@ import org.apache.poi.hssf.record.TableRecord;
 public final class FormulaRecordAggregate extends RecordAggregate implements CellValueRecordInterface {
 
     private final FormulaRecord _formulaRecord;
+    private SharedValueManager _sharedValueManager;
     /** caches the calculated result of the formula */
     private StringRecord _stringRecord;
-    private TableRecord _tableRecord;
     
-    public FormulaRecordAggregate(FormulaRecord formulaRecord) {
-        _formulaRecord = formulaRecord;
-        _stringRecord = null;
-    }
-    public FormulaRecordAggregate(FormulaRecord formulaRecord, RecordStream rs) {
-        _formulaRecord = formulaRecord;
-        Class nextClass = rs.peekNextClass();
-        if (nextClass == SharedFormulaRecord.class) {
-            // For (text) shared formulas, the SharedFormulaRecord comes before the StringRecord.
-            // In any case it is OK to skip SharedFormulaRecords because they were collected 
-            // before constructing the ValueRecordsAggregate.
-            rs.getNext(); // skip the shared formula record
-            nextClass = rs.peekNextClass();
+    /**
+     * @param stringRec may be <code>null</code> if this formula does not have a cached text 
+     * value.
+     * @param svm the {@link SharedValueManager} for the current sheet
+     */
+    public FormulaRecordAggregate(FormulaRecord formulaRec, StringRecord stringRec, SharedValueManager svm) {
+        if (svm == null) {
+            throw new IllegalArgumentException("sfm must not be null");
         }
-        if (nextClass == StringRecord.class) {
-            _stringRecord = (StringRecord) rs.getNext();
-        } else if (nextClass == TableRecord.class) {
-            _tableRecord = (TableRecord) rs.getNext();
+        if (formulaRec.isSharedFormula()) {
+            svm.convertSharedFormulaRecord(formulaRec);
         }
+        _formulaRecord = formulaRec;
+        _sharedValueManager = svm;
+        _stringRecord = stringRec;
     }
 
     public void setStringRecord(StringRecord stringRecord) {
         _stringRecord = stringRecord;
-        _tableRecord = null; // probably can't have both present at the same time
-        // TODO - establish rules governing when each of these sub records may exist
     }
     
     public FormulaRecord getFormulaRecord() {
@@ -102,12 +94,13 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
    
     public void visitContainedRecords(RecordVisitor rv) {
          rv.visitRecord(_formulaRecord);
+         Record sharedFormulaRecord = _sharedValueManager.getRecordForFirstCell(_formulaRecord);
+         if (sharedFormulaRecord != null) {
+             rv.visitRecord(sharedFormulaRecord);
+         }
          if (_stringRecord != null) {
              rv.visitRecord(_stringRecord);
          }
-         if (_tableRecord != null) {
-             rv.visitRecord(_tableRecord);
-        }
     }
    
     public String getStringValue() {

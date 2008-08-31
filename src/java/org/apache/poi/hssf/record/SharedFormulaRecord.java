@@ -22,7 +22,6 @@ import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RefNPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
-import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.util.HexDump;
 
 /**
@@ -36,59 +35,31 @@ import org.apache.poi.util.HexDump;
  * record types.
  * @author Danny Mui at apache dot org
  */
-public final class SharedFormulaRecord extends Record {
+public final class SharedFormulaRecord extends SharedValueRecordBase {
     public final static short   sid = 0x04BC;
 
-    private CellRangeAddress8Bit _range;
     private int field_5_reserved;
     private Ptg[] field_7_parsed_expr;
 
     public SharedFormulaRecord() {
-    	_range = new CellRangeAddress8Bit(0, 0, 0, 0);
-    	field_7_parsed_expr = Ptg.EMPTY_PTG_ARRAY;
+        field_7_parsed_expr = Ptg.EMPTY_PTG_ARRAY;
     }
 
     /**
      * @param in the RecordInputstream to read the record from
      */
     public SharedFormulaRecord(RecordInputStream in) {
-          super(in);
+        super(in);
+        field_5_reserved        = in.readShort();
+        int field_6_expression_len = in.readShort();
+        field_7_parsed_expr = Ptg.readTokens(field_6_expression_len, in);
     }
-
-    protected void validateSid(short id) {
-        if (id != this.sid) {
-            throw new RecordFormatException("Not a valid SharedFormula");
-        }
-    }
-
-    public int getFirstRow() {
-      return _range.getFirstRow();
-    }
-
-    public int getLastRow() {
-      return _range.getLastRow();
-    }
-
-    public short getFirstColumn() {
-      return (short) _range.getFirstColumn();
-    }
-
-    public short getLastColumn() {
-      return (short) _range.getLastColumn();
-    }
-
-    /**
-     * spit the record out AS IS.  no interpretation or identification
-     */
-
-    public int serialize(int offset, byte [] data)
-    {
+    protected void serializeExtraData(int offset, byte[] data) {
         //Because this record is converted to individual Formula records, this method is not required.
         throw new UnsupportedOperationException("Cannot serialize a SharedFormulaRecord");
     }
-
-    public int getRecordSize()
-    {
+    
+    protected int getExtraDataSize() {
         //Because this record is converted to individual Formula records, this method is not required.
         throw new UnsupportedOperationException("Cannot get the size for a SharedFormulaRecord");
 
@@ -103,12 +74,13 @@ public final class SharedFormulaRecord extends Record {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[SHARED FORMULA (").append(HexDump.intToHex(sid)).append("]\n");
-        buffer.append("    .range      = ").append(_range.toString()).append("\n");
+        buffer.append("    .range      = ").append(getRange().toString()).append("\n");
         buffer.append("    .reserved    = ").append(HexDump.shortToHex(field_5_reserved)).append("\n");
 
         for (int k = 0; k < field_7_parsed_expr.length; k++ ) {
            buffer.append("Formula[").append(k).append("]");
-           buffer.append(field_7_parsed_expr[k].toString()).append("\n");
+           Ptg ptg = field_7_parsed_expr[k];
+           buffer.append(ptg.toString()).append(ptg.getRVAType()).append("\n");
         }
 
         buffer.append("[/SHARED FORMULA]\n");
@@ -117,23 +89,6 @@ public final class SharedFormulaRecord extends Record {
 
     public short getSid() {
         return sid;
-    }
-
-    protected void fillFields(RecordInputStream in) {
-        _range = new CellRangeAddress8Bit(in);
-        field_5_reserved        = in.readShort();
-        int field_6_expression_len = in.readShort();
-        field_7_parsed_expr = Ptg.readTokens(field_6_expression_len, in);
-    }
-
-    /**
-     * Are we shared by the supplied formula record?
-     */
-    public boolean isFormulaInShared(FormulaRecord formula) {
-      final int formulaRow = formula.getRow();
-      final int formulaColumn = formula.getColumn();
-      return ((getFirstRow() <= formulaRow) && (getLastRow() >= formulaRow) &&
-          (getFirstColumn() <= formulaColumn) && (getLastColumn() >= formulaColumn));
     }
 
     /**
@@ -176,9 +131,9 @@ public final class SharedFormulaRecord extends Record {
                                 areaNPtg.isFirstColRelative(),
                                 areaNPtg.isLastColRelative());
             } else {
-            	if (false) {// do we need a ptg clone here?
-            		ptg = ptg.copy();
-            	}
+                if (false) {// do we need a ptg clone here?
+                    ptg = ptg.copy();
+                }
             }
             if (!ptg.isBaseToken()) {
                 ptg.setClass(originalOperandClass);
@@ -194,12 +149,12 @@ public final class SharedFormulaRecord extends Record {
      * counter part
      */
     public void convertSharedFormulaRecord(FormulaRecord formula) {
-      //Sanity checks
-        if (!isFormulaInShared(formula)) {
+        int formulaRow = formula.getRow();
+        int formulaColumn = formula.getColumn();
+        //Sanity checks
+        if (!isInRange(formulaRow, formulaColumn)) {
             throw new RuntimeException("Shared Formula Conversion: Coding Error");
         }
-        final int formulaRow = formula.getRow();
-        final int formulaColumn = formula.getColumn();
 
         Ptg[] ptgs = convertSharedFormulas(field_7_parsed_expr, formulaRow, formulaColumn);
         formula.setParsedExpression(ptgs);
@@ -222,22 +177,6 @@ public final class SharedFormulaRecord extends Record {
         }
         return row;
     }
-
-    /**
-     * Mirroring formula records so it is registered in the ValueRecordsAggregate
-     */
-    public boolean isInValueSection()
-    {
-         return true;
-    }
-
-
-     /**
-      * Register it in the ValueRecordsAggregate so it can go into the FormulaRecordAggregate
-      */
-     public boolean isValue() {
-         return true;
-     }
 
     public Object clone() {
         //Because this record is converted to individual Formula records, this method is not required.

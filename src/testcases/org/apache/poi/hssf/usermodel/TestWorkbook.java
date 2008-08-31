@@ -17,23 +17,19 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Iterator;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.eventmodel.ERFListener;
-import org.apache.poi.hssf.eventmodel.EventRecordFactory;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.BackupRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
+import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.Region;
@@ -73,10 +69,7 @@ public final class TestWorkbook extends TestCase {
      *             HSSFSheet last row or first row is incorrect.             <P>
      *
      */
-
-    public void testWriteSheetSimple()
-        throws IOException
-    {
+    public void testWriteSheetSimple() throws IOException {
         File             file = TempFile.createTempFile("testWriteSheetSimple",
                                                     ".xls");
         FileOutputStream out  = new FileOutputStream(file);
@@ -85,13 +78,10 @@ public final class TestWorkbook extends TestCase {
         HSSFRow          r    = null;
         HSSFCell         c    = null;
 
-        for (short rownum = ( short ) 0; rownum < 100; rownum++)
-        {
+        for (int rownum = 0; rownum < 100; rownum++) {
             r = s.createRow(rownum);
 
-            // r.setRowNum(( short ) rownum);
-            for (short cellnum = ( short ) 0; cellnum < 50; cellnum += 2)
-            {
+            for (int cellnum = 0; cellnum < 50; cellnum += 2) {
                 c = r.createCell(cellnum);
                 c.setCellValue(rownum * 10000 + cellnum
                                + ((( double ) rownum / 1000)
@@ -105,8 +95,6 @@ public final class TestWorkbook extends TestCase {
         sanityChecker.checkHSSFWorkbook(wb);
         assertEquals("LAST ROW == 99", 99, s.getLastRowNum());
         assertEquals("FIRST ROW == 0", 0, s.getFirstRowNum());
-
-        // assert((s.getLastRowNum() == 99));
     }
 
     /**
@@ -131,13 +119,10 @@ public final class TestWorkbook extends TestCase {
         HSSFRow          r    = null;
         HSSFCell         c    = null;
 
-        for (short rownum = ( short ) 0; rownum < 100; rownum++)
-        {
+        for (int rownum = 0; rownum < 100; rownum++) {
             r = s.createRow(rownum);
 
-            // r.setRowNum(( short ) rownum);
-            for (short cellnum = ( short ) 0; cellnum < 50; cellnum += 2)
-            {
+            for (int cellnum = 0; cellnum < 50; cellnum += 2) {
                 c = r.createCell(cellnum);
                 c.setCellValue(rownum * 10000 + cellnum
                                + ((( double ) rownum / 1000)
@@ -146,13 +131,11 @@ public final class TestWorkbook extends TestCase {
                 c.setCellValue(new HSSFRichTextString("TEST"));
             }
         }
-        for (short rownum = ( short ) 0; rownum < 25; rownum++)
-        {
+        for (int rownum = 0; rownum < 25; rownum++) {
             r = s.getRow(rownum);
             s.removeRow(r);
         }
-        for (short rownum = ( short ) 75; rownum < 100; rownum++)
-        {
+        for (int rownum = 75; rownum < 100; rownum++) {
             r = s.getRow(rownum);
             s.removeRow(r);
         }
@@ -429,12 +412,10 @@ public final class TestWorkbook extends TestCase {
         HSSFWorkbook     wb   = new HSSFWorkbook();
         HSSFSheet        s    = wb.createSheet();
 
-        for (short rownum = ( short ) 0; rownum < 100; rownum++)
-        {
+        for (int rownum = 0; rownum < 100; rownum++) {
             HSSFRow r = s.createRow(rownum);
 
-            for (short cellnum = ( short ) 0; cellnum < 50; cellnum += 2)
-            {
+            for (int cellnum = 0; cellnum < 50; cellnum += 2) {
                 HSSFCell c = r.createCell(cellnum);
                 c.setCellValue(rownum * 10000 + cellnum
                                + ((( double ) rownum / 1000)
@@ -466,13 +447,10 @@ public final class TestWorkbook extends TestCase {
     /**
      * Test the backup field gets set as expected.
      */
-
-    public void testBackupRecord()
-        throws Exception
-    {
-        HSSFWorkbook wb       = new HSSFWorkbook();
-        wb.createSheet();
-        Workbook     workbook = wb.getWorkbook();
+    public void testBackupRecord() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+		wb.createSheet();
+		Workbook workbook = wb.getWorkbook();
         BackupRecord record   = workbook.getBackupRecord();
 
         assertEquals(0, record.getBackup());
@@ -480,7 +458,7 @@ public final class TestWorkbook extends TestCase {
         assertEquals(1, record.getBackup());
     }
 
-    private static final class RecordCounter implements ERFListener {
+    private static final class RecordCounter implements RecordVisitor {
         private int _count;
 
         public RecordCounter() {
@@ -489,9 +467,10 @@ public final class TestWorkbook extends TestCase {
         public int getCount() {
             return _count;
         }
-        public boolean processRecord(Record rec) {
-            _count++;
-            return true;
+        public void visitRecord(Record r) {
+            if (r instanceof LabelSSTRecord) {
+                _count++;
+            }
         }
     }
     
@@ -500,9 +479,7 @@ public final class TestWorkbook extends TestCase {
      *
      * We need to make sure only one LabelSSTRecord is produced.
      */
-    public void testRepeatingBug()
-        throws Exception
-    {
+    public void testRepeatingBug() {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet    sheet    = workbook.createSheet("Design Variants");
         HSSFRow      row      = sheet.createRow(2);
@@ -511,12 +488,8 @@ public final class TestWorkbook extends TestCase {
         cell.setCellValue(new HSSFRichTextString("Class"));
         cell = row.createCell(2);
 
-        byte[] data = new byte[sheet.getSheet().getSize()];
-        sheet.getSheet().serialize(0, data);
         RecordCounter rc = new RecordCounter();
-        EventRecordFactory erf = new EventRecordFactory(rc, new short[] { LabelSSTRecord.sid, });
-        erf.processRecords(new ByteArrayInputStream(data));
-        
+        sheet.getSheet().visitContainedRecords(rc, 0);
         assertEquals(1, rc.getCount());
     }
 

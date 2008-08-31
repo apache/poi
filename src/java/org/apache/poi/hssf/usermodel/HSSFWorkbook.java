@@ -51,6 +51,7 @@ import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.record.SSTRecord;
 import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
@@ -109,7 +110,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      */
 
     private ArrayList names;
-    
+
     /**
      * this holds the HSSFFont objects attached to this workbook.
      * We only create these from the low level records as required.
@@ -129,7 +130,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * someplace else.
      */
     private HSSFDataFormat formatter;
-    
+
     /**
      * The policy to apply in the event of missing or
      *  blank cells when fetching from a row.
@@ -380,7 +381,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     /**
      * Sets the policy on what to do when
      *  getting missing or blank cells from a row.
-     * This will then apply to all calls to 
+     * This will then apply to all calls to
      *  {@link HSSFRow.getCell()}. See
      *  {@link MissingCellPolicy}
      */
@@ -403,17 +404,17 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     private void validateSheetIndex(int index) {
         int lastSheetIx = _sheets.size() - 1;
         if (index < 0 || index > lastSheetIx) {
-            throw new IllegalArgumentException("Sheet index (" 
+            throw new IllegalArgumentException("Sheet index ("
                     + index +") is out of range (0.." +    lastSheetIx + ")");
         }
     }
-    
+
     /**
      * Selects a single sheet. This may be different to
-     * the 'active' sheet (which is the sheet with focus).  
+     * the 'active' sheet (which is the sheet with focus).
      */
     public void setSelectedTab(int index) {
-        
+
         validateSheetIndex(index);
         int nSheets = _sheets.size();
         for (int i=0; i<nSheets; i++) {
@@ -429,7 +430,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         setSelectedTab((int)index);
     }
     public void setSelectedTabs(int[] indexes) {
-        
+
         for (int i = 0; i < indexes.length; i++) {
             validateSheetIndex(indexes[i]);
         }
@@ -441,7 +442,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
                     bSelect = true;
                     break;
                 }
-                
+
             }
                getSheetAt(i).setSelected(bSelect);
         }
@@ -453,7 +454,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * 'Selected' sheet(s) is a distinct concept.
      */
     public void setActiveSheet(int index) {
-        
+
         validateSheetIndex(index);
         int nSheets = _sheets.size();
         for (int i=0; i<nSheets; i++) {
@@ -474,13 +475,13 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     }
     /**
      * deprecated May 2008
-     * @deprecated - Misleading name - use getActiveSheetIndex() 
+     * @deprecated - Misleading name - use getActiveSheetIndex()
      */
     public short getSelectedTab() {
         return (short) getActiveSheetIndex();
     }
 
-    
+
     /**
      * sets the first tab that is displayed in the list of tabs
      * in excel.
@@ -491,7 +492,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     }
     /**
      * deprecated May 2008
-     * @deprecated - Misleading name - use setFirstVisibleTab() 
+     * @deprecated - Misleading name - use setFirstVisibleTab()
      */
     public void setDisplayedTab(short index) {
        setFirstVisibleTab(index);
@@ -505,7 +506,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     }
     /**
      * deprecated May 2008
-     * @deprecated - Misleading name - use getFirstVisibleTab() 
+     * @deprecated - Misleading name - use getFirstVisibleTab()
      */
     public short getDisplayedTab() {
         return (short) getFirstVisibleTab();
@@ -698,7 +699,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     /**
      * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and
      * returns the high level representation. Use this to create new sheets.
-     * 
+     *
      * @param sheetname
      *            sheetname to set for the sheet.
      * @return HSSFSheet representing the new sheet.
@@ -781,16 +782,16 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
     /**
      * Removes sheet at the given index.<p/>
-     * 
-     * Care must be taken if the removed sheet is the currently active or only selected sheet in 
-     * the workbook. There are a few situations when Excel must have a selection and/or active 
+     *
+     * Care must be taken if the removed sheet is the currently active or only selected sheet in
+     * the workbook. There are a few situations when Excel must have a selection and/or active
      * sheet. (For example when printing - see Bug 40414).<br/>
-     * 
+     *
      * This method makes sure that if the removed sheet was active, another sheet will become
      * active in its place.  Furthermore, if the removed sheet was the only selected sheet, another
-     * sheet will become selected.  The newly active/selected sheet will have the same index, or 
+     * sheet will become selected.  The newly active/selected sheet will have the same index, or
      * one less if the removed sheet was the last in the workbook.
-     * 
+     *
      * @param index of the sheet  (0-based)
      */
     public void removeSheetAt(int index) {
@@ -1023,7 +1024,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         if(fontindex == Short.MAX_VALUE){
             throw new IllegalArgumentException("Maximum number of fonts was exceeded");
         }
-        
+
         // Ask getFontAt() to build it for us,
         //  so it gets properly cached
         return getFontAt(fontindex);
@@ -1039,7 +1040,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         for (short i=0; i<=getNumberOfFonts(); i++) {
             // Remember - there is no 4!
             if(i == 4) continue;
-            
+
             HSSFFont hssfFont = getFontAt(i);
             if (hssfFont.getBoldweight() == boldWeight
                     && hssfFont.getColor() == color
@@ -1089,7 +1090,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
         return retval;
     }
-    
+
     /**
      * Reset the fonts cache, causing all new calls
      *  to getFontAt() to create new objects.
@@ -1180,6 +1181,37 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     }
 
     /**
+     * Totals the sizes of all sheet records and eventually serializes them
+     */
+    private static final class SheetRecordCollector implements RecordVisitor {
+
+        private List _list;
+        private int _totalSize;
+
+        public SheetRecordCollector() {
+            _totalSize = 0;
+            _list = new ArrayList(128);
+        }
+        public int getTotalSize() {
+            return _totalSize;
+        }
+        public void visitRecord(Record r) {
+            _list.add(r);
+            _totalSize+=r.getRecordSize();
+        }
+        public int serialize(int offset, byte[] data) {
+            int result = 0;
+            int nRecs = _list.size();
+            for(int i=0; i<nRecs; i++) {
+                Record rec = (Record)_list.get(i);
+                result += rec.serialize(offset + result, data);
+            }
+            return result;
+        }
+    }
+
+
+    /**
      * Method getBytes - get the bytes of just the HSSF portions of the XLS file.
      * Use this to construct a POI POIFSFileSystem yourself.
      *
@@ -1190,13 +1222,11 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * @see org.apache.poi.hssf.model.Workbook
      * @see org.apache.poi.hssf.model.Sheet
      */
-
-    public byte[] getBytes()
-    {
+    public byte[] getBytes() {
         if (log.check( POILogger.DEBUG )) {
             log.log(DEBUG, "HSSFWorkbook.getBytes()");
         }
-        
+
         HSSFSheet[] sheets = getSheets();
         int nSheets = sheets.length;
 
@@ -1209,26 +1239,27 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         int totalsize = workbook.getSize();
 
         // pre-calculate all the sheet sizes and set BOF indexes
-        int[] estimatedSheetSizes = new int[nSheets];
+        SheetRecordCollector[] srCollectors = new SheetRecordCollector[nSheets];
         for (int k = 0; k < nSheets; k++) {
             workbook.setSheetBof(k, totalsize);
-            int sheetSize = sheets[k].getSheet().getSize();
-            estimatedSheetSizes[k] = sheetSize;
-            totalsize += sheetSize;
+            SheetRecordCollector src = new SheetRecordCollector();
+            sheets[k].getSheet().visitContainedRecords(src, totalsize);
+            totalsize += src.getTotalSize();
+            srCollectors[k] = src;
         }
-
 
         byte[] retval = new byte[totalsize];
         int pos = workbook.serialize(0, retval);
 
         for (int k = 0; k < nSheets; k++) {
-            int serializedSize = sheets[k].getSheet().serialize(pos, retval);
-            if (serializedSize != estimatedSheetSizes[k]) {
+            SheetRecordCollector src = srCollectors[k];
+            int serializedSize = src.serialize(pos, retval);
+            if (serializedSize != src.getTotalSize()) {
                 // Wrong offset values have been passed in the call to setSheetBof() above.
-                // For books with more than one sheet, this discrepancy would cause excel 
+                // For books with more than one sheet, this discrepancy would cause excel
                 // to report errors and loose data while reading the workbook
-                throw new IllegalStateException("Actual serialized sheet size (" + serializedSize 
-                        + ") differs from pre-calculated size (" + estimatedSheetSizes[k] 
+                throw new IllegalStateException("Actual serialized sheet size (" + serializedSize
+                        + ") differs from pre-calculated size (" + src.getTotalSize()
                         + ") for sheet (" + k + ")");
                 // TODO - add similar sanity check to ensure that Sheet.serializeIndexRecord() does not write mis-aligned offsets either
             }
@@ -1671,11 +1702,11 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     }
 
     /**
-     * Note - This method should only used by POI internally.  
+     * Note - This method should only used by POI internally.
      * It may get deleted or change definition in future POI versions
      */
-	public NameXPtg getNameXPtg(String name) {
-		return workbook.getNameXPtg(name);		
-	}
+    public NameXPtg getNameXPtg(String name) {
+        return workbook.getNameXPtg(name);
+    }
 
 }

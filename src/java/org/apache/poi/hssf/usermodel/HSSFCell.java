@@ -292,23 +292,20 @@ public class HSSFCell implements Cell {
         {
 
             case CELL_TYPE_FORMULA :
-                FormulaRecordAggregate frec = null;
+                FormulaRecordAggregate frec;
 
-                if (cellType != this.cellType)
-                {
-                    frec = new FormulaRecordAggregate(new FormulaRecord());
+                if (cellType != this.cellType) {
+                    frec = sheet.createFormula(row, col);
+                } else {
+                    frec = (FormulaRecordAggregate) record;
+                    frec.setRow(row);
+                    frec.setColumn(col);
                 }
-                else
-                {
-                    frec = ( FormulaRecordAggregate ) record;
-                }
-                frec.setColumn(col);
                 if (setValue)
                 {
                     frec.getFormulaRecord().setValue(getNumericCellValue());
                 }
                 frec.setXFIndex(styleIndex);
-                frec.setRow(row);
                 record = frec;
                 break;
 

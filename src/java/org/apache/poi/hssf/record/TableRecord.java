@@ -34,19 +34,15 @@ import org.apache.poi.util.LittleEndian;
  *
  * See p536 of the June 08 binary docs
  */
-public final class TableRecord extends Record {
+public final class TableRecord extends SharedValueRecordBase {
 	public static final short sid = 0x0236;
 
 	private static final BitField alwaysCalc      = BitFieldFactory.getInstance(0x0001);
-	private static final BitField reserved1       = BitFieldFactory.getInstance(0x0002);
+	private static final BitField calcOnOpen      = BitFieldFactory.getInstance(0x0002);
 	private static final BitField rowOrColInpCell = BitFieldFactory.getInstance(0x0004);
 	private static final BitField oneOrTwoVar     = BitFieldFactory.getInstance(0x0008);
 	private static final BitField rowDeleted      = BitFieldFactory.getInstance(0x0010);
 	private static final BitField colDeleted      = BitFieldFactory.getInstance(0x0020);
-	private static final BitField reserved2       = BitFieldFactory.getInstance(0x0040);
-	private static final BitField reserved3       = BitFieldFactory.getInstance(0x0080);
-
-	private CellRangeAddress8Bit _range;
 
 	private int field_5_flags;
 	private int field_6_res;
@@ -55,9 +51,8 @@ public final class TableRecord extends Record {
 	private int field_9_rowInputCol;
 	private int field_10_colInputCol;
 
-
-	protected void fillFields(RecordInputStream in) {
-		_range = new CellRangeAddress8Bit(in);
+	public TableRecord(RecordInputStream in) {
+		super(in);
 		field_5_flags        = in.readByte();
 		field_6_res          = in.readByte();
 		field_7_rowInputRow  = in.readShort();
@@ -66,16 +61,9 @@ public final class TableRecord extends Record {
 		field_10_colInputCol = in.readShort();
 	}
 
-	public TableRecord(RecordInputStream in) {
-		super(in);
-	}
 	public TableRecord(CellRangeAddress8Bit range) {
-		_range = range;
+		super(range);
 		field_6_res = 0;
-	}
-
-	public CellRangeAddress8Bit getRange() {
-		return _range;
 	}
 
 	public int getFlags() {
@@ -153,43 +141,24 @@ public final class TableRecord extends Record {
 	public short getSid() {
 		return sid;
 	}
-
-	public int serialize(int offset, byte[] data) {
-		int dataSize = getDataSize();
-		LittleEndian.putShort(data, 0 + offset, sid);
-		LittleEndian.putUShort(data, 2 + offset, dataSize);
-
-		_range.serialize(4 + offset, data);
-		LittleEndian.putByte(data, 10 + offset, field_5_flags);
-		LittleEndian.putByte(data, 11 + offset, field_6_res);
-		LittleEndian.putUShort(data, 12 + offset, field_7_rowInputRow);
-		LittleEndian.putUShort(data, 14 + offset, field_8_colInputRow);
-		LittleEndian.putUShort(data, 16 + offset, field_9_rowInputCol);
-		LittleEndian.putUShort(data, 18 + offset, field_10_colInputCol);
-
-		return 4 + dataSize;
+	protected int getExtraDataSize() {
+		return 
+		2 // 2 byte fields
+		+ 8; // 4 short fields
 	}
-	private int getDataSize() {
-		return CellRangeAddress8Bit.ENCODED_SIZE
-			+ 2 // 2 byte fields
-			+ 8; // 4 short fields
-	}
-
-	public int getRecordSize() {
-		return 4+getDataSize();
-	}
-
-	protected void validateSid(short id) {
-		if (id != sid)
-		{
-			throw new RecordFormatException("NOT A TABLE RECORD");
-		}
+	protected void serializeExtraData(int offset, byte[] data) {
+		LittleEndian.putByte(data, 0 + offset, field_5_flags);
+		LittleEndian.putByte(data, 1 + offset, field_6_res);
+		LittleEndian.putUShort(data, 2 + offset, field_7_rowInputRow);
+		LittleEndian.putUShort(data, 4 + offset, field_8_colInputRow);
+		LittleEndian.putUShort(data, 6 + offset, field_9_rowInputCol);
+		LittleEndian.putUShort(data, 8 + offset, field_10_colInputCol);
 	}
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("[TABLE]\n");
-		buffer.append("    .range    = ").append(_range.toString()).append("\n");
+		buffer.append("    .range    = ").append(getRange().toString()).append("\n");
 		buffer.append("    .flags    = ") .append(HexDump.byteToHex(field_5_flags)).append("\n");
 		buffer.append("    .alwaysClc= ").append(isAlwaysCalc()).append("\n");
 		buffer.append("    .reserved = ").append(HexDump.intToHex(field_6_res)).append("\n");

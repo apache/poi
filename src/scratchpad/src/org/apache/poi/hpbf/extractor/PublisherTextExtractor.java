@@ -24,6 +24,7 @@ import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hpbf.HPBFDocument;
 import org.apache.poi.hpbf.model.qcbits.QCBit;
 import org.apache.poi.hpbf.model.qcbits.QCTextBit;
+import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type12;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -31,6 +32,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  */
 public class PublisherTextExtractor extends POIOLE2TextExtractor {
 	private HPBFDocument doc;
+	private boolean hyperlinksByDefault = false;
 	
 	public PublisherTextExtractor(HPBFDocument doc) {
 		super(doc);
@@ -43,6 +45,16 @@ public class PublisherTextExtractor extends POIOLE2TextExtractor {
 		this(new POIFSFileSystem(is));
 	}
 	
+	/**
+	 * Should a call to getText() return hyperlinks inline
+	 *  with the text?
+	 * Default is no
+	 */
+	public void setHyperlinksByDefault(boolean hyperlinksByDefault) {
+		this.hyperlinksByDefault = hyperlinksByDefault;
+	}
+
+	
 	public String getText() {
 		StringBuffer text = new StringBuffer();
 		
@@ -52,6 +64,24 @@ public class PublisherTextExtractor extends POIOLE2TextExtractor {
 			if(bits[i] != null && bits[i] instanceof QCTextBit) {
 				QCTextBit t = (QCTextBit)bits[i];
 				text.append( t.getText().replace('\r', '\n') );
+			}
+		}
+		
+		// If requested, add in the hyperlinks
+		// Ideally, we'd do these inline, but the hyperlink
+		//  positions are relative to the text area the
+		//  hyperlink is in, and we have yet to figure out
+		//  how to tie that together.
+		if(hyperlinksByDefault) {
+			for(int i=0; i<bits.length; i++) {
+				if(bits[i] != null && bits[i] instanceof Type12) {
+					Type12 hyperlinks = (Type12)bits[i];
+					for(int j=0; j<hyperlinks.getNumberOfHyperlinks(); j++) {
+						text.append("<");
+						text.append(hyperlinks.getHyperlink(j));
+						text.append(">\n");
+					}
+				}
 			}
 		}
 		

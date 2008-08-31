@@ -41,7 +41,7 @@ import java.util.Set;
  * @author Csaba Nagy (ncsaba at yahoo dot com)
  */
 public final class RecordFactory {
-    private static final int NUM_RECORDS = 512;
+	private static final int NUM_RECORDS = 512;
 
 	private static final Class[] CONSTRUCTOR_ARGS = { RecordInputStream.class, };
 
@@ -50,6 +50,7 @@ public final class RecordFactory {
 	 * Note - this most but not *every* subclass of Record.
 	 */
 	private static final Class[] records = {
+		ArrayRecord.class,
 		BackupRecord.class,
 		BlankRecord.class,
 		BOFRecord.class,

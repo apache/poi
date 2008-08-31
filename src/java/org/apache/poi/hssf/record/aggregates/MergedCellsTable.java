@@ -93,8 +93,13 @@ public final class MergedCellsTable extends RecordAggregate {
 			rv.visitRecord(new MergeCellsRecord(cras, startIx, nLeftoverMergedRegions));
 		}
 	}
+	public void addRecords(MergeCellsRecord[] mcrs) {
+		for (int i = 0; i < mcrs.length; i++) {
+			addMergeCellsRecord(mcrs[i]);
+		}
+	}
 
-	public void add(MergeCellsRecord mcr) {
+	private void addMergeCellsRecord(MergeCellsRecord mcr) {
 		int nRegions = mcr.getNumAreas();
 		for (int i = 0; i < nRegions; i++) {
 			_mergedRegions.add(mcr.getAreaAt(i));
@@ -125,4 +130,5 @@ public final class MergedCellsTable extends RecordAggregate {
 	public int getNumberOfMergedRegions() {
 		return _mergedRegions.size();
 	}
+
 }
