@@ -23,16 +23,10 @@ import java.util.List;
 
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.DBCellRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.MergeCellsRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
-import org.apache.poi.hssf.record.RowRecord;
-import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.StringRecord;
-import org.apache.poi.hssf.record.TableRecord;
-import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 
 /**
@@ -143,63 +137,27 @@ public final class ValueRecordsAggregate {
     }
 
     /**
-     * Processes a sequential group of cell value records.  Stops at endIx or the first
-     * non-value record encountered.
-     * @param sfh used to resolve any shared formulas for the current sheet
-     * @return the number of records consumed
+     * Processes a single cell value record
+     * @param sfh used to resolve any shared-formulas/arrays/tables for the current sheet
      */
-    public int construct(List records, int offset, int endIx, SharedFormulaHolder sfh) {
-        RecordStream rs = new RecordStream(records, offset, endIx);
-
-        // Now do the main processing sweep
-        while (rs.hasNext()) {
-            Class recClass = rs.peekNextClass();
-            if (recClass == StringRecord.class) {
-                throw new RuntimeException("Loose StringRecord found without preceding FormulaRecord");
+    public void construct(CellValueRecordInterface rec, RecordStream rs, SharedValueManager sfh) {
+        if (rec instanceof FormulaRecord) {
+            FormulaRecord formulaRec = (FormulaRecord)rec;
+            if (formulaRec.isSharedFormula()) {
+                sfh.convertSharedFormulaRecord(formulaRec);
             }
-
-            if (recClass == TableRecord.class) {
-                throw new RuntimeException("Loose TableRecord found without preceding FormulaRecord");
+            // read optional cached text value
+            StringRecord cachedText;
+            Class nextClass = rs.peekNextClass();
+            if (nextClass == StringRecord.class) {
+                cachedText = (StringRecord) rs.getNext();
+            } else {
+                cachedText = null;
             }
-
-            if (recClass == UnknownRecord.class) {
-                break;
-            }
-            if (recClass == RowRecord.class) {
-                break;
-            }
-            if (recClass == DBCellRecord.class) {
-                // end of 'Row Block'.  This record is ignored by POI
-                break;
-            }
-
-            Record rec = rs.getNext();
-
-            if (recClass == SharedFormulaRecord.class) {
-                // Already handled, not to worry
-                continue;
-            }
-            if (recClass == MergeCellsRecord.class) {
-                // doesn't really belong here
-                // can safely be ignored, because it has been processed in a higher method
-                continue;
-            }
-
-            if (!rec.isValue()) {
-                throw new RuntimeException("bad record type");
-            }
-            if (rec instanceof FormulaRecord) {
-                FormulaRecord formula = (FormulaRecord)rec;
-                if (formula.isSharedFormula()) {
-                    sfh.convertSharedFormulaRecord(formula);
-                }
-
-                insertCell(new FormulaRecordAggregate((FormulaRecord)rec, rs));
-                continue;
-            }
-            insertCell(( CellValueRecordInterface ) rec);
+            insertCell(new FormulaRecordAggregate(formulaRec, cachedText, sfh));
+        } else {
+            insertCell(rec);
         }
-        return rs.getCountRead();
     }
 
     /** Tallies a count of the size of the cell records
@@ -247,8 +205,8 @@ public final class ValueRecordsAggregate {
         return pos - offset;
     }
 
-    public int visitCellsForRow(int rowIndex, RecordVisitor rv) {
-        int result = 0;
+    public void visitCellsForRow(int rowIndex, RecordVisitor rv) {
+
         CellValueRecordInterface[] cellRecs = records[rowIndex];
         if (cellRecs != null) {
             for (int i = 0; i < cellRecs.length; i++) {
@@ -256,24 +214,15 @@ public final class ValueRecordsAggregate {
                 if (cvr == null) {
                     continue;
                 }
-                if (cvr instanceof FormulaRecordAggregate) {
-                    FormulaRecordAggregate fmAgg = (FormulaRecordAggregate) cvr;
-                    Record fmAggRec = fmAgg.getFormulaRecord();
-                    rv.visitRecord(fmAggRec);
-                    result += fmAggRec.getRecordSize();
-                    fmAggRec = fmAgg.getStringRecord();
-                    if (fmAggRec != null) {
-                        rv.visitRecord(fmAggRec);
-                        result += fmAggRec.getRecordSize();
-                    }
+                if (cvr instanceof RecordAggregate) {
+                    RecordAggregate agg = (RecordAggregate) cvr;
+                    agg.visitContainedRecords(rv);
                 } else {
                     Record rec = (Record) cvr;
                     rv.visitRecord(rec);
-                    result += rec.getRecordSize();
                 }
             }
         }
-        return result;
     }
 
     public CellValueRecordInterface[] getValueRecords() {
