@@ -22,20 +22,16 @@ import org.apache.poi.hssf.record.formula.AreaI;
 /**
  * @author Josh Micich
  */
-abstract class AreaEvalBase implements AreaEval {
+public abstract class AreaEvalBase implements AreaEval {
 
 	private final int _firstColumn;
 	private final int _firstRow;
 	private final int _lastColumn;
 	private final int _lastRow;
-	private final ValueEval[] _values;
 	private final int _nColumns;
 	private final int _nRows;
 
-	protected AreaEvalBase(AreaI ptg, ValueEval[] values) {
-		if (values == null) {
-			throw new IllegalArgumentException("values must not be null");
-		}
+	protected AreaEvalBase(AreaI ptg) {
 		_firstRow = ptg.getFirstRow();
 		_firstColumn = ptg.getFirstColumn();
 		_lastRow = ptg.getLastRow();
@@ -43,22 +39,6 @@ abstract class AreaEvalBase implements AreaEval {
 		
 		_nColumns = _lastColumn - _firstColumn + 1;
 		_nRows = _lastRow - _firstRow + 1;
-		
-		int expectedItemCount = _nRows * _nColumns;
-		if ((values.length != expectedItemCount)) {
-			// Note - this math may need alteration when POI starts to support full column or full row refs
-			throw new IllegalArgumentException("Array size should be (" + expectedItemCount
-					+ ") but was (" + values.length + ")");
-		}
-		
-
-
-		for (int i = values.length - 1; i >= 0; i--) {
-			if (values[i] == null) {
-				throw new IllegalArgumentException("value array elements must not be null");
-			}
-		}
-		_values = values;
 	}
 
 	public final int getFirstColumn() {
@@ -116,14 +96,7 @@ abstract class AreaEvalBase implements AreaEval {
 		return _lastRow-_firstRow+1;
 	}
 
-	public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
-		int index = relativeRowIndex * _nColumns + relativeColumnIndex;
-		ValueEval result = _values[index];
-		if (result == null) {
-			return BlankEval.INSTANCE;
-		}
-		return result;
-	}
+	public abstract ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex);
 
 	public int getWidth() {
 		return _lastColumn-_firstColumn+1;

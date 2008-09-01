@@ -17,29 +17,25 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.AreaPtg;
-import org.apache.poi.hssf.record.formula.RefPtg;
-import org.apache.poi.hssf.record.formula.eval.Area2DEval;
+import junit.framework.TestCase;
+
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.Ref2DEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-
-import junit.framework.TestCase;
 /**
  * Tests for Excel function MID()
- * 
+ *
  * @author Josh Micich
  */
 public final class TestMid extends TestCase {
 
-	
+
 	private static Eval invokeMid(Eval text, Eval startPos, Eval numChars) {
 		Eval[] args = new Eval[] { text, startPos, numChars, };
 		return new Mid().evaluate(args, -1, (short)-1);
@@ -56,28 +52,28 @@ public final class TestMid extends TestCase {
 		assertEquals(ErrorEval.class, result.getClass());
 		assertEquals(expectedError.getErrorCode(), ((ErrorEval)result).getErrorCode());
 	}
-	
+
 	public void testBasic() {
-		
+
 		confirmMid(new StringEval("galactic"), new NumberEval(3), new NumberEval(4), "lact");
 	}
-	
+
 	/**
 	 * Valid cases where args are not precisely (string, int, int) but can be resolved OK.
 	 */
 	public void testUnusualArgs() {
 		// startPos with fractional digits
 		confirmMid(new StringEval("galactic"), new NumberEval(3.1), new NumberEval(4), "lact");
-		
+
 		// string startPos
 		confirmMid(new StringEval("galactic"), new StringEval("3"), new NumberEval(4), "lact");
-		
-		// text (first) arg type is number, other args are strings with fractional digits 
+
+		// text (first) arg type is number, other args are strings with fractional digits
 		confirmMid(new NumberEval(123456), new StringEval("3.1"), new StringEval("2.9"), "34");
-		
+
 		// startPos is 1x1 area ref, numChars is cell ref
-		AreaEval aeStart = new Area2DEval(new AreaPtg("A1:A1"), new ValueEval[] { new NumberEval(2), } );
-		RefEval reNumChars = new Ref2DEval(new RefPtg("B1"), new NumberEval(3));
+		AreaEval aeStart = EvalFactory.createAreaEval("A1:A1", new ValueEval[] { new NumberEval(2), } );
+		RefEval reNumChars = EvalFactory.createRefEval("B1", new NumberEval(3));
 		confirmMid(new StringEval("galactic"), aeStart, reNumChars, "ala");
 
 		confirmMid(new StringEval("galactic"), new NumberEval(3.1), BlankEval.INSTANCE, "");
@@ -85,7 +81,7 @@ public final class TestMid extends TestCase {
 		confirmMid(new StringEval("galactic"), new NumberEval(3), BoolEval.FALSE, "");
 		confirmMid(new StringEval("galactic"), new NumberEval(3), BoolEval.TRUE, "l");
 		confirmMid(BlankEval.INSTANCE, new NumberEval(3), BoolEval.TRUE, "");
-	
+
 	}
 
 	/**
@@ -93,7 +89,7 @@ public final class TestMid extends TestCase {
 	 */
 	public void testExtremes() {
 		confirmMid(new StringEval("galactic"), new NumberEval(4), new NumberEval(400), "actic");
-		
+
 		confirmMid(new StringEval("galactic"), new NumberEval(30), new NumberEval(4), "");
 		confirmMid(new StringEval("galactic"), new NumberEval(3), new NumberEval(0), "");
 	}
@@ -106,9 +102,9 @@ public final class TestMid extends TestCase {
 		confirmMid(new StringEval("galactic"), ErrorEval.NAME_INVALID, new NumberEval(4), ErrorEval.NAME_INVALID);
 		confirmMid(new StringEval("galactic"), new NumberEval(3), ErrorEval.NAME_INVALID, ErrorEval.NAME_INVALID);
 		confirmMid(new StringEval("galactic"), ErrorEval.DIV_ZERO, ErrorEval.NAME_INVALID, ErrorEval.DIV_ZERO);
-		
+
 		confirmMid(new StringEval("galactic"), BlankEval.INSTANCE, new NumberEval(3.1), ErrorEval.VALUE_INVALID);
-		
+
 		confirmMid(new StringEval("galactic"), new NumberEval(0), new NumberEval(4), ErrorEval.VALUE_INVALID);
 		confirmMid(new StringEval("galactic"), new NumberEval(1), new NumberEval(-1), ErrorEval.VALUE_INVALID);
 	}

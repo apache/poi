@@ -1,26 +1,22 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
 
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.Area3DPtg;
-import org.apache.poi.hssf.record.formula.AreaPtg;
-import org.apache.poi.hssf.record.formula.eval.Area3DEval;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
@@ -28,13 +24,9 @@ import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
-import org.apache.poi.hssf.record.formula.eval.Ref3DEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 /**
  * Implementation for Excel function OFFSET()<p/>
  * 
@@ -51,7 +43,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  * 
  * @author Josh Micich
  */
-public final class Offset implements FreeRefFunction {
+public final class Offset implements Function {
 	// These values are specific to BIFF8
 	private static final int LAST_VALID_ROW_INDEX = 0xFFFF;
 	private static final int LAST_VALID_COLUMN_INDEX = 0xFF;
@@ -125,37 +117,29 @@ public final class Offset implements FreeRefFunction {
 	 * Encapsulates either an area or cell reference which may be 2d or 3d.
 	 */
 	private static final class BaseRef {
-		private static final int INVALID_SHEET_INDEX = -1;
 		private final int _firstRowIndex;
 		private final int _firstColumnIndex;
 		private final int _width;
 		private final int _height;
-		private final int _externalSheetIndex;
+		private final RefEval _refEval;
+		private final AreaEval _areaEval;
 		
 		public BaseRef(RefEval re) {
+			_refEval = re;
+			_areaEval = null;
 			_firstRowIndex = re.getRow();
 			_firstColumnIndex = re.getColumn();
 			_height = 1;
 			_width = 1;
-			if (re instanceof Ref3DEval) {
-				Ref3DEval r3e = (Ref3DEval) re;
-				_externalSheetIndex = r3e.getExternSheetIndex();
-			} else {
-				_externalSheetIndex = INVALID_SHEET_INDEX;
-			}
 		}
 
 		public BaseRef(AreaEval ae) {
+			_refEval = null;
+			_areaEval = ae;
 			_firstRowIndex = ae.getFirstRow();
 			_firstColumnIndex = ae.getFirstColumn();
 			_height = ae.getLastRow() - ae.getFirstRow() + 1;
 			_width = ae.getLastColumn() - ae.getFirstColumn() + 1;
-			if (ae instanceof Area3DEval) {
-				Area3DEval a3e = (Area3DEval) ae;
-				_externalSheetIndex = a3e.getExternSheetIndex();
-			} else {
-				_externalSheetIndex = INVALID_SHEET_INDEX;
-			}
 		}
 
 		public int getWidth() {
@@ -170,19 +154,17 @@ public final class Offset implements FreeRefFunction {
 		public int getFirstColumnIndex() {
 			return _firstColumnIndex;
 		}
-		public boolean isIs3d() {
-			return _externalSheetIndex > 0;
-		}
 
-		public short getExternalSheetIndex() {
-			if(_externalSheetIndex < 0) {
-				throw new IllegalStateException("external sheet index only available for 3d refs");
+		public AreaEval offset(int relFirstRowIx, int relLastRowIx, 
+				int relFirstColIx, int relLastColIx) {
+			if (_refEval == null) {
+				return _areaEval.offset(relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
 			}
-			return (short) _externalSheetIndex;
+			return _refEval.offset(relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
 		}
 	}
 	
-	public ValueEval evaluate(Eval[] args, int srcCellRow, short srcCellCol, HSSFWorkbook workbook, HSSFSheet sheet) {
+	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
 		
 		if(args.length < 3 || args.length > 5) {
 			return ErrorEval.VALUE_INVALID;
@@ -206,37 +188,25 @@ public final class Offset implements FreeRefFunction {
 			}
 			LinearOffsetRange rowOffsetRange = new LinearOffsetRange(rowOffset, height);
 			LinearOffsetRange colOffsetRange = new LinearOffsetRange(columnOffset, width);
-			return createOffset(baseRef, rowOffsetRange, colOffsetRange, workbook, sheet);
+			return createOffset(baseRef, rowOffsetRange, colOffsetRange);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
 	}
 
 	private static AreaEval createOffset(BaseRef baseRef, 
-			LinearOffsetRange rowOffsetRange, LinearOffsetRange colOffsetRange, 
-			HSSFWorkbook workbook, HSSFSheet sheet) throws EvaluationException {
+			LinearOffsetRange orRow, LinearOffsetRange orCol) throws EvaluationException {
 
-		LinearOffsetRange rows = rowOffsetRange.normaliseAndTranslate(baseRef.getFirstRowIndex());
-		LinearOffsetRange cols = colOffsetRange.normaliseAndTranslate(baseRef.getFirstColumnIndex());
+		LinearOffsetRange absRows = orRow.normaliseAndTranslate(baseRef.getFirstRowIndex());
+		LinearOffsetRange absCols = orCol.normaliseAndTranslate(baseRef.getFirstColumnIndex());
 		
-		if(rows.isOutOfBounds(0, LAST_VALID_ROW_INDEX)) {
+		if(absRows.isOutOfBounds(0, LAST_VALID_ROW_INDEX)) {
 			throw new EvaluationException(ErrorEval.REF_INVALID);
 		}
-		if(cols.isOutOfBounds(0, LAST_VALID_COLUMN_INDEX)) {
+		if(absCols.isOutOfBounds(0, LAST_VALID_COLUMN_INDEX)) {
 			throw new EvaluationException(ErrorEval.REF_INVALID);
 		}
-		if(baseRef.isIs3d()) {
-			Area3DPtg a3dp = new Area3DPtg(rows.getFirstIndex(), rows.getLastIndex(), 
-					cols.getFirstIndex(), cols.getLastIndex(),
-					false, false, false, false,
-					baseRef.getExternalSheetIndex());
-			return HSSFFormulaEvaluator.evaluateArea3dPtg(workbook, a3dp);
-		}
-		
-		AreaPtg ap = new AreaPtg(rows.getFirstIndex(), rows.getLastIndex(), 
-				cols.getFirstIndex(), cols.getLastIndex(),
-				false, false, false, false);
-		return HSSFFormulaEvaluator.evaluateAreaPtg(sheet, workbook, ap);
+		return baseRef.offset(orRow.getFirstIndex(), orRow.getLastIndex(), orCol.getFirstIndex(), orCol.getLastIndex());
 	}
 
 	private static BaseRef evaluateBaseRef(Eval eval) throws EvaluationException {

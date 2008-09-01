@@ -21,9 +21,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
-import org.apache.poi.hssf.record.formula.eval.Area2DEval;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
@@ -91,7 +89,7 @@ public final class TestCountFuncs extends TestCase {
 				BoolEval.TRUE,
 				BlankEval.INSTANCE,
 		};
-		range = createAreaEval("A1:B3", values);
+		range = EvalFactory.createAreaEval("A1:B3", values);
 		confirmCountIf(2, range, BoolEval.TRUE);
 
 		// when criteria is numeric
@@ -103,7 +101,7 @@ public final class TestCountFuncs extends TestCase {
 				new NumberEval(2),
 				BoolEval.TRUE,
 		};
-		range = createAreaEval("A1:B3", values);
+		range = EvalFactory.createAreaEval("A1:B3", values);
 		confirmCountIf(3, range, new NumberEval(2));
 		// note - same results when criteria is a string that parses as the number with the same value
 		confirmCountIf(3, range, new StringEval("2.00"));
@@ -126,18 +124,13 @@ public final class TestCountFuncs extends TestCase {
 				new NumberEval(25),
 				new NumberEval(25),
 		};
-		Area2DEval arg0 = new Area2DEval(new AreaPtg("C1:C6"), values);
+		AreaEval arg0 = EvalFactory.createAreaEval("C1:C6", values);
 
-		Ref2DEval criteriaArg = new Ref2DEval(new RefPtg("A1"), new NumberEval(25));
+		ValueEval criteriaArg = EvalFactory.createRefEval("A1", new NumberEval(25));
 		Eval[] args=  { arg0, criteriaArg, };
 
 		double actual = NumericFunctionInvoker.invoke(new Countif(), args);
 		assertEquals(4, actual, 0D);
-	}
-
-
-	private static AreaEval createAreaEval(String areaRefStr, ValueEval[] values) {
-		return new Area2DEval(new AreaPtg(areaRefStr), values);
 	}
 
 	private static void confirmCountA(int expected, Eval[] args) {
