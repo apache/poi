@@ -30,29 +30,32 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  */
 public final class If implements Function {
 
-    public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+		Eval falseResult;
+		switch (args.length) {
+			case 3:
+				falseResult = args[2];
+				break;
+			case 2:
+				falseResult = BoolEval.FALSE;
+				break;
+			default:
+				return ErrorEval.VALUE_INVALID;
+		}
+		boolean b;
+		try {
+			b = evaluateFirstArg(args[0], srcCellRow, srcCellCol);
+		} catch (EvaluationException e) {
+			return e.getErrorEval();
+		}
+		if (b) {
+			return args[1];
+		}
+		return falseResult;
+	}
 
-        Eval evalWhenFalse = BoolEval.FALSE;
-        switch (args.length) {
-            case 3:
-                evalWhenFalse = args[2];
-            case 2:
-                boolean b;
-				try {
-					b = evaluateFirstArg(args[0], srcCellRow, srcCellCol);
-				} catch (EvaluationException e) {
-					return e.getErrorEval();
-				}
-                if (b) {
-                    return args[1];
-                }
-                return evalWhenFalse;
-            default:
-                return ErrorEval.VALUE_INVALID;
-        }
-    }
-
-	private static boolean evaluateFirstArg(Eval arg, int srcCellRow, short srcCellCol) throws EvaluationException {
+	private static boolean evaluateFirstArg(Eval arg, int srcCellRow, short srcCellCol)
+			throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
 		Boolean b = OperandResolver.coerceValueToBoolean(ve, false);
 		if (b == null) {
