@@ -20,6 +20,8 @@
  */
 package org.apache.poi.hssf.record.formula.functions;
 
+import org.apache.poi.hssf.record.formula.functions.XYNumericFunction.Accumulator;
+
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -566,99 +568,99 @@ public class TestMathX extends AbstractNumericTestCase {
     }
 
     public void testSumx2my2() {
-        double d = 0;
         double[] xarr = null;
         double[] yarr = null;
         
         xarr = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         yarr = new double[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-        d = MathX.sumx2my2(xarr, yarr);
-        assertEquals("sumx2my2 ", 100, d);
+        confirmSumx2my2(xarr, yarr, 100);
         
         xarr = new double[]{-1, -2, -3, -4, -5, -6, -7, -8, -9, -10};
         yarr = new double[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-        d = MathX.sumx2my2(xarr, yarr);
-        assertEquals("sumx2my2 ", 100, d);
+        confirmSumx2my2(xarr, yarr, 100);
         
         xarr = new double[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
         yarr = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        d = MathX.sumx2my2(xarr, yarr);
-        assertEquals("sumx2my2 ", -100, d);
+        confirmSumx2my2(xarr, yarr, -100);
         
         xarr = new double[]{10};
         yarr = new double[]{9};
-        d = MathX.sumx2my2(xarr, yarr);
-        assertEquals("sumx2my2 ", 19, d);
+        confirmSumx2my2(xarr, yarr, 19);
         
         xarr = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         yarr = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        d = MathX.sumx2my2(xarr, yarr);
-        assertEquals("sumx2my2 ", 0, d);
-        
+        confirmSumx2my2(xarr, yarr, 0);
     }
 
     public void testSumx2py2() {
-        double d = 0;
         double[] xarr = null;
         double[] yarr = null;
         
         xarr = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         yarr = new double[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-        d = MathX.sumx2py2(xarr, yarr);
-        assertEquals("sumx2py2 ", 670, d);
+        confirmSumx2py2(xarr, yarr, 670);
         
         xarr = new double[]{-1, -2, -3, -4, -5, -6, -7, -8, -9, -10};
         yarr = new double[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-        d = MathX.sumx2py2(xarr, yarr);
-        assertEquals("sumx2py2 ", 670, d);
+        confirmSumx2py2(xarr, yarr, 670);
         
         xarr = new double[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
         yarr = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        d = MathX.sumx2py2(xarr, yarr);
-        assertEquals("sumx2py2 ", 670, d);
+        confirmSumx2py2(xarr, yarr, 670);
         
         xarr = new double[]{10};
         yarr = new double[]{9};
-        d = MathX.sumx2py2(xarr, yarr);
-        assertEquals("sumx2py2 ", 181, d);
+        confirmSumx2py2(xarr, yarr, 181);
         
         xarr = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         yarr = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        d = MathX.sumx2py2(xarr, yarr);
-        assertEquals("sumx2py2 ", 770, d);
+        confirmSumx2py2(xarr, yarr, 770);
     }
 
     public void testSumxmy2() {
-        double d = 0;
         double[] xarr = null;
         double[] yarr = null;
         
         xarr = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         yarr = new double[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-        d = MathX.sumxmy2(xarr, yarr);
-        assertEquals("sumxmy2 ", 10, d);
+        confirmSumxmy2(xarr, yarr, 10);
         
         xarr = new double[]{-1, -2, -3, -4, -5, -6, -7, -8, -9, -10};
         yarr = new double[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-        d = MathX.sumxmy2(xarr, yarr);
-        assertEquals("sumxmy2 ", 1330, d);
+        confirmSumxmy2(xarr, yarr, 1330);
         
         xarr = new double[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
         yarr = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        d = MathX.sumxmy2(xarr, yarr);
-        assertEquals("sumxmy2 ", 10, d);
+        confirmSumxmy2(xarr, yarr, 10);
         
         xarr = new double[]{10};
         yarr = new double[]{9};
-        d = MathX.sumxmy2(xarr, yarr);
-        assertEquals("sumxmy2 ", 1, d);
+        confirmSumxmy2(xarr, yarr, 1);
         
         xarr = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         yarr = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        d = MathX.sumxmy2(xarr, yarr);
-        assertEquals("sumxmy2 ", 0, d);
+        confirmSumxmy2(xarr, yarr, 0);
     }
 
+    private static void confirmSumx2my2(double[] xarr, double[] yarr, double expectedResult) {
+        confirmXY(new Sumx2my2().createAccumulator(), xarr, yarr, expectedResult);
+    }
+    private static void confirmSumx2py2(double[] xarr, double[] yarr, double expectedResult) {
+        confirmXY(new Sumx2py2().createAccumulator(), xarr, yarr, expectedResult);
+    }
+    private static void confirmSumxmy2(double[] xarr, double[] yarr, double expectedResult) {
+        confirmXY(new Sumxmy2().createAccumulator(), xarr, yarr, expectedResult);
+    }
+
+    private static void confirmXY(Accumulator acc, double[] xarr, double[] yarr,
+            double expectedResult) {
+        double result = 0.0;
+        for (int i = 0; i < xarr.length; i++) {
+            result += acc.accumulate(xarr[i], yarr[i]);
+        }
+        assertEquals(expectedResult, result, 0.0);
+    }
+    
     public void testRound() {
         double d = 0;
         int p = 0;

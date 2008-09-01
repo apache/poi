@@ -97,4 +97,10 @@ public interface AreaEval extends ValueEval {
      * specified indexes should relative to the top left corner of this area.  
      */
     ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex);
+
+    /**
+     * Creates an {@link AreaEval} offset by a relative amount from from the upper left cell
+     * of this area
+     */
+    AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx);
 }

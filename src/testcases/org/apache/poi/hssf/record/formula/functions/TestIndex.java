@@ -19,8 +19,7 @@ package org.apache.poi.hssf.record.formula.functions;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.formula.AreaPtg;
-import org.apache.poi.hssf.record.formula.eval.Area2DEval;
+import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
@@ -68,7 +67,7 @@ public final class TestIndex extends TestCase {
 		for (int i = 0; i < values.length; i++) {
 			values[i] = new NumberEval(dValues[i]);
 		}
-		Area2DEval arg0 = new Area2DEval(new AreaPtg(areaRefString), values);
+		AreaEval arg0 = EvalFactory.createAreaEval(areaRefString, values);
 		
 		Eval[] args;
 		if (colNum > 0) {

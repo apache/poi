@@ -17,8 +17,6 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.AreaPtg;
-import org.apache.poi.hssf.record.formula.eval.Area2DEval;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
@@ -366,13 +364,7 @@ final class LookupUtils {
 			// Make this cell ref look like a 1x1 area ref.
 
 			// It doesn't matter if eval is a 2D or 3D ref, because that detail is never asked of AreaEval.
-			// This code only requires the value array item.
-			// anything would be ok for rowIx and colIx, but may as well get it right.
-			int rowIx = refEval.getRow();
-			int colIx = refEval.getColumn();
-			AreaPtg ap = new AreaPtg(rowIx, rowIx, colIx, colIx, false, false, false, false);
-			ValueEval value = refEval.getInnerValueEval();
-			return new Area2DEval(ap, new ValueEval[] { value, });
+			return refEval.offset(0, 0, 0, 0);
 		}
 		throw EvaluationException.invalidValue();
 	}

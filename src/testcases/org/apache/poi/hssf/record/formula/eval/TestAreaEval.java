@@ -20,7 +20,8 @@ package org.apache.poi.hssf.record.formula.eval;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.hssf.record.formula.AreaPtg;
+import org.apache.poi.hssf.record.formula.functions.EvalFactory;
 
 /**
  * Tests for <tt>AreaEval</tt>
@@ -30,8 +31,8 @@ import org.apache.poi.hssf.record.formula.Area3DPtg;
 public final class TestAreaEval extends TestCase {
 
 	public void testGetValue_bug44950() {
-		
-		Area3DPtg ptg = new Area3DPtg("B2:D3", (short)0);
+		// TODO - this test probably isn't testing much anymore
+		AreaPtg ptg = new AreaPtg("B2:D3");
 		NumberEval one = new NumberEval(1);
 		ValueEval[] values = {
 				one,	
@@ -41,7 +42,7 @@ public final class TestAreaEval extends TestCase {
 				new NumberEval(5),	
 				new NumberEval(6),	
 		};
-		AreaEval ae = new Area3DEval(ptg, values);
+		AreaEval ae = EvalFactory.createAreaEval(ptg, values);
 		if (one == ae.getValueAt(1, 2)) {
 			throw new AssertionFailedError("Identified bug 44950 a");
 		}

@@ -17,17 +17,15 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.RefPtg;
+import junit.framework.TestCase;
+
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
-import org.apache.poi.hssf.record.formula.eval.Ref2DEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-
-import junit.framework.TestCase;
 
 /**
  * Test cases for SUMPRODUCT()
@@ -50,7 +48,7 @@ public final class TestSumproduct extends TestCase {
 
 	public void testScalarSimple() {
 
-		RefEval refEval = new Ref2DEval(new RefPtg("A1"), new NumberEval(3));
+		RefEval refEval = EvalFactory.createRefEval("A1", new NumberEval(3));
 		Eval[] args = {
 			refEval, 
 			new NumberEval(2),

@@ -18,22 +18,23 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
+import junit.framework.TestCase;
+
 import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
+import org.apache.poi.hssf.record.formula.functions.EvalFactory;
 import org.apache.poi.hssf.record.formula.functions.NumericFunctionInvoker;
-
-import junit.framework.TestCase;
 
 /**
  * Test for unary plus operator evaluator.
- * 
+ *
  * @author Josh Micich
  */
 public final class TestUnaryPlusEval extends TestCase {
-	
+
 	/**
 	 * Test for bug observable at svn revision 618865 (5-Feb-2008)<br/>
-	 * The code for handling column operands had been copy-pasted from the row handling code. 
+	 * The code for handling column operands had been copy-pasted from the row handling code.
 	 */
 	public void testColumnOperand() {
 
@@ -42,15 +43,14 @@ public final class TestUnaryPlusEval extends TestCase {
 		short colNum = (short)5;
 		AreaPtg areaPtg = new AreaPtg(firstRow, lastRow, colNum, colNum, false, false, false, false);
 		ValueEval[] values = {
-				new NumberEval(27),	
-				new NumberEval(29),	
-				new NumberEval(35),	// value in row 10 
-				new NumberEval(37),	
-				new NumberEval(38),	
+				new NumberEval(27),
+				new NumberEval(29),
+				new NumberEval(35),	// value in row 10
+				new NumberEval(37),
+				new NumberEval(38),
 		};
-		Eval areaEval = new Area2DEval(areaPtg, values);
-		Eval[] args = { 
-			areaEval,	
+		Eval[] args = {
+			EvalFactory.createAreaEval(areaPtg, values),
 		};
 
 		double result = NumericFunctionInvoker.invoke(new UnaryPlusEval(UnaryPlusPtg.instance), args, 10, (short)20);
