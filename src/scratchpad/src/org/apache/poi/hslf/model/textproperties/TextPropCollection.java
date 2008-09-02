@@ -34,6 +34,7 @@ public class TextPropCollection {
 	private int charactersCovered;
 	private short reservedField;
 	private LinkedList textPropList;
+    private int maskSpecial = 0;
 
 	/** Fetch the number of characters this styling applies to */
 	public int getCharactersCovered() { return charactersCovered; }
@@ -94,21 +95,28 @@ public class TextPropCollection {
 		// If we do, decode that, save it, and shuffle on
 		for(int i=0; i<potentialProperties.length; i++) {
 			// Check there's still data left to read
-			if(dataOffset+bytesPassed >= data.length) {
-				// Out of data, can't be any more properties to go
-				return bytesPassed;
-			}
-			
+
 			// Check if this property is found in the mask
 			if((containsField & potentialProperties[i].getMask()) != 0) {
+                if(dataOffset+bytesPassed >= data.length) {
+                    // Out of data, can't be any more properties to go
+                    // remember the mask and return
+                    maskSpecial |= potentialProperties[i].getMask();
+                    return bytesPassed;
+                }
+
 				// Bingo, data contains this property
 				TextProp prop = (TextProp)potentialProperties[i].clone();
 				int val = 0;
 				if(prop.getSize() == 2) {
 					val = LittleEndian.getShort(data,dataOffset+bytesPassed);
-				} else {
+				} else if(prop.getSize() == 4){
 					val = LittleEndian.getInt(data,dataOffset+bytesPassed);
-				}
+				} else if (prop.getSize() == 0){
+                    //remember "special" bits.
+                    maskSpecial |= potentialProperties[i].getMask();
+                    continue;
+                }
 				prop.setValue(val);
 				bytesPassed += prop.getSize();
 				textPropList.add(prop);
@@ -161,15 +169,18 @@ public class TextPropCollection {
 		}
 
 		// Then the mask field
-		int mask = 0;
+		int mask = maskSpecial;
 		for(int i=0; i<textPropList.size(); i++) {
 			TextProp textProp = (TextProp)textPropList.get(i);
             //sometimes header indicates that the bitmask is present but its value is 0
-            if (textProp instanceof BitMaskTextProp)
-                mask |= (textProp.getWriteMask() == 0 ? 1 : textProp.getWriteMask());
-            else
+
+            if (textProp instanceof BitMaskTextProp) {
+                if(mask == 0) mask |=  textProp.getWriteMask();
+            }
+            else {
                 mask |= textProp.getWriteMask();
-		}
+            }
+        }
 		StyleTextPropAtom.writeLittleEndian(mask,o);
 
 		// Then the contents of all the properties
@@ -178,7 +189,7 @@ public class TextPropCollection {
 			int val = textProp.getValue();
 			if(textProp.getSize() == 2) {
 				StyleTextPropAtom.writeLittleEndian((short)val,o);
-			} else {
+			} else if(textProp.getSize() == 4){
 				StyleTextPropAtom.writeLittleEndian(val,o);
 			}
 		}

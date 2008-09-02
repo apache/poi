@@ -124,47 +124,54 @@ public class StyleTextPropAtom extends RecordAtom
 
 	/** All the different kinds of paragraph properties we might handle */
 	public static TextProp[] paragraphTextPropTypes = new TextProp[] {
-				new ParagraphFlagsTextProp(),
+                new TextProp(0, 0x1, "hasBullet"),
+                new TextProp(0, 0x2, "hasBulletFont"),
+                new TextProp(0, 0x4, "hasBulletColor"),
+                new TextProp(0, 0x8, "hasBulletSize"),
+                new ParagraphFlagsTextProp(),
                 new TextProp(2, 0x80, "bullet.char"),
 				new TextProp(2, 0x10, "bullet.font"),
                 new TextProp(2, 0x40, "bullet.size"),
 				new TextProp(4, 0x20, "bullet.color"),
                 new AlignmentTextProp(),
                 new TextProp(2, 0x100, "text.offset"),
-				new TextProp(2, 0x200, "para_unknown_2"),
                 new TextProp(2, 0x400, "bullet.offset"),
-				new TextProp(2, 0x1000, "linespacing"),
-				new TextProp(2, 0x2000, "spacebefore"),
-				new TextProp(2, 0x4000, "spaceafter"),
-				new TextProp(2, 0x8000, "para_unknown_4"),
-				new TextProp(2, 0x10000, "para_unknown_5"),
-				new TextProp(2, 0xA0000, "para_unknown_6"),
-				new TextProp(2, 0x200000, "para_unknown_7")
+                new TextProp(2, 0x1000, "linespacing"),
+                new TextProp(2, 0x2000, "spacebefore"),
+                new TextProp(2, 0x4000, "spaceafter"),
+                new TextProp(2, 0x8000, "defaultTabSize"),
+				new TextProp(2, 0x100000, "tabStops"),
+				new TextProp(2, 0x10000, "fontAlign"),
+				new TextProp(2, 0xA0000, "wrapFlags"),
+				new TextProp(2, 0x200000, "textDirection")
 	};
 	/** All the different kinds of character properties we might handle */
 	public static TextProp[] characterTextPropTypes = new TextProp[] {
-				new CharFlagsTextProp(),
+                new TextProp(0, 0x1, "bold"),
+                new TextProp(0, 0x2, "italic"),
+                new TextProp(0, 0x4, "underline"),
+                new TextProp(0, 0x8, "unused1"),
+                new TextProp(0, 0x10, "shadow"),
+                new TextProp(0, 0x20, "fehint"),
+                new TextProp(0, 0x40, "unused2"),
+                new TextProp(0, 0x80, "kumi"),
+                new TextProp(0, 0x100, "unused3"),
+                new TextProp(0, 0x200, "emboss"),
+                new CharFlagsTextProp(),
 				new TextProp(2, 0x10000, "font.index"),
-                new TextProp(2, 0x200000, "asian_or_complex"),
-                new TextProp(2, 0x400000, "char_unknown_2"),
-                new TextProp(2, 0x800000, "symbol"),
+                new TextProp(0, 0x100000, "pp10ext"),
+                new TextProp(2, 0x200000, "asian.font.index"),
+                new TextProp(2, 0x400000, "ansi.font.index"),
+                new TextProp(2, 0x800000, "symbol.font.index"),
 				new TextProp(2, 0x20000, "font.size"),
 				new TextProp(4, 0x40000, "font.color"),
-				new TextProp(2, 0x80000, "superscript"),
-				new TextProp(2, 0x100000, "char_unknown_1"),
-				new TextProp(2, 0x1000000, "char_unknown_3"),
-				new TextProp(2, 0x2000000, "char_unknown_4"),
-				new TextProp(2, 0x4000000, "char_unknown_5"),
-				new TextProp(2, 0x8000000, "char_unknown_6"),
-				new TextProp(2, 0x10000000, "char_unknown_7"),
-				new TextProp(2, 0x20000000, "char_unknown_8"),
-				new TextProp(2, 0x40000000, "char_unknown_9"),
-				new TextProp(2, 0x80000000, "char_unknown_10"),
-	};
+                new TextProp(2, 0x80000, "superscript"),
+
+    };
 
 	/* *************** record code follows ********************** */
 
-	/** 
+	/**
 	 * For the Text Style Properties (StyleTextProp) Atom
 	 */
 	public StyleTextPropAtom(byte[] source, int start, int len) {
@@ -192,7 +199,7 @@ public class StyleTextPropAtom extends RecordAtom
 	}
 
 
-	/** 
+	/**
 	 * A new set of text style properties for some text without any.
 	 */
 	public StyleTextPropAtom(int parentTextSize) {
@@ -209,11 +216,11 @@ public class StyleTextPropAtom extends RecordAtom
 		paragraphStyles = new LinkedList();
 		charStyles = new LinkedList();
 
-		TextPropCollection defaultParagraphTextProps = 
+		TextPropCollection defaultParagraphTextProps =
 			new TextPropCollection(parentTextSize, (short)0);
 		paragraphStyles.add(defaultParagraphTextProps);
 
-		TextPropCollection defaultCharacterTextProps = 
+		TextPropCollection defaultCharacterTextProps =
 			new TextPropCollection(parentTextSize);
 		charStyles.add(defaultCharacterTextProps);
 
@@ -269,8 +276,7 @@ public class StyleTextPropAtom extends RecordAtom
 			textHandled += textLen;
 			pos += 4;
 
-			// Fetch the 2 byte value that is safe to ignore as 0
-			short paraIgn = LittleEndian.getShort(rawContents,pos);
+			short indent = LittleEndian.getShort(rawContents,pos);
 			pos += 2;
 
 			// Grab the 4 byte value that tells us what properties follow
@@ -278,7 +284,7 @@ public class StyleTextPropAtom extends RecordAtom
 			pos += 4;
 
 			// Now make sense of those properties
-			TextPropCollection thisCollection = new TextPropCollection(textLen, paraIgn);
+			TextPropCollection thisCollection = new TextPropCollection(textLen, indent);
 			int plSize = thisCollection.buildTextPropList(
 					paraFlags, paragraphTextPropTypes, rawContents, pos);
 			pos += plSize;

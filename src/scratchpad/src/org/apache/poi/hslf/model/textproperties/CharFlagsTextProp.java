@@ -35,19 +35,19 @@ public class CharFlagsTextProp extends BitMaskTextProp {
     public static String NAME = "char_flags";
 	public CharFlagsTextProp() {
 		super(2,0xffff, NAME, new String[] {
-				"bold",          // 0x0001
-				"italic",        // 0x0002
-				"underline",     // 0x0004
-				"char_unknown_1",// 0x0008
-				"shadow",        // 0x0010
-				"char_unknown_2",// 0x0020
-				"char_unknown_3",// 0x0040
-				"char_unknown_4",// 0x0080
-				"strikethrough", // 0x0100
-				"relief",        // 0x0200
-				"reset_numbering",    // 0x0400
-				"enable_numbering_1", // 0x0800
-				"enable_numbering_2", // 0x1000
+				"bold",                 // 0x0001  A bit that specifies whether the characters are bold.
+				"italic",               // 0x0002  A bit that specifies whether the characters are italicized.
+				"underline",            // 0x0004  A bit that specifies whether the characters are underlined.
+				"char_unknown_1",       // 0x0008  Undefined and MUST be ignored.
+				"shadow",               // 0x0010  A bit that specifies whether the characters have a shadow effect.
+				"fehint",               // 0x0020  A bit that specifies whether characters originated from double-byte input.
+				"char_unknown_2",       // 0x0040  Undefined and MUST be ignored.
+				"kumi",                 // 0x0080  A bit that specifies whether Kumimoji are used for vertical text.
+				"strikethrough",        // 0x0100  Undefined and MUST be ignored.
+				"emboss",               // 0x0200  A bit that specifies whether the characters are embossed.
+                "char_unknown_3",       // 0x0400  Undefined and MUST be ignored.
+                "char_unknown_4",       // 0x0800  Undefined and MUST be ignored.
+                "char_unknown_5",       // 0x1000  Undefined and MUST be ignored.
 			}
 		);
 	}
