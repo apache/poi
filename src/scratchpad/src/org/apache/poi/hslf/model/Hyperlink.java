@@ -34,7 +34,14 @@ import java.util.Iterator;
  * @author Yegor Kozlov
  */
 public class Hyperlink {
+    public static final byte LINK_NEXTSLIDE = InteractiveInfoAtom.LINK_NextSlide;
+    public static final byte LINK_PREVIOUSSLIDE = InteractiveInfoAtom.LINK_PreviousSlide;
+    public static final byte LINK_FIRSTSLIDE = InteractiveInfoAtom.LINK_FirstSlide;
+    public static final byte LINK_LASTSLIDE = InteractiveInfoAtom.LINK_LastSlide;
+    public static final byte LINK_URL = InteractiveInfoAtom.LINK_Url;
+    public static final byte LINK_NULL = InteractiveInfoAtom.LINK_NULL;
 
+    private int id=-1;
     private int type;
     private String address;
     private String title;
@@ -42,13 +49,39 @@ public class Hyperlink {
 
     /**
      * Gets the type of the hyperlink action.
-     * Must be a <code>ACTION_*</code>  constant defined in <code>InteractiveInfoAtom</code>
+     * Must be a <code>LINK_*</code>  constant</code>
      *
      * @return the hyperlink URL
      * @see InteractiveInfoAtom
      */
     public int getType() {
         return type;
+    }
+
+    public void setType(int val) {
+        type = val;
+        switch(type){
+            case LINK_NEXTSLIDE:
+                title = "NEXT";
+                address = "1,-1,NEXT";
+                break;
+            case LINK_PREVIOUSSLIDE:
+                title = "PREV";
+                address = "1,-1,PREV";
+                break;
+            case LINK_FIRSTSLIDE:
+                title = "FIRST";
+                address = "1,-1,FIRST";
+                break;
+            case LINK_LASTSLIDE:
+                title = "LAST";
+                address = "1,-1,LAST";
+                break;
+            default:
+                title = "";
+                address = "";
+                break;
+        }
     }
 
     /**
@@ -60,6 +93,18 @@ public class Hyperlink {
         return address;
     }
 
+    public void setAddress(String str) {
+        address = str;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     /**
      * Gets the hyperlink user-friendly title (if different from URL)
      *
@@ -67,6 +112,10 @@ public class Hyperlink {
      */
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(String str) {
+        title = str;
     }
 
     /**
