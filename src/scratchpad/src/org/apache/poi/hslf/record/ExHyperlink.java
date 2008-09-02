@@ -63,14 +63,16 @@ public class ExHyperlink extends RecordContainer {
 	 * TODO: Figure out if we should always set both
 	 */
 	public void setLinkURL(String url) {
-		linkDetailsA.setText(url);
-
-		// linkDetailsB isn't present in all PPT versions
 		if(linkDetailsB != null) {
 			linkDetailsB.setText(url);
 		}
 	}
-	
+    public void setLinkTitle(String title) {
+        if(linkDetailsA != null) {
+            linkDetailsA.setText(title);
+        }
+    }
+
 	/**
 	 * Get the link details (field A)
 	 */
