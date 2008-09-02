@@ -64,6 +64,10 @@ public class ChunkFactory {
 	private void processChunkParseCommands() throws IOException {
 		String line;
 		InputStream cpd = ChunkFactory.class.getResourceAsStream(chunkTableName);
+		if(cpd == null) {
+			throw new IllegalStateException("Unable to find HDGF chunk definition on the classpath - " + chunkTableName);
+		}
+		
 		BufferedReader inp = new BufferedReader(new InputStreamReader(cpd));
 		while( (line = inp.readLine()) != null ) {
 			if(line.startsWith("#")) continue;

@@ -30,6 +30,7 @@ import org.apache.poi.hslf.model.Notes;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.model.TextRun;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -95,6 +96,9 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	 */
 	public PowerPointExtractor(POIFSFileSystem fs) throws IOException {
 		this(new HSLFSlideShow(fs));
+	}
+	public PowerPointExtractor(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
+		this(new HSLFSlideShow(dir, fs));
 	}
 
 	/**
