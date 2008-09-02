@@ -19,6 +19,7 @@ package org.apache.poi;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Common Parent for OLE2 based Text Extractors
@@ -58,5 +59,13 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
 	 */
 	public POITextExtractor getMetadataTextExtractor() {
 		return new HPSFPropertiesExtractor(this);
+	}
+
+	/**
+	 * Return the underlying POIFS FileSystem of
+	 *  this document.
+	 */
+	public POIFSFileSystem getFileSystem() {
+		return document.filesystem;
 	}
 }

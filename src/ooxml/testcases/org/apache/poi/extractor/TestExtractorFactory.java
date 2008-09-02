@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import org.apache.poi.POIOLE2TextExtractor;
+import org.apache.poi.POITextExtractor;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
@@ -42,6 +44,7 @@ public class TestExtractorFactory extends TestCase {
 	private String word_dir;
 	private String powerpoint_dir;
 	private String visio_dir;
+	private String poifs_dir;
 	
 	private File txt;
 	
@@ -63,6 +66,12 @@ public class TestExtractorFactory extends TestCase {
 		word_dir = System.getProperty("HWPF.testdata.path");
 		powerpoint_dir = System.getProperty("HSLF.testdata.path");
 		visio_dir = System.getProperty("HDGF.testdata.path");
+		poifs_dir = System.getProperty("POIFS.testdata.path");
+		assertNotNull(excel_dir);
+		assertNotNull(word_dir);
+		assertNotNull(powerpoint_dir);
+		assertNotNull(visio_dir);
+		assertNotNull(poifs_dir);
 		
 		txt = new File(powerpoint_dir, "SampleShow.txt");
 		
@@ -299,5 +308,57 @@ public class TestExtractorFactory extends TestCase {
 		} catch(InvalidOperationException e) {
 			// Good
 		}
+	}
+
+	/**
+	 * Test embeded docs text extraction. For now, only
+	 *  does poifs embeded, but will do ooxml ones 
+	 *  at some point.
+	 */
+	public void testEmbeded() throws Exception {
+		POIOLE2TextExtractor ext;
+		POITextExtractor[] embeds;
+		File f;
+		
+		// No embedings
+		ext = (POIOLE2TextExtractor)
+				ExtractorFactory.createExtractor(xls);
+		embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
+		assertEquals(0, embeds.length);
+		
+		// Excel
+		f = new File(poifs_dir, "excel_with_embeded.xls");
+		ext = (POIOLE2TextExtractor)
+				ExtractorFactory.createExtractor(f);
+		embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
+		
+		assertEquals(6, embeds.length);
+		assertTrue(embeds[0] instanceof PowerPointExtractor);
+		assertTrue(embeds[1] instanceof ExcelExtractor);
+		assertTrue(embeds[2] instanceof ExcelExtractor);
+		assertTrue(embeds[3] instanceof PowerPointExtractor);
+		assertTrue(embeds[4] instanceof WordExtractor);
+		assertTrue(embeds[5] instanceof WordExtractor);
+		for(int i=0; i<embeds.length; i++) {
+			assertTrue(embeds[i].getText().length() > 20);
+		}
+		
+		// Word
+		f = new File(poifs_dir, "word_with_embeded.doc");
+		ext = (POIOLE2TextExtractor)
+				ExtractorFactory.createExtractor(f);
+		embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
+		
+		assertEquals(4, embeds.length);
+		assertTrue(embeds[0] instanceof WordExtractor);
+		assertTrue(embeds[1] instanceof ExcelExtractor);
+		assertTrue(embeds[2] instanceof ExcelExtractor);
+		assertTrue(embeds[3] instanceof PowerPointExtractor);
+		for(int i=0; i<embeds.length; i++) {
+			assertTrue(embeds[i].getText().length() > 20);
+		}
+		
+		// TODO - PowerPoint
+		// TODO - Visio
 	}
 }

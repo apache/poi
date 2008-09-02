@@ -18,9 +18,11 @@ package org.apache.poi.extractor;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.apache.poi.POIOLE2TextExtractor;
@@ -31,6 +33,8 @@ import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.apache.poi.poifs.filesystem.DirectoryEntry;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xslf.XSLFSlideShow;
@@ -105,24 +109,95 @@ public class ExtractorFactory {
 	}
 	
 	public static POIOLE2TextExtractor createExtractor(POIFSFileSystem fs) throws IOException {
+		return createExtractor(fs.getRoot(), fs);
+	}
+	public static POIOLE2TextExtractor createExtractor(DirectoryNode poifsDir, POIFSFileSystem fs) throws IOException {
 		// Look for certain entries in the stream, to figure it
 		//  out from
-		for(Iterator entries = fs.getRoot().getEntries(); entries.hasNext(); ) {
+		for(Iterator entries = poifsDir.getEntries(); entries.hasNext(); ) {
 			Entry entry = (Entry)entries.next();
 			
 			if(entry.getName().equals("Workbook")) {
-				return new ExcelExtractor(fs);
+				return new ExcelExtractor(poifsDir, fs);
 			}
 			if(entry.getName().equals("WordDocument")) {
-				return new WordExtractor(fs);
+				return new WordExtractor(poifsDir, fs);
 			}
 			if(entry.getName().equals("PowerPoint Document")) {
-				return new PowerPointExtractor(fs);
+				return new PowerPointExtractor(poifsDir, fs);
 			}
 			if(entry.getName().equals("VisioDocument")) {
-				return new VisioTextExtractor(fs);
+				return new VisioTextExtractor(poifsDir, fs);
 			}
 		}
 		throw new IllegalArgumentException("No supported documents found in the OLE2 stream");
+	}
+	
+	
+	/**
+	 * Returns an array of text extractors, one for each of
+	 *  the embeded documents in the file (if there are any).
+	 * If there are no embeded documents, you'll get back an
+	 *  empty array. Otherwise, you'll get one open 
+	 *  {@link POITextExtractor} for each embeded file.
+	 */
+	public static POITextExtractor[] getEmbededDocsTextExtractors(POIOLE2TextExtractor ext) throws IOException {
+		// Find all the embeded directories
+		ArrayList dirs = new ArrayList();
+		POIFSFileSystem fs = ext.getFileSystem();
+		if(fs == null) {
+			throw new IllegalStateException("The extractor didn't know which POIFS it came from!");
+		}
+		
+		if(ext instanceof ExcelExtractor) {
+			// These are in MBD... under the root
+			Iterator it = fs.getRoot().getEntries();
+			while(it.hasNext()) {
+				Entry entry = (Entry)it.next();
+				if(entry.getName().startsWith("MBD")) {
+					dirs.add(entry);
+				}
+			}
+		} else if(ext instanceof WordExtractor) {
+			// These are in ObjectPool -> _... under the root
+			try {
+				DirectoryEntry op = (DirectoryEntry)
+					fs.getRoot().getEntry("ObjectPool");
+				Iterator it = op.getEntries();
+				while(it.hasNext()) {
+					Entry entry = (Entry)it.next();
+					if(entry.getName().startsWith("_")) {
+						dirs.add(entry);
+					}
+				}
+			} catch(FileNotFoundException e) {}
+		} else if(ext instanceof PowerPointExtractor) {
+			// Tricky, not stored directly in poifs
+			// TODO
+		}
+		
+		// Create the extractors
+		if(dirs == null || dirs.size() == 0) {
+			return new POITextExtractor[0];
+		}
+		
+		POITextExtractor[] te = new POITextExtractor[dirs.size()];
+		for(int i=0; i<te.length; i++) {
+			te[i] = createExtractor(
+					(DirectoryNode)dirs.get(i), ext.getFileSystem()
+			);
+		}
+		return te;
+	}
+
+	/**
+	 * Returns an array of text extractors, one for each of
+	 *  the embeded documents in the file (if there are any).
+	 * If there are no embeded documents, you'll get back an
+	 *  empty array. Otherwise, you'll get one open 
+	 *  {@link POITextExtractor} for each embeded file.
+	 */
+	public static POITextExtractor[] getEmbededDocsTextExtractors(POIXMLTextExtractor ext) {
+		throw new IllegalStateException("Not yet supported");
 	}
 }

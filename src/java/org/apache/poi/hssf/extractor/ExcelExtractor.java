@@ -26,6 +26,7 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -48,7 +49,10 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 		this.wb = wb;
 	}
 	public ExcelExtractor(POIFSFileSystem fs) throws IOException {
-		this(new HSSFWorkbook(fs));
+		this(fs.getRoot(), fs);
+	}
+	public ExcelExtractor(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
+		this(new HSSFWorkbook(dir, fs, true));
 	}
 	
 
