@@ -223,8 +223,16 @@ public final class TestHSSFSheet extends TestCase {
 		workbook.cloneSheet(0);
 
 		assertNotNull(workbook.getSheet("Test Clone"));
-		assertNotNull(workbook.getSheet("Test Clone(1)"));
-		assertNotNull(workbook.getSheet("Test Clone(2)"));
+		assertNotNull(workbook.getSheet("Test Clone (2)"));
+		assertEquals("Test Clone (3)", workbook.getSheetName(2));
+		assertNotNull(workbook.getSheet("Test Clone (3)"));
+		
+		workbook.removeSheetAt(0);
+		workbook.removeSheetAt(0);
+		workbook.removeSheetAt(0);
+		workbook.createSheet("abc ( 123)");
+		workbook.cloneSheet(0);
+		assertEquals("abc (124)", workbook.getSheetName(1));
 	}
 
 	/**

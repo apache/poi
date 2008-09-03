@@ -429,9 +429,9 @@ public final class TestHSSFWorkbook extends TestCase {
         assertEquals("On2", nr.getNameText());
         assertEquals(0, nr.getSheetNumber());
         assertEquals(1, nr.getExternSheetNumber());
-        assertEquals(1, nr.getNameDefinition().size());
+        assertEquals(1, nr.getNameDefinition().length);
         
-        ptg = (Area3DPtg)nr.getNameDefinition().get(0);
+        ptg = (Area3DPtg)nr.getNameDefinition()[0];
         assertEquals(1, ptg.getExternSheetIndex());
         assertEquals(0, ptg.getFirstColumn());
         assertEquals(0, ptg.getFirstRow());
@@ -452,9 +452,9 @@ public final class TestHSSFWorkbook extends TestCase {
         assertEquals("OnOne", nr.getNameText());
         assertEquals(0, nr.getSheetNumber());
         assertEquals(0, nr.getExternSheetNumber());
-        assertEquals(1, nr.getNameDefinition().size());
+        assertEquals(1, nr.getNameDefinition().length);
         
-        ptg = (Area3DPtg)nr.getNameDefinition().get(0);
+        ptg = (Area3DPtg)nr.getNameDefinition()[0];
         assertEquals(0, ptg.getExternSheetIndex());
         assertEquals(0, ptg.getFirstColumn());
         assertEquals(2, ptg.getFirstRow());
@@ -475,9 +475,9 @@ public final class TestHSSFWorkbook extends TestCase {
         assertEquals("OnSheet3", nr.getNameText());
         assertEquals(0, nr.getSheetNumber());
         assertEquals(2, nr.getExternSheetNumber());
-        assertEquals(1, nr.getNameDefinition().size());
+        assertEquals(1, nr.getNameDefinition().length);
         
-        ptg = (Area3DPtg)nr.getNameDefinition().get(0);
+        ptg = (Area3DPtg)nr.getNameDefinition()[0];
         assertEquals(2, ptg.getExternSheetIndex());
         assertEquals(0, ptg.getFirstColumn());
         assertEquals(0, ptg.getFirstRow());
