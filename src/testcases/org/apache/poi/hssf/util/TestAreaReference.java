@@ -19,7 +19,6 @@ package org.apache.poi.hssf.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -28,6 +27,7 @@ import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.MemFuncPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFName;
@@ -204,13 +204,13 @@ public final class TestAreaReference extends TestCase {
         assertNotNull(nr);
         assertEquals("test", nr.getNameText());
 
-        List def =nr.getNameDefinition();
-        assertEquals(4, def.size());
+        Ptg[] def =nr.getNameDefinition();
+        assertEquals(4, def.length);
 
-        MemFuncPtg ptgA = (MemFuncPtg)def.get(0);
-        Area3DPtg ptgB = (Area3DPtg)def.get(1);
-        Area3DPtg ptgC = (Area3DPtg)def.get(2);
-        UnionPtg ptgD = (UnionPtg)def.get(3);
+        MemFuncPtg ptgA = (MemFuncPtg)def[0];
+        Area3DPtg ptgB = (Area3DPtg)def[1];
+        Area3DPtg ptgC = (Area3DPtg)def[2];
+        UnionPtg ptgD = (UnionPtg)def[3];
         assertEquals("", ptgA.toFormulaString(wb));
         assertEquals(refA, ptgB.toFormulaString(wb));
         assertEquals(refB, ptgC.toFormulaString(wb));
