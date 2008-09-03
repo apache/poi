@@ -94,10 +94,14 @@ public final class ArrayPtg extends Ptg {
 
 		buffer.append("columns = ").append(getColumnCount()).append("\n");
 		buffer.append("rows = ").append(getRowCount()).append("\n");
-		for (int x=0;x<getColumnCount();x++) {
-			for (int y=0;y<getRowCount();y++) {
-				Object o = token_3_arrayValues[getValueIndex(x, y)];
-	   			buffer.append("[").append(x).append("][").append(y).append("] = ").append(o).append("\n"); 
+		if (token_3_arrayValues == null) {
+			buffer.append("  #values#uninitialised#\n");
+		} else {
+			for (int x=0;x<getColumnCount();x++) {
+				for (int y=0;y<getRowCount();y++) {
+					Object o = token_3_arrayValues[getValueIndex(x, y)];
+					buffer.append("[").append(x).append("][").append(y).append("] = ").append(o).append("\n"); 
+				}
 			}
 		}
 		return buffer.toString();
