@@ -279,18 +279,23 @@ public class TestReOrderingSlides extends TestCase {
 		assertEquals(3, ss_read.getSlides().length);
 		
 		// And check it's as expected
-		s1 = ss_read.getSlides()[0];
-		s2 = ss_read.getSlides()[1];
-		s3 = ss_read.getSlides()[2];
-		
-		assertEquals(257, s1._getSheetNumber());
-		assertEquals(4, s1._getSheetRefId());
+		Slide _s1 = ss_read.getSlides()[0];
+		Slide _s2 = ss_read.getSlides()[1];
+		Slide _s3 = ss_read.getSlides()[2];
+
+        // 1 --> 3
+        assertEquals(s1._getSheetNumber(), _s3._getSheetNumber());
+		assertEquals(s1._getSheetRefId(), _s3._getSheetRefId());
 		assertEquals(1, s1.getSlideNumber());
-		assertEquals(256, s2._getSheetNumber());
-		assertEquals(3, s2._getSheetRefId());
+
+        // 2nd slide is not updated
+        assertEquals(s2._getSheetNumber(), _s2._getSheetNumber());
+        assertEquals(s2._getSheetRefId(), _s2._getSheetRefId());
 		assertEquals(2, s2.getSlideNumber());
-		assertEquals(258, s3._getSheetNumber());
-		assertEquals(5, s3._getSheetRefId());
+
+        // 3 --> 1
+        assertEquals(s3._getSheetNumber(), _s1._getSheetNumber());
+        assertEquals(s3._getSheetRefId(), _s1._getSheetRefId());
 		assertEquals(3, s3.getSlideNumber());
 	}
 }
