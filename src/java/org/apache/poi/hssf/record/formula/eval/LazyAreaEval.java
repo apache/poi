@@ -23,7 +23,6 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellReference;
 
 /**
@@ -33,12 +32,12 @@ import org.apache.poi.hssf.util.CellReference;
 public final class LazyAreaEval extends AreaEvalBase {
 
 	private final HSSFSheet _sheet;
-	private HSSFWorkbook _workbook;
+	private HSSFFormulaEvaluator _evaluator;
 
-	public LazyAreaEval(AreaI ptg, HSSFSheet sheet, HSSFWorkbook workbook) {
+	public LazyAreaEval(AreaI ptg, HSSFSheet sheet, HSSFFormulaEvaluator evaluator) {
 		super(ptg);
 		_sheet = sheet;
-		_workbook = workbook;
+		_evaluator = evaluator;
 	}
 
 	public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) { 
@@ -54,21 +53,21 @@ public final class LazyAreaEval extends AreaEvalBase {
 		if (cell == null) {
 			return BlankEval.INSTANCE;
 		}
-		return HSSFFormulaEvaluator.getEvalForCell(cell, _sheet, _workbook);
+		return _evaluator.getEvalForCell(cell, _sheet);
 	}
 
 	public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
 		AreaI area = new OffsetArea(getFirstRow(), getFirstColumn(),
 				relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
 
-		return new LazyAreaEval(area, _sheet, _workbook);
+		return new LazyAreaEval(area, _sheet, _evaluator);
 	}
 	public String toString() {
 		CellReference crA = new CellReference(getFirstRow(), getFirstColumn());
 		CellReference crB = new CellReference(getLastRow(), getLastColumn());
 		StringBuffer sb = new StringBuffer();
 		sb.append(getClass().getName()).append("[");
-		String sheetName = _workbook.getSheetName(_workbook.getSheetIndex(_sheet));
+		String sheetName = _evaluator.getSheetName(_sheet);
 		sb.append(sheetName);
 		sb.append('!');
 		sb.append(crA.formatAsString());

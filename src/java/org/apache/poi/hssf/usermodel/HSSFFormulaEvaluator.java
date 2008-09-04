@@ -56,19 +56,67 @@ import org.apache.poi.hssf.record.formula.eval.OperationEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.util.CellReference;
 
 /**
+ * Evaluates formula cells.<p/>
+ * 
+ * For performance reasons, this class keeps a cache of all previously calculated intermediate
+ * cell values.  Be sure to call {@link #clearCache()} if any workbook cells are changed between
+ * calls to evaluate~ methods on this class.
+ * 
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *
+ * @author Josh Micich
  */
 public class HSSFFormulaEvaluator {
 
+	/**
+	 * used to track the number of evaluations
+	 */
+    private static final class Counter {
+        public int value;
+        public Counter() {
+            value = 0;
+        }
+    }
+
     private final HSSFSheet _sheet;
     private final HSSFWorkbook _workbook;
+    private final EvaluationCache _cache;
+
+    private Counter _evaluationCounter;
 
     public HSSFFormulaEvaluator(HSSFSheet sheet, HSSFWorkbook workbook) {
+        this(sheet, workbook, new EvaluationCache(), new Counter());
+    }
+
+    private HSSFFormulaEvaluator(HSSFSheet sheet, HSSFWorkbook workbook, EvaluationCache cache, Counter evaluationCounter) {
         _sheet = sheet;
         _workbook = workbook;
+        _cache = cache;
+        _evaluationCounter = evaluationCounter;
+    }
+
+    /**
+     * for debug use. Used in toString methods
+     */
+    public String getSheetName(HSSFSheet sheet) {
+        return _workbook.getSheetName(_workbook.getSheetIndex(sheet));
+    }
+    /**
+     * for debug/test use
+     */
+    /* package */ int getEvaluationCount() {
+        return _evaluationCounter.value;
+    }
+
+    private static boolean isDebugLogEnabled() {
+        return false;
+    }
+    private static void logDebug(String s) {
+        if (isDebugLogEnabled()) {
+            System.out.println(s);
+        }
     }
 
     /**
@@ -82,6 +130,14 @@ public class HSSFFormulaEvaluator {
         }
     }
 
+    /**
+     * Should be called whenever there are changes to input cells in the evaluated workbook.
+     * Failure to call this method after changing cell values will cause incorrect behaviour
+     * of the evaluate~ methods of this class
+     */
+    public void clearCache() {
+        _cache.clear();
+    }
 
     /**
      * Returns an underlying FormulaParser, for the specified
@@ -118,7 +174,7 @@ public class HSSFFormulaEvaluator {
                 retval.setErrorValue(cell.getErrorCellValue());
                 break;
             case HSSFCell.CELL_TYPE_FORMULA:
-                retval = getCellValueForEval(internalEvaluate(cell, _sheet, _workbook));
+                retval = getCellValueForEval(internalEvaluate(cell, _sheet));
                 break;
             case HSSFCell.CELL_TYPE_NUMERIC:
                 retval = new CellValue(HSSFCell.CELL_TYPE_NUMERIC);
@@ -156,7 +212,7 @@ public class HSSFFormulaEvaluator {
         if (cell != null) {
             switch (cell.getCellType()) {
             case HSSFCell.CELL_TYPE_FORMULA:
-                CellValue cv = getCellValueForEval(internalEvaluate(cell, _sheet, _workbook));
+                CellValue cv = getCellValueForEval(internalEvaluate(cell, _sheet));
                 switch (cv.getCellType()) {
                 case HSSFCell.CELL_TYPE_BOOLEAN:
                     cell.setCellValue(cv.getBooleanValue());
@@ -201,7 +257,7 @@ public class HSSFFormulaEvaluator {
         if (cell != null) {
             switch (cell.getCellType()) {
             case HSSFCell.CELL_TYPE_FORMULA:
-                CellValue cv = getCellValueForEval(internalEvaluate(cell, _sheet, _workbook));
+                CellValue cv = getCellValueForEval(internalEvaluate(cell, _sheet));
                 switch (cv.getCellType()) {
                 case HSSFCell.CELL_TYPE_BOOLEAN:
                     cell.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
@@ -299,28 +355,40 @@ public class HSSFFormulaEvaluator {
      * else a runtime exception will be thrown somewhere inside the method.
      * (Hence this is a private method.)
      */
-    private static ValueEval internalEvaluate(HSSFCell srcCell, HSSFSheet sheet, HSSFWorkbook workbook) {
+    private ValueEval internalEvaluate(HSSFCell srcCell, HSSFSheet sheet) {
         int srcRowNum = srcCell.getRowIndex();
         int srcColNum = srcCell.getCellNum();
 
         ValueEval result;
 
+        int sheetIndex = _workbook.getSheetIndex(sheet);
+        result = _cache.getValue(sheetIndex, srcRowNum, srcColNum);
+        if (result != null) {
+            return result;
+        }
+        _evaluationCounter.value++;
+
         EvaluationCycleDetector tracker = EvaluationCycleDetectorManager.getTracker();
 
-        if(!tracker.startEvaluate(workbook, sheet, srcRowNum, srcColNum)) {
+        if(!tracker.startEvaluate(_workbook, sheet, srcRowNum, srcColNum)) {
             return ErrorEval.CIRCULAR_REF_ERROR;
         }
         try {
-            result = evaluateCell(workbook, sheet, srcRowNum, (short)srcColNum, srcCell.getCellFormula());
+            result = evaluateCell(srcRowNum, (short)srcColNum, srcCell.getCellFormula());
         } finally {
-            tracker.endEvaluate(workbook, sheet, srcRowNum, srcColNum);
+            tracker.endEvaluate(_workbook, sheet, srcRowNum, srcColNum);
+            _cache.setValue(sheetIndex, srcRowNum, srcColNum, result);
+        }
+        if (isDebugLogEnabled()) {
+            String sheetName = _workbook.getSheetName(sheetIndex);
+            CellReference cr = new CellReference(srcRowNum, srcColNum);
+            logDebug("Evaluated " + sheetName + "!" + cr.formatAsString() + " to " + result.toString());
         }
         return result;
     }
-    private static ValueEval evaluateCell(HSSFWorkbook workbook, HSSFSheet sheet,
-            int srcRowNum, short srcColNum, String cellFormulaText) {
+    private ValueEval evaluateCell(int srcRowNum, short srcColNum, String cellFormulaText) {
 
-        Ptg[] ptgs = FormulaParser.parse(cellFormulaText, workbook);
+        Ptg[] ptgs = FormulaParser.parse(cellFormulaText, _workbook);
 
         Stack stack = new Stack();
         for (int i = 0, iSize = ptgs.length; i < iSize; i++) {
@@ -352,13 +420,15 @@ public class HSSFFormulaEvaluator {
                     Eval p = (Eval) stack.pop();
                     ops[j] = p;
                 }
-                 opResult = invokeOperation(operation, ops, srcRowNum, srcColNum, workbook, sheet);
+                logDebug("invoke " + operation + " (nAgs=" + numops + ")");
+                opResult = invokeOperation(operation, ops, srcRowNum, srcColNum, _workbook, _sheet);
             } else {
-                opResult = getEvalForPtg(ptg, sheet, workbook);
+                opResult = getEvalForPtg(ptg, _sheet);
             }
             if (opResult == null) {
                 throw new RuntimeException("Evaluation result must not be null");
             }
+            logDebug("push " + opResult);
             stack.push(opResult);
         }
 
@@ -415,30 +485,38 @@ public class HSSFFormulaEvaluator {
         return operation.evaluate(ops, srcRowNum, srcColNum);
     }
 
+    private HSSFSheet getOtherSheet(int externSheetIndex) {
+        Workbook wb = _workbook.getWorkbook();
+        return _workbook.getSheetAt(wb.getSheetIndexFromExternSheetIndex(externSheetIndex));
+    }
+    private HSSFFormulaEvaluator createEvaluatorForAnotherSheet(HSSFSheet sheet) {
+        return new HSSFFormulaEvaluator(sheet, _workbook, _cache, _evaluationCounter);
+    }
+
     /**
      * returns an appropriate Eval impl instance for the Ptg. The Ptg must be
      * one of: Area3DPtg, AreaPtg, ReferencePtg, Ref3DPtg, IntPtg, NumberPtg,
      * StringPtg, BoolPtg <br/>special Note: OperationPtg subtypes cannot be
      * passed here!
      */
-    private static Eval getEvalForPtg(Ptg ptg, HSSFSheet sheet, HSSFWorkbook workbook) {
+    private Eval getEvalForPtg(Ptg ptg, HSSFSheet sheet) {
         if (ptg instanceof NamePtg) {
             // named ranges, macro functions
             NamePtg namePtg = (NamePtg) ptg;
-            int numberOfNames = workbook.getNumberOfNames();
+            int numberOfNames = _workbook.getNumberOfNames();
             int nameIndex = namePtg.getIndex();
             if(nameIndex < 0 || nameIndex >= numberOfNames) {
-                throw new RuntimeException("Bad name index (" + nameIndex 
+                throw new RuntimeException("Bad name index (" + nameIndex
                         + "). Allowed range is (0.." + (numberOfNames-1) + ")");
             }
-            NameRecord nameRecord = workbook.getWorkbook().getNameRecord(nameIndex);
+            NameRecord nameRecord = _workbook.getWorkbook().getNameRecord(nameIndex);
             if (nameRecord.isFunctionName()) {
                 return new NameEval(nameRecord.getNameText());
             }
             if (nameRecord.hasFormula()) {
-                return evaluateNameFormula(nameRecord.getNameDefinition(), sheet, workbook);
+                return evaluateNameFormula(nameRecord.getNameDefinition(), sheet);
             }
-            
+
             throw new RuntimeException("Don't now how to evalate name '" + nameRecord.getNameText() + "'");
         }
         if (ptg instanceof NameXPtg) {
@@ -446,22 +524,20 @@ public class HSSFFormulaEvaluator {
             return new NameXEval(nameXPtg.getSheetRefIndex(), nameXPtg.getNameIndex());
         }
         if (ptg instanceof RefPtg) {
-            return new LazyRefEval(((RefPtg) ptg), sheet, workbook);
+            return new LazyRefEval(((RefPtg) ptg), sheet, this);
         }
         if (ptg instanceof Ref3DPtg) {
             Ref3DPtg refPtg = (Ref3DPtg) ptg;
-            Workbook wb = workbook.getWorkbook();
-            HSSFSheet xsheet = workbook.getSheetAt(wb.getSheetIndexFromExternSheetIndex(refPtg.getExternSheetIndex()));
-            return new LazyRefEval(refPtg, xsheet, workbook);
+            HSSFSheet xsheet = getOtherSheet(refPtg.getExternSheetIndex());
+            return new LazyRefEval(refPtg, xsheet, createEvaluatorForAnotherSheet(xsheet));
         }
         if (ptg instanceof AreaPtg) {
-            return new LazyAreaEval(((AreaPtg) ptg), sheet, workbook);
+            return new LazyAreaEval(((AreaPtg) ptg), sheet, this);
         }
         if (ptg instanceof Area3DPtg) {
             Area3DPtg a3dp = (Area3DPtg) ptg;
-            Workbook wb = workbook.getWorkbook();
-            HSSFSheet xsheet = workbook.getSheetAt(wb.getSheetIndexFromExternSheetIndex(a3dp.getExternSheetIndex()));
-            return new LazyAreaEval(a3dp, xsheet, workbook);
+            HSSFSheet xsheet = getOtherSheet(a3dp.getExternSheetIndex());
+            return new LazyAreaEval(a3dp, xsheet, createEvaluatorForAnotherSheet(xsheet));
         }
 
         if (ptg instanceof IntPtg) {
@@ -479,18 +555,17 @@ public class HSSFFormulaEvaluator {
         if (ptg instanceof ErrPtg) {
             return ErrorEval.valueOf(((ErrPtg) ptg).getErrorCode());
         }
-        if (ptg instanceof UnknownPtg) { 
+        if (ptg instanceof UnknownPtg) {
             // TODO - remove UnknownPtg
             throw new RuntimeException("UnknownPtg not allowed");
         }
         throw new RuntimeException("Unexpected ptg class (" + ptg.getClass().getName() + ")");
     }
-    private static Eval evaluateNameFormula(Ptg[] ptgs, HSSFSheet sheet,
-            HSSFWorkbook workbook) {
+    private Eval evaluateNameFormula(Ptg[] ptgs, HSSFSheet sheet) {
         if (ptgs.length > 1) {
             throw new RuntimeException("Complex name formulas not supported yet");
         }
-        return getEvalForPtg(ptgs[0], sheet, workbook);
+        return getEvalForPtg(ptgs[0], sheet);
     }
 
     /**
@@ -502,7 +577,7 @@ public class HSSFFormulaEvaluator {
      * @param sheet
      * @param workbook
      */
-    public static ValueEval getEvalForCell(HSSFCell cell, HSSFSheet sheet, HSSFWorkbook workbook) {
+    public ValueEval getEvalForCell(HSSFCell cell, HSSFSheet sheet) {
 
         if (cell == null) {
             return BlankEval.INSTANCE;
@@ -513,7 +588,7 @@ public class HSSFFormulaEvaluator {
             case HSSFCell.CELL_TYPE_STRING:
                 return new StringEval(cell.getRichStringCellValue().getString());
             case HSSFCell.CELL_TYPE_FORMULA:
-                return internalEvaluate(cell, sheet, workbook);
+                return internalEvaluate(cell, sheet);
             case HSSFCell.CELL_TYPE_BOOLEAN:
                 return BoolEval.valueOf(cell.getBooleanCellValue());
             case HSSFCell.CELL_TYPE_BLANK:

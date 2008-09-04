@@ -19,6 +19,8 @@ package org.apache.poi.hssf.usermodel;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 
 import junit.framework.AssertionFailedError;
@@ -35,6 +37,7 @@ import org.apache.poi.hssf.record.formula.Ptg;
  */
 public final class TestFormulaEvaluatorBugs extends TestCase {
 
+	private static final boolean OUTPUT_TEST_FILES = false;
 	private String tmpDirName;
 
 	protected void setUp() {
@@ -65,13 +68,15 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
 		assertEquals(4.2 * 25, row.getCell(3).getNumericCellValue(), 0.0001);
 
-		// Save
-		File existing = new File(tmpDirName, "44636-existing.xls");
-		FileOutputStream out = new FileOutputStream(existing);
-		wb.write(out);
-		out.close();
-		System.err.println("Existing file for bug #44636 written to " + existing.toString());
-
+		FileOutputStream out;
+		if (OUTPUT_TEST_FILES) {
+			// Save
+			File existing = new File(tmpDirName, "44636-existing.xls");
+			out = new FileOutputStream(existing);
+			wb.write(out);
+			out.close();
+			System.err.println("Existing file for bug #44636 written to " + existing.toString());
+		}
 		// Now, do a new file from scratch
 		wb = new HSSFWorkbook();
 		sheet = wb.createSheet();
@@ -86,12 +91,14 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
 		assertEquals(5.4, row.getCell(0).getNumericCellValue(), 0.0001);
 
-		// Save
-		File scratch = new File(tmpDirName, "44636-scratch.xls");
-		out = new FileOutputStream(scratch);
-		wb.write(out);
-		out.close();
-		System.err.println("New file for bug #44636 written to " + scratch.toString());
+		if (OUTPUT_TEST_FILES) {
+			// Save
+			File scratch = new File(tmpDirName, "44636-scratch.xls");
+			out = new FileOutputStream(scratch);
+			wb.write(out);
+			out.close();
+			System.err.println("New file for bug #44636 written to " + scratch.toString());
+		}
 	}
 
 	/**
@@ -281,64 +288,39 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 	}
 	
 	/**
-	 * Apparently, each subsequent call takes longer, which is very
-	 *  odd.
-	 * We think it's because the formulas are recursive and crazy
+	 * The HSSFFormula evaluator performance benefits greatly from caching of intermediate cell values
 	 */
-	public void DISABLEDtestSlowEvaluate45376() throws Exception {
-		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("45376.xls");
+	public void testSlowEvaluate45376() {
 		
-		final String SHEET_NAME = "Eingabe";
-        final int row = 6;
-        final HSSFSheet sheet = wb.getSheet(SHEET_NAME);
-        
-        int firstCol = 4;
-        int lastCol = 14;
-        long[] timings = new long[lastCol-firstCol+1];
-        long[] rtimings = new long[lastCol-firstCol+1];
-        
-        long then, now;
-
-        final HSSFRow excelRow = sheet.getRow(row);
-        for(int i = firstCol; i <= lastCol; i++) {
-             final HSSFCell excelCell = excelRow.getCell(i);
-             final HSSFFormulaEvaluator evaluator = new
-                 HSSFFormulaEvaluator(sheet, wb);
-
-             now = System.currentTimeMillis();
-             evaluator.evaluate(excelCell);
-             then = System.currentTimeMillis();
-             timings[i-firstCol] = (then-now);
-             System.err.println("Col " + i + " took " + (then-now) + "ms");
-        }
-        for(int i = lastCol; i >= firstCol; i--) {
-            final HSSFCell excelCell = excelRow.getCell(i);
-            final HSSFFormulaEvaluator evaluator = new
-                HSSFFormulaEvaluator(sheet, wb);
-
-            now = System.currentTimeMillis();
-            evaluator.evaluate(excelCell);
-            then = System.currentTimeMillis();
-            rtimings[i-firstCol] = (then-now);
-            System.err.println("Col " + i + " took " + (then-now) + "ms");
-       }
-        
-        // The timings for each should be about the same
-        long avg = 0;
-        for(int i=0; i<timings.length; i++) {
-        	avg += timings[i];
-        }
-        avg = (long)( ((double)avg) / timings.length );
-        
-        // Warn if any took more then 1.5 the average
-        // TODO - replace with assert or similar
-        for(int i=0; i<timings.length; i++) {
-        	if(timings[i] > 1.5*avg) {
-        		System.err.println("Doing col " + (i+firstCol) + 
-        				" took " + timings[i] + "ms, vs avg " + 
-        				avg + "ms"
-        		);
-        	}
-        }
+		// Firstly set up a sequence of formula cells where each depends on the  previous multiple
+		// times.  Without caching, each subsequent cell take about 4 times longer to evaluate.
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet("Sheet1");
+		HSSFRow row = sheet.createRow(0);
+		for(int i=1; i<10; i++) {
+			HSSFCell cell = row.createCell(i);
+			char prevCol = (char) ('A' + i-1);
+			String prevCell = prevCol + "1";
+			// this formula is inspired by the offending formula of the attachment for bug 45376
+			String formula = "IF(DATE(YEAR(" + prevCell + "),MONTH(" + prevCell + ")+1,1)<=$D$3," +
+					"DATE(YEAR(" + prevCell + "),MONTH(" + prevCell + ")+1,1),NA())";
+			cell.setCellFormula(formula);
+			
+		}
+		Calendar cal = new GregorianCalendar(2000, 0, 1, 0, 0, 0);
+		row.createCell(0).setCellValue(cal);
+		
+		// Choose cell A9, so that the failing test case doesn't take too long to execute.
+		HSSFCell cell = row.getCell(8);
+		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
+		evaluator.evaluate(cell);
+		int evalCount = evaluator.getEvaluationCount();
+		// With caching, the evaluationCount is 8 which is a big improvement
+		if (evalCount > 10) {
+			// Without caching, evaluating cell 'A9' takes 21845 evaluations which consumes
+			// much time (~3 sec on Core 2 Duo 2.2GHz)
+			System.err.println("Cell A9 took " + evalCount + " intermediate evaluations");
+			throw new AssertionFailedError("Identifed bug 45376 - Formula evaluator should cache values");
+		}
 	}
 }
