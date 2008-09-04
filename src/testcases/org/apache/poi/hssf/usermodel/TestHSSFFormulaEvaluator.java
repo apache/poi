@@ -15,32 +15,29 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.formula.eval;
+package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.CellValue;
+
+import junit.framework.TestCase;
 /**
+ * 
  * @author Josh Micich
  */
-public final class NameEval implements Eval {
-
-	private final String _functionName;
+public final class TestHSSFFormulaEvaluator extends TestCase {
 
 	/**
-	 * Creates a NameEval representing a function name
+	 * Test that the HSSFFormulaEvaluator can evaluate simple named ranges
+	 *  (single cells and rectangular areas)
 	 */
-	public NameEval(String functionName) {
-		_functionName = functionName;
-	}
-
-
-	public String getFunctionName() {
-		return _functionName;
-	}
-
-	public String toString() {
-		StringBuffer sb = new StringBuffer(64);
-		sb.append(getClass().getName()).append(" [");
-		sb.append(_functionName);
-		sb.append("]");
-		return sb.toString();
+	public void testEvaluateSimple() {
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("testNames.xls");
+		HSSFSheet sheet = wb.getSheetAt(0);
+		HSSFCell cell = sheet.getRow(8).getCell(0);
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
+		CellValue cv = fe.evaluate(cell);
+		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
+		assertEquals(3.72, cv.getNumberValue(), 0.0);
 	}
 }

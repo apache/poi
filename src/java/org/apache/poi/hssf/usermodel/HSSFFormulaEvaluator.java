@@ -22,6 +22,7 @@ import java.util.Stack;
 
 import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.BoolPtg;
@@ -62,8 +63,8 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  */
 public class HSSFFormulaEvaluator {
 
-    protected HSSFSheet _sheet;
-    protected HSSFWorkbook _workbook;
+    private final HSSFSheet _sheet;
+    private final HSSFWorkbook _workbook;
 
     public HSSFFormulaEvaluator(HSSFSheet sheet, HSSFWorkbook workbook) {
         _sheet = sheet;
@@ -76,6 +77,9 @@ public class HSSFFormulaEvaluator {
      */
     public void setCurrentRow(HSSFRow row) {
         // do nothing
+        if (false) {
+            row.getClass(); // suppress unused parameter compiler warning
+        }
     }
 
 
@@ -297,8 +301,9 @@ public class HSSFFormulaEvaluator {
      */
     private static ValueEval internalEvaluate(HSSFCell srcCell, HSSFSheet sheet, HSSFWorkbook workbook) {
         int srcRowNum = srcCell.getRowIndex();
-        short srcColNum = srcCell.getCellNum();
+        int srcColNum = srcCell.getCellNum();
 
+        ValueEval result;
 
         EvaluationCycleDetector tracker = EvaluationCycleDetectorManager.getTracker();
 
@@ -306,10 +311,11 @@ public class HSSFFormulaEvaluator {
             return ErrorEval.CIRCULAR_REF_ERROR;
         }
         try {
-            return evaluateCell(workbook, sheet, srcRowNum, srcColNum, srcCell.getCellFormula());
+            result = evaluateCell(workbook, sheet, srcRowNum, (short)srcColNum, srcCell.getCellFormula());
         } finally {
             tracker.endEvaluate(workbook, sheet, srcRowNum, srcColNum);
         }
+        return result;
     }
     private static ValueEval evaluateCell(HSSFWorkbook workbook, HSSFSheet sheet,
             int srcRowNum, short srcColNum, String cellFormulaText) {
@@ -326,19 +332,10 @@ public class HSSFFormulaEvaluator {
                 continue;
             }
             if (ptg instanceof MemErrPtg) { continue; }
-            if (ptg instanceof MissingArgPtg) { continue; }
-            if (ptg instanceof NamePtg) {
-                // named ranges, macro functions
-                NamePtg namePtg = (NamePtg) ptg;
-                stack.push(new NameEval(namePtg.getIndex()));
+            if (ptg instanceof MissingArgPtg) {
+                // TODO - might need to push BlankEval or MissingArgEval
                 continue;
             }
-            if (ptg instanceof NameXPtg) {
-                NameXPtg nameXPtg = (NameXPtg) ptg;
-                stack.push(new NameXEval(nameXPtg.getSheetRefIndex(), nameXPtg.getNameIndex()));
-                continue;
-            }
-            if (ptg instanceof UnknownPtg) { continue; }
             Eval opResult;
             if (ptg instanceof OperationPtg) {
                 OperationPtg optg = (OperationPtg) ptg;
@@ -355,9 +352,12 @@ public class HSSFFormulaEvaluator {
                     Eval p = (Eval) stack.pop();
                     ops[j] = p;
                 }
-                opResult = invokeOperation(operation, ops, srcRowNum, srcColNum, workbook, sheet);
+                 opResult = invokeOperation(operation, ops, srcRowNum, srcColNum, workbook, sheet);
             } else {
                 opResult = getEvalForPtg(ptg, sheet, workbook);
+            }
+            if (opResult == null) {
+                throw new RuntimeException("Evaluation result must not be null");
             }
             stack.push(opResult);
         }
@@ -422,6 +422,29 @@ public class HSSFFormulaEvaluator {
      * passed here!
      */
     private static Eval getEvalForPtg(Ptg ptg, HSSFSheet sheet, HSSFWorkbook workbook) {
+        if (ptg instanceof NamePtg) {
+            // named ranges, macro functions
+            NamePtg namePtg = (NamePtg) ptg;
+            int numberOfNames = workbook.getNumberOfNames();
+            int nameIndex = namePtg.getIndex();
+            if(nameIndex < 0 || nameIndex >= numberOfNames) {
+                throw new RuntimeException("Bad name index (" + nameIndex 
+                        + "). Allowed range is (0.." + (numberOfNames-1) + ")");
+            }
+            NameRecord nameRecord = workbook.getWorkbook().getNameRecord(nameIndex);
+            if (nameRecord.isFunctionName()) {
+                return new NameEval(nameRecord.getNameText());
+            }
+            if (nameRecord.hasFormula()) {
+                return evaluateNameFormula(nameRecord.getNameDefinition(), sheet, workbook);
+            }
+            
+            throw new RuntimeException("Don't now how to evalate name '" + nameRecord.getNameText() + "'");
+        }
+        if (ptg instanceof NameXPtg) {
+            NameXPtg nameXPtg = (NameXPtg) ptg;
+            return new NameXEval(nameXPtg.getSheetRefIndex(), nameXPtg.getNameIndex());
+        }
         if (ptg instanceof RefPtg) {
             return new LazyRefEval(((RefPtg) ptg), sheet, workbook);
         }
@@ -456,8 +479,20 @@ public class HSSFFormulaEvaluator {
         if (ptg instanceof ErrPtg) {
             return ErrorEval.valueOf(((ErrPtg) ptg).getErrorCode());
         }
+        if (ptg instanceof UnknownPtg) { 
+            // TODO - remove UnknownPtg
+            throw new RuntimeException("UnknownPtg not allowed");
+        }
         throw new RuntimeException("Unexpected ptg class (" + ptg.getClass().getName() + ")");
     }
+    private static Eval evaluateNameFormula(Ptg[] ptgs, HSSFSheet sheet,
+            HSSFWorkbook workbook) {
+        if (ptgs.length > 1) {
+            throw new RuntimeException("Complex name formulas not supported yet");
+        }
+        return getEvalForPtg(ptgs[0], sheet, workbook);
+    }
+
     /**
      * Given a cell, find its type and from that create an appropriate ValueEval
      * impl instance and return that. Since the cell could be an external

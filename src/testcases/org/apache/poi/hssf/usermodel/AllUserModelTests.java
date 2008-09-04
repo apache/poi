@@ -46,6 +46,7 @@ public class AllUserModelTests {
 		result.addTestSuite(TestHSSFConditionalFormatting.class);
 		result.addTestSuite(TestHSSFDataFormatter.class);
 		result.addTestSuite(TestHSSFDateUtil.class);
+		result.addTestSuite(TestHSSFFormulaEvaluator.class);
 		result.addTestSuite(TestHSSFHeaderFooter.class);
 		result.addTestSuite(TestHSSFHyperlink.class);
 		result.addTestSuite(TestHSSFOptimiser.class);
