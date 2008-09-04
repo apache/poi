@@ -69,8 +69,9 @@ import org.apache.poi.hssf.record.formula.eval.UnaryPlusEval;
  */
 final class OperationEvaluatorFactory {
 	private static final Class[] OPERATION_CONSTRUCTOR_CLASS_ARRAY = new Class[] { Ptg.class };
-	
+	// TODO - use singleton instances directly instead of reflection
 	private static final Map _constructorsByPtgClass = initialiseConstructorsMap();
+	private static final Map _instancesByPtgClass = initialiseInstancesMap();
 	
 	private OperationEvaluatorFactory() {
 		// no instances of this class
@@ -81,15 +82,9 @@ final class OperationEvaluatorFactory {
 		add(m, AddPtg.class, AddEval.class);
 		add(m, ConcatPtg.class, ConcatEval.class);
 		add(m, DividePtg.class, DivideEval.class);
-		add(m, EqualPtg.class, EqualEval.class);
 		add(m, FuncPtg.class, FuncVarEval.class);
 		add(m, FuncVarPtg.class, FuncVarEval.class);
-		add(m, GreaterEqualPtg.class, GreaterEqualEval.class);
-		add(m, GreaterThanPtg.class, GreaterThanEval.class);
-		add(m, LessEqualPtg.class, LessEqualEval.class);
-		add(m, LessThanPtg.class, LessThanEval.class);
 		add(m, MultiplyPtg.class, MultiplyEval.class);
-		add(m, NotEqualPtg.class, NotEqualEval.class);
 		add(m, PercentPtg.class, PercentEval.class);
 		add(m, PowerPtg.class, PowerEval.class);
 		add(m, SubtractPtg.class, SubtractEval.class);
@@ -97,13 +92,30 @@ final class OperationEvaluatorFactory {
 		add(m, UnaryPlusPtg.class, UnaryPlusEval.class);
 		return m;
 	}
+	private static Map initialiseInstancesMap() {
+		Map m = new HashMap(32);
+		add(m, EqualPtg.class, EqualEval.instance);
+		add(m, GreaterEqualPtg.class, GreaterEqualEval.instance);
+		add(m, GreaterThanPtg.class, GreaterThanEval.instance);
+		add(m, LessEqualPtg.class, LessEqualEval.instance);
+		add(m, LessThanPtg.class, LessThanEval.instance);
+		add(m, NotEqualPtg.class, NotEqualEval.instance);
+		return m;
+	}
+
+	private static void add(Map m, Class ptgClass, OperationEval evalInstance) {
+		if(!Ptg.class.isAssignableFrom(ptgClass)) {
+			throw new IllegalArgumentException("Expected Ptg subclass");
+		}
+		m.put(ptgClass, evalInstance);
+	}
 
 	private static void add(Map m, Class ptgClass, Class evalClass) {
-		
 		// perform some validation now, to keep later exception handlers simple
 		if(!Ptg.class.isAssignableFrom(ptgClass)) {
 			throw new IllegalArgumentException("Expected Ptg subclass");
 		}
+		
 		if(!OperationEval.class.isAssignableFrom(evalClass)) {
 			throw new IllegalArgumentException("Expected OperationEval subclass");
 		}
@@ -125,7 +137,7 @@ final class OperationEvaluatorFactory {
 		}
 		m.put(ptgClass, constructor);
 	}
-	
+
 	/**
 	 * returns the OperationEval concrete impl instance corresponding
 	 * to the supplied operationPtg
@@ -134,8 +146,15 @@ final class OperationEvaluatorFactory {
 		if(ptg == null) {
 			throw new IllegalArgumentException("ptg must not be null");
 		}
+		Object result;
 		
 		Class ptgClass = ptg.getClass();
+		
+		result = _instancesByPtgClass.get(ptgClass);
+		if (result != null) {
+			return (OperationEval) result;
+		}
+		
 		
 		Constructor constructor = (Constructor) _constructorsByPtgClass.get(ptgClass);
 		if(constructor == null) {
@@ -147,7 +166,6 @@ final class OperationEvaluatorFactory {
 			throw new RuntimeException("Unexpected operation ptg class (" + ptgClass.getName() + ")");
 		}
 		
-		Object result;
 		Object[] initargs = { ptg };
 		try {
 			result = constructor.newInstance(initargs);
