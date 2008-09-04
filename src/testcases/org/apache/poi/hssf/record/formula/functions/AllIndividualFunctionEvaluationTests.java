@@ -36,6 +36,7 @@ public final class AllIndividualFunctionEvaluationTests {
 		result.addTestSuite(TestIndex.class);
 		result.addTestSuite(TestIsBlank.class);
 		result.addTestSuite(TestLen.class);
+		result.addTestSuite(TestLookupFunctionsFromSpreadsheet.class);
 		result.addTestSuite(TestMid.class);
 		result.addTestSuite(TestMathX.class);
 		result.addTestSuite(TestMatch.class);
