@@ -18,14 +18,13 @@
 package org.apache.poi.hssf.record.formula.eval;
 
 import org.apache.poi.hssf.record.formula.AreaI;
-import org.apache.poi.hssf.record.formula.AreaI.OffsetArea;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
+import org.apache.poi.hssf.record.formula.AreaI.OffsetArea;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellReference;
 
 /**
@@ -35,18 +34,18 @@ import org.apache.poi.hssf.util.CellReference;
 public final class LazyRefEval extends RefEvalBase {
 
 	private final HSSFSheet _sheet;
-	private final HSSFWorkbook _workbook;
+	private final HSSFFormulaEvaluator _evaluator;
 
 
-	public LazyRefEval(RefPtg ptg, HSSFSheet sheet, HSSFWorkbook workbook) {
+	public LazyRefEval(RefPtg ptg, HSSFSheet sheet, HSSFFormulaEvaluator evaluator) {
 		super(ptg.getRow(), ptg.getColumn());
 		_sheet = sheet;
-		_workbook = workbook;
+		_evaluator = evaluator;
 	}
-	public LazyRefEval(Ref3DPtg ptg, HSSFSheet sheet, HSSFWorkbook workbook) {
+	public LazyRefEval(Ref3DPtg ptg, HSSFSheet sheet, HSSFFormulaEvaluator evaluator) {
 		super(ptg.getRow(), ptg.getColumn());
 		_sheet = sheet;
-		_workbook = workbook;
+		_evaluator = evaluator;
 	}
 
 	public ValueEval getInnerValueEval() {
@@ -61,7 +60,7 @@ public final class LazyRefEval extends RefEvalBase {
 		if (cell == null) {
 			return BlankEval.INSTANCE;
 		}
-		return HSSFFormulaEvaluator.getEvalForCell(cell, _sheet, _workbook);
+		return _evaluator.getEvalForCell(cell, _sheet);
 	}
 	
 	public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
@@ -69,14 +68,14 @@ public final class LazyRefEval extends RefEvalBase {
 		AreaI area = new OffsetArea(getRow(), getColumn(),
 				relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
 
-		return new LazyAreaEval(area, _sheet, _workbook);
+		return new LazyAreaEval(area, _sheet, _evaluator);
 	}
 	
 	public String toString() {
 		CellReference cr = new CellReference(getRow(), getColumn());
 		StringBuffer sb = new StringBuffer();
 		sb.append(getClass().getName()).append("[");
-		String sheetName = _workbook.getSheetName(_workbook.getSheetIndex(_sheet));
+		String sheetName = _evaluator.getSheetName(_sheet);
 		sb.append(sheetName);
 		sb.append('!');
 		sb.append(cr.formatAsString());
