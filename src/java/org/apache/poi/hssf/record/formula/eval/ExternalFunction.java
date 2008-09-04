@@ -42,7 +42,7 @@ final class ExternalFunction implements FreeRefFunction {
 		FreeRefFunction targetFunc;
 		try {
 			if (nameArg instanceof NameEval) {
-				targetFunc = findInternalUserDefinedFunction(workbook, (NameEval) nameArg);
+				targetFunc = findInternalUserDefinedFunction((NameEval) nameArg);
 			} else if (nameArg instanceof NameXEval) {
 				targetFunc = findExternalUserDefinedFunction(workbook, (NameXEval) nameArg);
 			} else {
@@ -65,7 +65,7 @@ final class ExternalFunction implements FreeRefFunction {
 		if(false) {
 			System.out.println("received call to external user defined function (" + functionName + ")");
 		}
-		// currently only looking for functions from the 'Analysis TookPak'
+		// currently only looking for functions from the 'Analysis TookPak'  e.g. "YEARFRAC" or "ISEVEN"
 		// not sure how much this logic would need to change to support other or multiple add-ins.
 		FreeRefFunction result = AnalysisToolPak.findFunction(functionName);
 		if (result != null) {
@@ -74,24 +74,13 @@ final class ExternalFunction implements FreeRefFunction {
 		throw new EvaluationException(ErrorEval.FUNCTION_NOT_IMPLEMENTED);
 	}
 
-	private FreeRefFunction findInternalUserDefinedFunction(HSSFWorkbook workbook, NameEval functionNameEval) throws EvaluationException {
+	private FreeRefFunction findInternalUserDefinedFunction(NameEval functionNameEval) throws EvaluationException {
 
-		int numberOfNames = workbook.getNumberOfNames();
-		
-		int nameIndex = functionNameEval.getIndex();
-		if(nameIndex < 0 || nameIndex >= numberOfNames) {
-			throw new RuntimeException("Bad name index (" + nameIndex 
-					+ "). Allowed range is (0.." + (numberOfNames-1) + ")");
-		}
-		
-		String functionName = workbook.getNameName(nameIndex);
+		String functionName = functionNameEval.getFunctionName();
 		if(false) {
 			System.out.println("received call to internal user defined function  (" + functionName + ")");
 		}
-		// TODO - detect if the NameRecord corresponds to a named range, function, or something undefined
-		// throw the right errors in these cases
-		
-		// TODO find the implementation for the external function e.g. "YEARFRAC" or "ISEVEN"
+		// TODO find the implementation for the user defined function
 		
 		throw new EvaluationException(ErrorEval.FUNCTION_NOT_IMPLEMENTED);
 	}

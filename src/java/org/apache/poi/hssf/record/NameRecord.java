@@ -243,12 +243,18 @@ public final class NameRecord extends Record {
 		}
 	}
 	/**
-	 * @return true if name is a function
+	 * @return <code>true</code> if name is a function
 	 */
 	public boolean isFunctionName() {
 		return (field_1_option_flag & Option.OPT_FUNCTION_NAME) != 0;
 	}
 
+	/**
+	 * @return <code>true</code> if name has a formula (named range or defined value)
+	 */
+	public boolean hasFormula() {
+		return field_1_option_flag == 0 && field_13_name_definition.length > 0;
+	}
 
 	/**
 	 * @return true if name is a command
