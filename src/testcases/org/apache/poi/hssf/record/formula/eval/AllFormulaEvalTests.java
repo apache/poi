@@ -31,6 +31,7 @@ public class AllFormulaEvalTests {
 		TestSuite result = new TestSuite(AllFormulaEvalTests.class.getName());
 		result.addTestSuite(TestAreaEval.class);
 		result.addTestSuite(TestCircularReferences.class);
+		result.addTestSuite(TestDivideEval.class);
 		result.addTestSuite(TestEqualEval.class);
 		result.addTestSuite(TestExternalFunction.class);
 		result.addTestSuite(TestFormulaBugs.class);

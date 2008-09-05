@@ -79,17 +79,9 @@ final class OperationEvaluatorFactory {
 	
 	private static Map initialiseConstructorsMap() {
 		Map m = new HashMap(32);
-		add(m, AddPtg.class, AddEval.class);
 		add(m, ConcatPtg.class, ConcatEval.class);
-		add(m, DividePtg.class, DivideEval.class);
 		add(m, FuncPtg.class, FuncVarEval.class);
 		add(m, FuncVarPtg.class, FuncVarEval.class);
-		add(m, MultiplyPtg.class, MultiplyEval.class);
-		add(m, PercentPtg.class, PercentEval.class);
-		add(m, PowerPtg.class, PowerEval.class);
-		add(m, SubtractPtg.class, SubtractEval.class);
-		add(m, UnaryMinusPtg.class, UnaryMinusEval.class);
-		add(m, UnaryPlusPtg.class, UnaryPlusEval.class);
 		return m;
 	}
 	private static Map initialiseInstancesMap() {
@@ -100,6 +92,15 @@ final class OperationEvaluatorFactory {
 		add(m, LessEqualPtg.class, LessEqualEval.instance);
 		add(m, LessThanPtg.class, LessThanEval.instance);
 		add(m, NotEqualPtg.class, NotEqualEval.instance);
+
+		add(m, AddPtg.class, AddEval.instance);
+		add(m, DividePtg.class, DivideEval.instance);
+		add(m, MultiplyPtg.class, MultiplyEval.instance);
+		add(m, PercentPtg.class, PercentEval.instance);
+		add(m, PowerPtg.class, PowerEval.instance);
+		add(m, SubtractPtg.class, SubtractEval.instance);
+		add(m, UnaryMinusPtg.class, UnaryMinusEval.instance);
+		add(m, UnaryPlusPtg.class, UnaryPlusEval.instance);
 		return m;
 	}
 

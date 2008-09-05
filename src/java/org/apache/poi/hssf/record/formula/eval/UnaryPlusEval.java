@@ -17,8 +17,6 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -26,13 +24,9 @@ import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
  */
 public final class UnaryPlusEval implements OperationEval {
 
-    private UnaryPlusPtg delegate;
+    public static final OperationEval instance = new UnaryPlusEval();
     
-    /**
-     * called by reflection
-     */
-    public UnaryPlusEval(Ptg ptg) {
-        this.delegate = (UnaryPlusPtg) ptg;
+    private UnaryPlusEval() {
     }
 
     public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
@@ -59,10 +53,10 @@ public final class UnaryPlusEval implements OperationEval {
     }
 
     public int getNumberOfOperands() {
-        return delegate.getNumberOfOperands();
+        return 1;
     }
 
     public int getType() {
-        return delegate.getType();
+        throw new RuntimeException("obsolete code should not be called");
     }
 }

@@ -17,40 +17,39 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
-
 /**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *  
+ * @author Josh Micich
  */
-public final class UnaryMinusEval implements OperationEval {
+abstract class TwoOperandNumericOperation implements OperationEval {
 
-	public static final OperationEval instance = new UnaryMinusEval();
-
-	private UnaryMinusEval() {
-	}
-
-	public Eval evaluate(Eval[] args, int srcRow, short srcCol) {
-		if (args.length != 1) {
-			return ErrorEval.VALUE_INVALID;
-		}
-    	double d;
-		try {
-			ValueEval ve = OperandResolver.getSingleValue(args[0], srcRow, srcCol);
-			if (ve instanceof BlankEval) {
-				return NumberEval.ZERO;
-			}
-			d = OperandResolver.coerceValueToDouble(ve);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
-		return new NumberEval(-d);
-	}
-
-	public int getNumberOfOperands() {
-		return 1;
-	}
 	public final int getType() {
     	// TODO - remove
         throw new RuntimeException("obsolete code should not be called");
     }
+    protected final double singleOperandEvaluate(Eval arg, int srcCellRow, short srcCellCol) throws EvaluationException {
+    	ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
+		if (ve instanceof BlankEval) {
+			return 0.0;
+		}
+   		return OperandResolver.coerceValueToDouble(ve);
+    }
+    
+    public final Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+		double result;
+		try {
+			double d0 = singleOperandEvaluate(args[0], srcCellRow, srcCellCol);
+			double d1 = singleOperandEvaluate(args[1], srcCellRow, srcCellCol);
+			result = evaluate(d0, d1);
+			if (Double.isNaN(result) || Double.isInfinite(result)) {
+				return ErrorEval.NUM_ERROR;
+			}
+		} catch (EvaluationException e) {
+			return e.getErrorEval();
+		}
+    	return new NumberEval(result);
+    }
+	protected abstract double evaluate(double d0, double d1) throws EvaluationException;
+	public final int getNumberOfOperands() {
+		return 2;
+	}
 }
