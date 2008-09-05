@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
+import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
@@ -587,7 +588,9 @@ final class LookupUtils {
 
 		if (lookupValue instanceof BlankEval) {
 			// blank eval can never be found in a lookup array
-			throw new EvaluationException(ErrorEval.NA);
+			//throw new EvaluationException(ErrorEval.NA);
+			// TODO - investigate this
+			return new NumberLookupComparer(NumberEval.ZERO);
 		}
 		if (lookupValue instanceof StringEval) {
 			return new StringLookupComparer((StringEval) lookupValue);

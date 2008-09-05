@@ -487,7 +487,7 @@ public final class NameRecord extends Record {
 	}
 
 	private static Ptg createNewPtg(){
-		return new Area3DPtg("A1", 0); // TODO - change to not be partially initialised
+		return new Area3DPtg("A1:A1", 0); // TODO - change to not be partially initialised
 	}
 
 	/** gets the reference , the area only (range)
