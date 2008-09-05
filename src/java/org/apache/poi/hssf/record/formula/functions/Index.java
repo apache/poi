@@ -90,19 +90,9 @@ public final class Index implements Function {
 		}
 	}
 	
-	private static ValueEval getValueFromArea(AreaEval ae, int pRowIx, int pColumnIx) throws EvaluationException {
+	private static ValueEval getValueFromArea(AreaEval ae, int rowIx, int columnIx) throws EvaluationException {
 		int width = ae.getWidth();
 		int height = ae.getHeight();
-		int rowIx;
-		int columnIx;
-		if (ae.isRow() && pColumnIx == 0 && pRowIx > 0) {
-			// TODO - explore all these special cases
-			rowIx = 0;
-			columnIx = pRowIx;
-		} else {
-			rowIx = pRowIx;
-			columnIx = pColumnIx;
-		}
 		
 		// Slightly irregular logic for bounds checking errors
 		if (rowIx >= height || columnIx >= width) {
