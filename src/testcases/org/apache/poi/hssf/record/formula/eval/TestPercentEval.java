@@ -20,7 +20,7 @@ package org.apache.poi.hssf.record.formula.eval;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.formula.PercentPtg;
+import org.apache.poi.hssf.record.formula.functions.EvalFactory;
 import org.apache.poi.hssf.record.formula.functions.NumericFunctionInvoker;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
@@ -41,8 +41,8 @@ public final class TestPercentEval extends TestCase {
 			arg,	
 		};
 		
-		PercentEval opEval = new PercentEval(PercentPtg.instance);
-		double result = NumericFunctionInvoker.invoke(opEval, args, -1, (short)-1);
+		OperationEval opEval = PercentEval.instance;
+		double result = NumericFunctionInvoker.invoke(opEval, args, 0, 0);
 		
 		assertEquals(expectedResult, result, 0);
 	}
@@ -55,6 +55,10 @@ public final class TestPercentEval extends TestCase {
 		confirm(BoolEval.TRUE, 0.01);
 	}
 
+	public void test1x1Area() {
+		AreaEval ae = EvalFactory.createAreaEval("B2:B2", new ValueEval[] { new NumberEval(50), });
+		confirm(ae, 0.5);
+	}
 	public void testInSpreadSheet() {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Sheet1");

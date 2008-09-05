@@ -17,55 +17,40 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
-import org.apache.poi.hssf.record.formula.PercentPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
 
 /**
  * Implementation of Excel formula token '%'. <p/>
  * @author Josh Micich
  */
-public final class PercentEval extends NumericOperationEval {
+public final class PercentEval implements OperationEval {
 
-	private PercentPtg _delegate;
+	public static final OperationEval instance = new PercentEval();
 
-	private static final ValueEvalToNumericXlator NUM_XLATOR = new ValueEvalToNumericXlator(
-			(short) (ValueEvalToNumericXlator.BOOL_IS_PARSED
-					| ValueEvalToNumericXlator.REF_BOOL_IS_PARSED
-					| ValueEvalToNumericXlator.STRING_IS_PARSED | ValueEvalToNumericXlator.REF_STRING_IS_PARSED));
-
-	public PercentEval(Ptg ptg) {
-		_delegate = (PercentPtg) ptg;
-	}
-
-	protected ValueEvalToNumericXlator getXlator() {
-		return NUM_XLATOR;
+	private PercentEval() {
 	}
 
 	public Eval evaluate(Eval[] args, int srcRow, short srcCol) {
 		if (args.length != 1) {
 			return ErrorEval.VALUE_INVALID;
 		}
-
-		ValueEval ve = singleOperandEvaluate(args[0], srcRow, srcCol);
-		if (ve instanceof NumericValueEval) {
-			double d0 = ((NumericValueEval) ve).getNumberValue();
-			return new NumberEval(d0 / 100);
+    	double d0;
+		try {
+			ValueEval ve = OperandResolver.getSingleValue(args[0], srcRow, srcCol);
+			if (ve instanceof BlankEval) {
+				return NumberEval.ZERO;
+			}
+			d0 = OperandResolver.coerceValueToDouble(ve);
+		} catch (EvaluationException e) {
+			return e.getErrorEval();
 		}
-
-		if (ve instanceof BlankEval) {
-			return NumberEval.ZERO;
-		}
-		if (ve instanceof ErrorEval) {
-			return ve;
-		}
-		return ErrorEval.VALUE_INVALID;
+		return new NumberEval(d0 / 100);
 	}
 
 	public int getNumberOfOperands() {
-		return _delegate.getNumberOfOperands();
+		return 1;
 	}
-
-	public int getType() {
-		return _delegate.getType();
-	}
+	public final int getType() {
+    	// TODO - remove
+        throw new RuntimeException("obsolete code should not be called");
+    }
 }
