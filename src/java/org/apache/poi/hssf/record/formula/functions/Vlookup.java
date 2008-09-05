@@ -60,7 +60,16 @@ public final class Vlookup implements Function {
 			AreaEval tableArray = LookupUtils.resolveTableArrayArg(args[1]);
 			boolean isRangeLookup = LookupUtils.resolveRangeLookupArg(arg3, srcCellRow, srcCellCol);
 			int rowIndex = LookupUtils.lookupIndexOfValue(lookupValue, LookupUtils.createColumnVector(tableArray, 0), isRangeLookup);
-			ValueEval veColIndex = OperandResolver.getSingleValue(args[2], srcCellRow, srcCellCol);
+			ValueEval veColIndex;
+			try {
+				veColIndex = OperandResolver.getSingleValue(args[2], srcCellRow, srcCellCol);
+			} catch (EvaluationException e) {
+				// weird translation of errors for the third arg - needs investigation
+				if (e.getErrorEval() == ErrorEval.NA) {
+					return ErrorEval.REF_INVALID;
+				}
+				throw e;
+			}
 			int colIndex = LookupUtils.resolveRowOrColIndexArg(veColIndex);
 			ValueVector resultCol = createResultColumnVector(tableArray, colIndex);
 			return resultCol.getItem(rowIndex);

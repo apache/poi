@@ -83,7 +83,7 @@ public final class TestAreaReference extends TestCase {
     public void testReferenceWithSheet() {
         AreaReference ar;
         
-        ar = new AreaReference("Tabelle1!B5");
+        ar = new AreaReference("Tabelle1!B5:B5");
         assertTrue(ar.isSingleCell());
         TestCellReference.confirmCell(ar.getFirstCell(), "Tabelle1", 4, 1, false, false, "Tabelle1!B5");
         
@@ -113,11 +113,11 @@ public final class TestAreaReference extends TestCase {
         }
     }
 
-    public void testContiguousReferences() throws Exception {
-        String refSimple = "$C$10";
+    public void testContiguousReferences() {
+        String refSimple = "$C$10:$C$10";
         String ref2D = "$C$10:$D$11";
-        String refDCSimple = "$C$10,$D$12,$E$14";
-        String refDC2D = "$C$10:$C$11,$D$12,$E$14:$E$20";
+        String refDCSimple = "$C$10:$C$10,$D$12:$D$12,$E$14:$E$14";
+        String refDC2D = "$C$10:$C$11,$D$12:$D$12,$E$14:$E$20";
         String refDC3D = "Tabelle1!$C$10:$C$14,Tabelle1!$D$10:$D$12";
 
         // Check that we detect as contiguous properly
@@ -243,16 +243,16 @@ public final class TestAreaReference extends TestCase {
     private static void confirmResolveCellRef(HSSFWorkbook wb, CellReference cref) {
         HSSFSheet s = wb.getSheet(cref.getSheetName());
         HSSFRow r = s.getRow(cref.getRow());
-        HSSFCell c = r.getCell(cref.getCol());
+        HSSFCell c = r.getCell((int)cref.getCol());
         assertNotNull(c);
     }
     
     public void testSpecialSheetNames() {
         AreaReference ar;
-        ar = new AreaReference("'Sheet A'!A1");
+        ar = new AreaReference("'Sheet A'!A1:A1");
         confirmAreaSheetName(ar, "Sheet A", "'Sheet A'!A1");
         
-        ar = new AreaReference("'Hey! Look Here!'!A1");
+        ar = new AreaReference("'Hey! Look Here!'!A1:A1");
         confirmAreaSheetName(ar, "Hey! Look Here!", "'Hey! Look Here!'!A1");
         
         ar = new AreaReference("'O''Toole'!A1:B2");
@@ -268,7 +268,24 @@ public final class TestAreaReference extends TestCase {
         assertEquals(expectedFullText, ar.formatAsString());
     }
     
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(TestAreaReference.class);
-    }
+    public void testWholeColumnRefs() {
+		confirmWholeColumnRef("A:A", 0, 0, false, false);
+		confirmWholeColumnRef("$C:D", 2, 3, true, false);
+		confirmWholeColumnRef("AD:$AE", 29, 30, false, true);
+		
+	}
+
+	private static void confirmWholeColumnRef(String ref, int firstCol, int lastCol, boolean firstIsAbs, boolean lastIsAbs) {
+		AreaReference ar = new AreaReference(ref);
+		confirmCell(ar.getFirstCell(), 0, firstCol, true, firstIsAbs);
+		confirmCell(ar.getLastCell(), 0xFFFF, lastCol, true, lastIsAbs);
+	}
+
+	private static void confirmCell(CellReference cell, int row, int col, boolean isRowAbs,
+			boolean isColAbs) {
+		assertEquals(row, cell.getRow());
+		assertEquals(col, cell.getCol());
+		assertEquals(isRowAbs, cell.isRowAbsolute());
+		assertEquals(isColAbs, cell.isColAbsolute());
+	}
 }

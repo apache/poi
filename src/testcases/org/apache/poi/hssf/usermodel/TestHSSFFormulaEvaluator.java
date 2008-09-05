@@ -40,4 +40,43 @@ public final class TestHSSFFormulaEvaluator extends TestCase {
 		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
 		assertEquals(3.72, cv.getNumberValue(), 0.0);
 	}
+	
+	public void testFullColumnRefs() {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet("Sheet1");
+		HSSFRow row = sheet.createRow(0);
+		HSSFCell cell0 = row.createCell(0);
+		cell0.setCellFormula("sum(D:D)");
+		HSSFCell cell1 = row.createCell(1);
+		cell1.setCellFormula("sum(D:E)");
+
+		// some values in column D
+		setValue(sheet, 1, 3, 5.0);
+		setValue(sheet, 2, 3, 6.0);
+		setValue(sheet, 5, 3, 7.0);
+		setValue(sheet, 50, 3, 8.0);
+		
+		// some values in column E
+		setValue(sheet, 1, 4, 9.0);
+		setValue(sheet, 2, 4, 10.0);
+		setValue(sheet, 30000, 4, 11.0);
+		
+		// some other values 
+		setValue(sheet, 1, 2, 100.0);
+		setValue(sheet, 2, 5, 100.0);
+		setValue(sheet, 3, 6, 100.0);
+		
+		
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
+		assertEquals(26.0, fe.evaluate(cell0).getNumberValue(), 0.0);
+		assertEquals(56.0, fe.evaluate(cell1).getNumberValue(), 0.0);
+	}
+
+	private static void setValue(HSSFSheet sheet, int rowIndex, int colIndex, double value) {
+		HSSFRow row = sheet.getRow(rowIndex);
+		if (row == null) {
+			row = sheet.createRow(rowIndex);
+		}
+		row.createCell(colIndex).setCellValue(value);
+	}
 }
