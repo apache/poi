@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.regex.Pattern;
 
+import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
@@ -96,6 +97,9 @@ final class YearFrac implements FreeRefFunction {
 			Calendar date = parseDate(strVal);
 			return HSSFDateUtil.getExcelDate(date, false);
 		}
+		if (ve instanceof BlankEval) {
+			return 0.0;
+		}
 		return OperandResolver.coerceValueToDouble(ve);
 	}
 
@@ -120,7 +124,7 @@ final class YearFrac implements FreeRefFunction {
 		} catch (NumberFormatException e) {
 			throw new EvaluationException(ErrorEval.VALUE_INVALID);
 		}
-		if (f0<0 || f1<0 || f2<0 || f0>12 || f1>12 || f2>12) {
+		if (f0<0 || f1<0 || f2<0 || (f0>12 && f1>12 && f2>12)) {
 			// easy to see this cannot be a valid date
 			throw new EvaluationException(ErrorEval.VALUE_INVALID);
 		}
@@ -150,6 +154,7 @@ final class YearFrac implements FreeRefFunction {
 		if (day <1 || day>cal.getActualMaximum(Calendar.DAY_OF_MONTH)) {
 			throw new EvaluationException(ErrorEval.VALUE_INVALID);
 		}
+		cal.set(Calendar.DAY_OF_MONTH, day);
 		return cal;
 	}
 
