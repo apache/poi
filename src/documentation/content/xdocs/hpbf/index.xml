@@ -41,7 +41,7 @@
               lots of offsets to other parts of the file.</p>
             <p>Our initial aim is to provude a text extractor for the format
               (now done), and be able to extract hyperlinks from within
-              the document (not yet supported). Additional low level
+              the document (partly supported). Additional low level
               code to process the file format may follow, if there
               is demand and developer interest warrant it.</p>
 			<p>At this time, there is no <em>usermodel</em> api or similar.

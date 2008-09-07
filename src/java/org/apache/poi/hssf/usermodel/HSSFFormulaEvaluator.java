@@ -43,19 +43,11 @@ public class HSSFFormulaEvaluator extends FormulaEvaluator {
         return new FormulaParser(formula, workbook);
     }
     
-
     /**
      * debug method
-     * 
-     * @param formula
-     * @param sheet
-     * @param workbook
      */
     void inspectPtgs(String formula) {
-    	HSSFWorkbook hssfWb = (HSSFWorkbook)_workbook;
-        FormulaParser fp = new FormulaParser(formula, hssfWb);
-        fp.parse();
-        Ptg[] ptgs = fp.getRPNPtg();
+        Ptg[] ptgs = FormulaParser.parse(formula, _workbook);
         System.out.println("<ptg-group>");
         for (int i = 0, iSize = ptgs.length; i < iSize; i++) {
             System.out.println("<ptg>");

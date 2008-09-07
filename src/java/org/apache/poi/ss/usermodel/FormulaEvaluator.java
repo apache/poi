@@ -1,26 +1,23 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
 
 package org.apache.poi.ss.usermodel;
 
-import java.lang.reflect.Constructor;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Stack;
 
 import org.apache.poi.hssf.model.FormulaParser;
@@ -28,6 +25,7 @@ import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.BoolPtg;
 import org.apache.poi.hssf.record.formula.ControlPtg;
+import org.apache.poi.hssf.record.formula.ErrPtg;
 import org.apache.poi.hssf.record.formula.IntPtg;
 import org.apache.poi.hssf.record.formula.MemErrPtg;
 import org.apache.poi.hssf.record.formula.MissingArgPtg;
@@ -41,77 +39,51 @@ import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.StringPtg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.hssf.record.formula.UnknownPtg;
-import org.apache.poi.hssf.record.formula.eval.Area2DEval;
-import org.apache.poi.hssf.record.formula.eval.Area3DEval;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.FunctionEval;
+import org.apache.poi.hssf.record.formula.eval.LazyAreaEval;
+import org.apache.poi.hssf.record.formula.eval.LazyRefEval;
 import org.apache.poi.hssf.record.formula.eval.NameEval;
 import org.apache.poi.hssf.record.formula.eval.NameXEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.OperationEval;
-import org.apache.poi.hssf.record.formula.eval.Ref2DEval;
-import org.apache.poi.hssf.record.formula.eval.Ref3DEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- * 
+ *
  */
 public class FormulaEvaluator {
-                
-    // params to lookup the right constructor using reflection
-    private static final Class[] VALUE_CONTRUCTOR_CLASS_ARRAY = new Class[] { Ptg.class };
 
-    private static final Class[] AREA3D_CONSTRUCTOR_CLASS_ARRAY = new Class[] { Ptg.class, ValueEval[].class };
-
-    private static final Class[] REFERENCE_CONSTRUCTOR_CLASS_ARRAY = new Class[] { Ptg.class, ValueEval.class };
-
-    private static final Class[] REF3D_CONSTRUCTOR_CLASS_ARRAY = new Class[] { Ptg.class, ValueEval.class };
-
-    // Maps for mapping *Eval to *Ptg
-    private static final Map VALUE_EVALS_MAP = new HashMap();
-
-    /*
-     * Following is the mapping between the Ptg tokens returned 
-     * by the FormulaParser and the *Eval classes that are used 
-     * by the FormulaEvaluator
-     */
-    static {
-        VALUE_EVALS_MAP.put(BoolPtg.class, BoolEval.class);
-        VALUE_EVALS_MAP.put(IntPtg.class, NumberEval.class);
-        VALUE_EVALS_MAP.put(NumberPtg.class, NumberEval.class);
-        VALUE_EVALS_MAP.put(StringPtg.class, StringEval.class);
-
-    }
-
-    
     protected Sheet _sheet;
     protected Workbook _workbook;
-    
+
     public FormulaEvaluator(Sheet sheet, Workbook workbook) {
-        this._sheet = sheet;
-        this._workbook = workbook;
+        _sheet = sheet;
+        _workbook = workbook;
     }
-    
+
     /**
      * Does nothing
      * @deprecated (Aug 2008) - not needed, since the current row can be derived from the cell
      */
-    public void setCurrentRow(Row row) {}
+    public void setCurrentRow(Row row) {
+        // do nothing
+    }
+
 
     /**
      * If cell contains a formula, the formula is evaluated and returned,
      * else the CellValue simply copies the appropriate cell value from
      * the cell and also its cell type. This method should be preferred over
      * evaluateInCell() when the call should not modify the contents of the
-     * original cell. 
+     * original cell.
      * @param cell
      */
     public CellValue evaluate(Cell cell) {
@@ -144,25 +116,25 @@ public class FormulaEvaluator {
         }
         return retval;
     }
-    
-    
+
+
     /**
      * If cell contains formula, it evaluates the formula,
      *  and saves the result of the formula. The cell
      *  remains as a formula cell.
      * Else if cell does not contain formula, this method leaves
-     *  the cell unchanged. 
+     *  the cell unchanged.
      * Note that the type of the formula result is returned,
      *  so you know what kind of value is also stored with
-     *  the formula. 
+     *  the formula.
      * <pre>
      * int evaluatedCellType = evaluator.evaluateFormulaCell(cell);
      * </pre>
      * Be aware that your cell will hold both the formula,
      *  and the result. If you want the cell replaced with
-     *  the result of the formula, use {@link #evaluateInCell(HSSFCell)}
+     *  the result of the formula, use {@link #evaluateInCell(Cell)}
      * @param cell The cell to evaluate
-     * @return The type of the formula result (the cell's type remains as HSSFCell.CELL_TYPE_FORMULA however)
+     * @return The type of the formula result (the cell's type remains as Cell.CELL_TYPE_FORMULA however)
      */
     public int evaluateFormulaCell(Cell cell) {
         if (cell != null) {
@@ -192,21 +164,21 @@ public class FormulaEvaluator {
         }
         return -1;
     }
-        
+
     /**
      * If cell contains formula, it evaluates the formula, and
      *  puts the formula result back into the cell, in place
      *  of the old formula.
      * Else if cell does not contain formula, this method leaves
-     *  the cell unchanged. 
-     * Note that the same instance of HSSFCell is returned to 
+     *  the cell unchanged.
+     * Note that the same instance of Cell is returned to
      * allow chained calls like:
      * <pre>
      * int evaluatedCellType = evaluator.evaluateInCell(cell).getCellType();
      * </pre>
      * Be aware that your cell value will be changed to hold the
      *  result of the formula. If you simply want the formula
-     *  value computed for you, use {@link #evaluateFormulaCell(HSSFCell)}
+     *  value computed for you, use {@link #evaluateFormulaCell(Cell)}
      * @param cell
      */
     public Cell evaluateInCell(Cell cell) {
@@ -239,7 +211,7 @@ public class FormulaEvaluator {
         }
         return cell;
     }
-    
+
     /**
      * Loops over all cells in all sheets of the supplied
      *  workbook.
@@ -248,32 +220,32 @@ public class FormulaEvaluator {
      *  remain as formula cells.
      * For cells that do not contain formulas, no changes
      *  are made.
-     * This is a helpful wrapper around looping over all 
+     * This is a helpful wrapper around looping over all
      *  cells, and calling evaluateFormulaCell on each one.
      */
-	public static void evaluateAllFormulaCells(Workbook wb) {
-		for(int i=0; i<wb.getNumberOfSheets(); i++) {
-			Sheet sheet = wb.getSheetAt(i);
-			FormulaEvaluator evaluator = new FormulaEvaluator(sheet, wb);
+    public static void evaluateAllFormulaCells(Workbook wb) {
+        for(int i=0; i<wb.getNumberOfSheets(); i++) {
+            Sheet sheet = wb.getSheetAt(i);
+            FormulaEvaluator evaluator = new FormulaEvaluator(sheet, wb);
 
-			for (Iterator rit = sheet.rowIterator(); rit.hasNext();) {
-				Row r = (Row)rit.next();
+            for (Iterator rit = sheet.rowIterator(); rit.hasNext();) {
+                Row r = (Row)rit.next();
 
-				for (Iterator cit = r.cellIterator(); cit.hasNext();) {
-					Cell c = (Cell)cit.next();
-					if (c.getCellType() == Cell.CELL_TYPE_FORMULA)
-						evaluator.evaluateFormulaCell(c);
-				}
-			}
-		}
-	}
-        
-    
+                for (Iterator cit = r.cellIterator(); cit.hasNext();) {
+                    Cell c = (Cell)cit.next();
+                    if (c.getCellType() == Cell.CELL_TYPE_FORMULA)
+                        evaluator.evaluateFormulaCell(c);
+                }
+            }
+        }
+    }
+
+
     /**
      * Returns a CellValue wrapper around the supplied ValueEval instance.
      * @param eval
      */
-    protected static CellValue getCellValueForEval(ValueEval eval, CreationHelper cHelper) {
+    private static CellValue getCellValueForEval(ValueEval eval, CreationHelper cHelper) {
         CellValue retval = null;
         if (eval != null) {
             if (eval instanceof NumberEval) {
@@ -297,7 +269,7 @@ public class FormulaEvaluator {
             else if (eval instanceof ErrorEval) {
                 retval = new CellValue(Cell.CELL_TYPE_ERROR, cHelper);
                 retval.setErrorValue((byte)((ErrorEval)eval).getErrorCode());
-//                retval.setRichTextStringValue(new HSSFRichTextString("#An error occurred. check cell.getErrorCode()"));
+//                retval.setRichTextStringValue(new RichTextString("#An error occurred. check cell.getErrorCode()"));
             }
             else {
                 retval = new CellValue(Cell.CELL_TYPE_ERROR, cHelper);
@@ -305,19 +277,19 @@ public class FormulaEvaluator {
         }
         return retval;
     }
-    
+
     /**
-     * Dev. Note: Internal evaluate must be passed only a formula cell 
+     * Dev. Note: Internal evaluate must be passed only a formula cell
      * else a runtime exception will be thrown somewhere inside the method.
      * (Hence this is a private method.)
      */
     private static ValueEval internalEvaluate(Cell srcCell, Sheet sheet, Workbook workbook) {
         int srcRowNum = srcCell.getRowIndex();
         short srcColNum = srcCell.getCellNum();
-        
-        
+
+
         EvaluationCycleDetector tracker = EvaluationCycleDetectorManager.getTracker();
-        
+
         if(!tracker.startEvaluate(workbook, sheet, srcRowNum, srcColNum)) {
             return ErrorEval.CIRCULAR_REF_ERROR;
         }
@@ -327,8 +299,9 @@ public class FormulaEvaluator {
             tracker.endEvaluate(workbook, sheet, srcRowNum, srcColNum);
         }
     }
-    private static ValueEval evaluateCell(Workbook workbook, Sheet sheet, 
+    private static ValueEval evaluateCell(Workbook workbook, Sheet sheet,
             int srcRowNum, short srcColNum, String cellFormulaText) {
+
         Ptg[] ptgs = FormulaParser.parse(cellFormulaText, workbook);
 
         Stack stack = new Stack();
@@ -337,16 +310,16 @@ public class FormulaEvaluator {
             // since we don't know how to handle these yet :(
             Ptg ptg = ptgs[i];
             if (ptg instanceof ControlPtg) {
-               // skip Parentheses, Attr, etc
-               continue;
-			}
+                // skip Parentheses, Attr, etc
+                continue;
+            }
             if (ptg instanceof MemErrPtg) { continue; }
             if (ptg instanceof MissingArgPtg) { continue; }
-            if (ptg instanceof NamePtg) { 
+            if (ptg instanceof NamePtg) {
                 // named ranges, macro functions
                 NamePtg namePtg = (NamePtg) ptg;
                 stack.push(new NameEval(namePtg.getIndex()));
-                continue; 
+                continue;
             }
             if (ptg instanceof NameXPtg) {
                 NameXPtg nameXPtg = (NameXPtg) ptg;
@@ -354,7 +327,7 @@ public class FormulaEvaluator {
                 continue;
             }
             if (ptg instanceof UnknownPtg) { continue; }
-
+            Eval opResult;
             if (ptg instanceof OperationPtg) {
                 OperationPtg optg = (OperationPtg) ptg;
 
@@ -370,42 +343,11 @@ public class FormulaEvaluator {
                     Eval p = (Eval) stack.pop();
                     ops[j] = p;
                 }
-                Eval opresult = invokeOperation(operation, ops, srcRowNum, srcColNum, workbook, sheet);
-                stack.push(opresult);
+                opResult = invokeOperation(operation, ops, srcRowNum, srcColNum, workbook, sheet);
+            } else {
+                opResult = getEvalForPtg(ptg, sheet, workbook);
             }
-            else if (ptg instanceof RefPtg) {
-                RefPtg refPtg = (RefPtg) ptg;
-                int colIx = refPtg.getColumn();
-                int rowIx = refPtg.getRow();
-                Row row = sheet.getRow(rowIx);
-                Cell cell = (row != null) ? row.getCell(colIx) : null;
-                stack.push(createRef2DEval(refPtg, cell, sheet, workbook));
-            }
-            else if (ptg instanceof Ref3DPtg) {
-                Ref3DPtg refPtg = (Ref3DPtg) ptg;
-                int colIx = refPtg.getColumn();
-                int rowIx = refPtg.getRow();
-                Sheet xsheet = workbook.getSheetAt(
-                		workbook.getSheetIndexFromExternSheetIndex(refPtg.getExternSheetIndex())
-                );
-                Row row = xsheet.getRow(rowIx);
-                Cell cell = (row != null) ? row.getCell(colIx) : null;
-                stack.push(createRef3DEval(refPtg, cell, xsheet, workbook));
-            }
-            else if (ptg instanceof AreaPtg) {
-                AreaPtg ap = (AreaPtg) ptg;
-                AreaEval ae = evaluateAreaPtg(sheet, workbook, ap);
-                stack.push(ae);
-            }
-            else if (ptg instanceof Area3DPtg) {
-                Area3DPtg a3dp = (Area3DPtg) ptg;
-                AreaEval ae = evaluateArea3dPtg(workbook, a3dp);
-                stack.push(ae);
-            }
-            else {
-                Eval ptgEval = getEvalForPtg(ptg);
-                stack.push(ptgEval);
-            }
+            stack.push(opResult);
         }
 
         ValueEval value = ((ValueEval) stack.pop());
@@ -414,9 +356,9 @@ public class FormulaEvaluator {
         }
         value = dereferenceValue(value, srcRowNum, srcColNum);
         if (value instanceof BlankEval) {
-        	// Note Excel behaviour here. A blank final final value is converted to zero.  
+            // Note Excel behaviour here. A blank final final value is converted to zero.
             return NumberEval.ZERO;
-            // Formulas _never_ evaluate to blank.  If a formula appears to have evaluated to 
+            // Formulas _never_ evaluate to blank.  If a formula appears to have evaluated to
             // blank, the actual value is empty string. This can be verified with ISBLANK().
         }
         return value;
@@ -425,8 +367,8 @@ public class FormulaEvaluator {
     /**
      * Dereferences a single value from any AreaEval or RefEval evaluation result.
      * If the supplied evaluationResult is just a plain value, it is returned as-is.
-	 * @return a <tt>NumberEval</tt>, <tt>StringEval</tt>, <tt>BoolEval</tt>,
-	 *  <tt>BlankEval</tt> or <tt>ErrorEval</tt>. Never <code>null</code>.
+     * @return a <tt>NumberEval</tt>, <tt>StringEval</tt>, <tt>BoolEval</tt>,
+     *  <tt>BlankEval</tt> or <tt>ErrorEval</tt>. Never <code>null</code>.
      */
     private static ValueEval dereferenceValue(ValueEval evaluationResult, int srcRowNum, short srcColNum) {
         if (evaluationResult instanceof RefEval) {
@@ -460,107 +402,48 @@ public class FormulaEvaluator {
         }
         return operation.evaluate(ops, srcRowNum, srcColNum);
     }
-    
-    public static AreaEval evaluateAreaPtg(Sheet sheet, Workbook workbook, AreaPtg ap) {
-        int row0 = ap.getFirstRow();
-        int col0 = ap.getFirstColumn();
-        int row1 = ap.getLastRow();
-        int col1 = ap.getLastColumn();
-        
-        // If the last row is -1, then the
-        //  reference is for the rest of the column
-        // (eg C:C)
-        // TODO: Handle whole column ranges properly
-        if(row1 == -1 && row0 >= 0) {
-            row1 = (short)sheet.getLastRowNum();
-        }
-        ValueEval[] values = evalArea(workbook, sheet, row0, col0, row1, col1);
-        return new Area2DEval(ap, values);
-    }
-
-    public static AreaEval evaluateArea3dPtg(Workbook workbook, Area3DPtg a3dp) {
-    	int row0 = a3dp.getFirstRow();
-    	int col0 = a3dp.getFirstColumn();
-    	int row1 = a3dp.getLastRow();
-    	int col1 = a3dp.getLastColumn();
-        Sheet xsheet = workbook.getSheetAt(
-        		workbook.getSheetIndexFromExternSheetIndex(a3dp.getExternSheetIndex())
-        );
-        
-        // If the last row is -1, then the
-        //  reference is for the rest of the column
-        // (eg C:C)
-        // TODO: Handle whole column ranges properly
-        if(row1 == -1 && row0 >= 0) {
-            row1 = (short)xsheet.getLastRowNum();
-        }
-        
-        ValueEval[] values = evalArea(workbook, xsheet, row0, col0, row1, col1);
-        return new Area3DEval(a3dp, values);
-    }
-    
-    private static ValueEval[] evalArea(Workbook workbook, Sheet sheet, 
-    		int row0, int col0, int row1, int col1) {
-        ValueEval[] values = new ValueEval[(row1 - row0 + 1) * (col1 - col0 + 1)];
-        for (int x = row0; sheet != null && x < row1 + 1; x++) {
-            Row row = sheet.getRow(x);
-            for (int y = col0; y < col1 + 1; y++) {
-                ValueEval cellEval;
-                if(row == null) {
-                	cellEval = BlankEval.INSTANCE;
-                } else {
-                	cellEval = getEvalForCell(row.getCell(y), row, sheet, workbook);
-                }
-				values[(x - row0) * (col1 - col0 + 1) + (y - col0)] = cellEval;
-            }
-        }
-        return values;
-    }
 
     /**
      * returns an appropriate Eval impl instance for the Ptg. The Ptg must be
-     * one of: Area3DPtg, AreaPtg, RefPtg, Ref3DPtg, IntPtg, NumberPtg,
+     * one of: Area3DPtg, AreaPtg, ReferencePtg, Ref3DPtg, IntPtg, NumberPtg,
      * StringPtg, BoolPtg <br/>special Note: OperationPtg subtypes cannot be
      * passed here!
-     * 
-     * @param ptg
      */
-    protected static Eval getEvalForPtg(Ptg ptg) {
-        Eval retval = null;
-
-        Class clazz = (Class) VALUE_EVALS_MAP.get(ptg.getClass());
-        try {
-            if (ptg instanceof Area3DPtg) {
-                Constructor constructor = clazz.getConstructor(AREA3D_CONSTRUCTOR_CLASS_ARRAY);
-                retval = (OperationEval) constructor.newInstance(new Ptg[] { ptg });
-            }
-            else if (ptg instanceof AreaPtg) {
-                Constructor constructor = clazz.getConstructor(AREA3D_CONSTRUCTOR_CLASS_ARRAY);
-                retval = (OperationEval) constructor.newInstance(new Ptg[] { ptg });
-            }
-            else if (ptg instanceof RefPtg) {
-                Constructor constructor = clazz.getConstructor(REFERENCE_CONSTRUCTOR_CLASS_ARRAY);
-                retval = (OperationEval) constructor.newInstance(new Ptg[] { ptg });
-            }
-            else if (ptg instanceof Ref3DPtg) {
-                Constructor constructor = clazz.getConstructor(REF3D_CONSTRUCTOR_CLASS_ARRAY);
-                retval = (OperationEval) constructor.newInstance(new Ptg[] { ptg });
-            }
-            else {
-                if (ptg instanceof IntPtg || ptg instanceof NumberPtg || ptg instanceof StringPtg
-                        || ptg instanceof BoolPtg) {
-                    Constructor constructor = clazz.getConstructor(VALUE_CONTRUCTOR_CLASS_ARRAY);
-                    retval = (ValueEval) constructor.newInstance(new Ptg[] { ptg });
-                }
-            }
+    private static Eval getEvalForPtg(Ptg ptg, Sheet sheet, Workbook workbook) {
+        if (ptg instanceof RefPtg) {
+            return new LazyRefEval(((RefPtg) ptg), sheet, workbook);
         }
-        catch (Exception e) {
-            throw new RuntimeException("Fatal Error: ", e);
+        if (ptg instanceof Ref3DPtg) {
+            Ref3DPtg refPtg = (Ref3DPtg) ptg;
+            Sheet xsheet = workbook.getSheetAt(workbook.getSheetIndexFromExternSheetIndex(refPtg.getExternSheetIndex()));
+            return new LazyRefEval(refPtg, xsheet, workbook);
         }
-        return retval;
+        if (ptg instanceof AreaPtg) {
+            return new LazyAreaEval(((AreaPtg) ptg), sheet, workbook);
+        }
+        if (ptg instanceof Area3DPtg) {
+            Area3DPtg a3dp = (Area3DPtg) ptg;
+            Sheet xsheet = workbook.getSheetAt(workbook.getSheetIndexFromExternSheetIndex(a3dp.getExternSheetIndex()));
+            return new LazyAreaEval(a3dp, xsheet, workbook);
+        }
 
+        if (ptg instanceof IntPtg) {
+            return new NumberEval(((IntPtg)ptg).getValue());
+        }
+        if (ptg instanceof NumberPtg) {
+            return new NumberEval(((NumberPtg)ptg).getValue());
+        }
+        if (ptg instanceof StringPtg) {
+            return new StringEval(((StringPtg) ptg).getValue());
+        }
+        if (ptg instanceof BoolPtg) {
+            return BoolEval.valueOf(((BoolPtg) ptg).getValue());
+        }
+        if (ptg instanceof ErrPtg) {
+            return ErrorEval.valueOf(((ErrPtg) ptg).getErrorCode());
+        }
+        throw new RuntimeException("Unexpected ptg class (" + ptg.getClass().getName() + ")");
     }
-
     /**
      * Given a cell, find its type and from that create an appropriate ValueEval
      * impl instance and return that. Since the cell could be an external
@@ -570,7 +453,7 @@ public class FormulaEvaluator {
      * @param sheet
      * @param workbook
      */
-    protected static ValueEval getEvalForCell(Cell cell, Row row, Sheet sheet, Workbook workbook) {
+    public static ValueEval getEvalForCell(Cell cell, Sheet sheet, Workbook workbook) {
 
         if (cell == null) {
             return BlankEval.INSTANCE;
@@ -593,73 +476,21 @@ public class FormulaEvaluator {
     }
 
     /**
-     * Creates a Ref2DEval for RefPtg.
-     * Non existent cells are treated as RefEvals containing BlankEval.
-     */
-    private static Ref2DEval createRef2DEval(RefPtg ptg, Cell cell, 
-            Sheet sheet, Workbook workbook) {
-        if (cell == null) {
-            return new Ref2DEval(ptg, BlankEval.INSTANCE);
-        }
-        
-        switch (cell.getCellType()) {
-            case Cell.CELL_TYPE_NUMERIC:
-                return new Ref2DEval(ptg, new NumberEval(cell.getNumericCellValue()));
-            case Cell.CELL_TYPE_STRING:
-                return new Ref2DEval(ptg, new StringEval(cell.getRichStringCellValue().getString()));
-            case Cell.CELL_TYPE_FORMULA:
-                return new Ref2DEval(ptg, internalEvaluate(cell, sheet, workbook));
-            case Cell.CELL_TYPE_BOOLEAN:
-                return new Ref2DEval(ptg, BoolEval.valueOf(cell.getBooleanCellValue()));
-            case Cell.CELL_TYPE_BLANK:
-                return new Ref2DEval(ptg, BlankEval.INSTANCE);
-            case Cell.CELL_TYPE_ERROR:
-                return new  Ref2DEval(ptg, ErrorEval.valueOf(cell.getErrorCellValue()));
-        }
-        throw new RuntimeException("Unexpected cell type (" + cell.getCellType() + ")");
-    }
-
-    /**
-     * create a Ref3DEval for Ref3DPtg.
-     */
-    private static Ref3DEval createRef3DEval(Ref3DPtg ptg, Cell cell, 
-            Sheet sheet, Workbook workbook) {
-        if (cell == null) {
-            return new Ref3DEval(ptg, BlankEval.INSTANCE);
-        }
-        switch (cell.getCellType()) {
-            case Cell.CELL_TYPE_NUMERIC:
-                return new Ref3DEval(ptg, new NumberEval(cell.getNumericCellValue()));
-            case Cell.CELL_TYPE_STRING:
-                return new Ref3DEval(ptg, new StringEval(cell.getRichStringCellValue().getString()));
-            case Cell.CELL_TYPE_FORMULA:
-                return new Ref3DEval(ptg, internalEvaluate(cell, sheet, workbook));
-            case Cell.CELL_TYPE_BOOLEAN:
-                return new Ref3DEval(ptg, BoolEval.valueOf(cell.getBooleanCellValue()));
-            case Cell.CELL_TYPE_BLANK:
-                return new Ref3DEval(ptg, BlankEval.INSTANCE);
-            case Cell.CELL_TYPE_ERROR:
-                return new Ref3DEval(ptg, ErrorEval.valueOf(cell.getErrorCellValue()));
-        }
-        throw new RuntimeException("Unexpected cell type (" + cell.getCellType() + ")");
-    }
-    
-    /**
-     * Mimics the 'data view' of a cell. This allows formula evaluator 
+     * Mimics the 'data view' of a cell. This allows formula evaluator
      * to return a CellValue instead of precasting the value to String
      * or Number or boolean type.
      * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
      */
     public static class CellValue {
-    	private CreationHelper creationHelper;
+        private CreationHelper creationHelper;
         private int cellType;
         private RichTextString richTextStringValue;
         private double numberValue;
         private boolean booleanValue;
         private byte errorValue;
-        
+
         /**
-         * CellType should be one of the types defined in HSSFCell
+         * CellType should be one of the types defined in Cell
          * @param cellType
          */
         public CellValue(int cellType, CreationHelper creationHelper) {
@@ -705,8 +536,8 @@ public class FormulaEvaluator {
          * @deprecated
          */
         public void setStringValue(String stringValue) {
-            this.richTextStringValue =
-            	creationHelper.createRichTextString(stringValue);
+            this.richTextStringValue = 
+                  creationHelper.createRichTextString(stringValue);
         }
         /**
          * @return Returns the cellType.

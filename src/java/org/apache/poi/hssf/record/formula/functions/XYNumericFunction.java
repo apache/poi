@@ -1,19 +1,19 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
 
 package org.apache.poi.hssf.record.formula.functions;
 
@@ -24,180 +24,162 @@ import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.record.formula.functions.LookupUtils.ValueVector;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *
+ * 
  */
 public abstract class XYNumericFunction implements Function {
-    protected static final int X = 0;
-    protected static final int Y = 1;
-    
-    protected static final class DoubleArrayPair {
 
-		private final double[] _xArray;
-		private final double[] _yArray;
-
-		public DoubleArrayPair(double[] xArray, double[] yArray) {
-			_xArray = xArray;
-			_yArray = yArray;
+	private static abstract class ValueArray implements ValueVector {
+		private final int _size;
+		protected ValueArray(int size) {
+			_size = size;
 		}
-		public double[] getXArray() {
-			return _xArray;
+		public ValueEval getItem(int index) {
+			if (index < 0 || index > _size) {
+				throw new IllegalArgumentException("Specified index " + index
+						+ " is outside range (0.." + (_size - 1) + ")");
+			}
+			return getItemInternal(index);
 		}
-		public double[] getYArray() {
-			return _yArray;
+		protected abstract ValueEval getItemInternal(int index);
+		public final int getSize() {
+			return _size;
 		}
-    }
+	}
 
+	private static final class SingleCellValueArray extends ValueArray {
+		private final ValueEval _value;
+		public SingleCellValueArray(ValueEval value) {
+			super(1);
+			_value = value;
+		}
+		protected ValueEval getItemInternal(int index) {
+			return _value;
+		}
+	}
 
-    public final Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
-    	if(args.length != 2) {
-    		return ErrorEval.VALUE_INVALID;
-    	}
-    	
-        double[][] values;
+	private static final class RefValueArray extends ValueArray {
+		private final RefEval _ref;
+		public RefValueArray(RefEval ref) {
+			super(1);
+			_ref = ref;
+		}
+		protected ValueEval getItemInternal(int index) {
+			return _ref.getInnerValueEval();
+		}
+	}
+
+	private static final class AreaValueArray extends ValueArray {
+		private final AreaEval _ae;
+		private final int _width;
+
+		public AreaValueArray(AreaEval ae) {
+			super(ae.getWidth() * ae.getHeight());
+			_ae = ae;
+			_width = ae.getWidth();
+		}
+		protected ValueEval getItemInternal(int index) {
+			int rowIx = index / _width;
+			int colIx = index % _width;
+			return _ae.getRelativeValue(rowIx, colIx);
+		}
+	}
+
+	protected static interface Accumulator {
+		double accumulate(double x, double y);
+	}
+
+	/**
+	 * Constructs a new instance of the Accumulator used to calculated this function
+	 */
+	protected abstract Accumulator createAccumulator();
+
+	public final Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+		if (args.length != 2) {
+			return ErrorEval.VALUE_INVALID;
+		}
+
+		double result;
 		try {
-			values = getValues(args[0], args[1]);
+			ValueVector vvX = createValueVector(args[0]);
+			ValueVector vvY = createValueVector(args[1]);
+			int size = vvX.getSize();
+			if (size == 0 || vvY.getSize() != size) {
+				return ErrorEval.NA;
+			}
+			result = evaluateInternal(vvX, vvY, size);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
-        if (values==null 
-                || values[X] == null || values[Y] == null
-                || values[X].length == 0 || values[Y].length == 0
-                || values[X].length != values[Y].length) {
-            return ErrorEval.VALUE_INVALID;
-        }
-        
-        double d = evaluate(values[X], values[Y]);
-        if (Double.isNaN(d) || Double.isInfinite(d)) {
+		if (Double.isNaN(result) || Double.isInfinite(result)) {
 			return ErrorEval.NUM_ERROR;
 		}
-		return new NumberEval(d);
-    }    
-    protected abstract double evaluate(double[] xArray, double[] yArray);
+		return new NumberEval(result);
+	}
 
-    /**
-     * Returns a double array that contains values for the numeric cells
-     * from among the list of operands. Blanks and Blank equivalent cells
-     * are ignored. Error operands or cells containing operands of type
-     * that are considered invalid and would result in #VALUE! error in 
-     * excel cause this function to return null.
-     */
-    private static double[][] getNumberArray(Eval[] xops, Eval[] yops) throws EvaluationException {
-    	
-    	// check for errors first: size mismatch, value errors in x, value errors in y
-    	
-    	int nArrayItems = xops.length;
-		if(nArrayItems != yops.length) {
-    		throw new EvaluationException(ErrorEval.NA);
-    	}
-		for (int i = 0; i < xops.length; i++) {
-			Eval eval = xops[i];
-			if (eval instanceof ErrorEval) {
-				throw new EvaluationException((ErrorEval) eval);
+	private double evaluateInternal(ValueVector x, ValueVector y, int size)
+			throws EvaluationException {
+		Accumulator acc = createAccumulator();
+
+		// error handling is as if the x is fully evaluated before y
+		ErrorEval firstXerr = null;
+		ErrorEval firstYerr = null;
+		boolean accumlatedSome = false;
+		double result = 0.0;
+
+		for (int i = 0; i < size; i++) {
+			ValueEval vx = x.getItem(i);
+			ValueEval vy = y.getItem(i);
+			if (vx instanceof ErrorEval) {
+				if (firstXerr == null) {
+					firstXerr = (ErrorEval) vx;
+					continue;
+				}
+			}
+			if (vy instanceof ErrorEval) {
+				if (firstYerr == null) {
+					firstYerr = (ErrorEval) vy;
+					continue;
+				}
+			}
+			// only count pairs if both elements are numbers
+			if (vx instanceof NumberEval && vy instanceof NumberEval) {
+				accumlatedSome = true;
+				NumberEval nx = (NumberEval) vx;
+				NumberEval ny = (NumberEval) vy;
+				result += acc.accumulate(nx.getNumberValue(), ny.getNumberValue());
+			} else {
+				// all other combinations of value types are silently ignored
 			}
 		}
-		for (int i = 0; i < yops.length; i++) {
-			Eval eval = yops[i];
-			if (eval instanceof ErrorEval) {
-				throw new EvaluationException((ErrorEval) eval);
-			}
+		if (firstXerr != null) {
+			throw new EvaluationException(firstXerr);
 		}
-		
-        double[] xResult = new double[nArrayItems];
-        double[] yResult = new double[nArrayItems];
-    	
-        int count = 0;
-        
-		for (int i=0, iSize=nArrayItems; i<iSize; i++) {
-		    Eval xEval = xops[i];
-		    Eval yEval = yops[i];
-		    
-		    if (isNumberEval(xEval) && isNumberEval(yEval)) {
-		    	xResult[count] = getDoubleValue(xEval);
-		    	yResult[count] = getDoubleValue(yEval);
-		        if (Double.isNaN(xResult[count]) || Double.isNaN(xResult[count])) {
-		            throw new EvaluationException(ErrorEval.NUM_ERROR);
-		        }
-		        count++;
-		    }
+		if (firstYerr != null) {
+			throw new EvaluationException(firstYerr);
 		}
-        
-		return new double[][] {
-        	trimToSize(xResult, count),
-            trimToSize(yResult, count),
-		};
-    }
-    
-    private static double[][] getValues(Eval argX, Eval argY) throws EvaluationException {
-    	
-    	if (argX instanceof ErrorEval) {
-			throw new EvaluationException((ErrorEval) argX);
+		if (!accumlatedSome) {
+			throw new EvaluationException(ErrorEval.DIV_ZERO);
 		}
-    	if (argY instanceof ErrorEval) {
-			throw new EvaluationException((ErrorEval) argY);
+		return result;
+	}
+
+	private static ValueVector createValueVector(Eval arg) throws EvaluationException {
+		if (arg instanceof ErrorEval) {
+			throw new EvaluationException((ErrorEval) arg);
 		}
-    	
-        Eval[] xEvals;
-		Eval[] yEvals;
-		if (argX instanceof AreaEval) {
-		    AreaEval ae = (AreaEval) argX;
-		    xEvals = ae.getValues();
-		} else {
-		    xEvals = new Eval[] { argX, };
+		if (arg instanceof AreaEval) {
+			return new AreaValueArray((AreaEval) arg);
 		}
-		
-		if (argY instanceof AreaEval) {
-		    AreaEval ae = (AreaEval) argY;
-		    yEvals = ae.getValues();
-		} else {
-		    yEvals = new Eval[] { argY, };
+		if (arg instanceof RefEval) {
+			return new RefValueArray((RefEval) arg);
 		}
-		
-		return getNumberArray(xEvals, yEvals);
-    }
-    
-    private static double[] trimToSize(double[] arr, int len) {
-        double[] tarr = arr;
-        if (arr.length > len) {
-            tarr = new double[len];
-            System.arraycopy(arr, 0, tarr, 0, len);
-        }
-        return tarr;
-    }
-    
-    private static boolean isNumberEval(Eval eval) {
-        boolean retval = false;
-        
-        if (eval instanceof NumberEval) {
-            retval = true;
-        }
-        else if (eval instanceof RefEval) {
-            RefEval re = (RefEval) eval;
-            ValueEval ve = re.getInnerValueEval();
-            retval = (ve instanceof NumberEval);
-        }
-        
-        return retval;
-    }
-    
-    private static double getDoubleValue(Eval eval) {
-        double retval = 0;
-        if (eval instanceof NumberEval) {
-            NumberEval ne = (NumberEval) eval;
-            retval = ne.getNumberValue();
-        }
-        else if (eval instanceof RefEval) {
-            RefEval re = (RefEval) eval;
-            ValueEval ve = re.getInnerValueEval();
-                retval = (ve instanceof NumberEval)
-                    ? ((NumberEval) ve).getNumberValue()
-                    : Double.NaN;
-        }
-        else if (eval instanceof ErrorEval) {
-            retval = Double.NaN;
-        }
-        return retval;
-    }
+		if (arg instanceof ValueEval) {
+			return new SingleCellValueArray((ValueEval) arg);
+		}
+		throw new RuntimeException("Unexpected eval class (" + arg.getClass().getName() + ")");
+	}
 }

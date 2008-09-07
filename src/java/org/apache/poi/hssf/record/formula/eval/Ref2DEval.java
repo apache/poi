@@ -47,4 +47,7 @@ public final class Ref2DEval implements RefEval {
     public int getColumn() {
         return delegate.getColumn();
     }
+    public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
+        throw new RuntimeException("should not be called"); // TODO - delete this whole class
+    }
 }

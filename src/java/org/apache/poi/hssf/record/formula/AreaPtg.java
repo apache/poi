@@ -23,16 +23,16 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * Specifies a rectangular area of cells A1:A4 for instance.
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class AreaPtg extends AreaPtgBase {
-    public final static short sid  = 0x25;
+public final class AreaPtg extends Area2DPtgBase {
+	public final static short sid  = 0x25;
 
-    public AreaPtg(int firstRow, int lastRow, int firstColumn, int lastColumn, boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative) {
-      super(firstRow, lastRow, firstColumn, lastColumn, firstRowRelative, lastRowRelative, firstColRelative, lastColRelative);
-    }
-    public AreaPtg(RecordInputStream in) {
-      super(in);
-    }
-    public AreaPtg(String arearef) {
+	public AreaPtg(int firstRow, int lastRow, int firstColumn, int lastColumn, boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative) {
+		super(firstRow, lastRow, firstColumn, lastColumn, firstRowRelative, lastRowRelative, firstColRelative, lastColRelative);
+	}
+	public AreaPtg(RecordInputStream in) {
+		super(in);
+	}
+	public AreaPtg(String arearef) {
 		super(arearef);
 	}
 	protected byte getSid() {
