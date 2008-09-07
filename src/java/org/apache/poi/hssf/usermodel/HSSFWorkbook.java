@@ -35,6 +35,7 @@ import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.record.AbstractEscherHolderRecord;
 import org.apache.poi.hssf.record.BackupRecord;
 import org.apache.poi.hssf.record.DrawingGroupRecord;
@@ -705,8 +706,8 @@ public class HSSFWorkbook extends POIDocument
             newNameRecord.setHidden(true);
             HSSFName newName = new HSSFName(this, newNameRecord);
             names.add(newName);
-            // TODO - when an Autofilter is present, there are some DrawingRecords which also need adjusting
-            // In particular, some IDs of some EscherSpRecords need changing. See bug 45720
+
+            workbook.cloneDrawings(clonedSheet.getSheet());
         }
         // TODO - maybe same logic required for other/all built-in name records
         
