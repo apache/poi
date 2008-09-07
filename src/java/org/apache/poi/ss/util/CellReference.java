@@ -80,7 +80,7 @@ public class CellReference {
         if (_isColAbs) {
             colRef=colRef.substring(1);
         }
-        _colIndex = convertColStringToNum(colRef);
+        _colIndex = convertColStringToIndex(colRef);
         
         String rowRef=parts[2];
         if (rowRef.length() < 1) {
@@ -94,7 +94,7 @@ public class CellReference {
     }
 
     public CellReference(int pRow, int pCol) {
-    	this(pRow, pCol, false, false);
+    	this(pRow, pCol & 0xFFFF, false, false);
     }
     public CellReference(int pRow, short pCol) {
     	this(pRow, (int)pCol, false, false);
@@ -130,18 +130,31 @@ public class CellReference {
     public String getSheetName(){
         return _sheetName;
     }
-    
+ 
+    public static boolean isPartAbsolute(String part) {
+        return part.charAt(0) == ABSOLUTE_REFERENCE_MARKER;
+    }
+
     /**
      * takes in a column reference portion of a CellRef and converts it from
      * ALPHA-26 number format to 0-based base 10.
+     * 'A' -> 0
+     * 'Z' -> 25
+     * 'AA' -> 26
+     * 'IV' -> 255
+     * @return zero based column index
      */
-    private int convertColStringToNum(String ref) {
-		int lastIx = ref.length()-1;
-		int retval=0;
-		int pos = 0;
-		
-		for (int k = lastIx; k > -1; k--) {
+    protected static int convertColStringToIndex(String ref) {
+        int pos = 0;
+        int retval=0;
+		for (int k = ref.length()-1; k >= 0; k--) {
 			char thechar = ref.charAt(k);
+            if (thechar == ABSOLUTE_REFERENCE_MARKER) {
+               if (k != 0) {
+                  throw new IllegalArgumentException("Bad col ref format '" + ref + "'");
+               }
+               break;
+            }
 			// Character.getNumericValue() returns the values
 			//  10-35 for the letter A-Z
 			int shift = (int)Math.pow(26, pos);

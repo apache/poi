@@ -22,26 +22,24 @@ package org.apache.poi.hssf.record.formula.eval;
  */
 public final class NameEval implements Eval {
 
-	private final int _index;
+	private final String _functionName;
 
 	/**
-	 * @param index zero based index to a defined name record
+	 * Creates a NameEval representing a function name
 	 */
-	public NameEval(int index) {
-		_index = index;
+	public NameEval(String functionName) {
+		_functionName = functionName;
 	}
 
-	/**
-	 * @return zero based index to a defined name record
-	 */
-	public int getIndex() {
-		return _index;
+
+	public String getFunctionName() {
+		return _functionName;
 	}
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer(64);
 		sb.append(getClass().getName()).append(" [");
-		sb.append(_index);
+		sb.append(_functionName);
 		sb.append("]");
 		return sb.toString();
 	}

@@ -243,8 +243,16 @@ public abstract class RecordContainer extends Record
 			moveChildRecords(oldLoc, newLoc, number);
 		}
 	}
-	
-	
+
+    /**
+     * Set child records. 
+     *
+     * @param records   the new child records
+     */
+    public void setChildRecord(Record[] records) {
+        this._children = records;
+    }
+
 	/* ===============================================================
 	 *                 External Serialisation Methods
 	 * ===============================================================

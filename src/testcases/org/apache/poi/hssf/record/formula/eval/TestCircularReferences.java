@@ -93,7 +93,6 @@ public final class TestCircularReferences extends TestCase {
 		HSSFCell testCell = row.createCell(0);
 		testCell.setCellFormula("A1");
 
-		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
 		CellValue cellValue = evaluateWithCycles(wb, sheet, testCell);
 		
 		confirmCycleErrorCode(cellValue);
@@ -114,7 +113,6 @@ public final class TestCircularReferences extends TestCase {
 		HSSFCell testCell = row.createCell(3);
 		testCell.setCellFormula("A1");
 
-		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
 		CellValue cellValue = evaluateWithCycles(wb, sheet, testCell);
 		
 		confirmCycleErrorCode(cellValue);

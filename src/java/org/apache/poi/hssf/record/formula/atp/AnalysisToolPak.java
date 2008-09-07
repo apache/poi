@@ -109,8 +109,8 @@ public final class AnalysisToolPak {
 		r(m, "IMSUB", null);
 		r(m, "IMSUM", null);
 		r(m, "INTRATE", null);
-		r(m, "ISEVEN", null);
-		r(m, "ISODD", null);
+		r(m, "ISEVEN", ParityFunction.IS_EVEN);
+		r(m, "ISODD", ParityFunction.IS_ODD);
 		r(m, "LCM", null);
 		r(m, "MDURATION", null);
 		r(m, "MROUND", null);

@@ -322,30 +322,45 @@ final class LookupUtils {
 	 *      <tr><td>&lt;blank&gt;</td><td>&nbsp;</td><td>#VALUE!</td></tr>
 	 *    </table><br/>
 	 *
-	 *  * Note - out of range errors (both too high and too low) are handled by the caller.
-	 * @return column or row index as a zero-based value
-	 *
+	 * Note - out of range errors (result index too high) are handled by the caller.
+	 * @return column or row index as a zero-based value, never negative.
+	 * @throws EvaluationException when the specified arg cannot be coerced to a non-negative integer
 	 */
-	public static int resolveRowOrColIndexArg(ValueEval veRowColIndexArg) throws EvaluationException {
-		if(veRowColIndexArg == null) {
+	public static int resolveRowOrColIndexArg(Eval rowColIndexArg, int srcCellRow, int srcCellCol) throws EvaluationException {
+		if(rowColIndexArg == null) {
 			throw new IllegalArgumentException("argument must not be null");
 		}
+		
+		ValueEval veRowColIndexArg;
+		try {
+			veRowColIndexArg = OperandResolver.getSingleValue(rowColIndexArg, srcCellRow, (short)srcCellCol);
+		} catch (EvaluationException e) {
+			// All errors get translated to #REF!
+			throw EvaluationException.invalidRef();
+		}
+		int oneBasedIndex;
 		if(veRowColIndexArg instanceof BlankEval) {
+			oneBasedIndex = 0;
+		} else {
+			if(veRowColIndexArg instanceof StringEval) {
+				StringEval se = (StringEval) veRowColIndexArg;
+				String strVal = se.getStringValue();
+				Double dVal = OperandResolver.parseDouble(strVal);
+				if(dVal == null) {
+					// String does not resolve to a number. Raise #REF! error.
+					throw EvaluationException.invalidRef();
+					// This includes text booleans "TRUE" and "FALSE".  They are not valid.
+				}
+				// else - numeric value parses OK
+			}
+			// actual BoolEval values get interpreted as FALSE->0 and TRUE->1
+			oneBasedIndex = OperandResolver.coerceValueToInt(veRowColIndexArg);
+		}
+		if (oneBasedIndex < 1) {
+			// note this is asymmetric with the errors when the index is too large (#REF!)  
 			throw EvaluationException.invalidValue();
 		}
-		if(veRowColIndexArg instanceof StringEval) {
-			StringEval se = (StringEval) veRowColIndexArg;
-			String strVal = se.getStringValue();
-			Double dVal = OperandResolver.parseDouble(strVal);
-			if(dVal == null) {
-				// String does not resolve to a number. Raise #VALUE! error.
-				throw EvaluationException.invalidRef();
-				// This includes text booleans "TRUE" and "FALSE".  They are not valid.
-			}
-			// else - numeric value parses OK
-		}
-		// actual BoolEval values get interpreted as FALSE->0 and TRUE->1
-		return OperandResolver.coerceValueToInt(veRowColIndexArg) - 1;
+		return oneBasedIndex - 1; // convert to zero based
 	}
 
 
@@ -583,11 +598,13 @@ final class LookupUtils {
 		return maxIx - 1;
 	}
 
-	public static LookupValueComparer createLookupComparer(ValueEval lookupValue) throws EvaluationException {
+	public static LookupValueComparer createLookupComparer(ValueEval lookupValue) {
 
-		if (lookupValue instanceof BlankEval) {
-			// blank eval can never be found in a lookup array
-			throw new EvaluationException(ErrorEval.NA);
+		if (lookupValue == BlankEval.INSTANCE) {
+			// blank eval translates to zero
+			// Note - a blank eval in the lookup column/row never matches anything
+			// empty string in the lookup column/row can only be matched by explicit emtpty string
+			return new NumberLookupComparer(NumberEval.ZERO);
 		}
 		if (lookupValue instanceof StringEval) {
 			return new StringLookupComparer((StringEval) lookupValue);

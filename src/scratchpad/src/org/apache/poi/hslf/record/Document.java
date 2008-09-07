@@ -71,27 +71,44 @@ public class Document extends PositionDependentRecordContainer
 	 * This will normally return an array of size 2 or 3
 	 */
 	public SlideListWithText[] getSlideListWithTexts() { return slwts; }
-	/**
+
+    /**
 	 * Returns the SlideListWithText that deals with the
 	 *  Master Slides 
 	 */
 	public SlideListWithText getMasterSlideListWithText() { 
-		if(slwts.length > 0) { return slwts[0]; }
-		return null; }
+        for (int i = 0; i < slwts.length; i++) {
+            if(slwts[i].getInstance() == SlideListWithText.MASTER) {
+                return slwts[i];
+            }
+        }
+        return null;
+    }
+
 	/**
 	 * Returns the SlideListWithText that deals with the
 	 *  Slides, or null if there isn't one
 	 */
-	public SlideListWithText getSlideSlideListWithText() { 
-		if(slwts.length > 1) { return slwts[1]; }
-		return null; }
+	public SlideListWithText getSlideSlideListWithText() {
+        for (int i = 0; i < slwts.length; i++) {
+            if(slwts[i].getInstance() == SlideListWithText.SLIDES) {
+                return slwts[i];
+            }
+        }
+		return null;
+    }
 	/**
 	 * Returns the SlideListWithText that deals with the
 	 *  notes, or null if there isn't one
 	 */
 	public SlideListWithText getNotesSlideListWithText() {
-		if(slwts.length > 2) { return slwts[2]; }
-		return null; }
+        for (int i = 0; i < slwts.length; i++) {
+            if(slwts[i].getInstance() == SlideListWithText.NOTES) {
+                return slwts[i];
+            }
+        }
+		return null;
+    }
 
 
 	/** 

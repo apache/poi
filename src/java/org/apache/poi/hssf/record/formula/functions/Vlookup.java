@@ -60,8 +60,7 @@ public final class Vlookup implements Function {
 			AreaEval tableArray = LookupUtils.resolveTableArrayArg(args[1]);
 			boolean isRangeLookup = LookupUtils.resolveRangeLookupArg(arg3, srcCellRow, srcCellCol);
 			int rowIndex = LookupUtils.lookupIndexOfValue(lookupValue, LookupUtils.createColumnVector(tableArray, 0), isRangeLookup);
-			ValueEval veColIndex = OperandResolver.getSingleValue(args[2], srcCellRow, srcCellCol);
-			int colIndex = LookupUtils.resolveRowOrColIndexArg(veColIndex);
+			int colIndex = LookupUtils.resolveRowOrColIndexArg(args[2], srcCellRow, srcCellCol);
 			ValueVector resultCol = createResultColumnVector(tableArray, colIndex);
 			return resultCol.getItem(rowIndex);
 		} catch (EvaluationException e) {
@@ -73,12 +72,11 @@ public final class Vlookup implements Function {
 	/**
 	 * Returns one column from an <tt>AreaEval</tt>
 	 * 
-	 * @throws EvaluationException (#VALUE!) if colIndex is negative, (#REF!) if colIndex is too high
+	 * @param colIndex assumed to be non-negative
+	 * 
+	 * @throws EvaluationException (#REF!) if colIndex is too high
 	 */
 	private ValueVector createResultColumnVector(AreaEval tableArray, int colIndex) throws EvaluationException {
-		if(colIndex < 0) {
-			throw EvaluationException.invalidValue();
-		}
 		if(colIndex >= tableArray.getWidth()) {
 			throw EvaluationException.invalidRef();
 		}

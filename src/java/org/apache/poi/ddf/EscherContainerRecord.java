@@ -235,4 +235,21 @@ public class EscherContainerRecord extends EscherRecord
         return null;
     }
 
+    /**
+     * Recursively find records with the specified record ID
+     *
+     * @param out - list to store found records
+     */
+    public void getRecordsById(short recordId, List out){
+        for(Iterator it = childRecords.iterator(); it.hasNext();) {
+            Object er = it.next();
+            if(er instanceof EscherContainerRecord) {
+                EscherContainerRecord c = (EscherContainerRecord)er;
+                c.getRecordsById(recordId, out );
+            } else if (er instanceof EscherSpRecord){
+                out.add(er);
+            }
+        }
+    }
+
 }

@@ -55,49 +55,40 @@ public final class ValueEvalToNumericXlator {
      * @param eval
      */
     public ValueEval attemptXlateToNumeric(ValueEval eval) {
-        ValueEval retval = null;
         
         if (eval == null) {
-            retval = BlankEval.INSTANCE;
+            throw new IllegalArgumentException("eval must not be null");
         }
         
         // most common case - least worries :)
-        else if (eval instanceof NumberEval) {
-            retval = eval; 
+        if (eval instanceof NumberEval) {
+            return eval; 
         }
         
-        // booleval
-        else if (eval instanceof BoolEval) {
-            retval = ((flags & BOOL_IS_PARSED) > 0)
+        if (eval instanceof BoolEval) {
+            return ((flags & BOOL_IS_PARSED) > 0)
                 ? (NumericValueEval) eval
                 : xlateBlankEval(BLANK_IS_PARSED);
         } 
         
-        // stringeval 
-        else if (eval instanceof StringEval) {
-            retval = xlateStringEval((StringEval) eval); // TODO: recursive call needed
+        if (eval instanceof StringEval) {
+            return xlateStringEval((StringEval) eval); // TODO: recursive call needed
         }
         
-        // refeval
-        else if (eval instanceof RefEval) {
-            retval = xlateRefEval((RefEval) eval);
+        if (eval instanceof RefEval) {
+            return xlateRefEval((RefEval) eval);
         }
         
-        // erroreval
-        else if (eval instanceof ErrorEval) {
-            retval = eval;
+        if (eval instanceof ErrorEval) {
+            return eval;
         }
         
-        else if (eval instanceof BlankEval) {
-            retval = xlateBlankEval(BLANK_IS_PARSED);
+        if (eval instanceof BlankEval) {
+            return xlateBlankEval(BLANK_IS_PARSED);
         }
         
         // probably AreaEval? then not acceptable.
-        else {
-            throw new RuntimeException("Invalid ValueEval type passed for conversion: " + eval.getClass());
-        }
-        
-        return retval;
+        throw new RuntimeException("Invalid ValueEval type passed for conversion: " + eval.getClass());
     }
     
     /**

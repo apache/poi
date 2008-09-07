@@ -50,7 +50,24 @@ import java.util.Vector;
 // For now, pretend to be an atom
 public class SlideListWithText extends RecordContainer
 {
-	private byte[] _header;
+
+    /**
+     * Instance filed of the record header indicates that this SlideListWithText stores
+     * references to slides
+     */
+    public static final int SLIDES = 0;
+    /**
+     * Instance filed of the record header indicates that this SlideListWithText stores
+     * references to master slides
+     */
+    public static final int MASTER = 1;
+    /**
+     * Instance filed of the record header indicates that this SlideListWithText stores
+     * references to notes
+     */
+    public static final int NOTES = 2;
+
+    private byte[] _header;
 	private static long _type = 4080;
 
 	private SlideAtomsSet[] slideAtomsSets;
@@ -123,9 +140,9 @@ public class SlideListWithText extends RecordContainer
 	public void addSlidePersistAtom(SlidePersistAtom spa) {
 		// Add the new SlidePersistAtom at the end
 		appendChildRecord(spa);
-		
+
 		SlideAtomsSet newSAS = new SlideAtomsSet(spa, new Record[0]);
-		
+
 		// Update our SlideAtomsSets with this
 		SlideAtomsSet[] sas = new SlideAtomsSet[slideAtomsSets.length+1];
 		System.arraycopy(slideAtomsSets, 0, sas, 0, slideAtomsSets.length);
@@ -133,7 +150,15 @@ public class SlideListWithText extends RecordContainer
 		slideAtomsSets = sas;
 	}
 
-	/**
+    public int getInstance(){
+        return LittleEndian.getShort(_header, 0) >> 4;
+    }
+
+    public void setInstance(int inst){
+        LittleEndian.putShort(_header, (short)((inst << 4) | 0xF));
+    }
+
+    /**
 	 * Get access to the SlideAtomsSets of the children of this record
 	 */
 	public SlideAtomsSet[] getSlideAtomsSets() { return slideAtomsSets; }
@@ -152,35 +177,6 @@ public class SlideListWithText extends RecordContainer
 	}
 
 	/**
-	 * Shifts a SlideAtomsSet to a new position.
-	 * Works by shifting the child records about, then updating
-	 *  the SlideAtomSets array
-	 * @param toMove The SlideAtomsSet to move
-	 * @param newPosition The new (0 based) position for the SlideAtomsSet
-	 */
-	public void repositionSlideAtomsSet(SlideAtomsSet toMove, int newPosition) {
-		// Ensure it's one of ours
-		int curPos = -1;
-		for(int i=0; i<slideAtomsSets.length; i++) {
-			if(slideAtomsSets[i] == toMove) { curPos = i; }
-		}
-		if(curPos == -1) {
-			throw new IllegalArgumentException("The supplied SlideAtomsSet didn't belong to this SlideListWithText");
-		}
-		
-		// Ensure the newPosision is valid
-		if(newPosition < 0 || newPosition >= slideAtomsSets.length) {
-			throw new IllegalArgumentException("The new position must be between 0, and the number of SlideAtomsSets");
-		}
-		
-		// Build the new records list
-		moveChildrenBefore(toMove.getSlidePersistAtom(), toMove.slideRecords.length, slideAtomsSets[newPosition].getSlidePersistAtom());
-		
-		// Build the new SlideAtomsSets list
-		ArrayUtil.arrayMoveWithin(slideAtomsSets, curPos, newPosition, 1);
-	}
-
-	/** 
 	 * Inner class to wrap up a matching set of records that hold the
 	 *  text for a given sheet. Contains the leading SlidePersistAtom,
 	 *  and all of the records until the next SlidePersistAtom. This 
