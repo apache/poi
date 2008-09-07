@@ -68,6 +68,17 @@ public class DrawingManager2
      */
     public int allocateShapeId(short drawingGroupId)
     {
+        EscherDgRecord dg = getDrawingGroup(drawingGroupId);
+        return allocateShapeId(drawingGroupId, dg);
+    }
+
+    /**
+     * Allocates new shape id for the new drawing group id.
+     *
+     * @return a new shape id.
+     */
+    public int allocateShapeId(short drawingGroupId, EscherDgRecord dg)
+    {
         dgg.setNumShapesSaved( dgg.getNumShapesSaved() + 1 );
 
         // Add to existing cluster if space available
@@ -78,7 +89,6 @@ public class DrawingManager2
             {
                 int result = c.getNumShapeIdsUsed() + (1024 * (i+1));
                 c.incrementShapeId();
-                EscherDgRecord dg = getDrawingGroup(drawingGroupId);
                 dg.setNumShapes( dg.getNumShapes() + 1 );
                 dg.setLastMSOSPID( result );
                 if (result >= dgg.getShapeIdMax())
@@ -90,7 +100,6 @@ public class DrawingManager2
         // Create new cluster
         dgg.addCluster( drawingGroupId, 0 );
         dgg.getFileIdClusters()[dgg.getFileIdClusters().length-1].incrementShapeId();
-        EscherDgRecord dg = getDrawingGroup(drawingGroupId);
         dg.setNumShapes( dg.getNumShapes() + 1 );
         int result = (1024 * dgg.getFileIdClusters().length);
         dg.setLastMSOSPID( result );
@@ -98,7 +107,6 @@ public class DrawingManager2
             dgg.setShapeIdMax( result + 1 );
         return result;
     }
-
     ////////////  Non-public methods /////////////
     
     /**

@@ -22,57 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.ddf.EscherBoolProperty;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherDggRecord;
-import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.ddf.EscherRGBProperty;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.ddf.EscherSplitMenuColorsRecord;
-import org.apache.poi.hssf.record.BOFRecord;
-import org.apache.poi.hssf.record.BackupRecord;
-import org.apache.poi.hssf.record.BookBoolRecord;
-import org.apache.poi.hssf.record.BoundSheetRecord;
-import org.apache.poi.hssf.record.CodepageRecord;
-import org.apache.poi.hssf.record.CountryRecord;
-import org.apache.poi.hssf.record.DSFRecord;
-import org.apache.poi.hssf.record.DateWindow1904Record;
-import org.apache.poi.hssf.record.DrawingGroupRecord;
-import org.apache.poi.hssf.record.EOFRecord;
-import org.apache.poi.hssf.record.ExtSSTRecord;
-import org.apache.poi.hssf.record.ExtendedFormatRecord;
-import org.apache.poi.hssf.record.ExternSheetRecord;
-import org.apache.poi.hssf.record.FileSharingRecord;
-import org.apache.poi.hssf.record.FnGroupCountRecord;
-import org.apache.poi.hssf.record.FontRecord;
-import org.apache.poi.hssf.record.FormatRecord;
-import org.apache.poi.hssf.record.HideObjRecord;
-import org.apache.poi.hssf.record.HyperlinkRecord;
-import org.apache.poi.hssf.record.InterfaceEndRecord;
-import org.apache.poi.hssf.record.InterfaceHdrRecord;
-import org.apache.poi.hssf.record.MMSRecord;
-import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.PaletteRecord;
-import org.apache.poi.hssf.record.PasswordRecord;
-import org.apache.poi.hssf.record.PasswordRev4Record;
-import org.apache.poi.hssf.record.PrecisionRecord;
-import org.apache.poi.hssf.record.ProtectRecord;
-import org.apache.poi.hssf.record.ProtectionRev4Record;
-import org.apache.poi.hssf.record.RecalcIdRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RefreshAllRecord;
-import org.apache.poi.hssf.record.SSTRecord;
-import org.apache.poi.hssf.record.StyleRecord;
-import org.apache.poi.hssf.record.SupBookRecord;
-import org.apache.poi.hssf.record.TabIdRecord;
-import org.apache.poi.hssf.record.UnicodeString;
-import org.apache.poi.hssf.record.UseSelFSRecord;
-import org.apache.poi.hssf.record.WindowOneRecord;
-import org.apache.poi.hssf.record.WindowProtectRecord;
-import org.apache.poi.hssf.record.WriteAccessRecord;
-import org.apache.poi.hssf.record.WriteProtectRecord;
+import org.apache.poi.ddf.*;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.SheetReferences;
@@ -2206,17 +2157,17 @@ public final class Workbook implements Model {
         //  contains a EscherDggRecord
         for(Iterator rit = records.iterator(); rit.hasNext();) {
             Record r = (Record)rit.next();
-            
+
             if(r instanceof DrawingGroupRecord) {
                 DrawingGroupRecord dg =    (DrawingGroupRecord)r;
                 dg.processChildRecords();
-                
+
                 EscherContainerRecord cr =
                     dg.getEscherContainer();
                 if(cr == null) {
                     continue;
                 }
-                
+
                 EscherDggRecord dgg = null;
                 for(Iterator it = cr.getChildRecords().iterator(); it.hasNext();) {
                     Object er = it.next();
@@ -2224,7 +2175,7 @@ public final class Workbook implements Model {
                         dgg = (EscherDggRecord)er;
                     }
                 }
-                
+
                 if(dgg != null) {
                     drawingManager = new DrawingManager2(dgg);
                     return;
@@ -2234,7 +2185,7 @@ public final class Workbook implements Model {
 
         // Look for the DrawingGroup record
         int dgLoc = findFirstRecordLocBySid(DrawingGroupRecord.sid);
-        
+
         // If there is one, does it have a EscherDggRecord?
         if(dgLoc != -1) {
             DrawingGroupRecord dg =
@@ -2246,7 +2197,7 @@ public final class Workbook implements Model {
                     dgg = (EscherDggRecord)er;
                 }
             }
-            
+
             if(dgg != null) {
                 drawingManager = new DrawingManager2(dgg);
             }
@@ -2454,5 +2405,55 @@ public final class Workbook implements Model {
 
     public NameXPtg getNameXPtg(String name) {
         return getOrCreateLinkTable().getNameXPtg(name);
+    }
+
+    /**
+     * Check if the cloned sheet has drawings. If yes, then allocate a new drawing group ID and
+     * re-generate shape IDs
+     *
+     * @param sheet the cloned sheet
+     */
+    public void cloneDrawings(Sheet sheet){
+
+        findDrawingGroup();
+
+        if(drawingManager == null) {
+            //this workbook does not have drawings
+            return;
+        }
+
+        //check if the cloned sheet has drawings
+        int aggLoc = sheet.aggregateDrawingRecords(drawingManager, false);
+        if(aggLoc != -1) {
+            EscherAggregate agg = (EscherAggregate) sheet.findFirstRecordBySid(EscherAggregate.sid);
+
+            EscherDggRecord dgg = drawingManager.getDgg();
+
+            //register a new drawing group for the cloned sheet
+            int dgId = drawingManager.findNewDrawingGroupId();
+            dgg.addCluster( dgId, 0 );
+            dgg.setDrawingsSaved(dgg.getDrawingsSaved() + 1);
+
+            EscherDgRecord dg = null;
+            for(Iterator it = agg.getEscherContainer().getChildRecords().iterator(); it.hasNext();) {
+                Object er = it.next();
+                if(er instanceof EscherDgRecord) {
+                    dg = (EscherDgRecord)er;
+                    //update id of the drawing in the cloned sheet
+                    dg.setOptions( (short) ( dgId << 4 ) );
+                } else if (er instanceof EscherContainerRecord){
+                    //recursively find shape records and re-generate shapeId
+                    ArrayList spRecords = new ArrayList();
+                    EscherContainerRecord cp = (EscherContainerRecord)er;
+                    cp.getRecordsById(EscherSpRecord.RECORD_ID,  spRecords);
+                    for(Iterator spIt = spRecords.iterator(); spIt.hasNext();) {
+                        EscherSpRecord sp = (EscherSpRecord)spIt.next();
+                        int shapeId = drawingManager.allocateShapeId((short)dgId, dg);
+                        sp.setShapeId(shapeId);
+                    }
+                }
+            }
+
+        }
     }
 }
