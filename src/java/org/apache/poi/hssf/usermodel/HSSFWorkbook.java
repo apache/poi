@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 
 import org.apache.poi.POIDocument;
 import org.apache.poi.ddf.EscherBSERecord;
@@ -36,6 +35,7 @@ import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.record.AbstractEscherHolderRecord;
 import org.apache.poi.hssf.record.BackupRecord;
 import org.apache.poi.hssf.record.DrawingGroupRecord;
@@ -55,6 +55,8 @@ import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.util.SheetReferences;
@@ -667,33 +669,81 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * @return HSSFSheet representing the cloned sheet.
      */
 
-    public HSSFSheet cloneSheet(int sheetNum) {
-        validateSheetIndex(sheetNum);
-        HSSFSheet srcSheet = (HSSFSheet) _sheets.get(sheetNum);
-        String srcName = workbook.getSheetName(sheetNum);
+    public HSSFSheet cloneSheet(int sheetIndex) {
+        validateSheetIndex(sheetIndex);
+        HSSFSheet srcSheet = (HSSFSheet) _sheets.get(sheetIndex);
+        String srcName = workbook.getSheetName(sheetIndex);
         HSSFSheet clonedSheet = srcSheet.cloneSheet(this);
         clonedSheet.setSelected(false);
         clonedSheet.setActive(false);
 
+        String name = getUniqueSheetName(srcName);
+        int newSheetIndex = _sheets.size(); 
         _sheets.add(clonedSheet);
-        int i = 1;
+        workbook.setSheetName(newSheetIndex, name);
+        
+        // Check this sheet has an autofilter, (which has a built-in NameRecord at workbook level)
+        int filterDbNameIndex = findExistingBuiltinNameRecordIdx(sheetIndex, NameRecord.BUILTIN_FILTER_DB);
+        if (filterDbNameIndex >=0) {
+            NameRecord origNameRecord = workbook.getNameRecord(filterDbNameIndex);
+            // copy original formula but adjust 3D refs to the new external sheet index
+            int newExtSheetIx = getExternalSheetIndex(newSheetIndex);
+            Ptg[] ptgs = origNameRecord.getNameDefinition();
+            for (int i=0; i< ptgs.length; i++) {
+                Ptg ptg = ptgs[i];
+                ptg = ptg.copy();
+                
+                if (ptg instanceof Area3DPtg) {
+                    Area3DPtg a3p = (Area3DPtg) ptg;
+                    a3p.setExternSheetIndex(newExtSheetIx);
+                } else if (ptg instanceof Ref3DPtg) {
+                    Ref3DPtg r3p = (Ref3DPtg) ptg;
+                    r3p.setExternSheetIndex(newExtSheetIx);
+                }
+                ptgs[i] = ptg;
+            }
+            NameRecord newNameRecord = workbook.createBuiltInName(NameRecord.BUILTIN_FILTER_DB, newSheetIndex+1);
+            newNameRecord.setNameDefinition(ptgs);
+            newNameRecord.setHidden(true);
+            HSSFName newName = new HSSFName(this, newNameRecord);
+            names.add(newName);
+
+            workbook.cloneDrawings(clonedSheet.getSheet());
+        }
+        // TODO - maybe same logic required for other/all built-in name records
+        
+        return clonedSheet;
+    }
+
+    private String getUniqueSheetName(String srcName) {
+        int uniqueIndex = 2;
+        String baseName = srcName;
+        int bracketPos = srcName.lastIndexOf('(');
+        if (bracketPos > 0 && srcName.endsWith(")")) {
+            String suffix = srcName.substring(bracketPos + 1, srcName.length() - ")".length());
+            try {
+                uniqueIndex = Integer.parseInt(suffix.trim());
+                uniqueIndex++;
+                baseName=srcName.substring(0, bracketPos).trim();
+            } catch (NumberFormatException e) {
+                // contents of brackets not numeric
+            }
+        }
         while (true) {
             // Try and find the next sheet name that is unique
-            String name = srcName;
-            String index = Integer.toString(i++);
-            if (name.length() + index.length() + 2 < 31) {
-                name = name + "(" + index + ")";
+            String index = Integer.toString(uniqueIndex++);
+            String name;
+            if (baseName.length() + index.length() + 2 < 31) {
+                name = baseName + " (" + index + ")";
             } else {
-                name = name.substring(0, 31 - index.length() - 2) + "(" + index + ")";
+                name = baseName.substring(0, 31 - index.length() - 2) + "(" + index + ")";
             }
 
             //If the sheet name is unique, then set it otherwise move on to the next number.
             if (workbook.getSheetIndex(name) == -1) {
-              workbook.setSheetName(_sheets.size()-1, name);
-              break;
+              return name;
             }
         }
-        return clonedSheet;
     }
 
     /**
@@ -907,7 +957,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         boolean removingRange =
                 startColumn == -1 && endColumn == -1 && startRow == -1 && endRow == -1;
 
-        int rowColHeaderNameIndex = findExistingRowColHeaderNameRecordIdx(sheetIndex);
+        int rowColHeaderNameIndex = findExistingBuiltinNameRecordIdx(sheetIndex, NameRecord.BUILTIN_PRINT_TITLE);
         if (removingRange) {
             if (rowColHeaderNameIndex >= 0) {
                 workbook.removeName(rowColHeaderNameIndex);
@@ -925,29 +975,27 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
             isNewRecord = false;
         }
 
-        short definitionTextLength = settingRowAndColumn ? (short)0x001a : (short)0x000b;
-        nameRecord.setDefinitionTextLength(definitionTextLength); // TODO - remove
-
-        Stack ptgs = new Stack();
+        List temp = new ArrayList();
 
         if (settingRowAndColumn) {
             final int exprsSize = 2 * 11 + 1; // 2 * Area3DPtg.SIZE + UnionPtg.SIZE
-            ptgs.add(new MemFuncPtg(exprsSize));
+            temp.add(new MemFuncPtg(exprsSize));
         }
         if (startColumn >= 0) {
             Area3DPtg colArea = new Area3DPtg(0, MAX_ROW, startColumn, endColumn, 
                     false, false, false, false, externSheetIndex);
-            ptgs.add(colArea);
+            temp.add(colArea);
         }
         if (startRow >= 0) {
             Area3DPtg rowArea = new Area3DPtg(startRow, endRow, 0, MAX_COLUMN, 
                     false, false, false, false, externSheetIndex);
-            ptgs.add(rowArea);
+            temp.add(rowArea);
         }
-        if (settingRowAndColumn)
-        {
-            ptgs.add(UnionPtg.instance);
+        if (settingRowAndColumn) {
+            temp.add(UnionPtg.instance);
         }
+        Ptg[] ptgs = new Ptg[temp.size()];
+        temp.toArray(ptgs);
         nameRecord.setNameDefinition(ptgs);
 
         if (isNewRecord)
@@ -963,13 +1011,13 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     }
 
 
-    private int findExistingRowColHeaderNameRecordIdx(int sheetIndex) {
+    private int findExistingBuiltinNameRecordIdx(int sheetIndex, byte builtinCode) {
         for(int defNameIndex =0; defNameIndex<names.size(); defNameIndex++) {
             NameRecord r = workbook.getNameRecord(defNameIndex);
             if (r == null) {
                 throw new RuntimeException("Unable to find all defined names to iterate over");
             }
-            if (!isRowColHeaderRecord( r )) {
+            if (!r.isBuiltInName() || r.getBuiltInName() != builtinCode) {
                 continue;
             }
             if(r.getSheetNumber() == 0) {
@@ -983,10 +1031,6 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
             }
         }
         return -1;
-    }
-
-    private static boolean isRowColHeaderRecord(NameRecord r) {
-        return r.isBuiltInName() && r.getBuiltInName() == NameRecord.BUILTIN_PRINT_TITLE;
     }
 
     /**
@@ -1288,6 +1332,9 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
         return result;
     }
+	public NameRecord getNameRecord(int nameIndex) {
+		return getWorkbook().getNameRecord(nameIndex);
+	}
 
     /** gets the named range name
      * @param index the named range index (0 based)

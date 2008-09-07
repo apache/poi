@@ -19,40 +19,44 @@ package org.apache.poi.hssf.record.formula.eval;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.functions.EvalFactory;
 import org.apache.poi.hssf.record.formula.functions.NumericFunctionInvoker;
 
 /**
- * Test for unary plus operator evaluator.
- *
+ * Test for divide operator evaluator.
+ * 
  * @author Josh Micich
  */
-public final class TestUnaryPlusEval extends TestCase {
-
-	/**
-	 * Test for bug observable at svn revision 618865 (5-Feb-2008)<br/>
-	 * The code for handling column operands had been copy-pasted from the row handling code.
-	 */
-	public void testColumnOperand() {
-
-		short firstRow = (short)8;
-		short lastRow = (short)12;
-		short colNum = (short)5;
-		AreaPtg areaPtg = new AreaPtg(firstRow, lastRow, colNum, colNum, false, false, false, false);
-		ValueEval[] values = {
-				new NumberEval(27),
-				new NumberEval(29),
-				new NumberEval(35),	// value in row 10
-				new NumberEval(37),
-				new NumberEval(38),
+public final class TestDivideEval extends TestCase {
+	
+	private static void confirm(ValueEval arg0, ValueEval arg1, double expectedResult) {
+		Eval[] args = { 
+			arg0, arg1,	 
 		};
-		Eval[] args = {
-			EvalFactory.createAreaEval(areaPtg, values),
+		
+		double result = NumericFunctionInvoker.invoke(DivideEval.instance, args, 0, 0);
+		
+		assertEquals(expectedResult, result, 0);
+	}
+
+	public void testBasic() {
+		confirm(new NumberEval(5), new NumberEval(2), 2.5);
+		confirm(new NumberEval(3), new NumberEval(16), 0.1875);
+		confirm(new NumberEval(-150), new NumberEval(-15), 10.0);
+		confirm(new StringEval("0.2"), new NumberEval(0.05), 4.0);
+		confirm(BoolEval.TRUE, new StringEval("-0.2"), -5.0);
+	}
+
+	public void test1x1Area() {
+		AreaEval ae0 = EvalFactory.createAreaEval("B2:B2", new ValueEval[] { new NumberEval(50), });
+		AreaEval ae1 = EvalFactory.createAreaEval("C2:C2", new ValueEval[] { new NumberEval(10), });
+		confirm(ae0, ae1, 5);
+	}
+	public void testDivZero() {
+		Eval[] args = { 
+			new NumberEval(5), NumberEval.ZERO,	 
 		};
-
-		double result = NumericFunctionInvoker.invoke(UnaryPlusEval.instance, args, 10, (short)20);
-
-		assertEquals(35, result, 0);
+		Eval result = DivideEval.instance.evaluate(args, 0, (short) 0);
+		assertEquals(ErrorEval.DIV_ZERO, result);
 	}
 }

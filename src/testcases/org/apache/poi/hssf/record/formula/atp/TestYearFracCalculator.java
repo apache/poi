@@ -38,6 +38,7 @@ public final class TestYearFracCalculator extends TestCase {
 		confirm(md(1999, 3, 31), md(1999, 4, 3), 1, 0.008219178);
 		confirm(md(1999, 4, 5), md(1999, 4, 8), 1, 0.008219178);
 		confirm(md(1999, 4, 4), md(1999, 4, 7), 1, 0.008219178);
+		confirm(md(2000, 2, 5), md(2000, 6, 1), 0, 0.322222222);
 	}
 
 	private void confirm(double startDate, double endDate, int basis, double expectedValue) {

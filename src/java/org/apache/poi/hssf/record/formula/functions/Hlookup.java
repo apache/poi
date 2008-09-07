@@ -60,8 +60,7 @@ public final class Hlookup implements Function {
 			AreaEval tableArray = LookupUtils.resolveTableArrayArg(args[1]);
 			boolean isRangeLookup = LookupUtils.resolveRangeLookupArg(arg3, srcCellRow, srcCellCol);
 			int colIndex = LookupUtils.lookupIndexOfValue(lookupValue, LookupUtils.createRowVector(tableArray, 0), isRangeLookup);
-			ValueEval veColIndex = OperandResolver.getSingleValue(args[2], srcCellRow, srcCellCol);
-			int rowIndex = LookupUtils.resolveRowOrColIndexArg(veColIndex);
+			int rowIndex = LookupUtils.resolveRowOrColIndexArg(args[2], srcCellRow, srcCellCol);
 			ValueVector resultCol = createResultColumnVector(tableArray, rowIndex);
 			return resultCol.getItem(colIndex);
 		} catch (EvaluationException e) {
@@ -73,15 +72,14 @@ public final class Hlookup implements Function {
 	/**
 	 * Returns one column from an <tt>AreaEval</tt>
 	 * 
-	 * @throws EvaluationException (#VALUE!) if colIndex is negative, (#REF!) if colIndex is too high
+	 * @param rowIndex assumed to be non-negative
+	 * 
+	 * @throws EvaluationException (#REF!) if colIndex is too high
 	 */
-	private ValueVector createResultColumnVector(AreaEval tableArray, int colIndex) throws EvaluationException {
-		if(colIndex < 0) {
-			throw EvaluationException.invalidValue();
-		}
-		if(colIndex >= tableArray.getWidth()) {
+	private ValueVector createResultColumnVector(AreaEval tableArray, int rowIndex) throws EvaluationException {
+		if(rowIndex >= tableArray.getHeight()) {
 			throw EvaluationException.invalidRef();
 		}
-		return LookupUtils.createRowVector(tableArray, colIndex);
+		return LookupUtils.createRowVector(tableArray, rowIndex);
 	}
 }

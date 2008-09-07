@@ -62,6 +62,8 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">45720 Fixed HSSFWorkbook.cloneSheet to correctly clone sheets with drawings</action>
+           <action dev="POI-DEVELOPERS" type="fix">45728 Fix for SlideShow.reorderSlide in HSLF</action>
            <action dev="POI-DEVELOPERS" type="add">Initial support for embedded movies and controls in HSLF</action>
            <action dev="POI-DEVELOPERS" type="fix">45358 - signed/unsigned error when parsing 3-d area refs, performance problem evaluating area refs, and ClassCastExcecption in IF()</action>
            <action dev="POI-DEVELOPERS" type="add">Support for HPBF Publisher hyperlinks, including during text extraction</action>

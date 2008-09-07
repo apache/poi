@@ -37,6 +37,7 @@ import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -1020,9 +1021,9 @@ public final class TestBugs extends TestCase {
             NameRecord r = w.getNameRecord(i);
             assertTrue(r.getSheetNumber() <= wb.getNumberOfSheets());
             
-            List nd = r.getNameDefinition();
-            assertEquals(1, nd.size());
-            assertTrue(nd.get(0) instanceof DeletedArea3DPtg);
+            Ptg[] nd = r.getNameDefinition();
+            assertEquals(1, nd.length);
+            assertTrue(nd[0] instanceof DeletedArea3DPtg);
         }
         
         
@@ -1038,9 +1039,9 @@ public final class TestBugs extends TestCase {
             NameRecord r = w.getNameRecord(i);
             assertTrue(r.getSheetNumber() <= wb.getNumberOfSheets());
             
-            List nd = r.getNameDefinition();
-            assertEquals(1, nd.size());
-            assertTrue(nd.get(0) instanceof DeletedArea3DPtg);
+            Ptg[] nd = r.getNameDefinition();
+            assertEquals(1, nd.length);
+            assertTrue(nd[0] instanceof DeletedArea3DPtg);
         }
         
         
@@ -1055,9 +1056,9 @@ public final class TestBugs extends TestCase {
             NameRecord r = w.getNameRecord(i);
             assertTrue(r.getSheetNumber() <= wb.getNumberOfSheets());
             
-            List nd = r.getNameDefinition();
-            assertEquals(1, nd.size());
-            assertTrue(nd.get(0) instanceof DeletedArea3DPtg);
+            Ptg[] nd = r.getNameDefinition();
+            assertEquals(1, nd.length);
+            assertTrue(nd[0] instanceof DeletedArea3DPtg);
         }
     }
     

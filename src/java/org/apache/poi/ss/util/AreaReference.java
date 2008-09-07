@@ -46,29 +46,59 @@ public class AreaReference {
         }
 
         String[] parts = separateAreaRefs(reference);
-        
-        // Special handling for whole-column references
-        if(parts.length == 2 && parts[0].length() == 1 &&
-                parts[1].length() == 1 && 
-                parts[0].charAt(0) >= 'A' && parts[0].charAt(0) <= 'Z' &&
-                parts[1].charAt(0) >= 'A' && parts[1].charAt(0) <= 'Z') {
-            // Represented internally as x$1 to x$65536
-            //  which is the maximum range of rows
-            parts[0] = parts[0] + "$1";
-            parts[1] = parts[1] + "$65536";
-        }
-        
-        _firstCell = new CellReference(parts[0]);
-        
-        if(parts.length == 2) {
-            _lastCell = new CellReference(parts[1]);
-            _isSingleCell = false;
-        } else {
+        String part0 = parts[0];
+        if (parts.length == 1) {
+            // TODO - probably shouldn't initialize area ref when text is really a cell ref
+            // Need to fix some named range stuff to get rid of this
+            _firstCell = new CellReference(part0);
+            
             _lastCell = _firstCell;
             _isSingleCell = true;
+            return;
         }
-    }
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Bad area ref '" + reference + "'");
+        }
+        
+        String part1 = parts[1];
+        if (isPlainColumn(part0)) {
+            if (!isPlainColumn(part1)) {
+                throw new RuntimeException("Bad area ref '" + reference + "'");
+            }
+            // Special handling for whole-column references
+            // Represented internally as x$1 to x$65536
+            //  which is the maximum range of rows
+
+            boolean firstIsAbs = CellReference.isPartAbsolute(part0);
+            boolean lastIsAbs = CellReference.isPartAbsolute(part1);
+            
+            int col0 = CellReference.convertColStringToIndex(part0);
+            int col1 = CellReference.convertColStringToIndex(part1);
+            
+            _firstCell = new CellReference(0, col0, true, firstIsAbs);
+            _lastCell = new CellReference(0xFFFF, col1, true, lastIsAbs);
+            _isSingleCell = false;
+            // TODO - whole row refs
+        } else {
+            _firstCell = new CellReference(part0);
+            _lastCell = new CellReference(part1);
+            _isSingleCell = part0.equals(part1);
+       }
+     }
     
+    private boolean isPlainColumn(String refPart) {
+        for(int i=refPart.length()-1; i>=0; i--) {
+            int ch = refPart.charAt(i);
+            if (ch == '$' && i==0) {
+            	continue;
+            }
+            if (ch < 'A' || ch > 'Z') {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Creates an area ref from a pair of Cell References.
      */

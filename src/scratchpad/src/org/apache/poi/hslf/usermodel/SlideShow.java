@@ -536,32 +536,37 @@ public final class SlideShow {
 	
 	/**
 	 * Re-orders a slide, to a new position.
-	 * @param oldSlideNumer The old slide number (1 based)
+	 * @param oldSlideNumber The old slide number (1 based)
 	 * @param newSlideNumber The new slide number (1 based)
 	 */
-	public void reorderSlide(int oldSlideNumer, int newSlideNumber) {
+	public void reorderSlide(int oldSlideNumber, int newSlideNumber) {
 		// Ensure these numbers are valid
-		if(oldSlideNumer < 1 || newSlideNumber < 1) {
+		if(oldSlideNumber < 1 || newSlideNumber < 1) {
 			throw new IllegalArgumentException("Old and new slide numbers must be greater than 0");
 		}
-		if(oldSlideNumer > _slides.length || newSlideNumber > _slides.length) {
+		if(oldSlideNumber > _slides.length || newSlideNumber > _slides.length) {
 			throw new IllegalArgumentException("Old and new slide numbers must not exceed the number of slides (" + _slides.length + ")");
 		}
-		
-		// Shift the SlideAtomsSet
-		SlideListWithText slwt = _documentRecord.getSlideSlideListWithText(); 
-		slwt.repositionSlideAtomsSet( 
-				slwt.getSlideAtomsSets()[(oldSlideNumer-1)],
-				(newSlideNumber-1)
-		);
-		
-		// Re-order the slides
-		ArrayUtil.arrayMoveWithin(_slides, (oldSlideNumer-1), (newSlideNumber-1), 1);
-		
-		// Tell the appropriate slides their new numbers
-		for(int i=0; i<_slides.length; i++) {
-			_slides[i].setSlideNumber( (i+1) );
-		}
+
+        //  The order of slides is defined by the order of slide atom sets in the SlideListWithText container.
+        SlideListWithText slwt = _documentRecord.getSlideSlideListWithText();
+        SlideAtomsSet[] sas = slwt.getSlideAtomsSets();
+
+        SlideAtomsSet tmp = sas[oldSlideNumber-1];
+        sas[oldSlideNumber-1] = sas[newSlideNumber-1];
+        sas[newSlideNumber-1] = tmp;
+
+        ArrayList lst = new ArrayList();
+        for (int i = 0; i < sas.length; i++) {
+            lst.add(sas[i].getSlidePersistAtom());
+            Record[] r = sas[i].getSlideRecords();
+            for (int j = 0; j < r.length; j++) {
+                lst.add(r[j]);
+            }
+            _slides[i].setSlideNumber(i+1);
+        }
+        Record[] r = (Record[])lst.toArray(new Record[lst.size()]);
+        slwt.setChildRecord(r);
 	}
 
 	/* ===============================================================
@@ -585,7 +590,8 @@ public final class SlideShow {
   		if(slist == null) {
   			// Need to add a new one
   			slist = new SlideListWithText();
-  			_documentRecord.addSlideListWithText(slist);
+  			slist.setInstance(SlideListWithText.SLIDES);
+            _documentRecord.addSlideListWithText(slist);
   		}
 
   		// Grab the SlidePersistAtom with the highest Slide Number.
@@ -678,10 +684,10 @@ public final class SlideShow {
 		ptr.addSlideLookup(sp.getRefID(), slideOffset);
 		logger.log(POILogger.INFO, "New slide ended up at " + slideOffset);
 
-  		// All done and added
+        slide.setMasterSheet(_masters[0]);
+          // All done and added
   		return slide;
 	}
-
 
     /**
      * Adds a picture to this presentation and returns the associated index.

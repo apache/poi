@@ -41,7 +41,7 @@ public final class Ref3DPtg extends OperandPtg {
     private static final BitField colRelative = BitFieldFactory.getInstance(0x4000);
 
     private final static int  SIZE = 7; // 6 + 1 for Ptg
-    private short             field_1_index_extern_sheet;
+    private int             field_1_index_extern_sheet;
     /** The row index - zero based unsigned 16 bit value */
     private int            field_2_row;
     /** Field 2 
@@ -93,10 +93,10 @@ public final class Ref3DPtg extends OperandPtg {
     }
 
     public short getExternSheetIndex(){
-        return field_1_index_extern_sheet;
+        return (short)field_1_index_extern_sheet;
     }
 
-    public void setExternSheetIndex(short index){
+    public void setExternSheetIndex(int index){
         field_1_index_extern_sheet = index;
     }
 
