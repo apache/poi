@@ -800,6 +800,7 @@ under the License.
     <target name="test-ooxml" depends="compile-main,compile-ooxml,-test-ooxml-check" unless="ooxml.test.notRequired">
         <junit printsummary="yes" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="ooxml.test.failed">
             <classpath refid="test.ooxml.classpath" />
+            <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/>
             <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
             <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
