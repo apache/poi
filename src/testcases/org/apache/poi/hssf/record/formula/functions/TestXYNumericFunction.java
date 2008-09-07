@@ -19,8 +19,6 @@ package org.apache.poi.hssf.record.formula.functions;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.formula.AreaPtg;
-import org.apache.poi.hssf.record.formula.eval.Area2DEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
@@ -100,7 +98,7 @@ public final class TestXYNumericFunction extends TestCase {
 
 	private static ValueEval createAreaEval(ValueEval[] values) {
 		String refStr = "A1:A" + values.length;
-		return new Area2DEval(new AreaPtg(refStr), values);
+		return EvalFactory.createAreaEval(refStr, values);
 	}
 
 	public void testErrors() {

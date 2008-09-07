@@ -17,17 +17,15 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.RefPtg;
+import junit.framework.TestCase;
+
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.Ref2DEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-
-import junit.framework.TestCase;
 
 /**
  * Test cases for Excel function T()
@@ -50,7 +48,7 @@ public final class TestTFunc extends TestCase {
 	 * where cell A1 has the specified innerValue
 	 */
 	private Eval invokeTWithReference(ValueEval innerValue) {
-		Eval arg = new Ref2DEval(new RefPtg((short)1, (short)1, false, false), innerValue);
+		Eval arg = EvalFactory.createRefEval("$B$2", innerValue);
 		return invokeT(arg);
 	}
 	

@@ -23,7 +23,7 @@ import org.apache.poi.util.BitFieldFactory;
 
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.hssf.util.AreaReference;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
@@ -37,11 +37,9 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
      * see similar comment in ReferencePtg
      */
     protected final RuntimeException notImplemented() {
-          return new RuntimeException("Coding Error: This method should never be called. This ptg should be converted");
+        return new RuntimeException("Coding Error: This method should never be called. This ptg should be converted");
     }
 
-    public final static short sid  = 0x25;
-    private final static int  SIZE = 9;
     /** zero based, unsigned 16 bit */
     private int             field_1_first_row;
     /** zero based, unsigned 16 bit */
@@ -55,6 +53,10 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
     private final static BitField   colRelative = BitFieldFactory.getInstance(0x4000);
     private final static BitField   columnMask      = BitFieldFactory.getInstance(0x3FFF);
 
+    protected AreaPtgBase() {
+        // do nothing
+    }
+    
     protected AreaPtgBase(String arearef) {
         AreaReference ar = new AreaReference(arearef);
         CellReference firstCell = ar.getFirstCell();
@@ -97,35 +99,17 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
         }
     }
 
-    protected AreaPtgBase(RecordInputStream in)
-    {
-        field_1_first_row    = in.readUShort();
-        field_2_last_row     = in.readUShort();
+    protected final void readCoordinates(RecordInputStream in) {
+        field_1_first_row = in.readUShort();
+        field_2_last_row = in.readUShort();
         field_3_first_column = in.readUShort();
-        field_4_last_column  = in.readUShort();
+        field_4_last_column = in.readUShort();
     }
-
-    public final String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append(getClass().getName());
-        sb.append(" [");
-        sb.append(AreaReference.formatAsString(this));
-        sb.append("]");
-        return sb.toString();
-    }
-    protected abstract byte getSid();
-
-    public final void writeBytes(byte [] array, int offset) {
-        array[offset] = (byte) (getSid() + getPtgClass());
-        LittleEndian.putShort(array,offset+1,(short)field_1_first_row);
-        LittleEndian.putShort(array,offset+3,(short)field_2_last_row);
-        LittleEndian.putShort(array,offset+5,(short)field_3_first_column);
-        LittleEndian.putShort(array,offset+7,(short)field_4_last_column);        
-    }
-
-    
-    public final int getSize() {
-        return SIZE;
+    protected final void writeCoordinates(byte[] array, int offset) {
+        LittleEndian.putUShort(array, offset + 0, field_1_first_row);
+        LittleEndian.putUShort(array, offset + 2, field_2_last_row);
+        LittleEndian.putUShort(array, offset + 4, field_3_first_column);
+        LittleEndian.putUShort(array, offset + 6, field_4_last_column);        
     }
 
     /**
@@ -207,7 +191,7 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
      */
     public final void setFirstColumn(int colIx) {
         checkColumnBounds(colIx);
-    	field_3_first_column=columnMask.setValue(field_3_first_column, colIx);
+        field_3_first_column=columnMask.setValue(field_3_first_column, colIx);
     }
 
     /**
@@ -266,7 +250,7 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
      */
     public final void setLastColumn(int colIx) {
         checkColumnBounds(colIx);
-    	field_4_last_column=columnMask.setValue(field_4_last_column, colIx);
+        field_4_last_column=columnMask.setValue(field_4_last_column, colIx);
     }
 
     /**
@@ -275,9 +259,18 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
     public final void setLastColumnRaw(short column) {
         field_4_last_column = column;
     }
+    protected final String formatReferenceAsString() {
+        CellReference topLeft = new CellReference(getFirstRow(),getFirstColumn(),!isFirstRowRelative(),!isFirstColRelative());
+        CellReference botRight = new CellReference(getLastRow(),getLastColumn(),!isLastRowRelative(),!isLastColRelative());
+        
+        if(AreaReference.isWholeColumnReference(topLeft, botRight)) {
+            return (new AreaReference(topLeft, botRight)).formatAsString();
+        }
+        return topLeft.formatAsString() + ":" + botRight.formatAsString(); 
+    }
     
     public String toFormulaString(Workbook book) {
-        return AreaReference.formatAsString(this);
+        return formatReferenceAsString();
     }
 
     public byte getDefaultOperandClass() {

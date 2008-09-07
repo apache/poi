@@ -20,7 +20,8 @@ package org.apache.poi.hssf.util;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.util.CellReference.NameType;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.util.CellReference.NameType;
 
 
 public final class TestCellReference extends TestCase {

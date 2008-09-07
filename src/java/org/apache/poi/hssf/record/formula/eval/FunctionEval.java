@@ -50,7 +50,6 @@ public abstract class FunctionEval implements OperationEval {
      
     static {
         Map m = new HashMap();
-        addMapping(m, ID.OFFSET, new Offset());
         addMapping(m, ID.INDIRECT, new Indirect());
         addMapping(m, ID.EXTERNAL_FUNC, new ExternalFunction());
         freeRefFunctionsByIdMap = m;
@@ -155,7 +154,7 @@ public abstract class FunctionEval implements OperationEval {
         retval[75] = new Areas(); // AREAS
         retval[76] = new Rows(); // ROWS
         retval[77] = new Columns(); // COLUMNS
-        retval[ID.OFFSET] = null; // Offset.evaluate has a different signature
+        retval[ID.OFFSET] = new Offset(); // OFFSET
         retval[79] = new Absref(); // ABSREF
         retval[80] = new Relref(); // RELREF
         retval[81] = new Argument(); // ARGUMENT

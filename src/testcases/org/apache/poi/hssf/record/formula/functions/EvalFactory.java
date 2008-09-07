@@ -14,17 +14,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.AreaPtg;
+import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
-import org.apache.poi.hssf.record.formula.eval.Area2DEval;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
+import org.apache.poi.hssf.record.formula.eval.AreaEvalBase;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.Ref2DEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
+import org.apache.poi.hssf.record.formula.eval.RefEvalBase;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
@@ -32,7 +32,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  * 
  * @author Josh Micich
  */
-final class EvalFactory {
+public final class EvalFactory {
 
 	private EvalFactory() {
 		// no instances of this class
@@ -44,6 +44,14 @@ final class EvalFactory {
 	 */
 	public static AreaEval createAreaEval(String areaRefStr, ValueEval[] values) {
 		AreaPtg areaPtg = new AreaPtg(areaRefStr);
+		return createAreaEval(areaPtg, values);
+	}
+
+	/**
+	 * Creates a dummy AreaEval 
+	 * @param values empty (<code>null</code>) entries in this array will be converted to NumberEval.ZERO
+	 */
+	public static AreaEval createAreaEval(AreaPtg areaPtg, ValueEval[] values) {
 		int nCols = areaPtg.getLastColumn() - areaPtg.getFirstColumn() + 1;
 		int nRows = areaPtg.getLastRow() - areaPtg.getFirstRow() + 1;
 		int nExpected = nRows * nCols;
@@ -55,13 +63,57 @@ final class EvalFactory {
 				values[i] = NumberEval.ZERO;
 			}
 		}
-		return new Area2DEval(areaPtg, values);
+		return new MockAreaEval(areaPtg, values);
 	}
 
 	/**
 	 * Creates a single RefEval (with value zero)
 	 */
 	public static RefEval createRefEval(String refStr) {
-		return new Ref2DEval(new RefPtg(refStr), NumberEval.ZERO);
+		return createRefEval(refStr, NumberEval.ZERO);
 	}
+	public static RefEval createRefEval(String refStr, ValueEval value) {
+		return new MockRefEval(new RefPtg(refStr), value);
+	}
+	
+	private static final class MockAreaEval extends AreaEvalBase {
+		private final ValueEval[] _values;
+		public MockAreaEval(AreaPtg areaPtg, ValueEval[] values) {
+			super(areaPtg);
+			_values = values;
+		}
+		public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
+			if (relativeRowIndex < 0 || relativeRowIndex >=getHeight()) {
+				throw new IllegalArgumentException("row index out of range");
+			}
+			int width = getWidth();
+			if (relativeColumnIndex < 0 || relativeColumnIndex >=width) {
+				throw new IllegalArgumentException("column index out of range");
+			}
+			int oneDimensionalIndex = relativeRowIndex * width + relativeColumnIndex;
+			return _values[oneDimensionalIndex];
+		}
+		public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
+			throw new RuntimeException("Operation not implemented on this mock object");
+		}
+	}
+	
+	private static final class MockRefEval extends RefEvalBase {
+		private final ValueEval _value;
+		public MockRefEval(RefPtg ptg, ValueEval value) {
+			super(ptg.getRow(), ptg.getColumn());
+			_value = value;
+		}
+		public MockRefEval(Ref3DPtg ptg, ValueEval value) {
+			super(ptg.getRow(), ptg.getColumn());
+			_value = value;
+		}
+		public ValueEval getInnerValueEval() {
+			return _value;
+		}
+		public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
+			throw new RuntimeException("Operation not implemented on this mock object");
+		}
+	}
+	
 }

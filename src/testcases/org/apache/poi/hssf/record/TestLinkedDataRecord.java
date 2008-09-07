@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -33,9 +30,7 @@ import java.util.Stack;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestLinkedDataRecord
-        extends TestCase
-{
+public final class TestLinkedDataRecord extends TestCase {
 
 /*
     The records below are records that would appear in a simple bar chart
@@ -160,14 +155,7 @@ recordid = 0x1051, size =8
         (byte)0x00,(byte)0x00,          // index to last column and relative flags
     };
 
-    public TestLinkedDataRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
 
         LinkedDataRecord record = new LinkedDataRecord(new TestcaseRecordInputStream((short)0x1051, (short)data.length, data));
         assertEquals( LinkedDataRecord.LINK_TYPE_VALUES, record.getLinkType());
@@ -176,19 +164,11 @@ recordid = 0x1051, size =8
         assertEquals( false, record.isCustomNumberFormat() );
         assertEquals( 0, record.getIndexNumberFmtRecord());
 
-        Area3DPtg ptg = new Area3DPtg();
-        ptg.setExternSheetIndex((short)0);
-        ptg.setFirstColumn((short)0);
-        ptg.setLastColumn((short)0);
-        ptg.setFirstRow((short)0);
-        ptg.setLastRow((short)7936);
-        ptg.setFirstColRelative(false);
-        ptg.setLastColRelative(false);
-        ptg.setFirstRowRelative(false);
-        ptg.setLastRowRelative(false);
-        Stack s = new Stack();
-        s.push(ptg);
-        assertEquals( s, record.getFormulaOfLink().getFormulaTokens() );
+        Area3DPtg ptgExpected = new Area3DPtg(0, 7936, 0, 0,
+                false, false, false, false, 0);
+        
+        Object ptgActual = record.getFormulaOfLink().getFormulaTokens().get(0);
+        assertEquals(ptgExpected.toString(),  ptgActual.toString());
 
         assertEquals( data.length + 4, record.getRecordSize() );
 
@@ -196,24 +176,15 @@ recordid = 0x1051, size =8
 
     }
 
-    public void testStore()
-    {
+    public void testStore() {
         LinkedDataRecord record = new LinkedDataRecord();
         record.setLinkType( LinkedDataRecord.LINK_TYPE_VALUES );
         record.setReferenceType( LinkedDataRecord.REFERENCE_TYPE_WORKSHEET );
         record.setOptions( (short)0 );
         record.setCustomNumberFormat( false );
         record.setIndexNumberFmtRecord( (short)0 );
-        Area3DPtg ptg = new Area3DPtg();
-        ptg.setExternSheetIndex((short)0);
-        ptg.setFirstColumn((short)0);
-        ptg.setLastColumn((short)0);
-        ptg.setFirstRow((short)0);
-        ptg.setLastRow((short)7936);
-        ptg.setFirstColRelative(false);
-        ptg.setLastColRelative(false);
-        ptg.setFirstRowRelative(false);
-        ptg.setLastRowRelative(false);
+        Area3DPtg ptg = new Area3DPtg(0, 7936, 0, 0,
+        		false, false, false, false, 0);
         Stack s = new Stack();
         s.push(ptg);
         LinkedDataFormulaField formulaOfLink = new LinkedDataFormulaField();

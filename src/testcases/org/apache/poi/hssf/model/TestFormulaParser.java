@@ -24,6 +24,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.FormulaParser.FormulaParseException;
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.AddPtg;
+import org.apache.poi.hssf.record.formula.AreaI;
 import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.BoolPtg;
@@ -835,5 +836,30 @@ public final class TestFormulaParser extends TestCase {
 			}
 		}
 		cell.setCellFormula("count(fp1)"); // plain cell ref, col is in range
+	}
+	
+	public void testParseAreaRefHighRow_bug45358() {
+		Ptg[] ptgs;
+		AreaI aptg;
+		
+		HSSFWorkbook book = new HSSFWorkbook();
+		book.createSheet("Sheet1");
+		
+		ptgs = FormulaParser.parse("Sheet1!A10:A40000", book);
+		aptg = (AreaI) ptgs[0];
+		if (aptg.getLastRow() == -25537) {
+			throw new AssertionFailedError("Identified bug 45358");
+		}
+		assertEquals(39999, aptg.getLastRow());
+		
+		ptgs = FormulaParser.parse("Sheet1!A10:A65536", book);
+		aptg = (AreaI) ptgs[0];
+		assertEquals(65535, aptg.getLastRow());
+		
+		// plain area refs should be ok too
+		ptgs = parseFormula("A10:A65536");
+		aptg = (AreaI) ptgs[0];
+		assertEquals(65535, aptg.getLastRow());
+		
 	}
 }

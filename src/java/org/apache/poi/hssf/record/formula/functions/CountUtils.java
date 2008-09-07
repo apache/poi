@@ -50,9 +50,9 @@ final class CountUtils {
 		for (int rrIx=0; rrIx<height; rrIx++) {
 			for (int rcIx=0; rcIx<width; rcIx++) {
 				ValueEval ve = areaEval.getRelativeValue(rrIx, rcIx);
-    			if(criteriaPredicate.matches(ve)) {
-    				result++;
-    			}
+				if(criteriaPredicate.matches(ve)) {
+					result++;
+				}
 			}
 		}
 		return result;
@@ -67,6 +67,9 @@ final class CountUtils {
 		return 0;
 	}
 	public static int countArg(Eval eval, I_MatchPredicate criteriaPredicate) {
+		if (eval == null) {
+			throw new IllegalArgumentException("eval must not be null");
+		}
 		if (eval instanceof AreaEval) {
 			return CountUtils.countMatchingCellsInArea((AreaEval) eval, criteriaPredicate);
 		}

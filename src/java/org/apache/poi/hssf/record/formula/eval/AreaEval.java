@@ -62,13 +62,6 @@ public interface AreaEval extends ValueEval {
     boolean isColumn();
 
     /**
-     * The array of values  in this area. Although the area
-     * maybe 1D (ie. isRow() or isColumn() returns true) or 2D
-     * the returned array is 1D.
-     */
-    ValueEval[] getValues();
-
-    /**
      * @return the ValueEval from within this area at the specified row and col index. Never 
      * <code>null</code> (possibly {@link BlankEval}).  The specified indexes should be absolute 
      * indexes in the sheet and not relative indexes within the area.  
@@ -104,4 +97,10 @@ public interface AreaEval extends ValueEval {
      * specified indexes should relative to the top left corner of this area.  
      */
     ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex);
+
+    /**
+     * Creates an {@link AreaEval} offset by a relative amount from from the upper left cell
+     * of this area
+     */
+    AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx);
 }

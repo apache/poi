@@ -14,47 +14,63 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hssf.record.formula;
 
 /**
- * Common interface for AreaPtg and Area3DPtg, and their
- *  child classes.
+ * Common interface for AreaPtg and Area3DPtg, and their child classes.
  */
 public interface AreaI {
-    /**
-     * @return the first row in the area
-     */
-    public int getFirstRow();
+	/**
+	 * @return the first row in the area
+	 */
+	public int getFirstRow();
 
-    /**
-     * @return last row in the range (x2 in x1,y1-x2,y2)
-     */
-    public int getLastRow();
-    
-    /**
-     * @return the first column number in the area.
-     */
-    public int getFirstColumn();
-    
-    /**
-     * @return lastcolumn in the area
-     */
-    public int getLastColumn();
-    
-    /**
-     * @return isrelative first column to relative or not
-     */
-    public boolean isFirstColRelative();
-    /**
-     * @return lastcol relative or not
-     */
-    public boolean isLastColRelative();
-    /**
-     * @return whether or not the first row is a relative reference or not.
-     */
-    public boolean isFirstRowRelative();
-    /**
-     * @return last row relative or not
-     */
-    public boolean isLastRowRelative();
+	/**
+	 * @return last row in the range (x2 in x1,y1-x2,y2)
+	 */
+	public int getLastRow();
+
+	/**
+	 * @return the first column number in the area.
+	 */
+	public int getFirstColumn();
+
+	/**
+	 * @return lastcolumn in the area
+	 */
+	public int getLastColumn();
+
+	class OffsetArea implements AreaI {
+
+		private final int _firstColumn;
+		private final int _firstRow;
+		private final int _lastColumn;
+		private final int _lastRow;
+
+		public OffsetArea(int baseRow, int baseColumn, int relFirstRowIx, int relLastRowIx,
+				int relFirstColIx, int relLastColIx) {
+			_firstRow = baseRow + relFirstRowIx;
+			_lastRow = baseRow + relLastRowIx;
+			_firstColumn = baseColumn + relFirstColIx;
+			_lastColumn = baseColumn + relLastColIx;
+		}
+
+		public int getFirstColumn() {
+			return _firstColumn;
+		}
+
+		public int getFirstRow() {
+			return _firstRow;
+		}
+
+		public int getLastColumn() {
+			return _lastColumn;
+		}
+
+		public int getLastRow() {
+			return _lastRow;
+		}
+	}
+
 }

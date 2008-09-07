@@ -131,14 +131,6 @@ public abstract class RefPtgBase extends OperandPtg {
         field_2_col=colRelative.setBoolean(field_2_col,rel);
     }
 
-    public final void setColumnRawX(int col) { // TODO
-        field_2_col = col;
-    }
-
-    public int getColumnRawX() { // TODO
-        return field_2_col;
-    }
-
     public final void setColumn(int col) {
         if(col < 0 || col >= 0x100) {
             throw new IllegalArgumentException("Specified colIx (" + col + ") is out of range");

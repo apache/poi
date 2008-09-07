@@ -21,6 +21,8 @@ import org.apache.poi.ddf.*;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.InteractiveInfo;
+import org.apache.poi.hslf.record.InteractiveInfoAtom;
 import org.apache.poi.hslf.exceptions.HSLFException;
 
 import java.awt.*;
@@ -343,4 +345,57 @@ public class SimpleShape extends Shape {
             _clientData.setRemainingData(out.toByteArray());
         }
     }
+
+    public void setHyperlink(Hyperlink link){
+        if(link.getId() == -1){
+            throw new HSLFException("You must call SlideShow.addHyperlink(Hyperlink link) first");
+        }
+
+        EscherClientDataRecord cldata = new EscherClientDataRecord();
+        cldata.setOptions((short)0xF);
+        getSpContainer().getChildRecords().add(cldata);
+
+        InteractiveInfo info = new InteractiveInfo();
+        InteractiveInfoAtom infoAtom = info.getInteractiveInfoAtom();
+
+        switch(link.getType()){
+            case Hyperlink.LINK_FIRSTSLIDE:
+                infoAtom.setAction(InteractiveInfoAtom.ACTION_JUMP);
+                infoAtom.setJump(InteractiveInfoAtom.JUMP_FIRSTSLIDE);
+                infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_FirstSlide);
+                break;
+            case Hyperlink.LINK_LASTSLIDE:
+                infoAtom.setAction(InteractiveInfoAtom.ACTION_JUMP);
+                infoAtom.setJump(InteractiveInfoAtom.JUMP_LASTSLIDE);
+                infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_LastSlide);
+                break;
+            case Hyperlink.LINK_NEXTSLIDE:
+                infoAtom.setAction(InteractiveInfoAtom.ACTION_JUMP);
+                infoAtom.setJump(InteractiveInfoAtom.JUMP_NEXTSLIDE);
+                infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_NextSlide);
+                break;
+            case Hyperlink.LINK_PREVIOUSSLIDE:
+                infoAtom.setAction(InteractiveInfoAtom.ACTION_JUMP);
+                infoAtom.setJump(InteractiveInfoAtom.JUMP_PREVIOUSSLIDE);
+                infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_PreviousSlide);
+                break;
+            case Hyperlink.LINK_URL:
+                infoAtom.setAction(InteractiveInfoAtom.ACTION_HYPERLINK);
+                infoAtom.setJump(InteractiveInfoAtom.JUMP_NONE);
+                infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_Url);
+                break;
+          }
+
+        infoAtom.setHyperlinkID(link.getId());
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            info.writeOut(out);
+        } catch(Exception e){
+            throw new HSLFException(e);
+        }
+        cldata.setRemainingData(out.toByteArray());
+
+    }
+
 }

@@ -760,12 +760,8 @@ public final class HSSFChart {
 		r.setIndexNumberFmtRecord( (short) 0 );
 		LinkedDataFormulaField formula = new LinkedDataFormulaField();
 		Stack tokens = new Stack();
-		Area3DPtg p = new Area3DPtg();
-		p.setExternSheetIndex( (short) 0 );
-		p.setFirstColumn( (short) 1 );
-		p.setLastColumn( (short) 1 );
-		p.setFirstRow( (short) 0 );
-		p.setLastRow( (short) 31 );
+		Area3DPtg p = new Area3DPtg(0, 31, 1, 1,
+		        false, false, false, false, 0);
 		tokens.add( p );
 		formula.setFormulaTokens( tokens );
 		r.setFormulaOfLink( formula );
@@ -781,12 +777,8 @@ public final class HSSFChart {
 		r.setIndexNumberFmtRecord( (short) 0 );
 		LinkedDataFormulaField formula = new LinkedDataFormulaField();
 		Stack tokens = new Stack();
-		Area3DPtg p = new Area3DPtg();
-		p.setExternSheetIndex( (short) 0 );
-		p.setFirstColumn( (short) 0 );
-		p.setLastColumn( (short) 0 );
-		p.setFirstRow( (short) 0 );
-		p.setLastRow( (short) 31 );
+		Area3DPtg p = new Area3DPtg(0, 31, 0, 0,
+				false, false, false, false, 0);
 		tokens.add( p );
 		formula.setFormulaTokens( tokens );
 		r.setFormulaOfLink( formula );

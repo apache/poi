@@ -35,17 +35,11 @@ import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.CFRuleRecord;
-import org.apache.poi.hssf.record.DVALRecord;
 import org.apache.poi.hssf.record.DVRecord;
-import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
-import org.apache.poi.hssf.record.HCenterRecord;
-import org.apache.poi.hssf.record.PageBreakRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SCLRecord;
-import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
@@ -384,6 +378,22 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
 
        DVRecord dvRecord = dataValidation.createDVRecord(workbook);
        dvt.addDataValidation(dvRecord);
+    }
+    
+    /**
+     * Get the DVRecords objects that are associated to this sheet
+     * @return a list of DVRecord instances
+     */
+    public List getDVRecords() {
+        List dvRecords = new ArrayList();
+        List records = sheet.getRecords();
+        
+        for(int index=0; index<records.size(); index++) {
+           if(records.get(index) instanceof DVRecord) {
+        	   dvRecords.add(records.get(index));
+           }
+        }
+        return dvRecords;
     }
 
 
@@ -1273,11 +1283,9 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
                     // Since it's a formula cell, process the
                     //  formula string, and look to see if
                     //  it contains any references
-                    FormulaParser fp = new FormulaParser(c.getCellFormula(), workbook);
-                    fp.parse();
 
                     // Look for references, and update if needed
-                    Ptg[] ptgs = fp.getRPNPtg();
+                    Ptg[] ptgs = FormulaParser.parse(c.getCellFormula(), workbook);
                     boolean changed = false;
                     for(int i=0; i<ptgs.length; i++) {
                         if(ptgs[i] instanceof RefPtg) {
@@ -1294,7 +1302,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
                     //  re-create the formula string
                     if(changed) {
                         c.setCellFormula(
-                                fp.toFormulaString(ptgs)
+                             FormulaParser.toFormulaString(workbook, ptgs)
                         );
                     }
                 }
