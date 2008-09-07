@@ -34,8 +34,9 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1.1-alpha1" date="2008-??-??">
-           <action dev="POI-DEVELOPERS" type="fix">45720 Fixed HSSFWorkbook.cloneSheet to correctly clone sheets with drawings</action>
-           <action dev="POI-DEVELOPERS" type="fix">45728 Fix for SlideShow.reorderSlide in HSLF</action>
+           <action dev="POI-DEVELOPERS" type="add">45738 - Initial HWPF support for Office Art Shapes</action>
+           <action dev="POI-DEVELOPERS" type="fix">45720 - Fixed HSSFWorkbook.cloneSheet to correctly clone sheets with drawings</action>
+           <action dev="POI-DEVELOPERS" type="fix">45728 - Fix for SlideShow.reorderSlide in HSLF</action>
            <action dev="POI-DEVELOPERS" type="add">Initial support for embedded movies and controls in HSLF</action>
            <action dev="POI-DEVELOPERS" type="fix">45358 - signed/unsigned error when parsing 3-d area refs, performance problem evaluating area refs, and ClassCastExcecption in IF()</action>
            <action dev="POI-DEVELOPERS" type="add">Support for HPBF Publisher hyperlinks, including during text extraction</action>
