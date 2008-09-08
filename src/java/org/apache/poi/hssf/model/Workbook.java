@@ -2466,6 +2466,10 @@ public final class Workbook implements Model {
         int aggLoc = sheet.aggregateDrawingRecords(drawingManager, false);
         if(aggLoc != -1) {
             EscherAggregate agg = (EscherAggregate) sheet.findFirstRecordBySid(EscherAggregate.sid);
+            EscherContainerRecord escherContainer = agg.getEscherContainer();
+            if (escherContainer == null) {
+                return;
+            }
 
             EscherDggRecord dgg = drawingManager.getDgg();
 
@@ -2475,7 +2479,7 @@ public final class Workbook implements Model {
             dgg.setDrawingsSaved(dgg.getDrawingsSaved() + 1);
 
             EscherDgRecord dg = null;
-            for(Iterator it = agg.getEscherContainer().getChildRecords().iterator(); it.hasNext();) {
+            for(Iterator it = escherContainer.getChildRecords().iterator(); it.hasNext();) {
                 Object er = it.next();
                 if(er instanceof EscherDgRecord) {
                     dg = (EscherDgRecord)er;

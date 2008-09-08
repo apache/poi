@@ -1042,13 +1042,7 @@ public class HSSFWorkbook extends POIDocument
             if (!r.isBuiltInName() || r.getBuiltInName() != builtinCode) {
                 continue;
             }
-            if(r.getSheetNumber() == 0) {
-                //ignore "GLOBAL" name records
-                continue;
-            }
-            int externIndex = r.getSheetNumber() -1;
-            int nameRecordSheetIndex = workbook.getSheetIndexFromExternSheetIndex(externIndex);
-            if (nameRecordSheetIndex == sheetIndex) {
+            if (r.getSheetNumber() -1 == sheetIndex) {
                 return defNameIndex;
             }
         }
