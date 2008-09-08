@@ -143,9 +143,9 @@ public abstract class FunctionEval implements OperationEval {
         retval[64] = new Match(); // MATCH
         retval[65] = new Date(); // DATE
         retval[66] = new Time(); // TIME
-        retval[67] = new Day(); // DAY
-        retval[68] = new Month(); // MONTH
-        retval[69] = new Year(); // YEAR
+        retval[67] = CalendarFieldFunction.DAY; // DAY
+        retval[68] = CalendarFieldFunction.MONTH; // MONTH
+        retval[69] = CalendarFieldFunction.YEAR; // YEAR
         retval[70] = new Weekday(); // WEEKDAY
         retval[71] = new Hour(); // HOUR
         retval[72] = new Minute(); // MINUTE
