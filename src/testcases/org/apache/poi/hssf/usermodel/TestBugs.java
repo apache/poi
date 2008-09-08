@@ -1381,4 +1381,31 @@ public final class TestBugs extends TestCase {
         assertFalse(nwb.getSheetAt(1).getForceFormulaRecalculation());
         assertTrue(nwb.getSheetAt(2).getForceFormulaRecalculation());
     }
+    
+    /**
+     * Very hidden sheets not displaying as such
+     */
+    public void test45761() {
+    	HSSFWorkbook wb = openSample("45761.xls");
+    	assertEquals(3, wb.getNumberOfSheets());
+    	
+    	assertFalse(wb.isSheetHidden(0));
+    	assertFalse(wb.isSheetVeryHidden(0));
+    	assertTrue(wb.isSheetHidden(1));
+    	assertFalse(wb.isSheetVeryHidden(1));
+    	assertFalse(wb.isSheetHidden(2));
+    	assertTrue(wb.isSheetVeryHidden(2));
+    	
+    	// Change 0 to be very hidden, and re-load
+    	wb.setSheetHidden(0, 2);
+    	
+        HSSFWorkbook nwb = writeOutAndReadBack(wb);
+
+    	assertFalse(nwb.isSheetHidden(0));
+    	assertTrue(nwb.isSheetVeryHidden(0));
+    	assertTrue(nwb.isSheetHidden(1));
+    	assertFalse(nwb.isSheetVeryHidden(1));
+    	assertFalse(nwb.isSheetHidden(2));
+    	assertTrue(nwb.isSheetVeryHidden(2));
+    }
 }
