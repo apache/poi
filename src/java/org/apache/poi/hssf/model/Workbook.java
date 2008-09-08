@@ -560,14 +560,29 @@ public final class Workbook implements Model {
     }
 
     /**
-     * gets the hidden flag for a given sheet.
+     * Gets the hidden flag for a given sheet.
+     * Note that a sheet could instead be 
+     *  set to be very hidden, which is different
+     *  ({@link #isSheetVeryHidden(int)})
      *
      * @param sheetnum the sheet number (0 based)
      * @return True if sheet is hidden
      */
-
     public boolean isSheetHidden(int sheetnum) {
         return getBoundSheetRec(sheetnum).isHidden();
+    }
+
+    /**
+     * Gets the very hidden flag for a given sheet.
+     * This is different from the normal 
+     *  hidden flag 
+     *  ({@link #isSheetHidden(int)})
+     *
+     * @param sheetnum the sheet number (0 based)
+     * @return True if sheet is very hidden
+     */
+    public boolean isSheetVeryHidden(int sheetnum) {
+        return getBoundSheetRec(sheetnum).isVeryHidden();
     }
 
     /**
@@ -576,16 +591,41 @@ public final class Workbook implements Model {
      * @param sheetnum The sheet number
      * @param hidden True to mark the sheet as hidden, false otherwise
      */
-    
     public void setSheetHidden(int sheetnum, boolean hidden) {
         getBoundSheetRec(sheetnum).setHidden(hidden);
     }
+    
+    /**
+     * Hide or unhide a sheet.
+     *  0 = not hidden
+     *  1 = hidden
+     *  2 = very hidden.
+     * 
+     * @param sheetnum The sheet number
+     * @param hidden 0 for not hidden, 1 for hidden, 2 for very hidden
+     */
+    public void setSheetHidden(int sheetnum, int hidden) {
+    	BoundSheetRecord bsr = getBoundSheetRec(sheetnum);
+    	boolean h = false;
+    	boolean vh = false;
+    	if(hidden == 0) {
+    	} else if(hidden == 1) {
+    		h = true;
+    	} else if(hidden == 2) {
+    		vh = true;
+    	} else {
+    		throw new IllegalArgumentException("Invalid hidden flag " + hidden + " given, must be 0, 1 or 2");
+    	}
+    	bsr.setHidden(h);
+    	bsr.setVeryHidden(vh);
+    }
+    
+    
     /**
      * get the sheet's index
      * @param name  sheet name
      * @return sheet index or -1 if it was not found.
      */
-
     public int getSheetIndex(String name) {
         int retval = -1;
 
