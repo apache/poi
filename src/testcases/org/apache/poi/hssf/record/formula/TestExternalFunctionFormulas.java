@@ -77,8 +77,9 @@ public final class TestExternalFunctionFormulas extends TestCase {
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
 		confirmCellEval(sheet, 0, 0, fe, "YEARFRAC(B1,C1)", 29.0/90.0);
 		confirmCellEval(sheet, 1, 0, fe, "YEARFRAC(B2,C2)", 0.0);
-		confirmCellEval(sheet, 2, 0, fe, "IF(ISEVEN(3),1.2,1.6)", 1.6);
-		confirmCellEval(sheet, 3, 0, fe, "IF(ISODD(3),1.2,1.6)", 1.2);
+		confirmCellEval(sheet, 2, 0, fe, "YEARFRAC(B3,C3,D3)", 0.0);
+		confirmCellEval(sheet, 3, 0, fe, "IF(ISEVEN(3),1.2,1.6)", 1.6);
+		confirmCellEval(sheet, 4, 0, fe, "IF(ISODD(3),1.2,1.6)", 1.2);
 	}
 
 	private static void confirmCellEval(HSSFSheet sheet, int rowIx, int colIx, 

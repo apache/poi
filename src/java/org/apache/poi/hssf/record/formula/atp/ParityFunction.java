@@ -61,9 +61,6 @@ final class ParityFunction implements FreeRefFunction {
 	private static int evaluateArgParity(Eval arg, int srcCellRow, short srcCellCol) throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
 		
-		if (ve == BlankEval.INSTANCE) {
-			return 0;
-		}
 		double d = OperandResolver.coerceValueToDouble(ve);
 		if (d < 0) {
 			d = -d;

@@ -21,7 +21,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
@@ -58,12 +57,7 @@ public final class CalendarFieldFunction implements Function {
 		int val;
 		try {
 			ValueEval ve = OperandResolver.getSingleValue(operands[0], srcCellRow, srcCellCol);
-
-			if (ve == BlankEval.INSTANCE) {
-				val = 0;
-			} else {
-				val = OperandResolver.coerceValueToInt(ve);
-			}
+			val = OperandResolver.coerceValueToInt(ve);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}

@@ -33,12 +33,9 @@ public final class UnaryMinusEval implements OperationEval {
 		if (args.length != 1) {
 			return ErrorEval.VALUE_INVALID;
 		}
-    	double d;
+		double d;
 		try {
 			ValueEval ve = OperandResolver.getSingleValue(args[0], srcRow, srcCol);
-			if (ve instanceof BlankEval) {
-				return NumberEval.ZERO;
-			}
 			d = OperandResolver.coerceValueToDouble(ve);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
@@ -50,7 +47,7 @@ public final class UnaryMinusEval implements OperationEval {
 		return 1;
 	}
 	public final int getType() {
-    	// TODO - remove
-        throw new RuntimeException("obsolete code should not be called");
-    }
+		// TODO - remove
+		throw new RuntimeException("obsolete code should not be called");
+	}
 }
