@@ -171,7 +171,8 @@ public final class OperandResolver {
 
 	/**
 	 * Applies some conversion rules if the supplied value is not already an integer.<br/>
-	 * Value is first coerced to a <tt>double</tt> ( See <tt>coerceValueToDouble()</tt> ).<p/>
+	 * Value is first coerced to a <tt>double</tt> ( See <tt>coerceValueToDouble()</tt> ).
+	 * Note - <tt>BlankEval</tt> is converted to <code>0</code>.<p/> 
 	 * 
 	 * Excel typically converts doubles to integers by truncating toward negative infinity.<br/>
 	 * The equivalent java code is:<br/>
@@ -181,6 +182,9 @@ public final class OperandResolver {
 	 * 
 	 */
 	public static int coerceValueToInt(ValueEval ev) throws EvaluationException {
+		if (ev == BlankEval.INSTANCE) {
+			return 0;
+		}
 		double d = coerceValueToDouble(ev);
 		// Note - the standard java type conversion from double to int truncates toward zero.
 		// but Math.floor() truncates toward negative infinity
@@ -189,16 +193,20 @@ public final class OperandResolver {
 
 	/**
 	 * Applies some conversion rules if the supplied value is not already a number.
-	 * Note - <tt>BlankEval</tt> is not supported and must be handled by the caller. 
-	 * @param ev must be a <tt>NumberEval</tt>, <tt>StringEval</tt> or <tt>BoolEval</tt>
+	 * Note - <tt>BlankEval</tt> is converted to {@link NumberEval#ZERO}. 
+	 * @param ev must be a {@link NumberEval}, {@link StringEval}, {@link BoolEval} or 
+	 * {@link BlankEval}
 	 * @return actual, parsed or interpreted double value (respectively).
 	 * @throws EvaluationException(#VALUE!) only if a StringEval is supplied and cannot be parsed
 	 * as a double (See <tt>parseDouble()</tt> for allowable formats).
-	 * @throws RuntimeException if the supplied parameter is not <tt>NumberEval</tt>,
-	 *  <tt>StringEval</tt> or <tt>BoolEval</tt>
+	 * @throws RuntimeException if the supplied parameter is not {@link NumberEval}, 
+	 * {@link StringEval}, {@link BoolEval} or {@link BlankEval}
 	 */
 	public static double coerceValueToDouble(ValueEval ev) throws EvaluationException {
 
+		if (ev == BlankEval.INSTANCE) {
+			return 0.0;
+		}
 		if (ev instanceof NumericValueEval) {
 			// this also handles booleans
 			return ((NumericValueEval)ev).getNumberValue();
