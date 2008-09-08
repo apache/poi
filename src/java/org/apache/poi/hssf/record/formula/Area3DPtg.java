@@ -57,6 +57,7 @@ public final class Area3DPtg extends AreaPtgBase {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(getClass().getName());
+		sb.append(" [");
 		sb.append("sheetIx=").append(getExternSheetIndex());
 		sb.append(" ! ");
 		sb.append(formatReferenceAsString());
