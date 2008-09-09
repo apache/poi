@@ -2493,6 +2493,8 @@ public final class Workbook implements Model {
                     for(Iterator spIt = spRecords.iterator(); spIt.hasNext();) {
                         EscherSpRecord sp = (EscherSpRecord)spIt.next();
                         int shapeId = drawingManager.allocateShapeId((short)dgId, dg);
+                        //allocateShapeId increments the number of shapes. roll back to the previous value
+                        dg.setNumShapes(dg.getNumShapes()-1);
                         sp.setShapeId(shapeId);
                     }
                 }
