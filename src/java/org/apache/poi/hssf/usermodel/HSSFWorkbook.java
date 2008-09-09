@@ -582,13 +582,28 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     }
 
     /**
-     * check whether a sheet is hidden
+     * Check whether a sheet is hidden.
+     * Note that a sheet could instead be 
+     *  set to be very hidden, which is different
+     *  ({@link #isSheetVeryHidden(int)})
      * @param sheetIx Number
      * @return True if sheet is hidden
      */
     public boolean isSheetHidden(int sheetIx) {
         validateSheetIndex(sheetIx);
         return workbook.isSheetHidden(sheetIx);
+    }
+    /**
+     * Check whether a sheet is very hidden.
+     * This is different from the normal 
+     *  hidden status  
+     *  ({@link #isSheetHidden(int)})
+     * @param sheetIx Number
+     * @return True if sheet is very hidden
+     */
+    public boolean isSheetVeryHidden(int sheetIx) {
+        validateSheetIndex(sheetIx);
+        return workbook.isSheetVeryHidden(sheetIx);
     }
 
     /**
@@ -598,6 +613,19 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * @param hidden True to mark the sheet as hidden, false otherwise
      */
     public void setSheetHidden(int sheetIx, boolean hidden) {
+        validateSheetIndex(sheetIx);
+        workbook.setSheetHidden(sheetIx, hidden);
+    }
+    /**
+     * Hide or unhide a sheet.
+     *  0 = not hidden
+     *  1 = hidden
+     *  2 = very hidden.
+     * 
+     * @param sheetIx The sheet number
+     * @param hidden 0 for not hidden, 1 for hidden, 2 for very hidden
+     */
+    public void setSheetHidden(int sheetIx, int hidden) {
         validateSheetIndex(sheetIx);
         workbook.setSheetHidden(sheetIx, hidden);
     }
@@ -708,8 +736,8 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
             HSSFName newName = new HSSFName(this, newNameRecord);
             names.add(newName);
 
-            workbook.cloneDrawings(clonedSheet.getSheet());
         }
+        workbook.cloneDrawings(clonedSheet.getSheet());
         // TODO - maybe same logic required for other/all built-in name records
         
         return clonedSheet;
@@ -1020,13 +1048,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
             if (!r.isBuiltInName() || r.getBuiltInName() != builtinCode) {
                 continue;
             }
-            if(r.getSheetNumber() == 0) {
-                //ignore "GLOBAL" name records
-                continue;
-            }
-            int externIndex = r.getSheetNumber() -1;
-            int nameRecordSheetIndex = workbook.getSheetIndexFromExternSheetIndex(externIndex);
-            if (nameRecordSheetIndex == sheetIndex) {
+            if (r.getSheetNumber() -1 == sheetIndex) {
                 return defNameIndex;
             }
         }

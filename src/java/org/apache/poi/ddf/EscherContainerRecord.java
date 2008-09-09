@@ -243,10 +243,11 @@ public class EscherContainerRecord extends EscherRecord
     public void getRecordsById(short recordId, List out){
         for(Iterator it = childRecords.iterator(); it.hasNext();) {
             Object er = it.next();
-            if(er instanceof EscherContainerRecord) {
-                EscherContainerRecord c = (EscherContainerRecord)er;
+            EscherRecord r = (EscherRecord)er;
+            if(r instanceof EscherContainerRecord) {
+                EscherContainerRecord c = (EscherContainerRecord)r;
                 c.getRecordsById(recordId, out );
-            } else if (er instanceof EscherSpRecord){
+            } else if (r.getRecordId() == recordId){
                 out.add(er);
             }
         }

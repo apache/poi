@@ -97,9 +97,6 @@ final class YearFrac implements FreeRefFunction {
 			Calendar date = parseDate(strVal);
 			return DateUtil.getExcelDate(date, false);
 		}
-		if (ve instanceof BlankEval) {
-			return 0.0;
-		}
 		return OperandResolver.coerceValueToDouble(ve);
 	}
 

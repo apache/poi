@@ -560,14 +560,29 @@ public final class Workbook implements Model {
     }
 
     /**
-     * gets the hidden flag for a given sheet.
+     * Gets the hidden flag for a given sheet.
+     * Note that a sheet could instead be 
+     *  set to be very hidden, which is different
+     *  ({@link #isSheetVeryHidden(int)})
      *
      * @param sheetnum the sheet number (0 based)
      * @return True if sheet is hidden
      */
-
     public boolean isSheetHidden(int sheetnum) {
         return getBoundSheetRec(sheetnum).isHidden();
+    }
+
+    /**
+     * Gets the very hidden flag for a given sheet.
+     * This is different from the normal 
+     *  hidden flag 
+     *  ({@link #isSheetHidden(int)})
+     *
+     * @param sheetnum the sheet number (0 based)
+     * @return True if sheet is very hidden
+     */
+    public boolean isSheetVeryHidden(int sheetnum) {
+        return getBoundSheetRec(sheetnum).isVeryHidden();
     }
 
     /**
@@ -576,16 +591,41 @@ public final class Workbook implements Model {
      * @param sheetnum The sheet number
      * @param hidden True to mark the sheet as hidden, false otherwise
      */
-    
     public void setSheetHidden(int sheetnum, boolean hidden) {
         getBoundSheetRec(sheetnum).setHidden(hidden);
     }
+    
+    /**
+     * Hide or unhide a sheet.
+     *  0 = not hidden
+     *  1 = hidden
+     *  2 = very hidden.
+     * 
+     * @param sheetnum The sheet number
+     * @param hidden 0 for not hidden, 1 for hidden, 2 for very hidden
+     */
+    public void setSheetHidden(int sheetnum, int hidden) {
+    	BoundSheetRecord bsr = getBoundSheetRec(sheetnum);
+    	boolean h = false;
+    	boolean vh = false;
+    	if(hidden == 0) {
+    	} else if(hidden == 1) {
+    		h = true;
+    	} else if(hidden == 2) {
+    		vh = true;
+    	} else {
+    		throw new IllegalArgumentException("Invalid hidden flag " + hidden + " given, must be 0, 1 or 2");
+    	}
+    	bsr.setHidden(h);
+    	bsr.setVeryHidden(vh);
+    }
+    
+    
     /**
      * get the sheet's index
      * @param name  sheet name
      * @return sheet index or -1 if it was not found.
      */
-
     public int getSheetIndex(String name) {
         int retval = -1;
 
@@ -2426,6 +2466,10 @@ public final class Workbook implements Model {
         int aggLoc = sheet.aggregateDrawingRecords(drawingManager, false);
         if(aggLoc != -1) {
             EscherAggregate agg = (EscherAggregate) sheet.findFirstRecordBySid(EscherAggregate.sid);
+            EscherContainerRecord escherContainer = agg.getEscherContainer();
+            if (escherContainer == null) {
+                return;
+            }
 
             EscherDggRecord dgg = drawingManager.getDgg();
 
@@ -2435,7 +2479,7 @@ public final class Workbook implements Model {
             dgg.setDrawingsSaved(dgg.getDrawingsSaved() + 1);
 
             EscherDgRecord dg = null;
-            for(Iterator it = agg.getEscherContainer().getChildRecords().iterator(); it.hasNext();) {
+            for(Iterator it = escherContainer.getChildRecords().iterator(); it.hasNext();) {
                 Object er = it.next();
                 if(er instanceof EscherDgRecord) {
                     dg = (EscherDgRecord)er;
@@ -2449,6 +2493,8 @@ public final class Workbook implements Model {
                     for(Iterator spIt = spRecords.iterator(); spIt.hasNext();) {
                         EscherSpRecord sp = (EscherSpRecord)spIt.next();
                         int shapeId = drawingManager.allocateShapeId((short)dgId, dg);
+                        //allocateShapeId increments the number of shapes. roll back to the previous value
+                        dg.setNumShapes(dg.getNumShapes()-1);
                         sp.setShapeId(shapeId);
                     }
                 }

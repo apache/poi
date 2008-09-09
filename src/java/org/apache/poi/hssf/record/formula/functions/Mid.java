@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
@@ -81,12 +80,8 @@ public class Mid implements Function {
 
 	private static int evaluateNumberArg(Eval arg, int srcCellRow, short srcCellCol) throws EvaluationException {
 		ValueEval ev = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
-		if (ev instanceof BlankEval) {
-			// Note - for start_num arg, blank causes error(#VALUE!),
-			// but for num_chars causes empty string to be returned.
-			return 0;
-		}
-
+		// Note - for start_num arg, blank/zero causes error(#VALUE!),
+		// but for num_chars causes empty string to be returned.
 		return OperandResolver.coerceValueToInt(ev);
 	}
 }
