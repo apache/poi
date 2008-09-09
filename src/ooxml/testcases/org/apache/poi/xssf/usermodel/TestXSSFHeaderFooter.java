@@ -55,8 +55,8 @@ public class TestXSSFHeaderFooter extends TestCase {
     	assertTrue(head.areFieldsStripped());
     	
     	// Now even more complex
-    	head.setCenter("HEADER TEXT &P&N&D&T&Z&F&F&A&G");
-    	assertEquals("HEADER TEXT &G", head.getCenter());
+    	head.setCenter("HEADER TEXT &P&N&D&T&Z&F&F&A&V");
+    	assertEquals("HEADER TEXT &V", head.getCenter());
 	}
 	
 	// TODO Rest of tests
