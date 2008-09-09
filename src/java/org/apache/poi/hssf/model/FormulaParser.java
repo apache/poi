@@ -22,9 +22,12 @@ import java.util.List;
 import java.util.Stack;
 
 //import PTGs .. since we need everything, import *
+import org.apache.poi.hssf.record.UnicodeString;
+import org.apache.poi.hssf.record.constant.ErrorConstant;
 import org.apache.poi.hssf.record.formula.*;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
+import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -69,9 +72,9 @@ public final class FormulaParser {
     public static final int FORMULA_TYPE_ARRAY =2;
     public static final int FORMULA_TYPE_CONDFORMAT = 3;
     public static final int FORMULA_TYPE_NAMEDRANGE = 4;
-    // this constant is currently very specific.  The exact differences from general data 
+    // this constant is currently very specific.  The exact differences from general data
     // validation formulas or conditional format formulas is not known yet
-    public static final int FORMULA_TYPE_DATAVALIDATION_LIST = 5;    
+    public static final int FORMULA_TYPE_DATAVALIDATION_LIST = 5;
 
     private final String formulaString;
     private final int formulaLength;
@@ -139,9 +142,9 @@ public final class FormulaParser {
     /** Report What Was Expected */
     private RuntimeException expected(String s) {
         String msg;
-        
+
         if (look == '=' && formulaString.substring(0, pointer-1).trim().length() < 1) {
-            msg = "The specified formula '" + formulaString 
+            msg = "The specified formula '" + formulaString
                 + "' starts with an equals sign which is not allowed.";
         } else {
             msg = "Parse error near char " + (pointer-1) + " '" + look + "'"
@@ -193,8 +196,8 @@ public final class FormulaParser {
     /**
      * Parses a sheet name, named range name, or simple cell reference.<br/>
      * Note - identifiers in Excel can contain dots, so this method may return a String
-     * which may need to be converted to an area reference.  For example, this method 
-     * may return a value like "A1..B2", in which case the caller must convert it to 
+     * which may need to be converted to an area reference.  For example, this method
+     * may return a value like "A1..B2", in which case the caller must convert it to
      * an area reference like "A1:B2"
      */
     private String parseIdentifier() {
@@ -250,7 +253,7 @@ public final class FormulaParser {
     }
 
     private Ptg parseNameOrReference(String name) {
-        
+
         AreaReference areaRef = parseArea(name);
         if (areaRef != null) {
             // will happen if dots are used instead of colon
@@ -372,29 +375,29 @@ public final class FormulaParser {
     private ParseNode function(String name) {
         Ptg nameToken = null;
         if(!AbstractFunctionPtg.isBuiltInFunctionName(name)) {
-        	// user defined function
+            // user defined function
             // in the token tree, the name is more or less the first argument
-        	
-        
-        	int nameIndex = book.getNameIndex(name);
-        	if (nameIndex >= 0) {
-        		HSSFName hName = book.getNameAt(nameIndex);
-        		if (!hName.isFunctionName()) {
-        			throw new FormulaParseException("Attempt to use name '" + name 
-        					+ "' as a function, but defined name in workbook does not refer to a function");
-        		}
-        		
-        		// calls to user-defined functions within the workbook 
-        		// get a Name token which points to a defined name record
-        		nameToken = new NamePtg(name, this.book);
-        	} else {
-        		
-        		nameToken = book.getNameXPtg(name);
-        		if (nameToken == null) {
-        			throw new FormulaParseException("Name '" + name 
-        					+ "' is completely unknown in the current workbook");
-        		}
-        	}
+
+
+            int nameIndex = book.getNameIndex(name);
+            if (nameIndex >= 0) {
+                HSSFName hName = book.getNameAt(nameIndex);
+                if (!hName.isFunctionName()) {
+                    throw new FormulaParseException("Attempt to use name '" + name
+                            + "' as a function, but defined name in workbook does not refer to a function");
+                }
+
+                // calls to user-defined functions within the workbook
+                // get a Name token which points to a defined name record
+                nameToken = new NamePtg(name, this.book);
+            } else {
+
+                nameToken = book.getNameXPtg(name);
+                if (nameToken == null) {
+                    throw new FormulaParseException("Name '" + name
+                            + "' is completely unknown in the current workbook");
+                }
+            }
         }
 
         Match('(');
@@ -542,7 +545,7 @@ public final class FormulaParser {
         SkipWhite();
         switch(look) {
             case '#':
-                return new ParseNode(parseErrorLiteral());
+                return new ParseNode(ErrPtg.valueOf(parseErrorLiteral()));
             case '-':
                 Match('-');
                 return new ParseNode(UnaryMinusPtg.instance, powerFactor());
@@ -555,7 +558,12 @@ public final class FormulaParser {
                 Match(')');
                 return new ParseNode(ParenthesisPtg.instance, inside);
             case '"':
-                return new ParseNode(parseStringLiteral());
+                return new ParseNode(new StringPtg(parseStringLiteral()));
+            case '{':
+                Match('{');
+                ParseNode arrayNode = parseArray();
+                Match('}');
+                return arrayNode;
         }
         if (IsAlpha(look) || look == '\''){
             return parseFunctionReferenceOrName();
@@ -564,6 +572,95 @@ public final class FormulaParser {
         return new ParseNode(parseNumber());
     }
 
+
+    private ParseNode parseArray() {
+        List rowsData = new ArrayList();
+        while(true) {
+            Object[] singleRowData = parseArrayRow();
+            rowsData.add(singleRowData);
+            if (look == '}') {
+                break;
+            }
+            if (look != ';') {
+                throw expected("'}' or ';'");
+            }
+            Match(';');
+        }
+        int nRows = rowsData.size();
+        Object[][] values2d = new Object[nRows][];
+        rowsData.toArray(values2d);
+        int nColumns = values2d[0].length;
+        checkRowLengths(values2d, nColumns);
+
+        return new ParseNode(new ArrayPtg(values2d));
+    }
+    private void checkRowLengths(Object[][] values2d, int nColumns) {
+        for (int i = 0; i < values2d.length; i++) {
+            int rowLen = values2d[i].length;
+            if (rowLen != nColumns) {
+                throw new FormulaParseException("Array row " + i + " has length " + rowLen
+                        + " but row 0 has length " + nColumns);
+            }
+        }
+    }
+
+    private Object[] parseArrayRow() {
+        List temp = new ArrayList();
+        while (true) {
+            temp.add(parseArrayItem());
+            SkipWhite();
+            switch(look) {
+                case '}':
+                case ';':
+                    break;
+                case ',':
+                    Match(',');
+                    continue;
+                default:
+                    throw expected("'}' or ','");
+
+            }
+            break;
+        }
+
+        Object[] result = new Object[temp.size()];
+        temp.toArray(result);
+        return result;
+    }
+
+    private Object parseArrayItem() {
+        SkipWhite();
+        switch(look) {
+            case '"': return new UnicodeString(parseStringLiteral());
+            case '#': return ErrorConstant.valueOf(parseErrorLiteral());
+            case 'F': case 'f':
+            case 'T': case 't':
+                return parseBooleanLiteral();
+        }
+        // else assume number
+        return convertArrayNumber(parseNumber());
+    }
+
+    private Boolean parseBooleanLiteral() {
+        String iden = parseIdentifier();
+        if ("TRUE".equalsIgnoreCase(iden)) {
+            return Boolean.TRUE;
+        }
+        if ("FALSE".equalsIgnoreCase(iden)) {
+            return Boolean.FALSE;
+        }
+        throw expected("'TRUE' or 'FALSE'");
+    }
+
+    private static Double convertArrayNumber(Ptg ptg) {
+        if (ptg instanceof IntPtg) {
+            return new Double(((IntPtg)ptg).getValue());
+        }
+        if (ptg instanceof NumberPtg) {
+            return new Double(((NumberPtg)ptg).getValue());
+        }
+        throw new RuntimeException("Unexpected ptg (" + ptg.getClass().getName() + ")");
+    }
 
     private Ptg parseNumber() {
         String number2 = null;
@@ -601,7 +698,7 @@ public final class FormulaParser {
     }
 
 
-    private ErrPtg parseErrorLiteral() {
+    private int parseErrorLiteral() {
         Match('#');
         String part1 = parseIdentifier().toUpperCase();
 
@@ -609,13 +706,13 @@ public final class FormulaParser {
             case 'V':
                 if(part1.equals("VALUE")) {
                     Match('!');
-                    return ErrPtg.VALUE_INVALID;
+                    return HSSFErrorConstants.ERROR_VALUE;
                 }
                 throw expected("#VALUE!");
             case 'R':
                 if(part1.equals("REF")) {
                     Match('!');
-                    return ErrPtg.REF_INVALID;
+                    return HSSFErrorConstants.ERROR_REF;
                 }
                 throw expected("#REF!");
             case 'D':
@@ -623,21 +720,21 @@ public final class FormulaParser {
                     Match('/');
                     Match('0');
                     Match('!');
-                    return ErrPtg.DIV_ZERO;
+                    return HSSFErrorConstants.ERROR_DIV_0;
                 }
                 throw expected("#DIV/0!");
             case 'N':
                 if(part1.equals("NAME")) {
                     Match('?');  // only one that ends in '?'
-                    return ErrPtg.NAME_INVALID;
+                    return HSSFErrorConstants.ERROR_NAME;
                 }
                 if(part1.equals("NUM")) {
                     Match('!');
-                    return ErrPtg.NUM_ERROR;
+                    return HSSFErrorConstants.ERROR_NUM;
                 }
                 if(part1.equals("NULL")) {
                     Match('!');
-                    return ErrPtg.NULL_INTERSECTION;
+                    return HSSFErrorConstants.ERROR_NULL;
                 }
                 if(part1.equals("N")) {
                     Match('/');
@@ -646,7 +743,7 @@ public final class FormulaParser {
                     }
                     Match(look);
                     // Note - no '!' or '?' suffix
-                    return ErrPtg.N_A;
+                    return HSSFErrorConstants.ERROR_NA;
                 }
                 throw expected("#NAME?, #NUM!, #NULL! or #N/A");
 
@@ -699,7 +796,7 @@ public final class FormulaParser {
     }
 
 
-    private StringPtg parseStringLiteral() {
+    private String parseStringLiteral() {
         Match('"');
 
         StringBuffer token = new StringBuffer();
@@ -713,7 +810,7 @@ public final class FormulaParser {
             token.append(look);
             GetChar();
         }
-        return new StringPtg(token.toString());
+        return token.toString();
     }
 
     /** Parse and Translate a Math Term */
@@ -970,7 +1067,7 @@ end;
         }
         return result;
     }
-    
+
     private static String[] getOperands(Stack stack, int nOperands) {
         String[] operands = new String[nOperands];
 

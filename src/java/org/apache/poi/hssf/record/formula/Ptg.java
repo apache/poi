@@ -162,7 +162,7 @@ public abstract class Ptg implements Cloneable {
 			case StringPtg.sid:       return new StringPtg(in);       // 0x17
 			case AttrPtg.sid:                
 			case 0x1a:        return new AttrPtg(in); // 0x19
-			case ErrPtg.sid:          return new ErrPtg(in);          // 0x1c
+			case ErrPtg.sid:          return ErrPtg.read(in);         // 0x1c
 			case BoolPtg.sid:         return new BoolPtg(in);         // 0x1d
 			case IntPtg.sid:          return new IntPtg(in);          // 0x1e
 			case NumberPtg.sid:       return new NumberPtg(in);       // 0x1f
