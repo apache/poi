@@ -48,11 +48,11 @@ public final class TestIndex extends TestCase {
 		double[] values = TEST_VALUES0;
 		confirmAreaEval("C1:D6", values, 4, 1, 7);
 		confirmAreaEval("C1:D6", values, 6, 2, 12);
-		confirmAreaEval("C1:D6", values, 3, -1, 5);
+		confirmAreaEval("C1:D6", values, 3, 1, 5);
 		
 		// now treat same data as 3 columns, 4 rows
 		confirmAreaEval("C10:E13", values, 2, 2, 5); 
-		confirmAreaEval("C10:E13", values, 4, -1, 10);
+		confirmAreaEval("C10:E13", values, 4, 1, 10);
 	}
 	
 	/**
