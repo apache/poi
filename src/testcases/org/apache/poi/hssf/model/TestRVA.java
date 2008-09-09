@@ -17,10 +17,6 @@
 
 package org.apache.poi.hssf.model;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
@@ -46,21 +42,12 @@ public final class TestRVA extends TestCase {
 
 	public void testFormulas() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("testRVA.xls");
-		try {
-			wb = new HSSFWorkbook(new FileInputStream("C:/josh/client/poi/svn/trunk-h2/src/testcases/org/apache/poi/hssf/data/testRVA.xls"));
-		} catch (FileNotFoundException e1) {
-			throw new RuntimeException(e1);
-		} catch (IOException e1) {
-			throw new RuntimeException(e1);
-		}
 		HSSFSheet sheet = wb.getSheetAt(0);
 
 		int countFailures = 0;
 		int countErrors = 0;
 
 		int rowIx = 0;
-//		rowIx = 34;
-//		rowIx =32;
 		while (rowIx < 65535) {
 			HSSFRow row = sheet.getRow(rowIx);
 			if (row == null) {
@@ -85,8 +72,6 @@ public final class TestRVA extends TestCase {
 				e.printStackTrace();
 			}
 			rowIx++;
-//			if (rowIx>30) break;
-//			break;
 		}
 		if (countErrors + countFailures > 0) {
 			String msg = "One or more RVA tests failed: countFailures=" + countFailures
