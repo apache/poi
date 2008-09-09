@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">Fixed special cases of INDEX function (single column/single row, errors)</action>
            <action dev="POI-DEVELOPERS" type="add">45761 - Support for Very Hidden excel sheets in HSSF</action>
            <action dev="POI-DEVELOPERS" type="add">45738 - Initial HWPF support for Office Art Shapes</action>
            <action dev="POI-DEVELOPERS" type="fix">45720 - Fixed HSSFWorkbook.cloneSheet to correctly clone sheets with drawings</action>
