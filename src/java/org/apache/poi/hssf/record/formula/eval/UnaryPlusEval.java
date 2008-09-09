@@ -24,21 +24,18 @@ package org.apache.poi.hssf.record.formula.eval;
  */
 public final class UnaryPlusEval implements OperationEval {
 
-    public static final OperationEval instance = new UnaryPlusEval();
-    
-    private UnaryPlusEval() {
-    }
+	public static final OperationEval instance = new UnaryPlusEval();
+	
+	private UnaryPlusEval() {
+	}
 
-    public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
-    	if(args.length != 1) {
-    		return ErrorEval.VALUE_INVALID;
-    	}
-    	double d;
+	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+		if(args.length != 1) {
+			return ErrorEval.VALUE_INVALID;
+		}
+		double d;
 		try {
 			ValueEval ve = OperandResolver.getSingleValue(args[0], srcCellRow, srcCellCol);
-			if(ve instanceof BlankEval) {
-				return NumberEval.ZERO;
-			}
 			if(ve instanceof StringEval) {
 				// Note - asymmetric with UnaryMinus
 				// -"hello" evaluates to #VALUE!
@@ -49,14 +46,14 @@ public final class UnaryPlusEval implements OperationEval {
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
-    	return new NumberEval(+d);    	
-    }
+		return new NumberEval(+d);
+	}
 
-    public int getNumberOfOperands() {
-        return 1;
-    }
+	public int getNumberOfOperands() {
+		return 1;
+	}
 
-    public int getType() {
-        throw new RuntimeException("obsolete code should not be called");
-    }
+	public int getType() {
+		throw new RuntimeException("obsolete code should not be called");
+	}
 }

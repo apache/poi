@@ -527,4 +527,33 @@ public final class TestHSSFWorkbook extends TestCase {
             }
         }
     }
+    
+    /**
+     * Test to make sure that NameRecord.getSheetNumber() is interpreted as a
+     * 1-based sheet tab index (not a 1-based extern sheet index)
+     */
+    public void testFindBuiltInNameRecord() {
+        // testRRaC has multiple (3) built-in name records
+        // The second print titles name record has getSheetNumber()==4
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("testRRaC.xls");
+        NameRecord nr;
+        assertEquals(3, wb.getWorkbook().getNumNames());
+        nr = wb.getWorkbook().getNameRecord(2);
+        // TODO - render full row and full column refs properly
+        assertEquals("Sheet2!$A$1:$IV$1", nr.getAreaReference(wb)); // 1:1
+        
+        try {
+            wb.setRepeatingRowsAndColumns(3, 4, 5, 8, 11);
+        } catch (RuntimeException e) {
+            if (e.getMessage().equals("Builtin (7) already exists for sheet (4)")) {
+                // there was a problem in the code which locates the existing print titles name record 
+                throw new RuntimeException("Identified bug 45720b");
+            }
+            throw e;
+        }
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertEquals(3, wb.getWorkbook().getNumNames());
+        nr = wb.getWorkbook().getNameRecord(2);
+        assertEquals("Sheet2!E:F,Sheet2!$A$9:$IV$12", nr.getAreaReference(wb)); // E:F,9:12
+    }
 }

@@ -339,23 +339,19 @@ final class LookupUtils {
 			throw EvaluationException.invalidRef();
 		}
 		int oneBasedIndex;
-		if(veRowColIndexArg instanceof BlankEval) {
-			oneBasedIndex = 0;
-		} else {
-			if(veRowColIndexArg instanceof StringEval) {
-				StringEval se = (StringEval) veRowColIndexArg;
-				String strVal = se.getStringValue();
-				Double dVal = OperandResolver.parseDouble(strVal);
-				if(dVal == null) {
-					// String does not resolve to a number. Raise #REF! error.
-					throw EvaluationException.invalidRef();
-					// This includes text booleans "TRUE" and "FALSE".  They are not valid.
-				}
-				// else - numeric value parses OK
+		if(veRowColIndexArg instanceof StringEval) {
+			StringEval se = (StringEval) veRowColIndexArg;
+			String strVal = se.getStringValue();
+			Double dVal = OperandResolver.parseDouble(strVal);
+			if(dVal == null) {
+				// String does not resolve to a number. Raise #REF! error.
+				throw EvaluationException.invalidRef();
+				// This includes text booleans "TRUE" and "FALSE".  They are not valid.
 			}
-			// actual BoolEval values get interpreted as FALSE->0 and TRUE->1
-			oneBasedIndex = OperandResolver.coerceValueToInt(veRowColIndexArg);
+			// else - numeric value parses OK
 		}
+		// actual BoolEval values get interpreted as FALSE->0 and TRUE->1
+		oneBasedIndex = OperandResolver.coerceValueToInt(veRowColIndexArg);
 		if (oneBasedIndex < 1) {
 			// note this is asymmetric with the errors when the index is too large (#REF!)  
 			throw EvaluationException.invalidValue();

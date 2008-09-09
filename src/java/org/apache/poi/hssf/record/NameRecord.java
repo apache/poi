@@ -82,8 +82,9 @@ public final class NameRecord extends Record {
 
 	private short             field_1_option_flag;
 	private byte              field_2_keyboard_shortcut;
-	private short             field_5_index_to_sheet;     // unused: see field_6
-	/** the one based sheet number.  Zero if this is a global name */
+	/** One-based extern index of sheet (resolved via LinkTable). Zero if this is a global name  */
+	private short             field_5_externSheetIndex_plus1;
+	/** the one based sheet number.  */
 	private int               field_6_sheetNumber;
 	private boolean           field_11_nameIsMultibyte;
 	private byte              field_12_built_in_code;
@@ -144,7 +145,7 @@ public final class NameRecord extends Record {
 
 	/**
 	 * For named ranges, and built-in names
-	 * @return the 1-based sheet number.  Zero if this is a global name
+	 * @return the 1-based sheet number. 
 	 */
 	public int getSheetNumber()
 	{
@@ -384,7 +385,7 @@ public final class NameRecord extends Record {
 		LittleEndian.putByte(data, 7 + offset, getNameTextLength());
 		// Note -
 		LittleEndian.putUShort(data, 8 + offset, Ptg.getEncodedSizeWithoutArrayData(field_13_name_definition));
-		LittleEndian.putUShort(data, 10 + offset, field_5_index_to_sheet);
+		LittleEndian.putUShort(data, 10 + offset, field_5_externSheetIndex_plus1);
 		LittleEndian.putUShort(data, 12 + offset, field_6_sheetNumber);
 		LittleEndian.putByte(data, 14 + offset, field_7_length_custom_menu);
 		LittleEndian.putByte(data, 15 + offset, field_8_length_description_text);
@@ -557,7 +558,7 @@ public final class NameRecord extends Record {
 		field_2_keyboard_shortcut           = in.readByte();
 		int field_3_length_name_text        = in.readByte();
 		int field_4_length_name_definition  = in.readShort();
-		field_5_index_to_sheet              = in.readShort();
+		field_5_externSheetIndex_plus1      = in.readShort();
 		field_6_sheetNumber                 = in.readUShort();
 		int field_7_length_custom_menu      = in.readUByte();
 		int field_8_length_description_text = in.readUByte();
@@ -649,8 +650,8 @@ public final class NameRecord extends Record {
 		sb.append("    .option flags           = ").append(HexDump.shortToHex(field_1_option_flag)).append("\n");
 		sb.append("    .keyboard shortcut      = ").append(HexDump.byteToHex(field_2_keyboard_shortcut)).append("\n");
 		sb.append("    .length of the name     = ").append(getNameTextLength()).append("\n");
-		sb.append("    .unused                 = ").append( field_5_index_to_sheet ).append("\n");
-		sb.append("    .index to sheet (1-based, 0=Global) = ").append( field_6_sheetNumber ).append("\n");
+		sb.append("    .extSheetIx(1-based, 0=Global)= ").append( field_5_externSheetIndex_plus1 ).append("\n");
+		sb.append("    .sheetTabIx             = ").append(field_6_sheetNumber ).append("\n");
 		sb.append("    .Menu text length       = ").append(field_14_custom_menu_text.length()).append("\n");
 		sb.append("    .Description text length= ").append(field_15_description_text.length()).append("\n");
 		sb.append("    .Help topic text length = ").append(field_16_help_topic_text.length()).append("\n");

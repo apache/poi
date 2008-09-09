@@ -103,6 +103,9 @@ public class HWPFDocument extends POIDocument
   /** Escher Drawing Group information */
   protected EscherRecordHolder _dgg;
 
+  /** Holds Office Art objects */
+  protected ShapesTable _officeArts;
+
   protected HWPFDocument()
   {
      super(null, null);
@@ -252,6 +255,8 @@ public class HWPFDocument extends POIDocument
     
     // read in the pictures stream
     _pictures = new PicturesTable(this, _dataStream, _mainStream, _fspa, _dgg);
+    // And the art shapes stream
+    _officeArts = new ShapesTable(_tableStream, _fib);
 
     _st = new SectionTable(_mainStream, _tableStream, _fib.getFcPlcfsed(), _fib.getLcbPlcfsed(), fcMin, _tpt, _cpSplit);
     _ss = new StyleSheet(_tableStream, _fib.getFcStshf());
@@ -391,6 +396,13 @@ public class HWPFDocument extends POIDocument
    */
   public PicturesTable getPicturesTable() {
 	  return _pictures;
+  }
+  
+  /**
+   * @return ShapesTable object, that is able to extract office are shapes from this document
+   */
+  public ShapesTable getShapesTable() {
+	  return _officeArts;
   }
 
   /**

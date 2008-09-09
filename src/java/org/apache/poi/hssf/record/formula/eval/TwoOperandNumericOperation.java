@@ -23,18 +23,15 @@ package org.apache.poi.hssf.record.formula.eval;
 abstract class TwoOperandNumericOperation implements OperationEval {
 
 	public final int getType() {
-    	// TODO - remove
-        throw new RuntimeException("obsolete code should not be called");
-    }
-    protected final double singleOperandEvaluate(Eval arg, int srcCellRow, short srcCellCol) throws EvaluationException {
-    	ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
-		if (ve instanceof BlankEval) {
-			return 0.0;
-		}
-   		return OperandResolver.coerceValueToDouble(ve);
-    }
-    
-    public final Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+		// TODO - remove
+		throw new RuntimeException("obsolete code should not be called");
+	}
+	protected final double singleOperandEvaluate(Eval arg, int srcCellRow, short srcCellCol) throws EvaluationException {
+		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
+		return OperandResolver.coerceValueToDouble(ve);
+	}
+	
+	public final Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
 		double result;
 		try {
 			double d0 = singleOperandEvaluate(args[0], srcCellRow, srcCellCol);
@@ -46,8 +43,8 @@ abstract class TwoOperandNumericOperation implements OperationEval {
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
-    	return new NumberEval(result);
-    }
+		return new NumberEval(result);
+	}
 	protected abstract double evaluate(double d0, double d1) throws EvaluationException;
 	public final int getNumberOfOperands() {
 		return 2;

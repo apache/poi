@@ -36,6 +36,7 @@ public final class BoundSheetRecord extends Record {
     public final static short sid = 0x0085;
 
 	private static final BitField hiddenFlag = BitFieldFactory.getInstance(0x01);
+	private static final BitField veryHiddenFlag = BitFieldFactory.getInstance(0x02);
     private int field_1_position_of_BOF;
     private short field_2_option_flags;
     private byte field_3_sheetname_length;
@@ -301,11 +302,31 @@ public final class BoundSheetRecord extends Record {
         return sid;
     }
 
+    /**
+     * Is the sheet hidden? Different from very hidden 
+     */
     public boolean isHidden() {
 	    return hiddenFlag.isSet(field_2_option_flags);
     }
 
+    /**
+     * Is the sheet hidden? Different from very hidden 
+     */
     public void setHidden(boolean hidden) {
 	    field_2_option_flags = hiddenFlag.setShortBoolean(field_2_option_flags, hidden);
+    }
+
+    /**
+     * Is the sheet very hidden? Different from (normal) hidden 
+     */
+    public boolean isVeryHidden() {
+	    return veryHiddenFlag.isSet(field_2_option_flags);
+    }
+
+    /**
+     * Is the sheet very hidden? Different from (normal) hidden 
+     */
+    public void setVeryHidden(boolean veryHidden) {
+	    field_2_option_flags = veryHiddenFlag.setShortBoolean(field_2_option_flags, veryHidden);
     }
 }
