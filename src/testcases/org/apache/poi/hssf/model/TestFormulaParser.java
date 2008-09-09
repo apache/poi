@@ -22,10 +22,12 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.FormulaParser.FormulaParseException;
+import org.apache.poi.hssf.record.constant.ErrorConstant;
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.AddPtg;
 import org.apache.poi.hssf.record.formula.AreaI;
 import org.apache.poi.hssf.record.formula.AreaPtg;
+import org.apache.poi.hssf.record.formula.ArrayPtg;
 import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.BoolPtg;
 import org.apache.poi.hssf.record.formula.ConcatPtg;
@@ -48,6 +50,7 @@ import org.apache.poi.hssf.record.formula.SubtractPtg;
 import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
 import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -860,6 +863,20 @@ public final class TestFormulaParser extends TestCase {
 		ptgs = parseFormula("A10:A65536");
 		aptg = (AreaI) ptgs[0];
 		assertEquals(65535, aptg.getLastRow());
+		
+	}
+	public void testParseArray()  {
+		Ptg[] ptgs;
+		ptgs = parseFormula("mode({1,2,2,#REF!;FALSE,3,3,2})");
+		assertEquals(2, ptgs.length);
+		Ptg ptg0 = ptgs[0];
+		assertEquals(ArrayPtg.class, ptg0.getClass());
+		assertEquals("{1.0,2.0,2.0,#REF!;FALSE,3.0,3.0,2.0}", ptg0.toFormulaString(null));
+		
+		ArrayPtg aptg = (ArrayPtg) ptg0;
+		Object[][] values = aptg.getTokenArrayValues();
+		assertEquals(ErrorConstant.valueOf(HSSFErrorConstants.ERROR_REF), values[0][3]);
+		assertEquals(Boolean.FALSE, values[1][0]);
 		
 	}
 }

@@ -74,7 +74,7 @@ final class OperandClassTransformer {
 						+ _formulaType + ") not supported yet");
 		
 		}
-		transformNode(rootNode, rootNodeOperandClass, false, false);
+		transformNode(rootNode, rootNodeOperandClass, false);
 	}
 
 	/**
@@ -83,22 +83,35 @@ final class OperandClassTransformer {
 	 * the function return value).
 	 */
 	private void transformNode(ParseNode node, byte desiredOperandClass,
-			boolean callerForceArrayFlag, boolean isDirectChildOfValueOperator) {
+			boolean callerForceArrayFlag) {
 		Ptg token = node.getToken();
 		ParseNode[] children = node.getChildren();
+		boolean isSimpleValueFunc = isSimpleValueFunction(token);
+		
+		if (isSimpleValueFunc) {
+			boolean localForceArray = desiredOperandClass == Ptg.CLASS_ARRAY;
+			for (int i = 0; i < children.length; i++) {
+				transformNode(children[i], desiredOperandClass, localForceArray);
+			}
+			setSimpleValueFuncClass((AbstractFunctionPtg) token, desiredOperandClass, callerForceArrayFlag);
+			return;
+		}
+		
 		if (token instanceof ValueOperatorPtg || token instanceof ControlPtg) {
 			// Value Operator Ptgs and Control are base tokens, so token will be unchanged
-			
 			// but any child nodes are processed according to desiredOperandClass and callerForceArrayFlag
+			
+			// As per OOO documentation Sec 3.2.4 "Token Class Transformation", "Step 1"
+			// All direct operands of value operators that are initially 'R' type will 
+			// be converted to 'V' type.
+			byte localDesiredOperandClass = desiredOperandClass == Ptg.CLASS_REF ? Ptg.CLASS_VALUE : desiredOperandClass;
 			for (int i = 0; i < children.length; i++) {
-				ParseNode child = children[i];
-				transformNode(child, desiredOperandClass, callerForceArrayFlag, true);
+				transformNode(children[i], localDesiredOperandClass, callerForceArrayFlag);
 			}
 			return;
 		}
 		if (token instanceof AbstractFunctionPtg) {
-			transformFunctionNode((AbstractFunctionPtg) token, children, desiredOperandClass,
-					callerForceArrayFlag);
+			transformFunctionNode((AbstractFunctionPtg) token, children, desiredOperandClass, callerForceArrayFlag);
 			return;
 		}
 		if (children.length > 0) {
@@ -109,15 +122,24 @@ final class OperandClassTransformer {
 			// nothing to do
 			return;
 		}
-		if (isDirectChildOfValueOperator) {
-			// As per OOO documentation Sec 3.2.4 "Token Class Transformation", "Step 1"
-			// All direct operands of value operators that are initially 'R' type will 
-			// be converted to 'V' type.
-			if (token.getPtgClass() == Ptg.CLASS_REF) {
-				token.setClass(Ptg.CLASS_VALUE); 
-			}
-		}
 		token.setClass(transformClass(token.getPtgClass(), desiredOperandClass, callerForceArrayFlag));
+	}
+
+	private static boolean isSimpleValueFunction(Ptg token) {
+		if (token instanceof AbstractFunctionPtg) {
+			AbstractFunctionPtg aptg = (AbstractFunctionPtg) token;
+			if (aptg.getDefaultOperandClass() != Ptg.CLASS_VALUE) {
+				return false;
+			}
+			int numberOfOperands = aptg.getNumberOfOperands();
+			for (int i=numberOfOperands-1; i>=0; i--) {
+				if (aptg.getParameterClass(i) != Ptg.CLASS_VALUE) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 
 	private byte transformClass(byte currentOperandClass, byte desiredOperandClass,
@@ -185,6 +207,7 @@ final class OperandClassTransformer {
 						switch (defaultReturnOperandClass) {
 							case Ptg.CLASS_REF:
 								afp.setClass(Ptg.CLASS_REF);
+//								afp.setClass(Ptg.CLASS_ARRAY);
 								break;
 							case Ptg.CLASS_VALUE:
 								afp.setClass(Ptg.CLASS_ARRAY);
@@ -220,7 +243,17 @@ final class OperandClassTransformer {
 		for (int i = 0; i < children.length; i++) {
 			ParseNode child = children[i];
 			byte paramOperandClass = afp.getParameterClass(i);
-			transformNode(child, paramOperandClass, localForceArrayFlag, false);
+			transformNode(child, paramOperandClass, localForceArrayFlag);
+		}
+	}
+
+	private void setSimpleValueFuncClass(AbstractFunctionPtg afp,
+			byte desiredOperandClass, boolean callerForceArrayFlag) {
+
+		if (callerForceArrayFlag  || desiredOperandClass == Ptg.CLASS_ARRAY) {
+			afp.setClass(Ptg.CLASS_ARRAY);
+		} else {
+			afp.setClass(Ptg.CLASS_VALUE); 
 		}
 	}
 }
