@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
+import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
@@ -30,7 +31,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEvalToNumericXlator;
  * Super class for all Evals for financial function evaluation.
  * 
  */
-public abstract class FinanceFunction extends NumericFunction {
+public abstract class FinanceFunction implements Function {
     private static final ValueEvalToNumericXlator DEFAULT_NUM_XLATOR =
         new ValueEvalToNumericXlator((short) (0
                 | ValueEvalToNumericXlator.BOOL_IS_PARSED  
@@ -68,4 +69,35 @@ public abstract class FinanceFunction extends NumericFunction {
         }
         return retval;
     }
+    
+    protected final ValueEval singleOperandEvaluate(Eval eval, int srcRow, short srcCol) {
+
+        if (eval instanceof AreaEval) {
+            AreaEval ae = (AreaEval) eval;
+            if (ae.contains(srcRow, srcCol)) { // circular ref!
+                return ErrorEval.CIRCULAR_REF_ERROR;
+            }
+            if (ae.isRow()) {
+                if (ae.isColumn()) {
+                	return ae.getRelativeValue(0, 0);
+                }
+                if (ae.containsColumn(srcCol)) {
+                    ValueEval ve = ae.getValueAt(ae.getFirstRow(), srcCol);
+                    ve = getXlator().attemptXlateToNumeric(ve);
+                    return getXlator().attemptXlateToNumeric(ve);
+                }
+                return ErrorEval.VALUE_INVALID;
+            }
+            if (ae.isColumn()) {
+                if (ae.containsRow(srcRow)) {
+                    ValueEval ve = ae.getValueAt(srcRow, ae.getFirstColumn());
+                    return getXlator().attemptXlateToNumeric(ve);
+                }
+                return ErrorEval.VALUE_INVALID;
+            }
+            return ErrorEval.VALUE_INVALID;
+        }
+        return getXlator().attemptXlateToNumeric((ValueEval) eval);
+    }
+    
 }
