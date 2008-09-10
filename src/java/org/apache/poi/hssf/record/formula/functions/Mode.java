@@ -17,35 +17,118 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.poi.hssf.record.formula.eval.AreaEval;
+import org.apache.poi.hssf.record.formula.eval.BlankEval;
+import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
+import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.RefEval;
+import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEvalToNumericXlator;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *
+ * 
  */
-public class Mode extends MultiOperandNumericFunction {
-	private static final ValueEvalToNumericXlator DEFAULT_NUM_XLATOR =
-		new ValueEvalToNumericXlator(0);
+public class Mode implements Function {
 
 	/**
-	 * this is the default impl for the factory method getXlator
-	 * of the super class NumericFunction. Subclasses can override this method
-	 * if they desire to return a different ValueEvalToNumericXlator instance
-	 * than the default.
+	 * if v is zero length or contains no duplicates, return value is
+	 * Double.NaN. Else returns the value that occurs most times and if there is
+	 * a tie, returns the first such value.
+	 * 
+	 * @param v
 	 */
-	protected ValueEval attemptXlateToNumeric(ValueEval ve) {
-		return DEFAULT_NUM_XLATOR.attemptXlateToNumeric(ve);
-	}
-
-	protected double evaluate(double[] values) throws EvaluationException {
-		double d = StatsLib.mode(values);
-		if (Double.isNaN(d)) {
-			// TODO - StatsLib is returning NaN to denote 'no duplicate values'
+	public static double evaluate(double[] v) throws EvaluationException {
+		if (v.length < 2) {
 			throw new EvaluationException(ErrorEval.NA);
 		}
-		return d;
+
+		// very naive impl, may need to be optimized
+		int[] counts = new int[v.length];
+		Arrays.fill(counts, 1);
+		for (int i = 0, iSize = v.length; i < iSize; i++) {
+			for (int j = i + 1, jSize = v.length; j < jSize; j++) {
+				if (v[i] == v[j])
+					counts[i]++;
+			}
+		}
+		double maxv = 0;
+		int maxc = 0;
+		for (int i = 0, iSize = counts.length; i < iSize; i++) {
+			if (counts[i] > maxc) {
+				maxv = v[i];
+				maxc = counts[i];
+			}
+		}
+		if (maxc > 1) {
+			return maxv;
+		}
+		throw new EvaluationException(ErrorEval.NA);
+
+	}
+
+	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+		double result;
+		try {
+			List temp = new ArrayList();
+			for (int i = 0; i < args.length; i++) {
+				collectValues(args[i], temp);
+			}
+			double[] values = new double[temp.size()];
+			for (int i = 0; i < values.length; i++) {
+				values[i] = ((Double) temp.get(i)).doubleValue();
+			}
+			result = evaluate(values);
+		} catch (EvaluationException e) {
+			return e.getErrorEval();
+		}
+		return new NumberEval(result);
+	}
+
+	private static void collectValues(Eval arg, List temp) throws EvaluationException {
+		if (arg instanceof AreaEval) {
+			AreaEval ae = (AreaEval) arg;
+			int width = ae.getWidth();
+			int height = ae.getHeight();
+			for (int rrIx = 0; rrIx < height; rrIx++) {
+				for (int rcIx = 0; rcIx < width; rcIx++) {
+					ValueEval ve1 = ae.getRelativeValue(rrIx, rcIx);
+					collectValue(ve1, temp, false);
+				}
+			}
+			return;
+		}
+		if (arg instanceof RefEval) {
+			RefEval re = (RefEval) arg;
+			collectValue(re.getInnerValueEval(), temp, true);
+			return;
+		}
+		collectValue(arg, temp, true);
+
+	}
+
+	private static void collectValue(Eval arg, List temp, boolean mustBeNumber)
+			throws EvaluationException {
+		if (arg instanceof ErrorEval) {
+			throw new EvaluationException((ErrorEval) arg);
+		}
+		if (arg == BlankEval.INSTANCE || arg instanceof BoolEval || arg instanceof StringEval) {
+			if (mustBeNumber) {
+				throw EvaluationException.invalidValue();
+			}
+			return;
+		}
+		if (arg instanceof NumberEval) {
+			temp.add(new Double(((NumberEval) arg).getNumberValue()));
+			return;
+		}
+		throw new RuntimeException("Unexpected value type (" + arg.getClass().getName() + ")");
 	}
 }

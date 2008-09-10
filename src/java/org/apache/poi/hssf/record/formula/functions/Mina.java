@@ -27,10 +27,8 @@ import org.apache.poi.hssf.record.formula.eval.ValueEvalToNumericXlator;
 public final class Mina extends MultiOperandNumericFunction {
     private static final ValueEvalToNumericXlator DEFAULT_NUM_XLATOR =
         new ValueEvalToNumericXlator((short) (
-                  ValueEvalToNumericXlator.BOOL_IS_PARSED  
-                | ValueEvalToNumericXlator.REF_BOOL_IS_PARSED  
-                | ValueEvalToNumericXlator.STRING_IS_PARSED  
-                | ValueEvalToNumericXlator.BLANK_IS_PARSED
+                  ValueEvalToNumericXlator.REF_BOOL_IS_PARSED  
+                 | ValueEvalToNumericXlator.BLANK_IS_PARSED
                 ));
     
 	protected ValueEval attemptXlateToNumeric(ValueEval ve) {

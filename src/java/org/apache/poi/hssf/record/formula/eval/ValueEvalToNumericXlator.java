@@ -23,11 +23,9 @@ package org.apache.poi.hssf.record.formula.eval;
  */
 public final class ValueEvalToNumericXlator {
 
-    public static final int STRING_IS_PARSED = 0x0001;
-    public static final int BOOL_IS_PARSED = 0x0002;
-    public static final int BLANK_IS_PARSED = 0x0004; // => blanks are not ignored, converted to 0
+    public static final int BLANK_IS_PARSED = 0x0001; // => blanks are not ignored, converted to 0
     
-    public static final int REF_BOOL_IS_PARSED = 0x0008;
+    public static final int REF_BOOL_IS_PARSED = 0x0002;
     
     private final int flags;
     
@@ -59,9 +57,7 @@ public final class ValueEvalToNumericXlator {
         }
         
         if (eval instanceof BoolEval) {
-            return ((flags & BOOL_IS_PARSED) > 0)
-                ? (NumericValueEval) eval
-                : xlateBlankEval();
+            return eval;
         } 
         
         if (eval instanceof StringEval) {
@@ -135,17 +131,13 @@ public final class ValueEvalToNumericXlator {
      * uses the relevant flags to decode the StringEval
      * @param eval
      */
-    private ValueEval xlateStringEval(StringEval eval) {
+    private static ValueEval xlateStringEval(StringEval eval) {
 
-        if ((flags & STRING_IS_PARSED) > 0) {
-            String s = eval.getStringValue();
-            Double d = OperandResolver.parseDouble(s);
-            if(d == null) {
-                return ErrorEval.VALUE_INVALID;
-            }
-            return new NumberEval(d.doubleValue());
+        String s = eval.getStringValue();
+        Double d = OperandResolver.parseDouble(s);
+        if(d == null) {
+            return ErrorEval.VALUE_INVALID;
         }
-        // else strings are errors?
-        return ErrorEval.VALUE_INVALID;
+        return new NumberEval(d.doubleValue());
     }
 }
