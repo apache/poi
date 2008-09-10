@@ -1,23 +1,20 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-/*
- * Created on May 14, 2005
- *
- */
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.hssf.record.formula.eval;
 
 /**
@@ -30,11 +27,7 @@ public final class ValueEvalToNumericXlator {
     public static final int BOOL_IS_PARSED = 0x0002;
     public static final int BLANK_IS_PARSED = 0x0004; // => blanks are not ignored, converted to 0
     
-    public static final int REF_STRING_IS_PARSED = 0x0008;
-    public static final int REF_BOOL_IS_PARSED = 0x0010;
-    public static final int REF_BLANK_IS_PARSED = 0x0020;
-    
-    public static final int STRING_IS_INVALID_VALUE = 0x0800;
+    public static final int REF_BOOL_IS_PARSED = 0x0008;
     
     private final int flags;
     
@@ -68,11 +61,11 @@ public final class ValueEvalToNumericXlator {
         if (eval instanceof BoolEval) {
             return ((flags & BOOL_IS_PARSED) > 0)
                 ? (NumericValueEval) eval
-                : xlateBlankEval(BLANK_IS_PARSED);
+                : xlateBlankEval();
         } 
         
         if (eval instanceof StringEval) {
-            return xlateStringEval((StringEval) eval); // TODO: recursive call needed
+            return xlateStringEval((StringEval) eval);
         }
         
         if (eval instanceof RefEval) {
@@ -84,7 +77,7 @@ public final class ValueEvalToNumericXlator {
         }
         
         if (eval instanceof BlankEval) {
-            return xlateBlankEval(BLANK_IS_PARSED);
+            return xlateBlankEval();
         }
         
         // probably AreaEval? then not acceptable.
@@ -97,8 +90,8 @@ public final class ValueEvalToNumericXlator {
      * valued numbereval is returned, else BlankEval.INSTANCE
      * is returned.
      */
-    private ValueEval xlateBlankEval(int flag) {
-        return ((flags & flag) > 0)
+    private ValueEval xlateBlankEval() {
+        return ((flags & BLANK_IS_PARSED) > 0)
                 ? (ValueEval) NumberEval.ZERO
                 : BlankEval.INSTANCE;
     }
@@ -122,7 +115,8 @@ public final class ValueEvalToNumericXlator {
         } 
         
         if (eval instanceof StringEval) {
-            return xlateRefStringEval((StringEval) eval);
+            // all ref strings are blanks
+			return BlankEval.INSTANCE;
         }
         
         if (eval instanceof ErrorEval) {
@@ -130,7 +124,7 @@ public final class ValueEvalToNumericXlator {
         }
         
         if (eval instanceof BlankEval) {
-            return xlateBlankEval(REF_BLANK_IS_PARSED);
+            return xlateBlankEval();
         }
         
         throw new RuntimeException("Invalid ValueEval type passed for conversion: ("
@@ -151,29 +145,7 @@ public final class ValueEvalToNumericXlator {
             }
             return new NumberEval(d.doubleValue());
         }
-        // strings are errors?
-        if ((flags & STRING_IS_INVALID_VALUE) > 0) {
-            return ErrorEval.VALUE_INVALID;
-        }
-        
-        // ignore strings
-        return xlateBlankEval(BLANK_IS_PARSED);
-    }
-    
-    /**
-     * uses the relevant flags to decode the StringEval
-     * @param eval
-     */
-    private ValueEval xlateRefStringEval(StringEval sve) {
-        if ((flags & REF_STRING_IS_PARSED) > 0) {
-            String s = sve.getStringValue();
-            Double d = OperandResolver.parseDouble(s);
-            if(d == null) {
-                return ErrorEval.VALUE_INVALID;
-            }
-            return new NumberEval(d.doubleValue());
-        }
-        // strings are blanks
-        return BlankEval.INSTANCE;
+        // else strings are errors?
+        return ErrorEval.VALUE_INVALID;
     }
 }

@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEvalToNumericXlator;
 
 /**
@@ -26,39 +27,25 @@ import org.apache.poi.hssf.record.formula.eval.ValueEvalToNumericXlator;
  *
  */
 public class Mode extends MultiOperandNumericFunction {
-    private static final ValueEvalToNumericXlator DEFAULT_NUM_XLATOR =
-        new ValueEvalToNumericXlator((short) (0
-              //| ValueEvalToNumericXlator.BOOL_IS_PARSED  
-              //| ValueEvalToNumericXlator.REF_BOOL_IS_PARSED  
-              //| ValueEvalToNumericXlator.EVALUATED_REF_BOOL_IS_PARSED  
-              //| ValueEvalToNumericXlator.STRING_IS_PARSED  
-              //| ValueEvalToNumericXlator.REF_STRING_IS_PARSED  
-              //| ValueEvalToNumericXlator.EVALUATED_REF_STRING_IS_PARSED  
-              //| ValueEvalToNumericXlator.STRING_TO_BOOL_IS_PARSED  
-              //| ValueEvalToNumericXlator.REF_STRING_TO_BOOL_IS_PARSED  
-                | ValueEvalToNumericXlator.STRING_IS_INVALID_VALUE  
-              //| ValueEvalToNumericXlator.REF_STRING_IS_INVALID_VALUE
-              //| ValueEvalToNumericXlator.EVALUATED_REF_BLANK_IS_PARSED
-              //| ValueEvalToNumericXlator.REF_BLANK_IS_PARSED
-              //| ValueEvalToNumericXlator.BLANK_IS_PARSED
-                ));
-    
-    /**
-     * this is the default impl for the factory method getXlator
-     * of the super class NumericFunction. Subclasses can override this method
-     * if they desire to return a different ValueEvalToNumericXlator instance
-     * than the default.
-     */
-    protected ValueEvalToNumericXlator getXlator() {
-        return DEFAULT_NUM_XLATOR;
-    }
+	private static final ValueEvalToNumericXlator DEFAULT_NUM_XLATOR =
+		new ValueEvalToNumericXlator(0);
 
-    protected double evaluate(double[] values) throws EvaluationException {
-        double d = StatsLib.mode(values);
-        if (Double.isNaN(d)) {
-        	// TODO - StatsLib is returning NaN to denote 'no duplicate values'
-        	throw new EvaluationException(ErrorEval.NA);
-        }
-        return d;
-    }
+	/**
+	 * this is the default impl for the factory method getXlator
+	 * of the super class NumericFunction. Subclasses can override this method
+	 * if they desire to return a different ValueEvalToNumericXlator instance
+	 * than the default.
+	 */
+	protected ValueEval attemptXlateToNumeric(ValueEval ve) {
+		return DEFAULT_NUM_XLATOR.attemptXlateToNumeric(ve);
+	}
+
+	protected double evaluate(double[] values) throws EvaluationException {
+		double d = StatsLib.mode(values);
+		if (Double.isNaN(d)) {
+			// TODO - StatsLib is returning NaN to denote 'no duplicate values'
+			throw new EvaluationException(ErrorEval.NA);
+		}
+		return d;
+	}
 }
