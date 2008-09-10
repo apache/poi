@@ -129,10 +129,10 @@ public abstract class FunctionEval implements OperationEval {
         retval[52] = new Growth(); // GROWTH
         retval[53] = new Goto(); // GOTO
         retval[54] = new Halt(); // HALT
-        retval[56] = new Pv(); // PV
-        retval[57] = new Fv(); // FV
-        retval[58] = new Nper(); // NPER
-        retval[59] = new Pmt(); // PMT
+        retval[56] = FinanceFunction.PV;
+        retval[57] = FinanceFunction.FV;
+        retval[58] = FinanceFunction.NPER;
+        retval[59] = FinanceFunction.PMT;
         retval[60] = new Rate(); // RATE
         retval[61] = new Mirr(); // MIRR
         retval[62] = new Irr(); // IRR

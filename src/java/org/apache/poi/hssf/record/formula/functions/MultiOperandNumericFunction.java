@@ -27,7 +27,6 @@ import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
 import org.apache.poi.hssf.record.formula.eval.Ref2DEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEvalToNumericXlator;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -74,9 +73,6 @@ public abstract class MultiOperandNumericFunction implements Function {
 
 	private static final int DEFAULT_MAX_NUM_OPERANDS = 30;
 
-	protected abstract ValueEvalToNumericXlator getXlator();
-
-	
 	public final Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
 		
 		double d;
@@ -185,7 +181,5 @@ public abstract class MultiOperandNumericFunction implements Function {
 	}
 
 
-	protected ValueEval attemptXlateToNumeric(ValueEval ve) {
-		return getXlator().attemptXlateToNumeric(ve);
-	}
+	protected abstract ValueEval attemptXlateToNumeric(ValueEval ve);
 }
