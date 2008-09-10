@@ -112,15 +112,6 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 			throw new AssertionFailedError(msg + " - actual value was null");
 		}
 		
-		if (expected.getCellType() == HSSFCell.CELL_TYPE_STRING) {
-			String value = expected.getRichStringCellValue().getString();
-			if (value.startsWith("#")) {
-				// TODO - this code never called
-				expected.setCellType(HSSFCell.CELL_TYPE_ERROR);
-				// expected.setCellErrorValue(...?);
-			}
-		}
-		
 		switch (expected.getCellType()) {
 			case HSSFCell.CELL_TYPE_BLANK:
 				assertEquals(msg, HSSFCell.CELL_TYPE_BLANK, actual.getCellType());
@@ -131,18 +122,13 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 				break;
 			case HSSFCell.CELL_TYPE_ERROR:
 				assertEquals(msg, HSSFCell.CELL_TYPE_ERROR, actual.getCellType());
-				if(false) { // TODO: fix ~45 functions which are currently returning incorrect error values
-					assertEquals(msg, expected.getErrorCellValue(), actual.getErrorValue());
-				}
+				assertEquals(msg, ErrorEval.getText(expected.getErrorCellValue()), ErrorEval.getText(actual.getErrorValue()));
 				break;
 			case HSSFCell.CELL_TYPE_FORMULA: // will never be used, since we will call method after formula evaluation
 				throw new AssertionFailedError("Cannot expect formula as result of formula evaluation: " + msg);
 			case HSSFCell.CELL_TYPE_NUMERIC:
 				assertEquals(msg, HSSFCell.CELL_TYPE_NUMERIC, actual.getCellType());
 				TestMathX.assertEquals(msg, expected.getNumericCellValue(), actual.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
-//				double delta = Math.abs(expected.getNumericCellValue()-actual.getNumberValue());
-//				double pctExpected = Math.abs(0.00001*expected.getNumericCellValue());
-//				assertTrue(msg, delta <= pctExpected);
 				break;
 			case HSSFCell.CELL_TYPE_STRING:
 				assertEquals(msg, HSSFCell.CELL_TYPE_STRING, actual.getCellType());
@@ -152,7 +138,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	}
 
 
-	protected void setUp() throws Exception {
+	protected void setUp() {
 		if (workbook == null) {
 			workbook = HSSFTestDataSamples.openSampleWorkbook(SS.FILENAME);
 			sheet = workbook.getSheetAt( 0 );
