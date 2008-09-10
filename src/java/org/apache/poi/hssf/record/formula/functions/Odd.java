@@ -22,7 +22,7 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  *  
  */
-public final class Odd extends NumericFunctionOneArg {
+public final class Odd extends NumericFunction.OneArg {
 	private static final long PARITY_MASK = 0xFFFFFFFFFFFFFFFEL;
     
 	protected double evaluate(double d) {
