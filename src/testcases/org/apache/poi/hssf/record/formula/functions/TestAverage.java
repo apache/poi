@@ -27,14 +27,13 @@ import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 /**
  * Tests for Excel function AVERAGE()
- * 
+ *
  * @author Josh Micich
  */
 public final class TestAverage extends TestCase {
 
-	
 	private static Eval invokeAverage(Eval[] args) {
-		return new Average().evaluate(args, -1, (short)-1);
+		return AggregateFunction.AVERAGE.evaluate(args, -1, (short)-1);
 	}
 
 	private void confirmAverage(Eval[] args, double expected) {
@@ -48,56 +47,56 @@ public final class TestAverage extends TestCase {
 		assertEquals(ErrorEval.class, result.getClass());
 		assertEquals(expectedError.getErrorCode(), ((ErrorEval)result).getErrorCode());
 	}
-	
+
 	public void testBasic() {
-		
+
 		ValueEval[] values = {
-				new NumberEval(1),	
-				new NumberEval(2),	
-				new NumberEval(3),	
-				new NumberEval(4),	
+				new NumberEval(1),
+				new NumberEval(2),
+				new NumberEval(3),
+				new NumberEval(4),
 		};
-		
+
 		confirmAverage(values, 2.5);
-		
+
 		values = new ValueEval[] {
-				new NumberEval(1),	
+				new NumberEval(1),
 				new NumberEval(2),
 				BlankEval.INSTANCE,
-				new NumberEval(3),	
+				new NumberEval(3),
 				BlankEval.INSTANCE,
-				new NumberEval(4),	
+				new NumberEval(4),
 				BlankEval.INSTANCE,
 		};
-		
+
 		confirmAverage(values, 2.5);
 	}
-	
+
 	/**
 	 * Valid cases where values are not pure numbers
 	 */
 	public void testUnusualArgs() {
 		ValueEval[] values = {
-				new NumberEval(1),	
-				new NumberEval(2),	
-				BoolEval.TRUE,	
-				BoolEval.FALSE,	
+				new NumberEval(1),
+				new NumberEval(2),
+				BoolEval.TRUE,
+				BoolEval.FALSE,
 		};
-		
+
 		confirmAverage(values, 1.0);
-		
+
 	}
 
 	// currently disabled because MultiOperandNumericFunction.getNumberArray(Eval[], int, short)
 	// does not handle error values properly yet
 	public void XtestErrors() {
 		ValueEval[] values = {
-				new NumberEval(1),	
-				ErrorEval.NAME_INVALID,	
-				new NumberEval(3),	
-				ErrorEval.DIV_ZERO,	
+				new NumberEval(1),
+				ErrorEval.NAME_INVALID,
+				new NumberEval(3),
+				ErrorEval.DIV_ZERO,
 		};
 		confirmAverage(values, ErrorEval.NAME_INVALID);
-			
+
 	}
 }
