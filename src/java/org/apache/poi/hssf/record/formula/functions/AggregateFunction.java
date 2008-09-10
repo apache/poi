@@ -28,10 +28,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEvalToNumericXlator;
  */
 public abstract class AggregateFunction extends MultiOperandNumericFunction {
 	private static final ValueEvalToNumericXlator DEFAULT_NUM_XLATOR =
-		new ValueEvalToNumericXlator((short) (
-				  ValueEvalToNumericXlator.BOOL_IS_PARSED
-				| ValueEvalToNumericXlator.STRING_IS_PARSED
-				 ));
+		new ValueEvalToNumericXlator(0);
 
 	protected ValueEval attemptXlateToNumeric(ValueEval ve) {
 		return DEFAULT_NUM_XLATOR.attemptXlateToNumeric(ve);
