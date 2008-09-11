@@ -19,21 +19,16 @@ package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEvalToNumericXlator;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  *
  */
 public abstract class AggregateFunction extends MultiOperandNumericFunction {
-	private static final ValueEvalToNumericXlator DEFAULT_NUM_XLATOR =
-		new ValueEvalToNumericXlator(0);
 
-	protected ValueEval attemptXlateToNumeric(ValueEval ve) {
-		return DEFAULT_NUM_XLATOR.attemptXlateToNumeric(ve);
+	protected AggregateFunction() {
+		super(false, false);
 	}
-
 
 	/* ---------------------------------------------------------------------- */
 

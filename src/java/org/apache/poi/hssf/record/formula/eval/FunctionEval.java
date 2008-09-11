@@ -420,8 +420,8 @@ public abstract class FunctionEval implements OperationEval {
         retval[359] = new Hyperlink(); // HYPERLINK
         retval[360] = new NotImplementedFunction(); // PHONETIC
         retval[361] = new Averagea(); // AVERAGEA
-        retval[362] = new Maxa(); // MAXA
-        retval[363] = new Mina(); // MINA
+        retval[362] = MinaMaxa.MAXA;
+        retval[363] = MinaMaxa.MINA;
         retval[364] = new Stdevpa(); // STDEVPA
         retval[365] = new Varpa(); // VARPA
         retval[366] = new Stdeva(); // STDEVA
