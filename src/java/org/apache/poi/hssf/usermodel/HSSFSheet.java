@@ -384,7 +384,7 @@ public final class HSSFSheet {
         
         for(int index=0; index<records.size(); index++) {
            if(records.get(index) instanceof DVRecord) {
-        	   dvRecords.add(records.get(index));
+               dvRecords.add(records.get(index));
            }
         }
         return dvRecords;
@@ -1596,14 +1596,32 @@ public final class HSSFSheet {
     }
 
     /**
+     * @deprecated (Sep 2008) use {@link #setColumnGroupCollapsed(int, boolean)}
+     */
+    public void setColumnGroupCollapsed(short columnNumber, boolean collapsed) {
+        setColumnGroupCollapsed(columnNumber & 0xFFFF, collapsed);
+    }
+    /**
+     * @deprecated (Sep 2008) use {@link #groupColumn(int, int)}
+     */
+    public void groupColumn(short fromColumn, short toColumn) {
+        groupColumn(fromColumn & 0xFFFF, toColumn & 0xFFFF);
+    }
+    /**
+     * @deprecated (Sep 2008) use {@link #ungroupColumn(int, int)}
+     */
+    public void ungroupColumn(short fromColumn, short toColumn) {
+        ungroupColumn(fromColumn & 0xFFFF, toColumn & 0xFFFF);
+    }
+
+    /**
      * Expands or collapses a column group.
      *
      * @param columnNumber      One of the columns in the group.
      * @param collapsed         true = collapse group, false = expand group.
      */
-    public void setColumnGroupCollapsed( short columnNumber, boolean collapsed )
-    {
-        sheet.setColumnGroupCollapsed( columnNumber, collapsed );
+    public void setColumnGroupCollapsed(int columnNumber, boolean collapsed) {
+        sheet.setColumnGroupCollapsed(columnNumber, collapsed);
     }
 
     /**
@@ -1612,14 +1630,12 @@ public final class HSSFSheet {
      * @param fromColumn        beginning of the column range.
      * @param toColumn          end of the column range.
      */
-    public void groupColumn(short fromColumn, short toColumn)
-    {
-        sheet.groupColumnRange( fromColumn, toColumn, true );
+    public void groupColumn(int fromColumn, int toColumn) {
+        sheet.groupColumnRange(fromColumn, toColumn, true);
     }
 
-    public void ungroupColumn( short fromColumn, short toColumn )
-    {
-        sheet.groupColumnRange( fromColumn, toColumn, false );
+    public void ungroupColumn(int fromColumn, int toColumn) {
+        sheet.groupColumnRange(fromColumn, toColumn, false);
     }
 
     public void groupRow(int fromRow, int toRow)
