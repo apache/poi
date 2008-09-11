@@ -35,11 +35,11 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
 
 
 public class TestXSSFSheet extends TestCase {
@@ -727,4 +727,98 @@ public class TestXSSFSheet extends TestCase {
     	row9.setHeight((short) 9);
     	return sheet;
 	}
+	
+	
+	
+	   public void testGroupUngroupColumn() {
+	    	Workbook workbook = new XSSFWorkbook();
+	    	CTSheet ctSheet = CTSheet.Factory.newInstance();
+	    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
+	    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+
+	    	//one level
+	    	System.out.println("livello 1");
+	    	sheet.groupColumn((short)2,(short)7);
+	    	sheet.groupColumn((short)10,(short)11);
+	    	CTCols cols=sheet.getWorksheet().getColsArray(0);
+	    	assertEquals(2,cols.sizeOfColArray());
+	    	CTCol[]colArray=cols.getColArray();
+	    	assertNotNull(colArray);
+	    	assertEquals(2,colArray[0].getMin());
+	    	assertEquals(7,colArray[0].getMax());
+	    	assertEquals(1, colArray[0].getOutlineLevel());
+
+	    	//two level  
+	    	System.out.println("\n livello 2");
+	    	sheet.groupColumn((short)1,(short)2);
+	    	cols=sheet.getWorksheet().getColsArray(0);
+	    	assertEquals(4,cols.sizeOfColArray());
+	    	colArray=cols.getColArray();
+	    	assertEquals(2, colArray[1].getOutlineLevel());
+
+	    	//three level
+	    	System.out.println("\n livello 3");
+	    	sheet.groupColumn((short)6,(short)8);
+	    	sheet.groupColumn((short)2,(short)3);
+	    	cols=sheet.getWorksheet().getColsArray(0);
+	    	assertEquals(7,cols.sizeOfColArray());
+	    	colArray=cols.getColArray();
+	    	assertEquals(3, colArray[1].getOutlineLevel());
+	    	assertEquals(3,sheet.getSheetTypeSheetFormatPr().getOutlineLevelCol());
+
+	    	sheet.ungroupColumn((short)8,(short) 10);
+	    	colArray=cols.getColArray();
+	    	//assertEquals(3, colArray[1].getOutlineLevel());
+
+	    	sheet.ungroupColumn((short)4,(short)6);
+	    	sheet.ungroupColumn((short)2,(short)2);
+	    	colArray=cols.getColArray();
+	    	assertEquals(4, colArray.length);
+	    	assertEquals(2,sheet.getSheetTypeSheetFormatPr().getOutlineLevelCol());
+	    }
+
+	    
+	    public void testGroupUngroupRow() {
+	    	Workbook workbook = new XSSFWorkbook();
+	    	CTSheet ctSheet = CTSheet.Factory.newInstance();
+	    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
+	    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+
+	    	//one level
+	    	sheet.groupRow(9,10);
+	    	assertEquals(2,sheet.rows.size());
+	    	CTRow[]rowArray=sheet.getWorksheet().getSheetData().getRowArray();    	
+	    	assertEquals(2,rowArray.length);
+	    	CTRow ctrow=rowArray[0];
+
+	    	assertNotNull(ctrow);
+	    	assertEquals(9,ctrow.getR());
+	    	assertEquals(1, ctrow.getOutlineLevel());
+	    	assertEquals(1,sheet.getSheetTypeSheetFormatPr().getOutlineLevelRow());
+
+	    	//two level    	
+	    	sheet.groupRow(10,13);
+	    	rowArray=sheet.getWorksheet().getSheetData().getRowArray();    	
+	    	assertEquals(5,rowArray.length);
+	    	assertEquals(5,sheet.rows.size());
+	    	ctrow=rowArray[1];
+	    	assertNotNull(ctrow);
+	    	assertEquals(10,ctrow.getR());
+	    	assertEquals(2, ctrow.getOutlineLevel());
+	    	assertEquals(2,sheet.getSheetTypeSheetFormatPr().getOutlineLevelRow());
+
+	    	
+	    	sheet.ungroupRow(8, 10);
+	    	rowArray=sheet.getWorksheet().getSheetData().getRowArray();    	
+	    	assertEquals(4,rowArray.length);
+	    	assertEquals(1,sheet.getSheetTypeSheetFormatPr().getOutlineLevelRow());
+
+	    	sheet.ungroupRow(10,10);
+	    	rowArray=sheet.getWorksheet().getSheetData().getRowArray();    	
+	    	assertEquals(3,rowArray.length);
+	    	assertEquals(3,sheet.rows.size());
+
+	    	assertEquals(1,sheet.getSheetTypeSheetFormatPr().getOutlineLevelRow());
+	    }
+
 }

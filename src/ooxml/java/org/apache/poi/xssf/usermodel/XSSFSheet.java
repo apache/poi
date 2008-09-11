@@ -45,28 +45,38 @@ import org.apache.xmlbeans.XmlOptions;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackageRelationship;
 import org.openxml4j.opc.PackageRelationshipCollection;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTControls;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCustomProperties;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOutlinePr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetUpPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetup;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPrintOptions;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRecord;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSelection;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STSheetState;
 
 
 public class XSSFSheet implements Sheet {
@@ -79,8 +89,11 @@ public class XSSFSheet implements Sheet {
     protected XSSFWorkbook workbook;
     protected CommentsSource sheetComments;
     protected CTMergeCells ctMergeCells;
+    
+
     protected ArrayList<Drawing> drawings;
     protected ArrayList<Control> controls;
+
 
     public static final short LeftMargin = 0;
     public static final short RightMargin = 1;
@@ -598,13 +611,15 @@ public class XSSFSheet implements Sheet {
 	}
 
     public boolean getRowSumsBelow() {
-        // TODO Auto-generated method stub
-        return false;
+        CTSheetPr sheetPr = getSheetTypeSheetPr();
+        CTOutlinePr outLinePr = sheetPr.getOutlinePr();
+        return outLinePr.getSummaryBelow();
     }
 
     public boolean getRowSumsRight() {
-        // TODO Auto-generated method stub
-        return false;
+        CTSheetPr sheetPr = getSheetTypeSheetPr();
+        CTOutlinePr outLinePr = sheetPr.getOutlinePr();
+        return outLinePr.getSummaryRight();
     }
 
     public boolean getScenarioProtect() {
@@ -633,15 +648,56 @@ public class XSSFSheet implements Sheet {
     	return getSheetTypePrintOptions().getVerticalCentered();
     }
 
+    
     public void groupColumn(short fromColumn, short toColumn) {
-        // TODO Auto-generated method stub
-
+    	CTCols ctCols=worksheet.getColsArray(0);
+    	CTCol ctCol=CTCol.Factory.newInstance();
+    	ctCol.setMin(fromColumn);
+    	ctCol.setMax(toColumn);
+    	this.columnHelper.addCleanColIntoCols(ctCols, ctCol);    	
+    	for(int index=fromColumn;index<=toColumn;index++){
+    		CTCol col=columnHelper.getColumn(index, false);
+    		//col must exist
+    		short outlineLevel=col.getOutlineLevel();
+    		col.setOutlineLevel((short)(outlineLevel+1));
+    		index=(int)col.getMax();
+    	}    	
+    	worksheet.setColsArray(0,ctCols);
+    	setSheetFormatPrOutlineLevelCol();
     }
 
     public void groupRow(int fromRow, int toRow) {
-        // TODO Auto-generated method stub
-
+      	for(int i=fromRow;i<=toRow;i++){
+    		XSSFRow xrow=(XSSFRow)getRow(i-1);
+    		if(xrow==null){//create a new Row
+    			 xrow=(XSSFRow)createRow(i-1);
+    		}    		
+    		CTRow ctrow=xrow.getCTRow();
+    		short outlineLevel=ctrow.getOutlineLevel();
+    		ctrow.setOutlineLevel((short)(outlineLevel+1));    			
+       	}
+      	setSheetFormatPrOutlineLevelRow();
     }
+
+   private short getMaxOutlineLevelRows(){
+    	short outlineLevel=0;
+    	for(Row r:rows){
+    		XSSFRow xrow=(XSSFRow)r;
+    		outlineLevel=xrow.getCTRow().getOutlineLevel()>outlineLevel? xrow.getCTRow().getOutlineLevel(): outlineLevel;
+    	}
+    	return outlineLevel;
+    }
+    
+    
+    private short getMaxOutlineLevelCols(){
+    	CTCols ctCols=worksheet.getColsArray(0);
+    	CTCol[]colArray=ctCols.getColArray();
+    	short outlineLevel=0;
+    	for(CTCol col: colArray){
+    		outlineLevel=col.getOutlineLevel()>outlineLevel? col.getOutlineLevel(): outlineLevel;    		
+    	}
+    	return outlineLevel;
+    }    
 
     public boolean isColumnBroken(short column) {
         CTBreak[] brkArray = getSheetTypeColumnBreaks().getBrkArray();
@@ -720,9 +776,10 @@ public class XSSFSheet implements Sheet {
 
     public void removeRow(Row row) {
         int counter = 0;
+        int rowNum=row.getRowNum();
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             Row r = it.next();
-            if (r.getRowNum() == row.getRowNum()) {
+            if (r.getRowNum() == rowNum) {
                 it.remove();
                 worksheet.getSheetData().removeRow(counter);
             }
@@ -804,7 +861,12 @@ public class XSSFSheet implements Sheet {
     }
 
     public void setDialog(boolean b) {
-        // TODO Auto-generated method stub
+        if(b && dialogsheet == null){
+            CTDialogsheet dialogSheet = CTDialogsheet.Factory.newInstance();
+            dialogsheet = dialogSheet;
+        }else{
+            dialogsheet = null;
+        }
     }
 
     public void setDisplayFormulas(boolean show) {
@@ -884,13 +946,15 @@ public class XSSFSheet implements Sheet {
     }
 
     public void setRowSumsBelow(boolean b) {
-        // TODO Auto-generated method stub
-
+        CTSheetPr sheetPr = getSheetTypeSheetPr();
+        CTOutlinePr outLinePr = sheetPr.getOutlinePr();
+        outLinePr.setSummaryBelow(b);
     }
 
     public void setRowSumsRight(boolean b) {
-        // TODO Auto-generated method stub
-
+        CTSheetPr sheetPr = getSheetTypeSheetPr();
+        CTOutlinePr outLinePr = sheetPr.getOutlinePr();
+        outLinePr.setSummaryRight(b);
     }
 
     public void setVerticallyCenter(boolean value) {
@@ -946,16 +1010,51 @@ public class XSSFSheet implements Sheet {
     	getSheetTypeSheetView().setTopLeftCell(cellRef);
     }
 
-    public void ungroupColumn(short fromColumn, short toColumn) {
-        // TODO Auto-generated method stub
-
+public void ungroupColumn(short fromColumn, short toColumn) {
+    	CTCols cols=worksheet.getColsArray(0);
+    	for(int index=fromColumn;index<=toColumn;index++){
+    		CTCol col=columnHelper.getColumn(index, false);
+    		if(col!=null){
+    			short outlineLevel=col.getOutlineLevel();
+        		col.setOutlineLevel((short)(outlineLevel-1));
+    			index=(int)col.getMax();
+    			
+    			if(col.getOutlineLevel()<=0){
+    				int colIndex=columnHelper.getIndexOfColumn(cols,col);
+    		    	worksheet.getColsArray(0).removeCol(colIndex);
+    			}
+    		}
+    	}
+    	worksheet.setColsArray(0,cols);
+    	setSheetFormatPrOutlineLevelCol();
     }
 
     public void ungroupRow(int fromRow, int toRow) {
-        // TODO Auto-generated method stub
-
+    	for(int i=fromRow;i<=toRow;i++){
+    		XSSFRow xrow=(XSSFRow)getRow(i-1);
+    		if(xrow!=null){
+    			CTRow ctrow=xrow.getCTRow();
+    			short outlinelevel=ctrow.getOutlineLevel();
+    			ctrow.setOutlineLevel((short)(outlinelevel-1));
+    			//remove a row only if the row has no cell and if the outline level is 0
+    			if(ctrow.getOutlineLevel()==0 && xrow.getFirstCellNum()==-1){
+    				removeRow(xrow);
+    			}
+    		}
+    	}
+       setSheetFormatPrOutlineLevelRow();
     }
 
+    private void setSheetFormatPrOutlineLevelRow(){
+    	short maxLevelRow=getMaxOutlineLevelRows();
+    	getSheetTypeSheetFormatPr().setOutlineLevelRow((short)(maxLevelRow));
+    }
+    
+    private void setSheetFormatPrOutlineLevelCol(){
+    	short maxLevelCol=getMaxOutlineLevelCols();
+    	getSheetTypeSheetFormatPr().setOutlineLevelCol((short)(maxLevelCol));
+    }
+    
     public void setSelected(boolean flag) {
         CTSheetViews views = getSheetTypeSheetViews();
         for (CTSheetView view : views.getSheetViewArray()) {
@@ -1101,4 +1200,9 @@ public class XSSFSheet implements Sheet {
 		}
 		return getDefaultSheetView().getPane();
 	}
+	
+	
+	
+	
+	
 }

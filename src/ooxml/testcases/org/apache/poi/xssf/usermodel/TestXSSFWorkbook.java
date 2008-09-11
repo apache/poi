@@ -25,19 +25,19 @@ import java.io.OutputStream;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.StylesSource;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.model.StylesTable;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
-
 import org.openxml4j.opc.ContentTypes;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackagingURIHelper;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 
 public class TestXSSFWorkbook extends TestCase {
     public TestXSSFWorkbook(String name) {
@@ -238,6 +238,85 @@ public class TestXSSFWorkbook extends TestCase {
         assertEquals(6, wbPart.getRelationships().size());
 
     }
+    
+    public void testFindFont(){
+        //get dafault font and check against default value
+    	XSSFWorkbook workbook = new XSSFWorkbook();
+    	Font fontFind=workbook.findFont(Font.BOLDWEIGHT_NORMAL, Font.COLOR_NORMAL, (short)11, "Calibri", false, false, Font.SS_NONE, Font.U_NONE);
+    	assertNotNull(fontFind);    	
+    	
+    	//get default font, then change 2 values and check against different values (height changes)
+    	Font font=workbook.createFont();
+    	font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+    	font.setUnderline(Font.U_DOUBLE);
+    	StylesSource styleSource=new StylesTable();
+    	long index=styleSource.putFont(font);
+    	System.out.println("index="+index);
+    	workbook.setStylesSource(styleSource);
+    	fontFind=workbook.findFont(Font.BOLDWEIGHT_BOLD, Font.COLOR_NORMAL, (short)15, "Calibri", false, false, Font.SS_NONE, Font.U_DOUBLE);
+        assertNull(fontFind);
+    }
+
+    public void testGetCellStyleAt(){
+     	XSSFWorkbook workbook = new XSSFWorkbook();
+        short i = 0;
+        //get default style
+        CellStyle cellStyleAt = workbook.getCellStyleAt(i);
+        assertNotNull(cellStyleAt);
+        
+        //get custom style
+        StylesSource styleSource = workbook.getStylesSource();
+        CellStyle customStyle = new XSSFCellStyle(styleSource);
+        Font font = new XSSFFont();
+        font.setFontName("Verdana");
+        customStyle.setFont(font);
+        Long x = styleSource.putStyle(customStyle);
+        cellStyleAt = workbook.getCellStyleAt(x.shortValue());
+        assertNotNull(cellStyleAt);        
+    }
+    
+    public void testGetFontAt(){
+     	XSSFWorkbook workbook = new XSSFWorkbook();
+        StylesSource styleSource = workbook.getStylesSource();
+        short i = 0;
+        //get default font
+        Font fontAt = workbook.getFontAt(i);
+        assertNotNull(fontAt);
+        
+        //get customized font
+        Font customFont = new XSSFFont();
+        customFont.setItalic(true);
+        Long x = styleSource.putFont(customFont);
+        fontAt = workbook.getFontAt(x.shortValue());
+        assertNotNull(fontAt);
+    }
+    
+    public void testGetNumCellStyles(){
+     	XSSFWorkbook workbook = new XSSFWorkbook();
+        short i = workbook.getNumCellStyles();
+        //get default cellStyles
+        assertEquals(1, i);
+        //get wrong value
+        assertNotSame(2, i);        
+    }
+    
+    public void testGetDisplayedTab(){
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        short i = (short) workbook.getFirstVisibleTab();
+        //get default diplayedTab
+        assertEquals(0, i);        
+    }
+    
+    public void testSetDisplayedTab(){
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        workbook.setFirstVisibleTab(new Integer(1).shortValue());
+        short i = (short) workbook.getFirstVisibleTab();
+        //0 (defualt value) is not longer set
+        assertNotSame(0, i);
+        //1 is the default tab
+        assertEquals(1, i);
+    }
+    
     
     public void testLoadSave() throws Exception {
 		File xml = new File(
