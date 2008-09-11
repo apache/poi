@@ -65,6 +65,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookViews;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
@@ -260,8 +261,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     public Font createFont() {
-        // TODO Auto-generated method stub
-        return null;
+        return new XSSFFont();
     }
 
     public XSSFName createName() {
@@ -306,8 +306,22 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     public Font findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
-        // TODO Auto-generated method stub
-        return null;
+    	short fontNum=getNumberOfFonts();
+        for (short i = 0; i <= fontNum; i++) {
+            XSSFFont xssfFont = (XSSFFont)getFontAt(i);
+            if (xssfFont.getBoldweight() == boldWeight
+                    && xssfFont.getColor() == color
+                    && xssfFont.getFontHeightInPoints() == fontHeight
+                    && xssfFont.getFontName().equals(name)
+                    && xssfFont.getItalic() == italic
+                    && xssfFont.getStrikeout() == strikeout
+                    && xssfFont.getTypeOffset() == typeOffset
+                    && xssfFont.getUnderline() == underline)
+            {
+                return xssfFont;
+            }
+        }
+    	return null;
     }
 
     public List getAllEmbeddedObjects() {
@@ -352,8 +366,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     public CellStyle getCellStyleAt(short idx) {
-        // TODO Auto-generated method stub
-        return null;
+        return stylesSource.getStyleAt(idx);
     }
 
     public Palette getCustomPalette() {
@@ -361,14 +374,24 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         return null;
     }
 
+    /**
+     * get the first tab that is displayed in the list of tabs in excel.
+     */    
+    public int getFirstVisibleTab() {
+        CTBookViews bookViews = workbook.getBookViews();
+        CTBookView bookView = bookViews.getWorkbookViewArray(0);
+        return (short) bookView.getActiveTab();
+    }
+    /**
+     * deprecated Aug 2008
+     * @deprecated - Misleading name - use getFirstVisibleTab() 
+     */
     public short getDisplayedTab() {
-        // TODO Auto-generated method stub
-        return 0;
+        return (short) getFirstVisibleTab();
     }
 
     public Font getFontAt(short idx) {
-        // TODO Auto-generated method stub
-        return null;
+        return stylesSource.getFontAt(idx);
     }
 
     public XSSFName getNameAt(int index) {
@@ -395,9 +418,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 		return null;
 	}
 
-	public short getNumCellStyles() {
-        // TODO Auto-generated method stub
-        return 0;
+    public short getNumCellStyles() {
+        return (short) ((StylesTable)stylesSource).getNumCellStyles();
     }
 
     public short getNumberOfFonts() {
@@ -553,9 +575,22 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     }
 
+    /**
+     * sets the first tab that is displayed in the list of tabs
+     * in excel.
+     * @param index
+     */
+    public void setFirstVisibleTab(short index) {
+        CTBookViews bookViews = workbook.getBookViews();
+        CTBookView bookView= bookViews.getWorkbookViewArray(0);
+        bookView.setActiveTab(index);
+    }
+    /**
+     * deprecated Aug 2008
+     * @deprecated - Misleading name - use setFirstVisibleTab() 
+     */
     public void setDisplayedTab(short index) {
-        // TODO Auto-generated method stub
-
+        setFirstVisibleTab(index);
     }
 
     public void setPrintArea(int sheetIndex, String reference) {

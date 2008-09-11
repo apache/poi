@@ -18,6 +18,7 @@ package org.apache.poi.xssf.usermodel.extensions;
 
 import java.util.LinkedList;
 
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType.Enum;
@@ -65,5 +66,15 @@ public class XSSFCellFill {
 	public CTFill getCTFill() {
 		return this.fill;
 	}
+        public void setFillBackgroundColor(long index) {
+                CTColor ctColor=fill.getPatternFill().addNewBgColor();
+                ctColor.setIndexed(index);
+                fill.getPatternFill().setBgColor(ctColor);
+        }
 
+	public void setFillForegroundColor(long index) {
+		CTColor ctColor=fill.getPatternFill().addNewFgColor();
+		ctColor.setIndexed(index);
+		fill.getPatternFill().setFgColor(ctColor);
+	}
 }

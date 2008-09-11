@@ -257,5 +257,9 @@ public class XSSFRow implements Row {
     	this.row.setHidden(height);
 
     }
+    
+    public CTRow getCTRow(){
+    	return this.row;
+    }
 
 }

@@ -38,6 +38,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorders;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellStyleXfs;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellXfs;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDxf;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDxfs;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFills;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
@@ -46,10 +48,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmts;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STFontScheme;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;
-
 
 
 /**
@@ -64,6 +64,8 @@ public class StylesTable implements StylesSource, XSSFModel {
     private final LinkedList<CTBorder> borders = new LinkedList<CTBorder>();
     private final LinkedList<CTXf> styleXfs = new LinkedList<CTXf>();
     private final LinkedList<CTXf> xfs = new LinkedList<CTXf>();
+    
+    private final LinkedList<CTDxf> dxfs = new LinkedList<CTDxf>();
     
     /**
      * The first style id available for use as a custom style
@@ -101,7 +103,6 @@ public class StylesTable implements StylesSource, XSSFModel {
     public void readFrom(InputStream is) throws IOException {
         try {
         	doc = StyleSheetDocument.Factory.parse(is);
-        	
         	// Grab all the different bits we care about
         	if(doc.getStyleSheet().getNumFmts() != null)
         	for (CTNumFmt nfmt : doc.getStyleSheet().getNumFmts().getNumFmtArray()) {
@@ -127,6 +128,12 @@ public class StylesTable implements StylesSource, XSSFModel {
         	for (CTXf xf : doc.getStyleSheet().getCellStyleXfs().getXfArray()) {
         		styleXfs.add(xf);
         	}
+        	// dxf
+        	if(doc.getStyleSheet().getDxfs() != null)
+            	for (CTDxf dxf : doc.getStyleSheet().getDxfs().getDxfArray()) {
+            		dxfs.add(dxf);
+            	}
+        	
         } catch (XmlException e) {
             throw new IOException(e.getLocalizedMessage());
         }
@@ -163,6 +170,7 @@ public class StylesTable implements StylesSource, XSSFModel {
     public Font getFontAt(long idx) {
     	return new XSSFFont(fonts.get((int) idx));
     }
+    
     public synchronized long putFont(Font font) {
     	return putFont((XSSFFont)font, fonts);
     }
@@ -216,7 +224,14 @@ public class StylesTable implements StylesSource, XSSFModel {
 		styleXfs.add(cellStyleXf);
 		return styleXfs.size();
 	}
-	/**
+    /**
+     * get the size of cell styles
+     */
+    public int getNumCellStyles(){
+        return styleXfs.size();
+    }
+      
+    /**
      * For unit testing only
      */
     public int _getNumberFormatSize() {
@@ -329,6 +344,17 @@ public class StylesTable implements StylesSource, XSSFModel {
         	doc.getStyleSheet().setCellStyleXfs(ctSXfs);
     	}
     	
+    	// Style dxf
+    	if(dxfs.size() > 0) {
+        	CTDxfs ctDxfs = CTDxfs.Factory.newInstance();
+        	ctDxfs.setCount(dxfs.size());
+        	ctDxfs.setDxfArray(dxfs.toArray(new CTDxf[dxfs.size()])
+        	);
+        	doc.getStyleSheet().setDxfs(ctDxfs);
+    	}
+    	
+    	
+    	
         // Save
         doc.save(out, options);
     }
@@ -345,8 +371,9 @@ public class StylesTable implements StylesSource, XSSFModel {
     	return font.putFont(fonts);
 	}
 	private void initialize() {
-		CTFont ctFont = createDefaultFont();
-    	fonts.add(ctFont);
+		//CTFont ctFont = createDefaultFont();
+		XSSFFont xssfFont = createDefaultFont();
+    	fonts.add(xssfFont.getCTFont());
     	
     	CTFill ctFill = createDefaultFill();
     	fills.add(ctFill);
@@ -360,6 +387,7 @@ public class StylesTable implements StylesSource, XSSFModel {
     	xf.setXfId(0);
     	xfs.add(xf);
 	}
+	
 	private CTXf createDefaultXf() {
 		CTXf ctXf = CTXf.Factory.newInstance();
     	ctXf.setNumFmtId(0);
@@ -377,18 +405,50 @@ public class StylesTable implements StylesSource, XSSFModel {
     	ctBorder.addNewDiagonal();
 		return ctBorder;
 	}
+	
 	private CTFill createDefaultFill() {
 		CTFill ctFill = CTFill.Factory.newInstance();
     	ctFill.addNewPatternFill().setPatternType(STPatternType.NONE);
 		return ctFill;
 	}
-	private CTFont createDefaultFont() {
+	
+	private XSSFFont createDefaultFont() {
+		/*
 		CTFont ctFont = CTFont.Factory.newInstance();
     	ctFont.addNewSz().setVal(11);
     	ctFont.addNewColor().setTheme(1);
     	ctFont.addNewName().setVal("Calibri");
     	ctFont.addNewFamily().setVal(2);
     	ctFont.addNewScheme().setVal(STFontScheme.MINOR);
-		return ctFont;
+    	XSSFFont font=new XSSFFont(ctFont);
+		return font;
+		*/
+		
+		XSSFFont xssfFont=new XSSFFont();
+		xssfFont.setFontHeightInPoints(XSSFFont.DEFAULT_FONT_SIZE);
+		xssfFont.setColor(XSSFFont.DEFAULT_FONT_COLOR);//setTheme 
+		xssfFont.setFontName(XSSFFont.DEFAULT_FONT_NAME);
+		xssfFont.setFamily(XSSFFont.FONT_FAMILY_SWISS);
+		xssfFont.setScheme(XSSFFont.SCHEME_MINOR);
+		return xssfFont;
 	}
+	
+	
+	
+	
+	public CTDxf getDxf(long idx) {
+		if(dxfs.size()==0)
+			return CTDxf.Factory.newInstance();
+		else
+			return dxfs.get((int) idx);
+	}
+	
+	
+	public long putDxf(CTDxf dxf) {
+			this.dxfs.add(dxf);
+			return this.dxfs.size();
+	}
+	
+	
+	
 }

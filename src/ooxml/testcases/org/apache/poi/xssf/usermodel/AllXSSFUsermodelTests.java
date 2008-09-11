@@ -52,6 +52,9 @@ public final class AllXSSFUsermodelTests {
 		result.addTestSuite(TestXSSFRow.class);
 		result.addTestSuite(TestXSSFSheet.class);
 		result.addTestSuite(TestXSSFWorkbook.class);
+				
+		result.addTestSuite(TestXSSFFont.class);
+
 		return result;
 	}
 }

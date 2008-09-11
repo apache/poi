@@ -293,13 +293,11 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public void setFillBackgroundColor(short bg) {
-		// TODO Auto-generated method stub
-		
+		getCellFill().setFillBackgroundColor(bg);
 	}
 
 	public void setFillForegroundColor(short bg) {
-		// TODO Auto-generated method stub
-		
+		getCellFill().setFillForegroundColor(bg);
 	}
 
 	public void setFillPattern(short fp) {
@@ -308,8 +306,10 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public void setFont(Font font) {
-		// TODO Auto-generated method stub
-		
+		if(font!=null){
+			long index=this.stylesSource.putFont(font);
+			this.cellXf.setFontId(index);
+		}
 	}
 
 	public void setHidden(boolean hidden) {

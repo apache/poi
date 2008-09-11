@@ -161,15 +161,18 @@ public class ColumnHelper {
      * Insert a new CTCol at position 0 into cols, setting min=min, max=max and
      * copying all the colsWithAttributes array cols attributes into newCol
      */
-    private CTCol insertCol(CTCols cols, long min, long max,
-            CTCol[] colsWithAttributes) {
-        CTCol newCol = cols.insertNewCol(0);
-        newCol.setMin(min);
-        newCol.setMax(max);
-        for (CTCol col : colsWithAttributes) {
-            setColumnAttributes(col, newCol);
+    private CTCol insertCol(CTCols cols, long min, long max,            
+        CTCol[] colsWithAttributes) {
+        if(!columnExists(cols,min,max)){
+                CTCol newCol = cols.insertNewCol(0);
+                newCol.setMin(min);
+                newCol.setMax(max);
+                for (CTCol col : colsWithAttributes) {
+                        setColumnAttributes(col, newCol);
+                }
+                return newCol;
         }
-        return newCol;
+        return null;
     }
 
     public boolean columnExists(CTCols cols, long index) {
@@ -186,6 +189,9 @@ public class ColumnHelper {
     	toCol.setHidden(fromCol.getHidden());
     	toCol.setBestFit(fromCol.getBestFit());
         toCol.setStyle(fromCol.getStyle());
+        if(fromCol.getOutlineLevel()!=0){
+        	toCol.setOutlineLevel(fromCol.getOutlineLevel());
+        }
     }
 
     public void setColBestFit(long index, boolean bestFit) {
@@ -229,5 +235,22 @@ public class ColumnHelper {
 		}
 		return -1;
 	}
-
+        
+        private boolean columnExists(CTCols cols, long min, long max) {
+            for (int i = 0; i < cols.sizeOfColArray(); i++) {
+                if (cols.getColArray(i).getMin() == min && cols.getColArray(i).getMax() == max) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        public int getIndexOfColumn(CTCols cols, CTCol col) {
+            for (int i = 0; i < cols.sizeOfColArray(); i++) {
+                if (cols.getColArray(i).getMin() == col.getMin() && cols.getColArray(i).getMax() == col.getMax()) {
+                    return i;
+                }
+            }
+            return -1;
+        }
 }

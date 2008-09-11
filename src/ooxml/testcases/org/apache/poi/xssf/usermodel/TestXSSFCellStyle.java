@@ -19,11 +19,13 @@ package org.apache.poi.xssf.usermodel;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.ss.usermodel.StylesSource;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.poi.xssf.usermodel.extensions.XSSFColor;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
+import org.apache.poi.xssf.util.IndexedColors;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellXfs;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
@@ -222,8 +224,33 @@ public class TestXSSFCellStyle extends TestCase {
 		assertEquals(8, cellStyle.getFillPattern());
 	}
 	
-	public void testGetFont() {
-		assertNotNull(cellStyle.getFont());
+	public void testGetSetFont() {
+		assertNotNull(this.cellStyle.getFont());
+		
+		StylesSource stylesSource=new StylesTable();
+		XSSFFont xssfFont=new XSSFFont();
+		xssfFont.setFontName("Arial");
+		stylesSource.putFont(xssfFont);
+		XSSFCellStyle cellStyle=new XSSFCellStyle(stylesSource);
+	
+		XSSFFont xssfFont2=new XSSFFont();
+		xssfFont2.setFontName("courier");
+		xssfFont2.setFontHeightInPoints((short)10);
+		
+		cellStyle.setFont(xssfFont2);
+		assertEquals(2,cellStyle.getFontIndex());
+		assertEquals(xssfFont2.getFontName(),cellStyle.getFont().getFontName());
+		assertEquals(stylesSource.getFontAt(2).getFontHeightInPoints(),cellStyle.getFont().getFontHeightInPoints());
+
+		cellStyle.setFont(xssfFont);
+		assertEquals(1,cellStyle.getFontIndex());
+		
+		
+		XSSFFont xssfFont3=new XSSFFont();
+		xssfFont3.setFontName("Arial");
+		cellStyle.setFont(xssfFont3);
+		assertNotSame(1,cellStyle.getFontIndex());
+		
 	}
 	
 	public void testGetSetHidden() {
@@ -274,6 +301,32 @@ public class TestXSSFCellStyle extends TestCase {
 		assertFalse(cellXf.getAlignment().getWrapText());
 	}
 
+	public void testGetSetFillBackgroundColor() {
+		setUp();
+		CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
+		CTColor ctBgColor = ctPatternFill.addNewBgColor();
+		ctBgColor.setIndexed(IndexedColors.BLUE);
+		assertEquals(IndexedColors.BLUE, cellStyle.getFillBackgroundColor());
+		
+		cellStyle.setFillBackgroundColor((short)IndexedColors.GREEN);
+		assertEquals(IndexedColors.GREEN,ctFill.getPatternFill().getBgColor().getIndexed());
+	}
+        
+	public void testGetSetFillForegroundColor() {
+		setUp();
+
+		CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
+		CTColor ctFgColor = ctPatternFill.addNewFgColor();
+		ctFgColor.setIndexed(5);
+		assertEquals(5, cellStyle.getFillForegroundColor());
+		
+		ctFgColor.setIndexed(IndexedColors.BLUE);
+		assertEquals(IndexedColors.BLUE, cellStyle.getFillForegroundColor());
+		
+		cellStyle.setFillForegroundColor((short)IndexedColors.GREEN);
+		assertEquals(IndexedColors.GREEN,ctFill.getPatternFill().getFgColor().getIndexed());
+	}
+        
 	/**
 	 * Cloning one XSSFCellStyle onto Another, same XSSFWorkbook
 	 */
