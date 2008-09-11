@@ -20,7 +20,6 @@ package org.apache.poi.hssf.model;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.ColumnInfoRecord;
-import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 
 /**
  * @author Tony Poppleton
@@ -29,7 +28,7 @@ public final class TestSheetAdditional extends TestCase {
 	
 	public void testGetCellWidth() {
 		Sheet sheet = Sheet.createSheet();
-		ColumnInfoRecord nci = ColumnInfoRecordsAggregate.createColInfo();
+		ColumnInfoRecord nci = new ColumnInfoRecord();
 
 		// Prepare test model
 		nci.setFirstColumn((short)5);
@@ -55,5 +54,4 @@ public final class TestSheetAdditional extends TestCase {
 		assertEquals((short)100,sheet.getColumnWidth((short)9));
 		assertEquals((short)100,sheet.getColumnWidth((short)10));
 	}
-
 }

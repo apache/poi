@@ -357,7 +357,7 @@ public final class TestSheet extends TestCase {
         xfindex = sheet.getXFIndexForColAt((short) 1);
         assertEquals(DEFAULT_IDX, xfindex);
 
-        ColumnInfoRecord nci = ColumnInfoRecordsAggregate.createColInfo();
+        ColumnInfoRecord nci = new ColumnInfoRecord();
         sheet._columnInfos.insertColumn(nci);
 
         // single column ColumnInfoRecord
@@ -567,7 +567,7 @@ public final class TestSheet extends TestCase {
 
         sheet.setMargin(HSSFSheet.LeftMargin, 0.3);
         try {
-            row.createCell((short) 0);
+            row.createCell(0);
         } catch (IllegalStateException e) {
             if (e.getMessage().equals("Cannot create value records before row records exist")) {
                 throw new AssertionFailedError("Identified bug 45717");
@@ -576,4 +576,3 @@ public final class TestSheet extends TestCase {
         }
     }
 }
-

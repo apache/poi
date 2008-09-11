@@ -1055,7 +1055,7 @@ public final class Sheet implements Model {
 
         ColumnInfoRecord ci = _columnInfos.findColumnInfo(columnIndex);
         if (ci != null) {
-            return ci.getColumnWidth();
+            return (short)ci.getColumnWidth();
         }
         //default column width is measured in characters
         //multiply
@@ -1079,8 +1079,8 @@ public final class Sheet implements Model {
     public short getXFIndexForColAt(short columnIndex) {
         ColumnInfoRecord ci = _columnInfos.findColumnInfo(columnIndex);
         if (ci != null) {
-            return ci.getXFIndex();
-         }
+            return (short)ci.getXFIndex();
+        }
         return 0xF;
     }
 
@@ -1138,8 +1138,7 @@ public final class Sheet implements Model {
      * @param indent        if true the group will be indented by one level,
      *                      if false indenting will be removed by one level.
      */
-    public void groupColumnRange(short fromColumn, short toColumn, boolean indent)
-    {
+    public void groupColumnRange(int fromColumn, int toColumn, boolean indent) {
 
         // Set the level for each column
         _columnInfos.groupColumnRange( fromColumn, toColumn, indent);
@@ -1709,17 +1708,13 @@ public final class Sheet implements Model {
     }
 
 
-    public void setColumnGroupCollapsed( short columnNumber, boolean collapsed )
-    {
-        if (collapsed)
-        {
-            _columnInfos.collapseColumn( columnNumber );
-        }
-        else
-        {
-            _columnInfos.expandColumn( columnNumber );
-        }
-    }
+    public void setColumnGroupCollapsed(int columnNumber, boolean collapsed) {
+		if (collapsed) {
+			_columnInfos.collapseColumn(columnNumber);
+		} else {
+			_columnInfos.expandColumn(columnNumber);
+		}
+	}
 
     /**
      * protect a spreadsheet with a password (not encypted, just sets protect
