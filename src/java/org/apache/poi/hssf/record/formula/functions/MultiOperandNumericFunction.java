@@ -19,13 +19,14 @@ package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
+import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
-import org.apache.poi.hssf.record.formula.eval.Ref2DEval;
+import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
+import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
@@ -35,6 +36,16 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  * where the order of operands does not matter
  */
 public abstract class MultiOperandNumericFunction implements Function {
+
+	private final boolean _isReferenceBoolCounted;
+	private final boolean _isBlankCounted;
+
+	protected MultiOperandNumericFunction(boolean isReferenceBoolCounted, boolean isBlankCounted) {
+		_isReferenceBoolCounted = isReferenceBoolCounted;
+		_isBlankCounted = isBlankCounted;
+	}
+
+
 	static final double[] EMPTY_DOUBLE_ARRAY = { };
 
 	private static class DoubleList {
@@ -74,7 +85,7 @@ public abstract class MultiOperandNumericFunction implements Function {
 	private static final int DEFAULT_MAX_NUM_OPERANDS = 30;
 
 	public final Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
-		
+
 		double d;
 		try {
 			double[] values = getNumberArray(args);
@@ -82,16 +93,16 @@ public abstract class MultiOperandNumericFunction implements Function {
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
-		
+
 		if (Double.isNaN(d) || Double.isInfinite(d))
 			return ErrorEval.NUM_ERROR;
-		
+
 		return new NumberEval(d);
 	}
 
 	protected abstract double evaluate(double[] values) throws EvaluationException;
-	
-	
+
+
 	/**
 	 * Maximum number of operands accepted by this function.
 	 * Subclasses may override to change default value.
@@ -132,54 +143,58 @@ public abstract class MultiOperandNumericFunction implements Function {
 			int height = ae.getHeight();
 			for (int rrIx=0; rrIx<height; rrIx++) {
 				for (int rcIx=0; rcIx<width; rcIx++) {
-					ValueEval ve1 = ae.getRelativeValue(rrIx, rcIx);
-					 /*
-					 * TODO: For an AreaEval, we are constructing a RefEval
-					 * per element.
-					 * For now this is a tempfix solution since this may
-					 * require a more generic fix at the level of
-					 * HSSFFormulaEvaluator where we store an array
-					 * of RefEvals as the "values" array.
-					 */
-					RefEval re = new Ref2DEval(null, ve1);
-					ValueEval ve = attemptXlateToNumeric(re);
-					if (ve instanceof ErrorEval) {
-						throw new EvaluationException((ErrorEval)ve);
-					}
-					if (ve instanceof BlankEval) {
-						// note - blanks are ignored, so returned array will be smaller.
-						continue;
-					}
-					if (ve instanceof NumericValueEval) {
-						NumericValueEval nve = (NumericValueEval) ve;
-						temp.add(nve.getNumberValue());
-					} else {
-						throw new RuntimeException("Unexpected value class (" + ve.getClass().getName() + ")");
-					}
+					ValueEval ve = ae.getRelativeValue(rrIx, rcIx);
+					collectValue(ve, true, temp);
 				}
 			}
 			return;
 		}
-
-		// for ValueEvals other than AreaEval
-		ValueEval ve = attemptXlateToNumeric((ValueEval) operand);
-
-		if (ve instanceof NumericValueEval) {
-			NumericValueEval nve = (NumericValueEval) ve;
-			temp.add(nve.getNumberValue());
+		if (operand instanceof RefEval) {
+			RefEval re = (RefEval) operand;
+			collectValue(re.getInnerValueEval(), true, temp);
 			return;
 		}
-
-		if (ve instanceof BlankEval) {
-			// ignore blanks
+		collectValue((ValueEval)operand, false, temp);
+	}
+	private void collectValue(ValueEval ve, boolean isViaReference, DoubleList temp)  throws EvaluationException {
+		if (ve == null) {
+			throw new IllegalArgumentException("ve must not be null");
+		}
+		if (ve instanceof NumberEval) {
+			NumberEval ne = (NumberEval) ve;
+			temp.add(ne.getNumberValue());
 			return;
 		}
 		if (ve instanceof ErrorEval) {
-			throw new EvaluationException((ErrorEval)ve);
+			throw new EvaluationException((ErrorEval) ve);
 		}
-		throw new RuntimeException("Unexpected value class (" + ve.getClass().getName() + ")");
+		if (ve instanceof StringEval) {
+			if (isViaReference) {
+				// ignore all ref strings
+				return;
+			}
+			String s = ((StringEval) ve).getStringValue();
+			Double d = OperandResolver.parseDouble(s);
+			if(d == null) {
+				throw new EvaluationException(ErrorEval.VALUE_INVALID);
+			}
+			temp.add(d.doubleValue());
+			return;
+		}
+		if (ve instanceof BoolEval) {
+			if (!isViaReference || _isReferenceBoolCounted) {
+				BoolEval boolEval = (BoolEval) ve;
+				temp.add(boolEval.getNumberValue());
+			}
+			return;
+		}
+		if (ve == BlankEval.INSTANCE) {
+			if (_isBlankCounted) {
+				temp.add(0.0);
+			}
+			return;
+		}
+		throw new RuntimeException("Invalid ValueEval type passed for conversion: ("
+				+ ve.getClass() + ")");
 	}
-
-
-	protected abstract ValueEval attemptXlateToNumeric(ValueEval ve);
 }

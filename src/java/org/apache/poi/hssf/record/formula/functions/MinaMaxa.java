@@ -17,25 +17,24 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEvalToNumericXlator;
-
 /**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt; 
- *
+ * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
+ * 
  */
-public final class Mina extends MultiOperandNumericFunction {
-    private static final ValueEvalToNumericXlator DEFAULT_NUM_XLATOR =
-        new ValueEvalToNumericXlator((short) (
-                  ValueEvalToNumericXlator.REF_BOOL_IS_PARSED  
-                 | ValueEvalToNumericXlator.BLANK_IS_PARSED
-                ));
-    
-	protected ValueEval attemptXlateToNumeric(ValueEval ve) {
-		return DEFAULT_NUM_XLATOR.attemptXlateToNumeric(ve);
+public abstract class MinaMaxa extends MultiOperandNumericFunction {
+
+	protected MinaMaxa() {
+		super(true, true);
 	}
 
-    public double evaluate(double[] values) {
-        return values.length > 0 ? MathX.min(values) : 0;
-    }
+	public static final Function MAXA = new MinaMaxa() {
+		protected double evaluate(double[] values) {
+			return values.length > 0 ? MathX.max(values) : 0;
+		}
+	};
+	public static final Function MINA = new MinaMaxa() {
+		protected double evaluate(double[] values) {
+			return values.length > 0 ? MathX.min(values) : 0;
+		}
+	};
 }
