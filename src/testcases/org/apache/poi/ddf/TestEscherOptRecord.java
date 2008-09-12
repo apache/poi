@@ -24,20 +24,16 @@ import org.apache.poi.util.HexDump;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Iterator;
 
 public class TestEscherOptRecord extends TestCase
 {
 
-    public void testFillFields() throws Exception
-    {
+    public void testFillFields() {
         checkFillFieldsSimple();
         checkFillFieldsComplex();
     }
 
-    private void checkFillFieldsComplex() throws IOException
-    {
+    private void checkFillFieldsComplex() {
         String dataStr = "33 00 " +
                 "0B F0 " +
                 "14 00 00 00 " +
@@ -60,9 +56,7 @@ public class TestEscherOptRecord extends TestCase
 
     }
 
-    private void checkFillFieldsSimple()
-            throws IOException
-    {
+    private void checkFillFieldsSimple() {
         String dataStr = "33 00 " + // options
                         "0B F0 " + // recordid
                         "12 00 00 00 " + // remaining bytes
@@ -83,8 +77,7 @@ public class TestEscherOptRecord extends TestCase
         assertEquals( prop3, r.getEscherProperty( 2 ) );
     }
 
-    public void testSerialize() throws Exception
-    {
+    public void testSerialize() {
         checkSerializeSimple();
         checkSerializeComplex();
     }
@@ -111,7 +104,7 @@ public class TestEscherOptRecord extends TestCase
                 "BF, 00, 01, 00, 00, 00, " +
                 "01, 80, 02, 00, 00, 00, " +
                 "BF, 00, 01, 00, 00, 00, " +
-                "01, 02, ]";
+                "01, 02]";
         assertEquals( dataStr, HexDump.toHex(data) );
 
     }
@@ -135,13 +128,12 @@ public class TestEscherOptRecord extends TestCase
                 "12, 00, 00, 00, " +
                 "BF, 00, 01, 00, 00, 00, " +
                 "81, 01, 09, 00, 00, 08, " +
-                "C0, 01, 40, 00, 00, 08, ]";
+                "C0, 01, 40, 00, 00, 08]";
         assertEquals( dataStr, HexDump.toHex(data) );
         assertEquals( 26, bytesWritten );
     }
 
-    public void testToString() throws Exception
-    {
+    public void testToString() {
         String nl = System.getProperty("line.separator");
         EscherOptRecord r = new EscherOptRecord();
         r.setOptions((short)0x000F);
@@ -162,8 +154,8 @@ public class TestEscherOptRecord extends TestCase
      * Test serialisation of a particually complex example 
      * This test is currently broken!
      */
-    public void testComplexSerialise() throws Exception {
-    	byte[] data = new byte[] {
+    public void testComplexSerialise() {
+    	byte[] data = {
     		0x53, 0x01, 0x0B, 0xF0-256, 0x9C-256, 0x01, 0x00, 0x00, 
     		// Simple data follows
     		0x42, 0x01,	0x49, 0x00, 0x00, 0x00,          // SP @ 8
@@ -263,7 +255,7 @@ public class TestEscherOptRecord extends TestCase
      *
      * See Bug 41946 for details.
      */
-    public void test41946() throws IOException {
+    public void test41946() {
         String dataStr1 =
                 "03 08 0B F0 00 03 00 00 81 00 30 65 01 00 82 00 98 B2 00 00 83 00 30 65 01 " +
                 "00 84 00 98 B2 00 00 85 00 00 00 00 00 87 00 01 00 00 00 88 00 00 00 00 00 " +
@@ -315,7 +307,7 @@ public class TestEscherOptRecord extends TestCase
      * Test that EscherOptRecord can properly read/write array properties
      * with empty complex part.
      */
-    public void testEmptyArrayProperty() throws IOException {
+    public void testEmptyArrayProperty() {
         EscherOptRecord r = new EscherOptRecord();
         EscherArrayProperty p = new EscherArrayProperty((short)(EscherProperties.FILL__SHADECOLORS + 0x8000), new byte[0] );
         assertEquals(0, p.getNumberOfElementsInArray());

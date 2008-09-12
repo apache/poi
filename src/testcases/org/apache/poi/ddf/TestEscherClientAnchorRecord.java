@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 import junit.framework.TestCase;
@@ -24,8 +23,7 @@ import org.apache.poi.util.HexRead;
 
 public class TestEscherClientAnchorRecord extends TestCase
 {
-    public void testSerialize() throws Exception
-    {
+    public void testSerialize() {
         EscherClientAnchorRecord r = createRecord();
 
         byte[] data = new byte[8 + 18 + 2];
@@ -37,11 +35,10 @@ public class TestEscherClientAnchorRecord extends TestCase
                 "4D, 00, 37, 00, 21, 00, 58, 00, " +
                 "0B, 00, 2C, 00, 16, 00, 63, 00, " +
                 "42, 00, " +
-                "FF, DD, ]", HexDump.toHex( data ) );
+                "FF, DD]", HexDump.toHex( data ) );
     }
 
-    public void testFillFields() throws Exception
-    {
+    public void testFillFields() {
         String hexData = "01 00 " +
                 "10 F0 " +
                 "14 00 00 00 " +
@@ -68,8 +65,7 @@ public class TestEscherClientAnchorRecord extends TestCase
         assertEquals( (byte) 0xDD, r.getRemainingData()[1] );
     }
 
-    public void testToString() throws Exception
-    {
+    public void testToString() {
         String nl = System.getProperty("line.separator");
 
         String expected = "org.apache.poi.ddf.EscherClientAnchorRecord:" + nl +

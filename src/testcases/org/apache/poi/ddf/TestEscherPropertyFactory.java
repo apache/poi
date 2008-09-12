@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 import junit.framework.TestCase;
@@ -30,8 +29,7 @@ import org.apache.poi.util.HexDump;
  */
 public class TestEscherPropertyFactory extends TestCase
 {
-    public void testCreateProperties() throws Exception
-    {
+    public void testCreateProperties() {
         String dataStr = "41 C1 " +     // propid, complex ind
                 "03 00 00 00 " +         // size of complex property
                 "01 00 " +              // propid, complex ind
@@ -46,15 +44,11 @@ public class TestEscherPropertyFactory extends TestCase
         List props = f.createProperties( data, 0, (short)3 );
         EscherComplexProperty p1 = (EscherComplexProperty) props.get( 0 );
         assertEquals( (short)0xC141, p1.getId() );
-        assertEquals( "[01, 02, 03, ]", HexDump.toHex( p1.getComplexData() ) );
+        assertEquals( "[01, 02, 03]", HexDump.toHex( p1.getComplexData() ) );
 
         EscherComplexProperty p3 = (EscherComplexProperty) props.get( 2 );
         assertEquals( (short)0xC141, p3.getId() );
-        assertEquals( "[01, 02, 03, ]", HexDump.toHex( p3.getComplexData() ) );
-
-
+        assertEquals( "[01, 02, 03]", HexDump.toHex( p3.getComplexData() ) );
     }
-
-
-
 }
+

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 import junit.framework.TestCase;
@@ -24,8 +23,7 @@ import org.apache.poi.util.HexRead;
 
 public class TestEscherDggRecord extends TestCase
 {
-    public void testSerialize() throws Exception
-    {
+    public void testSerialize() {
         EscherDggRecord r = createRecord();
 
         byte[] data = new byte[32];
@@ -38,12 +36,11 @@ public class TestEscherDggRecord extends TestCase
                 "02, 00, 00, 00, " +
                 "02, 00, 00, 00, " +
                 "01, 00, 00, 00, " +
-                "01, 00, 00, 00, 02, 00, 00, 00, ]",
+                "01, 00, 00, 00, 02, 00, 00, 00]",
                 HexDump.toHex( data ) );
     }
 
-    public void testFillFields() throws Exception
-    {
+    public void testFillFields() {
         String hexData = "00 00 " +
                 "06 F0 " +
                 "18 00 00 00 " +
@@ -66,8 +63,7 @@ public class TestEscherDggRecord extends TestCase
         assertEquals( 0x02, r.getFileIdClusters()[0].getNumShapeIdsUsed());
     }
 
-    public void testToString() throws Exception
-    {
+    public void testToString() {
         String nl = System.getProperty("line.separator");
 
         String expected = "org.apache.poi.ddf.EscherDggRecord:" + nl +
@@ -82,7 +78,7 @@ public class TestEscherDggRecord extends TestCase
         assertEquals( expected, createRecord().toString() );
     }
 
-    private EscherDggRecord createRecord()
+    private static EscherDggRecord createRecord()
     {
         EscherDggRecord r = new EscherDggRecord();
         r.setOptions( (short) 0x0000 );
@@ -96,12 +92,9 @@ public class TestEscherDggRecord extends TestCase
         return r;
     }
 
-    public void testGetRecordSize() throws Exception
-    {
+    public void testGetRecordSize() {
         EscherDggRecord r = new EscherDggRecord();
         r.setFileIdClusters(new EscherDggRecord.FileIdCluster[] { new EscherDggRecord.FileIdCluster(0,0) } );
         assertEquals(32,r.getRecordSize());
-
     }
-
 }
