@@ -35,9 +35,8 @@ import junit.framework.TestCase;
 public final class TestArrayPtg extends TestCase {
 
 	private static final byte[] ENCODED_PTG_DATA = {
-		0x40, 0x00,
-		0x08, 0x00,
-		0, 0, 0, 0, 0, 0, 0, 0, 
+		0x40,
+		0, 0, 0, 0, 0, 0, 0, 
 	};
 	private static final byte[] ENCODED_CONSTANT_DATA = {
 		2,    // 3 columns
@@ -150,6 +149,7 @@ public final class TestArrayPtg extends TestCase {
 		RecordInputStream in = new TestcaseRecordInputStream(ArrayPtg.sid, fullData);
 		
 		Ptg[] ptgs = Ptg.readTokens(ENCODED_PTG_DATA.length, in);
+		assertEquals(1, ptgs.length);
 		ArrayPtg aPtg = (ArrayPtg) ptgs[0];
 		assertEquals(operandClass, aPtg.getPtgClass());
 	}
