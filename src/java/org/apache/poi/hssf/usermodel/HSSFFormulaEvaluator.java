@@ -47,8 +47,6 @@ import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.FunctionEval;
-import org.apache.poi.hssf.record.formula.eval.LazyAreaEval;
-import org.apache.poi.hssf.record.formula.eval.LazyRefEval;
 import org.apache.poi.hssf.record.formula.eval.NameEval;
 import org.apache.poi.hssf.record.formula.eval.NameXEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
@@ -70,28 +68,36 @@ import org.apache.poi.hssf.util.CellReference;
  */
 public class HSSFFormulaEvaluator {
 
-	/**
-	 * used to track the number of evaluations
-	 */
+    /**
+     * used to track the number of evaluations
+     */
     private static final class Counter {
         public int value;
+        public int depth;
         public Counter() {
             value = 0;
         }
     }
 
-    private final HSSFSheet _sheet;
     private final HSSFWorkbook _workbook;
     private final EvaluationCache _cache;
 
     private Counter _evaluationCounter;
 
+    /**
+     * @deprecated (Sep 2008) HSSFSheet parameter is ignored
+     */
     public HSSFFormulaEvaluator(HSSFSheet sheet, HSSFWorkbook workbook) {
-        this(sheet, workbook, new EvaluationCache(), new Counter());
+        this(workbook);
+        if (false) {
+            sheet.toString(); // suppress unused parameter compiler warning
+        }
+    }
+    public HSSFFormulaEvaluator(HSSFWorkbook workbook) {
+        this(workbook, new EvaluationCache(), new Counter());
     }
 
-    private HSSFFormulaEvaluator(HSSFSheet sheet, HSSFWorkbook workbook, EvaluationCache cache, Counter evaluationCounter) {
-        _sheet = sheet;
+    private HSSFFormulaEvaluator(HSSFWorkbook workbook, EvaluationCache cache, Counter evaluationCounter) {
         _workbook = workbook;
         _cache = cache;
         _evaluationCounter = evaluationCounter;
@@ -100,7 +106,7 @@ public class HSSFFormulaEvaluator {
     /**
      * for debug use. Used in toString methods
      */
-    public String getSheetName(HSSFSheet sheet) {
+    /* package */ String getSheetName(HSSFSheet sheet) {
         return _workbook.getSheetName(_workbook.getSheetIndex(sheet));
     }
     /**
@@ -159,34 +165,23 @@ public class HSSFFormulaEvaluator {
      * @param cell
      */
     public CellValue evaluate(HSSFCell cell) {
-        CellValue retval = null;
-        if (cell != null) {
-            switch (cell.getCellType()) {
-            case HSSFCell.CELL_TYPE_BLANK:
-                retval = new CellValue(HSSFCell.CELL_TYPE_BLANK);
-                break;
-            case HSSFCell.CELL_TYPE_BOOLEAN:
-                retval = new CellValue(HSSFCell.CELL_TYPE_BOOLEAN);
-                retval.setBooleanValue(cell.getBooleanCellValue());
-                break;
-            case HSSFCell.CELL_TYPE_ERROR:
-                retval = new CellValue(HSSFCell.CELL_TYPE_ERROR);
-                retval.setErrorValue(cell.getErrorCellValue());
-                break;
-            case HSSFCell.CELL_TYPE_FORMULA:
-                retval = getCellValueForEval(internalEvaluate(cell, _sheet));
-                break;
-            case HSSFCell.CELL_TYPE_NUMERIC:
-                retval = new CellValue(HSSFCell.CELL_TYPE_NUMERIC);
-                retval.setNumberValue(cell.getNumericCellValue());
-                break;
-            case HSSFCell.CELL_TYPE_STRING:
-                retval = new CellValue(HSSFCell.CELL_TYPE_STRING);
-                retval.setRichTextStringValue(cell.getRichStringCellValue());
-                break;
-            }
+        if (cell == null) {
+            return null;
         }
-        return retval;
+        
+        switch (cell.getCellType()) {
+            case HSSFCell.CELL_TYPE_BOOLEAN:
+                return CellValue.valueOf(cell.getBooleanCellValue());
+            case HSSFCell.CELL_TYPE_ERROR:
+                return CellValue.getError(cell.getErrorCellValue());
+            case HSSFCell.CELL_TYPE_FORMULA:
+                return evaluateFormulaCellValue(cell);
+            case HSSFCell.CELL_TYPE_NUMERIC:
+                return new CellValue(cell.getNumericCellValue());
+            case HSSFCell.CELL_TYPE_STRING:
+                return new CellValue(cell.getRichStringCellValue());
+        }
+        throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
     }
 
 
@@ -209,32 +204,13 @@ public class HSSFFormulaEvaluator {
      * @return The type of the formula result (the cell's type remains as HSSFCell.CELL_TYPE_FORMULA however)
      */
     public int evaluateFormulaCell(HSSFCell cell) {
-        if (cell != null) {
-            switch (cell.getCellType()) {
-            case HSSFCell.CELL_TYPE_FORMULA:
-                CellValue cv = getCellValueForEval(internalEvaluate(cell, _sheet));
-                switch (cv.getCellType()) {
-                case HSSFCell.CELL_TYPE_BOOLEAN:
-                    cell.setCellValue(cv.getBooleanValue());
-                    break;
-                case HSSFCell.CELL_TYPE_ERROR:
-                    cell.setCellValue(cv.getErrorValue());
-                    break;
-                case HSSFCell.CELL_TYPE_NUMERIC:
-                    cell.setCellValue(cv.getNumberValue());
-                    break;
-                case HSSFCell.CELL_TYPE_STRING:
-                    cell.setCellValue(cv.getRichTextStringValue());
-                    break;
-                case HSSFCell.CELL_TYPE_BLANK:
-                    break;
-                case HSSFCell.CELL_TYPE_FORMULA: // this will never happen, we have already evaluated the formula
-                    break;
-                }
-                return cv.getCellType();
-            }
+        if (cell == null || cell.getCellType() != HSSFCell.CELL_TYPE_FORMULA) {
+            return -1;
         }
-        return -1;
+        CellValue cv = evaluateFormulaCellValue(cell);
+        // cell remains a formula cell, but the cached value is changed
+        setCellValue(cell, cv);
+        return cv.getCellType();
     }
 
     /**
@@ -254,34 +230,55 @@ public class HSSFFormulaEvaluator {
      * @param cell
      */
     public HSSFCell evaluateInCell(HSSFCell cell) {
-        if (cell != null) {
-            switch (cell.getCellType()) {
-            case HSSFCell.CELL_TYPE_FORMULA:
-                CellValue cv = getCellValueForEval(internalEvaluate(cell, _sheet));
-                switch (cv.getCellType()) {
-                case HSSFCell.CELL_TYPE_BOOLEAN:
-                    cell.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
-                    cell.setCellValue(cv.getBooleanValue());
-                    break;
-                case HSSFCell.CELL_TYPE_ERROR:
-                    cell.setCellErrorValue(cv.getErrorValue());
-                    break;
-                case HSSFCell.CELL_TYPE_NUMERIC:
-                    cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
-                    cell.setCellValue(cv.getNumberValue());
-                    break;
-                case HSSFCell.CELL_TYPE_STRING:
-                    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-                    cell.setCellValue(cv.getRichTextStringValue());
-                    break;
-                case HSSFCell.CELL_TYPE_BLANK:
-                    break;
-                case HSSFCell.CELL_TYPE_FORMULA: // this will never happen, we have already evaluated the formula
-                    break;
-                }
-            }
+        if (cell == null) {
+            return null;
+        }
+        if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+            CellValue cv = evaluateFormulaCellValue(cell);
+            setCellType(cell, cv); // cell will no longer be a formula cell
+            setCellValue(cell, cv);
         }
         return cell;
+    }
+    private static void setCellType(HSSFCell cell, CellValue cv) {
+        int cellType = cv.getCellType();
+        switch (cellType) {
+            case HSSFCell.CELL_TYPE_BOOLEAN:
+            case HSSFCell.CELL_TYPE_ERROR:
+            case HSSFCell.CELL_TYPE_NUMERIC:
+            case HSSFCell.CELL_TYPE_STRING:
+                cell.setCellType(cellType);
+                return;
+            case HSSFCell.CELL_TYPE_BLANK:
+                // never happens - blanks eventually get translated to zero
+            case HSSFCell.CELL_TYPE_FORMULA:
+                // this will never happen, we have already evaluated the formula
+        }
+        throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");
+    }
+
+    private static void setCellValue(HSSFCell cell, CellValue cv) {
+        int cellType = cv.getCellType();
+        switch (cellType) {
+            case HSSFCell.CELL_TYPE_BOOLEAN:
+                cell.setCellValue(cv.getBooleanValue());
+                break;
+            case HSSFCell.CELL_TYPE_ERROR:
+                cell.setCellErrorValue(cv.getErrorValue());
+                break;
+            case HSSFCell.CELL_TYPE_NUMERIC:
+                cell.setCellValue(cv.getNumberValue());
+                break;
+            case HSSFCell.CELL_TYPE_STRING:
+                cell.setCellValue(cv.getRichTextStringValue());
+                break;
+            case HSSFCell.CELL_TYPE_BLANK:
+                // never happens - blanks eventually get translated to zero
+            case HSSFCell.CELL_TYPE_FORMULA:
+                // this will never happen, we have already evaluated the formula
+            default:
+                throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");
+        }
     }
 
     /**
@@ -296,9 +293,9 @@ public class HSSFFormulaEvaluator {
      *  cells, and calling evaluateFormulaCell on each one.
      */
     public static void evaluateAllFormulaCells(HSSFWorkbook wb) {
+        HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
         for(int i=0; i<wb.getNumberOfSheets(); i++) {
             HSSFSheet sheet = wb.getSheetAt(i);
-            HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
 
             for (Iterator rit = sheet.rowIterator(); rit.hasNext();) {
                 HSSFRow r = (HSSFRow)rit.next();
@@ -312,72 +309,61 @@ public class HSSFFormulaEvaluator {
         }
     }
 
-
     /**
      * Returns a CellValue wrapper around the supplied ValueEval instance.
      * @param eval
      */
-    private static CellValue getCellValueForEval(ValueEval eval) {
-        CellValue retval = null;
-        if (eval != null) {
-            if (eval instanceof NumberEval) {
-                NumberEval ne = (NumberEval) eval;
-                retval = new CellValue(HSSFCell.CELL_TYPE_NUMERIC);
-                retval.setNumberValue(ne.getNumberValue());
-            }
-            else if (eval instanceof BoolEval) {
-                BoolEval be = (BoolEval) eval;
-                retval = new CellValue(HSSFCell.CELL_TYPE_BOOLEAN);
-                retval.setBooleanValue(be.getBooleanValue());
-            }
-            else if (eval instanceof StringEval) {
-                StringEval ne = (StringEval) eval;
-                retval = new CellValue(HSSFCell.CELL_TYPE_STRING);
-                retval.setStringValue(ne.getStringValue());
-            }
-            else if (eval instanceof BlankEval) {
-                retval = new CellValue(HSSFCell.CELL_TYPE_BLANK);
-            }
-            else if (eval instanceof ErrorEval) {
-                retval = new CellValue(HSSFCell.CELL_TYPE_ERROR);
-                retval.setErrorValue((byte)((ErrorEval)eval).getErrorCode());
-//                retval.setRichTextStringValue(new HSSFRichTextString("#An error occurred. check cell.getErrorCode()"));
-            }
-            else {
-                retval = new CellValue(HSSFCell.CELL_TYPE_ERROR);
-            }
+    private CellValue evaluateFormulaCellValue(HSSFCell cell) {
+        ValueEval eval = internalEvaluate(cell);
+        if (eval instanceof NumberEval) {
+            NumberEval ne = (NumberEval) eval;
+            return new CellValue(ne.getNumberValue());
         }
-        return retval;
+        if (eval instanceof BoolEval) {
+            BoolEval be = (BoolEval) eval;
+            return CellValue.valueOf(be.getBooleanValue());
+        }
+        if (eval instanceof StringEval) {
+            StringEval ne = (StringEval) eval;
+            return new CellValue(new HSSFRichTextString(ne.getStringValue()));
+        }
+        if (eval instanceof ErrorEval) {
+            return CellValue.getError(((ErrorEval)eval).getErrorCode());
+        }
+        throw new RuntimeException("Unexpected eval class (" + eval.getClass().getName() + ")");
     }
 
     /**
      * Dev. Note: Internal evaluate must be passed only a formula cell
      * else a runtime exception will be thrown somewhere inside the method.
      * (Hence this is a private method.)
+     * @return never <code>null</code>, never {@link BlankEval}
      */
-    private ValueEval internalEvaluate(HSSFCell srcCell, HSSFSheet sheet) {
+    private ValueEval internalEvaluate(HSSFCell srcCell) {
         int srcRowNum = srcCell.getRowIndex();
         int srcColNum = srcCell.getCellNum();
 
         ValueEval result;
 
-        int sheetIndex = _workbook.getSheetIndex(sheet);
+        int sheetIndex = _workbook.findSheetIndex(srcCell.getSheet());
         result = _cache.getValue(sheetIndex, srcRowNum, srcColNum);
         if (result != null) {
             return result;
         }
         _evaluationCounter.value++;
+        _evaluationCounter.depth++;
 
         EvaluationCycleDetector tracker = EvaluationCycleDetectorManager.getTracker();
 
-        if(!tracker.startEvaluate(_workbook, sheet, srcRowNum, srcColNum)) {
+        if(!tracker.startEvaluate(_workbook, sheetIndex, srcRowNum, srcColNum)) {
             return ErrorEval.CIRCULAR_REF_ERROR;
         }
         try {
-            result = evaluateCell(srcRowNum, (short)srcColNum, srcCell.getCellFormula());
+            result = evaluateCell(sheetIndex, srcRowNum, (short)srcColNum, srcCell.getCellFormula());
         } finally {
-            tracker.endEvaluate(_workbook, sheet, srcRowNum, srcColNum);
+            tracker.endEvaluate(_workbook, sheetIndex, srcRowNum, srcColNum);
             _cache.setValue(sheetIndex, srcRowNum, srcColNum, result);
+            _evaluationCounter.depth--;
         }
         if (isDebugLogEnabled()) {
             String sheetName = _workbook.getSheetName(sheetIndex);
@@ -386,7 +372,7 @@ public class HSSFFormulaEvaluator {
         }
         return result;
     }
-    private ValueEval evaluateCell(int srcRowNum, short srcColNum, String cellFormulaText) {
+    private ValueEval evaluateCell(int sheetIndex, int srcRowNum, short srcColNum, String cellFormulaText) {
 
         Ptg[] ptgs = FormulaParser.parse(cellFormulaText, _workbook);
 
@@ -420,15 +406,15 @@ public class HSSFFormulaEvaluator {
                     Eval p = (Eval) stack.pop();
                     ops[j] = p;
                 }
-                logDebug("invoke " + operation + " (nAgs=" + numops + ")");
-                opResult = invokeOperation(operation, ops, srcRowNum, srcColNum, _workbook, _sheet);
+//                logDebug("invoke " + operation + " (nAgs=" + numops + ")");
+                opResult = invokeOperation(operation, ops, _workbook, sheetIndex, srcRowNum, srcColNum);
             } else {
-                opResult = getEvalForPtg(ptg, _sheet);
+                opResult = getEvalForPtg(ptg, sheetIndex);
             }
             if (opResult == null) {
                 throw new RuntimeException("Evaluation result must not be null");
             }
-            logDebug("push " + opResult);
+//            logDebug("push " + opResult);
             stack.push(opResult);
         }
 
@@ -473,24 +459,21 @@ public class HSSFFormulaEvaluator {
         return evaluationResult;
     }
 
-    private static Eval invokeOperation(OperationEval operation, Eval[] ops, int srcRowNum, short srcColNum,
-            HSSFWorkbook workbook, HSSFSheet sheet) {
+    private static Eval invokeOperation(OperationEval operation, Eval[] ops, 
+            HSSFWorkbook workbook, int sheetIndex, int srcRowNum, int srcColNum) {
 
         if(operation instanceof FunctionEval) {
             FunctionEval fe = (FunctionEval) operation;
             if(fe.isFreeRefFunction()) {
-                return fe.getFreeRefFunction().evaluate(ops, srcRowNum, srcColNum, workbook, sheet);
+                return fe.getFreeRefFunction().evaluate(ops, workbook, sheetIndex, srcRowNum, srcColNum);
             }
         }
-        return operation.evaluate(ops, srcRowNum, srcColNum);
+        return operation.evaluate(ops, srcRowNum, (short)srcColNum);
     }
 
     private HSSFSheet getOtherSheet(int externSheetIndex) {
         Workbook wb = _workbook.getWorkbook();
         return _workbook.getSheetAt(wb.getSheetIndexFromExternSheetIndex(externSheetIndex));
-    }
-    private HSSFFormulaEvaluator createEvaluatorForAnotherSheet(HSSFSheet sheet) {
-        return new HSSFFormulaEvaluator(sheet, _workbook, _cache, _evaluationCounter);
     }
 
     /**
@@ -499,7 +482,7 @@ public class HSSFFormulaEvaluator {
      * StringPtg, BoolPtg <br/>special Note: OperationPtg subtypes cannot be
      * passed here!
      */
-    private Eval getEvalForPtg(Ptg ptg, HSSFSheet sheet) {
+    private Eval getEvalForPtg(Ptg ptg, int sheetIndex) {
         if (ptg instanceof NamePtg) {
             // named ranges, macro functions
             NamePtg namePtg = (NamePtg) ptg;
@@ -514,7 +497,7 @@ public class HSSFFormulaEvaluator {
                 return new NameEval(nameRecord.getNameText());
             }
             if (nameRecord.hasFormula()) {
-                return evaluateNameFormula(nameRecord.getNameDefinition(), sheet);
+                return evaluateNameFormula(nameRecord.getNameDefinition(), sheetIndex);
             }
 
             throw new RuntimeException("Don't now how to evalate name '" + nameRecord.getNameText() + "'");
@@ -522,22 +505,6 @@ public class HSSFFormulaEvaluator {
         if (ptg instanceof NameXPtg) {
             NameXPtg nameXPtg = (NameXPtg) ptg;
             return new NameXEval(nameXPtg.getSheetRefIndex(), nameXPtg.getNameIndex());
-        }
-        if (ptg instanceof RefPtg) {
-            return new LazyRefEval(((RefPtg) ptg), sheet, this);
-        }
-        if (ptg instanceof Ref3DPtg) {
-            Ref3DPtg refPtg = (Ref3DPtg) ptg;
-            HSSFSheet xsheet = getOtherSheet(refPtg.getExternSheetIndex());
-            return new LazyRefEval(refPtg, xsheet, createEvaluatorForAnotherSheet(xsheet));
-        }
-        if (ptg instanceof AreaPtg) {
-            return new LazyAreaEval(((AreaPtg) ptg), sheet, this);
-        }
-        if (ptg instanceof Area3DPtg) {
-            Area3DPtg a3dp = (Area3DPtg) ptg;
-            HSSFSheet xsheet = getOtherSheet(a3dp.getExternSheetIndex());
-            return new LazyAreaEval(a3dp, xsheet, createEvaluatorForAnotherSheet(xsheet));
         }
 
         if (ptg instanceof IntPtg) {
@@ -555,17 +522,38 @@ public class HSSFFormulaEvaluator {
         if (ptg instanceof ErrPtg) {
             return ErrorEval.valueOf(((ErrPtg) ptg).getErrorCode());
         }
+        HSSFSheet sheet = _workbook.getSheetAt(sheetIndex);
+        if (ptg instanceof RefPtg) {
+            return new LazyRefEval(((RefPtg) ptg), sheet, this);
+        }
+        if (ptg instanceof AreaPtg) {
+            return new LazyAreaEval(((AreaPtg) ptg), sheet, this);
+        }
+        if (ptg instanceof Ref3DPtg) {
+            Ref3DPtg refPtg = (Ref3DPtg) ptg;
+            HSSFSheet xsheet = getOtherSheet(refPtg.getExternSheetIndex());
+            return new LazyRefEval(refPtg, xsheet, this);
+        }
+        if (ptg instanceof Area3DPtg) {
+            Area3DPtg a3dp = (Area3DPtg) ptg;
+            HSSFSheet xsheet = getOtherSheet(a3dp.getExternSheetIndex());
+            return new LazyAreaEval(a3dp, xsheet, this);
+        }
+
         if (ptg instanceof UnknownPtg) {
-            // TODO - remove UnknownPtg
+            // POI uses UnknownPtg when the encoded Ptg array seems to be corrupted.
+            // This seems to occur in very rare cases (e.g. unused name formulas in bug 44774, attachment 21790)
+            // In any case, formulas are re-parsed before execution, so UnknownPtg should not get here 
             throw new RuntimeException("UnknownPtg not allowed");
         }
+        
         throw new RuntimeException("Unexpected ptg class (" + ptg.getClass().getName() + ")");
     }
-    private Eval evaluateNameFormula(Ptg[] ptgs, HSSFSheet sheet) {
+    private Eval evaluateNameFormula(Ptg[] ptgs, int sheetIndex) {
         if (ptgs.length > 1) {
             throw new RuntimeException("Complex name formulas not supported yet");
         }
-        return getEvalForPtg(ptgs[0], sheet);
+        return getEvalForPtg(ptgs[0], sheetIndex);
     }
 
     /**
@@ -573,11 +561,8 @@ public class HSSFFormulaEvaluator {
      * impl instance and return that. Since the cell could be an external
      * reference, we need the sheet that this belongs to.
      * Non existent cells are treated as empty.
-     * @param cell
-     * @param sheet
-     * @param workbook
      */
-    public ValueEval getEvalForCell(HSSFCell cell, HSSFSheet sheet) {
+    /* package */ ValueEval getEvalForCell(HSSFCell cell) {
 
         if (cell == null) {
             return BlankEval.INSTANCE;
@@ -588,7 +573,7 @@ public class HSSFFormulaEvaluator {
             case HSSFCell.CELL_TYPE_STRING:
                 return new StringEval(cell.getRichStringCellValue().getString());
             case HSSFCell.CELL_TYPE_FORMULA:
-                return internalEvaluate(cell, sheet);
+                return internalEvaluate(cell);
             case HSSFCell.CELL_TYPE_BOOLEAN:
                 return BoolEval.valueOf(cell.getBooleanCellValue());
             case HSSFCell.CELL_TYPE_BLANK:
@@ -606,43 +591,50 @@ public class HSSFFormulaEvaluator {
      * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
      */
     public static final class CellValue {
-        private int cellType;
-        private HSSFRichTextString richTextStringValue;
-        private double numberValue;
-        private boolean booleanValue;
-        private byte errorValue;
+        public static final CellValue TRUE = new CellValue(HSSFCell.CELL_TYPE_BOOLEAN, 0.0, true,  null, 0);
+        public static final CellValue FALSE= new CellValue(HSSFCell.CELL_TYPE_BOOLEAN, 0.0, false, null, 0);
+        
+        private final int _cellType;
+        private final double _numberValue;
+        private final boolean _booleanValue;
+        private final HSSFRichTextString _richTextStringValue;
+        private final int _errorCode;
 
-        /**
-         * CellType should be one of the types defined in HSSFCell
-         * @param cellType
-         */
-        public CellValue(int cellType) {
-            super();
-            this.cellType = cellType;
+        private CellValue(int cellType, double numberValue, boolean booleanValue, 
+                HSSFRichTextString textValue, int errorCode) {
+            _cellType = cellType;
+            _numberValue = numberValue;
+            _booleanValue = booleanValue;
+            _richTextStringValue = textValue;
+            _errorCode = errorCode;
         }
+        
+        
+        /* package*/ CellValue(double numberValue) {
+            this(HSSFCell.CELL_TYPE_NUMERIC, numberValue, false, null, 0);
+        }
+        /* package*/ static CellValue valueOf(boolean booleanValue) {
+            return booleanValue ? TRUE : FALSE;
+        }
+        /* package*/ CellValue(HSSFRichTextString stringValue) {
+            this(HSSFCell.CELL_TYPE_STRING, 0.0, false, stringValue, 0);
+        }
+        /* package*/ static CellValue getError(int errorCode) {
+            return new CellValue(HSSFCell.CELL_TYPE_ERROR, 0.0, false, null, errorCode);
+        }
+        
+        
         /**
          * @return Returns the booleanValue.
          */
         public boolean getBooleanValue() {
-            return booleanValue;
-        }
-        /**
-         * @param booleanValue The booleanValue to set.
-         */
-        public void setBooleanValue(boolean booleanValue) {
-            this.booleanValue = booleanValue;
+            return _booleanValue;
         }
         /**
          * @return Returns the numberValue.
          */
         public double getNumberValue() {
-            return numberValue;
-        }
-        /**
-         * @param numberValue The numberValue to set.
-         */
-        public void setNumberValue(double numberValue) {
-            this.numberValue = numberValue;
+            return _numberValue;
         }
         /**
          * @return Returns the stringValue. This method is deprecated, use
@@ -650,45 +642,25 @@ public class HSSFFormulaEvaluator {
          * @deprecated
          */
         public String getStringValue() {
-            return richTextStringValue.getString();
-        }
-        /**
-         * @param stringValue The stringValue to set. This method is deprecated, use
-         * getRichTextStringValue instead.
-         * @deprecated
-         */
-        public void setStringValue(String stringValue) {
-            this.richTextStringValue = new HSSFRichTextString(stringValue);
+            return _richTextStringValue.getString();
         }
         /**
          * @return Returns the cellType.
          */
         public int getCellType() {
-            return cellType;
+            return _cellType;
         }
         /**
          * @return Returns the errorValue.
          */
         public byte getErrorValue() {
-            return errorValue;
-        }
-        /**
-         * @param errorValue The errorValue to set.
-         */
-        public void setErrorValue(byte errorValue) {
-            this.errorValue = errorValue;
+            return (byte) _errorCode;
         }
         /**
          * @return Returns the richTextStringValue.
          */
         public HSSFRichTextString getRichTextStringValue() {
-            return richTextStringValue;
-        }
-        /**
-         * @param richTextStringValue The richTextStringValue to set.
-         */
-        public void setRichTextStringValue(HSSFRichTextString richTextStringValue) {
-            this.richTextStringValue = richTextStringValue;
+            return _richTextStringValue;
         }
     }
 

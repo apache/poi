@@ -45,13 +45,13 @@ public interface FreeRefFunction {
 	 * 
 	 * @param args the pre-evaluated arguments for this function. args is never <code>null</code>,
 	 * 		  nor are any of its elements.
+	 * @param srcCellSheet zero based sheet index of the cell containing the currently evaluating formula
 	 * @param srcCellRow zero based row index of the cell containing the currently evaluating formula 
 	 * @param srcCellCol zero based column index of the cell containing the currently evaluating formula 
 	 * @param workbook is the workbook containing the formula/cell being evaluated
-	 * @param sheet is the sheet containing the formula/cell being evaluated
 	 * @return never <code>null</code>. Possibly an instance of <tt>ErrorEval</tt> in the case of 
 	 * a specified Excel error (Exceptions are never thrown to represent Excel errors).
 	 * 
 	 */
-	ValueEval evaluate(Eval[] args, int srcCellRow, short srcCellCol, HSSFWorkbook workbook, HSSFSheet sheet);
+	ValueEval evaluate(Eval[] args, HSSFWorkbook workbook, int srcCellSheet, int srcCellRow, int srcCellCol);
 }

@@ -65,7 +65,7 @@ public final class TestExternalFunction extends TestCase {
 		String actualFormula=cell.getCellFormula();
 		assertEquals("myFunc()", actualFormula);
 		
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		CellValue evalResult = fe.evaluate(cell);
 		
 		// Check the return value from ExternalFunction.evaluate()

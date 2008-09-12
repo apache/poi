@@ -68,7 +68,7 @@ public final class TestFormulaEvaluatorDocs extends TestCase {
 		// uses evaluateFormulaCell()
 		for(int sheetNum = 0; sheetNum < wb.getNumberOfSheets(); sheetNum++) {
 			HSSFSheet sheet = wb.getSheetAt(sheetNum);
-			HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
+			HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
 
 			for(Iterator rit = sheet.rowIterator(); rit.hasNext();) {
 				HSSFRow r = (HSSFRow)rit.next();
@@ -103,7 +103,7 @@ public final class TestFormulaEvaluatorDocs extends TestCase {
 		// uses evaluateInCell()
 		for(int sheetNum = 0; sheetNum < wb.getNumberOfSheets(); sheetNum++) {
 			HSSFSheet sheet = wb.getSheetAt(sheetNum);
-			HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
+			HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
 
 			for(Iterator rit = sheet.rowIterator(); rit.hasNext();) {
 				HSSFRow r = (HSSFRow)rit.next();

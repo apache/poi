@@ -177,7 +177,7 @@ public final class TestIndexFunctionFromSpreadsheet extends TestCase {
 
 	private void processTestSheet(HSSFWorkbook workbook, String sheetName) {
 		HSSFSheet sheet = workbook.getSheetAt(0);
-		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, workbook);
+		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(workbook);
 		int maxRows = sheet.getLastRowNum()+1;
 		int result = Result.NO_EVALUATIONS_FOUND; // so far
 

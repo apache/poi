@@ -15,23 +15,23 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.formula.eval;
+package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.formula.AreaI;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.AreaI.OffsetArea;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.record.formula.eval.AreaEval;
+import org.apache.poi.hssf.record.formula.eval.BlankEval;
+import org.apache.poi.hssf.record.formula.eval.RefEvalBase;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.util.CellReference;
 
 /**
 *
 * @author Josh Micich 
 */
-public final class LazyRefEval extends RefEvalBase {
+final class LazyRefEval extends RefEvalBase {
 
 	private final HSSFSheet _sheet;
 	private final HSSFFormulaEvaluator _evaluator;
@@ -60,7 +60,7 @@ public final class LazyRefEval extends RefEvalBase {
 		if (cell == null) {
 			return BlankEval.INSTANCE;
 		}
-		return _evaluator.getEvalForCell(cell, _sheet);
+		return _evaluator.getEvalForCell(cell);
 	}
 	
 	public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {

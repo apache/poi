@@ -37,19 +37,19 @@ final class EvaluationCycleDetector {
 	private static final class CellEvaluationFrame {
 
 		private final HSSFWorkbook _workbook;
-		private final HSSFSheet _sheet;
+		private final int _sheetIndex;
 		private final int _srcRowNum;
 		private final int _srcColNum;
 
-		public CellEvaluationFrame(HSSFWorkbook workbook, HSSFSheet sheet, int srcRowNum, int srcColNum) {
+		public CellEvaluationFrame(HSSFWorkbook workbook, int sheetIndex, int srcRowNum, int srcColNum) {
 			if (workbook == null) {
 				throw new IllegalArgumentException("workbook must not be null");
 			}
-			if (sheet == null) {
-				throw new IllegalArgumentException("sheet must not be null");
+			if (sheetIndex < 0) {
+				throw new IllegalArgumentException("sheetIndex must not be negative");
 			}
 			_workbook = workbook;
-			_sheet = sheet;
+			_sheetIndex = sheetIndex;
 			_srcRowNum = srcRowNum;
 			_srcColNum = srcColNum;
 		}
@@ -59,7 +59,7 @@ final class EvaluationCycleDetector {
 			if (_workbook != other._workbook) {
 				return false;
 			}
-			if (_sheet != other._sheet) {
+			if (_sheetIndex != other._sheetIndex) {
 				return false;
 			}
 			if (_srcRowNum != other._srcRowNum) {
@@ -75,7 +75,7 @@ final class EvaluationCycleDetector {
 		 * @return human readable string for debug purposes
 		 */
 		public String formatAsString() {
-			return "R=" + _srcRowNum + " C=" + _srcColNum + " ShIx=" + _workbook.getSheetIndex(_sheet);
+			return "R=" + _srcRowNum + " C=" + _srcColNum + " ShIx=" + _sheetIndex;
 		}
 
 		public String toString() {
@@ -108,8 +108,8 @@ final class EvaluationCycleDetector {
 	 * @return <code>true</code> if the specified cell has not been visited yet in the current 
 	 * evaluation. <code>false</code> if the specified cell is already being evaluated.
 	 */
-	public boolean startEvaluate(HSSFWorkbook workbook, HSSFSheet sheet, int srcRowNum, int srcColNum) {
-		CellEvaluationFrame cef = new CellEvaluationFrame(workbook, sheet, srcRowNum, srcColNum);
+	public boolean startEvaluate(HSSFWorkbook workbook, int sheetIndex, int srcRowNum, int srcColNum) {
+		CellEvaluationFrame cef = new CellEvaluationFrame(workbook, sheetIndex, srcRowNum, srcColNum);
 		if (_evaluationFrames.contains(cef)) {
 			return false;
 		}
@@ -129,7 +129,7 @@ final class EvaluationCycleDetector {
 	 * required. However, they have been included to assert correct behaviour,
 	 * and form more meaningful error messages.
 	 */
-	public void endEvaluate(HSSFWorkbook workbook, HSSFSheet sheet, int srcRowNum, int srcColNum) {
+	public void endEvaluate(HSSFWorkbook workbook, int sheetIndex, int srcRowNum, int srcColNum) {
 		int nFrames = _evaluationFrames.size();
 		if (nFrames < 1) {
 			throw new IllegalStateException("Call to endEvaluate without matching call to startEvaluate");
@@ -137,7 +137,7 @@ final class EvaluationCycleDetector {
 
 		nFrames--;
 		CellEvaluationFrame cefExpected = (CellEvaluationFrame) _evaluationFrames.get(nFrames);
-		CellEvaluationFrame cefActual = new CellEvaluationFrame(workbook, sheet, srcRowNum, srcColNum);
+		CellEvaluationFrame cefActual = new CellEvaluationFrame(workbook, sheetIndex, srcRowNum, srcColNum);
 		if (!cefActual.equals(cefExpected)) {
 			throw new RuntimeException("Wrong cell specified. "
 					+ "Corresponding startEvaluate() call was for cell {"

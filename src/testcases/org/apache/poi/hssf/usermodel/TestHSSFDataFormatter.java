@@ -243,7 +243,7 @@ public final class TestHSSFDataFormatter extends TestCase {
 		assertEquals("SUM(12.25,12.25)/100", formatter.formatCellValue(cell));
 
 		// now with a formula evaluator
-		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb.getSheetAt(0), wb);
+		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
 		log(formatter.formatCellValue(cell, evaluator) + "\t\t\t (with evaluator)");
 		assertEquals("24.50%", formatter.formatCellValue(cell,evaluator));
 	}
@@ -257,7 +257,7 @@ public final class TestHSSFDataFormatter extends TestCase {
 		Iterator it = row.cellIterator();
 		Format defaultFormat = new DecimalFormat("Balance $#,#00.00 USD;Balance -$#,#00.00 USD");
 		formatter.setDefaultNumberFormat(defaultFormat);
-		double value = 10d;
+
 		log("\n==== DEFAULT NUMBER FORMAT ====");
 		while (it.hasNext()) {
 			HSSFCell cell = (HSSFCell) it.next();

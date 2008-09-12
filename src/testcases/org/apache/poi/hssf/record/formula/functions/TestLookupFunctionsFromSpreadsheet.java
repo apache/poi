@@ -211,7 +211,7 @@ public final class TestLookupFunctionsFromSpreadsheet extends TestCase {
 
 	private int processTestSheet(HSSFWorkbook workbook, int sheetIndex, String sheetName) {
 		HSSFSheet sheet = workbook.getSheetAt(sheetIndex);
-		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, workbook);
+		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(workbook);
 		int maxRows = sheet.getLastRowNum()+1;
 		int result = Result.NO_EVALUATIONS_FOUND; // so far
 		

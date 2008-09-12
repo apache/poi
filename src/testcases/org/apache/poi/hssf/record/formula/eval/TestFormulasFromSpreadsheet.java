@@ -178,7 +178,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	 */
 	private void processFunctionGroup(int startRowIndex, String testFocusFunctionName) {
  
-		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, workbook);
+		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(workbook);
 
 		int rowIndex = startRowIndex;
 		while (true) {

@@ -85,7 +85,7 @@ public final class TestFormulaParserEval extends TestCase {
 		sheet.createRow(32768).createCell(0).setCellValue(31);
 		sheet.createRow(32769).createCell(0).setCellValue(11);
 		
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		CellValue result;
 		try {
 			result = fe.evaluate(cell);

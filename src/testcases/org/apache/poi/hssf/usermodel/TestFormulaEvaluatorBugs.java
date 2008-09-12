@@ -117,7 +117,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 
 		HSSFSheet sheet = wb.getSheetAt(0);
 
-		HSSFFormulaEvaluator eva = new HSSFFormulaEvaluator(sheet, wb);
+		HSSFFormulaEvaluator eva = new HSSFFormulaEvaluator(wb);
 
 		row = sheet.getRow(0);
 		cell = row.getCell(0);
@@ -177,7 +177,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 
 		HSSFSheet sheet = wb.getSheetAt(0);
 
-		HSSFFormulaEvaluator eva = new HSSFFormulaEvaluator(sheet, wb);
+		HSSFFormulaEvaluator eva = new HSSFFormulaEvaluator(wb);
 
 		// =index(C:C,2,1) -> 2
 		HSSFRow rowIDX = sheet.getRow(3);
@@ -238,7 +238,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 
 		cell.setCellFormula("1=1");
 
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		try {
 			fe.evaluateInCell(cell);
 		} catch (NumberFormatException e) {
@@ -257,7 +257,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		int numSheets = wb.getNumberOfSheets();
 		for (int i = 0; i < numSheets; i++) {
 			HSSFSheet s = wb.getSheetAt(i);
-			HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(s, wb);
+			HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb);
 
 			for (Iterator rows = s.rowIterator(); rows.hasNext();) {
 				HSSFRow r = (HSSFRow) rows.next();
@@ -276,7 +276,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		HSSFRow row = sheet.createRow(1);
 		HSSFCell cell = row.createCell(0);
 		cell.setCellFormula("na()"); // this formula evaluates to an Excel error code '#N/A'
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		try {
 			fe.evaluateInCell(cell);
 		} catch (NumberFormatException e) {
@@ -312,7 +312,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		
 		// Choose cell A9, so that the failing test case doesn't take too long to execute.
 		HSSFCell cell = row.getCell(8);
-		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
+		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
 		evaluator.evaluate(cell);
 		int evalCount = evaluator.getEvaluationCount();
 		// With caching, the evaluationCount is 8 which is a big improvement

@@ -268,7 +268,7 @@ public final class TestCountFuncs extends TestCase {
 		int failureCount = 0;
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(FILE_NAME);
 		HSSFSheet sheet = wb.getSheetAt(0);
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		int maxRow = sheet.getLastRowNum();
 		for (int rowIx=START_ROW_IX; rowIx<maxRow; rowIx++) {
 			HSSFRow row = sheet.getRow(rowIx);
