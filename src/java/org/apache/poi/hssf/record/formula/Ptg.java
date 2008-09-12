@@ -56,20 +56,21 @@ public abstract class Ptg implements Cloneable {
 	/**
 	 * @deprecated - use readTokens()
 	 */
-	public static Stack createParsedExpressionTokens(short size, RecordInputStream in)
-	{
+	public static Stack createParsedExpressionTokens(short size, RecordInputStream in) {
 		Stack stack = new Stack();
 		int pos = 0;
 		List arrayPtgs = null;
-		while ( pos < size )
-		{
+		while (pos < size) {
 			Ptg ptg = Ptg.createPtg( in );
 			if (ptg instanceof ArrayPtg) {
-				if (arrayPtgs == null)
+				if (arrayPtgs == null) {
 					arrayPtgs = new ArrayList(5);
+				}
 				arrayPtgs.add(ptg);
-				pos += 8;
-			} else pos += ptg.getSize();
+				pos += ArrayPtg.PLAIN_TOKEN_SIZE;
+			} else {
+				pos += ptg.getSize();
+			}
 			stack.push( ptg );
 		}
 		if(pos != size) {
@@ -109,25 +110,25 @@ public abstract class Ptg implements Cloneable {
 		int baseId = id & 0x1F | 0x20;
 		
 		switch (baseId) {
-			case ArrayPtg.sid:     return new ArrayPtg(in);    // 0x20, 0x40, 0x60
-			 case FuncPtg.sid:     return new FuncPtg(in);     // 0x21, 0x41, 0x61
-			 case FuncVarPtg.sid:  return new FuncVarPtg(in);  // 0x22, 0x42, 0x62
-			 case NamePtg.sid:     return new NamePtg(in);     // 0x23, 0x43, 0x63
-			 case RefPtg.sid:      return new RefPtg(in);      // 0x24, 0x44, 0x64
-			 case AreaPtg.sid:     return new AreaPtg(in);     // 0x25, 0x45, 0x65
-			 case MemAreaPtg.sid:  return new MemAreaPtg(in);  // 0x26, 0x46, 0x66
-			 case MemErrPtg.sid:   return new MemErrPtg(in);   // 0x27, 0x47, 0x67
-			 case MemFuncPtg.sid:  return new MemFuncPtg(in);  // 0x29, 0x49, 0x69
-			 case RefErrorPtg.sid: return  new RefErrorPtg(in);// 0x2a, 0x4a, 0x6a
-			 case AreaErrPtg.sid:  return new AreaErrPtg(in);  // 0x2b, 0x4b, 0x6b
-			 case RefNPtg.sid:     return new RefNPtg(in);     // 0x2c, 0x4c, 0x6c
-			 case AreaNPtg.sid:    return new AreaNPtg(in);    // 0x2d, 0x4d, 0x6d
+			case ArrayPtg.sid:    return new ArrayPtg(in);    // 0x20, 0x40, 0x60
+			case FuncPtg.sid:     return new FuncPtg(in);     // 0x21, 0x41, 0x61
+			case FuncVarPtg.sid:  return new FuncVarPtg(in);  // 0x22, 0x42, 0x62
+			case NamePtg.sid:     return new NamePtg(in);     // 0x23, 0x43, 0x63
+			case RefPtg.sid:      return new RefPtg(in);      // 0x24, 0x44, 0x64
+			case AreaPtg.sid:     return new AreaPtg(in);     // 0x25, 0x45, 0x65
+			case MemAreaPtg.sid:  return new MemAreaPtg(in);  // 0x26, 0x46, 0x66
+			case MemErrPtg.sid:   return new MemErrPtg(in);   // 0x27, 0x47, 0x67
+			case MemFuncPtg.sid:  return new MemFuncPtg(in);  // 0x29, 0x49, 0x69
+			case RefErrorPtg.sid: return new RefErrorPtg(in); // 0x2a, 0x4a, 0x6a
+			case AreaErrPtg.sid:  return new AreaErrPtg(in);  // 0x2b, 0x4b, 0x6b
+			case RefNPtg.sid:     return new RefNPtg(in);     // 0x2c, 0x4c, 0x6c
+			case AreaNPtg.sid:    return new AreaNPtg(in);    // 0x2d, 0x4d, 0x6d
 
-			 case NameXPtg.sid:    return new NameXPtg(in);    // 0x39, 0x49, 0x79
-			 case Ref3DPtg.sid:    return  new Ref3DPtg(in);   // 0x3a, 0x5a, 0x7a
-			 case Area3DPtg.sid:   return new Area3DPtg(in);   // 0x3b, 0x5b, 0x7b
-			 case DeletedRef3DPtg.sid:  return new DeletedRef3DPtg(in);   // 0x3c, 0x5c, 0x7c
-			 case DeletedArea3DPtg.sid: return  new DeletedArea3DPtg(in); // 0x3d, 0x5d, 0x7d
+			case NameXPtg.sid:    return new NameXPtg(in);    // 0x39, 0x49, 0x79
+			case Ref3DPtg.sid:    return new Ref3DPtg(in);    // 0x3a, 0x5a, 0x7a
+			case Area3DPtg.sid:   return new Area3DPtg(in);   // 0x3b, 0x5b, 0x7b
+			case DeletedRef3DPtg.sid:  return new DeletedRef3DPtg(in);   // 0x3c, 0x5c, 0x7c
+			case DeletedArea3DPtg.sid: return  new DeletedArea3DPtg(in); // 0x3d, 0x5d, 0x7d
 		}
 		throw new UnsupportedOperationException(" Unknown Ptg in Formula: 0x"+
 				   Integer.toHexString(id) + " (" + ( int ) id + ")");
@@ -262,11 +263,14 @@ public abstract class Ptg implements Cloneable {
 
 			ptg.writeBytes(array, pos + offset);
 			if (ptg instanceof ArrayPtg) {
-			  if (arrayPtgs == null)
-				  arrayPtgs = new ArrayList(5);
-			  arrayPtgs.add(ptg);
-			  pos += 8;
-			} else pos += ptg.getSize();
+				if (arrayPtgs == null) {
+					arrayPtgs = new ArrayList(5);
+				}
+				arrayPtgs.add(ptg);
+				pos += ArrayPtg.PLAIN_TOKEN_SIZE;
+			} else {
+				pos += ptg.getSize();
+			}
 		}
 		if (arrayPtgs != null) {
 			for (int i=0;i<arrayPtgs.size();i++) {
