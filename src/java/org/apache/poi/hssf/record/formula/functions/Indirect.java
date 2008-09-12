@@ -41,7 +41,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  */
 public final class Indirect implements FreeRefFunction {
 
-	public ValueEval evaluate(Eval[] args, int srcCellRow, short srcCellCol, HSSFWorkbook workbook, HSSFSheet sheet) {
+	public ValueEval evaluate(Eval[] args, HSSFWorkbook workbook, int srcCellSheet, int srcCellRow, int srcCellCol) {
 		// TODO - implement INDIRECT()
 		return ErrorEval.FUNCTION_NOT_IMPLEMENTED;
 	}

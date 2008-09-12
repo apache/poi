@@ -35,7 +35,7 @@ public final class TestHSSFFormulaEvaluator extends TestCase {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("testNames.xls");
 		HSSFSheet sheet = wb.getSheetAt(0);
 		HSSFCell cell = sheet.getRow(8).getCell(0);
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		CellValue cv = fe.evaluate(cell);
 		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
 		assertEquals(3.72, cv.getNumberValue(), 0.0);
@@ -67,7 +67,7 @@ public final class TestHSSFFormulaEvaluator extends TestCase {
 		setValue(sheet, 3, 6, 100.0);
 		
 		
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		assertEquals(26.0, fe.evaluate(cell0).getNumberValue(), 0.0);
 		assertEquals(56.0, fe.evaluate(cell1).getNumberValue(), 0.0);
 	}

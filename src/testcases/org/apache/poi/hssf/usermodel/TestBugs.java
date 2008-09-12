@@ -1183,7 +1183,7 @@ public final class TestBugs extends TestCase {
 
 
         // Now evaluate, they should all be changed
-        HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(s, wb);
+        HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb);
         eval.evaluateFormulaCell(c1);
         eval.evaluateFormulaCell(c2);
         eval.evaluateFormulaCell(c3);
