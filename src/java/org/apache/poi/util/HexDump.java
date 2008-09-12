@@ -255,8 +255,10 @@ public class HexDump {
         retVal.append('[');
         for(int x = 0; x < value.length; x++)
         {
+            if (x>0) {
+                retVal.append(", ");
+            }
             retVal.append(toHex(value[x]));
-            retVal.append(", ");
         }
         retVal.append(']');
         return retVal.toString();

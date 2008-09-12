@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+ 
 package org.apache.poi.ddf;
 
 import junit.framework.TestCase;
@@ -24,8 +23,7 @@ import org.apache.poi.util.HexRead;
 
 public class TestEscherClientDataRecord extends TestCase
 {
-    public void testSerialize() throws Exception
-    {
+    public void testSerialize() {
         EscherClientDataRecord r = createRecord();
 
         byte[] data = new byte[8];
@@ -33,12 +31,11 @@ public class TestEscherClientDataRecord extends TestCase
         assertEquals( 8, bytesWritten );
         assertEquals( "[02, 00, " +
                 "11, F0, " +
-                "00, 00, 00, 00, ]",
+                "00, 00, 00, 00]",
                 HexDump.toHex( data ) );
     }
 
-    public void testFillFields() throws Exception
-    {
+    public void testFillFields() {
         String hexData = "02 00 " +
                 "11 F0 " +
                 "00 00 00 00 ";
@@ -51,8 +48,7 @@ public class TestEscherClientDataRecord extends TestCase
         assertEquals( "[]", HexDump.toHex(r.getRemainingData()) );
     }
 
-    public void testToString() throws Exception
-    {
+    public void testToString() {
         String nl = System.getProperty("line.separator");
 
         String expected = "org.apache.poi.ddf.EscherClientDataRecord:" + nl +
@@ -63,7 +59,7 @@ public class TestEscherClientDataRecord extends TestCase
         assertEquals( expected, createRecord().toString() );
     }
 
-    private EscherClientDataRecord createRecord()
+    private static EscherClientDataRecord createRecord()
     {
         EscherClientDataRecord r = new EscherClientDataRecord();
         r.setOptions( (short) 0x0002 );
@@ -71,5 +67,4 @@ public class TestEscherClientDataRecord extends TestCase
         r.setRemainingData( new byte[] {} );
         return r;
     }
-
 }

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 import junit.framework.TestCase;
@@ -24,8 +23,7 @@ import org.apache.poi.util.HexRead;
 
 public class TestEscherSpRecord extends TestCase
 {
-    public void testSerialize() throws Exception
-    {
+    public void testSerialize() {
         EscherSpRecord r = createRecord();
 
         byte[] data = new byte[16];
@@ -35,12 +33,11 @@ public class TestEscherSpRecord extends TestCase
                 "0A, F0, " +
                 "08, 00, 00, 00, " +
                 "00, 04, 00, 00, " +
-                "05, 00, 00, 00, ]",
+                "05, 00, 00, 00]",
                 HexDump.toHex( data ) );
     }
 
-    public void testFillFields() throws Exception
-    {
+    public void testFillFields() {
         String hexData = "02 00 " +
                 "0A F0 " +
                 "08 00 00 00 " +
@@ -55,8 +52,7 @@ public class TestEscherSpRecord extends TestCase
         assertEquals( 0x05, r.getFlags() );
     }
 
-    public void testToString() throws Exception
-    {
+    public void testToString() {
         String nl = System.getProperty("line.separator");
 
         String expected = "org.apache.poi.ddf.EscherSpRecord:" + nl +
@@ -67,7 +63,7 @@ public class TestEscherSpRecord extends TestCase
         assertEquals( expected, createRecord().toString() );
     }
 
-    private EscherSpRecord createRecord()
+    private static EscherSpRecord createRecord()
     {
         EscherSpRecord r = new EscherSpRecord();
         r.setOptions( (short) 0x0002 );

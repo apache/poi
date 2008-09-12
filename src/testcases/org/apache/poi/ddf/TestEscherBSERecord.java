@@ -37,7 +37,7 @@ public class TestEscherBSERecord extends TestCase
         assertEquals( (short) 0x0001, r.getOptions() );
         assertEquals( EscherBSERecord.BT_JPEG, r.getBlipTypeWin32() );
         assertEquals( EscherBSERecord.BT_JPEG, r.getBlipTypeMacOS() );
-        assertEquals( "[01, 02, 03, 04, 05, 06, 07, 08, 09, 0A, 0B, 0C, 0D, 0E, 0F, 00, ]", HexDump.toHex( r.getUid() ) );
+        assertEquals( "[01, 02, 03, 04, 05, 06, 07, 08, 09, 0A, 0B, 0C, 0D, 0E, 0F, 00]", HexDump.toHex( r.getUid() ) );
         assertEquals( (short) 1, r.getTag() );
         assertEquals( 2, r.getRef() );
         assertEquals( 3, r.getOffset() );
@@ -57,7 +57,7 @@ public class TestEscherBSERecord extends TestCase
         assertEquals( 44, bytesWritten );
         assertEquals( "[01, 00, 00, 00, 24, 00, 00, 00, 05, 05, 01, 02, 03, 04, " +
                 "05, 06, 07, 08, 09, 0A, 0B, 0C, 0D, 0E, 0F, 00, 01, 00, 00, 00, " +
-                "00, 00, 02, 00, 00, 00, 03, 00, 00, 00, 04, 05, 06, 07, ]",
+                "00, 00, 02, 00, 00, 00, 03, 00, 00, 00, 04, 05, 06, 07]",
                 HexDump.toHex( data ) );
 
     }
@@ -90,7 +90,7 @@ public class TestEscherBSERecord extends TestCase
                 "  Options: 0x0001" + nl +
                 "  BlipTypeWin32: 5" + nl +
                 "  BlipTypeMacOS: 5" + nl +
-                "  SUID: [01, 02, 03, 04, 05, 06, 07, 08, 09, 0A, 0B, 0C, 0D, 0E, 0F, 00, ]" + nl +
+                "  SUID: [01, 02, 03, 04, 05, 06, 07, 08, 09, 0A, 0B, 0C, 0D, 0E, 0F, 00]" + nl +
                 "  Tag: 1" + nl +
                 "  Size: 0" + nl +
                 "  Ref: 2" + nl +

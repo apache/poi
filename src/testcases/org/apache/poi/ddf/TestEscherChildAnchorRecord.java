@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 import junit.framework.TestCase;
@@ -24,8 +23,7 @@ import org.apache.poi.util.HexRead;
 
 public class TestEscherChildAnchorRecord extends TestCase
 {
-    public void testSerialize() throws Exception
-    {
+    public void testSerialize() {
         EscherChildAnchorRecord r = createRecord();
 
         byte[] data = new byte[8 + 16];
@@ -37,7 +35,7 @@ public class TestEscherChildAnchorRecord extends TestCase
                 "01, 00, 00, 00, " +
                 "02, 00, 00, 00, " +
                 "03, 00, 00, 00, " +
-                "04, 00, 00, 00, ]", HexDump.toHex( data ) );
+                "04, 00, 00, 00]", HexDump.toHex( data ) );
     }
 
     public void testFillFields() throws Exception
@@ -62,8 +60,7 @@ public class TestEscherChildAnchorRecord extends TestCase
         assertEquals( (short) 0x0001, r.getOptions() );
     }
 
-    public void testToString() throws Exception
-    {
+    public void testToString(){
         String nl = System.getProperty( "line.separator" );
 
         String expected = "org.apache.poi.ddf.EscherChildAnchorRecord:" + nl +
@@ -76,7 +73,7 @@ public class TestEscherChildAnchorRecord extends TestCase
         assertEquals( expected, createRecord().toString() );
     }
 
-    private EscherChildAnchorRecord createRecord()
+    private static EscherChildAnchorRecord createRecord()
     {
         EscherChildAnchorRecord r = new EscherChildAnchorRecord();
         r.setRecordId( EscherChildAnchorRecord.RECORD_ID );
@@ -87,5 +84,5 @@ public class TestEscherChildAnchorRecord extends TestCase
         r.setDy2( 4 );
         return r;
     }
-
 }
+
