@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hssf.extractor;
 
 import java.io.IOException;
@@ -49,10 +50,10 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 /**
  * A text extractor for Excel files, that is based
  *  on the hssf eventusermodel api.
- * It will typically use less memory than 
+ * It will typically use less memory than
  *  {@link ExcelExtractor}, but may not provide
  *  the same richness of formatting.
- * Returns the textual content of the file, suitable for 
+ * Returns the textual content of the file, suitable for
  *  indexing by something like Lucene, but not really
  *  intended for display to the user.
  * To turn an excel file into a CSV or similar, then see
@@ -63,8 +64,8 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 	private POIFSFileSystem fs;
 	private boolean includeSheetNames = true;
 	private boolean formulasNotResults = false;
-	
-	public EventBasedExcelExtractor(POIFSFileSystem fs) throws IOException {
+
+	public EventBasedExcelExtractor(POIFSFileSystem fs) {
 		super(null);
 		this.fs = fs;
 	}
@@ -98,8 +99,8 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 	public void setFormulasNotResults(boolean formulasNotResults) {
 		this.formulasNotResults = formulasNotResults;
 	}
-	
-	
+
+
 	/**
 	 * Retreives the text contents of the file
 	 */
@@ -107,7 +108,7 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 		String text = null;
 		try {
 			TextListener tl = triggerExtraction();
-			
+
 			text = tl.text.toString();
 			if(! text.endsWith("\n")) {
 				text = text + "\n";
@@ -115,37 +116,37 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 		} catch(IOException e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		return text;
 	}
-	
+
 	private TextListener triggerExtraction() throws IOException {
 		TextListener tl = new TextListener();
 		FormatTrackingHSSFListener ft = new FormatTrackingHSSFListener(tl);
 		tl.ft = ft;
-		
+
 		// Register and process
 		HSSFEventFactory factory = new HSSFEventFactory();
 		HSSFRequest request = new HSSFRequest();
 		request.addListenerForAllRecords(ft);
-		
+
 		factory.processWorkbookEvents(request, fs);
-		
+
 		return tl;
 	}
-	
+
 	private class TextListener implements HSSFListener {
 		private FormatTrackingHSSFListener ft;
 		private SSTRecord sstRecord;
-		
+
 		private List sheetNames = new ArrayList();
 		private StringBuffer text = new StringBuffer();
 		private int sheetNum = -1;
 		private int rowNum;
-		
+
 		private boolean outputNextStringValue = false;
 		private int nextRow = -1;
-		
+
 		public void processRecord(Record record) {
 			String thisText = null;
 			int thisRow = -1;
@@ -160,7 +161,7 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 				if(bof.getType() == BOFRecord.TYPE_WORKSHEET) {
 					sheetNum++;
 					rowNum = -1;
-					
+
 					if(includeSheetNames) {
 						if(text.length() > 0) text.append("\n");
 						text.append(sheetNames.get(sheetNum));
@@ -170,60 +171,60 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 			case SSTRecord.sid:
 				sstRecord = (SSTRecord)record;
 				break;
-			
-	        case FormulaRecord.sid:
-	        	FormulaRecord frec = (FormulaRecord) record;
-	        	thisRow = frec.getRow();
-	        	
-	        	if(formulasNotResults) {
-	        		thisText = FormulaParser.toFormulaString(null, frec.getParsedExpression());
-	        	} else {
-	        		if(Double.isNaN( frec.getValue() )) {
-	        			// Formula result is a string
-	        			// This is stored in the next record
-	        			outputNextStringValue = true;
-	    	        	nextRow = frec.getRow();
-	        		} else {
-	        			thisText = formatNumberDateCell(frec, frec.getValue());
-	        		}
-	        	}
-	            break;
-	        case StringRecord.sid:
-	        	if(outputNextStringValue) {
-	        		// String for formula
-	        		StringRecord srec = (StringRecord)record;
-	        		thisText = srec.getString(); 
-	        		thisRow = nextRow;
-	        		outputNextStringValue = false;
-	        	}
-	            break;
-	        case LabelRecord.sid:
-	        	LabelRecord lrec = (LabelRecord) record;
-	            thisRow = lrec.getRow();
-	            thisText = lrec.getValue();
-	            break;
-	        case LabelSSTRecord.sid:
-	        	LabelSSTRecord lsrec = (LabelSSTRecord) record;
-	            thisRow = lsrec.getRow();
-	            if(sstRecord == null) {
-	            	throw new IllegalStateException("No SST record found");
-	            }
-	            thisText = sstRecord.getString(lsrec.getSSTIndex()).toString();
-	            break;
-	        case NoteRecord.sid:
-	        	NoteRecord nrec = (NoteRecord) record;
-	        	thisRow = nrec.getRow();
-	        	// TODO: Find object to match nrec.getShapeId()
-	            break;
-	        case NumberRecord.sid:
-	            NumberRecord numrec = (NumberRecord) record;
-	            thisRow = numrec.getRow();
-	            thisText = formatNumberDateCell(numrec, numrec.getValue());
-	            break;
-	        default:
-	        	break;
+
+			case FormulaRecord.sid:
+				FormulaRecord frec = (FormulaRecord) record;
+				thisRow = frec.getRow();
+
+				if(formulasNotResults) {
+					thisText = FormulaParser.toFormulaString(null, frec.getParsedExpression());
+				} else {
+					if(frec.hasCachedResultString()) {
+						// Formula result is a string
+						// This is stored in the next record
+						outputNextStringValue = true;
+						nextRow = frec.getRow();
+					} else {
+						thisText = formatNumberDateCell(frec, frec.getValue());
+					}
+				}
+				break;
+			case StringRecord.sid:
+				if(outputNextStringValue) {
+					// String for formula
+					StringRecord srec = (StringRecord)record;
+					thisText = srec.getString();
+					thisRow = nextRow;
+					outputNextStringValue = false;
+				}
+				break;
+			case LabelRecord.sid:
+				LabelRecord lrec = (LabelRecord) record;
+				thisRow = lrec.getRow();
+				thisText = lrec.getValue();
+				break;
+			case LabelSSTRecord.sid:
+				LabelSSTRecord lsrec = (LabelSSTRecord) record;
+				thisRow = lsrec.getRow();
+				if(sstRecord == null) {
+					throw new IllegalStateException("No SST record found");
+				}
+				thisText = sstRecord.getString(lsrec.getSSTIndex()).toString();
+				break;
+			case NoteRecord.sid:
+				NoteRecord nrec = (NoteRecord) record;
+				thisRow = nrec.getRow();
+				// TODO: Find object to match nrec.getShapeId()
+				break;
+			case NumberRecord.sid:
+				NumberRecord numrec = (NumberRecord) record;
+				thisRow = numrec.getRow();
+				thisText = formatNumberDateCell(numrec, numrec.getValue());
+				break;
+			default:
+				break;
 			}
-			
+
 			if(thisText != null) {
 				if(thisRow != rowNum) {
 					rowNum = thisRow;
@@ -235,42 +236,42 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 				text.append(thisText);
 			}
 		}
-		
+
 		/**
-		 * Formats a number or date cell, be that a real number, or the 
+		 * Formats a number or date cell, be that a real number, or the
 		 *  answer to a formula
 		 */
 		private String formatNumberDateCell(CellValueRecordInterface cell, double value) {
-	        // Get the built in format, if there is one
+			// Get the built in format, if there is one
 			int formatIndex = ft.getFormatIndex(cell);
 			String formatString = ft.getFormatString(cell);
-			
+
 			if(formatString == null) {
-	            return Double.toString(value);
-	        } else {
-	        	// Is it a date?
-	        	if(HSSFDateUtil.isADateFormat(formatIndex,formatString) &&
-	        			HSSFDateUtil.isValidExcelDate(value)) {
-	        		// Java wants M not m for month
-	        		formatString = formatString.replace('m','M');
-	        		// Change \- into -, if it's there
-	        		formatString = formatString.replaceAll("\\\\-","-");
-	        		
-	        		// Format as a date
-	        		Date d = HSSFDateUtil.getJavaDate(value, false);
-	        		DateFormat df = new SimpleDateFormat(formatString);
-		            return df.format(d);
-	        	} else {
-	        		if(formatString == "General") {
-	        			// Some sort of wierd default
-	        			return Double.toString(value);
-	        		}
-	        		
-	        		// Format as a number
-		            DecimalFormat df = new DecimalFormat(formatString);
-		            return df.format(value);
-	        	}
-	        }
+				return Double.toString(value);
+			} else {
+				// Is it a date?
+				if(HSSFDateUtil.isADateFormat(formatIndex,formatString) &&
+						HSSFDateUtil.isValidExcelDate(value)) {
+					// Java wants M not m for month
+					formatString = formatString.replace('m','M');
+					// Change \- into -, if it's there
+					formatString = formatString.replaceAll("\\\\-","-");
+
+					// Format as a date
+					Date d = HSSFDateUtil.getJavaDate(value, false);
+					DateFormat df = new SimpleDateFormat(formatString);
+					return df.format(d);
+				} else {
+					if(formatString == "General") {
+						// Some sort of wierd default
+						return Double.toString(value);
+					}
+
+					// Format as a number
+					DecimalFormat df = new DecimalFormat(formatString);
+					return df.format(value);
+				}
+			}
 		}
 	}
 }

@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record.aggregates;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.StringRecord;
 
 /**
@@ -34,9 +35,9 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
     private SharedValueManager _sharedValueManager;
     /** caches the calculated result of the formula */
     private StringRecord _stringRecord;
-    
+
     /**
-     * @param stringRec may be <code>null</code> if this formula does not have a cached text 
+     * @param stringRec may be <code>null</code> if this formula does not have a cached text
      * value.
      * @param svm the {@link SharedValueManager} for the current sheet
      */
@@ -44,6 +45,14 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
         if (svm == null) {
             throw new IllegalArgumentException("sfm must not be null");
         }
+        boolean hasStringRec = stringRec != null;
+        boolean hasCachedStringFlag = formulaRec.hasCachedResultString();
+		if (hasStringRec != hasCachedStringFlag) {
+			throw new RecordFormatException("String record was "
+					+ (hasStringRec ? "": "not ") + " supplied but formula record flag is "
+					+ (hasCachedStringFlag ? "" : "not ") + " set");
+		}
+        	
         if (formulaRec.isSharedFormula()) {
             svm.convertSharedFormulaRecord(formulaRec);
         }
@@ -52,18 +61,18 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
         _stringRecord = stringRec;
     }
 
-    public void setStringRecord(StringRecord stringRecord) {
-        _stringRecord = stringRecord;
-    }
-    
     public FormulaRecord getFormulaRecord() {
         return _formulaRecord;
     }
 
+    /**
+     * debug only
+     * TODO - encapsulate
+     */
     public StringRecord getStringRecord() {
         return _stringRecord;
     }
-    
+
     public short getXFIndex() {
         return _formulaRecord.getXFIndex();
     }
@@ -91,7 +100,7 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
     public String toString() {
         return _formulaRecord.toString();
     }
-   
+
     public void visitContainedRecords(RecordVisitor rv) {
          rv.visitRecord(_formulaRecord);
          Record sharedFormulaRecord = _sharedValueManager.getRecordForFirstCell(_formulaRecord);
@@ -102,11 +111,33 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
              rv.visitRecord(_stringRecord);
          }
     }
-   
+
     public String getStringValue() {
         if(_stringRecord==null) {
             return null;
         }
         return _stringRecord.getString();
+    }
+
+    public void setCachedStringResult(String value) {
+
+        // Save the string into a String Record, creating one if required
+        if(_stringRecord == null) {
+            _stringRecord = new StringRecord();
+        }
+        _stringRecord.setString(value);
+        if (value.length() < 1) {
+            _formulaRecord.setCachedResultTypeEmptyString();
+        } else {
+            _formulaRecord.setCachedResultTypeString();
+        }
+    }
+    public void setCachedBooleanResult(boolean value) {
+        _stringRecord = null;
+        _formulaRecord.setCachedResultBoolean(value);
+    }
+    public void setCachedErrorResult(int errorCode) {
+        _stringRecord = null;
+        _formulaRecord.setCachedResultErrorCode(errorCode);
     }
 }

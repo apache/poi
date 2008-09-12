@@ -214,7 +214,9 @@ public final class TestSheet extends TestCase {
         records.add(new DimensionsRecord());
         records.add(new RowRecord(0));
         records.add(new RowRecord(1));
-        records.add(new FormulaRecord());
+        FormulaRecord formulaRecord = new FormulaRecord();
+        formulaRecord.setCachedResultTypeString();
+		records.add(formulaRecord);
         records.add(new StringRecord());
         records.add(new RowRecord(2));
         records.add(createWindow2Record());

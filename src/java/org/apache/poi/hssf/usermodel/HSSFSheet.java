@@ -1295,9 +1295,7 @@ public final class HSSFSheet {
                     // If any references were changed, then
                     //  re-create the formula string
                     if(changed) {
-                        c.setCellFormula(
-                             FormulaParser.toFormulaString(workbook, ptgs)
-                        );
+                        c.setFormulaOnly(ptgs);
                     }
                 }
             }
