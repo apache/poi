@@ -270,7 +270,7 @@ public class HSSFFormulaEvaluator {
                 cell.setCellValue(cv.getNumberValue());
                 break;
             case HSSFCell.CELL_TYPE_STRING:
-                cell.setCellValue(new HSSFRichTextString(cv.getStringValue()));
+                cell.setCellValue(cv.getRichTextStringValue());
                 break;
             case HSSFCell.CELL_TYPE_BLANK:
                 // never happens - blanks eventually get translated to zero
