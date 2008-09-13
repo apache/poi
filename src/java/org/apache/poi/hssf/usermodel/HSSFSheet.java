@@ -207,7 +207,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      */
     public HSSFRow createRow(int rownum)
     {
-        HSSFRow row = new HSSFRow(workbook, sheet, rownum);
+        HSSFRow row = new HSSFRow(workbook, this, rownum);
 
         addRow(row, true);
         return row;
@@ -222,7 +222,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
 
     private HSSFRow createRowFromRecord(RowRecord row)
     {
-        HSSFRow hrow = new HSSFRow(workbook, sheet, row);
+        HSSFRow hrow = new HSSFRow(workbook, this, row);
 
         addRow(hrow, false);
         return hrow;
@@ -390,7 +390,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
         
         for(int index=0; index<records.size(); index++) {
            if(records.get(index) instanceof DVRecord) {
-        	   dvRecords.add(records.get(index));
+               dvRecords.add(records.get(index));
            }
         }
         return dvRecords;
@@ -1301,9 +1301,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
                     // If any references were changed, then
                     //  re-create the formula string
                     if(changed) {
-                        c.setCellFormula(
-                             FormulaParser.toFormulaString(workbook, ptgs)
-                        );
+                        c.setFormulaOnly(ptgs);
                     }
                 }
             }
@@ -1602,14 +1600,32 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
     }
 
     /**
+     * @deprecated (Sep 2008) use {@link #setColumnGroupCollapsed(int, boolean)}
+     */
+    public void setColumnGroupCollapsed(short columnNumber, boolean collapsed) {
+        setColumnGroupCollapsed(columnNumber & 0xFFFF, collapsed);
+    }
+    /**
+     * @deprecated (Sep 2008) use {@link #groupColumn(int, int)}
+     */
+    public void groupColumn(short fromColumn, short toColumn) {
+        groupColumn(fromColumn & 0xFFFF, toColumn & 0xFFFF);
+    }
+    /**
+     * @deprecated (Sep 2008) use {@link #ungroupColumn(int, int)}
+     */
+    public void ungroupColumn(short fromColumn, short toColumn) {
+        ungroupColumn(fromColumn & 0xFFFF, toColumn & 0xFFFF);
+    }
+
+    /**
      * Expands or collapses a column group.
      *
      * @param columnNumber      One of the columns in the group.
      * @param collapsed         true = collapse group, false = expand group.
      */
-    public void setColumnGroupCollapsed( short columnNumber, boolean collapsed )
-    {
-        sheet.setColumnGroupCollapsed( columnNumber, collapsed );
+    public void setColumnGroupCollapsed(int columnNumber, boolean collapsed) {
+        sheet.setColumnGroupCollapsed(columnNumber, collapsed);
     }
 
     /**
@@ -1618,14 +1634,12 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * @param fromColumn        beginning of the column range.
      * @param toColumn          end of the column range.
      */
-    public void groupColumn(short fromColumn, short toColumn)
-    {
-        sheet.groupColumnRange( fromColumn, toColumn, true );
+    public void groupColumn(int fromColumn, int toColumn) {
+        sheet.groupColumnRange(fromColumn, toColumn, true);
     }
 
-    public void ungroupColumn( short fromColumn, short toColumn )
-    {
-        sheet.groupColumnRange( fromColumn, toColumn, false );
+    public void ungroupColumn(int fromColumn, int toColumn) {
+        sheet.groupColumnRange(fromColumn, toColumn, false);
     }
 
     public void groupRow(int fromRow, int toRow)

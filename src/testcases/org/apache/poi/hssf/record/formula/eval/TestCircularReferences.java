@@ -35,9 +35,9 @@ public final class TestCircularReferences extends TestCase {
 	/**
 	 * Translates StackOverflowError into AssertionFailedError
 	 */
-	private static CellValue evaluateWithCycles(HSSFWorkbook wb, HSSFSheet sheet, HSSFCell testCell)
+	private static CellValue evaluateWithCycles(HSSFWorkbook wb, HSSFCell testCell)
 			throws AssertionFailedError {
-		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
+		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
 		try {
 			return evaluator.evaluate(testCell);
 		} catch (StackOverflowError e) {
@@ -75,7 +75,7 @@ public final class TestCircularReferences extends TestCase {
 		// arguments before invoking operators, POI must handle such potential cycles gracefully.
 		
 
-		CellValue cellValue = evaluateWithCycles(wb, sheet, testCell);
+		CellValue cellValue = evaluateWithCycles(wb, testCell);
 		
 		assertTrue(cellValue.getCellType() == HSSFCell.CELL_TYPE_NUMERIC);
 		assertEquals(2, cellValue.getNumberValue(), 0);
@@ -93,7 +93,7 @@ public final class TestCircularReferences extends TestCase {
 		HSSFCell testCell = row.createCell(0);
 		testCell.setCellFormula("A1");
 
-		CellValue cellValue = evaluateWithCycles(wb, sheet, testCell);
+		CellValue cellValue = evaluateWithCycles(wb, testCell);
 		
 		confirmCycleErrorCode(cellValue);
 	}
@@ -113,7 +113,7 @@ public final class TestCircularReferences extends TestCase {
 		HSSFCell testCell = row.createCell(3);
 		testCell.setCellFormula("A1");
 
-		CellValue cellValue = evaluateWithCycles(wb, sheet, testCell);
+		CellValue cellValue = evaluateWithCycles(wb, testCell);
 		
 		confirmCycleErrorCode(cellValue);
 	}

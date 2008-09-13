@@ -60,36 +60,6 @@ public final class StatsLib {
         return r;
     }
     
-    /**
-     * if v is zero length or contains no duplicates, return value
-     * is Double.NaN. Else returns the value that occurs most times
-     * and if there is a tie, returns the first such value. 
-     * @param v
-     */
-    public static double mode(double[] v) {
-        double r = Double.NaN;
-        
-        // very naive impl, may need to be optimized
-        if (v!=null && v.length > 1) {
-            int[] counts = new int[v.length]; 
-            Arrays.fill(counts, 1);
-            for (int i=0, iSize=v.length; i<iSize; i++) {
-                for (int j=i+1, jSize=v.length; j<jSize; j++) {
-                    if (v[i] == v[j]) counts[i]++;
-                }
-            }
-            double maxv = 0;
-            int maxc = 0;
-            for (int i=0, iSize=counts.length; i<iSize; i++) {
-                if (counts[i] > maxc) {
-                    maxv = v[i];
-                    maxc = counts[i];
-                }
-            }
-            r = (maxc > 1) ? maxv : Double.NaN; // "no-dups" check
-        }
-        return r;
-    }
     
     public static double median(double[] v) {
         double r = Double.NaN;

@@ -42,8 +42,8 @@ final class ParityFunction implements FreeRefFunction {
 		_desiredParity = desiredParity;
 	}
 
-	public ValueEval evaluate(Eval[] args, int srcCellRow, short srcCellCol, Workbook workbook,
-			Sheet sheet) {
+	public ValueEval evaluate(Eval[] args, Workbook workbook, int srcCellSheet, int srcCellRow,
+			int srcCellCol) {
 		if (args.length != 1) {
 			return ErrorEval.VALUE_INVALID;  
 		}
@@ -58,8 +58,8 @@ final class ParityFunction implements FreeRefFunction {
 		return BoolEval.valueOf(val == _desiredParity);
 	}
 
-	private static int evaluateArgParity(Eval arg, int srcCellRow, short srcCellCol) throws EvaluationException {
-		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
+	private static int evaluateArgParity(Eval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
+		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, (short)srcCellCol);
 		
 		double d = OperandResolver.coerceValueToDouble(ve);
 		if (d < 0) {

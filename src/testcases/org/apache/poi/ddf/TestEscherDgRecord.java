@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 import junit.framework.TestCase;
@@ -24,8 +23,7 @@ import org.apache.poi.util.HexRead;
 
 public class TestEscherDgRecord extends TestCase
 {
-    public void testSerialize() throws Exception
-    {
+    public void testSerialize() {
         EscherDgRecord r = createRecord();
 
         byte[] data = new byte[16];
@@ -35,12 +33,11 @@ public class TestEscherDgRecord extends TestCase
                 "08, F0, " +
                 "08, 00, 00, 00, " +
                 "02, 00, 00, 00, " +     // num shapes in drawing
-                "01, 04, 00, 00, ]",     // The last MSOSPID given to an SP in this DG
+                "01, 04, 00, 00]",     // The last MSOSPID given to an SP in this DG
                 HexDump.toHex( data ) );
     }
 
-    public void testFillFields() throws Exception
-    {
+    public void testFillFields() {
         String hexData = "10 00 " +
                 "08 F0 " +
                 "08 00 00 00 " +
@@ -55,8 +52,7 @@ public class TestEscherDgRecord extends TestCase
         assertEquals( 1025, r.getLastMSOSPID() );
     }
 
-    public void testToString() throws Exception
-    {
+    public void testToString() {
         String nl = System.getProperty("line.separator");
 
         String expected = "org.apache.poi.ddf.EscherDgRecord:" + nl +
@@ -67,7 +63,7 @@ public class TestEscherDgRecord extends TestCase
         assertEquals( expected, createRecord().toString() );
     }
 
-    private EscherDgRecord createRecord()
+    private static EscherDgRecord createRecord()
     {
         EscherDgRecord r = new EscherDgRecord();
         r.setOptions( (short) 0x0010 );
@@ -76,5 +72,4 @@ public class TestEscherDgRecord extends TestCase
         r.setLastMSOSPID(1025);
         return r;
     }
-
 }

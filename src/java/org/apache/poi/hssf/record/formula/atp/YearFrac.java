@@ -61,8 +61,8 @@ final class YearFrac implements FreeRefFunction {
 		// enforce singleton
 	}
 
-	public ValueEval evaluate(Eval[] args, int srcCellRow, short srcCellCol, Workbook workbook,
-			Sheet sheet) {
+	public ValueEval evaluate(Eval[] args, Workbook workbook, int srcCellSheet, int srcCellRow,
+			int srcCellCol) {
 
 		double result;
 		try {
@@ -85,8 +85,8 @@ final class YearFrac implements FreeRefFunction {
 		return new NumberEval(result);
 	}
 
-	private static double evaluateDateArg(Eval arg, int srcCellRow, short srcCellCol) throws EvaluationException {
-		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
+	private static double evaluateDateArg(Eval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
+		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, (short) srcCellCol);
 
 		if (ve instanceof StringEval) {
 			String strVal = ((StringEval) ve).getStringValue();
@@ -155,8 +155,8 @@ final class YearFrac implements FreeRefFunction {
 		return cal;
 	}
 
-	private static int evaluateIntArg(Eval arg, int srcCellRow, short srcCellCol) throws EvaluationException {
-		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
+	private static int evaluateIntArg(Eval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
+		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, (short) srcCellCol);
 		return OperandResolver.coerceValueToInt(ve);
 	}
 }

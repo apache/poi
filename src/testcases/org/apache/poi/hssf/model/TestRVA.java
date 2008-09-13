@@ -61,8 +61,10 @@ public final class TestRVA extends TestCase {
 			try {
 				confirmCell(cell, formula, wb);
 			} catch (AssertionFailedError e) {
+				System.out.flush();
 				System.err.println("Problem with row[" + rowIx + "] formula '" + formula + "'");
 				System.err.println(e.getMessage());
+				System.err.flush();
 				countFailures++;
 			} catch (RuntimeException e) {
 				System.err.println("Problem with row[" + rowIx + "] formula '" + formula + "'");
@@ -104,8 +106,8 @@ public final class TestRVA extends TestCase {
 			if (excelPtg.getClass() != poiPtg.getClass()) {
 				hasMismatch = true;
 				sb.append("  mismatch token type[" + i + "] " + getShortClassName(excelPtg) + " "
-						+ getOperandClassName(excelPtg) + " - " + getShortClassName(poiPtg) + " "
-						+ getOperandClassName(poiPtg));
+						+ excelPtg.getRVAType() + " - " + getShortClassName(poiPtg) + " "
+						+ poiPtg.getRVAType());
 				sb.append(NEW_LINE);
 				continue;
 			}
@@ -113,16 +115,16 @@ public final class TestRVA extends TestCase {
 				continue;
 			}
 			sb.append("  token[" + i + "] " + excelPtg.toString() + " "
-					+ getOperandClassName(excelPtg));
+					+ excelPtg.getRVAType());
 
 			if (excelPtg.getPtgClass() != poiPtg.getPtgClass()) {
 				hasMismatch = true;
-				sb.append(" - was " + getOperandClassName(poiPtg));
+				sb.append(" - was " + poiPtg.getRVAType());
 			}
 			sb.append(NEW_LINE);
 		}
 		if (false) { // set 'true' to see trace of RVA values
-			System.out.println(formula);
+			System.out.println(formulaCell.getRowIndex() + " " + formula);
 			System.out.println(sb.toString());
 		}
 		if (hasMismatch) {
@@ -134,15 +136,5 @@ public final class TestRVA extends TestCase {
 		String cn = o.getClass().getName();
 		int pos = cn.lastIndexOf('.');
 		return cn.substring(pos + 1);
-	}
-
-	private static String getOperandClassName(Ptg ptg) {
-		byte ptgClass = ptg.getPtgClass();
-		switch (ptgClass) {
-			case Ptg.CLASS_REF:   return "R";
-			case Ptg.CLASS_VALUE: return "V";
-			case Ptg.CLASS_ARRAY: return "A";
-		}
-		throw new RuntimeException("Unknown operand class (" + ptgClass + ")");
 	}
 }

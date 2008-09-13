@@ -37,7 +37,7 @@ public final class TestDate extends TestCase {
         HSSFSheet sheet = wb.createSheet("new sheet");
         cell11 = sheet.createRow(0).createCell(0);
         cell11.setCellType(HSSFCell.CELL_TYPE_FORMULA);
-        evaluator = new HSSFFormulaEvaluator(sheet, wb);
+        evaluator = new HSSFFormulaEvaluator(wb);
     }
 
     /**

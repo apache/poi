@@ -35,9 +35,8 @@ import junit.framework.TestCase;
 public final class TestArrayPtg extends TestCase {
 
 	private static final byte[] ENCODED_PTG_DATA = {
-		0x40, 0x00,
-		0x08, 0x00,
-		0, 0, 0, 0, 0, 0, 0, 0, 
+		0x40,
+		0, 0, 0, 0, 0, 0, 0, 
 	};
 	private static final byte[] ENCODED_CONSTANT_DATA = {
 		2,    // 3 columns
@@ -60,15 +59,15 @@ public final class TestArrayPtg extends TestCase {
 		ptg.readTokenValues(new TestcaseRecordInputStream(0, ENCODED_CONSTANT_DATA));
 		assertEquals(3, ptg.getColumnCount());
 		assertEquals(2, ptg.getRowCount());
-		Object[] values = ptg.getTokenArrayValues();
-		assertEquals(6, values.length);
+		Object[][] values = ptg.getTokenArrayValues();
+		assertEquals(2, values.length);
 		
 		
-		assertEquals(Boolean.TRUE, values[0]);
-		assertEquals(new UnicodeString("ABCD"), values[1]);
-		assertEquals(new Double(0), values[3]);
-		assertEquals(Boolean.FALSE, values[4]);
-		assertEquals(new UnicodeString("FG"), values[5]);
+		assertEquals(Boolean.TRUE, values[0][0]);
+		assertEquals(new UnicodeString("ABCD"), values[0][1]);
+		assertEquals(new Double(0), values[1][0]);
+		assertEquals(Boolean.FALSE, values[1][1]);
+		assertEquals(new UnicodeString("FG"), values[1][2]);
 		
 		byte[] outBuf = new byte[ENCODED_CONSTANT_DATA.length];
 		ptg.writeTokenValueBytes(outBuf, 0);
@@ -89,10 +88,10 @@ public final class TestArrayPtg extends TestCase {
 		assertEquals(2, ptg.getRowCount());
 		
 		assertEquals(0, ptg.getValueIndex(0, 0));
-		assertEquals(2, ptg.getValueIndex(1, 0));
-		assertEquals(4, ptg.getValueIndex(2, 0));
-		assertEquals(1, ptg.getValueIndex(0, 1));
-		assertEquals(3, ptg.getValueIndex(1, 1));
+		assertEquals(1, ptg.getValueIndex(1, 0));
+		assertEquals(2, ptg.getValueIndex(2, 0));
+		assertEquals(3, ptg.getValueIndex(0, 1));
+		assertEquals(4, ptg.getValueIndex(1, 1));
 		assertEquals(5, ptg.getValueIndex(2, 1));
 	}
 	
@@ -110,7 +109,7 @@ public final class TestArrayPtg extends TestCase {
 		if (formula.equals("SUM({1.0,6.0,11.0;2.0,7.0,12.0;3.0,8.0,13.0;4.0,9.0,14.0;5.0,10.0,15.0})")) {
 			throw new AssertionFailedError("Identified bug 42564 b");
 		}
-		assertEquals("SUM({1.0,2.0,3.0;4.0,5.0,6.0;7.0,8.0,9.0;10.0,11.0,12.0;13.0,14.0,15.0})", formula);
+		assertEquals("SUM({1.0,2.0,3.0,4.0,5.0;6.0,7.0,8.0,9.0,10.0;11.0,12.0,13.0,14.0,15.0})", formula);
 	}
 
 	public void testToFormulaString() {
@@ -127,7 +126,7 @@ public final class TestArrayPtg extends TestCase {
 			}
 			throw e;
 		}
-		assertEquals("{TRUE,\"ABCD\";\"E\",0.0;FALSE,\"FG\"}", actualFormula);
+		assertEquals("{TRUE,\"ABCD\",\"E\";0.0,FALSE,\"FG\"}", actualFormula);
 	}
 	
 	/**
@@ -150,6 +149,7 @@ public final class TestArrayPtg extends TestCase {
 		RecordInputStream in = new TestcaseRecordInputStream(ArrayPtg.sid, fullData);
 		
 		Ptg[] ptgs = Ptg.readTokens(ENCODED_PTG_DATA.length, in);
+		assertEquals(1, ptgs.length);
 		ArrayPtg aPtg = (ArrayPtg) ptgs[0];
 		assertEquals(operandClass, aPtg.getPtgClass());
 	}

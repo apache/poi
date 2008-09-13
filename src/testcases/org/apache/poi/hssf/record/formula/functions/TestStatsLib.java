@@ -20,6 +20,11 @@
  */
 package org.apache.poi.hssf.record.formula.functions;
 
+import junit.framework.AssertionFailedError;
+
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.hssf.record.formula.eval.EvaluationException;
+
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -181,49 +186,53 @@ public class TestStatsLib extends AbstractNumericTestCase {
     }
 
     public void testMode() {
-        double[] v = null;
+        double[] v;
         double d, x = 0;
         
         v = new double[] {1,2,3,4,5,6,7,8,9,10};
-        d = StatsLib.mode(v);
-        x = Double.NaN;
-        assertEquals("mode ", x, d);
+        confirmMode(v, null);
         
         v = new double[] {1,1,1,1,1,1,1,1,1,1};
-        d = StatsLib.mode(v);
-        x = 1;
-        assertEquals("mode ", x, d);
+        confirmMode(v, 1.0);
         
         v = new double[] {0,0,0,0,0,0,0,0,0,0};
-        d = StatsLib.mode(v);
-        x = 0;
-        assertEquals("mode ", x, d);
+        confirmMode(v, 0.0);
         
         v = new double[] {1,2,1,2,1,2,1,2,1,2};
-        d = StatsLib.mode(v);
-        x = 1;
-        assertEquals("mode ", x, d);
+        confirmMode(v, 1.0);
         
         v = new double[] {123.12,33.3333,2d/3d,5.37828,0.999};
-        d = StatsLib.mode(v);
-        x = Double.NaN;
-        assertEquals("mode ", x, d);
+        confirmMode(v, null);
         
         v = new double[] {-1,-2,-3,-4,-5,-6,-7,-8,-9,-10};
-        d = StatsLib.mode(v);
-        x = Double.NaN;
-        assertEquals("mode ", x, d);
+        confirmMode(v, null);
         
         v = new double[] {1,2,3,4,1,1,1,1,0,0,0,0,0};
-        d = StatsLib.mode(v);
-        x = 1;
-        assertEquals("mode ", x, d);
+        confirmMode(v, 1.0);
         
         v = new double[] {0,1,2,3,4,1,1,1,0,0,0,0,1};
-        d = StatsLib.mode(v);
-        x = 0;
-        assertEquals("mode ", x, d);
+        confirmMode(v, 0.0);
     }
+    private static void confirmMode(double[] v, double expectedResult) {
+    	confirmMode(v, new Double(expectedResult));
+    }
+    private static void confirmMode(double[] v, Double expectedResult) {
+    	double actual;
+		try {
+			actual = Mode.evaluate(v);
+			if (expectedResult == null) {
+				throw new AssertionFailedError("Expected N/A exception was not thrown");
+			}
+		} catch (EvaluationException e) {
+			if (expectedResult == null) {
+				assertEquals(ErrorEval.NA, e.getErrorEval());
+				return;
+			}
+			throw new RuntimeException(e);
+		}
+    	assertEquals("mode", expectedResult.doubleValue(), actual);
+    }
+    
 
     public void testStddev() {
         double[] v = null;

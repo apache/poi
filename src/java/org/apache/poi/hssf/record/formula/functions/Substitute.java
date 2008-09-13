@@ -1,30 +1,26 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-/*
- * Created on May 15, 2005
- *
- */
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
-import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
+import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
-import org.apache.poi.hssf.record.formula.eval.StringValueEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
@@ -32,86 +28,75 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  * Substitutes text in a text string with new text, some number of times.
  * @author Manda Wilson &lt; wilson at c bio dot msk cc dot org &gt;
  */
-public class Substitute extends TextFunction {
-	private static final int REPLACE_ALL = -1;
-	
-	/**
-	 *Substitutes text in a text string with new text, some number of times.
-	 * 
-	 * @see org.apache.poi.hssf.record.formula.eval.Eval
-	 */
-    public Eval evaluate(Eval[] operands, int srcCellRow, short srcCellCol) {		
-    	Eval retval = null;
-        String oldStr = null;
-        String searchStr = null;
-        String newStr = null;
-        int numToReplace = REPLACE_ALL;
-        
-        switch (operands.length) {
-	        default:
-	            retval = ErrorEval.VALUE_INVALID;
-	        case 4:
-	        	ValueEval fourthveval = singleOperandEvaluate(operands[3], srcCellRow, srcCellCol);
-	        	if (fourthveval instanceof NumericValueEval) {
-	        		NumericValueEval numToReplaceEval = (NumericValueEval) fourthveval;
-	        		// NOTE: it is safe to cast to int here
-	                // because in Excel =SUBSTITUTE("teststr","t","T",1.9) 
-	                // returns Teststr 
-	                // so 1.9 must be truncated to 1
-		        	numToReplace = (int) numToReplaceEval.getNumberValue();
-	        	} else {
-	        		retval = ErrorEval.VALUE_INVALID;
-	        	}
-	        case 3:	
-	        	// first operand is text string containing characters to replace
-	            // second operand is text to find
-	            // third operand is replacement text
-	            ValueEval firstveval = singleOperandEvaluate(operands[0], srcCellRow, srcCellCol);
-	            ValueEval secondveval = singleOperandEvaluate(operands[1], srcCellRow, srcCellCol);
-	            ValueEval thirdveval = singleOperandEvaluate(operands[2], srcCellRow, srcCellCol);
-	            if (firstveval instanceof StringValueEval
-	            	&& secondveval instanceof StringValueEval
-	            	&& thirdveval instanceof StringValueEval) {
-	            	
-	                StringValueEval oldStrEval = (StringValueEval) firstveval;
-	                oldStr = oldStrEval.getStringValue();
-	                
-	                StringValueEval searchStrEval = (StringValueEval) secondveval;
-	               	searchStr = searchStrEval.getStringValue();
-	                
-	               	StringValueEval newStrEval = (StringValueEval) thirdveval;
-	               	newStr = newStrEval.getStringValue();
-	            } else {
-	            	retval = ErrorEval.VALUE_INVALID;
-	            }
-	    }
-	        
-        if (retval == null) {
-			if (numToReplace != REPLACE_ALL && numToReplace < 1) {
-				retval = ErrorEval.VALUE_INVALID;
-			} else if (searchStr.length() == 0) {
-				retval = new StringEval(oldStr);
-			} else {
-				StringBuffer strBuff = new StringBuffer();
-				int startIndex = 0;
-				int nextMatch = -1;
-				for (int leftToReplace = numToReplace; 
-					(leftToReplace > 0 || numToReplace == REPLACE_ALL) 
-						&& (nextMatch = oldStr.indexOf(searchStr, startIndex)) != -1;
-					leftToReplace--) {
-					// store everything from end of last match to start of this match
-					strBuff.append(oldStr.substring(startIndex, nextMatch));
-					strBuff.append(newStr);
-					startIndex = nextMatch + searchStr.length();
+public final class Substitute extends TextFunction {
+
+	protected ValueEval evaluateFunc(Eval[] args, int srcCellRow, short srcCellCol)
+			throws EvaluationException {
+		if (args.length < 3 || args.length > 4) {
+			return ErrorEval.VALUE_INVALID;
+		}
+
+		String oldStr = evaluateStringArg(args[0], srcCellRow, srcCellCol);
+		String searchStr = evaluateStringArg(args[1], srcCellRow, srcCellCol);
+		String newStr = evaluateStringArg(args[2], srcCellRow, srcCellCol);
+
+		String result;
+		switch (args.length) {
+			default:
+				throw new IllegalStateException("Cannot happen");
+			case 4:
+				int instanceNumber = evaluateIntArg(args[3], srcCellRow, srcCellCol);
+				if (instanceNumber < 1) {
+					return ErrorEval.VALUE_INVALID;
 				}
+				result = replaceOneOccurrence(oldStr, searchStr, newStr, instanceNumber);
+				break;
+			case 3:
+				result = replaceAllOccurrences(oldStr, searchStr, newStr);
+		}
+		return new StringEval(result);
+	}
+
+	private static String replaceAllOccurrences(String oldStr, String searchStr, String newStr) {
+		StringBuffer sb = new StringBuffer();
+		int startIndex = 0;
+		int nextMatch = -1;
+		while (true) {
+			nextMatch = oldStr.indexOf(searchStr, startIndex);
+			if (nextMatch < 0) {
 				// store everything from end of last match to end of string
-				if (startIndex < oldStr.length()) {
-					strBuff.append(oldStr.substring(startIndex));
-				}
-				retval = new StringEval(strBuff.toString());
+				sb.append(oldStr.substring(startIndex));
+				return sb.toString();
 			}
-        } 
-		return retval;
-    }
-    
+			// store everything from end of last match to start of this match
+			sb.append(oldStr.substring(startIndex, nextMatch));
+			sb.append(newStr);
+			startIndex = nextMatch + searchStr.length();
+		}
+	}
+
+	private static String replaceOneOccurrence(String oldStr, String searchStr, String newStr, int instanceNumber) {
+		if (searchStr.length() < 1) {
+			return oldStr;
+		}
+		int startIndex = 0;
+		int nextMatch = -1;
+		int count=0;
+		while (true) {
+			nextMatch = oldStr.indexOf(searchStr, startIndex);
+			if (nextMatch < 0) {
+				// not enough occurrences found - leave unchanged
+				return oldStr;
+			}
+			count++;
+			if (count == instanceNumber) {
+				StringBuffer sb = new StringBuffer(oldStr.length() + newStr.length());
+				sb.append(oldStr.substring(0, nextMatch));
+				sb.append(newStr);
+				sb.append(oldStr.substring(nextMatch + searchStr.length()));
+				return sb.toString();
+			}
+			startIndex = nextMatch + searchStr.length();
+		}
+	}
 }

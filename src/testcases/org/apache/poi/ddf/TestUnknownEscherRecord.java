@@ -24,8 +24,7 @@ import org.apache.poi.util.HexDump;
 
 public class TestUnknownEscherRecord extends TestCase
 {
-    public void testFillFields() throws Exception
-    {
+    public void testFillFields() {
         String testData =
                 "0F 02 " + // options
                 "11 F1 " + // record id
@@ -82,15 +81,14 @@ public class TestUnknownEscherRecord extends TestCase
 
     }
 
-    public void testSerialize() throws Exception
-    {
+    public void testSerialize() {
         UnknownEscherRecord r = new UnknownEscherRecord();
         r.setOptions( (short) 0x1234 );
         r.setRecordId( (short) 0xF112 );
         byte[] data = new byte[8];
         r.serialize( 0, data, new NullEscherSerializationListener() );
 
-        assertEquals( "[34, 12, 12, F1, 00, 00, 00, 00, ]", HexDump.toHex( data ) );
+        assertEquals( "[34, 12, 12, F1, 00, 00, 00, 00]", HexDump.toHex( data ) );
 
         EscherRecord childRecord = new UnknownEscherRecord();
         childRecord.setOptions( (short) 0x9999 );
@@ -100,11 +98,10 @@ public class TestUnknownEscherRecord extends TestCase
         data = new byte[16];
         r.serialize( 0, data, new NullEscherSerializationListener() );
 
-        assertEquals( "[3F, 12, 12, F1, 08, 00, 00, 00, 99, 99, 01, FF, 00, 00, 00, 00, ]", HexDump.toHex( data ) );
+        assertEquals( "[3F, 12, 12, F1, 08, 00, 00, 00, 99, 99, 01, FF, 00, 00, 00, 00]", HexDump.toHex( data ) );
     }
 
-    public void testToString() throws Exception
-    {
+    public void testToString() {
         UnknownEscherRecord r = new UnknownEscherRecord();
         r.setOptions( (short) 0x1234 );
         r.setRecordId( (short) 0xF112 );
@@ -119,6 +116,4 @@ public class TestUnknownEscherRecord extends TestCase
                 "  numchildren: 0" + nl
                 , r.toString() );
     }
-
-
 }

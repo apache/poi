@@ -43,10 +43,9 @@ public final class TestBug42464 extends TestCase {
 	}
 	
 	private static void process(HSSFWorkbook wb) {
+		HSSFFormulaEvaluator eval =	new HSSFFormulaEvaluator(wb);
 		for(int i=0; i<wb.getNumberOfSheets(); i++) {
 			HSSFSheet s = wb.getSheetAt(i);
-			HSSFFormulaEvaluator eval =
-				new HSSFFormulaEvaluator(s, wb);
 			
 			Iterator it = s.rowIterator();
 			while(it.hasNext()) {

@@ -113,15 +113,6 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 			throw new AssertionFailedError(msg + " - actual value was null");
 		}
 		
-		if (expected.getCellType() == Cell.CELL_TYPE_STRING) {
-			String value = expected.getRichStringCellValue().getString();
-			if (value.startsWith("#")) {
-				// TODO - this code never called
-				expected.setCellType(Cell.CELL_TYPE_ERROR);
-				// expected.setCellErrorValue(...?);
-			}
-		}
-		
 		switch (expected.getCellType()) {
 			case Cell.CELL_TYPE_BLANK:
 				assertEquals(msg, Cell.CELL_TYPE_BLANK, actual.getCellType());
@@ -132,32 +123,27 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 				break;
 			case Cell.CELL_TYPE_ERROR:
 				assertEquals(msg, Cell.CELL_TYPE_ERROR, actual.getCellType());
-				if(false) { // TODO: fix ~45 functions which are currently returning incorrect error values
-					assertEquals(msg, expected.getErrorCellValue(), actual.getErrorValue());
-				}
+				assertEquals(msg, ErrorEval.getText(expected.getErrorCellValue()), ErrorEval.getText(actual.getErrorValue()));
 				break;
 			case Cell.CELL_TYPE_FORMULA: // will never be used, since we will call method after formula evaluation
 				throw new AssertionFailedError("Cannot expect formula as result of formula evaluation: " + msg);
 			case Cell.CELL_TYPE_NUMERIC:
 				assertEquals(msg, Cell.CELL_TYPE_NUMERIC, actual.getCellType());
 				TestMathX.assertEquals(msg, expected.getNumericCellValue(), actual.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
-//				double delta = Math.abs(expected.getNumericCellValue()-actual.getNumberValue());
-//				double pctExpected = Math.abs(0.00001*expected.getNumericCellValue());
-//				assertTrue(msg, delta <= pctExpected);
 				break;
 			case Cell.CELL_TYPE_STRING:
 				assertEquals(msg, Cell.CELL_TYPE_STRING, actual.getCellType());
-				assertEquals(msg, expected.getRichStringCellValue().getString(), actual.getRichTextStringValue().getString());
+				assertEquals(msg, expected.getRichStringCellValue().getString(), actual.getStringValue());
 				break;
 		}
 	}
 
 
-	protected void setUp() throws Exception {
+	protected void setUp() {
 		if (workbook == null) {
 			workbook = HSSFTestDataSamples.openSampleWorkbook(SS.FILENAME);
 			sheet = workbook.getSheetAt( 0 );
-		  }
+		}
 		_functionFailureCount = 0;
 		_functionSuccessCount = 0;
 		_evaluationFailureCount = 0;
@@ -192,8 +178,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	 * Typically pass <code>null</code> to test all functions
 	 */
 	private void processFunctionGroup(int startRowIndex, String testFocusFunctionName) {
- 
-		FormulaEvaluator evaluator = new FormulaEvaluator(sheet, workbook);
+		FormulaEvaluator evaluator = new FormulaEvaluator(workbook);
 
 		int rowIndex = startRowIndex;
 		while (true) {
@@ -263,7 +248,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 				result = Result.SOME_EVALUATIONS_FAILED;
 			}
 		}
- 		return result;
+		return result;
 	}
 
 	/**

@@ -30,13 +30,11 @@ public class TestEscherContainerRecord extends TestCase
 {
 	private String ESCHER_DATA_PATH;
 	
-	protected void setUp() throws Exception {
-		super.setUp();
+	protected void setUp() {
 		ESCHER_DATA_PATH = System.getProperty("DDF.testdata.path");
 	}
 
-	public void testFillFields() throws Exception
-    {
+	public void testFillFields() {
         EscherRecordFactory f = new DefaultEscherRecordFactory();
         byte[] data = HexRead.readFromString( "0F 02 11 F1 00 00 00 00" );
         EscherRecord r = f.createRecord( data, 0 );
@@ -55,15 +53,14 @@ public class TestEscherContainerRecord extends TestCase
         assertEquals( (short) 0xF222, c.getRecordId() );
     }
 
-    public void testSerialize() throws Exception
-    {
+    public void testSerialize() {
         UnknownEscherRecord r = new UnknownEscherRecord();
         r.setOptions( (short) 0x123F );
         r.setRecordId( (short) 0xF112 );
         byte[] data = new byte[8];
         r.serialize( 0, data, new NullEscherSerializationListener() );
 
-        assertEquals( "[3F, 12, 12, F1, 00, 00, 00, 00, ]", HexDump.toHex( data ) );
+        assertEquals( "[3F, 12, 12, F1, 00, 00, 00, 00]", HexDump.toHex( data ) );
 
         EscherRecord childRecord = new UnknownEscherRecord();
         childRecord.setOptions( (short) 0x9999 );
@@ -72,12 +69,11 @@ public class TestEscherContainerRecord extends TestCase
         data = new byte[16];
         r.serialize( 0, data, new NullEscherSerializationListener() );
 
-        assertEquals( "[3F, 12, 12, F1, 08, 00, 00, 00, 99, 99, 01, FF, 00, 00, 00, 00, ]", HexDump.toHex( data ) );
+        assertEquals( "[3F, 12, 12, F1, 08, 00, 00, 00, 99, 99, 01, FF, 00, 00, 00, 00]", HexDump.toHex( data ) );
 
     }
 
-    public void testToString() throws Exception
-    {
+    public void testToString() {
         EscherContainerRecord r = new EscherContainerRecord();
         r.setRecordId( EscherContainerRecord.SP_CONTAINER );
         r.setOptions( (short) 0x000F );
@@ -134,8 +130,7 @@ public class TestEscherContainerRecord extends TestCase
         assertEquals( expected, r.toString() );
     }
 
-    public void testGetRecordSize() throws Exception
-    {
+    public void testGetRecordSize() {
         EscherContainerRecord r = new EscherContainerRecord();
         r.addChildRecord(new EscherRecord()
         {

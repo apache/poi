@@ -22,6 +22,7 @@ import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
+import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
@@ -51,6 +52,10 @@ public final class Index implements Function {
 			return ErrorEval.VALUE_INVALID;
 		}
 		Eval firstArg = args[0];
+		if (firstArg instanceof RefEval) {
+			// convert to area ref for simpler code in getValueFromArea()
+			firstArg = ((RefEval)firstArg).offset(0, 0, 0, 0);
+		}
 		if(!(firstArg instanceof AreaEval)) {
 			
 			// else the other variation of this function takes an array as the first argument
@@ -84,16 +89,63 @@ public final class Index implements Function {
 					// too many arguments
 					return ErrorEval.VALUE_INVALID;
 			}
-			return getValueFromArea(reference, rowIx, columnIx);
+			return getValueFromArea(reference, rowIx, columnIx, nArgs);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
 	}
 	
-	private static ValueEval getValueFromArea(AreaEval ae, int rowIx, int columnIx) throws EvaluationException {
+	/**
+	 * @param nArgs - needed because error codes are slightly different when only 2 args are passed 
+	 */
+	private static ValueEval getValueFromArea(AreaEval ae, int pRowIx, int pColumnIx, int nArgs) throws EvaluationException {
+		int rowIx;
+		int columnIx;
+		
+		// when the area ref is a single row or a single column,
+		// there are special rules for conversion of rowIx and columnIx
+		if (ae.isRow()) {
+			if (ae.isColumn()) {
+				rowIx = pRowIx == -1 ? 0 : pRowIx;
+				columnIx = pColumnIx == -1 ? 0 : pColumnIx;
+			} else {
+				if (nArgs == 2) {
+					rowIx = 0;
+					columnIx = pRowIx;
+				} else {
+					rowIx = pRowIx == -1 ? 0 : pRowIx;
+					columnIx = pColumnIx;
+				}
+			}
+			if (rowIx < -1 || columnIx < -1) {
+				throw new EvaluationException(ErrorEval.VALUE_INVALID);
+			}
+		} else if (ae.isColumn()) {
+			if (nArgs == 2) {
+				rowIx = pRowIx;
+				columnIx = 0;
+			} else {
+				rowIx = pRowIx;
+				columnIx = pColumnIx == -1 ? 0 : pColumnIx;
+			}
+			if (rowIx < -1 || columnIx < -1) {
+				throw new EvaluationException(ErrorEval.VALUE_INVALID);
+			}
+		} else {
+			if (nArgs == 2) {
+				// always an error with 2-D area refs
+				if (pRowIx < -1) {
+					throw new EvaluationException(ErrorEval.VALUE_INVALID);
+				}
+				throw new EvaluationException(ErrorEval.REF_INVALID);
+			}
+			// Normal case - area ref is 2-D, and both index args were provided
+			rowIx = pRowIx;
+			columnIx = pColumnIx;
+		}
+		
 		int width = ae.getWidth();
 		int height = ae.getHeight();
-		
 		// Slightly irregular logic for bounds checking errors
 		if (rowIx >= height || columnIx >= width) {
 			throw new EvaluationException(ErrorEval.REF_INVALID);

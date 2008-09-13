@@ -44,7 +44,7 @@ public final class TestIsBlank extends TestCase {
          
         cell.setCellFormula("isblank(Sheet2!A1:A1)");
         
-        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet1, wb);
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
         CellValue result = fe.evaluate(cell);
         assertEquals(HSSFCell.CELL_TYPE_BOOLEAN, result.getCellType());
         assertEquals(true, result.getBooleanValue());
