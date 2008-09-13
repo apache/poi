@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 import junit.framework.TestCase;
@@ -36,8 +35,7 @@ public class TestEscherBlipWMFRecord extends TestCase
         data = HexRead.readFromString(dataStr);
     }
 
-    public void testSerialize() throws Exception
-    {
+    public void testSerialize() {
         EscherBlipWMFRecord r = new EscherBlipWMFRecord();
         r.setBoundaryLeft(1);
         r.setBoundaryHeight(2);
@@ -72,14 +70,13 @@ public class TestEscherBlipWMFRecord extends TestCase
                 "05, 00, 00, 00, " +    // field_9_cacheOfSavedSize
                 "08, " +                // field_10_compressionFlag
                 "07, " +                // field_11_filter
-                "01, 02, ]",            // field_12_data
+                "01, 02]",            // field_12_data
                 HexDump.toHex(buf));
         assertEquals(60, r.getRecordSize() );
 
     }
 
-    public void testFillFields() throws Exception
-    {
+    public void testFillFields() {
         EscherBlipWMFRecord r = new EscherBlipWMFRecord();
         r.fillFields( data, 0, new DefaultEscherRecordFactory());
 
@@ -92,15 +89,14 @@ public class TestEscherBlipWMFRecord extends TestCase
         assertEquals( 6, r.getCacheOfSize() );
         assertEquals( 7, r.getFilter() );
         assertEquals( 8, r.getCompressionFlag() );
-        assertEquals( "[01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, ]", HexDump.toHex(r.getSecondaryUID() ) );
+        assertEquals( "[01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01]", HexDump.toHex(r.getSecondaryUID() ) );
         assertEquals( 10, r.getWidth() );
         assertEquals( 11, r.getHeight() );
         assertEquals( (short)5420, r.getOptions() );
-        assertEquals( "[01, 02, ]", HexDump.toHex( r.getData() ) );
+        assertEquals( "[01, 02]", HexDump.toHex( r.getData() ) );
     }
 
-    public void testToString() throws Exception
-    {
+    public void testToString() {
         EscherBlipWMFRecord r = new EscherBlipWMFRecord();
         r.fillFields( data, 0, new DefaultEscherRecordFactory() );
 
@@ -109,7 +105,7 @@ public class TestEscherBlipWMFRecord extends TestCase
         assertEquals( "org.apache.poi.ddf.EscherBlipWMFRecord:" + nl +
                 "  RecordId: 0xF018" + nl +
                 "  Options: 0x152C" + nl +
-                "  Secondary UID: [01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, ]" + nl +
+                "  Secondary UID: [01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01]" + nl +
                 "  CacheOfSize: 6" + nl +
                 "  BoundaryTop: 3" + nl +
                 "  BoundaryLeft: 1" + nl +
@@ -124,5 +120,5 @@ public class TestEscherBlipWMFRecord extends TestCase
                 "00000000 01 02                                           .." + nl
                 , r.toString() );
     }
-
 }
+

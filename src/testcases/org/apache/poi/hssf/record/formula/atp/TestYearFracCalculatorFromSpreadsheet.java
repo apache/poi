@@ -56,7 +56,7 @@ public final class TestYearFracCalculatorFromSpreadsheet extends TestCase {
 		
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("yearfracExamples.xls");
 		HSSFSheet sheet = wb.getSheetAt(0);
-		HSSFFormulaEvaluator formulaEvaluator = new HSSFFormulaEvaluator(sheet, wb);
+		HSSFFormulaEvaluator formulaEvaluator = new HSSFFormulaEvaluator(wb);
 		int nSuccess = 0;
 		int nFailures = 0;
 		int nUnexpectedErrors = 0;

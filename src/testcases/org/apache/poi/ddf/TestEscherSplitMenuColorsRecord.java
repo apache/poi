@@ -24,8 +24,7 @@ import org.apache.poi.util.HexRead;
 
 public class TestEscherSplitMenuColorsRecord extends TestCase
 {
-    public void testSerialize() throws Exception
-    {
+    public void testSerialize() {
         EscherSplitMenuColorsRecord r = createRecord();
 
         byte[] data = new byte[24];
@@ -37,12 +36,11 @@ public class TestEscherSplitMenuColorsRecord extends TestCase
                 "02, 04, 00, 00, " +
                 "02, 00, 00, 00, " +
                 "02, 00, 00, 00, " +
-                "01, 00, 00, 00, ]",
+                "01, 00, 00, 00]",
                 HexDump.toHex( data ) );
     }
 
-    public void testFillFields() throws Exception
-    {
+    public void testFillFields() {
         String hexData = "40 00 " +
                 "1E F1 " +
                 "10 00 00 00 " +
@@ -61,8 +59,7 @@ public class TestEscherSplitMenuColorsRecord extends TestCase
         assertEquals( 0x01, r.getColor4() );
     }
 
-    public void testToString() throws Exception
-    {
+    public void testToString() {
         String nl = System.getProperty("line.separator");
 
         String expected = "org.apache.poi.ddf.EscherSplitMenuColorsRecord:" + nl +
@@ -76,7 +73,7 @@ public class TestEscherSplitMenuColorsRecord extends TestCase
         assertEquals( expected, createRecord().toString() );
     }
 
-    private EscherSplitMenuColorsRecord createRecord()
+    private static EscherSplitMenuColorsRecord createRecord()
     {
         EscherSplitMenuColorsRecord r = new EscherSplitMenuColorsRecord();
         r.setOptions( (short) 0x0040 );
@@ -87,5 +84,4 @@ public class TestEscherSplitMenuColorsRecord extends TestCase
         r.setColor4( 0x1 );
         return r;
     }
-
 }

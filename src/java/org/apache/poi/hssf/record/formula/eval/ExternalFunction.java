@@ -19,7 +19,6 @@ package org.apache.poi.hssf.record.formula.eval;
 
 import org.apache.poi.hssf.record.formula.atp.AnalysisToolPak;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 /**
  * 
@@ -31,7 +30,8 @@ import org.apache.poi.ss.usermodel.Workbook;
  */
 final class ExternalFunction implements FreeRefFunction {
 
-	public ValueEval evaluate(Eval[] args, int srcCellRow, short srcCellCol, Workbook workbook, Sheet sheet) {
+	public ValueEval evaluate(Eval[] args, Workbook workbook, 
+			int srcCellSheet, int srcCellRow,int srcCellCol) {
 		
 		int nIncomingArgs = args.length;
 		if(nIncomingArgs < 1) {
@@ -55,7 +55,7 @@ final class ExternalFunction implements FreeRefFunction {
 		int nOutGoingArgs = nIncomingArgs -1;
 		Eval[] outGoingArgs = new Eval[nOutGoingArgs];
 		System.arraycopy(args, 1, outGoingArgs, 0, nOutGoingArgs);
-		return targetFunc.evaluate(outGoingArgs, srcCellRow, srcCellCol, workbook, sheet);
+		return targetFunc.evaluate(outGoingArgs, workbook, srcCellSheet, srcCellRow, srcCellCol);
 	}
 
 	private FreeRefFunction findExternalUserDefinedFunction(Workbook workbook,

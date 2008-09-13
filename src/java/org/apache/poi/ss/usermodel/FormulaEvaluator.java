@@ -20,9 +20,6 @@ package org.apache.poi.ss.usermodel;
 import java.util.Iterator;
 import java.util.Stack;
 
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellReference;
-
 import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
@@ -49,8 +46,6 @@ import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.FunctionEval;
-import org.apache.poi.hssf.record.formula.eval.LazyAreaEval;
-import org.apache.poi.hssf.record.formula.eval.LazyRefEval;
 import org.apache.poi.hssf.record.formula.eval.NameEval;
 import org.apache.poi.hssf.record.formula.eval.NameXEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
@@ -58,6 +53,7 @@ import org.apache.poi.hssf.record.formula.eval.OperationEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.util.CellReference;
 
 /**
  * Evaluates formula cells.<p/>
@@ -70,29 +66,37 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  * @author Josh Micich
  */
 public class FormulaEvaluator {
-	/**
-	 * used to track the number of evaluations
-	 */
+
+    /**
+     * used to track the number of evaluations
+     */
     private static final class Counter {
         public int value;
+        public int depth;
         public Counter() {
             value = 0;
         }
     }
 
-    protected Sheet _sheet;
-    protected Workbook _workbook;
+    protected final Workbook _workbook;
     private final EvaluationCache _cache;
 
     private Counter _evaluationCounter;
 
-
+    /**
+     * @deprecated (Sep 2008) Sheet parameter is ignored
+     */
     public FormulaEvaluator(Sheet sheet, Workbook workbook) {
-        this(sheet, workbook, new EvaluationCache(), new Counter());
+        this(workbook);
+        if (false) {
+            sheet.toString(); // suppress unused parameter compiler warning
+        }
     }
-    
-    private FormulaEvaluator(Sheet sheet, Workbook workbook, EvaluationCache cache, Counter evaluationCounter) {
-        _sheet = sheet;
+    public FormulaEvaluator(Workbook workbook) {
+        this(workbook, new EvaluationCache(), new Counter());
+    }
+
+    private FormulaEvaluator(Workbook workbook, EvaluationCache cache, Counter evaluationCounter) {
         _workbook = workbook;
         _cache = cache;
         _evaluationCounter = evaluationCounter;
@@ -140,7 +144,6 @@ public class FormulaEvaluator {
         _cache.clear();
     }
 
-
     /**
      * If cell contains a formula, the formula is evaluated and returned,
      * else the CellValue simply copies the appropriate cell value from
@@ -150,34 +153,23 @@ public class FormulaEvaluator {
      * @param cell
      */
     public CellValue evaluate(Cell cell) {
-        CellValue retval = null;
-        if (cell != null) {
-            switch (cell.getCellType()) {
-            case Cell.CELL_TYPE_BLANK:
-                retval = new CellValue(Cell.CELL_TYPE_BLANK, _workbook.getCreationHelper());
-                break;
-            case Cell.CELL_TYPE_BOOLEAN:
-                retval = new CellValue(Cell.CELL_TYPE_BOOLEAN, _workbook.getCreationHelper());
-                retval.setBooleanValue(cell.getBooleanCellValue());
-                break;
-            case Cell.CELL_TYPE_ERROR:
-                retval = new CellValue(Cell.CELL_TYPE_ERROR, _workbook.getCreationHelper());
-                retval.setErrorValue(cell.getErrorCellValue());
-                break;
-            case Cell.CELL_TYPE_FORMULA:
-                retval = getCellValueForEval(internalEvaluate(cell, _sheet), _workbook.getCreationHelper());
-                break;
-            case Cell.CELL_TYPE_NUMERIC:
-                retval = new CellValue(Cell.CELL_TYPE_NUMERIC, _workbook.getCreationHelper());
-                retval.setNumberValue(cell.getNumericCellValue());
-                break;
-            case Cell.CELL_TYPE_STRING:
-                retval = new CellValue(Cell.CELL_TYPE_STRING, _workbook.getCreationHelper());
-                retval.setRichTextStringValue(cell.getRichStringCellValue());
-                break;
-            }
+        if (cell == null) {
+            return null;
         }
-        return retval;
+        
+        switch (cell.getCellType()) {
+            case Cell.CELL_TYPE_BOOLEAN:
+                return CellValue.valueOf(cell.getBooleanCellValue());
+            case Cell.CELL_TYPE_ERROR:
+                return CellValue.getError(cell.getErrorCellValue());
+            case Cell.CELL_TYPE_FORMULA:
+                return evaluateFormulaCellValue(cell);
+            case Cell.CELL_TYPE_NUMERIC:
+                return new CellValue(cell.getNumericCellValue(), _workbook.getCreationHelper());
+            case Cell.CELL_TYPE_STRING:
+                return new CellValue(cell.getRichStringCellValue().getString(), _workbook.getCreationHelper());
+        }
+        throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
     }
 
 
@@ -200,32 +192,13 @@ public class FormulaEvaluator {
      * @return The type of the formula result (the cell's type remains as Cell.CELL_TYPE_FORMULA however)
      */
     public int evaluateFormulaCell(Cell cell) {
-        if (cell != null) {
-            switch (cell.getCellType()) {
-            case Cell.CELL_TYPE_FORMULA:
-                CellValue cv = getCellValueForEval(internalEvaluate(cell, _sheet), _workbook.getCreationHelper());
-                switch (cv.getCellType()) {
-                case Cell.CELL_TYPE_BOOLEAN:
-                    cell.setCellValue(cv.getBooleanValue());
-                    break;
-                case Cell.CELL_TYPE_ERROR:
-                    cell.setCellValue(cv.getErrorValue());
-                    break;
-                case Cell.CELL_TYPE_NUMERIC:
-                    cell.setCellValue(cv.getNumberValue());
-                    break;
-                case Cell.CELL_TYPE_STRING:
-                    cell.setCellValue(cv.getRichTextStringValue());
-                    break;
-                case Cell.CELL_TYPE_BLANK:
-                    break;
-                case Cell.CELL_TYPE_FORMULA: // this will never happen, we have already evaluated the formula
-                    break;
-                }
-                return cv.getCellType();
-            }
+        if (cell == null || cell.getCellType() != Cell.CELL_TYPE_FORMULA) {
+            return -1;
         }
-        return -1;
+        CellValue cv = evaluateFormulaCellValue(cell);
+        // cell remains a formula cell, but the cached value is changed
+        setCellValue(cell, cv);
+        return cv.getCellType();
     }
 
     /**
@@ -245,34 +218,55 @@ public class FormulaEvaluator {
      * @param cell
      */
     public Cell evaluateInCell(Cell cell) {
-        if (cell != null) {
-            switch (cell.getCellType()) {
-            case Cell.CELL_TYPE_FORMULA:
-                CellValue cv = getCellValueForEval(internalEvaluate(cell, _sheet), _workbook.getCreationHelper());
-                switch (cv.getCellType()) {
-                case Cell.CELL_TYPE_BOOLEAN:
-                    cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
-                    cell.setCellValue(cv.getBooleanValue());
-                    break;
-                case Cell.CELL_TYPE_ERROR:
-                    cell.setCellErrorValue(cv.getErrorValue());
-                    break;
-                case Cell.CELL_TYPE_NUMERIC:
-                    cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-                    cell.setCellValue(cv.getNumberValue());
-                    break;
-                case Cell.CELL_TYPE_STRING:
-                    cell.setCellType(Cell.CELL_TYPE_STRING);
-                    cell.setCellValue(cv.getRichTextStringValue());
-                    break;
-                case Cell.CELL_TYPE_BLANK:
-                    break;
-                case Cell.CELL_TYPE_FORMULA: // this will never happen, we have already evaluated the formula
-                    break;
-                }
-            }
+        if (cell == null) {
+            return null;
+        }
+        if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+            CellValue cv = evaluateFormulaCellValue(cell);
+            setCellType(cell, cv); // cell will no longer be a formula cell
+            setCellValue(cell, cv);
         }
         return cell;
+    }
+    private static void setCellType(Cell cell, CellValue cv) {
+        int cellType = cv.getCellType();
+        switch (cellType) {
+            case Cell.CELL_TYPE_BOOLEAN:
+            case Cell.CELL_TYPE_ERROR:
+            case Cell.CELL_TYPE_NUMERIC:
+            case Cell.CELL_TYPE_STRING:
+                cell.setCellType(cellType);
+                return;
+            case Cell.CELL_TYPE_BLANK:
+                // never happens - blanks eventually get translated to zero
+            case Cell.CELL_TYPE_FORMULA:
+                // this will never happen, we have already evaluated the formula
+        }
+        throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");
+    }
+
+    private static void setCellValue(Cell cell, CellValue cv) {
+        int cellType = cv.getCellType();
+        switch (cellType) {
+            case Cell.CELL_TYPE_BOOLEAN:
+                cell.setCellValue(cv.getBooleanValue());
+                break;
+            case Cell.CELL_TYPE_ERROR:
+                cell.setCellErrorValue(cv.getErrorValue());
+                break;
+            case Cell.CELL_TYPE_NUMERIC:
+                cell.setCellValue(cv.getNumberValue());
+                break;
+            case Cell.CELL_TYPE_STRING:
+                cell.setCellValue(cv.getRichTextStringValue());
+                break;
+            case Cell.CELL_TYPE_BLANK:
+                // never happens - blanks eventually get translated to zero
+            case Cell.CELL_TYPE_FORMULA:
+                // this will never happen, we have already evaluated the formula
+            default:
+                throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");
+        }
     }
 
     /**
@@ -287,9 +281,9 @@ public class FormulaEvaluator {
      *  cells, and calling evaluateFormulaCell on each one.
      */
     public static void evaluateAllFormulaCells(Workbook wb) {
+        FormulaEvaluator evaluator = new FormulaEvaluator(wb);
         for(int i=0; i<wb.getNumberOfSheets(); i++) {
             Sheet sheet = wb.getSheetAt(i);
-            FormulaEvaluator evaluator = new FormulaEvaluator(sheet, wb);
 
             for (Iterator rit = sheet.rowIterator(); rit.hasNext();) {
                 Row r = (Row)rit.next();
@@ -303,72 +297,61 @@ public class FormulaEvaluator {
         }
     }
 
-
     /**
      * Returns a CellValue wrapper around the supplied ValueEval instance.
      * @param eval
      */
-    private static CellValue getCellValueForEval(ValueEval eval, CreationHelper cHelper) {
-        CellValue retval = null;
-        if (eval != null) {
-            if (eval instanceof NumberEval) {
-                NumberEval ne = (NumberEval) eval;
-                retval = new CellValue(Cell.CELL_TYPE_NUMERIC, cHelper);
-                retval.setNumberValue(ne.getNumberValue());
-            }
-            else if (eval instanceof BoolEval) {
-                BoolEval be = (BoolEval) eval;
-                retval = new CellValue(Cell.CELL_TYPE_BOOLEAN, cHelper);
-                retval.setBooleanValue(be.getBooleanValue());
-            }
-            else if (eval instanceof StringEval) {
-                StringEval ne = (StringEval) eval;
-                retval = new CellValue(Cell.CELL_TYPE_STRING, cHelper);
-                retval.setStringValue(ne.getStringValue());
-            }
-            else if (eval instanceof BlankEval) {
-                retval = new CellValue(Cell.CELL_TYPE_BLANK, cHelper);
-            }
-            else if (eval instanceof ErrorEval) {
-                retval = new CellValue(Cell.CELL_TYPE_ERROR, cHelper);
-                retval.setErrorValue((byte)((ErrorEval)eval).getErrorCode());
-//                retval.setRichTextStringValue(new RichTextString("#An error occurred. check cell.getErrorCode()"));
-            }
-            else {
-                retval = new CellValue(Cell.CELL_TYPE_ERROR, cHelper);
-            }
+    private CellValue evaluateFormulaCellValue(Cell cell) {
+        ValueEval eval = internalEvaluate(cell);
+        if (eval instanceof NumberEval) {
+            NumberEval ne = (NumberEval) eval;
+            return new CellValue(ne.getNumberValue(), _workbook.getCreationHelper());
         }
-        return retval;
+        if (eval instanceof BoolEval) {
+            BoolEval be = (BoolEval) eval;
+            return CellValue.valueOf(be.getBooleanValue());
+        }
+        if (eval instanceof StringEval) {
+            StringEval ne = (StringEval) eval;
+            return new CellValue(ne.getStringValue(), _workbook.getCreationHelper());
+        }
+        if (eval instanceof ErrorEval) {
+            return CellValue.getError(((ErrorEval)eval).getErrorCode());
+        }
+        throw new RuntimeException("Unexpected eval class (" + eval.getClass().getName() + ")");
     }
 
     /**
      * Dev. Note: Internal evaluate must be passed only a formula cell
      * else a runtime exception will be thrown somewhere inside the method.
      * (Hence this is a private method.)
+     * @return never <code>null</code>, never {@link BlankEval}
      */
-    private ValueEval internalEvaluate(Cell srcCell, Sheet sheet) {
+    private ValueEval internalEvaluate(Cell srcCell) {
         int srcRowNum = srcCell.getRowIndex();
         int srcColNum = srcCell.getCellNum();
 
         ValueEval result;
 
-        int sheetIndex = _workbook.getSheetIndex(sheet);
+        int sheetIndex = _workbook.getSheetIndex(srcCell.getSheet());
         result = _cache.getValue(sheetIndex, srcRowNum, srcColNum);
         if (result != null) {
-           return result;
+            return result;
         }
         _evaluationCounter.value++;
+        _evaluationCounter.depth++;
 
         EvaluationCycleDetector tracker = EvaluationCycleDetectorManager.getTracker();
 
-        if(!tracker.startEvaluate(_workbook, sheet, srcRowNum, srcColNum)) {
+        if(!tracker.startEvaluate(_workbook, sheetIndex, srcRowNum, srcColNum)) {
             return ErrorEval.CIRCULAR_REF_ERROR;
         }
         try {
-            result = evaluateCell(srcRowNum, (short)srcColNum, srcCell.getCellFormula());
+            result = evaluateCell(sheetIndex, srcRowNum, (short)srcColNum, srcCell.getCellFormula());
         } finally {
-            tracker.endEvaluate(_workbook, sheet, srcRowNum, srcColNum);
+            tracker.endEvaluate(_workbook, sheetIndex, srcRowNum, srcColNum);
             _cache.setValue(sheetIndex, srcRowNum, srcColNum, result);
+            _evaluationCounter.depth--;
         }
         if (isDebugLogEnabled()) {
             String sheetName = _workbook.getSheetName(sheetIndex);
@@ -377,7 +360,7 @@ public class FormulaEvaluator {
         }
         return result;
     }
-    private ValueEval evaluateCell(int srcRowNum, short srcColNum, String cellFormulaText) {
+    private ValueEval evaluateCell(int sheetIndex, int srcRowNum, short srcColNum, String cellFormulaText) {
 
         Ptg[] ptgs = FormulaParser.parse(cellFormulaText, _workbook);
 
@@ -392,8 +375,8 @@ public class FormulaEvaluator {
             }
             if (ptg instanceof MemErrPtg) { continue; }
             if (ptg instanceof MissingArgPtg) {
-               // TODO - might need to push BlankEval or MissingArgEval
-               continue;
+                // TODO - might need to push BlankEval or MissingArgEval
+                continue;
             }
             Eval opResult;
             if (ptg instanceof OperationPtg) {
@@ -411,15 +394,15 @@ public class FormulaEvaluator {
                     Eval p = (Eval) stack.pop();
                     ops[j] = p;
                 }
-                logDebug("invoke " + operation + " (nAgs=" + numops + ")");
-                opResult = invokeOperation(operation, ops, srcRowNum, srcColNum, _workbook, _sheet);
+//                logDebug("invoke " + operation + " (nAgs=" + numops + ")");
+                opResult = invokeOperation(operation, ops, _workbook, sheetIndex, srcRowNum, srcColNum);
             } else {
-                opResult = getEvalForPtg(ptg, _sheet);
+                opResult = getEvalForPtg(ptg, sheetIndex);
             }
             if (opResult == null) {
                 throw new RuntimeException("Evaluation result must not be null");
             }
-            logDebug("push " + opResult);
+//            logDebug("push " + opResult);
             stack.push(opResult);
         }
 
@@ -428,7 +411,7 @@ public class FormulaEvaluator {
             throw new IllegalStateException("evaluation stack not empty");
         }
         value = dereferenceValue(value, srcRowNum, srcColNum);
-        if (value instanceof BlankEval) {
+        if (value == BlankEval.INSTANCE) {
             // Note Excel behaviour here. A blank final final value is converted to zero.
             return NumberEval.ZERO;
             // Formulas _never_ evaluate to blank.  If a formula appears to have evaluated to
@@ -464,23 +447,20 @@ public class FormulaEvaluator {
         return evaluationResult;
     }
 
-    private static Eval invokeOperation(OperationEval operation, Eval[] ops, int srcRowNum, short srcColNum,
-            Workbook workbook, Sheet sheet) {
+    private static Eval invokeOperation(OperationEval operation, Eval[] ops, 
+            Workbook workbook, int sheetIndex, int srcRowNum, int srcColNum) {
 
         if(operation instanceof FunctionEval) {
             FunctionEval fe = (FunctionEval) operation;
             if(fe.isFreeRefFunction()) {
-                return fe.getFreeRefFunction().evaluate(ops, srcRowNum, srcColNum, workbook, sheet);
+                return fe.getFreeRefFunction().evaluate(ops, workbook, sheetIndex, srcRowNum, srcColNum);
             }
         }
-        return operation.evaluate(ops, srcRowNum, srcColNum);
+        return operation.evaluate(ops, srcRowNum, (short)srcColNum);
     }
 
     private Sheet getOtherSheet(int externSheetIndex) {
         return _workbook.getSheetAt(_workbook.getSheetIndexFromExternSheetIndex(externSheetIndex));
-    }
-    private FormulaEvaluator createEvaluatorForAnotherSheet(Sheet sheet) {
-        return new FormulaEvaluator(sheet, _workbook, _cache, _evaluationCounter);
     }
 
     /**
@@ -489,7 +469,7 @@ public class FormulaEvaluator {
      * StringPtg, BoolPtg <br/>special Note: OperationPtg subtypes cannot be
      * passed here!
      */
-    private Eval getEvalForPtg(Ptg ptg, Sheet sheet) {
+    private Eval getEvalForPtg(Ptg ptg, int sheetIndex) {
         if (ptg instanceof NamePtg) {
             // named ranges, macro functions
             NamePtg namePtg = (NamePtg) ptg;
@@ -499,40 +479,22 @@ public class FormulaEvaluator {
                 throw new RuntimeException("Bad name index (" + nameIndex
                         + "). Allowed range is (0.." + (numberOfNames-1) + ")");
             }
-            if(_workbook instanceof org.apache.poi.hssf.usermodel.HSSFWorkbook) { 
-				org.apache.poi.hssf.usermodel.HSSFWorkbook hssfWb = 
-					(org.apache.poi.hssf.usermodel.HSSFWorkbook)_workbook;
-				NameRecord nameRecord = hssfWb.getNameRecord(nameIndex);
+			if(_workbook instanceof org.apache.poi.hssf.usermodel.HSSFWorkbook) {
+				NameRecord nameRecord = ((org.apache.poi.hssf.usermodel.HSSFWorkbook)_workbook).getNameRecord(nameIndex);
 				if (nameRecord.isFunctionName()) {
 					return new NameEval(nameRecord.getNameText());
 				}
 				if (nameRecord.hasFormula()) {
-					return evaluateNameFormula(nameRecord.getNameDefinition(), sheet);
+					return evaluateNameFormula(nameRecord.getNameDefinition(), sheetIndex);
 				}
-				throw new RuntimeException("Don't know how to evalate name '" + nameRecord.getNameText() + "'");
-			} else {
-				throw new RuntimeException("Don't know how to evaluate name records for XSSF");
+
+				throw new RuntimeException("Don't now how to evalate name '" + nameRecord.getNameText() + "'");
 			}
+			throw new RuntimeException("Don't now how to evalate name for XSSFWorkbook");
         }
         if (ptg instanceof NameXPtg) {
             NameXPtg nameXPtg = (NameXPtg) ptg;
             return new NameXEval(nameXPtg.getSheetRefIndex(), nameXPtg.getNameIndex());
-        }
-        if (ptg instanceof RefPtg) {
-            return new LazyRefEval(((RefPtg) ptg), sheet, this);
-        }
-        if (ptg instanceof Ref3DPtg) {
-            Ref3DPtg refPtg = (Ref3DPtg) ptg;
-            Sheet xsheet = getOtherSheet(refPtg.getExternSheetIndex());
-            return new LazyRefEval(refPtg, xsheet, createEvaluatorForAnotherSheet(xsheet));
-        }
-        if (ptg instanceof AreaPtg) {
-            return new LazyAreaEval(((AreaPtg) ptg), sheet, this);
-        }
-        if (ptg instanceof Area3DPtg) {
-            Area3DPtg a3dp = (Area3DPtg) ptg;
-            Sheet xsheet = getOtherSheet(a3dp.getExternSheetIndex());
-            return new LazyAreaEval(a3dp, xsheet, createEvaluatorForAnotherSheet(xsheet));
         }
 
         if (ptg instanceof IntPtg) {
@@ -550,17 +512,38 @@ public class FormulaEvaluator {
         if (ptg instanceof ErrPtg) {
             return ErrorEval.valueOf(((ErrPtg) ptg).getErrorCode());
         }
+        Sheet sheet = _workbook.getSheetAt(sheetIndex);
+        if (ptg instanceof RefPtg) {
+            return new LazyRefEval(((RefPtg) ptg), sheet, this);
+        }
+        if (ptg instanceof AreaPtg) {
+            return new LazyAreaEval(((AreaPtg) ptg), sheet, this);
+        }
+        if (ptg instanceof Ref3DPtg) {
+            Ref3DPtg refPtg = (Ref3DPtg) ptg;
+            Sheet xsheet = getOtherSheet(refPtg.getExternSheetIndex());
+            return new LazyRefEval(refPtg, xsheet, this);
+        }
+        if (ptg instanceof Area3DPtg) {
+            Area3DPtg a3dp = (Area3DPtg) ptg;
+            Sheet xsheet = getOtherSheet(a3dp.getExternSheetIndex());
+            return new LazyAreaEval(a3dp, xsheet, this);
+        }
+
         if (ptg instanceof UnknownPtg) {
-            // TODO - remove UnknownPtg
+            // POI uses UnknownPtg when the encoded Ptg array seems to be corrupted.
+            // This seems to occur in very rare cases (e.g. unused name formulas in bug 44774, attachment 21790)
+            // In any case, formulas are re-parsed before execution, so UnknownPtg should not get here 
             throw new RuntimeException("UnknownPtg not allowed");
         }
+        
         throw new RuntimeException("Unexpected ptg class (" + ptg.getClass().getName() + ")");
     }
-    private Eval evaluateNameFormula(Ptg[] ptgs, Sheet sheet) {
+    private Eval evaluateNameFormula(Ptg[] ptgs, int sheetIndex) {
         if (ptgs.length > 1) {
             throw new RuntimeException("Complex name formulas not supported yet");
         }
-        return getEvalForPtg(ptgs[0], sheet);
+        return getEvalForPtg(ptgs[0], sheetIndex);
     }
 
     /**
@@ -568,11 +551,8 @@ public class FormulaEvaluator {
      * impl instance and return that. Since the cell could be an external
      * reference, we need the sheet that this belongs to.
      * Non existent cells are treated as empty.
-     * @param cell
-     * @param sheet
-     * @param workbook
      */
-    public ValueEval getEvalForCell(Cell cell, Sheet sheet) {
+    public ValueEval getEvalForCell(Cell cell) {
 
         if (cell == null) {
             return BlankEval.INSTANCE;
@@ -583,7 +563,7 @@ public class FormulaEvaluator {
             case Cell.CELL_TYPE_STRING:
                 return new StringEval(cell.getRichStringCellValue().getString());
             case Cell.CELL_TYPE_FORMULA:
-                return internalEvaluate(cell, sheet);
+                return internalEvaluate(cell);
             case Cell.CELL_TYPE_BOOLEAN:
                 return BoolEval.valueOf(cell.getBooleanCellValue());
             case Cell.CELL_TYPE_BLANK:
@@ -600,93 +580,99 @@ public class FormulaEvaluator {
      * or Number or boolean type.
      * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
      */
-    public static class CellValue {
-        private CreationHelper creationHelper;
-        private int cellType;
-        private RichTextString richTextStringValue;
-        private double numberValue;
-        private boolean booleanValue;
-        private byte errorValue;
+    public static final class CellValue {
+        public static final CellValue TRUE = new CellValue(Cell.CELL_TYPE_BOOLEAN, 0.0, true,  null, 0, null);
+        public static final CellValue FALSE= new CellValue(Cell.CELL_TYPE_BOOLEAN, 0.0, false, null, 0, null);
+        
+        private final int _cellType;
+        private final double _numberValue;
+        private final boolean _booleanValue;
+        private final String _textValue;
+        private final int _errorCode;
+		private CreationHelper _creationHelper;
 
-        /**
-         * CellType should be one of the types defined in Cell
-         * @param cellType
-         */
-        public CellValue(int cellType, CreationHelper creationHelper) {
-            super();
-            this.creationHelper = creationHelper;
-            this.cellType = cellType;
+        private CellValue(int cellType, double numberValue, boolean booleanValue, 
+                String textValue, int errorCode, CreationHelper creationHelper) {
+            _cellType = cellType;
+            _numberValue = numberValue;
+            _booleanValue = booleanValue;
+            _textValue = textValue;
+            _errorCode = errorCode;
+			_creationHelper = creationHelper;
         }
+        
+        
+        /* package*/ CellValue(double numberValue, CreationHelper creationHelper) {
+            this(Cell.CELL_TYPE_NUMERIC, numberValue, false, null, 0, creationHelper);
+        }
+        /* package*/ static CellValue valueOf(boolean booleanValue) {
+            return booleanValue ? TRUE : FALSE;
+        }
+        /* package*/ CellValue(String stringValue, CreationHelper creationHelper) {
+            this(Cell.CELL_TYPE_STRING, 0.0, false, stringValue, 0, creationHelper);
+        }
+        /* package*/ static CellValue getError(int errorCode) {
+            return new CellValue(Cell.CELL_TYPE_ERROR, 0.0, false, null, errorCode, null);
+        }
+        
+        
         /**
          * @return Returns the booleanValue.
          */
         public boolean getBooleanValue() {
-            return booleanValue;
-        }
-        /**
-         * @param booleanValue The booleanValue to set.
-         */
-        public void setBooleanValue(boolean booleanValue) {
-            this.booleanValue = booleanValue;
+            return _booleanValue;
         }
         /**
          * @return Returns the numberValue.
          */
         public double getNumberValue() {
-            return numberValue;
+            return _numberValue;
         }
         /**
-         * @param numberValue The numberValue to set.
-         */
-        public void setNumberValue(double numberValue) {
-            this.numberValue = numberValue;
-        }
-        /**
-         * @return Returns the stringValue. This method is deprecated, use
-         * getRichTextStringValue instead
-         * @deprecated
+         * @return Returns the stringValue.
          */
         public String getStringValue() {
-            return richTextStringValue.getString();
-        }
-        /**
-         * @param stringValue The stringValue to set. This method is deprecated, use
-         * getRichTextStringValue instead.
-         * @deprecated
-         */
-        public void setStringValue(String stringValue) {
-            this.richTextStringValue = 
-                  creationHelper.createRichTextString(stringValue);
+            return _textValue;
         }
         /**
          * @return Returns the cellType.
          */
         public int getCellType() {
-            return cellType;
+            return _cellType;
         }
         /**
          * @return Returns the errorValue.
          */
         public byte getErrorValue() {
-            return errorValue;
-        }
-        /**
-         * @param errorValue The errorValue to set.
-         */
-        public void setErrorValue(byte errorValue) {
-            this.errorValue = errorValue;
+            return (byte) _errorCode;
         }
         /**
          * @return Returns the richTextStringValue.
+         * @deprecated (Sep 2008) Text formatting is lost during formula evaluation.  Use {@link #getStringValue()}  
          */
         public RichTextString getRichTextStringValue() {
-            return richTextStringValue;
+            return _creationHelper.createRichTextString(_textValue);
         }
-        /**
-         * @param richTextStringValue The richTextStringValue to set.
-         */
-        public void setRichTextStringValue(RichTextString richTextStringValue) {
-            this.richTextStringValue = richTextStringValue;
+        public String toString() {
+            StringBuffer sb = new StringBuffer(64);
+            sb.append(getClass().getName()).append(" [");
+            sb.append(formatAsString());
+            sb.append("]");
+            return sb.toString();
+        }
+
+        public String formatAsString() {
+            switch (_cellType) {
+                case Cell.CELL_TYPE_NUMERIC:
+                    return String.valueOf(_numberValue);
+                case Cell.CELL_TYPE_STRING:
+                    return '"' + _textValue + '"';
+                case Cell.CELL_TYPE_BOOLEAN:
+                    return _booleanValue ? "TRUE" : "FALSE";
+                case Cell.CELL_TYPE_ERROR:
+                    return ErrorEval.getText(_errorCode);
+            }
+            return "<error unexpected cell type " + _cellType + ">";
         }
     }
 }

@@ -209,30 +209,18 @@ public class RecordInputStream extends InputStream {
     return result;
   }
 
-  byte[] NAN_data = null;
   public double readDouble() {
-    checkRecordPosition();    
-    //Reset NAN data
-    NAN_data = null;
-    double result = LittleEndian.getDouble(data, recordOffset);
-    //Excel represents NAN in several ways, at this point in time we do not often
-    //know the sequence of bytes, so as a hack we store the NAN byte sequence
-    //so that it is not corrupted.
+    checkRecordPosition();
+    long valueLongBits = LittleEndian.getLong(data, recordOffset);
+    double result = Double.longBitsToDouble(valueLongBits);
     if (Double.isNaN(result)) {
-      NAN_data = new byte[8];
-      System.arraycopy(data, recordOffset, NAN_data, 0, 8);
+      throw new RuntimeException("Did not expect to read NaN");
     }
-    
     recordOffset += LittleEndian.DOUBLE_SIZE;
     pos += LittleEndian.DOUBLE_SIZE;
     return result;
   }
-  
-  public byte[] getNANData() {
-    if (NAN_data == null)
-      throw new RecordFormatException("Do NOT call getNANData without calling readDouble that returns NaN");
-    return NAN_data;
-  }
+
   
   public short[] readShortArray() {
     checkRecordPosition();
@@ -276,9 +264,6 @@ public class RecordInputStream extends InputStream {
   }
     
   public String readCompressedUnicode(int length) {
-    if(length == 0) {
-        return "";
-    }
     if ((length < 0) || ((remaining() < length) && !isContinueNext())) {
             throw new IllegalArgumentException("Illegal length " + length);
     }
@@ -291,9 +276,7 @@ public class RecordInputStream extends InputStream {
           if(compressByte != 0) throw new IllegalArgumentException("compressByte in continue records must be 0 while reading compressed unicode");
       }
       byte b = readByte();
-      //Typecast direct to char from byte with high bit set causes all ones
-      //in the high byte of the char (which is of course incorrect)
-      char ch = (char)( (short)0xff & (short)b );
+      char ch = (char)(0x00FF & b); // avoid sex
       buf.append(ch); 
     }
     return buf.toString();    

@@ -41,7 +41,7 @@ import org.apache.poi.ss.usermodel.Workbook;
  */
 public final class Indirect implements FreeRefFunction {
 
-	public ValueEval evaluate(Eval[] args, int srcCellRow, short srcCellCol, Workbook workbook, Sheet sheet) {
+	public ValueEval evaluate(Eval[] args, Workbook workbook, int srcCellSheet, int srcCellRow, int srcCellCol) {
 		// TODO - implement INDIRECT()
 		return ErrorEval.FUNCTION_NOT_IMPLEMENTED;
 	}

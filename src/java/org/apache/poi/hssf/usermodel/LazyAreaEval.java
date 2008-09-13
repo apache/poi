@@ -15,9 +15,15 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.usermodel;
+package org.apache.poi.hssf.usermodel;
+import org.apache.poi.hssf.record.formula.AreaI;
 
-public interface Comment {
-	public void setRow(short row);
-	public void setColumn(short row);
+/**
+ *
+ * @author Josh Micich 
+ */
+final class LazyAreaEval extends org.apache.poi.ss.usermodel.LazyAreaEval {
+	public LazyAreaEval(AreaI ptg, HSSFSheet sheet, HSSFFormulaEvaluator evaluator) {
+		super(ptg, sheet, evaluator);
+	}
 }

@@ -19,6 +19,7 @@ package org.apache.poi.ss.usermodel;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 
 /**
  * This is a JDK 1.4 compatible interface for HSSFCell.
@@ -85,6 +86,7 @@ public interface Cell {
     void setCellErrorValue(byte value);
 
     HSSFCellStyle getCellStyle();
+    HSSFSheet getSheet();
 
     boolean getBooleanCellValue();
     double getNumericCellValue();

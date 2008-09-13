@@ -20,7 +20,6 @@ package org.apache.poi.hssf.usermodel;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.ss.usermodel.Cell;
@@ -55,7 +54,7 @@ public final class HSSFRow implements Comparable, Row {
     /**
      * reference to containing Sheet
      */
-    private Sheet sheet;
+    private HSSFSheet sheet;
 
     /**
      * Creates new HSSFRow from scratch. Only HSSFSheet should do this.
@@ -65,7 +64,7 @@ public final class HSSFRow implements Comparable, Row {
      * @param rowNum the row number of this row (0 based)
      * @see org.apache.poi.hssf.usermodel.HSSFSheet#createRow(int)
      */
-    HSSFRow(HSSFWorkbook book, Sheet sheet, int rowNum)
+    HSSFRow(HSSFWorkbook book, HSSFSheet sheet, int rowNum)
     {
         this.rowNum = rowNum;
         this.book = book;
@@ -84,7 +83,7 @@ public final class HSSFRow implements Comparable, Row {
      * @param record the low level api object this row should represent
      * @see org.apache.poi.hssf.usermodel.HSSFSheet#createRow(int)
      */
-    HSSFRow(HSSFWorkbook book, Sheet sheet, RowRecord record)
+    HSSFRow(HSSFWorkbook book, HSSFSheet sheet, RowRecord record)
     {
         this.book = book;
         this.sheet = sheet;
@@ -139,7 +138,7 @@ public final class HSSFRow implements Comparable, Row {
 
         HSSFCell cell = new HSSFCell(book, sheet, getRowNum(), shortCellNum, type);
         addCell(cell);
-        sheet.addValueRecord(getRowNum(), cell.getCellValueRecord());
+        sheet.getSheet().addValueRecord(getRowNum(), cell.getCellValueRecord());
         return cell;
     }
 
@@ -166,7 +165,7 @@ public final class HSSFRow implements Comparable, Row {
         
         if(alsoRemoveRecords) {
             CellValueRecordInterface cval = cell.getCellValueRecord();
-            sheet.removeValueRecord(getRowNum(), cval);
+            sheet.getSheet().removeValueRecord(getRowNum(), cval);
         }
         
         if (cell.getCellNum()+1 == row.getLastCol()) {
@@ -465,7 +464,7 @@ public final class HSSFRow implements Comparable, Row {
 
         //The low-order 15 bits contain the row height.
         //The 0x8000 bit indicates that the row is standard height (optional) 
-        if ((height & 0x8000) != 0) height = sheet.getDefaultRowHeight();
+        if ((height & 0x8000) != 0) height = sheet.getSheet().getDefaultRowHeight();
         else height &= 0x7FFF;
 
         return height;

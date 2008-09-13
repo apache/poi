@@ -39,7 +39,7 @@ public final class TestBug43093 extends TestCase {
 	}
 
 	public void testBug43093() {
-		HSSFWorkbook     xlw    = new HSSFWorkbook();
+		HSSFWorkbook xlw = new HSSFWorkbook();
 
 		addNewSheetWithCellsA1toD4(xlw, 1);
 		addNewSheetWithCellsA1toD4(xlw, 2);
@@ -51,7 +51,7 @@ public final class TestBug43093 extends TestCase {
 		HSSFCell  s2E4 = s2r3.createCell(4);
 		s2E4.setCellFormula("SUM(s3!B2:C3)");
 
-		HSSFFormulaEvaluator eva = new HSSFFormulaEvaluator(s2, xlw);
+		HSSFFormulaEvaluator eva = new HSSFFormulaEvaluator(xlw);
 		double d = eva.evaluate(s2E4).getNumberValue();
 
 		// internalEvaluate(...) Area3DEval.: 311+312+321+322 expected

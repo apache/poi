@@ -31,6 +31,9 @@ public class HSSFFormulaEvaluator extends FormulaEvaluator {
     public HSSFFormulaEvaluator(HSSFSheet sheet, HSSFWorkbook workbook) {
     	super(sheet, workbook);
     }
+    public HSSFFormulaEvaluator(HSSFWorkbook workbook) {
+    	super(workbook);
+    }
 
     /**
      * Returns an underlying FormulaParser, for the specified

@@ -30,21 +30,15 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.FormulaEvaluator.CellValue;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.usermodel.FormulaEvaluator.CellValue;
 
 /**
- * Tests lookup functions (VLOOKUP, HLOOKUP, LOOKUP, MATCH) as loaded from a test data spreadsheet.<p/>
- * These tests have been separated from the common function and operator tests because the lookup
- * functions have more complex test cases and test data setup.
- *
- * Tests for bug fixes and specific/tricky behaviour can be found in the corresponding test class
- * (<tt>TestXxxx</tt>) of the target (<tt>Xxxx</tt>) implementor, where execution can be observed
- *  more easily.
+ * Tests INDEX() as loaded from a test data spreadsheet.<p/>
  *
  * @author Josh Micich
  */
-public final class TestLookupFunctionsFromSpreadsheet extends TestCase {
+public final class TestIndexFunctionFromSpreadsheet extends TestCase {
 
 	private static final class Result {
 		public static final int SOME_EVALUATIONS_FAILED = -1;
@@ -58,37 +52,21 @@ public final class TestLookupFunctionsFromSpreadsheet extends TestCase {
 	private static final class SS {
 
 		/** Name of the test spreadsheet (found in the standard test data folder) */
-		public final static String FILENAME = "LookupFunctionsTestCaseData.xls";
+		public final static String FILENAME = "IndexFunctionTestCaseData.xls";
 
-		/** Name of the first sheet in the spreadsheet (contains comments) */
-		public final static String README_SHEET_NAME = "Read Me";
-
-
-		/** Row (zero-based) in each sheet where the evaluation cases start.   */
-		public static final int START_TEST_CASES_ROW_INDEX = 4; // Row '5'
-		/**  Index of the column that contains the function names */
-		public static final int COLUMN_INDEX_MARKER = 0; // Column 'A'
-		public static final int COLUMN_INDEX_EVALUATION = 1; // Column 'B'
-		public static final int COLUMN_INDEX_EXPECTED_RESULT = 2; // Column 'C'
-		public static final int COLUMN_ROW_COMMENT = 3; // Column 'D'
-
-		/** Used to indicate when there are no more test cases on the current sheet   */
-		public static final String TEST_CASES_END_MARKER = "<end>";
-		/** Used to indicate that the test on the current row should be ignored */
-		public static final String SKIP_CURRENT_TEST_CASE_MARKER = "<skip>";
+		public static final int COLUMN_INDEX_EVALUATION = 2; // Column 'C'
+		public static final int COLUMN_INDEX_EXPECTED_RESULT = 3; // Column 'D'
 
 	}
 
 	// Note - multiple failures are aggregated before ending.
 	// If one or more functions fail, a single AssertionFailedError is thrown at the end
-	private int _sheetFailureCount;
-	private int _sheetSuccessCount;
 	private int _evaluationFailureCount;
 	private int _evaluationSuccessCount;
 
 
 
-	private static void confirmExpectedResult(String msg, HSSFCell expected, CellValue actual) {
+	private static void confirmExpectedResult(String msg, HSSFCell expected, HSSFFormulaEvaluator.CellValue actual) {
 		if (expected == null) {
 			throw new AssertionFailedError(msg + " - Bad setup data expected value is null");
 		}
@@ -112,7 +90,7 @@ public final class TestLookupFunctionsFromSpreadsheet extends TestCase {
 				assertEquals(msg, expected.getBooleanCellValue(), actual.getBooleanValue());
 				break;
 			case HSSFCell.CELL_TYPE_FORMULA: // will never be used, since we will call method after formula evaluation
-				throw new IllegalStateException("Cannot expect formula as result of formula evaluation: " + msg);
+				throw new AssertionFailedError("Cannot expect formula as result of formula evaluation: " + msg);
 			case HSSFCell.CELL_TYPE_NUMERIC:
 				assertEquals(expected.getNumericCellValue(), actual.getNumberValue(), 0.0);
 				break;
@@ -167,8 +145,6 @@ public final class TestLookupFunctionsFromSpreadsheet extends TestCase {
 
 
 	protected void setUp() {
-		_sheetFailureCount = 0;
-		_sheetSuccessCount = 0;
 		_evaluationFailureCount = 0;
 		_evaluationSuccessCount = 0;
 	}
@@ -176,23 +152,13 @@ public final class TestLookupFunctionsFromSpreadsheet extends TestCase {
 	public void testFunctionsFromTestSpreadsheet() {
 		HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook(SS.FILENAME);
 
-		confirmReadMeSheet(workbook);
-		int nSheets = workbook.getNumberOfSheets();
-		for(int i=1; i< nSheets; i++) {
-			int sheetResult = processTestSheet(workbook, i, workbook.getSheetName(i));
-			switch(sheetResult) {
-				case Result.ALL_EVALUATIONS_SUCCEEDED: _sheetSuccessCount ++; break;
-				case Result.SOME_EVALUATIONS_FAILED: _sheetFailureCount ++; break;
-			}
-		}
+		processTestSheet(workbook, workbook.getSheetName(0));
 
 		// confirm results
 		String successMsg = "There were "
-				+ _sheetSuccessCount + " successful sheets(s) and "
 				+ _evaluationSuccessCount + " function(s) without error";
-		if(_sheetFailureCount > 0) {
-			String msg = _sheetFailureCount + " sheets(s) failed with "
-			+ _evaluationFailureCount + " evaluation(s).  " + successMsg;
+		if(_evaluationFailureCount > 0) {
+			String msg = _evaluationFailureCount + " evaluation(s) failed.  " + successMsg;
 			throw new AssertionFailedError(msg);
 		}
 		if(false) { // normally no output for successful tests
@@ -200,29 +166,16 @@ public final class TestLookupFunctionsFromSpreadsheet extends TestCase {
 		}
 	}
 
-	private int processTestSheet(HSSFWorkbook workbook, int sheetIndex, String sheetName) {
-		HSSFSheet sheet = workbook.getSheetAt(sheetIndex);
+	private void processTestSheet(HSSFWorkbook workbook, String sheetName) {
+		HSSFSheet sheet = workbook.getSheetAt(0);
 		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(workbook);
 		int maxRows = sheet.getLastRowNum()+1;
 		int result = Result.NO_EVALUATIONS_FOUND; // so far
 
-		String currentGroupComment = null;
-		for(int rowIndex=SS.START_TEST_CASES_ROW_INDEX; rowIndex<maxRows; rowIndex++) {
+		for(int rowIndex=0; rowIndex<maxRows; rowIndex++) {
 			HSSFRow r = sheet.getRow(rowIndex);
-			String newMarkerValue = getMarkerColumnValue(r);
 			if(r == null) {
 				continue;
-			}
-			if(SS.TEST_CASES_END_MARKER.equalsIgnoreCase(newMarkerValue)) {
-				// normal exit point
-				return result;
-			}
-			if(SS.SKIP_CURRENT_TEST_CASE_MARKER.equalsIgnoreCase(newMarkerValue)) {
-				// currently disabled test case row
-				continue;
-			}
-			if(newMarkerValue != null) {
-				currentGroupComment = newMarkerValue;
 			}
 			HSSFCell c = r.getCell(SS.COLUMN_INDEX_EVALUATION);
 			if (c == null || c.getCellType() != HSSFCell.CELL_TYPE_FORMULA) {
@@ -230,9 +183,8 @@ public final class TestLookupFunctionsFromSpreadsheet extends TestCase {
 			}
 			CellValue actualValue = evaluator.evaluate(c);
 			HSSFCell expectedValueCell = r.getCell(SS.COLUMN_INDEX_EXPECTED_RESULT);
-			String rowComment = getRowCommentColumnValue(r);
 
-			String msgPrefix = formatTestCaseDetails(sheetName, r.getRowNum(), c, currentGroupComment, rowComment);
+			String msgPrefix = formatTestCaseDetails(sheetName, r.getRowNum(), c);
 			try {
 				confirmExpectedResult(msgPrefix, expectedValueCell, actualValue);
 				_evaluationSuccessCount ++;
@@ -250,54 +202,17 @@ public final class TestLookupFunctionsFromSpreadsheet extends TestCase {
 			}
 
 		}
-		throw new RuntimeException("Missing end marker '" + SS.TEST_CASES_END_MARKER
-				+ "' on sheet '" + sheetName + "'");
-
 	}
 
 
-	private static String formatTestCaseDetails(String sheetName, int rowNum, HSSFCell c, String currentGroupComment,
-			String rowComment) {
+	private static String formatTestCaseDetails(String sheetName, int rowNum, HSSFCell c) {
 
 		StringBuffer sb = new StringBuffer();
 		CellReference cr = new CellReference(sheetName, rowNum, c.getCellNum(), false, false);
 		sb.append(cr.formatAsString());
 		sb.append(" {=").append(c.getCellFormula()).append("}");
-
-		if(currentGroupComment != null) {
-			sb.append(" '");
-			sb.append(currentGroupComment);
-			if(rowComment != null) {
-				sb.append(" - ");
-				sb.append(rowComment);
-			}
-			sb.append("' ");
-		} else {
-			if(rowComment != null) {
-				sb.append(" '");
-				sb.append(rowComment);
-				sb.append("' ");
-			}
-		}
-
 		return sb.toString();
 	}
-
-	/**
-	 * Asserts that the 'read me' comment page exists, and has this class' name in one of the
-	 * cells.  This back-link is to make it easy to find this class if a reader encounters the
-	 * spreadsheet first.
-	 */
-	private void confirmReadMeSheet(HSSFWorkbook workbook) {
-		String firstSheetName = workbook.getSheetName(0);
-		if(!firstSheetName.equalsIgnoreCase(SS.README_SHEET_NAME)) {
-			throw new RuntimeException("First sheet's name was '" + firstSheetName + "' but expected '" + SS.README_SHEET_NAME + "'");
-		}
-		HSSFSheet sheet = workbook.getSheetAt(0);
-		String specifiedClassName = sheet.getRow(2).getCell(0).getRichStringCellValue().getString();
-		assertEquals("Test class name in spreadsheet comment", getClass().getName(), specifiedClassName);
-	}
-
 
 	/**
 	 * Useful to keep output concise when expecting many failures to be reported by this test case
@@ -330,36 +245,6 @@ public final class TestLookupFunctionsFromSpreadsheet extends TestCase {
 		for(int i=startIx; i<endIx; i++) {
 			ps.println("\tat " + stes[i].toString());
 		}
-
-	}
-
-	private static String getRowCommentColumnValue(HSSFRow r) {
-		return getCellTextValue(r, SS.COLUMN_ROW_COMMENT, "row comment");
-	}
-
-	private static String getMarkerColumnValue(HSSFRow r) {
-		return getCellTextValue(r, SS.COLUMN_INDEX_MARKER, "marker");
-	}
-
-	/**
-	 * @return <code>null</code> if cell is missing, empty or blank
-	 */
-	private static String getCellTextValue(HSSFRow r, int colIndex, String columnName) {
-		if(r == null) {
-			return null;
-		}
-		HSSFCell cell = r.getCell(colIndex);
-		if(cell == null) {
-			return null;
-		}
-		if(cell.getCellType() == HSSFCell.CELL_TYPE_BLANK) {
-			return null;
-		}
-		if(cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
-			return cell.getRichStringCellValue().getString();
-		}
-
-		throw new RuntimeException("Bad cell type for '" + columnName + "' column: ("
-				+ cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
 	}
 }
+

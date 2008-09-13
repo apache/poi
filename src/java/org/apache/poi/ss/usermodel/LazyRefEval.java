@@ -15,36 +15,42 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.formula.eval;
+package org.apache.poi.ss.usermodel;
 
 import org.apache.poi.hssf.record.formula.AreaI;
+import org.apache.poi.hssf.record.formula.Ref3DPtg;
+import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.AreaI.OffsetArea;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.hssf.record.formula.eval.AreaEval;
+import org.apache.poi.hssf.record.formula.eval.BlankEval;
+import org.apache.poi.hssf.record.formula.eval.RefEvalBase;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.util.CellReference;
 
 /**
- *
- * @author Josh Micich 
- */
-public final class LazyAreaEval extends AreaEvalBase {
+*
+* @author Josh Micich 
+*/
+public class LazyRefEval extends RefEvalBase {
 
 	private final Sheet _sheet;
-	private FormulaEvaluator _evaluator;
+	private final FormulaEvaluator _evaluator;
 
-	public LazyAreaEval(AreaI ptg, Sheet sheet, FormulaEvaluator evaluator) {
-		super(ptg);
+
+	public LazyRefEval(RefPtg ptg, Sheet sheet, FormulaEvaluator evaluator) {
+		super(ptg.getRow(), ptg.getColumn());
+		_sheet = sheet;
+		_evaluator = evaluator;
+	}
+	public LazyRefEval(Ref3DPtg ptg, Sheet sheet, FormulaEvaluator evaluator) {
+		super(ptg.getRow(), ptg.getColumn());
 		_sheet = sheet;
 		_evaluator = evaluator;
 	}
 
-	public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) { 
-		
-		int rowIx = (relativeRowIndex + getFirstRow() ) & 0xFFFF;
-		int colIx = (relativeColumnIndex + getFirstColumn() ) & 0x00FF;
+	public ValueEval getInnerValueEval() {
+		int rowIx = getRow();
+		int colIx = getColumn();
 		
 		Row row = _sheet.getRow(rowIx);
 		if (row == null) {
@@ -54,26 +60,25 @@ public final class LazyAreaEval extends AreaEvalBase {
 		if (cell == null) {
 			return BlankEval.INSTANCE;
 		}
-		return _evaluator.getEvalForCell(cell, _sheet);
+		return _evaluator.getEvalForCell(cell);
 	}
-
+	
 	public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
-		AreaI area = new OffsetArea(getFirstRow(), getFirstColumn(),
+		
+		AreaI area = new OffsetArea(getRow(), getColumn(),
 				relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
 
 		return new LazyAreaEval(area, _sheet, _evaluator);
 	}
+	
 	public String toString() {
-		CellReference crA = new CellReference(getFirstRow(), getFirstColumn());
-		CellReference crB = new CellReference(getLastRow(), getLastColumn());
+		CellReference cr = new CellReference(getRow(), getColumn());
 		StringBuffer sb = new StringBuffer();
 		sb.append(getClass().getName()).append("[");
 		String sheetName = _evaluator.getSheetName(_sheet);
 		sb.append(sheetName);
 		sb.append('!');
-		sb.append(crA.formatAsString());
-		sb.append(':');
-		sb.append(crB.formatAsString());
+		sb.append(cr.formatAsString());
 		sb.append("]");
 		return sb.toString();
 	}

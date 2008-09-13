@@ -74,7 +74,7 @@ public final class TestExternalFunctionFormulas extends TestCase {
 	public void testEvaluate() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
 		HSSFSheet sheet = wb.getSheetAt(0);
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		confirmCellEval(sheet, 0, 0, fe, "YEARFRAC(B1,C1)", 29.0/90.0);
 		confirmCellEval(sheet, 1, 0, fe, "YEARFRAC(B2,C2)", 0.0);
 		confirmCellEval(sheet, 2, 0, fe, "YEARFRAC(B3,C3,D3)", 0.0);

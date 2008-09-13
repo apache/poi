@@ -661,6 +661,16 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         return -1;
     }
 
+    /* package */ int findSheetIndex(Sheet sheet) {
+        for(int i=0; i<_sheets.size(); i++) {
+            HSSFSheet hSheet = (HSSFSheet) _sheets.get(i);
+            if(hSheet.getSheet() == sheet) {
+                return i;
+            }
+        }
+        throw new IllegalArgumentException("Specified sheet not found in this workbook");
+    }
+
     /**
      * Returns the external sheet index of the sheet
      *  with the given internal index, creating one

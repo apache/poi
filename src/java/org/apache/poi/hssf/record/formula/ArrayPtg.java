@@ -44,8 +44,11 @@ public final class ArrayPtg extends Ptg {
 	 * (not including the data which comes after all formula tokens)
 	 */
 	public static final int PLAIN_TOKEN_SIZE = 1+RESERVED_FIELD_LEN;
+
+	private static final byte[] DEFAULT_RESERVED_DATA = new byte[RESERVED_FIELD_LEN];
+
 	// TODO - fix up field visibility and subclasses
-	private byte[] field_1_reserved;
+	private final byte[] field_1_reserved;
 	
 	// data from these fields comes after the Ptg data of all tokens in current formula
 	private short  token_1_columns;
@@ -59,8 +62,42 @@ public final class ArrayPtg extends Ptg {
 			field_1_reserved[i] = in.readByte();
 		}
 	}
-	public Object[] getTokenArrayValues() {
-		return (Object[]) token_3_arrayValues.clone();
+	/**
+	 * @param values2d array values arranged in rows
+	 */
+	public ArrayPtg(Object[][] values2d) {
+		int nColumns = values2d[0].length;
+		int nRows = values2d.length;
+		// convert 2-d to 1-d array (row by row according to getValueIndex())
+		token_1_columns = (short) nColumns;
+		token_2_rows = (short) nRows;
+
+		Object[] vv = new Object[token_1_columns * token_2_rows];
+		for (int r=0; r<nRows; r++) {
+			Object[] rowData = values2d[r];
+			for (int c=0; c<nColumns; c++) {
+				vv[getValueIndex(c, r)] = rowData[c];
+			}
+		}
+		
+		token_3_arrayValues = vv;
+		field_1_reserved = DEFAULT_RESERVED_DATA;
+	}
+	/**
+	 * @return 2-d array (inner index is rowIx, outer index is colIx)
+	 */
+	public Object[][] getTokenArrayValues() {
+		if (token_3_arrayValues == null) {
+			throw new IllegalStateException("array values not read yet");
+		}
+		Object[][] result = new Object[token_2_rows][token_1_columns];
+		for (int r = 0; r < token_2_rows; r++) {
+			Object[] rowData = result[r];
+			for (int c = 0; c < token_1_columns; c++) {
+				rowData[c] = token_3_arrayValues[getValueIndex(c, r)];
+			}
+		}
+		return result;
 	}
 	
 	public boolean isBaseToken() {
@@ -88,27 +125,21 @@ public final class ArrayPtg extends Ptg {
 		token_3_arrayValues = ConstantValueParser.parse(in, totalCount);
 	}
 
-	public String toString()
-	{
-		StringBuffer buffer = new StringBuffer("[ArrayPtg]\n");
+	public String toString() {
+		StringBuffer sb = new StringBuffer("[ArrayPtg]\n");
 
-		buffer.append("columns = ").append(getColumnCount()).append("\n");
-		buffer.append("rows = ").append(getRowCount()).append("\n");
+		sb.append("nRows = ").append(getRowCount()).append("\n");
+		sb.append("nCols = ").append(getColumnCount()).append("\n");
 		if (token_3_arrayValues == null) {
-			buffer.append("  #values#uninitialised#\n");
+			sb.append("  #values#uninitialised#\n");
 		} else {
-			for (int x=0;x<getColumnCount();x++) {
-				for (int y=0;y<getRowCount();y++) {
-					Object o = token_3_arrayValues[getValueIndex(x, y)];
-					buffer.append("[").append(x).append("][").append(y).append("] = ").append(o).append("\n"); 
-				}
-			}
+			sb.append("  ").append(formatAsString());
 		}
-		return buffer.toString();
+		return sb.toString();
 	}
 
 	/**
-	 * Note - (2D) array elements are stored column by column 
+	 * Note - (2D) array elements are stored row by row
 	 * @return the index into the internal 1D array for the specified column and row
 	 */
 	/* package */ int getValueIndex(int colIx, int rowIx) {
@@ -120,7 +151,7 @@ public final class ArrayPtg extends Ptg {
 			throw new IllegalArgumentException("Specified rowIx (" + rowIx 
 					+ ") is outside the allowed range (0.." + (token_2_rows-1) + ")");
 		}
-		return rowIx + token_2_rows * colIx;
+		return rowIx * token_1_columns + colIx;
 	}
 
 	public void writeBytes(byte[] data, int offset) {
@@ -153,16 +184,15 @@ public final class ArrayPtg extends Ptg {
 			+ ConstantValueParser.getEncodedSize(token_3_arrayValues);
 	}
 
-	public String toFormulaString(Workbook book)
-	{
+	public String formatAsString() {
 		StringBuffer b = new StringBuffer();
 		b.append("{");
-		for (int x=0;x<getColumnCount();x++) {
-		  	if (x > 0) {
+	  	for (int y=0;y<getRowCount();y++) {
+			if (y > 0) {
 				b.append(";");
 			}
-		  	for (int y=0;y<getRowCount();y++) {
-				if (y > 0) {
+			for (int x=0;x<getColumnCount();x++) {
+			  	if (x > 0) {
 					b.append(",");
 				}
 		  		Object o = token_3_arrayValues[getValueIndex(x, y)];
@@ -172,11 +202,14 @@ public final class ArrayPtg extends Ptg {
 		b.append("}");
 		return b.toString();
 	}
+	public String toFormulaString(Workbook book) {
+		return formatAsString();
+	}
 	
 	private static String getConstantText(Object o) {
 
 		if (o == null) {
-			return ""; // TODO - how is 'empty value' represented in formulas?
+			throw new RuntimeException("Array item cannot be null");
 		}
 		if (o instanceof UnicodeString) {
 			return "\"" + ((UnicodeString)o).getString() + "\"";
@@ -195,12 +228,5 @@ public final class ArrayPtg extends Ptg {
 	
 	public byte getDefaultOperandClass() {
 		return Ptg.CLASS_ARRAY;
-	}
-	
-	public Object clone() {
-	  ArrayPtg ptg = (ArrayPtg) super.clone();
-	  ptg.field_1_reserved = (byte[]) field_1_reserved.clone();
-	  ptg.token_3_arrayValues = (Object[]) token_3_arrayValues.clone();
-	  return ptg;
 	}
 }

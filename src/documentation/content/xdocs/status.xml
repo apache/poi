@@ -62,6 +62,10 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">Made HSSFFormulaEvaluator no longer require initialisation with sheet or row</action>
+           <action dev="POI-DEVELOPERS" type="add">Extended support for cached results of formula cells</action>
+           <action dev="POI-DEVELOPERS" type="fix">45639 - Fixed AIOOBE due to bad index logic in ColumnInfoRecordsAggregate</action>
+           <action dev="POI-DEVELOPERS" type="fix">Fixed special cases of INDEX function (single column/single row, errors)</action>
            <action dev="POI-DEVELOPERS" type="add">45761 - Support for Very Hidden excel sheets in HSSF</action>
            <action dev="POI-DEVELOPERS" type="add">45738 - Initial HWPF support for Office Art Shapes</action>
            <action dev="POI-DEVELOPERS" type="fix">45720 - Fixed HSSFWorkbook.cloneSheet to correctly clone sheets with drawings</action>

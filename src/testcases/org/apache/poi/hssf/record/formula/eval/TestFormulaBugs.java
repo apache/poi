@@ -66,7 +66,7 @@ public final class TestFormulaBugs extends TestCase {
 				.getCellFormula());
 
 		// We might as well evaluate the formula
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		CellValue cv = fe.evaluate(cell);
 
 		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
@@ -111,7 +111,7 @@ public final class TestFormulaBugs extends TestCase {
 		}
 		
 		// use POI's evaluator as an extra sanity check
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		CellValue cv;
 		cv = fe.evaluate(cell);
 		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
@@ -162,7 +162,7 @@ public final class TestFormulaBugs extends TestCase {
 
 		double expectedResult = (4.0 * 8.0 + 5.0 * 9.0) / 10.0;
 
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet1, wb);
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		CellValue cv = fe.evaluate(cell);
 
 		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());

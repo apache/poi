@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 import junit.framework.TestCase;
@@ -24,8 +23,7 @@ import org.apache.poi.util.HexRead;
 
 public class TestEscherSpgrRecord extends TestCase
 {
-    public void testSerialize() throws Exception
-    {
+    public void testSerialize() {
         EscherSpgrRecord r = createRecord();
 
         byte[] data = new byte[24];
@@ -37,12 +35,11 @@ public class TestEscherSpgrRecord extends TestCase
                 "01, 00, 00, 00, " +     // x
                 "02, 00, 00, 00, " +     // y
                 "03, 00, 00, 00, " +     // width
-                "04, 00, 00, 00, ]",     // height
+                "04, 00, 00, 00]",     // height
                 HexDump.toHex( data ) );
     }
 
-    public void testFillFields() throws Exception
-    {
+    public void testFillFields() {
         String hexData = "10 00 " +
                 "09 F0 " +
                 "10 00 00 00 " +
@@ -61,8 +58,7 @@ public class TestEscherSpgrRecord extends TestCase
         assertEquals( 4, r.getRectY2() );
     }
 
-    public void testToString() throws Exception
-    {
+    public void testToString() {
         String nl = System.getProperty("line.separator");
 
         String expected = "org.apache.poi.ddf.EscherSpgrRecord:" + nl +
@@ -72,11 +68,10 @@ public class TestEscherSpgrRecord extends TestCase
                 "  RectY: 2" + nl +
                 "  RectWidth: 3" + nl +
                 "  RectHeight: 4" + nl;
-                ;
         assertEquals( expected, createRecord().toString() );
     }
 
-    private EscherSpgrRecord createRecord()
+    private static EscherSpgrRecord createRecord()
     {
         EscherSpgrRecord r = new EscherSpgrRecord();
         r.setOptions( (short) 0x0010 );
@@ -87,5 +82,4 @@ public class TestEscherSpgrRecord extends TestCase
         r.setRectY2(4);
         return r;
     }
-
 }

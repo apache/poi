@@ -67,7 +67,7 @@ public final class TestPercentEval extends TestCase {
 		cell.setCellFormula("B1%");
 		row.createCell(1).setCellValue(50.0);
 		
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		CellValue cv;
 		try {
 			cv = fe.evaluate(cell);

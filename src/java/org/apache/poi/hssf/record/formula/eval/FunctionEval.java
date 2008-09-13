@@ -1,23 +1,20 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-/*
- * Created on May 8, 2005
- *
- */
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.hssf.record.formula.eval;
 
 import java.util.HashMap;
@@ -81,42 +78,42 @@ public abstract class FunctionEval implements OperationEval {
         retval[1] = new If(); // IF
         retval[2] = new IsNa(); // ISNA
         retval[3] = new IsError(); // ISERROR
-        retval[4] = new Sum(); // SUM
-        retval[5] = new Average(); // AVERAGE
-        retval[6] = new Min(); // MIN
-        retval[7] = new Max(); // MAX
+        retval[4] = AggregateFunction.SUM;
+        retval[5] = AggregateFunction.AVERAGE;
+        retval[6] = AggregateFunction.MIN;
+        retval[7] = AggregateFunction.MAX;
         retval[8] = new Row(); // ROW
         retval[9] = new Column(); // COLUMN
         retval[10] = new Na(); // NA
         retval[11] = new Npv(); // NPV
-        retval[12] = new Stdev(); // STDEV
-        retval[13] = NumericFunctionOneArg.DOLLAR;
+        retval[12] = AggregateFunction.STDEV;
+        retval[13] = NumericFunction.DOLLAR;
         retval[14] = new Fixed(); // FIXED
-        retval[15] = NumericFunctionOneArg.SIN;
-        retval[16] = NumericFunctionOneArg.COS;
-        retval[17] = NumericFunctionOneArg.TAN;
-        retval[18] = NumericFunctionOneArg.ATAN;
+        retval[15] = NumericFunction.SIN;
+        retval[16] = NumericFunction.COS;
+        retval[17] = NumericFunction.TAN;
+        retval[18] = NumericFunction.ATAN;
         retval[19] = new Pi(); // PI
-        retval[20] = NumericFunctionOneArg.SQRT;
-        retval[21] = NumericFunctionOneArg.EXP;
-        retval[22] = NumericFunctionOneArg.LN;
-        retval[23] = NumericFunctionOneArg.LOG10;
-        retval[24] = NumericFunctionOneArg.ABS;
-        retval[25] = NumericFunctionOneArg.INT;
-        retval[26] = NumericFunctionOneArg.SIGN;
-        retval[27] = new Round(); // ROUND
+        retval[20] = NumericFunction.SQRT;
+        retval[21] = NumericFunction.EXP;
+        retval[22] = NumericFunction.LN;
+        retval[23] = NumericFunction.LOG10;
+        retval[24] = NumericFunction.ABS;
+        retval[25] = NumericFunction.INT;
+        retval[26] = NumericFunction.SIGN;
+        retval[27] = NumericFunction.ROUND;
         retval[28] = new Lookup(); // LOOKUP
         retval[29] = new Index(); // INDEX
         retval[30] = new Rept(); // REPT
-        retval[31] = new Mid(); // MID
-        retval[32] = new Len(); // LEN
+        retval[31] = TextFunction.MID;
+        retval[32] = TextFunction.LEN;
         retval[33] = new Value(); // VALUE
         retval[34] = new True(); // TRUE
         retval[35] = new False(); // FALSE
         retval[36] = new And(); // AND
         retval[37] = new Or(); // OR
         retval[38] = new Not(); // NOT
-        retval[39] = new Mod(); // MOD
+        retval[39] = NumericFunction.MOD;
         retval[40] = new Dcount(); // DCOUNT
         retval[41] = new Dsum(); // DSUM
         retval[42] = new Daverage(); // DAVERAGE
@@ -132,16 +129,16 @@ public abstract class FunctionEval implements OperationEval {
         retval[52] = new Growth(); // GROWTH
         retval[53] = new Goto(); // GOTO
         retval[54] = new Halt(); // HALT
-        retval[56] = new Pv(); // PV
-        retval[57] = new Fv(); // FV
-        retval[58] = new Nper(); // NPER
-        retval[59] = new Pmt(); // PMT
+        retval[56] = FinanceFunction.PV;
+        retval[57] = FinanceFunction.FV;
+        retval[58] = FinanceFunction.NPER;
+        retval[59] = FinanceFunction.PMT;
         retval[60] = new Rate(); // RATE
         retval[61] = new Mirr(); // MIRR
         retval[62] = new Irr(); // IRR
         retval[63] = new Rand(); // RAND
         retval[64] = new Match(); // MATCH
-        retval[65] = new Date(); // DATE
+        retval[65] = DateFunc.instance; // DATE
         retval[66] = new Time(); // TIME
         retval[67] = CalendarFieldFunction.DAY; // DAY
         retval[68] = CalendarFieldFunction.MONTH; // MONTH
@@ -173,9 +170,9 @@ public abstract class FunctionEval implements OperationEval {
         retval[94] = new Activecell(); // ACTIVECELL
         retval[95] = new NotImplementedFunction(); // SELECTION
         retval[96] = new Result(); // RESULT
-        retval[97] = new Atan2(); // ATAN2
-        retval[98] = NumericFunctionOneArg.ASIN;
-        retval[99] = NumericFunctionOneArg.ACOS;
+        retval[97] = NumericFunction.ATAN2;
+        retval[98] = NumericFunction.ASIN;
+        retval[99] = NumericFunction.ACOS;
         retval[100] = new Choose(); // CHOOSE
         retval[101] = new Hlookup(); // HLOOKUP
         retval[102] = new Vlookup(); // VLOOKUP
@@ -185,16 +182,16 @@ public abstract class FunctionEval implements OperationEval {
         retval[106] = new NotImplementedFunction(); // GETFORMULA
         retval[107] = new NotImplementedFunction(); // GETNAME
         retval[108] = new Setvalue(); // SETVALUE
-        retval[109] = new Log(); // LOG
+        retval[109] = NumericFunction.LOG;
         retval[110] = new Exec(); // EXEC
         retval[111] = new Char(); // CHAR
-        retval[112] = new Lower(); // LOWER
-        retval[113] = new Upper(); // UPPER
+        retval[112] = TextFunction.LOWER;
+        retval[113] = TextFunction.UPPER;
         retval[114] = new Proper(); // PROPER
-        retval[115] = new Left(); // LEFT
-        retval[116] = new Right(); // RIGHT
-        retval[117] = new Exact(); // EXACT
-        retval[118] = new Trim(); // TRIM
+        retval[115] = TextFunction.LEFT;
+        retval[116] = TextFunction.RIGHT;
+        retval[117] = TextFunction.EXACT;
+        retval[118] = TextFunction.TRIM;
         retval[119] = new Replace(); // REPLACE
         retval[120] = new Substitute(); // SUBSTITUTE
         retval[121] = new Code(); // CODE
@@ -255,8 +252,8 @@ public abstract class FunctionEval implements OperationEval {
         retval[180] = new NotImplementedFunction(); // RESTART
         retval[181] = new Help(); // HELP
         retval[182] = new NotImplementedFunction(); // GETBAR
-        retval[183] = new Product(); // PRODUCT
-        retval[184] = NumericFunctionOneArg.FACT;
+        retval[183] = AggregateFunction.PRODUCT;
+        retval[184] = NumericFunction.FACT;
         retval[185] = new NotImplementedFunction(); // GETCELL
         retval[186] = new NotImplementedFunction(); // GETWORKSPACE
         retval[187] = new NotImplementedFunction(); // GETWINDOW
@@ -282,8 +279,8 @@ public abstract class FunctionEval implements OperationEval {
         retval[209] = new Rightb(); // RIGHTB
         retval[210] = new Midb(); // MIDB
         retval[211] = new Lenb(); // LENB
-        retval[212] = new Roundup(); // ROUNDUP
-        retval[213] = new Rounddown(); // ROUNDDOWN
+        retval[212] = NumericFunction.ROUNDUP;
+        retval[213] = NumericFunction.ROUNDDOWN;
         retval[214] = new Asc(); // ASC
         retval[215] = new Dbcs(); // DBCS
         retval[216] = new Rank(); // RANK
@@ -291,14 +288,14 @@ public abstract class FunctionEval implements OperationEval {
         retval[220] = new Days360(); // DAYS360
         retval[221] = new Today(); // TODAY
         retval[222] = new Vdb(); // VDB
-        retval[227] = new Median(); // MEDIAN
+        retval[227] = AggregateFunction.MEDIAN;
         retval[228] = new Sumproduct(); // SUMPRODUCT
-        retval[229] = NumericFunctionOneArg.SINH;
-        retval[230] = NumericFunctionOneArg.COSH;
-        retval[231] = NumericFunctionOneArg.TANH;
-        retval[232] = NumericFunctionOneArg.ASINH;
-        retval[233] = NumericFunctionOneArg.ACOSH;
-        retval[234] = NumericFunctionOneArg.ATANH;
+        retval[229] = NumericFunction.SINH;
+        retval[230] = NumericFunction.COSH;
+        retval[231] = NumericFunction.TANH;
+        retval[232] = NumericFunction.ASINH;
+        retval[233] = NumericFunction.ACOSH;
+        retval[234] = NumericFunction.ATANH;
         retval[235] = new Dget(); // DGET
         retval[236] = new NotImplementedFunction(); // CREATEOBJECT
         retval[237] = new Volatile(); // VOLATILE
@@ -331,14 +328,14 @@ public abstract class FunctionEval implements OperationEval {
         retval[266] = new NotImplementedFunction(); // PRESSTOOL
         retval[267] = new NotImplementedFunction(); // REGISTERID
         retval[268] = new NotImplementedFunction(); // GETWORKBOOK
-        retval[269] = new Avedev(); // AVEDEV
+        retval[269] = AggregateFunction.AVEDEV;
         retval[270] = new Betadist(); // BETADIST
         retval[271] = new Gammaln(); // GAMMALN
         retval[272] = new Betainv(); // BETAINV
         retval[273] = new Binomdist(); // BINOMDIST
         retval[274] = new Chidist(); // CHIDIST
         retval[275] = new Chiinv(); // CHIINV
-        retval[276] = new Combin(); // COMBIN
+        retval[276] = NumericFunction.COMBIN;
         retval[277] = new Confidence(); // CONFIDENCE
         retval[278] = new Critbinom(); // CRITBINOM
         retval[279] = new Even(); // EVEN
@@ -347,10 +344,10 @@ public abstract class FunctionEval implements OperationEval {
         retval[282] = new Finv(); // FINV
         retval[283] = new Fisher(); // FISHER
         retval[284] = new Fisherinv(); // FISHERINV
-        retval[285] = new Floor(); // FLOOR
+        retval[285] = NumericFunction.FLOOR;
         retval[286] = new Gammadist(); // GAMMADIST
         retval[287] = new Gammainv(); // GAMMAINV
-        retval[288] = new Ceiling(); // CEILING
+        retval[288] = NumericFunction.CEILING;
         retval[289] = new Hypgeomdist(); // HYPGEOMDIST
         retval[290] = new Lognormdist(); // LOGNORMDIST
         retval[291] = new Loginv(); // LOGINV
@@ -380,15 +377,15 @@ public abstract class FunctionEval implements OperationEval {
         retval[315] = new Slope(); // SLOPE
         retval[316] = new Ttest(); // TTEST
         retval[317] = new Prob(); // PROB
-        retval[318] = new Devsq(); // DEVSQ
+        retval[318] = AggregateFunction.DEVSQ;
         retval[319] = new Geomean(); // GEOMEAN
         retval[320] = new Harmean(); // HARMEAN
-        retval[321] = new Sumsq(); // SUMSQ
+        retval[321] = AggregateFunction.SUMSQ;
         retval[322] = new Kurt(); // KURT
         retval[323] = new Skew(); // SKEW
         retval[324] = new Ztest(); // ZTEST
-        retval[325] = new Large(); // LARGE
-        retval[326] = new Small(); // SMALL
+        retval[325] = AggregateFunction.LARGE;
+        retval[326] = AggregateFunction.SMALL;
         retval[327] = new Quartile(); // QUARTILE
         retval[328] = new Percentile(); // PERCENTILE
         retval[329] = new Percentrank(); // PERCENTRANK
@@ -397,14 +394,14 @@ public abstract class FunctionEval implements OperationEval {
         retval[332] = new Tinv(); // TINV
         retval[334] = new NotImplementedFunction(); // MOVIECOMMAND
         retval[335] = new NotImplementedFunction(); // GETMOVIE
-        retval[336] = new Concatenate(); // CONCATENATE
-        retval[337] = new Power(); // POWER
+        retval[336] = TextFunction.CONCATENATE;
+        retval[337] = NumericFunction.POWER;
         retval[338] = new NotImplementedFunction(); // PIVOTADDDATA
         retval[339] = new NotImplementedFunction(); // GETPIVOTTABLE
         retval[340] = new NotImplementedFunction(); // GETPIVOTFIELD
         retval[341] = new NotImplementedFunction(); // GETPIVOTITEM
-        retval[342] = NumericFunctionOneArg.RADIANS;
-        retval[343] = NumericFunctionOneArg.DEGREES;
+        retval[342] = NumericFunction.RADIANS;
+        retval[343] = NumericFunction.DEGREES;
         retval[344] = new Subtotal(); // SUBTOTAL
         retval[345] = new Sumif(); // SUMIF
         retval[346] = new Countif(); // COUNTIF
@@ -423,8 +420,8 @@ public abstract class FunctionEval implements OperationEval {
         retval[359] = new Hyperlink(); // HYPERLINK
         retval[360] = new NotImplementedFunction(); // PHONETIC
         retval[361] = new Averagea(); // AVERAGEA
-        retval[362] = new Maxa(); // MAXA
-        retval[363] = new Mina(); // MINA
+        retval[362] = MinaMaxa.MAXA;
+        retval[363] = MinaMaxa.MINA;
         retval[364] = new Stdevpa(); // STDEVPA
         retval[365] = new Varpa(); // VARPA
         retval[366] = new Stdeva(); // STDEVA

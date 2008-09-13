@@ -106,6 +106,8 @@ public interface Cell {
 
     int getRowIndex();
 
+    Sheet getSheet();
+
     /**
      * set the cells type (numeric, formula or string)
      * @see #CELL_TYPE_NUMERIC

@@ -172,9 +172,12 @@ public class HexRead
         return rval;
     }
 
-    static public byte[] readFromString(String data) throws IOException
-    {
-        return readData(new ByteArrayInputStream( data.getBytes() ), -1);
+    static public byte[] readFromString(String data) {
+        try {
+            return readData(new ByteArrayInputStream( data.getBytes() ), -1);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     static private void readToEOL( InputStream stream ) throws IOException

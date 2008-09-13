@@ -36,7 +36,7 @@ public final class TestPmt extends TestCase {
 		assertEquals(expected, ne.getNumberValue(), 0.00005);
 	}
 	private static Eval invoke(Eval[] args) {
-		return new Pmt().evaluate(args, -1, (short)-1);
+		return FinanceFunction.PMT.evaluate(args, -1, (short)-1);
 	}
 	/**
 	 * Invocation when not expecting an error result

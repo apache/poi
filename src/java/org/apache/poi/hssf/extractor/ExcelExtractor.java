@@ -14,12 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hssf.extractor;
 
 import java.io.IOException;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.ss.usermodel.HeaderFooter;
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFComment;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
@@ -112,40 +114,52 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 				int lastCell = row.getLastCellNum();
 				for(int k=firstCell;k<lastCell;k++) {
 					HSSFCell cell = row.getCell(k);
-					boolean outputContents = false;
 					if(cell == null) { continue; }
+					boolean outputContents = true;
 					
 					switch(cell.getCellType()) {
+						case HSSFCell.CELL_TYPE_BLANK:
+							outputContents = false;
+							break;
 						case HSSFCell.CELL_TYPE_STRING:
 							text.append(cell.getRichStringCellValue().getString());
-							outputContents = true;
 							break;
 						case HSSFCell.CELL_TYPE_NUMERIC:
 							// Note - we don't apply any formatting!
 							text.append(cell.getNumericCellValue());
-							outputContents = true;
 							break;
 						case HSSFCell.CELL_TYPE_BOOLEAN:
 							text.append(cell.getBooleanCellValue());
-							outputContents = true;
+							break;
+						case HSSFCell.CELL_TYPE_ERROR:
+							text.append(ErrorEval.getText(cell.getErrorCellValue()));
 							break;
 						case HSSFCell.CELL_TYPE_FORMULA:
 							if(formulasNotResults) {
 								text.append(cell.getCellFormula());
 							} else {
-								// Try it as a string, if not as a number
-								HSSFRichTextString str = 
-									cell.getRichStringCellValue();
-								if(str != null && str.length() > 0) {
-									text.append(str.toString());
-								} else {
-									// Try and treat it as a number
-									double val = cell.getNumericCellValue();
-									text.append(val);
+								switch(cell.getCachedFormulaResultType()) {
+									case HSSFCell.CELL_TYPE_STRING:
+										HSSFRichTextString str = cell.getRichStringCellValue();
+										if(str != null && str.length() > 0) {
+											text.append(str.toString());
+										}
+										break;
+									case HSSFCell.CELL_TYPE_NUMERIC:
+										text.append(cell.getNumericCellValue());
+										break;
+									case HSSFCell.CELL_TYPE_BOOLEAN:
+										text.append(cell.getBooleanCellValue());
+										break;
+									case HSSFCell.CELL_TYPE_ERROR:
+										text.append(ErrorEval.getText(cell.getErrorCellValue()));
+										break;
+										
 								}
 							}
-							outputContents = true;
 							break;
+						default:
+							throw new RuntimeException("Unexpected cell type (" + cell.getCellType() + ")");
 					}
 					
 					// Output the comment, if requested and exists

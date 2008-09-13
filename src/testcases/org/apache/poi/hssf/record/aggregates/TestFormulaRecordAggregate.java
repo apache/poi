@@ -30,6 +30,7 @@ public final class TestFormulaRecordAggregate extends TestCase {
     
     public void testBasic() throws Exception {
         FormulaRecord f = new FormulaRecord();
+        f.setCachedResultTypeString();
         StringRecord s = new StringRecord();
         s.setString("abc");
         FormulaRecordAggregate fagg = new FormulaRecordAggregate(f, s, SharedValueManager.EMPTY);

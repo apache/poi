@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.model.Sheet;
@@ -60,8 +61,8 @@ import org.apache.poi.ss.usermodel.RichTextString;
  * Cells can be numeric, formula-based or string-based (text).  The cell type
  * specifies this.  String cells cannot conatin numbers and numeric cells cannot
  * contain strings (at least according to our model).  Client apps should do the
- * conversions themselves.  Formula cells have the formula string, as well as 
- * the formula result, which can be numeric or string. 
+ * conversions themselves.  Formula cells have the formula string, as well as
+ * the formula result, which can be numeric or string.
  * <p>
  * Cells should have their number (0 based) before being added to a row.  Only
  * cells that have values should be added.
@@ -86,14 +87,15 @@ public class HSSFCell implements Cell {
     public final static int CELL_TYPE_BOOLEAN = 4;
     /** Error   Cell type (5) @see #setCellType(int) @see #getCellType() */
     public final static int CELL_TYPE_ERROR   = 5;
-    
+
     public final static short        ENCODING_UNCHANGED          = -1;
     public final static short        ENCODING_COMPRESSED_UNICODE = 0;
     public final static short        ENCODING_UTF_16             = 1;
+
+    private final HSSFWorkbook       book;
+    private final HSSFSheet          sheet;
     private int                      cellType;
     private HSSFRichTextString       stringValue;
-    private HSSFWorkbook             book;
-    private Sheet                    sheet;
     private CellValueRecordInterface record;
     private HSSFComment              comment;
 
@@ -113,7 +115,7 @@ public class HSSFCell implements Cell {
      *
      * @see org.apache.poi.hssf.usermodel.HSSFRow#createCell(short)
      */
-    protected HSSFCell(HSSFWorkbook book, Sheet sheet, int row, short col)
+    protected HSSFCell(HSSFWorkbook book, HSSFSheet sheet, int row, short col)
     {
         checkBounds(col);
         stringValue  = null;
@@ -123,8 +125,11 @@ public class HSSFCell implements Cell {
         // Relying on the fact that by default the cellType is set to 0 which
         // is different to CELL_TYPE_BLANK hence the following method call correctly
         // creates a new blank cell.
-        short xfindex = sheet.getXFIndexForColAt(col);
+        short xfindex = sheet.getSheet().getXFIndexForColAt(col);
         setCellType(CELL_TYPE_BLANK, false, row, col,xfindex);
+    }
+    public HSSFSheet getSheet() {
+        return sheet;
     }
 
     /**
@@ -140,7 +145,7 @@ public class HSSFCell implements Cell {
      *                Type of cell
      * @see org.apache.poi.hssf.usermodel.HSSFRow#createCell(short,int)
      */
-    protected HSSFCell(HSSFWorkbook book, Sheet sheet, int row, short col,
+    protected HSSFCell(HSSFWorkbook book, HSSFSheet sheet, int row, short col,
                        int type)
     {
         checkBounds(col);
@@ -148,8 +153,8 @@ public class HSSFCell implements Cell {
         stringValue  = null;
         this.book    = book;
         this.sheet   = sheet;
-        
-        short xfindex = sheet.getXFIndexForColAt(col);
+
+        short xfindex = sheet.getSheet().getXFIndexForColAt(col);
         setCellType(type,false,row,col,xfindex);
     }
 
@@ -161,7 +166,7 @@ public class HSSFCell implements Cell {
      * @param sheet - Sheet record of the sheet containing this cell
      * @param cval - the Cell Value Record we wish to represent
      */
-    protected HSSFCell(HSSFWorkbook book, Sheet sheet, CellValueRecordInterface cval) {
+    protected HSSFCell(HSSFWorkbook book, HSSFSheet sheet, CellValueRecordInterface cval) {
         record      = cval;
         cellType    = determineType(cval);
         stringValue = null;
@@ -190,10 +195,10 @@ public class HSSFCell implements Cell {
      * used internally -- given a cell value record, figure out its type
      */
     private static int determineType(CellValueRecordInterface cval) {
-    	if (cval instanceof FormulaRecordAggregate) {
-    		return HSSFCell.CELL_TYPE_FORMULA;
-    	}
-    	// all others are plain BIFF records
+        if (cval instanceof FormulaRecordAggregate) {
+            return HSSFCell.CELL_TYPE_FORMULA;
+        }
+        // all others are plain BIFF records
         Record record = ( Record ) cval;
         switch (record.getSid()) {
 
@@ -209,13 +214,13 @@ public class HSSFCell implements Cell {
         }
         throw new RuntimeException("Bad cell value rec (" + cval.getClass().getName() + ")");
     }
-    
+
     /**
      * Returns the Workbook that this Cell is bound to
      * @return
      */
     protected Workbook getBoundWorkbook() {
-    	return book.getWorkbook();
+        return book.getWorkbook();
     }
 
     /**
@@ -233,7 +238,7 @@ public class HSSFCell implements Cell {
     {
         record.setColumn(num);
     }
-    
+
     /**
      * Updates the cell record's idea of what
      *  column it belongs in (0 based)
@@ -241,7 +246,7 @@ public class HSSFCell implements Cell {
      */
     protected void updateCellNum(short num)
     {
-    	record.setColumn(num);
+        record.setColumn(num);
     }
 
     /**
@@ -295,7 +300,7 @@ public class HSSFCell implements Cell {
                 FormulaRecordAggregate frec;
 
                 if (cellType != this.cellType) {
-                    frec = sheet.createFormula(row, col);
+                    frec = sheet.getSheet().createFormula(row, col);
                 } else {
                     frec = (FormulaRecordAggregate) record;
                     frec.setRow(row);
@@ -421,17 +426,17 @@ public class HSSFCell implements Cell {
                 errRec.setColumn(col);
                 if (setValue)
                 {
-                    errRec.setValue(getErrorCellValue());
+                    errRec.setValue((byte)HSSFErrorConstants.ERROR_VALUE);
                 }
                 errRec.setXFIndex(styleIndex);
                 errRec.setRow(row);
                 record = errRec;
                 break;
         }
-        if (cellType != this.cellType && 
+        if (cellType != this.cellType &&
             this.cellType!=-1 )  // Special Value to indicate an uninitialized Cell
         {
-            sheet.replaceValueRecord(record);
+            sheet.getSheet().replaceValueRecord(record);
         }
         this.cellType = cellType;
     }
@@ -457,21 +462,20 @@ public class HSSFCell implements Cell {
      *        precalculated value, for numerics we'll set its value. For other types we
      *        will change the cell to a numeric cell and set its value.
      */
-    public void setCellValue(double value)
-    {
+    public void setCellValue(double value) {
         int row=record.getRow();
         short col=record.getColumn();
         short styleIndex=record.getXFIndex();
-        if ((cellType != CELL_TYPE_NUMERIC) && (cellType != CELL_TYPE_FORMULA))
-        {
-            setCellType(CELL_TYPE_NUMERIC, false, row, col, styleIndex);
-        }
-        
-        // Save into the appropriate record
-        if(record instanceof FormulaRecordAggregate) {
-        	(( FormulaRecordAggregate ) record).getFormulaRecord().setValue(value);
-        } else {
-        	(( NumberRecord ) record).setValue(value);
+
+        switch (cellType) {
+            default:
+                setCellType(CELL_TYPE_NUMERIC, false, row, col, styleIndex);
+            case CELL_TYPE_ERROR:
+                (( NumberRecord ) record).setValue(value);
+                break;
+            case CELL_TYPE_FORMULA:
+                ((FormulaRecordAggregate)record).getFormulaRecord().setValue(value);
+                break;
         }
     }
 
@@ -491,7 +495,7 @@ public class HSSFCell implements Cell {
     /**
      * set a date value for the cell. Excel treats dates as numeric so you will need to format the cell as
      * a date.
-     * 
+     *
      * This will set the cell value based on the Calendar's timezone. As Excel
      * does not support timezones this means that both 20:00+03:00 and
      * 20:00-03:00 will be reported as the same value (20:00) even that there
@@ -547,31 +551,20 @@ public class HSSFCell implements Cell {
             return;
         }
         if (cellType == CELL_TYPE_FORMULA) {
-            // Set the 'pre-evaluated result' for the formula 
+            // Set the 'pre-evaluated result' for the formula
             // note - formulas do not preserve text formatting.
             FormulaRecordAggregate fr = (FormulaRecordAggregate) record;
-            
-            // Save the string into a String Record, creating
-            //  one if required
-            StringRecord sr = fr.getStringRecord();
-            if(sr == null) {
-            	// Wasn't a string before, need a new one
-            	sr = new StringRecord();
-                fr.setStringRecord(sr);
-            }
-            
-            // Save, loosing the formatting
-            sr.setString(hvalue.getString());
+            fr.setCachedStringResult(hvalue.getString());
             // Update our local cache to the un-formatted version
-            stringValue = new HSSFRichTextString(sr.getString());
-            
+            stringValue = new HSSFRichTextString(value.getString());
+
             // All done
             return;
         }
 
         // If we get here, we're not dealing with a formula,
         //  so handle things as a normal rich text cell
-        
+
         if (cellType != CELL_TYPE_STRING) {
             setCellType(CELL_TYPE_STRING, false, row, col, styleIndex);
         }
@@ -599,95 +592,95 @@ public class HSSFCell implements Cell {
         FormulaRecord frec = rec.getFormulaRecord();
         frec.setOptions((short) 2);
         frec.setValue(0);
-        
+
         //only set to default if there is no extended format index already set
         if (rec.getXFIndex() == (short)0) {
-			rec.setXFIndex((short) 0x0f);
-		}
+            rec.setXFIndex((short) 0x0f);
+        }
         Ptg[] ptgs = FormulaParser.parse(formula, book);
         frec.setParsedExpression(ptgs);
+    }
+    /* package */ void setFormulaOnly(Ptg[] ptgs) {
+        if (ptgs == null) {
+            throw new IllegalArgumentException("ptgs must not be null");
+        }
+        ((FormulaRecordAggregate)record).getFormulaRecord().setParsedExpression(ptgs);
     }
 
     public String getCellFormula() {
         return FormulaParser.toFormulaString(book, ((FormulaRecordAggregate)record).getFormulaRecord().getParsedExpression());
     }
 
+    /**
+     * Used to help format error messages
+     */
+    private static String getCellTypeName(int cellTypeCode) {
+        switch (cellTypeCode) {
+            case CELL_TYPE_BLANK:   return "blank";
+            case CELL_TYPE_STRING:  return "text";
+            case CELL_TYPE_BOOLEAN: return "boolean";
+            case CELL_TYPE_ERROR:   return "error";
+            case CELL_TYPE_NUMERIC: return "numeric";
+            case CELL_TYPE_FORMULA: return "formula";
+        }
+        return "#unknown cell type (" + cellTypeCode + ")#";
+    }
+
+    private static RuntimeException typeMismatch(int expectedTypeCode, int actualTypeCode, boolean isFormulaCell) {
+        String msg = "Cannot get a "
+            + getCellTypeName(expectedTypeCode) + " value from a "
+            + getCellTypeName(actualTypeCode) + " " + (isFormulaCell ? "formula " : "") + "cell";
+        return new IllegalStateException(msg);
+    }
+    private static void checkFormulaCachedValueType(int expectedTypeCode, FormulaRecord fr) {
+        int cachedValueType = fr.getCachedResultType();
+        if (cachedValueType != expectedTypeCode) {
+            throw typeMismatch(expectedTypeCode, cachedValueType, true);
+        }
+    }
 
     /**
-     * Get the value of the cell as a number.  
+     * Get the value of the cell as a number.
      * For strings we throw an exception.
      * For blank cells we return a 0.
      * See {@link HSSFDataFormatter} for turning this
      *  number into a string similar to that which
-     *  Excel would render this number as. 
+     *  Excel would render this number as.
      */
-    public double getNumericCellValue()
-    {
-        if (cellType == CELL_TYPE_BLANK)
-        {
-            return 0;
+    public double getNumericCellValue() {
+
+        switch(cellType) {
+            case CELL_TYPE_BLANK:
+                return 0.0;
+            case CELL_TYPE_NUMERIC:
+                return ((NumberRecord)record).getValue();
+            default:
+                throw typeMismatch(CELL_TYPE_NUMERIC, cellType, false);
+            case CELL_TYPE_FORMULA:
+                break;
         }
-        if (cellType == CELL_TYPE_STRING)
-        {
-            throw new NumberFormatException(
-                "You cannot get a numeric value from a String based cell");
-        }
-        if (cellType == CELL_TYPE_BOOLEAN)
-        {
-            throw new NumberFormatException(
-                "You cannot get a numeric value from a boolean cell");
-        }
-        if (cellType == CELL_TYPE_ERROR)
-        {
-            throw new NumberFormatException(
-                "You cannot get a numeric value from an error cell");
-        }
-        if(cellType == CELL_TYPE_NUMERIC)
-        {
-          return ((NumberRecord)record).getValue();
-        }
-        if(cellType == CELL_TYPE_FORMULA)
-        {
-          return ((FormulaRecordAggregate)record).getFormulaRecord().getValue();
-        }
-        throw new NumberFormatException("Unknown Record Type in Cell:"+cellType);
+        FormulaRecord fr = ((FormulaRecordAggregate)record).getFormulaRecord();
+        checkFormulaCachedValueType(CELL_TYPE_NUMERIC, fr);
+        return fr.getValue();
     }
 
     /**
-     * Get the value of the cell as a date.  
+     * Get the value of the cell as a date.
      * For strings we throw an exception.
      * For blank cells we return a null.
      * See {@link HSSFDataFormatter} for formatting
      *  this date into a string similar to how excel does.
      */
-    public Date getDateCellValue()
-    {
-        if (cellType == CELL_TYPE_BLANK)
-        {
+    public Date getDateCellValue() {
+
+        if (cellType == CELL_TYPE_BLANK) {
             return null;
         }
-        if (cellType == CELL_TYPE_STRING)
-        {
-            throw new NumberFormatException(
-                "You cannot get a date value from a String based cell");
-        }
-        if (cellType == CELL_TYPE_BOOLEAN)
-        {
-            throw new NumberFormatException(
-                "You cannot get a date value from a boolean cell");
-        }
-        if (cellType == CELL_TYPE_ERROR)
-        {
-            throw new NumberFormatException(
-                "You cannot get a date value from an error cell");
-        }
-        double value=this.getNumericCellValue();
+        double value = getNumericCellValue();
         if (book.getWorkbook().isUsing1904DateWindowing()) {
-            return HSSFDateUtil.getJavaDate(value,true);
+            return HSSFDateUtil.getJavaDate(value, true);
         }
-        else {
-            return HSSFDateUtil.getJavaDate(value,false);
-        }
+        return HSSFDateUtil.getJavaDate(value, false);
     }
 
     /**
@@ -708,33 +701,22 @@ public class HSSFCell implements Cell {
      * For blank cells we return an empty string.
      * For formulaCells that are not string Formulas, we return empty String
      */
+    public HSSFRichTextString getRichStringCellValue() {
 
-    public HSSFRichTextString getRichStringCellValue()
-    {
-        if (cellType == CELL_TYPE_BLANK)
-        {
-            return new HSSFRichTextString("");
+        switch(cellType) {
+            case CELL_TYPE_BLANK:
+                return new HSSFRichTextString("");
+            case CELL_TYPE_STRING:
+                return stringValue;
+            default:
+                throw typeMismatch(CELL_TYPE_STRING, cellType, false);
+            case CELL_TYPE_FORMULA:
+                break;
         }
-        if (cellType == CELL_TYPE_NUMERIC)
-        {
-            throw new NumberFormatException(
-                "You cannot get a string value from a numeric cell");
-        }
-        if (cellType == CELL_TYPE_BOOLEAN)
-        {
-            throw new NumberFormatException(
-                "You cannot get a string value from a boolean cell");
-        }
-        if (cellType == CELL_TYPE_ERROR)
-        {
-            throw new NumberFormatException(
-                "You cannot get a string value from an error cell");
-        }
-        if (cellType == CELL_TYPE_FORMULA) 
-        {
-            if (stringValue==null) return new HSSFRichTextString("");
-        }
-        return stringValue;
+        FormulaRecordAggregate fra = ((FormulaRecordAggregate)record);
+        checkFormulaCachedValueType(CELL_TYPE_STRING, fra.getFormulaRecord());
+        String strVal = fra.getStringValue();
+        return new HSSFRichTextString(strVal == null ? "" : strVal);
     }
 
     /**
@@ -745,47 +727,56 @@ public class HSSFCell implements Cell {
      *        will change the cell to a boolean cell and set its value.
      */
 
-    public void setCellValue(boolean value)
-    {
+    public void setCellValue(boolean value) {
         int row=record.getRow();
         short col=record.getColumn();
         short styleIndex=record.getXFIndex();
-        if ((cellType != CELL_TYPE_BOOLEAN ) && ( cellType != CELL_TYPE_FORMULA))
-        {
-            setCellType(CELL_TYPE_BOOLEAN, false, row, col, styleIndex);
+
+        switch (cellType) {
+            default:
+                setCellType(CELL_TYPE_BOOLEAN, false, row, col, styleIndex);
+            case CELL_TYPE_ERROR:
+                (( BoolErrRecord ) record).setValue(value);
+                break;
+            case CELL_TYPE_FORMULA:
+                ((FormulaRecordAggregate)record).getFormulaRecord().setCachedResultBoolean(value);
+                break;
         }
-        (( BoolErrRecord ) record).setValue(value);
     }
 
     /**
      * set a error value for the cell
      *
-     * @param value the error value to set this cell to.  For formulas we'll set the
-     *        precalculated value ??? IS THIS RIGHT??? , for errors we'll set
+     * @param errorCode the error value to set this cell to.  For formulas we'll set the
+     *        precalculated value , for errors we'll set
      *        its value. For other types we will change the cell to an error
      *        cell and set its value.
      */
-
-    public void setCellErrorValue(byte value)
-    {
+    public void setCellErrorValue(byte errorCode) {
         int row=record.getRow();
         short col=record.getColumn();
         short styleIndex=record.getXFIndex();
-        if (cellType != CELL_TYPE_ERROR) {
-            setCellType(CELL_TYPE_ERROR, false, row, col, styleIndex);
+        switch (cellType) {
+            default:
+                setCellType(CELL_TYPE_ERROR, false, row, col, styleIndex);
+            case CELL_TYPE_ERROR:
+                (( BoolErrRecord ) record).setValue(errorCode);
+                break;
+            case CELL_TYPE_FORMULA:
+                ((FormulaRecordAggregate)record).getFormulaRecord().setCachedResultErrorCode(errorCode);
+                break;
         }
-        (( BoolErrRecord ) record).setValue(value);
     }
     /**
      * Chooses a new boolean value for the cell when its type is changing.<p/>
-     * 
-     * Usually the caller is calling setCellType() with the intention of calling 
+     *
+     * Usually the caller is calling setCellType() with the intention of calling
      * setCellValue(boolean) straight afterwards.  This method only exists to give
      * the cell a somewhat reasonable value until the setCellValue() call (if at all).
      * TODO - perhaps a method like setCellTypeAndValue(int, Object) should be introduced to avoid this
      */
     private boolean convertCellValueToBoolean() {
-        
+
         switch (cellType) {
             case CELL_TYPE_BOOLEAN:
                 return (( BoolErrRecord ) record).getBooleanValue();
@@ -796,11 +787,11 @@ public class HSSFCell implements Cell {
 
             // All other cases convert to false
             // These choices are not well justified.
-            case CELL_TYPE_FORMULA:  
+            case CELL_TYPE_FORMULA:
                 // should really evaluate, but HSSFCell can't call HSSFFormulaEvaluator
             case CELL_TYPE_ERROR:
             case CELL_TYPE_BLANK:
-                return false;  
+                return false;
         }
         throw new RuntimeException("Unexpected cell type (" + cellType + ")");
     }
@@ -809,38 +800,39 @@ public class HSSFCell implements Cell {
      * get the value of the cell as a boolean.  For strings, numbers, and errors, we throw an exception.
      * For blank cells we return a false.
      */
+    public boolean getBooleanCellValue() {
 
-    public boolean getBooleanCellValue()
-    {
-        if (cellType == CELL_TYPE_BOOLEAN)
-        {
-            return (( BoolErrRecord ) record).getBooleanValue();
+        switch(cellType) {
+            case CELL_TYPE_BLANK:
+                return false;
+            case CELL_TYPE_BOOLEAN:
+                return (( BoolErrRecord ) record).getBooleanValue();
+            default:
+                throw typeMismatch(CELL_TYPE_BOOLEAN, cellType, false);
+            case CELL_TYPE_FORMULA:
+                break;
         }
-        if (cellType == CELL_TYPE_BLANK)
-        {
-            return false;
-        }
-        throw new NumberFormatException(
-            "You cannot get a boolean value from a non-boolean cell");
+        FormulaRecord fr = ((FormulaRecordAggregate)record).getFormulaRecord();
+        checkFormulaCachedValueType(CELL_TYPE_BOOLEAN, fr);
+        return fr.getCachedBooleanValue();
     }
 
     /**
      * get the value of the cell as an error code.  For strings, numbers, and booleans, we throw an exception.
      * For blank cells we return a 0.
      */
-
-    public byte getErrorCellValue()
-    {
-        if (cellType == CELL_TYPE_ERROR)
-        {
-            return (( BoolErrRecord ) record).getErrorValue();
+    public byte getErrorCellValue() {
+        switch(cellType) {
+            case CELL_TYPE_ERROR:
+                return (( BoolErrRecord ) record).getErrorValue();
+            default:
+                throw typeMismatch(CELL_TYPE_ERROR, cellType, false);
+            case CELL_TYPE_FORMULA:
+                break;
         }
-        if (cellType == CELL_TYPE_BLANK)
-        {
-            return ( byte ) 0;
-        }
-        throw new NumberFormatException(
-            "You cannot get an error value from a non-error cell");
+        FormulaRecord fr = ((FormulaRecordAggregate)record).getFormulaRecord();
+        checkFormulaCachedValueType(CELL_TYPE_ERROR, fr);
+        return (byte) fr.getCachedErrorValue();
     }
 
     /**
@@ -897,7 +889,7 @@ public class HSSFCell implements Cell {
           throw new RuntimeException("You cannot reference columns with an index of less then 0.");
       }
     }
-    
+
     /**
      * Sets this cell as the active cell for the worksheet
      */
@@ -905,45 +897,45 @@ public class HSSFCell implements Cell {
     {
         int row=record.getRow();
         short col=record.getColumn();
-        this.sheet.setActiveCellRow(row);
-        this.sheet.setActiveCellCol(col);
+        this.sheet.getSheet().setActiveCellRow(row);
+        this.sheet.getSheet().setActiveCellCol(col);
     }
-    
+
     /**
      * Returns a string representation of the cell
-     * 
-     * This method returns a simple representation, 
+     *
+     * This method returns a simple representation,
      * anthing more complex should be in user code, with
-     * knowledge of the semantics of the sheet being processed. 
-     * 
-     * Formula cells return the formula string, 
-     * rather than the formula result. 
+     * knowledge of the semantics of the sheet being processed.
+     *
+     * Formula cells return the formula string,
+     * rather than the formula result.
      * Dates are displayed in dd-MMM-yyyy format
      * Errors are displayed as #ERR&lt;errIdx&gt;
      */
     public String toString() {
-    	switch (getCellType()) {
-    		case CELL_TYPE_BLANK:
-    			return "";
-    		case CELL_TYPE_BOOLEAN:
-    			return getBooleanCellValue()?"TRUE":"FALSE";
-    		case CELL_TYPE_ERROR:
-    			return ErrorEval.getText((( BoolErrRecord ) record).getErrorValue());
-    		case CELL_TYPE_FORMULA:
-    			return getCellFormula();
-    		case CELL_TYPE_NUMERIC:
-    			//TODO apply the dataformat for this cell
-    			if (HSSFDateUtil.isCellDateFormatted(this)) {
-    				DateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
-    				return sdf.format(getDateCellValue());
-    			} else {
-    				return  getNumericCellValue() + "";
-    			}
-    		case CELL_TYPE_STRING:
-    			return getStringCellValue();
-    		default:
-    			return "Unknown Cell Type: " + getCellType();
-    	}
+        switch (getCellType()) {
+            case CELL_TYPE_BLANK:
+                return "";
+            case CELL_TYPE_BOOLEAN:
+                return getBooleanCellValue()?"TRUE":"FALSE";
+            case CELL_TYPE_ERROR:
+                return ErrorEval.getText((( BoolErrRecord ) record).getErrorValue());
+            case CELL_TYPE_FORMULA:
+                return getCellFormula();
+            case CELL_TYPE_NUMERIC:
+                //TODO apply the dataformat for this cell
+                if (HSSFDateUtil.isCellDateFormatted(this)) {
+                    DateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+                    return sdf.format(getDateCellValue());
+                } else {
+                    return  getNumericCellValue() + "";
+                }
+            case CELL_TYPE_STRING:
+                return getStringCellValue();
+            default:
+                return "Unknown Cell Type: " + getCellType();
+        }
     }
 
     /**
@@ -954,14 +946,14 @@ public class HSSFCell implements Cell {
      * @param comment comment associated with this cell
      */
     public void setCellComment(Comment comment){
-    	if(comment == null) {
-    		removeCellComment();
-    		return;
-    	}
+        if(comment == null) {
+            removeCellComment();
+            return;
+        }
 
-        this.comment = (HSSFComment) comment;
-        this.comment.setRow((short)record.getRow());
-        this.comment.setColumn(record.getColumn());
+        comment.setRow((short)record.getRow());
+        comment.setColumn(record.getColumn());
+        this.comment = (HSSFComment)comment;
     }
 
     /**
@@ -971,11 +963,11 @@ public class HSSFCell implements Cell {
      */
      public HSSFComment getCellComment(){
         if (comment == null) {
-            comment = findCellComment(sheet, record.getRow(), record.getColumn());
+            comment = findCellComment(sheet.getSheet(), record.getRow(), record.getColumn());
         }
         return comment;
     }
-     
+
     /**
      * Removes the comment for this cell, if
      *  there is one.
@@ -983,40 +975,41 @@ public class HSSFCell implements Cell {
      *  all comments after performing this action!
      */
     public void removeCellComment() {
-    	HSSFComment comment = findCellComment(sheet, record.getRow(), record.getColumn());
-		this.comment = null;
-    	
-    	if(comment == null) {
-    		// Nothing to do
-    		return;
-    	}
-    	
-    	// Zap the underlying NoteRecord
-    	sheet.getRecords().remove(comment.getNoteRecord());
-    	
-    	// If we have a TextObjectRecord, is should
-    	//  be proceeed by:
-    	// MSODRAWING with container
-    	// OBJ
-    	// MSODRAWING with EscherTextboxRecord
-    	if(comment.getTextObjectRecord() != null) {
-    		TextObjectRecord txo = comment.getTextObjectRecord();
-    		int txoAt = sheet.getRecords().indexOf(txo);
-    		
-    		if(sheet.getRecords().get(txoAt-3) instanceof DrawingRecord &&
-    			sheet.getRecords().get(txoAt-2) instanceof ObjRecord &&
-    			sheet.getRecords().get(txoAt-1) instanceof DrawingRecord) {
-    			// Zap these, in reverse order
-    			sheet.getRecords().remove(txoAt-1);
-    			sheet.getRecords().remove(txoAt-2);
-    			sheet.getRecords().remove(txoAt-3);
-    		} else {
-    			throw new IllegalStateException("Found the wrong records before the TextObjectRecord, can't remove comment");
-    		}
-    		
-    		// Now remove the text record
-    		sheet.getRecords().remove(txo);
-    	}
+        HSSFComment comment = findCellComment(sheet.getSheet(), record.getRow(), record.getColumn());
+        this.comment = null;
+
+        if(comment == null) {
+            // Nothing to do
+            return;
+        }
+
+        // Zap the underlying NoteRecord
+        List sheetRecords = sheet.getSheet().getRecords();
+        sheetRecords.remove(comment.getNoteRecord());
+
+        // If we have a TextObjectRecord, is should
+        //  be proceeed by:
+        // MSODRAWING with container
+        // OBJ
+        // MSODRAWING with EscherTextboxRecord
+        if(comment.getTextObjectRecord() != null) {
+            TextObjectRecord txo = comment.getTextObjectRecord();
+            int txoAt = sheetRecords.indexOf(txo);
+
+            if(sheetRecords.get(txoAt-3) instanceof DrawingRecord &&
+                sheetRecords.get(txoAt-2) instanceof ObjRecord &&
+                sheetRecords.get(txoAt-1) instanceof DrawingRecord) {
+                // Zap these, in reverse order
+                sheetRecords.remove(txoAt-1);
+                sheetRecords.remove(txoAt-2);
+                sheetRecords.remove(txoAt-3);
+            } else {
+                throw new IllegalStateException("Found the wrong records before the TextObjectRecord, can't remove comment");
+            }
+
+            // Now remove the text record
+            sheetRecords.remove(txo);
+        }
     }
 
     /**
@@ -1070,7 +1063,7 @@ public class HSSFCell implements Cell {
      * @return hyperlink associated with this cell or null if not found
      */
     public HSSFHyperlink getHyperlink(){
-        for (Iterator it = sheet.getRecords().iterator(); it.hasNext(); ) {
+        for (Iterator it = sheet.getSheet().getRecords().iterator(); it.hasNext(); ) {
             RecordBase rec = (RecordBase) it.next();
             if (rec instanceof HyperlinkRecord){
                 HyperlinkRecord link = (HyperlinkRecord)rec;
@@ -1108,7 +1101,19 @@ public class HSSFCell implements Cell {
                 break;
         }
 
-        int eofLoc = sheet.findFirstRecordLocBySid( EOFRecord.sid );
-        sheet.getRecords().add( eofLoc, link.record );
+        int eofLoc = sheet.getSheet().findFirstRecordLocBySid( EOFRecord.sid );
+        sheet.getSheet().getRecords().add( eofLoc, link.record );
+    }
+    /**
+     * Only valid for formula cells
+     * @return one of ({@link #CELL_TYPE_NUMERIC}, {@link #CELL_TYPE_STRING},
+     *     {@link #CELL_TYPE_BOOLEAN}, {@link #CELL_TYPE_ERROR}) depending
+     * on the cached value of the formula
+     */
+    public int getCachedFormulaResultType() {
+        if (this.cellType != CELL_TYPE_FORMULA) {
+            throw new IllegalStateException("Only formula cells have cached results");
+        }
+        return ((FormulaRecordAggregate)record).getFormulaRecord().getCachedResultType();
     }
 }
