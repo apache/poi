@@ -41,6 +41,7 @@
         </release>
 -->
         <release version="3.5.1-beta2" date="2008-08-20">
+           <action dev="POI-DEVELOPERS" type="fix">45676 - Handle very long cells in the XSSF EventUserModel example</action>
            <action dev="POI-DEVELOPERS" type="add">Initial ExtractorFactory support for building TextExtractors for embeded documents</action>
            <action dev="POI-DEVELOPERS" type="add">Support stripping XSSF header and footer fields (eg page number) out of header and footer text if required</action>
            <action dev="POI-DEVELOPERS" type="add">Add POIXMLPropertiesTextExtractor, which provides to the OOXML file formats a similar function to HPSF's HPSFPropertiesExtractor</action>

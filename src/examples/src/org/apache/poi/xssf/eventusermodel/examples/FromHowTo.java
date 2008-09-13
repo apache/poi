@@ -103,10 +103,19 @@ public class FromHowTo {
 					nextIsString = false;
 				}
 			}
+			// Clear contents cache
+			lastContents = "";
 		}
 		
 		public void endElement(String uri, String localName, String name)
 				throws SAXException {
+			// Process the last contents as required.
+			// Do now, as characters() may be called more than once
+			if(nextIsString) {
+				int idx = Integer.parseInt(lastContents);
+				lastContents = sst.getSharedStringAt(idx);
+			}
+
 			// v => contents of a cell
 			// Output after we've seen the string contents
 			if(name.equals("v")) {
@@ -116,11 +125,7 @@ public class FromHowTo {
 
 		public void characters(char[] ch, int start, int length)
 				throws SAXException {
-			lastContents = new String(ch, start, length);
-			if(nextIsString) {
-				int idx = Integer.parseInt(lastContents);
-				lastContents = sst.getSharedStringAt(idx);
-			}
+			lastContents += new String(ch, start, length);
 		}
 	}
 	
