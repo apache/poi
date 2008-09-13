@@ -272,12 +272,7 @@ public final class OperandResolver {
 			StringValueEval sve = (StringValueEval) ve;
 			return sve.getStringValue();
 		}
-		if (ve instanceof NumberEval) {
-			NumberEval neval = (NumberEval) ve;
-			return neval.getStringValue();
-		} 
-
-		if (ve instanceof BlankEval) {
+		if (ve == BlankEval.INSTANCE) {
 			return "";
 		}
 		throw new IllegalArgumentException("Unexpected eval class (" + ve.getClass().getName() + ")");
@@ -289,7 +284,7 @@ public final class OperandResolver {
 	 */
 	public static Boolean coerceValueToBoolean(ValueEval ve, boolean stringsAreBlanks) throws EvaluationException {
 
-		if (ve == null || ve instanceof BlankEval) {
+		if (ve == null || ve == BlankEval.INSTANCE) {
 			// TODO - remove 've == null' condition once AreaEval is fixed
 			return null;
 		}
@@ -297,7 +292,7 @@ public final class OperandResolver {
 			return Boolean.valueOf(((BoolEval) ve).getBooleanValue());
 		}
 
-		if (ve instanceof BlankEval) {
+		if (ve == BlankEval.INSTANCE) {
 			return null;
 		}
 

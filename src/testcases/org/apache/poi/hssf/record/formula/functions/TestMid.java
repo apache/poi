@@ -38,7 +38,7 @@ public final class TestMid extends TestCase {
 
 	private static Eval invokeMid(Eval text, Eval startPos, Eval numChars) {
 		Eval[] args = new Eval[] { text, startPos, numChars, };
-		return new Mid().evaluate(args, -1, (short)-1);
+		return TextFunction.MID.evaluate(args, -1, (short)-1);
 	}
 
 	private void confirmMid(Eval text, Eval startPos, Eval numChars, String expected) {

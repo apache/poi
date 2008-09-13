@@ -35,7 +35,7 @@ public final class TestTrim extends TestCase {
 	
 	private static Eval invokeTrim(Eval text) {
 		Eval[] args = new Eval[] { text, };
-		return new Trim().evaluate(args, -1, (short)-1);
+		return TextFunction.TRIM.evaluate(args, -1, (short)-1);
 	}
 
 	private void confirmTrim(Eval text, String expected) {

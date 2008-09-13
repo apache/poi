@@ -44,7 +44,7 @@ public final class ConcatEval implements OperationEval {
 			    if (ve instanceof StringValueEval) {
 			        StringValueEval sve = (StringValueEval) ve;
 			        sb.append(sve.getStringValue());
-			    } else if (ve instanceof BlankEval) {
+			    } else if (ve == BlankEval.INSTANCE) {
 			        // do nothing
 			    } else { // must be an error eval
 			        throw new RuntimeException("Unexpected value type (" 
