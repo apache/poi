@@ -59,7 +59,7 @@ public final class TestIndexFunctionFromSpreadsheet extends TestCase {
 
 	}
 
- 	// Note - multiple failures are aggregated before ending.
+	// Note - multiple failures are aggregated before ending.
 	// If one or more functions fail, a single AssertionFailedError is thrown at the end
 	private int _evaluationFailureCount;
 	private int _evaluationSuccessCount;
@@ -95,7 +95,7 @@ public final class TestIndexFunctionFromSpreadsheet extends TestCase {
 				assertEquals(expected.getNumericCellValue(), actual.getNumberValue(), 0.0);
 				break;
 			case HSSFCell.CELL_TYPE_STRING:
-				assertEquals(msg, expected.getRichStringCellValue().getString(), actual.getRichTextStringValue().getString());
+				assertEquals(msg, expected.getRichStringCellValue().getString(), actual.getStringValue());
 				break;
 		}
 	}
@@ -103,7 +103,7 @@ public final class TestIndexFunctionFromSpreadsheet extends TestCase {
 
 	private static AssertionFailedError wrongTypeError(String msgPrefix, HSSFCell expectedCell, CellValue actualValue) {
 		return new AssertionFailedError(msgPrefix + " Result type mismatch. Evaluated result was "
-				+ formatValue(actualValue)
+				+ actualValue.formatAsString()
 				+ " but the expected result was "
 				+ formatValue(expectedCell)
 				);
@@ -121,7 +121,7 @@ public final class TestIndexFunctionFromSpreadsheet extends TestCase {
 		if(actual.getCellType() != HSSFCell.CELL_TYPE_ERROR) {
 			throw new AssertionFailedError(msgPrefix + " Expected cell error ("
 					+ ErrorEval.getText(expectedErrorCode) + ") but actual value was "
-					+ formatValue(actual));
+					+ actual.formatAsString());
 		}
 		if(expectedErrorCode != actual.getErrorValue()) {
 			throw new AssertionFailedError(msgPrefix + " Expected cell error code ("
@@ -142,15 +142,6 @@ public final class TestIndexFunctionFromSpreadsheet extends TestCase {
 		}
 		throw new RuntimeException("Unexpected cell type of expected value (" + expecedCell.getCellType() + ")");
 	}
-	private static String formatValue(CellValue actual) {
-		switch (actual.getCellType()) {
-			case HSSFCell.CELL_TYPE_BLANK: return "<blank>";
-			case HSSFCell.CELL_TYPE_BOOLEAN: return String.valueOf(actual.getBooleanValue());
-			case HSSFCell.CELL_TYPE_NUMERIC: return String.valueOf(actual.getNumberValue());
-			case HSSFCell.CELL_TYPE_STRING: return actual.getRichTextStringValue().getString();
-		}
-		throw new RuntimeException("Unexpected cell type of evaluated value (" + actual.getCellType() + ")");
-	}
 
 
 	protected void setUp() {
@@ -166,13 +157,13 @@ public final class TestIndexFunctionFromSpreadsheet extends TestCase {
 		// confirm results
 		String successMsg = "There were "
 				+ _evaluationSuccessCount + " function(s) without error";
- 		if(_evaluationFailureCount > 0) {
+		if(_evaluationFailureCount > 0) {
 			String msg = _evaluationFailureCount + " evaluation(s) failed.  " + successMsg;
 			throw new AssertionFailedError(msg);
 		}
- 		if(false) { // normally no output for successful tests
- 			System.out.println(getClass().getName() + ": " + successMsg);
- 		}
+		if(false) { // normally no output for successful tests
+			System.out.println(getClass().getName() + ": " + successMsg);
+		}
 	}
 
 	private void processTestSheet(HSSFWorkbook workbook, String sheetName) {

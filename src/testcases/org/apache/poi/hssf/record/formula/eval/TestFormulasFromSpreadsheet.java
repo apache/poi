@@ -132,7 +132,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 				break;
 			case HSSFCell.CELL_TYPE_STRING:
 				assertEquals(msg, HSSFCell.CELL_TYPE_STRING, actual.getCellType());
-				assertEquals(msg, expected.getRichStringCellValue().getString(), actual.getRichTextStringValue().getString());
+				assertEquals(msg, expected.getRichStringCellValue().getString(), actual.getStringValue());
 				break;
 		}
 	}
@@ -142,7 +142,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 		if (workbook == null) {
 			workbook = HSSFTestDataSamples.openSampleWorkbook(SS.FILENAME);
 			sheet = workbook.getSheetAt( 0 );
-		  }
+		}
 		_functionFailureCount = 0;
 		_functionSuccessCount = 0;
 		_evaluationFailureCount = 0;
@@ -177,7 +177,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	 * Typically pass <code>null</code> to test all functions
 	 */
 	private void processFunctionGroup(int startRowIndex, String testFocusFunctionName) {
- 
+
 		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(workbook);
 
 		int rowIndex = startRowIndex;
@@ -248,7 +248,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 				result = Result.SOME_EVALUATIONS_FAILED;
 			}
 		}
- 		return result;
+		return result;
 	}
 
 	/**

@@ -179,7 +179,7 @@ public class HSSFFormulaEvaluator {
             case HSSFCell.CELL_TYPE_NUMERIC:
                 return new CellValue(cell.getNumericCellValue());
             case HSSFCell.CELL_TYPE_STRING:
-                return new CellValue(cell.getRichStringCellValue());
+                return new CellValue(cell.getRichStringCellValue().getString());
         }
         throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
     }
@@ -270,7 +270,7 @@ public class HSSFFormulaEvaluator {
                 cell.setCellValue(cv.getNumberValue());
                 break;
             case HSSFCell.CELL_TYPE_STRING:
-                cell.setCellValue(cv.getRichTextStringValue());
+                cell.setCellValue(new HSSFRichTextString(cv.getStringValue()));
                 break;
             case HSSFCell.CELL_TYPE_BLANK:
                 // never happens - blanks eventually get translated to zero
@@ -325,7 +325,7 @@ public class HSSFFormulaEvaluator {
         }
         if (eval instanceof StringEval) {
             StringEval ne = (StringEval) eval;
-            return new CellValue(new HSSFRichTextString(ne.getStringValue()));
+            return new CellValue(ne.getStringValue());
         }
         if (eval instanceof ErrorEval) {
             return CellValue.getError(((ErrorEval)eval).getErrorCode());
@@ -423,7 +423,7 @@ public class HSSFFormulaEvaluator {
             throw new IllegalStateException("evaluation stack not empty");
         }
         value = dereferenceValue(value, srcRowNum, srcColNum);
-        if (value instanceof BlankEval) {
+        if (value == BlankEval.INSTANCE) {
             // Note Excel behaviour here. A blank final final value is converted to zero.
             return NumberEval.ZERO;
             // Formulas _never_ evaluate to blank.  If a formula appears to have evaluated to
@@ -597,15 +597,15 @@ public class HSSFFormulaEvaluator {
         private final int _cellType;
         private final double _numberValue;
         private final boolean _booleanValue;
-        private final HSSFRichTextString _richTextStringValue;
+        private final String _textValue;
         private final int _errorCode;
 
         private CellValue(int cellType, double numberValue, boolean booleanValue, 
-                HSSFRichTextString textValue, int errorCode) {
+                String textValue, int errorCode) {
             _cellType = cellType;
             _numberValue = numberValue;
             _booleanValue = booleanValue;
-            _richTextStringValue = textValue;
+            _textValue = textValue;
             _errorCode = errorCode;
         }
         
@@ -616,7 +616,7 @@ public class HSSFFormulaEvaluator {
         /* package*/ static CellValue valueOf(boolean booleanValue) {
             return booleanValue ? TRUE : FALSE;
         }
-        /* package*/ CellValue(HSSFRichTextString stringValue) {
+        /* package*/ CellValue(String stringValue) {
             this(HSSFCell.CELL_TYPE_STRING, 0.0, false, stringValue, 0);
         }
         /* package*/ static CellValue getError(int errorCode) {
@@ -637,12 +637,10 @@ public class HSSFFormulaEvaluator {
             return _numberValue;
         }
         /**
-         * @return Returns the stringValue. This method is deprecated, use
-         * getRichTextStringValue instead
-         * @deprecated
+         * @return Returns the stringValue.
          */
         public String getStringValue() {
-            return _richTextStringValue.getString();
+            return _textValue;
         }
         /**
          * @return Returns the cellType.
@@ -658,9 +656,31 @@ public class HSSFFormulaEvaluator {
         }
         /**
          * @return Returns the richTextStringValue.
+         * @deprecated (Sep 2008) Text formatting is lost during formula evaluation.  Use {@link #getStringValue()}  
          */
         public HSSFRichTextString getRichTextStringValue() {
-            return _richTextStringValue;
+            return new HSSFRichTextString(_textValue);
+        }
+        public String toString() {
+            StringBuffer sb = new StringBuffer(64);
+            sb.append(getClass().getName()).append(" [");
+            sb.append(formatAsString());
+            sb.append("]");
+            return sb.toString();
+        }
+
+        public String formatAsString() {
+            switch (_cellType) {
+                case HSSFCell.CELL_TYPE_NUMERIC:
+                    return String.valueOf(_numberValue);
+                case HSSFCell.CELL_TYPE_STRING:
+                    return '"' + _textValue + '"';
+                case HSSFCell.CELL_TYPE_BOOLEAN:
+                    return _booleanValue ? "TRUE" : "FALSE";
+                case HSSFCell.CELL_TYPE_ERROR:
+                    return ErrorEval.getText(_errorCode);
+            }
+            return "<error unexpected cell type " + _cellType + ">";
         }
     }
 
