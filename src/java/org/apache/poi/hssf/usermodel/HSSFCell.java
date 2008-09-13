@@ -89,7 +89,7 @@ public final class HSSFCell {
     public final static short        ENCODING_UTF_16             = 1;
 
     private final HSSFWorkbook       book;
-    private final Sheet              sheet;
+    private final HSSFSheet          sheet;
     private int                      cellType;
     private HSSFRichTextString       stringValue;
     private CellValueRecordInterface record;
@@ -111,7 +111,7 @@ public final class HSSFCell {
      *
      * @see org.apache.poi.hssf.usermodel.HSSFRow#createCell(short)
      */
-    protected HSSFCell(HSSFWorkbook book, Sheet sheet, int row, short col)
+    protected HSSFCell(HSSFWorkbook book, HSSFSheet sheet, int row, short col)
     {
         checkBounds(col);
         stringValue  = null;
@@ -121,10 +121,10 @@ public final class HSSFCell {
         // Relying on the fact that by default the cellType is set to 0 which
         // is different to CELL_TYPE_BLANK hence the following method call correctly
         // creates a new blank cell.
-        short xfindex = sheet.getXFIndexForColAt(col);
+        short xfindex = sheet.getSheet().getXFIndexForColAt(col);
         setCellType(CELL_TYPE_BLANK, false, row, col,xfindex);
     }
-    /* package */ Sheet getSheet() {
+    /* package */ HSSFSheet getSheet() {
         return sheet;
     }
 
@@ -141,7 +141,7 @@ public final class HSSFCell {
      *                Type of cell
      * @see org.apache.poi.hssf.usermodel.HSSFRow#createCell(short,int)
      */
-    protected HSSFCell(HSSFWorkbook book, Sheet sheet, int row, short col,
+    protected HSSFCell(HSSFWorkbook book, HSSFSheet sheet, int row, short col,
                        int type)
     {
         checkBounds(col);
@@ -150,7 +150,7 @@ public final class HSSFCell {
         this.book    = book;
         this.sheet   = sheet;
 
-        short xfindex = sheet.getXFIndexForColAt(col);
+        short xfindex = sheet.getSheet().getXFIndexForColAt(col);
         setCellType(type,false,row,col,xfindex);
     }
 
@@ -162,7 +162,7 @@ public final class HSSFCell {
      * @param sheet - Sheet record of the sheet containing this cell
      * @param cval - the Cell Value Record we wish to represent
      */
-    protected HSSFCell(HSSFWorkbook book, Sheet sheet, CellValueRecordInterface cval) {
+    protected HSSFCell(HSSFWorkbook book, HSSFSheet sheet, CellValueRecordInterface cval) {
         record      = cval;
         cellType    = determineType(cval);
         stringValue = null;
@@ -296,7 +296,7 @@ public final class HSSFCell {
                 FormulaRecordAggregate frec;
 
                 if (cellType != this.cellType) {
-                    frec = sheet.createFormula(row, col);
+                    frec = sheet.getSheet().createFormula(row, col);
                 } else {
                     frec = (FormulaRecordAggregate) record;
                     frec.setRow(row);
@@ -432,7 +432,7 @@ public final class HSSFCell {
         if (cellType != this.cellType &&
             this.cellType!=-1 )  // Special Value to indicate an uninitialized Cell
         {
-            sheet.replaceValueRecord(record);
+            sheet.getSheet().replaceValueRecord(record);
         }
         this.cellType = cellType;
     }
@@ -888,8 +888,8 @@ public final class HSSFCell {
     {
         int row=record.getRow();
         short col=record.getColumn();
-        this.sheet.setActiveCellRow(row);
-        this.sheet.setActiveCellCol(col);
+        this.sheet.getSheet().setActiveCellRow(row);
+        this.sheet.getSheet().setActiveCellCol(col);
     }
 
     /**
@@ -954,7 +954,7 @@ public final class HSSFCell {
      */
      public HSSFComment getCellComment(){
         if (comment == null) {
-            comment = findCellComment(sheet, record.getRow(), record.getColumn());
+            comment = findCellComment(sheet.getSheet(), record.getRow(), record.getColumn());
         }
         return comment;
     }
@@ -966,7 +966,7 @@ public final class HSSFCell {
      *  all comments after performing this action!
      */
     public void removeCellComment() {
-        HSSFComment comment = findCellComment(sheet, record.getRow(), record.getColumn());
+        HSSFComment comment = findCellComment(sheet.getSheet(), record.getRow(), record.getColumn());
         this.comment = null;
 
         if(comment == null) {
@@ -975,7 +975,7 @@ public final class HSSFCell {
         }
 
         // Zap the underlying NoteRecord
-        List sheetRecords = sheet.getRecords();
+        List sheetRecords = sheet.getSheet().getRecords();
         sheetRecords.remove(comment.getNoteRecord());
 
         // If we have a TextObjectRecord, is should
@@ -1054,7 +1054,7 @@ public final class HSSFCell {
      * @return hyperlink associated with this cell or null if not found
      */
     public HSSFHyperlink getHyperlink(){
-        for (Iterator it = sheet.getRecords().iterator(); it.hasNext(); ) {
+        for (Iterator it = sheet.getSheet().getRecords().iterator(); it.hasNext(); ) {
             RecordBase rec = (RecordBase) it.next();
             if (rec instanceof HyperlinkRecord){
                 HyperlinkRecord link = (HyperlinkRecord)rec;
@@ -1090,8 +1090,8 @@ public final class HSSFCell {
                 break;
         }
 
-        int eofLoc = sheet.findFirstRecordLocBySid( EOFRecord.sid );
-        sheet.getRecords().add( eofLoc, link.record );
+        int eofLoc = sheet.getSheet().findFirstRecordLocBySid( EOFRecord.sid );
+        sheet.getSheet().getRecords().add( eofLoc, link.record );
     }
     /**
      * Only valid for formula cells
