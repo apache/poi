@@ -345,7 +345,7 @@ public class HSSFFormulaEvaluator {
 
         ValueEval result;
 
-        int sheetIndex = _workbook.findSheetIndex(srcCell.getSheet());
+        int sheetIndex = _workbook.getSheetIndex(srcCell.getSheet());
         result = _cache.getValue(sheetIndex, srcRowNum, srcColNum);
         if (result != null) {
             return result;

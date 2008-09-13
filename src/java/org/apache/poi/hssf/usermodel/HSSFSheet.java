@@ -203,7 +203,7 @@ public final class HSSFSheet {
      */
     public HSSFRow createRow(int rownum)
     {
-        HSSFRow row = new HSSFRow(workbook, sheet, rownum);
+        HSSFRow row = new HSSFRow(workbook, this, rownum);
 
         addRow(row, true);
         return row;
@@ -218,7 +218,7 @@ public final class HSSFSheet {
 
     private HSSFRow createRowFromRecord(RowRecord row)
     {
-        HSSFRow hrow = new HSSFRow(workbook, sheet, row);
+        HSSFRow hrow = new HSSFRow(workbook, this, row);
 
         addRow(hrow, false);
         return hrow;
