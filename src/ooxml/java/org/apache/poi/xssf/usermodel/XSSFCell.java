@@ -27,6 +27,7 @@ import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.SharedStringSource;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.StylesSource;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -74,6 +75,10 @@ public final class XSSFCell implements Cell {
     protected StylesSource getStylesSource() {
         return this.stylesSource;
     }
+
+	public Sheet getSheet() {
+		return this.row.getSheet();
+	}
 
     public boolean getBooleanCellValue() {
         if (STCellType.B != cell.getT()) {
