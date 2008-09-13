@@ -35,7 +35,7 @@ public final class TestLen extends TestCase {
 	
 	private static Eval invokeLen(Eval text) {
 		Eval[] args = new Eval[] { text, };
-		return new Len().evaluate(args, -1, (short)-1);
+		return TextFunction.LEN.evaluate(args, -1, (short)-1);
 	}
 
 	private void confirmLen(Eval text, int expected) {
