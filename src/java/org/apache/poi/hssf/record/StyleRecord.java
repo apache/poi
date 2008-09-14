@@ -160,7 +160,10 @@ public final class StyleRecord extends Record {
     public void setName(String name)
     {
         field_4_name = name;
-        //TODO set name length and string options
+        
+        // Fix up the length
+        field_2_name_length = (short)name.length();
+        //TODO set name string options
     }
 
     // end user defined
