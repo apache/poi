@@ -773,6 +773,61 @@ public final class Workbook implements Model {
         numxfs++;
         return xf;
     }
+    
+    /**
+     * Returns the StyleRecord for the given
+     *  xfIndex, or null if that ExtendedFormat doesn't
+     *  have a Style set.
+     */
+    public StyleRecord getStyleRecord(int xfIndex) {
+    	// Style records always follow after 
+    	//  the ExtendedFormat records
+    	boolean done = false;
+    	for(int i=records.getXfpos(); i<records.size() &&
+    			!done; i++) {
+    		Record r = records.get(i);
+    		if(r instanceof ExtendedFormatRecord) {
+    		} else if(r instanceof StyleRecord) {
+    			StyleRecord sr = (StyleRecord)r;
+    			if(sr.getIndex() == xfIndex) {
+    				return sr;
+    			}
+    		} else {
+    			done = true;
+    		}
+    	}
+    	return null;
+    }
+    /**
+     * Creates a new StyleRecord, for the given Extended
+     *  Format index, and adds it onto the end of the
+     *  records collection
+     */
+    public StyleRecord createStyleRecord(int xfIndex) {
+    	// Style records always follow after 
+    	//  the ExtendedFormat records
+    	StyleRecord newSR = new StyleRecord();
+    	newSR.setIndex((short)xfIndex);
+    	
+    	// Find the spot
+    	int addAt = -1;
+    	for(int i=records.getXfpos(); i<records.size() &&
+    			addAt == -1; i++) {
+    		Record r = records.get(i);
+    		if(r instanceof ExtendedFormatRecord ||
+    				r instanceof StyleRecord) {
+    			// Keep going
+    		} else {
+    			addAt = i;
+    		}
+    	}
+    	if(addAt == -1) {
+    		throw new IllegalStateException("No XF Records found!");
+    	}
+    	records.add(addAt, newSR);
+    	
+    	return newSR;
+    }
 
     /**
      * Adds a string to the SST table and returns its index (if its a duplicate

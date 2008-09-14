@@ -21,6 +21,7 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.FontRecord;
+import org.apache.poi.hssf.record.StyleRecord;
 import org.apache.poi.hssf.util.HSSFColor;
 
 /**
@@ -929,6 +930,37 @@ public class HSSFCellStyle
     public short getFillForegroundColor()
     {
         return format.getFillForeground();
+    }
+    
+    /**
+     * Gets the name of the user defined style.
+     * Returns null for built in styles, and
+     *  styles where no name has been defined
+     */
+    public String getUserStyleName() {
+    	StyleRecord sr = workbook.getStyleRecord(index);
+    	if(sr == null) {
+    		return null;
+    	}
+    	if(sr.getType() == StyleRecord.STYLE_BUILT_IN) {
+    		return null;
+    	}
+    	return sr.getName();
+    }
+    
+    /**
+     * Sets the name of the user defined style.
+     * Will complain if you try this on a built in style.
+     */
+    public void setUserStyleName(String styleName) {
+    	StyleRecord sr = workbook.getStyleRecord(index);
+    	if(sr == null) {
+    		sr = workbook.createStyleRecord(index);
+    	}
+    	if(sr.getType() == StyleRecord.STYLE_BUILT_IN) {
+    		throw new IllegalArgumentException("Unable to set user specified style names for built in styles!");
+    	}
+    	sr.setName(styleName);
     }
 
     /**
