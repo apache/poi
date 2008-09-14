@@ -26,7 +26,6 @@ import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.hssf.util.SheetReferences;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -1902,33 +1901,22 @@ public final class Workbook implements Model {
         return linkTable;
     }
 
-    public SheetReferences getSheetReferences() {
-        SheetReferences refs = new SheetReferences();
-        
-        if (linkTable != null) {
-            int numRefStructures = linkTable.getNumberOfREFStructures();
-            for (short k = 0; k < numRefStructures; k++) {
-                
-                String sheetName = findSheetNameFromExternSheet(k);
-                refs.addSheetReference(sheetName, k);
-                
-            }
-        }
-        return refs;
-    }
-
     /** finds the sheet name by his extern sheet index
-     * @param num extern sheet index
-     * @return sheet name
+     * @param externSheetIndex extern sheet index
+     * @return sheet name.
      */
-    public String findSheetNameFromExternSheet(short num){
+    public String findSheetNameFromExternSheet(int externSheetIndex){
 
-        int indexToSheet = linkTable.getIndexToSheet(num);
+        int indexToSheet = linkTable.getIndexToSheet(externSheetIndex);
         
         if (indexToSheet < 0) {
             // TODO - what does '-1' mean here?
             //error check, bail out gracefully!
             return "";
+        }
+        if (indexToSheet >= boundsheets.size()) {
+            // Not sure if this can ever happen (See bug 45798)
+            return ""; // Seems to be what excel would do in this case
         }
         return getSheetName(indexToSheet);
     }

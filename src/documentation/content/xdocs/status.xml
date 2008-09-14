@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1.1-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">45978 - Fixed IOOBE in Ref3DPtg.toFormulaString() due eager initialisation of SheetReferences</action>
            <action dev="POI-DEVELOPERS" type="add">Made HSSFFormulaEvaluator no longer require initialisation with sheet or row</action>
            <action dev="POI-DEVELOPERS" type="add">Extended support for cached results of formula cells</action>
            <action dev="POI-DEVELOPERS" type="fix">45639 - Fixed AIOOBE due to bad index logic in ColumnInfoRecordsAggregate</action>
