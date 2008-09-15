@@ -39,7 +39,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.StylesSource;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
-import org.apache.poi.ss.util.SheetReferences;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.CommentsTable;
@@ -463,6 +462,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public int getSheetIndexFromExternSheetIndex(int externSheetNumber) {
 		return externSheetNumber;
 	}
+    /**
+     * Doesn't do anything special - returns the same as getSheetName()
+     * TODO - figure out if this is a ole2 specific thing, or
+     *  if we need to do something proper here too!
+     */
+    public String findSheetNameFromExternSheet(int externSheetIndex) {
+		return getSheetName(externSheetIndex);
+	}
 
 	public Sheet getSheet(String name) {
         CTSheet[] sheets = this.workbook.getSheets().getSheetArray();  
@@ -508,14 +515,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public String getSheetName(int sheet) {
         return this.workbook.getSheets().getSheetArray(sheet).getName();
     }
-    
-    public SheetReferences getSheetReferences() {
-    	SheetReferences sr = new SheetReferences();
-    	for(int i=0; i<getNumberOfSheets(); i++) {
-    		sr.addSheetReference(getSheetName(i), i);
-    	}
-    	return sr;
-	}
     
     /**
      * Are we a normal workbook (.xlsx), or a 

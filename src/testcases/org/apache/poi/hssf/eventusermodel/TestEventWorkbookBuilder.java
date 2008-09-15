@@ -16,6 +16,7 @@
 ==================================================================== */
 
 package org.apache.poi.hssf.eventusermodel;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -32,7 +33,6 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.SheetReferences;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 /**
  * Tests for {@link EventWorkbookBuilder}
@@ -66,9 +66,6 @@ public final class TestEventWorkbookBuilder extends TestCase {
 	public void testGetStubWorkbooks() {
 		assertNotNull(listener.getStubWorkbook());
 		assertNotNull(listener.getStubHSSFWorkbook());
-		
-		assertNotNull(listener.getStubWorkbook().getSheetReferences());
-		assertNotNull(listener.getStubHSSFWorkbook().getSheetReferences());
 	}
 	
 	public void testContents() {
@@ -78,10 +75,10 @@ public final class TestEventWorkbookBuilder extends TestCase {
 		
 		assertEquals(3, listener.getStubWorkbook().getNumSheets());
 		
-		SheetReferences ref = listener.getStubWorkbook().getSheetReferences();
-		assertEquals("Sh3", ref.getSheetName(0));
-		assertEquals("Sheet1", ref.getSheetName(1));
-		assertEquals("S2", ref.getSheetName(2));
+		Workbook ref = listener.getStubWorkbook();
+		assertEquals("Sh3", ref.findSheetNameFromExternSheet(0));
+		assertEquals("Sheet1", ref.findSheetNameFromExternSheet(1));
+		assertEquals("S2", ref.findSheetNameFromExternSheet(2));
 	}
 	
 	public void testFormulas() {

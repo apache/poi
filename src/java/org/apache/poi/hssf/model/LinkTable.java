@@ -348,10 +348,6 @@ final class LinkTable {
 		return -1;
 	}
 
-	public int getNumberOfREFStructures() {
-		return _externSheetRecord.getNumOfRefs();
-	}
-
 	public String resolveNameXText(int refIndex, int definedNameIndex) {
 		int extBookIndex = _externSheetRecord.getExtbookIndexFromRefIndex(refIndex);
 		return _externalBookBlocks[extBookIndex].getNameText(definedNameIndex);

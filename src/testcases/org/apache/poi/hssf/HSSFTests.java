@@ -23,14 +23,11 @@ import junit.framework.TestSuite;
 import org.apache.poi.hssf.eventmodel.TestEventRecordFactory;
 import org.apache.poi.hssf.eventmodel.TestModelFactory;
 import org.apache.poi.hssf.eventusermodel.AllEventUserModelTests;
+import org.apache.poi.hssf.extractor.TestExcelExtractor;
 import org.apache.poi.hssf.model.AllModelTests;
 import org.apache.poi.hssf.record.AllRecordTests;
 import org.apache.poi.hssf.usermodel.AllUserModelTests;
-import org.apache.poi.hssf.util.TestAreaReference;
-import org.apache.poi.hssf.util.TestCellReference;
-import org.apache.poi.hssf.util.TestRKUtil;
-import org.apache.poi.hssf.util.TestRangeAddress;
-import org.apache.poi.hssf.util.TestSheetReferences;
+import org.apache.poi.hssf.util.AllHSSFUtilTests;
 
 /**
  * Test Suite for all sub-packages of org.apache.poi.hssf<br/>
@@ -41,27 +38,20 @@ import org.apache.poi.hssf.util.TestSheetReferences;
  */
 public final class HSSFTests {
 
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-
     public static Test suite() {
-        TestSuite suite = new TestSuite("Tests for org.apache.poi.hssf");
-        // $JUnit-BEGIN$
+        TestSuite suite = new TestSuite(HSSFTests.class.getName());
 
         suite.addTest(AllEventUserModelTests.suite());
         suite.addTest(AllModelTests.suite());
         suite.addTest(AllUserModelTests.suite());
         suite.addTest(AllRecordTests.suite());
+        suite.addTest(AllHSSFUtilTests.suite());
 
-        suite.addTest(new TestSuite(TestAreaReference.class));
-        suite.addTest(new TestSuite(TestCellReference.class));
-        suite.addTest(new TestSuite(TestRangeAddress.class));
-        suite.addTest(new TestSuite(TestRKUtil.class));
-        suite.addTest(new TestSuite(TestSheetReferences.class));
+        if (false) { // TODO - hook this test up
+            suite.addTest(new TestSuite(TestExcelExtractor.class));
+        }
         suite.addTest(new TestSuite(TestEventRecordFactory.class));
         suite.addTest(new TestSuite(TestModelFactory.class));
-        // $JUnit-END$
         return suite;
     }
 }
