@@ -531,6 +531,8 @@ public final class HSSFRow implements Comparable, Row {
      * Note that the 4th element might well not be cell 4, as the iterator
      *  will not return un-defined (null) cells.
      * Call getCellNum() on the returned cells to know which cell they are.
+     * As this only ever works on physically defined cells, 
+     *  the {@link MissingCellPolicy} has no effect.
      */
     public Iterator cellIterator()
     {
