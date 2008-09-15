@@ -382,7 +382,10 @@ public class HSSFWorkbook extends POIDocument
      *  getting missing or blank cells from a row.
      * This will then apply to all calls to
      *  {@link HSSFRow.getCell()}. See
-     *  {@link MissingCellPolicy}
+     *  {@link MissingCellPolicy}.
+     * Note that this has no effect on any
+     *  iterators, only on when fetching Cells
+     *  by their column index.
      */
     public void setMissingCellPolicy(MissingCellPolicy missingCellPolicy) {
         this.missingCellPolicy = missingCellPolicy;
