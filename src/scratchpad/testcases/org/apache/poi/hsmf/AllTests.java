@@ -33,6 +33,7 @@ public class AllTests
     TestSuite suite = new TestSuite();
     suite.addTestSuite(org.apache.poi.hsmf.model.TestBlankFileRead.class);
     suite.addTestSuite(org.apache.poi.hsmf.model.TestSimpleFileRead.class);
+    suite.addTestSuite(org.apache.poi.hsmf.model.TestOutlook30FileRead.class);
     suite.addTestSuite(org.apache.poi.hsmf.model.TestChunkData.class);
     
     return suite;

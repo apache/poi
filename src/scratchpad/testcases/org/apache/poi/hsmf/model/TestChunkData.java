@@ -31,42 +31,47 @@ import junit.framework.TestCase;
  *
  */
 public class TestChunkData extends TestCase {
+	private Chunks chunks = Chunks.getInstance(false);
+	
 	public void testChunkCreate() {
-		StringChunk chunk = new StringChunk(0x0200);
+		StringChunk chunk = new StringChunk(0x0200, false);
 		TestCase.assertEquals("__substg1.0_0200001E", chunk.getEntryName());
 		
 		/* test the lower and upper limits of the chunk ids */
-		chunk = new StringChunk(0x0000);
+		chunk = new StringChunk(0x0000, false);
 		TestCase.assertEquals("__substg1.0_0000001E", chunk.getEntryName());
 		
-		chunk = new StringChunk(0xFFFF);
+		chunk = new StringChunk(0xFFFF, false);
 		TestCase.assertEquals("__substg1.0_FFFF001E", chunk.getEntryName());
+		
+		chunk = new StringChunk(0xFFFF, true);
+		TestCase.assertEquals("__substg1.0_FFFF001F", chunk.getEntryName());
 	}
 	
 	public void testTextBodyChunk() {
-		StringChunk chunk = new StringChunk(0x1000);
-		TestCase.assertEquals(chunk.getEntryName(), Chunks.getInstance().textBodyChunk.getEntryName());
+		StringChunk chunk = new StringChunk(0x1000, false);
+		TestCase.assertEquals(chunk.getEntryName(), chunks.textBodyChunk.getEntryName());
 	}
 
 	public void testDisplayToChunk() {
-		StringChunk chunk = new StringChunk(0x0E04);
-		TestCase.assertEquals(chunk.getEntryName(), Chunks.getInstance().displayToChunk.getEntryName());
+		StringChunk chunk = new StringChunk(0x0E04, false);
+		TestCase.assertEquals(chunk.getEntryName(), chunks.displayToChunk.getEntryName());
 	}
 	
 
 	public void testDisplayCCChunk() {
-		StringChunk chunk = new StringChunk(0x0E03);
-		TestCase.assertEquals(chunk.getEntryName(), Chunks.getInstance().displayCCChunk.getEntryName());
+		StringChunk chunk = new StringChunk(0x0E03, false);
+		TestCase.assertEquals(chunk.getEntryName(), chunks.displayCCChunk.getEntryName());
 	}
 
 	public void testDisplayBCCChunk() {
-		StringChunk chunk = new StringChunk(0x0E02);
-		TestCase.assertEquals(chunk.getEntryName(), Chunks.getInstance().displayBCCChunk.getEntryName());
+		StringChunk chunk = new StringChunk(0x0E02, false);
+		TestCase.assertEquals(chunk.getEntryName(), chunks.displayBCCChunk.getEntryName());
 	}
 	
 	public void testSubjectChunk() {
-		Chunk chunk = new StringChunk(0x0037);
-		TestCase.assertEquals(chunk.getEntryName(), Chunks.getInstance().subjectChunk.getEntryName());
+		Chunk chunk = new StringChunk(0x0037, false);
+		TestCase.assertEquals(chunk.getEntryName(), chunks.subjectChunk.getEntryName());
 	}
 	
 }

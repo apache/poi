@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.poi.hsmf.datatypes.Chunk;
+import org.apache.poi.hsmf.datatypes.Chunks;
+import org.apache.poi.hsmf.datatypes.Types;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.hsmf.exceptions.DirectoryChunkNotFoundException;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
@@ -82,7 +84,36 @@ public class POIFSChunkParser {
 		
 		this.directoryMap = this.processPOIIterator(iter);
 	}
-
+	
+	/**
+	 * Returns a list of the standard chunk types, as 
+	 *  appropriate for the chunks we find in the file.
+	 */
+	public Chunks identifyChunks() {
+		// Are they of the old or new type of strings?
+		boolean hasOldStrings = false;
+		boolean hasNewStrings = false;
+		String oldStringEnd = Types.asFileEnding(Types.OLD_STRING);
+		String newStringEnd = Types.asFileEnding(Types.NEW_STRING);
+		
+		for(Iterator i = directoryMap.keySet().iterator(); i.hasNext();) {
+			String entry = (String)i.next();
+			if(entry.endsWith( oldStringEnd )) {
+				hasOldStrings = true;
+			}
+			if(entry.endsWith( newStringEnd )) {
+				hasNewStrings = true;
+			}
+		}
+		
+		if(hasOldStrings && hasNewStrings) {
+			throw new IllegalStateException("Your file contains string chunks of both the old and new types. Giving up");
+		} else if(hasNewStrings) {
+			return Chunks.getInstance(true);
+		}
+		return Chunks.getInstance(false);
+	}
+	
 	/**
 	 * Pull the chunk data that's stored in this object's hashmap out and return it as a HashMap.
 	 * @param entryName
