@@ -407,6 +407,41 @@ public class TestXSSFSheet extends TestCase {
         Sheet sheet = workbook.createSheet("Sheet 1");
         sheet.setColumnWidth((short) 1,(short)  22);
         assertEquals(22, sheet.getColumnWidth((short) 1));
+        
+        // Now check the low level stuff, and check that's all
+        //  been set correctly
+        XSSFSheet xs = (XSSFSheet)sheet;
+        CTWorksheet cts = xs.getWorksheet();
+        
+        CTCols[] cols_s = cts.getColsArray();
+        assertEquals(1, cols_s.length);
+        CTCols cols = cols_s[0];
+        assertEquals(1, cols.sizeOfColArray());
+        CTCol col = cols.getColArray(0);
+        
+        // XML is 1 based, POI is 0 based
+        assertEquals(2, col.getMin());
+        assertEquals(2, col.getMax());
+        assertEquals(22.0, col.getWidth());
+        
+        
+        // Now set another
+        sheet.setColumnWidth((short) 3,(short)  33);
+        
+        cols_s = cts.getColsArray();
+        assertEquals(1, cols_s.length);
+        cols = cols_s[0];
+        assertEquals(2, cols.sizeOfColArray());
+        
+        col = cols.getColArray(0);
+        assertEquals(2, col.getMin()); // POI 1
+        assertEquals(2, col.getMax());
+        assertEquals(22.0, col.getWidth());
+        
+        col = cols.getColArray(1);
+        assertEquals(4, col.getMin()); // POI 3
+        assertEquals(4, col.getMax());
+        assertEquals(33.0, col.getWidth());
     }
     
     public void testGetSetColumnHidden() {
@@ -744,8 +779,8 @@ public class TestXSSFSheet extends TestCase {
 	    	assertEquals(2,cols.sizeOfColArray());
 	    	CTCol[]colArray=cols.getColArray();
 	    	assertNotNull(colArray);
-	    	assertEquals(2,colArray[0].getMin());
-	    	assertEquals(7,colArray[0].getMax());
+	    	assertEquals(2+1,colArray[0].getMin()); // 1 based
+	    	assertEquals(7+1,colArray[0].getMax()); // 1 based
 	    	assertEquals(1, colArray[0].getOutlineLevel());
 
 	    	//two level  

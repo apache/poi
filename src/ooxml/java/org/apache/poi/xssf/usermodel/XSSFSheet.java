@@ -648,15 +648,20 @@ public class XSSFSheet implements Sheet {
     	return getSheetTypePrintOptions().getVerticalCentered();
     }
 
-    
+    /**
+     * Group between (0 based) columns 
+     */
     public void groupColumn(short fromColumn, short toColumn) {
+    	groupColumn1Based(fromColumn+1, toColumn+1);
+    }
+    private void groupColumn1Based(int fromColumn, int toColumn) {
     	CTCols ctCols=worksheet.getColsArray(0);
     	CTCol ctCol=CTCol.Factory.newInstance();
     	ctCol.setMin(fromColumn);
     	ctCol.setMax(toColumn);
     	this.columnHelper.addCleanColIntoCols(ctCols, ctCol);    	
     	for(int index=fromColumn;index<=toColumn;index++){
-    		CTCol col=columnHelper.getColumn(index, false);
+    		CTCol col=columnHelper.getColumn1Based(index, false);
     		//col must exist
     		short outlineLevel=col.getOutlineLevel();
     		col.setOutlineLevel((short)(outlineLevel+1));
