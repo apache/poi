@@ -334,10 +334,28 @@ public class TestCellStyle
     	assertEquals(23, cs2.getIndex());
     	assertEquals(24, cs3.getIndex());
     	
+    	assertNull(cs1.getParentStyle());
+    	assertNotNull(cs2.getParentStyle());
+    	assertNotNull(cs3.getParentStyle());
+    	
+    	assertEquals(21, cs2.getParentStyle().getIndex());
+    	assertEquals(22, cs3.getParentStyle().getIndex());
+    	
+    	// Now check we can get style records for 
+    	//  the parent ones
+    	assertNull(wb.getWorkbook().getStyleRecord(15));
+    	assertNull(wb.getWorkbook().getStyleRecord(23));
+    	assertNull(wb.getWorkbook().getStyleRecord(24));
+    	
+    	assertNotNull(wb.getWorkbook().getStyleRecord(21));
+    	assertNotNull(wb.getWorkbook().getStyleRecord(22));
+    	
     	// Now check the style names
-//    	assertEquals(null, cs1.getUserStyleName());
-//    	assertEquals("style1", cs2.getUserStyleName());
-//    	assertEquals("style2", cs3.getUserStyleName());
+    	assertEquals(null, cs1.getUserStyleName());
+    	assertEquals(null, cs2.getUserStyleName());
+    	assertEquals(null, cs3.getUserStyleName());
+    	assertEquals("style1", cs2.getParentStyle().getUserStyleName());
+    	assertEquals("style2", cs3.getParentStyle().getUserStyleName());
     }
 
     public static void main(String [] ignored_args)

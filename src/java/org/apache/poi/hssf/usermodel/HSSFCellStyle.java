@@ -254,6 +254,22 @@ public class HSSFCellStyle
     {
         return index;
     }
+    
+    /**
+     * Return the parent style for this cell style.
+     * In most cases this will be null, but in a few
+     *  cases there'll be a fully defined parent.
+     */
+    public HSSFCellStyle getParentStyle() {
+    	if(format.getParentIndex() == 0) {
+    		return null;
+    	}
+    	return new HSSFCellStyle(
+    			format.getParentIndex(),
+    			workbook.getExFormatAt(format.getParentIndex()),
+    			workbook
+    	);
+    }
 
     /**
      * set the data format (must be a valid format)
