@@ -160,20 +160,6 @@ public final class Ref3DPtg extends OperandPtg {
 
     }
 
-    // TODO - find a home for this method
-    // There is already a method on Workbook called getSheetName but it seems to do something different.
-	static String getSheetName(Workbook book, int externSheetIndex) {
-        // TODO - there are 3 ways this method can return null. Is each valid?
-        if (book == null) {
-            return null;
-        }
-
-        SheetReferences refs = book.getSheetReferences();
-        if (refs == null) {
-            return null;
-        }
-        return refs.getSheetName(externSheetIndex);
-    }
     /**
      * @return text representation of this cell reference that can be used in text 
      * formulas. The sheet name will get properly delimited if required.
@@ -181,7 +167,7 @@ public final class Ref3DPtg extends OperandPtg {
     public String toFormulaString(Workbook book)
     {
         StringBuffer retval = new StringBuffer();
-        String sheetName = getSheetName(book, field_1_index_extern_sheet);
+        String sheetName = book.findSheetNameFromExternSheet(field_1_index_extern_sheet);
         if(sheetName != null) {
             SheetNameFormatter.appendFormat(retval, sheetName);
             retval.append( '!' );

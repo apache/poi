@@ -29,6 +29,8 @@ import java.io.*;
 import java.util.*;
 
 import junit.framework.*;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -40,6 +42,10 @@ import org.apache.poi.util.TempFile;
 public class TestCellStyle
     extends TestCase
 {
+
+    private static HSSFWorkbook openSample(String sampleFileName) {
+        return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);
+    }
 
     /** Creates a new instance of TestCellStyle */
 
@@ -302,6 +308,54 @@ public class TestCellStyle
     	assertTrue(fmtClone.getFormat("Test##") == clone.getDataFormat());
     	assertFalse(fmtClone.getFormat("Test##") == fmt.getFormat("Test##"));
     	assertEquals(5, wbClone.getNumberOfFonts());
+    }
+    
+    public void testStyleNames() throws Exception {
+        HSSFWorkbook wb = openSample("WithExtendedStyles.xls");
+    	HSSFSheet s = wb.getSheetAt(0);
+    	HSSFCell c1 = s.getRow(0).getCell(0);
+    	HSSFCell c2 = s.getRow(1).getCell(0);
+    	HSSFCell c3 = s.getRow(2).getCell(0);
+    	
+    	HSSFCellStyle cs1 = c1.getCellStyle();
+    	HSSFCellStyle cs2 = c2.getCellStyle();
+    	HSSFCellStyle cs3 = c3.getCellStyle();
+    	
+    	assertNotNull(cs1);
+    	assertNotNull(cs2);
+    	assertNotNull(cs3);
+    	
+    	// Check we got the styles we'd expect
+    	assertEquals(10, cs1.getFont(wb).getFontHeightInPoints());
+    	assertEquals(9,  cs2.getFont(wb).getFontHeightInPoints());
+    	assertEquals(12, cs3.getFont(wb).getFontHeightInPoints());
+    	
+    	assertEquals(15, cs1.getIndex());
+    	assertEquals(23, cs2.getIndex());
+    	assertEquals(24, cs3.getIndex());
+    	
+    	assertNull(cs1.getParentStyle());
+    	assertNotNull(cs2.getParentStyle());
+    	assertNotNull(cs3.getParentStyle());
+    	
+    	assertEquals(21, cs2.getParentStyle().getIndex());
+    	assertEquals(22, cs3.getParentStyle().getIndex());
+    	
+    	// Now check we can get style records for 
+    	//  the parent ones
+    	assertNull(wb.getWorkbook().getStyleRecord(15));
+    	assertNull(wb.getWorkbook().getStyleRecord(23));
+    	assertNull(wb.getWorkbook().getStyleRecord(24));
+    	
+    	assertNotNull(wb.getWorkbook().getStyleRecord(21));
+    	assertNotNull(wb.getWorkbook().getStyleRecord(22));
+    	
+    	// Now check the style names
+    	assertEquals(null, cs1.getUserStyleName());
+    	assertEquals(null, cs2.getUserStyleName());
+    	assertEquals(null, cs3.getUserStyleName());
+    	assertEquals("style1", cs2.getParentStyle().getUserStyleName());
+    	assertEquals("style2", cs3.getParentStyle().getUserStyleName());
     }
 
     public static void main(String [] ignored_args)

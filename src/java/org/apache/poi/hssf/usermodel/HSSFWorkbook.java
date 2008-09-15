@@ -35,7 +35,6 @@ import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.record.AbstractEscherHolderRecord;
 import org.apache.poi.hssf.record.BackupRecord;
 import org.apache.poi.hssf.record.DrawingGroupRecord;
@@ -59,7 +58,6 @@ import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.hssf.util.SheetReferences;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -864,8 +862,13 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         return retval;
     }
 
-    public SheetReferences getSheetReferences() {
-        return workbook.getSheetReferences();
+    /**
+     * @deprecated for POI internal use only (formula rendering).  This method is likely to
+     * be removed in future versions of POI.
+     */
+    public String findSheetNameFromExternSheet(int externSheetIndex){
+        // TODO - don't expose internal ugliness like externSheet indexes to the user model API
+        return workbook.findSheetNameFromExternSheet(externSheetIndex);
     }
 
     /**
@@ -1379,12 +1382,15 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     }
 
     /**
-     * TODO - make this less cryptic / move elsewhere
+     * @deprecated for POI internal use only (formula rendering).  This method is likely to
+     * be removed in future versions of POI.
+     * 
      * @param refIndex Index to REF entry in EXTERNSHEET record in the Link Table
      * @param definedNameIndex zero-based to DEFINEDNAME or EXTERNALNAME record
      * @return the string representation of the defined or external name
      */
     public String resolveNameXText(int refIndex, int definedNameIndex) {
+        // TODO - make this less cryptic / move elsewhere
         return workbook.resolveNameXText(refIndex, definedNameIndex);
     }
 

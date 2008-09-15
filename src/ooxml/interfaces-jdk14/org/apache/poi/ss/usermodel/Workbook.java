@@ -19,7 +19,6 @@ package org.apache.poi.ss.usermodel;
 
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.SheetReferences;
 
 /**
  * This is a JDK 1.4 compatible interface for HSSFWorkbook.
@@ -39,7 +38,7 @@ public interface Workbook {
 
     String getSheetName(int sheet);
     HSSFSheet getSheetAt(int index);
-    SheetReferences getSheetReferences();
+    String findSheetNameFromExternSheet(int externSheetIndex);
     int getSheetIndex(String name);
     int getSheetIndex(Sheet sheet);
     int getSheetIndexFromExternSheetIndex(int externSheetNumber);

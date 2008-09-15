@@ -34,7 +34,6 @@ public class AllHSSFUtilTests {
 		result.addTestSuite(TestHSSFColor.class);
 		result.addTestSuite(TestRangeAddress.class);
 		result.addTestSuite(TestRKUtil.class);
-		result.addTestSuite(TestSheetReferences.class);
 		return result;
 	}
 }

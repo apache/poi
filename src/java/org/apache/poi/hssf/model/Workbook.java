@@ -26,7 +26,6 @@ import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.hssf.util.SheetReferences;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -773,6 +772,61 @@ public final class Workbook implements Model {
         records.setXfpos( records.getXfpos() + 1 );
         numxfs++;
         return xf;
+    }
+    
+    /**
+     * Returns the StyleRecord for the given
+     *  xfIndex, or null if that ExtendedFormat doesn't
+     *  have a Style set.
+     */
+    public StyleRecord getStyleRecord(int xfIndex) {
+    	// Style records always follow after 
+    	//  the ExtendedFormat records
+    	boolean done = false;
+    	for(int i=records.getXfpos(); i<records.size() &&
+    			!done; i++) {
+    		Record r = records.get(i);
+    		if(r instanceof ExtendedFormatRecord) {
+    		} else if(r instanceof StyleRecord) {
+    			StyleRecord sr = (StyleRecord)r;
+    			if(sr.getIndex() == xfIndex) {
+    				return sr;
+    			}
+    		} else {
+    			done = true;
+    		}
+    	}
+    	return null;
+    }
+    /**
+     * Creates a new StyleRecord, for the given Extended
+     *  Format index, and adds it onto the end of the
+     *  records collection
+     */
+    public StyleRecord createStyleRecord(int xfIndex) {
+    	// Style records always follow after 
+    	//  the ExtendedFormat records
+    	StyleRecord newSR = new StyleRecord();
+    	newSR.setIndex((short)xfIndex);
+    	
+    	// Find the spot
+    	int addAt = -1;
+    	for(int i=records.getXfpos(); i<records.size() &&
+    			addAt == -1; i++) {
+    		Record r = records.get(i);
+    		if(r instanceof ExtendedFormatRecord ||
+    				r instanceof StyleRecord) {
+    			// Keep going
+    		} else {
+    			addAt = i;
+    		}
+    	}
+    	if(addAt == -1) {
+    		throw new IllegalStateException("No XF Records found!");
+    	}
+    	records.add(addAt, newSR);
+    	
+    	return newSR;
     }
 
     /**
@@ -1902,33 +1956,22 @@ public final class Workbook implements Model {
         return linkTable;
     }
 
-    public SheetReferences getSheetReferences() {
-        SheetReferences refs = new SheetReferences();
-        
-        if (linkTable != null) {
-            int numRefStructures = linkTable.getNumberOfREFStructures();
-            for (short k = 0; k < numRefStructures; k++) {
-                
-                String sheetName = findSheetNameFromExternSheet(k);
-                refs.addSheetReference(sheetName, k);
-                
-            }
-        }
-        return refs;
-    }
-
     /** finds the sheet name by his extern sheet index
-     * @param num extern sheet index
-     * @return sheet name
+     * @param externSheetIndex extern sheet index
+     * @return sheet name.
      */
-    public String findSheetNameFromExternSheet(short num){
+    public String findSheetNameFromExternSheet(int externSheetIndex){
 
-        int indexToSheet = linkTable.getIndexToSheet(num);
+        int indexToSheet = linkTable.getIndexToSheet(externSheetIndex);
         
         if (indexToSheet < 0) {
             // TODO - what does '-1' mean here?
             //error check, bail out gracefully!
             return "";
+        }
+        if (indexToSheet >= boundsheets.size()) {
+            // Not sure if this can ever happen (See bug 45798)
+            return ""; // Seems to be what excel would do in this case
         }
         return getSheetName(indexToSheet);
     }

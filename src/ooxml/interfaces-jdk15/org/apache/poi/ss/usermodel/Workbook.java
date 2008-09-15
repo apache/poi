@@ -22,7 +22,6 @@ import java.io.OutputStream;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
-import org.apache.poi.ss.util.SheetReferences;
 
 public interface Workbook {
 
@@ -218,7 +217,7 @@ public interface Workbook {
 
     void removeSheetAt(int index);
 
-    SheetReferences getSheetReferences();
+    String findSheetNameFromExternSheet(int externSheetIndex);
     
     /**
      * determine whether the Excel GUI will backup the workbook when saving.

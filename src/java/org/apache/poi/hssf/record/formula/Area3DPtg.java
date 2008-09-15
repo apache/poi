@@ -92,7 +92,7 @@ public final class Area3DPtg extends AreaPtgBase {
 	public String toFormulaString(Workbook book) {
 		// First do the sheet name
 		StringBuffer retval = new StringBuffer();
-		String sheetName = Ref3DPtg.getSheetName(book, field_1_index_extern_sheet);
+		String sheetName = book.findSheetNameFromExternSheet(field_1_index_extern_sheet);
 		if(sheetName != null) {
 			if(sheetName.length() == 0) {
 				// What excel does if sheet has been deleted
