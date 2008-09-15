@@ -26,6 +26,12 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
+/**
+ * Helper class for dealing with the Column settings on
+ *  a CTWorksheet (the data part of a sheet).
+ * Note - within POI, we use 0 based column indexes, but
+ *  the column definitions in the XML are 1 based!
+ */
 public class ColumnHelper {
 
     private CTWorksheet worksheet;
@@ -70,20 +76,31 @@ public class ColumnHelper {
         return newCol;
     }
 
+    /**
+     * Returns the Column at the given 0 based index
+     */
     public CTCol getColumn(long index, boolean splitColumns) {
+    	return getColumn1Based(index+1, splitColumns);
+    }
+    /**
+     * Returns the Column at the given 1 based index.
+     * POI default is 0 based, but the file stores
+     *  as 1 based.
+     */
+    public CTCol getColumn1Based(long index1, boolean splitColumns) {
         CTCols colsArray = worksheet.getColsArray(0);
 		for (int i = 0; i < colsArray.sizeOfColArray(); i++) {
             CTCol colArray = colsArray.getColArray(i);
-			if (colArray.getMin() <= index && colArray.getMax() >= index) {
+			if (colArray.getMin() <= index1 && colArray.getMax() >= index1) {
 				if (splitColumns) {
-					if (colArray.getMin() < index) {
-						insertCol(colsArray, colArray.getMin(), (index - 1), new CTCol[]{colArray});
+					if (colArray.getMin() < index1) {
+						insertCol(colsArray, colArray.getMin(), (index1 - 1), new CTCol[]{colArray});
 					}
-					if (colArray.getMax() > index) {
-						insertCol(colsArray, (index + 1), colArray.getMax(), new CTCol[]{colArray});
+					if (colArray.getMax() > index1) {
+						insertCol(colsArray, (index1 + 1), colArray.getMax(), new CTCol[]{colArray});
 					}
-					colArray.setMin(index);
-					colArray.setMax(index);
+					colArray.setMin(index1);
+					colArray.setMax(index1);
 				}
                 return colArray;
             }
@@ -175,9 +192,16 @@ public class ColumnHelper {
         return null;
     }
 
+    /**
+     * Does the column at the given 0 based index exist
+     *  in the supplied list of column definitions?
+     */
     public boolean columnExists(CTCols cols, long index) {
+    	return columnExists1Based(cols, index+1);
+    }
+    private boolean columnExists1Based(CTCols cols, long index1) {
         for (int i = 0; i < cols.sizeOfColArray(); i++) {
-            if (cols.getColArray(i).getMin() == index) {
+            if (cols.getColArray(i).getMin() == index1) {
                 return true;
             }
         }
@@ -195,26 +219,30 @@ public class ColumnHelper {
     }
 
     public void setColBestFit(long index, boolean bestFit) {
-        CTCol col = getOrCreateColumn(index, false);
+        CTCol col = getOrCreateColumn1Based(index+1, false);
         col.setBestFit(bestFit);
     }
 
     public void setColWidth(long index, double width) {
-        CTCol col = getOrCreateColumn(index, false);
+        CTCol col = getOrCreateColumn1Based(index+1, false);
         col.setWidth(width);
     }
 
     public void setColHidden(long index, boolean hidden) {
-        CTCol col = getOrCreateColumn(index, false);
+        CTCol col = getOrCreateColumn1Based(index+1, false);
         col.setHidden(hidden);
     }
 
-    protected CTCol getOrCreateColumn(long index, boolean splitColumns) {
-        CTCol col = getColumn(index, splitColumns);
+    /**
+     * Return the CTCol at the given (0 based) column index,
+     *  creating it if required.
+     */
+    protected CTCol getOrCreateColumn1Based(long index1, boolean splitColumns) {
+        CTCol col = getColumn1Based(index1, splitColumns);
         if (col == null) {
             col = worksheet.getColsArray(0).addNewCol();
-            col.setMin(index);
-            col.setMax(index);
+            col.setMin(index1);
+            col.setMax(index1);
         }
         return col;
     }
@@ -224,7 +252,7 @@ public class ColumnHelper {
 	}
 	
 	public void setColDefaultStyle(long index, int styleId) {
-		CTCol col = getOrCreateColumn(index, true);
+		CTCol col = getOrCreateColumn1Based(index+1, true);
 		col.setStyle(styleId);
 	}
 	
@@ -235,22 +263,22 @@ public class ColumnHelper {
 		}
 		return -1;
 	}
-        
-        private boolean columnExists(CTCols cols, long min, long max) {
-            for (int i = 0; i < cols.sizeOfColArray(); i++) {
-                if (cols.getColArray(i).getMin() == min && cols.getColArray(i).getMax() == max) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        
-        public int getIndexOfColumn(CTCols cols, CTCol col) {
-            for (int i = 0; i < cols.sizeOfColArray(); i++) {
-                if (cols.getColArray(i).getMin() == col.getMin() && cols.getColArray(i).getMax() == col.getMax()) {
-                    return i;
-                }
-            }
-            return -1;
-        }
+
+	private boolean columnExists(CTCols cols, long min, long max) {
+	    for (int i = 0; i < cols.sizeOfColArray(); i++) {
+	        if (cols.getColArray(i).getMin() == min && cols.getColArray(i).getMax() == max) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+	
+	public int getIndexOfColumn(CTCols cols, CTCol col) {
+	    for (int i = 0; i < cols.sizeOfColArray(); i++) {
+	        if (cols.getColArray(i).getMin() == col.getMin() && cols.getColArray(i).getMax() == col.getMax()) {
+	            return i;
+	        }
+	    }
+	    return -1;
+	}
 }

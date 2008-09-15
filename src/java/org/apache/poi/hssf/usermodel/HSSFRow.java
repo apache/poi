@@ -537,7 +537,7 @@ public final class HSSFRow implements Comparable, Row {
       return new CellIterator();
     }
     /**
-     * Alias for {@link CellIterator} to allow
+     * Alias for {@link #cellIterator} to allow
      *  foreach loops
      */
     public Iterator iterator() { 
