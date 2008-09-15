@@ -27,9 +27,26 @@ public class StringChunk extends Chunk {
 
 	private String value;
 
-	public StringChunk(int chunkId) {
+	/**
+	 * Creates a String Chunk, for either the old
+	 *  or new style of string chunk types.
+	 */
+	public StringChunk(int chunkId, boolean newStyleString) {
+		this(chunkId, getStringType(newStyleString));
+	}
+	private static int getStringType(boolean newStyleString) {
+		if(newStyleString)
+			return Types.NEW_STRING;
+		return Types.OLD_STRING;
+	}
+	
+	/**
+	 * Create a String Chunk, with the specified
+	 *  type.
+	 */
+	public StringChunk(int chunkId, int type) {
 		this.chunkId = chunkId;
-		this.type = Types.STRING;
+		this.type = type;
 	}
 	
 	/* (non-Javadoc)

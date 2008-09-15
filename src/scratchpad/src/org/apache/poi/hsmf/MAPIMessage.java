@@ -37,6 +37,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 public class MAPIMessage {
 	private POIFSChunkParser chunkParser;
 	private POIFSFileSystem fs;
+	private Chunks chunks;
 	
 	/**
 	 * Constructor for creating new files.
@@ -64,6 +65,10 @@ public class MAPIMessage {
 	public MAPIMessage(InputStream in) throws IOException {
 		this.fs = new POIFSFileSystem(in);
 		chunkParser = new POIFSChunkParser(this.fs);
+		
+		// Figure out the right string type, based on
+		//  the chunks present
+		chunks = chunkParser.identifyChunks();
 	}
 	
 
@@ -87,7 +92,7 @@ public class MAPIMessage {
 	 * @throws ChunkNotFoundException 
 	 */
 	public String getTextBody() throws IOException, ChunkNotFoundException {
-		return getStringFromChunk(Chunks.getInstance().textBodyChunk);
+		return getStringFromChunk(chunks.textBodyChunk);
 	}
 
 	/**
@@ -96,7 +101,7 @@ public class MAPIMessage {
 	 * @throws ChunkNotFoundException
 	 */
 	public String getSubject() throws ChunkNotFoundException {
-		return getStringFromChunk(Chunks.getInstance().subjectChunk);
+		return getStringFromChunk(chunks.subjectChunk);
 	}
 	
 	
@@ -107,7 +112,7 @@ public class MAPIMessage {
 	 * @throws ChunkNotFoundException
 	 */
 	public String getDisplayTo() throws ChunkNotFoundException {
-		return getStringFromChunk(Chunks.getInstance().displayToChunk);
+		return getStringFromChunk(chunks.displayToChunk);
 	}
 	
 	/**
@@ -117,7 +122,7 @@ public class MAPIMessage {
 	 * @throws ChunkNotFoundException
 	 */
 	public String getDisplayFrom() throws ChunkNotFoundException {
-		return getStringFromChunk(Chunks.getInstance().displayFromChunk);
+		return getStringFromChunk(chunks.displayFromChunk);
 	}
 	
 	/**
@@ -127,7 +132,7 @@ public class MAPIMessage {
 	 * @throws ChunkNotFoundException
 	 */
 	public String getDisplayCC() throws ChunkNotFoundException {
-		return getStringFromChunk(Chunks.getInstance().displayCCChunk);
+		return getStringFromChunk(chunks.displayCCChunk);
 	}
 	
 	/**
@@ -137,7 +142,7 @@ public class MAPIMessage {
 	 * @throws ChunkNotFoundException
 	 */
 	public String getDisplayBCC() throws ChunkNotFoundException {
-		return getStringFromChunk(Chunks.getInstance().displayBCCChunk);
+		return getStringFromChunk(chunks.displayBCCChunk);
 	}
 
 
@@ -148,7 +153,7 @@ public class MAPIMessage {
 	 * @throws ChunkNotFoundException
 	 */
 	public String getConversationTopic() throws ChunkNotFoundException {
-		return getStringFromChunk(Chunks.getInstance().conversationTopic);
+		return getStringFromChunk(chunks.conversationTopic);
 	}
 
 	/**
@@ -160,6 +165,6 @@ public class MAPIMessage {
 	 * @throws ChunkNotFoundException
 	 */
 	public String getMessageClass() throws ChunkNotFoundException {
-		return getStringFromChunk(Chunks.getInstance().messageClass);
+		return getStringFromChunk(chunks.messageClass);
 	}	
 }

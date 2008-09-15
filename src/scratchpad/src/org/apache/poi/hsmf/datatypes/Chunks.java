@@ -25,17 +25,39 @@ package org.apache.poi.hsmf.datatypes;
  */
 public class Chunks {
 	/* String parts of Outlook Messages that are currently known */
-	public StringChunk messageClass = new StringChunk(0x001A);		//Type of message that the MSG represents (ie. IPM.Note)
-	public StringChunk textBodyChunk = new StringChunk(0x1000);		//BODY Chunk, for plain/text messages
-	public StringChunk subjectChunk = new StringChunk(0x0037);  	//Subject link chunk, in plain/text
-	public StringChunk displayToChunk = new StringChunk(0x0E04);	//Value that is in the TO field (not actually the addresses as they are stored in recip directory nodes
-	public StringChunk displayFromChunk = new StringChunk(0x0C1A);	//Value that is in the FROM field
-	public StringChunk displayCCChunk = new StringChunk(0x0E03);	//value that shows in the CC field
-	public StringChunk displayBCCChunk = new StringChunk(0x0E02);	//Value that shows in the BCC field
-	public StringChunk conversationTopic = new StringChunk(0x0070); //Sort of like the subject line, but without the RE: and FWD: parts.
-	public StringChunk sentByServerType = new StringChunk(0x0075);	//Type of server that the message originated from (SMTP, etc).
+
+	/** Type of message that the MSG represents (ie. IPM.Note) */
+	public StringChunk messageClass;
+	/** BODY Chunk, for plain/text messages */
+	public StringChunk textBodyChunk;
+	/** Subject link chunk, in plain/text */
+	public StringChunk subjectChunk;
+	/** Value that is in the TO field (not actually the addresses as they are stored in recip directory nodes */
+	public StringChunk displayToChunk;
+	/** Value that is in the FROM field */
+	public StringChunk displayFromChunk;
+	/** value that shows in the CC field */
+	public StringChunk displayCCChunk;
+	/** Value that shows in the BCC field */
+	public StringChunk displayBCCChunk;
+	/** Sort of like the subject line, but without the RE: and FWD: parts. */
+	public StringChunk conversationTopic;
+	/** Type of server that the message originated from (SMTP, etc). */
+	public StringChunk sentByServerType;
 	
-	public static Chunks getInstance() {
-		return new Chunks();
+	private Chunks(boolean newStringType) {
+		messageClass = new StringChunk(0x001A, newStringType);
+		textBodyChunk = new StringChunk(0x1000, newStringType);
+		subjectChunk = new StringChunk(0x0037, newStringType);
+		displayToChunk = new StringChunk(0x0E04, newStringType);
+		displayFromChunk = new StringChunk(0x0C1A, newStringType);
+		displayCCChunk = new StringChunk(0x0E03, newStringType);
+		displayBCCChunk = new StringChunk(0x0E02, newStringType);
+		conversationTopic = new StringChunk(0x0070, newStringType);
+		sentByServerType = new StringChunk(0x0075, newStringType);
+	}
+	
+	public static Chunks getInstance(boolean newStringType) {
+		return new Chunks(newStringType);
 	}
 }
