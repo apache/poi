@@ -973,9 +973,7 @@ public final class Sheet implements Model {
      * get the default column width for the sheet (if the columns do not define their own width)
      * @return default column width
      */
-
-    public short getDefaultColumnWidth()
-    {
+    public int getDefaultColumnWidth() {
         return defaultcolwidth.getColWidth();
     }
 
@@ -1009,9 +1007,7 @@ public final class Sheet implements Model {
      * set the default column width for the sheet (if the columns do not define their own width)
      * @param dcw  default column width
      */
-
-    public void setDefaultColumnWidth(short dcw)
-    {
+    public void setDefaultColumnWidth(int dcw) {
         defaultcolwidth.setColWidth(dcw);
     }
 
@@ -1043,15 +1039,15 @@ public final class Sheet implements Model {
      * @return column width in units of 1/256th of a character width
      */
 
-    public short getColumnWidth(short columnIndex) {
+    public int getColumnWidth(int columnIndex) {
 
         ColumnInfoRecord ci = _columnInfos.findColumnInfo(columnIndex);
         if (ci != null) {
-            return (short)ci.getColumnWidth();
+            return ci.getColumnWidth();
         }
         //default column width is measured in characters
         //multiply
-        return (short)(256*defaultcolwidth.getColWidth());
+        return (256*defaultcolwidth.getColWidth());
     }
 
     /**
@@ -1084,8 +1080,8 @@ public final class Sheet implements Model {
      * @param width
      *            (in units of 1/256th of a character width)
      */
-    public void setColumnWidth(short column, short width) {
-        setColumn( column, new Short(width), null, null, null);
+    public void setColumnWidth(int column, int width) {
+        setColumn(column, null, new Integer(width), null, null, null);
     }
 
     /**
@@ -1096,7 +1092,7 @@ public final class Sheet implements Model {
      * @see #setColumnHidden(short,boolean)
      * @return whether the column is hidden or not.
      */
-    public boolean isColumnHidden(short columnIndex) {
+    public boolean isColumnHidden(int columnIndex) {
         ColumnInfoRecord cir = _columnInfos.findColumnInfo(columnIndex);
         if (cir == null) {
             return false;
@@ -1109,16 +1105,14 @@ public final class Sheet implements Model {
      * @param column - the column number
      * @param hidden - whether the column is hidden or not
      */
-    public void setColumnHidden(short column, boolean hidden)
-    {
-        setColumn( column, null, null, new Boolean(hidden), null);
+    public void setColumnHidden(int column, boolean hidden) {
+        setColumn( column, null, null, null, Boolean.valueOf(hidden), null);
+    }
+    public void setDefaultColumnStyle(int column, int styleIndex) {
+        setColumn(column, new Short((short)styleIndex), null, null, null, null);
     }
 
-    public void setColumn(short column, Short width, Integer level, Boolean hidden, Boolean collapsed) {
-        _columnInfos.setColumn( column, null, width, level, hidden, collapsed );
-    }
-
-    public void setColumn(short column, Short xfStyle, Short width, Integer level, Boolean hidden, Boolean collapsed) {
+    private void setColumn(int column, Short xfStyle, Integer width, Integer level, Boolean hidden, Boolean collapsed) {
         _columnInfos.setColumn( column, xfStyle, width, level, hidden, collapsed );
     }
 
