@@ -134,7 +134,7 @@ public class HSSF
                 c = r.createCell(cellnum + 1,
                                  HSSFCell.CELL_TYPE_STRING);
                 c.setCellValue(new HSSFRichTextString("TEST"));
-                s.setColWidth(cellnum + 1, (int)(50 * 8 / 0.05));
+                s.setColumnWidth(cellnum + 1, (int)(50 * 8 / 0.05));
                 if ((rownum % 2) == 0)
                 {
                     c.setCellStyle(cs2);

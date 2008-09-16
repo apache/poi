@@ -404,30 +404,24 @@ public final class HSSFSheet {
     }
 
     /**
-     * @deprecated (Sep 2008) use {@link #setColWidth(int, int)}
+     * @deprecated (Sep 2008) use {@link #setColumnWidth(int, int)}
      */
     public void setColumnWidth(short columnIndex, short width) {
-        setColWidth(columnIndex & 0xFFFF, width & 0xFFFF);
+        setColumnWidth(columnIndex & 0xFFFF, width & 0xFFFF);
     }
 
     /**
-     * @deprecated (Sep 2008) use {@link #getColWidth(int)}
+     * @deprecated (Sep 2008) use {@link #getColumnWidth(int)}
      */
     public short getColumnWidth(short columnIndex) {
-        return (short)getColWidth(columnIndex & 0xFFFF);
+        return (short)getColumnWidth(columnIndex & 0xFFFF);
     }
 
     /**
-     * @deprecated (Sep 2008) use {@link #getDefaultColWidth()}
-     */
-    public short getDefaultColumnWidth() {
-        return (short) getDefaultColWidth();
-    }
-    /**
-     * @deprecated (Sep 2008) use {@link #setDefaultColWidth(int)}
+     * @deprecated (Sep 2008) use {@link #setDefaultColumnWidth(int)}
      */
     public void setDefaultColumnWidth(short width) {
-        setDefaultColWidth(width & 0xFFFF);
+        setDefaultColumnWidth(width & 0xFFFF);
     }
 
     /**
@@ -453,7 +447,7 @@ public final class HSSFSheet {
      * @param columnIndex - the column to set (0-based)
      * @param width - the width in units of 1/256th of a character width
      */
-    public void setColWidth(int columnIndex, int width) {
+    public void setColumnWidth(int columnIndex, int width) {
         sheet.setColumnWidth(columnIndex, width);
     }
 
@@ -462,7 +456,7 @@ public final class HSSFSheet {
      * @param columnIndex - the column to set (0-based)
      * @return width - the width in units of 1/256th of a character width
      */
-    public int getColWidth(int columnIndex) {
+    public int getColumnWidth(int columnIndex) {
         return sheet.getColumnWidth(columnIndex);
     }
 
@@ -471,7 +465,7 @@ public final class HSSFSheet {
      * characters
      * @return default column width
      */
-    public int getDefaultColWidth() {
+    public int getDefaultColumnWidth() {
         return sheet.getDefaultColumnWidth();
     }
     /**
@@ -479,7 +473,7 @@ public final class HSSFSheet {
      * characters
      * @param width default column width
      */
-    public void setDefaultColWidth(int width) {
+    public void setDefaultColumnWidth(int width) {
         sheet.setDefaultColumnWidth(width);
     }
 

@@ -218,7 +218,7 @@ public final class TestBugs extends TestCase {
             }
         }
 
-        sheet.setDefaultColWidth(18) ;
+        sheet.setDefaultColumnWidth(18) ;
 
         writeTestOutputFileForViewing(wb, "test22568");
     }

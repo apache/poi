@@ -103,7 +103,7 @@ public class SViewerPanel extends JPanel {
     TableColumnModel columns = sheetView.getColumnModel();
     for (int i=0; i< columns.getColumnCount(); i++) {
       TableColumn column = columns.getColumn(i);
-      int width = sheet.getColWidth(i);
+      int width = sheet.getColumnWidth(i);
       //256 is because the width is in 256ths of a character
       column.setPreferredWidth(width/256*magicCharFactor);
     }
