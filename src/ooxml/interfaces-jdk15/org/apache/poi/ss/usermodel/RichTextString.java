@@ -101,18 +101,6 @@ public interface RichTextString {
     short getFontOfFormattingRun(int index);
 
     /**
-     * Compares one rich text string to another.
-     */
-    int compareTo(Object o);
-
-    boolean equals(Object o);
-
-    /**
-     * @return  the plain text representation of this string.
-     */
-    String toString();
-
-    /**
      * Applies the specified font to the entire string.
      *
      * @param fontIndex  the font to apply.

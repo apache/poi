@@ -94,34 +94,12 @@ public interface Workbook {
     short getDisplayedTab();
 
     /**
-     * @deprecated POI will now properly handle unicode strings without
-     * forceing an encoding
-     */
-    public final static byte ENCODING_COMPRESSED_UNICODE = 0;
-
-    /**
-     * @deprecated POI will now properly handle unicode strings without
-     * forceing an encoding
-     */
-    public final static byte ENCODING_UTF_16 = 1;
-
-    /**
-     * set the sheet name. 
+     * set the sheet name.
      * Will throw IllegalArgumentException if the name is greater than 31 chars
      * or contains /\?*[]
      * @param sheet number (0 based)
      */
     void setSheetName(int sheet, String name);
-
-    /**
-     * set the sheet name forcing the encoding. Forcing the encoding IS A BAD IDEA!!!
-     * @deprecated 3-Jan-2006 POI now automatically detects unicode and sets the encoding
-     * appropriately. Simply use setSheetName(int sheet, String encoding) 
-     * @throws IllegalArgumentException if the name is greater than 31 chars
-     * or contains /\?*[]
-     * @param sheet number (0 based)
-     */
-    void setSheetName(int sheet, String name, short encoding);
 
     /**
      * get the sheet name
@@ -147,11 +125,11 @@ public interface Workbook {
      * Returns the external sheet index of the sheet
      *  with the given internal index, creating one
      *  if needed.
-     * Used by some of the more obscure formula and 
+     * Used by some of the more obscure formula and
      *  named range things.
      */
     int getExternalSheetIndex(int internalSheetIndex);
-    
+
     /**
      * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and returns
      * the high level representation.  Use this to create new sheets.
@@ -185,7 +163,7 @@ public interface Workbook {
      */
 
     int getNumberOfSheets();
-    
+
     /**
      * Finds the sheet index for a particular external sheet number.
      * @param externSheetNumber The external sheet number to convert
@@ -337,16 +315,6 @@ public interface Workbook {
      */
 
     byte[] getBytes();
-
-    /** @deprecated Do not call this method from your applications. Use the methods
-     *  available in the HSSFRow to add string HSSFCells
-     */
-    int addSSTString(String string);
-
-    /** @deprecated Do not call this method from your applications. Use the methods
-     *  available in the HSSFRow to get string HSSFCells
-     */
-    String getSSTString(int index);
 
     /** gets the total number of named ranges in the workboko
      * @return number of named ranges

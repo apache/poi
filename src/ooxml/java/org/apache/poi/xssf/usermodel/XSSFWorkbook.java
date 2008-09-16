@@ -75,31 +75,31 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
 public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 	/** Are we a normal workbook, or a macro enabled one? */
 	private boolean isMacroEnabled = false;
-	
+
     private CTWorkbook workbook;
-    
+
     private List<XSSFSheet> sheets = new LinkedList<XSSFSheet>();
     private List<XSSFName> namedRanges = new LinkedList<XSSFName>();
-    
+
     private SharedStringSource sharedStringSource;
     private StylesSource stylesSource;
-    
+
     private MissingCellPolicy missingCellPolicy = Row.RETURN_NULL_AND_BLANK;
 
     private static POILogger log = POILogFactory.getLogger(XSSFWorkbook.class);
-    
+
     public XSSFWorkbook() {
         this.workbook = CTWorkbook.Factory.newInstance();
         CTBookViews bvs = this.workbook.addNewBookViews();
         CTBookView bv = bvs.addNewWorkbookView();
         bv.setActiveTab(0);
         this.workbook.addNewSheets();
-        
+
         // We always require styles and shared strings
         sharedStringSource = new SharedStringsTable();
         stylesSource = new StylesTable();
     }
-    
+
     public XSSFWorkbook(String path) throws IOException {
     	this(openPackage(path));
     }
@@ -108,11 +108,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         try {
             WorkbookDocument doc = WorkbookDocument.Factory.parse(getCorePart().getInputStream());
             this.workbook = doc.getWorkbook();
-            
+
             // Are we macro enabled, or just normal?
-            isMacroEnabled = 
+            isMacroEnabled =
             		getCorePart().getContentType().equals(XSSFRelation.MACROS_WORKBOOK.getContentType());
-            
+
             try {
 	            // Load shared strings
 	            this.sharedStringSource = (SharedStringSource)
@@ -128,7 +128,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             	e.printStackTrace();
             	throw new IOException("Unable to load styles - " + e.toString());
             }
-            
+
             // Load individual sheets
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
                 PackagePart part = getPackagePart(ctSheet);
@@ -136,7 +136,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 	log.log(POILogger.WARN, "Sheet with name " + ctSheet.getName() + " and r:id " + ctSheet.getId()+ " was defined, but didn't exist in package, skipping");
                     continue;
                 }
-                
+
                 // Load child streams of the sheet
                 ArrayList<? extends XSSFModel> childModels;
                 CommentsSource comments = null;
@@ -148,7 +148,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 	if(childModels.size() > 0) {
                 		comments = (CommentsSource)childModels.get(0);
                 	}
-                	
+
 	                // Get the drawings for the sheet, if there are any
 	                drawings = (ArrayList<Drawing>)XSSFRelation.VML_DRAWINGS.loadAll(part);
 	                // Get the activeX controls for the sheet, if there are any
@@ -156,22 +156,22 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 } catch(Exception e) {
                 	throw new RuntimeException("Unable to construct child part",e);
                 }
-                
+
                 // Now create the sheet
                 WorksheetDocument worksheetDoc = WorksheetDocument.Factory.parse(part.getInputStream());
                 XSSFSheet sheet = new XSSFSheet(ctSheet, worksheetDoc.getWorksheet(), this, comments, drawings, controls);
                 this.sheets.add(sheet);
-                
+
                 // Process external hyperlinks for the sheet,
                 //  if there are any
                 PackageRelationshipCollection hyperlinkRels =
                 	part.getRelationshipsByType(XSSFRelation.SHEET_HYPERLINKS.getRelation());
                 sheet.initHyperlinks(hyperlinkRels);
-                
+
                 // Get the embeddings for the workbook
                 for(PackageRelationship rel : part.getRelationshipsByType(XSSFRelation.OLEEMBEDDINGS.getRelation()))
                     embedds.add(getTargetPart(rel)); // TODO: Add this reference to each sheet as well
-                
+
                 for(PackageRelationship rel : part.getRelationshipsByType(XSSFRelation.PACKEMBEDDINGS.getRelation()))
                     embedds.add(getTargetPart(rel));
             }
@@ -180,7 +180,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         } catch (InvalidFormatException e) {
             throw new IOException(e.toString());
         }
-        
+
         // Process the named ranges
         if(workbook.getDefinedNames() != null) {
         	for(CTDefinedName ctName : workbook.getDefinedNames().getDefinedNameArray()) {
@@ -195,7 +195,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     /**
      * Get the PackagePart corresponding to a given sheet.
-     * 
+     *
      * @param ctSheet The sheet
      * @return A PackagePart, or null if no matching part found.
      * @throws InvalidFormatException
@@ -208,18 +208,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         }
         return getTargetPart(rel);
     }
-    
+
     public int addPicture(byte[] pictureData, int format) {
         // TODO Auto-generated method stub
         return 0;
     }
 
-    public int addSSTString(String string) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    public Sheet cloneSheet(int sheetNum) {
+    public XSSFSheet cloneSheet(int sheetNum) {
         XSSFSheet srcSheet = sheets.get(sheetNum);
         String srcName = getSheetName(sheetNum);
         if (srcSheet != null) {
@@ -228,7 +223,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             sheets.add(clonedSheet);
             CTSheet newcts = this.workbook.getSheets().addNewSheet();
             newcts.set(clonedSheet.getSheet());
-            
+
             int i = 1;
             while (true) {
                 //Try and find the next sheet name that is unique
@@ -251,7 +246,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         return null;
     }
 
-    public CellStyle createCellStyle() {
+    public XSSFCellStyle createCellStyle() {
     	return new XSSFCellStyle(stylesSource);
     }
 
@@ -259,7 +254,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     	return getCreationHelper().createDataFormat();
     }
 
-    public Font createFont() {
+    public XSSFFont createFont() {
         return new XSSFFont();
     }
 
@@ -269,22 +264,23 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     	return name;
     }
 
-    public Sheet createSheet() {
-        return createSheet(null);
+    public XSSFSheet createSheet() {
+        String sheetname = "Sheet" + (sheets.size() + 1);
+        return createSheet(sheetname);
     }
 
-    public Sheet createSheet(String sheetname) {
+    public XSSFSheet createSheet(String sheetname) {
         return createSheet(sheetname, null);
     }
-    
-    public Sheet createSheet(String sheetname, CTWorksheet worksheet) {
+
+    public XSSFSheet createSheet(String sheetname, CTWorksheet worksheet) {
         CTSheet sheet = addSheet(sheetname);
         XSSFWorksheet wrapper = new XSSFWorksheet(sheet, worksheet, this);
         this.sheets.add(wrapper);
         return wrapper;
     }
-    
-    public Sheet createDialogsheet(String sheetname, CTDialogsheet dialogsheet) {
+
+    public XSSFSheet createDialogsheet(String sheetname, CTDialogsheet dialogsheet) {
     	  CTSheet sheet = addSheet(sheetname);
     	  XSSFDialogsheet wrapper = new XSSFDialogsheet(sheet, dialogsheet, this);
     	  this.sheets.add(wrapper);
@@ -375,7 +371,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     /**
      * get the first tab that is displayed in the list of tabs in excel.
-     */    
+     */
     public int getFirstVisibleTab() {
         CTBookViews bookViews = workbook.getBookViews();
         CTBookView bookView = bookViews.getWorkbookViewArray(0);
@@ -383,7 +379,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
     /**
      * deprecated Aug 2008
-     * @deprecated - Misleading name - use getFirstVisibleTab() 
+     * @deprecated - Misleading name - use getFirstVisibleTab()
      */
     public short getDisplayedTab() {
         return (short) getFirstVisibleTab();
@@ -407,7 +403,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     	}
     	return -1;
     }
-    
+
     /**
      * TODO - figure out what the hell this methods does in
      *  HSSF...
@@ -439,10 +435,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         return null;
     }
 
-    public String getSSTString(int index) {
-        return getSharedStringSource().getSharedStringAt(index);
-    }
-
     public short getSelectedTab() {
         short i = 0;
         for (XSSFSheet sheet : this.sheets) {
@@ -453,7 +445,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         }
         return -1;
     }
-    
+
     /**
      * Doesn't do anything - returns the same index
      * TODO - figure out if this is a ole2 specific thing, or
@@ -472,7 +464,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 	}
 
 	public Sheet getSheet(String name) {
-        CTSheet[] sheets = this.workbook.getSheets().getSheetArray();  
+        CTSheet[] sheets = this.workbook.getSheets().getSheetArray();
         for (int i = 0 ; i < sheets.length ; ++i) {
             if (name.equals(sheets[i].getName())) {
                 return this.sheets.get(i);
@@ -486,7 +478,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     public int getSheetIndex(String name) {
-        CTSheet[] sheets = this.workbook.getSheets().getSheetArray();  
+        CTSheet[] sheets = this.workbook.getSheets().getSheetArray();
         for (int i = 0 ; i < sheets.length ; ++i) {
             if (name.equals(sheets[i].getName())) {
                 return i;
@@ -498,12 +490,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public int getSheetIndex(Sheet sheet) {
         return this.sheets.indexOf(sheet);
     }
-    
+
     /**
      * Returns the external sheet index of the sheet
      *  with the given internal index, creating one
      *  if needed.
-     * Used by some of the more obscure formula and 
+     * Used by some of the more obscure formula and
      *  named range things.
      * Fairly easy on XSSF (we think...) since the
      *  internal and external indicies are the same
@@ -618,10 +610,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     public void setSheetName(int sheet, String name) {
-        this.workbook.getSheets().getSheetArray(sheet).setName(name);
-    }
-
-    public void setSheetName(int sheet, String name, short encoding) {
         this.workbook.getSheets().getSheetArray(sheet).setName(name);
     }
 

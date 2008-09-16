@@ -80,10 +80,10 @@ public class XSSFRow implements Row {
         return 0;
     }
 
-    public Cell createCell(int column) {
+    public XSSFCell createCell(int column) {
     	return createCell(column, Cell.CELL_TYPE_BLANK);
     }
-    public Cell createCell(short column) {
+    public XSSFCell createCell(short column) {
     	return createCell((int)column);
     }
 
@@ -105,10 +105,10 @@ public class XSSFRow implements Row {
         return xcell;
     }
 
-    public Cell createCell(short column, int type) {
+    public XSSFCell createCell(short column, int type) {
     	return createCell((int)column, type);
     }
-    public Cell createCell(int column, int type) {
+    public XSSFCell createCell(int column, int type) {
         int index = 0;
         for (Cell c : this.cells) {
             if (c.getCellNum() == column) {

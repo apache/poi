@@ -24,6 +24,7 @@ import java.util.Iterator;
 import junit.framework.TestCase;
 
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.openxml4j.opc.Package;
 
 /**
@@ -76,8 +77,8 @@ public class TestXSSFReader extends TestCase {
     	
     	XSSFReader r = new XSSFReader(pkg);
     	
-    	assertEquals(11, r.getSharedStringsTable()._getNumberOfStrings());
-    	assertEquals("Test spreadsheet", r.getSharedStringsTable().getSharedStringAt(0));
+    	assertEquals(11, r.getSharedStringsTable().getItems().size());
+    	assertEquals("Test spreadsheet", new XSSFRichTextString(r.getSharedStringsTable().getEntryAt(0)).toString());
     }
     
     public void testSheets() throws Exception {
