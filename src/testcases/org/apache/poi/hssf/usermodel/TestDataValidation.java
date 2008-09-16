@@ -268,11 +268,11 @@ public final class TestDataValidation extends TestCase {
 			for (int i = 0; i < 6; i++) {
 				row.createCell(i).setCellStyle(_style_4);
 				if (i == 2 || i == 3 || i == 4) {
-					sheet.setColWidth(i, 3500);
+					sheet.setColumnWidth(i, 3500);
 				} else if (i == 5) {
-					sheet.setColWidth(i, 10000);
+					sheet.setColumnWidth(i, 10000);
 				} else {
-					sheet.setColWidth(i, 8000);
+					sheet.setColumnWidth(i, 8000);
 				}
 			}
 			HSSFCell cell = row.getCell(0);
