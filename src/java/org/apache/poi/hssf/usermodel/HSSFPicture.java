@@ -162,7 +162,7 @@ public class HSSFPicture
 
     private float getColumnWidthInPixels(short column){
 
-        short cw = patriarch.sheet.getColumnWidth(column);
+        int cw = patriarch.sheet.getColWidth(column);
         float px = getPixelWidth(column);
 
         return cw/px;
@@ -180,8 +180,8 @@ public class HSSFPicture
 
     private float getPixelWidth(short column){
 
-        int def = patriarch.sheet.getDefaultColumnWidth()*256;
-        short cw = patriarch.sheet.getColumnWidth(column);
+        int def = patriarch.sheet.getDefaultColWidth()*256;
+        int cw = patriarch.sheet.getColWidth(column);
 
         return cw == def ? PX_DEFAULT : PX_MODIFIED;
     }
