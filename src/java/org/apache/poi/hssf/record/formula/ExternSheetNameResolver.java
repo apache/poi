@@ -17,20 +17,29 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
- * RefNPtg
- * @author Jason Height (jheight at apache dot com)
+ * @author Josh Micich
  */
-public final class RefNPtg extends Ref2DPtgBase {
-	public final static byte sid = 0x2C;
+final class ExternSheetNameResolver {
 
-	public RefNPtg(RecordInputStream in) {
-		super(in);
+	private ExternSheetNameResolver() {
+		// no instances of this class
 	}
 
-	protected byte getSid() {
-		return sid;
+	public static String prependSheetName(HSSFWorkbook book, int field_1_index_extern_sheet, String cellRefText) {
+		String sheetName = book.findSheetNameFromExternSheet(field_1_index_extern_sheet);
+		StringBuffer sb = new StringBuffer(sheetName.length() + cellRefText.length() + 4);
+		if (sheetName.length() < 1) {
+			// What excel does if sheet has been deleted
+			sb.append("#REF"); // note - '!' added just once below
+		} else {
+    		SheetNameFormatter.appendFormat(sb, sheetName);
+		}
+   		sb.append('!');
+		sb.append(cellRefText);
+		return sb.toString();
 	}
 }

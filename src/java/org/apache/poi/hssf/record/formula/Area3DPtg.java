@@ -88,24 +88,6 @@ public final class Area3DPtg extends AreaPtgBase {
 	 *  formulas. The sheet name will get properly delimited if required.
 	 */
 	public String toFormulaString(HSSFWorkbook book) {
-		// First do the sheet name
-		StringBuffer retval = new StringBuffer();
-		String sheetName = book.findSheetNameFromExternSheet(field_1_index_extern_sheet);
-		if(sheetName != null) {
-			if(sheetName.length() == 0) {
-				// What excel does if sheet has been deleted
-				sheetName = "#REF";
-				retval.append(sheetName);
-			} else {
-				// Normal
-				SheetNameFormatter.appendFormat(retval, sheetName);
-			}
-			retval.append( '!' );
-		}
-		
-		// Now the normal area bit
-		retval.append(formatReferenceAsString());
-		
-		return retval.toString();
+		return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, formatReferenceAsString());
 	}
 }

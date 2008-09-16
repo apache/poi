@@ -19,6 +19,10 @@ package org.apache.poi.hssf.usermodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import junit.framework.TestCase;
 
@@ -201,36 +205,69 @@ public final class TestSheetShiftRows extends TestCase {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ForShifting.xls");
 
         HSSFSheet sheet = wb.getSheet("Sheet1");
-        assertEquals(19, sheet.getLastRowNum());
+        assertEquals(20, sheet.getLastRowNum());
+        
+        confirmRow(sheet, 0, 1, 171, 1, "ROW(D1)", "100+B1", "COUNT(D1:E1)");
+        confirmRow(sheet, 1, 2, 172, 1, "ROW(D2)", "100+B2", "COUNT(D2:E2)");
+        confirmRow(sheet, 2, 3, 173, 1, "ROW(D3)", "100+B3", "COUNT(D3:E3)");
+        
+        confirmCell(sheet, 6, 1, 271, "200+B1");
+        confirmCell(sheet, 7, 1, 272, "200+B2");
+        confirmCell(sheet, 8, 1, 273, "200+B3");
 
-        assertEquals("cell B1 (ref)", sheet.getRow(0).getCell(3).getRichStringCellValue().toString());
-        assertEquals("CONCATENATE(B1,\" (ref)\")", sheet.getRow(0).getCell(3).getCellFormula());
-        assertEquals("cell B2 (ref)", sheet.getRow(1).getCell(3).getRichStringCellValue().toString());
-        assertEquals("CONCATENATE(B2,\" (ref)\")", sheet.getRow(1).getCell(3).getCellFormula());
-        assertEquals("cell B3 (ref)", sheet.getRow(2).getCell(3).getRichStringCellValue().toString());
-        assertEquals("CONCATENATE(B3,\" (ref)\")", sheet.getRow(2).getCell(3).getCellFormula());
-        assertEquals("cell B2 (ref)", sheet.getRow(6).getCell(1).getRichStringCellValue().toString());
-        assertEquals("CONCATENATE(B2,\" (ref)\")", sheet.getRow(6).getCell(1).getCellFormula());
-
+        confirmCell(sheet, 14, 0, 0.0, "A12"); // the cell referred to by this formula will be replaced
+        
+        // -----------
+        // Row index 1 -> 11 (row "2" -> row "12")
         sheet.shiftRows(1, 1, 10);
+        
+        // Now check what sheet looks like after move
 
-        // Row 1 => Row 11
-        // So strings on row 11 unchanged, but reference in formula is
-        assertEquals("cell B1 (ref)", sheet.getRow(0).getCell(3).getRichStringCellValue().toString());
-        assertEquals("CONCATENATE(B1,\" (ref)\")", sheet.getRow(0).getCell(3).getCellFormula());
+        // no changes on row "1"
+        confirmRow(sheet, 0, 1, 171, 1, "ROW(D1)", "100+B1", "COUNT(D1:E1)");
+        
+        // row "2" is now empty
         assertEquals(0, sheet.getRow(1).getPhysicalNumberOfCells());
 
-        // still save b2
-        assertEquals("cell B2 (ref)", sheet.getRow(11).getCell(3).getRichStringCellValue().toString());
-        // but points to b12
-        assertEquals("CONCATENATE(B12,\" (ref)\")", sheet.getRow(11).getCell(3).getCellFormula());
+        // Row "2" moved to row "12", and the formula has been updated.
+        // note however that the cached formula result (2) has not been updated. (POI differs from Excel here)
+        confirmRow(sheet, 11, 2, 172, 1, "ROW(D12)", "100+B12", "COUNT(D12:E12)");
 
-        assertEquals("cell B3 (ref)", sheet.getRow(2).getCell(3).getRichStringCellValue().toString());
-        assertEquals("CONCATENATE(B3,\" (ref)\")", sheet.getRow(2).getCell(3).getCellFormula());
+        // no changes on row "3"
+        confirmRow(sheet, 2, 3, 173, 1, "ROW(D3)", "100+B3", "COUNT(D3:E3)");
 
-        // one on a non-shifted row also updated
-        assertEquals("cell B2 (ref)", sheet.getRow(6).getCell(1).getRichStringCellValue().toString());
-        assertEquals("CONCATENATE(B12,\" (ref)\")", sheet.getRow(6).getCell(1).getCellFormula());
+        
+        confirmCell(sheet, 14, 0, 0.0, "#REF!");  
+        
+        
+        // Formulas on rows that weren't shifted:
+        confirmCell(sheet, 6, 1, 271, "200+B1");
+        confirmCell(sheet, 7, 1, 272, "200+B12"); // this one moved
+        confirmCell(sheet, 8, 1, 273, "200+B3");
+        
+        // check formulas on other sheets
+        HSSFSheet sheet2 = wb.getSheet("Sheet2");
+        confirmCell(sheet2,  0, 0, 371, "300+Sheet1!B1");
+        confirmCell(sheet2,  1, 0, 372, "300+Sheet1!B12");
+        confirmCell(sheet2,  2, 0, 373, "300+Sheet1!B3");
+        
+        confirmCell(sheet2, 11, 0, 300, "300+Sheet1!#REF!");
+        
+        
+        // Note - named ranges formulas have not been updated
+    }
+
+    private static void confirmRow(HSSFSheet sheet, int rowIx, double valA, double valB, double valC,
+                String formulaA, String formulaB, String formulaC) {
+        confirmCell(sheet, rowIx, 4, valA, formulaA);
+        confirmCell(sheet, rowIx, 5, valB, formulaB);
+        confirmCell(sheet, rowIx, 6, valC, formulaC);
+    }
+
+    private static void confirmCell(HSSFSheet sheet, int rowIx, int colIx, 
+            double expectedValue, String expectedFormula) {
+        HSSFCell cell = sheet.getRow(rowIx).getCell(colIx);
+        assertEquals(expectedValue, cell.getNumericCellValue(), 0.0);
+        assertEquals(expectedFormula, cell.getCellFormula());
     }
 }
-
