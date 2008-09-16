@@ -21,6 +21,7 @@ import java.util.Iterator;
 
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.openxml4j.opc.Package;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -113,7 +114,7 @@ public class FromHowTo {
 			// Do now, as characters() may be called more than once
 			if(nextIsString) {
 				int idx = Integer.parseInt(lastContents);
-				lastContents = sst.getSharedStringAt(idx);
+				lastContents = new XSSFRichTextString(sst.getEntryAt(idx)).toString();
 			}
 
 			// v => contents of a cell

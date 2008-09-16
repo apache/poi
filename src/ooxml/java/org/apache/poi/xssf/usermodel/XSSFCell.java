@@ -32,6 +32,8 @@ import org.apache.poi.ss.usermodel.StylesSource;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.model.StylesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
@@ -46,8 +48,8 @@ public final class XSSFCell implements Cell {
     private final CTCell cell;
     private final XSSFRow row;
     private int cellNum;
-    private SharedStringSource sharedStringSource;
-    private StylesSource stylesSource;
+    private SharedStringsTable sharedStringSource;
+    private StylesTable stylesSource;
 
     private POILogger logger = POILogFactory.getLogger(XSSFCell.class);
 
@@ -65,8 +67,8 @@ public final class XSSFCell implements Cell {
         if (cell.getR() != null) {
             this.cellNum = parseCellNum(cell.getR());
         }
-        this.sharedStringSource = row.getSheet().getWorkbook().getSharedStringSource();
-        this.stylesSource = row.getSheet().getWorkbook().getStylesSource();
+        this.sharedStringSource = (SharedStringsTable) row.getSheet().getWorkbook().getSharedStringSource();
+        this.stylesSource = (StylesTable)row.getSheet().getWorkbook().getStylesSource();
     }
 
     protected SharedStringSource getSharedStringSource() {
@@ -234,7 +236,7 @@ public final class XSSFCell implements Cell {
         // (i.e. whether to return empty string or throw exception).
     }
 
-    public RichTextString getRichStringCellValue() {
+    public XSSFRichTextString getRichStringCellValue() {
         if(this.cell.getT() == STCellType.INLINE_STR) {
             if(this.cell.isSetV()) {
                 return new XSSFRichTextString(this.cell.getV());
@@ -243,12 +245,15 @@ public final class XSSFCell implements Cell {
             }
         }
         if(this.cell.getT() == STCellType.S) {
+            XSSFRichTextString rt;
             if(this.cell.isSetV()) {
                 int sRef = Integer.parseInt(this.cell.getV());
-                return new XSSFRichTextString(getSharedStringSource().getSharedStringAt(sRef));
+                rt = new XSSFRichTextString(sharedStringSource.getEntryAt(sRef));
             } else {
-                return new XSSFRichTextString("");
+                rt = new XSSFRichTextString("");
             }
+            rt.setStylesTableReference(stylesSource);
+            return rt;
         }
         throw new NumberFormatException("You cannot get a string value from a non-string cell");
     }
@@ -396,7 +401,8 @@ public final class XSSFCell implements Cell {
         if(this.cell.getT() != STCellType.S) {
             this.cell.setT(STCellType.S);
         }
-        int sRef = getSharedStringSource().putSharedString(value.getString());
+        XSSFRichTextString rt = (XSSFRichTextString)value;
+        int sRef = sharedStringSource.addEntry(rt.getCTRst());
         this.cell.setV(Integer.toString(sRef));
     }
 
@@ -408,7 +414,6 @@ public final class XSSFCell implements Cell {
         this.cell.setV(value ? TRUE_AS_STRING : FALSE_AS_STRING);
     }
 
-    @Override
     public String toString() {
         return "[" + this.row.getRowNum() + "," + this.getCellNum() + "] " + this.cell.getV();
     }

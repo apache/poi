@@ -22,19 +22,4 @@ package org.apache.poi.ss.usermodel;
  */
 public interface SharedStringSource {
     
-    /**
-     * Return the string at position <code>idx</idx> (0-based) in this source.
-     * 
-     * @param idx String position.
-     * @return The string, or null if not found.
-     */
-    public String getSharedStringAt(int idx);
-    
-    /**
-     * Store a string in this source.
-     * 
-     * @param s The string to store.
-     * @return The 0-based position of the newly added string.
-     */
-    public int putSharedString(String s);
 }

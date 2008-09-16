@@ -451,13 +451,6 @@ public interface Sheet extends Iterable<Row> {
     boolean getScenarioProtect();
 
     /**
-     * Sets the protection on enabled or disabled
-     * @param protect true => protection enabled; false => protection disabled
-     * @deprecated use protectSheet(String, boolean, boolean)
-     */
-    void setProtect(boolean protect);
-
-    /**
      * Sets the protection enabled as well as the password
      * @param password to set for protection
      */

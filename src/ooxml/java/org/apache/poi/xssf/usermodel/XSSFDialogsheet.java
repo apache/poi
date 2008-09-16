@@ -42,7 +42,7 @@ public class XSSFDialogsheet extends XSSFSheet implements Sheet{
 		}
 	}
 	
-	public Row createRow(int rowNum) {
+	public XSSFRow createRow(int rowNum) {
 		return null;
 	}
 

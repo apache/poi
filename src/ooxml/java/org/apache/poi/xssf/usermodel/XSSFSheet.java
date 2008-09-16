@@ -266,7 +266,7 @@ public class XSSFSheet implements Sheet {
         return xrow;
     }
 
-    public Row createRow(int rownum) {
+    public XSSFRow createRow(int rownum) {
         int index = 0;
         for (Row r : this.rows) {
                 if (r.getRowNum() == rownum) {
@@ -930,11 +930,6 @@ public class XSSFSheet implements Sheet {
 
     public void setPrintGridlines(boolean newPrintGridlines) {
     	getSheetTypePrintOptions().setGridLines(newPrintGridlines);
-    }
-
-    public void setProtect(boolean protect) {
-        // TODO Auto-generated method stub
-
     }
 
     public void setRowBreak(int row) {

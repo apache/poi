@@ -20,26 +20,67 @@ package org.apache.poi.xssf.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.LinkedList;
+import java.util.*;
 
 import org.apache.poi.ss.usermodel.SharedStringSource;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.SstDocument;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
 
 
 /**
  * Table of strings shared across all sheets in a workbook.
- * 
- * @version $Id$
+ * <p>
+ * A workbook may contain thousands of cells containing string (non-numeric) data. Furthermore this data is very
+ * likely to be repeated across many rows or columns. The goal of implementing a single string table that is shared
+ * across the workbook is to improve performance in opening and saving the file by only reading and writing the
+ * repetitive information once.
+ * </p>
+ * <p>
+ * Consider for example a workbook summarizing information for cities within various countries. There may be a
+ * column for the name of the country, a column for the name of each city in that country, and a column
+ * containing the data for each city. In this case the country name is repetitive, being duplicated in many cells.
+ * In many cases the repetition is extensive, and a tremendous savings is realized by making use of a shared string
+ * table when saving the workbook. When displaying text in the spreadsheet, the cell table will just contain an
+ * index into the string table as the value of a cell, instead of the full string.
+ * </p>
+ * <p>
+ * The shared string table contains all the necessary information for displaying the string: the text, formatting
+ * properties, and phonetic properties (for East Asian languages).
+ * </p>
+ *
+ * @author Nick Birch
+ * @author Yegor Kozlov
  */
 public class SharedStringsTable implements SharedStringSource, XSSFModel {
 
-    private final LinkedList<String> strings = new LinkedList<String>();
-    private SstDocument doc;
-    
+    /**
+     *  Array of individual string items in the Shared String table.
+     */
+    private final List<CTRst> strings = new ArrayList<CTRst>();
+
+    /**
+     *  Maps strings and their indexes in the <code>strings</code> arrays
+     */
+    private final Map<String, Integer> stmap = new HashMap<String, Integer>();
+
+    /**
+     * An integer representing the total count of strings in the workbook. This count does not
+     * include any numbers, it counts only the total of text strings in the workbook.
+     */
+    private int count;
+
+    /**
+     * An integer representing the total count of unique strings in the Shared String Table.
+     * A string is unique even if it is a copy of another string, but has different formatting applied
+     * at the character level.
+     */
+    private int uniqueCount;
+
     /**
      * Create a new SharedStringsTable, by reading it 
      *  from the InputStream of a PackagePart.
@@ -54,7 +95,7 @@ public class SharedStringsTable implements SharedStringSource, XSSFModel {
      * Create a new, empty SharedStringsTable
      */
     public SharedStringsTable() {
-    	doc = SstDocument.Factory.newInstance();
+        count = uniqueCount = 0;
     }
 
     /**
@@ -65,32 +106,81 @@ public class SharedStringsTable implements SharedStringSource, XSSFModel {
      */
     public void readFrom(InputStream is) throws IOException {
         try {
-            doc = SstDocument.Factory.parse(is);
-            for (CTRst rst : doc.getSst().getSiArray()) {
-                strings.add(rst.getT());
+            int cnt = 0;
+            CTSst sst = SstDocument.Factory.parse(is).getSst();
+            count = (int)sst.getCount();
+            uniqueCount = (int)sst.getUniqueCount();
+            for (CTRst st : sst.getSiArray()) {
+                stmap.put(st.toString(), cnt);
+                strings.add(st);
+                cnt++;
             }
         } catch (XmlException e) {
             throw new IOException(e.getLocalizedMessage());
         }
     }
 
-    public String getSharedStringAt(int idx) {
+    /**
+     * Return a string item by index
+     *
+     * @param idx index of item to return.
+     * @return the item at the specified position in this Shared String table.
+     */
+    public CTRst getEntryAt(int idx) {
         return strings.get(idx);
     }
 
-    public synchronized int putSharedString(String s) {
-        if (strings.contains(s)) {
-            return strings.indexOf(s);
-        }
-        strings.add(s);
-        return strings.size() - 1;
-    }
-    
     /**
-     * For unit testing only!
+     * Return an integer representing the total count of strings in the workbook. This count does not
+     * include any numbers, it counts only the total of text strings in the workbook.
+     *
+     * @return the total count of strings in the workbook
      */
-    public int _getNumberOfStrings() {
-    	return strings.size();
+    public int getCount(){
+        return count;
+    }
+
+    /**
+     * Returns an integer representing the total count of unique strings in the Shared String Table.
+     * A string is unique even if it is a copy of another string, but has different formatting applied
+     * at the character level.
+     *
+     * @return the total count of unique strings in the workbook
+     */
+    public int getUniqueCount(){
+        return uniqueCount;
+    }
+
+    /**
+     * Add an entry to this Shared String table (a new value is appened to the end).
+     *
+     * <p>
+     * If the Shared String table already contains this <code>CTRst</code> bean, its index is returned.
+     * Otherwise a new entry is aded.
+     * </p>
+     *
+     * @param st the entry to add
+     * @return index the index of added entry
+     */
+    public int addEntry(CTRst st) {
+        String s = st.toString();
+        count++;
+        if (stmap.containsKey(s)) {
+            return stmap.get(s);
+        }
+        uniqueCount++;
+        int idx = strings.size();
+        stmap.put(s, idx);
+        strings.add(st);
+        return idx;
+    }
+    /**
+     * Provide low-level access to the underlying array of CTRst beans
+     *
+     * @return array of CTRst beans
+     */
+    public List<CTRst> getItems() {
+        return strings;
     }
 
     /**
@@ -103,17 +193,16 @@ public class SharedStringsTable implements SharedStringSource, XSSFModel {
         XmlOptions options = new XmlOptions();
         options.setSaveOuter();
         options.setUseDefaultNamespace();
-        
-        // Requests use of whitespace for easier reading
-        options.setSavePrettyPrint();
 
+        //re-create the sst table every time saving a workbook
         SstDocument doc = SstDocument.Factory.newInstance(options);
         CTSst sst = doc.addNewSst();
-        sst.setCount(strings.size());
-        sst.setUniqueCount(strings.size());
-        for (String s : strings) {
-            sst.addNewSi().setT(s);
-        }
+        sst.setCount(count);
+        sst.setUniqueCount(uniqueCount);
+
+        CTRst[] ctr = strings.toArray(new CTRst[strings.size()]);
+        sst.setSiArray(ctr);
         doc.save(out, options);
     }
+
 }
