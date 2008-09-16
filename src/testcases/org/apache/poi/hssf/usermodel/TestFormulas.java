@@ -1052,25 +1052,25 @@ public final class TestFormulas extends TestCase {
          sb.write(new FileOutputStream(file));
     }
 
-    /*Unknown Ptg 3C*/
+    /** Unknown Ptg 3C*/
     public void test27272_1() throws Exception {
         HSSFWorkbook wb = openSample("27272_1.xls");
         wb.getSheetAt(0);
-        assertEquals("Reference for named range ", "#REF!",wb.getNameAt(0).getReference());
+        assertEquals("Reference for named range ", "Compliance!#REF!",wb.getNameAt(0).getReference());
         File outF = File.createTempFile("bug27272_1",".xls");
         wb.write(new FileOutputStream(outF));
         System.out.println("Open "+outF.getAbsolutePath()+" in Excel");
     }
-    /*Unknown Ptg 3D*/
+    /** Unknown Ptg 3D*/
     public void test27272_2() throws Exception {
         HSSFWorkbook wb = openSample("27272_2.xls");
-        assertEquals("Reference for named range ", "#REF!",wb.getNameAt(0).getReference());
+        assertEquals("Reference for named range ", "'LOAD.POD_HISTORIES'!#REF!",wb.getNameAt(0).getReference());
         File outF = File.createTempFile("bug27272_2",".xls");
         wb.write(new FileOutputStream(outF));
         System.out.println("Open "+outF.getAbsolutePath()+" in Excel");
     }
 
-    /* MissingArgPtg */
+    /** MissingArgPtg */
     public void testMissingArgPtg() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFCell cell = wb.createSheet("Sheet1").createRow(4).createCell(0);

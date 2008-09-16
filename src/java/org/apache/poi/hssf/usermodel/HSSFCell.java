@@ -296,7 +296,7 @@ public final class HSSFCell {
                 FormulaRecordAggregate frec;
 
                 if (cellType != this.cellType) {
-                    frec = sheet.getSheet().createFormula(row, col);
+                    frec = sheet.getSheet().getRowsAggregate().createFormula(row, col);
                 } else {
                     frec = (FormulaRecordAggregate) record;
                     frec.setRow(row);
@@ -591,12 +591,6 @@ public final class HSSFCell {
         }
         Ptg[] ptgs = FormulaParser.parse(formula, book);
         frec.setParsedExpression(ptgs);
-    }
-    /* package */ void setFormulaOnly(Ptg[] ptgs) {
-        if (ptgs == null) {
-            throw new IllegalArgumentException("ptgs must not be null");
-        }
-        ((FormulaRecordAggregate)record).getFormulaRecord().setParsedExpression(ptgs);
     }
 
     public String getCellFormula() {

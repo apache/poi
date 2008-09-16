@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.LittleEndian;
 
@@ -27,23 +28,30 @@ import org.apache.poi.util.LittleEndian;
  * @author Daniel Noll (daniel at nuix dot com dot au)
  */
 public final class AreaErrPtg extends OperandPtg {
-    public final static byte sid  = 0x2b;
+	public final static byte sid = 0x2B;
+	private final int unused1;
+	private final int unused2;
 
-    public AreaErrPtg(RecordInputStream in) {
-    	// 8 bytes unused:
-        in.readInt();
-        in.readInt();
-    }
+	public AreaErrPtg() {
+		unused1 = 0;
+		unused2 = 0;
+	}
 
-    public void writeBytes(byte [] array, int offset) {
-        array[offset] = (byte) (sid + getPtgClass());
-        LittleEndian.putInt(array, offset+1, 0);
-        LittleEndian.putInt(array, offset+5, 0);
-    }
+	public AreaErrPtg(RecordInputStream in) {
+		// 8 bytes unused:
+		unused1 = in.readInt();
+		unused2 = in.readInt();
+	}
 
-    public String toFormulaString(HSSFWorkbook book) {
-        return "#REF!";
-    }
+	public void writeBytes(byte[] array, int offset) {
+		LittleEndian.putByte(array, offset + 0, sid + getPtgClass());
+		LittleEndian.putInt(array, offset + 1, unused1);
+		LittleEndian.putInt(array, offset + 5, unused2);
+	}
+
+	public String toFormulaString(HSSFWorkbook book) {
+		return HSSFErrorConstants.getText(HSSFErrorConstants.ERROR_REF);
+	}
 
 	public byte getDefaultOperandClass() {
 		return Ptg.CLASS_REF;

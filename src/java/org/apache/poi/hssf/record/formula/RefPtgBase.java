@@ -17,13 +17,11 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-
-import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * ReferencePtgBase - handles references (such as A1, A2, IA4)
@@ -32,7 +30,6 @@ import org.apache.poi.hssf.record.RecordInputStream;
  */
 public abstract class RefPtgBase extends OperandPtg {
 
-    private final static int SIZE = 5;
     private final static int MAX_ROW_NUMBER = 65536;
 
    /** The row index - zero based unsigned 16 bit value */
@@ -70,29 +67,14 @@ public abstract class RefPtgBase extends OperandPtg {
       setColRelative(isColumnRelative);
     }
 
-    protected RefPtgBase(RecordInputStream in) {
+    protected final void readCoordinates(RecordInputStream in) {
         field_1_row = in.readUShort();
         field_2_col = in.readUShort();
     }
-
-    public final String toString() {
-        CellReference cr = new CellReference(getRow(), getColumn(), !isRowRelative(),!isColRelative());
-        StringBuffer sb = new StringBuffer();
-        sb.append(getClass().getName());
-        sb.append(" [");
-        sb.append(cr.formatAsString());
-        sb.append("]");
-        return sb.toString();
+    protected final void writeCoordinates(byte[] array, int offset) {
+        LittleEndian.putUShort(array, offset + 0, field_1_row);
+        LittleEndian.putUShort(array, offset + 2, field_2_col);
     }
-
-    public final void writeBytes(byte [] array, int offset) {
-        array[offset] = (byte) (getSid() + getPtgClass());
-
-        LittleEndian.putShort(array, offset+1, (short)field_1_row);
-        LittleEndian.putShort(array, offset+3, (short)field_2_col);
-    }
-    
-    protected abstract byte getSid();
 
     public final void setRow(int row) {
         if(row < 0 || row >= MAX_ROW_NUMBER) {
@@ -102,16 +84,9 @@ public abstract class RefPtgBase extends OperandPtg {
     }
 
     /**
-     * Returns the row number as a short, which will be
-     *  wrapped (negative) for values between 32769 and 65535
+     * @return the row number as an int, between 0 and 65535
      */
     public final int getRow(){
-        return field_1_row;
-    }
-    /**
-     * Returns the row number as an int, between 0 and 65535
-     */
-    public final int getRowAsInt() {
         return field_1_row;
     }
 
@@ -135,20 +110,16 @@ public abstract class RefPtgBase extends OperandPtg {
         if(col < 0 || col >= 0x100) {
             throw new IllegalArgumentException("Specified colIx (" + col + ") is out of range");
         }
-    	field_2_col = column.setValue(field_2_col, col);
+       field_2_col = column.setValue(field_2_col, col);
     }
 
     public final int getColumn() {
-    	return column.getValue(field_2_col);
+       return column.getValue(field_2_col);
     }
-
-    public final int getSize() {
-        return SIZE;
-    }
-
-    public final String toFormulaString(HSSFWorkbook book) {
-        //TODO -- should we store a cellreference instance in this ptg?? but .. memory is an issue, i believe!
-        return (new CellReference(getRowAsInt(),getColumn(),!isRowRelative(),!isColRelative())).formatAsString();
+    protected final String formatReferenceAsString() {
+        // Only make cell references as needed. Memory is an issue
+        CellReference cr = new CellReference(getRow(), getColumn(), !isRowRelative(), !isColRelative());
+        return cr.formatAsString();
     }
 
     public final byte getDefaultOperandClass() {

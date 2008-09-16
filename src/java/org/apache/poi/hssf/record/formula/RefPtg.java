@@ -24,30 +24,26 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author  Andrew C. Oliver (acoliver@apache.org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class RefPtg extends RefPtgBase {
-    public final static byte sid  = 0x24;
+public final class RefPtg extends Ref2DPtgBase {
+	public final static byte sid = 0x24;
 
-    /**
-     * Takes in a String representation of a cell reference and fills out the
-     * numeric fields.
-     */
-    public RefPtg(String cellref) {
-    	super(cellref);
-    }
+	/**
+	 * Takes in a String representation of a cell reference and fills out the
+	 * numeric fields.
+	 */
+	public RefPtg(String cellref) {
+		super(cellref);
+	}
 
-    public RefPtg(int row, int column, boolean isRowRelative, boolean isColumnRelative) {
-      setRow(row);
-      setColumn(column);
-      setRowRelative(isRowRelative);
-      setColRelative(isColumnRelative);
-    }
+	public RefPtg(int row, int column, boolean isRowRelative, boolean isColumnRelative) {
+		super(row, column, isRowRelative, isColumnRelative);
+	}
 
-    public RefPtg(RecordInputStream in) {
-        super(in);
-    }
+	public RefPtg(RecordInputStream in) {
+		super(in);
+	}
 
 	protected byte getSid() {
 		return sid;
 	}
-    
 }

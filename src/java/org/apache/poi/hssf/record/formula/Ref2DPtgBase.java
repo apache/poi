@@ -18,46 +18,51 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * RefError - handles deleted cell reference
- * @author Jason Height (jheight at chariot dot net dot au)
+ * @author Josh Micich
  */
-public final class RefErrorPtg extends OperandPtg {
-
+abstract class Ref2DPtgBase extends RefPtgBase {
     private final static int SIZE = 5;
-    public final static byte sid  = 0x2A;
-    private int              field_1_reserved;
 
-    public RefErrorPtg() {
-        field_1_reserved = 0;
-    }
-    public RefErrorPtg(RecordInputStream in) {
-        field_1_reserved = in.readInt();
-    }
-
-    public String toString() {
-        return getClass().getName();
+    /**
+     * Takes in a String representation of a cell reference and fills out the
+     * numeric fields.
+     */
+    protected Ref2DPtgBase(String cellref) {
+    	super(cellref);
     }
 
-    public void writeBytes(byte [] array, int offset) {
-        LittleEndian.putByte(array, offset+0, sid + getPtgClass());
-        LittleEndian.putInt(array,offset+1,field_1_reserved);
+    protected Ref2DPtgBase(int row, int column, boolean isRowRelative, boolean isColumnRelative) {
+      setRow(row);
+      setColumn(column);
+      setRowRelative(isRowRelative);
+      setColRelative(isColumnRelative);
     }
 
-    public int getSize()
-    {
+    protected Ref2DPtgBase(RecordInputStream in) {
+        readCoordinates(in);
+    }
+    public final void writeBytes(byte [] array, int offset) {
+    	LittleEndian.putByte(array, offset+0, getSid() + getPtgClass());
+    	writeCoordinates(array, offset+1);
+    }
+    public final String toFormulaString(HSSFWorkbook book) {
+    	return formatReferenceAsString();
+    }
+
+	protected abstract byte getSid();
+    public final int getSize() {
         return SIZE;
     }
-
-    public String toFormulaString(HSSFWorkbook book) {
-        return HSSFErrorConstants.getText(HSSFErrorConstants.ERROR_REF);
-    }
-    
-    public byte getDefaultOperandClass() {
-        return Ptg.CLASS_REF;
+    public final String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName());
+        sb.append(" [");
+        sb.append(formatReferenceAsString());
+        sb.append("]");
+        return sb.toString();
     }
 }

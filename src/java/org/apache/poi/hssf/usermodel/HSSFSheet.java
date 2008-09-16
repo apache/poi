@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.TreeMap;
 
 import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
@@ -43,8 +42,7 @@ import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.RefPtg;
+import org.apache.poi.hssf.record.formula.FormulaShifter;
 import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.hssf.util.Region;
@@ -1174,33 +1172,26 @@ public final class HSSFSheet {
      * @param resetOriginalRowHeight whether to set the original row's height to the default
      * @param moveComments whether to move comments at the same time as the cells they are attached to
      */
-    public void shiftRows( int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight, boolean moveComments)
-    {
-        int s, e, inc;
-        if ( n < 0 )
-        {
+    public void shiftRows(int startRow, int endRow, int n, 
+            boolean copyRowHeight, boolean resetOriginalRowHeight, boolean moveComments) {
+        int s, inc;
+        if (n < 0) {
             s = startRow;
-            e = endRow;
             inc = 1;
-        }
-        else
-        {
+        } else {
             s = endRow;
-            e = startRow;
             inc = -1;
         }
 
         shiftMerged(startRow, endRow, n, true);
         sheet.getPageSettings().shiftRowBreaks(startRow, endRow, n);
 
-        for ( int rowNum = s; rowNum >= startRow && rowNum <= endRow && rowNum >= 0 && rowNum < 65536; rowNum += inc )
-        {
+        for ( int rowNum = s; rowNum >= startRow && rowNum <= endRow && rowNum >= 0 && rowNum < 65536; rowNum += inc ) {
             HSSFRow row = getRow( rowNum );
             HSSFRow row2Replace = getRow( rowNum + n );
             if ( row2Replace == null )
                 row2Replace = createRow( rowNum + n );
 
-            HSSFCell cell;
             
             // Remove all the old cells from the row we'll
             //  be writing too, before we start overwriting 
@@ -1230,7 +1221,7 @@ public final class HSSFSheet {
             // Copy each cell from the source row to
             //  the destination row
             for(Iterator cells = row.cellIterator(); cells.hasNext(); ) {
-                cell = (HSSFCell)cells.next();
+                HSSFCell cell = (HSSFCell)cells.next();
                 row.removeCell( cell );
                 CellValueRecordInterface cellRecord = cell.getCellValueRecord();
                 cellRecord.setRow( rowNum + n );
@@ -1257,49 +1248,21 @@ public final class HSSFSheet {
 
         // Update any formulas on this sheet that point to
         //  rows which have been moved
-        updateFormulasAfterShift(startRow, endRow, n);
-    }
+        int sheetIndex = workbook.getSheetIndex(this);
+        short externSheetIndex = book.checkExternSheet(sheetIndex);
+        FormulaShifter shifter = FormulaShifter.createForRowShift(externSheetIndex, startRow, endRow, n);
+        sheet.getRowsAggregate().updateFormulasAfterRowShift(shifter, externSheetIndex);
 
-    /**
-     * Called by shiftRows to update formulas on this sheet
-     *  to point to the new location of moved rows
-     */
-    private void updateFormulasAfterShift(int startRow, int endRow, int n) {
-        // Need to look at every cell on the sheet
-        // Not just those that were moved
-        Iterator ri = rowIterator();
-        while(ri.hasNext()) {
-            HSSFRow r = (HSSFRow)ri.next();
-            Iterator ci = r.cellIterator();
-            while(ci.hasNext()) {
-                HSSFCell c = (HSSFCell)ci.next();
-                if(c.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
-                    // Since it's a formula cell, process the
-                    //  formula string, and look to see if
-                    //  it contains any references
-
-                    // Look for references, and update if needed
-                    Ptg[] ptgs = FormulaParser.parse(c.getCellFormula(), workbook);
-                    boolean changed = false;
-                    for(int i=0; i<ptgs.length; i++) {
-                        if(ptgs[i] instanceof RefPtg) {
-                            RefPtg rptg = (RefPtg)ptgs[i];
-                            if(startRow <= rptg.getRowAsInt() &&
-                                    rptg.getRowAsInt() <= endRow) {
-                                // References a row that moved
-                                rptg.setRow(rptg.getRowAsInt() + n);
-                                changed = true;
-                            }
-                        }
-                    }
-                    // If any references were changed, then
-                    //  re-create the formula string
-                    if(changed) {
-                        c.setFormulaOnly(ptgs);
-                    }
-                }
+        int nSheets = workbook.getNumberOfSheets();
+        for(int i=0; i<nSheets; i++) {
+            Sheet otherSheet = workbook.getSheetAt(i).getSheet();
+            if (otherSheet == this.sheet) {
+                continue;
             }
+            short otherExtSheetIx = book.checkExternSheet(i);
+            otherSheet.getRowsAggregate().updateFormulasAfterRowShift(shifter, otherExtSheetIx);
         }
+        // TODO - adjust formulas in named ranges
     }
 
     protected void insertChartRecords( List records )
@@ -1646,9 +1609,12 @@ public final class HSSFSheet {
         sheet.groupRowRange( fromRow, toRow, false );
     }
 
-    public void setRowGroupCollapsed( int row, boolean collapse )
-    {
-        sheet.setRowGroupCollapsed( row, collapse );
+    public void setRowGroupCollapsed(int rowIndex, boolean collapse) {
+        if (collapse) {
+            sheet.getRowsAggregate().collapseRow(rowIndex);
+        } else {
+            sheet.getRowsAggregate().expandRow(rowIndex);
+        }
     }
 
     /**

@@ -35,13 +35,20 @@ public final class DeletedArea3DPtg extends OperandPtg {
 	private final int unused1;
 	private final int unused2;
 
-	public DeletedArea3DPtg( RecordInputStream in) {
+	public DeletedArea3DPtg(int externSheetIndex) {
+		field_1_index_extern_sheet = externSheetIndex;
+		unused1 = 0;
+		unused2 = 0;
+	}
+	
+	public DeletedArea3DPtg(RecordInputStream in) {
 		field_1_index_extern_sheet = in.readUShort();
 		unused1 = in.readInt();
 		unused2 = in.readInt();
 	}
 	public String toFormulaString(HSSFWorkbook book) {
-		return HSSFErrorConstants.getText(HSSFErrorConstants.ERROR_REF);
+		return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, 
+				HSSFErrorConstants.getText(HSSFErrorConstants.ERROR_REF));
 	}
 	public byte getDefaultOperandClass() {
 		return Ptg.CLASS_REF;
