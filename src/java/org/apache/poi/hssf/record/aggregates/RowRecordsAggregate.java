@@ -35,6 +35,7 @@ import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.TableRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.formula.FormulaShifter;
 
 /**
  *
@@ -506,5 +507,8 @@ public final class RowRecordsAggregate extends RecordAggregate {
         fr.setRow(row);
         fr.setColumn((short) col);
         return new FormulaRecordAggregate(fr, null, _sharedValueManager);
+    }
+    public void updateFormulasAfterRowShift(FormulaShifter formulaShifter, int currentExternSheetIndex) {
+        _valuesAgg.updateFormulasAfterRowShift(formulaShifter, currentExternSheetIndex);
     }
 }

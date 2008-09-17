@@ -62,7 +62,6 @@ import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
-import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.MergedCellsTable;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate;
@@ -127,7 +126,8 @@ public final class Sheet implements Model {
     /*package*/ColumnInfoRecordsAggregate _columnInfos;
     /** the DimensionsRecord is always present */
     private DimensionsRecord             _dimensions;
-    protected RowRecordsAggregate        _rowsAggregate              =     null;
+    /** always present */
+    protected RowRecordsAggregate        _rowsAggregate;
     private   DataValidityTable          _dataValidityTable=     null;
     private   ConditionalFormattingTable condFormatting;
 
@@ -329,10 +329,13 @@ public final class Sheet implements Model {
         if (retval.windowTwo == null) {
             throw new RuntimeException("WINDOW2 was not found");
         }
+        if (retval._rowsAggregate == null) {
+        	retval._rowsAggregate = new RowRecordsAggregate();
+            records.add(retval.dimsloc + 1, retval._rowsAggregate);
+        }
         // put merged cells table in the right place (regardless of where the first MergedCellsRecord was found */
         RecordOrderer.addNewSheetRecord(records, retval._mergedCellsTable);
         retval.records = records;
-        retval.checkRows();
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "sheet createSheet (existing file) exited");
         return retval;
@@ -441,6 +444,8 @@ public final class Sheet implements Model {
         retval._dimensions = createDimensions();
         records.add(retval._dimensions);
         retval.dimsloc = records.size()-1;
+        retval._rowsAggregate = new RowRecordsAggregate();
+        records.add(retval._rowsAggregate);
         // 'Sheet View Settings'
         records.add(retval.windowTwo = retval.createWindowTwo());
         retval.selection = createSelection();
@@ -456,14 +461,10 @@ public final class Sheet implements Model {
         return retval;
     }
 
-    private void checkRows()
-    {
-        if (_rowsAggregate == null)
-        {
-            _rowsAggregate = new RowRecordsAggregate();
-            records.add(dimsloc + 1, _rowsAggregate);
-        }
+    public RowRecordsAggregate getRowsAggregate() {
+    	return _rowsAggregate;
     }
+
     private MergedCellsTable getMergedRecords() {
         // always present
         return _mergedCellsTable;
@@ -624,13 +625,6 @@ public final class Sheet implements Model {
     }
 
     /**
-     * Create a row record.  (does not add it to the records contained in this sheet)
-     */
-    private static RowRecord createRow(int row) {
-        return RowRecordsAggregate.createRow( row );
-    }
-
-    /**
      * Adds a value record to the sheet's contained binary records
      * (i.e. LabelSSTRecord or NumberRecord).
      * <P>
@@ -714,7 +708,6 @@ public final class Sheet implements Model {
 
     public void addRow(RowRecord row)
     {
-        checkRows();
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "addRow ");
         DimensionsRecord d = _dimensions;
@@ -748,7 +741,6 @@ public final class Sheet implements Model {
      * @param row  the row record to remove
      */
     public void removeRow(RowRecord row) {
-        checkRows();
         _rowsAggregate.removeRow(row);
     }
 
@@ -1295,7 +1287,7 @@ public final class Sheet implements Model {
     }
 
     /**
-     * Returns the first occurance of a record matching a particular sid.
+     * Returns the first occurrence of a record matching a particular sid.
      */
 
     public Record findFirstRecordBySid(short sid)
@@ -1781,13 +1773,12 @@ public final class Sheet implements Model {
 
     public void groupRowRange(int fromRow, int toRow, boolean indent)
     {
-        checkRows();
         for (int rowNum = fromRow; rowNum <= toRow; rowNum++)
         {
             RowRecord row = getRow( rowNum );
             if (row == null)
             {
-                row = createRow( rowNum );
+                row = RowRecordsAggregate.createRow(rowNum);
                 addRow( row );
             }
             int level = row.getOutlineLevel();
@@ -1817,17 +1808,6 @@ public final class Sheet implements Model {
         guts.setLeftRowGutter( (short) ( 29 + (12 * (maxLevel)) ) );
     }
 
-    public void setRowGroupCollapsed( int row, boolean collapse )
-    {
-        if (collapse)
-        {
-            _rowsAggregate.collapseRow( row );
-        }
-        else
-        {
-            _rowsAggregate.expandRow( row );
-        }
-    }
     public DataValidityTable getOrCreateDataValidityTable() {
         if (_dataValidityTable == null) {
             DataValidityTable result = new DataValidityTable();
@@ -1835,9 +1815,5 @@ public final class Sheet implements Model {
             _dataValidityTable = result;
         }
         return _dataValidityTable;
-    }
-
-    public FormulaRecordAggregate createFormula(int row, int col) {
-        return _rowsAggregate.createFormula(row, col);
     }
 }

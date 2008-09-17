@@ -537,9 +537,7 @@ public final class NameRecord extends Record {
 				temp.add(ptg);
 			}
 		} else {
-			Ptg ptg = new Ref3DPtg();
-			((Ref3DPtg) ptg).setExternSheetIndex(externSheetIndex);
-			((Ref3DPtg) ptg).setArea(ref);
+			Ref3DPtg ptg = new Ref3DPtg(ra.getFromCell(), externSheetIndex);
 			temp.add(ptg);
 		}
 		Ptg[] ptgs = new Ptg[temp.size()];

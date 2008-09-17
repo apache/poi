@@ -28,6 +28,8 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
+import org.apache.poi.hssf.record.formula.FormulaShifter;
+import org.apache.poi.hssf.record.formula.Ptg;
 
 /**
  *
@@ -220,6 +222,25 @@ public final class ValueRecordsAggregate {
                 } else {
                     Record rec = (Record) cvr;
                     rv.visitRecord(rec);
+                }
+            }
+        }
+    }
+
+    public void updateFormulasAfterRowShift(FormulaShifter shifter, int currentExternSheetIndex) {
+        for (int i = 0; i < records.length; i++) {
+            CellValueRecordInterface[] rowCells = records[i];
+            if (rowCells == null) {
+                continue;
+            }
+            for (int j = 0; j < rowCells.length; j++) {
+                CellValueRecordInterface cell = rowCells[j];
+                if (cell instanceof FormulaRecordAggregate) {
+                	FormulaRecord fr = ((FormulaRecordAggregate)cell).getFormulaRecord();
+                    Ptg[] ptgs = fr.getParsedExpression(); // needs clone() inside this getter?
+                    if (shifter.adjustFormula(ptgs, currentExternSheetIndex)) {
+                        fr.setParsedExpression(ptgs);
+                    }
                 }
             }
         }

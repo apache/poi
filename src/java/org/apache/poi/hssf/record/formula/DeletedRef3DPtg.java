@@ -41,8 +41,14 @@ public final class DeletedRef3DPtg extends OperandPtg {
 		unused1 = in.readInt();
 	}
 
+	public DeletedRef3DPtg(int externSheetIndex) {
+		field_1_index_extern_sheet = externSheetIndex;
+		unused1 = 0;
+	}
+
 	public String toFormulaString(Workbook book) {
-		return ErrorConstants.getText(ErrorConstants.ERROR_REF);
+		return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, 
+				ErrorConstants.getText(ErrorConstants.ERROR_REF));
 	}
 	public byte getDefaultOperandClass() {
 		return Ptg.CLASS_REF;

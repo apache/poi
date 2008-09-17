@@ -476,7 +476,7 @@ public final class TestNamedRange extends TestCase {
 
 		HSSFName name2 = wb.getNameAt(1);
 		assertEquals("b", name2.getNameName());
-		assertEquals("#REF!", name2.getReference());
+		assertEquals("Sheet1!#REF!", name2.getReference());
 		assertTrue(name2.isDeleted());
 		try {
 			AreaReference ref2 = new AreaReference(name2.getReference());
