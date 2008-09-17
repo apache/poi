@@ -26,13 +26,12 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.SharedStringSource;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.StylesSource;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.model.SharedStringSource;
 import org.apache.poi.xssf.model.StylesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
@@ -48,7 +47,7 @@ public final class XSSFCell implements Cell {
     private final CTCell cell;
     private final XSSFRow row;
     private int cellNum;
-    private SharedStringsTable sharedStringSource;
+    private SharedStringSource sharedStringSource;
     private StylesTable stylesSource;
 
     private POILogger logger = POILogFactory.getLogger(XSSFCell.class);
@@ -67,7 +66,7 @@ public final class XSSFCell implements Cell {
         if (cell.getR() != null) {
             this.cellNum = parseCellNum(cell.getR());
         }
-        this.sharedStringSource = (SharedStringsTable) row.getSheet().getWorkbook().getSharedStringSource();
+        this.sharedStringSource = row.getSheet().getWorkbook().getSharedStringSource();
         this.stylesSource = (StylesTable)row.getSheet().getWorkbook().getStylesSource();
     }
 

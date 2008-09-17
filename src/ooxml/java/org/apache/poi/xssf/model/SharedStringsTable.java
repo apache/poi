@@ -20,16 +20,16 @@ package org.apache.poi.xssf.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.apache.poi.ss.usermodel.SharedStringSource;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.SstDocument;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
 
 
 /**
@@ -204,5 +204,4 @@ public class SharedStringsTable implements SharedStringSource, XSSFModel {
         sst.setSiArray(ctr);
         doc.save(out, options);
     }
-
 }
