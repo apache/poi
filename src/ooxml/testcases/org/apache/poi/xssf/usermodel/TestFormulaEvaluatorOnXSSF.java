@@ -17,12 +17,14 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.InputStream;
 import java.io.PrintStream;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.formula.eval.TestFormulasFromSpreadsheet;
 import org.apache.poi.hssf.record.formula.functions.TestMathX;
 import org.apache.poi.ss.usermodel.Cell;
@@ -113,15 +115,6 @@ public final class TestFormulaEvaluatorOnXSSF extends TestCase {
 			throw new AssertionFailedError(msg + " - actual value was null");
 		}
 		
-		if (expected.getCellType() == Cell.CELL_TYPE_STRING) {
-			String value = expected.getRichStringCellValue().getString();
-			if (value.startsWith("#")) {
-				// TODO - this code never called
-				expected.setCellType(Cell.CELL_TYPE_ERROR);
-				// expected.setCellErrorValue(...?);
-			}
-		}
-		
 		switch (expected.getCellType()) {
 			case Cell.CELL_TYPE_BLANK:
 				assertEquals(msg, Cell.CELL_TYPE_BLANK, actual.getCellType());
@@ -147,7 +140,7 @@ public final class TestFormulaEvaluatorOnXSSF extends TestCase {
 				break;
 			case Cell.CELL_TYPE_STRING:
 				assertEquals(msg, Cell.CELL_TYPE_STRING, actual.getCellType());
-				assertEquals(msg, expected.getRichStringCellValue().getString(), actual.getRichTextStringValue().getString());
+				assertEquals(msg, expected.getRichStringCellValue().getString(), actual.getStringValue());
 				break;
 		}
 	}
@@ -155,8 +148,8 @@ public final class TestFormulaEvaluatorOnXSSF extends TestCase {
 
 	protected void setUp() throws Exception {
 		if (workbook == null) {
-			String filePath = System.getProperty("HSSF.testdata.path")+ "/" + SS.FILENAME;
-			Package pkg = Package.open(filePath);
+			InputStream is = HSSFTestDataSamples.openSampleFileStream(SS.FILENAME);
+			Package pkg = Package.open(is);
 			workbook = new XSSFWorkbook( pkg );
 			sheet = workbook.getSheetAt( 0 );
 		  }
@@ -206,7 +199,7 @@ public final class TestFormulaEvaluatorOnXSSF extends TestCase {
 	 */
 	private void processFunctionGroup(int startRowIndex, String testFocusFunctionName) {
  
-		FormulaEvaluator evaluator = new FormulaEvaluator(sheet, workbook);
+		FormulaEvaluator evaluator = new FormulaEvaluator(workbook);
 
 		int rowIndex = startRowIndex;
 		while (true) {
@@ -252,7 +245,6 @@ public final class TestFormulaEvaluatorOnXSSF extends TestCase {
 		
 		int result = Result.NO_EVALUATIONS_FOUND; // so far
 		short endcolnum = formulasRow.getLastCellNum();
-		evaluator.setCurrentRow(formulasRow);
 
 		// iterate across the row for all the evaluation cases
 		for (short colnum=SS.COLUMN_INDEX_FIRST_TEST_VALUE; colnum < endcolnum; colnum++) {
@@ -341,7 +333,6 @@ public final class TestFormulaEvaluatorOnXSSF extends TestCase {
 		for(int i=startIx; i<endIx; i++) {
 			ps.println("\tat " + stes[i].toString());
 		}
-		
 	}
 
 	/**
