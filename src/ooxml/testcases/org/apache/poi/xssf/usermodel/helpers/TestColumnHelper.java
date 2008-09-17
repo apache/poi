@@ -29,7 +29,11 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 
-public class TestColumnHelper extends TestCase {
+/**
+ * Tests for {@link ColumnHelper}
+ *
+ */
+public final class TestColumnHelper extends TestCase {
 
     public void testCleanColumns() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
@@ -182,7 +186,14 @@ public class TestColumnHelper extends TestCase {
         col9.setMax(27);
         helper.addCleanColIntoCols(cols1, col9);
 
-        System.err.println(cols1);
+        if (false) {
+            System.err.println(cols1);
+        }
+        // TODO - assert something interesting
+        CTCol[] colArray = cols1.getColArray();
+        assertEquals(12, colArray.length);
+        assertEquals(1, colArray[0].getMin());
+        assertEquals(16750, colArray[11].getMax());
     }
 
     public void testGetColumn() {
@@ -230,7 +241,7 @@ public class TestColumnHelper extends TestCase {
 
     public void testGetOrCreateColumn() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        XSSFSheet sheet = workbook.createSheet("Sheet 1");
         ColumnHelper columnHelper = sheet.getColumnHelper();
         
         // Check POI 0 based, OOXML 1 based
@@ -250,10 +261,10 @@ public class TestColumnHelper extends TestCase {
     }
     
     public void testGetSetColDefaultStyle() {
-    	XSSFWorkbook workbook = new XSSFWorkbook();
-    	CTSheet ctSheet = CTSheet.Factory.newInstance();
-    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
-    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        CTSheet ctSheet = CTSheet.Factory.newInstance();
+        CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
+        XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, workbook);
         ColumnHelper columnHelper = sheet.getColumnHelper();
         
         // POI column 3, OOXML column 4
@@ -283,7 +294,7 @@ public class TestColumnHelper extends TestCase {
         assertEquals(1, columnHelper.getColDefaultStyle(10));
     }
 
-    private int countColumns(CTWorksheet worksheet) {
+    private static int countColumns(CTWorksheet worksheet) {
         int count;
         count = 0;
         for (int i = 0; i < worksheet.sizeOfColsArray(); i++) {
@@ -296,5 +307,4 @@ public class TestColumnHelper extends TestCase {
         }
         return count;
     }
-
 }
