@@ -204,24 +204,23 @@ public final class TestBugs extends TestCase {
         col_cnt = c;
         rw_cnt = r;
 
-        HSSFRow rw = null ;
-        HSSFCell cell =null;
+        HSSFRow rw ;
         rw = sheet.createRow(0) ;
         //Header row
         for(int j=0; j<col_cnt; j++){
-            cell = rw.createCell(j) ;
+            HSSFCell cell = rw.createCell(j) ;
             setCellText(cell, "Col " + (j+1)) ;
         }
 
         for(int i=1; i<rw_cnt; i++){
             rw = sheet.createRow(i) ;
             for(int j=0; j<col_cnt; j++){
-                cell = rw.createCell(j) ;
+                HSSFCell cell = rw.createCell(j) ;
                 setCellText(cell, "Row:" + (i+1) + ",Column:" + (j+1)) ;
             }
         }
 
-        sheet.setDefaultColumnWidth((short) 18) ;
+        sheet.setDefaultColumnWidth(18) ;
 
         writeTestOutputFileForViewing(wb, "test22568");
     }

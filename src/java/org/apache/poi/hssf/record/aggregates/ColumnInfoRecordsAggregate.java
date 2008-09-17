@@ -299,7 +299,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	}
 
 
-	public void setColumn(int targetColumnIx, Short xfIndex, Short width, 
+	public void setColumn(int targetColumnIx, Short xfIndex, Integer width, 
 					Integer level, Boolean hidden, Boolean collapsed) {
 		ColumnInfoRecord ci = null;
 		int k  = 0;
@@ -389,13 +389,13 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	/**
 	 * Sets all non null fields into the <code>ci</code> parameter.
 	 */
-	private static void setColumnInfoFields( ColumnInfoRecord ci, Short xfStyle, Short width, 
-				Integer level, Boolean hidden, Boolean collapsed ) {
+	private static void setColumnInfoFields(ColumnInfoRecord ci, Short xfStyle, Integer width, 
+				Integer level, Boolean hidden, Boolean collapsed) {
 		if (xfStyle != null) {
 			ci.setXFIndex(xfStyle.shortValue());
 		}
 		if (width != null) {
-			ci.setColumnWidth(width.shortValue());
+			ci.setColumnWidth(width.intValue());
 		}
 		if (level != null) {
 			ci.setOutlineLevel( level.shortValue() );

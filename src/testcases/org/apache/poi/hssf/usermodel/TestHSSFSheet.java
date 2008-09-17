@@ -435,7 +435,7 @@ public final class TestHSSFSheet extends TestCase {
         // This will tell us that cloneSheet, and by extension,
         // the list forms of createSheet leave us with an accessible
         // ProtectRecord.
-        hssfSheet.setProtect(true);
+        hssfSheet.protectSheet("secret");
         Sheet cloned = sheet.cloneSheet();
         assertNotNull(cloned.getProtect());
         assertTrue(hssfSheet.getProtect());
@@ -682,8 +682,8 @@ public final class TestHSSFSheet extends TestCase {
         // autoSize the first column and check its size before the merged region (1,0,1,1) is set:
         // it has to be based on the 2nd row width
         sheet.autoSizeColumn((short)0);
-        assertTrue("Column autosized with only one row: wrong width", sheet.getColumnWidth((short)0) >= minWithRow1And2);
-        assertTrue("Column autosized with only one row: wrong width", sheet.getColumnWidth((short)0) <= maxWithRow1And2);
+        assertTrue("Column autosized with only one row: wrong width", sheet.getColumnWidth(0) >= minWithRow1And2);
+        assertTrue("Column autosized with only one row: wrong width", sheet.getColumnWidth(0) <= maxWithRow1And2);
 
         //create a region over the 2nd row and auto size the first column
         sheet.addMergedRegion(new CellRangeAddress(1,1,0,1));
@@ -693,16 +693,16 @@ public final class TestHSSFSheet extends TestCase {
         // check that the autoSized column width has ignored the 2nd row
         // because it is included in a merged region (Excel like behavior)
         HSSFSheet sheet2 = wb2.getSheet(sheetName);
-        assertTrue(sheet2.getColumnWidth((short)0) >= minWithRow1Only);
-        assertTrue(sheet2.getColumnWidth((short)0) <= maxWithRow1Only);
+        assertTrue(sheet2.getColumnWidth(0) >= minWithRow1Only);
+        assertTrue(sheet2.getColumnWidth(0) <= maxWithRow1Only);
 
         // remove the 2nd row merged region and check that the 2nd row value is used to the autoSizeColumn width
         sheet2.removeMergedRegion(1);
         sheet2.autoSizeColumn((short)0);
         HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
         HSSFSheet sheet3 = wb3.getSheet(sheetName);
-        assertTrue(sheet3.getColumnWidth((short)0) >= minWithRow1And2);
-        assertTrue(sheet3.getColumnWidth((short)0) <= maxWithRow1And2);
+        assertTrue(sheet3.getColumnWidth(0) >= minWithRow1And2);
+        assertTrue(sheet3.getColumnWidth(0) <= maxWithRow1And2);
     }
 
     /**
@@ -786,7 +786,7 @@ public final class TestHSSFSheet extends TestCase {
         HSSFSheet sh = wb.getSheetAt(0);
         for (char i = 'A'; i <= 'S'; i++) {
             int idx = i - 'A';
-            int w = sh.getColumnWidth((short)idx);
+            int w = sh.getColumnWidth(idx);
             assertEquals(ref[idx], w);
         }
 
@@ -795,24 +795,24 @@ public final class TestHSSFSheet extends TestCase {
         int def_width = sh.getDefaultColumnWidth();
         for (char i = 'A'; i <= 'S'; i++) {
             int idx = i - 'A';
-            int w = sh.getColumnWidth((short)idx);
-            //getDefaultColumnWidth returns width measued in characters
-            //getColumnWidth returns width measued in 1/256th units
+            int w = sh.getColumnWidth(idx);
+            //getDefaultColumnWidth returns width measured in characters
+            //getColumnWidth returns width measured in 1/256th units
             assertEquals(def_width*256, w);
         }
 
         //test new workbook
         wb = new HSSFWorkbook();
         sh = wb.createSheet();
-        sh.setDefaultColumnWidth((short)10);
+        sh.setDefaultColumnWidth(10);
         assertEquals(10, sh.getDefaultColumnWidth());
-        assertEquals(256*10, sh.getColumnWidth((short)0));
-        assertEquals(256*10, sh.getColumnWidth((short)1));
-        assertEquals(256*10, sh.getColumnWidth((short)2));
+        assertEquals(256*10, sh.getColumnWidth(0));
+        assertEquals(256*10, sh.getColumnWidth(1));
+        assertEquals(256*10, sh.getColumnWidth(2));
         for (char i = 'D'; i <= 'F'; i++) {
-            short w = (short)(256*12);
-            sh.setColumnWidth((short)i, w);
-            assertEquals(w, sh.getColumnWidth((short)i));
+            short w = (256*12);
+            sh.setColumnWidth(i, w);
+            assertEquals(w, sh.getColumnWidth(i));
         }
 
         //serialize and read again
@@ -821,14 +821,18 @@ public final class TestHSSFSheet extends TestCase {
         sh = wb.getSheetAt(0);
         assertEquals(10, sh.getDefaultColumnWidth());
         //columns A-C have default width
-        assertEquals(256*10, sh.getColumnWidth((short)0));
-        assertEquals(256*10, sh.getColumnWidth((short)1));
-        assertEquals(256*10, sh.getColumnWidth((short)2));
+        assertEquals(256*10, sh.getColumnWidth(0));
+        assertEquals(256*10, sh.getColumnWidth(1));
+        assertEquals(256*10, sh.getColumnWidth(2));
         //columns D-F have custom width
         for (char i = 'D'; i <= 'F'; i++) {
-            short w = (short)(256*12);
-            assertEquals(w, sh.getColumnWidth((short)i));
+            short w = (256*12);
+            assertEquals(w, sh.getColumnWidth(i));
         }
+
+        // check for 16-bit signed/unsigned error:
+        sh.setColumnWidth(0, 40000);
+        assertEquals(40000, sh.getColumnWidth(0));
     }
 
     /**

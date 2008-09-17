@@ -40,7 +40,7 @@ public final class ColumnInfoRecord extends Record {
     private static final BitField outlevel  = BitFieldFactory.getInstance(0x0700);
     private static final BitField collapsed = BitFieldFactory.getInstance(0x1000);
     // Excel seems write values 2, 10, and 260, even though spec says "must be zero"
-    private short                 field_6_reserved;
+    private int                 field_6_reserved;
 
     /**
      * Creates a column info record with default width and format
@@ -64,14 +64,14 @@ public final class ColumnInfoRecord extends Record {
 
     protected void fillFields(RecordInputStream in)
     {
-        field_1_first_col = in.readShort();
-        field_2_last_col  = in.readShort();
-        field_3_col_width = in.readShort();
-        field_4_xf_index  = in.readShort();
-        field_5_options   = in.readShort();
+        field_1_first_col = in.readUShort();
+        field_2_last_col  = in.readUShort();
+        field_3_col_width = in.readUShort();
+        field_4_xf_index  = in.readUShort();
+        field_5_options   = in.readUShort();
         switch(in.remaining()) {
             case 2: // usual case
-                field_6_reserved  = in.readShort();
+                field_6_reserved  = in.readUShort();
                 break;
             case 1:
                 // often COLINFO gets encoded 1 byte short
