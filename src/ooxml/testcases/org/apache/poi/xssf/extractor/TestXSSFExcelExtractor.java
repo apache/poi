@@ -107,7 +107,12 @@ public class TestXSSFExcelExtractor extends TestCase {
 				"adipiscing\t777\n" +
 				"elit\t888\n" +
 				"Nunc\t999\n" +
-				"at\t4995\n", text);
+				"at\t4995\n" +
+                "The quick brown fox jumps over the lazy dog\n" +
+                "hello, xssf\thello, xssf\n" +
+                "hello, xssf\thello, xssf\n" +
+                "hello, xssf\thello, xssf\n" +
+                "hello, xssf\thello, xssf\n", text);
 		
 		// Now get formulas not their values
 		extractor.setFormulasNotResults(true);
@@ -122,7 +127,12 @@ public class TestXSSFExcelExtractor extends TestCase {
 				"adipiscing\t777\n" +
 				"elit\t888\n" +
 				"Nunc\t999\n" +
-				"at\tSUM(B1:B9)\n", text);
+				"at\tSUM(B1:B9)\n" +
+                "The quick brown fox jumps over the lazy dog\n" +
+                "hello, xssf\thello, xssf\n" +
+                "hello, xssf\thello, xssf\n" +
+                "hello, xssf\thello, xssf\n" +
+                "hello, xssf\thello, xssf\n", text);
 		
 		// With sheet names too
 		extractor.setIncludeSheetNames(true);
@@ -139,7 +149,12 @@ public class TestXSSFExcelExtractor extends TestCase {
 				"elit\t888\n" +
 				"Nunc\t999\n" +
 				"at\tSUM(B1:B9)\n" +
-				"Sheet2\n" +
+				"rich test\n" +
+                "The quick brown fox jumps over the lazy dog\n" +
+                "hello, xssf\thello, xssf\n" +
+                "hello, xssf\thello, xssf\n" +
+                "hello, xssf\thello, xssf\n" +
+                "hello, xssf\thello, xssf\n" +
 				"Sheet3\n"
 				, text);
 	}
