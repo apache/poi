@@ -1651,7 +1651,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * @param style the style to set
      */
     public void setDefaultColumnStyle(short column, CellStyle style) {
-        sheet.setDefaultColumnStyle(column, style.getIndex());
+        sheet.setDefaultColumnStyle(column, ((HSSFCellStyle)style).getIndex());
     }
 
     /**
