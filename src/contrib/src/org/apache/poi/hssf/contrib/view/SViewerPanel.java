@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.contrib.view;
 
@@ -47,10 +44,10 @@ public class SViewerPanel extends JPanel {
    *
    */
   private static final int magicCharFactor = 7;
-  /** Reference to the woorkbook that is being displayed*/
-  private HSSFWorkbook wb;
+  /** Reference to the wookbook that is being displayed*/
+  /* package */ HSSFWorkbook wb;
   /** Reference to the tabs component*/
-  private JTabbedPane sheetPane;
+  /* package */ JTabbedPane sheetPane;
   /** Reference to the cell renderer that is used to render all cells*/
   private SVTableCellRenderer cellRenderer;
   /** Reference to the cell editor that is used to edit all cells.
@@ -106,7 +103,7 @@ public class SViewerPanel extends JPanel {
     TableColumnModel columns = sheetView.getColumnModel();
     for (int i=0; i< columns.getColumnCount(); i++) {
       TableColumn column = columns.getColumn(i);
-      short width = sheet.getColumnWidth((short)i);
+      int width = sheet.getColumnWidth(i);
       //256 is because the width is in 256ths of a character
       column.setPreferredWidth(width/256*magicCharFactor);
     }
@@ -208,7 +205,7 @@ public class SViewerPanel extends JPanel {
     public void actionPerformed(ActionEvent e) {
       int tabIndex = sheetPane.getSelectedIndex();
       if (tabIndex != -1) {
-        String newSheetName = (String)JOptionPane.showInputDialog(sheetPane, "Enter a new Sheetname", "Rename Sheet", JOptionPane.QUESTION_MESSAGE);
+        String newSheetName = JOptionPane.showInputDialog(sheetPane, "Enter a new Sheetname", "Rename Sheet", JOptionPane.QUESTION_MESSAGE);
         if (newSheetName != null) {
           wb.setSheetName(tabIndex, newSheetName);
           sheetPane.setTitleAt(tabIndex, newSheetName);

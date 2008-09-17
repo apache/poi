@@ -396,47 +396,74 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
 
 
     /**
+     * @deprecated (Sep 2008) use {@link #setColumnHidden(int, boolean)}
+     */
+    public void setColumnHidden(short columnIndex, boolean hidden) {
+        setColumnHidden(columnIndex & 0xFFFF, hidden);
+    }
+
+    /**
+     * @deprecated (Sep 2008) use {@link #isColumnHidden(int)}
+     */
+    public boolean isColumnHidden(short columnIndex) {
+        return isColumnHidden(columnIndex & 0xFFFF);
+    }
+
+    /**
+     * @deprecated (Sep 2008) use {@link #setColumnWidth(int, int)}
+     */
+    public void setColumnWidth(short columnIndex, short width) {
+        setColumnWidth(columnIndex & 0xFFFF, width & 0xFFFF);
+    }
+
+    /**
+     * @deprecated (Sep 2008) use {@link #getColumnWidth(int)}
+     */
+    public short getColumnWidth(short columnIndex) {
+        return (short)getColumnWidth(columnIndex & 0xFFFF);
+    }
+
+    /**
+     * @deprecated (Sep 2008) use {@link #setDefaultColumnWidth(int)}
+     */
+    public void setDefaultColumnWidth(short width) {
+        setDefaultColumnWidth(width & 0xFFFF);
+    }
+
+    /**
      * Get the visibility state for a given column.
-     * @param column - the column to get (0-based)
+     * @param columnIndex - the column to get (0-based)
      * @param hidden - the visiblity state of the column
      */
-
-    public void setColumnHidden(short column, boolean hidden)
-    {
-        sheet.setColumnHidden(column, hidden);
+    public void setColumnHidden(int columnIndex, boolean hidden) {
+        sheet.setColumnHidden(columnIndex, hidden);
     }
 
     /**
      * Get the hidden state for a given column.
-     * @param column - the column to set (0-based)
-     * @return hidden - the visiblity state of the column
+     * @param columnIndex - the column to set (0-based)
+     * @return hidden - <code>false</code> if the column is visible
      */
-
-    public boolean isColumnHidden(short column)
-    {
-        return sheet.isColumnHidden(column);
+    public boolean isColumnHidden(int columnIndex) {
+        return sheet.isColumnHidden(columnIndex);
     }
 
     /**
      * set the width (in units of 1/256th of a character width)
-     * @param column - the column to set (0-based)
+     * @param columnIndex - the column to set (0-based)
      * @param width - the width in units of 1/256th of a character width
      */
-
-    public void setColumnWidth(short column, short width)
-    {
-        sheet.setColumnWidth(column, width);
+    public void setColumnWidth(int columnIndex, int width) {
+        sheet.setColumnWidth(columnIndex, width);
     }
 
     /**
      * get the width (in units of 1/256th of a character width )
-     * @param column - the column to set (0-based)
+     * @param columnIndex - the column to set (0-based)
      * @return width - the width in units of 1/256th of a character width
      */
-
-    public short getColumnWidth(short column)
-    {
-        return sheet.getColumnWidth(column);
+    public int getColumnWidth(int columnIndex) {
+        return sheet.getColumnWidth(columnIndex);
     }
 
     /**
@@ -444,20 +471,25 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * characters
      * @return default column width
      */
-
-    public short getDefaultColumnWidth()
-    {
+    public int getDefaultColumnWidth() {
         return sheet.getDefaultColumnWidth();
     }
+    /**
+     * set the default column width for the sheet (if the columns do not define their own width) in
+     * characters
+     * @param width default column width
+     */
+    public void setDefaultColumnWidth(int width) {
+        sheet.setDefaultColumnWidth(width);
+    }
+
 
     /**
      * get the default row height for the sheet (if the rows do not define their own height) in
      * twips (1/20 of  a point)
      * @return  default row height
      */
-
-    public short getDefaultRowHeight()
-    {
+    public short getDefaultRowHeight() {
         return sheet.getDefaultRowHeight();
     }
 
@@ -470,17 +502,6 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
     public float getDefaultRowHeightInPoints()
     {
         return (sheet.getDefaultRowHeight() / 20);
-    }
-
-    /**
-     * set the default column width for the sheet (if the columns do not define their own width) in
-     * characters
-     * @param width default column width
-     */
-
-    public void setDefaultColumnWidth(short width)
-    {
-        sheet.setDefaultColumnWidth(width);
     }
 
     /**
@@ -1005,19 +1026,19 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
     /**
      * Sets the protection on enabled or disabled
      * @param protect true => protection enabled; false => protection disabled
-         * @deprecated use protectSheet(String, boolean, boolean)
+     * @deprecated (Jul 2007) use {@link #protectSheet(String)}
      */
     public void setProtect(boolean protect) {
         getSheet().getProtect().setProtect(protect);
     }
 
-        /**
-         * Sets the protection enabled as well as the password
-         * @param password to set for protection
-         */
-        public void protectSheet(String password) {
-                getSheet().protectSheet(password, true, true); //protect objs&scenarios(normal)
-        }
+    /**
+     * Sets the protection enabled as well as the password
+     * @param password to set for protection
+     */
+    public void protectSheet(String password) {
+            getSheet().protectSheet(password, true, true); //protect objs&scenarios(normal)
+    }
 
     /**
      * Sets the zoom magnication for the sheet.  The zoom is expressed as a
@@ -1630,7 +1651,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * @param style the style to set
      */
     public void setDefaultColumnStyle(short column, CellStyle style) {
-       sheet.setColumn(column, new Short(((HSSFCellStyle) style).getIndex()), null, null, null, null);
+        sheet.setDefaultColumnStyle(column, style.getIndex());
     }
 
     /**

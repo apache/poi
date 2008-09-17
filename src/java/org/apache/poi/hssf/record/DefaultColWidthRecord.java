@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,14 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Title:        Default Column Width Record<P>
+ * Title:        Default Column Width Record (0x0055) <P>
  * Description:  Specifies the default width for columns that have no specific
  *               width set.<P>
  * REFERENCE:  PG 302 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
@@ -30,12 +28,9 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-
-public class DefaultColWidthRecord
-    extends Record
-{
-    public final static short sid = 0x55;
-    private short             field_1_col_width;
+public final class DefaultColWidthRecord extends Record {
+    public final static short sid = 0x0055;
+    private int             field_1_col_width;
 
     public DefaultColWidthRecord()
     {
@@ -61,17 +56,17 @@ public class DefaultColWidthRecord
 
     protected void fillFields(RecordInputStream in)
     {
-        field_1_col_width = in.readShort();
+        field_1_col_width = in.readUShort();
     }
 
     /**
      * set the default column width
-     * @param height defaultwidth for columns
+     * @param width defaultwidth for columns
      */
 
-    public void setColWidth(short height)
+    public void setColWidth(int width)
     {
-        field_1_col_width = height;
+        field_1_col_width = width;
     }
 
     /**
@@ -79,7 +74,7 @@ public class DefaultColWidthRecord
      * @return defaultwidth for columns
      */
 
-    public short getColWidth()
+    public int getColWidth()
     {
         return field_1_col_width;
     }
@@ -97,9 +92,9 @@ public class DefaultColWidthRecord
 
     public int serialize(int offset, byte [] data)
     {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 0x2);
-        LittleEndian.putShort(data, 4 + offset, getColWidth());
+        LittleEndian.putUShort(data, 0 + offset, sid);
+        LittleEndian.putUShort(data, 2 + offset, 0x2);
+        LittleEndian.putUShort(data, 4 + offset, getColWidth());
         return getRecordSize();
     }
 

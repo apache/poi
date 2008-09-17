@@ -19,7 +19,9 @@ package org.apache.poi.ss.usermodel;
 
 import java.util.Iterator;
 
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.util.PaneInformation;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.Region;
 
 public interface Sheet extends Iterable<Row> {
@@ -96,37 +98,65 @@ public interface Sheet extends Iterable<Row> {
 
     int getLastRowNum();
 
+    
+    
+    /**
+     * @deprecated (Sep 2008) use {@link #setColumnHidden(int, boolean)}
+     */
+    void setColumnHidden(short columnIndex, boolean hidden);
+    /**
+     * @deprecated (Sep 2008) use {@link #isColumnHidden(int)}
+     */
+    boolean isColumnHidden(short columnIndex);
+
+    /**
+     * @deprecated (Sep 2008) use {@link #setColumnWidth(int, int)}
+     */
+    void setColumnWidth(short columnIndex, short width);
+
+    /**
+     * @deprecated (Sep 2008) use {@link #getColumnWidth(int)}
+     */
+    short getColumnWidth(short columnIndex);
+
+    /**
+     * @deprecated (Sep 2008) use {@link #setDefaultColumnWidth(int)}
+     */
+    void setDefaultColumnWidth(short width);
+    
     /**
      * Get the visibility state for a given column.
-     * @param column - the column to get (0-based)
+     * @param columnIndex - the column to get (0-based)
      * @param hidden - the visiblity state of the column
      */
-
-    void setColumnHidden(short column, boolean hidden);
+    void setColumnHidden(int columnIndex, boolean hidden);
 
     /**
      * Get the hidden state for a given column.
-     * @param column - the column to set (0-based)
-     * @return hidden - the visiblity state of the column
+     * @param columnIndex - the column to set (0-based)
+     * @return hidden - <code>false</code> if the column is visible
      */
-
-    boolean isColumnHidden(short column);
+    boolean isColumnHidden(int columnIndex);
 
     /**
      * set the width (in units of 1/256th of a character width)
-     * @param column - the column to set (0-based)
+     * @param columnIndex - the column to set (0-based)
      * @param width - the width in units of 1/256th of a character width
      */
-
-    void setColumnWidth(short column, short width);
+    void setColumnWidth(int columnIndex, int width);
 
     /**
      * get the width (in units of 1/256th of a character width )
-     * @param column - the column to set (0-based)
+     * @param columnIndex - the column to set (0-based)
      * @return width - the width in units of 1/256th of a character width
      */
-
-    short getColumnWidth(short column);
+    int getColumnWidth(int columnIndex);
+    /**
+     * set the default column width for the sheet (if the columns do not define their own width) in
+     * characters
+     * @param width default column width
+     */
+    public void setDefaultColumnWidth(int width);
 
     /**
      * get the default column width for the sheet (if the columns do not define their own width) in
@@ -134,7 +164,7 @@ public interface Sheet extends Iterable<Row> {
      * @return default column width
      */
 
-    short getDefaultColumnWidth();
+    int getDefaultColumnWidth();
 
     /**
      * get the default row height for the sheet (if the rows do not define their own height) in
@@ -151,14 +181,6 @@ public interface Sheet extends Iterable<Row> {
      */
 
     float getDefaultRowHeightInPoints();
-
-    /**
-     * set the default column width for the sheet (if the columns do not define their own width) in
-     * characters
-     * @param width default column width
-     */
-
-    void setDefaultColumnWidth(short width);
 
     /**
      * set the default row height for the sheet (if the rows do not define their own height) in
@@ -190,12 +212,17 @@ public interface Sheet extends Iterable<Row> {
 
     void setGridsPrinted(boolean value);
 
+    
     /**
      * adds a merged region of cells (hence those cells form one)
      * @param region (rowfrom/colfrom-rowto/colto) to merge
      * @return index of this region
      */
+    int addMergedRegion(CellRangeAddress region);
 
+    /**
+     * @deprecated (Aug-2008) use {@link #addMergedRegion(CellRangeAddress)}
+     */
     int addMergedRegion(Region region);
 
     /**

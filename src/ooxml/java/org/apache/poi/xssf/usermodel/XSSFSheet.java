@@ -35,6 +35,7 @@ import org.apache.poi.ss.usermodel.Patriarch;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.Region;
 import org.apache.poi.xssf.model.CommentsTable;
@@ -224,6 +225,12 @@ public class XSSFSheet implements Sheet {
     protected CTSheet getSheet() {
         return this.sheet;
     }
+    public int addMergedRegion(CellRangeAddress cra) {
+    	Region r = new Region(cra.getFirstRow(), (short)cra.getFirstColumn(),
+    			cra.getLastRow(), (short)cra.getLastColumn());
+    	return addMergedRegion(r);
+    }
+    
     
     public int addMergedRegion(Region region) {
     	addNewMergeCell(region);
@@ -345,12 +352,15 @@ public class XSSFSheet implements Sheet {
 		return worksheet.getColBreaks();
 	}
 
+	public int getColumnWidth(int columnIndex) {
+        return (int) columnHelper.getColumn(columnIndex, false).getWidth();
+	}
     public short getColumnWidth(short column) {
-        return (short) columnHelper.getColumn(column, false).getWidth();
+    	return (short) getColumnWidth(column & 0xFFFF);
     }
 
-    public short getDefaultColumnWidth() {
-        return (short) getSheetTypeSheetFormatPr().getDefaultColWidth();
+    public int getDefaultColumnWidth() {
+        return (int)getSheetTypeSheetFormatPr().getDefaultColWidth();
     }
 
     public short getDefaultRowHeight() {
@@ -714,8 +724,11 @@ public class XSSFSheet implements Sheet {
         return false;
     }
 
+    public boolean isColumnHidden(int columnIndex) {
+        return columnHelper.getColumn(columnIndex, false).getHidden();
+    }
     public boolean isColumnHidden(short column) {
-        return columnHelper.getColumn(column, false).getHidden();
+        return isColumnHidden(column & 0xFFFF);
     }
 
     public boolean isDisplayFormulas() {
@@ -839,20 +852,29 @@ public class XSSFSheet implements Sheet {
 
     }
 
+    public void setColumnHidden(int columnIndex, boolean hidden) {
+        columnHelper.setColHidden(columnIndex, hidden);
+    }
     public void setColumnHidden(short column, boolean hidden) {
-        columnHelper.setColHidden(column, hidden);
+    	setColumnHidden(column & 0xFFFF, hidden);
     }
 
+    public void setColumnWidth(int columnIndex, int width) {
+        columnHelper.setColWidth(columnIndex, width);
+    }
     public void setColumnWidth(short column, short width) {
-        columnHelper.setColWidth(column, width);
+    	setColumnWidth(column & 0xFFFF, width & 0xFFFF);
     }
 
     public void setDefaultColumnStyle(short column, CellStyle style) {
     	columnHelper.setColDefaultStyle(column, style);
     }
 
+    public void setDefaultColumnWidth(int width) {
+        getSheetTypeSheetFormatPr().setDefaultColWidth(width);
+    }
     public void setDefaultColumnWidth(short width) {
-        getSheetTypeSheetFormatPr().setDefaultColWidth((double) width);
+    	setDefaultColumnWidth(width & 0xFFFF);
     }
 
     public void setDefaultRowHeight(short height) {
