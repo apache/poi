@@ -48,29 +48,19 @@ public final class TestNper extends TestCase {
 	}
 	
 	public void testEvaluate_bug_45732() {
-// TODO - fix deprecated code etc
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Sheet1");
-		HSSFCell cell = sheet.createRow(0).createCell((short)0);
+		HSSFCell cell = sheet.createRow(0).createCell(0);
 		
 		cell.setCellFormula("NPER(12,4500,100000,100000)");
 		cell.setCellValue(15.0);
 		assertEquals("NPER(12,4500,100000.0,100000.0)", cell.getCellFormula());
-//		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cell.getCachedFormulaResultType());
+		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cell.getCachedFormulaResultType());
 		assertEquals(15.0, cell.getNumericCellValue(), 0.0);
 		
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
-		fe.setCurrentRow(sheet.getRow(0));
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		fe.evaluateFormulaCell(cell);
-//		assertEquals(HSSFCell.CELL_TYPE_ERROR, cell.getCachedFormulaResultType());
-		try {
-			if(cell.getNumericCellValue() == 15.0) {
-				throw new AssertionFailedError("Identified bug 45732");
-			}
-		} catch (RuntimeException e) {
-			// expected during successful test
-			assertEquals("Cannot get a numeric value from a error formula cell", e.getMessage());
-		}
+		assertEquals(HSSFCell.CELL_TYPE_ERROR, cell.getCachedFormulaResultType());
 		assertEquals(HSSFErrorConstants.ERROR_NUM, cell.getErrorCellValue());
 	}
 	
