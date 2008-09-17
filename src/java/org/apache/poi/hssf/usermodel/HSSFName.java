@@ -47,7 +47,7 @@ public final class HSSFName {
      * @return sheet name, which this named range referred to
      */
     public String getSheetName() {
-        short indexToExternSheet = _definedNameRec.getExternSheetNumber();
+        int indexToExternSheet = _definedNameRec.getExternSheetNumber();
 
         return _book.getWorkbook().findSheetNameFromExternSheet(indexToExternSheet);
     }
