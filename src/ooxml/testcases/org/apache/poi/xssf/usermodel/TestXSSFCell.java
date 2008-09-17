@@ -17,8 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,19 +28,24 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.SharedStringSource;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.xssf.model.SharedStringSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
-
-public class TestXSSFCell extends TestCase {
+/**
+ * Tests for {@link XSSFCell}
+ *
+ */
+public final class TestXSSFCell extends TestCase {
     
     private static final String TEST_C10_AUTHOR = "test C10 author";
 
@@ -160,7 +163,7 @@ public class TestXSSFCell extends TestCase {
         assertEquals("Foo2", cell.getRichStringCellValue().getString());
     }
     
-    public void testSetGetStringShared() throws Exception {
+    public void testSetGetStringShared() {
         XSSFRow row = createParentObjects();
         XSSFCell cell = new XSSFCell(row);
 
@@ -176,7 +179,7 @@ public class TestXSSFCell extends TestCase {
     /**
      * Test that empty cells (no v element) return default values.
      */
-    public void testGetEmptyCellValue() throws Exception {
+    public void testGetEmptyCellValue() {
         XSSFRow row = createParentObjects();
         XSSFCell cell = new XSSFCell(row);
         cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
@@ -216,12 +219,12 @@ public class TestXSSFCell extends TestCase {
     }
     
     public static class DummySharedStringSource implements SharedStringSource {
-        ArrayList<String> strs = new ArrayList<String>();
-        public String getSharedStringAt(int idx) {
+        ArrayList<CTRst> strs = new ArrayList<CTRst>();
+        public CTRst getEntryAt(int idx) {
             return strs.get(idx);
         }
 
-        public synchronized int putSharedString(String s) {
+        public synchronized int addEntry(CTRst s) {
             if(strs.contains(s)) {
                 return strs.indexOf(s);
             }
@@ -241,8 +244,8 @@ public class TestXSSFCell extends TestCase {
         
         // Create C10 cell
         Row row = sheet.createRow(9);
-        Cell cell = row.createCell((short)2);
-        Cell cell3 = row.createCell((short)3);
+        row.createCell(2);
+        row.createCell(3);
         
         
         // Set a comment for C10 cell
@@ -267,8 +270,8 @@ public class TestXSSFCell extends TestCase {
         
         // Create C10 cell
         Row row = sheet.createRow(9);
-        Cell cell = row.createCell((short)2);
-        Cell cell3 = row.createCell((short)3);
+        Cell cell = row.createCell(2);
+        row.createCell(3);
         
         // Create a comment
         Comment comment = comments.addComment();
@@ -295,10 +298,11 @@ public class TestXSSFCell extends TestCase {
     	assertEquals("A1", ctWorksheet.getSheetViews().getSheetViewArray(0).getSelectionArray(0).getActiveCell());
     }
     
+    
     /**
      * Tests that cell formatting stuff works as expected
      */
-    public void testCellFormatting() throws Exception {
+    public void testCellFormatting() {
     	Workbook workbook = new XSSFWorkbook();
     	Sheet sheet = workbook.createSheet();
     	CreationHelper creationHelper = workbook.getCreationHelper();
@@ -324,18 +328,13 @@ public class TestXSSFCell extends TestCase {
     	
     	
     	// Save, re-load, and test again
-    	File tmp = File.createTempFile("poi", "xlsx");
-    	FileOutputStream out = new FileOutputStream(tmp);
-    	workbook.write(out);
-    	out.close();
-    	
-    	Workbook wb2 = new XSSFWorkbook(tmp.toString());
+    	Workbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(workbook);
     	Cell c2 = wb2.getSheetAt(0).getRow(0).getCell(0);
     	assertEquals(new Date(654321), c2.getDateCellValue());
     	assertEquals("yyyy/mm/dd", c2.getCellStyle().getDataFormatString());
     }
 
-    private XSSFRow createParentObjects() {
+    private static XSSFRow createParentObjects() {
         XSSFWorkbook wb = new XSSFWorkbook();
         wb.setSharedStringSource(new DummySharedStringSource());
         XSSFSheet sheet = new XSSFSheet(wb);
@@ -347,12 +346,12 @@ public class TestXSSFCell extends TestCase {
      * Test to ensure we can only assign cell styles that belong
      *  to our workbook, and not those from other workbooks.
      */
-    public void testCellStyleWorkbookMatch() throws Exception {
+    public void testCellStyleWorkbookMatch() {
     	XSSFWorkbook wbA = new XSSFWorkbook();
     	XSSFWorkbook wbB = new XSSFWorkbook();
     	
-    	XSSFCellStyle styA = (XSSFCellStyle)wbA.createCellStyle();
-    	XSSFCellStyle styB = (XSSFCellStyle)wbB.createCellStyle();
+    	XSSFCellStyle styA = wbA.createCellStyle();
+    	XSSFCellStyle styB = wbB.createCellStyle();
     	
     	styA.verifyBelongsToStylesSource(wbA.getStylesSource());
     	styB.verifyBelongsToStylesSource(wbB.getStylesSource());

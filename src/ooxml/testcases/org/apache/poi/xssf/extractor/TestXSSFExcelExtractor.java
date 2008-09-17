@@ -14,77 +14,35 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.extractor;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.POITextExtractor;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 
 /**
- * Tests for XSSFExcelExtractor
+ * Tests for {@link XSSFExcelExtractor}
  */
-public class TestXSSFExcelExtractor extends TestCase {
-	/**
-	 * A very simple file
-	 */
-	private File xmlA;
-	/**
-	 * A fairly complex file
-	 */
-	private File xmlB;
-	
-	/**
-	 * A fairly simple file - ooxml
-	 */
-	private File simpleXLSX; 
-	/**
-	 * A fairly simple file - ole2
-	 */
-	private File simpleXLS;
+public final class TestXSSFExcelExtractor extends TestCase {
 
-	protected void setUp() throws Exception {
-		super.setUp();
-		
-		xmlA = new File(
-				System.getProperty("HSSF.testdata.path") +
-				File.separator + "sample.xlsx"
-		);
-		assertTrue(xmlA.exists());
-		xmlB = new File(
-				System.getProperty("HSSF.testdata.path") +
-				File.separator + "AverageTaxRates.xlsx"
-		);
-		assertTrue(xmlB.exists());
-		
-		simpleXLSX = new File(
-				System.getProperty("HSSF.testdata.path") +
-				File.separator + "SampleSS.xlsx"
-		);
-		simpleXLS = new File(
-				System.getProperty("HSSF.testdata.path") +
-				File.separator + "SampleSS.xls"
-		);
-		assertTrue(simpleXLS.exists());
-		assertTrue(simpleXLSX.exists());
+
+	private static final XSSFExcelExtractor getExtractor(String sampleName) {
+		return new XSSFExcelExtractor(XSSFTestDataSamples.openSampleWorkbook(sampleName));
 	}
 
 	/**
 	 * Get text out of the simple file
 	 */
-	public void testGetSimpleText() throws Exception {
-		new XSSFExcelExtractor(xmlA.toString());
-		new XSSFExcelExtractor(new XSSFWorkbook(xmlA.toString()));
-		
-		XSSFExcelExtractor extractor = 
-			new XSSFExcelExtractor(xmlA.toString());
+	public void testGetSimpleText() {
+		// a very simple file
+		XSSFExcelExtractor extractor = getExtractor("sample.xlsx");
 		extractor.getText();
 		
 		String text = extractor.getText();
@@ -97,73 +55,52 @@ public class TestXSSFExcelExtractor extends TestCase {
 		// Now without, will have text
 		extractor.setIncludeSheetNames(false);
 		text = extractor.getText();
+		String CHUNK1 =
+			"Lorem\t111\n" + 
+    		"ipsum\t222\n" + 
+    		"dolor\t333\n" + 
+    		"sit\t444\n" + 
+    		"amet\t555\n" + 
+    		"consectetuer\t666\n" + 
+    		"adipiscing\t777\n" + 
+    		"elit\t888\n" + 
+    		"Nunc\t999\n";
+		String CHUNK2 =
+			"The quick brown fox jumps over the lazy dog\n" +
+			"hello, xssf	hello, xssf\n" +
+			"hello, xssf	hello, xssf\n" +
+			"hello, xssf	hello, xssf\n" +
+			"hello, xssf	hello, xssf\n";
 		assertEquals(
-				"Lorem\t111\n" +
-				"ipsum\t222\n" +
-				"dolor\t333\n" +
-				"sit\t444\n" +
-				"amet\t555\n" +
-				"consectetuer\t666\n" +
-				"adipiscing\t777\n" +
-				"elit\t888\n" +
-				"Nunc\t999\n" +
-				"at\t4995\n" +
-                "The quick brown fox jumps over the lazy dog\n" +
-                "hello, xssf\thello, xssf\n" +
-                "hello, xssf\thello, xssf\n" +
-                "hello, xssf\thello, xssf\n" +
-                "hello, xssf\thello, xssf\n", text);
+				CHUNK1 + 
+				"at\t4995\n" + 
+				CHUNK2
+				, text);
 		
 		// Now get formulas not their values
 		extractor.setFormulasNotResults(true);
 		text = extractor.getText();
 		assertEquals(
-				"Lorem\t111\n" +
-				"ipsum\t222\n" +
-				"dolor\t333\n" +
-				"sit\t444\n" +
-				"amet\t555\n" +
-				"consectetuer\t666\n" +
-				"adipiscing\t777\n" +
-				"elit\t888\n" +
-				"Nunc\t999\n" +
-				"at\tSUM(B1:B9)\n" +
-                "The quick brown fox jumps over the lazy dog\n" +
-                "hello, xssf\thello, xssf\n" +
-                "hello, xssf\thello, xssf\n" +
-                "hello, xssf\thello, xssf\n" +
-                "hello, xssf\thello, xssf\n", text);
+				CHUNK1 +
+				"at\tSUM(B1:B9)\n" + 
+				CHUNK2, text);
 		
 		// With sheet names too
 		extractor.setIncludeSheetNames(true);
 		text = extractor.getText();
 		assertEquals(
 				"Sheet1\n" +
-				"Lorem\t111\n" +
-				"ipsum\t222\n" +
-				"dolor\t333\n" +
-				"sit\t444\n" +
-				"amet\t555\n" +
-				"consectetuer\t666\n" +
-				"adipiscing\t777\n" +
-				"elit\t888\n" +
-				"Nunc\t999\n" +
-				"at\tSUM(B1:B9)\n" +
+				CHUNK1 +
+				"at\tSUM(B1:B9)\n" + 
 				"rich test\n" +
-                "The quick brown fox jumps over the lazy dog\n" +
-                "hello, xssf\thello, xssf\n" +
-                "hello, xssf\thello, xssf\n" +
-                "hello, xssf\thello, xssf\n" +
-                "hello, xssf\thello, xssf\n" +
+				CHUNK2 +
 				"Sheet3\n"
 				, text);
 	}
 	
-	public void testGetComplexText() throws Exception {
-		new XSSFExcelExtractor(xmlB.toString());
-		
-		XSSFExcelExtractor extractor = 
-			new XSSFExcelExtractor(new XSSFWorkbook(xmlB.toString()));
+	public void testGetComplexText() {
+		// A fairly complex file
+		XSSFExcelExtractor extractor = getExtractor("AverageTaxRates.xlsx");
 		extractor.getText();
 		
 		String text = extractor.getText();
@@ -182,12 +119,12 @@ public class TestXSSFExcelExtractor extends TestCase {
 	 *  ExcelExtractor does, when we're both passed
 	 *  the same file, just saved as xls and xlsx
 	 */
-	public void testComparedToOLE2() throws Exception {
-		XSSFExcelExtractor ooxmlExtractor =
-			new XSSFExcelExtractor(simpleXLSX.toString());
+	public void testComparedToOLE2() {
+		// A fairly simple file - ooxml
+		XSSFExcelExtractor ooxmlExtractor = getExtractor("SampleSS.xlsx");
+
 		ExcelExtractor ole2Extractor =
-			new ExcelExtractor(new HSSFWorkbook(
-					new FileInputStream(simpleXLS)));
+			new ExcelExtractor(HSSFTestDataSamples.openSampleWorkbook("SampleSS.xls"));
 		
 		POITextExtractor[] extractors =
 			new POITextExtractor[] { ooxmlExtractor, ole2Extractor };
@@ -207,39 +144,26 @@ public class TestXSSFExcelExtractor extends TestCase {
 	/**
 	 * From bug #45540
 	 */
-	public void testHeaderFooter() throws Exception {
+	public void testHeaderFooter() {
 		String[] files = new String[] {
 			"45540_classic_Header.xlsx", "45540_form_Header.xlsx",
 			"45540_classic_Footer.xlsx", "45540_form_Footer.xlsx",
 		};
-		for(String file : files) {
-			File xml = new File(
-					System.getProperty("HSSF.testdata.path") +
-					File.separator + file
-			);
-			assertTrue(xml.exists());
-			
-			XSSFExcelExtractor extractor = 
-				new XSSFExcelExtractor(new XSSFWorkbook(xml.toString()));
+		for(String sampleName : files) {
+			XSSFExcelExtractor extractor = getExtractor(sampleName);
 			String text = extractor.getText();
 			
-			assertTrue("Unable to find expected word in text from " + file + "\n" + text, text.contains("testdoc"));
-	        assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase")); 
+			assertTrue("Unable to find expected word in text from " + sampleName + "\n" + text, text.contains("testdoc"));
+			assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase")); 
 		}
 	}
 
 	/**
 	 * From bug #45544
 	 */
-	public void testComments() throws Exception {
-		File xml = new File(
-				System.getProperty("HSSF.testdata.path") +
-				File.separator + "45544.xlsx"
-		);
-		assertTrue(xml.exists());
+	public void testComments() {
 		
-		XSSFExcelExtractor extractor = 
-			new XSSFExcelExtractor(new XSSFWorkbook(xml.toString()));
+		XSSFExcelExtractor extractor = getExtractor("45544.xlsx");
 		String text = extractor.getText();
 
 		// No comments there yet

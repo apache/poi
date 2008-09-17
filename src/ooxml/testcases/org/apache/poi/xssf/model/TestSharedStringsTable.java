@@ -19,37 +19,26 @@ package org.apache.poi.xssf.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
-
 import junit.framework.TestCase;
 
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
+
 /**
- * Test SharedStringsTable, the cache of strings in a workbook
+ * Test {@link SharedStringsTable}, the cache of strings in a workbook
  *
  * @author Yegor Kozlov
  */
-public class TestSharedStringsTable extends TestCase {
-	private File xml;
-	
-	protected void setUp() throws Exception {
-		xml = new File(
-				System.getProperty("HSSF.testdata.path") +
-				File.separator + "sample.xlsx"
-		);
-		assertTrue(xml.exists());
-	}
+public final class TestSharedStringsTable extends TestCase {
 
-	public void testCreateNew() throws Exception {
+	public void testCreateNew() {
 		SharedStringsTable sst = new SharedStringsTable();
 		
         CTRst st;
@@ -120,15 +109,19 @@ public class TestSharedStringsTable extends TestCase {
         assertEquals("Second string", new XSSFRichTextString(sst.getEntryAt(2)).toString());
     }
 	
-	public void testReadWrite() throws Exception {
-        XSSFWorkbook wb = new XSSFWorkbook(xml.getPath());
+	public void testReadWrite() {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
         SharedStringsTable sst1 = (SharedStringsTable)wb.getSharedStringSource();
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        sst1.writeTo(out);
-
         //serialize, read back and compare with the original
-        SharedStringsTable sst2 = new SharedStringsTable(new ByteArrayInputStream(out.toByteArray()));
+		SharedStringsTable sst2;
+		try {
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			sst1.writeTo(out);
+			sst2 = new SharedStringsTable(new ByteArrayInputStream(out.toByteArray()));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
         assertEquals(sst1.getCount(), sst2.getCount());
         assertEquals(sst1.getUniqueCount(), sst2.getUniqueCount());
 

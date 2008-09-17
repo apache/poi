@@ -15,6 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.usermodel;
+package org.apache.poi.xssf.model;
 
-public interface SharedStringSource {}
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
+
+/**
+ * Allows the getting and saving of shared strings
+ */
+public interface SharedStringSource {
+	CTRst getEntryAt(int ref);
+	int addEntry(CTRst rst);  
+}
