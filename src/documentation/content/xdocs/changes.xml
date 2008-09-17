@@ -67,6 +67,7 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
         <release version="3.2-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">45780 - Fixed HSSFSheet.shiftRows to also update Area refs</action>
            <action dev="POI-DEVELOPERS" type="fix">45804 - Update HSMF to handle Outlook 3.0 msg files, which have a different string chunk type</action>
            <action dev="POI-DEVELOPERS" type="add">Expose the name of Named Cell Styles via HSSFCellStyle (normally held on the parent style though)</action>
            <action dev="POI-DEVELOPERS" type="fix">45978 - Fixed IOOBE in Ref3DPtg.toFormulaString() due eager initialisation of SheetReferences</action>

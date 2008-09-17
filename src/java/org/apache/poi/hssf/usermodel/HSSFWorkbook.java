@@ -678,10 +678,35 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      *  if needed.
      * Used by some of the more obscure formula and
      *  named range things.
+     * @deprecated for POI internal use only (formula parsing).  This method is likely to
+     * be removed in future versions of POI.
      */
     public int getExternalSheetIndex(int internalSheetIndex) {
         return workbook.checkExternSheet(internalSheetIndex);
     }
+    /**
+     * @deprecated for POI internal use only (formula rendering).  This method is likely to
+     * be removed in future versions of POI.
+     */
+    public String findSheetNameFromExternSheet(int externSheetIndex){
+        // TODO - don't expose internal ugliness like externSheet indexes to the user model API
+        return workbook.findSheetNameFromExternSheet(externSheetIndex);
+    }
+    /**
+     * @deprecated for POI internal use only (formula rendering).  This method is likely to
+     * be removed in future versions of POI.
+     * 
+     * @param refIndex Index to REF entry in EXTERNSHEET record in the Link Table
+     * @param definedNameIndex zero-based to DEFINEDNAME or EXTERNALNAME record
+     * @return the string representation of the defined or external name
+     */
+    public String resolveNameXText(int refIndex, int definedNameIndex) {
+        // TODO - make this less cryptic / move elsewhere
+        return workbook.resolveNameXText(refIndex, definedNameIndex);
+    }
+
+
+
 
     /**
      * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and returns
@@ -863,15 +888,6 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
             }
         }
         return retval;
-    }
-
-    /**
-     * @deprecated for POI internal use only (formula rendering).  This method is likely to
-     * be removed in future versions of POI.
-     */
-    public String findSheetNameFromExternSheet(int externSheetIndex){
-        // TODO - don't expose internal ugliness like externSheet indexes to the user model API
-        return workbook.findSheetNameFromExternSheet(externSheetIndex);
     }
 
     /**
@@ -1383,20 +1399,6 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
         return result;
     }
-
-    /**
-     * @deprecated for POI internal use only (formula rendering).  This method is likely to
-     * be removed in future versions of POI.
-     * 
-     * @param refIndex Index to REF entry in EXTERNSHEET record in the Link Table
-     * @param definedNameIndex zero-based to DEFINEDNAME or EXTERNALNAME record
-     * @return the string representation of the defined or external name
-     */
-    public String resolveNameXText(int refIndex, int definedNameIndex) {
-        // TODO - make this less cryptic / move elsewhere
-        return workbook.resolveNameXText(refIndex, definedNameIndex);
-    }
-
 
     /**
      * Sets the printarea for the sheet provided

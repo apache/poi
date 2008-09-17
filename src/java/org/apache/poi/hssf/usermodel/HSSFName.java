@@ -126,8 +126,16 @@ public class HSSFName implements Name {
      * @return true if the name refers to a deleted cell, false otherwise
      */
     public boolean isDeleted(){
-        String ref = getReference();
-        return "#REF!".endsWith(ref);
+        String formulaText = getReference();
+        if (formulaText.startsWith("#REF!")) {
+        	// sheet deleted
+        	return true;
+        }
+        if (formulaText.endsWith("#REF!")) {
+        	// cell range deleted
+        	return true;
+        }
+        return false;
     }
     public boolean isFunctionName() {
         return _definedNameRec.isFunctionName();

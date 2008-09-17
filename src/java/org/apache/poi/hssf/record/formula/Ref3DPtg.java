@@ -18,12 +18,8 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.hssf.util.RangeAddress;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.util.SheetReferences;
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -34,49 +30,36 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 1.0-pre
  */
-public final class Ref3DPtg extends OperandPtg {
+public final class Ref3DPtg extends RefPtgBase {
     public final static byte sid  = 0x3a;
-
-    private static final BitField rowRelative = BitFieldFactory.getInstance(0x8000);
-    private static final BitField colRelative = BitFieldFactory.getInstance(0x4000);
 
     private final static int  SIZE = 7; // 6 + 1 for Ptg
     private int             field_1_index_extern_sheet;
-    /** The row index - zero based unsigned 16 bit value */
-    private int            field_2_row;
-    /** Field 2 
-     * - lower 8 bits is the zero based unsigned byte column index 
-     * - bit 16 - isRowRelative
-     * - bit 15 - isColumnRelative 
-     */
-    private int             field_3_column;
 
     /** Creates new AreaPtg */
     public Ref3DPtg() {}
 
     public Ref3DPtg(RecordInputStream in) {
         field_1_index_extern_sheet = in.readShort();
-        field_2_row          = in.readShort();
-        field_3_column        = in.readShort();
+        readCoordinates(in);
     }
     
     public Ref3DPtg(String cellref, short externIdx ) {
         CellReference c= new CellReference(cellref);
         setRow(c.getRow());
-        setColumn((short)c.getCol());
+        setColumn(c.getCol());
         setColRelative(!c.isColAbsolute());
         setRowRelative(!c.isRowAbsolute());   
         setExternSheetIndex(externIdx);
     }
 
     public String toString() {
-        CellReference cr = new CellReference(getRow(), getColumn(), !isRowRelative(),!isColRelative());
         StringBuffer sb = new StringBuffer();
         sb.append(getClass().getName());
         sb.append(" [");
         sb.append("sheetIx=").append(getExternSheetIndex());
         sb.append(" ! ");
-        sb.append(cr.formatAsString());
+        sb.append(formatReferenceAsString());
         sb.append("]");
         return sb.toString();
     }
@@ -84,8 +67,7 @@ public final class Ref3DPtg extends OperandPtg {
     public void writeBytes(byte [] array, int offset) {
         array[ 0 + offset ] = (byte) (sid + getPtgClass());
         LittleEndian.putShort(array, 1 + offset , getExternSheetIndex());
-        LittleEndian.putShort(array, 3 + offset , (short)getRow());
-        LittleEndian.putShort(array, 5 + offset , (short)getColumnRaw());
+        writeCoordinates(array, offset+3);
     }
 
     public int getSize() {
@@ -100,83 +82,11 @@ public final class Ref3DPtg extends OperandPtg {
         field_1_index_extern_sheet = index;
     }
 
-    public int getRow() {
-        return field_2_row;
-    }
-
-    public void setRow(int row) {
-        field_2_row = row;
-    }
-
-    public int getColumn() {
-        return field_3_column & 0xFF;
-    }
-
-    public int getColumnRaw() {
-        return field_3_column;
-    }
-
-     public boolean isRowRelative()
-    {
-        return rowRelative.isSet(field_3_column);
-    }
-    
-    public void setRowRelative(boolean rel) {
-        field_3_column=rowRelative.setBoolean(field_3_column,rel);
-    }
-    
-    public boolean isColRelative()
-    {
-        return colRelative.isSet(field_3_column);
-    }
-    
-    public void setColRelative(boolean rel) {
-        field_3_column=colRelative.setBoolean(field_3_column,rel);
-    }
-    public void setColumn(short column) {
-        field_3_column &= 0xFF00;
-        field_3_column |= column & 0xFF;
-    }
-
-    public void setColumnRaw(short column) {
-        field_3_column = column;
-    }
-
-   /* public String getArea(){
-        RangeAddress ra = new RangeAddress("");
-
-        String result = (ra.numTo26Sys(getColumn()) + (getRow() + 1));
-
-        return result;
-    }*/
-
-    public void setArea(String ref){
-        RangeAddress ra = new RangeAddress(ref);
-
-        String from = ra.getFromCell();
-
-        setColumn((short) (ra.getXPosition(from) -1));
-        setRow((short) (ra.getYPosition(from) -1));
-
-    }
-
     /**
      * @return text representation of this cell reference that can be used in text 
      * formulas. The sheet name will get properly delimited if required.
      */
-    public String toFormulaString(Workbook book)
-    {
-        StringBuffer retval = new StringBuffer();
-        String sheetName = book.findSheetNameFromExternSheet(field_1_index_extern_sheet);
-        if(sheetName != null) {
-            SheetNameFormatter.appendFormat(retval, sheetName);
-            retval.append( '!' );
-        }
-        retval.append((new CellReference(getRow(),getColumn(),!isRowRelative(),!isColRelative())).formatAsString()); 
-        return retval.toString();
+    public String toFormulaString(Workbook book) {
+		return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, formatReferenceAsString());
     }
-
-   public byte getDefaultOperandClass() {
-		return Ptg.CLASS_REF;
-	}
 }
