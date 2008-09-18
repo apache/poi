@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
@@ -49,7 +48,7 @@ public class UnknownPtg extends Ptg {
         return size;
     }
 
-    public String toFormulaString(Workbook book)
+    public String toFormulaString()
     {
         return "UNKNOWN";
     }

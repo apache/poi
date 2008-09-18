@@ -21,7 +21,6 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.record.constant.ConstantValueParser;
 import org.apache.poi.hssf.record.constant.ErrorConstant;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -184,7 +183,7 @@ public final class ArrayPtg extends Ptg {
 			+ ConstantValueParser.getEncodedSize(token_3_arrayValues);
 	}
 
-	public String formatAsString() {
+	public String formatAsString() { // TODO - fold into toFormulaString
 		StringBuffer b = new StringBuffer();
 		b.append("{");
 	  	for (int y=0;y<getRowCount();y++) {
@@ -202,7 +201,7 @@ public final class ArrayPtg extends Ptg {
 		b.append("}");
 		return b.toString();
 	}
-	public String toFormulaString(Workbook book) {
+	public String toFormulaString() {
 		return formatAsString();
 	}
 	

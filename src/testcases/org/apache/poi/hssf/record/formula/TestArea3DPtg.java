@@ -14,10 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record.formula;
 
+import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
@@ -27,21 +27,22 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  */
 public final class TestArea3DPtg extends AbstractPtgTestCase {
 
-    /**
-     * confirms that sheet names get properly escaped
-     */
+	/**
+	 * confirms that sheet names get properly escaped
+	 */
 	public void testToFormulaString() {
-		
+
 		Area3DPtg target = new Area3DPtg("A1:B1", (short)0);
-		
+
 		String sheetName = "my sheet";
-		HSSFWorkbook book = createWorkbookWithSheet(sheetName);
+		HSSFWorkbook wb = createWorkbookWithSheet(sheetName);
+		HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(wb);
 		assertEquals("'my sheet'!A1:B1", target.toFormulaString(book));
-		
-        book.setSheetName(0, "Sheet1");
-        assertEquals("Sheet1!A1:B1", target.toFormulaString(book));
-        
-        book.setSheetName(0, "C64");
-        assertEquals("'C64'!A1:B1", target.toFormulaString(book));
+
+		wb.setSheetName(0, "Sheet1");
+		assertEquals("Sheet1!A1:B1", target.toFormulaString(book));
+
+		wb.setSheetName(0, "C64");
+		assertEquals("'C64'!A1:B1", target.toFormulaString(book));
 	}
 }

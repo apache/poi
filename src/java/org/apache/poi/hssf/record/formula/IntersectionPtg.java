@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * @author Daniel Noll (daniel at nuix dot com dot au)
@@ -46,7 +45,7 @@ public final class IntersectionPtg extends OperationPtg {
     }
 
     /** Implementation of method from Ptg */
-    public String toFormulaString(Workbook book)
+    public String toFormulaString()
     {
         return " ";
     }

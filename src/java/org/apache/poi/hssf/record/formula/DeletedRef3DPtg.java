@@ -19,8 +19,9 @@ package org.apache.poi.hssf.record.formula;
 
 
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.ss.usermodel.ErrorConstants;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
+import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -30,7 +31,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Patrick Luby
  * @version 1.0-pre
  */
-public final class DeletedRef3DPtg extends OperandPtg {
+public final class DeletedRef3DPtg extends OperandPtg implements WorkbookDependentFormula {
 	public final static byte sid  = 0x3c;
 	private final int field_1_index_extern_sheet;
 	private final int unused1;
@@ -46,9 +47,12 @@ public final class DeletedRef3DPtg extends OperandPtg {
 		unused1 = 0;
 	}
 
-	public String toFormulaString(Workbook book) {
+	public String toFormulaString(FormulaRenderingWorkbook book) {
 		return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, 
-				ErrorConstants.getText(ErrorConstants.ERROR_REF));
+				HSSFErrorConstants.getText(HSSFErrorConstants.ERROR_REF));
+	}
+	public String toFormulaString() {
+		throw new RuntimeException("3D references need a workbook to determine formula text");
 	}
 	public byte getDefaultOperandClass() {
 		return Ptg.CLASS_REF;

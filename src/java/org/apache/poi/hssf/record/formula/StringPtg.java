@@ -97,7 +97,7 @@ public final class StringPtg extends ScalarConstantPtg {
         }
     }
 
-    protected String toFormulaString() {
+    public String toFormulaString() {
         String value = field_3_string;
         int len = value.length();
         StringBuffer sb = new StringBuffer(len + 4);

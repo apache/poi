@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 
 /**
  * @author Josh Micich
@@ -28,16 +28,16 @@ final class ExternSheetNameResolver {
 		// no instances of this class
 	}
 
-	public static String prependSheetName(Workbook book, int field_1_index_extern_sheet, String cellRefText) {
-		String sheetName = book.findSheetNameFromExternSheet(field_1_index_extern_sheet);
+	public static String prependSheetName(FormulaRenderingWorkbook book, int field_1_index_extern_sheet, String cellRefText) {
+		String sheetName = book.getSheetNameByExternSheet(field_1_index_extern_sheet);
 		StringBuffer sb = new StringBuffer(sheetName.length() + cellRefText.length() + 4);
 		if (sheetName.length() < 1) {
 			// What excel does if sheet has been deleted
 			sb.append("#REF"); // note - '!' added just once below
 		} else {
-			SheetNameFormatter.appendFormat(sb, sheetName);
+    		SheetNameFormatter.appendFormat(sb, sheetName);
 		}
-			sb.append('!');
+   		sb.append('!');
 		sb.append(cellRefText);
 		return sb.toString();
 	}

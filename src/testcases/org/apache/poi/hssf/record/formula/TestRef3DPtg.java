@@ -14,10 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record.formula;
 
+import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
@@ -28,17 +28,17 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 public final class TestRef3DPtg extends AbstractPtgTestCase {
 
 	public void testToFormulaString() {
-		
+
 		Ref3DPtg target = new Ref3DPtg("A1", (short)0);
-		
-		HSSFWorkbook book = createWorkbookWithSheet("my sheet");
-		
+
+		HSSFWorkbook wb = createWorkbookWithSheet("my sheet");
+		HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(wb);
 		assertEquals("'my sheet'!A1", target.toFormulaString(book));
 
-        book.setSheetName(0, "ProfitAndLoss");
-        assertEquals("ProfitAndLoss!A1", target.toFormulaString(book));
-        
-        book.setSheetName(0, "profit+loss");
-        assertEquals("'profit+loss'!A1", target.toFormulaString(book));
+		wb.setSheetName(0, "ProfitAndLoss");
+		assertEquals("ProfitAndLoss!A1", target.toFormulaString(book));
+
+		wb.setSheetName(0, "profit+loss");
+		assertEquals("'profit+loss'!A1", target.toFormulaString(book));
 	}
 }

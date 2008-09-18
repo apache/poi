@@ -32,6 +32,7 @@ import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
+import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 /**
@@ -110,7 +111,8 @@ public final class TestEventWorkbookBuilder extends TestCase {
 		assertTrue(ptgs[0] instanceof Ref3DPtg);
 		
 		Ref3DPtg ptg = (Ref3DPtg)ptgs[0];
-		assertEquals("Sheet1!A1", ptg.toFormulaString(stubHSSF));
+		HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(stubHSSF);
+		assertEquals("Sheet1!A1", ptg.toFormulaString(book));
 		
 		
 		// Now check we get the right formula back for

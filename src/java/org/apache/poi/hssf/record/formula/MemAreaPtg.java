@@ -17,9 +17,8 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * @author Daniel Noll (daniel at nuix dot com dot au)
@@ -74,7 +73,7 @@ public class MemAreaPtg extends OperandPtg {
         return SIZE;
     }
 
-    public String toFormulaString(Workbook book)
+    public String toFormulaString()
     {
         return ""; // TODO: Not sure how to format this. -- DN
     }

@@ -17,15 +17,16 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * 
  * @author aviks
  */
-public final class NameXPtg extends OperandPtg {
+public final class NameXPtg extends OperandPtg implements WorkbookDependentFormula {
 	public final static short sid = 0x39;
 	private final static int SIZE = 7;
 
@@ -65,9 +66,12 @@ public final class NameXPtg extends OperandPtg {
 		return SIZE;
 	}
 
-	public String toFormulaString(Workbook book) {
+	public String toFormulaString(FormulaRenderingWorkbook book) {
 		// -1 to convert definedNameIndex from 1-based to zero-based
-		return book.resolveNameXText(_sheetRefIndex, _nameNumber - 1);
+		return book.resolveNameXText(this);
+	}
+	public String toFormulaString() {
+		throw new RuntimeException("3D references need a workbook to determine formula text");
 	}
 
 	public byte getDefaultOperandClass() {

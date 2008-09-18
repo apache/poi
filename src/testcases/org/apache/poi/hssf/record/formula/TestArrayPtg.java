@@ -119,7 +119,7 @@ public final class TestArrayPtg extends TestCase {
 		
 		String actualFormula;
 		try {
-			actualFormula = ptg.toFormulaString(null);
+			actualFormula = ptg.toFormulaString();
 		} catch (IllegalArgumentException e) {
 			if (e.getMessage().equals("Unexpected constant class (java.lang.Boolean)")) {
 				throw new AssertionFailedError("Identified bug 45380");

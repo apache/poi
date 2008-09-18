@@ -42,7 +42,7 @@ public final class MissingArgPtg extends ScalarConstantPtg {
         return SIZE;
     }
    
-    protected String toFormulaString() {
+    public String toFormulaString() {
         return " ";
     }
 }
