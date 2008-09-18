@@ -32,6 +32,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.SharedStringSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
@@ -336,7 +337,7 @@ public final class TestXSSFCell extends TestCase {
 
     private static XSSFRow createParentObjects() {
         XSSFWorkbook wb = new XSSFWorkbook();
-        wb.setSharedStringSource(new DummySharedStringSource());
+        wb.setSharedStringSource(new SharedStringsTable());
         XSSFSheet sheet = new XSSFSheet(wb);
         XSSFRow row = new XSSFRow(sheet);
         return row;

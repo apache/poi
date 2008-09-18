@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -102,6 +103,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public XSSFWorkbook(String path) throws IOException {
     	this(openPackage(path));
     }
+    public XSSFWorkbook(InputStream  is) throws IOException {
+    	this(openPackage(is));
+    }
+
     public XSSFWorkbook(Package pkg) throws IOException {
         super(pkg);
         try {
@@ -299,11 +304,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     }
 
-    public Font findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
+    public XSSFFont findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
     	short fontNum=getNumberOfFonts();
-        for (short i = 0; i <= fontNum; i++) {
-            XSSFFont xssfFont = (XSSFFont)getFontAt(i);
-            if (xssfFont.getBoldweight() == boldWeight
+        for (short i = 0; i < fontNum; i++) {
+            XSSFFont xssfFont = getFontAt(i);
+            if (    xssfFont.getBold() == (boldWeight == XSSFFont.BOLDWEIGHT_BOLD)
                     && xssfFont.getColor() == color
                     && xssfFont.getFontHeightInPoints() == fontHeight
                     && xssfFont.getFontName().equals(name)
@@ -384,8 +389,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         return (short) getFirstVisibleTab();
     }
 
-    public Font getFontAt(short idx) {
-        return stylesSource.getFontAt(idx);
+    public XSSFFont getFontAt(short idx) {
+        return (XSSFFont)stylesSource.getFontAt(idx);
     }
 
     public XSSFName getNameAt(int index) {
@@ -418,7 +423,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     public short getNumberOfFonts() {
         // TODO Auto-generated method stub
-        return 0;
+        return (short)((StylesTable)stylesSource).getNumberOfFonts();
     }
 
     public int getNumberOfNames() {

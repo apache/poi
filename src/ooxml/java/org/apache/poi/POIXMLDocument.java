@@ -100,7 +100,14 @@ public abstract class POIXMLDocument {
             throw new IOException(e.toString());
         }
     }
-    
+    public static Package openPackage(InputStream is) throws IOException {
+        try {
+            return Package.open(is);
+        } catch (InvalidFormatException e) {
+            throw new IOException(e.toString());
+        }
+    }
+
     protected Package getPackage() {
         return this.pkg;
     }

@@ -70,7 +70,7 @@ public class XSSFCellBorder {
 	}
 
 	public void setBorderColor(BorderSide side, XSSFColor color) {
-		color.setToBorder(getBorder(side));
+		getBorder(side).setColor(color.getCTColor());
 	}
 	
 	private CTBorderPr getBorder(BorderSide side) {

@@ -417,7 +417,7 @@ public class XSSFCellStyle implements CellStyle {
         return (short) getBorderColor(side).getIndexed();
     }
 
-    private void setBorderColorIndexed(BorderSide side, long color) {
+    private void setBorderColorIndexed(BorderSide side, int color) {
         getBorderColor(side).setIndexed(color);
     }
 

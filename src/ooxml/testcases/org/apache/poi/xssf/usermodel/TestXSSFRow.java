@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.TestXSSFCell.DummySharedStringSource;
+import org.apache.poi.xssf.model.SharedStringsTable;
 
 /**
  * Tests for XSSFRow
@@ -167,7 +168,7 @@ public final class TestXSSFRow extends TestCase {
         row.setZeroHeight(true);
         assertTrue(row.getZeroHeight());
     }
-        
+
     /**
      * Tests for the missing/blank cell policy stuff
      */
@@ -184,7 +185,7 @@ public final class TestXSSFRow extends TestCase {
         row.createCell((short)1).setCellValue(3.2);
         row.createCell((short)4, Cell.CELL_TYPE_BLANK);
         row.createCell((short)5).setCellValue(4);
-        
+
         // First up, no policy
         assertEquals(Cell.CELL_TYPE_STRING,  row.getCell(0).getCellType());
         assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(1).getCellType());
@@ -192,7 +193,7 @@ public final class TestXSSFRow extends TestCase {
         assertEquals(null, row.getCell(3));
         assertEquals(Cell.CELL_TYPE_BLANK,   row.getCell(4).getCellType());
         assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(5).getCellType());
-        
+
         // RETURN_NULL_AND_BLANK - same as default
         assertEquals(Cell.CELL_TYPE_STRING,  row.getCell(0, Row.RETURN_NULL_AND_BLANK).getCellType());
         assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(1, Row.RETURN_NULL_AND_BLANK).getCellType());
@@ -200,7 +201,7 @@ public final class TestXSSFRow extends TestCase {
         assertEquals(null, row.getCell(3, Row.RETURN_NULL_AND_BLANK));
         assertEquals(Cell.CELL_TYPE_BLANK,   row.getCell(4, Row.RETURN_NULL_AND_BLANK).getCellType());
         assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(5, Row.RETURN_NULL_AND_BLANK).getCellType());
-        
+
         // RETURN_BLANK_AS_NULL - nearly the same
         assertEquals(Cell.CELL_TYPE_STRING,  row.getCell(0, XSSFRow.RETURN_BLANK_AS_NULL).getCellType());
         assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(1, XSSFRow.RETURN_BLANK_AS_NULL).getCellType());
@@ -208,7 +209,7 @@ public final class TestXSSFRow extends TestCase {
         assertEquals(null, row.getCell(3, XSSFRow.RETURN_BLANK_AS_NULL));
         assertEquals(null, row.getCell(4, XSSFRow.RETURN_BLANK_AS_NULL));
         assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(5, XSSFRow.RETURN_BLANK_AS_NULL).getCellType());
-        
+
         // CREATE_NULL_AS_BLANK - creates as needed
         assertEquals(Cell.CELL_TYPE_STRING,  row.getCell(0, XSSFRow.CREATE_NULL_AS_BLANK).getCellType());
         assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(1, XSSFRow.CREATE_NULL_AS_BLANK).getCellType());
@@ -216,7 +217,7 @@ public final class TestXSSFRow extends TestCase {
         assertEquals(Cell.CELL_TYPE_BLANK,   row.getCell(3, XSSFRow.CREATE_NULL_AS_BLANK).getCellType());
         assertEquals(Cell.CELL_TYPE_BLANK,   row.getCell(4, XSSFRow.CREATE_NULL_AS_BLANK).getCellType());
         assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(5, XSSFRow.CREATE_NULL_AS_BLANK).getCellType());
-        
+
         // Check created ones get the right column
         assertEquals((short)0, row.getCell(0, XSSFRow.CREATE_NULL_AS_BLANK).getCellNum());
         assertEquals((short)1, row.getCell(1, XSSFRow.CREATE_NULL_AS_BLANK).getCellNum());
@@ -244,7 +245,7 @@ public final class TestXSSFRow extends TestCase {
 
     private static XSSFSheet createParentObjects() {
         XSSFWorkbook wb = new XSSFWorkbook();
-        wb.setSharedStringSource(new DummySharedStringSource());
+        wb.setSharedStringSource(new SharedStringsTable());
         return new XSSFSheet(wb);
     }
 }

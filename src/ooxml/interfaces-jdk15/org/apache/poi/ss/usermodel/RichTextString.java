@@ -25,8 +25,6 @@ package org.apache.poi.ss.usermodel;
  * @author Jason Height (jheight at apache.org)
  */
 public interface RichTextString {
-    /** Place holder for indicating that NO_FONT has been applied here */
-    public static final short NO_FONT = 0;
     
     /**
      * Applies a font to the specified characters of a string.
@@ -68,20 +66,8 @@ public interface RichTextString {
     int length();
 
     /**
-     * Returns the font in use at a particular index.
+     * @return  The number of formatting runs used.
      *
-     * @param index         The index.
-     * @return              The font that's currently being applied at that
-     *                      index or null if no font is being applied or the
-     *                      index is out of range.
-     */
-    short getFontAtIndex(int index);
-
-    /**
-     * @return  The number of formatting runs used. There will always be at
-     *          least one of font NO_FONT.
-     *
-     * @see #NO_FONT
      */
     int numFormattingRuns();
 
@@ -91,14 +77,6 @@ public interface RichTextString {
      * @return  the index within the string.
      */
     int getIndexOfFormattingRun(int index);
-
-    /**
-     * Gets the font used in a particular formatting run.
-     *
-     * @param index     the index of the formatting run
-     * @return  the font number used.
-     */
-    short getFontOfFormattingRun(int index);
 
     /**
      * Applies the specified font to the entire string.

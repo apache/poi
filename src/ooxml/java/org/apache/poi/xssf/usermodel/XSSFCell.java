@@ -392,6 +392,10 @@ public final class XSSFCell implements Cell {
 
     }
 
+    public void setCellValue(String str) {
+        this.setCellValue(new XSSFRichTextString(str));
+    }
+    
     public void setCellValue(RichTextString value) {
         if(this.cell.getT() == STCellType.INLINE_STR) {
             this.cell.setV(value.getString());
@@ -401,6 +405,7 @@ public final class XSSFCell implements Cell {
             this.cell.setT(STCellType.S);
         }
         XSSFRichTextString rt = (XSSFRichTextString)value;
+        rt.setStylesTableReference(stylesSource);
         int sRef = sharedStringSource.addEntry(rt.getCTRst());
         this.cell.setV(Integer.toString(sRef));
     }
@@ -437,13 +442,6 @@ public final class XSSFCell implements Cell {
       }
     }
 
-    /**
-     * Creates an XSSFRichTextString for you.
-     */
-	public RichTextString createRichTextString(String text) {
-		return new XSSFRichTextString(text);
-	}
-	
 	public Hyperlink getHyperlink() {
 		return row.getSheet().getHyperlink(row.getRowNum(), cellNum);
 	}

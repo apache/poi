@@ -132,8 +132,6 @@ public final class TestXSSFExcelExtractor extends TestCase {
 			POITextExtractor extractor = extractors[i];
 			
 			String text = extractor.getText().replaceAll("[\r\t]", "");
-			//System.out.println(text.length());
-			//System.out.println(text);
 			assertTrue(text.startsWith("First Sheet\nTest spreadsheet\n2nd row2nd row 2nd column\n"));
 			Pattern pattern = Pattern.compile(".*13(\\.0+)?\\s+Sheet3.*", Pattern.DOTALL);
 			Matcher m = pattern.matcher(text);

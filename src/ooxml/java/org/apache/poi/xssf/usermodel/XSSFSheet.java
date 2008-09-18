@@ -134,6 +134,8 @@ public class XSSFSheet implements Sheet {
         if (this.worksheet.getSheetData() == null) {
         	this.worksheet.addNewSheetData();
         }
+        //CTSheetView sheetView = getSheetTypeSheetView();
+        //sheetView.setWorkbookViewId(0);
         initRows(this.worksheet);
         initColumns(this.worksheet);
         
@@ -984,8 +986,17 @@ public class XSSFSheet implements Sheet {
     }
 
     // HSSFSheet compatibility methods. See also the following zoom related methods
+    /**
+     * Sets the zoom magnication for the sheet.  The zoom is expressed as a
+     * fraction.  For example to express a zoom of 75% use 3 for the numerator
+     * and 4 for the denominator.
+     *
+     * @param numerator     The numerator for the zoom magnification.
+     * @param denominator   The denominator for the zoom magnification.
+     */    
     public void setZoom(int numerator, int denominator) {
-    	setZoom((numerator/denominator) * 100);
+        Float result = new Float(numerator)/new Float(denominator)*100;
+    	setZoom(result.intValue());
     }
 
     public void setZoom(long scale) {

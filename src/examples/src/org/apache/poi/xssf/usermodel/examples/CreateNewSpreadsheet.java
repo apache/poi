@@ -46,7 +46,7 @@ public class CreateNewSpreadsheet {
 		
 		s2.getRow(2).createCell(1).setCellValue(createHelper.createRichTextString("Sheet 2"));
 
-		
+/*
 		// Comment
 		Comment comment = ((XSSFSheet)s1).createComment();
 //		HSSFPatriarch patriach = (HSSFPatriarch)s1.createDrawingPatriarch();
@@ -62,7 +62,7 @@ public class CreateNewSpreadsheet {
 		hyperlink.setLabel("Link to POI");
 		s1.getRow(1).createCell(1).setHyperlink(hyperlink);
 		s1.getRow(1).getCell(1).setCellValue(createHelper.createRichTextString("Link to POI"));
-		
+*/
 		// Save
 		FileOutputStream fout = new FileOutputStream("NewFile.xlsx");
 		wb.write(fout);

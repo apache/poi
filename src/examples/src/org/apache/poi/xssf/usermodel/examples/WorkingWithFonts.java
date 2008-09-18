@@ -21,8 +21,8 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.IndexedColors;
 import org.apache.poi.xssf.usermodel.extensions.XSSFColor;
-import org.apache.poi.xssf.util.IndexedColors;
 
 import java.io.FileOutputStream;
 
@@ -42,7 +42,7 @@ public class WorkingWithFonts {
         font.setFontHeightInPoints((short)24);
         font.setFontName("Courier New");
 
-        font.setColor((short)IndexedColors.RED);
+        font.setColor(IndexedColors.RED.getIndex());
 
         font.setItalic(true);
         font.setStrikeout(true);
