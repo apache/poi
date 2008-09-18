@@ -319,7 +319,7 @@ public final class FormulaParser {
         for(int i = 0; i < book.getNumberOfNames(); i++) {
             // named range name matching is case insensitive
             if(book.getNameAt(i).getNameName().equalsIgnoreCase(name)) {
-                return new NamePtg(name, book);
+                return new NamePtg(i);
             }
         }
         throw new FormulaParseException("Specified named range '"
@@ -388,7 +388,7 @@ public final class FormulaParser {
 
                 // calls to user-defined functions within the workbook
                 // get a Name token which points to a defined name record
-                nameToken = new NamePtg(name, this.book);
+                nameToken = new NamePtg(nameIndex);
             } else {
 				if(book instanceof HSSFWorkbook) {
 					nameToken = ((HSSFWorkbook)book).getNameXPtg(name);

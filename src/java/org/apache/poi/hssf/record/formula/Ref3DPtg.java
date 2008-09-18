@@ -44,7 +44,7 @@ public final class Ref3DPtg extends RefPtgBase {
         readCoordinates(in);
     }
     
-    public Ref3DPtg(String cellref, short externIdx ) {
+    public Ref3DPtg(String cellref, int externIdx ) {
         CellReference c= new CellReference(cellref);
         setRow(c.getRow());
         setColumn(c.getCol());
@@ -65,17 +65,17 @@ public final class Ref3DPtg extends RefPtgBase {
     }
 
     public void writeBytes(byte [] array, int offset) {
-        array[ 0 + offset ] = (byte) (sid + getPtgClass());
-        LittleEndian.putShort(array, 1 + offset , getExternSheetIndex());
-        writeCoordinates(array, offset+3);
+    	LittleEndian.putByte(array, 0 + offset, sid + getPtgClass());
+		LittleEndian.putUShort(array, 1 + offset, getExternSheetIndex());
+		writeCoordinates(array, offset + 3);
     }
 
     public int getSize() {
         return SIZE;
     }
 
-    public short getExternSheetIndex(){
-        return (short)field_1_index_extern_sheet;
+    public int getExternSheetIndex(){
+        return field_1_index_extern_sheet;
     }
 
     public void setExternSheetIndex(int index){

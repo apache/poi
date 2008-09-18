@@ -447,7 +447,7 @@ public final class NameRecord extends Record {
 	/** gets the extern sheet number
 	 * @return extern sheet index
 	 */
-	public short getExternSheetNumber(){
+	public int getExternSheetNumber(){
 		if (field_13_name_definition.length < 1) {
 			return 0;
 		}
@@ -513,7 +513,7 @@ public final class NameRecord extends Record {
 			oldPtg = field_13_name_definition[0];
 		}
 		List temp = new ArrayList();
-		short externSheetIndex = 0;
+		int externSheetIndex = 0;
 
 		if (oldPtg.getClass() == Area3DPtg.class){
 			externSheetIndex =  ((Area3DPtg) oldPtg).getExternSheetIndex();

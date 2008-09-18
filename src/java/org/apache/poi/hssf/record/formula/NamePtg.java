@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.LittleEndian;
 
@@ -31,33 +30,14 @@ public final class NamePtg extends OperandPtg {
     public final static short sid  = 0x23;
     private final static int  SIZE = 5;
     /** one-based index to defined name record */
-    private short             field_1_label_index;
+    private int  field_1_label_index;
     private short             field_2_zero;   // reserved must be 0
 
     /**
-     * Creates new NamePtg and sets its name index to that of the corresponding defined name record
-     * in the workbook.  The search for the name record is case insensitive.  If it is not found, 
-     * it gets created.
+     * @param nameIndex zero-based index to name within workbook
      */
-    public NamePtg(String name, Workbook book) {
-        field_1_label_index = (short)(1+getOrCreateNameRecord(book, name)); // convert to 1-based
-    }
-    /**
-     * @return zero based index of the found or newly created defined name record. 
-     */
-    private static final int getOrCreateNameRecord(Workbook book, String name) {
-        // perhaps this logic belongs in Workbook?
-        int countNames = book.getNumberOfNames();
-        for (int i = 0; i < countNames; i++) {
-            if(name.equalsIgnoreCase( book.getNameName(i) )) {
-                return i; 
-            }
-        }
-        
-        Name nameObj = book.createName();
-        nameObj.setNameName(name);
-        
-        return countNames;
+    public NamePtg(int nameIndex) {
+        field_1_label_index = 1+nameIndex; // convert to 1-based
     }
 
     /** Creates new NamePtg */
@@ -75,9 +55,9 @@ public final class NamePtg extends OperandPtg {
     }
 
     public void writeBytes(byte [] array, int offset) {
-        array[offset+0]= (byte) (sid + getPtgClass());
-        LittleEndian.putShort(array,offset+1,field_1_label_index);
-        LittleEndian.putShort(array,offset+3, field_2_zero);
+    	LittleEndian.putByte(array, offset + 0, sid + getPtgClass());
+		LittleEndian.putUShort(array, offset + 1, field_1_label_index);
+		LittleEndian.putUShort(array, offset + 3, field_2_zero);
     }
 
     public int getSize() {
