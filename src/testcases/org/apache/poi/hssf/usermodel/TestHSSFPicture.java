@@ -47,4 +47,18 @@ public final class TestHSSFPicture extends TestCase{
         assertEquals(848, anchor1.getDx2());
         assertEquals(240, anchor1.getDy2());
     }
+
+    /**
+     * Bug # 45829 reported ArithmeticException (/ by zero) when resizing png with zero DPI.
+     */
+    public void test45829() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sh1 = wb.createSheet();
+        HSSFPatriarch p1 = sh1.createDrawingPatriarch();
+
+        byte[] pictureData = HSSFTestDataSamples.getTestDataFileContent("45829.png");
+        int idx1 = wb.addPicture( pictureData, HSSFWorkbook.PICTURE_TYPE_PNG );
+        HSSFPicture pic = p1.createPicture(new HSSFClientAnchor(), idx1);
+        pic.resize();
+    }
 }
