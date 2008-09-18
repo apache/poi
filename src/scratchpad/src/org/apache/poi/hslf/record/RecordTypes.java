@@ -101,7 +101,7 @@ public class RecordTypes {
     public static final Type MetaFile = new Type(4033,null);
     public static final Type ExOleObjAtom = new Type(4035,ExOleObjAtom.class);
     public static final Type SrKinsoku = new Type(4040,null);
-    public static final Type HandOut = new Type(4041,null);
+    public static final Type HandOut = new Type(4041,DummyPositionSensitiveRecordWithChildren.class);
     public static final Type ExEmbed = new Type(4044,ExEmbed.class);
     public static final Type ExEmbedAtom = new Type(4045,ExEmbedAtom.class);
     public static final Type ExLink = new Type(4046,null);

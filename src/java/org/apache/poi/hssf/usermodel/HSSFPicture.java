@@ -235,6 +235,12 @@ public class HSSFPicture
                     BufferedImage img = r.read(0);
 
                     int[] dpi = getResolution(r);
+
+                    //if DPI is zero then assume standard 96 DPI
+                    //since cannot divide by zero
+                    if (dpi[0] == 0) dpi[0] = 96;
+                    if (dpi[1] == 0) dpi[1] = 96;
+                    
                     size.width = img.getWidth()*96/dpi[0];
                     size.height = img.getHeight()*96/dpi[1];
 
