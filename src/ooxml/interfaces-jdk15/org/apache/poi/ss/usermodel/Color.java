@@ -19,22 +19,5 @@ package org.apache.poi.ss.usermodel;
 
 public interface Color {
 
-    /**
-     * @return index to the standard palette
-     */
-
-    short getIndex();
-
-    /**
-     * @return  triplet representation like that in Excel
-     */
-
-    short[] getTriplet();
-
-    /**
-     * @return a hex string exactly like a gnumeric triplet
-     */
-
-    String getHexString();
 
 }

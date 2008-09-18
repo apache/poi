@@ -639,12 +639,10 @@ public class TestXSSFSheet extends TestCase {
     }
     
     public void testGetActiveCell() {
-    	Workbook workbook = new XSSFWorkbook();
-    	CTSheet ctSheet = CTSheet.Factory.newInstance();
-    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
-    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
-    	ctWorksheet.addNewSheetViews().addNewSheetView().addNewSelection().setActiveCell("R5");
-    	
+    	XSSFWorkbook workbook = new XSSFWorkbook();
+    	XSSFSheet sheet = workbook.createSheet();
+    	sheet.setActiveCell("R5");
+
     	assertEquals("R5", sheet.getActiveCell());
     	
     }
@@ -733,7 +731,6 @@ public class TestXSSFSheet extends TestCase {
     	assertEquals(1, ctWorksheet.getColsArray(0).getColArray(0).getStyle());
     	XSSFRow row = (XSSFRow) sheet.createRow(0);
     	XSSFCell cell = (XSSFCell) sheet.getRow(0).createCell(3);
-    	//System.out.println(cell.getCellStyle());
     	
     }
     
@@ -772,7 +769,6 @@ public class TestXSSFSheet extends TestCase {
 	    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
 
 	    	//one level
-	    	System.out.println("livello 1");
 	    	sheet.groupColumn((short)2,(short)7);
 	    	sheet.groupColumn((short)10,(short)11);
 	    	CTCols cols=sheet.getWorksheet().getColsArray(0);
@@ -784,7 +780,6 @@ public class TestXSSFSheet extends TestCase {
 	    	assertEquals(1, colArray[0].getOutlineLevel());
 
 	    	//two level  
-	    	System.out.println("\n livello 2");
 	    	sheet.groupColumn((short)1,(short)2);
 	    	cols=sheet.getWorksheet().getColsArray(0);
 	    	assertEquals(4,cols.sizeOfColArray());
@@ -792,7 +787,6 @@ public class TestXSSFSheet extends TestCase {
 	    	assertEquals(2, colArray[1].getOutlineLevel());
 
 	    	//three level
-	    	System.out.println("\n livello 3");
 	    	sheet.groupColumn((short)6,(short)8);
 	    	sheet.groupColumn((short)2,(short)3);
 	    	cols=sheet.getWorksheet().getColsArray(0);
@@ -855,5 +849,13 @@ public class TestXSSFSheet extends TestCase {
 
 	    	assertEquals(1,sheet.getSheetTypeSheetFormatPr().getOutlineLevelRow());
 	    }
+            
+            public void testSetZoom() {
+                Workbook workBook = new XSSFWorkbook();
+                XSSFSheet sheet1 = (XSSFSheet) workBook.createSheet("new sheet");
+                sheet1.setZoom(3,4);   // 75 percent magnification
+                long zoom = sheet1.getSheetTypeSheetView().getZoomScale();
+                assertEquals(zoom, 75);
+            }
 
 }

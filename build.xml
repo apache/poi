@@ -555,8 +555,8 @@ under the License.
 	<delete file="${version.java}" />
   </target>
 
-  <target name="test" depends="test-main,test-scratchpad,test-contrib"
-    description="Tests main, contrib and scratchpad"/>
+  <target name="test" depends="test-main,test-scratchpad,test-contrib,test-ooxml"
+    description="Tests main, contrib, scratchpad and ooxml"/>
 
     <target name="-test-main-check">
         <uptodate property="main.test.notRequired" targetfile="${main.testokfile}">
@@ -1206,7 +1206,7 @@ FORREST_HOME environment variable!</echo>
             </manifest>        
         </jar>
 	</target>
-    <target name="jar" depends="compile, compile-version, jar-14" description="Creates jar files for distribution">
+    <target name="jar" depends="compile, compile-version, jar-14, jar-ooxml" description="Creates jar files for distribution">
         <jar destfile="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar">
 			<fileset dir="${main.output.dir}" />
 			<fileset dir="legal/" />

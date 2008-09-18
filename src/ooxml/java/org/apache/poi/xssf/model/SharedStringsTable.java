@@ -195,7 +195,7 @@ public class SharedStringsTable implements SharedStringSource, XSSFModel {
         options.setUseDefaultNamespace();
 
         //re-create the sst table every time saving a workbook
-        SstDocument doc = SstDocument.Factory.newInstance(options);
+        SstDocument doc = SstDocument.Factory.newInstance();
         CTSst sst = doc.addNewSst();
         sst.setCount(count);
         sst.setUniqueCount(uniqueCount);

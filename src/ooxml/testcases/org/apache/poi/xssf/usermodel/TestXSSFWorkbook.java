@@ -247,7 +247,7 @@ public class TestXSSFWorkbook extends TestCase {
     	
     	//get default font, then change 2 values and check against different values (height changes)
     	Font font=workbook.createFont();
-    	font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+    	((XSSFFont)font).setBold(true);
     	font.setUnderline(Font.U_DOUBLE);
     	StylesSource styleSource=new StylesTable();
     	long index=styleSource.putFont(font);
@@ -289,6 +289,25 @@ public class TestXSSFWorkbook extends TestCase {
         Long x = styleSource.putFont(customFont);
         fontAt = workbook.getFontAt(x.shortValue());
         assertNotNull(fontAt);
+    }
+    
+    public void testGetNumberOfFonts(){
+     	XSSFWorkbook wb = new XSSFWorkbook();
+
+        XSSFFont f1=wb.createFont();
+     	f1.setBold(true);
+     	wb.createCellStyle().setFont(f1);
+
+        XSSFFont f2=wb.createFont();
+     	f2.setUnderline(Font.U_DOUBLE);
+        wb.createCellStyle().setFont(f2);
+
+        XSSFFont f3=wb.createFont();
+     	f3.setFontHeightInPoints((short)23);
+        wb.createCellStyle().setFont(f3);
+
+        assertEquals(4,wb.getNumberOfFonts());
+     	assertEquals(Font.U_DOUBLE,wb.getFontAt((short)2).getUnderline());
     }
     
     public void testGetNumCellStyles(){

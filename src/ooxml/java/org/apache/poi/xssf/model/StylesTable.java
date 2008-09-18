@@ -20,6 +20,7 @@ package org.apache.poi.xssf.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -59,7 +60,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;
  */
 public class StylesTable implements StylesSource, XSSFModel {
     private final Hashtable<Long,String> numberFormats = new Hashtable<Long,String>();
-    private final LinkedList<CTFont> fonts = new LinkedList<CTFont>();
+    private final ArrayList<CTFont> fonts = new ArrayList<CTFont>();
     private final LinkedList<CTFill> fills = new LinkedList<CTFill>();
     private final LinkedList<CTBorder> borders = new LinkedList<CTBorder>();
     private final LinkedList<CTXf> styleXfs = new LinkedList<CTXf>();
@@ -230,7 +231,12 @@ public class StylesTable implements StylesSource, XSSFModel {
     public int getNumCellStyles(){
         return styleXfs.size();
     }
-      
+    /**
+     * get the size of fonts
+     */
+    public int getNumberOfFonts(){
+        return this.fonts.size();
+    } 
     /**
      * For unit testing only
      */
@@ -367,7 +373,7 @@ public class StylesTable implements StylesSource, XSSFModel {
 		return fill.putFill(fills);
 	}
 
-    private long putFont(XSSFFont font, LinkedList<CTFont> fonts) {
+    private long putFont(XSSFFont font, ArrayList<CTFont> fonts) {
     	return font.putFont(fonts);
 	}
 	private void initialize() {
@@ -423,8 +429,8 @@ public class StylesTable implements StylesSource, XSSFModel {
     	XSSFFont font=new XSSFFont(ctFont);
 		return font;
 		*/
-		
-		XSSFFont xssfFont=new XSSFFont();
+		CTFont ctFont = CTFont.Factory.newInstance();		
+		XSSFFont xssfFont=new XSSFFont(ctFont);
 		xssfFont.setFontHeightInPoints(XSSFFont.DEFAULT_FONT_SIZE);
 		xssfFont.setColor(XSSFFont.DEFAULT_FONT_COLOR);//setTheme 
 		xssfFont.setFontName(XSSFFont.DEFAULT_FONT_NAME);

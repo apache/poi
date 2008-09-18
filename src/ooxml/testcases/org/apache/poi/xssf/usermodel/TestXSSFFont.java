@@ -1,5 +1,7 @@
 package org.apache.poi.xssf.usermodel;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,9 +13,8 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.util.CTFontWrapper;
 import org.apache.poi.xssf.util.Charset;
-import org.apache.poi.xssf.util.IndexedColors;
+import org.openxml4j.opc.Package;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
@@ -38,60 +39,51 @@ public class TestXSSFFont extends TestCase{
 
 	public void testBoldweight(){
 		CTFont ctFont=CTFont.Factory.newInstance();
-		CTFontWrapper wrapper=new CTFontWrapper(ctFont);
-
-		CTBooleanProperty bool=wrapper.getCTFont().addNewB();
+		CTBooleanProperty bool=ctFont.addNewB();
 		bool.setVal(false);
-		wrapper.setB(bool);	
-
+		ctFont.setBArray(0,bool);
 		XSSFFont xssfFont=new XSSFFont(ctFont);
-		assertEquals(Font.BOLDWEIGHT_NORMAL, xssfFont.getBoldweight());
+		assertEquals(false, xssfFont.getBold());
 
 
-		xssfFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		xssfFont.setBold(true);
 		assertEquals(ctFont.getBArray().length,1);
 		assertEquals(true, ctFont.getBArray(0).getVal());
-		assertEquals(true,wrapper.getB().getVal());
-
 	}
 
 	public void testCharSet(){
 		CTFont ctFont=CTFont.Factory.newInstance();
-		CTFontWrapper wrapper=new CTFontWrapper(ctFont);
 		CTIntProperty prop=ctFont.addNewCharset();
 		prop.setVal(Charset.ANSI_CHARSET);
-		
-		wrapper.setCharset(prop);
+
+		ctFont.setCharsetArray(0,prop);
 		XSSFFont xssfFont=new XSSFFont(ctFont);
 		assertEquals(Font.ANSI_CHARSET,xssfFont.getCharSet());
-		
+
 		xssfFont.setCharSet(Font.DEFAULT_CHARSET);
-		assertEquals(Charset.DEFAULT_CHARSET, wrapper.getCharset().getVal());
+		assertEquals(Charset.DEFAULT_CHARSET,ctFont.getCharsetArray(0).getVal());
 	}
 
 
 	public void testFontName(){
 		CTFont ctFont=CTFont.Factory.newInstance();
-		CTFontWrapper wrapper=new CTFontWrapper(ctFont);
 		CTFontName fname=ctFont.addNewName();
 		fname.setVal("Arial");
-		wrapper.setFontName(fname);
+		ctFont.setNameArray(0,fname);
 
 		XSSFFont xssfFont=new XSSFFont(ctFont);
 		assertEquals("Arial", xssfFont.getFontName());
 
 		xssfFont.setFontName("Courier");
-		assertEquals("Courier",wrapper.getName().getVal());
+		assertEquals("Courier",ctFont.getNameArray(0).getVal());
 	}
 
 
 	public void testItalic(){
 		CTFont ctFont=CTFont.Factory.newInstance();
-		CTFontWrapper wrapper=new CTFontWrapper(ctFont);
-
-		CTBooleanProperty bool=wrapper.getCTFont().addNewI();
+		CTBooleanProperty bool=ctFont.addNewI();
 		bool.setVal(false);
-		wrapper.setI(bool);	
+		ctFont.setIArray(0,bool);
 
 		XSSFFont xssfFont=new XSSFFont(ctFont);
 		assertEquals(false, xssfFont.getItalic());
@@ -99,17 +91,15 @@ public class TestXSSFFont extends TestCase{
 		xssfFont.setItalic(true);
 		assertEquals(ctFont.getIArray().length,1);
 		assertEquals(true, ctFont.getIArray(0).getVal());
-		assertEquals(true,wrapper.getI().getVal());
+		assertEquals(true,ctFont.getIArray(0).getVal());
 	}
 
 
 	public void testStrikeout(){
 		CTFont ctFont=CTFont.Factory.newInstance();
-		CTFontWrapper wrapper=new CTFontWrapper(ctFont);
-
-		CTBooleanProperty bool=wrapper.getCTFont().addNewStrike();
+		CTBooleanProperty bool=ctFont.addNewStrike();
 		bool.setVal(false);
-		wrapper.setStrike(bool);	
+		ctFont.setStrikeArray(0,bool);
 
 		XSSFFont xssfFont=new XSSFFont(ctFont);
 		assertEquals(false, xssfFont.getStrikeout());
@@ -117,139 +107,218 @@ public class TestXSSFFont extends TestCase{
 		xssfFont.setStrikeout(true);
 		assertEquals(ctFont.getStrikeArray().length,1);
 		assertEquals(true, ctFont.getStrikeArray(0).getVal());
-		assertEquals(true,wrapper.getStrike().getVal());
+		assertEquals(true,ctFont.getStrikeArray(0).getVal());
 	}
 
 
 	public void testFontHeight(){
 		CTFont ctFont=CTFont.Factory.newInstance();
-		CTFontWrapper wrapper=new CTFontWrapper(ctFont);
 		CTFontSize size=ctFont.addNewSz();
 		size.setVal(11);
-		wrapper.setSz(size);
-		
+		ctFont.setSzArray(0,size);
+
 		XSSFFont xssfFont=new XSSFFont(ctFont);
 		assertEquals(11/20,xssfFont.getFontHeight());
-		
+
 		xssfFont.setFontHeight((short)20);
-		assertEquals(new Double(20*20).doubleValue(),wrapper.getSz().getVal());	}
+		assertEquals(new Double(20*20).doubleValue(),ctFont.getSzArray(0).getVal());
+	}
 
 
 	public void testFontHeightInPoint(){
 		CTFont ctFont=CTFont.Factory.newInstance();
-		CTFontWrapper wrapper=new CTFontWrapper(ctFont);
 		CTFontSize size=ctFont.addNewSz();
 		size.setVal(14);
-		wrapper.setSz(size);
-		
+		ctFont.setSzArray(0,size);
+
 		XSSFFont xssfFont=new XSSFFont(ctFont);
 		assertEquals(14,xssfFont.getFontHeightInPoints());
-		
+
 		xssfFont.setFontHeightInPoints((short)20);
-		assertEquals(new Double(20).doubleValue(),wrapper.getSz().getVal());
+		assertEquals(new Double(20).doubleValue(),ctFont.getSzArray(0).getVal());
 	}
 
 
 	public void testUnderline(){
 		CTFont ctFont=CTFont.Factory.newInstance();
-		CTFontWrapper wrapper=new CTFontWrapper(ctFont);
-
-		CTUnderlineProperty underlinePropr=wrapper.getCTFont().addNewU();
+		CTUnderlineProperty underlinePropr=ctFont.addNewU();
 		underlinePropr.setVal(STUnderlineValues.SINGLE);
-		wrapper.setU(underlinePropr);	
+		ctFont.setUArray(0,underlinePropr);
 
 		XSSFFont xssfFont=new XSSFFont(ctFont);
 		assertEquals(Font.U_SINGLE, xssfFont.getUnderline());
 
 		xssfFont.setUnderline(Font.U_DOUBLE);
 		assertEquals(ctFont.getUArray().length,1);
-		assertEquals(STUnderlineValues.DOUBLE,wrapper.getU().getVal());
-		}			
+		assertEquals(STUnderlineValues.DOUBLE,ctFont.getUArray(0).getVal());
+		}
 
 	public void testColor(){
 		CTFont ctFont=CTFont.Factory.newInstance();
-		CTFontWrapper wrapper=new CTFontWrapper(ctFont);
 		CTColor color=ctFont.addNewColor();
-		//color.setIndexed(IndexedColors.DEFAULT_COLOR);
 		color.setIndexed(XSSFFont.DEFAULT_FONT_COLOR);
-		wrapper.setColor(color);
-		
+		ctFont.setColorArray(0,color);
+
 		XSSFFont xssfFont=new XSSFFont(ctFont);
 		assertEquals(Font.COLOR_NORMAL,xssfFont.getColor());
-		
-		xssfFont.setColor(Font.COLOR_RED);
-		assertEquals(IndexedColors.RED,wrapper.getColor().getIndexed());
+
+		xssfFont.setColor(IndexedColors.RED.getIndex());
+		assertEquals(IndexedColors.RED.getIndex(), ctFont.getColorArray(0).getIndexed());
+	}
+/*
+	public void testRgbColor(){
+		CTFont ctFont=CTFont.Factory.newInstance();
+		CTColor color=ctFont.addNewColor();
+		color.setRgb(new byte[]{});
+		ctFont.setColorArray(0,color);
+
+		XSSFFont xssfFont=new XSSFFont(ctFont);
+		assertEquals(,xssfFont.getRgbColor());
+
+		xssfFont.setRgbColor(new XSSFColor(new java.awt.Color(10,19,10)));
+		//assertEquals(,ctFont.getColorArray(0).getRgb());
 	}
 
+	public void testThemeColor(){
+		CTFont ctFont=CTFont.Factory.newInstance();
+		CTColor color=ctFont.addNewColor();
+		color.setTheme();
+		ctFont.setColorArray(0,color);
 
+		XSSFFont xssfFont=new XSSFFont(ctFont);
+		assertEquals(,xssfFont.getThemeColor());
+
+		xssfFont.setThemeColor(Font.COLOR_RED);
+		assertEquals(,ctFont.getColorArray(0).getTheme());
+		assertEquals(,ctFont.getColorArray(0).getTint());
+	}
+*/
 	public void testFamily(){
 		CTFont ctFont=CTFont.Factory.newInstance();
-		CTFontWrapper wrapper=new CTFontWrapper(ctFont);
 		CTIntProperty family=ctFont.addNewFamily();
 		family.setVal(XSSFFont.FONT_FAMILY_MODERN);
-		wrapper.setFamily(family);
-		
+		ctFont.setFamilyArray(0,family);
+
 		XSSFFont xssfFont=new XSSFFont(ctFont);
 		assertEquals(XSSFFont.FONT_FAMILY_MODERN,xssfFont.getFamily());
-
 	}
 
-	
+
 	public void testScheme(){
 		CTFont ctFont=CTFont.Factory.newInstance();
-		CTFontWrapper wrapper=new CTFontWrapper(ctFont);
 		CTFontScheme scheme=ctFont.addNewScheme();
 		scheme.setVal(STFontScheme.MAJOR);
-		wrapper.setFontScheme(scheme);
-		
+		ctFont.setSchemeArray(0,scheme);
+
 		XSSFFont font=new XSSFFont(ctFont);
 		assertEquals(XSSFFont.SCHEME_MAJOR,font.getScheme());
-		
+
 		font.setScheme(XSSFFont.SCHEME_NONE);
-		assertEquals(STFontScheme.NONE,wrapper.getFontScheme().getVal());		
+		assertEquals(STFontScheme.NONE,ctFont.getSchemeArray(0).getVal());
 	}
 
 	public void testTypeOffset(){
 		CTFont ctFont=CTFont.Factory.newInstance();
-		CTFontWrapper wrapper=new CTFontWrapper(ctFont);
 		CTVerticalAlignFontProperty valign=ctFont.addNewVertAlign();
 		valign.setVal(STVerticalAlignRun.BASELINE);
-		wrapper.setVertAlign(valign);
-		
+		ctFont.setVertAlignArray(0,valign);
+
 		XSSFFont font=new XSSFFont(ctFont);
 		assertEquals(Font.SS_NONE,font.getTypeOffset());
-		
+
 		font.setTypeOffset(XSSFFont.SS_SUPER);
-		assertEquals(STVerticalAlignRun.SUPERSCRIPT,wrapper.getVertAlign().getVal());	
+		assertEquals(STVerticalAlignRun.SUPERSCRIPT,ctFont.getVertAlignArray(0).getVal());
 	}
-	
+
+	/**
+	 * Tests that we can define fonts to a new
+	 *  file, save, load, and still see them
+	 * @throws Exception
+	 */
+	public void testCreateSave() throws Exception {
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet s1 = (XSSFSheet)wb.createSheet();
+		Row r1 = s1.createRow(0);
+		Cell r1c1 = r1.createCell(0);
+		r1c1.setCellValue(2.2);
+
+		assertEquals(1, wb.getNumberOfFonts());
+
+		XSSFFont font=wb.createFont();
+		font.setBold(true);
+		font.setStrikeout(true);
+		font.setColor(IndexedColors.YELLOW.getIndex());
+		font.setFontName("Courier");
+        wb.createCellStyle().setFont(font);
+        assertEquals(2, wb.getNumberOfFonts());
+
+		CellStyle cellStyleTitle=wb.createCellStyle();
+		cellStyleTitle.setFont(font);
+		r1c1.setCellStyle(cellStyleTitle);
+
+		// Save and re-load
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		wb.write(baos);
+		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+
+		wb = new XSSFWorkbook(Package.open(bais));
+		s1 = (XSSFSheet)wb.getSheetAt(0);
+
+		assertEquals(2, wb.getNumberOfFonts());
+		assertNotNull(s1.getRow(0).getCell(0).getCellStyle().getFont(wb));
+		assertEquals(IndexedColors.YELLOW.getIndex(), s1.getRow(0).getCell(0).getCellStyle().getFont(wb).getColor());
+		assertEquals("Courier", s1.getRow(0).getCell(0).getCellStyle().getFont(wb).getFontName());
+
+		// Now add an orphaned one
+		XSSFFont font2 = wb.createFont();
+		font2.setItalic(true);
+		font2.setFontHeightInPoints((short)15);
+		wb.createCellStyle().setFont(font2);
+        assertEquals(3, wb.getNumberOfFonts());
+
+		// Save and re-load
+		baos = new ByteArrayOutputStream();
+		wb.write(baos);
+		bais = new ByteArrayInputStream(baos.toByteArray());
+
+		wb = new XSSFWorkbook(Package.open(bais));
+		s1 = (XSSFSheet)wb.getSheetAt(0);
+
+		assertEquals(3, wb.getNumberOfFonts());
+		assertNotNull(wb.getFontAt((short)1));
+		assertNotNull(wb.getFontAt((short)2));
+
+		assertEquals(15, wb.getFontAt((short)2).getFontHeightInPoints());
+		assertEquals(true, wb.getFontAt((short)2).getItalic());
+	}
+
 
 	public void testXSSFFont() throws IOException{
 		XSSFWorkbook workbook=new XSSFWorkbook();
 		//Font font1=workbook.createFont();
-		
+
 		Sheet sheet=workbook.createSheet("sheet 1 - test font");
-		
-		
+
+
 		Row row=sheet.createRow(0);
 		Cell cell=row.createCell(0);
 		cell.setCellValue(new XSSFRichTextString("XSSFFont test example file"));
-		Font font=new XSSFFont();
-		font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		XSSFFont font=new XSSFFont();
+		font.setBold(true);
 		font.setFontHeightInPoints((short)22);
-		font.setColor((short)IndexedColors.BLUE);
+		font.setColor(IndexedColors.BLUE.getIndex());
 		font.setFontName("Verdana");
 		CellStyle cellStyleTitle=workbook.createCellStyle();
 		cellStyleTitle.setFont(font);
 		cell.setCellStyle(cellStyleTitle);
 
-		
+
 		row=sheet.createRow(3);
-		Font font1=new XSSFFont();
-		font1.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		XSSFFont font1=new XSSFFont();
+		font1.setBold(true);
 		font1.setItalic(true);
 		font1.setFontHeightInPoints((short)18);
-		font1.setColor(Font.COLOR_RED);
+		font1.setColor(IndexedColors.RED.getIndex());
 		font1.setFontName("Arial");
 		CellStyle cellStyle1=workbook.createCellStyle();
 		cellStyle1.setFont(font1);
@@ -279,7 +348,7 @@ public class TestXSSFFont extends TestCase{
 		font3.setFontHeightInPoints((short)9);
 		font3.setFontName("Times");
 		font3.setStrikeout(true);
-		font3.setColor((short)IndexedColors.PINK);
+		font3.setColor(IndexedColors.PINK.getIndex());
 		CellStyle cellStyle3=workbook.createCellStyle();
 		cellStyle3.setFont(font3);
 

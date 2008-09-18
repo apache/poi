@@ -17,7 +17,7 @@
 package org.apache.poi.xssf.usermodel.examples;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xssf.util.IndexedColors;
+import org.apache.poi.xssf.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.*;
 
 import java.io.FileOutputStream;
@@ -40,13 +40,13 @@ public class WorkingWithBorders {
         // Style the cell with borders all around.
         CellStyle style = wb.createCellStyle();
         style.setBorderBottom(CellStyle.BORDER_THIN);
-        style.setBottomBorderColor((short)IndexedColors.BLACK);
+        style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
         style.setBorderLeft(CellStyle.BORDER_THIN);
-        style.setLeftBorderColor((short)IndexedColors.GREEN);
+        style.setLeftBorderColor(IndexedColors.GREEN.getIndex());
         style.setBorderRight(CellStyle.BORDER_THIN);
-        style.setRightBorderColor((short)IndexedColors.BLUE);
+        style.setRightBorderColor(IndexedColors.BLUE.getIndex());
         style.setBorderTop(CellStyle.BORDER_MEDIUM_DASHED);
-        style.setTopBorderColor((short)IndexedColors.BLACK);
+        style.setTopBorderColor(IndexedColors.BLACK.getIndex());
         cell.setCellStyle(style);
 
         // Write the output to a file

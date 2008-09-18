@@ -130,14 +130,6 @@ public interface Font {
     String getFontName();
 
     /**
-     * get the index within the HSSFWorkbook (sequence within the collection of Font objects)
-     * @return unique index number of the underlying record this Font represents (probably you don't care
-     *  unless you're comparing which one is which)
-     */
-
-    short getIndex();
-
-    /**
      * set the font height in unit's of 1/20th of a point.  Maybe you might want to
      * use the setFontHeightInPoints which matches to the familiar 10, 12, 14 etc..
      * @param height height in 1/20ths of a point
@@ -216,24 +208,6 @@ public interface Font {
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
      */
     short getColor();
-
-    /**
-     * set the boldness to use
-     * @param boldweight
-     * @see #BOLDWEIGHT_NORMAL
-     * @see #BOLDWEIGHT_BOLD
-     */
-
-    void setBoldweight(short boldweight);
-
-    /**
-     * get the boldness to use
-     * @return boldweight
-     * @see #BOLDWEIGHT_NORMAL
-     * @see #BOLDWEIGHT_BOLD
-     */
-
-    short getBoldweight();
 
     /**
      * set normal,super or subscript.

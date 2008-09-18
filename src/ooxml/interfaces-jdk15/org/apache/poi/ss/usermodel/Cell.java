@@ -173,6 +173,8 @@ public interface Cell {
 
     void setCellValue(RichTextString value);
 
+    void setCellValue(String value);
+
     void setCellFormula(String formula);
 
     String getCellFormula();

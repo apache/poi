@@ -18,6 +18,6 @@
 package org.apache.poi.ss.usermodel;
 
 public interface Comment {
-	public void setRow(short row);
+	public void setRow(int row);
 	public void setColumn(short row);
 }
