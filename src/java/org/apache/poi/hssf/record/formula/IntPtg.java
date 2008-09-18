@@ -68,7 +68,7 @@ public final class IntPtg extends ScalarConstantPtg {
         return SIZE;
     }
 
-    protected String toFormulaString() {
+    public String toFormulaString() {
         return String.valueOf(getValue());
     }
 }

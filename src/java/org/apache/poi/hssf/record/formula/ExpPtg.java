@@ -17,10 +17,8 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
-
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -61,7 +59,7 @@ public final class ExpPtg extends ControlPtg {
       return field_2_first_col;
     }    
 
-    public String toFormulaString(Workbook book)
+    public String toFormulaString()
     {
         throw new RecordFormatException("Coding Error: Expected ExpPtg to be converted from Shared to Non-Shared Formula by ValueRecordsAggregate, but it wasn't");
     }

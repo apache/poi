@@ -46,5 +46,4 @@ public abstract class OperationPtg extends Ptg {
     	// TODO remove "int getType();" from Eval hierarchy
     	throw new RuntimeException("remove this method");
     }
-    
 }

@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * @author Glen Stampoultzis (glens at apache.org)
@@ -45,7 +44,7 @@ public final class UnionPtg extends OperationPtg {
         array[ offset + 0 ] = sid;
     }
 
-    public String toFormulaString(Workbook book)
+    public String toFormulaString()
     {
         return ",";
     }

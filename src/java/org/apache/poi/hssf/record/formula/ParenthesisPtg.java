@@ -18,10 +18,6 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import java.util.List;
-
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * While formula tokens are stored in RPN order and thus do not need parenthesis for 
@@ -52,7 +48,7 @@ public final class ParenthesisPtg extends ControlPtg {
         return SIZE;
     }
 
-    public String toFormulaString(Workbook book)
+    public String toFormulaString()
     {
         return "()";
     }

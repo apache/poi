@@ -18,8 +18,9 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -30,7 +31,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 1.0-pre
  */
-public final class Ref3DPtg extends RefPtgBase {
+public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormula {
     public final static byte sid  = 0x3a;
 
     private final static int  SIZE = 7; // 6 + 1 for Ptg
@@ -86,7 +87,10 @@ public final class Ref3DPtg extends RefPtgBase {
      * @return text representation of this cell reference that can be used in text 
      * formulas. The sheet name will get properly delimited if required.
      */
-    public String toFormulaString(Workbook book) {
+    public String toFormulaString(FormulaRenderingWorkbook book) {
 		return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, formatReferenceAsString());
     }
+	public String toFormulaString() {
+		throw new RuntimeException("3D references need a workbook to determine formula text");
+	}
 }

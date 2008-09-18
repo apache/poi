@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Common superclass of all value operators.
@@ -47,7 +47,7 @@ public abstract class ValueOperatorPtg extends OperationPtg {
 	public final int getSize() {
 		return 1;
 	}
-    public final String toFormulaString(Workbook book) {
+    public final String toFormulaString() {
     	// TODO - prune this method out of the hierarchy
     	throw new RuntimeException("toFormulaString(String[] operands) should be used for subclasses of OperationPtgs");
 	}

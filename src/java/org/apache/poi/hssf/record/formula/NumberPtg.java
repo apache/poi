@@ -63,7 +63,7 @@ public final class NumberPtg extends ScalarConstantPtg {
         return SIZE;
     }
 
-    protected String toFormulaString() {
+    public String toFormulaString() {
         // TODO - java's rendering of double values is not quite same as excel's
         // Maybe use HSSFDataFormatter?
         return String.valueOf(field_1_value);

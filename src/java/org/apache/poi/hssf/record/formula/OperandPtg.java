@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
+
 /**
  * @author Josh Micich
  */

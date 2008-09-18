@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  *
@@ -45,7 +45,7 @@ public final class MemErrPtg extends MemAreaPtg {
         array[offset] = (byte) (sid + getPtgClass());
     }
 
-    public String toFormulaString(Workbook book)
+    public String toFormulaString()
     {
         return "ERR#";
     }

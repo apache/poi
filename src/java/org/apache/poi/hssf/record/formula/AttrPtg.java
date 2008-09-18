@@ -17,12 +17,10 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
-
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * "Special Attributes"
@@ -244,11 +242,11 @@ public final class AttrPtg extends ControlPtg {
         if(space.isSet(field_1_options)) {
             return operands[ 0 ];
         } else if (optiIf.isSet(field_1_options)) {
-            return toFormulaString((Workbook)null) + "(" + operands[ 0 ]             +")";
+            return toFormulaString() + "(" + operands[ 0 ]             +")";
         } else if (optGoto.isSet(field_1_options)) {
-            return toFormulaString((Workbook)null) + operands[0];   //goto isn't a real formula element should not show up
+            return toFormulaString() + operands[0];   //goto isn't a real formula element should not show up
         } else {
-            return toFormulaString((Workbook)null) + "(" + operands[ 0 ] + ")";
+            return toFormulaString() + "(" + operands[ 0 ] + ")";
         }
     }
   
@@ -263,7 +261,7 @@ public final class AttrPtg extends ControlPtg {
         return -1;
     }
         
-   public String toFormulaString(Workbook book) {
+   public String toFormulaString() {
       if(semiVolatile.isSet(field_1_options)) {
         return "ATTR(semiVolatile)";
       }
