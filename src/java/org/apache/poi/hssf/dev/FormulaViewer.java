@@ -97,7 +97,7 @@ public class FormulaViewer
             StringBuffer buf = new StringBuffer();
             
             if (token instanceof ExpPtg) return;
-            buf.append(((OperationPtg) token).toFormulaString((HSSFWorkbook)null));
+            buf.append(((OperationPtg) token).toFormulaString());
             buf.append(sep);
             switch (token.getPtgClass()) {
                 case Ptg.CLASS_REF :
@@ -161,7 +161,7 @@ public class FormulaViewer
 		Ptg[] tokens = record.getParsedExpression();
 		for (int i = 0; i < tokens.length; i++) {
 			Ptg token = tokens[i];
-            buf.append( token.toFormulaString((HSSFWorkbook)null));
+            buf.append( token.toFormulaString());
             switch (token.getPtgClass()) {
                 case Ptg.CLASS_REF :
                     buf.append("(R)");

@@ -19,7 +19,6 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -49,7 +48,7 @@ public final class AreaErrPtg extends OperandPtg {
 		LittleEndian.putInt(array, offset + 5, unused2);
 	}
 
-	public String toFormulaString(HSSFWorkbook book) {
+	public String toFormulaString() {
 		return HSSFErrorConstants.getText(HSSFErrorConstants.ERROR_REF);
 	}
 

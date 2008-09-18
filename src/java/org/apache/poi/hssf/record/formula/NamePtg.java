@@ -18,8 +18,8 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.hssf.usermodel.HSSFName;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndian;
  * @author  andy
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class NamePtg extends OperandPtg {
+public final class NamePtg extends OperandPtg implements WorkbookDependentFormula {
     public final static short sid  = 0x23;
     private final static int  SIZE = 5;
     /** one-based index to defined name record */
@@ -65,10 +65,13 @@ public final class NamePtg extends OperandPtg {
         return SIZE;
     }
 
-    public String toFormulaString(HSSFWorkbook book)
+    public String toFormulaString(FormulaRenderingWorkbook book)
     {
-    	return book.getNameName(field_1_label_index - 1);
+    	return book.getNameText(this);
     }
+	public String toFormulaString() {
+		throw new RuntimeException("3D references need a workbook to determine formula text");
+	}
     
     public byte getDefaultOperandClass() {
 		return Ptg.CLASS_REF;

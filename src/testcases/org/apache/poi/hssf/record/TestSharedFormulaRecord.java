@@ -66,7 +66,7 @@ public final class TestSharedFormulaRecord extends TestCase {
 		Ptg[] convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 100, 200);
 		
 		RefPtg refPtg = (RefPtg) convertedFormula[1];
-		assertEquals("$C101", refPtg.toFormulaString(null));
+		assertEquals("$C101", refPtg.toFormulaString());
 		if (refPtg.getPtgClass() == Ptg.CLASS_REF) {
 			throw new AssertionFailedError("Identified bug 45123");
 		}

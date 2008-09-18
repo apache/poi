@@ -53,7 +53,7 @@ public final class RefErrorPtg extends OperandPtg {
         return SIZE;
     }
 
-    public String toFormulaString(HSSFWorkbook book) {
+    public String toFormulaString() {
         return HSSFErrorConstants.getText(HSSFErrorConstants.ERROR_REF);
     }
     

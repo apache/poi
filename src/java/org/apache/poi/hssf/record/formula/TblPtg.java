@@ -17,10 +17,8 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
-
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -68,7 +66,7 @@ public final class TblPtg extends ControlPtg {
       return field_2_first_col;
     }
 
-    public String toFormulaString(HSSFWorkbook book)
+    public String toFormulaString()
     {
         // table(....)[][]
         throw new RecordFormatException("Table and Arrays are not yet supported");

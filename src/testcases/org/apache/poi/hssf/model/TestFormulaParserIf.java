@@ -33,7 +33,6 @@ import org.apache.poi.hssf.record.formula.NotEqualPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.StringPtg;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Tests <tt>FormulaParser</tt> specifically with respect to IF() functions
@@ -202,7 +201,7 @@ public final class TestFormulaParserIf extends TestCase {
 		assertEquals(true, flag.getValue());
 		assertEquals("Y", y.getValue());
 		assertEquals("N", n.getValue());
-		assertEquals("IF", funif.toFormulaString((HSSFWorkbook) null));
+		assertEquals("IF", funif.toFormulaString());
 		assertTrue("Goto ptg exists", goto1.isGoto());
 	}
 	/**

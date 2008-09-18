@@ -17,9 +17,8 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * @author Glen Stampoultzis (glens at apache.org)
@@ -51,7 +50,7 @@ public final class MemFuncPtg extends OperandPtg {
         LittleEndian.putUShort( array, offset + 1, field_1_len_ref_subexpression );
     }
 
-    public String toFormulaString(HSSFWorkbook book)
+    public String toFormulaString()
     {
         return "";
     }

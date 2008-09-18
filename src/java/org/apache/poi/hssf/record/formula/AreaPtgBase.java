@@ -17,14 +17,12 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.BitFieldFactory;
-
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Specifies a rectangular area of cells A1:A4 for instance.
@@ -269,7 +267,7 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
         return topLeft.formatAsString() + ":" + botRight.formatAsString(); 
     }
     
-    public String toFormulaString(HSSFWorkbook book) {
+    public String toFormulaString() {
         return formatReferenceAsString();
     }
 

@@ -52,7 +52,7 @@ public final class BoolPtg extends ScalarConstantPtg {
         return SIZE;
     }
 
-    protected String toFormulaString() {
+    public String toFormulaString() {
         return _value ? "TRUE" : "FALSE";
     }
 }
