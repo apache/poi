@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * @author Daniel Noll (daniel at nuix dot com dot au)
@@ -46,7 +45,7 @@ public final class RangePtg  extends OperationPtg {
         array[ offset + 0 ] = sid;
     }
 
-    public String toFormulaString(HSSFWorkbook book)
+    public String toFormulaString()
     {
         return ":";
     }

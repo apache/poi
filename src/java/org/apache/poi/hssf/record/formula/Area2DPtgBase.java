@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -45,7 +44,7 @@ public abstract class Area2DPtgBase extends AreaPtgBase {
 	public final int getSize() {
 		return SIZE;
 	}
-	public final String toFormulaString(HSSFWorkbook book) {
+	public final String toFormulaString() {
     	return formatReferenceAsString();
 	}
     public final String toString() {

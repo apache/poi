@@ -51,6 +51,7 @@ import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
 import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
+import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -130,13 +131,14 @@ public final class TestFormulaParser extends TestCase {
 	public void testMacroFunction() {
 		// testNames.xls contains a VB function called 'myFunc'
 		HSSFWorkbook w = HSSFTestDataSamples.openSampleWorkbook("testNames.xls");
+		HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(w);
 
 		Ptg[] ptg = FormulaParser.parse("myFunc()", w);
 		// myFunc() actually takes 1 parameter.  Don't know if POI will ever be able to detect this problem
 
 		// the name gets encoded as the first arg
 		NamePtg tname = (NamePtg) ptg[0];
-		assertEquals("myFunc", tname.toFormulaString(w));
+		assertEquals("myFunc", tname.toFormulaString(book));
 
 		AbstractFunctionPtg tfunc = (AbstractFunctionPtg) ptg[1];
 		assertTrue(tfunc.isExternalFunction());
@@ -871,7 +873,7 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals(2, ptgs.length);
 		Ptg ptg0 = ptgs[0];
 		assertEquals(ArrayPtg.class, ptg0.getClass());
-		assertEquals("{1.0,2.0,2.0,#REF!;FALSE,3.0,3.0,2.0}", ptg0.toFormulaString(null));
+		assertEquals("{1.0,2.0,2.0,#REF!;FALSE,3.0,3.0,2.0}", ptg0.toFormulaString());
 		
 		ArrayPtg aptg = (ArrayPtg) ptg0;
 		Object[][] values = aptg.getTokenArrayValues();

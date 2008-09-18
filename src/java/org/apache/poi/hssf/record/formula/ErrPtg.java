@@ -67,7 +67,7 @@ public final class ErrPtg extends ScalarConstantPtg {
         array[offset + 1] = (byte)field_1_error_code;
     }
 
-    protected String toFormulaString() {
+    public String toFormulaString() {
         return HSSFErrorConstants.getText(field_1_error_code);
     }
 

@@ -184,7 +184,7 @@ public final class ArrayPtg extends Ptg {
 			+ ConstantValueParser.getEncodedSize(token_3_arrayValues);
 	}
 
-	public String formatAsString() {
+	public String formatAsString() { // TODO - fold into toFormulaString
 		StringBuffer b = new StringBuffer();
 		b.append("{");
 	  	for (int y=0;y<getRowCount();y++) {
@@ -202,7 +202,7 @@ public final class ArrayPtg extends Ptg {
 		b.append("}");
 		return b.toString();
 	}
-	public String toFormulaString(HSSFWorkbook book) {
+	public String toFormulaString() {
 		return formatAsString();
 	}
 	

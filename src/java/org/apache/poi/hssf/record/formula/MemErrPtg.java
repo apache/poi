@@ -45,7 +45,7 @@ public final class MemErrPtg extends MemAreaPtg {
         array[offset] = (byte) (sid + getPtgClass());
     }
 
-    public String toFormulaString(HSSFWorkbook book)
+    public String toFormulaString()
     {
         return "ERR#";
     }

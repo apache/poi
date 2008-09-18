@@ -30,6 +30,7 @@ import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -190,6 +191,7 @@ public final class TestAreaReference extends TestCase {
         InputStream is = HSSFTestDataSamples.openSampleFileStream("44167.xls");
         HSSFWB wb = new HSSFWB(is);
         Workbook workbook = wb.getWorkbook();
+        HSSFEvaluationWorkbook eb = HSSFEvaluationWorkbook.create(wb);
 
         assertEquals(1, wb.getNumberOfNames());
         String sheetName = "Tabelle1";
@@ -211,10 +213,10 @@ public final class TestAreaReference extends TestCase {
         Area3DPtg ptgB = (Area3DPtg)def[1];
         Area3DPtg ptgC = (Area3DPtg)def[2];
         UnionPtg ptgD = (UnionPtg)def[3];
-        assertEquals("", ptgA.toFormulaString(wb));
-        assertEquals(refA, ptgB.toFormulaString(wb));
-        assertEquals(refB, ptgC.toFormulaString(wb));
-        assertEquals(",", ptgD.toFormulaString(wb));
+        assertEquals("", ptgA.toFormulaString());
+        assertEquals(refA, ptgB.toFormulaString(eb));
+        assertEquals(refB, ptgC.toFormulaString(eb));
+        assertEquals(",", ptgD.toFormulaString());
 
         assertEquals(ref, nr.getAreaReference(wb));
 

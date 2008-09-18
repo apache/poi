@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -49,7 +48,7 @@ abstract class Ref2DPtgBase extends RefPtgBase {
     	LittleEndian.putByte(array, offset+0, getSid() + getPtgClass());
     	writeCoordinates(array, offset+1);
     }
-    public final String toFormulaString(HSSFWorkbook book) {
+    public final String toFormulaString() {
     	return formatReferenceAsString();
     }
 

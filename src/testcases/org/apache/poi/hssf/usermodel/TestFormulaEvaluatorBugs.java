@@ -202,7 +202,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		assertEquals(2, ptg.getLastColumn());
 		assertEquals(0, ptg.getFirstRow());
 		assertEquals(65535, ptg.getLastRow());
-		assertEquals("C:C", ptg.toFormulaString(wb));
+		assertEquals("C:C", ptg.toFormulaString());
 
 		// Will show as C:C, but won't know how many
 		// rows it covers as we don't have the sheet
@@ -316,6 +316,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		evaluator.evaluate(cell);
 		int evalCount = evaluator.getEvaluationCount();
 		// With caching, the evaluationCount is 8 which is a big improvement
+		assertTrue(evalCount > 0);  // make sure the counter is actually working
 		if (evalCount > 10) {
 			// Without caching, evaluating cell 'A9' takes 21845 evaluations which consumes
 			// much time (~3 sec on Core 2 Duo 2.2GHz)

@@ -19,21 +19,53 @@ package org.apache.poi.hssf.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
-//import PTGs .. since we need everything, import *
 import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.record.constant.ErrorConstant;
-import org.apache.poi.hssf.record.formula.*;
+import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
+import org.apache.poi.hssf.record.formula.AddPtg;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.hssf.record.formula.AreaPtg;
+import org.apache.poi.hssf.record.formula.ArrayPtg;
+import org.apache.poi.hssf.record.formula.BoolPtg;
+import org.apache.poi.hssf.record.formula.ConcatPtg;
+import org.apache.poi.hssf.record.formula.DividePtg;
+import org.apache.poi.hssf.record.formula.EqualPtg;
+import org.apache.poi.hssf.record.formula.ErrPtg;
+import org.apache.poi.hssf.record.formula.FuncPtg;
+import org.apache.poi.hssf.record.formula.FuncVarPtg;
+import org.apache.poi.hssf.record.formula.GreaterEqualPtg;
+import org.apache.poi.hssf.record.formula.GreaterThanPtg;
+import org.apache.poi.hssf.record.formula.IntPtg;
+import org.apache.poi.hssf.record.formula.LessEqualPtg;
+import org.apache.poi.hssf.record.formula.LessThanPtg;
+import org.apache.poi.hssf.record.formula.MissingArgPtg;
+import org.apache.poi.hssf.record.formula.MultiplyPtg;
+import org.apache.poi.hssf.record.formula.NamePtg;
+import org.apache.poi.hssf.record.formula.NameXPtg;
+import org.apache.poi.hssf.record.formula.NotEqualPtg;
+import org.apache.poi.hssf.record.formula.NumberPtg;
+import org.apache.poi.hssf.record.formula.ParenthesisPtg;
+import org.apache.poi.hssf.record.formula.PercentPtg;
+import org.apache.poi.hssf.record.formula.PowerPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.Ref3DPtg;
+import org.apache.poi.hssf.record.formula.RefPtg;
+import org.apache.poi.hssf.record.formula.StringPtg;
+import org.apache.poi.hssf.record.formula.SubtractPtg;
+import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
+import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
+import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.util.CellReference.NameType;
+import org.apache.poi.ss.formula.FormulaRenderer;
 
 /**
  * This class parses a formula string into a List of tokens in RPN order.
@@ -1001,94 +1033,6 @@ end;
      * @return a human readable String
      */
     public static String toFormulaString(HSSFWorkbook book, Ptg[] ptgs) {
-        if (ptgs == null || ptgs.length == 0) {
-            // TODO - what is the justification for returning "#NAME" (which is not "#NAME?", btw)
-            return "#NAME";
-        }
-        Stack stack = new Stack();
-
-        for (int i=0 ; i < ptgs.length; i++) {
-            Ptg ptg = ptgs[i];
-            // TODO - what about MemNoMemPtg?
-            if(ptg instanceof MemAreaPtg || ptg instanceof MemFuncPtg || ptg instanceof MemErrPtg) {
-                // marks the start of a list of area expressions which will be naturally combined
-                // by their trailing operators (e.g. UnionPtg)
-                // TODO - put comment and throw exception in toFormulaString() of these classes
-                continue;
-            }
-            if (ptg instanceof ParenthesisPtg) {
-                String contents = (String)stack.pop();
-                stack.push ("(" + contents + ")");
-                continue;
-            }
-            if (ptg instanceof AttrPtg) {
-                AttrPtg attrPtg = ((AttrPtg) ptg);
-                if (attrPtg.isOptimizedIf() || attrPtg.isOptimizedChoose() || attrPtg.isGoto()) {
-                    continue;
-                }
-                if (attrPtg.isSpace()) {
-                    // POI currently doesn't render spaces in formulas
-                    continue;
-                    // but if it ever did, care must be taken:
-                    // tAttrSpace comes *before* the operand it applies to, which may be consistent
-                    // with how the formula text appears but is against the RPN ordering assumed here
-                }
-                if (attrPtg.isSemiVolatile()) {
-                    // similar to tAttrSpace - RPN is violated
-                    continue;
-                }
-                if (attrPtg.isSum()) {
-                    String[] operands = getOperands(stack, attrPtg.getNumberOfOperands());
-                    stack.push(attrPtg.toFormulaString(operands));
-                    continue;
-                }
-                throw new RuntimeException("Unexpected tAttr: " + attrPtg.toString());
-            }
-
-            if (! (ptg instanceof OperationPtg)) {
-                stack.push(ptg.toFormulaString(book));
-                continue;
-            }
-
-            OperationPtg o = (OperationPtg) ptg;
-            String[] operands = getOperands(stack, o.getNumberOfOperands());
-            stack.push(o.toFormulaString(operands));
-        }
-        if(stack.isEmpty()) {
-            // inspection of the code above reveals that every stack.pop() is followed by a
-            // stack.push(). So this is either an internal error or impossible.
-            throw new IllegalStateException("Stack underflow");
-        }
-        String result = (String) stack.pop();
-        if(!stack.isEmpty()) {
-            // Might be caused by some tokens like AttrPtg and Mem*Ptg, which really shouldn't
-            // put anything on the stack
-            throw new IllegalStateException("too much stuff left on the stack");
-        }
-        return result;
-    }
-
-    private static String[] getOperands(Stack stack, int nOperands) {
-        String[] operands = new String[nOperands];
-
-        for (int j = nOperands-1; j >= 0; j--) { // reverse iteration because args were pushed in-order
-            if(stack.isEmpty()) {
-               String msg = "Too few arguments supplied to operation. Expected (" + nOperands
-                    + ") operands but got (" + (nOperands - j - 1) + ")";
-                throw new IllegalStateException(msg);
-            }
-            operands[j] = (String) stack.pop();
-        }
-        return operands;
-    }
-    /**
-     * Static method to convert an array of Ptgs in RPN order
-     *  to a human readable string format in infix mode. Works
-     *  on the current workbook for named and 3D references.
-     * @param ptgs  array of Ptg, can be null or empty
-     * @return a human readable String
-     */
-    public String toFormulaString(Ptg[] ptgs) {
-        return toFormulaString(book, ptgs);
+        return FormulaRenderer.toFormulaString(HSSFEvaluationWorkbook.create(book), ptgs);
     }
 }

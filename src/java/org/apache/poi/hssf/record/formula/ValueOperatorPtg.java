@@ -47,7 +47,7 @@ public abstract class ValueOperatorPtg extends OperationPtg {
 	public final int getSize() {
 		return 1;
 	}
-    public final String toFormulaString(HSSFWorkbook book) {
+    public final String toFormulaString() {
     	// TODO - prune this method out of the hierarchy
     	throw new RuntimeException("toFormulaString(String[] operands) should be used for subclasses of OperationPtgs");
 	}

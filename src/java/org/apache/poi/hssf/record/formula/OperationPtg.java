@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record.formula;
 
+import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
+
 /**
  * defines a Ptg that is an operation instead of an operand
  * @author  andy
@@ -46,5 +48,10 @@ public abstract class OperationPtg extends Ptg {
     	// TODO remove "int getType();" from Eval hierarchy
     	throw new RuntimeException("remove this method");
     }
+
+	public String toFormulaString(FormulaRenderingWorkbook book) {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }

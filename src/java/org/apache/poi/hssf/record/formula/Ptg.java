@@ -305,7 +305,7 @@ public abstract class Ptg implements Cloneable {
 	/**
 	 * return a string representation of this token alone
 	 */
-	public abstract String toFormulaString(HSSFWorkbook book);
+	public abstract String toFormulaString();
 	/**
 	 * dump a debug representation (hexdump) to a string
 	 */
