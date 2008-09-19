@@ -408,15 +408,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     	return -1;
     }
 
-    /**
-     * TODO - figure out what the hell this methods does in
-     *  HSSF...
-     */
-    public String resolveNameXText(int refIndex, int definedNameIndex) {
-		// TODO Replace with something proper
-		return null;
-	}
-
     public short getNumCellStyles() {
         return (short) ((StylesTable)stylesSource).getNumCellStyles();
     }
@@ -450,23 +441,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         return -1;
     }
 
-    /**
-     * Doesn't do anything - returns the same index
-     * TODO - figure out if this is a ole2 specific thing, or
-     *  if we need to do something proper here too!
-     */
-    public int getSheetIndexFromExternSheetIndex(int externSheetNumber) {
-		return externSheetNumber;
-	}
-    /**
-     * Doesn't do anything special - returns the same as getSheetName()
-     * TODO - figure out if this is a ole2 specific thing, or
-     *  if we need to do something proper here too!
-     */
-    public String findSheetNameFromExternSheet(int externSheetIndex) {
-		return getSheetName(externSheetIndex);
-	}
-
 	public Sheet getSheet(String name) {
         CTSheet[] sheets = this.workbook.getSheets().getSheetArray();
         for (int i = 0 ; i < sheets.length ; ++i) {
@@ -493,19 +467,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     public int getSheetIndex(Sheet sheet) {
         return this.sheets.indexOf(sheet);
-    }
-
-    /**
-     * Returns the external sheet index of the sheet
-     *  with the given internal index, creating one
-     *  if needed.
-     * Used by some of the more obscure formula and
-     *  named range things.
-     * Fairly easy on XSSF (we think...) since the
-     *  internal and external indicies are the same
-     */
-    public int getExternalSheetIndex(int internalSheetIndex) {
-    	return internalSheetIndex;
     }
 
     public String getSheetName(int sheet) {

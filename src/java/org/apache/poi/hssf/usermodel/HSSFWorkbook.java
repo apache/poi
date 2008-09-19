@@ -662,17 +662,8 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         return -1;
     }
 
-    /* package */ int findSheetIndex(Sheet sheet) {
-        for(int i=0; i<_sheets.size(); i++) {
-            HSSFSheet hSheet = (HSSFSheet) _sheets.get(i);
-            if(hSheet.getSheet() == sheet) {
-                return i;
-            }
-        }
-        throw new IllegalArgumentException("Specified sheet not found in this workbook");
-    }
-
     /**
+<<<<<<< .working
      * Returns the external sheet index of the sheet
      *  with the given internal index, creating one
      *  if needed.
@@ -709,6 +700,8 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
 
     /**
+=======
+>>>>>>> .merge-right.r696898
      * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and returns
      * the high level representation.  Use this to create new sheets.
      *
@@ -751,7 +744,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         if (filterDbNameIndex >=0) {
             NameRecord origNameRecord = workbook.getNameRecord(filterDbNameIndex);
             // copy original formula but adjust 3D refs to the new external sheet index
-            int newExtSheetIx = getExternalSheetIndex(newSheetIndex);
+            int newExtSheetIx = workbook.checkExternSheet(newSheetIndex);
             Ptg[] ptgs = origNameRecord.getNameDefinition();
             for (int i=0; i< ptgs.length; i++) {
                 Ptg ptg = ptgs[i];

@@ -17,15 +17,14 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import junit.framework.TestCase;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 
-import junit.framework.TestCase;
-
-public class TestXSSFFormulaEvaluation extends TestCase {
+public final class TestXSSFFormulaEvaluation extends TestCase {
 	public TestXSSFFormulaEvaluation(String name) {
 		super(name);
 		
@@ -37,7 +36,7 @@ public class TestXSSFFormulaEvaluation extends TestCase {
 	}
 
 	public void testSimpleArithmatic() {
-		Workbook wb = new XSSFWorkbook();
+		XSSFWorkbook wb = new XSSFWorkbook();
 		Sheet s = wb.createSheet();
 		Row r = s.createRow(0);
 		
@@ -49,7 +48,7 @@ public class TestXSSFFormulaEvaluation extends TestCase {
 		c2.setCellFormula("10/2");
 		assertTrue( Double.isNaN(c2.getNumericCellValue()) );
 		
-		FormulaEvaluator fe = new FormulaEvaluator(s, wb);
+		FormulaEvaluator fe = new XSSFFormulaEvaluator(wb);
 		
 		fe.evaluateFormulaCell(c1);
 		fe.evaluateFormulaCell(c2);
@@ -59,7 +58,7 @@ public class TestXSSFFormulaEvaluation extends TestCase {
 	}
 	
 	public void testSumCount() {
-		Workbook wb = new XSSFWorkbook();
+		XSSFWorkbook wb = new XSSFWorkbook();
 		Sheet s = wb.createSheet();
 		Row r = s.createRow(0);
 		r.createCell(0).setCellValue(2.5);
@@ -87,7 +86,7 @@ public class TestXSSFFormulaEvaluation extends TestCase {
 
 
 		// Evaluate and test
-		FormulaEvaluator fe = new FormulaEvaluator(s, wb);
+		FormulaEvaluator fe = new XSSFFormulaEvaluator(wb);
 		
 		fe.evaluateFormulaCell(c1);
 		fe.evaluateFormulaCell(c2);

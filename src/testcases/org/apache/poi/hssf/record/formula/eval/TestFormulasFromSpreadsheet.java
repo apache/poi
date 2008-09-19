@@ -25,12 +25,12 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.formula.functions.TestMathX;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;;
 
 /**
  * Tests formulas and operators as loaded from a test data spreadsheet.<p/>
@@ -88,7 +88,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 		public static final int NUMBER_OF_ROWS_PER_FUNCTION = 4;
 	}
 
-	private Workbook workbook;
+	private HSSFWorkbook workbook;
 	private Sheet sheet;
 	// Note - multiple failures are aggregated before ending.  
 	// If one or more functions fail, a single AssertionFailedError is thrown at the end
@@ -105,7 +105,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	}
 
 
-	private static void confirmExpectedResult(String msg, Cell expected, FormulaEvaluator.CellValue actual) {
+	private static void confirmExpectedResult(String msg, Cell expected, CellValue actual) {
 		if (expected == null) {
 			throw new AssertionFailedError(msg + " - Bad setup data expected value is null");
 		}
@@ -178,7 +178,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	 * Typically pass <code>null</code> to test all functions
 	 */
 	private void processFunctionGroup(int startRowIndex, String testFocusFunctionName) {
-		FormulaEvaluator evaluator = new FormulaEvaluator(workbook);
+		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(workbook);
 
 		int rowIndex = startRowIndex;
 		while (true) {
@@ -219,7 +219,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	 * @return a constant from the local Result class denoting whether there were any evaluation
 	 * cases, and whether they all succeeded.
 	 */
-	private int processFunctionRow(FormulaEvaluator evaluator, String targetFunctionName, 
+	private int processFunctionRow(HSSFFormulaEvaluator evaluator, String targetFunctionName, 
 			Row formulasRow, Row expectedValuesRow) {
 		
 		int result = Result.NO_EVALUATIONS_FOUND; // so far
@@ -232,7 +232,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 				continue;
 			}
 
-			FormulaEvaluator.CellValue actualValue = evaluator.evaluate(c);
+			CellValue actualValue = evaluator.evaluate(c);
 
 			Cell expectedValueCell = getExpectedValueCell(expectedValuesRow, colnum);
 			try {

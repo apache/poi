@@ -66,9 +66,9 @@ public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormu
     }
 
     public void writeBytes(byte [] array, int offset) {
-    	LittleEndian.putByte(array, 0 + offset, sid + getPtgClass());
-		LittleEndian.putUShort(array, 1 + offset, getExternSheetIndex());
-		writeCoordinates(array, offset + 3);
+        LittleEndian.putByte(array, 0 + offset, sid + getPtgClass());
+        LittleEndian.putUShort(array, 1 + offset, getExternSheetIndex());
+        writeCoordinates(array, offset + 3);
     }
 
     public int getSize() {
@@ -88,9 +88,9 @@ public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormu
      * formulas. The sheet name will get properly delimited if required.
      */
     public String toFormulaString(FormulaRenderingWorkbook book) {
-		return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, formatReferenceAsString());
+        return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, formatReferenceAsString());
     }
-	public String toFormulaString() {
-		throw new RuntimeException("3D references need a workbook to determine formula text");
-	}
+    public String toFormulaString() {
+        throw new RuntimeException("3D references need a workbook to determine formula text");
+    }
 }

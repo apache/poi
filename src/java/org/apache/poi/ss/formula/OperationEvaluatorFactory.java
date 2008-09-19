@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.apache.poi.ss.formula;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

@@ -20,7 +20,7 @@ package org.apache.poi.hssf.record.formula;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.model.FormulaParser;
+import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
@@ -87,7 +87,7 @@ public final class TestAreaPtg extends TestCase {
 	private static String shiftAllColumnsBy1(String  formula) {
 		int letUsShiftColumn1By1Column=1;
 		HSSFWorkbook wb = null;
-		Ptg[] ptgs = FormulaParser.parse(formula, wb);
+		Ptg[] ptgs = HSSFFormulaParser.parse(formula, wb);
 		for(int i=0; i<ptgs.length; i++)
 		{
 			Ptg ptg = ptgs[i];
@@ -98,7 +98,7 @@ public final class TestAreaPtg extends TestCase {
 				aptg.setLastColumn((short)(aptg.getLastColumn()+letUsShiftColumn1By1Column));
 			}
 		}
-		String newFormula = FormulaParser.toFormulaString(wb, ptgs);
+		String newFormula = HSSFFormulaParser.toFormulaString(wb, ptgs);
 		return newFormula;
 	}
 }

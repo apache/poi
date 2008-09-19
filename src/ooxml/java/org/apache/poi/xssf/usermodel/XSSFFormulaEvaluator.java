@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.apache.poi.xssf.usermodel;
 
 import java.util.Iterator;
 
@@ -24,9 +24,12 @@ import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
 /**
@@ -39,21 +42,12 @@ import org.apache.poi.ss.usermodel.Sheet;
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  * @author Josh Micich
  */
-public class HSSFFormulaEvaluator /* almost implements FormulaEvaluator */ {
+public class XSSFFormulaEvaluator implements FormulaEvaluator {
 
 	private WorkbookEvaluator _bookEvaluator;
 
-	/**
-	 * @deprecated (Sep 2008) HSSFSheet parameter is ignored
-	 */
-	public HSSFFormulaEvaluator(HSSFSheet sheet, HSSFWorkbook workbook) {
-		this(workbook);
-		if (false) {
-			sheet.toString(); // suppress unused parameter compiler warning
-		}
-	}
-	public HSSFFormulaEvaluator(HSSFWorkbook workbook) {
-   		_bookEvaluator = new WorkbookEvaluator(HSSFEvaluationWorkbook.create(workbook));
+	public XSSFFormulaEvaluator(XSSFWorkbook workbook) {
+   		_bookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(workbook));
 	}
 
 	/**
@@ -63,16 +57,6 @@ public class HSSFFormulaEvaluator /* almost implements FormulaEvaluator */ {
 		return _bookEvaluator.getEvaluationCount();
 	}
 
-	/**
-	 * Does nothing
-	 * @deprecated (Aug 2008) - not needed, since the current row can be derived from the cell
-	 */
-	public void setCurrentRow(HSSFRow row) {
-		// do nothing
-		if (false) {
-			row.getClass(); // suppress unused parameter compiler warning
-		}
-	}
 
 	/**
 	 * Should be called whenever there are major changes (e.g. moving sheets) to input cells
@@ -106,15 +90,15 @@ public class HSSFFormulaEvaluator /* almost implements FormulaEvaluator */ {
 		}
 
 		switch (cell.getCellType()) {
-			case HSSFCell.CELL_TYPE_BOOLEAN:
+			case XSSFCell.CELL_TYPE_BOOLEAN:
 				return CellValue.valueOf(cell.getBooleanCellValue());
-			case HSSFCell.CELL_TYPE_ERROR:
+			case XSSFCell.CELL_TYPE_ERROR:
 				return CellValue.getError(cell.getErrorCellValue());
-			case HSSFCell.CELL_TYPE_FORMULA:
+			case XSSFCell.CELL_TYPE_FORMULA:
 				return evaluateFormulaCellValue(cell);
-			case HSSFCell.CELL_TYPE_NUMERIC:
+			case XSSFCell.CELL_TYPE_NUMERIC:
 				return new CellValue(cell.getNumericCellValue());
-			case HSSFCell.CELL_TYPE_STRING:
+			case XSSFCell.CELL_TYPE_STRING:
 				return new CellValue(cell.getRichStringCellValue().getString());
 		}
 		throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
@@ -140,7 +124,7 @@ public class HSSFFormulaEvaluator /* almost implements FormulaEvaluator */ {
 	 * @return The type of the formula result (the cell's type remains as HSSFCell.CELL_TYPE_FORMULA however)
 	 */
 	public int evaluateFormulaCell(Cell cell) {
-		if (cell == null || cell.getCellType() != HSSFCell.CELL_TYPE_FORMULA) {
+		if (cell == null || cell.getCellType() != XSSFCell.CELL_TYPE_FORMULA) {
 			return -1;
 		}
 		CellValue cv = evaluateFormulaCellValue(cell);
@@ -165,12 +149,12 @@ public class HSSFFormulaEvaluator /* almost implements FormulaEvaluator */ {
 	 *  value computed for you, use {@link #evaluateFormulaCell(HSSFCell)}
 	 * @param cell
 	 */
-	public HSSFCell evaluateInCell(Cell cell) {
+	public XSSFCell evaluateInCell(Cell cell) {
 		if (cell == null) {
 			return null;
 		}
-		HSSFCell result = (HSSFCell) cell;
-		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+		XSSFCell result = (XSSFCell) cell;
+		if (cell.getCellType() == XSSFCell.CELL_TYPE_FORMULA) {
 			CellValue cv = evaluateFormulaCellValue(cell);
 			setCellType(cell, cv); // cell will no longer be a formula cell
 			setCellValue(cell, cv);
@@ -180,15 +164,15 @@ public class HSSFFormulaEvaluator /* almost implements FormulaEvaluator */ {
 	private static void setCellType(Cell cell, CellValue cv) {
 		int cellType = cv.getCellType();
 		switch (cellType) {
-			case HSSFCell.CELL_TYPE_BOOLEAN:
-			case HSSFCell.CELL_TYPE_ERROR:
-			case HSSFCell.CELL_TYPE_NUMERIC:
-			case HSSFCell.CELL_TYPE_STRING:
+			case XSSFCell.CELL_TYPE_BOOLEAN:
+			case XSSFCell.CELL_TYPE_ERROR:
+			case XSSFCell.CELL_TYPE_NUMERIC:
+			case XSSFCell.CELL_TYPE_STRING:
 				cell.setCellType(cellType);
 				return;
-			case HSSFCell.CELL_TYPE_BLANK:
+			case XSSFCell.CELL_TYPE_BLANK:
 				// never happens - blanks eventually get translated to zero
-			case HSSFCell.CELL_TYPE_FORMULA:
+			case XSSFCell.CELL_TYPE_FORMULA:
 				// this will never happen, we have already evaluated the formula
 		}
 		throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");
@@ -197,21 +181,21 @@ public class HSSFFormulaEvaluator /* almost implements FormulaEvaluator */ {
 	private static void setCellValue(Cell cell, CellValue cv) {
 		int cellType = cv.getCellType();
 		switch (cellType) {
-			case HSSFCell.CELL_TYPE_BOOLEAN:
+			case XSSFCell.CELL_TYPE_BOOLEAN:
 				cell.setCellValue(cv.getBooleanValue());
 				break;
-			case HSSFCell.CELL_TYPE_ERROR:
+			case XSSFCell.CELL_TYPE_ERROR:
 				cell.setCellErrorValue(cv.getErrorValue());
 				break;
-			case HSSFCell.CELL_TYPE_NUMERIC:
+			case XSSFCell.CELL_TYPE_NUMERIC:
 				cell.setCellValue(cv.getNumberValue());
 				break;
-			case HSSFCell.CELL_TYPE_STRING:
-				cell.setCellValue(new HSSFRichTextString(cv.getStringValue()));
+			case XSSFCell.CELL_TYPE_STRING:
+				cell.setCellValue(new XSSFRichTextString(cv.getStringValue()));
 				break;
-			case HSSFCell.CELL_TYPE_BLANK:
+			case XSSFCell.CELL_TYPE_BLANK:
 				// never happens - blanks eventually get translated to zero
-			case HSSFCell.CELL_TYPE_FORMULA:
+			case XSSFCell.CELL_TYPE_FORMULA:
 				// this will never happen, we have already evaluated the formula
 			default:
 				throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");
@@ -229,17 +213,17 @@ public class HSSFFormulaEvaluator /* almost implements FormulaEvaluator */ {
 	 * This is a helpful wrapper around looping over all
 	 *  cells, and calling evaluateFormulaCell on each one.
 	 */
-	public static void evaluateAllFormulaCells(HSSFWorkbook wb) {
-		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
+	public static void evaluateAllFormulaCells(XSSFWorkbook wb) {
+		XSSFFormulaEvaluator evaluator = new XSSFFormulaEvaluator(wb);
 		for(int i=0; i<wb.getNumberOfSheets(); i++) {
-			HSSFSheet sheet = wb.getSheetAt(i);
+			Sheet sheet = wb.getSheetAt(i);
 
-			for (Iterator rit = sheet.rowIterator(); rit.hasNext();) {
-				HSSFRow r = (HSSFRow)rit.next();
+			for (Iterator<Row> rit = sheet.rowIterator(); rit.hasNext();) {
+				Row r = rit.next();
 
 				for (Iterator cit = r.cellIterator(); cit.hasNext();) {
-					HSSFCell c = (HSSFCell)cit.next();
-					if (c.getCellType() == HSSFCell.CELL_TYPE_FORMULA)
+					XSSFCell c = (XSSFCell) cit.next();
+					if (c.getCellType() == XSSFCell.CELL_TYPE_FORMULA)
 						evaluator.evaluateFormulaCell(c);
 				}
 			}

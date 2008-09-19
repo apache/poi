@@ -24,13 +24,13 @@ import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.formula.EvaluationWorkbook;
 
 public final class AnalysisToolPak {
 
 	private static final FreeRefFunction NotImplemented = new FreeRefFunction() {
 
-		public ValueEval evaluate(Eval[] args, Workbook workbook, int srcCellSheet,
+		public ValueEval evaluate(Eval[] args, EvaluationWorkbook workbook, int srcCellSheet,
 				int srcCellRow, int srcCellCol) {
 			return ErrorEval.FUNCTION_NOT_IMPLEMENTED;
 		}

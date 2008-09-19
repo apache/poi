@@ -19,7 +19,7 @@ package org.apache.poi.hssf.eventusermodel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hssf.model.FormulaParser;
+import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.BoundSheetRecord;
 import org.apache.poi.hssf.record.EOFRecord;
@@ -33,7 +33,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  * When working with the EventUserModel, if you want to 
  *  process formulas, you need an instance of
  *  {@link Workbook} to pass to a {@link HSSFWorkbook},
- *  to finally give to {@link FormulaParser}, 
+ *  to finally give to {@link HSSFFormulaParser}, 
  *  and this will build you stub ones.
  * Since you're working with the EventUserModel, you
  *  wouldn't want to get a full {@link Workbook} and
@@ -41,7 +41,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  *  Instead, you should collect a few key records as they
  *  go past, then call this once you have them to build a
  *  stub {@link Workbook}, and from that a stub
- *  {@link HSSFWorkbook}, to use with the {@link FormulaParser}.
+ *  {@link HSSFWorkbook}, to use with the {@link HSSFFormulaParser}.
  * 
  * The records you should collect are:
  *  * {@link ExternSheetRecord}
@@ -56,7 +56,7 @@ public class EventWorkbookBuilder {
 	/**
 	 * Wraps up your stub {@link Workbook} as a stub
 	 *  {@link HSSFWorkbook}, ready for passing to
-	 *  {@link FormulaParser}
+	 *  {@link HSSFFormulaParser}
 	 * @param workbook A stub {@link Workbook}
 	 */
 	public static HSSFWorkbook createStubHSSFWorkbook(Workbook workbook) {
@@ -65,11 +65,11 @@ public class EventWorkbookBuilder {
 	
 	/**
 	 * Creates a stub Workbook from the supplied records,
-	 *  suitable for use with the {@link FormulaParser}
+	 *  suitable for use with the {@link HSSFFormulaParser}
 	 * @param externs The ExternSheetRecords in your file
 	 * @param bounds The BoundSheetRecords in your file
 	 * @param sst The SSTRecord in your file.
-	 * @return A stub Workbook suitable for use with {@link FormulaParser}
+	 * @return A stub Workbook suitable for use with {@link HSSFFormulaParser}
 	 */
 	public static Workbook createStubWorkbook(ExternSheetRecord[] externs,
 			BoundSheetRecord[] bounds, SSTRecord sst) {
@@ -103,10 +103,10 @@ public class EventWorkbookBuilder {
 	
 	/**
 	 * Creates a stub workbook from the supplied records,
-	 *  suitable for use with the {@link FormulaParser}
+	 *  suitable for use with the {@link HSSFFormulaParser}
 	 * @param externs The ExternSheetRecords in your file
 	 * @param bounds The BoundSheetRecords in your file
-	 * @return A stub Workbook suitable for use with {@link FormulaParser}
+	 * @return A stub Workbook suitable for use with {@link HSSFFormulaParser}
 	 */
 	public static Workbook createStubWorkbook(ExternSheetRecord[] externs,
 			BoundSheetRecord[] bounds) {

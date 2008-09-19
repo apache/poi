@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.eventusermodel.EventWorkbookBuilder.SheetRecordCollectingListener;
-import org.apache.poi.hssf.model.FormulaParser;
+import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
@@ -101,7 +101,7 @@ public final class TestEventWorkbookBuilder extends TestCase {
 		
 		// Check we can get the formula without breaking
 		for(int i=0; i<fRecs.length; i++) {
-			FormulaParser.toFormulaString(stubHSSF, fRecs[i].getParsedExpression());
+			HSSFFormulaParser.toFormulaString(stubHSSF, fRecs[i].getParsedExpression());
 		}
 		
 		// Peer into just one formula, and check that
@@ -123,19 +123,19 @@ public final class TestEventWorkbookBuilder extends TestCase {
 		fr = fRecs[0];
 		assertEquals(1, fr.getRow());
 		assertEquals(0, fr.getColumn());
-		assertEquals("Sheet1!A1", FormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
+		assertEquals("Sheet1!A1", HSSFFormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
 		
 		// Sheet 1 A5 is to another sheet
 		fr = fRecs[3];
 		assertEquals(4, fr.getRow());
 		assertEquals(0, fr.getColumn());
-		assertEquals("'S2'!A1", FormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
+		assertEquals("'S2'!A1", HSSFFormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
 		
 		// Sheet 1 A7 is to another sheet, range
 		fr = fRecs[5];
 		assertEquals(6, fr.getRow());
 		assertEquals(0, fr.getColumn());
-		assertEquals("SUM(Sh3!A1:A4)", FormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
+		assertEquals("SUM(Sh3!A1:A4)", HSSFFormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
 		
 		
 		// Now, load via Usermodel and re-check

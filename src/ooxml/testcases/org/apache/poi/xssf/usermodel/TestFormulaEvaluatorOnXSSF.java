@@ -28,10 +28,10 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.formula.eval.TestFormulasFromSpreadsheet;
 import org.apache.poi.hssf.record.formula.functions.TestMathX;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.openxml4j.opc.Package;
 
 /**
@@ -90,7 +90,7 @@ public final class TestFormulaEvaluatorOnXSSF extends TestCase {
 		public static final int NUMBER_OF_ROWS_PER_FUNCTION = 4;
 	}
 
-	private Workbook workbook;
+	private XSSFWorkbook workbook;
 	private Sheet sheet;
 	// Note - multiple failures are aggregated before ending.  
 	// If one or more functions fail, a single AssertionFailedError is thrown at the end
@@ -107,7 +107,7 @@ public final class TestFormulaEvaluatorOnXSSF extends TestCase {
 	}
 
 
-	private static void confirmExpectedResult(String msg, Cell expected, FormulaEvaluator.CellValue actual) {
+	private static void confirmExpectedResult(String msg, Cell expected, CellValue actual) {
 		if (expected == null) {
 			throw new AssertionFailedError(msg + " - Bad setup data expected value is null");
 		}
@@ -199,7 +199,7 @@ public final class TestFormulaEvaluatorOnXSSF extends TestCase {
 	 */
 	private void processFunctionGroup(int startRowIndex, String testFocusFunctionName) {
  
-		FormulaEvaluator evaluator = new FormulaEvaluator(workbook);
+		FormulaEvaluator evaluator = new XSSFFormulaEvaluator(workbook);
 
 		int rowIndex = startRowIndex;
 		while (true) {
@@ -256,7 +256,7 @@ public final class TestFormulaEvaluatorOnXSSF extends TestCase {
 				continue;
 			}
 
-			FormulaEvaluator.CellValue actualValue;
+			CellValue actualValue;
 			try {
 				actualValue = evaluator.evaluate(c);
 			} catch (RuntimeException e) {

@@ -28,7 +28,7 @@ import org.apache.poi.ss.usermodel.Name;
  *
  * @author Libin Roman (Vista Portal LDT. Developer)
  */
-public class HSSFName implements Name {
+public final class HSSFName implements Name {
     private HSSFWorkbook _book;
     private NameRecord _definedNameRec;
 
@@ -96,8 +96,7 @@ public class HSSFName implements Name {
      */
     private void setSheetName(String sheetName){
         int sheetNumber = _book.getSheetIndex(sheetName);
-        short externSheetNumber = (short)
-			_book.getExternalSheetIndex(sheetNumber);
+        short externSheetNumber = _book.getWorkbook().checkExternSheet(sheetNumber);
         _definedNameRec.setExternSheetNumber(externSheetNumber);
     }
 

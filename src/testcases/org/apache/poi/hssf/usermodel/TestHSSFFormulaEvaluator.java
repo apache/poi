@@ -17,10 +17,10 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.ss.usermodel.FormulaEvaluator.CellValue;
-
 import junit.framework.TestCase;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ss.usermodel.CellValue;
 /**
  * 
  * @author Josh Micich
