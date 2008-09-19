@@ -17,18 +17,16 @@
 
 package org.apache.poi.hssf.model;
 
-import java.util.List;
-
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderer;
-import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
+import org.apache.poi.ss.formula.FormulaType;
 
 /**
- * HSSF wrapper for the {@link FormulaParser}
+ * HSSF wrapper for the {@link FormulaParser} and {@link FormulaRenderer} 
  * 
  * @author Josh Micich
  */
@@ -42,30 +40,28 @@ public final class HSSFFormulaParser {
 		// no instances of this class
 	}
 
+	/**
+	 * Convenience method for parsing cell formulas. see {@link #parse(String, HSSFWorkbook, int)}
+	 */
 	public static Ptg[] parse(String formula, HSSFWorkbook workbook) {
 		return FormulaParser.parse(formula, createParsingWorkbook(workbook));
 	}
 
+	/**
+	 * @param formulaType a constant from {@link FormulaType}
+	 * @return the parsed formula tokens
+	 */
 	public static Ptg[] parse(String formula, HSSFWorkbook workbook, int formulaType) {
 		return FormulaParser.parse(formula, createParsingWorkbook(workbook), formulaType);
 	}
 
-	public static String toFormulaString(HSSFWorkbook book, List lptgs) {
-		return toFormulaString(HSSFEvaluationWorkbook.create(book), lptgs);
-	}
 	/**
-	 * Convenience method which takes in a list then passes it to the
-	 *  other toFormulaString signature.
-	 * @param book   workbook for 3D and named references
-	 * @param lptgs  list of Ptg, can be null or empty
+	 * Static method to convert an array of {@link Ptg}s in RPN order
+	 * to a human readable string format in infix mode.
+	 * @param book  used for defined names and 3D references
+	 * @param ptgs  must not be <code>null</code>
 	 * @return a human readable String
 	 */
-	public static String toFormulaString(FormulaRenderingWorkbook book, List lptgs) {
-		Ptg[] ptgs = new Ptg[lptgs.size()];
-		lptgs.toArray(ptgs);
-		return FormulaRenderer.toFormulaString(book, ptgs);
-	}
-    
 	public static String toFormulaString(HSSFWorkbook book, Ptg[] ptgs) {
 		return FormulaRenderer.toFormulaString(HSSFEvaluationWorkbook.create(book), ptgs);
 	}
