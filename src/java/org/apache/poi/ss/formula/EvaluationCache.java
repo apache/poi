@@ -15,12 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.apache.poi.ss.formula;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 
 /**
  * Performance optimisation for {@link HSSFFormulaEvaluator}. This class stores previously
@@ -31,55 +33,29 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  * @author Josh Micich
  */
 final class EvaluationCache {
-	private static final class Key {
 
-		private final int _sheetIndex;
-		private final int _srcRowNum;
-		private final int _srcColNum;
-		private final int _hashCode;
-
-		public Key(int sheetIndex, int srcRowNum, int srcColNum) {
-			_sheetIndex = sheetIndex;
-			_srcRowNum = srcRowNum;
-			_srcColNum = srcColNum;
-			_hashCode = sheetIndex + srcRowNum + srcColNum;
-		}
-
-		public int hashCode() {
-			return _hashCode;
-		}
-
-		public boolean equals(Object obj) {
-			Key other = (Key) obj;
-			if (_hashCode != other._hashCode) {
-				return false;
-			}
-			if (_sheetIndex != other._sheetIndex) {
-				return false;
-			}
-			if (_srcRowNum != other._srcRowNum) {
-				return false;
-			}
-			if (_srcColNum != other._srcColNum) {
-				return false;
-			}
-			return true;
-		}
-	}
-
+	private static final CellEvaluationFrame[] EMPTY_CEF_ARRAY = { };
 	private final Map _valuesByKey;
+	private final Map _consumingCellsByDest;
 
 	/* package */EvaluationCache() {
 		_valuesByKey = new HashMap();
+		_consumingCellsByDest = new HashMap();
 	}
 
 	public ValueEval getValue(int sheetIndex, int srcRowNum, int srcColNum) {
-		Key key = new Key(sheetIndex, srcRowNum, srcColNum);
+		return getValue(new CellEvaluationFrame(sheetIndex, srcRowNum, srcColNum));
+	}
+
+	/* package */ ValueEval getValue(CellEvaluationFrame key) {
 		return (ValueEval) _valuesByKey.get(key);
 	}
 
 	public void setValue(int sheetIndex, int srcRowNum, int srcColNum, ValueEval value) {
-		Key key = new Key(sheetIndex, srcRowNum, srcColNum);
+		setValue(new CellEvaluationFrame(sheetIndex, srcRowNum, srcColNum), value);
+	}
+
+	/* package */ void setValue(CellEvaluationFrame key, ValueEval value) {
 		if (_valuesByKey.containsKey(key)) {
 			throw new RuntimeException("Already have cached value for this cell");
 		}
@@ -91,5 +67,33 @@ final class EvaluationCache {
 	 */
 	public void clear() {
 		_valuesByKey.clear();
+	}
+
+	public void clearValue(int sheetIndex, int rowIndex, int columnIndex) {
+		clearValuesRecursive(new CellEvaluationFrame(sheetIndex, rowIndex, columnIndex));
+		
+	}
+
+	private void clearValuesRecursive(CellEvaluationFrame cef) {
+		CellEvaluationFrame[] consumingCells = getConsumingCells(cef);
+		for (int i = 0; i < consumingCells.length; i++) {
+			clearValuesRecursive(consumingCells[i]);
+		}
+		_valuesByKey.remove(cef);
+		_consumingCellsByDest.remove(cef);
+	}
+
+	private CellEvaluationFrame[] getConsumingCells(CellEvaluationFrame cef) {
+		List temp = (List) _consumingCellsByDest.get(cef);
+		if (temp == null) {
+			return EMPTY_CEF_ARRAY;
+		}
+		int nItems = temp.size();
+		if (temp.size() < 1) {
+			return EMPTY_CEF_ARRAY;
+		}
+		CellEvaluationFrame[] result = new CellEvaluationFrame[nItems];
+		temp.toArray(result);
+		return result;
 	}
 }

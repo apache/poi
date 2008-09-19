@@ -19,17 +19,24 @@ package org.apache.poi.ss.formula;
 
 import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
-
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 /**
- * Abstracts a workbook for the purpose of converting formula to text.<br/>
+ * Abstracts a workbook for the purpose of formula evaluation.<br/>
  * 
  * For POI internal use only
  * 
  * @author Josh Micich
  */
-public interface FormulaRenderingWorkbook {
+public interface EvaluationWorkbook {
+	String getSheetName(int sheetIndex);
+	int getSheetIndex(HSSFSheet sheet);
 
-	String getSheetNameByExternSheet(int externSheetIndex);
-	String resolveNameXText(NameXPtg nameXPtg);
-	String getNameText(NamePtg namePtg);
+	HSSFSheet getSheet(int sheetIndex);
+
+	HSSFSheet getSheetByExternSheetIndex(int externSheetIndex);
+	EvaluationName getName(NamePtg namePtg);
+	String resolveNameXText(NameXPtg ptg);
+	Ptg[] getFormulaTokens(HSSFCell cell);
 }

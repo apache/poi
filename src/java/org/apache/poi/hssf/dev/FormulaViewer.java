@@ -20,7 +20,7 @@ package org.apache.poi.hssf.dev;
 import java.io.FileInputStream;
 import java.util.List;
 
-import org.apache.poi.hssf.model.FormulaParser;
+import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFactory;
@@ -181,7 +181,7 @@ public class FormulaViewer
     
     private static String composeFormula(FormulaRecord record)
     {
-       return  FormulaParser.toFormulaString((HSSFWorkbook)null, record.getParsedExpression());
+       return  HSSFFormulaParser.toFormulaString((HSSFWorkbook)null, record.getParsedExpression());
     }
 
     /**

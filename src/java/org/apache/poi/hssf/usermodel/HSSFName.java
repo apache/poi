@@ -95,7 +95,7 @@ public final class HSSFName {
      */
     private void setSheetName(String sheetName){
         int sheetNumber = _book.getSheetIndex(sheetName);
-        short externSheetNumber = _book.getExternalSheetIndex(sheetNumber);
+        short externSheetNumber = _book.getWorkbook().checkExternSheet(sheetNumber);
         _definedNameRec.setExternSheetNumber(externSheetNumber);
     }
 

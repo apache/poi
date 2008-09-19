@@ -15,81 +15,31 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.apache.poi.ss.formula;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+
 /**
  * Instances of this class keep track of multiple dependent cell evaluations due
- * to recursive calls to <tt>HSSFFormulaEvaluator.internalEvaluate()</tt>.
+ * to recursive calls to {@link WorkbookEvaluator#evaluate(HSSFCell)}
  * The main purpose of this class is to detect an attempt to evaluate a cell
  * that is already being evaluated. In other words, it detects circular
  * references in spreadsheet formulas.
  * 
  * @author Josh Micich
  */
-final class EvaluationCycleDetector {
-
-	/**
-	 * Stores the parameters that identify the evaluation of one cell.<br/>
-	 */
-	private static final class CellEvaluationFrame {
-
-		private final HSSFWorkbook _workbook;
-		private final int _sheetIndex;
-		private final int _srcRowNum;
-		private final int _srcColNum;
-
-		public CellEvaluationFrame(HSSFWorkbook workbook, int sheetIndex, int srcRowNum, int srcColNum) {
-			if (workbook == null) {
-				throw new IllegalArgumentException("workbook must not be null");
-			}
-			if (sheetIndex < 0) {
-				throw new IllegalArgumentException("sheetIndex must not be negative");
-			}
-			_workbook = workbook;
-			_sheetIndex = sheetIndex;
-			_srcRowNum = srcRowNum;
-			_srcColNum = srcColNum;
-		}
-
-		public boolean equals(Object obj) {
-			CellEvaluationFrame other = (CellEvaluationFrame) obj;
-			if (_workbook != other._workbook) {
-				return false;
-			}
-			if (_sheetIndex != other._sheetIndex) {
-				return false;
-			}
-			if (_srcRowNum != other._srcRowNum) {
-				return false;
-			}
-			if (_srcColNum != other._srcColNum) {
-				return false;
-			}
-			return true;
-		}
-
-		/**
-		 * @return human readable string for debug purposes
-		 */
-		public String formatAsString() {
-			return "R=" + _srcRowNum + " C=" + _srcColNum + " ShIx=" + _sheetIndex;
-		}
-
-		public String toString() {
-			StringBuffer sb = new StringBuffer(64);
-			sb.append(getClass().getName()).append(" [");
-			sb.append(formatAsString());
-			sb.append("]");
-			return sb.toString();
-		}
-	}
+final class EvaluationTracker {
 
 	private final List _evaluationFrames;
+	private final EvaluationCache _cache;
 
-	public EvaluationCycleDetector() {
+	public EvaluationTracker(EvaluationCache cache) {
+		_cache = cache;
 		_evaluationFrames = new ArrayList();
 	}
 
@@ -108,13 +58,16 @@ final class EvaluationCycleDetector {
 	 * @return <code>true</code> if the specified cell has not been visited yet in the current 
 	 * evaluation. <code>false</code> if the specified cell is already being evaluated.
 	 */
-	public boolean startEvaluate(HSSFWorkbook workbook, int sheetIndex, int srcRowNum, int srcColNum) {
-		CellEvaluationFrame cef = new CellEvaluationFrame(workbook, sheetIndex, srcRowNum, srcColNum);
+	public ValueEval startEvaluate(int sheetIndex, int srcRowNum, int srcColNum) {
+		CellEvaluationFrame cef = new CellEvaluationFrame(sheetIndex, srcRowNum, srcColNum);
 		if (_evaluationFrames.contains(cef)) {
-			return false;
+			return ErrorEval.CIRCULAR_REF_ERROR;
 		}
-		_evaluationFrames.add(cef);
-		return true;
+		ValueEval result = _cache.getValue(cef);
+		if (result == null) {
+			_evaluationFrames.add(cef);
+		}
+		return result;
 	}
 
 	/**
@@ -128,8 +81,9 @@ final class EvaluationCycleDetector {
 	 * Assuming a well behaved client, parameters to this method would not be
 	 * required. However, they have been included to assert correct behaviour,
 	 * and form more meaningful error messages.
+	 * @param result 
 	 */
-	public void endEvaluate(HSSFWorkbook workbook, int sheetIndex, int srcRowNum, int srcColNum) {
+	public void endEvaluate(int sheetIndex, int srcRowNum, int srcColNum, ValueEval result) {
 		int nFrames = _evaluationFrames.size();
 		if (nFrames < 1) {
 			throw new IllegalStateException("Call to endEvaluate without matching call to startEvaluate");
@@ -137,7 +91,7 @@ final class EvaluationCycleDetector {
 
 		nFrames--;
 		CellEvaluationFrame cefExpected = (CellEvaluationFrame) _evaluationFrames.get(nFrames);
-		CellEvaluationFrame cefActual = new CellEvaluationFrame(workbook, sheetIndex, srcRowNum, srcColNum);
+		CellEvaluationFrame cefActual = new CellEvaluationFrame(sheetIndex, srcRowNum, srcColNum);
 		if (!cefActual.equals(cefExpected)) {
 			throw new RuntimeException("Wrong cell specified. "
 					+ "Corresponding startEvaluate() call was for cell {"
@@ -146,5 +100,7 @@ final class EvaluationCycleDetector {
 		}
 		// else - no problems so pop current frame 
 		_evaluationFrames.remove(nFrames);
+		
+		_cache.setValue(cefActual, result);
 	}
 }

@@ -17,19 +17,21 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
 
 /**
- * Abstracts a workbook for the purpose of converting formula to text.<br/>
+ * Abstracts a workbook for the purpose of formula parsing.<br/>
  * 
  * For POI internal use only
  * 
  * @author Josh Micich
  */
-public interface FormulaRenderingWorkbook {
+public interface FormulaParsingWorkbook {
+	/**
+	 *  named range name matching is case insensitive
+	 */
+	EvaluationName getName(String name);
 
-	String getSheetNameByExternSheet(int externSheetIndex);
-	String resolveNameXText(NameXPtg nameXPtg);
-	String getNameText(NamePtg namePtg);
+	int getExternalSheetIndex(String sheetName);
+	NameXPtg getNameXPtg(String name);
 }

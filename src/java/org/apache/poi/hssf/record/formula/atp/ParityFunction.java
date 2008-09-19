@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record.formula.atp;
 
-import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
@@ -25,8 +24,7 @@ import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.EvaluationWorkbook;
 /**
  * Implementation of Excel 'Analysis ToolPak' function ISEVEN() ISODD()<br/>
  * 
@@ -42,7 +40,7 @@ final class ParityFunction implements FreeRefFunction {
 		_desiredParity = desiredParity;
 	}
 
-	public ValueEval evaluate(Eval[] args, HSSFWorkbook workbook, int srcCellSheet, int srcCellRow,
+	public ValueEval evaluate(Eval[] args, EvaluationWorkbook workbook, int srcCellSheet, int srcCellRow,
 			int srcCellCol) {
 		if (args.length != 1) {
 			return ErrorEval.VALUE_INVALID;  

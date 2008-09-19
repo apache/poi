@@ -20,7 +20,7 @@ package org.apache.poi.hssf.record.formula.function;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.model.FormulaParser;
+import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.FuncPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
@@ -36,7 +36,7 @@ public final class TestParseMissingBuiltInFuncs extends TestCase {
 
 	private static Ptg[] parse(String formula) {
 		HSSFWorkbook book = new HSSFWorkbook();
-		return FormulaParser.parse(formula, book);
+		return HSSFFormulaParser.parse(formula, book);
 	}
 	private static void confirmFunc(String formula, int expPtgArraySize, boolean isVarArgFunc, int funcIx) {
 		Ptg[] ptgs = parse(formula);
@@ -58,7 +58,7 @@ public final class TestParseMissingBuiltInFuncs extends TestCase {
 		
 		// check that parsed Ptg array converts back to formula text OK
 		HSSFWorkbook book = new HSSFWorkbook();
-		String reRenderedFormula = FormulaParser.toFormulaString(book, ptgs);
+		String reRenderedFormula = HSSFFormulaParser.toFormulaString(book, ptgs);
 		assertEquals(formula, reRenderedFormula);
 	}
 	

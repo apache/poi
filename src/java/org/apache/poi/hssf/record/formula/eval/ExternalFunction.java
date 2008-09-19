@@ -19,7 +19,7 @@ package org.apache.poi.hssf.record.formula.eval;
 
 import org.apache.poi.hssf.record.formula.atp.AnalysisToolPak;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.EvaluationWorkbook;
 /**
  * 
  * Common entry point for all user-defined (non-built-in) functions (where 
@@ -30,7 +30,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  */
 final class ExternalFunction implements FreeRefFunction {
 
-	public ValueEval evaluate(Eval[] args, HSSFWorkbook workbook, 
+	public ValueEval evaluate(Eval[] args, EvaluationWorkbook workbook, 
 			int srcCellSheet, int srcCellRow,int srcCellCol) {
 		
 		int nIncomingArgs = args.length;
@@ -58,9 +58,9 @@ final class ExternalFunction implements FreeRefFunction {
 		return targetFunc.evaluate(outGoingArgs, workbook, srcCellSheet, srcCellRow, srcCellCol);
 	}
 
-	private FreeRefFunction findExternalUserDefinedFunction(HSSFWorkbook workbook,
+	private FreeRefFunction findExternalUserDefinedFunction(EvaluationWorkbook workbook,
 			NameXEval n) throws EvaluationException {
-		String functionName = workbook.resolveNameXText(n.getSheetRefIndex(), n.getNameNumber());
+		String functionName = workbook.resolveNameXText(n.getPtg());
 
 		if(false) {
 			System.out.println("received call to external user defined function (" + functionName + ")");

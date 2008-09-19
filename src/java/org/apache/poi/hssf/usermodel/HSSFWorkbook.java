@@ -661,52 +661,6 @@ public class HSSFWorkbook extends POIDocument
         return -1;
     }
 
-    /* package */ int findSheetIndex(Sheet sheet) {
-        for(int i=0; i<_sheets.size(); i++) {
-            HSSFSheet hSheet = (HSSFSheet) _sheets.get(i);
-            if(hSheet.getSheet() == sheet) {
-                return i;
-            }
-        }
-        throw new IllegalArgumentException("Specified sheet not found in this workbook");
-    }
-
-    /**
-     * Returns the external sheet index of the sheet
-     *  with the given internal index, creating one
-     *  if needed.
-     * Used by some of the more obscure formula and
-     *  named range things.
-     * @deprecated for POI internal use only (formula parsing).  This method is likely to
-     * be removed in future versions of POI.
-     */
-    public short getExternalSheetIndex(int internalSheetIndex) {
-        return workbook.checkExternSheet(internalSheetIndex);
-    }
-    /**
-     * @deprecated for POI internal use only (formula rendering).  This method is likely to
-     * be removed in future versions of POI.
-     */
-    public String findSheetNameFromExternSheet(int externSheetIndex){
-        // TODO - don't expose internal ugliness like externSheet indexes to the user model API
-        return workbook.findSheetNameFromExternSheet(externSheetIndex);
-    }
-    /**
-     * @deprecated for POI internal use only (formula rendering).  This method is likely to
-     * be removed in future versions of POI.
-     * 
-     * @param refIndex Index to REF entry in EXTERNSHEET record in the Link Table
-     * @param definedNameIndex zero-based to DEFINEDNAME or EXTERNALNAME record
-     * @return the string representation of the defined or external name
-     */
-    public String resolveNameXText(int refIndex, int definedNameIndex) {
-        // TODO - make this less cryptic / move elsewhere
-        return workbook.resolveNameXText(refIndex, definedNameIndex);
-    }
-
-
-
-
     /**
      * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and returns
      * the high level representation.  Use this to create new sheets.
@@ -750,7 +704,7 @@ public class HSSFWorkbook extends POIDocument
         if (filterDbNameIndex >=0) {
             NameRecord origNameRecord = workbook.getNameRecord(filterDbNameIndex);
             // copy original formula but adjust 3D refs to the new external sheet index
-            int newExtSheetIx = getExternalSheetIndex(newSheetIndex);
+            int newExtSheetIx = workbook.checkExternSheet(newSheetIndex);
             Ptg[] ptgs = origNameRecord.getNameDefinition();
             for (int i=0; i< ptgs.length; i++) {
                 Ptg ptg = ptgs[i];

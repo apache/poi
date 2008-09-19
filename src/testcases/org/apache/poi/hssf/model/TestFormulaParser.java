@@ -21,7 +21,6 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.model.FormulaParser.FormulaParseException;
 import org.apache.poi.hssf.record.constant.ErrorConstant;
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.AddPtg;
@@ -56,6 +55,7 @@ import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.FormulaParserTestHelper;
 
 /**
  * Test the low level formula parser functionality. High level tests are to
@@ -67,9 +67,12 @@ public final class TestFormulaParser extends TestCase {
 	 * @return parsed token array already confirmed not <code>null</code>
 	 */
 	/* package */ static Ptg[] parseFormula(String formula) {
-		Ptg[] result = FormulaParser.parse(formula, null);
+		Ptg[] result = HSSFFormulaParser.parse(formula, (HSSFWorkbook)null);
 		assertNotNull("Ptg array should not be null", result);
 		return result;
+	}
+	private static String toFormulaString(Ptg[] ptgs) {
+		return HSSFFormulaParser.toFormulaString((HSSFWorkbook)null, ptgs);
 	}
 
 	public void testSimpleFormula() {
@@ -133,7 +136,7 @@ public final class TestFormulaParser extends TestCase {
 		HSSFWorkbook w = HSSFTestDataSamples.openSampleWorkbook("testNames.xls");
 		HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(w);
 
-		Ptg[] ptg = FormulaParser.parse("myFunc()", w);
+		Ptg[] ptg = HSSFFormulaParser.parse("myFunc()", w);
 		// myFunc() actually takes 1 parameter.  Don't know if POI will ever be able to detect this problem
 
 		// the name gets encoded as the first arg
@@ -405,7 +408,7 @@ public final class TestFormulaParser extends TestCase {
 		Ptg[] ptgs = {
 				new FuncPtg(10),
 		};
-		assertEquals("NA()", FormulaParser.toFormulaString(book, ptgs));
+		assertEquals("NA()", HSSFFormulaParser.toFormulaString(book, ptgs));
 	}
 
 	public void testPercent() {
@@ -639,11 +642,11 @@ public final class TestFormulaParser extends TestCase {
 		String formulaString;
 		Ptg[] ptgs;
 		ptgs = parseFormula("sum(5, 2, if(3>2, sum(A1:A2), 6))");
-		formulaString = FormulaParser.toFormulaString(null, ptgs);
+		formulaString = toFormulaString(ptgs);
 		assertEquals("SUM(5,2,IF(3>2,SUM(A1:A2),6))", formulaString);
 
 		ptgs = parseFormula("if(1<2,sum(5, 2, if(3>2, sum(A1:A2), 6)),4)");
-		formulaString = FormulaParser.toFormulaString(null, ptgs);
+		formulaString = toFormulaString(ptgs);
 		assertEquals("IF(1<2,SUM(5,2,IF(3>2,SUM(A1:A2),6)),4)", formulaString);
 	}
 	public void testParserErrors() {
@@ -665,12 +668,9 @@ public final class TestFormulaParser extends TestCase {
 		try {
 			parseFormula(formula);
 			throw new AssertionFailedError("expected parse exception");
-		} catch (FormulaParseException e) {
-			// expected during successful test
-			assertNotNull(e.getMessage());
 		} catch (RuntimeException e) {
-			e.printStackTrace();
-			fail("Wrong exception:" + e.getMessage());
+			// expected during successful test
+			FormulaParserTestHelper.confirmParseException(e);
 		}
 	}
 
@@ -697,7 +697,7 @@ public final class TestFormulaParser extends TestCase {
 		Ptg[] ptgs = { spacePtg, new IntPtg(4), };
 		String formulaString;
 		try {
-			formulaString = FormulaParser.toFormulaString(null, ptgs);
+			formulaString = toFormulaString(ptgs);
 		} catch (IllegalStateException e) {
 			if(e.getMessage().equalsIgnoreCase("too much stuff left on the stack")) {
 				throw new AssertionFailedError("Identified bug 44609");
@@ -709,7 +709,7 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals("4", formulaString);
 
 		ptgs = new Ptg[] { new IntPtg(3), spacePtg, new IntPtg(4), spacePtg, AddPtg.instance, };
-		formulaString = FormulaParser.toFormulaString(null, ptgs);
+		formulaString = toFormulaString(ptgs);
 		assertEquals("3+4", formulaString);
 	}
 
@@ -725,7 +725,7 @@ public final class TestFormulaParser extends TestCase {
 				DividePtg.instance,
 		};
 		try {
-			FormulaParser.toFormulaString(null, ptgs);
+			toFormulaString(ptgs);
 			fail("Expected exception was not thrown");
 		} catch (IllegalStateException e) {
 			// expected during successful test
@@ -764,10 +764,10 @@ public final class TestFormulaParser extends TestCase {
 	private static void confirmArgCountMsg(String formula, String expectedMessage) {
 		HSSFWorkbook book = new HSSFWorkbook();
 		try {
-			FormulaParser.parse(formula, book);
+			HSSFFormulaParser.parse(formula, book);
 			throw new AssertionFailedError("Didn't get parse exception as expected");
-		} catch (FormulaParseException e) {
-			assertEquals(expectedMessage, e.getMessage());
+		} catch (RuntimeException e) {
+			FormulaParserTestHelper.confirmParseException(e, expectedMessage);
 		}
 	}
 
@@ -776,15 +776,17 @@ public final class TestFormulaParser extends TestCase {
 		try {
 			parseFormula("round(3.14;2)");
 			throw new AssertionFailedError("Didn't get parse exception as expected");
-		} catch (FormulaParseException e) {
-			assertEquals("Parse error near char 10 ';' in specified formula 'round(3.14;2)'. Expected ',' or ')'", e.getMessage());
+		} catch (RuntimeException e) {
+			FormulaParserTestHelper.confirmParseException(e, 
+					"Parse error near char 10 ';' in specified formula 'round(3.14;2)'. Expected ',' or ')'");
 		}
 
 		try {
 			parseFormula(" =2+2");
 			throw new AssertionFailedError("Didn't get parse exception as expected");
-		} catch (FormulaParseException e) {
-			assertEquals("The specified formula ' =2+2' starts with an equals sign which is not allowed.", e.getMessage());
+		} catch (RuntimeException e) {
+			FormulaParserTestHelper.confirmParseException(e, 
+					"The specified formula ' =2+2' starts with an equals sign which is not allowed.");
 		}
 	}
 	
@@ -819,7 +821,7 @@ public final class TestFormulaParser extends TestCase {
 
 		Ptg[] ptgs;
 		try {
-			ptgs = FormulaParser.parse("count(pfy1)", wb);
+			ptgs = HSSFFormulaParser.parse("count(pfy1)", wb);
 		} catch (IllegalArgumentException e) {
 			if (e.getMessage().equals("Specified colIx (1012) is out of range")) {
 				throw new AssertionFailedError("Identified bug 45354");
@@ -835,10 +837,9 @@ public final class TestFormulaParser extends TestCase {
 		try {
 			cell.setCellFormula("count(pf1)");
 			throw new AssertionFailedError("Expected formula parse execption");
-		} catch (FormulaParseException e) {
-			if (!e.getMessage().equals("Specified named range 'pf1' does not exist in the current workbook.")) {
-				throw e;
-			}
+		} catch (RuntimeException e) {
+			FormulaParserTestHelper.confirmParseException(e, 
+					"Specified named range 'pf1' does not exist in the current workbook.");
 		}
 		cell.setCellFormula("count(fp1)"); // plain cell ref, col is in range
 	}
@@ -850,14 +851,14 @@ public final class TestFormulaParser extends TestCase {
 		HSSFWorkbook book = new HSSFWorkbook();
 		book.createSheet("Sheet1");
 		
-		ptgs = FormulaParser.parse("Sheet1!A10:A40000", book);
+		ptgs = HSSFFormulaParser.parse("Sheet1!A10:A40000", book);
 		aptg = (AreaI) ptgs[0];
 		if (aptg.getLastRow() == -25537) {
 			throw new AssertionFailedError("Identified bug 45358");
 		}
 		assertEquals(39999, aptg.getLastRow());
 		
-		ptgs = FormulaParser.parse("Sheet1!A10:A65536", book);
+		ptgs = HSSFFormulaParser.parse("Sheet1!A10:A65536", book);
 		aptg = (AreaI) ptgs[0];
 		assertEquals(65535, aptg.getLastRow());
 		
