@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Tests specific formula examples in <tt>OperandClassTransformer</tt>.
@@ -31,9 +32,15 @@ import org.apache.poi.hssf.record.formula.Ptg;
  */
 public final class TestOperandClassTransformer extends TestCase {
 
+	private static Ptg[] parseFormula(String formula) {
+		Ptg[] result = HSSFFormulaParser.parse(formula, (HSSFWorkbook)null);
+		assertNotNull("Ptg array should not be null", result);
+		return result;
+	}
+	
 	public void testMdeterm() {
 		String formula = "MDETERM(ABS(A1))";
-		Ptg[] ptgs = FormulaParser.parse(formula, null);
+		Ptg[] ptgs = parseFormula(formula);
 
 		confirmTokenClass(ptgs, 0, Ptg.CLASS_ARRAY);
 		confirmFuncClass(ptgs, 1, "ABS", Ptg.CLASS_ARRAY);
@@ -51,7 +58,7 @@ public final class TestOperandClassTransformer extends TestCase {
 	 */
 	public void DISABLED_testIndexPi1() {
 		String formula = "INDEX(PI(),1)";
-		Ptg[] ptgs = FormulaParser.parse(formula, null);
+		Ptg[] ptgs = parseFormula(formula);
 
 		confirmFuncClass(ptgs, 1, "PI", Ptg.CLASS_ARRAY); // fails as of POI 3.1
 		confirmFuncClass(ptgs, 2, "INDEX", Ptg.CLASS_VALUE);
@@ -63,7 +70,7 @@ public final class TestOperandClassTransformer extends TestCase {
 	 */
 	public void testDirectOperandOfValueOperator() {
 		String formula = "COUNT(A1*1)";
-		Ptg[] ptgs = FormulaParser.parse(formula, null);
+		Ptg[] ptgs = parseFormula(formula);
 		if (ptgs[0].getPtgClass() == Ptg.CLASS_REF) {
 			throw new AssertionFailedError("Identified bug 45348");
 		}
@@ -78,13 +85,13 @@ public final class TestOperandClassTransformer extends TestCase {
 	public void testRtoV() {
 
 		String formula = "lookup(A1, A3:A52, B3:B52)";
-		Ptg[] ptgs = FormulaParser.parse(formula, null);
+		Ptg[] ptgs = parseFormula(formula);
 		confirmTokenClass(ptgs, 0, Ptg.CLASS_VALUE);
 	}
 	
 	public void testComplexIRR_bug45041() {
 		String formula = "(1+IRR(SUMIF(A:A,ROW(INDIRECT(MIN(A:A)&\":\"&MAX(A:A))),B:B),0))^365-1";
-		Ptg[] ptgs = FormulaParser.parse(formula, null);
+		Ptg[] ptgs = parseFormula(formula);
 
 		FuncVarPtg rowFunc = (FuncVarPtg) ptgs[10];
 		FuncVarPtg sumifFunc = (FuncVarPtg) ptgs[12];

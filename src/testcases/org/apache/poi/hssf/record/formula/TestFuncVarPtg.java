@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.model.FormulaParser;
+import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import junit.framework.AssertionFailedError;
@@ -36,7 +36,7 @@ public final class TestFuncVarPtg extends TestCase {
 	 */
 	public void testOperandClass() {
 		HSSFWorkbook book = new HSSFWorkbook();
-		Ptg[] ptgs = FormulaParser.parse("sum(A1:A2)", book);
+		Ptg[] ptgs = HSSFFormulaParser.parse("sum(A1:A2)", book);
 		assertEquals(2, ptgs.length);
 		assertEquals(AreaPtg.class, ptgs[0].getClass());
 		

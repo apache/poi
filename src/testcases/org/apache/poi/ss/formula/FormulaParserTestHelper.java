@@ -17,19 +17,32 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.hssf.record.formula.NamePtg;
-import org.apache.poi.hssf.record.formula.NameXPtg;
+import junit.framework.Assert;
+import junit.framework.AssertionFailedError;
 
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaParser.FormulaParseException;
 /**
- * Abstracts a workbook for the purpose of converting formula to text.<br/>
- * 
- * For POI internal use only
+ * Avoids making {@link FormulaParser#FormulaParseException} public
  * 
  * @author Josh Micich
  */
-public interface FormulaRenderingWorkbook {
-
-	String getSheetNameByExternSheet(int externSheetIndex);
-	String resolveNameXText(NameXPtg nameXPtg);
-	String getNameText(NamePtg namePtg);
+public class FormulaParserTestHelper {
+	public static void confirmParseException(RuntimeException e, String expectedMessage) {
+		checkType(e);
+		Assert.assertEquals(expectedMessage, e.getMessage());
+	}
+	public static void confirmParseException(RuntimeException e) {
+		checkType(e);
+		Assert.assertNotNull(e.getMessage());
+	}
+	private static void checkType(RuntimeException e) throws AssertionFailedError {
+		if (!(e instanceof FormulaParseException)) {
+    		String failMsg = "Expected FormulaParseException, but got (" 
+    			+ e.getClass().getName() + "):";
+    		System.err.println(failMsg);
+    		e.printStackTrace();
+    		throw new AssertionFailedError(failMsg);
+		}
+	}
 }

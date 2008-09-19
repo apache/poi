@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.model;
+package org.apache.poi.ss.formula;
 
 import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;

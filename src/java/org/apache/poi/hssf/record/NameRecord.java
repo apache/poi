@@ -20,7 +20,7 @@ package org.apache.poi.hssf.record;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hssf.model.FormulaParser;
+import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
@@ -495,7 +495,7 @@ public final class NameRecord extends Record {
 	 * @return area reference
 	 */
 	public String getAreaReference(HSSFWorkbook book){
-		return FormulaParser.toFormulaString(book, field_13_name_definition);
+		return HSSFFormulaParser.toFormulaString(book, field_13_name_definition);
 	}
 
 	/** sets the reference , the area only (range)

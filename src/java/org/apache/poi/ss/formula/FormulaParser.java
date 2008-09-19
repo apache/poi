@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.model;
+package org.apache.poi.ss.formula;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,14 +58,9 @@ import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
-import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
-import org.apache.poi.hssf.usermodel.HSSFName;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.util.CellReference.NameType;
-import org.apache.poi.ss.formula.FormulaRenderer;
 
 /**
  * This class parses a formula string into a List of tokens in RPN order.
@@ -83,6 +78,7 @@ import org.apache.poi.ss.formula.FormulaRenderer;
  *  @author Cameron Riley (criley at ekmail.com)
  *  @author Peter M. Murray (pete at quantrix dot com)
  *  @author Pavel Krupets (pkrupets at palmtreebusiness dot com)
+ *  @author Josh Micich
  */
 public final class FormulaParser {
 
@@ -99,14 +95,6 @@ public final class FormulaParser {
         }
     }
 
-    public static final int FORMULA_TYPE_CELL = 0;
-    public static final int FORMULA_TYPE_SHARED = 1;
-    public static final int FORMULA_TYPE_ARRAY =2;
-    public static final int FORMULA_TYPE_CONDFORMAT = 3;
-    public static final int FORMULA_TYPE_NAMEDRANGE = 4;
-    // this constant is currently very specific.  The exact differences from general data
-    // validation formulas or conditional format formulas is not known yet
-    public static final int FORMULA_TYPE_DATAVALIDATION_LIST = 5;
 
     private final String formulaString;
     private final int formulaLength;
@@ -122,7 +110,8 @@ public final class FormulaParser {
      */
     private char look;
 
-    private HSSFWorkbook book;
+    private FormulaParsingWorkbook book;
+
 
 
     /**
@@ -137,19 +126,19 @@ public final class FormulaParser {
      *  model.Workbook, then use the convenience method on
      *  usermodel.HSSFFormulaEvaluator
      */
-    public FormulaParser(String formula, HSSFWorkbook book){
+    private FormulaParser(String formula, FormulaParsingWorkbook book){
         formulaString = formula;
         pointer=0;
         this.book = book;
         formulaLength = formulaString.length();
     }
 
-    public static Ptg[] parse(String formula, HSSFWorkbook book) {
-        return parse(formula, book, FORMULA_TYPE_CELL);
+    public static Ptg[] parse(String formula, FormulaParsingWorkbook book) {
+        return parse(formula, book, FormulaType.CELL);
     }
 
-    public static Ptg[] parse(String formula, HSSFWorkbook workbook, int formulaType) {
-        FormulaParser fp = HSSFFormulaEvaluator.getUnderlyingParser(workbook, formula);
+    public static Ptg[] parse(String formula, FormulaParsingWorkbook workbook, int formulaType) {
+        FormulaParser fp = new FormulaParser(formula, workbook);
         fp.parse();
         return fp.getRPNPtg(formulaType);
     }
@@ -308,7 +297,7 @@ public final class FormulaParser {
             Match('!');
             String sheetName = name;
             String first = parseIdentifier();
-            short externIdx = book.getExternalSheetIndex(book.getSheetIndex(sheetName));
+            int externIdx = book.getExternalSheetIndex(sheetName);
             areaRef = parseArea(name);
             if (areaRef != null) {
                 // will happen if dots are used instead of colon
@@ -330,7 +319,7 @@ public final class FormulaParser {
                 }
                 return new Area3DPtg(first+":"+second,externIdx);
             }
-            return new Ref3DPtg(first,externIdx);
+            return new Ref3DPtg(first, externIdx);
         }
         if (name.equalsIgnoreCase("TRUE") || name.equalsIgnoreCase("FALSE")) {
             return new BoolPtg(name.toUpperCase());
@@ -346,15 +335,16 @@ public final class FormulaParser {
             new FormulaParseException("Name '" + name
                 + "' does not look like a cell reference or named range");
         }
-
-        for(int i = 0; i < book.getNumberOfNames(); i++) {
-            // named range name matching is case insensitive
-            if(book.getNameAt(i).getNameName().equalsIgnoreCase(name)) {
-                return new NamePtg(i);
-            }
-        }
-        throw new FormulaParseException("Specified named range '"
+        EvaluationName evalName = book.getName(name);
+        if (evalName == null) {
+            throw new FormulaParseException("Specified named range '"
                     + name + "' does not exist in the current workbook.");
+        }
+        if (evalName.isRange()) {
+            return evalName.createPtg();
+        }
+        throw new FormulaParseException("Specified name '"
+                    + name + "' is not a range as expected");
     }
 
     /**
@@ -410,10 +400,15 @@ public final class FormulaParser {
             // user defined function
             // in the token tree, the name is more or less the first argument
 
+            EvaluationName hName = book.getName(name);
+            if (hName == null) {
 
-            int nameIndex = book.getNameIndex(name);
-            if (nameIndex >= 0) {
-                HSSFName hName = book.getNameAt(nameIndex);
+                nameToken = book.getNameXPtg(name);
+                if (nameToken == null) {
+                    throw new FormulaParseException("Name '" + name
+                            + "' is completely unknown in the current workbook");
+                }
+            } else {
                 if (!hName.isFunctionName()) {
                     throw new FormulaParseException("Attempt to use name '" + name
                             + "' as a function, but defined name in workbook does not refer to a function");
@@ -421,14 +416,7 @@ public final class FormulaParser {
 
                 // calls to user-defined functions within the workbook
                 // get a Name token which points to a defined name record
-                nameToken = new NamePtg(nameIndex);
-            } else {
-
-                nameToken = book.getNameXPtg(name);
-                if (nameToken == null) {
-                    throw new FormulaParseException("Name '" + name
-                            + "' is completely unknown in the current workbook");
-                }
+                nameToken = hName.createPtg();
             }
         }
 
@@ -965,9 +953,9 @@ end;
 
     /**
      *  API call to execute the parsing of the formula
-     * @deprecated use {@link #parse(String, HSSFWorkbook)} directly
+     * 
      */
-    public void parse() {
+    private void parse() {
         pointer=0;
         GetChar();
         _rootNode = comparisonExpression();
@@ -979,60 +967,10 @@ end;
         }
     }
 
-
-    /*********************************
-     * PARSER IMPLEMENTATION ENDS HERE
-     * EXCEL SPECIFIC METHODS BELOW
-     *******************************/
-
-    /** API call to retrive the array of Ptgs created as
-     * a result of the parsing
-     */
-    public Ptg[] getRPNPtg() {
-        return getRPNPtg(FORMULA_TYPE_CELL);
-    }
-
-    public Ptg[] getRPNPtg(int formulaType) {
+    private Ptg[] getRPNPtg(int formulaType) {
         OperandClassTransformer oct = new OperandClassTransformer(formulaType);
         // RVA is for 'operand class': 'reference', 'value', 'array'
         oct.transformFormula(_rootNode);
         return ParseNode.toTokenArray(_rootNode);
-    }
-
-    /**
-     * Convenience method which takes in a list then passes it to the
-     *  other toFormulaString signature.
-     * @param book   workbook for 3D and named references
-     * @param lptgs  list of Ptg, can be null or empty
-     * @return a human readable String
-     */
-    public static String toFormulaString(HSSFWorkbook book, List lptgs) {
-        String retval = null;
-        if (lptgs == null || lptgs.size() == 0) return "#NAME";
-        Ptg[] ptgs = new Ptg[lptgs.size()];
-        ptgs = (Ptg[])lptgs.toArray(ptgs);
-        retval = toFormulaString(book, ptgs);
-        return retval;
-    }
-    /**
-     * Convenience method which takes in a list then passes it to the
-     *  other toFormulaString signature. Works on the current
-     *  workbook for 3D and named references
-     * @param lptgs  list of Ptg, can be null or empty
-     * @return a human readable String
-     */
-    public String toFormulaString(List lptgs) {
-        return toFormulaString(book, lptgs);
-    }
-
-    /**
-     * Static method to convert an array of Ptgs in RPN order
-     * to a human readable string format in infix mode.
-     * @param book  workbook for named and 3D references
-     * @param ptgs  array of Ptg, can be null or empty
-     * @return a human readable String
-     */
-    public static String toFormulaString(HSSFWorkbook book, Ptg[] ptgs) {
-        return FormulaRenderer.toFormulaString(HSSFEvaluationWorkbook.create(book), ptgs);
     }
 }

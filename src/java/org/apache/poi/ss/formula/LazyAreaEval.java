@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.apache.poi.ss.formula;
 
 import org.apache.poi.hssf.record.formula.AreaI;
 import org.apache.poi.hssf.record.formula.AreaI.OffsetArea;
@@ -23,6 +23,9 @@ import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.AreaEvalBase;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.util.CellReference;
 
 /**
@@ -32,9 +35,9 @@ import org.apache.poi.hssf.util.CellReference;
 final class LazyAreaEval extends AreaEvalBase {
 
 	private final HSSFSheet _sheet;
-	private HSSFFormulaEvaluator _evaluator;
+	private final CellEvaluator _evaluator;
 
-	public LazyAreaEval(AreaI ptg, HSSFSheet sheet, HSSFFormulaEvaluator evaluator) {
+	public LazyAreaEval(AreaI ptg, HSSFSheet sheet, CellEvaluator evaluator) {
 		super(ptg);
 		_sheet = sheet;
 		_evaluator = evaluator;

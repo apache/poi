@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.hssf.model.FormulaParser;
+import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.BlankRecord;
@@ -124,7 +124,7 @@ public final class HSSFCell {
         short xfindex = sheet.getSheet().getXFIndexForColAt(col);
         setCellType(CELL_TYPE_BLANK, false, row, col,xfindex);
     }
-    /* package */ HSSFSheet getSheet() {
+    public HSSFSheet getSheet() {
         return sheet;
     }
 
@@ -589,12 +589,12 @@ public final class HSSFCell {
         if (rec.getXFIndex() == (short)0) {
             rec.setXFIndex((short) 0x0f);
         }
-        Ptg[] ptgs = FormulaParser.parse(formula, book);
+        Ptg[] ptgs = HSSFFormulaParser.parse(formula, book);
         frec.setParsedExpression(ptgs);
     }
 
     public String getCellFormula() {
-        return FormulaParser.toFormulaString(book, ((FormulaRecordAggregate)record).getFormulaRecord().getParsedExpression());
+        return HSSFFormulaParser.toFormulaString(book, ((FormulaRecordAggregate)record).getFormulaRecord().getParsedExpression());
     }
 
     /**

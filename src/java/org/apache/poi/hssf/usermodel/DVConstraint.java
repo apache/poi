@@ -20,10 +20,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.poi.hssf.model.FormulaParser;
+import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.formula.NumberPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.StringPtg;
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaType;
 
 /**
  * 
@@ -339,7 +341,7 @@ public class DVConstraint {
 
 		if (_explicitListValues == null) {
 			// formula is parsed with slightly different RVA rules: (root node type must be 'reference')
-			return FormulaParser.parse(_formula1, workbook, FormulaParser.FORMULA_TYPE_DATAVALIDATION_LIST);
+			return HSSFFormulaParser.parse(_formula1, workbook, FormulaType.DATAVALIDATION_LIST);
 			// To do: Excel places restrictions on the available operations within a list formula.
 			// Some things like union and intersection are not allowed.
 		}
@@ -369,7 +371,7 @@ public class DVConstraint {
 		if (value != null) {
 			throw new IllegalStateException("Both formula and value cannot be present");
 		}
-		return FormulaParser.parse(formula, workbook);
+		return HSSFFormulaParser.parse(formula, workbook);
 	}
 	
 	

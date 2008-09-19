@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.apache.poi.ss.formula;
 
 import org.apache.poi.hssf.record.formula.AreaI;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
@@ -25,6 +25,9 @@ import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.RefEvalBase;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.util.CellReference;
 
 /**
@@ -34,15 +37,15 @@ import org.apache.poi.hssf.util.CellReference;
 final class LazyRefEval extends RefEvalBase {
 
 	private final HSSFSheet _sheet;
-	private final HSSFFormulaEvaluator _evaluator;
+	private final CellEvaluator _evaluator;
 
 
-	public LazyRefEval(RefPtg ptg, HSSFSheet sheet, HSSFFormulaEvaluator evaluator) {
+	public LazyRefEval(RefPtg ptg, HSSFSheet sheet, CellEvaluator evaluator) {
 		super(ptg.getRow(), ptg.getColumn());
 		_sheet = sheet;
 		_evaluator = evaluator;
 	}
-	public LazyRefEval(Ref3DPtg ptg, HSSFSheet sheet, HSSFFormulaEvaluator evaluator) {
+	public LazyRefEval(Ref3DPtg ptg, HSSFSheet sheet, CellEvaluator evaluator) {
 		super(ptg.getRow(), ptg.getColumn());
 		_sheet = sheet;
 		_evaluator = evaluator;

@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.model.FormulaParser;
+import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
@@ -595,6 +595,6 @@ public final class CFRuleRecord extends Record {
 		if(formula == null) {
 			return null;
 		}
-		return FormulaParser.parse(formula, workbook);
+		return HSSFFormulaParser.parse(formula, workbook);
 	}
 }
