@@ -17,7 +17,6 @@
 
 package org.apache.poi.ss.formula;
 
-import java.util.List;
 import java.util.Stack;
 
 import org.apache.poi.hssf.record.formula.AttrPtg;
@@ -36,33 +35,17 @@ import org.apache.poi.hssf.record.formula.Ptg;
  * @author Josh Micich
  */
 public class FormulaRenderer {
-    /**
-     * Convenience method which takes in a list then passes it to the
-     *  other toFormulaString signature.
-     * @param book   workbook for 3D and named references
-     * @param lptgs  list of Ptg, can be null or empty
-     * @return a human readable String
-     */
-    public static String toFormulaString(FormulaRenderingWorkbook book, List lptgs) {
-        String retval = null;
-        if (lptgs == null || lptgs.size() == 0) return "#NAME";
-        Ptg[] ptgs = new Ptg[lptgs.size()];
-        ptgs = (Ptg[])lptgs.toArray(ptgs);
-        retval = toFormulaString(book, ptgs);
-        return retval;
-    }
     
     /**
-     * Static method to convert an array of Ptgs in RPN order
+     * Static method to convert an array of {@link Ptg}s in RPN order
      * to a human readable string format in infix mode.
-     * @param book  workbook for named and 3D references
-     * @param ptgs  array of Ptg, can be null or empty
+     * @param book  used for defined names and 3D references
+     * @param ptgs  must not be <code>null</code>
      * @return a human readable String
      */
     public static String toFormulaString(FormulaRenderingWorkbook book, Ptg[] ptgs) {
         if (ptgs == null || ptgs.length == 0) {
-            // TODO - what is the justification for returning "#NAME" (which is not "#NAME?", btw)
-            return "#NAME";
+            throw new IllegalArgumentException("ptgs must not be null");
         }
         Stack stack = new Stack();
 
