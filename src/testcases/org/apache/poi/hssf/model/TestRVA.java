@@ -82,7 +82,7 @@ public final class TestRVA extends TestCase {
 
 	private void confirmCell(HSSFCell formulaCell, String formula, HSSFWorkbook wb) {
 		Ptg[] excelPtgs = FormulaExtractor.getPtgs(formulaCell);
-		Ptg[] poiPtgs = FormulaParser.parse(formula, wb);
+		Ptg[] poiPtgs = HSSFFormulaParser.parse(formula, wb);
 		int nExcelTokens = excelPtgs.length;
 		int nPoiTokens = poiPtgs.length;
 		if (nExcelTokens != nPoiTokens) {

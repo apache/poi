@@ -31,7 +31,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.ss.usermodel.FormulaEvaluator.CellValue;
+import org.apache.poi.ss.usermodel.CellValue;
 
 /**
  * Tests INDEX() as loaded from a test data spreadsheet.<p/>
@@ -66,7 +66,7 @@ public final class TestIndexFunctionFromSpreadsheet extends TestCase {
 
 
 
-	private static void confirmExpectedResult(String msg, HSSFCell expected, HSSFFormulaEvaluator.CellValue actual) {
+	private static void confirmExpectedResult(String msg, HSSFCell expected, CellValue actual) {
 		if (expected == null) {
 			throw new AssertionFailedError(msg + " - Bad setup data expected value is null");
 		}

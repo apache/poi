@@ -76,7 +76,7 @@ public final class TestDate extends TestCase {
 
     private void confirm(String formulaText, double expectedResult) {
         cell11.setCellFormula(formulaText);
-        evaluator.clearCache();
+        evaluator.clearAllCachedResultValues();
         double actualValue = evaluator.evaluate(cell11).getNumberValue();
         assertEquals(expectedResult, actualValue, 0);
     }

@@ -15,42 +15,38 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.usermodel;
+package org.apache.poi.ss.formula;
 
 import org.apache.poi.hssf.record.formula.AreaI;
-import org.apache.poi.hssf.record.formula.Ref3DPtg;
-import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.AreaI.OffsetArea;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
+import org.apache.poi.hssf.record.formula.eval.AreaEvalBase;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
-import org.apache.poi.hssf.record.formula.eval.RefEvalBase;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.hssf.util.CellReference;
 
 /**
-*
-* @author Josh Micich 
-*/
-public class LazyRefEval extends RefEvalBase {
+ *
+ * @author Josh Micich 
+ */
+final class LazyAreaEval extends AreaEvalBase {
 
 	private final Sheet _sheet;
-	private final FormulaEvaluator _evaluator;
+	private final CellEvaluator _evaluator;
 
-
-	public LazyRefEval(RefPtg ptg, Sheet sheet, FormulaEvaluator evaluator) {
-		super(ptg.getRow(), ptg.getColumn());
-		_sheet = sheet;
-		_evaluator = evaluator;
-	}
-	public LazyRefEval(Ref3DPtg ptg, Sheet sheet, FormulaEvaluator evaluator) {
-		super(ptg.getRow(), ptg.getColumn());
+	public LazyAreaEval(AreaI ptg, Sheet sheet, CellEvaluator evaluator) {
+		super(ptg);
 		_sheet = sheet;
 		_evaluator = evaluator;
 	}
 
-	public ValueEval getInnerValueEval() {
-		int rowIx = getRow();
-		int colIx = getColumn();
+	public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) { 
+		
+		int rowIx = (relativeRowIndex + getFirstRow() ) & 0xFFFF;
+		int colIx = (relativeColumnIndex + getFirstColumn() ) & 0x00FF;
 		
 		Row row = _sheet.getRow(rowIx);
 		if (row == null) {
@@ -62,23 +58,24 @@ public class LazyRefEval extends RefEvalBase {
 		}
 		return _evaluator.getEvalForCell(cell);
 	}
-	
+
 	public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
-		
-		AreaI area = new OffsetArea(getRow(), getColumn(),
+		AreaI area = new OffsetArea(getFirstRow(), getFirstColumn(),
 				relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
 
 		return new LazyAreaEval(area, _sheet, _evaluator);
 	}
-	
 	public String toString() {
-		CellReference cr = new CellReference(getRow(), getColumn());
+		CellReference crA = new CellReference(getFirstRow(), getFirstColumn());
+		CellReference crB = new CellReference(getLastRow(), getLastColumn());
 		StringBuffer sb = new StringBuffer();
 		sb.append(getClass().getName()).append("[");
 		String sheetName = _evaluator.getSheetName(_sheet);
 		sb.append(sheetName);
 		sb.append('!');
-		sb.append(cr.formatAsString());
+		sb.append(crA.formatAsString());
+		sb.append(':');
+		sb.append(crB.formatAsString());
 		sb.append("]");
 		return sb.toString();
 	}

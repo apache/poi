@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.hssf.model.FormulaParser;
+import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.BlankRecord;
@@ -513,20 +513,16 @@ public class HSSFCell implements Cell {
     }
 
     /**
-     * set a string value for the cell. Please note that if you are using
-     * full 16 bit unicode you should call <code>setEncoding()</code> first.
+     * set a string value for the cell. 
      *
-     * @param value  value to set the cell to.  For formulas we'll set the formula
-     * string, for String cells we'll set its value.  For other types we will
+     * @param value value to set the cell to.  For formulas we'll set the formula
+     * cached string result, for String cells we'll set its value. For other types we will
      * change the cell to a string cell and set its value.
      * If value is null then we will change the cell to a Blank cell.
-     * @deprecated Use setCellValue(HSSFRichTextString) instead.
      */
-
-    public void setCellValue(String value)
-    {
-      HSSFRichTextString str = new HSSFRichTextString(value);
-      setCellValue(str);
+    public void setCellValue(String value) {
+        HSSFRichTextString str = value == null ? null :  new HSSFRichTextString(value);
+        setCellValue(str);
     }
 
     /**
@@ -597,12 +593,12 @@ public class HSSFCell implements Cell {
         if (rec.getXFIndex() == (short)0) {
             rec.setXFIndex((short) 0x0f);
         }
-        Ptg[] ptgs = FormulaParser.parse(formula, book);
+        Ptg[] ptgs = HSSFFormulaParser.parse(formula, book);
         frec.setParsedExpression(ptgs);
     }
 
     public String getCellFormula() {
-        return FormulaParser.toFormulaString(book, ((FormulaRecordAggregate)record).getFormulaRecord().getParsedExpression());
+        return HSSFFormulaParser.toFormulaString(book, ((FormulaRecordAggregate)record).getFormulaRecord().getParsedExpression());
     }
 
     /**

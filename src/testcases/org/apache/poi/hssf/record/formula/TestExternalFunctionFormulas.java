@@ -24,12 +24,12 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.model.FormulaParser;
+import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.FormulaEvaluator.CellValue;
+import org.apache.poi.ss.usermodel.CellValue;
 /**
  * Tests for functions from external workbooks (e.g. YEARFRAC).
  * 
@@ -52,7 +52,7 @@ public final class TestExternalFunctionFormulas extends TestCase {
 	
 	public void testParse() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
-		Ptg[] ptgs = FormulaParser.parse("YEARFRAC(B1,C1)", wb);
+		Ptg[] ptgs = HSSFFormulaParser.parse("YEARFRAC(B1,C1)", wb);
 		assertEquals(4, ptgs.length);
 		assertEquals(NameXPtg.class, ptgs[0].getClass());
 		

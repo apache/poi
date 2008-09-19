@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.model;
+package org.apache.poi.ss.formula;
 
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.ControlPtg;
@@ -63,10 +63,10 @@ final class OperandClassTransformer {
 	public void transformFormula(ParseNode rootNode) {
 		byte rootNodeOperandClass;
 		switch (_formulaType) {
-			case FormulaParser.FORMULA_TYPE_CELL:
+			case FormulaType.CELL:
 				rootNodeOperandClass = Ptg.CLASS_VALUE;
 				break;
-			case FormulaParser.FORMULA_TYPE_DATAVALIDATION_LIST:
+			case FormulaType.DATAVALIDATION_LIST:
 				rootNodeOperandClass = Ptg.CLASS_REF;
 				break;
 			default:

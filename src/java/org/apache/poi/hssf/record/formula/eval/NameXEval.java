@@ -17,32 +17,27 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
+import org.apache.poi.hssf.record.formula.NameXPtg;
+
 /**
  * @author Josh Micich
  */
 public final class NameXEval implements Eval {
 
-	/** index to REF entry in externsheet record */
-	private final int _sheetRefIndex;
-	/** index to defined name or externname table(1 based) */
-	private final int _nameNumber;
+	private final NameXPtg _ptg;
 
-	public NameXEval(int sheetRefIndex, int nameNumber) {
-		_sheetRefIndex = sheetRefIndex;
-		_nameNumber = nameNumber;
+	public NameXEval(NameXPtg ptg) {
+		_ptg = ptg;
 	}
 
-	public int getSheetRefIndex() {
-		return _sheetRefIndex;
-	}
-	public int getNameNumber() {
-		return _nameNumber;
+	public NameXPtg getPtg() {
+		return _ptg;
 	}
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer(64);
 		sb.append(getClass().getName()).append(" [");
-		sb.append(_sheetRefIndex).append(", ").append(_nameNumber);
+		sb.append(_ptg.getSheetRefIndex()).append(", ").append(_ptg.getNameIndex());
 		sb.append("]");
 		return sb.toString();
 	}

@@ -21,7 +21,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.regex.Pattern;
 
-import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
@@ -31,8 +30,7 @@ import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.formula.EvaluationWorkbook;
 /**
  * Implementation of Excel 'Analysis ToolPak' function YEARFRAC()<br/>
  * 
@@ -61,7 +59,7 @@ final class YearFrac implements FreeRefFunction {
 		// enforce singleton
 	}
 
-	public ValueEval evaluate(Eval[] args, Workbook workbook, int srcCellSheet, int srcCellRow,
+	public ValueEval evaluate(Eval[] args, EvaluationWorkbook workbook, int srcCellSheet, int srcCellRow,
 			int srcCellCol) {
 
 		double result;

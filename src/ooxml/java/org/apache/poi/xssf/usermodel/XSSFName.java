@@ -37,7 +37,7 @@ public class XSSFName implements Name {
 	
 	public boolean isFunctionName() {
 		// TODO Figure out how HSSF does this, and do the same!
-		return false;
+		return ctName.getFunction(); // maybe this works - verify
 	}
 	/**
 	 * Returns the underlying named range object
