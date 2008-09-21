@@ -44,6 +44,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor {
 	private boolean includeSheetNames = true;
 	private boolean formulasNotResults = false;
 	private boolean includeCellComments = false;
+	private boolean includeBlankCells = false;
 	
 	public ExcelExtractor(HSSFWorkbook wb) {
 		super(wb);
@@ -73,13 +74,26 @@ public class ExcelExtractor extends POIOLE2TextExtractor {
     public void setIncludeCellComments(boolean includeCellComments) {
         this.includeCellComments = includeCellComments;
     }
+	/**
+	 * Should blank cells be output? Default is to only
+	 *  output cells that are present in the file and are
+	 *  non-blank.
+	 */
+	public void setIncludeBlankCells(boolean includeBlankCells) {
+		this.includeBlankCells = includeBlankCells;
+	}
 	
 	/**
 	 * Retreives the text contents of the file
 	 */
 	public String getText() {
 		StringBuffer text = new StringBuffer();
+
+		// We don't care about the differnce between
+		//  null (missing) and blank cells
+		wb.setMissingCellPolicy(HSSFRow.RETURN_BLANK_AS_NULL);
 		
+		// Process each sheet in turn
 		for(int i=0;i<wb.getNumberOfSheets();i++) {
 			HSSFSheet sheet = wb.getSheetAt(i);
 			if(sheet == null) { continue; }
@@ -108,63 +122,68 @@ public class ExcelExtractor extends POIOLE2TextExtractor {
 				// Check each cell in turn
 				int firstCell = row.getFirstCellNum();
 				int lastCell = row.getLastCellNum();
+				if(includeBlankCells) {
+					firstCell = 0;
+				}
+				
 				for(int k=firstCell;k<lastCell;k++) {
 					HSSFCell cell = row.getCell(k);
-					if(cell == null) { continue; }
 					boolean outputContents = true;
-					
-					switch(cell.getCellType()) {
-						case HSSFCell.CELL_TYPE_BLANK:
-							outputContents = false;
-							break;
-						case HSSFCell.CELL_TYPE_STRING:
-							text.append(cell.getRichStringCellValue().getString());
-							break;
-						case HSSFCell.CELL_TYPE_NUMERIC:
-							// Note - we don't apply any formatting!
-							text.append(cell.getNumericCellValue());
-							break;
-						case HSSFCell.CELL_TYPE_BOOLEAN:
-							text.append(cell.getBooleanCellValue());
-							break;
-						case HSSFCell.CELL_TYPE_ERROR:
-							text.append(ErrorEval.getText(cell.getErrorCellValue()));
-							break;
-						case HSSFCell.CELL_TYPE_FORMULA:
-							if(formulasNotResults) {
-								text.append(cell.getCellFormula());
-							} else {
-								switch(cell.getCachedFormulaResultType()) {
-									case HSSFCell.CELL_TYPE_STRING:
-										HSSFRichTextString str = cell.getRichStringCellValue();
-										if(str != null && str.length() > 0) {
-											text.append(str.toString());
-										}
-										break;
-									case HSSFCell.CELL_TYPE_NUMERIC:
-										text.append(cell.getNumericCellValue());
-										break;
-									case HSSFCell.CELL_TYPE_BOOLEAN:
-										text.append(cell.getBooleanCellValue());
-										break;
-									case HSSFCell.CELL_TYPE_ERROR:
-										text.append(ErrorEval.getText(cell.getErrorCellValue()));
-										break;
-										
+
+					if(cell == null) {
+						// Only output if requested
+						outputContents = includeBlankCells;
+					} else {
+						switch(cell.getCellType()) {
+							case HSSFCell.CELL_TYPE_STRING:
+								text.append(cell.getRichStringCellValue().getString());
+								break;
+							case HSSFCell.CELL_TYPE_NUMERIC:
+								// Note - we don't apply any formatting!
+								text.append(cell.getNumericCellValue());
+								break;
+							case HSSFCell.CELL_TYPE_BOOLEAN:
+								text.append(cell.getBooleanCellValue());
+								break;
+							case HSSFCell.CELL_TYPE_ERROR:
+								text.append(ErrorEval.getText(cell.getErrorCellValue()));
+								break;
+							case HSSFCell.CELL_TYPE_FORMULA:
+								if(formulasNotResults) {
+									text.append(cell.getCellFormula());
+								} else {
+									switch(cell.getCachedFormulaResultType()) {
+										case HSSFCell.CELL_TYPE_STRING:
+											HSSFRichTextString str = cell.getRichStringCellValue();
+											if(str != null && str.length() > 0) {
+												text.append(str.toString());
+											}
+											break;
+										case HSSFCell.CELL_TYPE_NUMERIC:
+											text.append(cell.getNumericCellValue());
+											break;
+										case HSSFCell.CELL_TYPE_BOOLEAN:
+											text.append(cell.getBooleanCellValue());
+											break;
+										case HSSFCell.CELL_TYPE_ERROR:
+											text.append(ErrorEval.getText(cell.getErrorCellValue()));
+											break;
+											
+									}
 								}
-							}
-							break;
-						default:
-							throw new RuntimeException("Unexpected cell type (" + cell.getCellType() + ")");
-					}
-					
-					// Output the comment, if requested and exists
-				    HSSFComment comment = cell.getCellComment();
-					if(includeCellComments && comment != null) {
-					    // Replace any newlines with spaces, otherwise it
-					    //  breaks the output
-					    String commentText = comment.getString().getString().replace('\n', ' ');
-					    text.append(" Comment by "+comment.getAuthor()+": "+commentText);
+								break;
+							default:
+								throw new RuntimeException("Unexpected cell type (" + cell.getCellType() + ")");
+						}
+						
+						// Output the comment, if requested and exists
+					    HSSFComment comment = cell.getCellComment();
+						if(includeCellComments && comment != null) {
+						    // Replace any newlines with spaces, otherwise it
+						    //  breaks the output
+						    String commentText = comment.getString().getString().replace('\n', ' ');
+						    text.append(" Comment by "+comment.getAuthor()+": "+commentText);
+						}
 					}
 					
 					// Output a tab if we're not on the last cell
