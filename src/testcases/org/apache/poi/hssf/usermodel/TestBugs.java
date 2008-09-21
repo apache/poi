@@ -1474,4 +1474,14 @@ public final class TestBugs extends TestCase {
     		fail();
     	} catch(IllegalArgumentException e) {}
     }
+    
+    /**
+     * Charts with long titles
+     */
+    public void test45784() {
+    	// This used to break
+        HSSFWorkbook wb = openSample("45784.xls");
+        assertEquals(1, wb.getNumberOfSheets());
+    	
+    }
 }

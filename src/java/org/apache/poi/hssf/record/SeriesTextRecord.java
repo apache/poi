@@ -75,7 +75,8 @@ public class SeriesTextRecord
         field_1_id                     = in.readShort();
         field_2_textLength             = in.readByte();
         field_3_undocumented           = in.readByte();
-        field_4_text                   = in.readUnicodeLEString(field_2_textLength);
+        field_4_text                   = in.readUnicodeLEString(
+        		LittleEndian.ubyteToInt(field_2_textLength));
     }
 
     public String toString()
@@ -163,17 +164,33 @@ public class SeriesTextRecord
     /**
      * Get the text length field for the SeriesText record.
      */
-    public byte getTextLength()
+    public int getTextLength()
     {
-        return field_2_textLength;
+        return LittleEndian.ubyteToInt(field_2_textLength);
     }
 
     /**
      * Set the text length field for the SeriesText record.
+     * Needs to be wrapped.
      */
     public void setTextLength(byte field_2_textLength)
     {
         this.field_2_textLength = field_2_textLength;
+    }
+    /**
+     * Set the text length field for the SeriesText record.
+     */
+    public void setTextLength(int field_2_textLength)
+    {
+    	if(field_2_textLength > 255) {
+    		throw new IllegalArgumentException("Length must be 0-255");
+    	}
+    	if(field_2_textLength > 127) {
+    		this.field_2_textLength = (byte)
+    			(field_2_textLength-256);
+    	} else {
+    		this.field_2_textLength = (byte)field_2_textLength;
+    	}
     }
 
     /**
