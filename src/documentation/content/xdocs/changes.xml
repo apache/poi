@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.2-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">45777 - Throw an exception if HSSF Footer or Header is attemped to be set too long, rather than having it break during writing out</action>
            <action dev="POI-DEVELOPERS" type="add">45844 - Addtional diagnostics for HSLF SlideShowRecordDumper</action>
            <action dev="POI-DEVELOPERS" type="fix">45829 - HSSFPicture.getImageDimension() failed when DPI of image is zero</action>
            <action dev="POI-DEVELOPERS" type="fix">45815 - Bit mask values in StyleTextPropAtom were not preserved across read-write</action>
