@@ -36,14 +36,14 @@
     </devs>
 
 		<!-- Don't forget to update status.xml too! -->
-        <release version="3.5.1-beta4" date="2008-??-??">
+        <release version="3.5-beta4" date="2008-??-??">
         </release>
-        <release version="3.5.1-beta3" date="2008-09-26">
+        <release version="3.5-beta3" date="2008-09-26">
            <action dev="POI-DEVELOPERS" type="fix">45518 - Fix up ColumnHelper to output valid col tags, by making 1 based and 0 based bits clearer, and using the right ones</action>
            <action dev="POI-DEVELOPERS" type="fix">45676 - Handle very long cells in the XSSF EventUserModel example</action>
            <action dev="POI-DEVELOPERS" type="add">Initial ExtractorFactory support for building TextExtractors for embeded documents</action>
         </release>
-        <release version="3.5.1-beta2" date="2008-08-20">
+        <release version="3.5-beta2" date="2008-08-20">
            <action dev="POI-DEVELOPERS" type="add">Support stripping XSSF header and footer fields (eg page number) out of header and footer text if required</action>
            <action dev="POI-DEVELOPERS" type="add">Add POIXMLPropertiesTextExtractor, which provides to the OOXML file formats a similar function to HPSF's HPSFPropertiesExtractor</action>
            <action dev="POI-DEVELOPERS" type="add">45539 - Improve XWPFWordExtractor to extract headers and footers</action>
@@ -57,7 +57,7 @@
            <action dev="POI-DEVELOPERS" type="add">45431 - Partial support for .xlm files. Not quite enough for excel to load them though</action>
            <action dev="POI-DEVELOPERS" type="fix">45430 - Correct named range sheet reporting when no local sheet id is given in the xml</action>
 		</release>
-        <release version="3.5.1-beta1" date="2008-07-18">
+        <release version="3.5-beta1" date="2008-07-18">
            <action dev="POI-DEVELOPERS" type="add">45018 - Support for fetching embeded documents from within an OOXML file</action>
            <action dev="POI-DEVELOPERS" type="add">Port support for setting a policy on missing / blank cells when fetching, to XSSF too</action>
            <action dev="POI-DEVELOPERS" type="add">Common text extraction factory, which returns the correct POITextExtractor for the supplied data</action>
