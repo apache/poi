@@ -19,6 +19,7 @@
 
 package org.apache.poi.hslf.record;
 
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import java.io.IOException;
@@ -100,5 +101,16 @@ public class TextBytesAtom extends RecordAtom
 
 		// Write out our text
 		out.write(_text);
+	}
+
+	/**
+	 * dump debug info; use getText() to return a string 
+	 * representation of the atom
+	 */
+	public String toString() {
+        StringBuffer out = new StringBuffer();
+        out.append( "TextBytesAtom:\n");
+		out.append( HexDump.dump(_text, 0, 0) );
+		return out.toString();
 	}
 }

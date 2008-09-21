@@ -35,6 +35,8 @@ public class TextPropCollection {
 	private short reservedField;
 	private LinkedList textPropList;
     private int maskSpecial = 0;
+    
+    public int getSpecialMask() { return maskSpecial; }
 
 	/** Fetch the number of characters this styling applies to */
 	public int getCharactersCovered() { return charactersCovered; }
