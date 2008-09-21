@@ -32,6 +32,7 @@ import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.HexDump;
 
 /**
  * A StyleTextPropAtom (type 4001). Holds basic character properties 
@@ -417,25 +418,62 @@ public class StyleTextPropAtom extends RecordAtom
      */
     public String toString(){
         StringBuffer out = new StringBuffer();
-        out.append("Paragraph properties\n");
-        for (Iterator it1 = getParagraphStyles().iterator(); it1.hasNext();) {
-            TextPropCollection pr = (TextPropCollection)it1.next();
-            out.append("  chars covered: " + pr.getCharactersCovered() + "\n");
-            for (Iterator it2 = pr.getTextPropList().iterator(); it2.hasNext(); ) {
-                TextProp p = (TextProp)it2.next();
-                out.append("    " + p.getName() + " = " + p.getValue() + "\n");
-            }
+        
+	    out.append("StyleTextPropAtom:\n");
+        if (!initialised) {
+	        out.append("Uninitialised, dumping Raw Style Data\n");
+        } else {
+        
+	        out.append("Paragraph properties\n");
+	        
+	        for (Iterator it1 = getParagraphStyles().iterator(); it1.hasNext();) {
+	            TextPropCollection pr = (TextPropCollection)it1.next();
+	            out.append("  chars covered: " + pr.getCharactersCovered());
+	            out.append("  special mask flags: 0x" + HexDump.toHex(pr.getSpecialMask()) + "\n");
+	            for (Iterator it2 = pr.getTextPropList().iterator(); it2.hasNext(); ) {
+	                TextProp p = (TextProp)it2.next();
+	                out.append("    " + p.getName() + " = " + p.getValue() );
+	                out.append(" (0x" + HexDump.toHex(p.getValue()) + ")\n");
+	            }
+	            
+	            out.append("  para bytes that would be written: \n");
+	            
+	            try {
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					pr.writeOut(baos);
+					byte[] b = baos.toByteArray();
+					out.append(HexDump.dump(b, 0, 0));
+	            } catch (Exception e ) {
+	            	e.printStackTrace();
+	            }
+	        }
+	
+	        out.append("Character properties\n");
+	        for (Iterator it1 = getCharacterStyles().iterator(); it1.hasNext();) {
+	            TextPropCollection pr = (TextPropCollection)it1.next();
+	            out.append("  chars covered: " + pr.getCharactersCovered() );
+	            out.append("  special mask flags: 0x" + HexDump.toHex(pr.getSpecialMask()) + "\n");
+	            for (Iterator it2 = pr.getTextPropList().iterator(); it2.hasNext(); ) {
+	                TextProp p = (TextProp)it2.next();
+	                out.append("    " + p.getName() + " = " + p.getValue() );
+	                out.append(" (0x" + HexDump.toHex(p.getValue()) + ")\n");
+	            }
+	            
+	            out.append("  char bytes that would be written: \n");
+	            
+	            try {
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					pr.writeOut(baos);
+					byte[] b = baos.toByteArray();
+					out.append(HexDump.dump(b, 0, 0));
+	            } catch (Exception e ) {
+	            	e.printStackTrace();
+	            }
+	        }
         }
-
-        out.append("Character properties\n");
-        for (Iterator it1 = getCharacterStyles().iterator(); it1.hasNext();) {
-            TextPropCollection pr = (TextPropCollection)it1.next();
-            out.append("  chars covered: " + pr.getCharactersCovered() + "\n");
-            for (Iterator it2 = pr.getTextPropList().iterator(); it2.hasNext(); ) {
-                TextProp p = (TextProp)it2.next();
-                out.append("    " + p.getName() + " = " + p.getValue() + "\n");
-            }
-        }
+        	
+        out.append("  original byte stream \n");
+		out.append( HexDump.dump(rawContents, 0, 0) );
 
         return out.toString();
     }
