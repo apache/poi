@@ -187,6 +187,27 @@ public final class TestExcelExtractor extends TestCase {
 		);
 	}
 	
+	public void testWithBlank() throws Exception {
+		ExcelExtractor extractor = createExtractor("MissingBits.xls");
+		String def = extractor.getText();
+		extractor.setIncludeBlankCells(true);
+		String padded = extractor.getText();
+		
+		assertTrue(def.startsWith(
+				"Sheet1\n" +
+				"&[TAB]\t\n" +
+				"Hello\t\n" +
+				"11.0\t23.0\t\n"
+		));
+		
+		assertTrue(padded.startsWith(
+				"Sheet1\n" +
+				"&[TAB]\t\n" +
+				"Hello\t\t\t\t\t\t\t\t\t\t\t\n" +
+				"11.0\t\t\t23.0\t\t\t\t\t\t\t\t\n"
+		));
+	}
+	
 	
 	/**
 	 * Embded in a non-excel file

@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.2-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">Update hssf.extractor.ExcelExtractor to optionally output blank cells too</action>
            <action dev="POI-DEVELOPERS" type="add">Include the sheet name in the output of examples.XLS2CSVmra</action>
            <action dev="POI-DEVELOPERS" type="fix">45784 - Support long chart titles in SeriesTextRecords</action>
            <action dev="POI-DEVELOPERS" type="fix">45777 - Throw an exception if HSSF Footer or Header is attemped to be set too long, rather than having it break during writing out</action>
