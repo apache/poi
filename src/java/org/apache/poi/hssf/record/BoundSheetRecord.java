@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
@@ -328,5 +332,32 @@ public final class BoundSheetRecord extends Record {
      */
     public void setVeryHidden(boolean veryHidden) {
 	    field_2_option_flags = veryHiddenFlag.setShortBoolean(field_2_option_flags, veryHidden);
+    }
+    
+    /**
+     * Takes a list of BoundSheetRecords, and returns the all
+     *  ordered by the position of their BOFs.
+     */
+    public static BoundSheetRecord[] orderByBofPosition(List boundSheetRecords) {
+    	BoundSheetRecord[] bsrs = (BoundSheetRecord[])boundSheetRecords.toArray(
+    			new BoundSheetRecord[boundSheetRecords.size()]);
+    	
+    	// Sort
+    	Arrays.sort(bsrs, new BOFComparator());
+    	
+    	// All done
+    	return bsrs;
+    }
+    private static class BOFComparator implements Comparator {
+		public int compare(Object bsr1, Object bsr2) {
+			return compare((BoundSheetRecord)bsr1, (BoundSheetRecord)bsr2);
+		}
+		public int compare(BoundSheetRecord bsr1, BoundSheetRecord bsr2) {
+			if(bsr1.field_1_position_of_BOF < bsr2.field_1_position_of_BOF)
+				return -1;
+			if(bsr1.field_1_position_of_BOF == bsr2.field_1_position_of_BOF)
+				return 0;
+			return 1;
+		}
     }
 }

@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -37,5 +38,25 @@ public final class TestBOFRecord extends TestCase {
         } catch (ArrayIndexOutOfBoundsException e) {
             throw new AssertionFailedError("Identified bug 42794");
         }
+    }
+    
+    public void testOrdering() throws Exception {
+    	BoundSheetRecord bs1 = new BoundSheetRecord();
+    	BoundSheetRecord bs2 = new BoundSheetRecord();
+    	BoundSheetRecord bs3 = new BoundSheetRecord();
+    	bs1.setPositionOfBof(11);
+    	bs2.setPositionOfBof(33);
+    	bs3.setPositionOfBof(22);
+    	
+    	ArrayList l = new ArrayList();
+    	l.add(bs1);
+    	l.add(bs2);
+    	l.add(bs3);
+    	
+    	BoundSheetRecord[] r = BoundSheetRecord.orderByBofPosition(l);
+    	assertEquals(3, r.length);
+    	assertEquals(bs1, r[0]);
+    	assertEquals(bs3, r[1]);
+    	assertEquals(bs2, r[2]);
     }
 }
