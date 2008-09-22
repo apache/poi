@@ -515,18 +515,6 @@ public class HSSFWorkbook extends POIDocument
     }
 
     /**
-     * @deprecated POI will now properly handle unicode strings without
-     * forceing an encoding
-     */
-    public final static byte ENCODING_COMPRESSED_UNICODE = 0;
-    /**
-     * @deprecated POI will now properly handle unicode strings without
-     * forceing an encoding
-     */
-    public final static byte ENCODING_UTF_16             = 1;
-
-
-    /**
      * set the sheet name.
      * Will throw IllegalArgumentException if the name is greater than 31 chars
      * or contains /\?*[]
@@ -539,35 +527,6 @@ public class HSSFWorkbook extends POIDocument
         }
         validateSheetIndex(sheetIx);
         workbook.setSheetName(sheetIx, name);
-    }
-
-
-    /**
-     * set the sheet name forcing the encoding. Forcing the encoding IS A BAD IDEA!!!
-     * @deprecated 3-Jan-2006 POI now automatically detects unicode and sets the encoding
-     * appropriately. Simply use setSheetName(int sheet, String encoding)
-     * @throws IllegalArgumentException if the name is greater than 31 chars
-     * or contains /\?*[]
-     * @param sheet number (0 based)
-     */
-    public void setSheetName(int sheetIx, String name, short encoding)
-    {
-        if (workbook.doesContainsSheetName( name, sheetIx )) {
-            throw new IllegalArgumentException( "The workbook already contains a sheet with this name" );
-        }
-        validateSheetIndex(sheetIx);
-
-        switch ( encoding ) {
-        case ENCODING_COMPRESSED_UNICODE:
-        case ENCODING_UTF_16:
-            break;
-
-        default:
-            // TODO java.io.UnsupportedEncodingException
-            throw new RuntimeException( "Unsupported encoding" );
-        }
-
-        workbook.setSheetName( sheetIx, name, encoding );
     }
 
     /**
