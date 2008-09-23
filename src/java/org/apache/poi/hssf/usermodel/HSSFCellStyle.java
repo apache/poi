@@ -926,7 +926,9 @@ public class HSSFCellStyle implements CellStyle
     }
 
     /**
-     * get the background fill color
+     * Get the background fill color.
+     * Note - many cells are actually filled with a foreground
+     *  fill, not a background fill - see {@link #getFillForegroundColor()}
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
      * @return fill color
      */
@@ -952,7 +954,9 @@ public class HSSFCellStyle implements CellStyle
     }
 
     /**
-     * get the foreground fill color
+     * Get the foreground fill color.
+     * Many cells are filled with this, instead of a 
+     *  background color ({@link #getFillBackgroundColor()})
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
      * @return fill color
      */

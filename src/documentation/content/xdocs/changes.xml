@@ -67,6 +67,10 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
         <release version="3.2-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">16936 - Initial support for whole-row cell styling</action>
+           <action dev="POI-DEVELOPERS" type="add">Update hssf.extractor.ExcelExtractor to optionally output blank cells too</action>
+           <action dev="POI-DEVELOPERS" type="add">Include the sheet name in the output of examples.XLS2CSVmra</action>
+           <action dev="POI-DEVELOPERS" type="fix">45784 - Support long chart titles in SeriesTextRecords</action>
            <action dev="POI-DEVELOPERS" type="fix">45777 - Throw an exception if HSSF Footer or Header is attemped to be set too long, rather than having it break during writing out</action>
            <action dev="POI-DEVELOPERS" type="add">45844 - Addtional diagnostics for HSLF SlideShowRecordDumper</action>
            <action dev="POI-DEVELOPERS" type="fix">45829 - HSSFPicture.getImageDimension() failed when DPI of image is zero</action>

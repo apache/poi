@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 
 import org.apache.poi.hssf.eventusermodel.FormatTrackingHSSFListener;
 import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
@@ -34,6 +35,7 @@ import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.BoolErrRecord;
+import org.apache.poi.hssf.record.BoundSheetRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.LabelRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
@@ -69,6 +71,11 @@ public class XLS2CSVmra implements HSSFListener {
 	// Records we pick up as we process
 	private SSTRecord sstRecord;
 	private FormatTrackingHSSFListener formatListener;
+	
+	/** So we known which sheet we're on */
+	private int sheetIndex = -1;
+	private BoundSheetRecord[] orderedBSRs;
+	private ArrayList boundSheetRecords = new ArrayList();
 
 	// For handling formulas with string results
 	private int nextRow;
@@ -132,6 +139,9 @@ public class XLS2CSVmra implements HSSFListener {
 
 		switch (record.getSid())
 		{
+		case BoundSheetRecord.sid:
+			boundSheetRecords.add(record);
+			break;
 		case BOFRecord.sid:
 			BOFRecord br = (BOFRecord)record;
 			if(br.getType() == BOFRecord.TYPE_WORKSHEET) {
@@ -139,6 +149,17 @@ public class XLS2CSVmra implements HSSFListener {
 				if(workbookBuildingListener != null && stubWorkbook == null) {
 					stubWorkbook = workbookBuildingListener.getStubHSSFWorkbook();
 				}
+				
+				// Output the worksheet name
+				// Works by ordering the BSRs by the location of
+				//  their BOFRecords, and then knowing that we
+				//  process BOFRecords in byte offset order
+				sheetIndex++;
+				if(orderedBSRs == null) {
+					orderedBSRs = BoundSheetRecord.orderByBofPosition(boundSheetRecords);
+				}
+				output.println();
+				output.println(orderedBSRs[sheetIndex].getSheetname() + ":");
 			}
 			break;
 
