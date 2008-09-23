@@ -31,6 +31,10 @@ import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.EvaluationListener;
+import org.apache.poi.ss.formula.WorkbookEvaluator;
+import org.apache.poi.ss.formula.WorkbookEvaluatorTestHelper;
 
 /**
  * 
@@ -287,6 +291,29 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		}
 	}
 	
+	private static final class EvalListener extends EvaluationListener {
+		private int _countCacheHits;
+		private int _countCacheMisses;
+
+		public EvalListener() {
+			_countCacheHits = 0;
+			_countCacheMisses = 0;
+		}
+		public int getCountCacheHits() {
+			return _countCacheHits;
+		}
+		public int getCountCacheMisses() {
+			return _countCacheMisses;
+		}
+
+		public void onCacheHit(int sheetIndex, int srcRowNum, int srcColNum, ValueEval result) {
+			_countCacheHits++;
+		}
+		public void onStartEvaluate(int sheetIndex, int rowIndex, int columnIndex, Ptg[] ptgs) {
+			_countCacheMisses++;
+		}
+	}
+	
 	/**
 	 * The HSSFFormula evaluator performance benefits greatly from caching of intermediate cell values
 	 */
@@ -312,16 +339,20 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		
 		// Choose cell A9, so that the failing test case doesn't take too long to execute.
 		HSSFCell cell = row.getCell(8);
-		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
+		EvalListener evalListener = new EvalListener();
+		WorkbookEvaluator evaluator = WorkbookEvaluatorTestHelper.createEvaluator(wb, evalListener);
 		evaluator.evaluate(cell);
-		int evalCount = evaluator.getEvaluationCount();
-		// With caching, the evaluationCount is 8 which is a big improvement
-		assertTrue(evalCount > 0);  // make sure the counter is actually working
+		int evalCount = evalListener.getCountCacheMisses();
 		if (evalCount > 10) {
 			// Without caching, evaluating cell 'A9' takes 21845 evaluations which consumes
 			// much time (~3 sec on Core 2 Duo 2.2GHz)
 			System.err.println("Cell A9 took " + evalCount + " intermediate evaluations");
 			throw new AssertionFailedError("Identifed bug 45376 - Formula evaluator should cache values");
 		}
+		// With caching, the evaluationCount is 8 which is a big improvement
+		// Note - these expected values may change if the WorkbookEvaluator is 
+		// ever optimised to short circuit 'if' functions.
+		assertEquals(8, evalCount);
+		assertEquals(24, evalListener.getCountCacheHits());
 	}
 }

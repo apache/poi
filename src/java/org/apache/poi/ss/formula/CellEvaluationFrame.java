@@ -17,55 +17,47 @@
 
 package org.apache.poi.ss.formula;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
- * Stores the parameters that identify the evaluation of one cell.<br/>
+ * Stores details about the current evaluation of a cell.<br/>
  */
 final class CellEvaluationFrame {
 
-	private final int _sheetIndex;
-	private final int _srcRowNum;
-	private final int _srcColNum;
-	private final int _hashCode;
+	private final CellLocation _cellLocation;
+	private final Set _usedCells;
 
-	public CellEvaluationFrame(int sheetIndex, int srcRowNum, int srcColNum) {
-		if (sheetIndex < 0) {
-			throw new IllegalArgumentException("sheetIndex must not be negative");
-		}
-		_sheetIndex = sheetIndex;
-		_srcRowNum = srcRowNum;
-		_srcColNum = srcColNum;
-		_hashCode = sheetIndex + 17 * (srcRowNum + 17 * srcColNum);
+	public CellEvaluationFrame(CellLocation cellLoc) {
+		_cellLocation = cellLoc;
+		_usedCells = new HashSet();
 	}
-
-	public boolean equals(Object obj) {
-		CellEvaluationFrame other = (CellEvaluationFrame) obj;
-		if (_sheetIndex != other._sheetIndex) {
-			return false;
-		}
-		if (_srcRowNum != other._srcRowNum) {
-			return false;
-		}
-		if (_srcColNum != other._srcColNum) {
-			return false;
-		}
-		return true;
-	}
-	public int hashCode() {
-		return _hashCode;
-	}
-
-	/**
-	 * @return human readable string for debug purposes
-	 */
-	public String formatAsString() {
-		return "R=" + _srcRowNum + " C=" + _srcColNum + " ShIx=" + _sheetIndex;
+	public CellLocation getCoordinates() {
+		return _cellLocation;
 	}
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer(64);
 		sb.append(getClass().getName()).append(" [");
-		sb.append(formatAsString());
+		sb.append(_cellLocation.formatAsString());
 		sb.append("]");
 		return sb.toString();
+	}
+	public void addUsedCell(CellLocation coordinates) {
+		_usedCells.add(coordinates);
+	}
+	/**
+	 * @return never <code>null</code>, (possibly empty) array of all cells directly used while 
+	 * evaluating the formula of this frame.  For non-formula cells this will always be an empty
+	 * array;
+	 */
+	public CellLocation[] getUsedCells() {
+		int nItems = _usedCells.size();
+		if (nItems < 1) {
+			return CellLocation.EMPTY_ARRAY;
+		}
+		CellLocation[] result = new CellLocation[nItems];
+		_usedCells.toArray(result);
+		return result;
 	}
 }

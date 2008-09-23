@@ -17,6 +17,14 @@
 
 package org.apache.poi.ss.usermodel;
 
+import org.apache.poi.hssf.record.formula.eval.BlankEval;
+import org.apache.poi.hssf.record.formula.eval.BoolEval;
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.StringEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+
 
 /**
  * Evaluates formula cells.<p/>
@@ -36,7 +44,21 @@ public interface FormulaEvaluator {
      * of the evaluate~ methods of this class
      */
     void clearAllCachedResultValues();
-    void clearCachedResultValue(Sheet sheet, int rowIndex, int columnIndex);
+	/**
+	 * Sets the cached value for a plain (non-formula) cell.
+	 * Should be called whenever there are changes to individual input cells in the evaluated workbook.
+	 * Failure to call this method after changing cell values will cause incorrect behaviour
+	 * of the evaluate~ methods of this class
+	 * @param never <code>null</code>. Use {@link BlankEval#INSTANCE} when the cell is being 
+	 * cleared. Otherwise an instance of {@link NumberEval}, {@link StringEval}, {@link BoolEval}
+	 * or {@link ErrorEval} to represent a plain cell value.
+	 */
+    void setCachedPlainValue(Sheet sheet, int rowIndex, int columnIndex, ValueEval value);
+	/**
+	 * Should be called to tell the cell value cache that the specified cell has just become a
+	 * formula cell, or the formula text has changed 
+	 */
+	void notifySetFormula(HSSFSheet sheet, int rowIndex, int columnIndex);
     /**
      * If cell contains a formula, the formula is evaluated and returned,
      * else the CellValue simply copies the appropriate cell value from

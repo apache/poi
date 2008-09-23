@@ -17,26 +17,33 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.hssf.record.formula.NamePtg;
-import org.apache.poi.hssf.record.formula.NameXPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.Sheet;
 /**
- * Abstracts a workbook for the purpose of formula evaluation.<br/>
  * 
- * For POI internal use only
  * 
  * @author Josh Micich
  */
-public interface EvaluationWorkbook {
-	String getSheetName(int sheetIndex);
-	int getSheetIndex(Sheet sheet);
+final class SheetRefEvaluator {
 
-	Sheet getSheet(int sheetIndex);
+	private final WorkbookEvaluator _bookEvaluator;
+	private final EvaluationTracker _tracker;
+	private final Sheet _sheet;
+	private final int _sheetIndex;
 
-	int convertFromExternSheetIndex(int externSheetIndex);
-	EvaluationName getName(NamePtg namePtg);
-	String resolveNameXText(NameXPtg ptg);
-	Ptg[] getFormulaTokens(Cell cell);
+	public SheetRefEvaluator(WorkbookEvaluator bookEvaluator, EvaluationTracker tracker,
+			EvaluationWorkbook _workbook, int sheetIndex) {
+		_bookEvaluator = bookEvaluator;
+		_tracker = tracker;
+		_sheet = _workbook.getSheet(sheetIndex);
+		_sheetIndex = sheetIndex;
+	}
+
+	public String getSheetName() {
+		return _bookEvaluator.getSheetName(_sheetIndex);
+	}
+
+	public ValueEval getEvalForCell(int rowIndex, int columnIndex) {
+		return _bookEvaluator.evaluateReference(_sheet, _sheetIndex, rowIndex, columnIndex, _tracker);
+	}
 }

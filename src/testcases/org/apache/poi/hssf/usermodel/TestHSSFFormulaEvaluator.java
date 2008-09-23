@@ -79,4 +79,17 @@ public final class TestHSSFFormulaEvaluator extends TestCase {
 		}
 		row.createCell(colIndex).setCellValue(value);
 	}
+
+	/**
+	 * {@link HSSFFormulaEvaluator#evaluate(HSSFCell)} should behave the same whether the cell
+	 * is <code>null</code> or blank.
+	 */
+	public void testEvaluateBlank() {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+		assertNull(fe.evaluate(null));
+		HSSFSheet sheet = wb.createSheet("Sheet1");
+		HSSFCell cell = sheet.createRow(0).createCell(0);
+		assertNull(fe.evaluate(cell));
+	}
 }
