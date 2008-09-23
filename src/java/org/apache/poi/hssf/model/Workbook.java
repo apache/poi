@@ -326,15 +326,14 @@ public final class Workbook implements Model {
 
         int nBoundSheets = 1; // now just do 1
         for ( int k = 0; k < nBoundSheets; k++ ) {   
-            BoundSheetRecord bsr =
-                    (BoundSheetRecord) retval.createBoundSheet( k );
+            BoundSheetRecord bsr = retval.createBoundSheet(k);
 
-            records.add( bsr );
-            retval.boundsheets.add( bsr );
-            retval.records.setBspos( records.size() - 1 );
+			records.add(bsr);
+			retval.boundsheets.add(bsr);
+			retval.records.setBspos(records.size() - 1);
         }
-//        retval.records.supbookpos = retval.records.bspos + 1;
-//        retval.records.namepos = retval.records.supbookpos + 2;
+        // retval.records.supbookpos = retval.records.bspos + 1;
+        //        retval.records.namepos = retval.records.supbookpos + 2;
         records.add( retval.createCountry() );
         for ( int k = 0; k < nBoundSheets; k++ ) {   
             retval.getOrCreateLinkTable().checkExternSheet(k);
@@ -498,7 +497,6 @@ public final class Workbook implements Model {
         checkSheets(sheetnum);
         BoundSheetRecord sheet = (BoundSheetRecord)boundsheets.get( sheetnum );
         sheet.setSheetname(sheetname);
-        sheet.setSheetnameLength( (byte)sheetname.length() );
     }
 
     /**
@@ -517,22 +515,6 @@ public final class Workbook implements Model {
                 return true;
         }
         return false;
-    }
-
-    /**
-     * sets the name for a given sheet forcing the encoding. This is STILL A BAD IDEA.
-     * Poi now automatically detects unicode
-     *
-     *@deprecated 3-Jan-06 Simply use setSheetNam e(int sheetnum, String sheetname)
-     * @param sheetnum the sheet number (0 based)
-     * @param sheetname the name for the sheet
-     */    
-    public void setSheetName(int sheetnum, String sheetname, short encoding ) {
-        checkSheets(sheetnum);
-        BoundSheetRecord sheet = getBoundSheetRec(sheetnum);
-        sheet.setSheetname(sheetname);
-        sheet.setSheetnameLength( (byte)sheetname.length() );
-        sheet.setCompressedUnicodeFlag( (byte)encoding );
     }
     
     /**
@@ -643,13 +625,12 @@ public final class Workbook implements Model {
      * if we're trying to address one more sheet than we have, go ahead and add it!  if we're
      * trying to address >1 more than we have throw an exception!
      */
-
     private void checkSheets(int sheetnum) {
         if ((boundsheets.size()) <= sheetnum) {   // if we're short one add another..
             if ((boundsheets.size() + 1) <= sheetnum) {
                 throw new RuntimeException("Sheet number out of bounds!");
             }
-            BoundSheetRecord bsr = (BoundSheetRecord ) createBoundSheet(sheetnum);
+            BoundSheetRecord bsr = createBoundSheet(sheetnum);
 
             records.add(records.getBspos()+1, bsr);
             records.setBspos( records.getBspos() + 1 );
@@ -1860,37 +1841,8 @@ public final class Workbook implements Model {
      * @see org.apache.poi.hssf.record.BoundSheetRecord
      * @see org.apache.poi.hssf.record.Record
      */
-
-    protected Record createBoundSheet(int id) {   // 1,2,3 sheets
-        BoundSheetRecord retval = new BoundSheetRecord();
-
-        switch (id) {
-
-            case 0 :
-                retval.setPositionOfBof(0x0);   // should be set later
-                retval.setOptionFlags(( short ) 0);
-                retval.setSheetnameLength(( byte ) 0x6);
-                retval.setCompressedUnicodeFlag(( byte ) 0);
-                retval.setSheetname("Sheet1");
-                break;
-
-            case 1 :
-                retval.setPositionOfBof(0x0);   // should be set later
-                retval.setOptionFlags(( short ) 0);
-                retval.setSheetnameLength(( byte ) 0x6);
-                retval.setCompressedUnicodeFlag(( byte ) 0);
-                retval.setSheetname("Sheet2");
-                break;
-
-            case 2 :
-                retval.setPositionOfBof(0x0);   // should be set later
-                retval.setOptionFlags(( short ) 0);
-                retval.setSheetnameLength(( byte ) 0x6);
-                retval.setCompressedUnicodeFlag(( byte ) 0);
-                retval.setSheetname("Sheet3");
-                break;
-        }
-        return retval;
+    private static BoundSheetRecord createBoundSheet(int id) {
+        return new BoundSheetRecord("Sheet" + (id+1));
     }
 
     /**
