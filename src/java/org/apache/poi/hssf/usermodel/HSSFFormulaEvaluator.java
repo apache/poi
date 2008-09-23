@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import java.util.Iterator;
 
+import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
@@ -50,14 +51,7 @@ public class HSSFFormulaEvaluator {
 		}
 	}
 	public HSSFFormulaEvaluator(HSSFWorkbook workbook) {
-   		_bookEvaluator = new WorkbookEvaluator(HSSFEvaluationWorkbook.create(workbook));
-	}
-
-	/**
-	 * TODO for debug/test use
-	 */
-	/* package */ int getEvaluationCount() {
-		return _bookEvaluator.getEvaluationCount();
+		_bookEvaluator = new WorkbookEvaluator(HSSFEvaluationWorkbook.create(workbook));
 	}
 
 	/**
@@ -81,12 +75,23 @@ public class HSSFFormulaEvaluator {
 		_bookEvaluator.clearAllCachedResultValues();
 	}
 	/**
+	 * Sets the cached value for a plain (non-formula) cell.
 	 * Should be called whenever there are changes to individual input cells in the evaluated workbook.
 	 * Failure to call this method after changing cell values will cause incorrect behaviour
 	 * of the evaluate~ methods of this class
+	 * @param never <code>null</code>. Use {@link BlankEval#INSTANCE} when the cell is being 
+	 * cleared. Otherwise an instance of {@link NumberEval}, {@link StringEval}, {@link BoolEval}
+	 * or {@link ErrorEval} to represent a plain cell value.
 	 */
-	public void clearCachedResultValue(HSSFSheet sheet, int rowIndex, int columnIndex) {
-		_bookEvaluator.clearCachedResultValue(sheet, rowIndex, columnIndex);
+	public void setCachedPlainValue(HSSFSheet sheet, int rowIndex, int columnIndex, ValueEval value) {
+		_bookEvaluator.setCachedPlainValue(sheet, rowIndex, columnIndex, value);
+	}
+	/**
+	 * Should be called to tell the cell value cache that the specified cell has just become a
+	 * formula cell, or the formula text has changed 
+	 */
+	public void notifySetFormula(HSSFSheet sheet, int rowIndex, int columnIndex) {
+		_bookEvaluator.notifySetFormula(sheet, rowIndex, columnIndex);
 	}
 
 	/**
@@ -95,7 +100,9 @@ public class HSSFFormulaEvaluator {
 	 * the cell and also its cell type. This method should be preferred over
 	 * evaluateInCell() when the call should not modify the contents of the
 	 * original cell.
-	 * @param cell
+	 * 
+	 * @param cell may be <code>null</code> signifying that the cell is not present (or blank)
+	 * @return <code>null</code> if the supplied cell is <code>null</code> or blank
 	 */
 	public CellValue evaluate(HSSFCell cell) {
 		if (cell == null) {
@@ -113,6 +120,8 @@ public class HSSFFormulaEvaluator {
 				return new CellValue(cell.getNumericCellValue());
 			case HSSFCell.CELL_TYPE_STRING:
 				return new CellValue(cell.getRichStringCellValue().getString());
+			case HSSFCell.CELL_TYPE_BLANK:
+				return null;
 		}
 		throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
 	}

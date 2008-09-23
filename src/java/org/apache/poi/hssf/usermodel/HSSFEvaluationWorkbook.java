@@ -71,11 +71,9 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	public HSSFSheet getSheet(int sheetIndex) {
 		return _uBook.getSheetAt(sheetIndex);
 	}
-
-	public HSSFSheet getSheetByExternSheetIndex(int externSheetIndex) {
-		int sheetIndex = _iBook.getSheetIndexFromExternSheetIndex(externSheetIndex);
-		return _uBook.getSheetAt(sheetIndex);
-	}
+	public int convertFromExternSheetIndex(int externSheetIndex) {
+		return _iBook.getSheetIndexFromExternSheetIndex(externSheetIndex);
+}
 
 	public HSSFWorkbook getWorkbook() {
 		return _uBook;

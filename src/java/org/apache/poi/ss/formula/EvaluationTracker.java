@@ -18,7 +18,9 @@
 package org.apache.poi.ss.formula;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
@@ -36,11 +38,13 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 final class EvaluationTracker {
 
 	private final List _evaluationFrames;
+	private final Set _currentlyEvaluatingCells;
 	private final EvaluationCache _cache;
 
 	public EvaluationTracker(EvaluationCache cache) {
 		_cache = cache;
 		_evaluationFrames = new ArrayList();
+		_currentlyEvaluatingCells = new HashSet();
 	}
 
 	/**
@@ -58,14 +62,17 @@ final class EvaluationTracker {
 	 * @return <code>true</code> if the specified cell has not been visited yet in the current 
 	 * evaluation. <code>false</code> if the specified cell is already being evaluated.
 	 */
-	public ValueEval startEvaluate(int sheetIndex, int srcRowNum, int srcColNum) {
-		CellEvaluationFrame cef = new CellEvaluationFrame(sheetIndex, srcRowNum, srcColNum);
-		if (_evaluationFrames.contains(cef)) {
+	public ValueEval startEvaluate(CellLocation cellLoc) {
+		if (cellLoc == null) {
+			throw new IllegalArgumentException("cellLoc must not be null");
+		}
+		if (_currentlyEvaluatingCells.contains(cellLoc)) {
 			return ErrorEval.CIRCULAR_REF_ERROR;
 		}
-		ValueEval result = _cache.getValue(cef);
+		ValueEval result = _cache.getValue(cellLoc);
 		if (result == null) {
-			_evaluationFrames.add(cef);
+			_currentlyEvaluatingCells.add(cellLoc);
+			_evaluationFrames.add(new CellEvaluationFrame(cellLoc));
 		}
 		return result;
 	}
@@ -83,24 +90,41 @@ final class EvaluationTracker {
 	 * and form more meaningful error messages.
 	 * @param result 
 	 */
-	public void endEvaluate(int sheetIndex, int srcRowNum, int srcColNum, ValueEval result) {
+	public void endEvaluate(CellLocation cellLoc, ValueEval result, boolean isPlainValueCell) {
+
 		int nFrames = _evaluationFrames.size();
 		if (nFrames < 1) {
 			throw new IllegalStateException("Call to endEvaluate without matching call to startEvaluate");
 		}
 
 		nFrames--;
-		CellEvaluationFrame cefExpected = (CellEvaluationFrame) _evaluationFrames.get(nFrames);
-		CellEvaluationFrame cefActual = new CellEvaluationFrame(sheetIndex, srcRowNum, srcColNum);
-		if (!cefActual.equals(cefExpected)) {
+		CellEvaluationFrame frame = (CellEvaluationFrame) _evaluationFrames.get(nFrames);
+		CellLocation coordinates = frame.getCoordinates();
+		if (!coordinates.equals(cellLoc)) {
 			throw new RuntimeException("Wrong cell specified. "
 					+ "Corresponding startEvaluate() call was for cell {"
-					+ cefExpected.formatAsString() + "} this endEvaluate() call is for cell {"
-					+ cefActual.formatAsString() + "}");
+					+ coordinates.formatAsString() + "} this endEvaluate() call is for cell {"
+					+ cellLoc.formatAsString() + "}");
 		}
 		// else - no problems so pop current frame 
 		_evaluationFrames.remove(nFrames);
-		
-		_cache.setValue(cefActual, result);
+		_currentlyEvaluatingCells.remove(coordinates);
+
+		// TODO - don't cache results of volatile formulas 
+		_cache.setValue(coordinates, isPlainValueCell, frame.getUsedCells(), result);
 	}
+	/**
+	 * Tells the currently evaluating cell frame that it has a dependency on the specified 
+	 * <tt>usedCell<tt> 
+	 * @param usedCell location of cell which is referenced (and used) by the current cell.
+	 */
+	public void acceptDependency(CellLocation usedCell) {
+		int prevFrameIndex = _evaluationFrames.size()-1;
+		if (prevFrameIndex < 0) {
+			throw new IllegalStateException("Call to acceptDependency without prior call to startEvaluate");
+		}
+		CellEvaluationFrame consumingFrame = (CellEvaluationFrame) _evaluationFrames.get(prevFrameIndex);
+		consumingFrame.addUsedCell(usedCell);
+	}
+
 }

@@ -21,11 +21,7 @@ import org.apache.poi.hssf.record.formula.AreaI;
 import org.apache.poi.hssf.record.formula.AreaI.OffsetArea;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.AreaEvalBase;
-import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.util.CellReference;
 
 /**
@@ -34,12 +30,10 @@ import org.apache.poi.hssf.util.CellReference;
  */
 final class LazyAreaEval extends AreaEvalBase {
 
-	private final HSSFSheet _sheet;
-	private final CellEvaluator _evaluator;
+	private final SheetRefEvaluator _evaluator;
 
-	public LazyAreaEval(AreaI ptg, HSSFSheet sheet, CellEvaluator evaluator) {
+	public LazyAreaEval(AreaI ptg, SheetRefEvaluator evaluator) {
 		super(ptg);
-		_sheet = sheet;
 		_evaluator = evaluator;
 	}
 
@@ -48,30 +42,21 @@ final class LazyAreaEval extends AreaEvalBase {
 		int rowIx = (relativeRowIndex + getFirstRow() ) & 0xFFFF;
 		int colIx = (relativeColumnIndex + getFirstColumn() ) & 0x00FF;
 		
-		HSSFRow row = _sheet.getRow(rowIx);
-		if (row == null) {
-			return BlankEval.INSTANCE;
-		}
-		HSSFCell cell = row.getCell(colIx);
-		if (cell == null) {
-			return BlankEval.INSTANCE;
-		}
-		return _evaluator.getEvalForCell(cell);
+		return _evaluator.getEvalForCell(rowIx, colIx);
 	}
 
 	public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
 		AreaI area = new OffsetArea(getFirstRow(), getFirstColumn(),
 				relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
 
-		return new LazyAreaEval(area, _sheet, _evaluator);
+		return new LazyAreaEval(area, _evaluator);
 	}
 	public String toString() {
 		CellReference crA = new CellReference(getFirstRow(), getFirstColumn());
 		CellReference crB = new CellReference(getLastRow(), getLastColumn());
 		StringBuffer sb = new StringBuffer();
 		sb.append(getClass().getName()).append("[");
-		String sheetName = _evaluator.getSheetName(_sheet);
-		sb.append(sheetName);
+		sb.append(_evaluator.getSheetName());
 		sb.append('!');
 		sb.append(crA.formatAsString());
 		sb.append(':');

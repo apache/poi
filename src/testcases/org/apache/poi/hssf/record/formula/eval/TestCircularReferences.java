@@ -71,8 +71,9 @@ public final class TestCircularReferences extends TestCase {
 		// This formula should evaluate to the contents of B2,
 		testCell.setCellFormula("INDEX(A1:B4,2,2)");
 		// However the range A1:B4 also includes the current cell A4.  If the other parameters
-		// were 4 and 1, this would represent a circular reference.  Since POI 'fully' evaluates
-		// arguments before invoking operators, POI must handle such potential cycles gracefully.
+		// were 4 and 1, this would represent a circular reference.  Prior to v3.2 POI would 
+		// 'fully' evaluate ref arguments before invoking operators, which raised the possibility of
+		// cycles / StackOverflowErrors.
 		
 
 		CellValue cellValue = evaluateWithCycles(wb, testCell);
