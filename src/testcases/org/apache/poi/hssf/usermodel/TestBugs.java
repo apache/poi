@@ -1476,4 +1476,49 @@ public final class TestBugs extends TestCase {
     		fail();
     	} catch(IllegalArgumentException e) {}
     }
+    
+    /**
+     * Charts with long titles
+     */
+    public void test45784() {
+    	// This used to break
+        HSSFWorkbook wb = openSample("45784.xls");
+        assertEquals(1, wb.getNumberOfSheets());
+    }
+    
+   /**
+     * Cell background colours
+     */
+    public void test45492() {
+    	HSSFWorkbook wb = openSample("45492.xls");
+    	HSSFSheet s = wb.getSheetAt(0);
+    	HSSFRow r = s.getRow(0);
+    	HSSFPalette p = wb.getCustomPalette();
+    	
+    	HSSFCell auto = r.getCell(0);
+    	HSSFCell grey = r.getCell(1);
+    	HSSFCell red = r.getCell(2);
+    	HSSFCell blue = r.getCell(3);
+    	HSSFCell green = r.getCell(4);
+    	
+    	assertEquals(64, auto.getCellStyle().getFillForegroundColor());
+    	assertEquals(64, auto.getCellStyle().getFillBackgroundColor());
+    	assertEquals("0:0:0", p.getColor(64).getHexString());
+    	
+    	assertEquals(22, grey.getCellStyle().getFillForegroundColor());
+    	assertEquals(64, grey.getCellStyle().getFillBackgroundColor());
+    	assertEquals("C0C0:C0C0:C0C0", p.getColor(22).getHexString());
+    	
+    	assertEquals(10, red.getCellStyle().getFillForegroundColor());
+    	assertEquals(64, red.getCellStyle().getFillBackgroundColor());
+    	assertEquals("FFFF:0:0", p.getColor(10).getHexString());
+    	
+    	assertEquals(12, blue.getCellStyle().getFillForegroundColor());
+    	assertEquals(64, blue.getCellStyle().getFillBackgroundColor());
+    	assertEquals("0:0:FFFF", p.getColor(12).getHexString());
+    	
+    	assertEquals(11, green.getCellStyle().getFillForegroundColor());
+    	assertEquals(64, green.getCellStyle().getFillBackgroundColor());
+    	assertEquals("0:FFFF:0", p.getColor(11).getHexString());
+    }
 }

@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -524,6 +525,33 @@ public final class HSSFRow implements Comparable, Row {
         if (cellnum > getLastCellNum())
             return -1;
         return cellnum;
+    }
+    
+    /**
+     * Is this row formatted? Most aren't, but some rows
+     *  do have whole-row styles. For those that do, you
+     *  can get the formatting from {@link #getRowStyle()}
+     */
+    public boolean isFormatted() {
+    	return row.getFormatted();
+    }
+    /**
+     * Returns the whole-row cell styles. Most rows won't
+     *  have one of these, so will return null. Call
+     *  {@link #isFormatted()} to check first.
+     */
+    public HSSFCellStyle getRowStyle() {
+    	if(!isFormatted()) { return null; }
+        short styleIndex = row.getXFIndex();
+        ExtendedFormatRecord xf = book.getWorkbook().getExFormatAt(styleIndex);
+        return new HSSFCellStyle(styleIndex, xf, book);
+    }
+    /**
+     * Applies a whole-row cell styling to the row.
+     */
+    public void setRowStyle(HSSFCellStyle style) {
+    	row.setFormatted(true);
+    	row.setXFIndex(style.getIndex());
     }
 
     /**

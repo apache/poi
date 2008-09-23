@@ -58,6 +58,15 @@ public class HSSFPalette implements Palette
     	}
         return null;
     }
+    /**
+     * Retrieves the color at a given index
+     *
+     * @param index the palette index, between 0x8 to 0x40 inclusive
+     * @return the color, or null if the index is not populated
+     */
+    public HSSFColor getColor(int index) {
+    	return getColor((short)index);
+    }
     
     /**
      * Finds the first occurance of a given color
