@@ -117,6 +117,18 @@ public class HeaderRecord
         field_4_header = header;
         field_3_unicode_flag = 
             (byte) (StringUtil.hasMultibyte(field_4_header) ? 1 : 0);
+        
+        // Check it'll fit into the space in the record
+        if(field_4_header == null) return;
+        if(field_3_unicode_flag == 1) {
+        	if(field_4_header.length() > 127) {
+        		throw new IllegalArgumentException("Header string too long (limit is 127 for unicode strings)");
+        	}
+        } else {
+        	if(field_4_header.length() > 255) {
+        		throw new IllegalArgumentException("Header string too long (limit is 255 for non-unicode strings)");
+        	}
+        }
     }
 
     /**
