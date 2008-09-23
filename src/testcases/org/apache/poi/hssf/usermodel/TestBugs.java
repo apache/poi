@@ -1416,4 +1416,64 @@ public final class TestBugs extends TestCase {
         assertFalse(nwb.isSheetHidden(2));
         assertTrue(nwb.isSheetVeryHidden(2));
     }
+    
+    /**
+     * header / footer text too long
+     */
+    public void test45777() {
+    	HSSFWorkbook wb = new HSSFWorkbook();
+    	HSSFSheet s = wb.createSheet();
+    	
+    	String s248 = "";
+    	for(int i=0; i<248; i++) {
+    		s248 += "x";
+    	}
+    	String s249 = s248 + "1";
+    	String s250 = s248 + "12";
+    	String s251 = s248 + "123";
+    	assertEquals(248, s248.length());
+    	assertEquals(249, s249.length());
+    	assertEquals(250, s250.length());
+    	assertEquals(251, s251.length());
+    	
+    	
+    	// Try on headers
+    	s.getHeader().setCenter(s248);
+    	assertEquals(254, s.getHeader().getRawHeader().length());
+    	writeOutAndReadBack(wb);
+    	
+    	s.getHeader().setCenter(s249);
+    	assertEquals(255, s.getHeader().getRawHeader().length());
+    	writeOutAndReadBack(wb);
+    	
+    	try {
+    		s.getHeader().setCenter(s250); // 256
+    		fail();
+    	} catch(IllegalArgumentException e) {}
+    	
+    	try {
+    		s.getHeader().setCenter(s251); // 257
+    		fail();
+    	} catch(IllegalArgumentException e) {}
+    	
+    	
+    	// Now try on footers
+    	s.getFooter().setCenter(s248);
+    	assertEquals(254, s.getFooter().getRawFooter().length());
+    	writeOutAndReadBack(wb);
+    	
+    	s.getFooter().setCenter(s249);
+    	assertEquals(255, s.getFooter().getRawFooter().length());
+    	writeOutAndReadBack(wb);
+    	
+    	try {
+    		s.getFooter().setCenter(s250); // 256
+    		fail();
+    	} catch(IllegalArgumentException e) {}
+    	
+    	try {
+    		s.getFooter().setCenter(s251); // 257
+    		fail();
+    	} catch(IllegalArgumentException e) {}
+    }
 }

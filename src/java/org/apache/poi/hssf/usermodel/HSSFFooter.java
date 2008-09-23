@@ -71,6 +71,11 @@ public class HSSFFooter extends HeaderFooter implements Footer {
 	right = newRight;
 	createFooterString();
     }
+    
+    protected String getRawFooter() {
+    	return footerRecord.getFooter();
+    }
+
 
     /**
      * Creates the complete footer string based on the left, center, and middle

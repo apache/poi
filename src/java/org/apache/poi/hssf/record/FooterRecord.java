@@ -118,6 +118,18 @@ public class FooterRecord
         field_4_footer = footer;
         field_3_unicode_flag = 
             (byte) (StringUtil.hasMultibyte(field_4_footer) ? 1 : 0);
+        // Check it'll fit into the space in the record
+        
+        if(field_4_footer == null) return;
+        if(field_3_unicode_flag == 1) {
+        	if(field_4_footer.length() > 127) {
+        		throw new IllegalArgumentException("Footer string too long (limit is 127 for unicode strings)");
+        	}
+        } else {
+        	if(field_4_footer.length() > 255) {
+        		throw new IllegalArgumentException("Footer string too long (limit is 255 for non-unicode strings)");
+        	}
+        }
     }
 
     /**

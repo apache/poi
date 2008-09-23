@@ -78,6 +78,10 @@ public class HSSFHeader extends HeaderFooter implements Header {
         right = newRight;
         createHeaderString();
     }
+    
+    protected String getRawHeader() {
+    	return headerRecord.getHeader();
+    }
 
     /**
      * Creates the complete header string based on the left, center, and middle
