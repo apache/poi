@@ -19,12 +19,14 @@ package org.apache.poi.xssf.usermodel;
 
 import java.util.Iterator;
 
+import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -51,14 +53,6 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 	}
 
 	/**
-	 * TODO for debug/test use
-	 */
-	/* package */ int getEvaluationCount() {
-		return _bookEvaluator.getEvaluationCount();
-	}
-
-
-	/**
 	 * Should be called whenever there are major changes (e.g. moving sheets) to input cells
 	 * in the evaluated workbook.
 	 * Failure to call this method after changing cell values will cause incorrect behaviour
@@ -67,13 +61,11 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 	public void clearAllCachedResultValues() {
 		_bookEvaluator.clearAllCachedResultValues();
 	}
-	/**
-	 * Should be called whenever there are changes to individual input cells in the evaluated workbook.
-	 * Failure to call this method after changing cell values will cause incorrect behaviour
-	 * of the evaluate~ methods of this class
-	 */
-	public void clearCachedResultValue(Sheet sheet, int rowIndex, int columnIndex) {
-		_bookEvaluator.clearCachedResultValue(sheet, rowIndex, columnIndex);
+	public void setCachedPlainValue(Sheet sheet, int rowIndex, int columnIndex, ValueEval value) {
+		_bookEvaluator.setCachedPlainValue(sheet, rowIndex, columnIndex, value);
+	}
+	public void notifySetFormula(HSSFSheet sheet, int rowIndex, int columnIndex) {
+		_bookEvaluator.notifySetFormula(sheet, rowIndex, columnIndex);
 	}
 
 	/**

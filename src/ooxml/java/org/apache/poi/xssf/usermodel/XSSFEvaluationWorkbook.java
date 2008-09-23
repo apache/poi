@@ -37,10 +37,16 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		return externSheetIndex;
 	}
 	/**
-	 * @returns the external sheet index of the sheet with the given internal
-	 *          index, creating one if needed. Used by some of the more obscure
-	 *          formula and named range things. Fairly easy on XSSF (we
-	 *          think...) since the internal and external indicies are the same
+	 * @return the sheet index of the sheet with the given external index.
+	 */
+	public int convertFromExternSheetIndex(int externSheetIndex) {
+		return externSheetIndex;
+	}
+	/**
+	 * @return  the external sheet index of the sheet with the given internal
+	 * index. Used by some of the more obscure formula and named range things. 
+	 * Fairly easy on XSSF (we think...) since the internal and external 
+	 * indicies are the same
 	 */
 	private int convertToExternalSheetIndex(int sheetIndex) {
 		return sheetIndex;
@@ -71,10 +77,6 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 
 	public String getSheetName(int sheetIndex) {
 		return _uBook.getSheetName(sheetIndex);
-	}
-
-	public int getNameIndex(String name) {
-		return _uBook.getNameIndex(name);
 	}
 
 	public NameXPtg getNameXPtg(String name) {

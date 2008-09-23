@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula;
 
+import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.Stack;
 
 import org.apache.poi.hssf.record.formula.Area3DPtg;
@@ -52,6 +54,7 @@ import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
 /**
@@ -67,42 +70,27 @@ import org.apache.poi.ss.usermodel.Sheet;
  */
 public class WorkbookEvaluator {
 
-	/**
-	 * used to track the number of evaluations
-	 */
-	private static final class Counter {
-		public int value;
-		public int depth;
-		public Counter() {
-			value = 0;
-		}
-	}
-
 	private final EvaluationWorkbook _workbook;
 	private final EvaluationCache _cache;
 
-	private Counter _evaluationCounter;
+	private final IEvaluationListener _evaluationListener;
+	private final Map _sheetIndexesBySheet;
 
 	public WorkbookEvaluator(EvaluationWorkbook workbook) {
+		this (workbook, null);
+	}
+	/* package */ WorkbookEvaluator(EvaluationWorkbook workbook, IEvaluationListener evaluationListener) {
 		_workbook = workbook;
-		_cache = new EvaluationCache();
-		_evaluationCounter = new Counter();
+		_evaluationListener = evaluationListener;
+		_cache = new EvaluationCache(evaluationListener);
+		_sheetIndexesBySheet = new IdentityHashMap();
 	}
 
 	/**
-	 * for debug use. Used in toString methods
+	 * also for debug use. Used in toString methods
 	 */
-	/* package */ String getSheetName(Sheet sheet) {
-		return getSheetName(getSheetIndex(sheet));
-	}
-	private String getSheetName(int sheetIndex) {
+	/* package */ String getSheetName(int sheetIndex) {
 		return _workbook.getSheetName(sheetIndex);
-	}
-	/**
-	 * for debug/test use
-	 */
-	public int getEvaluationCount() {
-		return _evaluationCounter.value;
 	}
 
 	private static boolean isDebugLogEnabled() {
@@ -121,55 +109,121 @@ public class WorkbookEvaluator {
 	 */
 	public void clearAllCachedResultValues() {
 		_cache.clear();
-	}
-
-	public void clearCachedResultValue(Sheet sheet, int rowIndex, int columnIndex) {
-		int sheetIndex = getSheetIndex(sheet);
-		_cache.clearValue(sheetIndex, rowIndex, columnIndex);
-
-	}
-	private int getSheetIndex(Sheet sheet) {
-		// TODO cache sheet indexes too
-		return _workbook.getSheetIndex(sheet);
-	}
-
-	public ValueEval evaluate(Cell srcCell) {
-		return internalEvaluate(srcCell, new EvaluationTracker(_cache));
+		_sheetIndexesBySheet.clear();
 	}
 
 	/**
-	 * Dev. Note: Internal evaluate must be passed only a formula cell
-	 * else a runtime exception will be thrown somewhere inside the method.
-	 * (Hence this is a private method.)
+	 * Sets the cached value for a plain (non-formula) cell.
+	 * @param never <code>null</code>. Use {@link BlankEval#INSTANCE} when the cell is being 
+	 * cleared. Otherwise an instance of {@link NumberEval}, {@link StringEval}, {@link BoolEval}
+	 * or {@link ErrorEval} to represent a plain cell value.
+	 */
+	public void setCachedPlainValue(Sheet sheet, int rowIndex, int columnIndex, ValueEval value) {
+		if (value == null) {
+			throw new IllegalArgumentException("value must not be null");
+		}
+		int sheetIndex = getSheetIndex(sheet);
+		_cache.setValue(new CellLocation(sheetIndex, rowIndex, columnIndex), true, CellLocation.EMPTY_ARRAY, value);
+
+	}
+	/**
+	 * Should be called to tell the cell value cache that the specified cell has just become a
+	 * formula cell, or the formula text has changed 
+	 */
+	public void notifySetFormula(Sheet sheet, int rowIndex, int columnIndex) {
+		int sheetIndex = getSheetIndex(sheet);
+		_cache.setValue(new CellLocation(sheetIndex, rowIndex, columnIndex), false, CellLocation.EMPTY_ARRAY, null);
+
+	}
+	private int getSheetIndex(Sheet sheet) {
+		Integer result = (Integer) _sheetIndexesBySheet.get(sheet);
+		if (result == null) {
+			result = new Integer(_workbook.getSheetIndex(sheet));
+			_sheetIndexesBySheet.put(sheet, result);
+		}
+		return result.intValue();
+	}
+
+	public ValueEval evaluate(Cell srcCell) {
+		int sheetIndex = getSheetIndex(srcCell.getSheet());
+		CellLocation cellLoc = new CellLocation(sheetIndex, srcCell.getRowIndex(), srcCell.getCellNum());
+		return internalEvaluate(srcCell, cellLoc, new EvaluationTracker(_cache));
+	}
+
+	/**
 	 * @return never <code>null</code>, never {@link BlankEval}
 	 */
-	/* package */ ValueEval internalEvaluate(Cell srcCell, EvaluationTracker tracker) {
-		int srcRowNum = srcCell.getRowIndex();
-		int srcColNum = srcCell.getCellNum();
+	private ValueEval internalEvaluate(Cell srcCell, CellLocation cellLoc, EvaluationTracker tracker) {
+		int sheetIndex = cellLoc.getSheetIndex();
+		int rowIndex = cellLoc.getRowIndex();
+		int columnIndex = cellLoc.getColumnIndex();
 
 		ValueEval result;
 
-		int sheetIndex = getSheetIndex(srcCell.getSheet());
-		result = tracker.startEvaluate(sheetIndex, srcRowNum, srcColNum);
+		result = tracker.startEvaluate(cellLoc);
+		IEvaluationListener evalListener = _evaluationListener;
 		if (result != null) {
+			if(evalListener != null) {
+				evalListener.onCacheHit(sheetIndex, rowIndex, columnIndex, result);
+			}
 			return result;
 		}
-		_evaluationCounter.value++;
-		_evaluationCounter.depth++;
 
+		boolean isPlainFormulaCell = false;
 		try {
-			Ptg[] ptgs = _workbook.getFormulaTokens(srcCell);
-			result = evaluateCell(sheetIndex, srcRowNum, (short)srcColNum, ptgs, tracker);
+			result = getValueFromNonFormulaCell(srcCell);
+			if (result != null) {
+				isPlainFormulaCell = true;
+				if(evalListener != null) {
+					evalListener.onReadPlainValue(sheetIndex, rowIndex, columnIndex, result);
+				}
+			} else {
+				isPlainFormulaCell = false;
+				Ptg[] ptgs = _workbook.getFormulaTokens(srcCell);
+				if(evalListener == null) {
+					result = evaluateCell(sheetIndex, rowIndex, (short)columnIndex, ptgs, tracker);
+				} else {
+					evalListener.onStartEvaluate(sheetIndex, rowIndex, columnIndex, ptgs);
+					result = evaluateCell(sheetIndex, rowIndex, (short)columnIndex, ptgs, tracker);
+					evalListener.onEndEvaluate(sheetIndex, rowIndex, columnIndex, result);
+				}
+			}
 		} finally {
-			tracker.endEvaluate(sheetIndex, srcRowNum, srcColNum, result);
-			_evaluationCounter.depth--;
+			tracker.endEvaluate(cellLoc, result, isPlainFormulaCell);
 		}
 		if (isDebugLogEnabled()) {
 			String sheetName = getSheetName(sheetIndex);
-			CellReference cr = new CellReference(srcRowNum, srcColNum);
+			CellReference cr = new CellReference(rowIndex, columnIndex);
 			logDebug("Evaluated " + sheetName + "!" + cr.formatAsString() + " to " + result.toString());
 		}
 		return result;
+	}
+	/**
+	 * Gets the value from a non-formula cell.
+	 * @param cell may be <code>null</code>
+	 * @return {@link BlankEval} if cell is <code>null</code> or blank, <code>null</code> if cell 
+	 * is a formula cell.
+	 */
+	private static ValueEval getValueFromNonFormulaCell(Cell cell) {
+		if (cell == null) {
+			return BlankEval.INSTANCE;
+		}
+		int cellType = cell.getCellType();
+		switch (cellType) {
+			case Cell.CELL_TYPE_FORMULA:
+				return null;
+			case Cell.CELL_TYPE_NUMERIC:
+				return new NumberEval(cell.getNumericCellValue());
+			case Cell.CELL_TYPE_STRING:
+				return new StringEval(cell.getRichStringCellValue().getString());
+			case Cell.CELL_TYPE_BOOLEAN:
+				return BoolEval.valueOf(cell.getBooleanCellValue());
+			case Cell.CELL_TYPE_BLANK:
+				return BlankEval.INSTANCE;
+			case Cell.CELL_TYPE_ERROR:
+				return ErrorEval.valueOf(cell.getErrorCellValue());
+		}
+		throw new RuntimeException("Unexpected cell type (" + cellType + ")");
 	}
 	private ValueEval evaluateCell(int sheetIndex, int srcRowNum, short srcColNum, Ptg[] ptgs, EvaluationTracker tracker) {
 
@@ -268,10 +322,6 @@ public class WorkbookEvaluator {
 		return operation.evaluate(ops, srcRowNum, (short)srcColNum);
 	}
 
-	private Sheet getOtherSheet(int externSheetIndex) {
-		return _workbook.getSheetByExternSheetIndex(externSheetIndex);
-	}
-
 	/**
 	 * returns an appropriate Eval impl instance for the Ptg. The Ptg must be
 	 * one of: Area3DPtg, AreaPtg, ReferencePtg, Ref3DPtg, IntPtg, NumberPtg,
@@ -311,23 +361,24 @@ public class WorkbookEvaluator {
 		if (ptg instanceof ErrPtg) {
 			return ErrorEval.valueOf(((ErrPtg) ptg).getErrorCode());
 		}
-		CellEvaluator ce = new CellEvaluator(this, tracker);
-		Sheet sheet = _workbook.getSheet(sheetIndex);
-		if (ptg instanceof RefPtg) {
-			return new LazyRefEval(((RefPtg) ptg), sheet, ce);
-		}
-		if (ptg instanceof AreaPtg) {
-			return new LazyAreaEval(((AreaPtg) ptg), sheet, ce);
-		}
 		if (ptg instanceof Ref3DPtg) {
 			Ref3DPtg refPtg = (Ref3DPtg) ptg;
-			Sheet xsheet = getOtherSheet(refPtg.getExternSheetIndex());
-			return new LazyRefEval(refPtg, xsheet, ce);
+			int otherSheetIndex = _workbook.convertFromExternSheetIndex(refPtg.getExternSheetIndex());
+			SheetRefEvaluator sre = new SheetRefEvaluator(this, tracker, _workbook, otherSheetIndex);
+			return new LazyRefEval(refPtg, sre);
 		}
 		if (ptg instanceof Area3DPtg) {
-			Area3DPtg a3dp = (Area3DPtg) ptg;
-			Sheet xsheet = getOtherSheet(a3dp.getExternSheetIndex());
-			return new LazyAreaEval(a3dp, xsheet, ce);
+			Area3DPtg aptg = (Area3DPtg) ptg;
+			int otherSheetIndex = _workbook.convertFromExternSheetIndex(aptg.getExternSheetIndex());
+			SheetRefEvaluator sre = new SheetRefEvaluator(this, tracker, _workbook, otherSheetIndex);
+			return new LazyAreaEval(aptg, sre);
+		}
+		SheetRefEvaluator sre = new SheetRefEvaluator(this, tracker, _workbook, sheetIndex);
+		if (ptg instanceof RefPtg) {
+			return new LazyRefEval(((RefPtg) ptg), sre);
+		}
+		if (ptg instanceof AreaPtg) {
+			return new LazyAreaEval(((AreaPtg) ptg), sre);
 		}
 
 		if (ptg instanceof UnknownPtg) {
@@ -344,5 +395,23 @@ public class WorkbookEvaluator {
 			throw new RuntimeException("Complex name formulas not supported yet");
 		}
 		return getEvalForPtg(ptgs[0], sheetIndex, tracker);
+	}
+	
+	/**
+	 * Used by the lazy ref evals whenever they need to get the value of a contained cell.
+	 */
+	/* package */ ValueEval evaluateReference(Sheet sheet, int sheetIndex, int rowIndex,
+			int columnIndex, EvaluationTracker tracker) {
+		
+		Row row = sheet.getRow(rowIndex);
+		Cell cell;
+		if (row == null) {
+			cell = null;
+		} else {
+			cell = row.getCell(columnIndex);
+ 		}
+		CellLocation cellLoc = new CellLocation(sheetIndex, rowIndex, columnIndex);
+		tracker.acceptDependency(cellLoc);
+		return internalEvaluate(cell, cellLoc, tracker);
 	}
 }

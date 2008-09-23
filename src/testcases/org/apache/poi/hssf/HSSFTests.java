@@ -28,6 +28,7 @@ import org.apache.poi.hssf.model.AllModelTests;
 import org.apache.poi.hssf.record.AllRecordTests;
 import org.apache.poi.hssf.usermodel.AllUserModelTests;
 import org.apache.poi.hssf.util.AllHSSFUtilTests;
+import org.apache.poi.ss.formula.TestEvaluationCache;
 
 /**
  * Test Suite for all sub-packages of org.apache.poi.hssf<br/>
@@ -52,6 +53,7 @@ public final class HSSFTests {
         }
         suite.addTest(new TestSuite(TestEventRecordFactory.class));
         suite.addTest(new TestSuite(TestModelFactory.class));
+        suite.addTest(new TestSuite(TestEvaluationCache.class));
         return suite;
     }
 }
