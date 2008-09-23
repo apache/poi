@@ -17,13 +17,20 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
-import junit.framework.AssertionFailedError;
-
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import org.apache.poi.hssf.record.*;
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
+
+import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.BoundSheetRecord;
+import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.InterfaceHdrRecord;
+import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.usermodel.SanityChecker.CheckRecord;
 
 /**
  * A Test case for a test utility class.<br/>
@@ -33,137 +40,96 @@ import org.apache.poi.hssf.record.*;
  */
 public final class TestSanityChecker extends TestCase {
 
-    public void testCheckRecordOrder() {
-        final SanityChecker c = new SanityChecker();
-        List records = new ArrayList();
-        records.add(new BOFRecord());
-        records.add(new InterfaceHdrRecord());
-        records.add(new BoundSheetRecord());
-        records.add(EOFRecord.instance);
-        final SanityChecker.CheckRecord[] check = {
-            new SanityChecker.CheckRecord(BOFRecord.class, '1'),
-            new SanityChecker.CheckRecord(InterfaceHdrRecord.class, '0'),
-            new SanityChecker.CheckRecord(BoundSheetRecord.class, 'M'),
-            new SanityChecker.CheckRecord(NameRecord.class, '*'),
-            new SanityChecker.CheckRecord(EOFRecord.class, '1'),
-        };
-        // check pass
-        c.checkRecordOrder(records, check);
-        records.add(2, new BoundSheetRecord());
-        c.checkRecordOrder(records, check);
-        records.remove(1);      // optional record missing
-        c.checkRecordOrder(records, check);
-        records.add(3, new NameRecord());
-        records.add(3, new NameRecord()); // optional multiple record occurs more than one time
-        c.checkRecordOrder(records, check);
+	private static BoundSheetRecord createBoundSheetRec() {
+		return new BoundSheetRecord("Sheet1");
+	}
+	public void testCheckRecordOrder() {
+		final SanityChecker c = new SanityChecker();
+		List records = new ArrayList();
+		records.add(new BOFRecord());
+		records.add(new InterfaceHdrRecord());
+		records.add(createBoundSheetRec());
+		records.add(EOFRecord.instance);
+		CheckRecord[] check = {
+				new CheckRecord(BOFRecord.class, '1'),
+				new CheckRecord(InterfaceHdrRecord.class, '0'),
+				new CheckRecord(BoundSheetRecord.class, 'M'),
+				new CheckRecord(NameRecord.class, '*'),
+				new CheckRecord(EOFRecord.class, '1'),
+		};
+		// check pass
+		c.checkRecordOrder(records, check);
+		records.add(2, createBoundSheetRec());
+		c.checkRecordOrder(records, check);
+		records.remove(1);	  // optional record missing
+		c.checkRecordOrder(records, check);
+		records.add(3, new NameRecord());
+		records.add(3, new NameRecord()); // optional multiple record occurs more than one time
+		c.checkRecordOrder(records, check);
 
-        // check fail
-        expectFail( new Runnable() {
-            public void run()
-            {
-                // check optional in wrong spot
-                List records = new ArrayList();
-                records.add(new BOFRecord());
-                records.add(new BoundSheetRecord());
-                records.add(new InterfaceHdrRecord());
-                records.add(EOFRecord.instance);
-                c.checkRecordOrder(records, check);
-            }
-        });
+		// check fail
+		confirmBadRecordOrder(check, new Record[] {
+				new BOFRecord(),
+				createBoundSheetRec(),
+				new InterfaceHdrRecord(),
+				EOFRecord.instance,
+		});
 
-        expectFail( new Runnable() {
-            public void run()
-            {
-                // check optional one off occurs more than once
-                List records = new ArrayList();
-                records.add(new BOFRecord());
-                records.add(new InterfaceHdrRecord());
-                records.add(new BoundSheetRecord());
-                records.add(new InterfaceHdrRecord());
-                records.add(EOFRecord.instance);
-                c.checkRecordOrder(records, check);
-            }
-        });
+		confirmBadRecordOrder(check, new Record[] {
+				new BOFRecord(),
+				new InterfaceHdrRecord(),
+				createBoundSheetRec(),
+				new InterfaceHdrRecord(),
+				EOFRecord.instance,
+		});
 
-        expectFail( new Runnable() {
-            public void run()
-            {
-                // check many scattered
-                List records = new ArrayList();
-                records.add(new BOFRecord());
-                records.add(new BoundSheetRecord());
-                records.add(new NameRecord());
-                records.add(EOFRecord.instance);
-                records.add(new NameRecord());
-                c.checkRecordOrder(records, check);
-            }
-        });
+		confirmBadRecordOrder(check, new Record[] {
+				new BOFRecord(),
+				createBoundSheetRec(),
+				new NameRecord(),
+				EOFRecord.instance,
+				new NameRecord(),
+		});
 
-        expectFail( new Runnable() {
-            public void run()
-            {
-                // check missing manditory
-                List records = new ArrayList();
-                records.add(new InterfaceHdrRecord());
-                records.add(new BoundSheetRecord());
-                records.add(EOFRecord.instance);
-                c.checkRecordOrder(records, check);
-            }
-        });
+		confirmBadRecordOrder(check, new Record[] {
+				new InterfaceHdrRecord(),
+				createBoundSheetRec(),
+				EOFRecord.instance,
+		});
 
-        expectFail( new Runnable() {
-            public void run()
-            {
-                // check missing 1..many
-                List records = new ArrayList();
-                records.add(new BOFRecord());
-                records.add(new InterfaceHdrRecord());
-                records.add(EOFRecord.instance);
-                c.checkRecordOrder(records, check);
-            }
-        });
+		confirmBadRecordOrder(check, new Record[] {
+				new BOFRecord(),
+				new InterfaceHdrRecord(),
+				EOFRecord.instance,
+		});
 
-        expectFail( new Runnable() {
-            public void run()
-            {
-                // check wrong order
-                List records = new ArrayList();
-                records.add(new InterfaceHdrRecord());
-                records.add(new BoundSheetRecord());
-                records.add(new BOFRecord());
-                records.add(EOFRecord.instance);
-                c.checkRecordOrder(records, check);
-            }
-        });
+		confirmBadRecordOrder(check, new Record[] {
+				new InterfaceHdrRecord(),
+				createBoundSheetRec(),
+				new BOFRecord(),
+				EOFRecord.instance,
+		});
 
-        expectFail( new Runnable() {
-            public void run()
-            {
-                // check optional record in wrong order
-                List records = new ArrayList();
-                records.add(new BOFRecord());
-                records.add(new BoundSheetRecord());
-                records.add(new InterfaceHdrRecord());
-                records.add(EOFRecord.instance);
-                c.checkRecordOrder(records, check);
-            }
-        });
-
-    }
-
-    private void expectFail( Runnable runnable )
-    {
-        boolean fail = false;
-        try
-        {
-            runnable.run();
-            fail = true;
-        }
-        catch (AssertionFailedError pass)
-        {
-        }
-        assertTrue(!fail);
-    }
-
+		confirmBadRecordOrder(check, new Record[] {
+				new BOFRecord(),
+				createBoundSheetRec(),
+				new InterfaceHdrRecord(),
+				EOFRecord.instance,
+		});
+	}
+	private static void confirmBadRecordOrder(final SanityChecker.CheckRecord[] check, Record[] recs) {
+		final SanityChecker c = new SanityChecker();
+		final List records = Arrays.asList(recs);
+		try {
+			new Runnable() {
+				public void run() {
+					c.checkRecordOrder(records, check);
+				}
+			}.run();
+		} catch (AssertionFailedError pass) {
+			// expected during normal test
+			return;
+		}
+		throw new AssertionFailedError("Did not get failure exception as expected");
+	}
 }
-
