@@ -29,6 +29,8 @@ import java.util.Map.Entry;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.StylesSource;
+import org.apache.poi.xssf.usermodel.FontFamily;
+import org.apache.poi.xssf.usermodel.FontScheme;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
@@ -103,38 +105,38 @@ public class StylesTable implements StylesSource, XSSFModel {
      */
     public void readFrom(InputStream is) throws IOException {
         try {
-        	doc = StyleSheetDocument.Factory.parse(is);
-        	// Grab all the different bits we care about
-        	if(doc.getStyleSheet().getNumFmts() != null)
+            doc = StyleSheetDocument.Factory.parse(is);
+            // Grab all the different bits we care about
+            if(doc.getStyleSheet().getNumFmts() != null)
         	for (CTNumFmt nfmt : doc.getStyleSheet().getNumFmts().getNumFmtArray()) {
-        		numberFormats.put(nfmt.getNumFmtId(), nfmt.getFormatCode());
+        	    numberFormats.put(nfmt.getNumFmtId(), nfmt.getFormatCode());
         	}
-        	if(doc.getStyleSheet().getFonts() != null)
+            if(doc.getStyleSheet().getFonts() != null)
         	for (CTFont font : doc.getStyleSheet().getFonts().getFontArray()) {
-        		fonts.add(font);
+        	    fonts.add(font);
         	}
-        	if(doc.getStyleSheet().getFills() != null)
+            if(doc.getStyleSheet().getFills() != null)
         	for (CTFill fill : doc.getStyleSheet().getFills().getFillArray()) {
-        		fills.add(fill);
+        	    fills.add(fill);
         	}
-        	if(doc.getStyleSheet().getBorders() != null)
+            if(doc.getStyleSheet().getBorders() != null)
         	for (CTBorder border : doc.getStyleSheet().getBorders().getBorderArray()) {
-        		borders.add(border);
+        	    borders.add(border);
         	}
-        	if(doc.getStyleSheet().getCellXfs() != null)
+            if(doc.getStyleSheet().getCellXfs() != null)
         	for (CTXf xf : doc.getStyleSheet().getCellXfs().getXfArray()) {
-        		xfs.add(xf);
+        	    xfs.add(xf);
         	}
-        	if(doc.getStyleSheet().getCellStyleXfs() != null)
+            if(doc.getStyleSheet().getCellStyleXfs() != null)
         	for (CTXf xf : doc.getStyleSheet().getCellStyleXfs().getXfArray()) {
-        		styleXfs.add(xf);
+        	    styleXfs.add(xf);
         	}
-        	// dxf
-        	if(doc.getStyleSheet().getDxfs() != null)
-            	for (CTDxf dxf : doc.getStyleSheet().getDxfs().getDxfArray()) {
-            		dxfs.add(dxf);
-            	}
-        	
+            // dxf
+            if(doc.getStyleSheet().getDxfs() != null)
+        	for (CTDxf dxf : doc.getStyleSheet().getDxfs().getDxfArray()) {
+        	    dxfs.add(dxf);
+        	}
+
         } catch (XmlException e) {
             throw new IOException(e.getLocalizedMessage());
         }
@@ -350,7 +352,7 @@ public class StylesTable implements StylesSource, XSSFModel {
         	doc.getStyleSheet().setCellStyleXfs(ctSXfs);
     	}
     	
-    	// Style dxf
+    	// Style dxfs
     	if(dxfs.size() > 0) {
         	CTDxfs ctDxfs = CTDxfs.Factory.newInstance();
         	ctDxfs.setCount(dxfs.size());
@@ -358,8 +360,6 @@ public class StylesTable implements StylesSource, XSSFModel {
         	);
         	doc.getStyleSheet().setDxfs(ctDxfs);
     	}
-    	
-    	
     	
         // Save
         doc.save(out, options);
@@ -375,47 +375,51 @@ public class StylesTable implements StylesSource, XSSFModel {
 
     private long putFont(XSSFFont font, ArrayList<CTFont> fonts) {
     	return font.putFont(fonts);
-	}
+    }
+    
 	private void initialize() {
 		//CTFont ctFont = createDefaultFont();
-		XSSFFont xssfFont = createDefaultFont();
-    	fonts.add(xssfFont.getCTFont());
-    	
-    	CTFill ctFill = createDefaultFill();
-    	fills.add(ctFill);
-    	
-    	CTBorder ctBorder = createDefaultBorder();
-    	borders.add(ctBorder);
-    	
-    	CTXf styleXf = createDefaultXf();
-    	styleXfs.add(styleXf);
-    	CTXf xf = createDefaultXf();
-    	xf.setXfId(0);
-    	xfs.add(xf);
+	    XSSFFont xssfFont = createDefaultFont();
+	    fonts.add(xssfFont.getCTFont());
+	  
+	    CTFill[] ctFill = createDefaultFills();
+	    fills.add(ctFill[0]);
+/*	    
+	    fills.add(ctFill[1]);
+*/
+	    CTBorder ctBorder = createDefaultBorder();
+	    borders.add(ctBorder);
+
+	    CTXf styleXf = createDefaultXf();
+	    styleXfs.add(styleXf);
+	    CTXf xf = createDefaultXf();
+	    xf.setXfId(0);
+	    xfs.add(xf);
 	}
-	
+
 	private CTXf createDefaultXf() {
-		CTXf ctXf = CTXf.Factory.newInstance();
-    	ctXf.setNumFmtId(0);
-    	ctXf.setFontId(0);
-    	ctXf.setFillId(0);
-    	ctXf.setBorderId(0);
-    	return ctXf;
+	    CTXf ctXf = CTXf.Factory.newInstance();
+	    ctXf.setNumFmtId(0);
+	    ctXf.setFontId(0);
+	    ctXf.setFillId(0);
+	    ctXf.setBorderId(0);
+	    return ctXf;
 	}
 	private CTBorder createDefaultBorder() {
-		CTBorder ctBorder = CTBorder.Factory.newInstance();
-    	ctBorder.addNewBottom();
-    	ctBorder.addNewTop();
-    	ctBorder.addNewLeft();
-    	ctBorder.addNewRight();
-    	ctBorder.addNewDiagonal();
-		return ctBorder;
+	    CTBorder ctBorder = CTBorder.Factory.newInstance();
+	    ctBorder.addNewBottom();
+	    ctBorder.addNewTop();
+	    ctBorder.addNewLeft();
+	    ctBorder.addNewRight();
+	    ctBorder.addNewDiagonal();
+	    return ctBorder;
 	}
 	
-	private CTFill createDefaultFill() {
-		CTFill ctFill = CTFill.Factory.newInstance();
-    	ctFill.addNewPatternFill().setPatternType(STPatternType.NONE);
-		return ctFill;
+	private CTFill[] createDefaultFills() {
+	    CTFill[] ctFill = new CTFill[]{CTFill.Factory.newInstance(),CTFill.Factory.newInstance()};
+	    ctFill[0].addNewPatternFill().setPatternType(STPatternType.NONE);
+	    ctFill[1].addNewPatternFill().setPatternType(STPatternType.DARK_GRAY);
+	    return ctFill;
 	}
 	
 	private XSSFFont createDefaultFont() {
@@ -434,19 +438,17 @@ public class StylesTable implements StylesSource, XSSFModel {
 		xssfFont.setFontHeightInPoints(XSSFFont.DEFAULT_FONT_SIZE);
 		xssfFont.setColor(XSSFFont.DEFAULT_FONT_COLOR);//setTheme 
 		xssfFont.setFontName(XSSFFont.DEFAULT_FONT_NAME);
-		xssfFont.setFamily(XSSFFont.FONT_FAMILY_SWISS);
-		xssfFont.setScheme(XSSFFont.SCHEME_MINOR);
+		xssfFont.setFamily(FontFamily.SWISS);
+		xssfFont.setScheme(FontScheme.MINOR);
 		return xssfFont;
 	}
 	
 	
-	
-	
 	public CTDxf getDxf(long idx) {
-		if(dxfs.size()==0)
-			return CTDxf.Factory.newInstance();
-		else
-			return dxfs.get((int) idx);
+	    if(dxfs.size()==0)
+		return CTDxf.Factory.newInstance();
+	    else
+		return dxfs.get((int) idx);
 	}
 	
 	

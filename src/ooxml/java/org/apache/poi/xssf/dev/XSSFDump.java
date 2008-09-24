@@ -69,7 +69,7 @@ public class XSSFDump {
             File f = new File(root, entry.getName());
             FileOutputStream out = new FileOutputStream(f);
 
-            if(entry.getName().endsWith(".xml") || entry.getName().endsWith(".vml")){
+            if(entry.getName().endsWith(".xml") || entry.getName().endsWith(".vml") || entry.getName().endsWith(".rels")){
                 //pass the xml through the Xerces serializer to produce nicely formatted output
                 Document doc = builder.parse(zip.getInputStream(entry));
 
