@@ -242,7 +242,7 @@ public class TestXSSFWorkbook extends TestCase {
     public void testFindFont(){
         //get dafault font and check against default value
     	XSSFWorkbook workbook = new XSSFWorkbook();
-    	Font fontFind=workbook.findFont(Font.BOLDWEIGHT_NORMAL, Font.COLOR_NORMAL, (short)11, "Calibri", false, false, Font.SS_NONE, Font.U_NONE);
+    	Font fontFind=workbook.findFont(Font.BOLDWEIGHT_NORMAL, IndexedColors.BLACK.getIndex(), (short)11, "Calibri", false, false, Font.SS_NONE, Font.U_NONE);
     	assertNotNull(fontFind);    	
     	
     	//get default font, then change 2 values and check against different values (height changes)
@@ -251,9 +251,8 @@ public class TestXSSFWorkbook extends TestCase {
     	font.setUnderline(Font.U_DOUBLE);
     	StylesSource styleSource=new StylesTable();
     	long index=styleSource.putFont(font);
-    	System.out.println("index="+index);
     	workbook.setStylesSource(styleSource);
-    	fontFind=workbook.findFont(Font.BOLDWEIGHT_BOLD, Font.COLOR_NORMAL, (short)15, "Calibri", false, false, Font.SS_NONE, Font.U_DOUBLE);
+    	fontFind=workbook.findFont(Font.BOLDWEIGHT_BOLD, IndexedColors.BLACK.getIndex(), (short)15, "Calibri", false, false, Font.SS_NONE, Font.U_DOUBLE);
         assertNull(fontFind);
     }
 
@@ -291,6 +290,7 @@ public class TestXSSFWorkbook extends TestCase {
         assertNotNull(fontAt);
     }
     
+
     public void testGetNumberOfFonts(){
      	XSSFWorkbook wb = new XSSFWorkbook();
 

@@ -16,13 +16,12 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.Font;
+import java.util.ArrayList;
 
-import org.apache.poi.xssf.util.Charset;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.xssf.usermodel.extensions.XSSFColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
-
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontName;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontScheme;
@@ -30,26 +29,10 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontSize;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIntProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTUnderlineProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTVerticalAlignFontProperty;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STFontScheme;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignRun;
 
-import java.util.ArrayList;
-
 public class XSSFFont implements Font {
-
-
-    public static final int SCHEME_MAJOR=2;
-    public static final int SCHEME_MINOR=3;
-    public static final int SCHEME_NONE=0;
-
-    public static final int FONT_FAMILY_NOT_APPLICABLE=0;
-    public static final int FONT_FAMILY_ROMAN=1;
-    public static final int FONT_FAMILY_SWISS=2;
-    public static final int FONT_FAMILY_MODERN=3;
-    public static final int FONT_FAMILY_SCRIPT=4;
-    public static final int FONT_FAMILY_DECORATIVE=5;
-
 
     public static final String DEFAULT_FONT_NAME="Calibri";
     public static final short DEFAULT_FONT_SIZE=11;
@@ -70,48 +53,27 @@ public class XSSFFont implements Font {
          return ctFont;
     }
 
-     /**
-      *
-      */
+     
      public boolean getBold() {
          CTBooleanProperty bold=ctFont.sizeOfBArray() == 0 ? null : ctFont.getBArray(0);
          return (bold!=null && bold.getVal());
     }
 
-
-
     public byte getCharSet() {
          CTIntProperty charset= ctFont.sizeOfCharsetArray() == 0?null:ctFont.getCharsetArray(0);
-        if(charset!=null){
-            //this value must be set -- can't be null
-            switch (charset.getVal()) {
-            case Charset.ANSI_CHARSET:
-                return Font.ANSI_CHARSET;
-
-            case Charset.DEFAULT_CHARSET:
-                return Font.DEFAULT_CHARSET;
-
-            case Charset.SYMBOL_CHARSET:
-                return Font.SYMBOL_CHARSET;
-
-            default://maight be correct to return this byte value???
-                return Byte.parseByte(Integer.toString(charset.getVal()));
-            }
-        }
-        else
-            return Font.ANSI_CHARSET;
+         return charset == null ? FontCharset.ANSI.getValue() : FontCharset.valueOf(charset.getVal()).getValue(); 
     }
 
     public short getColor() {
         CTColor color=ctFont.sizeOfColorArray()==0?null: ctFont.getColorArray(0);
-        if(color == null) return Font.COLOR_NORMAL;
+        if(color == null) return IndexedColors.BLACK.getIndex();
         
         long index=color.getIndexed();
         if (index==XSSFFont.DEFAULT_FONT_COLOR){
-            return Font.COLOR_NORMAL;
+            return IndexedColors.BLACK.getIndex();
         }
         else if(index == IndexedColors.RED.getIndex()){
-            return Font.COLOR_RED;
+            return IndexedColors.RED.getIndex();
         }
         else{
             return Short.parseShort(new Long(index).toString());
@@ -119,9 +81,10 @@ public class XSSFFont implements Font {
     }
 
 
-     public byte[] getRgbColor() {
-         CTColor color=ctFont.sizeOfColorArray()==0?null: ctFont.getColorArray(0);
-         return color.getRgb();
+     public XSSFColor getRgbColor() {
+         CTColor ctColor=ctFont.sizeOfColorArray()==0?null: ctFont.getColorArray(0);
+         XSSFColor color=new XSSFColor(ctColor);
+         return color;
      }
 
      public short getThemeColor() {
@@ -134,12 +97,13 @@ public class XSSFFont implements Font {
     public short getFontHeight() {
          CTFontSize size=ctFont.sizeOfSzArray()==0?null: ctFont.getSzArray(0);
          if(size!=null){
-             double fontHeight= size.getVal()/20;
+             double fontHeight= size.getVal();
             return (short)fontHeight;
         }
         else
-            return DEFAULT_FONT_SIZE/20;
+            return DEFAULT_FONT_SIZE;
     }
+
 
     public short getFontHeightInPoints() {
          CTFontSize size=ctFont.sizeOfSzArray()==0?null: ctFont.getSzArray(0);
@@ -152,9 +116,9 @@ public class XSSFFont implements Font {
     }
 
 
-     public String getFontName() {
-         CTFontName name=ctFont.sizeOfNameArray()==0?null:ctFont.getNameArray(0);
-         return name==null? null:name.getVal();
+    public String getFontName() {
+	CTFontName name = ctFont.sizeOfNameArray() == 0 ? null : ctFont.getNameArray(0);
+	return name == null ? null : name.getVal();
     }
 
 
@@ -187,26 +151,31 @@ public class XSSFFont implements Font {
     }
 
      public byte getUnderline() {
-         CTUnderlineProperty underline=ctFont.sizeOfUArray()==0?null:ctFont.getUArray(0);
-        if(underline!=null){
-             switch (underline.getVal().intValue()) {
-            case STUnderlineValues.INT_DOUBLE:
-                return Font.U_DOUBLE;
-            case STUnderlineValues.INT_DOUBLE_ACCOUNTING:
-                return Font.U_DOUBLE_ACCOUNTING;
+	 /*
+         CTUnderlineProperty underline = ctFont.sizeOfUArray() == 0 ? null : ctFont.getUArray(0);
+         return underline == null ? (byte)FontUnderline.NONE.getValue().intValue() : (byte)FontUnderline.valueOf(underline.getVal()).getValue().intValue();
+         */
+	    CTUnderlineProperty underline=ctFont.sizeOfUArray()==0?null:ctFont.getUArray(0);
+	        if(underline!=null){
+		    FontUnderline fontUnderline=FontUnderline.valueOf(underline.getVal());
+	             switch (fontUnderline.getValue().intValue()) {
+	            case STUnderlineValues.INT_DOUBLE:
+	                return Font.U_DOUBLE;
+	            case STUnderlineValues.INT_DOUBLE_ACCOUNTING:
+	                return Font.U_DOUBLE_ACCOUNTING;
 
-            case STUnderlineValues.INT_SINGLE_ACCOUNTING:
-                return Font.U_SINGLE_ACCOUNTING;
+	            case STUnderlineValues.INT_SINGLE_ACCOUNTING:
+	                return Font.U_SINGLE_ACCOUNTING;
 
-            case STUnderlineValues.INT_NONE:
-                return Font.U_NONE;
+	            case STUnderlineValues.INT_NONE:
+	                return Font.U_NONE;
 
-            case STUnderlineValues.INT_SINGLE:
-            default:
-                return Font.U_SINGLE;
-            }
-        }
-        return Font.U_NONE;
+	            case STUnderlineValues.INT_SINGLE:
+	            default:
+	                return Font.U_SINGLE;
+	            }
+	        }
+	        return Font.U_NONE;
     }
 
      /**
@@ -218,26 +187,28 @@ public class XSSFFont implements Font {
          ctBold.setVal(true);
       }
 
-     /**
-      *
-      */
+     
     public void setCharSet(byte charset) {
          CTIntProperty charsetProperty=ctFont.sizeOfCharsetArray()==0?ctFont.addNewCharset():ctFont.getCharsetArray(0);
         switch (charset) {
         case Font.ANSI_CHARSET:
-            charsetProperty.setVal(Charset.ANSI_CHARSET);
+            charsetProperty.setVal(FontCharset.ANSI.getValue());
             break;
         case Font.SYMBOL_CHARSET:
-            charsetProperty.setVal(Charset.SYMBOL_CHARSET);
+            charsetProperty.setVal(FontCharset.SYMBOL.getValue());
             break;
         case Font.DEFAULT_CHARSET:
-            charsetProperty.setVal(Charset.DEFAULT_CHARSET);
+            charsetProperty.setVal(FontCharset.DEFAULT.getValue());
             break;
         default:
             throw new RuntimeException("Attention: an attempt to set a type of unknow charset and charset");
         }
     }
 
+  
+    public void setCharSet(FontCharset charSet) {
+		setCharSet(charSet.getValue());
+    }
 
     public void setColor(short color) {
          CTColor ctColor=ctFont.sizeOfColorArray()==0?ctFont.addNewColor():ctFont.getColorArray(0);
@@ -257,24 +228,24 @@ public class XSSFFont implements Font {
     }
 
 
-
     public void setFontHeight(short height) {
-        CTFontSize fontSize=ctFont.sizeOfSzArray()==0?ctFont.addNewSz():ctFont.getSzArray(0);
-          fontSize.setVal(height*20);
+	setFontHeight((double)height);
     }
 
+    public void setFontHeight(double height) {
+        CTFontSize fontSize=ctFont.sizeOfSzArray()==0?ctFont.addNewSz():ctFont.getSzArray(0);
+        fontSize.setVal(height);
+    }
 
     public void setFontHeightInPoints(short height) {
-          CTFontSize fontSize=ctFont.sizeOfSzArray()==0?ctFont.addNewSz():ctFont.getSzArray(0);
-          fontSize.setVal(height);
+          setFontHeight((double)height);
     }
 
 
-
-     public void setRgbColor(XSSFColor color) {
-         CTColor ctColor=ctFont.sizeOfColorArray()==0?ctFont.addNewColor():ctFont.getColorArray(0);
-         ctColor.setRgb(color.getRgb());
-        }
+    public void setRgbColor(XSSFColor color) {
+	CTColor ctColor=ctFont.sizeOfColorArray()==0?ctFont.addNewColor():ctFont.getColorArray(0);
+	ctColor.setRgb(color.getRgb());
+    }
 
      public void setThemeColor(short theme) {
          CTColor ctColor=ctFont.sizeOfColorArray()==0?ctFont.addNewColor():ctFont.getColorArray(0);
@@ -282,8 +253,8 @@ public class XSSFFont implements Font {
      }
 
     public void setFontName(String name) {
- 		CTFontName fontName=ctFont.sizeOfNameArray()==0?ctFont.addNewName():ctFont.getNameArray(0);
- 		fontName.setVal(name);
+	CTFontName fontName=ctFont.sizeOfNameArray()==0?ctFont.addNewName():ctFont.getNameArray(0);
+	fontName.setVal(name);
     }
 
     public void setItalic(boolean italic) {
@@ -297,7 +268,7 @@ public class XSSFFont implements Font {
     }
 
     public void setTypeOffset(short offset) {
-         CTVerticalAlignFontProperty offsetProperty=ctFont.sizeOfVertAlignArray()==0?ctFont.addNewVertAlign(): ctFont.getVertAlignArray(0);
+        CTVerticalAlignFontProperty offsetProperty=ctFont.sizeOfVertAlignArray()==0?ctFont.addNewVertAlign(): ctFont.getVertAlignArray(0);
         switch (offset) {
         case Font.SS_NONE:
             offsetProperty.setVal(STVerticalAlignRun.BASELINE);
@@ -315,25 +286,36 @@ public class XSSFFont implements Font {
          CTUnderlineProperty ctUnderline=ctFont.sizeOfUArray()==0?ctFont.addNewU():ctFont.getUArray(0);
         switch (underline) {
         case Font.U_DOUBLE:
-            ctUnderline.setVal(STUnderlineValues.DOUBLE);
+            ctUnderline.setVal(FontUnderline.DOUBLE.getValue());
             break;
         case Font.U_DOUBLE_ACCOUNTING:
-            ctUnderline.setVal(STUnderlineValues.DOUBLE_ACCOUNTING);
+            ctUnderline.setVal(FontUnderline.DOUBLE_ACCOUNTING.getValue());
             break;
         case Font.U_SINGLE_ACCOUNTING:
-            ctUnderline.setVal(STUnderlineValues.SINGLE_ACCOUNTING);
+            ctUnderline.setVal(FontUnderline.SINGLE_ACCOUNTING.getValue());
             break;
         case Font.U_NONE:
-            ctUnderline.setVal(STUnderlineValues.NONE);
+            ctUnderline.setVal(FontUnderline.NONE.getValue());
             break;
-
         case Font.U_SINGLE:
         default:
-            ctUnderline.setVal(STUnderlineValues.SINGLE);
+            ctUnderline.setVal(FontUnderline.SINGLE.getValue());
         break;
         }
     }
-
+    
+    public void setUnderline(FontUnderline underline) {
+        CTUnderlineProperty ctUnderline=ctFont.sizeOfUArray()==0?ctFont.addNewU():ctFont.getUArray(0);
+        ctUnderline.setVal(underline.getValue());
+    }
+    
+    
+    public String toString(){
+	        return "org.apache.poi.xssf.usermodel.XSSFFont{" +
+               ctFont +
+              "}";
+    }
+    
 
      public long putFont(ArrayList<CTFont> fonts) {
         //TODO
@@ -349,58 +331,37 @@ public class XSSFFont implements Font {
         return fonts.size() - 1;
     }
 
-    // solo di xssfFont - non di Font-
-    //sono utilizzati nel metodo createDefaultFont in StylesTable insta.
+/*
+  this methds are used only for XSSFFont and aren't in Font interface
+  are used in method SthlesTable.createDefaultfont
+ */
 
-    public int getScheme(){
+    public FontScheme getScheme(){
         CTFontScheme scheme=ctFont.sizeOfSchemeArray()==0?null:ctFont.getSchemeArray(0);
-        if(scheme!=null){
-            int fontScheme = scheme.getVal().intValue();
-            switch (fontScheme) {
-            case STFontScheme.INT_MAJOR:
-                return XSSFFont.SCHEME_MAJOR;
-            case STFontScheme.INT_MINOR:
-                return XSSFFont.SCHEME_MINOR;
-            case STFontScheme.INT_NONE:
-                return XSSFFont.SCHEME_NONE;
-
-            default:
-                return fontScheme;
-            }
-        }
-        return 0;
+        return scheme == null ? FontScheme.NONE : FontScheme.valueOf(scheme.getVal());
     }
 
-
-      public void setScheme(int scheme){
+    public void setScheme(FontScheme scheme){
          CTFontScheme ctFontScheme=ctFont.sizeOfSchemeArray()==0?ctFont.addNewScheme():ctFont.getSchemeArray(0);
-        switch (scheme) {
-        case XSSFFont.SCHEME_MAJOR:
-            ctFontScheme.setVal(STFontScheme.MAJOR);
-            break;
-        case XSSFFont.SCHEME_MINOR:
-            ctFontScheme.setVal(STFontScheme.MINOR);
-            break;
-        case XSSFFont.SCHEME_NONE:
-            ctFontScheme.setVal(STFontScheme.NONE);
-            break;
-        default:
-            throw new RuntimeException("Schema value ["+ scheme +"] not supported in XSSFFont");
-        }
+         ctFontScheme.setVal(scheme.getValue());
     }
 
 
       public int getFamily(){
-         CTIntProperty family=ctFont.sizeOfFamilyArray()==0?ctFont.addNewFamily():ctFont.getFamilyArray(0);
-         if(family!=null)
-             return family.getVal();
-          else
-              return XSSFFont.FONT_FAMILY_SWISS;
+         CTIntProperty family = ctFont.sizeOfFamilyArray() == 0 ? ctFont.addNewFamily() : ctFont.getFamilyArray(0);
+         return family == null ? FontFamily.NOT_APPLICABLE.getValue() : FontFamily.valueOf(family.getVal()).getValue();
       }
 
-      public void setFamily(int value){
-         CTIntProperty family=ctFont.sizeOfFamilyArray()==0?ctFont.addNewFamily():ctFont.getFamilyArray(0);
+      
+     public void setFamily(int value){
+         CTIntProperty family = ctFont.sizeOfFamilyArray() == 0 ? ctFont.addNewFamily() : ctFont.getFamilyArray(0);
           family.setVal(value);
      }
+      
+     public void setFamily(FontFamily family){
+	 setFamily(family.getValue());
+     }
 
+     
+    
 }
