@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
@@ -41,9 +42,9 @@ public class TestXSSFCellStyle extends TestCase {
 
     public void setUp() {
         stylesTable = new StylesTable();
-
+        
         ctStylesheet = stylesTable._getRawStylesheet();
-
+        
         // Until we do XSSFBorder properly, cheat
         ctBorderA = CTBorder.Factory.newInstance();
         XSSFCellBorder borderA = new XSSFCellBorder(ctBorderA);
@@ -56,7 +57,7 @@ public class TestXSSFCellStyle extends TestCase {
         ctFill = CTFill.Factory.newInstance();
         XSSFCellFill fill = new XSSFCellFill(ctFill);
         long fillId = stylesTable.putFill(fill);
-        assertEquals(1, fillId);
+        assertEquals(2, fillId);
 
         ctFont = CTFont.Factory.newInstance();
         XSSFFont font = new XSSFFont(ctFont);
@@ -67,11 +68,15 @@ public class TestXSSFCellStyle extends TestCase {
         cellStyleXf.setBorderId(1);
         cellStyleXf.setFillId(1);
         cellStyleXf.setFontId(1);
+        
         cellXfs = ctStylesheet.addNewCellXfs();
         cellXf = cellXfs.addNewXf();
         cellXf.setXfId(1);
+        cellXf.setBorderId(1);
+        cellXf.setFillId(1);
+        cellXf.setFontId(1);
         stylesTable.putCellStyleXf(cellStyleXf);
-        stylesTable.putCellXf(cellXf);
+        long id=stylesTable.putCellXf(cellXf);
         cellStyle = new XSSFCellStyle(1, 1, stylesTable);
     }
 
@@ -192,23 +197,77 @@ public class TestXSSFCellStyle extends TestCase {
     }
 
     public void testGetFillBackgroundColor() {
-        CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
+	setUp();
+	CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
         CTColor ctBgColor = ctPatternFill.addNewBgColor();
-        ctBgColor.setIndexed(4);
-        assertEquals(4, cellStyle.getFillBackgroundColor());
+        ctBgColor.setIndexed(IndexedColors.BRIGHT_GREEN.getIndex());
+        ctPatternFill.setBgColor(ctBgColor);
+
+        XSSFCellFill cellFill=new XSSFCellFill(ctFill);
+        long index=stylesTable.putFill(cellFill);
+        ((XSSFCellStyle)cellStyle).getCoreXf().setFillId(index);
+
+        assertEquals(2,cellStyle.getCoreXf().getFillId());
+        assertEquals(IndexedColors.BRIGHT_GREEN.getIndex(), cellStyle.getFillBackgroundColor());
+        
+        cellStyle.setFillBackgroundColor(IndexedColors.BLUE.getIndex());
+        assertEquals(IndexedColors.BLUE.getIndex(), ctFill.getPatternFill().getBgColor().getIndexed());
+        
+        //test rgb color - XSSFColor
+        CTColor ctColor=CTColor.Factory.newInstance();
+        ctColor.setRgb("FFFFFF".getBytes());
+        ctPatternFill.setBgColor(ctColor);
+        assertEquals(ctColor.toString(), cellStyle.getFillBackgroundRgbColor().getCTColor().toString());
+        
+        cellStyle.setFillBackgroundRgbColor(new XSSFColor(ctColor));
+        assertEquals(ctColor.getRgb()[0], ctPatternFill.getBgColor().getRgb()[0]);
+        assertEquals(ctColor.getRgb()[1], ctPatternFill.getBgColor().getRgb()[1]);
+        assertEquals(ctColor.getRgb()[2], ctPatternFill.getBgColor().getRgb()[2]);
+        assertEquals(ctColor.getRgb()[3], ctPatternFill.getBgColor().getRgb()[3]);
     }
 
     public void testGetFillForegroundColor() {
-        CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
+	setUp();
+	CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
         CTColor ctFgColor = ctPatternFill.addNewFgColor();
-        ctFgColor.setIndexed(5);
-        assertEquals(5, cellStyle.getFillForegroundColor());
+        ctFgColor.setIndexed(IndexedColors.BRIGHT_GREEN.getIndex());
+        ctPatternFill.setFgColor(ctFgColor);
+
+        XSSFCellFill cellFill=new XSSFCellFill(ctFill);
+        long index=stylesTable.putFill(cellFill);
+        ((XSSFCellStyle)cellStyle).getCoreXf().setFillId(index);
+
+        assertEquals(2,cellStyle.getCoreXf().getFillId());
+        assertEquals(IndexedColors.BRIGHT_GREEN.getIndex(), cellStyle.getFillForegroundColor());
+        
+        cellStyle.setFillForegroundColor(IndexedColors.BLUE.getIndex());
+        assertEquals(IndexedColors.BLUE.getIndex(), ctFill.getPatternFill().getFgColor().getIndexed());
+        
+        //test rgb color - XSSFColor
+        CTColor ctColor=CTColor.Factory.newInstance();
+        ctColor.setRgb("FFFFFF".getBytes());
+        ctPatternFill.setFgColor(ctColor);
+        assertEquals(ctColor.toString(), cellStyle.getFillForegroundRgbColor().getCTColor().toString());
+        
+        cellStyle.setFillForegroundRgbColor(new XSSFColor(ctColor));
+        assertEquals(ctColor.getRgb()[0], ctPatternFill.getFgColor().getRgb()[0]);
+        assertEquals(ctColor.getRgb()[1], ctPatternFill.getFgColor().getRgb()[1]);
+        assertEquals(ctColor.getRgb()[2], ctPatternFill.getFgColor().getRgb()[2]);
+        assertEquals(ctColor.getRgb()[3], ctPatternFill.getFgColor().getRgb()[3]);
     }
 
     public void testGetFillPattern() {
+	setUp();
         CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
         ctPatternFill.setPatternType(STPatternType.DARK_DOWN);
-        assertEquals(8, cellStyle.getFillPattern());
+        XSSFCellFill cellFill=new XSSFCellFill(ctFill);
+        long index=stylesTable.putFill(cellFill);
+        ((XSSFCellStyle)cellStyle).getCoreXf().setFillId(index);
+	
+        assertEquals(CellStyle.THICK_FORWARD_DIAG, cellStyle.getFillPattern());
+        
+        cellStyle.setFillPattern(CellStyle.BRICKS);
+        assertEquals(STPatternType.INT_DARK_TRELLIS,ctPatternFill.getPatternType().intValue());
     }
 
     public void testGetFont() {

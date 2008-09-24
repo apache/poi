@@ -18,8 +18,8 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,7 +31,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CommentsSource;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Palette;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row;
@@ -68,6 +67,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
 
@@ -251,15 +251,32 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     public XSSFCellStyle createCellStyle() {
+	CTXf xf=CTXf.Factory.newInstance();
+	xf.setNumFmtId(0);
+	xf.setFontId(0);
+	xf.setFillId(0);
+	xf.setBorderId(0);
+	xf.setXfId(0);
+	int xfSize=((StylesTable)stylesSource)._getStyleXfsSize();
+	long indexXf=((StylesTable)stylesSource).putCellXf(xf);
+	XSSFCellStyle style = new XSSFCellStyle(new Long(indexXf-1).intValue(), xfSize-1, (StylesTable)stylesSource);
+	return style;
+    }
+    
+ /*
+    public XSSFCellStyle createCellStyle() {
     	return new XSSFCellStyle(stylesSource);
     }
+*/
 
     public DataFormat createDataFormat() {
     	return getCreationHelper().createDataFormat();
     }
 
     public XSSFFont createFont() {
-        return new XSSFFont();
+        XSSFFont font= new XSSFFont();
+        stylesSource.putFont(font);
+        return font;
     }
 
     public XSSFName createName() {
@@ -308,7 +325,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     	short fontNum=getNumberOfFonts();
         for (short i = 0; i < fontNum; i++) {
             XSSFFont xssfFont = getFontAt(i);
-            if (    xssfFont.getBold() == (boldWeight == XSSFFont.BOLDWEIGHT_BOLD)
+
+            if (    (xssfFont.getBold() == (boldWeight == XSSFFont.BOLDWEIGHT_BOLD))
                     && xssfFont.getColor() == color
                     && xssfFont.getFontHeightInPoints() == fontHeight
                     && xssfFont.getFontName().equals(name)
@@ -413,7 +431,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     public short getNumberOfFonts() {
-        // TODO Auto-generated method stub
         return (short)((StylesTable)stylesSource).getNumberOfFonts();
     }
 
@@ -472,9 +489,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public String getSheetName(int sheet) {
         return this.workbook.getSheets().getSheetArray(sheet).getName();
     }
-    
+
     /**
-     * Are we a normal workbook (.xlsx), or a 
+     * Are we a normal workbook (.xlsx), or a
      *  macro enabled workbook (.xlsm)?
      */
     public boolean isMacroEnabled() {
@@ -518,14 +535,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 	/**
 	 * Sets the policy on what to do when
 	 *  getting missing or blank cells from a row.
-	 * This will then apply to all calls to 
+	 * This will then apply to all calls to
 	 *  {@link Row.getCell()}. See
 	 *  {@link MissingCellPolicy}
 	 */
 	public void setMissingCellPolicy(MissingCellPolicy missingCellPolicy) {
 		this.missingCellPolicy = missingCellPolicy;
 	}
-	
+
     public void setBackupFlag(boolean backupValue) {
         // TODO Auto-generated method stub
 
@@ -543,7 +560,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
     /**
      * deprecated Aug 2008
-     * @deprecated - Misleading name - use setFirstVisibleTab() 
+     * @deprecated - Misleading name - use setFirstVisibleTab()
      */
     public void setDisplayedTab(short index) {
         setFirstVisibleTab(index);
@@ -616,7 +633,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             xmlOptions.setSavePrettyPrint();
             xmlOptions.setSaveOuter();
             xmlOptions.setUseDefaultNamespace();
-            
+
             // Write out our sheets, updating the references
             //  to them in the main workbook as we go
             for (int i=0 ; i < this.getNumberOfSheets(); i++) {
@@ -627,21 +644,21 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 PackageRelationship rel =
                 	 corePart.addRelationship(partName, TargetMode.INTERNAL, XSSFRelation.WORKSHEET.getRelation(), "rSheet" + sheetNumber);
                 PackagePart part = pkg.createPart(partName, XSSFRelation.WORKSHEET.getContentType());
-                 
+
                 // XXX This should not be needed, but apparently the setSaveOuter call above does not work in XMLBeans 2.2
                 xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorksheet.type.getName().getNamespaceURI(), "worksheet"));
                 sheet.save(part, xmlOptions);
-                 
+
                 // Update our internal reference for the package part
                 workbook.getSheets().getSheetArray(i).setId(rel.getId());
                 workbook.getSheets().getSheetArray(i).setSheetId(sheetNumber);
-                
+
                 // If our sheet has comments, then write out those
                 if(sheet.hasComments()) {
                 	CommentsTable ct = (CommentsTable)sheet.getCommentsSourceIfExists();
                 	XSSFRelation.SHEET_COMMENTS.save(ct, part, sheetNumber);
                 }
-                
+
                 // If our sheet has drawings, then write out those
                 if(sheet.getDrawings() != null) {
                 	int drawingIndex = 1;
@@ -654,7 +671,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 		drawingIndex++;
                 	}
                 }
-                
+
                 // If our sheet has controls, then write out those
                 if(sheet.getControls() != null) {
                 	int controlIndex = 1;
@@ -668,7 +685,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 	}
                 }
             }
-             
+
             // Write shared strings and styles
             if(sharedStringSource != null) {
 	             SharedStringsTable sst = (SharedStringsTable)sharedStringSource;
@@ -678,7 +695,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 	             StylesTable st = (StylesTable)stylesSource;
 	             XSSFRelation.STYLES.save(st, corePart);
             }
-            
+
             // Named ranges
             if(namedRanges.size() > 0) {
             	CTDefinedNames names = CTDefinedNames.Factory.newInstance();
@@ -693,7 +710,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             		workbook.setDefinedNames(null);
             	}
             }
-            
+
             // Macro related bits
             if(isMacroEnabled) {
 	            // Copy VBA Macros if present
@@ -714,7 +731,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorkbook.type.getName().getNamespaceURI(), "workbook"));
             workbook.save(out, xmlOptions);
             out.close();
-             
+
             //  All done
             pkg.close();
         } catch (InvalidFormatException e) {

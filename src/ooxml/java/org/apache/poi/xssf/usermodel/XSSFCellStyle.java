@@ -17,7 +17,10 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.StylesSource;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellAlignment;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
@@ -28,6 +31,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellAlignment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellProtection;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 
 
 public class XSSFCellStyle implements CellStyle {
@@ -74,13 +78,12 @@ public class XSSFCellStyle implements CellStyle {
      */
     public XSSFCellStyle(StylesSource stylesSource) {
         this.stylesSource = stylesSource;
-
         // We need a new CTXf for the main styles
         // TODO decide on a style ctxf
         cellXf = CTXf.Factory.newInstance();
         cellStyleXf = null;
     }
-
+    
     /**
      * Verifies that this style belongs to the supplied Workbook
      *  Styles Source.
@@ -173,12 +176,65 @@ public class XSSFCellStyle implements CellStyle {
         return (short) getCellFill().getFillBackgroundColor().getIndexed();
     }
 
+    public XSSFColor getFillBackgroundRgbColor() {
+        return getCellFill().getFillBackgroundColor();
+    }
+
     public short getFillForegroundColor() {
         return (short) getCellFill().getFillForegroundColor().getIndexed();
     }
 
+    public XSSFColor getFillForegroundRgbColor() {
+        return  getCellFill().getFillForegroundColor();
+    }
+
     public short getFillPattern() {
-        return (short) getCellFill().getPatternType().intValue();
+	int fp= getCellFill().getPatternType().intValue();
+	switch (fp) {
+	case STPatternType.INT_NONE:
+		return CellStyle.NO_FILL;
+	case STPatternType.INT_SOLID: 
+	    return CellStyle.SOLID_FOREGROUND;
+	case STPatternType.INT_LIGHT_GRAY:
+	    return CellStyle.FINE_DOTS;
+	case STPatternType.INT_DARK_GRID:
+		return CellStyle.ALT_BARS;
+	case STPatternType.INT_DARK_GRAY:
+	    return CellStyle.SPARSE_DOTS;
+	case STPatternType.INT_DARK_HORIZONTAL: 
+	    return CellStyle.THICK_HORZ_BANDS;
+	case STPatternType.INT_DARK_VERTICAL:
+	    return CellStyle.THICK_VERT_BANDS;
+	case STPatternType.INT_DARK_UP:
+		return CellStyle.THICK_BACKWARD_DIAG;
+	case STPatternType.INT_DARK_DOWN:
+		return CellStyle.THICK_FORWARD_DIAG;
+	case STPatternType.INT_GRAY_0625:
+		return CellStyle.BIG_SPOTS;
+	case STPatternType.INT_DARK_TRELLIS:
+		return CellStyle.BRICKS;
+	case STPatternType.INT_LIGHT_HORIZONTAL:
+		return CellStyle.THIN_HORZ_BANDS;
+	case STPatternType.INT_LIGHT_VERTICAL:
+		return CellStyle.THIN_VERT_BANDS;
+	case STPatternType.INT_LIGHT_UP:
+		return CellStyle.THIN_BACKWARD_DIAG;
+	case STPatternType.INT_LIGHT_DOWN:
+		return CellStyle.THIN_FORWARD_DIAG;
+	case STPatternType.INT_LIGHT_GRID:
+		return CellStyle.SQUARES;
+	case STPatternType.INT_LIGHT_TRELLIS:
+		return CellStyle.DIAMONDS;
+	case STPatternType.INT_GRAY_125:
+		return CellStyle.LESS_DOTS;
+/*		
+	case STPatternType.INT_GRAY_0625:
+		return CellStyle.LEAST_DOTS;
+*/		
+	default:
+	    	return CellStyle.NO_FILL;
+	}
+    //    return (short) getCellFill().getPatternType().intValue();
     }
 
     public Font getFont(Workbook parentWorkbook) {
@@ -288,17 +344,85 @@ public class XSSFCellStyle implements CellStyle {
         cellXf.setNumFmtId((long)fmt);
     }
 
+    public void setFillBackgroundRgbColor(XSSFColor color) {
+        cellFill=getCellFill();
+        cellFill.setFillBackgroundRgbColor(color);
+    }
+
     public void setFillBackgroundColor(short bg) {
         getCellFill().setFillBackgroundColor(bg);
     }
 
+    public void setFillForegroundRgbColor(XSSFColor color) {
+        getCellFill().setFillForegroundRgbColor(color);
+    }
+
     public void setFillForegroundColor(short bg) {
-        getCellFill().setFillForegroundColor(bg);
+	getCellFill().setFillForegroundColor(bg);
     }
 
     public void setFillPattern(short fp) {
-        // TODO Auto-generated method stub
-
+	cellFill=getCellFill();
+	switch (fp) {
+	case CellStyle.NO_FILL:
+		cellFill.setPatternType(STPatternType.NONE);
+	    break;
+	case CellStyle.SOLID_FOREGROUND:
+		cellFill.setPatternType(STPatternType.SOLID);
+		    break;
+	case CellStyle.FINE_DOTS:
+		cellFill.setPatternType(STPatternType.LIGHT_GRAY);
+		    break;
+	case CellStyle.ALT_BARS:
+		cellFill.setPatternType(STPatternType.DARK_GRID);
+		    break;
+	case CellStyle.SPARSE_DOTS:
+		cellFill.setPatternType(STPatternType.DARK_GRAY);
+		    break;
+	case CellStyle.THICK_HORZ_BANDS:
+		cellFill.setPatternType(STPatternType.DARK_HORIZONTAL);
+		    break;
+	case CellStyle.THICK_VERT_BANDS:
+		cellFill.setPatternType(STPatternType.DARK_VERTICAL);
+		    break;
+	case CellStyle.THICK_BACKWARD_DIAG:
+		cellFill.setPatternType(STPatternType.DARK_UP);
+		    break;
+	case CellStyle.THICK_FORWARD_DIAG:
+		cellFill.setPatternType(STPatternType.DARK_DOWN);
+		    break;
+	case CellStyle.BIG_SPOTS:
+		cellFill.setPatternType(STPatternType.GRAY_0625);
+		    break;
+	case CellStyle.BRICKS:
+		cellFill.setPatternType(STPatternType.DARK_TRELLIS);
+		    break;
+	case CellStyle.THIN_HORZ_BANDS:
+		cellFill.setPatternType(STPatternType.LIGHT_HORIZONTAL);
+		    break;
+	case CellStyle.THIN_VERT_BANDS:
+		cellFill.setPatternType(STPatternType.LIGHT_VERTICAL);
+		    break;
+	case CellStyle.THIN_BACKWARD_DIAG:
+		cellFill.setPatternType(STPatternType.LIGHT_UP);
+		    break;
+	case CellStyle.THIN_FORWARD_DIAG:
+		cellFill.setPatternType(STPatternType.LIGHT_DOWN);
+		    break;
+	case CellStyle.SQUARES:
+		cellFill.setPatternType(STPatternType.LIGHT_GRID);
+		    break;
+	case CellStyle.DIAMONDS:
+		cellFill.setPatternType(STPatternType.LIGHT_TRELLIS);
+		    break;
+	case CellStyle.LESS_DOTS:
+		cellFill.setPatternType(STPatternType.GRAY_125);
+		    break;
+	case CellStyle.LEAST_DOTS:
+		cellFill.setPatternType(STPatternType.GRAY_0625);
+		    break;
+	default: throw new RuntimeException("Fill type ["+fp+"] not accepted");
+	}
     }
 
     public void setFont(Font font) {
@@ -306,6 +430,7 @@ public class XSSFCellStyle implements CellStyle {
             long index=this.stylesSource.putFont(font);
             this.cellXf.setFontId(index);
         }
+        this.cellXf.setApplyFont(true);
     }
 
     public void setHidden(boolean hidden) {
@@ -320,9 +445,16 @@ public class XSSFCellStyle implements CellStyle {
         setBorderColorIndexed(BorderSide.LEFT, color);
     }
 
+	
+	private void setBorderColorIndexed(BorderSide side, XSSFColor color) {
+		this.cellBorder.setBorderColor(side, color);
+	}
+
+
     public void setLocked(boolean locked) {
         getCellProtection().setLocked(locked);
     }
+
 
     public void setRightBorderColor(short color) {
         setBorderColorIndexed(BorderSide.RIGHT, color);
@@ -355,34 +487,54 @@ public class XSSFCellStyle implements CellStyle {
     public void setBorderColor(BorderSide side, XSSFColor color) {
         getCellBorder().setBorderColor(side, color);
     }
-
+    
     private XSSFCellBorder getCellBorder() {
         if (cellBorder == null) {
             // TODO make a common Cell Border object
-            cellBorder = ((StylesTable)stylesSource).getBorderAt(getBorderId());
+            int borderId=getBorderId();
+            if(borderId==-1){
+        	cellBorder=new XSSFCellBorder();
+		long index=((StylesTable)stylesSource).putBorder(cellBorder);
+		this.cellXf.setBorderId(index);
+		this.cellXf.setApplyBorder(true);
+            }
+            else{
+        	cellBorder = ((StylesTable)stylesSource).getBorderAt(borderId);
+            }
         }
         return cellBorder;
     }
 
     private int getBorderId() {
-        if (cellXf.isSetBorderId()) {
+        if (cellXf.isSetBorderId() && cellXf.getBorderId()>0) {
             return (int) cellXf.getBorderId();
         }
-        return (int) cellStyleXf.getBorderId();
+        return -1;
+      //  return (int) cellStyleXf.getBorderId();
     }
-
+    
     private XSSFCellFill getCellFill() {
-        if (cellFill == null) {
-            cellFill = ((StylesTable)stylesSource).getFillAt(getFillId());
-        }
-        return cellFill;
+	if (cellFill == null) {
+	    int fillId=getFillId();
+	    if(fillId == -1) {
+		cellFill=new XSSFCellFill();
+		long index=((StylesTable)stylesSource).putFill(cellFill);
+		this.cellXf.setFillId(index);
+		this.cellXf.setApplyFill(true);
+	    }
+	    else{
+		cellFill=((StylesTable)stylesSource).getFillAt(fillId);
+	    }
+	}
+	return cellFill;
     }
 
     private int getFillId() {
-        if (cellXf.isSetFillId()) {
+        if (cellXf.isSetFillId() && cellXf.getFillId()>0) {
             return (int) cellXf.getFillId();
         }
-        return (int) cellStyleXf.getFillId();
+        //return (int) cellStyleXf.getFillId();
+        return -1; 
     }
 
     private int getFontId() {
