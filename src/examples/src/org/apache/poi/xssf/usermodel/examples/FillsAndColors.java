@@ -16,12 +16,16 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel.examples;
 
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.hssf.util.HSSFColor;
-
 import java.io.FileOutputStream;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.IndexedColors;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Fills and Colors
@@ -36,7 +40,7 @@ public class FillsAndColors {
 
             // Aqua background
             CellStyle style = wb.createCellStyle();
-            style.setFillBackgroundColor(HSSFColor.AQUA.index);
+            style.setFillBackgroundColor(IndexedColors.AQUA.getIndex());
             style.setFillPattern(CellStyle.BIG_SPOTS);
             Cell cell = row.createCell((short) 1);
             cell.setCellValue(new XSSFRichTextString("X"));
@@ -44,7 +48,7 @@ public class FillsAndColors {
 
             // Orange "foreground", foreground being the fill foreground not the font color.
             style = wb.createCellStyle();
-            style.setFillForegroundColor(HSSFColor.ORANGE.index);
+            style.setFillForegroundColor(IndexedColors.ORANGE.getIndex());
             style.setFillPattern(CellStyle.SOLID_FOREGROUND);
             cell = row.createCell((short) 2);
             cell.setCellValue(new XSSFRichTextString("X"));

@@ -66,15 +66,30 @@ public class XSSFCellFill {
 	public CTFill getCTFill() {
 		return this.fill;
 	}
+	
         public void setFillBackgroundColor(long index) {
-                CTColor ctColor=fill.getPatternFill().addNewBgColor();
+                CTColor ctColor=getPatternFill().addNewBgColor();
                 ctColor.setIndexed(index);
                 fill.getPatternFill().setBgColor(ctColor);
         }
 
 	public void setFillForegroundColor(long index) {
-		CTColor ctColor=fill.getPatternFill().addNewFgColor();
+		CTColor ctColor=getPatternFill().addNewFgColor();
 		ctColor.setIndexed(index);
 		fill.getPatternFill().setFgColor(ctColor);
 	}
+	
+	 public void setFillBackgroundRgbColor(XSSFColor color) {
+             fill.getPatternFill().setBgColor(color.getCTColor());
+	 }
+
+	public void setFillForegroundRgbColor(XSSFColor color) {
+		fill.getPatternFill().setFgColor(color.getCTColor());
+	}
+	
+	public void setPatternType(Enum patternType) {
+		getPatternFill().setPatternType(patternType);
+	}
+
+    
 }
