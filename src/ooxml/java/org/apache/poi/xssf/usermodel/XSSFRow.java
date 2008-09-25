@@ -129,12 +129,12 @@ public class XSSFRow implements Row {
         return xcell;
     }
 
-    private Cell retrieveCell(int cellnum) {
+    private XSSFCell retrieveCell(int cellnum) {
         Iterator<Cell> it = cellIterator();
         for ( ; it.hasNext() ; ) {
         	Cell cell = it.next();
         	if (cell.getCellNum() == cellnum) {
-        		return cell; 
+        		return (XSSFCell)cell;
         	}
         }
         return null;
@@ -145,7 +145,7 @@ public class XSSFRow implements Row {
      *  with the {@link MissingCellPolicy} from the
      *  parent Workbook.
      */
-    public Cell getCell(int cellnum) {
+    public XSSFCell getCell(int cellnum) {
     	return getCell(cellnum, sheet.getWorkbook().getMissingCellPolicy());
     }
     
@@ -153,8 +153,8 @@ public class XSSFRow implements Row {
      * Returns the cell at the given (0 based) index,
      *  with the specified {@link MissingCellPolicy}
      */
-    public Cell getCell(int cellnum, MissingCellPolicy policy) {
-    	Cell cell = retrieveCell(cellnum);
+    public XSSFCell getCell(int cellnum, MissingCellPolicy policy) {
+    	XSSFCell cell = retrieveCell(cellnum);
     	if(policy == RETURN_NULL_AND_BLANK) {
     		return cell;
     	}

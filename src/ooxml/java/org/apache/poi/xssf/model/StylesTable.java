@@ -178,7 +178,7 @@ public class StylesTable implements StylesSource, XSSFModel {
     	return putFont((XSSFFont)font, fonts);
     }
 
-	public CellStyle getStyleAt(long idx) {
+	public XSSFCellStyle getStyleAt(long idx) {
     	int styleXfId = 0;
 
     	// 0 is the empty default
@@ -378,15 +378,16 @@ public class StylesTable implements StylesSource, XSSFModel {
     }
 
 
+
 	private void initialize() {
+		//CTFont ctFont = createDefaultFont();
 	    XSSFFont xssfFont = createDefaultFont();
 	    fonts.add(xssfFont.getCTFont());
 
 	    CTFill[] ctFill = createDefaultFills();
 	    fills.add(ctFill[0]);
-/*
 	    fills.add(ctFill[1]);
-*/
+
 	    CTBorder ctBorder = createDefaultBorder();
 	    borders.add(ctBorder);
 
@@ -414,6 +415,7 @@ public class StylesTable implements StylesSource, XSSFModel {
 	    ctBorder.addNewDiagonal();
 	    return ctBorder;
 	}
+
 
 	private CTFill[] createDefaultFills() {
 	    CTFill[] ctFill = new CTFill[]{CTFill.Factory.newInstance(),CTFill.Factory.newInstance()};

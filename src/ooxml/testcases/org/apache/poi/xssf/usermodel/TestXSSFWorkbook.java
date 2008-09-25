@@ -88,7 +88,7 @@ public class TestXSSFWorkbook extends TestCase {
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet1 = workbook.createSheet("sheet1");
         Sheet sheet2 = workbook.createSheet("sheet2");
-        assertEquals(-1, workbook.getSelectedTab());
+        assertEquals(0, workbook.getSelectedTab());
         workbook.setSelectedTab((short) 0);
         assertEquals(0, workbook.getSelectedTab());
         workbook.setSelectedTab((short) 1);

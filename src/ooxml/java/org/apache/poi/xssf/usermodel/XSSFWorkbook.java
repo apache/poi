@@ -40,13 +40,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.model.Control;
-import org.apache.poi.xssf.model.Drawing;
-import org.apache.poi.xssf.model.SharedStringSource;
-import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.XSSFModel;
+import org.apache.poi.xssf.model.*;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -83,6 +77,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     private SharedStringSource sharedStringSource;
     private StylesSource stylesSource;
+
+    private List<? extends XSSFModel> themes = new LinkedList<ThemeTable>();
 
     private MissingCellPolicy missingCellPolicy = Row.RETURN_NULL_AND_BLANK;
 
@@ -131,6 +127,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             } catch(Exception e) {
             	e.printStackTrace();
             	throw new IOException("Unable to load styles - " + e.toString());
+            }
+            try {
+	            // Load shared strings
+	            this.themes = XSSFRelation.THEME.loadAll(getCorePart());
+            } catch(Exception e) {
+            	throw new IOException("Unable to load shared strings - " + e.toString());
             }
 
             // Load individual sheets
@@ -251,23 +253,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     public XSSFCellStyle createCellStyle() {
-	CTXf xf=CTXf.Factory.newInstance();
-	xf.setNumFmtId(0);
-	xf.setFontId(0);
-	xf.setFillId(0);
-	xf.setBorderId(0);
-	xf.setXfId(0);
-	int xfSize=((StylesTable)stylesSource)._getStyleXfsSize();
-	long indexXf=((StylesTable)stylesSource).putCellXf(xf);
-	XSSFCellStyle style = new XSSFCellStyle(new Long(indexXf-1).intValue(), xfSize-1, (StylesTable)stylesSource);
-	return style;
+        CTXf xf=CTXf.Factory.newInstance();
+        xf.setNumFmtId(0);
+        xf.setFontId(0);
+        xf.setFillId(0);
+        xf.setBorderId(0);
+        xf.setXfId(0);
+        int xfSize=((StylesTable)stylesSource)._getStyleXfsSize();
+        long indexXf=((StylesTable)stylesSource).putCellXf(xf);
+        XSSFCellStyle style = new XSSFCellStyle(new Long(indexXf-1).intValue(), xfSize-1, (StylesTable)stylesSource);
+        return style;
     }
-    
- /*
-    public XSSFCellStyle createCellStyle() {
-    	return new XSSFCellStyle(stylesSource);
-    }
-*/
 
     public DataFormat createDataFormat() {
     	return getCreationHelper().createDataFormat();
@@ -291,12 +287,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     public XSSFSheet createSheet(String sheetname) {
-        return createSheet(sheetname, null);
+        return createSheet(sheetname, XSSFSheet.newSheetInstance());
     }
 
     public XSSFSheet createSheet(String sheetname, CTWorksheet worksheet) {
         CTSheet sheet = addSheet(sheetname);
-        XSSFWorksheet wrapper = new XSSFWorksheet(sheet, worksheet, this);
+        XSSFSheet wrapper = new XSSFSheet(sheet, worksheet, this);
         this.sheets.add(wrapper);
         return wrapper;
     }
@@ -468,7 +464,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         return null;
     }
 
-    public Sheet getSheetAt(int index) {
+    public XSSFSheet getSheetAt(int index) {
         return this.sheets.get(index);
     }
 
@@ -623,7 +619,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             // Main part
             PackagePartName corePartName = PackagingURIHelper.createPartName(workbookRelation.getDefaultFileName());
             // Create main part relationship
-            pkg.addRelationship(corePartName, TargetMode.INTERNAL, PackageRelationshipTypes.CORE_DOCUMENT, "rId1");
+            int rId = 1;
+            pkg.addRelationship(corePartName, TargetMode.INTERNAL, PackageRelationshipTypes.CORE_DOCUMENT, "rId" + (rId++));
+
             // Create main document part
             PackagePart corePart = pkg.createPart(corePartName, workbookRelation.getContentType());
             OutputStream out;
@@ -636,13 +634,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
             // Write out our sheets, updating the references
             //  to them in the main workbook as we go
+            int drawingIndex = 1;
             for (int i=0 ; i < this.getNumberOfSheets(); i++) {
             	int sheetNumber = (i+1);
-            	XSSFSheet sheet = (XSSFSheet) this.getSheetAt(i);
+            	XSSFSheet sheet = this.getSheetAt(i);
                 PackagePartName partName = PackagingURIHelper.createPartName(
                 		XSSFRelation.WORKSHEET.getFileName(sheetNumber));
                 PackageRelationship rel =
-                	 corePart.addRelationship(partName, TargetMode.INTERNAL, XSSFRelation.WORKSHEET.getRelation(), "rSheet" + sheetNumber);
+                	 corePart.addRelationship(partName, TargetMode.INTERNAL, XSSFRelation.WORKSHEET.getRelation(), "rId" + sheetNumber);
                 PackagePart part = pkg.createPart(partName, XSSFRelation.WORKSHEET.getContentType());
 
                 // XXX This should not be needed, but apparently the setSaveOuter call above does not work in XMLBeans 2.2
@@ -653,15 +652,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 workbook.getSheets().getSheetArray(i).setId(rel.getId());
                 workbook.getSheets().getSheetArray(i).setSheetId(sheetNumber);
 
-                // If our sheet has comments, then write out those
-                if(sheet.hasComments()) {
-                	CommentsTable ct = (CommentsTable)sheet.getCommentsSourceIfExists();
-                	XSSFRelation.SHEET_COMMENTS.save(ct, part, sheetNumber);
-                }
-
                 // If our sheet has drawings, then write out those
                 if(sheet.getDrawings() != null) {
-                	int drawingIndex = 1;
                 	for(Drawing drawing : sheet.getDrawings()) {
                 		XSSFRelation.VML_DRAWINGS.save(
                 				drawing,
@@ -670,6 +662,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 		);
                 		drawingIndex++;
                 	}
+                }
+
+                // If our sheet has comments, then write out those
+                if(sheet.hasComments()) {
+                	CommentsTable ct = (CommentsTable)sheet.getCommentsSourceIfExists();
+                	XSSFRelation.SHEET_COMMENTS.save(ct, part, sheetNumber);
                 }
 
                 // If our sheet has controls, then write out those
@@ -694,6 +692,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             if(stylesSource != null) {
 	             StylesTable st = (StylesTable)stylesSource;
 	             XSSFRelation.STYLES.save(st, corePart);
+            }
+            if(themes.size() > 0) {
+                for(int i=0; i< themes.size(); i++) {
+                    XSSFRelation.THEME.save(themes.get(i), corePart, i+1);
+                }
             }
 
             // Named ranges
@@ -751,7 +754,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     protected void setSharedStringSource(SharedStringSource sharedStringSource) {
         this.sharedStringSource = sharedStringSource;
     }
-    
+
     public StylesSource getStylesSource() {
     	return this.stylesSource;
     }

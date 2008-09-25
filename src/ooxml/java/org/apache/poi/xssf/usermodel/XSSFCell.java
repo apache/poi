@@ -110,7 +110,7 @@ public final class XSSFCell implements Cell {
 		return row.getRowNum();
 	}
 
-    public CellStyle getCellStyle() {
+    public XSSFCellStyle getCellStyle() {
         // Zero is the empty default
         if(this.cell.getS() > 0) {
             return stylesSource.getStyleAt(this.cell.getS());

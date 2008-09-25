@@ -19,89 +19,80 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPrintOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 public class XSSFDialogsheet extends XSSFSheet implements Sheet{
 
-	public XSSFDialogsheet(CTSheet sheet, CTDialogsheet dialogsheet,
-			XSSFWorkbook workbook) {
-		super(sheet, null, workbook);
-		this.worksheet = null;
-		this.dialogsheet = dialogsheet;
-		if (this.dialogsheet == null) {
-			this.dialogsheet = CTDialogsheet.Factory.newInstance();
-		}
-	}
-	
-	public XSSFRow createRow(int rowNum) {
-		return null;
-	}
+    public XSSFDialogsheet(CTSheet sheet, CTDialogsheet dialogsheet,
+                           XSSFWorkbook workbook) {
+        super(sheet, CTWorksheet.Factory.newInstance(), workbook);
+        this.worksheet = null;
+        this.dialogsheet = dialogsheet;
+        if (this.dialogsheet == null) {
+            this.dialogsheet = CTDialogsheet.Factory.newInstance();
+        }
+    }
 
-	protected CTHeaderFooter getSheetTypeHeaderFooter() {
-		if (dialogsheet.getHeaderFooter() == null) {
-			dialogsheet.setHeaderFooter(CTHeaderFooter.Factory.newInstance());
-		}
-		return dialogsheet.getHeaderFooter();
-	}
+    public XSSFRow createRow(int rowNum) {
+        return null;
+    }
 
-	protected CTSheetPr getSheetTypeSheetPr() {
-    	if (dialogsheet.getSheetPr() == null) {
-    		dialogsheet.setSheetPr(CTSheetPr.Factory.newInstance());
-    	}
-		return dialogsheet.getSheetPr();
-	}
+    protected CTHeaderFooter getSheetTypeHeaderFooter() {
+        if (dialogsheet.getHeaderFooter() == null) {
+            dialogsheet.setHeaderFooter(CTHeaderFooter.Factory.newInstance());
+        }
+        return dialogsheet.getHeaderFooter();
+    }
 
-	protected CTPageBreak getSheetTypeColumnBreaks() {
-		return null;
-	}
+    protected CTSheetPr getSheetTypeSheetPr() {
+        if (dialogsheet.getSheetPr() == null) {
+            dialogsheet.setSheetPr(CTSheetPr.Factory.newInstance());
+        }
+        return dialogsheet.getSheetPr();
+    }
 
-	protected CTSheetFormatPr getSheetTypeSheetFormatPr() {
-		if (dialogsheet.getSheetFormatPr() == null) {
-			dialogsheet.setSheetFormatPr(CTSheetFormatPr.Factory.newInstance());
-		}
-		return dialogsheet.getSheetFormatPr();
-	}
+    protected CTPageBreak getSheetTypeColumnBreaks() {
+        return null;
+    }
 
-	protected CTPageMargins getSheetTypePageMargins() {
-		if (dialogsheet.getPageMargins() == null) {
-			dialogsheet.setPageMargins(CTPageMargins.Factory.newInstance());
-		}
-		return dialogsheet.getPageMargins();
-	}
+    protected CTSheetFormatPr getSheetTypeSheetFormatPr() {
+        if (dialogsheet.getSheetFormatPr() == null) {
+            dialogsheet.setSheetFormatPr(CTSheetFormatPr.Factory.newInstance());
+        }
+        return dialogsheet.getSheetFormatPr();
+    }
 
-	protected CTPageBreak getSheetTypeRowBreaks() {
-		return null;
-	}
+    protected CTPageMargins getSheetTypePageMargins() {
+        if (dialogsheet.getPageMargins() == null) {
+            dialogsheet.setPageMargins(CTPageMargins.Factory.newInstance());
+        }
+        return dialogsheet.getPageMargins();
+    }
 
-	protected CTSheetViews getSheetTypeSheetViews() {
-		if (dialogsheet.getSheetViews() == null) {
-			dialogsheet.setSheetViews(CTSheetViews.Factory.newInstance());
-			dialogsheet.getSheetViews().addNewSheetView();
-		}
-		return dialogsheet.getSheetViews();
-	}
+    protected CTPageBreak getSheetTypeRowBreaks() {
+        return null;
+    }
 
-	protected CTPrintOptions getSheetTypePrintOptions() {
-		if (dialogsheet.getPrintOptions() == null) {
-			dialogsheet.setPrintOptions(CTPrintOptions.Factory.newInstance());
-		}
-		return dialogsheet.getPrintOptions();
-	}
+    protected CTSheetViews getSheetTypeSheetViews() {
+        if (dialogsheet.getSheetViews() == null) {
+            dialogsheet.setSheetViews(CTSheetViews.Factory.newInstance());
+            dialogsheet.getSheetViews().addNewSheetView();
+        }
+        return dialogsheet.getSheetViews();
+    }
 
-	protected CTSheetProtection getSheetTypeProtection() {
-		if (dialogsheet.getSheetProtection() == null) {
-			dialogsheet.setSheetProtection(CTSheetProtection.Factory.newInstance());
-		}
-		return dialogsheet.getSheetProtection();
-	}
-	
+    protected CTPrintOptions getSheetTypePrintOptions() {
+        if (dialogsheet.getPrintOptions() == null) {
+            dialogsheet.setPrintOptions(CTPrintOptions.Factory.newInstance());
+        }
+        return dialogsheet.getPrintOptions();
+    }
+
+    protected CTSheetProtection getSheetTypeProtection() {
+        if (dialogsheet.getSheetProtection() == null) {
+            dialogsheet.setSheetProtection(CTSheetProtection.Factory.newInstance());
+        }
+        return dialogsheet.getSheetProtection();
+    }
+
 }
