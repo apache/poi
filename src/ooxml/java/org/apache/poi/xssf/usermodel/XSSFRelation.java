@@ -13,15 +13,7 @@ import java.util.Iterator;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.xssf.model.BinaryPart;
-import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.model.Control;
-import org.apache.poi.xssf.model.Drawing;
-import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.XSSFChildContainingModel;
-import org.apache.poi.xssf.model.XSSFModel;
-import org.apache.poi.xssf.model.XSSFWritableModel;
+import org.apache.poi.xssf.model.*;
 import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackagePartName;
@@ -122,6 +114,12 @@ public class XSSFRelation {
 			"/xl/activeX/activeX#.bin",
 	        BinaryPart.class
 	);
+    public static final XSSFRelation THEME = new XSSFRelation(
+            "application/vnd.openxmlformats-officedocument.theme+xml",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme",
+            "/xl/theme/theme#.xml",
+            ThemeTable.class
+    );
 	
 	
     private static POILogger log = POILogFactory.getLogger(XSSFRelation.class);

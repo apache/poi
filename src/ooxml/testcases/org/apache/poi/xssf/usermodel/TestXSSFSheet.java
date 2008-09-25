@@ -121,8 +121,8 @@ public class TestXSSFSheet extends TestCase {
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Sheet 1");
         // Test that default height set by the constructor
-        assertEquals((short) 0, sheet.getDefaultRowHeight());
-        assertEquals((float) 0, sheet.getDefaultRowHeightInPoints());
+        assertEquals((short) 300, sheet.getDefaultRowHeight());
+        assertEquals((float) 15, sheet.getDefaultRowHeightInPoints());
         // Set a new default row height in twips and test getting the value in points
         sheet.setDefaultRowHeight((short) 360);
         assertEquals((float) 18, sheet.getDefaultRowHeightInPoints());
@@ -244,7 +244,7 @@ public class TestXSSFSheet extends TestCase {
     public void testGetSetMargin() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Sheet 1");
-        assertEquals((double) 0, sheet.getMargin((short) 0));
+        assertEquals(0.7, sheet.getMargin((short) 0));
         sheet.setMargin((short) 0, 10);
         assertEquals((double) 10, sheet.getMargin((short) 0));
         assertEquals((double) 10, sheet.getMargin((short) 1));
@@ -465,9 +465,9 @@ public class TestXSSFSheet extends TestCase {
     
     public void testGetDialog() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        XSSFSheet sheet = workbook.createSheet("Sheet 1");
         assertFalse(sheet.getDialog());
-        XSSFSheet dialogsheet = (XSSFSheet) workbook.createDialogsheet("Dialogsheet 1", null);
+        XSSFSheet dialogsheet = workbook.createDialogsheet("Dialogsheet 1", null);
         assertTrue(dialogsheet.getDialog());
     	
     }

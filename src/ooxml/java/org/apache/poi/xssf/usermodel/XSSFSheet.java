@@ -128,28 +128,54 @@ public class XSSFSheet implements Sheet {
         this.workbook = workbook;
         this.sheet = sheet;
         this.worksheet = worksheet;
-        if (this.worksheet == null) {
-        	this.worksheet = CTWorksheet.Factory.newInstance();
-        }
+
         if (this.worksheet.getSheetData() == null) {
         	this.worksheet.addNewSheetData();
         }
-        //CTSheetView sheetView = getSheetTypeSheetView();
-        //sheetView.setWorkbookViewId(0);
+
         initRows(this.worksheet);
         initColumns(this.worksheet);
-        
+
     	hyperlinks = new ArrayList<XSSFHyperlink>();
 	}
 
     public XSSFSheet(XSSFWorkbook workbook) {
         this.workbook = workbook;
-        
+
         hyperlinks = new ArrayList<XSSFHyperlink>();
     }
 
     public XSSFWorkbook getWorkbook() {
         return this.workbook;
+    }
+
+    /**
+     * Create a new CTWorksheet instance and setup default values
+     *
+     * @return a new instance
+     */
+    protected static CTWorksheet newSheetInstance(){
+        CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
+        CTSheetFormatPr ctFormat = worksheet.addNewSheetFormatPr();
+        ctFormat.setDefaultRowHeight(15.0);
+
+        CTSheetView ctView = worksheet.addNewSheetViews().addNewSheetView();
+        ctView.setTabSelected(true);
+        ctView.setWorkbookViewId(0);
+
+        worksheet.addNewDimension().setRef("A1");
+
+        worksheet.addNewSheetData();
+
+        CTPageMargins ctMargins = worksheet.addNewPageMargins();
+        ctMargins.setBottom(0.75);
+        ctMargins.setFooter(0.3);
+        ctMargins.setHeader(0.3);
+        ctMargins.setLeft(0.7);
+        ctMargins.setRight(0.7);
+        ctMargins.setTop(0.75);
+
+        return worksheet;
     }
 
     /**
@@ -591,11 +617,11 @@ public class XSSFSheet implements Sheet {
         return false;
     }
 
-    public Row getRow(int rownum) {
+    public XSSFRow getRow(int rownum) {
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
                 Row row = it.next();
                 if (row.getRowNum() == rownum) {
-                        return row;
+                        return (XSSFRow)row;
                 }
         }
         return null;
