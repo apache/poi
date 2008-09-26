@@ -25,11 +25,11 @@ import org.apache.poi.xssf.usermodel.*;
 
 public class CreateNewSpreadsheet {
 	public static void main(String[] args) throws Exception {
-		Workbook wb = new XSSFWorkbook();
+		XSSFWorkbook wb = new XSSFWorkbook();
 		CreationHelper createHelper = wb.getCreationHelper();
 		
-		Sheet s1 = wb.createSheet("Sheet One");
-		Sheet s2 = wb.createSheet("2nd Sheet");
+		XSSFSheet s1 = wb.createSheet("Sheet One");
+		XSSFSheet s2 = wb.createSheet("Sheet One");
 		
 		// Create a few cells
 		s1.createRow(0);
@@ -46,24 +46,13 @@ public class CreateNewSpreadsheet {
 		
 		s2.getRow(2).createCell(1).setCellValue(createHelper.createRichTextString("Sheet 2"));
 
-/*
-		// Comment
-		Comment comment = ((XSSFSheet)s1).createComment();
-//		HSSFPatriarch patriach = (HSSFPatriarch)s1.createDrawingPatriarch();
-//		Comment comment = patriach.createComment(new HSSFClientAnchor(0, 0, 0, 0, (short)4, 2, (short) 6, 5));
-		
-		comment.setAuthor("Apache POI");
-		comment.setString(createHelper.createRichTextString("I am a comment"));
-		s1.getRow(0).getCell(0).setCellComment(comment);
-		
-		// Hyperlink
-		Hyperlink hyperlink = createHelper.createHyperlink(Hyperlink.LINK_URL);
-		hyperlink.setAddress("http://poi.apache.org/");
-		hyperlink.setLabel("Link to POI");
-		s1.getRow(1).createCell(1).setHyperlink(hyperlink);
-		s1.getRow(1).getCell(1).setCellValue(createHelper.createRichTextString("Link to POI"));
-*/
-		// Save
+        s1.groupRow(0, 3);
+
+        s1.getRow(1).setHeight(10.4);
+        //s1.setActiveCell("A2");
+        //s2.setSelected(true);
+
+        // Save
 		FileOutputStream fout = new FileOutputStream("NewFile.xlsx");
 		wb.write(fout);
 		fout.close();

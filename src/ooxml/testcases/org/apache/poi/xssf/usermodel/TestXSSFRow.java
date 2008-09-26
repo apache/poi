@@ -17,14 +17,20 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.Iterator;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.TestXSSFCell.DummySharedStringSource;
 import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 
 /**
  * Tests for XSSFRow
@@ -121,45 +127,19 @@ public final class TestXSSFRow extends TestCase {
         assertEquals(-1, emptyRow.getFirstCellNum());
     }
 
-    public void testLastCellNum() {
-        XSSFRow row = getSampleRow();
-        assertEquals(100, row.getLastCellNum());
-
-        Cell cell = row.getCell((short) 100);
-        row.removeCell(cell);
-        assertFalse(row.getLastCellNum() == (short) 100);
-    }
-
-    public void testRemoveCell() {
-        XSSFRow row = getSampleRow();
-
-        // Test removing the first cell
-        Cell firstCell = row.getCell((short) 2);
-        assertNotNull(firstCell);
-        assertEquals(7, row.getPhysicalNumberOfCells());
-        row.removeCell(firstCell);
-        assertEquals(6, row.getPhysicalNumberOfCells());
-        firstCell = row.getCell((short) 2);
-        assertNull(firstCell);
-
-        // Test removing the last cell
-        Cell lastCell = row.getCell((short) 100);
-        row.removeCell(lastCell);
-    }
-
     public void testGetSetHeight() {
         XSSFRow row = getSampleRow();
         // I assume that "ht" attribute value is in 'points', please verify that
         // Test that no rowHeight is set
         assertEquals((short) -1, row.getHeight());
-        // Set a rowHeight in twips (1/20th of a point) and test the new value
+        // Set a rowHeight and test the new value
         row.setHeight((short) 240);
-        assertEquals((short) 240, row.getHeight());
-        assertEquals(12F, row.getHeightInPoints());
+        assertEquals((short) 240.0, row.getHeight());
+        assertEquals((float)240.0, row.getHeightInPoints());
         // Set a new rowHeight in points and test the new value
-        row.setHeightInPoints(13F);
-        assertEquals((float) 13, row.getHeightInPoints());
-        assertEquals((short) 260, row.getHeight());
+        row.setHeightInPoints(13);
+        assertEquals((float) 13.0, row.getHeightInPoints());
+        assertEquals((short) 13.0, row.getHeight());
     }
 
     public void testGetSetZeroHeight() throws Exception {
@@ -247,5 +227,75 @@ public final class TestXSSFRow extends TestCase {
         XSSFWorkbook wb = new XSSFWorkbook();
         wb.setSharedStringSource(new SharedStringsTable());
         return new XSSFSheet(wb);
+    }
+
+    /**
+     * Test that XSSFRow.getLastCellNum is consistent with HSSFRow.getLastCellNum
+     */
+    public void testLastCellNum() {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        XSSFWorkbook wb2 = new XSSFWorkbook();
+
+        HSSFSheet sheet1 = wb1.createSheet();
+        XSSFSheet sheet2 = wb2.createSheet();
+
+        for (int i = 0; i < 10; i++) {
+            HSSFRow row1 = sheet1.createRow(i);
+            XSSFRow row2 = sheet2.createRow(i);
+
+            for (int j = 0; j < 5; j++) {
+                //before adding a cell
+                assertEquals(row1.getLastCellNum(), row2.getLastCellNum());
+
+                HSSFCell cell1 = row1.createCell(j);
+                XSSFCell cell2 = row2.createCell(j);
+
+                //after adding a cell
+                assertEquals(row1.getLastCellNum(), row2.getLastCellNum());
+            }
+        }
+    }
+
+    public void testRemoveCell() {
+        XSSFRow row = getSampleRow();
+
+        // Test removing the first cell
+        Cell firstCell = row.getCell((short) 2);
+        assertNotNull(firstCell);
+        assertEquals(7, row.getPhysicalNumberOfCells());
+        row.removeCell(firstCell);
+        assertEquals(6, row.getPhysicalNumberOfCells());
+        firstCell = row.getCell((short) 2);
+        assertNull(firstCell);
+
+        // Test removing the last cell
+        Cell lastCell = row.getCell((short) 100);
+        row.removeCell(lastCell);
+    }
+
+    public void testFirstLastCellNum() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet();
+        XSSFRow row = sheet.createRow(0);
+        assertEquals(-1, row.getLastCellNum());
+        assertEquals(-1, row.getFirstCellNum());
+        row.createCell(1);
+        assertEquals(2, row.getLastCellNum());
+        assertEquals(1, row.getFirstCellNum());
+        row.createCell(3);
+        assertEquals(4, row.getLastCellNum());
+        assertEquals(1, row.getFirstCellNum());
+        row.removeCell(row.getCell(3));
+        assertEquals(2, row.getLastCellNum());
+        assertEquals(1, row.getFirstCellNum());
+        row.removeCell(row.getCell(1));
+        assertEquals(-1, row.getLastCellNum());
+        assertEquals(-1, row.getFirstCellNum());
+
+        workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+        sheet = workbook.getSheetAt(0);
+
+        assertEquals(-1, sheet.getRow(0).getLastCellNum());
+        assertEquals(-1, sheet.getRow(0).getFirstCellNum());
     }
 }

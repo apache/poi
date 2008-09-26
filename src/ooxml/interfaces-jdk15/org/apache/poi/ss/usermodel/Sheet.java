@@ -233,12 +233,6 @@ public interface Sheet extends Iterable<Row> {
     void setVerticallyCenter(boolean value);
 
     /**
-     * Determine whether printed output for this sheet will be vertically centered.
-     */
-
-    boolean getVerticallyCenter(boolean value);
-
-    /**
      * determines whether the output is horizontally centered on the page.
      * @param value true to horizontally center, false otherwise.
      */
@@ -671,12 +665,6 @@ public interface Sheet extends Iterable<Row> {
      * @param column
      */
     void removeColumnBreak(short column);
-
-    /**
-     * Aggregates the drawing records and dumps the escher record hierarchy
-     * to the standard output.
-     */
-    void dumpDrawingRecords(boolean fat);
 
     /**
      * Creates the toplevel drawing patriarch.  This will have the effect of

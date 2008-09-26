@@ -19,10 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -80,6 +77,15 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STSheetState;
 
 
+/**
+ * High level representation of a worksheet.
+ *
+ * <p>
+ * Sheets are the central structures within a workbook, and are where a user does most of his spreadsheet work.
+ * The most common type of sheet is the worksheet, which is represented as a grid of cells. Worksheet cells can
+ * contain text, numbers, dates, and formulas. Cells can also be formatted.  A workbook usually contains more than one sheet.
+ * </p>
+ */
 public class XSSFSheet implements Sheet {
     protected CTSheet sheet;
     protected CTWorksheet worksheet;
@@ -139,12 +145,17 @@ public class XSSFSheet implements Sheet {
     	hyperlinks = new ArrayList<XSSFHyperlink>();
 	}
 
-    public XSSFSheet(XSSFWorkbook workbook) {
+    protected XSSFSheet(XSSFWorkbook workbook) {
         this.workbook = workbook;
 
         hyperlinks = new ArrayList<XSSFHyperlink>();
     }
 
+    /**
+     * Returns the parent XSSFWorkbook
+     *
+     * @return the parent XSSFWorkbook
+     */
     public XSSFWorkbook getWorkbook() {
         return this.workbook;
     }
@@ -154,7 +165,7 @@ public class XSSFSheet implements Sheet {
      *
      * @return a new instance
      */
-    protected static CTWorksheet newSheetInstance(){
+    protected static CTWorksheet newInstance(){
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         CTSheetFormatPr ctFormat = worksheet.addNewSheetFormatPr();
         ctFormat.setDefaultRowHeight(15.0);
@@ -214,8 +225,13 @@ public class XSSFSheet implements Sheet {
         worksheet.save(out, xmlOptions);
         out.close();
     }
-    
-    protected CTWorksheet getWorksheet() {
+
+    /**
+     * Provide access to the underlying XML bean
+     *
+     * @return the underlying CTWorksheet bean
+     */
+    public CTWorksheet getWorksheet() {
         return this.worksheet;
     }
     
@@ -265,8 +281,35 @@ public class XSSFSheet implements Sheet {
     	return ctMergeCells.sizeOfMergeCellArray();
     }
 
-    public void autoSizeColumn(short column) {
-    	columnHelper.setColBestFit(column, true);
+    /**
+     * Adjusts the column width to fit the contents.
+     *
+     * This process can be relatively slow on large sheets, so this should
+     *  normally only be called once per column, at the end of your
+     *  processing.
+     *
+     * @param column the column index
+     */
+   public void autoSizeColumn(short column) {
+    	autoSizeColumn(column, false);
+    }
+
+    /**
+     * Adjusts the column width to fit the contents.
+     *
+     * This process can be relatively slow on large sheets, so this should
+     *  normally only be called once per column, at the end of your
+     *  processing.
+     *
+     * You can specify whether the content of merged cells should be considered or ignored.
+     *  Default is to ignore merged cells.
+     *
+     * @param column the column index
+     * @param useMergedCells whether to use the contents of merged cells when calculating the width of the column
+     */
+    public void autoSizeColumn(short column, boolean useMergedCells) {
+        //TODO:
+        columnHelper.setColBestFit(column, true);
     }
 
     public Patriarch createDrawingPatriarch() {
@@ -274,11 +317,23 @@ public class XSSFSheet implements Sheet {
         return null;
     }
 
+    /**
+     * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.
+     * @param colSplit      Horizonatal position of split.
+     * @param rowSplit      Vertical position of split.
+     * @param topRow        Top row visible in bottom pane
+     * @param leftmostColumn   Left column visible in right pane.
+     */
     public void createFreezePane(int colSplit, int rowSplit, int leftmostColumn, int topRow) {
     	this.createFreezePane(colSplit, rowSplit);
     	this.showInPane((short)topRow, (short)leftmostColumn);
     }
 
+    /**
+     * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.
+     * @param colSplit      Horizonatal position of split.
+     * @param rowSplit      Vertical position of split.
+     */
     public void createFreezePane(int colSplit, int rowSplit) {
     	getPane().setXSplit(colSplit);
     	getPane().setYSplit(rowSplit);
@@ -290,8 +345,8 @@ public class XSSFSheet implements Sheet {
      * Creates a new comment for this sheet. You still
      *  need to assign it to a cell though
      */
-    public Comment createComment() {
-    	return getComments().addComment();
+    public XSSFComment createComment() {
+    	return (XSSFComment)getComments().addComment();
     }
 
     protected XSSFRow addRow(int index, int rownum) {
@@ -301,35 +356,50 @@ public class XSSFSheet implements Sheet {
         return xrow;
     }
 
+    /**
+     * Create a new row within the sheet and return the high level representation
+     *
+     * @param rownum  row number
+     * @return High level {@link XSSFRow} object representing a row in the sheet
+     * @see #removeRow(org.apache.poi.ss.usermodel.Row)
+     */
     public XSSFRow createRow(int rownum) {
         int index = 0;
         for (Row r : this.rows) {
-                if (r.getRowNum() == rownum) {
-                        // Replace r with new row
+            if (r.getRowNum() == rownum) {
+                // Replace r with new row
                 XSSFRow xrow = addRow(index, rownum);
-                        rows.set(index, xrow);
-                        return xrow;
-                }
-                if (r.getRowNum() > rownum) {
-                        XSSFRow xrow = addRow(index, rownum);
-                        rows.add(index, xrow);
-                        return xrow;
-                }
-                ++index;
+                rows.set(index, xrow);
+                return xrow;
+            }
+            if (r.getRowNum() > rownum) {
+                XSSFRow xrow = addRow(index, rownum);
+                rows.add(index, xrow);
+                return xrow;
+            }
+            ++index;
         }
         XSSFRow xrow = addRow(index, rownum);
         rows.add(xrow);
         return xrow;
     }
 
+    /**
+     * Creates a split pane. Any existing freezepane or split pane is overwritten.
+     * @param xSplitPos      Horizonatal position of split (in 1/20th of a point).
+     * @param ySplitPos      Vertical position of split (in 1/20th of a point).
+     * @param topRow        Top row visible in bottom pane
+     * @param leftmostColumn   Left column visible in right pane.
+     * @param activePane    Active pane.  One of: PANE_LOWER_RIGHT,
+     *                      PANE_UPPER_RIGHT, PANE_LOWER_LEFT, PANE_UPPER_LEFT
+     * @see #PANE_LOWER_LEFT
+     * @see #PANE_LOWER_RIGHT
+     * @see #PANE_UPPER_LEFT
+     * @see #PANE_UPPER_RIGHT
+     */
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane) {
     	createFreezePane(xSplitPos, ySplitPos, leftmostColumn, topRow);
     	getPane().setActivePane(STPane.Enum.forInt(activePane));
-    }
-
-    public void dumpDrawingRecords(boolean fat) {
-        // TODO Auto-generated method stub
-
     }
 
     public boolean getAlternateExpression() {
@@ -342,15 +412,11 @@ public class XSSFSheet implements Sheet {
         return false;
     }
 
-    public boolean getAutobreaks() {
-        return getSheetTypePageSetUpPr().getAutoPageBreaks();
-    }
-
-    public Comment getCellComment(int row, int column) {
-    	return getComments().findCellComment(row, column);
+    public XSSFComment getCellComment(int row, int column) {
+    	return (XSSFComment)getComments().findCellComment(row, column);
     }
     
-    public Hyperlink getHyperlink(int row, int column) {
+    public XSSFHyperlink getHyperlink(int row, int column) {
     	String ref = new CellReference(row, column).formatAsString();
     	for(XSSFHyperlink hyperlink : hyperlinks) {
     		if(hyperlink.getCellRef().equals(ref)) {
@@ -360,11 +426,18 @@ public class XSSFSheet implements Sheet {
     	return null;
     }
 
+    /**
+     * Vertical page break information used for print layout view, page layout view, drawing print breaks
+     * in normal view, and for printing the worksheet.
+     *
+     * @return column indexes of all the vertical page breaks, never <code>null</code>
+     */
     public int[] getColumnBreaks() {
-        CTBreak[] brkArray = getSheetTypeColumnBreaks().getBrkArray();
-        if (brkArray.length == 0) {
-            return null;
+        if (!worksheet.isSetColBreaks() || worksheet.getColBreaks().sizeOfBrkArray() == 0) {
+            return new int[0];
         }
+
+        CTBreak[] brkArray = worksheet.getColBreaks().getBrkArray();
         int[] breaks = new int[brkArray.length];
         for (int i = 0 ; i < brkArray.length ; i++) {
             CTBreak brk = brkArray[i];
@@ -418,6 +491,11 @@ public class XSSFSheet implements Sheet {
         return false;
     }
 
+    /**
+     * Gets the first row on the sheet
+     *
+     * @return the number of the first logical row on the sheet, zero based
+     */
     public int getFirstRowNum() {
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             Row row = it.next();
@@ -428,18 +506,34 @@ public class XSSFSheet implements Sheet {
         return -1;
     }
 
+    /**
+     * Flag indicating whether the Fit to Page print option is enabled.
+     *
+     * @return <code>true</code>
+     */
     public boolean getFitToPage() {
-        return getSheetTypePageSetUpPr().getFitToPage();
+        CTSheetPr sheetPr = getSheetTypeSheetPr();
+        CTPageSetUpPr psSetup = (sheetPr == null || !sheetPr.isSetPageSetUpPr()) ?
+                CTPageSetUpPr.Factory.newInstance() : sheetPr.getPageSetUpPr();
+        return psSetup.getFitToPage();
     }
 
-    
+    protected CTSheetPr getSheetTypeSheetPr() {
+        if (worksheet.getSheetPr() == null) {
+            worksheet.setSheetPr(CTSheetPr.Factory.newInstance());
+        }
+        return worksheet.getSheetPr();
+    }
+
 	protected CTHeaderFooter getSheetTypeHeaderFooter() {
 		if (worksheet.getHeaderFooter() == null) {
 			worksheet.setHeaderFooter(CTHeaderFooter.Factory.newInstance());
 		}
 		return worksheet.getHeaderFooter();
 	}
-    
+
+
+
     /**
      * Returns the default footer for the sheet,
      *  creating one as needed.
@@ -617,49 +711,133 @@ public class XSSFSheet implements Sheet {
         return false;
     }
 
+    /**
+     * Returns the logical row ( 0-based).  If you ask for a row that is not
+     * defined you get a null.  This is to say row 4 represents the fifth row on a sheet.
+     *
+     * @param rownum  row to get
+     * @return <code>XSSFRow</code> representing the rownumber or <code>null</code> if its not defined on the sheet
+     */
     public XSSFRow getRow(int rownum) {
+        //TODO current implemenation is expensive, it should take O(1), not O(N)
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
-                Row row = it.next();
-                if (row.getRowNum() == rownum) {
-                        return (XSSFRow)row;
-                }
+            Row row = it.next();
+            if (row.getRowNum() == rownum) {
+                 return (XSSFRow)row;
+            }
         }
         return null;
     }
 
+    /**
+     * Horizontal page break information used for print layout view, page layout view, drawing print breaks in normal
+     *  view, and for printing the worksheet.
+     *
+     * @return row indexes of all the horizontal page breaks, never <code>null</code>
+     */
     public int[] getRowBreaks() {
-        CTPageBreak rowBreaks = getSheetTypeRowBreaks();
-        int breaksCount = rowBreaks.getBrkArray().length;
-        if (breaksCount == 0) {
-            return null;
+        if (!worksheet.isSetRowBreaks() || worksheet.getRowBreaks().sizeOfBrkArray() == 0) {
+            return new int[0];
         }
-        int[] breaks = new int[breaksCount];
-        for (int i = 0 ; i < breaksCount ; i++) {
-            CTBreak brk = rowBreaks.getBrkArray(i);
-            breaks[i] = (int) brk.getId();
+
+        CTBreak[] brkArray = worksheet.getRowBreaks().getBrkArray();
+        int[] breaks = new int[brkArray.length];
+        for (int i = 0 ; i < brkArray.length ; i++) {
+            CTBreak brk = brkArray[i];
+            breaks[i] = (int)brk.getId();
         }
         return breaks;
     }
 
-	protected CTPageBreak getSheetTypeRowBreaks() {
-		if (worksheet.getRowBreaks() == null) {
-			worksheet.setRowBreaks(CTPageBreak.Factory.newInstance());
-		}
-		return worksheet.getRowBreaks();
-	}
-
+    /**
+     * Flag indicating whether summary rows appear below detail in an outline, when applying an outline.
+     *
+     * <p>
+     * When true a summary row is inserted below the detailed data being summarized and a
+     * new outline level is established on that row.
+     * </p>
+     * <p>
+     * When false a summary row is inserted above the detailed data being summarized and a new outline level
+     * is established on that row.
+     * </p>
+     * @return <code>true</code> if row summaries appear below detail in the outline
+     */
     public boolean getRowSumsBelow() {
-        CTSheetPr sheetPr = getSheetTypeSheetPr();
-        CTOutlinePr outLinePr = sheetPr.getOutlinePr();
-        return outLinePr.getSummaryBelow();
+        CTSheetPr sheetPr = worksheet.getSheetPr();
+        CTOutlinePr outlinePr = (sheetPr != null && sheetPr.isSetOutlinePr())
+                ? sheetPr.getOutlinePr() : CTOutlinePr.Factory.newInstance();
+        return outlinePr.getSummaryBelow();
     }
 
+    /**
+     * Flag indicating whether summary rows appear below detail in an outline, when applying an outline.
+     *
+     * <p>
+     * When true a summary row is inserted below the detailed data being summarized and a
+     * new outline level is established on that row.
+     * </p>
+     * <p>
+     * When false a summary row is inserted above the detailed data being summarized and a new outline level
+     * is established on that row.
+     * </p>
+     * @param value <code>true</code> if row summaries appear below detail in the outline
+     */
+    public void setRowSumsBelow(boolean value) {
+        ensureOutlinePr().setSummaryBelow(value);
+    }
+
+    /**
+     * Flag indicating whether summary columns appear to the right of detail in an outline, when applying an outline.
+     *
+     * <p>
+     * When true a summary column is inserted to the right of the detailed data being summarized
+     * and a new outline level is established on that column.
+     * </p>
+     * <p>
+     * When false a summary column is inserted to the left of the detailed data being
+     * summarized and a new outline level is established on that column.
+     * </p>
+     * @return <code>true</code> if col summaries appear right of the detail in the outline
+     */
     public boolean getRowSumsRight() {
-        CTSheetPr sheetPr = getSheetTypeSheetPr();
-        CTOutlinePr outLinePr = sheetPr.getOutlinePr();
-        return outLinePr.getSummaryRight();
+        CTSheetPr sheetPr = worksheet.getSheetPr();
+        CTOutlinePr outlinePr = (sheetPr != null && sheetPr.isSetOutlinePr())
+                ? sheetPr.getOutlinePr() : CTOutlinePr.Factory.newInstance();
+        return outlinePr.getSummaryRight();
     }
 
+    /**
+     * Flag indicating whether summary columns appear to the right of detail in an outline, when applying an outline.
+     *
+     * <p>
+     * When true a summary column is inserted to the right of the detailed data being summarized
+     * and a new outline level is established on that column.
+     * </p>
+     * <p>
+     * When false a summary column is inserted to the left of the detailed data being
+     * summarized and a new outline level is established on that column.
+     * </p>
+     * @param value <code>true</code> if col summaries appear right of the detail in the outline
+     */
+    public void setRowSumsRight(boolean value) {
+        ensureOutlinePr().setSummaryRight(value);
+    }
+
+
+    /**
+     * Ensure CTWorksheet.CTSheetPr.CTOutlinePr
+     */
+    private CTOutlinePr ensureOutlinePr(){
+        CTSheetPr sheetPr = worksheet.isSetSheetPr() ? worksheet.getSheetPr() : worksheet.addNewSheetPr();
+        CTOutlinePr outlinePr = sheetPr.isSetOutlinePr() ? sheetPr.getOutlinePr() : sheetPr.addNewOutlinePr();
+        return outlinePr;
+    }
+
+    /**
+     * A flag indicating whether scenarios are locked when the sheet is protected.
+     *
+     * @return true => protection enabled; false => protection disabled
+     */
     public boolean getScenarioProtect() {
     	return getSheetTypeProtection().getScenarios();
     }
@@ -671,19 +849,25 @@ public class XSSFSheet implements Sheet {
 		return worksheet.getSheetProtection();
 	}
 
+    /**
+     * The top row in the visible view when the sheet is
+     * first viewed after opening it in a viewer
+     *
+     * @return integer indicating the rownum (0 based) of the top row
+     */
     public short getTopRow() {
     	String cellRef = getSheetTypeSheetView().getTopLeftCell();
     	CellReference cellReference = new CellReference(cellRef);
         return (short) cellReference.getRow();
     }
 
-    // Right signature method. Remove the wrong one when it will be removed in HSSFSheet (and interface)
+    /**
+     * Determine whether printed output for this sheet will be vertically centered.
+     *
+     * @return whether printed output for this sheet will be vertically centered.
+     */
     public boolean getVerticallyCenter() {
-    	return getVerticallyCenter(true);
-    }
-
-    public boolean getVerticallyCenter(boolean value) {
-    	return getSheetTypePrintOptions().getVerticalCentered();
+        return getSheetTypePrintOptions().getVerticalCentered();
     }
 
     /**
@@ -711,9 +895,9 @@ public class XSSFSheet implements Sheet {
 
     public void groupRow(int fromRow, int toRow) {
       	for(int i=fromRow;i<=toRow;i++){
-    		XSSFRow xrow=(XSSFRow)getRow(i-1);
-    		if(xrow==null){//create a new Row
-    			 xrow=(XSSFRow)createRow(i-1);
+    		XSSFRow xrow = getRow(i-1);
+    		if(xrow == null){//create a new Row
+    			 xrow = createRow(i-1);
     		}    		
     		CTRow ctrow=xrow.getCTRow();
     		short outlineLevel=ctrow.getOutlineLevel();
@@ -742,10 +926,13 @@ public class XSSFSheet implements Sheet {
     	return outlineLevel;
     }    
 
+    /**
+     * Determines if there is a page break at the indicated column
+     */
     public boolean isColumnBroken(short column) {
-        CTBreak[] brkArray = getSheetTypeColumnBreaks().getBrkArray();
-        for (int i = 0 ; i < brkArray.length ; i++) {
-            if (brkArray[i].getId() == column) {
+        int[] colBreaks = getColumnBreaks();
+        for (int i = 0 ; i < colBreaks.length ; i++) {
+            if (colBreaks[i] == column) {
                 return true;
             }
         }
@@ -779,11 +966,14 @@ public class XSSFSheet implements Sheet {
     	return getSheetTypePrintOptions().getGridLines();
     }
 
+    /**
+     * Tests if there is a page break at the indicated row
+     *
+     * @param row index of the row to test
+     * @return <code>true</code> if there is a page break at the indicated row
+     */
     public boolean isRowBroken(int row) {
         int[] rowBreaks = getRowBreaks();
-        if (rowBreaks == null) {
-            return false;
-        }
         for (int i = 0 ; i < rowBreaks.length ; i++) {
             if (rowBreaks[i] == row) {
                 return true;
@@ -792,19 +982,32 @@ public class XSSFSheet implements Sheet {
         return false;
     }
 
-    public void protectSheet(String password) {
-        // TODO Auto-generated method stub
-
+    /**
+     * Sets a page break at the indicated row
+     */
+    public void setRowBreak(int row) {
+        CTPageBreak pgBreak = worksheet.isSetRowBreaks() ? worksheet.getRowBreaks() : worksheet.addNewRowBreaks();
+        if (! isRowBroken(row)) {
+            CTBreak brk = pgBreak.addNewBrk();
+            brk.setId(row);
+        }
     }
 
+    /**
+     * Removes a page break at the indicated column
+     */
     public void removeColumnBreak(short column) {
         CTBreak[] brkArray = getSheetTypeColumnBreaks().getBrkArray();
         for (int i = 0 ; i < brkArray.length ; i++) {
             if (brkArray[i].getId() == column) {
                 getSheetTypeColumnBreaks().removeBrk(i);
-                continue;
             }
         }
+    }
+
+    public void protectSheet(String password) {
+        // TODO Auto-generated method stub
+
     }
 
     public void removeMergedRegion(int index) {
@@ -833,12 +1036,15 @@ public class XSSFSheet implements Sheet {
         }
     }
 
+    /**
+     * Removes the page break at the indicated row
+     */
     public void removeRowBreak(int row) {
-        CTBreak[] brkArray = getSheetTypeRowBreaks().getBrkArray();
+        CTPageBreak pgBreak = worksheet.isSetRowBreaks() ? worksheet.getRowBreaks() : worksheet.addNewRowBreaks();
+        CTBreak[] brkArray = pgBreak.getBrkArray();
         for (int i = 0 ; i < brkArray.length ; i++) {
             if (brkArray[i].getId() == row) {
-                getSheetTypeRowBreaks().removeBrk(i);
-                continue;
+                pgBreak.removeBrk(i);
             }
         }
     }
@@ -846,6 +1052,7 @@ public class XSSFSheet implements Sheet {
     public Iterator<Row> rowIterator() {
         return rows.iterator();
     }
+
     /**
      * Alias for {@link #rowIterator()} to
      *  allow foreach loops
@@ -864,8 +1071,27 @@ public class XSSFSheet implements Sheet {
 
     }
 
-    public void setAutobreaks(boolean b) {
-        getSheetTypePageSetUpPr().setAutoPageBreaks(b);
+    /**
+     * Flag indicating whether the sheet displays Automatic Page Breaks.
+     *
+     * @return <code>true</code> if the sheet displays Automatic Page Breaks.
+     */
+     public boolean getAutobreaks() {
+        CTSheetPr sheetPr = getSheetTypeSheetPr();
+        CTPageSetUpPr psSetup = (sheetPr == null || !sheetPr.isSetPageSetUpPr()) ?
+                CTPageSetUpPr.Factory.newInstance() : sheetPr.getPageSetUpPr();
+        return psSetup.getAutoPageBreaks();
+    }
+
+    /**
+     * Flag indicating whether the sheet displays Automatic Page Breaks.
+     *
+     * @param value <code>true</code> if the sheet displays Automatic Page Breaks.
+     */
+    public void setAutobreaks(boolean value) {
+        CTSheetPr sheetPr = getSheetTypeSheetPr();
+        CTPageSetUpPr psSetup = sheetPr.isSetPageSetUpPr() ? sheetPr.getPageSetUpPr() : sheetPr.addNewPageSetUpPr();
+        psSetup.setAutoPageBreaks(value);
     }
 
     public void setColumnBreak(short column) {
@@ -982,36 +1208,15 @@ public class XSSFSheet implements Sheet {
     	getSheetTypePrintOptions().setGridLines(newPrintGridlines);
     }
 
-    public void setRowBreak(int row) {
-        CTPageBreak pageBreak = getSheetTypeRowBreaks();
-        if (! isRowBroken(row)) {
-            CTBreak brk = pageBreak.addNewBrk();
-            brk.setId(row);
-        }
-    }
-
     public void setRowGroupCollapsed(int row, boolean collapse) {
         // TODO Auto-generated method stub
 
-    }
-
-    public void setRowSumsBelow(boolean b) {
-        CTSheetPr sheetPr = getSheetTypeSheetPr();
-        CTOutlinePr outLinePr = sheetPr.getOutlinePr();
-        outLinePr.setSummaryBelow(b);
-    }
-
-    public void setRowSumsRight(boolean b) {
-        CTSheetPr sheetPr = getSheetTypeSheetPr();
-        CTOutlinePr outLinePr = sheetPr.getOutlinePr();
-        outLinePr.setSummaryRight(b);
     }
 
     public void setVerticallyCenter(boolean value) {
     	getSheetTypePrintOptions().setVerticalCentered(value);
     }
 
-    // HSSFSheet compatibility methods. See also the following zoom related methods
     /**
      * Sets the zoom magnication for the sheet.  The zoom is expressed as a
      * fraction.  For example to express a zoom of 75% use 3 for the numerator
@@ -1019,25 +1224,98 @@ public class XSSFSheet implements Sheet {
      *
      * @param numerator     The numerator for the zoom magnification.
      * @param denominator   The denominator for the zoom magnification.
+     * @see #setZoom(int)
      */    
     public void setZoom(int numerator, int denominator) {
         Float result = new Float(numerator)/new Float(denominator)*100;
     	setZoom(result.intValue());
     }
 
-    public void setZoom(long scale) {
+    /**
+     * Window zoom magnification for current view representing percent values.
+     * Valid values range from 10 to 400. Horizontal & Vertical scale together.
+     *
+     * For example:
+     * <pre>
+     * 10 - 10%
+     * 20 - 20%
+     * …
+     * 100 - 100%
+     * …
+     * 400 - 400%
+     * </pre>
+     *
+     * Current view can be Normal, Page Layout, or Page Break Preview.
+     *
+     * @param scale window zoom magnification
+     */
+    public void setZoom(int scale) {
     	getSheetTypeSheetView().setZoomScale(scale);
     }
 
-    public void setZoomNormal(long scale) {
+    /**
+     * Zoom magnification to use when in normal view, representing percent values.
+     * Valid values range from 10 to 400. Horizontal & Vertical scale together.
+     *
+     * For example:
+     * <pre>
+     * 10 - 10%
+     * 20 - 20%
+     * …
+     * 100 - 100%
+     * …
+     * 400 - 400%
+     * </pre>
+     *
+     * Applies for worksheet sheet type only; zero implies the automatic setting.
+     *
+     * @param scale window zoom magnification
+     */
+    public void setZoomNormal(int scale) {
     	getSheetTypeSheetView().setZoomScaleNormal(scale);
     }
 
-    public void setZoomPageLayoutView(long scale) {
+    /**
+     * Zoom magnification to use when in page layout view, representing percent values.
+     * Valid values range from 10 to 400. Horizontal & Vertical scale together.
+     *
+     * For example:
+     * <pre>
+     * 10 - 10%
+     * 20 - 20%
+     * …
+     * 100 - 100%
+     * …
+     * 400 - 400%
+     * </pre>
+     *
+     * Applies for worksheet sheet type only; zero implies the automatic setting.
+     *
+     * @param scale
+     */
+    public void setZoomPageLayoutView(int scale) {
     	getSheetTypeSheetView().setZoomScalePageLayoutView(scale);
     }
 
-    public void setZoomSheetLayoutView(long scale) {
+    /**
+     * Zoom magnification to use when in page break preview, representing percent values.
+     * Valid values range from 10 to 400. Horizontal & Vertical scale together.
+     *
+     * For example:
+     * <pre>
+     * 10 - 10%
+     * 20 - 20%
+     * …
+     * 100 - 100%
+     * …
+     * 400 - 400%
+     * </pre>
+     *
+     * Applies for worksheet only; zero implies the automatic setting.
+     *
+     * @param scale
+     */
+    public void setZoomSheetLayoutView(int scale) {
     	getSheetTypeSheetView().setZoomScaleSheetLayoutView(scale);
     }
 
@@ -1063,13 +1341,20 @@ public class XSSFSheet implements Sheet {
         }
     }
 
+    /**
+     * Location of the top left visible cell Location of the top left visible cell in the bottom right
+     * pane (when in Left-to-Right mode).
+     *
+     * @param toprow the top row to show in desktop window pane
+     * @param leftcol the left column to show in desktop window pane
+     */
     public void showInPane(short toprow, short leftcol) {
     	CellReference cellReference = new CellReference(toprow, leftcol);
     	String cellRef = cellReference.formatAsString();
     	getSheetTypeSheetView().setTopLeftCell(cellRef);
     }
 
-public void ungroupColumn(short fromColumn, short toColumn) {
+    public void ungroupColumn(short fromColumn, short toColumn) {
     	CTCols cols=worksheet.getColsArray(0);
     	for(int index=fromColumn;index<=toColumn;index++){
     		CTCol col=columnHelper.getColumn(index, false);
@@ -1114,13 +1399,6 @@ public void ungroupColumn(short fromColumn, short toColumn) {
     	getSheetTypeSheetFormatPr().setOutlineLevelCol((short)(maxLevelCol));
     }
     
-    public void setSelected(boolean flag) {
-        CTSheetViews views = getSheetTypeSheetViews();
-        for (CTSheetView view : views.getSheetViewArray()) {
-            view.setTabSelected(flag);
-        }
-    }
-
 	protected CTSheetViews getSheetTypeSheetViews() {
 		if (worksheet.getSheetViews() == null) {
 			worksheet.setSheetViews(CTSheetViews.Factory.newInstance());
@@ -1128,30 +1406,76 @@ public void ungroupColumn(short fromColumn, short toColumn) {
 		}
 		return worksheet.getSheetViews();
 	}
-    
+
+    /**
+     * Returns a flag indicating whether this sheet is selected.
+     * <p>
+     * When only 1 sheet is selected and active, this value should be in synch with the activeTab value.
+     * In case of a conflict, the Start Part setting wins and sets the active sheet tab.
+     * </p>
+     * Note: multiple sheets can be selected, but only one sheet can be active at one time.
+     *
+     * @return <code>true</code> if this sheet is selected
+     */
     public boolean isSelected() {
         CTSheetView view = getDefaultSheetView();
         return view != null && view.getTabSelected();
     }
     
+    /**
+     * Sets a flag indicating whether this sheet is selected.
+     *
+     * <p>
+     * When only 1 sheet is selected and active, this value should be in synch with the activeTab value.
+     * In case of a conflict, the Start Part setting wins and sets the active sheet tab.
+     * </p>
+     * Note: multiple sheets can be selected, but only one sheet can be active at one time.
+     *
+     * @param value <code>true</code> if this sheet is selected
+     */
+    public void setSelected(boolean value) {
+        CTSheetViews views = getSheetTypeSheetViews();
+        for (CTSheetView view : views.getSheetViewArray()) {
+            view.setTabSelected(value);
+        }
+    }
+
+    /**
+     * Assign a cell comment to a cell region in this worksheet
+     *
+     * @param cellRef cell region
+     * @param comment the comment to assign
+     */
     public void setCellComment(String cellRef, XSSFComment comment) {
 		CellReference cellReference = new CellReference(cellRef);
     	
 		comment.setRow(cellReference.getRow());
-		comment.setColumn((short)cellReference.getCol());
+		comment.setColumn(cellReference.getCol());
     }
     
-    public void setCellHyperlink(XSSFHyperlink hyperlink) {
+    protected void setCellHyperlink(XSSFHyperlink hyperlink) {
     	hyperlinks.add(hyperlink);
     }
-    
+
+    /**
+     * Return location of the active cell, e.g. <code>A1</code>.
+     *
+     * @return the location of the active cell.
+     */
     public String getActiveCell() {
     	return getSheetTypeSelection().getActiveCell();
     }
 
+    /**
+     * Sets location of the active cell
+     *
+     * @param cellRef the location of the active cell, e.g. <code>A1</code>..
+     */
 	public void setActiveCell(String cellRef) {
-		getSheetTypeSelection().setActiveCell(cellRef);
-	}
+		CTSelection ctsel = getSheetTypeSelection();
+        ctsel.setActiveCell(cellRef);
+        ctsel.setSqref(Arrays.asList(cellRef));
+    }
 	
 	/**
 	 * Does this sheet have any comments on it? We need to know,
@@ -1228,19 +1552,10 @@ public void ungroupColumn(short fromColumn, short toColumn) {
 	}
 
 	private CTPageSetUpPr getSheetTypePageSetUpPr() {
-    	if (getSheetTypeSheetPr().getPageSetUpPr() == null) {
-    		getSheetTypeSheetPr().setPageSetUpPr(CTPageSetUpPr.Factory.newInstance());
-    	}
-		return getSheetTypeSheetPr().getPageSetUpPr();
+        CTSheetPr sheetPr = getSheetTypeSheetPr();
+        return sheetPr.isSetPageSetUpPr() ? sheetPr.getPageSetUpPr() : sheetPr.addNewPageSetUpPr();
 	}
 
-	protected CTSheetPr getSheetTypeSheetPr() {
-    	if (worksheet.getSheetPr() == null) {
-    		worksheet.setSheetPr(CTSheetPr.Factory.newInstance());
-    	}
-		return worksheet.getSheetPr();
-	}
-    
     private boolean removeRow(int startRow, int endRow, int n, int rownum) {
     	if (rownum >= (startRow + n) && rownum <= (endRow + n)) {
     		if (n > 0 && rownum > endRow) {

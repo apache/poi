@@ -233,8 +233,7 @@ public class TestCommentsTable extends TestCase {
 		assertEquals("Also POI", 
 				sheet2.getRow(2).getCell(1).getCellComment().getAuthor());
 		
-		// TODO: fix xmlbeans so it doesn't eat newlines
-		assertEquals("Nick Burch:This is a comment",
+		assertEquals("Nick Burch:\nThis is a comment",
 				sheet1.getRow(4).getCell(2).getCellComment().getString().getString());
 	}
 	

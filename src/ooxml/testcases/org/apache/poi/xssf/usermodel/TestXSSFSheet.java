@@ -30,6 +30,10 @@ import org.apache.poi.ss.util.Region;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.openxml4j.opc.Package;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
@@ -166,7 +170,7 @@ public class TestXSSFSheet extends TestCase {
     public void testGetSetRowBreaks() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Sheet 1");
-        assertNull(sheet.getRowBreaks());
+        assertEquals(0, sheet.getRowBreaks().length);
         sheet.setRowBreak(1);
         sheet.setRowBreak(15);
         assertNotNull(sheet.getRowBreaks());
@@ -190,7 +194,7 @@ public class TestXSSFSheet extends TestCase {
     public void testGetSetColumnBreaks() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Sheet 1");
-        assertNull(sheet.getColumnBreaks());
+        assertEquals(0, sheet.getColumnBreaks().length);
         sheet.setColumnBreak((short) 11);
         assertNotNull(sheet.getColumnBreaks());
         assertEquals(11, sheet.getColumnBreaks()[0]);
@@ -201,7 +205,7 @@ public class TestXSSFSheet extends TestCase {
     public void testRemoveColumnBreak() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Sheet 1");
-        assertNull(sheet.getColumnBreaks());
+        assertEquals(0, sheet.getColumnBreaks().length);
         sheet.setColumnBreak((short) 11);
         assertNotNull(sheet.getColumnBreaks());
         sheet.setColumnBreak((short) 12);
@@ -857,5 +861,20 @@ public class TestXSSFSheet extends TestCase {
                 long zoom = sheet1.getSheetTypeSheetView().getZoomScale();
                 assertEquals(zoom, 75);
             }
+
+    public void testOutlineProperties() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+
+        XSSFSheet sheet = wb.createSheet();
+
+        assertTrue(sheet.getRowSumsBelow());
+        assertTrue(sheet.getRowSumsRight());
+
+        sheet.setRowSumsBelow(false);
+        sheet.setRowSumsRight(false);
+
+        assertFalse(sheet.getRowSumsBelow());
+        assertFalse(sheet.getRowSumsRight());
+    }
 
 }

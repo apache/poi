@@ -129,7 +129,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             	throw new IOException("Unable to load styles - " + e.toString());
             }
             try {
-	            // Load shared strings
+	            // Load themes
 	            this.themes = XSSFRelation.THEME.loadAll(getCorePart());
             } catch(Exception e) {
             	throw new IOException("Unable to load shared strings - " + e.toString());
@@ -195,7 +195,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         }
     }
 
-    protected CTWorkbook getWorkbook() {
+    /**
+     * Return the underlying XML bean
+     *
+     * @return the underlying CTWorkbook bean
+     */
+    public CTWorkbook getWorkbook() {
         return this.workbook;
     }
 
@@ -265,8 +270,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         return style;
     }
 
-    public DataFormat createDataFormat() {
-    	return getCreationHelper().createDataFormat();
+    public XSSFDataFormat createDataFormat() {
+    	return (XSSFDataFormat)getCreationHelper().createDataFormat();
     }
 
     public XSSFFont createFont() {
@@ -287,7 +292,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     public XSSFSheet createSheet(String sheetname) {
-        return createSheet(sheetname, XSSFSheet.newSheetInstance());
+	    if (doesContainsSheetName( sheetname, sheets.size() ))
+	   	    throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
+        return createSheet(sheetname, XSSFSheet.newInstance());
     }
 
     public XSSFSheet createSheet(String sheetname, CTWorksheet worksheet) {
@@ -298,24 +305,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     public XSSFSheet createDialogsheet(String sheetname, CTDialogsheet dialogsheet) {
-    	  CTSheet sheet = addSheet(sheetname);
-    	  XSSFDialogsheet wrapper = new XSSFDialogsheet(sheet, dialogsheet, this);
-    	  this.sheets.add(wrapper);
-    	  return wrapper;
+    CTSheet sheet = addSheet(sheetname);
+    XSSFDialogsheet wrapper = new XSSFDialogsheet(sheet, dialogsheet, this);
+    this.sheets.add(wrapper);
+    return wrapper;
     }
 
 	private CTSheet addSheet(String sheetname) {
 		CTSheet sheet = workbook.getSheets().addNewSheet();
-        if (sheetname != null) {
-            sheet.setName(sheetname);
-        }
+        sheet.setName(sheetname);
 		return sheet;
 	}
-
-    public void dumpDrawingGroupRecords(boolean fat) {
-        // TODO Auto-generated method stub
-
-    }
 
     public XSSFFont findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
     	short fontNum=getNumberOfFonts();
@@ -373,34 +373,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         return false;
     }
 
-    public byte[] getBytes() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public CellStyle getCellStyleAt(short idx) {
-        return stylesSource.getStyleAt(idx);
+    public XSSFCellStyle getCellStyleAt(short idx) {
+        return (XSSFCellStyle)stylesSource.getStyleAt(idx);
     }
 
     public Palette getCustomPalette() {
         // TODO Auto-generated method stub
         return null;
-    }
-
-    /**
-     * get the first tab that is displayed in the list of tabs in excel.
-     */
-    public int getFirstVisibleTab() {
-        CTBookViews bookViews = workbook.getBookViews();
-        CTBookView bookView = bookViews.getWorkbookViewArray(0);
-        return (short) bookView.getActiveTab();
-    }
-    /**
-     * deprecated Aug 2008
-     * @deprecated - Misleading name - use getFirstVisibleTab()
-     */
-    public short getDisplayedTab() {
-        return (short) getFirstVisibleTab();
     }
 
     public XSSFFont getFontAt(short idx) {
@@ -545,18 +524,44 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     /**
-     * sets the first tab that is displayed in the list of tabs
-     * in excel.
-     * @param index
+     * Gets the first tab that is displayed in the list of tabs in excel.
+     *
+     * @return integer that contains the index to the active sheet in this book view.
+     */
+    public int getFirstVisibleTab() {
+        CTBookViews bookViews = workbook.getBookViews();
+        CTBookView bookView = bookViews.getWorkbookViewArray(0);
+        return (short) bookView.getActiveTab();
+    }
+
+    /**
+     * Sets the first tab that is displayed in the list of tabs in excel.
+     *
+     * @param index integer that contains the index to the active sheet in this book view.
      */
     public void setFirstVisibleTab(short index) {
         CTBookViews bookViews = workbook.getBookViews();
         CTBookView bookView= bookViews.getWorkbookViewArray(0);
         bookView.setActiveTab(index);
     }
+
     /**
-     * deprecated Aug 2008
-     * @deprecated - Misleading name - use setFirstVisibleTab()
+     * Gets the first tab that is displayed in the list of tabs
+     * in excel.
+     * @return an integer that contains the index to the active sheet in this book view.
+     *
+     * @deprecated Aug 2008 - Misleading name - use #getFirstVisibleTab()
+     */
+    public short getDisplayedTab() {
+        return (short) getFirstVisibleTab();
+    }
+
+    /**
+     * sets the first tab that is displayed in the list of tabs
+     * in excel.
+     * @param index integer that contains the index to the active sheet in this book view.
+     *
+     * @deprecated Aug 2008 - Misleading name - use #setFirstVisibleTab()
      */
     public void setDisplayedTab(short index) {
         setFirstVisibleTab(index);
@@ -588,6 +593,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     public void setSheetName(int sheet, String name) {
+	    if (doesContainsSheetName(name, sheet ))
+	        throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
         this.workbook.getSheets().getSheetArray(sheet).setName(name);
     }
 
@@ -765,4 +772,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public CreationHelper getCreationHelper() {
     	return new XSSFCreationHelper(this);
     }
+
+    private boolean doesContainsSheetName(String name, int excludeSheetIdx) {
+        CTSheet[] ctSheetArray = workbook.getSheets().getSheetArray();
+        for (int i = 0; i < ctSheetArray.length; i++) {
+            if (excludeSheetIdx != i && name.equalsIgnoreCase(ctSheetArray[i].getName()))
+                return true;
+        }
+        return false;
+    }
+
 }
