@@ -30,248 +30,264 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 public abstract class AreaPtgBase extends OperandPtg implements AreaI {
-    /**
-     * TODO - (May-2008) fix subclasses of AreaPtg 'AreaN~' which are used in shared formulas.
-     * see similar comment in ReferencePtg
-     */
-    protected final RuntimeException notImplemented() {
-        return new RuntimeException("Coding Error: This method should never be called. This ptg should be converted");
-    }
+	/**
+	 * TODO - (May-2008) fix subclasses of AreaPtg 'AreaN~' which are used in shared formulas.
+	 * see similar comment in ReferencePtg
+	 */
+	protected final RuntimeException notImplemented() {
+		return new RuntimeException("Coding Error: This method should never be called. This ptg should be converted");
+	}
 
-    /** zero based, unsigned 16 bit */
-    private int             field_1_first_row;
-    /** zero based, unsigned 16 bit */
-    private int             field_2_last_row;
-    /** zero based, unsigned 8 bit */
-    private int             field_3_first_column;
-    /** zero based, unsigned 8 bit */
-    private int             field_4_last_column;
-    
-    private final static BitField   rowRelative = BitFieldFactory.getInstance(0x8000);
-    private final static BitField   colRelative = BitFieldFactory.getInstance(0x4000);
-    private final static BitField   columnMask      = BitFieldFactory.getInstance(0x3FFF);
+	/** zero based, unsigned 16 bit */
+	private int             field_1_first_row;
+	/** zero based, unsigned 16 bit */
+	private int             field_2_last_row;
+	/** zero based, unsigned 8 bit */
+	private int             field_3_first_column;
+	/** zero based, unsigned 8 bit */
+	private int             field_4_last_column;
+	
+	private final static BitField   rowRelative = BitFieldFactory.getInstance(0x8000);
+	private final static BitField   colRelative = BitFieldFactory.getInstance(0x4000);
+	private final static BitField   columnMask      = BitFieldFactory.getInstance(0x3FFF);
 
-    protected AreaPtgBase() {
-        // do nothing
-    }
-    
-    protected AreaPtgBase(String arearef) {
-        AreaReference ar = new AreaReference(arearef);
-        CellReference firstCell = ar.getFirstCell();
-        CellReference lastCell = ar.getLastCell();
-        setFirstRow(firstCell.getRow());
-        setFirstColumn(firstCell.getCol());
-        setLastRow(lastCell.getRow());
-        setLastColumn(lastCell.getCol());
-        setFirstColRelative(!firstCell.isColAbsolute());
-        setLastColRelative(!lastCell.isColAbsolute());
-        setFirstRowRelative(!firstCell.isRowAbsolute());
-        setLastRowRelative(!lastCell.isRowAbsolute());        
-    }
-    
-    protected AreaPtgBase(int firstRow, int lastRow, int firstColumn, int lastColumn,
-            boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative) {
-        
-        checkColumnBounds(firstColumn);
-        checkColumnBounds(lastColumn);
-        checkRowBounds(firstRow);
-        checkRowBounds(lastRow);
-      setFirstRow(firstRow);
-      setLastRow(lastRow);
-      setFirstColumn(firstColumn);
-      setLastColumn(lastColumn);
-      setFirstRowRelative(firstRowRelative);
-      setLastRowRelative(lastRowRelative);
-      setFirstColRelative(firstColRelative);
-      setLastColRelative(lastColRelative);
-    }    
+	protected AreaPtgBase() {
+		// do nothing
+	}
+	
+	protected AreaPtgBase(String arearef) {
+		AreaReference ar = new AreaReference(arearef);
+		CellReference firstCell = ar.getFirstCell();
+		CellReference lastCell = ar.getLastCell();
+		setFirstRow(firstCell.getRow());
+		setFirstColumn(firstCell.getCol());
+		setLastRow(lastCell.getRow());
+		setLastColumn(lastCell.getCol());
+		setFirstColRelative(!firstCell.isColAbsolute());
+		setLastColRelative(!lastCell.isColAbsolute());
+		setFirstRowRelative(!firstCell.isRowAbsolute());
+		setLastRowRelative(!lastCell.isRowAbsolute());        
+	}
+	
+	protected AreaPtgBase(int firstRow, int lastRow, int firstColumn, int lastColumn,
+			boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative) {
+		
+		checkColumnBounds(firstColumn);
+		checkColumnBounds(lastColumn);
+		checkRowBounds(firstRow);
+		checkRowBounds(lastRow);
+		
+		if (lastRow > firstRow) {
+			setFirstRow(firstRow);
+			setLastRow(lastRow);
+			setFirstRowRelative(firstRowRelative);
+			setLastRowRelative(lastRowRelative);
+		} else {
+			setFirstRow(lastRow);
+			setLastRow(firstRow);
+			setFirstRowRelative(lastRowRelative);
+			setLastRowRelative(firstRowRelative);
+		}
+			
+		if (lastColumn > firstColumn) {
+			setFirstColumn(firstColumn);
+			setLastColumn(lastColumn);
+			setFirstColRelative(firstColRelative);
+			setLastColRelative(lastColRelative);
+		} else {
+			setFirstColumn(lastColumn);
+			setLastColumn(firstColumn);
+			setFirstColRelative(lastColRelative);
+			setLastColRelative(firstColRelative);
+		}
+	}    
 
-    private static void checkColumnBounds(int colIx) {
-        if((colIx & 0x0FF) != colIx) {
-            throw new IllegalArgumentException("colIx (" + colIx + ") is out of range");
-        }
-    }
-    private static void checkRowBounds(int rowIx) {
-        if((rowIx & 0x0FFFF) != rowIx) {
-            throw new IllegalArgumentException("rowIx (" + rowIx + ") is out of range");
-        }
-    }
+	private static void checkColumnBounds(int colIx) {
+		if((colIx & 0x0FF) != colIx) {
+			throw new IllegalArgumentException("colIx (" + colIx + ") is out of range");
+		}
+	}
+	private static void checkRowBounds(int rowIx) {
+		if((rowIx & 0x0FFFF) != rowIx) {
+			throw new IllegalArgumentException("rowIx (" + rowIx + ") is out of range");
+		}
+	}
 
-    protected final void readCoordinates(RecordInputStream in) {
-        field_1_first_row = in.readUShort();
-        field_2_last_row = in.readUShort();
-        field_3_first_column = in.readUShort();
-        field_4_last_column = in.readUShort();
-    }
-    protected final void writeCoordinates(byte[] array, int offset) {
-        LittleEndian.putUShort(array, offset + 0, field_1_first_row);
-        LittleEndian.putUShort(array, offset + 2, field_2_last_row);
-        LittleEndian.putUShort(array, offset + 4, field_3_first_column);
-        LittleEndian.putUShort(array, offset + 6, field_4_last_column);        
-    }
+	protected final void readCoordinates(RecordInputStream in) {
+		field_1_first_row = in.readUShort();
+		field_2_last_row = in.readUShort();
+		field_3_first_column = in.readUShort();
+		field_4_last_column = in.readUShort();
+	}
+	protected final void writeCoordinates(byte[] array, int offset) {
+		LittleEndian.putUShort(array, offset + 0, field_1_first_row);
+		LittleEndian.putUShort(array, offset + 2, field_2_last_row);
+		LittleEndian.putUShort(array, offset + 4, field_3_first_column);
+		LittleEndian.putUShort(array, offset + 6, field_4_last_column);        
+	}
 
-    /**
-     * @return the first row in the area
-     */
-    public final int getFirstRow() {
-        return field_1_first_row;
-    }
+	/**
+	 * @return the first row in the area
+	 */
+	public final int getFirstRow() {
+		return field_1_first_row;
+	}
 
-    /**
-     * sets the first row
-     * @param rowIx number (0-based)
-     */
-    public final void setFirstRow(int rowIx) {
-        checkRowBounds(rowIx);
-        field_1_first_row = rowIx;
-    }
+	/**
+	 * sets the first row
+	 * @param rowIx number (0-based)
+	 */
+	public final void setFirstRow(int rowIx) {
+		checkRowBounds(rowIx);
+		field_1_first_row = rowIx;
+	}
 
-    /**
-     * @return last row in the range (x2 in x1,y1-x2,y2)
-     */
-    public final int getLastRow() {
-        return field_2_last_row;
-    }
+	/**
+	 * @return last row in the range (x2 in x1,y1-x2,y2)
+	 */
+	public final int getLastRow() {
+		return field_2_last_row;
+	}
 
-    /**
-     * @param rowIx last row number in the area 
-     */
-    public final void setLastRow(int rowIx) {
-        checkRowBounds(rowIx);
-        field_2_last_row = rowIx;
-    }
+	/**
+	 * @param rowIx last row number in the area 
+	 */
+	public final void setLastRow(int rowIx) {
+		checkRowBounds(rowIx);
+		field_2_last_row = rowIx;
+	}
 
-    /**
-     * @return the first column number in the area.
-     */
-    public final int getFirstColumn() {
-        return columnMask.getValue(field_3_first_column);
-    }
+	/**
+	 * @return the first column number in the area.
+	 */
+	public final int getFirstColumn() {
+		return columnMask.getValue(field_3_first_column);
+	}
 
-    /**
-     * @return the first column number + the options bit settings unstripped
-     */
-    public final short getFirstColumnRaw() {
-        return (short) field_3_first_column; // TODO
-    }
+	/**
+	 * @return the first column number + the options bit settings unstripped
+	 */
+	public final short getFirstColumnRaw() {
+		return (short) field_3_first_column; // TODO
+	}
 
-    /**
-     * @return whether or not the first row is a relative reference or not.
-     */
-    public final boolean isFirstRowRelative() {
-        return rowRelative.isSet(field_3_first_column);
-    }
-    
-    /**
-     * sets the first row to relative or not
-     * @param rel is relative or not.
-     */
-    public final void setFirstRowRelative(boolean rel) {
-        field_3_first_column=rowRelative.setBoolean(field_3_first_column,rel);
-    }
+	/**
+	 * @return whether or not the first row is a relative reference or not.
+	 */
+	public final boolean isFirstRowRelative() {
+		return rowRelative.isSet(field_3_first_column);
+	}
+	
+	/**
+	 * sets the first row to relative or not
+	 * @param rel is relative or not.
+	 */
+	public final void setFirstRowRelative(boolean rel) {
+		field_3_first_column=rowRelative.setBoolean(field_3_first_column,rel);
+	}
 
-    /**
-     * @return isrelative first column to relative or not
-     */
-    public final boolean isFirstColRelative() {
-        return colRelative.isSet(field_3_first_column);
-    }
-    
-    /**
-     * set whether the first column is relative 
-     */
-    public final void setFirstColRelative(boolean rel) {
-        field_3_first_column=colRelative.setBoolean(field_3_first_column,rel);
-    }
+	/**
+	 * @return isrelative first column to relative or not
+	 */
+	public final boolean isFirstColRelative() {
+		return colRelative.isSet(field_3_first_column);
+	}
+	
+	/**
+	 * set whether the first column is relative 
+	 */
+	public final void setFirstColRelative(boolean rel) {
+		field_3_first_column=colRelative.setBoolean(field_3_first_column,rel);
+	}
 
-    /**
-     * set the first column in the area
-     */
-    public final void setFirstColumn(int colIx) {
-        checkColumnBounds(colIx);
-        field_3_first_column=columnMask.setValue(field_3_first_column, colIx);
-    }
+	/**
+	 * set the first column in the area
+	 */
+	public final void setFirstColumn(int colIx) {
+		checkColumnBounds(colIx);
+		field_3_first_column=columnMask.setValue(field_3_first_column, colIx);
+	}
 
-    /**
-     * set the first column irrespective of the bitmasks
-     */
-    public final void setFirstColumnRaw(int column) {
-        field_3_first_column = column;
-    }
+	/**
+	 * set the first column irrespective of the bitmasks
+	 */
+	public final void setFirstColumnRaw(int column) {
+		field_3_first_column = column;
+	}
 
-    /**
-     * @return lastcolumn in the area
-     */
-    public final int getLastColumn() {
-        return columnMask.getValue(field_4_last_column);
-    }
+	/**
+	 * @return lastcolumn in the area
+	 */
+	public final int getLastColumn() {
+		return columnMask.getValue(field_4_last_column);
+	}
 
-    /**
-     * @return last column and bitmask (the raw field)
-     */
-    public final short getLastColumnRaw() {
-        return (short) field_4_last_column;
-    }
+	/**
+	 * @return last column and bitmask (the raw field)
+	 */
+	public final short getLastColumnRaw() {
+		return (short) field_4_last_column;
+	}
 
-    /**
-     * @return last row relative or not
-     */
-    public final boolean isLastRowRelative() {
-        return rowRelative.isSet(field_4_last_column);
-    }
-    
-    /**
-     * set whether the last row is relative or not
-     * @param rel <code>true</code> if the last row relative, else
-     * <code>false</code>
-     */
-    public final void setLastRowRelative(boolean rel) {
-        field_4_last_column=rowRelative.setBoolean(field_4_last_column,rel);
-    }
+	/**
+	 * @return last row relative or not
+	 */
+	public final boolean isLastRowRelative() {
+		return rowRelative.isSet(field_4_last_column);
+	}
+	
+	/**
+	 * set whether the last row is relative or not
+	 * @param rel <code>true</code> if the last row relative, else
+	 * <code>false</code>
+	 */
+	public final void setLastRowRelative(boolean rel) {
+		field_4_last_column=rowRelative.setBoolean(field_4_last_column,rel);
+	}
 
-    /**
-     * @return lastcol relative or not
-     */
-    public final boolean isLastColRelative() {
-        return colRelative.isSet(field_4_last_column);
-    }
-    
-    /**
-     * set whether the last column should be relative or not
-     */
-    public final void setLastColRelative(boolean rel) {
-        field_4_last_column=colRelative.setBoolean(field_4_last_column,rel);
-    }
-    
-    /**
-     * set the last column in the area
-     */
-    public final void setLastColumn(int colIx) {
-        checkColumnBounds(colIx);
-        field_4_last_column=columnMask.setValue(field_4_last_column, colIx);
-    }
+	/**
+	 * @return lastcol relative or not
+	 */
+	public final boolean isLastColRelative() {
+		return colRelative.isSet(field_4_last_column);
+	}
+	
+	/**
+	 * set whether the last column should be relative or not
+	 */
+	public final void setLastColRelative(boolean rel) {
+		field_4_last_column=colRelative.setBoolean(field_4_last_column,rel);
+	}
+	
+	/**
+	 * set the last column in the area
+	 */
+	public final void setLastColumn(int colIx) {
+		checkColumnBounds(colIx);
+		field_4_last_column=columnMask.setValue(field_4_last_column, colIx);
+	}
 
-    /**
-     * set the last column irrespective of the bitmasks
-     */
-    public final void setLastColumnRaw(short column) {
-        field_4_last_column = column;
-    }
-    protected final String formatReferenceAsString() {
-        CellReference topLeft = new CellReference(getFirstRow(),getFirstColumn(),!isFirstRowRelative(),!isFirstColRelative());
-        CellReference botRight = new CellReference(getLastRow(),getLastColumn(),!isLastRowRelative(),!isLastColRelative());
-        
-        if(AreaReference.isWholeColumnReference(topLeft, botRight)) {
-            return (new AreaReference(topLeft, botRight)).formatAsString();
-        }
-        return topLeft.formatAsString() + ":" + botRight.formatAsString(); 
-    }
-    
-    public String toFormulaString() {
-        return formatReferenceAsString();
-    }
+	/**
+	 * set the last column irrespective of the bitmasks
+	 */
+	public final void setLastColumnRaw(short column) {
+		field_4_last_column = column;
+	}
+	protected final String formatReferenceAsString() {
+		CellReference topLeft = new CellReference(getFirstRow(),getFirstColumn(),!isFirstRowRelative(),!isFirstColRelative());
+		CellReference botRight = new CellReference(getLastRow(),getLastColumn(),!isLastRowRelative(),!isLastColRelative());
+		
+		if(AreaReference.isWholeColumnReference(topLeft, botRight)) {
+			return (new AreaReference(topLeft, botRight)).formatAsString();
+		}
+		return topLeft.formatAsString() + ":" + botRight.formatAsString(); 
+	}
+	
+	public String toFormulaString() {
+		return formatReferenceAsString();
+	}
 
-    public byte getDefaultOperandClass() {
-        return Ptg.CLASS_REF;
-    }
+	public byte getDefaultOperandClass() {
+		return Ptg.CLASS_REF;
+	}
 }

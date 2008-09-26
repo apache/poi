@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula;
 
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.ControlPtg;
+import org.apache.poi.hssf.record.formula.RangePtg;
 import org.apache.poi.hssf.record.formula.ValueOperatorPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 
@@ -115,6 +116,10 @@ final class OperandClassTransformer {
 			return;
 		}
 		if (children.length > 0) {
+			if (token == RangePtg.instance) {
+				// TODO is any token transformation required under the various ref operators?
+				return;
+			}
 			throw new IllegalStateException("Node should not have any children");
 		}
 

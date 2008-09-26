@@ -101,13 +101,27 @@ public final class SheetNameFormatter {
 				return true;
 			}
 		}
+		if (nameLooksLikeBooleanLiteral(rawSheetName)) {
+			return true;
+		}
+		// Error constant literals all contain '#' and other special characters
+		// so they don't get this far
 		return false;
 	}
 	
+	private static boolean nameLooksLikeBooleanLiteral(String rawSheetName) {
+		switch(rawSheetName.charAt(0)) {
+			case 'T': case 't':
+				return "TRUE".equalsIgnoreCase(rawSheetName);
+			case 'F': case 'f':
+				return "FALSE".equalsIgnoreCase(rawSheetName);
+		}
+		return false;
+	}
 	/**
 	 * @return <code>true</code> if the presence of the specified character in a sheet name would 
 	 * require the sheet name to be delimited in formulas.  This includes every non-alphanumeric 
-	 * character besides underscore '_'.
+	 * character besides underscore '_' and dot '.'.
 	 */
 	/* package */ static boolean isSpecialChar(char ch) {
 		// note - Character.isJavaIdentifierPart() would allow dollars '$'
@@ -115,7 +129,8 @@ public final class SheetNameFormatter {
 			return false;
 		}
 		switch(ch) {
-			case '_': // underscore is ok
+			case '.': // dot is OK
+			case '_': // underscore is OK
 				return false;
 			case '\n':
 			case '\r':

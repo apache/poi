@@ -90,7 +90,7 @@ public final class AreaReference {
         for(int i=refPart.length()-1; i>=0; i--) {
             int ch = refPart.charAt(i);
             if (ch == '$' && i==0) {
-            	continue;
+                continue;
             }
             if (ch < 'A' || ch > 'Z') {
                 return false;
@@ -101,10 +101,48 @@ public final class AreaReference {
 
     /**
      * Creates an area ref from a pair of Cell References.
+     * Also normalises such that the top-left
      */
     public AreaReference(CellReference topLeft, CellReference botRight) {
-        _firstCell = topLeft;
-        _lastCell = botRight;
+        boolean swapRows = topLeft.getRow() > botRight.getRow();
+        boolean swapCols = topLeft.getCol() > botRight.getCol();
+        if (swapRows || swapCols) {
+            int firstRow; 
+            int lastRow; 
+            int firstColumn; 
+            int lastColumn;
+            boolean firstRowAbs; 
+            boolean lastRowAbs; 
+            boolean firstColAbs;
+            boolean lastColAbs;   
+            if (swapRows) {
+                firstRow = botRight.getRow();
+                firstRowAbs = botRight.isRowAbsolute();
+                lastRow = topLeft.getRow();
+                lastRowAbs = topLeft.isRowAbsolute();
+            } else {
+                firstRow = topLeft.getRow();
+                firstRowAbs = topLeft.isRowAbsolute();
+                lastRow = botRight.getRow();
+                lastRowAbs = botRight.isRowAbsolute();
+            }
+            if (swapCols) {
+                firstColumn = botRight.getCol();
+                firstColAbs = botRight.isColAbsolute();
+                lastColumn = topLeft.getCol();
+                lastColAbs = topLeft.isColAbsolute();
+            } else {
+                firstColumn = topLeft.getCol();
+                firstColAbs = topLeft.isColAbsolute();
+                lastColumn = botRight.getCol();
+                lastColAbs = botRight.isColAbsolute();
+            }
+            _firstCell = new CellReference(firstRow, firstColumn, firstRowAbs, firstColAbs);
+            _lastCell = new CellReference(lastRow, lastColumn, lastRowAbs, lastColAbs);
+        } else {
+            _firstCell = topLeft;
+            _lastCell = botRight;
+        }
         _isSingleCell = false;
     }
 
