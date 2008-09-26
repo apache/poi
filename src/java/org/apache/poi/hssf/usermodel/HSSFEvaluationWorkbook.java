@@ -2,7 +2,9 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
@@ -94,7 +96,14 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		return new Name(_iBook.getNameRecord(ix), ix);
 	}
 	public Ptg[] getFormulaTokens(HSSFCell cell) {
-		return HSSFFormulaParser.parse(cell.getCellFormula(), _uBook);
+		if (false) {
+			// re-parsing the formula text also works, but is a waste of time
+			// It is useful from time to time to run all unit tests with this code
+			// to make sure that all formulas POI can evaluate can also be parsed.
+			return HSSFFormulaParser.parse(cell.getCellFormula(), _uBook);
+		}
+		FormulaRecord fr = ((FormulaRecordAggregate) cell.getCellValueRecord()).getFormulaRecord();
+		return fr.getParsedExpression();
 	}
 
 	private static final class Name implements EvaluationName {

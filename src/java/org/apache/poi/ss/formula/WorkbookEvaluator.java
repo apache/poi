@@ -22,12 +22,18 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.hssf.record.formula.AreaErrPtg;
 import org.apache.poi.hssf.record.formula.AreaPtg;
+import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.BoolPtg;
 import org.apache.poi.hssf.record.formula.ControlPtg;
+import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
+import org.apache.poi.hssf.record.formula.DeletedRef3DPtg;
 import org.apache.poi.hssf.record.formula.ErrPtg;
+import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.IntPtg;
 import org.apache.poi.hssf.record.formula.MemErrPtg;
+import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.MissingArgPtg;
 import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
@@ -35,6 +41,7 @@ import org.apache.poi.hssf.record.formula.NumberPtg;
 import org.apache.poi.hssf.record.formula.OperationPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
+import org.apache.poi.hssf.record.formula.RefErrorPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.StringPtg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
@@ -181,10 +188,10 @@ public class WorkbookEvaluator {
 				isPlainFormulaCell = false;
 				Ptg[] ptgs = _workbook.getFormulaTokens(srcCell);
 				if(evalListener == null) {
-					result = evaluateCell(sheetIndex, rowIndex, (short)columnIndex, ptgs, tracker);
+					result = evaluateFormula(sheetIndex, rowIndex, (short)columnIndex, ptgs, tracker);
 				} else {
 					evalListener.onStartEvaluate(sheetIndex, rowIndex, columnIndex, ptgs);
-					result = evaluateCell(sheetIndex, rowIndex, (short)columnIndex, ptgs, tracker);
+					result = evaluateFormula(sheetIndex, rowIndex, (short)columnIndex, ptgs, tracker);
 					evalListener.onEndEvaluate(sheetIndex, rowIndex, columnIndex, result);
 				}
 			}
@@ -225,15 +232,29 @@ public class WorkbookEvaluator {
 		}
 		throw new RuntimeException("Unexpected cell type (" + cellType + ")");
 	}
-	private ValueEval evaluateCell(int sheetIndex, int srcRowNum, short srcColNum, Ptg[] ptgs, EvaluationTracker tracker) {
+	// visibility raised for testing
+	/* package */ ValueEval evaluateFormula(int sheetIndex, int srcRowNum, int srcColNum, Ptg[] ptgs, EvaluationTracker tracker) {
 
 		Stack stack = new Stack();
 		for (int i = 0, iSize = ptgs.length; i < iSize; i++) {
 
 			// since we don't know how to handle these yet :(
 			Ptg ptg = ptgs[i];
+			if (ptg instanceof AttrPtg) {
+				AttrPtg attrPtg = (AttrPtg) ptg;
+				if (attrPtg.isSum()) {
+					// Excel prefers to encode 'SUM()' as a tAttr token, but this evaluator
+					// expects the equivalent function token
+					byte nArgs = 1;  // tAttrSum always has 1 parameter
+					ptg = new FuncVarPtg("SUM", nArgs); 
+				}
+			}
 			if (ptg instanceof ControlPtg) {
 				// skip Parentheses, Attr, etc
+				continue;
+			}
+			if (ptg instanceof MemFuncPtg) {
+				// can ignore, rest of tokens for this expression are in OK RPN order
 				continue;
 			}
 			if (ptg instanceof MemErrPtg) { continue; }
@@ -289,7 +310,7 @@ public class WorkbookEvaluator {
 	 * @return a <tt>NumberEval</tt>, <tt>StringEval</tt>, <tt>BoolEval</tt>,
 	 *  <tt>BlankEval</tt> or <tt>ErrorEval</tt>. Never <code>null</code>.
 	 */
-	private static ValueEval dereferenceValue(ValueEval evaluationResult, int srcRowNum, short srcColNum) {
+	private static ValueEval dereferenceValue(ValueEval evaluationResult, int srcRowNum, int srcColNum) {
 		if (evaluationResult instanceof RefEval) {
 			RefEval rv = (RefEval) evaluationResult;
 			return rv.getInnerValueEval();
@@ -360,6 +381,10 @@ public class WorkbookEvaluator {
 		}
 		if (ptg instanceof ErrPtg) {
 			return ErrorEval.valueOf(((ErrPtg) ptg).getErrorCode());
+		}
+		if (ptg instanceof AreaErrPtg ||ptg instanceof RefErrorPtg 
+				|| ptg instanceof DeletedArea3DPtg || ptg instanceof DeletedRef3DPtg) {
+				return ErrorEval.REF_INVALID;
 		}
 		if (ptg instanceof Ref3DPtg) {
 			Ref3DPtg refPtg = (Ref3DPtg) ptg;

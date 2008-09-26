@@ -15,30 +15,20 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.formula.eval;
+package org.apache.poi.ss.formula;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 /**
- * Collects all tests the package <tt>org.apache.poi.hssf.record.formula.eval</tt>.
+ * Test suite for org.apache.poi.ss.formula
  * 
  * @author Josh Micich
  */
-public class AllFormulaEvalTests {
-	
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllFormulaEvalTests.class.getName());
-		result.addTestSuite(TestAreaEval.class);
-		result.addTestSuite(TestCircularReferences.class);
-		result.addTestSuite(TestDivideEval.class);
-		result.addTestSuite(TestEqualEval.class);
-		result.addTestSuite(TestExternalFunction.class);
-		result.addTestSuite(TestFormulaBugs.class);
-		result.addTestSuite(TestFormulasFromSpreadsheet.class);
-		result.addTestSuite(TestPercentEval.class);
-		result.addTestSuite(TestRangeEval.class);
-		result.addTestSuite(TestUnaryPlusEval.class);
-		return result;
-	}
+public final class AllSSFormulaTests {
+    public static Test suite() {
+        TestSuite result = new TestSuite(AllSSFormulaTests.class.getName());
+        result.addTestSuite(TestEvaluationCache.class);
+        result.addTestSuite(TestWorkbookEvaluator.class);
+        return result;
+    }
 }
