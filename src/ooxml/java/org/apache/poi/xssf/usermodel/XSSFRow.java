@@ -186,7 +186,7 @@ public class XSSFRow implements Row {
 
     public short getHeight() {
     	if (this.row.getHt() > 0) {
-    		return (short) (this.row.getHt() * 20);
+    		return (short) (this.row.getHt());
     	}
         return -1;
     }
@@ -198,12 +198,31 @@ public class XSSFRow implements Row {
         return -1;
     }
 
+    /**
+     * Gets the index of the last cell contained in this row <b>PLUS ONE</b>. The result also
+     * happens to be the 1-based column number of the last cell.  This value can be used as a
+     * standard upper bound when iterating over cells:
+     * <pre>
+     * short minColIx = row.getFirstCellNum();
+     * short maxColIx = row.getLastCellNum();
+     * for(short colIx=minColIx; colIx&lt;maxColIx; colIx++) {
+     *   XSSFCell cell = row.getCell(colIx);
+     *   if(cell == null) {
+     *     continue;
+     *   }
+     *   //... do something with cell
+     * }
+     * </pre>
+     *
+     * @return short representing the last logical cell in the row <b>PLUS ONE</b>, or -1 if the
+     *  row does not contain any cells.
+     */
     public short getLastCellNum() {
     	short lastCellNum = -1;
     	for (Iterator<Cell> it = cellIterator() ; it.hasNext() ; ) {
     		Cell cell = it.next();
     		if (cell != null) {
-    			lastCellNum = cell.getCellNum();
+    			lastCellNum = (short)(cell.getCellNum() + 1);
     		}
     	}
     	return lastCellNum;
@@ -241,11 +260,17 @@ public class XSSFRow implements Row {
     }
 
     public void setHeight(short height) {
-    	this.row.setHt((double) height / 20);
+    	this.row.setHt((double) height);
+    	this.row.setCustomHeight(true);
+    }
+
+    public void setHeight(double height) {
+    	this.row.setHt((double) height);
+    	this.row.setCustomHeight(true);
     }
 
     public void setHeightInPoints(float height) {
-    	this.row.setHt((double) height);
+	    setHeight((short)height);
     }
 
     public void setRowNum(int rowNum) {

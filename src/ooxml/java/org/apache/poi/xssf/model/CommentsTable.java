@@ -61,7 +61,7 @@ public class CommentsTable implements CommentsSource, XSSFModel {
         options.setUseDefaultNamespace();
         
         // Requests use of whitespace for easier reading
-        options.setSavePrettyPrint();
+        //options.setSavePrettyPrint();
         
         CommentsDocument doc = CommentsDocument.Factory.newInstance(options);
         doc.setComments(comments);

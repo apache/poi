@@ -283,20 +283,6 @@ public interface Workbook {
 
     void write(OutputStream stream) throws IOException;
 
-    /**
-     * Method getBytes - get the bytes of just the HSSF portions of the XLS file.
-     * Use this to construct a POI POIFSFileSystem yourself.
-     *
-     *
-     * @return byte[] array containing the binary representation of this workbook and all contained
-     *         sheets, rows, cells, etc.
-     *
-     * @see org.apache.poi.hssf.model.Workbook
-     * @see org.apache.poi.hssf.model.Sheet
-     */
-
-    byte[] getBytes();
-
     /** gets the total number of named ranges in the workboko
      * @return number of named ranges
      */
@@ -399,11 +385,6 @@ public interface Workbook {
 
     /** Test only. Do not use */
     void insertChartRecord();
-
-    /**
-     * Spits out a list of all the drawing records in the workbook.
-     */
-    void dumpDrawingGroupRecords(boolean fat);
 
     /**
      * Adds a picture to the workbook.

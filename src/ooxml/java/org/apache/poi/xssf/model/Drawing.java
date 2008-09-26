@@ -56,7 +56,7 @@ public class Drawing implements XSSFChildContainingModel {
         options.setSaveOuter();
         options.setUseDefaultNamespace();        
         // Requests use of whitespace for easier reading
-        options.setSavePrettyPrint();
+        //options.setSavePrettyPrint();
         drawing.save(out, options);
 	}
 	

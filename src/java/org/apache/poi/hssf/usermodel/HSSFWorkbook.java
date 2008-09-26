@@ -659,8 +659,6 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
 
     /**
-=======
->>>>>>> .merge-right.r696898
      * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and returns
      * the high level representation.  Use this to create new sheets.
      *

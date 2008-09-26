@@ -297,10 +297,6 @@ public final class XSSFCell implements Cell {
 
 
     public void setCellFormula(String formula) {
-        if (this.cell.getT() != STCellType.STR)
-        {
-            this.cell.setT(STCellType.STR);
-        }
         CTCellFormula f =  CTCellFormula.Factory.newInstance();
         f.setStringValue(formula);
         this.cell.setF(f);
