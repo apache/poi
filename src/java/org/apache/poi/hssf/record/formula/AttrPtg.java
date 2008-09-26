@@ -34,13 +34,13 @@ public final class AttrPtg extends ControlPtg {
     private final static int  SIZE = 4;
     private byte              field_1_options;
     private short             field_2_data;
-    
+
     /** only used for tAttrChoose: table of offsets to starts of args */
     private final int[] _jumpTable;
     /** only used for tAttrChoose: offset to the tFuncVar for CHOOSE() */
     private final int   _chooseFuncOffset;
-    
-    // flags 'volatile' and 'space', can be combined.  
+
+    // flags 'volatile' and 'space', can be combined.
     // OOO spec says other combinations are theoretically possible but not likely to occur.
     private static final BitField semiVolatile = BitFieldFactory.getInstance(0x01);
     private static final BitField optiIf       = BitFieldFactory.getInstance(0x02);
@@ -49,12 +49,14 @@ public final class AttrPtg extends ControlPtg {
     private static final BitField sum          = BitFieldFactory.getInstance(0x10);
     private static final BitField baxcel       = BitFieldFactory.getInstance(0x20); // 'assignment-style formula in a macro sheet'
     private static final BitField space        = BitFieldFactory.getInstance(0x40);
-    
+
+    public static final AttrPtg SUM = new AttrPtg(0x0010, 0, null, -1);
+
     public static final class SpaceType {
         private SpaceType() {
             // no instances of this class
         }
-        
+
         /** 00H = Spaces before the next token (not allowed before tParen token) */
         public static final int SPACE_BEFORE = 0x00;
         /** 01H = Carriage returns before the next token (not allowed before tParen token) */
@@ -75,7 +77,7 @@ public final class AttrPtg extends ControlPtg {
         _jumpTable = null;
         _chooseFuncOffset = -1;
     }
-    
+
     public AttrPtg(RecordInputStream in)
     {
         field_1_options = in.readByte();
@@ -92,7 +94,7 @@ public final class AttrPtg extends ControlPtg {
             _jumpTable = null;
             _chooseFuncOffset = -1;
         }
-        
+
     }
     private AttrPtg(int options, int data, int[] jt, int chooseFuncOffset) {
         field_1_options = (byte) options;
@@ -100,7 +102,7 @@ public final class AttrPtg extends ControlPtg {
         _jumpTable = jt;
         _chooseFuncOffset = chooseFuncOffset;
     }
-    
+
     /**
      * @param type a constant from <tt>SpaceType</tt>
      * @param count the number of space characters
@@ -145,7 +147,7 @@ public final class AttrPtg extends ControlPtg {
     {
         return sum.isSet(getOptions());
     }
-    
+
     public void setSum(boolean bsum) {
         field_1_options=sum.setByteBoolean(field_1_options,bsum);
     }
@@ -155,13 +157,13 @@ public final class AttrPtg extends ControlPtg {
     }
 
     /**
-     * Flags this ptg as a goto/jump 
+     * Flags this ptg as a goto/jump
      * @param isGoto
      */
     public void setGoto(boolean isGoto) {
         field_1_options=optGoto.setByteBoolean(field_1_options, isGoto);
     }
-    
+
     // lets hope no one uses this anymore
     public boolean isBaxcel()
     {
@@ -201,7 +203,7 @@ public final class AttrPtg extends ControlPtg {
         } else if(isOptimizedChoose()) {
             sb.append("choose nCases=").append(getData());
         } else if(isGoto()) {
-            sb.append("skip dist=").append(getData()); 
+            sb.append("skip dist=").append(getData());
         } else if(isSum()) {
             sb.append("sum ");
         } else if(isBaxcel()) {
@@ -218,7 +220,7 @@ public final class AttrPtg extends ControlPtg {
         LittleEndian.putShort(array,offset+2, field_2_data);
         int[] jt = _jumpTable;
         if (jt != null) {
-            int joff = offset+4; 
+            int joff = offset+4;
             LittleEndian.putUShort(array, joff, _chooseFuncOffset);
             joff+=2;
             for (int i = 0; i < jt.length; i++) {
@@ -227,7 +229,7 @@ public final class AttrPtg extends ControlPtg {
             }
             LittleEndian.putUShort(array, joff, _chooseFuncOffset);
         }
-        
+
     }
 
     public int getSize()
@@ -249,7 +251,7 @@ public final class AttrPtg extends ControlPtg {
             return toFormulaString() + "(" + operands[ 0 ] + ")";
         }
     }
-  
+
 
     public int getNumberOfOperands()
     {
@@ -260,7 +262,7 @@ public final class AttrPtg extends ControlPtg {
     {
         return -1;
     }
-        
+
    public String toFormulaString() {
       if(semiVolatile.isSet(field_1_options)) {
         return "ATTR(semiVolatile)";

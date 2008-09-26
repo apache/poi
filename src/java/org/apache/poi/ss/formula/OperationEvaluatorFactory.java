@@ -40,6 +40,7 @@ import org.apache.poi.hssf.record.formula.OperationPtg;
 import org.apache.poi.hssf.record.formula.PercentPtg;
 import org.apache.poi.hssf.record.formula.PowerPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.RangePtg;
 import org.apache.poi.hssf.record.formula.SubtractPtg;
 import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
 import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
@@ -57,6 +58,7 @@ import org.apache.poi.hssf.record.formula.eval.NotEqualEval;
 import org.apache.poi.hssf.record.formula.eval.OperationEval;
 import org.apache.poi.hssf.record.formula.eval.PercentEval;
 import org.apache.poi.hssf.record.formula.eval.PowerEval;
+import org.apache.poi.hssf.record.formula.eval.RangeEval;
 import org.apache.poi.hssf.record.formula.eval.SubtractEval;
 import org.apache.poi.hssf.record.formula.eval.UnaryMinusEval;
 import org.apache.poi.hssf.record.formula.eval.UnaryPlusEval;
@@ -101,6 +103,7 @@ final class OperationEvaluatorFactory {
 		add(m, SubtractPtg.class, SubtractEval.instance);
 		add(m, UnaryMinusPtg.class, UnaryMinusEval.instance);
 		add(m, UnaryPlusPtg.class, UnaryPlusEval.instance);
+		add(m, RangePtg.class, RangeEval.instance);
 		return m;
 	}
 
