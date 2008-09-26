@@ -146,7 +146,7 @@ public final class TestFormulaBugs extends TestCase {
 			throw new AssertionFailedError("Identified bug 42448");
 		}
 
-		assertEquals("SUMPRODUCT(A!C7:C67,B8:B68)/B69", cell.getCellFormula());
+		assertEquals("SUMPRODUCT(A!C7:A!C67,B8:B68)/B69", cell.getCellFormula());
 
 		// might as well evaluate the sucker...
 

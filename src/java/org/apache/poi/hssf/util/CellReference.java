@@ -34,6 +34,7 @@ public final class CellReference {
 	public static final class NameType {
 		public static final int CELL = 1;
 		public static final int NAMED_RANGE = 2;
+		public static final int COLUMN = 3;
 		public static final int BAD_CELL_OR_NAMED_RANGE = -1;
 	}
 	/** The character ($) that signifies a row or column value is absolute instead of relative */ 
@@ -44,10 +45,16 @@ public final class CellReference {
 	private static final char SPECIAL_NAME_DELIMITER = '\'';
 	
 	/**
-	 * Matches a run of letters followed by a run of digits.  The run of letters is group 1 and the
-	 * run of digits is group 2.  Each group may optionally be prefixed with a single '$'.
+	 * Matches a run of one or more letters followed by a run of one or more digits.
+	 * The run of letters is group 1 and the run of digits is group 2.  
+	 * Each group may optionally be prefixed with a single '$'.
 	 */
 	private static final Pattern CELL_REF_PATTERN = Pattern.compile("\\$?([A-Za-z]+)\\$?([0-9]+)");
+	/**
+	 * Matches a run of one or more letters.  The run of letters is group 1.  
+	 * The text may optionally be prefixed with a single '$'.
+	 */
+	private static final Pattern COLUMN_REF_PATTERN = Pattern.compile("\\$?([A-Za-z]+)");
 	/**
 	 * Named range names must start with a letter or underscore.  Subsequent characters may include
 	 * digits or dot.  (They can even end in dot).
@@ -203,7 +210,7 @@ public final class CellReference {
 		// named range name
 		// This behaviour is a little weird.  For example, "IW123" is a valid named range name
 		// because the column "IW" is beyond the maximum "IV".  Note - this behaviour is version
-		// dependent.  In Excel 2007, "IW123" is not a valid named range name.
+		// dependent.  In BIFF12, "IW123" is not a valid named range name, but in BIFF8 it is.
 		if (str.indexOf(ABSOLUTE_REFERENCE_MARKER) >= 0) {
 			// Of course, named range names cannot have '$'
 			return NameType.BAD_CELL_OR_NAMED_RANGE;
@@ -212,11 +219,17 @@ public final class CellReference {
 	}
 
 	private static int validateNamedRangeName(String str) {
+		Matcher colMatcher = COLUMN_REF_PATTERN.matcher(str);
+		if (colMatcher.matches()) {
+			String colStr = colMatcher.group(1);
+			if (isColumnWithnRange(colStr)) {
+				return NameType.COLUMN;
+			}
+		}
 		if (!NAMED_RANGE_NAME_PATTERN.matcher(str).matches()) {
 			return NameType.BAD_CELL_OR_NAMED_RANGE;
 		}
 		return NameType.NAMED_RANGE;
-		
 	}
 	
 	
@@ -257,22 +270,12 @@ public final class CellReference {
 	 * @return <code>true</code> if the row and col parameters are within range of a BIFF8 spreadsheet.
 	 */
 	public static boolean cellReferenceIsWithinRange(String colStr, String rowStr) {
-		int numberOfLetters = colStr.length();
-		if(numberOfLetters > BIFF8_LAST_COLUMN_TEXT_LEN) {
-			// "Sheet1" case etc
-			return false; // that was easy
+		if (!isColumnWithnRange(colStr)) {
+			return false;
 		}
 		int nDigits = rowStr.length();
 		if(nDigits > BIFF8_LAST_ROW_TEXT_LEN) {
 			return false; 
-		}
-		if(numberOfLetters == BIFF8_LAST_COLUMN_TEXT_LEN) {
-			if(colStr.toUpperCase().compareTo(BIFF8_LAST_COLUMN) > 0) {
-				return false;
-			}
-		} else {
-			// apparent column name has less chars than max
-			// no need to check range
 		}
 		
 		if(nDigits == BIFF8_LAST_ROW_TEXT_LEN) {
@@ -285,6 +288,23 @@ public final class CellReference {
 			// no need to check range
 		}
 		
+		return true;
+	}
+
+	private static boolean isColumnWithnRange(String colStr) {
+		int numberOfLetters = colStr.length();
+		if(numberOfLetters > BIFF8_LAST_COLUMN_TEXT_LEN) {
+			// "Sheet1" case etc
+			return false; // that was easy
+		}
+		if(numberOfLetters == BIFF8_LAST_COLUMN_TEXT_LEN) {
+			if(colStr.toUpperCase().compareTo(BIFF8_LAST_COLUMN) > 0) {
+				return false;
+			}
+		} else {
+			// apparent column name has less chars than max
+			// no need to check range
+		}
 		return true;
 	}
 

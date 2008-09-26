@@ -1064,7 +1064,7 @@ public final class TestFormulas extends TestCase {
     /** Unknown Ptg 3D*/
     public void test27272_2() throws Exception {
         HSSFWorkbook wb = openSample("27272_2.xls");
-        assertEquals("Reference for named range ", "'LOAD.POD_HISTORIES'!#REF!",wb.getNameAt(0).getReference());
+        assertEquals("LOAD.POD_HISTORIES!#REF!", wb.getNameAt(0).getReference());
         File outF = File.createTempFile("bug27272_2",".xls");
         wb.write(new FileOutputStream(outF));
         System.out.println("Open "+outF.getAbsolutePath()+" in Excel");
