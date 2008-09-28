@@ -32,6 +32,16 @@ public interface FormulaParsingWorkbook {
 	 */
 	EvaluationName getName(String name);
 
-	int getExternalSheetIndex(String sheetName);
 	NameXPtg getNameXPtg(String name);
+
+	/**
+	 * gets the externSheet index for a sheet from this workbook
+	 */
+	int getExternalSheetIndex(String sheetName);
+	/**
+	 * gets the externSheet index for a sheet from an external workbook
+	 * @param workbookName e.g. "Budget.xls"
+	 * @param sheetName a name of a sheet in that workbook
+	 */
+	int getExternalSheetIndex(String workbookName, String sheetName);
 }

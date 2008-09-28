@@ -17,25 +17,32 @@
 
 package org.apache.poi.ss.formula;
 
+import org.apache.poi.hssf.util.CellReference;
+
 /**
  * Stores the parameters that identify the evaluation of one cell.<br/>
  */
 final class CellLocation {
 	public static final CellLocation[] EMPTY_ARRAY = { };
 	
+	private final EvaluationWorkbook _book;
 	private final int _sheetIndex;
 	private final int _rowIndex;
 	private final int _columnIndex;
 	private final int _hashCode;
 
-	public CellLocation(int sheetIndex, int rowIndex, int columnIndex) {
+	public CellLocation(EvaluationWorkbook book, int sheetIndex, int rowIndex, int columnIndex) {
 		if (sheetIndex < 0) {
 			throw new IllegalArgumentException("sheetIndex must not be negative");
 		}
+		_book = book;
 		_sheetIndex = sheetIndex;
 		_rowIndex = rowIndex;
 		_columnIndex = columnIndex;
-		_hashCode = sheetIndex + 17 * (rowIndex + 17 * columnIndex);
+		_hashCode = System.identityHashCode(book) + sheetIndex + 17 * (rowIndex + 17 * columnIndex);
+	}
+	public Object getBook() {
+		return _book;
 	}
 	public int getSheetIndex() {
 		return _sheetIndex;
@@ -49,13 +56,16 @@ final class CellLocation {
 
 	public boolean equals(Object obj) {
 		CellLocation other = (CellLocation) obj;
-		if (getSheetIndex() != other.getSheetIndex()) {
-			return false;
-		}
 		if (getRowIndex() != other.getRowIndex()) {
 			return false;
 		}
 		if (getColumnIndex() != other.getColumnIndex()) {
+			return false;
+		}
+		if (getSheetIndex() != other.getSheetIndex()) {
+			return false;
+		}
+		if (getBook() != other.getBook()) {
 			return false;
 		}
 		return true;
@@ -68,7 +78,8 @@ final class CellLocation {
 	 * @return human readable string for debug purposes
 	 */
 	public String formatAsString() {
-		return  "ShIx=" + getSheetIndex() + " R=" + getRowIndex() + " C=" + getColumnIndex();
+		CellReference cr = new CellReference(_rowIndex, _columnIndex, false, false);
+		return  "ShIx=" + getSheetIndex() + " " + cr.formatAsString();
 	}
 
 	public String toString() {

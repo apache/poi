@@ -25,6 +25,7 @@ import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 
 /**
@@ -52,6 +53,21 @@ public class HSSFFormulaEvaluator {
 	}
 	public HSSFFormulaEvaluator(HSSFWorkbook workbook) {
 		_bookEvaluator = new WorkbookEvaluator(HSSFEvaluationWorkbook.create(workbook));
+	}
+	
+	/**
+	 * Coordinates several formula evaluators together so that formulas that involve external
+	 * references can be evaluated.
+	 * @param workbookNames the simple file names used to identify the workbooks in formulas
+	 * with external links (for example "MyData.xls" as used in a formula "[MyData.xls]Sheet1!A1")
+	 * @param evaluators all evaluators for the full set of workbooks required by the formulas. 
+	 */
+	public static void setupEnvironment(String[] workbookNames, HSSFFormulaEvaluator[] evaluators) {
+		WorkbookEvaluator[] wbEvals = new WorkbookEvaluator[evaluators.length];
+		for (int i = 0; i < wbEvals.length; i++) {
+			wbEvals[i] = evaluators[i]._bookEvaluator;
+		}
+		CollaboratingWorkbooksEnvironment.setup(workbookNames, wbEvals);
 	}
 
 	/**

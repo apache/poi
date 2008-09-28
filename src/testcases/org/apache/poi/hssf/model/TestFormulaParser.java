@@ -43,11 +43,13 @@ import org.apache.poi.hssf.record.formula.NumberPtg;
 import org.apache.poi.hssf.record.formula.PercentPtg;
 import org.apache.poi.hssf.record.formula.PowerPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.StringPtg;
 import org.apache.poi.hssf.record.formula.SubtractPtg;
 import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
 import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
+import org.apache.poi.hssf.usermodel.FormulaExtractor;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
@@ -913,4 +915,33 @@ public final class TestFormulaParser extends TestCase {
 
 		assertEquals("'true'!B2", cell.getCellFormula());
 	}
+	
+	public void testParseExternalWorkbookReference() {
+		HSSFWorkbook wbA = HSSFTestDataSamples.openSampleWorkbook("multibookFormulaA.xls");
+		HSSFCell cell = wbA.getSheetAt(0).getRow(0).getCell(0);
+
+		// make sure formula in sample is as expected
+		assertEquals("[multibookFormulaB.xls]BSheet1!B1", cell.getCellFormula());
+		Ptg[] expectedPtgs = FormulaExtractor.getPtgs(cell);
+		confirmSingle3DRef(expectedPtgs, 1);
+		
+		// now try (re-)parsing the formula
+		Ptg[] actualPtgs = HSSFFormulaParser.parse("[multibookFormulaB.xls]BSheet1!B1", wbA);
+		confirmSingle3DRef(actualPtgs, 1); // externalSheetIndex 1 -> BSheet1
+		
+		// try parsing a formula pointing to a different external sheet
+		Ptg[] otherPtgs = HSSFFormulaParser.parse("[multibookFormulaB.xls]AnotherSheet!B1", wbA);
+		confirmSingle3DRef(otherPtgs, 0); // externalSheetIndex 0 -> AnotherSheet
+		
+		// try setting the same formula in a cell
+		cell.setCellFormula("[multibookFormulaB.xls]AnotherSheet!B1");
+		assertEquals("[multibookFormulaB.xls]AnotherSheet!B1", cell.getCellFormula());
+	}
+	private static void confirmSingle3DRef(Ptg[] ptgs, int expectedExternSheetIndex) {
+		assertEquals(1, ptgs.length);
+		Ptg ptg0 = ptgs[0];
+		assertEquals(Ref3DPtg.class, ptg0.getClass());
+		assertEquals(expectedExternSheetIndex, ((Ref3DPtg)ptg0).getExternSheetIndex());
+	}
+	
 }

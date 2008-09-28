@@ -78,7 +78,7 @@ public final class TestSupBookRecord extends TestCase {
 
         assertEquals( 34, record.getRecordSize() );  //sid+size+data
         
-        assertEquals("testURL", record.getURL().getString());
+        assertEquals("testURL", record.getURL());
         UnicodeString[] sheetNames = record.getSheetNames();
         assertEquals(2, sheetNames.length);
         assertEquals("Sheet1", sheetNames[0].getString());

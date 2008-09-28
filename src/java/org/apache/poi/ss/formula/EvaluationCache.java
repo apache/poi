@@ -81,13 +81,7 @@ final class EvaluationCache {
 						+ cellLoc.formatAsString());
 			}
 		}
-		if (_evaluationListener == null) {
-			// optimisation - don't bother sorting if there is no listener.
-		} else {
-			// for testing
-			// make order of callbacks to listener more deterministic
-			Arrays.sort(usedCells, CellLocationComparator);
-		}
+		sortCellLocationsForLogging(usedCells);
 		CellCacheEntry entry = getEntry(cellLoc);
 		CellLocation[] consumingFormulaCells = entry.getConsumingCells();
 		CellLocation[] prevUsedCells = entry.getUsedCells();
@@ -108,6 +102,18 @@ final class EvaluationCache {
 		
 		// clear all cells that directly or indirectly depend on this one
 		recurseClearCachedFormulaResults(consumingFormulaCells, 0);
+	}
+
+	/**
+	 * This method sorts the supplied cellLocs so that the order of call-backs to the evaluation 
+	 * listener is more deterministic
+	 */
+	private void sortCellLocationsForLogging(CellLocation[] cellLocs) {
+		if (_evaluationListener == null) {
+			// optimisation - don't bother sorting if there is no listener.
+		} else {
+			Arrays.sort(cellLocs, CellLocationComparator);
+		}
 	}
 
 	private void unlinkConsumingCells(CellLocation[] prevUsedCells, CellLocation[] usedCells,
@@ -149,6 +155,7 @@ final class EvaluationCache {
 	 * @param formulaCells
 	 */
 	private void recurseClearCachedFormulaResults(CellLocation[] formulaCells, int depth) {
+		sortCellLocationsForLogging(formulaCells);
 		int nextDepth = depth+1;
 		for (int i = 0; i < formulaCells.length; i++) {
 			CellLocation fc = formulaCells[i];
@@ -196,6 +203,10 @@ final class EvaluationCache {
 			CellLocation clB = (CellLocation) b;
 			
 			int cmp;
+			cmp = System.identityHashCode(clA.getBook()) - System.identityHashCode(clB.getBook());
+			if (cmp != 0) {
+				return cmp;
+			}
 			cmp = clA.getSheetIndex() - clB.getSheetIndex();
 			if (cmp != 0) {
 				return cmp;
