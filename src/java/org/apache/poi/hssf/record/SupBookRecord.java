@@ -221,8 +221,33 @@ public final class SupBookRecord extends Record {
     {
         return sid;
     }
-    public UnicodeString getURL() {
-        return field_2_encoded_url;
+    public String getURL() {
+        String encodedUrl = field_2_encoded_url.getString();
+        switch(encodedUrl.charAt(0)) {
+            case 0: // Reference to an empty workbook name
+                return encodedUrl.substring(1); // will this just be empty string?
+            case 1: // encoded file name
+                return decodeFileName(encodedUrl);
+            case 2: // Self-referential external reference
+                return encodedUrl.substring(1);
+                
+        }
+        return encodedUrl;
+    }
+    private static String decodeFileName(String encodedUrl) {
+        return encodedUrl.substring(1);
+        // TODO the following special characters may appear in the rest of the string, and need to get interpreted
+        /* see "MICROSOFT OFFICE EXCEL 97-2007  BINARY FILE FORMAT SPECIFICATION"
+        chVolume  1 
+        chSameVolume  2 
+        chDownDir  3
+        chUpDir  4 
+        chLongVolume  5
+        chStartupDir  6
+        chAltStartupDir 7
+        chLibDir  8
+        
+        */
     }
     public UnicodeString[] getSheetNames() {
         return (UnicodeString[]) field_3_sheet_names.clone();

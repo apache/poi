@@ -39,6 +39,9 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		int sheetIndex = _uBook.getSheetIndex(sheetName);
 		return _iBook.checkExternSheet(sheetIndex);
 	}
+	public int getExternalSheetIndex(String workbookName, String sheetName) {
+		return _iBook.getExternalSheetIndex(workbookName, sheetName);
+	}
 
 	public EvaluationName getName(int index) {
 		return new Name(_iBook.getNameRecord(index), index);
@@ -56,6 +59,9 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 
 	public int getSheetIndex(HSSFSheet sheet) {
 		return _uBook.getSheetIndex(sheet);
+	}
+	public int getSheetIndex(String sheetName) {
+		return _uBook.getSheetIndex(sheetName);
 	}
 
 	public String getSheetName(int sheetIndex) {
@@ -75,8 +81,12 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	}
 	public int convertFromExternSheetIndex(int externSheetIndex) {
 		return _iBook.getSheetIndexFromExternSheetIndex(externSheetIndex);
-}
+	}
 
+	public ExternalSheet getExternalSheet(int externSheetIndex) {
+		return _iBook.getExternalSheet(externSheetIndex);
+	}
+	
 	public HSSFWorkbook getWorkbook() {
 		return _uBook;
 	}

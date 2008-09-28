@@ -250,10 +250,13 @@ public class ExternSheetRecord extends Record {
 		return _list.size() - 1;
 	}
 
-	public int getRefIxForSheet(int sheetIndex) {
+	public int getRefIxForSheet(int externalBookIndex, int sheetIndex) {
 		int nItems = _list.size();
 		for (int i = 0; i < nItems; i++) {
 			RefSubRecord ref = getRef(i);
+			if (ref.getExtBookIndex() != externalBookIndex) {
+				continue;
+			}
 			if (ref.getFirstSheetIndex() == sheetIndex && ref.getLastSheetIndex() == sheetIndex) {
 				return i;
 			}

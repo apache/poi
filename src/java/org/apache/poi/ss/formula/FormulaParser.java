@@ -257,7 +257,7 @@ public final class FormulaParser {
      */
     private Identifier parseIdentifier() {
         StringBuffer sb = new StringBuffer();
-        if (!IsAlpha(look) && look != '\'') {
+        if (!IsAlpha(look) && look != '\'' && look != '[') {
             throw expected("Name");
         }
         boolean isQuoted = look == '\''; 
@@ -276,7 +276,7 @@ public final class FormulaParser {
         } else {
             // allow for any sequence of dots and identifier chars
             // special case of two consecutive dots is best treated in the calling code
-            while (IsAlNum(look) || look == '.') {
+            while (IsAlNum(look) || look == '.' || look == '[' || look == ']') {
                 sb.append(look);
                 GetChar();
             }
@@ -368,7 +368,7 @@ public final class FormulaParser {
             // 3-D ref
             // this code assumes iden is a sheetName
             // TODO - handle <book name> ! <named range name>
-            int externIdx = book.getExternalSheetIndex(iden.getName());
+            int externIdx = getExternalSheetIndex(iden.getName());
             String secondIden = parseUnquotedIdentifier();
             AreaReference areaRef = parseArea(secondIden);
             if (areaRef == null) {
@@ -416,6 +416,17 @@ public final class FormulaParser {
         }
         throw new FormulaParseException("Specified name '"
                     + name + "' is not a range as expected");
+    }
+
+    private int getExternalSheetIndex(String name) {
+        if (name.charAt(0) == '[') {
+            // we have a sheet name qualified with workbook name e.g. '[MyData.xls]Sheet1'
+            int pos = name.lastIndexOf(']'); // safe because sheet names never have ']'
+            String wbName = name.substring(1, pos);
+            String sheetName = name.substring(pos+1);
+            return book.getExternalSheetIndex(wbName, sheetName);
+        }
+        return book.getExternalSheetIndex(name);
     }
 
     /**
@@ -656,7 +667,7 @@ public final class FormulaParser {
                 Match('}');
                 return arrayNode;
         }
-        if (IsAlpha(look) || look == '\''){
+        if (IsAlpha(look) || look == '\'' || look == '['){
             return parseFunctionReferenceOrName();
         }
         // else - assume number

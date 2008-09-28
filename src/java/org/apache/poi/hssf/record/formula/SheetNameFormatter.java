@@ -66,6 +66,22 @@ public final class SheetNameFormatter {
 			out.append(rawSheetName);
 		}
 	}
+	public static void appendFormat(StringBuffer out, String workbookName, String rawSheetName) {
+		boolean needsQuotes = needsDelimiting(workbookName) || needsDelimiting(rawSheetName);
+		if(needsQuotes) {
+			out.append(DELIMITER);
+			out.append('[');
+			appendAndEscape(out, workbookName.replace('[', '(').replace(']', ')'));
+			out.append(']');
+			appendAndEscape(out, rawSheetName);
+			out.append(DELIMITER);
+		} else {
+			out.append('[');
+			out.append(workbookName);
+			out.append(']');
+			out.append(rawSheetName);
+		}
+	}
 
 	private static void appendAndEscape(StringBuffer sb, String rawSheetName) {
 		int len = rawSheetName.length();

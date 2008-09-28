@@ -19,8 +19,9 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.ss.formula.ExternSheetReferenceToken;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
+import org.apache.poi.ss.formula.WorkbookDependentFormula;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -31,7 +32,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 1.0-pre
  */
-public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormula {
+public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormula, ExternSheetReferenceToken {
     public final static byte sid  = 0x3a;
 
     private final static int  SIZE = 7; // 6 + 1 for Ptg
@@ -75,11 +76,11 @@ public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormu
         return SIZE;
     }
 
-    public int getExternSheetIndex(){
+    public int getExternSheetIndex() {
         return field_1_index_extern_sheet;
     }
 
-    public void setExternSheetIndex(int index){
+    public void setExternSheetIndex(int index) {
         field_1_index_extern_sheet = index;
     }
 

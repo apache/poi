@@ -63,6 +63,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
 
 /**
  * Evaluates formula cells.<p/>
@@ -75,13 +76,14 @@ import org.apache.poi.hssf.util.CellReference;
  *
  * @author Josh Micich
  */
-public class WorkbookEvaluator {
+public final class WorkbookEvaluator {
 
 	private final EvaluationWorkbook _workbook;
-	private final EvaluationCache _cache;
+	private EvaluationCache _cache;
 
 	private final IEvaluationListener _evaluationListener;
 	private final Map _sheetIndexesBySheet;
+	private CollaboratingWorkbooksEnvironment _collaboratingWorkbookEnvironment;
 
 	public WorkbookEvaluator(EvaluationWorkbook workbook) {
 		this (workbook, null);
@@ -91,6 +93,7 @@ public class WorkbookEvaluator {
 		_evaluationListener = evaluationListener;
 		_cache = new EvaluationCache(evaluationListener);
 		_sheetIndexesBySheet = new IdentityHashMap();
+		_collaboratingWorkbookEnvironment = CollaboratingWorkbooksEnvironment.EMPTY;
 	}
 
 	/**
@@ -108,7 +111,22 @@ public class WorkbookEvaluator {
 			System.out.println(s);
 		}
 	}
+	/* package */ void attachToEnvironment(CollaboratingWorkbooksEnvironment collaboratingWorkbooksEnvironment, EvaluationCache cache) {
+		_collaboratingWorkbookEnvironment = collaboratingWorkbooksEnvironment;
+		_cache = cache;
+	}
+	/* package */ CollaboratingWorkbooksEnvironment getEnvironment() {
+		return _collaboratingWorkbookEnvironment;
+	}
 
+	/* package */ void detachFromEnvironment() {
+		_collaboratingWorkbookEnvironment = CollaboratingWorkbooksEnvironment.EMPTY;
+		_cache = new EvaluationCache(_evaluationListener);
+	}
+	/* package */ IEvaluationListener getEvaluationListener() {
+		return _evaluationListener;
+	}
+	 
 	/**
 	 * Should be called whenever there are changes to input cells in the evaluated workbook.
 	 * Failure to call this method after changing cell values will cause incorrect behaviour
@@ -130,7 +148,7 @@ public class WorkbookEvaluator {
 			throw new IllegalArgumentException("value must not be null");
 		}
 		int sheetIndex = getSheetIndex(sheet);
-		_cache.setValue(new CellLocation(sheetIndex, rowIndex, columnIndex), true, CellLocation.EMPTY_ARRAY, value);
+		_cache.setValue(new CellLocation(_workbook, sheetIndex, rowIndex, columnIndex), true, CellLocation.EMPTY_ARRAY, value);
 
 	}
 	/**
@@ -139,13 +157,17 @@ public class WorkbookEvaluator {
 	 */
 	public void notifySetFormula(HSSFSheet sheet, int rowIndex, int columnIndex) {
 		int sheetIndex = getSheetIndex(sheet);
-		_cache.setValue(new CellLocation(sheetIndex, rowIndex, columnIndex), false, CellLocation.EMPTY_ARRAY, null);
+		_cache.setValue(new CellLocation(_workbook, sheetIndex, rowIndex, columnIndex), false, CellLocation.EMPTY_ARRAY, null);
 
 	}
 	private int getSheetIndex(HSSFSheet sheet) {
 		Integer result = (Integer) _sheetIndexesBySheet.get(sheet);
 		if (result == null) {
-			result = new Integer(_workbook.getSheetIndex(sheet));
+			int sheetIndex = _workbook.getSheetIndex(sheet);
+			if (sheetIndex < 0) {
+				throw new RuntimeException("Specified sheet from a different book");
+			}
+			result = new Integer(sheetIndex);
 			_sheetIndexesBySheet.put(sheet, result);
 		}
 		return result.intValue();
@@ -153,7 +175,7 @@ public class WorkbookEvaluator {
 
 	public ValueEval evaluate(HSSFCell srcCell) {
 		int sheetIndex = getSheetIndex(srcCell.getSheet());
-		CellLocation cellLoc = new CellLocation(sheetIndex, srcCell.getRowIndex(), srcCell.getCellNum());
+		CellLocation cellLoc = new CellLocation(_workbook, sheetIndex, srcCell.getRowIndex(), srcCell.getCellNum());
 		return internalEvaluate(srcCell, cellLoc, new EvaluationTracker(_cache));
 	}
 
@@ -342,6 +364,20 @@ public class WorkbookEvaluator {
 		}
 		return operation.evaluate(ops, srcRowNum, (short)srcColNum);
 	}
+	private SheetRefEvaluator createExternSheetRefEvaluator(EvaluationTracker tracker,
+			ExternSheetReferenceToken ptg) {
+		int externSheetIndex = ptg.getExternSheetIndex();
+		ExternalSheet externalSheet = _workbook.getExternalSheet(externSheetIndex);
+		if (externalSheet != null) {
+			WorkbookEvaluator otherEvaluator = _collaboratingWorkbookEnvironment.getWorkbookEvaluator(externalSheet.getWorkbookName());
+			EvaluationWorkbook otherBook = otherEvaluator._workbook;
+			int otherSheetIndex = otherBook.getSheetIndex(externalSheet.getSheetName());
+			return new SheetRefEvaluator(otherEvaluator, tracker, otherBook, otherSheetIndex);
+		}
+		int otherSheetIndex = _workbook.convertFromExternSheetIndex(externSheetIndex);
+		return new SheetRefEvaluator(this, tracker, _workbook, otherSheetIndex);
+		
+	}
 
 	/**
 	 * returns an appropriate Eval impl instance for the Ptg. The Ptg must be
@@ -350,6 +386,8 @@ public class WorkbookEvaluator {
 	 * passed here!
 	 */
 	private Eval getEvalForPtg(Ptg ptg, int sheetIndex, EvaluationTracker tracker) {
+		//  consider converting all these (ptg instanceof XxxPtg) expressions to (ptg.getClass() == XxxPtg.class)
+
 		if (ptg instanceof NamePtg) {
 			// named ranges, macro functions
 			NamePtg namePtg = (NamePtg) ptg;
@@ -388,14 +426,12 @@ public class WorkbookEvaluator {
 		}
 		if (ptg instanceof Ref3DPtg) {
 			Ref3DPtg refPtg = (Ref3DPtg) ptg;
-			int otherSheetIndex = _workbook.convertFromExternSheetIndex(refPtg.getExternSheetIndex());
-			SheetRefEvaluator sre = new SheetRefEvaluator(this, tracker, _workbook, otherSheetIndex);
+			SheetRefEvaluator sre = createExternSheetRefEvaluator(tracker, refPtg);
 			return new LazyRefEval(refPtg, sre);
 		}
 		if (ptg instanceof Area3DPtg) {
 			Area3DPtg aptg = (Area3DPtg) ptg;
-			int otherSheetIndex = _workbook.convertFromExternSheetIndex(aptg.getExternSheetIndex());
-			SheetRefEvaluator sre = new SheetRefEvaluator(this, tracker, _workbook, otherSheetIndex);
+			SheetRefEvaluator sre = createExternSheetRefEvaluator(tracker, aptg);
 			return new LazyAreaEval(aptg, sre);
 		}
 		SheetRefEvaluator sre = new SheetRefEvaluator(this, tracker, _workbook, sheetIndex);
@@ -435,7 +471,7 @@ public class WorkbookEvaluator {
 		} else {
 			cell = row.getCell(columnIndex);
  		}
-		CellLocation cellLoc = new CellLocation(sheetIndex, rowIndex, columnIndex);
+		CellLocation cellLoc = new CellLocation(_workbook, sheetIndex, rowIndex, columnIndex);
 		tracker.acceptDependency(cellLoc);
 		return internalEvaluate(cell, cellLoc, tracker);
 	}

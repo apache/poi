@@ -31,12 +31,36 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
  */
 public interface EvaluationWorkbook {
 	String getSheetName(int sheetIndex);
+	/**
+	 * @return -1 if the specified sheet is from a different book
+	 */
 	int getSheetIndex(HSSFSheet sheet);
+	int getSheetIndex(String sheetName);
 
 	HSSFSheet getSheet(int sheetIndex);
 
+	/**
+	 * @return <code>null</code> if externSheetIndex refers to a sheet inside the current workbook
+	 */
+	ExternalSheet getExternalSheet(int externSheetIndex);
 	int convertFromExternSheetIndex(int externSheetIndex);
 	EvaluationName getName(NamePtg namePtg);
 	String resolveNameXText(NameXPtg ptg);
 	Ptg[] getFormulaTokens(HSSFCell cell);
+	
+	class ExternalSheet {
+		private final String _workbookName;
+		private final String _sheetName;
+
+		public ExternalSheet(String workbookName, String sheetName) {
+			_workbookName = workbookName;
+			_sheetName = sheetName;
+		}
+		public String getWorkbookName() {
+			return _workbookName;
+		}
+		public String getSheetName() {
+			return _sheetName;
+		}
+	}
 }
