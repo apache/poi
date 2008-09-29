@@ -1272,7 +1272,7 @@ public final class HSSFSheet {
         int sheetIndex = workbook.getSheetIndex(this);
         short externSheetIndex = book.checkExternSheet(sheetIndex);
         FormulaShifter shifter = FormulaShifter.createForRowShift(externSheetIndex, startRow, endRow, n);
-        sheet.getRowsAggregate().updateFormulasAfterRowShift(shifter, externSheetIndex);
+        sheet.updateFormulasAfterCellShift(shifter, externSheetIndex);
 
         int nSheets = workbook.getNumberOfSheets();
         for(int i=0; i<nSheets; i++) {
@@ -1281,7 +1281,7 @@ public final class HSSFSheet {
                 continue;
             }
             short otherExtSheetIx = book.checkExternSheet(i);
-            otherSheet.getRowsAggregate().updateFormulasAfterRowShift(shifter, otherExtSheetIx);
+            otherSheet.updateFormulasAfterCellShift(shifter, otherExtSheetIx);
         }
         // TODO - adjust formulas in named ranges
     }

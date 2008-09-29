@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.2-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">45890 - fixed HSSFSheet.shiftRows to also update conditional formats</action>
            <action dev="POI-DEVELOPERS" type="add">45865 modified Formula Parser/Evaluator to handle cross-worksheet formulas</action>
            <action dev="POI-DEVELOPERS" type="add">Optimised the FormulaEvaluator to take cell dependencies into account</action>
            <action dev="POI-DEVELOPERS" type="add">16936 - Initial support for whole-row cell styling</action>
