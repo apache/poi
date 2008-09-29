@@ -27,10 +27,8 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocument;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CommentsSource;
 import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Palette;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row;
@@ -337,6 +335,18 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     	return null;
     }
 
+    /**
+     * Convenience method to get the active sheet.  The active sheet is is the sheet
+     * which is currently displayed when the workbook is viewed in Excel.
+     * 'Selected' sheet(s) is a distinct concept.
+     */
+    public int getActiveSheetIndex() {
+        //activeTab (Active Sheet Index) Specifies an unsignedInt 
+        //that contains the index to the active sheet in this book view.
+        Long index = workbook.getBookViews().getWorkbookViewArray(0).getActiveTab();
+        return index.intValue();
+    }
+
     public List getAllEmbeddedObjects() {
         // TODO Auto-generated method stub
         return null;
@@ -518,6 +528,29 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 		this.missingCellPolicy = missingCellPolicy;
 	}
 
+    /**
+     * Convenience method to set the active sheet.  The active sheet is is the sheet
+     * which is currently displayed when the workbook is viewed in Excel.
+     * 'Selected' sheet(s) is a distinct concept.
+     */
+    public void setActiveSheet(int index) {
+
+        validateSheetIndex(index);
+        //activeTab (Active Sheet Index) Specifies an unsignedInt that contains the index to the active sheet in this book view.
+        CTBookView[] arrayBook = workbook.getBookViews().getWorkbookViewArray();
+        for (int i = 0; i < arrayBook.length; i++) {
+            workbook.getBookViews().getWorkbookViewArray(i).setActiveTab(index);
+        }
+    }
+
+    private void validateSheetIndex(int index) {
+        int lastSheetIx = sheets.size() - 1;
+        if (index < 0 || index > lastSheetIx) {
+            throw new IllegalArgumentException("Sheet index ("
+                    + index +") is out of range (0.." +    lastSheetIx + ")");
+        }
+    }
+
     public void setBackupFlag(boolean backupValue) {
         // TODO Auto-generated method stub
 
@@ -539,32 +572,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      *
      * @param index integer that contains the index to the active sheet in this book view.
      */
-    public void setFirstVisibleTab(short index) {
+    public void setFirstVisibleTab(int index) {
         CTBookViews bookViews = workbook.getBookViews();
         CTBookView bookView= bookViews.getWorkbookViewArray(0);
         bookView.setActiveTab(index);
-    }
-
-    /**
-     * Gets the first tab that is displayed in the list of tabs
-     * in excel.
-     * @return an integer that contains the index to the active sheet in this book view.
-     *
-     * @deprecated Aug 2008 - Misleading name - use #getFirstVisibleTab()
-     */
-    public short getDisplayedTab() {
-        return (short) getFirstVisibleTab();
-    }
-
-    /**
-     * sets the first tab that is displayed in the list of tabs
-     * in excel.
-     * @param index integer that contains the index to the active sheet in this book view.
-     *
-     * @deprecated Aug 2008 - Misleading name - use #setFirstVisibleTab()
-     */
-    public void setDisplayedTab(short index) {
-        setFirstVisibleTab(index);
     }
 
     public void setPrintArea(int sheetIndex, String reference) {

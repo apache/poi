@@ -43,12 +43,23 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 public final class TestXSSFWorkbook extends TestCase {
 
 	@Override
-	protected void setUp() throws Exception {
+	protected void setUp() {
 		// Use system out logger
 		System.setProperty(
 				"org.apache.poi.util.POILogger",
 				"org.apache.poi.util.SystemOutLogger"
 		);
+	}
+
+	public void testGetSetActiveSheet(){
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		workbook.createSheet("sheet1");
+		workbook.createSheet("sheet2");
+		workbook.createSheet("sheet3");
+		// set second sheet
+		workbook.setActiveSheet(1);
+		// test if second sheet is set up
+		assertEquals(1, workbook.getActiveSheetIndex());
 	}
 
 	public void testGetSheetIndex() {
