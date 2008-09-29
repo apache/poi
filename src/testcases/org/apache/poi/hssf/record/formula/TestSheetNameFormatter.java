@@ -20,16 +20,12 @@ package org.apache.poi.hssf.record.formula;
 import junit.framework.TestCase;
 
 /**
- * Tests for SheetNameFormatter
+ * Tests for {@link SheetNameFormatter}
  * 
  * @author Josh Micich
  */
 public final class TestSheetNameFormatter extends TestCase {
 
-	public TestSheetNameFormatter(String testName) {
-		super(testName);
-	}
-	
 	private static void confirmFormat(String rawSheetName, String expectedSheetNameEncoding) {
 		assertEquals(expectedSheetNameEncoding, SheetNameFormatter.format(rawSheetName));
 	}
@@ -53,6 +49,16 @@ public final class TestSheetNameFormatter extends TestCase {
 		confirmFormat("my_3rd_sheet", "my_3rd_sheet"); // underscores and digits OK
 		confirmFormat("A12220", "'A12220'"); 
 		confirmFormat("TAXRETURN19980415", "TAXRETURN19980415"); 
+	}
+	
+	public void testBooleanLiterals() {
+		confirmFormat("TRUE", "'TRUE'");
+		confirmFormat("FALSE", "'FALSE'");
+		confirmFormat("True", "'True'");
+		confirmFormat("fAlse", "'fAlse'");
+		
+		confirmFormat("Yes", "Yes");
+		confirmFormat("No", "No");
 	}
 	
 	private static void confirmCellNameMatch(String rawSheetName, boolean expected) {

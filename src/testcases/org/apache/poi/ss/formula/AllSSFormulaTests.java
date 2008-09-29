@@ -15,24 +15,20 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.util;
+package org.apache.poi.ss.formula;
 
-
-public final class AreaReference extends org.apache.poi.ss.util.AreaReference {
-    /**
-     * Create an area ref from a string representation.  Sheet names containing special characters should be
-     * delimited and escaped as per normal syntax rules for formulas.<br/> 
-     * The area reference must be contiguous (i.e. represent a single rectangle, not a union of rectangles)
-     */
-    public AreaReference(String reference) {
-		super(reference);
-    }
-    
-    /**
-     * Creates an area ref from a pair of Cell References.
-     * Also normalises such that the top-left
-     */
-    public AreaReference(CellReference topLeft, CellReference botRight) {
-		super(topLeft, botRight);
+import junit.framework.Test;
+import junit.framework.TestSuite;
+/**
+ * Test suite for org.apache.poi.ss.formula
+ * 
+ * @author Josh Micich
+ */
+public final class AllSSFormulaTests {
+    public static Test suite() {
+        TestSuite result = new TestSuite(AllSSFormulaTests.class.getName());
+        result.addTestSuite(TestEvaluationCache.class);
+        result.addTestSuite(TestWorkbookEvaluator.class);
+        return result;
     }
 }

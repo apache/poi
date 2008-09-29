@@ -2,7 +2,9 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
@@ -39,6 +41,9 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		int sheetIndex = _uBook.getSheetIndex(sheetName);
 		return _iBook.checkExternSheet(sheetIndex);
 	}
+	public int getExternalSheetIndex(String workbookName, String sheetName) {
+		return _iBook.getExternalSheetIndex(workbookName, sheetName);
+	}
 
 	public EvaluationName getName(int index) {
 		return new Name(_iBook.getNameRecord(index), index);
@@ -56,6 +61,9 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 
 	public int getSheetIndex(Sheet sheet) {
 		return _uBook.getSheetIndex(sheet);
+	}
+	public int getSheetIndex(String sheetName) {
+		return _uBook.getSheetIndex(sheetName);
 	}
 
 	public String getSheetName(int sheetIndex) {
@@ -75,8 +83,12 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	}
 	public int convertFromExternSheetIndex(int externSheetIndex) {
 		return _iBook.getSheetIndexFromExternSheetIndex(externSheetIndex);
-}
+	}
 
+	public ExternalSheet getExternalSheet(int externSheetIndex) {
+		return _iBook.getExternalSheet(externSheetIndex);
+	}
+	
 	public HSSFWorkbook getWorkbook() {
 		return _uBook;
 	}
@@ -96,7 +108,15 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		return new Name(_iBook.getNameRecord(ix), ix);
 	}
 	public Ptg[] getFormulaTokens(Cell cell) {
-		return HSSFFormulaParser.parse(cell.getCellFormula(), _uBook);
+		if (false) {
+			// re-parsing the formula text also works, but is a waste of time
+			// It is useful from time to time to run all unit tests with this code
+			// to make sure that all formulas POI can evaluate can also be parsed.
+			return HSSFFormulaParser.parse(cell.getCellFormula(), _uBook);
+		}
+		HSSFCell hCell = (HSSFCell) cell;
+		FormulaRecord fr = ((FormulaRecordAggregate) hCell.getCellValueRecord()).getFormulaRecord();
+		return fr.getParsedExpression();
 	}
 
 	private static final class Name implements EvaluationName {

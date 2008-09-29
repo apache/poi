@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -42,12 +41,8 @@ public final class TestFormulas extends TestCase {
     /**
      * Add 1+1 -- WHoohoo!
      */
+    public void testBasicAddIntegers() {
 
-    public void testBasicAddIntegers()
-    throws Exception {
-
-        File file = TempFile.createTempFile("testFormula",".xls");
-        FileOutputStream out    = new FileOutputStream(file);
         HSSFWorkbook     wb     = new HSSFWorkbook();
         HSSFSheet        s      = wb.createSheet();
         HSSFRow          r      = null;
@@ -58,95 +53,78 @@ public final class TestFormulas extends TestCase {
         c = r.createCell(1);
         c.setCellFormula(1 + "+" + 1);
 
-        wb.write(out);
-        out.close();
-
-        FileInputStream in = new FileInputStream(file);
-        wb = new HSSFWorkbook(in);
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         s  = wb.getSheetAt(0);
         r  = s.getRow(1);
         c  = r.getCell(1);
 
         assertTrue("Formula is as expected",("1+1".equals(c.getCellFormula())));
-        in.close();
     }
 
     /**
      * Add various integers
      */
-
-    public void testAddIntegers()
-    throws Exception {
+    public void testAddIntegers() {
         binomialOperator("+");
     }
 
     /**
      * Multiply various integers
      */
-
-    public void testMultplyIntegers()
-    throws Exception {
+    public void testMultplyIntegers() {
         binomialOperator("*");
     }
 
     /**
      * Subtract various integers
      */
-    public void testSubtractIntegers()
-    throws Exception {
+    public void testSubtractIntegers() {
         binomialOperator("-");
     }
 
     /**
      * Subtract various integers
      */
-    public void testDivideIntegers()
-    throws Exception {
+    public void testDivideIntegers() {
         binomialOperator("/");
     }
 
     /**
      * Exponentialize various integers;
      */
-    public void testPowerIntegers()
-    throws Exception {
+    public void testPowerIntegers() {
         binomialOperator("^");
     }
 
     /**
-     * Concatinate two numbers 1&2 = 12
+     * Concatenate two numbers 1&2 = 12
      */
-    public void testConcatIntegers()
-    throws Exception {
+    public void testConcatIntegers() {
         binomialOperator("&");
     }
 
     /**
      * tests 1*2+3*4
      */
-    public void testOrderOfOperationsMultiply()
-    throws Exception {
+    public void testOrderOfOperationsMultiply() {
         orderTest("1*2+3*4");
     }
 
     /**
      * tests 1*2+3^4
      */
-    public void testOrderOfOperationsPower()
-    throws Exception {
+    public void testOrderOfOperationsPower() {
         orderTest("1*2+3^4");
     }
 
     /**
      * Tests that parenthesis are obeyed
      */
-    public void testParenthesis()
-    throws Exception {
+    public void testParenthesis() {
         orderTest("(1*3)+2+(1+2)*(3^4)^5");
     }
 
-    public void testReferencesOpr()
-    throws Exception {
+    public void testReferencesOpr() {
         String[] operation = new String[] {
                             "+", "-", "*", "/", "^", "&"
                            };
@@ -159,16 +137,12 @@ public final class TestFormulas extends TestCase {
      * Tests creating a file with floating point in a formula.
      *
      */
-    public void testFloat()
-    throws Exception {
+    public void testFloat() {
         floatTest("*");
         floatTest("/");
     }
 
-    private void floatTest(String operator)
-    throws Exception {
-        File file = TempFile.createTempFile("testFormulaFloat",".xls");
-        FileOutputStream out    = new FileOutputStream(file);
+    private static void floatTest(String operator) {
         HSSFWorkbook     wb     = new HSSFWorkbook();
         HSSFSheet        s      = wb.createSheet();
         HSSFRow          r      = null;
@@ -180,10 +154,10 @@ public final class TestFormulas extends TestCase {
         c = r.createCell(1);
         c.setCellFormula(""+Float.MIN_VALUE + operator + Float.MIN_VALUE);
 
-       for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2) ) {
+       for (int x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2) ) {
             r = s.createRow(x);
 
-            for (short y = 1; y < 256 && y > 0; y= (short) (y +2)) {
+            for (int y = 1; y < 256 && y > 0; y= (short) (y +2)) {
 
                 c = r.createCell(y);
                 c.setCellFormula("" + x+"."+y + operator + y +"."+x);
@@ -196,69 +170,48 @@ public final class TestFormulas extends TestCase {
             c = r.createCell(0);
             c.setCellFormula("" + Float.MAX_VALUE + operator + Float.MAX_VALUE);
         }
-        wb.write(out);
-        out.close();
-        assertTrue("file exists",file.exists());
-        out=null;wb=null;  //otherwise we get out of memory error!
-        floatVerify(operator,file);
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
 
+        floatVerify(operator, wb);
     }
 
-            private void floatVerify(String operator, File file)
-    throws Exception {
+    private static void floatVerify(String operator, HSSFWorkbook wb) {
 
-        FileInputStream  in     = new FileInputStream(file);
-        HSSFWorkbook     wb     = new HSSFWorkbook(in);
         HSSFSheet        s      = wb.getSheetAt(0);
-        HSSFRow          r      = null;
-        HSSFCell         c      = null;
 
-        // dont know how to check correct result .. for the moment, we just verify that the file can be read.
+        // don't know how to check correct result .. for the moment, we just verify that the file can be read.
 
-        for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
-            r = s.getRow(x);
+        for (int x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
+        	HSSFRow r = s.getRow(x);
 
-            for (short y = 1; y < 256 && y > 0; y=(short)(y+2)) {
+            for (int y = 1; y < 256 && y > 0; y=(short)(y+2)) {
 
-                c = r.getCell(y);
+            	HSSFCell c = r.getCell(y);
                 assertTrue("got a formula",c.getCellFormula()!=null);
 
                 assertTrue("loop Formula is as expected "+x+"."+y+operator+y+"."+x+"!="+c.getCellFormula(),(
                 (""+x+"."+y+operator+y+"."+x).equals(c.getCellFormula()) ));
-
             }
         }
-
-       in.close();
-       assertTrue("file exists",file.exists());
     }
 
-    public void testAreaSum()
-    throws Exception {
+    public void testAreaSum() {
         areaFunctionTest("SUM");
     }
 
-    public void testAreaAverage()
-    throws Exception {
+    public void testAreaAverage() {
         areaFunctionTest("AVERAGE");
     }
 
-    public void testRefArraySum()
-    throws Exception {
+    public void testRefArraySum() {
         refArrayFunctionTest("SUM");
     }
 
-    public void testAreaArraySum()
-    throws Exception {
+    public void testAreaArraySum() {
         refAreaArrayFunctionTest("SUM");
     }
 
-
-
-    private void operationRefTest(String operator)
-    throws Exception {
-        File file = TempFile.createTempFile("testFormula",".xls");
-        FileOutputStream out    = new FileOutputStream(file);
+    private static void operationRefTest(String operator) {
         HSSFWorkbook     wb     = new HSSFWorkbook();
         HSSFSheet        s      = wb.createSheet();
         HSSFRow          r      = null;
@@ -317,21 +270,16 @@ public final class TestFormulas extends TestCase {
             c.setCellFormula("" + "B1" + operator + "IV255");
         }
 
-        wb.write(out);
-        out.close();
-        assertTrue("file exists",file.exists());
-        operationalRefVerify(operator,file);
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        operationalRefVerify(operator, wb);
     }
 
     /**
      * Opens the sheet we wrote out by binomialOperator and makes sure the formulas
      * all match what we expect (x operator y)
      */
-    private void operationalRefVerify(String operator, File file)
-    throws Exception {
+    private static void operationalRefVerify(String operator, HSSFWorkbook wb) {
 
-        FileInputStream  in     = new FileInputStream(file);
-        HSSFWorkbook     wb     = new HSSFWorkbook(in);
         HSSFSheet        s      = wb.getSheetAt(0);
         HSSFRow          r      = null;
         HSSFCell         c      = null;
@@ -345,46 +293,43 @@ public final class TestFormulas extends TestCase {
         ));
 
 
-        for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
+        for (int x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
             r = s.getRow(x);
 
-            for (short y = 1; y < 256 && y > 0; y++) {
+            for (int y = 1; y < 256 && y > 0; y++) {
 
-                String ref=null;
-                String ref2=null;
-                short refx1=0;
-                short refy1=0;
-                short refx2=0;
-                short refy2=0;
+                int refx1;
+                int refy1;
+                int refx2;
+                int refy2;
                 if (x +50 < Short.MAX_VALUE) {
-                    refx1=(short)(x+50);
-                    refx2=(short)(x+46);
+                    refx1=x+50;
+                    refx2=x+46;
                 } else {
-                    refx1=(short)(x-4);
-                    refx2=(short)(x-3);
+                    refx1=x-4;
+                    refx2=x-3;
                 }
 
                 if (y+50 < 255) {
-                    refy1=(short)(y+50);
-                    refy2=(short)(y+49);
+                    refy1=y+50;
+                    refy2=y+49;
                 } else {
-                    refy1=(short)(y-4);
-                    refy2=(short)(y-3);
+                    refy1=y-4;
+                    refy2=y-3;
                 }
 
                 c = r.getCell(y);
                 CellReference cr= new CellReference(refx1, refy1, false, false);
+                String ref=cr.formatAsString();
                 ref=cr.formatAsString();
                 cr=new CellReference(refx2,refy2, false, false);
-                ref2=cr.formatAsString();
+                String ref2=cr.formatAsString();
 
 
                 assertTrue("loop Formula is as expected "+ref+operator+ref2+"!="+c.getCellFormula(),(
                 (""+ref+operator+ref2).equals(c.getCellFormula())
                                                          )
                 );
-
-
             }
         }
 
@@ -392,13 +337,7 @@ public final class TestFormulas extends TestCase {
         r = s.getRow(0);
         c = r.getCell(0);
 
-        assertTrue("maxval Formula is as expected",(
-        ("B1"+operator+"IV255").equals(c.getCellFormula())
-                                                   )
-        );
-
-        in.close();
-        assertTrue("file exists",file.exists());
+        assertEquals("B1"+operator+"IV255", c.getCellFormula());
     }
 
 
@@ -406,10 +345,7 @@ public final class TestFormulas extends TestCase {
     /**
      * tests order wrting out == order writing in for a given formula
      */
-    private void orderTest(String formula)
-    throws Exception {
-        File file = TempFile.createTempFile("testFormula",".xls");
-        FileOutputStream out    = new FileOutputStream(file);
+    private static void orderTest(String formula) {
         HSSFWorkbook     wb     = new HSSFWorkbook();
         HSSFSheet        s      = wb.createSheet();
         HSSFRow          r      = null;
@@ -420,12 +356,7 @@ public final class TestFormulas extends TestCase {
         c = r.createCell(1);
         c.setCellFormula(formula);
 
-        wb.write(out);
-        out.close();
-        assertTrue("file exists",file.exists());
-
-        FileInputStream  in     = new FileInputStream(file);
-        wb     = new HSSFWorkbook(in);
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         s      = wb.getSheetAt(0);
 
         //get our minimum values
@@ -434,8 +365,6 @@ public final class TestFormulas extends TestCase {
         assertTrue("minval Formula is as expected",
                    formula.equals(c.getCellFormula())
                   );
-
-        in.close();
     }
 
     /**
@@ -443,10 +372,7 @@ public final class TestFormulas extends TestCase {
      * huge set of x operator y formulas.  Next we call binomialVerify and verify
      * that they are all how we expect.
      */
-    private void binomialOperator(String operator)
-    throws Exception {
-        File file = TempFile.createTempFile("testFormula",".xls");
-        FileOutputStream out    = new FileOutputStream(file);
+    private static void binomialOperator(String operator) {
         HSSFWorkbook     wb     = new HSSFWorkbook();
         HSSFSheet        s      = wb.createSheet();
         HSSFRow          r      = null;
@@ -474,23 +400,15 @@ public final class TestFormulas extends TestCase {
             c = r.createCell(0);
             c.setCellFormula("" + Short.MAX_VALUE + operator + Short.MAX_VALUE);
         }
-
-        wb.write(out);
-        out.close();
-        assertTrue("file exists",file.exists());
-
-        binomialVerify(operator,file);
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        binomialVerify(operator, wb);
     }
 
     /**
      * Opens the sheet we wrote out by binomialOperator and makes sure the formulas
      * all match what we expect (x operator y)
      */
-    private void binomialVerify(String operator, File file)
-    throws Exception {
-
-        FileInputStream  in     = new FileInputStream(file);
-        HSSFWorkbook     wb     = new HSSFWorkbook(in);
+    private static void binomialVerify(String operator, HSSFWorkbook wb) {
         HSSFSheet        s      = wb.getSheetAt(0);
         HSSFRow          r      = null;
         HSSFCell         c      = null;
@@ -502,10 +420,10 @@ public final class TestFormulas extends TestCase {
         ( ("1"+operator+"1").equals(c.getCellFormula())
         ));
 
-        for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
+        for (int x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
             r = s.getRow(x);
 
-            for (short y = 1; y < 256 && y > 0; y++) {
+            for (int y = 1; y < 256 && y > 0; y++) {
 
                 c = r.getCell(y);
 
@@ -513,8 +431,6 @@ public final class TestFormulas extends TestCase {
                 (""+x+operator+y).equals(c.getCellFormula())
                                                          )
                 );
-
-
             }
         }
 
@@ -522,90 +438,62 @@ public final class TestFormulas extends TestCase {
         r = s.getRow(0);
         c = r.getCell(0);
 
-
         assertTrue("maxval Formula is as expected",(
         (""+Short.MAX_VALUE+operator+Short.MAX_VALUE).equals(c.getCellFormula())
                                                    )
         );
-
-        in.close();
-        assertTrue("file exists",file.exists());
-    }
-
-
-
-    /**
-     * Writes a function then tests to see if its correct
-     *
-     */
-    public void areaFunctionTest(String function)
-    throws Exception {
-
-            File file = TempFile.createTempFile("testFormulaAreaFunction"+function,".xls");
-            FileOutputStream out    = new FileOutputStream(file);
-            HSSFWorkbook     wb     = new HSSFWorkbook();
-            HSSFSheet        s      = wb.createSheet();
-            HSSFRow          r      = null;
-            HSSFCell         c      = null;
-
-
-            r = s.createRow(0);
-
-            c = r.createCell(0);
-            c.setCellFormula(function+"(A2:A3)");
-
-
-            wb.write(out);
-            out.close();
-            assertTrue("file exists",file.exists());
-
-            FileInputStream in = new FileInputStream(file);
-            wb = new HSSFWorkbook(in);
-            s = wb.getSheetAt(0);
-            r = s.getRow(0);
-            c = r.getCell(0);
-
-            assertTrue("function ="+function+"(A2:A3)",
-                        ( (function+"(A2:A3)").equals((function+"(A2:A3)")) )
-                      );
-            in.close();
     }
 
     /**
      * Writes a function then tests to see if its correct
-     *
      */
-    public void refArrayFunctionTest(String function)
-    throws Exception {
+    public static void areaFunctionTest(String function) {
 
-            File file = TempFile.createTempFile("testFormulaArrayFunction"+function,".xls");
-            FileOutputStream out    = new FileOutputStream(file);
-            HSSFWorkbook     wb     = new HSSFWorkbook();
-            HSSFSheet        s      = wb.createSheet();
-            HSSFRow          r      = null;
-            HSSFCell         c      = null;
+        HSSFWorkbook     wb     = new HSSFWorkbook();
+        HSSFSheet        s      = wb.createSheet();
+        HSSFRow          r      = null;
+        HSSFCell         c      = null;
 
 
-            r = s.createRow(0);
+        r = s.createRow(0);
 
-            c = r.createCell(0);
-            c.setCellFormula(function+"(A2,A3)");
+        c = r.createCell(0);
+        c.setCellFormula(function+"(A2:A3)");
+
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        s = wb.getSheetAt(0);
+        r = s.getRow(0);
+        c = r.getCell(0);
+
+        assertTrue("function ="+function+"(A2:A3)",
+                    ( (function+"(A2:A3)").equals((function+"(A2:A3)")) )
+                  );
+    }
+
+    /**
+     * Writes a function then tests to see if its correct
+     */
+    public void refArrayFunctionTest(String function) {
+
+        HSSFWorkbook     wb     = new HSSFWorkbook();
+        HSSFSheet        s      = wb.createSheet();
+        HSSFRow          r      = null;
+        HSSFCell         c      = null;
 
 
-            wb.write(out);
-            out.close();
-            assertTrue("file exists",file.exists());
+        r = s.createRow(0);
 
-            FileInputStream in = new FileInputStream(file);
-            wb = new HSSFWorkbook(in);
-            s = wb.getSheetAt(0);
-            r = s.getRow(0);
-            c = r.getCell(0);
+        c = r.createCell(0);
+        c.setCellFormula(function+"(A2,A3)");
 
-            assertTrue("function ="+function+"(A2,A3)",
-                        ( (function+"(A2,A3)").equals(c.getCellFormula()) )
-                      );
-            in.close();
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        s = wb.getSheetAt(0);
+        r = s.getRow(0);
+        c = r.getCell(0);
+
+        assertTrue("function ="+function+"(A2,A3)",
+                    ( (function+"(A2,A3)").equals(c.getCellFormula()) )
+                  );
     }
 
 
@@ -613,294 +501,224 @@ public final class TestFormulas extends TestCase {
      * Writes a function then tests to see if its correct
      *
      */
-    public void refAreaArrayFunctionTest(String function)
-    throws Exception {
+    public void refAreaArrayFunctionTest(String function) {
 
-            File file = TempFile.createTempFile("testFormulaAreaArrayFunction"+function,".xls");
-            FileOutputStream out    = new FileOutputStream(file);
-            HSSFWorkbook     wb     = new HSSFWorkbook();
-            HSSFSheet        s      = wb.createSheet();
-            HSSFRow          r      = null;
-            HSSFCell         c      = null;
+        HSSFWorkbook     wb     = new HSSFWorkbook();
+        HSSFSheet        s      = wb.createSheet();
+        HSSFRow          r      = null;
+        HSSFCell         c      = null;
 
 
-            r = s.createRow(0);
+        r = s.createRow(0);
 
-            c = r.createCell(0);
-            c.setCellFormula(function+"(A2:A4,B2:B4)");
-            c=r.createCell(1);
-            c.setCellFormula(function+"($A$2:$A4,B$2:B4)");
+        c = r.createCell(0);
+        c.setCellFormula(function+"(A2:A4,B2:B4)");
+        c=r.createCell(1);
+        c.setCellFormula(function+"($A$2:$A4,B$2:B4)");
 
-            wb.write(out);
-            out.close();
-            assertTrue("file exists",file.exists());
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        s = wb.getSheetAt(0);
+        r = s.getRow(0);
+        c = r.getCell(0);
 
-            FileInputStream in = new FileInputStream(file);
-            wb = new HSSFWorkbook(in);
-            s = wb.getSheetAt(0);
-            r = s.getRow(0);
-            c = r.getCell(0);
+        assertTrue("function ="+function+"(A2:A4,B2:B4)",
+                    ( (function+"(A2:A4,B2:B4)").equals(c.getCellFormula()) )
+                  );
 
-            assertTrue("function ="+function+"(A2:A4,B2:B4)",
-                        ( (function+"(A2:A4,B2:B4)").equals(c.getCellFormula()) )
-                      );
-
-            c=r.getCell(1);
-             assertTrue("function ="+function+"($A$2:$A4,B$2:B4)",
-                        ( (function+"($A$2:$A4,B$2:B4)").equals(c.getCellFormula()) )
-                      );
-            in.close();
+        c=r.getCell(1);
+        assertTrue("function ="+function+"($A$2:$A4,B$2:B4)",
+                    ( (function+"($A$2:$A4,B$2:B4)").equals(c.getCellFormula()) )
+                  );
     }
 
 
 
-    public void testAbsRefs() throws Exception {
-            File file = TempFile.createTempFile("testFormulaAbsRef",".xls");
-            FileOutputStream out    = new FileOutputStream(file);
-            HSSFWorkbook     wb     = new HSSFWorkbook();
-            HSSFSheet        s      = wb.createSheet();
-            HSSFRow          r      = null;
-            HSSFCell         c      = null;
+    public void testAbsRefs() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet s = wb.createSheet();
+		HSSFRow r;
+		HSSFCell c;
 
+        r = s.createRow(0);
+        c = r.createCell(0);
+        c.setCellFormula("A3+A2");
+        c=r.createCell(1);
+        c.setCellFormula("$A3+$A2");
+        c=r.createCell(2);
+        c.setCellFormula("A$3+A$2");
+        c=r.createCell(3);
+        c.setCellFormula("$A$3+$A$2");
+        c=r.createCell(4);
+        c.setCellFormula("SUM($A$3,$A$2)");
 
-            r = s.createRow(0);
-
-            c = r.createCell(0);
-            c.setCellFormula("A3+A2");
-            c=r.createCell(1);
-            c.setCellFormula("$A3+$A2");
-            c=r.createCell(2);
-            c.setCellFormula("A$3+A$2");
-            c=r.createCell(3);
-            c.setCellFormula("$A$3+$A$2");
-            c=r.createCell(4);
-            c.setCellFormula("SUM($A$3,$A$2)");
-
-            wb.write(out);
-            out.close();
-            assertTrue("file exists",file.exists());
-
-            FileInputStream in = new FileInputStream(file);
-            wb = new HSSFWorkbook(in);
-            s = wb.getSheetAt(0);
-            r = s.getRow(0);
-            c = r.getCell(0);
-            assertTrue("A3+A2", ("A3+A2").equals(c.getCellFormula()));
-             c = r.getCell(1);
-            assertTrue("$A3+$A2", ("$A3+$A2").equals(c.getCellFormula()));
-             c = r.getCell(2);
-            assertTrue("A$3+A$2", ("A$3+A$2").equals(c.getCellFormula()));
-             c = r.getCell(3);
-            assertTrue("$A$3+$A$2", ("$A$3+$A$2").equals(c.getCellFormula()));
-             c = r.getCell(4);
-            assertTrue("SUM($A$3,$A$2)", ("SUM($A$3,$A$2)").equals(c.getCellFormula()));
-            in.close();
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        s = wb.getSheetAt(0);
+        r = s.getRow(0);
+        c = r.getCell(0);
+        assertTrue("A3+A2", ("A3+A2").equals(c.getCellFormula()));
+         c = r.getCell(1);
+        assertTrue("$A3+$A2", ("$A3+$A2").equals(c.getCellFormula()));
+         c = r.getCell(2);
+        assertTrue("A$3+A$2", ("A$3+A$2").equals(c.getCellFormula()));
+         c = r.getCell(3);
+        assertTrue("$A$3+$A$2", ("$A$3+$A$2").equals(c.getCellFormula()));
+         c = r.getCell(4);
+        assertTrue("SUM($A$3,$A$2)", ("SUM($A$3,$A$2)").equals(c.getCellFormula()));
     }
 
-    public void testSheetFunctions()
-        throws IOException
-    {
-            File file = TempFile.createTempFile("testSheetFormula",".xls");
-            FileOutputStream out    = new FileOutputStream(file);
-            HSSFWorkbook     wb     = new HSSFWorkbook();
-            HSSFSheet        s      = wb.createSheet("A");
-            HSSFRow          r      = null;
-            HSSFCell         c      = null;
-            r = s.createRow(0);
-            c = r.createCell(0);c.setCellValue(1);
-            c = r.createCell(1);c.setCellValue(2);
+    public void testSheetFunctions() {
+        HSSFWorkbook     wb     = new HSSFWorkbook();
+        HSSFSheet        s      = wb.createSheet("A");
+        HSSFRow          r      = null;
+        HSSFCell         c      = null;
+        r = s.createRow(0);
+        c = r.createCell(0);c.setCellValue(1);
+        c = r.createCell(1);c.setCellValue(2);
 
-            s      = wb.createSheet("B");
-            r = s.createRow(0);
-            c=r.createCell(0); c.setCellFormula("AVERAGE(A!A1:B1)");
-            c=r.createCell(1); c.setCellFormula("A!A1+A!B1");
-            c=r.createCell(2); c.setCellFormula("A!$A$1+A!$B1");
-            wb.write(out);
-            out.close();
+        s      = wb.createSheet("B");
+        r = s.createRow(0);
+        c=r.createCell(0); c.setCellFormula("AVERAGE(A!A1:B1)");
+        c=r.createCell(1); c.setCellFormula("A!A1+A!B1");
+        c=r.createCell(2); c.setCellFormula("A!$A$1+A!$B1");
 
-             assertTrue("file exists",file.exists());
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
 
-            FileInputStream in = new FileInputStream(file);
-            wb = new HSSFWorkbook(in);
-            s = wb.getSheet("B");
-            r = s.getRow(0);
-            c = r.getCell(0);
-            assertTrue("expected: AVERAGE(A!A1:B1) got: "+c.getCellFormula(), ("AVERAGE(A!A1:B1)").equals(c.getCellFormula()));
-            c = r.getCell(1);
-            assertTrue("expected: A!A1+A!B1 got: "+c.getCellFormula(), ("A!A1+A!B1").equals(c.getCellFormula()));
-            in.close();
+        s = wb.getSheet("B");
+        r = s.getRow(0);
+        c = r.getCell(0);
+        assertTrue("expected: AVERAGE(A!A1:B1) got: "+c.getCellFormula(), ("AVERAGE(A!A1:B1)").equals(c.getCellFormula()));
+        c = r.getCell(1);
+        assertTrue("expected: A!A1+A!B1 got: "+c.getCellFormula(), ("A!A1+A!B1").equals(c.getCellFormula()));
     }
 
     public void testRVAoperands() throws Exception {
-         File file = TempFile.createTempFile("testFormulaRVA",".xls");
-            FileOutputStream out    = new FileOutputStream(file);
-            HSSFWorkbook     wb     = new HSSFWorkbook();
-            HSSFSheet        s      = wb.createSheet();
-            HSSFRow          r      = null;
-            HSSFCell         c      = null;
+        File file = TempFile.createTempFile("testFormulaRVA",".xls");
+        FileOutputStream out    = new FileOutputStream(file);
+        HSSFWorkbook     wb     = new HSSFWorkbook();
+        HSSFSheet        s      = wb.createSheet();
+        HSSFRow          r      = null;
+        HSSFCell         c      = null;
 
 
-            r = s.createRow(0);
+        r = s.createRow(0);
 
-            c = r.createCell(0);
-            c.setCellFormula("A3+A2");
-            c=r.createCell(1);
-            c.setCellFormula("AVERAGE(A3,A2)");
-            c=r.createCell(2);
-            c.setCellFormula("ROW(A3)");
-            c=r.createCell(3);
-            c.setCellFormula("AVERAGE(A2:A3)");
-            c=r.createCell(4);
-            c.setCellFormula("POWER(A2,A3)");
-            c=r.createCell(5);
-            c.setCellFormula("SIN(A2)");
+        c = r.createCell(0);
+        c.setCellFormula("A3+A2");
+        c=r.createCell(1);
+        c.setCellFormula("AVERAGE(A3,A2)");
+        c=r.createCell(2);
+        c.setCellFormula("ROW(A3)");
+        c=r.createCell(3);
+        c.setCellFormula("AVERAGE(A2:A3)");
+        c=r.createCell(4);
+        c.setCellFormula("POWER(A2,A3)");
+        c=r.createCell(5);
+        c.setCellFormula("SIN(A2)");
 
-            c=r.createCell(6);
-            c.setCellFormula("SUM(A2:A3)");
+        c=r.createCell(6);
+        c.setCellFormula("SUM(A2:A3)");
 
-            c=r.createCell(7);
-            c.setCellFormula("SUM(A2,A3)");
+        c=r.createCell(7);
+        c.setCellFormula("SUM(A2,A3)");
 
-            r = s.createRow(1);c=r.createCell(0); c.setCellValue(2.0);
-             r = s.createRow(2);c=r.createCell(0); c.setCellValue(3.0);
+        r = s.createRow(1);c=r.createCell(0); c.setCellValue(2.0);
+         r = s.createRow(2);c=r.createCell(0); c.setCellValue(3.0);
 
-            wb.write(out);
-            out.close();
-            assertTrue("file exists",file.exists());
+        wb.write(out);
+        out.close();
+        assertTrue("file exists",file.exists());
     }
 
-    public void testStringFormulas()
-        throws IOException
-    {
-            File file = TempFile.createTempFile("testStringFormula",".xls");
-            FileOutputStream out    = new FileOutputStream(file);
-            HSSFWorkbook     wb     = new HSSFWorkbook();
-            HSSFSheet        s      = wb.createSheet("A");
-            HSSFRow          r      = null;
-            HSSFCell         c      = null;
-            r = s.createRow(0);
-            c=r.createCell(1); c.setCellFormula("UPPER(\"abc\")");
-            c=r.createCell(2); c.setCellFormula("LOWER(\"ABC\")");
-            c=r.createCell(3); c.setCellFormula("CONCATENATE(\" my \",\" name \")");
+    public void testStringFormulas() {
+        HSSFWorkbook     wb     = new HSSFWorkbook();
+        HSSFSheet        s      = wb.createSheet("A");
+        HSSFRow          r      = null;
+        HSSFCell         c      = null;
+        r = s.createRow(0);
+        c=r.createCell(1); c.setCellFormula("UPPER(\"abc\")");
+        c=r.createCell(2); c.setCellFormula("LOWER(\"ABC\")");
+        c=r.createCell(3); c.setCellFormula("CONCATENATE(\" my \",\" name \")");
 
-            wb.write(out);
-            out.close();
+        HSSFTestDataSamples.writeOutAndReadBack(wb);
 
-            wb = openSample("StringFormulas.xls");
-            s = wb.getSheetAt(0);
-            r = s.getRow(0);
-            c = r.getCell(0);
-            assertTrue("expected: UPPER(\"xyz\") got "+c.getCellFormula(), ("UPPER(\"xyz\")").equals(c.getCellFormula()));
-            //c = r.getCell((short)1);
-            //assertTrue("expected: A!A1+A!B1 got: "+c.getCellFormula(), ("A!A1+A!B1").equals(c.getCellFormula()));
+        wb = openSample("StringFormulas.xls");
+        s = wb.getSheetAt(0);
+        r = s.getRow(0);
+        c = r.getCell(0);
+        assertEquals("UPPER(\"xyz\")", c.getCellFormula());
     }
 
+    public void testLogicalFormulas() {
 
+        HSSFWorkbook     wb     = new HSSFWorkbook();
+        HSSFSheet        s      = wb.createSheet("A");
+        HSSFRow          r      = null;
+        HSSFCell         c      = null;
+        r = s.createRow(0);
+        c=r.createCell(1); c.setCellFormula("IF(A1<A2,B1,B2)");
 
-    public void testLogicalFormulas()
-        throws IOException
-    {
-
-            File file = TempFile.createTempFile("testLogicalFormula",".xls");
-            FileOutputStream out    = new FileOutputStream(file);
-            HSSFWorkbook     wb     = new HSSFWorkbook();
-            HSSFSheet        s      = wb.createSheet("A");
-            HSSFRow          r      = null;
-            HSSFCell         c      = null;
-            r = s.createRow(0);
-            c=r.createCell(1); c.setCellFormula("IF(A1<A2,B1,B2)");
-
-
-            wb.write(out);
-            out.close();
-
-             assertTrue("file exists",file.exists());
-
-            FileInputStream in = new FileInputStream(file);
-            wb = new HSSFWorkbook(in);
-            s = wb.getSheetAt(0);
-            r = s.getRow(0);
-            c = r.getCell(1);
-            assertEquals("Formula in cell 1 ","IF(A1<A2,B1,B2)",c.getCellFormula());
-            in.close();
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        s = wb.getSheetAt(0);
+        r = s.getRow(0);
+        c = r.getCell(1);
+        assertEquals("Formula in cell 1 ","IF(A1<A2,B1,B2)",c.getCellFormula());
     }
 
-    public void testDateFormulas()
-        throws IOException
-    {
-            File file = TempFile.createTempFile("testDateFormula",".xls");
-            FileOutputStream out    = new FileOutputStream(file);
-            HSSFWorkbook     wb     = new HSSFWorkbook();
-            HSSFSheet        s      = wb.createSheet("testSheet1");
-            HSSFRow          r      = null;
-            HSSFCell         c      = null;
+    public void testDateFormulas() {
+        HSSFWorkbook     wb     = new HSSFWorkbook();
+        HSSFSheet        s      = wb.createSheet("testSheet1");
+        HSSFRow          r      = null;
+        HSSFCell         c      = null;
 
-            r = s.createRow(0 );
-            c = r.createCell(0 );
+        r = s.createRow(0 );
+        c = r.createCell(0 );
 
-            HSSFCellStyle cellStyle = wb.createCellStyle();
-            cellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));
-            c.setCellValue(new Date());
-            c.setCellStyle(cellStyle);
+        HSSFCellStyle cellStyle = wb.createCellStyle();
+        cellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));
+        c.setCellValue(new Date());
+        c.setCellStyle(cellStyle);
 
-           // assertEquals("Checking hour = " + hour, date.getTime().getTime(),
-           //              HSSFDateUtil.getJavaDate(excelDate).getTime());
+       // assertEquals("Checking hour = " + hour, date.getTime().getTime(),
+       //              HSSFDateUtil.getJavaDate(excelDate).getTime());
 
-            for (int k=1; k < 100; k++) {
-              r=s.createRow(k);
-              c=r.createCell(0);
-              c.setCellFormula("A"+(k)+"+1");
-              c.setCellStyle(cellStyle);
-            }
+        for (int k=1; k < 100; k++) {
+          r=s.createRow(k);
+          c=r.createCell(0);
+          c.setCellFormula("A"+(k)+"+1");
+          c.setCellStyle(cellStyle);
+        }
 
-            wb.write(out);
-            out.close();
-
-            assertTrue("file exists",file.exists());
-
+        HSSFTestDataSamples.writeOutAndReadBack(wb);
     }
 
 
-    public void testIfFormulas()
-        throws IOException
-    {
-            File file = TempFile.createTempFile("testIfFormula",".xls");
-            FileOutputStream out    = new FileOutputStream(file);
-            HSSFWorkbook     wb     = new HSSFWorkbook();
-            HSSFSheet        s      = wb.createSheet("testSheet1");
-            HSSFRow          r      = null;
-            HSSFCell         c      = null;
-            r = s.createRow(0);
-            c=r.createCell(1); c.setCellValue(1);
-            c=r.createCell(2); c.setCellValue(2);
-            c=r.createCell(3); c.setCellFormula("MAX(A1:B1)");
-            c=r.createCell(4); c.setCellFormula("IF(A1=D1,\"A1\",\"B1\")");
+    public void testIfFormulas() {
+        HSSFWorkbook     wb     = new HSSFWorkbook();
+        HSSFSheet        s      = wb.createSheet("testSheet1");
+        HSSFRow          r      = null;
+        HSSFCell         c      = null;
+        r = s.createRow(0);
+        c=r.createCell(1); c.setCellValue(1);
+        c=r.createCell(2); c.setCellValue(2);
+        c=r.createCell(3); c.setCellFormula("MAX(A1:B1)");
+        c=r.createCell(4); c.setCellFormula("IF(A1=D1,\"A1\",\"B1\")");
 
-            wb.write(out);
-            out.close();
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        s = wb.getSheetAt(0);
+        r = s.getRow(0);
+        c = r.getCell(4);
 
-            assertTrue("file exists",file.exists());
+        assertTrue("expected: IF(A1=D1,\"A1\",\"B1\") got "+c.getCellFormula(), ("IF(A1=D1,\"A1\",\"B1\")").equals(c.getCellFormula()));
 
-            FileInputStream in = new FileInputStream(file);
-            wb = new HSSFWorkbook(in);
-            s = wb.getSheetAt(0);
-            r = s.getRow(0);
-            c = r.getCell(4);
+        wb = openSample("IfFormulaTest.xls");
+        s = wb.getSheetAt(0);
+        r = s.getRow(3);
+        c = r.getCell(0);
+        assertTrue("expected: IF(A3=A1,\"A1\",\"A2\") got "+c.getCellFormula(), ("IF(A3=A1,\"A1\",\"A2\")").equals(c.getCellFormula()));
+        //c = r.getCell((short)1);
+        //assertTrue("expected: A!A1+A!B1 got: "+c.getCellFormula(), ("A!A1+A!B1").equals(c.getCellFormula()));
 
-            assertTrue("expected: IF(A1=D1,\"A1\",\"B1\") got "+c.getCellFormula(), ("IF(A1=D1,\"A1\",\"B1\")").equals(c.getCellFormula()));
-            in.close();
 
-            wb = openSample("IfFormulaTest.xls");
-            s = wb.getSheetAt(0);
-            r = s.getRow(3);
-            c = r.getCell(0);
-            assertTrue("expected: IF(A3=A1,\"A1\",\"A2\") got "+c.getCellFormula(), ("IF(A3=A1,\"A1\",\"A2\")").equals(c.getCellFormula()));
-            //c = r.getCell((short)1);
-            //assertTrue("expected: A!A1+A!B1 got: "+c.getCellFormula(), ("A!A1+A!B1").equals(c.getCellFormula()));
-            in.close();
-
-        File simpleIf = TempFile.createTempFile("testSimpleIfFormulaWrite",".xls");
-        out    = new FileOutputStream(simpleIf);
         wb     = new HSSFWorkbook();
         s      = wb.createSheet("testSheet1");
         r      = null;
@@ -908,14 +726,8 @@ public final class TestFormulas extends TestCase {
         r = s.createRow(0);
         c=r.createCell(0); c.setCellFormula("IF(1=1,0,1)");
 
-        wb.write(out);
-        out.close();
-        assertTrue("file exists", simpleIf.exists());
+        HSSFTestDataSamples.writeOutAndReadBack(wb);
 
-        assertTrue("length of simpleIf file is zero", (simpleIf.length()>0));
-
-        File nestedIf = TempFile.createTempFile("testNestedIfFormula",".xls");
-        out    = new FileOutputStream(nestedIf);
         wb     = new HSSFWorkbook();
         s      = wb.createSheet("testSheet1");
         r      = null;
@@ -939,17 +751,10 @@ public final class TestFormulas extends TestCase {
 
         formulaCell.setCellFormula("IF(A1=B1,AVERAGE(A1:B1),AVERAGE(A2:B2))");
 
-
-        wb.write(out);
-        out.close();
-        assertTrue("file exists", nestedIf.exists());
-
-        assertTrue("length of nestedIf file is zero", (nestedIf.length()>0));
+        HSSFTestDataSamples.writeOutAndReadBack(wb);
     }
 
-    public void testSumIf()
-        throws IOException
-    {
+    public void testSumIf() {
         String function ="SUMIF(A1:A5,\">4000\",B1:B5)";
 
         HSSFWorkbook wb = openSample("sumifformula.xls");
@@ -960,40 +765,34 @@ public final class TestFormulas extends TestCase {
         assertEquals(function, c.getCellFormula());
 
 
-        File file = TempFile.createTempFile("testSumIfFormula",".xls");
-        FileOutputStream out    = new FileOutputStream(file);
         wb     = new HSSFWorkbook();
         s      = wb.createSheet();
 
         r = s.createRow(0);
-        c=r.createCell(0); c.setCellValue((double)1000);
-        c=r.createCell(1); c.setCellValue((double)1);
+        c=r.createCell(0); c.setCellValue(1000);
+        c=r.createCell(1); c.setCellValue(1);
 
 
         r = s.createRow(1);
-        c=r.createCell(0); c.setCellValue((double)2000);
-        c=r.createCell(1); c.setCellValue((double)2);
+        c=r.createCell(0); c.setCellValue(2000);
+        c=r.createCell(1); c.setCellValue(2);
 
         r = s.createRow(2);
-        c=r.createCell(0); c.setCellValue((double)3000);
-        c=r.createCell(1); c.setCellValue((double)3);
+        c=r.createCell(0); c.setCellValue(3000);
+        c=r.createCell(1); c.setCellValue(3);
 
         r = s.createRow(3);
-        c=r.createCell(0); c.setCellValue((double)4000);
-        c=r.createCell(1); c.setCellValue((double)4);
+        c=r.createCell(0); c.setCellValue(4000);
+        c=r.createCell(1); c.setCellValue(4);
 
         r = s.createRow(4);
-        c=r.createCell(0); c.setCellValue((double)5000);
-        c=r.createCell(1); c.setCellValue((double)5);
+        c=r.createCell(0); c.setCellValue(5000);
+        c=r.createCell(1); c.setCellValue(5);
 
         r = s.getRow(0);
         c=r.createCell(2); c.setCellFormula(function);
 
-        wb.write(out);
-        out.close();
-
-        assertTrue("sumif file doesnt exists", (file.exists()));
-        assertTrue("sumif == 0 bytes", file.length() > 0);
+        HSSFTestDataSamples.writeOutAndReadBack(wb);
     }
 
     public void testSquareMacro() {
@@ -1064,7 +863,7 @@ public final class TestFormulas extends TestCase {
     /** Unknown Ptg 3D*/
     public void test27272_2() throws Exception {
         HSSFWorkbook wb = openSample("27272_2.xls");
-        assertEquals("Reference for named range ", "'LOAD.POD_HISTORIES'!#REF!",wb.getNameAt(0).getReference());
+        assertEquals("Reference for named range ", "LOAD.POD_HISTORIES!#REF!",wb.getNameAt(0).getReference());
         File outF = File.createTempFile("bug27272_2",".xls");
         wb.write(new FileOutputStream(outF));
         System.out.println("Open "+outF.getAbsolutePath()+" in Excel");
@@ -1084,9 +883,5 @@ public final class TestFormulas extends TestCase {
         assertEquals("$A11*2", wb.getSheetAt(0).getRow(11).getCell(1).toString());
         assertEquals("DZ2*2", wb.getSheetAt(0).getRow(1).getCell(128).toString());
         assertEquals("B32770*2", wb.getSheetAt(0).getRow(32768).getCell(1).toString());
-    }
-
-    public static void main(String [] args) {
-        junit.textui.TestRunner.run(TestFormulas.class);
     }
 }

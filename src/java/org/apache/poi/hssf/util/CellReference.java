@@ -18,22 +18,13 @@
 package org.apache.poi.hssf.util;
 
 /**
- * Common convertion functions between Excel style A1, C27 style
+ * Common conversion functions between Excel style A1, C27 style
  *  cell references, and POI usermodel style row=0, column=0
  *  style references.
  * @author  Avik Sengupta
  * @author  Dennis Doubleday (patch to seperateRowColumns())
  */
 public final class CellReference extends org.apache.poi.ss.util.CellReference {
-	/**
-	 * Used to classify identifiers found in formulas as cell references or not.
-	 */
-	public static final class NameType {
-		public static final int CELL = 1;
-		public static final int NAMED_RANGE = 2;
-		public static final int BAD_CELL_OR_NAMED_RANGE = -1;
-	}
-
     /**
      * Create an cell ref from a string representation.  Sheet names containing special characters should be
      * delimited and escaped as per normal syntax rules for formulas.
@@ -45,19 +36,12 @@ public final class CellReference extends org.apache.poi.ss.util.CellReference {
     public CellReference(int pRow, int pCol) {
     	super(pRow, pCol, true, true);
     }
-    public CellReference(int pRow, short pCol) {
-    	super(pRow, (int)pCol, true, true);
-    }
     
     public CellReference(int pRow, int pCol, boolean pAbsRow, boolean pAbsCol) {
         super(null, pRow, pCol, pAbsRow, pAbsCol);
     }
     public CellReference(String pSheetName, int pRow, int pCol, boolean pAbsRow, boolean pAbsCol) {
     	super(pSheetName, pRow, pCol, pAbsRow, pAbsCol);
-    }
-    
-    protected void appendCellReference(StringBuffer sb) {
-    	super.appendCellReference(sb);
     }
     protected static String convertNumToColString(int col) {
     	return org.apache.poi.ss.util.CellReference.convertNumToColString(col);

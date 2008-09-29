@@ -43,11 +43,13 @@ import org.apache.poi.hssf.record.formula.NumberPtg;
 import org.apache.poi.hssf.record.formula.PercentPtg;
 import org.apache.poi.hssf.record.formula.PowerPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.StringPtg;
 import org.apache.poi.hssf.record.formula.SubtractPtg;
 import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
 import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
+import org.apache.poi.hssf.usermodel.FormulaExtractor;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
@@ -553,14 +555,14 @@ public final class TestFormulaParser extends TestCase {
 
 		Class[] expClss;
 
-		expClss = new Class[] { 
-				RefPtg.class, 
+		expClss = new Class[] {
+				RefPtg.class,
 				AttrPtg.class, // tAttrIf
-				MissingArgPtg.class, 
+				MissingArgPtg.class,
 				AttrPtg.class, // tAttrSkip
 				RefPtg.class,
 				AttrPtg.class, // tAttrSkip
-				FuncVarPtg.class, 
+				FuncVarPtg.class,
 		};
 
 		confirmTokenClasses("if(A1, ,C1)", expClss);
@@ -735,10 +737,10 @@ public final class TestFormulaParser extends TestCase {
 	/**
 	 * Make sure that POI uses the right Func Ptg when encoding formulas.  Functions with variable
 	 * number of args should get FuncVarPtg, functions with fixed args should get FuncPtg.<p/>
-	 * 
+	 *
 	 * Prior to the fix for bug 44675 POI would encode FuncVarPtg for all functions.  In many cases
-	 * Excel tolerates the wrong Ptg and evaluates the formula OK (e.g. SIN), but in some cases 
-	 * (e.g. COUNTIF) Excel fails to evaluate the formula, giving '#VALUE!' instead. 
+	 * Excel tolerates the wrong Ptg and evaluates the formula OK (e.g. SIN), but in some cases
+	 * (e.g. COUNTIF) Excel fails to evaluate the formula, giving '#VALUE!' instead.
 	 */
 	public void testFuncPtgSelection() {
 
@@ -777,7 +779,7 @@ public final class TestFormulaParser extends TestCase {
 			parseFormula("round(3.14;2)");
 			throw new AssertionFailedError("Didn't get parse exception as expected");
 		} catch (RuntimeException e) {
-			FormulaParserTestHelper.confirmParseException(e, 
+			FormulaParserTestHelper.confirmParseException(e,
 					"Parse error near char 10 ';' in specified formula 'round(3.14;2)'. Expected ',' or ')'");
 		}
 
@@ -785,11 +787,11 @@ public final class TestFormulaParser extends TestCase {
 			parseFormula(" =2+2");
 			throw new AssertionFailedError("Didn't get parse exception as expected");
 		} catch (RuntimeException e) {
-			FormulaParserTestHelper.confirmParseException(e, 
+			FormulaParserTestHelper.confirmParseException(e,
 					"The specified formula ' =2+2' starts with an equals sign which is not allowed.");
 		}
 	}
-	
+
 	/**
 	 * this function name has a dot in it.
 	 */
@@ -798,8 +800,8 @@ public final class TestFormulaParser extends TestCase {
 		Ptg[] ptgs;
 		try {
 			ptgs = parseFormula("error.type(A1)");
-			
-			
+
+
 		} catch (IllegalArgumentException e) {
 			if (e.getMessage().equals("Invalid Formula cell reference: 'error'")) {
 				throw new AssertionFailedError("Identified bug 45334");
@@ -811,7 +813,7 @@ public final class TestFormulaParser extends TestCase {
 		FuncPtg funcPtg = (FuncPtg) ptgs[1];
 		assertEquals("ERROR.TYPE", funcPtg.getName());
 	}
-	
+
 	public void testNamedRangeThatLooksLikeCell() {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Sheet1");
@@ -838,35 +840,35 @@ public final class TestFormulaParser extends TestCase {
 			cell.setCellFormula("count(pf1)");
 			throw new AssertionFailedError("Expected formula parse execption");
 		} catch (RuntimeException e) {
-			FormulaParserTestHelper.confirmParseException(e, 
+			FormulaParserTestHelper.confirmParseException(e,
 					"Specified named range 'pf1' does not exist in the current workbook.");
 		}
 		cell.setCellFormula("count(fp1)"); // plain cell ref, col is in range
 	}
-	
+
 	public void testParseAreaRefHighRow_bug45358() {
 		Ptg[] ptgs;
 		AreaI aptg;
-		
+
 		HSSFWorkbook book = new HSSFWorkbook();
 		book.createSheet("Sheet1");
-		
+
 		ptgs = HSSFFormulaParser.parse("Sheet1!A10:A40000", book);
 		aptg = (AreaI) ptgs[0];
 		if (aptg.getLastRow() == -25537) {
 			throw new AssertionFailedError("Identified bug 45358");
 		}
 		assertEquals(39999, aptg.getLastRow());
-		
+
 		ptgs = HSSFFormulaParser.parse("Sheet1!A10:A65536", book);
 		aptg = (AreaI) ptgs[0];
 		assertEquals(65535, aptg.getLastRow());
-		
+
 		// plain area refs should be ok too
 		ptgs = parseFormula("A10:A65536");
 		aptg = (AreaI) ptgs[0];
 		assertEquals(65535, aptg.getLastRow());
-		
+
 	}
 	public void testParseArray()  {
 		Ptg[] ptgs;
@@ -875,11 +877,71 @@ public final class TestFormulaParser extends TestCase {
 		Ptg ptg0 = ptgs[0];
 		assertEquals(ArrayPtg.class, ptg0.getClass());
 		assertEquals("{1.0,2.0,2.0,#REF!;FALSE,3.0,3.0,2.0}", ptg0.toFormulaString());
-		
+
 		ArrayPtg aptg = (ArrayPtg) ptg0;
 		Object[][] values = aptg.getTokenArrayValues();
 		assertEquals(ErrorConstant.valueOf(HSSFErrorConstants.ERROR_REF), values[0][3]);
 		assertEquals(Boolean.FALSE, values[1][0]);
-		
 	}
+
+	public void testRangeOperator() {
+
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet();
+		HSSFCell cell = sheet.createRow(0).createCell(0);
+
+		wb.setSheetName(0, "Sheet1");
+		cell.setCellFormula("Sheet1!B$4:Sheet1!$C1"); // explicit range ':' operator
+		assertEquals("Sheet1!B$4:Sheet1!$C1", cell.getCellFormula()); 
+
+		cell.setCellFormula("Sheet1!B$4:$C1"); // plain area ref
+		assertEquals("Sheet1!B1:$C$4", cell.getCellFormula()); // note - area ref is normalised
+		
+		cell.setCellFormula("Sheet1!$C1...B$4"); // different syntax for plain area ref
+		assertEquals("Sheet1!B1:$C$4", cell.getCellFormula());
+
+		// with funny sheet name
+		wb.setSheetName(0, "A1...A2");
+		cell.setCellFormula("A1...A2!B1");
+		assertEquals("A1...A2!B1", cell.getCellFormula());
+	}
+
+	public void testBooleanNamedSheet() {
+
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet("true");
+		HSSFCell cell = sheet.createRow(0).createCell(0);
+		cell.setCellFormula("'true'!B2");
+
+		assertEquals("'true'!B2", cell.getCellFormula());
+	}
+	
+	public void testParseExternalWorkbookReference() {
+		HSSFWorkbook wbA = HSSFTestDataSamples.openSampleWorkbook("multibookFormulaA.xls");
+		HSSFCell cell = wbA.getSheetAt(0).getRow(0).getCell(0);
+
+		// make sure formula in sample is as expected
+		assertEquals("[multibookFormulaB.xls]BSheet1!B1", cell.getCellFormula());
+		Ptg[] expectedPtgs = FormulaExtractor.getPtgs(cell);
+		confirmSingle3DRef(expectedPtgs, 1);
+		
+		// now try (re-)parsing the formula
+		Ptg[] actualPtgs = HSSFFormulaParser.parse("[multibookFormulaB.xls]BSheet1!B1", wbA);
+		confirmSingle3DRef(actualPtgs, 1); // externalSheetIndex 1 -> BSheet1
+		
+		// try parsing a formula pointing to a different external sheet
+		Ptg[] otherPtgs = HSSFFormulaParser.parse("[multibookFormulaB.xls]AnotherSheet!B1", wbA);
+		confirmSingle3DRef(otherPtgs, 0); // externalSheetIndex 0 -> AnotherSheet
+		
+		// try setting the same formula in a cell
+		cell.setCellFormula("[multibookFormulaB.xls]AnotherSheet!B1");
+		assertEquals("[multibookFormulaB.xls]AnotherSheet!B1", cell.getCellFormula());
+	}
+	private static void confirmSingle3DRef(Ptg[] ptgs, int expectedExternSheetIndex) {
+		assertEquals(1, ptgs.length);
+		Ptg ptg0 = ptgs[0];
+		assertEquals(Ref3DPtg.class, ptg0.getClass());
+		assertEquals(expectedExternSheetIndex, ((Ref3DPtg)ptg0).getExternSheetIndex());
+	}
+	
 }
