@@ -20,6 +20,7 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
+import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.ss.util.Region;
 import org.apache.poi.ss.util.CellRangeAddress;
 
@@ -31,11 +32,11 @@ import org.apache.poi.ss.util.CellRangeAddress;
 public final class HSSFSheetConditionalFormatting {
 	
 	private final HSSFWorkbook _workbook;
-	private final Sheet _sheet;
+	private final ConditionalFormattingTable _conditionalFormattingTable;
 
 	/* package */ HSSFSheetConditionalFormatting(HSSFWorkbook workbook, Sheet sheet) {
 		_workbook = workbook;
-		_sheet = sheet;
+		_conditionalFormattingTable = sheet.getConditionalFormattingTable();
 	}
 
 	/**
@@ -99,7 +100,7 @@ public final class HSSFSheetConditionalFormatting {
 	public int addConditionalFormatting( HSSFConditionalFormatting cf ) {
 		CFRecordsAggregate cfraClone = cf.getCFRecordsAggregate().cloneCFAggregate();
 
-		return _sheet.addConditionalFormatting(cfraClone);
+		return _conditionalFormattingTable.add(cfraClone);
 	}
 	/**
 	 * @deprecated use <tt>CellRangeAddress</tt> instead of <tt>Region</tt>
@@ -134,7 +135,7 @@ public final class HSSFSheetConditionalFormatting {
 			rules[i] = cfRules[i].getCfRuleRecord();
 		}
 		CFRecordsAggregate cfra = new CFRecordsAggregate(regions, rules);
-		return _sheet.addConditionalFormatting(cfra);
+		return _conditionalFormattingTable.add(cfra);
 	}
 
 	public int addConditionalFormatting(CellRangeAddress[] regions,
@@ -166,7 +167,7 @@ public final class HSSFSheetConditionalFormatting {
 	* @return Conditional Formatting object
 	*/
 	public HSSFConditionalFormatting getConditionalFormattingAt(int index) {
-		CFRecordsAggregate cf = _sheet.getCFRecordsAggregateAt(index);
+		CFRecordsAggregate cf = _conditionalFormattingTable.get(index);
 		if (cf == null) {
 			return null;
 		}
@@ -177,7 +178,7 @@ public final class HSSFSheetConditionalFormatting {
 	* @return number of Conditional Formatting objects of the sheet
 	*/
 	public int getNumConditionalFormattings() {
-		return _sheet.getNumConditionalFormattings();
+		return _conditionalFormattingTable.size();
 	}
 
 	/**
@@ -185,6 +186,6 @@ public final class HSSFSheetConditionalFormatting {
 	* @param index of a Conditional Formatting object to remove
 	*/
 	public void removeConditionalFormatting(int index) {
-		_sheet.removeConditionalFormatting(index);
+		_conditionalFormattingTable.remove(index);
 	}
 }

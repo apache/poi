@@ -19,7 +19,10 @@ package org.apache.poi.hssf.model;
 
 import java.util.List;
 
+import org.apache.poi.hssf.record.ArrayRecord;
 import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.BlankRecord;
+import org.apache.poi.hssf.record.BoolErrRecord;
 import org.apache.poi.hssf.record.CalcCountRecord;
 import org.apache.poi.hssf.record.CalcModeRecord;
 import org.apache.poi.hssf.record.DVALRecord;
@@ -30,22 +33,30 @@ import org.apache.poi.hssf.record.DimensionsRecord;
 import org.apache.poi.hssf.record.DrawingRecord;
 import org.apache.poi.hssf.record.DrawingSelectionRecord;
 import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.GridsetRecord;
 import org.apache.poi.hssf.record.GutsRecord;
 import org.apache.poi.hssf.record.HyperlinkRecord;
 import org.apache.poi.hssf.record.IndexRecord;
 import org.apache.poi.hssf.record.IterationRecord;
+import org.apache.poi.hssf.record.LabelRecord;
+import org.apache.poi.hssf.record.LabelSSTRecord;
+import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.record.PaneRecord;
 import org.apache.poi.hssf.record.PrecisionRecord;
 import org.apache.poi.hssf.record.PrintGridlinesRecord;
 import org.apache.poi.hssf.record.PrintHeadersRecord;
+import org.apache.poi.hssf.record.RKRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.RefModeRecord;
+import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.SaveRecalcRecord;
 import org.apache.poi.hssf.record.SelectionRecord;
+import org.apache.poi.hssf.record.SharedFormulaRecord;
+import org.apache.poi.hssf.record.TableRecord;
 import org.apache.poi.hssf.record.TextObjectRecord;
 import org.apache.poi.hssf.record.UncalcedRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
@@ -324,7 +335,7 @@ final class RecordOrderer {
 	 * It is assumed that at least one row or cell value record has been found prior to the current 
 	 * record
 	 */
-	public static boolean isEndOfRowBlock(short sid) {
+	public static boolean isEndOfRowBlock(int sid) {
 		switch(sid) {
 			case DrawingRecord.sid:
 			case DrawingSelectionRecord.sid:
@@ -343,5 +354,30 @@ final class RecordOrderer {
 				throw new RuntimeException("Found EOFRecord before WindowTwoRecord was encountered");
 		}
 		return PageSettingsBlock.isComponentRecord(sid);
+	}
+
+	/**
+	 * @return <code>true</code> if the specified record id normally appears in the row blocks section 
+	 * of the sheet records
+	 */
+	public static boolean isRowBlockRecord(int sid) {
+		switch (sid) {
+			case RowRecord.sid:
+				
+			case BlankRecord.sid:
+			case BoolErrRecord.sid:
+			case FormulaRecord.sid:
+			case LabelRecord.sid:
+			case LabelSSTRecord.sid:
+			case NumberRecord.sid:
+			case RKRecord.sid:
+
+			case ArrayRecord.sid:
+			case SharedFormulaRecord.sid:
+			case TableRecord.sid:
+				return true;
+				
+		}
+		return false;
 	}
 }

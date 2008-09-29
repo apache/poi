@@ -18,9 +18,10 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.util.RKUtil;
+import org.apache.poi.util.HexDump;
 
 /**
- * Title:        RK Record
+ * Title:        RK Record (0x027E)
  * Description:  An internal 32 bit number with the two most significant bits
  *               storing the type.  This is part of a bizarre scheme to save disk
  *               space and memory (gee look at all the other whole records that
@@ -37,15 +38,15 @@ import org.apache.poi.hssf.util.RKUtil;
  * @see org.apache.poi.hssf.record.NumberRecord
  */
 public final class RKRecord extends Record implements CellValueRecordInterface {
-    public final static short sid                      = 0x27e;
+    public final static short sid                      = 0x027E;
     public final static short RK_IEEE_NUMBER           = 0;
     public final static short RK_IEEE_NUMBER_TIMES_100 = 1;
     public final static short RK_INTEGER               = 2;
     public final static short RK_INTEGER_TIMES_100     = 3;
-    private int             field_1_row;
-    private short             field_2_col;
-    private short             field_3_xf_index;
-    private int               field_4_rk_number;
+    private int field_1_row;
+    private int field_2_col;
+    private int field_3_xf_index;
+    private int field_4_rk_number;
 
     public RKRecord()
     {
@@ -55,7 +56,6 @@ public final class RKRecord extends Record implements CellValueRecordInterface {
      * Constructs a RK record and sets its fields appropriately.
      * @param in the RecordInputstream to read the record from
      */
-
     public RKRecord(RecordInputStream in)
     {
         super(in);
@@ -71,14 +71,12 @@ public final class RKRecord extends Record implements CellValueRecordInterface {
 
     protected void fillFields(RecordInputStream in)
     {
-        //field_1_row       = LittleEndian.getShort(data, 0 + offset);
         field_1_row       = in.readUShort();
-        field_2_col       = in.readShort();
-        field_3_xf_index  = in.readShort();
+        field_2_col       = in.readUShort();
+        field_3_xf_index  = in.readUShort();
         field_4_rk_number = in.readInt();
     }
 
-    //public short getRow()
     public int getRow()
     {
         return field_1_row;
@@ -86,12 +84,12 @@ public final class RKRecord extends Record implements CellValueRecordInterface {
 
     public short getColumn()
     {
-        return field_2_col;
+        return (short) field_2_col;
     }
 
     public short getXFIndex()
     {
-        return field_3_xf_index;
+        return (short) field_3_xf_index;
     }
 
     public int getRKField()
@@ -110,7 +108,6 @@ public final class RKRecord extends Record implements CellValueRecordInterface {
      *             <LI>RK_INTEGER_TIMES_100</LI>
      *         </OL>
      */
-
     public short getRKType()
     {
         return ( short ) (field_4_rk_number & 3);
@@ -133,7 +130,6 @@ public final class RKRecord extends Record implements CellValueRecordInterface {
      * @return the value as a proper double (hey, it <B>could</B>
      *         happen)
      */
-
     public double getRKNumber()
     {
         return RKUtil.decodeNumber(field_4_rk_number);
@@ -142,26 +138,20 @@ public final class RKRecord extends Record implements CellValueRecordInterface {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuffer sb = new StringBuffer();
 
-        buffer.append("[RK]\n");
-        buffer.append("    .row            = ")
-            .append(Integer.toHexString(getRow())).append("\n");
-        buffer.append("    .col            = ")
-            .append(Integer.toHexString(getColumn())).append("\n");
-        buffer.append("    .xfindex        = ")
-            .append(Integer.toHexString(getXFIndex())).append("\n");
-        buffer.append("    .rknumber       = ")
-            .append(Integer.toHexString(getRKField())).append("\n");
-        buffer.append("        .rktype     = ")
-            .append(Integer.toHexString(getRKType())).append("\n");
-        buffer.append("        .rknumber   = ").append(getRKNumber())
-            .append("\n");
-        buffer.append("[/RK]\n");
-        return buffer.toString();
+        sb.append("[RK]\n");
+        sb.append("    .row       = ").append(HexDump.shortToHex(getRow())).append("\n");
+        sb.append("    .col       = ").append(HexDump.shortToHex(getColumn())).append("\n");
+        sb.append("    .xfindex   = ").append(HexDump.shortToHex(getXFIndex())).append("\n");
+        sb.append("    .rknumber  = ").append(HexDump.intToHex(getRKField())).append("\n");
+        sb.append("      .rktype  = ").append(HexDump.byteToHex(getRKType())).append("\n");
+        sb.append("      .rknumber= ").append(getRKNumber()).append("\n");
+        sb.append("[/RK]\n");
+        return sb.toString();
     }
 
-//temporarily just constructs a new number record and returns its value
+// temporarily just constructs a new number record and returns its value
     public int serialize(int offset, byte [] data)
     {
         NumberRecord rec = new NumberRecord();
@@ -209,21 +199,10 @@ public final class RKRecord extends Record implements CellValueRecordInterface {
         return sid;
     }
 
-    public boolean isInValueSection()
-    {
-        return true;
-    }
-
-    public boolean isValue()
-    {
-        return true;
-    }
-
     public void setColumn(short col)
     {
     }
 
-    //public void setRow(short row)
     public void setRow(int row)
     {
     }

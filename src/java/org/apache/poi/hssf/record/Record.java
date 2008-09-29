@@ -99,24 +99,6 @@ public abstract class Record extends RecordBase {
     }
 
     /**
-     * tells whether this type of record contains a value
-     */
-
-    public boolean isValue()
-    {
-        return false;
-    }
-
-    /**
-     * DBCELL, ROW, VALUES all say yes
-     */
-
-    public boolean isInValueSection()
-    {
-        return false;
-    }
-
-    /**
      * get a string representation of the record (for biffview/debugging)
      */
 

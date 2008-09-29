@@ -47,12 +47,12 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
         }
         boolean hasStringRec = stringRec != null;
         boolean hasCachedStringFlag = formulaRec.hasCachedResultString();
-		if (hasStringRec != hasCachedStringFlag) {
-			throw new RecordFormatException("String record was "
-					+ (hasStringRec ? "": "not ") + " supplied but formula record flag is "
-					+ (hasCachedStringFlag ? "" : "not ") + " set");
-		}
-        	
+        if (hasStringRec != hasCachedStringFlag) {
+            throw new RecordFormatException("String record was "
+                    + (hasStringRec ? "": "not ") + " supplied but formula record flag is "
+                    + (hasCachedStringFlag ? "" : "not ") + " set");
+        }
+
         if (formulaRec.isSharedFormula()) {
             svm.convertSharedFormulaRecord(formulaRec);
         }
