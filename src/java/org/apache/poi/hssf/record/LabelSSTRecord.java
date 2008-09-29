@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -30,10 +31,10 @@ import org.apache.poi.util.LittleEndian;
  */
 public final class LabelSSTRecord extends Record implements CellValueRecordInterface {
     public final static short sid = 0xfd;
-    private int             field_1_row;
-    private short             field_2_column;
-    private short             field_3_xf_index;
-    private int               field_4_sst_index;
+    private int field_1_row;
+    private int field_2_column;
+    private int field_3_xf_index;
+    private int field_4_sst_index;
 
     public LabelSSTRecord()
     {
@@ -43,7 +44,6 @@ public final class LabelSSTRecord extends Record implements CellValueRecordInter
      * Constructs an LabelSST record and sets its fields appropriately.
      * @param in the RecordInputstream to read the record from
      */
-
     public LabelSSTRecord(RecordInputStream in)
     {
         super(in);
@@ -60,14 +60,12 @@ public final class LabelSSTRecord extends Record implements CellValueRecordInter
 
     protected void fillFields(RecordInputStream in)
     {
-        //field_1_row       = LittleEndian.getShort(data, 0 + offset);
         field_1_row       = in.readUShort();
-        field_2_column    = in.readShort();
-        field_3_xf_index  = in.readShort();
+        field_2_column    = in.readUShort();
+        field_3_xf_index  = in.readUShort();
         field_4_sst_index = in.readInt();
     }
 
-    //public void setRow(short row)
     public void setRow(int row)
     {
         field_1_row = row;
@@ -102,7 +100,6 @@ public final class LabelSSTRecord extends Record implements CellValueRecordInter
         field_4_sst_index = index;
     }
 
-    //public short getRow()
     public int getRow()
     {
         return field_1_row;
@@ -110,7 +107,7 @@ public final class LabelSSTRecord extends Record implements CellValueRecordInter
 
     public short getColumn()
     {
-        return field_2_column;
+        return (short)field_2_column;
     }
 
     /**
@@ -122,7 +119,7 @@ public final class LabelSSTRecord extends Record implements CellValueRecordInter
 
     public short getXFIndex()
     {
-        return field_3_xf_index;
+        return (short)field_3_xf_index;
     }
 
     /**
@@ -139,29 +136,24 @@ public final class LabelSSTRecord extends Record implements CellValueRecordInter
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuffer sb = new StringBuffer();
 
-        buffer.append("[LABELSST]\n");
-        buffer.append("    .row            = ")
-            .append(Integer.toHexString(getRow())).append("\n");
-        buffer.append("    .column         = ")
-            .append(Integer.toHexString(getColumn())).append("\n");
-        buffer.append("    .xfindex        = ")
-            .append(Integer.toHexString(getXFIndex())).append("\n");
-        buffer.append("    .sstindex       = ")
-            .append(Integer.toHexString(getSSTIndex())).append("\n");
-        buffer.append("[/LABELSST]\n");
-        return buffer.toString();
+        sb.append("[LABELSST]\n");
+        sb.append("    .row     = ").append(HexDump.shortToHex(getRow())).append("\n");
+        sb.append("    .column  = ").append(HexDump.shortToHex(getColumn())).append("\n");
+        sb.append("    .xfindex = ").append(HexDump.shortToHex(getXFIndex())).append("\n");
+        sb.append("    .sstindex= ").append(HexDump.intToHex(getSSTIndex())).append("\n");
+        sb.append("[/LABELSST]\n");
+        return sb.toString();
     }
 
     public int serialize(int offset, byte [] data)
     {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 10);
-        //LittleEndian.putShort(data, 4 + offset, getRow());
-        LittleEndian.putShort(data, 4 + offset, ( short )getRow());
-        LittleEndian.putShort(data, 6 + offset, getColumn());
-        LittleEndian.putShort(data, 8 + offset, getXFIndex());
+        LittleEndian.putUShort(data, 0 + offset, sid);
+        LittleEndian.putUShort(data, 2 + offset, 10);
+        LittleEndian.putUShort(data, 4 + offset, getRow());
+        LittleEndian.putUShort(data, 6 + offset, getColumn());
+        LittleEndian.putUShort(data, 8 + offset, getXFIndex());
         LittleEndian.putInt(data, 10 + offset, getSSTIndex());
         return getRecordSize();
     }
@@ -174,16 +166,6 @@ public final class LabelSSTRecord extends Record implements CellValueRecordInter
     public short getSid()
     {
         return sid;
-    }
-
-    public boolean isInValueSection()
-    {
-        return true;
-    }
-
-    public boolean isValue()
-    {
-        return true;
     }
 
     public Object clone() {

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,19 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
-/*
- * BlankRecord.java
- *
- * Created on December 10, 2001, 12:07 PM
- */
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Title:        Blank cell record <P>
+ * Title:        Blank cell record (0x0201) <P>
  * Description:  Represents a column in a row with no value but with styling.<P>
  * REFERENCE:  PG 287 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
@@ -35,13 +29,12 @@ import org.apache.poi.util.LittleEndian;
  * @version 2.0-pre
  */
 public final class BlankRecord extends Record implements CellValueRecordInterface {
-    public final static short sid = 0x201;
+    public final static short sid = 0x0201;
     private int             field_1_row;
     private short             field_2_col;
     private short             field_3_xf;
 
     /** Creates a new instance of BlankRecord */
-
     public BlankRecord()
     {
     }
@@ -50,7 +43,6 @@ public final class BlankRecord extends Record implements CellValueRecordInterfac
      * Constructs a BlankRecord and sets its fields appropriately
      * @param in the RecordInputstream to read the record from
      */
-
     public BlankRecord(RecordInputStream in)
     {
         super(in);
@@ -58,7 +50,6 @@ public final class BlankRecord extends Record implements CellValueRecordInterfac
 
     protected void fillFields(RecordInputStream in)
     {
-        //field_1_row = LittleEndian.getShort(data, 0 + offset);
         field_1_row = in.readUShort();
         field_2_col = in.readShort();
         field_3_xf  = in.readShort();
@@ -70,7 +61,6 @@ public final class BlankRecord extends Record implements CellValueRecordInterfac
      *
      * @param id alleged id for this record
      */
-
     protected void validateSid(short id)
     {
         if (id != sid)
@@ -83,8 +73,6 @@ public final class BlankRecord extends Record implements CellValueRecordInterfac
      * set the row this cell occurs on
      * @param row the row this cell occurs within
      */
-
-    //public void setRow(short row)
     public void setRow(int row)
     {
         field_1_row = row;
@@ -95,8 +83,6 @@ public final class BlankRecord extends Record implements CellValueRecordInterfac
      *
      * @return the row
      */
-
-    //public short getRow()
     public int getRow()
     {
         return field_1_row;
@@ -107,7 +93,6 @@ public final class BlankRecord extends Record implements CellValueRecordInterfac
      *
      * @return the column
      */
-
     public short getColumn()
     {
         return field_2_col;
@@ -119,7 +104,6 @@ public final class BlankRecord extends Record implements CellValueRecordInterfac
      * @param xf - the 0-based index of the extended format
      * @see org.apache.poi.hssf.record.ExtendedFormatRecord
      */
-
     public void setXFIndex(short xf)
     {
         field_3_xf = xf;
@@ -130,7 +114,6 @@ public final class BlankRecord extends Record implements CellValueRecordInterfac
      *
      * @return extended format index
      */
-
     public short getXFIndex()
     {
         return field_3_xf;
@@ -147,20 +130,9 @@ public final class BlankRecord extends Record implements CellValueRecordInterfac
         field_2_col = col;
     }
 
-    public boolean isInValueSection()
-    {
-        return true;
-    }
-
-    public boolean isValue()
-    {
-        return true;
-    }
-
     /**
      * return the non static version of the id for this record.
      */
-
     public short getSid()
     {
         return sid;
@@ -168,17 +140,14 @@ public final class BlankRecord extends Record implements CellValueRecordInterfac
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuffer sb = new StringBuffer();
 
-        buffer.append("[BLANK]\n");
-        buffer.append("row       = ").append(Integer.toHexString(getRow()))
-            .append("\n");
-        buffer.append("col       = ").append(Integer.toHexString(getColumn()))
-            .append("\n");
-        buffer.append("xf        = ")
-            .append(Integer.toHexString(getXFIndex())).append("\n");
-        buffer.append("[/BLANK]\n");
-        return buffer.toString();
+        sb.append("[BLANK]\n");
+        sb.append("    row= ").append(HexDump.shortToHex(getRow())).append("\n");
+        sb.append("    col= ").append(HexDump.shortToHex(getColumn())).append("\n");
+        sb.append("    xf = ").append(HexDump.shortToHex(getXFIndex())).append("\n");
+        sb.append("[/BLANK]\n");
+        return sb.toString();
     }
 
     /**
@@ -188,15 +157,13 @@ public final class BlankRecord extends Record implements CellValueRecordInterfac
      *
      * @return byte array containing instance data
      */
-
     public int serialize(int offset, byte [] data)
     {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 6);
-        //LittleEndian.putShort(data, 4 + offset, getRow());
-        LittleEndian.putShort(data, 4 + offset, ( short ) getRow());
-        LittleEndian.putShort(data, 6 + offset, getColumn());
-        LittleEndian.putShort(data, 8 + offset, getXFIndex());
+        LittleEndian.putUShort(data, 0 + offset, sid);
+        LittleEndian.putUShort(data, 2 + offset, 6);
+        LittleEndian.putUShort(data, 4 + offset, getRow());
+        LittleEndian.putUShort(data, 6 + offset, getColumn());
+        LittleEndian.putUShort(data, 8 + offset, getXFIndex());
         return getRecordSize();
     }
 
