@@ -1,11 +1,5 @@
 package org.apache.poi.xssf.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -13,8 +7,8 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.extensions.XSSFColor;
-import org.openxml4j.opc.Package;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
@@ -28,16 +22,14 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STFontScheme;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignRun;
 
-public class TestXSSFFont extends TestCase{
+public final class TestXSSFFont extends TestCase{
 
-	public void testConstructor(){
+	public void testConstructor() {
 		XSSFFont xssfFont=new XSSFFont();
-		assertNotNull(xssfFont);
 		assertNotNull(xssfFont.getCTFont());
 	}
 
-
-	public void testBoldweight(){
+	public void testBoldweight() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTBooleanProperty bool=ctFont.addNewB();
 		bool.setVal(false);
@@ -51,7 +43,7 @@ public class TestXSSFFont extends TestCase{
 		assertEquals(true, ctFont.getBArray(0).getVal());
 	}
 
-	public void testCharSet(){
+	public void testCharSet() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTIntProperty prop=ctFont.addNewCharset();
 		prop.setVal(FontCharset.ANSI.getValue());
@@ -64,8 +56,7 @@ public class TestXSSFFont extends TestCase{
 		assertEquals(FontCharset.DEFAULT.getValue(),ctFont.getCharsetArray(0).getVal());
 	}
 
-
-	public void testFontName(){
+	public void testFontName() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTFontName fname=ctFont.addNewName();
 		fname.setVal("Arial");
@@ -78,8 +69,7 @@ public class TestXSSFFont extends TestCase{
 		assertEquals("Courier",ctFont.getNameArray(0).getVal());
 	}
 
-
-	public void testItalic(){
+	public void testItalic() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTBooleanProperty bool=ctFont.addNewI();
 		bool.setVal(false);
@@ -94,8 +84,7 @@ public class TestXSSFFont extends TestCase{
 		assertEquals(true,ctFont.getIArray(0).getVal());
 	}
 
-
-	public void testStrikeout(){
+	public void testStrikeout() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTBooleanProperty bool=ctFont.addNewStrike();
 		bool.setVal(false);
@@ -110,8 +99,7 @@ public class TestXSSFFont extends TestCase{
 		assertEquals(true,ctFont.getStrikeArray(0).getVal());
 	}
 
-
-	public void testFontHeight(){
+	public void testFontHeight() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTFontSize size=ctFont.addNewSz();
 		size.setVal(11);
@@ -124,8 +112,7 @@ public class TestXSSFFont extends TestCase{
 		assertEquals(new Double(20).doubleValue(),ctFont.getSzArray(0).getVal());
 	}
 
-
-	public void testFontHeightInPoint(){
+	public void testFontHeightInPoint() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTFontSize size=ctFont.addNewSz();
 		size.setVal(14);
@@ -138,8 +125,7 @@ public class TestXSSFFont extends TestCase{
 		assertEquals(new Double(20).doubleValue(),ctFont.getSzArray(0).getVal());
 	}
 
-
-	public void testUnderline(){
+	public void testUnderline() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTUnderlineProperty underlinePropr=ctFont.addNewU();
 		underlinePropr.setVal(STUnderlineValues.SINGLE);
@@ -157,7 +143,7 @@ public class TestXSSFFont extends TestCase{
 		assertEquals(STUnderlineValues.DOUBLE_ACCOUNTING,ctFont.getUArray(0).getVal());
 	}
 
-	public void testColor(){
+	public void testColor() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTColor color=ctFont.addNewColor();
 		color.setIndexed(XSSFFont.DEFAULT_FONT_COLOR);
@@ -170,39 +156,39 @@ public class TestXSSFFont extends TestCase{
 		assertEquals(IndexedColors.RED.getIndex(), ctFont.getColorArray(0).getIndexed());
 	}
 
-	public void testRgbColor(){
-	    CTFont ctFont=CTFont.Factory.newInstance();
-	    CTColor color=ctFont.addNewColor();
+	public void testRgbColor() {
+		CTFont ctFont=CTFont.Factory.newInstance();
+		CTColor color=ctFont.addNewColor();
 
-	    color.setRgb(Integer.toHexString(0xFFFFFF).getBytes());
-	    ctFont.setColorArray(0,color);
+		color.setRgb(Integer.toHexString(0xFFFFFF).getBytes());
+		ctFont.setColorArray(0,color);
 
-	    XSSFFont xssfFont=new XSSFFont(ctFont);
-	    assertEquals(ctFont.getColorArray(0).getRgb()[0],xssfFont.getRgbColor().getRgb()[0]);
-	    assertEquals(ctFont.getColorArray(0).getRgb()[1],xssfFont.getRgbColor().getRgb()[1]);
-	    assertEquals(ctFont.getColorArray(0).getRgb()[2],xssfFont.getRgbColor().getRgb()[2]);
-	    assertEquals(ctFont.getColorArray(0).getRgb()[3],xssfFont.getRgbColor().getRgb()[3]);
+		XSSFFont xssfFont=new XSSFFont(ctFont);
+		assertEquals(ctFont.getColorArray(0).getRgb()[0],xssfFont.getRgbColor().getRgb()[0]);
+		assertEquals(ctFont.getColorArray(0).getRgb()[1],xssfFont.getRgbColor().getRgb()[1]);
+		assertEquals(ctFont.getColorArray(0).getRgb()[2],xssfFont.getRgbColor().getRgb()[2]);
+		assertEquals(ctFont.getColorArray(0).getRgb()[3],xssfFont.getRgbColor().getRgb()[3]);
 
-	    color.setRgb(Integer.toHexString(0xF1F1F1).getBytes());
-	    XSSFColor newColor=new XSSFColor(color);
-	    xssfFont.setRgbColor(newColor);
-	    assertEquals(ctFont.getColorArray(0).getRgb()[2],newColor.getRgb()[2]);
+		color.setRgb(Integer.toHexString(0xF1F1F1).getBytes());
+		XSSFColor newColor=new XSSFColor(color);
+		xssfFont.setRgbColor(newColor);
+		assertEquals(ctFont.getColorArray(0).getRgb()[2],newColor.getRgb()[2]);
 	}
 
-	public void testThemeColor(){
-	    CTFont ctFont=CTFont.Factory.newInstance();
-	    CTColor color=ctFont.addNewColor();
-	    color.setTheme((long)1);
-	    ctFont.setColorArray(0,color);
+	public void testThemeColor() {
+		CTFont ctFont=CTFont.Factory.newInstance();
+		CTColor color=ctFont.addNewColor();
+		color.setTheme(1);
+		ctFont.setColorArray(0,color);
 
-	    XSSFFont xssfFont=new XSSFFont(ctFont);
-	    assertEquals(ctFont.getColorArray(0).getTheme(),xssfFont.getThemeColor());
+		XSSFFont xssfFont=new XSSFFont(ctFont);
+		assertEquals(ctFont.getColorArray(0).getTheme(),xssfFont.getThemeColor());
 
-	    xssfFont.setThemeColor(IndexedColors.RED.getIndex());
-	    assertEquals(IndexedColors.RED.getIndex(),ctFont.getColorArray(0).getTheme());
+		xssfFont.setThemeColor(IndexedColors.RED.getIndex());
+		assertEquals(IndexedColors.RED.getIndex(),ctFont.getColorArray(0).getTheme());
 	}
 
-	public void testFamily(){
+	public void testFamily() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTIntProperty family=ctFont.addNewFamily();
 		family.setVal(FontFamily.MODERN.getValue());
@@ -212,8 +198,7 @@ public class TestXSSFFont extends TestCase{
 		assertEquals(FontFamily.MODERN.getValue(),xssfFont.getFamily());
 	}
 
-
-	public void testScheme(){
+	public void testScheme() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTFontScheme scheme=ctFont.addNewScheme();
 		scheme.setVal(STFontScheme.MAJOR);
@@ -226,7 +211,7 @@ public class TestXSSFFont extends TestCase{
 		assertEquals(STFontScheme.NONE,ctFont.getSchemeArray(0).getVal());
 	}
 
-	public void testTypeOffset(){
+	public void testTypeOffset() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTVerticalAlignFontProperty valign=ctFont.addNewVertAlign();
 		valign.setVal(STVerticalAlignRun.BASELINE);
@@ -244,9 +229,9 @@ public class TestXSSFFont extends TestCase{
 	 *  file, save, load, and still see them
 	 * @throws Exception
 	 */
-	public void testCreateSave() throws Exception {
+	public void testCreateSave() {
 		XSSFWorkbook wb = new XSSFWorkbook();
-		XSSFSheet s1 = (XSSFSheet)wb.createSheet();
+		XSSFSheet s1 = wb.createSheet();
 		Row r1 = s1.createRow(0);
 		Cell r1c1 = r1.createCell(0);
 		r1c1.setCellValue(2.2);
@@ -258,20 +243,16 @@ public class TestXSSFFont extends TestCase{
 		font.setStrikeout(true);
 		font.setColor(IndexedColors.YELLOW.getIndex());
 		font.setFontName("Courier");
-        wb.createCellStyle().setFont(font);
-        assertEquals(2, wb.getNumberOfFonts());
+		wb.createCellStyle().setFont(font);
+		assertEquals(2, wb.getNumberOfFonts());
 
 		CellStyle cellStyleTitle=wb.createCellStyle();
 		cellStyleTitle.setFont(font);
 		r1c1.setCellStyle(cellStyleTitle);
 
 		// Save and re-load
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		wb.write(baos);
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-
-		wb = new XSSFWorkbook(Package.open(bais));
-		s1 = (XSSFSheet)wb.getSheetAt(0);
+		wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+		s1 = wb.getSheetAt(0);
 
 		assertEquals(2, wb.getNumberOfFonts());
 		assertNotNull(s1.getRow(0).getCell(0).getCellStyle().getFont(wb));
@@ -283,15 +264,11 @@ public class TestXSSFFont extends TestCase{
 		font2.setItalic(true);
 		font2.setFontHeightInPoints((short)15);
 		wb.createCellStyle().setFont(font2);
-        assertEquals(3, wb.getNumberOfFonts());
+		assertEquals(3, wb.getNumberOfFonts());
 
 		// Save and re-load
-		baos = new ByteArrayOutputStream();
-		wb.write(baos);
-		bais = new ByteArrayInputStream(baos.toByteArray());
-
-		wb = new XSSFWorkbook(Package.open(bais));
-		s1 = (XSSFSheet)wb.getSheetAt(0);
+		wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+		s1 = wb.getSheetAt(0);
 
 		assertEquals(3, wb.getNumberOfFonts());
 		assertNotNull(wb.getFontAt((short)1));
@@ -301,8 +278,7 @@ public class TestXSSFFont extends TestCase{
 		assertEquals(true, wb.getFontAt((short)2).getItalic());
 	}
 
-
-	public void testXSSFFont() throws IOException{
+	public void testXSSFFont() {
 		XSSFWorkbook workbook=new XSSFWorkbook();
 		//Font font1=workbook.createFont();
 
@@ -363,12 +339,7 @@ public class TestXSSFFont extends TestCase{
 
 		cell1.setCellValue(new XSSFRichTextString("pink italic Times 9pt strikeout!!!"));
 		cell1.setCellStyle(cellStyle3);
-		
-		File tmpFile = new File("test-ooxml-font.xlsx");
-		if(tmpFile.exists()) tmpFile.delete();
-		FileOutputStream out = new FileOutputStream(tmpFile);
-		workbook.write(out);
-		out.close();
-	}
 
+		XSSFTestDataSamples.writeOutAndReadBack(workbook);
+	}
 }
