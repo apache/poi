@@ -20,13 +20,13 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
 
 <document>
-    <header>
-        <title>Formula Evaluation</title>
-        <authors>
+	<header>
+		<title>Formula Evaluation</title>
+		<authors>
 			<person email="amoweb@yahoo.com" name="Amol Deshmukh" id="AD"/>
-        </authors>
-    </header>
-    <body>
+		</authors>
+	</header>
+	<body>
 		<section><title>Introduction</title>
 			<p>The POI formula evaluation code enables you to calculate the result of 
 				formulas in Excels sheets read-in, or created in POI. This document explains
@@ -66,35 +66,34 @@
 FileInputStream fis = new FileInputStream("c:/temp/test.xls");
 HSSFWorkbook wb = new HSSFWorkbook(fis);
 HSSFSheet sheet = wb.getSheetAt(0);
-HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
+HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
 
 // suppose your formula is in B3
-CellReference cellReference = new CellReference("B3"); 
+CellReference cellReference = new CellReference("B3");
 HSSFRow row = sheet.getRow(cellReference.getRow());
-HSSFCell cell = row.getCell(cellReference.getCol()); 
+HSSFCell cell = row.getCell((int)cellReference.getCol());
 
-evaluator.setCurrentRow(row);
 HSSFFormulaEvaluator.CellValue cellValue = evaluator.evaluate(cell);
 
 switch (cellValue.getCellType()) {
 	case HSSFCell.CELL_TYPE_BOOLEAN:
-    	System.out.println(cellValue.getBooleanValue());
-    	break;
+		System.out.println(cellValue.getBooleanValue());
+		break;
 	case HSSFCell.CELL_TYPE_NUMERIC:
-    	System.out.println(cellValue.getNumberValue());
-    	break;
+		System.out.println(cellValue.getNumberValue());
+		break;
 	case HSSFCell.CELL_TYPE_STRING:
-    	System.out.println(cellValue.getStringValue());
-    	break;
+		System.out.println(cellValue.getStringValue());
+		break;
 	case HSSFCell.CELL_TYPE_BLANK:
-    	break;
+		break;
 	case HSSFCell.CELL_TYPE_ERROR:
-    	break;
+		break;
 
 	// CELL_TYPE_FORMULA will never happen
-	case HSSFCell.CELL_TYPE_FORMULA: 
-    	break;
-}				
+	case HSSFCell.CELL_TYPE_FORMULA:
+		break;
+}			
 				</source>
 				<p>Thus using the retrieved value (of type 
 					HSSFFormulaEvaluator.CellValue - a nested class) returned 
@@ -119,36 +118,42 @@ switch (cellValue.getCellType()) {
 FileInputStream fis = new FileInputStream("/somepath/test.xls");
 HSSFWorkbook wb = new HSSFWorkbook(fis);
 HSSFSheet sheet = wb.getSheetAt(0);
-HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
+HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
 
 // suppose your formula is in B3
-CellReference cellReference = new CellReference("B3"); 
+CellReference cellReference = new CellReference("B3");
 HSSFRow row = sheet.getRow(cellReference.getRow());
-HSSFCell cell = row.getCell(cellReference.getCol()); 
-evaluator.setCurrentRow(row);
+HSSFCell cell = row.getCell((int)cellReference.getCol());
 
 if (cell!=null) {
-	switch (<strong>evaluator.evaluateFormulaCell</strong>(cell)) {
+	int valueType = evaluator.evaluateFormulaCell(cell);
+	if (valueType == -1) {
+		// Cell was not a formula cell
+		// but we can read the plain value from the cell just the same as a formula result
+		valueType = cell.getCellType();
+	}
+	switch (valueType) {
 		case HSSFCell.CELL_TYPE_BOOLEAN:
-		    System.out.println(cell.getBooleanCellValue());
-		    break;
+			System.out.println(cell.getBooleanCellValue());
+			break;
 		case HSSFCell.CELL_TYPE_NUMERIC:
-		    System.out.println(cell.getNumberCellValue());
-		    break;
+			System.out.println(cell.getNumericCellValue());
+			break;
 		case HSSFCell.CELL_TYPE_STRING:
-		    System.out.println(cell.getStringCellValue());
-		    break;
+			System.out.println(cell.getRichStringCellValue().getString());
+			break;
 		case HSSFCell.CELL_TYPE_BLANK:
-		    break;
+			break;
 		case HSSFCell.CELL_TYPE_ERROR:
-		    System.out.println(cell.getErrorCellValue());
-		    break;
-		
-		// CELL_TYPE_FORMULA will never occur
-		case HSSFCell.CELL_TYPE_FORMULA: 
-		    break;
+			System.out.println(HSSFErrorConstants.getText(cell.getErrorCellValue()));
+			break;
+
+		case HSSFCell.CELL_TYPE_FORMULA:
+			throw new IllegalStateException("Result-type 'formula' cannot occur");
 	}
 }
+
+
 				</source>
 			</section>
 
@@ -163,36 +168,36 @@ if (cell!=null) {
 FileInputStream fis = new FileInputStream("/somepath/test.xls");
 HSSFWorkbook wb = new HSSFWorkbook(fis);
 HSSFSheet sheet = wb.getSheetAt(0);
-HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
+HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
 
 // suppose your formula is in B3
-CellReference cellReference = new CellReference("B3"); 
+CellReference cellReference = new CellReference("B3");
 HSSFRow row = sheet.getRow(cellReference.getRow());
-HSSFCell cell = row.getCell(cellReference.getCol()); 
-evaluator.setCurrentRow(row);
+HSSFCell cell = row.getCell((int)cellReference.getCol());
 
 if (cell!=null) {
-	switch (<strong>evaluator.evaluateInCell</strong>(cell).getCellType()) {
+	switch (evaluator.evaluateInCell(cell).getCellType()) {
 		case HSSFCell.CELL_TYPE_BOOLEAN:
-		    System.out.println(cell.getBooleanCellValue());
-		    break;
+			System.out.println(cell.getBooleanCellValue());
+			break;
 		case HSSFCell.CELL_TYPE_NUMERIC:
-		    System.out.println(cell.getNumberCellValue());
-		    break;
+			System.out.println(cell.getNumericCellValue());
+			break;
 		case HSSFCell.CELL_TYPE_STRING:
-		    System.out.println(cell.getStringCellValue());
-		    break;
+			System.out.println(cell.getRichStringCellValue().getString());
+			break;
 		case HSSFCell.CELL_TYPE_BLANK:
-		    break;
+			break;
 		case HSSFCell.CELL_TYPE_ERROR:
-		    System.out.println(cell.getErrorCellValue());
-		    break;
-		
+			System.out.println(cell.getErrorCellValue());
+			break;
+
 		// CELL_TYPE_FORMULA will never occur
-		case HSSFCell.CELL_TYPE_FORMULA: 
-		    break;
+		case HSSFCell.CELL_TYPE_FORMULA:
+			break;
 	}
 }
+
 				</source>
 			</section>
 
@@ -201,13 +206,12 @@ if (cell!=null) {
 				<source>
 FileInputStream fis = new FileInputStream("/somepath/test.xls");
 HSSFWorkbook wb = new HSSFWorkbook(fis);
-for(int sheetNum = 0; sheetNum &lt; wb.getNumberOfSheets(); sheetNum++) {
+HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
+for(int sheetNum = 0; sheetNum < wb.getNumberOfSheets(); sheetNum++) {
 	HSSFSheet sheet = wb.getSheetAt(sheetNum);
-	HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
 
 	for(Iterator rit = sheet.rowIterator(); rit.hasNext();) {
 		HSSFRow r = (HSSFRow)rit.next();
-		evaluator.setCurrentRow(r);
 
 		for(Iterator cit = r.cellIterator(); cit.hasNext();) {
 			HSSFCell c = (HSSFCell)cit.next();
@@ -218,6 +222,7 @@ for(int sheetNum = 0; sheetNum &lt; wb.getNumberOfSheets(); sheetNum++) {
 	}
 }
 wb.write(new FileOutputStream("/somepath/changed.xls"));
+
 				</source>
 			</section>
 		</section>
@@ -226,12 +231,12 @@ wb.write(new FileOutputStream("/somepath/changed.xls"));
 		<section><title>Performance Notes</title>
 			<ul>
 				<li>Generally you should have to create only one HSSFFormulaEvaluator 
-					instance per sheet, but there really is no overhead in creating 
-					multiple HSSFFormulaEvaluators per sheet other than that of the 
+					instance per workbook, but there really is no overhead in creating 
+					multiple HSSFFormulaEvaluators per workbook other than that of the 
 					HSSFFormulaEvaluator object creation. 
 				</li>
 				<li>Also note that HSSFFormulaEvaluator maintains a reference to 
-					the sheet and workbook, so ensure that the evaluator instance 
+					the workbook, so ensure that the evaluator instance 
 					is available for garbage collection when you are done with it 
 					(in other words don't maintain long lived reference to 
 					HSSFFormulaEvaluator if you don't really need to - unless 
