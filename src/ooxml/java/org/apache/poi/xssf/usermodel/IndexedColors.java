@@ -77,12 +77,14 @@ public enum IndexedColors {
     BROWN(60),
     PLUM(61),
     INDIGO(62),
-    GREY_80_PERCENT(63);
+    GREY_80_PERCENT(63),
+    AUTOMATIC(64),
+    ;
 
-    private short index;
+    private int index;
 
     IndexedColors(int idx){
-        index = (short)idx;
+        index = idx;
     }
 
     /**
@@ -91,6 +93,6 @@ public enum IndexedColors {
      * @return index of this color
      */
     public short getIndex(){
-        return index;
+        return (short)index;
     }
 }
