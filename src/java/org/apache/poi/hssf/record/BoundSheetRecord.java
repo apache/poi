@@ -116,9 +116,8 @@ public final class BoundSheetRecord extends Record {
 			throw new IllegalArgumentException("sheetName must not be null");
 		}
 		int len = sheetName.length();
-		if (len < 1 || len > 31) {
-			throw new IllegalArgumentException("sheetName '" + sheetName 
-					+ "' is invalid - must be 1-30 characters long");
+		if (len < 1) {
+			throw new IllegalArgumentException("sheetName must not be empty string");
 		}
 		for (int i=0; i<len; i++) {
 			char ch = sheetName.charAt(i);
