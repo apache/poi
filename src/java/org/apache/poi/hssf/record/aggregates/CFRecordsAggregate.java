@@ -24,6 +24,10 @@ import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.formula.AreaErrPtg;
+import org.apache.poi.hssf.record.formula.AreaPtg;
+import org.apache.poi.hssf.record.formula.FormulaShifter;
+import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.util.CellRangeAddress;
 
 /**
@@ -173,5 +177,69 @@ public final class CFRecordsAggregate extends RecordAggregate {
 			CFRuleRecord rule = (CFRuleRecord)rules.get(i);
 			rv.visitRecord(rule);
 		}
+	}
+
+	/**
+	 * @return <code>false</code> if this whole {@link CFHeaderRecord} / {@link CFRuleRecord}s should be deleted
+	 */
+	public boolean updateFormulasAfterCellShift(FormulaShifter shifter, int currentExternSheetIx) {
+		CellRangeAddress[] cellRanges = header.getCellRanges();
+		boolean changed = false;
+		List temp = new ArrayList();
+		for (int i = 0; i < cellRanges.length; i++) {
+			CellRangeAddress craOld = cellRanges[i];
+			CellRangeAddress craNew = shiftRange(shifter, craOld, currentExternSheetIx);
+			if (craNew == null) {
+				changed = true;
+				continue;
+			}
+			temp.add(craNew);
+			if (craNew != craOld) {
+				changed = true;
+			}
+		}
+
+		if (changed) {
+			int nRanges = temp.size();
+			if (nRanges == 0) {
+				return false;
+			}
+			CellRangeAddress[] newRanges = new CellRangeAddress[nRanges];
+			temp.toArray(newRanges);
+			header.setCellRanges(newRanges);
+		}
+		
+		for(int i=0; i<rules.size(); i++) {
+			CFRuleRecord rule = (CFRuleRecord)rules.get(i);
+			Ptg[] ptgs;
+			ptgs = rule.getParsedExpression1();
+			if (ptgs != null && shifter.adjustFormula(ptgs, currentExternSheetIx)) {
+				rule.setParsedExpression1(ptgs);
+			}
+			ptgs = rule.getParsedExpression2();
+			if (ptgs != null && shifter.adjustFormula(ptgs, currentExternSheetIx)) {
+				rule.setParsedExpression2(ptgs);
+			}
+		}
+		return true;
+	}
+
+	private static CellRangeAddress shiftRange(FormulaShifter shifter, CellRangeAddress cra, int currentExternSheetIx) {
+		// FormulaShifter works well in terms of Ptgs - so convert CellRangeAddress to AreaPtg (and back) here
+		AreaPtg aptg = new AreaPtg(cra.getFirstRow(), cra.getLastRow(), cra.getFirstColumn(), cra.getLastColumn(), false, false, false, false);
+		Ptg[] ptgs = { aptg, };
+		
+		if (!shifter.adjustFormula(ptgs, currentExternSheetIx)) {
+			return cra;
+		}
+		Ptg ptg0 = ptgs[0];
+		if (ptg0 instanceof AreaPtg) {
+			AreaPtg bptg = (AreaPtg) ptg0;
+			return new CellRangeAddress(bptg.getFirstRow(), bptg.getLastRow(), bptg.getFirstColumn(), bptg.getLastColumn());
+		}
+		if (ptg0 instanceof AreaErrPtg) {
+			return null;
+		}
+		throw new IllegalStateException("Unexpected shifted ptg class (" + ptg0.getClass().getName() + ")");
 	}
 }

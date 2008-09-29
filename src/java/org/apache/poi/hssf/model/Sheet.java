@@ -68,6 +68,7 @@ import org.apache.poi.hssf.record.aggregates.RecordAggregate;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.PositionTrackingVisitor;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
+import org.apache.poi.hssf.record.formula.FormulaShifter;
 import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.util.POILogFactory;
@@ -470,6 +471,15 @@ public final class Sheet implements Model {
         return _mergedCellsTable;
     }
 
+    /**
+     * Updates formulas in cells and conditional formats due to moving of cells
+     * @param externSheetIndex the externSheet index of this sheet 
+     */
+    public void updateFormulasAfterCellShift(FormulaShifter shifter, int externSheetIndex) {
+        getRowsAggregate().updateFormulasAfterRowShift(shifter, externSheetIndex);
+        getConditionalFormattingTable().updateFormulasAfterCellShift(shifter, externSheetIndex);
+        // TODO - adjust data validations 
+    }
 
     public int addMergedRegion(int rowFrom, int colFrom, int rowTo, int colTo) {
         // Validate input
@@ -509,30 +519,12 @@ public final class Sheet implements Model {
     public int getNumMergedRegions() {
         return getMergedRecords().getNumberOfMergedRegions();
     }
-    private ConditionalFormattingTable getConditionalFormattingTable() {
+    public ConditionalFormattingTable getConditionalFormattingTable() {
         if (condFormatting == null) {
             condFormatting = new ConditionalFormattingTable();
             RecordOrderer.addNewSheetRecord(records, condFormatting);
         }
         return condFormatting;
-    }
-
-
-    public int addConditionalFormatting(CFRecordsAggregate cfAggregate) {
-        ConditionalFormattingTable cft = getConditionalFormattingTable();
-        return cft.add(cfAggregate);
-    }
-
-    public void removeConditionalFormatting(int index) {
-        getConditionalFormattingTable().remove(index);
-    }
-
-    public CFRecordsAggregate getCFRecordsAggregateAt(int index) {
-        return getConditionalFormattingTable().get(index);
-    }
-
-    public int getNumConditionalFormattings() {
-        return getConditionalFormattingTable().size();
     }
 
     /**

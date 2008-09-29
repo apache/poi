@@ -27,10 +27,8 @@ import org.apache.poi.hssf.util.HSSFColor;
  * 
  * @author Dmitriy Kumshayev
  */
-public final class TestHSSFConditionalFormatting extends TestCase
-{
-	public void testCreateCF() 
-	{
+public final class TestHSSFConditionalFormatting extends TestCase {
+	public void testCreateCF() {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet();
 		String formula = "7";
@@ -147,5 +145,45 @@ public final class TestHSSFConditionalFormatting extends TestCase
 			throw e;
 		}
 		assertEquals(2, wb.getNumberOfSheets());
+	}
+
+	public void testShiftRows() {
+
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet();
+
+		HSSFSheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
+
+		HSSFConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule(
+				ComparisonOperator.BETWEEN, "sum(A10:A15)", "1+sum(B16:B30)");
+		HSSFFontFormatting fontFmt = rule1.createFontFormatting();
+		fontFmt.setFontStyle(true, false);
+
+		HSSFPatternFormatting patternFmt = rule1.createPatternFormatting();
+		patternFmt.setFillBackgroundColor(HSSFColor.YELLOW.index);
+		HSSFConditionalFormattingRule [] cfRules = { rule1, };
+
+		CellRangeAddress [] regions = {
+			new CellRangeAddress(2, 4, 0, 0), // A3:A5
+		};
+		sheetCF.addConditionalFormatting(regions, cfRules);
+
+		// This row-shift should destroy the CF region
+		sheet.shiftRows(10, 20, -9);
+		assertEquals(0, sheetCF.getNumConditionalFormattings());
+
+		// re-add the CF
+		sheetCF.addConditionalFormatting(regions, cfRules);
+
+		// This row shift should only affect the formulas
+		sheet.shiftRows(14, 17, 8);
+		HSSFConditionalFormatting cf = sheetCF.getConditionalFormattingAt(0);
+		assertEquals("SUM(A10:A23)", cf.getRule(0).getFormula1());
+		assertEquals("1+SUM(B24:B30)", cf.getRule(0).getFormula2());
+
+		sheet.shiftRows(0, 8, 21);
+		cf = sheetCF.getConditionalFormattingAt(0);
+		assertEquals("SUM(A10:A21)", cf.getRule(0).getFormula1());
+		assertEquals("1+SUM(#REF!)", cf.getRule(0).getFormula2());
 	}
 }
