@@ -49,6 +49,7 @@ import org.apache.poi.hssf.record.formula.ParenthesisPtg;
 import org.apache.poi.hssf.record.formula.PercentPtg;
 import org.apache.poi.hssf.record.formula.PowerPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.RangePtg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.StringPtg;
@@ -60,7 +61,7 @@ import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.hssf.util.CellReference.NameType;
+import org.apache.poi.ss.util.CellReference.NameType;
 
 /**
  * This class parses a formula string into a List of tokens in RPN order.
@@ -81,6 +82,33 @@ import org.apache.poi.hssf.util.CellReference.NameType;
  *  @author Josh Micich
  */
 public final class FormulaParser {
+    private static final class Identifier {
+        private final String _name;
+        private final boolean _isQuoted;
+
+        public Identifier(String name, boolean isQuoted) {
+            _name = name;
+            _isQuoted = isQuoted;
+        }
+        public String getName() {
+            return _name;
+        }
+        public boolean isQuoted() {
+            return _isQuoted;
+        }
+        public String toString() {
+            StringBuffer sb = new StringBuffer(64);
+            sb.append(getClass().getName());
+            sb.append(" [");
+            if (_isQuoted) {
+                sb.append("'").append(_name).append("'");
+            } else {
+                sb.append(_name);
+            }
+            sb.append("]");
+            return sb.toString();
+        }
+    }
 
     /**
      * Specific exception thrown when a supplied formula does not parse properly.<br/>
@@ -176,23 +204,23 @@ public final class FormulaParser {
     }
 
     /** Recognize an Alpha Character */
-    private boolean IsAlpha(char c) {
+    private static boolean IsAlpha(char c) {
         return Character.isLetter(c) || c == '$' || c=='_';
     }
 
     /** Recognize a Decimal Digit */
-    private boolean IsDigit(char c) {
+    private static boolean IsDigit(char c) {
         return Character.isDigit(c);
     }
 
     /** Recognize an Alphanumeric */
-    private boolean  IsAlNum(char c) {
-        return  (IsAlpha(c) || IsDigit(c));
+    private static boolean IsAlNum(char c) {
+        return IsAlpha(c) || IsDigit(c);
     }
 
     /** Recognize White Space */
-    private boolean IsWhite( char c) {
-        return  (c ==' ' || c== TAB);
+    private static boolean IsWhite( char c) {
+        return  c ==' ' || c== TAB;
     }
 
     /** Skip Over Leading White Space */
@@ -213,7 +241,13 @@ public final class FormulaParser {
         }
         GetChar();
     }
-
+    private String parseUnquotedIdentifier() {
+        Identifier iden = parseIdentifier();
+        if (iden.isQuoted()) {
+            throw expected("unquoted identifier");
+        }
+        return iden.getName();
+    }
     /**
      * Parses a sheet name, named range name, or simple cell reference.<br/>
      * Note - identifiers in Excel can contain dots, so this method may return a String
@@ -221,18 +255,17 @@ public final class FormulaParser {
      * may return a value like "A1..B2", in which case the caller must convert it to
      * an area reference like "A1:B2"
      */
-    private String parseIdentifier() {
-        StringBuffer Token = new StringBuffer();
-        if (!IsAlpha(look) && look != '\'') {
+    private Identifier parseIdentifier() {
+        StringBuffer sb = new StringBuffer();
+        if (!IsAlpha(look) && look != '\'' && look != '[') {
             throw expected("Name");
         }
-        if(look == '\'')
-        {
+        boolean isQuoted = look == '\''; 
+        if(isQuoted) {
             Match('\'');
             boolean done = look == '\'';
-            while(!done)
-            {
-                Token.append(look);
+            while(!done) {
+                sb.append(look);
                 GetChar();
                 if(look == '\'')
                 {
@@ -240,17 +273,15 @@ public final class FormulaParser {
                     done = look != '\'';
                 }
             }
-        }
-        else
-        {
+        } else {
             // allow for any sequence of dots and identifier chars
             // special case of two consecutive dots is best treated in the calling code
-            while (IsAlNum(look) || look == '.') {
-                Token.append(look);
+            while (IsAlNum(look) || look == '.' || look == '[' || look == ']') {
+                sb.append(look);
                 GetChar();
             }
         }
-        return Token.toString();
+        return new Identifier(sb.toString(), isQuoted);
     }
 
     /** Get a Number */
@@ -265,71 +296,111 @@ public final class FormulaParser {
     }
 
     private ParseNode parseFunctionReferenceOrName() {
-        String name = parseIdentifier();
+        Identifier iden = parseIdentifier();
         if (look == '('){
             //This is a function
-            return function(name);
+            return function(iden.getName());
         }
-        return new ParseNode(parseNameOrReference(name));
+        if (!iden.isQuoted()) {
+            String name = iden.getName();
+            if (name.equalsIgnoreCase("TRUE") || name.equalsIgnoreCase("FALSE")) {
+                return  new ParseNode(new BoolPtg(name.toUpperCase()));
+            }
+        }
+        return parseRangeExpression(iden);
     }
 
-    private Ptg parseNameOrReference(String name) {
+    private ParseNode parseRangeExpression(Identifier iden) {
+        Ptg ptgA = parseNameOrCellRef(iden);
+        if (look == ':') {
+            GetChar();
+            Identifier iden2 = parseIdentifier();
+            Ptg ptgB = parseNameOrCellRef(iden2);
+            Ptg simplified = reduceRangeExpression(ptgA, ptgB);
+            
+            if (simplified == null) {
+                ParseNode[] children = {
+                    new ParseNode(ptgA),    
+                    new ParseNode(ptgB),
+                };
+                return new ParseNode(RangePtg.instance, children);
+            }
+            return new ParseNode(simplified);
+        }
+        return new ParseNode(ptgA);
+    } 
+    
+    /**
+     * 
+     * "A1", "B3" -> "A1:B3"   
+     * "sheet1!A1", "B3" -> "sheet1!A1:B3"
+     * 
+     * @return <code>null</code> if the range expression cannot / shouldn't be reduced.
+     */
+    private static Ptg reduceRangeExpression(Ptg ptgA, Ptg ptgB) {
+        if (!(ptgB instanceof RefPtg)) {
+            // only when second ref is simple 2-D ref can the range 
+            // expression be converted to an area ref
+            return null;
+        }
+        RefPtg refB = (RefPtg) ptgB;
 
+        if (ptgA instanceof RefPtg) {
+            RefPtg refA = (RefPtg) ptgA;
+            return new AreaPtg(refA.getRow(), refB.getRow(), refA.getColumn(), refB.getColumn(),
+                    refA.isRowRelative(), refB.isRowRelative(), refA.isColRelative(), refB.isColRelative());
+        }
+        if (ptgA instanceof Ref3DPtg) {
+            Ref3DPtg refA = (Ref3DPtg) ptgA;
+            return new Area3DPtg(refA.getRow(), refB.getRow(), refA.getColumn(), refB.getColumn(),
+                    refA.isRowRelative(), refB.isRowRelative(), refA.isColRelative(), refB.isColRelative(),
+                    refA.getExternSheetIndex());
+        }
+        // Note - other operand types (like AreaPtg) which probably can't evaluate 
+        // do not cause validation errors at parse time
+        return null;
+    }
+
+    private Ptg parseNameOrCellRef(Identifier iden) {
+        
+        if (look == '!') {
+            GetChar();
+            // 3-D ref
+            // this code assumes iden is a sheetName
+            // TODO - handle <book name> ! <named range name>
+            int externIdx = getExternalSheetIndex(iden.getName());
+            String secondIden = parseUnquotedIdentifier();
+            AreaReference areaRef = parseArea(secondIden);
+            if (areaRef == null) {
+                return new Ref3DPtg(secondIden, externIdx);
+            }
+            // will happen if dots are used instead of colon
+            return new Area3DPtg(areaRef.formatAsString(), externIdx);
+        }
+
+        String name = iden.getName();
         AreaReference areaRef = parseArea(name);
         if (areaRef != null) {
             // will happen if dots are used instead of colon
             return new AreaPtg(areaRef.formatAsString());
         }
-
-        if (look == ':' || look == '.') { // this is a AreaReference
-            GetChar();
-
-            while (look == '.') { // formulas can have . or .. or ... instead of :
-                GetChar();
-            }
-
-            String first = name;
-            String second = parseIdentifier();
-            return new AreaPtg(first+":"+second);
-        }
-
-        if (look == '!') {
-            Match('!');
-            String sheetName = name;
-            String first = parseIdentifier();
-            int externIdx = book.getExternalSheetIndex(sheetName);
-            areaRef = parseArea(name);
-            if (areaRef != null) {
-                // will happen if dots are used instead of colon
-                return new Area3DPtg(areaRef.formatAsString(), externIdx);
-            }
-            if (look == ':') {
-                Match(':');
-                String second=parseIdentifier();
-                if (look == '!') {
-                    //The sheet name was included in both of the areas. Only really
-                    //need it once
-                    Match('!');
-                    String third=parseIdentifier();
-
-                    if (!sheetName.equals(second))
-                        throw new RuntimeException("Unhandled double sheet reference.");
-
-                    return new Area3DPtg(first+":"+third,externIdx);
-                }
-                return new Area3DPtg(first+":"+second,externIdx);
-            }
-            return new Ref3DPtg(first, externIdx);
-        }
-        if (name.equalsIgnoreCase("TRUE") || name.equalsIgnoreCase("FALSE")) {
-            return new BoolPtg(name.toUpperCase());
-        }
-
         // This can be either a cell ref or a named range
-        // Try to spot which it is
+
+
         int nameType = CellReference.classifyCellReference(name);
         if (nameType == NameType.CELL) {
             return new RefPtg(name);
+        }
+        if (look == ':') {
+            if (nameType == NameType.COLUMN) {
+                GetChar();
+                String secondIden = parseUnquotedIdentifier();
+                if (CellReference.classifyCellReference(secondIden) != NameType.COLUMN) {
+                    throw new FormulaParseException("Expected full column after '" + name 
+                            + ":' but got '" + secondIden + "'");
+                }
+                return new AreaPtg(name + ":" + secondIden);
+            }
         }
         if (nameType != NameType.NAMED_RANGE) {
             new FormulaParseException("Name '" + name
@@ -345,6 +416,17 @@ public final class FormulaParser {
         }
         throw new FormulaParseException("Specified name '"
                     + name + "' is not a range as expected");
+    }
+
+    private int getExternalSheetIndex(String name) {
+        if (name.charAt(0) == '[') {
+            // we have a sheet name qualified with workbook name e.g. '[MyData.xls]Sheet1'
+            int pos = name.lastIndexOf(']'); // safe because sheet names never have ']'
+            String wbName = name.substring(1, pos);
+            String sheetName = name.substring(pos+1);
+            return book.getExternalSheetIndex(wbName, sheetName);
+        }
+        return book.getExternalSheetIndex(name);
     }
 
     /**
@@ -585,7 +667,7 @@ public final class FormulaParser {
                 Match('}');
                 return arrayNode;
         }
-        if (IsAlpha(look) || look == '\''){
+        if (IsAlpha(look) || look == '\'' || look == '['){
             return parseFunctionReferenceOrName();
         }
         // else - assume number
@@ -662,7 +744,7 @@ public final class FormulaParser {
     }
 
     private Boolean parseBooleanLiteral() {
-        String iden = parseIdentifier();
+        String iden = parseUnquotedIdentifier();
         if ("TRUE".equalsIgnoreCase(iden)) {
             return Boolean.TRUE;
         }
@@ -720,7 +802,7 @@ public final class FormulaParser {
 
     private int parseErrorLiteral() {
         Match('#');
-        String part1 = parseIdentifier().toUpperCase();
+        String part1 = parseUnquotedIdentifier().toUpperCase();
 
         switch(part1.charAt(0)) {
             case 'V':

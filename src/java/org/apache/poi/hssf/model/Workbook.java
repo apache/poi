@@ -26,6 +26,7 @@ import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -328,9 +329,9 @@ public final class Workbook implements Model {
         for ( int k = 0; k < nBoundSheets; k++ ) {   
             BoundSheetRecord bsr = retval.createBoundSheet(k);
 
-			records.add(bsr);
-			retval.boundsheets.add(bsr);
-			retval.records.setBspos(records.size() - 1);
+            records.add(bsr);
+            retval.boundsheets.add(bsr);
+            retval.records.setBspos(records.size() - 1);
         }
         // retval.records.supbookpos = retval.records.bspos + 1;
         //        retval.records.namepos = retval.records.supbookpos + 2;
@@ -586,19 +587,19 @@ public final class Workbook implements Model {
      * @param hidden 0 for not hidden, 1 for hidden, 2 for very hidden
      */
     public void setSheetHidden(int sheetnum, int hidden) {
-    	BoundSheetRecord bsr = getBoundSheetRec(sheetnum);
-    	boolean h = false;
-    	boolean vh = false;
-    	if(hidden == 0) {
-    	} else if(hidden == 1) {
-    		h = true;
-    	} else if(hidden == 2) {
-    		vh = true;
-    	} else {
-    		throw new IllegalArgumentException("Invalid hidden flag " + hidden + " given, must be 0, 1 or 2");
-    	}
-    	bsr.setHidden(h);
-    	bsr.setVeryHidden(vh);
+        BoundSheetRecord bsr = getBoundSheetRec(sheetnum);
+        boolean h = false;
+        boolean vh = false;
+        if(hidden == 0) {
+        } else if(hidden == 1) {
+            h = true;
+        } else if(hidden == 2) {
+            vh = true;
+        } else {
+            throw new IllegalArgumentException("Invalid hidden flag " + hidden + " given, must be 0, 1 or 2");
+        }
+        bsr.setHidden(h);
+        bsr.setVeryHidden(vh);
     }
     
     
@@ -761,23 +762,23 @@ public final class Workbook implements Model {
      *  have a Style set.
      */
     public StyleRecord getStyleRecord(int xfIndex) {
-    	// Style records always follow after 
-    	//  the ExtendedFormat records
-    	boolean done = false;
-    	for(int i=records.getXfpos(); i<records.size() &&
-    			!done; i++) {
-    		Record r = records.get(i);
-    		if(r instanceof ExtendedFormatRecord) {
-    		} else if(r instanceof StyleRecord) {
-    			StyleRecord sr = (StyleRecord)r;
-    			if(sr.getIndex() == xfIndex) {
-    				return sr;
-    			}
-    		} else {
-    			done = true;
-    		}
-    	}
-    	return null;
+        // Style records always follow after 
+        //  the ExtendedFormat records
+        boolean done = false;
+        for(int i=records.getXfpos(); i<records.size() &&
+                !done; i++) {
+            Record r = records.get(i);
+            if(r instanceof ExtendedFormatRecord) {
+            } else if(r instanceof StyleRecord) {
+                StyleRecord sr = (StyleRecord)r;
+                if(sr.getIndex() == xfIndex) {
+                    return sr;
+                }
+            } else {
+                done = true;
+            }
+        }
+        return null;
     }
     /**
      * Creates a new StyleRecord, for the given Extended
@@ -785,29 +786,29 @@ public final class Workbook implements Model {
      *  records collection
      */
     public StyleRecord createStyleRecord(int xfIndex) {
-    	// Style records always follow after 
-    	//  the ExtendedFormat records
-    	StyleRecord newSR = new StyleRecord();
-    	newSR.setIndex((short)xfIndex);
-    	
-    	// Find the spot
-    	int addAt = -1;
-    	for(int i=records.getXfpos(); i<records.size() &&
-    			addAt == -1; i++) {
-    		Record r = records.get(i);
-    		if(r instanceof ExtendedFormatRecord ||
-    				r instanceof StyleRecord) {
-    			// Keep going
-    		} else {
-    			addAt = i;
-    		}
-    	}
-    	if(addAt == -1) {
-    		throw new IllegalStateException("No XF Records found!");
-    	}
-    	records.add(addAt, newSR);
-    	
-    	return newSR;
+        // Style records always follow after 
+        //  the ExtendedFormat records
+        StyleRecord newSR = new StyleRecord();
+        newSR.setIndex((short)xfIndex);
+        
+        // Find the spot
+        int addAt = -1;
+        for(int i=records.getXfpos(); i<records.size() &&
+                addAt == -1; i++) {
+            Record r = records.get(i);
+            if(r instanceof ExtendedFormatRecord ||
+                    r instanceof StyleRecord) {
+                // Keep going
+            } else {
+                addAt = i;
+            }
+        }
+        if(addAt == -1) {
+            throw new IllegalStateException("No XF Records found!");
+        }
+        records.add(addAt, newSR);
+        
+        return newSR;
     }
 
     /**
@@ -1914,8 +1915,7 @@ public final class Workbook implements Model {
      */
     public String findSheetNameFromExternSheet(int externSheetIndex){
 
-        int indexToSheet = linkTable.getIndexToSheet(externSheetIndex);
-        
+        int indexToSheet = linkTable.getIndexToInternalSheet(externSheetIndex);
         if (indexToSheet < 0) {
             // TODO - what does '-1' mean here?
             //error check, bail out gracefully!
@@ -1926,6 +1926,13 @@ public final class Workbook implements Model {
             return ""; // Seems to be what excel would do in this case
         }
         return getSheetName(indexToSheet);
+    }
+    public ExternalSheet getExternalSheet(int externSheetIndex) {
+        String[] extNames = linkTable.getExternalBookAndSheetName(externSheetIndex);
+        if (extNames == null) {
+            return null;
+        }
+        return new ExternalSheet(extNames[0], extNames[1]);
     }
 
     /**
@@ -1944,8 +1951,13 @@ public final class Workbook implements Model {
      * @return index to extern sheet
      */
     public short checkExternSheet(int sheetNumber){
-        return getOrCreateLinkTable().checkExternSheet(sheetNumber);
+        return (short)getOrCreateLinkTable().checkExternSheet(sheetNumber);
     }
+
+	public int getExternalSheetIndex(String workbookName, String sheetName) {
+		return getOrCreateLinkTable().getExternalSheetIndex(workbookName, sheetName);
+	}
+    
 
     /** gets the total number of names
      * @return number of names

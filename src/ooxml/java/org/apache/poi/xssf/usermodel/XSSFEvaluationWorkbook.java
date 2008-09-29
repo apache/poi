@@ -57,10 +57,6 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		return convertToExternalSheetIndex(sheetIndex);
 	}
 
-	public EvaluationName getName(int index) {
-		return new Name(_uBook.getNameAt(index), index, this);
-	}
-
 	public EvaluationName getName(String name) {
 		for(int i=0; i < _uBook.getNumberOfNames(); i++) {
 			String nameText = _uBook.getNameName(i);
@@ -88,14 +84,15 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		return _uBook.getSheetAt(sheetIndex);
 	}
 
-    /**
-     * Doesn't do anything - returns the same index
-     * TODO - figure out if this is a ole2 specific thing, or
-     *  if we need to do something proper here too!
-     */
-	public Sheet getSheetByExternSheetIndex(int externSheetIndex) {
-		int sheetIndex = convertFromExternalSheetIndex(externSheetIndex);
-		return _uBook.getSheetAt(sheetIndex);
+	public ExternalSheet getExternalSheet(int externSheetIndex) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public int getExternalSheetIndex(String workbookName, String sheetName) {
+		throw new RuntimeException("not implemented yet");
+	}
+	public int getSheetIndex(String sheetName) {
+		return _uBook.getSheetIndex(sheetName);
 	}
 
 	public Workbook getWorkbook() {

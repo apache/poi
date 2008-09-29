@@ -50,10 +50,10 @@ public interface AreaI {
 
 		public OffsetArea(int baseRow, int baseColumn, int relFirstRowIx, int relLastRowIx,
 				int relFirstColIx, int relLastColIx) {
-			_firstRow = baseRow + relFirstRowIx;
-			_lastRow = baseRow + relLastRowIx;
-			_firstColumn = baseColumn + relFirstColIx;
-			_lastColumn = baseColumn + relLastColIx;
+			_firstRow = baseRow + Math.min(relFirstRowIx, relLastRowIx);
+			_lastRow = baseRow + Math.max(relFirstRowIx, relLastRowIx);
+			_firstColumn = baseColumn + Math.min(relFirstColIx, relLastColIx);
+			_lastColumn = baseColumn + Math.max(relFirstColIx, relLastColIx);
 		}
 
 		public int getFirstColumn() {
@@ -72,5 +72,4 @@ public interface AreaI {
 			return _lastRow;
 		}
 	}
-
 }
