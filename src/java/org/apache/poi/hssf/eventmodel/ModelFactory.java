@@ -31,9 +31,9 @@ import org.apache.poi.hssf.record.Record;
 
 
 /**
- * ModelFactory creates workbook and sheet models based upon 
+ * ModelFactory creates workbook and sheet models based upon
  * events thrown by them there events from the EventRecordFactory.
- * 
+ *
  * @see org.apache.poi.hssf.eventmodel.EventRecordFactory
  * @author Andrew C. Oliver acoliver@apache.org
  */
@@ -43,7 +43,7 @@ public class ModelFactory implements ERFListener
     List listeners;
     Model currentmodel;
     boolean lastEOF;
- 
+
     /**
      * Constructor for ModelFactory.  Does practically nothing.
      */
@@ -52,15 +52,15 @@ public class ModelFactory implements ERFListener
         super();
         listeners = new ArrayList(1);
     }
-    
+
     /**
-     * register a ModelFactoryListener so that it can receive 
+     * register a ModelFactoryListener so that it can receive
      * Models as they are created.
      */
     public void registerListener(ModelFactoryListener listener) {
         listeners.add(listener);
     }
-    
+
     /**
      * Start processing the Workbook stream into Model events.
      */
@@ -75,31 +75,31 @@ public class ModelFactory implements ERFListener
     {
        if (rec.getSid() == BOFRecord.sid) {
              if (lastEOF != true) {
-              throw new RuntimeException("Not yet handled embedded models");  
+              throw new RuntimeException("Not yet handled embedded models");
              } else {
               BOFRecord bof = (BOFRecord)rec;
               switch (bof.getType()) {
                case BOFRecord.TYPE_WORKBOOK:
-                 currentmodel = new Workbook();                 
+                 currentmodel = new Workbook();
                break;
                case BOFRecord.TYPE_WORKSHEET:
-                 currentmodel = new Sheet();                                  
+                 currentmodel = Sheet.createSheet();
                break;
               default:
                    throw new RuntimeException("Unsupported model type "+bof.getType());
-              }                
-               
-             }        
+              }
+
+             }
         }
-        
+
         if (rec.getSid() == EOFRecord.sid) {
             lastEOF = true;
             throwEvent(currentmodel);
         } else {
-            lastEOF = false;   
+            lastEOF = false;
         }
-        
- 
+
+
         return true;
     }
 
