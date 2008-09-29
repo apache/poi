@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.CFHeaderRecord;
+import org.apache.poi.hssf.record.formula.FormulaShifter;
 
 /**
  * Holds all the conditional formatting for a workbook sheet.<p/>
@@ -83,6 +84,17 @@ public final class ConditionalFormattingTable extends RecordAggregate {
 		if (index < 0 || index >= _cfHeaders.size()) {
 			throw new IllegalArgumentException("Specified CF index " + index
 					+ " is outside the allowable range (0.." + (_cfHeaders.size() - 1) + ")");
+		}
+	}
+
+	public void updateFormulasAfterCellShift(FormulaShifter shifter, int externSheetIndex) {
+		for (int i = 0; i < _cfHeaders.size(); i++) {
+			CFRecordsAggregate subAgg = (CFRecordsAggregate) _cfHeaders.get(i);
+			boolean shouldKeep = subAgg.updateFormulasAfterCellShift(shifter, externSheetIndex);
+			if (!shouldKeep) {
+				_cfHeaders.remove(i);
+				i--;
+			}
 		}
 	}
 }

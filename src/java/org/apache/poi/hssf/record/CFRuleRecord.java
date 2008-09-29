@@ -420,6 +420,15 @@ public final class CFRuleRecord extends Record {
 	{
 		return field_17_formula1;
 	}
+	public void setParsedExpression1(Ptg[] ptgs) {
+		field_17_formula1 = safeClone(ptgs);
+	}
+	private static Ptg[] safeClone(Ptg[] ptgs) {
+		if (ptgs == null) {
+			return null;
+		}
+		return (Ptg[]) ptgs.clone();
+	}
 
 	/**
 	 * get the stack of the 2nd expression as a list
@@ -433,6 +442,9 @@ public final class CFRuleRecord extends Record {
 	public Ptg[] getParsedExpression2()
 	{
 		return field_18_formula2;
+	}
+	public void setParsedExpression2(Ptg[] ptgs) {
+		field_18_formula2 = safeClone(ptgs);
 	}
 	
 	/**

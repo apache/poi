@@ -56,6 +56,11 @@ import org.apache.poi.hssf.util.CellRangeAddress;
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class TestSheet extends TestCase {
+    private static Sheet createSheet(List inRecs) {
+        return Sheet.createSheet(new RecordStream(inRecs, 0));
+    }
+	
+	
     public void testCreateSheet() {
         // Check we're adding row and cell aggregates
         List records = new ArrayList();
@@ -63,7 +68,7 @@ public final class TestSheet extends TestCase {
         records.add( new DimensionsRecord() );
         records.add(createWindow2Record());
         records.add(EOFRecord.instance);
-        Sheet sheet = Sheet.createSheet( records, 0, 0 );
+        Sheet sheet = createSheet(records);
 
         int pos = 0;
         assertTrue( sheet.records.get(pos++) instanceof BOFRecord );
@@ -187,7 +192,7 @@ public final class TestSheet extends TestCase {
         records.add(EOFRecord.instance);
         records.add(merged);
 
-        Sheet sheet = Sheet.createSheet(records, 0);
+        Sheet sheet = createSheet(records);
         sheet.records.remove(0);
 
         //stub object to throw off list INDEX operations
@@ -222,7 +227,7 @@ public final class TestSheet extends TestCase {
         records.add(createWindow2Record());
         records.add(EOFRecord.instance);
 
-        Sheet sheet = Sheet.createSheet(records, 0);
+        Sheet sheet = createSheet(records);
         assertNotNull("Row [2] was skipped", sheet.getRow(2));
     }
 
@@ -446,7 +451,7 @@ public final class TestSheet extends TestCase {
         records.add(new DimensionsRecord());
         records.add(createWindow2Record());
         records.add(EOFRecord.instance);
-        Sheet sheet = Sheet.createSheet(records, 0, 0);
+        Sheet sheet = createSheet(records);
         
         // The original bug was due to different logic for collecting records for sizing and 
         // serialization. The code has since been refactored into a single method for visiting

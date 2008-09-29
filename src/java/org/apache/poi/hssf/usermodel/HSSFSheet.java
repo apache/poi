@@ -1278,7 +1278,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
         int sheetIndex = workbook.getSheetIndex(this);
         short externSheetIndex = book.checkExternSheet(sheetIndex);
         FormulaShifter shifter = FormulaShifter.createForRowShift(externSheetIndex, startRow, endRow, n);
-        sheet.getRowsAggregate().updateFormulasAfterRowShift(shifter, externSheetIndex);
+        sheet.updateFormulasAfterCellShift(shifter, externSheetIndex);
 
         int nSheets = workbook.getNumberOfSheets();
         for(int i=0; i<nSheets; i++) {
@@ -1287,7 +1287,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
                 continue;
             }
             short otherExtSheetIx = book.checkExternSheet(i);
-            otherSheet.getRowsAggregate().updateFormulasAfterRowShift(shifter, otherExtSheetIx);
+            otherSheet.updateFormulasAfterCellShift(shifter, otherExtSheetIx);
         }
         // TODO - adjust formulas in named ranges
     }

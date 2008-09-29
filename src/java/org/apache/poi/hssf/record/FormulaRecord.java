@@ -406,14 +406,6 @@ public final class FormulaRecord extends Record implements CellValueRecordInterf
 		return 4 + getDataSize();
 	}
 
-	public boolean isInValueSection() {
-		return true;
-	}
-
-	public boolean isValue() {
-		return true;
-	}
-
 	public String toString() {
 
 		StringBuffer sb = new StringBuffer();
