@@ -16,80 +16,94 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel.extensions;
 
-import java.util.LinkedList;
+import java.util.List;
 
+import org.apache.poi.xssf.usermodel.IndexedColors;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType.Enum;
 
-public class XSSFCellFill {
+public final class XSSFCellFill {
 	
-	private CTFill fill;
+	private CTFill _fill;
 	
 	public XSSFCellFill(CTFill fill) {
-		this.fill = fill;
+		_fill = fill;
 	}
 	
 	public XSSFCellFill() {
-		this.fill = CTFill.Factory.newInstance();
+		_fill = CTFill.Factory.newInstance();
 	}
 	
 	public XSSFColor getFillBackgroundColor() {
-		return new XSSFColor(getPatternFill().getBgColor());
+		CTColor ctColor = getPatternFill().getBgColor();
+		if (ctColor == null) {
+			XSSFColor result = new XSSFColor();
+			result.setIndexed(IndexedColors.AUTOMATIC.getIndex());
+			return result;
+		}
+		return new XSSFColor(ctColor);
 	}
 
 	public XSSFColor getFillForegroundColor() {
-		return new XSSFColor(getPatternFill().getFgColor());
+		CTColor ctColor = getPatternFill().getFgColor();
+		if (ctColor == null) {
+			XSSFColor result = new XSSFColor();
+			result.setIndexed(IndexedColors.AUTOMATIC.getIndex());
+			return result;
+		}
+		return new XSSFColor(ctColor);
 	}
 
 	public Enum getPatternType() {
 		return getPatternFill().getPatternType();
 	}
 	
-	public long putFill(LinkedList<CTFill> fills) {
-		if (fills.contains(fill)) {
-			return fills.indexOf(fill);
+	/**
+	 * @return the index of the just added fill
+	 */
+	public int putFill(List<CTFill> fills) {
+		if (fills.contains(_fill)) {
+			return fills.indexOf(_fill);
 		}
-		fills.add(fill);
+		fills.add(_fill);
 		return fills.size() - 1;
 	}
 
 	private CTPatternFill getPatternFill() {
-		CTPatternFill patternFill = fill.getPatternFill();
+		CTPatternFill patternFill = _fill.getPatternFill();
 		if (patternFill == null) {
-			patternFill = fill.addNewPatternFill();
+			patternFill = _fill.addNewPatternFill();
 		}
 		return patternFill;
 	}
 
 	public CTFill getCTFill() {
-		return this.fill;
+		return _fill;
 	}
 	
-        public void setFillBackgroundColor(long index) {
-                CTColor ctColor=getPatternFill().addNewBgColor();
-                ctColor.setIndexed(index);
-                fill.getPatternFill().setBgColor(ctColor);
-        }
+	public void setFillBackgroundColor(long index) {
+		CTColor ctColor=getPatternFill().addNewBgColor();
+		ctColor.setIndexed(index);
+		_fill.getPatternFill().setBgColor(ctColor);
+	}
 
 	public void setFillForegroundColor(long index) {
 		CTColor ctColor=getPatternFill().addNewFgColor();
 		ctColor.setIndexed(index);
-		fill.getPatternFill().setFgColor(ctColor);
+		_fill.getPatternFill().setFgColor(ctColor);
 	}
 	
-	 public void setFillBackgroundRgbColor(XSSFColor color) {
-             fill.getPatternFill().setBgColor(color.getCTColor());
-	 }
+	public void setFillBackgroundRgbColor(XSSFColor color) {
+		_fill.getPatternFill().setBgColor(color.getCTColor());
+	}
 
 	public void setFillForegroundRgbColor(XSSFColor color) {
-		fill.getPatternFill().setFgColor(color.getCTColor());
+		_fill.getPatternFill().setFgColor(color.getCTColor());
 	}
 	
 	public void setPatternType(Enum patternType) {
 		getPatternFill().setPatternType(patternType);
 	}
-
-    
 }
