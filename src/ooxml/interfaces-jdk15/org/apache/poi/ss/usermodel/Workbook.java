@@ -49,8 +49,14 @@ public interface Workbook {
     /** PNG format */
     public static final int PICTURE_TYPE_PNG = 6;
 
-    /** Device independant bitmap */
+    /** Device independent bitmap */
     public static final int PICTURE_TYPE_DIB = 7;
+
+    int getActiveSheetIndex();
+    void setActiveSheet(int sheetIndex);
+
+    int getFirstVisibleTab();
+    void setFirstVisibleTab(int sheetIndex);
 
     /**
      * sets the order of appearance for a given sheet.
@@ -79,19 +85,6 @@ public interface Workbook {
      * @see org.apache.poi.hssf.usermodel.HSSFSheet#setSelected(boolean)
      */
     short getSelectedTab();
-
-    /**
-     * sets the first tab that is displayed in the list of tabs
-     * in excel.
-     * @param index
-     */
-    void setDisplayedTab(short index);
-
-    /**
-     * sets the first tab that is displayed in the list of tabs
-     * in excel.
-     */
-    short getDisplayedTab();
 
     /**
      * set the sheet name.

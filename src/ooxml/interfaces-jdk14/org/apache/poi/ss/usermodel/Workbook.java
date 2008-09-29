@@ -26,6 +26,13 @@ import org.apache.poi.hssf.usermodel.*;
  *  which work properly for both HSSFWorkbook and XSSFWorkbook
  */
 public interface Workbook {
+
+    int getActiveSheetIndex();
+    void setActiveSheet(int sheetIndex);
+
+    int getFirstVisibleTab();
+    void setFirstVisibleTab(int sheetIndex);
+
     int getNumberOfSheets();
     short getNumberOfFonts();
     int getNumberOfNames();
@@ -34,15 +41,11 @@ public interface Workbook {
     HSSFName getNameAt(int index);
     int getNameIndex(String name);
     String getNameName(int index);
-    String resolveNameXText(int refIndex, int definedNameIndex);
 
     String getSheetName(int sheet);
     HSSFSheet getSheetAt(int index);
-    String findSheetNameFromExternSheet(int externSheetIndex);
     int getSheetIndex(String name);
     int getSheetIndex(Sheet sheet);
-    int getSheetIndexFromExternSheetIndex(int externSheetNumber);
-	int getExternalSheetIndex(int internalSheetIndex);
 
     CreationHelper getCreationHelper();
 
