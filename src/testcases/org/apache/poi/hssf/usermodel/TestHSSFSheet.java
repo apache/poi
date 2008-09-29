@@ -891,4 +891,23 @@ public final class TestHSSFSheet extends TestCase {
 
         //TODO: check shapeId in the cloned sheet
     }
+    
+    /**
+     * POI now (Sep 2008) allows sheet names longer than 31 chars (for other apps besides Excel).
+     * Since Excel silently truncates to 31, make sure that POI enforces uniqueness on the first
+     * 31 chars. 
+     */
+    public void testLongSheetNames() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        final String SAME_PREFIX = "A123456789B123456789C123456789"; // 30 chars
+        
+        wb.createSheet(SAME_PREFIX + "Dxxxx");
+        try {
+            wb.createSheet(SAME_PREFIX + "Dyyyy"); // identical up to the 32nd char
+            throw new AssertionFailedError("Expected exception not thrown");
+        } catch (IllegalArgumentException e) {
+            assertEquals("The workbook already contains a sheet of this name", e.getMessage());
+        }
+        wb.createSheet(SAME_PREFIX + "Exxxx"); // OK - differs in the 31st char
+    }
 }
