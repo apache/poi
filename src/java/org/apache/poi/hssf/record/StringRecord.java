@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -23,14 +21,12 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Supports the STRING record structure.
+ * Supports the STRING record structure. (0x0207)
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class StringRecord
-        extends Record
-{
-    public final static short   sid = 0x207;
+public class StringRecord extends Record {
+    public final static short   sid = 0x0207;
     private int                 field_1_string_length;
     private byte                field_2_unicode_flag;
     private String              field_3_string;
@@ -73,7 +69,7 @@ public class StringRecord
         field_1_string_length           = in.readShort();
         field_2_unicode_flag            = in.readByte();
         byte[] data = in.readRemainder();
-        //Why isnt this using the in.readString methods???
+        //Why isn't this using the in.readString methods???
         if (isUnCompressedUnicode())
         {
             field_3_string = StringUtil.getFromUnicodeLE(data, 0, field_1_string_length );
@@ -90,11 +86,6 @@ public class StringRecord
     	} else {
     		field_3_string += StringUtil.getFromCompressedUnicode(data, 0, field_1_string_length - field_3_string.length());
     	}
-    }
-
-    public boolean isInValueSection()
-    {
-        return true;
     }
 
     private int getStringByteLength()
@@ -130,8 +121,8 @@ public class StringRecord
      */
     public int serialize( int offset, byte[] data )
     {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) (3 + getStringByteLength()));
+        LittleEndian.putUShort(data, 0 + offset, sid);
+        LittleEndian.putUShort(data, 2 + offset, 3 + getStringByteLength());
         LittleEndian.putUShort(data, 4 + offset, field_1_string_length);
         data[6 + offset] = field_2_unicode_flag;
         if (isUnCompressedUnicode())
@@ -180,8 +171,6 @@ public class StringRecord
         setCompressedFlag(StringUtil.hasMultibyte(string) ?  (byte)1 : (byte)0);        
     }
 
-
-
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
@@ -199,7 +188,5 @@ public class StringRecord
         rec.field_2_unicode_flag= this.field_2_unicode_flag;
         rec.field_3_string = this.field_3_string;
         return rec;
-
     }
-
 }

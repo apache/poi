@@ -17,8 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.HexDump;
+
 /**
- * Label Record - read only support for strings stored directly in the cell..  Don't
+ * Label Record (0x0204) - read only support for strings stored directly in the cell..  Don't
  * use this (except to read), use LabelSST instead <P>
  * REFERENCE:  PG 325 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
@@ -27,7 +29,7 @@ package org.apache.poi.hssf.record;
  * @see org.apache.poi.hssf.record.LabelSSTRecord
  */
 public final class LabelRecord extends Record implements CellValueRecordInterface {
-    public final static short sid = 0x204;
+    public final static short sid = 0x0204;
 
     private int               field_1_row;
     private short             field_2_column;
@@ -37,7 +39,6 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
     private String            field_6_value;
 
     /** Creates new LabelRecord */
-
     public LabelRecord()
     {
     }
@@ -47,7 +48,6 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
      *
      * @param in the RecordInputstream to read the record from
      */
-
     public LabelRecord(RecordInputStream in)
     {
         super(in);
@@ -59,7 +59,6 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
      *
      * @param id alleged id for this record
      */
-
     protected void validateSid(short id)
     {
         if (id != sid)
@@ -71,7 +70,6 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
     /**
      * @param in the RecordInputstream to read the record from
      */
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_row          = in.readUShort();
@@ -92,11 +90,6 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
 
 /*
  * READ ONLY ACCESS... THIS IS FOR COMPATIBILITY ONLY...USE LABELSST! public
- * void setRow(short row) { field_1_row = row; }
- * 
- * public void setColumn(short col) { field_2_column = col; }
- * 
- * public void setXFIndex(short index) { field_3_xf_index = index; }
  */
     public int getRow()
     {
@@ -117,7 +110,6 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
      * get the number of characters this string contains
      * @return number of characters
      */
-
     public short getStringLength()
     {
         return field_4_string_len;
@@ -127,7 +119,6 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
      * is this uncompressed unicode (16bit)?  Or just 8-bit compressed?
      * @return isUnicode - True for 16bit- false for 8bit
      */
-
     public boolean isUnCompressedUnicode()
     {
         return (field_5_unicode_flag == 1);
@@ -139,7 +130,6 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
      * @return the text string
      * @see #getStringLength()
      */
-
     public String getValue()
     {
         return field_6_value;
@@ -148,7 +138,6 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
     /**
      * THROWS A RUNTIME EXCEPTION..  USE LABELSSTRecords.  YOU HAVE NO REASON to use LABELRecord!!
      */
-
     public int serialize(int offset, byte [] data)
     {
         throw new RecordFormatException(
@@ -162,38 +151,21 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("[LABEL]\n");
-        buffer.append("    .row            = ")
-            .append(Integer.toHexString(getRow())).append("\n");
-        buffer.append("    .column         = ")
-            .append(Integer.toHexString(getColumn())).append("\n");
-        buffer.append("    .xfindex        = ")
-            .append(Integer.toHexString(getXFIndex())).append("\n");
-        buffer.append("    .string_len       = ")
-            .append(Integer.toHexString(field_4_string_len)).append("\n");
-        buffer.append("    .unicode_flag       = ")
-            .append(Integer.toHexString(field_5_unicode_flag)).append("\n");
-        buffer.append("    .value       = ")
-            .append(getValue()).append("\n");
-        buffer.append("[/LABEL]\n");
-        return buffer.toString();
-    }
-
-    public boolean isInValueSection()
-    {
-        return true;
-    }
-
-    public boolean isValue()
-    {
-        return true;
+        StringBuffer sb = new StringBuffer();
+		sb.append("[LABEL]\n");
+		sb.append("    .row       = ").append(HexDump.shortToHex(getRow())).append("\n");
+		sb.append("    .column    = ").append(HexDump.shortToHex(getColumn())).append("\n");
+		sb.append("    .xfindex   = ").append(HexDump.shortToHex(getXFIndex())).append("\n");
+		sb.append("    .string_len= ").append(HexDump.shortToHex(field_4_string_len)).append("\n");
+		sb.append("    .unicode_flag= ").append(HexDump.byteToHex(field_5_unicode_flag)).append("\n");
+		sb.append("    .value       = ").append(getValue()).append("\n");
+		sb.append("[/LABEL]\n");
+        return sb.toString();
     }
 
     /**
-     * NO-OP!
-     */
-
+	 * NO-OP!
+	 */
     public void setColumn(short col)
     {
     }
@@ -201,8 +173,6 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
     /**
      * NO-OP!
      */
-
-    //public void setRow(short row)
     public void setRow(int row)
     {
     }
@@ -210,7 +180,6 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
     /**
      * no op!
      */
-
     public void setXFIndex(short xf)
     {
     }

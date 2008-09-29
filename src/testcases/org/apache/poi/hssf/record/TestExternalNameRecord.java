@@ -82,11 +82,9 @@ public final class TestExternalNameRecord extends TestCase {
 		assertTrue(enr.isAutomaticLink());
 		assertFalse(enr.isBuiltInName());
 		assertFalse(enr.isIconifiedPictureLink());
-		assertFalse(enr.isInValueSection());
 		assertFalse(enr.isOLELink());
 		assertFalse(enr.isPicureLink());
 		assertTrue(enr.isStdDocumentNameIdentifier());
-		assertFalse(enr.isValue());
 
 		TestcaseRecordInputStream.confirmRecordEncoding(0x0023, dataAutoDocName, enr.serialize());
 	}
@@ -98,11 +96,9 @@ public final class TestExternalNameRecord extends TestCase {
 		assertFalse(enr.isAutomaticLink());
 		assertFalse(enr.isBuiltInName());
 		assertFalse(enr.isIconifiedPictureLink());
-		assertFalse(enr.isInValueSection());
 		assertFalse(enr.isOLELink());
 		assertFalse(enr.isPicureLink());
 		assertFalse(enr.isStdDocumentNameIdentifier());
-		assertFalse(enr.isValue());
 
 		TestcaseRecordInputStream.confirmRecordEncoding(0x0023, dataPlainName, enr.serialize());
 	}

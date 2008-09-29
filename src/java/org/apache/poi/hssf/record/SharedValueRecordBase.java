@@ -115,20 +115,4 @@ public abstract class SharedValueRecordBase extends Record {
 		CellRangeAddress8Bit r = getRange();
 		return r.getFirstRow() == rowIx && r.getFirstColumn() == colIx;
 	}
-
-	/**
-	 * Mirroring formula records so it is registered in the
-	 * ValueRecordsAggregate
-	 */
-	public final boolean isInValueSection() {
-		return true;
-	}
-
-	/**
-	 * Register it in the ValueRecordsAggregate so it can go into the
-	 * FormulaRecordAggregate
-	 */
-	public final boolean isValue() {
-		return true;
-	}
 }

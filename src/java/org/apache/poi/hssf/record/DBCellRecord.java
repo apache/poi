@@ -182,10 +182,6 @@ public final class DBCellRecord extends Record {
         return sid;
     }
 
-    public boolean isInValueSection()
-    {
-        return true;
-    }
     public Object clone() {
         // TODO - make immutable.
         // this should be safe because only the instantiating code mutates these objects

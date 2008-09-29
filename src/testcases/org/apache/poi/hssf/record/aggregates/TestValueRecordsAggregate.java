@@ -65,7 +65,7 @@ public final class TestValueRecordsAggregate extends TestCase {
     }
 
     private void constructValueRecord(List records) {
-        RowBlocksReader rbr = new RowBlocksReader(records, 0);
+        RowBlocksReader rbr = new RowBlocksReader(new RecordStream(records, 0));
         SharedValueManager sfrh = rbr.getSharedFormulaManager();
         RecordStream rs = rbr.getPlainRecordStream();
         while(rs.hasNext()) {

@@ -83,7 +83,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
                 // might need to keep track of where exactly these belong
                 continue;
             }
-            if (!rec.isValue()) {
+            if (!(rec instanceof CellValueRecordInterface)) {
                 throw new RuntimeException("Unexpected record type (" + rec.getClass().getName() + ")");
             }
             _valuesAgg.construct((CellValueRecordInterface)rec, rs, svm);

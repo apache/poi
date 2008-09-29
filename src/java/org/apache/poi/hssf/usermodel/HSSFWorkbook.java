@@ -33,6 +33,7 @@ import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBitmapBlip;
 import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.AbstractEscherHolderRecord;
@@ -276,10 +277,9 @@ public class HSSFWorkbook extends POIDocument
 
         // convert all LabelRecord records to LabelSSTRecord
         convertLabelRecords(records, recOffset);
-        while (recOffset < records.size()) {
-            Sheet sheet = Sheet.createSheet(records, sheetNum++, recOffset );
-
-            recOffset = sheet.getEofLoc()+1; // TODO - use better technique to keep track of the used records
+        RecordStream rs = new RecordStream(records, recOffset);
+        while (rs.hasNext()) {
+            Sheet sheet = Sheet.createSheet(rs);
             _sheets.add(new HSSFSheet(this, sheet));
         }
 

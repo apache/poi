@@ -58,7 +58,6 @@ import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.hssf.record.UncalcedRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
-import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
@@ -105,7 +104,6 @@ public final class Sheet implements Model {
     private static POILogger            log              = POILogFactory.getLogger(Sheet.class);
 
     protected ArrayList                  records           =     null;
-    protected int                        dimsloc           =     -1;  // TODO - remove dimsloc
     protected PrintGridlinesRecord       printGridlines    =     null;
     protected GridsetRecord              gridset           =     null;
     private   GutsRecord                 _gutsRecord;
@@ -118,7 +116,7 @@ public final class Sheet implements Model {
     protected ObjectProtectRecord        objprotect        =     null;
     protected ScenarioProtectRecord      scenprotect       =     null;
     protected PasswordRecord             password          =     null;
-    
+
     protected WindowTwoRecord            windowTwo         =     null;
     protected SelectionRecord            selection         =     null;
     /** java object always present, but if empty no BIFF records are written */
@@ -128,28 +126,19 @@ public final class Sheet implements Model {
     /** the DimensionsRecord is always present */
     private DimensionsRecord             _dimensions;
     /** always present */
-    protected RowRecordsAggregate        _rowsAggregate;
+    protected final RowRecordsAggregate        _rowsAggregate;
     private   DataValidityTable          _dataValidityTable=     null;
     private   ConditionalFormattingTable condFormatting;
 
-    protected int                        eofLoc            =     0;
     private   Iterator                   rowRecIterator    =     null;
 
     /** Add an UncalcedRecord if not true indicating formulas have not been calculated */
     protected boolean _isUncalced = false;
-    
+
     public static final byte PANE_LOWER_RIGHT = (byte)0;
     public static final byte PANE_UPPER_RIGHT = (byte)1;
     public static final byte PANE_LOWER_LEFT = (byte)2;
     public static final byte PANE_UPPER_LEFT = (byte)3;
-
-    /**
-     * Creates new Sheet with no initialization --useless at this point
-     * @see #createSheet(List,int,int)
-     */
-    public Sheet() {
-        _mergedCellsTable = new MergedCellsTable();
-    }
 
     /**
      * read support  (offset used as starting point for search) for low level
@@ -168,178 +157,170 @@ public final class Sheet implements Model {
      * @see org.apache.poi.hssf.model.Workbook
      * @see org.apache.poi.hssf.record.Record
      */
-    public static Sheet createSheet(List inRecs, int sheetnum, int offset)
-    {
-        if (log.check( POILogger.DEBUG ))
-            log.logFormatted(POILogger.DEBUG,
-                    "Sheet createSheet (existing file) with %",
-                    new Integer(inRecs.size()));
-        Sheet     retval             = new Sheet();
-        ArrayList records            = new ArrayList(inRecs.size() / 5);
+    public static Sheet createSheet(RecordStream rs) {
+        return new Sheet(rs);
+    }
+    private Sheet(RecordStream rs) {
+        _mergedCellsTable = new MergedCellsTable();
+        RowRecordsAggregate rra = null;
+
+        records            = new ArrayList(128);
         // TODO - take chart streams off into separate java objects
         int       bofEofNestingLevel = 0;  // nesting level can only get to 2 (when charts are present)
+        int dimsloc = -1;
 
-        for (int k = offset; k < inRecs.size(); k++) {
-            Record rec = ( Record ) inRecs.get(k);
-            if ( rec.getSid() == IndexRecord.sid ) {
-                // ignore INDEX record because it is only needed by Excel, 
-                // and POI always re-calculates its contents 
+        while (rs.hasNext()) {
+            int recSid = rs.peekNextSid();
+
+            if ( recSid == CFHeaderRecord.sid ) {
+                condFormatting = new ConditionalFormattingTable(rs);
+                records.add(condFormatting);
                 continue;
             }
 
-            if ( rec.getSid() == CFHeaderRecord.sid ) {
-                RecordStream rs = new RecordStream(inRecs, k);
-                retval.condFormatting = new ConditionalFormattingTable(rs);
-                k += rs.getCountRead()-1;
-                records.add(retval.condFormatting);
+            if (recSid == ColumnInfoRecord.sid) {
+                _columnInfos = new ColumnInfoRecordsAggregate(rs);
+                records.add(_columnInfos);
                 continue;
             }
-            
-            if (rec.getSid() == ColumnInfoRecord.sid) {
-                RecordStream rs = new RecordStream(inRecs, k);
-                retval._columnInfos = new ColumnInfoRecordsAggregate(rs);
-                k += rs.getCountRead()-1;
-                records.add(retval._columnInfos);
+            if ( recSid == DVALRecord.sid) {
+                _dataValidityTable = new DataValidityTable(rs);
+                records.add(_dataValidityTable);
                 continue;
             }
-            if ( rec.getSid() == DVALRecord.sid) {
-                RecordStream rs = new RecordStream(inRecs, k);
-                retval._dataValidityTable = new DataValidityTable(rs);
-                k += rs.getCountRead() - 1; // TODO - convert this method result to be zero based
-                records.add(retval._dataValidityTable);
-                continue;
-            }
-            // TODO construct RowRecordsAggregate from RecordStream
-            if ((rec.getSid() == RowRecord.sid || rec.isValue()) && bofEofNestingLevel == 1 ) {
+
+            if (RecordOrderer.isRowBlockRecord(recSid) && bofEofNestingLevel == 1 ) {
                 //only add the aggregate once
-                if (retval._rowsAggregate != null) {
+                if (rra != null) {
                     throw new RuntimeException("row/cell records found in the wrong place");
                 }
-                RowBlocksReader rbr = new RowBlocksReader(inRecs, k);
-                retval._mergedCellsTable.addRecords(rbr.getLooseMergedCells());
-                retval._rowsAggregate = new RowRecordsAggregate(rbr.getPlainRecordStream(), rbr.getSharedFormulaManager());
-                records.add(retval._rowsAggregate); //only add the aggregate once
-                k += rbr.getTotalNumberOfRecords() - 1;
+                RowBlocksReader rbr = new RowBlocksReader(rs);
+                _mergedCellsTable.addRecords(rbr.getLooseMergedCells());
+                rra = new RowRecordsAggregate(rbr.getPlainRecordStream(), rbr.getSharedFormulaManager());
+                records.add(rra); //only add the aggregate once
                 continue;
             }
-             
-            if (PageSettingsBlock.isComponentRecord(rec.getSid())) {
-                RecordStream rs = new RecordStream(inRecs, k);
+
+            if (PageSettingsBlock.isComponentRecord(recSid)) {
                 PageSettingsBlock psb = new PageSettingsBlock(rs);
                 if (bofEofNestingLevel == 1) {
-                    if (retval._psBlock == null) {
-                        retval._psBlock = psb;
+                    if (_psBlock == null) {
+                        _psBlock = psb;
                     } else {
                         // more than one 'Page Settings Block' at nesting level 1 ?
                         // apparently this happens in about 15 test sample files
                     }
                 }
                 records.add(psb);
-                k += rs.getCountRead()-1;
-                continue;
-            }
-            
-            if (rec.getSid() == MergeCellsRecord.sid) {
-                // when the MergedCellsTable is found in the right place, we expect those records to be contiguous
-                RecordStream rs = new RecordStream(inRecs, k);
-                retval._mergedCellsTable.read(rs);
-                k += rs.getCountRead()-1;
-                continue;
-            }
-            if (rec.getSid() == UncalcedRecord.sid) {
-                // don't add UncalcedRecord to the list
-                retval._isUncalced = true; // this flag is enough
                 continue;
             }
 
-            if (rec.getSid() == BOFRecord.sid)
+            if (recSid == MergeCellsRecord.sid) {
+                // when the MergedCellsTable is found in the right place, we expect those records to be contiguous
+                _mergedCellsTable.read(rs);
+                continue;
+            }
+
+            Record rec = rs.getNext();
+            if ( recSid == IndexRecord.sid ) {
+                // ignore INDEX record because it is only needed by Excel,
+                // and POI always re-calculates its contents
+                continue;
+            }
+
+
+            if (recSid == UncalcedRecord.sid) {
+                // don't add UncalcedRecord to the list
+                _isUncalced = true; // this flag is enough
+                continue;
+            }
+
+            if (recSid == BOFRecord.sid)
             {
                 bofEofNestingLevel++;
                 if (log.check( POILogger.DEBUG ))
                     log.log(POILogger.DEBUG, "Hit BOF record. Nesting increased to " + bofEofNestingLevel);
             }
-            else if (rec.getSid() == EOFRecord.sid)
+            else if (recSid == EOFRecord.sid)
             {
                 --bofEofNestingLevel;
                 if (log.check( POILogger.DEBUG ))
                     log.log(POILogger.DEBUG, "Hit EOF record. Nesting decreased to " + bofEofNestingLevel);
                 if (bofEofNestingLevel == 0) {
                     records.add(rec);
-                    retval.eofLoc = k;
                     break;
                 }
             }
-            else if (rec.getSid() == DimensionsRecord.sid)
+            else if (recSid == DimensionsRecord.sid)
             {
                 // Make a columns aggregate if one hasn't ready been created.
-                if (retval._columnInfos == null)
+                if (_columnInfos == null)
                 {
-                    retval._columnInfos = new ColumnInfoRecordsAggregate();
-                    records.add(retval._columnInfos);
+                    _columnInfos = new ColumnInfoRecordsAggregate();
+                    records.add(_columnInfos);
                 }
 
-                retval._dimensions    = ( DimensionsRecord ) rec;
-                retval.dimsloc = records.size();
+                _dimensions    = ( DimensionsRecord ) rec;
+                dimsloc = records.size();
             }
-            else if (rec.getSid() == DefaultColWidthRecord.sid)
+            else if (recSid == DefaultColWidthRecord.sid)
             {
-                retval.defaultcolwidth = ( DefaultColWidthRecord ) rec;
+                defaultcolwidth = ( DefaultColWidthRecord ) rec;
             }
-            else if (rec.getSid() == DefaultRowHeightRecord.sid)
+            else if (recSid == DefaultRowHeightRecord.sid)
             {
-                retval.defaultrowheight = ( DefaultRowHeightRecord ) rec;
+                defaultrowheight = ( DefaultRowHeightRecord ) rec;
             }
-            else if ( rec.getSid() == PrintGridlinesRecord.sid )
+            else if ( recSid == PrintGridlinesRecord.sid )
             {
-                retval.printGridlines = (PrintGridlinesRecord) rec;
+                printGridlines = (PrintGridlinesRecord) rec;
             }
-            else if ( rec.getSid() == GridsetRecord.sid )
+            else if ( recSid == GridsetRecord.sid )
             {
-                retval.gridset = (GridsetRecord) rec;
+                gridset = (GridsetRecord) rec;
             }
-            else if ( rec.getSid() == SelectionRecord.sid )
+            else if ( recSid == SelectionRecord.sid )
             {
-                retval.selection = (SelectionRecord) rec;
+                selection = (SelectionRecord) rec;
             }
-            else if ( rec.getSid() == WindowTwoRecord.sid )
+            else if ( recSid == WindowTwoRecord.sid )
             {
-                retval.windowTwo = (WindowTwoRecord) rec;
+                windowTwo = (WindowTwoRecord) rec;
             }
-            else if ( rec.getSid() == ProtectRecord.sid )
+            else if ( recSid == ProtectRecord.sid )
             {
-                retval.protect = (ProtectRecord) rec;
+                protect = (ProtectRecord) rec;
             }
-            else if ( rec.getSid() == ObjectProtectRecord.sid )
+            else if ( recSid == ObjectProtectRecord.sid )
             {
-                retval.objprotect = (ObjectProtectRecord) rec;
+                objprotect = (ObjectProtectRecord) rec;
             }
-            else if ( rec.getSid() == ScenarioProtectRecord.sid )
+            else if ( recSid == ScenarioProtectRecord.sid )
             {
-                retval.scenprotect = (ScenarioProtectRecord) rec;
+                scenprotect = (ScenarioProtectRecord) rec;
             }
-            else if ( rec.getSid() == PasswordRecord.sid )
+            else if ( recSid == PasswordRecord.sid )
             {
-                retval.password = (PasswordRecord) rec;
+                password = (PasswordRecord) rec;
             }
 
             records.add(rec);
         }
-        if (retval._dimensions == null) {
+        if (_dimensions == null) {
             throw new RuntimeException("DimensionsRecord was not found");
         }
-        if (retval.windowTwo == null) {
+        if (windowTwo == null) {
             throw new RuntimeException("WINDOW2 was not found");
         }
-        if (retval._rowsAggregate == null) {
-        	retval._rowsAggregate = new RowRecordsAggregate();
-            records.add(retval.dimsloc + 1, retval._rowsAggregate);
+        if (rra == null) {
+            rra = new RowRecordsAggregate();
+            records.add(dimsloc + 1, rra);
         }
+        _rowsAggregate = rra;
         // put merged cells table in the right place (regardless of where the first MergedCellsRecord was found */
-        RecordOrderer.addNewSheetRecord(records, retval._mergedCellsTable);
-        retval.records = records;
+        RecordOrderer.addNewSheetRecord(records, _mergedCellsTable);
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "sheet createSheet (existing file) exited");
-        return retval;
     }
 
     private static final class RecordCloner implements RecordVisitor {
@@ -362,7 +343,7 @@ public final class Sheet implements Model {
      * belongs to a sheet.
      */
     public Sheet cloneSheet() {
-        ArrayList clonedRecords = new ArrayList(this.records.size());
+        List clonedRecords = new ArrayList(this.records.size());
         for (int i = 0; i < this.records.size(); i++) {
             RecordBase rb = (RecordBase) this.records.get(i);
             if (rb instanceof RecordAggregate) {
@@ -372,25 +353,7 @@ public final class Sheet implements Model {
             Record rec = (Record) ((Record) rb).clone();
             clonedRecords.add(rec);
         }
-        return createSheet(clonedRecords, 0, 0);
-    }
-
-
-    /**
-     * read support  (offset = 0) Same as createSheet(Record[] recs, int, int)
-     * only the record offset is assumed to be 0.
-     *
-     * @param records  array containing those records in the sheet in sequence (normally obtained from RecordFactory)
-     * @param sheetnum integer specifying the sheet's number (0,1 or 2 in this release)
-     * @return Sheet object
-     */
-
-    public static Sheet createSheet(List records, int sheetnum)
-    {
-        if (log.check( POILogger.DEBUG ))
-            log.log(POILogger.DEBUG,
-                    "Sheet createSheet (exisiting file) assumed offset 0");
-        return createSheet(records, sheetnum, 0);
+        return createSheet(new RecordStream(clonedRecords, 0));
     }
 
     /**
@@ -400,19 +363,18 @@ public final class Sheet implements Model {
      *
      * @return Sheet object with all values set to defaults
      */
-
-    public static Sheet createSheet()
-    {
-         // TODO - convert this method to a constructor
+    public static Sheet createSheet() {
+        return new Sheet();
+    }
+    private Sheet() {
+        _mergedCellsTable = new MergedCellsTable();
+        records = new ArrayList(32);
 
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "Sheet createsheet from scratch called");
-        Sheet     retval  = new Sheet();
-        ArrayList records = new ArrayList(30);
 
         records.add(createBOF());
 
-        // records.add(retval.createIndex());
         records.add(createCalcMode());
         records.add(createCalcCount() );
         records.add(createRefMode() );
@@ -420,50 +382,46 @@ public final class Sheet implements Model {
         records.add(createDelta() );
         records.add(createSaveRecalc() );
         records.add(createPrintHeaders() );
-        retval.printGridlines = createPrintGridlines();
-        records.add( retval.printGridlines );
-        retval.gridset = createGridset();
-        records.add( retval.gridset );
-        retval._gutsRecord = createGuts();
-        records.add( retval._gutsRecord );
-        retval.defaultrowheight = createDefaultRowHeight();
-        records.add( retval.defaultrowheight );
-        records.add( retval.createWSBool() );
-        
+        printGridlines = createPrintGridlines();
+        records.add( printGridlines );
+        gridset = createGridset();
+        records.add( gridset );
+        _gutsRecord = createGuts();
+        records.add( _gutsRecord );
+        defaultrowheight = createDefaultRowHeight();
+        records.add( defaultrowheight );
+        records.add( createWSBool() );
+
         // 'Page Settings Block'
-        retval._psBlock = new PageSettingsBlock();
-        records.add(retval._psBlock);
-        
+        _psBlock = new PageSettingsBlock();
+        records.add(_psBlock);
+
         // 'Worksheet Protection Block' (after 'Page Settings Block' and before DEFCOLWIDTH)
         // PROTECT record normally goes here, don't add yet since the flag is initially false
-        
-        retval.defaultcolwidth = createDefaultColWidth();
-        records.add( retval.defaultcolwidth);
+
+        defaultcolwidth = createDefaultColWidth();
+        records.add( defaultcolwidth);
         ColumnInfoRecordsAggregate columns = new ColumnInfoRecordsAggregate();
         records.add( columns );
-        retval._columnInfos = columns;
-        retval._dimensions = createDimensions();
-        records.add(retval._dimensions);
-        retval.dimsloc = records.size()-1;
-        retval._rowsAggregate = new RowRecordsAggregate();
-        records.add(retval._rowsAggregate);
+        _columnInfos = columns;
+        _dimensions = createDimensions();
+        records.add(_dimensions);
+        _rowsAggregate = new RowRecordsAggregate();
+        records.add(_rowsAggregate);
         // 'Sheet View Settings'
-        records.add(retval.windowTwo = retval.createWindowTwo());
-        retval.selection = createSelection();
-        records.add(retval.selection);
+        records.add(windowTwo = createWindowTwo());
+        selection = createSelection();
+        records.add(selection);
 
-        records.add(retval._mergedCellsTable); // MCT comes after 'Sheet View Settings' 
+        records.add(_mergedCellsTable); // MCT comes after 'Sheet View Settings'
         records.add(EOFRecord.instance);
 
-
-        retval.records = records;
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "Sheet createsheet from scratch exit");
-        return retval;
     }
 
     public RowRecordsAggregate getRowsAggregate() {
-    	return _rowsAggregate;
+        return _rowsAggregate;
     }
 
     private MergedCellsTable getMergedRecords() {
@@ -473,12 +431,12 @@ public final class Sheet implements Model {
 
     /**
      * Updates formulas in cells and conditional formats due to moving of cells
-     * @param externSheetIndex the externSheet index of this sheet 
+     * @param externSheetIndex the externSheet index of this sheet
      */
     public void updateFormulasAfterCellShift(FormulaShifter shifter, int externSheetIndex) {
         getRowsAggregate().updateFormulasAfterRowShift(shifter, externSheetIndex);
         getConditionalFormattingTable().updateFormulasAfterCellShift(shifter, externSheetIndex);
-        // TODO - adjust data validations 
+        // TODO - adjust data validations
     }
 
     public int addMergedRegion(int rowFrom, int colFrom, int rowTo, int colTo) {
@@ -557,7 +515,7 @@ public final class Sheet implements Model {
     public void visitContainedRecords(RecordVisitor rv, int offset) {
 
         PositionTrackingVisitor ptv = new PositionTrackingVisitor(rv, offset);
-        
+
         boolean haveSerializedIndex = false;
 
         for (int k = 0; k < records.size(); k++)
@@ -1066,7 +1024,7 @@ public final class Sheet implements Model {
 
     /**
      * set the width for a given column in 1/256th of a character width units
-     * 
+     *
      * @param column -
      *            the column number
      * @param width
@@ -1332,7 +1290,7 @@ public final class Sheet implements Model {
     public WindowTwoRecord getWindowTwo() {
         return windowTwo;
     }
- 
+
     /**
      * Returns the PrintGridlinesRecord.
      * @return PrintGridlinesRecord for the sheet.
@@ -1357,11 +1315,6 @@ public final class Sheet implements Model {
      */
     public void setSelected(boolean sel) {
         windowTwo.setSelected(sel);
-    }
-
-    public int getEofLoc()
-    {
-        return eofLoc;
     }
 
     /**
@@ -1473,7 +1426,7 @@ public final class Sheet implements Model {
         if (log.check( POILogger.DEBUG )) {
             log.log(POILogger.DEBUG, "create protect record with protection disabled");
         }
-        ProtectRecord retval = new ProtectRecord(); 
+        ProtectRecord retval = new ProtectRecord();
         retval.setProtect(false); // TODO - supply param to constructor
         return retval;
     }
@@ -1675,24 +1628,23 @@ public final class Sheet implements Model {
         }
     }
 
-    
+
     public PageSettingsBlock getPageSettings() {
         if (_psBlock == null) {
             _psBlock = new PageSettingsBlock();
             RecordOrderer.addNewSheetRecord(records, _psBlock);
-            dimsloc++;
         }
         return _psBlock;
     }
 
 
     public void setColumnGroupCollapsed(int columnNumber, boolean collapsed) {
-		if (collapsed) {
-			_columnInfos.collapseColumn(columnNumber);
-		} else {
-			_columnInfos.expandColumn(columnNumber);
-		}
-	}
+        if (collapsed) {
+            _columnInfos.collapseColumn(columnNumber);
+        } else {
+            _columnInfos.expandColumn(columnNumber);
+        }
+    }
 
     /**
      * protect a spreadsheet with a password (not encypted, just sets protect

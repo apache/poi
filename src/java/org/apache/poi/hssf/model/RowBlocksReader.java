@@ -39,30 +39,28 @@ public final class RowBlocksReader {
 	private final List _plainRecords;
 	private final SharedValueManager _sfm;
 	private final MergeCellsRecord[] _mergedCellsRecords;
-	private final int _totalNumberOfRecords;
 
 	/**
 	 * Also collects any loose MergeCellRecords and puts them in the supplied
 	 * mergedCellsTable
 	 */
-	public RowBlocksReader(List recs, int startIx) {
+	public RowBlocksReader(RecordStream rs) {
 		List plainRecords = new ArrayList();
 		List shFrmRecords = new ArrayList();
 		List arrayRecords = new ArrayList();
 		List tableRecords = new ArrayList();
 		List mergeCellRecords = new ArrayList();
 
-		int endIx = -1;
-		for (int i = startIx; i < recs.size(); i++) {
-			Record rec = (Record) recs.get(i);
-			if (RecordOrderer.isEndOfRowBlock(rec.getSid())) {
-				// End of row/cell records for the current sheet
-				// Note - It is important that this code does not inadvertently any sheet 
-				// records from a subsequent sheet.  For example, if SharedFormulaRecords 
-				// are taken from the wrong sheet, this could cause bug 44449. 
-				endIx = i;
-				break;
+		while(!RecordOrderer.isEndOfRowBlock(rs.peekNextSid())) {
+			// End of row/cell records for the current sheet
+			// Note - It is important that this code does not inadvertently add any sheet 
+			// records from a subsequent sheet.  For example, if SharedFormulaRecords 
+			// are taken from the wrong sheet, this could cause bug 44449.
+			if (!rs.hasNext()) {
+				throw new RuntimeException("Failed to find end of row/cell records");
+			
 			}
+			Record rec = rs.getNext();
 			List dest;
 			switch (rec.getSid()) {
 				case MergeCellsRecord.sid:    dest = mergeCellRecords; break;
@@ -72,9 +70,6 @@ public final class RowBlocksReader {
 				default:                      dest = plainRecords;
 			}
 			dest.add(rec);
-		}
-		if (endIx < 0) {
-			throw new RuntimeException("Failed to find end of row/cell records");
 		}
 		SharedFormulaRecord[] sharedFormulaRecs = new SharedFormulaRecord[shFrmRecords.size()];
 		ArrayRecord[] arrayRecs = new ArrayRecord[arrayRecords.size()];
@@ -87,7 +82,6 @@ public final class RowBlocksReader {
 		_sfm = SharedValueManager.create(sharedFormulaRecs, arrayRecs, tableRecs);
 		_mergedCellsRecords = new MergeCellsRecord[mergeCellRecords.size()];
 		mergeCellRecords.toArray(_mergedCellsRecords);
-		_totalNumberOfRecords = endIx - startIx;
 	}
 	
 	/**
@@ -97,10 +91,6 @@ public final class RowBlocksReader {
 	 */
 	public MergeCellsRecord[] getLooseMergedCells() {
 		return _mergedCellsRecords;
-	}
-
-	public int getTotalNumberOfRecords() {
-		return _totalNumberOfRecords;
 	}
 
 	public SharedValueManager getSharedFormulaManager() {

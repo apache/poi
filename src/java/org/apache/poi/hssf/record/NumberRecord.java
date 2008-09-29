@@ -17,22 +17,23 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.record.Record;
 
 /**
- * Contains a numeric cell value. <P>
+ * NUMBER (0x0203) Contains a numeric cell value. <P>
  * REFERENCE:  PG 334 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 public final class NumberRecord extends Record implements CellValueRecordInterface {
-    public static final short sid = 0x203;
-    private int             field_1_row;
-    private short             field_2_col;
-    private short             field_3_xf;
-    private double            field_4_value;
+    public static final short sid = 0x0203;
+    private int field_1_row;
+    private int field_2_col;
+    private int field_3_xf;
+    private double field_4_value;
 
     /** Creates new NumberRecord */
     public NumberRecord()
@@ -44,7 +45,6 @@ public final class NumberRecord extends Record implements CellValueRecordInterfa
      *
      * @param in the RecordInputstream to read the record from
      */
-
     public NumberRecord(RecordInputStream in)
     {
         super(in);
@@ -53,17 +53,14 @@ public final class NumberRecord extends Record implements CellValueRecordInterfa
     /**
      * @param in the RecordInputstream to read the record from
      */
-
     protected void fillFields(RecordInputStream in)
     {
-        //field_1_row   = LittleEndian.getShort(data, 0 + offset);
         field_1_row   = in.readUShort();
-        field_2_col   = in.readShort();
-        field_3_xf    = in.readShort();
+        field_2_col   = in.readUShort();
+        field_3_xf    = in.readUShort();
         field_4_value = in.readDouble();
     }
 
-    //public void setRow(short row)
     public void setRow(int row)
     {
         field_1_row = row;
@@ -79,7 +76,6 @@ public final class NumberRecord extends Record implements CellValueRecordInterfa
      * @see org.apache.poi.hssf.record.ExtendedFormatRecord
      * @param xf  index to the XF record
      */
-
     public void setXFIndex(short xf)
     {
         field_3_xf = xf;
@@ -90,13 +86,11 @@ public final class NumberRecord extends Record implements CellValueRecordInterfa
      *
      * @param value  double representing the value
      */
-
     public void setValue(double value)
     {
         field_4_value = value;
     }
 
-    //public short getRow()
     public int getRow()
     {
         return field_1_row;
@@ -104,7 +98,7 @@ public final class NumberRecord extends Record implements CellValueRecordInterfa
 
     public short getColumn()
     {
-        return field_2_col;
+        return (short)field_2_col;
     }
 
     /**
@@ -112,10 +106,9 @@ public final class NumberRecord extends Record implements CellValueRecordInterfa
      * @see org.apache.poi.hssf.record.ExtendedFormatRecord
      * @return index to the XF record
      */
-
     public short getXFIndex()
     {
-        return field_3_xf;
+        return (short)field_3_xf;
     }
 
     /**
@@ -123,7 +116,6 @@ public final class NumberRecord extends Record implements CellValueRecordInterfa
      *
      * @return double representing the value
      */
-
     public double getValue()
     {
         return field_4_value;
@@ -131,37 +123,31 @@ public final class NumberRecord extends Record implements CellValueRecordInterfa
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuffer sb = new StringBuffer();
 
-        buffer.append("[NUMBER]\n");
-        buffer.append("    .row            = ")
-            .append(Integer.toHexString(getRow())).append("\n");
-        buffer.append("    .col            = ")
-            .append(Integer.toHexString(getColumn())).append("\n");
-        buffer.append("    .xfindex        = ")
-            .append(Integer.toHexString(getXFIndex())).append("\n");
-        buffer.append("    .value          = ").append(getValue())
-            .append("\n");
-        buffer.append("[/NUMBER]\n");
-        return buffer.toString();
+        sb.append("[NUMBER]\n");
+        sb.append("    .row    = ").append(HexDump.shortToHex(getRow())).append("\n");
+        sb.append("    .col    = ").append(HexDump.shortToHex(getColumn())).append("\n");
+        sb.append("    .xfindex= ").append(HexDump.shortToHex(getXFIndex())).append("\n");
+        sb.append("    .value  = ").append(getValue()).append("\n");
+        sb.append("[/NUMBER]\n");
+        return sb.toString();
     }
 
     /**
      * called by the class that is responsible for writing this sucker.
      * Subclasses should implement this so that their data is passed back in a
      * byte array.
-     *
+     * 
      * @return byte array containing instance data
      */
-
     public int serialize(int offset, byte [] data)
     {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 14);
-        //LittleEndian.putShort(data, 4 + offset, getRow());
-        LittleEndian.putShort(data, 4 + offset, ( short ) getRow());
-        LittleEndian.putShort(data, 6 + offset, getColumn());
-        LittleEndian.putShort(data, 8 + offset, getXFIndex());
+        LittleEndian.putUShort(data, 0 + offset, sid);
+        LittleEndian.putUShort(data, 2 + offset, 14);
+        LittleEndian.putUShort(data, 4 + offset, getRow());
+        LittleEndian.putUShort(data, 6 + offset, getColumn());
+        LittleEndian.putUShort(data, 8 + offset, getXFIndex());
         LittleEndian.putDouble(data, 10 + offset, getValue());
         return getRecordSize();
     }
@@ -189,16 +175,6 @@ public final class NumberRecord extends Record implements CellValueRecordInterfa
     public short getSid()
     {
         return sid;
-    }
-
-    public boolean isInValueSection()
-    {
-        return true;
-    }
-
-    public boolean isValue()
-    {
-        return true;
     }
 
     public Object clone() {

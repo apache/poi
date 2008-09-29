@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,26 +14,21 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
-/*
- * BoolErrRecord.java
- *
- * Created on January 19, 2002, 9:30 AM
- */
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Creates new BoolErrRecord. <P>
+ * Creates new BoolErrRecord. (0x0205) <P>
  * REFERENCE:  PG ??? Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Michael P. Harhen
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 public final class BoolErrRecord extends Record implements CellValueRecordInterface {
-    public final static short sid = 0x205;
+    public final static short sid = 0x0205;
     private int               field_1_row;
     private short             field_2_column;
     private short             field_3_xf_index;
@@ -42,7 +36,6 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
     private byte              field_5_fError;
 
     /** Creates new BoolErrRecord */
-
     public BoolErrRecord()
     {
     }
@@ -52,7 +45,6 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
      *
      * @param in the RecordInputstream to read the record from
      */
-
     public BoolErrRecord(RecordInputStream in)
     {
         super(in);
@@ -61,7 +53,6 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
     /**
      * @param in the RecordInputstream to read the record from
      */
-
     protected void fillFields(RecordInputStream in)
     {
         //field_1_row      = LittleEndian.getShort(data, 0 + offset);
@@ -72,7 +63,6 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
         field_5_fError   = in.readByte();
     }
 
-    //public void setRow(short row)
     public void setRow(int row)
     {
         field_1_row = row;
@@ -88,7 +78,6 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
      * @see org.apache.poi.hssf.record.ExtendedFormatRecord
      * @param xf    index to the XF record
      */
-
     public void setXFIndex(short xf)
     {
         field_3_xf_index = xf;
@@ -99,7 +88,6 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
      *
      * @param value   representing the boolean value
      */
-
     public void setValue(boolean value)
     {
         field_4_bBoolErr = value ? ( byte ) 1
@@ -114,7 +102,6 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
      *                  this value can only be 0,7,15,23,29,36 or 42
      *                  see bugzilla bug 16560 for an explanation
      */
-
     public void setValue(byte value)
     {
         if ( (value==0)||(value==7)||(value==15)||(value==23)||(value==29)||(value==36)||(value==42)) {
@@ -125,7 +112,6 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
         }
     }
 
-    //public short getRow()
     public int getRow()
     {
         return field_1_row;
@@ -141,7 +127,6 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
      * @see org.apache.poi.hssf.record.ExtendedFormatRecord
      * @return index to the XF record
      */
-
     public short getXFIndex()
     {
         return field_3_xf_index;
@@ -152,7 +137,6 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
      *
      * @return boolean representing the boolean value
      */
-
     public boolean getBooleanValue()
     {
         return (field_4_bBoolErr != 0);
@@ -163,7 +147,6 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
      *
      * @return byte representing the error value
      */
-
     public byte getErrorValue()
     {
         return field_4_bBoolErr;
@@ -174,7 +157,6 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
      *
      * @return boolean true if the cell holds a boolean value
      */
-
     public boolean isBoolean()
     {
         return (field_5_fError == ( byte ) 0);
@@ -195,50 +177,40 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
 
     public boolean isError()
     {
-        return (field_5_fError != ( byte ) 0);
+        return field_5_fError != 0;
     }
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuffer sb = new StringBuffer();
 
-        buffer.append("[BOOLERR]\n");
-        buffer.append("    .row            = ")
-            .append(Integer.toHexString(getRow())).append("\n");
-        buffer.append("    .col            = ")
-            .append(Integer.toHexString(getColumn())).append("\n");
-        buffer.append("    .xfindex        = ")
-            .append(Integer.toHexString(getXFIndex())).append("\n");
-        if (isBoolean())
-        {
-            buffer.append("    .booleanValue   = ").append(getBooleanValue())
-                .append("\n");
+        sb.append("[BOOLERR]\n");
+        sb.append("    .row    = ").append(HexDump.shortToHex(getRow())).append("\n");
+        sb.append("    .col    = ").append(HexDump.shortToHex(getColumn())).append("\n");
+        sb.append("    .xfindex= ").append(HexDump.shortToHex(getXFIndex())).append("\n");
+        if (isBoolean()) {
+            sb.append("    .booleanValue   = ").append(getBooleanValue()).append("\n");
+        } else {
+            sb.append("    .errorValue     = ").append(getErrorValue()).append("\n");
         }
-        else
-        {
-            buffer.append("    .errorValue     = ").append(getErrorValue())
-                .append("\n");
-        }
-        buffer.append("[/BOOLERR]\n");
-        return buffer.toString();
+        sb.append("[/BOOLERR]\n");
+        return sb.toString();
     }
 
     /**
      * called by the class that is responsible for writing this sucker.
      * Subclasses should implement this so that their data is passed back in a
      * byte array.
-     *
+     * 
      * @return byte array containing instance data
      */
-
     public int serialize(int offset, byte [] data)
     {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 8);
-        //LittleEndian.putShort(data, 4 + offset, getRow());
-        LittleEndian.putShort(data, 4 + offset, ( short ) getRow());
-        LittleEndian.putShort(data, 6 + offset, getColumn());
-        LittleEndian.putShort(data, 8 + offset, getXFIndex());
+        LittleEndian.putUShort(data, 0 + offset, sid);
+        LittleEndian.putUShort(data, 2 + offset, 8);
+        LittleEndian.putUShort(data, 4 + offset, getRow());
+        LittleEndian.putUShort(data, 6 + offset, getColumn());
+        LittleEndian.putUShort(data, 8 + offset, getXFIndex());
         data[ 10 + offset ] = field_4_bBoolErr;
         data[ 11 + offset ] = field_5_fError;
         return getRecordSize();
@@ -255,7 +227,6 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
      *
      * @param id alleged id for this record
      */
-
     protected void validateSid(short id)
     {
         if (id != BoolErrRecord.sid)
@@ -267,16 +238,6 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
     public short getSid()
     {
         return sid;
-    }
-
-    public boolean isInValueSection()
-    {
-        return true;
-    }
-
-    public boolean isValue()
-    {
-        return true;
     }
 
     public Object clone() {
