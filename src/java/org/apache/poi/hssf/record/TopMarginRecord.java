@@ -33,30 +33,9 @@ public class TopMarginRecord extends Record implements Margin
     public TopMarginRecord()    {    }
 
     /**
-     * Constructs a TopMargin record and sets its fields appropriately.
-     *
      * @param in the RecordInputstream to read the record from
      */
     public TopMarginRecord( RecordInputStream in )
-    {        super( in );    }
-
-    /**
-     * Checks the sid matches the expected side for this record
-     *
-     * @param id   the expected sid.
-     */
-    protected void validateSid( short id )
-    {
-        if ( id != sid )
-        {
-            throw new RecordFormatException( "Not a TopMargin record" );
-        }
-    }
-
-    /**
-     * @param in the RecordInputstream to read the record from
-     */
-    protected void fillFields( RecordInputStream in )
     {
         field_1_margin = in.readDouble();
     }
@@ -102,4 +81,4 @@ public class TopMarginRecord extends Record implements Margin
         rec.field_1_margin = this.field_1_margin;
         return rec;
     }
-}  // END OF CLASS
+}  // END OF CLAS

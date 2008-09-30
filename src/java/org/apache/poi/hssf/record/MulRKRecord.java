@@ -37,15 +37,6 @@ public final class MulRKRecord extends Record {
 	private RkRec[] field_3_rks;
 	private short   field_4_last_col;
 
-	/**
-	 * Constructs a MulRK record and sets its fields appropriately.
-	 *
-	 * @param in the RecordInputstream to read the record from
-	 */
-	public MulRKRecord(RecordInputStream in) {
-		super(in);
-	}
-
 	public int getRow() {
 		return field_1_row;
 	}
@@ -93,7 +84,7 @@ public final class MulRKRecord extends Record {
 	/**
 	 * @param in the RecordInputstream to read the record from
 	 */
-	protected void fillFields(RecordInputStream in) {
+	public MulRKRecord(RecordInputStream in) {
 		field_1_row = in.readUShort();
 		field_2_first_col = in.readShort();
 		field_3_rks = RkRec.parseRKs(in);
@@ -115,21 +106,6 @@ public final class MulRKRecord extends Record {
 		}
 		buffer.append("[/MULRK]\n");
 		return buffer.toString();
-	}
-
-	/**
-	 * called by constructor, should throw runtime exception in the event of a
-	 * record passed with a differing ID.
-	 *
-	 * @param id alleged id for this record
-	 */
-
-	protected void validateSid(short id)
-	{
-		if (id != sid)
-		{
-			throw new RecordFormatException("Not a MulRKRecord!");
-		}
 	}
 
 	public short getSid()

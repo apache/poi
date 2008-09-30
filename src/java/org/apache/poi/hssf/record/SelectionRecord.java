@@ -51,21 +51,7 @@ public final class SelectionRecord extends Record {
         };
     }
 
-    /**
-     * Constructs a Selection record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
     public SelectionRecord(RecordInputStream in) {
-        super(in);
-    }
-
-    protected void validateSid(short id) {
-        if (id != sid) {
-            throw new RecordFormatException("NOT A valid Selection RECORD");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in) {
         field_1_pane            = in.readByte();
         field_2_row_active_cell = in.readUShort();
         field_3_col_active_cell = in.readShort();

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,21 +28,12 @@ import junit.framework.TestCase;
 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public class TestLegendRecord
-        extends TestCase
-{
+public class TestLegendRecord extends TestCase {
     byte[] data = new byte[] {
 	(byte)0x76,(byte)0x0E,(byte)0x00,(byte)0x00,(byte)0x86,(byte)0x07,(byte)0x00,(byte)0x00,(byte)0x19,(byte)0x01,(byte)0x00,(byte)0x00,(byte)0x8B,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x03,(byte)0x01,(byte)0x1F,(byte)0x00
     };
 
-    public TestLegendRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
         LegendRecord record = new LegendRecord(new TestcaseRecordInputStream((short)0x1015, (short)data.length, data));
         
 
@@ -71,8 +59,6 @@ public class TestLegendRecord
 
 
         assertEquals( 24, record.getRecordSize() );
-
-        record.validateSid((short)0x1015);
     }
 
     public void testStore()

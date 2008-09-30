@@ -17,11 +17,11 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.HexDump;
 import java.io.UnsupportedEncodingException;
-import java.io.ByteArrayOutputStream;
+
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 public class TextObjectRecord
         extends TextObjectBaseRecord
@@ -35,13 +35,7 @@ public class TextObjectRecord
     public TextObjectRecord( RecordInputStream in )
     {
         super( in );
-        if (str == null)
-        	str = new HSSFRichTextString("");
-    }
 
-    protected void fillFields(RecordInputStream in)
-    {
-        super.fillFields(in);
         if (getTextLength() > 0) {
         if (in.isContinueNext() && in.remaining() == 0) {
             //1st Continue
@@ -56,6 +50,8 @@ public class TextObjectRecord
                 processFontRuns(in);
             } else throw new RecordFormatException("Expected Continue Record to hold font runs for TextObjectRecord");
         }
+        if (str == null)
+        	str = new HSSFRichTextString("");
     }
 
 

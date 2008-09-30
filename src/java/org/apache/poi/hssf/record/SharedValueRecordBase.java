@@ -45,12 +45,6 @@ public abstract class SharedValueRecordBase extends Record {
 		_range = new CellRangeAddress8Bit(in);
 	}
 
-	protected final void validateSid(short id) {
-		if (id != getSid()) {
-			throw new RecordFormatException("Not a valid SharedFormula");
-		}
-	}
-
 	public final CellRangeAddress8Bit getRange() {
 		return _range;
 	}
@@ -90,10 +84,6 @@ public abstract class SharedValueRecordBase extends Record {
 		pos += CellRangeAddress8Bit.ENCODED_SIZE;
 		serializeExtraData(pos, data);
 		return dataSize + 4;
-	}
-
-	protected final void fillFields(RecordInputStream in) {
-		throw new RuntimeException("Should not be called.  Fields are filled in constructor");
 	}
 
 	/**

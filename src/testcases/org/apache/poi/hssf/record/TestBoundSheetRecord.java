@@ -46,13 +46,6 @@ public final class TestBoundSheetRecord extends TestCase {
         BoundSheetRecord record = new BoundSheetRecord("1234567890223456789032345678904");
 
         try {
-            record.setSheetname("12345678902234567890323456789042");
-            throw new AssertionFailedError("Should have thrown IllegalArgumentException, but didnt");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
-
-        try {
             record.setSheetname("s//*s");
             throw new AssertionFailedError("Should have thrown IllegalArgumentException, but didnt");
         } catch (IllegalArgumentException e) {

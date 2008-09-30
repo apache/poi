@@ -47,25 +47,7 @@ public class CodepageRecord
     {
     }
 
-    /**
-     * Constructs a CodepageRecord and sets its fields appropriately
-     * @param in the RecordInputstream to read the record from
-     */
-
     public CodepageRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A CODEPAGE RECORD");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_codepage = in.readShort();
     }

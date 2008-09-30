@@ -39,19 +39,11 @@ public class TestNoteRecord
         0x6E, 0x64, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x00
     };
 
-    public TestNoteRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testRead()
-            throws Exception
-    {
+    public void testRead() {
 
         NoteRecord record = new NoteRecord(new TestcaseRecordInputStream(NoteRecord.sid, (short)data.length, data));
 
         assertEquals(NoteRecord.sid, record.getSid());
-        record.validateSid(NoteRecord.sid);
         assertEquals(6, record.getRow());
         assertEquals(1, record.getColumn());
         assertEquals(NoteRecord.NOTE_VISIBLE, record.getFlags());
@@ -60,11 +52,9 @@ public class TestNoteRecord
 
     }
 
-    public void testWrite()
-    {
+    public void testWrite() {
         NoteRecord record = new NoteRecord();
         assertEquals(NoteRecord.sid, record.getSid());
-        record.validateSid(NoteRecord.sid);
         
         record.setRow((short)6);
         record.setColumn((short)1);

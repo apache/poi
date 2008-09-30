@@ -43,31 +43,7 @@ public final class ObjRecord extends Record {
         // TODO - ensure 2 sub-records (ftCmo  15h, and ftEnd  00h) are always created
     }
 
-    /**
-     * Constructs a OBJ record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public ObjRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    /**
-     * Checks the sid matches the expected side for this record
-     *
-     * @param id   the expected sid.
-     */
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("Not an OBJ record");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
     	// TODO - problems with OBJ sub-records stream
     	// MS spec says first sub-records is always CommonObjectDataSubRecord, and last is 

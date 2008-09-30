@@ -31,15 +31,11 @@ public class MissingRowDummyRecord extends Record {
 		this.rowNumber = rowNumber;
 	}
 	
-	protected void fillFields(RecordInputStream in) {
-	}
 	public short getSid() {
 		return -1;
 	}
 	public int serialize(int offset, byte[] data) {
 		return -1;
-	}
-	protected void validateSid(short id) {
 	}
 	
 	public int getRowNumber() {

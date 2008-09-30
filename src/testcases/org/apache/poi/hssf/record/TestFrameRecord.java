@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,22 +28,13 @@ import junit.framework.TestCase;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestFrameRecord
-        extends TestCase
-{
+public final class TestFrameRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0x00,(byte)0x00,      // border type
         (byte)0x02,(byte)0x00       // options
     };
 
-    public TestFrameRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
 
         FrameRecord record = new FrameRecord(new TestcaseRecordInputStream((short)0x1032, (short)data.length, data));
         assertEquals( FrameRecord.BORDER_TYPE_REGULAR, record.getBorderType());
@@ -54,10 +42,7 @@ public class TestFrameRecord
         assertEquals( false, record.isAutoSize() );
         assertEquals( true, record.isAutoPosition() );
 
-
         assertEquals( 8, record.getRecordSize() );
-
-        record.validateSid((short)0x1032);
     }
 
     public void testStore()

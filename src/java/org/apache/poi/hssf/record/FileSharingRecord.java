@@ -36,24 +36,8 @@ public final class FileSharingRecord extends Record {
     private String            field_3_username_value;
 
     public FileSharingRecord() {}
-    
-
-    /**
-     * Constructs a FileSharing record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
 
     public FileSharingRecord(RecordInputStream in) {
-        super(in);
-    }
-
-    protected void validateSid(short id) {
-        if (id != sid) {
-            throw new RecordFormatException("NOT A FILESHARING RECORD");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in) {
         field_1_readonly = in.readShort();
         field_2_password = in.readShort();
         

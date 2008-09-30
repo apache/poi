@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -30,9 +27,7 @@ import junit.framework.TestCase;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestAxisParentRecord
-        extends TestCase
-{
+public final class TestAxisParentRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0x00,(byte)0x00,                                   // axis type
         (byte)0x1D,(byte)0x02,(byte)0x00,(byte)0x00,             // x
@@ -41,14 +36,7 @@ public class TestAxisParentRecord
         (byte)0x56,(byte)0x0B,(byte)0x00,(byte)0x00              // height
     };
 
-    public TestAxisParentRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
         AxisParentRecord record = new AxisParentRecord(new TestcaseRecordInputStream((short)0x1041, (short)data.length, data));
         assertEquals( AxisParentRecord.AXIS_TYPE_MAIN, record.getAxisType());
         assertEquals( 0x021d, record.getX());
@@ -56,10 +44,7 @@ public class TestAxisParentRecord
         assertEquals( 0x0b31, record.getWidth());
         assertEquals( 0x0b56, record.getHeight());
 
-
         assertEquals( 22, record.getRecordSize() );
-
-        record.validateSid((short)0x1041);
     }
 
     public void testStore()

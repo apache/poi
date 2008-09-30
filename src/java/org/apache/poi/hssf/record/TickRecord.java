@@ -56,32 +56,7 @@ public final class TickRecord extends Record {
 
     }
 
-    /**
-     * Constructs a Tick record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public TickRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    /**
-     * Checks the sid matches the expected side for this record
-     *
-     * @param id   the expected sid.
-     */
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("Not a Tick record");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
 
         field_1_majorTickType          = in.readByte();

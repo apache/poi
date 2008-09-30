@@ -49,11 +49,6 @@ public final class CFHeaderRecord extends Record {
 
 	public CFHeaderRecord(RecordInputStream in)
 	{
-		super(in);
-	}
-
-	protected void fillFields(RecordInputStream in)
-	{
 		field_1_numcf = in.readShort();
 		field_2_need_recalculation = in.readShort();
 		field_3_enclosing_cell_range = new org.apache.poi.hssf.util.CellRangeAddress(in);
@@ -158,22 +153,6 @@ public final class CFHeaderRecord extends Record {
 
 	public int getRecordSize() {
 		return 4 + getDataSize();
-	}
-
-	/**
-	 * called by constructor, should throw runtime exception in the event of a
-	 * record passed with a differing ID.
-	 *
-	 * @param id alleged id for this record
-	 */
-
-	protected void validateSid(short id)
-	{
-		if (id != sid)
-		{
-			throw new RecordFormatException(
-					"NOT A ConditionalFormattingHeaderRecord RECORD");
-		}
 	}
 
 	public short getSid()

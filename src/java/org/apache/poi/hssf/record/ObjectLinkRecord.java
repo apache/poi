@@ -49,32 +49,7 @@ public class ObjectLinkRecord
 
     }
 
-    /**
-     * Constructs a ObjectLink record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public ObjectLinkRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    /**
-     * Checks the sid matches the expected side for this record
-     *
-     * @param id   the expected sid.
-     */
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("Not a ObjectLink record");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_anchorId               = in.readShort();
         field_2_link1                  = in.readShort();

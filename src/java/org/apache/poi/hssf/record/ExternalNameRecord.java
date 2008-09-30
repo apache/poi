@@ -47,11 +47,7 @@ public final class ExternalNameRecord extends Record {
 	private short  field_2_index;
 	private short  field_3_not_used;
 	private String field_4_name;
-	private Ptg[]  field_5_name_definition; // TODO - junits for name definition field
-
-	public ExternalNameRecord(RecordInputStream in) {
-		super(in);
-	}
+	private Ptg[]  field_5_name_definition;
 
 	/**
 	 * Convenience Function to determine if the name is a built-in name
@@ -90,19 +86,6 @@ public final class ExternalNameRecord extends Record {
 		return field_4_name;
 	}
 
-
-	/**
-	 * called by constructor, should throw runtime exception in the event of a
-	 * record passed with a differing ID.
-	 *
-	 * @param id alleged id for this record
-	 */
-	protected void validateSid(short id) {
-		if (id != sid) {
-			throw new RecordFormatException("NOT A valid ExternalName RECORD");
-		}
-	}
-
 	private int getDataSize(){
 		int result = 3 * 2  // 3 short fields
 			+ 2 + field_4_name.length(); // nameLen and name
@@ -129,13 +112,13 @@ public final class ExternalNameRecord extends Record {
 		LittleEndian.putShort( data, 4 + offset, field_1_option_flag );
 		LittleEndian.putShort( data, 6 + offset, field_2_index );
 		LittleEndian.putShort( data, 8 + offset, field_3_not_used );
-		short nameLen = (short) field_4_name.length();
-		LittleEndian.putShort( data, 10 + offset, nameLen );
+		int nameLen = field_4_name.length();
+		LittleEndian.putUShort( data, 10 + offset, nameLen );
 		StringUtil.putCompressedUnicode( field_4_name, data, 12 + offset );
 		if(hasFormula()) {
-			short defLen = (short) getNameDefinitionSize();
-			LittleEndian.putShort( data, 12 + nameLen + offset, defLen );
-			Ptg.serializePtgStack(toStack(field_5_name_definition), data, 14 + nameLen + offset );
+			int defLen = getNameDefinitionSize();
+			LittleEndian.putUShort( data, 12 + nameLen + offset, defLen );
+			Ptg.serializePtgs(field_5_name_definition, data, 14 + nameLen + offset );
 		}
 		return dataSize + 4;
 	}
@@ -154,7 +137,7 @@ public final class ExternalNameRecord extends Record {
 	}
 
 
-	protected void fillFields(RecordInputStream in) {
+	public ExternalNameRecord(RecordInputStream in) {
 		field_1_option_flag = in.readShort();
 		field_2_index       = in.readShort();
 		field_3_not_used    = in.readShort();
@@ -171,7 +154,7 @@ public final class ExternalNameRecord extends Record {
 			throw readFail("Ran out of record data trying to read formula.");
 		}
 		short formulaLen = in.readShort();
-		field_5_name_definition = toPtgArray(Ptg.createParsedExpressionTokens(formulaLen, in));
+		field_5_name_definition = Ptg.readTokens(formulaLen, in);
 	}
 	/*
 	 * Makes better error messages (while hasFormula() is not reliable) 
@@ -207,19 +190,6 @@ public final class ExternalNameRecord extends Record {
 			return false;
 		}
 		return true;
-	}
-
-	private static Ptg[] toPtgArray(Stack s) {
-		Ptg[] result = new Ptg[s.size()];
-		s.toArray(result);
-		return result;
-	}
-	private static Stack toStack(Ptg[] ptgs) {
-		Stack result = new Stack();
-		for (int i = 0; i < ptgs.length; i++) {
-			result.push(ptgs[i]);
-		}
-		return result;
 	}
 
 	public short getSid() {

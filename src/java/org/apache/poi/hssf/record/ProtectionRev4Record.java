@@ -40,25 +40,7 @@ public class ProtectionRev4Record
     {
     }
 
-    /**
-     * Constructs a ProtectionRev4 record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public ProtectionRev4Record(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A PROTECTION REV 4 RECORD");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_protect = in.readShort();
     }

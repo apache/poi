@@ -37,25 +37,13 @@ public class UncalcedRecord extends Record
 	 */
 	public UncalcedRecord() {
 	}
-	/**
-	 * read constructor
-	 */
-	public UncalcedRecord(RecordInputStream in) {
-		super(in);
-	}
 
 	public short getSid() {
 		return sid;
 	}
 
-	protected void validateSid(short id) {
-		if (id != sid) {
-			throw new RecordFormatException("NOT AN UNCALCED RECORD");
-		}
-	}
-
-	protected void fillFields(RecordInputStream in) {
-		short unused = in.readShort();
+	public UncalcedRecord(RecordInputStream in) {
+		in.readShort(); // unused
 	}
 
 	public String toString() {
@@ -66,9 +54,9 @@ public class UncalcedRecord extends Record
 	}
 
 	public int serialize(int offset, byte[] data) {
-		LittleEndian.putShort(data, 0 + offset, sid);
-		LittleEndian.putShort(data, 2 + offset, (short) 2);
-		LittleEndian.putShort(data, 4 + offset, (short) 0); // unused
+		LittleEndian.putUShort(data, 0 + offset, sid);
+		LittleEndian.putUShort(data, 2 + offset, 2);
+		LittleEndian.putUShort(data, 4 + offset, 0); // unused
 		return getRecordSize();
 	}
 

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -32,10 +30,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @version 2.0-pre
  */
-
-public class WindowOneRecord
-    extends Record
-{
+public final class WindowOneRecord extends Record {
     public final static short     sid = 0x3d;
 
     // our variable names stolen from old TV sets.
@@ -66,25 +61,7 @@ public class WindowOneRecord
     {
     }
 
-    /**
-     * Constructs a WindowOne record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public WindowOneRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A WINDOW1 RECORD");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_h_hold            = in.readShort();
         field_2_v_hold            = in.readShort();

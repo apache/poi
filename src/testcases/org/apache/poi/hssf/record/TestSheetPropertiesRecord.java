@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,23 +28,14 @@ import junit.framework.TestCase;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestSheetPropertiesRecord
-        extends TestCase
-{
+public final class TestSheetPropertiesRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0x0A,(byte)0x00,
         (byte)0x00
         //,(byte)0x00       // not sure where that last byte comes from
     };
 
-    public TestSheetPropertiesRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
         SheetPropertiesRecord record = new SheetPropertiesRecord(new TestcaseRecordInputStream((short)0x1044, (short)data.length, data));
         assertEquals( 10, record.getFlags());
         assertEquals( false, record.isChartTypeManuallyFormatted() );
@@ -59,8 +47,6 @@ public class TestSheetPropertiesRecord
 
 
         assertEquals( 7, record.getRecordSize() );
-
-        record.validateSid((short)0x1044);
     }
 
     public void testStore()

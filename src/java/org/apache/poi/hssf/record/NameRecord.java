@@ -108,15 +108,6 @@ public final class NameRecord extends Record {
 	}
 
 	/**
-	 * Constructs a Name record and sets its fields appropriately.
-	 *
-	 * @param in the RecordInputstream to read the record from
-	 */
-	public NameRecord(RecordInputStream in) {
-		super(in);
-	}
-
-	/**
 	 * Constructor to create a built-in named region
 	 * @param builtin Built-in byte representation for the name record, use the public constants
 	 */
@@ -340,18 +331,6 @@ public final class NameRecord extends Record {
 		return field_17_status_bar_text;
 	}
 
-	/**
-	 * called by constructor, should throw runtime exception in the event of a
-	 * record passed with a differing ID.
-	 *
-	 * @param id alleged id for this record
-	 */
-	protected void validateSid(short id) {
-		if (id != sid) {
-			throw new RecordFormatException("NOT A valid Name RECORD");
-		}
-	}
-
 
 	/**
 	 * called by the class that is responsible for writing this sucker.
@@ -551,7 +530,7 @@ public final class NameRecord extends Record {
 	 *
 	 * @param in the RecordInputstream to read the record from
 	 */
-	protected void fillFields(RecordInputStream in) {
+	public NameRecord(RecordInputStream in) {
 		field_1_option_flag                 = in.readShort();
 		field_2_keyboard_shortcut           = in.readByte();
 		int field_3_length_name_text        = in.readByte();

@@ -48,32 +48,7 @@ public final class AreaFormatRecord extends Record {
 
     }
 
-    /**
-     * Constructs a AreaFormat record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public AreaFormatRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    /**
-     * Checks the sid matches the expected side for this record
-     *
-     * @param id   the expected sid.
-     */
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("Not a AreaFormat record");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_foregroundColor        = in.readInt();
         field_2_backgroundColor        = in.readInt();

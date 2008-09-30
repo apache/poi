@@ -58,7 +58,6 @@ public final class TestTableRecord extends TestCase {
 		assertEquals(0, record.getColInputCol());
 
 		assertEquals( 16 + 4, record.getRecordSize() );
-		record.validateSid((short)0x236);
 	}
 
     public void testStore()

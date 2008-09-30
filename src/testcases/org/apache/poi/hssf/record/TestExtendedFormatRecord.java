@@ -36,14 +36,7 @@ public final class TestExtendedFormatRecord extends TestCase {
     		0xC0-256, 0x20  // Fill Palette 20c0
     };
 
-    public TestExtendedFormatRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
         ExtendedFormatRecord record = new ExtendedFormatRecord(new TestcaseRecordInputStream((short)0xe0, (short)data.length, data));
         assertEquals(0, record.getFontIndex());
         assertEquals(0, record.getFormatIndex());
@@ -56,7 +49,6 @@ public final class TestExtendedFormatRecord extends TestCase {
         assertEquals(0x20c0, record.getFillPaletteOptions());
 
         assertEquals( 20 + 4, record.getRecordSize() );
-        record.validateSid((short)0xe0);
     }
 
     public void testStore()

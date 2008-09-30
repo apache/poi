@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -111,8 +109,7 @@ public class UnicodeString
 
     public UnicodeString(RecordInputStream in)
     {
-      validateSid(in.getSid());
-      fillFields(in);
+      fillFields(in); // TODO - inline
     }
 
 
@@ -189,16 +186,6 @@ public class UnicodeString
     }
 
     /**
-     * NO OP
-     */
-
-    protected void validateSid(short id)
-    {
-
-        // included only for interface compliance
-    }
-
-    /**
      * @param in the RecordInputstream to read the record from
      */
     protected void fillFields(RecordInputStream in)
@@ -236,9 +223,7 @@ public class UnicodeString
               throw new RecordFormatException("Expected continue record.");
           }
           if (isCompressed) {
-            //Typecast direct to char from byte with high bit set causes all ones
-            //in the high byte of the char (which is of course incorrect)
-            char ch = (char)( (short)0xff & (short)in.readByte() );
+            char ch = (char)in.readUByte(); // avoid sex
             tmpString.append(ch);
           } else {
             char ch = (char) in.readShort();

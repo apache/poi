@@ -61,32 +61,7 @@ public final class LineFormatRecord extends Record {
 
     }
 
-    /**
-     * Constructs a LineFormat record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public LineFormatRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    /**
-     * Checks the sid matches the expected side for this record
-     *
-     * @param id   the expected sid.
-     */
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("Not a LineFormat record");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_lineColor              = in.readInt();
         field_2_linePattern            = in.readShort();

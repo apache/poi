@@ -46,25 +46,7 @@ public class FormatRecord
     {
     }
 
-    /**
-     * Constructs a Format record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public FormatRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A FORMAT RECORD");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_index_code       = in.readShort();
         field_3_unicode_len      = in.readShort();

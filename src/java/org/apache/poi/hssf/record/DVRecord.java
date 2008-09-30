@@ -75,15 +75,6 @@ public final class DVRecord extends Record {
 	private static final BitField opt_show_error_on_invalid_value  = new BitField(0x00080000);
 	private static final BitField opt_condition_operator           = new BitField(0x00700000);
 
-	/**
-	 * Constructs a DV record and sets its fields appropriately.
-	 *
-	 * @param in the RecordInputstream to read the record from
-	 */
-	public DVRecord(RecordInputStream in) {
-		super(in);
-	}
-
 	public DVRecord(int validationType, int operator, int errorStyle, boolean emptyCellAllowed,
 			boolean suppressDropDownArrow, boolean isExplicitList,
 			boolean showPromptBox, String promptTitle, String promptText, 
@@ -110,13 +101,7 @@ public final class DVRecord extends Record {
 		_regions = regions;
 	}
 
-	protected void validateSid(short id) {
-		if (id != sid) {
-			throw new RecordFormatException("NOT a valid DV RECORD");
-		}
-	}
-
-	protected void fillFields(RecordInputStream in) {
+	public DVRecord(RecordInputStream in) {
 		
 	   _option_flags = in.readInt();
 	   

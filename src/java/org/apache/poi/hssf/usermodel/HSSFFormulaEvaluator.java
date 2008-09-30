@@ -147,22 +147,19 @@ public class HSSFFormulaEvaluator /* almost implements FormulaEvaluator */ {
 
 
 	/**
-	 * If cell contains formula, it evaluates the formula,
-	 *  and saves the result of the formula. The cell
-	 *  remains as a formula cell.
-	 * Else if cell does not contain formula, this method leaves
-	 *  the cell unchanged.
-	 * Note that the type of the formula result is returned,
-	 *  so you know what kind of value is also stored with
-	 *  the formula.
+	 * If cell contains formula, it evaluates the formula, and saves the result of the formula. The
+	 * cell remains as a formula cell. If the cell does not contain formula, this method returns -1
+	 * and leaves the cell unchanged.
+	 * 
+	 * Note that the type of the <em>formula result</em> is returned, so you know what kind of 
+	 * cached formula result is also stored with  the formula.
 	 * <pre>
 	 * int evaluatedCellType = evaluator.evaluateFormulaCell(cell);
 	 * </pre>
-	 * Be aware that your cell will hold both the formula,
-	 *  and the result. If you want the cell replaced with
-	 *  the result of the formula, use {@link #evaluateInCell(HSSFCell)}
+	 * Be aware that your cell will hold both the formula, and the result. If you want the cell 
+	 * replaced with the result of the formula, use {@link #evaluateInCell(HSSFCell)}
 	 * @param cell The cell to evaluate
-	 * @return The type of the formula result (the cell's type remains as HSSFCell.CELL_TYPE_FORMULA however)
+	 * @return -1 for non-formula cells, or the type of the <em>formula result</em>
 	 */
 	public int evaluateFormulaCell(Cell cell) {
 		if (cell == null || cell.getCellType() != HSSFCell.CELL_TYPE_FORMULA) {

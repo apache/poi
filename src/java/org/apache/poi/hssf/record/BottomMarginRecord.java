@@ -39,30 +39,7 @@ public class BottomMarginRecord
 
     }
 
-    /**
-     * Constructs a BottomMargin record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
     public BottomMarginRecord( RecordInputStream in )
-    {
-        super( in );
-    }
-
-    /**
-     * Checks the sid matches the expected side for this record
-     *
-     * @param id the expected sid.
-     */
-    protected void validateSid( short id )
-    {
-        if ( id != sid )
-        {
-            throw new RecordFormatException( "Not a BottomMargin record" );
-        }
-    }
-
-    protected void fillFields( RecordInputStream in )
     {
         field_1_margin = in.readDouble();
     }
@@ -121,4 +98,4 @@ public class BottomMarginRecord
         return rec;
     }
 
-}  // END OF CLASS
+}  // END OF CLAS

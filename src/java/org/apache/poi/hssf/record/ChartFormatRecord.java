@@ -44,25 +44,7 @@ public final class ChartFormatRecord extends Record {
     {
     }
 
-    /**
-     * Constructs a ChartFormatRecord record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public ChartFormatRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A CHARTFORMAT RECORD");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field1_x_position = in.readInt();
         field2_y_position = in.readInt();

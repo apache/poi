@@ -52,17 +52,6 @@ public class ExtSSTInfoSubRecord
 
     public ExtSSTInfoSubRecord(RecordInputStream in)
     {
-        super(in);
-    }
-
-    protected void validateSid(short id)
-    {
-
-        // do nothing
-    }
-
-    protected void fillFields(RecordInputStream in)
-    {
         field_1_stream_pos        = in.readInt();
         field_2_bucket_sst_offset = in.readShort();
         field_3_zero              = in.readShort();

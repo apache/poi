@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,9 +28,7 @@ import junit.framework.TestCase;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestCommonObjectDataSubRecord
-        extends TestCase
-{
+public final class TestCommonObjectDataSubRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0x12,(byte)0x00,(byte)0x01,(byte)0x00,
         (byte)0x01,(byte)0x00,(byte)0x11,(byte)0x60,
@@ -42,16 +37,8 @@ public class TestCommonObjectDataSubRecord
         (byte)0x00,(byte)0x00,
     };
 
-    public TestCommonObjectDataSubRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
         CommonObjectDataSubRecord record = new CommonObjectDataSubRecord(new TestcaseRecordInputStream((short)0x15, (short)data.length, data));
-        
 
         assertEquals( CommonObjectDataSubRecord.OBJECT_TYPE_LIST_BOX, record.getObjectType());
         assertEquals( (short)1, record.getObjectId());
@@ -64,8 +51,6 @@ public class TestCommonObjectDataSubRecord
         assertEquals( (int)218103808, record.getReserved2());
         assertEquals( (int)294, record.getReserved3());
         assertEquals( 22 , record.getRecordSize() );
-
-        record.validateSid((short)0x15);
     }
 
     public void testStore()

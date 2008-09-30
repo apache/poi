@@ -96,33 +96,12 @@ public class ExternSheetRecord extends Record {
 	}
 	
 	/**
-	 * Constructs a Extern Sheet record and sets its fields appropriately.
-	 * @param in the RecordInputstream to read the record from
-	 */
-	
-	public ExternSheetRecord(RecordInputStream in) {
-		super(in);
-	}
-	
-	/**
-	 * called by constructor, should throw runtime exception in the event of a
-	 * record passed with a differing ID.
-	 *
-	 * @param id alleged id for this record
-	 */
-	protected void validateSid(short id) {
-		if (id != sid) {
-			throw new RecordFormatException("NOT An ExternSheet RECORD");
-		}
-	}
-	
-	/**
 	 * called by the constructor, should set class level fields.  Should throw
 	 * runtime exception for bad/icomplete data.
 	 *
 	 * @param in the RecordInputstream to read the record from
 	 */
-	protected void fillFields(RecordInputStream in) {
+	public ExternSheetRecord(RecordInputStream in) {
 		_list		   = new ArrayList();
 		
 		int nItems  = in.readShort();

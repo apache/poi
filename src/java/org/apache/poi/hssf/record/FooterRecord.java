@@ -45,25 +45,7 @@ public class FooterRecord
     {
     }
 
-    /**
-     * Constructs a FooterRecord record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public FooterRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A FooterRECORD");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         if (in.remaining() > 0)
         {

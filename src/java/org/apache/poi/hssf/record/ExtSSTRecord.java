@@ -53,25 +53,7 @@ public class ExtSSTRecord
         field_2_sst_info = new ArrayList();
     }
 
-    /**
-     * Constructs a EOFRecord record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public ExtSSTRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT An EXTSST RECORD");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_2_sst_info           = new ArrayList();
         field_1_strings_per_bucket = in.readShort();

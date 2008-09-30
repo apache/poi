@@ -40,25 +40,7 @@ public class DSFRecord
     {
     }
 
-    /**
-     * Constructs a DBCellRecord and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public DSFRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A DSF RECORD");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_dsf = in.readShort();
     }

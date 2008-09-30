@@ -38,22 +38,12 @@ public final class CRNCountRecord extends Record {
 		throw new RuntimeException("incomplete code");
 	}
 
-	public CRNCountRecord(RecordInputStream in) {
-		super(in);
-	}
-
-	protected void validateSid(short id) {
-		if (id != sid) {
-			throw new RecordFormatException("NOT An XCT RECORD");
-		}
-	}
-
 	public int getNumberOfCRNs() {
 		return field_1_number_crn_records;
 	}
 
 
-	protected void fillFields(RecordInputStream in) {
+	public CRNCountRecord(RecordInputStream in) {
 		field_1_number_crn_records = in.readShort();
 		if(field_1_number_crn_records < 0) {
 			// TODO - seems like the sign bit of this field might be used for some other purpose

@@ -46,25 +46,7 @@ public class FnGroupCountRecord
     {
     }
 
-    /**
-     * Constructs a FnGroupCount record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public FnGroupCountRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A FNGROUPCOUNT RECORD");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_count = in.readShort();
     }

@@ -54,18 +54,6 @@ public class NoteRecord extends Record {
     }
 
     /**
-     * Constructs a <code>NoteRecord</code> and fills its fields
-     * from the supplied <code>RecordInputStream</code>.
-     *
-     * @param in the stream to read from
-     */
-    public NoteRecord(RecordInputStream in)
-    {
-        super(in);
-
-    }
-
-    /**
      * @return id of this record.
      */
     public short getSid()
@@ -74,22 +62,9 @@ public class NoteRecord extends Record {
     }
 
     /**
-     * Checks the sid matches the expected side for this record
-     *
-     * @param id   the expected sid.
-     */
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("Not a NoteRecord record");
-        }
-    }
-
-    /**
      * Read the record data from the supplied <code>RecordInputStream</code>
      */
-    protected void fillFields(RecordInputStream in)
+    public NoteRecord(RecordInputStream in)
     {
         field_1_row = in.readShort();
         field_2_col = in.readShort();

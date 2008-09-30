@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -33,63 +31,33 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-
-public class WSBoolRecord
-    extends Record
-{
+public final class WSBoolRecord extends Record {
     public final static short     sid = 0x81;
     private byte                  field_1_wsbool;         // crappy names are because this is really one big short field (2byte)
-    private byte                  field_2_wsbool;         // but the docs inconsistantly use it as 2 seperate bytes
+    private byte                  field_2_wsbool;         // but the docs inconsistently use it as 2 separate bytes
 
-    // I decided to be consistant in this way.
-    static final private BitField autobreaks          =
-        BitFieldFactory.getInstance(0x01);                               // are automatic page breaks visible
+    // I decided to be consistent in this way.
+    private static final BitField autobreaks    = BitFieldFactory.getInstance(0x01); // are automatic page breaks visible
 
     // bits 1 to 3 unused
-    static final private BitField dialog              =
-        BitFieldFactory.getInstance(0x10);                               // is sheet dialog sheet
-    static final private BitField applystyles         =
-        BitFieldFactory.getInstance(0x20);                               // whether to apply automatic styles to outlines
-    static final private BitField rowsumsbelow        = BitFieldFactory.getInstance(
-        0x40);                                            // whether summary rows will appear below detail in outlines
-    static final private BitField rowsumsright        = BitFieldFactory.getInstance(
-        0x80);                                            // whether summary rows will appear right of the detail in outlines
-    static final private BitField fittopage           =
-        BitFieldFactory.getInstance(0x01);                               // whether to fit stuff to the page
+    private static final BitField dialog        = BitFieldFactory.getInstance(0x10); // is sheet dialog sheet
+    private static final BitField applystyles   = BitFieldFactory.getInstance(0x20); // whether to apply automatic styles to outlines
+    private static final BitField rowsumsbelow  = BitFieldFactory.getInstance(0x40); // whether summary rows will appear below detail in outlines
+    private static final BitField rowsumsright  = BitFieldFactory.getInstance(0x80); // whether summary rows will appear right of the detail in outlines
+    private static final BitField fittopage     = BitFieldFactory.getInstance(0x01); // whether to fit stuff to the page
 
     // bit 2 reserved
-    static final private BitField displayguts         = BitFieldFactory.getInstance(
-        0x06);                                            // whether to display outline symbols (in the gutters)
+    private static final BitField displayguts   = BitFieldFactory.getInstance(0x06); // whether to display outline symbols (in the gutters)
 
     // bits 4-5 reserved
-    static final private BitField alternateexpression =   // whether to use alternate expression eval
-        BitFieldFactory.getInstance(0x40);
-    static final private BitField alternateformula    =   // whether to use alternate formula entry
-        BitFieldFactory.getInstance(0x80);
+    private static final BitField alternateexpression = BitFieldFactory.getInstance(0x40); // whether to use alternate expression eval
+    private static final BitField alternateformula    = BitFieldFactory.getInstance(0x80); // whether to use alternate formula entry
 
     public WSBoolRecord()
     {
     }
 
-    /**
-     * Constructs a WSBool record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public WSBoolRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A WSBoolRECORD");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
        byte data[] = in.readRemainder();
         field_1_wsbool =
