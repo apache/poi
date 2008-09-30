@@ -686,8 +686,8 @@ public class HSSFWorkbook extends POIDocument
             HSSFName newName = new HSSFName(this, newNameRecord);
             names.add(newName);
 
+            workbook.cloneDrawings(clonedSheet.getSheet());
         }
-        workbook.cloneDrawings(clonedSheet.getSheet());
         // TODO - maybe same logic required for other/all built-in name records
         
         return clonedSheet;
