@@ -43,17 +43,7 @@ public class IterationRecord
     {
     }
 
-    /**
-     * Constructs an Iteration record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public IterationRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_iteration = in.readShort();
     }

@@ -46,19 +46,7 @@ public class FontBasisRecord
 
     }
 
-    /**
-     * Constructs a FontBasis record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public FontBasisRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_xBasis                 = in.readShort();
         field_2_yBasis                 = in.readShort();

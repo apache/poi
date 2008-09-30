@@ -45,19 +45,7 @@ public class DefaultDataLabelTextPropertiesRecord
 
     }
 
-    /**
-     * Constructs a DefaultDataLabelTextProperties record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public DefaultDataLabelTextPropertiesRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_categoryDataType       = in.readShort();
     }

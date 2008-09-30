@@ -46,19 +46,9 @@ public class NoteStructureSubRecord
     }
 
     /**
-     * Constructs a NoteStructureSubRecord and sets its fields appropriately.
-     *
-     */
-    public NoteStructureSubRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    /**
      * Read the record data from the supplied <code>RecordInputStream</code>
      */
-    protected void fillFields(RecordInputStream in)
+    public NoteStructureSubRecord(RecordInputStream in)
     {
         //just grab the raw data
         reserved = in.readRemainder();

@@ -186,20 +186,7 @@ public final class FormulaRecord extends Record implements CellValueRecordInterf
 		field_8_parsed_expr = Ptg.EMPTY_PTG_ARRAY;
 	}
 
-	/**
-	 * Constructs a Formula record and sets its fields appropriately.
-	 * Note - id must be 0x06 (NOT 0x406 see MSKB #Q184647 for an
-	 * "explanation of this bug in the documentation) or an exception
-	 *  will be throw upon validation
-	 *
-	 * @param in the RecordInputstream to read the record from
-	 */
-
 	public FormulaRecord(RecordInputStream in) {
-		super(in);
-	}
-
-	protected void fillFields(RecordInputStream in) {
 		field_1_row	 = in.readUShort();
 		field_2_column  = in.readShort();
 		field_3_xf	  = in.readShort();

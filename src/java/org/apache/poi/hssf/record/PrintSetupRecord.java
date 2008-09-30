@@ -66,17 +66,7 @@ public class PrintSetupRecord extends Record {
     {
     }
 
-    /**
-     * Constructs a PrintSetup (SETUP) record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public PrintSetupRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_paper_size    = in.readShort();
         field_2_scale         = in.readShort();

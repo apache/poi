@@ -17,17 +17,40 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hssf.usermodel.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.ddf.DefaultEscherRecordFactory;
+import org.apache.poi.ddf.EscherBoolProperty;
+import org.apache.poi.ddf.EscherClientAnchorRecord;
+import org.apache.poi.ddf.EscherClientDataRecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherDgRecord;
+import org.apache.poi.ddf.EscherDggRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherRecordFactory;
+import org.apache.poi.ddf.EscherSerializationListener;
+import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.ddf.EscherSpgrRecord;
+import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.hssf.model.AbstractShape;
-import org.apache.poi.hssf.model.TextboxShape;
-import org.apache.poi.hssf.model.DrawingManager2;
-import org.apache.poi.hssf.model.ConvertAnchor;
 import org.apache.poi.hssf.model.CommentShape;
+import org.apache.poi.hssf.model.ConvertAnchor;
+import org.apache.poi.hssf.model.DrawingManager2;
+import org.apache.poi.hssf.model.TextboxShape;
+import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
+import org.apache.poi.hssf.usermodel.HSSFPatriarch;
+import org.apache.poi.hssf.usermodel.HSSFShape;
+import org.apache.poi.hssf.usermodel.HSSFShapeContainer;
+import org.apache.poi.hssf.usermodel.HSSFShapeGroup;
+import org.apache.poi.hssf.usermodel.HSSFTextbox;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-
-import java.util.*;
 
 /**
  * This class is used to aggregate the MSODRAWING and OBJ record
@@ -283,16 +306,6 @@ public class EscherAggregate extends AbstractEscherHolderRecord
     }
 
     /**
-     * Unused since this is an aggregate record.  Use createAggregate().
-     *
-     * @see #createAggregate
-     */
-    protected void fillFields( byte[] data, short size, int offset )
-    {
-        throw new IllegalStateException( "Should not reach here" );
-    }
-
-    /**
      * Calculates the string representation of this record.  This is
      * simply a dump of all the records.
      */
@@ -539,8 +552,7 @@ public class EscherAggregate extends AbstractEscherHolderRecord
     	// The top level container ought to have
     	//  the DgRecord and the container of one container
     	//  per shape group (patriach overall first)
-    	EscherContainerRecord topContainer =
-    		(EscherContainerRecord)getEscherContainer();
+    	EscherContainerRecord topContainer = getEscherContainer();
     	if(topContainer == null) {
     		return;
     	}

@@ -31,11 +31,6 @@ public class DrawingRecord extends Record
 
     public DrawingRecord( RecordInputStream in )
     {
-        super( in );
-    }
-
-    protected void fillFields( RecordInputStream in )
-    {
       recordData = in.readRemainder();
     }
 

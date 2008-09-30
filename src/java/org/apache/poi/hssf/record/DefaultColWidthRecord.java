@@ -36,17 +36,7 @@ public final class DefaultColWidthRecord extends Record {
     {
     }
 
-    /**
-     * Constructs a DefaultColumnWidth record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public DefaultColWidthRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_col_width = in.readUShort();
     }

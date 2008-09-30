@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,23 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
 /**
  * Subrecords are part of the OBJ class.
  */
-abstract public class SubRecord
-        extends Record
-{
-    public SubRecord()
-    {
-    }
-
-    public SubRecord( RecordInputStream in )
-    {
-        super( in );
+abstract public class SubRecord extends Record {
+    protected SubRecord() {
     }
 
     public static Record createSubRecord(RecordInputStream in)

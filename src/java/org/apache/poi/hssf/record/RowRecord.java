@@ -74,16 +74,7 @@ public final class RowRecord extends Record {
         field_8_xf_index = ( short ) 0xf;
     }
 
-    /**
-     * Constructs a Row record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
     public RowRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_row_number   = in.readUShort();
         field_2_first_col    = in.readShort();

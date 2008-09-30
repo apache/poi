@@ -44,17 +44,7 @@ public class DeltaRecord
     {
     }
 
-    /**
-     * Constructs a Delta record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public DeltaRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_max_change = in.readDouble();
     }

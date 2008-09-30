@@ -43,19 +43,7 @@ public class PlotGrowthRecord
 
     }
 
-    /**
-     * Constructs a PlotGrowth record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public PlotGrowthRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_horizontalScale        = in.readInt();
         field_2_verticalScale          = in.readInt();

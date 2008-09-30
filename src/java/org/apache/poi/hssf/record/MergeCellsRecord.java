@@ -56,9 +56,6 @@ public final class MergeCellsRecord extends Record {
     	_startIndex = 0;
     	_regions = cras;
     }
-    protected void fillFields(RecordInputStream in) {
-    	throw new RuntimeException("obsolete");
-    }
     /**
      * get the number of merged areas.  If this drops down to 0 you should just go
      * ahead and delete the record.

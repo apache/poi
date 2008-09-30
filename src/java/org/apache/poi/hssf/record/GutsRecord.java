@@ -43,17 +43,7 @@ public class GutsRecord
     {
     }
 
-    /**
-     * Constructs a Guts record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public GutsRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_left_row_gutter = in.readShort();
         field_2_top_col_gutter  = in.readShort();

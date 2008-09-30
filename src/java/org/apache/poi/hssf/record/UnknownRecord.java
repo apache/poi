@@ -269,11 +269,6 @@ public final class UnknownRecord extends Record {
 		return false;
 	}
 
-	protected final void fillFields(RecordInputStream in) {
-		throw new RecordFormatException(
-				"Unknown record cannot be constructed via offset -- we need a copy of the data");
-	}
-
 	public final Object clone() {
 		// immutable - ok to return this
 		return this;

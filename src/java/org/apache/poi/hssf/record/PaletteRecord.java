@@ -48,17 +48,7 @@ public class PaletteRecord
       createDefaultPalette();
     }
 
-    /**
-     * Constructs a PaletteRecord record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public PaletteRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
        field_1_numcolors = in.readShort();
        field_2_colors    = new ArrayList(field_1_numcolors);

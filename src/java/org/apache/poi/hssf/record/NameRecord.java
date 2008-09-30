@@ -108,15 +108,6 @@ public final class NameRecord extends Record {
 	}
 
 	/**
-	 * Constructs a Name record and sets its fields appropriately.
-	 *
-	 * @param in the RecordInputstream to read the record from
-	 */
-	public NameRecord(RecordInputStream in) {
-		super(in);
-	}
-
-	/**
 	 * Constructor to create a built-in named region
 	 * @param builtin Built-in byte representation for the name record, use the public constants
 	 */
@@ -539,7 +530,7 @@ public final class NameRecord extends Record {
 	 *
 	 * @param in the RecordInputstream to read the record from
 	 */
-	protected void fillFields(RecordInputStream in) {
+	public NameRecord(RecordInputStream in) {
 		field_1_option_flag                 = in.readShort();
 		field_2_keyboard_shortcut           = in.readByte();
 		int field_3_length_name_text        = in.readByte();

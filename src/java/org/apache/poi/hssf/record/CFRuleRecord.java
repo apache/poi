@@ -159,10 +159,6 @@ public final class CFRuleRecord extends Record {
 	}
 
 	public CFRuleRecord(RecordInputStream in) {
-		super(in);
-	}
-
-	protected void fillFields(RecordInputStream in) {
 		field_1_condition_type = in.readByte();
 		field_2_comparison_operator = in.readByte();
 		int field_3_formula1_len = in.readUShort();

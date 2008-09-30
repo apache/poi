@@ -30,13 +30,7 @@ public class RightMarginRecord extends Record implements Margin
 
     public RightMarginRecord()    {    }
 
-    /**
-     * Constructs a RightMargin record and sets its fields appropriately.     *     * @param id    id must be 0x27 or an exception     *              will be throw upon validation     * @param size  size the size of the data area of the record     * @param data  data of the record (should not contain sid/len)
-     */
     public RightMarginRecord( RecordInputStream in )
-    {        super( in );    }
-
-    protected void fillFields( RecordInputStream in )
     {
         field_1_margin = in.readDouble();
     }
@@ -82,4 +76,4 @@ public class RightMarginRecord extends Record implements Margin
         rec.field_1_margin = this.field_1_margin;
         return rec;
     }
-}  // END OF CLAS
+}  // END OF CLA

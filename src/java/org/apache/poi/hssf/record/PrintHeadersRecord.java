@@ -41,17 +41,7 @@ public class PrintHeadersRecord
     {
     }
 
-    /**
-     * Constructs a PrintHeaders record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public PrintHeadersRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_print_headers = in.readShort();
     }

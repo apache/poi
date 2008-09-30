@@ -41,25 +41,6 @@ public abstract class Record extends RecordBase {
     }
 
     /**
-     * Constructor Record
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-    protected Record(RecordInputStream in)
-    {
-        fillFields(in);
-    }
-
-    /**
-     * called by the constructor, should set class level fields.  Should throw
-     * runtime exception for bad/icomplete data.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
-    protected abstract void fillFields(RecordInputStream in);
-
-    /**
      * called by the class that is responsible for writing this sucker.
      * Subclasses should implement this so that their data is passed back in a
      * byte array.

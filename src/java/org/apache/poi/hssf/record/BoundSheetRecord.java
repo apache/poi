@@ -53,15 +53,6 @@ public final class BoundSheetRecord extends Record {
 	}
 
 	/**
-	 * Constructs a BoundSheetRecord and sets its fields appropriately
-	 *
-	 * @param in the RecordInputstream to read the record from
-	 */
-	public BoundSheetRecord(RecordInputStream in) {
-		super(in);
-	}
-
-	/**
 	 * UTF8: sid + len + bof + flags + len(str) + unicode + str 2 + 2 + 4 + 2 +
 	 * 1 + 1 + len(str)
 	 * 
@@ -69,7 +60,7 @@ public final class BoundSheetRecord extends Record {
 	 * 1 + 1 + 2 * len(str)
 	 * 
 	 */
-	protected void fillFields(RecordInputStream in) {
+	public BoundSheetRecord(RecordInputStream in) {
 		field_1_position_of_BOF = in.readInt();
 		field_2_option_flags = in.readUShort();
 		int field_3_sheetname_length = in.readUByte();

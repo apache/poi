@@ -46,17 +46,6 @@ public class ContinueRecord
     }
 
     /**
-     * Main constructor -- kinda dummy because we don't validate or fill fields
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
-    public ContinueRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    /**
      * USE ONLY within "processContinue"
      */
 
@@ -125,7 +114,7 @@ public class ContinueRecord
      * @param in the RecordInputstream to read the record from
      */
 
-    protected void fillFields(RecordInputStream in)
+    public ContinueRecord(RecordInputStream in)
     {
       field_1_data = in.readRemainder();
     }

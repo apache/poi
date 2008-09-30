@@ -40,17 +40,7 @@ public class PasswordRev4Record
     {
     }
 
-    /**
-     * Constructs a PasswordRev4 (PROT4REVPASS) record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public PasswordRev4Record(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_password = in.readShort();
     }

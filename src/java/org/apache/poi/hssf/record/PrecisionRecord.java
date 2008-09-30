@@ -40,17 +40,7 @@ public class PrecisionRecord
     {
     }
 
-    /**
-     * Constructs a Precision record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public PrecisionRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_precision = in.readShort();
     }

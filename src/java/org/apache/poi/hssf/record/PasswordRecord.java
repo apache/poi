@@ -36,16 +36,7 @@ public class PasswordRecord extends Record {
     public PasswordRecord() {
     }
 
-    /**
-     * Constructs a Password record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public PasswordRecord(RecordInputStream in) {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in) {
         field_1_password = in.readShort();
     }
 

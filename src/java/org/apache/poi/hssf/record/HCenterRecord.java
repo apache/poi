@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,42 +14,28 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Title:        HCenter record<P>
+ * Title:        HCenter record (0x0083)<P>
  * Description:  whether to center between horizontal margins<P>
  * REFERENCE:  PG 320 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-
-public class HCenterRecord
-    extends Record
-{
-    public final static short sid = 0x83;
+public final class HCenterRecord extends Record {
+    public final static short sid = 0x0083;
     private short             field_1_hcenter;
 
     public HCenterRecord()
     {
     }
 
-    /**
-     * Constructs an HCenter record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public HCenterRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_hcenter = in.readShort();
     }
@@ -96,8 +81,8 @@ public class HCenterRecord
     public int serialize(int offset, byte [] data)
     {
         LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 0x2);
-        LittleEndian.putShort(data, 4 + offset, ( short ) field_1_hcenter);
+        LittleEndian.putUShort(data, 2 + offset, 0x2);
+        LittleEndian.putUShort(data, 4 + offset, field_1_hcenter);
         return getRecordSize();
     }
 

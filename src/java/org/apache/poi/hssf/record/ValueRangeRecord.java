@@ -55,19 +55,7 @@ public final class ValueRangeRecord extends Record {
 
     }
 
-    /**
-     * Constructs a ValueRange record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public ValueRangeRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_minimumAxisValue       = in.readDouble();
         field_2_maximumAxisValue       = in.readDouble();

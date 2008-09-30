@@ -54,18 +54,6 @@ public class NoteRecord extends Record {
     }
 
     /**
-     * Constructs a <code>NoteRecord</code> and fills its fields
-     * from the supplied <code>RecordInputStream</code>.
-     *
-     * @param in the stream to read from
-     */
-    public NoteRecord(RecordInputStream in)
-    {
-        super(in);
-
-    }
-
-    /**
      * @return id of this record.
      */
     public short getSid()
@@ -76,7 +64,7 @@ public class NoteRecord extends Record {
     /**
      * Read the record data from the supplied <code>RecordInputStream</code>
      */
-    protected void fillFields(RecordInputStream in)
+    public NoteRecord(RecordInputStream in)
     {
         field_1_row = in.readShort();
         field_2_col = in.readShort();

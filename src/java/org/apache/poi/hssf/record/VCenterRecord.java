@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -30,27 +28,15 @@ import org.apache.poi.util.LittleEndian;
  * @version 2.0-pre
  */
 
-public class VCenterRecord
-    extends Record
-{
+public final class VCenterRecord extends Record {
     public final static short sid = 0x84;
-    private short             field_1_vcenter;
+    private int field_1_vcenter;
 
     public VCenterRecord()
     {
     }
 
-    /**
-     * Constructs a VCENTER record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public VCenterRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_vcenter = in.readShort();
     }
@@ -62,14 +48,7 @@ public class VCenterRecord
 
     public void setVCenter(boolean hc)
     {
-        if (hc == true)
-        {
-            field_1_vcenter = 1;
-        }
-        else
-        {
-            field_1_vcenter = 0;
-        }
+    	field_1_vcenter = hc ? 1 : 0;
     }
 
     /**
@@ -95,9 +74,9 @@ public class VCenterRecord
 
     public int serialize(int offset, byte [] data)
     {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 0x2);
-        LittleEndian.putShort(data, 4 + offset, ( short ) field_1_vcenter);
+        LittleEndian.putUShort(data, 0 + offset, sid);
+        LittleEndian.putUShort(data, 2 + offset, 0x2);
+        LittleEndian.putUShort(data, 4 + offset, field_1_vcenter);
         return getRecordSize();
     }
 

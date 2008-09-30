@@ -52,16 +52,7 @@ public final class RKRecord extends Record implements CellValueRecordInterface {
     {
     }
 
-    /**
-     * Constructs a RK record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
     public RKRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_row       = in.readUShort();
         field_2_col       = in.readUShort();

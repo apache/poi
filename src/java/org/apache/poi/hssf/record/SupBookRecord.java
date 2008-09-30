@@ -66,17 +66,6 @@ public final class SupBookRecord extends Record {
         _isAddInFunctions = false;
     }
 
-    /**
-     * Constructs a Extern Sheet record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x16 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     */
-    public SupBookRecord(RecordInputStream in) {
-        super(in);
-    }
-
     public boolean isExternalReferences() {
         return field_3_sheet_names != null;
     }
@@ -94,7 +83,7 @@ public final class SupBookRecord extends Record {
      * @param size size of data
      * @param offset of the record's data (provided a big array of the file)
      */
-    protected void fillFields(RecordInputStream in) {
+    public SupBookRecord(RecordInputStream in) {
         field_1_number_of_sheets = in.readShort();
         
         if(in.getLength() > SMALL_RECORD_SIZE) {

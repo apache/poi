@@ -53,17 +53,6 @@ public class MulBlankRecord
     }
 
     /**
-     * Constructs a MulBlank record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
-    public MulBlankRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    /**
      * get the row number of the cells this represents
      *
      * @return row number
@@ -119,7 +108,7 @@ public class MulBlankRecord
     /**
      * @param in the RecordInputstream to read the record from
      */
-    protected void fillFields(RecordInputStream in)
+    public MulBlankRecord(RecordInputStream in)
     {
         //field_1_row       = LittleEndian.getShort(data, 0 + offset);
         field_1_row       = in.readUShort();

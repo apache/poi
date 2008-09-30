@@ -54,19 +54,7 @@ public final class LinkedDataRecord extends Record {
 
     }
 
-    /**
-     * Constructs a LinkedData record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public LinkedDataRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_linkType               = in.readByte();
         field_2_referenceType          = in.readByte();
@@ -142,7 +130,7 @@ public final class LinkedDataRecord extends Record {
         rec.field_2_referenceType = field_2_referenceType;
         rec.field_3_options = field_3_options;
         rec.field_4_indexNumberFmtRecord = field_4_indexNumberFmtRecord;
-        rec.field_5_formulaOfLink = ((LinkedDataFormulaField)field_5_formulaOfLink.clone());;
+        rec.field_5_formulaOfLink = ((LinkedDataFormulaField)field_5_formulaOfLink.clone());
         return rec;
     }
 
