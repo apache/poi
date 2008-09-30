@@ -27,9 +27,13 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.apache.poi.POIXMLDocumentPart;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.SstDocument;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxml4j.opc.PackagePart;
+import org.openxml4j.opc.PackageRelationship;
 
 
 /**
@@ -56,7 +60,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.SstDocument;
  * @author Nick Birch
  * @author Yegor Kozlov
  */
-public class SharedStringsTable implements SharedStringSource, XSSFModel {
+public class SharedStringsTable extends POIXMLDocumentPart implements XSSFModel, SharedStringSource {
 
     /**
      *  Array of individual string items in the Shared String table.
@@ -89,13 +93,17 @@ public class SharedStringsTable implements SharedStringSource, XSSFModel {
      * @throws IOException if an error occurs while reading.
      */
     public SharedStringsTable(InputStream is) throws IOException {
+        super(null, null);
         readFrom(is);
     }
-    /**
-     * Create a new, empty SharedStringsTable
-     */
+
     public SharedStringsTable() {
-        count = uniqueCount = 0;
+        super(null, null);
+    }
+
+    public SharedStringsTable(PackagePart part, PackageRelationship rel) throws IOException {
+        super(part, rel);
+        readFrom(part.getInputStream());
     }
 
     /**
@@ -203,5 +211,13 @@ public class SharedStringsTable implements SharedStringSource, XSSFModel {
         CTRst[] ctr = strings.toArray(new CTRst[strings.size()]);
         sst.setSiArray(ctr);
         doc.save(out, options);
+    }
+
+    @Override
+    protected void commit() throws IOException {
+        PackagePart part = getPackagePart();
+        OutputStream out = part.getOutputStream();
+        writeTo(out);
+        out.close();
     }
 }

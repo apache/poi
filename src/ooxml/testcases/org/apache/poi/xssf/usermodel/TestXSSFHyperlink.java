@@ -17,8 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import junit.framework.TestCase;
@@ -27,6 +25,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.openxml4j.opc.Package;
 
 public class TestXSSFHyperlink extends TestCase {
@@ -79,12 +78,9 @@ public class TestXSSFHyperlink extends TestCase {
 		
 		
 		// Write out, and check
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		workbook.write(baos);
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-		
+
 		// Load up again, check all links still there
-		XSSFWorkbook wb2 = new XSSFWorkbook(Package.open(bais));
+		XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(workbook);
 		assertEquals(3, wb2.getNumberOfSheets());
 		assertNotNull(wb2.getSheetAt(0));
 		assertNotNull(wb2.getSheetAt(1));
@@ -119,18 +115,14 @@ public class TestXSSFHyperlink extends TestCase {
 		
 		
 		// Save and re-load once more
-		baos = new ByteArrayOutputStream();
-		wb2.write(baos);
-		bais = new ByteArrayInputStream(baos.toByteArray());
-		
-		
-		XSSFWorkbook wb3 = new XSSFWorkbook(Package.open(bais));
+
+        XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2);
 		assertEquals(3, wb3.getNumberOfSheets());
 		assertNotNull(wb3.getSheetAt(0));
 		assertNotNull(wb3.getSheetAt(1));
 		assertNotNull(wb3.getSheetAt(2));
 		
-		sheet = (XSSFSheet)wb3.getSheetAt(0);
+		sheet = wb3.getSheetAt(0);
 		
 		assertEquals(5, sheet.getNumHyperlinks());
 		doTestHyperlinkContents(sheet);

@@ -29,7 +29,7 @@ public class CreateNewSpreadsheet {
 		CreationHelper createHelper = wb.getCreationHelper();
 		
 		XSSFSheet s1 = wb.createSheet("Sheet One");
-		XSSFSheet s2 = wb.createSheet("Sheet One");
+		XSSFSheet s2 = wb.createSheet("Sheet Two");
 		
 		// Create a few cells
 		s1.createRow(0);

@@ -36,6 +36,7 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
+import org.apache.poi.POIXMLDocumentPart;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
@@ -54,13 +55,16 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;
+import org.openxml4j.opc.PackagePart;
+import org.openxml4j.opc.PackageRelationship;
+
 
 /**
  * Table of styles shared across all sheets in a workbook.
  *
  * @author ugo
  */
-public class StylesTable implements StylesSource, XSSFModel {
+public class StylesTable extends POIXMLDocumentPart implements StylesSource, XSSFModel {
 	private final Hashtable<Long,String> numberFormats = new Hashtable<Long,String>();
 	private final List<CTFont> fonts = new ArrayList<CTFont>();
 	private final List<CTFill> fills = new LinkedList<CTFill>();
@@ -85,17 +89,24 @@ public class StylesTable implements StylesSource, XSSFModel {
 	 * @throws IOException if an error occurs while reading.
 	 */
 	public StylesTable(InputStream is) throws IOException {
+        super(null, null);
 		readFrom(is);
 	}
 	/**
 	 * Create a new, empty StylesTable
 	 */
 	public StylesTable() {
+        super(null, null);
 		doc = StyleSheetDocument.Factory.newInstance();
 		doc.addNewStyleSheet();
 		// Initialization required in order to make the document readable by MSExcel
 		initialize();
 	}
+
+    public StylesTable(PackagePart part, PackageRelationship rel) throws IOException {
+        super(part, rel);
+        readFrom(part.getInputStream());
+    }
 
 	/**
 	 * Read this shared styles table from an XML file.
@@ -364,6 +375,14 @@ public class StylesTable implements StylesSource, XSSFModel {
 		// Save
 		doc.save(out, options);
 	}
+
+    @Override
+    protected void commit() throws IOException {
+        PackagePart part = getPackagePart();
+        OutputStream out = part.getOutputStream();
+        writeTo(out);
+        out.close();
+    }
 
 	private long putBorder(XSSFCellBorder border, List<CTBorder> borders) {
 		return border.putBorder((LinkedList<CTBorder>) borders); // TODO - use List instead of LinkedList

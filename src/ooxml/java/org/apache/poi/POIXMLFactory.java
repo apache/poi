@@ -14,30 +14,27 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.dev;
+package org.apache.poi;
 
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxml4j.opc.PackageRelationship;
+import org.openxml4j.opc.PackagePart;
 
-import java.io.FileOutputStream;
 
 /**
- * Utility which loads a SpreadsheetML file and saves it back.
- * This is a handy tool to investigate read-write round trip safety.
+ * Defines a factory API that enables sub-classes to create instances of <code>POIXMLDocumentPart</code>
  *
  * @author Yegor Kozlov
  */
-public class XSSFSave {
-    public static void main(String[] args) throws Exception {
-        for (int i = 0; i < args.length; i++) {
-            XSSFWorkbook wb = new XSSFWorkbook(args[i]);
+public class POIXMLFactory {
 
-            System.out.println("wb.getNumberOfSheets(): " + wb.getNumberOfSheets());
-            int sep = args[i].lastIndexOf('.');
-            String outfile = args[i].substring(0, sep) + "-save.xlsx";
-            FileOutputStream out = new FileOutputStream(outfile);
-            wb.write(out);
-            out.close();
-        }
+    /**
+     * Creates a new instance of a {@link POIXMLDocumentPart}
+     *
+     * @param rel   the package part relationship
+     * @param part  the PackagePart representing the created instance
+     * @return A new instance of a POIXMLDocumentPart.
+     */
+     public POIXMLDocumentPart create(PackageRelationship rel, PackagePart part){
+        return new POIXMLDocumentPart(part, rel);
     }
-
 }

@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocument;
+import org.apache.poi.POIXMLRelation;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.BinaryPart;
@@ -49,7 +50,7 @@ import org.openxml4j.opc.TargetMode;
 /**
  * 
  */
-public final class XSSFRelation<W extends XSSFModel> {
+public final class XSSFRelation<W extends XSSFModel> extends POIXMLRelation {
 
 	public static final XSSFRelation WORKBOOK = new XSSFRelation(
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml",
@@ -156,16 +157,12 @@ public final class XSSFRelation<W extends XSSFModel> {
     	return new XSSFRelation<R>(type, rel, defaultName, cls);
     }
    
-	private String _type;
-	private String _relation;
-	private String _defaultName;
 	private Constructor<W> _constructor;
 	private final boolean _constructorTakesTwoArgs;
 	
 	private XSSFRelation(String type, String rel, String defaultName, Class<W> cls) {
-		_type = type;
-		_relation = rel;
-		_defaultName = defaultName;
+		super(type, rel, defaultName);
+
 		if (cls == null) {
 			_constructor = null;
 			_constructorTakesTwoArgs = false;
@@ -189,10 +186,7 @@ public final class XSSFRelation<W extends XSSFModel> {
 			_constructorTakesTwoArgs = twoArg;
 		}
 	}
-	public String getContentType() { return _type; }
-	public String getRelation() { return _relation; }
-	public String getDefaultFileName() { return _defaultName; }
-	
+
 	/**
 	 * Does one of these exist for the given core
 	 *  package part?

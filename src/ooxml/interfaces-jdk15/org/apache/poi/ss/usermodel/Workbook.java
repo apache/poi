@@ -376,9 +376,6 @@ public interface Workbook {
 
     Palette getCustomPalette();
 
-    /** Test only. Do not use */
-    void insertChartRecord();
-
     /**
      * Adds a picture to the workbook.
      *
@@ -392,7 +389,7 @@ public interface Workbook {
     /**
      * Gets all pictures from the Workbook.
      *
-     * @return the list of pictures (a list of {@link HSSFPictureData} objects.)
+     * @return the list of pictures (a list of {@link PictureData} objects.)
      */
     List getAllPictures();
 

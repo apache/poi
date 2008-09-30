@@ -14,30 +14,41 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.dev;
-
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.FileOutputStream;
+package org.apache.poi;
 
 /**
- * Utility which loads a SpreadsheetML file and saves it back.
- * This is a handy tool to investigate read-write round trip safety.
+ * Represents a descriptor of a OOXML relation.
  *
  * @author Yegor Kozlov
  */
-public class XSSFSave {
-    public static void main(String[] args) throws Exception {
-        for (int i = 0; i < args.length; i++) {
-            XSSFWorkbook wb = new XSSFWorkbook(args[i]);
+public class POIXMLRelation {
 
-            System.out.println("wb.getNumberOfSheets(): " + wb.getNumberOfSheets());
-            int sep = args[i].lastIndexOf('.');
-            String outfile = args[i].substring(0, sep) + "-save.xlsx";
-            FileOutputStream out = new FileOutputStream(outfile);
-            wb.write(out);
-            out.close();
-        }
+    protected String _type;
+    protected String _relation;
+    protected String _defaultName;
+
+    /**
+     * Instantiates a POIXMLRelation.
+     */
+    protected POIXMLRelation(String type, String rel, String defaultName) {
+        _type = type;
+        _relation = rel;
+        _defaultName = defaultName;
     }
 
+    public String getContentType() { return _type; }
+    public String getRelation() { return _relation; }
+    public String getDefaultFileName() { return _defaultName; }
+
+    /**
+     * Returns the filename for the nth one of these,
+     *  eg /xl/comments4.xml
+     */
+    public String getFileName(int index) {
+        if(_defaultName.indexOf("#") == -1) {
+            // Generic filename in all cases
+            return getDefaultFileName();
+        }
+        return _defaultName.replace("#", Integer.toString(index));
+    }
 }
