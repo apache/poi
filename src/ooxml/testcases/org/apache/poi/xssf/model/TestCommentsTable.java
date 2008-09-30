@@ -30,6 +30,7 @@ import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackagingURIHelper;
@@ -212,12 +213,8 @@ public class TestCommentsTable extends TestCase {
 		
 		
 		// Save, and re-load the file
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		workbook.write(baos);
-		
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-		workbook = new XSSFWorkbook(Package.open(bais));
-		
+        workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+
 		// Check we still have comments where we should do
 		sheet1 = workbook.getSheetAt(0);
 		sheet2 = (XSSFSheet)workbook.getSheetAt(1);
@@ -259,12 +256,8 @@ public class TestCommentsTable extends TestCase {
 				sheet1.getRow(12).getCell(2).getCellComment().getAuthor());
 		
 		// Save, and re-load the file
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		workbook.write(baos);
-		
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-		workbook = new XSSFWorkbook(Package.open(bais));
-		
+        workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+
 		// Check we still have comments where we should do
 		sheet1 = workbook.getSheetAt(0);
 		assertNotNull(sheet1.getRow(4).getCell(2).getCellComment());

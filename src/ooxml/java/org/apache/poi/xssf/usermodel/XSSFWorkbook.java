@@ -18,16 +18,15 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
-
+import java.util.HashMap;
+import java.util.Iterator;
 import javax.xml.namespace.QName;
-
 import org.apache.poi.POIXMLDocument;
-import org.apache.poi.ss.usermodel.CommentsSource;
-import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLFactory;
 import org.apache.poi.ss.usermodel.Palette;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row;
@@ -37,19 +36,15 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.PackageHelper;
 import org.apache.poi.xssf.model.*;
-import org.apache.xmlbeans.XmlException;
+import org.apache.poi.POIXMLException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxml4j.exceptions.InvalidFormatException;
+import org.openxml4j.exceptions.OpenXML4JException;
+import org.openxml4j.opc.*;
 import org.openxml4j.opc.Package;
-import org.openxml4j.opc.PackagePart;
-import org.openxml4j.opc.PackagePartName;
-import org.openxml4j.opc.PackageRelationship;
-import org.openxml4j.opc.PackageRelationshipCollection;
-import org.openxml4j.opc.PackageRelationshipTypes;
-import org.openxml4j.opc.PackagingURIHelper;
-import org.openxml4j.opc.TargetMode;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookView;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookViews;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
@@ -57,137 +52,203 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
 
+/**
+ * High level representation of a SpreadsheetML workbook.  This is the first object most users
+ * will construct whether they are reading or writing a workbook.  It is also the
+ * top level object for creating new sheets/etc.
+ */
+public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<XSSFSheet> {
 
-public class XSSFWorkbook extends POIXMLDocument implements Workbook {
-	/** Are we a normal workbook, or a macro enabled one? */
-	private boolean isMacroEnabled = false;
+    /**
+     * The underlying XML bean
+     */
+    private CTWorkbook workbook;
 
-	private CTWorkbook workbook;
+    /**
+     * this holds the XSSFSheet objects attached to this workbook
+     */
+    private List<XSSFSheet> sheets;
 
-	private List<XSSFSheet> sheets = new LinkedList<XSSFSheet>();
-	private List<XSSFName> namedRanges = new LinkedList<XSSFName>();
+    /**
+     * this holds the XSSFName objects attached to this workbook
+     */
+    private List<XSSFName> namedRanges;
 
-	private SharedStringSource sharedStringSource;
-	private StylesSource stylesSource;
+    /**
+     * shared string table - a cache of strings in this workbook
+     */
+    private SharedStringsTable sharedStringSource;
 
-	private List<ThemeTable> themes = new LinkedList<ThemeTable>();
+    /**
+     * A collection of shared objects used for styling content,
+     * e.g. fonts, cell styles, colors, etc.
+     */
+    private StylesSource stylesSource;
 
-	private MissingCellPolicy missingCellPolicy = Row.RETURN_NULL_AND_BLANK;
+    /**
+     * Used to keep track of the data formatter so that all
+     * createDataFormatter calls return the same one for a given
+     * book.  This ensures that updates from one places is visible
+     * someplace else.
+     */
+    private XSSFDataFormat formatter;
+
+    /**
+     * The policy to apply in the event of missing or
+     *  blank cells when fetching from a row.
+     * See {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy}
+     */
+    private MissingCellPolicy missingCellPolicy = Row.RETURN_NULL_AND_BLANK;
 
 	private static POILogger log = POILogFactory.getLogger(XSSFWorkbook.class);
 
+    /**
+     * Create a new SpreadsheetML workbook.
+     */
 	public XSSFWorkbook() {
-		this.workbook = CTWorkbook.Factory.newInstance();
-		CTBookViews bvs = this.workbook.addNewBookViews();
-		CTBookView bv = bvs.addNewWorkbookView();
-		bv.setActiveTab(0);
-		this.workbook.addNewSheets();
-
-		// We always require styles and shared strings
-		sharedStringSource = new SharedStringsTable();
-		stylesSource = new StylesTable();
+        super();
+        try {
+            newWorkbook();
+        }catch (Exception e){
+            throw new POIXMLException(e);
+        }
 	}
 
+    /**
+     * Constructs a XSSFWorkbook object given a file name.
+     *
+     * @param      path   the file name.
+     */
 	public XSSFWorkbook(String path) throws IOException {
 		this(openPackage(path));
 	}
-	public XSSFWorkbook(InputStream  is) throws IOException {
-		this(openPackage(is));
-	}
 
-	public XSSFWorkbook(Package pkg) throws IOException {
-		super(pkg);
+    /**
+     * Constructs a XSSFWorkbook object given a OpenXML4J <code>Package</code> object,
+     * see <a href="http://openxml4j.org/">www.openxml4j.org</a>.
+     *
+     * @param pkg the OpenXML4J <code>Package</code> object.
+     */
+    public XSSFWorkbook(Package pkg) throws IOException {
+        super();
+        if(pkg.getPackageAccess() == PackageAccess.READ){
+            //current implementation of OpenXML4J is funny.
+            //Packages opened by Package.open(InputStream is) are read-only,
+            //there is no way to change or even save such an instance in a OutputStream.
+            //The workaround is to create a copy via a temp file
+            try {
+                Package tmp = PackageHelper.clone(pkg);
+                initialize(tmp);
+            } catch (OpenXML4JException e){
+                throw new POIXMLException(e);
+            }
+        } else {
+            initialize(pkg);
+        }
+    }
+
+    /**
+     * Initialize this workbook from the specified Package
+     */
+    @Override
+    protected void initialize(Package pkg) throws IOException {
+        super.initialize(pkg);
+
 		try {
-			WorkbookDocument doc = WorkbookDocument.Factory.parse(getCorePart().getInputStream());
+            //build the POIXMLDocumentPart tree, this workbook is the root
+            read(new XSSFFactory());
+
+            PackagePart corePart = getCorePart();
+
+            WorkbookDocument doc = WorkbookDocument.Factory.parse(corePart.getInputStream());
 			this.workbook = doc.getWorkbook();
 
-			// Are we macro enabled, or just normal?
-			isMacroEnabled =
-					getCorePart().getContentType().equals(XSSFRelation.MACROS_WORKBOOK.getContentType());
-
-			try {
-				// Load shared strings
-				sharedStringSource = XSSFRelation.SHARED_STRINGS.load(getCorePart());
-			} catch(Exception e) {
-				throw new IOException("Unable to load shared strings - " + e.toString());
+            HashMap<String, XSSFSheet> shIdMap = new HashMap<String, XSSFSheet>();
+            for(POIXMLDocumentPart p : getRelations()){
+                if(p instanceof SharedStringsTable) sharedStringSource = (SharedStringsTable)p;
+                else if(p instanceof StylesSource) stylesSource = (StylesSource)p;
+                else if (p instanceof XSSFSheet) {
+                    shIdMap.put(p.getPackageRelationship().getId(), (XSSFSheet)p);
+			    }
 			}
-			try {
-				// Load styles source
-				stylesSource = XSSFRelation.STYLES.load(getCorePart());
-			} catch(Exception e) {
-				e.printStackTrace();
-				throw new IOException("Unable to load styles - " + e.toString());
-			}
-			try {
-				// Load themes
-				themes = XSSFRelation.THEME.loadAll(getCorePart());
-			} catch(Exception e) {
-				throw new IOException("Unable to load shared strings - " + e.toString());
-			}
-
 			// Load individual sheets
+            sheets = new LinkedList<XSSFSheet>();
 			for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
-				PackagePart part = getPackagePart(ctSheet);
-				if (part == null) {
+                String id = ctSheet.getId();
+                XSSFSheet sh = shIdMap.get(id);
+                sh.sheet = ctSheet;
+                if(sh == null) {
 					log.log(POILogger.WARN, "Sheet with name " + ctSheet.getName() + " and r:id " + ctSheet.getId()+ " was defined, but didn't exist in package, skipping");
 					continue;
 				}
+                //initialize internal arrays of rows and columns
+                sh.initialize();
 
-				// Load child streams of the sheet
-				List<CommentsTable> childModels;
-				CommentsSource comments = null;
-				List<Drawing> drawings;
-				List<Control> controls;
-				try {
-					// Get the comments for the sheet, if there are any
-					childModels = XSSFRelation.SHEET_COMMENTS.loadAll(part);
-					if(childModels.size() > 0) {
-						comments = childModels.get(0);
-					}
-
-					// Get the drawings for the sheet, if there are any
-					drawings = XSSFRelation.VML_DRAWINGS.loadAll(part);
-					// Get the activeX controls for the sheet, if there are any
-					controls = XSSFRelation.ACTIVEX_CONTROLS.loadAll(part);
-				} catch(Exception e) {
-					throw new RuntimeException("Unable to construct child part",e);
-				}
-
-				// Now create the sheet
-				WorksheetDocument worksheetDoc = WorksheetDocument.Factory.parse(part.getInputStream());
-				XSSFSheet sheet = new XSSFSheet(ctSheet, worksheetDoc.getWorksheet(), this, comments, drawings, controls);
-				this.sheets.add(sheet);
-
+                PackagePart sheetPart = sh.getPackagePart();
 				// Process external hyperlinks for the sheet,
 				//  if there are any
 				PackageRelationshipCollection hyperlinkRels =
-					part.getRelationshipsByType(XSSFRelation.SHEET_HYPERLINKS.getRelation());
-				sheet.initHyperlinks(hyperlinkRels);
+                	sheetPart.getRelationshipsByType(XSSFRelation.SHEET_HYPERLINKS.getRelation());
+                sh.initHyperlinks(hyperlinkRels);
 
 				// Get the embeddings for the workbook
-				for(PackageRelationship rel : part.getRelationshipsByType(XSSFRelation.OLEEMBEDDINGS.getRelation()))
+                for(PackageRelationship rel : sheetPart.getRelationshipsByType(XSSFRelation.OLEEMBEDDINGS.getRelation()))
 					embedds.add(getTargetPart(rel)); // TODO: Add this reference to each sheet as well
 
-				for(PackageRelationship rel : part.getRelationshipsByType(XSSFRelation.PACKEMBEDDINGS.getRelation()))
+                for(PackageRelationship rel : sheetPart.getRelationshipsByType(XSSFRelation.PACKEMBEDDINGS.getRelation()))
 					embedds.add(getTargetPart(rel));
-			}
-		} catch (XmlException e) {
-			throw new IOException(e.toString());
-		} catch (InvalidFormatException e) {
-			throw new IOException(e.toString());
-		}
 
-		// Process the named ranges
-		if(workbook.getDefinedNames() != null) {
-			for(CTDefinedName ctName : workbook.getDefinedNames().getDefinedNameArray()) {
-				namedRanges.add(new XSSFName(ctName, this));
+                sheets.add(sh);
 			}
-		}
+
+            if(sharedStringSource == null) {
+                //Create SST if it is missing
+                sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, SharedStringsTable.class);
+		    }
+
+		    // Process the named ranges
+            namedRanges = new LinkedList<XSSFName>();
+            if(workbook.getDefinedNames() != null) {
+                for(CTDefinedName ctName : workbook.getDefinedNames().getDefinedNameArray()) {
+                    namedRanges.add(new XSSFName(ctName, this));
+                }
+		    }
+
+        } catch (Exception e) {
+            throw new POIXMLException(e);
+        }
+    }
+
+    /**
+     * Create a new SpreadsheetML OOXML package and setup the default minimal content
+     */
+    protected void newWorkbook() throws IOException, OpenXML4JException{
+        Package pkg = Package.create(PackageHelper.createTempFile());
+        // Main part
+        PackagePartName corePartName = PackagingURIHelper.createPartName(XSSFRelation.WORKBOOK.getDefaultFileName());
+        // Create main part relationship
+        pkg.addRelationship(corePartName, TargetMode.INTERNAL, PackageRelationshipTypes.CORE_DOCUMENT);
+        // Create main document part
+        pkg.createPart(corePartName, XSSFRelation.WORKBOOK.getContentType());
+
+        pkg.getPackageProperties().setCreatorProperty("Apache POI");
+
+        super.initialize(pkg);
+
+        workbook = CTWorkbook.Factory.newInstance();
+        CTBookViews bvs = workbook.addNewBookViews();
+        CTBookView bv = bvs.addNewWorkbookView();
+        bv.setActiveTab(0);
+        workbook.addNewSheets();
+
+        sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, SharedStringsTable.class);
+        stylesSource = (StylesTable)createRelationship(XSSFRelation.STYLES, StylesTable.class);
+
+        namedRanges = new LinkedList<XSSFName>();
+        sheets = new LinkedList<XSSFSheet>();
 	}
 
 	/**
@@ -197,22 +258,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 	 */
 	public CTWorkbook getWorkbook() {
 		return this.workbook;
-	}
-
-	/**
-	 * Get the PackagePart corresponding to a given sheet.
-	 *
-	 * @param ctSheet The sheet
-	 * @return A PackagePart, or null if no matching part found.
-	 * @throws InvalidFormatException
-	 */
-	private PackagePart getPackagePart(CTSheet ctSheet) throws InvalidFormatException {
-		PackageRelationship rel = this.getCorePart().getRelationship(ctSheet.getId());
-		if (rel == null) {
-			log.log(POILogger.WARN, "No relationship found for sheet " + ctSheet.getId() + " - core part has " + this.getCorePart().getRelationships().size() + " relations defined");
-			return null;
-		}
-		return getTargetPart(rel);
 	}
 
 	public int addPicture(byte[] pictureData, int format) {
@@ -252,6 +297,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 		return null;
 	}
 
+    /**
+     * Create a new XSSFCellStyle and add it to the workbook's style table
+     *
+     * @return the new XSSFCellStyle object
+     */
 	public XSSFCellStyle createCellStyle() {
 		CTXf xf=CTXf.Factory.newInstance();
 		xf.setNumFmtId(0);
@@ -265,53 +315,93 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 		return style;
 	}
 
-	public XSSFDataFormat createDataFormat() {
-		return (XSSFDataFormat)getCreationHelper().createDataFormat();
-	}
+    /**
+     * Returns the instance of XSSFDataFormat for this workbook.
+     *
+     * @return the XSSFDataFormat object
+     * @see org.apache.poi.ss.usermodel.DataFormat
+     */
+    public XSSFDataFormat createDataFormat() {
+        if (formatter == null)
+            formatter = new XSSFDataFormat(stylesSource);
+        return formatter;
+    }
 
+    /**
+     * create a new Font and add it to the workbook's font table
+     *
+     * @return new font object
+     */
 	public XSSFFont createFont() {
 		XSSFFont font= new XSSFFont();
 		stylesSource.putFont(font);
 		return font;
 	}
 
+    /**
+     * Creates a new named range and add it to the model
+     *
+     * @return named range high level
+     */
 	public XSSFName createName() {
 		XSSFName name = new XSSFName(this);
 		namedRanges.add(name);
 		return name;
 	}
 
+    /**
+     * create an XSSFSheet for this workbook, adds it to the sheets and returns
+     * the high level representation.  Use this to create new sheets.
+     *
+     * @return XSSFSheet representing the new sheet.
+     */
 	public XSSFSheet createSheet() {
 		String sheetname = "Sheet" + (sheets.size() + 1);
 		return createSheet(sheetname);
 	}
 
+    /**
+     * create an XSSFSheet for this workbook, adds it to the sheets and returns
+     * the high level representation.  Use this to create new sheets.
+     *
+     * @param sheetname  sheetname to set for the sheet, can't be duplicate, greater than 31 chars or contain /\?*[]
+     * @return XSSFSheet representing the new sheet.
+     */
 	public XSSFSheet createSheet(String sheetname) {
 		if (doesContainsSheetName( sheetname, sheets.size() ))
 	   		throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
-		return createSheet(sheetname, XSSFSheet.newInstance());
-	}
 
-	public XSSFSheet createSheet(String sheetname, CTWorksheet worksheet) {
+        int sheetNumber = getNumberOfSheets() + 1;
+        XSSFSheet wrapper = (XSSFSheet)createRelationship(XSSFRelation.WORKSHEET, XSSFSheet.class, sheetNumber);
+        wrapper.setParent(this);
+
 		CTSheet sheet = addSheet(sheetname);
-		XSSFSheet wrapper = new XSSFSheet(sheet, worksheet, this);
+        wrapper.sheet = sheet;
+        sheet.setId(wrapper.getPackageRelationship().getId());
+        sheet.setSheetId(sheetNumber);
+
 		this.sheets.add(wrapper);
 		return wrapper;
 	}
 
-	public XSSFSheet createDialogsheet(String sheetname, CTDialogsheet dialogsheet) {
-	CTSheet sheet = addSheet(sheetname);
-	XSSFDialogsheet wrapper = new XSSFDialogsheet(sheet, dialogsheet, this);
-	this.sheets.add(wrapper);
-	return wrapper;
+    protected XSSFSheet createDialogsheet(String sheetname, CTDialogsheet dialogsheet) {
+        CTSheet sheet = addSheet(sheetname);
+        XSSFDialogsheet wrapper = new XSSFDialogsheet(sheet, dialogsheet, this);
+        this.sheets.add(wrapper);
+        return wrapper;
 	}
 
 	private CTSheet addSheet(String sheetname) {
-		CTSheet sheet = workbook.getSheets().addNewSheet();
+		validateSheetName(sheetname);
+
+        CTSheet sheet = workbook.getSheets().addNewSheet();
 		sheet.setName(sheetname);
 		return sheet;
 	}
 
+    /**
+     * Finds a font that matches the one with the supplied attributes
+     */
 	public XSSFFont findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
 		short fontNum=getNumberOfFonts();
 		for (short i = 0; i < fontNum; i++) {
@@ -344,34 +434,43 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 		return index.intValue();
 	}
 
+    /**
+     * Gets all embedded OLE2 objects from the Workbook.
+     *
+     * @return the list of embedded objects (a list of {@link org.openxml4j.opc.PackagePart} objects.)
+     */
 	public List getAllEmbeddedObjects() {
-		// TODO Auto-generated method stub
-		return null;
+        return embedds;
 	}
 
+    /**
+     * Gets all pictures from the Workbook.
+     *
+     * @return the list of pictures (a list of {@link XSSFPictureData} objects.)
+     */
 	public List<PictureData> getAllPictures() {
 		// In OOXML pictures are referred to in sheets
 		List<PictureData> pictures = new LinkedList<PictureData>();
-		for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
-			try {
-				PackagePart sheetPart = getPackagePart(ctSheet);
-				if (sheetPart == null) {
-					continue;
-				}
-				PackageRelationshipCollection prc = sheetPart.getRelationshipsByType(XSSFRelation.DRAWINGS.getRelation());
-				for (PackageRelationship rel : prc) {
-					PackagePart drawingPart = getTargetPart(rel);
-					PackageRelationshipCollection prc2 = drawingPart.getRelationshipsByType(XSSFRelation.IMAGES.getRelation());
-					for (PackageRelationship rel2 : prc2) {
-						PackagePart imagePart = getTargetPart(rel2);
-						XSSFPictureData pd = new XSSFPictureData(imagePart);
-						pictures.add(pd);
-					}
-				}
-			} catch (InvalidFormatException e) {
-				throw new RuntimeException(e.getMessage(), e);
-			}
-		}
+        for(POIXMLDocumentPart p : getRelations()){
+            if (p instanceof XSSFSheet) {
+                PackagePart sheetPart = p.getPackagePart();
+                try {
+                    PackageRelationshipCollection prc = sheetPart.getRelationshipsByType(XSSFRelation.DRAWINGS.getRelation());
+                    for (PackageRelationship rel : prc) {
+                        PackagePart drawingPart = getTargetPart(rel);
+                        PackageRelationshipCollection prc2 = drawingPart.getRelationshipsByType(XSSFRelation.IMAGES.getRelation());
+                        for (PackageRelationship rel2 : prc2) {
+                            PackagePart imagePart = getTargetPart(rel2);
+                            XSSFPictureData pd = new XSSFPictureData(imagePart);
+                            pictures.add(pd);
+                        }
+                    }
+                } catch (InvalidFormatException e) {
+                    throw new POIXMLException(e.getMessage(), e);
+                }
+
+            }
+        }
 		return pictures;
 	}
 
@@ -389,39 +488,91 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 		return null;
 	}
 
+    /**
+     * Get the font at the given index number
+     *
+     * @param idx  index number
+     * @return XSSFFont at the index
+     */
 	public XSSFFont getFontAt(short idx) {
 		return (XSSFFont)stylesSource.getFontAt(idx);
 	}
 
+    /**
+     * Gets the Named range at the given index number
+     *
+     * @param index position of the named range
+     * @return XSSFName at the index
+     */
 	public XSSFName getNameAt(int index) {
 		return namedRanges.get(index);
 	}
+
+    /**
+     * Gets the Named range name at the given index number,
+     * this method is equivalent to <code>getNameAt(index).getName()</code>
+     *
+     * @param index the named range index (0 based)
+     * @return named range name
+     * @see #getNameAt(int)
+     */
 	public String getNameName(int index) {
 		return getNameAt(index).getNameName();
 	}
-	public int getNameIndex(String name) {
-		for(int i=0; i<namedRanges.size(); i++) {
-			if(namedRanges.get(i).getNameName().equals(name)) {
-				return i;
-			}
-		}
+
+    /**
+     * Gets the named range index by his name
+     * <i>Note:</i>Excel named ranges are case-insensitive and
+     * this method performs a case-insensitive search.
+     *
+     * @param name named range name
+     * @return named range index
+     */
+    public int getNameIndex(String name) {
+        int i = 0;
+        for(XSSFName nr : namedRanges) {
+            if(nr.getNameName().equals(name)) {
+                return i;
+            }
+            i++;
+        }
 		return -1;
 	}
 
+    /**
+     * Get the number of styles the workbook contains
+     *
+     * @return count of cell styles
+     */
 	public short getNumCellStyles() {
 		return (short) ((StylesTable)stylesSource).getNumCellStyles();
 	}
 
+    /**
+     * Get the number of fonts in the this workbook
+     *
+     * @return number of fonts
+     */
 	public short getNumberOfFonts() {
 		return (short)((StylesTable)stylesSource).getNumberOfFonts();
 	}
 
+    /**
+     * Get the number of named ranges in the this workbook
+     *
+     * @return number of named ranges
+     */
 	public int getNumberOfNames() {
 		return namedRanges.size();
 	}
 
+    /**
+     * Get the number of worksheets in the this workbook
+     *
+     * @return number of worksheets
+     */
 	public int getNumberOfSheets() {
-		return this.workbook.getSheets().sizeOfSheetArray();
+        return this.sheets.size();
 	}
 
 	public String getPrintArea(int sheetIndex) {
@@ -429,6 +580,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 		return null;
 	}
 
+    /**
+     * deprecated May 2008
+     * @deprecated - Misleading name - use getActiveSheetIndex()
+     */
 	public short getSelectedTab() {
 		short i = 0;
 		for (XSSFSheet sheet : this.sheets) {
@@ -440,7 +595,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 		return -1;
 	}
 
-	public Sheet getSheet(String name) {
+    /**
+     * Get sheet with the given name (case insensitive match)
+     *
+     * @param name of the sheet
+     * @return XSSFSheet with the name provided or <code>null</code> if it does not exist
+     */
+	public XSSFSheet getSheet(String name) {
 		CTSheet[] sheets = this.workbook.getSheets().getSheetArray();
 		for (int i = 0 ; i < sheets.length ; ++i) {
 			if (name.equals(sheets[i].getName())) {
@@ -450,10 +611,22 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 		return null;
 	}
 
+    /**
+     * Get the XSSFSheet object at the given index.
+     *
+     * @param index of the sheet number (0-based physical & logical)
+     * @return XSSFSheet at the provided index
+     */
 	public XSSFSheet getSheetAt(int index) {
 		return this.sheets.get(index);
 	}
 
+    /**
+     * Returns the index of the sheet by his name
+     *
+     * @param name the sheet name
+     * @return index of the sheet (0 based)
+     */
 	public int getSheetIndex(String name) {
 		CTSheet[] sheets = this.workbook.getSheets().getSheetArray();
 		for (int i = 0 ; i < sheets.length ; ++i) {
@@ -464,25 +637,50 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 		return -1;
 	}
 
+    /**
+     * Returns the index of the given sheet
+     *
+     * @param sheet the sheet to look up
+     * @return index of the sheet (0 based). <tt>-1</tt> if not found
+     */
 	public int getSheetIndex(Sheet sheet) {
-		return this.sheets.indexOf(sheet);
+        int idx = 0;
+        for(XSSFSheet sh : this){
+            if(sh == sheet) return idx;
+            idx++;
+        }
+        return -1;
 	}
 
-	public String getSheetName(int sheet) {
-		return this.workbook.getSheets().getSheetArray(sheet).getName();
+    /**
+     * Get the sheet name
+     *
+     * @param sheetIx Number
+     * @return Sheet name
+     */
+	public String getSheetName(int sheetIx) {
+        validateSheetIndex(sheetIx);
+		return this.workbook.getSheets().getSheetArray(sheetIx).getName();
 	}
 
+    /**
+     * Allow foreach loops:
+     * <pre><code>
+     * XSSFWorkbook wb = new XSSFWorkbook(package);
+     * for(XSSFSheet sheet : wb){
+     *
+     * }
+     * </code></pre>
+     */
+    public Iterator<XSSFSheet> iterator() {
+        return sheets.iterator();
+    }
 	/**
 	 * Are we a normal workbook (.xlsx), or a
 	 *  macro enabled workbook (.xlsm)?
 	 */
 	public boolean isMacroEnabled() {
-		return isMacroEnabled;
-	}
-
-	public void insertChartRecord() {
-		// TODO Auto-generated method stub
-
+        return getCorePart().getContentType().equals(XSSFRelation.MACROS_WORKBOOK.getContentType());
 	}
 
 	public void removeName(int index) {
@@ -500,6 +698,20 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
 	}
 
+    /**
+     * Removes sheet at the given index.<p/>
+     *
+     * Care must be taken if the removed sheet is the currently active or only selected sheet in
+     * the workbook. There are a few situations when Excel must have a selection and/or active
+     * sheet. (For example when printing - see Bug 40414).<br/>
+     *
+     * This method makes sure that if the removed sheet was active, another sheet will become
+     * active in its place.  Furthermore, if the removed sheet was the only selected sheet, another
+     * sheet will become selected.  The newly active/selected sheet will have the same index, or
+     * one less if the removed sheet was the last in the workbook.
+     *
+     * @param index of the sheet  (0-based)
+     */
 	public void removeSheetAt(int index) {
 		this.sheets.remove(index);
 		this.workbook.getSheets().removeSheet(index);
@@ -518,7 +730,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 	 * Sets the policy on what to do when
 	 *  getting missing or blank cells from a row.
 	 * This will then apply to all calls to
-	 *  {@link Row.getCell()}. See
+	 *  {@link Row#getCell(int)}}. See
 	 *  {@link MissingCellPolicy}
 	 */
 	public void setMissingCellPolicy(MissingCellPolicy missingCellPolicy) {
@@ -600,12 +812,24 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 		}
 	}
 
+    /**
+     * Set the sheet name.
+     * Will throw IllegalArgumentException if the name is greater than 31 chars
+     * or contains /\?*[]
+     * @param sheet number (0 based)
+     */
 	public void setSheetName(int sheet, String name) {
 		if (doesContainsSheetName(name, sheet ))
 			throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
 		this.workbook.getSheets().getSheetArray(sheet).setName(name);
 	}
 
+    /**
+     * sets the order of appearance for a given sheet.
+     *
+     * @param sheetname the name of the sheet to reorder
+     * @param pos the position that we want to insert the sheet into (0 based)
+     */
 	public void setSheetOrder(String sheetname, int pos) {
 		int idx = getSheetIndex(sheetname);
 		sheets.add(pos, sheets.remove(idx));
@@ -621,141 +845,53 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
 	}
 
-	public void write(OutputStream stream) throws IOException {
-		// What kind of workbook are we?
-		XSSFRelation workbookRelation = XSSFRelation.WORKBOOK;
-		if(isMacroEnabled) {
-			workbookRelation = XSSFRelation.MACROS_WORKBOOK;
-		}
+    /**
+     * marshal named ranges from the {@link #namedRanges} collection to the underlying CTWorkbook bean
+     */
+    private void saveNamedRanges(){
+        // Named ranges
+        if(namedRanges.size() > 0) {
+            CTDefinedNames names = CTDefinedNames.Factory.newInstance();
+            CTDefinedName[] nr = new CTDefinedName[namedRanges.size()];
+            int i = 0;
+            for(XSSFName name : namedRanges) {
+                nr[i] = name.getCTName();
+                i++;
+            }
+            names.setDefinedNameArray(nr);
+            workbook.setDefinedNames(names);
+        } else {
+            if(workbook.isSetDefinedNames()) {
+                workbook.unsetDefinedNames();
+            }
+        }
 
-		try {
-			// Create a package referring the temp file.
-			Package pkg = Package.create(stream);
-			// Main part
-			PackagePartName corePartName = PackagingURIHelper.createPartName(workbookRelation.getDefaultFileName());
-			// Create main part relationship
-			int rId = 1;
-			pkg.addRelationship(corePartName, TargetMode.INTERNAL, PackageRelationshipTypes.CORE_DOCUMENT, "rId" + (rId++));
+    }
 
-			// Create main document part
-			PackagePart corePart = pkg.createPart(corePartName, workbookRelation.getContentType());
-			OutputStream out;
+    @Override
+    protected void commit() throws IOException {
+        saveNamedRanges();
 
-			XmlOptions xmlOptions = new XmlOptions();
-			// Requests use of whitespace for easier reading
-			xmlOptions.setSavePrettyPrint();
-			xmlOptions.setSaveOuter();
-			xmlOptions.setUseDefaultNamespace();
+        XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
+        xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorkbook.type.getName().getNamespaceURI(), "workbook"));
+        PackagePart part = getPackagePart();
+        OutputStream out = part.getOutputStream();
+        workbook.save(out, xmlOptions);
+        out.close();
+    }
 
-			// Write out our sheets, updating the references
-			//  to them in the main workbook as we go
-			int drawingIndex = 1;
-			for (int i=0 ; i < this.getNumberOfSheets(); i++) {
-				int sheetNumber = (i+1);
-				XSSFSheet sheet = this.getSheetAt(i);
-				PackagePartName partName = PackagingURIHelper.createPartName(
-						XSSFRelation.WORKSHEET.getFileName(sheetNumber));
-				PackageRelationship rel =
-					 corePart.addRelationship(partName, TargetMode.INTERNAL, XSSFRelation.WORKSHEET.getRelation(), "rId" + sheetNumber);
-				PackagePart part = pkg.createPart(partName, XSSFRelation.WORKSHEET.getContentType());
+    /**
+     * Method write - write out this workbook to an Outputstream.
+     *
+     * @param stream - the java OutputStream you wish to write the XLS to
+     *
+     * @exception IOException if anything can't be written.
+     */
+    public void write(OutputStream stream) throws IOException {
+        //force all children to commit their changes into the underlying OOXML Package
+        save();
 
-				// XXX This should not be needed, but apparently the setSaveOuter call above does not work in XMLBeans 2.2
-				xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorksheet.type.getName().getNamespaceURI(), "worksheet"));
-				sheet.save(part, xmlOptions);
-
-				// Update our internal reference for the package part
-				workbook.getSheets().getSheetArray(i).setId(rel.getId());
-				workbook.getSheets().getSheetArray(i).setSheetId(sheetNumber);
-
-				// If our sheet has drawings, then write out those
-				if(sheet.getDrawings() != null) {
-					for(Drawing drawing : sheet.getDrawings()) {
-						XSSFRelation.VML_DRAWINGS.save(
-								drawing,
-								part,
-								drawingIndex
-						);
-						drawingIndex++;
-					}
-				}
-
-				// If our sheet has comments, then write out those
-				if(sheet.hasComments()) {
-					CommentsTable ct = (CommentsTable)sheet.getCommentsSourceIfExists();
-					XSSFRelation.SHEET_COMMENTS.save(ct, part, sheetNumber);
-				}
-
-				// If our sheet has controls, then write out those
-				if(sheet.getControls() != null) {
-					int controlIndex = 1;
-					for(Control control : sheet.getControls()) {
-						XSSFRelation.ACTIVEX_CONTROLS.save(
-								control,
-								part,
-								controlIndex
-						);
-						controlIndex++;
-					}
-				}
-			}
-
-			// Write shared strings and styles
-			if(sharedStringSource != null) {
-				 SharedStringsTable sst = (SharedStringsTable)sharedStringSource;
-				 XSSFRelation.SHARED_STRINGS.save(sst, corePart);
-			}
-			if(stylesSource != null) {
-				 StylesTable st = (StylesTable)stylesSource;
-				 XSSFRelation.STYLES.save(st, corePart);
-			}
-			if(themes.size() > 0) {
-				for(int i=0; i< themes.size(); i++) {
-					XSSFRelation.THEME.save(themes.get(i), corePart, i+1);
-				}
-			}
-
-			// Named ranges
-			if(namedRanges.size() > 0) {
-				CTDefinedNames names = CTDefinedNames.Factory.newInstance();
-				CTDefinedName[] nr = new CTDefinedName[namedRanges.size()];
-				for(int i=0; i<namedRanges.size(); i++) {
-					nr[i] = namedRanges.get(i).getCTName();
-				}
-				names.setDefinedNameArray(nr);
-				workbook.setDefinedNames(names);
-			} else {
-				if(workbook.isSetDefinedNames()) {
-					workbook.setDefinedNames(null);
-				}
-			}
-
-			// Macro related bits
-			if(isMacroEnabled) {
-				// Copy VBA Macros if present
-				if(XSSFRelation.VBA_MACROS.exists( getCorePart() )) {
-					try {
-						BinaryPart vba = XSSFRelation.VBA_MACROS.load(getCorePart());
-						XSSFRelation.VBA_MACROS.save(vba, corePart);
-					} catch(Exception e) {
-						throw new RuntimeException("Unable to copy vba macros over", e);
-					}
-				}
-			}
-
-			// Now we can write out the main Workbook, with
-			//  the correct references to the other parts
-			out = corePart.getOutputStream();
-			// XXX This should not be needed, but apparently the setSaveOuter call above does not work in XMLBeans 2.2
-			xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorkbook.type.getName().getNamespaceURI(), "workbook"));
-			workbook.save(out, xmlOptions);
-			out.close();
-
-			//  All done
-			pkg.close();
-		} catch (InvalidFormatException e) {
-			// TODO: replace with more meaningful exception
-			throw new RuntimeException(e);
-		}
+        getPackage().save(stream);
 	}
 
 	public void writeProtectWorkbook(String password, String username) {
@@ -763,24 +899,46 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
 	}
 
-	public SharedStringSource getSharedStringSource() {
+    /**
+     * Returns SharedStringsTable - tha cache of string for this workbook
+     *
+     * @return the shared string table
+     */
+    public SharedStringsTable getSharedStringSource() {
 		return this.sharedStringSource;
 	}
-	protected void setSharedStringSource(SharedStringSource sharedStringSource) {
+    //TODO do we really need setSharedStringSource?
+    protected void setSharedStringSource(SharedStringsTable sharedStringSource) {
 		this.sharedStringSource = sharedStringSource;
 	}
 
+    /**
+     * Return a object representing a collection of shared objects used for styling content,
+     * e.g. fonts, cell styles, colors, etc.
+     */
 	public StylesSource getStylesSource() {
 		return this.stylesSource;
 	}
+    //TODO do we really need setStylesSource?
 	protected void setStylesSource(StylesSource stylesSource) {
 		this.stylesSource = stylesSource;
 	}
 
-	public CreationHelper getCreationHelper() {
+    /**
+     * Returns an object that handles instantiating concrete
+     *  classes of the various instances for XSSF.
+     */
+	public XSSFCreationHelper getCreationHelper() {
 		return new XSSFCreationHelper(this);
 	}
 
+    /**
+     * Determines whether a workbook contains the provided sheet name.
+     *
+     * @param name the name to test (case insensitive match)
+     * @param excludeSheetIdx the sheet to exclude from the check or -1 to include all sheets in the check.
+     * @return true if the sheet contains the name, false otherwise.
+     */
 	private boolean doesContainsSheetName(String name, int excludeSheetIdx) {
 		CTSheet[] ctSheetArray = workbook.getSheets().getSheetArray();
 		for (int i = 0; i < ctSheetArray.length; i++) {
@@ -789,4 +947,32 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 		}
 		return false;
 	}
+
+    private static void validateSheetName(String sheetName) {
+        if (sheetName == null) {
+            throw new IllegalArgumentException("sheetName must not be null");
+        }
+        int len = sheetName.length();
+        if (len < 1 || len > 31) {
+            throw new IllegalArgumentException("sheetName '" + sheetName
+                    + "' is invalid - must be 1-30 characters long");
+        }
+        for (int i=0; i<len; i++) {
+            char ch = sheetName.charAt(i);
+            switch (ch) {
+                case '/':
+                case '\\':
+                case '?':
+                case '*':
+                case ']':
+                case '[':
+                    break;
+                default:
+                    // all other chars OK
+                    continue;
+            }
+            throw new IllegalArgumentException("Invalid char (" + ch
+                    + ") found at index (" + i + ") in sheet name '" + sheetName + "'");
+        }
+     }
 }

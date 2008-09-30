@@ -23,26 +23,22 @@ import org.apache.poi.ss.usermodel.RichTextString;
 
 public class XSSFCreationHelper implements CreationHelper {
 	private XSSFWorkbook workbook;
-	private XSSFDataFormat dataFormat;
 	XSSFCreationHelper(XSSFWorkbook wb) {
 		workbook = wb;
-		
-		// Create the things we only ever need one of
-		dataFormat = new XSSFDataFormat(workbook.getStylesSource());
 	}
 	
     /**
      * Creates a new XSSFRichTextString for you.
      */
-	public RichTextString createRichTextString(String text) {
+	public XSSFRichTextString createRichTextString(String text) {
 		return new XSSFRichTextString(text);
 	}
 	
-	public DataFormat createDataFormat() {
-		return dataFormat;
+	public XSSFDataFormat createDataFormat() {
+		return workbook.createDataFormat();
 	}
 	
-	public Hyperlink createHyperlink(int type) {
+	public XSSFHyperlink createHyperlink(int type) {
 		return new XSSFHyperlink(type);
 	}
 }

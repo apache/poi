@@ -21,10 +21,7 @@ import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
-import java.io.FileOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipEntry;
 import java.util.Enumeration;
@@ -70,24 +67,32 @@ public class XSSFDump {
             FileOutputStream out = new FileOutputStream(f);
 
             if(entry.getName().endsWith(".xml") || entry.getName().endsWith(".vml") || entry.getName().endsWith(".rels")){
-                //pass the xml through the Xerces serializer to produce nicely formatted output
-                Document doc = builder.parse(zip.getInputStream(entry));
+                try {
+                    //pass the xml through the Xerces serializer to produce nicely formatted output
+                    Document doc = builder.parse(zip.getInputStream(entry));
 
-                OutputFormat  format  = new OutputFormat( doc );
-                format.setIndenting(true);
+                    OutputFormat  format  = new OutputFormat( doc );
+                    format.setIndenting(true);
 
-                XMLSerializer serial = new  XMLSerializer( out, format );
-                serial.asDOMSerializer();
-                serial.serialize( doc.getDocumentElement() );
-
+                    XMLSerializer serial = new  XMLSerializer( out, format );
+                    serial.asDOMSerializer();
+                    serial.serialize( doc.getDocumentElement() );
+                } catch (Exception e){
+                    System.err.println("Failed to parse " + entry.getName() + ", dumping raw content");
+                    dump(zip.getInputStream(entry), out);
+                }
             } else {
-                int pos;
-                byte[] chunk = new byte[2048];
-                InputStream is = zip.getInputStream(entry);
-                while((pos = is.read(chunk)) > 0) out.write(chunk, 0, pos);
+                dump(zip.getInputStream(entry), out);
             }
             out.close();
 
         }
+    }
+
+    protected static void dump(InputStream is, OutputStream out) throws IOException{
+        int pos;
+        byte[] chunk = new byte[2048];
+        while((pos = is.read(chunk)) > 0) out.write(chunk, 0, pos);
+
     }
 }

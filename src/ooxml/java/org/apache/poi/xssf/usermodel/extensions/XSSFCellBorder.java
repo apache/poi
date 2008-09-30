@@ -75,10 +75,22 @@ public class XSSFCellBorder {
 	
 	private CTBorderPr getBorder(BorderSide side) {
 		switch (side) {
-		case TOP: return border.getTop();
-		case RIGHT: return border.getRight();
-		case BOTTOM: return border.getBottom();
-		case LEFT: return border.getLeft();
+		case TOP: {
+		    CTBorderPr borderPr = border.isSetTop() ? border.getTop() : border.addNewTop();
+		    return borderPr;
+		}
+		case RIGHT: {
+			    CTBorderPr borderPr = border.isSetRight() ? border.getRight() : border.addNewRight();
+			    return borderPr;
+		}
+		case BOTTOM:{
+			    CTBorderPr borderPr = border.isSetBottom() ? border.getBottom() : border.addNewBottom();
+			    return borderPr;
+		}
+		case LEFT:{
+			    CTBorderPr borderPr = border.isSetLeft() ? border.getLeft() : border.addNewLeft();
+			    return borderPr;
+			}
 		default: throw new IllegalArgumentException("No suitable side specified for the border");
 		}
 	}

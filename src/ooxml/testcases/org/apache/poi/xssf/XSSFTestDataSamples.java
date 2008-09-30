@@ -17,10 +17,7 @@
 
 package org.apache.poi.xssf;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -47,15 +44,20 @@ public class XSSFTestDataSamples {
 		}
 	}
     public static <R extends Workbook> R writeOutAndReadBack(R wb) {
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
     	Workbook result;
 		try {
-	    	wb.write(baos);
-	    	InputStream is = new ByteArrayInputStream(baos.toByteArray());
 	    	if (wb instanceof HSSFWorkbook) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
+                wb.write(baos);
+                InputStream is = new ByteArrayInputStream(baos.toByteArray());
 	    		result = new HSSFWorkbook(is);
 	    	} else if (wb instanceof XSSFWorkbook) {
-    			Package pkg = Package.open(is);
+                File tmp = File.createTempFile("poi-ooxml-", ".xlsx");
+                tmp.deleteOnExit();
+                FileOutputStream out = new FileOutputStream(tmp);
+                wb.write(out);
+                out.close();
+    			Package pkg = Package.open(tmp.getAbsolutePath());
     			result = new XSSFWorkbook(pkg);
 	    	} else {
 	    		throw new RuntimeException("Unexpected workbook type (" 

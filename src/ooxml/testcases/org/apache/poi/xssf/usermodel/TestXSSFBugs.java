@@ -17,120 +17,107 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 
 import junit.framework.TestCase;
 
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 
 public class TestXSSFBugs extends TestCase {
-	private String getFilePath(String file) {
-		File xml = new File(
-				System.getProperty("HSSF.testdata.path") +
-				File.separator + file
-		);
-		assertTrue(xml.exists());
-		
-		return xml.toString();
-	}
-	
-	private Package saveAndOpen(XSSFWorkbook wb) throws Exception {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		wb.write(baos);
-		ByteArrayInputStream inp = new ByteArrayInputStream(
-				baos.toByteArray()
-		);
-		Package pkg = Package.open(inp);
-		return pkg;
-	}
-	
-	/**
-	 * Named ranges had the right reference, but
-	 *  the wrong sheet name
-	 */
-	public void test45430() throws Exception {
-		XSSFWorkbook wb = new XSSFWorkbook(getFilePath("45430.xlsx"));
-		assertFalse(wb.isMacroEnabled());
-		assertEquals(3, wb.getNumberOfNames());
-		
-		assertEquals(0, wb.getNameAt(0).getCTName().getLocalSheetId());
-		assertFalse(wb.getNameAt(0).getCTName().isSetLocalSheetId());
-		assertEquals("SheetA!$A$1", wb.getNameAt(0).getReference());
-		assertEquals("SheetA", wb.getNameAt(0).getSheetName());
-		
-		assertEquals(0, wb.getNameAt(1).getCTName().getLocalSheetId());
-		assertFalse(wb.getNameAt(1).getCTName().isSetLocalSheetId());
-		assertEquals("SheetB!$A$1", wb.getNameAt(1).getReference());
-		assertEquals("SheetB", wb.getNameAt(1).getSheetName());
-		
-		assertEquals(0, wb.getNameAt(2).getCTName().getLocalSheetId());
-		assertFalse(wb.getNameAt(2).getCTName().isSetLocalSheetId());
-		assertEquals("SheetC!$A$1", wb.getNameAt(2).getReference());
-		assertEquals("SheetC", wb.getNameAt(2).getSheetName());
-		
-		// Save and re-load, still there
-		Package nPkg = saveAndOpen(wb);
-		XSSFWorkbook nwb = new XSSFWorkbook(nPkg);
-		assertEquals(3, nwb.getNumberOfNames());
-		assertEquals("SheetA!$A$1", nwb.getNameAt(0).getReference());
-	}
-	
-	/**
-	 * We should carry vba macros over after save
-	 */
-	public void test45431() throws Exception {
-		Package pkg = Package.open(getFilePath("45431.xlsm"));
-		XSSFWorkbook wb = new XSSFWorkbook(pkg);
-		assertTrue(wb.isMacroEnabled());
-		
-		// Check the various macro related bits can be found
-		PackagePart vba = pkg.getPart(
-				PackagingURIHelper.createPartName("/xl/vbaProject.bin")
-		);
-		assertNotNull(vba);
-		// And the drawing bit
-		PackagePart drw = pkg.getPart(
-				PackagingURIHelper.createPartName("/xl/drawings/vmlDrawing1.vml")
-		);
-		assertNotNull(drw);
-		
-		
-		// Save and re-open, both still there
-		Package nPkg = saveAndOpen(wb);
-		XSSFWorkbook nwb = new XSSFWorkbook(nPkg);
-		assertTrue(nwb.isMacroEnabled());
-		
-		vba = nPkg.getPart(
-				PackagingURIHelper.createPartName("/xl/vbaProject.bin")
-		);
-		assertNotNull(vba);
-		drw = nPkg.getPart(
-				PackagingURIHelper.createPartName("/xl/drawings/vmlDrawing1.vml")
-		);
-		assertNotNull(drw);
-		
-		// And again, just to be sure
-		nPkg = saveAndOpen(nwb);
-		nwb = new XSSFWorkbook(nPkg);
-		assertTrue(nwb.isMacroEnabled());
-		
-		vba = nPkg.getPart(
-				PackagingURIHelper.createPartName("/xl/vbaProject.bin")
-		);
-		assertNotNull(vba);
-		drw = nPkg.getPart(
-				PackagingURIHelper.createPartName("/xl/drawings/vmlDrawing1.vml")
-		);
-		assertNotNull(drw);
-		
-		// For testing with excel
+    private String getFilePath(String file) {
+        File xml = new File(
+                System.getProperty("HSSF.testdata.path") +
+                File.separator + file
+        );
+        assertTrue(xml.exists());
+
+        return xml.toString();
+    }
+
+    /**
+     * Named ranges had the right reference, but
+     *  the wrong sheet name
+     */
+    public void test45430() throws Exception {
+        XSSFWorkbook wb = new XSSFWorkbook(getFilePath("45430.xlsx"));
+        assertFalse(wb.isMacroEnabled());
+        assertEquals(3, wb.getNumberOfNames());
+
+        assertEquals(0, wb.getNameAt(0).getCTName().getLocalSheetId());
+        assertFalse(wb.getNameAt(0).getCTName().isSetLocalSheetId());
+        assertEquals("SheetA!$A$1", wb.getNameAt(0).getReference());
+        assertEquals("SheetA", wb.getNameAt(0).getSheetName());
+
+        assertEquals(0, wb.getNameAt(1).getCTName().getLocalSheetId());
+        assertFalse(wb.getNameAt(1).getCTName().isSetLocalSheetId());
+        assertEquals("SheetB!$A$1", wb.getNameAt(1).getReference());
+        assertEquals("SheetB", wb.getNameAt(1).getSheetName());
+
+        assertEquals(0, wb.getNameAt(2).getCTName().getLocalSheetId());
+        assertFalse(wb.getNameAt(2).getCTName().isSetLocalSheetId());
+        assertEquals("SheetC!$A$1", wb.getNameAt(2).getReference());
+        assertEquals("SheetC", wb.getNameAt(2).getSheetName());
+
+        // Save and re-load, still there
+        XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertEquals(3, nwb.getNumberOfNames());
+        assertEquals("SheetA!$A$1", nwb.getNameAt(0).getReference());
+    }
+
+    /**
+     * We should carry vba macros over after save
+     */
+    public void test45431() throws Exception {
+        Package pkg = Package.open(getFilePath("45431.xlsm"));
+        XSSFWorkbook wb = new XSSFWorkbook(pkg);
+        assertTrue(wb.isMacroEnabled());
+
+        // Check the various macro related bits can be found
+        PackagePart vba = pkg.getPart(
+                PackagingURIHelper.createPartName("/xl/vbaProject.bin")
+        );
+        assertNotNull(vba);
+        // And the drawing bit
+        PackagePart drw = pkg.getPart(
+                PackagingURIHelper.createPartName("/xl/drawings/vmlDrawing1.vml")
+        );
+        assertNotNull(drw);
+
+
+        // Save and re-open, both still there
+        XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        Package nPkg = nwb.getPackage();
+        assertTrue(nwb.isMacroEnabled());
+
+        vba = nPkg.getPart(
+                PackagingURIHelper.createPartName("/xl/vbaProject.bin")
+        );
+        assertNotNull(vba);
+        drw = nPkg.getPart(
+                PackagingURIHelper.createPartName("/xl/drawings/vmlDrawing1.vml")
+        );
+        assertNotNull(drw);
+
+        // And again, just to be sure
+        nwb = XSSFTestDataSamples.writeOutAndReadBack(nwb);
+        nPkg = nwb.getPackage();
+        assertTrue(nwb.isMacroEnabled());
+
+        vba = nPkg.getPart(
+                PackagingURIHelper.createPartName("/xl/vbaProject.bin")
+        );
+        assertNotNull(vba);
+        drw = nPkg.getPart(
+                PackagingURIHelper.createPartName("/xl/drawings/vmlDrawing1.vml")
+        );
+        assertNotNull(drw);
+
+        // For testing with excel
 //		FileOutputStream fout = new FileOutputStream("/tmp/foo.xlsm");
 //		nwb.write(fout);
 //		fout.close();
-	}
+    }
 }

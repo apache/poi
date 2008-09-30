@@ -17,9 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Comment;
@@ -27,6 +24,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.openxml4j.opc.Package;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTAuthors;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
@@ -135,7 +133,7 @@ public class TestXSSFComment extends TestCase {
 	 */
 	public void testCreateSave() throws Exception {
 		XSSFWorkbook wb = new XSSFWorkbook();
-		XSSFSheet s1 = (XSSFSheet)wb.createSheet();
+		XSSFSheet s1 = wb.createSheet();
 		Row r1 = s1.createRow(0);
 		Cell r1c1 = r1.createCell(0);
 		r1c1.setCellValue(2.2);
@@ -150,12 +148,8 @@ public class TestXSSFComment extends TestCase {
 		assertEquals(1, s1.getNumberOfComments());
 		
 		// Save and re-load
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		wb.write(baos);
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-		
-		wb = new XSSFWorkbook(Package.open(bais));
-		s1 = (XSSFSheet)wb.getSheetAt(0);
+		wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+		s1 = wb.getSheetAt(0);
 		
 		assertEquals(1, s1.getNumberOfComments());
 		assertNotNull(s1.getRow(0).getCell(0).getCellComment());
@@ -171,12 +165,9 @@ public class TestXSSFComment extends TestCase {
 		assertEquals(2, s1.getNumberOfComments());
 		
 		// Save and re-load
-		baos = new ByteArrayOutputStream();
-		wb.write(baos);
-		bais = new ByteArrayInputStream(baos.toByteArray());
-		
-		wb = new XSSFWorkbook(Package.open(bais));
-		s1 = (XSSFSheet)wb.getSheetAt(0);
+
+		wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+		s1 = wb.getSheetAt(0);
 		
 		assertEquals(2, s1.getNumberOfComments());
 		assertNotNull(s1.getCellComment(0, 0));

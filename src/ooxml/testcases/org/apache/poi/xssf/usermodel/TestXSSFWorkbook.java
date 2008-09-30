@@ -441,7 +441,7 @@ public final class TestXSSFWorkbook extends TestCase {
 		
 		// Now, an existing file with named ranges
 		workbook = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx");
-		
+
 		assertEquals(2, workbook.getNumberOfNames());
 		assertEquals("Sheet1!$A$2:$A$7", workbook.getNameAt(0).getReference());
 		assertEquals("AllANumbers", workbook.getNameAt(0).getNameName());

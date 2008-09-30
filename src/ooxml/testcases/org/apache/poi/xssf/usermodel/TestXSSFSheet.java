@@ -17,8 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Iterator;
 import junit.framework.TestCase;
@@ -30,11 +28,7 @@ import org.apache.poi.ss.util.Region;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.openxml4j.opc.Package;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
@@ -349,11 +343,7 @@ public class TestXSSFSheet extends TestCase {
 		
 		
 		// Save and reload
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		workbook.write(baos);
-		XSSFWorkbook wb = new XSSFWorkbook(Package.open(
-				new ByteArrayInputStream(baos.toByteArray())
-		));
+		XSSFWorkbook wb = XSSFTestDataSamples.writeOutAndReadBack(workbook);
 		
 		hdr = (XSSFOddHeader)wb.getSheetAt(0).getHeader();
 		ftr = (XSSFOddFooter)wb.getSheetAt(0).getFooter(); 
