@@ -54,17 +54,7 @@ public final class StyleRecord extends Record {
     {
     }
 
-    /**
-     * Constructs a Style record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public StyleRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_xf_index = in.readShort();
         if (getType() == STYLE_BUILT_IN)

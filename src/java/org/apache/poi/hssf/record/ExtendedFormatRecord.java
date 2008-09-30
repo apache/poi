@@ -195,17 +195,7 @@ public class ExtendedFormatRecord
     {
     }
 
-    /**
-     * Constructs an ExtendedFormat record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public ExtendedFormatRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_font_index           = in.readShort();
         field_2_format_index         = in.readShort();

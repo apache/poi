@@ -59,10 +59,6 @@ public class ChartTitleFormatRecord extends Record {
 	}
 
 	public ChartTitleFormatRecord(RecordInputStream in) {
-		super(in);
-	}
-
-	protected void fillFields(RecordInputStream in) {
 		m_recs = in.readUShort();
 		int idx;
 		CTFormat ctf;

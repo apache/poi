@@ -40,17 +40,7 @@ public class BookBoolRecord
     {
     }
 
-    /**
-     * Constructs a BookBoolRecord and sets its fields appropriately
-     * @param in the RecordInputstream to read the record from
-     */
-
     public BookBoolRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_save_link_values = in.readShort();
     }

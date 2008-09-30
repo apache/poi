@@ -57,18 +57,7 @@ public abstract class AbstractEscherHolderRecord
         escherRecords = new ArrayList();
     }
 
-    /**
-     * Constructs a Bar record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
     public AbstractEscherHolderRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         escherRecords = new ArrayList();
         if (! DESERIALISE )

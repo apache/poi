@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,12 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
 
 /**
  * Title:        Write Protect Record<P>
@@ -28,10 +25,7 @@ import org.apache.poi.util.StringUtil;
  * REFERENCE:  PG 425 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @version 3.0-pre
  */
-
-public class WriteProtectRecord
-    extends Record
-{
+public final class WriteProtectRecord extends Record {
     public final static short sid = 0x86;
 
     public WriteProtectRecord()
@@ -39,16 +33,9 @@ public class WriteProtectRecord
     }
 
     /**
-     * Constructs a WriteAccess record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
+     * @param in unused (since this record has no data)
      */
-
     public WriteProtectRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
     }
 
@@ -63,8 +50,8 @@ public class WriteProtectRecord
 
     public int serialize(int offset, byte [] data)
     {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)0);
+        LittleEndian.putUShort(data, 0 + offset, sid);
+        LittleEndian.putUShort(data, 2 + offset, 0);
 
         return getRecordSize();
     }

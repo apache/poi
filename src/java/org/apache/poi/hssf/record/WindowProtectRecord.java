@@ -39,17 +39,7 @@ public class WindowProtectRecord
     {
     }
 
-    /**
-     * Constructs a WindowProtect record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public WindowProtectRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_protect = in.readShort();
     }

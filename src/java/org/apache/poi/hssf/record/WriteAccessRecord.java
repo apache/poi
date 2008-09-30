@@ -42,17 +42,7 @@ public class WriteAccessRecord
     {
     }
 
-    /**
-     * Constructs a WriteAccess record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public WriteAccessRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         byte[] data = in.readRemainder();
         //The string is always 112 characters (padded with spaces), therefore

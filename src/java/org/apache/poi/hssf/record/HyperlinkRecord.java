@@ -131,16 +131,6 @@ public class HyperlinkRecord extends Record {
     }
 
     /**
-     * Read hyperlink from input stream
-     *
-     * @param in the stream to read from
-     */
-    public HyperlinkRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    /**
      * Return the column of the first cell that contains the hyperlink
      *
      * @return the 0-based column of the first cell that contains the hyperlink
@@ -315,7 +305,7 @@ public class HyperlinkRecord extends Record {
     /**
      * @param in the RecordInputstream to read the record from
      */
-    protected void fillFields(RecordInputStream in)
+    public HyperlinkRecord(RecordInputStream in)
     {
         try {
             rwFirst = in.readShort();

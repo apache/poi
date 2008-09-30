@@ -46,19 +46,7 @@ public final class FrameRecord extends Record {
 
     }
 
-    /**
-     * Constructs a Frame record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public FrameRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_borderType             = in.readShort();
         field_2_options                = in.readShort();

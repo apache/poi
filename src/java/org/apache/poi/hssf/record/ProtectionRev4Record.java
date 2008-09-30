@@ -40,17 +40,7 @@ public class ProtectionRev4Record
     {
     }
 
-    /**
-     * Constructs a ProtectionRev4 record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public ProtectionRev4Record(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_protect = in.readShort();
     }

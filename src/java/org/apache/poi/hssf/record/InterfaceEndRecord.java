@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,41 +14,30 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Title: Interface End Record<P>
+ * Title: Interface End Record (0x00E2)<P>
  * Description: Shows where the Interface Records end (MMS)
  *  (has no fields)<P>
  * REFERENCE:  PG 324 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @version 2.0-pre
  */
-
-public class InterfaceEndRecord
-    extends Record
-{
-    public final static short sid = 0xe2;
+public final class InterfaceEndRecord extends Record {
+    public final static short sid = 0x00E2;
 
     public InterfaceEndRecord()
     {
     }
 
     /**
-     * Constructs an InterfaceEnd record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
+     * @param in unused (since this record has no data)
      */
-
     public InterfaceEndRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
     }
 

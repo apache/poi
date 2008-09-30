@@ -41,19 +41,9 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
     }
 
     /**
-     * Constructs a BoolErr record and sets its fields appropriately.
-     *
      * @param in the RecordInputstream to read the record from
      */
     public BoolErrRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    /**
-     * @param in the RecordInputstream to read the record from
-     */
-    protected void fillFields(RecordInputStream in)
     {
         //field_1_row      = LittleEndian.getShort(data, 0 + offset);
         field_1_row      = in.readUShort();

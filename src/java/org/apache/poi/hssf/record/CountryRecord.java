@@ -44,17 +44,7 @@ public class CountryRecord
     {
     }
 
-    /**
-     * Constructs a CountryRecord and sets its fields appropriately
-     * @param in the RecordInputstream to read the record from
-     */
-
     public CountryRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_default_country = in.readShort();
         field_2_current_country = in.readShort();

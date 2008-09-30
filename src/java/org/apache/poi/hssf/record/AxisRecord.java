@@ -49,19 +49,7 @@ public class AxisRecord
 
     }
 
-    /**
-     * Constructs a Axis record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public AxisRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_axisType               = in.readShort();
         field_2_reserved1              = in.readInt();

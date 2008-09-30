@@ -91,17 +91,6 @@ public class SSTRecord
     }
 
     /**
-     * Constructs an SST record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
-    public SSTRecord( RecordInputStream in )
-    {
-        super( in );
-    }
-
-    /**
      * Add a string.
      *
      * @param string string to be added
@@ -335,7 +324,7 @@ public class SSTRecord
      * @param in the RecordInputstream to read the record from
      */
 
-    protected void fillFields( RecordInputStream in )
+    public SSTRecord( RecordInputStream in )
     {
         // this method is ALWAYS called after construction -- using
         // the nontrivial constructor, of course -- so this is where

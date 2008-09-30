@@ -45,17 +45,7 @@ public class InterfaceHdrRecord
     {
     }
 
-    /**
-     * Constructs an Codepage record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public InterfaceHdrRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_codepage = in.readShort();
     }

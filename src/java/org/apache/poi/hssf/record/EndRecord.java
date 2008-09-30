@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -30,9 +28,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Glen Stampoultzis (glens at apache.org)
  */
 
-public class EndRecord
-    extends Record
-{
+public final class EndRecord extends Record {
     public static final short sid = 0x1034;
 
     public EndRecord()
@@ -40,16 +36,9 @@ public class EndRecord
     }
 
     /**
-     * Constructs a EndRecord record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
+     * @param in unused (since this record has no data)
      */
-
     public EndRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
     }
 
@@ -64,9 +53,8 @@ public class EndRecord
 
     public int serialize(int offset, byte [] data)
     {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) 0));   // no record info
+        LittleEndian.putUShort(data, 0 + offset, sid);
+        LittleEndian.putUShort(data, 2 + offset, 0);   // no record info
         return getRecordSize();
     }
 

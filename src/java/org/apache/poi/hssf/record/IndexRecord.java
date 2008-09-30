@@ -48,17 +48,7 @@ public class IndexRecord
     {
     }
 
-    /**
-     * Constructs an Index record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public IndexRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_5_dbcells       =
             new IntList(DBCELL_CAPACITY);   // initial capacity of 30

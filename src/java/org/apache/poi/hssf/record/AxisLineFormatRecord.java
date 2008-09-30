@@ -46,19 +46,7 @@ public class AxisLineFormatRecord
 
     }
 
-    /**
-     * Constructs a AxisLineFormat record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public AxisLineFormatRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_axisType               = in.readShort();
     }

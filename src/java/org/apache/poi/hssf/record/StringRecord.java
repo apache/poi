@@ -37,19 +37,9 @@ public class StringRecord extends Record {
     }
 
     /**
-     * Constructs a String record and sets its fields appropriately.
-     *
      * @param in the RecordInputstream to read the record from
      */
-    public StringRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    /**
-     * @param in the RecordInputstream to read the record from
-     */
-    protected void fillFields( RecordInputStream in)
+    public StringRecord( RecordInputStream in)
     {
         field_1_string_length           = in.readShort();
         field_2_unicode_flag            = in.readByte();

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,12 +15,9 @@
    limitations under the License.
 ==================================================================== */
         
-
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * The end data record is used to denote the end of the subrecords.
@@ -30,10 +26,8 @@ import org.apache.poi.util.*;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class EndSubRecord
-    extends SubRecord
-{
-    public final static short      sid                             = 0x00;
+public final class EndSubRecord extends SubRecord {
+    public final static short      sid = 0x00;
 
 
     public EndSubRecord()
@@ -42,18 +36,9 @@ public class EndSubRecord
     }
 
     /**
-     * Constructs a End record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
+     * @param in unused (since this record has no data)
      */
-
     public EndSubRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
     }
 

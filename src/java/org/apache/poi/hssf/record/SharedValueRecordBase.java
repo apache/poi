@@ -86,10 +86,6 @@ public abstract class SharedValueRecordBase extends Record {
 		return dataSize + 4;
 	}
 
-	protected final void fillFields(RecordInputStream in) {
-		throw new RuntimeException("Should not be called.  Fields are filled in constructor");
-	}
-
 	/**
 	 * @return <code>true</code> if (rowIx, colIx) is within the range ({@link #getRange()})
 	 * of this shared value object.

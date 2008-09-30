@@ -49,11 +49,6 @@ public final class CFHeaderRecord extends Record {
 
 	public CFHeaderRecord(RecordInputStream in)
 	{
-		super(in);
-	}
-
-	protected void fillFields(RecordInputStream in)
-	{
 		field_1_numcf = in.readShort();
 		field_2_need_recalculation = in.readShort();
 		field_3_enclosing_cell_range = new CellRangeAddress(in);

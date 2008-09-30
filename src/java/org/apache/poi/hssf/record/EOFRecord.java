@@ -40,16 +40,9 @@ public final class EOFRecord extends Record {
     }
 
     /**
-     * Constructs a EOFRecord record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
+     * @param in unused (since this record has no data)
      */
-
     public EOFRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
     }
 

@@ -498,17 +498,11 @@ public final class TestHSSFWorkbook extends TestCase {
         public BadlyBehavedRecord() {
             // 
         }
-        protected void fillFields(RecordInputStream in) {
-            throw new RuntimeException("Should not be called");
-        }
         public short getSid() {
             return 0x777;
         }
         public int serialize(int offset, byte[] data) {
             return 4;
-        }
-        protected void validateSid(short id) {
-            throw new RuntimeException("Should not be called");
         }
         public int getRecordSize() {
             return 8;

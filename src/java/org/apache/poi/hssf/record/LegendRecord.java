@@ -62,19 +62,7 @@ public final class LegendRecord extends Record {
 
     }
 
-    /**
-     * Constructs a Legend record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public LegendRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_xAxisUpperLeft         = in.readInt();
         field_2_yAxisUpperLeft         = in.readInt();

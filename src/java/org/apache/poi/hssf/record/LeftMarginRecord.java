@@ -31,15 +31,7 @@ public class LeftMarginRecord extends Record implements Margin
 
     public LeftMarginRecord()    {    }
 
-    /**
-     * Constructs a LeftMargin record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
     public LeftMarginRecord(RecordInputStream in)
-    {        super(in);    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_margin = in.readDouble();
     }
@@ -93,4 +85,4 @@ public class LeftMarginRecord extends Record implements Margin
         rec.field_1_margin = this.field_1_margin;
         return rec;
     }
-}  // END OF CLASS
+}  // END OF CLAS

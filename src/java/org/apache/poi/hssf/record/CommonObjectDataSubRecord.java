@@ -82,18 +82,7 @@ public final class CommonObjectDataSubRecord extends SubRecord {
 
     }
 
-    /**
-     * Constructs a CommonObjectData record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public CommonObjectDataSubRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_objectType             = in.readShort();
         field_2_objectId               = in.readShort();

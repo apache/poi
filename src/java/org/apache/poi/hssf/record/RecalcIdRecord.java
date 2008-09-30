@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -37,9 +35,7 @@ import org.apache.poi.util.LittleEndian;
  * @see org.apache.poi.hssf.model.Workbook
  */
 
-public class RecalcIdRecord
-    extends Record
-{
+public final class RecalcIdRecord extends Record {
     public final static short sid = 0x1c1;
     public short[]            field_1_recalcids;
 
@@ -49,17 +45,7 @@ public class RecalcIdRecord
     {
     }
 
-    /**
-     * Constructs a RECALCID record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public RecalcIdRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_recalcids = new short[ in.remaining() / 2 ];
         for (int k = 0; k < field_1_recalcids.length; k++)
@@ -118,9 +104,8 @@ public class RecalcIdRecord
         short   length     = ( short ) (tabids.length * 2);
         int     byteoffset = 4;
 
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) length));
+        LittleEndian.putUShort(data, 0 + offset, sid);
+        LittleEndian.putUShort(data, 2 + offset, length);
 
         // 2 (num bytes in a short)
         for (int k = 0; k < (length / 2); k++)

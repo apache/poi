@@ -76,18 +76,7 @@ public class FontRecord
     {
     }
 
-    /**
-     * Constructs a Font record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public FontRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_font_height         = in.readShort();
         field_2_attributes          = in.readShort();

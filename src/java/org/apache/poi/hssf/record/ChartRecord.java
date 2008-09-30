@@ -45,19 +45,7 @@ public class ChartRecord
 
     }
 
-    /**
-     * Constructs a Chart record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public ChartRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_x                      = in.readInt();
         field_2_y                      = in.readInt();

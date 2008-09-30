@@ -38,16 +38,7 @@ public final class DBCellRecord extends Record {
         field_2_cell_offsets = new short[0];
     }
 
-    /**
-     * Constructs a DBCellRecord and sets its fields appropriately
-     * @param in the RecordInputstream to read the record from
-     */
     public DBCellRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_row_offset   = in.readUShort();
         int size = in.remaining();        
