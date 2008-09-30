@@ -71,19 +71,6 @@ public class SeriesRecord
     
     }
 
-    /**
-     * Checks the sid matches the expected side for this record
-     *
-     * @param id   the expected sid.
-     */
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("Not a Series record");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_categoryDataType       = in.readShort();

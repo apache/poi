@@ -62,13 +62,6 @@ public class ChartTitleFormatRecord extends Record {
 		super(in);
 	}
 
-	protected void validateSid(short id) {
-		if (id != sid)
-        {
-            throw new RecordFormatException("NOT A CHARTTITLEFORMAT RECORD");
-        }
-	}
-
 	protected void fillFields(RecordInputStream in) {
 		m_recs = in.readUShort();
 		int idx;

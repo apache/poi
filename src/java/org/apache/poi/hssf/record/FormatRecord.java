@@ -56,14 +56,6 @@ public class FormatRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A FORMAT RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_index_code       = in.readShort();

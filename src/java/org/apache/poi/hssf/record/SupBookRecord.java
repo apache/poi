@@ -77,12 +77,6 @@ public final class SupBookRecord extends Record {
         super(in);
     }
 
-    protected void validateSid(short id) {
-        if (id != sid) {
-            throw new RecordFormatException("NOT An ExternSheet RECORD");
-        }
-    }
-
     public boolean isExternalReferences() {
         return field_3_sheet_names != null;
     }

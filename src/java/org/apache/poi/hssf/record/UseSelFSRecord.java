@@ -52,14 +52,6 @@ public class UseSelFSRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A UseSelFS RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_flag = in.readShort();

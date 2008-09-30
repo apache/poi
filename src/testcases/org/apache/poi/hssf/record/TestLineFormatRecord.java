@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,9 +28,7 @@ import junit.framework.TestCase;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestLineFormatRecord
-        extends TestCase
-{
+public class TestLineFormatRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,    // colour
         (byte)0x00,(byte)0x00,                          // pattern
@@ -42,14 +37,7 @@ public class TestLineFormatRecord
         (byte)0x4D,(byte)0x00                           // index
     };
 
-    public TestLineFormatRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
         LineFormatRecord record = new LineFormatRecord(new TestcaseRecordInputStream((short)0x1007, (short)data.length, data));
         assertEquals( 0, record.getLineColor());
         assertEquals( 0, record.getLinePattern());
@@ -59,10 +47,7 @@ public class TestLineFormatRecord
         assertEquals( false, record.isDrawTicks() );
         assertEquals( 0x4d, record.getColourPaletteIndex());
 
-
         assertEquals( 16, record.getRecordSize() );
-
-        record.validateSid((short)0x1007);
     }
 
     public void testStore()

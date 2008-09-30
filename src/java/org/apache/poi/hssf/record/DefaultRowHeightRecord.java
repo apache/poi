@@ -52,14 +52,6 @@ public class DefaultRowHeightRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A DefaultRowHeight RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_option_flags = in.readShort();

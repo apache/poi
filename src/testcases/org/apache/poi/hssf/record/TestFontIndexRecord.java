@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,29 +28,17 @@ import junit.framework.TestCase;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestFontIndexRecord
-        extends TestCase
-{
+public final class TestFontIndexRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0x05,(byte)0x00
     };
 
-    public TestFontIndexRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
 
         FontIndexRecord record = new FontIndexRecord(new TestcaseRecordInputStream((short)0x1026, (short)data.length, data));
         assertEquals( 5, record.getFontIndex());
 
-
         assertEquals( 6, record.getRecordSize() );
-
-        record.validateSid((short)0x1026);
     }
 
     public void testStore()

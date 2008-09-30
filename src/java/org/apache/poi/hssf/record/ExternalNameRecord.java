@@ -90,19 +90,6 @@ public final class ExternalNameRecord extends Record {
 		return field_4_name;
 	}
 
-
-	/**
-	 * called by constructor, should throw runtime exception in the event of a
-	 * record passed with a differing ID.
-	 *
-	 * @param id alleged id for this record
-	 */
-	protected void validateSid(short id) {
-		if (id != sid) {
-			throw new RecordFormatException("NOT A valid ExternalName RECORD");
-		}
-	}
-
 	private int getDataSize(){
 		int result = 3 * 2  // 3 short fields
 			+ 2 + field_4_name.length(); // nameLen and name

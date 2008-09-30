@@ -71,14 +71,6 @@ public final class WindowTwoRecord extends Record {
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A valid WindowTwo RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
       int size = in.remaining();

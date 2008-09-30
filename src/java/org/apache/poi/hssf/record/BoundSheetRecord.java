@@ -61,12 +61,6 @@ public final class BoundSheetRecord extends Record {
 		super(in);
 	}
 
-	protected void validateSid(short id) {
-		if (id != sid) {
-			throw new RecordFormatException("NOT A Bound Sheet RECORD");
-		}
-	}
-
 	/**
 	 * UTF8: sid + len + bof + flags + len(str) + unicode + str 2 + 2 + 4 + 2 +
 	 * 1 + 1 + len(str)

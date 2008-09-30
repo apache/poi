@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -18,11 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import junit.framework.*;
-
-import java.util.Arrays;
-import java.util.List;
 import java.io.ByteArrayInputStream;
+import java.util.Arrays;
+
+import junit.framework.TestCase;
 
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 
@@ -32,7 +30,7 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
  *
  * @author Yegor Kozlov
  */
-public class TestTextObjectRecord extends TestCase {
+public final class TestTextObjectRecord extends TestCase {
 
     byte[] data = {(byte)0xB6, 0x01, 0x12, 0x00, 0x12, 0x02, 0x00, 0x00, 0x00, 0x00,
                    0x00, 0x00, 0x00, 0x00, 0x0D, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00,
@@ -42,17 +40,13 @@ public class TestTextObjectRecord extends TestCase {
                    0x00, 0x08, 0x00, 0x0D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 
-    public void testRead()
-            throws Exception
-    {
-
+    public void testRead() {
 
         RecordInputStream is = new RecordInputStream(new ByteArrayInputStream(data));
         is.nextRecord();
         TextObjectRecord record = new TextObjectRecord(is);
 
         assertEquals(TextObjectRecord.sid, record.getSid());
-        record.validateSid(TextObjectRecord.sid);
         assertEquals(TextObjectRecord.HORIZONTAL_TEXT_ALIGNMENT_LEFT_ALIGNED, record.getHorizontalTextAlignment());
         assertEquals(TextObjectRecord.VERTICAL_TEXT_ALIGNMENT_TOP, record.getVerticalTextAlignment());
         assertEquals(TextObjectRecord.TEXT_ORIENTATION_NONE, record.getTextOrientation());

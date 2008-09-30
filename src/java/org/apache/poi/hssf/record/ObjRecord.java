@@ -54,19 +54,6 @@ public final class ObjRecord extends Record {
         super(in);
     }
 
-    /**
-     * Checks the sid matches the expected side for this record
-     *
-     * @param id   the expected sid.
-     */
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("Not an OBJ record");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
     	// TODO - problems with OBJ sub-records stream

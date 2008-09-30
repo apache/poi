@@ -50,14 +50,6 @@ public class VCenterRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A VCenter RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_vcenter = in.readShort();

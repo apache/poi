@@ -56,20 +56,6 @@ public final class BlankRecord extends Record implements CellValueRecordInterfac
     }
 
     /**
-     * called by constructor, should throw runtime exception in the event of a
-     * record passed with a differing ID.
-     *
-     * @param id alleged id for this record
-     */
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A BLANKRECORD!");
-        }
-    }
-
-    /**
      * set the row this cell occurs on
      * @param row the row this cell occurs within
      */

@@ -56,14 +56,6 @@ public class CalcCountRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT An Calc Count RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_iterations = in.readShort();

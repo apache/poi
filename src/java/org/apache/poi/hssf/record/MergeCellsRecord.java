@@ -119,13 +119,6 @@ public final class MergeCellsRecord extends Record {
         return retval.toString();
     }
 
-    protected void validateSid(short id) {
-        if (id != sid) {
-            throw new RecordFormatException("NOT A MERGEDCELLS RECORD!! "
-                                            + id);
-        }
-    }
-
     public Object clone() {
     	int nRegions = _numberOfRegions;
     	CellRangeAddress[] clonedRegions = new CellRangeAddress[nRegions];

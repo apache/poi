@@ -74,19 +74,6 @@ public class NoteRecord extends Record {
     }
 
     /**
-     * Checks the sid matches the expected side for this record
-     *
-     * @param id   the expected sid.
-     */
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("Not a NoteRecord record");
-        }
-    }
-
-    /**
      * Read the record data from the supplied <code>RecordInputStream</code>
      */
     protected void fillFields(RecordInputStream in)

@@ -64,14 +64,6 @@ public final class StyleRecord extends Record {
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A STYLE RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_xf_index = in.readShort();

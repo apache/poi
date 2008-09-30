@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,9 +28,7 @@ import junit.framework.TestCase;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestAreaFormatRecord
-        extends TestCase
-{
+public final class TestAreaFormatRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0xFF,(byte)0xFF,(byte)0xFF,(byte)0x00,    // forecolor
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,    // backcolor
@@ -44,14 +39,7 @@ public class TestAreaFormatRecord
 
     };
 
-    public TestAreaFormatRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
 
         AreaFormatRecord record = new AreaFormatRecord(new TestcaseRecordInputStream((short)0x100a, (short)data.length, data));
         assertEquals( 0xFFFFFF, record.getForegroundColor());
@@ -65,8 +53,6 @@ public class TestAreaFormatRecord
 
 
         assertEquals( 20, record.getRecordSize() );
-
-        record.validateSid((short)0x100a);
     }
 
     public void testStore()

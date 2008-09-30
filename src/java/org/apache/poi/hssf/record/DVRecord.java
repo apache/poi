@@ -110,12 +110,6 @@ public final class DVRecord extends Record {
 		_regions = regions;
 	}
 
-	protected void validateSid(short id) {
-		if (id != sid) {
-			throw new RecordFormatException("NOT a valid DV RECORD");
-		}
-	}
-
 	protected void fillFields(RecordInputStream in) {
 		
 	   _option_flags = in.readInt();

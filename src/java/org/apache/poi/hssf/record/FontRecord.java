@@ -87,14 +87,6 @@ public class FontRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A FONT RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_font_height         = in.readShort();

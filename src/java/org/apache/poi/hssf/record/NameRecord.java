@@ -340,18 +340,6 @@ public final class NameRecord extends Record {
 		return field_17_status_bar_text;
 	}
 
-	/**
-	 * called by constructor, should throw runtime exception in the event of a
-	 * record passed with a differing ID.
-	 *
-	 * @param id alleged id for this record
-	 */
-	protected void validateSid(short id) {
-		if (id != sid) {
-			throw new RecordFormatException("NOT A valid Name RECORD");
-		}
-	}
-
 
 	/**
 	 * called by the class that is responsible for writing this sucker.

@@ -50,14 +50,6 @@ public class PrintGridlinesRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A PrintGridlines RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_print_gridlines = in.readShort();

@@ -372,14 +372,6 @@ public class HyperlinkRecord extends Record {
         return HyperlinkRecord.sid;
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A HYPERLINKRECORD!");
-        }
-    }
-
     public int serialize(int offset, byte[] data)
     {
         int pos = offset;

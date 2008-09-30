@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -29,9 +28,7 @@ import junit.framework.TestCase;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestFontBasisRecord
-        extends TestCase
-{
+public final class TestFontBasisRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0x28,(byte)0x1A,   // x basis
         (byte)0x9C,(byte)0x0F,   // y basis
@@ -40,14 +37,7 @@ public class TestFontBasisRecord
         (byte)0x05,(byte)0x00    // index to font table
     };
 
-    public TestFontBasisRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
 
         FontBasisRecord record = new FontBasisRecord(new TestcaseRecordInputStream((short)0x1060, (short)data.length, data));
         assertEquals( 0x1a28, record.getXBasis());
@@ -56,10 +46,7 @@ public class TestFontBasisRecord
         assertEquals( 0x00, record.getScale());
         assertEquals( 0x05, record.getIndexToFontTable());
 
-
         assertEquals( 14, record.getRecordSize() );
-
-        record.validateSid((short)0x1060);
     }
 
     public void testStore()

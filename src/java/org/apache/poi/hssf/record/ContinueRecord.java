@@ -98,20 +98,6 @@ public class ContinueRecord
     }
 
     /**
-     * Make sure we have a good id
-     *
-     * @param id the alleged id
-     */
-
-    protected void validateSid(short id)
-    {
-        if (id != ContinueRecord.sid)
-        {
-            throw new RecordFormatException("Not a Continue Record");
-        }
-    }
-
-    /**
      * Debugging toString
      *
      * @return string representation

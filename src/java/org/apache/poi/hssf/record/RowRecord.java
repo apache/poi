@@ -83,14 +83,6 @@ public final class RowRecord extends Record {
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A valid ROW RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_row_number   = in.readUShort();

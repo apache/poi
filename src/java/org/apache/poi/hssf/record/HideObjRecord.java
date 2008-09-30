@@ -52,14 +52,6 @@ public class HideObjRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A HIDEOBJ RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_hide_obj = in.readShort();

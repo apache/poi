@@ -61,14 +61,6 @@ public final class RKRecord extends Record implements CellValueRecordInterface {
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A valid RK RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_row       = in.readUShort();

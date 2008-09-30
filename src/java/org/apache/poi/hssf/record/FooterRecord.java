@@ -55,14 +55,6 @@ public class FooterRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A FooterRECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         if (in.remaining() > 0)

@@ -50,14 +50,6 @@ public class FilePassRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A FILEPASS RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_encryptedpassword = in.readInt();

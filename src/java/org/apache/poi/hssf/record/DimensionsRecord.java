@@ -55,14 +55,6 @@ public class DimensionsRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A valid DIMENSIONS RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_first_row = in.readInt();

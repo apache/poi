@@ -53,19 +53,6 @@ public class GroupMarkerSubRecord
     
     }
 
-    /**
-     * Checks the sid matches the expected side for this record
-     *
-     * @param id   the expected sid.
-     */
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("Not a Group Marker record");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
 //        int pos = 0;

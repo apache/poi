@@ -42,12 +42,6 @@ public final class CRNCountRecord extends Record {
 		super(in);
 	}
 
-	protected void validateSid(short id) {
-		if (id != sid) {
-			throw new RecordFormatException("NOT An XCT RECORD");
-		}
-	}
-
 	public int getNumberOfCRNs() {
 		return field_1_number_crn_records;
 	}

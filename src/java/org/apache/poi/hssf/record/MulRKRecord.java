@@ -117,21 +117,6 @@ public final class MulRKRecord extends Record {
 		return buffer.toString();
 	}
 
-	/**
-	 * called by constructor, should throw runtime exception in the event of a
-	 * record passed with a differing ID.
-	 *
-	 * @param id alleged id for this record
-	 */
-
-	protected void validateSid(short id)
-	{
-		if (id != sid)
-		{
-			throw new RecordFormatException("Not a MulRKRecord!");
-		}
-	}
-
 	public short getSid()
 	{
 		return sid;

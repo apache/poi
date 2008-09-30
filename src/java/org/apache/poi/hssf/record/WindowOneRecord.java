@@ -76,14 +76,6 @@ public class WindowOneRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A WINDOW1 RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_h_hold            = in.readShort();

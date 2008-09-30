@@ -58,14 +58,6 @@ public class IndexRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT An Index RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_5_dbcells       =

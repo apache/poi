@@ -47,14 +47,6 @@ public final class DBCellRecord extends Record {
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A valid DBCell RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_row_offset   = in.readUShort();

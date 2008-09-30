@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,50 +28,29 @@ import junit.framework.TestCase;
 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public class TestSeriesTextRecord
-        extends TestCase
-{
+public final class TestSeriesTextRecord extends TestCase {
     byte[] data = new byte[] {
 	(byte)0x00,(byte)0x00,(byte)0x0C,(byte)0x01,(byte)0x56,(byte)0x00,(byte)0x61,(byte)0x00,(byte)0x6C,(byte)0x00,(byte)0x75,(byte)0x00,(byte)0x65,(byte)0x00,(byte)0x20,(byte)0x00,(byte)0x4E,(byte)0x00,(byte)0x75,(byte)0x00,(byte)0x6D,(byte)0x00,(byte)0x62,(byte)0x00,(byte)0x65,(byte)0x00,(byte)0x72,(byte)0x00
     };
 
-    public TestSeriesTextRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
         SeriesTextRecord record = new SeriesTextRecord(new TestcaseRecordInputStream((short)0x100d, (short)data.length, data));
-        
 
         assertEquals( (short)0, record.getId());
-
         assertEquals( (byte)0x0C, record.getTextLength());
-
         assertEquals( (byte)0x01, record.getUndocumented());
-
         assertEquals( "Value Number", record.getText());
 
-
         assertEquals( 32, record.getRecordSize() );
-
-        record.validateSid((short)0x100d);
     }
 
     public void testStore()
     {
         SeriesTextRecord record = new SeriesTextRecord();
 
-
-
         record.setId( (short)0 );
-
         record.setTextLength( (byte)0x0C );
-
         record.setUndocumented( (byte)0x01 );
-
         record.setText( "Value Number" );
 
 

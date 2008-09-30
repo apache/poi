@@ -53,14 +53,6 @@ public class GutsRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A Guts RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_left_row_gutter = in.readShort();

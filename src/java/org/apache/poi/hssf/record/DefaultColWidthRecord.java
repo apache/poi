@@ -46,14 +46,6 @@ public final class DefaultColWidthRecord extends Record {
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A DefaultColWidth RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_col_width = in.readUShort();
