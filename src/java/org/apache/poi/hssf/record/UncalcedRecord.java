@@ -48,12 +48,6 @@ public class UncalcedRecord extends Record
 		return sid;
 	}
 
-	protected void validateSid(short id) {
-		if (id != sid) {
-			throw new RecordFormatException("NOT AN UNCALCED RECORD");
-		}
-	}
-
 	protected void fillFields(RecordInputStream in) {
 		short unused = in.readShort();
 	}

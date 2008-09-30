@@ -68,19 +68,6 @@ public abstract class AbstractEscherHolderRecord
     
     }
 
-    /**
-     * Checks the sid matches the expected side for this record
-     *
-     * @param id   the expected sid.
-     */
-    protected void validateSid(short id)
-    {
-        if (id != getSid())
-        {
-            throw new RecordFormatException("Not an escher record! (sid was " + id + ", expecting " + getSid() + ")");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         escherRecords = new ArrayList();

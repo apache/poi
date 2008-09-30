@@ -356,18 +356,6 @@ public final class FormulaRecord extends Record implements CellValueRecordInterf
 		field_8_parsed_expr = ptgs;
 	}
 
-	/**
-	 * called by constructor, should throw runtime exception in the event of a
-	 * record passed with a differing ID.
-	 *
-	 * @param id alleged id for this record
-	 */
-	protected void validateSid(short id) {
-		if (id != sid) {
-			throw new RecordFormatException("NOT A FORMULA RECORD");
-		}
-	}
-
 	public short getSid() {
 		return sid;
 	}

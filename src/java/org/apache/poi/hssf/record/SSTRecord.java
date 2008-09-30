@@ -257,23 +257,6 @@ public class SSTRecord
     }
 
     /**
-     * validate SID
-     *
-     * @param id the alleged SID
-     *
-     * @exception RecordFormatException if validation fails
-     */
-
-    protected void validateSid( final short id )
-            throws RecordFormatException
-    {
-        if ( id != sid )
-        {
-            throw new RecordFormatException( "NOT An SST RECORD" );
-        }
-    }
-
-    /**
      * Fill the fields from the data
      * <P>
      * The data consists of sets of string data. This string data is

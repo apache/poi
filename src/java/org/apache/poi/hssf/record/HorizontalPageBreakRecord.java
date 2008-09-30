@@ -44,13 +44,6 @@ public final class HorizontalPageBreakRecord extends PageBreakRecord {
 		super(in);
 	}
 
-	protected void validateSid(short id) {
-		if (id != getSid()) {
-			throw new RecordFormatException(
-					"NOT A HorizontalPageBreak or VerticalPageBreak RECORD!! " + id);
-		}
-	}
-
 	public short getSid() {
 		return sid;
 	}

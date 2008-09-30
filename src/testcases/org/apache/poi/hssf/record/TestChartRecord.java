@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,9 +28,7 @@ import junit.framework.TestCase;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestChartRecord
-        extends TestCase
-{
+public final class TestChartRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,
@@ -41,14 +36,7 @@ public class TestChartRecord
         (byte)0xC8,(byte)0xCC,(byte)0xE5,(byte)0x00
     };
 
-    public TestChartRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
 
         ChartRecord record = new ChartRecord(new TestcaseRecordInputStream((short)0x1002, (short)data.length, data));
         assertEquals( 0, record.getX());
@@ -56,10 +44,7 @@ public class TestChartRecord
         assertEquals( 30474216, record.getWidth());
         assertEquals( 15060168, record.getHeight());
 
-
         assertEquals( 20, record.getRecordSize() );
-
-        record.validateSid((short)0x1002);
     }
 
     public void testStore()

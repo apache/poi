@@ -55,12 +55,6 @@ public class ExtSSTInfoSubRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-
-        // do nothing
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_stream_pos        = in.readInt();

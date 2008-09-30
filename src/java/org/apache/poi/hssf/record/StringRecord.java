@@ -46,21 +46,6 @@ public class StringRecord extends Record {
         super(in);
     }
 
-
-    /**
-     * Throw a runtime exception in the event of a
-     * record passed with a differing ID.
-     *
-     * @param id alleged id for this record
-     */
-    protected void validateSid( short id )
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("Not a valid StringRecord");
-        }
-    }
-
     /**
      * @param in the RecordInputstream to read the record from
      */

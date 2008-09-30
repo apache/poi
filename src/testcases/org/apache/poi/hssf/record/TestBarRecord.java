@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,23 +28,14 @@ import junit.framework.TestCase;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestBarRecord
-        extends TestCase
-{
+public final class TestBarRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0x00,(byte)0x00,   // bar space
         (byte)0x96,(byte)0x00,   // category space
         (byte)0x00,(byte)0x00    // format flags
     };
 
-    public TestBarRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
 
         BarRecord record = new BarRecord(new TestcaseRecordInputStream((short)0x1017, (short)data.length, data));
         assertEquals( 0, record.getBarSpace());
@@ -58,10 +46,7 @@ public class TestBarRecord
         assertEquals( false, record.isDisplayAsPercentage() );
         assertEquals( false, record.isShadow() );
 
-
         assertEquals( 10, record.getRecordSize() );
-
-        record.validateSid((short)0x1017);
     }
 
     public void testStore()

@@ -53,14 +53,6 @@ public class IterationRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT An ITERATION RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_iteration = in.readShort();

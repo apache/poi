@@ -111,8 +111,7 @@ public class UnicodeString
 
     public UnicodeString(RecordInputStream in)
     {
-      validateSid(in.getSid());
-      fillFields(in);
+      fillFields(in); // TODO - inline
     }
 
 
@@ -186,16 +185,6 @@ public class UnicodeString
         //Phew!! After all of that we have finally worked out that the strings
         //are identical.
         return true;
-    }
-
-    /**
-     * NO OP
-     */
-
-    protected void validateSid(short id)
-    {
-
-        // included only for interface compliance
     }
 
     /**

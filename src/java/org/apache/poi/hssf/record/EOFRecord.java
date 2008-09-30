@@ -49,14 +49,6 @@ public final class EOFRecord extends Record {
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT An EOF RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
     }

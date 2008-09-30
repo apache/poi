@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,9 +28,7 @@ import junit.framework.TestCase;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestCategorySeriesAxisRecord
-        extends TestCase
-{
+public final class TestCategorySeriesAxisRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0x01,(byte)0x00,    // crossing point
         (byte)0x01,(byte)0x00,    // label frequency
@@ -41,14 +36,7 @@ public class TestCategorySeriesAxisRecord
         (byte)0x01,(byte)0x00     // options
     };
 
-    public TestCategorySeriesAxisRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
 
         CategorySeriesAxisRecord record = new CategorySeriesAxisRecord(new TestcaseRecordInputStream((short)0x1020, (short)data.length, data));
         assertEquals( 1, record.getCrossingPoint());
@@ -59,10 +47,7 @@ public class TestCategorySeriesAxisRecord
         assertEquals( false, record.isCrossesFarRight() );
         assertEquals( false, record.isReversed() );
 
-
         assertEquals( 4 + 8, record.getRecordSize() );
-
-        record.validateSid((short)0x1020);
     }
 
     public void testStore()

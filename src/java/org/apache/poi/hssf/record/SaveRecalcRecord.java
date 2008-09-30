@@ -50,14 +50,6 @@ public class SaveRecalcRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A Save Recalc RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_recalc = in.readShort();

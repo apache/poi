@@ -56,14 +56,6 @@ public class FnGroupCountRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A FNGROUPCOUNT RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_count = in.readShort();

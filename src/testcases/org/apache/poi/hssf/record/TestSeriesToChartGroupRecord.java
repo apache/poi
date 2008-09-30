@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,28 +28,16 @@ import junit.framework.TestCase;
 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public class TestSeriesToChartGroupRecord
-        extends TestCase
-{
+public final class TestSeriesToChartGroupRecord extends TestCase {
     byte[] data = new byte[] {
 	(byte)0x0, (byte)0x0
     };
 
-    public TestSeriesToChartGroupRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
         SeriesToChartGroupRecord record = new SeriesToChartGroupRecord(new TestcaseRecordInputStream((short)0x1045, (short)data.length, data));
         assertEquals( 0x0, record.getChartGroupIndex());
 
-
         assertEquals( 0x6, record.getRecordSize() );
-
-        record.validateSid((short)0x1045);
     }
 
     public void testStore()

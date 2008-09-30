@@ -55,14 +55,6 @@ public class HeaderRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A HEADERRECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         if (in.remaining() > 0)

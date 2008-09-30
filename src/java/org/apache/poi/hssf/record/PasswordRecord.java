@@ -45,12 +45,6 @@ public class PasswordRecord extends Record {
         super(in);
     }
 
-    protected void validateSid(short id) {
-        if (id != sid) {
-            throw new RecordFormatException("NOT A PASSWORD RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in) {
         field_1_password = in.readShort();
     }

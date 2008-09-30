@@ -83,14 +83,6 @@ public final class ColumnInfoRecord extends Record {
         }
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A COLINFO RECORD!!");
-        }
-    }
-
     /**
      * set the first column this record defines formatting info for
      * @param fc - the first column index (0-based)

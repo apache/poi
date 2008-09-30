@@ -52,14 +52,6 @@ public class WriteAccessRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A WRITEACCESS RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         byte[] data = in.readRemainder();

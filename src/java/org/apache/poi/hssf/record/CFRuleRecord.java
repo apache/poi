@@ -446,21 +446,6 @@ public final class CFRuleRecord extends Record {
 	public void setParsedExpression2(Ptg[] ptgs) {
 		field_18_formula2 = safeClone(ptgs);
 	}
-	
-	/**
-	 * called by constructor, should throw runtime exception in the event of a
-	 * record passed with a differing ID.
-	 *
-	 * @param id alleged id for this record
-	 */
-
-	protected void validateSid(short id)
-	{
-		if (id != sid)
-		{
-			throw new RecordFormatException("NOT A CFRULE RECORD");
-		}
-	}
 
 	public short getSid()
 	{

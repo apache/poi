@@ -50,14 +50,6 @@ public class BackupRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A BACKUP RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_backup = in.readShort();

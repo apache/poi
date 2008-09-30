@@ -71,14 +71,6 @@ public class CalcModeRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT An Calc Mode RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_calcmode = in.readShort();

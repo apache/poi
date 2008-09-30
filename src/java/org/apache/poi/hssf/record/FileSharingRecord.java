@@ -47,12 +47,6 @@ public final class FileSharingRecord extends Record {
         super(in);
     }
 
-    protected void validateSid(short id) {
-        if (id != sid) {
-            throw new RecordFormatException("NOT A FILESHARING RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in) {
         field_1_readonly = in.readShort();
         field_2_password = in.readShort();

@@ -52,14 +52,6 @@ public class ScenarioProtectRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A SCENARIOPROTECT RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_protect = in.readShort();

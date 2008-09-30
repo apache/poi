@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,46 +28,26 @@ import junit.framework.TestCase;
 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public class TestObjectLinkRecord
-        extends TestCase
-{
+public final class TestObjectLinkRecord extends TestCase {
     byte[] data = new byte[] {
 	(byte)0x03,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00
     };
 
-    public TestObjectLinkRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
         ObjectLinkRecord record = new ObjectLinkRecord(new TestcaseRecordInputStream((short)0x1027, (short)data.length, data));
         
-
         assertEquals( (short)3, record.getAnchorId());
-
         assertEquals( (short)0x00, record.getLink1());
-
         assertEquals( (short)0x00, record.getLink2());
 
-
         assertEquals( 10, record.getRecordSize() );
-
-        record.validateSid((short)0x1027);
     }
 
-    public void testStore()
-    {
+    public void testStore() {
         ObjectLinkRecord record = new ObjectLinkRecord();
 
-
-
         record.setAnchorId( (short)3 );
-
         record.setLink1( (short)0x00 );
-
         record.setLink2( (short)0x00 );
 
 

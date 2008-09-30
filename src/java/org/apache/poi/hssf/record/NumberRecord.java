@@ -157,21 +157,6 @@ public final class NumberRecord extends Record implements CellValueRecordInterfa
         return 18;
     }
 
-    /**
-     * called by constructor, should throw runtime exception in the event of a
-     * record passed with a differing ID.
-     *
-     * @param id alleged id for this record
-     */
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A Number RECORD");
-        }
-    }
-
     public short getSid()
     {
         return sid;

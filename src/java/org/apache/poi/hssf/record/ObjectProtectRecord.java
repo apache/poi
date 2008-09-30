@@ -51,14 +51,6 @@ public class ObjectProtectRecord
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT AN OBJECTPROTECT RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_protect = in.readShort();

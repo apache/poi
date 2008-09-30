@@ -54,20 +54,6 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
     }
 
     /**
-     * called by constructor, should throw runtime exception in the event of a
-     * record passed with a differing ID.
-     *
-     * @param id alleged id for this record
-     */
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("Not a valid LabelRecord");
-        }
-    }
-
-    /**
      * @param in the RecordInputstream to read the record from
      */
     protected void fillFields(RecordInputStream in)

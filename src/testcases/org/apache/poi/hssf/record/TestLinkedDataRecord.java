@@ -171,9 +171,6 @@ recordid = 0x1051, size =8
         assertEquals(ptgExpected.toString(),  ptgActual.toString());
 
         assertEquals( data.length + 4, record.getRecordSize() );
-
-        record.validateSid((short)0x1051);
-
     }
 
     public void testStore() {

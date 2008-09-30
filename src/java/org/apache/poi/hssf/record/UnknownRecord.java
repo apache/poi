@@ -92,13 +92,6 @@ public final class UnknownRecord extends Record {
 	}
 
 	/**
-	 * NO OP!
-	 */
-	protected void validateSid(short id) {
-		// if we had a valid sid we wouldn't be using the "Unknown Record" record now would we?
-	}
-
-	/**
 	 * print a sort of string representation ([UNKNOWN RECORD] id = x [/UNKNOWN RECORD])
 	 */
 	public final String toString() {

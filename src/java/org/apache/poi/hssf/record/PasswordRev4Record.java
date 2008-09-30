@@ -50,14 +50,6 @@ public class PasswordRev4Record
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A PROT4REVPASSWORD RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_password = in.readShort();

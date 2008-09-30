@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hssf.record;
 
 
@@ -28,37 +29,24 @@ import java.util.Arrays;
  *
  * @author Yegor Kozlov
  */
-public class TestNoteStructureSubRecord
-        extends TestCase
-{
+public final class TestNoteStructureSubRecord extends TestCase {
     private byte[] data = new byte[] {
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)0x80, 0x00, 0x00, 0x00,
         0x00, 0x00, (byte)0xBF, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)0x81, 0x01,
         (byte)0xCC, (byte)0xEC
     };
 
-    public TestNoteStructureSubRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testRead()
-            throws Exception
-    {
+    public void testRead() {
 
         NoteStructureSubRecord record = new NoteStructureSubRecord(new TestcaseRecordInputStream(NoteStructureSubRecord.sid, (short)data.length, data));
 
         assertEquals(NoteStructureSubRecord.sid, record.getSid());
-        record.validateSid(NoteStructureSubRecord.sid);
         assertEquals(data.length + 4, record.getRecordSize());
-
     }
 
-    public void testWrite()
-    {
+    public void testWrite() {
         NoteStructureSubRecord record = new NoteStructureSubRecord();
         assertEquals(NoteStructureSubRecord.sid, record.getSid());
-        record.validateSid(NoteStructureSubRecord.sid);
         assertEquals(data.length + 4, record.getRecordSize());
 
         byte [] ser = record.serialize();

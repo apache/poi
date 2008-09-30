@@ -47,18 +47,8 @@ public abstract class Record extends RecordBase {
      */
     protected Record(RecordInputStream in)
     {
-        validateSid(in.getSid());
         fillFields(in);
     }
-
-    /**
-     * called by constructor, should throw runtime exception in the event of a
-     * record passed with a differing ID.
-     *
-     * @param id alleged id for this record
-     */
-
-    protected abstract void validateSid(short id);
 
     /**
      * called by the constructor, should set class level fields.  Should throw

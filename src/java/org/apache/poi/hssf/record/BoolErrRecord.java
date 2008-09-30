@@ -221,20 +221,6 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
         return 12;
     }
 
-    /**
-     * called by constructor, should throw runtime exception in the event of a
-     * record passed with a differing ID.
-     *
-     * @param id alleged id for this record
-     */
-    protected void validateSid(short id)
-    {
-        if (id != BoolErrRecord.sid)
-        {
-            throw new RecordFormatException("Not a valid BoolErrRecord");
-        }
-    }
-
     public short getSid()
     {
         return sid;

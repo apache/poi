@@ -105,18 +105,6 @@ public class ExternSheetRecord extends Record {
 	}
 	
 	/**
-	 * called by constructor, should throw runtime exception in the event of a
-	 * record passed with a differing ID.
-	 *
-	 * @param id alleged id for this record
-	 */
-	protected void validateSid(short id) {
-		if (id != sid) {
-			throw new RecordFormatException("NOT An ExternSheet RECORD");
-		}
-	}
-	
-	/**
 	 * called by the constructor, should set class level fields.  Should throw
 	 * runtime exception for bad/icomplete data.
 	 *

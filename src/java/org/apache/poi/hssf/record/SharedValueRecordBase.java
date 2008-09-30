@@ -45,12 +45,6 @@ public abstract class SharedValueRecordBase extends Record {
 		_range = new CellRangeAddress8Bit(in);
 	}
 
-	protected final void validateSid(short id) {
-		if (id != getSid()) {
-			throw new RecordFormatException("Not a valid SharedFormula");
-		}
-	}
-
 	public final CellRangeAddress8Bit getRange() {
 		return _range;
 	}

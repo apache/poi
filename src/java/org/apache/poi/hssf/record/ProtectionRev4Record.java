@@ -50,14 +50,6 @@ public class ProtectionRev4Record
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A PROTECTION REV 4 RECORD");
-        }
-    }
-
     protected void fillFields(RecordInputStream in)
     {
         field_1_protect = in.readShort();
