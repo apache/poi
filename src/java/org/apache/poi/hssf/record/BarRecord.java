@@ -47,32 +47,7 @@ public final class BarRecord extends Record {
 
     }
 
-    /**
-     * Constructs a Bar record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public BarRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    /**
-     * Checks the sid matches the expected side for this record
-     *
-     * @param id   the expected sid.
-     */
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("Not a Bar record");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_barSpace               = in.readShort();
         field_2_categorySpace          = in.readShort();

@@ -52,17 +52,7 @@ public final class ColumnInfoRecord extends Record {
         field_6_reserved = 2; // seems to be the most common value
     }
 
-    /**
-     * Constructs a ColumnInfo record and sets its fields appropriately
-     * @param in the RecordInputstream to read the record from
-     */
-
     public ColumnInfoRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_first_col = in.readUShort();
         field_2_last_col  = in.readUShort();
@@ -80,14 +70,6 @@ public final class ColumnInfoRecord extends Record {
                 break;
             default:
                 throw new RuntimeException("Unusual record size remaining=(" + in.remaining() + ")");
-        }
-    }
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A COLINFO RECORD!!");
         }
     }
 

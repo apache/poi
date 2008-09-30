@@ -45,26 +45,7 @@ public class CalcCountRecord
     {
     }
 
-    /**
-     * Constructs a CalcCountRecord and sets its fields appropriately
-     * @param in the RecordInputstream to read the record from
-     *
-     */
-
     public CalcCountRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT An Calc Count RECORD");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_iterations = in.readShort();
     }

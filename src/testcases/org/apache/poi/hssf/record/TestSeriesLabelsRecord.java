@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,21 +28,12 @@ import junit.framework.TestCase;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestSeriesLabelsRecord
-        extends TestCase
-{
+public final class TestSeriesLabelsRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0x03,(byte)0x00
     };
 
-    public TestSeriesLabelsRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
         SeriesLabelsRecord record = new SeriesLabelsRecord(new TestcaseRecordInputStream((short)0x100c, (short)data.length, data));
         assertEquals( 3, record.getFormatFlags());
         assertEquals( true, record.isShowActual() );
@@ -57,8 +45,6 @@ public class TestSeriesLabelsRecord
 
 
         assertEquals( 2+4, record.getRecordSize() );
-
-        record.validateSid((short)0x100c);
     }
 
     public void testStore()

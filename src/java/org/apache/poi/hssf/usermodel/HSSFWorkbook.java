@@ -516,15 +516,17 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     }
 
     /**
-     * set the sheet name.
-     * Will throw IllegalArgumentException if the name is greater than 31 chars
-     * or contains /\?*[]
+     * Sets the sheet name.
+     * Will throw IllegalArgumentException if the name is duplicated or contains /\?*[]
+     * Note - Excel allows sheet names up to 31 chars in length but other applications allow more.
+     * Excel does not crash with names longer than 31 chars, but silently truncates such names to 
+     * 31 chars.  POI enforces uniqueness on the first 31 chars.
+     * 
      * @param sheetIx number (0 based)
      */
-    public void setSheetName(int sheetIx, String name)
-    {
-        if (workbook.doesContainsSheetName( name, sheetIx )) {
-            throw new IllegalArgumentException( "The workbook already contains a sheet with this name" );
+    public void setSheetName(int sheetIx, String name) {
+        if (workbook.doesContainsSheetName(name, sheetIx)) {
+            throw new IllegalArgumentException("The workbook already contains a sheet with this name");
         }
         validateSheetIndex(sheetIx);
         workbook.setSheetName(sheetIx, name);
@@ -764,14 +766,14 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and
      * returns the high level representation. Use this to create new sheets.
      *
-     * @param sheetname
-     *            sheetname to set for the sheet.
+     * @param sheetname the name for the new sheet. Note - certain length limits
+     * apply. See {@link #setSheetName(int, String)}.
+     *
      * @return HSSFSheet representing the new sheet.
      * @throws IllegalArgumentException
      *             if there is already a sheet present with a case-insensitive
      *             match for the specified name.
      */
-
     public HSSFSheet createSheet(String sheetname)
     {
         if (workbook.doesContainsSheetName( sheetname, _sheets.size() ))

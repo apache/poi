@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,9 +28,7 @@ import junit.framework.TestCase;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestDataFormatRecord
-        extends TestCase
-{
+public final class TestDataFormatRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0xFF,(byte)0xFF,      // point number
         (byte)0x00,(byte)0x00,      // series index
@@ -41,14 +36,7 @@ public class TestDataFormatRecord
         (byte)0x00,(byte)0x00       // format flags
     };
 
-    public TestDataFormatRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
 
         DataFormatRecord record = new DataFormatRecord(new TestcaseRecordInputStream((short)0x1006, (short)data.length, data));
         assertEquals( (short)0xFFFF, record.getPointNumber());
@@ -57,10 +45,7 @@ public class TestDataFormatRecord
         assertEquals( 0, record.getFormatFlags());
         assertEquals( false, record.isUseExcel4Colors() );
 
-
         assertEquals( 12, record.getRecordSize() );
-
-        record.validateSid((short)0x1006);
     }
 
     public void testStore()

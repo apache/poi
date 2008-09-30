@@ -42,25 +42,7 @@ public class RefModeRecord
     {
     }
 
-    /**
-     * Constructs a RefMode record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public RefModeRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT An RefMode RECORD");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_mode = in.readShort();
     }

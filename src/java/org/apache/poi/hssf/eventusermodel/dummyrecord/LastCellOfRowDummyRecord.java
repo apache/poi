@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.eventusermodel.dummyrecord;
 
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * A dummy record to indicate that we've now had the last
@@ -47,15 +46,10 @@ public class LastCellOfRowDummyRecord extends Record {
 	 */
 	public int getLastColumnNumber() { return lastColumnNumber; }
 	
-	protected void fillFields(RecordInputStream in) {
-	}
 	public short getSid() {
 		return -1;
 	}
 	public int serialize(int offset, byte[] data) {
 		return -1;
 	}
-	protected void validateSid(short id) {
-	}
-
 }

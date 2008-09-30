@@ -41,19 +41,9 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
     }
 
     /**
-     * Constructs a BoolErr record and sets its fields appropriately.
-     *
      * @param in the RecordInputstream to read the record from
      */
     public BoolErrRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    /**
-     * @param in the RecordInputstream to read the record from
-     */
-    protected void fillFields(RecordInputStream in)
     {
         //field_1_row      = LittleEndian.getShort(data, 0 + offset);
         field_1_row      = in.readUShort();
@@ -219,20 +209,6 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
     public int getRecordSize()
     {
         return 12;
-    }
-
-    /**
-     * called by constructor, should throw runtime exception in the event of a
-     * record passed with a differing ID.
-     *
-     * @param id alleged id for this record
-     */
-    protected void validateSid(short id)
-    {
-        if (id != BoolErrRecord.sid)
-        {
-            throw new RecordFormatException("Not a valid BoolErrRecord");
-        }
     }
 
     public short getSid()

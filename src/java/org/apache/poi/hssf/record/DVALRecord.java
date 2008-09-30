@@ -48,26 +48,7 @@ public class DVALRecord extends Record
         field_5_dv_no = 0x00000000;
     }
 
-    /**
-     * Constructs a DVAL record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
-    public DVALRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A valid DVAL RECORD");
-        }
-    }
-
-	protected void fillFields(RecordInputStream in)
+	public DVALRecord(RecordInputStream in)
 	{
 		this.field_1_options = in.readShort();
 		this.field_2_horiz_pos = in.readInt();

@@ -83,11 +83,7 @@ public abstract class PageBreakRecord extends Record {
         _breakMap = new HashMap();
     }
 
-    protected PageBreakRecord(RecordInputStream in) {
-        super(in);
-    }
-
-    protected void fillFields(RecordInputStream in)
+    public PageBreakRecord(RecordInputStream in)
     {
         int nBreaks = in.readShort();
         _breaks = new ArrayList(nBreaks + 2);

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,26 +28,16 @@ import junit.framework.TestCase;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestAxisRecord
-        extends TestCase
-{
+public final class TestAxisRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0x00,(byte)0x00,                               // type
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00
-
     };
 
-    public TestAxisRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
 
         AxisRecord record = new AxisRecord(new TestcaseRecordInputStream((short)0x101d, (short)data.length, data));
         assertEquals( AxisRecord.AXIS_TYPE_CATEGORY_OR_X_AXIS, record.getAxisType());
@@ -59,10 +46,7 @@ public class TestAxisRecord
         assertEquals( 0, record.getReserved3());
         assertEquals( 0, record.getReserved4());
 
-
         assertEquals( 4 + 18, record.getRecordSize() );
-
-        record.validateSid((short)0x101d);
     }
 
     public void testStore()

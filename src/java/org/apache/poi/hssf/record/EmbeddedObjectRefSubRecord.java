@@ -54,35 +54,12 @@ public class EmbeddedObjectRefSubRecord
         field_5_ole_classname = "";
     }
 
-    /**
-     * Constructs an EmbeddedObjectRef record and sets its fields appropriately.
-     *
-     * @param in the record input stream.
-     */
-    public EmbeddedObjectRefSubRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    /**
-     * Checks the sid matches the expected side for this record
-     *
-     * @param id   the expected sid.
-     */
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("Not a EmbeddedObjectRef record");
-        }
-    }
-
     public short getSid()
     {
         return sid;
     }
 
-    protected void fillFields(RecordInputStream in)
+    public EmbeddedObjectRefSubRecord(RecordInputStream in)
     {
         field_1_stream_id_offset       = in.readShort();
         field_2_unknown                = in.readShortArray();

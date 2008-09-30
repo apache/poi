@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -30,9 +27,7 @@ import junit.framework.TestCase;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestPaneRecord
-        extends TestCase
-{
+public final class TestPaneRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0x01, (byte)0x00,
         (byte)0x02, (byte)0x00,
@@ -41,16 +36,8 @@ public class TestPaneRecord
         (byte)0x02, (byte)0x00,
     };
 
-    public TestPaneRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
         PaneRecord record = new PaneRecord(new TestcaseRecordInputStream((short)0x41, (short)data.length, data));
-        
 
         assertEquals( (short)1, record.getX());
         assertEquals( (short)2, record.getY());
@@ -59,8 +46,6 @@ public class TestPaneRecord
         assertEquals( PaneRecord.ACTIVE_PANE_LOWER_LEFT, record.getActivePane());
 
         assertEquals( 14, record.getRecordSize() );
-
-        record.validateSid((short)0x41);
     }
 
     public void testStore()

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -31,9 +29,7 @@ import java.util.Iterator;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class LinkedDataFormulaField
-        implements CustomField
-{
+public final class LinkedDataFormulaField implements CustomField {
     Stack formulaTokens = new Stack();
 
     public int getSize()

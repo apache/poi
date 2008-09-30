@@ -40,25 +40,7 @@ public class PrintGridlinesRecord
     {
     }
 
-    /**
-     * Constructs a PrintGridlines record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public PrintGridlinesRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A PrintGridlines RECORD");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_print_gridlines = in.readShort();
     }

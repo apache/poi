@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * preceeds and identifies a frame as belonging to the plot area.
@@ -30,9 +26,7 @@ import org.apache.poi.util.*;
 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public class PlotAreaRecord
-    extends Record
-{
+public final class PlotAreaRecord extends Record {
     public final static short      sid                             = 0x1035;
 
 
@@ -42,31 +36,9 @@ public class PlotAreaRecord
     }
 
     /**
-     * Constructs a PlotArea record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
+     * @param in unused (since this record has no data)
      */
-
     public PlotAreaRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    /**
-     * Checks the sid matches the expected side for this record
-     *
-     * @param id   the expected sid.
-     */
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("Not a PlotArea record");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
 
     }

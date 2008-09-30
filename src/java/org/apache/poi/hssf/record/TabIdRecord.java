@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -29,10 +27,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @version 2.0-pre
  */
-
-public class TabIdRecord
-    extends Record
-{
+public final class TabIdRecord extends Record {
     public final static short sid = 0x13d;
     public short[]            field_1_tabids;
 
@@ -40,25 +35,7 @@ public class TabIdRecord
     {
     }
 
-    /**
-     * Constructs a TabID record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public TabIdRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A TABID RECORD");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_tabids = new short[ in.remaining() / 2 ];
         for (int k = 0; k < field_1_tabids.length; k++)
@@ -105,13 +82,12 @@ public class TabIdRecord
 
     public int serialize(int offset, byte [] data)
     {
-        short[] tabids     = getTabIdArray();
-        short   length     = ( short ) (tabids.length * 2);
-        int     byteoffset = 4;
+        short[] tabids = getTabIdArray();
+        int length = tabids.length * 2;
+        int byteoffset = 4;
 
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) length));   // nubmer tabids *
+        LittleEndian.putUShort(data, 0 + offset, sid);
+        LittleEndian.putUShort(data, 2 + offset, length);   // nubmer tabids *
 
         // 2 (num bytes in a short)
         for (int k = 0; k < (length / 2); k++)

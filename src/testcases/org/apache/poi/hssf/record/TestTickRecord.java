@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,9 +28,7 @@ import junit.framework.TestCase;
 
  * @author Andrew C. Oliver(acoliver at apache.org)
  */
-public class TestTickRecord
-        extends TestCase
-{
+public final class TestTickRecord extends TestCase {
     byte[] data = new byte[] {
 	(byte)0x02, (byte)0x00, (byte)0x03, (byte)0x01, 
         (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
@@ -44,14 +39,7 @@ public class TestTickRecord
 	(byte)0x4D, (byte)0x00, (byte)0x00, (byte)0x00
     };
 
-    public TestTickRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
         TickRecord record = new TickRecord(new TestcaseRecordInputStream((short)0x101e, (short)data.length, data));
         assertEquals( (byte)2, record.getMajorTickType());
         assertEquals( (byte)0, record.getMinorTickType());
@@ -70,8 +58,6 @@ public class TestTickRecord
 
 
         assertEquals( 34, record.getRecordSize() );
-
-        record.validateSid((short)0x101e);
     }
 
     public void testStore()

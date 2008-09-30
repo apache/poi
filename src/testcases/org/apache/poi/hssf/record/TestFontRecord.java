@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -26,9 +25,7 @@ import junit.framework.TestCase;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  */
-public class TestFontRecord
-        extends TestCase
-{
+public final class TestFontRecord extends TestCase {
 	byte[] header = new byte[] {
     		0x31, 00, 0x1a, 00, // sid=31, 26 bytes long
 	};
@@ -45,14 +42,7 @@ public class TestFontRecord
     		0x00, 0x61, 0x00, 0x6C, 0x00
     };
 
-    public TestFontRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
 
         FontRecord record = new FontRecord(new TestcaseRecordInputStream((short)0x31, (short)data.length, data));
         assertEquals( 0xc8, record.getFontHeight());
@@ -72,7 +62,6 @@ public class TestFontRecord
 
 
         assertEquals( 26 + 4, record.getRecordSize() );
-        record.validateSid((short)0x31);
     }
 
     public void testStore()

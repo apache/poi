@@ -48,32 +48,7 @@ public class AxisParentRecord
 
     }
 
-    /**
-     * Constructs a AxisParent record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public AxisParentRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    /**
-     * Checks the sid matches the expected side for this record
-     *
-     * @param id   the expected sid.
-     */
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("Not a AxisParent record");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_axisType               = in.readShort();
         field_2_x                      = in.readInt();

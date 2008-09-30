@@ -39,22 +39,12 @@ public final class CRNRecord extends Record {
 		throw new RuntimeException("incomplete code");
 	}
 
-	public CRNRecord(RecordInputStream in) {
-		super(in);
-	}
-
-	protected void validateSid(short id) {
-		if (id != sid) {
-			throw new RecordFormatException("NOT An XCT RECORD");
-		}
-	}
-
 	public int getNumberOfCRNs() {
 		return field_1_last_column_index;
 	}
 
 
-	protected void fillFields(RecordInputStream in) {
+	public CRNRecord(RecordInputStream in) {
 		field_1_last_column_index = in.readByte() & 0x00FF;
 		field_2_first_column_index = in.readByte() & 0x00FF;
 		field_3_row_index = in.readShort();

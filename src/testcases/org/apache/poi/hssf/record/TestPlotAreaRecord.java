@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,36 +28,19 @@ import junit.framework.TestCase;
 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public class TestPlotAreaRecord
-        extends TestCase
-{
+public final class TestPlotAreaRecord extends TestCase {
     byte[] data = new byte[] {
 	
     };
 
-    public TestPlotAreaRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
         PlotAreaRecord record = new PlotAreaRecord(new TestcaseRecordInputStream((short)0x1035, (short)data.length, data));
-        
-
 
         assertEquals( 4, record.getRecordSize() );
-
-        record.validateSid((short)0x1035);
     }
 
-    public void testStore()
-    {
+    public void testStore() {
         PlotAreaRecord record = new PlotAreaRecord();
-
-
-
 
         byte [] recordBytes = record.serialize();
         assertEquals(recordBytes.length - 4, data.length);

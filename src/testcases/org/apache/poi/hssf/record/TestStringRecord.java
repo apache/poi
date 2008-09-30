@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -30,9 +27,7 @@ import junit.framework.TestCase;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestStringRecord
-        extends TestCase
-{
+public class TestStringRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0x0B,(byte)0x00,   // length
         (byte)0x00,              // option
@@ -40,21 +35,12 @@ public class TestStringRecord
         (byte)0x46,(byte)0x61,(byte)0x68,(byte)0x72,(byte)0x7A,(byte)0x65,(byte)0x75,(byte)0x67,(byte)0x74,(byte)0x79,(byte)0x70
     };
 
-    public TestStringRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
 
         StringRecord record = new StringRecord(new TestcaseRecordInputStream((short)0x207, (short)data.length, data));
         assertEquals( "Fahrzeugtyp", record.getString());
 
         assertEquals( 18, record.getRecordSize() );
-
-        record.validateSid((short)0x207);
     }
 
     public void testStore()

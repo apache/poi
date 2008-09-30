@@ -57,32 +57,7 @@ public final class AxisOptionsRecord extends Record {
 
     }
 
-    /**
-     * Constructs a AxisOptions record and sets its fields appropriately.
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-
     public AxisOptionsRecord(RecordInputStream in)
-    {
-        super(in);
-    
-    }
-
-    /**
-     * Checks the sid matches the expected side for this record
-     *
-     * @param id   the expected sid.
-     */
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("Not a AxisOptions record");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_minimumCategory        = in.readShort();
         field_2_maximumCategory        = in.readShort();

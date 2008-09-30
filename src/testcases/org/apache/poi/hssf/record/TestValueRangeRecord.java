@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,9 +28,7 @@ import junit.framework.TestCase;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestValueRangeRecord
-        extends TestCase
-{
+public final class TestValueRangeRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,     // min axis value
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,     // max axis value
@@ -43,14 +38,7 @@ public class TestValueRangeRecord
         (byte)0x1F,(byte)0x01                                    // options
     };
 
-    public TestValueRangeRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
 
         ValueRangeRecord record = new ValueRangeRecord(new TestcaseRecordInputStream((short)0x101f, (short)data.length, data));
         assertEquals( 0.0, record.getMinimumAxisValue(), 0.001);
@@ -70,8 +58,6 @@ public class TestValueRangeRecord
         assertEquals( true, record.isReserved() );
 
         assertEquals( 42+4, record.getRecordSize() );
-
-        record.validateSid((short)0x101f);
     }
 
     public void testStore()

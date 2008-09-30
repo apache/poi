@@ -92,13 +92,6 @@ public final class UnknownRecord extends Record {
 	}
 
 	/**
-	 * NO OP!
-	 */
-	protected void validateSid(short id) {
-		// if we had a valid sid we wouldn't be using the "Unknown Record" record now would we?
-	}
-
-	/**
 	 * print a sort of string representation ([UNKNOWN RECORD] id = x [/UNKNOWN RECORD])
 	 */
 	public final String toString() {
@@ -274,11 +267,6 @@ public final class UnknownRecord extends Record {
 				return true;
 		}
 		return false;
-	}
-
-	protected final void fillFields(RecordInputStream in) {
-		throw new RecordFormatException(
-				"Unknown record cannot be constructed via offset -- we need a copy of the data");
 	}
 
 	public final Object clone() {

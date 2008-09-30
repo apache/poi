@@ -55,6 +55,12 @@ import org.apache.poi.util.POILogger;
  * @version 1.0-pre
  */
 public final class Workbook implements Model {
+    /**
+     * Excel silently truncates long sheet names to 31 chars.
+     * This constant is used to ensure uniqueness in the first 31 chars
+     */
+    private static final int MAX_SENSITIVE_SHEET_NAME_LEN = 31;
+
     private static final int   DEBUG       = POILogger.DEBUG;
 
     /**
@@ -488,32 +494,43 @@ public final class Workbook implements Model {
 
     /**
      * sets the name for a given sheet.  If the boundsheet record doesn't exist and
-     * its only one more than we have, go ahead and create it.  If its > 1 more than
+     * its only one more than we have, go ahead and create it.  If it's > 1 more than
      * we have, except
      *
      * @param sheetnum the sheet number (0 based)
      * @param sheetname the name for the sheet
      */
-    public void setSheetName(int sheetnum, String sheetname ) {
+    public void setSheetName(int sheetnum, String sheetname) {
         checkSheets(sheetnum);
         BoundSheetRecord sheet = (BoundSheetRecord)boundsheets.get( sheetnum );
         sheet.setSheetname(sheetname);
     }
 
     /**
-     * Determines whether a workbook contains the provided sheet name.
+     * Determines whether a workbook contains the provided sheet name.  For the purpose of 
+     * comparison, long names are truncated to 31 chars.
      *
      * @param name the name to test (case insensitive match)
      * @param excludeSheetIdx the sheet to exclude from the check or -1 to include all sheets in the check.
      * @return true if the sheet contains the name, false otherwise.
      */
-    public boolean doesContainsSheetName( String name, int excludeSheetIdx )
-    {
-        for ( int i = 0; i < boundsheets.size(); i++ )
-        {
+    public boolean doesContainsSheetName(String name, int excludeSheetIdx) {
+        String aName = name;
+        if (aName.length() > MAX_SENSITIVE_SHEET_NAME_LEN) {
+            aName = aName.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN);
+        }
+        for (int i = 0; i < boundsheets.size(); i++) {
             BoundSheetRecord boundSheetRecord = getBoundSheetRec(i);
-            if (excludeSheetIdx != i && name.equalsIgnoreCase(boundSheetRecord.getSheetname()))
+            if (excludeSheetIdx == i) {
+                continue;
+            }
+            String bName = boundSheetRecord.getSheetname();
+            if (bName.length() > MAX_SENSITIVE_SHEET_NAME_LEN) {
+                bName = bName.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN);
+            }
+            if (aName.equalsIgnoreCase(bName)) {
                 return true;
+            }
         }
         return false;
     }
@@ -1954,9 +1971,9 @@ public final class Workbook implements Model {
         return (short)getOrCreateLinkTable().checkExternSheet(sheetNumber);
     }
 
-	public int getExternalSheetIndex(String workbookName, String sheetName) {
-		return getOrCreateLinkTable().getExternalSheetIndex(workbookName, sheetName);
-	}
+    public int getExternalSheetIndex(String workbookName, String sheetName) {
+        return getOrCreateLinkTable().getExternalSheetIndex(workbookName, sheetName);
+    }
     
 
     /** gets the total number of names

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -49,11 +46,6 @@ public final class TestSupBookRecord extends TestCase {
                 (byte)'S', (byte)'h', (byte)'e', (byte)'e', (byte)'t', (byte)'2', 
    };
 
-    public TestSupBookRecord(String name)
-    {
-        super(name);
-    }
-
     /**
      * tests that we can load the record
      */
@@ -64,8 +56,6 @@ public final class TestSupBookRecord extends TestCase {
         assertEquals( 0x4, record.getNumberOfSheets() );    //expected # of sheets
 
         assertEquals( 8, record.getRecordSize() );  //sid+size+data
-
-        record.validateSid((short)0x01AE);
     }
     /**
      * tests that we can load the record
@@ -83,8 +73,6 @@ public final class TestSupBookRecord extends TestCase {
         assertEquals(2, sheetNames.length);
         assertEquals("Sheet1", sheetNames[0].getString());
         assertEquals("Sheet2", sheetNames[1].getString());
-
-        record.validateSid((short)0x01AE);
     }
     
     /**
@@ -96,7 +84,6 @@ public final class TestSupBookRecord extends TestCase {
         assertTrue( record.isAddInFunctions() );             //expected flag
         assertEquals( 0x1, record.getNumberOfSheets() );    //expected # of sheets
         assertEquals( 8, record.getRecordSize() );  //sid+size+data
-        record.validateSid((short)0x01AE);
     }
    
     /**
@@ -119,10 +106,4 @@ public final class TestSupBookRecord extends TestCase {
 
         TestcaseRecordInputStream.confirmRecordEncoding(0x01AE, dataER, record.serialize());
     }    
-    
-    public static void main(String [] args) {
-        System.out
-        .println("Testing org.apache.poi.hssf.record.SupBookRecord");
-        junit.textui.TestRunner.run(TestSupBookRecord.class);
-    }
 }

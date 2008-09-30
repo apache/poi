@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.eventusermodel.dummyrecord;
 
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * A dummy record for when we're missing a cell in a row,
@@ -33,15 +32,11 @@ public class MissingCellDummyRecord extends Record {
 		this.column = column;
 	}
 	
-	protected void fillFields(RecordInputStream in) {
-	}
 	public short getSid() {
 		return -1;
 	}
 	public int serialize(int offset, byte[] data) {
 		return -1;
-	}
-	protected void validateSid(short id) {
 	}
 	
 	public int getRow() { return row; }

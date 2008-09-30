@@ -42,25 +42,7 @@ public class UseSelFSRecord
     {
     }
 
-    /**
-     * Constructs a UseSelFS record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public UseSelFSRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A UseSelFS RECORD");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_flag = in.readShort();
     }

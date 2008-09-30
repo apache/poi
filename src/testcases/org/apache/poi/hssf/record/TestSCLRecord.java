@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
@@ -31,29 +28,17 @@ import junit.framework.TestCase;
 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public class TestSCLRecord
-        extends TestCase
-{
+public final class TestSCLRecord extends TestCase {
     byte[] data = new byte[] {
       (byte)0x3,(byte)0x0,(byte)0x4,(byte)0x0
     };
 
-    public TestSCLRecord(String name)
-    {
-        super(name);
-    }
-
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoad() {
         SCLRecord record = new SCLRecord(new TestcaseRecordInputStream((short)0xa0, (short)data.length, data));
         assertEquals( 3, record.getNumerator());
         assertEquals( 4, record.getDenominator());
 
-
         assertEquals( 8, record.getRecordSize() );
-
-        record.validateSid((short)0xa0);
     }
 
     public void testStore()

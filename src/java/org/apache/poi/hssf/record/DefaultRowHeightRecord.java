@@ -42,25 +42,7 @@ public class DefaultRowHeightRecord
     {
     }
 
-    /**
-     * Constructs a DefaultRowHeight record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public DefaultRowHeightRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A DefaultRowHeight RECORD");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_option_flags = in.readShort();
         field_2_row_height   = in.readShort();

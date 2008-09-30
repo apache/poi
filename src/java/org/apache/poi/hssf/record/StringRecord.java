@@ -37,34 +37,9 @@ public class StringRecord extends Record {
     }
 
     /**
-     * Constructs a String record and sets its fields appropriately.
-     *
      * @param in the RecordInputstream to read the record from
      */
-    public StringRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-
-    /**
-     * Throw a runtime exception in the event of a
-     * record passed with a differing ID.
-     *
-     * @param id alleged id for this record
-     */
-    protected void validateSid( short id )
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("Not a valid StringRecord");
-        }
-    }
-
-    /**
-     * @param in the RecordInputstream to read the record from
-     */
-    protected void fillFields( RecordInputStream in)
+    public StringRecord( RecordInputStream in)
     {
         field_1_string_length           = in.readShort();
         field_2_unicode_flag            = in.readByte();

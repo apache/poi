@@ -40,25 +40,7 @@ public class SaveRecalcRecord
     {
     }
 
-    /**
-     * Constructs an SaveRecalc record and sets its fields appropriately.
-     * @param in the RecordInputstream to read the record from
-     */
-
     public SaveRecalcRecord(RecordInputStream in)
-    {
-        super(in);
-    }
-
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new RecordFormatException("NOT A Save Recalc RECORD");
-        }
-    }
-
-    protected void fillFields(RecordInputStream in)
     {
         field_1_recalc = in.readShort();
     }
