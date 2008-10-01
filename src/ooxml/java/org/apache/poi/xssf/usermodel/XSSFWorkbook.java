@@ -26,7 +26,6 @@ import java.util.Iterator;
 import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLFactory;
 import org.apache.poi.ss.usermodel.Palette;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row;
@@ -45,15 +44,7 @@ import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.*;
 import org.openxml4j.opc.Package;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookView;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookViews;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 /**
  * High level representation of a SpreadsheetML workbook.  This is the first object most users
@@ -103,28 +94,28 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     private MissingCellPolicy missingCellPolicy = Row.RETURN_NULL_AND_BLANK;
 
-	private static POILogger log = POILogFactory.getLogger(XSSFWorkbook.class);
+    private static POILogger log = POILogFactory.getLogger(XSSFWorkbook.class);
 
     /**
      * Create a new SpreadsheetML workbook.
      */
-	public XSSFWorkbook() {
+    public XSSFWorkbook() {
         super();
         try {
             newWorkbook();
         }catch (Exception e){
             throw new POIXMLException(e);
         }
-	}
+    }
 
     /**
      * Constructs a XSSFWorkbook object given a file name.
      *
      * @param      path   the file name.
      */
-	public XSSFWorkbook(String path) throws IOException {
-		this(openPackage(path));
-	}
+    public XSSFWorkbook(String path) throws IOException {
+        this(openPackage(path));
+    }
 
     /**
      * Constructs a XSSFWorkbook object given a OpenXML4J <code>Package</code> object,
@@ -157,14 +148,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     protected void initialize(Package pkg) throws IOException {
         super.initialize(pkg);
 
-		try {
+        try {
             //build the POIXMLDocumentPart tree, this workbook is the root
             read(new XSSFFactory());
 
             PackagePart corePart = getCorePart();
 
             WorkbookDocument doc = WorkbookDocument.Factory.parse(corePart.getInputStream());
-			this.workbook = doc.getWorkbook();
+            this.workbook = doc.getWorkbook();
 
             HashMap<String, XSSFSheet> shIdMap = new HashMap<String, XSSFSheet>();
             for(POIXMLDocumentPart p : getRelations()){
@@ -172,50 +163,50 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                 else if(p instanceof StylesSource) stylesSource = (StylesSource)p;
                 else if (p instanceof XSSFSheet) {
                     shIdMap.put(p.getPackageRelationship().getId(), (XSSFSheet)p);
-			    }
-			}
-			// Load individual sheets
+                }
+            }
+            // Load individual sheets
             sheets = new LinkedList<XSSFSheet>();
-			for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
+            for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
                 String id = ctSheet.getId();
                 XSSFSheet sh = shIdMap.get(id);
                 sh.sheet = ctSheet;
                 if(sh == null) {
-					log.log(POILogger.WARN, "Sheet with name " + ctSheet.getName() + " and r:id " + ctSheet.getId()+ " was defined, but didn't exist in package, skipping");
-					continue;
-				}
+                    log.log(POILogger.WARN, "Sheet with name " + ctSheet.getName() + " and r:id " + ctSheet.getId()+ " was defined, but didn't exist in package, skipping");
+                    continue;
+                }
                 //initialize internal arrays of rows and columns
                 sh.initialize();
 
                 PackagePart sheetPart = sh.getPackagePart();
-				// Process external hyperlinks for the sheet,
-				//  if there are any
-				PackageRelationshipCollection hyperlinkRels =
-                	sheetPart.getRelationshipsByType(XSSFRelation.SHEET_HYPERLINKS.getRelation());
+                // Process external hyperlinks for the sheet,
+                //  if there are any
+                PackageRelationshipCollection hyperlinkRels =
+                    sheetPart.getRelationshipsByType(XSSFRelation.SHEET_HYPERLINKS.getRelation());
                 sh.initHyperlinks(hyperlinkRels);
 
-				// Get the embeddings for the workbook
+                // Get the embeddings for the workbook
                 for(PackageRelationship rel : sheetPart.getRelationshipsByType(XSSFRelation.OLEEMBEDDINGS.getRelation()))
-					embedds.add(getTargetPart(rel)); // TODO: Add this reference to each sheet as well
+                    embedds.add(getTargetPart(rel)); // TODO: Add this reference to each sheet as well
 
                 for(PackageRelationship rel : sheetPart.getRelationshipsByType(XSSFRelation.PACKEMBEDDINGS.getRelation()))
-					embedds.add(getTargetPart(rel));
+                    embedds.add(getTargetPart(rel));
 
                 sheets.add(sh);
-			}
+            }
 
             if(sharedStringSource == null) {
                 //Create SST if it is missing
                 sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, SharedStringsTable.class);
-		    }
+            }
 
-		    // Process the named ranges
+            // Process the named ranges
             namedRanges = new LinkedList<XSSFName>();
             if(workbook.getDefinedNames() != null) {
                 for(CTDefinedName ctName : workbook.getDefinedNames().getDefinedNameArray()) {
                     namedRanges.add(new XSSFName(ctName, this));
                 }
-		    }
+            }
 
         } catch (Exception e) {
             throw new POIXMLException(e);
@@ -249,71 +240,71 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
         namedRanges = new LinkedList<XSSFName>();
         sheets = new LinkedList<XSSFSheet>();
-	}
+    }
 
-	/**
-	 * Return the underlying XML bean
-	 *
-	 * @return the underlying CTWorkbook bean
-	 */
-	public CTWorkbook getWorkbook() {
-		return this.workbook;
-	}
+    /**
+     * Return the underlying XML bean
+     *
+     * @return the underlying CTWorkbook bean
+     */
+    public CTWorkbook getWorkbook() {
+        return this.workbook;
+    }
 
-	public int addPicture(byte[] pictureData, int format) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public int addPicture(byte[] pictureData, int format) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
-	public XSSFSheet cloneSheet(int sheetNum) {
-		XSSFSheet srcSheet = sheets.get(sheetNum);
-		String srcName = getSheetName(sheetNum);
-		if (srcSheet != null) {
-			XSSFSheet clonedSheet = srcSheet.cloneSheet();
+    public XSSFSheet cloneSheet(int sheetNum) {
+        XSSFSheet srcSheet = sheets.get(sheetNum);
+        String srcName = getSheetName(sheetNum);
+        if (srcSheet != null) {
+            XSSFSheet clonedSheet = srcSheet.cloneSheet();
 
-			sheets.add(clonedSheet);
-			CTSheet newcts = this.workbook.getSheets().addNewSheet();
-			newcts.set(clonedSheet.getSheet());
+            sheets.add(clonedSheet);
+            CTSheet newcts = this.workbook.getSheets().addNewSheet();
+            newcts.set(clonedSheet.getSheet());
 
-			int i = 1;
-			while (true) {
-				//Try and find the next sheet name that is unique
-				String name = srcName;
-				String index = Integer.toString(i++);
-				if (name.length() + index.length() + 2 < 31) {
-					name = name + "("+index+")";
-				} else {
-					name = name.substring(0, 31 - index.length() - 2) + "(" +index + ")";
-				}
+            int i = 1;
+            while (true) {
+                //Try and find the next sheet name that is unique
+                String name = srcName;
+                String index = Integer.toString(i++);
+                if (name.length() + index.length() + 2 < 31) {
+                    name = name + "("+index+")";
+                } else {
+                    name = name.substring(0, 31 - index.length() - 2) + "(" +index + ")";
+                }
 
-				//If the sheet name is unique, then set it otherwise move on to the next number.
-				if (getSheetIndex(name) == -1) {
-					setSheetName(sheets.size() - 1, name);
-					break;
-				}
-			}
-			return clonedSheet;
-		}
-		return null;
-	}
+                //If the sheet name is unique, then set it otherwise move on to the next number.
+                if (getSheetIndex(name) == -1) {
+                    setSheetName(sheets.size() - 1, name);
+                    break;
+                }
+            }
+            return clonedSheet;
+        }
+        return null;
+    }
 
     /**
      * Create a new XSSFCellStyle and add it to the workbook's style table
      *
      * @return the new XSSFCellStyle object
      */
-	public XSSFCellStyle createCellStyle() {
-		CTXf xf=CTXf.Factory.newInstance();
-		xf.setNumFmtId(0);
-		xf.setFontId(0);
-		xf.setFillId(0);
-		xf.setBorderId(0);
-		xf.setXfId(0);
-		int xfSize=((StylesTable)stylesSource)._getStyleXfsSize();
-		long indexXf=((StylesTable)stylesSource).putCellXf(xf);
-		XSSFCellStyle style = new XSSFCellStyle(new Long(indexXf-1).intValue(), xfSize-1, (StylesTable)stylesSource);
-		return style;
-	}
+    public XSSFCellStyle createCellStyle() {
+        CTXf xf=CTXf.Factory.newInstance();
+        xf.setNumFmtId(0);
+        xf.setFontId(0);
+        xf.setFillId(0);
+        xf.setBorderId(0);
+        xf.setXfId(0);
+        int xfSize=((StylesTable)stylesSource)._getStyleXfsSize();
+        long indexXf=((StylesTable)stylesSource).putCellXf(xf);
+        XSSFCellStyle style = new XSSFCellStyle(new Long(indexXf-1).intValue(), xfSize-1, (StylesTable)stylesSource);
+        return style;
+    }
 
     /**
      * Returns the instance of XSSFDataFormat for this workbook.
@@ -332,22 +323,22 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @return new font object
      */
-	public XSSFFont createFont() {
-		XSSFFont font= new XSSFFont();
-		stylesSource.putFont(font);
-		return font;
-	}
+    public XSSFFont createFont() {
+        XSSFFont font= new XSSFFont();
+        stylesSource.putFont(font);
+        return font;
+    }
 
     /**
      * Creates a new named range and add it to the model
      *
      * @return named range high level
      */
-	public XSSFName createName() {
-		XSSFName name = new XSSFName(this);
-		namedRanges.add(name);
-		return name;
-	}
+    public XSSFName createName() {
+        XSSFName name = new XSSFName(this);
+        namedRanges.add(name);
+        return name;
+    }
 
     /**
      * create an XSSFSheet for this workbook, adds it to the sheets and returns
@@ -355,10 +346,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @return XSSFSheet representing the new sheet.
      */
-	public XSSFSheet createSheet() {
-		String sheetname = "Sheet" + (sheets.size() + 1);
-		return createSheet(sheetname);
-	}
+    public XSSFSheet createSheet() {
+        String sheetname = "Sheet" + (sheets.size() + 1);
+        return createSheet(sheetname);
+    }
 
     /**
      * create an XSSFSheet for this workbook, adds it to the sheets and returns
@@ -367,90 +358,90 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param sheetname  sheetname to set for the sheet, can't be duplicate, greater than 31 chars or contain /\?*[]
      * @return XSSFSheet representing the new sheet.
      */
-	public XSSFSheet createSheet(String sheetname) {
-		if (doesContainsSheetName( sheetname, sheets.size() ))
-	   		throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
+    public XSSFSheet createSheet(String sheetname) {
+        if (containsSheet( sheetname, sheets.size() ))
+               throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
 
         int sheetNumber = getNumberOfSheets() + 1;
         XSSFSheet wrapper = (XSSFSheet)createRelationship(XSSFRelation.WORKSHEET, XSSFSheet.class, sheetNumber);
         wrapper.setParent(this);
 
-		CTSheet sheet = addSheet(sheetname);
+        CTSheet sheet = addSheet(sheetname);
         wrapper.sheet = sheet;
         sheet.setId(wrapper.getPackageRelationship().getId());
         sheet.setSheetId(sheetNumber);
 
-		this.sheets.add(wrapper);
-		return wrapper;
-	}
+        this.sheets.add(wrapper);
+        return wrapper;
+    }
 
     protected XSSFSheet createDialogsheet(String sheetname, CTDialogsheet dialogsheet) {
         CTSheet sheet = addSheet(sheetname);
         XSSFDialogsheet wrapper = new XSSFDialogsheet(sheet, dialogsheet, this);
         this.sheets.add(wrapper);
         return wrapper;
-	}
+    }
 
-	private CTSheet addSheet(String sheetname) {
-		validateSheetName(sheetname);
+    private CTSheet addSheet(String sheetname) {
+        validateSheetName(sheetname);
 
         CTSheet sheet = workbook.getSheets().addNewSheet();
-		sheet.setName(sheetname);
-		return sheet;
-	}
+        sheet.setName(sheetname);
+        return sheet;
+    }
 
     /**
      * Finds a font that matches the one with the supplied attributes
      */
-	public XSSFFont findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
-		short fontNum=getNumberOfFonts();
-		for (short i = 0; i < fontNum; i++) {
-			XSSFFont xssfFont = getFontAt(i);
+    public XSSFFont findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
+        short fontNum=getNumberOfFonts();
+        for (short i = 0; i < fontNum; i++) {
+            XSSFFont xssfFont = getFontAt(i);
 
-			if (	(xssfFont.getBold() == (boldWeight == XSSFFont.BOLDWEIGHT_BOLD))
-					&& xssfFont.getColor() == color
-					&& xssfFont.getFontHeightInPoints() == fontHeight
-					&& xssfFont.getFontName().equals(name)
-					&& xssfFont.getItalic() == italic
-					&& xssfFont.getStrikeout() == strikeout
-					&& xssfFont.getTypeOffset() == typeOffset
-					&& xssfFont.getUnderline() == underline)
-			{
-				return xssfFont;
-			}
-		}
-		return null;
-	}
+            if (	(xssfFont.getBold() == (boldWeight == XSSFFont.BOLDWEIGHT_BOLD))
+                    && xssfFont.getColor() == color
+                    && xssfFont.getFontHeightInPoints() == fontHeight
+                    && xssfFont.getFontName().equals(name)
+                    && xssfFont.getItalic() == italic
+                    && xssfFont.getStrikeout() == strikeout
+                    && xssfFont.getTypeOffset() == typeOffset
+                    && xssfFont.getUnderline() == underline)
+            {
+                return xssfFont;
+            }
+        }
+        return null;
+    }
 
-	/**
-	 * Convenience method to get the active sheet.  The active sheet is is the sheet
-	 * which is currently displayed when the workbook is viewed in Excel.
-	 * 'Selected' sheet(s) is a distinct concept.
-	 */
-	public int getActiveSheetIndex() {
-		//activeTab (Active Sheet Index) Specifies an unsignedInt
-		//that contains the index to the active sheet in this book view.
-		Long index = workbook.getBookViews().getWorkbookViewArray(0).getActiveTab();
-		return index.intValue();
-	}
+    /**
+     * Convenience method to get the active sheet.  The active sheet is is the sheet
+     * which is currently displayed when the workbook is viewed in Excel.
+     * 'Selected' sheet(s) is a distinct concept.
+     */
+    public int getActiveSheetIndex() {
+        //activeTab (Active Sheet Index) Specifies an unsignedInt
+        //that contains the index to the active sheet in this book view.
+        Long index = workbook.getBookViews().getWorkbookViewArray(0).getActiveTab();
+        return index.intValue();
+    }
 
     /**
      * Gets all embedded OLE2 objects from the Workbook.
      *
      * @return the list of embedded objects (a list of {@link org.openxml4j.opc.PackagePart} objects.)
      */
-	public List getAllEmbeddedObjects() {
+    public List getAllEmbeddedObjects() {
         return embedds;
-	}
+    }
 
     /**
      * Gets all pictures from the Workbook.
      *
      * @return the list of pictures (a list of {@link XSSFPictureData} objects.)
      */
-	public List<PictureData> getAllPictures() {
-		// In OOXML pictures are referred to in sheets
-		List<PictureData> pictures = new LinkedList<PictureData>();
+    public List<PictureData> getAllPictures() {
+        // In OOXML pictures are referred to in sheets
+        List<PictureData> pictures = new LinkedList<PictureData>();
         for(POIXMLDocumentPart p : getRelations()){
             if (p instanceof XSSFSheet) {
                 PackagePart sheetPart = p.getPackagePart();
@@ -471,22 +462,22 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
             }
         }
-		return pictures;
-	}
+        return pictures;
+    }
 
-	public boolean getBackupFlag() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    public boolean getBackupFlag() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	public XSSFCellStyle getCellStyleAt(short idx) {
-		return (XSSFCellStyle)stylesSource.getStyleAt(idx);
-	}
+    public XSSFCellStyle getCellStyleAt(short idx) {
+        return (XSSFCellStyle)stylesSource.getStyleAt(idx);
+    }
 
-	public Palette getCustomPalette() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public Palette getCustomPalette() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
     /**
      * Get the font at the given index number
@@ -494,9 +485,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param idx  index number
      * @return XSSFFont at the index
      */
-	public XSSFFont getFontAt(short idx) {
-		return (XSSFFont)stylesSource.getFontAt(idx);
-	}
+    public XSSFFont getFontAt(short idx) {
+        return (XSSFFont)stylesSource.getFontAt(idx);
+    }
 
     /**
      * Gets the Named range at the given index number
@@ -504,9 +495,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param index position of the named range
      * @return XSSFName at the index
      */
-	public XSSFName getNameAt(int index) {
-		return namedRanges.get(index);
-	}
+    public XSSFName getNameAt(int index) {
+        return namedRanges.get(index);
+    }
 
     /**
      * Gets the Named range name at the given index number,
@@ -516,9 +507,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @return named range name
      * @see #getNameAt(int)
      */
-	public String getNameName(int index) {
-		return getNameAt(index).getNameName();
-	}
+    public String getNameName(int index) {
+        return getNameAt(index).getNameName();
+    }
 
     /**
      * Gets the named range index by his name
@@ -536,64 +527,64 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             }
             i++;
         }
-		return -1;
-	}
+        return -1;
+    }
 
     /**
      * Get the number of styles the workbook contains
      *
      * @return count of cell styles
      */
-	public short getNumCellStyles() {
-		return (short) ((StylesTable)stylesSource).getNumCellStyles();
-	}
+    public short getNumCellStyles() {
+        return (short) ((StylesTable)stylesSource).getNumCellStyles();
+    }
 
     /**
      * Get the number of fonts in the this workbook
      *
      * @return number of fonts
      */
-	public short getNumberOfFonts() {
-		return (short)((StylesTable)stylesSource).getNumberOfFonts();
-	}
+    public short getNumberOfFonts() {
+        return (short)((StylesTable)stylesSource).getNumberOfFonts();
+    }
 
     /**
      * Get the number of named ranges in the this workbook
      *
      * @return number of named ranges
      */
-	public int getNumberOfNames() {
-		return namedRanges.size();
-	}
+    public int getNumberOfNames() {
+        return namedRanges.size();
+    }
 
     /**
      * Get the number of worksheets in the this workbook
      *
      * @return number of worksheets
      */
-	public int getNumberOfSheets() {
+    public int getNumberOfSheets() {
         return this.sheets.size();
-	}
+    }
 
-	public String getPrintArea(int sheetIndex) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public String getPrintArea(int sheetIndex) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
     /**
      * deprecated May 2008
      * @deprecated - Misleading name - use getActiveSheetIndex()
      */
-	public short getSelectedTab() {
-		short i = 0;
-		for (XSSFSheet sheet : this.sheets) {
-			if (sheet.isSelected()) {
-				return i;
-			}
-			++i;
-		}
-		return -1;
-	}
+    public short getSelectedTab() {
+        short i = 0;
+        for (XSSFSheet sheet : this.sheets) {
+            if (sheet.isSelected()) {
+                return i;
+            }
+            ++i;
+        }
+        return -1;
+    }
 
     /**
      * Get sheet with the given name (case insensitive match)
@@ -601,15 +592,15 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param name of the sheet
      * @return XSSFSheet with the name provided or <code>null</code> if it does not exist
      */
-	public XSSFSheet getSheet(String name) {
-		CTSheet[] sheets = this.workbook.getSheets().getSheetArray();
-		for (int i = 0 ; i < sheets.length ; ++i) {
-			if (name.equals(sheets[i].getName())) {
-				return this.sheets.get(i);
-			}
-		}
-		return null;
-	}
+    public XSSFSheet getSheet(String name) {
+        CTSheet[] sheets = this.workbook.getSheets().getSheetArray();
+        for (int i = 0 ; i < sheets.length ; ++i) {
+            if (name.equals(sheets[i].getName())) {
+                return this.sheets.get(i);
+            }
+        }
+        return null;
+    }
 
     /**
      * Get the XSSFSheet object at the given index.
@@ -617,9 +608,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param index of the sheet number (0-based physical & logical)
      * @return XSSFSheet at the provided index
      */
-	public XSSFSheet getSheetAt(int index) {
-		return this.sheets.get(index);
-	}
+    public XSSFSheet getSheetAt(int index) {
+        validateSheetIndex(index);
+        return this.sheets.get(index);
+    }
 
     /**
      * Returns the index of the sheet by his name
@@ -627,15 +619,15 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param name the sheet name
      * @return index of the sheet (0 based)
      */
-	public int getSheetIndex(String name) {
-		CTSheet[] sheets = this.workbook.getSheets().getSheetArray();
-		for (int i = 0 ; i < sheets.length ; ++i) {
-			if (name.equals(sheets[i].getName())) {
-				return i;
-			}
-		}
-		return -1;
-	}
+    public int getSheetIndex(String name) {
+        CTSheet[] sheets = this.workbook.getSheets().getSheetArray();
+        for (int i = 0 ; i < sheets.length ; ++i) {
+            if (name.equals(sheets[i].getName())) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     /**
      * Returns the index of the given sheet
@@ -643,14 +635,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param sheet the sheet to look up
      * @return index of the sheet (0 based). <tt>-1</tt> if not found
      */
-	public int getSheetIndex(Sheet sheet) {
+    public int getSheetIndex(Sheet sheet) {
         int idx = 0;
         for(XSSFSheet sh : this){
             if(sh == sheet) return idx;
             idx++;
         }
         return -1;
-	}
+    }
 
     /**
      * Get the sheet name
@@ -658,13 +650,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param sheetIx Number
      * @return Sheet name
      */
-	public String getSheetName(int sheetIx) {
+    public String getSheetName(int sheetIx) {
         validateSheetIndex(sheetIx);
-		return this.workbook.getSheets().getSheetArray(sheetIx).getName();
-	}
+        return this.workbook.getSheets().getSheetArray(sheetIx).getName();
+    }
 
     /**
-     * Allow foreach loops:
+     * Allows foreach loops:
      * <pre><code>
      * XSSFWorkbook wb = new XSSFWorkbook(package);
      * for(XSSFSheet sheet : wb){
@@ -675,28 +667,28 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     public Iterator<XSSFSheet> iterator() {
         return sheets.iterator();
     }
-	/**
-	 * Are we a normal workbook (.xlsx), or a
-	 *  macro enabled workbook (.xlsm)?
-	 */
-	public boolean isMacroEnabled() {
+    /**
+     * Are we a normal workbook (.xlsx), or a
+     *  macro enabled workbook (.xlsm)?
+     */
+    public boolean isMacroEnabled() {
         return getCorePart().getContentType().equals(XSSFRelation.MACROS_WORKBOOK.getContentType());
-	}
+    }
 
-	public void removeName(int index) {
-		// TODO Auto-generated method stub
+    public void removeName(int index) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	public void removeName(String name) {
-		// TODO Auto-generated method stub
+    public void removeName(String name) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	public void removePrintArea(int sheetIndex) {
-		// TODO Auto-generated method stub
+    public void removePrintArea(int sheetIndex) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
     /**
      * Removes sheet at the given index.<p/>
@@ -712,117 +704,130 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @param index of the sheet  (0-based)
      */
-	public void removeSheetAt(int index) {
-		this.sheets.remove(index);
-		this.workbook.getSheets().removeSheet(index);
-	}
+    public void removeSheetAt(int index) {
+        validateSheetIndex(index);
+        
+        this.sheets.remove(index);
+        this.workbook.getSheets().removeSheet(index);
+    }
 
-	/**
-	 * Retrieves the current policy on what to do when
-	 *  getting missing or blank cells from a row.
-	 * The default is to return blank and null cells.
-	 *  {@link MissingCellPolicy}
-	 */
-	public MissingCellPolicy getMissingCellPolicy() {
-		return missingCellPolicy;
-	}
-	/**
-	 * Sets the policy on what to do when
-	 *  getting missing or blank cells from a row.
-	 * This will then apply to all calls to
-	 *  {@link Row#getCell(int)}}. See
-	 *  {@link MissingCellPolicy}
-	 */
-	public void setMissingCellPolicy(MissingCellPolicy missingCellPolicy) {
-		this.missingCellPolicy = missingCellPolicy;
-	}
+    /**
+     * Retrieves the current policy on what to do when
+     *  getting missing or blank cells from a row.
+     * The default is to return blank and null cells.
+     *  {@link MissingCellPolicy}
+     */
+    public MissingCellPolicy getMissingCellPolicy() {
+        return missingCellPolicy;
+    }
+    /**
+     * Sets the policy on what to do when
+     *  getting missing or blank cells from a row.
+     * This will then apply to all calls to
+     *  {@link Row#getCell(int)}}. See
+     *  {@link MissingCellPolicy}
+     */
+    public void setMissingCellPolicy(MissingCellPolicy missingCellPolicy) {
+        this.missingCellPolicy = missingCellPolicy;
+    }
 
-	/**
-	 * Convenience method to set the active sheet.  The active sheet is is the sheet
-	 * which is currently displayed when the workbook is viewed in Excel.
-	 * 'Selected' sheet(s) is a distinct concept.
-	 */
-	public void setActiveSheet(int index) {
+    /**
+     * Convenience method to set the active sheet.  The active sheet is is the sheet
+     * which is currently displayed when the workbook is viewed in Excel.
+     * 'Selected' sheet(s) is a distinct concept.
+     */
+    public void setActiveSheet(int index) {
 
-		validateSheetIndex(index);
-		//activeTab (Active Sheet Index) Specifies an unsignedInt that contains the index to the active sheet in this book view.
-		CTBookView[] arrayBook = workbook.getBookViews().getWorkbookViewArray();
-		for (int i = 0; i < arrayBook.length; i++) {
-			workbook.getBookViews().getWorkbookViewArray(i).setActiveTab(index);
-		}
-	}
+        validateSheetIndex(index);
+        //activeTab (Active Sheet Index) Specifies an unsignedInt that contains the index to the active sheet in this book view.
+        CTBookView[] arrayBook = workbook.getBookViews().getWorkbookViewArray();
+        for (int i = 0; i < arrayBook.length; i++) {
+            workbook.getBookViews().getWorkbookViewArray(i).setActiveTab(index);
+        }
+    }
 
-	private void validateSheetIndex(int index) {
-		int lastSheetIx = sheets.size() - 1;
-		if (index < 0 || index > lastSheetIx) {
-			throw new IllegalArgumentException("Sheet index ("
-					+ index +") is out of range (0.." +	lastSheetIx + ")");
-		}
-	}
+    /**
+     * Validate sheet index
+     *
+     * @param index the index to validate
+     * @throws IllegalArgumentException if the index is out of range (index
+     *            &lt; 0 || index &gt;= getNumberOfSheets()).
+    */
+    private void validateSheetIndex(int index) {
+        int lastSheetIx = sheets.size() - 1;
+        if (index < 0 || index > lastSheetIx) {
+            throw new IllegalArgumentException("Sheet index ("
+                    + index +") is out of range (0.." +	lastSheetIx + ")");
+        }
+    }
 
-	public void setBackupFlag(boolean backupValue) {
-		// TODO Auto-generated method stub
+    public void setBackupFlag(boolean backupValue) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	/**
-	 * Gets the first tab that is displayed in the list of tabs in excel.
-	 *
-	 * @return integer that contains the index to the active sheet in this book view.
-	 */
-	public int getFirstVisibleTab() {
-		CTBookViews bookViews = workbook.getBookViews();
-		CTBookView bookView = bookViews.getWorkbookViewArray(0);
-		return (short) bookView.getActiveTab();
-	}
+    /**
+     * Gets the first tab that is displayed in the list of tabs in excel.
+     *
+     * @return integer that contains the index to the active sheet in this book view.
+     */
+    public int getFirstVisibleTab() {
+        CTBookViews bookViews = workbook.getBookViews();
+        CTBookView bookView = bookViews.getWorkbookViewArray(0);
+        return (short) bookView.getActiveTab();
+    }
 
-	/**
-	 * Sets the first tab that is displayed in the list of tabs in excel.
-	 *
-	 * @param index integer that contains the index to the active sheet in this book view.
-	 */
-	public void setFirstVisibleTab(int index) {
-		CTBookViews bookViews = workbook.getBookViews();
-		CTBookView bookView= bookViews.getWorkbookViewArray(0);
-		bookView.setActiveTab(index);
-	}
+    /**
+     * Sets the first tab that is displayed in the list of tabs in excel.
+     *
+     * @param index integer that contains the index to the active sheet in this book view.
+     */
+    public void setFirstVisibleTab(int index) {
+        CTBookViews bookViews = workbook.getBookViews();
+        CTBookView bookView= bookViews.getWorkbookViewArray(0);
+        bookView.setActiveTab(index);
+    }
 
-	public void setPrintArea(int sheetIndex, String reference) {
-		// TODO Auto-generated method stub
+    public void setPrintArea(int sheetIndex, String reference) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	public void setPrintArea(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow) {
-		// TODO Auto-generated method stub
+    public void setPrintArea(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	public void setRepeatingRowsAndColumns(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow) {
-		// TODO Auto-generated method stub
+    public void setRepeatingRowsAndColumns(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	/**
-	 * We only set one sheet as selected for compatibility with HSSF.
-	 */
-	public void setSelectedTab(short index) {
-		for (int i = 0 ; i < this.sheets.size() ; ++i) {
-			XSSFSheet sheet = this.sheets.get(i);
-			sheet.setSelected(i == index);
-		}
-	}
+    /**
+     * We only set one sheet as selected for compatibility with HSSF.
+     */
+    public void setSelectedTab(short index) {
+        for (int i = 0 ; i < this.sheets.size() ; ++i) {
+            XSSFSheet sheet = this.sheets.get(i);
+            sheet.setSelected(i == index);
+        }
+    }
 
     /**
      * Set the sheet name.
      * Will throw IllegalArgumentException if the name is greater than 31 chars
      * or contains /\?*[]
+     *
      * @param sheet number (0 based)
+     * @see #validateSheetName(String)
      */
-	public void setSheetName(int sheet, String name) {
-		if (doesContainsSheetName(name, sheet ))
-			throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
-		this.workbook.getSheets().getSheetArray(sheet).setName(name);
-	}
+    public void setSheetName(int sheet, String name) {
+        validateSheetIndex(sheet);
+        validateSheetName(name);
+        if (containsSheet(name, sheet ))
+            throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
+        this.workbook.getSheets().getSheetArray(sheet).setName(name);
+    }
 
     /**
      * sets the order of appearance for a given sheet.
@@ -830,20 +835,20 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param sheetname the name of the sheet to reorder
      * @param pos the position that we want to insert the sheet into (0 based)
      */
-	public void setSheetOrder(String sheetname, int pos) {
-		int idx = getSheetIndex(sheetname);
-		sheets.add(pos, sheets.remove(idx));
-		// Reorder CTSheets
-		XmlObject cts = this.workbook.getSheets().getSheetArray(idx).copy();
-		this.workbook.getSheets().removeSheet(idx);
-		CTSheet newcts = this.workbook.getSheets().insertNewSheet(pos);
-		newcts.set(cts);
-	}
+    public void setSheetOrder(String sheetname, int pos) {
+        int idx = getSheetIndex(sheetname);
+        sheets.add(pos, sheets.remove(idx));
+        // Reorder CTSheets
+        XmlObject cts = this.workbook.getSheets().getSheetArray(idx).copy();
+        this.workbook.getSheets().removeSheet(idx);
+        CTSheet newcts = this.workbook.getSheets().insertNewSheet(pos);
+        newcts.set(cts);
+    }
 
-	public void unwriteProtectWorkbook() {
-		// TODO Auto-generated method stub
+    public void unwriteProtectWorkbook() {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
     /**
      * marshal named ranges from the {@link #namedRanges} collection to the underlying CTWorkbook bean
@@ -892,12 +897,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         save();
 
         getPackage().save(stream);
-	}
+    }
 
-	public void writeProtectWorkbook(String password, String username) {
-		// TODO Auto-generated method stub
+    public void writeProtectWorkbook(String password, String username) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
     /**
      * Returns SharedStringsTable - tha cache of string for this workbook
@@ -905,32 +910,32 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @return the shared string table
      */
     public SharedStringsTable getSharedStringSource() {
-		return this.sharedStringSource;
-	}
+        return this.sharedStringSource;
+    }
     //TODO do we really need setSharedStringSource?
     protected void setSharedStringSource(SharedStringsTable sharedStringSource) {
-		this.sharedStringSource = sharedStringSource;
-	}
+        this.sharedStringSource = sharedStringSource;
+    }
 
     /**
      * Return a object representing a collection of shared objects used for styling content,
      * e.g. fonts, cell styles, colors, etc.
      */
-	public StylesSource getStylesSource() {
-		return this.stylesSource;
-	}
+    public StylesSource getStylesSource() {
+        return this.stylesSource;
+    }
     //TODO do we really need setStylesSource?
-	protected void setStylesSource(StylesSource stylesSource) {
-		this.stylesSource = stylesSource;
-	}
+    protected void setStylesSource(StylesSource stylesSource) {
+        this.stylesSource = stylesSource;
+    }
 
     /**
      * Returns an object that handles instantiating concrete
      *  classes of the various instances for XSSF.
      */
-	public XSSFCreationHelper getCreationHelper() {
-		return new XSSFCreationHelper(this);
-	}
+    public XSSFCreationHelper getCreationHelper() {
+        return new XSSFCreationHelper(this);
+    }
 
     /**
      * Determines whether a workbook contains the provided sheet name.
@@ -939,15 +944,37 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param excludeSheetIdx the sheet to exclude from the check or -1 to include all sheets in the check.
      * @return true if the sheet contains the name, false otherwise.
      */
-	private boolean doesContainsSheetName(String name, int excludeSheetIdx) {
-		CTSheet[] ctSheetArray = workbook.getSheets().getSheetArray();
-		for (int i = 0; i < ctSheetArray.length; i++) {
-			if (excludeSheetIdx != i && name.equalsIgnoreCase(ctSheetArray[i].getName()))
-				return true;
-		}
-		return false;
-	}
+    private boolean containsSheet(String name, int excludeSheetIdx) {
+        CTSheet[] ctSheetArray = workbook.getSheets().getSheetArray();
+        for (int i = 0; i < ctSheetArray.length; i++) {
+            if (excludeSheetIdx != i && name.equalsIgnoreCase(ctSheetArray[i].getName()))
+                return true;
+        }
+        return false;
+    }
 
+    /**
+     * Validates sheet name.
+     *
+     * <p>
+     * The character count <tt>MUST</tt> be greater than or equal to 1 and less than or equal to 31.
+     * The string MUST NOT contain the any of the following characters:
+     * <ul>
+     * <li> 0x0000 </li>
+     * <li> 0x0003 </li>
+     * <li> colon (:) </li>
+     * <li> backslash (\) </li>
+     * <li> asterisk (*) </li>
+     * <li> question mark (?) </li>
+     * <li> forward slash (/) </li>
+     * <li> opening square bracket ([) </li>
+     * <li> closing square bracket (]) </li>
+     * </ul>
+     * The string MUST NOT begin or end with the single quote (') character.
+     * </p>
+     *
+     * @param sheetName the name to validate
+     */
     private static void validateSheetName(String sheetName) {
         if (sheetName == null) {
             throw new IllegalArgumentException("sheetName must not be null");
@@ -975,4 +1002,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                     + ") found at index (" + i + ") in sheet name '" + sheetName + "'");
         }
      }
+
+    /**
+     * Gets a boolean value that indicates whether the date systems used in the workbook starts in 1904.
+     * <p>
+     * The default value is false, meaning that the workbook uses the 1900 date system,
+     * where 1/1/1900 is the first day in the system..
+     * </p>
+     * @return true if the date systems used in the workbook starts in 1904
+     */
+    protected boolean isDate1904(){
+        CTWorkbookPr workbookPr = workbook.getWorkbookPr();
+        return workbookPr != null && workbookPr.getDate1904();
+    }
 }

@@ -32,336 +32,531 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTVerticalAlignFontPr
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignRun;
 
+/**
+ * Represents a font used in a workbook.
+ *
+ * @author Gisella Bronzetti
+ */
 public class XSSFFont implements Font {
 
-    public static final String DEFAULT_FONT_NAME="Calibri";
-    public static final short DEFAULT_FONT_SIZE=11;
+    /**
+     * By default, Microsoft Office Excel 2007 uses the Calibry font in font size 11
+     */
+    public static final String DEFAULT_FONT_NAME = "Calibri";
+    /**
+     * By default, Microsoft Office Excel 2007 uses the Calibry font in font size 11
+     */
+    public static final short DEFAULT_FONT_SIZE = 11;
+    /**
+     * Default font color is black
+     * @see IndexedColors.BLACK
+     */
     public static final short DEFAULT_FONT_COLOR = IndexedColors.BLACK.getIndex();
 
-     private CTFont ctFont;
+    private CTFont ctFont;
 
+    /**
+     * Create a new XSSFFont
+     *
+     * @param font the underlying CTFont bean
+     */
     public XSSFFont(CTFont font) {
-         this.ctFont=font;
+        this.ctFont = font;
     }
 
-     protected XSSFFont() {
-         this.ctFont = CTFont.Factory.newInstance();
+    /**
+     * Create a new XSSFont. This method is protected to be used only by XSSFWorkbook
+     */
+    protected XSSFFont() {
+        this.ctFont = CTFont.Factory.newInstance();
     }
 
-
-    public CTFont getCTFont(){
-         return ctFont;
+    /**
+     * get the underlying CTFont font
+     */
+    public CTFont getCTFont() {
+        return ctFont;
     }
 
-     
-     public boolean getBold() {
-         CTBooleanProperty bold=ctFont.sizeOfBArray() == 0 ? null : ctFont.getBArray(0);
-         return (bold!=null && bold.getVal());
+    /**
+     * get a boolean value for the boldness to use.
+     *
+     * @return boolean - bold
+     */
+    public boolean getBold() {
+        CTBooleanProperty bold = ctFont.sizeOfBArray() == 0 ? null : ctFont.getBArray(0);
+        return (bold != null && bold.getVal());
     }
 
+    /**
+     * get character-set to use.
+     *
+     * @return byte - character-set
+     * @see FontCharset
+     */
     public byte getCharSet() {
-         CTIntProperty charset= ctFont.sizeOfCharsetArray() == 0?null:ctFont.getCharsetArray(0);
-         return charset == null ? FontCharset.ANSI.getValue() : FontCharset.valueOf(charset.getVal()).getValue(); 
+        CTIntProperty charset = ctFont.sizeOfCharsetArray() == 0 ? null : ctFont.getCharsetArray(0);
+        return charset == null ? FontCharset.ANSI.getValue() : FontCharset.valueOf(charset.getVal()).getValue();
     }
 
+
+    /**
+     * get the indexed color value for the font
+     * References a color defined in IndexedColors.
+     *
+     * @return short - indexed color to use
+     * @see IndexedColors
+     */
     public short getColor() {
-        CTColor color=ctFont.sizeOfColorArray()==0?null: ctFont.getColorArray(0);
-        if(color == null) return IndexedColors.BLACK.getIndex();
-        
-        long index=color.getIndexed();
-        if (index==XSSFFont.DEFAULT_FONT_COLOR){
+        CTColor color = ctFont.sizeOfColorArray() == 0 ? null : ctFont.getColorArray(0);
+        if (color == null) return IndexedColors.BLACK.getIndex();
+
+        long index = color.getIndexed();
+        if (index == XSSFFont.DEFAULT_FONT_COLOR) {
             return IndexedColors.BLACK.getIndex();
-        }
-        else if(index == IndexedColors.RED.getIndex()){
+        } else if (index == IndexedColors.RED.getIndex()) {
             return IndexedColors.RED.getIndex();
-        }
-        else{
-            return Short.parseShort(new Long(index).toString());
+        } else {
+            return (short)index;
         }
     }
 
 
-     public XSSFColor getRgbColor() {
-         CTColor ctColor=ctFont.sizeOfColorArray()==0?null: ctFont.getColorArray(0);
-         XSSFColor color=new XSSFColor(ctColor);
-         return color;
-     }
+    /**
+     * get the color value for the font
+     * References a color defined as  Standard Alpha Red Green Blue color value (ARGB).
+     *
+     * @return XSSFColor - rgb color to use
+     */
+    public XSSFColor getRgbColor() {
+        CTColor ctColor = ctFont.sizeOfColorArray() == 0 ? null : ctFont.getColorArray(0);
+        XSSFColor color = new XSSFColor(ctColor);
+        return color;
+    }
 
-     public short getThemeColor() {
-         CTColor color=ctFont.sizeOfColorArray()==0?null: ctFont.getColorArray(0);
-         long index=color.getTheme();
-         return (short)index;
-     }
 
+    /**
+     * get the color value for the font
+     * References a color defined in theme.
+     *
+     * @return short - theme defined to use
+     */
+    public short getThemeColor() {
+        CTColor color = ctFont.sizeOfColorArray() == 0 ? null : ctFont.getColorArray(0);
+        long index = color == null ? 0 : color.getTheme();
+        return (short) index;
+    }
 
+    /**
+     * get the font height in point.
+     *
+     * @return short - height in point
+     */
     public short getFontHeight() {
-         CTFontSize size=ctFont.sizeOfSzArray()==0?null: ctFont.getSzArray(0);
-         if(size!=null){
-             double fontHeight= size.getVal();
-            return (short)fontHeight;
-        }
-        else
+        CTFontSize size = ctFont.sizeOfSzArray() == 0 ? null : ctFont.getSzArray(0);
+        if (size != null) {
+            double fontHeight = size.getVal();
+            return (short) fontHeight;
+        } else
             return DEFAULT_FONT_SIZE;
     }
 
-
+    /**
+     * @see #getFontHeight()
+     */
     public short getFontHeightInPoints() {
-         CTFontSize size=ctFont.sizeOfSzArray()==0?null: ctFont.getSzArray(0);
-         if(size!=null){
-             double fontHeight= size.getVal();
-             return (short)fontHeight;
-          }
-        else
+        CTFontSize size = ctFont.sizeOfSzArray() == 0 ? null : ctFont.getSzArray(0);
+        if (size != null) {
+            double fontHeight = size.getVal();
+            return (short) fontHeight;
+        } else
             return DEFAULT_FONT_SIZE;
     }
 
-
+    /**
+     * get the name of the font (i.e. Arial)
+     *
+     * @return String - a string representing the name of the font to use
+     */
     public String getFontName() {
-	CTFontName name = ctFont.sizeOfNameArray() == 0 ? null : ctFont.getNameArray(0);
-	return name == null ? null : name.getVal();
+        CTFontName name = ctFont.sizeOfNameArray() == 0 ? null : ctFont.getNameArray(0);
+        return name == null ? null : name.getVal();
     }
 
+    /**
+     * get a boolean value that specify whether to use italics or not
+     *
+     * @return boolean - value for italic
+     */
+    public boolean getItalic() {
+        CTBooleanProperty italic = ctFont.sizeOfIArray() == 0 ? null : ctFont.getIArray(0);
+        return italic != null && italic.getVal();
+    }
 
-      public boolean getItalic() {
-         CTBooleanProperty italic=ctFont.sizeOfIArray()==0?null:ctFont.getIArray(0);
-         return italic!=null && italic.getVal();
-      }
+    /**
+     * get a boolean value that specify whether to use a strikeout horizontal line through the text or not
+     *
+     * @return boolean - value for strikeout
+     */
+    public boolean getStrikeout() {
+        CTBooleanProperty strike = ctFont.sizeOfStrikeArray() == 0 ? null : ctFont.getStrikeArray(0);
+        return strike != null && strike.getVal();
+    }
 
-      public boolean getStrikeout() {
-         CTBooleanProperty strike=ctFont.sizeOfStrikeArray()==0?null:ctFont.getStrikeArray(0);
-         return strike!=null && strike.getVal();
-      }
-
+    /**
+     * get normal,super or subscript.
+     *
+     * @return short - offset type to use (none,super,sub)
+     * @see Font#SS_NONE
+     * @see Font#SS_SUPER
+     * @see Font#SS_SUB
+     */
     public short getTypeOffset() {
-        CTVerticalAlignFontProperty vAlign=ctFont.sizeOfVertAlignArray()==0?null:ctFont.getVertAlignArray(0);
-        if(vAlign!=null){
-            int val=vAlign.getVal().intValue();
+        CTVerticalAlignFontProperty vAlign = ctFont.sizeOfVertAlignArray() == 0 ? null : ctFont.getVertAlignArray(0);
+        if (vAlign != null) {
+            int val = vAlign.getVal().intValue();
             switch (val) {
-            case STVerticalAlignRun.INT_BASELINE:
-                return Font.SS_NONE;
-            case STVerticalAlignRun.INT_SUBSCRIPT:
-                return Font.SS_SUB;
-            case STVerticalAlignRun.INT_SUPERSCRIPT:
-                return Font.SS_SUPER;
-            default: throw new RuntimeException("Wrong offset value "+val);
+                case STVerticalAlignRun.INT_BASELINE:
+                    return Font.SS_NONE;
+                case STVerticalAlignRun.INT_SUBSCRIPT:
+                    return Font.SS_SUB;
+                case STVerticalAlignRun.INT_SUPERSCRIPT:
+                    return Font.SS_SUPER;
+                default:
+                    throw new RuntimeException("Wrong offset value " + val);
             }
-        }
-        else
+        } else
             return Font.SS_NONE;
     }
 
-     public byte getUnderline() {
-	 /*
-         CTUnderlineProperty underline = ctFont.sizeOfUArray() == 0 ? null : ctFont.getUArray(0);
-         return underline == null ? (byte)FontUnderline.NONE.getValue().intValue() : (byte)FontUnderline.valueOf(underline.getVal()).getValue().intValue();
-         */
-	    CTUnderlineProperty underline=ctFont.sizeOfUArray()==0?null:ctFont.getUArray(0);
-	        if(underline!=null){
-		    FontUnderline fontUnderline=FontUnderline.valueOf(underline.getVal());
-	             switch (fontUnderline.getValue().intValue()) {
-	            case STUnderlineValues.INT_DOUBLE:
-	                return Font.U_DOUBLE;
-	            case STUnderlineValues.INT_DOUBLE_ACCOUNTING:
-	                return Font.U_DOUBLE_ACCOUNTING;
+    /**
+     * get type of text underlining to use
+     *
+     * @return byte - underlining type
+     * @see FontUnderline
+     */
+    public byte getUnderline() {
+        CTUnderlineProperty underline = ctFont.sizeOfUArray() == 0 ? null : ctFont.getUArray(0);
+        if (underline != null) {
+            FontUnderline fontUnderline = FontUnderline.valueOf(underline.getVal());
+            switch (fontUnderline.getValue().intValue()) {
+                case STUnderlineValues.INT_DOUBLE:
+                    return Font.U_DOUBLE;
+                case STUnderlineValues.INT_DOUBLE_ACCOUNTING:
+                    return Font.U_DOUBLE_ACCOUNTING;
 
-	            case STUnderlineValues.INT_SINGLE_ACCOUNTING:
-	                return Font.U_SINGLE_ACCOUNTING;
+                case STUnderlineValues.INT_SINGLE_ACCOUNTING:
+                    return Font.U_SINGLE_ACCOUNTING;
 
-	            case STUnderlineValues.INT_NONE:
-	                return Font.U_NONE;
+                case STUnderlineValues.INT_NONE:
+                    return Font.U_NONE;
 
-	            case STUnderlineValues.INT_SINGLE:
-	            default:
-	                return Font.U_SINGLE;
-	            }
-	        }
-	        return Font.U_NONE;
+                case STUnderlineValues.INT_SINGLE:
+                default:
+                    return Font.U_SINGLE;
+            }
+        }
+        return Font.U_NONE;
     }
 
-     /**
-      * Set characters in bold face font style.
-      * If omitted, the default value is true.
-      */
-     public void setBold(boolean bold) {
-         CTBooleanProperty ctBold=ctFont.sizeOfBArray()==0?ctFont.addNewB():ctFont.getBArray(0);
-         ctBold.setVal(true);
-      }
+    /**
+     * set a boolean value for the boldness to use. If omitted, the default value is true.
+     *
+     * @param bold - boldness to use
+     */
+    public void setBold(boolean bold) {
+        CTBooleanProperty ctBold = ctFont.sizeOfBArray() == 0 ? ctFont.addNewB() : ctFont.getBArray(0);
+        ctBold.setVal(true);
+    }
 
-     
+    /**
+     * set character-set to use.
+     *
+     * @param charset - charset
+     * @see FontCharset
+     */
     public void setCharSet(byte charset) {
-         CTIntProperty charsetProperty=ctFont.sizeOfCharsetArray()==0?ctFont.addNewCharset():ctFont.getCharsetArray(0);
+        CTIntProperty charsetProperty = ctFont.sizeOfCharsetArray() == 0 ? ctFont.addNewCharset() : ctFont.getCharsetArray(0);
         switch (charset) {
-        case Font.ANSI_CHARSET:
-            charsetProperty.setVal(FontCharset.ANSI.getValue());
-            break;
-        case Font.SYMBOL_CHARSET:
-            charsetProperty.setVal(FontCharset.SYMBOL.getValue());
-            break;
-        case Font.DEFAULT_CHARSET:
-            charsetProperty.setVal(FontCharset.DEFAULT.getValue());
-            break;
-        default:
-            throw new RuntimeException("Attention: an attempt to set a type of unknow charset and charset");
+            case Font.ANSI_CHARSET:
+                charsetProperty.setVal(FontCharset.ANSI.getValue());
+                break;
+            case Font.SYMBOL_CHARSET:
+                charsetProperty.setVal(FontCharset.SYMBOL.getValue());
+                break;
+            case Font.DEFAULT_CHARSET:
+                charsetProperty.setVal(FontCharset.DEFAULT.getValue());
+                break;
+            default:
+                throw new RuntimeException("Attention: an attempt to set a type of unknow charset and charset");
         }
     }
 
-  
+    /**
+     * set character-set to use.
+     *
+     * @param charSet
+     */
     public void setCharSet(FontCharset charSet) {
-		setCharSet(charSet.getValue());
+        setCharSet(charSet.getValue());
     }
 
+    /**
+     * set the indexed color for the font
+     *
+     * @param color - color to use
+     * @see #DEFAULT_FONT_COLOR - Note: default font color
+     * @see IndexedColors
+     */
     public void setColor(short color) {
-         CTColor ctColor=ctFont.sizeOfColorArray()==0?ctFont.addNewColor():ctFont.getColorArray(0);
-
+        CTColor ctColor = ctFont.sizeOfColorArray() == 0 ? ctFont.addNewColor() : ctFont.getColorArray(0);
         switch (color) {
-        case Font.COLOR_NORMAL:{
-            ctColor.setIndexed(XSSFFont.DEFAULT_FONT_COLOR);
-            break;
-        }
-        case Font.COLOR_RED:{
-            ctColor.setIndexed(IndexedColors.RED.getIndex());
-            break;
-        }
-        default:
-            ctColor.setIndexed(color);
+            case Font.COLOR_NORMAL: {
+                ctColor.setIndexed(XSSFFont.DEFAULT_FONT_COLOR);
+                break;
+            }
+            case Font.COLOR_RED: {
+                ctColor.setIndexed(IndexedColors.RED.getIndex());
+                break;
+            }
+            default:
+                ctColor.setIndexed(color);
         }
     }
 
-
+    /**
+     * set the font height in points.
+     *
+     * @param height - height in points
+     */
     public void setFontHeight(short height) {
-	setFontHeight((double)height);
+        setFontHeight((double) height);
     }
 
+    /**
+     * set the font height in points.
+     *
+     * @param height - height in points
+     */
     public void setFontHeight(double height) {
-        CTFontSize fontSize=ctFont.sizeOfSzArray()==0?ctFont.addNewSz():ctFont.getSzArray(0);
+        CTFontSize fontSize = ctFont.sizeOfSzArray() == 0 ? ctFont.addNewSz() : ctFont.getSzArray(0);
         fontSize.setVal(height);
     }
 
+    /**
+     * set the font height in points.
+     *
+     * @link #setFontHeight
+     */
     public void setFontHeightInPoints(short height) {
-          setFontHeight((double)height);
+        setFontHeight(height);
     }
 
-
+    /**
+     * set the color for the font in Standard Alpha Red Green Blue color value
+     *
+     * @param color - color to use
+     */
     public void setRgbColor(XSSFColor color) {
-	CTColor ctColor=ctFont.sizeOfColorArray()==0?ctFont.addNewColor():ctFont.getColorArray(0);
-	ctColor.setRgb(color.getRgb());
+        CTColor ctColor = ctFont.sizeOfColorArray() == 0 ? ctFont.addNewColor() : ctFont.getColorArray(0);
+        ctColor.setRgb(color.getRgb());
     }
 
-     public void setThemeColor(short theme) {
-         CTColor ctColor=ctFont.sizeOfColorArray()==0?ctFont.addNewColor():ctFont.getColorArray(0);
-         ctColor.setTheme(theme);
-     }
+    /**
+     * set the theme color for the font to use
+     *
+     * @param theme - theme color to use
+     */
+    public void setThemeColor(short theme) {
+        CTColor ctColor = ctFont.sizeOfColorArray() == 0 ? ctFont.addNewColor() : ctFont.getColorArray(0);
+        ctColor.setTheme(theme);
+    }
 
+    /**
+     * set the name for the font (i.e. Arial).
+     * If the font doesn't exist (because it isn't installed on the system),
+     * or the charset is invalid for that font, then another font should
+     * be substituted.
+     * The string length for this attribute shall be 0 to 31 characters.
+     * Default font name is Calibri.
+     *
+     * @param name - value representing the name of the font to use
+     * @see #DEFAULT_FONT_NAME
+     */
     public void setFontName(String name) {
-	CTFontName fontName=ctFont.sizeOfNameArray()==0?ctFont.addNewName():ctFont.getNameArray(0);
-	fontName.setVal(name);
+        CTFontName fontName = ctFont.sizeOfNameArray() == 0 ? ctFont.addNewName() : ctFont.getNameArray(0);
+        fontName.setVal(name);
     }
 
+
+    /**
+     * set a boolean value for the property specifying whether to use italics or not
+     * If omitted, the default value is true.
+     *
+     * @param italic - value for italics or not
+     */
     public void setItalic(boolean italic) {
-         CTBooleanProperty bool=ctFont.sizeOfIArray()==0?ctFont.addNewI():ctFont.getIArray(0);
-          bool.setVal(italic);
+        CTBooleanProperty bool = ctFont.sizeOfIArray() == 0 ? ctFont.addNewI() : ctFont.getIArray(0);
+        bool.setVal(italic);
     }
 
+
+    /**
+     * set a boolean value for the property specifying whether to use a strikeout horizontal line through the text or not
+     * If omitted, the default value is true.
+     *
+     * @param strikeout - value for strikeout or not
+     */
     public void setStrikeout(boolean strikeout) {
-         CTBooleanProperty strike=ctFont.sizeOfStrikeArray()==0?ctFont.addNewStrike():ctFont.getStrikeArray(0);
-          strike.setVal(strikeout);
+        CTBooleanProperty strike = ctFont.sizeOfStrikeArray() == 0 ? ctFont.addNewStrike() : ctFont.getStrikeArray(0);
+        strike.setVal(strikeout);
     }
 
+    /**
+     * set normal,super or subscript, that representing the vertical-alignment setting.
+     * Setting this to either subscript or superscript shall make the font size smaller if a
+     * smaller font size is available.
+     *
+     * @param offset - offset type to use (none,super,sub)
+     * @see #SS_NONE
+     * @see #SS_SUPER
+     * @see #SS_SUB
+     */
     public void setTypeOffset(short offset) {
-        CTVerticalAlignFontProperty offsetProperty=ctFont.sizeOfVertAlignArray()==0?ctFont.addNewVertAlign(): ctFont.getVertAlignArray(0);
+        CTVerticalAlignFontProperty offsetProperty = ctFont.sizeOfVertAlignArray() == 0 ? ctFont.addNewVertAlign() : ctFont.getVertAlignArray(0);
         switch (offset) {
-        case Font.SS_NONE:
-            offsetProperty.setVal(STVerticalAlignRun.BASELINE);
-            break;
-        case Font.SS_SUB:
-            offsetProperty.setVal(STVerticalAlignRun.SUBSCRIPT);
-            break;
-        case Font.SS_SUPER:
-            offsetProperty.setVal(STVerticalAlignRun.SUPERSCRIPT);
-            break;
+            case Font.SS_NONE:
+                offsetProperty.setVal(STVerticalAlignRun.BASELINE);
+                break;
+            case Font.SS_SUB:
+                offsetProperty.setVal(STVerticalAlignRun.SUBSCRIPT);
+                break;
+            case Font.SS_SUPER:
+                offsetProperty.setVal(STVerticalAlignRun.SUPERSCRIPT);
+                break;
         }
     }
 
+    /**
+     * set the style of underlining that is used.
+     * The none style is equivalent to not using underlining at all.
+     *
+     * @param underline - underline type to use
+     * @see FontUnderline
+     */
     public void setUnderline(byte underline) {
-         CTUnderlineProperty ctUnderline=ctFont.sizeOfUArray()==0?ctFont.addNewU():ctFont.getUArray(0);
+        CTUnderlineProperty ctUnderline = ctFont.sizeOfUArray() == 0 ? ctFont.addNewU() : ctFont.getUArray(0);
         switch (underline) {
-        case Font.U_DOUBLE:
-            ctUnderline.setVal(FontUnderline.DOUBLE.getValue());
-            break;
-        case Font.U_DOUBLE_ACCOUNTING:
-            ctUnderline.setVal(FontUnderline.DOUBLE_ACCOUNTING.getValue());
-            break;
-        case Font.U_SINGLE_ACCOUNTING:
-            ctUnderline.setVal(FontUnderline.SINGLE_ACCOUNTING.getValue());
-            break;
-        case Font.U_NONE:
-            ctUnderline.setVal(FontUnderline.NONE.getValue());
-            break;
-        case Font.U_SINGLE:
-        default:
-            ctUnderline.setVal(FontUnderline.SINGLE.getValue());
-        break;
+            case Font.U_DOUBLE:
+                ctUnderline.setVal(FontUnderline.DOUBLE.getValue());
+                break;
+            case Font.U_DOUBLE_ACCOUNTING:
+                ctUnderline.setVal(FontUnderline.DOUBLE_ACCOUNTING.getValue());
+                break;
+            case Font.U_SINGLE_ACCOUNTING:
+                ctUnderline.setVal(FontUnderline.SINGLE_ACCOUNTING.getValue());
+                break;
+            case Font.U_NONE:
+                ctUnderline.setVal(FontUnderline.NONE.getValue());
+                break;
+            case Font.U_SINGLE:
+            default:
+                ctUnderline.setVal(FontUnderline.SINGLE.getValue());
+                break;
         }
     }
-    
+
+    /**
+     * set an enumeration representing the style of underlining that is used.
+     * The none style is equivalent to not using underlining at all.
+     * The possible values for this attribute are defined by the FontUnderline
+     *
+     * @param underline - FontUnderline enum value
+     */
     public void setUnderline(FontUnderline underline) {
-        CTUnderlineProperty ctUnderline=ctFont.sizeOfUArray()==0?ctFont.addNewU():ctFont.getUArray(0);
+        CTUnderlineProperty ctUnderline = ctFont.sizeOfUArray() == 0 ? ctFont.addNewU() : ctFont.getUArray(0);
         ctUnderline.setVal(underline.getValue());
     }
-    
-    
-    public String toString(){
-	        return "org.apache.poi.xssf.usermodel.XSSFFont{" +
-               ctFont +
-              "}";
-    }
-    
 
-     public long putFont(ArrayList<CTFont> fonts) {
+
+    public String toString() {
+        return "org.apache.poi.xssf.usermodel.XSSFFont{" +
+                ctFont +
+                "}";
+    }
+
+
+    public long putFont(ArrayList<CTFont> fonts) {
         //TODO
         /*
            * we need to implement a method equals to check that 2 instances of CTFont
            * are different by comparison of all font attributes.
            * NB: take a look to findFont method in XSSFWorkbook
            */
-         if(fonts.contains(ctFont)) {
-             return fonts.indexOf(ctFont);
+        if (fonts.contains(ctFont)) {
+            return fonts.indexOf(ctFont);
         }
-         fonts.add(ctFont);
+        fonts.add(ctFont);
         return fonts.size() - 1;
     }
 
-/*
-  this methds are used only for XSSFFont and aren't in Font interface
-  are used in method SthlesTable.createDefaultfont
- */
-
-    public FontScheme getScheme(){
-        CTFontScheme scheme=ctFont.sizeOfSchemeArray()==0?null:ctFont.getSchemeArray(0);
+    /**
+     * get the font scheme property.
+     * is used only in StylesTable to create the default instance of font
+     *
+     * @return FontScheme
+     * @see org.apache.poi.xssf.model.StylesTable#createDefaultFont()
+     */
+    public FontScheme getScheme() {
+        CTFontScheme scheme = ctFont.sizeOfSchemeArray() == 0 ? null : ctFont.getSchemeArray(0);
         return scheme == null ? FontScheme.NONE : FontScheme.valueOf(scheme.getVal());
     }
 
-    public void setScheme(FontScheme scheme){
-         CTFontScheme ctFontScheme=ctFont.sizeOfSchemeArray()==0?ctFont.addNewScheme():ctFont.getSchemeArray(0);
-         ctFontScheme.setVal(scheme.getValue());
+    /**
+     * set font scheme property
+     *
+     * @param scheme - FontScheme enum value
+     * @see FontScheme
+     */
+    public void setScheme(FontScheme scheme) {
+        CTFontScheme ctFontScheme = ctFont.sizeOfSchemeArray() == 0 ? ctFont.addNewScheme() : ctFont.getSchemeArray(0);
+        ctFontScheme.setVal(scheme.getValue());
+    }
+
+    /**
+     * get the font family to use.
+     *
+     * @return the font family to use
+     * @see FontFamily
+     */
+    public int getFamily() {
+        CTIntProperty family = ctFont.sizeOfFamilyArray() == 0 ? ctFont.addNewFamily() : ctFont.getFamilyArray(0);
+        return family == null ? FontFamily.NOT_APPLICABLE.getValue() : FontFamily.valueOf(family.getVal()).getValue();
+    }
+
+    /**
+     * Set the font family this font belongs to.
+     * A font family is a set of fonts having common stroke width and serif characteristics.
+     * The font name overrides when there are conflicting values.
+     *
+     * @param value - font family
+     * @see FontFamily
+     */
+    public void setFamily(int value) {
+        CTIntProperty family = ctFont.sizeOfFamilyArray() == 0 ? ctFont.addNewFamily() : ctFont.getFamilyArray(0);
+        family.setVal(value);
+    }
+
+    /**
+     * set an enumeration representing the font family this font belongs to.
+     * A font family is a set of fonts having common stroke width and serif characteristics.
+     *
+     * @param family font family
+     * @link #setFamily(int value)
+     */
+    public void setFamily(FontFamily family) {
+        setFamily(family.getValue());
     }
 
 
-      public int getFamily(){
-         CTIntProperty family = ctFont.sizeOfFamilyArray() == 0 ? ctFont.addNewFamily() : ctFont.getFamilyArray(0);
-         return family == null ? FontFamily.NOT_APPLICABLE.getValue() : FontFamily.valueOf(family.getVal()).getValue();
-      }
-
-      
-     public void setFamily(int value){
-         CTIntProperty family = ctFont.sizeOfFamilyArray() == 0 ? ctFont.addNewFamily() : ctFont.getFamilyArray(0);
-          family.setVal(value);
-     }
-      
-     public void setFamily(FontFamily family){
-	 setFamily(family.getValue());
-     }
-
-     
-    
 }

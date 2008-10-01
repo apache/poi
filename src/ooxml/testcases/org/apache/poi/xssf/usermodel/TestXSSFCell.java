@@ -23,17 +23,21 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.SharedStringSource;
+import org.apache.poi.xssf.model.SharedStringsTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
@@ -108,6 +112,10 @@ public final class TestXSSFCell extends TestCase {
         } catch (NumberFormatException e) {
             // success
         }
+        
+        cell.setCellValue(cal);
+        assertEquals(before1904,cell.getDateCellValue());
+        
     }
     
     public void testSetGetError() throws Exception {
@@ -379,4 +387,82 @@ public final class TestXSSFCell extends TestCase {
     		fail();
     	} catch(IllegalArgumentException e) {}
     }
+    
+    
+    public void testHSSFXSSFToString(){
+	Workbook xwb = new XSSFWorkbook();
+    	Sheet xsheet = xwb.createSheet();
+    	XSSFCell xcell = (XSSFCell) xsheet.createRow(0).createCell((short)0);
+    	
+    	Workbook hwb=new HSSFWorkbook();
+    	Sheet hsheet=hwb.createSheet();
+    	HSSFCell hcell = (HSSFCell) hsheet.createRow(0).createCell((short)0);
+
+    	//BLANK
+    	assertEquals(hcell.toString(),xcell.toString());
+    	System.out.println("BLANK==> xssf="+xcell.toString() + " - hssf="+hcell.toString());
+    	//BOOLEAN
+    	xcell.setCellValue(true);
+    	xcell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+    	hcell.setCellValue(true);
+    	hcell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+    	System.out.println("BOOLEAN==> xssf="+xcell.toString() + " - hssf="+hcell.toString());
+    	assertEquals(hcell.toString(),xcell.toString());
+    	
+	//NUMERIC
+
+    	xcell.setCellValue(1234);
+    	xcell.setCellType(Cell.CELL_TYPE_NUMERIC);
+    	hcell.setCellValue(1234);
+    	hcell.setCellType(Cell.CELL_TYPE_NUMERIC);
+    	System.out.println("NUMERIC==> xssf="+xcell.toString() + " - hssf="+hcell.toString());
+    	assertEquals(hcell.toString(),xcell.toString());
+    	
+    	//DATE ********************
+    	
+    	Calendar cal = Calendar.getInstance();
+        cal.set(1903, 1, 8);
+    	xcell.setCellValue(cal.getTime());
+    	CellStyle xstyle=xwb.createCellStyle();
+        DataFormat format = xwb.createDataFormat();
+    	xstyle.setDataFormat(format.getFormat("YYYY-MM-DD"));
+    	xcell.setCellStyle(xstyle);
+
+    	hcell.setCellValue(cal.getTime());
+    	CellStyle hstyle=hwb.createCellStyle();
+        DataFormat hformat = hwb.createDataFormat();
+    	hstyle.setDataFormat(hformat.getFormat("YYYY-MM-DD"));
+    	hcell.setCellStyle(hstyle);
+    	
+    	System.out.println("DATE==> xssf="+xcell.toString() + " - hssf="+hcell.toString());
+    	assertEquals(hcell.toString(),xcell.toString());
+    	
+    	
+    	//STRING
+    	xcell.setCellValue(new XSSFRichTextString("text string"));
+    	xcell.setCellType(Cell.CELL_TYPE_STRING);
+    	hcell.setCellValue(new HSSFRichTextString("text string"));
+    	hcell.setCellType(Cell.CELL_TYPE_STRING);
+    	System.out.println("STRING==> xssf="+xcell.toString() + " - hssf="+hcell.toString());
+    	assertEquals(hcell.toString(),xcell.toString());
+    	
+    	//ERROR
+    	xcell.setCellErrorValue(Cell.ERROR_VALUE);
+    	xcell.setCellType(Cell.CELL_TYPE_ERROR);
+
+    	hcell.setCellErrorValue((byte)0);
+    	hcell.setCellType(Cell.CELL_TYPE_ERROR);
+
+    	System.out.println("ERROR==> xssf="+xcell.toString() + " - hssf="+hcell.toString());
+    	assertEquals(hcell.toString(),xcell.toString());
+    	
+    	//FORMULA
+    	xcell.setCellFormula("A1+B2");
+    	hcell.setCellValue("A1+B2");
+    	System.out.println("FORMULA==> xssf="+xcell.toString() + " - hssf="+hcell.toString());
+    	assertEquals(hcell.toString(),xcell.toString());
+    	
+    }
+    
+    
 }

@@ -438,9 +438,28 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return false;
     }
 
+
+    /**
+     * Get whether to display the guts or not,
+     * default value is true
+     *
+     * @return boolean - guts or no guts
+     */
     public boolean getDisplayGuts() {
-        // TODO Auto-generated method stub
-        return false;
+        CTSheetPr sheetPr = getSheetTypeSheetPr();
+        CTOutlinePr outlinePr = sheetPr.getOutlinePr() == null ? CTOutlinePr.Factory.newInstance() : sheetPr.getOutlinePr();
+        return outlinePr.getShowOutlineSymbols();
+    }
+
+    /**
+     * Set whether to display the guts or not
+     *
+     * @param value - guts or no guts
+     */
+    public void setDisplayGuts(boolean value) {
+        CTSheetPr sheetPr = getSheetTypeSheetPr();
+        CTOutlinePr outlinePr = sheetPr.getOutlinePr() == null ? sheetPr.addNewOutlinePr() : sheetPr.getOutlinePr();
+        outlinePr.setShowOutlineSymbols(value);
     }
 
     /**
@@ -1115,11 +1134,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     public void setDisplayGridlines(boolean show) {
         getSheetTypeSheetView().setShowGridLines(show);
-    }
-
-    public void setDisplayGuts(boolean b) {
-        // TODO Auto-generated method stub
-
     }
 
     public void setDisplayRowColHeadings(boolean show) {
