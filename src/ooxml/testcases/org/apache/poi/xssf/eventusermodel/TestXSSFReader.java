@@ -109,4 +109,30 @@ public class TestXSSFReader extends TestCase {
     	}
     	assertEquals(3, count);
     }
+
+    /**
+     * Check that the sheet iterator returns sheets in the logical order
+     * (as they are defined in the workbook.xml)
+     */
+    public void testOrderOfSheets() throws Exception {
+        File f = new File(dirName, "reordered_sheets.xlsx");
+        Package pkg = Package.open(f.toString());
+
+        XSSFReader r = new XSSFReader(pkg);
+
+        String[] sheetNames = {"Sheet4", "Sheet2", "Sheet3", "Sheet1"};
+        XSSFReader.SheetIterator it = (XSSFReader.SheetIterator)r.getSheetsData();
+
+        int count = 0;
+        while(it.hasNext()) {
+            InputStream inp = it.next();
+            assertNotNull(inp);
+            inp.close();
+
+            assertEquals(sheetNames[count], it.getSheetName());
+            count++;
+        }
+        assertEquals(4, count);
+
+    }
 }
