@@ -510,6 +510,14 @@ public class TestXSSFSheet extends TestCase {
         assertFalse(sheet.isDisplayGridlines());
     }
     
+    public void testIsSetDisplayGuts() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        assertTrue(sheet.getDisplayGuts());
+        sheet.setDisplayGuts(false);
+        assertFalse(sheet.getDisplayGuts());
+    }
+    
     public void testIsSetDisplayRowColHeadings() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");

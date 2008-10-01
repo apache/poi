@@ -17,10 +17,13 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
@@ -73,6 +76,7 @@ public final class XSSFCell implements Cell {
     protected SharedStringSource getSharedStringSource() {
         return this.sharedStringSource;
     }
+    
     protected StylesSource getStylesSource() {
         return this.stylesSource;
     }
@@ -154,10 +158,10 @@ public final class XSSFCell implements Cell {
         if (STCellType.N == this.cell.getT() || STCellType.STR == this.cell.getT()) {
             double value = this.getNumericCellValue();
             if (false /* book.isUsing1904DateWindowing() */) {  // FIXME
-                return HSSFDateUtil.getJavaDate(value,true);
+                return DateUtil.getJavaDate(value,true);
             }
             else {
-                return HSSFDateUtil.getJavaDate(value,false);
+                return DateUtil.getJavaDate(value,false);
             }
         }
         throw new NumberFormatException("You cannot get a date value from a cell of type " + this.cell.getT());
@@ -256,14 +260,17 @@ public final class XSSFCell implements Cell {
         }
         throw new NumberFormatException("You cannot get a string value from a non-string cell");
     }
-
+    
+    /**
+     * Sets this cell as the active cell for the worksheet
+     */
     public void setAsActiveCell() {
         row.getSheet().setActiveCell(cell.getR());
     }
 
+   
     public void setCellComment(Comment comment) {
-        String cellRef =
-            new CellReference(row.getRowNum(), getCellNum()).formatAsString();
+        String cellRef = new CellReference(row.getRowNum(), getCellNum()).formatAsString();
         row.getSheet().setCellComment(cellRef, (XSSFComment)comment);
     }
 
@@ -352,6 +359,15 @@ public final class XSSFCell implements Cell {
         }
     }
 
+    /**
+     * set the cells type (numeric, formula or string)
+     * @see #CELL_TYPE_NUMERIC
+     * @see #CELL_TYPE_STRING
+     * @see #CELL_TYPE_FORMULA
+     * @see #CELL_TYPE_BLANK
+     * @see #CELL_TYPE_BOOLEAN
+     * @see #CELL_TYPE_ERROR
+     */
     public void setCellType(int cellType) {
         switch (cellType) {
         case CELL_TYPE_BOOLEAN:
@@ -379,13 +395,38 @@ public final class XSSFCell implements Cell {
         this.cell.setV(String.valueOf(value));
     }
 
+
+    /**
+     * set a date value for the cell. Excel treats dates as numeric so you will need to format the cell as
+     * a date.
+     *
+     * @param value  the date value to set this cell to.  For formulas we'll set the
+     *        precalculated value, for numerics we'll set its value. For other types we
+     *        will change the cell to a numeric cell and set its value.
+     */
     public void setCellValue(Date value) {
-        setCellValue(HSSFDateUtil.getExcelDate(value, false /*this.book.isUsing1904DateWindowing()*/)); // FIXME
+	    boolean date1904 = this.row.getSheet().getWorkbook().isDate1904();
+        setCellValue(DateUtil.getExcelDate(value, date1904));
     }
 
+    /**
+     * set a date value for the cell. Excel treats dates as numeric so you will need to format the cell as
+     * a date.
+     *
+     * This will set the cell value based on the Calendar's timezone. As Excel
+     * does not support timezones this means that both 20:00+03:00 and
+     * 20:00-03:00 will be reported as the same value (20:00) even that there
+     * are 6 hours difference between the two times. This difference can be
+     * preserved by using <code>setCellValue(value.getTime())</code> which will
+     * automatically shift the times to the default timezone.
+     *
+     * @param value  the date value to set this cell to.  For formulas we'll set the
+     *        precalculated value, for numerics we'll set its value. For othertypes we
+     *        will change the cell to a numeric cell and set its value.
+     */
     public void setCellValue(Calendar value) {
-        // TODO Auto-generated method stub
-
+	    boolean date1904 = this.row.getSheet().getWorkbook().isDate1904();
+        setCellValue( DateUtil.getExcelDate(value, date1904 ));
     }
 
     public void setCellValue(String str) {
@@ -414,8 +455,42 @@ public final class XSSFCell implements Cell {
         this.cell.setV(value ? TRUE_AS_STRING : FALSE_AS_STRING);
     }
 
+    /**
+     * Returns a string representation of the cell
+     *
+     * This method returns a simple representation,
+     * anthing more complex should be in user code, with
+     * knowledge of the semantics of the sheet being processed.
+     *
+     * Formula cells return the formula string,
+     * rather than the formula result.
+     * Dates are displayed in dd-MMM-yyyy format
+     * Errors are displayed as #ERR&lt;errIdx&gt;
+     */
     public String toString() {
-        return "[" + this.row.getRowNum() + "," + this.getCellNum() + "] " + this.cell.getV();
+        // return "[" + this.row.getRowNum() + "," + this.getCellNum() + "] " + this.cell.getV();
+        switch (getCellType()) {
+            case CELL_TYPE_BLANK:
+                return "";
+            case CELL_TYPE_BOOLEAN:
+                return getBooleanCellValue() ? "TRUE" : "FALSE";
+            case CELL_TYPE_ERROR:
+                return ErrorEval.getText(getErrorCellValue());
+            case CELL_TYPE_FORMULA:
+                return getCellFormula();
+            case CELL_TYPE_NUMERIC:
+                //TODO apply the dataformat for this cell
+                if (DateUtil.isCellDateFormatted(this)) {
+                    DateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+                    return sdf.format(getDateCellValue());
+                } else {
+                    return getNumericCellValue() + "";
+                }
+            case CELL_TYPE_STRING:
+                return getRichStringCellValue().toString();
+            default:
+                return "Unknown Cell Type: " + getCellType();
+        }
     }
 
     /**
@@ -429,16 +504,15 @@ public final class XSSFCell implements Cell {
      * @throws RuntimeException if the bounds are exceeded.
      */
     private void checkBounds(int cellNum) {
-      if (cellNum > 255) {
-          throw new RuntimeException("You cannot have more than 255 columns "+
+        if (cellNum > 255) {
+            throw new RuntimeException("You cannot have more than 255 columns " +
                     "in a given row (IV).  Because Excel can't handle it");
-      }
-      else if (cellNum < 0) {
-          throw new RuntimeException("You cannot reference columns with an index of less then 0.");
-      }
+        } else if (cellNum < 0) {
+            throw new RuntimeException("You cannot reference columns with an index of less then 0.");
+        }
     }
 
-	public Hyperlink getHyperlink() {
+    public Hyperlink getHyperlink() {
 		return row.getSheet().getHyperlink(row.getRowNum(), cellNum);
 	}
 	public void setHyperlink(Hyperlink hyperlink) {
