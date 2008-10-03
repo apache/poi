@@ -37,6 +37,8 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.2-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">45889 - fixed ArrayIndexOutOfBoundsException when constructing HSLF Table with a single row </action>
+           <action dev="POI-DEVELOPERS" type="add">Initial support for creating hyperlinks in HSLF</action>
            <action dev="POI-DEVELOPERS" type="fix">45876 - fixed BoundSheetRecord to allow sheet names longer than 31 chars</action>
            <action dev="POI-DEVELOPERS" type="add">45890 - fixed HSSFSheet.shiftRows to also update conditional formats</action>
            <action dev="POI-DEVELOPERS" type="add">45865 modified Formula Parser/Evaluator to handle cross-worksheet formulas</action>

@@ -53,6 +53,9 @@ public class Table extends ShapeGroup {
     public Table(int numrows, int numcols) {
         super();
 
+        if(numrows < 1) throw new IllegalArgumentException("The number of rows must be greater than 1");
+        if(numcols < 1) throw new IllegalArgumentException("The number of columns must be greater than 1");
+
         int x=0, y=0, tblWidth=0, tblHeight=0;
         cells = new TableCell[numrows][numcols];
         for (int i = 0; i < cells.length; i++) {
@@ -165,11 +168,11 @@ public class Table extends ShapeGroup {
                 Rectangle anchor = sh[i].getAnchor();
                 if(anchor.y != y0){
                     y0 = anchor.y;
-                    if(row != null) maxrowlen = Math.max(maxrowlen, row.size());
                     row = new ArrayList();
                     lst.add(row);
                 }
                 row.add(sh[i]);
+                maxrowlen = Math.max(maxrowlen, row.size());
             }
         }
         cells = new TableCell[lst.size()][maxrowlen];
