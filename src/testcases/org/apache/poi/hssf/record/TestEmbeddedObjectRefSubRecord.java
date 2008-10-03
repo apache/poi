@@ -16,12 +16,12 @@
 ==================================================================== */
 package org.apache.poi.hssf.record;
 
-import junit.framework.TestCase;
-import org.apache.poi.util.HexRead;
-
-import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;
+
+import junit.framework.TestCase;
+
+import org.apache.poi.util.HexRead;
 
 /**
  * Tests the serialization and deserialization of the TestEmbeddedObjectRefSubRecord
@@ -30,53 +30,111 @@ import java.util.Arrays;
  *
  * @author Yegor Kozlov
  */
-public class TestEmbeddedObjectRefSubRecord extends TestCase {
+public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 
-    String data1 = "[20, 00, 05, 00, FC, 10, 76, 01, 02, 24, 14, DF, 00, 03, 10, 00, 00, 46, 6F, 72, 6D, 73, 2E, 43, 68, 65, 63, 6B, 42, 6F, 78, 2E, 31, 00, 00, 00, 00, 00, 70, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, ]";
+	String data1 = "[20, 00, 05, 00, FC, 10, 76, 01, 02, 24, 14, DF, 00, 03, 10, 00, 00, 46, 6F, 72, 6D, 73, 2E, 43, 68, 65, 63, 6B, 42, 6F, 78, 2E, 31, 00, 00, 00, 00, 00, 70, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, ]";
 
-    public void testStore() throws IOException {
+	public void testStore() {
 
-        byte[] src = HexRead.readFromString(data1);
-        src = TestcaseRecordInputStream.mergeDataAndSid(EmbeddedObjectRefSubRecord.sid, (short)src.length, src);
+		byte[] src = hr(data1);
+		src = TestcaseRecordInputStream.mergeDataAndSid(EmbeddedObjectRefSubRecord.sid, (short)src.length, src);
 
-        RecordInputStream in = new RecordInputStream(new ByteArrayInputStream(src));
-        in.nextRecord();
+		RecordInputStream in = new RecordInputStream(new ByteArrayInputStream(src));
+		in.nextRecord();
 
-        EmbeddedObjectRefSubRecord record1 = new EmbeddedObjectRefSubRecord(in);
+		EmbeddedObjectRefSubRecord record1 = new EmbeddedObjectRefSubRecord(in);
 
-        byte[] ser = record1.serialize();
+		byte[] ser = record1.serialize();
 
-        RecordInputStream in2 = new RecordInputStream(new ByteArrayInputStream(ser));
-        in2.nextRecord();
-        EmbeddedObjectRefSubRecord record2 = new EmbeddedObjectRefSubRecord(in2);
+		RecordInputStream in2 = new RecordInputStream(new ByteArrayInputStream(ser));
+		in2.nextRecord();
+		EmbeddedObjectRefSubRecord record2 = new EmbeddedObjectRefSubRecord(in2);
 
-        assertTrue(Arrays.equals(src, ser));
-        assertEquals(record1.field_1_stream_id_offset, record2.field_1_stream_id_offset);
-        assertTrue(Arrays.equals(record1.field_2_unknown, record2.field_2_unknown));
-        assertEquals(record1.field_3_unicode_len, record2.field_3_unicode_len);
-        assertEquals(record1.field_4_unicode_flag, record2.field_4_unicode_flag);
-        assertEquals(record1.field_5_ole_classname, record2.field_5_ole_classname);
-        assertEquals(record1.field_6_stream_id, record2.field_6_stream_id);
-        assertTrue(Arrays.equals(record1.remainingBytes, record2.remainingBytes));
-    }
+		assertTrue(Arrays.equals(src, ser));
+		assertEquals(record1.getOLEClassName(), record2.getOLEClassName());
 
-    public void testCreate() throws IOException {
+		byte[] ser2 = record1.serialize();
+		assertTrue(Arrays.equals(ser, ser2));
+	}
+
+	public void testCreate() {
+
+		EmbeddedObjectRefSubRecord record1 = new EmbeddedObjectRefSubRecord();
+
+		byte[] ser = record1.serialize();
+		RecordInputStream in2 = new RecordInputStream(new ByteArrayInputStream(ser));
+		in2.nextRecord();
+		EmbeddedObjectRefSubRecord record2 = new EmbeddedObjectRefSubRecord(in2);
+
+		assertEquals(record1.getOLEClassName(), record2.getOLEClassName());
+		assertEquals(record1.getStreamId(), record2.getStreamId());
+
+		byte[] ser2 = record1.serialize();
+		assertTrue(Arrays.equals(ser, ser2));
+	}
 
 
-        EmbeddedObjectRefSubRecord record1 = new EmbeddedObjectRefSubRecord();
+	/**
+	 * taken from ftPictFmla sub-record in attachment 22645 (offset 0x40AB).
+	 */
+	private static final byte[] data45912 = hr(
+		"09 00 14 00 " +
+		"12 00 0B 00 F8 02 88 04 3B 00 " +
+		"00 00 00 01 00 00 00 01 " +
+		"00 00");
 
-        byte[] ser = record1.serialize();
-        RecordInputStream in2 = new RecordInputStream(new ByteArrayInputStream(ser));
-        in2.nextRecord();
-        EmbeddedObjectRefSubRecord record2 = new EmbeddedObjectRefSubRecord(in2);
+	public void testCameraTool_bug45912() {
+		byte[] data = data45912;
+		RecordInputStream in = new RecordInputStream(new ByteArrayInputStream(data));
+		in.nextRecord();
 
-        assertEquals(record1.field_1_stream_id_offset, record2.field_1_stream_id_offset);
-        assertTrue(Arrays.equals(record1.field_2_unknown, record2.field_2_unknown));
-        assertEquals(record1.field_3_unicode_len, record2.field_3_unicode_len);
-        assertEquals(record1.field_4_unicode_flag, record2.field_4_unicode_flag);
-        assertEquals(record1.field_5_ole_classname, record2.field_5_ole_classname);
-        assertEquals(record1.field_6_stream_id, record2.field_6_stream_id);
-        assertTrue(Arrays.equals(record1.remainingBytes, record2.remainingBytes));
+		EmbeddedObjectRefSubRecord rec = new EmbeddedObjectRefSubRecord(in);
+		byte[] ser2 = rec.serialize();
+		assertTrue(Arrays.equals(data, ser2));
 
-    }
+
+	}
+
+	private static byte[] hr(String string) {
+		return HexRead.readFromString(string);
+	}
+
+	/**
+	 * tests various examples of OLE controls
+	 */
+	public void testVarious() {
+		String[] rawData = {
+			"12 00 0B 00 70 95 0B 05 3B 01 00 36 00 40 00 18 00 19 00 18",
+			"12 00 0B 00 B0 4D 3E 03 3B 00 00 00 00 01 00 00 80 01 C0 00",
+			"0C 00 05 00 60 AF 3B 03 24 FD FF FE C0 FE",
+			"24 00 05 00 40 42 3E 03 02 80 CD B4 04 03 15 00 00 46 6F 72 6D 73 2E 43 6F 6D 6D 61 6E 64 42 75 74 74 6F 6E 2E 31 00 00 00 00 54 00 00 00 00 00 00 00 00 00 00 00",
+			"22 00 05 00 10 4E 3E 03 02 00 4C CC 04 03 12 00 00 46 6F 72 6D 73 2E 53 70 69 6E 42 75 74 74 6F 6E 2E 31 00 54 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00",
+			"20 00 05 00 E0 41 3E 03 02 00 FC 0B 05 03 10 00 00 46 6F 72 6D 73 2E 43 6F 6D 62 6F 42 6F 78 2E 31 00 74 00 00 00 4C 00 00 00 00 00 00 00 00 00 00 00",
+			"24 00 05 00 00 4C AF 03 02 80 E1 93 05 03 14 00 00 46 6F 72 6D 73 2E 4F 70 74 69 6F 6E 42 75 74 74 6F 6E 2E 31 00 C0 00 00 00 70 00 00 00 00 00 00 00 00 00 00 00",
+			"20 00 05 00 E0 A4 28 04 02 80 EA 93 05 03 10 00 00 46 6F 72 6D 73 2E 43 68 65 63 6B 42 6F 78 2E 31 00 30 01 00 00 6C 00 00 00 00 00 00 00 00 00 00 00",
+			"1C 00 05 00 30 40 3E 03 02 00 CC B4 04 03 0D 00 00 46 6F 72 6D 73 2E 4C 61 62 65 6C 2E 31 9C 01 00 00 54 00 00 00 00 00 00 00 00 00 00 00",
+			"1E 00 05 00 B0 A4 28 04 02 00 D0 0A 05 03 0F 00 00 46 6F 72 6D 73 2E 4C 69 73 74 42 6F 78 2E 31 F0 01 00 00 48 00 00 00 00 00 00 00 00 00 00 00",
+			"24 00 05 00 C0 AF 3B 03 02 80 D1 0A 05 03 14 00 00 46 6F 72 6D 73 2E 54 6F 67 67 6C 65 42 75 74 74 6F 6E 2E 31 00 38 02 00 00 6C 00 00 00 00 00 00 00 00 00 00 00",
+			"1E 00 05 00 90 AF 3B 03 02 80 D4 0A 05 03 0F 00 00 46 6F 72 6D 73 2E 54 65 78 74 42 6F 78 2E 31 A4 02 00 00 48 00 00 00 00 00 00 00 00 00 00 00",
+			"24 00 05 00 60 40 3E 03 02 00 D6 0A 05 03 14 00 00 46 6F 72 6D 73 2E 54 6F 67 67 6C 65 42 75 74 74 6F 6E 2E 31 00 EC 02 00 00 6C 00 00 00 00 00 00 00 00 00 00 00",
+			"20 00 05 00 20 4D 3E 03 02 00 D9 0A 05 03 11 00 00 46 6F 72 6D 73 2E 53 63 72 6F 6C 6C 42 61 72 2E 31 58 03 00 00 20 00 00 00 00 00 00 00 00 00 00 00",
+			"20 00 05 00 00 AF 28 04 02 80 31 AC 04 03 10 00 00 53 68 65 6C 6C 2E 45 78 70 6C 6F 72 65 72 2E 32 00 78 03 00 00 AC 00 00 00 00 00 00 00 00 00 00 00",
+		};
+
+		for (int i = 0; i < rawData.length; i++) {
+			confirmRead(hr(rawData[i]), i);
+		}
+	}
+
+	private static void confirmRead(byte[] data, int i) {
+		RecordInputStream in = new TestcaseRecordInputStream(EmbeddedObjectRefSubRecord.sid, (short)data.length, data);
+
+		EmbeddedObjectRefSubRecord rec = new EmbeddedObjectRefSubRecord(in);
+		byte[] ser2 = rec.serialize();
+		byte[] d2 = (byte[]) data.clone(); // remove sid+len for compare
+		System.arraycopy(ser2, 4, d2, 0, d2.length);
+		if (!Arrays.equals(data, d2)) {
+			fail("re-read NQR for case " + i);
+		}
+	}
 }
