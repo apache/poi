@@ -969,7 +969,7 @@ public final class TestBugs extends TestCase {
     public void test44840() {
         HSSFWorkbook wb = openSample("WithCheckBoxes.xls");
 
-        // Take a look at the embeded objects
+        // Take a look at the embedded objects
         List objects = wb.getAllEmbeddedObjects();
         assertEquals(1, objects.size());
 
@@ -980,10 +980,10 @@ public final class TestBugs extends TestCase {
         EmbeddedObjectRefSubRecord rec = obj.findObjectRecord();
         assertNotNull(rec);
 
-        assertEquals(32, rec.field_1_stream_id_offset);
-        assertEquals(0, rec.field_6_stream_id); // WRONG!
-        assertEquals("Forms.CheckBox.1", rec.field_5_ole_classname);
-        assertEquals(12, rec.remainingBytes.length);
+//        assertEquals(32, rec.field_1_stream_id_offset);
+        assertEquals(0, rec.getStreamId().intValue()); // WRONG!
+        assertEquals("Forms.CheckBox.1", rec.getOLEClassName());
+        assertEquals(12, rec.getObjectData().length);
 
         // Doesn't have a directory
         assertFalse(obj.hasDirectoryEntry());
@@ -995,7 +995,7 @@ public final class TestBugs extends TestCase {
             obj.getDirectory();
             fail();
         } catch(FileNotFoundException e) {
-            // expectd during successful test
+            // expected during successful test
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
