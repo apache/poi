@@ -203,7 +203,7 @@ final class EvaluationCache {
 			CellLocation clB = (CellLocation) b;
 			
 			int cmp;
-			cmp = System.identityHashCode(clA.getBook()) - System.identityHashCode(clB.getBook());
+			cmp = clA.getBookIndex() - clB.getBookIndex();
 			if (cmp != 0) {
 				return cmp;
 			}

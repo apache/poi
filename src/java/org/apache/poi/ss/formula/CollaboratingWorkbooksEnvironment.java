@@ -97,7 +97,7 @@ public final class CollaboratingWorkbooksEnvironment {
 		EvaluationCache cache = new EvaluationCache(evalListener);
 		
 		for(int i=0; i<nItems; i++) {
-			evaluators[i].attachToEnvironment(env, cache);
+			evaluators[i].attachToEnvironment(env, cache, i);
 		}
 		
 	}
