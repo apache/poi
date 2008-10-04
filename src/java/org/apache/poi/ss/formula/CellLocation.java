@@ -25,24 +25,24 @@ import org.apache.poi.hssf.util.CellReference;
 final class CellLocation {
 	public static final CellLocation[] EMPTY_ARRAY = { };
 	
-	private final EvaluationWorkbook _book;
+	private final int _bookIx;
 	private final int _sheetIndex;
 	private final int _rowIndex;
 	private final int _columnIndex;
 	private final int _hashCode;
 
-	public CellLocation(EvaluationWorkbook book, int sheetIndex, int rowIndex, int columnIndex) {
+	public CellLocation(int bookIx, int sheetIndex, int rowIndex, int columnIndex) {
 		if (sheetIndex < 0) {
 			throw new IllegalArgumentException("sheetIndex must not be negative");
 		}
-		_book = book;
+		_bookIx = bookIx;
 		_sheetIndex = sheetIndex;
 		_rowIndex = rowIndex;
 		_columnIndex = columnIndex;
-		_hashCode = System.identityHashCode(book) + sheetIndex + 17 * (rowIndex + 17 * columnIndex);
+		_hashCode = _bookIx + 17 * (sheetIndex + 17 * (rowIndex + 17 * columnIndex));
 	}
-	public Object getBook() {
-		return _book;
+	public int getBookIndex() {
+		return _bookIx;
 	}
 	public int getSheetIndex() {
 		return _sheetIndex;
@@ -65,7 +65,7 @@ final class CellLocation {
 		if (getSheetIndex() != other.getSheetIndex()) {
 			return false;
 		}
-		if (getBook() != other.getBook()) {
+		if (getBookIndex() != other.getBookIndex()) {
 			return false;
 		}
 		return true;
