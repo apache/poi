@@ -66,9 +66,9 @@ import org.openxml4j.opc.PackageRelationship;
  */
 public class StylesTable extends POIXMLDocumentPart implements StylesSource, XSSFModel {
 	private final Hashtable<Long,String> numberFormats = new Hashtable<Long,String>();
-	private final List<CTFont> fonts = new ArrayList<CTFont>();
-	private final List<CTFill> fills = new LinkedList<CTFill>();
-	private final List<CTBorder> borders = new LinkedList<CTBorder>();
+	private final List<XSSFFont> fonts = new ArrayList<XSSFFont>();
+	private final List<XSSFCellFill> fills = new ArrayList<XSSFCellFill>();
+	private final List<XSSFCellBorder> borders = new ArrayList<XSSFCellBorder>();
 	private final List<CTXf> styleXfs = new LinkedList<CTXf>();
 	private final List<CTXf> xfs = new LinkedList<CTXf>();
 
@@ -122,17 +122,21 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource, XSS
 			for (CTNumFmt nfmt : doc.getStyleSheet().getNumFmts().getNumFmtArray()) {
 				numberFormats.put(nfmt.getNumFmtId(), nfmt.getFormatCode());
 			}
-			if(doc.getStyleSheet().getFonts() != null)
-			for (CTFont font : doc.getStyleSheet().getFonts().getFontArray()) {
-				fonts.add(font);
-			}
+			if(doc.getStyleSheet().getFonts() != null){
+                int idx = 0;
+                for (CTFont font : doc.getStyleSheet().getFonts().getFontArray()) {
+                    XSSFFont f = new XSSFFont(font, idx);
+                    fonts.add(f);
+                    idx++;
+                }
+            }
 			if(doc.getStyleSheet().getFills() != null)
 			for (CTFill fill : doc.getStyleSheet().getFills().getFillArray()) {
-				fills.add(fill);
+				fills.add(new XSSFCellFill(fill));
 			}
 			if(doc.getStyleSheet().getBorders() != null)
 			for (CTBorder border : doc.getStyleSheet().getBorders().getBorderArray()) {
-				borders.add(border);
+				borders.add(new XSSFCellBorder(border));
 			}
 			if(doc.getStyleSheet().getCellXfs() != null)
 			for (CTXf xf : doc.getStyleSheet().getCellXfs().getXfArray()) {
@@ -181,12 +185,17 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource, XSS
 		return newKey;
 	}
 
-	public Font getFontAt(long idx) {
-		return new XSSFFont(fonts.get((int) idx));
+	public XSSFFont getFontAt(long idx) {
+		return fonts.get((int)idx);
 	}
 
-	public synchronized long putFont(Font font) {
-		return putFont((XSSFFont)font, fonts);
+	public long putFont(Font font) {
+        int idx = fonts.indexOf(font);
+        if (idx != -1) {
+            return idx;
+        }
+        fonts.add((XSSFFont)font);
+        return fonts.size() - 1;
 	}
 
 	public XSSFCellStyle getStyleAt(long idx) {
@@ -209,24 +218,44 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource, XSS
 		return xfs.indexOf(mainXF);
 	}
 
-	public XSSFCellBorder getBorderAt(long idx) {
-		return new XSSFCellBorder(borders.get((int)idx));
-	}
-	public long putBorder(XSSFCellBorder border) {
-		return putBorder(border, borders);
+	public XSSFCellBorder getBorderAt(int idx) {
+		return borders.get(idx);
 	}
 
-	public XSSFCellFill getFillAt(long idx) {
-		return new XSSFCellFill(fills.get((int) idx));
+    public int putBorder(XSSFCellBorder border) {
+        int idx = borders.indexOf(border);
+        if (idx != -1) {
+            return idx;
+        }
+        borders.add(border);
+        return borders.size() - 1;
 	}
-	public long putFill(XSSFCellFill fill) {
-		return fill.putFill(fills);
+
+    public List<XSSFCellBorder> getBorders(){
+        return borders;
+    }
+
+	public XSSFCellFill getFillAt(int idx) {
+		return fills.get(idx);
+	}
+
+    public List<XSSFCellFill> getFills(){
+        return fills;
+    }
+
+    public int putFill(XSSFCellFill fill) {
+        int idx = fills.indexOf(fill);
+        if (idx != -1) {
+            return idx;
+        }
+        fills.add(fill);
+        return fills.size() - 1;
 	}
 
 	public CTXf getCellXfAt(long idx) {
 		return xfs.get((int) idx);
 	}
-	public long putCellXf(CTXf cellXf) {
+	public int putCellXf(CTXf cellXf) {
 		xfs.add(cellXf);
 		return xfs.size();
 	}
@@ -234,7 +263,7 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource, XSS
 	public CTXf getCellStyleXfAt(long idx) {
 		return styleXfs.get((int) idx);
 	}
-	public long putCellStyleXf(CTXf cellStyleXf) {
+	public int putCellStyleXf(CTXf cellStyleXf) {
 		styleXfs.add(cellStyleXf);
 		return styleXfs.size();
 	}
@@ -323,24 +352,32 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource, XSS
 		}
 		doc.getStyleSheet().setNumFmts(formats);
 
+        int idx = 0;
 		// Fonts
 		CTFonts ctFonts = CTFonts.Factory.newInstance();
 		ctFonts.setCount(fonts.size());
-		ctFonts.setFontArray(
-				fonts.toArray(new CTFont[fonts.size()])
-		);
+        CTFont[] ctfnt = new CTFont[fonts.size()];
+        idx = 0;
+        for(XSSFFont f : fonts) ctfnt[idx++] = f.getCTFont();
+        ctFonts.setFontArray(ctfnt);
 		doc.getStyleSheet().setFonts(ctFonts);
 
 		// Fills
 		CTFills ctFills = CTFills.Factory.newInstance();
 		ctFills.setCount(fills.size());
-		ctFills.setFillArray(fills.toArray(new CTFill[fills.size()]));
+        CTFill[] ctf = new CTFill[fills.size()];
+        idx = 0;
+        for(XSSFCellFill f : fills) ctf[idx++] = f.getCTFill();
+        ctFills.setFillArray(ctf);
 		doc.getStyleSheet().setFills(ctFills);
 
 		// Borders
 		CTBorders ctBorders = CTBorders.Factory.newInstance();
 		ctBorders.setCount(borders.size());
-		ctBorders.setBorderArray(borders.toArray(new CTBorder[borders.size()]));
+        CTBorder[] ctb = new CTBorder[borders.size()];
+        idx = 0;
+        for(XSSFCellBorder b : borders) ctb[idx++] = b.getCTBorder();
+		ctBorders.setBorderArray(ctb);
 		doc.getStyleSheet().setBorders(ctBorders);
 
 		// Xfs
@@ -384,25 +421,17 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource, XSS
         out.close();
     }
 
-	private long putBorder(XSSFCellBorder border, List<CTBorder> borders) {
-		return border.putBorder((LinkedList<CTBorder>) borders); // TODO - use List instead of LinkedList
-	}
-
-	private long putFont(XSSFFont font, List<CTFont> fonts) {
-		return font.putFont((ArrayList<CTFont>) fonts); // TODO - use List instead of ArrayList
-	}
-
 	private void initialize() {
 		//CTFont ctFont = createDefaultFont();
 		XSSFFont xssfFont = createDefaultFont();
-		fonts.add(xssfFont.getCTFont());
+		fonts.add(xssfFont);
 
 		CTFill[] ctFill = createDefaultFills();
-		fills.add(ctFill[0]);
-		fills.add(ctFill[1]);
+		fills.add(new XSSFCellFill(ctFill[0]));
+		fills.add(new XSSFCellFill(ctFill[1]));
 
 		CTBorder ctBorder = createDefaultBorder();
-		borders.add(ctBorder);
+		borders.add(new XSSFCellBorder(ctBorder));
 
 		CTXf styleXf = createDefaultXf();
 		styleXfs.add(styleXf);
@@ -439,7 +468,7 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource, XSS
 
 	private XSSFFont createDefaultFont() {
 		CTFont ctFont = CTFont.Factory.newInstance();
-		XSSFFont xssfFont=new XSSFFont(ctFont);
+		XSSFFont xssfFont=new XSSFFont(ctFont, 0);
 		xssfFont.setFontHeightInPoints(XSSFFont.DEFAULT_FONT_SIZE);
 		xssfFont.setColor(XSSFFont.DEFAULT_FONT_COLOR);//setTheme
 		xssfFont.setFontName(XSSFFont.DEFAULT_FONT_NAME);

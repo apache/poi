@@ -39,6 +39,11 @@ public class XSSFColor {
         this.ctColor = CTColor.Factory.newInstance();
     }
 
+    public XSSFColor(java.awt.Color clr) {
+        this();
+        ctColor.setRgb(new byte[]{(byte)clr.getRed(), (byte)clr.getGreen(), (byte)clr.getBlue()});
+    }
+
     /**
      * A boolean value indicating the ctColor is automatic and system ctColor dependent.
      */
@@ -56,8 +61,8 @@ public class XSSFColor {
     /**
      * Indexed ctColor value. Only used for backwards compatibility. References a ctColor in indexedColors.
      */
-    public int getIndexed() {
-		return (int)ctColor.getIndexed();
+    public short getIndexed() {
+		return (short)ctColor.getIndexed();
 	}
 	
     /**
@@ -195,4 +200,16 @@ public class XSSFColor {
     public CTColor getCTColor(){
         return ctColor;
     }
+
+    public int hashCode(){
+        return ctColor.toString().hashCode();
+    }
+
+    public boolean equals(Object o){
+        if(!(o instanceof XSSFColor)) return false;
+
+        XSSFColor cf = (XSSFColor)o;
+        return ctColor.toString().equals(cf.getCTColor().toString());
+    }
+
 }

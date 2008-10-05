@@ -30,7 +30,6 @@ import org.apache.poi.ss.usermodel.Palette;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.StylesSource;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.util.POILogFactory;
@@ -77,7 +76,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * A collection of shared objects used for styling content,
      * e.g. fonts, cell styles, colors, etc.
      */
-    private StylesSource stylesSource;
+    private StylesTable stylesSource;
 
     /**
      * Used to keep track of the data formatter so that all
@@ -160,7 +159,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             HashMap<String, XSSFSheet> shIdMap = new HashMap<String, XSSFSheet>();
             for(POIXMLDocumentPart p : getRelations()){
                 if(p instanceof SharedStringsTable) sharedStringSource = (SharedStringsTable)p;
-                else if(p instanceof StylesSource) stylesSource = (StylesSource)p;
+                else if(p instanceof StylesTable) stylesSource = (StylesTable)p;
                 else if (p instanceof XSSFSheet) {
                     shIdMap.put(p.getPackageRelationship().getId(), (XSSFSheet)p);
                 }
@@ -300,9 +299,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         xf.setFillId(0);
         xf.setBorderId(0);
         xf.setXfId(0);
-        int xfSize=((StylesTable)stylesSource)._getStyleXfsSize();
-        long indexXf=((StylesTable)stylesSource).putCellXf(xf);
-        XSSFCellStyle style = new XSSFCellStyle(new Long(indexXf-1).intValue(), xfSize-1, (StylesTable)stylesSource);
+        int xfSize=(stylesSource)._getStyleXfsSize();
+        long indexXf=(stylesSource).putCellXf(xf);
+        XSSFCellStyle style = new XSSFCellStyle(new Long(indexXf-1).intValue(), xfSize-1, stylesSource);
         return style;
     }
 
@@ -324,8 +323,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @return new font object
      */
     public XSSFFont createFont() {
-        XSSFFont font= new XSSFFont();
-        stylesSource.putFont(font);
+        XSSFFont font = new XSSFFont();
+        font.putFont(stylesSource);
         return font;
     }
 
@@ -394,7 +393,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * Finds a font that matches the one with the supplied attributes
      */
     public XSSFFont findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
-        short fontNum=getNumberOfFonts();
+        short fontNum = getNumberOfFonts();
         for (short i = 0; i < fontNum; i++) {
             XSSFFont xssfFont = getFontAt(i);
 
@@ -471,7 +470,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
 
     public XSSFCellStyle getCellStyleAt(short idx) {
-        return (XSSFCellStyle)stylesSource.getStyleAt(idx);
+        return stylesSource.getStyleAt(idx);
     }
 
     public Palette getCustomPalette() {
@@ -536,7 +535,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @return count of cell styles
      */
     public short getNumCellStyles() {
-        return (short) ((StylesTable)stylesSource).getNumCellStyles();
+        return (short) (stylesSource).getNumCellStyles();
     }
 
     /**
@@ -545,7 +544,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @return number of fonts
      */
     public short getNumberOfFonts() {
-        return (short)((StylesTable)stylesSource).getNumberOfFonts();
+        return (short)(stylesSource).getNumberOfFonts();
     }
 
     /**
@@ -921,11 +920,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * Return a object representing a collection of shared objects used for styling content,
      * e.g. fonts, cell styles, colors, etc.
      */
-    public StylesSource getStylesSource() {
+    public StylesTable getStylesSource() {
         return this.stylesSource;
     }
     //TODO do we really need setStylesSource?
-    protected void setStylesSource(StylesSource stylesSource) {
+    protected void setStylesSource(StylesTable stylesSource) {
         this.stylesSource = stylesSource;
     }
 

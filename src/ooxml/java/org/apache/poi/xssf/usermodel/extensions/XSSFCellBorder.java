@@ -22,76 +22,96 @@ import java.util.LinkedList;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
+import org.apache.poi.xssf.usermodel.BorderStyle;
 
 
 public class XSSFCellBorder {
-	private CTBorder border;
-	
-	/**
-	 * Creates a Cell Border from the supplied XML definition
-	 */
-	public XSSFCellBorder(CTBorder border) {
-		this.border = border;
-	}
-	/**
-	 * Creates a new, empty Cell Border, on the
-	 *  given Styles Table
-	 */
-	public XSSFCellBorder() {
-		border = CTBorder.Factory.newInstance();
-	}
-	
-	public static enum BorderSide {
-		TOP, RIGHT, BOTTOM, LEFT
-	}
-	
-	public long putBorder(LinkedList<CTBorder> borders) {
-		if(borders.contains(border)) {
-			return borders.indexOf(border);
-		}
-		borders.add(border);
-		return borders.size() - 1;
-	}
-	
-	public STBorderStyle.Enum getBorderStyle(BorderSide side) {
-		return getBorder(side).getStyle();
-	}
-	
-	public void setBorderStyle(BorderSide side, STBorderStyle.Enum style) {
-		getBorder(side).setStyle(style);
-	}
-	
-	public XSSFColor getBorderColor(BorderSide side) {
-		CTBorderPr borderPr = getBorder(side);
-		if (!borderPr.isSetColor()) {
-			borderPr.addNewColor();
-		}
-		return new XSSFColor(getBorder(side).getColor());
-	}
 
-	public void setBorderColor(BorderSide side, XSSFColor color) {
-		getBorder(side).setColor(color.getCTColor());
-	}
-	
-	private CTBorderPr getBorder(BorderSide side) {
-		switch (side) {
-		case TOP: {
-		    CTBorderPr borderPr = border.isSetTop() ? border.getTop() : border.addNewTop();
-		    return borderPr;
-		}
-		case RIGHT: {
-			    CTBorderPr borderPr = border.isSetRight() ? border.getRight() : border.addNewRight();
-			    return borderPr;
-		}
-		case BOTTOM:{
-			    CTBorderPr borderPr = border.isSetBottom() ? border.getBottom() : border.addNewBottom();
-			    return borderPr;
-		}
-		case LEFT:{
-			    CTBorderPr borderPr = border.isSetLeft() ? border.getLeft() : border.addNewLeft();
-			    return borderPr;
-			}
-		default: throw new IllegalArgumentException("No suitable side specified for the border");
-		}
-	}
+    private CTBorder border;
+
+    /**
+     * Creates a Cell Border from the supplied XML definition
+     */
+    public XSSFCellBorder(CTBorder border) {
+        this.border = border;
+    }
+    /**
+     * Creates a new, empty Cell Border, on the
+     *  given Styles Table
+     */
+    public XSSFCellBorder() {
+        border = CTBorder.Factory.newInstance();
+    }
+
+    public static enum BorderSide {
+        TOP, RIGHT, BOTTOM, LEFT
+    }
+
+    public CTBorder getCTBorder() {
+        return border;
+    }
+
+    public BorderStyle getBorderStyle(BorderSide side) {
+        CTBorderPr ctBorder = getBorder(side);
+        STBorderStyle.Enum border = ctBorder == null ? STBorderStyle.NONE : ctBorder.getStyle();
+        return BorderStyle.values()[border.intValue() - 1];
+    }
+
+    public void setBorderStyle(BorderSide side, BorderStyle style) {
+        getBorder(side, true).setStyle(STBorderStyle.Enum.forInt(style.ordinal() + 1));
+    }
+
+    public XSSFColor getBorderColor(BorderSide side) {
+        CTBorderPr borderPr = getBorder(side);
+        return borderPr != null && borderPr.isSetColor() ?
+                new XSSFColor(borderPr.getColor()) : null;
+    }
+
+    public void setBorderColor(BorderSide side, XSSFColor color) {
+        CTBorderPr borderPr = getBorder(side, true);
+        if(color == null) borderPr.unsetColor();
+        else borderPr.setColor(color.getCTColor());
+    }
+
+    private CTBorderPr getBorder(BorderSide side) {
+        return getBorder(side, false);
+    }
+
+    private CTBorderPr getBorder(BorderSide side, boolean ensure) {
+        CTBorderPr borderPr;
+        switch (side) {
+            case TOP:
+                borderPr = border.getTop();
+                if(ensure && borderPr == null) borderPr = border.addNewTop();
+                break;
+            case RIGHT:
+                borderPr = border.getRight();
+                if(ensure && borderPr == null) borderPr = border.addNewRight();
+                break;
+            case BOTTOM:
+                borderPr = border.getBottom();
+                if(ensure && borderPr == null) borderPr = border.addNewBottom();
+                break;
+            case LEFT:
+                borderPr = border.getLeft();
+                if(ensure && borderPr == null) borderPr = border.addNewLeft();
+                break;
+            default:
+                throw new IllegalArgumentException("No suitable side specified for the border");
+        }
+        return borderPr;
+    }
+
+
+    public int hashCode(){
+        return border.toString().hashCode();
+    }
+
+    public boolean equals(Object o){
+        if(!(o instanceof XSSFCellBorder)) return false;
+
+        XSSFCellBorder cf = (XSSFCellBorder)o;
+        return border.toString().equals(cf.getCTBorder().toString());
+    }
+
 }

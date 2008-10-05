@@ -255,9 +255,11 @@ public final class TestXSSFFont extends TestCase{
 		s1 = wb.getSheetAt(0);
 
 		assertEquals(2, wb.getNumberOfFonts());
-		assertNotNull(s1.getRow(0).getCell(0).getCellStyle().getFont(wb));
-		assertEquals(IndexedColors.YELLOW.getIndex(), s1.getRow(0).getCell(0).getCellStyle().getFont(wb).getColor());
-		assertEquals("Courier", s1.getRow(0).getCell(0).getCellStyle().getFont(wb).getFontName());
+        short idx = s1.getRow(0).getCell(0).getCellStyle().getFontIndex();
+        Font fnt = wb.getFontAt(idx);
+        assertNotNull(fnt);
+		assertEquals(IndexedColors.YELLOW.getIndex(), fnt.getColor());
+		assertEquals("Courier", fnt.getFontName());
 
 		// Now add an orphaned one
 		XSSFFont font2 = wb.createFont();
@@ -342,4 +344,92 @@ public final class TestXSSFFont extends TestCase{
 
 		XSSFTestDataSamples.writeOutAndReadBack(workbook);
 	}
+
+    /**
+     * Test that fonts get added properly
+     * 
+     * @see org.apache.poi.hssf.usermodel.TestBugs#test45338()
+     */
+    public void test45338() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        assertEquals(1, wb.getNumberOfFonts());
+
+        XSSFSheet s = wb.createSheet();
+        s.createRow(0);
+        s.createRow(1);
+        XSSFCell c1 = s.getRow(0).createCell(0);
+        XSSFCell c2 = s.getRow(1).createCell(0);
+
+        assertEquals(1, wb.getNumberOfFonts());
+
+        XSSFFont f1 = wb.getFontAt((short)0);
+        assertEquals(XSSFFont.BOLDWEIGHT_NORMAL, f1.getBoldweight());
+
+        // Check that asking for the same font
+        //  multiple times gives you the same thing.
+        // Otherwise, our tests wouldn't work!
+        assertEquals(
+                wb.getFontAt((short)0),
+                wb.getFontAt((short)0)
+        );
+
+        // Look for a new font we have
+        //  yet to add
+        assertNull(
+            wb.findFont(
+                (short)11, (short)123, (short)22,
+                "Thingy", false, true, (short)2, (byte)2
+            )
+        );
+
+        XSSFFont nf = wb.createFont();
+        assertEquals(2, wb.getNumberOfFonts());
+
+        assertEquals(1, nf.getIndex());
+        assertEquals(nf, wb.getFontAt((short)1));
+
+        nf.setBoldweight((short)11);
+        nf.setColor((short)123);
+        nf.setFontHeight((short)22);
+        nf.setFontName("Thingy");
+        nf.setItalic(false);
+        nf.setStrikeout(true);
+        nf.setTypeOffset((short)2);
+        nf.setUnderline((byte)2);
+
+        assertEquals(2, wb.getNumberOfFonts());
+        assertEquals(nf, wb.getFontAt((short)1));
+
+        assertEquals(
+                wb.getFontAt((short)1),
+                wb.getFontAt((short)1)
+        );
+        assertTrue(
+                wb.getFontAt((short)0)
+                !=
+                wb.getFontAt((short)1)
+        );
+
+        // Find it now
+        assertNotNull(
+            wb.findFont(
+                (short)11, (short)123, (short)22,
+                "Thingy", false, true, (short)2, (byte)2
+            )
+        );
+        assertEquals(
+            1,
+            wb.findFont(
+                   (short)11, (short)123, (short)22,
+                   "Thingy", false, true, (short)2, (byte)2
+               ).getIndex()
+        );
+        assertEquals(nf,
+               wb.findFont(
+                   (short)11, (short)123, (short)22,
+                   "Thingy", false, true, (short)2, (byte)2
+               )
+        );
+    }
+
 }

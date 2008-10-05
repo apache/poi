@@ -32,34 +32,72 @@ import java.io.FileOutputStream;
 public class WorkingWithFonts {
     public static void main(String[] args) throws Exception {
         Workbook wb = new XSSFWorkbook();
-        Sheet sheet = wb.createSheet("new sheet");
+        Sheet sheet = wb.createSheet("Fonts");
 
-        // Create a row and put some cells in it. Rows are 0 based.
-        Row row = sheet.createRow((short) 1);
+        Font font0 = wb.createFont();
+        font0.setColor(IndexedColors.BROWN.getIndex());
+        CellStyle style0 = wb.createCellStyle();
+        style0.setFont(font0);
 
-        // Create a new font and alter it.
-        Font font = wb.createFont();
-        font.setFontHeightInPoints((short)24);
-        font.setFontName("Courier New");
+        Font font1 = wb.createFont();
+        font1.setFontHeightInPoints((short)14);
+        font1.setFontName("Courier New");
+        font1.setColor(IndexedColors.RED.getIndex());
+        CellStyle style1 = wb.createCellStyle();
+        style1.setFont(font1);
 
-        font.setColor(IndexedColors.RED.getIndex());
+        Font font2 = wb.createFont();
+        font2.setFontHeightInPoints((short)16);
+        font2.setFontName("Arial");
+        font2.setColor(IndexedColors.GREEN.getIndex());
+        CellStyle style2 = wb.createCellStyle();
+        style2.setFont(font2);
 
-        font.setItalic(true);
-        font.setStrikeout(true);
+        Font font3 = wb.createFont();
+        font3.setFontHeightInPoints((short)18);
+        font3.setFontName("Times New Roman");
+        font3.setColor(IndexedColors.LAVENDER.getIndex());
+        CellStyle style3 = wb.createCellStyle();
+        style3.setFont(font3);
 
-        // Fonts are set into a style so create a new one to use.
-        CellStyle style = wb.createCellStyle();
-        style.setFont(font);
+        Font font4 = wb.createFont();
+        font4.setFontHeightInPoints((short)18);
+        font4.setFontName("Wingdings");
+        font4.setColor(IndexedColors.GOLD.getIndex());
+        CellStyle style4 = wb.createCellStyle();
+        style4.setFont(font4);
 
-        // Create a cell and put a value in it.
-        Cell cell = row.createCell((short) 1);
-        cell.setCellValue(1974);
-        //cell.setCellValue(new XSSFRichTextString("This is a test of fonts"));
-        cell.setCellStyle(style);
+        Font font5 = wb.createFont();
+        font5.setFontName("Symbol");
+        CellStyle style5 = wb.createCellStyle();
+        style5.setFont(font5);
+
+        Cell cell0 = sheet.createRow(0).createCell(1);
+        cell0.setCellValue("Default");
+        cell0.setCellStyle(style0);
+
+        Cell cell1 = sheet.createRow(1).createCell(1);
+        cell1.setCellValue("Courier");
+        cell1.setCellStyle(style1);
+
+        Cell cell2 = sheet.createRow(2).createCell(1);
+        cell2.setCellValue("Arial");
+        cell2.setCellStyle(style2);
+
+        Cell cell3 = sheet.createRow(3).createCell(1);
+        cell3.setCellValue("Times New Roman");
+        cell3.setCellStyle(style3);
+
+        Cell cell4 = sheet.createRow(4).createCell(1);
+        cell4.setCellValue("Wingdings");
+        cell4.setCellStyle(style4);
+
+        Cell cell5 = sheet.createRow(5).createCell(1);
+        cell5.setCellValue("Symbol");
+        cell5.setCellStyle(style5);
 
         // Write the output to a file
-
-        FileOutputStream fileOut = new FileOutputStream("fonts.xlsx");
+        FileOutputStream fileOut = new FileOutputStream("xssf-fonts.xlsx");
         wb.write(fileOut);
         fileOut.close();
     }
