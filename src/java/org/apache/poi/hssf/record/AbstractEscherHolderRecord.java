@@ -36,9 +36,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Glen Stampoultzis (glens at apache.org)
  * @author Michael Zalewski (zalewski at optonline.net)
  */
-public abstract class AbstractEscherHolderRecord
-    extends Record
-{
+public abstract class AbstractEscherHolderRecord extends Record {
     private static boolean DESERIALISE;
     static {
     try {
@@ -133,34 +131,6 @@ public abstract class AbstractEscherHolderRecord
         return getRecordSize();
     }
 
-//    public int serialize(int offset, byte[] data)
-//    {
-//        if (escherRecords.size() == 0 && rawData != null)
-//        {
-//            System.arraycopy( rawData, 0, data, offset, rawData.length);
-//            return rawData.length;
-//        }
-//        else
-//        {
-//            collapseShapeInformation();
-//
-//            LittleEndian.putShort(data, 0 + offset, getSid());
-//            LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-//
-//            int pos = offset + 4;
-//            for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
-//            {
-//                EscherRecord r = (EscherRecord) iterator.next();
-//                pos += r.serialize(pos, data, new NullEscherSerializationListener() );
-//            }
-//
-//            return getRecordSize();
-//        }
-//    }
-
-    /**
-     * Size of record (including 4 byte header)
-     */
     public int getRecordSize()
     {
         if (escherRecords.size() == 0 && rawData != null)
@@ -323,9 +293,4 @@ public abstract class AbstractEscherHolderRecord
     {
         convertToEscherRecords(0, rawData.length, rawData );
     }
-
-}  // END OF CLASS
-
-
-
-
+}

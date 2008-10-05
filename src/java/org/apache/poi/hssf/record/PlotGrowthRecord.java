@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,24 +14,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
- * The plot growth record specifies the scaling factors used when a font is scaled.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * The plot growth record specifies the scaling factors used when a font is scaled.<p/>
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class PlotGrowthRecord
-    extends Record
-{
+public final class PlotGrowthRecord extends Record {
     public final static short      sid                             = 0x1064;
     private  int        field_1_horizontalScale;
     private  int        field_2_verticalScale;
@@ -81,9 +74,6 @@ public class PlotGrowthRecord
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 4 + 4;
@@ -136,10 +126,4 @@ public class PlotGrowthRecord
     {
         this.field_2_verticalScale = field_2_verticalScale;
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

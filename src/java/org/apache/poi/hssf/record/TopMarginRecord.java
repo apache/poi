@@ -20,13 +20,11 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.*;
 
 /**
- * Record for the top margin.
- * NOTE: This source was automatically generated.
- *
+ * Record for the top margin.<p/>
+ * 
  * @author Shawn Laubach (slaubach at apache dot org)
  */
-public class TopMarginRecord extends Record implements Margin
-{
+public final class TopMarginRecord extends Record implements Margin {
     public final static short sid = 0x28;
     private double field_1_margin;
 
@@ -57,9 +55,6 @@ public class TopMarginRecord extends Record implements Margin
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()    {        return 4 + 8;    }
 
     public short getSid()    {        return sid;    }
@@ -81,4 +76,4 @@ public class TopMarginRecord extends Record implements Margin
         rec.field_1_margin = this.field_1_margin;
         return rec;
     }
-}  // END OF CLAS
+}  // END OF CLA

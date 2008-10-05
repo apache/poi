@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,24 +14,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
- * The font basis record stores various font metrics.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * The font basis record stores various font metrics.<p/>
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class FontBasisRecord
-    extends Record
-{
+public final class FontBasisRecord extends Record {
     public final static short      sid                             = 0x1060;
     private  short      field_1_xBasis;
     private  short      field_2_yBasis;
@@ -101,9 +94,6 @@ public class FontBasisRecord
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 2 + 2 + 2 + 2 + 2;
@@ -207,10 +197,4 @@ public class FontBasisRecord
     {
         this.field_5_indexToFontTable = field_5_indexToFontTable;
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

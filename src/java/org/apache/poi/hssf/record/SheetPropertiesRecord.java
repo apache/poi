@@ -23,10 +23,8 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Describes a chart sheet properties record.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * Describes a chart sheet properties record.<p/>
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class SheetPropertiesRecord extends Record {
@@ -92,9 +90,6 @@ public final class SheetPropertiesRecord extends Record {
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 2 + 1;
