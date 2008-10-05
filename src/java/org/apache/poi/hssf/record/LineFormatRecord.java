@@ -23,10 +23,8 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Describes a line format record.  The line format record controls how a line on a chart appears.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * Describes a line format record.  The line format record controls how a line on a chart appears.<p/>
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class LineFormatRecord extends Record {
@@ -120,9 +118,6 @@ public final class LineFormatRecord extends Record {
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 4 + 2 + 2 + 2 + 2;

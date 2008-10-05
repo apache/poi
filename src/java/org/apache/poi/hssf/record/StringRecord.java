@@ -68,9 +68,6 @@ public class StringRecord extends Record {
         return isUnCompressedUnicode() ? field_1_string_length * 2 : field_1_string_length;
     }
 
-    /**
-     * gives the current serialized size of the record. Should include the sid and reclength (4 bytes).
-     */
     public int getRecordSize()
     {
         return 4 + 2 + 1 + getStringByteLength();

@@ -20,19 +20,18 @@ package org.apache.poi.hssf.record;
 /**
  * The margin interface is a parent used to define left, right, top and bottom margins.
  * This allows much of the code to be generic when it comes to handling margins.
- * NOTE: This source wass automatically generated.
  *
  * @author Shawn Laubach (slaubach at apache dot org)
  */
-public interface Margin
-{
-    /**
-     * Get the margin field for the Margin.
-     */
-    public double getMargin();
+public interface Margin {
+	// TODO - introduce MarginBaseRecord
+	/**
+	 * Get the margin field for the Margin.
+	 */
+	public double getMargin();
 
-    /**
-     * Set the margin field for the Margin.
-     */
-    public void setMargin( double field_1_margin );
-}  // END OF CLASS
+	/**
+	 * Set the margin field for the Margin.
+	 */
+	public void setMargin(double field_1_margin);
+}

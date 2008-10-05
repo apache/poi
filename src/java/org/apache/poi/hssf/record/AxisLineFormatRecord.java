@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,24 +14,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
- * The axis line format record defines the axis type details.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * The axis line format record defines the axis type details.<p/>
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class AxisLineFormatRecord
-    extends Record
-{
+public final class AxisLineFormatRecord extends Record {
     public final static short      sid                             = 0x1021;
     private  short      field_1_axisType;
     public final static short       AXIS_TYPE_AXIS_LINE            = 0;
@@ -77,9 +70,6 @@ public class AxisLineFormatRecord
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 2;
@@ -128,10 +118,4 @@ public class AxisLineFormatRecord
     {
         this.field_1_axisType = field_1_axisType;
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

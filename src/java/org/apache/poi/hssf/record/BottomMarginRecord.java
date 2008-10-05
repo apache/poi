@@ -23,14 +23,11 @@ import org.apache.poi.util.*;
 
 
 /**
- * Record for the bottom margin.
- * NOTE: This source was automatically generated.
- *
+ * Record for the bottom margin.<p/>
+ * 
  * @author Shawn Laubach (slaubach at apache dot org)
  */
-public class BottomMarginRecord
-        extends Record implements Margin
-{
+public final class BottomMarginRecord extends Record implements Margin {
     public final static short sid = 0x29;
     private double field_1_margin;
 
@@ -62,9 +59,6 @@ public class BottomMarginRecord
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4 + 8;
@@ -98,4 +92,4 @@ public class BottomMarginRecord
         return rec;
     }
 
-}  // END OF CLAS
+}  // END OF CLA

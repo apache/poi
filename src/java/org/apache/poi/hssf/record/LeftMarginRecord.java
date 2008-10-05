@@ -17,16 +17,16 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.*;
+import org.apache.poi.util.LittleEndian;
 
 /**
- * Record for the left margin.
- * NOTE: This source was automatically generated.
+ * Record for the left margin.<p/>
+ * 
  * @author Shawn Laubach (slaubach at apache dot org)
  */
 public class LeftMarginRecord extends Record implements Margin
 {
-    public final static short sid = 0x26;
+    public final static short sid = 0x0026;
     private double field_1_margin;
 
     public LeftMarginRecord()    {    }
@@ -53,9 +53,6 @@ public class LeftMarginRecord extends Record implements Margin
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()    {
         return 4 + 8;
     }
@@ -85,4 +82,4 @@ public class LeftMarginRecord extends Record implements Margin
         rec.field_1_margin = this.field_1_margin;
         return rec;
     }
-}  // END OF CLAS
+}  // END OF CLA

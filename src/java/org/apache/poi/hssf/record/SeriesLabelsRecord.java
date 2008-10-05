@@ -23,10 +23,8 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * The series label record defines the type of label associated with the data format record.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * The series label record defines the type of label associated with the data format record.<p/>
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class SeriesLabelsRecord extends Record {
@@ -83,9 +81,6 @@ public final class SeriesLabelsRecord extends Record {
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 2;

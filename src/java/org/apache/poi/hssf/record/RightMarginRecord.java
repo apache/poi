@@ -15,16 +15,16 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.*;
+import org.apache.poi.util.LittleEndian;
 
 /**
- * Record for the right margin. * NOTE: This source was automatically generated. * @author Shawn Laubach (slaubach at apache dot org)
+ * Record for the right margin.<p/>
+ * 
+ * @author Shawn Laubach (slaubach at apache dot org)
  */
-public class RightMarginRecord extends Record implements Margin
-{
+public final class RightMarginRecord extends Record implements Margin {
     public final static short sid = 0x27;
     private double field_1_margin;
 
@@ -52,9 +52,6 @@ public class RightMarginRecord extends Record implements Margin
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()    {        return 4 + 8;    }
 
     public short getSid()    {        return sid;    }
@@ -76,4 +73,4 @@ public class RightMarginRecord extends Record implements Margin
         rec.field_1_margin = this.field_1_margin;
         return rec;
     }
-}  // END OF CLA
+}  // END OF CL

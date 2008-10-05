@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,24 +14,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
- * The units record describes units.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * The units record describes units.<p/>
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class UnitsRecord
-    extends Record
-{
+public final class UnitsRecord extends Record {
     public final static short      sid                             = 0x1001;
     private  short      field_1_units;
 
@@ -74,9 +67,6 @@ public class UnitsRecord
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 2;
@@ -112,10 +102,4 @@ public class UnitsRecord
     {
         this.field_1_units = field_1_units;
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

@@ -19,21 +19,21 @@
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * The TXO record is used to define the properties of a text box.  It is followed
-        by two continue records unless there is no actual text.  The first continue record contains
-        the text data and the next continue record contains the formatting runs.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * by two continue records unless there is no actual text.  The first continue record contains
+ * the text data and the next continue record contains the formatting runs.<p/>
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public class TextObjectBaseRecord extends Record {
-    public final static short      sid                             = 0x1B6;
+	// TODO - don't instantiate superclass
+    public final static short      sid                             = 0x01B6;
     
     private static final BitField reserved1               = BitFieldFactory.getInstance(0x0001);
     private static final BitField HorizontalTextAlignment = BitFieldFactory.getInstance(0x000E);
@@ -149,9 +149,6 @@ public class TextObjectBaseRecord extends Record {
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4;

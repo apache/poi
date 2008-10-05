@@ -23,10 +23,8 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * The area format record is used to define the colours and patterns for an area.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * The area format record is used to define the colours and patterns for an area.<p/>
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class AreaFormatRecord extends Record {
@@ -112,9 +110,6 @@ public final class AreaFormatRecord extends Record {
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 4 + 4 + 2 + 2 + 2 + 2;

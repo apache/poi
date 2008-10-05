@@ -20,10 +20,8 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * The end data record is used to denote the end of the subrecords.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * The end data record is used to denote the end of the subrecords.<p/>
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class EndSubRecord extends SubRecord {
@@ -61,9 +59,6 @@ public final class EndSubRecord extends SubRecord {
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4 ;
@@ -79,9 +74,4 @@ public final class EndSubRecord extends SubRecord {
     
         return rec;
     }
-
-
-
-}  // END OF CLASS
-
-
+}

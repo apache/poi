@@ -23,10 +23,8 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * The value range record defines the range of the value axis.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * The value range record defines the range of the value axis.<p/>
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class ValueRangeRecord extends Record {
@@ -121,9 +119,6 @@ public final class ValueRangeRecord extends Record {
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 8 + 8 + 8 + 8 + 8 + 2;
