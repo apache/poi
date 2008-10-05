@@ -277,14 +277,6 @@ public interface CellStyle {
     short getFontIndex();
 
     /**
-     * gets the font for this style
-     * @param parentWorkbook The HSSFWorkbook that this style belongs to
-     * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#getFontIndex()
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
-     */
-    Font getFont(Workbook parentWorkbook);
-
-    /**
      * set the cell's using this style to be hidden
      * @param hidden - whether the cell using this style should be hidden
      */

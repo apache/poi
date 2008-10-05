@@ -68,6 +68,11 @@ public class CreateCell {
         cell.setCellValue(new Date());
         cell.setCellStyle(style);
 
+        //hyperlink
+        row.createCell(7).setCellFormula("SUM(A1:B1)");
+        cell.setCellFormula("HYPERLINK(\"http://google.com\",\"Google\")");
+
+
         // Write the output to a file
         FileOutputStream fileOut = new FileOutputStream("ooxml-cell.xlsx");
         wb.write(fileOut);

@@ -20,44 +20,44 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.StylesSource;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellAlignment;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.poi.xssf.usermodel.extensions.XSSFColor;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellAlignment;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellProtection;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 
-public class XSSFCellStyle implements CellStyle {
+/**
+ *
+ * High level representation of the the possible formatting information for the contents of the cells on a sheet in a
+ * SpreadsheetML document.
+ *
+ * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#createCellStyle()
+ * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getCellStyleAt(short)
+ * @see org.apache.poi.xssf.usermodel.XSSFCell#setCellStyle(org.apache.poi.ss.usermodel.CellStyle)
+ */
+public class XSSFCellStyle implements CellStyle, Cloneable {
 
     private int cellXfId;
-    private int cellStyleXfId;
-    private StylesSource stylesSource;
+    private StylesTable stylesSource;
     private CTXf cellXf;
     private CTXf cellStyleXf;
-    private XSSFCellBorder cellBorder;
-    private XSSFCellFill cellFill;
     private XSSFFont font;
     private XSSFCellAlignment cellAlignment;
 
     /**
      * Creates a Cell Style from the supplied parts
-     * @param cellXf The main XF for the cell
-     * @param cellStyleXf Optional, style xf
+     * @param cellXfId The main XF for the cell
+     * @param cellStyleXfId Optional, style xf
      * @param stylesSource Styles Source to work off
      */
     public XSSFCellStyle(int cellXfId, int cellStyleXfId, StylesTable stylesSource) {
         this.cellXfId = cellXfId;
-        this.cellStyleXfId = cellStyleXfId;
         this.stylesSource = stylesSource;
         this.cellXf = stylesSource.getCellXfAt(this.cellXfId);
-        this.cellStyleXf = stylesSource.getCellStyleXfAt(this.cellStyleXfId);
+        this.cellStyleXf = stylesSource.getCellStyleXfAt(cellStyleXfId);
     }
 
     /**
@@ -66,6 +66,7 @@ public class XSSFCellStyle implements CellStyle {
     public CTXf getCoreXf() {
         return cellXf;
     }
+
     /**
      * Used so that StylesSource can figure out our location
      */
@@ -77,13 +78,13 @@ public class XSSFCellStyle implements CellStyle {
      * Creates an empty Cell Style
      */
     public XSSFCellStyle(StylesSource stylesSource) {
-        this.stylesSource = stylesSource;
+        this.stylesSource = (StylesTable)stylesSource;
         // We need a new CTXf for the main styles
         // TODO decide on a style ctxf
         cellXf = CTXf.Factory.newInstance();
         cellStyleXf = null;
     }
-    
+
     /**
      * Verifies that this style belongs to the supplied Workbook
      *  Styles Source.
@@ -117,426 +118,1168 @@ public class XSSFCellStyle implements CellStyle {
         }
         throw new IllegalArgumentException("Can only clone from one XSSFCellStyle to another, not between HSSFCellStyle and XSSFCellStyle");
     }
+
     public void cloneStyleFrom(XSSFCellStyle source) {
         throw new IllegalStateException("TODO");
     }
 
+    /**
+     * Get the type of horizontal alignment for the cell
+     *
+     * @return short - the type of alignment
+     * @see #ALIGN_GENERAL
+     * @see #ALIGN_LEFT
+     * @see #ALIGN_CENTER
+     * @see #ALIGN_RIGHT
+     * @see #ALIGN_FILL
+     * @see #ALIGN_JUSTIFY
+     * @see #ALIGN_CENTER_SELECTION
+     */
     public short getAlignment() {
         return (short)(getAlignmentEnum().ordinal());
     }
 
+    /**
+     * Get the type of horizontal alignment for the cell
+     *
+     * @return HorizontalAlignment - the type of alignment
+     */
     public HorizontalAlignment getAlignmentEnum() {
         return getCellAlignment().getHorizontal();
     }
 
+    /**
+     * Get the type of border to use for the bottom border of the cell
+     *
+     * @return short - border type
+     * @see #BORDER_NONE
+     * @see #BORDER_THIN
+     * @see #BORDER_MEDIUM
+     * @see #BORDER_DASHED
+     * @see #BORDER_DOTTED
+     * @see #BORDER_THICK
+     * @see #BORDER_DOUBLE
+     * @see #BORDER_HAIR
+     * @see #BORDER_MEDIUM_DASHED
+     * @see #BORDER_DASH_DOT
+     * @see #BORDER_MEDIUM_DASH_DOT
+     * @see #BORDER_DASH_DOT_DOT
+     * @see #BORDER_MEDIUM_DASH_DOT_DOT
+     * @see #BORDER_SLANTED_DASH_DOT
+     */
     public short getBorderBottom() {
-        return getBorderStyleAsShort(BorderSide.BOTTOM);
+        if(!cellXf.getApplyBorder()) return BORDER_NONE;
+
+        int idx = (int)cellXf.getBorderId();
+        CTBorder ct = stylesSource.getBorderAt(idx).getCTBorder();
+        STBorderStyle.Enum ptrn = ct.isSetBottom() ? ct.getBottom().getStyle() : null;
+        return ptrn == null ? BORDER_NONE : (short)(ptrn.intValue() - 1);
     }
 
-    public String getBorderBottomAsString() {
-        return getBorderStyleAsString(BorderSide.BOTTOM);
+    /**
+     * Get the type of border to use for the bottom border of the cell
+     *
+     * @return border type as Java enum
+     * @see BorderStyle
+     */
+    public BorderStyle getBorderBottomEnum() {
+        int style  = getBorderBottom();
+        return BorderStyle.values()[style];
     }
 
+    /**
+     * Get the type of border to use for the left border of the cell
+     *
+     * @return short - border type, default value is {@link #BORDER_NONE}
+     * @see #BORDER_NONE
+     * @see #BORDER_THIN
+     * @see #BORDER_MEDIUM
+     * @see #BORDER_DASHED
+     * @see #BORDER_DOTTED
+     * @see #BORDER_THICK
+     * @see #BORDER_DOUBLE
+     * @see #BORDER_HAIR
+     * @see #BORDER_MEDIUM_DASHED
+     * @see #BORDER_DASH_DOT
+     * @see #BORDER_MEDIUM_DASH_DOT
+     * @see #BORDER_DASH_DOT_DOT
+     * @see #BORDER_MEDIUM_DASH_DOT_DOT
+     * @see #BORDER_SLANTED_DASH_DOT
+     */
     public short getBorderLeft() {
-        return getBorderStyleAsShort(BorderSide.LEFT);
+        if(!cellXf.getApplyBorder()) return BORDER_NONE;
+
+        int idx = (int)cellXf.getBorderId();
+        CTBorder ct = stylesSource.getBorderAt(idx).getCTBorder();
+        STBorderStyle.Enum ptrn = ct.isSetLeft() ? ct.getLeft().getStyle() : null;
+        return ptrn == null ? BORDER_NONE : (short)(ptrn.intValue() - 1);
     }
 
-    public String getBorderLeftAsString() {
-        return getBorderStyleAsString(BorderSide.LEFT);
+    /**
+     * Get the type of border to use for the left border of the cell
+     *
+     * @return border type, default value is {@link BorderStyle.NONE}
+     */
+    public BorderStyle getBorderLeftEnum() {
+        int style  = getBorderLeft();
+        return BorderStyle.values()[style];
     }
 
+    /**
+     * Get the type of border to use for the right border of the cell
+     *
+     * @return short - border type, default value is {@link #BORDER_NONE}
+     * @see #BORDER_NONE
+     * @see #BORDER_THIN
+     * @see #BORDER_MEDIUM
+     * @see #BORDER_DASHED
+     * @see #BORDER_DOTTED
+     * @see #BORDER_THICK
+     * @see #BORDER_DOUBLE
+     * @see #BORDER_HAIR
+     * @see #BORDER_MEDIUM_DASHED
+     * @see #BORDER_DASH_DOT
+     * @see #BORDER_MEDIUM_DASH_DOT
+     * @see #BORDER_DASH_DOT_DOT
+     * @see #BORDER_MEDIUM_DASH_DOT_DOT
+     * @see #BORDER_SLANTED_DASH_DOT
+     */
     public short getBorderRight() {
-        return getBorderStyleAsShort(BorderSide.RIGHT);
+        if(!cellXf.getApplyBorder()) return BORDER_NONE;
+
+        int idx = (int)cellXf.getBorderId();
+        CTBorder ct = stylesSource.getBorderAt(idx).getCTBorder();
+        STBorderStyle.Enum ptrn = ct.isSetRight() ? ct.getRight().getStyle() : null;
+        return ptrn == null ? BORDER_NONE : (short)(ptrn.intValue() - 1);
     }
 
-    public String getBorderRightAsString() {
-        return getBorderStyleAsString(BorderSide.RIGHT);
+    /**
+     * Get the type of border to use for the right border of the cell
+     *
+     * @return border type, default value is {@link BorderStyle.NONE}
+     */
+    public BorderStyle getBorderRightEnum() {
+        int style  = getBorderRight();
+        return BorderStyle.values()[style];
     }
 
+    /**
+     * Get the type of border to use for the top border of the cell
+     *
+     * @return short - border type, default value is {@link #BORDER_NONE}
+     * @see #BORDER_NONE
+     * @see #BORDER_THIN
+     * @see #BORDER_MEDIUM
+     * @see #BORDER_DASHED
+     * @see #BORDER_DOTTED
+     * @see #BORDER_THICK
+     * @see #BORDER_DOUBLE
+     * @see #BORDER_HAIR
+     * @see #BORDER_MEDIUM_DASHED
+     * @see #BORDER_DASH_DOT
+     * @see #BORDER_MEDIUM_DASH_DOT
+     * @see #BORDER_DASH_DOT_DOT
+     * @see #BORDER_MEDIUM_DASH_DOT_DOT
+     * @see #BORDER_SLANTED_DASH_DOT
+     */
     public short getBorderTop() {
-        return getBorderStyleAsShort(BorderSide.TOP);
+        if(!cellXf.getApplyBorder()) return BORDER_NONE;
+
+        int idx = (int)cellXf.getBorderId();
+        CTBorder ct = stylesSource.getBorderAt(idx).getCTBorder();
+        STBorderStyle.Enum ptrn = ct.isSetTop() ? ct.getTop().getStyle() : null;
+        return ptrn == null ? BORDER_NONE : (short)(ptrn.intValue() - 1);
     }
 
-    public String getBorderTopAsString() {
-        return getBorderStyleAsString(BorderSide.TOP);
+     /**
+     * Get the type of border to use for the top border of the cell
+     *
+     * @return border type, default value is {@link BorderStyle.NONE}
+     */
+    public BorderStyle getBorderTopEnum() {
+         int style  = getBorderTop();
+         return BorderStyle.values()[style];
     }
 
+    /**
+     * Get the color to use for the bottom border
+     * <br/>
+     * Color is optional. When missing, IndexedColors.AUTOMATIC is implied.
+     * @return the index of the color definition, default value is {@link IndexedColors.AUTOMATIC}
+     * @see IndexedColors
+     */
     public short getBottomBorderColor() {
-        return getBorderColorIndexed(BorderSide.BOTTOM);
+        XSSFColor clr = getBottomBorderRgbColor();
+        return clr == null ? IndexedColors.BLACK.getIndex() : (short)clr.getIndexed();
     }
 
+    /**
+     * Get the color to use for the bottom border as a {@link XSSFColor}
+     *
+     * @return the used color or <code>null</code> if not set
+     */
+    public XSSFColor getBottomBorderRgbColor() {
+        if(!cellXf.getApplyBorder()) return null;
+
+        int idx = (int)cellXf.getBorderId();
+        XSSFCellBorder border = stylesSource.getBorderAt(idx);
+
+        return border.getBorderColor(BorderSide.BOTTOM);
+    }
+
+    /**
+     * Get the index of the number format (numFmt) record used by this cell format.
+     *
+     * @return the index of the number format
+     */
     public short getDataFormat() {
         return (short)cellXf.getNumFmtId();
     }
+
+    /**
+     * Get the contents of the format string, by looking up
+     * the StylesSource
+     *
+     * @return the number format string
+     */
     public String getDataFormatString() {
         return stylesSource.getNumberFormatAt(getDataFormat());
     }
 
+    /**
+     * Get the background fill color.
+     * <p>
+     * Note - many cells are actually filled with a foreground
+     *  fill, not a background fill - see {@link #getFillForegroundColor()}
+     * </p>
+     * @return fill color, default value is {@link IndexedColors.AUTOMATIC}
+     * @see IndexedColors
+     */
     public short getFillBackgroundColor() {
-        return (short) getCellFill().getFillBackgroundColor().getIndexed();
+        XSSFColor clr = getFillBackgroundRgbColor();
+        return clr == null ? IndexedColors.AUTOMATIC.getIndex() : (short)clr.getIndexed();
     }
 
+    /**
+     * Get the background fill color.
+     * <p>
+     * Note - many cells are actually filled with a foreground
+     *  fill, not a background fill - see {@link #getFillForegroundColor()}
+     * </p>
+     * @see org.apache.poi.xssf.usermodel.extensions.XSSFColor#getRgb()
+     * @return XSSFColor - fill color or <code>null</code> if not set
+     */
     public XSSFColor getFillBackgroundRgbColor() {
-        return getCellFill().getFillBackgroundColor();
+        if(!cellXf.getApplyFill()) return null;
+
+        int fillIndex = (int)cellXf.getFillId();
+        XSSFCellFill fg = stylesSource.getFillAt(fillIndex);
+
+        return fg.getFillBackgroundColor();
     }
 
+    /**
+     * Get the foreground fill color.
+     * <p>
+     * Many cells are filled with this, instead of a
+     *  background color ({@link #getFillBackgroundColor()})
+     * </p>
+     * @see IndexedColors
+     * @return fill color, default value is {@link IndexedColors.AUTOMATIC}
+     */
     public short getFillForegroundColor() {
-        return (short) getCellFill().getFillForegroundColor().getIndexed();
+        XSSFColor clr = getFillForegroundRgbColor();
+        return clr == null ? IndexedColors.AUTOMATIC.getIndex() : (short)clr.getIndexed();
     }
 
+    /**
+     * Get the foreground fill color.
+     *
+     * @return XSSFColor - fill color or <code>null</code> if not set
+     */
     public XSSFColor getFillForegroundRgbColor() {
-        return  getCellFill().getFillForegroundColor();
+        if(!cellXf.getApplyFill()) return null;
+
+        int fillIndex = (int)cellXf.getFillId();
+        XSSFCellFill fg = stylesSource.getFillAt(fillIndex);
+
+        return fg.getFillForegroundColor();
     }
 
+    /**
+     * Get the fill pattern
+     * @return fill pattern, default value is {@link #NO_FILL}
+     *
+     * @see #NO_FILL
+     * @see #SOLID_FOREGROUND
+     * @see #FINE_DOTS
+     * @see #ALT_BARS
+     * @see #SPARSE_DOTS
+     * @see #THICK_HORZ_BANDS
+     * @see #THICK_VERT_BANDS
+     * @see #THICK_BACKWARD_DIAG
+     * @see #THICK_FORWARD_DIAG
+     * @see #BIG_SPOTS
+     * @see #BRICKS
+     * @see #THIN_HORZ_BANDS
+     * @see #THIN_VERT_BANDS
+     * @see #THIN_BACKWARD_DIAG
+     * @see #THIN_FORWARD_DIAG
+     * @see #SQUARES
+     * @see #DIAMONDS
+     */
     public short getFillPattern() {
-	int fp= getCellFill().getPatternType().intValue();
-	switch (fp) {
-	case STPatternType.INT_NONE:
-		return CellStyle.NO_FILL;
-	case STPatternType.INT_SOLID: 
-	    return CellStyle.SOLID_FOREGROUND;
-	case STPatternType.INT_LIGHT_GRAY:
-	    return CellStyle.FINE_DOTS;
-	case STPatternType.INT_DARK_GRID:
-		return CellStyle.ALT_BARS;
-	case STPatternType.INT_DARK_GRAY:
-	    return CellStyle.SPARSE_DOTS;
-	case STPatternType.INT_DARK_HORIZONTAL: 
-	    return CellStyle.THICK_HORZ_BANDS;
-	case STPatternType.INT_DARK_VERTICAL:
-	    return CellStyle.THICK_VERT_BANDS;
-	case STPatternType.INT_DARK_UP:
-		return CellStyle.THICK_BACKWARD_DIAG;
-	case STPatternType.INT_DARK_DOWN:
-		return CellStyle.THICK_FORWARD_DIAG;
-	case STPatternType.INT_GRAY_0625:
-		return CellStyle.BIG_SPOTS;
-	case STPatternType.INT_DARK_TRELLIS:
-		return CellStyle.BRICKS;
-	case STPatternType.INT_LIGHT_HORIZONTAL:
-		return CellStyle.THIN_HORZ_BANDS;
-	case STPatternType.INT_LIGHT_VERTICAL:
-		return CellStyle.THIN_VERT_BANDS;
-	case STPatternType.INT_LIGHT_UP:
-		return CellStyle.THIN_BACKWARD_DIAG;
-	case STPatternType.INT_LIGHT_DOWN:
-		return CellStyle.THIN_FORWARD_DIAG;
-	case STPatternType.INT_LIGHT_GRID:
-		return CellStyle.SQUARES;
-	case STPatternType.INT_LIGHT_TRELLIS:
-		return CellStyle.DIAMONDS;
-	case STPatternType.INT_GRAY_125:
-		return CellStyle.LESS_DOTS;
-/*		
-	case STPatternType.INT_GRAY_0625:
-		return CellStyle.LEAST_DOTS;
-*/		
-	default:
-	    	return CellStyle.NO_FILL;
-	}
-    //    return (short) getCellFill().getPatternType().intValue();
+        if(!cellXf.getApplyFill()) return 0;
+
+        int fillIndex = (int)cellXf.getFillId();
+        XSSFCellFill fill = stylesSource.getFillAt(fillIndex);
+
+        STPatternType.Enum ptrn = fill.getPatternType();
+        if(ptrn == null) return CellStyle.NO_FILL;
+        return (short)(ptrn.intValue() - 1);
     }
 
-    public Font getFont(Workbook parentWorkbook) {
-        return getFont();
+    /**
+     * Get the fill pattern
+     *
+     * @return the fill pattern, default value is {@link FillPatternType.NO_FILL}
+     */
+    public FillPatternType getFillPatternEnum() {
+        int style  = getFillPattern();
+        return FillPatternType.values()[style];
     }
 
-    public Font getFont() {
+    /**
+    * Gets the font for this style
+    * @return Font - font
+    */
+    public XSSFFont getFont() {
         if (font == null) {
-            font = (XSSFFont) ((StylesTable)stylesSource).getFontAt(getFontId());
+            font = stylesSource.getFontAt(getFontId());
         }
         return font;
     }
 
+    /**
+     * Gets the index of the font for this style
+     *
+     * @return short - font index
+     * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getFontAt(short)
+     */
     public short getFontIndex() {
         return (short) getFontId();
     }
 
+    /**
+     * Get whether the cell's using this style are to be hidden
+     *
+     * @return boolean -  whether the cell using this style is hidden
+     */
     public boolean getHidden() {
         return getCellProtection().getHidden();
     }
 
+    /**
+     * Get the number of spaces to indent the text in the cell
+     *
+     * @return indent - number of spaces
+     */
     public short getIndention() {
         return (short) getCellAlignment().getIndent();
     }
 
+    /**
+     * Get the index within the StylesTable (sequence within the collection of CTXf elements)
+     *
+     * @return unique index number of the underlying record this style represents
+     */
     public short getIndex() {
-        return (short) this.cellXfId;
+        return (short)this.cellXfId;
     }
 
+    /**
+     * Get the color to use for the left border
+     *
+     * @return the index of the color definition, default value is {@link IndexedColors.BLACK}
+     * @see IndexedColors
+     */
     public short getLeftBorderColor() {
-        return getBorderColorIndexed(BorderSide.LEFT);
+        XSSFColor clr = getLeftBorderRgbColor();
+        return clr == null ? IndexedColors.BLACK.getIndex() : (short)clr.getIndexed();
     }
 
+    /**
+     * Get the color to use for the left border
+     *
+     * @return the index of the color definition or <code>null</code> if not set
+     * @see IndexedColors
+     */
+    public XSSFColor getLeftBorderRgbColor() {
+        if(!cellXf.getApplyBorder()) return null;
+
+        int idx = (int)cellXf.getBorderId();
+        XSSFCellBorder border = stylesSource.getBorderAt(idx);
+
+        return border.getBorderColor(BorderSide.LEFT);
+    }
+
+    /**
+     * Get whether the cell's using this style are locked
+     *
+     * @return whether the cell using this style are locked
+     */
     public boolean getLocked() {
         return getCellProtection().getLocked();
     }
 
+    /**
+     * Get the color to use for the right border
+     *
+     * @return the index of the color definition, default value is {@link IndexedColors.BLACK}
+     * @see IndexedColors
+     */
     public short getRightBorderColor() {
-        return getBorderColorIndexed(BorderSide.RIGHT);
+        XSSFColor clr = getRightBorderRgbColor();
+        return clr == null ? IndexedColors.BLACK.getIndex() : (short)clr.getIndexed();
+    }
+    /**
+     * Get the color to use for the right border
+     *
+     * @return the used color or <code>null</code> if not set
+     */
+    public XSSFColor getRightBorderRgbColor() {
+        if(!cellXf.getApplyBorder()) return null;
+
+        int idx = (int)cellXf.getBorderId();
+        XSSFCellBorder border = stylesSource.getBorderAt(idx);
+
+        return border.getBorderColor(BorderSide.RIGHT);
     }
 
+    /**
+     * Get the degree of rotation for the text in the cell
+     * <p>
+     * Expressed in degrees. Values range from 0 to 180. The first letter of
+     * the text is considered the center-point of the arc.
+     * <br/>
+     * For 0 - 90, the value represents degrees above horizon. For 91-180 the degrees below the
+     * horizon is calculated as:
+     * <br/>
+     * <code>[degrees below horizon] = 90 - textRotation.</code>
+     * </p>
+     *
+     * @return rotation degrees (between 0 and 180 degrees)
+     */
     public short getRotation() {
         return (short) getCellAlignment().getTextRotation();
     }
 
+    /**
+     * Get the color to use for the top border
+     *
+     * @return the index of the color definition, default value is {@link IndexedColors.BLACK}
+     * @see IndexedColors
+     */
     public short getTopBorderColor() {
-        return getBorderColorIndexed(BorderSide.TOP);
+        XSSFColor clr = getTopBorderRgbColor();
+        return clr == null ? IndexedColors.BLACK.getIndex() : (short)clr.getIndexed();
     }
 
+    /**
+     * Get the color to use for the top border
+     *
+     * @return the used color or <code>null</code> if not set
+     */
+    public XSSFColor getTopBorderRgbColor() {
+        if(!cellXf.getApplyBorder()) return null;
+
+        int idx = (int)cellXf.getBorderId();
+        XSSFCellBorder border = stylesSource.getBorderAt(idx);
+
+        return border.getBorderColor(BorderSide.TOP);
+    }
+
+    /**
+     * Get the type of vertical alignment for the cell
+     *
+     * @return align the type of alignment, default value is {@link #VERTICAL_BOTTOM}
+     * @see #VERTICAL_TOP
+     * @see #VERTICAL_CENTER
+     * @see #VERTICAL_BOTTOM
+     * @see #VERTICAL_JUSTIFY
+     */
     public short getVerticalAlignment() {
         return (short) (getVerticalAlignmentEnum().ordinal());
     }
 
+    /**
+     * Get the type of vertical alignment for the cell
+     *
+     * @return the type of alignment, default value is {@link VerticalAlignment.BOTTOM}
+     * @see VerticalAlignment
+     */
     public VerticalAlignment getVerticalAlignmentEnum() {
         return getCellAlignment().getVertical();
     }
 
+    /**
+     * Whether the text should be wrapped
+     *
+     * @return  a boolean value indicating if the text in a cell should be line-wrapped within the cell.
+     */
     public boolean getWrapText() {
         return getCellAlignment().getWrapText();
     }
 
+    /**
+     * Set the type of horizontal alignment for the cell
+     *
+     * @param align - the type of alignment
+     * @see #ALIGN_GENERAL
+     * @see #ALIGN_LEFT
+     * @see #ALIGN_CENTER
+     * @see #ALIGN_RIGHT
+     * @see #ALIGN_FILL
+     * @see #ALIGN_JUSTIFY
+     * @see #ALIGN_CENTER_SELECTION
+     */
     public void setAlignment(short align) {
         getCellAlignment().setHorizontal(HorizontalAlignment.values()[align]);
     }
 
+    /**
+     * Set the type of horizontal alignment for the cell
+     *
+     * @param align - the type of alignment
+     * @see HorizontalAlignment
+     */
     public void setAlignment(HorizontalAlignment align) {
         setAlignment((short)align.ordinal());
     }
 
+    /**
+     * Set the type of border to use for the bottom border of the cell
+     *
+     * @param border the type of border to use
+     * @see #BORDER_NONE
+     * @see #BORDER_THIN
+     * @see #BORDER_MEDIUM
+     * @see #BORDER_DASHED
+     * @see #BORDER_DOTTED
+     * @see #BORDER_THICK
+     * @see #BORDER_DOUBLE
+     * @see #BORDER_HAIR
+     * @see #BORDER_MEDIUM_DASHED
+     * @see #BORDER_DASH_DOT
+     * @see #BORDER_MEDIUM_DASH_DOT
+     * @see #BORDER_DASH_DOT_DOT
+     * @see #BORDER_MEDIUM_DASH_DOT_DOT
+     * @see #BORDER_SLANTED_DASH_DOT
+     */
     public void setBorderBottom(short border) {
-        setBorderBottomEnum(STBorderStyle.Enum.forInt(border));
+        CTBorder ct = getCTBorder();
+        CTBorderPr pr = ct.isSetBottom() ? ct.getBottom() : ct.addNewBottom();
+        if(border == BORDER_NONE) ct.unsetBottom();
+        else pr.setStyle(STBorderStyle.Enum.forInt(border + 1));
+
+        int idx = stylesSource.putBorder(new XSSFCellBorder(ct));
+
+        cellXf.setBorderId(idx);
+        cellXf.setApplyBorder(true);
     }
 
-    public void setBorderBottomEnum(STBorderStyle.Enum style) {
-        getCellBorder().setBorderStyle(BorderSide.BOTTOM, style);
+    /**
+     * Set the type of border to use for the bottom border of the cell
+     *
+     * @param border - type of border to use
+     * @see BorderStyle
+     */
+    public void setBorderBottom(BorderStyle border) {
+	    setBorderBottom((short)border.ordinal());
     }
 
+    /**
+     * Set the type of border to use for the left border of the cell
+     * @param border the type of border to use
+     * @see #BORDER_NONE
+     * @see #BORDER_THIN
+     * @see #BORDER_MEDIUM
+     * @see #BORDER_DASHED
+     * @see #BORDER_DOTTED
+     * @see #BORDER_THICK
+     * @see #BORDER_DOUBLE
+     * @see #BORDER_HAIR
+     * @see #BORDER_MEDIUM_DASHED
+     * @see #BORDER_DASH_DOT
+     * @see #BORDER_MEDIUM_DASH_DOT
+     * @see #BORDER_DASH_DOT_DOT
+     * @see #BORDER_MEDIUM_DASH_DOT_DOT
+     * @see #BORDER_SLANTED_DASH_DOT
+     */
     public void setBorderLeft(short border) {
-        setBorderLeftEnum(STBorderStyle.Enum.forInt(border));
+        CTBorder ct = getCTBorder();
+        CTBorderPr pr = ct.isSetLeft() ? ct.getLeft() : ct.addNewLeft();
+        if(border == BORDER_NONE) ct.unsetLeft();
+        else pr.setStyle(STBorderStyle.Enum.forInt(border + 1));
+
+        int idx = stylesSource.putBorder(new XSSFCellBorder(ct));
+
+        cellXf.setBorderId(idx);
+        cellXf.setApplyBorder(true);
     }
 
-    public void setBorderLeftEnum(STBorderStyle.Enum style) {
-        getCellBorder().setBorderStyle(BorderSide.LEFT, style);
+     /**
+     * Set the type of border to use for the left border of the cell
+      *
+     * @param border the type of border to use
+     */
+    public void setBorderLeft(BorderStyle border) {
+	    setBorderLeft((short)border.ordinal());
     }
 
-    public void setBorderRight(short border) {
-        setBorderRightEnum(STBorderStyle.Enum.forInt(border));
+    /**
+     * Set the type of border to use for the right border of the cell
+     *
+     * @param border the type of border to use
+     * @see #BORDER_NONE
+     * @see #BORDER_THIN
+     * @see #BORDER_MEDIUM
+     * @see #BORDER_DASHED
+     * @see #BORDER_DOTTED
+     * @see #BORDER_THICK
+     * @see #BORDER_DOUBLE
+     * @see #BORDER_HAIR
+     * @see #BORDER_MEDIUM_DASHED
+     * @see #BORDER_DASH_DOT
+     * @see #BORDER_MEDIUM_DASH_DOT
+     * @see #BORDER_DASH_DOT_DOT
+     * @see #BORDER_MEDIUM_DASH_DOT_DOT
+     * @see #BORDER_SLANTED_DASH_DOT
+     */
+   public void setBorderRight(short border) {
+        CTBorder ct = getCTBorder();
+        CTBorderPr pr = ct.isSetRight() ? ct.getRight() : ct.addNewRight();
+        if(border == BORDER_NONE) ct.unsetRight();
+        else pr.setStyle(STBorderStyle.Enum.forInt(border + 1));
+
+        int idx = stylesSource.putBorder(new XSSFCellBorder(ct));
+
+        cellXf.setBorderId(idx);
+        cellXf.setApplyBorder(true);
     }
 
-    public void setBorderRightEnum(STBorderStyle.Enum style) {
-        getCellBorder().setBorderStyle(BorderSide.RIGHT, style);
+     /**
+     * Set the type of border to use for the right border of the cell
+      *
+     * @param border the type of border to use
+     */
+    public void setBorderRight(BorderStyle border) {
+	    setBorderRight((short)border.ordinal());
     }
 
-    public void setBorderTop(short border) {
-        setBorderTopEnum(STBorderStyle.Enum.forInt(border));
+    /**
+     * Set the type of border to use for the top border of the cell
+     *
+     * @param border the type of border to use
+     * @see #BORDER_NONE
+     * @see #BORDER_THIN
+     * @see #BORDER_MEDIUM
+     * @see #BORDER_DASHED
+     * @see #BORDER_DOTTED
+     * @see #BORDER_THICK
+     * @see #BORDER_DOUBLE
+     * @see #BORDER_HAIR
+     * @see #BORDER_MEDIUM_DASHED
+     * @see #BORDER_DASH_DOT
+     * @see #BORDER_MEDIUM_DASH_DOT
+     * @see #BORDER_DASH_DOT_DOT
+     * @see #BORDER_MEDIUM_DASH_DOT_DOT
+     * @see #BORDER_SLANTED_DASH_DOT
+     */
+   public void setBorderTop(short border) {
+        CTBorder ct = getCTBorder();
+        CTBorderPr pr = ct.isSetTop() ? ct.getTop() : ct.addNewTop();
+        if(border == BORDER_NONE) ct.unsetTop();
+        else pr.setStyle(STBorderStyle.Enum.forInt(border + 1));
+
+        int idx = stylesSource.putBorder(new XSSFCellBorder(ct));
+
+        cellXf.setBorderId(idx);
+        cellXf.setApplyBorder(true);
     }
 
-    public void setBorderTopEnum(STBorderStyle.Enum style) {
-        getCellBorder().setBorderStyle(BorderSide.TOP, style);
+    /**
+     * Set the type of border to use for the top border of the cell
+     *
+     * @param border the type of border to use
+     */
+    public void setBorderTopEnum(BorderStyle border) {
+	    setBorderTop((short)border.ordinal());
     }
 
+    /**
+     * Set the color to use for the bottom border
+     * @param color the index of the color definition
+     * @see IndexedColors
+     */
     public void setBottomBorderColor(short color) {
-        setBorderColorIndexed(BorderSide.BOTTOM, color);
+        XSSFColor clr = new XSSFColor();
+        clr.setIndexed(color);
+        setBottomBorderColor(clr);
     }
 
+    /**
+     * Set the color to use for the bottom border
+     *
+     * @param color the color to use, null means no color
+     */
+    public void setBottomBorderColor(XSSFColor color) {
+        CTBorder ct = getCTBorder();
+        if(color == null && !ct.isSetBottom()) return;
+
+        CTBorderPr pr = ct.isSetBottom() ? ct.getBottom() : ct.addNewBottom();
+        if(color != null)  pr.setColor(color.getCTColor());
+        else pr.unsetColor();
+
+        int idx = stylesSource.putBorder(new XSSFCellBorder(ct));
+
+        cellXf.setBorderId(idx);
+        cellXf.setApplyBorder(true);
+    }
+
+    /**
+     * Set the index of a data format
+     *
+     * @param fmt the index of a data format
+     */
     public void setDataFormat(short fmt) {
         cellXf.setNumFmtId((long)fmt);
     }
 
-    public void setFillBackgroundRgbColor(XSSFColor color) {
-        cellFill=getCellFill();
-        cellFill.setFillBackgroundRgbColor(color);
-    }
-
-    public void setFillBackgroundColor(short bg) {
-        getCellFill().setFillBackgroundColor(bg);
-    }
-
-    public void setFillForegroundRgbColor(XSSFColor color) {
-        getCellFill().setFillForegroundRgbColor(color);
-    }
-
-    public void setFillForegroundColor(short bg) {
-	getCellFill().setFillForegroundColor(bg);
-    }
-
-    public void setFillPattern(short fp) {
-	cellFill=getCellFill();
-	switch (fp) {
-	case CellStyle.NO_FILL:
-		cellFill.setPatternType(STPatternType.NONE);
-	    break;
-	case CellStyle.SOLID_FOREGROUND:
-		cellFill.setPatternType(STPatternType.SOLID);
-		    break;
-	case CellStyle.FINE_DOTS:
-		cellFill.setPatternType(STPatternType.LIGHT_GRAY);
-		    break;
-	case CellStyle.ALT_BARS:
-		cellFill.setPatternType(STPatternType.DARK_GRID);
-		    break;
-	case CellStyle.SPARSE_DOTS:
-		cellFill.setPatternType(STPatternType.DARK_GRAY);
-		    break;
-	case CellStyle.THICK_HORZ_BANDS:
-		cellFill.setPatternType(STPatternType.DARK_HORIZONTAL);
-		    break;
-	case CellStyle.THICK_VERT_BANDS:
-		cellFill.setPatternType(STPatternType.DARK_VERTICAL);
-		    break;
-	case CellStyle.THICK_BACKWARD_DIAG:
-		cellFill.setPatternType(STPatternType.DARK_UP);
-		    break;
-	case CellStyle.THICK_FORWARD_DIAG:
-		cellFill.setPatternType(STPatternType.DARK_DOWN);
-		    break;
-	case CellStyle.BIG_SPOTS:
-		cellFill.setPatternType(STPatternType.GRAY_0625);
-		    break;
-	case CellStyle.BRICKS:
-		cellFill.setPatternType(STPatternType.DARK_TRELLIS);
-		    break;
-	case CellStyle.THIN_HORZ_BANDS:
-		cellFill.setPatternType(STPatternType.LIGHT_HORIZONTAL);
-		    break;
-	case CellStyle.THIN_VERT_BANDS:
-		cellFill.setPatternType(STPatternType.LIGHT_VERTICAL);
-		    break;
-	case CellStyle.THIN_BACKWARD_DIAG:
-		cellFill.setPatternType(STPatternType.LIGHT_UP);
-		    break;
-	case CellStyle.THIN_FORWARD_DIAG:
-		cellFill.setPatternType(STPatternType.LIGHT_DOWN);
-		    break;
-	case CellStyle.SQUARES:
-		cellFill.setPatternType(STPatternType.LIGHT_GRID);
-		    break;
-	case CellStyle.DIAMONDS:
-		cellFill.setPatternType(STPatternType.LIGHT_TRELLIS);
-		    break;
-	case CellStyle.LESS_DOTS:
-		cellFill.setPatternType(STPatternType.GRAY_125);
-		    break;
-	case CellStyle.LEAST_DOTS:
-		cellFill.setPatternType(STPatternType.GRAY_0625);
-		    break;
-	default: throw new RuntimeException("Fill type ["+fp+"] not accepted");
-	}
-    }
-
-    public void setFont(Font font) {
-        if(font!=null){
-            long index=this.stylesSource.putFont(font);
-            this.cellXf.setFontId(index);
+    /**
+     * Set the background fill color represented as a {@link XSSFColor} value.
+     * <p>
+     * For example:
+     * <pre>
+     * cs.setFillPattern(XSSFCellStyle.FINE_DOTS );
+     * cs.setFillBackgroundRgbColor(new XSSFColor(java.awt.Color.RED));
+     * </pre>
+     * optionally a Foreground and background fill can be applied:
+     * <i>Note: Ensure Foreground color is set prior to background</i>
+     * <pre>
+     * cs.setFillPattern(XSSFCellStyle.FINE_DOTS );
+     * cs.setFillForegroundColor(new XSSFColor(java.awt.Color.BLUE));
+     * cs.setFillBackgroundColor(new XSSFColor(java.awt.Color.GREEN));
+     * </pre>
+     * or, for the special case of SOLID_FILL:
+     * <pre>
+     * cs.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND );
+     * cs.setFillForegroundColor(new XSSFColor(java.awt.Color.GREEN));
+     * </pre>
+     * It is necessary to set the fill style in order
+     * for the color to be shown in the cell.
+     *
+     * @param color - the color to use
+     */
+    public void setFillBackgroundColor(XSSFColor color) {
+        CTFill ct = getCTFill();
+        CTPatternFill ptrn = ct.getPatternFill();
+        if(color == null) {
+            if(ptrn != null) ptrn.unsetBgColor();
+        } else {
+            if(ptrn == null) ptrn = ct.addNewPatternFill();
+            ptrn.setBgColor(color.getCTColor());
         }
-        this.cellXf.setApplyFont(true);
+
+        int idx = stylesSource.putFill(new XSSFCellFill(ct));
+
+        cellXf.setFillId(idx);
+        cellXf.setApplyFill(true);
     }
 
+    /**
+     * Set the background fill color represented as a indexed color value.
+     * <p>
+     * For example:
+     * <pre>
+     * cs.setFillPattern(XSSFCellStyle.FINE_DOTS );
+     * cs.setFillBackgroundRgbColor(IndexedColors.RED.getIndex());
+     * </pre>
+     * optionally a Foreground and background fill can be applied:
+     * <i>Note: Ensure Foreground color is set prior to background</i>
+     * <pre>
+     * cs.setFillPattern(XSSFCellStyle.FINE_DOTS );
+     * cs.setFillForegroundColor(IndexedColors.BLUE.getIndex());
+     * cs.setFillBackgroundColor(IndexedColors.RED.getIndex());
+     * </pre>
+     * or, for the special case of SOLID_FILL:
+     * <pre>
+     * cs.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND );
+     * cs.setFillForegroundColor(IndexedColors.RED.getIndex());
+     * </pre>
+     * It is necessary to set the fill style in order
+     * for the color to be shown in the cell.
+     *
+     * @param bg - the color to use
+     * @see IndexedColors
+     */
+    public void setFillBackgroundColor(short bg) {
+        XSSFColor clr = new XSSFColor();
+        clr.setIndexed(bg);
+        setFillBackgroundColor(clr);
+    }
+
+    /**
+    * Set the foreground fill color represented as a {@link XSSFColor} value.
+     * <br/>
+    * <i>Note: Ensure Foreground color is set prior to background color.</i>
+    * @param color the color to use
+    * @see #setFillBackgroundColor(org.apache.poi.xssf.usermodel.extensions.XSSFColor) )
+    */
+    public void setFillForegroundColor(XSSFColor color) {
+        CTFill ct = getCTFill();
+
+        CTPatternFill ptrn = ct.getPatternFill();
+        if(color == null) {
+            if(ptrn != null) ptrn.unsetFgColor();
+        } else {
+            if(ptrn == null) ptrn = ct.addNewPatternFill();
+            ptrn.setFgColor(color.getCTColor());
+        }
+
+        int idx = stylesSource.putFill(new XSSFCellFill(ct));
+
+        cellXf.setFillId(idx);
+        cellXf.setApplyFill(true);
+    }
+
+    /**
+     * Set the foreground fill color as a indexed color value
+     * <br/>
+     * <i>Note: Ensure Foreground color is set prior to background color.</i>
+     * @param fg the color to use
+     * @see IndexedColors
+     */
+    public void setFillForegroundColor(short fg) {
+        XSSFColor clr = new XSSFColor();
+        clr.setIndexed(fg);
+        setFillForegroundColor(clr);
+    }
+
+    /**
+     * Get a <b>copy</b> of the currently used CTFill, if none is used, return a new instance.
+     */
+    private CTFill getCTFill(){
+        CTFill ct;
+        if(cellXf.getApplyFill()) {
+            int fillIndex = (int)cellXf.getFillId();
+            XSSFCellFill cf = stylesSource.getFillAt(fillIndex);
+
+            ct = (CTFill)cf.getCTFill().copy();
+        } else {
+            ct = CTFill.Factory.newInstance();
+        }
+        return ct;
+    }
+
+    /**
+     * Get a <b>copy</b> of the currently used CTBorder, if none is used, return a new instance.
+     */
+    private CTBorder getCTBorder(){
+        CTBorder ct;
+        if(cellXf.getApplyBorder()) {
+            int idx = (int)cellXf.getBorderId();
+            XSSFCellBorder cf = stylesSource.getBorderAt(idx);
+
+            ct = (CTBorder)cf.getCTBorder().copy();
+        } else {
+            ct = CTBorder.Factory.newInstance();
+        }
+        return ct;
+    }
+
+    /**
+     * This element is used to specify cell fill information for pattern and solid color cell fills.
+     * For solid cell fills (no pattern),  foregorund color is used.
+     * For cell fills with patterns specified, then the cell fill color is specified by the background color.
+     *
+     * @see #NO_FILL
+     * @see #SOLID_FOREGROUND
+     * @see #FINE_DOTS
+     * @see #ALT_BARS
+     * @see #SPARSE_DOTS
+     * @see #THICK_HORZ_BANDS
+     * @see #THICK_VERT_BANDS
+     * @see #THICK_BACKWARD_DIAG
+     * @see #THICK_FORWARD_DIAG
+     * @see #BIG_SPOTS
+     * @see #BRICKS
+     * @see #THIN_HORZ_BANDS
+     * @see #THIN_VERT_BANDS
+     * @see #THIN_BACKWARD_DIAG
+     * @see #THIN_FORWARD_DIAG
+     * @see #SQUARES
+     * @see #DIAMONDS
+     * @see #setFillBackgroundColor(short)
+     * @see #setFillForegroundColor(short)
+     * @param fp  fill pattern (set to {@link #SOLID_FOREGROUND} to fill w/foreground color)
+     */
+   public void setFillPattern(short fp) {
+        CTFill ct = getCTFill();
+        CTPatternFill ptrn = ct.isSetPatternFill() ? ct.getPatternFill() : ct.addNewPatternFill();
+        if(fp == NO_FILL && ptrn.isSetPatternType()) ptrn.unsetPatternType();
+        else ptrn.setPatternType(STPatternType.Enum.forInt(fp + 1));
+
+        int idx = stylesSource.putFill(new XSSFCellFill(ct));
+
+        cellXf.setFillId(idx);
+        cellXf.setApplyFill(true);
+    }
+
+    /**
+     * This element is used to specify cell fill information for pattern and solid color cell fills. For solid cell fills (no pattern),
+     * foreground color is used is used. For cell fills with patterns specified, then the cell fill color is specified by the background color element.
+     *
+     * @param ptrn the fill pattern to use
+     * @see #setFillBackgroundColor(short)
+     * @see #setFillForegroundColor(short)
+     * @see FillPatternType
+     */
+    public void setFillPattern(FillPatternType ptrn) {
+	    setFillPattern((short)ptrn.ordinal());
+    }
+
+    /**
+     * Set the font for this style
+     *
+     * @param font  a font object created or retreived from the XSSFWorkbook object
+     * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#createFont()
+     * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getFontAt(short)
+     */
+    public void setFont(Font font) {
+        if(font != null){
+            long index = font.getIndex();
+            this.cellXf.setFontId(index);
+            this.cellXf.setApplyFont(true);
+        } else {
+            this.cellXf.setApplyFont(false);
+        }
+    }
+
+    /**
+     * Set the cell's using this style to be hidden
+     *
+     * @param hidden - whether the cell using this style should be hidden
+     */
     public void setHidden(boolean hidden) {
         getCellProtection().setHidden(hidden);
     }
 
+    /**
+     * Set the number of spaces to indent the text in the cell
+     *
+     * @param indent - number of spaces
+     */
     public void setIndention(short indent) {
         getCellAlignment().setIndent(indent);
     }
 
+    /**
+     * Set the color to use for the left border as a indexed color value
+     *
+     * @param color the index of the color definition
+     * @see IndexedColors
+     */
     public void setLeftBorderColor(short color) {
-        setBorderColorIndexed(BorderSide.LEFT, color);
+        XSSFColor clr = new XSSFColor();
+        clr.setIndexed(color);
+        setLeftBorderColor(clr);
     }
 
-	
-	private void setBorderColorIndexed(BorderSide side, XSSFColor color) {
-		this.cellBorder.setBorderColor(side, color);
-	}
+    /**
+     * Set the color to use for the left border as a {@link XSSFColor} value
+     *
+     * @param color the color to use
+     */
+    public void setLeftBorderColor(XSSFColor color) {
+        CTBorder ct = getCTBorder();
+        if(color == null && !ct.isSetLeft()) return;
 
+        CTBorderPr pr = ct.isSetLeft() ? ct.getLeft() : ct.addNewLeft();
+        if(color != null)  pr.setColor(color.getCTColor());
+        else pr.unsetColor();
 
+        int idx = stylesSource.putBorder(new XSSFCellBorder(ct));
+
+        cellXf.setBorderId(idx);
+        cellXf.setApplyBorder(true);
+    }
+
+    /**
+     * Set the cell's using this style to be locked
+     *
+     * @param locked -  whether the cell using this style should be locked
+     */
     public void setLocked(boolean locked) {
         getCellProtection().setLocked(locked);
     }
 
-
+    /**
+     * Set the color to use for the right border
+     *
+     * @param color the index of the color definition
+     * @see IndexedColors
+     */
     public void setRightBorderColor(short color) {
-        setBorderColorIndexed(BorderSide.RIGHT, color);
+        XSSFColor clr = new XSSFColor();
+        clr.setIndexed(color);
+        setRightBorderColor(clr);
     }
 
+    /**
+     * Set the color to use for the right border as a {@link XSSFColor} value
+     *
+     * @param color the color to use
+     */
+    public void setRightBorderColor(XSSFColor color) {
+        CTBorder ct = getCTBorder();
+        if(color == null && !ct.isSetRight()) return;
+
+        CTBorderPr pr = ct.isSetRight() ? ct.getRight() : ct.addNewRight();
+        if(color != null)  pr.setColor(color.getCTColor());
+        else pr.unsetColor();
+
+        int idx = stylesSource.putBorder(new XSSFCellBorder(ct));
+
+        cellXf.setBorderId(idx);
+        cellXf.setApplyBorder(true);
+    }
+
+    /**
+     * Set the degree of rotation for the text in the cell
+     * <p>
+     * Expressed in degrees. Values range from 0 to 180. The first letter of
+     * the text is considered the center-point of the arc.
+     * <br/>
+     * For 0 - 90, the value represents degrees above horizon. For 91-180 the degrees below the
+     * horizon is calculated as:
+     * <br/>
+     * <code>[degrees below horizon] = 90 - textRotation.</code>
+     * </p>
+     *
+     * @param rotation - the rotation degrees (between 0 and 180 degrees)
+     */
     public void setRotation(short rotation) {
         getCellAlignment().setTextRotation(rotation);
     }
 
+
+    /**
+     * Set the color to use for the top border
+     *
+     * @param color the index of the color definition
+     * @see IndexedColors
+     */
     public void setTopBorderColor(short color) {
-        setBorderColorIndexed(BorderSide.TOP, color);
+        XSSFColor clr = new XSSFColor();
+        clr.setIndexed(color);
+        setTopBorderColor(clr);
     }
 
+    /**
+     * Set the color to use for the top border as a {@link XSSFColor} value
+     *
+     * @param color the color to use
+     */
+    public void setTopBorderColor(XSSFColor color) {
+        CTBorder ct = getCTBorder();
+        if(color == null && !ct.isSetTop()) return;
+
+        CTBorderPr pr = ct.isSetTop() ? ct.getTop() : ct.addNewTop();
+        if(color != null)  pr.setColor(color.getCTColor());
+        else pr.unsetColor();
+
+        int idx = stylesSource.putBorder(new XSSFCellBorder(ct));
+
+        cellXf.setBorderId(idx);
+        cellXf.setApplyBorder(true);
+    }
+
+    /**
+     * Set the type of vertical alignment for the cell
+     *
+     * @param align - align the type of alignment
+     * @see #VERTICAL_TOP
+     * @see #VERTICAL_CENTER
+     * @see #VERTICAL_BOTTOM
+     * @see #VERTICAL_JUSTIFY
+     * @see VerticalAlignment
+     */
     public void setVerticalAlignment(short align) {
         getCellAlignment().setVertical(VerticalAlignment.values()[align]);
     }
 
+    /**
+     * Set the type of vertical alignment for the cell
+     *
+     * @param align - the type of alignment
+     */
     public void setVerticalAlignment(VerticalAlignment align) {
         getCellAlignment().setVertical(align);
     }
 
+    /**
+     * Set whether the text should be wrapped
+     *
+     * @param wrapped a boolean value indicating if the text in a cell should be line-wrapped within the cell.
+     */
     public void setWrapText(boolean wrapped) {
         getCellAlignment().setWrapText(wrapped);
     }
 
+    /**
+     * Gets border color
+     *
+     * @param side the border side
+     * @return the used color
+     */
     public XSSFColor getBorderColor(BorderSide side) {
-        return getCellBorder().getBorderColor(side);
+        switch(side){
+            case BOTTOM:
+                return getBottomBorderRgbColor();
+            case RIGHT:
+                return getRightBorderRgbColor();
+            case TOP:
+                return getTopBorderRgbColor();
+            case LEFT:
+                return getLeftBorderRgbColor();
+            default:
+                throw new IllegalArgumentException("Unknown border: " + side);
+        }
     }
 
+    /**
+     * Set the color to use for the selected border
+     *
+     * @param side - where to apply the color definition
+     * @param color - the color to use
+     */
     public void setBorderColor(BorderSide side, XSSFColor color) {
-        getCellBorder().setBorderColor(side, color);
-    }
-    
-    private XSSFCellBorder getCellBorder() {
-        if (cellBorder == null) {
-            // TODO make a common Cell Border object
-            int borderId=getBorderId();
-            if(borderId==-1){
-        	cellBorder=new XSSFCellBorder();
-		long index=((StylesTable)stylesSource).putBorder(cellBorder);
-		this.cellXf.setBorderId(index);
-		this.cellXf.setApplyBorder(true);
-            }
-            else{
-        	cellBorder = ((StylesTable)stylesSource).getBorderAt(borderId);
-            }
+        switch(side){
+            case BOTTOM:
+                setBottomBorderColor(color);
+                break;
+            case RIGHT:
+                setRightBorderColor(color);
+                break;
+            case TOP:
+                setTopBorderColor(color);
+                break;
+            case LEFT:
+                setLeftBorderColor(color);
+                break;
         }
-        return cellBorder;
     }
-
-    private int getBorderId() {
-        if (cellXf.isSetBorderId() && cellXf.getBorderId()>0) {
-            return (int) cellXf.getBorderId();
-        }
-        return -1;
-      //  return (int) cellStyleXf.getBorderId();
-    }
-    
-    private XSSFCellFill getCellFill() {
-	if (cellFill == null) {
-	    int fillId=getFillId();
-	    if(fillId == -1) {
-		cellFill=new XSSFCellFill();
-		long index=((StylesTable)stylesSource).putFill(cellFill);
-		this.cellXf.setFillId(index);
-		this.cellXf.setApplyFill(true);
-	    }
-	    else{
-		cellFill=((StylesTable)stylesSource).getFillAt(fillId);
-	    }
-	}
-	return cellFill;
-    }
-
-    private int getFillId() {
-        if (cellXf.isSetFillId() && cellXf.getFillId()>0) {
-            return (int) cellXf.getFillId();
-        }
-        //return (int) cellStyleXf.getFillId();
-        return -1; 
-    }
-
     private int getFontId() {
         if (cellXf.isSetFontId()) {
             return (int) cellXf.getFontId();
@@ -544,6 +1287,10 @@ public class XSSFCellStyle implements CellStyle {
         return (int) cellStyleXf.getFontId();
     }
 
+    /**
+     * get a cellProtection from the supplied XML definition
+     * @return CTCellProtection
+     */
     private CTCellProtection getCellProtection() {
         if (cellXf.getProtection() == null) {
             cellXf.addNewProtection();
@@ -551,13 +1298,22 @@ public class XSSFCellStyle implements CellStyle {
         return cellXf.getProtection();
     }
 
-    public XSSFCellAlignment getCellAlignment() {
+    /**
+     * get the cellAlignment object to use for manage alignment
+     * @return XSSFCellAlignment - cell alignment
+     */
+    protected XSSFCellAlignment getCellAlignment() {
         if (this.cellAlignment == null) {
             this.cellAlignment = new XSSFCellAlignment(getCTCellAlignment());
         }
         return this.cellAlignment;
     }
 
+    /**
+     * Return the CTCellAlignment instance for alignment
+     *
+     * @return CTCellAlignment
+     */
     private CTCellAlignment getCTCellAlignment() {
         if (cellXf.getAlignment() == null) {
             cellXf.setAlignment(CTCellAlignment.Factory.newInstance());
@@ -565,24 +1321,40 @@ public class XSSFCellStyle implements CellStyle {
         return cellXf.getAlignment();
     }
 
-    private short getBorderColorIndexed(BorderSide side) {
-        return (short) getBorderColor(side).getIndexed();
+    /**
+     * Returns a hash code value for the object. The hash is derived from the underlying CTXf bean.
+     *
+     * @return the hash code value for this style
+     */
+    public int hashCode(){
+        return cellXf.toString().hashCode();
     }
 
-    private void setBorderColorIndexed(BorderSide side, int color) {
-        getBorderColor(side).setIndexed(color);
+    /**
+     * Checks is the supplied style is equal to this style
+     *
+     * @param o the style to check
+     * @return true if the supplied style is equal to this style
+     */
+    public boolean equals(Object o){
+        if(o == null || !(o instanceof XSSFCellStyle)) return false;
+
+        XSSFCellStyle cf = (XSSFCellStyle)o;
+        return cellXf.toString().equals(cf.getCoreXf().toString());
     }
 
-    private short getBorderStyleAsShort(BorderSide side) {
-        return (short) (getBorderStyle(side).intValue() - 1);
-    }
+    /**
+     * Make a copy of this style. The underlying CTXf bean is cloned,
+     * the references to fills and borders remain.
+     *
+     * @return a copy of this style
+     */
+    public Object clone(){
+        CTXf xf = (CTXf)cellXf.copy();
 
-    private String getBorderStyleAsString(BorderSide side) {
-        return getBorderStyle(side).toString();
-    }
-
-    private STBorderStyle.Enum getBorderStyle(BorderSide side) {
-        return getCellBorder().getBorderStyle(side);
+        int xfSize = stylesSource._getStyleXfsSize();
+        int indexXf = stylesSource.putCellXf(xf);
+        return new XSSFCellStyle(indexXf-1, xfSize-1, stylesSource);
     }
 
 }

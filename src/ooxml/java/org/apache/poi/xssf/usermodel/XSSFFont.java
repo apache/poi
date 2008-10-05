@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.xssf.usermodel.extensions.XSSFColor;
+import org.apache.poi.xssf.model.StylesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
@@ -54,6 +55,7 @@ public class XSSFFont implements Font {
     public static final short DEFAULT_FONT_COLOR = IndexedColors.BLACK.getIndex();
 
     private CTFont ctFont;
+    private short index;
 
     /**
      * Create a new XSSFFont
@@ -62,6 +64,12 @@ public class XSSFFont implements Font {
      */
     public XSSFFont(CTFont font) {
         this.ctFont = font;
+        this.index = 0;
+    }
+
+    public XSSFFont(CTFont font, int index) {
+        this.ctFont = font;
+        this.index = (short)index;
     }
 
     /**
@@ -69,6 +77,8 @@ public class XSSFFont implements Font {
      */
     protected XSSFFont() {
         this.ctFont = CTFont.Factory.newInstance();
+        setFontName(DEFAULT_FONT_NAME);
+        setFontHeight(DEFAULT_FONT_SIZE);
     }
 
     /**
@@ -130,8 +140,7 @@ public class XSSFFont implements Font {
      */
     public XSSFColor getRgbColor() {
         CTColor ctColor = ctFont.sizeOfColorArray() == 0 ? null : ctFont.getColorArray(0);
-        XSSFColor color = new XSSFColor(ctColor);
-        return color;
+        return ctColor == null ? null : new XSSFColor(ctColor);
     }
 
 
@@ -180,7 +189,7 @@ public class XSSFFont implements Font {
      */
     public String getFontName() {
         CTFontName name = ctFont.sizeOfNameArray() == 0 ? null : ctFont.getNameArray(0);
-        return name == null ? null : name.getVal();
+        return name == null ? DEFAULT_FONT_NAME : name.getVal();
     }
 
     /**
@@ -265,8 +274,29 @@ public class XSSFFont implements Font {
      * @param bold - boldness to use
      */
     public void setBold(boolean bold) {
-        CTBooleanProperty ctBold = ctFont.sizeOfBArray() == 0 ? ctFont.addNewB() : ctFont.getBArray(0);
-        ctBold.setVal(true);
+        if(bold){
+            CTBooleanProperty ctBold = ctFont.sizeOfBArray() == 0 ? ctFont.addNewB() : ctFont.getBArray(0);
+            ctBold.setVal(bold);
+        } else {
+            ctFont.setBArray(null);
+        }
+    }
+
+    public void setBoldweight(short boldweight)
+    {
+        setBold(boldweight == BOLDWEIGHT_BOLD);
+    }
+
+    /**
+     * get the boldness to use
+     * @return boldweight
+     * @see #BOLDWEIGHT_NORMAL
+     * @see #BOLDWEIGHT_BOLD
+     */
+
+    public short getBoldweight()
+    {
+        return getBold() ? BOLDWEIGHT_BOLD : BOLDWEIGHT_NORMAL;
     }
 
     /**
@@ -322,6 +352,10 @@ public class XSSFFont implements Font {
             default:
                 ctColor.setIndexed(color);
         }
+    }
+    public void setColor(XSSFColor color) {
+        if(color == null) ctFont.setColorArray(null);
+        else ctFont.setColorArray(new CTColor[]{color.getCTColor()});
     }
 
     /**
@@ -385,7 +419,7 @@ public class XSSFFont implements Font {
      */
     public void setFontName(String name) {
         CTFontName fontName = ctFont.sizeOfNameArray() == 0 ? ctFont.addNewName() : ctFont.getNameArray(0);
-        fontName.setVal(name);
+        fontName.setVal(name == null ? DEFAULT_FONT_NAME : name);
     }
 
 
@@ -396,8 +430,12 @@ public class XSSFFont implements Font {
      * @param italic - value for italics or not
      */
     public void setItalic(boolean italic) {
-        CTBooleanProperty bool = ctFont.sizeOfIArray() == 0 ? ctFont.addNewI() : ctFont.getIArray(0);
-        bool.setVal(italic);
+        if(italic){
+            CTBooleanProperty bool = ctFont.sizeOfIArray() == 0 ? ctFont.addNewI() : ctFont.getIArray(0);
+            bool.setVal(italic);
+        } else {
+            ctFont.setIArray(null);
+        }
     }
 
 
@@ -408,8 +446,11 @@ public class XSSFFont implements Font {
      * @param strikeout - value for strikeout or not
      */
     public void setStrikeout(boolean strikeout) {
-        CTBooleanProperty strike = ctFont.sizeOfStrikeArray() == 0 ? ctFont.addNewStrike() : ctFont.getStrikeArray(0);
-        strike.setVal(strikeout);
+        if(!strikeout) ctFont.setStrikeArray(null);
+        else {
+            CTBooleanProperty strike = ctFont.sizeOfStrikeArray() == 0 ? ctFont.addNewStrike() : ctFont.getStrikeArray(0);
+            strike.setVal(strikeout);
+        }
     }
 
     /**
@@ -423,17 +464,21 @@ public class XSSFFont implements Font {
      * @see #SS_SUB
      */
     public void setTypeOffset(short offset) {
-        CTVerticalAlignFontProperty offsetProperty = ctFont.sizeOfVertAlignArray() == 0 ? ctFont.addNewVertAlign() : ctFont.getVertAlignArray(0);
-        switch (offset) {
-            case Font.SS_NONE:
-                offsetProperty.setVal(STVerticalAlignRun.BASELINE);
-                break;
-            case Font.SS_SUB:
-                offsetProperty.setVal(STVerticalAlignRun.SUBSCRIPT);
-                break;
-            case Font.SS_SUPER:
-                offsetProperty.setVal(STVerticalAlignRun.SUPERSCRIPT);
-                break;
+        if(offset == Font.SS_NONE){
+            ctFont.setVertAlignArray(null);
+        } else {
+            CTVerticalAlignFontProperty offsetProperty = ctFont.sizeOfVertAlignArray() == 0 ? ctFont.addNewVertAlign() : ctFont.getVertAlignArray(0);
+            switch (offset) {
+                case Font.SS_NONE:
+                    offsetProperty.setVal(STVerticalAlignRun.BASELINE);
+                    break;
+                case Font.SS_SUB:
+                    offsetProperty.setVal(STVerticalAlignRun.SUBSCRIPT);
+                    break;
+                case Font.SS_SUPER:
+                    offsetProperty.setVal(STVerticalAlignRun.SUPERSCRIPT);
+                    break;
+            }
         }
     }
 
@@ -445,24 +490,25 @@ public class XSSFFont implements Font {
      * @see FontUnderline
      */
     public void setUnderline(byte underline) {
-        CTUnderlineProperty ctUnderline = ctFont.sizeOfUArray() == 0 ? ctFont.addNewU() : ctFont.getUArray(0);
-        switch (underline) {
-            case Font.U_DOUBLE:
-                ctUnderline.setVal(FontUnderline.DOUBLE.getValue());
-                break;
-            case Font.U_DOUBLE_ACCOUNTING:
-                ctUnderline.setVal(FontUnderline.DOUBLE_ACCOUNTING.getValue());
-                break;
-            case Font.U_SINGLE_ACCOUNTING:
-                ctUnderline.setVal(FontUnderline.SINGLE_ACCOUNTING.getValue());
-                break;
-            case Font.U_NONE:
-                ctUnderline.setVal(FontUnderline.NONE.getValue());
-                break;
-            case Font.U_SINGLE:
-            default:
-                ctUnderline.setVal(FontUnderline.SINGLE.getValue());
-                break;
+        if(underline == Font.U_NONE) {
+            ctFont.setUArray(null);
+        } else {
+            CTUnderlineProperty ctUnderline = ctFont.sizeOfUArray() == 0 ? ctFont.addNewU() : ctFont.getUArray(0);
+            switch (underline) {
+                case Font.U_DOUBLE:
+                    ctUnderline.setVal(FontUnderline.DOUBLE.getValue());
+                    break;
+                case Font.U_DOUBLE_ACCOUNTING:
+                    ctUnderline.setVal(FontUnderline.DOUBLE_ACCOUNTING.getValue());
+                    break;
+                case Font.U_SINGLE_ACCOUNTING:
+                    ctUnderline.setVal(FontUnderline.SINGLE_ACCOUNTING.getValue());
+                    break;
+                case Font.U_SINGLE:
+                default:
+                    ctUnderline.setVal(FontUnderline.NONE.getValue());
+                    break;
+            }
         }
     }
 
@@ -486,18 +532,13 @@ public class XSSFFont implements Font {
     }
 
 
-    public long putFont(ArrayList<CTFont> fonts) {
-        //TODO
-        /*
-           * we need to implement a method equals to check that 2 instances of CTFont
-           * are different by comparison of all font attributes.
-           * NB: take a look to findFont method in XSSFWorkbook
-           */
-        if (fonts.contains(ctFont)) {
-            return fonts.indexOf(ctFont);
-        }
-        fonts.add(ctFont);
-        return fonts.size() - 1;
+    /**
+     * Register ourselfs in the style table
+     */
+    public long putFont(StylesTable styles) {
+        short idx = (short)styles.putFont(this);
+        this.index = idx;
+        return idx;
     }
 
     /**
@@ -558,5 +599,26 @@ public class XSSFFont implements Font {
         setFamily(family.getValue());
     }
 
+    /**
+     * get the index within the XSSFWorkbook (sequence within the collection of Font objects)
+     * @return unique index number of the underlying record this Font represents (probably you don't care
+     *  unless you're comparing which one is which)
+     */
+
+    public short getIndex()
+    {
+        return index;
+    }
+
+    public int hashCode(){
+        return ctFont.toString().hashCode();
+    }
+
+    public boolean equals(Object o){
+        if(!(o instanceof XSSFFont)) return false;
+
+        XSSFFont cf = (XSSFFont)o;
+        return ctFont.toString().equals(cf.getCTFont().toString());
+    }
 
 }

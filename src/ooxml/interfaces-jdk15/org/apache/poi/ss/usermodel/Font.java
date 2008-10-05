@@ -270,6 +270,17 @@ public interface Font {
      */
     void setCharSet(byte charset);
 
-    String toString();
+    /**
+     * get the index within the XSSFWorkbook (sequence within the collection of Font objects)
+     * 
+     * @return unique index number of the underlying record this Font represents (probably you don't care
+     *  unless you're comparing which one is which)
+     */
+    public short getIndex();
+
+    public void setBoldweight(short boldweight);
+
+    public short getBoldweight();
+
 
 }

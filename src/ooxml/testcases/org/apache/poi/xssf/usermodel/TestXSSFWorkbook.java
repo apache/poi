@@ -256,7 +256,7 @@ public final class TestXSSFWorkbook extends TestCase {
 		Font font=workbook.createFont();
 		((XSSFFont)font).setBold(true);
 		font.setUnderline(Font.U_DOUBLE);
-		StylesSource styleSource=new StylesTable();
+		StylesTable styleSource=new StylesTable();
 		long index=styleSource.putFont(font);
 		System.out.println("index="+index);
 		workbook.setStylesSource(styleSource);

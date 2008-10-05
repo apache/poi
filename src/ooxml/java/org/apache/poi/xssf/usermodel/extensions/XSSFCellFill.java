@@ -22,6 +22,7 @@ import org.apache.poi.xssf.usermodel.IndexedColors;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType.Enum;
 
 public final class XSSFCellFill {
@@ -37,41 +38,54 @@ public final class XSSFCellFill {
 	}
 	
 	public XSSFColor getFillBackgroundColor() {
-		CTColor ctColor = getPatternFill().getBgColor();
-		if (ctColor == null) {
-			XSSFColor result = new XSSFColor();
-			result.setIndexed(IndexedColors.AUTOMATIC.getIndex());
-			return result;
-		}
-		return new XSSFColor(ctColor);
+        CTPatternFill ptrn = _fill.getPatternFill();
+        if(ptrn == null) return null;
+
+        CTColor ctColor = ptrn.getBgColor();
+		return ctColor == null ? null : new XSSFColor(ctColor);
 	}
 
-	public XSSFColor getFillForegroundColor() {
-		CTColor ctColor = getPatternFill().getFgColor();
-		if (ctColor == null) {
-			XSSFColor result = new XSSFColor();
-			result.setIndexed(IndexedColors.AUTOMATIC.getIndex());
-			return result;
-		}
-		return new XSSFColor(ctColor);
+    public void setFillBackgroundColor(int index) {
+        CTPatternFill ptrn = ensureCTPatternFill();
+        CTColor ctColor = ptrn.isSetBgColor() ? ptrn.getBgColor() : ptrn.addNewBgColor();
+        ctColor.setIndexed(index);
+    }
+
+    public void setFillBackgroundColor(XSSFColor color) {
+        CTPatternFill ptrn = ensureCTPatternFill();
+        ptrn.setBgColor(color.getCTColor());
+    }
+
+    public XSSFColor getFillForegroundColor() {
+        CTPatternFill ptrn = _fill.getPatternFill();
+        if(ptrn == null) return null;
+
+        CTColor ctColor = ptrn.getFgColor();
+        return ctColor == null ? null : new XSSFColor(ctColor);
+    }
+
+    public void setFillForegroundColor(int index) {
+        CTPatternFill ptrn = ensureCTPatternFill();
+        CTColor ctColor = ptrn.isSetFgColor() ? ptrn.getFgColor() : ptrn.addNewFgColor();
+        ctColor.setIndexed(index);
+    }
+
+    public void setFillForegroundColor(XSSFColor color) {
+        CTPatternFill ptrn = ensureCTPatternFill();
+        ptrn.setFgColor(color.getCTColor());
+    }
+
+	public STPatternType.Enum getPatternType() {
+        CTPatternFill ptrn = _fill.getPatternFill();
+		return ptrn == null ? null : ptrn.getPatternType();
 	}
 
-	public Enum getPatternType() {
-		return getPatternFill().getPatternType();
-	}
-	
-	/**
-	 * @return the index of the just added fill
-	 */
-	public int putFill(List<CTFill> fills) {
-		if (fills.contains(_fill)) {
-			return fills.indexOf(_fill);
-		}
-		fills.add(_fill);
-		return fills.size() - 1;
-	}
+    public void setPatternType(STPatternType.Enum patternType) {
+        CTPatternFill ptrn = ensureCTPatternFill();
+        ptrn.setPatternType(patternType);
+    }
 
-	private CTPatternFill getPatternFill() {
+	private CTPatternFill ensureCTPatternFill() {
 		CTPatternFill patternFill = _fill.getPatternFill();
 		if (patternFill == null) {
 			patternFill = _fill.addNewPatternFill();
@@ -83,27 +97,14 @@ public final class XSSFCellFill {
 		return _fill;
 	}
 	
-	public void setFillBackgroundColor(long index) {
-		CTColor ctColor=getPatternFill().addNewBgColor();
-		ctColor.setIndexed(index);
-		_fill.getPatternFill().setBgColor(ctColor);
-	}
+    public int hashCode(){
+        return _fill.toString().hashCode();
+    }
 
-	public void setFillForegroundColor(long index) {
-		CTColor ctColor=getPatternFill().addNewFgColor();
-		ctColor.setIndexed(index);
-		_fill.getPatternFill().setFgColor(ctColor);
-	}
-	
-	public void setFillBackgroundRgbColor(XSSFColor color) {
-		_fill.getPatternFill().setBgColor(color.getCTColor());
-	}
+    public boolean equals(Object o){
+        if(!(o instanceof XSSFCellFill)) return false;
 
-	public void setFillForegroundRgbColor(XSSFColor color) {
-		_fill.getPatternFill().setFgColor(color.getCTColor());
-	}
-	
-	public void setPatternType(Enum patternType) {
-		getPatternFill().setPatternType(patternType);
-	}
+        XSSFCellFill cf = (XSSFCellFill)o;
+        return _fill.toString().equals(cf.getCTFill().toString());
+    }
 }

@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel.extensions;
 
 
+import org.apache.poi.xssf.usermodel.FillPatternType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
@@ -48,11 +49,19 @@ public class TestXSSFCellFill extends TestCase {
 		assertEquals(8, cellFill.getFillForegroundColor().getIndexed());
 	}
 	
-	public void testGetPatternType() {
+	public void testGetSetPatternType() {
 		CTFill ctFill = CTFill.Factory.newInstance();
 		XSSFCellFill cellFill = new XSSFCellFill(ctFill);
 		CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
-		ctPatternFill.setPatternType(STPatternType.DARK_DOWN);
-		assertEquals(8, cellFill.getPatternType().intValue());
+		ctPatternFill.setPatternType(STPatternType.SOLID);
+		//assertEquals(FillPatternType.SOLID_FOREGROUND.ordinal(), cellFill.getPatternType().ordinal());
 	}
+
+    public void testGetNotModifies() {
+        CTFill ctFill = CTFill.Factory.newInstance();
+        XSSFCellFill cellFill = new XSSFCellFill(ctFill);
+        CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
+        ctPatternFill.setPatternType(STPatternType.DARK_DOWN);
+        assertEquals(8, cellFill.getPatternType().intValue());
+    }
 }
