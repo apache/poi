@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.2-alpha1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">43354 - support for evalating formulas with missing args</action>
            <action dev="POI-DEVELOPERS" type="fix">45912 - fixed ArrayIndexOutOfBoundsException in EmbeddedObjectRefSubRecord</action>
            <action dev="POI-DEVELOPERS" type="fix">45889 - fixed ArrayIndexOutOfBoundsException when constructing HSLF Table with a single row </action>
            <action dev="POI-DEVELOPERS" type="add">Initial support for creating hyperlinks in HSLF</action>
