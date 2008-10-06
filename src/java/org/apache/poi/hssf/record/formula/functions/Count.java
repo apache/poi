@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.MissingArgEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.functions.CountUtils.I_MatchPredicate;
 
@@ -62,6 +63,10 @@ public final class Count implements Function {
 
 			if(valueEval instanceof NumberEval) {
 				// only numbers are counted
+				return true;
+			}
+			if(valueEval == MissingArgEval.instance) {
+				// oh yeah, and missing arguments
 				return true;
 			}
 

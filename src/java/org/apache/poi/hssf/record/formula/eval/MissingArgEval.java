@@ -17,29 +17,19 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
- * Collects all tests the package <tt>org.apache.poi.hssf.record.formula.eval</tt>.
- * 
+ * Represents the (intermediate) evaluated result of a missing function argument.  In most cases
+ * this can be translated into {@link BlankEval} but there are some notable exceptions.  Functions
+ * COUNT and COUNTA <em>do</em> count their missing args.  Note - the differences between 
+ * {@link MissingArgEval} and {@link BlankEval} have not been investigated fully, so the POI
+ * evaluator may need to be updated to account for these as they are found.
+ *
  * @author Josh Micich
  */
-public class AllFormulaEvalTests {
-	
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllFormulaEvalTests.class.getName());
-		result.addTestSuite(TestAreaEval.class);
-		result.addTestSuite(TestCircularReferences.class);
-		result.addTestSuite(TestDivideEval.class);
-		result.addTestSuite(TestEqualEval.class);
-		result.addTestSuite(TestExternalFunction.class);
-		result.addTestSuite(TestFormulaBugs.class);
-		result.addTestSuite(TestFormulasFromSpreadsheet.class);
-		result.addTestSuite(TestMissingArgEval.class);
-		result.addTestSuite(TestPercentEval.class);
-		result.addTestSuite(TestRangeEval.class);
-		result.addTestSuite(TestUnaryPlusEval.class);
-		return result;
-	}
+public final class MissingArgEval implements ValueEval {
+
+    public static MissingArgEval instance = new MissingArgEval();
+
+    private MissingArgEval() {
+    }
 }

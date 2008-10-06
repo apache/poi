@@ -52,6 +52,7 @@ import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.FunctionEval;
+import org.apache.poi.hssf.record.formula.eval.MissingArgEval;
 import org.apache.poi.hssf.record.formula.eval.NameEval;
 import org.apache.poi.hssf.record.formula.eval.NameXEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
@@ -284,10 +285,7 @@ public final class WorkbookEvaluator {
 				continue;
 			}
 			if (ptg instanceof MemErrPtg) { continue; }
-			if (ptg instanceof MissingArgPtg) {
-				// TODO - might need to push BlankEval or MissingArgEval
-				continue;
-			}
+
 			Eval opResult;
 			if (ptg instanceof OperationPtg) {
 				OperationPtg optg = (OperationPtg) ptg;
@@ -306,6 +304,9 @@ public final class WorkbookEvaluator {
 				}
 //				logDebug("invoke " + operation + " (nAgs=" + numops + ")");
 				opResult = invokeOperation(operation, ops, _workbook, sheetIndex, srcRowNum, srcColNum);
+				if (opResult == MissingArgEval.instance) {
+					opResult = BlankEval.INSTANCE;
+				}
 			} else {
 				opResult = getEvalForPtg(ptg, sheetIndex, tracker);
 			}
@@ -423,6 +424,9 @@ public final class WorkbookEvaluator {
 		}
 		if (ptg instanceof ErrPtg) {
 			return ErrorEval.valueOf(((ErrPtg) ptg).getErrorCode());
+		}
+		if (ptg instanceof MissingArgPtg) {
+			return MissingArgEval.instance;
 		}
 		if (ptg instanceof AreaErrPtg ||ptg instanceof RefErrorPtg 
 				|| ptg instanceof DeletedArea3DPtg || ptg instanceof DeletedRef3DPtg) {
