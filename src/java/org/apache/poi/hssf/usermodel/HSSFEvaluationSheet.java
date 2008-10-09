@@ -15,29 +15,36 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.EvaluationCell;
+import org.apache.poi.ss.formula.EvaluationSheet;
 
 /**
- * Tests {@link CellCacheEntry}.
- *
+ * HSSF wrapper for a sheet under evaluation
+ * 
  * @author Josh Micich
  */
-public class TestCellCacheEntry extends TestCase {
+final class HSSFEvaluationSheet implements EvaluationSheet {
 
-	public void testBasic() {
-		CellCacheEntry pcce = new PlainValueCellCacheEntry(new NumberEval(42.0));
-		ValueEval ve = pcce.getValue();
-		assertEquals(42, ((NumberEval)ve).getNumberValue(), 0.0);
-		
-		FormulaCellCacheEntry fcce = new FormulaCellCacheEntry();
-		fcce.updateFormulaResult(new NumberEval(10.0), CellCacheEntry.EMPTY_ARRAY, null);
-		
-		ve = fcce.getValue();
-		assertEquals(10, ((NumberEval)ve).getNumberValue(), 0.0);
+	private final HSSFSheet _hs;
+
+	public HSSFEvaluationSheet(HSSFSheet hs) {
+		_hs = hs;
+	}
+
+	public HSSFSheet getHSSFSheet() {
+		return _hs;
+	}
+	public EvaluationCell getCell(int rowIndex, int columnIndex) {
+		HSSFRow row = _hs.getRow(rowIndex);
+		if (row == null) {
+			return null;
+		}
+		HSSFCell cell = row.getCell(columnIndex);
+		if (cell == null) {
+			return null;
+		}
+		return new HSSFEvaluationCell(cell, this);
 	}
 }

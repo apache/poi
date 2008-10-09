@@ -17,42 +17,44 @@
 
 package org.apache.poi.ss.formula;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.IEvaluationListener.ICacheEntry;
 
 /**
  * Stores the parameters that identify the evaluation of one cell.<br/>
  */
-final class CellCacheEntry {
-	private ValueEval _value;
-	private final Set _consumingCells;
-	private CellLocation[] _usedCells;
-	private boolean _isPlainValueCell;
+abstract class CellCacheEntry implements ICacheEntry {
+	public static final CellCacheEntry[] EMPTY_ARRAY = { };
 	
-	public CellCacheEntry() {
-		_consumingCells = new HashSet();
+	private final FormulaCellCacheEntrySet _consumingCells;
+	private ValueEval _value;
+	
+
+	protected CellCacheEntry() {
+		_consumingCells = new FormulaCellCacheEntrySet();
 	}
-	public boolean updatePlainValue(ValueEval value) {
-		boolean wasChanged = false;
-		if (!_isPlainValueCell) {
-			wasChanged = true;
+	protected final void clearValue() {
+		_value = null;
+	}
+
+	public final boolean updateValue(ValueEval value) {
+		if (value == null) {
+			throw new IllegalArgumentException("Did not expect to update to null");
 		}
-		if (!areValuesEqual(_value, value)) {
-			wasChanged = true;
-		}
-		_isPlainValueCell = true;
+		boolean result = !areValuesEqual(_value, value);
 		_value = value;
-		_usedCells = null;
-		return wasChanged;
+		return result;
 	}
-	private boolean areValuesEqual(ValueEval a, ValueEval b) {
+	public final ValueEval getValue() {
+		return _value;
+	}
+	
+	private static boolean areValuesEqual(ValueEval a, ValueEval b) {
 		if (a == null) {
 			return false;
 		}
@@ -78,41 +80,58 @@ final class CellCacheEntry {
 		}
 		throw new IllegalStateException("Unexpected value class (" + cls.getName() + ")");
 	}
-	public void setFormulaResult(ValueEval value, CellLocation[] usedCells) {
-		_isPlainValueCell = false;
-		_value = value;
-		_usedCells = usedCells;
-	}
-	public void addConsumingCell(CellLocation cellLoc) {
+
+	public final void addConsumingCell(FormulaCellCacheEntry cellLoc) {
 		_consumingCells.add(cellLoc);
 		
 	}
-	public CellLocation[] getConsumingCells() {
-		int nItems = _consumingCells.size();
-		if (nItems < 1) {
-			return CellLocation.EMPTY_ARRAY;
-		}
-		CellLocation[] result = new CellLocation[nItems];
-		_consumingCells.toArray(result);
-		return result;
+	public final FormulaCellCacheEntry[] getConsumingCells() {
+		return _consumingCells.toArray();
 	}
-	public CellLocation[] getUsedCells() {
-		return _usedCells;
-	}
-	public void clearConsumingCell(CellLocation fc) {
-		if(!_consumingCells.remove(fc)) {
-			throw new IllegalStateException("Cell '" + fc.formatAsString() + "' does not use this cell");
+
+	public final void clearConsumingCell(FormulaCellCacheEntry cce) {
+		if(!_consumingCells.remove(cce)) {
+			throw new IllegalStateException("Specified formula cell is not consumed by this cell");
 		}
+	}
+	public final void recurseClearCachedFormulaResults(IEvaluationListener listener) {
+		if (listener == null) {
+			recurseClearCachedFormulaResults();
+		} else {
+			listener.onClearCachedValue(this);
+			recurseClearCachedFormulaResults(listener, 1);
+		}
+	}
+	
+	/**
+	 * Calls formulaCell.setFormulaResult(null, null) recursively all the way up the tree of 
+	 * dependencies. Calls usedCell.clearConsumingCell(fc) for each child of a cell that is
+	 * cleared along the way.
+	 * @param formulaCells
+	 */
+	protected final void recurseClearCachedFormulaResults() {
+		FormulaCellCacheEntry[] formulaCells = getConsumingCells();
 		
-	}
-	public ValueEval getValue() {
-		ValueEval result = _value;
-		if (result == null) {
-			if (_isPlainValueCell) {
-				throw new IllegalStateException("Plain value cell should always have a value");
-				
-			}
+		for (int i = 0; i < formulaCells.length; i++) {
+			FormulaCellCacheEntry fc = formulaCells[i];
+			fc.clearFormulaEntry();
+			fc.recurseClearCachedFormulaResults();
 		}
-		return result;
 	}
+	
+	/**
+	 * Identical to {@link #recurseClearCachedFormulaResults()} except for the listener call-backs
+	 */
+	protected final void recurseClearCachedFormulaResults(IEvaluationListener listener, int depth) {
+		FormulaCellCacheEntry[] formulaCells = getConsumingCells();
+
+		listener.sortDependentCachedValues(formulaCells);
+		for (int i = 0; i < formulaCells.length; i++) {
+			FormulaCellCacheEntry fc = formulaCells[i];
+			listener.onClearDependentCachedValue(fc, depth);
+			fc.clearFormulaEntry();
+			fc.recurseClearCachedFormulaResults(listener, depth+1);
+		}
+	}
+	
 }

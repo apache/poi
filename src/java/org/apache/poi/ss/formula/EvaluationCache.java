@@ -17,16 +17,17 @@
 
 package org.apache.poi.ss.formula;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
+import org.apache.poi.hssf.record.formula.eval.BlankEval;
+import org.apache.poi.hssf.record.formula.eval.BoolEval;
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.ss.formula.FormulaCellCache.IEntryOperation;
+import org.apache.poi.ss.formula.FormulaUsedBlankCellSet.BookSheetKey;
+import org.apache.poi.ss.formula.PlainCellCache.Loc;
 
 /**
  * Performance optimisation for {@link HSSFFormulaEvaluator}. This class stores previously
@@ -38,152 +39,138 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
  */
 final class EvaluationCache {
 
-	private final Map _entriesByLocation;
-	private final Map _consumingCellsByUsedCells;
+	private final PlainCellCache _plainCellCache;
+	private final FormulaCellCache _formulaCellCache;
 	/** only used for testing. <code>null</code> otherwise */
-	private final IEvaluationListener _evaluationListener;
+	final IEvaluationListener _evaluationListener;
 
 	/* package */EvaluationCache(IEvaluationListener evaluationListener) {
 		_evaluationListener = evaluationListener;
-		_entriesByLocation = new HashMap();
-		_consumingCellsByUsedCells = new HashMap();
+		_plainCellCache = new PlainCellCache();
+		_formulaCellCache = new FormulaCellCache();
 	}
 
-	/**
-	 * @param cellLoc never <code>null</code>
-	 * @return only ever <code>null</code> for formula cells that have had their cached value cleared
-	 */
-	public ValueEval getValue(CellLocation cellLoc) {
-		return getEntry(cellLoc).getValue();
-	}
+	public void notifyUpdateCell(int bookIndex, int sheetIndex, EvaluationCell cell) {
+		FormulaCellCacheEntry fcce = _formulaCellCache.get(cell);
+		
+		Loc loc = new Loc(bookIndex, sheetIndex, cell.getRowIndex(), cell.getColumnIndex());
+		PlainValueCellCacheEntry pcce = _plainCellCache.get(loc);
 
-	/**
-	 * @param cellLoc
-	 * @param usedCells never <code>null</code>, (possibly zero length) array of all cells actually 
-	 * directly used when evaluating the formula
-	 * @param isPlainValue pass <code>true</code> if cellLoc refers to a plain value (non-formula) 
-	 * cell, <code>false</code> for a formula cell.
-	 * @param value the value of a non-formula cell or the result of evaluating the cell formula
-	 * Pass <code>null</code> to signify clearing the cached result of a formula cell) 
-	 */
-	public void setValue(CellLocation cellLoc, boolean isPlainValue, 
-			CellLocation[] usedCells, ValueEval value) {
-
-		CellCacheEntry existingEntry = (CellCacheEntry) _entriesByLocation.get(cellLoc);
-		if (existingEntry != null && existingEntry.getValue() != null) {
-			if (isPlainValue) {
-				// can set a plain cell cached value any time
-			} else if (value == null) {
-				// or clear the cached value of a formula cell at any time
+		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+			if (fcce == null) {
+				if (pcce == null) {
+					updateAnyBlankReferencingFormulas(bookIndex, sheetIndex, cell.getRowIndex(), cell.getColumnIndex());
+				}
+				fcce = new FormulaCellCacheEntry();
+				_formulaCellCache.put(cell, fcce);
 			} else {
-				// but a formula cached value would only be getting updated if the cache didn't have a value to start with
-				throw new IllegalStateException("Already have cached value for this cell: "
-						+ cellLoc.formatAsString());
+				fcce.recurseClearCachedFormulaResults(_evaluationListener);
+				fcce.clearFormulaEntry();
 			}
-		}
-		sortCellLocationsForLogging(usedCells);
-		CellCacheEntry entry = getEntry(cellLoc);
-		CellLocation[] consumingFormulaCells = entry.getConsumingCells();
-		CellLocation[] prevUsedCells = entry.getUsedCells();
-		if (isPlainValue) {
-			
-			if(!entry.updatePlainValue(value)) {
-				return;
+			if (pcce == null) {
+				// was formula cell before - no change of type
+			} else {
+				// changing from plain cell to formula cell
+				pcce.recurseClearCachedFormulaResults(_evaluationListener);
+				_plainCellCache.remove(loc);
 			}
 		} else {
-			entry.setFormulaResult(value, usedCells);
-			for (int i = 0; i < usedCells.length; i++) {
-				getEntry(usedCells[i]).addConsumingCell(cellLoc);
-			}
-		}
-		// need to tell all cells that were previously used, but no longer are, 
-		// that they are not consumed by this cell any more
-		unlinkConsumingCells(prevUsedCells, usedCells, cellLoc);
-		
-		// clear all cells that directly or indirectly depend on this one
-		recurseClearCachedFormulaResults(consumingFormulaCells, 0);
-	}
-
-	/**
-	 * This method sorts the supplied cellLocs so that the order of call-backs to the evaluation 
-	 * listener is more deterministic
-	 */
-	private void sortCellLocationsForLogging(CellLocation[] cellLocs) {
-		if (_evaluationListener == null) {
-			// optimisation - don't bother sorting if there is no listener.
-		} else {
-			Arrays.sort(cellLocs, CellLocationComparator);
-		}
-	}
-
-	private void unlinkConsumingCells(CellLocation[] prevUsedCells, CellLocation[] usedCells,
-			CellLocation cellLoc) {
-		if (prevUsedCells == null) {
-			return;
-		}
-		int nPrevUsed = prevUsedCells.length;
-		if (nPrevUsed < 1) {
-			return;
-		}
-		int nUsed = usedCells.length;
-		Set usedSet;
-		if (nUsed < 1) {
-			usedSet = Collections.EMPTY_SET;
-		} else {
-			usedSet = new HashSet(nUsed * 3 / 2);
-			for (int i = 0; i < nUsed; i++) {
-				usedSet.add(usedCells[i]);
-			}
-		}
-		for (int i = 0; i < nPrevUsed; i++) {
-			CellLocation prevUsed = prevUsedCells[i];
-			if (!usedSet.contains(prevUsed)) {
-				// previously was used by cellLoc, but not anymore
-				getEntry(prevUsed).clearConsumingCell(cellLoc);
+			ValueEval value = WorkbookEvaluator.getValueFromNonFormulaCell(cell);
+			if (pcce == null) {
+				if (fcce == null) {
+					updateAnyBlankReferencingFormulas(bookIndex, sheetIndex, cell.getRowIndex(), cell.getColumnIndex());
+				}
+				pcce = new PlainValueCellCacheEntry(value);
+				_plainCellCache.put(loc, pcce);
 				if (_evaluationListener != null) {
-					//TODO _evaluationListener.onUnconsume(prevUsed.getSheetIndex(), etc)
+					_evaluationListener.onReadPlainValue(sheetIndex, cell.getRowIndex(), cell.getColumnIndex(), pcce);
+				}
+			} else {
+				if(pcce.updateValue(value)) {
+					pcce.recurseClearCachedFormulaResults(_evaluationListener);
 				}
 			}
+			if (fcce == null) {
+				// was plain cell before - no change of type
+			} else {
+				// was formula cell before - now a plain value
+				_formulaCellCache.remove(cell);
+				fcce.setSensitiveInputCells(null);
+				fcce.recurseClearCachedFormulaResults(_evaluationListener);
+			}
 		}
-		
 	}
 
-	/**
-	 * Calls formulaCell.setFormulaResult(null, null) recursively all the way up the tree of 
-	 * dependencies. Calls usedCell.clearConsumingCell(fc) for each child of a cell that is
-	 * cleared along the way.
-	 * @param formulaCells
-	 */
-	private void recurseClearCachedFormulaResults(CellLocation[] formulaCells, int depth) {
-		sortCellLocationsForLogging(formulaCells);
-		int nextDepth = depth+1;
-		for (int i = 0; i < formulaCells.length; i++) {
-			CellLocation fc = formulaCells[i];
-			CellCacheEntry formulaCell = getEntry(fc);
-			CellLocation[] usedCells = formulaCell.getUsedCells();
-			if (usedCells != null) {
-				for (int j = 0; j < usedCells.length; j++) {
-					CellCacheEntry usedCell = getEntry(usedCells[j]);
-					usedCell.clearConsumingCell(fc);
-				}
+	private void updateAnyBlankReferencingFormulas(int bookIndex, int sheetIndex, 
+			final int rowIndex, final int columnIndex) {
+		final BookSheetKey bsk = new BookSheetKey(bookIndex, sheetIndex);
+		_formulaCellCache.applyOperation(new IEntryOperation() {
+
+			public void processEntry(FormulaCellCacheEntry entry) {
+				entry.notifyUpdatedBlankCell(bsk, rowIndex, columnIndex, _evaluationListener);
+			}
+		});
+	}
+
+	public PlainValueCellCacheEntry getPlainValueEntry(int bookIndex, int sheetIndex,
+			int rowIndex, int columnIndex, ValueEval value) {
+		
+		Loc loc = new Loc(bookIndex, sheetIndex, rowIndex, columnIndex);
+		PlainValueCellCacheEntry result = _plainCellCache.get(loc);
+		if (result == null) {
+			result = new PlainValueCellCacheEntry(value);
+			_plainCellCache.put(loc, result);
+			if (_evaluationListener != null) {
+				_evaluationListener.onReadPlainValue(sheetIndex, rowIndex, columnIndex, result);
+			}
+		} else {
+			// TODO - if we are confident that this sanity check is not required, we can remove 'value' from plain value cache entry  
+			if (!areValuesEqual(result.getValue(), value)) {
+				throw new IllegalStateException("value changed");
 			}
 			if (_evaluationListener != null) {
-				ValueEval value = formulaCell.getValue();
-				_evaluationListener.onClearDependentCachedValue(fc.getSheetIndex(), fc.getRowIndex(), fc.getColumnIndex(), value, nextDepth);
+				_evaluationListener.onCacheHit(sheetIndex, rowIndex, columnIndex, value);
 			}
-			formulaCell.setFormulaResult(null, null);
-			recurseClearCachedFormulaResults(formulaCell.getConsumingCells(), nextDepth);
-		}
-	}
-
-	private CellCacheEntry getEntry(CellLocation cellLoc) {
-		CellCacheEntry result = (CellCacheEntry)_entriesByLocation.get(cellLoc);
-		if (result == null) {
-			result = new CellCacheEntry();
-			_entriesByLocation.put(cellLoc, result);
 		}
 		return result;
 	}
+	private boolean areValuesEqual(ValueEval a, ValueEval b) {
+		if (a == null) {
+			return false;
+		}
+		Class cls = a.getClass();
+		if (cls != b.getClass()) {
+			// value type is changing
+			return false;
+		}
+		if (a == BlankEval.INSTANCE) {
+			return b == a;
+		}
+		if (cls == NumberEval.class) {
+			return ((NumberEval)a).getNumberValue() == ((NumberEval)b).getNumberValue();
+		}
+		if (cls == StringEval.class) {
+			return ((StringEval)a).getStringValue().equals(((StringEval)b).getStringValue());
+		}
+		if (cls == BoolEval.class) {
+			return ((BoolEval)a).getBooleanValue() == ((BoolEval)b).getBooleanValue();
+		}
+		if (cls == ErrorEval.class) {
+			return ((ErrorEval)a).getErrorCode() == ((ErrorEval)b).getErrorCode();
+		}
+		throw new IllegalStateException("Unexpected value class (" + cls.getName() + ")");
+	}
+	
+	public FormulaCellCacheEntry getOrCreateFormulaCellEntry(EvaluationCell cell) {
+		FormulaCellCacheEntry result = _formulaCellCache.get(cell);
+		if (result == null) {
+			
+			result = new FormulaCellCacheEntry();
+			_formulaCellCache.put(cell, result);
+		}
+		return result;
+	}
+
 	/**
 	 * Should be called whenever there are changes to input cells in the evaluated workbook.
 	 */
@@ -191,34 +178,28 @@ final class EvaluationCache {
 		if(_evaluationListener != null) {
 			_evaluationListener.onClearWholeCache();
 		}
-		_entriesByLocation.clear();
-		_consumingCellsByUsedCells.clear();
+		_plainCellCache.clear();
+		_formulaCellCache.clear();
 	}
-
-
-	private static final Comparator CellLocationComparator = new Comparator() {
-
-		public int compare(Object a, Object b) {
-			CellLocation clA = (CellLocation) a;
-			CellLocation clB = (CellLocation) b;
-			
-			int cmp;
-			cmp = clA.getBookIndex() - clB.getBookIndex();
-			if (cmp != 0) {
-				return cmp;
-			}
-			cmp = clA.getSheetIndex() - clB.getSheetIndex();
-			if (cmp != 0) {
-				return cmp;
-			}
-			cmp = clA.getRowIndex() - clB.getRowIndex();
-			if (cmp != 0) {
-				return cmp;
-			}
-			cmp = clA.getColumnIndex() - clB.getColumnIndex();
-			
-			return cmp;
-		}
+	public void notifyDeleteCell(int bookIndex, int sheetIndex, EvaluationCell cell) {
 		
-	};
+		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+			FormulaCellCacheEntry fcce = _formulaCellCache.remove(cell);
+			if (fcce == null) {
+				// formula cell has not been evaluated yet 
+			} else {
+				fcce.setSensitiveInputCells(null);
+				fcce.recurseClearCachedFormulaResults(_evaluationListener);
+			}
+		} else {
+			Loc loc = new Loc(bookIndex, sheetIndex, cell.getRowIndex(), cell.getColumnIndex());
+			PlainValueCellCacheEntry pcce = _plainCellCache.get(loc);
+			
+			if (pcce == null) {
+				// cache entry doesn't exist. nothing to do
+			} else {
+				pcce.recurseClearCachedFormulaResults(_evaluationListener);
+			}
+		}
+	}
 }
