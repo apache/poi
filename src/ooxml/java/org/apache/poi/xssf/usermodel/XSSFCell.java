@@ -107,8 +107,14 @@ public final class XSSFCell implements Cell {
         return this.cell.getF().getStringValue();
     }
 
+    /**
+     * @deprecated use {@link #getColumnIndex()}
+     */
     public short getCellNum() {
-        return (short)this.cellNum;
+        return (short)getColumnIndex();
+    }
+    public int getColumnIndex() {
+    	return this.cellNum;
     }
 	public int getRowIndex() {
 		return row.getRowNum();

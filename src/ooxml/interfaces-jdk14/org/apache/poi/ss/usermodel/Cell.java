@@ -77,7 +77,15 @@ public interface Cell {
 
 
     int getCellType();
+    /**
+     * @deprecated (Oct 2008) use {@link #getColumnIndex()}
+     */
     short getCellNum();
+    
+    /**
+     * @return the cell's column index (zero based)
+     */
+    int getColumnIndex();
     int getRowIndex();
 
     String getCellFormula();

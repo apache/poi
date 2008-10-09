@@ -20,7 +20,6 @@ package org.apache.poi.hssf.usermodel;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
 /**
  * Test HSSFRow is okay.
@@ -152,7 +151,7 @@ public final class TestHSSFRow extends TestCase {
         assertNull(row.getCell(1));
         assertNotNull(row.getCell(5));
 
-        assertEquals(5, cellB2.getCellNum());
+        assertEquals(5, cellB2.getColumnIndex());
         assertEquals(2, row.getFirstCellNum());
         assertEquals(6, row.getLastCellNum());
     }
@@ -258,12 +257,12 @@ public final class TestHSSFRow extends TestCase {
         assertEquals(HSSFCell.CELL_TYPE_NUMERIC, row.getCell(5, HSSFRow.CREATE_NULL_AS_BLANK).getCellType());
         
         // Check created ones get the right column
-        assertEquals((short)0, row.getCell(0, HSSFRow.CREATE_NULL_AS_BLANK).getCellNum());
-        assertEquals((short)1, row.getCell(1, HSSFRow.CREATE_NULL_AS_BLANK).getCellNum());
-        assertEquals((short)2, row.getCell(2, HSSFRow.CREATE_NULL_AS_BLANK).getCellNum());
-        assertEquals((short)3, row.getCell(3, HSSFRow.CREATE_NULL_AS_BLANK).getCellNum());
-        assertEquals((short)4, row.getCell(4, HSSFRow.CREATE_NULL_AS_BLANK).getCellNum());
-        assertEquals((short)5, row.getCell(5, HSSFRow.CREATE_NULL_AS_BLANK).getCellNum());
+        assertEquals(0, row.getCell(0, HSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
+        assertEquals(1, row.getCell(1, HSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
+        assertEquals(2, row.getCell(2, HSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
+        assertEquals(3, row.getCell(3, HSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
+        assertEquals(4, row.getCell(4, HSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
+        assertEquals(5, row.getCell(5, HSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
         
         
         // Now change the cell policy on the workbook, check

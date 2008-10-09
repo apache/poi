@@ -98,11 +98,14 @@ public interface Cell {
     void setCellNum(short num);
 
     /**
-     *  get the cell's number within the row
-     * @return short reperesenting the column number (logical!)
+     * @deprecated (Oct 2008) use {@link #getColumnIndex()}
      */
-
     short getCellNum();
+    
+    /**
+     * @return the cell's column index (zero based)
+     */
+    int getColumnIndex();
 
     int getRowIndex();
 
