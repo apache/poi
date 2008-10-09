@@ -256,11 +256,11 @@ public final class TestLookupFunctionsFromSpreadsheet extends TestCase {
 	}
 
 
-	private static String formatTestCaseDetails(String sheetName, int rowNum, HSSFCell c, String currentGroupComment,
+	private static String formatTestCaseDetails(String sheetName, int rowIndex, HSSFCell c, String currentGroupComment,
 			String rowComment) {
 
 		StringBuffer sb = new StringBuffer();
-		CellReference cr = new CellReference(sheetName, rowNum, c.getCellNum(), false, false);
+		CellReference cr = new CellReference(sheetName, rowIndex, c.getColumnIndex(), false, false);
 		sb.append(cr.formatAsString());
 		sb.append(" {=").append(c.getCellFormula()).append("}");
 

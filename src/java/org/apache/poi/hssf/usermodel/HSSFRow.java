@@ -149,7 +149,7 @@ public final class HSSFRow implements Comparable {
     }
     private void removeCell(HSSFCell cell, boolean alsoRemoveRecords) {
         
-        short column=cell.getCellNum();
+        int column=cell.getColumnIndex();
         if(column < 0) {
             throw new RuntimeException("Negative cell indexes not allowed");
         }
@@ -163,10 +163,10 @@ public final class HSSFRow implements Comparable {
             sheet.getSheet().removeValueRecord(getRowNum(), cval);
         }
         
-        if (cell.getCellNum()+1 == row.getLastCol()) {
+        if (cell.getColumnIndex()+1 == row.getLastCol()) {
             row.setLastCol((short) (findLastCell(row.getLastCol())+1));
         }
-        if (cell.getCellNum() == row.getFirstCol()) {
+        if (cell.getColumnIndex() == row.getFirstCol()) {
             row.setFirstCol(findFirstCell(row.getFirstCol()));
         }
     }
@@ -246,7 +246,7 @@ public final class HSSFRow implements Comparable {
         }
         
         // Check it's one of ours
-        if(! cells[cell.getCellNum()].equals(cell)) {
+        if(! cells[cell.getColumnIndex()].equals(cell)) {
             throw new IllegalArgumentException("Asked to move a cell, but it didn't belong to our row");
         }
         
@@ -262,7 +262,7 @@ public final class HSSFRow implements Comparable {
      */
     private void addCell(HSSFCell cell) {
 
-        short column=cell.getCellNum();
+        int column=cell.getColumnIndex();
         // re-allocate cells array as required.
         if(column>=cells.length) {
             HSSFCell[] oldCells=cells;
@@ -277,7 +277,7 @@ public final class HSSFRow implements Comparable {
         
         // fix up firstCol and lastCol indexes
         if (row.getFirstCol() == -1 || column < row.getFirstCol()) {
-            row.setFirstCol(column);
+            row.setFirstCol((short)column);
         }
         
         if (row.getLastCol() == -1 || column >= row.getLastCol()) {

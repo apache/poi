@@ -114,7 +114,7 @@ public final class TestHSSFComment extends TestCase {
              assertFalse("cells in the second column have not empyy notes", 
                      "".equals(comment.getString().getString()));
              assertEquals(rownum, comment.getRow());
-             assertEquals(cell.getCellNum(), comment.getColumn());
+             assertEquals(cell.getColumnIndex(), comment.getColumn());
          }
      }
 
