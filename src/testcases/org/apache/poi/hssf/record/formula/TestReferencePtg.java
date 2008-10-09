@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record.formula;
 
 import java.util.Arrays;
-import java.util.Stack;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -95,9 +94,9 @@ public final class TestReferencePtg extends TestCase {
     };
     public void testReadWrite_tRefN_bug45091() {
         TestcaseRecordInputStream in = new TestcaseRecordInputStream(-1, tRefN_data);
-        Stack ptgs = Ptg.createParsedExpressionTokens((short)tRefN_data.length, in);
+        Ptg[] ptgs = Ptg.readTokens(tRefN_data.length, in);
         byte[] outData = new byte[5];
-        Ptg.serializePtgStack(ptgs, outData, 0);
+        Ptg.serializePtgs(ptgs, outData, 0);
         if (outData[0] == 0x24) {
             throw new AssertionFailedError("Identified bug 45091");
         }
