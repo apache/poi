@@ -17,27 +17,26 @@
 
 package org.apache.poi.ss.formula;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
-
 /**
- * Tests {@link CellCacheEntry}.
- *
+ * Abstracts a cell for the purpose of formula evaluation.  This interface represents both formula
+ * and non-formula cells.<br/>
+ * 
+ * Implementors of this class must implement {@link #hashCode()} and {@link #equals(Object)}
+ * to provide an <em>identity</em> relationship based on the underlying HSSF or XSSF cell <p/>
+ * 
+ * For POI internal use only
+ * 
  * @author Josh Micich
  */
-public class TestCellCacheEntry extends TestCase {
+public interface EvaluationCell {
+	// consider method Object getUnderlyingCell() to reduce memory consumption in formula cell cache
+	EvaluationSheet getSheet();
+	int getRowIndex();
+	int getColumnIndex();
+	int getCellType();
 
-	public void testBasic() {
-		CellCacheEntry pcce = new PlainValueCellCacheEntry(new NumberEval(42.0));
-		ValueEval ve = pcce.getValue();
-		assertEquals(42, ((NumberEval)ve).getNumberValue(), 0.0);
-		
-		FormulaCellCacheEntry fcce = new FormulaCellCacheEntry();
-		fcce.updateFormulaResult(new NumberEval(10.0), CellCacheEntry.EMPTY_ARRAY, null);
-		
-		ve = fcce.getValue();
-		assertEquals(10, ((NumberEval)ve).getNumberValue(), 0.0);
-	}
+	double getNumericCellValue();
+	String getStringCellValue();
+	boolean getBooleanCellValue();
+	int getErrorCellValue();
 }

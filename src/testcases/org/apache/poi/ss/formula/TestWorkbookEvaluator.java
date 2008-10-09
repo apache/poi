@@ -127,18 +127,21 @@ public class TestWorkbookEvaluator extends TestCase {
 		confirmEvaluation(264, evaluatorA, cell);
 
 		// change [wbB]BSheet1!B3 (from 50 to 60)
-		bSheet1.getRow(2).getCell(1).setCellValue(60);
-		evaluatorB.setCachedPlainValue(bSheet1, 2, 1, new NumberEval(60));
+		HSSFCell cellB3 = bSheet1.getRow(2).getCell(1);
+		cellB3.setCellValue(60);
+		evaluatorB.notifyUpdateCell(cellB3);
 		confirmEvaluation(274, evaluatorA, cell);
 
 		// change [wbA]ASheet1!A3 (from 100 to 80)
-		aSheet1.getRow(2).getCell(0).setCellValue(80);
-		evaluatorA.setCachedPlainValue(aSheet1, 2, 0, new NumberEval(80));
+		HSSFCell cellA3 = aSheet1.getRow(2).getCell(0);
+		cellA3.setCellValue(80);
+		evaluatorA.notifyUpdateCell(cellA3);
 		confirmEvaluation(234, evaluatorA, cell);
 
 		// change [wbA]AnotherSheet!A1 (from 2 to 3)
-		wbA.getSheetAt(1).getRow(0).getCell(0).setCellValue(3);
-		evaluatorA.setCachedPlainValue(wbA.getSheetAt(1), 0, 0, new NumberEval(3));
+		HSSFCell cellA1 = wbA.getSheetAt(1).getRow(0).getCell(0);
+		cellA1.setCellValue(3);
+		evaluatorA.notifyUpdateCell(cellA1);
 		confirmEvaluation(235, evaluatorA, cell);
 	}
 
