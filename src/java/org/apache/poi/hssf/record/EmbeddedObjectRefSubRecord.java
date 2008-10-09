@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,166 +15,312 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.record;
 
+import java.io.ByteArrayInputStream;
 
-
-import org.apache.poi.util.*;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.hssf.record.formula.AreaPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.Ref3DPtg;
+import org.apache.poi.hssf.record.formula.RefPtg;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
 
 /**
+ * ftPictFmla (0x0009)<br/>
  * A sub-record within the OBJ record which stores a reference to an object
  * stored in a separate entry within the OLE2 compound file.
  *
  * @author Daniel Noll
  */
-public class EmbeddedObjectRefSubRecord
-    extends SubRecord
-{
-    public static final short sid = 0x9;
+public final class EmbeddedObjectRefSubRecord extends SubRecord {
+	public static final short sid = 0x0009;
 
-    public short   field_1_stream_id_offset;                    // Offset to stream ID from the point after this value.
-    public short[] field_2_unknown;                             // Unknown stuff at the front.  TODO: Confirm that it's a short[]
-    // TODO: Consider making a utility class for these.  I've discovered the same field ordering
-    //       in FormatRecord and StringRecord, it may be elsewhere too.
-    public short   field_3_unicode_len;                         // Length of Unicode string.
-    public boolean field_4_unicode_flag;                        // Flags whether the string is Unicode.
-    public String  field_5_ole_classname;                       // Classname of the embedded OLE document (e.g. Word.Document.8)
-    public int     field_6_stream_id;                           // ID of the OLE stream containing the actual data.
+	private static final byte[] EMPTY_BYTE_ARRAY = { };
 
-    private int field_5_ole_classname_padding; // developer laziness...
-    public byte[] remainingBytes;
+	private int field_1_unknown_int;
+	/** either an area or a cell ref */
+	private Ptg field_2_refPtg;
+	private byte[] field_2_unknownFormulaData;
+	// TODO: Consider making a utility class for these.  I've discovered the same field ordering
+	//	   in FormatRecord and StringRecord, it may be elsewhere too.
+	private boolean field_3_unicode_flag;  // Flags whether the string is Unicode.
+	private String  field_4_ole_classname; // Classname of the embedded OLE document (e.g. Word.Document.8)
+	/** Formulas often have a single non-zero trailing byte.
+	 * This is in a similar position to he pre-streamId padding
+	 * It is unknown if the value is important (it seems to mirror a value a few bytes earlier) 
+	 *  */
+	private Byte  field_4_unknownByte;
+	private Integer field_5_stream_id;     // ID of the OLE stream containing the actual data.
+	private byte[] field_6_unknown;
 
-    public EmbeddedObjectRefSubRecord()
-    {
-        field_2_unknown = new short[0];
-        remainingBytes = new byte[0];
-        field_1_stream_id_offset = 6;
-        field_5_ole_classname = "";
-    }
 
-    public short getSid()
-    {
-        return sid;
-    }
+	// currently for testing only - needs review
+	EmbeddedObjectRefSubRecord() {
+		field_2_unknownFormulaData = new byte[] { 0x02, 0x6C, 0x6A, 0x16, 0x01, }; // just some sample data.  These values vary a lot
+		field_6_unknown = EMPTY_BYTE_ARRAY;
+		field_4_ole_classname = null;
+	}
 
-    public EmbeddedObjectRefSubRecord(RecordInputStream in)
-    {
-        field_1_stream_id_offset       = in.readShort();
-        field_2_unknown                = in.readShortArray();
-        field_3_unicode_len            = in.readShort();
-        field_4_unicode_flag           = ( in.readByte() & 0x01 ) != 0;
+	public short getSid() {
+		return sid;
+	}
 
-        if ( field_4_unicode_flag )
-        {
-            field_5_ole_classname      = in.readUnicodeLEString( field_3_unicode_len );
-        }
-        else
-        {
-            field_5_ole_classname      = in.readCompressedUnicode( field_3_unicode_len );
-        }
+	public EmbeddedObjectRefSubRecord(RecordInputStream in) {
+		// Much guess-work going on here due to lack of any documentation.
+		// See similar source code in OOO:
+		// http://lxr.go-oo.org/source/sc/sc/source/filter/excel/xiescher.cxx
+		// 1223 void XclImpOleObj::ReadPictFmla( XclImpStream& rStrm, sal_uInt16 nRecSize )
 
-        // Padded with NUL bytes.  The -2 is because field_1_stream_id_offset
-        // is relative to after the offset field, whereas in.getRecordOffset()
-        // is relative to the start of this record (minus the header.)
-        field_5_ole_classname_padding = 0;
-        while (in.getRecordOffset() - 2 < field_1_stream_id_offset)
-        {
-            field_5_ole_classname_padding++;
-            in.readByte(); // discard
-        }
+		int streamIdOffset = in.readShort(); // OOO calls this 'nFmlaLen'
 
-        // Fetch the stream ID
-        field_6_stream_id = in.readInt();
-        
-        // Store what's left
-        remainingBytes = in.readRemainder();
-    }
+		int dataLenAfterFormula = in.remaining() - streamIdOffset;
+		int formulaSize = in.readUShort();
+		field_1_unknown_int = in.readInt();
+		byte[] formulaRawBytes = readRawData(in, formulaSize);
+		field_2_refPtg = readRefPtg(formulaRawBytes);
+		if (field_2_refPtg == null) {
+			// common case
+			// field_2_n16 seems to be 5 here
+			// The formula almost looks like tTbl but the row/column values seem like garbage.
+			field_2_unknownFormulaData = formulaRawBytes;
+		} else {
+			field_2_unknownFormulaData = null;
+		}
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = offset;
+		int stringByteCount;
+		if (in.remaining() >= dataLenAfterFormula + 3) {
+			int tag = in.readByte();
+			if (tag != 0x03) {
+				throw new RecordFormatException("Expected byte 0x03 here");
+			}
+			int nChars = in.readUShort();
+			if (nChars > 0) {
+				 // OOO: the 4th way Xcl stores a unicode string: not even a Grbit byte present if length 0
+				field_3_unicode_flag		   = ( in.readByte() & 0x01 ) != 0;
+				if (field_3_unicode_flag) {
+					field_4_ole_classname = in.readUnicodeLEString(nChars);
+					stringByteCount = nChars * 2;
+				} else {
+					field_4_ole_classname = in.readCompressedUnicode(nChars);
+					stringByteCount = nChars;
+				}
+			} else {
+				field_4_ole_classname = "";
+				stringByteCount = 0;
+			}
+		} else {
+			field_4_ole_classname = null;
+			stringByteCount = 0;
+		}
+		// Pad to next 2-byte boundary
+		if (((stringByteCount + formulaSize) % 2) != 0) {
+			int b = in.readByte();
+			if (field_2_refPtg != null && field_4_ole_classname == null) {
+				field_4_unknownByte = new Byte((byte)b);
+			}
+		}
+		int nUnexpectedPadding = in.remaining() - dataLenAfterFormula;
 
-        LittleEndian.putShort(data, pos, sid); pos += 2;
-        LittleEndian.putShort(data, pos, (short)(getRecordSize() - 4)); pos += 2;
+		if (nUnexpectedPadding > 0) {
+			System.err.println("Discarding " + nUnexpectedPadding + " unexpected padding bytes ");
+			readRawData(in, nUnexpectedPadding);
+		}
 
-        LittleEndian.putShort(data, pos, field_1_stream_id_offset); pos += 2;
-        LittleEndian.putShortArray(data, pos, field_2_unknown); pos += field_2_unknown.length * 2 + 2;
-        LittleEndian.putShort(data, pos, field_3_unicode_len); pos += 2;
-        data[pos] = field_4_unicode_flag ? (byte) 0x01 : (byte) 0x00; pos++;
+		// Fetch the stream ID
+		if (dataLenAfterFormula >= 4) {
+			field_5_stream_id = new Integer(in.readInt());
+		} else {
+			field_5_stream_id = null;
+		}
 
-        if ( field_4_unicode_flag )
-        {
-            StringUtil.putUnicodeLE( field_5_ole_classname, data, pos ); pos += field_5_ole_classname.length() * 2;
-        }
-        else
-        {
-            StringUtil.putCompressedUnicode( field_5_ole_classname, data, pos ); pos += field_5_ole_classname.length();
-        }
+		field_6_unknown = in.readRemainder();
+	}
 
-        // Padded with the same number of NUL bytes as were originally skipped.
-        // XXX: This is only accurate until we make the classname mutable.
-        pos += field_5_ole_classname_padding;
-        
-        LittleEndian.putInt(data, pos, field_6_stream_id); pos += 4;
+	private static Ptg readRefPtg(byte[] formulaRawBytes) {
+		byte[] data = new byte[formulaRawBytes.length + 4];
+		LittleEndian.putUShort(data, 0, -5555);
+		LittleEndian.putUShort(data, 2, formulaRawBytes.length);
+		System.arraycopy(formulaRawBytes, 0, data, 4, formulaRawBytes.length);
+		RecordInputStream in = new RecordInputStream(new ByteArrayInputStream(data));
+		in.nextRecord();
+	   	byte ptgSid = in.readByte();
+		switch(ptgSid) {
+			case AreaPtg.sid:   return new AreaPtg(in);
+			case Area3DPtg.sid: return new Area3DPtg(in);
+			case RefPtg.sid:	return new RefPtg(in);
+			case Ref3DPtg.sid:  return new Ref3DPtg(in);
+		}
+		return null;
+	}
 
-        System.arraycopy(remainingBytes, 0, data, pos, remainingBytes.length);
+	private static byte[] readRawData(RecordInputStream in, int size) {
+		if (size < 0) {
+			throw new IllegalArgumentException("Negative size (" + size + ")");
+		}
+		if (size == 0) {
+			return EMPTY_BYTE_ARRAY;
+		}
+		byte[] result = new byte[size];
+		for(int i=0; i< size; i++) {
+			result[i] = in.readByte();
+		}
+		return result;
+	}
+	
+	private int getStreamIDOffset(int formulaSize) {
+		int result = 2 + 4; // formulaSize + f2unknown_int
+		result += formulaSize;
+		
+		int stringLen;
+		if (field_4_ole_classname == null) {
+			// don't write 0x03, stringLen, flag, text
+			stringLen = 0;
+		} else {
+			result += 1 + 2 + 1;  // 0x03, stringLen, flag
+			stringLen = field_4_ole_classname.length();
+			if (field_3_unicode_flag) {
+				result += stringLen * 2;
+			} else {
+				result += stringLen;
+			}
+		}
+		// pad to next 2 byte boundary
+		if ((result % 2) != 0) {
+			result ++; 
+		}
+		return result;
+	}
+	
+	private int getDataSize(int idOffset) {
 
-        return getRecordSize();
-    }
+		int result = 2 + idOffset; // 2 for idOffset short field itself
+		if (field_5_stream_id != null) {
+    		result += 4;
+		}
+		return result +  field_6_unknown.length;
+	}
+	private int getDataSize() {
+		int formulaSize = field_2_refPtg == null ? field_2_unknownFormulaData.length : field_2_refPtg.getSize();
+		int idOffset = getStreamIDOffset(formulaSize);
+		return getDataSize(idOffset);
+	}
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
-    public int getRecordSize()
-    {
-        // The stream id offset is relative to after the stream ID.
-        // Add 2 bytes for the stream id offset and 4 bytes for the stream id itself and 4 byts for the record header.
-        return remainingBytes.length + field_1_stream_id_offset + 2 + 4 + 4;
-    }
+	public int serialize(int base, byte[] data) {
 
-    /**
-     * Gets the stream ID containing the actual data.  The data itself
-     * can be found under a top-level directory entry in the OLE2 filesystem
-     * under the name "MBD<var>xxxxxxxx</var>" where <var>xxxxxxxx</var> is
-     * this ID converted into hex (in big endian order, funnily enough.)
-     * 
-     * @return the data stream ID.
-     */
-    public int getStreamId()
-    {
-        return field_6_stream_id;
-    }
+		int formulaSize = field_2_refPtg == null ? field_2_unknownFormulaData.length : field_2_refPtg.getSize();
+		int idOffset = getStreamIDOffset(formulaSize);
+		int dataSize = getDataSize(idOffset);
+		
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("[ftPictFmla]\n");
-        buffer.append("    .streamIdOffset       = ")
-            .append("0x").append(HexDump.toHex(  field_1_stream_id_offset ))
-            .append(" (").append( field_1_stream_id_offset ).append(" )")
-            .append(System.getProperty("line.separator"));
-        buffer.append("    .unknown              = ")
-            .append("0x").append(HexDump.toHex(  field_2_unknown ))
-            .append(" (").append( field_2_unknown.length ).append(" )")
-            .append(System.getProperty("line.separator"));
-        buffer.append("    .unicodeLen           = ")
-            .append("0x").append(HexDump.toHex(  field_3_unicode_len ))
-            .append(" (").append( field_3_unicode_len ).append(" )")
-            .append(System.getProperty("line.separator"));
-        buffer.append("    .unicodeFlag          = ")
-            .append("0x").append( field_4_unicode_flag ? 0x01 : 0x00 )
-            .append(" (").append( field_4_unicode_flag ).append(" )")
-            .append(System.getProperty("line.separator"));
-        buffer.append("    .oleClassname         = ")
-            .append(field_5_ole_classname)
-            .append(System.getProperty("line.separator"));
-        buffer.append("    .streamId             = ")
-            .append("0x").append(HexDump.toHex(  field_6_stream_id ))
-            .append(" (").append( field_6_stream_id ).append(" )")
-            .append(System.getProperty("line.separator"));
-        buffer.append("[/ftPictFmla]");
-        return buffer.toString();
-    }
+		LittleEndian.putUShort(data, base + 0, sid);
+		LittleEndian.putUShort(data, base + 2, dataSize);
 
+		LittleEndian.putUShort(data, base + 4, idOffset);
+		LittleEndian.putUShort(data, base + 6, formulaSize);
+		LittleEndian.putInt(data, base + 8, field_1_unknown_int);
+
+		int pos = base+12;
+
+		if (field_2_refPtg == null) {
+			System.arraycopy(field_2_unknownFormulaData, 0, data, pos, field_2_unknownFormulaData.length);
+		} else {
+			field_2_refPtg.writeBytes(data, pos);
+		}
+	   	pos += formulaSize;
+
+		int stringLen;
+		if (field_4_ole_classname == null) {
+			// don't write 0x03, stringLen, flag, text
+			stringLen = 0;
+		} else {
+			LittleEndian.putByte(data, pos, 0x03);
+			pos += 1;
+			stringLen = field_4_ole_classname.length();
+			LittleEndian.putUShort(data, pos, stringLen);
+			pos += 2;
+			LittleEndian.putByte(data, pos, field_3_unicode_flag ? 0x01 : 0x00);
+			pos += 1;
+
+			if (field_3_unicode_flag) {
+				StringUtil.putUnicodeLE(field_4_ole_classname, data, pos);
+				pos += stringLen * 2;
+			} else {
+				StringUtil.putCompressedUnicode(field_4_ole_classname, data, pos);
+				pos += stringLen;
+			}
+		}
+
+		// pad to next 2-byte boundary (requires 0 or 1 bytes)
+		switch(idOffset - (pos - 6 - base)) { // 6 for 3 shorts: sid, dataSize, idOffset
+			case 1:
+				LittleEndian.putByte(data, pos, field_4_unknownByte == null ? 0x00 : field_4_unknownByte.intValue());
+				pos ++;
+			case 0:
+				break;
+			default:
+				throw new IllegalStateException("Bad padding calculation (" + idOffset + ", " + (pos-base) + ")");	
+		}
+
+		if (field_5_stream_id != null) {
+    		LittleEndian.putInt(data, pos, field_5_stream_id.intValue());
+    		pos += 4;
+		}
+		System.arraycopy(field_6_unknown, 0, data, pos, field_6_unknown.length);
+
+		return 4 + dataSize;
+	}
+
+	public int getRecordSize() {
+		return 4 + getDataSize();
+	}
+
+	/**
+	 * Gets the stream ID containing the actual data.  The data itself
+	 * can be found under a top-level directory entry in the OLE2 filesystem
+	 * under the name "MBD<var>xxxxxxxx</var>" where <var>xxxxxxxx</var> is
+	 * this ID converted into hex (in big endian order, funnily enough.)
+	 *
+	 * @return the data stream ID. Possibly <code>null</code>
+	 */
+	public Integer getStreamId() {
+		return field_5_stream_id;
+	}
+
+	public String getOLEClassName() {
+		return field_4_ole_classname;
+	}
+
+	public byte[] getObjectData() {
+		return field_6_unknown;
+	}
+
+
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("[ftPictFmla]\n");
+		sb.append("    .f2unknown     = ").append(HexDump.intToHex(field_1_unknown_int)).append("\n");
+		if (field_2_refPtg == null) {
+			sb.append("    .f3unknown     = ").append(HexDump.toHex(field_2_unknownFormulaData)).append("\n");
+		} else {
+			sb.append("    .formula       = ").append(field_2_refPtg.toString()).append("\n");
+		}
+		if (field_4_ole_classname != null) {
+			sb.append("    .unicodeFlag   = ").append(field_3_unicode_flag).append("\n");
+			sb.append("    .oleClassname  = ").append(field_4_ole_classname).append("\n");
+		}
+		if (field_4_unknownByte != null) {
+			sb.append("    .f4unknown   = ").append(HexDump.byteToHex(field_4_unknownByte.intValue())).append("\n");
+		}
+		if (field_5_stream_id != null) {
+			sb.append("    .streamId      = ").append(HexDump.intToHex(field_5_stream_id.intValue())).append("\n");
+		}
+		if (field_6_unknown.length > 0) {
+			sb.append("    .f7unknown     = ").append(HexDump.toHex(field_6_unknown)).append("\n");
+		}
+		sb.append("[/ftPictFmla]");
+		return sb.toString();
+	}
 }

@@ -20,6 +20,7 @@ package org.apache.poi.ss.formula;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
@@ -59,6 +60,9 @@ final class CellCacheEntry {
 		if (cls != b.getClass()) {
 			// value type is changing
 			return false;
+		}
+		if (a == BlankEval.INSTANCE) {
+			return b == a;
 		}
 		if (cls == NumberEval.class) {
 			return ((NumberEval)a).getNumberValue() == ((NumberEval)b).getNumberValue();

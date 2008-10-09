@@ -17,19 +17,37 @@
 
 package org.apache.poi.ss.formula;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.apache.poi.hssf.record.formula.eval.BlankEval;
+import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
+
 /**
- * Test suite for org.apache.poi.ss.formula
- * 
+ * Tests {@link CellCacheEntry}.
+ *
  * @author Josh Micich
  */
-public final class AllSSFormulaTests {
-    public static Test suite() {
-		TestSuite result = new TestSuite(AllSSFormulaTests.class.getName());
-		result.addTestSuite(TestCellCacheEntry.class);
-		result.addTestSuite(TestEvaluationCache.class);
-		result.addTestSuite(TestWorkbookEvaluator.class);
-		return result;
+public class TestCellCacheEntry extends TestCase {
+
+	public void testBasic() {
+		CellCacheEntry cce = new CellCacheEntry();
+		cce.updatePlainValue(new NumberEval(42.0));
+		ValueEval ve = cce.getValue();
+		assertEquals(42, ((NumberEval)ve).getNumberValue(), 0.0);
+		
+		cce.setFormulaResult(new NumberEval(10.0), new CellLocation[] { });
+	}
+
+	public void testBlank() {
+		CellCacheEntry cce = new CellCacheEntry();
+		cce.updatePlainValue(BlankEval.INSTANCE);
+		try {
+			cce.updatePlainValue(BlankEval.INSTANCE);
+		} catch (IllegalStateException e) {
+			// bug was visible around svn r700356
+			throw new AssertionFailedError("cache entry does not handle blank values properly");
+		}
 	}
 }

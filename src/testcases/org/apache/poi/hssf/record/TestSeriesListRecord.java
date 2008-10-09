@@ -29,7 +29,7 @@ import junit.framework.TestCase;
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class TestSeriesListRecord extends TestCase {
-    byte[] data = new byte[] {
+    private static final byte[] data = {
         (byte)0x02,(byte)0x00,(byte)0x01,(byte)0x20,(byte)0xff,(byte)0xf0
     };
 
@@ -43,10 +43,8 @@ public final class TestSeriesListRecord extends TestCase {
         assertEquals( 4 + 6, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
-        SeriesListRecord record = new SeriesListRecord();
-        record.setSeriesNumbers( new short[] { (short)0x2001, (short)0xf0ff } );
+    public void testStore() {
+        SeriesListRecord record = new SeriesListRecord(new short[] { (short)0x2001, (short)0xf0ff } );
 
         byte [] recordBytes = record.serialize();
         assertEquals(recordBytes.length - 4, data.length);

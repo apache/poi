@@ -32,7 +32,7 @@ import org.apache.poi.util.HexDump;
  *
  * @author Daniel Noll
  */
-public class HSSFObjectData
+public final class HSSFObjectData
 {
     /**
      * Underlying object record ultimately containing a reference to the object.
@@ -60,8 +60,7 @@ public class HSSFObjectData
      * Returns the OLE2 Class Name of the object
      */
     public String getOLE2ClassName() {
-    	EmbeddedObjectRefSubRecord subRecord = findObjectRecord();
-    	return subRecord.field_5_ole_classname;
+        return findObjectRecord().getOLEClassName();
     }
 
     /**
@@ -72,9 +71,9 @@ public class HSSFObjectData
      * @throws IOException if there was an error reading the data.
      */
     public DirectoryEntry getDirectory() throws IOException {
-    	EmbeddedObjectRefSubRecord subRecord = findObjectRecord();
+        EmbeddedObjectRefSubRecord subRecord = findObjectRecord();
 
-    	int streamId = ((EmbeddedObjectRefSubRecord) subRecord).getStreamId();
+        int streamId = subRecord.getStreamId().intValue();
         String streamName = "MBD" + HexDump.toHex(streamId);
 
         Entry entry = poifs.getRoot().getEntry(streamName);
@@ -91,8 +90,7 @@ public class HSSFObjectData
      *  Entry
      */
     public byte[] getObjectData() {
-    	EmbeddedObjectRefSubRecord subRecord = findObjectRecord();
-    	return subRecord.remainingBytes;
+        return findObjectRecord().getObjectData();
     }
     
     /**
@@ -101,10 +99,11 @@ public class HSSFObjectData
      * (Not all do, those that don't have a data portion)
      */
     public boolean hasDirectoryEntry() {
-    	EmbeddedObjectRefSubRecord subRecord = findObjectRecord();
-    	
-    	// Field 6 tells you
-    	return (subRecord.field_6_stream_id != 0);
+        EmbeddedObjectRefSubRecord subRecord = findObjectRecord();
+        
+        // 'stream id' field tells you
+        Integer streamId = subRecord.getStreamId();
+        return streamId != null && streamId.intValue() != 0;
     }
     
     /**
@@ -117,7 +116,7 @@ public class HSSFObjectData
         while (subRecordIter.hasNext()) {
             Object subRecord = subRecordIter.next();
             if (subRecord instanceof EmbeddedObjectRefSubRecord) {
-            	return (EmbeddedObjectRefSubRecord)subRecord;
+                return (EmbeddedObjectRefSubRecord)subRecord;
             }
         }
         

@@ -40,7 +40,7 @@ public class TxInteractiveInfoAtom extends RecordAtom {
     /**
      * Constructs a brand new link related atom record.
      */
-    protected TxInteractiveInfoAtom() {
+    public TxInteractiveInfoAtom() {
         _header = new byte[8];
         _data = new byte[8];
 

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,66 +14,66 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.LittleEndian;
 
 /**
- * The series list record defines the series displayed as an overlay to the main chart record.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * 
+ * The series list record defines the series displayed as an overlay to the main chart record.<br/>
+ * TODO - does this record (0x1016) really exist.  It doesn't seem to be referenced in either the OOO or MS doc
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class SeriesListRecord
-    extends Record
-{
-    public final static short      sid                             = 0x1016;
+public final class SeriesListRecord extends Record {
+    public final static short sid = 0x1016;
     private  short[]    field_1_seriesNumbers;
 
-
-    public SeriesListRecord()
-    {
-
+    public SeriesListRecord(short[] seriesNumbers) {
+    	field_1_seriesNumbers = seriesNumbers;
     }
 
-    public SeriesListRecord(RecordInputStream in)
-    {
-        field_1_seriesNumbers          = in.readShortArray();
+    public SeriesListRecord(RecordInputStream in) {
+    	int nItems = in.readUShort();
+    	short[] ss = new short[nItems];
+    	for (int i = 0; i < nItems; i++) {
+			ss[i] = in.readShort();
+			
+		}
+        field_1_seriesNumbers = ss;
     }
 
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[SERIESLIST]\n");
-        buffer.append("    .seriesNumbers        = ")
-            .append(" (").append( getSeriesNumbers() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append("    .seriesNumbers= ").append(" (").append( getSeriesNumbers() ).append(" )");
+        buffer.append("\n"); 
 
         buffer.append("[/SERIESLIST]\n");
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
+    public int serialize(int offset, byte[] data) {
 
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
+        int nItems = field_1_seriesNumbers.length;
+        int dataSize = 2 + 2 * nItems;
+    	
+        LittleEndian.putUShort(data, 0 + offset, sid);
+        LittleEndian.putUShort(data, 2 + offset, dataSize);
 
-        LittleEndian.putShortArray(data, 4 + offset + pos, field_1_seriesNumbers);
+        LittleEndian.putUShort(data, 4 + offset, nItems);
+        
+        int pos = offset + 6;
+    	for (int i = 0; i < nItems; i++) {
+    		LittleEndian.putUShort(data, pos, field_1_seriesNumbers[i]);
+    		pos += 2;
+    	}
 
-        return getRecordSize();
+        return 4 + dataSize;
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + field_1_seriesNumbers.length * 2 + 2;
@@ -86,34 +85,23 @@ public class SeriesListRecord
     }
 
     public Object clone() {
-        SeriesListRecord rec = new SeriesListRecord();
-    
-        rec.field_1_seriesNumbers = field_1_seriesNumbers;
-        return rec;
+        return new SeriesListRecord((short[]) field_1_seriesNumbers.clone());
     }
-
-
-
 
     /**
      * Get the series numbers field for the SeriesList record.
      */
-    public short[] getSeriesNumbers()
-    {
+    public short[] getSeriesNumbers() {
         return field_1_seriesNumbers;
     }
 
     /**
      * Set the series numbers field for the SeriesList record.
      */
-    public void setSeriesNumbers(short[] field_1_seriesNumbers)
-    {
+    public void setSeriesNumbers(short[] field_1_seriesNumbers) {
         this.field_1_seriesNumbers = field_1_seriesNumbers;
     }
-
-
-}  // END OF CLASS
-
+}
 
 
 
