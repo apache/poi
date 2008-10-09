@@ -619,7 +619,7 @@ public final class TestBugs extends TestCase {
             int cellNum = 0;
             for (Iterator it2 = row.cellIterator(); it2.hasNext(); cellNum++) {
                 HSSFCell cell = (HSSFCell)it2.next();
-                assertEquals(cellNum, cell.getCellNum());
+                assertEquals(cellNum, cell.getColumnIndex());
             }
         }
     }

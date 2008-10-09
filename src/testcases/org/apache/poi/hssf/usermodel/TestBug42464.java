@@ -66,7 +66,7 @@ public final class TestBug42464 extends TestCase {
 			FormulaRecord r = record.getFormulaRecord();
 			Ptg[] ptgs = r.getParsedExpression();
 			
-			String cellRef = new CellReference(row.getRowNum(), cell.getCellNum(), false, false).formatAsString();
+			String cellRef = new CellReference(row.getRowNum(), cell.getColumnIndex(), false, false).formatAsString();
 			if(false && cellRef.equals("BP24")) { // TODO - replace System.out.println()s with asserts
 				System.out.print(cellRef);
 				System.out.println(" - has " + ptgs.length + " ptgs:");
