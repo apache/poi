@@ -20,44 +20,58 @@ package org.apache.poi.ss.formula;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
+
 /**
  * Stores details about the current evaluation of a cell.<br/>
  */
 final class CellEvaluationFrame {
 
-	private final CellLocation _cellLocation;
-	private final Set _usedCells;
+	private final FormulaCellCacheEntry _cce;
+	private final Set _sensitiveInputCells;
+	private FormulaUsedBlankCellSet _usedBlankCellGroup;
 
-	public CellEvaluationFrame(CellLocation cellLoc) {
-		_cellLocation = cellLoc;
-		_usedCells = new HashSet();
+	public CellEvaluationFrame(FormulaCellCacheEntry cce) {
+		_cce = cce;
+		_sensitiveInputCells = new HashSet();
 	}
-	public CellLocation getCoordinates() {
-		return _cellLocation;
+	public CellCacheEntry getCCE() {
+		return _cce;
 	}
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer(64);
 		sb.append(getClass().getName()).append(" [");
-		sb.append(_cellLocation.formatAsString());
 		sb.append("]");
 		return sb.toString();
 	}
-	public void addUsedCell(CellLocation coordinates) {
-		_usedCells.add(coordinates);
+	/**
+	 * @param inputCell a cell directly used by the formula of this evaluation frame
+	 */
+	public void addSensitiveInputCell(CellCacheEntry inputCell) {
+		_sensitiveInputCells.add(inputCell);
 	}
 	/**
 	 * @return never <code>null</code>, (possibly empty) array of all cells directly used while 
-	 * evaluating the formula of this frame.  For non-formula cells this will always be an empty
-	 * array;
+	 * evaluating the formula of this frame.
 	 */
-	public CellLocation[] getUsedCells() {
-		int nItems = _usedCells.size();
+	private CellCacheEntry[] getSensitiveInputCells() {
+		int nItems = _sensitiveInputCells.size();
 		if (nItems < 1) {
-			return CellLocation.EMPTY_ARRAY;
+			return CellCacheEntry.EMPTY_ARRAY;
 		}
-		CellLocation[] result = new CellLocation[nItems];
-		_usedCells.toArray(result);
+		CellCacheEntry[] result = new CellCacheEntry[nItems];
+		_sensitiveInputCells.toArray(result);
 		return result;
+	}
+	public void addUsedBlankCell(int bookIndex, int sheetIndex, int rowIndex, int columnIndex) {
+		if (_usedBlankCellGroup == null) {
+			_usedBlankCellGroup = new FormulaUsedBlankCellSet();
+		}
+		_usedBlankCellGroup.addCell(bookIndex, sheetIndex, rowIndex, columnIndex);
+	}
+	
+	public void updateFormulaResult(ValueEval result) {
+		_cce.updateFormulaResult(result, getSensitiveInputCells(), _usedBlankCellGroup);
 	}
 }

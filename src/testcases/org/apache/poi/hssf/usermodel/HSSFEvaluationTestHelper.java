@@ -15,29 +15,19 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.EvaluationCell;
 
 /**
- * Tests {@link CellCacheEntry}.
- *
+ * Raises visibility of some internal functionality for test purposes 
+ * 
  * @author Josh Micich
  */
-public class TestCellCacheEntry extends TestCase {
+public final class HSSFEvaluationTestHelper {
 
-	public void testBasic() {
-		CellCacheEntry pcce = new PlainValueCellCacheEntry(new NumberEval(42.0));
-		ValueEval ve = pcce.getValue();
-		assertEquals(42, ((NumberEval)ve).getNumberValue(), 0.0);
-		
-		FormulaCellCacheEntry fcce = new FormulaCellCacheEntry();
-		fcce.updateFormulaResult(new NumberEval(10.0), CellCacheEntry.EMPTY_ARRAY, null);
-		
-		ve = fcce.getValue();
-		assertEquals(10, ((NumberEval)ve).getNumberValue(), 0.0);
+	public static EvaluationCell wrapCell(HSSFCell cell) {
+		return new HSSFEvaluationCell(cell);
 	}
+
 }

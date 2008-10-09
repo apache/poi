@@ -1,3 +1,20 @@
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
@@ -8,12 +25,12 @@ import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationName;
+import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Sheet;
 
 /**
  * Internal POI use only
@@ -45,8 +62,8 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		return _iBook.getExternalSheetIndex(workbookName, sheetName);
 	}
 
-	public EvaluationName getName(int index) {
-		return new Name(_iBook.getNameRecord(index), index);
+	public NameXPtg getNameXPtg(String name) {
+		return _iBook.getNameXPtg(name);
 	}
 
 	public EvaluationName getName(String name) {
@@ -59,7 +76,8 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		return null;
 	}
 
-	public int getSheetIndex(Sheet sheet) {
+	public int getSheetIndex(EvaluationSheet evalSheet) {
+		HSSFSheet sheet = ((HSSFEvaluationSheet)evalSheet).getHSSFSheet();
 		return _uBook.getSheetIndex(sheet);
 	}
 	public int getSheetIndex(String sheetName) {
@@ -70,16 +88,8 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		return _uBook.getSheetName(sheetIndex);
 	}
 
-	public int getNameIndex(String name) {
-		return _uBook.getNameIndex(name);
-	}
-
-	public NameXPtg getNameXPtg(String name) {
-		return _iBook.getNameXPtg(name);
-	}
-
-	public Sheet getSheet(int sheetIndex) {
-		return _uBook.getSheetAt(sheetIndex);
+	public EvaluationSheet getSheet(int sheetIndex) {
+		return new HSSFEvaluationSheet(_uBook.getSheetAt(sheetIndex));
 	}
 	public int convertFromExternSheetIndex(int externSheetIndex) {
 		return _iBook.getSheetIndexFromExternSheetIndex(externSheetIndex);
@@ -87,10 +97,6 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 
 	public ExternalSheet getExternalSheet(int externSheetIndex) {
 		return _iBook.getExternalSheet(externSheetIndex);
-	}
-	
-	public HSSFWorkbook getWorkbook() {
-		return _uBook;
 	}
 
 	public String resolveNameXText(NameXPtg n) {
@@ -107,15 +113,15 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		int ix = namePtg.getIndex();
 		return new Name(_iBook.getNameRecord(ix), ix);
 	}
-	public Ptg[] getFormulaTokens(Cell cell) {
+	public Ptg[] getFormulaTokens(EvaluationCell evalCell) {
+		HSSFCell cell = ((HSSFEvaluationCell)evalCell).getHSSFCell();
 		if (false) {
 			// re-parsing the formula text also works, but is a waste of time
 			// It is useful from time to time to run all unit tests with this code
 			// to make sure that all formulas POI can evaluate can also be parsed.
 			return HSSFFormulaParser.parse(cell.getCellFormula(), _uBook);
 		}
-		HSSFCell hCell = (HSSFCell) cell;
-		FormulaRecord fr = ((FormulaRecordAggregate) hCell.getCellValueRecord()).getFormulaRecord();
+		FormulaRecord fr = ((FormulaRecordAggregate) cell.getCellValueRecord()).getFormulaRecord();
 		return fr.getParsedExpression();
 	}
 
@@ -128,23 +134,18 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 			_nameRecord = nameRecord;
 			_index = index;
 		}
-
 		public Ptg[] getNameDefinition() {
 			return _nameRecord.getNameDefinition();
 		}
-
 		public String getNameText() {
 			return _nameRecord.getNameText();
 		}
-
 		public boolean hasFormula() {
 			return _nameRecord.hasFormula();
 		}
-
 		public boolean isFunctionName() {
 			return _nameRecord.isFunctionName();
 		}
-
 		public boolean isRange() {
 			return _nameRecord.hasFormula(); // TODO - is this right?
 		}

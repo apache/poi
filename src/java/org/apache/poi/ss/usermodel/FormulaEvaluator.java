@@ -45,20 +45,17 @@ public interface FormulaEvaluator {
      */
     void clearAllCachedResultValues();
 	/**
-	 * Sets the cached value for a plain (non-formula) cell.
-	 * Should be called whenever there are changes to individual input cells in the evaluated workbook.
+	 * Should be called to tell the cell value cache that the specified (value or formula) cell 
+	 * has changed.
 	 * Failure to call this method after changing cell values will cause incorrect behaviour
 	 * of the evaluate~ methods of this class
-	 * @param never <code>null</code>. Use {@link BlankEval#INSTANCE} when the cell is being 
-	 * cleared. Otherwise an instance of {@link NumberEval}, {@link StringEval}, {@link BoolEval}
-	 * or {@link ErrorEval} to represent a plain cell value.
 	 */
-    void setCachedPlainValue(Sheet sheet, int rowIndex, int columnIndex, ValueEval value);
+    void notifySetFormula(Cell cell);
 	/**
 	 * Should be called to tell the cell value cache that the specified cell has just become a
 	 * formula cell, or the formula text has changed 
 	 */
-	void notifySetFormula(HSSFSheet sheet, int rowIndex, int columnIndex);
+    void notifyDeleteCell(Cell cell);
     /**
      * If cell contains a formula, the formula is evaluated and returned,
      * else the CellValue simply copies the appropriate cell value from

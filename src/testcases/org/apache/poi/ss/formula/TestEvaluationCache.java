@@ -19,7 +19,11 @@ package org.apache.poi.ss.formula;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -33,10 +37,12 @@ import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFEvaluationTestHelper;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.formula.PlainCellCache.Loc;
 
 /**
  * Tests {@link EvaluationCache}.  Makes sure that where possible (previously calculated) cached 
@@ -46,33 +52,89 @@ import org.apache.poi.hssf.util.CellReference;
  * @author Josh Micich
  */
 public class TestEvaluationCache extends TestCase {
+	
+	private static final class FormulaCellCacheEntryComparer implements Comparator {
+
+		private final Map _formulaCellsByCacheEntry;
+
+		public FormulaCellCacheEntryComparer(Map formulaCellsByCacheEntry) {
+			_formulaCellsByCacheEntry = formulaCellsByCacheEntry;
+		}
+		private EvaluationCell getCell(Object a) {
+			return (EvaluationCell)_formulaCellsByCacheEntry.get(a);
+		}
+
+		public int compare(Object oa, Object ob) {
+			EvaluationCell a = getCell(oa);
+			EvaluationCell b = getCell(ob);
+			int cmp;
+			cmp = a.getRowIndex() - b.getRowIndex();
+			if (cmp != 0) {
+				return cmp;
+			}
+			cmp = a.getColumnIndex() - b.getColumnIndex();
+			if (cmp != 0) {
+				return cmp;
+			}
+			if (a.getSheet() == b.getSheet()) {
+				return 0;
+			}
+			throw new RuntimeException("Incomplete code - don't know how to order sheets");
+		}
+	}
+	
 	private static final class EvalListener extends EvaluationListener {
 
 		private final List _logList;
 		private final HSSFWorkbook _book;
+		private Map _formulaCellsByCacheEntry;
+		private Map _plainCellLocsByCacheEntry;
 
 		public EvalListener(HSSFWorkbook wb) {
 			_book = wb;
 			_logList = new ArrayList();
+			_formulaCellsByCacheEntry = new HashMap();
+			_plainCellLocsByCacheEntry = new HashMap();
 		}
 		public void onCacheHit(int sheetIndex, int rowIndex, int columnIndex, ValueEval result) {
 			log("hit", rowIndex, columnIndex, result);
 		}
-		public void onReadPlainValue(int sheetIndex, int rowIndex, int columnIndex, ValueEval value) {
-			log("value", rowIndex, columnIndex, value);
+		public void onReadPlainValue(int sheetIndex, int rowIndex, int columnIndex, ICacheEntry entry) {
+			Loc loc = new Loc(0, sheetIndex, rowIndex, columnIndex);
+			_plainCellLocsByCacheEntry.put(entry, loc);
+			log("value", rowIndex, columnIndex, entry.getValue());
 		}
-		public void onStartEvaluate(int sheetIndex, int rowIndex, int columnIndex, Ptg[] ptgs) {
-			log("start", rowIndex, columnIndex, ptgs);
+		public void onStartEvaluate(EvaluationCell cell, ICacheEntry entry, Ptg[] ptgs) {
+			_formulaCellsByCacheEntry.put(entry, cell);
+			log("start", cell.getRowIndex(), cell.getColumnIndex(), ptgs);
 		}
-		public void onEndEvaluate(int sheetIndex, int rowIndex, int columnIndex, ValueEval result) {
-			log("end", rowIndex, columnIndex, result);
+		public void onEndEvaluate(ICacheEntry entry, ValueEval result) {
+			EvaluationCell cell = (EvaluationCell) _formulaCellsByCacheEntry.get(entry);
+			log("end", cell.getRowIndex(), cell.getColumnIndex(), result);
 		}
-		public void onClearCachedValue(int sheetIndex, int rowIndex, int columnIndex, ValueEval value) {
-			log("clear", rowIndex, columnIndex, value);
+		public void onClearCachedValue(ICacheEntry entry) {
+			int rowIndex;
+			int columnIndex;
+			EvaluationCell cell = (EvaluationCell) _formulaCellsByCacheEntry.get(entry);
+			if (cell == null) {
+				Loc loc = (Loc)_plainCellLocsByCacheEntry.get(entry);
+				if (loc == null) {
+					throw new IllegalStateException("can't find cell or location");
+				}
+				rowIndex = loc.getRowIndex();
+				columnIndex = loc.getColumnIndex();
+			} else {
+				rowIndex = cell.getRowIndex();
+				columnIndex = cell.getColumnIndex();
+			}
+			log("clear", rowIndex, columnIndex, entry.getValue());
 		}
-		public void onClearDependentCachedValue(int sheetIndex, int rowIndex, int columnIndex,
-				ValueEval value,int depth) {
-			log("clear" + depth, rowIndex, columnIndex, value);
+		public void sortDependentCachedValues(ICacheEntry[] entries) {
+			Arrays.sort(entries, new FormulaCellCacheEntryComparer(_formulaCellsByCacheEntry));
+		}
+		public void onClearDependentCachedValue(ICacheEntry entry, int depth) {
+			EvaluationCell cell = (EvaluationCell) _formulaCellsByCacheEntry.get(entry);
+   			log("clear" + depth, cell.getRowIndex(), cell.getColumnIndex(),  entry.getValue());
 		}
 		private void log(String tag, int rowIndex, int columnIndex, Object value) {
 			StringBuffer sb = new StringBuffer(64);
@@ -139,19 +201,23 @@ public class TestEvaluationCache extends TestCase {
 			_sheet = _wb.createSheet("Sheet1");
 		}
 
+		private static EvaluationCell wrapCell(HSSFCell cell) {
+			return HSSFEvaluationTestHelper.wrapCell(cell);
+		}
+
 		public void setCellValue(String cellRefText, double value) {
 			HSSFCell cell = getOrCreateCell(cellRefText);
 			// be sure to blank cell, in case it is currently a formula
 			cell.setCellType(HSSFCell.CELL_TYPE_BLANK);
 			// otherwise this line will only set the formula cached result;
 			cell.setCellValue(value);
-			_evaluator.setCachedPlainValue(_sheet, cell.getRowIndex(), cell.getCellNum(), new NumberEval(value));
+			_evaluator.notifyUpdateCell(wrapCell(cell));
 		}
 
 		public void setCellFormula(String cellRefText, String formulaText) {
 			HSSFCell cell = getOrCreateCell(cellRefText);
 			cell.setCellFormula(formulaText);
-			_evaluator.notifySetFormula(_sheet, cell.getRowIndex(), cell.getCellNum());
+			_evaluator.notifyUpdateCell(wrapCell(cell));
 		}
 
 		private HSSFCell getOrCreateCell(String cellRefText) {
@@ -170,7 +236,7 @@ public class TestEvaluationCache extends TestCase {
 		}
 
 		public ValueEval evaluateCell(String cellRefText) {
-			return _evaluator.evaluate(getOrCreateCell(cellRefText));
+			return _evaluator.evaluate(wrapCell(getOrCreateCell(cellRefText)));
 		}
 
 		public String[] getAndClearLog() {
@@ -243,6 +309,7 @@ public class TestEvaluationCache extends TestCase {
 		// change a low level cell
 		ms.setCellValue("D1", 10);
 		confirmLog(ms, new String[] {
+				"clear D1 10",
 				"clear1 C1 54",
 				"clear2 B1 8",
 				"clear3 A1 46",
@@ -272,6 +339,7 @@ public class TestEvaluationCache extends TestCase {
 
 		ms.setCellValue("B3", 3); // B3 is in the middle of the dependency tree
 		confirmLog(ms, new String[] {
+				"clear B3 3",
 				"clear1 B2 46",
 				"clear2 A1 46",
 		});
@@ -296,6 +364,7 @@ public class TestEvaluationCache extends TestCase {
 		ms.getAndClearLog();
 		ms.setCellFormula("B2", "B3*C2-C3"); // used to be "B3*C1-C2"
 		confirmLog(ms, new String[] {
+			"clear B2 46",
 			"clear1 A1 46",
 		});
 
@@ -307,7 +376,8 @@ public class TestEvaluationCache extends TestCase {
 					"hit B3 2",
 					"hit C2 62",
 					"start C3 SUM(D3:E4)",
-						"hit D3 16", "hit E3 17", "value D4 #BLANK#", "value E4 #BLANK#",
+						"hit D3 16", "hit E3 17", 
+//						"value D4 #BLANK#", "value E4 #BLANK#",
 					"end C3 33",
 				"end B2 91",
 			"end A1 91",
@@ -320,6 +390,7 @@ public class TestEvaluationCache extends TestCase {
 		// Now change a value that should no longer affect B2
 		ms.setCellValue("D1", 11);
 		confirmLog(ms, new String[] {
+			"clear D1 11",
 			"clear1 C1 54",
 			// note there is no "clear2 B2 91" here because B2 doesn't depend on C1 anymore
 			"clear2 B1 8",
@@ -342,7 +413,7 @@ public class TestEvaluationCache extends TestCase {
 
 	/**
 	 * verifies that when updating a plain cell, depending (formula) cell cached values are cleared
-	 * only when the palin cell's value actually changes
+	 * only when the plain cell's value actually changes
 	 */
 	public void testRedundantUpdate() {
 		MySheet ms = new MySheet();
@@ -369,6 +440,7 @@ public class TestEvaluationCache extends TestCase {
 
 		ms.setCellValue("B1", 11); // value changing
 		confirmLog(ms, new String[] {
+			"clear B1 11",
 			"clear1 A1 25",	// expect consuming formula cached result to get cleared
 		});
 		confirmEvaluate(ms, "A1", 24);
@@ -434,9 +506,55 @@ public class TestEvaluationCache extends TestCase {
 			"hit D1 25",
 			"end A1 25",
 		});
-
 	}
 
+	public void testBlankCells() {
+
+
+		MySheet ms = new MySheet();
+
+		ms.setCellFormula("A1", "sum(B1:D4,B5:E6)");
+		ms.setCellValue("B1", 12);
+		ms.clearAllCachedResultValues();
+		ms.getAndClearLog();
+
+		confirmEvaluate(ms, "A1", 12);
+		confirmLog(ms, new String[] {
+			"start A1 SUM(B1:D4,B5:E6)",
+			"value B1 12",
+			"end A1 12",
+		});
+		ms.setCellValue("B6", 2);
+		ms.getAndClearLog();
+
+		confirmEvaluate(ms, "A1", 14);
+		confirmLog(ms, new String[] {
+			"start A1 SUM(B1:D4,B5:E6)",
+			"hit B1 12",
+			"hit B6 2",
+			"end A1 14",
+		});
+		ms.setCellValue("E4", 2);
+		ms.getAndClearLog();
+
+		confirmEvaluate(ms, "A1", 14);
+		confirmLog(ms, new String[] {
+			"hit A1 14",
+		});
+		
+		ms.setCellValue("D1", 1);
+		ms.getAndClearLog();
+
+		confirmEvaluate(ms, "A1", 15);
+		confirmLog(ms, new String[] {
+			"start A1 SUM(B1:D4,B5:E6)",
+			"hit B1 12",
+			"hit D1 1",
+			"hit B6 2",
+			"end A1 15",
+		});
+	}
+	
 	private static void confirmEvaluate(MySheet ms, String cellRefText, double expectedValue) {
 		ValueEval v = ms.evaluateCell(cellRefText);
 		assertEquals(NumberEval.class, v.getClass());

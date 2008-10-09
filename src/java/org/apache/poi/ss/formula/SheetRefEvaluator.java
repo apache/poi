@@ -18,7 +18,6 @@
 package org.apache.poi.ss.formula;
 
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.ss.usermodel.Sheet;
 /**
  * 
  * 
@@ -28,7 +27,7 @@ final class SheetRefEvaluator {
 
 	private final WorkbookEvaluator _bookEvaluator;
 	private final EvaluationTracker _tracker;
-	private final Sheet _sheet;
+	private final EvaluationSheet _sheet;
 	private final int _sheetIndex;
 
 	public SheetRefEvaluator(WorkbookEvaluator bookEvaluator, EvaluationTracker tracker,
