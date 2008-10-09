@@ -23,10 +23,8 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * This record refers to a category or series axis and is used to specify label/tickmark frequency.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * This record refers to a category or series axis and is used to specify label/tickmark frequency.<p/>
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class CategorySeriesAxisRecord extends Record {
@@ -99,9 +97,6 @@ public final class CategorySeriesAxisRecord extends Record {
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 2 + 2 + 2 + 2;

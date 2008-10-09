@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,25 +14,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
- * The number format index record indexes format table.  This applies to an axis.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * The number format index record indexes format table.  This applies to an axis.<p/>
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class NumberFormatIndexRecord
-    extends Record
-{
-    public final static short      sid                             = 0x104e;
+public final class NumberFormatIndexRecord extends Record {
+    public final static short      sid                             = 0x104E;
     private  short      field_1_formatIndex;
 
 
@@ -73,9 +66,6 @@ public class NumberFormatIndexRecord
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 2;
@@ -111,10 +101,4 @@ public class NumberFormatIndexRecord
     {
         this.field_1_formatIndex = field_1_formatIndex;
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

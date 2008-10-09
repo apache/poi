@@ -100,9 +100,6 @@ public class NoteRecord extends Record {
         return getRecordSize();
     }
 
-    /**
-     * Size of record
-     */
     public int getRecordSize()
     {
         int retval = 4 + 2 + 2 + 2 + 2 + 2 + 1 + field_5_author.length() + 1;

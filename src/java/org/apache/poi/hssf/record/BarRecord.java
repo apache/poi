@@ -23,10 +23,8 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * The bar record is used to define a bar chart.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * The bar record is used to define a bar chart.<p/>
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class BarRecord extends Record {
@@ -94,9 +92,6 @@ public final class BarRecord extends Record {
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 2 + 2 + 2;

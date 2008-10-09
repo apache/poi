@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,24 +14,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
- * The series chart group index record stores the index to the CHARTFORMAT record (0 based).
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * The series chart group index record stores the index to the CHARTFORMAT record (0 based).<p/>
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class SeriesChartGroupIndexRecord
-    extends Record
-{
+public final class SeriesChartGroupIndexRecord extends Record {
     public final static short      sid                             = 0x1045;
     private  short      field_1_chartGroupIndex;
 
@@ -73,9 +66,6 @@ public class SeriesChartGroupIndexRecord
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 2;
@@ -111,10 +101,4 @@ public class SeriesChartGroupIndexRecord
     {
         this.field_1_chartGroupIndex = field_1_chartGroupIndex;
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

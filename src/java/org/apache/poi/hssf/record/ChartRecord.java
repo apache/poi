@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,24 +14,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * The chart record is used to define the location and size of a chart.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class ChartRecord
-    extends Record
-{
+public final class ChartRecord extends Record {
     public final static short      sid                             = 0x1002;
     private  int        field_1_x;
     private  int        field_2_y;
@@ -94,9 +86,6 @@ public class ChartRecord
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 4 + 4 + 4 + 4;
@@ -183,10 +172,4 @@ public class ChartRecord
     {
         this.field_4_height = field_4_height;
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

@@ -23,10 +23,8 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Defines a legend for a chart.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * Defines a legend for a chart.<p/>
+ * 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
 public final class LegendRecord extends Record {
@@ -135,9 +133,6 @@ public final class LegendRecord extends Record {
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 4 + 4 + 4 + 4 + 1 + 1 + 2;

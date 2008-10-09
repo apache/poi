@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,24 +14,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
- * Links text to an object on the chart or identifies it as the title.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * Links text to an object on the chart or identifies it as the title.<p/>
+ * 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public class ObjectLinkRecord
-    extends Record
-{
+public final class ObjectLinkRecord extends Record {
     public final static short      sid                             = 0x1027;
     private  short      field_1_anchorId;
     public final static short       ANCHOR_ID_CHART_TITLE          = 1;
@@ -93,9 +86,6 @@ public class ObjectLinkRecord
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 2 + 2 + 2;
@@ -180,10 +170,4 @@ public class ObjectLinkRecord
     {
         this.field_3_link2 = field_3_link2;
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

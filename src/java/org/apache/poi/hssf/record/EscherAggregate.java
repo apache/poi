@@ -498,9 +498,6 @@ public class EscherAggregate extends AbstractEscherHolderRecord
         return size;
     }
 
-    /**
-     * The number of bytes required to serialize this record.
-     */
     public int getRecordSize()
     {
         convertUserModelToRecords();

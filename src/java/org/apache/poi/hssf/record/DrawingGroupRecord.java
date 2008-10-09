@@ -83,9 +83,6 @@ public class DrawingGroupRecord extends AbstractEscherHolderRecord
     	convertRawBytesToEscherRecords();
     }
 
-    /**
-     * Size of record (including 4 byte headers for all sections)
-     */
     public int getRecordSize()
     {
         return grossSizeFromDataSize( getRawDataSize() );

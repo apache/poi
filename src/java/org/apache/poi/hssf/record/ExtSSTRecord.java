@@ -129,7 +129,6 @@ public class ExtSSTRecord
         return pos;
     }
 
-    /** Returns the size of this record */
     public int getRecordSize()
     {
         return 6 + 8*getNumInfoRecords();
