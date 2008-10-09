@@ -23,10 +23,8 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * The area record is used to define a area chart.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * The area record is used to define a area chart.<p/>
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class AreaRecord extends Record {
@@ -77,9 +75,6 @@ public final class AreaRecord extends Record {
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 2;

@@ -23,10 +23,8 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * The common object data record is used to store all common preferences for an excel object.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
- *
+ * The common object data record is used to store all common preferences for an excel object.<p/>
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class CommonObjectDataSubRecord extends SubRecord {
@@ -147,9 +145,6 @@ public final class CommonObjectDataSubRecord extends SubRecord {
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 2 + 2 + 2 + 4 + 4 + 4;

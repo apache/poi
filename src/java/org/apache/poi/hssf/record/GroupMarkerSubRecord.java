@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,24 +14,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * The group marker record is used as a position holder for groups.
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class GroupMarkerSubRecord
-    extends SubRecord
-{
-    public final static short      sid                             = 0x06;
+public class GroupMarkerSubRecord extends SubRecord {
+    public final static short      sid                             = 0x0006;
 
     private byte[] reserved = new byte[0];    // would really love to know what goes in here.
 
@@ -43,7 +37,6 @@ public class GroupMarkerSubRecord
 
     public GroupMarkerSubRecord(RecordInputStream in)
     {
-//        int pos = 0;
         reserved = in.readRemainder();
     }
 
@@ -67,9 +60,6 @@ public class GroupMarkerSubRecord
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4 + reserved.length;
@@ -87,9 +77,4 @@ public class GroupMarkerSubRecord
             rec.reserved[i] = reserved[i];
         return rec;
     }
-
-
-
-}  // END OF CLASS
-
-
+}

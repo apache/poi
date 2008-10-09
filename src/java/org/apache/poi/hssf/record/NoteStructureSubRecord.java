@@ -87,9 +87,6 @@ public class NoteStructureSubRecord
         return getRecordSize();
     }
 
-    /**
-     * Size of record
-     */
     public int getRecordSize()
     {
         return 4 + reserved.length;

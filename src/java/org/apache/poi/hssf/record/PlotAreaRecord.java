@@ -20,10 +20,8 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * preceeds and identifies a frame as belonging to the plot area.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * preceeds and identifies a frame as belonging to the plot area.<p/>
+ * 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
 public final class PlotAreaRecord extends Record {
@@ -62,9 +60,6 @@ public final class PlotAreaRecord extends Record {
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4 ;
@@ -80,13 +75,4 @@ public final class PlotAreaRecord extends Record {
     
         return rec;
     }
-
-
-
-
-
-}  // END OF CLASS
-
-
-
-
+}

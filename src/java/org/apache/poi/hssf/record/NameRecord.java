@@ -410,8 +410,6 @@ public final class NameRecord extends Record {
 		return nChars;
 	}
 
-	/** returns the record size
-	 */
 	public int getRecordSize(){
 		return 4 // sid + size
 			+ 15 // 4 shorts + 7 bytes

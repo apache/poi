@@ -164,7 +164,6 @@ public class DVALRecord extends Record
         return getRecordSize();
     }
 
-    //with 4 bytes header
     public int getRecordSize()
     {
         return 22;

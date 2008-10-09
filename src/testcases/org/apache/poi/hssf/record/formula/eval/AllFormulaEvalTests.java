@@ -36,6 +36,7 @@ public class AllFormulaEvalTests {
 		result.addTestSuite(TestExternalFunction.class);
 		result.addTestSuite(TestFormulaBugs.class);
 		result.addTestSuite(TestFormulasFromSpreadsheet.class);
+		result.addTestSuite(TestMissingArgEval.class);
 		result.addTestSuite(TestPercentEval.class);
 		result.addTestSuite(TestRangeEval.class);
 		result.addTestSuite(TestUnaryPlusEval.class);

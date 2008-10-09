@@ -117,9 +117,6 @@ public final class ObjRecord extends Record {
         return getRecordSize();
     }
 
-    /**
-     * Size of record (excluding 4 byte header)
-     */
     public int getRecordSize()
     {
         int size = 0;

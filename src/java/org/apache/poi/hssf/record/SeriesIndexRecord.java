@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,24 +14,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
- * links a series to its position in the series list.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * links a series to its position in the series list.<p/>
+ * 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public class SeriesIndexRecord
-    extends Record
-{
+public final class SeriesIndexRecord extends Record {
     public final static short      sid                             = 0x1065;
     private  short      field_1_index;
 
@@ -73,9 +66,6 @@ public class SeriesIndexRecord
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 2;
@@ -111,10 +101,4 @@ public class SeriesIndexRecord
     {
         this.field_1_index = field_1_index;
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

@@ -15,23 +15,21 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.apache.poi.hssf.record.formula.eval;
 
 /**
- * The margin interface is a parent used to define left, right, top and bottom margins.
- * This allows much of the code to be generic when it comes to handling margins.
+ * Represents the (intermediate) evaluated result of a missing function argument.  In most cases
+ * this can be translated into {@link BlankEval} but there are some notable exceptions.  Functions
+ * COUNT and COUNTA <em>do</em> count their missing args.  Note - the differences between 
+ * {@link MissingArgEval} and {@link BlankEval} have not been investigated fully, so the POI
+ * evaluator may need to be updated to account for these as they are found.
  *
- * @author Shawn Laubach (slaubach at apache dot org)
+ * @author Josh Micich
  */
-public interface Margin {
-	// TODO - introduce MarginBaseRecord
-	/**
-	 * Get the margin field for the Margin.
-	 */
-	public double getMargin();
+public final class MissingArgEval implements ValueEval {
 
-	/**
-	 * Set the margin field for the Margin.
-	 */
-	public void setMargin(double field_1_margin);
+    public static MissingArgEval instance = new MissingArgEval();
+
+    private MissingArgEval() {
+    }
 }

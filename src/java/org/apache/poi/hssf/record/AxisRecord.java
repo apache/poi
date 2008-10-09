@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,24 +14,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-
-
-import org.apache.poi.util.*;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
- * The axis record defines the type of an axis.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-
+ * The axis record defines the type of an axis.<p/>
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class AxisRecord
-    extends Record
-{
+public final class AxisRecord extends Record {
     public final static short      sid                             = 0x101d;
     private  short      field_1_axisType;
     public final static short       AXIS_TYPE_CATEGORY_OR_X_AXIS   = 0;
@@ -104,9 +97,6 @@ public class AxisRecord
         return getRecordSize();
     }
 
-    /**
-     * Size of record (exluding 4 byte header)
-     */
     public int getRecordSize()
     {
         return 4  + 2 + 4 + 4 + 4 + 4;
@@ -221,10 +211,4 @@ public class AxisRecord
     {
         this.field_5_reserved4 = field_5_reserved4;
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}
