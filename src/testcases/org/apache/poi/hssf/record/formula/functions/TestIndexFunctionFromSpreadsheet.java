@@ -205,10 +205,10 @@ public final class TestIndexFunctionFromSpreadsheet extends TestCase {
 	}
 
 
-	private static String formatTestCaseDetails(String sheetName, int rowNum, HSSFCell c) {
+	private static String formatTestCaseDetails(String sheetName, int rowIndex, HSSFCell c) {
 
 		StringBuffer sb = new StringBuffer();
-		CellReference cr = new CellReference(sheetName, rowNum, c.getCellNum(), false, false);
+		CellReference cr = new CellReference(sheetName, rowIndex, c.getColumnIndex(), false, false);
 		sb.append(cr.formatAsString());
 		sb.append(" {=").append(c.getCellFormula()).append("}");
 		return sb.toString();

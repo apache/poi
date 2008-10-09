@@ -55,7 +55,7 @@ final class HSSFEvaluationCell implements EvaluationCell {
 		return _cell.getCellType();
 	}
 	public int getColumnIndex() {
-		return _cell.getCellNum();
+		return _cell.getColumnIndex();
 	}
 	public int getErrorCellValue() {
 		return _cell.getErrorCellValue();
