@@ -20,8 +20,7 @@ package org.apache.poi.ss.formula;
 import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Sheet;
+
 /**
  * Abstracts a workbook for the purpose of formula evaluation.<br/>
  * 
@@ -34,10 +33,10 @@ public interface EvaluationWorkbook {
 	/**
 	 * @return -1 if the specified sheet is from a different book
 	 */
-	int getSheetIndex(Sheet sheet);
+	int getSheetIndex(EvaluationSheet sheet);
 	int getSheetIndex(String sheetName);
 
-	Sheet getSheet(int sheetIndex);
+	EvaluationSheet getSheet(int sheetIndex);
 
 	/**
 	 * @return <code>null</code> if externSheetIndex refers to a sheet inside the current workbook
@@ -46,7 +45,7 @@ public interface EvaluationWorkbook {
 	int convertFromExternSheetIndex(int externSheetIndex);
 	EvaluationName getName(NamePtg namePtg);
 	String resolveNameXText(NameXPtg ptg);
-	Ptg[] getFormulaTokens(Cell cell);
+	Ptg[] getFormulaTokens(EvaluationCell cell);
 	
 	class ExternalSheet {
 		private final String _workbookName;

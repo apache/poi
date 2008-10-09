@@ -17,27 +17,17 @@
 
 package org.apache.poi.ss.formula;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
-
 /**
- * Tests {@link CellCacheEntry}.
- *
+ * Abstracts a sheet for the purpose of formula evaluation.<br/>
+ * 
+ * For POI internal use only
+ * 
  * @author Josh Micich
  */
-public class TestCellCacheEntry extends TestCase {
+public interface EvaluationSheet {
 
-	public void testBasic() {
-		CellCacheEntry pcce = new PlainValueCellCacheEntry(new NumberEval(42.0));
-		ValueEval ve = pcce.getValue();
-		assertEquals(42, ((NumberEval)ve).getNumberValue(), 0.0);
-		
-		FormulaCellCacheEntry fcce = new FormulaCellCacheEntry();
-		fcce.updateFormulaResult(new NumberEval(10.0), CellCacheEntry.EMPTY_ARRAY, null);
-		
-		ve = fcce.getValue();
-		assertEquals(10, ((NumberEval)ve).getNumberValue(), 0.0);
-	}
+	/**
+	 * @return <code>null</code> if there is no cell at the specified coordinates
+	 */
+	EvaluationCell getCell(int rowIndex, int columnIndex);
 }

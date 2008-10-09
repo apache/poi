@@ -19,14 +19,12 @@ package org.apache.poi.xssf.usermodel;
 
 import java.util.Iterator;
 
-import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -61,11 +59,11 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 	public void clearAllCachedResultValues() {
 		_bookEvaluator.clearAllCachedResultValues();
 	}
-	public void setCachedPlainValue(Sheet sheet, int rowIndex, int columnIndex, ValueEval value) {
-		_bookEvaluator.setCachedPlainValue(sheet, rowIndex, columnIndex, value);
+	public void notifySetFormula(Cell cell) {
+		_bookEvaluator.notifyUpdateCell(new XSSFEvaluationCell((XSSFCell)cell));
 	}
-	public void notifySetFormula(HSSFSheet sheet, int rowIndex, int columnIndex) {
-		_bookEvaluator.notifySetFormula(sheet, rowIndex, columnIndex);
+	public void notifyDeleteCell(Cell cell) {
+		_bookEvaluator.notifyDeleteCell(new XSSFEvaluationCell((XSSFCell)cell));
 	}
 
 	/**
@@ -227,7 +225,7 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 	 * @param eval
 	 */
 	private CellValue evaluateFormulaCellValue(Cell cell) {
-		ValueEval eval = _bookEvaluator.evaluate(cell);
+		ValueEval eval = _bookEvaluator.evaluate(new XSSFEvaluationCell((XSSFCell) cell));
 		if (eval instanceof NumberEval) {
 			NumberEval ne = (NumberEval) eval;
 			return new CellValue(ne.getNumberValue());

@@ -32,6 +32,7 @@ import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationListener;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.WorkbookEvaluatorTestHelper;
@@ -168,6 +169,12 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		assertEquals("-1000000.0-3000000.0", cell.getCellFormula());
 		assertEquals(-4000000, eva.evaluate(cell).getNumberValue(), 0);
 	}
+//	public static void main(String[] args) {
+//		new TestFormulaEvaluatorBugs().test44410();
+//		new TestFormulaEvaluatorBugs().testSlowEvaluate45376();
+//		new HSSFWorkbook();
+//		System.out.println("done");
+//	}
 
 	/**
 	 * Bug 44410: SUM(C:C) is valid in excel, and means a sum
@@ -309,7 +316,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		public void onCacheHit(int sheetIndex, int srcRowNum, int srcColNum, ValueEval result) {
 			_countCacheHits++;
 		}
-		public void onStartEvaluate(int sheetIndex, int rowIndex, int columnIndex, Ptg[] ptgs) {
+		public void onStartEvaluate(EvaluationCell cell, ICacheEntry entry, Ptg[] ptgs) {
 			_countCacheMisses++;
 		}
 	}
@@ -341,7 +348,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		HSSFCell cell = row.getCell(8);
 		EvalListener evalListener = new EvalListener();
 		WorkbookEvaluator evaluator = WorkbookEvaluatorTestHelper.createEvaluator(wb, evalListener);
-		evaluator.evaluate(cell);
+		evaluator.evaluate(HSSFEvaluationTestHelper.wrapCell(cell));
 		int evalCount = evalListener.getCountCacheMisses();
 		if (evalCount > 10) {
 			// Without caching, evaluating cell 'A9' takes 21845 evaluations which consumes

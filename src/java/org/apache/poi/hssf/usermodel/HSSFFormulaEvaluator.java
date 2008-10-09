@@ -19,7 +19,6 @@ package org.apache.poi.hssf.usermodel;
 
 import java.util.Iterator;
 
-import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
@@ -29,7 +28,6 @@ import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.Sheet;
 
 /**
  * Evaluates formula cells.<p/>
@@ -86,7 +84,9 @@ public class HSSFFormulaEvaluator /* almost implements FormulaEvaluator */ {
 
 	/**
 	 * Should be called whenever there are major changes (e.g. moving sheets) to input cells
-	 * in the evaluated workbook.
+	 * in the evaluated workbook.  If performance is not critical, a single call to this method
+	 * may be used instead of many specific calls to the notify~ methods.
+	 *  
 	 * Failure to call this method after changing cell values will cause incorrect behaviour
 	 * of the evaluate~ methods of this class
 	 */
@@ -94,23 +94,22 @@ public class HSSFFormulaEvaluator /* almost implements FormulaEvaluator */ {
 		_bookEvaluator.clearAllCachedResultValues();
 	}
 	/**
-	 * Sets the cached value for a plain (non-formula) cell.
-	 * Should be called whenever there are changes to individual input cells in the evaluated workbook.
+	 * Should be called to tell the cell value cache that the specified (value or formula) cell 
+	 * has changed.
 	 * Failure to call this method after changing cell values will cause incorrect behaviour
 	 * of the evaluate~ methods of this class
-	 * @param never <code>null</code>. Use {@link BlankEval#INSTANCE} when the cell is being 
-	 * cleared. Otherwise an instance of {@link NumberEval}, {@link StringEval}, {@link BoolEval}
-	 * or {@link ErrorEval} to represent a plain cell value.
 	 */
-	public void setCachedPlainValue(Sheet sheet, int rowIndex, int columnIndex, ValueEval value) {
-		_bookEvaluator.setCachedPlainValue(sheet, rowIndex, columnIndex, value);
+	public void notifyUpdateCell(HSSFCell cell) {
+		_bookEvaluator.notifyUpdateCell(new HSSFEvaluationCell(cell));
 	}
 	/**
-	 * Should be called to tell the cell value cache that the specified cell has just become a
-	 * formula cell, or the formula text has changed 
+	 * Should be called to tell the cell value cache that the specified cell has just been
+	 * deleted. 
+	 * Failure to call this method after changing cell values will cause incorrect behaviour
+	 * of the evaluate~ methods of this class
 	 */
-	public void notifySetFormula(HSSFSheet sheet, int rowIndex, int columnIndex) {
-		_bookEvaluator.notifySetFormula(sheet, rowIndex, columnIndex);
+	public void notifyDeleteCell(HSSFCell cell) {
+		_bookEvaluator.notifyDeleteCell(new HSSFEvaluationCell(cell));
 	}
 
 	/**
@@ -273,7 +272,7 @@ public class HSSFFormulaEvaluator /* almost implements FormulaEvaluator */ {
 	 * @param eval
 	 */
 	private CellValue evaluateFormulaCellValue(Cell cell) {
-		ValueEval eval = _bookEvaluator.evaluate(cell);
+		ValueEval eval = _bookEvaluator.evaluate(new HSSFEvaluationCell((HSSFCell)cell));
 		if (eval instanceof NumberEval) {
 			NumberEval ne = (NumberEval) eval;
 			return new CellValue(ne.getNumberValue());

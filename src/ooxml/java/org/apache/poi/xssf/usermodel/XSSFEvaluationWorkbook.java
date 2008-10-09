@@ -1,16 +1,32 @@
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationName;
+import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
 /**
@@ -67,7 +83,8 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		return null;
 	}
 
-	public int getSheetIndex(Sheet sheet) {
+	public int getSheetIndex(EvaluationSheet evalSheet) {
+		XSSFSheet sheet = ((XSSFEvaluationSheet)evalSheet).getXSSFSheet();
 		return _uBook.getSheetIndex(sheet);
 	}
 
@@ -80,8 +97,8 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		throw new RuntimeException("Not implemented yet");
 	}
 
-	public Sheet getSheet(int sheetIndex) {
-		return _uBook.getSheetAt(sheetIndex);
+	public EvaluationSheet getSheet(int sheetIndex) {
+		return new XSSFEvaluationSheet(_uBook.getSheetAt(sheetIndex));
 	}
 
 	public ExternalSheet getExternalSheet(int externSheetIndex) {
@@ -93,10 +110,6 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	}
 	public int getSheetIndex(String sheetName) {
 		return _uBook.getSheetIndex(sheetName);
-	}
-
-	public Workbook getWorkbook() {
-		return _uBook;
 	}
 
     /**
@@ -119,7 +132,8 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		int ix = namePtg.getIndex();
 		return new Name(_uBook.getNameAt(ix), ix, this);
 	}
-	public Ptg[] getFormulaTokens(Cell cell) {
+	public Ptg[] getFormulaTokens(EvaluationCell evalCell) {
+		XSSFCell cell = ((XSSFEvaluationCell)evalCell).getXSSFCell();
 		XSSFEvaluationWorkbook frBook = XSSFEvaluationWorkbook.create(_uBook);
 		return FormulaParser.parse(cell.getCellFormula(), frBook);
 	}
