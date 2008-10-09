@@ -547,4 +547,31 @@ public abstract class TextShape extends SimpleShape {
         return (OEPlaceholderAtom)getClientDataRecord(RecordTypes.OEPlaceholderAtom.typeID);
     }
 
+    /**
+     *
+     * Assigns a hyperlink to this text shape
+     *
+     * @param linkId    id of the hyperlink, @see org.apache.poi.hslf.usermodel.SlideShow#addHyperlink(Hyperlink)
+     * @param      beginIndex   the beginning index, inclusive.
+     * @param      endIndex     the ending index, exclusive.
+     * @see org.apache.poi.hslf.usermodel.SlideShow#addHyperlink(Hyperlink)
+     */
+    public void setHyperlink(int linkId, int beginIndex, int endIndex){
+        //TODO validate beginIndex and endIndex and throw IllegalArgumentException
+
+        InteractiveInfo info = new InteractiveInfo();
+        InteractiveInfoAtom infoAtom = info.getInteractiveInfoAtom();
+        infoAtom.setAction(InteractiveInfoAtom.ACTION_HYPERLINK);
+        infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_Url);
+        infoAtom.setHyperlinkID(linkId);
+
+        _txtbox.appendChildRecord(info);
+
+        TxInteractiveInfoAtom txiatom = new TxInteractiveInfoAtom();
+        txiatom.setStartIndex(beginIndex);
+        txiatom.setEndIndex(endIndex);
+        _txtbox.appendChildRecord(txiatom);
+
+    }
+
 }

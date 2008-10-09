@@ -60,4 +60,40 @@ public class TestTable extends TestCase {
         assertEquals(tbl.getNumberOfRows(), tbl3.getNumberOfRows());
     }
 
+    /**
+     * Error constructing Table when rownum=1
+     */
+    public void test45889(){
+        SlideShow ppt = new SlideShow();
+        Slide slide = ppt.createSlide();
+        Shape[] shapes;
+        Table tbl1 = new Table(1, 5);
+        assertEquals(5, tbl1.getNumberOfColumns());
+        assertEquals(1, tbl1.getNumberOfRows());
+        slide.addShape(tbl1);
+
+        shapes = slide.getShapes();
+        assertEquals(1, shapes.length);
+
+        Table tbl2 = (Table)shapes[0];
+        assertSame(tbl1.getSpContainer(), tbl2.getSpContainer());
+
+        assertEquals(tbl1.getNumberOfColumns(), tbl2.getNumberOfColumns());
+        assertEquals(tbl1.getNumberOfRows(), tbl2.getNumberOfRows());
+    }
+
+    public void testIllegalCOnstruction(){
+        try {
+            Table tbl = new Table(0, 5);
+            fail("Table(rownum, colnum) must throw IllegalArgumentException if any of tghe arguments is less than 1");
+        } catch (IllegalArgumentException e){
+
+        }
+        try {
+            Table tbl = new Table(5, 0);
+            fail("Table(rownum, colnum) must throw IllegalArgumentException if any of tghe arguments is less than 1");
+        } catch (IllegalArgumentException e){
+
+        }
+    }
 }

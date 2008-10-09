@@ -251,20 +251,6 @@ public final class LittleEndian implements LittleEndianConsts {
     }
 
     /**
-     *  put a array of shorts into a byte array
-     *
-     *@param  data    the byte array
-     *@param  offset  a starting offset into the byte array
-     *@param  value   the short array
-     */
-    public static void putShortArray(final byte[] data, final int offset, final short[] value) {
-        putNumber(data, offset, value.length, SHORT_SIZE);
-        for (int i = 0; i < value.length; i++) {
-            putNumber(data, offset + 2 + (i * 2), value[i], SHORT_SIZE);
-        }
-    }
-
-    /**
      * put an unsigned short value into a byte array
      *
      * @param data the byte array

@@ -80,6 +80,7 @@ public final class WorkbookEvaluator {
 
 	private final EvaluationWorkbook _workbook;
 	private EvaluationCache _cache;
+	private int _workbookIx;
 
 	private final IEvaluationListener _evaluationListener;
 	private final Map _sheetIndexesBySheet;
@@ -94,6 +95,7 @@ public final class WorkbookEvaluator {
 		_cache = new EvaluationCache(evaluationListener);
 		_sheetIndexesBySheet = new IdentityHashMap();
 		_collaboratingWorkbookEnvironment = CollaboratingWorkbooksEnvironment.EMPTY;
+		_workbookIx = 0;
 	}
 
 	/**
@@ -111,9 +113,10 @@ public final class WorkbookEvaluator {
 			System.out.println(s);
 		}
 	}
-	/* package */ void attachToEnvironment(CollaboratingWorkbooksEnvironment collaboratingWorkbooksEnvironment, EvaluationCache cache) {
+	/* package */ void attachToEnvironment(CollaboratingWorkbooksEnvironment collaboratingWorkbooksEnvironment, EvaluationCache cache, int workbookIx) {
 		_collaboratingWorkbookEnvironment = collaboratingWorkbooksEnvironment;
 		_cache = cache;
+		_workbookIx = workbookIx;
 	}
 	/* package */ CollaboratingWorkbooksEnvironment getEnvironment() {
 		return _collaboratingWorkbookEnvironment;
@@ -122,6 +125,7 @@ public final class WorkbookEvaluator {
 	/* package */ void detachFromEnvironment() {
 		_collaboratingWorkbookEnvironment = CollaboratingWorkbooksEnvironment.EMPTY;
 		_cache = new EvaluationCache(_evaluationListener);
+		_workbookIx = 0;
 	}
 	/* package */ IEvaluationListener getEvaluationListener() {
 		return _evaluationListener;
@@ -148,7 +152,7 @@ public final class WorkbookEvaluator {
 			throw new IllegalArgumentException("value must not be null");
 		}
 		int sheetIndex = getSheetIndex(sheet);
-		_cache.setValue(new CellLocation(_workbook, sheetIndex, rowIndex, columnIndex), true, CellLocation.EMPTY_ARRAY, value);
+		_cache.setValue(getCellLoc(sheetIndex, rowIndex, columnIndex), true, CellLocation.EMPTY_ARRAY, value);
 
 	}
 	/**
@@ -157,7 +161,7 @@ public final class WorkbookEvaluator {
 	 */
 	public void notifySetFormula(Sheet sheet, int rowIndex, int columnIndex) {
 		int sheetIndex = getSheetIndex(sheet);
-		_cache.setValue(new CellLocation(_workbook, sheetIndex, rowIndex, columnIndex), false, CellLocation.EMPTY_ARRAY, null);
+		_cache.setValue(getCellLoc(sheetIndex, rowIndex, columnIndex), false, CellLocation.EMPTY_ARRAY, null);
 
 	}
 	private int getSheetIndex(Sheet sheet) {
@@ -175,7 +179,7 @@ public final class WorkbookEvaluator {
 
 	public ValueEval evaluate(Cell srcCell) {
 		int sheetIndex = getSheetIndex(srcCell.getSheet());
-		CellLocation cellLoc = new CellLocation(_workbook, sheetIndex, srcCell.getRowIndex(), srcCell.getCellNum());
+		CellLocation cellLoc = getCellLoc(sheetIndex, srcCell.getRowIndex(), srcCell.getCellNum());
 		return internalEvaluate(srcCell, cellLoc, new EvaluationTracker(_cache));
 	}
 
@@ -471,8 +475,11 @@ public final class WorkbookEvaluator {
 		} else {
 			cell = row.getCell(columnIndex);
  		}
-		CellLocation cellLoc = new CellLocation(_workbook, sheetIndex, rowIndex, columnIndex);
+		CellLocation cellLoc = getCellLoc(sheetIndex, rowIndex, columnIndex);
 		tracker.acceptDependency(cellLoc);
 		return internalEvaluate(cell, cellLoc, tracker);
+	}
+	private CellLocation getCellLoc(int sheetIndex, int rowIndex, int columnIndex) {
+		return new CellLocation(_workbookIx, sheetIndex, rowIndex, columnIndex);
 	}
 }
