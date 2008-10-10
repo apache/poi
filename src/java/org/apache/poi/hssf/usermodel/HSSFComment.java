@@ -152,10 +152,7 @@ public class HSSFComment extends HSSFTextbox {
         if (string.numFormattingRuns() == 0) string.applyFont((short)0);
 
         if (txo != null) {
-            int frLength = ( string.numFormattingRuns() + 1 ) * 8;
-            txo.setFormattingRunLength( (short) frLength );
-            txo.setTextLength( (short) string.length() );
-            txo.setStr( string );
+            txo.setStr(string);
         }
         super.setString(string);
     }

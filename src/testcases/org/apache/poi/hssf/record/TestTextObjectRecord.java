@@ -22,7 +22,11 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.util.HexRead;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Tests that serialization and deserialization of the TextObjectRecord .
@@ -32,17 +36,23 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
  */
 public final class TestTextObjectRecord extends TestCase {
 
-    byte[] data = {(byte)0xB6, 0x01, 0x12, 0x00, 0x12, 0x02, 0x00, 0x00, 0x00, 0x00,
-                   0x00, 0x00, 0x00, 0x00, 0x0D, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00,
-                   0x00, 0x3C, 0x00, 0x1B, 0x00, 0x01, 0x48, 0x00, 0x65, 0x00, 0x6C,
-                   0x00, 0x6C, 0x00, 0x6F, 0x00, 0x2C, 0x00, 0x20, 0x00, 0x57, 0x00,
-                   0x6F, 0x00, 0x72, 0x00, 0x6C, 0x00, 0x64, 0x00, 0x21, 0x00, 0x3C,
-                   0x00, 0x08, 0x00, 0x0D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    private static final byte[] simpleData = HexRead.readFromString(
+    	"B6 01 12 00 " +
+    	"12 02 00 00 00 00 00 00" +
+    	"00 00 0D 00 08 00	00 00" +
+    	"00 00 " +
+    	"3C 00 1B 00 " +
+    	"01 48 00 65 00 6C 00 6C 00 6F 00 " +
+    	"2C 00 20 00 57 00 6F 00 72 00 6C " +
+    	"00 64 00 21 00 " + 
+    	"3C 00 08 " +
+    	"00 0D 00 00 00 00 00 00 00"
+    );
 
 
     public void testRead() {
 
-        RecordInputStream is = new RecordInputStream(new ByteArrayInputStream(data));
+        RecordInputStream is = new RecordInputStream(new ByteArrayInputStream(simpleData));
         is.nextRecord();
         TextObjectRecord record = new TextObjectRecord(is);
 
@@ -50,36 +60,51 @@ public final class TestTextObjectRecord extends TestCase {
         assertEquals(TextObjectRecord.HORIZONTAL_TEXT_ALIGNMENT_LEFT_ALIGNED, record.getHorizontalTextAlignment());
         assertEquals(TextObjectRecord.VERTICAL_TEXT_ALIGNMENT_TOP, record.getVerticalTextAlignment());
         assertEquals(TextObjectRecord.TEXT_ORIENTATION_NONE, record.getTextOrientation());
-        assertEquals(0, record.getReserved7());
         assertEquals("Hello, World!", record.getStr().getString());
-
     }
 
-    public void testWrite()
-    {
+    public void testWrite() {
         HSSFRichTextString str = new HSSFRichTextString("Hello, World!");
 
         TextObjectRecord record = new TextObjectRecord();
-        int frLength = ( str.numFormattingRuns() + 1 ) * 8;
-        record.setFormattingRunLength( (short) frLength );
-        record.setTextLength( (short) str.length() );
-        record.setStr( str );
+        record.setStr(str);
         record.setHorizontalTextAlignment( TextObjectRecord.HORIZONTAL_TEXT_ALIGNMENT_LEFT_ALIGNED );
         record.setVerticalTextAlignment( TextObjectRecord.VERTICAL_TEXT_ALIGNMENT_TOP );
         record.setTextLocked( true );
         record.setTextOrientation( TextObjectRecord.TEXT_ORIENTATION_NONE );
-        record.setReserved7( 0 );
 
         byte [] ser = record.serialize();
-        //assertEquals(ser.length , data.length);
+        assertEquals(ser.length , simpleData.length);
 
-        //assertTrue(Arrays.equals(data, ser));
+        assertTrue(Arrays.equals(simpleData, ser));
 
         //read again
-        RecordInputStream is = new RecordInputStream(new ByteArrayInputStream(data));
+        RecordInputStream is = new RecordInputStream(new ByteArrayInputStream(simpleData));
         is.nextRecord();
         record = new TextObjectRecord(is);
+    }
 
+    /**
+     * Zero {@link ContinueRecord}s follow a {@link TextObjectRecord} if the text is empty
+     */
+    public void testWriteEmpty() {
+        HSSFRichTextString str = new HSSFRichTextString("");
+
+        TextObjectRecord record = new TextObjectRecord();
+        record.setStr(str);
+
+        byte [] ser = record.serialize();
+        
+        int formatDataLen = LittleEndian.getUShort(ser, 16);
+        assertEquals("formatDataLength", 0, formatDataLen);
+
+        assertEquals(22, ser.length); // just the TXO record
+        
+        //read again
+        RecordInputStream is = new RecordInputStream(new ByteArrayInputStream(ser));
+        is.nextRecord();
+        record = new TextObjectRecord(is);
+        assertEquals(0, record.getStr().length());
     }
 
     /**
@@ -95,10 +120,7 @@ public final class TestTextObjectRecord extends TestCase {
             HSSFRichTextString str = new HSSFRichTextString(buff.toString());
 
             TextObjectRecord obj = new TextObjectRecord();
-            int frLength = ( str.numFormattingRuns() + 1 ) * 8;
-            obj.setFormattingRunLength( (short) frLength );
-            obj.setTextLength( (short) str.length() );
-            obj.setStr( str );
+            obj.setStr(str);
 
             byte [] data = obj.serialize();
             RecordInputStream is = new RecordInputStream(new ByteArrayInputStream(data));
@@ -120,30 +142,12 @@ public final class TestTextObjectRecord extends TestCase {
         HSSFRichTextString str = new HSSFRichTextString(text);
 
         TextObjectRecord obj = new TextObjectRecord();
-        int frLength = ( str.numFormattingRuns() + 1 ) * 8;
-        obj.setFormattingRunLength( (short) frLength );
-        obj.setTextLength( (short) str.length() );
-        obj.setReserved1(true);
-        obj.setReserved2((short)2);
-        obj.setReserved3((short)3);
-        obj.setReserved4((short)4);
-        obj.setReserved5((short)5);
-        obj.setReserved6((short)6);
-        obj.setReserved7((short)7);
         obj.setStr( str );
 
 
         TextObjectRecord cloned = (TextObjectRecord)obj.clone();
-        assertEquals(obj.getReserved2(), cloned.getReserved2());
-        assertEquals(obj.getReserved3(), cloned.getReserved3());
-        assertEquals(obj.getReserved4(), cloned.getReserved4());
-        assertEquals(obj.getReserved5(), cloned.getReserved5());
-        assertEquals(obj.getReserved6(), cloned.getReserved6());
-        assertEquals(obj.getReserved7(), cloned.getReserved7());
         assertEquals(obj.getRecordSize(), cloned.getRecordSize());
-        assertEquals(obj.getOptions(), cloned.getOptions());
         assertEquals(obj.getHorizontalTextAlignment(), cloned.getHorizontalTextAlignment());
-        assertEquals(obj.getFormattingRunLength(), cloned.getFormattingRunLength());
         assertEquals(obj.getStr().getString(), cloned.getStr().getString());
 
         //finally check that the serialized data is the same
@@ -151,4 +155,47 @@ public final class TestTextObjectRecord extends TestCase {
         byte[] cln = cloned.serialize();
         assertTrue(Arrays.equals(src, cln));
     }
+    
+    /** similar to {@link #simpleData} but with link formula at end of TXO rec*/ 
+    private static final byte[] linkData = HexRead.readFromString(
+        	"B6 01 " + // TextObjectRecord.sid
+        	"1E 00 " + // size 18
+    	    "44 02 02 00 00 00 00 00" +
+    	    "00 00 " +
+    	    "02 00 " + // strLen 2
+    	    "10 00 " + // 16 bytes for 2 format runs
+    	    "00 00 00 00 " +
+
+            "05 00 " +          // formula size
+            "D4 F0 8A 03 " +    // unknownInt
+            "24 01 00 13 C0 " + //tRef(T2)
+            "13 " +             // ??
+
+        	"3C 00 " + // ContinueRecord.sid
+    	    "05 00 " + // size 5
+    	    "01 " + // unicode uncompressed
+    	    "41 00 42 00 " + // 'AB'
+        	"3C 00 " + // ContinueRecord.sid
+    	    "10 00 " + // size 16 
+    	    "00 00 18 00 00 00 00 00 " +
+    	    "02 00 00 00 00 00 00 00 " 
+        );
+    
+    
+    public void testLinkFormula() {
+        RecordInputStream is = new RecordInputStream(new ByteArrayInputStream(linkData));
+        is.nextRecord();
+        TextObjectRecord rec = new TextObjectRecord(is);
+		
+        Ptg ptg = rec.getLinkRefPtg();
+        assertNotNull(ptg);
+        assertEquals(RefPtg.class, ptg.getClass());
+        RefPtg rptg = (RefPtg) ptg;
+        assertEquals("T2", rptg.toFormulaString());
+
+        byte [] data2 = rec.serialize();
+        assertEquals(linkData.length, data2.length);
+        assertTrue(Arrays.equals(linkData, data2));
+	}
+    
 }
