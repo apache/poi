@@ -321,51 +321,54 @@ public final class RecordFactory {
 		Record lastRecord = null;
 		while (recStream.hasNextRecord()) {
 			recStream.nextRecord();
-			if (recStream.getSid() != 0) {
-				Record[] recs = createRecord(recStream);   // handle MulRK records
+			if (recStream.getSid() == 0) {
+				// After EOF, Excel seems to pad block with zeros
+				continue;
+			}
+			Record[] recs = createRecord(recStream);   // handle MulRK records
 
-				if (recs.length > 1) {
-					for (int k = 0; k < recs.length; k++) {
-						records.add(recs[ k ]);			   // these will be number records
-					}
-				} else {
-					Record record = recs[ 0 ];
-
-					if (record != null) {
-						if (record.getSid() == DrawingGroupRecord.sid
-							   && lastRecord instanceof DrawingGroupRecord) {
-							DrawingGroupRecord lastDGRecord = (DrawingGroupRecord) lastRecord;
-							lastDGRecord.join((AbstractEscherHolderRecord) record);
-						} else if (record.getSid() == ContinueRecord.sid &&
-								 ((lastRecord instanceof ObjRecord) || (lastRecord instanceof TextObjectRecord))) {
-							// Drawing records have a very strange continue behaviour.
-							//There can actually be OBJ records mixed between the continues.
-							lastDrawingRecord.processContinueRecord( ((ContinueRecord)record).getData() );
-							//we must remember the position of the continue record.
-							//in the serialization procedure the original structure of records must be preserved
-							records.add(record);
-						} else if (record.getSid() == ContinueRecord.sid &&
-								(lastRecord instanceof DrawingGroupRecord)) {
-							((DrawingGroupRecord)lastRecord).processContinueRecord(((ContinueRecord)record).getData());
-						} else if (record.getSid() == ContinueRecord.sid &&
-								(lastRecord instanceof StringRecord)) {
-							((StringRecord)lastRecord).processContinueRecord(((ContinueRecord)record).getData());
-						} else if (record.getSid() == ContinueRecord.sid) {
-							if (lastRecord instanceof UnknownRecord) {
-								//Gracefully handle records that we dont know about,
-								//that happen to be continued
-								records.add(record);
-							} else 
-								throw new RecordFormatException("Unhandled Continue Record");
-						} else {
-							lastRecord = record;
-							if (record instanceof DrawingRecord) {
-								lastDrawingRecord = (DrawingRecord) record;
-							}
-							records.add(record);
-						}
-					}
+			if (recs.length > 1) {
+				for (int k = 0; k < recs.length; k++) {
+					records.add(recs[ k ]);			   // these will be number records
 				}
+				continue;
+			}
+			Record record = recs[ 0 ];
+
+			if (record == null) {
+				continue;
+			}
+			if (record.getSid() == DrawingGroupRecord.sid
+				   && lastRecord instanceof DrawingGroupRecord) {
+				DrawingGroupRecord lastDGRecord = (DrawingGroupRecord) lastRecord;
+				lastDGRecord.join((AbstractEscherHolderRecord) record);
+			} else if (record.getSid() == ContinueRecord.sid) {
+				ContinueRecord contRec = (ContinueRecord)record;
+				
+				if (lastRecord instanceof ObjRecord || lastRecord instanceof TextObjectRecord) {
+					// Drawing records have a very strange continue behaviour.
+					//There can actually be OBJ records mixed between the continues.
+					lastDrawingRecord.processContinueRecord(contRec.getData() );
+					//we must remember the position of the continue record.
+					//in the serialization procedure the original structure of records must be preserved
+					records.add(record);
+				} else if (lastRecord instanceof DrawingGroupRecord) {
+					((DrawingGroupRecord)lastRecord).processContinueRecord(contRec.getData());
+				} else if (lastRecord instanceof StringRecord) {
+					((StringRecord)lastRecord).processContinueRecord(contRec.getData());
+				} else if (lastRecord instanceof UnknownRecord) {
+					//Gracefully handle records that we don't know about,
+					//that happen to be continued
+					records.add(record);
+				} else {
+					throw new RecordFormatException("Unhandled Continue Record");
+				}
+			} else {
+				lastRecord = record;
+				if (record instanceof DrawingRecord) {
+					lastDrawingRecord = (DrawingRecord) record;
+				}
+				records.add(record);
 			}
 		}
 		return records;

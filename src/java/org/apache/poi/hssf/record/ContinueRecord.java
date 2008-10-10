@@ -22,75 +22,43 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Title:        Continue Record - Helper class used primarily for SST Records <P>
+ * Title:        Continue Record(0x003C) - Helper class used primarily for SST Records <P>
  * Description:  handles overflow for prior record in the input
  *               stream; content is tailored to that prior record<P>
  * @author Marc Johnson (mjohnson at apache dot org)
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Csaba Nagy (ncsaba at yahoo dot com)
- * @version 2.0-pre
  */
-
-public class ContinueRecord
-    extends Record
-{
+public final class ContinueRecord extends Record {
     public final static short sid = 0x003C;
-    private byte[]            field_1_data;
+    private byte[]            _data;
 
-    /**
-     * default constructor
-     */
-
-    public ContinueRecord()
-    {
+    public ContinueRecord(byte[] data) {
+        _data = data;
     }
 
     /**
      * USE ONLY within "processContinue"
      */
-
     public byte [] serialize()
     {
-        byte[] retval = new byte[ field_1_data.length + 4 ];
+        byte[] retval = new byte[ _data.length + 4 ];
         serialize(0, retval);
         return retval;
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-
-        LittleEndian.putShort(data, offset, sid);
-        LittleEndian.putShort(data, offset + 2, ( short ) field_1_data.length);
-        System.arraycopy(field_1_data, 0, data, offset + 4, field_1_data.length);
-        return field_1_data.length + 4;
-        // throw new RecordFormatException(
-        //    "You're not supposed to serialize Continue records like this directly");
-    }
-
-	/*
-     * @param data raw data
-     */
-
-    public void setData(byte [] data)
-    {
-        field_1_data = data;
+    public int serialize(int offset, byte[] data) {
+        return write(data, offset, null, _data);
     }
 
     /**
      * get the data for continuation
      * @return byte array containing all of the continued data
      */
-
     public byte [] getData()
     {
-        return field_1_data;
+        return _data;
     }
-
-    /**
-     * Debugging toString
-     *
-     * @return string representation
-     */
 
     public String toString()
     {
@@ -113,19 +81,36 @@ public class ContinueRecord
      *
      * @param in the RecordInputstream to read the record from
      */
-
     public ContinueRecord(RecordInputStream in)
     {
-      field_1_data = in.readRemainder();
+      _data = in.readRemainder();
+    }
+
+    public Object clone() {
+      return new ContinueRecord(_data);
     }
 
     /**
-     * Clone this record.
+     * Writes the full encoding of a Continue record without making an instance
      */
-    public Object clone() {
-      ContinueRecord clone = new ContinueRecord();
-      clone.setData(field_1_data);
-      return clone;
+    public static int write(byte[] destBuf, int destOffset, Byte initialDataByte, byte[] srcData) {
+        return write(destBuf, destOffset, initialDataByte, srcData, 0, srcData.length);
     }
-
+    /**
+     * @param initialDataByte (optional - often used for unicode flag). 
+     * If supplied, this will be written before srcData
+     * @return the total number of bytes written
+     */
+    public static int write(byte[] destBuf, int destOffset, Byte initialDataByte, byte[] srcData, int srcOffset, int len) {
+        int totalLen = len + (initialDataByte == null ? 0 : 1);
+        LittleEndian.putUShort(destBuf, destOffset, sid);
+        LittleEndian.putUShort(destBuf, destOffset + 2, totalLen);
+        int pos = destOffset + 4;
+        if (initialDataByte != null) {
+            LittleEndian.putByte(destBuf, pos, initialDataByte.byteValue());
+            pos += 1;
+        }
+        System.arraycopy(srcData, srcOffset, destBuf, pos, len);
+        return 4 + totalLen;
+    }
 }
