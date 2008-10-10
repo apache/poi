@@ -23,6 +23,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -93,7 +94,7 @@ public final class TestReferencePtg extends TestCase {
     	0x2C, 33, 44, 55, 66,
     };
     public void testReadWrite_tRefN_bug45091() {
-        TestcaseRecordInputStream in = new TestcaseRecordInputStream(-1, tRefN_data);
+        RecordInputStream in = TestcaseRecordInputStream.createWithFakeSid(tRefN_data);
         Ptg[] ptgs = Ptg.readTokens(tRefN_data.length, in);
         byte[] outData = new byte[5];
         Ptg.serializePtgs(ptgs, outData, 0);

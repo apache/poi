@@ -38,7 +38,7 @@ public final class TestCategorySeriesAxisRecord extends TestCase {
 
     public void testLoad() {
 
-        CategorySeriesAxisRecord record = new CategorySeriesAxisRecord(new TestcaseRecordInputStream((short)0x1020, (short)data.length, data));
+        CategorySeriesAxisRecord record = new CategorySeriesAxisRecord(TestcaseRecordInputStream.create(0x1020, data));
         assertEquals( 1, record.getCrossingPoint());
         assertEquals( 1, record.getLabelFrequency());
         assertEquals( 1, record.getTickMarkFrequency());

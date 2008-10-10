@@ -39,7 +39,7 @@ public final class TestAxisRecord extends TestCase {
 
     public void testLoad() {
 
-        AxisRecord record = new AxisRecord(new TestcaseRecordInputStream((short)0x101d, (short)data.length, data));
+        AxisRecord record = new AxisRecord(TestcaseRecordInputStream.create(0x101d, data));
         assertEquals( AxisRecord.AXIS_TYPE_CATEGORY_OR_X_AXIS, record.getAxisType());
         assertEquals( 0, record.getReserved1());
         assertEquals( 0, record.getReserved2());

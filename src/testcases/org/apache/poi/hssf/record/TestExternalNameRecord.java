@@ -43,7 +43,7 @@ public final class TestExternalNameRecord extends TestCase {
 	};
 	
 	private static ExternalNameRecord createSimpleENR(byte[] data) {
-		return new ExternalNameRecord(new TestcaseRecordInputStream((short)0x0023, data));
+		return new ExternalNameRecord(TestcaseRecordInputStream.create(0x0023, data));
 	}
 	public void testBasicDeserializeReserialize() {
 		

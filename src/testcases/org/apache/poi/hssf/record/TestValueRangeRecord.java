@@ -40,7 +40,7 @@ public final class TestValueRangeRecord extends TestCase {
 
     public void testLoad() {
 
-        ValueRangeRecord record = new ValueRangeRecord(new TestcaseRecordInputStream((short)0x101f, (short)data.length, data));
+        ValueRangeRecord record = new ValueRangeRecord(TestcaseRecordInputStream.create(0x101f, data));
         assertEquals( 0.0, record.getMinimumAxisValue(), 0.001);
         assertEquals( 0.0, record.getMaximumAxisValue(), 0.001);
         assertEquals( 0.0, record.getMajorIncrement(), 0.001);

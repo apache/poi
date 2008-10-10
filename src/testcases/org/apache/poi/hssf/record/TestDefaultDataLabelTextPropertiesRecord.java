@@ -35,7 +35,7 @@ public final class TestDefaultDataLabelTextPropertiesRecord extends TestCase {
 
     public void testLoad() {
 
-        DefaultDataLabelTextPropertiesRecord record = new DefaultDataLabelTextPropertiesRecord(new TestcaseRecordInputStream((short)0x1024, (short)data.length, data));
+        DefaultDataLabelTextPropertiesRecord record = new DefaultDataLabelTextPropertiesRecord(TestcaseRecordInputStream.create(0x1024, data));
         assertEquals( 2, record.getCategoryDataType());
 
         assertEquals( 6, record.getRecordSize() );

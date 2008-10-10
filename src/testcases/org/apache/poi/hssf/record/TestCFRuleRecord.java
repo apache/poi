@@ -54,7 +54,7 @@ public final class TestCFRuleRecord extends TestCase
 		System.arraycopy(serializedRecord, 4, recordData, 0, recordData.length);
 
 		// Deserialize
-		record = new CFRuleRecord(new TestcaseRecordInputStream(CFRuleRecord.sid, (short)recordData.length, recordData));
+		record = new CFRuleRecord(TestcaseRecordInputStream.create(CFRuleRecord.sid, recordData));
 
 		// Serialize again
 		byte[] output = record.serialize();
@@ -317,7 +317,7 @@ public final class TestCFRuleRecord extends TestCase
 	 */
 	public void testReserializeRefNTokens() {
 		
-		RecordInputStream is = new TestcaseRecordInputStream(CFRuleRecord.sid, DATA_REFN);
+		RecordInputStream is = TestcaseRecordInputStream.create(CFRuleRecord.sid, DATA_REFN);
 		CFRuleRecord rr = new CFRuleRecord(is);
 		Ptg[] ptgs = rr.getParsedExpression1();
 		assertEquals(3, ptgs.length);

@@ -87,10 +87,8 @@ public final class TestEventRecordFactory extends TestCase {
         bof.setHistoryBitMask(BOFRecord.HISTORY_MASK);
         
         byte[] bytes = bof.serialize();
-        byte[] nbytes = new byte[bytes.length - 4];
-        System.arraycopy(bytes,4,nbytes,0,nbytes.length);
             
-        Record[] records = RecordFactory.createRecord(new TestcaseRecordInputStream(bof.getSid(),(short)nbytes.length,nbytes));
+        Record[] records = RecordFactory.createRecord(TestcaseRecordInputStream.create(bytes));
         
         assertTrue("record.length must be 1, was ="+records.length,records.length == 1);
         assertTrue("record is the same", compareRec(bof,records[0]));

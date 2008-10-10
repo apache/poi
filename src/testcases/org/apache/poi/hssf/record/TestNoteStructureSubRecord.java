@@ -38,7 +38,7 @@ public final class TestNoteStructureSubRecord extends TestCase {
 
     public void testRead() {
 
-        NoteStructureSubRecord record = new NoteStructureSubRecord(new TestcaseRecordInputStream(NoteStructureSubRecord.sid, (short)data.length, data));
+        NoteStructureSubRecord record = new NoteStructureSubRecord(TestcaseRecordInputStream.create(NoteStructureSubRecord.sid, data));
 
         assertEquals(NoteStructureSubRecord.sid, record.getSid());
         assertEquals(data.length + 4, record.getRecordSize());

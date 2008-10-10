@@ -29,19 +29,19 @@ import java.io.ByteArrayOutputStream;
  *
  * @author Jason Height (jheight @ apache dot org)
  */
-public class RecordInputStream extends InputStream {
-  /** Maximum size of a single record (minus the 4 byte header) without a continue*/
-  public final static short MAX_RECORD_DATA_SIZE = 8224;
-  private static final int INVALID_SID_VALUE = -1;
+public final class RecordInputStream extends InputStream {
+	/** Maximum size of a single record (minus the 4 byte header) without a continue*/
+	public final static short MAX_RECORD_DATA_SIZE = 8224;
+	private static final int INVALID_SID_VALUE = -1;
 
-  private InputStream in;
-  protected short currentSid;
-  protected short currentLength = -1;
-  protected short nextSid;
+	private InputStream in;
+	private short currentSid;
+	private short currentLength = -1;
+	private short nextSid;
 
-  protected byte[] data = new byte[MAX_RECORD_DATA_SIZE];
-  protected short recordOffset;
-  protected long pos;
+	private final byte[] data = new byte[MAX_RECORD_DATA_SIZE];
+	private short recordOffset;
+	private long pos;
 
   private boolean autoContinue = true;
 

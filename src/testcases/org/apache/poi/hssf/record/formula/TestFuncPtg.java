@@ -34,7 +34,7 @@ public final class TestFuncPtg extends TestCase {
             0,
         };
 
-        FuncPtg ptg = new FuncPtg( new TestcaseRecordInputStream((short)0, (short)fakeData.length, fakeData) );
+        FuncPtg ptg = new FuncPtg(TestcaseRecordInputStream.createWithFakeSid(fakeData) );
         assertEquals( "Len formula index is not 32(20H)", 0x20, ptg.getFunctionIndex() );
         assertEquals( "Number of operands in the len formula", 1, ptg.getNumberOfOperands() );
         assertEquals( "Function Name", "LEN", ptg.getName() );

@@ -34,7 +34,7 @@ public final class TestSeriesTextRecord extends TestCase {
     };
 
     public void testLoad() {
-        SeriesTextRecord record = new SeriesTextRecord(new TestcaseRecordInputStream((short)0x100d, (short)data.length, data));
+        SeriesTextRecord record = new SeriesTextRecord(TestcaseRecordInputStream.create(0x100d, data));
 
         assertEquals( (short)0, record.getId());
         assertEquals( (byte)0x0C, record.getTextLength());

@@ -34,7 +34,7 @@ public final class TestObjectLinkRecord extends TestCase {
     };
 
     public void testLoad() {
-        ObjectLinkRecord record = new ObjectLinkRecord(new TestcaseRecordInputStream((short)0x1027, (short)data.length, data));
+        ObjectLinkRecord record = new ObjectLinkRecord(TestcaseRecordInputStream.create(0x1027, data));
         
         assertEquals( (short)3, record.getAnchorId());
         assertEquals( (short)0x00, record.getLink1());

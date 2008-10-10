@@ -35,7 +35,7 @@ public final class TestNumberFormatIndexRecord extends TestCase {
 
     public void testLoad() {
 
-        NumberFormatIndexRecord record = new NumberFormatIndexRecord(new TestcaseRecordInputStream((short)0x104e, (short)data.length, data));
+        NumberFormatIndexRecord record = new NumberFormatIndexRecord(TestcaseRecordInputStream.create(0x104e, data));
         assertEquals( 5, record.getFormatIndex());
 
         assertEquals( 6, record.getRecordSize() );
