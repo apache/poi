@@ -41,6 +41,8 @@ public class XSSFFactory extends POIXMLFactory  {
         parts.put(XSSFRelation.SHARED_STRINGS.getRelation(), SharedStringsTable.class);
         parts.put(XSSFRelation.STYLES.getRelation(), StylesTable.class);
         parts.put(XSSFRelation.SHEET_COMMENTS.getRelation(), CommentsTable.class);
+        parts.put(XSSFRelation.DRAWINGS.getRelation(), XSSFDrawing.class);
+        parts.put(XSSFRelation.IMAGES.getRelation(), XSSFPictureData.class);
     }
 
     public POIXMLDocumentPart create(PackageRelationship rel, PackagePart p){

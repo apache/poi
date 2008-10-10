@@ -31,7 +31,6 @@ public class XSSFSave {
         for (int i = 0; i < args.length; i++) {
             XSSFWorkbook wb = new XSSFWorkbook(args[i]);
 
-            System.out.println("wb.getNumberOfSheets(): " + wb.getNumberOfSheets());
             int sep = args[i].lastIndexOf('.');
             String outfile = args[i].substring(0, sep) + "-save.xlsx";
             FileOutputStream out = new FileOutputStream(outfile);

@@ -16,7 +16,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDrawing;
  * A drawing object in XSSF. May well have raw pictures
  *  attached to it as children.
  */
-public class Drawing implements XSSFChildContainingModel {
+public class Drawing implements XSSFModel {
 	private CTDrawing drawing;
 	private String originalId;
 	
@@ -77,20 +77,11 @@ public class Drawing implements XSSFChildContainingModel {
 	 * Generates and adds XSSFActiveXData children
 	 */
 	public void generateChild(PackagePart childPart, String childRelId) {
-		XSSFPictureData pd = new XSSFPictureData(childPart, childRelId);
-		pictures.add(pd);
-	}
+		//XSSFPictureData pd = new XSSFPictureData(childPart, childRelId);
+		//pictures.add(pd);
+        throw new RuntimeException("deprecated");
+    }
 
-	public WritableChild getChildForWriting(int index) {
-		if(index >= pictures.size()) {
-			throw new IllegalArgumentException("Can't get child at " + index + " when size is " + getNumberOfChildren());
-		}
-		return new WritableChild(
-				pictures.get(index),
-				XSSFRelation.IMAGES
-		);
-	}
-	
 	public ArrayList<XSSFPictureData> getPictures()
 	{
 		return this.pictures;

@@ -330,13 +330,7 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource, XSS
 	 * @throws IOException if an error occurs while writing.
 	 */
 	public void writeTo(OutputStream out) throws IOException {
-		XmlOptions options = new XmlOptions();
-		options.setSaveOuter();
-		options.setUseDefaultNamespace();
-
-		// Requests use of whitespace for easier reading
-		options.setSavePrettyPrint();
-
+		XmlOptions options = new XmlOptions(DEFAULT_XML_OPTIONS);
 
 		// Work on the current one
 		// Need to do this, as we don't handle

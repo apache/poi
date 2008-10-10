@@ -23,22 +23,64 @@ package org.apache.poi;
  */
 public class POIXMLRelation {
 
+    /**
+     * Describes the content stored in a part.
+     */
     protected String _type;
+
+    /**
+     * The kind of connection between a source part and a target part in a package.
+     */
     protected String _relation;
+
+    /**
+     * The path component of a pack URI.
+     */
     protected String _defaultName;
 
     /**
      * Instantiates a POIXMLRelation.
+     *
+     * @param type content type
+     * @param rel  relationship
+     * @param defaultName default item name
      */
-    protected POIXMLRelation(String type, String rel, String defaultName) {
+    public POIXMLRelation(String type, String rel, String defaultName) {
         _type = type;
         _relation = rel;
         _defaultName = defaultName;
     }
 
-    public String getContentType() { return _type; }
-    public String getRelation() { return _relation; }
-    public String getDefaultFileName() { return _defaultName; }
+    /**
+     * Return the content type. Content types define a media type, a subtype, and an
+     * optional set of parameters, as defined in RFC 2616.
+     *
+     * @return the content type
+     */
+    public String getContentType() {
+        return _type;
+    }
+
+    /**
+     * Return the relationship, the kind of connection between a source part and a target part in a package.
+     * Relationships make the connections between parts directly discoverable without looking at the content
+     * in the parts, and without altering the parts themselves.
+     *
+     * @return the relationship
+     */
+    public String getRelation() {
+        return _relation;
+    }
+
+    /**
+     * Return the default part name. Part names are used to refer to a part in the context of a
+     * package, typically as part of a URI.
+     *
+     * @return the default part name
+     */
+    public String getDefaultFileName() {
+        return _defaultName;
+    }
 
     /**
      * Returns the filename for the nth one of these,

@@ -19,11 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import javax.xml.namespace.QName;
 
 import org.apache.poi.hssf.util.PaneInformation;
@@ -31,7 +27,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CommentsSource;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
-import org.apache.poi.ss.usermodel.Patriarch;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -40,16 +35,18 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.Region;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.Control;
-import org.apache.poi.xssf.model.Drawing;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlException;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackageRelationship;
 import org.openxml4j.opc.PackageRelationshipCollection;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 
 
 /**
@@ -62,6 +59,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
  * </p>
  */
 public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
+    private static POILogger logger = POILogFactory.getLogger(XSSFSheet.class);
+
     protected CTSheet sheet;
     protected CTWorksheet worksheet;
     protected CTDialogsheet dialogsheet;
@@ -72,7 +71,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     protected CTMergeCells ctMergeCells;
 
 
-    protected List<Drawing> drawings;
     protected List<Control> controls;
 
 
@@ -149,7 +147,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         ctFormat.setDefaultRowHeight(15.0);
 
         CTSheetView ctView = worksheet.addNewSheetViews().addNewSheetView();
-        ctView.setTabSelected(true);
         ctView.setWorkbookViewId(0);
 
         worksheet.addNewDimension().setRef("A1");
@@ -166,11 +163,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         return worksheet;
     }
-
-    public List<Drawing> getDrawings()
-    {
-        return drawings;
-        }
 
     public List<Control> getControls()
     {
@@ -263,9 +255,42 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         columnHelper.setColBestFit(column, true);
     }
 
-    public Patriarch createDrawingPatriarch() {
-        // TODO Auto-generated method stub
-        return null;
+    /**
+     * Create a new SpreadsheetML drawing. If this sheet already contains a drawing - return that.
+     *
+     * @return a SpreadsheetML drawing
+     */
+    public XSSFDrawing createDrawingPatriarch() {
+        XSSFDrawing drawing = null;
+        CTDrawing ctDrawing = worksheet.getDrawing();
+        if(ctDrawing == null) {
+            //drawingNumber = #drawings.size() + 1
+            int drawingNumber = getPackagePart().getPackage().getPartsByRelationshipType(XSSFRelation.DRAWINGS.getRelation()).size() + 1;
+            drawing = (XSSFDrawing)createRelationship(XSSFRelation.DRAWINGS, XSSFDrawing.class, drawingNumber);
+            String relId = drawing.getPackageRelationship().getId();
+
+            //add CT_Drawing element which indicates that this sheet contains drawing components built on the drawingML platform.
+            //The relationship Id references the part containing the drawingML definitions.
+            ctDrawing = worksheet.addNewDrawing();
+            ctDrawing.setId(relId);
+        } else {
+            //search the referenced drawing in the list of the sheet's relations
+            for(POIXMLDocumentPart p : getRelations()){
+                if(p instanceof XSSFDrawing) {
+                    XSSFDrawing dr = (XSSFDrawing)p;
+                    String drId = dr.getPackageRelationship().getId();
+                    if(drId.equals(ctDrawing.getId())){
+                        drawing = dr;
+                        break;
+                    }
+                    break;
+                }
+            }
+            if(drawing == null){
+                logger.log(POILogger.ERROR, "Can't find drawing with id=" + ctDrawing.getId() + " in the list of the sheet's relationships");
+            }
+        }
+        return drawing;
     }
 
     /**
@@ -406,14 +431,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     public int getColumnWidth(int columnIndex) {
-        return (int) columnHelper.getColumn(columnIndex, false).getWidth();
+        CTCol col = columnHelper.getColumn(columnIndex, false);
+        return col == null ? getDefaultColumnWidth() : (int)col.getWidth();
     }
     public short getColumnWidth(short column) {
         return (short) getColumnWidth(column & 0xFFFF);
     }
 
     public int getDefaultColumnWidth() {
-        return (int)getSheetTypeSheetFormatPr().getDefaultColWidth();
+        CTSheetFormatPr pr = getSheetTypeSheetFormatPr();
+        return pr.isSetDefaultColWidth() ? (int)pr.getDefaultColWidth() : (int)pr.getBaseColWidth();
     }
 
     public short getDefaultRowHeight() {
@@ -1570,14 +1597,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorksheet.type.getName().getNamespaceURI(), "worksheet"));
+
+        Map map = new HashMap();
+        map.put(STRelationshipId.type.getName().getNamespaceURI(), "r");
+        xmlOptions.setSaveSuggestedPrefixes(map);
+
         PackagePart part = getPackagePart();
         OutputStream out = part.getOutputStream();
         worksheet.save(out, xmlOptions);
         out.close();
-    }
-
-    protected void setParent(POIXMLDocumentPart p){
-        this.parent = p;
     }
 
 }
