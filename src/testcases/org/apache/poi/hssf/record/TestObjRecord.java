@@ -51,7 +51,7 @@ public final class TestObjRecord extends TestCase {
     };
 
     public void testLoad() {
-        ObjRecord record = new ObjRecord(new TestcaseRecordInputStream(ObjRecord.sid, (short)recdata.length, recdata));
+        ObjRecord record = new ObjRecord(TestcaseRecordInputStream.create(ObjRecord.sid, recdata));
 
         assertEquals(28, record.getRecordSize() - 4);
 
@@ -63,7 +63,7 @@ public final class TestObjRecord extends TestCase {
     }
 
     public void testStore() {
-        ObjRecord record = new ObjRecord(new TestcaseRecordInputStream(ObjRecord.sid, (short)recdata.length, recdata));
+        ObjRecord record = new ObjRecord(TestcaseRecordInputStream.create(ObjRecord.sid, recdata));
 
         byte [] recordBytes = record.serialize();
         assertEquals(28, recordBytes.length - 4);
@@ -91,7 +91,7 @@ public final class TestObjRecord extends TestCase {
         byte [] bytes = new byte[recordBytes.length-4];
         System.arraycopy(recordBytes, 4, bytes, 0, bytes.length);
 
-        record = new ObjRecord(new TestcaseRecordInputStream(ObjRecord.sid, (short)bytes.length, bytes));
+        record = new ObjRecord(TestcaseRecordInputStream.create(ObjRecord.sid, bytes));
         List subrecords = record.getSubRecords();
         assertEquals( 2, subrecords.size() );
         assertTrue( subrecords.get(0) instanceof CommonObjectDataSubRecord);
@@ -99,7 +99,7 @@ public final class TestObjRecord extends TestCase {
     }
     
     public void testReadWriteWithPadding_bug45133() {
-        ObjRecord record = new ObjRecord(new TestcaseRecordInputStream(ObjRecord.sid, (short)recdataNeedingPadding.length, recdataNeedingPadding));
+        ObjRecord record = new ObjRecord(TestcaseRecordInputStream.create(ObjRecord.sid, recdataNeedingPadding));
         
         if (record.getRecordSize() == 34) {
         	throw new AssertionFailedError("Identified bug 45133");

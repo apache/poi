@@ -49,7 +49,7 @@ public final class TestRecordFactory extends TestCase {
             0, 6, 5, 0, -2, 28, -51, 7, -55, 64, 0, 0, 6, 1, 0, 0
         };
         short    size    = 16;
-        Record[] record  = RecordFactory.createRecord(new TestcaseRecordInputStream(recType, size, data));
+        Record[] record  = RecordFactory.createRecord(TestcaseRecordInputStream.create(recType, data));
 
         assertEquals(BOFRecord.class.getName(),
                      record[ 0 ].getClass().getName());
@@ -69,7 +69,7 @@ public final class TestRecordFactory extends TestCase {
         {
             0, 0
         };
-        record  = RecordFactory.createRecord(new TestcaseRecordInputStream(recType, size, data));
+        record  = RecordFactory.createRecord(TestcaseRecordInputStream.create(recType, data));
         assertEquals(MMSRecord.class.getName(),
                      record[ 0 ].getClass().getName());
         MMSRecord mmsRecord = ( MMSRecord ) record[ 0 ];
@@ -94,7 +94,7 @@ public final class TestRecordFactory extends TestCase {
             0, 0, 0, 0, 21, 0, 0, 0, 0, 0
         };
         short    size    = 10;
-        Record[] record  = RecordFactory.createRecord(new TestcaseRecordInputStream(recType, size, data));
+        Record[] record  = RecordFactory.createRecord(TestcaseRecordInputStream.create(recType, data));
 
         assertEquals(NumberRecord.class.getName(),
                      record[ 0 ].getClass().getName());

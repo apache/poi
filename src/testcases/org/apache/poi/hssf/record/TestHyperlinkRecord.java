@@ -17,7 +17,6 @@
 package org.apache.poi.hssf.record;
 
 import java.io.ByteArrayInputStream;
-import java.net.URL;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
@@ -28,7 +27,7 @@ import junit.framework.TestCase;
  * @author Nick Burch
  * @author Yegor Kozlov
  */
-public class TestHyperlinkRecord extends TestCase {
+public final class TestHyperlinkRecord extends TestCase {
 
     //link to http://www.lakings.com/
     byte[] data1 = { 0x02, 0x00,    //First row of the hyperlink
@@ -165,7 +164,7 @@ public class TestHyperlinkRecord extends TestCase {
                     0x00, 0x41, 0x00, 0x31, 0x00, 0x00, 0x00};
 
     public void testReadURLLink(){
-        RecordInputStream is = new TestcaseRecordInputStream((short)HyperlinkRecord.sid, (short)data1.length, data1);
+        RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data1);
         HyperlinkRecord link = new HyperlinkRecord(is);
         assertEquals(2, link.getFirstRow());
         assertEquals(2, link.getLastRow());
@@ -184,7 +183,7 @@ public class TestHyperlinkRecord extends TestCase {
     }
 
     public void testReadFileLink(){
-        RecordInputStream is = new TestcaseRecordInputStream((short)HyperlinkRecord.sid, (short)data2.length, data2);
+        RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data2);
         HyperlinkRecord link = new HyperlinkRecord(is);
         assertEquals(0, link.getFirstRow());
         assertEquals(0, link.getLastRow());
@@ -202,7 +201,7 @@ public class TestHyperlinkRecord extends TestCase {
     }
 
     public void testReadEmailLink(){
-        RecordInputStream is = new TestcaseRecordInputStream((short)HyperlinkRecord.sid, (short)data3.length, data3);
+        RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data3);
         HyperlinkRecord link = new HyperlinkRecord(is);
         assertEquals(1, link.getFirstRow());
         assertEquals(1, link.getLastRow());
@@ -220,7 +219,7 @@ public class TestHyperlinkRecord extends TestCase {
     }
 
     public void testReadDocumentLink(){
-        RecordInputStream is = new TestcaseRecordInputStream((short)HyperlinkRecord.sid, (short)data4.length, data4);
+        RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data4);
         HyperlinkRecord link = new HyperlinkRecord(is);
         assertEquals(3, link.getFirstRow());
         assertEquals(3, link.getLastRow());
@@ -237,7 +236,7 @@ public class TestHyperlinkRecord extends TestCase {
     }
 
     private void serialize(byte[] data){
-        RecordInputStream is = new TestcaseRecordInputStream((short)HyperlinkRecord.sid, (short)data.length, data);
+        RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data);
         HyperlinkRecord link = new HyperlinkRecord(is);
         byte[] bytes1 = link.serialize();
         is = new RecordInputStream(new ByteArrayInputStream(bytes1));
@@ -318,7 +317,7 @@ public class TestHyperlinkRecord extends TestCase {
     public void testClone() throws Exception {
         byte[][] data = {data1, data2, data3, data4};
         for (int i = 0; i < data.length; i++) {
-            RecordInputStream is = new TestcaseRecordInputStream((short)HyperlinkRecord.sid, (short)data[i].length, data[i]);
+            RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data[i]);
             HyperlinkRecord link = new HyperlinkRecord(is);
             HyperlinkRecord clone = (HyperlinkRecord)link.clone();
             assertTrue(Arrays.equals(link.serialize(), clone.serialize()));

@@ -34,7 +34,7 @@ public final class TestPlotAreaRecord extends TestCase {
     };
 
     public void testLoad() {
-        PlotAreaRecord record = new PlotAreaRecord(new TestcaseRecordInputStream((short)0x1035, (short)data.length, data));
+        PlotAreaRecord record = new PlotAreaRecord(TestcaseRecordInputStream.create(0x1035, data));
 
         assertEquals( 4, record.getRecordSize() );
     }

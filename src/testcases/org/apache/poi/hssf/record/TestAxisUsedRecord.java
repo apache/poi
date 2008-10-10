@@ -34,7 +34,7 @@ public final class TestAxisUsedRecord extends TestCase {
     };
 
     public void testLoad() {
-        AxisUsedRecord record = new AxisUsedRecord(new TestcaseRecordInputStream((short)0x1046, (short)data.length, data));
+        AxisUsedRecord record = new AxisUsedRecord(TestcaseRecordInputStream.create(0x1046, data));
         assertEquals( 1, record.getNumAxis());
 
         assertEquals( 6, record.getRecordSize() );

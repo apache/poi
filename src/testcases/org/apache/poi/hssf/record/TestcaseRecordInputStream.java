@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 import junit.framework.Assert;
 
@@ -30,27 +31,51 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Jason Height (jheight at apache.org)
  */
-public class TestcaseRecordInputStream
-        extends RecordInputStream
-{
+public final class TestcaseRecordInputStream {
+	
+	private TestcaseRecordInputStream() {
+		// no instances of this class
+	}
+	
+	/**
+	 * Prepends a mock record identifier to the supplied data and opens a record input stream 
+	 */
+	public static RecordInputStream createWithFakeSid(byte[] data) {
+		return create(-5555, data);
+		
+	}
+	public static RecordInputStream create(int sid, byte[] data) {
+		return create(mergeDataAndSid(sid, data.length, data));
+	}
+	/**
+	 * First 4 bytes of <tt>data</tt> are assumed to be record identifier and length. The supplied 
+	 * <tt>data</tt> can contain multiple records (sequentially encoded in the same way) 
+	 */
+	public static RecordInputStream create(byte[] data) {
+		InputStream is = new ByteArrayInputStream(data);
+		RecordInputStream result = new RecordInputStream(is);
+		result.nextRecord();
+		return result;
+	}
+	
     /**
      * Convenience constructor
      */
-    public TestcaseRecordInputStream(int sid, byte[] data)
-    {
-      super(new ByteArrayInputStream(mergeDataAndSid((short)sid, (short)data.length, data)));
-      nextRecord();
-    }
-    public TestcaseRecordInputStream(short sid, short length, byte[] data)
-    {
-      super(new ByteArrayInputStream(mergeDataAndSid(sid, length, data)));
-      nextRecord();
-    }
+//    public TestcaseRecordInputStream(int sid, byte[] data)
+//    {
+//      super(new ByteArrayInputStream(mergeDataAndSid(sid, data.length, data)));
+//      nextRecord();
+//    }
+//    public TestcaseRecordInputStream(short sid, short length, byte[] data)
+//    {
+//      super(new ByteArrayInputStream(mergeDataAndSid(sid, length, data)));
+//      nextRecord();
+//    }
 
-    public static byte[] mergeDataAndSid(short sid, short length, byte[] data) {
+    public static byte[] mergeDataAndSid(int sid, int length, byte[] data) {
       byte[] result = new byte[data.length + 4];
-      LittleEndian.putShort(result, 0, sid);
-      LittleEndian.putShort(result, 2, length);
+      LittleEndian.putUShort(result, 0, sid);
+      LittleEndian.putUShort(result, 2, length);
       System.arraycopy(data, 0, result, 4, data.length);
       return result;
     }

@@ -39,7 +39,7 @@ public final class TestSeriesRecord extends TestCase {
 
     public void testLoad() {
 
-        SeriesRecord record = new SeriesRecord(new TestcaseRecordInputStream((short)0x1003, (short)data.length, data));
+        SeriesRecord record = new SeriesRecord(TestcaseRecordInputStream.create(0x1003, data));
         assertEquals( SeriesRecord.CATEGORY_DATA_TYPE_NUMERIC, record.getCategoryDataType());
         assertEquals( SeriesRecord.VALUES_DATA_TYPE_NUMERIC, record.getValuesDataType());
         assertEquals( 27, record.getNumCategories());

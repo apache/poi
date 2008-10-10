@@ -27,7 +27,7 @@ import junit.framework.TestCase;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestTextRecord extends TestCase {
+public final class TestTextRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0x02,                                          // horiz align
         (byte)0x02,                                          // vert align
@@ -45,7 +45,7 @@ public class TestTextRecord extends TestCase {
 
     public void testLoad() {
 
-        TextRecord record = new TextRecord(new TestcaseRecordInputStream((short)0x1025, (short)data.length, data));
+        TextRecord record = new TextRecord(TestcaseRecordInputStream.create(0x1025, data));
         assertEquals( TextRecord.HORIZONTAL_ALIGNMENT_CENTER, record.getHorizontalAlignment());
         assertEquals( TextRecord.VERTICAL_ALIGNMENT_CENTER, record.getVerticalAlignment());
         assertEquals( TextRecord.DISPLAY_MODE_TRANSPARENT, record.getDisplayMode());

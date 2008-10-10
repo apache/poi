@@ -34,7 +34,7 @@ public final class TestAxisLineFormatRecord extends TestCase {
     };
 
     public void testLoad() {
-        AxisLineFormatRecord record = new AxisLineFormatRecord(new TestcaseRecordInputStream((short)0x1021, (short)data.length, data));
+        AxisLineFormatRecord record = new AxisLineFormatRecord(TestcaseRecordInputStream.create(0x1021, data));
         assertEquals( AxisLineFormatRecord.AXIS_TYPE_MAJOR_GRID_LINE, record.getAxisType());
 
         assertEquals( 6, record.getRecordSize() );

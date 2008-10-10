@@ -28,7 +28,7 @@ import junit.framework.TestCase;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestLineFormatRecord extends TestCase {
+public final class TestLineFormatRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,    // colour
         (byte)0x00,(byte)0x00,                          // pattern
@@ -38,7 +38,7 @@ public class TestLineFormatRecord extends TestCase {
     };
 
     public void testLoad() {
-        LineFormatRecord record = new LineFormatRecord(new TestcaseRecordInputStream((short)0x1007, (short)data.length, data));
+        LineFormatRecord record = new LineFormatRecord(TestcaseRecordInputStream.create(0x1007, data));
         assertEquals( 0, record.getLineColor());
         assertEquals( 0, record.getLinePattern());
         assertEquals( 0, record.getWeight());

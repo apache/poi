@@ -90,7 +90,7 @@ public final class TestCFHeaderRecord extends TestCase
 			(byte)0x03,	(byte)0x00,
 		};
 
-		CFHeaderRecord record = new CFHeaderRecord(new TestcaseRecordInputStream(CFHeaderRecord.sid, (short)recordData.length, recordData));
+		CFHeaderRecord record = new CFHeaderRecord(TestcaseRecordInputStream.create(CFHeaderRecord.sid, recordData));
 
 		assertEquals("#CFRULES", 3, record.getNumberOfConditionalFormats());
 		assertTrue(record.getNeedRecalculation());
@@ -143,7 +143,7 @@ public final class TestCFHeaderRecord extends TestCase
 
 		CFHeaderRecord record;
 		try {
-			record = new CFHeaderRecord(new TestcaseRecordInputStream(CFHeaderRecord.sid, (short)recordData.length, recordData));
+			record = new CFHeaderRecord(TestcaseRecordInputStream.create(CFHeaderRecord.sid, recordData));
 		} catch (IllegalArgumentException e) {
 			if(e.getMessage().equals("invalid cell range (-25536, 2, -15536, 2)")) {
 				throw new AssertionFailedError("Identified bug 44739b");

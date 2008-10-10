@@ -41,7 +41,7 @@ public final class TestAreaFormatRecord extends TestCase {
 
     public void testLoad() {
 
-        AreaFormatRecord record = new AreaFormatRecord(new TestcaseRecordInputStream((short)0x100a, (short)data.length, data));
+        AreaFormatRecord record = new AreaFormatRecord(TestcaseRecordInputStream.create(0x100a, data));
         assertEquals( 0xFFFFFF, record.getForegroundColor());
         assertEquals( 0x000000, record.getBackgroundColor());
         assertEquals( 1, record.getPattern());

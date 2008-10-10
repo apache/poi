@@ -29,9 +29,7 @@ import java.util.Arrays;
  *
  * @author Yegor Kozlov
  */
-public class TestNoteRecord
-        extends TestCase
-{
+public final class TestNoteRecord extends TestCase {
     private byte[] data = new byte[] {
         0x06, 0x00, 0x01, 0x00, 0x02, 0x00, 0x02, 0x04, 0x1A, 0x00,
         0x00, 0x41, 0x70, 0x61, 0x63, 0x68, 0x65, 0x20, 0x53, 0x6F,
@@ -41,7 +39,7 @@ public class TestNoteRecord
 
     public void testRead() {
 
-        NoteRecord record = new NoteRecord(new TestcaseRecordInputStream(NoteRecord.sid, (short)data.length, data));
+        NoteRecord record = new NoteRecord(TestcaseRecordInputStream.create(NoteRecord.sid, data));
 
         assertEquals(NoteRecord.sid, record.getSid());
         assertEquals(6, record.getRow());

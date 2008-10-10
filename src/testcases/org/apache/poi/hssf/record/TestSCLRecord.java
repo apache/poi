@@ -34,7 +34,7 @@ public final class TestSCLRecord extends TestCase {
     };
 
     public void testLoad() {
-        SCLRecord record = new SCLRecord(new TestcaseRecordInputStream((short)0xa0, (short)data.length, data));
+        SCLRecord record = new SCLRecord(TestcaseRecordInputStream.create(0xa0, data));
         assertEquals( 3, record.getNumerator());
         assertEquals( 4, record.getDenominator());
 

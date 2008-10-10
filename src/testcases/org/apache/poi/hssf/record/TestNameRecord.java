@@ -1,4 +1,3 @@
-        
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -25,9 +24,7 @@ import junit.framework.TestCase;
  *
  * @author Danny Mui (dmui at apache dot org)
  */
-public class TestNameRecord
-        extends TestCase
-{
+public final class TestNameRecord extends TestCase {
 
     /**
      * Makes sure that additional name information is parsed properly such as menu/description
@@ -55,13 +52,11 @@ public class TestNameRecord
         };
 
 
-        NameRecord name = new NameRecord(new TestcaseRecordInputStream(NameRecord.sid, (short) examples.length, examples));
+        NameRecord name = new NameRecord(TestcaseRecordInputStream.create(NameRecord.sid, examples));
         String description = name.getDescriptionText();
         assertNotNull( description );
         assertTrue( "text contains ALLWOR", description.indexOf( "ALLWOR" ) > 0 );
-
     }
-
 }
 
 
