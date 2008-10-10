@@ -28,6 +28,7 @@ import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFPictureData;
 
 
 public class TestLoadSaveXSSF extends TestCase {
@@ -42,7 +43,7 @@ public class TestLoadSaveXSSF extends TestCase {
             filename = "src/ooxml/testcases/org/apache/poi/xssf/data";
         }
     }
-    
+
     public void testLoadSample() throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook(new File(filename, "sample.xlsx").getAbsolutePath());
         assertEquals(3, workbook.getNumberOfSheets());
@@ -55,7 +56,7 @@ public class TestLoadSaveXSSF extends TestCase {
         cell = row.getCell((short) 0);
         assertEquals("Lorem", cell.getRichStringCellValue().getString());
     }
-    
+
     // TODO filename string hard coded in XSSFWorkbook constructor in order to make ant test-ooxml target be successfull.
     public void testLoadStyles() throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook(new File(filename, "styles.xlsx").getAbsolutePath());
@@ -69,7 +70,7 @@ public class TestLoadSaveXSSF extends TestCase {
     // TODO filename string hard coded in XSSFWorkbook constructor in order to make ant test-ooxml target be successfull.
     public void testLoadPictures() throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook(new File(filename, "picture.xlsx").getAbsolutePath());
-        List<PictureData> pictures = workbook.getAllPictures();
+        List<XSSFPictureData> pictures = workbook.getAllPictures();
         assertEquals(1, pictures.size());
     }
 

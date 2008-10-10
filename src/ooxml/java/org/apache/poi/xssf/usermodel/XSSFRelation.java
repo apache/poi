@@ -83,7 +83,7 @@ public final class XSSFRelation<W extends XSSFModel> extends POIXMLRelation {
 		    StylesTable.class
 	);
 	public static final XSSFRelation DRAWINGS = new XSSFRelation(
-			"application/vnd.openxmlformats-officedocument.drawingml.chart+xml",
+			"application/vnd.openxmlformats-officedocument.drawing+xml",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing",
 			"/xl/drawings/drawing#.xml",
 			null
@@ -95,9 +95,10 @@ public final class XSSFRelation<W extends XSSFModel> extends POIXMLRelation {
 			Drawing.class
 	);
     public static final XSSFRelation IMAGES = new XSSFRelation(
-    		"image/x-emf", // TODO
+            //client will substitute $type and $ext with the appropriate values depending on the passed data
+            "image/$type",
      		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-    		"/xl/media/image#.emf",
+    		"/xl/media/image#.$ext",
     		null
     );
 	public static final XSSFRelation<CommentsTable> SHEET_COMMENTS = create(

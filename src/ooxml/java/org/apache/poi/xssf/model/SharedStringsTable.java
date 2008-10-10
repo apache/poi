@@ -198,9 +198,7 @@ public class SharedStringsTable extends POIXMLDocumentPart implements XSSFModel,
      * @throws IOException if an error occurs while writing.
      */
     public void writeTo(OutputStream out) throws IOException {
-        XmlOptions options = new XmlOptions();
-        options.setSaveOuter();
-        options.setUseDefaultNamespace();
+        XmlOptions options = new XmlOptions(DEFAULT_XML_OPTIONS);
 
         //re-create the sst table every time saving a workbook
         SstDocument doc = SstDocument.Factory.newInstance();

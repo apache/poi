@@ -43,6 +43,7 @@ public class POIXMLDocumentPart {
         DEFAULT_XML_OPTIONS = new XmlOptions();
         DEFAULT_XML_OPTIONS.setSaveOuter();
         DEFAULT_XML_OPTIONS.setUseDefaultNamespace();
+        DEFAULT_XML_OPTIONS.setSaveAggressiveNamespaces();
     }
 
     protected PackagePart packagePart;
@@ -158,16 +159,30 @@ public class POIXMLDocumentPart {
      * @return the created child POIXMLDocumentPart
      */
     protected POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, Class<? extends POIXMLDocumentPart> cls, int idx){
+        return createRelationship(descriptor, cls, idx, false);
+    }
+
+    /**
+     * Create a new child POIXMLDocumentPart
+     *
+     * @param descriptor the part descriptor
+     * @param cls the Class object identifying the type of instance to create
+     * @param idx part number
+     * @param norel if true, then no relationship is added. 
+     * @return the created child POIXMLDocumentPart
+     */
+    protected POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, Class<? extends POIXMLDocumentPart> cls, int idx, boolean norel){
         try {
 
             PackagePartName ppName = PackagingURIHelper.createPartName(descriptor.getFileName(idx));
-            PackageRelationship rel =
-                packagePart.addRelationship(ppName, TargetMode.INTERNAL, descriptor.getRelation());
+            PackageRelationship rel = null;
+            if(!norel) rel = packagePart.addRelationship(ppName, TargetMode.INTERNAL, descriptor.getRelation());
 
             PackagePart part = packagePart.getPackage().createPart(ppName, descriptor.getContentType());
             POIXMLDocumentPart doc = cls.newInstance();
             doc.packageRel = rel;
             doc.packagePart = part;
+            doc.parent = this;
             addRelation(doc);
             return doc;
         } catch (Exception e){

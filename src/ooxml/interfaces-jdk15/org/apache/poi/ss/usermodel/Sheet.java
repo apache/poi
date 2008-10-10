@@ -672,7 +672,7 @@ public interface Sheet extends Iterable<Row> {
      *
      * @return  The new patriarch.
      */
-    Patriarch createDrawingPatriarch();
+    //Patriarch createDrawingPatriarch();
 
     /**
      * Expands or collapses a column group.

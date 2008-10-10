@@ -19,10 +19,9 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import java.util.*;
 import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLDocumentPart;
@@ -35,6 +34,7 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.PackageHelper;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.model.*;
 import org.apache.poi.POIXMLException;
 import org.apache.xmlbeans.XmlObject;
@@ -44,6 +44,7 @@ import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.*;
 import org.openxml4j.opc.Package;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 
 /**
  * High level representation of a SpreadsheetML workbook.  This is the first object most users
@@ -92,6 +93,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * See {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy}
      */
     private MissingCellPolicy missingCellPolicy = Row.RETURN_NULL_AND_BLANK;
+
+    /**
+     * array of pictures for this workbook
+     */
+    private List<XSSFPictureData> pictures;
 
     private static POILogger log = POILogFactory.getLogger(XSSFWorkbook.class);
 
@@ -250,9 +256,33 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return this.workbook;
     }
 
+    /**
+     * Adds a picture to the workbook.
+     *
+     * @param pictureData       The bytes of the picture
+     * @param format            The format of the picture.
+     *
+     * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .
+     * @see #PICTURE_TYPE_EMF
+     * @see #PICTURE_TYPE_WMF
+     * @see #PICTURE_TYPE_PICT
+     * @see #PICTURE_TYPE_JPEG
+     * @see #PICTURE_TYPE_PNG
+     * @see #PICTURE_TYPE_DIB
+     * @see #getAllPictures()
+     */
     public int addPicture(byte[] pictureData, int format) {
-        // TODO Auto-generated method stub
-        return 0;
+        int imageNumber = getAllPictures().size() + 1;
+        XSSFPictureData img = (XSSFPictureData)createRelationship(XSSFPictureData.RELATIONS[format], XSSFPictureData.class, imageNumber, true);
+        try {
+            OutputStream out = img.getPackagePart().getOutputStream();
+            out.write(pictureData);
+            out.close();
+        } catch (IOException e){
+            throw new POIXMLException(e);
+        }
+        pictures.add(img);
+        return imageNumber - 1;
     }
 
     public XSSFSheet cloneSheet(int sheetNum) {
@@ -363,13 +393,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
         int sheetNumber = getNumberOfSheets() + 1;
         XSSFSheet wrapper = (XSSFSheet)createRelationship(XSSFRelation.WORKSHEET, XSSFSheet.class, sheetNumber);
-        wrapper.setParent(this);
 
         CTSheet sheet = addSheet(sheetname);
         wrapper.sheet = sheet;
         sheet.setId(wrapper.getPackageRelationship().getId());
         sheet.setSheetId(sheetNumber);
-
+        if(sheets.size() == 0) wrapper.setSelected(true);
         this.sheets.add(wrapper);
         return wrapper;
     }
@@ -438,27 +467,21 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @return the list of pictures (a list of {@link XSSFPictureData} objects.)
      */
-    public List<PictureData> getAllPictures() {
-        // In OOXML pictures are referred to in sheets
-        List<PictureData> pictures = new LinkedList<PictureData>();
-        for(POIXMLDocumentPart p : getRelations()){
-            if (p instanceof XSSFSheet) {
-                PackagePart sheetPart = p.getPackagePart();
-                try {
-                    PackageRelationshipCollection prc = sheetPart.getRelationshipsByType(XSSFRelation.DRAWINGS.getRelation());
-                    for (PackageRelationship rel : prc) {
-                        PackagePart drawingPart = getTargetPart(rel);
-                        PackageRelationshipCollection prc2 = drawingPart.getRelationshipsByType(XSSFRelation.IMAGES.getRelation());
-                        for (PackageRelationship rel2 : prc2) {
-                            PackagePart imagePart = getTargetPart(rel2);
-                            XSSFPictureData pd = new XSSFPictureData(imagePart);
-                            pictures.add(pd);
+    public List<XSSFPictureData> getAllPictures() {
+        if(pictures == null) {
+            //In OOXML pictures are referred to in sheets,
+            //dive into sheet's relations, select drawings and their images
+            pictures = new ArrayList();
+            for(XSSFSheet sh : sheets){
+                for(POIXMLDocumentPart dr : sh.getRelations()){
+                    if(dr instanceof XSSFDrawing){
+                        for(POIXMLDocumentPart img : dr.getRelations()){
+                            if(img instanceof XSSFPictureData){
+                                pictures.add((XSSFPictureData)img);
+                            }
                         }
                     }
-                } catch (InvalidFormatException e) {
-                    throw new POIXMLException(e.getMessage(), e);
                 }
-
             }
         }
         return pictures;
@@ -705,7 +728,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     public void removeSheetAt(int index) {
         validateSheetIndex(index);
-        
+
         this.sheets.remove(index);
         this.workbook.getSheets().removeSheet(index);
     }
@@ -878,6 +901,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorkbook.type.getName().getNamespaceURI(), "workbook"));
+        Map map = new HashMap();
+        map.put(STRelationshipId.type.getName().getNamespaceURI(), "r");
+        xmlOptions.setSaveSuggestedPrefixes(map);
+
         PackagePart part = getPackagePart();
         OutputStream out = part.getOutputStream();
         workbook.save(out, xmlOptions);
