@@ -207,7 +207,7 @@ if (cell!=null) {
 FileInputStream fis = new FileInputStream("/somepath/test.xls");
 HSSFWorkbook wb = new HSSFWorkbook(fis);
 HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
-for(int sheetNum = 0; sheetNum < wb.getNumberOfSheets(); sheetNum++) {
+for(int sheetNum = 0; sheetNum &lt; wb.getNumberOfSheets(); sheetNum++) {
 	HSSFSheet sheet = wb.getSheetAt(sheetNum);
 
 	for(Iterator rit = sheet.rowIterator(); rit.hasNext();) {
