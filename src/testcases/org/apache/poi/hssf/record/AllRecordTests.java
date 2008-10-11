@@ -84,6 +84,7 @@ public final class AllRecordTests {
 		result.addTestSuite(TestPaneRecord.class);
 		result.addTestSuite(TestPlotAreaRecord.class);
 		result.addTestSuite(TestPlotGrowthRecord.class);
+		result.addTestSuite(TestRecordInputStream.class);
 		result.addTestSuite(TestRecordFactory.class);
 		result.addTestSuite(TestSCLRecord.class);
 		result.addTestSuite(TestSSTDeserializer.class);
