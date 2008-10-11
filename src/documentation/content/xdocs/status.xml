@@ -33,7 +33,7 @@
 
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
-        <release version="3.2-alpha1" date="2008-??-??">
+        <release version="3.2-final" date="2008-10-19">
            <action dev="POI-DEVELOPERS" type="fix">45866 - allowed for change of unicode compression across Continue records</action>
            <action dev="POI-DEVELOPERS" type="fix">45964 - support for link formulas in Text Objects</action>
            <action dev="POI-DEVELOPERS" type="fix">43354 - support for evalating formulas with missing args</action>
