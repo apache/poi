@@ -25,16 +25,24 @@ import org.openxml4j.opc.PackagePart;
  *
  * @author Yegor Kozlov
  */
-public class POIXMLFactory {
+public abstract class POIXMLFactory {
 
     /**
-     * Creates a new instance of a {@link POIXMLDocumentPart}
+     * Create a POIXMLDocumentPart from existing package part and relation. This method is called
+     * from {@link POIXMLDocumentPart#read(POIXMLFactory)} when parsing a document
      *
      * @param rel   the package part relationship
      * @param part  the PackagePart representing the created instance
      * @return A new instance of a POIXMLDocumentPart.
      */
-     public POIXMLDocumentPart create(PackageRelationship rel, PackagePart part){
-        return new POIXMLDocumentPart(part, rel);
-    }
+     public abstract POIXMLDocumentPart createDocumentPart(PackageRelationship rel, PackagePart part);
+
+    /**
+     * Create a new POIXMLDocumentPart using the supplied descriptor. This method is used when adding new parts
+     * to a document, for example, when adding a sheet to a workbook, slide to a presentation, etc.
+     *
+     * @param descriptor  described the object to create
+     * @return A new instance of a POIXMLDocumentPart.
+     */
+     public abstract POIXMLDocumentPart newDocumentPart(POIXMLRelation descriptor);
 }

@@ -39,12 +39,12 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
     protected static final POIXMLRelation[] RELATIONS;
     static {
         RELATIONS = new POIXMLRelation[8];
-        RELATIONS[Workbook.PICTURE_TYPE_EMF] = new POIXMLRelation("image/x-emf", XSSFRelation.IMAGES.getRelation(), "/xl/media/image#.emf");
-        RELATIONS[Workbook.PICTURE_TYPE_WMF] = new POIXMLRelation("image/x-wmf", XSSFRelation.IMAGES.getRelation(), "/xl/media/image#.wmf");
-        RELATIONS[Workbook.PICTURE_TYPE_PICT] = new POIXMLRelation("image/pict", XSSFRelation.IMAGES.getRelation(), "/xl/media/image#.pict");
-        RELATIONS[Workbook.PICTURE_TYPE_JPEG] = new POIXMLRelation("image/jpeg", XSSFRelation.IMAGES.getRelation(), "/xl/media/image#.jpeg");
-        RELATIONS[Workbook.PICTURE_TYPE_PNG] = new POIXMLRelation("image/png", XSSFRelation.IMAGES.getRelation(), "/xl/media/image#.png");
-        RELATIONS[Workbook.PICTURE_TYPE_DIB] = new POIXMLRelation("image/dib", XSSFRelation.IMAGES.getRelation(), "/xl/media/image#.dib");
+        RELATIONS[Workbook.PICTURE_TYPE_EMF] = XSSFRelation.IMAGE_EMF;
+        RELATIONS[Workbook.PICTURE_TYPE_WMF] = XSSFRelation.IMAGE_WMF;
+        RELATIONS[Workbook.PICTURE_TYPE_PICT] = XSSFRelation.IMAGE_PICT;
+        RELATIONS[Workbook.PICTURE_TYPE_JPEG] = XSSFRelation.IMAGE_JPEG;
+        RELATIONS[Workbook.PICTURE_TYPE_PNG] = XSSFRelation.IMAGE_PNG;
+        RELATIONS[Workbook.PICTURE_TYPE_DIB] = XSSFRelation.IMAGE_DIB;
     }
 
     /**

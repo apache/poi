@@ -21,7 +21,7 @@ package org.apache.poi;
  *
  * @author Yegor Kozlov
  */
-public class POIXMLRelation {
+public abstract class POIXMLRelation {
 
     /**
      * Describes the content stored in a part.
@@ -39,6 +39,26 @@ public class POIXMLRelation {
     protected String _defaultName;
 
     /**
+     * Defines what object is used to construct instances of this relationship
+     */
+    private Class<? extends POIXMLDocumentPart> _cls;
+
+    /**
+     * Instantiates a POIXMLRelation.
+     *
+     * @param type content type
+     * @param rel  relationship
+     * @param defaultName default item name
+     * @param cls defines what object is used to construct instances of this relationship
+     */
+    public POIXMLRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {
+        _type = type;
+        _relation = rel;
+        _defaultName = defaultName;
+        _cls = cls;
+    }
+
+    /**
      * Instantiates a POIXMLRelation.
      *
      * @param type content type
@@ -46,11 +66,8 @@ public class POIXMLRelation {
      * @param defaultName default item name
      */
     public POIXMLRelation(String type, String rel, String defaultName) {
-        _type = type;
-        _relation = rel;
-        _defaultName = defaultName;
+        this(type, rel, defaultName, null);
     }
-
     /**
      * Return the content type. Content types define a media type, a subtype, and an
      * optional set of parameters, as defined in RFC 2616.
@@ -92,5 +109,14 @@ public class POIXMLRelation {
             return getDefaultFileName();
         }
         return _defaultName.replace("#", Integer.toString(index));
+    }
+
+    /**
+     * Return type of the obejct used to construct instances of this relationship
+     *
+     * @return the class of the object used to construct instances of this relation
+     */
+    public Class<? extends POIXMLDocumentPart> getRelationClass(){
+        return _cls;
     }
 }

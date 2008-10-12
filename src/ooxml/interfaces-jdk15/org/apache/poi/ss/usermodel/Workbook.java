@@ -374,8 +374,6 @@ public interface Workbook {
      */
     void removeName(String name);
 
-    Palette getCustomPalette();
-
     /**
      * Adds a picture to the workbook.
      *
