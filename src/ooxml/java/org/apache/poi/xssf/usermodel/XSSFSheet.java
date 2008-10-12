@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.util.*;
 import javax.xml.namespace.QName;
 
+import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CommentsSource;
@@ -699,9 +700,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return counter;
     }
 
-    public PrintSetup getPrintSetup() {
-        // TODO Auto-generated method stub
-        return null;
+    public XSSFPrintSetup getPrintSetup() {
+        return new XSSFPrintSetup(getWorksheet());
     }
 
     public boolean getProtect() {

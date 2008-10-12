@@ -45,7 +45,7 @@ public class XSSFDrawing extends POIXMLDocumentPart {
     /**
      * Create a new SpreadsheetML drawing
      *
-     * @see org.apache.poi.xssf.usermodel.XSSFWorksheet#createDrawingPatriarch()
+     * @see org.apache.poi.xssf.usermodel.XSSFSheet#createDrawingPatriarch()
      */
     public XSSFDrawing() {
         super(null, null);

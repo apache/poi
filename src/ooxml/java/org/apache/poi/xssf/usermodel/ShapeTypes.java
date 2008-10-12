@@ -17,7 +17,7 @@
 package org.apache.poi.xssf.usermodel;
 
 /**
- * All know type of automatic shapes in DrawingML
+ * All known types of automatic shapes in DrawingML
  *
  * @author Yegor Kozlov
  */
