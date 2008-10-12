@@ -18,39 +18,37 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLRelation;
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.xssf.model.BinaryPart;
-import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.model.Control;
-import org.apache.poi.xssf.model.Drawing;
-import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.ThemeTable;
-import org.apache.poi.xssf.model.XSSFChildContainingModel;
-import org.apache.poi.xssf.model.XSSFModel;
-import org.apache.poi.xssf.model.XSSFWritableModel;
 import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackagePartName;
 import org.openxml4j.opc.PackageRelationship;
 import org.openxml4j.opc.PackageRelationshipCollection;
 import org.openxml4j.opc.PackagingURIHelper;
-import org.openxml4j.opc.TargetMode;
 
 /**
  * 
  */
-public final class XSSFRelation<W extends XSSFModel> extends POIXMLRelation {
+public final class XSSFRelation extends POIXMLRelation {
+
+    private static POILogger log = POILogFactory.getLogger(XSSFRelation.class);
+
+    /**
+     * A map to lookup POIXMLRelation by its relation type
+     */
+    protected static Map<String, XSSFRelation> _table = new HashMap<String, XSSFRelation>();
+
 
 	public static final XSSFRelation WORKBOOK = new XSSFRelation(
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml",
@@ -68,15 +66,15 @@ public final class XSSFRelation<W extends XSSFModel> extends POIXMLRelation {
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet",
 			"/xl/worksheets/sheet#.xml",
-			null
+			XSSFSheet.class
 	);
-	public static final XSSFRelation<SharedStringsTable> SHARED_STRINGS = create(
+	public static final XSSFRelation SHARED_STRINGS = new XSSFRelation(
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings",
 			"/xl/sharedStrings.xml",
 			SharedStringsTable.class
 	);
-	public static final XSSFRelation<StylesTable> STYLES = create(
+	public static final XSSFRelation STYLES = new XSSFRelation(
 		    "application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml",
 		    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles",
 		    "/xl/styles.xml",
@@ -86,22 +84,58 @@ public final class XSSFRelation<W extends XSSFModel> extends POIXMLRelation {
 			"application/vnd.openxmlformats-officedocument.drawing+xml",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing",
 			"/xl/drawings/drawing#.xml",
-			null
+			XSSFDrawing.class
 	);
-	public static final XSSFRelation<Drawing> VML_DRAWINGS = create(
+	public static final XSSFRelation VML_DRAWINGS = new XSSFRelation(
 			"application/vnd.openxmlformats-officedocument.vmlDrawing",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing",
 			"/xl/drawings/vmlDrawing#.vml",
-			Drawing.class
+			null
 	);
     public static final XSSFRelation IMAGES = new XSSFRelation(
-            //client will substitute $type and $ext with the appropriate values depending on the passed data
-            "image/$type",
+            null,
      		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-    		"/xl/media/image#.$ext",
-    		null
+    		null,
+    		XSSFPictureData.class
     );
-	public static final XSSFRelation<CommentsTable> SHEET_COMMENTS = create(
+    public static final XSSFRelation IMAGE_EMF = new XSSFRelation(
+            "image/x-emf",
+     		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+    		"/xl/media/image#.emf",
+    		XSSFPictureData.class
+    );
+    public static final XSSFRelation IMAGE_WMF = new XSSFRelation(
+            "image/x-wmf",
+     		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+    		"/xl/media/image#.wmf",
+    		XSSFPictureData.class
+    );
+    public static final XSSFRelation IMAGE_PICT = new XSSFRelation(
+            "image/pict",
+     		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+    		"/xl/media/image#.pict",
+    		XSSFPictureData.class
+    );
+    public static final XSSFRelation IMAGE_JPEG = new XSSFRelation(
+            "image/jpeg",
+     		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+    		"/xl/media/image#.jpeg",
+    		XSSFPictureData.class
+    );
+    public static final XSSFRelation IMAGE_PNG = new XSSFRelation(
+            "image/png",
+     		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+    		"/xl/media/image#.png",
+    		XSSFPictureData.class
+    );
+    public static final XSSFRelation IMAGE_DIB = new XSSFRelation(
+            "image/dib",
+     		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+    		"/xl/media/image#.dib",
+    		XSSFPictureData.class
+    );
+
+  public static final XSSFRelation SHEET_COMMENTS = new XSSFRelation(
 		    "application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml",
 		    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments",
 		    "/xl/comments#.xml",
@@ -113,111 +147,54 @@ public final class XSSFRelation<W extends XSSFModel> extends POIXMLRelation {
 		    null,
 		    null
 	);
-	public static final XSSFRelation<BinaryPart> OLEEMBEDDINGS = create(
+	public static final XSSFRelation OLEEMBEDDINGS = new XSSFRelation(
 	        null,
 	        POIXMLDocument.OLE_OBJECT_REL_TYPE,
 	        null,
-	        BinaryPart.class
+	        null
 	);
-	public static final XSSFRelation<BinaryPart> PACKEMBEDDINGS = create(
+	public static final XSSFRelation PACKEMBEDDINGS = new XSSFRelation(
             null,
             POIXMLDocument.PACK_OBJECT_REL_TYPE,
             null,
-            BinaryPart.class
+            null
     );
 
-	public static final XSSFRelation<BinaryPart> VBA_MACROS = create(
+	public static final XSSFRelation VBA_MACROS = new XSSFRelation(
             "application/vnd.ms-office.vbaProject",
             "http://schemas.microsoft.com/office/2006/relationships/vbaProject",
             "/xl/vbaProject.bin",
-	        BinaryPart.class
+	        null
     );
-	public static final XSSFRelation<Control> ACTIVEX_CONTROLS = create(
+	public static final XSSFRelation ACTIVEX_CONTROLS = new XSSFRelation(
 			"application/vnd.ms-office.activeX+xml",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/control",
 			"/xl/activeX/activeX#.xml",
-			Control.class
+			null
 	);
-	public static final XSSFRelation<BinaryPart> ACTIVEX_BINS = create(
+	public static final XSSFRelation ACTIVEX_BINS = new XSSFRelation(
 			"application/vnd.ms-office.activeX",
 			"http://schemas.microsoft.com/office/2006/relationships/activeXControlBinary",
 			"/xl/activeX/activeX#.bin",
-	        BinaryPart.class
+	        null
 	);
-    public static final XSSFRelation<ThemeTable> THEME = create(
+    public static final XSSFRelation THEME = new XSSFRelation(
             "application/vnd.openxmlformats-officedocument.theme+xml",
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme",
             "/xl/theme/theme#.xml",
-            ThemeTable.class
+            null
     );
 	
 	
-    private static POILogger log = POILogFactory.getLogger(XSSFRelation.class);
-    
-    private static <R extends XSSFModel> XSSFRelation<R> create(String type, String rel, String defaultName, Class<R> cls) {
-    	return new XSSFRelation<R>(type, rel, defaultName, cls);
+
+	private XSSFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {
+        super(type, rel, defaultName, cls);
+
+        if(cls != null && !_table.containsKey(rel)) _table.put(rel, this);
     }
-   
-	private Constructor<W> _constructor;
-	private final boolean _constructorTakesTwoArgs;
-	
-	private XSSFRelation(String type, String rel, String defaultName, Class<W> cls) {
-		super(type, rel, defaultName);
 
-		if (cls == null) {
-			_constructor = null;
-			_constructorTakesTwoArgs = false;
-		} else {
-			Constructor<W> c;
-			boolean twoArg;
-			
-			// Find the right constructor 
-			try {
-				c = cls.getConstructor(InputStream.class, String.class);
-				twoArg = true;
-			} catch(NoSuchMethodException e) {
-				try {
-					c = cls.getConstructor(InputStream.class);
-					twoArg = false;
-				} catch(NoSuchMethodException e2) {
-					throw new RuntimeException(e2);
-				}
-			}
-			_constructor = c;
-			_constructorTakesTwoArgs = twoArg;
-		}
-	}
-
-	/**
-	 * Does one of these exist for the given core
-	 *  package part?
-	 */
-	public boolean exists(PackagePart corePart) throws InvalidFormatException {
-		if(corePart == null) {
-			// new file, can't exist
-			return false;
-		}
-		
-        PackageRelationshipCollection prc =
-        	corePart.getRelationshipsByType(_relation);
-        Iterator<PackageRelationship> it = prc.iterator();
-        return it.hasNext();
-	}
-	
-	/**
-	 * Returns the filename for the nth one of these, 
-	 *  eg /xl/comments4.xml
-	 */
-	public String getFileName(int index) {
-		if(_defaultName.indexOf("#") == -1) {
-			// Generic filename in all cases
-			return getDefaultFileName();
-		}
-		return _defaultName.replace("#", Integer.toString(index));
-	}
-
-	/**
-	 * Fetches the InputStream to read the contents, based
+    /**
+	 *  Fetches the InputStream to read the contents, based
 	 *  of the specified core part, for which we are defined
 	 *  as a suitable relationship
 	 */
@@ -235,150 +212,16 @@ public final class XSSFRelation<W extends XSSFModel> extends POIXMLRelation {
         	return null;
         }
 	}
-	
-	/**
-	 * Loads all the XSSFModels of this type which are
-	 *  defined as relationships of the given parent part
-	 */
-	public List<W> loadAll(PackagePart parentPart) throws Exception {
-		List<W> found = new ArrayList<W>();
-		for(PackageRelationship rel : parentPart.getRelationshipsByType(_relation)) {
-			PackagePart part = XSSFWorkbook.getTargetPart(parentPart.getPackage(), rel);
-			found.add(create(part, rel));
-		}
-		return found;
-	}
-	
-	/**
-	 * Load a single Model, which is defined as a suitable
-	 *  relationship from the specified core (parent) 
-	 *  package part.
-	 */
-	public W load(PackagePart corePart) throws Exception {
-        PackageRelationshipCollection prc =
-        	corePart.getRelationshipsByType(_relation);
-        Iterator<PackageRelationship> it = prc.iterator();
-        if(it.hasNext()) {
-            PackageRelationship rel = it.next();
-            PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
-            PackagePart part = corePart.getPackage().getPart(relName);
-            return create(part, rel);
-        } else {
-        	log.log(POILogger.WARN, "No part " + _defaultName + " found");
-        	return null;
-        }
-	}
-	
-	/**
-	 * Does the actual Model creation
-	 */
-	private W create(PackagePart thisPart, PackageRelationship rel) 
-			throws IOException, InvalidFormatException {
-		
-		if (_constructor == null) {
-			throw new IllegalStateException("Model class not set");
-		}
-		// Instantiate, if we can
-		InputStream inp = thisPart.getInputStream();
-		if (inp == null) {
-			return null; // TODO - is this valid?
-		}
-		Object[] args;
-		if (_constructorTakesTwoArgs) {
-			args = new Object[] { inp, rel.getId(), };
-		} else {
-			args = new Object[] { inp, };
-		}
-		W result;
-        try {
-        	try {
-				result = _constructor.newInstance(args);
-			} catch (IllegalArgumentException e) {
-				throw new RuntimeException(e);
-			} catch (InstantiationException e) {
-				throw new RuntimeException(e);
-			} catch (IllegalAccessException e) {
-				throw new RuntimeException(e);
-			} catch (InvocationTargetException e) {
-				Throwable t = e.getTargetException();
-				if (t instanceof IOException) {
-					throw (IOException)t;
-				}
-				if (t instanceof RuntimeException) {
-					throw (RuntimeException)t;
-				}
-				throw new RuntimeException(t);
-			}
-        } finally {
-        	inp.close();
-        }
-        
-		// Do children, if required
-		if(result instanceof XSSFChildContainingModel) {
-			XSSFChildContainingModel ccm = 
-				(XSSFChildContainingModel)result;
-			for(String relType : ccm.getChildrenRelationshipTypes()) {
-				for(PackageRelationship cRel : thisPart.getRelationshipsByType(relType)) {
-					PackagePart childPart = XSSFWorkbook.getTargetPart(thisPart.getPackage(), cRel);
-					ccm.generateChild(childPart, cRel.getId());
-				}
-			}
-		}
- 		
-		
-        return result;
-	}
-	
-	/**
-	 * Save, with the default name
-	 * @return The internal reference ID it was saved at, normally then used as an r:id
-	 */
-	protected String save(XSSFWritableModel model, PackagePart corePart) throws IOException {
-		return save(model, corePart, _defaultName);
-	}
-	/**
-	 * Save, with the name generated by the given index
-	 * @return The internal reference ID it was saved at, normally then used as an r:id
-	 */
-	protected String save(XSSFWritableModel model, PackagePart corePart, int index) throws IOException {
-		return save(model, corePart, getFileName(index));
-	}
-	/**
-	 * Save, with the specified name
-	 * @return The internal reference ID it was saved at, normally then used as an r:id
-	 */
-	protected String save(XSSFWritableModel model, PackagePart corePart, String name) throws IOException {
-        PackagePartName ppName = null;
-        try {
-        	ppName = PackagingURIHelper.createPartName(name);
-        } catch(InvalidFormatException e) {
-        	throw new IllegalStateException("Can't create part with name " + name + " for " + model, e);
-        }
-        PackageRelationship rel =
-        	corePart.addRelationship(ppName, TargetMode.INTERNAL, _relation);
-        PackagePart part = corePart.getPackage().createPart(ppName, _type);
-        
-        OutputStream out = part.getOutputStream();
-        model.writeTo(out);
-        out.close();
-        
-		// Do children, if required
-		if(model instanceof XSSFChildContainingModel) {
-			XSSFChildContainingModel ccm = 
-				(XSSFChildContainingModel)model;
-			// Loop over each child, writing it out
-			int numChildren = ccm.getNumberOfChildren();
-			for(int i=0; i<numChildren; i++) {
-				XSSFChildContainingModel.WritableChild child =
-					ccm.getChildForWriting(i);
-				child.getRelation().save(
-						child.getModel(),
-						part, 
-						(i+1)
-				);
-			}
-		}
-        
-        return rel.getId();
-	}
+
+
+    /**
+     * Get POIXMLRelation by relation type
+     *
+     * @param rel relation type, for example,
+     *    <code>http://schemas.openxmlformats.org/officeDocument/2006/relationships/image</code>
+     * @return registered POIXMLRelation or null if not found
+     */
+    public static XSSFRelation getInstance(String rel){
+        return _table.get(rel);
+    }
 }

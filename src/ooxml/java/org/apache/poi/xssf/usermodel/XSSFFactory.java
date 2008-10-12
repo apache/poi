@@ -19,14 +19,12 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLFactory;
 import org.apache.poi.POIXMLException;
-import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.POIXMLRelation;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 import org.openxml4j.opc.PackageRelationship;
 import org.openxml4j.opc.PackagePart;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.lang.reflect.Constructor;
 
 /**
@@ -35,25 +33,40 @@ import java.lang.reflect.Constructor;
  * @author Yegor Kozlov
  */
 public class XSSFFactory extends POIXMLFactory  {
-    protected static Map<String, Class> parts = new HashMap<String, Class>();
-    static {
-        parts.put(XSSFRelation.WORKSHEET.getRelation(), XSSFSheet.class);
-        parts.put(XSSFRelation.SHARED_STRINGS.getRelation(), SharedStringsTable.class);
-        parts.put(XSSFRelation.STYLES.getRelation(), StylesTable.class);
-        parts.put(XSSFRelation.SHEET_COMMENTS.getRelation(), CommentsTable.class);
-        parts.put(XSSFRelation.DRAWINGS.getRelation(), XSSFDrawing.class);
-        parts.put(XSSFRelation.IMAGES.getRelation(), XSSFPictureData.class);
+    private static POILogger logger = POILogFactory.getLogger(XSSFFactory.class);
+
+    private XSSFFactory(){
+
     }
 
-    public POIXMLDocumentPart create(PackageRelationship rel, PackagePart p){
-        Class cls = parts.get(rel.getRelationshipType());
-        if(cls == null) return super.create(rel, p);
+    public static XSSFFactory getInstance(){
+        return new XSSFFactory();
+    }
+
+    public POIXMLDocumentPart createDocumentPart(PackageRelationship rel, PackagePart part){
+        XSSFRelation descriptor = XSSFRelation.getInstance(rel.getRelationshipType());
+        if(descriptor == null || descriptor.getRelationClass() == null){
+            logger.log(POILogger.DEBUG, "using default POIXMLDocumentPart for " + rel.getRelationshipType());
+            return new POIXMLDocumentPart(part, rel);
+        }
 
         try {
+            Class cls = descriptor.getRelationClass();
             Constructor<? extends POIXMLDocumentPart> constructor = cls.getConstructor(PackagePart.class, PackageRelationship.class);
-            return constructor.newInstance(p, rel);
+            return constructor.newInstance(part, rel);
         } catch (Exception e){
             throw new POIXMLException(e);
         }
     }
+
+    public POIXMLDocumentPart newDocumentPart(POIXMLRelation descriptor){
+        try {
+            Class cls = descriptor.getRelationClass();
+            Constructor<? extends POIXMLDocumentPart> constructor = cls.getConstructor();
+            return constructor.newInstance();
+        } catch (Exception e){
+            throw new POIXMLException(e);
+        }
+    }
+
 }

@@ -143,43 +143,35 @@ public class POIXMLDocumentPart {
      * Create a new child POIXMLDocumentPart
      *
      * @param descriptor the part descriptor
-     * @param cls the Class object identifying the type of instance to create
+     * @param factory the factory that will create an instance of the requested relation
      * @return the created child POIXMLDocumentPart
      */
-    protected POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, Class<? extends POIXMLDocumentPart> cls){
-        return createRelationship(descriptor, cls, -1);
+    protected POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory){
+        return createRelationship(descriptor, factory, -1, false);
+    }
+
+    protected POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory, int idx){
+        return createRelationship(descriptor, factory, idx, false);
     }
 
     /**
      * Create a new child POIXMLDocumentPart
      *
      * @param descriptor the part descriptor
-     * @param cls the Class object identifying the type of instance to create
+     * @param factory the factory that will create an instance of the requested relation
      * @param idx part number
+     * @param noRelation if true, then no relationship is added.
      * @return the created child POIXMLDocumentPart
      */
-    protected POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, Class<? extends POIXMLDocumentPart> cls, int idx){
-        return createRelationship(descriptor, cls, idx, false);
-    }
-
-    /**
-     * Create a new child POIXMLDocumentPart
-     *
-     * @param descriptor the part descriptor
-     * @param cls the Class object identifying the type of instance to create
-     * @param idx part number
-     * @param norel if true, then no relationship is added. 
-     * @return the created child POIXMLDocumentPart
-     */
-    protected POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, Class<? extends POIXMLDocumentPart> cls, int idx, boolean norel){
+    protected POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory, int idx, boolean noRelation){
         try {
 
             PackagePartName ppName = PackagingURIHelper.createPartName(descriptor.getFileName(idx));
             PackageRelationship rel = null;
-            if(!norel) rel = packagePart.addRelationship(ppName, TargetMode.INTERNAL, descriptor.getRelation());
+            if(!noRelation) rel = packagePart.addRelationship(ppName, TargetMode.INTERNAL, descriptor.getRelation());
 
             PackagePart part = packagePart.getPackage().createPart(ppName, descriptor.getContentType());
-            POIXMLDocumentPart doc = cls.newInstance();
+            POIXMLDocumentPart doc = factory.newDocumentPart(descriptor);
             doc.packageRel = rel;
             doc.packagePart = part;
             doc.parent = this;
@@ -206,7 +198,7 @@ public class POIXMLDocumentPart {
                     logger.log(POILogger.ERROR, "Skipped invalid entry " + rel.getTargetURI());
                     continue;
                 }
-                POIXMLDocumentPart childPart = factory.create(rel, p);
+                POIXMLDocumentPart childPart = factory.createDocumentPart(rel, p);
                 childPart.parent = this;
                 addRelation(childPart);
 

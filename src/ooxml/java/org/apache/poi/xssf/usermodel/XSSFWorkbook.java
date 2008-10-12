@@ -19,14 +19,10 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.InputStream;
-import java.io.ByteArrayInputStream;
 import java.util.*;
 import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.ss.usermodel.Palette;
-import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -34,12 +30,10 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.PackageHelper;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.model.*;
 import org.apache.poi.POIXMLException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.*;
 import org.openxml4j.opc.Package;
@@ -131,7 +125,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     public XSSFWorkbook(Package pkg) throws IOException {
         super();
         if(pkg.getPackageAccess() == PackageAccess.READ){
-            //current implementation of OpenXML4J is funny.
+            //YK: current implementation of OpenXML4J is funny.
             //Packages opened by Package.open(InputStream is) are read-only,
             //there is no way to change or even save such an instance in a OutputStream.
             //The workaround is to create a copy via a temp file
@@ -155,7 +149,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
         try {
             //build the POIXMLDocumentPart tree, this workbook is the root
-            read(new XSSFFactory());
+            read(XSSFFactory.getInstance());
 
             PackagePart corePart = getCorePart();
 
@@ -202,7 +196,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
             if(sharedStringSource == null) {
                 //Create SST if it is missing
-                sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, SharedStringsTable.class);
+                sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, XSSFFactory.getInstance());
             }
 
             // Process the named ranges
@@ -240,8 +234,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         bv.setActiveTab(0);
         workbook.addNewSheets();
 
-        sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, SharedStringsTable.class);
-        stylesSource = (StylesTable)createRelationship(XSSFRelation.STYLES, StylesTable.class);
+        sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, XSSFFactory.getInstance());
+        stylesSource = (StylesTable)createRelationship(XSSFRelation.STYLES, XSSFFactory.getInstance());
 
         namedRanges = new LinkedList<XSSFName>();
         sheets = new LinkedList<XSSFSheet>();
@@ -273,7 +267,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     public int addPicture(byte[] pictureData, int format) {
         int imageNumber = getAllPictures().size() + 1;
-        XSSFPictureData img = (XSSFPictureData)createRelationship(XSSFPictureData.RELATIONS[format], XSSFPictureData.class, imageNumber, true);
+        XSSFPictureData img = (XSSFPictureData)createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true);
         try {
             OutputStream out = img.getPackagePart().getOutputStream();
             out.write(pictureData);
@@ -392,7 +386,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
 
         int sheetNumber = getNumberOfSheets() + 1;
-        XSSFSheet wrapper = (XSSFSheet)createRelationship(XSSFRelation.WORKSHEET, XSSFSheet.class, sheetNumber);
+        XSSFSheet wrapper = (XSSFSheet)createRelationship(XSSFRelation.WORKSHEET, XSSFFactory.getInstance(), sheetNumber);
 
         CTSheet sheet = addSheet(sheetname);
         wrapper.sheet = sheet;
@@ -496,11 +490,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return stylesSource.getStyleAt(idx);
     }
 
-    public Palette getCustomPalette() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     /**
      * Get the font at the given index number
      *
@@ -508,7 +497,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @return XSSFFont at the index
      */
     public XSSFFont getFontAt(short idx) {
-        return (XSSFFont)stylesSource.getFontAt(idx);
+        return stylesSource.getFontAt(idx);
     }
 
     /**

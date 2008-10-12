@@ -22,13 +22,11 @@ import java.io.OutputStream;
 import java.util.*;
 import javax.xml.namespace.QName;
 
-import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CommentsSource;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
-import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -70,10 +68,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     protected ColumnHelper columnHelper;
     protected CommentsSource sheetComments;
     protected CTMergeCells ctMergeCells;
-
-
-    protected List<Control> controls;
-
 
     public static final short LeftMargin = 0;
     public static final short RightMargin = 1;
@@ -167,7 +161,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     public List<Control> getControls()
     {
-        return controls;
+        return null;
     }
 
     /**
@@ -267,7 +261,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         if(ctDrawing == null) {
             //drawingNumber = #drawings.size() + 1
             int drawingNumber = getPackagePart().getPackage().getPartsByRelationshipType(XSSFRelation.DRAWINGS.getRelation()).size() + 1;
-            drawing = (XSSFDrawing)createRelationship(XSSFRelation.DRAWINGS, XSSFDrawing.class, drawingNumber);
+            drawing = (XSSFDrawing)createRelationship(XSSFRelation.DRAWINGS, XSSFFactory.getInstance(), drawingNumber);
             String relId = drawing.getPackageRelationship().getId();
 
             //add CT_Drawing element which indicates that this sheet contains drawing components built on the drawingML platform.
@@ -632,7 +626,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     public short getLeftCol() {
         String cellRef = worksheet.getSheetViews().getSheetViewArray(0).getTopLeftCell();
         CellReference cellReference = new CellReference(cellRef);
-        return (short)cellReference.getCol();
+        return cellReference.getCol();
     }
 
     public double getMargin(short margin) {
@@ -1220,8 +1214,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @see #setZoom(int)
      */
     public void setZoom(int numerator, int denominator) {
-        Float result = new Float(numerator)/new Float(denominator)*100;
-        setZoom(result.intValue());
+        int zoom = 100*numerator/denominator;
+        setZoom(zoom);
     }
 
     /**
@@ -1368,7 +1362,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     public void ungroupRow(int fromRow, int toRow) {
         for(int i=fromRow;i<=toRow;i++){
-            XSSFRow xrow=(XSSFRow)getRow(i-1);
+            XSSFRow xrow=getRow(i-1);
             if(xrow!=null){
                 CTRow ctrow=xrow.getCTRow();
                 short outlinelevel=ctrow.getOutlineLevel();
@@ -1384,12 +1378,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     private void setSheetFormatPrOutlineLevelRow(){
         short maxLevelRow=getMaxOutlineLevelRows();
-        getSheetTypeSheetFormatPr().setOutlineLevelRow((short)(maxLevelRow));
+        getSheetTypeSheetFormatPr().setOutlineLevelRow(maxLevelRow);
     }
 
     private void setSheetFormatPrOutlineLevelCol(){
         short maxLevelCol=getMaxOutlineLevelCols();
-        getSheetTypeSheetFormatPr().setOutlineLevelCol((short)(maxLevelCol));
+        getSheetTypeSheetFormatPr().setOutlineLevelCol(maxLevelCol);
     }
 
     protected CTSheetViews getSheetTypeSheetViews() {
@@ -1519,7 +1513,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     private CommentsSource getComments() {
         if (sheetComments == null) {
-            sheetComments = (CommentsTable)createRelationship(XSSFRelation.SHEET_COMMENTS, CommentsTable.class, (int)sheet.getSheetId());
+            sheetComments = (CommentsTable)createRelationship(XSSFRelation.SHEET_COMMENTS, XSSFFactory.getInstance(), (int)sheet.getSheetId());
         }
         return sheetComments;
     }
