@@ -67,13 +67,7 @@ public interface PrintSetup {
      */
     void setFitHeight(short height);
 
-    /**    
-     * Sets the options flags.  Not advisable to do it directly.    
-     * @param options The bit flags for the options    
-     */
-    void setOptions(short options);
-
-    /**    
+    /**
      * Set whether to go left to right or top down in ordering    
      * @param ltor left to right    
      */
@@ -180,12 +174,6 @@ public interface PrintSetup {
      * @return number of pages high to fit the sheet in    
      */
     short getFitHeight();
-
-    /**    
-     * Returns the bit flags for the options.    
-     * @return bit flags for the options    
-     */
-    short getOptions();
 
     /**    
      * Returns the left to right print order.    
