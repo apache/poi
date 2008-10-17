@@ -18,27 +18,28 @@ package org.apache.poi.xssf.usermodel.examples;
 
 import java.io.FileOutputStream;
 
-import org.apache.poi.ss.usermodel.PrintSetup;
+import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class FitSheetToOnePage {
+public class HeadersAndFooters {
 
 
     public static void main(String[]args) throws Exception {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("format sheet");
-        PrintSetup ps = sheet.getPrintSetup();
+        sheet.createRow(0).createCell(0).setCellValue(123);
 
-        sheet.setAutobreaks(true);
-
-        ps.setFitHeight((short) 1);
-        ps.setFitWidth((short) 1);
+        //set page numbers in the footer
+        Footer footer = sheet.getFooter();
+        //&P == current page number
+        //&N == page numbers
+        footer.setRight("Page &P of &N");
 
         // Create various cells and rows for spreadsheet.
 
-        FileOutputStream fileOut = new FileOutputStream("fitSheetToOnePage.xlsx");
+        FileOutputStream fileOut = new FileOutputStream("pageNumerOnFooter.xlsx");
         wb.write(fileOut);
         fileOut.close();
 

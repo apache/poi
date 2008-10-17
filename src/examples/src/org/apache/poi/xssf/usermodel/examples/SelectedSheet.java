@@ -18,29 +18,27 @@ package org.apache.poi.xssf.usermodel.examples;
 
 import java.io.FileOutputStream;
 
-import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-public class FitSheetToOnePage {
-
+public class SelectedSheet {
 
     public static void main(String[]args) throws Exception {
         Workbook wb = new XSSFWorkbook();
-        Sheet sheet = wb.createSheet("format sheet");
-        PrintSetup ps = sheet.getPrintSetup();
+        Sheet sheet = wb.createSheet("row sheet");
 
-        sheet.setAutobreaks(true);
-
-        ps.setFitHeight((short) 1);
-        ps.setFitWidth((short) 1);
+        Sheet sheet2 = wb.createSheet("another sheet");
+        Sheet sheet3 = wb.createSheet(" sheet 3 ");
+        sheet3.setSelected(true);
+        wb.setActiveSheet(2);
 
         // Create various cells and rows for spreadsheet.
 
-        FileOutputStream fileOut = new FileOutputStream("fitSheetToOnePage.xlsx");
+        FileOutputStream fileOut = new FileOutputStream("selectedSheet.xlsx");
         wb.write(fileOut);
         fileOut.close();
-
     }
+
 }
