@@ -28,7 +28,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
 
-public class XSSFRow implements Row {
+public class XSSFRow implements Row, Comparable {
 
     private CTRow row;
     
@@ -76,8 +76,20 @@ public class XSSFRow implements Row {
     }
 
     public int compareTo(Object obj) {
-        // TODO Auto-generated method stub
-        return 0;
+        XSSFRow loc = (XSSFRow) obj;
+        if (this.getRowNum() == loc.getRowNum())
+        {
+            return 0;
+        }
+        if (this.getRowNum() < loc.getRowNum())
+        {
+            return -1;
+        }
+        if (this.getRowNum() > loc.getRowNum())
+        {
+            return 1;
+        }
+        return -1;
     }
 
     public XSSFCell createCell(int column) {
@@ -184,18 +196,29 @@ public class XSSFRow implements Row {
     	return -1;
     }
 
+    /**
+     * Get the row's height measured in twips (1/20th of a point). If the height is not set, the default worksheet value is returned,
+     * See {@link org.apache.poi.xssf.usermodel.XSSFSheet#getDefaultRowHeightInPoints()}
+     *
+     * @return row height measured in twips (1/20th of a point)
+     */
     public short getHeight() {
-    	if (this.row.getHt() > 0) {
-    		return (short) (this.row.getHt());
-    	}
-        return -1;
+        return (short)(getHeightInPoints()*20);
     }
 
+    /**
+     * Returns row height measured in point size. If the height is not set, the default worksheet value is returned,
+     * See {@link org.apache.poi.xssf.usermodel.XSSFSheet#getDefaultRowHeightInPoints()}
+     *
+     * @return row height measured in point size
+     * @see org.apache.poi.xssf.usermodel.XSSFSheet#getDefaultRowHeightInPoints()
+     */
     public float getHeightInPoints() {
-    	if (this.row.getHt() > 0) {
-    		return (short) this.row.getHt();
-    	}
-        return -1;
+    	if (this.row.isSetHt()) {
+    		return (float) this.row.getHt();
+    	} else {
+            return sheet.getDefaultRowHeightInPoints();
+        }
     }
 
     /**
@@ -259,18 +282,28 @@ public class XSSFRow implements Row {
     	}
     }
 
+    /**
+     *  Set the height in "twips" or  1/20th of a point.
+     *
+     * @param height the height in "twips" or  1/20th of a point. <code>-1</code>  resets to the default height
+     */
     public void setHeight(short height) {
-    	this.row.setHt((double) height);
-    	this.row.setCustomHeight(true);
-    }
+    	if(height == -1){
+            this.row.unsetHt();
+            this.row.unsetCustomHeight();
+        } else {
+            this.row.setHt((double)height/20);
+            this.row.setCustomHeight(true);
 
-    public void setHeight(double height) {
-    	this.row.setHt((double) height);
-    	this.row.setCustomHeight(true);
+        }
     }
-
+    /**
+     * Set the row's height in points.
+     *
+     * @param height the height in points. <code>-1</code>  resets to the default height
+     */
     public void setHeightInPoints(float height) {
-	    setHeight((short)height);
+	    setHeight((short)(height*20));
     }
 
     public void setRowNum(int rowNum) {

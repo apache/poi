@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.InputStream;
 import java.util.*;
 import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocument;
@@ -30,6 +31,7 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.PackageHelper;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.model.*;
 import org.apache.poi.POIXMLException;
 import org.apache.xmlbeans.XmlObject;
@@ -275,6 +277,31 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         } catch (IOException e){
             throw new POIXMLException(e);
         }
+        pictures.add(img);
+        return imageNumber - 1;
+    }
+
+    /**
+     * Adds a picture to the workbook.
+     *
+     * @param is                The sream to read image from
+     * @param format            The format of the picture.
+     *
+     * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .
+     * @see #PICTURE_TYPE_EMF
+     * @see #PICTURE_TYPE_WMF
+     * @see #PICTURE_TYPE_PICT
+     * @see #PICTURE_TYPE_JPEG
+     * @see #PICTURE_TYPE_PNG
+     * @see #PICTURE_TYPE_DIB
+     * @see #getAllPictures()
+     */
+    public int addPicture(InputStream is, int format) throws IOException {
+        int imageNumber = getAllPictures().size() + 1;
+        XSSFPictureData img = (XSSFPictureData)createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true);
+        OutputStream out = img.getPackagePart().getOutputStream();
+        IOUtils.copy(is, out);
+        out.close();
         pictures.add(img);
         return imageNumber - 1;
     }

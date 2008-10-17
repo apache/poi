@@ -154,16 +154,13 @@ public final class TestXSSFWorkbook extends TestCase {
 	/**
 	 * Tests that we can save a new document
 	 */
-	public void testSaveNew() throws IOException {
+	public void testSaveNew() {
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		workbook.createSheet("sheet1");
 		workbook.createSheet("sheet2");
 		workbook.createSheet("sheet3");
-		File file = File.createTempFile("poi-", ".xlsx");
-		System.out.println("Saving newly created file to " + file.getAbsolutePath());
-		OutputStream out = new FileOutputStream(file);
-		workbook.write(out);
-		out.close();
+
+        XSSFTestDataSamples.writeOutAndReadBack(workbook);
 	}
 
 	/**
@@ -258,7 +255,6 @@ public final class TestXSSFWorkbook extends TestCase {
 		font.setUnderline(Font.U_DOUBLE);
 		StylesTable styleSource=new StylesTable();
 		long index=styleSource.putFont(font);
-		System.out.println("index="+index);
 		workbook.setStylesSource(styleSource);
 		fontFind=workbook.findFont(Font.BOLDWEIGHT_BOLD, IndexedColors.BLACK.getIndex(), (short)15, "Calibri", false, false, Font.SS_NONE, Font.U_DOUBLE);
 		assertNull(fontFind);

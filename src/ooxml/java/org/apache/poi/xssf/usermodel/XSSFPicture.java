@@ -43,18 +43,15 @@ public class XSSFPicture extends XSSFShape {
     private static final POILogger logger = POILogFactory.getLogger(XSSFPicture.class);
 
     /**
-     * width of 1px in columns with default width
+     * A default instance of CTShape used for creating new shapes.
      */
-    private static final float PX_DEFAULT = 0.125f;
-    /**
-     * width of 1px in columns with overridden width
-     */
-    private static final float PX_MODIFIED = 0.143f;
+    private static CTPicture prototype = null;
 
     /**
-     * Height of 1px of a row
+     * Width of one character in pixels. Same for Calibry and Arial.
      */
-    private static final int PX_ROW = 15;
+    private static final float CHARACTER_WIDTH = 7.0017f;
+
 
     /**
      * This object specifies a picture object and all its properties
@@ -65,56 +62,60 @@ public class XSSFPicture extends XSSFShape {
      * Construct a new XSSFPicture object. This constructor is called from
      *  {@link XSSFDrawing#createPicture(XSSFClientAnchor, int)}
      *
-     * @param parent the XSSFDrawing that owns this picture
-     * @param rel    the relationship to the picture data
-     * @param anchor the two cell anchor placeholder for this picture,
-     *   this object encloses the CTPicture bean that holds all the picture properties
+     * @param drawing the XSSFDrawing that owns this picture
      */
-    protected XSSFPicture(XSSFDrawing parent, PackageRelationship rel, CTTwoCellAnchor anchor){
-        super(parent, anchor);
-        //Create a new picture and attach it to the specified two-cell anchor
-        ctPicture = newPicture(rel);
-        anchor.setPic(ctPicture);
+    protected XSSFPicture(XSSFDrawing drawing, CTPicture ctPicture){
+        this.drawing = drawing;
+        this.ctPicture = ctPicture;
     }
 
     /**
-     * Create a new CTPicture bean and initialize its required attributes
+     * Returns a prototype that is used to construct new shapes
      *
-     * @param rel the relationship to the picture data
-     * @return a new CTPicture bean
+     * @return a prototype that is used to construct new shapes
      */
-    private static CTPicture newPicture(PackageRelationship rel){
-        CTPicture pic = CTPicture.Factory.newInstance();
+    protected static CTPicture prototype(){
+        if(prototype == null) {
+            CTPicture pic = CTPicture.Factory.newInstance();
+            CTPictureNonVisual nvpr = pic.addNewNvPicPr();
+            CTNonVisualDrawingProps nvProps = nvpr.addNewCNvPr();
+            nvProps.setId(1);
+            nvProps.setName("Picture 1");
+            nvProps.setDescr("Picture");
+            CTNonVisualPictureProperties nvPicProps = nvpr.addNewCNvPicPr();
+            nvPicProps.addNewPicLocks().setNoChangeAspect(true);
 
-        CTPictureNonVisual nvpr = pic.addNewNvPicPr();
-        CTNonVisualDrawingProps nvProps = nvpr.addNewCNvPr();
-        //YK: TODO shape IDs must be unique across workbook
-        int shapeId = 1;
-        nvProps.setId(shapeId);
-        nvProps.setName("Picture " + shapeId);
-        nvProps.setDescr(rel.getTargetURI().toString());
-        CTNonVisualPictureProperties nvPicProps = nvpr.addNewCNvPicPr();
-        nvPicProps.addNewPicLocks().setNoChangeAspect(true);
+            CTBlipFillProperties blip = pic.addNewBlipFill();
+            blip.addNewBlip().setEmbed("");
+            blip.addNewStretch().addNewFillRect();
 
-        CTBlipFillProperties blip = pic.addNewBlipFill();
-        blip.addNewBlip().setEmbed(rel.getId());
-        blip.addNewStretch().addNewFillRect();
+            CTShapeProperties sppr = pic.addNewSpPr();
+            CTTransform2D t2d = sppr.addNewXfrm();
+            CTPositiveSize2D ext = t2d.addNewExt();
+            //should be original picture width and height expressed in EMUs
+            ext.setCx(0);
+            ext.setCy(0);
 
-        CTShapeProperties sppr = pic.addNewSpPr();
-        CTTransform2D t2d = sppr.addNewXfrm();
-        CTPositiveSize2D ext = t2d.addNewExt();
-        //should be original picture width and height expressed in EMUs
-        ext.setCx(0);
-        ext.setCy(0);
+            CTPoint2D off = t2d.addNewOff();
+            off.setX(0);
+            off.setY(0);
 
-        CTPoint2D off = t2d.addNewOff();
-        off.setX(0);
-        off.setY(0);
+            CTPresetGeometry2D prstGeom = sppr.addNewPrstGeom();
+            prstGeom.setPrst(STShapeType.RECT);
+            prstGeom.addNewAvLst();
 
-        CTPresetGeometry2D prstGeom = sppr.addNewPrstGeom();
-        prstGeom.setPrst(STShapeType.RECT);
-        prstGeom.addNewAvLst();
-        return pic;
+            prototype = pic;
+        }
+        return prototype;
+    }
+
+    /**
+     * Link this shape with the picture data
+     *
+     * @param rel relationship referring the picture data
+     */
+    protected void setPictureReference(PackageRelationship rel){
+        ctPicture.getBlipFill().getBlip().setEmbed(rel.getId());
     }
 
     /**
@@ -130,7 +131,7 @@ public class XSSFPicture extends XSSFShape {
      * Reset the image to the original size.
      */
     public void resize(){
-        XSSFClientAnchor anchor = getAnchor();
+        XSSFClientAnchor anchor = (XSSFClientAnchor)getAnchor();
 
         XSSFClientAnchor pref = getPreferredSize();
 
@@ -152,78 +153,76 @@ public class XSSFPicture extends XSSFShape {
      * @return XSSFClientAnchor with the preferred size for this image
      */
     public XSSFClientAnchor getPreferredSize(){
-        XSSFClientAnchor anchor = getAnchor();
+        XSSFClientAnchor anchor = (XSSFClientAnchor)getAnchor();
 
         XSSFPictureData data = getPictureData();
         Dimension size = getImageDimension(data.getPackagePart(), data.getPictureType());
 
         float w = 0;
-
-        //space in the leftmost cell
-        w += anchor.getDx1()/EMU_PER_POINT;
-        short col2 = (short)(anchor.getCol1() + 1);
+        int col2 = anchor.getCol1();
         int dx2 = 0;
+        if(anchor.getDx1() > 0){
+            w += getColumnWidthInPixels(col2) - anchor.getDx1();
+            col2++;
+        }
 
-        while(w < size.width){
-            w += getColumnWidthInPixels(col2++);
+        for (;;) {
+            w += getColumnWidthInPixels(col2);
+            if(w > size.width) break;
+            col2++;
         }
 
         if(w > size.width) {
-            //calculate dx2, offset in the rightmost cell
-            col2--;
-            float cw = getColumnWidthInPixels(col2);
+            float cw = getColumnWidthInPixels(col2 + 1);
             float delta = w - size.width;
-            dx2 = (int)(EMU_PER_POINT*(cw-delta));
+            dx2 = (int)(EMU_PER_PIXEL*(cw-delta));
         }
         anchor.setCol2(col2);
         anchor.setDx2(dx2);
 
         float h = 0;
-        h += (1 - anchor.getDy1()/256)* getRowHeightInPixels(anchor.getRow1());
-        int row2 = anchor.getRow1() + 1;
+        int row2 = anchor.getRow1();
         int dy2 = 0;
 
-        while(h < size.height){
-            h += getRowHeightInPixels(row2++);
+        if(anchor.getDy1() > 0){
+            h += getRowHeightInPixels(row2) - anchor.getDy1();
+            row2++;
         }
+
+        for (;;) {
+            h += getRowHeightInPixels(row2);
+            if(h > size.height) break;
+            row2++;
+        }
+
         if(h > size.height) {
-            row2--;
-            float ch = getRowHeightInPixels(row2);
+            float ch = getRowHeightInPixels(row2 + 1);
             float delta = h - size.height;
-            dy2 = (int)((ch-delta)/ch*256);
+            dy2 = (int)(EMU_PER_PIXEL*(ch-delta));
         }
         anchor.setRow2(row2);
         anchor.setDy2(dy2);
 
+        CTPositiveSize2D size2d =  ctPicture.getSpPr().getXfrm().getExt();
+        size2d.setCx(size.width*EMU_PER_PIXEL);
+        size2d.setCy(size.height*EMU_PER_PIXEL);
+
         return anchor;
     }
 
-    private float getColumnWidthInPixels(int column){
+    private float getColumnWidthInPixels(int columnIndex){
         XSSFSheet sheet = (XSSFSheet)getDrawing().getParent();
-        int cw = sheet.getColumnWidth(column);
-        float px = getPixelWidth(column);
+        float numChars = (float)sheet.getColumnWidth(columnIndex)/256;
 
-        return cw/px;
+        return numChars*CHARACTER_WIDTH;
     }
 
-    private float getRowHeightInPixels(int i){
+    private float getRowHeightInPixels(int rowIndex){
         XSSFSheet sheet = (XSSFSheet)getDrawing().getParent();
 
-        XSSFRow row = sheet.getRow(i);
-        float height;
-        if(row != null) height = row.getHeight();
-        else height = sheet.getDefaultRowHeight();
-
-        return height/PX_ROW;
-    }
-
-    private float getPixelWidth(int column){
-        XSSFSheet sheet = (XSSFSheet)getDrawing().getParent();
-
-        int def = sheet.getDefaultColumnWidth();
-        int cw = sheet.getColumnWidth(column);
-
-        return cw == def ? PX_DEFAULT : PX_MODIFIED;
+        XSSFRow row = sheet.getRow(rowIndex);
+        float height = row != null ?  row.getHeightInPoints() : sheet.getDefaultRowHeightInPoints();
+        return height*PIXEL_DPI/POINT_DPI;
     }
 
     /**
@@ -238,7 +237,7 @@ public class XSSFPicture extends XSSFShape {
         Dimension size = new Dimension();
 
         switch (type){
-            //we can calculate the preferred size only for JPEG and PNG
+            //we can calculate the preferred size only for JPEG, PNG and BMP
             //other formats like WMF, EMF and PICT are not supported in Java
             case Workbook.PICTURE_TYPE_JPEG:
             case Workbook.PICTURE_TYPE_PNG:
@@ -255,11 +254,11 @@ public class XSSFPicture extends XSSFShape {
 
                     //if DPI is zero then assume standard 96 DPI
                     //since cannot divide by zero
-                    if (dpi[0] == 0) dpi[0] = 96;
-                    if (dpi[1] == 0) dpi[1] = 96;
+                    if (dpi[0] == 0) dpi[0] = PIXEL_DPI;
+                    if (dpi[1] == 0) dpi[1] = PIXEL_DPI;
 
-                    size.width = img.getWidth()*96/dpi[0];
-                    size.height = img.getHeight()*96/dpi[1];
+                    size.width = img.getWidth()*PIXEL_DPI/dpi[0];
+                    size.height = img.getHeight()*PIXEL_DPI/dpi[1];
 
                 } catch (IOException e){
                     //silently return if ImageIO failed to read the image
@@ -282,7 +281,7 @@ public class XSSFPicture extends XSSFShape {
      * {96, 96} is the default.
      */
     protected static int[] getResolution(ImageReader r) throws IOException {
-        int hdpi=96, vdpi=96;
+        int hdpi = PIXEL_DPI, vdpi = PIXEL_DPI;
         double mm2inch = 25.4;
 
         NodeList lst;
@@ -294,16 +293,6 @@ public class XSSFPicture extends XSSFShape {
         if(lst != null && lst.getLength() == 1) vdpi = (int)(mm2inch/Float.parseFloat(((Element)lst.item(0)).getAttribute("value")));
 
         return new int[]{hdpi, vdpi};
-    }
-
-    /**
-     * return the anchor that is used by this shape.
-     *
-     * @return  the anchor that is used by this shape.
-     */
-    public XSSFClientAnchor getAnchor(){
-        CTTwoCellAnchor ctAnchor = (CTTwoCellAnchor)getShapeContainer();
-        return new XSSFClientAnchor(ctAnchor.getFrom(), ctAnchor.getTo());
     }
 
     /**
@@ -320,6 +309,10 @@ public class XSSFPicture extends XSSFShape {
         }
         logger.log(POILogger.WARN, "Picture data was not found for blipId=" + blipId);
         return null;
+    }
+
+    protected CTShapeProperties getShapeProperties(){
+        return ctPicture.getSpPr();
     }
 
 }

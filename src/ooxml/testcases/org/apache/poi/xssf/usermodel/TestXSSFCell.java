@@ -400,13 +400,11 @@ public final class TestXSSFCell extends TestCase {
 
     	//BLANK
     	assertEquals(hcell.toString(),xcell.toString());
-    	System.out.println("BLANK==> xssf="+xcell.toString() + " - hssf="+hcell.toString());
     	//BOOLEAN
     	xcell.setCellValue(true);
     	xcell.setCellType(Cell.CELL_TYPE_BOOLEAN);
     	hcell.setCellValue(true);
     	hcell.setCellType(Cell.CELL_TYPE_BOOLEAN);
-    	System.out.println("BOOLEAN==> xssf="+xcell.toString() + " - hssf="+hcell.toString());
     	assertEquals(hcell.toString(),xcell.toString());
     	
 	//NUMERIC
@@ -415,7 +413,6 @@ public final class TestXSSFCell extends TestCase {
     	xcell.setCellType(Cell.CELL_TYPE_NUMERIC);
     	hcell.setCellValue(1234);
     	hcell.setCellType(Cell.CELL_TYPE_NUMERIC);
-    	System.out.println("NUMERIC==> xssf="+xcell.toString() + " - hssf="+hcell.toString());
     	assertEquals(hcell.toString(),xcell.toString());
     	
     	//DATE ********************
@@ -434,7 +431,6 @@ public final class TestXSSFCell extends TestCase {
     	hstyle.setDataFormat(hformat.getFormat("YYYY-MM-DD"));
     	hcell.setCellStyle(hstyle);
     	
-    	System.out.println("DATE==> xssf="+xcell.toString() + " - hssf="+hcell.toString());
     	assertEquals(hcell.toString(),xcell.toString());
     	
     	
@@ -443,7 +439,6 @@ public final class TestXSSFCell extends TestCase {
     	xcell.setCellType(Cell.CELL_TYPE_STRING);
     	hcell.setCellValue(new HSSFRichTextString("text string"));
     	hcell.setCellType(Cell.CELL_TYPE_STRING);
-    	System.out.println("STRING==> xssf="+xcell.toString() + " - hssf="+hcell.toString());
     	assertEquals(hcell.toString(),xcell.toString());
     	
     	//ERROR
@@ -453,13 +448,11 @@ public final class TestXSSFCell extends TestCase {
     	hcell.setCellErrorValue((byte)0);
     	hcell.setCellType(Cell.CELL_TYPE_ERROR);
 
-    	System.out.println("ERROR==> xssf="+xcell.toString() + " - hssf="+hcell.toString());
     	assertEquals(hcell.toString(),xcell.toString());
     	
     	//FORMULA
     	xcell.setCellFormula("A1+B2");
     	hcell.setCellValue("A1+B2");
-    	System.out.println("FORMULA==> xssf="+xcell.toString() + " - hssf="+hcell.toString());
     	assertEquals(hcell.toString(),xcell.toString());
     	
     }

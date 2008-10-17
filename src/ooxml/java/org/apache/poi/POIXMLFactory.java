@@ -41,7 +41,7 @@ public abstract class POIXMLFactory {
      * Create a new POIXMLDocumentPart using the supplied descriptor. This method is used when adding new parts
      * to a document, for example, when adding a sheet to a workbook, slide to a presentation, etc.
      *
-     * @param descriptor  described the object to create
+     * @param descriptor  describes the object to create
      * @return A new instance of a POIXMLDocumentPart.
      */
      public abstract POIXMLDocumentPart newDocumentPart(POIXMLRelation descriptor);

@@ -67,4 +67,13 @@ public class TestXSSFDrawing extends TestCase {
         assertEquals(drawingId, sheet.getWorksheet().getDrawing().getId());
 
     }
+    public void testMultipleDrawings(){
+        XSSFWorkbook wb = new XSSFWorkbook();
+        for (int i = 0; i < 3; i++) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
+        }
+        org.openxml4j.opc.Package pkg = wb.getPackage();
+        assertEquals(3, pkg.getPartsByContentType(XSSFRelation.DRAWINGS.getContentType()).size());
+    }
 }

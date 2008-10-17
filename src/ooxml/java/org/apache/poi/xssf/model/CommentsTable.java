@@ -34,7 +34,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CommentsDocument;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackageRelationship;
 
-public class CommentsTable extends POIXMLDocumentPart implements CommentsSource, XSSFModel {
+public class CommentsTable extends POIXMLDocumentPart implements CommentsSource {
     private CTComments comments;
 
     public CommentsTable(InputStream is) throws IOException {

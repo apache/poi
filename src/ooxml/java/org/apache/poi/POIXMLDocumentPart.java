@@ -110,7 +110,7 @@ public class POIXMLDocumentPart {
 
     /**
      * Save the content in the underlying package part.
-     * Default implemenation is empty meaning that the package part is left unmodified.
+     * Default implementation is empty meaning that the package part is left unmodified.
      *
      * Sub-classes should override and add logic to marshal the "model" into Ooxml4J.
      *
@@ -122,6 +122,7 @@ public class POIXMLDocumentPart {
      *   XmlObject bean = getXmlBean(); //the "model" which holds changes in memory
      *   bean.save(out, DEFAULT_XML_OPTIONS);
      *   out.close();
+     * }
      *  </code></pre>
      *
      */

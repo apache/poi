@@ -108,7 +108,7 @@ public class XSSFRichTextString implements RichTextString {
             font.setFontName("#" + fontIndex);
             fontIdRuns = new ArrayList<CTRPrElt>();
         } else {
-            font = (XSSFFont)styles.getFontAt(fontIndex);
+            font = styles.getFontAt(fontIndex);
         }
         applyFont(startIndex, endIndex, font);
     }
@@ -219,7 +219,7 @@ public class XSSFRichTextString implements RichTextString {
             font.setFontName("#" + fontIndex);
             fontIdRuns = new ArrayList<CTRPrElt>();
         } else {
-            font = (XSSFFont)styles.getFontAt(fontIndex);
+            font = styles.getFontAt(fontIndex);
         }
         applyFont(font);
     }
@@ -425,7 +425,7 @@ public class XSSFRichTextString implements RichTextString {
                     String fontName = pr.getRFontArray(0).getVal();
                     if(fontName.startsWith("#")){
                         int idx = Integer.parseInt(fontName.substring(1));
-                        XSSFFont font = (XSSFFont)styles.getFontAt(idx);
+                        XSSFFont font = styles.getFontAt(idx);
                         pr.removeRFont(0);
                         setRunAttributes(font.getCTFont(), pr);
                     }

@@ -176,11 +176,6 @@ public interface Row extends Iterable<Cell> {
 	 */
 	Iterator<Cell> iterator();
 
-    int compareTo(Object obj);
-
-    boolean equals(Object obj);
-
-    
     /**
      * Used to specify the different possible policies
      *  if for the case of null and blank cells
