@@ -28,6 +28,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.PackageHelper;
@@ -604,9 +605,16 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return this.sheets.size();
     }
 
-    public String getPrintArea(int sheetIndex) {
-        // TODO Auto-generated method stub
-        return null;
+    /**
+     * Retrieves the reference for the printarea of the specified sheet, the sheet name is appended to the reference even if it was not specified.
+     * @param sheetIndex Zero-based sheet index (0 Represents the first sheet to keep consistent with java)
+     * @return String Null if no print area has been defined
+     */
+    public String getPrintArea(int sheetIndex) {	
+        XSSFName name = getSpecificBuiltinRecord(XSSFName.BUILTIN_PRINT_AREA, sheetIndex);
+        if (name == null) return null;
+        //adding one here because 0 indicates a global named region; doesnt make sense for print areas
+        return name.getReference();
     }
 
     /**
@@ -826,21 +834,119 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         bookView.setActiveTab(index);
     }
 
+    /**
+     * Sets the printarea for the sheet provided
+     * <p>
+     * i.e. Reference = $A$1:$B$2
+     * @param sheetIndex Zero-based sheet index (0 Represents the first sheet to keep consistent with java)
+     * @param reference Valid name Reference for the Print Area
+     */
     public void setPrintArea(int sheetIndex, String reference) {
-        // TODO Auto-generated method stub
-
+        XSSFName name = getSpecificBuiltinRecord(XSSFName.BUILTIN_PRINT_AREA, sheetIndex);
+        if (name == null) {
+            name = createBuiltInName(XSSFName.BUILTIN_PRINT_AREA, sheetIndex);
+            namedRanges.add(name);
+        }
+        name.setReference(reference);
     }
 
+    /**
+     * For the Convenience of Java Programmers maintaining pointers.
+     * @see #setPrintArea(int, String)
+     * @param sheetIndex Zero-based sheet index (0 = First Sheet)
+     * @param startColumn Column to begin printarea
+     * @param endColumn Column to end the printarea
+     * @param startRow Row to begin the printarea
+     * @param endRow Row to end the printarea
+     */
     public void setPrintArea(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow) {
-        // TODO Auto-generated method stub
-
+        String reference=getReferencePrintArea(getSheetName(sheetIndex), startColumn, endColumn, startRow, endRow);
+        setPrintArea(sheetIndex, reference);
     }
 
-    public void setRepeatingRowsAndColumns(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow) {
-        // TODO Auto-generated method stub
-
+    /**
+     * Sets the repeating rows and columns for a sheet.
+     *   This is function is included in the workbook
+     * because it creates/modifies name records which are stored at the
+     * workbook level.
+     * <p>
+     * To set just repeating columns:
+     * <pre>
+     *  workbook.setRepeatingRowsAndColumns(0,0,1,-1,-1);
+     * </pre>
+     * To set just repeating rows:
+     * <pre>
+     *  workbook.setRepeatingRowsAndColumns(0,-1,-1,0,4);
+     * </pre>
+     * To remove all repeating rows and columns for a sheet.
+     * <pre>
+     *  workbook.setRepeatingRowsAndColumns(0,-1,-1,-1,-1);
+     * </pre>
+     *
+     * @param sheetIndex    0 based index to sheet.
+     * @param startColumn   0 based start of repeating columns.
+     * @param endColumn     0 based end of repeating columns.
+     * @param startRow      0 based start of repeating rows.
+     * @param endRow        0 based end of repeating rows.
+     */
+    public void setRepeatingRowsAndColumns(int sheetIndex,
+                                           int startColumn, int endColumn,
+                                           int startRow, int endRow) {
+        //TODO
     }
 
+
+    private String getReferencePrintArea(String sheetName, int startC, int endC, int startR, int endR) {
+        //windows excel example: Sheet1!$C$3:$E$4
+        CellReference colRef = new CellReference(sheetName, startR, startC, true, true);
+        CellReference colRef2 = new CellReference(sheetName, endR, endC, true, true);
+
+        String c = "'" + sheetName + "'!$" + colRef.getCellRefParts()[2] + "$" + colRef.getCellRefParts()[1] + ":$" + colRef2.getCellRefParts()[2] + "$" + colRef2.getCellRefParts()[1];
+        return c;
+    }
+
+    //****************** NAME RANGE *************************
+
+    private CTDefinedNames getDefinedNames() {
+        return workbook.getDefinedNames() == null ? workbook.addNewDefinedNames() : workbook.getDefinedNames();
+    }
+
+
+    public XSSFName getSpecificBuiltinRecord(String builtInCode, int sheetNumber) {
+        for (XSSFName name : namedRanges) {
+            if (name.getNameName().equalsIgnoreCase(builtInCode) && name.getLocalSheetId() == sheetNumber) {
+                return name;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Generates a NameRecord to represent a built-in region
+     * @return a new NameRecord
+     */
+    public XSSFName createBuiltInName(String builtInName, int sheetNumber) {
+        if (sheetNumber < 0 || sheetNumber+1 > Short.MAX_VALUE) {
+            throw new IllegalArgumentException("Sheet number ["+sheetNumber+"]is not valid ");
+        }
+        
+        CTDefinedName nameRecord=getDefinedNames().addNewDefinedName();
+        nameRecord.setName(builtInName);
+        nameRecord.setLocalSheetId(sheetNumber);
+   
+        XSSFName name=new XSSFName(nameRecord,this);        
+        //while(namedRanges.contains(name)) {
+        for(XSSFName nr :  namedRanges){
+            if(nr.equals(name))
+            throw new RuntimeException("Builtin (" + builtInName 
+                    + ") already exists for sheet (" + sheetNumber + ")");
+        }     
+
+        return name;
+    }
+    
+    //*******************************************
+    
     /**
      * We only set one sheet as selected for compatibility with HSSF.
      */

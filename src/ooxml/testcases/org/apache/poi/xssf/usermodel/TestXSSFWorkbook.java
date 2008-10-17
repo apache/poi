@@ -31,6 +31,7 @@ import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.StylesSource;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
 import org.openxml4j.opc.ContentTypes;
@@ -149,6 +150,73 @@ public final class TestXSSFWorkbook extends TestCase {
 		assertEquals("sheet3", workbook.getSheetName(0));
 		workbook.removeSheetAt(0);
 		assertEquals(0, workbook.getNumberOfSheets());
+	}
+
+	public void testPrintArea(){
+	 Workbook workbook = new XSSFWorkbook();
+	 Sheet sheet = workbook.createSheet("Test Print Area");
+	 String sheetName = workbook.getSheetName(0);
+	 
+	// String reference = sheetName+"!$A$1:$B$1";
+	// workbook.setPrintArea(0, reference);
+	 workbook.setPrintArea(0,1,5,4,9);
+	 
+	 String retrievedPrintArea = workbook.getPrintArea(0);
+
+ 	 //assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);
+	 assertEquals("'"+sheetName+"'!$B$5:$F$10", retrievedPrintArea);
+}
+	
+	public void _testRepeatingRowsAndColums() {
+		// First test that setting RR&C for same sheet more than once only creates a 
+		// single  Print_Titles built-in record
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet sheet = wb.createSheet("FirstSheet");
+		
+		// set repeating rows and columns twice for the first sheet
+		for (int i = 0; i < 2; i++) {
+			wb.setRepeatingRowsAndColumns(0, 0, 0, 0, 3);
+			//sheet.createFreezePane(0, 3);
+		}
+		assertEquals(1, wb.getNumberOfNames());
+		XSSFName nr1 = wb.getNameAt(0);
+		
+		assertEquals(XSSFName.BUILTIN_PRINT_TITLE, nr1.getNameName());
+		assertEquals("'FirstSheet'!$A:$A,'FirstSheet'!$1:$4", nr1.getReference());
+		
+		// Save and re-open
+		XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+
+		assertEquals(1, nwb.getNumberOfNames());
+		nr1 = nwb.getNameAt(0);
+		
+		assertEquals(XSSFName.BUILTIN_PRINT_TITLE, nr1.getNameName());
+		assertEquals("'FirstSheet'!$A:$A,'FirstSheet'!$1:$4", nr1.getReference());
+		
+		// check that setting RR&C on a second sheet causes a new Print_Titles built-in
+		// name to be created
+		sheet = nwb.createSheet("SecondSheet");
+		nwb.setRepeatingRowsAndColumns(1, 1, 2, 0, 0);
+
+		assertEquals(2, nwb.getNumberOfNames());
+		XSSFName nr2 = nwb.getNameAt(1);
+		
+		assertEquals(XSSFName.BUILTIN_PRINT_TITLE, nr2.getNameName());
+		assertEquals("'SecondSheet'!$B:$C,'SecondSheet'!$1:$1", nr2.getReference());
+		
+		if (false) {
+			// In case you fancy checking in excel, to ensure it
+			//  won't complain about the file now
+			try {
+				File tempFile = File.createTempFile("POI-45126-", ".xlsx");
+				FileOutputStream fout = new FileOutputStream(tempFile);
+				nwb.write(fout);
+				fout.close();
+				System.out.println("check out " + tempFile.getAbsolutePath());
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 	
 	/**
