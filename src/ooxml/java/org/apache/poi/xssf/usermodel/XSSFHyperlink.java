@@ -124,13 +124,25 @@ public class XSSFHyperlink implements Hyperlink {
 	public String getLabel() {
 		return ctHyperlink.getDisplay();
 	}
+	public String getLocation() {
+		return ctHyperlink.getLocation();
+	}
 	
 	public void setLabel(String label) {
 		ctHyperlink.setDisplay(label);
 	}
+	
+	public void setLocation(String location){
+		ctHyperlink.setLocation(location);
+	}
+	
 	public void setAddress(String address) {
 		location = address;
-	}
+        //we must set location for internal hyperlinks 
+        if(type == Hyperlink.LINK_DOCUMENT){
+            setLocation(address);
+        }
+    }
 
 	/**
 	 * Assigns this hyperlink to the given cell reference
