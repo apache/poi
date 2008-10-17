@@ -16,85 +16,96 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShapeNonVisual;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 /**
- * Represents an auto-shape in a SpreadsheetML drawing.
+ * Represents a shape with a predefined geometry in a SpreadsheetML drawing.
+ * Possible shape types are defined in {@link ShapeTypes}
  *
  * @author Yegor Kozlov
  */
 public class XSSFSimpleShape extends XSSFShape {
-
-    private CTShape ctShape;
+    /**
+     * A default instance of CTShape used for creating new shapes.
+     */
+    private static CTShape prototype = null;
 
     /**
-     * Construct a new XSSFSimpleShape object.
-     *
-     * @param parent the XSSFDrawing that owns this shape
-     * @param anchor the two cell anchor placeholder for this shape,
-     *               this object encloses the shape bean that holds all the shape properties
+     *  Xml bean that stores properties of this shape
      */
-    protected XSSFSimpleShape(XSSFDrawing parent, CTTwoCellAnchor anchor) {
-        super(parent, anchor);
-        ctShape = anchor.addNewSp();
-        newShape(ctShape);
+    private CTShape ctShape;
+
+    protected XSSFSimpleShape(XSSFDrawing drawing, CTShape ctShape) {
+        this.drawing = drawing;
+        this.ctShape = ctShape;
     }
 
     /**
-     * Initialize default structure of a new auto-shape
-     *
-     * @param shape newly created shape to initialize
+     * Prototype with the default structure of a new auto-shape.
      */
-    private static void newShape(CTShape shape) {
-        CTShapeNonVisual nv = shape.addNewNvSpPr();
-        CTNonVisualDrawingProps nvp = nv.addNewCNvPr();
-        int shapeId = 1;
-        nvp.setId(shapeId);
-        nvp.setName("Shape " + shapeId);
-        nv.addNewCNvSpPr();
+    protected static CTShape prototype() {
+        if(prototype == null) {
+            CTShape shape = CTShape.Factory.newInstance();
 
-        CTShapeProperties sp = shape.addNewSpPr();
-        CTTransform2D t2d = sp.addNewXfrm();
-        CTPositiveSize2D p1 = t2d.addNewExt();
-        p1.setCx(0);
-        p1.setCy(0);
-        CTPoint2D p2 = t2d.addNewOff();
-        p2.setX(0);
-        p2.setY(0);
+            CTShapeNonVisual nv = shape.addNewNvSpPr();
+            CTNonVisualDrawingProps nvp = nv.addNewCNvPr();
+            nvp.setId(1);
+            nvp.setName("Shape 1");
+            nv.addNewCNvSpPr();
 
-        CTPresetGeometry2D geom = sp.addNewPrstGeom();
-        geom.setPrst(STShapeType.RECT);
-        geom.addNewAvLst();
+            CTShapeProperties sp = shape.addNewSpPr();
+            CTTransform2D t2d = sp.addNewXfrm();
+            CTPositiveSize2D p1 = t2d.addNewExt();
+            p1.setCx(0);
+            p1.setCy(0);
+            CTPoint2D p2 = t2d.addNewOff();
+            p2.setX(0);
+            p2.setY(0);
 
-        CTShapeStyle style = shape.addNewStyle();
-        CTSchemeColor scheme = style.addNewLnRef().addNewSchemeClr();
-        scheme.setVal(STSchemeColorVal.ACCENT_1);
-        scheme.addNewShade().setVal(50000);
-        style.getLnRef().setIdx(2);
+            CTPresetGeometry2D geom = sp.addNewPrstGeom();
+            geom.setPrst(STShapeType.RECT);
+            geom.addNewAvLst();
 
-        CTStyleMatrixReference fillref = style.addNewFillRef();
-        fillref.setIdx(1);
-        fillref.addNewSchemeClr().setVal(STSchemeColorVal.ACCENT_1);
+            CTShapeStyle style = shape.addNewStyle();
+            CTSchemeColor scheme = style.addNewLnRef().addNewSchemeClr();
+            scheme.setVal(STSchemeColorVal.ACCENT_1);
+            scheme.addNewShade().setVal(50000);
+            style.getLnRef().setIdx(2);
 
-        CTStyleMatrixReference effectRef = style.addNewEffectRef();
-        effectRef.setIdx(0);
-        effectRef.addNewSchemeClr().setVal(STSchemeColorVal.ACCENT_1);
+            CTStyleMatrixReference fillref = style.addNewFillRef();
+            fillref.setIdx(1);
+            fillref.addNewSchemeClr().setVal(STSchemeColorVal.ACCENT_1);
 
-        CTFontReference fontRef = style.addNewFontRef();
-        fontRef.setIdx(STFontCollectionIndex.MINOR);
-        fontRef.addNewSchemeClr().setVal(STSchemeColorVal.LT_1);
+            CTStyleMatrixReference effectRef = style.addNewEffectRef();
+            effectRef.setIdx(0);
+            effectRef.addNewSchemeClr().setVal(STSchemeColorVal.ACCENT_1);
 
-        CTTextBody body = shape.addNewTxBody();
-        CTTextBodyProperties bodypr = body.addNewBodyPr();
-        bodypr.setAnchor(STTextAnchoringType.CTR);
-        bodypr.setRtlCol(false);
-        CTTextParagraph p = body.addNewP();
-        p.addNewPPr().setAlgn(STTextAlignType.CTR);
+            CTFontReference fontRef = style.addNewFontRef();
+            fontRef.setIdx(STFontCollectionIndex.MINOR);
+            fontRef.addNewSchemeClr().setVal(STSchemeColorVal.LT_1);
 
-        body.addNewLstStyle();
+            CTTextBody body = shape.addNewTxBody();
+            CTTextBodyProperties bodypr = body.addNewBodyPr();
+            bodypr.setAnchor(STTextAnchoringType.CTR);
+            bodypr.setRtlCol(false);
+            CTTextParagraph p = body.addNewP();
+            p.addNewPPr().setAlgn(STTextAlignType.CTR);
+            CTTextCharacterProperties endPr = p.addNewEndParaRPr();
+            endPr.setLang("en-US");
+            endPr.setSz(1100);
+
+            body.addNewLstStyle();
+
+            prototype = shape;
+        }
+        return prototype;
+    }
+
+    public CTShape getCTShape(){
+        return ctShape;
     }
 
     /**
@@ -117,62 +128,52 @@ public class XSSFSimpleShape extends XSSFShape {
         ctShape.getSpPr().getPrstGeom().setPrst(STShapeType.Enum.forInt(type));
     }
 
+    protected CTShapeProperties getShapeProperties(){
+        return ctShape.getSpPr();
+    }
+
+    public void setText(XSSFRichTextString str){
+
+        XSSFWorkbook wb = (XSSFWorkbook)getDrawing().getParent().getParent();
+        str.setStylesTableReference(wb.getStylesSource());
+
+        CTTextParagraph p = CTTextParagraph.Factory.newInstance();
+        if(str.numFormattingRuns() == 0){
+            CTRegularTextRun r = p.addNewR();
+            CTTextCharacterProperties rPr = r.addNewRPr();
+            rPr.setLang("en-US");
+            rPr.setSz(1100);
+            r.setT(str.getString());
+
+        } else {
+            for (int i = 0; i < str.getCTRst().sizeOfRArray(); i++) {
+                CTRElt lt = str.getCTRst().getRArray(i);
+                CTRPrElt ltPr = lt.getRPr();
+
+                CTRegularTextRun r = p.addNewR();
+                CTTextCharacterProperties rPr = r.addNewRPr();
+                rPr.setLang("en-US");
+
+                applyAttributes(ltPr, rPr);
+
+                r.setT(lt.getT());
+            }
+        }
+        ctShape.getTxBody().setPArray(new CTTextParagraph[]{p});
+
+    }
 
     /**
-     * Whether this shape is not filled with a color
      *
-     * @return true if this shape is not filled with a color.
+     * CTRPrElt --> CTFont adapter
      */
-    public boolean isNoFill() {
-        return ctShape.getSpPr().isSetNoFill();
+    private static void applyAttributes(CTRPrElt pr, CTTextCharacterProperties rPr){
+
+        if(pr.sizeOfBArray() > 0) rPr.setB(pr.getBArray(0).getVal());
+        //if(pr.sizeOfUArray() > 0) rPr.setU(pr.getUArray(0).getVal());
+        if(pr.sizeOfIArray() > 0) rPr.setI(pr.getIArray(0).getVal());
+
+        CTTextFont rFont = rPr.addNewLatin();
+        rFont.setTypeface(pr.sizeOfRFontArray() > 0 ? pr.getRFontArray(0).getVal() : "Arial");
     }
-
-    /**
-     * Sets whether this shape is filled or transparent.
-     *
-     * @param noFill if true then no fill will be applied to the shape element.
-     */
-    public void setNoFill(boolean noFill) {
-        CTShapeProperties props = ctShape.getSpPr();
-        //unset solid and pattern fills if they are set
-        if (props.isSetPattFill()) props.unsetPattFill();
-        if (props.isSetSolidFill()) props.unsetSolidFill();
-
-        props.setNoFill(CTNoFillProperties.Factory.newInstance());
-    }
-
-    /**
-     * Sets the color used to fill this shape using the solid fill pattern.
-     */
-    public void setFillColor(int red, int green, int blue) {
-        CTShapeProperties props = ctShape.getSpPr();
-        CTSolidColorFillProperties fill = props.isSetSolidFill() ? props.getSolidFill() : props.addNewSolidFill();
-        CTSRgbColor rgb = CTSRgbColor.Factory.newInstance();
-        rgb.setVal(new byte[]{(byte)red, (byte)green, (byte)blue});
-        fill.setSrgbClr(rgb);
-    }
-
-    /**
-     * The color applied to the lines of this shape.
-     */
-    public void setLineStyleColor( int red, int green, int blue ) {
-        CTShapeProperties props = ctShape.getSpPr();
-        CTLineProperties ln = props.isSetLn() ? props.getLn() : props.addNewLn();
-        CTSolidColorFillProperties fill = ln.isSetSolidFill() ? ln.getSolidFill() : ln.addNewSolidFill();
-        CTSRgbColor rgb = CTSRgbColor.Factory.newInstance();
-        rgb.setVal(new byte[]{(byte)red, (byte)green, (byte)blue});
-        fill.setSrgbClr(rgb);
-    }
-
-    /**
-     * Specifies the width to be used for the underline stroke.
-     *
-     * @param lineWidth width in points
-     */
-    public void setLineWidth( double lineWidth ) {
-        CTShapeProperties props = ctShape.getSpPr();
-        CTLineProperties ln = props.isSetLn() ? props.getLn() : props.addNewLn();
-        ln.setW((int)(lineWidth*EMU_PER_POINT));
-    }
-
 }

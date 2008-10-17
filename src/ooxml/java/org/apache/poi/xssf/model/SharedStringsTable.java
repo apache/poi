@@ -60,7 +60,7 @@ import org.openxml4j.opc.PackageRelationship;
  * @author Nick Birch
  * @author Yegor Kozlov
  */
-public class SharedStringsTable extends POIXMLDocumentPart implements XSSFModel, SharedStringSource {
+public class SharedStringsTable extends POIXMLDocumentPart implements SharedStringSource {
 
     /**
      *  Array of individual string items in the Shared String table.

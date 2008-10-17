@@ -98,32 +98,6 @@ public interface Sheet extends Iterable<Row> {
 
     int getLastRowNum();
 
-    
-    
-    /**
-     * @deprecated (Sep 2008) use {@link #setColumnHidden(int, boolean)}
-     */
-    void setColumnHidden(short columnIndex, boolean hidden);
-    /**
-     * @deprecated (Sep 2008) use {@link #isColumnHidden(int)}
-     */
-    boolean isColumnHidden(short columnIndex);
-
-    /**
-     * @deprecated (Sep 2008) use {@link #setColumnWidth(int, int)}
-     */
-    void setColumnWidth(short columnIndex, short width);
-
-    /**
-     * @deprecated (Sep 2008) use {@link #getColumnWidth(int)}
-     */
-    short getColumnWidth(short columnIndex);
-
-    /**
-     * @deprecated (Sep 2008) use {@link #setDefaultColumnWidth(int)}
-     */
-    void setDefaultColumnWidth(short width);
-    
     /**
      * Get the visibility state for a given column.
      * @param columnIndex - the column to get (0-based)

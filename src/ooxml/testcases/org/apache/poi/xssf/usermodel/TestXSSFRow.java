@@ -25,6 +25,8 @@ import junit.framework.TestCase;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -131,15 +133,15 @@ public final class TestXSSFRow extends TestCase {
         XSSFRow row = getSampleRow();
         // I assume that "ht" attribute value is in 'points', please verify that
         // Test that no rowHeight is set
-        assertEquals((short) -1, row.getHeight());
+        assertEquals(row.getSheet().getDefaultRowHeight(), row.getHeight());
         // Set a rowHeight and test the new value
         row.setHeight((short) 240);
         assertEquals((short) 240.0, row.getHeight());
-        assertEquals((float)240.0, row.getHeightInPoints());
+        assertEquals(12.0f, row.getHeightInPoints());
         // Set a new rowHeight in points and test the new value
         row.setHeightInPoints(13);
         assertEquals((float) 13.0, row.getHeightInPoints());
-        assertEquals((short) 13.0, row.getHeight());
+        assertEquals((short)(13.0*20), row.getHeight());
     }
 
     public void testGetSetZeroHeight() throws Exception {
@@ -225,8 +227,7 @@ public final class TestXSSFRow extends TestCase {
 
     private static XSSFSheet createParentObjects() {
         XSSFWorkbook wb = new XSSFWorkbook();
-        wb.setSharedStringSource(new SharedStringsTable());
-        return new XSSFSheet(wb);
+        return wb.createSheet();
     }
 
     /**
@@ -297,5 +298,38 @@ public final class TestXSSFRow extends TestCase {
 
         assertEquals(-1, sheet.getRow(0).getLastCellNum());
         assertEquals(-1, sheet.getRow(0).getFirstCellNum());
+    }
+
+    public void testRowHeightCompatibility(){
+        Workbook wb1 = new HSSFWorkbook();
+        Workbook wb2 = new XSSFWorkbook();
+
+        Sheet sh1 = wb1.createSheet();
+        Sheet sh2 = wb2.createSheet();
+
+        sh2.setDefaultRowHeight(sh1.getDefaultRowHeight());
+
+        assertEquals(sh1.getDefaultRowHeight(), sh2.getDefaultRowHeight());
+
+        //junit.framework.AssertionFailedError: expected:<12.0> but was:<12.75>
+        //YK: there is a bug in HSSF version, it trunkates decimal part
+        //assertEquals(sh1.getDefaultRowHeightInPoints(), sh2.getDefaultRowHeightInPoints());
+
+        Row row1 = sh1.createRow(0);
+        Row row2 = sh2.createRow(0);
+
+        assertEquals(row1.getHeight(), row2.getHeight());
+        assertEquals(row1.getHeightInPoints(), row2.getHeightInPoints());
+        row1.setHeight((short)100);
+        row2.setHeight((short)100);
+        assertEquals(row1.getHeight(), row2.getHeight());
+        assertEquals(row1.getHeightInPoints(), row2.getHeightInPoints());
+
+        row1.setHeightInPoints(25.5f);
+        row2.setHeightInPoints(25.5f);
+        assertEquals(row1.getHeight(), row2.getHeight());
+        assertEquals(row1.getHeightInPoints(), row2.getHeightInPoints());
+
+
     }
 }

@@ -64,15 +64,15 @@ import org.openxml4j.opc.PackageRelationship;
  *
  * @author ugo
  */
-public class StylesTable extends POIXMLDocumentPart implements StylesSource, XSSFModel {
+public class StylesTable extends POIXMLDocumentPart implements StylesSource {
 	private final Hashtable<Long,String> numberFormats = new Hashtable<Long,String>();
 	private final List<XSSFFont> fonts = new ArrayList<XSSFFont>();
 	private final List<XSSFCellFill> fills = new ArrayList<XSSFCellFill>();
 	private final List<XSSFCellBorder> borders = new ArrayList<XSSFCellBorder>();
-	private final List<CTXf> styleXfs = new LinkedList<CTXf>();
-	private final List<CTXf> xfs = new LinkedList<CTXf>();
+	private final List<CTXf> styleXfs = new ArrayList<CTXf>();
+	private final List<CTXf> xfs = new ArrayList<CTXf>();
 
-	private final List<CTDxf> dxfs = new LinkedList<CTDxf>();
+	private final List<CTDxf> dxfs = new ArrayList<CTDxf>();
 
 	/**
 	 * The first style id available for use as a custom style

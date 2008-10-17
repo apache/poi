@@ -20,11 +20,11 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 
 /**
  * A client anchor is attached to an excel worksheet.  It anchors against
- * top-left and buttom-right cells.
+ * top-left and bottom-right cells.
  *
  * @author Yegor Kozlov
  */
-public class XSSFClientAnchor {
+public class XSSFClientAnchor extends XSSFAnchor {
 
     /**
      * Starting anchor point
@@ -92,7 +92,7 @@ public class XSSFClientAnchor {
         return cell1.getCol();
     }
 
-    public void setCol1(short col1) {
+    public void setCol1(int col1) {
         cell1.setCol(col1);
     }
 
@@ -100,7 +100,7 @@ public class XSSFClientAnchor {
         return cell2.getCol();
     }
 
-    public void setCol2(short col2) {
+    public void setCol2(int col2) {
         cell2.setCol(col2);
     }
 
@@ -176,6 +176,10 @@ public class XSSFClientAnchor {
         return cell1;
     }
 
+    protected void setFrom(CTMarker from){
+        cell1 = from;
+    }
+
     /**
      * Return ending anchor point
      *
@@ -183,5 +187,9 @@ public class XSSFClientAnchor {
      */
     public CTMarker getTo(){
         return cell2;
+    }
+
+    protected void setTo(CTMarker to){
+        cell2 = to;
     }
 }

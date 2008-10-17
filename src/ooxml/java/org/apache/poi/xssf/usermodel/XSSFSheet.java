@@ -60,6 +60,15 @@ import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelations
 public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     private static POILogger logger = POILogFactory.getLogger(XSSFSheet.class);
 
+    /**
+     * Column width measured as the number of characters of the maximum digit width of the
+     * numbers 0, 1, 2, ..., 9 as rendered in the normal style's font. There are 4 pixels of margin
+     * padding (two on each side), plus 1 pixel padding for the gridlines.
+     *
+     * This value is the same for default font in Office 2007 (Calibry) and Office 2003 and earlier (Arial)
+     */
+    private static float DEFAULT_COLUMN_WIDTH = 9.140625f;
+
     protected CTSheet sheet;
     protected CTWorksheet worksheet;
     protected CTDialogsheet dialogsheet;
@@ -260,7 +269,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         CTDrawing ctDrawing = worksheet.getDrawing();
         if(ctDrawing == null) {
             //drawingNumber = #drawings.size() + 1
-            int drawingNumber = getPackagePart().getPackage().getPartsByRelationshipType(XSSFRelation.DRAWINGS.getRelation()).size() + 1;
+            int drawingNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.DRAWINGS.getContentType()).size() + 1;
             drawing = (XSSFDrawing)createRelationship(XSSFRelation.DRAWINGS, XSSFFactory.getInstance(), drawingNumber);
             String relId = drawing.getPackageRelationship().getId();
 
@@ -425,32 +434,62 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return worksheet.getColBreaks();
     }
 
+    /**
+     * Get the actual column width (in units of 1/256th of a character width )
+     *
+     * <p>
+     * Note, the returned  value is always gerater that {@link #getDefaultColumnWidth()} because the latter does not include margins.
+     * Actual column width measured as the number of characters of the maximum digit width of the
+     * numbers 0, 1, 2, ..., 9 as rendered in the normal style's font. There are 4 pixels of margin
+     * padding (two on each side), plus 1 pixel padding for the gridlines.
+     * </p>
+     *
+     * @param columnIndex - the column to set (0-based)
+     * @return width - the width in units of 1/256th of a character width
+     */
     public int getColumnWidth(int columnIndex) {
         CTCol col = columnHelper.getColumn(columnIndex, false);
-        return col == null ? getDefaultColumnWidth() : (int)col.getWidth();
-    }
-    public short getColumnWidth(short column) {
-        return (short) getColumnWidth(column & 0xFFFF);
+        double width = col == null || !col.isSetWidth() ? DEFAULT_COLUMN_WIDTH : col.getWidth();
+        return (int)(width*256);
     }
 
+    /**
+     * Get the default column width for the sheet (if the columns do not define their own width) in
+     * characters.
+     * <p>
+     * Note, this value is different from {@link #getColumnWidth(int)}. The latter is always greater and includes
+     * 4 pixels of margin padding (two on each side), plus 1 pixel padding for the gridlines.
+     * </p>
+     * @return default column width
+     */
     public int getDefaultColumnWidth() {
         CTSheetFormatPr pr = getSheetTypeSheetFormatPr();
-        return pr.isSetDefaultColWidth() ? (int)pr.getDefaultColWidth() : (int)pr.getBaseColWidth();
+        return (int)pr.getBaseColWidth();
     }
 
+    /**
+     * Get the default row height for the sheet (if the rows do not define their own height) in
+     * twips (1/20 of  a point)
+     *
+     * @return  default row height
+     */
     public short getDefaultRowHeight() {
         return (short) (getSheetTypeSheetFormatPr().getDefaultRowHeight() * 20);
     }
 
-    protected CTSheetFormatPr getSheetTypeSheetFormatPr() {
-        if (worksheet.getSheetFormatPr() == null) {
-            worksheet.setSheetFormatPr(CTSheetFormatPr.Factory.newInstance());
-        }
-        return worksheet.getSheetFormatPr();
+    /**
+     * Get the default row height for the sheet measued in point size (if the rows do not define their own height).
+     *
+     * @return  default row height in points
+     */
+    public float getDefaultRowHeightInPoints() {
+        return (float)getSheetTypeSheetFormatPr().getDefaultRowHeight();
     }
 
-    public float getDefaultRowHeightInPoints() {
-        return (short) getSheetTypeSheetFormatPr().getDefaultRowHeight();
+    protected CTSheetFormatPr getSheetTypeSheetFormatPr() {
+        return worksheet.isSetSheetFormatPr() ?
+               worksheet.getSheetFormatPr() :
+               worksheet.addNewSheetFormatPr();
     }
 
     public boolean getDialog() {
@@ -589,8 +628,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *  when set, used on even pages.
      */
     public Header getEvenHeader() {
-        return new XSSFEvenHeader(getSheetTypeHeaderFooter()
-);
+        return new XSSFEvenHeader(getSheetTypeHeaderFooter());
     }
     /**
      * Returns the first page header. Not there by
@@ -931,21 +969,39 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return false;
     }
 
+    /**
+     * Get the hidden state for a given column.
+     *
+     * @param columnIndex - the column to set (0-based)
+     * @return hidden - <code>false</code> if the column is visible
+     */
     public boolean isColumnHidden(int columnIndex) {
         return columnHelper.getColumn(columnIndex, false).getHidden();
     }
-    public boolean isColumnHidden(short column) {
-        return isColumnHidden(column & 0xFFFF);
-    }
 
+    /**
+     * Gets the flag indicating whether this sheet should display formulas.
+     *
+     * @return <code>true</code> if this sheet should display formulas.
+     */
     public boolean isDisplayFormulas() {
         return getSheetTypeSheetView().getShowFormulas();
     }
 
+    /**
+     * Gets the flag indicating whether this sheet should display gridlines.
+     *
+     * @return <code>true</code> if this sheet should display gridlines.
+     */
     public boolean isDisplayGridlines() {
         return getSheetTypeSheetView().getShowGridLines();
     }
 
+    /**
+     * Gets the flag indicating whether this sheet should display row and column headings.
+     *
+     * @return <code>true</code> if this sheet should display row and column headings.
+     */
     public boolean isDisplayRowColHeadings() {
         return getSheetTypeSheetView().getShowRowColHeaders();
     }
@@ -1098,36 +1154,57 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     }
 
-    public void setColumnHidden(int columnIndex, boolean hidden) {
+    /**
+     * Get the visibility state for a given column.
+     *
+     * @param columnIndex - the column to get (0-based)
+     * @param hidden - the visiblity state of the column
+     */
+     public void setColumnHidden(int columnIndex, boolean hidden) {
         columnHelper.setColHidden(columnIndex, hidden);
-    }
-    public void setColumnHidden(short column, boolean hidden) {
-        setColumnHidden(column & 0xFFFF, hidden);
-    }
+     }
 
+    /**
+     * Set the width (in units of 1/256th of a character width)
+     *
+     * @param columnIndex - the column to set (0-based)
+     * @param width - the width in units of 1/256th of a character width
+     */
     public void setColumnWidth(int columnIndex, int width) {
-        columnHelper.setColWidth(columnIndex, width);
-    }
-    public void setColumnWidth(short column, short width) {
-        setColumnWidth(column & 0xFFFF, width & 0xFFFF);
+        columnHelper.setColWidth(columnIndex, (double)width/256);
     }
 
     public void setDefaultColumnStyle(short column, CellStyle style) {
         columnHelper.setColDefaultStyle(column, style);
     }
 
+    /**
+     * Specifies the number of characters of the maximum digit width of the normal style's font.
+     * This value does not include margin padding or extra padding for gridlines. It is only the
+     * number of characters.
+     *
+     * @param width the number of characters. Default value is <code>8</code>.
+     */
     public void setDefaultColumnWidth(int width) {
-        getSheetTypeSheetFormatPr().setDefaultColWidth(width);
-    }
-    public void setDefaultColumnWidth(short width) {
-        setDefaultColumnWidth(width & 0xFFFF);
+        getSheetTypeSheetFormatPr().setBaseColWidth(width);
     }
 
+    /**
+     * Set the default row height for the sheet (if the rows do not define their own height) in
+     * twips (1/20 of  a point)
+     *
+     * @param  height default row height in  twips (1/20 of  a point)
+     */
     public void setDefaultRowHeight(short height) {
-        getSheetTypeSheetFormatPr().setDefaultRowHeight(height / 20);
+        getSheetTypeSheetFormatPr().setDefaultRowHeight((double)height / 20);
 
     }
 
+    /**
+     * Sets default row height measured in point size.
+     *
+     * @param height default row height measured in point size.
+     */
     public void setDefaultRowHeightInPoints(float height) {
         getSheetTypeSheetFormatPr().setDefaultRowHeight(height);
 
@@ -1142,6 +1219,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
     }
 
+    /**
+     * Sets the flag indicating whether this sheet should display formulas.
+     *
+     * @param show <code>true</code> if this sheet should display formulas.
+     */
     public void setDisplayFormulas(boolean show) {
         getSheetTypeSheetView().setShowFormulas(show);
     }
@@ -1153,15 +1235,30 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return getDefaultSheetView();
     }
 
+    /**
+     * Sets the flag indicating whether this sheet should display gridlines.
+     *
+     * @param show <code>true</code> if this sheet should display gridlines.
+     */
     public void setDisplayGridlines(boolean show) {
         getSheetTypeSheetView().setShowGridLines(show);
     }
 
+    /**
+     * Sets the flag indicating whether this sheet should display row and column headings.
+     *
+     * @param show <code>true</code> if this sheet should display row and column headings.
+     */
     public void setDisplayRowColHeadings(boolean show) {
         getSheetTypeSheetView().setShowRowColHeaders(show);
     }
 
-    public void setFitToPage(boolean b) {
+    /**
+     * Flag indicating whether the Fit to Page print option is enabled.
+     *
+     * @param b <code>true</code> if the Fit to Page print option is enabled.
+     */
+     public void setFitToPage(boolean b) {
         getSheetTypePageSetUpPr().setFitToPage(b);
     }
 
@@ -1169,6 +1266,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         setPrintGridlines(value);
     }
 
+    /**
+     * Center on page horizontally when printing.
+     *
+     * @param value whether to center on page horizontally when printing.
+     */
     public void setHorizontallyCenter(boolean value) {
         getSheetTypePrintOptions().setHorizontalCentered(value);
     }
@@ -1306,15 +1408,45 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         getSheetTypeSheetView().setZoomScaleSheetLayoutView(scale);
     }
 
+    /**
+     * Shifts rows between startRow and endRow n number of rows.
+     * If you use a negative number, it will shift rows up.
+     * Code ensures that rows don't wrap around.
+     *
+     * Calls shiftRows(startRow, endRow, n, false, false);
+     *
+     * <p>
+     * Additionally shifts merged regions that are completely defined in these
+     * rows (ie. merged 2 cells on a row to be shifted).
+     * @param startRow the row to start shifting
+     * @param endRow the row to end shifting
+     * @param n the number of rows to shift
+     */
     public void shiftRows(int startRow, int endRow, int n) {
         shiftRows(startRow, endRow, n, false, false);
     }
 
+    /**
+     * Shifts rows between startRow and endRow n number of rows.
+     * If you use a negative number, it will shift rows up.
+     * Code ensures that rows don't wrap around
+     *
+     * <p>
+     * Additionally shifts merged regions that are completely defined in these
+     * rows (ie. merged 2 cells on a row to be shifted).
+     * <p>
+     * TODO Might want to add bounds checking here
+     * @param startRow the row to start shifting
+     * @param endRow the row to end shifting
+     * @param n the number of rows to shift
+     * @param copyRowHeight whether to copy the row height during the shift
+     * @param resetOriginalRowHeight whether to set the original row's height to the default
+     */
     public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             Row row = it.next();
             if (!copyRowHeight) {
-                row.setHeight((short)0);
+                row.setHeight((short)-1);
             }
             if (resetOriginalRowHeight && getDefaultRowHeight() >= 0) {
                 row.setHeight(getDefaultRowHeight());

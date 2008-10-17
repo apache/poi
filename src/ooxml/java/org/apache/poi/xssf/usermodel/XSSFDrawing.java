@@ -19,10 +19,9 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.XmlObject;
 import org.openxml4j.opc.*;
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.STEditAs;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 
 import javax.xml.namespace.QName;
@@ -30,6 +29,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.LinkedList;
 
 /**
  * Represents a SpreadsheetML drawing
@@ -106,6 +107,23 @@ public class XSSFDrawing extends POIXMLDocumentPart {
     }
 
     /**
+     * Constructs a textbox under the drawing.
+     *
+     * @param anchor    the client anchor describes how this group is attached
+     *                  to the sheet.
+     * @return      the newly created textbox.
+     */
+    public XSSFTextBox createTextbox(XSSFClientAnchor anchor){
+        CTTwoCellAnchor ctAnchor = createTwoCellAnchor(anchor);
+        CTShape ctShape = ctAnchor.addNewSp();
+        ctShape.set(XSSFSimpleShape.prototype());
+        XSSFTextBox shape = new XSSFTextBox(this, ctShape);
+        shape.anchor = anchor;
+        return shape;
+
+    }
+
+    /**
      * Creates a picture.
      *
      * @param anchor    the client anchor describes how this picture is attached to the sheet.
@@ -116,13 +134,32 @@ public class XSSFDrawing extends POIXMLDocumentPart {
      */
     public XSSFPicture createPicture(XSSFClientAnchor anchor, int pictureIndex)
     {
+        PackageRelationship rel = addPictureReference(pictureIndex);
+
+        CTTwoCellAnchor ctAnchor = createTwoCellAnchor(anchor);
+        ctAnchor.setEditAs(STEditAs.ONE_CELL);
+        CTPicture ctShape = ctAnchor.addNewPic();
+        ctShape.set(XSSFPicture.prototype());
+
+        XSSFPicture shape = new XSSFPicture(this, ctShape);
+        shape.anchor = anchor;
+        shape.setPictureReference(rel);
+        return shape;
+    }
+
+    /**
+     * Add the indexed picture to this drawing relations
+     *
+     * @param pictureIndex the index of the picture in the workbook collection of pictures,
+     *   {@link org.apache.poi.xssf.usermodel.XSSFWorkbook#getAllPictures()} .
+     */
+    protected PackageRelationship addPictureReference(int pictureIndex){
         XSSFWorkbook wb = (XSSFWorkbook)getParent().getParent();
         XSSFPictureData data = wb.getAllPictures().get(pictureIndex);
         PackagePartName ppName = data.getPackagePart().getPartName();
         PackageRelationship rel = packagePart.addRelationship(ppName, TargetMode.INTERNAL, XSSFRelation.IMAGES.getRelation());
         addRelation(new XSSFPictureData(data.getPackagePart(), rel));
-        CTTwoCellAnchor ctAnchor = createTwoCellAnchor(anchor);
-        return new XSSFPicture(this, rel, ctAnchor);
+        return rel;
     }
 
     /**
@@ -136,7 +173,49 @@ public class XSSFDrawing extends POIXMLDocumentPart {
     public XSSFSimpleShape createSimpleShape(XSSFClientAnchor anchor)
     {
         CTTwoCellAnchor ctAnchor = createTwoCellAnchor(anchor);
-        return new XSSFSimpleShape(this, ctAnchor);
+        CTShape ctShape = ctAnchor.addNewSp();
+        ctShape.set(XSSFSimpleShape.prototype());
+        XSSFSimpleShape shape = new XSSFSimpleShape(this, ctShape);
+        shape.anchor = anchor;
+        return shape;
+    }
+
+    /**
+     * Creates a simple shape.  This includes such shapes as lines, rectangles,
+     * and ovals.
+     *
+     * @param anchor    the client anchor describes how this group is attached
+     *                  to the sheet.
+     * @return  the newly created shape.
+     */
+    public XSSFConnector createConnector(XSSFClientAnchor anchor)
+    {
+        CTTwoCellAnchor ctAnchor = createTwoCellAnchor(anchor);
+        CTConnector ctShape = ctAnchor.addNewCxnSp();
+        ctShape.set(XSSFConnector.prototype());
+
+        XSSFConnector shape = new XSSFConnector(this, ctShape);
+        shape.anchor = anchor;
+        return shape;
+    }
+
+    /**
+     * Creates a simple shape.  This includes such shapes as lines, rectangles,
+     * and ovals.
+     *
+     * @param anchor    the client anchor describes how this group is attached
+     *                  to the sheet.
+     * @return  the newly created shape.
+     */
+    public XSSFShapeGroup createGroup(XSSFClientAnchor anchor)
+    {
+        CTTwoCellAnchor ctAnchor = createTwoCellAnchor(anchor);
+        CTGroupShape ctGroup = ctAnchor.addNewGrpSp();
+        ctGroup.set(XSSFShapeGroup.prototype());
+
+        XSSFShapeGroup shape = new XSSFShapeGroup(this, ctGroup);
+        shape.anchor = anchor;
+        return shape;
     }
 
     /**
@@ -144,12 +223,13 @@ public class XSSFDrawing extends POIXMLDocumentPart {
      *
      * @return a new CTTwoCellAnchor
      */
-    private CTTwoCellAnchor createTwoCellAnchor(XSSFClientAnchor anchor){
+    private CTTwoCellAnchor createTwoCellAnchor(XSSFClientAnchor anchor) {
         CTTwoCellAnchor ctAnchor = drawing.addNewTwoCellAnchor();
-        ctAnchor.setEditAs(STEditAs.ONE_CELL);
         ctAnchor.setFrom(anchor.getFrom());
         ctAnchor.setTo(anchor.getTo());
         ctAnchor.addNewClientData();
+        anchor.setTo(ctAnchor.getTo());
+        anchor.setFrom(ctAnchor.getFrom());
         return ctAnchor;
     }
 }
