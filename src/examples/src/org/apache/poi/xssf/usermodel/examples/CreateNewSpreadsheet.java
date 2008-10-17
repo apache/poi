@@ -48,7 +48,7 @@ public class CreateNewSpreadsheet {
 
         s1.groupRow(0, 3);
 
-        s1.getRow(1).setHeight(10.4);
+        s1.getRow(1).setHeightInPoints(10.4f);
         //s1.setActiveCell("A2");
         //s2.setSelected(true);
 
