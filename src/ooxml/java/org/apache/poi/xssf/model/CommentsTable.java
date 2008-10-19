@@ -35,22 +35,11 @@ import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackageRelationship;
 
 public class CommentsTable extends POIXMLDocumentPart implements CommentsSource {
-    private CTComments comments;
+    protected CTComments comments;
 
-    public CommentsTable(InputStream is) throws IOException {
-        super(null, null);
-        readFrom(is);
-    }
     public CommentsTable() {
         super(null, null);
         comments = CTComments.Factory.newInstance();
-    }
-    /**
-     * For unit testing only!
-     */
-    public CommentsTable(CTComments comments) {
-        super(null, null);
-        this.comments = comments;
     }
 
     public CommentsTable(PackagePart part, PackageRelationship rel) throws IOException {
@@ -147,5 +136,9 @@ public class CommentsTable extends POIXMLDocumentPart implements CommentsSource 
         int index = getCommentsAuthors().sizeOfAuthorArray();
         getCommentsAuthors().insertAuthor(index, author);
         return index;
+    }
+
+    public CTComments getCTComments(){
+        return comments;
     }
 }

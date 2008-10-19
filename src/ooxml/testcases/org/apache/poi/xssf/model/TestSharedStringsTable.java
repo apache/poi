@@ -111,17 +111,11 @@ public final class TestSharedStringsTable extends TestCase {
 	
 	public void testReadWrite() {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
-        SharedStringsTable sst1 = (SharedStringsTable)wb.getSharedStringSource();
+        SharedStringsTable sst1 = wb.getSharedStringSource();
 
         //serialize, read back and compare with the original
-		SharedStringsTable sst2;
-		try {
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			sst1.writeTo(out);
-			sst2 = new SharedStringsTable(new ByteArrayInputStream(out.toByteArray()));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		SharedStringsTable sst2 = XSSFTestDataSamples.writeOutAndReadBack(wb).getSharedStringSource();
+        
         assertEquals(sst1.getCount(), sst2.getCount());
         assertEquals(sst1.getUniqueCount(), sst2.getUniqueCount());
 

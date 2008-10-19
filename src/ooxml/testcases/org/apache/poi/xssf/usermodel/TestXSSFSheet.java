@@ -35,7 +35,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
@@ -284,7 +283,7 @@ public class TestXSSFSheet extends TestCase {
 
     public void testGetFooter() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet)workbook.createSheet("Sheet 1");
+        XSSFSheet sheet = workbook.createSheet("Sheet 1");
         assertNotNull(sheet.getFooter());
         sheet.getFooter().setCenter("test center footer");
         assertEquals("test center footer", sheet.getFooter().getCenter());
@@ -610,31 +609,25 @@ public class TestXSSFSheet extends TestCase {
     
     public void testGetCellComment() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        CTSheet ctSheet = CTSheet.Factory.newInstance();
-        CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
-        CTComments ctComments = CTComments.Factory.newInstance();
-        CommentsTable sheetComments = new CommentsTable(ctComments);
-        XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, workbook, sheetComments);
-        assertNotNull(sheet);
-        
-        CTComment ctComment = ctComments.addNewCommentList().insertNewComment(0);
-        ctComment.setRef("C10");
-        ctComment.setAuthorId(sheetComments.findAuthor("test C10 author"));
-        
+        XSSFSheet sheet = workbook.createSheet();
+        XSSFComment comment = sheet.createComment();
+        comment.setAuthor("test C10 author");
+        sheet.setCellComment("C10", comment);
+
         assertNotNull(sheet.getCellComment(9, 2));
         assertEquals("test C10 author", sheet.getCellComment(9, 2).getAuthor());
     }
     
     public void testSetCellComment() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        CTSheet ctSheet = CTSheet.Factory.newInstance();
-        CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
-        XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, workbook);
+        XSSFSheet sheet = workbook.createSheet();
+
+        XSSFComment comment = sheet.createComment();
+
         Cell cell = sheet.createRow(0).createCell((short)0);
-        CTComments ctComments = CTComments.Factory.newInstance();
-        CommentsTable comments = new CommentsTable(ctComments);
-        XSSFComment comment = comments.addComment();
-        
+        CommentsTable comments = (CommentsTable)sheet.getCommentsSourceIfExists();
+        CTComments ctComments = comments.getCTComments();
+
         sheet.setCellComment("A1", comment);
         assertEquals("A1", ctComments.getCommentList().getCommentArray(0).getRef());
         comment.setAuthor("test A1 author");
@@ -651,10 +644,10 @@ public class TestXSSFSheet extends TestCase {
     }
     
     public void testCreateFreezePane() {
-    	Workbook workbook = new XSSFWorkbook();
-    	CTSheet ctSheet = CTSheet.Factory.newInstance();
-    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
-    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+    	XSSFWorkbook workbook = new XSSFWorkbook();
+    	XSSFSheet sheet = workbook.createSheet();
+        CTWorksheet ctWorksheet = sheet.getWorksheet();
+
     	sheet.createFreezePane(2, 4);
     	assertEquals((double)2, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getXSplit());
     	assertEquals(STPane.BOTTOM_RIGHT, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getActivePane());
@@ -668,20 +661,17 @@ public class TestXSSFSheet extends TestCase {
     }
     
     public void testNewMergedRegionAt() {
-    	Workbook workbook = new XSSFWorkbook();
-    	CTSheet ctSheet = CTSheet.Factory.newInstance();
-    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
-    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet();
     	Region region = new Region("B2:D4");
     	sheet.addMergedRegion(region);
     	assertEquals("B2:D4", sheet.getMergedRegionAt(0).getRegionRef());
     }
     
     public void testGetNumMergedRegions() {
-    	Workbook workbook = new XSSFWorkbook();
-    	CTSheet ctSheet = CTSheet.Factory.newInstance();
-    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
-    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet();
+        CTWorksheet ctWorksheet = sheet.getWorksheet();
     	assertEquals(0, sheet.getNumMergedRegions());
     	Region region = new Region("B2:D4");
     	sheet.addMergedRegion(region);
@@ -689,10 +679,9 @@ public class TestXSSFSheet extends TestCase {
     }
     
     public void testRemoveMergedRegion() {
-    	Workbook workbook = new XSSFWorkbook();
-    	CTSheet ctSheet = CTSheet.Factory.newInstance();
-    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
-    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet();
+        CTWorksheet ctWorksheet = sheet.getWorksheet();
     	Region region_1 = new Region("A1:B2");
     	Region region_2 = new Region("C3:D4");
     	Region region_3 = new Region("E5:F6");
@@ -710,11 +699,10 @@ public class TestXSSFSheet extends TestCase {
     }
     
     public void testSetDefaultColumnStyle() {
-    	XSSFWorkbook workbook = new XSSFWorkbook();
-    	CTSheet ctSheet = CTSheet.Factory.newInstance();
-    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
-    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
-    	StylesTable stylesTable = (StylesTable) workbook.getStylesSource();
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet();
+        CTWorksheet ctWorksheet = sheet.getWorksheet();
+    	StylesTable stylesTable = workbook.getStylesSource();
     	XSSFFont font = new XSSFFont();
     	font.setFontName("Cambria");
     	stylesTable.putFont(font);
@@ -766,10 +754,8 @@ public class TestXSSFSheet extends TestCase {
 	
 	
 	   public void testGroupUngroupColumn() {
-	    	Workbook workbook = new XSSFWorkbook();
-	    	CTSheet ctSheet = CTSheet.Factory.newInstance();
-	    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
-	    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+           XSSFWorkbook workbook = new XSSFWorkbook();
+           XSSFSheet sheet = workbook.createSheet();
 
 	    	//one level
 	    	sheet.groupColumn((short)2,(short)7);
@@ -811,10 +797,8 @@ public class TestXSSFSheet extends TestCase {
 
 	    
 	    public void testGroupUngroupRow() {
-	    	Workbook workbook = new XSSFWorkbook();
-	    	CTSheet ctSheet = CTSheet.Factory.newInstance();
-	    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
-	    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            XSSFSheet sheet = workbook.createSheet();
 
 	    	//one level
 	    	sheet.groupRow(9,10);

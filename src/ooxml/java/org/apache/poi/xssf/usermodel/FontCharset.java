@@ -23,7 +23,6 @@ package org.apache.poi.xssf.usermodel;
  * corresponds to the ANSI codepage (8-bit or DBCS) of that character set used by a given language. 
  * 
  * @author Gisella Bronzetti
- *
  */
 public enum FontCharset {
 
@@ -33,7 +32,6 @@ public enum FontCharset {
      MAC(77),
      SHIFTJIS(128),
      HANGEUL(129),
-     HANGUL(129),
      JOHAB(130),
      GB2312(134),
      CHINESEBIG5(136),
@@ -51,62 +49,27 @@ public enum FontCharset {
     
     private int charset;
 
-    
-    FontCharset(int value){
+    private FontCharset(int value){
         charset = value;
     }
 
     /**
-     * Returns index of this charset
+     * Returns value of this charset
      *
-     * @return index of this charset
+     * @return value of this charset
      */
-    public byte getValue(){
-        return (byte)charset;
+    public int getValue(){
+        return charset;
     }
-    
+
+    private static FontCharset[] _table = new FontCharset[256];
+    static {
+        for (FontCharset c : values()) {
+            _table[c.getValue()] = c;
+        }
+    }
+
     public static FontCharset valueOf(int value){
-	switch (value) {
-	case 0:
-	    return ANSI;
-	case 1:
-	    return DEFAULT;
-	case 2:
-	    return SYMBOL;
-	case 77:
-	    return MAC;
-	case 128:
-	    return SHIFTJIS;
-	case 129:
-	    return HANGEUL;
-	case 130:
-	    return JOHAB;
-	case 134:
-	    return GB2312;
-	case 136:
-	    return CHINESEBIG5;
-	case 161:
-	    return GREEK;
-	case 162:
-	    return TURKISH;
-	case 163:
-	    return VIETNAMESE;
-	case 177:
-	    return HEBREW;
-	case 178:
-	    return ARABIC;
-	case 186:
-	    return BALTIC;
-	case 204:
-	    return RUSSIAN;
-	case 222:
-	    return THAI;
-	case 238:
-	    return EASTEUROPE;
-	case 255:
-	    return OEM;
-	}
-	throw new RuntimeException("Charset value ["+ value +"] not supported");    
+        return _table[value];
     }
-    
 }

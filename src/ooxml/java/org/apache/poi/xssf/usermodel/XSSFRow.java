@@ -35,15 +35,7 @@ public class XSSFRow implements Row, Comparable {
     private List<Cell> cells;
     
     private XSSFSheet sheet;
-    
-    /**
-     * Create a new XSSFRow. This method is protected to be used only by
-     * tests.
-     */
-    protected XSSFRow(XSSFSheet sheet) {
-        this(CTRow.Factory.newInstance(), sheet);
-    }
-    
+
     /**
      * Create a new XSSFRow.
      * 
@@ -75,28 +67,34 @@ public class XSSFRow implements Row, Comparable {
     	return cellIterator();
     }
 
-    public int compareTo(Object obj) {
-        XSSFRow loc = (XSSFRow) obj;
-        if (this.getRowNum() == loc.getRowNum())
-        {
-            return 0;
-        }
-        if (this.getRowNum() < loc.getRowNum())
-        {
-            return -1;
-        }
-        if (this.getRowNum() > loc.getRowNum())
-        {
-            return 1;
-        }
-        return -1;
+    /**
+     * Compares two <code>XSSFRow</code> objects.
+     *
+     * @param   row   the <code>XSSFRow</code> to be compared.
+     * @return	the value <code>0</code> if the row number of this <code>XSSFRow</code> is
+     * 		equal to the row number of the argument <code>XSSFRow</code>; a value less than
+     * 		<code>0</code> if the row number of this this <code>XSSFRow</code> is numerically less
+     * 		than the row number of the argument <code>XSSFRow</code>; and a value greater
+     * 		than <code>0</code> if the row number of this this <code>XSSFRow</code> is numerically
+     * 		 greater than the row number of the argument <code>XSSFRow</code>.
+     */
+    public int compareTo(Object row) {
+        int thisVal = this.getRowNum();
+        int anotherVal = ((XSSFRow)row).getRowNum();
+        return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));
     }
 
+    /**
+     * Use this to create new cells within the row and return it.
+     * <p>
+     * The cell that is returned is a CELL_TYPE_BLANK. The type can be changed
+     * either through calling <code>setCellValue</code> or <code>setCellType</code>.
+     *
+     * @param column - the column number this cell represents
+     * @return Cell a high level representation of the created cell.
+     */
     public XSSFCell createCell(int column) {
     	return createCell(column, Cell.CELL_TYPE_BLANK);
-    }
-    public XSSFCell createCell(short column) {
-    	return createCell((int)column);
     }
 
     /**
@@ -117,19 +115,24 @@ public class XSSFRow implements Row, Comparable {
         return xcell;
     }
 
-    public XSSFCell createCell(short column, int type) {
-    	return createCell((int)column, type);
-    }
+    /**
+     * Use this to create new cells within the row and return it.
+     *
+     * @param column - the column number this cell represents
+     * @param type - the cell's data type
+     *
+     * @return XSSFCell a high level representation of the created cell.
+     */
     public XSSFCell createCell(int column, int type) {
         int index = 0;
         for (Cell c : this.cells) {
-            if (c.getCellNum() == column) {
+            if (c.getColumnIndex() == column) {
                 // Replace c with new Cell
                 XSSFCell xcell = addCell(column, index, type);
                 cells.set(index, xcell);
                 return xcell;
             }
-            if (c.getCellNum() > column) {
+            if (c.getColumnIndex() > column) {
                 XSSFCell xcell = addCell(column, index, type);
                 cells.add(index, xcell);
                 return xcell;

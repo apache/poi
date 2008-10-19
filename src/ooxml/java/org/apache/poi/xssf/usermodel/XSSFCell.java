@@ -36,6 +36,7 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.SharedStringSource;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.model.SharedStringsTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
@@ -50,18 +51,10 @@ public final class XSSFCell implements Cell {
     private final CTCell cell;
     private final XSSFRow row;
     private int cellNum;
-    private SharedStringSource sharedStringSource;
+    private SharedStringsTable sharedStringSource;
     private StylesTable stylesSource;
 
     private POILogger logger = POILogFactory.getLogger(XSSFCell.class);
-
-    /**
-     * Create a new XSSFCell. This method is protected to be used only by
-     * tests.
-     */
-    protected XSSFCell(XSSFRow row) {
-        this(row, CTCell.Factory.newInstance());
-    }
 
     public XSSFCell(XSSFRow row, CTCell cell) {
         this.cell = cell;
@@ -70,10 +63,10 @@ public final class XSSFCell implements Cell {
             this.cellNum = parseCellNum(cell.getR());
         }
         this.sharedStringSource = row.getSheet().getWorkbook().getSharedStringSource();
-        this.stylesSource = (StylesTable)row.getSheet().getWorkbook().getStylesSource();
+        this.stylesSource = row.getSheet().getWorkbook().getStylesSource();
     }
 
-    protected SharedStringSource getSharedStringSource() {
+    protected SharedStringsTable getSharedStringSource() {
         return this.sharedStringSource;
     }
     

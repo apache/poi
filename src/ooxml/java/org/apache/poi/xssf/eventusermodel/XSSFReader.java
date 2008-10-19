@@ -68,7 +68,8 @@ public class XSSFReader {
      *  shared strings.
      */
     public SharedStringsTable getSharedStringsTable() throws IOException, InvalidFormatException {
-        return new SharedStringsTable(getSharedStringsData());
+        ArrayList<PackagePart> parts = pkg.getPartsByContentType( XSSFRelation.SHARED_STRINGS.getContentType());
+        return parts.size() == 0 ? null : new SharedStringsTable(parts.get(0), null);
     }
 
     /**
@@ -76,7 +77,8 @@ public class XSSFReader {
      *  returns a handy object for working with cell styles
      */
     public StylesTable getStylesTable() throws IOException, InvalidFormatException {
-        return new StylesTable(getStylesData());
+        ArrayList<PackagePart> parts = pkg.getPartsByContentType( XSSFRelation.STYLES.getContentType());
+        return parts.size() == 0 ? null : new StylesTable(parts.get(0), null);
     }
 
 

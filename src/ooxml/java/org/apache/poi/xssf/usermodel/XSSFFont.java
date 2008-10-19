@@ -21,17 +21,7 @@ import java.util.ArrayList;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.xssf.usermodel.extensions.XSSFColor;
 import org.apache.poi.xssf.model.StylesTable;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontName;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontScheme;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontSize;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIntProperty;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTUnderlineProperty;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTVerticalAlignFontProperty;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignRun;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 /**
  * Represents a font used in a workbook.
@@ -106,7 +96,8 @@ public class XSSFFont implements Font {
      */
     public byte getCharSet() {
         CTIntProperty charset = ctFont.sizeOfCharsetArray() == 0 ? null : ctFont.getCharsetArray(0);
-        return charset == null ? FontCharset.ANSI.getValue() : FontCharset.valueOf(charset.getVal()).getValue();
+        int val = charset == null ? FontCharset.ANSI.getValue() : FontCharset.valueOf(charset.getVal()).getValue();
+        return (byte)val;
     }
 
 
@@ -247,23 +238,8 @@ public class XSSFFont implements Font {
     public byte getUnderline() {
         CTUnderlineProperty underline = ctFont.sizeOfUArray() == 0 ? null : ctFont.getUArray(0);
         if (underline != null) {
-            FontUnderline fontUnderline = FontUnderline.valueOf(underline.getVal());
-            switch (fontUnderline.getValue().intValue()) {
-                case STUnderlineValues.INT_DOUBLE:
-                    return Font.U_DOUBLE;
-                case STUnderlineValues.INT_DOUBLE_ACCOUNTING:
-                    return Font.U_DOUBLE_ACCOUNTING;
-
-                case STUnderlineValues.INT_SINGLE_ACCOUNTING:
-                    return Font.U_SINGLE_ACCOUNTING;
-
-                case STUnderlineValues.INT_NONE:
-                    return Font.U_NONE;
-
-                case STUnderlineValues.INT_SINGLE:
-                default:
-                    return Font.U_SINGLE;
-            }
+            FontUnderline val = FontUnderline.valueOf(underline.getVal().intValue());
+            return val.getByteValue();
         }
         return Font.U_NONE;
     }
@@ -328,7 +304,7 @@ public class XSSFFont implements Font {
      * @param charSet
      */
     public void setCharSet(FontCharset charSet) {
-        setCharSet(charSet.getValue());
+        setCharSet((byte)charSet.getValue());
     }
 
     /**
@@ -490,26 +466,7 @@ public class XSSFFont implements Font {
      * @see FontUnderline
      */
     public void setUnderline(byte underline) {
-        if(underline == Font.U_NONE) {
-            ctFont.setUArray(null);
-        } else {
-            CTUnderlineProperty ctUnderline = ctFont.sizeOfUArray() == 0 ? ctFont.addNewU() : ctFont.getUArray(0);
-            switch (underline) {
-                case Font.U_DOUBLE:
-                    ctUnderline.setVal(FontUnderline.DOUBLE.getValue());
-                    break;
-                case Font.U_DOUBLE_ACCOUNTING:
-                    ctUnderline.setVal(FontUnderline.DOUBLE_ACCOUNTING.getValue());
-                    break;
-                case Font.U_SINGLE_ACCOUNTING:
-                    ctUnderline.setVal(FontUnderline.SINGLE_ACCOUNTING.getValue());
-                    break;
-                case Font.U_SINGLE:
-                default:
-                    ctUnderline.setVal(FontUnderline.NONE.getValue());
-                    break;
-            }
-        }
+        setUnderline(FontUnderline.valueOf(underline));
     }
 
     /**
@@ -520,8 +477,13 @@ public class XSSFFont implements Font {
      * @param underline - FontUnderline enum value
      */
     public void setUnderline(FontUnderline underline) {
-        CTUnderlineProperty ctUnderline = ctFont.sizeOfUArray() == 0 ? ctFont.addNewU() : ctFont.getUArray(0);
-        ctUnderline.setVal(underline.getValue());
+        if(underline == FontUnderline.NONE && ctFont.sizeOfUArray() > 0){
+            ctFont.setUArray(null);
+        } else {
+            CTUnderlineProperty ctUnderline = ctFont.sizeOfUArray() == 0 ? ctFont.addNewU() : ctFont.getUArray(0);
+            STUnderlineValues.Enum val = STUnderlineValues.Enum.forInt(underline.getValue());
+            ctUnderline.setVal(val);
+        }
     }
 
 
@@ -550,7 +512,7 @@ public class XSSFFont implements Font {
      */
     public FontScheme getScheme() {
         CTFontScheme scheme = ctFont.sizeOfSchemeArray() == 0 ? null : ctFont.getSchemeArray(0);
-        return scheme == null ? FontScheme.NONE : FontScheme.valueOf(scheme.getVal());
+        return scheme == null ? FontScheme.NONE : FontScheme.valueOf(scheme.getVal().intValue());
     }
 
     /**
@@ -561,7 +523,8 @@ public class XSSFFont implements Font {
      */
     public void setScheme(FontScheme scheme) {
         CTFontScheme ctFontScheme = ctFont.sizeOfSchemeArray() == 0 ? ctFont.addNewScheme() : ctFont.getSchemeArray(0);
-        ctFontScheme.setVal(scheme.getValue());
+        STFontScheme.Enum val = STFontScheme.Enum.forInt(scheme.getValue());
+        ctFontScheme.setVal(val);
     }
 
     /**

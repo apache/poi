@@ -17,8 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellComments;
-
 /**
  * These enumerations specify how cell comments shall be displayed for paper printing purposes.
  *
@@ -29,45 +27,35 @@ public enum PrintCellComments {
     /**
      * Do not print cell comments.
      */
-    NONE(STCellComments.NONE),
+    NONE(1),
     /**
      * Print cell comments as displayed.
      */
-    AS_DISPLAYED(STCellComments.AS_DISPLAYED),
+    AS_DISPLAYED(2),
     /**
      * Print cell comments at end of document.
      */
-    AT_END(STCellComments.AT_END);
+    AT_END(3);
 
 
-    private STCellComments.Enum comments;
+    private int comments;
 
-
-    PrintCellComments(STCellComments.Enum comments) {
+    private PrintCellComments(int comments) {
         this.comments = comments;
     }
 
-
-    /**
-     * Returns comments of cell
-     *
-     * @return String comments of cell
-     */
-    public STCellComments.Enum getValue() {
+    public int getValue() {
         return comments;
     }
 
-
-    public static PrintCellComments valueOf(STCellComments.Enum cellComment) {
-        switch (cellComment.intValue()) {
-            case STCellComments.INT_AS_DISPLAYED:
-                return AS_DISPLAYED;
-            case STCellComments.INT_AT_END:
-                return AT_END;
-            case STCellComments.INT_NONE:
-                return NONE;
+    private static PrintCellComments[] _table = new PrintCellComments[4];
+    static {
+        for (PrintCellComments c : values()) {
+            _table[c.getValue()] = c;
         }
-        throw new RuntimeException("PrintCellComments: value [" + cellComment + "] not supported");
     }
 
+    public static PrintCellComments valueOf(int value){
+        return _table[value];
+    }
 }

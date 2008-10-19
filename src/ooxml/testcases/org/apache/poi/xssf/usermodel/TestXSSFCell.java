@@ -59,7 +59,7 @@ public final class TestXSSFCell extends TestCase {
      */
     public void testSetGetBoolean() throws Exception {
         XSSFRow row = createParentObjects();
-        XSSFCell cell = new XSSFCell(row);
+        XSSFCell cell = row.createCell(0);
         cell.setCellValue(true);
         assertEquals(Cell.CELL_TYPE_BOOLEAN, cell.getCellType());
         assertTrue(cell.getBooleanCellValue());
@@ -79,7 +79,7 @@ public final class TestXSSFCell extends TestCase {
      */
     public void testSetGetNumeric() throws Exception {
         XSSFRow row = createParentObjects();
-        XSSFCell cell = new XSSFCell(row);
+        XSSFCell cell = row.createCell(0);
         cell.setCellValue(10d);
         assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
         assertEquals(10d, cell.getNumericCellValue());
@@ -92,7 +92,7 @@ public final class TestXSSFCell extends TestCase {
      */
     public void testSetGetDate() throws Exception {
         XSSFRow row = createParentObjects();
-        XSSFCell cell = new XSSFCell(row);
+        XSSFCell cell = row.createCell(0);
         Date now = new Date();
         cell.setCellValue(now);
         assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
@@ -120,7 +120,7 @@ public final class TestXSSFCell extends TestCase {
     
     public void testSetGetError() throws Exception {
         XSSFRow row = createParentObjects();
-        XSSFCell cell = new XSSFCell(row);
+        XSSFCell cell = row.createCell(0);
         
         cell.setCellErrorValue((byte)0);
         assertEquals(Cell.CELL_TYPE_ERROR, cell.getCellType());
@@ -137,7 +137,7 @@ public final class TestXSSFCell extends TestCase {
     
     public void testSetGetFormula() throws Exception {
         XSSFRow row = createParentObjects();
-        XSSFCell cell = new XSSFCell(row);
+        XSSFCell cell = row.createCell(0);
         String formula = "SQRT(C2^2+D2^2)";
         
         cell.setCellFormula(formula);
@@ -174,7 +174,7 @@ public final class TestXSSFCell extends TestCase {
     
     public void testSetGetStringShared() {
         XSSFRow row = createParentObjects();
-        XSSFCell cell = new XSSFCell(row);
+        XSSFCell cell = row.createCell(0);
 
         cell.setCellValue(new XSSFRichTextString(""));
         assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
@@ -190,7 +190,7 @@ public final class TestXSSFCell extends TestCase {
      */
     public void testGetEmptyCellValue() {
         XSSFRow row = createParentObjects();
-        XSSFCell cell = new XSSFCell(row);
+        XSSFCell cell = row.createCell(0);
         cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
         assertFalse(cell.getBooleanCellValue());
         cell.setCellType(Cell.CELL_TYPE_NUMERIC);
@@ -214,7 +214,7 @@ public final class TestXSSFCell extends TestCase {
     public void testFormatPosition() {
         XSSFRow row = createParentObjects();
         row.setRowNum(0);
-        XSSFCell cell = new XSSFCell(row);
+        XSSFCell cell = row.createCell(0);
         cell.setCellNum((short) 0);
         assertEquals("A1", cell.formatPosition());
         cell.setCellNum((short) 25);
@@ -227,40 +227,19 @@ public final class TestXSSFCell extends TestCase {
         assertEquals("IV32768", cell.formatPosition());
     }
     
-    public static class DummySharedStringSource implements SharedStringSource {
-        ArrayList<CTRst> strs = new ArrayList<CTRst>();
-        public CTRst getEntryAt(int idx) {
-            return strs.get(idx);
-        }
-
-        public synchronized int addEntry(CTRst s) {
-            if(strs.contains(s)) {
-                return strs.indexOf(s);
-            }
-            strs.add(s);
-            return strs.size() - 1;
-        }
-    }
-    
     public void testGetCellComment() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        CTSheet ctSheet = CTSheet.Factory.newInstance();
-        CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
-        CTComments ctComments = CTComments.Factory.newInstance();
-        CommentsTable sheetComments = new CommentsTable(ctComments);
-        XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, workbook, sheetComments);
+        XSSFSheet sheet = workbook.createSheet();
         assertNotNull(sheet);
-        
+
+        XSSFComment comment = sheet.createComment();
+        comment.setAuthor(TEST_C10_AUTHOR);
+        sheet.setCellComment("C10", comment);
+
         // Create C10 cell
         Row row = sheet.createRow(9);
         row.createCell(2);
         row.createCell(3);
-        
-        
-        // Set a comment for C10 cell
-        CTComment ctComment = ctComments.addNewCommentList().insertNewComment(0);
-        ctComment.setRef("C10");
-        ctComment.setAuthorId(sheetComments.findAuthor(TEST_C10_AUTHOR));
         
         assertNotNull(sheet.getRow(9).getCell((short)2));
         assertNotNull(sheet.getRow(9).getCell((short)2).getCellComment());
@@ -270,41 +249,35 @@ public final class TestXSSFCell extends TestCase {
     
     public void testSetCellComment() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        CTSheet ctSheet = CTSheet.Factory.newInstance();
-        CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
-        CTComments ctComments = CTComments.Factory.newInstance();
-        CommentsTable comments = new CommentsTable(ctComments);
-        XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, workbook, comments);
+        XSSFSheet sheet = workbook.createSheet();
         assertNotNull(sheet);
-        
+
+        XSSFComment comment = sheet.createComment();
+        comment.setAuthor(TEST_C10_AUTHOR);
+
+        CTWorksheet ctWorksheet = sheet.getWorksheet();
+
         // Create C10 cell
         Row row = sheet.createRow(9);
         Cell cell = row.createCell(2);
         row.createCell(3);
-        
-        // Create a comment
-        Comment comment = comments.addComment();
-        comment.setAuthor(TEST_C10_AUTHOR);
-        
+
         // Set a comment for C10 cell
         cell.setCellComment(comment);
         
         CTCell ctCell = ctWorksheet.getSheetData().getRowArray(0).getCArray(0);
 		assertNotNull(ctCell);
 		assertEquals("C10", ctCell.getR());
-		long authorId = ctComments.getCommentList().getCommentArray(0).getAuthorId();
-		assertEquals(TEST_C10_AUTHOR, comments.getAuthor(authorId));
+		assertEquals(TEST_C10_AUTHOR, comment.getAuthor());
     }
     
     public void testSetAsActiveCell() {
-    	Workbook workbook = new XSSFWorkbook();
-    	CTSheet ctSheet = CTSheet.Factory.newInstance();
-    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
-    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+    	XSSFWorkbook workbook = new XSSFWorkbook();
+    	XSSFSheet sheet = workbook.createSheet();
     	Cell cell = sheet.createRow(0).createCell((short)0);
     	cell.setAsActiveCell();
     	
-    	assertEquals("A1", ctWorksheet.getSheetViews().getSheetViewArray(0).getSelectionArray(0).getActiveCell());
+    	assertEquals("A1", sheet.getWorksheet().getSheetViews().getSheetViewArray(0).getSelectionArray(0).getActiveCell());
     }
     
     
@@ -345,9 +318,8 @@ public final class TestXSSFCell extends TestCase {
 
     private static XSSFRow createParentObjects() {
         XSSFWorkbook wb = new XSSFWorkbook();
-        wb.setSharedStringSource(new SharedStringsTable());
-        XSSFSheet sheet = new XSSFSheet(wb);
-        XSSFRow row = new XSSFRow(sheet);
+        XSSFSheet sheet = wb.createSheet();
+        XSSFRow row = sheet.createRow(0);
         return row;
     }
 

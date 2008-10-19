@@ -18,9 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.PrintSetup;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetup;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 
 /**
@@ -34,21 +32,10 @@ public class XSSFPrintSetup implements PrintSetup {
 
 
     public XSSFPrintSetup(CTWorksheet worksheet) {
-        if (worksheet == null) throw new NullPointerException("");
         this.ctWorksheet = worksheet;
         this.pageSetup = ctWorksheet.getPageSetup() == null ? ctWorksheet.addNewPageSetup() : ctWorksheet.getPageSetup();
         this.pageMargins = ctWorksheet.getPageMargins() == null ? ctWorksheet.addNewPageMargins() : ctWorksheet.getPageMargins();
     }
-
-    public XSSFPrintSetup(XSSFSheet sheet) {
-        this(sheet.getWorksheet());
-    }
-
-    public XSSFPrintSetup(CTPageSetup pageSetup, CTPageMargins pageMargins) {
-        this.pageMargins = pageMargins;
-        this.pageSetup = pageSetup;
-    }
-
 
     /**
      * Set the paper size.
@@ -164,8 +151,9 @@ public class XSSFPrintSetup implements PrintSetup {
      * @param printnotes print the notes
      */
     public void setNotes(boolean printnotes) {
-        if (printnotes)
-            pageSetup.setCellComments(PrintCellComments.AS_DISPLAYED.getValue());
+        if (printnotes){
+            pageSetup.setCellComments(STCellComments.AS_DISPLAYED);
+        }
     }
 
     /**
@@ -240,7 +228,8 @@ public class XSSFPrintSetup implements PrintSetup {
      * @see PrintOrientation
      */
     public void setOrientation(PrintOrientation orientation) {
-        pageSetup.setOrientation(orientation.getValue());
+        STOrientation.Enum v = STOrientation.Enum.forInt(orientation.getValue());
+        pageSetup.setOrientation(v);
     }
 
     /**
@@ -250,12 +239,14 @@ public class XSSFPrintSetup implements PrintSetup {
      * @see PrintOrientation
      */
     public PrintOrientation getOrientation() {
-        return (pageSetup.getOrientation() == null) ? null : PrintOrientation.valueOf(pageSetup.getOrientation());
+        STOrientation.Enum val = pageSetup.getOrientation();
+        return val == null ? PrintOrientation.DEFAULT : PrintOrientation.valueOf(val.intValue());
     }
 
 
     public PrintCellComments getCellComment() {
-        return (pageSetup.getCellComments() == null) ? null : PrintCellComments.valueOf(pageSetup.getCellComments());
+        STCellComments.Enum val = pageSetup.getCellComments();
+        return val == null ? PrintCellComments.NONE : PrintCellComments.valueOf(val.intValue());
     }
 
     /**
@@ -264,7 +255,8 @@ public class XSSFPrintSetup implements PrintSetup {
      * @param pageOrder
      */
     public void setPageOrder(PageOrder pageOrder) {
-        pageSetup.setPageOrder(pageOrder.getValue());
+        STPageOrder.Enum v = STPageOrder.Enum.forInt(pageOrder.getValue());
+        pageSetup.setPageOrder(v);
     }
 
     /**
@@ -273,7 +265,7 @@ public class XSSFPrintSetup implements PrintSetup {
      * @return PageOrder
      */
     public PageOrder getPageOrder() {
-        return (pageSetup.getPageOrder() == null) ? null : PageOrder.valueOf(pageSetup.getPageOrder());
+        return (pageSetup.getPageOrder() == null) ? null : PageOrder.valueOf(pageSetup.getPageOrder().intValue());
     }
 
     /**

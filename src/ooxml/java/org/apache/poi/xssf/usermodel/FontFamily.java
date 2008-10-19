@@ -19,12 +19,10 @@ package org.apache.poi.xssf.usermodel;
 
 
 /**
- * 
  * The font family this font belongs to. A font family is a set of fonts having common stroke width and serif
  * characteristics. The font name overrides when there are conflicting values.
- * 
- * @author Gisella Bronzetti
  *
+ * @author Gisella Bronzetti
  */
 public enum FontFamily {
 
@@ -34,11 +32,10 @@ public enum FontFamily {
     MODERN(3),
     SCRIPT(4),
     DECORATIVE(5);
-    
+
     private int family;
 
-    
-    FontFamily(int value){
+    private FontFamily(int value) {
         family = value;
     }
 
@@ -47,28 +44,19 @@ public enum FontFamily {
      *
      * @return index of this font family
      */
-    public int getValue(){
+    public int getValue() {
         return family;
     }
-    
 
-    public static FontFamily valueOf(int family){
-	switch (family) {
-	case 0:
-	    return NOT_APPLICABLE;
-	case 1:
-	    return ROMAN;
-	case 2:
-	    return SWISS;
-	case 3:
-	    return MODERN;
-	case 4:
-	    return SCRIPT;
-	case 5:
-	    return DECORATIVE;
-	}
-	throw new RuntimeException("Family value ["+ family +"] not supported");    
+    private static FontFamily[] _table = new FontFamily[6];
+
+    static {
+        for (FontFamily c : values()) {
+            _table[c.getValue()] = c;
+        }
     }
-    
-    
+
+    public static FontFamily valueOf(int family) {
+        return _table[family];
+    }
 }

@@ -82,17 +82,6 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource {
 	private StyleSheetDocument doc;
 
 	/**
-	 * Create a new StylesTable, by reading it from
-	 *  the InputStream of a a PackagePart.
-	 *
-	 * @param is The input stream containing the XML document.
-	 * @throws IOException if an error occurs while reading.
-	 */
-	public StylesTable(InputStream is) throws IOException {
-        super(null, null);
-		readFrom(is);
-	}
-	/**
 	 * Create a new, empty StylesTable
 	 */
 	public StylesTable() {

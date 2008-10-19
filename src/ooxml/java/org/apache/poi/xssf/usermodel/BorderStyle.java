@@ -22,9 +22,7 @@ package org.apache.poi.xssf.usermodel;
  * i.e., whether it is borded dash dot, dash dot dot, dashed, dotted, double, hair, medium, 
  * medium dash dot, medium dash dot dot, medium dashed, none, slant dash dot, thick or thin.
  */
-
-
-public enum BorderStyle {
+ public enum BorderStyle {
 
     /**
      * No border
