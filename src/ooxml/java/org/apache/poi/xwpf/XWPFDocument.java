@@ -71,7 +71,11 @@ public class XWPFDocument extends POIXMLDocument {
 	protected List<XWPFHyperlink> hyperlinks;
 	protected List<XWPFParagraph> paragraphs;
 	protected List<XWPFTable> tables;
-	
+    /**
+     * The embedded OLE2 files in the OPC package
+     */
+    private List<PackagePart> embedds;
+
 	/** Handles the joy of different headers/footers for different pages */
 	private XWPFHeaderFooterPolicy headerFooterPolicy;
 	
@@ -239,5 +243,13 @@ public class XWPFDocument extends POIXMLDocument {
 	{
 		return getCorePart().getRelationshipsByType(COMMENT_RELATION_TYPE);
 	}
+
+    /**
+     * Get the document's embedded files.
+     */
+    public List<PackagePart> getAllEmbedds() throws OpenXML4JException {
+        return embedds;
+    }
+
 }
 
