@@ -17,8 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STOrientation;
-
 /**
  * The enumeration value indicating the print orientation for a sheet.
  *
@@ -29,49 +27,37 @@ public enum PrintOrientation {
     /**
      * orientation not specified
      */
-    DEFAULT(STOrientation.DEFAULT),
+    DEFAULT(1),
     /**
      * portrait orientation
      */
-    PORTRAIT(STOrientation.PORTRAIT),
+    PORTRAIT(2),
     /**
      * landscape orientations
      */
-    LANDSCAPE(STOrientation.LANDSCAPE);
+    LANDSCAPE(3);
 
 
-    private STOrientation.Enum orientation;
+    private int orientation;
 
-
-    PrintOrientation(STOrientation.Enum orientation) {
+    private PrintOrientation(int orientation) {
         this.orientation = orientation;
     }
 
 
-    /**
-     * Returns value of the orientation
-     *
-     * @return String value of the orientation
-     */
-    public STOrientation.Enum getValue() {
+    public int getValue() {
         return orientation;
     }
 
 
-    public static PrintOrientation valueOf(STOrientation.Enum orient) {
-        switch (orient.intValue()) {
-            case STOrientation.INT_DEFAULT:
-                return DEFAULT;
-            case STOrientation.INT_LANDSCAPE:
-                return LANDSCAPE;
-            case STOrientation.INT_PORTRAIT:
-                return PORTRAIT;
-                /*
-        default:
-            return DEFAULT;
-            */
+    private static PrintOrientation[] _table = new PrintOrientation[4];
+    static {
+        for (PrintOrientation c : values()) {
+            _table[c.getValue()] = c;
         }
-        throw new RuntimeException("Orientation value [" + orient + "] not supported");
     }
 
+    public static PrintOrientation valueOf(int value){
+        return _table[value];
+    }
 }

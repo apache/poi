@@ -259,9 +259,8 @@ public final class TestColumnHelper extends TestCase {
     
     public void testGetSetColDefaultStyle() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        CTSheet ctSheet = CTSheet.Factory.newInstance();
-        CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
-        XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, workbook);
+        XSSFSheet sheet = workbook.createSheet();
+        CTWorksheet ctWorksheet = sheet.getWorksheet();
         ColumnHelper columnHelper = sheet.getColumnHelper();
         
         // POI column 3, OOXML column 4

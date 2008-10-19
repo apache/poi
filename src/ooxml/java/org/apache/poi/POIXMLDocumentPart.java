@@ -176,6 +176,7 @@ public class POIXMLDocumentPart {
             doc.packageRel = rel;
             doc.packagePart = part;
             doc.parent = this;
+            doc.onDocumentCreate();
             addRelation(doc);
             return doc;
         } catch (Exception e){
@@ -201,6 +202,7 @@ public class POIXMLDocumentPart {
                 }
                 POIXMLDocumentPart childPart = factory.createDocumentPart(rel, p);
                 childPart.parent = this;
+                childPart.onDocumentRead();
                 addRelation(childPart);
 
                 if(p.hasRelationships()) childPart.read(factory);
@@ -208,4 +210,17 @@ public class POIXMLDocumentPart {
         }
     }
 
+    /**
+     * Fired when a new package part is created
+     */
+    public void onDocumentCreate(){
+
+    }
+
+    /**
+     * Fired when a package part is read
+     */
+    public void onDocumentRead(){
+
+    }
 }

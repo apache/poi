@@ -75,7 +75,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     protected List<Row> rows;
     protected List<XSSFHyperlink> hyperlinks;
     protected ColumnHelper columnHelper;
-    protected CommentsSource sheetComments;
+    private CommentsSource sheetComments;
     protected CTMergeCells ctMergeCells;
 
     public static final short LeftMargin = 0;
@@ -95,27 +95,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     public XSSFSheet(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
         super(part, rel);
         worksheet = WorksheetDocument.Factory.parse(part.getInputStream()).getWorksheet();
-    }
-
-    public XSSFSheet(CTSheet sheet, CTWorksheet worksheet, XSSFWorkbook workbook, CommentsSource sheetComments) {
-        super(null, null);
-        this.parent = workbook;
-        this.sheet = sheet;
-        this.worksheet = worksheet;
-        this.sheetComments = sheetComments;
-
-        initialize();
-    }
-
-    public XSSFSheet(CTSheet sheet, CTWorksheet worksheet, XSSFWorkbook workbook) {
-        this(sheet, worksheet, workbook, null);
-    }
-
-    protected XSSFSheet(XSSFWorkbook workbook) {
-        super(null, null);
-        this.parent = workbook;
-
-        hyperlinks = new ArrayList<XSSFHyperlink>();
     }
 
     /**
@@ -326,7 +305,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *  need to assign it to a cell though
      */
     public XSSFComment createComment() {
-        return (XSSFComment)getComments().addComment();
+        if (sheetComments == null) {
+            sheetComments = (CommentsTable)createRelationship(XSSFRelation.SHEET_COMMENTS, XSSFFactory.getInstance(), (int)sheet.getSheetId());
+        }
+        return (XSSFComment)sheetComments.addComment();
     }
 
     protected XSSFRow addRow(int index, int rownum) {
@@ -394,7 +376,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     public XSSFComment getCellComment(int row, int column) {
         if (sheetComments == null) return null;
-        else return (XSSFComment)getComments().findCellComment(row, column);
+        else return (XSSFComment)sheetComments.findCellComment(row, column);
     }
 
     public XSSFHyperlink getHyperlink(int row, int column) {
@@ -1633,22 +1615,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return views.getSheetViewArray(views.getSheetViewArray().length - 1);
     }
 
-    protected XSSFSheet cloneSheet() {
-        XSSFSheet newSheet = new XSSFSheet(getWorkbook());
-        newSheet.setSheet((CTSheet)sheet.copy());
-        return newSheet;
-    }
-
-    private void setSheet(CTSheet sheet) {
-        this.sheet = sheet;
-    }
-
-    private CommentsSource getComments() {
-        if (sheetComments == null) {
-            sheetComments = (CommentsTable)createRelationship(XSSFRelation.SHEET_COMMENTS, XSSFFactory.getInstance(), (int)sheet.getSheetId());
-        }
-        return sheetComments;
-    }
     /**
      * Returns the sheet's comments object if there is one,
      *  or null if not

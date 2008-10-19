@@ -310,33 +310,26 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     public XSSFSheet cloneSheet(int sheetNum) {
         XSSFSheet srcSheet = sheets.get(sheetNum);
         String srcName = getSheetName(sheetNum);
-        if (srcSheet != null) {
-            XSSFSheet clonedSheet = srcSheet.cloneSheet();
-
-            sheets.add(clonedSheet);
-            CTSheet newcts = this.workbook.getSheets().addNewSheet();
-            newcts.set(clonedSheet.getSheet());
-
-            int i = 1;
-            while (true) {
-                //Try and find the next sheet name that is unique
-                String name = srcName;
-                String index = Integer.toString(i++);
-                if (name.length() + index.length() + 2 < 31) {
-                    name = name + "("+index+")";
-                } else {
-                    name = name.substring(0, 31 - index.length() - 2) + "(" +index + ")";
-                }
-
-                //If the sheet name is unique, then set it otherwise move on to the next number.
-                if (getSheetIndex(name) == -1) {
-                    setSheetName(sheets.size() - 1, name);
-                    break;
-                }
+        int i = 1;
+        String name = srcName;
+        while (true) {
+            //Try and find the next sheet name that is unique
+            String index = Integer.toString(i++);
+            if (name.length() + index.length() + 2 < 31) {
+                name = name + "("+index+")";
+            } else {
+                name = name.substring(0, 31 - index.length() - 2) + "(" +index + ")";
             }
-            return clonedSheet;
+
+            //If the sheet name is unique, then set it otherwise move on to the next number.
+            if (getSheetIndex(name) == -1) {
+                break;
+            }
         }
-        return null;
+
+        XSSFSheet clonedSheet = createSheet(name);
+        clonedSheet.worksheet.set(srcSheet.worksheet);
+        return clonedSheet;
     }
 
     /**
@@ -425,11 +418,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return wrapper;
     }
 
-    protected XSSFSheet createDialogsheet(String sheetname, CTDialogsheet dialogsheet) {
-        CTSheet sheet = addSheet(sheetname);
-        XSSFDialogsheet wrapper = new XSSFDialogsheet(sheet, dialogsheet, this);
-        this.sheets.add(wrapper);
-        return wrapper;
+    protected XSSFDialogsheet createDialogsheet(String sheetname, CTDialogsheet dialogsheet) {
+        XSSFSheet sheet = createSheet(sheetname);
+        return new XSSFDialogsheet(sheet);
     }
 
     private CTSheet addSheet(String sheetname) {

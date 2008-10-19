@@ -60,7 +60,7 @@ import org.openxml4j.opc.PackageRelationship;
  * @author Nick Birch
  * @author Yegor Kozlov
  */
-public class SharedStringsTable extends POIXMLDocumentPart implements SharedStringSource {
+public class SharedStringsTable extends POIXMLDocumentPart {
 
     /**
      *  Array of individual string items in the Shared String table.
@@ -84,18 +84,6 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
      * at the character level.
      */
     private int uniqueCount;
-
-    /**
-     * Create a new SharedStringsTable, by reading it 
-     *  from the InputStream of a PackagePart.
-     * 
-     * @param is The input stream containing the XML document.
-     * @throws IOException if an error occurs while reading.
-     */
-    public SharedStringsTable(InputStream is) throws IOException {
-        super(null, null);
-        readFrom(is);
-    }
 
     public SharedStringsTable() {
         super(null, null);

@@ -27,15 +27,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 
 public class TestXSSFDialogSheet extends TestCase {
 	
-	public void testDialogsheetConstructor() {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Sheet 1");
-		XSSFDialogsheet dialogsheet = new XSSFDialogsheet(CTSheet.Factory.newInstance(), CTDialogsheet.Factory.newInstance(), workbook);
-		assertNotNull(dialogsheet);
-		XSSFDialogsheet dialogsheet2 = new XSSFDialogsheet(CTSheet.Factory.newInstance(), null, workbook);
-		assertNotNull(dialogsheet2);
-	}
-	
+
 	public void testCreateDialogSheet() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet dialogsheet = workbook.createDialogsheet("Dialogsheet 1", CTDialogsheet.Factory.newInstance());

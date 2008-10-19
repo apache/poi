@@ -17,52 +17,41 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STFontScheme;
-
 
 /**
- * Defines the font scheme to which this font belongs. 
+ * Defines the font scheme to which this font belongs.
  * When a font definition is part of a theme definition, then the font is categorized as either a major or minor font scheme component.
  * When a new theme is chosen, every font that is part of a theme definition is updated to use the new major or minor font definition for that
  * theme.
  * Usually major fonts are used for styles like headings, and minor fonts are used for body & paragraph text.
  *
  * @author Gisella Bronzetti
- *
  */
 public enum FontScheme {
 
 
-    MAJOR(STFontScheme.MAJOR), 
-    MINOR(STFontScheme.MINOR),
-    NONE(STFontScheme.NONE);
+    NONE(1),
+    MAJOR(2),
+    MINOR(3);
 
-    private STFontScheme.Enum scheme;
+    private int value;
 
-
-    FontScheme(STFontScheme.Enum value){
-	scheme = value;
+    private FontScheme(int val) {
+        value = val;
     }
 
-    /**
-     * Returns STFontScheme.Enum value of this font scheme
-     *
-     * @return STFontScheme.Enum value of this font scheme
-     */
-    public STFontScheme.Enum getValue(){
-	return scheme;
+    public int getValue() {
+        return value;
     }
 
+    private static FontScheme[] _table = new FontScheme[4];
+    static {
+        for (FontScheme c : values()) {
+            _table[c.getValue()] = c;
+        }
+    }
 
-    public static FontScheme valueOf(STFontScheme.Enum scheme){
-	switch (scheme.intValue()) {
-	case STFontScheme.INT_MAJOR:
-	    return MAJOR;
-	case STFontScheme.INT_MINOR:
-	    return MINOR;
-	case STFontScheme.INT_NONE:
-	    return NONE;
-	}
-	throw new RuntimeException("Schema value ["+ scheme +"] not supported");    
+    public static FontScheme valueOf(int value){
+        return _table[value];
     }
 }

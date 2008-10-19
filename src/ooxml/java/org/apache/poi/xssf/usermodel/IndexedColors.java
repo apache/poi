@@ -78,8 +78,7 @@ public enum IndexedColors {
     PLUM(61),
     INDIGO(62),
     GREY_80_PERCENT(63),
-    AUTOMATIC(64),
-    ;
+    AUTOMATIC(64);
 
     private int index;
 

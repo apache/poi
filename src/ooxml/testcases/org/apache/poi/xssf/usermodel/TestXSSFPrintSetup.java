@@ -19,191 +19,188 @@ package org.apache.poi.xssf.usermodel;
 
 import junit.framework.TestCase;
 
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetup;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellComments;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STOrientation;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPageOrder;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 /**
  * Tests for {@link XSSFPrintSetup}
- *
  */
 public class TestXSSFPrintSetup extends TestCase {
 
 
-    public void testConstructor(){
-	CTPageSetup pSetup=CTPageSetup.Factory.newInstance();
-	CTPageMargins pMargins=CTPageMargins.Factory.newInstance();
-	XSSFPrintSetup printSetup=new XSSFPrintSetup(pSetup, pMargins);
-	assertNotNull(printSetup);
-
-	XSSFWorkbook wb=new XSSFWorkbook();
-	printSetup=new XSSFPrintSetup(wb.createSheet());
-	assertNotNull(printSetup);
-    }
-
     public void testSetGetPaperSize() {
-	CTPageSetup pSetup=CTPageSetup.Factory.newInstance();
-	pSetup.setPaperSize(9);
-	XSSFPrintSetup printSetup=new XSSFPrintSetup(pSetup, null);
-	assertEquals(PaperSize.A4_PAPER,printSetup.getPaperSizeEnum());
-	assertEquals(9,printSetup.getPaperSize());
+        CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
+        CTPageSetup pSetup = worksheet.addNewPageSetup();
+        pSetup.setPaperSize(9);
+        XSSFPrintSetup printSetup = new XSSFPrintSetup(worksheet);
+        assertEquals(PaperSize.A4_PAPER, printSetup.getPaperSizeEnum());
+        assertEquals(9, printSetup.getPaperSize());
 
-	printSetup.setPaperSize(PaperSize.A3_PAPER);
-	assertEquals(8,pSetup.getPaperSize());
+        printSetup.setPaperSize(PaperSize.A3_PAPER);
+        assertEquals(8, pSetup.getPaperSize());
     }
 
 
     public void testSetGetScale() {
-	CTPageSetup pSetup=CTPageSetup.Factory.newInstance();
-	pSetup.setScale(9);
-	XSSFPrintSetup printSetup=new XSSFPrintSetup(pSetup, null);
-	assertEquals(9,printSetup.getScale());
+        CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
+        CTPageSetup pSetup = worksheet.addNewPageSetup();
+        pSetup.setScale(9);
+        XSSFPrintSetup printSetup = new XSSFPrintSetup(worksheet);
+        assertEquals(9, printSetup.getScale());
 
-	printSetup.setScale((short)100);
-	assertEquals(100,pSetup.getScale());
+        printSetup.setScale((short) 100);
+        assertEquals(100, pSetup.getScale());
     }
 
     public void testSetGetPageStart() {
-	CTPageSetup pSetup=CTPageSetup.Factory.newInstance();
-	pSetup.setFirstPageNumber(9);
-	XSSFPrintSetup printSetup=new XSSFPrintSetup(pSetup, null);
-	assertEquals(9,printSetup.getPageStart());
+        CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
+        CTPageSetup pSetup = worksheet.addNewPageSetup();
+        pSetup.setFirstPageNumber(9);
+        XSSFPrintSetup printSetup = new XSSFPrintSetup(worksheet);
+        assertEquals(9, printSetup.getPageStart());
 
-	printSetup.setPageStart((short)1);
-	assertEquals(1,pSetup.getFirstPageNumber());
+        printSetup.setPageStart((short) 1);
+        assertEquals(1, pSetup.getFirstPageNumber());
     }
 
 
     public void testSetGetFitWidthHeight() {
-	CTPageSetup pSetup=CTPageSetup.Factory.newInstance();
-	pSetup.setFitToWidth(50);
-	pSetup.setFitToHeight(99);
-	XSSFPrintSetup printSetup=new XSSFPrintSetup(pSetup, null);
-	assertEquals(50,printSetup.getFitWidth());
-	assertEquals(99,printSetup.getFitHeight());
+        CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
+        CTPageSetup pSetup = worksheet.addNewPageSetup();
+        pSetup.setFitToWidth(50);
+        pSetup.setFitToHeight(99);
+        XSSFPrintSetup printSetup = new XSSFPrintSetup(worksheet);
+        assertEquals(50, printSetup.getFitWidth());
+        assertEquals(99, printSetup.getFitHeight());
 
-	printSetup.setFitWidth((short)66);
-	printSetup.setFitHeight((short)80);
-	assertEquals(66,pSetup.getFitToWidth());
-	assertEquals(80,pSetup.getFitToHeight());
+        printSetup.setFitWidth((short) 66);
+        printSetup.setFitHeight((short) 80);
+        assertEquals(66, pSetup.getFitToWidth());
+        assertEquals(80, pSetup.getFitToHeight());
 
     }
 
     public void testSetGetLeftToRight() {
-	CTPageSetup pSetup=CTPageSetup.Factory.newInstance();
-	pSetup.setPageOrder(STPageOrder.DOWN_THEN_OVER);
-	XSSFPrintSetup printSetup=new XSSFPrintSetup(pSetup, null);
-	assertEquals(false,printSetup.getLeftToRight());
-	
-	printSetup.setLeftToRight(true);
-	assertEquals(PageOrder.OVER_THEN_DOWN.getValue(),pSetup.getPageOrder());
+        CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
+        CTPageSetup pSetup = worksheet.addNewPageSetup();
+        pSetup.setPageOrder(STPageOrder.DOWN_THEN_OVER);
+        XSSFPrintSetup printSetup = new XSSFPrintSetup(worksheet);
+        assertEquals(false, printSetup.getLeftToRight());
+
+        printSetup.setLeftToRight(true);
+        assertEquals(PageOrder.OVER_THEN_DOWN.getValue(), pSetup.getPageOrder().intValue());
     }
 
     public void testSetGetOrientation() {
-	CTPageSetup pSetup=CTPageSetup.Factory.newInstance();
-	pSetup.setOrientation(STOrientation.PORTRAIT);
-	XSSFPrintSetup printSetup=new XSSFPrintSetup(pSetup, null);
-	assertEquals(PrintOrientation.PORTRAIT,printSetup.getOrientation());
-	assertEquals(false,printSetup.getLandscape());
-	assertEquals(false,printSetup.getNoOrientation());
+        CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
+        CTPageSetup pSetup = worksheet.addNewPageSetup();
+        pSetup.setOrientation(STOrientation.PORTRAIT);
+        XSSFPrintSetup printSetup = new XSSFPrintSetup(worksheet);
+        assertEquals(PrintOrientation.PORTRAIT, printSetup.getOrientation());
+        assertEquals(false, printSetup.getLandscape());
+        assertEquals(false, printSetup.getNoOrientation());
 
-	printSetup.setOrientation(PrintOrientation.LANDSCAPE);
-	assertEquals(pSetup.getOrientation(),printSetup.getOrientation().getValue());
-	assertEquals(true,printSetup.getLandscape());
-	assertEquals(false,printSetup.getNoOrientation());
+        printSetup.setOrientation(PrintOrientation.LANDSCAPE);
+        assertEquals(pSetup.getOrientation().intValue(), printSetup.getOrientation().getValue());
+        assertEquals(true, printSetup.getLandscape());
+        assertEquals(false, printSetup.getNoOrientation());
     }
 
 
     public void testSetGetValidSettings() {
-	CTPageSetup pSetup=CTPageSetup.Factory.newInstance();
-	pSetup.setUsePrinterDefaults(false);
-	XSSFPrintSetup printSetup=new XSSFPrintSetup(pSetup, null);
-	assertEquals(false,printSetup.getValidSettings());
+        CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
+        CTPageSetup pSetup = worksheet.addNewPageSetup();
+        pSetup.setUsePrinterDefaults(false);
+        XSSFPrintSetup printSetup = new XSSFPrintSetup(worksheet);
+        assertEquals(false, printSetup.getValidSettings());
 
-	printSetup.setValidSettings(true);
-	assertEquals(true,pSetup.getUsePrinterDefaults());
+        printSetup.setValidSettings(true);
+        assertEquals(true, pSetup.getUsePrinterDefaults());
     }
 
     public void testSetGetNoColor() {
-	CTPageSetup pSetup=CTPageSetup.Factory.newInstance();
-	pSetup.setBlackAndWhite(false);
-	XSSFPrintSetup printSetup=new XSSFPrintSetup(pSetup, null);
-	assertEquals(false,printSetup.getNoColor());
+        CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
+        CTPageSetup pSetup = worksheet.addNewPageSetup();
+        pSetup.setBlackAndWhite(false);
+        XSSFPrintSetup printSetup = new XSSFPrintSetup(worksheet);
+        assertEquals(false, printSetup.getNoColor());
 
-	printSetup.setNoColor(true);
-	assertEquals(true,pSetup.getBlackAndWhite());
+        printSetup.setNoColor(true);
+        assertEquals(true, pSetup.getBlackAndWhite());
     }
 
     public void testSetGetDraft() {
-	CTPageSetup pSetup=CTPageSetup.Factory.newInstance();
-	pSetup.setDraft(false);
-	XSSFPrintSetup printSetup=new XSSFPrintSetup(pSetup, null);
-	assertEquals(false,printSetup.getDraft());
+        CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
+        CTPageSetup pSetup = worksheet.addNewPageSetup();
+        pSetup.setDraft(false);
+        XSSFPrintSetup printSetup = new XSSFPrintSetup(worksheet);
+        assertEquals(false, printSetup.getDraft());
 
-	printSetup.setDraft(true);
-	assertEquals(true,pSetup.getDraft());
+        printSetup.setDraft(true);
+        assertEquals(true, pSetup.getDraft());
     }
 
     public void testSetGetNotes() {
-	CTPageSetup pSetup=CTPageSetup.Factory.newInstance();
-	pSetup.setCellComments(STCellComments.NONE);
-	XSSFPrintSetup printSetup=new XSSFPrintSetup(pSetup, null);
-	assertEquals(false,printSetup.getNotes());
+        CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
+        CTPageSetup pSetup = worksheet.addNewPageSetup();
+        pSetup.setCellComments(STCellComments.NONE);
+        XSSFPrintSetup printSetup = new XSSFPrintSetup(worksheet);
+        assertEquals(false, printSetup.getNotes());
 
-	printSetup.setNotes(true);
-	assertEquals(PrintCellComments.AS_DISPLAYED.getValue(),pSetup.getCellComments());
+        printSetup.setNotes(true);
+        assertEquals(PrintCellComments.AS_DISPLAYED.getValue(), pSetup.getCellComments().intValue());
     }
 
 
     public void testSetGetUsePage() {
-	CTPageSetup pSetup=CTPageSetup.Factory.newInstance();
-	pSetup.setUseFirstPageNumber(false);
-	XSSFPrintSetup printSetup=new XSSFPrintSetup(pSetup, null);
-	assertEquals(false,printSetup.getUsePage());
+        CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
+        CTPageSetup pSetup = worksheet.addNewPageSetup();
+        pSetup.setUseFirstPageNumber(false);
+        XSSFPrintSetup printSetup = new XSSFPrintSetup(worksheet);
+        assertEquals(false, printSetup.getUsePage());
 
-	printSetup.setUsePage(true);
-	assertEquals(true,pSetup.getUseFirstPageNumber());
+        printSetup.setUsePage(true);
+        assertEquals(true, pSetup.getUseFirstPageNumber());
     }
 
     public void testSetGetHVResolution() {
-	CTPageSetup pSetup=CTPageSetup.Factory.newInstance();
-	pSetup.setHorizontalDpi(120);
-	pSetup.setVerticalDpi(100);
-	XSSFPrintSetup printSetup=new XSSFPrintSetup(pSetup, null);
-	assertEquals(120,printSetup.getHResolution());
-	assertEquals(100,printSetup.getVResolution());
+        CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
+        CTPageSetup pSetup = worksheet.addNewPageSetup();
+        pSetup.setHorizontalDpi(120);
+        pSetup.setVerticalDpi(100);
+        XSSFPrintSetup printSetup = new XSSFPrintSetup(worksheet);
+        assertEquals(120, printSetup.getHResolution());
+        assertEquals(100, printSetup.getVResolution());
 
-	printSetup.setHResolution((short)150);
-	printSetup.setVResolution((short)130);
-	assertEquals(150,pSetup.getHorizontalDpi());
-	assertEquals(130,pSetup.getVerticalDpi());
+        printSetup.setHResolution((short) 150);
+        printSetup.setVResolution((short) 130);
+        assertEquals(150, pSetup.getHorizontalDpi());
+        assertEquals(130, pSetup.getVerticalDpi());
     }
 
     public void testSetGetHeaderFooterMargin() {
-	CTPageMargins pMargins=CTPageMargins.Factory.newInstance();
-	pMargins.setHeader(1.5);
-	pMargins.setFooter(2);
-	XSSFPrintSetup printSetup=new XSSFPrintSetup( null, pMargins);
-	assertEquals(1.5,printSetup.getHeaderMargin());
-	assertEquals(2.0,printSetup.getFooterMargin());
+        CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
+        CTPageMargins pMargins = worksheet.addNewPageMargins();
+        pMargins.setHeader(1.5);
+        pMargins.setFooter(2);
+        XSSFPrintSetup printSetup = new XSSFPrintSetup(worksheet);
+        assertEquals(1.5, printSetup.getHeaderMargin());
+        assertEquals(2.0, printSetup.getFooterMargin());
 
-	printSetup.setHeaderMargin(5);
-	printSetup.setFooterMargin(3.5);
-	assertEquals(5.0,pMargins.getHeader());
-	assertEquals(3.5,pMargins.getFooter());
+        printSetup.setHeaderMargin(5);
+        printSetup.setFooterMargin(3.5);
+        assertEquals(5.0, pMargins.getHeader());
+        assertEquals(3.5, pMargins.getFooter());
     }
 
     public void testSetGetCopies() {
-	CTPageSetup pSetup=CTPageSetup.Factory.newInstance();
-	pSetup.setCopies(9);
-	XSSFPrintSetup printSetup=new XSSFPrintSetup(pSetup, null);
-	assertEquals(9,printSetup.getCopies());
+        CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
+        CTPageSetup pSetup = worksheet.addNewPageSetup();
+        pSetup.setCopies(9);
+        XSSFPrintSetup printSetup = new XSSFPrintSetup(worksheet);
+        assertEquals(9, printSetup.getCopies());
 
-	printSetup.setCopies((short)15);
-	assertEquals(15,pSetup.getCopies());
+        printSetup.setCopies((short) 15);
+        assertEquals(15, pSetup.getCopies());
     }
-
 
 }

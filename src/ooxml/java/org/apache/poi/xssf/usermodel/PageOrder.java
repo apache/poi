@@ -17,8 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPageOrder;
-
 /**
  * Specifies printed page order.
  *
@@ -29,37 +27,33 @@ public enum PageOrder {
     /**
      * Order pages vertically first, then move horizontally.
      */
-    DOWN_THEN_OVER(STPageOrder.DOWN_THEN_OVER),
+    DOWN_THEN_OVER(1),
     /**
      * Order pages horizontally first, then move vertically
      */
-    OVER_THEN_DOWN(STPageOrder.OVER_THEN_DOWN);
+    OVER_THEN_DOWN(2);
 
 
-    private STPageOrder.Enum order;
+    private int order;
 
 
-    PageOrder(STPageOrder.Enum order) {
+    private PageOrder(int order) {
         this.order = order;
     }
 
-    /**
-     * Returns value of pages order
-     *
-     * @return String value of pages order
-     */
-    public STPageOrder.Enum getValue() {
+    public int getValue() {
         return order;
     }
 
 
-    public static PageOrder valueOf(STPageOrder.Enum pageOrder) {
-        switch (pageOrder.intValue()) {
-            case STPageOrder.INT_DOWN_THEN_OVER:
-                return DOWN_THEN_OVER;
-            case STPageOrder.INT_OVER_THEN_DOWN:
-                return OVER_THEN_DOWN;
+    private static PageOrder[] _table = new PageOrder[3];
+    static {
+        for (PageOrder c : values()) {
+            _table[c.getValue()] = c;
         }
-        throw new RuntimeException("PageOrder value [" + pageOrder + "] not supported");
+    }
+
+    public static PageOrder valueOf(int value){
+        return _table[value];
     }
 }

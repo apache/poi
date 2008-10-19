@@ -17,59 +17,107 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
-
+import org.apache.poi.ss.usermodel.Font;
 
 /**
  * the different types of possible underline formatting
- * 
- * @author Gisella Bronzetti
  *
+ * @author Gisella Bronzetti
  */
 public enum FontUnderline {
-    
-/**
- * Double-line underlining under each character in the
- * cell. underlines are drawn through the descenders of
- * characters such as g and p.
- */
-   DOUBLE(STUnderlineValues.DOUBLE),
-   DOUBLE_ACCOUNTING(STUnderlineValues.DOUBLE_ACCOUNTING),
-   NONE(STUnderlineValues.NONE),
-   SINGLE(STUnderlineValues.SINGLE),
-   SINGLE_ACCOUNTING(STUnderlineValues.SINGLE_ACCOUNTING);
-    
-    private STUnderlineValues.Enum underline;
-
-    
-    FontUnderline(STUnderlineValues.Enum value){
-        underline = value;
-    }
 
     /**
-     * Returns index of this font family
-     *
-     * @return index of this font family
+     * Single-line underlining under each character in the cell.
+     * The underline is drawn through the descenders of
+     * characters such as g and p..
      */
-    public STUnderlineValues.Enum getValue(){
-        return underline;
+    SINGLE(1),
+
+    /**
+     * Double-line underlining under each character in the
+     * cell. underlines are drawn through the descenders of
+     * characters such as g and p.
+     */
+    DOUBLE(2),
+
+    /**
+     * Single-line accounting underlining under each
+     * character in the cell. The underline is drawn under the
+     * descenders of characters such as g and p.
+     */
+    SINGLE_ACCOUNTING(3),
+
+    /**
+     * Double-line accounting underlining under each
+     * character in the cell. The underlines are drawn under
+     * the descenders of characters such as g and p.
+     */
+    DOUBLE_ACCOUNTING(4),
+
+    /**
+     * No underline.
+     */
+    NONE(5);
+
+    private int value;
+
+
+    private FontUnderline(int val) {
+        value = val;
     }
-    
-    public static FontUnderline valueOf(STUnderlineValues.Enum underline){
-	switch (underline.intValue()) {
-	case STUnderlineValues.INT_DOUBLE:
-	    return DOUBLE;
-	case STUnderlineValues.INT_DOUBLE_ACCOUNTING:
-	    return DOUBLE_ACCOUNTING;
-	case STUnderlineValues.INT_SINGLE:
-	    return SINGLE;
-	case STUnderlineValues.INT_SINGLE_ACCOUNTING:
-	    return SINGLE_ACCOUNTING;
-	case STUnderlineValues.INT_NONE:
-	    return NONE;
-	}
-	throw new RuntimeException("Underline value ["+ underline +"] not supported");    
+
+    public int getValue() {
+        return value;
     }
-    
-    
+
+    public byte getByteValue() {
+        switch (this) {
+            case DOUBLE:
+                return Font.U_DOUBLE;
+            case DOUBLE_ACCOUNTING:
+                return Font.U_DOUBLE_ACCOUNTING;
+            case SINGLE_ACCOUNTING:
+                return Font.U_SINGLE_ACCOUNTING;
+            case NONE:
+                return Font.U_NONE;
+            case SINGLE:
+                return Font.U_SINGLE;
+            default:
+                return Font.U_SINGLE;
+        }
+    }
+
+    private static FontUnderline[] _table = new FontUnderline[6];
+    static {
+        for (FontUnderline c : values()) {
+            _table[c.getValue()] = c;
+        }
+    }
+
+    public static FontUnderline valueOf(int value){
+        return _table[value];
+    }
+
+    public static FontUnderline valueOf(byte value){
+        FontUnderline val;
+        switch (value) {
+            case Font.U_DOUBLE:
+                val = FontUnderline.DOUBLE;
+                break;
+            case Font.U_DOUBLE_ACCOUNTING:
+                val = FontUnderline.DOUBLE_ACCOUNTING;
+                break;
+            case Font.U_SINGLE_ACCOUNTING:
+                val = FontUnderline.SINGLE_ACCOUNTING;
+                break;
+            case Font.U_SINGLE:
+                val = FontUnderline.SINGLE;
+                break;
+            default:
+                val = FontUnderline.NONE;
+                break;
+        }
+        return val;
+    }
+
 }

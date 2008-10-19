@@ -43,7 +43,8 @@ public final class TestXSSFRow extends TestCase {
      * Test adding cells to a row in various places and see if we can find them again.
      */
     public void testAddAndIterateCells() {
-        XSSFRow row = new XSSFRow(createParentObjects());
+        XSSFSheet sheet = createParentObjects();
+        XSSFRow row = sheet.createRow(0);
 
         // One cell at the beginning
         Cell cell1 = row.createCell((short) 1);
@@ -125,7 +126,8 @@ public final class TestXSSFRow extends TestCase {
         assertFalse(row.getFirstCellNum() == (short) 2);
 
         // Test a row without cells
-        XSSFRow emptyRow = new XSSFRow(createParentObjects());
+        XSSFSheet sheet = createParentObjects();
+        XSSFRow emptyRow = sheet.createRow(0);
         assertEquals(-1, emptyRow.getFirstCellNum());
     }
 
@@ -155,7 +157,8 @@ public final class TestXSSFRow extends TestCase {
      * Tests for the missing/blank cell policy stuff
      */
     public void testGetCellPolicy() throws Exception {
-        XSSFRow row = new XSSFRow(createParentObjects());
+        XSSFSheet sheet = createParentObjects();
+        XSSFRow row = sheet.createRow(0);
 
         // 0 -> string
         // 1 -> num
@@ -214,7 +217,8 @@ public final class TestXSSFRow extends TestCase {
      * @return row
      */
     private static XSSFRow getSampleRow() {
-        XSSFRow row = new XSSFRow(createParentObjects());
+        XSSFSheet sheet = createParentObjects();
+        XSSFRow row = sheet.createRow(0);
         row.createCell((short) 2);
         row.createCell((short) 3, Cell.CELL_TYPE_NUMERIC);
         row.createCell((short) 4);

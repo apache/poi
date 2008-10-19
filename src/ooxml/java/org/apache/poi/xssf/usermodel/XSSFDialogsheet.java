@@ -19,18 +19,19 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxml4j.opc.PackagePart;
+import org.openxml4j.opc.PackageRelationship;
+
+import java.io.IOException;
 
 public class XSSFDialogsheet extends XSSFSheet implements Sheet{
 
-    public XSSFDialogsheet(CTSheet sheet, CTDialogsheet dialogsheet,
-                           XSSFWorkbook workbook) {
-        super(sheet, CTWorksheet.Factory.newInstance(), workbook);
-        this.worksheet = null;
-        this.dialogsheet = dialogsheet;
-        if (this.dialogsheet == null) {
-            this.dialogsheet = CTDialogsheet.Factory.newInstance();
-        }
+    public XSSFDialogsheet(XSSFSheet sheet) {
+        this.packagePart = sheet.getPackagePart();
+        this.packageRel = sheet.getPackageRelationship();
+        this.dialogsheet = CTDialogsheet.Factory.newInstance();
     }
 
     public XSSFRow createRow(int rowNum) {

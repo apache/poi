@@ -21,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Comment;
@@ -31,13 +32,11 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.POIXMLDocumentPart;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackagingURIHelper;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 import junit.framework.TestCase;
 
@@ -48,9 +47,13 @@ public class TestCommentsTable extends TestCase {
 	private static final String TEST_A1_TEXT = "test A1 text";
 	private static final String TEST_AUTHOR = "test author";
 
-	public void testfindAuthor() {
-		CTComments comments = CTComments.Factory.newInstance();
-		CommentsTable sheetComments = new CommentsTable(comments);
+	public void testfindAuthor() throws Exception {
+        CommentsDocument doc = CommentsDocument.Factory.newInstance();
+		doc.setComments(CTComments.Factory.newInstance());
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        doc.save(out, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+        CommentsTable sheetComments = new CommentsTable();
+        sheetComments.readFrom(new ByteArrayInputStream(out.toByteArray()));
 
 		assertEquals(0, sheetComments.findAuthor(TEST_AUTHOR));
 		assertEquals(1, sheetComments.findAuthor("another author"));
@@ -59,9 +62,16 @@ public class TestCommentsTable extends TestCase {
 		assertEquals(1, sheetComments.findAuthor("another author"));
 	}
 	
-	public void testGetCellComment() {
-		CTComments comments = CTComments.Factory.newInstance();
-		CommentsTable sheetComments = new CommentsTable(comments);
+	public void testGetCellComment() throws Exception {
+        CommentsDocument doc = CommentsDocument.Factory.newInstance();
+		doc.setComments(CTComments.Factory.newInstance());
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        doc.save(out, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+        CommentsTable sheetComments = new CommentsTable();
+        sheetComments.readFrom(new ByteArrayInputStream(out.toByteArray()));
+
+
+		CTComments comments = sheetComments.getCTComments();
 		CTCommentList commentList = comments.addNewCommentList();
 		
 		// Create 2 comments for A1 and A" cells
@@ -85,10 +95,15 @@ public class TestCommentsTable extends TestCase {
 		assertNull(sheetComments.findCellComment(2, 0));
 	}
 	
-	public void testAddCellComment() {
-		CTComments comments = CTComments.Factory.newInstance();
-		CommentsTable sheetComments = new CommentsTable(comments);
-		CTCommentList commentList = comments.addNewCommentList();
+	public void testAddCellComment() throws Exception {
+        CommentsDocument doc = CommentsDocument.Factory.newInstance();
+		doc.setComments(CTComments.Factory.newInstance());
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        doc.save(out, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+        CommentsTable sheetComments = new CommentsTable();
+        sheetComments.readFrom(new ByteArrayInputStream(out.toByteArray()));
+
+		CTCommentList commentList = sheetComments.getCTComments().addNewCommentList();
 		assertEquals(0, commentList.sizeOfCommentArray());
 		
 		XSSFComment comment = sheetComments.addComment();
@@ -114,11 +129,16 @@ public class TestCommentsTable extends TestCase {
 		assertTrue(xml.exists());
     	
 		Package pkg = Package.open(xml.toString());
-		PackagePart cpart = pkg.getPart(
-				PackagingURIHelper.createPartName("/xl/comments1.xml")
-		);
-		
-		CommentsTable ct = new CommentsTable(cpart.getInputStream());
+		XSSFWorkbook wb = new XSSFWorkbook(pkg);
+        List<POIXMLDocumentPart> rels = wb.getSheetAt(0).getRelations();
+        CommentsTable ct = null;
+        for(POIXMLDocumentPart p : rels) {
+            if(p instanceof CommentsTable){
+                ct = (CommentsTable)p;
+                break;
+            }
+        }
+        assertNotNull(ct);
 		assertEquals(2, ct.getNumberOfComments());
 		assertEquals(1, ct.getNumberOfAuthors());
 
@@ -126,13 +146,18 @@ public class TestCommentsTable extends TestCase {
 		
 		assertEquals("Nick Burch", comment.getAuthor());
 		assertEquals("Nick Burch:\nThis is a comment", comment.getString().getString());
-		
-		// Re-serialise
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ct.writeTo(baos);
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-		ct = new CommentsTable(bais);
-		
+
+        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        rels = wb.getSheetAt(0).getRelations();
+        ct = null;
+        for(POIXMLDocumentPart p : rels) {
+            if(p instanceof CommentsTable){
+                ct = (CommentsTable)p;
+                break;
+            }
+        }
+        assertNotNull(ct);
+
 		assertEquals(2, ct.getNumberOfComments());
 		assertEquals(1, ct.getNumberOfAuthors());
 		
@@ -140,9 +165,7 @@ public class TestCommentsTable extends TestCase {
 		
 		assertEquals("Nick Burch", comment.getAuthor());
 		
-		// TODO: Fix this!
-		// New line should still be there, but isn't!
-		//assertEquals("Nick Burch:\nThis is a comment", comment.getString().getString());
+		assertEquals("Nick Burch:\nThis is a comment", comment.getString().getString());
 	}
 
 	public void testExisting() throws Exception {

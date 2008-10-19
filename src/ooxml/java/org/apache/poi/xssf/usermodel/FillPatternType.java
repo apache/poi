@@ -21,8 +21,6 @@ package org.apache.poi.xssf.usermodel;
  * The enumeration value indicating the style of fill pattern being used for a cell format.
  * 
  */
-
-
 public enum FillPatternType {
     
     /**  No background */

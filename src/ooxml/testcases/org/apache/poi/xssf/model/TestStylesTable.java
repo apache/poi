@@ -20,11 +20,10 @@ package org.apache.poi.xssf.model;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 
 import junit.framework.TestCase;
 
@@ -50,19 +49,17 @@ public class TestStylesTable extends TestCase {
 	}
 	
 	public void testCreateSaveLoad() throws Exception {
-		StylesTable st = new StylesTable();
-		
+        XSSFWorkbook wb = new XSSFWorkbook();
+        StylesTable st = wb.getStylesSource();
+
 		assertNotNull(st._getRawStylesheet());
 		assertEquals(1, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(0, st._getNumberFormatSize());
 		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		st.writeTo(baos);
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-		st = new StylesTable(bais);
-		
-		assertNotNull(st._getRawStylesheet());
+		st = XSSFTestDataSamples.writeOutAndReadBack(wb).getStylesSource();
+
+        assertNotNull(st._getRawStylesheet());
 		assertEquals(1, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(0, st._getNumberFormatSize());
@@ -72,7 +69,7 @@ public class TestStylesTable extends TestCase {
 		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
 		assertNotNull(workbook.getStylesSource());
 		
-		StylesTable st = (StylesTable)workbook.getStylesSource();
+		StylesTable st = workbook.getStylesSource();
 		
 		doTestExisting(st);
 	}
@@ -80,13 +77,10 @@ public class TestStylesTable extends TestCase {
 		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
 		assertNotNull(workbook.getStylesSource());
 		
-		StylesTable st = (StylesTable)workbook.getStylesSource();
+		StylesTable st = workbook.getStylesSource();
 		doTestExisting(st);
 		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		st.writeTo(baos);
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-		st = new StylesTable(bais);
+		st = XSSFTestDataSamples.writeOutAndReadBack(workbook).getStylesSource();
 		doTestExisting(st);
 	}
 	public void doTestExisting(StylesTable st) throws Exception {
@@ -116,7 +110,8 @@ public class TestStylesTable extends TestCase {
 	}
 	
 	public void testPopulateNew() throws Exception {
-		StylesTable st = new StylesTable();
+		XSSFWorkbook wb = new XSSFWorkbook();
+        StylesTable st = wb.getStylesSource();
 		
 		assertNotNull(st._getRawStylesheet());
 		assertEquals(1, st._getXfsSize());
@@ -130,11 +125,8 @@ public class TestStylesTable extends TestCase {
 		st.putStyle(new XSSFCellStyle(st));
 		
 		// Save and re-load
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		st.writeTo(baos);
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-		st = new StylesTable(bais);
-		
+		st = XSSFTestDataSamples.writeOutAndReadBack(wb).getStylesSource();
+
 		assertNotNull(st._getRawStylesheet());
 		assertEquals(2, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
@@ -149,7 +141,7 @@ public class TestStylesTable extends TestCase {
 		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
 		assertNotNull(workbook.getStylesSource());
 		
-		StylesTable st = (StylesTable)workbook.getStylesSource();
+		StylesTable st = workbook.getStylesSource();
 		assertEquals(11, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(8, st._getNumberFormatSize());
@@ -158,11 +150,8 @@ public class TestStylesTable extends TestCase {
 		long nf2 = st.putNumberFormat("YYYY-mm-DD");
 		assertEquals(nf1, st.putNumberFormat("YYYY-mm-dd"));
 		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		st.writeTo(baos);
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-		st = new StylesTable(bais);
-		
+        st = XSSFTestDataSamples.writeOutAndReadBack(workbook).getStylesSource();
+
 		assertEquals(11, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(10, st._getNumberFormatSize());
