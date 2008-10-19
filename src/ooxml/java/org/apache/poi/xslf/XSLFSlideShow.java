@@ -17,6 +17,8 @@
 package org.apache.poi.xslf;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.LinkedList;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.xmlbeans.XmlException;
@@ -61,13 +63,18 @@ public class XSLFSlideShow extends POIXMLDocument {
 	public static final String COMMENT_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments";
 
 	private PresentationDocument presentationDoc;
-	
+    /**
+     * The embedded OLE2 files in the OPC package
+     */
+    private List<PackagePart> embedds;
+
 	public XSLFSlideShow(Package container) throws OpenXML4JException, IOException, XmlException {
 		super(container);
 		
 		presentationDoc =
 			PresentationDocument.Factory.parse(getCorePart().getInputStream());
 		
+        embedds = new LinkedList<PackagePart>();
 		for (CTSlideIdListEntry ctSlide : getSlideReferences().getSldIdArray()) {
 	          PackagePart slidePart =
 	                getTargetPart(getCorePart().getRelationship(ctSlide.getId2()));
@@ -224,4 +231,12 @@ public class XSLFSlideShow extends POIXMLDocument {
 			throw new IllegalStateException(e);
 		}
 	}
+
+    /**
+     * Get the document's embedded files.
+     */
+    public List<PackagePart> getAllEmbedds() throws OpenXML4JException {
+        return embedds;
+    }
+
 }

@@ -213,14 +213,14 @@ public class POIXMLDocumentPart {
     /**
      * Fired when a new package part is created
      */
-    public void onDocumentCreate(){
+    protected void onDocumentCreate(){
 
     }
 
     /**
      * Fired when a package part is read
      */
-    public void onDocumentRead(){
+    protected void onDocumentRead(){
 
     }
 }

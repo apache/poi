@@ -28,7 +28,7 @@ import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.*;
 import org.openxml4j.opc.Package;
 
-public class POIXMLDocument extends POIXMLDocumentPart{
+public abstract class POIXMLDocument extends POIXMLDocumentPart{
 
     public static final String CORE_PROPERTIES_REL_TYPE = "http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties";
     public static final String EXTENDED_PROPERTIES_REL_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties";
@@ -43,31 +43,24 @@ public class POIXMLDocument extends POIXMLDocumentPart{
     /** The OPC Package */
     private Package pkg;
 
-    /** The OPC core Package Part */
-    private PackagePart corePart;
-
     /**
      * The properties of the OPC package, opened as needed
      */
     private POIXMLProperties properties;
 
-    /**
-     * The embedded OLE2 files in the OPC package
-     */
-    protected List<PackagePart> embedds;
-
     protected POIXMLDocument() {
         super(null, null);
-        embedds = new LinkedList<PackagePart>();
+        try {
+            Package pkg = newPackage();
+            initialize(pkg);
+        } catch (IOException e){
+            throw new POIXMLException(e);
+        }
     }
 
     protected POIXMLDocument(Package pkg) throws IOException {
-        this();
+        super(null, null);
         initialize(pkg);
-    }
-
-    protected POIXMLDocument(String path) throws IOException {
-           this(openPackage(path));
     }
 
     /**
@@ -83,7 +76,7 @@ public class POIXMLDocument extends POIXMLDocumentPart{
         }
     }
 
-    protected void initialize(Package pkg) throws IOException {
+    private void initialize(Package pkg) throws IOException {
         try {
             this.pkg = pkg;
 
@@ -91,10 +84,11 @@ public class POIXMLDocument extends POIXMLDocumentPart{
                     PackageRelationshipTypes.CORE_DOCUMENT).getRelationship(0);
 
             // Get core part
-            this.corePart = super.packagePart = this.pkg.getPart(coreDocRelationship);
+            this.packagePart = this.pkg.getPart(coreDocRelationship);
+            this.packageRel = coreDocRelationship;
 
             // Verify it's there
-            if(corePart == null) {
+            if(this.packagePart == null) {
                 throw new IllegalArgumentException("No core part found for this document! Nothing with " + coreDocRelationship.getRelationshipType() + " present as a relation.");
             }
         } catch (OpenXML4JException e) {
@@ -102,12 +96,16 @@ public class POIXMLDocument extends POIXMLDocumentPart{
         }
     }
 
+    protected Package newPackage() throws IOException {
+        throw new POIXMLException("Must be overridden");
+    }
+
     public Package getPackage() {
         return this.pkg;
     }
 
     protected PackagePart getCorePart() {
-        return this.corePart;
+        return this.packagePart;
     }
 
     /**
@@ -128,7 +126,7 @@ public class POIXMLDocument extends POIXMLDocumentPart{
      * @return The target part
      * @throws InvalidFormatException
      */
-    public static PackagePart getTargetPart(Package pkg, PackageRelationship rel) throws InvalidFormatException {
+    protected static PackagePart getTargetPart(Package pkg, PackageRelationship rel) throws InvalidFormatException {
         PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
         PackagePart part = pkg.getPart(relName);
         if (part == null) {
@@ -138,33 +136,13 @@ public class POIXMLDocument extends POIXMLDocumentPart{
     }
 
     /**
-     * Fetches the (single) PackagePart which is defined as
-     *  the supplied relation content type of the base
-     *  package/container, or null if none found.
-     * @param relationType The relation content type to search for
-     * @throws IllegalArgumentException If we find more than one part of that type
-     */
-    protected PackagePart getSinglePartByRelationType(String relationType) throws IllegalArgumentException, OpenXML4JException {
-        PackageRelationshipCollection rels =
-            pkg.getRelationshipsByType(relationType);
-        if(rels.size() == 0) {
-            return null;
-        }
-        if(rels.size() > 1) {
-            throw new IllegalArgumentException("Found " + rels.size() + " relations for the type " + relationType + ", should only ever be one!");
-        }
-        PackageRelationship rel = rels.getRelationship(0);
-        return getTargetPart(rel);
-    }
-
-    /**
      * Retrieves all the PackageParts which are defined as
      *  relationships of the base document with the
      *  specified content type.
      */
     protected PackagePart[] getRelatedByType(String contentType) throws InvalidFormatException {
         PackageRelationshipCollection partsC =
-            getCorePart().getRelationshipsByType(contentType);
+            getPackagePart().getRelationshipsByType(contentType);
 
         PackagePart[] parts = new PackagePart[partsC.size()];
         int count = 0;
@@ -224,8 +202,6 @@ public class POIXMLDocument extends POIXMLDocumentPart{
     /**
      * Get the document's embedded files.
      */
-    public List<PackagePart> getAllEmbedds() throws OpenXML4JException
-    {
-        return embedds;
-    }
+    public abstract List<PackagePart> getAllEmbedds() throws OpenXML4JException;
+
 }

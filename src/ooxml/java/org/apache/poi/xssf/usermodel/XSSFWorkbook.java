@@ -38,6 +38,7 @@ import org.apache.poi.POIXMLException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxml4j.exceptions.OpenXML4JException;
+import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.opc.*;
 import org.openxml4j.opc.Package;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
@@ -99,15 +100,16 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     private static POILogger log = POILogFactory.getLogger(XSSFWorkbook.class);
 
     /**
+     * The embedded OLE2 files in the OPC package
+     */
+    private List<PackagePart> embedds;
+
+    /**
      * Create a new SpreadsheetML workbook.
      */
     public XSSFWorkbook() {
         super();
-        try {
-            newWorkbook();
-        }catch (Exception e){
-            throw new POIXMLException(e);
-        }
+        onDocumentCreate();
     }
 
     /**
@@ -126,37 +128,38 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param pkg the OpenXML4J <code>Package</code> object.
      */
     public XSSFWorkbook(Package pkg) throws IOException {
-        super();
+        super(ensureWriteAccess(pkg));
+        onDocumentRead();
+    }
+
+    /**
+     * YK: current implementation of OpenXML4J is funny.
+     * Packages opened by Package.open(InputStream is) are read-only,
+     * there is no way to change or even save such an instance in a OutputStream.
+     * The workaround is to create a copy via a temp file
+     */
+    private static Package ensureWriteAccess(Package pkg) throws IOException {
         if(pkg.getPackageAccess() == PackageAccess.READ){
             //YK: current implementation of OpenXML4J is funny.
-            //Packages opened by Package.open(InputStream is) are read-only,
-            //there is no way to change or even save such an instance in a OutputStream.
-            //The workaround is to create a copy via a temp file
             try {
-                Package tmp = PackageHelper.clone(pkg);
-                initialize(tmp);
+                return PackageHelper.clone(pkg);
             } catch (OpenXML4JException e){
                 throw new POIXMLException(e);
             }
-        } else {
-            initialize(pkg);
         }
+        return pkg;
     }
 
     /**
      * Initialize this workbook from the specified Package
      */
     @Override
-    protected void initialize(Package pkg) throws IOException {
-        super.initialize(pkg);
-
+    protected void onDocumentRead() {
         try {
             //build the POIXMLDocumentPart tree, this workbook is the root
             read(XSSFFactory.getInstance());
 
-            PackagePart corePart = getCorePart();
-
-            WorkbookDocument doc = WorkbookDocument.Factory.parse(corePart.getInputStream());
+            WorkbookDocument doc = WorkbookDocument.Factory.parse(getPackagePart().getInputStream());
             this.workbook = doc.getWorkbook();
 
             HashMap<String, XSSFSheet> shIdMap = new HashMap<String, XSSFSheet>();
@@ -167,8 +170,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                     shIdMap.put(p.getPackageRelationship().getId(), (XSSFSheet)p);
                 }
             }
+
             // Load individual sheets
             sheets = new LinkedList<XSSFSheet>();
+            embedds = new LinkedList<PackagePart>();
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
                 String id = ctSheet.getId();
                 XSSFSheet sh = shIdMap.get(id);
@@ -215,22 +220,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         }
     }
 
-    /**
-     * Create a new SpreadsheetML OOXML package and setup the default minimal content
-     */
-    protected void newWorkbook() throws IOException, OpenXML4JException{
-        Package pkg = Package.create(PackageHelper.createTempFile());
-        // Main part
-        PackagePartName corePartName = PackagingURIHelper.createPartName(XSSFRelation.WORKBOOK.getDefaultFileName());
-        // Create main part relationship
-        pkg.addRelationship(corePartName, TargetMode.INTERNAL, PackageRelationshipTypes.CORE_DOCUMENT);
-        // Create main document part
-        pkg.createPart(corePartName, XSSFRelation.WORKBOOK.getContentType());
-
-        pkg.getPackageProperties().setCreatorProperty("Apache POI");
-
-        super.initialize(pkg);
-
+    @Override
+    protected void onDocumentCreate() {
         workbook = CTWorkbook.Factory.newInstance();
         CTBookViews bvs = workbook.addNewBookViews();
         CTBookView bv = bvs.addNewWorkbookView();
@@ -242,6 +233,28 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
         namedRanges = new LinkedList<XSSFName>();
         sheets = new LinkedList<XSSFSheet>();
+        embedds = new LinkedList<PackagePart>();
+    }
+
+    /**
+     * Create a new SpreadsheetML package and setup the default minimal content
+     */
+    protected Package newPackage() throws IOException {
+        try {
+            Package pkg = Package.create(PackageHelper.createTempFile());
+            // Main part
+            PackagePartName corePartName = PackagingURIHelper.createPartName(XSSFRelation.WORKBOOK.getDefaultFileName());
+            // Create main part relationship
+            pkg.addRelationship(corePartName, TargetMode.INTERNAL, PackageRelationshipTypes.CORE_DOCUMENT);
+            // Create main document part
+            pkg.createPart(corePartName, XSSFRelation.WORKBOOK.getContentType());
+
+            pkg.getPackageProperties().setCreatorProperty("Apache POI");
+
+            return pkg;
+        } catch (InvalidFormatException e){
+            throw new POIXMLException(e);
+        }
     }
 
     /**
@@ -709,7 +722,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *  macro enabled workbook (.xlsm)?
      */
     public boolean isMacroEnabled() {
-        return getCorePart().getContentType().equals(XSSFRelation.MACROS_WORKBOOK.getContentType());
+        return getPackagePart().getContentType().equals(XSSFRelation.MACROS_WORKBOOK.getContentType());
     }
 
     public void removeName(int index) {
@@ -1153,5 +1166,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     protected boolean isDate1904(){
         CTWorkbookPr workbookPr = workbook.getWorkbookPr();
         return workbookPr != null && workbookPr.getDate1904();
+    }
+
+    /**
+     * Get the document's embedded files.
+     */
+    public List<PackagePart> getAllEmbedds() throws OpenXML4JException {
+        return embedds;
     }
 }
