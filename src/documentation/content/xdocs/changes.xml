@@ -37,7 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta4" date="2008-??-??">
-           <action dev="POI-DEVELOPERS" type="fix">YK: remove me. required to keep Forrest DTD compiler quiet</action>
+           <action dev="POI-DEVELOPERS" type="fix">46053 - fixed evaluation cache dependency analysis when changing blank cells</action>
         </release>
         <release version="3.2-FINAL" date="2008-10-19">
            <action dev="POI-DEVELOPERS" type="fix">45866 - allowed for change of unicode compression across Continue records</action>

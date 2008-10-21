@@ -19,7 +19,6 @@ package org.apache.poi.ss.formula;
 
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 
 /**
  * Tests should extend this class if they need to track the internal working of the {@link WorkbookEvaluator}.<br/>
@@ -45,6 +44,10 @@ public abstract class EvaluationListener implements IEvaluationListener {
 		// do nothing 
 	}
 	public void onClearCachedValue(ICacheEntry entry) {
+		// do nothing 
+	}
+	public void onChangeFromBlankValue(int sheetIndex, int rowIndex, int columnIndex,
+			EvaluationCell cell, ICacheEntry entry) {
 		// do nothing 
 	}
 	public void sortDependentCachedValues(ICacheEntry[] entries) {

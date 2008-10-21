@@ -38,9 +38,11 @@ import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationTestHelper;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.CellValue;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.formula.PlainCellCache.Loc;
 
@@ -134,7 +136,19 @@ public class TestEvaluationCache extends TestCase {
 		}
 		public void onClearDependentCachedValue(ICacheEntry entry, int depth) {
 			EvaluationCell cell = (EvaluationCell) _formulaCellsByCacheEntry.get(entry);
-   			log("clear" + depth, cell.getRowIndex(), cell.getColumnIndex(),  entry.getValue());
+			log("clear" + depth, cell.getRowIndex(), cell.getColumnIndex(), entry.getValue());
+		}
+
+		public void onChangeFromBlankValue(int sheetIndex, int rowIndex, int columnIndex,
+				EvaluationCell cell, ICacheEntry entry) {
+			log("changeFromBlank", rowIndex, columnIndex, entry.getValue());
+			if (entry.getValue() == null) { // hack to tell the difference between formula and plain value
+				// perhaps the API could be improved: onChangeFromBlankToValue, onChangeFromBlankToFormula
+				_formulaCellsByCacheEntry.put(entry, cell);
+			} else {
+				Loc loc = new Loc(0, sheetIndex, rowIndex, columnIndex);
+				_plainCellLocsByCacheEntry.put(entry, loc);
+			}
 		}
 		private void log(String tag, int rowIndex, int columnIndex, Object value) {
 			StringBuffer sb = new StringBuffer(64);
@@ -211,6 +225,11 @@ public class TestEvaluationCache extends TestCase {
 			cell.setCellType(HSSFCell.CELL_TYPE_BLANK);
 			// otherwise this line will only set the formula cached result;
 			cell.setCellValue(value);
+			_evaluator.notifyUpdateCell(wrapCell(cell));
+		}
+		public void clearCell(String cellRefText) {
+			HSSFCell cell = getOrCreateCell(cellRefText);
+			cell.setCellType(HSSFCell.CELL_TYPE_BLANK);
 			_evaluator.notifyUpdateCell(wrapCell(cell));
 		}
 
@@ -552,6 +571,75 @@ public class TestEvaluationCache extends TestCase {
 			"hit D1 1",
 			"hit B6 2",
 			"end A1 15",
+		});
+	}
+	
+	/**
+	 * Make sure that when blank cells are changed to value/formula cells, any dependent formulas
+	 * have their cached results cleared.
+	 */
+	public void testBlankCellChangedToValueCell_bug46053() {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet("Sheet1");
+		HSSFRow row = sheet.createRow(0);
+		HSSFCell cellA1 = row.createCell(0);
+		HSSFCell cellB1 = row.createCell(1);
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+
+		cellA1.setCellFormula("B1+2.2");
+		cellB1.setCellValue(1.5);
+
+		fe.notifyUpdateCell(cellA1);
+		fe.notifyUpdateCell(cellB1);
+
+		CellValue cv;
+		cv = fe.evaluate(cellA1);
+		assertEquals(3.7, cv.getNumberValue(), 0.0);
+
+		cellB1.setCellType(HSSFCell.CELL_TYPE_BLANK);
+		fe.notifyUpdateCell(cellB1);
+		cv = fe.evaluate(cellA1); // B1 was used to evaluate A1
+		assertEquals(2.2, cv.getNumberValue(), 0.0);
+
+		cellB1.setCellValue(0.4);  // changing B1, so A1 cached result should be cleared 
+		fe.notifyUpdateCell(cellB1);
+		cv = fe.evaluate(cellA1);
+		if (cv.getNumberValue() == 2.2) {
+			// looks like left-over cached result from before change to B1
+			throw new AssertionFailedError("Identified bug 46053");
+		}
+		assertEquals(2.6, cv.getNumberValue(), 0.0);
+	}
+	
+	/**
+	 * same use-case as the test for bug 46053, but checking trace values too
+	 */
+	public void testBlankCellChangedToValueCell() {
+
+		MySheet ms = new MySheet();
+
+		ms.setCellFormula("A1", "B1+2.2");
+		ms.setCellValue("B1", 1.5);
+		ms.clearAllCachedResultValues();
+		ms.clearCell("B1");
+		ms.getAndClearLog();
+
+		confirmEvaluate(ms, "A1", 2.2);
+		confirmLog(ms, new String[] {
+			"start A1 B1+2.2",
+			"end A1 2.2",
+		});
+		ms.setCellValue("B1", 0.4);
+		confirmLog(ms, new String[] {
+			"changeFromBlank B1 0.4",
+			"clear A1",
+		});
+
+		confirmEvaluate(ms, "A1", 2.6);
+		confirmLog(ms, new String[] {
+			"start A1 B1+2.2",
+			"hit B1 0.4",
+			"end A1 2.6",
 		});
 	}
 	
