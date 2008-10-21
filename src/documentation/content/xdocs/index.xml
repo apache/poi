@@ -31,10 +31,10 @@
   </header>
 
   <body>
-    <section><title>POI 3.1-FINAL Released (2008-06-29)</title>
+    <section><title>POI 3.2-FINAL Released (2008-10-19)</title>
       <p>
-        The POI team is pleased to announce the release of 3.1 FINAL, the latest release of Apache POI.
-        There have been many important bug fixes since the 3.0.2 release and a lot of new features. 
+        The POI team is pleased to announce the release of 3.2 FINAL, the latest release of Apache POI.
+        There have been many important bug fixes since the 3.1 release and a lot of new features. 
        </p><p>  A full list of changes	is available in
       <link href="./changes.html">the changelog</link>, and 
 		<link href="http://www.apache.org/dyn/closer.cgi/poi/release/">download</link>
@@ -43,7 +43,7 @@
       </p>
       <p>
         The release is also available from the central Maven repository 
-        under Group ID "org.apache.poi" and Version "3.1-FINAL".
+        under Group ID "org.apache.poi" and Version "3.2-FINAL".
       </p>  
     </section>
     <section><title>Office Open XML Support - POI 3.5</title>
@@ -51,14 +51,14 @@
        file formats, such as XLSX and PPTX, which were introduced in
        Office 2007.</p>
       <p>Support for these is currently only available in the 3.5 series,
-       which is in a svn branch (not trunk). POI 3.5.1 beta 1 was released
-       on 2008-07-18, and is our first release including the OOXML support.
+       which is in a svn branch (not trunk). POI 3.5.1 beta 3 was released
+       in October 2008, and is our first release including the OOXML support.
        It is available to download from your favourite
        <link href="http://www.apache.org/dyn/closer.cgi/poi/dev/">local mirror</link>.
       </p>
       <p>Please note that the documentation on the website is for the
-       3.1 series of POI. Documentation on the new OOXML support is
-       included in the 3.5.1 beta 1 distribution.</p>
+       3.2 series of POI. Documentation on the new OOXML support is
+       included in the 3.5.1 beta 3 distribution.</p>
     </section>
 
     <section><title>Purpose</title>
