@@ -36,9 +36,7 @@ public class TestXSSFDialogSheet extends TestCase {
     
     public void testGetDialog() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
-        assertFalse(sheet.getDialog());
-        XSSFSheet dialogsheet = (XSSFSheet) workbook.createDialogsheet("Dialogsheet 1", null);
+        XSSFDialogsheet dialogsheet = workbook.createDialogsheet("Dialogsheet 1", null);
         assertTrue(dialogsheet.getDialog());
     	
     }

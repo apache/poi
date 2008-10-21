@@ -48,12 +48,6 @@ public class XSSFPicture extends XSSFShape {
     private static CTPicture prototype = null;
 
     /**
-     * Width of one character in pixels. Same for Calibry and Arial.
-     */
-    private static final float CHARACTER_WIDTH = 7.0017f;
-
-
-    /**
      * This object specifies a picture object and all its properties
      */
     private CTPicture ctPicture;
@@ -214,7 +208,7 @@ public class XSSFPicture extends XSSFShape {
         XSSFSheet sheet = (XSSFSheet)getDrawing().getParent();
         float numChars = (float)sheet.getColumnWidth(columnIndex)/256;
 
-        return numChars*CHARACTER_WIDTH;
+        return numChars*XSSFWorkbook.DEFAULT_CHARACTER_WIDTH;
     }
 
     private float getRowHeightInPixels(int rowIndex){

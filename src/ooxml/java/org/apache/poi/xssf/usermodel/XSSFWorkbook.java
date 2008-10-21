@@ -52,6 +52,11 @@ import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelations
 public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<XSSFSheet> {
 
     /**
+     * Width of one character of the default font in pixels. Same for Calibry and Arial.
+     */
+    public static final float DEFAULT_CHARACTER_WIDTH = 7.0017f;
+
+    /**
      * The underlying XML bean
      */
     private CTWorkbook workbook;
@@ -140,7 +145,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     private static Package ensureWriteAccess(Package pkg) throws IOException {
         if(pkg.getPackageAccess() == PackageAccess.READ){
-            //YK: current implementation of OpenXML4J is funny.
             try {
                 return PackageHelper.clone(pkg);
             } catch (OpenXML4JException e){
@@ -358,8 +362,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         xf.setBorderId(0);
         xf.setXfId(0);
         int xfSize=(stylesSource)._getStyleXfsSize();
-        long indexXf=(stylesSource).putCellXf(xf);
-        XSSFCellStyle style = new XSSFCellStyle(new Long(indexXf-1).intValue(), xfSize-1, stylesSource);
+        int indexXf=(stylesSource).putCellXf(xf);
+        XSSFCellStyle style = new XSSFCellStyle(indexXf-1, xfSize-1, stylesSource);
         return style;
     }
 
@@ -513,11 +517,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return pictures;
     }
 
-    public boolean getBackupFlag() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
     public XSSFCellStyle getCellStyleAt(short idx) {
         return stylesSource.getStyleAt(idx);
     }
@@ -615,7 +614,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @return String Null if no print area has been defined
      */
     public String getPrintArea(int sheetIndex) {	
-        XSSFName name = getSpecificBuiltinRecord(XSSFName.BUILTIN_PRINT_AREA, sheetIndex);
+        XSSFName name = getBuiltInName(XSSFName.BUILTIN_PRINT_AREA, sheetIndex);
         if (name == null) return null;
         //adding one here because 0 indicates a global named region; doesnt make sense for print areas
         return name.getReference();
@@ -811,11 +810,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         }
     }
 
-    public void setBackupFlag(boolean backupValue) {
-        // TODO Auto-generated method stub
-
-    }
-
     /**
      * Gets the first tab that is displayed in the list of tabs in excel.
      *
@@ -846,7 +840,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param reference Valid name Reference for the Print Area
      */
     public void setPrintArea(int sheetIndex, String reference) {
-        XSSFName name = getSpecificBuiltinRecord(XSSFName.BUILTIN_PRINT_AREA, sheetIndex);
+        XSSFName name = getBuiltInName(XSSFName.BUILTIN_PRINT_AREA, sheetIndex);
         if (name == null) {
             name = createBuiltInName(XSSFName.BUILTIN_PRINT_AREA, sheetIndex);
             namedRanges.add(name);
@@ -916,7 +910,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
 
 
-    public XSSFName getSpecificBuiltinRecord(String builtInCode, int sheetNumber) {
+    private XSSFName getBuiltInName(String builtInCode, int sheetNumber) {
         for (XSSFName name : namedRanges) {
             if (name.getNameName().equalsIgnoreCase(builtInCode) && name.getLocalSheetId() == sheetNumber) {
                 return name;
@@ -929,7 +923,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * Generates a NameRecord to represent a built-in region
      * @return a new NameRecord
      */
-    public XSSFName createBuiltInName(String builtInName, int sheetNumber) {
+    private XSSFName createBuiltInName(String builtInName, int sheetNumber) {
         if (sheetNumber < 0 || sheetNumber+1 > Short.MAX_VALUE) {
             throw new IllegalArgumentException("Sheet number ["+sheetNumber+"]is not valid ");
         }
@@ -939,7 +933,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         nameRecord.setLocalSheetId(sheetNumber);
    
         XSSFName name=new XSSFName(nameRecord,this);        
-        //while(namedRanges.contains(name)) {
         for(XSSFName nr :  namedRanges){
             if(nr.equals(name))
             throw new RuntimeException("Builtin (" + builtInName 
@@ -991,11 +984,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         this.workbook.getSheets().removeSheet(idx);
         CTSheet newcts = this.workbook.getSheets().insertNewSheet(pos);
         newcts.set(cts);
-    }
-
-    public void unwriteProtectWorkbook() {
-        // TODO Auto-generated method stub
-
     }
 
     /**
@@ -1051,11 +1039,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         getPackage().save(stream);
     }
 
-    public void writeProtectWorkbook(String password, String username) {
-        // TODO Auto-generated method stub
-
-    }
-
     /**
      * Returns SharedStringsTable - tha cache of string for this workbook
      *
@@ -1064,10 +1047,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     public SharedStringsTable getSharedStringSource() {
         return this.sharedStringSource;
     }
-    //TODO do we really need setSharedStringSource?
-    protected void setSharedStringSource(SharedStringsTable sharedStringSource) {
-        this.sharedStringSource = sharedStringSource;
-    }
 
     /**
      * Return a object representing a collection of shared objects used for styling content,
@@ -1075,10 +1054,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     public StylesTable getStylesSource() {
         return this.stylesSource;
-    }
-    //TODO do we really need setStylesSource?
-    protected void setStylesSource(StylesTable stylesSource) {
-        this.stylesSource = stylesSource;
     }
 
     /**

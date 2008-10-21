@@ -90,7 +90,7 @@ public final class XSSFCell implements Cell {
     }
 
     public Comment getCellComment() {
-        return row.getSheet().getCellComment(row.getRowNum(), getCellNum());
+        return row.getSheet().getCellComment(row.getRowNum(), getColumnIndex());
     }
 
     public String getCellFormula() {
@@ -113,12 +113,15 @@ public final class XSSFCell implements Cell {
 		return row.getRowNum();
 	}
 
+    /**
+     * Return the cell's style.
+     *
+     * @return the cell's style. Always not-null. Default cell style has zero index and can be obtained as
+     * <code>workbook.getCellStyleAt(0)</code>
+     */
     public XSSFCellStyle getCellStyle() {
-        // Zero is the empty default
-        if(this.cell.getS() > 0) {
-            return stylesSource.getStyleAt(this.cell.getS());
-        }
-        return null;
+        long idx = cell.isSetS() ? cell.getS() : 0;
+        return stylesSource.getStyleAt(idx);
     }
 
     public int getCellType() {
@@ -156,7 +159,7 @@ public final class XSSFCell implements Cell {
     public Date getDateCellValue() {
         if (STCellType.N == this.cell.getT() || STCellType.STR == this.cell.getT()) {
             double value = this.getNumericCellValue();
-            if (false /* book.isUsing1904DateWindowing() */) {  // FIXME
+            if (row.getSheet().getWorkbook().isDate1904()) {
                 return DateUtil.getJavaDate(value,true);
             }
             else {
@@ -269,7 +272,7 @@ public final class XSSFCell implements Cell {
 
    
     public void setCellComment(Comment comment) {
-        String cellRef = new CellReference(row.getRowNum(), getCellNum()).formatAsString();
+        String cellRef = new CellReference(row.getRowNum(), getColumnIndex()).formatAsString();
         row.getSheet().setCellComment(cellRef, (XSSFComment)comment);
     }
 
@@ -333,7 +336,7 @@ public final class XSSFCell implements Cell {
     }
 
     protected String formatPosition() {
-        int col = this.getCellNum();
+        int col = this.getColumnIndex();
         String result = Character.valueOf((char) (col % 26 + 'A')).toString();
         if (col >= 26){
             col = col / 26;

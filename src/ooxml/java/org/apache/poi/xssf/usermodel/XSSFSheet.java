@@ -71,20 +71,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     protected CTSheet sheet;
     protected CTWorksheet worksheet;
-    protected CTDialogsheet dialogsheet;
     protected List<Row> rows;
     protected List<XSSFHyperlink> hyperlinks;
     protected ColumnHelper columnHelper;
     private CommentsSource sheetComments;
-    protected CTMergeCells ctMergeCells;
-
-    public static final short LeftMargin = 0;
-    public static final short RightMargin = 1;
-    public static final short TopMargin = 2;
-    public static final short BottomMargin = 3;
-    public static final short HeaderMargin = 4;
-    public static final short FooterMargin = 5;
-
 
     public XSSFSheet() {
         super(null, null);
@@ -203,7 +193,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
 
     public int addMergedRegion(Region region) {
-        addNewMergeCell(region);
+        CTMergeCells ctMergeCells = worksheet.isSetMergeCells() ? worksheet.getMergeCells() : worksheet.addNewMergeCells();
+        CTMergeCell ctMergeCell = ctMergeCells.addNewMergeCell();
+        ctMergeCell.setRef(region.getRegionRef());
         return ctMergeCells.sizeOfMergeCellArray();
     }
 
@@ -234,8 +226,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param useMergedCells whether to use the contents of merged cells when calculating the width of the column
      */
     public void autoSizeColumn(short column, boolean useMergedCells) {
-        //TODO:
-        columnHelper.setColBestFit(column, true);
+        double width = ColumnHelper.getColumnWidth(this, column, useMergedCells);
+        if(width != -1){
+            columnHelper.setColBestFit(column, true);
+            columnHelper.setCustomWidth(column, true);
+            columnHelper.setColWidth(column, width);
+        }
     }
 
     /**
@@ -474,14 +470,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                worksheet.addNewSheetFormatPr();
     }
 
-    public boolean getDialog() {
-        if (dialogsheet != null) {
-            return true;
-        }
-        return false;
-    }
-
-
     /**
      * Get whether to display the guts or not,
      * default value is true
@@ -677,12 +665,30 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     public Region getMergedRegionAt(int index) {
-        CTMergeCell ctMergeCell = getMergedCells().getMergeCellArray(index);
+        CTMergeCells ctMergeCells = worksheet.getMergeCells();
+        if(ctMergeCells == null) throw new IllegalStateException("This worksheet does not contain merged regions");
+
+        CTMergeCell ctMergeCell = ctMergeCells.getMergeCellArray(index);
         return new Region(ctMergeCell.getRef());
     }
 
+    /**
+     * @return the merged region at the specified index
+     */
+    public CellRangeAddress getMergedRegion(int index) {
+        CTMergeCells ctMergeCells = worksheet.getMergeCells();
+        if(ctMergeCells == null) throw new IllegalStateException("This worksheet does not contain merged regions");
+
+        CTMergeCell ctMergeCell = ctMergeCells.getMergeCellArray(index);
+        String ref = ctMergeCell.getRef();
+        CellReference cell1 = new CellReference(ref.substring(0, ref.indexOf(":")));
+        CellReference cell2 = new CellReference(ref.substring(ref.indexOf(":") + 1));
+        return new CellRangeAddress(cell1.getRow(), cell2.getRow(), cell1.getCol(), cell2.getCol());
+    }
+
     public int getNumMergedRegions() {
-        return getMergedCells().sizeOfMergeCellArray();
+        CTMergeCells ctMergeCells = worksheet.getMergeCells();
+        return ctMergeCells == null ? 0 : ctMergeCells.sizeOfMergeCellArray();
     }
 
     public int getNumHyperlinks() {
@@ -1040,17 +1046,24 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     }
 
+    /**
+     * Removes a merged region of cells (hence letting them free)
+     *
+     * @param index of the region to unmerge
+     */
     public void removeMergedRegion(int index) {
-        CTMergeCell[] mergeCellsArray = new CTMergeCell[getMergedCells().sizeOfMergeCellArray() - 1];
-        for (int i = 0 ; i < getMergedCells().sizeOfMergeCellArray() ; i++) {
+        CTMergeCells ctMergeCells = worksheet.getMergeCells();
+
+        CTMergeCell[] mergeCellsArray = new CTMergeCell[ctMergeCells.sizeOfMergeCellArray() - 1];
+        for (int i = 0 ; i < ctMergeCells.sizeOfMergeCellArray() ; i++) {
             if (i < index) {
-                mergeCellsArray[i] = getMergedCells().getMergeCellArray(i);
+                mergeCellsArray[i] = ctMergeCells.getMergeCellArray(i);
             }
             else if (i > index) {
-                mergeCellsArray[i - 1] = getMergedCells().getMergeCellArray(i);
+                mergeCellsArray[i - 1] = ctMergeCells.getMergeCellArray(i);
             }
         }
-        getMergedCells().setMergeCellArray(mergeCellsArray);
+        ctMergeCells.setMergeCellArray(mergeCellsArray);
     }
 
     public void removeRow(Row row) {
@@ -1190,15 +1203,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     public void setDefaultRowHeightInPoints(float height) {
         getSheetTypeSheetFormatPr().setDefaultRowHeight(height);
 
-    }
-
-    public void setDialog(boolean b) {
-        if(b && dialogsheet == null){
-            CTDialogsheet dialogSheet = CTDialogsheet.Factory.newInstance();
-            dialogsheet = dialogSheet;
-        }else{
-            dialogsheet = null;
-        }
     }
 
     /**
@@ -1623,19 +1627,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return sheetComments;
     }
 
-    private void addNewMergeCell(Region region) {
-        ctMergeCells = getMergedCells();
-        CTMergeCell ctMergeCell = ctMergeCells.addNewMergeCell();
-        ctMergeCell.setRef(region.getRegionRef());
-    }
-
-    private CTMergeCells getMergedCells() {
-        if (ctMergeCells == null) {
-            ctMergeCells = worksheet.addNewMergeCells();
-        }
-        return ctMergeCells;
-    }
-
     private CTPageSetUpPr getSheetTypePageSetUpPr() {
         CTSheetPr sheetPr = getSheetTypeSheetPr();
         return sheetPr.isSetPageSetUpPr() ? sheetPr.getPageSetUpPr() : sheetPr.addNewPageSetUpPr();
@@ -1666,10 +1657,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         if(worksheet.getColsArray().length == 1) {
             CTCols col = worksheet.getColsArray(0);
-            if(col.getColArray().length == 0) {
+            CTCol[] cols = col.getColArray();
+            if(cols.length == 0) {
                 worksheet.setColsArray(null);
             }
         }
+
         // Now re-generate our CTHyperlinks, if needed
         if(hyperlinks.size() > 0) {
             if(worksheet.getHyperlinks() == null) {

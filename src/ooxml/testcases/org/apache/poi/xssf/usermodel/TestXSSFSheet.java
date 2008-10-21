@@ -32,7 +32,6 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
@@ -305,7 +304,7 @@ public class TestXSSFSheet extends TestCase {
 		XSSFOddFooter ftr;
 
 		// Sheet 1 has a header with center and right text
-		XSSFSheet s1 = (XSSFSheet)workbook.getSheetAt(0);
+		XSSFSheet s1 = workbook.getSheetAt(0);
 		assertNotNull(s1.getHeader());
 		assertNotNull(s1.getFooter());
 		hdr = (XSSFOddHeader)s1.getHeader();
@@ -324,7 +323,7 @@ public class TestXSSFSheet extends TestCase {
 
 
 		// Sheet 2 has a footer, but it's empty
-		XSSFSheet s2 = (XSSFSheet)workbook.getSheetAt(1);
+		XSSFSheet s2 = workbook.getSheetAt(1);
 		assertNotNull(s2.getHeader());
 		assertNotNull(s2.getFooter());
 		hdr = (XSSFOddHeader)s2.getHeader();
@@ -359,7 +358,7 @@ public class TestXSSFSheet extends TestCase {
 
     public void testGetAllHeadersFooters() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        XSSFSheet sheet = workbook.createSheet("Sheet 1");
         assertNotNull(sheet.getOddFooter());
         assertNotNull(sheet.getEvenFooter());
         assertNotNull(sheet.getFirstFooter());
@@ -447,28 +446,19 @@ public class TestXSSFSheet extends TestCase {
     
     public void testAutoSizeColumn() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        XSSFSheet sheet = workbook.createSheet("Sheet 1");
+        sheet.createRow(0).createCell(13).setCellValue("test");
+
+        sheet.autoSizeColumn((short)13);
+
         ColumnHelper columnHelper = sheet.getColumnHelper();
         CTCol col = columnHelper.getColumn(13, false);
-        assertNull(col);
-        sheet.autoSizeColumn((short)13);
-        col = columnHelper.getColumn(13, false);
-        assertNotNull(col);
-        assertTrue(col.getBestFit());	
-    }
-    
-    public void testGetDialog() {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("Sheet 1");
-        assertFalse(sheet.getDialog());
-        XSSFSheet dialogsheet = workbook.createDialogsheet("Dialogsheet 1", null);
-        assertTrue(dialogsheet.getDialog());
-    	
+        assertTrue(col.getBestFit());
     }
     
     public void testGetSetHorizontallyCentered() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        XSSFSheet sheet = workbook.createSheet("Sheet 1");
         assertFalse(sheet.getHorizontallyCenter());
         sheet.setHorizontallyCenter(true);
         assertTrue(sheet.getHorizontallyCenter());
@@ -478,7 +468,7 @@ public class TestXSSFSheet extends TestCase {
     
     public void testGetSetVerticallyCentered() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        XSSFSheet sheet = workbook.createSheet("Sheet 1");
         assertFalse(sheet.getVerticallyCenter());
         sheet.setVerticallyCenter(true);
         assertTrue(sheet.getVerticallyCenter());
@@ -488,7 +478,7 @@ public class TestXSSFSheet extends TestCase {
     
     public void testIsSetPrintGridlines() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        XSSFSheet sheet = workbook.createSheet("Sheet 1");
         assertFalse(sheet.isPrintGridlines());
         sheet.setPrintGridlines(true);
         assertTrue(sheet.isPrintGridlines());
@@ -496,7 +486,7 @@ public class TestXSSFSheet extends TestCase {
     
     public void testIsSetDisplayFormulas() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        XSSFSheet sheet = workbook.createSheet("Sheet 1");
         assertFalse(sheet.isDisplayFormulas());
         sheet.setDisplayFormulas(true);
         assertTrue(sheet.isDisplayFormulas());
@@ -504,7 +494,7 @@ public class TestXSSFSheet extends TestCase {
     
     public void testIsSetDisplayGridLines() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        XSSFSheet sheet = workbook.createSheet("Sheet 1");
         assertTrue(sheet.isDisplayGridlines());
         sheet.setDisplayGridlines(false);
         assertFalse(sheet.isDisplayGridlines());
@@ -512,7 +502,7 @@ public class TestXSSFSheet extends TestCase {
     
     public void testIsSetDisplayGuts() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        XSSFSheet sheet = workbook.createSheet("Sheet 1");
         assertTrue(sheet.getDisplayGuts());
         sheet.setDisplayGuts(false);
         assertFalse(sheet.getDisplayGuts());
@@ -520,7 +510,7 @@ public class TestXSSFSheet extends TestCase {
     
     public void testIsSetDisplayRowColHeadings() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        XSSFSheet sheet = workbook.createSheet("Sheet 1");
         assertTrue(sheet.isDisplayRowColHeadings());
         sheet.setDisplayRowColHeadings(false);
         assertFalse(sheet.isDisplayRowColHeadings());
@@ -528,7 +518,7 @@ public class TestXSSFSheet extends TestCase {
     
     public void testGetScenarioProtect() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        XSSFSheet sheet = workbook.createSheet("Sheet 1");
         assertFalse(sheet.getScenarioProtect());
     }
     
@@ -720,8 +710,8 @@ public class TestXSSFSheet extends TestCase {
     	
     	sheet.setDefaultColumnStyle((short) 3, cellStyle);
     	assertEquals(1, ctWorksheet.getColsArray(0).getColArray(0).getStyle());
-    	XSSFRow row = (XSSFRow) sheet.createRow(0);
-    	XSSFCell cell = (XSSFCell) sheet.getRow(0).createCell(3);
+    	XSSFRow row = sheet.createRow(0);
+    	XSSFCell cell = sheet.getRow(0).createCell(3);
     	
     }
     

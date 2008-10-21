@@ -172,22 +172,6 @@ public interface Workbook {
     void removeSheetAt(int index);
     
     /**
-     * determine whether the Excel GUI will backup the workbook when saving.
-     *
-     * @param backupValue   true to indicate a backup will be performed.
-     */
-
-    void setBackupFlag(boolean backupValue);
-
-    /**
-     * determine whether the Excel GUI will backup the workbook when saving.
-     *
-     * @return the current setting for backups.
-     */
-
-    boolean getBackupFlag();
-
-    /**
      * Sets the repeating rows and columns for a sheet (as found in
      * File->PageSetup->Sheet).  This is function is included in the workbook
      * because it creates/modifies name records which are stored at the
@@ -337,7 +321,7 @@ public interface Workbook {
 	 * Sets the policy on what to do when
 	 *  getting missing or blank cells from a row.
 	 * This will then apply to all calls to 
-	 *  {@link Row.getCell()}. See
+	 *  {@link Row#getCell(int)} }. See
 	 *  {@link MissingCellPolicy}
 	 */
 	void setMissingCellPolicy(MissingCellPolicy missingCellPolicy);
@@ -392,21 +376,9 @@ public interface Workbook {
     List getAllPictures();
 
     /**
-     * protect a workbook with a password (not encypted, just sets writeprotect
-     * flags and the password.
-     * @param password to set
-     */
-    void writeProtectWorkbook(String password, String username);
-
-    /**
-     * removes the write protect flag
-     */
-    void unwriteProtectWorkbook();
-
-    /**
      * Gets all embedded OLE2 objects from the Workbook.
      *
-     * @return the list of embedded objects (a list of {@link HSSFObjectData} objects.)
+     * @return the list of embedded objects
      */
     List getAllEmbeddedObjects();
 

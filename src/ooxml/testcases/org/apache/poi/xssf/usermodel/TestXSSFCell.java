@@ -17,7 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -28,21 +27,13 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.model.SharedStringSource;
-import org.apache.poi.xssf.model.SharedStringsTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
@@ -291,7 +282,8 @@ public final class TestXSSFCell extends TestCase {
     	
     	CellStyle cs = workbook.createCellStyle();
     	assertNotNull(cs);
-    	
+        assertTrue(cs.getIndex() > 0);
+
     	assertNotNull(creationHelper);
     	assertNotNull(creationHelper.createDataFormat());
     	
@@ -299,9 +291,10 @@ public final class TestXSSFCell extends TestCase {
     			creationHelper.createDataFormat().getFormat("yyyy/mm/dd")
     	);
     	Cell cell = sheet.createRow(0).createCell((short)0);
+        assertNotNull(cell.getCellStyle());
+        assertEquals(0, cell.getCellStyle().getIndex());
     	cell.setCellValue(new Date(654321));
     	
-    	assertNull(cell.getCellStyle());
     	cell.setCellStyle(cs);
     	
     	assertEquals(new Date(654321), cell.getDateCellValue());

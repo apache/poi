@@ -23,5 +23,14 @@ package org.apache.poi.xssf.usermodel;
  * @author Yegor Kozlov
  */
 public abstract class XSSFAnchor {
+    
+    public abstract int getDx1();
+    public abstract void setDx1( int dx1 );
+    public abstract int getDy1();
+    public abstract void setDy1( int dy1 );
+    public abstract int getDy2();
+    public abstract void setDy2( int dy2 );
+    public abstract int getDx2();
+    public abstract void setDx2( int dx2 );
 
 }

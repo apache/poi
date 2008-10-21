@@ -488,9 +488,7 @@ public class XSSFFont implements Font {
 
 
     public String toString() {
-        return "org.apache.poi.xssf.usermodel.XSSFFont{" +
-                ctFont +
-                "}";
+        return ctFont.toString();
     }
 
 

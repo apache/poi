@@ -204,12 +204,12 @@ public final class TestXSSFRow extends TestCase {
         assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(5, XSSFRow.CREATE_NULL_AS_BLANK).getCellType());
 
         // Check created ones get the right column
-        assertEquals((short)0, row.getCell(0, XSSFRow.CREATE_NULL_AS_BLANK).getCellNum());
-        assertEquals((short)1, row.getCell(1, XSSFRow.CREATE_NULL_AS_BLANK).getCellNum());
-        assertEquals((short)2, row.getCell(2, XSSFRow.CREATE_NULL_AS_BLANK).getCellNum());
-        assertEquals((short)3, row.getCell(3, XSSFRow.CREATE_NULL_AS_BLANK).getCellNum());
-        assertEquals((short)4, row.getCell(4, XSSFRow.CREATE_NULL_AS_BLANK).getCellNum());
-        assertEquals((short)5, row.getCell(5, XSSFRow.CREATE_NULL_AS_BLANK).getCellNum());
+        assertEquals((short)0, row.getCell(0, XSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
+        assertEquals((short)1, row.getCell(1, XSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
+        assertEquals((short)2, row.getCell(2, XSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
+        assertEquals((short)3, row.getCell(3, XSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
+        assertEquals((short)4, row.getCell(4, XSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
+        assertEquals((short)5, row.getCell(5, XSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
     }
 
     /**

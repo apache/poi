@@ -143,7 +143,7 @@ public class FromQuickGuide {
 	public static void getCellContents(Sheet sheet) {
 	    for (Row row : sheet) {
 	        for (Cell cell : row) {
-	        	CellReference cellRef = new CellReference(row.getRowNum(), cell.getCellNum());
+	        	CellReference cellRef = new CellReference(row.getRowNum(), cell.getColumnIndex());
 	        	System.out.print(cellRef.formatAsString());
 	        	System.out.print(" - ");
 	        	
