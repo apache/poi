@@ -322,8 +322,6 @@ public final class TestXSSFWorkbook extends TestCase {
 		((XSSFFont)font).setBold(true);
 		font.setUnderline(Font.U_DOUBLE);
 		StylesTable styleSource=new StylesTable();
-		long index=styleSource.putFont(font);
-		workbook.setStylesSource(styleSource);
 		fontFind=workbook.findFont(Font.BOLDWEIGHT_BOLD, IndexedColors.BLACK.getIndex(), (short)15, "Calibri", false, false, Font.SS_NONE, Font.U_DOUBLE);
 		assertNull(fontFind);
 	}
@@ -399,7 +397,7 @@ public final class TestXSSFWorkbook extends TestCase {
 	
 	public void testSetDisplayedTab(){
 		XSSFWorkbook workbook = new XSSFWorkbook();
-		workbook.setFirstVisibleTab(new Integer(1).shortValue());
+		workbook.setFirstVisibleTab(1);
 		short i = (short) workbook.getFirstVisibleTab();
 		//0 (defualt value) is not longer set
 		assertNotSame(0, i);

@@ -145,7 +145,12 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * @return HorizontalAlignment - the type of alignment
      */
     public HorizontalAlignment getAlignmentEnum() {
-        return getCellAlignment().getHorizontal();
+        CTCellAlignment align = cellXf.getAlignment();
+        if(align != null && align.isSetHorizontal()) {
+            return HorizontalAlignment.values()[align.getHorizontal().intValue()-1];
+        } else {
+            return HorizontalAlignment.GENERAL;
+        }
     }
 
     /**
@@ -485,7 +490,8 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * @return indent - number of spaces
      */
     public short getIndention() {
-        return (short) getCellAlignment().getIndent();
+        CTCellAlignment align = cellXf.getAlignment();
+        return (short)(align == null ? 0 : align.getIndent());
     }
 
     /**
@@ -571,7 +577,8 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * @return rotation degrees (between 0 and 180 degrees)
      */
     public short getRotation() {
-        return (short) getCellAlignment().getTextRotation();
+        CTCellAlignment align = cellXf.getAlignment();
+        return (short)(align == null ? 0 : align.getTextRotation());
     }
 
     /**
@@ -619,7 +626,12 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * @see VerticalAlignment
      */
     public VerticalAlignment getVerticalAlignmentEnum() {
-        return getCellAlignment().getVertical();
+        CTCellAlignment align = cellXf.getAlignment();
+        if(align != null && align.isSetVertical()) {
+            return VerticalAlignment.values()[align.getVertical().intValue()-1];
+        } else {
+            return VerticalAlignment.BOTTOM;
+        }
     }
 
     /**
@@ -628,7 +640,8 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * @return  a boolean value indicating if the text in a cell should be line-wrapped within the cell.
      */
     public boolean getWrapText() {
-        return getCellAlignment().getWrapText();
+        CTCellAlignment align = cellXf.getAlignment();
+        return align != null && align.getWrapText();
     }
 
     /**

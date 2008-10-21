@@ -19,7 +19,6 @@ package org.apache.poi.ss.usermodel;
 
 import java.util.Iterator;
 
-import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.Region;
@@ -27,13 +26,17 @@ import org.apache.poi.ss.util.Region;
 public interface Sheet extends Iterable<Row> {
 
     /* Constants for margins */
-    public static final short LeftMargin = Sheet.LeftMargin;
+    public static final short LeftMargin = 0;
 
-    public static final short RightMargin = Sheet.RightMargin;
+    public static final short RightMargin = 1;
 
-    public static final short TopMargin = Sheet.TopMargin;
+    public static final short TopMargin = 2;
 
-    public static final short BottomMargin = Sheet.BottomMargin;
+    public static final short BottomMargin = 3;
+
+    public static final short HeaderMargin = 4;
+
+    public static final short FooterMargin = 5;
 
     public static final byte PANE_LOWER_RIGHT = (byte) 0;
 
@@ -57,7 +60,7 @@ public interface Sheet extends Iterable<Row> {
      * @param rownum  row number
      * @return High level HSSFRow object representing a row in the sheet
      * @see org.apache.poi.hssf.usermodel.HSSFRow
-     * @see #removeRow(HSSFRow)
+     * @see #removeRow(Row)
      */
     Row createRow(int rownum);
 
@@ -246,12 +249,6 @@ public interface Sheet extends Iterable<Row> {
      * be the third row if say for instance the second row is undefined.
      */
     Iterator<Row> rowIterator();
-    
-    /**
-     * Alias for {@link #rowIterator()} to allow 
-     *  foreach loops
-     */
-    Iterator<Row> iterator();
 
     /**
      * whether alternate expression evaluation is on
@@ -273,13 +270,6 @@ public interface Sheet extends Iterable<Row> {
      */
 
     void setAutobreaks(boolean b);
-
-    /**
-     * set whether sheet is a dialog sheet or not
-     * @param b  isDialog or not
-     */
-
-    void setDialog(boolean b);
 
     /**
      * set whether to display the guts or not
@@ -330,13 +320,6 @@ public interface Sheet extends Iterable<Row> {
      */
 
     boolean getAutobreaks();
-
-    /**
-     * get whether sheet is a dialog sheet or not
-     * @return isDialog or not
-     */
-
-    boolean getDialog();
 
     /**
      * get whether to display the guts or not

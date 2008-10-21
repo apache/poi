@@ -45,12 +45,12 @@ public interface Row extends Iterable<Cell> {
      *
      * @param column - the column number this cell represents
      *
-     * @return HSSFCell a high level representation of the created cell.
+     * @return Cell a high level representation of the created cell.
      */
     Cell createCell(int column, int type);
 
     /**
-     * remove the HSSFCell from this row.
+     * remove the Cell from this row.
      * @param cell to remove
      */
     void removeCell(Cell cell);
@@ -71,7 +71,7 @@ public interface Row extends Iterable<Cell> {
     int getRowNum();
 
     /**
-     * get the hssfcell representing a given column (logical cell) 0-based.  If you
+     * get the cell representing a given column (logical cell) 0-based.  If you
      * ask for a cell that is not defined....you get a null.
      *
      * @param cellnum  0 based column number
@@ -80,7 +80,7 @@ public interface Row extends Iterable<Cell> {
     Cell getCell(int cellnum);
     
     /**
-     * Get the hssfcell representing a given column (logical cell)
+     * Get the cell representing a given column (logical cell)
      *  0-based.  If you ask for a cell that is not defined, then
      *  your supplied policy says what to do
      *
@@ -157,12 +157,6 @@ public interface Row extends Iterable<Cell> {
      * actually be row cell depending on how many are defined!
      */
     Iterator<Cell> cellIterator();
-
-	/**
-	 * Alias for {@link #cellIterator()} to allow
-	 * foreach loops
-	 */
-	Iterator<Cell> iterator();
 
     /**
      * Used to specify the different possible policies

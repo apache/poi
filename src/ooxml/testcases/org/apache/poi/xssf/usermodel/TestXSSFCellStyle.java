@@ -532,10 +532,10 @@ public class TestXSSFCellStyle extends TestCase {
 
 	public void testGetSetIndent() {
 		assertEquals((short)0, cellStyle.getIndention());
-		cellXf.getAlignment().setIndent(3);
+		cellStyle.setIndention((short)3);
 		assertEquals((short)3, cellStyle.getIndention());
 		cellStyle.setIndention((short) 13);
-		assertEquals((short)13, cellXf.getAlignment().getIndent());
+		assertEquals((short)13, cellStyle.getIndention());
 	}
 
 	public void testGetSetAlignement() {
@@ -576,10 +576,10 @@ public class TestXSSFCellStyle extends TestCase {
 
 	public void testGetSetWrapText() {
 		assertFalse(cellStyle.getWrapText());
-		cellXf.getAlignment().setWrapText(true);
+		cellStyle.setWrapText(true);
 		assertTrue(cellStyle.getWrapText());
 		cellStyle.setWrapText(false);
-		assertFalse(cellXf.getAlignment().getWrapText());
+        assertFalse(cellStyle.getWrapText());
 	}
 
 	/**

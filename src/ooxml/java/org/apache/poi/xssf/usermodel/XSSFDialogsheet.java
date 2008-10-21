@@ -27,6 +27,7 @@ import org.openxml4j.opc.PackageRelationship;
 import java.io.IOException;
 
 public class XSSFDialogsheet extends XSSFSheet implements Sheet{
+    protected CTDialogsheet dialogsheet;
 
     public XSSFDialogsheet(XSSFSheet sheet) {
         this.packagePart = sheet.getPackagePart();
@@ -96,4 +97,7 @@ public class XSSFDialogsheet extends XSSFSheet implements Sheet{
         return dialogsheet.getSheetProtection();
     }
 
+    public boolean getDialog(){
+        return true;
+    }
 }

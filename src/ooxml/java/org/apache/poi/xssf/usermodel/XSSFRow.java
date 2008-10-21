@@ -27,7 +27,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
-
+/**
+ * High level representation of a row of a spreadsheet.
+ */
 public class XSSFRow implements Row, Comparable {
 
     private CTRow row;
@@ -45,20 +47,30 @@ public class XSSFRow implements Row, Comparable {
     public XSSFRow(CTRow row, XSSFSheet sheet) {
         this.row = row;
         this.sheet = sheet;
-        this.cells = new LinkedList<Cell>(); 
+        this.cells = new LinkedList<Cell>();
         for (CTCell c : row.getCArray()) {
             this.cells.add(new XSSFCell(this, c));
         }
         
     }
 
+    /**
+     * Returns the XSSFSheet this row belongs to
+     *
+     * @return the XSSFSheet that owns this row
+     */
     public XSSFSheet getSheet() {
         return this.sheet;
     }
     
+    /**
+     * @return Cell iterator of the physically defined cells.  Note element 4 may
+     * actually be row cell depending on how many are defined!
+     */
     public Iterator<Cell> cellIterator() {
         return cells.iterator();
     }
+
     /**
      * Alias for {@link #cellIterator()} to allow
      *  foreach loops
@@ -102,7 +114,7 @@ public class XSSFRow implements Row, Comparable {
      * 
      * @param column Cell column number.
      * @param index Position where to insert cell.
-     * @param type TODO
+     * @param type cell type, one of Cell.CELL_TYPE_*
      * @return The new cell.
      */
     protected XSSFCell addCell(int column, int index, int type) {
@@ -148,7 +160,7 @@ public class XSSFRow implements Row, Comparable {
         Iterator<Cell> it = cellIterator();
         for ( ; it.hasNext() ; ) {
         	Cell cell = it.next();
-        	if (cell.getCellNum() == cellnum) {
+        	if (cell.getColumnIndex() == cellnum) {
         		return (XSSFCell)cell;
         	}
         }
@@ -157,8 +169,9 @@ public class XSSFRow implements Row, Comparable {
     
     /**
      * Returns the cell at the given (0 based) index,
-     *  with the {@link MissingCellPolicy} from the
-     *  parent Workbook.
+     *  with the {@link MissingCellPolicy} from the parent Workbook.
+     *
+     * @return the cell at the given (0 based) index
      */
     public XSSFCell getCell(int cellnum) {
     	return getCell(cellnum, sheet.getWorkbook().getMissingCellPolicy());
@@ -167,6 +180,8 @@ public class XSSFRow implements Row, Comparable {
     /**
      * Returns the cell at the given (0 based) index,
      *  with the specified {@link MissingCellPolicy}
+     *
+     * @return the cell at the given (0 based) index
      */
     public XSSFCell getCell(int cellnum, MissingCellPolicy policy) {
     	XSSFCell cell = retrieveCell(cellnum);
@@ -189,11 +204,16 @@ public class XSSFRow implements Row, Comparable {
     	throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
     }
 
+    /**
+     * Get the number of the first cell contained in this row.
+     *
+     * @return short representing the first logical cell in the row, or -1 if the row does not contain any cells.
+     */
     public short getFirstCellNum() {
     	for (Iterator<Cell> it = cellIterator() ; it.hasNext() ; ) {
     		Cell cell = it.next();
     		if (cell != null) {
-    			return cell.getCellNum();
+    			return (short)cell.getColumnIndex();
     		}
     	}
     	return -1;
@@ -248,12 +268,18 @@ public class XSSFRow implements Row, Comparable {
     	for (Iterator<Cell> it = cellIterator() ; it.hasNext() ; ) {
     		Cell cell = it.next();
     		if (cell != null) {
-    			lastCellNum = (short)(cell.getCellNum() + 1);
+    			lastCellNum = (short)(cell.getColumnIndex() + 1);
     		}
     	}
     	return lastCellNum;
     }
 
+    /**
+     * Gets the number of defined cells (NOT number of cells in the actual row!).
+     * That is to say if only columns 0,4,5 have values then there would be 3.
+     *
+     * @return int representing the number of defined cells in the row.
+     */
     public int getPhysicalNumberOfCells() {
     	int count = 0;
     	for (Iterator<Cell> it = cellIterator() ; it.hasNext() ; ) {
@@ -264,19 +290,34 @@ public class XSSFRow implements Row, Comparable {
     	return count;
     }
 
+    /**
+     * Get row number this row represents
+     *
+     * @return the row number (0 based)
+     */
     public int getRowNum() {
         return (int) (row.getR() - 1);
     }
 
+    /**
+     * Get whether or not to display this row with 0 height
+     *
+     * @return - height is zero or not.
+     */
     public boolean getZeroHeight() {
     	return this.row.getHidden();
     }
 
+    /**
+     * Remove the Cell from this row.
+     *
+     * @param cell to remove
+     */
     public void removeCell(Cell cell) {
     	int counter = 0;
     	for (Iterator<Cell> it = cellIterator(); it.hasNext(); ) {
     		Cell c = it.next();
-    		if (c.getCellNum() == cell.getCellNum()) {
+    		if (c.getColumnIndex() == cell.getColumnIndex()) {
     			it.remove();
     			row.removeC(counter);
     			continue;
@@ -309,16 +350,31 @@ public class XSSFRow implements Row, Comparable {
 	    setHeight((short)(height*20));
     }
 
+    /**
+     * Set the row number of this row.
+     *
+     * @param rowNum  the row number (0-based)
+     */
     public void setRowNum(int rowNum) {
         this.row.setR(rowNum + 1);
 
     }
 
+    /**
+     * Set whether or not to display this row with 0 height
+     *
+     * @param height  height is zero or not.
+     */
     public void setZeroHeight(boolean height) {
     	this.row.setHidden(height);
 
     }
     
+    /**
+     * Returns the underlying CTRow xml bean representing this row
+     *
+     * @return the underlying CTRow bean
+     */
     public CTRow getCTRow(){
     	return this.row;
     }
