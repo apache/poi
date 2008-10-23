@@ -70,26 +70,6 @@ public interface Cell {
 
     public final static int CELL_TYPE_ERROR = 5;
     
-    public final static class CELL_ERROR_TYPE {
-    	private final byte type;
-    	private final String repr;
-    	private CELL_ERROR_TYPE(int type, String repr) {
-    		this.type = (byte)type;
-    		this.repr = repr;
-    	}
-    	
-    	public byte getType() { return type; }
-    	public String getStringRepr() { return repr; }
-    }
-    public static final CELL_ERROR_TYPE ERROR_NULL  = new CELL_ERROR_TYPE(0, "#NULL!");
-    public static final CELL_ERROR_TYPE ERROR_DIV0  = new CELL_ERROR_TYPE(7, "#DIV/0!");
-    public static final CELL_ERROR_TYPE ERROR_VALUE = new CELL_ERROR_TYPE(15, "#VALUE!");
-    public static final CELL_ERROR_TYPE ERROR_REF   = new CELL_ERROR_TYPE(23, "#REF!");
-    public static final CELL_ERROR_TYPE ERROR_NAME  = new CELL_ERROR_TYPE(29, "#NAME?");
-    public static final CELL_ERROR_TYPE ERROR_NUM   = new CELL_ERROR_TYPE(36, "#NUM!");
-    public static final CELL_ERROR_TYPE ERROR_NA    = new CELL_ERROR_TYPE(42, "#N/A");
-
-
     /**
      * set the cell's number within the row (0 based)
      * @param num  short the cell number
@@ -239,12 +219,12 @@ public interface Cell {
     byte getErrorCellValue();
 
     /**
-     * set the style for the cell.  The style should be an HSSFCellStyle created/retreived from
-     * the HSSFWorkbook.
+     * set the style for the cell.  The style should be an CellStyle created/retreived from
+     * the Workbook.
      *
      * @param style  reference contained in the workbook
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createCellStyle()
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(short)
+     * @see Workbook#createCellStyle()
+     * @see Workbook#getCellStyleAt(short)
      */
 
     void setCellStyle(CellStyle style);
@@ -252,7 +232,7 @@ public interface Cell {
     /**
      * get the style for the cell.  This is a reference to a cell style contained in the workbook
      * object.
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(short)
+     * @see Workbook#getCellStyleAt(short)
      */
 
     CellStyle getCellStyle();
@@ -261,20 +241,6 @@ public interface Cell {
      * Sets this cell as the active cell for the worksheet
      */
     void setAsActiveCell();
-
-    /**
-     * Returns a string representation of the cell
-     * 
-     * This method returns a simple representation, 
-     * anthing more complex should be in user code, with
-     * knowledge of the semantics of the sheet being processed. 
-     * 
-     * Formula cells return the formula string, 
-     * rather than the formula result. 
-     * Dates are displayed in dd-MMM-yyyy format
-     * Errors are displayed as #ERR&lt;errIdx&gt;
-     */
-    String toString();
 
     /**
      * Assign a comment to this cell
@@ -295,12 +261,12 @@ public interface Cell {
      *
      * @return hyperlink associated with this cell or null if not found
      */
-    public Hyperlink getHyperlink();
+    Hyperlink getHyperlink();
 
     /**
      * Assign a hypelrink to this cell
      *
      * @param link hypelrink associated with this cell
      */
-    public void setHyperlink(Hyperlink link);
+    void setHyperlink(Hyperlink link);
 }

@@ -866,6 +866,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * @param fmt the index of a data format
      */
     public void setDataFormat(short fmt) {
+        cellXf.setApplyNumberFormat(true);
         cellXf.setNumFmtId((long)fmt);
     }
 

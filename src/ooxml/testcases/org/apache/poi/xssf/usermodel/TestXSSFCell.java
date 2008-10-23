@@ -25,13 +25,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
@@ -51,18 +45,39 @@ public final class TestXSSFCell extends TestCase {
     public void testSetGetBoolean() throws Exception {
         XSSFRow row = createParentObjects();
         XSSFCell cell = row.createCell(0);
+        //for blank cells getBooleanCellValue returns false
+        assertFalse(cell.getBooleanCellValue());
+
         cell.setCellValue(true);
         assertEquals(Cell.CELL_TYPE_BOOLEAN, cell.getCellType());
         assertTrue(cell.getBooleanCellValue());
         cell.setCellValue(false);
         assertFalse(cell.getBooleanCellValue());
+
         cell.setCellType(Cell.CELL_TYPE_NUMERIC);
         try {
             cell.getBooleanCellValue();
             fail("Exception expected");
-        } catch (NumberFormatException e) {
+        } catch (IllegalStateException e) {
             // success
+            assertEquals("Cannot get a boolean value from a numeric cell", e.getMessage());
         }
+
+        cell.setCellValue("1");
+        assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
+        try {
+            cell.getBooleanCellValue();
+            fail("Exception expected");
+        } catch (IllegalStateException e) {
+            // success
+            assertEquals("Cannot get a boolean value from a text cell", e.getMessage());
+        }
+
+        //reverted to a blank cell
+        cell.setCellType(Cell.CELL_TYPE_BLANK);
+        assertFalse(cell.getBooleanCellValue());
+
+
     }
     
     /**
@@ -71,15 +86,54 @@ public final class TestXSSFCell extends TestCase {
     public void testSetGetNumeric() throws Exception {
         XSSFRow row = createParentObjects();
         XSSFCell cell = row.createCell(0);
-        cell.setCellValue(10d);
+        assertEquals(0.0, cell.getNumericCellValue());
+
+        cell.setCellValue(10.0);
         assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
-        assertEquals(10d, cell.getNumericCellValue());
+        assertEquals(10.0, cell.getNumericCellValue());
         cell.setCellValue(-23.76);
         assertEquals(-23.76, cell.getNumericCellValue());        
-    }
+
+        cell.setCellValue("string");
+        try {
+            cell.getNumericCellValue();
+            fail("Exception expected");
+        } catch (IllegalStateException e) {
+            // success
+            assertEquals("Cannot get a numeric value from a text cell", e.getMessage());
+        }
+
+        cell.setCellValue(true);
+        try {
+            cell.getNumericCellValue();
+            fail("Exception expected");
+        } catch (IllegalStateException e) {
+            // success
+            assertEquals("Cannot get a numeric value from a boolean cell", e.getMessage());
+        }
+
+        //reverted to a blank cell
+        cell.setCellType(Cell.CELL_TYPE_BLANK);
+        assertEquals(0.0, cell.getNumericCellValue());
+
+        //setting numeric value for a formula cell does not change the cell type
+        XSSFCell fcell = row.createCell(1);
+        fcell.setCellFormula("SUM(C4:E4)");
+        assertEquals(Cell.CELL_TYPE_FORMULA, fcell.getCellType());
+        fcell.setCellValue(36.6);
+        assertEquals(Cell.CELL_TYPE_FORMULA, fcell.getCellType());
+        assertEquals(36.6, fcell.getNumericCellValue());
+
+        //the said above is true for error cells
+        fcell.setCellType(Cell.CELL_TYPE_ERROR);
+        assertEquals(36.6, fcell.getNumericCellValue());
+        fcell.setCellValue(16.6);
+        assertEquals(Cell.CELL_TYPE_FORMULA, fcell.getCellType());
+        assertEquals(16.6, fcell.getNumericCellValue());
+     }
     
     /**
-     * Test setting and getting numeric values.
+     * Test setting and getting date values.
      */
     public void testSetGetDate() throws Exception {
         XSSFRow row = createParentObjects();
@@ -100,8 +154,9 @@ public final class TestXSSFCell extends TestCase {
         try {
             cell.getDateCellValue();
             fail("Exception expected");
-        } catch (NumberFormatException e) {
+        } catch (IllegalStateException e) {
             // success
+            assertEquals("Cannot get a numeric value from a boolean cell", e.getMessage());
         }
         
         cell.setCellValue(cal);
@@ -109,6 +164,34 @@ public final class TestXSSFCell extends TestCase {
         
     }
     
+    /**
+     * Test setting and getting date values.
+     */
+    public void testSetGetType() throws Exception {
+        XSSFRow row = createParentObjects();
+        XSSFCell cell = row.createCell(0);
+        cell.setCellType(Cell.CELL_TYPE_BLANK);
+        assertEquals(Cell.CELL_TYPE_BLANK, cell.getCellType());
+        cell.setCellType(Cell.CELL_TYPE_STRING);
+        assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
+        cell.setCellType(Cell.CELL_TYPE_FORMULA);
+        assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        cell.setCellFormula(null);
+
+        //number cell w/o value is treated as a Blank cell
+        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+        assertFalse(cell.getCTCell().isSetV());
+        assertEquals(Cell.CELL_TYPE_BLANK, cell.getCellType());
+
+        //normal number cells have set values
+        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+        cell.getCTCell().setV("0");
+        assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+
+        cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+        assertEquals(Cell.CELL_TYPE_BOOLEAN, cell.getCellType());
+    }
+
     public void testSetGetError() throws Exception {
         XSSFRow row = createParentObjects();
         XSSFCell cell = row.createCell(0);
@@ -116,14 +199,15 @@ public final class TestXSSFCell extends TestCase {
         cell.setCellErrorValue((byte)0);
         assertEquals(Cell.CELL_TYPE_ERROR, cell.getCellType());
         assertEquals((byte)0, cell.getErrorCellValue());
-        
+
+        //YK setting numeric value of a error cell does not change the cell type
         cell.setCellValue(2.2);
-        assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
-        
-        cell.setCellErrorValue(Cell.ERROR_NAME);
         assertEquals(Cell.CELL_TYPE_ERROR, cell.getCellType());
-        assertEquals(Cell.ERROR_NAME.getType(), cell.getErrorCellValue());
-        assertEquals(Cell.ERROR_NAME.getStringRepr(), cell.getErrorCellString());
+        
+        cell.setCellErrorValue(FormulaError.NAME);
+        assertEquals(Cell.CELL_TYPE_ERROR, cell.getCellType());
+        assertEquals(FormulaError.NAME.getCode(), cell.getErrorCellValue());
+        assertEquals(FormulaError.NAME.getString(), cell.getErrorCellString());
     }
     
     public void testSetGetFormula() throws Exception {
@@ -135,7 +219,13 @@ public final class TestXSSFCell extends TestCase {
         assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
         assertEquals(formula, cell.getCellFormula());
         
-        assertTrue( Double.isNaN( cell.getNumericCellValue() ));
+        assertEquals(0.0, cell.getNumericCellValue());
+
+        cell.setCellValue(44.5); //set precalculated value
+        assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals(44.5, cell.getNumericCellValue());
+
+        cell.setCellValue(""); //set precalculated value
     }
     
     public void testSetGetStringInline() throws Exception {
@@ -166,14 +256,27 @@ public final class TestXSSFCell extends TestCase {
     public void testSetGetStringShared() {
         XSSFRow row = createParentObjects();
         XSSFCell cell = row.createCell(0);
+        //we return empty string for blank cells
+        assertEquals("", cell.getStringCellValue());
 
-        cell.setCellValue(new XSSFRichTextString(""));
+        cell.setCellValue(new XSSFRichTextString("test"));
         assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
-        assertEquals("", cell.getRichStringCellValue().getString());
+        assertEquals("test", cell.getRichStringCellValue().getString());
 
         cell.setCellValue(new XSSFRichTextString("Foo"));
         assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
         assertEquals("Foo", cell.getRichStringCellValue().getString());
+
+        cell.setCellValue((String)null);
+        assertEquals(Cell.CELL_TYPE_BLANK, cell.getCellType());
+
+        XSSFCell fcell = row.createCell(1);
+        fcell.setCellFormula("SUM(C4:E4)");
+        assertEquals(Cell.CELL_TYPE_FORMULA, fcell.getCellType());
+        fcell.setCellValue("36.6");
+        assertEquals(Cell.CELL_TYPE_FORMULA, fcell.getCellType());
+        assertEquals("36.6", fcell.getStringCellValue());
+
     }
     
     /**
@@ -185,7 +288,7 @@ public final class TestXSSFCell extends TestCase {
         cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
         assertFalse(cell.getBooleanCellValue());
         cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-        assertTrue(Double.isNaN( cell.getNumericCellValue() ));
+        assertEquals(0.0, cell.getNumericCellValue() );
         assertNull(cell.getDateCellValue());
         cell.setCellType(Cell.CELL_TYPE_ERROR);
         assertEquals(0, cell.getErrorCellValue());
@@ -246,17 +349,15 @@ public final class TestXSSFCell extends TestCase {
         XSSFComment comment = sheet.createComment();
         comment.setAuthor(TEST_C10_AUTHOR);
 
-        CTWorksheet ctWorksheet = sheet.getWorksheet();
-
         // Create C10 cell
-        Row row = sheet.createRow(9);
-        Cell cell = row.createCell(2);
+        XSSFRow row = sheet.createRow(9);
+        XSSFCell cell = row.createCell(2);
         row.createCell(3);
 
         // Set a comment for C10 cell
         cell.setCellComment(comment);
         
-        CTCell ctCell = ctWorksheet.getSheetData().getRowArray(0).getCArray(0);
+        CTCell ctCell = cell.getCTCell();
 		assertNotNull(ctCell);
 		assertEquals("C10", ctCell.getR());
 		assertEquals(TEST_C10_AUTHOR, comment.getAuthor());
@@ -407,7 +508,7 @@ public final class TestXSSFCell extends TestCase {
     	assertEquals(hcell.toString(),xcell.toString());
     	
     	//ERROR
-    	xcell.setCellErrorValue(Cell.ERROR_VALUE);
+    	xcell.setCellErrorValue(FormulaError.VALUE);
     	xcell.setCellType(Cell.CELL_TYPE_ERROR);
 
     	hcell.setCellErrorValue((byte)0);
