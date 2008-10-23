@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianInput;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +30,7 @@ import java.io.ByteArrayOutputStream;
  *
  * @author Jason Height (jheight @ apache dot org)
  */
-public final class RecordInputStream extends InputStream {
+public final class RecordInputStream extends InputStream implements LittleEndianInput {
 	/** Maximum size of a single record (minus the 4 byte header) without a continue*/
 	public final static short MAX_RECORD_DATA_SIZE = 8224;
 	private static final int INVALID_SID_VALUE = -1;
@@ -189,8 +190,8 @@ public final class RecordInputStream extends InputStream {
 	/**
 	 * Reads an 8 bit, unsigned value
 	 */
-	public short readUByte() {
-		return (short) (readByte() & 0x00FF);
+	public int readUByte() {
+		return readByte() & 0x00FF;
 	}
 
 	/**
@@ -216,6 +217,16 @@ public final class RecordInputStream extends InputStream {
 		recordOffset += LittleEndian.DOUBLE_SIZE;
 		pos += LittleEndian.DOUBLE_SIZE;
 		return result;
+	}
+	public void readFully(byte[] buf) {
+		readFully(buf, 0, buf.length);
+	}
+
+	public void readFully(byte[] buf, int off, int len) {
+		checkRecordPosition(len);
+		System.arraycopy(data, recordOffset, buf, off, len);
+		recordOffset+=len;
+		pos+=len;
 	}
 
 	public String readString() {

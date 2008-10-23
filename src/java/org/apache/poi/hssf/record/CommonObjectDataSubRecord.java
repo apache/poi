@@ -20,7 +20,8 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The common object data record is used to store all common preferences for an excel object.<p/>
@@ -80,8 +81,10 @@ public final class CommonObjectDataSubRecord extends SubRecord {
 
     }
 
-    public CommonObjectDataSubRecord(RecordInputStream in)
-    {
+    public CommonObjectDataSubRecord(LittleEndianInput in, int size) {
+        if (size != 18) {
+            throw new RecordFormatException("Expected size 18 but got (" + size + ")");
+        }
         field_1_objectType             = in.readShort();
         field_2_objectId               = in.readShort();
         field_3_option                 = in.readShort();
@@ -128,26 +131,21 @@ public final class CommonObjectDataSubRecord extends SubRecord {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
+    public void serialize(LittleEndianOutput out) {
 
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
+        out.writeShort(sid);
+        out.writeShort(getDataSize());
 
-        LittleEndian.putShort(data, 4 + offset + pos, field_1_objectType);
-        LittleEndian.putShort(data, 6 + offset + pos, field_2_objectId);
-        LittleEndian.putShort(data, 8 + offset + pos, field_3_option);
-        LittleEndian.putInt(data, 10 + offset + pos, field_4_reserved1);
-        LittleEndian.putInt(data, 14 + offset + pos, field_5_reserved2);
-        LittleEndian.putInt(data, 18 + offset + pos, field_6_reserved3);
-
-        return getRecordSize();
+        out.writeShort(field_1_objectType);
+        out.writeShort(field_2_objectId);
+        out.writeShort(field_3_option);
+        out.writeInt(field_4_reserved1);
+        out.writeInt(field_5_reserved2);
+        out.writeInt(field_6_reserved3);
     }
 
-    public int getRecordSize()
-    {
-        return 4  + 2 + 2 + 2 + 4 + 4 + 4;
+	protected int getDataSize() {
+        return 2 + 2 + 2 + 4 + 4 + 4;
     }
 
     public short getSid()

@@ -28,14 +28,11 @@ import junit.framework.TestCase;
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class TestEndSubRecord extends TestCase {
-    byte[] data = new byte[] {
-	
-    };
+    private static final byte[] data =  { };
 
     public void testLoad() {
-        EndSubRecord record = new EndSubRecord(TestcaseRecordInputStream.create(0x00, data));
-
-        assertEquals( 4, record.getRecordSize() );
+        EndSubRecord record = new EndSubRecord(TestcaseRecordInputStream.create(0x00, data), 0);
+        assertEquals(0, record.getDataSize());
     }
 
     public void testStore()

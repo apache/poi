@@ -41,19 +41,19 @@ public final class TestObjRecord extends TestCase {
     private static final byte[] recdata = {
         0x15, 0x00, 0x12, 0x00, 0x06, 0x00, 0x01, 0x00, 0x11, 0x60,
         (byte)0xF4, 0x02, 0x41, 0x01, 0x14, 0x10, 0x1F, 0x02, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
         // TODO - this data seems to require two extra bytes padding. not sure where original file is.
         // it's not bug 38607 attachment 17639
     };
 
     private static final byte[] recdataNeedingPadding = {
-    	21, 0, 18, 0, 0, 0, 1, 0, 17, 96, 0, 0, 0, 0, 56, 111, -52, 3, 0, 0, 0, 0, 6, 0, 2, 0, 0, 0, 0, 0, 0, 0
+        21, 0, 18, 0, 0, 0, 1, 0, 17, 96, 0, 0, 0, 0, 56, 111, -52, 3, 0, 0, 0, 0, 6, 0, 2, 0, 0, 0, 0, 0, 0, 0
     };
 
     public void testLoad() {
         ObjRecord record = new ObjRecord(TestcaseRecordInputStream.create(ObjRecord.sid, recdata));
 
-        assertEquals(28, record.getRecordSize() - 4);
+        assertEquals(26, record.getRecordSize() - 4);
 
         List subrecords = record.getSubRecords();
         assertEquals(2, subrecords.size() );
@@ -66,7 +66,7 @@ public final class TestObjRecord extends TestCase {
         ObjRecord record = new ObjRecord(TestcaseRecordInputStream.create(ObjRecord.sid, recdata));
 
         byte [] recordBytes = record.serialize();
-        assertEquals(28, recordBytes.length - 4);
+        assertEquals(26, recordBytes.length - 4);
         byte[] subData = new byte[recdata.length];
         System.arraycopy(recordBytes, 4, subData, 0, subData.length);
         assertTrue(Arrays.equals(recdata, subData));
@@ -102,7 +102,7 @@ public final class TestObjRecord extends TestCase {
         ObjRecord record = new ObjRecord(TestcaseRecordInputStream.create(ObjRecord.sid, recdataNeedingPadding));
         
         if (record.getRecordSize() == 34) {
-        	throw new AssertionFailedError("Identified bug 45133");
+            throw new AssertionFailedError("Identified bug 45133");
         }
 
         assertEquals(36, record.getRecordSize());
