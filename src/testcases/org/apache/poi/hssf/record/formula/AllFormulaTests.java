@@ -41,6 +41,7 @@ public final class AllFormulaTests {
 		result.addTestSuite(TestAreaErrPtg.class);
 		result.addTestSuite(TestAreaPtg.class);
 		result.addTestSuite(TestArrayPtg.class);
+		result.addTestSuite(TestAttrPtg.class);
 		result.addTestSuite(TestErrPtg.class);
 		result.addTestSuite(TestExternalFunctionFormulas.class);
 		result.addTestSuite(TestFormulaShifter.class);
