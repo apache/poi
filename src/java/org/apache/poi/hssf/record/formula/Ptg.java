@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * <tt>Ptg</tt> represents a syntactic token in a formula.  'PTG' is an acronym for 
@@ -264,7 +266,7 @@ public abstract class Ptg implements Cloneable {
 	 */
 //    public abstract int getDataSize();
 
-	public final byte [] getBytes()
+	public final byte[] getBytes()
 	{
 		int    size  = getSize();
 		byte[] bytes = new byte[ size ];
@@ -275,6 +277,10 @@ public abstract class Ptg implements Cloneable {
 	/** write this Ptg to a byte array*/
 	public abstract void writeBytes(byte [] array, int offset);
 
+	public void write(LittleEndianOutput out) {
+		out.write(getBytes()); // TODO - optimise - just a hack for the moment
+	}
+	
 	/**
 	 * return a string representation of this token alone
 	 */
@@ -284,14 +290,13 @@ public abstract class Ptg implements Cloneable {
 	 */
 	public final String toDebugString() {
 		byte[] ba = new byte[getSize()];
-		String retval=null;
 		writeBytes(ba,0);
 		try {
-			retval = org.apache.poi.util.HexDump.dump(ba,0,0);
+			return HexDump.dump(ba,0,0);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return retval;
+		return null;
 	}
 
 	/** Overridden toString method to ensure object hash is not printed.

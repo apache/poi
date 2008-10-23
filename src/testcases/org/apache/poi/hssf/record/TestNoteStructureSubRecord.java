@@ -38,16 +38,16 @@ public final class TestNoteStructureSubRecord extends TestCase {
 
     public void testRead() {
 
-        NoteStructureSubRecord record = new NoteStructureSubRecord(TestcaseRecordInputStream.create(NoteStructureSubRecord.sid, data));
+        NoteStructureSubRecord record = new NoteStructureSubRecord(TestcaseRecordInputStream.create(NoteStructureSubRecord.sid, data), data.length);
 
         assertEquals(NoteStructureSubRecord.sid, record.getSid());
-        assertEquals(data.length + 4, record.getRecordSize());
+        assertEquals(data.length, record.getDataSize());
     }
 
     public void testWrite() {
         NoteStructureSubRecord record = new NoteStructureSubRecord();
         assertEquals(NoteStructureSubRecord.sid, record.getSid());
-        assertEquals(data.length + 4, record.getRecordSize());
+        assertEquals(data.length, record.getDataSize());
 
         byte [] ser = record.serialize();
         assertEquals(ser.length - 4, data.length);
@@ -62,7 +62,7 @@ public final class TestNoteStructureSubRecord extends TestCase {
         NoteStructureSubRecord cloned = (NoteStructureSubRecord)record.clone();
         byte[] cln = cloned.serialize();
 
-        assertEquals(record.getRecordSize(), cloned.getRecordSize());
+        assertEquals(record.getDataSize(), cloned.getDataSize());
         assertTrue(Arrays.equals(src, cln));
     }
 }

@@ -21,7 +21,6 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.record.constant.ConstantValueParser;
 import org.apache.poi.hssf.record.constant.ErrorConstant;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -51,7 +50,7 @@ public final class ArrayPtg extends Ptg {
 	private final byte[] field_1_reserved;
 	
 	// data from these fields comes after the Ptg data of all tokens in current formula
-	private short  token_1_columns;
+	private int  token_1_columns;
 	private short token_2_rows;
 	private Object[] token_3_arrayValues;
 
@@ -110,7 +109,7 @@ public final class ArrayPtg extends Ptg {
 	 * See page 304-305 of Excel97-2007BinaryFileFormat(xls)Specification.pdf
 	 */
 	public void readTokenValues(RecordInputStream in) {
-		short nColumns = in.readUByte();
+		int nColumns = in.readUByte();
 		short nRows = in.readShort();
 		//The token_1_columns and token_2_rows do not follow the documentation.
 		//The number of physical rows and columns is actually +1 of these values.
@@ -173,7 +172,7 @@ public final class ArrayPtg extends Ptg {
 	}
 
 	public short getColumnCount() {
-		return token_1_columns;
+		return (short)token_1_columns;
 	}
 
 	/** This size includes the size of the array Ptg plus the Array Ptg Token value size*/

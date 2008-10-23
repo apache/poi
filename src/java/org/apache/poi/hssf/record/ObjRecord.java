@@ -18,150 +18,163 @@
 package org.apache.poi.hssf.record;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.LittleEndianOutputStream;
 
 /**
+ * OBJRECORD (0x005D)<p/>
+ * 
  * The obj record is used to hold various graphic objects and controls.
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class ObjRecord extends Record {
-    public final static short      sid                             = 0x005D;
-    private List subrecords;
+	public final static short sid = 0x005D;
+	
+	private List subrecords;
+	/** used when POI has no idea what is going on */
+	private byte[] _uninterpretedData;
 
-    //00000000 15 00 12 00 01 00 01 00 11 60 00 00 00 00 00 0D .........`......
-    //00000010 26 01 00 00 00 00 00 00 00 00                   &.........
+	//00000000 15 00 12 00 01 00 01 00 11 60 00 00 00 00 00 0D .........`......
+	//00000010 26 01 00 00 00 00 00 00 00 00                   &.........
 
 
-    public ObjRecord()
-    {
-        subrecords = new ArrayList(2);
-        // TODO - ensure 2 sub-records (ftCmo  15h, and ftEnd  00h) are always created
-    }
+	public ObjRecord() {
+		subrecords = new ArrayList(2);
+		// TODO - ensure 2 sub-records (ftCmo 15h, and ftEnd 00h) are always created
+	}
 
-    public ObjRecord(RecordInputStream in)
-    {
-    	// TODO - problems with OBJ sub-records stream
-    	// MS spec says first sub-records is always CommonObjectDataSubRecord, and last is 
-    	// always EndSubRecord.  OOO spec does not mention ObjRecord(0x005D).
-    	// Existing POI test data seems to violate that rule.  Some test data seems to contain
-    	// garbage, and a crash is only averted by stopping at what looks like the 'EndSubRecord'
-    	
-        subrecords = new ArrayList();
-        //Check if this can be continued, if so then the
-        //following wont work properly
-        int subSize = 0;
-        byte[] subRecordData = in.readRemainder();
-        
-        RecordInputStream subRecStream = new RecordInputStream(new ByteArrayInputStream(subRecordData));
-        while(subRecStream.hasNextRecord()) {
-          subRecStream.nextRecord();
-          Record subRecord = SubRecord.createSubRecord(subRecStream);
-          subSize += subRecord.getRecordSize();
-          subrecords.add(subRecord);
-          if (subRecord instanceof EndSubRecord) {
-        	  break;
-          }
-        }
+	public ObjRecord(RecordInputStream in) {
+		// TODO - problems with OBJ sub-records stream
+		// MS spec says first sub-records is always CommonObjectDataSubRecord,
+		// and last is
+		// always EndSubRecord. OOO spec does not mention ObjRecord(0x005D).
+		// Existing POI test data seems to violate that rule. Some test data
+		// seems to contain
+		// garbage, and a crash is only averted by stopping at what looks like
+		// the 'EndSubRecord'
 
-        /**
-         * Add the EndSubRecord explicitly.
-         * 
-         * TODO - the reason the EndSubRecord is always skipped is because its 'sid' is zero and
-         * that causes subRecStream.hasNextRecord() to return false.
-         * There may be more than the size of EndSubRecord left-over, if there is any padding 
-         * after that record.  The content of the EndSubRecord and the padding is all zeros.
-         * So there's not much to look at past the last substantial record.
-         * 
-         * See Bugs 41242/45133 for details.
-         */
-        if (subRecordData.length - subSize >= 4) {
-            subrecords.add(new EndSubRecord());
-        }
-    }
+		// Check if this can be continued, if so then the
+		// following wont work properly
+		byte[] subRecordData = in.readRemainder();
+		if (LittleEndian.getUShort(subRecordData, 0) != CommonObjectDataSubRecord.sid) {
+			// seems to occur in just one junit on "OddStyleRecord.xls" (file created by CrystalReports)
+			// Excel tolerates the funny ObjRecord, and replaces it with a corrected version
+			// The exact logic/reasoning is not yet understood
+			_uninterpretedData = subRecordData;
+			return;
+		}
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
+//		System.out.println(HexDump.toHex(subRecordData));
 
-        buffer.append("[OBJ]\n");
-        for ( Iterator iterator = subrecords.iterator(); iterator.hasNext(); )
-        {
-            Record record = (Record) iterator.next();
-            buffer.append("SUBRECORD: " + record.toString());
-        }
-        buffer.append("[/OBJ]\n");
-        return buffer.toString();
-    }
+		subrecords = new ArrayList();
+		ByteArrayInputStream bais = new ByteArrayInputStream(subRecordData);
+		LittleEndianInputStream subRecStream = new LittleEndianInputStream(bais);
+		while (true) {
+			SubRecord subRecord = SubRecord.createSubRecord(subRecStream);
+			subrecords.add(subRecord);
+			if (subRecord instanceof EndSubRecord) {
+				break;
+			}
+		}
+		if (bais.available() > 0) {
+			// earlier versions of the code had allowances for padding
+			// At present (Oct-2008), no unit test samples exhibit such padding
+			String msg = "Leftover " + bais.available() 
+				+ " bytes in subrecord data " + HexDump.toHex(subRecordData);
+			throw new RecordFormatException(msg);
+		}
+	}
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
 
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
+		sb.append("[OBJ]\n");
+		for (int i = 0; i < subrecords.size(); i++) {
+			SubRecord record = (SubRecord) subrecords.get(i);
+			sb.append("SUBRECORD: ").append(record.toString());
+		}
+		sb.append("[/OBJ]\n");
+		return sb.toString();
+	}
+	
+	private int getDataSize() {
+		if (_uninterpretedData != null) {
+			return _uninterpretedData.length;
+		}
+		int size = 0;
+		for (int i=subrecords.size()-1; i>=0; i--) {
+			SubRecord record = (SubRecord) subrecords.get(i);
+			size += record.getDataSize()+4;
+		}
+		return size;
+	}
 
-        pos = offset + 4;
-        for ( Iterator iterator = subrecords.iterator(); iterator.hasNext(); )
-        {
-            Record record = (Record) iterator.next();
-            pos += record.serialize(pos, data);
-        }
-        // assume padding (if present) does not need to be written.
-        // it is probably zero already, and it probably doesn't matter anyway
+	public int serialize(int offset, byte[] data) {
+		int dataSize = getDataSize();
 
-        return getRecordSize();
-    }
+		LittleEndian.putUShort(data, 0 + offset, sid);
+		LittleEndian.putUShort(data, 2 + offset, dataSize);
 
-    public int getRecordSize()
-    {
-        int size = 0;
-        for ( Iterator iterator = subrecords.iterator(); iterator.hasNext(); )
-        {
-            Record record = (Record) iterator.next();
-            size += record.getRecordSize();
-        }
-        int oddBytes = size & 0x03;
-        int padding = oddBytes == 0 ? 0 : 4 - oddBytes;
-        return 4  + size + padding;
-    }
+		byte[] subRecordBytes;
+		if (_uninterpretedData == null) {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream(dataSize);
+			LittleEndianOutput leo = new LittleEndianOutputStream(baos);
 
-    public short getSid()
-    {
-        return sid;
-    }
+			for (int i = 0; i < subrecords.size(); i++) {
+				SubRecord record = (SubRecord) subrecords.get(i);
+				record.serialize(leo);
+			}
+			// padding
+			while (baos.size() < dataSize) {
+				baos.write(0);
+			}
+			subRecordBytes = baos.toByteArray();
+		} else {
+			subRecordBytes = _uninterpretedData;
+		}
+		System.arraycopy(subRecordBytes, 0, data, offset + 4, dataSize);
+		return 4 + dataSize;
+	}
 
-    public List getSubRecords()
-    {
-        return subrecords;
-    }
+	public int getRecordSize() {
+		return 4 + getDataSize();
+	}
 
-    public void clearSubRecords()
-    {
-        subrecords.clear();
-    }
+	public short getSid() {
+		return sid;
+	}
 
-    public void addSubRecord(int index, Object element)
-    {
-        subrecords.add( index, element );
-    }
+	public List getSubRecords() {
+		return subrecords;
+	}
 
-    public boolean addSubRecord(Object o)
-    {
-        return subrecords.add( o );
-    }
+	public void clearSubRecords() {
+		subrecords.clear();
+	}
 
-    public Object clone()
-    {
-        ObjRecord rec = new ObjRecord();
+	public void addSubRecord(int index, Object element) {
+		subrecords.add(index, element);
+	}
 
-        for ( Iterator iterator = subrecords.iterator(); iterator.hasNext(); )
-            rec.addSubRecord(( (Record) iterator.next() ).clone());
+	public boolean addSubRecord(Object o) {
+		return subrecords.add(o);
+	}
 
-        return rec;
-    }
+	public Object clone() {
+		ObjRecord rec = new ObjRecord();
+
+		for (int i = 0; i < subrecords.size(); i++) {
+			SubRecord record = (SubRecord) subrecords.get(i);
+			rec.addSubRecord(record.clone());
+		}
+		return rec;
+	}
 }

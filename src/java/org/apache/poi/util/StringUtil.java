@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,37 +14,34 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.util;
 
 import java.io.UnsupportedEncodingException;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
-/** 
- *  Title: String Utility Description: Collection of string handling utilities 
- *  
- * 
- *@author     Andrew C. Oliver 
- *@author     Sergei Kozello (sergeikozello at mail.ru) 
- *@author     Toshiaki Kamoshida (kamoshida.toshiaki at future dot co dot jp) 
- *@since      May 10, 2002 
- *@version    1.0 
+/**
+ *  Title: String Utility Description: Collection of string handling utilities
+ *
+ *
+ *@author     Andrew C. Oliver
+ *@author     Sergei Kozello (sergeikozello at mail.ru)
+ *@author     Toshiaki Kamoshida (kamoshida.toshiaki at future dot co dot jp)
  */
 public class StringUtil {
-	private final static String ENCODING = "ISO-8859-1";
-	/**     
-	 *  Constructor for the StringUtil object     
-	 */
+	private static final String ENCODING_ISO_8859_1 = "ISO-8859-1";
+
 	private StringUtil() {
+		// no instances of this class
 	}
 
-	/**     
+	/**
 	 *  Given a byte array of 16-bit unicode characters in Little Endian
 	 *  format (most important byte last), return a Java String representation
-	 *  of it. 
-	 *     
-	 * { 0x16, 0x00 } -0x16     
-	 *      
+	 *  of it.
+	 *
+	 * { 0x16, 0x00 } -0x16
+	 *
 	 * @param  string  the byte array to be converted
 	 * @param  offset  the initial offset into the
 	 *                 byte array. it is assumed that string[ offset ] and string[ offset +
@@ -53,11 +49,11 @@ public class StringUtil {
      * @param len the length of the final string
 	 * @return                                     the converted string
 	 * @exception  ArrayIndexOutOfBoundsException  if offset is out of bounds for
-	 *      the byte array (i.e., is negative or is greater than or equal to     
-	 *      string.length)     
+	 *      the byte array (i.e., is negative or is greater than or equal to
+	 *      string.length)
 	 * @exception  IllegalArgumentException        if len is too large (i.e.,
-	 *      there is not enough data in string to create a String of that     
-	 *      length)     
+	 *      there is not enough data in string to create a String of that
+	 *      length)
 	 */
 	public static String getFromUnicodeLE(
 		final byte[] string,
@@ -74,44 +70,44 @@ public class StringUtil {
 		try {
 			return new String(string, offset, len * 2, "UTF-16LE");
 		} catch (UnsupportedEncodingException e) {
-			throw new InternalError(); /*unreachable*/
+			throw new RuntimeException(e);
 		}
 	}
 
-	/**     
+	/**
 	 *  Given a byte array of 16-bit unicode characters in little endian
 	 *  format (most important byte last), return a Java String representation
-	 *  of it. 
-	 *      
-	 * { 0x16, 0x00 } -0x16     
-	 *     
-	 *@param  string  the byte array to be converted     
-	 *@return         the converted string    
+	 *  of it.
+	 *
+	 * { 0x16, 0x00 } -0x16
+	 *
+	 * @param  string  the byte array to be converted
+	 * @return         the converted string
 	 */
 	public static String getFromUnicodeLE(final byte[] string) {
 		if(string.length == 0) { return ""; }
 		return getFromUnicodeLE(string, 0, string.length / 2);
 	}
 
-	/**     
+	/**
 	 *  Given a byte array of 16-bit unicode characters in big endian
 	 *  format (most important byte first), return a Java String representation
-	 *  of it. 
-	 *      
-	 * { 0x00, 0x16 } -0x16     
-	 *     
-	 *@param  string                              the byte array to be converted     
-	 **@param  offset                              the initial offset into the     
-	 *      byte array. it is assumed that string[ offset ] and string[ offset +     
-	 *      1 ] contain the first 16-bit unicode character     
-         *@param len the length of the final string     
-	 *@return                                     the converted string     
-	 *@exception  ArrayIndexOutOfBoundsException  if offset is out of bounds for     
-	 *      the byte array (i.e., is negative or is greater than or equal to     
-	 *      string.length)     
-	 *@exception  IllegalArgumentException        if len is too large (i.e.,     
-	 *      there is not enough data in string to create a String of that     
-	 *      length)     
+	 *  of it.
+	 *
+	 * { 0x00, 0x16 } -0x16
+	 *
+	 * @param  string                              the byte array to be converted
+	 * @param  offset                              the initial offset into the
+	 *      byte array. it is assumed that string[ offset ] and string[ offset +
+	 *      1 ] contain the first 16-bit unicode character
+     * @param len the length of the final string
+	 * @return                                     the converted string
+	 * @exception  ArrayIndexOutOfBoundsException  if offset is out of bounds for
+	 *      the byte array (i.e., is negative or is greater than or equal to
+	 *      string.length)
+	 * @exception  IllegalArgumentException        if len is too large (i.e.,
+	 *      there is not enough data in string to create a String of that
+	 *      length)
 	 */
 	public static String getFromUnicodeBE(
 		final byte[] string,
@@ -127,34 +123,34 @@ public class StringUtil {
 		try {
 			return new String(string, offset, len * 2, "UTF-16BE");
 		} catch (UnsupportedEncodingException e) {
-			throw new InternalError(); /*unreachable*/
+			throw new RuntimeException(e);
 		}
 	}
 
-	/**     
+	/**
 	 *  Given a byte array of 16-bit unicode characters in big endian
 	 *  format (most important byte first), return a Java String representation
 	 *  of it.
-	 *      
-	 * { 0x00, 0x16 } -0x16     
-	 *     
-	 *@param  string  the byte array to be converted     
-	 *@return         the converted string     
+	 *
+	 * { 0x00, 0x16 } -0x16
+	 *
+	 * @param  string  the byte array to be converted
+	 * @return         the converted string
 	 */
 	public static String getFromUnicodeBE(final byte[] string) {
 		if(string.length == 0) { return ""; }
 		return getFromUnicodeBE(string, 0, string.length / 2);
 	}
 
-	/**      
+	/**
 	 * Read 8 bit data (in ISO-8859-1 codepage) into a (unicode) Java
 	 * String and return.
 	 * (In Excel terms, read compressed 8 bit unicode as a string)
-	 *       
-	 * @param string byte array to read      
-	 * @param offset offset to read byte array      
-	 * @param len    length to read byte array      
-	 * @return String generated String instance by reading byte array      
+	 *
+	 * @param string byte array to read
+	 * @param offset offset to read byte array
+	 * @param len    length to read byte array
+	 * @return String generated String instance by reading byte array
 	 */
 	public static String getFromCompressedUnicode(
 		final byte[] string,
@@ -162,83 +158,76 @@ public class StringUtil {
 		final int len) {
 		try {
 			int len_to_use = Math.min(len, string.length - offset);
-			return new String(string, offset, len_to_use, "ISO-8859-1");
+			return new String(string, offset, len_to_use, ENCODING_ISO_8859_1);
 		} catch (UnsupportedEncodingException e) {
-			throw new InternalError(); /* unreachable */
+			throw new RuntimeException(e);
 		}
 	}
 
-	/**      
-	 * Takes a unicode (java) string, and returns it as 8 bit data (in ISO-8859-1 
+	/**
+	 * Takes a unicode (java) string, and returns it as 8 bit data (in ISO-8859-1
 	 * codepage).
 	 * (In Excel terms, write compressed 8 bit unicode)
-	 *     
-	 *@param  input   the String containing the data to be written     
-	 *@param  output  the byte array to which the data is to be written     
-	 *@param  offset  an offset into the byte arrat at which the data is start     
-	 *      when written     
+	 *
+	 * @param  input   the String containing the data to be written
+	 * @param  output  the byte array to which the data is to be written
+	 * @param  offset  an offset into the byte arrat at which the data is start
+	 *      when written
 	 */
-	public static void putCompressedUnicode(
-		final String input,
-		final byte[] output,
-		final int offset) {
+	public static void putCompressedUnicode(String input, byte[] output, int offset) {
+		byte[] bytes;
 		try {
-			byte[] bytes = input.getBytes("ISO-8859-1");
-			System.arraycopy(bytes, 0, output, offset, bytes.length);
+			bytes = input.getBytes(ENCODING_ISO_8859_1);
 		} catch (UnsupportedEncodingException e) {
-			throw new InternalError(); /*unreachable*/
+			throw new RuntimeException(e);
 		}
+		System.arraycopy(bytes, 0, output, offset, bytes.length);
+	}
+	public static void putCompressedUnicode(String input, LittleEndianOutput out) {
+		byte[] bytes;
+		try {
+			bytes = input.getBytes(ENCODING_ISO_8859_1);
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+		out.write(bytes);
 	}
 
-	/**     
-	 * Takes a unicode string, and returns it as little endian (most 
+	/**
+	 * Takes a unicode string, and returns it as little endian (most
 	 * important byte last) bytes in the supplied byte array.
 	 * (In Excel terms, write uncompressed unicode)
-	 *     
-	 *@param  input   the String containing the unicode data to be written     
-	 *@param  output  the byte array to hold the uncompressed unicode, should be twice the length of the String
-	 *@param  offset  the offset to start writing into the byte array     
+	 *
+	 * @param  input   the String containing the unicode data to be written
+	 * @param  output  the byte array to hold the uncompressed unicode, should be twice the length of the String
+	 * @param  offset  the offset to start writing into the byte array
 	 */
-	public static void putUnicodeLE(
-		final String input,
-		final byte[] output,
-		final int offset) {
+	public static void putUnicodeLE(String input, byte[] output, int offset) {
+		byte[] bytes;
 		try {
-			byte[] bytes = input.getBytes("UTF-16LE");
-			System.arraycopy(bytes, 0, output, offset, bytes.length);
+			bytes = input.getBytes("UTF-16LE");
 		} catch (UnsupportedEncodingException e) {
-			throw new InternalError(); /*unreachable*/
+			throw new RuntimeException(e);
 		}
+		System.arraycopy(bytes, 0, output, offset, bytes.length);
+	}
+	public static void putUnicodeLE(String input, LittleEndianOutput out) {
+		byte[] bytes;
+		try {
+			bytes = input.getBytes("UTF-16LE");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+		out.write(bytes);
 	}
 
-	/**     
-	 * Takes a unicode string, and returns it as big endian (most 
-	 * important byte first) bytes in the supplied byte array.
-	 * (In Excel terms, write uncompressed unicode)
-	 *     
-	 *@param  input   the String containing the unicode data to be written     
-	 *@param  output  the byte array to hold the uncompressed unicode, should be twice the length of the String
-	 *@param  offset  the offset to start writing into the byte array     
-	 */
-	public static void putUnicodeBE(
-		final String input,
-		final byte[] output,
-		final int offset) {
-		try {
-			byte[] bytes = input.getBytes("UTF-16BE");
-			System.arraycopy(bytes, 0, output, offset, bytes.length);
-		} catch (UnsupportedEncodingException e) {
-			throw new InternalError(); /*unreachable*/
-		}
-	}
-
-	/**     
-	 *  Apply printf() like formatting to a string.      
-	 *  Primarily used for logging.    
-	 *@param  message  the string with embedded formatting info 
-	 *                 eg. "This is a test %2.2"     
-	 *@param  params   array of values to format into the string     
-	 *@return          The formatted string     
+	/**
+	 *  Apply printf() like formatting to a string.
+	 *  Primarily used for logging.
+	 * @param  message  the string with embedded formatting info
+	 *                 eg. "This is a test %2.2"
+	 * @param  params   array of values to format into the string
+	 * @return          The formatted string
 	 */
 	public static String format(String message, Object[] params) {
 		int currentParamNumber = 0;
@@ -307,39 +296,43 @@ public class StringUtil {
 		return 1;
 	}
 
-	/**     
-	 * @return the encoding we want to use, currently hardcoded to ISO-8859-1     
+	/**
+	 * @return the encoding we want to use, currently hardcoded to ISO-8859-1
 	 */
 	public static String getPreferredEncoding() {
-		return ENCODING;
+		return ENCODING_ISO_8859_1;
 	}
 
 	/**
 	 * check the parameter has multibyte character
-	 *
-	 * @param value  string to check
-	 * @return  boolean result
-	 *  true:string has at least one multibyte character
+	 * 
+	 * @param value string to check
+	 * @return boolean result true:string has at least one multibyte character
 	 */
-	public static boolean hasMultibyte(String value){
-	    if( value == null )return false;
-	    for(int i = 0 ; i < value.length() ; i++ ){
-	        char c = value.charAt(i);
-	        if(c > 0xFF )return true;
-	    }
-	    return false;
+	public static boolean hasMultibyte(String value) {
+		if (value == null)
+			return false;
+		for (int i = 0; i < value.length(); i++) {
+			char c = value.charAt(i);
+			if (c > 0xFF) {
+				return true;
+			}
+		}
+		return false;
 	}
-	
+
 	/**
 	 * Checks to see if a given String needs to be represented as Unicode
-	 * @param value 
+	 * 
+	 * @param value
 	 * @return true if string needs Unicode to be represented.
 	 */
-	  public static boolean isUnicodeString(final String value) {
-	    try {
-	      return !value.equals(new String(value.getBytes("ISO-8859-1"), "ISO-8859-1"));
-	    } catch (UnsupportedEncodingException e) {
-	      return true;
-	    }
-	  }
+	public static boolean isUnicodeString(final String value) {
+		try {
+			return !value.equals(new String(value.getBytes(ENCODING_ISO_8859_1),
+					ENCODING_ISO_8859_1));
+		} catch (UnsupportedEncodingException e) {
+			return true;
+		}
+	}
 }
