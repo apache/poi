@@ -793,9 +793,7 @@ public class TestXSSFSheet extends TestCase {
 	    	//one level
 	    	sheet.groupRow(9,10);
 	    	assertEquals(2,sheet.rows.size());
-	    	CTRow[]rowArray=sheet.getWorksheet().getSheetData().getRowArray();    	
-	    	assertEquals(2,rowArray.length);
-	    	CTRow ctrow=rowArray[0];
+	    	CTRow ctrow = sheet.getRow(8).getCTRow();
 
 	    	assertNotNull(ctrow);
 	    	assertEquals(9,ctrow.getR());
@@ -804,10 +802,8 @@ public class TestXSSFSheet extends TestCase {
 
 	    	//two level    	
 	    	sheet.groupRow(10,13);
-	    	rowArray=sheet.getWorksheet().getSheetData().getRowArray();    	
-	    	assertEquals(5,rowArray.length);
 	    	assertEquals(5,sheet.rows.size());
-	    	ctrow=rowArray[1];
+	    	ctrow = sheet.getRow(9).getCTRow();
 	    	assertNotNull(ctrow);
 	    	assertEquals(10,ctrow.getR());
 	    	assertEquals(2, ctrow.getOutlineLevel());
@@ -815,14 +811,11 @@ public class TestXSSFSheet extends TestCase {
 
 	    	
 	    	sheet.ungroupRow(8, 10);
-	    	rowArray=sheet.getWorksheet().getSheetData().getRowArray();    	
-	    	assertEquals(4,rowArray.length);
+            assertEquals(4,sheet.rows.size());
 	    	assertEquals(1,sheet.getSheetTypeSheetFormatPr().getOutlineLevelRow());
 
 	    	sheet.ungroupRow(10,10);
-	    	rowArray=sheet.getWorksheet().getSheetData().getRowArray();    	
-	    	assertEquals(3,rowArray.length);
-	    	assertEquals(3,sheet.rows.size());
+            assertEquals(3,sheet.rows.size());
 
 	    	assertEquals(1,sheet.getSheetTypeSheetFormatPr().getOutlineLevelRow());
 	    }

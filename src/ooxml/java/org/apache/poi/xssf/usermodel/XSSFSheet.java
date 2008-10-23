@@ -71,7 +71,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     protected CTSheet sheet;
     protected CTWorksheet worksheet;
-    protected List<Row> rows;
+    protected TreeMap<Integer, Row> rows;
     protected List<XSSFHyperlink> hyperlinks;
     protected ColumnHelper columnHelper;
     private CommentsSource sheetComments;
@@ -156,9 +156,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     protected void initRows(CTWorksheet worksheet) {
-        this.rows = new LinkedList<Row>();
+        this.rows = new TreeMap<Integer, Row>();
         for (CTRow row : worksheet.getSheetData().getRowArray()) {
-            this.rows.add(new XSSFRow(row, this));
+            XSSFRow r = new XSSFRow(row, this);
+            this.rows.put(r.getRowNum(), r);
         }
     }
 
@@ -307,13 +308,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return (XSSFComment)sheetComments.addComment();
     }
 
-    protected XSSFRow addRow(int index, int rownum) {
-        CTRow row = this.worksheet.getSheetData().insertNewRow(index);
-        XSSFRow xrow = new XSSFRow(row, this);
-        xrow.setRowNum(rownum);
-        return xrow;
-    }
-
     /**
      * Create a new row within the sheet and return the high level representation
      *
@@ -322,24 +316,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @see #removeRow(org.apache.poi.ss.usermodel.Row)
      */
     public XSSFRow createRow(int rownum) {
-        int index = 0;
-        for (Row r : this.rows) {
-            if (r.getRowNum() == rownum) {
-                // Replace r with new row
-                XSSFRow xrow = addRow(index, rownum);
-                rows.set(index, xrow);
-                return xrow;
-            }
-            if (r.getRowNum() > rownum) {
-                XSSFRow xrow = addRow(index, rownum);
-                rows.add(index, xrow);
-                return xrow;
-            }
-            ++index;
-        }
-        XSSFRow xrow = addRow(index, rownum);
-        rows.add(xrow);
-        return xrow;
+        CTRow ctRow = CTRow.Factory.newInstance();
+        XSSFRow r = new XSSFRow(ctRow, this);
+        r.setRowNum(rownum);
+        rows.put(r.getRowNum(), r);
+        return r;
     }
 
     /**
@@ -737,14 +718,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return <code>XSSFRow</code> representing the rownumber or <code>null</code> if its not defined on the sheet
      */
     public XSSFRow getRow(int rownum) {
-        //TODO current implemenation is expensive, it should take O(1), not O(N)
-        for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
-            Row row = it.next();
-            if (row.getRowNum() == rownum) {
-                 return (XSSFRow)row;
-            }
-        }
-        return null;
+        return (XSSFRow)rows.get(rownum);
     }
 
     /**
@@ -926,7 +900,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
    private short getMaxOutlineLevelRows(){
         short outlineLevel=0;
-        for(Row r:rows){
+        for(Row r : rows.values()){
             XSSFRow xrow=(XSSFRow)r;
             outlineLevel=xrow.getCTRow().getOutlineLevel()>outlineLevel? xrow.getCTRow().getOutlineLevel(): outlineLevel;
         }
@@ -1067,16 +1041,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     public void removeRow(Row row) {
-        int counter = 0;
-        int rowNum=row.getRowNum();
-        for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
-            Row r = it.next();
-            if (r.getRowNum() == rowNum) {
-                it.remove();
-                worksheet.getSheetData().removeRow(counter);
-            }
-            counter++;
-        }
+
+        rows.remove(row.getRowNum());
     }
 
     /**
@@ -1093,7 +1059,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     public Iterator<Row> rowIterator() {
-        return rows.iterator();
+        return rows.values().iterator();
     }
 
     /**
@@ -1444,6 +1410,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                 row.setRowNum(row.getRowNum() + n);
             }
         }
+        //rebuild the rows map
+        TreeMap<Integer, Row> map = new TreeMap<Integer, Row>();
+        for(Row r : this) map.put(r.getRowNum(), r);
+        rows = map;
     }
 
     /**
@@ -1679,6 +1649,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             }
             worksheet.getHyperlinks().setHyperlinkArray(ctHls);
         }
+
+        CTSheetData sheetData = worksheet.getSheetData();
+        ArrayList<CTRow> rArray = new ArrayList<CTRow>(rows.size());
+        for(Row row : rows.values()){
+            XSSFRow r = (XSSFRow)row;
+            r.onDocumentWrite();
+            rArray.add(r.getCTRow());
+        }
+        sheetData.setRowArray(rArray.toArray(new CTRow[rArray.size()]));
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorksheet.type.getName().getNamespaceURI(), "worksheet"));

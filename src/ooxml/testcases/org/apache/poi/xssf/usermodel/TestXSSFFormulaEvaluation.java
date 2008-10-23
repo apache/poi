@@ -42,12 +42,12 @@ public final class TestXSSFFormulaEvaluation extends TestCase {
 		
 		Cell c1 = r.createCell(0);
 		c1.setCellFormula("1+5");
-		assertTrue( Double.isNaN(c1.getNumericCellValue()) );
+		assertEquals(0.0, c1.getNumericCellValue() );
 		
 		Cell c2 = r.createCell(1);
 		c2.setCellFormula("10/2");
-		assertTrue( Double.isNaN(c2.getNumericCellValue()) );
-		
+        assertEquals(0.0, c2.getNumericCellValue() );
+
 		FormulaEvaluator fe = new XSSFFormulaEvaluator(wb);
 		
 		fe.evaluateFormulaCell(c1);
@@ -70,19 +70,19 @@ public final class TestXSSFFormulaEvaluation extends TestCase {
 		
 		Cell c1 = r.createCell(0);
 		c1.setCellFormula("SUM(A1:B1)");
-		assertTrue( Double.isNaN(c1.getNumericCellValue()) );
-		
+        assertEquals(0.0, c1.getNumericCellValue() );
+
 		Cell c2 = r.createCell(1);
 		c2.setCellFormula("SUM(A1:E1)");
-		assertTrue( Double.isNaN(c2.getNumericCellValue()) );
-		
+        assertEquals(0.0, c2.getNumericCellValue() );
+
 		Cell c3 = r.createCell(2);
 		c3.setCellFormula("COUNT(A1:A1)");
-		assertTrue( Double.isNaN(c3.getNumericCellValue()) );
+        assertEquals(0.0, c3.getNumericCellValue() );
 
 		Cell c4 = r.createCell(3);
 		c4.setCellFormula("COUNTA(A1:E1)");
-		assertTrue( Double.isNaN(c4.getNumericCellValue()) );
+        assertEquals(0.0, c4.getNumericCellValue() );
 
 
 		// Evaluate and test
