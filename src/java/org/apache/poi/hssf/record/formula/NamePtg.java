@@ -18,62 +18,62 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.ss.formula.WorkbookDependentFormula;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- *
- * @author  andy
+ * 
+ * @author andy
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class NamePtg extends OperandPtg implements WorkbookDependentFormula {
-    public final static short sid  = 0x23;
-    private final static int  SIZE = 5;
-    /** one-based index to defined name record */
-    private int  field_1_label_index;
-    private short             field_2_zero;   // reserved must be 0
+	public final static short sid = 0x23;
+	private final static int SIZE = 5;
+	/** one-based index to defined name record */
+	private int field_1_label_index;
+	private short field_2_zero; // reserved must be 0
 
-    /**
-     * @param nameIndex zero-based index to name within workbook
-     */
-    public NamePtg(int nameIndex) {
-        field_1_label_index = 1+nameIndex; // convert to 1-based
-    }
+	/**
+	 * @param nameIndex zero-based index to name within workbook
+	 */
+	public NamePtg(int nameIndex) {
+		field_1_label_index = 1 + nameIndex; // convert to 1-based
+	}
 
-    /** Creates new NamePtg */
+	/** Creates new NamePtg */
 
-    public NamePtg(RecordInputStream in) {
-        field_1_label_index = in.readShort();
-        field_2_zero        = in.readShort();
-    }
-    
-    /**
-     * @return zero based index to a defined name record in the LinkTable
-     */
-    public int getIndex() {
-        return field_1_label_index-1; // convert to zero based
-    }
+	public NamePtg(RecordInputStream in) {
+		field_1_label_index = in.readShort();
+		field_2_zero = in.readShort();
+	}
 
-    public void writeBytes(byte [] array, int offset) {
-    	LittleEndian.putByte(array, offset + 0, sid + getPtgClass());
-		LittleEndian.putUShort(array, offset + 1, field_1_label_index);
-		LittleEndian.putUShort(array, offset + 3, field_2_zero);
-    }
+	/**
+	 * @return zero based index to a defined name record in the LinkTable
+	 */
+	public int getIndex() {
+		return field_1_label_index - 1; // convert to zero based
+	}
 
-    public int getSize() {
-        return SIZE;
-    }
+	public void write(LittleEndianOutput out) {
+		out.writeByte(sid + getPtgClass());
+		out.writeShort(field_1_label_index);
+		out.writeShort(field_2_zero);
+	}
 
-    public String toFormulaString(FormulaRenderingWorkbook book)
-    {
-    	return book.getNameText(this);
-    }
+	public int getSize() {
+		return SIZE;
+	}
+
+	public String toFormulaString(FormulaRenderingWorkbook book) {
+		return book.getNameText(this);
+	}
+
 	public String toFormulaString() {
 		throw new RuntimeException("3D references need a workbook to determine formula text");
 	}
-    
-    public byte getDefaultOperandClass() {
+
+	public byte getDefaultOperandClass() {
 		return Ptg.CLASS_REF;
 	}
 }

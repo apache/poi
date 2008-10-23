@@ -18,35 +18,40 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- *
- * @author  andy
+ * 
+ * @author andy
  * @author Jason Height (jheight at chariot dot net dot au)
  * @author Daniel Noll (daniel at nuix dot com dot au)
  */
+public final class MemErrPtg extends OperandPtg {
+	public final static short sid = 0x27;
+	private final static int SIZE = 7;
+	private int field_1_reserved;
+	private short field_2_subex_len;
 
-public final class MemErrPtg extends MemAreaPtg {
-    public final static short sid  = 0x27;
+	public MemErrPtg(RecordInputStream in) {
+		field_1_reserved = in.readInt();
+		field_2_subex_len = in.readShort();
+	}
 
-    /** Creates new MemErrPtg */
+	public void write(LittleEndianOutput out) {
+		out.writeByte(sid + getPtgClass());
+		out.writeInt(field_1_reserved);
+		out.writeShort(field_2_subex_len);
+	}
 
-    public MemErrPtg()
-    {
-    }
+	public int getSize() {
+		return SIZE;
+	}
 
-    public MemErrPtg(RecordInputStream in) {
-        super(in);
-    }
+	public String toFormulaString() {
+		return "ERR#";
+	}
 
-    public void writeBytes(byte [] array, int offset) {
-        super.writeBytes(array, offset);
-        array[offset] = (byte) (sid + getPtgClass());
-    }
-
-    public String toFormulaString()
-    {
-        return "ERR#";
-    }
+	public byte getDefaultOperandClass() {
+		return Ptg.CLASS_VALUE;
+	}
 }

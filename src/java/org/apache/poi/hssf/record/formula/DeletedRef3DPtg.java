@@ -20,9 +20,9 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
-import org.apache.poi.ss.formula.WorkbookDependentFormula;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Deleted Reference 3D Ptg <P>
@@ -60,9 +60,9 @@ public final class DeletedRef3DPtg extends OperandPtg implements WorkbookDepende
 	public int getSize() {
 		return 7;
 	}
-	public void writeBytes(byte[] data, int offset) {
-		LittleEndian.putByte(data, 0 + offset, sid + getPtgClass());
-		LittleEndian.putUShort(data, 1 + offset, field_1_index_extern_sheet);
-		LittleEndian.putInt(data, 3 + offset, unused1);
+	public void write(LittleEndianOutput out) {
+		out.writeByte(sid + getPtgClass());
+		out.writeShort(field_1_index_extern_sheet);
+		out.writeInt(unused1);
 	}
 }

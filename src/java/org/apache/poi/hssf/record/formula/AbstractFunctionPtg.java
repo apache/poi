@@ -98,7 +98,6 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         buf.append(")");
     }
 
-    public abstract void writeBytes(byte[] array, int offset);
     public abstract int getSize();
 
 

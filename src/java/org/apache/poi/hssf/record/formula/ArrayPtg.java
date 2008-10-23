@@ -22,6 +22,7 @@ import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.record.constant.ConstantValueParser;
 import org.apache.poi.hssf.record.constant.ErrorConstant;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * ArrayPtg - handles arrays
@@ -153,10 +154,9 @@ public final class ArrayPtg extends Ptg {
 		return rowIx * token_1_columns + colIx;
 	}
 
-	public void writeBytes(byte[] data, int offset) {
-		
-		LittleEndian.putByte(data, offset + 0, sid + getPtgClass());
-		System.arraycopy(field_1_reserved, 0, data, offset+1, RESERVED_FIELD_LEN);
+	public void write(LittleEndianOutput out) {
+		out.writeByte(sid + getPtgClass());
+		out.write(field_1_reserved);
 	}
 
 	public int writeTokenValueBytes(byte[] data, int offset) {

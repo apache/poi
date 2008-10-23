@@ -22,7 +22,7 @@ import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.formula.ExternSheetReferenceToken;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Reference 3D Ptg <P>
@@ -66,10 +66,10 @@ public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormu
         return sb.toString();
     }
 
-    public void writeBytes(byte [] array, int offset) {
-        LittleEndian.putByte(array, 0 + offset, sid + getPtgClass());
-        LittleEndian.putUShort(array, 1 + offset, getExternSheetIndex());
-        writeCoordinates(array, offset + 3);
+	public void write(LittleEndianOutput out) {
+		out.writeByte(sid + getPtgClass());
+        out.writeShort(getExternSheetIndex());
+        writeCoordinates(out);
     }
 
     public int getSize() {

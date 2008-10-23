@@ -19,8 +19,7 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * RefError - handles deleted cell reference
@@ -43,9 +42,9 @@ public final class RefErrorPtg extends OperandPtg {
         return getClass().getName();
     }
 
-    public void writeBytes(byte [] array, int offset) {
-        LittleEndian.putByte(array, offset+0, sid + getPtgClass());
-        LittleEndian.putInt(array,offset+1,field_1_reserved);
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+        out.writeInt(field_1_reserved);
     }
 
     public int getSize()

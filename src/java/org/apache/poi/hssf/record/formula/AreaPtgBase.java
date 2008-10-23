@@ -22,7 +22,7 @@ import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Specifies a rectangular area of cells A1:A4 for instance.
@@ -46,7 +46,7 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 	private int             field_3_first_column;
 	/** zero based, unsigned 8 bit */
 	private int             field_4_last_column;
-	
+
 	private final static BitField   rowRelative = BitFieldFactory.getInstance(0x8000);
 	private final static BitField   colRelative = BitFieldFactory.getInstance(0x4000);
 	private final static BitField   columnMask      = BitFieldFactory.getInstance(0x3FFF);
@@ -54,7 +54,7 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 	protected AreaPtgBase() {
 		// do nothing
 	}
-	
+
 	protected AreaPtgBase(String arearef) {
 		AreaReference ar = new AreaReference(arearef);
 		CellReference firstCell = ar.getFirstCell();
@@ -66,17 +66,17 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 		setFirstColRelative(!firstCell.isColAbsolute());
 		setLastColRelative(!lastCell.isColAbsolute());
 		setFirstRowRelative(!firstCell.isRowAbsolute());
-		setLastRowRelative(!lastCell.isRowAbsolute());        
+		setLastRowRelative(!lastCell.isRowAbsolute());
 	}
-	
+
 	protected AreaPtgBase(int firstRow, int lastRow, int firstColumn, int lastColumn,
 			boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative) {
-		
+
 		checkColumnBounds(firstColumn);
 		checkColumnBounds(lastColumn);
 		checkRowBounds(firstRow);
 		checkRowBounds(lastRow);
-		
+
 		if (lastRow > firstRow) {
 			setFirstRow(firstRow);
 			setLastRow(lastRow);
@@ -88,7 +88,7 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 			setFirstRowRelative(lastRowRelative);
 			setLastRowRelative(firstRowRelative);
 		}
-			
+
 		if (lastColumn > firstColumn) {
 			setFirstColumn(firstColumn);
 			setLastColumn(lastColumn);
@@ -100,7 +100,7 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 			setFirstColRelative(lastColRelative);
 			setLastColRelative(firstColRelative);
 		}
-	}    
+	}
 
 	private static void checkColumnBounds(int colIx) {
 		if((colIx & 0x0FF) != colIx) {
@@ -119,11 +119,11 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 		field_3_first_column = in.readUShort();
 		field_4_last_column = in.readUShort();
 	}
-	protected final void writeCoordinates(byte[] array, int offset) {
-		LittleEndian.putUShort(array, offset + 0, field_1_first_row);
-		LittleEndian.putUShort(array, offset + 2, field_2_last_row);
-		LittleEndian.putUShort(array, offset + 4, field_3_first_column);
-		LittleEndian.putUShort(array, offset + 6, field_4_last_column);        
+	protected final void writeCoordinates(LittleEndianOutput out) {
+		out.writeShort(field_1_first_row);
+		out.writeShort(field_2_last_row);
+		out.writeShort(field_3_first_column);
+		out.writeShort(field_4_last_column);
 	}
 
 	/**
@@ -150,7 +150,7 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 	}
 
 	/**
-	 * @param rowIx last row number in the area 
+	 * @param rowIx last row number in the area
 	 */
 	public final void setLastRow(int rowIx) {
 		checkRowBounds(rowIx);
@@ -177,7 +177,7 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 	public final boolean isFirstRowRelative() {
 		return rowRelative.isSet(field_3_first_column);
 	}
-	
+
 	/**
 	 * sets the first row to relative or not
 	 * @param rel is relative or not.
@@ -192,9 +192,9 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 	public final boolean isFirstColRelative() {
 		return colRelative.isSet(field_3_first_column);
 	}
-	
+
 	/**
-	 * set whether the first column is relative 
+	 * set whether the first column is relative
 	 */
 	public final void setFirstColRelative(boolean rel) {
 		field_3_first_column=colRelative.setBoolean(field_3_first_column,rel);
@@ -235,7 +235,7 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 	public final boolean isLastRowRelative() {
 		return rowRelative.isSet(field_4_last_column);
 	}
-	
+
 	/**
 	 * set whether the last row is relative or not
 	 * @param rel <code>true</code> if the last row relative, else
@@ -251,14 +251,14 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 	public final boolean isLastColRelative() {
 		return colRelative.isSet(field_4_last_column);
 	}
-	
+
 	/**
 	 * set whether the last column should be relative or not
 	 */
 	public final void setLastColRelative(boolean rel) {
 		field_4_last_column=colRelative.setBoolean(field_4_last_column,rel);
 	}
-	
+
 	/**
 	 * set the last column in the area
 	 */
@@ -276,13 +276,13 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 	protected final String formatReferenceAsString() {
 		CellReference topLeft = new CellReference(getFirstRow(),getFirstColumn(),!isFirstRowRelative(),!isFirstColRelative());
 		CellReference botRight = new CellReference(getLastRow(),getLastColumn(),!isLastRowRelative(),!isLastColRelative());
-		
+
 		if(AreaReference.isWholeColumnReference(topLeft, botRight)) {
 			return (new AreaReference(topLeft, botRight)).formatAsString();
 		}
-		return topLeft.formatAsString() + ":" + botRight.formatAsString(); 
+		return topLeft.formatAsString() + ":" + botRight.formatAsString();
 	}
-	
+
 	public String toFormulaString() {
 		return formatReferenceAsString();
 	}
