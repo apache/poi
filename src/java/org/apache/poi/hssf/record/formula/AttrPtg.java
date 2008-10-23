@@ -221,15 +221,12 @@ public final class AttrPtg extends ControlPtg {
         int[] jt = _jumpTable;
         if (jt != null) {
             int joff = offset+4;
-            LittleEndian.putUShort(array, joff, _chooseFuncOffset);
-            joff+=2;
             for (int i = 0; i < jt.length; i++) {
                 LittleEndian.putUShort(array, joff, jt[i]);
                 joff+=2;
             }
             LittleEndian.putUShort(array, joff, _chooseFuncOffset);
         }
-
     }
 
     public int getSize()
