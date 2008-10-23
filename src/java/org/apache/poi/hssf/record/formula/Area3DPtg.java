@@ -21,7 +21,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.ss.formula.ExternSheetReferenceToken;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Area 3D Ptg - 3D reference (Sheet + Area)<P>
@@ -67,10 +67,10 @@ public final class Area3DPtg extends AreaPtgBase implements WorkbookDependentFor
 		return sb.toString();
 	}
 
-	public void writeBytes(byte[] array, int offset) {
-		LittleEndian.putByte(array, offset + 0, sid + getPtgClass());
-		LittleEndian.putUShort(array, 1 + offset, field_1_index_extern_sheet);
-		writeCoordinates(array, offset+3);
+	public void write(LittleEndianOutput out) {
+		out.writeByte(sid + getPtgClass());
+		out.writeShort(field_1_index_extern_sheet);
+		writeCoordinates(out);
 	}
 
 	public int getSize() {

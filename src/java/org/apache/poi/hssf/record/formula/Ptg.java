@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -128,7 +128,7 @@ public abstract class Ptg implements Cloneable {
 
 	private static Ptg createBasePtg(byte id, RecordInputStream in) {
 		switch(id) {
-			case 0x00:                return new UnknownPtg(); // TODO - not a real Ptg
+			case 0x00:                return new UnknownPtg(id); // TODO - not a real Ptg
 			case ExpPtg.sid:          return new ExpPtg(in);          // 0x01
 			case TblPtg.sid:          return new TblPtg(in);          // 0x02
 			case AddPtg.sid:          return AddPtg.instance;         // 0x03
@@ -229,14 +229,16 @@ public abstract class Ptg implements Cloneable {
 	 */
 	public static int serializePtgs(Ptg[] ptgs, byte[] array, int offset) {
 		int pos = 0;
-		int size = ptgs.length;
+		int nTokens = ptgs.length;
+		
+		LittleEndianOutput out = new LittleEndianByteArrayOutputStream(array, offset);
 
 		List arrayPtgs = null;
 
-		for (int k = 0; k < size; k++) {
+		for (int k = 0; k < nTokens; k++) {
 			Ptg ptg = ptgs[k];
 
-			ptg.writeBytes(array, pos + offset);
+			ptg.write(out);
 			if (ptg instanceof ArrayPtg) {
 				if (arrayPtgs == null) {
 					arrayPtgs = new ArrayList(5);
@@ -266,38 +268,12 @@ public abstract class Ptg implements Cloneable {
 	 */
 //    public abstract int getDataSize();
 
-	public final byte[] getBytes()
-	{
-		int    size  = getSize();
-		byte[] bytes = new byte[ size ];
-
-		writeBytes(bytes, 0);
-		return bytes;
-	}
-	/** write this Ptg to a byte array*/
-	public abstract void writeBytes(byte [] array, int offset);
-
-	public void write(LittleEndianOutput out) {
-		out.write(getBytes()); // TODO - optimise - just a hack for the moment
-	}
+	public abstract void write(LittleEndianOutput out);
 	
 	/**
 	 * return a string representation of this token alone
 	 */
 	public abstract String toFormulaString();
-	/**
-	 * dump a debug representation (hexdump) to a string
-	 */
-	public final String toDebugString() {
-		byte[] ba = new byte[getSize()];
-		writeBytes(ba,0);
-		try {
-			return HexDump.dump(ba,0,0);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 
 	/** Overridden toString method to ensure object hash is not printed.
 	 * This helps get rid of gratuitous diffs when comparing two dumps

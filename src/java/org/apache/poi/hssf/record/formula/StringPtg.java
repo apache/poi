@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record.formula;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -78,14 +79,14 @@ public final class StringPtg extends ScalarConstantPtg {
         return field_3_string;
     }
 
-    public void writeBytes(byte[] array, int offset) {
-        array[offset + 0] = sid;
-        array[offset + 1] = (byte) field_1_length;
-        array[offset + 2] = field_2_options;
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+        out.writeByte(field_1_length);
+        out.writeByte(field_2_options);
         if (fHighByte.isSet(field_2_options)) {
-            StringUtil.putUnicodeLE(getValue(), array, offset + 3);
+            StringUtil.putUnicodeLE(getValue(), out);
         } else {
-            StringUtil.putCompressedUnicode(getValue(), array, offset + 3);
+            StringUtil.putCompressedUnicode(getValue(), out);
         }
     }
 

@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * @author Daniel Noll (daniel at nuix dot com dot au)
@@ -61,10 +62,9 @@ public final class ErrPtg extends ScalarConstantPtg {
         return valueOf(in.readByte());
     }
 
-    public void writeBytes(byte [] array, int offset)
-    {
-        array[offset] = (byte) (sid + getPtgClass());
-        array[offset + 1] = (byte)field_1_error_code;
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+        out.writeByte(field_1_error_code);
     }
 
     public String toFormulaString() {

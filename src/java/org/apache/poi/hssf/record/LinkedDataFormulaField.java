@@ -51,7 +51,7 @@ public final class LinkedDataFormulaField {
                     .append( "=" )
                     .append(ptg.toString() )
                     .append( "\n" )
-                    .append(ptg.toDebugString() )
+                    .append(ptg.toString())
                     .append( "\n" );
         }
     }

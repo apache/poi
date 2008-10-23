@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record.formula;
 
+import org.apache.poi.util.LittleEndianOutput;
+
 
 /**
  * @author Daniel Noll (daniel at nuix dot com dot au)
@@ -40,9 +42,8 @@ public final class RangePtg  extends OperationPtg {
         return SIZE;
     }
 
-    public void writeBytes( byte[] array, int offset )
-    {
-        array[ offset + 0 ] = sid;
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
     }
 
     public String toFormulaString()

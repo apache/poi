@@ -21,6 +21,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * "Special Attributes"
@@ -213,19 +214,16 @@ public final class AttrPtg extends ControlPtg {
         return sb.toString();
     }
 
-    public void writeBytes(byte [] array, int offset)
-    {
-        LittleEndian.putByte(array, offset+0, sid);
-        LittleEndian.putByte(array, offset+1, field_1_options);
-        LittleEndian.putShort(array,offset+2, field_2_data);
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+        out.writeByte(field_1_options);
+        out.writeShort(field_2_data);
         int[] jt = _jumpTable;
         if (jt != null) {
-            int joff = offset+4;
             for (int i = 0; i < jt.length; i++) {
-                LittleEndian.putUShort(array, joff, jt[i]);
-                joff+=2;
+                out.writeShort(jt[i]);
             }
-            LittleEndian.putUShort(array, joff, _chooseFuncOffset);
+            out.writeShort(_chooseFuncOffset);
         }
     }
 

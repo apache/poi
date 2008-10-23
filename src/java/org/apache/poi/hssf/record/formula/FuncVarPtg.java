@@ -16,10 +16,10 @@
 ==================================================================== */
 
 package org.apache.poi.hssf.record.formula;
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  *
@@ -64,10 +64,10 @@ public final class FuncVarPtg extends AbstractFunctionPtg{
         }
     }
 
-     public void writeBytes(byte[] array, int offset) {
-        array[offset+0]=(byte) (sid + getPtgClass());
-        array[offset+1]=field_1_num_args;
-        LittleEndian.putShort(array,offset+2,field_2_fnc_index);
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+        out.writeByte(field_1_num_args);
+        out.writeShort(field_2_fnc_index);
     }
 
      public int getNumberOfOperands() {
