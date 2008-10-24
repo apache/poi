@@ -17,12 +17,13 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianInput;
-
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
+
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianInputStream;
 
 /**
  * Title:  Record Input Stream<P>
@@ -34,104 +35,129 @@ public final class RecordInputStream extends InputStream implements LittleEndian
 	/** Maximum size of a single record (minus the 4 byte header) without a continue*/
 	public final static short MAX_RECORD_DATA_SIZE = 8224;
 	private static final int INVALID_SID_VALUE = -1;
+	private static final int DATA_LEN_NEEDS_TO_BE_READ = -1;
+	private static final byte[] EMPTY_BYTE_ARRAY = { };
 
-	private InputStream in;
-	private short currentSid;
-	private short currentLength = -1;
-	private short nextSid;
+	private final InputStream _in;
+	/** {@link LittleEndianInput} facet of field {@link #_in} */
+	private final LittleEndianInput _le;
+	private int currentSid;
+	private int _currentDataLength;
+	private int nextSid;
+	private int recordOffset;
+	private boolean autoContinue; // TODO - remove this
 
-	private final byte[] data = new byte[MAX_RECORD_DATA_SIZE];
-	private short recordOffset;
-	private long pos;
+	public RecordInputStream(InputStream in) throws RecordFormatException {
+		_in = in;
+		if (in instanceof LittleEndianInput) {
+			// accessing directly is an optimisation
+			_le = (LittleEndianInput) in;
+		} else {
+			// less optimal, but should work OK just the same. Often occurs in junit tests.
+			_le = new LittleEndianInputStream(in);
+		}
+		try {
+		      if (_in.available() < LittleEndian.SHORT_SIZE) {
+		          nextSid = INVALID_SID_VALUE;
+		      } else {
+		    	  nextSid = LittleEndian.readShort(in);
+		      }
+		} catch (IOException ex) {
+			throw new RecordFormatException("Error reading bytes", ex);
+		}
+		_currentDataLength = DATA_LEN_NEEDS_TO_BE_READ;
+		autoContinue = true;
+	}
 
-  private boolean autoContinue = true;
-
-  public RecordInputStream(InputStream in) throws RecordFormatException {
-    this.in = in;
-    try {
-      nextSid = LittleEndian.readShort(in);
-      //Don't increment the pos just yet (technically we are at the start of
-      //the record stream until nextRecord is called).
-    } catch (IOException ex) {
-      throw new RecordFormatException("Error reading bytes", ex);
-    }
-  }
-
-	/** This method will read a byte from the current record*/
 	public int read() {
 		checkRecordPosition(LittleEndian.BYTE_SIZE);
-
-		byte result = data[recordOffset];
 		recordOffset += LittleEndian.BYTE_SIZE;
-		pos += LittleEndian.BYTE_SIZE;
-		return result;
+		return _le.readUByte();
+	}
+	public int read(byte[] b, int off, int len) {
+		int limit = Math.min(len, remaining());
+		if (limit == 0) {
+			return 0;
+		}
+		readFully(b, off,limit);
+		return limit;
 	}
 
   public short getSid() {
-    return currentSid;
+    return (short) currentSid;
   }
 
-  public short getLength() {
-    return currentLength;
+  public short getLength() { // TODO - remove
+    return (short) _currentDataLength;
   }
 
-  public short getRecordOffset() {
-    return recordOffset;
-  }
 
-  public long getPos() {
-    return pos;
-  }
+	/**
+	 * Note - this method is expected to be called only when completed reading the current BIFF record.
+	 * Calling this before reaching the end of the current record will cause all remaining data to be
+	 * discarded
+	 */
+	public boolean hasNextRecord() {
+		if (_currentDataLength != -1 && _currentDataLength != recordOffset) {
+			System.out.println("WARN. Unread "+remaining()+" bytes of record 0x"+Integer.toHexString(currentSid));
+			// discard unread data
+			while (recordOffset < _currentDataLength) {
+				readByte();
+			}
+		}
+		if (_currentDataLength != DATA_LEN_NEEDS_TO_BE_READ) {
+			nextSid = readNextSid();
+			_currentDataLength = DATA_LEN_NEEDS_TO_BE_READ;
+		}
+		return nextSid != INVALID_SID_VALUE;
+	}
 
-  public boolean hasNextRecord() {
-    return nextSid != INVALID_SID_VALUE;
-  }
+	/**
+	 * 
+	 * @return the sid of the next record or {@link #INVALID_SID_VALUE} if at end of stream
+	 */
+	private int readNextSid() {
+		int nAvailable;
+		try {
+			nAvailable = _in.available();
+		} catch (IOException e) {
+			throw new RecordFormatException("Error checking stream available bytes", e);
+		}
+		if (nAvailable < EOFRecord.ENCODED_SIZE) {
+			if (nAvailable > 0) {
+				// some scrap left over?
+				// ex45582-22397.xls has one extra byte after the last record
+				// Excel reads that file OK
+			}
+			return INVALID_SID_VALUE;
+		}
+		int result = _le.readUShort();
+		if (result == INVALID_SID_VALUE) {
+			throw new RecordFormatException("Found invalid sid (" + result + ")");
+		}
+		return result;
+	}
 
-  /** Moves to the next record in the stream.
-   *
-   * <i>Note: The auto continue flag is reset to true</i>
-   */
-  public void nextRecord() throws RecordFormatException {
-    if ((currentLength != -1) && (currentLength != recordOffset)) {
-      System.out.println("WARN. Unread "+remaining()+" bytes of record 0x"+Integer.toHexString(currentSid));
-    }
-    currentSid = nextSid;
-    pos += LittleEndian.SHORT_SIZE;
-    autoContinue = true;
-    try {
-      recordOffset = 0;
-      currentLength = LittleEndian.readShort(in);
-      if (currentLength > MAX_RECORD_DATA_SIZE)
-        throw new RecordFormatException("The content of an excel record cannot exceed "+MAX_RECORD_DATA_SIZE+" bytes");
-      pos += LittleEndian.SHORT_SIZE;
-      in.read(data, 0, currentLength);
-
-      //Read the Sid of the next record
-      if (in.available() < EOFRecord.ENCODED_SIZE) {
-          if (in.available() > 0) {
-              // some scrap left over?
-              // ex45582-22397.xls has one extra byte after the last record
-              // Excel reads that file OK
-          }
-          nextSid = INVALID_SID_VALUE;
-      } else {
-          nextSid = LittleEndian.readShort(in);
-          if (nextSid == INVALID_SID_VALUE) {
-              throw new RecordFormatException("Found sid " + nextSid + " after record with sid 0x"
-                      + Integer.toHexString(currentSid).toUpperCase());
-          }
-      }
-    } catch (IOException ex) {
-      throw new RecordFormatException("Error reading bytes", ex);
-    }
-  }
+	/** Moves to the next record in the stream.
+	 *
+	 * <i>Note: The auto continue flag is reset to true</i>
+	 */
+	public void nextRecord() throws RecordFormatException {
+		if (nextSid == INVALID_SID_VALUE) {
+			throw new IllegalStateException("EOF - next record not available");
+		}
+		currentSid = nextSid;
+		autoContinue = true;
+		recordOffset = 0;
+		_currentDataLength = _le.readUShort();
+		if (_currentDataLength > MAX_RECORD_DATA_SIZE) {
+			throw new RecordFormatException("The content of an excel record cannot exceed "
+					+ MAX_RECORD_DATA_SIZE + " bytes");
+		}
+	}
 
   public void setAutoContinue(boolean enable) {
     this.autoContinue = enable;
-  }
-
-  public boolean getAutoContinue() {
-    return autoContinue;
   }
 
 	private void checkRecordPosition(int requiredByteCount) {
@@ -150,11 +176,8 @@ public final class RecordInputStream extends InputStream implements LittleEndian
 	 */
 	public byte readByte() {
 		checkRecordPosition(LittleEndian.BYTE_SIZE);
-
-		byte result = data[recordOffset];
 		recordOffset += LittleEndian.BYTE_SIZE;
-		pos += LittleEndian.BYTE_SIZE;
-		return result;
+		return _le.readByte();
 	}
 
 	/**
@@ -162,29 +185,20 @@ public final class RecordInputStream extends InputStream implements LittleEndian
 	 */
 	public short readShort() {
 		checkRecordPosition(LittleEndian.SHORT_SIZE);
-
-		short result = LittleEndian.getShort(data, recordOffset);
 		recordOffset += LittleEndian.SHORT_SIZE;
-		pos += LittleEndian.SHORT_SIZE;
-		return result;
+		return _le.readShort();
 	}
 
 	public int readInt() {
 		checkRecordPosition(LittleEndian.INT_SIZE);
-
-		int result = LittleEndian.getInt(data, recordOffset);
 		recordOffset += LittleEndian.INT_SIZE;
-		pos += LittleEndian.INT_SIZE;
-		return result;
+		return _le.readInt();
 	}
 
 	public long readLong() {
 		checkRecordPosition(LittleEndian.LONG_SIZE);
-
-		long result = LittleEndian.getLong(data, recordOffset);
 		recordOffset += LittleEndian.LONG_SIZE;
-		pos += LittleEndian.LONG_SIZE;
-		return result;
+		return _le.readLong();
 	}
 
 	/**
@@ -200,22 +214,18 @@ public final class RecordInputStream extends InputStream implements LittleEndian
 	 */
 	public int readUShort() {
 		checkRecordPosition(LittleEndian.SHORT_SIZE);
-
-		int result = LittleEndian.getUShort(data, recordOffset);
 		recordOffset += LittleEndian.SHORT_SIZE;
-		pos += LittleEndian.SHORT_SIZE;
-		return result;
+		return _le.readUShort();
 	}
 
 	public double readDouble() {
 		checkRecordPosition(LittleEndian.DOUBLE_SIZE);
-		long valueLongBits = LittleEndian.getLong(data, recordOffset);
+		recordOffset += LittleEndian.DOUBLE_SIZE;
+		long valueLongBits = _le.readLong();
 		double result = Double.longBitsToDouble(valueLongBits);
 		if (Double.isNaN(result)) {
 			throw new RuntimeException("Did not expect to read NaN"); // (Because Excel typically doesn't write NaN
 		}
-		recordOffset += LittleEndian.DOUBLE_SIZE;
-		pos += LittleEndian.DOUBLE_SIZE;
 		return result;
 	}
 	public void readFully(byte[] buf) {
@@ -224,9 +234,8 @@ public final class RecordInputStream extends InputStream implements LittleEndian
 
 	public void readFully(byte[] buf, int off, int len) {
 		checkRecordPosition(len);
-		System.arraycopy(data, recordOffset, buf, off, len);
+		_le.readFully(buf, off, len);
 		recordOffset+=len;
-		pos+=len;
 	}
 
 	public String readString() {
@@ -315,18 +324,19 @@ public final class RecordInputStream extends InputStream implements LittleEndian
     return new UnicodeString(this);
   }
 
-  /** Returns the remaining bytes for the current record.
-   *
-   * @return The remaining bytes of the current record.
-   */
-  public byte[] readRemainder() {
-    int size = remaining();
-    byte[] result = new byte[size];
-    System.arraycopy(data, recordOffset, result, 0, size);
-    recordOffset += size;
-    pos += size;
-    return result;
-  }
+	/** Returns the remaining bytes for the current record.
+	 *
+	  * @return The remaining bytes of the current record.
+	  */
+	public byte[] readRemainder() {
+		int size = remaining();
+		if (size ==0) {
+			return EMPTY_BYTE_ARRAY;
+		}
+		byte[] result = new byte[size];
+		readFully(result);
+		return result;
+	}
 
   /** Reads all byte data for the current record, including any
    *  that overlaps into any following continue records.
@@ -350,19 +360,29 @@ public final class RecordInputStream extends InputStream implements LittleEndian
     return out.toByteArray();
   }
 
-  /** The remaining number of bytes in the <i>current</i> record.
-   *
-   * @return The number of bytes remaining in the current record
-   */
-  public int remaining() {
-    return (currentLength - recordOffset);
-  }
+	/** The remaining number of bytes in the <i>current</i> record.
+	 *
+	 * @return The number of bytes remaining in the current record
+	 */
+	public int remaining() {
+		if (_currentDataLength == DATA_LEN_NEEDS_TO_BE_READ) {
+			// already read sid of next record. so current one is finished
+			return 0;
+		}
+		return (_currentDataLength - recordOffset);
+	}
 
-  /** Returns true iif a Continue record is next in the excel stream
-   *
-   * @return True when a ContinueRecord is next.
-   */
-  public boolean isContinueNext() {
-    return (nextSid == ContinueRecord.sid);
-  }
+	/**
+	 *
+	 * @return <code>true</code> when a {@link ContinueRecord} is next.
+	 */
+	public boolean isContinueNext() {
+		if (_currentDataLength != DATA_LEN_NEEDS_TO_BE_READ && recordOffset != _currentDataLength) {
+			throw new IllegalStateException("Should never be called before end of current record");
+		}
+		if (!hasNextRecord()) {
+			return false;
+		}
+		return nextSid == ContinueRecord.sid;
+	}
 }

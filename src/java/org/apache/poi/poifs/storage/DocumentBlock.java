@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,31 +14,27 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import java.util.Arrays;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.IntegerField;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * A block of document data.
  *
  * @author Marc Johnson (mjohnson at apache dot org)
  */
+public final class DocumentBlock extends BigBlock {
+    private static final int BLOCK_SHIFT = 9;
+    private static final int BLOCK_SIZE = 1 << BLOCK_SHIFT;
+    private static final int BLOCK_MASK = BLOCK_SIZE-1;
 
-public class DocumentBlock
-    extends BigBlock
-{
     private static final byte _default_value = ( byte ) 0xFF;
     private byte[]            _data;
     private int               _bytes_read;
@@ -161,45 +156,10 @@ public class DocumentBlock
         return rval;
     }
 
-    /**
-     * read data from an array of DocumentBlocks
-     *
-     * @param blocks the blocks to read from
-     * @param buffer the buffer to write the data into
-     * @param offset the offset into the array of blocks to read from
-     */
-
-    public static void read(final DocumentBlock [] blocks,
-                            final byte [] buffer, final int offset)
-    {
-        int firstBlockIndex  = offset / POIFSConstants.BIG_BLOCK_SIZE;
-        int firstBlockOffset = offset % POIFSConstants.BIG_BLOCK_SIZE;
-        int lastBlockIndex   = (offset + buffer.length - 1)
-                               / POIFSConstants.BIG_BLOCK_SIZE;
-
-        if (firstBlockIndex == lastBlockIndex)
-        {
-            System.arraycopy(blocks[ firstBlockIndex ]._data,
-                             firstBlockOffset, buffer, 0, buffer.length);
-        }
-        else
-        {
-            int buffer_offset = 0;
-
-            System.arraycopy(blocks[ firstBlockIndex ]._data,
-                             firstBlockOffset, buffer, buffer_offset,
-                             POIFSConstants.BIG_BLOCK_SIZE
-                             - firstBlockOffset);
-            buffer_offset += POIFSConstants.BIG_BLOCK_SIZE - firstBlockOffset;
-            for (int j = firstBlockIndex + 1; j < lastBlockIndex; j++)
-            {
-                System.arraycopy(blocks[ j ]._data, 0, buffer, buffer_offset,
-                                 POIFSConstants.BIG_BLOCK_SIZE);
-                buffer_offset += POIFSConstants.BIG_BLOCK_SIZE;
-            }
-            System.arraycopy(blocks[ lastBlockIndex ]._data, 0, buffer,
-                             buffer_offset, buffer.length - buffer_offset);
-        }
+    public static DataInputBlock getDataInputBlock(DocumentBlock[] blocks, int offset) {
+        int firstBlockIndex = offset >> BLOCK_SHIFT;
+        int firstBlockOffset= offset & BLOCK_MASK;
+        return new DataInputBlock(blocks[firstBlockIndex]._data, firstBlockOffset);
     }
 
     /* ********** START extension of BigBlock ********** */
