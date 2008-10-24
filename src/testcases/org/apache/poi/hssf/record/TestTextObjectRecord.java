@@ -52,8 +52,7 @@ public final class TestTextObjectRecord extends TestCase {
 
     public void testRead() {
 
-        RecordInputStream is = new RecordInputStream(new ByteArrayInputStream(simpleData));
-        is.nextRecord();
+        RecordInputStream is =TestcaseRecordInputStream.create(simpleData);
         TextObjectRecord record = new TextObjectRecord(is);
 
         assertEquals(TextObjectRecord.sid, record.getSid());
@@ -79,8 +78,7 @@ public final class TestTextObjectRecord extends TestCase {
         assertTrue(Arrays.equals(simpleData, ser));
 
         //read again
-        RecordInputStream is = new RecordInputStream(new ByteArrayInputStream(simpleData));
-        is.nextRecord();
+        RecordInputStream is = TestcaseRecordInputStream.create(simpleData);
         record = new TextObjectRecord(is);
     }
 
@@ -101,8 +99,7 @@ public final class TestTextObjectRecord extends TestCase {
         assertEquals(22, ser.length); // just the TXO record
         
         //read again
-        RecordInputStream is = new RecordInputStream(new ByteArrayInputStream(ser));
-        is.nextRecord();
+        RecordInputStream is = TestcaseRecordInputStream.create(ser);
         record = new TextObjectRecord(is);
         assertEquals(0, record.getStr().length());
     }

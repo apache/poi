@@ -14,11 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hssf.record;
 
-import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.util.HexRead;
@@ -37,24 +38,35 @@ public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 	public void testStore() {
 
 		byte[] src = hr(data1);
-		src = TestcaseRecordInputStream.mergeDataAndSid(EmbeddedObjectRefSubRecord.sid, (short)src.length, src);
+//		src = TestcaseRecordInputStream.mergeDataAndSid(EmbeddedObjectRefSubRecord.sid, (short)src.length, src);
 
-		RecordInputStream in = new RecordInputStream(new ByteArrayInputStream(src));
-		in.nextRecord();
+		RecordInputStream in = TestcaseRecordInputStream.create(EmbeddedObjectRefSubRecord.sid, src);
 
-		EmbeddedObjectRefSubRecord record1 = new EmbeddedObjectRefSubRecord(in, src.length-4);
+		EmbeddedObjectRefSubRecord record1 = new EmbeddedObjectRefSubRecord(in, src.length);
 
 		byte[] ser = record1.serialize();
 
-		RecordInputStream in2 = new RecordInputStream(new ByteArrayInputStream(ser));
-		in2.nextRecord();
+		RecordInputStream in2 = TestcaseRecordInputStream.create(ser);
 		EmbeddedObjectRefSubRecord record2 = new EmbeddedObjectRefSubRecord(in2, ser.length-4);
 
-		assertTrue(Arrays.equals(src, ser));
+		confirmData(src, ser);
 		assertEquals(record1.getOLEClassName(), record2.getOLEClassName());
 
 		byte[] ser2 = record1.serialize();
 		assertTrue(Arrays.equals(ser, ser2));
+	}
+
+	/**
+	 * @param expectedData does not include sid & size
+	 * @param actualFullRecordData includes sid & size
+	 */
+	private static void confirmData(byte[] expectedData, byte[] actualFullRecordData) {
+		assertEquals(expectedData.length, actualFullRecordData.length-4);
+		for (int i = 0; i < expectedData.length; i++) {
+			if(expectedData[i] != actualFullRecordData[i+4]) {
+				throw new AssertionFailedError("Difference at offset (" + i + ")");
+			}
+		}
 	}
 
 	public void testCreate() {
@@ -62,8 +74,7 @@ public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 		EmbeddedObjectRefSubRecord record1 = new EmbeddedObjectRefSubRecord();
 
 		byte[] ser = record1.serialize();
-		RecordInputStream in2 = new RecordInputStream(new ByteArrayInputStream(ser));
-		in2.nextRecord();
+		RecordInputStream in2 = TestcaseRecordInputStream.create(ser);
 		EmbeddedObjectRefSubRecord record2 = new EmbeddedObjectRefSubRecord(in2, ser.length-4);
 
 		assertEquals(record1.getOLEClassName(), record2.getOLEClassName());
@@ -78,21 +89,17 @@ public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 	 * taken from ftPictFmla sub-record in attachment 22645 (offset 0x40AB).
 	 */
 	private static final byte[] data45912 = hr(
-		"09 00 14 00 " +
 		"12 00 0B 00 F8 02 88 04 3B 00 " +
 		"00 00 00 01 00 00 00 01 " +
 		"00 00");
 
 	public void testCameraTool_bug45912() {
 		byte[] data = data45912;
-		RecordInputStream in = new RecordInputStream(new ByteArrayInputStream(data));
-		in.nextRecord();
+		RecordInputStream in = TestcaseRecordInputStream.create(EmbeddedObjectRefSubRecord.sid, data);
 
-		EmbeddedObjectRefSubRecord rec = new EmbeddedObjectRefSubRecord(in, data.length-4);
+		EmbeddedObjectRefSubRecord rec = new EmbeddedObjectRefSubRecord(in, data.length);
 		byte[] ser2 = rec.serialize();
-		assertTrue(Arrays.equals(data, ser2));
-
-
+		confirmData(data, ser2);
 	}
 
 	private static byte[] hr(String string) {
