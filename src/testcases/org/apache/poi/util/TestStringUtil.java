@@ -42,43 +42,7 @@ public class TestStringUtil
         super( name );
     }
 
-    /**
-     * test simple form of getFromUnicode
-     */
-    public void testSimpleGetFromUnicode()
-    {
-        byte[] test_data = new byte[32];
-        int index = 0;
 
-        for ( int k = 0; k < 16; k++ )
-        {
-            test_data[index++] = (byte) 0;
-            test_data[index++] = (byte) ( 'a' + k );
-        }
-
-        assertEquals( "abcdefghijklmnop",
-                StringUtil.getFromUnicodeBE( test_data ) );
-    }
-
-    /**
-     * test simple form of getFromUnicode with symbols with code below and more 127
-     */
-    public void testGetFromUnicodeSymbolsWithCodesMoreThan127()
-    {
-        byte[] test_data = new byte[]{0x04, 0x22,
-                                      0x04, 0x35,
-                                      0x04, 0x41,
-                                      0x04, 0x42,
-                                      0x00, 0x20,
-                                      0x00, 0x74,
-                                      0x00, 0x65,
-                                      0x00, 0x73,
-                                      0x00, 0x74,
-        };
-
-        assertEquals( "\u0422\u0435\u0441\u0442 test",
-                StringUtil.getFromUnicodeBE( test_data ) );
-    }
 
     /**
      * test getFromUnicodeHigh for symbols with code below and more 127
@@ -101,62 +65,7 @@ public class TestStringUtil
                 StringUtil.getFromUnicodeLE( test_data ) );
     }
 
-    /**
-     * Test more complex form of getFromUnicode
-     */
-    public void testComplexGetFromUnicode()
-    {
-        byte[] test_data = new byte[32];
-        int index = 0;
-        for ( int k = 0; k < 16; k++ )
-        {
-            test_data[index++] = (byte) 0;
-            test_data[index++] = (byte) ( 'a' + k );
-        }
-        assertEquals( "abcdefghijklmno",
-                StringUtil.getFromUnicodeBE( test_data, 0, 15 ) );
-        assertEquals( "bcdefghijklmnop",
-                StringUtil.getFromUnicodeBE( test_data, 2, 15 ) );
-        try
-        {
-            StringUtil.getFromUnicodeBE( test_data, -1, 16 );
-            fail( "Should have caught ArrayIndexOutOfBoundsException" );
-        }
-        catch ( ArrayIndexOutOfBoundsException ignored )
-        {
-            // as expected
-        }
 
-        try
-        {
-            StringUtil.getFromUnicodeBE( test_data, 32, 16 );
-            fail( "Should have caught ArrayIndexOutOfBoundsException" );
-        }
-        catch ( ArrayIndexOutOfBoundsException ignored )
-        {
-            // as expected
-        }
-
-        try
-        {
-            StringUtil.getFromUnicodeBE( test_data, 1, 16 );
-            fail( "Should have caught IllegalArgumentException" );
-        }
-        catch ( IllegalArgumentException ignored )
-        {
-            // as expected
-        }
-
-        try
-        {
-            StringUtil.getFromUnicodeBE( test_data, 1, -1 );
-            fail( "Should have caught IllegalArgumentException" );
-        }
-        catch ( IllegalArgumentException ignored )
-        {
-            // as expected
-        }
-    }
 
     /**
      * Test putCompressedUnicode
