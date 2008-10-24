@@ -26,7 +26,6 @@ import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LittleEndianOutput;
@@ -113,10 +112,10 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 				field_3_unicode_flag = ( in.readByte() & 0x01 ) != 0;
 				remaining -= LittleEndian.BYTE_SIZE;
 				if (field_3_unicode_flag) {
-					field_4_ole_classname = in.readUnicodeLEString(nChars);
+					field_4_ole_classname = StringUtil.readUnicodeLE(in, nChars);
 					stringByteCount = nChars * 2;
 				} else {
-					field_4_ole_classname = in.readCompressedUnicode(nChars);
+					field_4_ole_classname = StringUtil.readCompressedUnicode(in, nChars);
 					stringByteCount = nChars;
 				}
 			} else {
