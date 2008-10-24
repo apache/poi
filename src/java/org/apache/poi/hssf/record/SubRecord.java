@@ -27,6 +27,7 @@ import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.LittleEndianOutputStream;
@@ -209,17 +210,12 @@ public abstract class SubRecord {
 			out.writeShort(_unknownShort13);
 		}
 		private static Ptg readRefPtg(byte[] formulaRawBytes) {
-			byte[] data = new byte[formulaRawBytes.length + 4];
-			LittleEndian.putUShort(data, 0, -5555);
-			LittleEndian.putUShort(data, 2, formulaRawBytes.length);
-			System.arraycopy(formulaRawBytes, 0, data, 4, formulaRawBytes.length);
-			RecordInputStream in = new RecordInputStream(new ByteArrayInputStream(data));
-			in.nextRecord();
-		   	byte ptgSid = in.readByte();
+			LittleEndianInput in = new LittleEndianByteArrayInputStream(formulaRawBytes);
+			byte ptgSid = in.readByte();
 			switch(ptgSid) {
 				case AreaPtg.sid:   return new AreaPtg(in);
 				case Area3DPtg.sid: return new Area3DPtg(in);
-				case RefPtg.sid:	return new RefPtg(in);
+				case RefPtg.sid:    return new RefPtg(in);
 				case Ref3DPtg.sid:  return new Ref3DPtg(in);
 			}
 			return null;

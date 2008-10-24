@@ -21,12 +21,12 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianInput;
 /**
  * 
  * @author Josh Micich
@@ -61,7 +61,7 @@ public final class TestConstantValueParser extends TestCase {
 		}
 	}
 	public void testDecode() {
-		RecordInputStream in = TestcaseRecordInputStream.createWithFakeSid(SAMPLE_ENCODING);
+		LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(SAMPLE_ENCODING);
 		
 		Object[] values = ConstantValueParser.parse(in, 4);
 		for (int i = 0; i < values.length; i++) {

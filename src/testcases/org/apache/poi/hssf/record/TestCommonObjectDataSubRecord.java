@@ -37,7 +37,7 @@ public final class TestCommonObjectDataSubRecord extends TestCase {
 	};
 
 	public void testLoad() {
-		CommonObjectDataSubRecord record = new CommonObjectDataSubRecord(TestcaseRecordInputStream.createWithFakeSid(data), data.length);
+		CommonObjectDataSubRecord record = new CommonObjectDataSubRecord(TestcaseRecordInputStream.createLittleEndian(data), data.length);
 
 		assertEquals( CommonObjectDataSubRecord.OBJECT_TYPE_LIST_BOX, record.getObjectType());
 		assertEquals((short) 1, record.getObjectId());

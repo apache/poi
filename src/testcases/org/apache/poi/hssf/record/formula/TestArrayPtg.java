@@ -25,6 +25,7 @@ import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianInput;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -55,9 +56,9 @@ public final class TestArrayPtg extends TestCase {
 	 */
 	public void testReadWriteTokenValueBytes() {
 		
-		ArrayPtg ptg = new ArrayPtg(TestcaseRecordInputStream.createWithFakeSid(ENCODED_PTG_DATA));
+		ArrayPtg ptg = new ArrayPtg(TestcaseRecordInputStream.createLittleEndian(ENCODED_PTG_DATA));
 		
-		ptg.readTokenValues(TestcaseRecordInputStream.createWithFakeSid(ENCODED_CONSTANT_DATA));
+		ptg.readTokenValues(TestcaseRecordInputStream.createLittleEndian(ENCODED_CONSTANT_DATA));
 		assertEquals(3, ptg.getColumnCount());
 		assertEquals(2, ptg.getRowCount());
 		Object[][] values = ptg.getTokenArrayValues();
@@ -83,8 +84,8 @@ public final class TestArrayPtg extends TestCase {
 	 * Excel stores array elements column by column.  This test makes sure POI does the same.
 	 */
 	public void testElementOrdering() {
-		ArrayPtg ptg = new ArrayPtg(TestcaseRecordInputStream.createWithFakeSid(ENCODED_PTG_DATA));
-		ptg.readTokenValues(TestcaseRecordInputStream.createWithFakeSid(ENCODED_CONSTANT_DATA));
+		ArrayPtg ptg = new ArrayPtg(TestcaseRecordInputStream.createLittleEndian(ENCODED_PTG_DATA));
+		ptg.readTokenValues(TestcaseRecordInputStream.createLittleEndian(ENCODED_CONSTANT_DATA));
 		assertEquals(3, ptg.getColumnCount());
 		assertEquals(2, ptg.getRowCount());
 		
@@ -114,9 +115,9 @@ public final class TestArrayPtg extends TestCase {
 	}
 
 	public void testToFormulaString() {
-		ArrayPtg ptg = new ArrayPtg(TestcaseRecordInputStream.createWithFakeSid(ENCODED_PTG_DATA));
+		ArrayPtg ptg = new ArrayPtg(TestcaseRecordInputStream.createLittleEndian(ENCODED_PTG_DATA));
 		
-		ptg.readTokenValues(TestcaseRecordInputStream.createWithFakeSid(ENCODED_CONSTANT_DATA));
+		ptg.readTokenValues(TestcaseRecordInputStream.createLittleEndian(ENCODED_CONSTANT_DATA));
 		
 		String actualFormula;
 		try {
@@ -147,7 +148,7 @@ public final class TestArrayPtg extends TestCase {
 		// Force encoded operand class for tArray 
 		fullData[0] = (byte) (ArrayPtg.sid + operandClass);
 		
-		RecordInputStream in = TestcaseRecordInputStream.createWithFakeSid(fullData);
+		LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(fullData);
 		
 		Ptg[] ptgs = Ptg.readTokens(ENCODED_PTG_DATA.length, in);
 		assertEquals(1, ptgs.length);

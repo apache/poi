@@ -119,7 +119,6 @@ public final class TestFormulaRecord extends TestCase {
 	public void testWithConcat() {
 		// =CHOOSE(2,A2,A3,A4)
 		byte[] data = {
-				6, 0, 68, 0,
 				1, 0, 1, 0, 15, 0, 0, 0, 0, 0, 0, 0, 57,
 				64, 0, 0, 12, 0, 12, -4, 46, 0,
 				30, 2, 0,	// Int - 2
@@ -134,8 +133,7 @@ public final class TestFormulaRecord extends TestCase {
 				25, 8, 3, 0,  // Attr
 				66, 4, 100, 0 // CHOOSE
 		};
-		RecordInputStream inp = new RecordInputStream( new ByteArrayInputStream(data));
-		inp.nextRecord();
+		RecordInputStream inp = TestcaseRecordInputStream.create(FormatRecord.sid, data);
 
 		FormulaRecord fr = new FormulaRecord(inp);
 
