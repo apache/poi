@@ -962,7 +962,7 @@ public class HSSFCellStyle
     	if(sr == null) {
     		return null;
     	}
-    	if(sr.getType() == StyleRecord.STYLE_BUILT_IN) {
+    	if(sr.isBuiltin()) {
     		return null;
     	}
     	return sr.getName();
@@ -977,7 +977,7 @@ public class HSSFCellStyle
     	if(sr == null) {
     		sr = workbook.createStyleRecord(index);
     	}
-    	if(sr.getType() == StyleRecord.STYLE_BUILT_IN) {
+    	if(sr.isBuiltin()) {
     		throw new IllegalArgumentException("Unable to set user specified style names for built in styles!");
     	}
     	sr.setName(styleName);

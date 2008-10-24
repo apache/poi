@@ -20,9 +20,14 @@ package org.apache.poi.util;
 import java.io.UnsupportedEncodingException;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
+
+import org.apache.poi.hssf.record.RecordInputStream;
 /**
- *  Title: String Utility Description: Collection of string handling utilities
- *
+ *  Title: String Utility Description: Collection of string handling utilities<p/>
+ *  
+ * Note - none of the methods in this class deals with {@link ContinueRecord}s.  For such
+ * functionality, consider using {@link RecordInputStream
+} *
  *
  *@author     Andrew C. Oliver
  *@author     Sergei Kozello (sergeikozello at mail.ru)
@@ -84,62 +89,9 @@ public class StringUtil {
 	 * @param  string  the byte array to be converted
 	 * @return         the converted string
 	 */
-	public static String getFromUnicodeLE(final byte[] string) {
+	public static String getFromUnicodeLE(byte[] string) {
 		if(string.length == 0) { return ""; }
 		return getFromUnicodeLE(string, 0, string.length / 2);
-	}
-
-	/**
-	 *  Given a byte array of 16-bit unicode characters in big endian
-	 *  format (most important byte first), return a Java String representation
-	 *  of it.
-	 *
-	 * { 0x00, 0x16 } -0x16
-	 *
-	 * @param  string                              the byte array to be converted
-	 * @param  offset                              the initial offset into the
-	 *      byte array. it is assumed that string[ offset ] and string[ offset +
-	 *      1 ] contain the first 16-bit unicode character
-     * @param len the length of the final string
-	 * @return                                     the converted string
-	 * @exception  ArrayIndexOutOfBoundsException  if offset is out of bounds for
-	 *      the byte array (i.e., is negative or is greater than or equal to
-	 *      string.length)
-	 * @exception  IllegalArgumentException        if len is too large (i.e.,
-	 *      there is not enough data in string to create a String of that
-	 *      length)
-	 */
-	public static String getFromUnicodeBE(
-		final byte[] string,
-		final int offset,
-		final int len)
-		throws ArrayIndexOutOfBoundsException, IllegalArgumentException {
-		if ((offset < 0) || (offset >= string.length)) {
-			throw new ArrayIndexOutOfBoundsException("Illegal offset");
-		}
-		if ((len < 0) || (((string.length - offset) / 2) < len)) {
-			throw new IllegalArgumentException("Illegal length");
-		}
-		try {
-			return new String(string, offset, len * 2, "UTF-16BE");
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	/**
-	 *  Given a byte array of 16-bit unicode characters in big endian
-	 *  format (most important byte first), return a Java String representation
-	 *  of it.
-	 *
-	 * { 0x00, 0x16 } -0x16
-	 *
-	 * @param  string  the byte array to be converted
-	 * @return         the converted string
-	 */
-	public static String getFromUnicodeBE(final byte[] string) {
-		if(string.length == 0) { return ""; }
-		return getFromUnicodeBE(string, 0, string.length / 2);
 	}
 
 	/**
@@ -162,6 +114,31 @@ public class StringUtil {
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	public static String readCompressedUnicode(LittleEndianInput in, int nChars) {
+		char[] buf = new char[nChars];
+		for (int i = 0; i < buf.length; i++) {
+			buf[i] = (char) in.readUByte();
+		}
+		return new String(buf);
+	}
+	/**
+	 * InputStream <tt>in</tt> is expected to contain:
+	 * <ol>
+	 * <li>ushort nChars</li>
+	 * <li>byte is16BitFlag</li>
+	 * <li>byte[]/char[] characterData</li>
+	 * </ol>
+	 * For this encoding, the is16BitFlag is always present even if nChars==0.
+	 */
+	public static String readUnicodeString(LittleEndianInput in) {
+		
+		int nChars = in.readUShort();
+		byte flag = in.readByte();
+		if ((flag & 0x01) == 0) {
+			return readCompressedUnicode(in, nChars);
+		}
+		return readUnicodeLE(in, nChars);
 	}
 
 	/**
@@ -219,6 +196,14 @@ public class StringUtil {
 			throw new RuntimeException(e);
 		}
 		out.write(bytes);
+	}
+	
+	public static String readUnicodeLE(LittleEndianInput in, int nChars) {
+		char[] buf = new char[nChars];
+		for (int i = 0; i < buf.length; i++) {
+			buf[i] = (char) in.readUShort();
+		}
+		return new String(buf);
 	}
 
 	/**
