@@ -30,6 +30,4 @@ public interface LittleEndianInput {
 	double readDouble();
 	void readFully(byte[] buf);
 	void readFully(byte[] buf, int off, int len);
-	String readUnicodeLEString(int nChars);
-	String readCompressedUnicode(int nChars);
 }

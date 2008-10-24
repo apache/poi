@@ -131,34 +131,4 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 			buf[i] = (byte) ch;
 		}
 	}
-	public String readCompressedUnicode(int nChars) {
-		char[] buf = new char[nChars];
-		for (int i = 0; i < buf.length; i++) {
-			int ch;
-			try {
-				ch = in.read();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-			checkEOF(ch);
-			buf[i] = (char) ch;
-			
-		}
-		return new String(buf);
-	}
-	public String readUnicodeLEString(int nChars) {
-		char[] buf = new char[nChars];
-		for (int i = 0; i < buf.length; i++) {
-			int ch;
-			try {
-				ch = in.read();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-			checkEOF(ch);
-			buf[i] = (char) ch;
-			
-		}
-		return new String(buf);
-	}
 }

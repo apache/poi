@@ -114,20 +114,4 @@ public final class LittleEndianByteArrayInputStream implements LittleEndianInput
 	public double readDouble() {
 		return Double.longBitsToDouble(readLong());
 	}
-	public String readCompressedUnicode(int nChars) {
-		checkPosition(nChars);
-		char[] buf = new char[nChars];
-		for (int i = 0; i < buf.length; i++) {
-			buf[i] = (char) readUByte();
-		}
-		return new String(buf);
-	}
-	public String readUnicodeLEString(int nChars) {
-		checkPosition(nChars*2);
-		char[] buf = new char[nChars];
-		for (int i = 0; i < buf.length; i++) {
-			buf[i] = (char) readUShort();
-		}
-		return new String(buf);
-	}
 }
