@@ -31,6 +31,7 @@ import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.poifs.property.DocumentProperty;
 import org.apache.poi.poifs.property.Property;
 import org.apache.poi.poifs.storage.BlockWritable;
+import org.apache.poi.poifs.storage.DataInputBlock;
 import org.apache.poi.poifs.storage.DocumentBlock;
 import org.apache.poi.poifs.storage.ListManagedBlock;
 import org.apache.poi.poifs.storage.RawDataBlock;
@@ -194,12 +195,62 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 	 *
 	 * @param buffer the buffer to write to
 	 * @param offset the offset into our storage to read from
+	 * This method is currently (Oct 2008) only used by test code. Perhaps it can be deleted
 	 */
 	void read(byte[] buffer, int offset) {
+		int len = buffer.length;
+
+		DataInputBlock currentBlock = getDataInputBlock(offset);
+		
+		int blockAvailable = currentBlock.available();
+		if (blockAvailable > len) {
+			currentBlock.readFully(buffer, 0, len);
+			return;
+		}
+		// else read big amount in chunks
+		int remaining = len;
+		int writePos = 0;
+		int currentOffset = offset;
+		while (remaining > 0) {
+			boolean blockIsExpiring = remaining >= blockAvailable;
+			int reqSize;
+			if (blockIsExpiring) {
+				reqSize = blockAvailable;
+			} else {
+				reqSize = remaining;
+			}
+			currentBlock.readFully(buffer, writePos, reqSize);
+			remaining-=reqSize;
+			writePos+=reqSize;
+			currentOffset += reqSize;
+			if (blockIsExpiring) {
+				if (currentOffset == _size) {
+					if (remaining > 0) {
+						throw new IllegalStateException("reached end of document stream unexpectedly");
+					}
+					currentBlock = null;
+					break;
+				}
+				currentBlock = getDataInputBlock(currentOffset);
+				blockAvailable = currentBlock.available();
+			}
+		}
+	}
+
+	/**
+	 * @return <code>null</code> if <tt>offset</tt> points to the end of the document stream
+	 */
+	DataInputBlock getDataInputBlock(int offset) {
+		if (offset >= _size) {
+			if (offset > _size) {
+				throw new RuntimeException("Request for Offset " + offset + " doc size is " + _size);
+			}
+			return null;
+		}
 		if (_property.shouldUseSmallBlocks()) {
-			SmallDocumentBlock.read(_small_store.getBlocks(), buffer, offset);
+			return SmallDocumentBlock.getDataInputBlock(_small_store.getBlocks(), offset);
 		} else {
-			DocumentBlock.read(_big_store.getBlocks(), buffer, offset);
+			return DocumentBlock.getDataInputBlock(_big_store.getBlocks(), offset);
 		}
 	}
 
