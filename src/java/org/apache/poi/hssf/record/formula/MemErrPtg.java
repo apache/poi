@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -32,7 +32,7 @@ public final class MemErrPtg extends OperandPtg {
 	private int field_1_reserved;
 	private short field_2_subex_len;
 
-	public MemErrPtg(RecordInputStream in) {
+	public MemErrPtg(LittleEndianInput in)  {
 		field_1_reserved = in.readInt();
 		field_2_subex_len = in.readShort();
 	}

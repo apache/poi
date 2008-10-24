@@ -17,10 +17,10 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -42,7 +42,7 @@ public final class DeletedArea3DPtg extends OperandPtg implements WorkbookDepend
 		unused2 = 0;
 	}
 	
-	public DeletedArea3DPtg(RecordInputStream in) {
+	public DeletedArea3DPtg(LittleEndianInput in)  {
 		field_1_index_extern_sheet = in.readUShort();
 		unused1 = in.readInt();
 		unused2 = in.readInt();

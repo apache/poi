@@ -18,10 +18,10 @@
 package org.apache.poi.hssf.record.formula;
 
 
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -37,7 +37,7 @@ public final class DeletedRef3DPtg extends OperandPtg implements WorkbookDepende
 	private final int unused1;
 
 	/** Creates new DeletedRef3DPtg */
-	public DeletedRef3DPtg(RecordInputStream in) {
+	public DeletedRef3DPtg(LittleEndianInput in)  {
 		field_1_index_extern_sheet = in.readUShort();
 		unused1 = in.readInt();
 	}

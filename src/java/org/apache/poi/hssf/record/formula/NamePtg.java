@@ -17,9 +17,9 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -43,7 +43,7 @@ public final class NamePtg extends OperandPtg implements WorkbookDependentFormul
 
 	/** Creates new NamePtg */
 
-	public NamePtg(RecordInputStream in) {
+	public NamePtg(LittleEndianInput in)  {
 		field_1_label_index = in.readShort();
 		field_2_zero = in.readShort();
 	}

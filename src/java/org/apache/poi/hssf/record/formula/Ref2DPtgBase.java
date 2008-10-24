@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -41,7 +41,7 @@ abstract class Ref2DPtgBase extends RefPtgBase {
 		setColRelative(isColumnRelative);
 	}
 
-	protected Ref2DPtgBase(RecordInputStream in) {
+	protected Ref2DPtgBase(LittleEndianInput in)  {
 		readCoordinates(in);
 	}
 

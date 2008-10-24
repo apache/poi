@@ -17,10 +17,11 @@
 
 package org.apache.poi.hssf.record.constant;
 
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.record.UnicodeString.UnicodeRecordStats;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.StringUtil;
 
 /**
  * To support Constant Values (2.5.7) as required by the CRN record.
@@ -47,7 +48,7 @@ public final class ConstantValueParser {
 		// no instances of this class
 	}
 
-	public static Object[] parse(RecordInputStream in, int nValues) {
+	public static Object[] parse(LittleEndianInput in, int nValues) {
 		Object[] result = new Object[nValues];
 		for (int i = 0; i < result.length; i++) {
 			result[i] = readAConstantValue(in);
@@ -55,7 +56,7 @@ public final class ConstantValueParser {
 		return result;
 	}
 
-	private static Object readAConstantValue(RecordInputStream in) {
+	private static Object readAConstantValue(LittleEndianInput in) {
 		byte grbit = in.readByte();
 		switch(grbit) {
 			case TYPE_EMPTY:
@@ -64,7 +65,7 @@ public final class ConstantValueParser {
 			case TYPE_NUMBER:
 				return new Double(in.readDouble());
 			case TYPE_STRING:
-				return in.readUnicodeString();
+				return new UnicodeString(StringUtil.readUnicodeString(in));
 			case TYPE_BOOLEAN:
 				return readBoolean(in);
 			case TYPE_ERROR_CODE:
@@ -77,7 +78,7 @@ public final class ConstantValueParser {
 		throw new RuntimeException("Unknown grbit value (" + grbit + ")");
 	}
 
-	private static Object readBoolean(RecordInputStream in) {
+	private static Object readBoolean(LittleEndianInput in) {
 		byte val = (byte)in.readLong(); // 7 bytes 'not used'
 		switch(val) {
 			case FALSE_ENCODING:
@@ -116,46 +117,43 @@ public final class ConstantValueParser {
 		return urs.recordSize;
 	}
 
-	public static void encode(byte[] data, int offset, Object[] values) {
-		int currentOffset = offset;
+	public static void encode(LittleEndianOutput out, Object[] values) {
 		for (int i = 0; i < values.length; i++) {
-			currentOffset += encodeSingleValue(data, currentOffset, values[i]);
+			encodeSingleValue(out, values[i]);
 		}
 	}
 
-	private static int encodeSingleValue(byte[] data, int offset, Object value) {
+	private static void encodeSingleValue(LittleEndianOutput out, Object value) {
 		if (value == EMPTY_REPRESENTATION) {
-			LittleEndian.putByte(data, offset, TYPE_EMPTY);
-			LittleEndian.putLong(data, offset+1, 0L);
-			return 9;
+			out.writeByte(TYPE_EMPTY);
+			out.writeLong(0L);
+			return;
 		}
 		if (value instanceof Boolean) {
 			Boolean bVal = ((Boolean)value);
-			LittleEndian.putByte(data, offset, TYPE_BOOLEAN);
+			out.writeByte(TYPE_BOOLEAN);
 			long longVal = bVal.booleanValue() ? 1L : 0L;
-			LittleEndian.putLong(data, offset+1, longVal);
-			return 9;
+			out.writeLong(longVal);
+			return;
 		}
 		if (value instanceof Double) {
 			Double dVal = (Double) value;
-			LittleEndian.putByte(data, offset, TYPE_NUMBER);
-			LittleEndian.putDouble(data, offset+1, dVal.doubleValue());
-			return 9;
+			out.writeByte(TYPE_NUMBER);
+			out.writeDouble(dVal.doubleValue());
+			return;
 		}
 		if (value instanceof UnicodeString) {
 			UnicodeString usVal = (UnicodeString) value;
-			LittleEndian.putByte(data, offset, TYPE_STRING);
-			UnicodeRecordStats urs = new UnicodeRecordStats();
-			usVal.serialize(urs, offset +1, data);
-			return 1 + urs.recordSize;
+			out.writeByte(TYPE_STRING);
+			StringUtil.writeUnicodeString(out, usVal.getString());
+			return;
 		}
 		if (value instanceof ErrorConstant) {
 			ErrorConstant ecVal = (ErrorConstant) value;
-			LittleEndian.putByte(data, offset, TYPE_ERROR_CODE);
-			LittleEndian.putUShort(data, offset+1, ecVal.getErrorCode());
-			LittleEndian.putUShort(data, offset+3, 0);
-			LittleEndian.putInt(data, offset+5, 0);
-			return 9;
+			out.writeByte(TYPE_ERROR_CODE);
+			long longVal = ecVal.getErrorCode();
+			out.writeLong(longVal);
+			return;
 		}
 
 		throw new IllegalStateException("Unexpected value type (" + value.getClass().getName() + "'");

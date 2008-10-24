@@ -26,6 +26,7 @@ import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 import org.apache.poi.util.HexRead;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 /**
  * 
  * @author Josh Micich
@@ -52,7 +53,8 @@ public final class TestConstantValueParser extends TestCase {
 	public void testEncode() {
 		int size = ConstantValueParser.getEncodedSize(SAMPLE_VALUES);
 		byte[] data = new byte[size];
-		ConstantValueParser.encode(data, 0, SAMPLE_VALUES);
+		
+		ConstantValueParser.encode(new LittleEndianByteArrayOutputStream(data, 0), SAMPLE_VALUES);
 		
 		if (!Arrays.equals(data, SAMPLE_ENCODING)) {
 			fail("Encoding differs");

@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -46,7 +46,7 @@ public final class IntPtg extends ScalarConstantPtg {
 	public final static byte sid = 0x1e;
 	private final int field_1_value;
 
-	public IntPtg(RecordInputStream in) {
+	public IntPtg(LittleEndianInput in)  {
 		this(in.readUShort());
 	}
 

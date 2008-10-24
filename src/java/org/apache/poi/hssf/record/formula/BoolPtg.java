@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -32,7 +32,7 @@ public final class BoolPtg extends ScalarConstantPtg {
 	public final static byte sid = 0x1D;
 	private final boolean _value;
 
-	public BoolPtg(RecordInputStream in) {
+	public BoolPtg(LittleEndianInput in)  {
 		_value = (in.readByte() == 1);
 	}
 

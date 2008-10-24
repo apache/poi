@@ -17,9 +17,9 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
@@ -47,7 +47,7 @@ public final class StringPtg extends ScalarConstantPtg {
     private final String field_3_string;
 
     /** Create a StringPtg from a stream */
-    public StringPtg(RecordInputStream in) {
+    public StringPtg(LittleEndianInput in)  {
         field_1_length = in.readUByte();
         field_2_options = in.readByte();
         if (fHighByte.isSet(field_2_options)) {

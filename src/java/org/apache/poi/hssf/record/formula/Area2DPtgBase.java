@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -30,7 +30,7 @@ public abstract class Area2DPtgBase extends AreaPtgBase {
 		super(firstRow, lastRow, firstColumn, lastColumn, firstRowRelative, lastRowRelative, firstColRelative, lastColRelative);
 	}
 
-	protected Area2DPtgBase(RecordInputStream in) {
+	protected Area2DPtgBase(LittleEndianInput in)  {
 		readCoordinates(in);
 	}
 

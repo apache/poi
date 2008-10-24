@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.LittleEndianInput;
 
 /**
  * RefNPtg
@@ -26,7 +26,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
 public final class RefNPtg extends Ref2DPtgBase {
 	public final static byte sid = 0x2C;
 
-	public RefNPtg(RecordInputStream in) {
+	public RefNPtg(LittleEndianInput in)  {
 		super(in);
 	}
 

@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordFormatException;
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -43,7 +43,7 @@ public final class TblPtg extends ControlPtg {
     /** The column number of the upper left corner */
     private final int field_2_first_col;
 
-    public TblPtg(RecordInputStream in) {
+    public TblPtg(LittleEndianInput in)  {
       field_1_first_row = in.readUShort();
       field_2_first_col = in.readUShort();
     }

@@ -17,9 +17,9 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -51,7 +51,7 @@ public final class NameXPtg extends OperandPtg implements WorkbookDependentFormu
 		this(sheetRefIndex, nameIndex + 1, 0);
 	}
 
-	public NameXPtg(RecordInputStream in) {
+	public NameXPtg(LittleEndianInput in)  {
 		this(in.readUShort(), in.readUShort(), in.readUShort());
 	}
 

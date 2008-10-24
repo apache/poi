@@ -140,6 +140,27 @@ public class StringUtil {
 		}
 		return readUnicodeLE(in, nChars);
 	}
+	/**
+	 * OutputStream <tt>out</tt> will get:
+	 * <ol>
+	 * <li>ushort nChars</li>
+	 * <li>byte is16BitFlag</li>
+	 * <li>byte[]/char[] characterData</li>
+	 * </ol>
+	 * For this encoding, the is16BitFlag is always present even if nChars==0.
+	 */
+	public static void writeUnicodeString(LittleEndianOutput out, String value) {
+		
+		int nChars = value.length();
+		out.writeShort(nChars);
+		boolean is16Bit = hasMultibyte(value);
+		out.writeByte(is16Bit ? 0x01 : 0x00);
+		if (is16Bit) {
+			putUnicodeLE(value, out);
+		} else {
+			putCompressedUnicode(value, out);
+		}
+	}
 
 	/**
 	 * Takes a unicode (java) string, and returns it as 8 bit data (in ISO-8859-1

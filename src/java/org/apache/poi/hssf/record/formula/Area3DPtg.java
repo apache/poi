@@ -17,10 +17,10 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.ss.formula.ExternSheetReferenceToken;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -44,7 +44,7 @@ public final class Area3DPtg extends AreaPtgBase implements WorkbookDependentFor
 		setExternSheetIndex( externIdx );
 	}
 
-	public Area3DPtg(RecordInputStream in) {
+	public Area3DPtg(LittleEndianInput in)  {
 		field_1_index_extern_sheet = in.readShort();
 		readCoordinates(in);
 	}

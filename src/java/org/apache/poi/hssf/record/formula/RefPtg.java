@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.LittleEndianInput;
 
 /**
  * ReferencePtg - handles references (such as A1, A2, IA4)
@@ -39,7 +39,7 @@ public final class RefPtg extends Ref2DPtgBase {
 		super(row, column, isRowRelative, isColumnRelative);
 	}
 
-	public RefPtg(RecordInputStream in) {
+	public RefPtg(LittleEndianInput in)  {
 		super(in);
 	}
 
