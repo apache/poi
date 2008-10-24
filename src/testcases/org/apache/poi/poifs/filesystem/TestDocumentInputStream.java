@@ -284,14 +284,10 @@ public class TestDocumentInputStream
     {
         DocumentInputStream stream = new DocumentInputStream(_workbook);
 
-        try
-        {
+        try {
             stream.read(null, 0, 1);
             fail("Should have caught NullPointerException");
-        }
-        catch (NullPointerException ignored)
-        {
-
+        } catch (IllegalArgumentException ignored) {
             // as expected
         }
 
