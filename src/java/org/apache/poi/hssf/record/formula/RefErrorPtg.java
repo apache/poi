@@ -17,8 +17,8 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -34,7 +34,7 @@ public final class RefErrorPtg extends OperandPtg {
     public RefErrorPtg() {
         field_1_reserved = 0;
     }
-    public RefErrorPtg(RecordInputStream in) {
+    public RefErrorPtg(LittleEndianInput in)  {
         field_1_reserved = in.readInt();
     }
 

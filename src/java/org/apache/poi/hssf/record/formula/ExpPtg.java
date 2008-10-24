@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordFormatException;
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -33,7 +33,7 @@ public final class ExpPtg extends ControlPtg {
     private final short            field_1_first_row;
     private final short            field_2_first_col;
 
-    public ExpPtg(RecordInputStream in)
+    public ExpPtg(LittleEndianInput in) 
     {
       field_1_first_row = in.readShort();
       field_2_first_col = in.readShort();

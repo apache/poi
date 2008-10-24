@@ -17,10 +17,10 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -79,7 +79,7 @@ public final class AttrPtg extends ControlPtg {
         _chooseFuncOffset = -1;
     }
 
-    public AttrPtg(RecordInputStream in)
+    public AttrPtg(LittleEndianInput in) 
     {
         field_1_options = in.readByte();
         field_2_data    = in.readShort();

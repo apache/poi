@@ -17,11 +17,11 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.formula.ExternSheetReferenceToken;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -41,7 +41,7 @@ public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormu
     /** Creates new AreaPtg */
     public Ref3DPtg() {}
 
-    public Ref3DPtg(RecordInputStream in) {
+    public Ref3DPtg(LittleEndianInput in)  {
         field_1_index_extern_sheet = in.readShort();
         readCoordinates(in);
     }

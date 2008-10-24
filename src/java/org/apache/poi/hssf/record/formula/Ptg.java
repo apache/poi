@@ -20,8 +20,8 @@ package org.apache.poi.hssf.record.formula;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -48,12 +48,12 @@ public abstract class Ptg implements Cloneable {
 	 * Reads <tt>size</tt> bytes of the input stream, to create an array of <tt>Ptg</tt>s.
 	 * Extra data (beyond <tt>size</tt>) may be read if and <tt>ArrayPtg</tt>s are present.
 	 */
-	public static Ptg[] readTokens(int size, RecordInputStream in) {
+	public static Ptg[] readTokens(int size, LittleEndianInput in) {
 		List temp = new ArrayList(4 + size / 2);
 		int pos = 0;
 		List arrayPtgs = null;
 		while (pos < size) {
-			Ptg ptg = Ptg.createPtg( in );
+			Ptg ptg = Ptg.createPtg(in);
 			if (ptg instanceof ArrayPtg) {
 				if (arrayPtgs == null) {
 					arrayPtgs = new ArrayList(5);
@@ -77,7 +77,7 @@ public abstract class Ptg implements Cloneable {
 		return toPtgArray(temp);
 	}
 
-	public static Ptg createPtg(RecordInputStream in) {
+	public static Ptg createPtg(LittleEndianInput in) {
 		byte id = in.readByte();
 		
 		if (id < 0x20) {
@@ -97,7 +97,7 @@ public abstract class Ptg implements Cloneable {
 		return retval;
 	}
 
-	private static Ptg createClassifiedPtg(byte id, RecordInputStream in) {
+	private static Ptg createClassifiedPtg(byte id, LittleEndianInput in) {
 		
 		int baseId = id & 0x1F | 0x20;
 		
@@ -126,7 +126,7 @@ public abstract class Ptg implements Cloneable {
 				   Integer.toHexString(id) + " (" + ( int ) id + ")");
 	}
 
-	private static Ptg createBasePtg(byte id, RecordInputStream in) {
+	private static Ptg createBasePtg(byte id, LittleEndianInput in) {
 		switch(id) {
 			case 0x00:                return new UnknownPtg(id); // TODO - not a real Ptg
 			case ExpPtg.sid:          return new ExpPtg(in);          // 0x01
@@ -228,10 +228,9 @@ public abstract class Ptg implements Cloneable {
 	 * @return number of bytes written
 	 */
 	public static int serializePtgs(Ptg[] ptgs, byte[] array, int offset) {
-		int pos = 0;
 		int nTokens = ptgs.length;
 		
-		LittleEndianOutput out = new LittleEndianByteArrayOutputStream(array, offset);
+		LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(array, offset);
 
 		List arrayPtgs = null;
 
@@ -244,18 +243,15 @@ public abstract class Ptg implements Cloneable {
 					arrayPtgs = new ArrayList(5);
 				}
 				arrayPtgs.add(ptg);
-				pos += ArrayPtg.PLAIN_TOKEN_SIZE;
-			} else {
-				pos += ptg.getSize();
 			}
 		}
 		if (arrayPtgs != null) {
 			for (int i=0;i<arrayPtgs.size();i++) {
 				ArrayPtg p = (ArrayPtg)arrayPtgs.get(i);
-				pos += p.writeTokenValueBytes(array, pos + offset);
+				p.writeTokenValueBytes(out);
 			}
 		}
-		return pos;
+		return out.getWriteIndex() - offset;
 	}
 
 	/**

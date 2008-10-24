@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -32,7 +32,7 @@ public final class MemFuncPtg extends OperandPtg {
 	 * Creates new function pointer from a byte array usually called while
 	 * reading an excel file.
 	 */
-	public MemFuncPtg(RecordInputStream in) {
+	public MemFuncPtg(LittleEndianInput in)  {
 		this(in.readUShort());
 	}
 
