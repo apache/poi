@@ -37,7 +37,7 @@ public final class TestBarRecord extends TestCase {
 
     public void testLoad() {
 
-        BarRecord record = new BarRecord(new TestcaseRecordInputStream((short)0x1017, (short)data.length, data));
+        BarRecord record = new BarRecord(TestcaseRecordInputStream.create(0x1017, data));
         assertEquals( 0, record.getBarSpace());
         assertEquals( 0x96, record.getCategorySpace());
         assertEquals( 0, record.getFormatFlags());

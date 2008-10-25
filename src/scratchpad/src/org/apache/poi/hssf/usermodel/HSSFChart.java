@@ -20,7 +20,6 @@ package org.apache.poi.hssf.usermodel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 
 import org.apache.poi.hssf.record.AreaFormatRecord;
 import org.apache.poi.hssf.record.AxisLineFormatRecord;
@@ -68,6 +67,7 @@ import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.ValueRangeRecord;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
 
 /**
  * Has methods for construction of a chart object.
@@ -759,11 +759,9 @@ public final class HSSFChart {
 		r.setCustomNumberFormat( false );
 		r.setIndexNumberFmtRecord( (short) 0 );
 		LinkedDataFormulaField formula = new LinkedDataFormulaField();
-		Stack tokens = new Stack();
 		Area3DPtg p = new Area3DPtg(0, 31, 1, 1,
 		        false, false, false, false, 0);
-		tokens.add( p );
-		formula.setFormulaTokens( tokens );
+		formula.setFormulaTokens(new Ptg[] { p, });
 		r.setFormulaOfLink( formula );
 		return r;
 	}
@@ -776,11 +774,9 @@ public final class HSSFChart {
 		r.setCustomNumberFormat( false );
 		r.setIndexNumberFmtRecord( (short) 0 );
 		LinkedDataFormulaField formula = new LinkedDataFormulaField();
-		Stack tokens = new Stack();
 		Area3DPtg p = new Area3DPtg(0, 31, 0, 0,
 				false, false, false, false, 0);
-		tokens.add( p );
-		formula.setFormulaTokens( tokens );
+		formula.setFormulaTokens(new Ptg[] { p, });
 		r.setFormulaOfLink( formula );
 		return r;
 	}

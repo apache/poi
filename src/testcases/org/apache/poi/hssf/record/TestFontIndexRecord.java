@@ -35,7 +35,7 @@ public final class TestFontIndexRecord extends TestCase {
 
     public void testLoad() {
 
-        FontIndexRecord record = new FontIndexRecord(new TestcaseRecordInputStream((short)0x1026, (short)data.length, data));
+        FontIndexRecord record = new FontIndexRecord(TestcaseRecordInputStream.create(0x1026, data));
         assertEquals( 5, record.getFontIndex());
 
         assertEquals( 6, record.getRecordSize() );

@@ -127,7 +127,7 @@ public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 	}
 
 	private static void confirmRead(byte[] data, int i) {
-		RecordInputStream in = new TestcaseRecordInputStream(EmbeddedObjectRefSubRecord.sid, (short)data.length, data);
+		RecordInputStream in = TestcaseRecordInputStream.create(EmbeddedObjectRefSubRecord.sid, data);
 
 		EmbeddedObjectRefSubRecord rec = new EmbeddedObjectRefSubRecord(in);
 		byte[] ser2 = rec.serialize();

@@ -82,7 +82,7 @@ public final class TestFormulaRecord extends TestCase {
 
 		};
 
-		FormulaRecord record = new FormulaRecord(new TestcaseRecordInputStream(FormulaRecord.sid, (short)29, formulaByte));
+		FormulaRecord record = new FormulaRecord(TestcaseRecordInputStream.create(FormulaRecord.sid, formulaByte));
 		assertEquals("Row", 0, record.getRow());
 		assertEquals("Column", 0, record.getColumn());
 		assertEquals(HSSFCell.CELL_TYPE_ERROR, record.getCachedResultType());
@@ -108,7 +108,7 @@ public final class TestFormulaRecord extends TestCase {
 		formulaByte[19]=(byte)0xFD;
 		formulaByte[20]=(byte)0x05;
 		formulaByte[22]=(byte)0x01;
-		FormulaRecord record = new FormulaRecord(new TestcaseRecordInputStream(FormulaRecord.sid, (short)27, formulaByte));
+		FormulaRecord record = new FormulaRecord(TestcaseRecordInputStream.create(FormulaRecord.sid, formulaByte));
 		assertEquals("Row", 0, record.getRow());
 		assertEquals("Column", 0, record.getColumn());
 		byte[] output = record.serialize();

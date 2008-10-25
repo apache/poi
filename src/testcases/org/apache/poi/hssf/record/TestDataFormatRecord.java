@@ -38,7 +38,7 @@ public final class TestDataFormatRecord extends TestCase {
 
     public void testLoad() {
 
-        DataFormatRecord record = new DataFormatRecord(new TestcaseRecordInputStream((short)0x1006, (short)data.length, data));
+        DataFormatRecord record = new DataFormatRecord(TestcaseRecordInputStream.create(0x1006, data));
         assertEquals( (short)0xFFFF, record.getPointNumber());
         assertEquals( 0, record.getSeriesIndex());
         assertEquals( 0, record.getSeriesNumber());

@@ -35,7 +35,7 @@ public final class TestUnitsRecord extends TestCase {
 
     public void testLoad() {
 
-        UnitsRecord record = new UnitsRecord(new TestcaseRecordInputStream((short)0x1001, (short)data.length, data));
+        UnitsRecord record = new UnitsRecord(TestcaseRecordInputStream.create(0x1001, data));
         assertEquals( 0, record.getUnits());
 
         assertEquals( 6, record.getRecordSize() );

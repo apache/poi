@@ -35,7 +35,7 @@ public final class TestSeriesListRecord extends TestCase {
 
     public void testLoad() {
 
-        SeriesListRecord record = new SeriesListRecord(new TestcaseRecordInputStream((short)0x1016, (short)data.length, data));
+        SeriesListRecord record = new SeriesListRecord(TestcaseRecordInputStream.create(0x1016, data));
         assertEquals( (short)0x2001, record.getSeriesNumbers()[0]);
         assertEquals( (short)0xf0ff, record.getSeriesNumbers()[1]);
         assertEquals( 2, record.getSeriesNumbers().length);

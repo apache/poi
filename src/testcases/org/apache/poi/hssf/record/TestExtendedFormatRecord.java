@@ -37,7 +37,7 @@ public final class TestExtendedFormatRecord extends TestCase {
     };
 
     public void testLoad() {
-        ExtendedFormatRecord record = new ExtendedFormatRecord(new TestcaseRecordInputStream((short)0xe0, (short)data.length, data));
+        ExtendedFormatRecord record = new ExtendedFormatRecord(TestcaseRecordInputStream.create(0xe0, data));
         assertEquals(0, record.getFontIndex());
         assertEquals(0, record.getFormatIndex());
         assertEquals(0xF5-256, record.getCellOptions());
@@ -117,7 +117,7 @@ public final class TestExtendedFormatRecord extends TestCase {
     }
     
     public void testCloneOnto() throws Exception {
-        ExtendedFormatRecord base = new ExtendedFormatRecord(new TestcaseRecordInputStream((short)0xe0, (short)data.length, data));
+        ExtendedFormatRecord base = new ExtendedFormatRecord(TestcaseRecordInputStream.create(0xe0, data));
     	
     	ExtendedFormatRecord other = new ExtendedFormatRecord();
         other.cloneStyleFrom(base);

@@ -35,7 +35,7 @@ public final class TestPlotGrowthRecord extends TestCase {
 
     public void testLoad() {
 
-        PlotGrowthRecord record = new PlotGrowthRecord(new TestcaseRecordInputStream((short)0x1064, (short)data.length, data));
+        PlotGrowthRecord record = new PlotGrowthRecord(TestcaseRecordInputStream.create(0x1064, data));
         assertEquals( 65536, record.getHorizontalScale());
         assertEquals( 65536, record.getVerticalScale());
 

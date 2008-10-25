@@ -19,9 +19,9 @@ package org.apache.poi.hssf.record;
 
 
 import junit.framework.TestCase;
-import org.apache.poi.hssf.record.formula.Area3DPtg;
 
-import java.util.Stack;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
 
 /**
  * Tests the serialization and deserialization of the LinkedDataRecord
@@ -157,7 +157,7 @@ recordid = 0x1051, size =8
 
     public void testLoad() {
 
-        LinkedDataRecord record = new LinkedDataRecord(new TestcaseRecordInputStream((short)0x1051, (short)data.length, data));
+        LinkedDataRecord record = new LinkedDataRecord(TestcaseRecordInputStream.create(0x1051, data));
         assertEquals( LinkedDataRecord.LINK_TYPE_VALUES, record.getLinkType());
         assertEquals( LinkedDataRecord.REFERENCE_TYPE_WORKSHEET, record.getReferenceType());
         assertEquals( 0, record.getOptions());
@@ -167,7 +167,7 @@ recordid = 0x1051, size =8
         Area3DPtg ptgExpected = new Area3DPtg(0, 7936, 0, 0,
                 false, false, false, false, 0);
         
-        Object ptgActual = record.getFormulaOfLink().getFormulaTokens().get(0);
+        Object ptgActual = record.getFormulaOfLink().getFormulaTokens()[0];
         assertEquals(ptgExpected.toString(),  ptgActual.toString());
 
         assertEquals( data.length + 4, record.getRecordSize() );
@@ -182,10 +182,8 @@ recordid = 0x1051, size =8
         record.setIndexNumberFmtRecord( (short)0 );
         Area3DPtg ptg = new Area3DPtg(0, 7936, 0, 0,
         		false, false, false, false, 0);
-        Stack s = new Stack();
-        s.push(ptg);
         LinkedDataFormulaField formulaOfLink = new LinkedDataFormulaField();
-        formulaOfLink.setFormulaTokens(s);
+        formulaOfLink.setFormulaTokens(new Ptg[] { ptg, });
         record.setFormulaOfLink(formulaOfLink );
 
         byte [] recordBytes = record.serialize();

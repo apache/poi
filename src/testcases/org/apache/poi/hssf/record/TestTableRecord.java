@@ -44,7 +44,7 @@ public final class TestTableRecord extends TestCase {
 
 	public void testLoad() {
 
-		TableRecord record = new TableRecord(new TestcaseRecordInputStream((short)0x236, (short)data.length, data));
+		TableRecord record = new TableRecord(TestcaseRecordInputStream.create(0x236, data));
 
 		CellRangeAddress8Bit range = record.getRange();
 		assertEquals(3, range.getFirstRow());

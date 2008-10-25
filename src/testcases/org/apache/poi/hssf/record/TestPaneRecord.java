@@ -37,7 +37,7 @@ public final class TestPaneRecord extends TestCase {
     };
 
     public void testLoad() {
-        PaneRecord record = new PaneRecord(new TestcaseRecordInputStream((short)0x41, (short)data.length, data));
+        PaneRecord record = new PaneRecord(TestcaseRecordInputStream.create(0x41, data));
 
         assertEquals( (short)1, record.getX());
         assertEquals( (short)2, record.getY());

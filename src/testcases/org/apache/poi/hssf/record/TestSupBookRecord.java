@@ -51,7 +51,7 @@ public final class TestSupBookRecord extends TestCase {
      */
     public void testLoadIR() {
 
-        SupBookRecord record = new SupBookRecord(new TestcaseRecordInputStream((short)0x01AE, dataIR));      
+        SupBookRecord record = new SupBookRecord(TestcaseRecordInputStream.create(0x01AE, dataIR));      
         assertTrue( record.isInternalReferences() );             //expected flag
         assertEquals( 0x4, record.getNumberOfSheets() );    //expected # of sheets
 
@@ -62,7 +62,7 @@ public final class TestSupBookRecord extends TestCase {
      */
     public void testLoadER() {
 
-        SupBookRecord record = new SupBookRecord(new TestcaseRecordInputStream((short)0x01AE, dataER));      
+        SupBookRecord record = new SupBookRecord(TestcaseRecordInputStream.create(0x01AE, dataER));      
         assertTrue( record.isExternalReferences() );             //expected flag
         assertEquals( 0x2, record.getNumberOfSheets() );    //expected # of sheets
 
@@ -80,7 +80,7 @@ public final class TestSupBookRecord extends TestCase {
      */
     public void testLoadAIF() {
 
-        SupBookRecord record = new SupBookRecord(new TestcaseRecordInputStream((short)0x01AE, dataAIF));      
+        SupBookRecord record = new SupBookRecord(TestcaseRecordInputStream.create(0x01AE, dataAIF));      
         assertTrue( record.isAddInFunctions() );             //expected flag
         assertEquals( 0x1, record.getNumberOfSheets() );    //expected # of sheets
         assertEquals( 8, record.getRecordSize() );  //sid+size+data

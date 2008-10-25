@@ -27,7 +27,7 @@ import junit.framework.TestCase;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestStringRecord extends TestCase {
+public final class TestStringRecord extends TestCase {
     byte[] data = new byte[] {
         (byte)0x0B,(byte)0x00,   // length
         (byte)0x00,              // option
@@ -37,7 +37,7 @@ public class TestStringRecord extends TestCase {
 
     public void testLoad() {
 
-        StringRecord record = new StringRecord(new TestcaseRecordInputStream((short)0x207, (short)data.length, data));
+        StringRecord record = new StringRecord(TestcaseRecordInputStream.create(0x207, data));
         assertEquals( "Fahrzeugtyp", record.getString());
 
         assertEquals( 18, record.getRecordSize() );

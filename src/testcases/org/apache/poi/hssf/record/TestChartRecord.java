@@ -38,7 +38,7 @@ public final class TestChartRecord extends TestCase {
 
     public void testLoad() {
 
-        ChartRecord record = new ChartRecord(new TestcaseRecordInputStream((short)0x1002, (short)data.length, data));
+        ChartRecord record = new ChartRecord(TestcaseRecordInputStream.create(0x1002, data));
         assertEquals( 0, record.getX());
         assertEquals( 0, record.getY());
         assertEquals( 30474216, record.getWidth());

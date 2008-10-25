@@ -69,7 +69,7 @@ public final class TestBoundSheetRecord extends TestCase {
 			// </str>
 		};
 	
-		RecordInputStream in = new TestcaseRecordInputStream(BoundSheetRecord.sid, data);
+		RecordInputStream in = TestcaseRecordInputStream.create(BoundSheetRecord.sid, data);
 		BoundSheetRecord bsr = new BoundSheetRecord(in);
 		// sheet name is unicode Russian for 'minor page'
 		assertEquals("\u0421\u0442\u0440\u0430\u043D\u0438\u0447\u043A\u0430", bsr.getSheetname());

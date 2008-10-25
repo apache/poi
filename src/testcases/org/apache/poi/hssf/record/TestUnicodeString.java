@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -19,6 +18,8 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.HexRead;
+
 import junit.framework.TestCase;
 
 /**
@@ -26,18 +27,10 @@ import junit.framework.TestCase;
  *
  * @author Jason Height (jheight at apache.org)
  */
-public class TestUnicodeString
-        extends TestCase
-{
+public final class TestUnicodeString extends TestCase {
 
-    public TestUnicodeString( String s )
-    {
-        super( s );
-    }
 
-    public void testSmallStringSize()
-            throws Exception
-    {
+    public void testSmallStringSize() {
         //Test a basic string
         UnicodeString s = makeUnicodeString("Test");
         UnicodeString.UnicodeRecordStats stats = new UnicodeString.UnicodeRecordStats();
@@ -80,9 +73,7 @@ public class TestUnicodeString
         assertEquals(30, stats.recordSize);
     }
 
-    public void testPerfectStringSize()
-            throws Exception
-    {
+    public void testPerfectStringSize() {
       //Test a basic string
       UnicodeString s = makeUnicodeString(SSTRecord.MAX_RECORD_SIZE-2-1);
       UnicodeString.UnicodeRecordStats stats = new UnicodeString.UnicodeRecordStats();
@@ -99,9 +90,7 @@ public class TestUnicodeString
       assertEquals(SSTRecord.MAX_RECORD_SIZE-1, stats.recordSize);
     }
 
-    public void testPerfectRichStringSize()
-            throws Exception
-    {
+    public void testPerfectRichStringSize() {
       //Test a rich text string
       UnicodeString s = makeUnicodeString(SSTRecord.MAX_RECORD_SIZE-2-1-8-2);
       s.addFormatRun(new UnicodeString.FormatRun((short)1,(short)0));
@@ -123,7 +112,7 @@ public class TestUnicodeString
       assertEquals(SSTRecord.MAX_RECORD_SIZE-1, stats.recordSize);
     }
 
-    public void testContinuedStringSize() throws Exception {
+    public void testContinuedStringSize() {
       //Test a basic string
       UnicodeString s = makeUnicodeString(SSTRecord.MAX_RECORD_SIZE-2-1+20);
       UnicodeString.UnicodeRecordStats stats = new UnicodeString.UnicodeRecordStats();
@@ -132,7 +121,7 @@ public class TestUnicodeString
     }
 
     /** Tests that a string size calculation that fits neatly in two records, the second being a continue*/
-    public void testPerfectContinuedStringSize() throws Exception {
+    public void testPerfectContinuedStringSize() {
       //Test a basic string
       int strSize = SSTRecord.MAX_RECORD_SIZE*2;
       //String overhead
@@ -150,19 +139,18 @@ public class TestUnicodeString
 
 
 
-    private UnicodeString makeUnicodeString( String s )
+    private static UnicodeString makeUnicodeString( String s )
     {
       UnicodeString st = new UnicodeString(s);
       st.setOptionFlags((byte)0);
       return st;
     }
 
-    private UnicodeString makeUnicodeString( int numChars) {
+    private static UnicodeString makeUnicodeString( int numChars) {
       StringBuffer b = new StringBuffer(numChars);
       for (int i=0;i<numChars;i++) {
         b.append(i%10);
       }
       return makeUnicodeString(b.toString());
     }
-
 }
