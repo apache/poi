@@ -17,7 +17,6 @@
 package org.apache.poi;
 
 import java.io.*;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.poi.poifs.common.POIFSConstants;
@@ -48,19 +47,9 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
      */
     private POIXMLProperties properties;
 
-    protected POIXMLDocument() {
-        super(null, null);
-        try {
-            Package pkg = newPackage();
-            initialize(pkg);
-        } catch (IOException e){
-            throw new POIXMLException(e);
-        }
-    }
-
-    protected POIXMLDocument(Package pkg) throws IOException {
-        super(null, null);
-        initialize(pkg);
+    protected POIXMLDocument(Package pkg) {
+        super(pkg);
+        this.pkg = pkg;
     }
 
     /**
@@ -76,36 +65,12 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
         }
     }
 
-    private void initialize(Package pkg) throws IOException {
-        try {
-            this.pkg = pkg;
-
-            PackageRelationship coreDocRelationship = this.pkg.getRelationshipsByType(
-                    PackageRelationshipTypes.CORE_DOCUMENT).getRelationship(0);
-
-            // Get core part
-            this.packagePart = this.pkg.getPart(coreDocRelationship);
-            this.packageRel = coreDocRelationship;
-
-            // Verify it's there
-            if(this.packagePart == null) {
-                throw new IllegalArgumentException("No core part found for this document! Nothing with " + coreDocRelationship.getRelationshipType() + " present as a relation.");
-            }
-        } catch (OpenXML4JException e) {
-            throw new IOException(e.toString());
-        }
-    }
-
-    protected Package newPackage() throws IOException {
-        throw new POIXMLException("Must be overridden");
-    }
-
     public Package getPackage() {
         return this.pkg;
     }
 
     protected PackagePart getCorePart() {
-        return this.packagePart;
+        return getPackagePart();
     }
 
     /**

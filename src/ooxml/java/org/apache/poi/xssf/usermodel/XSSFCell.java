@@ -383,7 +383,7 @@ public final class XSSFCell implements Cell {
      */
     public XSSFCellStyle getCellStyle() {
         long idx = cell.isSetS() ? cell.getS() : 0;
-        return stylesSource.getStyleAt(idx);
+        return stylesSource.getStyleAt((int)idx);
     }
 
     /**

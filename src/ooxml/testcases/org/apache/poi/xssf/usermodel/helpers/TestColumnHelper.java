@@ -25,7 +25,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 
@@ -64,7 +63,7 @@ public final class TestColumnHelper extends TestCase {
         // Remember - POI column 0 == OOXML column 1
         assertEquals((double) 88, helper.getColumn(0, false).getWidth());
         assertTrue(helper.getColumn(0, false).getHidden());
-        assertEquals((double) 00, helper.getColumn(1, false).getWidth());
+        assertEquals((double)0, helper.getColumn(1, false).getWidth());
         assertFalse(helper.getColumn(1, false).getHidden());
     }
 
@@ -260,7 +259,7 @@ public final class TestColumnHelper extends TestCase {
     public void testGetSetColDefaultStyle() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
-        CTWorksheet ctWorksheet = sheet.getWorksheet();
+        CTWorksheet ctWorksheet = sheet.getCTWorksheet();
         ColumnHelper columnHelper = sheet.getColumnHelper();
         
         // POI column 3, OOXML column 4
@@ -271,7 +270,7 @@ public final class TestColumnHelper extends TestCase {
         columnHelper.setColDefaultStyle(3, 2);
         assertEquals(2, columnHelper.getColDefaultStyle(3));
         assertEquals(-1, columnHelper.getColDefaultStyle(4));
-        StylesTable stylesTable = (StylesTable) workbook.getStylesSource();
+        StylesTable stylesTable = workbook.getStylesSource();
         CTXf cellXf = CTXf.Factory.newInstance();
         cellXf.setFontId(0);
         cellXf.setFillId(0);

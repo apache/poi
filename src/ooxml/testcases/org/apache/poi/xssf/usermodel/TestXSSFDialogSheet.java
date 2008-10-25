@@ -22,7 +22,6 @@ import junit.framework.TestCase;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 
 
 public class TestXSSFDialogSheet extends TestCase {
@@ -51,7 +50,7 @@ public class TestXSSFDialogSheet extends TestCase {
     
     public void testGetSetAutoBreaks() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFDialogsheet sheet = (XSSFDialogsheet) workbook.createDialogsheet("Dialogsheet 1", null);
+        XSSFDialogsheet sheet = workbook.createDialogsheet("Dialogsheet 1", null);
         assertTrue(sheet.getAutobreaks());
         sheet.setAutobreaks(false);
         assertFalse(sheet.getAutobreaks());
@@ -59,7 +58,7 @@ public class TestXSSFDialogSheet extends TestCase {
     
     public void testIsSetFitToPage() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFDialogsheet sheet = (XSSFDialogsheet) workbook.createDialogsheet("Dialogsheet 1", null);
+        XSSFDialogsheet sheet = workbook.createDialogsheet("Dialogsheet 1", null);
         assertFalse(sheet.getFitToPage());
         sheet.setFitToPage(true);
         assertTrue(sheet.getFitToPage());
@@ -69,7 +68,7 @@ public class TestXSSFDialogSheet extends TestCase {
     
     public void testGetSetMargin() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFDialogsheet sheet = (XSSFDialogsheet) workbook.createDialogsheet("Dialogsheet 1", null);
+        XSSFDialogsheet sheet = workbook.createDialogsheet("Dialogsheet 1", null);
         assertEquals((double) 0, sheet.getMargin((short) 0));
         sheet.setMargin((short) 0, 10);
         assertEquals((double) 10, sheet.getMargin((short) 0));
@@ -111,7 +110,7 @@ public class TestXSSFDialogSheet extends TestCase {
     
     public void testGetFooter() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFDialogsheet sheet = (XSSFDialogsheet) workbook.createDialogsheet("Dialogsheet 1", null);
+        XSSFDialogsheet sheet = workbook.createDialogsheet("Dialogsheet 1", null);
         assertNotNull(sheet.getFooter());
         sheet.getFooter().setCenter("test center footer");
         assertEquals("test center footer", sheet.getFooter().getCenter());
@@ -119,7 +118,7 @@ public class TestXSSFDialogSheet extends TestCase {
     
     public void testGetAllHeadersFooters() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFDialogsheet sheet = (XSSFDialogsheet) workbook.createDialogsheet("Dialogsheet 1", null);
+        XSSFDialogsheet sheet = workbook.createDialogsheet("Dialogsheet 1", null);
         assertNotNull(sheet);
         assertNotNull(sheet.getOddFooter());
         assertNotNull(sheet.getEvenFooter());
@@ -156,7 +155,7 @@ public class TestXSSFDialogSheet extends TestCase {
     
     public void testGetSetHorizontallyCentered() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFDialogsheet sheet = (XSSFDialogsheet) workbook.createDialogsheet("Dialogsheet 1", null);
+        XSSFDialogsheet sheet = workbook.createDialogsheet("Dialogsheet 1", null);
         assertFalse(sheet.getHorizontallyCenter());
         sheet.setHorizontallyCenter(true);
         assertTrue(sheet.getHorizontallyCenter());
@@ -166,7 +165,7 @@ public class TestXSSFDialogSheet extends TestCase {
     
     public void testGetSetVerticallyCentered() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFDialogsheet sheet = (XSSFDialogsheet) workbook.createDialogsheet("Dialogsheet 1", null);
+        XSSFDialogsheet sheet = workbook.createDialogsheet("Dialogsheet 1", null);
         assertFalse(sheet.getVerticallyCenter());
         sheet.setVerticallyCenter(true);
         assertTrue(sheet.getVerticallyCenter());
@@ -176,7 +175,7 @@ public class TestXSSFDialogSheet extends TestCase {
     
     public void testIsSetPrintGridlines() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFDialogsheet sheet = (XSSFDialogsheet) workbook.createDialogsheet("Dialogsheet 1", null);
+        XSSFDialogsheet sheet = workbook.createDialogsheet("Dialogsheet 1", null);
         assertFalse(sheet.isPrintGridlines());
         sheet.setPrintGridlines(true);
         assertTrue(sheet.isPrintGridlines());
@@ -184,7 +183,7 @@ public class TestXSSFDialogSheet extends TestCase {
     
     public void testIsSetDisplayFormulas() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFDialogsheet sheet = (XSSFDialogsheet) workbook.createDialogsheet("Dialogsheet 1", null);
+        XSSFDialogsheet sheet = workbook.createDialogsheet("Dialogsheet 1", null);
         assertFalse(sheet.isDisplayFormulas());
         sheet.setDisplayFormulas(true);
         assertTrue(sheet.isDisplayFormulas());
@@ -192,7 +191,7 @@ public class TestXSSFDialogSheet extends TestCase {
     
     public void testIsSetDisplayGridLines() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFDialogsheet sheet = (XSSFDialogsheet) workbook.createDialogsheet("Dialogsheet 1", null);
+        XSSFDialogsheet sheet = workbook.createDialogsheet("Dialogsheet 1", null);
         assertTrue(sheet.isDisplayGridlines());
         sheet.setDisplayGridlines(false);
         assertFalse(sheet.isDisplayGridlines());
@@ -200,7 +199,7 @@ public class TestXSSFDialogSheet extends TestCase {
     
     public void testIsSetDisplayRowColHeadings() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFDialogsheet sheet = (XSSFDialogsheet) workbook.createDialogsheet("Dialogsheet 1", null);
+        XSSFDialogsheet sheet = workbook.createDialogsheet("Dialogsheet 1", null);
         assertTrue(sheet.isDisplayRowColHeadings());
         sheet.setDisplayRowColHeadings(false);
         assertFalse(sheet.isDisplayRowColHeadings());
@@ -208,7 +207,7 @@ public class TestXSSFDialogSheet extends TestCase {
     
     public void testGetScenarioProtect() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFDialogsheet sheet = (XSSFDialogsheet) workbook.createDialogsheet("Dialogsheet 1", null);
+        XSSFDialogsheet sheet = workbook.createDialogsheet("Dialogsheet 1", null);
         assertFalse(sheet.getScenarioProtect());
     }
 	

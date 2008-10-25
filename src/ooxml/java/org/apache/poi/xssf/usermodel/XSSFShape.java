@@ -16,11 +16,6 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTAbsoluteAnchor;
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTOneCellAnchor;
-import org.openxmlformats.schemas.drawingml.x2006.chartDrawing.CTGroupShape;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
 
 /**

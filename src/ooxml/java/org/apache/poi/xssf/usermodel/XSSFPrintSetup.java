@@ -31,7 +31,7 @@ public class XSSFPrintSetup implements PrintSetup {
     private CTPageMargins pageMargins;
 
 
-    public XSSFPrintSetup(CTWorksheet worksheet) {
+    protected XSSFPrintSetup(CTWorksheet worksheet) {
         this.ctWorksheet = worksheet;
         this.pageSetup = ctWorksheet.getPageSetup() == null ? ctWorksheet.addNewPageSetup() : ctWorksheet.getPageSetup();
         this.pageMargins = ctWorksheet.getPageMargins() == null ? ctWorksheet.addNewPageMargins() : ctWorksheet.getPageMargins();

@@ -25,6 +25,7 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.*;
+import org.openxml4j.opc.Package;
 
 /**
  * Represents an entry of a OOXML package.
@@ -38,7 +39,7 @@ import org.openxml4j.opc.*;
 public class POIXMLDocumentPart {
     private static POILogger logger = POILogFactory.getLogger(POIXMLDocumentPart.class);
 
-    public static XmlOptions DEFAULT_XML_OPTIONS;
+    public static final XmlOptions DEFAULT_XML_OPTIONS;
     static {
         DEFAULT_XML_OPTIONS = new XmlOptions();
         DEFAULT_XML_OPTIONS.setSaveOuter();
@@ -46,14 +47,46 @@ public class POIXMLDocumentPart {
         DEFAULT_XML_OPTIONS.setSaveAggressiveNamespaces();
     }
 
-    protected PackagePart packagePart;
-    protected PackageRelationship packageRel;
-    protected POIXMLDocumentPart parent;
+    private PackagePart packagePart;
+    private PackageRelationship packageRel;
+    private POIXMLDocumentPart parent;
+    private List<POIXMLDocumentPart> relations;
 
-    protected List<POIXMLDocumentPart> relations;
+    /**
+     * Construct POIXMLDocumentPart representing a "core document" package part.
+     */
+    public POIXMLDocumentPart(Package pkg) {
+        try {
+            PackageRelationship coreRel = pkg.getRelationshipsByType(
+                    PackageRelationshipTypes.CORE_DOCUMENT).getRelationship(0);
 
+            this.relations = new LinkedList<POIXMLDocumentPart>();
+            this.packagePart = pkg.getPart(coreRel);
+            this.packageRel = coreRel;
+        } catch (OpenXML4JException e){
+            throw new POIXMLException(e);
+        }
+    }
+
+    /**
+     * Creates new POIXMLDocumentPart   - called by client code to create new parts from scratch.
+     *
+     * @see #createRelationship(POIXMLRelation, POIXMLFactory, int, boolean)
+     */
+    public POIXMLDocumentPart(){
+        this.relations = new LinkedList<POIXMLDocumentPart>();
+    }
+
+    /**
+     * Creates an POIXMLDocumentPart representing the given package part and relationship.
+     * Called by {@link #read(POIXMLFactory)} when reading in an exisiting file.
+     *
+     * @param part - The package part that holds xml data represenring this sheet.
+     * @param rel - the relationship of the given package part
+     * @see #read(POIXMLFactory)
+     */
     public POIXMLDocumentPart(PackagePart part, PackageRelationship rel){
-        relations = new LinkedList<POIXMLDocumentPart>();
+        this.relations = new LinkedList<POIXMLDocumentPart>();
         this.packagePart = part;
         this.packageRel = rel;
     }
@@ -63,7 +96,7 @@ public class POIXMLDocumentPart {
      *
      * @return the underlying PackagePart
      */
-    public PackagePart getPackagePart(){
+    public final PackagePart getPackagePart(){
         return packagePart;
     }
 
@@ -72,7 +105,7 @@ public class POIXMLDocumentPart {
      *
      * @return the PackageRelationship that identifies this POIXMLDocumentPart
      */
-    public PackageRelationship getPackageRelationship(){
+    public final PackageRelationship getPackageRelationship(){
         return packageRel;
     }
 
@@ -81,7 +114,7 @@ public class POIXMLDocumentPart {
      *
      * @return child relations
      */
-    public List<POIXMLDocumentPart> getRelations(){
+    public final List<POIXMLDocumentPart> getRelations(){
         return relations;
     }
 
@@ -90,7 +123,7 @@ public class POIXMLDocumentPart {
      *
      * @param part the child to add
      */
-    protected void addRelation(POIXMLDocumentPart part){
+    protected final void addRelation(POIXMLDocumentPart part){
         relations.add(part);
     }
 
@@ -99,7 +132,7 @@ public class POIXMLDocumentPart {
      *
      * @return the parent POIXMLDocumentPart or <code>null</code> for the root element.
      */
-    public POIXMLDocumentPart getParent(){
+    public final POIXMLDocumentPart getParent(){
         return parent;
     }
 
@@ -132,11 +165,12 @@ public class POIXMLDocumentPart {
 
     /**
      * Save changes in the underlying OOXML package.
+     * Recursively fires {@link #commit()} for each package part
      */
-    protected void save() throws IOException{
+    protected final void onSave() throws IOException{
         commit();
         for(POIXMLDocumentPart p : relations){
-            p.save();
+            p.onSave();
         }
     }
 
@@ -147,11 +181,11 @@ public class POIXMLDocumentPart {
      * @param factory the factory that will create an instance of the requested relation
      * @return the created child POIXMLDocumentPart
      */
-    protected POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory){
+    protected final POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory){
         return createRelationship(descriptor, factory, -1, false);
     }
 
-    protected POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory, int idx){
+    protected final POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory, int idx){
         return createRelationship(descriptor, factory, idx, false);
     }
 
@@ -164,7 +198,7 @@ public class POIXMLDocumentPart {
      * @param noRelation if true, then no relationship is added.
      * @return the created child POIXMLDocumentPart
      */
-    protected POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory, int idx, boolean noRelation){
+    protected final POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory, int idx, boolean noRelation){
         try {
 
             PackagePartName ppName = PackagingURIHelper.createPartName(descriptor.getFileName(idx));
@@ -176,7 +210,6 @@ public class POIXMLDocumentPart {
             doc.packageRel = rel;
             doc.packagePart = part;
             doc.parent = this;
-            doc.onDocumentCreate();
             addRelation(doc);
             return doc;
         } catch (Exception e){
@@ -190,7 +223,7 @@ public class POIXMLDocumentPart {
      *
      * @param factory   the factory object that creates POIXMLFactory instances
      */
-    protected void read(POIXMLFactory factory) throws OpenXML4JException {
+    protected final void read(POIXMLFactory factory) throws OpenXML4JException {
         PackageRelationshipCollection rels = packagePart.getRelationships();
         for (PackageRelationship rel : rels) {
             if(rel.getTargetMode() == TargetMode.INTERNAL){
@@ -202,7 +235,6 @@ public class POIXMLDocumentPart {
                 }
                 POIXMLDocumentPart childPart = factory.createDocumentPart(rel, p);
                 childPart.parent = this;
-                childPart.onDocumentRead();
                 addRelation(childPart);
 
                 if(p.hasRelationships()) childPart.read(factory);
@@ -210,17 +242,19 @@ public class POIXMLDocumentPart {
         }
     }
 
+
     /**
      * Fired when a new package part is created
      */
-    protected void onDocumentCreate(){
+    protected void onDocumentCreate() throws IOException {
 
     }
 
     /**
      * Fired when a package part is read
      */
-    protected void onDocumentRead(){
+    protected void onDocumentRead() throws IOException{
 
     }
+
 }

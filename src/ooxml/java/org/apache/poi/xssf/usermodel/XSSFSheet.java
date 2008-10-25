@@ -24,16 +24,13 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CommentsSource;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.util.Region;
 import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.model.Control;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
@@ -44,6 +41,7 @@ import org.apache.xmlbeans.XmlException;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackageRelationship;
 import org.openxml4j.opc.PackageRelationshipCollection;
+import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 
@@ -71,20 +69,30 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     protected CTSheet sheet;
     protected CTWorksheet worksheet;
-    protected TreeMap<Integer, Row> rows;
-    protected List<XSSFHyperlink> hyperlinks;
-    protected ColumnHelper columnHelper;
-    private CommentsSource sheetComments;
+    private TreeMap<Integer, Row> rows;
+    private List<XSSFHyperlink> hyperlinks;
+    private ColumnHelper columnHelper;
+    private CommentsTable sheetComments;
 
-    public XSSFSheet() {
-        super(null, null);
-        this.worksheet = newSheet();
-        initialize();
+    /**
+     * Creates new XSSFSheet   - called by XSSFWorkbook to create a sheet from scratch.
+     *
+     * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#createSheet()
+     */
+    protected XSSFSheet() {
+        super();
+        onDocumentCreate();
     }
 
-    public XSSFSheet(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
+    /**
+     * Creates an XSSFSheet representing the given package part and relationship.
+     * Should only be called by XSSFWorkbook when reading in an exisiting file.
+     *
+     * @param part - The package part that holds xml data represenring this sheet.
+     * @param rel - the relationship of the given package part in the underlying OPC package
+     */
+    protected XSSFSheet(PackagePart part, PackageRelationship rel) {
         super(part, rel);
-        worksheet = WorksheetDocument.Factory.parse(part.getInputStream()).getWorksheet();
     }
 
     /**
@@ -96,25 +104,81 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return (XSSFWorkbook)getParent();
     }
 
-    protected void initialize(){
-        if (this.worksheet.getSheetData() == null) {
-            this.worksheet.addNewSheetData();
+    /**
+     * Initialize worksheet data when reading in an exisiting file.
+     */
+    @Override
+    protected void onDocumentRead() {
+        try {
+            worksheet = WorksheetDocument.Factory.parse(getPackagePart().getInputStream()).getWorksheet();
+        } catch (XmlException e){
+            throw new POIXMLException(e);
+        } catch (IOException e){
+            throw new POIXMLException(e);
         }
-        initRows(this.worksheet);
-        initColumns(this.worksheet);
+
+        initRows(worksheet);
+        columnHelper = new ColumnHelper(worksheet);
 
         for(POIXMLDocumentPart p : getRelations()){
             if(p instanceof CommentsTable) sheetComments = (CommentsTable)p;
         }
-        hyperlinks = new ArrayList<XSSFHyperlink>();
+        // Process external hyperlinks for the sheet, if there are any
+        initHyperlinks();
     }
 
     /**
-     * Create a new CTWorksheet instance and setup default values
+     * Initialize worksheet data when creating a new sheet.
+     */
+    @Override
+    protected void onDocumentCreate(){
+        worksheet = newSheet();
+        initRows(worksheet);
+        columnHelper = new ColumnHelper(worksheet);
+        hyperlinks = new ArrayList<XSSFHyperlink>();
+    }
+
+    private void initRows(CTWorksheet worksheet) {
+        rows = new TreeMap<Integer, Row>();
+        for (CTRow row : worksheet.getSheetData().getRowArray()) {
+            XSSFRow r = new XSSFRow(row, this);
+            rows.put(r.getRowNum(), r);
+        }
+    }
+
+    /**
+     * Read hyperlink relations, link them with CTHyperlink beans in this worksheet
+     * and initialize the internal array of XSSFHyperlink objects
+     */
+    private void initHyperlinks() {
+        hyperlinks = new ArrayList<XSSFHyperlink>();
+
+        if(!worksheet.isSetHyperlinks()) return;
+
+        try {
+            PackageRelationshipCollection hyperRels =
+                getPackagePart().getRelationshipsByType(XSSFRelation.SHEET_HYPERLINKS.getRelation());
+
+            // Turn each one into a XSSFHyperlink
+            for(CTHyperlink hyperlink : worksheet.getHyperlinks().getHyperlinkArray()) {
+                PackageRelationship hyperRel = null;
+                if(hyperlink.getId() != null) {
+                    hyperRel = hyperRels.getRelationshipByID(hyperlink.getId());
+                }
+
+                hyperlinks.add( new XSSFHyperlink(hyperlink, hyperRel) );
+            }
+        } catch (InvalidFormatException e){
+            throw new POIXMLException(e);
+        }
+    }
+
+    /**
+     * Create a new CTWorksheet instance with all values set to defaults
      *
      * @return a new instance
      */
-    protected static CTWorksheet newSheet(){
+    private static CTWorksheet newSheet(){
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         CTSheetFormatPr ctFormat = worksheet.addNewSheetFormatPr();
         ctFormat.setDefaultRowHeight(15.0);
@@ -137,17 +201,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return worksheet;
     }
 
-    public List<Control> getControls()
-    {
-        return null;
-    }
-
     /**
-     * Provide access to the underlying XML bean
+     * Provide access to the CTWorksheet bean holding this sheet's data
      *
-     * @return the underlying CTWorksheet bean
+     * @return the CTWorksheet bean holding this sheet's data
      */
-    public CTWorksheet getWorksheet() {
+    public CTWorksheet getCTWorksheet() {
         return this.worksheet;
     }
 
@@ -155,48 +214,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return columnHelper;
     }
 
-    protected void initRows(CTWorksheet worksheet) {
-        this.rows = new TreeMap<Integer, Row>();
-        for (CTRow row : worksheet.getSheetData().getRowArray()) {
-            XSSFRow r = new XSSFRow(row, this);
-            this.rows.put(r.getRowNum(), r);
-        }
-    }
-
-    protected void initColumns(CTWorksheet worksheet) {
-        columnHelper = new ColumnHelper(worksheet);
-    }
-
-    protected void initHyperlinks(PackageRelationshipCollection hyperRels) {
-        if(worksheet.getHyperlinks() == null) return;
-
-        // Turn each one into a XSSFHyperlink
-        for(CTHyperlink hyperlink : worksheet.getHyperlinks().getHyperlinkArray()) {
-            PackageRelationship hyperRel = null;
-            if(hyperlink.getId() != null) {
-                hyperRel = hyperRels.getRelationshipByID(hyperlink.getId());
-            }
-
-            hyperlinks.add(
-                    new XSSFHyperlink(hyperlink, hyperRel)
-            );
-        }
-    }
-
-    protected CTSheet getSheet() {
-        return this.sheet;
-    }
+    /**
+     * Sdds a merged region of cells (hence those cells form one)
+     *
+     * @param cra (rowfrom/colfrom-rowto/colto) to merge
+     * @return index of this region
+     */
     public int addMergedRegion(CellRangeAddress cra) {
-        Region r = new Region(cra.getFirstRow(), (short)cra.getFirstColumn(),
-                cra.getLastRow(), (short)cra.getLastColumn());
-        return addMergedRegion(r);
-    }
-
-
-    public int addMergedRegion(Region region) {
         CTMergeCells ctMergeCells = worksheet.isSetMergeCells() ? worksheet.getMergeCells() : worksheet.addNewMergeCells();
         CTMergeCell ctMergeCell = ctMergeCells.addNewMergeCell();
-        ctMergeCell.setRef(region.getRegionRef());
+        ctMergeCell.setRef(cra.formatAsString());
         return ctMergeCells.sizeOfMergeCellArray();
     }
 
@@ -215,11 +242,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     /**
      * Adjusts the column width to fit the contents.
-     *
+     * <p>
      * This process can be relatively slow on large sheets, so this should
      *  normally only be called once per column, at the end of your
      *  processing.
-     *
+     * </p>
      * You can specify whether the content of merged cells should be considered or ignored.
      *  Default is to ignore merged cells.
      *
@@ -305,7 +332,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         if (sheetComments == null) {
             sheetComments = (CommentsTable)createRelationship(XSSFRelation.SHEET_COMMENTS, XSSFFactory.getInstance(), (int)sheet.getSheetId());
         }
-        return (XSSFComment)sheetComments.addComment();
+        return sheetComments.addComment();
     }
 
     /**
@@ -341,19 +368,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         getPane().setActivePane(STPane.Enum.forInt(activePane));
     }
 
-    public boolean getAlternateExpression() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    public boolean getAlternateFormula() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
     public XSSFComment getCellComment(int row, int column) {
         if (sheetComments == null) return null;
-        else return (XSSFComment)sheetComments.findCellComment(row, column);
+        else return sheetComments.findCellComment(row, column);
     }
 
     public XSSFHyperlink getHyperlink(int row, int column) {
@@ -480,13 +497,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return the number of the first logical row on the sheet, zero based
      */
     public int getFirstRowNum() {
-        for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
-            Row row = it.next();
-            if (row != null) {
-                return row.getRowNum();
-            }
-        }
-        return -1;
+        return rows.size() == 0 ? -1 : rows.firstKey();
     }
 
     /**
@@ -602,14 +613,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     public int getLastRowNum() {
-        int lastRowNum = -1;
-        for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
-            Row row = it.next();
-            if (row != null) {
-                lastRowNum = row.getRowNum();
-            }
-        }
-        return lastRowNum;
+        return rows.size() == 0 ? -1 : rows.lastKey();
     }
 
     public short getLeftCol() {
@@ -618,43 +622,74 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return cellReference.getCol();
     }
 
+    /**
+     * Gets the size of the margin in inches.
+     *
+     * @param margin which margin to get
+     * @return the size of the margin
+     * @see Sheet#LeftMargin
+     * @see Sheet#RightMargin
+     * @see Sheet#TopMargin
+     * @see Sheet#BottomMargin
+     * @see Sheet#HeaderMargin
+     * @see Sheet#FooterMargin
+     */
     public double getMargin(short margin) {
-        CTPageMargins pageMargins = getSheetTypePageMargins();
+        if (!worksheet.isSetPageMargins()) return 0;
+
+        CTPageMargins pageMargins = worksheet.getPageMargins();
         switch (margin) {
-        case LeftMargin:
-            return pageMargins.getLeft();
-        case RightMargin:
-            return pageMargins.getRight();
-        case TopMargin:
-            return pageMargins.getTop();
-        case BottomMargin:
-            return pageMargins.getBottom();
-        case HeaderMargin:
-            return pageMargins.getHeader();
-        case FooterMargin:
-            return pageMargins.getFooter();
-        default :
-            throw new POIXMLException( "Unknown margin constant:  " + margin );
+            case LeftMargin:
+                return pageMargins.getLeft();
+            case RightMargin:
+                return pageMargins.getRight();
+            case TopMargin:
+                return pageMargins.getTop();
+            case BottomMargin:
+                return pageMargins.getBottom();
+            case HeaderMargin:
+                return pageMargins.getHeader();
+            case FooterMargin:
+                return pageMargins.getFooter();
+            default :
+                throw new POIXMLException("Unknown margin constant:  " + margin);
         }
     }
 
-    protected CTPageMargins getSheetTypePageMargins() {
-        if (worksheet.getPageMargins() == null) {
-            worksheet.setPageMargins(CTPageMargins.Factory.newInstance());
+    /**
+     * Sets the size of the margin in inches.
+     *
+     * @param margin which margin to get
+     * @param size the size of the margin
+     * @see Sheet#LeftMargin
+     * @see Sheet#RightMargin
+     * @see Sheet#TopMargin
+     * @see Sheet#BottomMargin
+     * @see Sheet#HeaderMargin
+     * @see Sheet#FooterMargin
+     */
+    public void setMargin(short margin, double size) {
+        CTPageMargins pageMargins = worksheet.isSetPageMargins() ?
+                worksheet.getPageMargins() : worksheet.addNewPageMargins();
+        switch (margin) {
+            case LeftMargin:
+                pageMargins.setLeft(size);
+            case RightMargin:
+                pageMargins.setRight(size);
+            case TopMargin:
+                pageMargins.setTop(size);
+            case BottomMargin:
+                pageMargins.setBottom(size);
+            case HeaderMargin:
+                pageMargins.setHeader(size);
+            case FooterMargin:
+                pageMargins.setFooter(size);
         }
-        return worksheet.getPageMargins();
-    }
-
-    public Region getMergedRegionAt(int index) {
-        CTMergeCells ctMergeCells = worksheet.getMergeCells();
-        if(ctMergeCells == null) throw new IllegalStateException("This worksheet does not contain merged regions");
-
-        CTMergeCell ctMergeCell = ctMergeCells.getMergeCellArray(index);
-        return new Region(ctMergeCell.getRef());
     }
 
     /**
      * @return the merged region at the specified index
+     * @throws IllegalStateException if this worksheet does not contain merged regions
      */
     public CellRangeAddress getMergedRegion(int index) {
         CTMergeCells ctMergeCells = worksheet.getMergeCells();
@@ -667,6 +702,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return new CellRangeAddress(cell1.getRow(), cell2.getRow(), cell1.getCol(), cell2.getCol());
     }
 
+    /**
+     * Returns the number of merged regions defined in this worksheet
+     *
+     * @return number of merged regions in this worksheet
+     */
     public int getNumMergedRegions() {
         CTMergeCells ctMergeCells = worksheet.getMergeCells();
         return ctMergeCells == null ? 0 : ctMergeCells.sizeOfMergeCellArray();
@@ -676,38 +716,36 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return hyperlinks.size();
     }
 
-    public boolean getObjectProtect() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
     public PaneInformation getPaneInformation() {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public short getPassword() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
+    /**
+     * Returns the number of phsyically defined rows (NOT the number of rows in the sheet)
+     *
+     * @return the number of phsyically defined rows
+     */
     public int getPhysicalNumberOfRows() {
-        int counter = 0;
-        for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
-            if (it.next() != null) {
-                counter++;
-            }
-        }
-        return counter;
+        return rows.size();
     }
 
+    /**
+     * Gets the print setup object.
+     *
+     * @return The user model for the print setup object.
+     */
     public XSSFPrintSetup getPrintSetup() {
-        return new XSSFPrintSetup(getWorksheet());
+        return new XSSFPrintSetup(worksheet);
     }
 
+    /**
+     * Answer whether protection is enabled or disabled
+     *
+     * @return true => protection enabled; false => protection disabled
+     */
     public boolean getProtect() {
-        // TODO Auto-generated method stub
-        return false;
+        return worksheet.isSetSheetProtection() && worksheet.getSheetProtection().getSheet();
     }
 
     /**
@@ -757,8 +795,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     public boolean getRowSumsBelow() {
         CTSheetPr sheetPr = worksheet.getSheetPr();
         CTOutlinePr outlinePr = (sheetPr != null && sheetPr.isSetOutlinePr())
-                ? sheetPr.getOutlinePr() : CTOutlinePr.Factory.newInstance();
-        return outlinePr.getSummaryBelow();
+                ? sheetPr.getOutlinePr() : null;
+        return outlinePr == null || outlinePr.getSummaryBelow();
     }
 
     /**
@@ -821,8 +859,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     private CTOutlinePr ensureOutlinePr(){
         CTSheetPr sheetPr = worksheet.isSetSheetPr() ? worksheet.getSheetPr() : worksheet.addNewSheetPr();
-        CTOutlinePr outlinePr = sheetPr.isSetOutlinePr() ? sheetPr.getOutlinePr() : sheetPr.addNewOutlinePr();
-        return outlinePr;
+        return sheetPr.isSetOutlinePr() ? sheetPr.getOutlinePr() : sheetPr.addNewOutlinePr();
     }
 
     /**
@@ -831,14 +868,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return true => protection enabled; false => protection disabled
      */
     public boolean getScenarioProtect() {
-        return getSheetTypeProtection().getScenarios();
-    }
-
-    protected CTSheetProtection getSheetTypeProtection() {
-        if (worksheet.getSheetProtection() == null) {
-            worksheet.setSheetProtection(CTSheetProtection.Factory.newInstance());
-        }
-        return worksheet.getSheetProtection();
+        return worksheet.isSetSheetProtection() && worksheet.getSheetProtection().getScenarios();
     }
 
     /**
@@ -1015,11 +1045,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
     }
 
-    public void protectSheet(String password) {
-        // TODO Auto-generated method stub
-
-    }
-
     /**
      * Removes a merged region of cells (hence letting them free)
      *
@@ -1040,8 +1065,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         ctMergeCells.setMergeCellArray(mergeCellsArray);
     }
 
+    /**
+     * Remove a row from this sheet.  All cells contained in the row are removed as well
+     *
+     * @param row  the row to remove.
+     */
     public void removeRow(Row row) {
-
         rows.remove(row.getRowNum());
     }
 
@@ -1225,24 +1254,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     public void setHorizontallyCenter(boolean value) {
         getSheetTypePrintOptions().setHorizontalCentered(value);
-    }
-
-    public void setMargin(short margin, double size) {
-        CTPageMargins pageMargins = getSheetTypePageMargins();
-        switch (margin) {
-        case LeftMargin:
-            pageMargins.setLeft(size);
-        case RightMargin:
-            pageMargins.setRight(size);
-        case TopMargin:
-            pageMargins.setTop(size);
-        case BottomMargin:
-            pageMargins.setBottom(size);
-        case HeaderMargin:
-            pageMargins.setHeader(size);
-        case FooterMargin:
-            pageMargins.setFooter(size);
-        }
     }
 
     public void setPrintGridlines(boolean newPrintGridlines) {
@@ -1474,7 +1485,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         getSheetTypeSheetFormatPr().setOutlineLevelCol(maxLevelCol);
     }
 
-    protected CTSheetViews getSheetTypeSheetViews() {
+    private CTSheetViews getSheetTypeSheetViews() {
         if (worksheet.getSheetViews() == null) {
             worksheet.setSheetViews(CTSheetViews.Factory.newInstance());
             worksheet.getSheetViews().addNewSheetView();
@@ -1560,6 +1571,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         if(sheetComments == null) { return false; }
         return (sheetComments.getNumberOfComments() > 0);
     }
+
     protected int getNumberOfComments() {
         if(sheetComments == null) { return 0; }
         return sheetComments.getNumberOfComments();
@@ -1593,7 +1605,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * Returns the sheet's comments object if there is one,
      *  or null if not
      */
-    protected CommentsSource getCommentsSourceIfExists() {
+    protected CommentsTable getCommentsSourceIfExists() {
         return sheetComments;
     }
 

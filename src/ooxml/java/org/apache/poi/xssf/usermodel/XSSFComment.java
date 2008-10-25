@@ -20,6 +20,7 @@ import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CommentsSource;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.xssf.usermodel.helpers.RichTextStringHelper;
+import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.ss.util.CellReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
@@ -27,7 +28,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 public class XSSFComment implements Comment {
 	
 	private CTComment comment;
-	private CommentsSource comments;
+	private CommentsTable comments;
 
 	/**
 	 * Creates a new XSSFComment, associated with a given
@@ -35,13 +36,13 @@ public class XSSFComment implements Comment {
 	 * If, as an end user, you want a new XSSFComment
 	 *  object, the please ask your sheet for one.
 	 */
-	public XSSFComment(CommentsSource comments, CTComment comment) {
+	public XSSFComment(CommentsTable comments, CTComment comment) {
 		this.comment = comment;
 		this.comments = comments;
 	}
 
 	public String getAuthor() {
-		return comments.getAuthor(comment.getAuthorId());
+		return comments.getAuthor((int)comment.getAuthorId());
 	}
 
 	public int getColumn() {

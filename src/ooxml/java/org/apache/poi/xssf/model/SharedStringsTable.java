@@ -86,7 +86,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
     private int uniqueCount;
 
     public SharedStringsTable() {
-        super(null, null);
+        super();
     }
 
     public SharedStringsTable(PackagePart part, PackageRelationship rel) throws IOException {

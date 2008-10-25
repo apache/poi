@@ -34,11 +34,11 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CommentsDocument;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackageRelationship;
 
-public class CommentsTable extends POIXMLDocumentPart implements CommentsSource {
+public class CommentsTable extends POIXMLDocumentPart {
     protected CTComments comments;
 
     public CommentsTable() {
-        super(null, null);
+        super();
         comments = CTComments.Factory.newInstance();
     }
 
@@ -56,16 +56,9 @@ public class CommentsTable extends POIXMLDocumentPart implements CommentsSource 
         }
     }
     public void writeTo(OutputStream out) throws IOException {
-        XmlOptions options = new XmlOptions();
-        options.setSaveOuter();
-        options.setUseDefaultNamespace();
-
-        // Requests use of whitespace for easier reading
-        //options.setSavePrettyPrint();
-
-        CommentsDocument doc = CommentsDocument.Factory.newInstance(options);
+        CommentsDocument doc = CommentsDocument.Factory.newInstance();
         doc.setComments(comments);
-        doc.save(out, options);
+        doc.save(out, DEFAULT_XML_OPTIONS);
     }
 
     @Override

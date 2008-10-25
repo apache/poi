@@ -21,7 +21,6 @@ import java.util.Iterator;
 
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.Region;
 
 public interface Sheet extends Iterable<Row> {
 
@@ -198,11 +197,6 @@ public interface Sheet extends Iterable<Row> {
     int addMergedRegion(CellRangeAddress region);
 
     /**
-     * @deprecated (Aug-2008) use {@link #addMergedRegion(CellRangeAddress)}
-     */
-    int addMergedRegion(Region region);
-
-    /**
      * determines whether the output is vertically centered on the page.
      * @param value true to vertically center, false otherwise.
      */
@@ -235,14 +229,6 @@ public interface Sheet extends Iterable<Row> {
      */
 
     int getNumMergedRegions();
-
-    /**
-     * gets the region at a particular index
-     * @param index of the region to fetch
-     * @return the merged region (simple eh?)
-     */
-
-    Region getMergedRegionAt(int index);
 
     /**
      * @return an iterator of the PHYSICAL rows.  Meaning the 3rd element may not
@@ -299,20 +285,6 @@ public interface Sheet extends Iterable<Row> {
      */
 
     void setRowSumsRight(boolean b);
-
-    /**
-     * whether alternate expression evaluation is on
-     * @return alternative expression evaluation or not
-     */
-
-    boolean getAlternateExpression();
-
-    /**
-     * whether alternative formula entry is on
-     * @return alternative formulas or not
-     */
-
-    boolean getAlternateFormula();
 
     /**
      * show automatic page breaks or not
@@ -412,27 +384,10 @@ public interface Sheet extends Iterable<Row> {
     boolean getProtect();
 
     /**
-     * @return hashed password
-     */
-    short getPassword();
-
-    /**
-     * Answer whether object protection is enabled or disabled
-     * @return true => protection enabled; false => protection disabled
-     */
-    boolean getObjectProtect();
-
-    /**
      * Answer whether scenario protection is enabled or disabled
      * @return true => protection enabled; false => protection disabled
      */
     boolean getScenarioProtect();
-
-    /**
-     * Sets the protection enabled as well as the password
-     * @param password to set for protection
-     */
-    void protectSheet(String password);
 
     /**
      * Sets the zoom magnication for the sheet.  The zoom is expressed as a

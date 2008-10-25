@@ -52,8 +52,8 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
      *
      * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#addPicture(byte[], int)
      */
-    public XSSFPictureData() {
-        super(null, null);
+    protected XSSFPictureData() {
+        super();
     }
 
     /**
@@ -63,7 +63,7 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
      * @param rel  the package relationship holding this drawing,
      * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/image
      */
-    public XSSFPictureData(PackagePart part, PackageRelationship rel) {
+    protected XSSFPictureData(PackagePart part, PackageRelationship rel) {
         super(part, rel);
     }
 

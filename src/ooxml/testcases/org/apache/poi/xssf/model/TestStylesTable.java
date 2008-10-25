@@ -118,8 +118,8 @@ public class TestStylesTable extends TestCase {
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(0, st._getNumberFormatSize());
 		
-		long nf1 = st.putNumberFormat("yyyy-mm-dd");
-		long nf2 = st.putNumberFormat("yyyy-mm-DD");
+		int nf1 = st.putNumberFormat("yyyy-mm-dd");
+		int nf2 = st.putNumberFormat("yyyy-mm-DD");
 		assertEquals(nf1, st.putNumberFormat("yyyy-mm-dd"));
 		
 		st.putStyle(new XSSFCellStyle(st));
@@ -146,8 +146,8 @@ public class TestStylesTable extends TestCase {
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(8, st._getNumberFormatSize());
 		
-		long nf1 = st.putNumberFormat("YYYY-mm-dd");
-		long nf2 = st.putNumberFormat("YYYY-mm-DD");
+		int nf1 = st.putNumberFormat("YYYY-mm-dd");
+		int nf2 = st.putNumberFormat("YYYY-mm-DD");
 		assertEquals(nf1, st.putNumberFormat("YYYY-mm-dd"));
 		
         st = XSSFTestDataSamples.writeOutAndReadBack(workbook).getStylesSource();

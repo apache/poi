@@ -54,6 +54,8 @@ public final class TestXSSFWorkbook extends TestCase {
 
 	public void testGetSetActiveSheet(){
 		XSSFWorkbook workbook = new XSSFWorkbook();
+        assertEquals(0, workbook.getActiveSheetIndex());
+
 		workbook.createSheet("sheet1");
 		workbook.createSheet("sheet2");
 		workbook.createSheet("sheet3");
@@ -84,7 +86,7 @@ public final class TestXSSFWorkbook extends TestCase {
 		assertSame(sheet2, workbook.getSheetAt(0));
 		assertSame(sheet1, workbook.getSheetAt(1));
 		// Test reordering of CTSheets
-		CTWorkbook ctwb = workbook.getWorkbook();
+		CTWorkbook ctwb = workbook.getCTWorkbook();
 		CTSheet[] ctsheets = ctwb.getSheets().getSheetArray();
 		assertEquals("sheet2", ctsheets[0].getName());
 		assertEquals("sheet1", ctsheets[1].getName());
@@ -334,19 +336,19 @@ public final class TestXSSFWorkbook extends TestCase {
 		assertNotNull(cellStyleAt);
 		
 		//get custom style
-		StylesSource styleSource = workbook.getStylesSource();
+		StylesTable styleSource = workbook.getStylesSource();
 		CellStyle customStyle = new XSSFCellStyle(styleSource);
 		Font font = new XSSFFont();
 		font.setFontName("Verdana");
 		customStyle.setFont(font);
-		Long x = styleSource.putStyle(customStyle);
-		cellStyleAt = workbook.getCellStyleAt(x.shortValue());
+		int x = styleSource.putStyle(customStyle);
+		cellStyleAt = workbook.getCellStyleAt((short)x);
 		assertNotNull(cellStyleAt);		
 	}
 	
 	public void testGetFontAt(){
 	 	XSSFWorkbook workbook = new XSSFWorkbook();
-		StylesSource styleSource = workbook.getStylesSource();
+		StylesTable styleSource = workbook.getStylesSource();
 		short i = 0;
 		//get default font
 		Font fontAt = workbook.getFontAt(i);
@@ -355,8 +357,8 @@ public final class TestXSSFWorkbook extends TestCase {
 		//get customized font
 		Font customFont = new XSSFFont();
 		customFont.setItalic(true);
-		Long x = styleSource.putFont(customFont);
-		fontAt = workbook.getFontAt(x.shortValue());
+		int x = styleSource.putFont(customFont);
+		fontAt = workbook.getFontAt((short)x);
 		assertNotNull(fontAt);
 	}
 	
@@ -432,7 +434,7 @@ public final class TestXSSFWorkbook extends TestCase {
 	public void testStyles() {
 		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("Formatting.xlsx");
 		
-		StylesSource ss = workbook.getStylesSource();
+		StylesTable ss = workbook.getStylesSource();
 		assertNotNull(ss);
 		assertTrue(ss instanceof StylesTable);
 		StylesTable st = (StylesTable)ss;
