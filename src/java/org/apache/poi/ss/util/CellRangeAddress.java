@@ -50,4 +50,21 @@ public class CellRangeAddress extends CellRangeAddressBase {
 	public static int getEncodedSize(int numberOfItems) {
 		return numberOfItems * ENCODED_SIZE;
 	}
+
+    public String formatAsString() {
+        StringBuffer sb = new StringBuffer();
+        CellReference cellRefFrom = new CellReference(getFirstRow(), getFirstColumn());
+        CellReference cellRefTo = new CellReference(getLastRow(), getLastColumn());
+        sb.append(cellRefFrom.formatAsString());
+        sb.append(':');
+        sb.append(cellRefTo.formatAsString());
+        return sb.toString();
+    }
+
+    public static CellRangeAddress valueOf(String ref) {
+        int sep = ref.indexOf(":");
+        CellReference cellFrom = new CellReference(ref.substring(0, sep));
+        CellReference cellTo = new CellReference(ref.substring(sep + 1));
+        return new CellRangeAddress(cellFrom.getRow(), cellTo.getRow(), cellFrom.getCol(), cellTo.getCol());
+    }
 }

@@ -37,8 +37,8 @@ import org.apache.poi.xssf.model.*;
 import org.apache.poi.POIXMLException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.OpenXML4JException;
-import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.opc.*;
 import org.openxml4j.opc.Package;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
@@ -105,25 +105,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     private static POILogger log = POILogFactory.getLogger(XSSFWorkbook.class);
 
     /**
-     * The embedded OLE2 files in the OPC package
-     */
-    private List<PackagePart> embedds;
-
-    /**
      * Create a new SpreadsheetML workbook.
      */
     public XSSFWorkbook() {
-        super();
-        onDocumentCreate();
-    }
-
-    /**
-     * Constructs a XSSFWorkbook object given a file name.
-     *
-     * @param      path   the file name.
-     */
-    public XSSFWorkbook(String path) throws IOException {
-        this(openPackage(path));
+        super(newPackage());
+        onWorkbookCreate();
     }
 
     /**
@@ -134,7 +120,23 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     public XSSFWorkbook(Package pkg) throws IOException {
         super(ensureWriteAccess(pkg));
+
+        //build a tree of POIXMLDocumentParts, this workbook being the root
+        try {
+            read(XSSFFactory.getInstance());
+        } catch (OpenXML4JException e){
+            throw new POIXMLException(e);
+        }
         onDocumentRead();
+    }
+
+    /**
+     * Constructs a XSSFWorkbook object given a file name.
+     *
+     * @param      path   the file name.
+     */
+    public XSSFWorkbook(String path) throws IOException {
+        this(openPackage(path));
     }
 
     /**
@@ -154,19 +156,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return pkg;
     }
 
-    /**
-     * Initialize this workbook from the specified Package
-     */
     @Override
-    protected void onDocumentRead() {
+    protected void onDocumentRead() throws IOException {
         try {
-            //build the POIXMLDocumentPart tree, this workbook is the root
-            read(XSSFFactory.getInstance());
-
             WorkbookDocument doc = WorkbookDocument.Factory.parse(getPackagePart().getInputStream());
             this.workbook = doc.getWorkbook();
 
-            HashMap<String, XSSFSheet> shIdMap = new HashMap<String, XSSFSheet>();
+            Map<String, XSSFSheet> shIdMap = new HashMap<String, XSSFSheet>();
             for(POIXMLDocumentPart p : getRelations()){
                 if(p instanceof SharedStringsTable) sharedStringSource = (SharedStringsTable)p;
                 else if(p instanceof StylesTable) stylesSource = (StylesTable)p;
@@ -175,34 +171,16 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                 }
             }
 
-            // Load individual sheets
-            sheets = new LinkedList<XSSFSheet>();
-            embedds = new LinkedList<PackagePart>();
+            // Load individual sheets. The order of sheets is defined by the order of CTSheet beans in the workbook
+            sheets = new ArrayList<XSSFSheet>(shIdMap.size());
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
-                String id = ctSheet.getId();
-                XSSFSheet sh = shIdMap.get(id);
-                sh.sheet = ctSheet;
+                XSSFSheet sh = shIdMap.get(ctSheet.getId());
                 if(sh == null) {
                     log.log(POILogger.WARN, "Sheet with name " + ctSheet.getName() + " and r:id " + ctSheet.getId()+ " was defined, but didn't exist in package, skipping");
                     continue;
                 }
-                //initialize internal arrays of rows and columns
-                sh.initialize();
-
-                PackagePart sheetPart = sh.getPackagePart();
-                // Process external hyperlinks for the sheet,
-                //  if there are any
-                PackageRelationshipCollection hyperlinkRels =
-                    sheetPart.getRelationshipsByType(XSSFRelation.SHEET_HYPERLINKS.getRelation());
-                sh.initHyperlinks(hyperlinkRels);
-
-                // Get the embeddings for the workbook
-                for(PackageRelationship rel : sheetPart.getRelationshipsByType(XSSFRelation.OLEEMBEDDINGS.getRelation()))
-                    embedds.add(getTargetPart(rel)); // TODO: Add this reference to each sheet as well
-
-                for(PackageRelationship rel : sheetPart.getRelationshipsByType(XSSFRelation.PACKEMBEDDINGS.getRelation()))
-                    embedds.add(getTargetPart(rel));
-
+                sh.sheet = ctSheet;
+                sh.onDocumentRead();
                 sheets.add(sh);
             }
 
@@ -212,20 +190,22 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             }
 
             // Process the named ranges
-            namedRanges = new LinkedList<XSSFName>();
+            namedRanges = new ArrayList<XSSFName>();
             if(workbook.getDefinedNames() != null) {
                 for(CTDefinedName ctName : workbook.getDefinedNames().getDefinedNameArray()) {
                     namedRanges.add(new XSSFName(ctName, this));
                 }
             }
 
-        } catch (Exception e) {
+        } catch (XmlException e) {
             throw new POIXMLException(e);
         }
     }
 
-    @Override
-    protected void onDocumentCreate() {
+    /**
+     * Create a new CTWorkbook with all values set to default
+     */
+    private void onWorkbookCreate() {
         workbook = CTWorkbook.Factory.newInstance();
         CTBookViews bvs = workbook.addNewBookViews();
         CTBookView bv = bvs.addNewWorkbookView();
@@ -235,15 +215,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, XSSFFactory.getInstance());
         stylesSource = (StylesTable)createRelationship(XSSFRelation.STYLES, XSSFFactory.getInstance());
 
-        namedRanges = new LinkedList<XSSFName>();
-        sheets = new LinkedList<XSSFSheet>();
-        embedds = new LinkedList<PackagePart>();
+        namedRanges = new ArrayList<XSSFName>();
+        sheets = new ArrayList<XSSFSheet>();
     }
 
     /**
      * Create a new SpreadsheetML package and setup the default minimal content
      */
-    protected Package newPackage() throws IOException {
+    protected static Package newPackage() {
         try {
             Package pkg = Package.create(PackageHelper.createTempFile());
             // Main part
@@ -256,7 +235,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             pkg.getPackageProperties().setCreatorProperty("Apache POI");
 
             return pkg;
-        } catch (InvalidFormatException e){
+        } catch (Exception e){
             throw new POIXMLException(e);
         }
     }
@@ -266,7 +245,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @return the underlying CTWorkbook bean
      */
-    public CTWorkbook getWorkbook() {
+    public CTWorkbook getCTWorkbook() {
         return this.workbook;
     }
 
@@ -345,7 +324,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         }
 
         XSSFSheet clonedSheet = createSheet(name);
-        clonedSheet.worksheet.set(srcSheet.worksheet);
+        clonedSheet.getCTWorksheet().set(srcSheet.getCTWorksheet());
         return clonedSheet;
     }
 
@@ -380,7 +359,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
 
     /**
-     * create a new Font and add it to the workbook's font table
+     * Create a new Font and add it to the workbook's font table
      *
      * @return new font object
      */
@@ -391,7 +370,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
 
     /**
-     * Creates a new named range and add it to the model
+     * Create a new named range and add it to the workbook's names table
      *
      * @return named range high level
      */
@@ -402,7 +381,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
 
     /**
-     * create an XSSFSheet for this workbook, adds it to the sheets and returns
+     * Create an XSSFSheet for this workbook, adds it to the sheets and returns
      * the high level representation.  Use this to create new sheets.
      *
      * @return XSSFSheet representing the new sheet.
@@ -413,25 +392,26 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
 
     /**
-     * create an XSSFSheet for this workbook, adds it to the sheets and returns
+     * Create an XSSFSheet for this workbook, adds it to the sheets and returns
      * the high level representation.  Use this to create new sheets.
      *
      * @param sheetname  sheetname to set for the sheet, can't be duplicate, greater than 31 chars or contain /\?*[]
      * @return XSSFSheet representing the new sheet.
+     * @throws IllegalArgumentException if the sheetname is invalid or the workbook already contains a sheet of this name
      */
     public XSSFSheet createSheet(String sheetname) {
         if (containsSheet( sheetname, sheets.size() ))
                throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
 
+        CTSheet sheet = addSheet(sheetname);
+
         int sheetNumber = getNumberOfSheets() + 1;
         XSSFSheet wrapper = (XSSFSheet)createRelationship(XSSFRelation.WORKSHEET, XSSFFactory.getInstance(), sheetNumber);
-
-        CTSheet sheet = addSheet(sheetname);
         wrapper.sheet = sheet;
         sheet.setId(wrapper.getPackageRelationship().getId());
         sheet.setSheetId(sheetNumber);
         if(sheets.size() == 0) wrapper.setSelected(true);
-        this.sheets.add(wrapper);
+        sheets.add(wrapper);
         return wrapper;
     }
 
@@ -479,23 +459,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     public int getActiveSheetIndex() {
         //activeTab (Active Sheet Index) Specifies an unsignedInt
         //that contains the index to the active sheet in this book view.
-        Long index = workbook.getBookViews().getWorkbookViewArray(0).getActiveTab();
-        return index.intValue();
-    }
-
-    /**
-     * Gets all embedded OLE2 objects from the Workbook.
-     *
-     * @return the list of embedded objects (a list of {@link org.openxml4j.opc.PackagePart} objects.)
-     */
-    public List getAllEmbeddedObjects() {
-        return embedds;
+        return (int)workbook.getBookViews().getWorkbookViewArray(0).getActiveTab();
     }
 
     /**
      * Gets all pictures from the Workbook.
      *
      * @return the list of pictures (a list of {@link XSSFPictureData} objects.)
+     * @see #addPicture(byte[], int)
      */
     public List<XSSFPictureData> getAllPictures() {
         if(pictures == null) {
@@ -642,10 +613,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @return XSSFSheet with the name provided or <code>null</code> if it does not exist
      */
     public XSSFSheet getSheet(String name) {
-        CTSheet[] sheets = this.workbook.getSheets().getSheetArray();
-        for (int i = 0 ; i < sheets.length ; ++i) {
-            if (name.equals(sheets[i].getName())) {
-                return this.sheets.get(i);
+        CTSheet[] ctSheets = this.workbook.getSheets().getSheetArray();
+        for (int i = 0 ; i < ctSheets.length ; ++i) {
+            if (name.equalsIgnoreCase(ctSheets[i].getName())) {
+                return sheets.get(i);
             }
         }
         return null;
@@ -656,22 +627,24 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @param index of the sheet number (0-based physical & logical)
      * @return XSSFSheet at the provided index
+     * @throws IllegalArgumentException if the index is out of range (index
+     *            &lt; 0 || index &gt;= getNumberOfSheets()).
      */
     public XSSFSheet getSheetAt(int index) {
         validateSheetIndex(index);
-        return this.sheets.get(index);
+        return sheets.get(index);
     }
 
     /**
-     * Returns the index of the sheet by his name
+     * Returns the index of the sheet by his name (case insensitive match)
      *
      * @param name the sheet name
-     * @return index of the sheet (0 based)
+     * @return index of the sheet (0 based) or <tt>-1</tt if not found
      */
     public int getSheetIndex(String name) {
         CTSheet[] sheets = this.workbook.getSheets().getSheetArray();
         for (int i = 0 ; i < sheets.length ; ++i) {
-            if (name.equals(sheets[i].getName())) {
+            if (name.equalsIgnoreCase(sheets[i].getName())) {
                 return i;
             }
         }
@@ -1034,7 +1007,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     public void write(OutputStream stream) throws IOException {
         //force all children to commit their changes into the underlying OOXML Package
-        save();
+        onSave();
 
         getPackage().save(stream);
     }
@@ -1147,6 +1120,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * Get the document's embedded files.
      */
     public List<PackagePart> getAllEmbedds() throws OpenXML4JException {
+        List<PackagePart> embedds = new LinkedList<PackagePart>();
+
+        for(XSSFSheet sheet : sheets){
+            // Get the embeddings for the workbook
+            for(PackageRelationship rel : sheet.getPackagePart().getRelationshipsByType(XSSFRelation.OLEEMBEDDINGS.getRelation()))
+                embedds.add(getTargetPart(rel));
+
+            for(PackageRelationship rel : sheet.getPackagePart().getRelationshipsByType(XSSFRelation.PACKEMBEDDINGS.getRelation()))
+                embedds.add(getTargetPart(rel));
+
+        }
         return embedds;
     }
 }

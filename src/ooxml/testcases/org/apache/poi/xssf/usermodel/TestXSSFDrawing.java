@@ -42,8 +42,8 @@ public class TestXSSFDrawing extends TestCase {
         String drawingId = drawing.getPackageRelationship().getId();
 
         //there should be a relation to this drawing in the worksheet
-        assertTrue(sheet.getWorksheet().isSetDrawing());
-        assertEquals(drawingId, sheet.getWorksheet().getDrawing().getId());
+        assertTrue(sheet.getCTWorksheet().isSetDrawing());
+        assertEquals(drawingId, sheet.getCTWorksheet().getDrawing().getId());
 
     }
 
@@ -63,8 +63,8 @@ public class TestXSSFDrawing extends TestCase {
         String drawingId = drawing.getPackageRelationship().getId();
 
         //there should be a relation to this drawing in the worksheet
-        assertTrue(sheet.getWorksheet().isSetDrawing());
-        assertEquals(drawingId, sheet.getWorksheet().getDrawing().getId());
+        assertTrue(sheet.getCTWorksheet().isSetDrawing());
+        assertEquals(drawingId, sheet.getCTWorksheet().getDrawing().getId());
 
     }
     public void testMultipleDrawings(){

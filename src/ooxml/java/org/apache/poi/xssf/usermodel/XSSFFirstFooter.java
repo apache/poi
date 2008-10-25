@@ -23,7 +23,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
 
 public class XSSFFirstFooter extends XSSFHeaderFooter implements Footer{
 
-    public XSSFFirstFooter(CTHeaderFooter headerFooter) {
+    protected XSSFFirstFooter(CTHeaderFooter headerFooter) {
         super(headerFooter);
     }
     

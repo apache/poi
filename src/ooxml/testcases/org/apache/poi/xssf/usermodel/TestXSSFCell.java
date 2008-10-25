@@ -369,7 +369,7 @@ public final class TestXSSFCell extends TestCase {
     	Cell cell = sheet.createRow(0).createCell((short)0);
     	cell.setAsActiveCell();
     	
-    	assertEquals("A1", sheet.getWorksheet().getSheetViews().getSheetViewArray(0).getSelectionArray(0).getActiveCell());
+    	assertEquals("A1", sheet.getCTWorksheet().getSheetViews().getSheetViewArray(0).getSelectionArray(0).getActiveCell());
     }
     
     

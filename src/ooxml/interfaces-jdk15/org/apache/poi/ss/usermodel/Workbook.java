@@ -376,13 +376,6 @@ public interface Workbook {
     List getAllPictures();
 
     /**
-     * Gets all embedded OLE2 objects from the Workbook.
-     *
-     * @return the list of embedded objects
-     */
-    List getAllEmbeddedObjects();
-
-    /**
      * Returns an object that handles instantiating concrete
      *  classes of the various instances one needs for 
      *  HSSF and XSSF.

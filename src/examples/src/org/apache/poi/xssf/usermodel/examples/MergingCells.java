@@ -20,6 +20,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.hssf.util.Region;
@@ -38,7 +39,7 @@ public class MergingCells {
         Cell cell = row.createCell((short) 1);
         cell.setCellValue(new XSSFRichTextString("This is a test of merging"));
 
-        sheet.addMergedRegion(new Region(1,(short)1,1,(short)2));
+        sheet.addMergedRegion(new CellRangeAddress(1, 1, 1, 2));
 
         // Write the output to a file
         FileOutputStream fileOut = new FileOutputStream("merging_cells.xlsx");

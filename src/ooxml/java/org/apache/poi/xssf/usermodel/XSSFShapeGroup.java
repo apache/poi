@@ -18,11 +18,7 @@ package org.apache.poi.xssf.usermodel;
 
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
-import org.openxml4j.opc.PackagePartName;
 import org.openxml4j.opc.PackageRelationship;
-import org.openxml4j.opc.TargetMode;
-
-import java.util.List;
 
 /**
  * This object specifies a group shape that represents many shapes grouped together. This shape is to be treated
@@ -43,7 +39,7 @@ public class XSSFShapeGroup extends XSSFShape {
      * @param drawing the XSSFDrawing that owns this shape
      * @param ctGroup the XML bean that stores this group content
      */
-    public XSSFShapeGroup(XSSFDrawing drawing, CTGroupShape ctGroup) {
+    protected XSSFShapeGroup(XSSFDrawing drawing, CTGroupShape ctGroup) {
         this.drawing = drawing;
         this.ctGroup = ctGroup;
     }

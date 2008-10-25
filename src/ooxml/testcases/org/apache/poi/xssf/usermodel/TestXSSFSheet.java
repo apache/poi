@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.Region;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
@@ -404,7 +405,7 @@ public class TestXSSFSheet extends TestCase {
         // Now check the low level stuff, and check that's all
         //  been set correctly
         XSSFSheet xs = sheet;
-        CTWorksheet cts = xs.getWorksheet();
+        CTWorksheet cts = xs.getCTWorksheet();
 
         CTCols[] cols_s = cts.getColsArray();
         assertEquals(1, cols_s.length);
@@ -621,7 +622,7 @@ public class TestXSSFSheet extends TestCase {
         sheet.setCellComment("A1", comment);
         assertEquals("A1", ctComments.getCommentList().getCommentArray(0).getRef());
         comment.setAuthor("test A1 author");
-        assertEquals("test A1 author", comments.getAuthor(ctComments.getCommentList().getCommentArray(0).getAuthorId()));
+        assertEquals("test A1 author", comments.getAuthor((int)ctComments.getCommentList().getCommentArray(0).getAuthorId()));
     }
     
     public void testGetActiveCell() {
@@ -636,7 +637,7 @@ public class TestXSSFSheet extends TestCase {
     public void testCreateFreezePane() {
     	XSSFWorkbook workbook = new XSSFWorkbook();
     	XSSFSheet sheet = workbook.createSheet();
-        CTWorksheet ctWorksheet = sheet.getWorksheet();
+        CTWorksheet ctWorksheet = sheet.getCTWorksheet();
 
     	sheet.createFreezePane(2, 4);
     	assertEquals((double)2, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getXSplit());
@@ -653,17 +654,16 @@ public class TestXSSFSheet extends TestCase {
     public void testNewMergedRegionAt() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
-    	Region region = new Region("B2:D4");
+    	CellRangeAddress region = CellRangeAddress.valueOf("B2:D4");
     	sheet.addMergedRegion(region);
-    	assertEquals("B2:D4", sheet.getMergedRegionAt(0).getRegionRef());
+    	assertEquals("B2:D4", sheet.getMergedRegion(0).formatAsString());
     }
     
     public void testGetNumMergedRegions() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
-        CTWorksheet ctWorksheet = sheet.getWorksheet();
     	assertEquals(0, sheet.getNumMergedRegions());
-    	Region region = new Region("B2:D4");
+    	CellRangeAddress region = CellRangeAddress.valueOf("B2:D4");
     	sheet.addMergedRegion(region);
     	assertEquals(1, sheet.getNumMergedRegions());
     }
@@ -671,10 +671,10 @@ public class TestXSSFSheet extends TestCase {
     public void testRemoveMergedRegion() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
-        CTWorksheet ctWorksheet = sheet.getWorksheet();
-    	Region region_1 = new Region("A1:B2");
-    	Region region_2 = new Region("C3:D4");
-    	Region region_3 = new Region("E5:F6");
+        CTWorksheet ctWorksheet = sheet.getCTWorksheet();
+    	CellRangeAddress region_1 = CellRangeAddress.valueOf("A1:B2");
+    	CellRangeAddress region_2 = CellRangeAddress.valueOf("C3:D4");
+    	CellRangeAddress region_3 = CellRangeAddress.valueOf("E5:F6");
     	sheet.addMergedRegion(region_1);
     	sheet.addMergedRegion(region_2);
     	sheet.addMergedRegion(region_3);
@@ -691,7 +691,7 @@ public class TestXSSFSheet extends TestCase {
     public void testSetDefaultColumnStyle() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
-        CTWorksheet ctWorksheet = sheet.getWorksheet();
+        CTWorksheet ctWorksheet = sheet.getCTWorksheet();
     	StylesTable stylesTable = workbook.getStylesSource();
     	XSSFFont font = new XSSFFont();
     	font.setFontName("Cambria");
@@ -750,7 +750,7 @@ public class TestXSSFSheet extends TestCase {
 	    	//one level
 	    	sheet.groupColumn((short)2,(short)7);
 	    	sheet.groupColumn((short)10,(short)11);
-	    	CTCols cols=sheet.getWorksheet().getColsArray(0);
+	    	CTCols cols=sheet.getCTWorksheet().getColsArray(0);
 	    	assertEquals(2,cols.sizeOfColArray());
 	    	CTCol[]colArray=cols.getColArray();
 	    	assertNotNull(colArray);
@@ -760,7 +760,7 @@ public class TestXSSFSheet extends TestCase {
 
 	    	//two level  
 	    	sheet.groupColumn((short)1,(short)2);
-	    	cols=sheet.getWorksheet().getColsArray(0);
+	    	cols=sheet.getCTWorksheet().getColsArray(0);
 	    	assertEquals(4,cols.sizeOfColArray());
 	    	colArray=cols.getColArray();
 	    	assertEquals(2, colArray[1].getOutlineLevel());
@@ -768,7 +768,7 @@ public class TestXSSFSheet extends TestCase {
 	    	//three level
 	    	sheet.groupColumn((short)6,(short)8);
 	    	sheet.groupColumn((short)2,(short)3);
-	    	cols=sheet.getWorksheet().getColsArray(0);
+	    	cols=sheet.getCTWorksheet().getColsArray(0);
 	    	assertEquals(7,cols.sizeOfColArray());
 	    	colArray=cols.getColArray();
 	    	assertEquals(3, colArray[1].getOutlineLevel());
@@ -792,7 +792,7 @@ public class TestXSSFSheet extends TestCase {
 
 	    	//one level
 	    	sheet.groupRow(9,10);
-	    	assertEquals(2,sheet.rows.size());
+	    	assertEquals(2,sheet.getPhysicalNumberOfRows());
 	    	CTRow ctrow = sheet.getRow(8).getCTRow();
 
 	    	assertNotNull(ctrow);
@@ -802,7 +802,7 @@ public class TestXSSFSheet extends TestCase {
 
 	    	//two level    	
 	    	sheet.groupRow(10,13);
-	    	assertEquals(5,sheet.rows.size());
+	    	assertEquals(5,sheet.getPhysicalNumberOfRows());
 	    	ctrow = sheet.getRow(9).getCTRow();
 	    	assertNotNull(ctrow);
 	    	assertEquals(10,ctrow.getR());
@@ -811,11 +811,11 @@ public class TestXSSFSheet extends TestCase {
 
 	    	
 	    	sheet.ungroupRow(8, 10);
-            assertEquals(4,sheet.rows.size());
+            assertEquals(4,sheet.getPhysicalNumberOfRows());
 	    	assertEquals(1,sheet.getSheetTypeSheetFormatPr().getOutlineLevelRow());
 
 	    	sheet.ungroupRow(10,10);
-            assertEquals(3,sheet.rows.size());
+            assertEquals(3,sheet.getPhysicalNumberOfRows());
 
 	    	assertEquals(1,sheet.getSheetTypeSheetFormatPr().getOutlineLevelRow());
 	    }

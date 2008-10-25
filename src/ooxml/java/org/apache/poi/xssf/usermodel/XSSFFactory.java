@@ -39,8 +39,10 @@ public class XSSFFactory extends POIXMLFactory  {
 
     }
 
+    private static final XSSFFactory inst = new XSSFFactory();
+
     public static XSSFFactory getInstance(){
-        return new XSSFFactory();
+        return inst;
     }
 
     public POIXMLDocumentPart createDocumentPart(PackageRelationship rel, PackagePart part){
@@ -52,7 +54,7 @@ public class XSSFFactory extends POIXMLFactory  {
 
         try {
             Class cls = descriptor.getRelationClass();
-            Constructor<? extends POIXMLDocumentPart> constructor = cls.getConstructor(PackagePart.class, PackageRelationship.class);
+            Constructor<? extends POIXMLDocumentPart> constructor = cls.getDeclaredConstructor(PackagePart.class, PackageRelationship.class);
             return constructor.newInstance(part, rel);
         } catch (Exception e){
             throw new POIXMLException(e);
@@ -62,7 +64,7 @@ public class XSSFFactory extends POIXMLFactory  {
     public POIXMLDocumentPart newDocumentPart(POIXMLRelation descriptor){
         try {
             Class cls = descriptor.getRelationClass();
-            Constructor<? extends POIXMLDocumentPart> constructor = cls.getConstructor();
+            Constructor<? extends POIXMLDocumentPart> constructor = cls.getDeclaredConstructor();
             return constructor.newInstance();
         } catch (Exception e){
             throw new POIXMLException(e);

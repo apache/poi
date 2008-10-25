@@ -77,7 +77,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
     /**
      * Creates an empty Cell Style
      */
-    public XSSFCellStyle(StylesSource stylesSource) {
+    public XSSFCellStyle(StylesTable stylesSource) {
         this.stylesSource = (StylesTable)stylesSource;
         // We need a new CTXf for the main styles
         // TODO decide on a style ctxf
@@ -94,7 +94,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      *  workbook (if they're not, it won't work)
      * @throws IllegalArgumentException if there's a workbook mis-match
      */
-    public void verifyBelongsToStylesSource(StylesSource src) {
+    public void verifyBelongsToStylesSource(StylesTable src) {
         if(this.stylesSource != src) {
             throw new IllegalArgumentException("This Style does not belong to the supplied Workbook Stlyes Source. Are you trying to assign a style from one workbook to the cell of a differnt workbook?");
         }

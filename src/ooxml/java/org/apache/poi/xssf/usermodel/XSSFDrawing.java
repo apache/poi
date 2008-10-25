@@ -19,7 +19,6 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.apache.xmlbeans.XmlObject;
 import org.openxml4j.opc.*;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
@@ -29,8 +28,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.List;
-import java.util.LinkedList;
 
 /**
  * Represents a SpreadsheetML drawing
@@ -48,8 +45,8 @@ public class XSSFDrawing extends POIXMLDocumentPart {
      *
      * @see org.apache.poi.xssf.usermodel.XSSFSheet#createDrawingPatriarch()
      */
-    public XSSFDrawing() {
-        super(null, null);
+    protected XSSFDrawing() {
+        super();
         drawing = newDrawing();
     }
 
@@ -61,7 +58,7 @@ public class XSSFDrawing extends POIXMLDocumentPart {
      * @param rel  the package relationship holding this drawing,
      * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing
      */
-    public XSSFDrawing(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
+    protected XSSFDrawing(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
         super(part, rel);
         drawing = CTDrawing.Factory.parse(part.getInputStream());
     }
@@ -157,7 +154,7 @@ public class XSSFDrawing extends POIXMLDocumentPart {
         XSSFWorkbook wb = (XSSFWorkbook)getParent().getParent();
         XSSFPictureData data = wb.getAllPictures().get(pictureIndex);
         PackagePartName ppName = data.getPackagePart().getPartName();
-        PackageRelationship rel = packagePart.addRelationship(ppName, TargetMode.INTERNAL, XSSFRelation.IMAGES.getRelation());
+        PackageRelationship rel = getPackagePart().addRelationship(ppName, TargetMode.INTERNAL, XSSFRelation.IMAGES.getRelation());
         addRelation(new XSSFPictureData(data.getPackagePart(), rel));
         return rel;
     }

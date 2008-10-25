@@ -18,22 +18,24 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.StylesSource;
+import org.apache.poi.xssf.model.StylesTable;
 
 /**
  * Handles data formats for XSSF.
  * TODO Figure out if there are build in formats too 
  */
 public class XSSFDataFormat implements DataFormat {
-	private StylesSource stylesSource;
-	public XSSFDataFormat(StylesSource stylesSource) {
-		this.stylesSource = stylesSource;
-	}
-	
-	public short getFormat(String format) {
-		return (short)stylesSource.putNumberFormat(format);
-	}
+    private StylesTable stylesSource;
 
-	public String getFormat(short index) {
-		return stylesSource.getNumberFormatAt((long)index);
-	}
+    protected XSSFDataFormat(StylesTable stylesSource) {
+        this.stylesSource = stylesSource;
+    }
+
+    public short getFormat(String format) {
+        return (short)stylesSource.putNumberFormat(format);
+    }
+
+    public String getFormat(short index) {
+        return stylesSource.getNumberFormatAt(index);
+    }
 }

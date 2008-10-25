@@ -64,8 +64,8 @@ import org.openxml4j.opc.PackageRelationship;
  *
  * @author ugo
  */
-public class StylesTable extends POIXMLDocumentPart implements StylesSource {
-	private final Hashtable<Long,String> numberFormats = new Hashtable<Long,String>();
+public class StylesTable extends POIXMLDocumentPart {
+	private final Hashtable<Integer, String> numberFormats = new Hashtable<Integer,String>();
 	private final List<XSSFFont> fonts = new ArrayList<XSSFFont>();
 	private final List<XSSFCellFill> fills = new ArrayList<XSSFCellFill>();
 	private final List<XSSFCellBorder> borders = new ArrayList<XSSFCellBorder>();
@@ -77,7 +77,7 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource {
 	/**
 	 * The first style id available for use as a custom style
 	 */
-	public static final long FIRST_CUSTOM_STYLE_ID = 165;
+	public static final int FIRST_CUSTOM_STYLE_ID = 165;
 
 	private StyleSheetDocument doc;
 
@@ -85,7 +85,7 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource {
 	 * Create a new, empty StylesTable
 	 */
 	public StylesTable() {
-        super(null, null);
+        super();
 		doc = StyleSheetDocument.Factory.newInstance();
 		doc.addNewStyleSheet();
 		// Initialization required in order to make the document readable by MSExcel
@@ -109,7 +109,7 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource {
 			// Grab all the different bits we care about
 			if(doc.getStyleSheet().getNumFmts() != null)
 			for (CTNumFmt nfmt : doc.getStyleSheet().getNumFmts().getNumFmtArray()) {
-				numberFormats.put(nfmt.getNumFmtId(), nfmt.getFormatCode());
+				numberFormats.put((int)nfmt.getNumFmtId(), nfmt.getFormatCode());
 			}
 			if(doc.getStyleSheet().getFonts() != null){
                 int idx = 0;
@@ -150,14 +150,14 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource {
 	//  Start of style related getters and setters
 	// ===========================================================
 
-	public String getNumberFormatAt(long idx) {
+	public String getNumberFormatAt(int idx) {
 		return numberFormats.get(idx);
 	}
-	public synchronized long putNumberFormat(String fmt) {
+	public synchronized int putNumberFormat(String fmt) {
 		if (numberFormats.containsValue(fmt)) {
 			// Find the key, and return that
-			for(Enumeration<Long> keys = numberFormats.keys(); keys.hasMoreElements();) {
-				Long key = keys.nextElement();
+			for(Enumeration<Integer> keys = numberFormats.keys(); keys.hasMoreElements();) {
+				int key = keys.nextElement();
 				if(numberFormats.get(key).equals(fmt)) {
 					return key;
 				}
@@ -166,7 +166,7 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource {
 		}
 
 		// Find a spare key, and add that
-		long newKey = FIRST_CUSTOM_STYLE_ID;
+		int newKey = FIRST_CUSTOM_STYLE_ID;
 		while(numberFormats.containsKey(newKey)) {
 			newKey++;
 		}
@@ -174,11 +174,11 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource {
 		return newKey;
 	}
 
-	public XSSFFont getFontAt(long idx) {
+	public XSSFFont getFontAt(int idx) {
 		return fonts.get((int)idx);
 	}
 
-	public long putFont(Font font) {
+	public int putFont(Font font) {
         int idx = fonts.indexOf(font);
         if (idx != -1) {
             return idx;
@@ -187,7 +187,7 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource {
         return fonts.size() - 1;
 	}
 
-	public XSSFCellStyle getStyleAt(long idx) {
+	public XSSFCellStyle getStyleAt(int idx) {
 		int styleXfId = 0;
 
 		// 0 is the empty default
@@ -197,7 +197,7 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource {
 
 		return new XSSFCellStyle((int) idx, styleXfId, this);
 	}
-	public synchronized long putStyle(CellStyle style) {
+	public synchronized int putStyle(CellStyle style) {
 		XSSFCellStyle xStyle = (XSSFCellStyle)style;
 		CTXf mainXF = xStyle.getCoreXf();
 
@@ -241,7 +241,7 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource {
         return fills.size() - 1;
 	}
 
-	public CTXf getCellXfAt(long idx) {
+	public CTXf getCellXfAt(int idx) {
 		return xfs.get((int) idx);
 	}
 	public int putCellXf(CTXf cellXf) {
@@ -249,7 +249,7 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource {
 		return xfs.size();
 	}
 
-	public CTXf getCellStyleXfAt(long idx) {
+	public CTXf getCellStyleXfAt(int idx) {
 		return styleXfs.get((int) idx);
 	}
 	public int putCellStyleXf(CTXf cellStyleXf) {
@@ -328,7 +328,7 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource {
 		// Formats
 		CTNumFmts formats = CTNumFmts.Factory.newInstance();
 		formats.setCount(numberFormats.size());
-		for (Entry<Long, String> fmt : numberFormats.entrySet()) {
+		for (Entry<Integer, String> fmt : numberFormats.entrySet()) {
 			CTNumFmt ctFmt = formats.addNewNumFmt();
 			ctFmt.setNumFmtId(fmt.getKey());
 			ctFmt.setFormatCode(fmt.getValue());
@@ -460,14 +460,14 @@ public class StylesTable extends POIXMLDocumentPart implements StylesSource {
 		return xssfFont;
 	}
 
-	public CTDxf getDxf(long idx) {
+	public CTDxf getDxf(int idx) {
 		if(dxfs.size()==0)
 		return CTDxf.Factory.newInstance();
 		else
 		return dxfs.get((int) idx);
 	}
 
-	public long putDxf(CTDxf dxf) {
+	public int putDxf(CTDxf dxf) {
 		this.dxfs.add(dxf);
 		return this.dxfs.size();
 	}
