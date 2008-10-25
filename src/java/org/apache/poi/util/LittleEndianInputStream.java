@@ -22,6 +22,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ * Wraps an {@link InputStream} providing {@link LittleEndianInput}<p/>
+ * 
+ * This class does not buffer any input, so the stream read position maintained 
+ * by this class is consistent with that of the inner stream.
  * 
  * @author Josh Micich
  */
@@ -29,7 +33,13 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 	public LittleEndianInputStream(InputStream is) {
 		super(is);
 	}
-
+	public int available() {
+		try {
+			return super.available();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	public byte readByte() {
 		return (byte)readUByte();
 	}
