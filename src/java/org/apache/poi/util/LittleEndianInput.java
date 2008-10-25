@@ -21,6 +21,7 @@ package org.apache.poi.util;
  * @author Josh Micich
  */
 public interface LittleEndianInput {
+	int available();
 	byte readByte();
 	int readUByte();
 	short readShort();

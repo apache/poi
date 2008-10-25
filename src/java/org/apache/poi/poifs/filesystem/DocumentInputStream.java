@@ -89,8 +89,10 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
 		_currentBlock = getDataInputBlock(0);
 	}
 
-	public int available() throws IOException {
-		dieIfClosed();
+	public int available() {
+		if (_closed) {
+			throw new IllegalStateException("cannot perform requested operation on a closed stream");
+		}
 		return _document_size - _current_offset;
 	}
 
@@ -194,7 +196,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
 
 	private void checkAvaliable(int requestedSize) {
 		if (_closed) {
-			throw new RuntimeException("cannot perform requested operation on a closed stream");
+			throw new IllegalStateException("cannot perform requested operation on a closed stream");
 		}
 		if (requestedSize > _document_size - _current_offset) {
 			throw new RuntimeException("Buffer underrun - requested " + requestedSize

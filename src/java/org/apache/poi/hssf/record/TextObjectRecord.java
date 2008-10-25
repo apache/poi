@@ -131,13 +131,7 @@ public final class TextObjectRecord extends Record {
 		_text = new HSSFRichTextString(text);
 
 		if (field_7_formattingDataLength > 0) {
-			if (in.isContinueNext() && in.remaining() == 0) {
-				in.nextRecord();
-				processFontRuns(in, _text, field_7_formattingDataLength);
-			} else {
-				throw new RecordFormatException(
-						"Expected Continue Record to hold font runs for TextObjectRecord");
-			}
+			processFontRuns(in, _text, field_7_formattingDataLength);
 		}
 	}
 
@@ -155,10 +149,6 @@ public final class TextObjectRecord extends Record {
 		if (formattingRunDataLength % FORMAT_RUN_ENCODED_SIZE != 0) {
 			throw new RecordFormatException("Bad format run data length " + formattingRunDataLength
 					+ ")");
-		}
-		if (in.remaining() != formattingRunDataLength) {
-			throw new RecordFormatException("Expected " + formattingRunDataLength
-					+ " bytes but got " + in.remaining());
 		}
 		int nRuns = formattingRunDataLength / FORMAT_RUN_ENCODED_SIZE;
 		for (int i = 0; i < nRuns; i++) {

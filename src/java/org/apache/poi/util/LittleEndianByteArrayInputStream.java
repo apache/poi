@@ -40,6 +40,9 @@ public final class LittleEndianByteArrayInputStream implements LittleEndianInput
 		this(buf, 0, buf.length);
 	}
 
+	public int available() {
+		return _endIndex - _readIndex;
+	}
 	private void checkPosition(int i) {
 		if (i > _endIndex - _readIndex) {
 			throw new RuntimeException("Buffer overrun");
