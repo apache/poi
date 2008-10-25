@@ -125,7 +125,7 @@ public final class LinkedDataRecord extends Record {
         rec.field_2_referenceType = field_2_referenceType;
         rec.field_3_options = field_3_options;
         rec.field_4_indexNumberFmtRecord = field_4_indexNumberFmtRecord;
-        rec.field_5_formulaOfLink = ((LinkedDataFormulaField)field_5_formulaOfLink.clone());
+        rec.field_5_formulaOfLink = field_5_formulaOfLink.copy();
         return rec;
     }
 

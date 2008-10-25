@@ -66,7 +66,12 @@
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling PowerPoint files, irrespective of if they are .ppt or .pptx</action>
            <action dev="POI-DEVELOPERS" type="add">Created a common interface for handling Excel files, irrespective of if they are .xls or .xlsx</action>
         </release>
-        <release version="3.2-alpha1" date="2008-??-??">
+        <release version="3.5-beta4" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">YK: remove me. required to keep Forrest DTD compiler quiet</action>
+        </release>
+        <release version="3.2-FINAL" date="2008-10-19">
+           <action dev="POI-DEVELOPERS" type="fix">45866 - allowed for change of unicode compression across Continue records</action>
+           <action dev="POI-DEVELOPERS" type="fix">45964 - support for link formulas in Text Objects</action>
            <action dev="POI-DEVELOPERS" type="fix">43354 - support for evalating formulas with missing args</action>
            <action dev="POI-DEVELOPERS" type="fix">45912 - fixed ArrayIndexOutOfBoundsException in EmbeddedObjectRefSubRecord</action>
            <action dev="POI-DEVELOPERS" type="fix">45889 - fixed ArrayIndexOutOfBoundsException when constructing HSLF Table with a single row </action>

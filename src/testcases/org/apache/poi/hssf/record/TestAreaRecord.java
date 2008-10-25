@@ -35,7 +35,7 @@ public final class TestAreaRecord extends TestCase {
 
     public void testLoad() {
 
-        AreaRecord record = new AreaRecord(new TestcaseRecordInputStream((short)0x101A, (short)data.length, data));
+        AreaRecord record = new AreaRecord(TestcaseRecordInputStream.create(0x101A, data));
         assertEquals( 2, record.getFormatFlags());
         assertEquals( false, record.isStacked() );
         assertEquals( true, record.isDisplayAsPercentage() );

@@ -34,7 +34,7 @@ public final class TestSeriesToChartGroupRecord extends TestCase {
     };
 
     public void testLoad() {
-        SeriesToChartGroupRecord record = new SeriesToChartGroupRecord(new TestcaseRecordInputStream((short)0x1045, (short)data.length, data));
+        SeriesToChartGroupRecord record = new SeriesToChartGroupRecord(TestcaseRecordInputStream.create(0x1045, data));
         assertEquals( 0x0, record.getChartGroupIndex());
 
         assertEquals( 0x6, record.getRecordSize() );

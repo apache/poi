@@ -29,19 +29,19 @@ import java.io.ByteArrayOutputStream;
  *
  * @author Jason Height (jheight @ apache dot org)
  */
-public class RecordInputStream extends InputStream {
-  /** Maximum size of a single record (minus the 4 byte header) without a continue*/
-  public final static short MAX_RECORD_DATA_SIZE = 8224;
-  private static final int INVALID_SID_VALUE = -1;
+public final class RecordInputStream extends InputStream {
+	/** Maximum size of a single record (minus the 4 byte header) without a continue*/
+	public final static short MAX_RECORD_DATA_SIZE = 8224;
+	private static final int INVALID_SID_VALUE = -1;
 
-  private InputStream in;
-  protected short currentSid;
-  protected short currentLength = -1;
-  protected short nextSid;
+	private InputStream in;
+	private short currentSid;
+	private short currentLength = -1;
+	private short nextSid;
 
-  protected byte[] data = new byte[MAX_RECORD_DATA_SIZE];
-  protected short recordOffset;
-  protected long pos;
+	private final byte[] data = new byte[MAX_RECORD_DATA_SIZE];
+	private short recordOffset;
+	private long pos;
 
   private boolean autoContinue = true;
 
@@ -218,54 +218,81 @@ public class RecordInputStream extends InputStream {
 		return result;
 	}
 
-  /**
-   *  given a byte array of 16-bit unicode characters, compress to 8-bit and
-   *  return a string
-   *
-   * { 0x16, 0x00 } -0x16
-   *
-   * @param length the length of the final string
-   * @return                                     the converted string
-   * @exception  IllegalArgumentException        if len is too large (i.e.,
-   *      there is not enough data in string to create a String of that
-   *      length)
-   */
-  public String readUnicodeLEString(int length) {
-    if ((length < 0) || (((remaining() / 2) < length) && !isContinueNext())) {
-            throw new IllegalArgumentException("Illegal length - asked for " + length + " but only " + (remaining()/2) + " left!");
-    }
+	public String readString() {
+		int requestedLength = readUShort();
+		byte compressFlag = readByte();
+		return readStringCommon(requestedLength, compressFlag == 0);
+	}
+	/**
+	 *  given a byte array of 16-bit unicode characters, compress to 8-bit and
+	 *  return a string
+	 *
+	 * { 0x16, 0x00 } -0x16
+	 *
+	 * @param requestedLength the length of the final string
+	 * @return                                     the converted string
+	 * @exception  IllegalArgumentException        if len is too large (i.e.,
+	 *      there is not enough data in string to create a String of that
+	 *      length)
+	 */
+	public String readUnicodeLEString(int requestedLength) {
+		return readStringCommon(requestedLength, false);
+	}
 
-    StringBuffer buf = new StringBuffer(length);
-    for (int i=0;i<length;i++) {
-      if ((remaining() == 0) && (isContinueNext())){
-        nextRecord();
-        int compressByte = readByte();
-        if(compressByte != 1) throw new IllegalArgumentException("compressByte in continue records must be 1 while reading unicode LE string");
-      }
-      char ch = (char)readShort();
-      buf.append(ch);
-    }
-    return buf.toString();
-  }
+	public String readCompressedUnicode(int requestedLength) {
+		return readStringCommon(requestedLength, true);
+	}
 
-  public String readCompressedUnicode(int length) {
-    if ((length < 0) || ((remaining() < length) && !isContinueNext())) {
-            throw new IllegalArgumentException("Illegal length " + length);
-    }
-
-    StringBuffer buf = new StringBuffer(length);
-    for (int i=0;i<length;i++) {
-      if ((remaining() == 0) && (isContinueNext())) {
-          nextRecord();
-          int compressByte = readByte();
-          if(compressByte != 0) throw new IllegalArgumentException("compressByte in continue records must be 0 while reading compressed unicode");
-      }
-      byte b = readByte();
-      char ch = (char)(0x00FF & b); // avoid sex
-      buf.append(ch);
-    }
-    return buf.toString();
-  }
+	private String readStringCommon(int requestedLength, boolean pIsCompressedEncoding) {
+		// Sanity check to detect garbage string lengths
+		if (requestedLength < 0 || requestedLength > 0x100000) { // 16 million chars?
+			throw new IllegalArgumentException("Bad requested string length (" + requestedLength + ")");
+		}
+		char[] buf = new char[requestedLength];
+		boolean isCompressedEncoding = pIsCompressedEncoding;
+		int curLen = 0;
+		while(true) {
+			int availableChars =isCompressedEncoding ?  remaining() : remaining() / LittleEndian.SHORT_SIZE;
+			if (requestedLength - curLen <= availableChars) {
+				// enough space in current record, so just read it out
+				while(curLen < requestedLength) {
+					char ch;
+					if (isCompressedEncoding) {
+						ch = (char)readUByte();
+					} else {
+						ch = (char)readShort();
+					}
+					buf[curLen] = ch;
+					curLen++;
+				}
+				return new String(buf);
+			}
+			// else string has been spilled into next continue record
+			// so read what's left of the current record
+			while(availableChars > 0) {
+				char ch;
+				if (isCompressedEncoding) {
+					ch = (char)readUByte();
+				} else {
+					ch = (char)readShort();
+				}
+				buf[curLen] = ch;
+				curLen++;
+				availableChars--;
+			}
+			if (!isContinueNext()) {
+				throw new RecordFormatException("Expected to find a ContinueRecord in order to read remaining " 
+						+ (requestedLength-curLen) + " of " + requestedLength + " chars");
+			}
+			if(remaining() != 0) {
+				throw new RecordFormatException("Odd number of bytes(" + remaining() + ") left behind");
+			}
+			nextRecord();
+			// note - the compressed flag may change on the fly
+			byte compressFlag = readByte();
+			isCompressedEncoding = (compressFlag == 0); 
+		}
+	}
 
   /** Returns an excel style unicode string from the bytes reminaing in the record.
    * <i>Note:</i> Unicode strings differ from <b>normal</b> strings due to the addition of

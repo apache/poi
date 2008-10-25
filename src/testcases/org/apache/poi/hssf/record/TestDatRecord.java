@@ -35,7 +35,7 @@ public final class TestDatRecord extends TestCase {
 
     public void testLoad() {
 
-        DatRecord record = new DatRecord(new TestcaseRecordInputStream((short)0x1063, (short)data.length, data));
+        DatRecord record = new DatRecord(TestcaseRecordInputStream.create(0x1063, data));
         assertEquals( 0xD, record.getOptions());
         assertEquals( true, record.isHorizontalBorder() );
         assertEquals( false, record.isVerticalBorder() );

@@ -196,7 +196,7 @@ public class HSSFRichTextString
     
 
     /**
-     * @return  the number of characters in the font.
+     * @return  the number of characters in the text.
      */
     public int length()
     {

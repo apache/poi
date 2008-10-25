@@ -44,7 +44,7 @@ public final class TestFontRecord extends TestCase {
 
     public void testLoad() {
 
-        FontRecord record = new FontRecord(new TestcaseRecordInputStream((short)0x31, (short)data.length, data));
+        FontRecord record = new FontRecord(TestcaseRecordInputStream.create(0x31, data));
         assertEquals( 0xc8, record.getFontHeight());
         assertEquals( 0x00, record.getAttributes());
         assertFalse( record.isItalic());
@@ -100,7 +100,7 @@ public final class TestFontRecord extends TestCase {
     }
     
     public void testCloneOnto() throws Exception {
-        FontRecord base = new FontRecord(new TestcaseRecordInputStream((short)0x31, (short)data.length, data));
+        FontRecord base = new FontRecord(TestcaseRecordInputStream.create(0x31, data));
     	
         FontRecord other = new FontRecord();
         other.cloneStyleFrom(base);
@@ -112,8 +112,8 @@ public final class TestFontRecord extends TestCase {
     }
     
     public void testSameProperties() throws Exception {
-        FontRecord f1 = new FontRecord(new TestcaseRecordInputStream((short)0x31, (short)data.length, data));
-        FontRecord f2 = new FontRecord(new TestcaseRecordInputStream((short)0x31, (short)data.length, data));
+        FontRecord f1 = new FontRecord(TestcaseRecordInputStream.create(0x31, data));
+        FontRecord f2 = new FontRecord(TestcaseRecordInputStream.create(0x31, data));
     	
         assertTrue(f1.sameProperties(f2));
         

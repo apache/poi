@@ -25,6 +25,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
+import org.apache.poi.util.HexRead;
 /**
  * 
  * @author Josh Micich
@@ -37,13 +38,12 @@ public final class TestConstantValueParser extends TestCase {
 			new UnicodeString("Sample text"),
 			ErrorConstant.valueOf(HSSFErrorConstants.ERROR_DIV_0),
 		};
-	private static final byte[] SAMPLE_ENCODING = {
-		4, 1, 0, 0, 0, 0, 0, 0, 0, 
-		0, 0, 0, 0, 0, 0, 0, 0, 0,
-		1, -102, -103, -103, -103, -103, -103, -15, 63, 
-		2, 11, 0, 0, 83, 97, 109, 112, 108, 101, 32, 116, 101, 120, 116,
-		16, 7, 0, 0, 0, 0, 0, 0, 0,		
-	};
+	private static final byte[] SAMPLE_ENCODING = HexRead.readFromString(
+		"04 01 00 00 00 00 00 00 00 " +
+		"00 00 00 00 00 00 00 00 00 " +
+		"01 9A 99 99 99 99 99 F1 3F " +
+		"02 0B 00 00 53 61 6D 70 6C 65 20 74 65 78 74 " +
+		"10 07 00 00 00 00 00 00 00");
 	
 	public void testGetEncodedSize() {
 		int actual = ConstantValueParser.getEncodedSize(SAMPLE_VALUES);
@@ -59,7 +59,7 @@ public final class TestConstantValueParser extends TestCase {
 		}
 	}
 	public void testDecode() {
-		RecordInputStream in = new TestcaseRecordInputStream(0x0001, SAMPLE_ENCODING);
+		RecordInputStream in = TestcaseRecordInputStream.createWithFakeSid(SAMPLE_ENCODING);
 		
 		Object[] values = ConstantValueParser.parse(in, 4);
 		for (int i = 0; i < values.length; i++) {

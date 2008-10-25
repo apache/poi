@@ -44,10 +44,10 @@
        People interested should also follow the
        <link href="mailinglists.html">dev list</link> to track progress.</p>
     </section>
-    <section><title>POI 3.1-FINAL Released (2008-06-29)</title>
+    <section><title>POI 3.2-FINAL Released (2008-10-19)</title>
       <p>
-        The POI team is pleased to announce the release of 3.1 FINAL, the latest release of Apache POI.
-        There have been many important bug fixes since the 3.0.2 release and a lot of new features. 
+        The POI team is pleased to announce the release of 3.2 FINAL, the latest release of Apache POI.
+        There have been many important bug fixes since the 3.1 release and a lot of new features. 
        </p><p>  A full list of changes	is available in
       <link href="./changes.html">the changelog</link>, and 
 		<link href="http://www.apache.org/dyn/closer.cgi/poi/release/">download</link>
@@ -56,7 +56,7 @@
       </p>
       <p>
         The release is also available from the central Maven repository 
-        under Group ID "org.apache.poi" and Version "3.1-FINAL".
+        under Group ID "org.apache.poi" and Version "3.2-FINAL".
       </p>  
     </section>
 

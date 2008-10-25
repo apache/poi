@@ -36,7 +36,7 @@ public final class TestSheetPropertiesRecord extends TestCase {
     };
 
     public void testLoad() {
-        SheetPropertiesRecord record = new SheetPropertiesRecord(new TestcaseRecordInputStream((short)0x1044, (short)data.length, data));
+        SheetPropertiesRecord record = new SheetPropertiesRecord(TestcaseRecordInputStream.create(0x1044, data));
         assertEquals( 10, record.getFlags());
         assertEquals( false, record.isChartTypeManuallyFormatted() );
         assertEquals( true, record.isPlotVisibleOnly() );

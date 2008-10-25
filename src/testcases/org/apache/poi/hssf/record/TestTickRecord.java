@@ -40,7 +40,7 @@ public final class TestTickRecord extends TestCase {
     };
 
     public void testLoad() {
-        TickRecord record = new TickRecord(new TestcaseRecordInputStream((short)0x101e, (short)data.length, data));
+        TickRecord record = new TickRecord(TestcaseRecordInputStream.create(0x101e, data));
         assertEquals( (byte)2, record.getMajorTickType());
         assertEquals( (byte)0, record.getMinorTickType());
         assertEquals( (byte)3, record.getLabelPosition());

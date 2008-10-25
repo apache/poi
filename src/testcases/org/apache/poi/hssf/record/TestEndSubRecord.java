@@ -33,7 +33,7 @@ public final class TestEndSubRecord extends TestCase {
     };
 
     public void testLoad() {
-        EndSubRecord record = new EndSubRecord(new TestcaseRecordInputStream((short)0x00, (short)data.length, data));
+        EndSubRecord record = new EndSubRecord(TestcaseRecordInputStream.create(0x00, data));
 
         assertEquals( 4, record.getRecordSize() );
     }

@@ -20,47 +20,38 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.util.LittleEndian;
 
-import java.util.Stack;
-import java.util.Iterator;
-
 /**
  * Not implemented yet. May commit it anyway just so people can see
  * where I'm heading.
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class LinkedDataFormulaField implements CustomField {
-    Stack formulaTokens = new Stack();
+public final class LinkedDataFormulaField {
+    private Ptg[] formulaTokens;
 
     public int getSize()
     {
-        int size = 0;
-        for ( Iterator iterator = formulaTokens.iterator(); iterator.hasNext(); )
-        {
-            Ptg token = (Ptg) iterator.next();
-            size += token.getSize();
-        }
-        return size + 2;
+        return 2 + Ptg.getEncodedSize(formulaTokens);
     }
 
     public int fillField( RecordInputStream in )
     {
-        short tokenSize = in.readShort();
-        formulaTokens = Ptg.createParsedExpressionTokens(tokenSize, in);
-
+        int tokenSize = in.readUShort();
+        formulaTokens = Ptg.readTokens(tokenSize, in);
         return tokenSize + 2;
     }
 
     public void toString( StringBuffer buffer )
     {
-        for ( int k = 0; k < formulaTokens.size(); k++ )
+        for ( int k = 0; k < formulaTokens.length; k++ )
         {
+        	Ptg ptg = formulaTokens[k];
             buffer.append( "Formula " )
                     .append( k )
                     .append( "=" )
-                    .append( formulaTokens.get( k ).toString() )
+                    .append(ptg.toString() )
                     .append( "\n" )
-                    .append( ( (Ptg) formulaTokens.get( k ) ).toDebugString() )
+                    .append(ptg.toDebugString() )
                     .append( "\n" );
         }
     }
@@ -75,34 +66,26 @@ public final class LinkedDataFormulaField implements CustomField {
     public int serializeField( int offset, byte[] data )
     {
         int size = getSize();
-        LittleEndian.putShort(data, offset, (short)(size - 2));
+        LittleEndian.putUShort(data, offset, size - 2);
         int pos = offset + 2;
-        pos += Ptg.serializePtgStack(formulaTokens, data, pos);
+        pos += Ptg.serializePtgs(formulaTokens, data, pos);
         return size;
     }
 
-    public Object clone()
+    public void setFormulaTokens(Ptg[] ptgs)
     {
-        try
-        {
-            // todo: clone tokens? or are they immutable?
-            return super.clone();
-        }
-        catch ( CloneNotSupportedException e )
-        {
-            // should not happen
-            return null;
-        }
+        this.formulaTokens = (Ptg[])ptgs.clone();
     }
 
-    public void setFormulaTokens( Stack formulaTokens )
+    public Ptg[] getFormulaTokens()
     {
-        this.formulaTokens = (Stack) formulaTokens.clone();
+        return (Ptg[])this.formulaTokens.clone();
     }
 
-    public Stack getFormulaTokens()
-    {
-        return (Stack)this.formulaTokens.clone();
-    }
-
+	public LinkedDataFormulaField copy() {
+		LinkedDataFormulaField result = new LinkedDataFormulaField();
+		
+		result.formulaTokens = getFormulaTokens();
+		return result;
+	}
 }

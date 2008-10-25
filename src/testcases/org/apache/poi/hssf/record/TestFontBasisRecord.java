@@ -39,7 +39,7 @@ public final class TestFontBasisRecord extends TestCase {
 
     public void testLoad() {
 
-        FontBasisRecord record = new FontBasisRecord(new TestcaseRecordInputStream((short)0x1060, (short)data.length, data));
+        FontBasisRecord record = new FontBasisRecord(TestcaseRecordInputStream.create(0x1060, data));
         assertEquals( 0x1a28, record.getXBasis());
         assertEquals( 0x0f9c, record.getYBasis());
         assertEquals( 0xc8, record.getHeightBasis());

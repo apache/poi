@@ -19,10 +19,8 @@ package org.apache.poi.hssf.record.formula;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * <tt>Ptg</tt> represents a syntactic token in a formula.  'PTG' is an acronym for 
@@ -49,15 +47,7 @@ public abstract class Ptg implements Cloneable {
 	 * Extra data (beyond <tt>size</tt>) may be read if and <tt>ArrayPtg</tt>s are present.
 	 */
 	public static Ptg[] readTokens(int size, RecordInputStream in) {
-		Stack temp = createParsedExpressionTokens((short)size, in);
-		return toPtgArray(temp);
-	}
-
-	/**
-	 * @deprecated - use readTokens()
-	 */
-	public static Stack createParsedExpressionTokens(short size, RecordInputStream in) {
-		Stack stack = new Stack();
+		List temp = new ArrayList(4 + size / 2);
 		int pos = 0;
 		List arrayPtgs = null;
 		while (pos < size) {
@@ -71,7 +61,7 @@ public abstract class Ptg implements Cloneable {
 			} else {
 				pos += ptg.getSize();
 			}
-			stack.push( ptg );
+			temp.add( ptg );
 		}
 		if(pos != size) {
 			throw new RuntimeException("Ptg array size mismatch");
@@ -82,7 +72,7 @@ public abstract class Ptg implements Cloneable {
 				p.readTokenValues(in);
 			}
 		}
-		return stack;
+		return toPtgArray(temp);
 	}
 
 	public static Ptg createPtg(RecordInputStream in) {
@@ -200,19 +190,11 @@ public abstract class Ptg implements Cloneable {
 		l.toArray(result);
 		return result;
 	}
-	private static Stack createStack(Ptg[] formulaTokens) {
-		Stack result = new Stack();
-		for (int i = 0; i < formulaTokens.length; i++) {
-			result.add(formulaTokens[i]);
-		} 
-		return result;
-	}
 	/**
 	 * This method will return the same result as {@link #getEncodedSizeWithoutArrayData(Ptg[])} 
 	 * if there are no array tokens present.
 	 * @return the full size taken to encode the specified <tt>Ptg</tt>s 
 	 */
-	// TODO - several duplicates of this code should be refactored here
 	public static int getEncodedSize(Ptg[] ptgs) {
 		int result = 0;
 		for (int i = 0; i < ptgs.length; i++) {
@@ -243,23 +225,14 @@ public abstract class Ptg implements Cloneable {
 	 * The 2 byte encode length field is <b>not</b> written by this method.
 	 * @return number of bytes written
 	 */
-	public static int serializePtgs(Ptg[] ptgs, byte[] data, int offset) {
-		return serializePtgStack(createStack(ptgs), data, offset);
-	}
-
-	/**
-	 * @deprecated use serializePtgs()
-	 */
-	public static int serializePtgStack(Stack expression, byte[] array, int offset) {
+	public static int serializePtgs(Ptg[] ptgs, byte[] array, int offset) {
 		int pos = 0;
-		int size = 0;
-		if (expression != null)
-			size = expression.size();
+		int size = ptgs.length;
 
 		List arrayPtgs = null;
 
 		for (int k = 0; k < size; k++) {
-			Ptg ptg = ( Ptg ) expression.get(k);
+			Ptg ptg = ptgs[k];
 
 			ptg.writeBytes(array, pos + offset);
 			if (ptg instanceof ArrayPtg) {

@@ -17,8 +17,6 @@
 
 package org.apache.poi.hssf.record;
 
-import java.util.Stack;
-
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
@@ -124,11 +122,7 @@ public final class ExternalNameRecord extends Record {
 	}
 
 	private int getNameDefinitionSize() {
-		int result = 0;
-		for (int i = 0; i < field_5_name_definition.length; i++) {
-			result += field_5_name_definition[i].getSize();
-		}
-		return result;
+		return Ptg.getEncodedSize(field_5_name_definition);
 	}
 
 

@@ -59,7 +59,7 @@ public final class TestSharedFormulaRecord extends TestCase {
 	 */
 	public void testConvertSharedFormulasOperandClasses_bug45123() {
 		
-		TestcaseRecordInputStream in = new TestcaseRecordInputStream(0, SHARED_FORMULA_WITH_REF_ARRAYS_DATA);
+		RecordInputStream in = TestcaseRecordInputStream.createWithFakeSid(SHARED_FORMULA_WITH_REF_ARRAYS_DATA);
 		int encodedLen = in.readUShort();
 		Ptg[] sharedFormula = Ptg.readTokens(encodedLen, in);
 		

@@ -37,7 +37,7 @@ public final class TestAxisParentRecord extends TestCase {
     };
 
     public void testLoad() {
-        AxisParentRecord record = new AxisParentRecord(new TestcaseRecordInputStream((short)0x1041, (short)data.length, data));
+        AxisParentRecord record = new AxisParentRecord(TestcaseRecordInputStream.create(0x1041, data));
         assertEquals( AxisParentRecord.AXIS_TYPE_MAIN, record.getAxisType());
         assertEquals( 0x021d, record.getX());
         assertEquals( 0xdd, record.getY());
