@@ -589,6 +589,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         if (name == null) return null;
         //adding one here because 0 indicates a global named region; doesnt make sense for print areas
         return name.getReference();
+
     }
 
     /**
@@ -697,19 +698,52 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return getPackagePart().getContentType().equals(XSSFRelation.MACROS_WORKBOOK.getContentType());
     }
 
-    public void removeName(int index) {
-        // TODO Auto-generated method stub
-
+    /**
+     * removes the name
+     *
+     * @param nameIndex name index
+     */
+    public void removeName(int nameIndex) {
+        if (namedRanges.size() > nameIndex) {
+            XSSFName name = getNameAt(nameIndex);
+            int cont = 0;
+            for (XSSFName nameRange : namedRanges) {
+                if (nameRange.getReference().equals(name.getReference())) {
+                    namedRanges.remove(cont);
+                    getDefinedNames().removeDefinedName(nameIndex);
+                    break;
+                }
+                cont++;
+            }
+        }
     }
 
+    /**
+     * removes the name
+     *
+     * @param name range
+     *             name index
+     */
     public void removeName(String name) {
-        // TODO Auto-generated method stub
-
+        //TODO
+        //int index=getNameIndex(name);
+        //removeName(index);
     }
 
+    /**
+     * Delete the printarea for the sheet specified
+     *
+     * @param sheetIndex 0-based sheet index (0 = First Sheet)
+     */
     public void removePrintArea(int sheetIndex) {
-        // TODO Auto-generated method stub
-
+        int cont = 0;
+        for (XSSFName name : namedRanges) {
+            if (name.getNameName().equals(XSSFName.BUILTIN_PRINT_AREA) && name.getLocalSheetId() == sheetIndex) {
+                namedRanges.remove(cont);
+                break;
+            }
+            cont++;
+        }
     }
 
     /**
@@ -818,7 +852,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             name = createBuiltInName(XSSFName.BUILTIN_PRINT_AREA, sheetIndex);
             namedRanges.add(name);
         }
-        name.setReference(reference);
+	//short externSheetIndex = getWorkbook().checkExternSheet(sheetIndex);
+	//name.setExternSheetNumber(externSheetIndex);
+	name.setReference(reference);
     }
 
     /**
@@ -835,12 +871,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         setPrintArea(sheetIndex, reference);
     }
 
+
     /**
      * Sets the repeating rows and columns for a sheet.
-     *   This is function is included in the workbook
-     * because it creates/modifies name records which are stored at the
-     * workbook level.
-     * <p>
+     * <p/>
      * To set just repeating columns:
      * <pre>
      *  workbook.setRepeatingRowsAndColumns(0,0,1,-1,-1);
@@ -854,29 +888,65 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *  workbook.setRepeatingRowsAndColumns(0,-1,-1,-1,-1);
      * </pre>
      *
-     * @param sheetIndex    0 based index to sheet.
-     * @param startColumn   0 based start of repeating columns.
-     * @param endColumn     0 based end of repeating columns.
-     * @param startRow      0 based start of repeating rows.
-     * @param endRow        0 based end of repeating rows.
+     * @param sheetIndex  0 based index to sheet.
+     * @param startColumn 0 based start of repeating columns.
+     * @param endColumn   0 based end of repeating columns.
+     * @param startRow    0 based start of repeating rows.
+     * @param endRow      0 based end of repeating rows.
      */
     public void setRepeatingRowsAndColumns(int sheetIndex,
                                            int startColumn, int endColumn,
                                            int startRow, int endRow) {
-        //TODO
+        //	Check arguments
+        if ((startColumn == -1 && endColumn != -1) || startColumn < -1 || endColumn < -1 || startColumn > endColumn)
+            throw new IllegalArgumentException("Invalid column range specification");
+        if ((startRow == -1 && endRow != -1) || startRow < -1 || endRow < -1 || startRow > endRow)
+            throw new IllegalArgumentException("Invalid row range specification");
+
+        XSSFSheet sheet = getSheetAt(sheetIndex);
+        boolean removingRange = startColumn == -1 && endColumn == -1 && startRow == -1 && endRow == -1;
+
+        XSSFName name = getBuiltInName(XSSFName.BUILTIN_PRINT_TITLE, sheetIndex);
+        if (removingRange && name != null) {
+            namedRanges.remove(name);
+            return;
+        }
+        if (name == null) {
+            name = createBuiltInName(XSSFName.BUILTIN_PRINT_TITLE, sheetIndex);
+            String reference = getReferenceBuiltInRecord(name.getSheetName(), startColumn, endColumn, startRow, endRow);
+            name.setReference(reference);
+            namedRanges.add(name);
+        }
+
+        XSSFPrintSetup printSetup = sheet.getPrintSetup();
+        printSetup.setValidSettings(false);
     }
 
+    private static String getReferenceBuiltInRecord(String sheetName, int startC, int endC, int startR, int endR) {
+        //windows excel example for built-in title: 'second sheet'!$E:$F,'second sheet'!$2:$3
+        CellReference colRef = new CellReference(sheetName, 0, startC, true, true);
+        CellReference colRef2 = new CellReference(sheetName, 0, endC, true, true);
 
-    private String getReferencePrintArea(String sheetName, int startC, int endC, int startR, int endR) {
+        String c = "'" + sheetName + "'!$" + colRef.getCellRefParts()[2] + ":$" + colRef2.getCellRefParts()[2];
+
+        CellReference rowRef = new CellReference(sheetName, startR, 0, true, true);
+        CellReference rowRef2 = new CellReference(sheetName, endR, 0, true, true);
+
+        String r = "";
+
+        if (!rowRef.getCellRefParts()[1].equals("0") && !rowRef2.getCellRefParts()[1].equals("0")) {
+            r = ",'" + sheetName + "'!$" + rowRef.getCellRefParts()[1] + ":$" + rowRef2.getCellRefParts()[1];
+        }
+        return c + r;
+    }
+
+    private static String getReferencePrintArea(String sheetName, int startC, int endC, int startR, int endR) {
         //windows excel example: Sheet1!$C$3:$E$4
         CellReference colRef = new CellReference(sheetName, startR, startC, true, true);
         CellReference colRef2 = new CellReference(sheetName, endR, endC, true, true);
 
-        String c = "'" + sheetName + "'!$" + colRef.getCellRefParts()[2] + "$" + colRef.getCellRefParts()[1] + ":$" + colRef2.getCellRefParts()[2] + "$" + colRef2.getCellRefParts()[1];
-        return c;
+        return "'" + sheetName + "'!$" + colRef.getCellRefParts()[2] + "$" + colRef.getCellRefParts()[1] + ":$" + colRef2.getCellRefParts()[2] + "$" + colRef2.getCellRefParts()[1];
     }
-
-    //****************** NAME RANGE *************************
 
     private CTDefinedNames getDefinedNames() {
         return workbook.getDefinedNames() == null ? workbook.addNewDefinedNames() : workbook.getDefinedNames();
@@ -894,29 +964,28 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
     /**
      * Generates a NameRecord to represent a built-in region
+     *
      * @return a new NameRecord
      */
     private XSSFName createBuiltInName(String builtInName, int sheetNumber) {
-        if (sheetNumber < 0 || sheetNumber+1 > Short.MAX_VALUE) {
-            throw new IllegalArgumentException("Sheet number ["+sheetNumber+"]is not valid ");
+        if (sheetNumber < 0 || sheetNumber + 1 > Short.MAX_VALUE) {
+            throw new IllegalArgumentException("Sheet number [" + sheetNumber + "]is not valid ");
         }
-        
-        CTDefinedName nameRecord=getDefinedNames().addNewDefinedName();
+
+        CTDefinedName nameRecord = getDefinedNames().addNewDefinedName();
         nameRecord.setName(builtInName);
         nameRecord.setLocalSheetId(sheetNumber);
-   
-        XSSFName name=new XSSFName(nameRecord,this);        
-        for(XSSFName nr :  namedRanges){
-            if(nr.equals(name))
-            throw new RuntimeException("Builtin (" + builtInName 
-                    + ") already exists for sheet (" + sheetNumber + ")");
-        }     
+
+        XSSFName name = new XSSFName(nameRecord, this);
+        for (XSSFName nr : namedRanges) {
+            if (nr.equals(name))
+                throw new RuntimeException("Builtin (" + builtInName
+                        + ") already exists for sheet (" + sheetNumber + ")");
+        }
 
         return name;
     }
-    
-    //*******************************************
-    
+
     /**
      * We only set one sheet as selected for compatibility with HSSF.
      */

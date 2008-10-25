@@ -18,25 +18,40 @@ package org.apache.poi.xssf.usermodel.examples;
 
 import java.io.FileOutputStream;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class SetPrintArea {
-
+/**
+ * How to use newlines in cells
+ */
+public class CellNewlines {
 
     public static void main(String[]args) throws Exception {
         Workbook wb = new XSSFWorkbook();
-        Sheet sheet = wb.createSheet("Sheet1");
-        //wb.setPrintArea(0, "$A$1:$C$2");
-        //sets the print area for the first sheet
-        //Alternatively:
-        wb.setPrintArea(0, 1, 2, 0, 3); //is equivalent to using the name reference (See the JavaDocs for more details)
+        Sheet sheet = wb.createSheet();
 
-        // Create various cells and rows for spreadsheet.
+        Row row = sheet.createRow(2);
+        Cell cell = row.createCell(2);
+        cell.setCellValue("Use \n with word wrap on to create a new line");
 
-        FileOutputStream fileOut = new FileOutputStream("printArea.xlsx");
+        //to enable newlines you need set a cell styles with wrap=true
+        CellStyle cs = wb.createCellStyle();
+        cs.setWrapText(true);
+        cell.setCellStyle(cs);
+
+        //increase row height to accomodate two lines of text
+        row.setHeightInPoints((2*sheet.getDefaultRowHeightInPoints()));
+
+        //adjust column width to fit the content
+        sheet.autoSizeColumn((short)2);
+
+        FileOutputStream fileOut = new FileOutputStream("ooxml-newlines.xlsx");
         wb.write(fileOut);
         fileOut.close();
     }
+
 }

@@ -169,7 +169,7 @@ public final class TestXSSFWorkbook extends TestCase {
 	 assertEquals("'"+sheetName+"'!$B$5:$F$10", retrievedPrintArea);
 }
 	
-	public void _testRepeatingRowsAndColums() {
+	public void testRepeatingRowsAndColums() {
 		// First test that setting RR&C for same sheet more than once only creates a 
 		// single  Print_Titles built-in record
 		XSSFWorkbook wb = new XSSFWorkbook();
@@ -206,6 +206,10 @@ public final class TestXSSFWorkbook extends TestCase {
 		assertEquals(XSSFName.BUILTIN_PRINT_TITLE, nr2.getNameName());
 		assertEquals("'SecondSheet'!$B:$C,'SecondSheet'!$1:$1", nr2.getReference());
 		
+		
+		nwb.setRepeatingRowsAndColumns(1, -1, -1, -1, -1);
+		
+		
 		if (false) {
 			// In case you fancy checking in excel, to ensure it
 			//  won't complain about the file now
@@ -214,13 +218,13 @@ public final class TestXSSFWorkbook extends TestCase {
 				FileOutputStream fout = new FileOutputStream(tempFile);
 				nwb.write(fout);
 				fout.close();
-				System.out.println("check out " + tempFile.getAbsolutePath());
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
 		}
 	}
 	
+
 	/**
 	 * Tests that we can save a new document
 	 */
