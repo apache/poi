@@ -17,10 +17,10 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.ss.formula.WorkbookDependentFormula;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * 
@@ -51,15 +51,15 @@ public final class NameXPtg extends OperandPtg implements WorkbookDependentFormu
 		this(sheetRefIndex, nameIndex + 1, 0);
 	}
 
-	public NameXPtg(RecordInputStream in) {
+	public NameXPtg(LittleEndianInput in)  {
 		this(in.readUShort(), in.readUShort(), in.readUShort());
 	}
 
-	public void writeBytes(byte[] array, int offset) {
-		LittleEndian.putByte(array, offset + 0, sid + getPtgClass());
-		LittleEndian.putUShort(array, offset + 1, _sheetRefIndex);
-		LittleEndian.putUShort(array, offset + 3, _nameNumber);
-		LittleEndian.putUShort(array, offset + 5, _reserved);
+	public void write(LittleEndianOutput out) {
+		out.writeByte(sid + getPtgClass());
+		out.writeShort(_sheetRefIndex);
+		out.writeShort(_nameNumber);
+		out.writeShort(_reserved);
 	}
 
 	public int getSize() {

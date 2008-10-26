@@ -97,13 +97,13 @@ public final class TestLittleEndian extends TestCase {
      * test the getDouble() method
      */
     public void testGetDouble() {
-        assertEquals(_doubles[0], LittleEndian.getDouble(_double_array), 0.000001 );
+        assertEquals(_doubles[0], LittleEndian.getDouble(_double_array, 0), 0.000001 );
         assertEquals(_doubles[1], LittleEndian.getDouble( _double_array, LittleEndian.DOUBLE_SIZE), 0.000001);
-        assertTrue(Double.isNaN(LittleEndian.getDouble(_nan_double_array)));
+        assertTrue(Double.isNaN(LittleEndian.getDouble(_nan_double_array, 0)));
 
-        double nan = LittleEndian.getDouble(_nan_double_array);
+        double nan = LittleEndian.getDouble(_nan_double_array, 0);
         byte[] data = new byte[8];
-        LittleEndian.putDouble(data, nan);
+        LittleEndian.putDouble(data, 0, nan);
         for ( int i = 0; i < data.length; i++ ) {
             assertEquals(data[i], _nan_double_array[i]);
         }
@@ -144,7 +144,7 @@ public final class TestLittleEndian extends TestCase {
             (byte) 0x02,
         };
 
-        assertEquals(0xFFFFFFFFFFFFFF01L, LittleEndian.getLong(testdata));
+        assertEquals(0xFFFFFFFFFFFFFF01L, LittleEndian.getLong(testdata, 0));
         assertEquals(0x02FFFFFFFFFFFFFFL, LittleEndian.getLong(testdata, 1));
     }
 
@@ -194,7 +194,7 @@ public final class TestLittleEndian extends TestCase {
     public void testPutDouble() {
         byte[] received = new byte[ LittleEndian.DOUBLE_SIZE + 1 ];
 
-        LittleEndian.putDouble(received, _doubles[0]);
+        LittleEndian.putDouble(received, 0, _doubles[0]);
         assertTrue(compareByteArrays(received, _double_array, 0, LittleEndian.DOUBLE_SIZE));
         LittleEndian.putDouble(received, 1, _doubles[1]);
         byte[] expected = new byte[ LittleEndian.DOUBLE_SIZE + 1 ];
@@ -224,7 +224,7 @@ public final class TestLittleEndian extends TestCase {
 
         long testdata0 = 0xFFFFFFFFFFFFFF01L;
         long testdata1 = 0x02FFFFFFFFFFFFFFL;
-        LittleEndian.putLong(received, testdata0);
+        LittleEndian.putLong(received, 0, testdata0);
         assertTrue(compareByteArrays(received, expected, 0, LittleEndian.LONG_SIZE));
         LittleEndian.putLong(received, 1, testdata1);
         assertTrue(compareByteArrays(received, expected, 1, LittleEndian.LONG_SIZE));

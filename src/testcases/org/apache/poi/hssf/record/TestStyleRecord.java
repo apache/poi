@@ -15,35 +15,19 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.formula;
+package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndianInput;
-
+import junit.framework.TestCase;
 /**
- * ReferencePtg - handles references (such as A1, A2, IA4)
- * @author  Andrew C. Oliver (acoliver@apache.org)
- * @author Jason Height (jheight at chariot dot net dot au)
+ * 
  */
-public final class RefPtg extends Ref2DPtgBase {
-	public final static byte sid = 0x24;
-
-	/**
-	 * Takes in a String representation of a cell reference and fills out the
-	 * numeric fields.
-	 */
-	public RefPtg(String cellref) {
-		super(cellref);
-	}
-
-	public RefPtg(int row, int column, boolean isRowRelative, boolean isColumnRelative) {
-		super(row, column, isRowRelative, isColumnRelative);
-	}
-
-	public RefPtg(LittleEndianInput in)  {
-		super(in);
-	}
-
-	protected byte getSid() {
-		return sid;
-	}
+public final class TestStyleRecord extends TestCase {
+    public void testUnicodeReadName() {
+    	byte[] data = {
+   			17, 0, 9, 0, 1, 56, 94, -60, -119, 95, 0, 83, 0, 104, 0, 101, 0, 101, 0, 116, 0, 49, 0, 92, 40, //92, 36    			
+    	};
+    	RecordInputStream in = TestcaseRecordInputStream.create(StyleRecord.sid, data);
+    	StyleRecord sr = new StyleRecord(in);
+    	assertEquals("\u5E38\u89C4_Sheet1", sr.getName()); // "<Conventional>_Sheet1"
+    }
 }

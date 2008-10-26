@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,11 +14,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.contrib.poibrowser;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -160,17 +157,7 @@ public class TreeReaderListener implements POIFSReaderListener
             throw new RuntimeException(t.getMessage());
         }
 
-        try
-        {
-            is.close();
-        }
-        catch (IOException ex)
-        {
-            System.err.println
-                ("Unexpected exception while closing " +
-                event.getName() + " in " + event.getPath().toString());
-            ex.printStackTrace(System.err);
-        }
+        is.close();
 
         final MutableTreeNode parentNode = getNode(d.path, filename, rootNode);
         final MutableTreeNode nameNode = new DefaultMutableTreeNode(d.name);

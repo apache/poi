@@ -17,42 +17,43 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Boolean (boolean)
- * Stores a (java) boolean value in a formula.
+ * Boolean (boolean) Stores a (java) boolean value in a formula.
+ * 
  * @author Paul Krause (pkrause at soundbite dot com)
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class BoolPtg extends ScalarConstantPtg {
-    public final static int  SIZE = 2;
-    public final static byte sid  = 0x1d;
-    private final boolean _value;
+	public final static int SIZE = 2;
+	public final static byte sid = 0x1D;
+	private final boolean _value;
 
-    public BoolPtg(RecordInputStream in) {
-        _value = (in.readByte() == 1);
-    }
+	public BoolPtg(LittleEndianInput in)  {
+		_value = (in.readByte() == 1);
+	}
 
-    public BoolPtg(String formulaToken) {
-        _value = (formulaToken.equalsIgnoreCase("TRUE"));
-    }
+	public BoolPtg(String formulaToken) {
+		_value = (formulaToken.equalsIgnoreCase("TRUE"));
+	}
 
-    public boolean getValue() {
-        return _value;
-    }
+	public boolean getValue() {
+		return _value;
+	}
 
-    public void writeBytes(byte [] array, int offset) {
-        array[ offset + 0 ] = sid;
-        array[ offset + 1 ] = (byte) (_value ? 1 : 0);
-    }
+	public void write(LittleEndianOutput out) {
+		out.writeByte(sid + getPtgClass());
+		out.writeByte(_value ? 1 : 0);
+	}
 
-    public int getSize() {
-        return SIZE;
-    }
+	public int getSize() {
+		return SIZE;
+	}
 
-    public String toFormulaString() {
-        return _value ? "TRUE" : "FALSE";
-    }
+	public String toFormulaString() {
+		return _value ? "TRUE" : "FALSE";
+	}
 }

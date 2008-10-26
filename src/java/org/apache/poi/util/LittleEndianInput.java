@@ -21,6 +21,7 @@ package org.apache.poi.util;
  * @author Josh Micich
  */
 public interface LittleEndianInput {
+	int available();
 	byte readByte();
 	int readUByte();
 	short readShort();
@@ -30,6 +31,4 @@ public interface LittleEndianInput {
 	double readDouble();
 	void readFully(byte[] buf);
 	void readFully(byte[] buf, int off, int len);
-	String readUnicodeLEString(int nChars);
-	String readCompressedUnicode(int nChars);
 }

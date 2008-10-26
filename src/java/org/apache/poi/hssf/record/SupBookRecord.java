@@ -84,9 +84,11 @@ public final class SupBookRecord extends Record {
      * @param offset of the record's data (provided a big array of the file)
      */
     public SupBookRecord(RecordInputStream in) {
+    	int recLen = in.remaining();
+    	
         field_1_number_of_sheets = in.readShort();
         
-        if(in.getLength() > SMALL_RECORD_SIZE) {
+        if(recLen > SMALL_RECORD_SIZE) {
             // 5.38.1 External References
             _isAddInFunctions = false;
 

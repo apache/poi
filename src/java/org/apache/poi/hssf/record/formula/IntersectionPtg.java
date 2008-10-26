@@ -17,54 +17,46 @@
 
 package org.apache.poi.hssf.record.formula;
 
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * @author Daniel Noll (daniel at nuix dot com dot au)
  */
 public final class IntersectionPtg extends OperationPtg {
-    public final static byte sid  = 0x0f;
+	public final static byte sid = 0x0f;
 
-    public static final OperationPtg instance = new IntersectionPtg();
+	public static final OperationPtg instance = new IntersectionPtg();
 
-    private IntersectionPtg() {
-    	// enforce singleton
-    }
+	private IntersectionPtg() {
+		// enforce singleton
+	}
 
-    public final boolean isBaseToken() {
-        return true;
-    }
+	public final boolean isBaseToken() {
+		return true;
+	}
 
-    public int getSize()
-    {
-        return 1;
-    }
+	public int getSize() {
+		return 1;
+	}
 
-    public void writeBytes( byte[] array, int offset )
-    {
-        array[ offset + 0 ] = sid;
-    }
+	public void write(LittleEndianOutput out) {
+		out.writeByte(sid + getPtgClass());
+	}
 
-    /** Implementation of method from Ptg */
-    public String toFormulaString()
-    {
-        return " ";
-    }
+	public String toFormulaString() {
+		return " ";
+	}
 
+	public String toFormulaString(String[] operands) {
+		StringBuffer buffer = new StringBuffer();
 
-    /** implementation of method from OperationsPtg*/
-    public String toFormulaString(String[] operands)
-    {
-         StringBuffer buffer = new StringBuffer();
+		buffer.append(operands[0]);
+		buffer.append(" ");
+		buffer.append(operands[1]);
+		return buffer.toString();
+	}
 
-         buffer.append(operands[ 0 ]);
-         buffer.append(" ");
-         buffer.append(operands[ 1 ]);
-         return buffer.toString();
-     }
-
-    public int getNumberOfOperands()
-    {
-        return 2;
-    }
-
+	public int getNumberOfOperands() {
+		return 2;
+	}
 }

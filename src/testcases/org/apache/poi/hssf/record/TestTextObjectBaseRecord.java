@@ -55,10 +55,8 @@ public final class TestTextObjectBaseRecord extends TestCase {
     
 
     public void testLoad() {
-        RecordInputStream in = new RecordInputStream(new ByteArrayInputStream(data));
-        in.nextRecord();
+        RecordInputStream in = TestcaseRecordInputStream.create(data);
         TextObjectRecord record = new TextObjectRecord(in);
-
 
         assertEquals(TextObjectRecord.HORIZONTAL_TEXT_ALIGNMENT_CENTERED, record.getHorizontalTextAlignment());
         assertEquals(TextObjectRecord.VERTICAL_TEXT_ALIGNMENT_JUSTIFY, record.getVerticalTextAlignment());

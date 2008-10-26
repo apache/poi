@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,111 +14,130 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
+
+import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Title:        Write Access Record<P>
- * Description:  Stores the username of that who owns the spreadsheet generator
- *               (on unix the user's login, on Windoze its the name you typed when
- *                you installed the thing)<P>
- * REFERENCE:  PG 424 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
+ * Title: Write Access Record (0x005C)<p/>
+ * 
+ * Description: Stores the username of that who owns the spreadsheet generator (on unix the user's 
+ * login, on Windoze its the name you typed when you installed the thing)
+ * <p/>
+ * REFERENCE: PG 424 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * <p/>
+ * 
  * @author Andrew C. Oliver (acoliver at apache dot org)
- * @version 2.0-pre
  */
+public final class WriteAccessRecord extends Record {
+	private static final byte PAD_CHAR = (byte) ' ';
+	public final static short sid = 0x005C;
+	private static final int DATA_SIZE = 112;
+	private String field_1_username;
+	/** this record is always padded to a constant length */
+	private byte[] padding;
 
-public class WriteAccessRecord
-    extends Record
-{
-    public final static short sid = 0x5c;
-    private String            field_1_username;
+	public WriteAccessRecord() {
+		setUsername("");
+		padding = new byte[DATA_SIZE - 3];
+	}
 
-    public WriteAccessRecord()
-    {
-    }
+	public WriteAccessRecord(RecordInputStream in) {
+		if (in.remaining() > DATA_SIZE) {
+			throw new RecordFormatException("Expected data size (" + DATA_SIZE + ") but got ("
+					+ in.remaining() + ")");
+		}
+		// The string is always 112 characters (padded with spaces), therefore
+		// this record can not be continued.
 
-    public WriteAccessRecord(RecordInputStream in)
-    {
-        byte[] data = in.readRemainder();
-        //The string is always 112 characters (padded with spaces), therefore
-        //this record can not be continued.
+		int nChars = in.readUShort();
+		int is16BitFlag = in.readUByte();
+		int expectedPadSize = DATA_SIZE - 3;
+		if ((is16BitFlag & 0x01) == 0x00) {
+			field_1_username = StringUtil.readCompressedUnicode(in, nChars);
+			expectedPadSize -= nChars;
+		} else {
+			field_1_username = StringUtil.readUnicodeLE(in, nChars);
+			expectedPadSize -= nChars * 2;
+		}
+		padding = new byte[expectedPadSize];
+		int padSize = in.remaining();
+		in.readFully(padding, 0, padSize);
+		if (padSize < expectedPadSize) {
+			// this occurs in a couple of test examples: "42564.xls",
+			// "bug_42794.xls"
+			Arrays.fill(padding, padSize, expectedPadSize, PAD_CHAR);
+		}
+	}
 
-        //What a wierd record, it is not really a unicode string because the
-        //header doesnt provide a correct size indication.???
-        //But the header is present, so we need to skip over it.
-        //Odd, Odd, Odd ;-)
-        field_1_username = StringUtil.getFromCompressedUnicode(data, 3, data.length - 3);
-    }
+	/**
+	 * set the username for the user that created the report. HSSF uses the
+	 * logged in user.
+	 * 
+	 * @param username of the user who is logged in (probably "tomcat" or "apache")
+	 */
+	public void setUsername(String username) {
+		boolean is16bit = StringUtil.hasMultibyte(username);
+		int encodedByteCount = 3 + username.length() * (is16bit ? 2 : 1);
+		int paddingSize = DATA_SIZE - encodedByteCount;
+		if (paddingSize < 0) {
+			throw new IllegalArgumentException("Name is too long: " + username);
+		}
+		padding = new byte[paddingSize];
+		Arrays.fill(padding, PAD_CHAR);
 
-    /**
-     * set the username for the user that created the report.  HSSF uses the logged in user.
-     * @param username of the user who  is logged in (probably "tomcat" or "apache")
-     */
+		field_1_username = username;
+	}
 
-    public void setUsername(String username)
-    {
-        field_1_username = username;
-    }
+	/**
+	 * get the username for the user that created the report. HSSF uses the
+	 * logged in user. On natively created M$ Excel sheet this would be the name
+	 * you typed in when you installed it in most cases.
+	 * 
+	 * @return username of the user who is logged in (probably "tomcat" or "apache")
+	 */
+	public String getUsername() {
+		return field_1_username;
+	}
 
-    /**
-     * get the username for the user that created the report.  HSSF uses the logged in user.  On
-     * natively created M$ Excel sheet this would be the name you typed in when you installed it
-     * in most cases.
-     * @return username of the user who  is logged in (probably "tomcat" or "apache")
-     */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
 
-    public String getUsername()
-    {
-        return field_1_username;
-    }
+		buffer.append("[WRITEACCESS]\n");
+		buffer.append("    .name            = ").append(field_1_username.toString()).append("\n");
+		buffer.append("[/WRITEACCESS]\n");
+		return buffer.toString();
+	}
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
+	public int serialize(int offset, byte[] data) {
+		String username = getUsername();
+		boolean is16bit = StringUtil.hasMultibyte(username);
 
-        buffer.append("[WRITEACCESS]\n");
-        buffer.append("    .name            = ")
-            .append(field_1_username.toString()).append("\n");
-        buffer.append("[/WRITEACCESS]\n");
-        return buffer.toString();
-    }
+		LittleEndian.putUShort(data, 0 + offset, sid);
+		LittleEndian.putUShort(data, 2 + offset, DATA_SIZE);
+		LittleEndian.putUShort(data, 4 + offset, username.length());
+		LittleEndian.putByte(data, 6 + offset, is16bit ? 0x01 : 0x00);
+		int pos = offset + 7;
+		if (is16bit) {
+			StringUtil.putUnicodeLE(username, data, pos);
+			pos += username.length() * 2;
+		} else {
+			StringUtil.putCompressedUnicode(username, data, pos);
+			pos += username.length();
+		}
+		System.arraycopy(padding, 0, data, pos, padding.length);
+		return 4 + DATA_SIZE;
+	}
 
-    public int serialize(int offset, byte [] data)
-    {
-        String       username = getUsername();
-        StringBuffer temp     = new StringBuffer(0x70 - (0x3));
+	public int getRecordSize() {
+		return 4 + DATA_SIZE;
+	}
 
-        temp.append(username);
-        while (temp.length() < 0x70 - 0x3)
-        {
-            temp.append(
-                " ");   // (70 = fixed lenght -3 = the overhead bits of unicode string)
-        }
-        username = temp.toString();
-        UnicodeString str = new UnicodeString(username);
-        str.setOptionFlags(( byte ) 0x0);
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)112);   // 112 bytes (115 total)
-        UnicodeString.UnicodeRecordStats stats = new UnicodeString.UnicodeRecordStats();
-        stats.recordSize += 4;
-        stats.remainingSize-= 4;
-        str.serialize(stats, 4 + offset, data);
-
-        return getRecordSize();
-    }
-
-    public int getRecordSize()
-    {
-        return 116;
-    }
-
-    public short getSid()
-    {
-        return sid;
-    }
+	public short getSid() {
+		return sid;
+	}
 }

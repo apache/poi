@@ -23,6 +23,8 @@ import java.io.InputStream;
 import junit.framework.Assert;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayInputStream;
+import org.apache.poi.util.LittleEndianInput;
 
 /**
  * A Record Input Stream derivative that makes access to byte arrays used in the
@@ -40,8 +42,8 @@ public final class TestcaseRecordInputStream {
 	/**
 	 * Prepends a mock record identifier to the supplied data and opens a record input stream 
 	 */
-	public static RecordInputStream createWithFakeSid(byte[] data) {
-		return create(-5555, data);
+	public static LittleEndianInput createLittleEndian(byte[] data) {
+		return new LittleEndianByteArrayInputStream(data);
 		
 	}
 	public static RecordInputStream create(int sid, byte[] data) {

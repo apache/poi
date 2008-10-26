@@ -25,6 +25,8 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The TXO record (0x01B6) is used to define the properties of a text box. It is
@@ -129,13 +131,7 @@ public final class TextObjectRecord extends Record {
 		_text = new HSSFRichTextString(text);
 
 		if (field_7_formattingDataLength > 0) {
-			if (in.isContinueNext() && in.remaining() == 0) {
-				in.nextRecord();
-				processFontRuns(in, _text, field_7_formattingDataLength);
-			} else {
-				throw new RecordFormatException(
-						"Expected Continue Record to hold font runs for TextObjectRecord");
-			}
+			processFontRuns(in, _text, field_7_formattingDataLength);
 		}
 	}
 
@@ -153,10 +149,6 @@ public final class TextObjectRecord extends Record {
 		if (formattingRunDataLength % FORMAT_RUN_ENCODED_SIZE != 0) {
 			throw new RecordFormatException("Bad format run data length " + formattingRunDataLength
 					+ ")");
-		}
-		if (in.remaining() != formattingRunDataLength) {
-			throw new RecordFormatException("Expected " + formattingRunDataLength
-					+ " bytes but got " + in.remaining());
 		}
 		int nRuns = formattingRunDataLength / FORMAT_RUN_ENCODED_SIZE;
 		for (int i = 0; i < nRuns; i++) {
@@ -190,36 +182,31 @@ public final class TextObjectRecord extends Record {
 
 	private int serializeTXORecord(int offset, byte[] data) {
 		int dataSize = getDataSize();
+		int recSize = dataSize+4;
+		LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
 		
-		LittleEndian.putUShort(data, 0 + offset, TextObjectRecord.sid);
-		LittleEndian.putUShort(data, 2 + offset, dataSize);
-
+		out.writeShort(TextObjectRecord.sid);
+		out.writeShort(dataSize);
 		
-		LittleEndian.putUShort(data, 4 + offset, field_1_options);
-		LittleEndian.putUShort(data, 6 + offset, field_2_textOrientation);
-		LittleEndian.putUShort(data, 8 + offset, field_3_reserved4);
-		LittleEndian.putUShort(data, 10 + offset, field_4_reserved5);
-		LittleEndian.putUShort(data, 12 + offset, field_5_reserved6);
-		LittleEndian.putUShort(data, 14 + offset, _text.length());
-		LittleEndian.putUShort(data, 16 + offset, getFormattingDataLength());
-		LittleEndian.putInt(data, 18 + offset, field_8_reserved7);
+		out.writeShort(field_1_options);
+		out.writeShort(field_2_textOrientation);
+		out.writeShort(field_3_reserved4);
+		out.writeShort(field_4_reserved5);
+		out.writeShort(field_5_reserved6);
+		out.writeShort(_text.length());
+		out.writeShort(getFormattingDataLength());
+		out.writeInt(field_8_reserved7);
 		
 		if (_linkRefPtg != null) {
-			int pos = offset+22;
 			int formulaSize = _linkRefPtg.getSize();
-			LittleEndian.putUShort(data, pos, formulaSize);
-			pos += LittleEndian.SHORT_SIZE;
-			LittleEndian.putInt(data, pos, _unknownPreFormulaInt);
-			pos += LittleEndian.INT_SIZE;
-			_linkRefPtg.writeBytes(data, pos);
-			pos += formulaSize;
+			out.writeShort(formulaSize);
+			out.writeInt(_unknownPreFormulaInt);
+			_linkRefPtg.write(out);
 			if (_unknownPostFormulaByte != null) {
-				LittleEndian.putByte(data, pos, _unknownPostFormulaByte.byteValue());
-				pos += LittleEndian.BYTE_SIZE;
+				out.writeByte(_unknownPostFormulaByte.byteValue());
 			}
 		}
-		
-		return 4 + dataSize;
+		return recSize;
 	}
 
 	private int serializeTrailingRecords(int offset, byte[] data) {
