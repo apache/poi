@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record.formula;
 
+import org.apache.poi.util.LittleEndianOutput;
+
 
 /**
  * @author Glen Stampoultzis (glens at apache.org)
@@ -39,9 +41,8 @@ public final class UnionPtg extends OperationPtg {
         return 1;
     }
 
-    public void writeBytes( byte[] array, int offset )
-    {
-        array[ offset + 0 ] = sid;
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
     }
 
     public String toFormulaString()

@@ -788,7 +788,7 @@ public final class Workbook implements Model {
             if(r instanceof ExtendedFormatRecord) {
             } else if(r instanceof StyleRecord) {
                 StyleRecord sr = (StyleRecord)r;
-                if(sr.getIndex() == xfIndex) {
+                if(sr.getXFIndex() == xfIndex) {
                     return sr;
                 }
             } else {
@@ -806,7 +806,7 @@ public final class Workbook implements Model {
         // Style records always follow after 
         //  the ExtendedFormat records
         StyleRecord newSR = new StyleRecord();
-        newSR.setIndex((short)xfIndex);
+        newSR.setXFIndex(xfIndex);
         
         // Find the spot
         int addAt = -1;
@@ -1782,45 +1782,44 @@ public final class Workbook implements Model {
      * @see org.apache.poi.hssf.record.StyleRecord
      * @see org.apache.poi.hssf.record.Record
      */
-
     protected Record createStyle(int id) {   // we'll need multiple editions
         StyleRecord retval = new StyleRecord();
 
         switch (id) {
 
             case 0 :
-                retval.setIndex(( short ) 0xffff8010);
-                retval.setBuiltin(( byte ) 3);
+                retval.setXFIndex(0x010);
+                retval.setBuiltinStyle(3);
                 retval.setOutlineStyleLevel(( byte ) 0xffffffff);
                 break;
 
             case 1 :
-                retval.setIndex(( short ) 0xffff8011);
-                retval.setBuiltin(( byte ) 6);
+                retval.setXFIndex(0x011);
+                retval.setBuiltinStyle(6);
                 retval.setOutlineStyleLevel(( byte ) 0xffffffff);
                 break;
 
             case 2 :
-                retval.setIndex(( short ) 0xffff8012);
-                retval.setBuiltin(( byte ) 4);
+                retval.setXFIndex(0x012);
+                retval.setBuiltinStyle(4);
                 retval.setOutlineStyleLevel(( byte ) 0xffffffff);
                 break;
 
             case 3 :
-                retval.setIndex(( short ) 0xffff8013);
-                retval.setBuiltin(( byte ) 7);
+                retval.setXFIndex(0x013);
+                retval.setBuiltinStyle(7);
                 retval.setOutlineStyleLevel(( byte ) 0xffffffff);
                 break;
 
             case 4 :
-                retval.setIndex(( short ) 0xffff8000);
-                retval.setBuiltin(( byte ) 0);
+                retval.setXFIndex(0x000);
+                retval.setBuiltinStyle(0);
                 retval.setOutlineStyleLevel(( byte ) 0xffffffff);
                 break;
 
             case 5 :
-                retval.setIndex(( short ) 0xffff8014);
-                retval.setBuiltin(( byte ) 5);
+                retval.setXFIndex(0x014);
+                retval.setBuiltinStyle(5);
                 retval.setOutlineStyleLevel(( byte ) 0xffffffff);
                 break;
         }

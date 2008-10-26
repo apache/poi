@@ -16,10 +16,10 @@
 ==================================================================== */
 
 package org.apache.poi.hssf.record.formula;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  *
@@ -33,7 +33,7 @@ public final class FuncVarPtg extends AbstractFunctionPtg{
     /**Creates new function pointer from a byte array
      * usually called while reading an excel file.
      */
-    public FuncVarPtg(RecordInputStream in) {
+    public FuncVarPtg(LittleEndianInput in)  {
         field_1_num_args = in.readByte();
         field_2_fnc_index  = in.readShort();
         FunctionMetadata fm = FunctionMetadataRegistry.getFunctionByIndex(field_2_fnc_index);
@@ -64,10 +64,10 @@ public final class FuncVarPtg extends AbstractFunctionPtg{
         }
     }
 
-     public void writeBytes(byte[] array, int offset) {
-        array[offset+0]=(byte) (sid + getPtgClass());
-        array[offset+1]=field_1_num_args;
-        LittleEndian.putShort(array,offset+2,field_2_fnc_index);
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+        out.writeByte(field_1_num_args);
+        out.writeShort(field_2_fnc_index);
     }
 
      public int getNumberOfOperands() {

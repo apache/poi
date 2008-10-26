@@ -17,68 +17,45 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * @author Daniel Noll (daniel at nuix dot com dot au)
  */
 public class MemAreaPtg extends OperandPtg {
-    public final static short sid  = 0x26;
-    private final static int  SIZE = 7;
-    private int               field_1_reserved;
-    private short             field_2_subex_len;
+	public final static short sid = 0x26;
+	private final static int SIZE = 7;
+	private final int field_1_reserved;
+	private final int field_2_subex_len;
 
-    /** Creates new MemAreaPtg */
+	/** Creates new MemAreaPtg */
 
-    public MemAreaPtg()
-    {
-    }
+	public MemAreaPtg(int subexLen) {
+		field_1_reserved = 0;
+		field_2_subex_len = subexLen;
+	}
 
-    public MemAreaPtg(RecordInputStream in)
-    {
-        field_1_reserved  = in.readInt();
-        field_2_subex_len = in.readShort();
-    }
+	public MemAreaPtg(LittleEndianInput in)  {
+		field_1_reserved = in.readInt();
+		field_2_subex_len = in.readShort();
+	}
 
-    public void setReserved(int res)
-    {
-        field_1_reserved = res;
-    }
+	public void write(LittleEndianOutput out) {
+		out.writeByte(sid + getPtgClass());
+		out.writeInt(field_1_reserved);
+		out.writeShort(field_2_subex_len);
+	}
 
-    public int getReserved()
-    {
-        return field_1_reserved;
-    }
+	public int getSize() {
+		return SIZE;
+	}
 
-    public void setSubexpressionLength(short subexlen)
-    {
-        field_2_subex_len = subexlen;
-    }
+	public String toFormulaString() {
+		return ""; // TODO: Not sure how to format this. -- DN
+	}
 
-    public short getSubexpressionLength()
-    {
-        return field_2_subex_len;
-    }
-
-    public void writeBytes(byte [] array, int offset)
-    {
-        array[offset] = (byte) (sid + getPtgClass());
-        LittleEndian.putInt(array, offset + 1, field_1_reserved);
-        LittleEndian.putShort(array, offset + 5, field_2_subex_len);
-    }
-
-    public int getSize()
-    {
-        return SIZE;
-    }
-
-    public String toFormulaString()
-    {
-        return ""; // TODO: Not sure how to format this. -- DN
-    }
-
-    public byte getDefaultOperandClass() {
-    	return Ptg.CLASS_VALUE;
-    }
+	public byte getDefaultOperandClass() {
+		return Ptg.CLASS_VALUE;
+	}
 }

@@ -17,42 +17,48 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Common superclass of 2-D area refs 
+ * Common superclass of 2-D area refs
  */
 public abstract class Area2DPtgBase extends AreaPtgBase {
-	private final static int  SIZE = 9;
+	private final static int SIZE = 9;
 
 	protected Area2DPtgBase(int firstRow, int lastRow, int firstColumn, int lastColumn, boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative) {
 		super(firstRow, lastRow, firstColumn, lastColumn, firstRowRelative, lastRowRelative, firstColRelative, lastColRelative);
 	}
-	protected Area2DPtgBase(RecordInputStream in) {
+
+	protected Area2DPtgBase(LittleEndianInput in)  {
 		readCoordinates(in);
 	}
+
 	protected abstract byte getSid();
 
-	public final void writeBytes(byte [] array, int offset) {
-		LittleEndian.putByte(array, offset+0, getSid() + getPtgClass());
-		writeCoordinates(array, offset+1);       
+	public final void write(LittleEndianOutput out) {
+		out.writeByte(getSid() + getPtgClass());
+		writeCoordinates(out);
 	}
+
 	public Area2DPtgBase(String arearef) {
-    	super(arearef);
+		super(arearef);
 	}
+
 	public final int getSize() {
 		return SIZE;
 	}
+
 	public final String toFormulaString() {
-    	return formatReferenceAsString();
+		return formatReferenceAsString();
 	}
-    public final String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append(getClass().getName());
-        sb.append(" [");
-        sb.append(formatReferenceAsString());
-        sb.append("]");
-        return sb.toString();
-    }
+
+	public final String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(getClass().getName());
+		sb.append(" [");
+		sb.append(formatReferenceAsString());
+		sb.append("]");
+		return sb.toString();
+	}
 }

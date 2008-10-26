@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.LittleEndianInput;
 
 /**
  * Specifies a rectangular area of cells A1:A4 for instance.
@@ -26,7 +26,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
 public final class AreaNPtg extends Area2DPtgBase {
 	public final static short sid = 0x2D;
 
-	public AreaNPtg(RecordInputStream in) {
+	public AreaNPtg(LittleEndianInput in)  {
 		super(in);
 	}
 

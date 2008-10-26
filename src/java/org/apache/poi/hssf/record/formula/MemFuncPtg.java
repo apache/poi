@@ -17,56 +17,51 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class MemFuncPtg extends OperandPtg {
 
-    public final static byte sid = 0x29;
-    private final int field_1_len_ref_subexpression;
+	public final static byte sid = 0x29;
+	private final int field_1_len_ref_subexpression;
 
-    /**Creates new function pointer from a byte array
-     * usually called while reading an excel file.
-     */
-    public MemFuncPtg(RecordInputStream in) {
-        this(in.readUShort());
-    }
-
-    public MemFuncPtg(int subExprLen) {
-    	field_1_len_ref_subexpression = subExprLen;
+	/**
+	 * Creates new function pointer from a byte array usually called while
+	 * reading an excel file.
+	 */
+	public MemFuncPtg(LittleEndianInput in)  {
+		this(in.readUShort());
 	}
 
-	public int getSize()
-    {
-        return 3;
-    }
+	public MemFuncPtg(int subExprLen) {
+		field_1_len_ref_subexpression = subExprLen;
+	}
 
-    public void writeBytes( byte[] array, int offset )
-    {
-        array[offset + 0] =  sid ;
-        LittleEndian.putUShort( array, offset + 1, field_1_len_ref_subexpression );
-    }
+	public int getSize() {
+		return 3;
+	}
 
-    public String toFormulaString()
-    {
-        return "";
-    }
+	public void write(LittleEndianOutput out) {
+		out.writeByte(sid + getPtgClass());
+		out.writeShort(field_1_len_ref_subexpression);
+	}
 
-    public byte getDefaultOperandClass()
-    {
-        return Ptg.CLASS_REF;
-    }
+	public String toFormulaString() {
+		return "";
+	}
 
-    public int getNumberOfOperands()
-    {
-        return field_1_len_ref_subexpression;
-    }
+	public byte getDefaultOperandClass() {
+		return Ptg.CLASS_REF;
+	}
 
-    public int getLenRefSubexpression()
-    {
-        return field_1_len_ref_subexpression;
-    }
+	public int getNumberOfOperands() {
+		return field_1_len_ref_subexpression;
+	}
+
+	public int getLenRefSubexpression() {
+		return field_1_len_ref_subexpression;
+	}
 }

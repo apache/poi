@@ -18,8 +18,8 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordFormatException;
-import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * This ptg indicates a data table.
@@ -43,15 +43,15 @@ public final class TblPtg extends ControlPtg {
     /** The column number of the upper left corner */
     private final int field_2_first_col;
 
-    public TblPtg(RecordInputStream in) {
+    public TblPtg(LittleEndianInput in)  {
       field_1_first_row = in.readUShort();
       field_2_first_col = in.readUShort();
     }
 
-    public void writeBytes(byte [] array, int offset) {
-      LittleEndian.putByte(array, offset+0, sid);
-      LittleEndian.putUShort(array, offset+1, field_1_first_row);
-      LittleEndian.putUShort(array, offset+3, field_2_first_col);
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+        out.writeShort(field_1_first_row);
+        out.writeShort(field_2_first_col);
     }
 
     public int getSize() {

@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RefPtg;
+import org.apache.poi.util.LittleEndianInput;
 
 /**
  * @author Josh Micich
@@ -59,7 +60,7 @@ public final class TestSharedFormulaRecord extends TestCase {
 	 */
 	public void testConvertSharedFormulasOperandClasses_bug45123() {
 		
-		RecordInputStream in = TestcaseRecordInputStream.createWithFakeSid(SHARED_FORMULA_WITH_REF_ARRAYS_DATA);
+		LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(SHARED_FORMULA_WITH_REF_ARRAYS_DATA);
 		int encodedLen = in.readUShort();
 		Ptg[] sharedFormula = Ptg.readTokens(encodedLen, in);
 		

@@ -100,6 +100,7 @@ public final class AllRecordTests {
 		result.addTestSuite(TestSheetPropertiesRecord.class);
 		result.addTestSuite(TestSharedFormulaRecord.class);
 		result.addTestSuite(TestStringRecord.class);
+		result.addTestSuite(TestStyleRecord.class);
 		result.addTestSuite(TestSubRecord.class);
 		result.addTestSuite(TestSupBookRecord.class);
 		result.addTestSuite(TestTableRecord.class);

@@ -18,8 +18,8 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.RecordFormatException;
-import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  *
@@ -33,42 +33,41 @@ public final class ExpPtg extends ControlPtg {
     private final short            field_1_first_row;
     private final short            field_2_first_col;
 
-    public ExpPtg(RecordInputStream in)
+    public ExpPtg(LittleEndianInput in) 
     {
       field_1_first_row = in.readShort();
       field_2_first_col = in.readShort();
     }
-    
-    public void writeBytes(byte [] array, int offset)
-    {
-      array[offset+0]= (byte) (sid);
-      LittleEndian.putShort(array,offset+1,field_1_first_row);
-      LittleEndian.putShort(array,offset+3,field_2_first_col);
+
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+        out.writeShort(field_1_first_row);
+        out.writeShort(field_2_first_col);
     }
 
     public int getSize()
     {
         return SIZE;
     }
-    
+
     public short getRow() {
       return field_1_first_row;
     }
 
     public short getColumn() {
       return field_2_first_col;
-    }    
+    }
 
     public String toFormulaString()
     {
         throw new RecordFormatException("Coding Error: Expected ExpPtg to be converted from Shared to Non-Shared Formula by ValueRecordsAggregate, but it wasn't");
     }
-    
+
     public String toString()
     {
         StringBuffer buffer = new StringBuffer("[Array Formula or Shared Formula]\n");
         buffer.append("row = ").append(getRow()).append("\n");
         buffer.append("col = ").append(getColumn()).append("\n");
         return buffer.toString();
-    }    
+    }
 }

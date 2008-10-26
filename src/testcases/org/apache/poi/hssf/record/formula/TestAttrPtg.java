@@ -21,9 +21,9 @@ import java.util.Arrays;
 
 import junit.framework.AssertionFailedError;
 
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.util.HexRead;
+import org.apache.poi.util.LittleEndianInput;
 
 /**
  * Tests for {@link AttrPtg}.
@@ -37,7 +37,7 @@ public final class TestAttrPtg extends AbstractPtgTestCase {
 	 */
 	public void testReserializeAttrChoose() {
 		byte[] data = HexRead.readFromString("19, 04, 03, 00, 08, 00, 11, 00, 1A, 00, 23, 00");
-		RecordInputStream in = TestcaseRecordInputStream.createWithFakeSid(data);
+		LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(data);
 		Ptg[] ptgs = Ptg.readTokens(data.length, in);
 		byte[] data2 = new byte[data.length];
 		try {

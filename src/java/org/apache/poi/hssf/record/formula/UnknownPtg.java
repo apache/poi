@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  *
@@ -25,22 +25,17 @@ import org.apache.poi.hssf.record.RecordInputStream;
  */
 public class UnknownPtg extends Ptg {
     private short size = 1;
+    private final int _sid;
 
-    /** Creates new UnknownPtg */
-
-    public UnknownPtg()
-    {
-    }
-
-    public UnknownPtg(RecordInputStream in) {
-        // doesn't need anything
+    public UnknownPtg(int sid) {
+        _sid = sid;
     }
 
     public boolean isBaseToken() {
-    	return true;
+        return true;
     }
-    public void writeBytes(byte [] array, int offset)
-    {
+    public void write(LittleEndianOutput out) {
+        out.writeByte(_sid);
     }
 
     public int getSize()
@@ -55,8 +50,6 @@ public class UnknownPtg extends Ptg {
     public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
 
     public Object clone() {
-      return new UnknownPtg();
+      return this;
     }
-
-    
 }

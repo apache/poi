@@ -239,8 +239,7 @@ public final class TestHyperlinkRecord extends TestCase {
         RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data);
         HyperlinkRecord link = new HyperlinkRecord(is);
         byte[] bytes1 = link.serialize();
-        is = new RecordInputStream(new ByteArrayInputStream(bytes1));
-        is.nextRecord();
+        is = TestcaseRecordInputStream.create(bytes1);
         link = new HyperlinkRecord(is);
         byte[] bytes2 = link.serialize();
         assertEquals(bytes1.length, bytes2.length);

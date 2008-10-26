@@ -17,55 +17,55 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Number
- * Stores a floating point value in a formula
- * value stored in a 8 byte field using IEEE notation
- * @author  Avik Sengupta
+ * Number Stores a floating point value in a formula value stored in a 8 byte
+ * field using IEEE notation
+ * 
+ * @author Avik Sengupta
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class NumberPtg extends ScalarConstantPtg {
-    public final static int  SIZE = 9;
-    public final static byte sid  = 0x1f;
-    private final double field_1_value;
-        
-    /** Create a NumberPtg from a byte array read from disk */
-    public NumberPtg(RecordInputStream in) {
-        this(in.readDouble());
-    }
-    
-    /** Create a NumberPtg from a string representation of  the number
-     *  Number format is not checked, it is expected to be validated in the parser
-     *   that calls this method. 
-     *  @param value : String representation of a floating point number
-     */
-    public NumberPtg(String value) {
-        this(Double.parseDouble(value));
-    }
-    
-    public NumberPtg(double value) {
-        field_1_value = value;
-    }
-    
-    public double getValue() {
-        return field_1_value;
-    }
+	public final static int SIZE = 9;
+	public final static byte sid = 0x1f;
+	private final double field_1_value;
 
-    public void writeBytes(byte [] array, int offset) {
-        array[ offset + 0 ] = sid;
-        LittleEndian.putDouble(array, offset + 1, getValue());
-    }
+	public NumberPtg(LittleEndianInput in)  {
+		this(in.readDouble());
+	}
 
-    public int getSize() {
-        return SIZE;
-    }
+	/**
+	 * Create a NumberPtg from a string representation of the number Number
+	 * format is not checked, it is expected to be validated in the parser that
+	 * calls this method.
+	 * 
+	 * @param value String representation of a floating point number
+	 */
+	public NumberPtg(String value) {
+		this(Double.parseDouble(value));
+	}
 
-    public String toFormulaString() {
-        // TODO - java's rendering of double values is not quite same as excel's
-        // Maybe use HSSFDataFormatter?
-        return String.valueOf(field_1_value);
-    }
+	public NumberPtg(double value) {
+		field_1_value = value;
+	}
+
+	public double getValue() {
+		return field_1_value;
+	}
+
+	public void write(LittleEndianOutput out) {
+		out.writeByte(sid + getPtgClass());
+		out.writeDouble(getValue());
+	}
+
+	public int getSize() {
+		return SIZE;
+	}
+
+	public String toFormulaString() {
+		// TODO - java's rendering of double values is not quite same as excel's
+		return String.valueOf(field_1_value);
+	}
 }

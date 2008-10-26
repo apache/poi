@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,18 +14,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Arrays;
 
-import java.util.*;
-
-import junit.framework.*;
+import junit.framework.TestCase;
 
 import org.apache.poi.poifs.property.DirectoryProperty;
-import org.apache.poi.poifs.property.DocumentProperty;
 import org.apache.poi.poifs.storage.RawDataBlock;
 
 /**
@@ -35,22 +32,9 @@ import org.apache.poi.poifs.storage.RawDataBlock;
  * @author Marc Johnson
  */
 
-public class TestDocumentInputStream
-    extends TestCase
-{
+public final class TestDocumentInputStream extends TestCase {
 
-    /**
-     * Constructor TestDocumentInputStream
-     *
-     * @param name
-     *
-     * @exception IOException
-     */
-
-    public TestDocumentInputStream(String name)
-        throws IOException
-    {
-        super(name);
+	protected void setUp() throws Exception {
         int blocks = (_workbook_size + 511) / 512;
 
         _workbook_data = new byte[ 512 * blocks ];
@@ -86,13 +70,8 @@ public class TestDocumentInputStream
 
     /**
      * test constructor
-     *
-     * @exception IOException
      */
-
-    public void testConstructor()
-        throws IOException
-    {
+    public void testConstructor() throws IOException {
         DocumentInputStream stream = new DocumentInputStream(_workbook);
 
         assertEquals(_workbook_size, stream.available());
@@ -100,13 +79,8 @@ public class TestDocumentInputStream
 
     /**
      * test available() behavior
-     *
-     * @exception IOException
      */
-
-    public void testAvailable()
-        throws IOException
-    {
+    public void testAvailable() throws IOException {
         DocumentInputStream stream = new DocumentInputStream(_workbook);
 
         assertEquals(_workbook_size, stream.available());
@@ -115,9 +89,7 @@ public class TestDocumentInputStream
         {
             stream.available();
             fail("Should have caught IOException");
-        }
-        catch (IOException ignored)
-        {
+        } catch (IllegalStateException ignored) {
 
             // as expected
         }
@@ -125,13 +97,8 @@ public class TestDocumentInputStream
 
     /**
      * test mark/reset/markSupported.
-     *
-     * @exception IOException
      */
-
-    public void testMarkFunctions()
-        throws IOException
-    {
+    public void testMarkFunctions() throws IOException {
         DocumentInputStream stream = new DocumentInputStream(_workbook);
         byte[]              buffer = new byte[ _workbook_size / 5 ];
 
@@ -169,13 +136,8 @@ public class TestDocumentInputStream
 
     /**
      * test simple read method
-     *
-     * @exception IOException
      */
-
-    public void testReadSingleByte()
-        throws IOException
-    {
+    public void testReadSingleByte() throws IOException {
         DocumentInputStream stream    = new DocumentInputStream(_workbook);
         int                 remaining = _workbook_size;
 
@@ -205,13 +167,8 @@ public class TestDocumentInputStream
 
     /**
      * Test buffered read
-     *
-     * @exception IOException
      */
-
-    public void testBufferRead()
-        throws IOException
-    {
+    public void testBufferRead() throws IOException {
         DocumentInputStream stream = new DocumentInputStream(_workbook);
 
         try
@@ -275,23 +232,14 @@ public class TestDocumentInputStream
 
     /**
      * Test complex buffered read
-     *
-     * @exception IOException
      */
-
-    public void testComplexBufferRead()
-        throws IOException
-    {
+    public void testComplexBufferRead() throws IOException {
         DocumentInputStream stream = new DocumentInputStream(_workbook);
 
-        try
-        {
+        try {
             stream.read(null, 0, 1);
             fail("Should have caught NullPointerException");
-        }
-        catch (NullPointerException ignored)
-        {
-
+        } catch (IllegalArgumentException ignored) {
             // as expected
         }
 
@@ -391,13 +339,8 @@ public class TestDocumentInputStream
 
     /**
      * test skip
-     *
-     * @exception IOException
      */
-
-    public void testSkip()
-        throws IOException
-    {
+    public void testSkip() throws IOException {
         DocumentInputStream stream = new DocumentInputStream(_workbook);
 
         assertEquals(_workbook_size, stream.available());
@@ -421,18 +364,5 @@ public class TestDocumentInputStream
         assertEquals(_workbook_size,
                      stream.skip(2 + ( long ) Integer.MAX_VALUE));
         assertEquals(0, stream.available());
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println(
-            "Testing org.apache.poi.poifs.filesystem.DocumentInputStream");
-        junit.textui.TestRunner.run(TestDocumentInputStream.class);
     }
 }

@@ -20,8 +20,8 @@ package org.apache.poi.hssf.record.formula;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -48,12 +48,12 @@ public abstract class Ptg implements Cloneable {
 	 * Reads <tt>size</tt> bytes of the input stream, to create an array of <tt>Ptg</tt>s.
 	 * Extra data (beyond <tt>size</tt>) may be read if and <tt>ArrayPtg</tt>s are present.
 	 */
-	public static Ptg[] readTokens(int size, RecordInputStream in) {
+	public static Ptg[] readTokens(int size, LittleEndianInput in) {
 		List temp = new ArrayList(4 + size / 2);
 		int pos = 0;
 		List arrayPtgs = null;
 		while (pos < size) {
-			Ptg ptg = Ptg.createPtg( in );
+			Ptg ptg = Ptg.createPtg(in);
 			if (ptg instanceof ArrayPtg) {
 				if (arrayPtgs == null) {
 					arrayPtgs = new ArrayList(5);
@@ -77,7 +77,7 @@ public abstract class Ptg implements Cloneable {
 		return toPtgArray(temp);
 	}
 
-	public static Ptg createPtg(RecordInputStream in) {
+	public static Ptg createPtg(LittleEndianInput in) {
 		byte id = in.readByte();
 		
 		if (id < 0x20) {
@@ -97,7 +97,7 @@ public abstract class Ptg implements Cloneable {
 		return retval;
 	}
 
-	private static Ptg createClassifiedPtg(byte id, RecordInputStream in) {
+	private static Ptg createClassifiedPtg(byte id, LittleEndianInput in) {
 		
 		int baseId = id & 0x1F | 0x20;
 		
@@ -126,9 +126,9 @@ public abstract class Ptg implements Cloneable {
 				   Integer.toHexString(id) + " (" + ( int ) id + ")");
 	}
 
-	private static Ptg createBasePtg(byte id, RecordInputStream in) {
+	private static Ptg createBasePtg(byte id, LittleEndianInput in) {
 		switch(id) {
-			case 0x00:                return new UnknownPtg(); // TODO - not a real Ptg
+			case 0x00:                return new UnknownPtg(id); // TODO - not a real Ptg
 			case ExpPtg.sid:          return new ExpPtg(in);          // 0x01
 			case TblPtg.sid:          return new TblPtg(in);          // 0x02
 			case AddPtg.sid:          return AddPtg.instance;         // 0x03
@@ -228,32 +228,30 @@ public abstract class Ptg implements Cloneable {
 	 * @return number of bytes written
 	 */
 	public static int serializePtgs(Ptg[] ptgs, byte[] array, int offset) {
-		int pos = 0;
-		int size = ptgs.length;
+		int nTokens = ptgs.length;
+		
+		LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(array, offset);
 
 		List arrayPtgs = null;
 
-		for (int k = 0; k < size; k++) {
+		for (int k = 0; k < nTokens; k++) {
 			Ptg ptg = ptgs[k];
 
-			ptg.writeBytes(array, pos + offset);
+			ptg.write(out);
 			if (ptg instanceof ArrayPtg) {
 				if (arrayPtgs == null) {
 					arrayPtgs = new ArrayList(5);
 				}
 				arrayPtgs.add(ptg);
-				pos += ArrayPtg.PLAIN_TOKEN_SIZE;
-			} else {
-				pos += ptg.getSize();
 			}
 		}
 		if (arrayPtgs != null) {
 			for (int i=0;i<arrayPtgs.size();i++) {
 				ArrayPtg p = (ArrayPtg)arrayPtgs.get(i);
-				pos += p.writeTokenValueBytes(array, pos + offset);
+				p.writeTokenValueBytes(out);
 			}
 		}
-		return pos;
+		return out.getWriteIndex() - offset;
 	}
 
 	/**
@@ -266,38 +264,12 @@ public abstract class Ptg implements Cloneable {
 	 */
 //    public abstract int getDataSize();
 
-	public final byte[] getBytes()
-	{
-		int    size  = getSize();
-		byte[] bytes = new byte[ size ];
-
-		writeBytes(bytes, 0);
-		return bytes;
-	}
-	/** write this Ptg to a byte array*/
-	public abstract void writeBytes(byte [] array, int offset);
-
-	public void write(LittleEndianOutput out) {
-		out.write(getBytes()); // TODO - optimise - just a hack for the moment
-	}
+	public abstract void write(LittleEndianOutput out);
 	
 	/**
 	 * return a string representation of this token alone
 	 */
 	public abstract String toFormulaString();
-	/**
-	 * dump a debug representation (hexdump) to a string
-	 */
-	public final String toDebugString() {
-		byte[] ba = new byte[getSize()];
-		writeBytes(ba,0);
-		try {
-			return HexDump.dump(ba,0,0);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 
 	/** Overridden toString method to ensure object hash is not printed.
 	 * This helps get rid of gratuitous diffs when comparing two dumps

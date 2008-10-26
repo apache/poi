@@ -17,9 +17,9 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * AreaErr - handles deleted cell area references.
@@ -36,16 +36,16 @@ public final class AreaErrPtg extends OperandPtg {
 		unused2 = 0;
 	}
 
-	public AreaErrPtg(RecordInputStream in) {
+	public AreaErrPtg(LittleEndianInput in)  {
 		// 8 bytes unused:
 		unused1 = in.readInt();
 		unused2 = in.readInt();
 	}
 
-	public void writeBytes(byte[] array, int offset) {
-		LittleEndian.putByte(array, offset + 0, sid + getPtgClass());
-		LittleEndian.putInt(array, offset + 1, unused1);
-		LittleEndian.putInt(array, offset + 5, unused2);
+	public void write(LittleEndianOutput out) {
+		out.writeByte(sid + getPtgClass());
+		out.writeInt(unused1);
+		out.writeInt(unused2);
 	}
 
 	public String toFormulaString() {

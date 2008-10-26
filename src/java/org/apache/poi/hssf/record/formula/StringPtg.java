@@ -17,9 +17,8 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -31,29 +30,26 @@ import org.apache.poi.util.StringUtil;
  * @author Bernard Chesnoy
  */
 public final class StringPtg extends ScalarConstantPtg {
-    public final static int SIZE = 9;
-    public final static byte sid = 0x17;
-    private static final BitField fHighByte = BitFieldFactory.getInstance(0x01);
-    /** the character (")used in formulas to delimit string literals */
+     public final static byte sid = 0x17;
+    /** the character (") used in formulas to delimit string literals */
     private static final char FORMULA_DELIMITER = '"';
 
+    private final boolean _is16bitUnicode;
     /**
      * NOTE: OO doc says 16bit length, but BiffViewer says 8 Book says something
      * totally different, so don't look there!
      */
-    private final int field_1_length;
-    private final byte field_2_options;
     private final String field_3_string;
 
     /** Create a StringPtg from a stream */
-    public StringPtg(RecordInputStream in) {
-        field_1_length = in.readUByte();
-        field_2_options = in.readByte();
-        if (fHighByte.isSet(field_2_options)) {
-            field_3_string = in.readUnicodeLEString(field_1_length);
-        } else {
-            field_3_string = in.readCompressedUnicode(field_1_length);
-        }
+    public StringPtg(LittleEndianInput in)  {
+    	int nChars = in.readUByte(); // Note - nChars is 8-bit
+    	_is16bitUnicode = (in.readByte() & 0x01) != 0;
+    	if (_is16bitUnicode) {
+    		field_3_string = StringUtil.readUnicodeLE(in, nChars);
+    	} else {
+    		field_3_string = StringUtil.readCompressedUnicode(in, nChars);
+    	}
     }
 
     /**
@@ -69,32 +65,27 @@ public final class StringPtg extends ScalarConstantPtg {
             throw new IllegalArgumentException(
                     "String literals in formulas can't be bigger than 255 characters ASCII");
         }
-        field_2_options = (byte) fHighByte.setBoolean(0, StringUtil.hasMultibyte(value));
+        _is16bitUnicode = StringUtil.hasMultibyte(value);
         field_3_string = value;
-        field_1_length = value.length(); // for the moment, we support only ASCII strings in formulas we create
     }
 
     public String getValue() {
         return field_3_string;
     }
 
-    public void writeBytes(byte[] array, int offset) {
-        array[offset + 0] = sid;
-        array[offset + 1] = (byte) field_1_length;
-        array[offset + 2] = field_2_options;
-        if (fHighByte.isSet(field_2_options)) {
-            StringUtil.putUnicodeLE(getValue(), array, offset + 3);
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+        out.writeByte(field_3_string.length()); // Note - nChars is 8-bit
+        out.writeByte(_is16bitUnicode ? 0x01 : 0x00);
+        if (_is16bitUnicode) {
+        	StringUtil.putUnicodeLE(field_3_string, out);
         } else {
-            StringUtil.putCompressedUnicode(getValue(), array, offset + 3);
+        	StringUtil.putCompressedUnicode(field_3_string, out);
         }
     }
 
     public int getSize() {
-        if (fHighByte.isSet(field_2_options)) {
-            return 2 * field_1_length + 3;
-        } else {
-            return field_1_length + 3;
-        }
+    	return 3 +  field_3_string.length() * (_is16bitUnicode ? 2 : 1);
     }
 
     public String toFormulaString() {
