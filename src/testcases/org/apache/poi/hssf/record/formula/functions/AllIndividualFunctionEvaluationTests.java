@@ -32,6 +32,7 @@ public final class AllIndividualFunctionEvaluationTests {
 		result.addTestSuite(TestAverage.class);
 		result.addTestSuite(TestCountFuncs.class);
 		result.addTestSuite(TestDate.class);
+		result.addTestSuite(TestFind.class);
 		result.addTestSuite(TestFinanceLib.class);
 		result.addTestSuite(TestIndex.class);
 		result.addTestSuite(TestIndexFunctionFromSpreadsheet.class);
