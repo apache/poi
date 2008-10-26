@@ -17,16 +17,19 @@
         
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
+ * ftEnd (0x0000)<p/>
+ * 
  * The end data record is used to denote the end of the subrecords.<p/>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class EndSubRecord extends SubRecord {
-    public final static short      sid = 0x00;
-
+    public final static short sid = 0x0000; // Note - zero sid is somewhat unusual (compared to plain Records)
+    private static final int ENCODED_SIZE = 0;
 
     public EndSubRecord()
     {
@@ -35,9 +38,12 @@ public final class EndSubRecord extends SubRecord {
 
     /**
      * @param in unused (since this record has no data)
+     * @param size 
      */
-    public EndSubRecord(RecordInputStream in)
-    {
+    public EndSubRecord(LittleEndianInput in, int size) {
+        if ((size & 0xFF) != ENCODED_SIZE) { // mask out random crap in upper byte
+            throw new RecordFormatException("Unexpected size (" + size + ")");
+        }
     }
 
     public String toString()
@@ -50,18 +56,13 @@ public final class EndSubRecord extends SubRecord {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(sid);
+        out.writeShort(ENCODED_SIZE);
     }
 
-    public int getRecordSize()
-    {
-        return 4 ;
+	protected int getDataSize() {
+        return ENCODED_SIZE;
     }
 
     public short getSid()

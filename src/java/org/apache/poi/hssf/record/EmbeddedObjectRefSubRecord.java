@@ -26,6 +26,8 @@ import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -68,18 +70,23 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		return sid;
 	}
 
-	public EmbeddedObjectRefSubRecord(RecordInputStream in) {
+	public EmbeddedObjectRefSubRecord(LittleEndianInput in, int size) {
+		// TODO use 'size' param 
 		// Much guess-work going on here due to lack of any documentation.
 		// See similar source code in OOO:
 		// http://lxr.go-oo.org/source/sc/sc/source/filter/excel/xiescher.cxx
 		// 1223 void XclImpOleObj::ReadPictFmla( XclImpStream& rStrm, sal_uInt16 nRecSize )
 
 		int streamIdOffset = in.readShort(); // OOO calls this 'nFmlaLen'
+		int remaining = size - LittleEndian.SHORT_SIZE;
 
-		int dataLenAfterFormula = in.remaining() - streamIdOffset;
+		int dataLenAfterFormula = remaining - streamIdOffset;
 		int formulaSize = in.readUShort();
+		remaining -= LittleEndian.SHORT_SIZE;
 		field_1_unknown_int = in.readInt();
+		remaining -= LittleEndian.INT_SIZE;
 		byte[] formulaRawBytes = readRawData(in, formulaSize);
+		remaining -= formulaSize;
 		field_2_refPtg = readRefPtg(formulaRawBytes);
 		if (field_2_refPtg == null) {
 			// common case
@@ -91,15 +98,18 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		}
 
 		int stringByteCount;
-		if (in.remaining() >= dataLenAfterFormula + 3) {
+		if (remaining >= dataLenAfterFormula + 3) {
 			int tag = in.readByte();
+			remaining -= LittleEndian.BYTE_SIZE;
 			if (tag != 0x03) {
 				throw new RecordFormatException("Expected byte 0x03 here");
 			}
 			int nChars = in.readUShort();
+			remaining -= LittleEndian.SHORT_SIZE;
 			if (nChars > 0) {
 				 // OOO: the 4th way Xcl stores a unicode string: not even a Grbit byte present if length 0
-				field_3_unicode_flag		   = ( in.readByte() & 0x01 ) != 0;
+				field_3_unicode_flag = ( in.readByte() & 0x01 ) != 0;
+				remaining -= LittleEndian.BYTE_SIZE;
 				if (field_3_unicode_flag) {
 					field_4_ole_classname = in.readUnicodeLEString(nChars);
 					stringByteCount = nChars * 2;
@@ -115,28 +125,34 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 			field_4_ole_classname = null;
 			stringByteCount = 0;
 		}
+		remaining -= stringByteCount;
 		// Pad to next 2-byte boundary
 		if (((stringByteCount + formulaSize) % 2) != 0) {
 			int b = in.readByte();
+			remaining -= LittleEndian.BYTE_SIZE;
 			if (field_2_refPtg != null && field_4_ole_classname == null) {
 				field_4_unknownByte = new Byte((byte)b);
 			}
 		}
-		int nUnexpectedPadding = in.remaining() - dataLenAfterFormula;
+		int nUnexpectedPadding = remaining - dataLenAfterFormula;
 
 		if (nUnexpectedPadding > 0) {
 			System.err.println("Discarding " + nUnexpectedPadding + " unexpected padding bytes ");
 			readRawData(in, nUnexpectedPadding);
+			remaining-=nUnexpectedPadding;
 		}
 
 		// Fetch the stream ID
 		if (dataLenAfterFormula >= 4) {
 			field_5_stream_id = new Integer(in.readInt());
+			remaining -= LittleEndian.INT_SIZE;
 		} else {
 			field_5_stream_id = null;
 		}
 
-		field_6_unknown = in.readRemainder();
+		byte [] buf = new byte[remaining];
+		in.readFully(buf);
+		field_6_unknown = buf;
 	}
 
 	private static Ptg readRefPtg(byte[] formulaRawBytes) {
@@ -146,17 +162,17 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		System.arraycopy(formulaRawBytes, 0, data, 4, formulaRawBytes.length);
 		RecordInputStream in = new RecordInputStream(new ByteArrayInputStream(data));
 		in.nextRecord();
-	   	byte ptgSid = in.readByte();
+		byte ptgSid = in.readByte();
 		switch(ptgSid) {
 			case AreaPtg.sid:   return new AreaPtg(in);
 			case Area3DPtg.sid: return new Area3DPtg(in);
-			case RefPtg.sid:	return new RefPtg(in);
+			case RefPtg.sid:    return new RefPtg(in);
 			case Ref3DPtg.sid:  return new Ref3DPtg(in);
 		}
 		return null;
 	}
 
-	private static byte[] readRawData(RecordInputStream in, int size) {
+	private static byte[] readRawData(LittleEndianInput in, int size) {
 		if (size < 0) {
 			throw new IllegalArgumentException("Negative size (" + size + ")");
 		}
@@ -202,32 +218,32 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		}
 		return result +  field_6_unknown.length;
 	}
-	private int getDataSize() {
+	protected int getDataSize() {
 		int formulaSize = field_2_refPtg == null ? field_2_unknownFormulaData.length : field_2_refPtg.getSize();
 		int idOffset = getStreamIDOffset(formulaSize);
 		return getDataSize(idOffset);
 	}
 
-	public int serialize(int base, byte[] data) {
+	public void serialize(LittleEndianOutput out) {
 
 		int formulaSize = field_2_refPtg == null ? field_2_unknownFormulaData.length : field_2_refPtg.getSize();
 		int idOffset = getStreamIDOffset(formulaSize);
 		int dataSize = getDataSize(idOffset);
 		
 
-		LittleEndian.putUShort(data, base + 0, sid);
-		LittleEndian.putUShort(data, base + 2, dataSize);
+		out.writeShort(sid);
+		out.writeShort(dataSize);
 
-		LittleEndian.putUShort(data, base + 4, idOffset);
-		LittleEndian.putUShort(data, base + 6, formulaSize);
-		LittleEndian.putInt(data, base + 8, field_1_unknown_int);
+		out.writeShort(idOffset);
+		out.writeShort(formulaSize);
+		out.writeInt(field_1_unknown_int);
 
-		int pos = base+12;
+		int pos = 12;
 
 		if (field_2_refPtg == null) {
-			System.arraycopy(field_2_unknownFormulaData, 0, data, pos, field_2_unknownFormulaData.length);
+			out.write(field_2_unknownFormulaData);
 		} else {
-			field_2_refPtg.writeBytes(data, pos);
+			field_2_refPtg.write(out);
 		}
 	   	pos += formulaSize;
 
@@ -236,45 +252,39 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 			// don't write 0x03, stringLen, flag, text
 			stringLen = 0;
 		} else {
-			LittleEndian.putByte(data, pos, 0x03);
-			pos += 1;
+			out.writeByte(0x03);
+			pos+=1;
 			stringLen = field_4_ole_classname.length();
-			LittleEndian.putUShort(data, pos, stringLen);
-			pos += 2;
-			LittleEndian.putByte(data, pos, field_3_unicode_flag ? 0x01 : 0x00);
-			pos += 1;
+			out.writeShort(stringLen);
+			pos+=2;
+			out.writeByte(field_3_unicode_flag ? 0x01 : 0x00);
+			pos+=1;
 
 			if (field_3_unicode_flag) {
-				StringUtil.putUnicodeLE(field_4_ole_classname, data, pos);
+				StringUtil.putUnicodeLE(field_4_ole_classname, out);
 				pos += stringLen * 2;
 			} else {
-				StringUtil.putCompressedUnicode(field_4_ole_classname, data, pos);
+				StringUtil.putCompressedUnicode(field_4_ole_classname, out);
 				pos += stringLen;
 			}
 		}
 
 		// pad to next 2-byte boundary (requires 0 or 1 bytes)
-		switch(idOffset - (pos - 6 - base)) { // 6 for 3 shorts: sid, dataSize, idOffset
+		switch(idOffset - (pos - 6)) { // 6 for 3 shorts: sid, dataSize, idOffset
 			case 1:
-				LittleEndian.putByte(data, pos, field_4_unknownByte == null ? 0x00 : field_4_unknownByte.intValue());
+				out.writeByte(field_4_unknownByte == null ? 0x00 : field_4_unknownByte.intValue());
 				pos ++;
 			case 0:
 				break;
 			default:
-				throw new IllegalStateException("Bad padding calculation (" + idOffset + ", " + (pos-base) + ")");	
+				throw new IllegalStateException("Bad padding calculation (" + idOffset + ", " + pos + ")");	
 		}
 
 		if (field_5_stream_id != null) {
-    		LittleEndian.putInt(data, pos, field_5_stream_id.intValue());
+			out.writeInt(field_5_stream_id.intValue());
     		pos += 4;
 		}
-		System.arraycopy(field_6_unknown, 0, data, pos, field_6_unknown.length);
-
-		return 4 + dataSize;
-	}
-
-	public int getRecordSize() {
-		return 4 + getDataSize();
+		out.write(field_6_unknown);
 	}
 
 	/**
@@ -297,6 +307,9 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		return field_6_unknown;
 	}
 
+	public Object clone() {
+		return this; // TODO proper clone
+	}
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer();

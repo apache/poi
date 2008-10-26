@@ -19,7 +19,12 @@
 package org.apache.poi.hssf.record;
 
 
+import java.util.Arrays;
+
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+
+import org.apache.poi.util.HexRead;
 
 /**
  * Tests Subrecord components of an OBJ record.  Test data taken directly
@@ -27,73 +32,81 @@ import junit.framework.TestCase;
  *
  * @author Michael Zalewski (zalewski@optonline.net)
  */
-public class TestSubRecord
-        extends TestCase
-{
-    /*
-       The following is a dump of the OBJ record corresponding to an auto-filter
-       drop-down list. The 3rd subrecord beginning at offset 0x002e (type=0x0013)
-       does not conform to the documentation, because the length field is 0x1fee,
-       which is longer than the entire OBJ record.
+public final class TestSubRecord extends TestCase {
+	/*
+	   The following is a dump of the OBJ record corresponding to an auto-filter
+	   drop-down list. The 3rd subrecord beginning at offset 0x002e (type=0x0013)
+	   does not conform to the documentation, because the length field is 0x1fee,
+	   which is longer than the entire OBJ record.
 
-       00000000 15 00 12 00 14 00 01 00 01 21 00 00 00 00 3C 13 .........!....<.  Type=0x15 Len=0x0012 ftCmo
-       00000010 F4 03 00 00 00 00
-                                  0C 00 14 00 00 00 00 00 00 00 ................  Type=0x0c Len=0x0014 ftSbs
-       00000020 00 00 00 00 01 00 08 00 00 00 10 00 00 00
-                                                          13 00 ................  Type=0x13 Len=0x1FEE ftLbsData
-       00000030 EE 1F 00 00 08 00 08 00 01 03 00 00 0A 00 14 00 ................
-       00000040 6C 00
-                      00 00 00 00                               l.....            Type=0x00 Len=0x0000 ftEnd
-    */
+	   00000000 15 00 12 00 14 00 01 00 01 21 00 00 00 00 3C 13 .........!....<.  Type=0x15 Len=0x0012 ftCmo
+	   00000010 F4 03 00 00 00 00
+	                              0C 00 14 00 00 00 00 00 00 00 ................  Type=0x0c Len=0x0014 ftSbs
+	   00000020 00 00 00 00 01 00 08 00 00 00 10 00 00 00
+	                                                      13 00 ................  Type=0x13 Len=0x1FEE ftLbsData
+	   00000030 EE 1F 00 00 08 00 08 00 01 03 00 00 0A 00 14 00 ................
+	   00000040 6C 00
+	                  00 00 00 00                               l.....            Type=0x00 Len=0x0000 ftEnd
+	*/
 
-    byte[] dataAutoFilter = new byte[]{
-        // ftCmo
-        (byte) 0x15, (byte) 0x00, (byte) 0x12, (byte) 0x00, (byte) 0x14, (byte) 0x00, (byte) 0x01, (byte) 0x00
-        , (byte) 0x01, (byte) 0x00, (byte) 0x01, (byte) 0x21, (byte) 0x00, (byte) 0x00, (byte) 0x3c, (byte) 0x13
-        , (byte) 0xf4, (byte) 0x03, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
+	private static final byte[] dataAutoFilter 
+		= HexRead.readFromString(""
+			+ "5D 00 46 00 " // ObjRecord.sid, size=70
+			// ftCmo
+			+ "15 00 12 00 "
+			+ "14 00 01 00 01 00 01 21 00 00 3C 13 F4 03 00 00 00 00 "
+			// ftSbs (currently UnknownSubrecord)
+			+ "0C 00 14 00 "
+			+ "00 00 00 00 00 00 00 00 00 00 01 00 08 00 00 00 10 00 00 00 "
+			// ftLbsData (currently UnknownSubrecord)
+			+ "13 00 EE 1F 00 00 "
+			+ "08 00 08 00 01 03 00 00 0A 00 14 00 6C 00 "
+			// ftEnd
+			+ "00 00 00 00"
+		);
 
-        // ftSbs (currently UnknownSubrecord)
-        , (byte) 0x0c, (byte) 0x00
-        , (byte) 0x14, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
-        , (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x08, (byte) 0x00
-        , (byte) 0x00, (byte) 0x00, (byte) 0x10, (byte) 0x00, (byte) 0x00, (byte) 0x00
 
-        // ftLbsData (currently UnknownSubrecord)
-        , (byte) 0x13, (byte) 0x00
-        , (byte) 0xee, (byte) 0x1f, (byte) 0x00, (byte) 0x00, (byte) 0x08, (byte) 0x00, (byte) 0x08, (byte) 0x00
-        , (byte) 0x01, (byte) 0x03, (byte) 0x00, (byte) 0x00, (byte) 0x0a, (byte) 0x00, (byte) 0x14, (byte) 0x00
-        , (byte) 0x6c, (byte) 0x00
-
-        // ftEnd
-        , (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
-    };
-
-    public TestSubRecord( String name )
-    {
-        super( name );
-    }
-
-    public void testParseCmo()
-    {
-//jmh        Record r = SubRecord.createSubRecord( (short) 0x0015, (short) 0x0012, dataAutoFilter, 0x0000 );
-//jmh        assertEquals( "ftCmo is 22 bytes", 22, r.getRecordSize() );
-//jmh        assertEquals( "ftCmo is a CommonObjectDataSubRecord"
-//jmh                , "org.apache.poi.hssf.record.CommonObjectDataSubRecord"
-//jmh                , r.getClass().getName() );
-    }
-
-    public void testParseAutoFilterLbsData()
-    {
-//jmh        Record r = SubRecord.createSubRecord( (short) 0x0013, (short) 0x1fee, dataAutoFilter, 0x0032 );
-//jmh        assertEquals( "ftLbsData is 20 bytes", 20, r.getRecordSize() );
-    }
-
-    public void testParseEnd()
-    {
-//jmh        Record r = SubRecord.createSubRecord( (short) 0x0000, (short) 0x0000, dataAutoFilter, 0x0046 );
-//jmh        assertEquals( "ftEnd is 4 bytes", 4, r.getRecordSize() );
-//jmh        assertEquals( "ftEnd is a EndSubRecord"
-//jmh                , "org.apache.poi.hssf.record.EndSubRecord"
-//jmh                , r.getClass().getName() );
-    }
+	/**
+	 * Make sure that ftLbsData (which has abnormal size info) is parsed correctly.
+	 * If the size field is interpreted incorrectly, the resulting ObjRecord becomes way too big.
+	 * At the time of fixing (Oct-2008 svn r707447) {@link RecordInputStream} allowed  buffer 
+	 * read overruns, so the bug was mostly silent.
+	 */
+	public void testReadAll_bug45778() {
+		RecordInputStream in = TestcaseRecordInputStream.create(dataAutoFilter);
+		ObjRecord or = new ObjRecord(in);
+		byte[] data2 = or.serialize();
+		if (data2.length == 8228) {
+			throw new AssertionFailedError("Identified bug 45778");
+		}
+		assertEquals(74, data2.length);
+		assertTrue(Arrays.equals(dataAutoFilter, data2));
+	}
+	
+	public void testReadManualComboWithFormula() {
+		byte[] data = HexRead.readFromString(""
+   			+ "5D 00 66 00 "
+   			+ "15 00 12 00 14 00 02 00 11 20 00 00 00 00 "
+   			+ "20 44 C6 04 00 00 00 00 0C 00 14 00 04 F0 C6 04 "
+   			+ "00 00 00 00 00 00 01 00 06 00 00 00 10 00 00 00 "
+   			+ "0E 00 0C 00 05 00 80 44 C6 04 24 09 00 02 00 02 "
+   			+ "13 00 DE 1F 10 00 09 00 80 44 C6 04 25 0A 00 0F "
+   			+ "00 02 00 02 00 02 06 00 03 00 08 00 00 00 00 00 "
+   			+ "08 00 00 00 00 00 00 00 " // TODO sometimes last byte is non-zero
+   		);
+		
+		RecordInputStream in = TestcaseRecordInputStream.create(data);
+		ObjRecord or = new ObjRecord(in);
+		byte[] data2 = or.serialize();
+		if (data2.length == 8228) {
+			throw new AssertionFailedError("Identified bug XXXXX");
+		}
+		assertEquals("Encoded length", data.length, data2.length);
+		for (int i = 0; i < data.length; i++) {
+			if (data[i] != data2[i]) {
+				throw new AssertionFailedError("Encoded data differs at index " + i);
+			}
+		}
+		assertTrue(Arrays.equals(data, data2));
+	}
 }

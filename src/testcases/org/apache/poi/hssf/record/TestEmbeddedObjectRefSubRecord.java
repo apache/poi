@@ -42,13 +42,13 @@ public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 		RecordInputStream in = new RecordInputStream(new ByteArrayInputStream(src));
 		in.nextRecord();
 
-		EmbeddedObjectRefSubRecord record1 = new EmbeddedObjectRefSubRecord(in);
+		EmbeddedObjectRefSubRecord record1 = new EmbeddedObjectRefSubRecord(in, src.length-4);
 
 		byte[] ser = record1.serialize();
 
 		RecordInputStream in2 = new RecordInputStream(new ByteArrayInputStream(ser));
 		in2.nextRecord();
-		EmbeddedObjectRefSubRecord record2 = new EmbeddedObjectRefSubRecord(in2);
+		EmbeddedObjectRefSubRecord record2 = new EmbeddedObjectRefSubRecord(in2, ser.length-4);
 
 		assertTrue(Arrays.equals(src, ser));
 		assertEquals(record1.getOLEClassName(), record2.getOLEClassName());
@@ -64,7 +64,7 @@ public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 		byte[] ser = record1.serialize();
 		RecordInputStream in2 = new RecordInputStream(new ByteArrayInputStream(ser));
 		in2.nextRecord();
-		EmbeddedObjectRefSubRecord record2 = new EmbeddedObjectRefSubRecord(in2);
+		EmbeddedObjectRefSubRecord record2 = new EmbeddedObjectRefSubRecord(in2, ser.length-4);
 
 		assertEquals(record1.getOLEClassName(), record2.getOLEClassName());
 		assertEquals(record1.getStreamId(), record2.getStreamId());
@@ -88,7 +88,7 @@ public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 		RecordInputStream in = new RecordInputStream(new ByteArrayInputStream(data));
 		in.nextRecord();
 
-		EmbeddedObjectRefSubRecord rec = new EmbeddedObjectRefSubRecord(in);
+		EmbeddedObjectRefSubRecord rec = new EmbeddedObjectRefSubRecord(in, data.length-4);
 		byte[] ser2 = rec.serialize();
 		assertTrue(Arrays.equals(data, ser2));
 
@@ -129,7 +129,7 @@ public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 	private static void confirmRead(byte[] data, int i) {
 		RecordInputStream in = TestcaseRecordInputStream.create(EmbeddedObjectRefSubRecord.sid, data);
 
-		EmbeddedObjectRefSubRecord rec = new EmbeddedObjectRefSubRecord(in);
+		EmbeddedObjectRefSubRecord rec = new EmbeddedObjectRefSubRecord(in, data.length);
 		byte[] ser2 = rec.serialize();
 		byte[] d2 = (byte[]) data.clone(); // remove sid+len for compare
 		System.arraycopy(ser2, 4, d2, 0, d2.length);

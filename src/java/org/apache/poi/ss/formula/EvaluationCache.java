@@ -52,16 +52,21 @@ final class EvaluationCache {
 
 	public void notifyUpdateCell(int bookIndex, int sheetIndex, EvaluationCell cell) {
 		FormulaCellCacheEntry fcce = _formulaCellCache.get(cell);
-		
+
 		Loc loc = new Loc(bookIndex, sheetIndex, cell.getRowIndex(), cell.getColumnIndex());
 		PlainValueCellCacheEntry pcce = _plainCellCache.get(loc);
 
 		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
 			if (fcce == null) {
-				if (pcce == null) {
-					updateAnyBlankReferencingFormulas(bookIndex, sheetIndex, cell.getRowIndex(), cell.getColumnIndex());
-				}
 				fcce = new FormulaCellCacheEntry();
+				if (pcce == null) {
+					if (_evaluationListener != null) {
+						_evaluationListener.onChangeFromBlankValue(sheetIndex, cell.getRowIndex(),
+								cell.getColumnIndex(), cell, fcce);
+					}
+					updateAnyBlankReferencingFormulas(bookIndex, sheetIndex, cell.getRowIndex(),
+							cell.getColumnIndex());
+				}
 				_formulaCellCache.put(cell, fcce);
 			} else {
 				fcce.recurseClearCachedFormulaResults(_evaluationListener);
@@ -77,17 +82,27 @@ final class EvaluationCache {
 		} else {
 			ValueEval value = WorkbookEvaluator.getValueFromNonFormulaCell(cell);
 			if (pcce == null) {
-				if (fcce == null) {
-					updateAnyBlankReferencingFormulas(bookIndex, sheetIndex, cell.getRowIndex(), cell.getColumnIndex());
-				}
-				pcce = new PlainValueCellCacheEntry(value);
-				_plainCellCache.put(loc, pcce);
-				if (_evaluationListener != null) {
-					_evaluationListener.onReadPlainValue(sheetIndex, cell.getRowIndex(), cell.getColumnIndex(), pcce);
+				if (value != BlankEval.INSTANCE) {
+					// only cache non-blank values in the plain cell cache
+					// (dependencies on blank cells are managed by
+					// FormulaCellCacheEntry._usedBlankCellGroup)
+					pcce = new PlainValueCellCacheEntry(value);
+					if (fcce == null) {
+						if (_evaluationListener != null) {
+							_evaluationListener.onChangeFromBlankValue(sheetIndex, cell
+									.getRowIndex(), cell.getColumnIndex(), cell, pcce);
+						}
+						updateAnyBlankReferencingFormulas(bookIndex, sheetIndex,
+								cell.getRowIndex(), cell.getColumnIndex());
+					}
+					_plainCellCache.put(loc, pcce);
 				}
 			} else {
-				if(pcce.updateValue(value)) {
+				if (pcce.updateValue(value)) {
 					pcce.recurseClearCachedFormulaResults(_evaluationListener);
+				}
+				if (value == BlankEval.INSTANCE) {
+					_plainCellCache.remove(loc);
 				}
 			}
 			if (fcce == null) {

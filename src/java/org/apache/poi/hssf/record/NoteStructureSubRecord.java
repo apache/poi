@@ -17,10 +17,13 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.*;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Represents a NoteStructure (0xD) sub record.
+ * ftNts (0x000D)<p/>
+ * Represents a NoteStructure sub record.
  *
  * <p>
  * The docs say nothing about it. The length of this record is always 26 bytes.
@@ -28,45 +31,49 @@ import org.apache.poi.util.*;
  *
  * @author Yegor Kozlov
  */
-public class NoteStructureSubRecord
-    extends SubRecord
-{
-    public final static short      sid                             = 0x0D;
+public final class NoteStructureSubRecord extends SubRecord {
+    public final static short sid = 0x0D;
+    private static final int ENCODED_SIZE = 22;
 
     private byte[] reserved;
 
     /**
      * Construct a new <code>NoteStructureSubRecord</code> and
      * fill its data with the default values
+     * @param size 
+     * @param in 
      */
     public NoteStructureSubRecord()
     {
         //all we know is that the the length of <code>NoteStructureSubRecord</code> is always 22 bytes
-        reserved = new byte[22];
+        reserved = new byte[ENCODED_SIZE];
     }
 
     /**
      * Read the record data from the supplied <code>RecordInputStream</code>
      */
-    public NoteStructureSubRecord(RecordInputStream in)
-    {
+    public NoteStructureSubRecord(LittleEndianInput in, int size) {
+        if (size != ENCODED_SIZE) {
+            throw new RecordFormatException("Unexpected size (" + size + ")");
+        }
         //just grab the raw data
-        reserved = in.readRemainder();
+        byte[] buf = new byte[size];
+        in.readFully(buf);
+        reserved = buf;
     }
 
     /**
      * Convert this record to string.
-     * Used by BiffViewer and other utulities.
+     * Used by BiffViewer and other utilities.
      */
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
 
-        String nl = System.getProperty("line.separator");
-        buffer.append("[ftNts ]" + nl);
-        buffer.append("  size     = ").append(getRecordSize()).append(nl);
-        buffer.append("  reserved = ").append(HexDump.toHex(reserved)).append(nl);
-        buffer.append("[/ftNts ]" + nl);
+        buffer.append("[ftNts ]").append("\n");
+        buffer.append("  size     = ").append(getDataSize()).append("\n");
+        buffer.append("  reserved = ").append(HexDump.toHex(reserved)).append("\n");
+        buffer.append("[/ftNts ]").append("\n");
         return buffer.toString();
     }
 
@@ -78,18 +85,14 @@ public class NoteStructureSubRecord
      *
      * @return size of the record
      */
-    public int serialize(int offset, byte[] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-        System.arraycopy(reserved, 0, data, offset + 4, getRecordSize() - 4);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(sid);
+        out.writeShort(reserved.length);
+        out.write(reserved);
     }
 
-    public int getRecordSize()
-    {
-        return 4 + reserved.length;
+	protected int getDataSize() {
+        return reserved.length;
     }
 
     /**
