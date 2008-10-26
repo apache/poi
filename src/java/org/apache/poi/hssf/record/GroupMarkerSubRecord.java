@@ -18,26 +18,30 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
+ * ftGmo (0x0006)<p/>
  * The group marker record is used as a position holder for groups.
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class GroupMarkerSubRecord extends SubRecord {
-    public final static short      sid                             = 0x0006;
+public final class GroupMarkerSubRecord extends SubRecord {
+    public final static short sid = 0x0006;
 
-    private byte[] reserved = new byte[0];    // would really love to know what goes in here.
+    private static final byte[] EMPTY_BYTE_ARRAY = { };
 
-    public GroupMarkerSubRecord()
-    {
+    private byte[] reserved;    // would really love to know what goes in here.
 
+    public GroupMarkerSubRecord() {
+        reserved = EMPTY_BYTE_ARRAY;
     }
 
-    public GroupMarkerSubRecord(RecordInputStream in)
-    {
-        reserved = in.readRemainder();
+    public GroupMarkerSubRecord(LittleEndianInput in, int size) {
+        byte[] buf = new byte[size];
+        in.readFully(buf);
+        reserved = buf;
     }
 
     public String toString()
@@ -51,18 +55,14 @@ public class GroupMarkerSubRecord extends SubRecord {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-        System.arraycopy(reserved, 0, data, offset + 4, getRecordSize() - 4);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(sid);
+        out.writeShort(reserved.length);
+        out.write(reserved);
     }
 
-    public int getRecordSize()
-    {
-        return 4 + reserved.length;
+	protected int getDataSize() {
+        return reserved.length;
     }
 
     public short getSid()
