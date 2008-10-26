@@ -145,6 +145,14 @@ under the License.
   <property name="ooxml.xsds.url" value="http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%20Part%204%20(DOCX).zip" />
   <property name="ooxml.xsds.jar" location="${ooxml.lib}/ooxml-schemas.jar"/>
 
+  <!--
+   YK: OOXML requires two dependencies that are not in the Maven repository. 
+  -->
+  <property name="maven.ooxml.xsds.version.id" value="1.0"/>
+  <property name="maven.ooxml.xsds.jar" value="ooxml-schemas-${maven.ooxml.xsds.version.id}.jar"/>
+  <property name="maven.openxml4j.version.id" value="1.0-beta"/>
+  <property name="maven.openxml4j.jar" value="openxml4j-${maven.openxml4j.version.id}.jar"/>
+  
   <property name="build.site" location="build/tmp/site/build/site"/>
   <property name="build.site.src" location="build/tmp/site"/>
   <property name="junit.report.dir" location="${build.site}/junit"/>
@@ -156,6 +164,7 @@ under the License.
   <property name="mavendist.dir" location="build/maven-dist"/>
   <property name="mavendist.poi.dir" location="build/maven-dist/poi"/>
   <property name="mavendist.oap.dir" location="build/maven-dist/org.apache.poi"/>
+  <property name="mavendist.ooxml.dir" location="build/maven-ooxml-dependencies"/>
   <property name="jar.name" value="poi"/>
   <property name="version.id" value="3.5-beta4"/>
   <property name="halt.on.test.failure" value="true"/>
@@ -411,7 +420,7 @@ under the License.
 		</xmlbean>
 	</target>
 
-  <target name="compile" depends="init, compile-main, compile-main-14, 
+  <target name="compile" depends="init, compile-main, 
     compile-scratchpad, compile-contrib, compile-examples"
     description="Compiles the POI main classes, scratchpad, contrib, and examples"/>
 
@@ -1102,6 +1111,9 @@ FORREST_HOME environment variable!</echo>
 		<copy
 			file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"
 			tofile="${mavendist.oap.dir}/jars/${jar.name}-scratchpad-${version.id}.jar" />
+		<copy
+			file="${dist.dir}/${jar.name}-ooxml-${version.id}-${DSTAMP}.jar"
+			tofile="${mavendist.oap.dir}/jars/${jar.name}-ooxml-${version.id}.jar" />
 
 		<!-- TODO: Decide about source jars, and copy them if we have some -->
 
@@ -1157,6 +1169,22 @@ FORREST_HOME environment variable!</echo>
 				</tokenfilter>
 			</filterchain>
 		</copy>
+		<!-- And the ooxml pom -->
+		<copy 
+      file="maven/poi-ooxml.pom" 
+			tofile="${mavendist.oap.dir}/poms/${jar.name}-ooxml-${version.id}.pom" 
+		>
+			<filterchain>
+				<replacetokens>
+					<token key="VERSION" value="${version.id}" />
+					<token key="ARTIFICAT" value="poi-ooxml" />
+				</replacetokens>
+				<tokenfilter>
+					<replaceregex pattern="..-- START_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
+					<replaceregex pattern="..-- END_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
+				</tokenfilter>
+			</filterchain>
+		</copy>
 
 		<!-- Build the poi => org.apache.poi redirect poms -->
 		<!-- Copy from the base file, substituting in the version+artifact -->
@@ -1191,7 +1219,29 @@ FORREST_HOME environment variable!</echo>
 		<!-- And that's it for maven -->
 	</target>
 
-    <target name="jar-14" depends="compile-main-14, compile-version" description="Creates the jdk 1.4 only jar file">
+  <target name="maven-ooxml-dependencies" description="Builds the POM files for OpenXml4J and compiled XmlBeans generated from the Ecma supplied xsds">
+    <!-- OpenXml4J -->
+    <copy file="${ooxml.jar6.dir}" tofile="${mavendist.ooxml.dir}/org.openxml4j/jars/${maven.openxml4j.jar}" />
+    <copy file="maven/openxml4j.pom" tofile="${mavendist.ooxml.dir}/org.openxml4j/poms/openxml4j-${maven.openxml4j.version.id}.pom">
+			<filterchain>
+				<replacetokens>
+					<token key="VERSION" value="${maven.openxml4j.version.id}" />
+				</replacetokens>
+			</filterchain>
+		</copy>
+
+    <!-- ooxml-schemas -->
+    <copy file="${ooxml.xsds.jar}" tofile="${mavendist.ooxml.dir}/org.apache.poi/jars/${maven.ooxml.xsds.jar}" />
+    <copy file="maven/ooxml-schemas.pom" tofile="${mavendist.ooxml.dir}/org.apache.poi/poms/ooxml-schemas-${maven.ooxml.xsds.version.id}.pom">
+			<filterchain>
+				<replacetokens>
+					<token key="VERSION" value="${maven.ooxml.xsds.version.id}" />
+				</replacetokens>
+			</filterchain>
+		</copy>
+	</target>
+
+  <target name="jar-14" depends="compile-main-14, compile-version" description="Creates the jdk 1.4 only jar file">
         <jar destfile="${dist.dir}/${jar.name}-jdk14-${version.id}-${DSTAMP}.jar">
 			<fileset dir="${main14.output.dir}" />
 			<fileset dir="legal/" />
@@ -1205,8 +1255,9 @@ FORREST_HOME environment variable!</echo>
                 <attribute name="Implementation-Vendor" value="Apache"/>
             </manifest>        
         </jar>
-	</target>
-    <target name="jar" depends="compile, compile-version, jar-14, jar-ooxml" description="Creates jar files for distribution">
+  </target>
+
+  <target name="jar" depends="compile, compile-version, jar-ooxml" description="Creates jar files for distribution">
         <jar destfile="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar">
 			<fileset dir="${main.output.dir}" />
 			<fileset dir="legal/" />
