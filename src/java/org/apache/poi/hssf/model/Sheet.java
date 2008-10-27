@@ -68,7 +68,7 @@ import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.PositionTrackingVisitor;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.formula.FormulaShifter;
-import org.apache.poi.hssf.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;

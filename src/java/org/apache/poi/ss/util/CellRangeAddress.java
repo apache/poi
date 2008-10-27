@@ -16,6 +16,7 @@
 
 package org.apache.poi.ss.util;
 
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.util.LittleEndian;
 
@@ -41,6 +42,17 @@ public class CellRangeAddress extends CellRangeAddressBase {
 		LittleEndian.putUShort(data, offset + 4, getFirstColumn());
 		LittleEndian.putUShort(data, offset + 6, getLastColumn());
 		return ENCODED_SIZE;
+	}
+	public CellRangeAddress(RecordInputStream in) {
+		super(readUShortAndCheck(in), in.readUShort(), in.readUShort(), in.readUShort());
+	}
+
+	private static int readUShortAndCheck(RecordInputStream in) {
+		if (in.remaining() < ENCODED_SIZE) {
+			// Ran out of data
+			throw new RuntimeException("Ran out of data reading CellRangeAddress");
+		}
+		return in.readUShort();
 	}
 
 	public CellRangeAddress copy() {

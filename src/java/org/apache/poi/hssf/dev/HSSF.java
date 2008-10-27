@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.dev;
 
 import java.io.FileInputStream;
@@ -30,7 +29,7 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.util.Region;
 
@@ -222,7 +221,7 @@ public class HSSF
         if (args.length < 2)
         {
 
-/*            try
+            try
             {
                 HSSF hssf = new HSSF(args[ 0 ]);
 
@@ -231,26 +230,30 @@ public class HSSF
 
                 for (int k = 0; k < wb.getNumberOfSheets(); k++)
                 {
-                    System.out.println("Sheet " + k);
                     HSSFSheet sheet = wb.getSheetAt(k);
                     int       rows  = sheet.getPhysicalNumberOfRows();
-
+                    System.out.println("Sheet " + k + " \""
+                                       + wb.getSheetName(k) + "\" has "
+                                       + rows + " row(s).");
                     for (int r = 0; r < rows; r++)
                     {
-                        HSSFRow row   = sheet.getPhysicalRowAt(r);
-                        int     cells = row.getPhysicalNumberOfCells();
-
-                        System.out.println("ROW " + row.getRowNum());
+                        HSSFRow row   = sheet.getRow(r);
+                        int     cells = (row != null) ? row.getPhysicalNumberOfCells() : 0;
+                        if (row != null) {
+                          System.out.println("\nROW " + row.getRowNum()
+                                             + " has " + cells + " cell(s).");
+                        }
                         for (int c = 0; c < cells; c++)
                         {
-                            HSSFCell cell  = row.getPhysicalCellAt(c);
+                            HSSFCell cell  = row.getCell(c);
                             String   value = null;
 
                             switch (cell.getCellType())
                             {
 
                                 case HSSFCell.CELL_TYPE_FORMULA :
-                                    value = "FORMULA ";
+                                    value = "FORMULA value="
+                                    + cell.getCellFormula();
                                     break;
 
                                 case HSSFCell.CELL_TYPE_NUMERIC :
@@ -275,7 +278,7 @@ public class HSSF
             catch (Exception e)
             {
                 e.printStackTrace();
-            }*/
+            }
         }
         else if (args.length == 2)
         {

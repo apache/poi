@@ -50,7 +50,7 @@ public final class MergeCellsRecord extends Record {
      	int nRegions = in.readUShort();
     	CellRangeAddress[] cras = new CellRangeAddress[nRegions];
     	for (int i = 0; i < nRegions; i++) {
-			cras[i] = new org.apache.poi.hssf.util.CellRangeAddress(in);
+			cras[i] = new CellRangeAddress(in);
 		}
     	_numberOfRegions = nRegions;
     	_startIndex = 0;
