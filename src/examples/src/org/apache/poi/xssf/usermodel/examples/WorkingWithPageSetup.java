@@ -67,11 +67,6 @@ public class WorkingWithPageSetup {
         // Set the the repeating rows and columns on the second sheet.
         wb.setRepeatingRowsAndColumns(1,4,5,1,2);
 
-        // Set the the repeating rows and columns on the second sheet
-        wb.setRepeatingRowsAndColumns(1, 4, 5, 1, 2);
-
-
-
         //set the print area for the first sheet
         wb.setPrintArea(0, 1, 2, 0, 3);
 

@@ -208,8 +208,8 @@ public final class TestXSSFWorkbook extends TestCase {
 		
 		
 		nwb.setRepeatingRowsAndColumns(1, -1, -1, -1, -1);
-		
-		
+
+
 		if (false) {
 			// In case you fancy checking in excel, to ensure it
 			//  won't complain about the file now
