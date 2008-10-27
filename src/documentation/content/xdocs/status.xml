@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.5-beta4" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">46065 - added implementation for VALUE function</action>
            <action dev="POI-DEVELOPERS" type="add">45966 - added implementation for FIND function</action>
            <action dev="POI-DEVELOPERS" type="fix">45778 - fixed ObjRecord to read ftLbsData properly</action>
            <action dev="POI-DEVELOPERS" type="fix">46053 - fixed evaluation cache dependency analysis when changing blank cells</action>
