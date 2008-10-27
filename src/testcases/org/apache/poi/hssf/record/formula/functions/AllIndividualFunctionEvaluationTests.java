@@ -50,6 +50,7 @@ public final class AllIndividualFunctionEvaluationTests {
 		result.addTestSuite(TestStatsLib.class);
 		result.addTestSuite(TestTFunc.class);
 		result.addTestSuite(TestTrim.class);
+		result.addTestSuite(TestValue.class);
 		result.addTestSuite(TestXYNumericFunction.class);
 		return result;
 	}
