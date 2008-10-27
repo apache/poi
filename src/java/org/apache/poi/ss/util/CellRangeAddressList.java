@@ -18,6 +18,8 @@ package org.apache.poi.ss.util;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -51,7 +53,17 @@ public class CellRangeAddressList {
 		this();
 		addCellRangeAddress(firstRow, firstCol, lastRow, lastCol);
 	}
+	/**
+	 * @param in the RecordInputstream to read the record from
+	 */
+	public CellRangeAddressList(RecordInputStream in) {
+		this();
+		int nItems = in.readUShort();
 
+		for (int k = 0; k < nItems; k++) {
+			_list.add(new CellRangeAddress(in));
+		}
+	}
 	/**
 	 * Get the number of following ADDR structures. The number of this
 	 * structures is automatically set when reading an Excel file and/or

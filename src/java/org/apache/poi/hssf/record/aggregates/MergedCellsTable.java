@@ -22,8 +22,8 @@ import java.util.List;
 
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.MergeCellsRecord;
-import org.apache.poi.hssf.util.CellRangeAddress;
-import org.apache.poi.hssf.util.CellRangeAddressList;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddressList;
 
 /**
  * 
@@ -51,7 +51,8 @@ public final class MergedCellsTable extends RecordAggregate {
 			MergeCellsRecord mcr = (MergeCellsRecord) rs.getNext();
 			int nRegions = mcr.getNumAreas();
 			for (int i = 0; i < nRegions; i++) {
-				temp.add(mcr.getAreaAt(i));
+				CellRangeAddress cra = mcr.getAreaAt(i);
+				temp.add(cra);
 			}
 		}
 	}
@@ -102,7 +103,8 @@ public final class MergedCellsTable extends RecordAggregate {
 	private void addMergeCellsRecord(MergeCellsRecord mcr) {
 		int nRegions = mcr.getNumAreas();
 		for (int i = 0; i < nRegions; i++) {
-			_mergedRegions.add(mcr.getAreaAt(i));
+			CellRangeAddress cra = mcr.getAreaAt(i);
+			_mergedRegions.add(cra);
 		}
 	}
 
@@ -130,5 +132,4 @@ public final class MergedCellsTable extends RecordAggregate {
 	public int getNumberOfMergedRegions() {
 		return _mergedRegions.size();
 	}
-
 }

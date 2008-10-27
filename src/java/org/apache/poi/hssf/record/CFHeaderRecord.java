@@ -51,8 +51,8 @@ public final class CFHeaderRecord extends Record {
 	{
 		field_1_numcf = in.readShort();
 		field_2_need_recalculation = in.readShort();
-		field_3_enclosing_cell_range = new org.apache.poi.hssf.util.CellRangeAddress(in);
-		field_4_cell_ranges = new org.apache.poi.hssf.util.CellRangeAddressList(in);
+		field_3_enclosing_cell_range = new CellRangeAddress(in);
+		field_4_cell_ranges = new CellRangeAddressList(in);
 	}
 	
 	public int getNumberOfConditionalFormats()

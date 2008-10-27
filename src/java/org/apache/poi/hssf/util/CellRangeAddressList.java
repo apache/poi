@@ -33,6 +33,8 @@ import org.apache.poi.util.LittleEndian;
  * range address (called an ADDR structure) contains 4 16-bit-values.
  * </p>
  * 
+ * @deprecated use {@link org.apache.poi.ss.util.CellRangeAddressList}
+ * 
  * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
  */
 public class CellRangeAddressList extends org.apache.poi.ss.util.CellRangeAddressList {
