@@ -215,6 +215,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
+     * Returns the name of this sheet
+     * 
+     * @return the name of this sheet
+     */
+    public String getSheetName() {
+        return sheet.getName();
+    }
+
+    /**
      * Sdds a merged region of cells (hence those cells form one)
      *
      * @param cra (rowfrom/colfrom-rowto/colto) to merge

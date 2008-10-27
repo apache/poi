@@ -375,7 +375,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @return named range high level
      */
     public XSSFName createName() {
-        XSSFName name = new XSSFName(this);
+        XSSFName name = new XSSFName(CTDefinedName.Factory.newInstance(), this);
         namedRanges.add(name);
         return name;
     }
@@ -488,6 +488,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return pictures;
     }
 
+    /**
+     * gGet the cell style object at the given index
+     *
+     * @param idx  index within the set of styles
+     * @return XSSFCellStyle object at the index
+     */
     public XSSFCellStyle getCellStyleAt(short idx) {
         return stylesSource.getStyleAt(idx);
     }
@@ -699,35 +705,29 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
 
     /**
-     * removes the name
+     * Removes the name by its index
      *
-     * @param nameIndex name index
+     * @param nameIndex 0-based index of the name to remove.
      */
     public void removeName(int nameIndex) {
-        if (namedRanges.size() > nameIndex) {
-            XSSFName name = getNameAt(nameIndex);
-            int cont = 0;
-            for (XSSFName nameRange : namedRanges) {
-                if (nameRange.getReference().equals(name.getReference())) {
-                    namedRanges.remove(cont);
-                    getDefinedNames().removeDefinedName(nameIndex);
-                    break;
-                }
-                cont++;
-            }
-        }
+        namedRanges.remove(nameIndex);
     }
 
     /**
-     * removes the name
+     * Remove the named range by its name
      *
-     * @param name range
-     *             name index
+     * @param name named range name
+     * @throws IllegalArgumentException if the name was not found
      */
     public void removeName(String name) {
-        //TODO
-        //int index=getNameIndex(name);
-        //removeName(index);
+        for (int i = 0; i < namedRanges.size(); i++) {
+            XSSFName nm = namedRanges.get(i);
+            if(nm.getNameName().equalsIgnoreCase(name)) {
+                removeName(i);
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Named range was not found: " + name);
     }
 
     /**
@@ -852,9 +852,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             name = createBuiltInName(XSSFName.BUILTIN_PRINT_AREA, sheetIndex);
             namedRanges.add(name);
         }
-	//short externSheetIndex = getWorkbook().checkExternSheet(sheetIndex);
-	//name.setExternSheetNumber(externSheetIndex);
-	name.setReference(reference);
+        //short externSheetIndex = getWorkbook().checkExternSheet(sheetIndex);
+        //name.setExternSheetNumber(externSheetIndex);
+        name.setReference(reference);
     }
 
     /**
@@ -948,11 +948,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return "'" + sheetName + "'!$" + colRef.getCellRefParts()[2] + "$" + colRef.getCellRefParts()[1] + ":$" + colRef2.getCellRefParts()[2] + "$" + colRef2.getCellRefParts()[1];
     }
 
-    private CTDefinedNames getDefinedNames() {
-        return workbook.getDefinedNames() == null ? workbook.addNewDefinedNames() : workbook.getDefinedNames();
-    }
-
-
     private XSSFName getBuiltInName(String builtInCode, int sheetNumber) {
         for (XSSFName name : namedRanges) {
             if (name.getNameName().equalsIgnoreCase(builtInCode) && name.getLocalSheetId() == sheetNumber) {
@@ -972,7 +967,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             throw new IllegalArgumentException("Sheet number [" + sheetNumber + "]is not valid ");
         }
 
-        CTDefinedName nameRecord = getDefinedNames().addNewDefinedName();
+        CTDefinedNames names = workbook.getDefinedNames() == null ? workbook.addNewDefinedNames() : workbook.getDefinedNames();
+        CTDefinedName nameRecord = names.addNewDefinedName();
         nameRecord.setName(builtInName);
         nameRecord.setLocalSheetId(sheetNumber);
 
@@ -1068,7 +1064,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
 
     /**
-     * Method write - write out this workbook to an Outputstream.
+     * Write out this workbook to an Outputstream.
      *
      * @param stream - the java OutputStream you wish to write the XLS to
      *
