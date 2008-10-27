@@ -355,14 +355,14 @@ public final class RecordInputStream extends InputStream implements LittleEndian
     //growable array of the data.
     ByteArrayOutputStream out = new ByteArrayOutputStream(2*MAX_RECORD_DATA_SIZE);
 
-    while (isContinueNext()) {
+    while (true) {
       byte[] b = readRemainder();
       out.write(b, 0, b.length);
+      if (!isContinueNext()) {
+          break;
+      }
       nextRecord();
     }
-    byte[] b = readRemainder();
-    out.write(b, 0, b.length);
-
     return out.toByteArray();
   }
 
