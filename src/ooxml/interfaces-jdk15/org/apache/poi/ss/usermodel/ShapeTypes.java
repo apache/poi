@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.usermodel;
+package org.apache.poi.ss.usermodel;
 
 /**
  * All known types of automatic shapes in DrawingML

@@ -17,7 +17,6 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.CommentsSource;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.xssf.usermodel.helpers.RichTextStringHelper;
 import org.apache.poi.xssf.model.CommentsTable;

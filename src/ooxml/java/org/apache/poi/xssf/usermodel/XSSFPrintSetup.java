@@ -17,7 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.PrintSetup;
+import org.apache.poi.ss.usermodel.*;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 

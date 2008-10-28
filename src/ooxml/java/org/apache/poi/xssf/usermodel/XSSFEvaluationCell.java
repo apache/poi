@@ -32,7 +32,7 @@ final class XSSFEvaluationCell implements EvaluationCell {
 
 	public XSSFEvaluationCell(XSSFCell cell) {
 		_cell = cell;
-		_evalSheet = new XSSFEvaluationSheet((XSSFSheet)cell.getSheet());
+		_evalSheet = new XSSFEvaluationSheet(cell.getSheet());
 	}
 
 	public XSSFEvaluationCell(XSSFCell cell, XSSFEvaluationSheet evaluationSheet) {

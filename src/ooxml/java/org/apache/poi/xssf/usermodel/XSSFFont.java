@@ -16,9 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import java.util.ArrayList;
-
-import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.extensions.XSSFColor;
 import org.apache.poi.xssf.model.StylesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
@@ -92,7 +90,7 @@ public class XSSFFont implements Font {
      * get character-set to use.
      *
      * @return byte - character-set
-     * @see FontCharset
+     * @see org.apache.poi.ss.usermodel.FontCharset
      */
     public byte getCharSet() {
         CTIntProperty charset = ctFont.sizeOfCharsetArray() == 0 ? null : ctFont.getCharsetArray(0);
@@ -233,7 +231,7 @@ public class XSSFFont implements Font {
      * get type of text underlining to use
      *
      * @return byte - underlining type
-     * @see FontUnderline
+     * @see org.apache.poi.ss.usermodel.FontUnderline
      */
     public byte getUnderline() {
         CTUnderlineProperty underline = ctFont.sizeOfUArray() == 0 ? null : ctFont.getUArray(0);
@@ -529,7 +527,7 @@ public class XSSFFont implements Font {
      * get the font family to use.
      *
      * @return the font family to use
-     * @see FontFamily
+     * @see org.apache.poi.ss.usermodel.FontFamily
      */
     public int getFamily() {
         CTIntProperty family = ctFont.sizeOfFamilyArray() == 0 ? ctFont.addNewFamily() : ctFont.getFamilyArray(0);

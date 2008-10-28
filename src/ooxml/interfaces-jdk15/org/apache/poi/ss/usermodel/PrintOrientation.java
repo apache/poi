@@ -18,19 +18,46 @@
 package org.apache.poi.ss.usermodel;
 
 /**
- * Allows the getting and saving of cell comments, 
- *  associated with a given sheet.
+ * The enumeration value indicating the print orientation for a sheet.
+ *
+ * @author Gisella Bronzetti
  */
-public interface CommentsSource {
-	public String getAuthor(long authorId);
-	
-	public int getNumberOfComments();
-	
-	public int findAuthor(String author);
-	
-	public Comment findCellComment(int row, int column);
-	
-	public Comment findCellComment(String cellRef);
-	
-	public Comment addComment();
+public enum PrintOrientation {
+
+    /**
+     * orientation not specified
+     */
+    DEFAULT(1),
+    /**
+     * portrait orientation
+     */
+    PORTRAIT(2),
+    /**
+     * landscape orientations
+     */
+    LANDSCAPE(3);
+
+
+    private int orientation;
+
+    private PrintOrientation(int orientation) {
+        this.orientation = orientation;
+    }
+
+
+    public int getValue() {
+        return orientation;
+    }
+
+
+    private static PrintOrientation[] _table = new PrintOrientation[4];
+    static {
+        for (PrintOrientation c : values()) {
+            _table[c.getValue()] = c;
+        }
+    }
+
+    public static PrintOrientation valueOf(int value){
+        return _table[value];
+    }
 }

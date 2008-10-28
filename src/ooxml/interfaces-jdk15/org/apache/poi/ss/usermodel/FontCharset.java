@@ -15,49 +15,61 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.apache.poi.ss.usermodel;
+
 
 /**
- * The enumeration value indicating the print orientation for a sheet.
- *
+ * Charset represents the basic set of characters associated with a font (that it can display), and 
+ * corresponds to the ANSI codepage (8-bit or DBCS) of that character set used by a given language. 
+ * 
  * @author Gisella Bronzetti
  */
-public enum PrintOrientation {
+public enum FontCharset {
 
-    /**
-     * orientation not specified
-     */
-    DEFAULT(1),
-    /**
-     * portrait orientation
-     */
-    PORTRAIT(2),
-    /**
-     * landscape orientations
-     */
-    LANDSCAPE(3);
+     ANSI(0),
+     DEFAULT(1),
+     SYMBOL(2),
+     MAC(77),
+     SHIFTJIS(128),
+     HANGEUL(129),
+     JOHAB(130),
+     GB2312(134),
+     CHINESEBIG5(136),
+     GREEK(161),
+     TURKISH(162),
+     VIETNAMESE(163),
+     HEBREW(177),
+     ARABIC(178),
+     BALTIC(186),
+     RUSSIAN(204),
+     THAI(222),
+     EASTEUROPE(238),
+     OEM(255);
 
+    
+    private int charset;
 
-    private int orientation;
-
-    private PrintOrientation(int orientation) {
-        this.orientation = orientation;
+    private FontCharset(int value){
+        charset = value;
     }
 
-
-    public int getValue() {
-        return orientation;
+    /**
+     * Returns value of this charset
+     *
+     * @return value of this charset
+     */
+    public int getValue(){
+        return charset;
     }
 
-
-    private static PrintOrientation[] _table = new PrintOrientation[4];
+    private static FontCharset[] _table = new FontCharset[256];
     static {
-        for (PrintOrientation c : values()) {
+        for (FontCharset c : values()) {
             _table[c.getValue()] = c;
         }
     }
 
-    public static PrintOrientation valueOf(int value){
+    public static FontCharset valueOf(int value){
         return _table[value];
     }
 }

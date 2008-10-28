@@ -227,7 +227,7 @@ public interface CellStyle {
     public final static short LEAST_DOTS = 18;
 
     /**
-     * get the index within the HSSFWorkbook (sequence within the collection of ExtnededFormat objects)
+     * get the index within the Workbook (sequence within the collection of ExtnededFormat objects)
      * @return unique index number of the underlying record this style represents (probably you don't care
      *  unless you're comparing which one is which)
      */
@@ -236,14 +236,14 @@ public interface CellStyle {
 
     /**
      * set the data format (must be a valid format)
-     * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
+     * @see DataFormat
      */
 
     void setDataFormat(short fmt);
 
     /**
      * get the index of the format
-     * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
+     * @see DataFormat
      */
     short getDataFormat();
 
@@ -253,26 +253,17 @@ public interface CellStyle {
     public String getDataFormatString();
 
     /**
-     * Get the contents of the format string, by looking up
-     *  the DataFormat against the supplied workbook
-     * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
-     * XXX Commented out because it uses internal implementation Workbook class.
-     * 
-    String getDataFormatString(Workbook workbook);
-     */
-
-    /**
      * set the font for this style
-     * @param font  a font object created or retreived from the HSSFWorkbook object
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createFont()
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
+     * @param font  a font object created or retreived from the Workbook object
+     * @see Workbook#createFont()
+     * @see Workbook#getFontAt(short)
      */
 
     void setFont(Font font);
 
     /**
      * gets the index of the font for this style
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
+     * @see Workbook#getFontAt(short)
      */
     short getFontIndex();
 
@@ -571,8 +562,6 @@ public interface CellStyle {
 
     /**
      * get the color to use for the left border
-     * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @param color The index of the color definition
      */
     short getLeftBorderColor();
 
@@ -584,8 +573,7 @@ public interface CellStyle {
 
     /**
      * get the color to use for the left border
-     * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @param color The index of the color definition
+     * @return the index of the color definition
      */
     short getRightBorderColor();
 
@@ -597,8 +585,7 @@ public interface CellStyle {
 
     /**
      * get the color to use for the top border
-     * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @param color The index of the color definition
+     * @return hhe index of the color definition
      */
     short getTopBorderColor();
 
@@ -610,8 +597,7 @@ public interface CellStyle {
 
     /**
      * get the color to use for the left border
-     * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @param color The index of the color definition
+     * @return the index of the color definition
      */
     short getBottomBorderColor();
 
@@ -650,26 +636,6 @@ public interface CellStyle {
 
     /**
      * set the background fill color.
-     * <p>
-     * For example:
-     * <pre>
-     * cs.setFillPattern(HSSFCellStyle.FINE_DOTS );
-     * cs.setFillBackgroundColor(new HSSFColor.RED().getIndex()); 
-     * </pre>
-     * optionally a Foreground and background fill can be applied:
-     * <i>Note: Ensure Foreground color is set prior to background</i>
-     * <pre>
-     * cs.setFillPattern(HSSFCellStyle.FINE_DOTS );
-     * cs.setFillForegroundColor(new HSSFColor.BLUE().getIndex());
-     * cs.setFillBackgroundColor(new HSSFColor.RED().getIndex()); 
-     * </pre>
-     * or, for the special case of SOLID_FILL:
-     * <pre>
-     * cs.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND );
-     * cs.setFillForegroundColor(new HSSFColor.RED().getIndex());
-     * </pre>
-     * It is necessary to set the fill style in order
-     * for the color to be shown in the cell.
      *
      * @param bg  color
      */
@@ -678,7 +644,6 @@ public interface CellStyle {
 
     /**
      * get the background fill color
-     * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
      * @return fill color
      */
     short getFillBackgroundColor();
@@ -692,7 +657,6 @@ public interface CellStyle {
 
     /**
      * get the foreground fill color
-     * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
      * @return fill color
      */
     short getFillForegroundColor();

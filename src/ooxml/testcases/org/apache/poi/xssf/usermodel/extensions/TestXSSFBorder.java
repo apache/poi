@@ -19,7 +19,7 @@ package org.apache.poi.xssf.usermodel.extensions;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.xssf.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;

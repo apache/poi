@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.InputStream;
 import java.util.*;
 import javax.xml.namespace.QName;
 
@@ -110,10 +111,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     @Override
     protected void onDocumentRead() {
         try {
-            worksheet = WorksheetDocument.Factory.parse(getPackagePart().getInputStream()).getWorksheet();
-        } catch (XmlException e){
-            throw new POIXMLException(e);
+            read(getPackagePart().getInputStream());
         } catch (IOException e){
+            throw new POIXMLException(e);
+        }
+    }
+
+    protected void read(InputStream is) throws IOException {
+        try {
+            worksheet = WorksheetDocument.Factory.parse(is).getWorksheet();
+        } catch (XmlException e){
             throw new POIXMLException(e);
         }
 
@@ -1645,6 +1652,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     @Override
     protected void commit() throws IOException {
+        PackagePart part = getPackagePart();
+        OutputStream out = part.getOutputStream();
+        write(out);
+        out.close();
+    }
+
+    protected void write(OutputStream out) throws IOException {
 
         if(worksheet.getColsArray().length == 1) {
             CTCols col = worksheet.getColsArray(0);
@@ -1682,15 +1696,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorksheet.type.getName().getNamespaceURI(), "worksheet"));
-
         Map map = new HashMap();
         map.put(STRelationshipId.type.getName().getNamespaceURI(), "r");
         xmlOptions.setSaveSuggestedPrefixes(map);
 
-        PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
         worksheet.save(out, xmlOptions);
-        out.close();
     }
-
 }

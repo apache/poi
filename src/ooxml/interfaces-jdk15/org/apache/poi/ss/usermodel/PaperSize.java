@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.apache.poi.ss.usermodel;
 
 /**
  *  The enumeration value indicating the possible paper size for a sheet

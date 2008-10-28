@@ -15,61 +15,45 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
-
+package org.apache.poi.ss.usermodel;
 
 /**
- * Charset represents the basic set of characters associated with a font (that it can display), and 
- * corresponds to the ANSI codepage (8-bit or DBCS) of that character set used by a given language. 
- * 
+ * Specifies printed page order.
+ *
  * @author Gisella Bronzetti
  */
-public enum FontCharset {
-
-     ANSI(0),
-     DEFAULT(1),
-     SYMBOL(2),
-     MAC(77),
-     SHIFTJIS(128),
-     HANGEUL(129),
-     JOHAB(130),
-     GB2312(134),
-     CHINESEBIG5(136),
-     GREEK(161),
-     TURKISH(162),
-     VIETNAMESE(163),
-     HEBREW(177),
-     ARABIC(178),
-     BALTIC(186),
-     RUSSIAN(204),
-     THAI(222),
-     EASTEUROPE(238),
-     OEM(255);
-
-    
-    private int charset;
-
-    private FontCharset(int value){
-        charset = value;
-    }
+public enum PageOrder {
 
     /**
-     * Returns value of this charset
-     *
-     * @return value of this charset
+     * Order pages vertically first, then move horizontally.
      */
-    public int getValue(){
-        return charset;
+    DOWN_THEN_OVER(1),
+    /**
+     * Order pages horizontally first, then move vertically
+     */
+    OVER_THEN_DOWN(2);
+
+
+    private int order;
+
+
+    private PageOrder(int order) {
+        this.order = order;
     }
 
-    private static FontCharset[] _table = new FontCharset[256];
+    public int getValue() {
+        return order;
+    }
+
+
+    private static PageOrder[] _table = new PageOrder[3];
     static {
-        for (FontCharset c : values()) {
+        for (PageOrder c : values()) {
             _table[c.getValue()] = c;
         }
     }
 
-    public static FontCharset valueOf(int value){
+    public static PageOrder valueOf(int value){
         return _table[value];
     }
 }
