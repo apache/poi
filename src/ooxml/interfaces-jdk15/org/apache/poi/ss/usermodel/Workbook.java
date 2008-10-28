@@ -25,15 +25,6 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
 public interface Workbook {
 
-    /**
-     * used for compile-time performance/memory optimization.  This determines the
-     * initial capacity for the sheet collection.  Its currently set to 3.
-     * Changing it in this release will decrease performance
-     * since you're never allowed to have more or less than three sheets!
-     */
-
-    public final static int INITIAL_CAPACITY = 3;
-
     /** Extended windows meta file */
     public static final int PICTURE_TYPE_EMF = 2;
 
@@ -72,19 +63,10 @@ public interface Workbook {
      * This may be different from the "selected sheet" since excel seems to
      * allow you to show the data of one sheet when another is seen "selected"
      * in the tabs (at the bottom).
-     * @see org.apache.poi.hssf.usermodel.HSSFSheet#setSelected(boolean)
+     * @see Sheet#setSelected(boolean)
      * @param index
      */
     void setSelectedTab(short index);
-
-    /**
-     * gets the tab whose data is actually seen when the sheet is opened.
-     * This may be different from the "selected sheet" since excel seems to
-     * allow you to show the data of one sheet when another is seen "selected"
-     * in the tabs (at the bottom).
-     * @see org.apache.poi.hssf.usermodel.HSSFSheet#setSelected(boolean)
-     */
-    short getSelectedTab();
 
     /**
      * set the sheet name.
@@ -115,28 +97,28 @@ public interface Workbook {
     int getSheetIndex(Sheet sheet);
 
     /**
-     * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and returns
+     * create an Sheet for this Workbook, adds it to the sheets and returns
      * the high level representation.  Use this to create new sheets.
      *
-     * @return HSSFSheet representing the new sheet.
+     * @return Sheet representing the new sheet.
      */
 
     Sheet createSheet();
 
     /**
-     * create an HSSFSheet from an existing sheet in the HSSFWorkbook.
+     * create an Sheet from an existing sheet in the Workbook.
      *
-     * @return HSSFSheet representing the cloned sheet.
+     * @return Sheet representing the cloned sheet.
      */
 
     Sheet cloneSheet(int sheetNum);
 
     /**
-     * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and returns
+     * create an Sheet for this Workbook, adds it to the sheets and returns
      * the high level representation.  Use this to create new sheets.
      *
      * @param sheetname     sheetname to set for the sheet.
-     * @return HSSFSheet representing the new sheet.
+     * @return Sheet representing the new sheet.
      */
 
     Sheet createSheet(String sheetname);
@@ -149,9 +131,9 @@ public interface Workbook {
     int getNumberOfSheets();
 
     /**
-     * Get the HSSFSheet object at the given index.
+     * Get the Sheet object at the given index.
      * @param index of the sheet number (0-based physical & logical)
-     * @return HSSFSheet at the provided index
+     * @return Sheet at the provided index
      */
 
     Sheet getSheetAt(int index);
@@ -159,7 +141,7 @@ public interface Workbook {
     /**
      * Get sheet with the given name
      * @param name of the sheet
-     * @return HSSFSheet with the name provided or null if it does not exist
+     * @return Sheet with the name provided or null if it does not exist
      */
 
     Sheet getSheet(String name);
@@ -220,7 +202,7 @@ public interface Workbook {
     /**
      * get the font at the given index number
      * @param idx  index number
-     * @return HSSFFont at the index
+     * @return XSSFFont at the index
      */
 
     Font getFontAt(short idx);
@@ -242,7 +224,7 @@ public interface Workbook {
     /**
      * get the cell style object at the given index
      * @param idx  index within the set of styles
-     * @return HSSFCellStyle object at the index
+     * @return CellStyle object at the index
      */
 
     CellStyle getCellStyleAt(short idx);
@@ -270,12 +252,6 @@ public interface Workbook {
      * @return named range high level
      */
     Name getNameAt(int index);
-
-    /** gets the named range name
-     * @param index the named range index (0 based)
-     * @return named range name
-     */
-    String getNameName(int index);
 
     /**
      * Sets the printarea for the sheet provided
@@ -346,10 +322,8 @@ public interface Workbook {
     void removeName(int index);
 
     /**
-     * Returns the instance of HSSFDataFormat for this workbook.
-     * @return the HSSFDataFormat object
-     * @see org.apache.poi.hssf.record.FormatRecord
-     * @see org.apache.poi.hssf.record.Record
+     * Returns the instance of DataFormat for this workbook.
+     * @return the DataFormat object
      */
     DataFormat createDataFormat();
 

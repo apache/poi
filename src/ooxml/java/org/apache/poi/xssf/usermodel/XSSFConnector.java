@@ -95,10 +95,10 @@ public class XSSFConnector extends XSSFShape {
     }
 
     /**
-     * Gets the shape type, one of the constants defined in {@link org.apache.poi.xssf.usermodel.ShapeTypes}.
+     * Gets the shape type, one of the constants defined in {@link org.apache.poi.ss.usermodel.ShapeTypes}.
      *
      * @return the shape type
-     * @see org.apache.poi.xssf.usermodel.ShapeTypes
+     * @see org.apache.poi.ss.usermodel.ShapeTypes
      */
     public int getShapeType() {
         return ctShape.getSpPr().getPrstGeom().getPrst().intValue();
@@ -107,8 +107,8 @@ public class XSSFConnector extends XSSFShape {
     /**
      * Sets the shape types.
      *
-     * @param type the shape type, one of the constants defined in {@link org.apache.poi.xssf.usermodel.ShapeTypes}.
-     * @see org.apache.poi.xssf.usermodel.ShapeTypes
+     * @param type the shape type, one of the constants defined in {@link org.apache.poi.ss.usermodel.ShapeTypes}.
+     * @see org.apache.poi.ss.usermodel.ShapeTypes
      */
     public void setShapeType(int type) {
         ctShape.getSpPr().getPrstGeom().setPrst(STShapeType.Enum.forInt(type));

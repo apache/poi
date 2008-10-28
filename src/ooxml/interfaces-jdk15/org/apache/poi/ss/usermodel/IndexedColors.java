@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.apache.poi.ss.usermodel;
 
 /**
  * A deprecated indexing scheme for colours that is still required for some records, and for backwards

@@ -46,19 +46,11 @@ public interface Sheet extends Iterable<Row> {
     public static final byte PANE_UPPER_LEFT = (byte) 3;
 
     /**
-     * Used for compile-time optimization.  This is the initial size for the collection of
-     * rows.  It is currently set to 20.  If you generate larger sheets you may benefit
-     * by setting this to a higher number and recompiling a custom edition of HSSFSheet.
-     */
-
-    public final static int INITIAL_CAPACITY = 20;
-
-    /**
      * Create a new row within the sheet and return the high level representation
      *
      * @param rownum  row number
-     * @return High level HSSFRow object representing a row in the sheet
-     * @see org.apache.poi.hssf.usermodel.HSSFRow
+     * @return High level Row object representing a row in the sheet
+     * @see Row
      * @see #removeRow(Row)
      */
     Row createRow(int rownum);
@@ -75,7 +67,7 @@ public interface Sheet extends Iterable<Row> {
      * Returns the logical row (not physical) 0-based.  If you ask for a row that is not
      * defined you get a null.  This is to say row 4 represents the fifth row on a sheet.
      * @param rownum  row to get
-     * @return HSSFRow representing the rownumber or null if its not defined on the sheet
+     * @return Row representing the rownumber or null if its not defined on the sheet
      */
 
     Row getRow(int rownum);

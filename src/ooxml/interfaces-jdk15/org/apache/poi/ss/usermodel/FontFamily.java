@@ -15,47 +15,48 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.apache.poi.ss.usermodel;
+
 
 /**
- * These enumerations specify how cell comments shall be displayed for paper printing purposes.
+ * The font family this font belongs to. A font family is a set of fonts having common stroke width and serif
+ * characteristics. The font name overrides when there are conflicting values.
  *
  * @author Gisella Bronzetti
  */
-public enum PrintCellComments {
+public enum FontFamily {
 
-    /**
-     * Do not print cell comments.
-     */
-    NONE(1),
-    /**
-     * Print cell comments as displayed.
-     */
-    AS_DISPLAYED(2),
-    /**
-     * Print cell comments at end of document.
-     */
-    AT_END(3);
+    NOT_APPLICABLE(0),
+    ROMAN(1),
+    SWISS(2),
+    MODERN(3),
+    SCRIPT(4),
+    DECORATIVE(5);
 
+    private int family;
 
-    private int comments;
-
-    private PrintCellComments(int comments) {
-        this.comments = comments;
+    private FontFamily(int value) {
+        family = value;
     }
 
+    /**
+     * Returns index of this font family
+     *
+     * @return index of this font family
+     */
     public int getValue() {
-        return comments;
+        return family;
     }
 
-    private static PrintCellComments[] _table = new PrintCellComments[4];
+    private static FontFamily[] _table = new FontFamily[6];
+
     static {
-        for (PrintCellComments c : values()) {
+        for (FontFamily c : values()) {
             _table[c.getValue()] = c;
         }
     }
 
-    public static PrintCellComments valueOf(int value){
-        return _table[value];
+    public static FontFamily valueOf(int family) {
+        return _table[family];
     }
 }

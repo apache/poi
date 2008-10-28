@@ -23,15 +23,13 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.StylesSource;
-import org.apache.poi.xssf.usermodel.FontFamily;
-import org.apache.poi.xssf.usermodel.FontScheme;
+import org.apache.poi.ss.usermodel.FontFamily;
+import org.apache.poi.ss.usermodel.FontScheme;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;

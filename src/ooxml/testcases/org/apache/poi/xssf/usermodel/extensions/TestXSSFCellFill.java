@@ -18,7 +18,6 @@
 package org.apache.poi.xssf.usermodel.extensions;
 
 
-import org.apache.poi.xssf.usermodel.FillPatternType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;

@@ -19,8 +19,8 @@ package org.apache.poi.xssf.usermodel.extensions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellAlignment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STHorizontalAlignment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment;
-import org.apache.poi.xssf.usermodel.HorizontalAlignment;
-import org.apache.poi.xssf.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 
 
 /**

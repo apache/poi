@@ -19,19 +19,13 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.StylesSource;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
 import org.openxml4j.opc.ContentTypes;
@@ -99,17 +93,6 @@ public final class TestXSSFWorkbook extends TestCase {
 		assertSame(sheet1, workbook.getSheetAt(0));
 	}
 	
-	public void testSetSelectedTab() {
-		XSSFWorkbook workbook = new XSSFWorkbook();
-		workbook.createSheet("sheet1");
-		workbook.createSheet("sheet2");
-		assertEquals(0, workbook.getSelectedTab());
-		workbook.setSelectedTab((short) 0);
-		assertEquals(0, workbook.getSelectedTab());
-		workbook.setSelectedTab((short) 1);
-		assertEquals(1, workbook.getSelectedTab());
-	}
-	
 	public void testSetSheetName() {
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		workbook.createSheet("sheet1");
@@ -119,16 +102,32 @@ public final class TestXSSFWorkbook extends TestCase {
 	}
 	
 	public void testCloneSheet() {
-		XSSFWorkbook workbook = new XSSFWorkbook();
-		workbook.createSheet("sheet");
-		workbook.cloneSheet(0);
-		assertEquals(2, workbook.getNumberOfSheets());
-		assertEquals("sheet(1)", workbook.getSheetName(1));
-		workbook.setSheetName(1, "clonedsheet");
-		workbook.cloneSheet(1);
-		assertEquals(3, workbook.getNumberOfSheets());
-		assertEquals("clonedsheet(1)", workbook.getSheetName(2));
-	}
+        XSSFWorkbook book = new XSSFWorkbook();
+        XSSFSheet sheet = book.createSheet("TEST");
+        sheet.createRow(0).createCell(0).setCellValue("Test");
+        sheet.createRow(1).createCell(0).setCellValue(36.6);
+        sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, 2));
+        sheet.addMergedRegion(new CellRangeAddress(1, 2, 0, 2));
+        assertTrue(sheet.isSelected());
+
+        XSSFSheet clonedSheet = book.cloneSheet(0);
+        assertEquals("TEST (2)", clonedSheet.getSheetName());
+        assertEquals(2, clonedSheet.getPhysicalNumberOfRows());
+        assertEquals(2, clonedSheet.getNumMergedRegions());
+        assertFalse(clonedSheet.isSelected());
+
+        //cloned sheet is a deep copy, adding rows in the original does not affect the clone
+        sheet.createRow(2).createCell(0).setCellValue(1);
+        sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 2));
+        assertEquals(2, clonedSheet.getPhysicalNumberOfRows());
+        assertEquals(2, clonedSheet.getPhysicalNumberOfRows());
+
+        clonedSheet.createRow(2).createCell(0).setCellValue(1);
+        clonedSheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 2));
+        assertEquals(3, clonedSheet.getPhysicalNumberOfRows());
+        assertEquals(3, clonedSheet.getPhysicalNumberOfRows());
+
+    }
 	
 	public void testGetSheetByName() {
 		XSSFWorkbook workbook = new XSSFWorkbook();
@@ -209,19 +208,6 @@ public final class TestXSSFWorkbook extends TestCase {
 		
 		nwb.setRepeatingRowsAndColumns(1, -1, -1, -1, -1);
 
-
-		if (false) {
-			// In case you fancy checking in excel, to ensure it
-			//  won't complain about the file now
-			try {
-				File tempFile = File.createTempFile("POI-45126-", ".xlsx");
-				FileOutputStream fout = new FileOutputStream(tempFile);
-				nwb.write(fout);
-				fout.close();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
 	}
 	
 
@@ -327,7 +313,6 @@ public final class TestXSSFWorkbook extends TestCase {
 		Font font=workbook.createFont();
 		((XSSFFont)font).setBold(true);
 		font.setUnderline(Font.U_DOUBLE);
-		StylesTable styleSource=new StylesTable();
 		fontFind=workbook.findFont(Font.BOLDWEIGHT_BOLD, IndexedColors.BLACK.getIndex(), (short)15, "Calibri", false, false, Font.SS_NONE, Font.U_DOUBLE);
 		assertNull(fontFind);
 	}
@@ -440,8 +425,7 @@ public final class TestXSSFWorkbook extends TestCase {
 		
 		StylesTable ss = workbook.getStylesSource();
 		assertNotNull(ss);
-		assertTrue(ss instanceof StylesTable);
-		StylesTable st = (StylesTable)ss;
+		StylesTable st = ss;
 		
 		// Has 8 number formats
 		assertEquals(8, st._getNumberFormatSize());
@@ -467,9 +451,7 @@ public final class TestXSSFWorkbook extends TestCase {
 		
 		ss = workbook.getStylesSource();
 		assertNotNull(ss);
-		assertTrue(ss instanceof StylesTable);
-		st = (StylesTable)ss;
-		
+
 		assertEquals(10, st._getNumberFormatSize());
 		assertEquals(2, st._getFontsSize());
 		assertEquals(2, st._getFillsSize());
@@ -502,7 +484,7 @@ public final class TestXSSFWorkbook extends TestCase {
 		assertEquals("ForB3", workbook.getNameAt(1).getNameName());
 		assertEquals("B3 Comment", workbook.getNameAt(1).getComment());
 		
-		assertEquals("ForA2", workbook.getNameName(0));
+		assertEquals("ForA2", workbook.getNameAt(0).getNameName());
 		assertEquals(1, workbook.getNameIndex("ForB3"));
 		assertEquals(-1, workbook.getNameIndex("ForB3!!"));
 		

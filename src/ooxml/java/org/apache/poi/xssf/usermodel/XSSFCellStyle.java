@@ -17,9 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.StylesSource;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellAlignment;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
@@ -310,7 +308,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * Get the color to use for the bottom border
      * <br/>
      * Color is optional. When missing, IndexedColors.AUTOMATIC is implied.
-     * @return the index of the color definition, default value is {@link IndexedColors.AUTOMATIC}
+     * @return the index of the color definition, default value is {@link org.apache.poi.ss.usermodel.IndexedColors.AUTOMATIC}
      * @see IndexedColors
      */
     public short getBottomBorderColor() {
@@ -664,7 +662,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * Set the type of horizontal alignment for the cell
      *
      * @param align - the type of alignment
-     * @see HorizontalAlignment
+     * @see org.apache.poi.ss.usermodel.HorizontalAlignment
      */
     public void setAlignment(HorizontalAlignment align) {
         setAlignment((short)align.ordinal());
@@ -1192,7 +1190,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * Set the color to use for the top border
      *
      * @param color the index of the color definition
-     * @see IndexedColors
+     * @see org.apache.poi.ss.usermodel.IndexedColors
      */
     public void setTopBorderColor(short color) {
         XSSFColor clr = new XSSFColor();

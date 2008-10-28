@@ -17,7 +17,7 @@
 package org.apache.poi.xssf.usermodel.examples;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xssf.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.*;
 
 import java.io.FileOutputStream;

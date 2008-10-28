@@ -17,9 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocument;
@@ -102,7 +100,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     private List<XSSFPictureData> pictures;
 
-    private static POILogger log = POILogFactory.getLogger(XSSFWorkbook.class);
+    private static POILogger logger = POILogFactory.getLogger(XSSFWorkbook.class);
 
     /**
      * Create a new SpreadsheetML workbook.
@@ -176,7 +174,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
                 XSSFSheet sh = shIdMap.get(ctSheet.getId());
                 if(sh == null) {
-                    log.log(POILogger.WARN, "Sheet with name " + ctSheet.getName() + " and r:id " + ctSheet.getId()+ " was defined, but didn't exist in package, skipping");
+                    logger.log(POILogger.WARN, "Sheet with name " + ctSheet.getName() + " and r:id " + ctSheet.getId()+ " was defined, but didn't exist in package, skipping");
                     continue;
                 }
                 sh.sheet = ctSheet;
@@ -303,29 +301,78 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return imageNumber - 1;
     }
 
+    /**
+     * Create an XSSFSheet from an existing sheet in the XSSFWorkbook.
+     *  The cloned sheet is a deep copy of the original.
+     *
+     * @return XSSFSheet representing the cloned sheet.
+     * @throws IllegalArgumentException if the sheet index in invalid
+     * @throws POIXMLException if there were errors when cloning
+     */
     public XSSFSheet cloneSheet(int sheetNum) {
+        validateSheetIndex(sheetNum);
+
         XSSFSheet srcSheet = sheets.get(sheetNum);
-        String srcName = getSheetName(sheetNum);
-        int i = 1;
-        String name = srcName;
+        String srcName = srcSheet.getSheetName();
+        String clonedName = getUniqueSheetName(srcName);
+
+        XSSFSheet clonedSheet = createSheet(clonedName);
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            srcSheet.write(out);
+            clonedSheet.read(new ByteArrayInputStream(out.toByteArray()));
+        } catch (IOException e){
+            throw new POIXMLException("Failed to clone sheet", e);
+        }
+        CTWorksheet ct = clonedSheet.getCTWorksheet();
+        if(ct.isSetDrawing()) {
+            logger.log(POILogger.WARN, "Cloning sheets with drawings is not yet supported.");
+            ct.unsetDrawing();
+        }
+        if(ct.isSetLegacyDrawing()) {
+            logger.log(POILogger.WARN, "Cloning sheets with comments is not yet supported.");
+            ct.unsetLegacyDrawing();
+        }
+
+        clonedSheet.setSelected(false);
+        return clonedSheet;
+    }
+
+    /**
+     * Generate a valid sheet name based on the existing one. Used when cloning sheets.
+     *
+     * @param srcName the original sheet name to
+     * @return clone sheet name
+     */
+    private String getUniqueSheetName(String srcName) {
+        int uniqueIndex = 2;
+        String baseName = srcName;
+        int bracketPos = srcName.lastIndexOf('(');
+        if (bracketPos > 0 && srcName.endsWith(")")) {
+            String suffix = srcName.substring(bracketPos + 1, srcName.length() - ")".length());
+            try {
+                uniqueIndex = Integer.parseInt(suffix.trim());
+                uniqueIndex++;
+                baseName = srcName.substring(0, bracketPos).trim();
+            } catch (NumberFormatException e) {
+                // contents of brackets not numeric
+            }
+        }
         while (true) {
-            //Try and find the next sheet name that is unique
-            String index = Integer.toString(i++);
-            if (name.length() + index.length() + 2 < 31) {
-                name = name + "("+index+")";
+            // Try and find the next sheet name that is unique
+            String index = Integer.toString(uniqueIndex++);
+            String name;
+            if (baseName.length() + index.length() + 2 < 31) {
+                name = baseName + " (" + index + ")";
             } else {
-                name = name.substring(0, 31 - index.length() - 2) + "(" +index + ")";
+                name = baseName.substring(0, 31 - index.length() - 2) + "(" + index + ")";
             }
 
             //If the sheet name is unique, then set it otherwise move on to the next number.
             if (getSheetIndex(name) == -1) {
-                break;
+                return name;
             }
         }
-
-        XSSFSheet clonedSheet = createSheet(name);
-        clonedSheet.getCTWorksheet().set(srcSheet.getCTWorksheet());
-        return clonedSheet;
     }
 
     /**
@@ -519,18 +566,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
 
     /**
-     * Gets the Named range name at the given index number,
-     * this method is equivalent to <code>getNameAt(index).getName()</code>
-     *
-     * @param index the named range index (0 based)
-     * @return named range name
-     * @see #getNameAt(int)
-     */
-    public String getNameName(int index) {
-        return getNameAt(index).getNameName();
-    }
-
-    /**
      * Gets the named range index by his name
      * <i>Note:</i>Excel named ranges are case-insensitive and
      * this method performs a case-insensitive search.
@@ -596,21 +631,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         //adding one here because 0 indicates a global named region; doesnt make sense for print areas
         return name.getReference();
 
-    }
-
-    /**
-     * deprecated May 2008
-     * @deprecated - Misleading name - use getActiveSheetIndex()
-     */
-    public short getSelectedTab() {
-        short i = 0;
-        for (XSSFSheet sheet : this.sheets) {
-            if (sheet.isSelected()) {
-                return i;
-            }
-            ++i;
-        }
-        return -1;
     }
 
     /**

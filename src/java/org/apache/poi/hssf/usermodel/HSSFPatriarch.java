@@ -25,7 +25,6 @@ import org.apache.poi.ddf.EscherComplexProperty;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperty;
 import org.apache.poi.hssf.record.EscherAggregate;
-import org.apache.poi.ss.usermodel.Patriarch;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -35,7 +34,7 @@ import org.apache.poi.util.StringUtil;
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public class HSSFPatriarch
-        implements HSSFShapeContainer, Patriarch
+        implements HSSFShapeContainer
 {
     List shapes = new ArrayList();
     HSSFSheet sheet;

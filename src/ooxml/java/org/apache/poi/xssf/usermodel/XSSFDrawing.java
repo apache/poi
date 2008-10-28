@@ -39,6 +39,7 @@ public class XSSFDrawing extends POIXMLDocumentPart {
      * Root element of the SpreadsheetML Drawing part
      */
     private CTDrawing drawing;
+    private boolean isNew;
 
     /**
      * Create a new SpreadsheetML drawing
@@ -48,6 +49,7 @@ public class XSSFDrawing extends POIXMLDocumentPart {
     protected XSSFDrawing() {
         super();
         drawing = newDrawing();
+        isNew = true;
     }
 
     /**
@@ -91,7 +93,7 @@ public class XSSFDrawing extends POIXMLDocumentPart {
                 xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
                 xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">
         */
-        xmlOptions.setSaveSyntheticDocumentElement(new QName(CTDrawing.type.getName().getNamespaceURI(), "wsDr", "xdr"));
+        if(isNew) xmlOptions.setSaveSyntheticDocumentElement(new QName(CTDrawing.type.getName().getNamespaceURI(), "wsDr", "xdr"));
         Map map = new HashMap();
         map.put("http://schemas.openxmlformats.org/drawingml/2006/main", "a");
         map.put(STRelationshipId.type.getName().getNamespaceURI(), "r");

@@ -16,13 +16,9 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel.examples;
 
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.apache.poi.xssf.usermodel.IndexedColors;
-import org.apache.poi.xssf.usermodel.extensions.XSSFColor;
+import org.apache.poi.ss.usermodel.IndexedColors;
 
 import java.io.FileOutputStream;
 

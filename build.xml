@@ -519,7 +519,7 @@ under the License.
     </javac>
   </target>
 
-  <target name="compile-ooxml" depends="init, check-ooxml-xsds, fetch-ooxml-xsds, compile-ooxml-xsds, compile-main">
+  <target name="compile-ooxml" depends="init, check-ooxml-xsds, fetch-ooxml-xsds, compile-ooxml-xsds, compile-main, compile-scratchpad">
 	<!-- openxml4j requires java 1.5, so so must we, for now -->
     <javac target="1.5" source="1.5"
       destdir="${ooxml.output.dir}" debug="on" srcdir="${ooxml.src}">

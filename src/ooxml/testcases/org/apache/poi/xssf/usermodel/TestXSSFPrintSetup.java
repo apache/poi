@@ -20,6 +20,10 @@ package org.apache.poi.xssf.usermodel;
 import junit.framework.TestCase;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.apache.poi.ss.usermodel.PaperSize;
+import org.apache.poi.ss.usermodel.PageOrder;
+import org.apache.poi.ss.usermodel.PrintOrientation;
+import org.apache.poi.ss.usermodel.PrintCellComments;
 
 /**
  * Tests for {@link XSSFPrintSetup}

@@ -18,13 +18,8 @@ package org.apache.poi.xssf.usermodel.examples;
 
 import org.apache.poi.xssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 import java.io.FileOutputStream;
-import java.io.Writer;
-import java.io.StringWriter;
 
 /**
  *  Demonstrates how to work with rich text

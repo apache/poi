@@ -2,11 +2,7 @@ package org.apache.poi.xssf.usermodel;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.extensions.XSSFColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;

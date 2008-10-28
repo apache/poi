@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.apache.poi.ss.usermodel;
 
 /**
  * This enumeration value indicates the type of vertical alignment for a cell, i.e.,

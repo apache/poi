@@ -75,7 +75,7 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 
 	public EvaluationName getName(String name) {
 		for(int i=0; i < _uBook.getNumberOfNames(); i++) {
-			String nameText = _uBook.getNameName(i);
+			String nameText = _uBook.getNameAt(i).getNameName();
 			if (name.equalsIgnoreCase(nameText)) {
 				return new Name(_uBook.getNameAt(i), i, this);
 			}
