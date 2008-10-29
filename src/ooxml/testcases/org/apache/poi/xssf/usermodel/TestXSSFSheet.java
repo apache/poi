@@ -24,7 +24,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.Region;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
@@ -616,7 +615,7 @@ public class TestXSSFSheet extends TestCase {
         XSSFComment comment = sheet.createComment();
 
         Cell cell = sheet.createRow(0).createCell((short)0);
-        CommentsTable comments = (CommentsTable)sheet.getCommentsSourceIfExists();
+        CommentsTable comments = sheet.getCommentsTable();
         CTComments ctComments = comments.getCTComments();
 
         sheet.setCellComment("A1", comment);
@@ -710,9 +709,6 @@ public class TestXSSFSheet extends TestCase {
     	
     	sheet.setDefaultColumnStyle((short) 3, cellStyle);
     	assertEquals(1, ctWorksheet.getColsArray(0).getColArray(0).getStyle());
-    	XSSFRow row = sheet.createRow(0);
-    	XSSFCell cell = sheet.getRow(0).createCell(3);
-    	
     }
     
 
@@ -772,7 +768,7 @@ public class TestXSSFSheet extends TestCase {
 	    	assertEquals(7,cols.sizeOfColArray());
 	    	colArray=cols.getColArray();
 	    	assertEquals(3, colArray[1].getOutlineLevel());
-	    	assertEquals(3,sheet.getSheetTypeSheetFormatPr().getOutlineLevelCol());
+	    	assertEquals(3,sheet.getCTWorksheet().getSheetFormatPr().getOutlineLevelCol());
 
 	    	sheet.ungroupColumn((short)8,(short) 10);
 	    	colArray=cols.getColArray();
@@ -782,7 +778,7 @@ public class TestXSSFSheet extends TestCase {
 	    	sheet.ungroupColumn((short)2,(short)2);
 	    	colArray=cols.getColArray();
 	    	assertEquals(4, colArray.length);
-	    	assertEquals(2,sheet.getSheetTypeSheetFormatPr().getOutlineLevelCol());
+	    	assertEquals(2,sheet.getCTWorksheet().getSheetFormatPr().getOutlineLevelCol());
 	    }
 
 	    
@@ -798,7 +794,7 @@ public class TestXSSFSheet extends TestCase {
 	    	assertNotNull(ctrow);
 	    	assertEquals(9,ctrow.getR());
 	    	assertEquals(1, ctrow.getOutlineLevel());
-	    	assertEquals(1,sheet.getSheetTypeSheetFormatPr().getOutlineLevelRow());
+	    	assertEquals(1,sheet.getCTWorksheet().getSheetFormatPr().getOutlineLevelRow());
 
 	    	//two level    	
 	    	sheet.groupRow(10,13);
@@ -807,26 +803,37 @@ public class TestXSSFSheet extends TestCase {
 	    	assertNotNull(ctrow);
 	    	assertEquals(10,ctrow.getR());
 	    	assertEquals(2, ctrow.getOutlineLevel());
-	    	assertEquals(2,sheet.getSheetTypeSheetFormatPr().getOutlineLevelRow());
+	    	assertEquals(2,sheet.getCTWorksheet().getSheetFormatPr().getOutlineLevelRow());
 
 	    	
 	    	sheet.ungroupRow(8, 10);
             assertEquals(4,sheet.getPhysicalNumberOfRows());
-	    	assertEquals(1,sheet.getSheetTypeSheetFormatPr().getOutlineLevelRow());
+	    	assertEquals(1,sheet.getCTWorksheet().getSheetFormatPr().getOutlineLevelRow());
 
 	    	sheet.ungroupRow(10,10);
             assertEquals(3,sheet.getPhysicalNumberOfRows());
 
-	    	assertEquals(1,sheet.getSheetTypeSheetFormatPr().getOutlineLevelRow());
+	    	assertEquals(1,sheet.getCTWorksheet().getSheetFormatPr().getOutlineLevelRow());
 	    }
             
-            public void testSetZoom() {
-                Workbook workBook = new XSSFWorkbook();
-                XSSFSheet sheet1 = (XSSFSheet) workBook.createSheet("new sheet");
-                sheet1.setZoom(3,4);   // 75 percent magnification
-                long zoom = sheet1.getSheetTypeSheetView().getZoomScale();
-                assertEquals(zoom, 75);
-            }
+    public void testSetZoom() {
+        XSSFWorkbook workBook = new XSSFWorkbook();
+        XSSFSheet sheet1 = workBook.createSheet("new sheet");
+        sheet1.setZoom(3,4);   // 75 percent magnification
+        long zoom = sheet1.getCTWorksheet().getSheetViews().getSheetViewArray(0).getZoomScale();
+        assertEquals(zoom, 75);
+
+        sheet1.setZoom(200);
+        zoom = sheet1.getCTWorksheet().getSheetViews().getSheetViewArray(0).getZoomScale();
+        assertEquals(zoom, 200);
+
+        try {
+            sheet1.setZoom(500);
+            fail("Expecting exception");
+        } catch (IllegalArgumentException e){
+            assertEquals("Valid scale values range from 10 to 400", e.getMessage());
+        }
+    }
 
     public void testOutlineProperties() {
         XSSFWorkbook wb = new XSSFWorkbook();

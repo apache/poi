@@ -26,7 +26,6 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
-import org.apache.poi.xssf.usermodel.extensions.XSSFColor;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
@@ -48,7 +47,7 @@ public class TestXSSFCellStyle extends TestCase {
 	protected void setUp() {
 		stylesTable = new StylesTable();
 		
-		ctStylesheet = stylesTable._getRawStylesheet();
+		ctStylesheet = stylesTable.getCTStylesheet();
 		
 		ctBorderA = CTBorder.Factory.newInstance();
 		XSSFCellBorder borderA = new XSSFCellBorder(ctBorderA);
@@ -223,7 +222,7 @@ public class TestXSSFCellStyle extends TestCase {
 	public void testGetSetBottomBorderColor() {
         //defaults
         assertEquals(IndexedColors.BLACK.getIndex(), cellStyle.getBottomBorderColor());
-        assertNull(cellStyle.getBottomBorderRgbColor());
+        assertNull(cellStyle.getBottomBorderXSSFColor());
 
         int num = stylesTable.getBorders().size();
 
@@ -232,7 +231,7 @@ public class TestXSSFCellStyle extends TestCase {
         //setting indexed color
         cellStyle.setBottomBorderColor(IndexedColors.BLUE_GREY.getIndex());
         assertEquals(IndexedColors.BLUE_GREY.getIndex(), cellStyle.getBottomBorderColor());
-        clr = cellStyle.getBottomBorderRgbColor();
+        clr = cellStyle.getBottomBorderXSSFColor();
         assertTrue(clr.getCTColor().isSetIndexed());
         assertEquals(IndexedColors.BLUE_GREY.getIndex(), clr.getIndexed());
         //a new border was added to the styles table
@@ -249,21 +248,21 @@ public class TestXSSFCellStyle extends TestCase {
         num = stylesTable.getBorders().size();
         clr = new XSSFColor(java.awt.Color.CYAN);
         cellStyle.setBottomBorderColor(clr);
-        assertEquals(clr.getCTColor().toString(), cellStyle.getBottomBorderRgbColor().getCTColor().toString());
-        byte[] rgb = cellStyle.getBottomBorderRgbColor().getRgb();
+        assertEquals(clr.getCTColor().toString(), cellStyle.getBottomBorderXSSFColor().getCTColor().toString());
+        byte[] rgb = cellStyle.getBottomBorderXSSFColor().getRgb();
         assertEquals(java.awt.Color.CYAN, new java.awt.Color(rgb[0] & 0xFF, rgb[1] & 0xFF, rgb[2] & 0xFF));
         //another border was added to the styles table
         assertEquals(num + 1, stylesTable.getBorders().size());
 
         //passing null unsets the color
         cellStyle.setBottomBorderColor(null);
-        assertNull(cellStyle.getBottomBorderRgbColor());
+        assertNull(cellStyle.getBottomBorderXSSFColor());
     }
 
 	public void testGetSetTopBorderColor() {
         //defaults
         assertEquals(IndexedColors.BLACK.getIndex(), cellStyle.getTopBorderColor());
-        assertNull(cellStyle.getTopBorderRgbColor());
+        assertNull(cellStyle.getTopBorderXSSFColor());
 
         int num = stylesTable.getBorders().size();
 
@@ -272,7 +271,7 @@ public class TestXSSFCellStyle extends TestCase {
         //setting indexed color
         cellStyle.setTopBorderColor(IndexedColors.BLUE_GREY.getIndex());
         assertEquals(IndexedColors.BLUE_GREY.getIndex(), cellStyle.getTopBorderColor());
-        clr = cellStyle.getTopBorderRgbColor();
+        clr = cellStyle.getTopBorderXSSFColor();
         assertTrue(clr.getCTColor().isSetIndexed());
         assertEquals(IndexedColors.BLUE_GREY.getIndex(), clr.getIndexed());
         //a new border was added to the styles table
@@ -289,21 +288,21 @@ public class TestXSSFCellStyle extends TestCase {
         num = stylesTable.getBorders().size();
         clr = new XSSFColor(java.awt.Color.CYAN);
         cellStyle.setTopBorderColor(clr);
-        assertEquals(clr.getCTColor().toString(), cellStyle.getTopBorderRgbColor().getCTColor().toString());
-        byte[] rgb = cellStyle.getTopBorderRgbColor().getRgb();
+        assertEquals(clr.getCTColor().toString(), cellStyle.getTopBorderXSSFColor().getCTColor().toString());
+        byte[] rgb = cellStyle.getTopBorderXSSFColor().getRgb();
         assertEquals(java.awt.Color.CYAN, new java.awt.Color(rgb[0] & 0xFF, rgb[1] & 0xFF, rgb[2] & 0xFF));
         //another border was added to the styles table
         assertEquals(num + 1, stylesTable.getBorders().size());
 
         //passing null unsets the color
         cellStyle.setTopBorderColor(null);
-        assertNull(cellStyle.getTopBorderRgbColor());
+        assertNull(cellStyle.getTopBorderXSSFColor());
 	}
 
 	public void testGetSetLeftBorderColor() {
         //defaults
         assertEquals(IndexedColors.BLACK.getIndex(), cellStyle.getLeftBorderColor());
-        assertNull(cellStyle.getLeftBorderRgbColor());
+        assertNull(cellStyle.getLeftBorderXSSFColor());
 
         int num = stylesTable.getBorders().size();
 
@@ -312,7 +311,7 @@ public class TestXSSFCellStyle extends TestCase {
         //setting indexed color
         cellStyle.setLeftBorderColor(IndexedColors.BLUE_GREY.getIndex());
         assertEquals(IndexedColors.BLUE_GREY.getIndex(), cellStyle.getLeftBorderColor());
-        clr = cellStyle.getLeftBorderRgbColor();
+        clr = cellStyle.getLeftBorderXSSFColor();
         assertTrue(clr.getCTColor().isSetIndexed());
         assertEquals(IndexedColors.BLUE_GREY.getIndex(), clr.getIndexed());
         //a new border was added to the styles table
@@ -329,21 +328,21 @@ public class TestXSSFCellStyle extends TestCase {
         num = stylesTable.getBorders().size();
         clr = new XSSFColor(java.awt.Color.CYAN);
         cellStyle.setLeftBorderColor(clr);
-        assertEquals(clr.getCTColor().toString(), cellStyle.getLeftBorderRgbColor().getCTColor().toString());
-        byte[] rgb = cellStyle.getLeftBorderRgbColor().getRgb();
+        assertEquals(clr.getCTColor().toString(), cellStyle.getLeftBorderXSSFColor().getCTColor().toString());
+        byte[] rgb = cellStyle.getLeftBorderXSSFColor().getRgb();
         assertEquals(java.awt.Color.CYAN, new java.awt.Color(rgb[0] & 0xFF, rgb[1] & 0xFF, rgb[2] & 0xFF));
         //another border was added to the styles table
         assertEquals(num + 1, stylesTable.getBorders().size());
 
         //passing null unsets the color
         cellStyle.setLeftBorderColor(null);
-        assertNull(cellStyle.getLeftBorderRgbColor());
+        assertNull(cellStyle.getLeftBorderXSSFColor());
 	}
 
 	public void testGetSetRightBorderColor() {
         //defaults
         assertEquals(IndexedColors.BLACK.getIndex(), cellStyle.getRightBorderColor());
-        assertNull(cellStyle.getRightBorderRgbColor());
+        assertNull(cellStyle.getRightBorderXSSFColor());
 
         int num = stylesTable.getBorders().size();
 
@@ -352,7 +351,7 @@ public class TestXSSFCellStyle extends TestCase {
         //setting indexed color
         cellStyle.setRightBorderColor(IndexedColors.BLUE_GREY.getIndex());
         assertEquals(IndexedColors.BLUE_GREY.getIndex(), cellStyle.getRightBorderColor());
-        clr = cellStyle.getRightBorderRgbColor();
+        clr = cellStyle.getRightBorderXSSFColor();
         assertTrue(clr.getCTColor().isSetIndexed());
         assertEquals(IndexedColors.BLUE_GREY.getIndex(), clr.getIndexed());
         //a new border was added to the styles table
@@ -369,21 +368,21 @@ public class TestXSSFCellStyle extends TestCase {
         num = stylesTable.getBorders().size();
         clr = new XSSFColor(java.awt.Color.CYAN);
         cellStyle.setRightBorderColor(clr);
-        assertEquals(clr.getCTColor().toString(), cellStyle.getRightBorderRgbColor().getCTColor().toString());
-        byte[] rgb = cellStyle.getRightBorderRgbColor().getRgb();
+        assertEquals(clr.getCTColor().toString(), cellStyle.getRightBorderXSSFColor().getCTColor().toString());
+        byte[] rgb = cellStyle.getRightBorderXSSFColor().getRgb();
         assertEquals(java.awt.Color.CYAN, new java.awt.Color(rgb[0] & 0xFF, rgb[1] & 0xFF, rgb[2] & 0xFF));
         //another border was added to the styles table
         assertEquals(num + 1, stylesTable.getBorders().size());
 
         //passing null unsets the color
         cellStyle.setRightBorderColor(null);
-        assertNull(cellStyle.getRightBorderRgbColor());
+        assertNull(cellStyle.getRightBorderXSSFColor());
 	}
 
 	public void testGetSetFillBackgroundColor() {
 
         assertEquals(IndexedColors.AUTOMATIC.getIndex(), cellStyle.getFillBackgroundColor());
-        assertNull(cellStyle.getFillBackgroundRgbColor());
+        assertNull(cellStyle.getFillBackgroundXSSFColor());
 
         XSSFColor clr;
 
@@ -392,7 +391,7 @@ public class TestXSSFCellStyle extends TestCase {
         //setting indexed color
         cellStyle.setFillBackgroundColor(IndexedColors.RED.getIndex());
         assertEquals(IndexedColors.RED.getIndex(), cellStyle.getFillBackgroundColor());
-        clr = cellStyle.getFillBackgroundRgbColor();
+        clr = cellStyle.getFillBackgroundXSSFColor();
         assertTrue(clr.getCTColor().isSetIndexed());
         assertEquals(IndexedColors.RED.getIndex(), clr.getIndexed());
         //a new fill was added to the styles table
@@ -409,15 +408,15 @@ public class TestXSSFCellStyle extends TestCase {
         num = stylesTable.getFills().size();
         clr = new XSSFColor(java.awt.Color.CYAN);
         cellStyle.setFillBackgroundColor(clr);
-        assertEquals(clr.getCTColor().toString(), cellStyle.getFillBackgroundRgbColor().getCTColor().toString());
-        byte[] rgb = cellStyle.getFillBackgroundRgbColor().getRgb();
+        assertEquals(clr.getCTColor().toString(), cellStyle.getFillBackgroundXSSFColor().getCTColor().toString());
+        byte[] rgb = cellStyle.getFillBackgroundXSSFColor().getRgb();
         assertEquals(java.awt.Color.CYAN, new java.awt.Color(rgb[0] & 0xFF, rgb[1] & 0xFF, rgb[2] & 0xFF));
         //another border was added to the styles table
         assertEquals(num + 1, stylesTable.getFills().size());
 
         //passing null unsets the color
         cellStyle.setFillBackgroundColor(null);
-        assertNull(cellStyle.getFillBackgroundRgbColor());
+        assertNull(cellStyle.getFillBackgroundXSSFColor());
         assertEquals(IndexedColors.AUTOMATIC.getIndex(), cellStyle.getFillBackgroundColor());
 	}
 	
@@ -427,7 +426,7 @@ public class TestXSSFCellStyle extends TestCase {
 
 		XSSFCellStyle style1 = wb1.createCellStyle();
         assertEquals(IndexedColors.AUTOMATIC.getIndex(), style1.getFillBackgroundColor());
-        assertNull(style1.getFillBackgroundRgbColor());
+        assertNull(style1.getFillBackgroundXSSFColor());
 
         //compatibility with HSSF
         HSSFWorkbook wb2 = new HSSFWorkbook();
@@ -457,7 +456,7 @@ public class TestXSSFCellStyle extends TestCase {
 
         XSSFCellStyle defaultStyle = wb.getCellStyleAt((short)0);
         assertEquals(IndexedColors.AUTOMATIC.getIndex(), defaultStyle.getFillForegroundColor());
-        assertEquals(null, defaultStyle.getFillForegroundRgbColor());
+        assertEquals(null, defaultStyle.getFillForegroundXSSFColor());
         assertEquals(CellStyle.NO_FILL, defaultStyle.getFillPattern());
 
         XSSFCellStyle customStyle = wb.createCellStyle();

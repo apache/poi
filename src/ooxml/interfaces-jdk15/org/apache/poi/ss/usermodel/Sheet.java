@@ -167,21 +167,6 @@ public interface Sheet extends Iterable<Row> {
     void setDefaultRowHeightInPoints(float height);
 
     /**
-     * get whether gridlines are printed.
-     * @return true if printed
-     */
-
-    boolean isGridsPrinted();
-
-    /**
-     * set whether gridlines printed.
-     * @param value  false if not printed.
-     */
-
-    void setGridsPrinted(boolean value);
-
-    
-    /**
      * adds a merged region of cells (hence those cells form one)
      * @param region (rowfrom/colfrom-rowto/colto) to merge
      * @return index of this region
@@ -227,20 +212,6 @@ public interface Sheet extends Iterable<Row> {
      * be the third row if say for instance the second row is undefined.
      */
     Iterator<Row> rowIterator();
-
-    /**
-     * whether alternate expression evaluation is on
-     * @param b  alternative expression evaluation or not
-     */
-
-    void setAlternativeExpression(boolean b);
-
-    /**
-     * whether alternative formula entry is on
-     * @param b  alternative formulas or not
-     */
-
-    void setAlternativeFormula(boolean b);
 
     /**
      * show automatic page breaks or not

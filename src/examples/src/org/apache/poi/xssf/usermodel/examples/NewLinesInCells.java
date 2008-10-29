@@ -28,7 +28,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 /**
  * How to use newlines in cells
  */
-public class CellNewlines {
+public class NewLinesInCells {
 
     public static void main(String[]args) throws Exception {
         Workbook wb = new XSSFWorkbook();

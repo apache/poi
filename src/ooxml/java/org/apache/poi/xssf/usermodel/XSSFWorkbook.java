@@ -169,7 +169,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                 }
             }
 
-            // Load individual sheets. The order of sheets is defined by the order of CTSheet beans in the workbook
+            // Load individual sheets. The order of sheets is defined by the order of CTSheet elements in the workbook
             sheets = new ArrayList<XSSFSheet>(shIdMap.size());
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
                 XSSFSheet sh = shIdMap.get(ctSheet.getId());
@@ -189,7 +189,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
             // Process the named ranges
             namedRanges = new ArrayList<XSSFName>();
-            if(workbook.getDefinedNames() != null) {
+            if(workbook.isSetDefinedNames()) {
                 for(CTDefinedName ctName : workbook.getDefinedNames().getDefinedNameArray()) {
                     namedRanges.add(new XSSFName(ctName, this));
                 }
@@ -381,16 +381,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @return the new XSSFCellStyle object
      */
     public XSSFCellStyle createCellStyle() {
-        CTXf xf=CTXf.Factory.newInstance();
-        xf.setNumFmtId(0);
-        xf.setFontId(0);
-        xf.setFillId(0);
-        xf.setBorderId(0);
-        xf.setXfId(0);
-        int xfSize=(stylesSource)._getStyleXfsSize();
-        int indexXf=(stylesSource).putCellXf(xf);
-        XSSFCellStyle style = new XSSFCellStyle(indexXf-1, xfSize-1, stylesSource);
-        return style;
+        return stylesSource.createCellStyle();
     }
 
     /**
@@ -448,7 +439,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     public XSSFSheet createSheet(String sheetname) {
         if (containsSheet( sheetname, sheets.size() ))
-               throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
+               throw new IllegalArgumentException( "The workbook already contains a sheet of this name");
 
         CTSheet sheet = addSheet(sheetname);
 
@@ -479,23 +470,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * Finds a font that matches the one with the supplied attributes
      */
     public XSSFFont findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
-        short fontNum = getNumberOfFonts();
-        for (short i = 0; i < fontNum; i++) {
-            XSSFFont xssfFont = getFontAt(i);
-
-            if (	(xssfFont.getBold() == (boldWeight == XSSFFont.BOLDWEIGHT_BOLD))
-                    && xssfFont.getColor() == color
-                    && xssfFont.getFontHeightInPoints() == fontHeight
-                    && xssfFont.getFontName().equals(name)
-                    && xssfFont.getItalic() == italic
-                    && xssfFont.getStrikeout() == strikeout
-                    && xssfFont.getTypeOffset() == typeOffset
-                    && xssfFont.getUnderline() == underline)
-            {
-                return xssfFont;
-            }
-        }
-        return null;
+        return stylesSource.findFont(boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
     }
 
     /**
@@ -599,7 +574,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @return number of fonts
      */
     public short getNumberOfFonts() {
-        return (short)(stylesSource).getNumberOfFonts();
+        return (short)stylesSource.getFonts().size();
     }
 
     /**
@@ -617,7 +592,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @return number of worksheets
      */
     public int getNumberOfSheets() {
-        return this.sheets.size();
+        return sheets.size();
     }
 
     /**
@@ -640,10 +615,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @return XSSFSheet with the name provided or <code>null</code> if it does not exist
      */
     public XSSFSheet getSheet(String name) {
-        CTSheet[] ctSheets = this.workbook.getSheets().getSheetArray();
-        for (int i = 0 ; i < ctSheets.length ; ++i) {
-            if (name.equalsIgnoreCase(ctSheets[i].getName())) {
-                return sheets.get(i);
+        for (XSSFSheet sheet : sheets) {
+            if (name.equalsIgnoreCase(sheet.getSheetName())) {
+                return sheet;
             }
         }
         return null;
@@ -669,9 +643,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @return index of the sheet (0 based) or <tt>-1</tt if not found
      */
     public int getSheetIndex(String name) {
-        CTSheet[] sheets = this.workbook.getSheets().getSheetArray();
-        for (int i = 0 ; i < sheets.length ; ++i) {
-            if (name.equalsIgnoreCase(sheets[i].getName())) {
+        for (int i = 0 ; i < sheets.size() ; ++i) {
+            XSSFSheet sheet = sheets.get(i);
+            if (name.equalsIgnoreCase(sheet.getSheetName())) {
                 return i;
             }
         }
@@ -686,7 +660,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     public int getSheetIndex(Sheet sheet) {
         int idx = 0;
-        for(XSSFSheet sh : this){
+        for(XSSFSheet sh : sheets){
             if(sh == sheet) return idx;
             idx++;
         }
@@ -701,7 +675,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     public String getSheetName(int sheetIx) {
         validateSheetIndex(sheetIx);
-        return this.workbook.getSheets().getSheetArray(sheetIx).getName();
+        return sheets.get(sheetIx).getSheetName();
     }
 
     /**
@@ -981,11 +955,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * Generates a NameRecord to represent a built-in region
      *
      * @return a new NameRecord
+     * @throws IllegalArgumentException if sheetNumber is invalid
+     * @throws POIXMLException if such a name already exists in the workbook
      */
     private XSSFName createBuiltInName(String builtInName, int sheetNumber) {
-        if (sheetNumber < 0 || sheetNumber + 1 > Short.MAX_VALUE) {
-            throw new IllegalArgumentException("Sheet number [" + sheetNumber + "]is not valid ");
-        }
+        validateSheetIndex(sheetNumber);
 
         CTDefinedNames names = workbook.getDefinedNames() == null ? workbook.addNewDefinedNames() : workbook.getDefinedNames();
         CTDefinedName nameRecord = names.addNewDefinedName();
@@ -995,7 +969,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         XSSFName name = new XSSFName(nameRecord, this);
         for (XSSFName nr : namedRanges) {
             if (nr.equals(name))
-                throw new RuntimeException("Builtin (" + builtInName
+                throw new POIXMLException("Builtin (" + builtInName
                         + ") already exists for sheet (" + sheetNumber + ")");
         }
 
@@ -1006,8 +980,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * We only set one sheet as selected for compatibility with HSSF.
      */
     public void setSelectedTab(short index) {
-        for (int i = 0 ; i < this.sheets.size() ; ++i) {
-            XSSFSheet sheet = this.sheets.get(i);
+        for (int i = 0 ; i < sheets.size() ; ++i) {
+            XSSFSheet sheet = sheets.get(i);
             sheet.setSelected(i == index);
         }
     }
@@ -1025,7 +999,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         validateSheetName(name);
         if (containsSheet(name, sheet ))
             throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
-        this.workbook.getSheets().getSheetArray(sheet).setName(name);
+        workbook.getSheets().getSheetArray(sheet).setName(name);
     }
 
     /**
@@ -1038,9 +1012,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         int idx = getSheetIndex(sheetname);
         sheets.add(pos, sheets.remove(idx));
         // Reorder CTSheets
-        XmlObject cts = this.workbook.getSheets().getSheetArray(idx).copy();
-        this.workbook.getSheets().removeSheet(idx);
-        CTSheet newcts = this.workbook.getSheets().insertNewSheet(pos);
+        XmlObject cts = workbook.getSheets().getSheetArray(idx).copy();
+        workbook.getSheets().removeSheet(idx);
+        CTSheet newcts = workbook.getSheets().insertNewSheet(pos);
         newcts.set(cts);
     }
 
@@ -1218,4 +1192,63 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         }
         return embedds;
     }
+
+    /**
+     * Check whether a sheet is hidden.
+     * Note that a sheet could instead be set to be very hidden, which is different
+     *  ({@link #isSheetVeryHidden(int)})
+     * @param sheetIx Number
+     * @return True if sheet is hidden
+     * @throws IllegalArgumentException if sheetIx is invalid
+     */
+    public boolean isSheetHidden(int sheetIx) {
+        validateSheetIndex(sheetIx);
+        CTSheet ctSheet = sheets.get(sheetIx).sheet;
+        return ctSheet.getState() == STSheetState.HIDDEN;
+    }
+
+    /**
+     * Check whether a sheet is very hidden.
+     * This is different from the normal  hidden status ({@link #isSheetHidden(int)})
+     * @param sheetIx Number
+     * @return True if sheet is very hidden
+     * @throws IllegalArgumentException if sheetIx is invalid
+     */
+    public boolean isSheetVeryHidden(int sheetIx) {
+        validateSheetIndex(sheetIx);
+        CTSheet ctSheet = sheets.get(sheetIx).sheet;
+        return ctSheet.getState() == STSheetState.VERY_HIDDEN;
+    }
+
+    /**
+     * Hide or unhide a sheet
+     *
+     * @param sheetIx The sheet index
+     * @param hidden True to mark the sheet as hidden, false otherwise
+     * @throws IllegalArgumentException if sheetIx is invalid
+     */
+    public void setSheetHidden(int sheetIx, boolean hidden) {
+        validateSheetIndex(sheetIx);
+        CTSheet ctSheet = sheets.get(sheetIx).sheet;
+        ctSheet.setState(hidden ? STSheetState.HIDDEN : STSheetState.VISIBLE);
+    }
+
+    /**
+     * Hide or unhide a sheet.
+     * <pre>
+     *  0 = not hidden
+     *  1 = hidden
+     *  2 = very hidden.
+     * </pre>
+     *
+     * @param sheetIx The sheet number
+     * @param hidden 0 for not hidden, 1 for hidden, 2 for very hidden
+     * @throws IllegalArgumentException if sheetIx is invalid
+     */
+    public void setSheetHidden(int sheetIx, int hidden) {
+        validateSheetIndex(sheetIx);
+        CTSheet ctSheet = sheets.get(sheetIx).sheet;
+        ctSheet.setState(STSheetState.Enum.forInt(hidden));
+    }
+
 }

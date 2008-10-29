@@ -23,49 +23,51 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STHorizontalAlignment
 import java.io.FileOutputStream;
 
 /**
- *  Demonstrates various alignment options
+ * Shows how various alignment options work.
  */
 public class AligningCells {
 
-    public static void main(String[] args)
-                throws Exception
-        {
-            Workbook wb = new XSSFWorkbook();
+    public static void main(String[] args)  throws Exception {
+        Workbook wb = new XSSFWorkbook();
 
-            Sheet sheet = wb.createSheet("new sheet");
-            Row row = sheet.createRow((short) 2);
-
-            createCell(wb, row, (short) 0, XSSFCellStyle.ALIGN_CENTER, XSSFCellStyle.VERTICAL_BOTTOM);
-            createCell(wb, row, (short) 1, XSSFCellStyle.ALIGN_CENTER_SELECTION, XSSFCellStyle.VERTICAL_BOTTOM);
-            createCell(wb, row, (short) 2, XSSFCellStyle.ALIGN_FILL, XSSFCellStyle.VERTICAL_CENTER);
-            createCell(wb, row, (short) 3, XSSFCellStyle.ALIGN_GENERAL, XSSFCellStyle.VERTICAL_CENTER);
-            createCell(wb, row, (short) 4, XSSFCellStyle.ALIGN_JUSTIFY, XSSFCellStyle.VERTICAL_JUSTIFY);
-            createCell(wb, row, (short) 5, XSSFCellStyle.ALIGN_LEFT, XSSFCellStyle.VERTICAL_TOP);
-            createCell(wb, row, (short) 6, XSSFCellStyle.ALIGN_RIGHT, XSSFCellStyle.VERTICAL_TOP);
-
-            // Write the output to a file
-            FileOutputStream fileOut = new FileOutputStream("aligning.xlsx");
-            wb.write(fileOut);
-            fileOut.close();
-
+        Sheet sheet = wb.createSheet();
+        Row row = sheet.createRow((short) 2);
+        row.setHeightInPoints(30);
+        for (int i = 0; i < 8; i++) {
+            //column width is set in units of 1/256th of a character width
+            sheet.setColumnWidth(i, 256*15);
         }
 
-        /**
-         * Creates a cell and aligns it a certain way.
-         *
-         * @param wb        the workbook
-         * @param row       the row to create the cell in
-         * @param column    the column number to create the cell in
-         * @param halign    the horizontal alignment for the cell.
-         */
-        private static void createCell(Workbook wb, Row row, short column, short halign, short valign)
-        {
-            Cell cell = row.createCell(column);
-            cell.setCellValue(new XSSFRichTextString("Align It"));
-            CellStyle cellStyle = wb.createCellStyle();
-            cellStyle.setAlignment(halign);
-            cellStyle.setVerticalAlignment(valign);
-            cell.setCellStyle(cellStyle);
-        }
+        createCell(wb, row, (short) 0, XSSFCellStyle.ALIGN_CENTER, XSSFCellStyle.VERTICAL_BOTTOM);
+        createCell(wb, row, (short) 1, XSSFCellStyle.ALIGN_CENTER_SELECTION, XSSFCellStyle.VERTICAL_BOTTOM);
+        createCell(wb, row, (short) 2, XSSFCellStyle.ALIGN_FILL, XSSFCellStyle.VERTICAL_CENTER);
+        createCell(wb, row, (short) 3, XSSFCellStyle.ALIGN_GENERAL, XSSFCellStyle.VERTICAL_CENTER);
+        createCell(wb, row, (short) 4, XSSFCellStyle.ALIGN_JUSTIFY, XSSFCellStyle.VERTICAL_JUSTIFY);
+        createCell(wb, row, (short) 5, XSSFCellStyle.ALIGN_LEFT, XSSFCellStyle.VERTICAL_TOP);
+        createCell(wb, row, (short) 6, XSSFCellStyle.ALIGN_RIGHT, XSSFCellStyle.VERTICAL_TOP);
+
+        // Write the output to a file
+        FileOutputStream fileOut = new FileOutputStream("xssf-align.xlsx");
+        wb.write(fileOut);
+        fileOut.close();
+
+    }
+
+    /**
+     * Creates a cell and aligns it a certain way.
+     *
+     * @param wb     the workbook
+     * @param row    the row to create the cell in
+     * @param column the column number to create the cell in
+     * @param halign the horizontal alignment for the cell.
+     */
+    private static void createCell(Workbook wb, Row row, short column, short halign, short valign) {
+        Cell cell = row.createCell(column);
+        cell.setCellValue(new XSSFRichTextString("Align It"));
+        CellStyle cellStyle = wb.createCellStyle();
+        cellStyle.setAlignment(halign);
+        cellStyle.setVerticalAlignment(valign);
+        cell.setCellStyle(cellStyle);
+    }
 
 }

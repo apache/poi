@@ -324,7 +324,10 @@ public interface CellStyle {
     short getAlignment();
 
     /**
-     * set whether the text should be wrapped
+     * Set whether the text should be wrapped.
+     * Setting this flag to <code>true</code> make all content visible
+     * whithin a cell by displaying it on multiple lines
+     *
      * @param wrapped  wrap text or not
      */
 

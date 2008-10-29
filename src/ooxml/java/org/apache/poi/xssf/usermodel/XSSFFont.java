@@ -17,8 +17,8 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.extensions.XSSFColor;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.POIXMLException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 /**
@@ -127,7 +127,7 @@ public class XSSFFont implements Font {
      *
      * @return XSSFColor - rgb color to use
      */
-    public XSSFColor getRgbColor() {
+    public XSSFColor getXSSFColor() {
         CTColor ctColor = ctFont.sizeOfColorArray() == 0 ? null : ctFont.getColorArray(0);
         return ctColor == null ? null : new XSSFColor(ctColor);
     }
@@ -221,7 +221,7 @@ public class XSSFFont implements Font {
                 case STVerticalAlignRun.INT_SUPERSCRIPT:
                     return Font.SS_SUPER;
                 default:
-                    throw new RuntimeException("Wrong offset value " + val);
+                    throw new POIXMLException("Wrong offset value " + val);
             }
         } else
             return Font.SS_NONE;
@@ -292,7 +292,7 @@ public class XSSFFont implements Font {
                 charsetProperty.setVal(FontCharset.DEFAULT.getValue());
                 break;
             default:
-                throw new RuntimeException("Attention: an attempt to set a type of unknow charset and charset");
+                throw new POIXMLException("Attention: an attempt to set a type of unknow charset and charset");
         }
     }
 
@@ -327,9 +327,18 @@ public class XSSFFont implements Font {
                 ctColor.setIndexed(color);
         }
     }
+
+    /**
+     * set the color for the font in Standard Alpha Red Green Blue color value
+     *
+     * @param color - color to use
+     */
     public void setColor(XSSFColor color) {
         if(color == null) ctFont.setColorArray(null);
-        else ctFont.setColorArray(new CTColor[]{color.getCTColor()});
+        else {
+            CTColor ctColor = ctFont.sizeOfColorArray() == 0 ? ctFont.addNewColor() : ctFont.getColorArray(0);
+            ctColor.setRgb(color.getRgb());
+        }
     }
 
     /**
@@ -358,16 +367,6 @@ public class XSSFFont implements Font {
      */
     public void setFontHeightInPoints(short height) {
         setFontHeight(height);
-    }
-
-    /**
-     * set the color for the font in Standard Alpha Red Green Blue color value
-     *
-     * @param color - color to use
-     */
-    public void setRgbColor(XSSFColor color) {
-        CTColor ctColor = ctFont.sizeOfColorArray() == 0 ? ctFont.addNewColor() : ctFont.getColorArray(0);
-        ctColor.setRgb(color.getRgb());
     }
 
     /**

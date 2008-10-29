@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.usermodel.extensions;
+package org.apache.poi.xssf.usermodel;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 
@@ -206,7 +206,7 @@ public class XSSFColor {
     }
 
     public boolean equals(Object o){
-        if(!(o instanceof XSSFColor)) return false;
+        if(o == null || !(o instanceof XSSFColor)) return false;
 
         XSSFColor cf = (XSSFColor)o;
         return ctColor.toString().equals(cf.getCTColor().toString());

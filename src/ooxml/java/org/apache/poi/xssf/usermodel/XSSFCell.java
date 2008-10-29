@@ -27,6 +27,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.POIXMLException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
@@ -175,6 +176,7 @@ public final class XSSFCell implements Cell {
      * @return the value of the cell as a number
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is CELL_TYPE_STRING
      * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
+     * @see DataFormatter for turning this number into a string similar to that which Excel would render this number as.
      */
     public double getNumericCellValue() {
         int cellType = getCellType();
@@ -395,7 +397,7 @@ public final class XSSFCell implements Cell {
      */
     public void setCellStyle(CellStyle style) {
         if(style == null) {
-            cell.unsetS();
+            if(cell.isSetS()) cell.unsetS();
         } else {
 			XSSFCellStyle xStyle = (XSSFCellStyle)style;
 			xStyle.verifyBelongsToStylesSource(stylesSource);
@@ -455,6 +457,7 @@ public final class XSSFCell implements Cell {
      * @return the value of the cell as a date
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is CELL_TYPE_STRING
      * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
+     * @see DataFormatter for formatting  this date into a string similar to how excel does.
      */
     public Date getDateCellValue() {
         int cellType = getCellType();
@@ -746,10 +749,10 @@ public final class XSSFCell implements Cell {
      */
     private static void checkBounds(int cellNum) {
         if (cellNum > MAX_COLUMN_NUMBER) {
-            throw new RuntimeException("You cannot have more than "+MAX_COLUMN_NUMBER+" columns " +
+            throw new POIXMLException("You cannot have more than "+MAX_COLUMN_NUMBER+" columns " +
                     "in a given row because Excel can't handle it");
         } else if (cellNum < 0) {
-            throw new RuntimeException("You cannot reference columns with an index of less then 0.");
+            throw new POIXMLException("You cannot reference columns with an index of less then 0.");
         }
     }
 

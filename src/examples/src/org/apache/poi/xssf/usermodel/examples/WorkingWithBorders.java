@@ -28,7 +28,7 @@ import java.io.FileOutputStream;
 public class WorkingWithBorders {
     public static void main(String[] args) throws Exception {
         Workbook wb = new XSSFWorkbook();
-        Sheet sheet = wb.createSheet("new sheet");
+        Sheet sheet = wb.createSheet("borders");
 
         // Create a row and put some cells in it. Rows are 0 based.
         Row row = sheet.createRow((short) 1);
@@ -50,7 +50,7 @@ public class WorkingWithBorders {
         cell.setCellStyle(style);
 
         // Write the output to a file
-        FileOutputStream fileOut = new FileOutputStream("workbook_borders.xlsx");
+        FileOutputStream fileOut = new FileOutputStream("xssf-borders.xlsx");
         wb.write(fileOut);
         fileOut.close();
 

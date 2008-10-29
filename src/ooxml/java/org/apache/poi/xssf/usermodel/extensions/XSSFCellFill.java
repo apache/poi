@@ -20,6 +20,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 
 /**
  * This element specifies fill formatting.
