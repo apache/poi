@@ -71,7 +71,7 @@ public class WorkingWithPageSetup {
         wb.setPrintArea(0, 1, 2, 0, 3);
 
 
-        FileOutputStream fileOut = new FileOutputStream("ooxml-printsetup.xlsx");
+        FileOutputStream fileOut = new FileOutputStream("xssf-printsetup.xlsx");
         wb.write(fileOut);
         fileOut.close();
     }

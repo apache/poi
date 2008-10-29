@@ -22,36 +22,35 @@ import org.apache.poi.ss.usermodel.*;
 import java.io.FileOutputStream;
 
 /**
- *  Demonstrates how to work with rich text
+ * Demonstrates how to work with rich text
  */
 public class WorkingWithRichText {
 
-    public static void main(String[] args)
-                throws Exception
-        {
-            XSSFWorkbook wb = new XSSFWorkbook();
+    public static void main(String[] args) throws Exception {
+        
+        XSSFWorkbook wb = new XSSFWorkbook();
 
-            XSSFSheet sheet = wb.createSheet();
-            XSSFRow row = sheet.createRow((short) 2);
+        XSSFSheet sheet = wb.createSheet();
+        XSSFRow row = sheet.createRow((short) 2);
 
-            XSSFCell cell = row.createCell(1);
-            XSSFRichTextString rt = new XSSFRichTextString("The quick");
+        XSSFCell cell = row.createCell(1);
+        XSSFRichTextString rt = new XSSFRichTextString("The quick");
 
-            XSSFFont font1 = wb.createFont();
-            font1.setBold(true);
-            rt.append(" brown fox", font1);
+        XSSFFont font1 = wb.createFont();
+        font1.setBold(true);
+        rt.append(" brown fox", font1);
 
-            XSSFFont font2 = wb.createFont();
-            font2.setItalic(true);
-            font2.setColor(IndexedColors.RED.getIndex());
-            rt.applyFont((short)0);
-            cell.setCellValue(rt);
+        XSSFFont font2 = wb.createFont();
+        font2.setItalic(true);
+        font2.setColor(IndexedColors.RED.getIndex());
+        rt.applyFont((short) 0);
+        cell.setCellValue(rt);
 
-            // Write the output to a file
-            FileOutputStream fileOut = new FileOutputStream("rich_text.xlsx");
-            wb.write(fileOut);
-            fileOut.close();
+        // Write the output to a file
+        FileOutputStream fileOut = new FileOutputStream("xssf-richtext.xlsx");
+        wb.write(fileOut);
+        fileOut.close();
 
-        }
+    }
 
- }
+}

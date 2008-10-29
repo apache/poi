@@ -231,7 +231,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Sdds a merged region of cells (hence those cells form one)
+     * Adds a merged region of cells (hence those cells form one).
      *
      * @param cra (rowfrom/colfrom-rowto/colto) to merge
      * @return index of this region
@@ -324,8 +324,25 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param leftmostColumn   Left column visible in right pane.
      */
     public void createFreezePane(int colSplit, int rowSplit, int leftmostColumn, int topRow) {
-        this.createFreezePane(colSplit, rowSplit);
-        this.showInPane((short)topRow, (short)leftmostColumn);
+        CTPane pane = getPane();
+        if (colSplit > 0) pane.setXSplit(colSplit);
+        if (rowSplit > 0) pane.setYSplit(rowSplit);
+        pane.setState(STPaneState.FROZEN);
+        if (rowSplit == 0) {
+            pane.setTopLeftCell(new CellReference(0, topRow).formatAsString());
+            pane.setActivePane(STPane.TOP_RIGHT);
+        } else if (colSplit == 0) {
+            pane.setTopLeftCell(new CellReference(leftmostColumn, 64).formatAsString());
+            pane.setActivePane(STPane.BOTTOM_LEFT);
+        } else {
+            pane.setTopLeftCell(new CellReference(leftmostColumn, topRow).formatAsString());
+            pane.setActivePane(STPane.BOTTOM_RIGHT);
+        }
+
+        CTSheetView ctView = getDefaultSheetView();
+        ctView.setSelectionArray(null);
+        CTSelection sel = ctView.addNewSelection();
+        sel.setPane(pane.getActivePane());
     }
 
     /**
@@ -334,10 +351,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param rowSplit	  Vertical position of split.
      */
     public void createFreezePane(int colSplit, int rowSplit) {
-        getPane().setXSplit(colSplit);
-        getPane().setYSplit(rowSplit);
-        // make bottomRight default active pane
-        getPane().setActivePane(STPane.BOTTOM_RIGHT);
+        createFreezePane( colSplit, rowSplit, colSplit, rowSplit );
     }
 
     /**
@@ -419,7 +433,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return breaks;
     }
 
-    protected CTPageBreak getSheetTypeColumnBreaks() {
+    private CTPageBreak getSheetTypeColumnBreaks() {
         if (worksheet.getColBreaks() == null) {
             worksheet.setColBreaks(CTPageBreak.Factory.newInstance());
         }
@@ -452,11 +466,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * Note, this value is different from {@link #getColumnWidth(int)}. The latter is always greater and includes
      * 4 pixels of margin padding (two on each side), plus 1 pixel padding for the gridlines.
      * </p>
-     * @return default column width
+     * @return column width, default value is 8
      */
     public int getDefaultColumnWidth() {
-        CTSheetFormatPr pr = getSheetTypeSheetFormatPr();
-        return (int)pr.getBaseColWidth();
+        CTSheetFormatPr pr = worksheet.getSheetFormatPr();
+        return pr == null ? 8 : (int)pr.getBaseColWidth();
     }
 
     /**
@@ -466,7 +480,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return  default row height
      */
     public short getDefaultRowHeight() {
-        return (short) (getSheetTypeSheetFormatPr().getDefaultRowHeight() * 20);
+        return (short)(getDefaultRowHeightInPoints() * 20);
     }
 
     /**
@@ -475,10 +489,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return  default row height in points
      */
     public float getDefaultRowHeightInPoints() {
-        return (float)getSheetTypeSheetFormatPr().getDefaultRowHeight();
+        CTSheetFormatPr pr = worksheet.getSheetFormatPr();
+        return (float)(pr == null ? 0 : pr.getDefaultRowHeight());
     }
 
-    protected CTSheetFormatPr getSheetTypeSheetFormatPr() {
+    private CTSheetFormatPr getSheetTypeSheetFormatPr() {
         return worksheet.isSetSheetFormatPr() ?
                worksheet.getSheetFormatPr() :
                worksheet.addNewSheetFormatPr();
@@ -528,14 +543,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return psSetup.getFitToPage();
     }
 
-    protected CTSheetPr getSheetTypeSheetPr() {
+    private CTSheetPr getSheetTypeSheetPr() {
         if (worksheet.getSheetPr() == null) {
             worksheet.setSheetPr(CTSheetPr.Factory.newInstance());
         }
         return worksheet.getSheetPr();
     }
 
-    protected CTHeaderFooter getSheetTypeHeaderFooter() {
+    private CTHeaderFooter getSheetTypeHeaderFooter() {
         if (worksheet.getHeaderFooter() == null) {
             worksheet.setHeaderFooter(CTHeaderFooter.Factory.newInstance());
         }
@@ -617,15 +632,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
 
+    /**
+     * Determine whether printed output for this sheet will be horizontally centered.
+     */
     public boolean getHorizontallyCenter() {
-        return getSheetTypePrintOptions().getHorizontalCentered();
-    }
-
-    protected CTPrintOptions getSheetTypePrintOptions() {
-        if (worksheet.getPrintOptions() == null) {
-            worksheet.setPrintOptions(CTPrintOptions.Factory.newInstance());
-        }
-        return worksheet.getPrintOptions();
+        CTPrintOptions opts = worksheet.getPrintOptions();
+        return opts != null && opts.getHorizontalCentered();
     }
 
     public int getLastRowNum() {
@@ -732,9 +744,17 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return hyperlinks.size();
     }
 
+    /**
+     * Returns the information regarding the currently configured pane (split or freeze).
+     *
+     * @return null if no pane configured, or the pane information.
+     */
     public PaneInformation getPaneInformation() {
-        // TODO Auto-generated method stub
-        return null;
+        CTPane pane = getPane();
+        CellReference cellRef = pane.isSetTopLeftCell() ? new CellReference(pane.getTopLeftCell()) : null;
+        return new PaneInformation((short)pane.getXSplit(), (short)pane.getYSplit(),
+                (short)(cellRef == null ? 0 : cellRef.getRow()),(cellRef == null ? 0 : cellRef.getCol()),
+                (byte)pane.getActivePane().intValue(), pane.getState() == STPaneState.FROZEN);
     }
 
     /**
@@ -905,7 +925,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return whether printed output for this sheet will be vertically centered.
      */
     public boolean getVerticallyCenter() {
-        return getSheetTypePrintOptions().getVerticalCentered();
+        CTPrintOptions opts = worksheet.getPrintOptions();
+        return opts != null && opts.getVerticalCentered();
     }
 
     /**
@@ -997,16 +1018,37 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Gets the flag indicating whether this sheet should display gridlines.
+     * Gets the flag indicating whether this sheet displays the lines
+     * between rows and columns to make editing and reading easier.
      *
-     * @return <code>true</code> if this sheet should display gridlines.
+     * @return <code>true</code> if this sheet displays gridlines.
+     * @see #isPrintGridlines() to check if printing of gridlines is turned on or off
      */
     public boolean isDisplayGridlines() {
         return getSheetTypeSheetView().getShowGridLines();
     }
 
     /**
+     * Sets the flag indicating whether this sheet should display the lines
+     * between rows and columns to make editing and reading easier.
+     * To turn printing of gridlines use {@link #setPrintGridlines(boolean)}
+     *
+     *
+     * @param show <code>true</code> if this sheet should display gridlines.
+     * @see #setPrintGridlines(boolean)
+     */
+    public void setDisplayGridlines(boolean show) {
+        getSheetTypeSheetView().setShowGridLines(show);
+    }
+
+    /**
      * Gets the flag indicating whether this sheet should display row and column headings.
+     * <p>
+     * Row heading are the row numbers to the side of the sheet
+     * </p>
+     * <p>
+     * Column heading are the letters or numbers that appear above the columns of the sheet
+     * </p>
      *
      * @return <code>true</code> if this sheet should display row and column headings.
      */
@@ -1014,12 +1056,40 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return getSheetTypeSheetView().getShowRowColHeaders();
     }
 
-    public boolean isGridsPrinted() {
-        return isPrintGridlines();
+    /**
+     * Sets the flag indicating whether this sheet should display row and column headings.
+     * <p>
+     * Row heading are the row numbers to the side of the sheet
+     * </p>
+     * <p>
+     * Column heading are the letters or numbers that appear above the columns of the sheet
+     * </p>
+     *
+     * @param show <code>true</code> if this sheet should display row and column headings.
+     */
+    public void setDisplayRowColHeadings(boolean show) {
+        getSheetTypeSheetView().setShowRowColHeaders(show);
     }
 
+    /**
+     * Returns whether gridlines are printed.
+     *
+     * @return whether gridlines are printed
+     */
     public boolean isPrintGridlines() {
-        return getSheetTypePrintOptions().getGridLines();
+        CTPrintOptions opts = worksheet.getPrintOptions();
+        return opts != null && opts.getGridLines();
+    }
+
+    /**
+     * Turns on or off the printing of gridlines.
+     *
+     * @param value boolean to turn on or off the printing of gridlines
+     */
+    public void setPrintGridlines(boolean value) {
+        CTPrintOptions opts = worksheet.isSetPrintOptions() ?
+                worksheet.getPrintOptions() : worksheet.addNewPrintOptions();
+        opts.setGridLines(value);
     }
 
     /**
@@ -1103,6 +1173,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
     }
 
+    /**
+     * @return an iterator of the PHYSICAL rows.  Meaning the 3rd element may not
+     * be the third row if say for instance the second row is undefined.
+     * Call getRowNum() on each row if you care which one it is.
+     */
     public Iterator<Row> rowIterator() {
         return rows.values().iterator();
     }
@@ -1113,16 +1188,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     public Iterator<Row> iterator() {
         return rowIterator();
-    }
-
-    public void setAlternativeExpression(boolean b) {
-        // TODO Auto-generated method stub
-
-    }
-
-    public void setAlternativeFormula(boolean b) {
-        // TODO Auto-generated method stub
-
     }
 
     /**
@@ -1148,6 +1213,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         psSetup.setAutoPageBreaks(value);
     }
 
+    /**
+     * Sets a page break at the indicated column
+     *
+     * @param column the column to break
+     */
     public void setColumnBreak(short column) {
         if (! isColumnBroken(column)) {
             CTBreak brk = getSheetTypeColumnBreaks().addNewBrk();
@@ -1156,6 +1226,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     public void setColumnGroupCollapsed(short columnNumber, boolean collapsed) {
+        // TODO Auto-generated method stub
+
+    }
+
+    public void setRowGroupCollapsed(int row, boolean collapse) {
         // TODO Auto-generated method stub
 
     }
@@ -1225,29 +1300,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         getSheetTypeSheetView().setShowFormulas(show);
     }
 
-    protected CTSheetView getSheetTypeSheetView() {
+    private CTSheetView getSheetTypeSheetView() {
         if (getDefaultSheetView() == null) {
             getSheetTypeSheetViews().setSheetViewArray(0, CTSheetView.Factory.newInstance());
         }
         return getDefaultSheetView();
-    }
-
-    /**
-     * Sets the flag indicating whether this sheet should display gridlines.
-     *
-     * @param show <code>true</code> if this sheet should display gridlines.
-     */
-    public void setDisplayGridlines(boolean show) {
-        getSheetTypeSheetView().setShowGridLines(show);
-    }
-
-    /**
-     * Sets the flag indicating whether this sheet should display row and column headings.
-     *
-     * @param show <code>true</code> if this sheet should display row and column headings.
-     */
-    public void setDisplayRowColHeadings(boolean show) {
-        getSheetTypeSheetView().setShowRowColHeaders(show);
     }
 
     /**
@@ -1259,30 +1316,26 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         getSheetTypePageSetUpPr().setFitToPage(b);
     }
 
-    public void setGridsPrinted(boolean value) {
-        setPrintGridlines(value);
-    }
-
     /**
      * Center on page horizontally when printing.
      *
      * @param value whether to center on page horizontally when printing.
      */
     public void setHorizontallyCenter(boolean value) {
-        getSheetTypePrintOptions().setHorizontalCentered(value);
+        CTPrintOptions opts = worksheet.isSetPrintOptions() ?
+                worksheet.getPrintOptions() : worksheet.addNewPrintOptions();
+        opts.setHorizontalCentered(value);
     }
 
-    public void setPrintGridlines(boolean newPrintGridlines) {
-        getSheetTypePrintOptions().setGridLines(newPrintGridlines);
-    }
-
-    public void setRowGroupCollapsed(int row, boolean collapse) {
-        // TODO Auto-generated method stub
-
-    }
-
+    /**
+     * Whether the output is vertically centered on the page.
+     *
+     * @param value true to vertically center, false otherwise.
+     */
     public void setVerticallyCenter(boolean value) {
-        getSheetTypePrintOptions().setVerticalCentered(value);
+        CTPrintOptions opts = worksheet.isSetPrintOptions() ?
+                worksheet.getPrintOptions() : worksheet.addNewPrintOptions();
+        opts.setVerticalCentered(value);
     }
 
     /**
@@ -1316,75 +1369,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * Current view can be Normal, Page Layout, or Page Break Preview.
      *
      * @param scale window zoom magnification
+     * @throws IllegalArgumentException if scale is invalid
      */
     public void setZoom(int scale) {
+        if(scale < 10 || scale > 400) throw new IllegalArgumentException("Valid scale values range from 10 to 400");
         getSheetTypeSheetView().setZoomScale(scale);
-    }
-
-    /**
-     * Zoom magnification to use when in normal view, representing percent values.
-     * Valid values range from 10 to 400. Horizontal & Vertical scale together.
-     *
-     * For example:
-     * <pre>
-     * 10 - 10%
-     * 20 - 20%
-     * …
-     * 100 - 100%
-     * …
-     * 400 - 400%
-     * </pre>
-     *
-     * Applies for worksheet sheet type only; zero implies the automatic setting.
-     *
-     * @param scale window zoom magnification
-     */
-    public void setZoomNormal(int scale) {
-        getSheetTypeSheetView().setZoomScaleNormal(scale);
-    }
-
-    /**
-     * Zoom magnification to use when in page layout view, representing percent values.
-     * Valid values range from 10 to 400. Horizontal & Vertical scale together.
-     *
-     * For example:
-     * <pre>
-     * 10 - 10%
-     * 20 - 20%
-     * …
-     * 100 - 100%
-     * …
-     * 400 - 400%
-     * </pre>
-     *
-     * Applies for worksheet sheet type only; zero implies the automatic setting.
-     *
-     * @param scale
-     */
-    public void setZoomPageLayoutView(int scale) {
-        getSheetTypeSheetView().setZoomScalePageLayoutView(scale);
-    }
-
-    /**
-     * Zoom magnification to use when in page break preview, representing percent values.
-     * Valid values range from 10 to 400. Horizontal & Vertical scale together.
-     *
-     * For example:
-     * <pre>
-     * 10 - 10%
-     * 20 - 20%
-     * …
-     * 100 - 100%
-     * …
-     * 400 - 400%
-     * </pre>
-     *
-     * Applies for worksheet only; zero implies the automatic setting.
-     *
-     * @param scale
-     */
-    public void setZoomSheetLayoutView(int scale) {
-        getSheetTypeSheetView().setZoomScaleSheetLayoutView(scale);
     }
 
     /**
@@ -1414,7 +1403,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * Additionally shifts merged regions that are completely defined in these
      * rows (ie. merged 2 cells on a row to be shifted).
      * <p>
-     * TODO Might want to add bounds checking here
      * @param startRow the row to start shifting
      * @param endRow the row to end shifting
      * @param n the number of rows to shift
@@ -1457,33 +1445,33 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     public void ungroupColumn(short fromColumn, short toColumn) {
-        CTCols cols=worksheet.getColsArray(0);
-        for(int index=fromColumn;index<=toColumn;index++){
-            CTCol col=columnHelper.getColumn(index, false);
-            if(col!=null){
-                short outlineLevel=col.getOutlineLevel();
-                col.setOutlineLevel((short)(outlineLevel-1));
-                index=(int)col.getMax();
+        CTCols cols = worksheet.getColsArray(0);
+        for (int index = fromColumn; index <= toColumn; index++) {
+            CTCol col = columnHelper.getColumn(index, false);
+            if (col != null) {
+                short outlineLevel = col.getOutlineLevel();
+                col.setOutlineLevel((short) (outlineLevel - 1));
+                index = (int) col.getMax();
 
-                if(col.getOutlineLevel()<=0){
-                    int colIndex=columnHelper.getIndexOfColumn(cols,col);
+                if (col.getOutlineLevel() <= 0) {
+                    int colIndex = columnHelper.getIndexOfColumn(cols, col);
                     worksheet.getColsArray(0).removeCol(colIndex);
                 }
             }
         }
-        worksheet.setColsArray(0,cols);
+        worksheet.setColsArray(0, cols);
         setSheetFormatPrOutlineLevelCol();
     }
 
     public void ungroupRow(int fromRow, int toRow) {
-        for(int i=fromRow;i<=toRow;i++){
-            XSSFRow xrow=getRow(i-1);
-            if(xrow!=null){
-                CTRow ctrow=xrow.getCTRow();
-                short outlinelevel=ctrow.getOutlineLevel();
-                ctrow.setOutlineLevel((short)(outlinelevel-1));
+        for (int i = fromRow; i <= toRow; i++) {
+            XSSFRow xrow = getRow(i - 1);
+            if (xrow != null) {
+                CTRow ctrow = xrow.getCTRow();
+                short outlinelevel = ctrow.getOutlineLevel();
+                ctrow.setOutlineLevel((short) (outlinelevel - 1));
                 //remove a row only if the row has no cell and if the outline level is 0
-                if(ctrow.getOutlineLevel()==0 && xrow.getFirstCellNum()==-1){
+                if (ctrow.getOutlineLevel() == 0 && xrow.getFirstCellNum() == -1) {
                     removeRow(xrow);
                 }
             }
@@ -1621,7 +1609,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * Returns the sheet's comments object if there is one,
      *  or null if not
      */
-    protected CommentsTable getCommentsSourceIfExists() {
+    protected CommentsTable getCommentsTable() {
         return sheetComments;
     }
 

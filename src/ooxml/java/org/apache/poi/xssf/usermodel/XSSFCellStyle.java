@@ -22,7 +22,6 @@ import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellAlignment;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
-import org.apache.poi.xssf.usermodel.extensions.XSSFColor;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
@@ -36,7 +35,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
  * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getCellStyleAt(short)
  * @see org.apache.poi.xssf.usermodel.XSSFCell#setCellStyle(org.apache.poi.ss.usermodel.CellStyle)
  */
-public class XSSFCellStyle implements CellStyle, Cloneable {
+public class XSSFCellStyle implements CellStyle {
 
     private int cellXfId;
     private StylesTable stylesSource;
@@ -76,7 +75,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * Creates an empty Cell Style
      */
     public XSSFCellStyle(StylesTable stylesSource) {
-        this.stylesSource = (StylesTable)stylesSource;
+        this.stylesSource = stylesSource;
         // We need a new CTXf for the main styles
         // TODO decide on a style ctxf
         cellXf = CTXf.Factory.newInstance();
@@ -112,13 +111,9 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      */
     public void cloneStyleFrom(CellStyle source) {
         if(source instanceof XSSFCellStyle) {
-            this.cloneStyleFrom((XSSFCellStyle)source);
+            this.cloneStyleFrom(source);
         }
         throw new IllegalArgumentException("Can only clone from one XSSFCellStyle to another, not between HSSFCellStyle and XSSFCellStyle");
-    }
-
-    public void cloneStyleFrom(XSSFCellStyle source) {
-        throw new IllegalStateException("TODO");
     }
 
     /**
@@ -312,7 +307,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * @see IndexedColors
      */
     public short getBottomBorderColor() {
-        XSSFColor clr = getBottomBorderRgbColor();
+        XSSFColor clr = getBottomBorderXSSFColor();
         return clr == null ? IndexedColors.BLACK.getIndex() : (short)clr.getIndexed();
     }
 
@@ -321,7 +316,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      *
      * @return the used color or <code>null</code> if not set
      */
-    public XSSFColor getBottomBorderRgbColor() {
+    public XSSFColor getBottomBorderXSSFColor() {
         if(!cellXf.getApplyBorder()) return null;
 
         int idx = (int)cellXf.getBorderId();
@@ -359,7 +354,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * @see IndexedColors
      */
     public short getFillBackgroundColor() {
-        XSSFColor clr = getFillBackgroundRgbColor();
+        XSSFColor clr = getFillBackgroundXSSFColor();
         return clr == null ? IndexedColors.AUTOMATIC.getIndex() : (short)clr.getIndexed();
     }
 
@@ -369,10 +364,10 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * Note - many cells are actually filled with a foreground
      *  fill, not a background fill - see {@link #getFillForegroundColor()}
      * </p>
-     * @see org.apache.poi.xssf.usermodel.extensions.XSSFColor#getRgb()
+     * @see org.apache.poi.xssf.usermodel.XSSFColor#getRgb()
      * @return XSSFColor - fill color or <code>null</code> if not set
      */
-    public XSSFColor getFillBackgroundRgbColor() {
+    public XSSFColor getFillBackgroundXSSFColor() {
         if(!cellXf.getApplyFill()) return null;
 
         int fillIndex = (int)cellXf.getFillId();
@@ -391,7 +386,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * @return fill color, default value is {@link IndexedColors.AUTOMATIC}
      */
     public short getFillForegroundColor() {
-        XSSFColor clr = getFillForegroundRgbColor();
+        XSSFColor clr = getFillForegroundXSSFColor();
         return clr == null ? IndexedColors.AUTOMATIC.getIndex() : (short)clr.getIndexed();
     }
 
@@ -400,7 +395,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      *
      * @return XSSFColor - fill color or <code>null</code> if not set
      */
-    public XSSFColor getFillForegroundRgbColor() {
+    public XSSFColor getFillForegroundXSSFColor() {
         if(!cellXf.getApplyFill()) return null;
 
         int fillIndex = (int)cellXf.getFillId();
@@ -508,7 +503,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * @see IndexedColors
      */
     public short getLeftBorderColor() {
-        XSSFColor clr = getLeftBorderRgbColor();
+        XSSFColor clr = getLeftBorderXSSFColor();
         return clr == null ? IndexedColors.BLACK.getIndex() : (short)clr.getIndexed();
     }
 
@@ -518,7 +513,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * @return the index of the color definition or <code>null</code> if not set
      * @see IndexedColors
      */
-    public XSSFColor getLeftBorderRgbColor() {
+    public XSSFColor getLeftBorderXSSFColor() {
         if(!cellXf.getApplyBorder()) return null;
 
         int idx = (int)cellXf.getBorderId();
@@ -543,7 +538,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * @see IndexedColors
      */
     public short getRightBorderColor() {
-        XSSFColor clr = getRightBorderRgbColor();
+        XSSFColor clr = getRightBorderXSSFColor();
         return clr == null ? IndexedColors.BLACK.getIndex() : (short)clr.getIndexed();
     }
     /**
@@ -551,7 +546,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      *
      * @return the used color or <code>null</code> if not set
      */
-    public XSSFColor getRightBorderRgbColor() {
+    public XSSFColor getRightBorderXSSFColor() {
         if(!cellXf.getApplyBorder()) return null;
 
         int idx = (int)cellXf.getBorderId();
@@ -586,7 +581,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * @see IndexedColors
      */
     public short getTopBorderColor() {
-        XSSFColor clr = getTopBorderRgbColor();
+        XSSFColor clr = getTopBorderXSSFColor();
         return clr == null ? IndexedColors.BLACK.getIndex() : (short)clr.getIndexed();
     }
 
@@ -595,7 +590,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      *
      * @return the used color or <code>null</code> if not set
      */
-    public XSSFColor getTopBorderRgbColor() {
+    public XSSFColor getTopBorderXSSFColor() {
         if(!cellXf.getApplyBorder()) return null;
 
         int idx = (int)cellXf.getBorderId();
@@ -824,7 +819,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      *
      * @param border the type of border to use
      */
-    public void setBorderTopEnum(BorderStyle border) {
+    public void setBorderTop(BorderStyle border) {
 	    setBorderTop((short)border.ordinal());
     }
 
@@ -874,7 +869,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * For example:
      * <pre>
      * cs.setFillPattern(XSSFCellStyle.FINE_DOTS );
-     * cs.setFillBackgroundRgbColor(new XSSFColor(java.awt.Color.RED));
+     * cs.setFillBackgroundXSSFColor(new XSSFColor(java.awt.Color.RED));
      * </pre>
      * optionally a Foreground and background fill can be applied:
      * <i>Note: Ensure Foreground color is set prior to background</i>
@@ -915,7 +910,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * For example:
      * <pre>
      * cs.setFillPattern(XSSFCellStyle.FINE_DOTS );
-     * cs.setFillBackgroundRgbColor(IndexedColors.RED.getIndex());
+     * cs.setFillBackgroundXSSFColor(IndexedColors.RED.getIndex());
      * </pre>
      * optionally a Foreground and background fill can be applied:
      * <i>Note: Ensure Foreground color is set prior to background</i>
@@ -946,7 +941,7 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
      * <br/>
     * <i>Note: Ensure Foreground color is set prior to background color.</i>
     * @param color the color to use
-    * @see #setFillBackgroundColor(org.apache.poi.xssf.usermodel.extensions.XSSFColor) )
+    * @see #setFillBackgroundColor(org.apache.poi.xssf.usermodel.XSSFColor) )
     */
     public void setFillForegroundColor(XSSFColor color) {
         CTFill ct = getCTFill();
@@ -1241,7 +1236,11 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
     }
 
     /**
-     * Set whether the text should be wrapped
+     * Set whether the text should be wrapped.
+     * <p>
+     * Setting this flag to <code>true</code> make all content visible
+     * whithin a cell by displaying it on multiple lines
+     * </p>
      *
      * @param wrapped a boolean value indicating if the text in a cell should be line-wrapped within the cell.
      */
@@ -1258,13 +1257,13 @@ public class XSSFCellStyle implements CellStyle, Cloneable {
     public XSSFColor getBorderColor(BorderSide side) {
         switch(side){
             case BOTTOM:
-                return getBottomBorderRgbColor();
+                return getBottomBorderXSSFColor();
             case RIGHT:
-                return getRightBorderRgbColor();
+                return getRightBorderXSSFColor();
             case TOP:
-                return getTopBorderRgbColor();
+                return getTopBorderXSSFColor();
             case LEFT:
-                return getLeftBorderRgbColor();
+                return getLeftBorderXSSFColor();
             default:
                 throw new IllegalArgumentException("Unknown border: " + side);
         }

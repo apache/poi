@@ -326,8 +326,8 @@ public final class TestXSSFWorkbook extends TestCase {
 		
 		//get custom style
 		StylesTable styleSource = workbook.getStylesSource();
-		CellStyle customStyle = new XSSFCellStyle(styleSource);
-		Font font = new XSSFFont();
+		XSSFCellStyle customStyle = new XSSFCellStyle(styleSource);
+		XSSFFont font = new XSSFFont();
 		font.setFontName("Verdana");
 		customStyle.setFont(font);
 		int x = styleSource.putStyle(customStyle);
@@ -344,7 +344,7 @@ public final class TestXSSFWorkbook extends TestCase {
 		assertNotNull(fontAt);
 		
 		//get customized font
-		Font customFont = new XSSFFont();
+		XSSFFont customFont = new XSSFFont();
 		customFont.setItalic(true);
 		int x = styleSource.putFont(customFont);
 		fontAt = workbook.getFontAt((short)x);
@@ -430,11 +430,11 @@ public final class TestXSSFWorkbook extends TestCase {
 		// Has 8 number formats
 		assertEquals(8, st._getNumberFormatSize());
 		// Has 2 fonts
-		assertEquals(2, st._getFontsSize());
+		assertEquals(2, st.getFonts().size());
 		// Has 2 fills
-		assertEquals(2, st._getFillsSize());
+		assertEquals(2, st.getFills().size());
 		// Has 1 border
-		assertEquals(1, st._getBordersSize());
+		assertEquals(1, st.getBorders().size());
 		
 		// Add two more styles
 		assertEquals(StylesTable.FIRST_CUSTOM_STYLE_ID + 8, 
@@ -453,9 +453,9 @@ public final class TestXSSFWorkbook extends TestCase {
 		assertNotNull(ss);
 
 		assertEquals(10, st._getNumberFormatSize());
-		assertEquals(2, st._getFontsSize());
-		assertEquals(2, st._getFillsSize());
-		assertEquals(1, st._getBordersSize());
+		assertEquals(2, st.getFonts().size());
+		assertEquals(2, st.getFills().size());
+		assertEquals(1, st.getBorders().size());
 	}
 	
 	public void testNamedRanges() {

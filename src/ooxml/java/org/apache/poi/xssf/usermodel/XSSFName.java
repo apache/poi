@@ -18,6 +18,8 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
 /**
@@ -49,6 +51,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
  * @author Yegor Kozlov
  */
 public class XSSFName implements Name {
+    private static POILogger logger = POILogFactory.getLogger(XSSFWorkbook.class);
 
     /**
      * A built-in defined name that specifies the workbook's print area
@@ -166,8 +169,12 @@ public class XSSFName implements Name {
      * @throws IllegalArgumentException if the specified reference is unparsable
      */
     public void setReference(String ref) {
-        String normalizedRef = AreaReference.isContiguous(ref) ? new AreaReference(ref).formatAsString() : ref;
-        ctName.setStringValue(normalizedRef);
+        try {
+            ref = AreaReference.isContiguous(ref) ? new AreaReference(ref).formatAsString() : ref;
+        } catch (IllegalArgumentException e){
+            logger.log(POILogger.WARN, "failed to parse cell reference. Setting raw value");
+        }
+        ctName.setStringValue(ref);
     }
 
     /**

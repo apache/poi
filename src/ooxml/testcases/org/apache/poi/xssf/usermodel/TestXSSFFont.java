@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.usermodel.extensions.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
@@ -160,14 +160,14 @@ public final class TestXSSFFont extends TestCase{
 		ctFont.setColorArray(0,color);
 
 		XSSFFont xssfFont=new XSSFFont(ctFont);
-		assertEquals(ctFont.getColorArray(0).getRgb()[0],xssfFont.getRgbColor().getRgb()[0]);
-		assertEquals(ctFont.getColorArray(0).getRgb()[1],xssfFont.getRgbColor().getRgb()[1]);
-		assertEquals(ctFont.getColorArray(0).getRgb()[2],xssfFont.getRgbColor().getRgb()[2]);
-		assertEquals(ctFont.getColorArray(0).getRgb()[3],xssfFont.getRgbColor().getRgb()[3]);
+		assertEquals(ctFont.getColorArray(0).getRgb()[0],xssfFont.getXSSFColor().getRgb()[0]);
+		assertEquals(ctFont.getColorArray(0).getRgb()[1],xssfFont.getXSSFColor().getRgb()[1]);
+		assertEquals(ctFont.getColorArray(0).getRgb()[2],xssfFont.getXSSFColor().getRgb()[2]);
+		assertEquals(ctFont.getColorArray(0).getRgb()[3],xssfFont.getXSSFColor().getRgb()[3]);
 
 		color.setRgb(Integer.toHexString(0xF1F1F1).getBytes());
 		XSSFColor newColor=new XSSFColor(color);
-		xssfFont.setRgbColor(newColor);
+		xssfFont.setColor(newColor);
 		assertEquals(ctFont.getColorArray(0).getRgb()[2],newColor.getRgb()[2]);
 	}
 

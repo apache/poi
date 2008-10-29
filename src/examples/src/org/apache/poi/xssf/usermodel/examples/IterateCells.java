@@ -28,7 +28,7 @@ import org.apache.poi.ss.usermodel.Row;
 public class IterateCells {
 
     public static void main(String[] args) throws Exception {
-        Workbook wb = null;
+        Workbook wb = new XSSFWorkbook(args[0]);
         for (int i = 0; i < wb.getNumberOfSheets(); i++) {
             Sheet sheet = wb.getSheetAt(i);
             System.out.println(wb.getSheetName(i));

@@ -17,8 +17,6 @@
 
 package org.apache.poi.xssf.model;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -42,7 +40,7 @@ public class TestStylesTable extends TestCase {
 		StylesTable st = new StylesTable();
 		
 		// Check defaults
-		assertNotNull(st._getRawStylesheet());
+		assertNotNull(st.getCTStylesheet());
 		assertEquals(1, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(0, st._getNumberFormatSize());
@@ -52,14 +50,14 @@ public class TestStylesTable extends TestCase {
         XSSFWorkbook wb = new XSSFWorkbook();
         StylesTable st = wb.getStylesSource();
 
-		assertNotNull(st._getRawStylesheet());
+		assertNotNull(st.getCTStylesheet());
 		assertEquals(1, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(0, st._getNumberFormatSize());
 		
 		st = XSSFTestDataSamples.writeOutAndReadBack(wb).getStylesSource();
 
-        assertNotNull(st._getRawStylesheet());
+        assertNotNull(st.getCTStylesheet());
 		assertEquals(1, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(0, st._getNumberFormatSize());
@@ -85,14 +83,14 @@ public class TestStylesTable extends TestCase {
 	}
 	public void doTestExisting(StylesTable st) throws Exception {
 		// Check contents
-		assertNotNull(st._getRawStylesheet());
+		assertNotNull(st.getCTStylesheet());
 		assertEquals(11, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(8, st._getNumberFormatSize());
 		
-		assertEquals(2, st._getFontsSize());
-		assertEquals(2, st._getFillsSize());
-		assertEquals(1, st._getBordersSize());
+		assertEquals(2, st.getFonts().size());
+		assertEquals(2, st.getFills().size());
+		assertEquals(1, st.getBorders().size());
 		
 		assertEquals("yyyy/mm/dd", st.getNumberFormatAt(165));
 		assertEquals("yy/mm/dd", st.getNumberFormatAt(167));
@@ -113,7 +111,7 @@ public class TestStylesTable extends TestCase {
 		XSSFWorkbook wb = new XSSFWorkbook();
         StylesTable st = wb.getStylesSource();
 		
-		assertNotNull(st._getRawStylesheet());
+		assertNotNull(st.getCTStylesheet());
 		assertEquals(1, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(0, st._getNumberFormatSize());
@@ -127,7 +125,7 @@ public class TestStylesTable extends TestCase {
 		// Save and re-load
 		st = XSSFTestDataSamples.writeOutAndReadBack(wb).getStylesSource();
 
-		assertNotNull(st._getRawStylesheet());
+		assertNotNull(st.getCTStylesheet());
 		assertEquals(2, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(2, st._getNumberFormatSize());

@@ -358,4 +358,44 @@ public interface Workbook {
      *  classes.
      */
     CreationHelper getCreationHelper();
+
+    /**
+     * Check whether a sheet is hidden.
+     * Note that a sheet could instead be
+     *  set to be very hidden, which is different
+     *  ({@link #isSheetVeryHidden(int)})
+     * @param sheetIx Number
+     * @return True if sheet is hidden
+     */
+    public boolean isSheetHidden(int sheetIx) ;
+
+    /**
+     * Check whether a sheet is very hidden.
+     * This is different from the normal
+     *  hidden status
+     *  ({@link #isSheetHidden(int)})
+     * @param sheetIx Number
+     * @return True if sheet is very hidden
+     */
+    public boolean isSheetVeryHidden(int sheetIx);
+
+    /**
+     * Hide or unhide a sheet
+     *
+     * @param sheetIx The sheet index
+     * @param hidden True to mark the sheet as hidden, false otherwise
+     */
+    public void setSheetHidden(int sheetIx, boolean hidden);
+
+    /**
+     * Hide or unhide a sheet.
+     *  0 = not hidden
+     *  1 = hidden
+     *  2 = very hidden.
+     *
+     * @param sheetIx The sheet number
+     * @param hidden 0 for not hidden, 1 for hidden, 2 for very hidden
+     */
+    public void setSheetHidden(int sheetIx, int hidden);
+    
 }

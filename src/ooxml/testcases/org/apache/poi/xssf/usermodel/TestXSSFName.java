@@ -54,14 +54,6 @@ public class TestXSSFName extends TestCase {
         assertEquals("'Testing Named Ranges'!$A$1:$B$1", name1.getReference());
         assertEquals("Testing Named Ranges", name1.getSheetName());
 
-        //setting invalid reference should throw IllegalArgumentException
-        try {
-            name1.setReference("invalid");
-            fail("expected exception");
-        } catch (IllegalArgumentException e){
-            ;
-        }
-
         assertEquals(-1, name1.getLocalSheetId());
         name1.setLocalSheetId(1);
         assertEquals(1, name1.getLocalSheetId());

@@ -25,7 +25,7 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
- *
+ * Illustrates how to create cell and set values of different types.
  */
 public class CreateCell {
 

@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.POIXMLException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 
@@ -63,7 +64,7 @@ public class XSSFPrintSetup implements PrintSetup {
      * @param scale the scale to use
      */
     public void setScale(short scale) {
-        if (scale < 10 || scale > 400) throw new RuntimeException("Scale value not accepted: you must choose a value between 10 and 400.");
+        if (scale < 10 || scale > 400) throw new POIXMLException("Scale value not accepted: you must choose a value between 10 and 400.");
         pageSetup.setScale(scale);
     }
 

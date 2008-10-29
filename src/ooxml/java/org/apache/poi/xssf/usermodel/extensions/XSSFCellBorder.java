@@ -18,6 +18,7 @@ package org.apache.poi.xssf.usermodel.extensions;
 
 
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;

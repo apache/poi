@@ -28,7 +28,7 @@ import org.apache.poi.hssf.util.Region;
 import java.io.FileOutputStream;
 
 /**
- * Merging cells
+ * An example of how to merge regions of cells.
  */
 public class MergingCells {
     public static void main(String[] args) throws Exception {
