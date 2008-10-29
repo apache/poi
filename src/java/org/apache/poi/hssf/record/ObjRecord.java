@@ -18,15 +18,13 @@
 package org.apache.poi.hssf.record;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInputStream;
-import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.LittleEndianOutputStream;
 
 /**
  * OBJRECORD (0x005D)<p/>
@@ -37,10 +35,17 @@ import org.apache.poi.util.LittleEndianOutputStream;
  */
 public final class ObjRecord extends Record {
 	public final static short sid = 0x005D;
+
+	private static final int NORMAL_PAD_ALIGNMENT = 2;
+	private static int MAX_PAD_ALIGNMENT = 4;
 	
 	private List subrecords;
 	/** used when POI has no idea what is going on */
 	private byte[] _uninterpretedData;
+	/**
+	 * Excel seems to tolerate padding to quad or double byte length
+	 */
+	private boolean _isPaddedToQuadByteMultiple;
 
 	//00000000 15 00 12 00 01 00 01 00 11 60 00 00 00 00 00 0D .........`......
 	//00000010 26 01 00 00 00 00 00 00 00 00                   &.........
@@ -71,6 +76,10 @@ public final class ObjRecord extends Record {
 			_uninterpretedData = subRecordData;
 			return;
 		}
+		if (subRecordData.length % 2 != 0) {
+			String msg = "Unexpected length of subRecordData : " + HexDump.toHex(subRecordData);
+			throw new RecordFormatException(msg);
+		}
 
 //		System.out.println(HexDump.toHex(subRecordData));
 
@@ -84,12 +93,17 @@ public final class ObjRecord extends Record {
 				break;
 			}
 		}
-		if (bais.available() > 0) {
-			// earlier versions of the code had allowances for padding
-			// At present (Oct-2008), no unit test samples exhibit such padding
-			String msg = "Leftover " + bais.available() 
+		int nRemainingBytes = bais.available();
+		if (nRemainingBytes > 0) {
+			// At present (Oct-2008), most unit test samples have (subRecordData.length % 2 == 0)
+			_isPaddedToQuadByteMultiple = subRecordData.length % MAX_PAD_ALIGNMENT == 0;
+			if (nRemainingBytes >= (_isPaddedToQuadByteMultiple ? MAX_PAD_ALIGNMENT : NORMAL_PAD_ALIGNMENT)) {
+				String msg = "Leftover " + nRemainingBytes 
 				+ " bytes in subrecord data " + HexDump.toHex(subRecordData);
-			throw new RecordFormatException(msg);
+				throw new RecordFormatException(msg);
+			}
+		} else {
+			_isPaddedToQuadByteMultiple = false;
 		}
 	}
 
@@ -114,34 +128,41 @@ public final class ObjRecord extends Record {
 			SubRecord record = (SubRecord) subrecords.get(i);
 			size += record.getDataSize()+4;
 		}
+		if (_isPaddedToQuadByteMultiple) {
+			while (size % MAX_PAD_ALIGNMENT != 0) {
+				size++;
+			}
+		} else {
+			while (size % NORMAL_PAD_ALIGNMENT != 0) {
+				size++;
+			}
+		}
 		return size;
 	}
 
 	public int serialize(int offset, byte[] data) {
 		int dataSize = getDataSize();
+		int recSize = 4 + dataSize;
+		LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
 
-		LittleEndian.putUShort(data, 0 + offset, sid);
-		LittleEndian.putUShort(data, 2 + offset, dataSize);
+		out.writeShort(sid);
+		out.writeShort(dataSize);
 
-		byte[] subRecordBytes;
 		if (_uninterpretedData == null) {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream(dataSize);
-			LittleEndianOutput leo = new LittleEndianOutputStream(baos);
 
 			for (int i = 0; i < subrecords.size(); i++) {
 				SubRecord record = (SubRecord) subrecords.get(i);
-				record.serialize(leo);
+				record.serialize(out);
 			}
+			int expectedEndIx = offset+dataSize;
 			// padding
-			while (baos.size() < dataSize) {
-				baos.write(0);
+			while (out.getWriteIndex() < expectedEndIx) {
+				out.writeByte(0);
 			}
-			subRecordBytes = baos.toByteArray();
 		} else {
-			subRecordBytes = _uninterpretedData;
+			out.write(_uninterpretedData);
 		}
-		System.arraycopy(subRecordBytes, 0, data, offset + 4, dataSize);
-		return 4 + dataSize;
+		return recSize;
 	}
 
 	public int getRecordSize() {
