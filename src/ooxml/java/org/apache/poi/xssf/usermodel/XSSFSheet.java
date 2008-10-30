@@ -1412,9 +1412,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             Row row = it.next();
+
             if (!copyRowHeight) {
                 row.setHeight((short)-1);
             }
+
             if (resetOriginalRowHeight && getDefaultRowHeight() >= 0) {
                 row.setHeight(getDefaultRowHeight());
             }
@@ -1423,12 +1425,25 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             }
             else if (row.getRowNum() >= startRow && row.getRowNum() <= endRow) {
                 row.setRowNum(row.getRowNum() + n);
+                if (row.getFirstCellNum() > -1) {
+                    modifyCellReference((XSSFRow) row);
+                }
             }
         }
         //rebuild the rows map
         TreeMap<Integer, Row> map = new TreeMap<Integer, Row>();
         for(Row r : this) map.put(r.getRowNum(), r);
         rows = map;
+    }
+
+
+    private void modifyCellReference(XSSFRow row) {
+        for (int i = row.getFirstCellNum(); i <= row.getLastCellNum(); i++) {
+            XSSFCell c = row.getCell(i);
+            if (c != null) {
+                c.modifyCellReference(row);
+            }
+        }
     }
 
     /**
