@@ -18,13 +18,13 @@
 package org.apache.poi.hssf.eventusermodel.dummyrecord;
 
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.record.RecordFormatException;
 
 /**
  * A dummy record for when we're missing a row, but still
  *  want to trigger something
  */
-public class MissingRowDummyRecord extends Record {
+public final class MissingRowDummyRecord extends Record {
 	private int rowNumber;
 	
 	public MissingRowDummyRecord(int rowNumber) {
@@ -35,7 +35,10 @@ public class MissingRowDummyRecord extends Record {
 		return -1;
 	}
 	public int serialize(int offset, byte[] data) {
-		return -1;
+		throw new RecordFormatException("Cannot serialize a dummy record");
+	}
+	public int getRecordSize() {
+		throw new RecordFormatException("Cannot serialize a dummy record");
 	}
 	
 	public int getRowNumber() {
