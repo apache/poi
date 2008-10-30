@@ -267,22 +267,23 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @param height the height in "twips" or  1/20th of a point. <code>-1</code>  resets to the default height
      */
     public void setHeight(short height) {
-    	if(height == -1){
-            this.row.unsetHt();
-            this.row.unsetCustomHeight();
+        if (height == -1) {
+            if (row.isSetHt()) row.unsetHt();
+            if (row.isSetCustomHeight()) row.unsetCustomHeight();
         } else {
-            this.row.setHt((double)height/20);
-            this.row.setCustomHeight(true);
+            row.setHt((double) height / 20);
+            row.setCustomHeight(true);
 
         }
     }
+
     /**
      * Set the row's height in points.
      *
      * @param height the height in points. <code>-1</code>  resets to the default height
      */
     public void setHeightInPoints(float height) {
-	    setHeight((short)(height*20));
+	    setHeight((short)(height == -1 ? -1 : (height*20)));
     }
 
     /**

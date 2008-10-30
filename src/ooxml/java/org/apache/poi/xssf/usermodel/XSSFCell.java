@@ -809,4 +809,18 @@ public final class XSSFCell implements Cell {
     public CTCell getCTCell(){
         return cell;
     }
+
+    /**
+     * update cell reference when shifting rows
+     *
+     * @param row
+     */
+    protected void modifyCellReference(XSSFRow row) {
+        this.cell.setR(new CellReference(row.getRowNum(), cellNum).formatAsString());
+
+        CTCell[] ctCells = row.getCTRow().getCArray();
+        for (CTCell ctCell : ctCells) {
+            ctCell.setR(new CellReference(row.getRowNum(), cellNum).formatAsString());
+        }
+    }
 }
