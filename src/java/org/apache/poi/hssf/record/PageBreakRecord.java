@@ -97,7 +97,7 @@ public abstract class PageBreakRecord extends Record {
 
     }
 
-    private int getDataSize() {
+    protected int getDataSize() {
         return 2 + _breaks.size() * Break.ENCODED_SIZE;
     }
     public int getRecordSize() {

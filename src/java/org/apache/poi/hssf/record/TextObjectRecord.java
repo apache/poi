@@ -167,7 +167,7 @@ public final class TextObjectRecord extends Record {
 	 * Only for the current record. does not include any subsequent Continue
 	 * records
 	 */
-	private int getDataSize() {
+	protected int getDataSize() {
 		int result = 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4;
 		if (_linkRefPtg != null) {
 			result += 2 // formula size

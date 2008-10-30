@@ -158,7 +158,7 @@ public final class StyleRecord extends Record {
 	}
 
 	
-	private int getDataSize() {
+	protected int getDataSize() {
 		if (isBuiltin()) {
 			return 4; // short, byte, byte
 		}
