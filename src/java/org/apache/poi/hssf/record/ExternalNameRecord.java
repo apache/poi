@@ -83,7 +83,7 @@ public final class ExternalNameRecord extends Record {
 		return field_4_name;
 	}
 
-	private int getDataSize(){
+	protected int getDataSize(){
 		int result = 3 * 2  // 3 short fields
 			+ 2 + field_4_name.length(); // nameLen and name
 		if(hasFormula()) {

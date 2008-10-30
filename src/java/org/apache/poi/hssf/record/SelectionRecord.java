@@ -143,7 +143,7 @@ public final class SelectionRecord extends Record {
         buffer.append("[/SELECTION]\n");
         return buffer.toString();
     }
-    private int getDataSize() {
+    protected int getDataSize() {
         return 9 // 1 byte + 4 shorts 
             + CellRangeAddress8Bit.getEncodedSize(field_6_refs.length);
     }

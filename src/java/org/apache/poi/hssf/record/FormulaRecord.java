@@ -353,7 +353,7 @@ public final class FormulaRecord extends Record implements CellValueRecordInterf
 		return sid;
 	}
 
-	private int getDataSize() {
+	protected int getDataSize() {
 		return FIXED_SIZE + field_8_parsed_expr.getEncodedSize();
 	}
 	public int serialize(int offset, byte [] data) {

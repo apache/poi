@@ -119,7 +119,7 @@ public final class ObjRecord extends Record {
 		return sb.toString();
 	}
 	
-	private int getDataSize() {
+	protected int getDataSize() {
 		if (_uninterpretedData != null) {
 			return _uninterpretedData.length;
 		}

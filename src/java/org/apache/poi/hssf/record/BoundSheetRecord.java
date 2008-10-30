@@ -156,7 +156,7 @@ public final class BoundSheetRecord extends Record {
 		return buffer.toString();
 	}
 	
-	private int getDataSize() {
+	protected int getDataSize() {
 		return 8 + field_5_sheetname.length() * (isMultibyte() ? 2 : 1);
 	}
 

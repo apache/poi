@@ -130,7 +130,7 @@ public final class CFHeaderRecord extends Record {
 		return buffer.toString();
 	}
 
-	private int getDataSize() {
+	protected int getDataSize() {
 		return 4 // 2 short fields
 			+ CellRangeAddress.ENCODED_SIZE
 			+ field_4_cell_ranges.getSize();

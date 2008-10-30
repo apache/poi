@@ -138,7 +138,7 @@ public final class SupBookRecord extends Record {
         sb.append("]");
         return sb.toString();
     }
-    private int getDataSize() {
+    protected int getDataSize() {
         if(!isExternalReferences()) {
             return SMALL_RECORD_SIZE;
         }
