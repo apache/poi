@@ -493,14 +493,16 @@ public final class TestWorkbook extends TestCase {
     }
 
 
-    public void testManyRows() {
+    /**
+     * Test for row indexes beyond {@link Short#MAX_VALUE}.
+     * This bug was first fixed in svn r352609.
+     */
+    public void testRowIndexesBeyond32768() {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
         HSSFRow row;
         HSSFCell cell;
-        int i, j;
-        for ( i = 0, j = 32771; j > 0; i++, j-- )
-        {
+        for (int i = 32700; i < 32771; i++) {
             row = sheet.createRow(i);
             cell = row.createCell(0);
             cell.setCellValue(i);
