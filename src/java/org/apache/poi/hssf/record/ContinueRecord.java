@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -31,20 +29,14 @@ import org.apache.poi.util.LittleEndian;
  */
 public final class ContinueRecord extends Record {
     public final static short sid = 0x003C;
-    private byte[]            _data;
+    private byte[] _data;
 
     public ContinueRecord(byte[] data) {
         _data = data;
     }
 
-    /**
-     * USE ONLY within "processContinue"
-     */
-    public byte [] serialize()
-    {
-        byte[] retval = new byte[ _data.length + 4 ];
-        serialize(0, retval);
-        return retval;
+    public int getRecordSize() {
+        return 4 + _data.length;
     }
 
     public int serialize(int offset, byte[] data) {
