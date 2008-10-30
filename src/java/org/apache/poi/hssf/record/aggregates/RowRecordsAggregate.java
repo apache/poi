@@ -321,39 +321,38 @@ public final class RowRecordsAggregate extends RecordAggregate {
         return currentRow-1;
     }
 
-    public int writeHidden( RowRecord rowRecord, int row, boolean hidden )
-    {
+    /**
+     * Hide all rows at or below the current outline level
+     * @return index of the <em>next<em> row after the last row that gets hidden
+     */
+    private int writeHidden(RowRecord pRowRecord, int row) {
+        int rowIx = row;
+        RowRecord rowRecord = pRowRecord;
         int level = rowRecord.getOutlineLevel();
-        while (rowRecord != null && this.getRow(row).getOutlineLevel() >= level)
-        {
-            rowRecord.setZeroHeight( hidden );
-            row++;
-            rowRecord = this.getRow( row );
+        while (rowRecord != null && getRow(rowIx).getOutlineLevel() >= level) {
+            rowRecord.setZeroHeight(true);
+            rowIx++;
+            rowRecord = getRow(rowIx);
         }
-        return row - 1;
+        return rowIx;
     }
 
-    public void collapseRow( int rowNumber )
-    {
+    public void collapseRow(int rowNumber) {
 
         // Find the start of the group.
-        int startRow = findStartOfRowOutlineGroup( rowNumber );
-        RowRecord rowRecord = getRow( startRow );
+        int startRow = findStartOfRowOutlineGroup(rowNumber);
+        RowRecord rowRecord = getRow(startRow);
 
         // Hide all the columns until the end of the group
-        int lastRow = writeHidden( rowRecord, startRow, true );
+        int nextRowIx = writeHidden(rowRecord, startRow);
 
+        RowRecord row = getRow(nextRowIx);
+        if (row == null) {
+            row = createRow(nextRowIx);
+            insertRow(row);
+        }
         // Write collapse field
-        if (getRow(lastRow + 1) != null)
-        {
-            getRow(lastRow + 1).setColapsed( true );
-        }
-        else
-        {
-            RowRecord row = createRow( lastRow + 1);
-            row.setColapsed( true );
-            insertRow( row );
-        }
+        row.setColapsed(true);
     }
 
     /**
@@ -500,6 +499,9 @@ public final class RowRecordsAggregate extends RecordAggregate {
         _valuesAgg.insertCell(cvRec);
     }
     public void removeCell(CellValueRecordInterface cvRec) {
+        if (cvRec instanceof FormulaRecordAggregate) {
+            ((FormulaRecordAggregate)cvRec).notifyFormulaChanging();
+        }
         _valuesAgg.removeCell(cvRec);
     }
     public FormulaRecordAggregate createFormula(int row, int col) {

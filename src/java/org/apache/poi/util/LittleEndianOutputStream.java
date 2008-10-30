@@ -80,4 +80,12 @@ public final class LittleEndianOutputStream extends FilterOutputStream implement
 			throw new RuntimeException(e);
 		}
 	}
+	public void write(byte[] b, int off, int len) {
+		// suppress IOException for interface method
+		try {
+			super.write(b, off, len);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

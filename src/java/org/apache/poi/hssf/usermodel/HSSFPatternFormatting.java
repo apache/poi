@@ -87,7 +87,7 @@ public class HSSFPatternFormatting
 	 */
 	public short getFillBackgroundColor()
 	{
-		return patternFormatting.getFillBackgroundColor();
+		return (short)patternFormatting.getFillBackgroundColor();
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class HSSFPatternFormatting
 	 */
 	public short getFillForegroundColor()
 	{
-		return patternFormatting.getFillForegroundColor();
+		return (short)patternFormatting.getFillForegroundColor();
 	}
 
 	/**
@@ -105,7 +105,7 @@ public class HSSFPatternFormatting
 	 */
 	public short getFillPattern()
 	{
-		return patternFormatting.getFillPattern();
+		return (short)patternFormatting.getFillPattern();
 	}
 
 	/**

@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Implementation of the cell range address lists,like is described
@@ -122,16 +123,19 @@ public class CellRangeAddressList {
 	}
 
 	public int serialize(int offset, byte[] data) {
-		int pos = 2;
-
+		int totalSize = getSize();
+		serialize(new LittleEndianByteArrayOutputStream(data, offset, totalSize));
+		return totalSize;
+	}
+	public void serialize(LittleEndianOutput out) {
 		int nItems = _list.size();
-		LittleEndian.putUShort(data, offset, nItems);
+		out.writeShort(nItems);
 		for (int k = 0; k < nItems; k++) {
 			CellRangeAddress region = (CellRangeAddress) _list.get(k);
-			pos += region.serialize(offset + pos, data);
+			region.serialize(out);
 		}
-		return getSize();
 	}
+	
 
 	public CellRangeAddressList copy() {
 		CellRangeAddressList result = new CellRangeAddressList();

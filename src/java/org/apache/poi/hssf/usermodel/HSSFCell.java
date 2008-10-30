@@ -269,9 +269,8 @@ public class HSSFCell implements Cell {
      * @see #CELL_TYPE_BOOLEAN
      * @see #CELL_TYPE_ERROR
      */
-
-    public void setCellType(int cellType)
-    {
+    public void setCellType(int cellType) {
+        notifyFormulaChanging();
         int row=record.getRow();
         short col=record.getColumn();
         short styleIndex=record.getXFIndex();
@@ -533,7 +532,7 @@ public class HSSFCell implements Cell {
      * @param value  value to set the cell to.  For formulas we'll set the formula
      * string, for String cells we'll set its value.  For other types we will
      * change the cell to a string cell and set its value.
-     * If value is null then we will change the cell to a Blank cell.
+     * If value is <code>null</code> then we will change the cell to a Blank cell.
      */
 
     public void setCellValue(RichTextString value)
@@ -544,6 +543,7 @@ public class HSSFCell implements Cell {
         short styleIndex=record.getXFIndex();
         if (hvalue == null)
         {
+            notifyFormulaChanging();
             setCellType(CELL_TYPE_BLANK, false, row, col, styleIndex);
             return;
         }
@@ -581,25 +581,35 @@ public class HSSFCell implements Cell {
         short styleIndex=record.getXFIndex();
 
         if (formula==null) {
+            notifyFormulaChanging();
             setCellType(CELL_TYPE_BLANK, false, row, col, styleIndex);
             return;
         }
         setCellType(CELL_TYPE_FORMULA, false, row, col, styleIndex);
-        FormulaRecordAggregate rec = (FormulaRecordAggregate) record;
-        FormulaRecord frec = rec.getFormulaRecord();
+        FormulaRecordAggregate agg = (FormulaRecordAggregate) record;
+        FormulaRecord frec = agg.getFormulaRecord();
         frec.setOptions((short) 2);
         frec.setValue(0);
 
         //only set to default if there is no extended format index already set
-        if (rec.getXFIndex() == (short)0) {
-            rec.setXFIndex((short) 0x0f);
+        if (agg.getXFIndex() == (short)0) {
+            agg.setXFIndex((short) 0x0f);
         }
         Ptg[] ptgs = HSSFFormulaParser.parse(formula, book);
-        frec.setParsedExpression(ptgs);
+        agg.setParsedExpression(ptgs);
+    }
+    /**
+     * Should be called any time that a formula could potentially be deleted.
+     * Does nothing if this cell currently does not hold a formula
+     */
+    private void notifyFormulaChanging() {
+        if (record instanceof FormulaRecordAggregate) {
+            ((FormulaRecordAggregate)record).notifyFormulaChanging();
+        }
     }
 
     public String getCellFormula() {
-        return HSSFFormulaParser.toFormulaString(book, ((FormulaRecordAggregate)record).getFormulaRecord().getParsedExpression());
+        return HSSFFormulaParser.toFormulaString(book, ((FormulaRecordAggregate)record).getFormulaTokens());
     }
 
     /**

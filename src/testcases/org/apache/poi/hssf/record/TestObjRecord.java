@@ -20,6 +20,8 @@ package org.apache.poi.hssf.record;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.poi.util.HexRead;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
@@ -38,17 +40,17 @@ public final class TestObjRecord extends TestCase {
      *     [ftCmo]
      *     [ftEnd]
      */
-    private static final byte[] recdata = {
-        0x15, 0x00, 0x12, 0x00, 0x06, 0x00, 0x01, 0x00, 0x11, 0x60,
-        (byte)0xF4, 0x02, 0x41, 0x01, 0x14, 0x10, 0x1F, 0x02, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-        // TODO - this data seems to require two extra bytes padding. not sure where original file is.
-        // it's not bug 38607 attachment 17639
-    };
+    private static final byte[] recdata = HexRead.readFromString(""
+            + "15 00 12 00 06 00 01 00 11 60 "
+            + "F4 02 41 01 14 10 1F 02 00 00 "
+            +"00 00 00 00 00 00"
+            // TODO - this data seems to require two extra bytes padding. not sure where original file is.
+            // it's not bug 38607 attachment 17639
+    );
 
-    private static final byte[] recdataNeedingPadding = {
-        21, 0, 18, 0, 0, 0, 1, 0, 17, 96, 0, 0, 0, 0, 56, 111, -52, 3, 0, 0, 0, 0, 6, 0, 2, 0, 0, 0, 0, 0, 0, 0
-    };
+    private static final byte[] recdataNeedingPadding = HexRead.readFromString(""
+            + "15 00 12 00 00 00 01 00 11 60 00 00 00 00 38 6F CC 03 00 00 00 00 06 00 02 00 00 00 00 00 00 00"
+    );
 
     public void testLoad() {
         ObjRecord record = new ObjRecord(TestcaseRecordInputStream.create(ObjRecord.sid, recdata));
@@ -112,5 +114,24 @@ public final class TestObjRecord extends TestCase {
         assertEquals(CommonObjectDataSubRecord.class, subrecords.get(0).getClass());
         assertEquals(GroupMarkerSubRecord.class, subrecords.get(1).getClass());
         assertEquals(EndSubRecord.class, subrecords.get(2).getClass());
+    }
+    
+    /**
+     * Check that ObjRecord tolerates and preserves padding to a 4-byte boundary
+     * (normally padding is to a 2-byte boundary).
+     */
+    public void test4BytePadding() {
+        // actual data from file saved by Excel 2007
+        byte[] data = HexRead.readFromString(""
+                + "15 00 12 00  1E 00 01 00  11 60 B4 6D  3C 01 C4 06 "
+                + "49 06 00 00  00 00 00 00  00 00 00 00");
+        // this data seems to have 2 extra bytes of padding more than usual
+        // the total may have been padded to the nearest quad-byte length
+        RecordInputStream in = TestcaseRecordInputStream.create(ObjRecord.sid, data);
+        // check read OK
+        ObjRecord record = new ObjRecord(in);
+        // check that it re-serializes to the same data
+        byte[] ser = record.serialize();
+        TestcaseRecordInputStream.confirmRecordEncoding(ObjRecord.sid, data, ser);
     }
 }

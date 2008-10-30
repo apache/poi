@@ -19,7 +19,6 @@ package org.apache.poi.hssf.record.aggregates;
 
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
-import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * <tt>RecordAggregate</tt>s are groups of of BIFF <tt>Record</tt>s that are typically stored 
@@ -29,16 +28,6 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author Josh Micich
  */
 public abstract class RecordAggregate extends RecordBase {
-	// TODO - delete these methods when all subclasses have been converted
-	protected final void validateSid(short id) {
-		throw new RuntimeException("Should not be called");
-	}
-	protected final void fillFields(RecordInputStream in) {
-		throw new RuntimeException("Should not be called");
-	}
-	public final short getSid() {
-		throw new RuntimeException("Should not be called");
-	}
 
 	/**
 	 * Visit each of the atomic BIFF records contained in this {@link RecordAggregate} in the order

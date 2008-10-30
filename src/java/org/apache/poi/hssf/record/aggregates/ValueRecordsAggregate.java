@@ -145,9 +145,6 @@ public final class ValueRecordsAggregate {
     public void construct(CellValueRecordInterface rec, RecordStream rs, SharedValueManager sfh) {
         if (rec instanceof FormulaRecord) {
             FormulaRecord formulaRec = (FormulaRecord)rec;
-            if (formulaRec.isSharedFormula()) {
-                sfh.convertSharedFormulaRecord(formulaRec);
-            }
             // read optional cached text value
             StringRecord cachedText;
             Class nextClass = rs.peekNextClass();

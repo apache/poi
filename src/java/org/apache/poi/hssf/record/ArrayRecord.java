@@ -18,8 +18,9 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * ARRAY (0x0221)<p/>
@@ -36,14 +37,15 @@ public final class ArrayRecord extends SharedValueRecordBase {
 	
 	private int	_options;
 	private int _field3notUsed;
-	private Ptg[] _formulaTokens;
+	private Formula _formula;
 
 	public ArrayRecord(RecordInputStream in) {
 		super(in);
 		_options = in.readUShort();
 		_field3notUsed = in.readInt();
-		int formulaLen = in.readUShort();
-		_formulaTokens = Ptg.readTokens(formulaLen, in);
+		int formulaTokenLen = in.readUShort();
+		int totalFormulaLen = in.available();
+		_formula = Formula.read(formulaTokenLen, in, totalFormulaLen);
 	}
 
 	public boolean isAlwaysRecalculate() {
@@ -55,18 +57,12 @@ public final class ArrayRecord extends SharedValueRecordBase {
 
 	protected int getExtraDataSize() {
 		return 2 + 4
-			+ 2 + Ptg.getEncodedSize(_formulaTokens);
+			+ _formula.getEncodedSize();
 	}
-	protected void serializeExtraData(int offset, byte[] data) {
-		int pos = offset;
-		LittleEndian.putUShort(data, pos, _options);
-		pos+=2;
-		LittleEndian.putInt(data, pos, _field3notUsed);
-		pos+=4;
-		int tokenSize = Ptg.getEncodedSizeWithoutArrayData(_formulaTokens);
-		LittleEndian.putUShort(data, pos, tokenSize);
-		pos+=2;
-		Ptg.serializePtgs(_formulaTokens, data, pos);
+	protected void serializeExtraData(LittleEndianOutput out) {
+		out.writeShort(_options);
+		out.writeInt(_field3notUsed);
+		_formula.serialize(out);
 	}
 
 	public short getSid() {
@@ -80,8 +76,9 @@ public final class ArrayRecord extends SharedValueRecordBase {
 		sb.append(" options=").append(HexDump.shortToHex(_options)).append("\n");
 		sb.append(" notUsed=").append(HexDump.intToHex(_field3notUsed)).append("\n");
 		sb.append(" formula:").append("\n");
-		for (int i = 0; i < _formulaTokens.length; i++) {
-			Ptg ptg = _formulaTokens[i];
+		Ptg[] ptgs = _formula.getTokens();
+		for (int i = 0; i < ptgs.length; i++) {
+			Ptg ptg = ptgs[i];
 			sb.append(ptg.toString()).append(ptg.getRVAType()).append("\n");
 		}
 		sb.append("]");
