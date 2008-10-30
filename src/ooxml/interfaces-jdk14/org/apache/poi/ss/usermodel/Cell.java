@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.usermodel;
 
+import java.util.Date;
+
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -98,6 +100,11 @@ public interface Cell {
 
     boolean getBooleanCellValue();
     double getNumericCellValue();
+    /**
+     * get the value of the cell as a date.  For strings we throw an exception.
+     * For blank cells we return a null.
+     */
+    Date getDateCellValue();
     HSSFRichTextString getRichStringCellValue();
 
     void setCellType(int cellType);

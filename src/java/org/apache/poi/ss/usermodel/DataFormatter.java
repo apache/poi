@@ -63,7 +63,7 @@ import java.text.*;
  * @author James May (james dot may at fmr dot com)
  *
  */
-public class DataFormatter {
+public final class DataFormatter {
 
     /** Pattern to find a number format: "0" or  "#" */
     private static final Pattern numPattern = Pattern.compile("[0#]+");
@@ -469,28 +469,20 @@ public class DataFormatter {
      * @param evaluator The FormulaEvaluator (can be null)
      * @return a string value of the cell
      */
-    public String formatCellValue(Cell cell,
-                                  FormulaEvaluator evaluator) throws IllegalArgumentException {
+    public String formatCellValue(Cell cell, FormulaEvaluator evaluator) {
 
         if (cell == null) {
             return "";
         }
 
         int cellType = cell.getCellType();
-        if (evaluator != null && cellType == Cell.CELL_TYPE_FORMULA) {
-            try {
-                cellType = evaluator.evaluateFormulaCell(cell);
-            } catch (RuntimeException e) {
-                throw new RuntimeException("Did you forget to set the current" +
-                        " row on the FormulaEvaluator?", e);
-            }
-        }
-        switch (cellType)
-        {
-            case Cell.CELL_TYPE_FORMULA :
-                // should only occur if evaluator is null
+        if (cellType == Cell.CELL_TYPE_FORMULA) {
+            if (evaluator == null) {
                 return cell.getCellFormula();
-
+            }
+            cellType = evaluator.evaluateFormulaCell(cell);
+        }
+        switch (cellType) {
             case Cell.CELL_TYPE_NUMERIC :
 
                 if (DateUtil.isCellDateFormatted(cell)) {
