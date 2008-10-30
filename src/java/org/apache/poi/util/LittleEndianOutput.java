@@ -26,5 +26,6 @@ public interface LittleEndianOutput {
 	void writeInt(int v);
 	void writeLong(long v);
 	void writeDouble(double v);
-	void write(byte[] data);
+	void write(byte[] b);
+	void write(byte[] b, int offset, int len);
 }

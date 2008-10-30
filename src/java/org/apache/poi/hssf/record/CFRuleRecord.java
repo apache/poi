@@ -23,9 +23,10 @@ import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 
 /**
  * Conditional Formatting Rule Record.
@@ -94,18 +95,12 @@ public final class CFRuleRecord extends Record {
 
 	private FontFormatting fontFormatting;
 
-	private byte  field_8_align_text_break;
-	private byte  field_9_align_text_rotation_angle;
-	private short field_10_align_indentation;
-	private short field_11_relative_indentation;
-	private short field_12_not_used;
-	
 	private BorderFormatting borderFormatting;
 
 	private PatternFormatting patternFormatting;
 	
-	private Ptg[] field_17_formula1;
-	private Ptg[] field_18_formula2;
+	private Formula field_17_formula1;
+	private Formula field_18_formula2;
 	
 	/** Creates new CFRuleRecord */
 	private CFRuleRecord(byte conditionType, byte comparisonOperation)
@@ -121,23 +116,18 @@ public final class CFRuleRecord extends Record {
 
 		field_6_not_used = (short)0x8002; // Excel seems to write this value, but it doesn't seem to care what it reads
 		fontFormatting=null;
-		field_8_align_text_break = 0;
-		field_9_align_text_rotation_angle = 0;
-		field_10_align_indentation = 0;
-		field_11_relative_indentation = 0;
-		field_12_not_used = 0;
 		borderFormatting=null;
 		patternFormatting=null;
-		field_17_formula1=null;
-		field_18_formula2=null;
+		field_17_formula1=Formula.create(Ptg.EMPTY_PTG_ARRAY);
+		field_18_formula2=Formula.create(Ptg.EMPTY_PTG_ARRAY);
 	}
 	
 	private CFRuleRecord(byte conditionType, byte comparisonOperation, Ptg[] formula1, Ptg[] formula2) {
 		this(conditionType, comparisonOperation); 
 		field_1_condition_type = CONDITION_TYPE_CELL_VALUE_IS;
 		field_2_comparison_operator = comparisonOperation;
-		field_17_formula1 = formula1;
-		field_18_formula2 = formula2;
+		field_17_formula1 = Formula.create(formula1);
+		field_18_formula2 = Formula.create(formula2);
 	}
 
 	/**
@@ -178,12 +168,9 @@ public final class CFRuleRecord extends Record {
 			patternFormatting = new PatternFormatting(in);
 		}
 
-		if (field_3_formula1_len > 0) {
-			field_17_formula1 = Ptg.readTokens(field_3_formula1_len, in);
-		}
-		if (field_4_formula2_len > 0) {
-			field_18_formula2 = Ptg.readTokens(field_4_formula2_len, in);
-		}
+		// "You may not use unions, intersections or array constants in Conditional Formatting criteria"
+		field_17_formula1 = Formula.read(field_3_formula1_len, in);
+		field_18_formula2 = Formula.read(field_4_formula2_len, in);
 	}
 
 	public byte getConditionType()
@@ -414,33 +401,22 @@ public final class CFRuleRecord extends Record {
 
 	public Ptg[] getParsedExpression1()
 	{
-		return field_17_formula1;
+		return field_17_formula1.getTokens();
 	}
 	public void setParsedExpression1(Ptg[] ptgs) {
-		field_17_formula1 = safeClone(ptgs);
-	}
-	private static Ptg[] safeClone(Ptg[] ptgs) {
-		if (ptgs == null) {
-			return null;
-		}
-		return (Ptg[]) ptgs.clone();
+		field_17_formula1 = Formula.create(ptgs);
 	}
 
 	/**
 	 * get the stack of the 2nd expression as a list
 	 *
-	 * @return list of tokens (casts stack to a list and returns it!)
-	 * this method can return null is we are unable to create Ptgs from 
-	 *	 existing excel file
-	 * callers should check for null!
+	 * @return array of {@link Ptg}s, possibly <code>null</code>
 	 */
-
-	public Ptg[] getParsedExpression2()
-	{
-		return field_18_formula2;
+	public Ptg[] getParsedExpression2() {
+		return Formula.getTokens(field_18_formula2);
 	}
 	public void setParsedExpression2(Ptg[] ptgs) {
-		field_18_formula2 = safeClone(ptgs);
+		field_18_formula2 = Formula.create(ptgs);
 	}
 
 	public short getSid()
@@ -449,14 +425,11 @@ public final class CFRuleRecord extends Record {
 	}
 
 	/**
-	 * @param ptgs may be <code>null</code>
-	 * @return encoded size of the formula
+	 * @param ptgs must not be <code>null</code>
+	 * @return encoded size of the formula tokens (does not include 2 bytes for ushort length)
 	 */
-	private static int getFormulaSize(Ptg[] ptgs) {
-		if (ptgs == null) {
-			return 0;
-		}
-		return Ptg.getEncodedSize(ptgs);
+	private static int getFormulaSize(Formula formula) {
+		return formula.getEncodedTokenSize();
 	}
 	
 	/**
@@ -468,51 +441,43 @@ public final class CFRuleRecord extends Record {
 	 * @param data byte array containing instance data
 	 * @return number of bytes written
 	 */
-	public int serialize(int pOffset, byte [] data)
-	{
+	public int serialize(int pOffset, byte [] data) {
 		
 		int formula1Len=getFormulaSize(field_17_formula1);
 		int formula2Len=getFormulaSize(field_18_formula2);
 		
-		int offset = pOffset;
 		int recordsize = getRecordSize();
-		LittleEndian.putShort(data, 0 + offset, sid);
-		LittleEndian.putShort(data, 2 + offset, (short)(recordsize-4));
-		data[4 + offset] = field_1_condition_type;
-		data[5 + offset] = field_2_comparison_operator;
-		LittleEndian.putUShort(data, 6 + offset, formula1Len);
-		LittleEndian.putUShort(data, 8 + offset, formula2Len);
-		LittleEndian.putInt(data,  10 + offset, field_5_options);
-		LittleEndian.putShort(data,14 + offset, field_6_not_used);
 		
-		offset += 16;
+		LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(data, pOffset, recordsize);
 		
-		if( containsFontFormattingBlock() )
-		{
+		out.writeShort(sid);
+		out.writeShort(recordsize-4);
+		out.writeByte(field_1_condition_type);
+		out.writeByte(field_2_comparison_operator);
+		out.writeShort(formula1Len);
+		out.writeShort(formula2Len);
+		out.writeInt(field_5_options);
+		out.writeShort(field_6_not_used);
+		
+		if (containsFontFormattingBlock()) {
 			byte[] fontFormattingRawRecord  = fontFormatting.getRawRecord();
-			System.arraycopy(fontFormattingRawRecord, 0, data, offset, fontFormattingRawRecord.length);
-			offset += fontFormattingRawRecord.length;
+			out.write(fontFormattingRawRecord);
 		}
 		
-		if( containsBorderFormattingBlock())
-		{
-			offset += borderFormatting.serialize(offset, data);
+		if (containsBorderFormattingBlock()) {
+			borderFormatting.serialize(out);
 		}
 		
-		if( containsPatternFormattingBlock() )
-		{
-			offset += patternFormatting.serialize(offset, data);
+		if (containsPatternFormattingBlock()) {
+			patternFormatting.serialize(out);
 		}
 		
-		if (field_17_formula1 != null) {
-			offset += Ptg.serializePtgs(field_17_formula1, data, offset);
-		}
-
-		if (field_18_formula2 != null) {
-			offset += Ptg.serializePtgs(field_18_formula2, data, offset);
-		}
-		if(offset - pOffset != recordsize) {
-			throw new IllegalStateException("write mismatch (" + (offset - pOffset) + "!=" + recordsize + ")");
+		field_17_formula1.serializeTokens(out);
+		field_18_formula2.serializeTokens(out);
+		
+		if(out.getWriteIndex() - pOffset != recordsize) {
+			throw new IllegalStateException("write mismatch (" 
+					+ (out.getWriteIndex() - pOffset) + "!=" + recordsize + ")");
 		}
 		return recordsize;
 	}
@@ -531,25 +496,22 @@ public final class CFRuleRecord extends Record {
 	}
 
 
-	public String toString()
-	{
+	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("[CFRULE]\n");
 		buffer.append("    OPTION FLAGS=0x"+Integer.toHexString(getOptions()));
-		/*
-		if( containsFontFormattingBlock())
-		{
-			buffer.append(fontFormatting.toString());
+		if (false) {
+			if (containsFontFormattingBlock()) {
+				buffer.append(fontFormatting.toString());
+			}
+			if (containsBorderFormattingBlock()) {
+				buffer.append(borderFormatting.toString());
+			}
+			if (containsPatternFormattingBlock()) {
+				buffer.append(patternFormatting.toString());
+			}
+			buffer.append("[/CFRULE]\n");
 		}
-		if( containsBorderFormattingBlock())
-		{
-			buffer.append(borderFormatting.toString());
-		}
-		if( containsPatternFormattingBlock())
-		{
-			buffer.append(patternFormatting.toString());
-		}
-		buffer.append("[/CFRULE]\n");*/
 		return buffer.toString();
 	}
 	
@@ -566,12 +528,8 @@ public final class CFRuleRecord extends Record {
 		if (containsPatternFormattingBlock()) {
 			rec.patternFormatting = (PatternFormatting) patternFormatting.clone();
 		}
-		if (field_17_formula1 != null) {
-			rec.field_17_formula1 = (Ptg[]) field_17_formula1.clone();
-		}
-		if (field_18_formula2 != null) {
-			rec.field_18_formula2 = (Ptg[]) field_18_formula2.clone();
-		}
+		rec.field_17_formula1 = field_17_formula1.copy();
+		rec.field_18_formula2 = field_17_formula1.copy();
 
 		return rec;
 	}

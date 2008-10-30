@@ -81,6 +81,11 @@ public final class LittleEndianByteArrayOutputStream implements LittleEndianOutp
 		System.arraycopy(b, 0, _buf, _writeIndex, len);
 		_writeIndex += len;
 	}
+	public void write(byte[] b, int offset, int len) {
+		checkPosition(len);
+		System.arraycopy(b, offset, _buf, _writeIndex, len);
+		_writeIndex += len;
+	}
 	public int getWriteIndex() {
 		return _writeIndex;
 	}

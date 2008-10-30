@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,28 +14,20 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
-/*
- * FontFormatting.java
- *
- * Created on January 22, 2008, 10:05 PM
- */
 package org.apache.poi.hssf.record.cf;
 
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Pattern Formatting Block of the Conditional Formatting Rule Record.
  * 
  * @author Dmitriy Kumshayev
  */
-
-public class PatternFormatting implements Cloneable
-{
+public final class PatternFormatting implements Cloneable {
     /**  No background */
     public final static short     NO_FILL             = 0  ;
     /**  Solidly filled */
@@ -75,29 +66,29 @@ public class PatternFormatting implements Cloneable
     public final static short     LESS_DOTS           = 17 ;
     /**  Least Dots */
     public final static short     LEAST_DOTS          = 18 ;
-	
-    public PatternFormatting()
-    {
-        field_15_pattern_style	= (short)0;
-        field_16_pattern_color_indexes	= (short)0;
-    }
     
-    /** Creates new FontFormatting */
-    public PatternFormatting(RecordInputStream in)
-	{
-    	field_15_pattern_style	= in.readShort();
-        field_16_pattern_color_indexes	= in.readShort();
-	}
     
     // PATTERN FORMATING BLOCK
     // For Pattern Styles see constants at HSSFCellStyle (from NO_FILL to LEAST_DOTS)
-    private short 			 field_15_pattern_style;
+    private int              field_15_pattern_style;
     private static final BitField  fillPatternStyle = BitFieldFactory.getInstance(0xFC00);
     
-    private short 			 field_16_pattern_color_indexes;
-    private static final BitField  patternColorIndex = BitFieldFactory.getInstance(0x007F);		 
-    private static final BitField  patternBackgroundColorIndex = BitFieldFactory.getInstance(0x3F80);		 
+    private int              field_16_pattern_color_indexes;
+    private static final BitField  patternColorIndex = BitFieldFactory.getInstance(0x007F);         
+    private static final BitField  patternBackgroundColorIndex = BitFieldFactory.getInstance(0x3F80);         
 
+    
+    public PatternFormatting() {
+        field_15_pattern_style    = 0;
+        field_16_pattern_color_indexes    = 0;
+    }
+    
+    /** Creates new FontFormatting */
+    public PatternFormatting(LittleEndianInput in) {
+        field_15_pattern_style    = in.readUShort();
+        field_16_pattern_color_indexes    = in.readUShort();
+    }
+    
     /**
      * setting fill pattern
      *
@@ -121,63 +112,48 @@ public class PatternFormatting implements Cloneable
      *
      * @param fp  fill pattern 
      */
-    public void setFillPattern(short fp)
-    {
-    	field_15_pattern_style = fillPatternStyle.setShortValue(field_15_pattern_style, fp);
+    public void setFillPattern(int fp) {
+        field_15_pattern_style = fillPatternStyle.setValue(field_15_pattern_style, fp);
     }
 
     /**
-     * get the fill pattern 
      * @return fill pattern
      */
-
-    public short getFillPattern()
-    {
-        return fillPatternStyle.getShortValue(field_15_pattern_style);
+    public int getFillPattern() {
+        return fillPatternStyle.getValue(field_15_pattern_style);
     }
     
     /**
      * set the background fill color.
-     *
-     * @param bg  color
      */
-
-    public void setFillBackgroundColor(short bg)
-    {    	
-    	field_16_pattern_color_indexes = patternBackgroundColorIndex.setShortValue(field_16_pattern_color_indexes,bg);
+    public void setFillBackgroundColor(int bg) {        
+        field_16_pattern_color_indexes = patternBackgroundColorIndex.setValue(field_16_pattern_color_indexes,bg);
     }
 
     /**
-     * get the background fill color
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @return fill color
+     * @return get the background fill color
      */
-    public short getFillBackgroundColor()
-    {
-    	return patternBackgroundColorIndex.getShortValue(field_16_pattern_color_indexes);
+    public int getFillBackgroundColor() {
+        return patternBackgroundColorIndex.getValue(field_16_pattern_color_indexes);
     }
 
     /**
      * set the foreground fill color
-     * @param bg  color
      */
-    public void setFillForegroundColor(short fg)
-    {
-    	field_16_pattern_color_indexes = patternColorIndex.setShortValue(field_16_pattern_color_indexes,fg);
+    public void setFillForegroundColor(int fg) {
+        field_16_pattern_color_indexes = patternColorIndex.setValue(field_16_pattern_color_indexes,fg);
     }
 
     /**
-     * get the foreground fill color
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @return fill color
+     * @return get the foreground fill color
      */
-    public short getFillForegroundColor()
-    {
-    	return patternColorIndex.getShortValue(field_16_pattern_color_indexes);
+    public int getFillForegroundColor() {
+        return patternColorIndex.getValue(field_16_pattern_color_indexes);
     }
     
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
         buffer.append("    [Pattern Formatting]\n");
         buffer.append("          .fillpattern= ").append(Integer.toHexString(getFillPattern())).append("\n");
@@ -187,20 +163,15 @@ public class PatternFormatting implements Cloneable
         return buffer.toString();
     }
     
-    public Object clone() 
-    {
+    public Object clone()  {
       PatternFormatting rec = new PatternFormatting();
       rec.field_15_pattern_style = field_15_pattern_style;
       rec.field_16_pattern_color_indexes = field_16_pattern_color_indexes; 
       return rec;
     }
-    
-    public int serialize(int offset, byte [] data)
-    {
-    	LittleEndian.putShort(data, offset, field_15_pattern_style);
-    	offset += 2;
-    	LittleEndian.putShort(data, offset, field_16_pattern_color_indexes);
-    	offset += 2;
-    	return 4;
+
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_15_pattern_style);
+        out.writeShort(field_16_pattern_color_indexes);
     }
 }

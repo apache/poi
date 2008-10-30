@@ -17,46 +17,42 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.HexRead;
+
 import junit.framework.TestCase;
 
 /**
  * Tests the NameRecord serializes/deserializes correctly
- *
+ * 
  * @author Danny Mui (dmui at apache dot org)
  */
 public final class TestNameRecord extends TestCase {
 
-    /**
-     * Makes sure that additional name information is parsed properly such as menu/description
-     */
-    public void testFillExtras()
-    {
+	/**
+	 * Makes sure that additional name information is parsed properly such as menu/description
+	 */
+	public void testFillExtras() {
 
-        byte[] examples = {
-            (byte) 0x88, (byte) 0x03, (byte) 0x67, (byte) 0x06,
-            (byte) 0x07, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x23,
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x4D,
-            (byte) 0x61, (byte) 0x63, (byte) 0x72, (byte) 0x6F,
-            (byte) 0x31, (byte) 0x3A, (byte) 0x01, (byte) 0x00,
-            (byte) 0x00, (byte) 0x00, (byte) 0x11, (byte) 0x00,
-            (byte) 0x00, (byte) 0x4D, (byte) 0x61, (byte) 0x63,
-            (byte) 0x72, (byte) 0x6F, (byte) 0x20, (byte) 0x72,
-            (byte) 0x65, (byte) 0x63, (byte) 0x6F, (byte) 0x72,
-            (byte) 0x64, (byte) 0x65, (byte) 0x64, (byte) 0x20,
-            (byte) 0x32, (byte) 0x37, (byte) 0x2D, (byte) 0x53,
-            (byte) 0x65, (byte) 0x70, (byte) 0x2D, (byte) 0x39,
-            (byte) 0x33, (byte) 0x20, (byte) 0x62, (byte) 0x79,
-            (byte) 0x20, (byte) 0x41, (byte) 0x4C, (byte) 0x4C,
-            (byte) 0x57, (byte) 0x4F, (byte) 0x52
-        };
+		byte[] examples = HexRead.readFromString(""
+				+ "88 03 67 06 07 00 00 00 00 00 00 23 00 00 00 4D "
+				+ "61 63 72 6F 31 3A 01 00 00 00 11 00 00 4D 61 63 "
+				+ "72 6F 20 72 65 63 6F 72 64 65 64 20 32 37 2D 53 "
+				+ "65 70 2D 39 33 20 62 79 20 41 4C 4C 57 4F 52");
 
+		NameRecord name = new NameRecord(TestcaseRecordInputStream.create(NameRecord.sid, examples));
+		String description = name.getDescriptionText();
+		assertNotNull(description);
+		assertTrue(description.endsWith("Macro recorded 27-Sep-93 by ALLWOR"));
+	}
 
-        NameRecord name = new NameRecord(TestcaseRecordInputStream.create(NameRecord.sid, examples));
-        String description = name.getDescriptionText();
-        assertNotNull( description );
-        assertTrue( "text contains ALLWOR", description.indexOf( "ALLWOR" ) > 0 );
-    }
+	public void testReserialize() {
+		byte[] data = HexRead
+				.readFromString(""
+						+ "20 00 00 01 0B 00 00 00 01 00 00 00 00 00 00 06 3B 00 00 00 00 02 00 00 00 09 00]");
+		RecordInputStream in = TestcaseRecordInputStream.create(NameRecord.sid, data);
+		NameRecord nr = new NameRecord(in);
+		assertEquals(0x0020, nr.getOptionFlag());
+		byte[] data2 = nr.serialize();
+		TestcaseRecordInputStream.confirmRecordEncoding(NameRecord.sid, data, data2);
+	}
 }
-
-
