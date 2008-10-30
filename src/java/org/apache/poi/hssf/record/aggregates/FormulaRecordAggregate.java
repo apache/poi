@@ -21,7 +21,10 @@ import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFormatException;
+import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.StringRecord;
+import org.apache.poi.hssf.record.formula.ExpPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
 
 /**
  * The formula record aggregate is used to join together the formula record and it's
@@ -31,113 +34,177 @@ import org.apache.poi.hssf.record.StringRecord;
  */
 public final class FormulaRecordAggregate extends RecordAggregate implements CellValueRecordInterface {
 
-    private final FormulaRecord _formulaRecord;
-    private SharedValueManager _sharedValueManager;
-    /** caches the calculated result of the formula */
-    private StringRecord _stringRecord;
+	private final FormulaRecord _formulaRecord;
+	private SharedValueManager _sharedValueManager;
+	/** caches the calculated result of the formula */
+	private StringRecord _stringRecord;
+	private SharedFormulaRecord _sharedFormulaRecord;
 
-    /**
-     * @param stringRec may be <code>null</code> if this formula does not have a cached text
-     * value.
-     * @param svm the {@link SharedValueManager} for the current sheet
-     */
-    public FormulaRecordAggregate(FormulaRecord formulaRec, StringRecord stringRec, SharedValueManager svm) {
-        if (svm == null) {
-            throw new IllegalArgumentException("sfm must not be null");
-        }
-        boolean hasStringRec = stringRec != null;
-        boolean hasCachedStringFlag = formulaRec.hasCachedResultString();
-        if (hasStringRec != hasCachedStringFlag) {
-            throw new RecordFormatException("String record was "
-                    + (hasStringRec ? "": "not ") + " supplied but formula record flag is "
-                    + (hasCachedStringFlag ? "" : "not ") + " set");
-        }
+	/**
+	 * @param stringRec may be <code>null</code> if this formula does not have a cached text
+	 * value.
+	 * @param svm the {@link SharedValueManager} for the current sheet
+	 */
+	public FormulaRecordAggregate(FormulaRecord formulaRec, StringRecord stringRec, SharedValueManager svm) {
+		if (svm == null) {
+			throw new IllegalArgumentException("sfm must not be null");
+		}
+		boolean hasStringRec = stringRec != null;
+		boolean hasCachedStringFlag = formulaRec.hasCachedResultString();
+		if (hasStringRec != hasCachedStringFlag) {
+			throw new RecordFormatException("String record was "
+					+ (hasStringRec ? "": "not ") + " supplied but formula record flag is "
+					+ (hasCachedStringFlag ? "" : "not ") + " set");
+		}
 
-        if (formulaRec.isSharedFormula()) {
-            svm.convertSharedFormulaRecord(formulaRec);
-        }
-        _formulaRecord = formulaRec;
-        _sharedValueManager = svm;
-        _stringRecord = stringRec;
-    }
+		_formulaRecord = formulaRec;
+		_sharedValueManager = svm;
+		_stringRecord = stringRec;
+		if (formulaRec.isSharedFormula()) {
+			_sharedFormulaRecord = svm.linkSharedFormulaRecord(this);
+			if (_sharedFormulaRecord == null) {
+				handleMissingSharedFormulaRecord(formulaRec);
+			}
+		}
+	}
+	/**
+	 * Sometimes the shared formula flag "seems" to be erroneously set (because the corresponding
+	 * {@link SharedFormulaRecord} does not exist). Normally this would leave no way of determining
+	 * the {@link Ptg} tokens for the formula.  However as it turns out in these 
+	 * cases, Excel encodes the unshared {@link Ptg} tokens in the right place (inside the {@link
+	 * FormulaRecord}).  So the the only thing that needs to be done is to ignore the erroneous
+	 * shared formula flag.<br/>
+	 * 
+	 * This method may also be used for setting breakpoints to help diagnose issues regarding the
+	 * abnormally-set 'shared formula' flags. 
+	 * (see TestValueRecordsAggregate.testSpuriousSharedFormulaFlag()).<p/>
+	 */
+	private static void handleMissingSharedFormulaRecord(FormulaRecord formula) {
+		// make sure 'unshared' formula is actually available
+		Ptg firstToken = formula.getParsedExpression()[0]; 
+		if (firstToken instanceof ExpPtg) {
+			throw new RecordFormatException(
+					"SharedFormulaRecord not found for FormulaRecord with (isSharedFormula=true)");
+		}
+		// could log an info message here since this is a fairly unusual occurrence.
+		formula.setSharedFormula(false); // no point leaving the flag erroneously set
+	}
 
-    public FormulaRecord getFormulaRecord() {
-        return _formulaRecord;
-    }
+	public FormulaRecord getFormulaRecord() {
+		return _formulaRecord;
+	}
 
-    /**
-     * debug only
-     * TODO - encapsulate
-     */
-    public StringRecord getStringRecord() {
-        return _stringRecord;
-    }
+	/**
+	 * debug only
+	 * TODO - encapsulate
+	 */
+	public StringRecord getStringRecord() {
+		return _stringRecord;
+	}
 
-    public short getXFIndex() {
-        return _formulaRecord.getXFIndex();
-    }
+	public short getXFIndex() {
+		return _formulaRecord.getXFIndex();
+	}
 
-    public void setXFIndex(short xf) {
-        _formulaRecord.setXFIndex(xf);
-    }
+	public void setXFIndex(short xf) {
+		_formulaRecord.setXFIndex(xf);
+	}
 
-    public void setColumn(short col) {
-        _formulaRecord.setColumn(col);
-    }
+	public void setColumn(short col) {
+		_formulaRecord.setColumn(col);
+	}
 
-    public void setRow(int row) {
-        _formulaRecord.setRow(row);
-    }
+	public void setRow(int row) {
+		_formulaRecord.setRow(row);
+	}
 
-    public short getColumn() {
-        return _formulaRecord.getColumn();
-    }
+	public short getColumn() {
+		return _formulaRecord.getColumn();
+	}
 
-    public int getRow() {
-        return _formulaRecord.getRow();
-    }
+	public int getRow() {
+		return _formulaRecord.getRow();
+	}
 
-    public String toString() {
-        return _formulaRecord.toString();
-    }
+	public String toString() {
+		return _formulaRecord.toString();
+	}
 
-    public void visitContainedRecords(RecordVisitor rv) {
-         rv.visitRecord(_formulaRecord);
-         Record sharedFormulaRecord = _sharedValueManager.getRecordForFirstCell(_formulaRecord);
-         if (sharedFormulaRecord != null) {
-             rv.visitRecord(sharedFormulaRecord);
-         }
-         if (_stringRecord != null) {
-             rv.visitRecord(_stringRecord);
-         }
-    }
+	public void visitContainedRecords(RecordVisitor rv) {
+		 rv.visitRecord(_formulaRecord);
+		 // TODO - only bother with this if array or table formula
+		 Record sharedFormulaRecord = _sharedValueManager.getRecordForFirstCell(_formulaRecord);
+		 if (sharedFormulaRecord != null) {
+			 rv.visitRecord(sharedFormulaRecord);
+		 }
+		 if (_stringRecord != null) {
+			 rv.visitRecord(_stringRecord);
+		 }
+	}
 
-    public String getStringValue() {
-        if(_stringRecord==null) {
-            return null;
-        }
-        return _stringRecord.getString();
-    }
+	public String getStringValue() {
+		if(_stringRecord==null) {
+			return null;
+		}
+		return _stringRecord.getString();
+	}
 
-    public void setCachedStringResult(String value) {
+	public void setCachedStringResult(String value) {
 
-        // Save the string into a String Record, creating one if required
-        if(_stringRecord == null) {
-            _stringRecord = new StringRecord();
-        }
-        _stringRecord.setString(value);
-        if (value.length() < 1) {
-            _formulaRecord.setCachedResultTypeEmptyString();
-        } else {
-            _formulaRecord.setCachedResultTypeString();
-        }
-    }
-    public void setCachedBooleanResult(boolean value) {
-        _stringRecord = null;
-        _formulaRecord.setCachedResultBoolean(value);
-    }
-    public void setCachedErrorResult(int errorCode) {
-        _stringRecord = null;
-        _formulaRecord.setCachedResultErrorCode(errorCode);
-    }
+		// Save the string into a String Record, creating one if required
+		if(_stringRecord == null) {
+			_stringRecord = new StringRecord();
+		}
+		_stringRecord.setString(value);
+		if (value.length() < 1) {
+			_formulaRecord.setCachedResultTypeEmptyString();
+		} else {
+			_formulaRecord.setCachedResultTypeString();
+		}
+	}
+	public void setCachedBooleanResult(boolean value) {
+		_stringRecord = null;
+		_formulaRecord.setCachedResultBoolean(value);
+	}
+	public void setCachedErrorResult(int errorCode) {
+		_stringRecord = null;
+		_formulaRecord.setCachedResultErrorCode(errorCode);
+	}
+
+	public Ptg[] getFormulaTokens() {
+		if (_sharedFormulaRecord == null) {
+			return _formulaRecord.getParsedExpression();
+		}
+		return _sharedFormulaRecord.getFormulaTokens(_formulaRecord);
+	}
+
+	/**
+	 * Also checks for a related shared formula and unlinks it if found
+	 */
+	public void setParsedExpression(Ptg[] ptgs) {
+		notifyFormulaChanging();
+		_formulaRecord.setParsedExpression(ptgs);
+	}
+
+	public void unlinkSharedFormula() {
+		SharedFormulaRecord sfr = _sharedFormulaRecord;
+		if (sfr == null) {
+			throw new IllegalStateException("Formula not linked to shared formula");
+		}
+		Ptg[] ptgs = sfr.getFormulaTokens(_formulaRecord);
+		_formulaRecord.setParsedExpression(ptgs);
+		//Now its not shared!
+		_formulaRecord.setSharedFormula(false);
+		_sharedFormulaRecord = null;
+	}
+	/**
+	 * Should be called by any code which is either deleting this formula cell, or changing
+	 * its type.  This method gives the aggregate a chance to unlink any shared formula
+	 * that may be involved with this cell formula.
+	 */
+	public void notifyFormulaChanging() {
+		if (_sharedFormulaRecord != null) {
+			_sharedValueManager.unlink(_sharedFormulaRecord);
+		}
+	}
 }

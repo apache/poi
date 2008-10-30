@@ -17,8 +17,6 @@
 
 package org.apache.poi.hssf.record;
 
-import java.io.ByteArrayInputStream;
-
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.AttrPtg;
@@ -151,5 +149,23 @@ public final class TestFormulaRecord extends TestCase {
 
 		FuncVarPtg choose = (FuncVarPtg)ptgs[8];
 		assertEquals("CHOOSE", choose.getName());
+	}
+	
+	public void testReserialize() {
+		FormulaRecord formulaRecord = new FormulaRecord();
+		formulaRecord.setRow(1);
+		formulaRecord.setColumn((short) 1);
+		formulaRecord.setParsedExpression(new Ptg[] { new RefPtg("B$5"), });
+		formulaRecord.setValue(3.3);
+		byte[] ser = formulaRecord.serialize();
+		assertEquals(31, ser.length);
+
+		RecordInputStream in = TestcaseRecordInputStream.create(ser);
+		FormulaRecord fr2 = new FormulaRecord(in);
+		assertEquals(3.3, fr2.getValue(), 0.0);
+		Ptg[] ptgs = fr2.getParsedExpression();
+		assertEquals(1, ptgs.length);
+		RefPtg rp = (RefPtg) ptgs[0];
+		assertEquals("B$5", rp.toFormulaString());
 	}
 }

@@ -16,11 +16,7 @@
 
 package org.apache.poi.hssf.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.util.LittleEndian;
 
 /**
  * Implementation of the cell range address lists,like is described

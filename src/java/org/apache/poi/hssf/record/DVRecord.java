@@ -16,14 +16,16 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.record.UnicodeString.UnicodeRecordStats;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.usermodel.DVConstraint;
 import org.apache.poi.hssf.usermodel.HSSFDataValidation;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.util.BitField;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Title:        DATAVALIDATION Record (0x01BE)<p/>
@@ -53,11 +55,11 @@ public final class DVRecord extends Record {
 	/** Not used - Excel seems to always write 0x3FE0 */
 	private short _not_used_1 = 0x3FE0;
 	/** Formula data for first condition (RPN token array without size field) */
-	private Ptg[] _formula1;
+	private Formula _formula1;
 	/** Not used - Excel seems to always write 0x0000 */
 	private short _not_used_2 = 0x0000;
 	/** Formula data for second condition (RPN token array without size field) */
-	private Ptg[] _formula2;
+	private Formula _formula2;
 	/** Cell range address list with all affected ranges */
 	private CellRangeAddressList _regions;
 
@@ -96,34 +98,36 @@ public final class DVRecord extends Record {
 		_promptText = resolveTitleText(promptText);
 		_errorTitle = resolveTitleText(errorTitle);
 		_errorText = resolveTitleText(errorText);
-		_formula1 = formula1;
-		_formula2 = formula2;
+		_formula1 = Formula.create(formula1);
+		_formula2 = Formula.create(formula2);
 		_regions = regions;
 	}
 
 	public DVRecord(RecordInputStream in) {
-		
-	   _option_flags = in.readInt();
-	   
-	   _promptTitle = readUnicodeString(in);
-	   _errorTitle = readUnicodeString(in);
-	   _promptText = readUnicodeString(in);
-	   _errorText = readUnicodeString(in);
 
-	   int field_size_first_formula = in.readUShort(); 
-	   _not_used_1 = in.readShort();
+		_option_flags = in.readInt();
 
-	   //read first formula data condition
-	   _formula1 = Ptg.readTokens(field_size_first_formula, in);
+		_promptTitle = readUnicodeString(in);
+		_errorTitle = readUnicodeString(in);
+		_promptText = readUnicodeString(in);
+		_errorText = readUnicodeString(in);
 
-	   int field_size_sec_formula = in.readUShort(); 
-	   _not_used_2 = in.readShort();
+		int field_size_first_formula = in.readUShort();
+		_not_used_1 = in.readShort();
 
-	   //read sec formula data condition
-	   _formula2 = Ptg.readTokens(field_size_sec_formula, in);
+		// "You may not use unions, intersections or array constants in Data Validation criteria"
 
-	   //read cell range address list with all affected ranges
-	   _regions = new org.apache.poi.hssf.util.CellRangeAddressList(in);
+		// read first formula data condition
+		_formula1 = Formula.read(field_size_first_formula, in);
+
+		int field_size_sec_formula = in.readUShort();
+		_not_used_2 = in.readShort();
+
+		// read sec formula data condition
+		_formula2 = Formula.read(field_size_sec_formula, in);
+
+		// read cell range address list with all affected ranges
+		_regions = new CellRangeAddressList(in);
 	}
 
 	// --> start option flags
@@ -235,45 +239,43 @@ public final class DVRecord extends Record {
 		return str;
 	}
 
-	private void appendFormula(StringBuffer sb, String label, Ptg[] ptgs) {
+	private static void appendFormula(StringBuffer sb, String label, Formula f) {
 		sb.append(label);
-		if (ptgs.length < 1) {
+		
+		if (f == null) {
 			sb.append("<empty>\n");
 			return;
 		}
-		sb.append("\n");
+		Ptg[] ptgs = f.getTokens();
+		sb.append('\n');
 		for (int i = 0; i < ptgs.length; i++) {
 			sb.append('\t').append(ptgs[i].toString()).append('\n');
 		}
 	}
 
 	public int serialize(int offset, byte [] data) {
-		int size = this.getRecordSize();
-		LittleEndian.putShort(data, 0 + offset, sid);
-		LittleEndian.putShort(data, 2 + offset, ( short ) (size-4));
-
-		int pos = 4;
-		LittleEndian.putInt(data, pos + offset, _option_flags);
-		pos += 4;
+		int recSize = getRecordSize();
+		LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
 		
-		pos += serializeUnicodeString(_promptTitle, pos+offset, data);
-		pos += serializeUnicodeString(_errorTitle, pos+offset, data);
-		pos += serializeUnicodeString(_promptText, pos+offset, data);
-		pos += serializeUnicodeString(_errorText, pos+offset, data);
-		LittleEndian.putUShort(data, offset+pos, Ptg.getEncodedSize(_formula1));
-		pos += 2;
-		LittleEndian.putUShort(data, offset+pos, _not_used_1);
-		pos += 2;
+		out.writeShort(sid);
+		out.writeShort(recSize-4);
 
-		pos += Ptg.serializePtgs(_formula1, data, pos+offset);
-
-		LittleEndian.putUShort(data, offset+pos, Ptg.getEncodedSize(_formula2));
-		pos += 2;
-		LittleEndian.putShort(data, offset+pos, _not_used_2);
-		pos += 2;
-		pos += Ptg.serializePtgs(_formula2, data, pos+offset);
-		_regions.serialize(pos+offset, data);
-		return size;
+		out.writeInt(_option_flags);
+		
+		serializeUnicodeString(_promptTitle, out);
+		serializeUnicodeString(_errorTitle, out);
+		serializeUnicodeString(_promptText, out);
+		serializeUnicodeString(_errorText, out);
+		out.writeShort(_formula1.getEncodedTokenSize());
+		out.writeShort(_not_used_1);
+		_formula1.serializeTokens(out);
+		
+		out.writeShort(_formula2.getEncodedTokenSize());
+		out.writeShort(_not_used_2);
+		_formula2.serializeTokens(out);
+		
+		_regions.serialize(out);
+		return recSize;
 	}
 
 	/**
@@ -293,13 +295,12 @@ public final class DVRecord extends Record {
 		return new UnicodeString(in);
 	}
 
-	private static int serializeUnicodeString(UnicodeString us, int offset, byte[] data) {
-		UnicodeRecordStats urs = new UnicodeRecordStats();
-		us.serialize(urs, offset, data);
-		return urs.recordSize;
+	private static void serializeUnicodeString(UnicodeString us, LittleEndianOutput out) {
+		StringUtil.writeUnicodeString(out, us.getString());
 	}
-	private static int getUnicodeStringSize(UnicodeString str) {
-		return 3 + str.getString().length();
+	private static int getUnicodeStringSize(UnicodeString us) {
+		String str = us.getString();
+		return 3 + str.length() * (StringUtil.hasMultibyte(str) ? 2 : 1);
 	}
 
 	public int getRecordSize()  {
@@ -308,8 +309,8 @@ public final class DVRecord extends Record {
 		size += getUnicodeStringSize(_errorTitle);
 		size += getUnicodeStringSize(_promptText);
 		size += getUnicodeStringSize(_errorText);
-		size += Ptg.getEncodedSize(_formula1);
-		size += Ptg.getEncodedSize(_formula2);
+		size += _formula1.getEncodedTokenSize();
+		size += _formula2.getEncodedTokenSize();
 		size += _regions.getSize();
 		return size;
 	}

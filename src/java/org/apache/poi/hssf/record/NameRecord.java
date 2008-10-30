@@ -27,9 +27,11 @@ import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.RangeAddress;
+import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -89,7 +91,7 @@ public final class NameRecord extends Record {
 	private boolean           field_11_nameIsMultibyte;
 	private byte              field_12_built_in_code;
 	private String            field_12_name_text;
-	private Ptg[]             field_13_name_definition;
+	private Formula           field_13_name_definition;
 	private String            field_14_custom_menu_text;
 	private String            field_15_description_text;
 	private String            field_16_help_topic_text;
@@ -98,7 +100,7 @@ public final class NameRecord extends Record {
 
 	/** Creates new NameRecord */
 	public NameRecord() {
-		field_13_name_definition = Ptg.EMPTY_PTG_ARRAY;
+		field_13_name_definition = Formula.create(Ptg.EMPTY_PTG_ARRAY);
 
 		field_12_name_text = "";
 		field_14_custom_menu_text = "";
@@ -245,7 +247,7 @@ public final class NameRecord extends Record {
 	 * @return <code>true</code> if name has a formula (named range or defined value)
 	 */
 	public boolean hasFormula() {
-		return field_1_option_flag == 0 && field_13_name_definition.length > 0;
+		return field_1_option_flag == 0 && field_13_name_definition.getEncodedTokenSize() > 0;
 	}
 
 	/**
@@ -296,11 +298,11 @@ public final class NameRecord extends Record {
 	 * @return the name formula. never <code>null</code>
 	 */
 	public Ptg[] getNameDefinition() {
-		return (Ptg[]) field_13_name_definition.clone();
+		return field_13_name_definition.getTokens();
 	}
 
 	public void setNameDefinition(Ptg[] ptgs) {
-		field_13_name_definition = (Ptg[]) ptgs.clone();
+		field_13_name_definition = Formula.create(ptgs);
 	}
 
 	/** get the custom menu text
@@ -346,9 +348,9 @@ public final class NameRecord extends Record {
 		int field_9_length_help_topic_text = field_16_help_topic_text.length();
 		int field_10_length_status_bar_text = field_17_status_bar_text.length();
 		int rawNameSize = getNameRawSize();
-		
-		int formulaTotalSize = Ptg.getEncodedSize(field_13_name_definition);
-		int dataSize = 15 // 4 shorts + 7 bytes
+
+		int formulaTotalSize = field_13_name_definition.getEncodedSize();
+		int dataSize = 13 // 3 shorts + 7 bytes
 			+ rawNameSize
 			+ field_7_length_custom_menu
 			+ field_8_length_description_text
@@ -356,48 +358,45 @@ public final class NameRecord extends Record {
 			+ field_10_length_status_bar_text
 			+ formulaTotalSize;
 		
-		LittleEndian.putShort(data, 0 + offset, sid);
-		LittleEndian.putUShort(data, 2 + offset, dataSize);
+		int recSize = 4 + dataSize;
+		LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
+		
+		out.writeShort(sid);
+		out.writeShort(dataSize);
 		// size defined below
-		LittleEndian.putShort(data, 4 + offset, getOptionFlag());
-		LittleEndian.putByte(data, 6 + offset, getKeyboardShortcut());
-		LittleEndian.putByte(data, 7 + offset, getNameTextLength());
-		// Note -
-		LittleEndian.putUShort(data, 8 + offset, Ptg.getEncodedSizeWithoutArrayData(field_13_name_definition));
-		LittleEndian.putUShort(data, 10 + offset, field_5_externSheetIndex_plus1);
-		LittleEndian.putUShort(data, 12 + offset, field_6_sheetNumber);
-		LittleEndian.putByte(data, 14 + offset, field_7_length_custom_menu);
-		LittleEndian.putByte(data, 15 + offset, field_8_length_description_text);
-		LittleEndian.putByte(data, 16 + offset, field_9_length_help_topic_text);
-		LittleEndian.putByte(data, 17 + offset, field_10_length_status_bar_text);
-		LittleEndian.putByte(data, 18 + offset, field_11_nameIsMultibyte ? 1 : 0);
-		int pos = 19 + offset;
+		out.writeShort(getOptionFlag());
+		out.writeByte(getKeyboardShortcut());
+		out.writeByte(getNameTextLength());
+		// Note - formula size is not immediately before encoded formula, and does not include any array constant data
+		out.writeShort(field_13_name_definition.getEncodedTokenSize());
+		out.writeShort(field_5_externSheetIndex_plus1);
+		out.writeShort(field_6_sheetNumber);
+		out.writeByte(field_7_length_custom_menu);
+		out.writeByte(field_8_length_description_text);
+		out.writeByte(field_9_length_help_topic_text);
+		out.writeByte(field_10_length_status_bar_text);
+		out.writeByte(field_11_nameIsMultibyte ? 1 : 0);
 
 		if (isBuiltInName()) {
 			//can send the builtin name directly in
-			LittleEndian.putByte(data, pos,  field_12_built_in_code);
+			out.writeByte(field_12_built_in_code);
 		} else {
 			String nameText = field_12_name_text;
 			if (field_11_nameIsMultibyte) {
-    			StringUtil.putUnicodeLE(nameText, data, pos);
-     		} else {
-    			StringUtil.putCompressedUnicode(nameText, data, pos);
-    		}
+				StringUtil.putUnicodeLE(nameText, out);
+			} else {
+				StringUtil.putCompressedUnicode(nameText, out);
+			}
 		}
-		pos += rawNameSize;
-
-		Ptg.serializePtgs(field_13_name_definition,  data, pos);
-		pos += formulaTotalSize;
+		field_13_name_definition.serializeTokens(out);
+		field_13_name_definition.serializeArrayConstantData(out);
 		
-		StringUtil.putCompressedUnicode( getCustomMenuText(), data, pos);
-		pos += field_7_length_custom_menu;
-		StringUtil.putCompressedUnicode( getDescriptionText(), data, pos);
-		pos += field_8_length_description_text;
-		StringUtil.putCompressedUnicode( getHelpTopicText(), data, pos);
-		pos += field_9_length_help_topic_text;
-		StringUtil.putCompressedUnicode( getStatusBarText(), data, pos);
+		StringUtil.putCompressedUnicode( getCustomMenuText(), out);
+		StringUtil.putCompressedUnicode( getDescriptionText(), out);
+		StringUtil.putCompressedUnicode( getHelpTopicText(), out);
+		StringUtil.putCompressedUnicode( getStatusBarText(), out);
 
-		return 4 + dataSize;
+		return recSize;
 	}
 	private int getNameRawSize() {
 		if (isBuiltInName()) {
@@ -412,23 +411,23 @@ public final class NameRecord extends Record {
 
 	public int getRecordSize(){
 		return 4 // sid + size
-			+ 15 // 4 shorts + 7 bytes
+			+ 13 // 3 shorts + 7 bytes
 			+ getNameRawSize()
 			+ field_14_custom_menu_text.length()
 			+ field_15_description_text.length()
 			+ field_16_help_topic_text.length()
 			+ field_17_status_bar_text.length()
-			+ Ptg.getEncodedSize(field_13_name_definition);
+			+ field_13_name_definition.getEncodedSize();
 	}
 
 	/** gets the extern sheet number
 	 * @return extern sheet index
 	 */
 	public int getExternSheetNumber(){
-		if (field_13_name_definition.length < 1) {
+		if (field_13_name_definition.getEncodedSize() < 1) {
 			return 0;
 		}
-		Ptg ptg = field_13_name_definition[0];
+		Ptg ptg = field_13_name_definition.getTokens()[0];
 
 		if (ptg.getClass() == Area3DPtg.class){
 			return ((Area3DPtg) ptg).getExternSheetIndex();
@@ -444,15 +443,14 @@ public final class NameRecord extends Record {
 	 * @param externSheetNumber extern sheet number
 	 */
 	public void setExternSheetNumber(short externSheetNumber){
+		Ptg[] ptgs = field_13_name_definition.getTokens();
 		Ptg ptg;
 
-		if (field_13_name_definition.length < 1){
+		if (ptgs.length < 1){
 			ptg = createNewPtg();
-			field_13_name_definition = new Ptg[] {
-				ptg,
-			};
+			ptgs = new Ptg[] { ptg, };
 		} else {
-			ptg = field_13_name_definition[0];
+			ptg = ptgs[0];
 		}
 
 		if (ptg.getClass() == Area3DPtg.class){
@@ -461,7 +459,7 @@ public final class NameRecord extends Record {
 		} else if (ptg.getClass() == Ref3DPtg.class){
 			((Ref3DPtg) ptg).setExternSheetIndex(externSheetNumber);
 		}
-
+		field_13_name_definition = Formula.create(ptgs);
 	}
 
 	private static Ptg createNewPtg(){
@@ -472,7 +470,7 @@ public final class NameRecord extends Record {
 	 * @return area reference
 	 */
 	public String getAreaReference(HSSFWorkbook book){
-		return HSSFFormulaParser.toFormulaString(book, field_13_name_definition);
+		return HSSFFormulaParser.toFormulaString(book, field_13_name_definition.getTokens());
 	}
 
 	/** sets the reference , the area only (range)
@@ -483,11 +481,11 @@ public final class NameRecord extends Record {
 		RangeAddress ra = new RangeAddress(ref);
 		Ptg oldPtg;
 
-		if (field_13_name_definition.length < 1){
+		if (field_13_name_definition.getEncodedTokenSize() < 1){
 			oldPtg = createNewPtg();
 		} else {
 			//Trying to find extern sheet index
-			oldPtg = field_13_name_definition[0];
+			oldPtg = field_13_name_definition.getTokens()[0];
 		}
 		List temp = new ArrayList();
 		int externSheetIndex = 0;
@@ -519,7 +517,7 @@ public final class NameRecord extends Record {
 		}
 		Ptg[] ptgs = new Ptg[temp.size()];
 		temp.toArray(ptgs);
-		field_13_name_definition = ptgs;
+		field_13_name_definition = Formula.create(ptgs);
 	}
 
 	/**
@@ -528,17 +526,18 @@ public final class NameRecord extends Record {
 	 *
 	 * @param in the RecordInputstream to read the record from
 	 */
-	public NameRecord(RecordInputStream in) {
+	public NameRecord(RecordInputStream ris) {
+		LittleEndianInput in = ris;
 		field_1_option_flag                 = in.readShort();
 		field_2_keyboard_shortcut           = in.readByte();
 		int field_3_length_name_text        = in.readByte();
 		int field_4_length_name_definition  = in.readShort();
 		field_5_externSheetIndex_plus1      = in.readShort();
 		field_6_sheetNumber                 = in.readUShort();
-		int field_7_length_custom_menu      = in.readUByte();
-		int field_8_length_description_text = in.readUByte();
-		int field_9_length_help_topic_text  = in.readUByte();
-		int field_10_length_status_bar_text = in.readUByte();
+		int f7_customMenuLen      = in.readUByte();
+		int f8_descriptionTextLen = in.readUByte();
+		int f9_helpTopicTextLen  = in.readUByte();
+		int f10_statusBarTextLen = in.readUByte();
 
 		//store the name in byte form if it's a built-in name
 		field_11_nameIsMultibyte = (in.readByte() != 0);
@@ -546,19 +545,21 @@ public final class NameRecord extends Record {
 			field_12_built_in_code = in.readByte();
 		} else {
 			if (field_11_nameIsMultibyte) {
-				field_12_name_text = in.readUnicodeLEString(field_3_length_name_text);
+				field_12_name_text = StringUtil.readUnicodeLE(in, field_3_length_name_text);
 			} else {
-				field_12_name_text = in.readCompressedUnicode(field_3_length_name_text);
+				field_12_name_text = StringUtil.readCompressedUnicode(in, field_3_length_name_text);
 			}
 		}
 
-		field_13_name_definition = Ptg.readTokens(field_4_length_name_definition, in);
+		int nBytesAvailable = in.available() - (f7_customMenuLen 
+				+ f8_descriptionTextLen + f9_helpTopicTextLen + f10_statusBarTextLen);
+		field_13_name_definition = Formula.read(field_4_length_name_definition, in, nBytesAvailable);
 
 		//Who says that this can only ever be compressed unicode???
-		field_14_custom_menu_text = in.readCompressedUnicode(field_7_length_custom_menu);
-		field_15_description_text = in.readCompressedUnicode(field_8_length_description_text);
-		field_16_help_topic_text  = in.readCompressedUnicode(field_9_length_help_topic_text);
-		field_17_status_bar_text  = in.readCompressedUnicode(field_10_length_status_bar_text);
+		field_14_custom_menu_text = StringUtil.readCompressedUnicode(in, f7_customMenuLen);
+		field_15_description_text = StringUtil.readCompressedUnicode(in, f8_descriptionTextLen);
+		field_16_help_topic_text  = StringUtil.readCompressedUnicode(in, f9_helpTopicTextLen);
+		field_17_status_bar_text  = StringUtil.readCompressedUnicode(in, f10_statusBarTextLen);
 	}
 
 	/**
@@ -633,9 +634,10 @@ public final class NameRecord extends Record {
 		sb.append("    .Status bar text length = ").append(field_17_status_bar_text.length()).append("\n");
 		sb.append("    .NameIsMultibyte        = ").append(field_11_nameIsMultibyte).append("\n");
 		sb.append("    .Name (Unicode text)    = ").append( getNameText() ).append("\n");
-		sb.append("    .Formula (nTokens=").append(field_13_name_definition.length).append("):") .append("\n");
-		for (int i = 0; i < field_13_name_definition.length; i++) {
-			Ptg ptg = field_13_name_definition[i];
+		Ptg[] ptgs = field_13_name_definition.getTokens();
+		sb.append("    .Formula (nTokens=").append(ptgs.length).append("):") .append("\n");
+		for (int i = 0; i < ptgs.length; i++) {
+			Ptg ptg = ptgs[i];
 			sb.append("       " + ptg.toString()).append(ptg.getRVAType()).append("\n");
 		}
 
