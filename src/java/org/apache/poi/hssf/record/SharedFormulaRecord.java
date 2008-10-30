@@ -22,7 +22,10 @@ import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RefNPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
+import org.apache.poi.hssf.util.CellRangeAddress8Bit;
+import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        SHAREDFMLA (0x04BC) SharedFormulaRecord
@@ -39,10 +42,15 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
     public final static short   sid = 0x04BC;
 
     private int field_5_reserved;
-    private Ptg[] field_7_parsed_expr;
+    private Formula field_7_parsed_expr;
 
+    // for testing only
     public SharedFormulaRecord() {
-        field_7_parsed_expr = Ptg.EMPTY_PTG_ARRAY;
+        this(new CellRangeAddress8Bit(0,0,0,0));
+    }
+    private SharedFormulaRecord(CellRangeAddress8Bit range) {
+        super(range);
+        field_7_parsed_expr = Formula.create(Ptg.EMPTY_PTG_ARRAY);
     }
 
     /**
@@ -52,17 +60,17 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
         super(in);
         field_5_reserved        = in.readShort();
         int field_6_expression_len = in.readShort();
-        field_7_parsed_expr = Ptg.readTokens(field_6_expression_len, in);
+        int nAvailableBytes = in.available();
+        field_7_parsed_expr = Formula.read(field_6_expression_len, in, nAvailableBytes);
     }
-    protected void serializeExtraData(int offset, byte[] data) {
-        //Because this record is converted to individual Formula records, this method is not required.
-        throw new UnsupportedOperationException("Cannot serialize a SharedFormulaRecord");
+
+    protected void serializeExtraData(LittleEndianOutput out) {
+        out.writeShort(field_5_reserved);
+        field_7_parsed_expr.serialize(out);
     }
     
     protected int getExtraDataSize() {
-        //Because this record is converted to individual Formula records, this method is not required.
-        throw new UnsupportedOperationException("Cannot get the size for a SharedFormulaRecord");
-
+        return 2 + field_7_parsed_expr.getEncodedSize();
     }
 
     /**
@@ -77,9 +85,10 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
         buffer.append("    .range      = ").append(getRange().toString()).append("\n");
         buffer.append("    .reserved    = ").append(HexDump.shortToHex(field_5_reserved)).append("\n");
 
-        for (int k = 0; k < field_7_parsed_expr.length; k++ ) {
+        Ptg[] ptgs = field_7_parsed_expr.getTokens();
+        for (int k = 0; k < ptgs.length; k++ ) {
            buffer.append("Formula[").append(k).append("]");
-           Ptg ptg = field_7_parsed_expr[k];
+           Ptg ptg = ptgs[k];
            buffer.append(ptg.toString()).append(ptg.getRVAType()).append("\n");
         }
 
@@ -92,20 +101,13 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
     }
 
     /**
-     * Creates a non shared formula from the shared formula
-     * counter part
+     * Creates a non shared formula from the shared formula counterpart<br/>
+     * 
+     * Perhaps this functionality could be implemented in terms of the raw 
+     * byte array inside {@link Formula}.
      */
-    protected static Ptg[] convertSharedFormulas(Ptg[] ptgs, int formulaRow, int formulaColumn) {
-        if(false) {
-            /*
-             * TODO - (May-2008) Stop converting relative ref Ptgs in shared formula records.
-             * If/when POI writes out the workbook, this conversion makes an unnecessary diff in the BIFF records.
-             * Disabling this code breaks one existing junit.
-             * Some fix-up will be required to make Ptg.toFormulaString(HSSFWorkbook) work properly.
-             * That method will need 2 extra params: rowIx and colIx.
-             */
-            return ptgs;
-        }
+    static Ptg[] convertSharedFormulas(Ptg[] ptgs, int formulaRow, int formulaColumn) {
+
         Ptg[] newPtgStack = new Ptg[ptgs.length];
 
         for (int k = 0; k < ptgs.length; k++) {
@@ -145,10 +147,9 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
     }
 
     /**
-     * Creates a non shared formula from the shared formula
-     * counter part
+     * @return the equivalent {@link Ptg} array that the formula would have, were it not shared.
      */
-    public void convertSharedFormulaRecord(FormulaRecord formula) {
+    public Ptg[] getFormulaTokens(FormulaRecord formula) {
         int formulaRow = formula.getRow();
         int formulaColumn = formula.getColumn();
         //Sanity checks
@@ -156,10 +157,7 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
             throw new RuntimeException("Shared Formula Conversion: Coding Error");
         }
 
-        Ptg[] ptgs = convertSharedFormulas(field_7_parsed_expr, formulaRow, formulaColumn);
-        formula.setParsedExpression(ptgs);
-        //Now its not shared!
-        formula.setSharedFormula(false);
+        return convertSharedFormulas(field_7_parsed_expr.getTokens(), formulaRow, formulaColumn);
     }
 
     private static int fixupRelativeColumn(int currentcolumn, int column, boolean relative) {
@@ -179,7 +177,9 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
     }
 
     public Object clone() {
-        //Because this record is converted to individual Formula records, this method is not required.
-        throw new UnsupportedOperationException("Cannot clone a SharedFormulaRecord");
+        SharedFormulaRecord result = new SharedFormulaRecord(getRange());
+        result.field_5_reserved = field_5_reserved;
+        result.field_7_parsed_expr = field_7_parsed_expr.copy();
+        return result;
     }
 }

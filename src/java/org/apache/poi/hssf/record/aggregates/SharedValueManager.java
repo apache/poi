@@ -17,6 +17,9 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.poi.hssf.record.ArrayRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
@@ -35,18 +38,72 @@ import org.apache.poi.hssf.record.TableRecord;
  * @author Josh Micich
  */
 public final class SharedValueManager {
+	
+	// This class should probably be generalised to handle array and table groups too
+	private static final class SharedValueGroup {
+		private final SharedValueRecordBase _svr;
+		private final FormulaRecordAggregate[] _frAggs;
+		private int _numberOfFormulas;
+
+		public SharedValueGroup(SharedValueRecordBase svr) {
+			_svr = svr;
+			int width = svr.getLastColumn() - svr.getFirstColumn() + 1;
+			int height = svr.getLastRow() - svr.getFirstRow() + 1;
+			_frAggs = new FormulaRecordAggregate[width * height];
+			_numberOfFormulas = 0;
+		}
+
+		public void add(FormulaRecordAggregate agg) {
+			_frAggs[_numberOfFormulas++] = agg;
+		}
+
+		public void unlinkSharedFormulas() {
+			for (int i = 0; i < _numberOfFormulas; i++) {
+				_frAggs[i].unlinkSharedFormula();
+			}
+		}
+
+		public boolean isInRange(int rowIx, int columnIx) {
+			return _svr.isInRange(rowIx, columnIx);
+		}
+
+		public SharedValueRecordBase getSVR() {
+			return _svr;
+		}
+
+		/**
+		 * Note - Sometimes the first formula in a group is not present (because the range
+		 * is sparsely populated), so this method can return <code>true</code> for a cell
+		 * that is not the top-left corner of the range.
+		 * @return <code>true</code> if this is the first formula cell in the group
+		 */
+		public boolean isFirstCell(int row, int column) {
+			// hack for the moment, just check against the first formula that 
+			// came in through the add() method.
+			FormulaRecordAggregate fra = _frAggs[0];
+			return fra.getRow() == row && fra.getColumn() == column;
+		}
+		
+	}
 
 	public static final SharedValueManager EMPTY = new SharedValueManager(
 			new SharedFormulaRecord[0], new ArrayRecord[0], new TableRecord[0]);
-	private final SharedFormulaRecord[] _sfrs;
 	private final ArrayRecord[] _arrayRecords;
 	private final TableRecord[] _tableRecords;
+	private final Map _groupsBySharedFormulaRecord;
+	/** cached for optimization purposes */
+	private SharedValueGroup[] _groups;
 
 	private SharedValueManager(SharedFormulaRecord[] sharedFormulaRecords,
 			ArrayRecord[] arrayRecords, TableRecord[] tableRecords) {
-		_sfrs = sharedFormulaRecords;
 		_arrayRecords = arrayRecords;
 		_tableRecords = tableRecords;
+		Map m = new HashMap(sharedFormulaRecords.length * 3 / 2);
+		for (int i = 0; i < sharedFormulaRecords.length; i++) {
+			SharedFormulaRecord sfr = sharedFormulaRecords[i];
+			m.put(sfr, new SharedValueGroup(sfr));
+		}
+		_groupsBySharedFormulaRecord = m;
 	}
 
 	/**
@@ -64,41 +121,41 @@ public final class SharedValueManager {
 		return new SharedValueManager(sharedFormulaRecords, arrayRecords, tableRecords);
 	}
 
-	public void convertSharedFormulaRecord(FormulaRecord formula) {
+
+	/**
+	 * @return <code>null</code> if the specified formula does not have any corresponding
+	 * {@link SharedFormulaRecord}
+	 */
+	public SharedFormulaRecord linkSharedFormulaRecord(FormulaRecordAggregate agg) {
+		FormulaRecord formula = agg.getFormulaRecord();
 		int row = formula.getRow();
 		int column = formula.getColumn();
 		// Traverse the list of shared formulas in
 		// reverse order, and try to find the correct one
 		// for us
-		for (int i = 0; i < _sfrs.length; i++) {
-			SharedFormulaRecord shrd = _sfrs[i];
-			if (shrd.isInRange(row, column)) {
-				shrd.convertSharedFormulaRecord(formula);
-				return;
+		
+		SharedValueGroup[] groups = getGroups();
+		for (int i = 0; i < groups.length; i++) {
+			SharedValueGroup svr = groups[i];
+			if (svr.isInRange(row, column)) {
+				svr.add(agg);
+				return (SharedFormulaRecord) svr.getSVR();
 			}
 		}
-		// not found
-		handleMissingSharedFormulaRecord(formula);
+		return null;
 	}
 
-	/**
-	 * Sometimes the shared formula flag "seems" to be erroneously set, in which case there is no 
-	 * call to <tt>SharedFormulaRecord.convertSharedFormulaRecord</tt> and hence the 
-	 * <tt>parsedExpression</tt> field of this <tt>FormulaRecord</tt> will not get updated.<br/>
-	 * As it turns out, this is not a problem, because in these circumstances, the existing value
-	 * for <tt>parsedExpression</tt> is perfectly OK.<p/>
-	 * 
-	 * This method may also be used for setting breakpoints to help diagnose issues regarding the
-	 * abnormally-set 'shared formula' flags. 
-	 * (see TestValueRecordsAggregate.testSpuriousSharedFormulaFlag()).<p/>
-	 * 
-	 * The method currently does nothing but do not delete it without finding a nice home for this 
-	 * comment.
-	 */
-	private static void handleMissingSharedFormulaRecord(FormulaRecord formula) {
-		// could log an info message here since this is a fairly unusual occurrence.
-		formula.setSharedFormula(false); // no point leaving the flag erroneously set
+	private SharedValueGroup[] getGroups() {
+		if (_groups == null) {
+			SharedValueGroup[] groups = new SharedValueGroup[_groupsBySharedFormulaRecord.size()];
+			_groupsBySharedFormulaRecord.values().toArray(groups);
+			_groups = groups;
+			
+		}
+		return _groups;
 	}
+
+
 
 	/**
 	 * Note - does not return SharedFormulaRecords currently, because the corresponding formula
@@ -125,6 +182,26 @@ public final class SharedValueManager {
 				return ar;
 			}
 		}
+		SharedValueGroup[] groups = getGroups();
+		for (int i = 0; i < groups.length; i++) {
+			SharedValueGroup svg = groups[i];
+			if (svg.isFirstCell(row, column)) {
+				return svg.getSVR();
+			}
+		}
 		return null;
+	}
+
+	/**
+	 * Converts all {@link FormulaRecord}s handled by <tt>sharedFormulaRecord</tt> 
+	 * to plain unshared formulas
+	 */
+	public void unlink(SharedFormulaRecord sharedFormulaRecord) {
+		SharedValueGroup svg = (SharedValueGroup) _groupsBySharedFormulaRecord.remove(sharedFormulaRecord);
+		_groups = null; // be sure to reset cached value
+		if (svg == null) {
+			throw new IllegalStateException("Failed to find formulas for shared formula");
+		}
+		svg.unlinkSharedFormulas();
 	}
 }

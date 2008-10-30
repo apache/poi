@@ -19,6 +19,8 @@ package org.apache.poi.hssf.util;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p/>
@@ -48,12 +50,18 @@ public final class CellRangeAddress extends CellRangeAddressBase {
 		return in.readUShort();
 	}
 
+	/**
+	 * @deprecated use {@link #serialize(LittleEndianOutput)}
+	 */
 	public int serialize(int offset, byte[] data) {
-		LittleEndian.putUShort(data, offset + 0, getFirstRow());
-		LittleEndian.putUShort(data, offset + 2, getLastRow());
-		LittleEndian.putUShort(data, offset + 4, getFirstColumn());
-		LittleEndian.putUShort(data, offset + 6, getLastColumn());
+		serialize(new LittleEndianByteArrayOutputStream(data, offset, ENCODED_SIZE));
 		return ENCODED_SIZE;
+	}
+	public void serialize(LittleEndianOutput out) {
+		out.writeShort(getFirstRow());
+		out.writeShort(getLastRow());
+		out.writeShort(getFirstColumn());
+		out.writeShort(getLastColumn());
 	}
 	
 	public CellRangeAddress copy() {

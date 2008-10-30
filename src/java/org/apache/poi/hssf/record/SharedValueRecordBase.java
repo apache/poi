@@ -18,7 +18,9 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Common base class for {@link SharedFormulaRecord}, {@link ArrayRecord} and
@@ -41,7 +43,7 @@ public abstract class SharedValueRecordBase extends Record {
 	/**
 	 * reads only the range (1 {@link CellRangeAddress8Bit}) from the stream
 	 */
-	public SharedValueRecordBase(RecordInputStream in) {
+	public SharedValueRecordBase(LittleEndianInput in) {
 		_range = new CellRangeAddress8Bit(in);
 	}
 
@@ -71,19 +73,19 @@ public abstract class SharedValueRecordBase extends Record {
 
 	protected abstract int getExtraDataSize();
 
-	protected abstract void serializeExtraData(int offset, byte[] data);
+	protected abstract void serializeExtraData(LittleEndianOutput out);
 
 	public final int serialize(int offset, byte[] data) {
 		int dataSize = CellRangeAddress8Bit.ENCODED_SIZE + getExtraDataSize();
+		
+		int totalRecSize = dataSize + 4;
+		LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, totalRecSize);
+		out.writeShort(getSid());
+		out.writeShort(dataSize);
 
-		LittleEndian.putShort(data, 0 + offset, getSid());
-		LittleEndian.putUShort(data, 2 + offset, dataSize);
-
-		int pos = offset + 4;
-		_range.serialize(pos, data);
-		pos += CellRangeAddress8Bit.ENCODED_SIZE;
-		serializeExtraData(pos, data);
-		return dataSize + 4;
+		_range.serialize(out);
+		serializeExtraData(out);
+		return totalRecSize;
 	}
 
 	/**

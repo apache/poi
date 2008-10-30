@@ -499,6 +499,9 @@ public final class RowRecordsAggregate extends RecordAggregate {
         _valuesAgg.insertCell(cvRec);
     }
     public void removeCell(CellValueRecordInterface cvRec) {
+        if (cvRec instanceof FormulaRecordAggregate) {
+            ((FormulaRecordAggregate)cvRec).notifyFormulaChanging();
+        }
         _valuesAgg.removeCell(cvRec);
     }
     public FormulaRecordAggregate createFormula(int row, int col) {

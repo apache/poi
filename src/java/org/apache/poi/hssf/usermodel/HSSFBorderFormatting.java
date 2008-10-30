@@ -75,52 +75,52 @@ public final class HSSFBorderFormatting
 
 	public short getBorderBottom()
 	{
-		return borderFormatting.getBorderBottom();
+		return (short)borderFormatting.getBorderBottom();
 	}
 
 	public short getBorderDiagonal()
 	{
-		return borderFormatting.getBorderDiagonal();
+		return (short)borderFormatting.getBorderDiagonal();
 	}
 
 	public short getBorderLeft()
 	{
-		return borderFormatting.getBorderLeft();
+		return (short)borderFormatting.getBorderLeft();
 	}
 
 	public short getBorderRight()
 	{
-		return borderFormatting.getBorderRight();
+		return (short)borderFormatting.getBorderRight();
 	}
 
 	public short getBorderTop()
 	{
-		return borderFormatting.getBorderTop();
+		return (short)borderFormatting.getBorderTop();
 	}
 
 	public short getBottomBorderColor()
 	{
-		return borderFormatting.getBottomBorderColor();
+		return (short)borderFormatting.getBottomBorderColor();
 	}
 
 	public short getDiagonalBorderColor()
 	{
-		return borderFormatting.getDiagonalBorderColor();
+		return (short)borderFormatting.getDiagonalBorderColor();
 	}
 
 	public short getLeftBorderColor()
 	{
-		return borderFormatting.getLeftBorderColor();
+		return (short)borderFormatting.getLeftBorderColor();
 	}
 
 	public short getRightBorderColor()
 	{
-		return borderFormatting.getRightBorderColor();
+		return (short)borderFormatting.getRightBorderColor();
 	}
 
 	public short getTopBorderColor()
 	{
-		return borderFormatting.getTopBorderColor();
+		return (short)borderFormatting.getTopBorderColor();
 	}
 
 	public boolean isBackwardDiagonalOn()

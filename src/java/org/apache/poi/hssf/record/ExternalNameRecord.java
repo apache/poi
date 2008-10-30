@@ -17,20 +17,19 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.ss.formula.Formula;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * EXTERNALNAME<p/>
+ * EXTERNALNAME (0x0023)<p/>
  * 
  * @author Josh Micich
  */
 public final class ExternalNameRecord extends Record {
 
-	private static final Ptg[] EMPTY_PTG_ARRAY = { };
-
-	public final static short sid = 0x23; // as per BIFF8. (some old versions used 0x223)
+	public final static short sid = 0x0023; // as per BIFF8. (some old versions used 0x223)
 
 	private static final int OPT_BUILTIN_NAME          = 0x0001;
 	private static final int OPT_AUTOMATIC_LINK        = 0x0002; // m$ doc calls this fWantAdvise 
@@ -45,7 +44,7 @@ public final class ExternalNameRecord extends Record {
 	private short  field_2_index;
 	private short  field_3_not_used;
 	private String field_4_name;
-	private Ptg[]  field_5_name_definition;
+	private Formula  field_5_name_definition;
 
 	/**
 	 * Convenience Function to determine if the name is a built-in name
@@ -88,7 +87,7 @@ public final class ExternalNameRecord extends Record {
 		int result = 3 * 2  // 3 short fields
 			+ 2 + field_4_name.length(); // nameLen and name
 		if(hasFormula()) {
-			result += 2 + getNameDefinitionSize(); // nameDefLen and nameDef
+			result += field_5_name_definition.getEncodedSize();
 		}
 		return result;
 	}
@@ -104,27 +103,22 @@ public final class ExternalNameRecord extends Record {
 	 */
 	public int serialize( int offset, byte[] data ) {
 		int dataSize = getDataSize();
+		int recSize = dataSize + 4;
+		LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
 
-		LittleEndian.putShort( data, 0 + offset, sid );
-		LittleEndian.putShort( data, 2 + offset, (short) dataSize );
-		LittleEndian.putShort( data, 4 + offset, field_1_option_flag );
-		LittleEndian.putShort( data, 6 + offset, field_2_index );
-		LittleEndian.putShort( data, 8 + offset, field_3_not_used );
+		out.writeShort(sid);
+		out.writeShort(dataSize);
+		out.writeShort(field_1_option_flag);
+		out.writeShort(field_2_index);
+		out.writeShort(field_3_not_used);
 		int nameLen = field_4_name.length();
-		LittleEndian.putUShort( data, 10 + offset, nameLen );
-		StringUtil.putCompressedUnicode( field_4_name, data, 12 + offset );
-		if(hasFormula()) {
-			int defLen = getNameDefinitionSize();
-			LittleEndian.putUShort( data, 12 + nameLen + offset, defLen );
-			Ptg.serializePtgs(field_5_name_definition, data, 14 + nameLen + offset );
+		out.writeShort(nameLen);
+		StringUtil.putCompressedUnicode(field_4_name, out);
+		if (hasFormula()) {
+			field_5_name_definition.serialize(out);
 		}
-		return dataSize + 4;
+		return recSize;
 	}
-
-	private int getNameDefinitionSize() {
-		return Ptg.getEncodedSize(field_5_name_definition);
-	}
-
 
 	public int getRecordSize(){
 		return 4 + getDataSize();
@@ -141,14 +135,16 @@ public final class ExternalNameRecord extends Record {
 			if(in.remaining() > 0) {
 				throw readFail("Some unread data (is formula present?)");
 			}
-			field_5_name_definition = EMPTY_PTG_ARRAY;
+			field_5_name_definition = null;
 			return;
 		}
-		if(in.remaining() <= 0) {
+		int nBytesRemaining = in.available();
+		if(nBytesRemaining <= 0) {
 			throw readFail("Ran out of record data trying to read formula.");
 		}
-		short formulaLen = in.readShort();
-		field_5_name_definition = Ptg.readTokens(formulaLen, in);
+		int formulaLen = in.readUShort();
+		nBytesRemaining -=2;
+		field_5_name_definition = Formula.read(formulaLen, in, nBytesRemaining);
 	}
 	/*
 	 * Makes better error messages (while hasFormula() is not reliable) 
@@ -157,7 +153,7 @@ public final class ExternalNameRecord extends Record {
 	private RuntimeException readFail(String msg) {
 		String fullMsg = msg + " fields: (option=" + field_1_option_flag + " index=" + field_2_index 
 		+ " not_used=" + field_3_not_used + " name='" + field_4_name + "')";
-		return new RuntimeException(fullMsg);
+		return new RecordFormatException(fullMsg);
 	}
 
 	private boolean hasFormula() {

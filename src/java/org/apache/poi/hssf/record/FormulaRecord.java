@@ -20,10 +20,13 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Formula Record (0x0006).
@@ -35,7 +38,7 @@ import org.apache.poi.util.LittleEndian;
 public final class FormulaRecord extends Record implements CellValueRecordInterface {
 
 	public static final short sid = 0x0006;   // docs say 406...because of a bug Microsoft support site article #Q184647)
-	private static int FIXED_SIZE = 22;
+	private static int FIXED_SIZE = 20;
 
 	private static final BitField alwaysCalc = BitFieldFactory.getInstance(0x0001);
 	private static final BitField calcOnLoad = BitFieldFactory.getInstance(0x0002);
@@ -92,9 +95,9 @@ public final class FormulaRecord extends Record implements CellValueRecordInterf
 			}
 			return new SpecialCachedValue(result);
 		}
-		public void serialize(byte[] data, int offset) {
-			System.arraycopy(_variableData, 0, data, offset, VARIABLE_DATA_LENGTH);
-			LittleEndian.putUShort(data, offset+VARIABLE_DATA_LENGTH, 0xFFFF);
+		public void serialize(LittleEndianOutput out) {
+			out.write(_variableData);
+			out.writeShort(0xFFFF);
 		}
 		public String formatDebugString() {
 			return formatValue() + ' ' + HexDump.toHex(_variableData);
@@ -172,8 +175,13 @@ public final class FormulaRecord extends Record implements CellValueRecordInterf
 	private short  field_3_xf;
 	private double field_4_value;
 	private short  field_5_options;
-	private int    field_6_zero;
-	private Ptg[]  field_8_parsed_expr;
+	/**
+	 * Unused field.  As it turns out this field is often not zero..
+	 * According to Microsoft Excel Developer's Kit Page 318:
+	 * when writing the chn field (offset 20), it's supposed to be 0 but ignored on read
+	 */
+	private int field_6_zero;
+	private Formula field_8_parsed_expr;
 
 	/**
 	 * Since the NaN support seems sketchy (different constants) we'll store and spit it out directly
@@ -183,13 +191,14 @@ public final class FormulaRecord extends Record implements CellValueRecordInterf
 	/** Creates new FormulaRecord */
 
 	public FormulaRecord() {
-		field_8_parsed_expr = Ptg.EMPTY_PTG_ARRAY;
+		field_8_parsed_expr = Formula.create(Ptg.EMPTY_PTG_ARRAY);
 	}
 
-	public FormulaRecord(RecordInputStream in) {
-		field_1_row	 = in.readUShort();
-		field_2_column  = in.readShort();
-		field_3_xf	  = in.readShort();
+	public FormulaRecord(RecordInputStream ris) {
+		LittleEndianInput in = ris;
+		field_1_row = in.readUShort();
+		field_2_column = in.readShort();
+		field_3_xf = in.readShort();
 		long valueLongBits  = in.readLong();
 		field_5_options = in.readShort();
 		specialCachedValue = SpecialCachedValue.create(valueLongBits);
@@ -197,14 +206,11 @@ public final class FormulaRecord extends Record implements CellValueRecordInterf
 			field_4_value = Double.longBitsToDouble(valueLongBits);
 		}
 
-		field_6_zero		   = in.readInt();
+		field_6_zero = in.readInt();
+
 		int field_7_expression_len = in.readShort(); // this length does not include any extra array data
-		field_8_parsed_expr = Ptg.readTokens(field_7_expression_len, in);
-		if (in.remaining() == 10) {
-			// TODO - this seems to occur when IntersectionPtg is present
-			// 10 extra bytes are just 0x01 and 0x00
-			// This causes POI stderr: "WARN. Unread 10 bytes of record 0x6"
-		}
+		int nBytesAvailable = in.available();
+		field_8_parsed_expr = Formula.read(field_7_expression_len, in, nBytesAvailable);
 	}
 
 
@@ -336,11 +342,11 @@ public final class FormulaRecord extends Record implements CellValueRecordInterf
 	 * @return the formula tokens. never <code>null</code>
 	 */
 	public Ptg[] getParsedExpression() {
-		return (Ptg[]) field_8_parsed_expr.clone();
+		return field_8_parsed_expr.getTokens();
 	}
 
 	public void setParsedExpression(Ptg[] ptgs) {
-		field_8_parsed_expr = ptgs;
+		field_8_parsed_expr = Formula.create(ptgs);
 	}
 
 	public short getSid() {
@@ -348,33 +354,30 @@ public final class FormulaRecord extends Record implements CellValueRecordInterf
 	}
 
 	private int getDataSize() {
-		return FIXED_SIZE + Ptg.getEncodedSize(field_8_parsed_expr);
+		return FIXED_SIZE + field_8_parsed_expr.getEncodedSize();
 	}
 	public int serialize(int offset, byte [] data) {
 
 		int dataSize = getDataSize();
-
-		LittleEndian.putShort(data, 0 + offset, sid);
-		LittleEndian.putUShort(data, 2 + offset, dataSize);
-		LittleEndian.putUShort(data, 4 + offset, getRow());
-		LittleEndian.putShort(data, 6 + offset, getColumn());
-		LittleEndian.putShort(data, 8 + offset, getXFIndex());
+		int recSize = 4 + dataSize;
+		LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
+		out.writeShort(sid);
+		out.writeShort(dataSize);
+		out.writeShort(getRow());
+		out.writeShort(getColumn());
+		out.writeShort(getXFIndex());
 
 		if (specialCachedValue == null) {
-			LittleEndian.putDouble(data, 10 + offset, field_4_value);
+			out.writeDouble(field_4_value);
 		} else {
-			specialCachedValue.serialize(data, 10+offset);
+			specialCachedValue.serialize(out);
 		}
 
-		LittleEndian.putShort(data, 18 + offset, getOptions());
+		out.writeShort(getOptions());
 
-		//when writing the chn field (offset 20), it's supposed to be 0 but ignored on read
-		//Microsoft Excel Developer's Kit Page 318
-		LittleEndian.putInt(data, 20 + offset, 0);
-		int formulaTokensSize = Ptg.getEncodedSizeWithoutArrayData(field_8_parsed_expr);
-		LittleEndian.putUShort(data, 24 + offset, formulaTokensSize);
-		Ptg.serializePtgs(field_8_parsed_expr, data, 26+offset);
-		return 4 + dataSize;
+		out.writeInt(field_6_zero); // may as well write original data back so as to minimise differences from original
+		field_8_parsed_expr.serialize(out);
+		return recSize;
 	}
 
 	public int getRecordSize() {
@@ -385,24 +388,25 @@ public final class FormulaRecord extends Record implements CellValueRecordInterf
 
 		StringBuffer sb = new StringBuffer();
 		sb.append("[FORMULA]\n");
-		sb.append("	.row	   = ").append(HexDump.shortToHex(getRow())).append("\n");
-		sb.append("	.column	= ").append(HexDump.shortToHex(getColumn())).append("\n");
-		sb.append("	.xf		= ").append(HexDump.shortToHex(getXFIndex())).append("\n");
-		sb.append("	.value	 = ");
+		sb.append("  .row	   = ").append(HexDump.shortToHex(getRow())).append("\n");
+		sb.append("  .column	= ").append(HexDump.shortToHex(getColumn())).append("\n");
+		sb.append("  .xf		= ").append(HexDump.shortToHex(getXFIndex())).append("\n");
+		sb.append("  .value	 = ");
 		if (specialCachedValue == null) {
 			sb.append(field_4_value).append("\n");
 		} else {
 			sb.append(specialCachedValue.formatDebugString()).append("\n");
 		}
-		sb.append("	.options   = ").append(HexDump.shortToHex(getOptions())).append("\n");
-		sb.append("	.alwaysCalc= ").append(alwaysCalc.isSet(getOptions())).append("\n");
-		sb.append("	.calcOnLoad= ").append(calcOnLoad.isSet(getOptions())).append("\n");
-		sb.append("	.shared	= ").append(sharedFormula.isSet(getOptions())).append("\n");
-		sb.append("	.zero	  = ").append(HexDump.intToHex(field_6_zero)).append("\n");
+		sb.append("  .options   = ").append(HexDump.shortToHex(getOptions())).append("\n");
+		sb.append("    .alwaysCalc= ").append(isAlwaysCalc()).append("\n");
+		sb.append("    .calcOnLoad= ").append(isCalcOnLoad()).append("\n");
+		sb.append("    .shared    = ").append(isSharedFormula()).append("\n");
+		sb.append("  .zero      = ").append(HexDump.intToHex(field_6_zero)).append("\n");
 
-		for (int k = 0; k < field_8_parsed_expr.length; k++ ) {
-			sb.append("	 Ptg[").append(k).append("]=");
-			Ptg ptg = field_8_parsed_expr[k];
+		Ptg[] ptgs = field_8_parsed_expr.getTokens();
+		for (int k = 0; k < ptgs.length; k++ ) {
+			sb.append("    Ptg[").append(k).append("]=");
+			Ptg ptg = ptgs[k];
 			sb.append(ptg.toString()).append(ptg.getRVAType()).append("\n");
 		}
 		sb.append("[/FORMULA]\n");
@@ -417,12 +421,7 @@ public final class FormulaRecord extends Record implements CellValueRecordInterf
 		rec.field_4_value = field_4_value;
 		rec.field_5_options = field_5_options;
 		rec.field_6_zero = field_6_zero;
-		int nTokens = field_8_parsed_expr.length;
-		Ptg[] ptgs = new Ptg[nTokens];
-		for (int i = 0; i < nTokens; i++) {
-			ptgs[i] = field_8_parsed_expr[i].copy();
-		}
-		rec.field_8_parsed_expr = ptgs;
+		rec.field_8_parsed_expr = field_8_parsed_expr;
 		rec.specialCachedValue = specialCachedValue;
 		return rec;
 	}

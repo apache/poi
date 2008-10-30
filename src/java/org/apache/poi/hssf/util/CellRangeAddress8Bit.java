@@ -16,8 +16,9 @@
 
 package org.apache.poi.hssf.util;
 
-import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p/>
@@ -34,24 +35,30 @@ public final class CellRangeAddress8Bit extends CellRangeAddressBase {
 		super(firstRow, lastRow, firstCol, lastCol);
 	}
 
-	public CellRangeAddress8Bit(RecordInputStream in) {
+	public CellRangeAddress8Bit(LittleEndianInput in) {
 		super(readUShortAndCheck(in), in.readUShort(), in.readUByte(), in.readUByte());
 	}
 
-	private static int readUShortAndCheck(RecordInputStream in) {
-		if (in.remaining() < ENCODED_SIZE) {
+	private static int readUShortAndCheck(LittleEndianInput in) {
+		if (in.available() < ENCODED_SIZE) {
 			// Ran out of data
 			throw new RuntimeException("Ran out of data reading CellRangeAddress");
 		}
 		return in.readUShort();
 	}
 
+	/**
+	 * @deprecated use {@link #serialize(LittleEndianOutput)}
+	 */
 	public int serialize(int offset, byte[] data) {
-		LittleEndian.putUShort(data, offset + 0, getFirstRow());
-		LittleEndian.putUShort(data, offset + 2, getLastRow());
-		LittleEndian.putByte(data, offset + 4, getFirstColumn());
-		LittleEndian.putByte(data, offset + 5, getLastColumn());
+		serialize(new LittleEndianByteArrayOutputStream(data, offset, ENCODED_SIZE));
 		return ENCODED_SIZE;
+	}
+	public void serialize(LittleEndianOutput out) {
+		out.writeShort(getFirstRow());
+		out.writeShort(getLastRow());
+		out.writeByte(getFirstColumn());
+		out.writeByte(getLastColumn());
 	}
 	
 	public CellRangeAddress8Bit copy() {

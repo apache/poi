@@ -23,7 +23,7 @@ import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 /**
  * DATATABLE (0x0236)<p/>
  *
@@ -146,13 +146,13 @@ public final class TableRecord extends SharedValueRecordBase {
 		2 // 2 byte fields
 		+ 8; // 4 short fields
 	}
-	protected void serializeExtraData(int offset, byte[] data) {
-		LittleEndian.putByte(data, 0 + offset, field_5_flags);
-		LittleEndian.putByte(data, 1 + offset, field_6_res);
-		LittleEndian.putUShort(data, 2 + offset, field_7_rowInputRow);
-		LittleEndian.putUShort(data, 4 + offset, field_8_colInputRow);
-		LittleEndian.putUShort(data, 6 + offset, field_9_rowInputCol);
-		LittleEndian.putUShort(data, 8 + offset, field_10_colInputCol);
+	protected void serializeExtraData(LittleEndianOutput out) {
+		out.writeByte(field_5_flags);
+		out.writeByte(field_6_res);
+		out.writeShort(field_7_rowInputRow);
+		out.writeShort(field_8_colInputRow);
+		out.writeShort(field_9_rowInputCol);
+		out.writeShort(field_10_colInputCol);
 	}
 
 	public String toString() {
