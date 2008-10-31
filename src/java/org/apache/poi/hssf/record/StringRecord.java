@@ -68,9 +68,8 @@ public class StringRecord extends Record {
         return isUnCompressedUnicode() ? field_1_string_length * 2 : field_1_string_length;
     }
 
-    public int getRecordSize()
-    {
-        return 4 + 2 + 1 + getStringByteLength();
+    protected int getDataSize() {
+        return 2 + 1 + getStringByteLength();
     }
 
     /**

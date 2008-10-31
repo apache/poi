@@ -167,9 +167,8 @@ public class GutsRecord
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 12;
+    protected int getDataSize() {
+        return 8;
     }
 
     public short getSid()

@@ -87,8 +87,8 @@ public final class UnknownRecord extends Record {
 		return 4 + dataSize;
 	}
 
-	public final int getRecordSize() {
-		return 4 + _rawData.length;
+	protected int getDataSize() {
+		return _rawData.length;
 	}
 
 	/**

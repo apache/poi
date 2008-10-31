@@ -63,9 +63,8 @@ public final class EOFRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return ENCODED_SIZE;
+    protected int getDataSize() {
+        return ENCODED_SIZE - 4;
     }
 
     public short getSid()

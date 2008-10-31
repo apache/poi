@@ -158,7 +158,7 @@ public final class StyleRecord extends Record {
 	}
 
 	
-	private int getDataSize() {
+	protected int getDataSize() {
 		if (isBuiltin()) {
 			return 4; // short, byte, byte
 		}
@@ -186,10 +186,6 @@ public final class StyleRecord extends Record {
 			StringUtil.putCompressedUnicode(getName(), data, 9 + offset);
 		}
 		return 4+dataSize;
-	}
-
-	public int getRecordSize() {
-		return 4 + getDataSize();
 	}
 
 	public short getSid()

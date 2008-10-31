@@ -14,19 +14,21 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndian;
 
-public class DrawingRecord extends Record
-{
-    public static final short sid = 0xEC;
+public final class DrawingRecord extends Record {
+    public static final short sid = 0x00EC;
+
+	private static final byte[] EMPTY_BYTE_ARRAY = { };
 
     private byte[] recordData;
     private byte[] contd;
 
-    public DrawingRecord()
-    {
+    public DrawingRecord() {
+    	recordData = EMPTY_BYTE_ARRAY;
     }
 
     public DrawingRecord( RecordInputStream in )
@@ -54,13 +56,10 @@ public class DrawingRecord extends Record
         }
         return getRecordSize();
     }
+    protected int getDataSize() {
+        int retval = 0;
 
-    public int getRecordSize()
-    {
-        int retval = 4;
-
-        if (recordData != null)
-        {
+        if (recordData != null) {
             retval += recordData.length;
         }
         return retval;
@@ -91,10 +90,8 @@ public class DrawingRecord extends Record
     public Object clone() {
     	DrawingRecord rec = new DrawingRecord();
     	
-        if (recordData != null) {
-        	rec.recordData = new byte[ recordData.length ];
-        	System.arraycopy(recordData, 0, rec.recordData, 0, recordData.length);
-        }
+    	rec.recordData = new byte[ recordData.length ];
+    	System.arraycopy(recordData, 0, rec.recordData, 0, recordData.length);
     	if (contd != null) {
 	    	System.arraycopy(contd, 0, rec.contd, 0, contd.length);
 	    	rec.contd = new byte[ contd.length ];

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -29,14 +27,9 @@ import org.apache.poi.util.BitFieldFactory;
  * Description:  An element in the Font Table<P>
  * REFERENCE:  PG 315 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
- * @version 2.0-pre
  */
-
-public class FontRecord
-    extends Record
-{
-    public final static short     sid                 =
-        0x31;                                                 // docs are wrong (0x231 Microsoft Support site article Q184647)
+public final class FontRecord extends Record {
+    public final static short     sid                 = 0x0031;                                                 // docs are wrong (0x231 Microsoft Support site article Q184647)
     public final static short     SS_NONE             = 0;
     public final static short     SS_SUPER            = 1;
     public final static short     SS_SUB              = 2;
@@ -509,12 +502,10 @@ public class FontRecord
         }
         return getRecordSize();
     }
-
-    public int getRecordSize()
-    {
+    protected int getDataSize() {
     	// Note - no matter the original, we always
     	//  re-serialise the font name as unicode
-        return (getFontNameLength() * 2) + 20;
+        return 16 + getFontNameLength() * 2;
     }
 
     public short getSid()

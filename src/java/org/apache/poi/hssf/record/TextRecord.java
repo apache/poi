@@ -202,9 +202,8 @@ public final class TextRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 4  + 1 + 1 + 2 + 4 + 4 + 4 + 4 + 4 + 2 + 2 + 2 + 2;
+    protected int getDataSize() {
+        return 1 + 1 + 2 + 4 + 4 + 4 + 4 + 4 + 2 + 2 + 2 + 2;
     }
 
     public short getSid()

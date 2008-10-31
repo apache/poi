@@ -286,9 +286,8 @@ public class BOFRecord
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 20;
+    protected int getDataSize() {
+        return 16;
     }
 
     public short getSid()

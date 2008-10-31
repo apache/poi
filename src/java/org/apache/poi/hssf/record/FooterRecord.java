@@ -180,16 +180,13 @@ public class FooterRecord
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        int retval = 4;
+    protected int getDataSize() {
+        int retval = 0;
 
-        if (getFooterLength() > 0)
-        {
+        if (getFooterLength() > 0) {
             retval+=3; // [Shawn] Fixed for two null bytes in the length
         }
-        return (isMultibyte() ? 
-            (retval + getFooterLength()*2) : (retval + getFooterLength()));
+        return retval + getFooterLength() * (isMultibyte() ? 2 : 1);
     }
 
     public short getSid()

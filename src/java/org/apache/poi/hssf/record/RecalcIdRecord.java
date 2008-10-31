@@ -116,9 +116,8 @@ public final class RecalcIdRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 4 + (getRecalcIdArray().length * 2);
+    protected int getDataSize() {
+        return (getRecalcIdArray().length * 2);
     }
 
     public short getSid()

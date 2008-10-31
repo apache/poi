@@ -63,7 +63,7 @@ public final class CRNRecord extends Record {
 		sb.append("]");
 		return sb.toString();
 	}
-	private int getDataSize() {
+	protected int getDataSize() {
 		return 4 + ConstantValueParser.getEncodedSize(field_4_constant_values);
 	}
 
@@ -78,10 +78,6 @@ public final class CRNRecord extends Record {
 		out.writeShort(field_3_row_index);
 		ConstantValueParser.encode(out, field_4_constant_values);
 		return recSize;
-	}
-
-	public int getRecordSize() {
-		return getDataSize() + 4;
 	}
 
 	/**

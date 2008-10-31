@@ -96,9 +96,8 @@ public class PaletteRecord
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 4 + 2 + (field_1_numcolors * 4);
+    protected int getDataSize() {
+        return 2 + (field_1_numcolors * 4);
     }
 
     public short getSid()

@@ -113,10 +113,11 @@ public final class MulRKRecord extends Record {
 		return sid;
 	}
 
-	public int serialize(int offset, byte [] data)
-	{
-		throw new RecordFormatException(
-			"Sorry, you can't serialize a MulRK in this release");
+	public int serialize(int offset, byte [] data) {
+		throw new RecordFormatException( "Sorry, you can't serialize MulRK in this release");
+	}
+	protected int getDataSize() {
+		throw new RecordFormatException( "Sorry, you can't serialize MulRK in this release");
 	}
 
 	private static final class RkRec {

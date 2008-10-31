@@ -156,7 +156,7 @@ public final class BoundSheetRecord extends Record {
 		return buffer.toString();
 	}
 	
-	private int getDataSize() {
+	protected int getDataSize() {
 		return 8 + field_5_sheetname.length() * (isMultibyte() ? 2 : 1);
 	}
 
@@ -177,10 +177,6 @@ public final class BoundSheetRecord extends Record {
 			StringUtil.putCompressedUnicode(name, data, 12 + offset);
 		}
 		return 4 + dataSize;
-	}
-
-	public int getRecordSize() {
-		return 4 + getDataSize();
 	}
 
 	public short getSid() {

@@ -351,9 +351,8 @@ public final class RowRecord extends Record {
         return ENCODED_SIZE;
     }
 
-    public int getRecordSize()
-    {
-        return ENCODED_SIZE;
+    protected int getDataSize() {
+        return ENCODED_SIZE - 4;
     }
 
     public short getSid()

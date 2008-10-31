@@ -130,48 +130,20 @@ public abstract class AbstractEscherHolderRecord extends Record {
         }
         return getRecordSize();
     }
-
-    public int getRecordSize()
-    {
-        if (escherRecords.size() == 0 && rawData != null)
-        {
-            return rawData.length + 4;
+    protected int getDataSize() {
+        if (escherRecords.size() == 0 && rawData != null) {
+            return rawData.length;
         }
-        else
+        int size = 0;
+        for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
         {
-            int size = 4;
-            for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
-            {
-                EscherRecord r = (EscherRecord) iterator.next();
-                size += r.getRecordSize();
-            }
-            return size;
+            EscherRecord r = (EscherRecord) iterator.next();
+            size += r.getRecordSize();
         }
+        return size;
     }
 
-//
-//    /**
-//     * Size of record (including 4 byte header)
-//     */
-//    public int getRecordSize()
-//    {
-//        if (escherRecords.size() == 0 && rawData != null)
-//        {
-//            return rawData.length;
-//        }
-//        else
-//        {
-//            collapseShapeInformation();
-//
-//            int size = 4;
-//            for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
-//            {
-//                EscherRecord r = (EscherRecord) iterator.next();
-//                size += r.getRecordSize();
-//            }
-//            return size;
-//        }
-//    }
+
 
     public abstract short getSid();
 

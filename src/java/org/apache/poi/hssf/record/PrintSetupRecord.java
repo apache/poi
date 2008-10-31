@@ -340,9 +340,8 @@ public class PrintSetupRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 38;
+    protected int getDataSize() {
+        return 34;
     }
 
     public short getSid()
