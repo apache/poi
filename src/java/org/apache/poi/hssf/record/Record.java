@@ -54,19 +54,18 @@ public abstract class Record extends RecordBase {
         return retval;
     }
 
+    public final int getRecordSize() {
+    	return 4 + getDataSize();
+    }
     /**
      * @return the size of the data portion of this record 
      * (does not include initial 4 bytes for sid and size)
      */
-    protected int getDataSize() {
-    	// implementation is currently a hack
-    	// will eventually swap this out
-    	return getRecordSize() - 4;
-    }
+    protected abstract int getDataSize();
+    
     /**
      * get a string representation of the record (for biffview/debugging)
      */
-
     public String toString()
     {
         return super.toString();

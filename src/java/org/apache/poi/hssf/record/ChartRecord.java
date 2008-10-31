@@ -86,9 +86,8 @@ public final class ChartRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 4  + 4 + 4 + 4 + 4;
+    protected int getDataSize() {
+        return 4 + 4 + 4 + 4;
     }
 
     public short getSid()

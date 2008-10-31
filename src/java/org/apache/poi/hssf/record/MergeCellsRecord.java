@@ -72,9 +72,9 @@ public final class MergeCellsRecord extends Record {
         return _regions[_startIndex + index];
     }
 
-    public int getRecordSize() {
-    	return 4 + CellRangeAddressList.getEncodedSize(_numberOfRegions);
-    }
+    protected int getDataSize() {
+		return CellRangeAddressList.getEncodedSize(_numberOfRegions);
+	}
 
     public short getSid() {
         return sid;

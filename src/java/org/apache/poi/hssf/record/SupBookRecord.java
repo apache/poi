@@ -198,10 +198,6 @@ public final class SupBookRecord extends Record {
         return field_1_number_of_sheets;
     }
 
-    public int getRecordSize() {
-        return getDataSize() + 4;
-    }
-
     public short getSid()
     {
         return sid;

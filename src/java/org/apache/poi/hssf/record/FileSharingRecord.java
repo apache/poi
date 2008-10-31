@@ -153,12 +153,12 @@ public final class FileSharingRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize() {
+    protected int getDataSize() {
         short nameLen = getUsernameLength();
         if (nameLen < 1) {
-            return 10;
+            return 6;
         }
-        return 11+nameLen;
+        return 7+nameLen;
     }
 
     public short getSid() {

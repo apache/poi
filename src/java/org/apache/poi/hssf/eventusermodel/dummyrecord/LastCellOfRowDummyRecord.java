@@ -17,14 +17,12 @@
 
 package org.apache.poi.hssf.eventusermodel.dummyrecord;
 
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordFormatException;
 
 /**
  * A dummy record to indicate that we've now had the last
  *  cell record for this row.
  */
-public final class LastCellOfRowDummyRecord extends Record {
+public final class LastCellOfRowDummyRecord extends DummyRecordBase {
 	private int row;
 	private int lastColumnNumber;
 	
@@ -46,14 +44,4 @@ public final class LastCellOfRowDummyRecord extends Record {
 	 *  for the row.
 	 */
 	public int getLastColumnNumber() { return lastColumnNumber; }
-	
-	public short getSid() {
-		return -1;
-	}
-	public int serialize(int offset, byte[] data) {
-		throw new RecordFormatException("Cannot serialize a dummy record");
-	}
-	public int getRecordSize() {
-		throw new RecordFormatException("Cannot serialize a dummy record");
-	}
 }

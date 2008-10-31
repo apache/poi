@@ -133,8 +133,8 @@ public final class WriteAccessRecord extends Record {
 		return 4 + DATA_SIZE;
 	}
 
-	public int getRecordSize() {
-		return 4 + DATA_SIZE;
+	protected int getDataSize() {
+		return DATA_SIZE;
 	}
 
 	public short getSid() {

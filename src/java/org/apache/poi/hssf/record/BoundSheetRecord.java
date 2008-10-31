@@ -179,10 +179,6 @@ public final class BoundSheetRecord extends Record {
 		return 4 + dataSize;
 	}
 
-	public int getRecordSize() {
-		return 4 + getDataSize();
-	}
-
 	public short getSid() {
 		return sid;
 	}

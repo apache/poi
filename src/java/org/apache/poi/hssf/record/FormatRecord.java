@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -29,13 +27,9 @@ import org.apache.poi.util.StringUtil;
  * REFERENCE:  PG 317 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Shawn M. Laubach (slaubach at apache dot org)  
- * @version 2.0-pre
  */
-
-public class FormatRecord
-    extends Record
-{
-    public final static short sid = 0x41e;
+public final class FormatRecord extends Record {
+    public final static short sid = 0x041E;
     private short             field_1_index_code;
 
     private short             field_3_unicode_len;      // unicode string length
@@ -199,10 +193,8 @@ public class FormatRecord
       
         return getRecordSize();
     }
-
-    public int getRecordSize()
-    {
-        return 9 + ( ( field_3_unicode_flag ) ? 2 * field_3_unicode_len : field_3_unicode_len );
+    protected int getDataSize() {
+        return 5 + field_3_unicode_len * (field_3_unicode_flag ? 2 : 1);
     }
 
     public short getSid()

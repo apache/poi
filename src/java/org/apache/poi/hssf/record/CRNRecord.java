@@ -80,10 +80,6 @@ public final class CRNRecord extends Record {
 		return recSize;
 	}
 
-	public int getRecordSize() {
-		return getDataSize() + 4;
-	}
-
 	/**
 	 * return the non static version of the id for this record.
 	 */

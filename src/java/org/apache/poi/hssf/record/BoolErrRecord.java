@@ -206,9 +206,8 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 12;
+    protected int getDataSize() {
+        return 8;
     }
 
     public short getSid()

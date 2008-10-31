@@ -35,8 +35,8 @@ public final class ContinueRecord extends Record {
         _data = data;
     }
 
-    public int getRecordSize() {
-        return 4 + _data.length;
+    protected int getDataSize() {
+        return _data.length;
     }
 
     public int serialize(int offset, byte[] data) {

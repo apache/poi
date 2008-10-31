@@ -89,9 +89,8 @@ public class CalcCountRecord
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 6;
+    protected int getDataSize() {
+        return 2;
     }
 
     public short getSid()

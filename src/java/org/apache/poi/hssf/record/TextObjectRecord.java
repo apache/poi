@@ -167,7 +167,7 @@ public final class TextObjectRecord extends Record {
 	 * Only for the current record. does not include any subsequent Continue
 	 * records
 	 */
-	protected int getDataSize() {
+	private int getCurrentRecordDataSize() {
 		int result = 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4;
 		if (_linkRefPtg != null) {
 			result += 2 // formula size
@@ -181,7 +181,7 @@ public final class TextObjectRecord extends Record {
 	}
 
 	private int serializeTXORecord(int offset, byte[] data) {
-		int dataSize = getDataSize();
+		int dataSize = getCurrentRecordDataSize();
 		int recSize = dataSize+4;
 		LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
 		
@@ -272,10 +272,10 @@ public final class TextObjectRecord extends Record {
 
 	/**
 	 * Note - this total size includes all potential {@link ContinueRecord}s written
+	 * but it is not the "ushort size" value to be written at the start of the first BIFF record 
 	 */
-	public int getRecordSize() {
-		int baseSize = 4 + getDataSize();
-		return baseSize + getTrailingRecordsSize();
+	protected int getDataSize() {
+		return getCurrentRecordDataSize() + getTrailingRecordsSize();
 	}
 
 	

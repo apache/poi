@@ -17,14 +17,12 @@
 
 package org.apache.poi.hssf.eventusermodel.dummyrecord;
 
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordFormatException;
 
 /**
  * A dummy record for when we're missing a cell in a row,
  *  but still want to trigger something
  */
-public final class MissingCellDummyRecord extends Record {
+public final class MissingCellDummyRecord extends DummyRecordBase {
 	private int row;
 	private int column;
 	
@@ -32,17 +30,6 @@ public final class MissingCellDummyRecord extends Record {
 		this.row = row;
 		this.column = column;
 	}
-	
-	public short getSid() {
-		return -1;
-	}
-	public int serialize(int offset, byte[] data) {
-		throw new RecordFormatException("Cannot serialize a dummy record");
-	}
-	public int getRecordSize() {
-		throw new RecordFormatException("Cannot serialize a dummy record");
-	}
-	
 	public int getRow() { return row; }
 	public int getColumn() { return column; }
 }

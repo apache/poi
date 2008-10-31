@@ -59,9 +59,8 @@ public final class BottomMarginRecord extends Record implements Margin {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 4 + 8;
+    protected int getDataSize() {
+        return 8;
     }
 
     public short getSid()
@@ -92,4 +91,4 @@ public final class BottomMarginRecord extends Record implements Margin {
         return rec;
     }
 
-}  // END OF CLA
+}  // END OF C

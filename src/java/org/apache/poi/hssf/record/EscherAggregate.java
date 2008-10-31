@@ -498,8 +498,8 @@ public class EscherAggregate extends AbstractEscherHolderRecord
         return size;
     }
 
-    public int getRecordSize()
-    {
+    protected int getDataSize() {
+    	// TODO - convert this to RecordAggregate
         convertUserModelToRecords();
         List records = getEscherRecords();
         int rawEscherSize = getEscherRecordSize( records );
@@ -516,7 +516,7 @@ public class EscherAggregate extends AbstractEscherHolderRecord
             Record r = (Record) iterator.next();
             tailRecordSize += r.getRecordSize();
         }
-        return drawingRecordSize + objRecordSize + tailRecordSize;
+        return drawingRecordSize + objRecordSize + tailRecordSize - 4;
     }
 
     /**

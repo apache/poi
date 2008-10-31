@@ -90,9 +90,8 @@ public final class SheetPropertiesRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 4  + 2 + 1;
+    protected int getDataSize() {
+        return 2 + 1;
     }
 
     public short getSid()

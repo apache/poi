@@ -88,9 +88,8 @@ public class ChartTitleFormatRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 4 + 2 + (4 * m_formats.size());
+    protected int getDataSize() {
+        return 2 + (4 * m_formats.size());
     }
     
 	public short getSid() {

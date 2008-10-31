@@ -210,6 +210,15 @@ public final class PageSettingsBlock extends RecordAggregate {
 			rv.visitRecord(r);
 		}
 	}
+	private static void visitIfPresent(PageBreakRecord r, RecordVisitor rv) {
+		if (r != null) {
+			if (r.isEmpty()) {
+				// its OK to not serialize empty page break records
+				return;
+			}
+			rv.visitRecord(r);
+		}
+	}
 
 	/**
 	 * creates the Header Record and sets it to nothing/0 length

@@ -67,8 +67,8 @@ public abstract class SharedValueRecordBase extends Record {
 		return (short) _range.getLastColumn();
 	}
 
-	public final int getRecordSize() {
-		return 4 + CellRangeAddress8Bit.ENCODED_SIZE + getExtraDataSize();
+	protected int getDataSize() {
+		return CellRangeAddress8Bit.ENCODED_SIZE + getExtraDataSize();
 	}
 
 	protected abstract int getExtraDataSize();

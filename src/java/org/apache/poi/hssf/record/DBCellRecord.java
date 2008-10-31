@@ -143,10 +143,8 @@ public final class DBCellRecord extends Record {
         }
         return getRecordSize();
     }
-
-    public int getRecordSize()
-    {
-        return 8 + (getNumCellOffsets() * 2);
+    protected int getDataSize() {
+    	return 4 + (getNumCellOffsets() * 2);
     }
     
     /**

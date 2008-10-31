@@ -37,7 +37,6 @@ import org.apache.poi.util.LittleEndian;
  * @author Danny Mui (dmui at apache dot org)
  */
 public abstract class PageBreakRecord extends Record {
-    private static final boolean IS_EMPTY_RECORD_WRITTEN = false;
     private static final int[] EMPTY_INT_ARRAY = { };
 
     private List _breaks;
@@ -97,23 +96,15 @@ public abstract class PageBreakRecord extends Record {
 
     }
 
+    public boolean isEmpty() {
+    	return _breaks.isEmpty();
+    }
     protected int getDataSize() {
         return 2 + _breaks.size() * Break.ENCODED_SIZE;
     }
-    public int getRecordSize() {
-        int nBreaks = _breaks.size();
-        if (!IS_EMPTY_RECORD_WRITTEN && nBreaks < 1) {
-            return 0;
-        }
-        return 4 + getDataSize();
-    }
-
 
     public final int serialize(int offset, byte data[]) {
         int nBreaks = _breaks.size();
-        if (!IS_EMPTY_RECORD_WRITTEN && nBreaks < 1) {
-            return 0;
-        }
         int dataSize = getDataSize();
         LittleEndian.putUShort(data, offset + 0, getSid());
         LittleEndian.putUShort(data, offset + 2, dataSize);

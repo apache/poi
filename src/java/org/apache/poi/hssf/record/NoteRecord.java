@@ -24,8 +24,8 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Yegor Kozlov
  */
-public class NoteRecord extends Record {
-    public final static short sid = 0x1C;
+public final class NoteRecord extends Record {
+    public final static short sid = 0x001C;
 
     /**
      * Flag indicating that the comment is hidden (default)
@@ -100,16 +100,13 @@ public class NoteRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        int retval = 4 + 2 + 2 + 2 + 2 + 2 + 1 + field_5_author.length() + 1;
-
-        return retval;
+    protected int getDataSize() {
+        return 2 + 2 + 2 + 2 + 2 + 1 + field_5_author.length() + 1;
     }
 
     /**
      * Convert this record to string.
-     * Used by BiffViewer and other utulities.
+     * Used by BiffViewer and other utilities.
      */
      public String toString()
     {

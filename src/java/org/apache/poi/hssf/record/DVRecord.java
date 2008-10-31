@@ -303,8 +303,8 @@ public final class DVRecord extends Record {
 		return 3 + str.length() * (StringUtil.hasMultibyte(str) ? 2 : 1);
 	}
 
-	public int getRecordSize()  {
-		int size = 4+4+2+2+2+2;//header+options_field+first_formula_size+first_unused+sec_formula_size+sec+unused;
+	protected int getDataSize() {
+		int size = 4+2+2+2+2;//options_field+first_formula_size+first_unused+sec_formula_size+sec+unused;
 		size += getUnicodeStringSize(_promptTitle);
 		size += getUnicodeStringSize(_errorTitle);
 		size += getUnicodeStringSize(_promptText);

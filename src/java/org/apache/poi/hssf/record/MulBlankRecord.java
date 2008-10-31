@@ -127,7 +127,7 @@ public final class MulBlankRecord extends Record {
     public int serialize(int offset, byte [] data) {
         throw new RecordFormatException( "Sorry, you can't serialize MulBlank in this release");
     }
-    public int getRecordSize() {
+    protected int getDataSize() {
         throw new RecordFormatException( "Sorry, you can't serialize MulBlank in this release");
     }
 }

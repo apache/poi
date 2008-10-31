@@ -118,9 +118,8 @@ public final class LineFormatRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 4  + 4 + 2 + 2 + 2 + 2;
+    protected int getDataSize() {
+        return 4 + 2 + 2 + 2 + 2;
     }
 
     public short getSid()

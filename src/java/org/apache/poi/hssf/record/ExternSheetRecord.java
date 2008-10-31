@@ -188,10 +188,6 @@ public class ExternSheetRecord extends Record {
 		return (RefSubRecord) _list.get(i);
 	}
 	
-	public int getRecordSize() {
-		return 4 + getDataSize();
-	}
-	
 	/**
 	 * return the non static version of the id for this record.
 	 */

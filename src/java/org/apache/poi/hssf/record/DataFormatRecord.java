@@ -93,9 +93,8 @@ public final class DataFormatRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 4  + 2 + 2 + 2 + 2;
+    protected int getDataSize() {
+        return 2 + 2 + 2 + 2;
     }
 
     public short getSid()
