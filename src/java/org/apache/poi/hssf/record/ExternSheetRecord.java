@@ -153,8 +153,7 @@ public class ExternSheetRecord extends Record {
 		return sb.toString();
 	}
 	
-	
-	private int getDataSize() {
+	protected int getDataSize() {
 		return 2 + _list.size() * RefSubRecord.ENCODED_SIZE;
 	}
 	
@@ -187,10 +186,6 @@ public class ExternSheetRecord extends Record {
 
 	private RefSubRecord getRef(int i) {
 		return (RefSubRecord) _list.get(i);
-	}
-	
-	public int getRecordSize() {
-		return 4 + getDataSize();
 	}
 	
 	/**

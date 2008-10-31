@@ -117,9 +117,8 @@ public class CountryRecord
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 8;
+    protected int getDataSize() {
+        return 4;
     }
 
     public short getSid()

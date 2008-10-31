@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
-
 import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Title:        Extended Static String Table<P>
@@ -35,17 +34,14 @@ import java.util.ArrayList;
  * @version 2.0-pre
  * @see org.apache.poi.hssf.record.ExtSSTInfoSubRecord
  */
-
-public class ExtSSTRecord
-    extends Record
-{
+public final class ExtSSTRecord extends Record {
+    public final static short sid = 0x00FF;
     public static final int DEFAULT_BUCKET_SIZE = 8;
-    //Cant seem to find this documented but from the biffviewer it is clear that
+    //Can't seem to find this documented but from the biffviewer it is clear that
     //Excel only records the indexes for the first 128 buckets.
     public static final int MAX_BUCKETS = 128;
-    public final static short sid = 0xff;
     private short             field_1_strings_per_bucket = DEFAULT_BUCKET_SIZE;
-    private ArrayList         field_2_sst_info;
+    private List         field_2_sst_info;
 
 
     public ExtSSTRecord()
@@ -128,10 +124,8 @@ public class ExtSSTRecord
         }
         return pos;
     }
-
-    public int getRecordSize()
-    {
-        return 6 + 8*getNumInfoRecords();
+    protected int getDataSize() {
+    	return 2 + 8*getNumInfoRecords();
     }
 
     public static final int getNumberOfInfoRecsForStrings(int numStrings) {

@@ -108,9 +108,8 @@ public final class LinkedDataRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 4  + 1 + 1 + 2 + 2 + field_5_formulaOfLink.getSize();
+    protected int getDataSize() {
+        return 1 + 1 + 2 + 2 + field_5_formulaOfLink.getSize();
     }
 
     public short getSid()

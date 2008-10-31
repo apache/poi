@@ -26,8 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 
-public class DrawingGroupRecord extends AbstractEscherHolderRecord
-{
+public final class DrawingGroupRecord extends AbstractEscherHolderRecord {
     public static final short sid = 0xEB;
 
     static final int MAX_RECORD_SIZE = 8228;
@@ -82,30 +81,25 @@ public class DrawingGroupRecord extends AbstractEscherHolderRecord
     public void processChildRecords() {
     	convertRawBytesToEscherRecords();
     }
-
-    public int getRecordSize()
-    {
-        return grossSizeFromDataSize( getRawDataSize() );
+    protected int getDataSize() {
+    	// TODO - convert this to a RecordAggregate
+    	return grossSizeFromDataSize( getRawDataSize() ) - 4;
     }
 
-    public int getRawDataSize()
-    {
+    private int getRawDataSize() {
         List escherRecords = getEscherRecords();
         byte[] rawData = getRawData();
         if (escherRecords.size() == 0 && rawData != null)
         {
             return rawData.length;
         }
-        else
+        int size = 0;
+        for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
         {
-            int size = 0;
-            for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
-            {
-                EscherRecord r = (EscherRecord) iterator.next();
-                size += r.getRecordSize();
-            }
-            return size;
+            EscherRecord r = (EscherRecord) iterator.next();
+            size += r.getRecordSize();
         }
+        return size;
     }
 
     static int grossSizeFromDataSize(int dataSize)

@@ -140,9 +140,8 @@ public final class LabelSSTRecord extends Record implements CellValueRecordInter
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 14;
+    protected int getDataSize() {
+        return 10;
     }
 
     public short getSid()

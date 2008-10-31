@@ -74,9 +74,8 @@ public final class SeriesListRecord extends Record {
         return 4 + dataSize;
     }
 
-    public int getRecordSize()
-    {
-        return 4  + field_1_seriesNumbers.length * 2 + 2;
+    protected int getDataSize() {
+        return field_1_seriesNumbers.length * 2 + 2;
     }
 
     public short getSid()

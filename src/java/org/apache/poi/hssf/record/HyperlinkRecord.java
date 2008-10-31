@@ -31,7 +31,7 @@ import org.apache.poi.util.HexDump;
  * @author      Mark Hissink Muller <a href="mailto:mark@hissinkmuller.nl >mark&064;hissinkmuller.nl</a>
  * @author      Yegor Kozlov (yegor at apache dot org)
  */
-public class HyperlinkRecord extends Record {
+public final class HyperlinkRecord extends Record {
     /**
      * Link flags
      */
@@ -405,9 +405,8 @@ public class HyperlinkRecord extends Record {
     	return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        int size = 4;
+    protected int getDataSize() {
+        int size = 0;
         size += 2 + 2 + 2 + 2;  //rwFirst, rwLast, colFirst, colLast
         size += guid.length;
         size += 4;  //label_opts

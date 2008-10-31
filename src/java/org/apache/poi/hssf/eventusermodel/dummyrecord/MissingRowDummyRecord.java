@@ -17,27 +17,17 @@
 
 package org.apache.poi.hssf.eventusermodel.dummyrecord;
 
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * A dummy record for when we're missing a row, but still
  *  want to trigger something
  */
-public class MissingRowDummyRecord extends Record {
+public final class MissingRowDummyRecord extends DummyRecordBase {
 	private int rowNumber;
 	
 	public MissingRowDummyRecord(int rowNumber) {
 		this.rowNumber = rowNumber;
 	}
-	
-	public short getSid() {
-		return -1;
-	}
-	public int serialize(int offset, byte[] data) {
-		return -1;
-	}
-	
 	public int getRowNumber() {
 		return rowNumber;
 	}

@@ -34,7 +34,7 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
     private short             field_3_xf_index;
     private byte              field_4_bBoolErr;
     private byte              field_5_fError;
-    
+
     /** Creates new BoolErrRecord */
     public BoolErrRecord()
     {
@@ -206,9 +206,8 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 12;
+    protected int getDataSize() {
+        return 8;
     }
 
     public short getSid()

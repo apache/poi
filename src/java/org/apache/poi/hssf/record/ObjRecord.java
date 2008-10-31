@@ -119,7 +119,7 @@ public final class ObjRecord extends Record {
 		return sb.toString();
 	}
 	
-	private int getDataSize() {
+	protected int getDataSize() {
 		if (_uninterpretedData != null) {
 			return _uninterpretedData.length;
 		}
@@ -163,10 +163,6 @@ public final class ObjRecord extends Record {
 			out.write(_uninterpretedData);
 		}
 		return recSize;
-	}
-
-	public int getRecordSize() {
-		return 4 + getDataSize();
 	}
 
 	public short getSid() {

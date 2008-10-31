@@ -28,7 +28,6 @@ import java.io.ByteArrayInputStream;
  * @author Andrew C. Oliver
  * @author Marc Johnson (mjohnson at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
- * @version 2.0-pre
  */
 public abstract class Record extends RecordBase {
 
@@ -48,31 +47,25 @@ public abstract class Record extends RecordBase {
      * @return byte array containing instance data
      */
 
-    public byte [] serialize()
-    {
+    public final byte[] serialize() {
         byte[] retval = new byte[ getRecordSize() ];
 
         serialize(0, retval);
         return retval;
     }
 
-
-    /**
-     * gives the current serialized size of the record. Should include the sid and reclength (4 bytes).
-     */
-
-    public int getRecordSize()
-    {
-
-        // this is kind od a stupid way to do it but for now we just serialize
-        // the record and return the size of the byte array
-        return serialize().length;
+    public final int getRecordSize() {
+    	return 4 + getDataSize();
     }
-
+    /**
+     * @return the size of the data portion of this record 
+     * (does not include initial 4 bytes for sid and size)
+     */
+    protected abstract int getDataSize();
+    
     /**
      * get a string representation of the record (for biffview/debugging)
      */
-
     public String toString()
     {
         return super.toString();

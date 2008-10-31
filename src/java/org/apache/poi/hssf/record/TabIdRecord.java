@@ -98,9 +98,8 @@ public final class TabIdRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 4 + (getTabIdArray().length * 2);
+    protected int getDataSize() {
+        return (getTabIdArray().length * 2);
     }
 
     public short getSid()

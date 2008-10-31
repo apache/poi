@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -29,13 +27,9 @@ import org.apache.poi.util.StringUtil;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Shawn Laubach (slaubach at apache dot org) Modified 3/14/02
  * @author Jason Height (jheight at chariot dot net dot au)
- * @version 2.0-pre
  */
-
-public class HeaderRecord
-    extends Record
-{
-    public final static short sid = 0x14;
+public final class HeaderRecord extends Record {
+    public final static short sid = 0x0014;
     private byte              field_1_header_len;
     private byte              field_2_reserved;
     private byte              field_3_unicode_flag;
@@ -180,16 +174,13 @@ public class HeaderRecord
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        int retval = 4;
+    protected int getDataSize() {
+        int retval = 0;
 
-        if (getHeaderLength() != 0)
-        {
+        if (getHeaderLength() != 0) {
             retval+=3; // [Shawn] Fixed for two null bytes in the length
         }
-       return (isMultibyte() ? 
-            (retval + getHeaderLength()*2) : (retval + getHeaderLength()));
+       return retval + getHeaderLength() * (isMultibyte() ? 2 : 1);
     }
 
     public short getSid()

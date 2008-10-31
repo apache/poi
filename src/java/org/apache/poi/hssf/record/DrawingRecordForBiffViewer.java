@@ -23,9 +23,7 @@ import java.io.ByteArrayInputStream;
  * This is purely for the biff viewer.  During normal operations we don't want
  * to be seeing this.
  */
-public class DrawingRecordForBiffViewer
-        extends AbstractEscherHolderRecord
-{
+public final class DrawingRecordForBiffViewer extends AbstractEscherHolderRecord {
     public static final short sid = 0xEC;
 
     public DrawingRecordForBiffViewer()

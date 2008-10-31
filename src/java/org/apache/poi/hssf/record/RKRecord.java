@@ -34,7 +34,6 @@ import org.apache.poi.util.HexDump;
  * REFERENCE:  PG 376 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
- * @version 2.0-pre
  * @see org.apache.poi.hssf.record.NumberRecord
  */
 public final class RKRecord extends Record implements CellValueRecordInterface {
@@ -134,48 +133,12 @@ public final class RKRecord extends Record implements CellValueRecordInterface {
         return sb.toString();
     }
 
-// temporarily just constructs a new number record and returns its value
-    public int serialize(int offset, byte [] data)
-    {
-        NumberRecord rec = new NumberRecord();
-
-        rec.setColumn(getColumn());
-        rec.setRow(getRow());
-        rec.setValue(getRKNumber());
-        rec.setXFIndex(getXFIndex());
-        return rec.serialize(offset, data);
-    }
-
-    /**
-     * Debugging main()
-     * <P>
-     * Normally I'd do this in a junit test, but let's face it -- once
-     * this algorithm has been tested and it works, we are never ever
-     * going to change it. This is driven by the Faceless Enemy's
-     * minions, who dare not change the algorithm out from under us.
-     *
-     * @param ignored_args command line arguments, which we blithely
-     *                     ignore
-     */
-
-    public static void main(String ignored_args[])
-    {
-        int[]    values  =
-        {
-            0x3FF00000, 0x405EC001, 0x02F1853A, 0x02F1853B, 0xFCDD699A
-        };
-        double[] rvalues =
-        {
-            1, 1.23, 12345678, 123456.78, -13149594
-        };
-
-        for (int j = 0; j < values.length; j++)
-        {
-            System.out.println("input = " + Integer.toHexString(values[ j ])
-                               + " -> " + rvalues[ j ] + ": "
-                               + RKUtil.decodeNumber(values[ j ]));
-        }
-    }
+	public int serialize(int offset, byte [] data) {
+		throw new RecordFormatException( "Sorry, you can't serialize RK in this release");
+	}
+	protected int getDataSize() {
+		throw new RecordFormatException( "Sorry, you can't serialize RK in this release");
+	}
 
     public short getSid()
     {

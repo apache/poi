@@ -17,8 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-public class DrawingSelectionRecord extends AbstractEscherHolderRecord
-{
+public final class DrawingSelectionRecord extends AbstractEscherHolderRecord {
     public static final short sid = 0xED;
 
     public DrawingSelectionRecord()

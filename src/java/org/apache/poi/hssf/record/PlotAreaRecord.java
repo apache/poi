@@ -60,9 +60,8 @@ public final class PlotAreaRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 4 ;
+    protected int getDataSize() {
+        return 0;
     }
 
     public short getSid()

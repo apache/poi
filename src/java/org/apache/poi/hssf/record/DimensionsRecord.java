@@ -165,9 +165,8 @@ public class DimensionsRecord
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 18;
+    protected int getDataSize() {
+        return 14;
     }
 
     public short getSid()
