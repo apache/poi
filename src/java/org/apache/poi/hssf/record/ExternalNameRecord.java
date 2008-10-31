@@ -120,10 +120,6 @@ public final class ExternalNameRecord extends Record {
 		return recSize;
 	}
 
-	public int getRecordSize(){
-		return 4 + getDataSize();
-	}
-
 
 	public ExternalNameRecord(RecordInputStream in) {
 		field_1_option_flag = in.readShort();

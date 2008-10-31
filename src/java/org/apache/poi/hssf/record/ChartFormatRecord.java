@@ -85,9 +85,8 @@ public final class ChartFormatRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 22;
+    protected int getDataSize() {
+        return 18;
     }
 
     public short getSid()

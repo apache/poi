@@ -34,7 +34,6 @@ import org.apache.poi.util.HexDump;
  * REFERENCE:  PG 376 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
- * @version 2.0-pre
  * @see org.apache.poi.hssf.record.NumberRecord
  */
 public final class RKRecord extends Record implements CellValueRecordInterface {
@@ -137,7 +136,7 @@ public final class RKRecord extends Record implements CellValueRecordInterface {
 	public int serialize(int offset, byte [] data) {
 		throw new RecordFormatException( "Sorry, you can't serialize RK in this release");
 	}
-	public int getRecordSize() {
+	protected int getDataSize() {
 		throw new RecordFormatException( "Sorry, you can't serialize RK in this release");
 	}
 

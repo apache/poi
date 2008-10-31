@@ -149,9 +149,8 @@ public final class TickRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 4  + 1 + 1 + 1 + 1 + 4 + 8 + 8 + 2 + 2 + 2;
+    protected int getDataSize() {
+        return 1 + 1 + 1 + 1 + 4 + 8 + 8 + 2 + 2 + 2;
     }
 
     public short getSid()

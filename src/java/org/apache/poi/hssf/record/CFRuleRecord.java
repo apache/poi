@@ -482,17 +482,14 @@ public final class CFRuleRecord extends Record {
 		return recordsize;
 	}
 
-
-	public int getRecordSize()
-	{
-		int retval =16+
+	protected int getDataSize() {
+		return 12 +
 					(containsFontFormattingBlock()?fontFormatting.getRawRecord().length:0)+
 					(containsBorderFormattingBlock()?8:0)+
 					(containsPatternFormattingBlock()?4:0)+
 					getFormulaSize(field_17_formula1)+
 					getFormulaSize(field_18_formula2)
 					;
-		return retval;
 	}
 
 

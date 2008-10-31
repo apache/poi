@@ -144,9 +144,8 @@ public final class BlankRecord extends Record implements CellValueRecordInterfac
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 10;
+    protected int getDataSize() {
+        return 6;
     }
 
     public Object clone() {

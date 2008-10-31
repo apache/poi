@@ -280,9 +280,8 @@ public final class ColumnInfoRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 16;
+    protected int getDataSize() {
+        return 12;
     }
 
     public String toString()

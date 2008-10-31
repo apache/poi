@@ -53,8 +53,8 @@ public class LeftMarginRecord extends Record implements Margin
         return getRecordSize();
     }
 
-    public int getRecordSize()    {
-        return 4 + 8;
+    protected int getDataSize() {
+        return 8;
     }
 
     public short getSid()    {
@@ -82,4 +82,4 @@ public class LeftMarginRecord extends Record implements Margin
         rec.field_1_margin = this.field_1_margin;
         return rec;
     }
-}  // END OF CLA
+}  // END OF C

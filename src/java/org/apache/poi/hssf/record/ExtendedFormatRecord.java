@@ -1787,9 +1787,8 @@ public class ExtendedFormatRecord
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 24;
+    protected int getDataSize() {
+        return 20;
     }
 
     public short getSid()

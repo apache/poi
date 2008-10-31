@@ -97,9 +97,8 @@ public final class AxisRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 4  + 2 + 4 + 4 + 4 + 4;
+    protected int getDataSize() {
+        return 2 + 4 + 4 + 4 + 4;
     }
 
     public short getSid()

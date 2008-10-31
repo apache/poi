@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -39,10 +37,8 @@ import java.util.Iterator;
  * @see org.apache.poi.hssf.record.LabelSSTRecord
  * @see org.apache.poi.hssf.record.ContinueRecord
  */
-
-public class SSTRecord
-        extends Record
-{
+public final class SSTRecord extends Record {
+    public static final short sid = 0x00FC;
 
       private static UnicodeString EMPTY_STRING = new UnicodeString("");
 
@@ -62,8 +58,6 @@ public class SSTRecord
 
     /** overhead for each string includes the string's character count (a short) and the flag describing its characteristics (a byte) */
     static final int STRING_MINIMAL_OVERHEAD = LittleEndianConsts.SHORT_SIZE + LittleEndianConsts.BYTE_SIZE;
-
-    public static final short sid = 0xfc;
 
     /** union of strings in the SST and EXTSST */
     private int field_1_num_strings;
@@ -375,11 +369,10 @@ public class SSTRecord
     }
 
 
-    public int getRecordSize()
-    {
+    protected int getDataSize() {
         SSTRecordSizeCalculator calculator = new SSTRecordSizeCalculator(field_3_strings);
         int recordSize = calculator.getRecordSize();
-        return recordSize;
+        return recordSize-4;
     }
 
     SSTDeserializer getDeserializer()

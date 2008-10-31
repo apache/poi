@@ -380,10 +380,6 @@ public final class FormulaRecord extends Record implements CellValueRecordInterf
 		return recSize;
 	}
 
-	public int getRecordSize() {
-		return 4 + getDataSize();
-	}
-
 	public String toString() {
 
 		StringBuffer sb = new StringBuffer();

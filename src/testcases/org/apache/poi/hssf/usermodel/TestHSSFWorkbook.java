@@ -30,7 +30,6 @@ import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFormatException;
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.TempFile;
@@ -504,8 +503,8 @@ public final class TestHSSFWorkbook extends TestCase {
         public int serialize(int offset, byte[] data) {
             return 4;
         }
-        public int getRecordSize() {
-            return 8;
+        protected int getDataSize() {
+        	return 4;
         }
     }
     

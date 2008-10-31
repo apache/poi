@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
@@ -30,13 +28,9 @@ import org.apache.poi.util.LittleEndian;
  * REFERENCE:  PG 323 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
- * @version 2.0-pre
  */
-
-public class IndexRecord
-    extends Record
-{
-    public final static short sid             = 0x20B;
+public class IndexRecord extends Record {
+    public final static short sid             = 0x020B;
     public final static int   DBCELL_CAPACITY = 30;
     public int                field_1_zero;            // reserved must be 0
     public int                field_2_first_row;       // first row on the sheet
@@ -146,9 +140,8 @@ public class IndexRecord
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 20 + (getNumDbcells() * 4);
+    protected int getDataSize() {
+        return 16 + (getNumDbcells() * 4);
     }
     
     /** Returns the size of an INdexRecord when it needs to index the specified number of blocks

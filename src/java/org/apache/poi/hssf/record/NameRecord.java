@@ -408,10 +408,9 @@ public final class NameRecord extends Record {
 		} 
 		return nChars;
 	}
-
-	public int getRecordSize(){
-		return 4 // sid + size
-			+ 13 // 3 shorts + 7 bytes
+	
+	protected int getDataSize() {
+		return 13 // 3 shorts + 7 bytes
 			+ getNameRawSize()
 			+ field_14_custom_menu_text.length()
 			+ field_15_description_text.length()

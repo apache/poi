@@ -116,7 +116,7 @@ public final class MulRKRecord extends Record {
 	public int serialize(int offset, byte [] data) {
 		throw new RecordFormatException( "Sorry, you can't serialize MulRK in this release");
 	}
-	public int getRecordSize() {
+	protected int getDataSize() {
 		throw new RecordFormatException( "Sorry, you can't serialize MulRK in this release");
 	}
 

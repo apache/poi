@@ -165,10 +165,6 @@ public final class ObjRecord extends Record {
 		return recSize;
 	}
 
-	public int getRecordSize() {
-		return 4 + getDataSize();
-	}
-
 	public short getSid() {
 		return sid;
 	}

@@ -119,9 +119,8 @@ public final class ValueRangeRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 4  + 8 + 8 + 8 + 8 + 8 + 2;
+    protected int getDataSize() {
+        return 8 + 8 + 8 + 8 + 8 + 2;
     }
 
     public short getSid()

@@ -66,9 +66,8 @@ public final class SeriesChartGroupIndexRecord extends Record {
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
-        return 4  + 2;
+    protected int getDataSize() {
+        return 2;
     }
 
     public short getSid()
