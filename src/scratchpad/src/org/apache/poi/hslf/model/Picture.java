@@ -196,10 +196,14 @@ public class Picture extends SimpleShape {
         Document doc = ppt.getDocumentRecord();
         EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
         EscherContainerRecord bstore = (EscherContainerRecord)Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
-
+        if(bstore == null) {
+            logger.log(POILogger.DEBUG, "EscherContainerRecord.BSTORE_CONTAINER was not found ");
+            return null;
+        }
         List lst = bstore.getChildRecords();
         int idx = getPictureIndex();
         if (idx == 0){
+            logger.log(POILogger.DEBUG, "picture index was not found, returning ");
             return null;
         } else {
             return (EscherBSERecord)lst.get(idx-1);
@@ -263,7 +267,7 @@ public class Picture extends SimpleShape {
         ShapePainter.paint(this, graphics);
 
         PictureData data = getPictureData();
-        data.draw(graphics, this);
+        if(data != null) data.draw(graphics, this);
 
         graphics.setTransform(at);
     }
