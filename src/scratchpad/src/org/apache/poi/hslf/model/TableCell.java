@@ -56,8 +56,8 @@ public class TableCell extends TextBox {
         super(parent);
 
         setShapeType(ShapeTypes.Rectangle);
-        _txtrun.setRunType(TextHeaderAtom.HALF_BODY_TYPE);
-        _txtrun.getRichTextRuns()[0].setFlag(false, 0, false);
+        //_txtrun.setRunType(TextHeaderAtom.HALF_BODY_TYPE);
+        //_txtrun.getRichTextRuns()[0].setFlag(false, 0, false);
     }
 
     protected EscherContainerRecord createSpContainer(boolean isChild){

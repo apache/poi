@@ -24,6 +24,7 @@ import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.record.TextHeaderAtom;
 
 /**
  * Test <code>Table</code> object.
@@ -42,6 +43,10 @@ public class TestTable extends TestCase {
 
         Table tbl = new Table(2, 5);
         slide.addShape(tbl);
+
+        TableCell cell = tbl.getCell(0, 0);
+        //table cells have type=TextHeaderAtom.OTHER_TYPE, see bug #46033
+        assertEquals(TextHeaderAtom.OTHER_TYPE, cell.getTextRun().getRunType());
 
         assertTrue(slide.getShapes()[0] instanceof Table);
         Table tbl2 = (Table)slide.getShapes()[0];
