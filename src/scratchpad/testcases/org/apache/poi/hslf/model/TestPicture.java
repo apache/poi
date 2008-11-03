@@ -20,9 +20,12 @@ import junit.framework.*;
 
 import java.io.FileOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.ddf.EscherBSERecord;
 
@@ -68,6 +71,26 @@ public class TestPicture extends TestCase {
         assertSame(bse2, bse3);
         assertEquals(3, bse1.getRef());
 
+    }
+
+    /**
+     * Picture#getEscherBSERecord threw NullPointerException if EscherContainerRecord.BSTORE_CONTAINER
+     * was not found. The correct behaviour is to return null.
+     */
+    public void test46122() throws IOException {
+        SlideShow ppt = new SlideShow();
+        Slide slide = ppt.createSlide();
+
+        Picture pict = new Picture(-1); //index to non-existing picture data
+        pict.setSheet(slide);
+        PictureData data = pict.getPictureData();
+        assertNull(data);
+
+        BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics = img.createGraphics();
+        pict.draw(graphics);
+
+        assertTrue("no errors rendering Picture with null data", true);
     }
 
 }

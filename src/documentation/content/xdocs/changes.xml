@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta4" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">46122 - fixed Picture.draw to skip rendering if picture data was not found</action>
            <action dev="POI-DEVELOPERS" type="fix">15716 - memory usage optimisation - converted Ptg arrays into Formula objects</action>
            <action dev="POI-DEVELOPERS" type="add">46065 - added implementation for VALUE function</action>
            <action dev="POI-DEVELOPERS" type="add">45966 - added implementation for FIND function</action>
