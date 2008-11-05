@@ -43,7 +43,6 @@ import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
-import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.record.SubRecord;
 import org.apache.poi.hssf.record.TextObjectRecord;
 import org.apache.poi.hssf.record.UnicodeString;
@@ -253,7 +252,7 @@ public final class HSSFCell {
     }
     
     public int getColumnIndex() {
-    	return record.getColumn() & 0xFFFF;
+        return record.getColumn() & 0xFFFF;
     }
 
     /**
@@ -332,38 +331,23 @@ public final class HSSFCell {
                 break;
 
             case CELL_TYPE_STRING :
-                LabelSSTRecord lrec = null;
+                LabelSSTRecord lrec;
 
-                if (cellType != this.cellType)
-                {
+                if (cellType == this.cellType) {
+                    lrec = (LabelSSTRecord) record;
+                } else {
                     lrec = new LabelSSTRecord();
+                    lrec.setColumn(col);
+                    lrec.setRow(row);
+                    lrec.setXFIndex(styleIndex);
                 }
-                else
-                {
-                    lrec = ( LabelSSTRecord ) record;
-                }
-                lrec.setColumn(col);
-                lrec.setRow(row);
-                lrec.setXFIndex(styleIndex);
-                if (setValue)
-                {
-                    if ((getStringCellValue() != null)
-                            && (!getStringCellValue().equals("")))
-                    {
-                        int sst = 0;
-
-                        UnicodeString str = getRichStringCellValue().getUnicodeString();
-//jmh                        if (encoding == ENCODING_COMPRESSED_UNICODE)
-//jmh                        {
-//                      jmh                            str.setCompressedUnicode();
-//                      jmh                        } else if (encoding == ENCODING_UTF_16)
-//                      jmh                        {
-//                      jmh                            str.setUncompressedUnicode();
-//                      jmh                        }
-                        sst = book.getWorkbook().addSSTString(str);
-                        lrec.setSSTIndex(sst);
-                        getRichStringCellValue().setUnicodeString(book.getWorkbook().getSSTString(sst));
-                    }
+                if (setValue) {
+                    String str = convertCellValueToString();
+                    int sstIndex = book.getWorkbook().addSSTString(new UnicodeString(str));
+                    lrec.setSSTIndex(sstIndex);
+                    UnicodeString us = book.getWorkbook().getSSTString(sstIndex);
+                    stringValue = new HSSFRichTextString();
+                    stringValue.setUnicodeString(us);
                 }
                 record = lrec;
                 break;
@@ -778,7 +762,9 @@ public final class HSSFCell {
             case CELL_TYPE_BOOLEAN:
                 return (( BoolErrRecord ) record).getBooleanValue();
             case CELL_TYPE_STRING:
-                return Boolean.valueOf(((StringRecord)record).getString()).booleanValue();
+                int sstIndex = ((LabelSSTRecord)record).getSSTIndex();
+                String text = book.getWorkbook().getSSTString(sstIndex).getString();
+                return Boolean.valueOf(text).booleanValue();
             case CELL_TYPE_NUMERIC:
                 return ((NumberRecord)record).getValue() != 0;
 
@@ -789,6 +775,26 @@ public final class HSSFCell {
             case CELL_TYPE_ERROR:
             case CELL_TYPE_BLANK:
                 return false;
+        }
+        throw new RuntimeException("Unexpected cell type (" + cellType + ")");
+    }
+    private String convertCellValueToString() {
+
+        switch (cellType) {
+            case CELL_TYPE_BLANK:
+                return "";
+            case CELL_TYPE_BOOLEAN:
+                return ((BoolErrRecord) record).getBooleanValue() ? "TRUE" : "FALSE";
+            case CELL_TYPE_STRING:
+                int sstIndex = ((LabelSSTRecord)record).getSSTIndex();
+                return book.getWorkbook().getSSTString(sstIndex).getString();
+            case CELL_TYPE_NUMERIC:
+                return String.valueOf(((NumberRecord)record).getValue());
+            case CELL_TYPE_ERROR:
+                   return HSSFErrorConstants.getText(((BoolErrRecord) record).getErrorValue());
+            case CELL_TYPE_FORMULA:
+                // should really evaluate, but HSSFCell can't call HSSFFormulaEvaluator
+                return "";
         }
         throw new RuntimeException("Unexpected cell type (" + cellType + ")");
     }
