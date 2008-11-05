@@ -163,6 +163,15 @@ public class StringUtil {
 	}
 
 	/**
+	 * @return the number of bytes that would be written by {@link #writeUnicodeString(LittleEndianOutput, String)}
+	 */
+	public static int getEncodedSize(String value) {
+		int result = 2 + 1;
+		result += value.length() * (StringUtil.hasMultibyte(value) ? 2 : 1);
+		return result;
+	}
+
+	/**
 	 * Takes a unicode (java) string, and returns it as 8 bit data (in ISO-8859-1
 	 * codepage).
 	 * (In Excel terms, write compressed 8 bit unicode)

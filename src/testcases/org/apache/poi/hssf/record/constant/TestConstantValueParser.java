@@ -22,7 +22,6 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
-import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
@@ -36,7 +35,7 @@ public final class TestConstantValueParser extends TestCase {
 			Boolean.TRUE,
 			null,
 			new Double(1.1),
-			new UnicodeString("Sample text"),
+			"Sample text",
 			ErrorConstant.valueOf(HSSFErrorConstants.ERROR_DIV_0),
 		};
 	private static final byte[] SAMPLE_ENCODING = HexRead.readFromString(
