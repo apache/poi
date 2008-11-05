@@ -25,7 +25,7 @@ import junit.framework.TestCase;
  * @author Jason Height (jheight at apache.org)
  */
 public final class TestUnicodeString extends TestCase {
-	private static final int MAX_DATA_SIZE = SSTRecord.MAX_RECORD_SIZE;
+    private static final int MAX_DATA_SIZE = RecordInputStream.MAX_RECORD_DATA_SIZE;
 
     /** a 4 character string requiring 16 bit encoding */
     private static final String STR_16_BIT = "A\u591A\u8A00\u8A9E";
