@@ -320,16 +320,6 @@ public final class RecordInputStream extends InputStream implements LittleEndian
 		}
 	}
 
-  /** Returns an excel style unicode string from the bytes reminaing in the record.
-   * <i>Note:</i> Unicode strings differ from <b>normal</b> strings due to the addition of
-   * formatting information.
-   *
-   * @return The unicode string representation of the remaining bytes.
-   */
-  public UnicodeString readUnicodeString() {
-    return new UnicodeString(this);
-  }
-
 	/** Returns the remaining bytes for the current record.
 	 *
 	  * @return The remaining bytes of the current record.
