@@ -66,10 +66,10 @@ public final class TestArrayPtg extends TestCase {
 		
 		
 		assertEquals(Boolean.TRUE, values[0][0]);
-		assertEquals(new UnicodeString("ABCD"), values[0][1]);
+		assertEquals("ABCD", values[0][1]);
 		assertEquals(new Double(0), values[1][0]);
 		assertEquals(Boolean.FALSE, values[1][1]);
-		assertEquals(new UnicodeString("FG"), values[1][2]);
+		assertEquals("FG", values[1][2]);
 		
 		byte[] outBuf = new byte[ENCODED_CONSTANT_DATA.length];
 		ptg.writeTokenValueBytes(new LittleEndianByteArrayOutputStream(outBuf, 0));

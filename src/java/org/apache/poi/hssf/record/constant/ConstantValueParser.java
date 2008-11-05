@@ -17,8 +17,6 @@
 
 package org.apache.poi.hssf.record.constant;
 
-import org.apache.poi.hssf.record.UnicodeString;
-import org.apache.poi.hssf.record.UnicodeString.UnicodeRecordStats;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
@@ -65,7 +63,7 @@ public final class ConstantValueParser {
 			case TYPE_NUMBER:
 				return new Double(in.readDouble());
 			case TYPE_STRING:
-				return new UnicodeString(StringUtil.readUnicodeString(in));
+				return StringUtil.readUnicodeString(in);
 			case TYPE_BOOLEAN:
 				return readBoolean(in);
 			case TYPE_ERROR_CODE:
@@ -111,10 +109,8 @@ public final class ConstantValueParser {
 		if(cls == Boolean.class || cls == Double.class || cls == ErrorConstant.class) {
 			return 8;
 		}
-		UnicodeString strVal = (UnicodeString)object;
-		UnicodeRecordStats urs = new UnicodeRecordStats();
-		strVal.getRecordSize(urs);
-		return urs.recordSize;
+		String strVal = (String)object;
+		return StringUtil.getEncodedSize(strVal);
 	}
 
 	public static void encode(LittleEndianOutput out, Object[] values) {
@@ -142,10 +138,10 @@ public final class ConstantValueParser {
 			out.writeDouble(dVal.doubleValue());
 			return;
 		}
-		if (value instanceof UnicodeString) {
-			UnicodeString usVal = (UnicodeString) value;
+		if (value instanceof String) {
+			String val = (String) value;
 			out.writeByte(TYPE_STRING);
-			StringUtil.writeUnicodeString(out, usVal.getString());
+			StringUtil.writeUnicodeString(out, val);
 			return;
 		}
 		if (value instanceof ErrorConstant) {

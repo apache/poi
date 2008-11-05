@@ -206,8 +206,8 @@ public final class ArrayPtg extends Ptg {
 		if (o == null) {
 			throw new RuntimeException("Array item cannot be null");
 		}
-		if (o instanceof UnicodeString) {
-			return "\"" + ((UnicodeString)o).getString() + "\"";
+		if (o instanceof String) {
+			return "\"" + (String)o + "\"";
 		}
 		if (o instanceof Double) {
 			return ((Double)o).toString();
