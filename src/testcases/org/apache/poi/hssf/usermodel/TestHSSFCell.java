@@ -28,8 +28,8 @@ import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.util.HSSFColor;
 
 /**
- * Tests various functionity having to do with HSSFCell.  For instance support for
- * paticular datatypes, etc.
+ * Tests various functionality having to do with {@link HSSFCell}.  For instance support for
+ * particular datatypes, etc.
  * @author Andrew C. Oliver (andy at superlinksoftware dot com)
  * @author  Dan Sherman (dsherman at isisph.com)
  * @author Alex Jacoby (ajacoby at gmail.com)
@@ -345,41 +345,82 @@ public final class TestHSSFCell extends TestCase {
         }
     }
 
-    /**
-     * Test to ensure we can only assign cell styles that belong
-     *  to our workbook, and not those from other workbooks.
-     */
-    public void testCellStyleWorkbookMatch() throws Exception {
-    	HSSFWorkbook wbA = new HSSFWorkbook();
-    	HSSFWorkbook wbB = new HSSFWorkbook();
-    	
-    	HSSFCellStyle styA = wbA.createCellStyle();
-    	HSSFCellStyle styB = wbB.createCellStyle();
-    	
-    	styA.verifyBelongsToWorkbook(wbA);
-    	styB.verifyBelongsToWorkbook(wbB);
-    	try {
-    		styA.verifyBelongsToWorkbook(wbB);
-    		fail();
-    	} catch(IllegalArgumentException e) {}
-    	try {
-    		styB.verifyBelongsToWorkbook(wbA);
-    		fail();
-    	} catch(IllegalArgumentException e) {}
-    	
-    	HSSFCell cellA = wbA.createSheet().createRow(0).createCell(0);
-    	HSSFCell cellB = wbB.createSheet().createRow(0).createCell(0);
-    	
-    	cellA.setCellStyle(styA);
-    	cellB.setCellStyle(styB);
-    	try {
-        	cellA.setCellStyle(styB);
-    		fail();
-    	} catch(IllegalArgumentException e) {}
-    	try {
-        	cellB.setCellStyle(styA);
-    		fail();
-    	} catch(IllegalArgumentException e) {}
-    }
+	/**
+	 * Test to ensure we can only assign cell styles that belong
+	 *  to our workbook, and not those from other workbooks.
+	 */
+	public void testCellStyleWorkbookMatch() {
+		HSSFWorkbook wbA = new HSSFWorkbook();
+		HSSFWorkbook wbB = new HSSFWorkbook();
+
+		HSSFCellStyle styA = wbA.createCellStyle();
+		HSSFCellStyle styB = wbB.createCellStyle();
+
+		styA.verifyBelongsToWorkbook(wbA);
+		styB.verifyBelongsToWorkbook(wbB);
+		try {
+			styA.verifyBelongsToWorkbook(wbB);
+			fail();
+		} catch (IllegalArgumentException e) {}
+		try {
+			styB.verifyBelongsToWorkbook(wbA);
+			fail();
+		} catch (IllegalArgumentException e) {}
+
+		HSSFCell cellA = wbA.createSheet().createRow(0).createCell(0);
+		HSSFCell cellB = wbB.createSheet().createRow(0).createCell(0);
+
+		cellA.setCellStyle(styA);
+		cellB.setCellStyle(styB);
+		try {
+			cellA.setCellStyle(styB);
+			fail();
+		} catch (IllegalArgumentException e) {}
+		try {
+			cellB.setCellStyle(styA);
+			fail();
+		} catch (IllegalArgumentException e) {}
+	}
+
+	public void testChangeTypeStringToBool() {
+		HSSFCell cell = new HSSFWorkbook().createSheet("Sheet1").createRow(0).createCell(0);
+
+		cell.setCellValue(new HSSFRichTextString("TRUE"));
+		assertEquals(HSSFCell.CELL_TYPE_STRING, cell.getCellType());
+		try {
+			cell.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
+		} catch (ClassCastException e) {
+			throw new AssertionFailedError(
+					"Identified bug in conversion of cell from text to boolean");
+		}
+
+		assertEquals(HSSFCell.CELL_TYPE_BOOLEAN, cell.getCellType());
+		assertEquals(true, cell.getBooleanCellValue());
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		assertEquals("TRUE", cell.getRichStringCellValue().getString());
+
+		// 'false' text to bool and back
+		cell.setCellValue(new HSSFRichTextString("FALSE"));
+		cell.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
+		assertEquals(HSSFCell.CELL_TYPE_BOOLEAN, cell.getCellType());
+		assertEquals(false, cell.getBooleanCellValue());
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		assertEquals("FALSE", cell.getRichStringCellValue().getString());
+	}
+
+	public void testChangeTypeBoolToString() {
+		HSSFCell cell = new HSSFWorkbook().createSheet("Sheet1").createRow(0).createCell(0);
+		cell.setCellValue(true);
+		try {
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		} catch (IllegalStateException e) {
+			if (e.getMessage().equals("Cannot get a text value from a boolean cell")) {
+				throw new AssertionFailedError(
+						"Identified bug in conversion of cell from boolean to text");
+			}
+			throw e;
+		}
+		assertEquals("TRUE", cell.getRichStringCellValue().getString());
+	}
 }
 
