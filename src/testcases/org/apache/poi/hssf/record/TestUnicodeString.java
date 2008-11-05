@@ -26,9 +26,15 @@ import junit.framework.TestCase;
  */
 public final class TestUnicodeString extends TestCase {
 
+    /** a 4 character string requiring 16 bit encoding */
+    private static final String STR_16_BIT = "A\u591A\u8A00\u8A9E";
 
     private static void confirmSize(int expectedSize, UnicodeString s) {
+        confirmSize(expectedSize, s, 0);
+    }
+    private static void confirmSize(int expectedSize, UnicodeString s, int amountUsedInCurrentRecord) {
         UnicodeString.UnicodeRecordStats stats = new UnicodeString.UnicodeRecordStats();
+        stats.remainingSize = SSTRecord.MAX_RECORD_SIZE-amountUsedInCurrentRecord;
         s.getRecordSize(stats);
         assertEquals(expectedSize, stats.recordSize);
     }
@@ -39,10 +45,12 @@ public final class TestUnicodeString extends TestCase {
         confirmSize(7, s);
 
         //Test a small string that is uncompressed
+        s = makeUnicodeString(STR_16_BIT);
         s.setOptionFlags((byte)0x01);
         confirmSize(11, s);
 
         //Test a compressed small string that has rich text formatting
+        s.setString("Test");
         s.setOptionFlags((byte)0x8);
         UnicodeString.FormatRun r = new UnicodeString.FormatRun((short)0,(short)1);
         s.addFormatRun(r);
@@ -51,15 +59,18 @@ public final class TestUnicodeString extends TestCase {
         confirmSize(17, s);
 
         //Test a uncompressed small string that has rich text formatting
+        s.setString(STR_16_BIT);
         s.setOptionFlags((byte)0x9);
         confirmSize(21, s);
 
         //Test a compressed small string that has rich text and extended text
+        s.setString("Test");
         s.setOptionFlags((byte)0xC);
         s.setExtendedRst(new byte[]{(byte)0x1,(byte)0x2,(byte)0x3,(byte)0x4,(byte)0x5});
         confirmSize(26, s);
 
         //Test a uncompressed small string that has rich text and extended text
+        s.setString(STR_16_BIT);
         s.setOptionFlags((byte)0xD);
         confirmSize(30, s);
     }
@@ -72,7 +83,7 @@ public final class TestUnicodeString extends TestCase {
       //Test an uncompressed string
       //Note that we can only ever get to a maximim size of 8227 since an uncompressed
       //string is writing double bytes.
-      s = makeUnicodeString((SSTRecord.MAX_RECORD_SIZE-2-1)/2);
+      s = makeUnicodeString((SSTRecord.MAX_RECORD_SIZE-2-1)/2, true);
       s.setOptionFlags((byte)0x1);
       confirmSize(SSTRecord.MAX_RECORD_SIZE-1, s);
     }
@@ -86,9 +97,9 @@ public final class TestUnicodeString extends TestCase {
       confirmSize(SSTRecord.MAX_RECORD_SIZE, s);
 
       //Test an uncompressed rich text string
-      //Note that we can only ever get to a maximim size of 8227 since an uncompressed
+      //Note that we can only ever get to a maximum size of 8227 since an uncompressed
       //string is writing double bytes.
-      s = makeUnicodeString((SSTRecord.MAX_RECORD_SIZE-2-1-8-2)/2);
+      s = makeUnicodeString((SSTRecord.MAX_RECORD_SIZE-2-1-8-2)/2, true);
       s.addFormatRun(new UnicodeString.FormatRun((short)1,(short)0));
       s.addFormatRun(new UnicodeString.FormatRun((short)2,(short)1));
       s.setOptionFlags((byte)0x9);
@@ -116,17 +127,25 @@ public final class TestUnicodeString extends TestCase {
     }
 
 
-    private static UnicodeString makeUnicodeString( String s )
-    {
+    private static UnicodeString makeUnicodeString(String s) {
       UnicodeString st = new UnicodeString(s);
       st.setOptionFlags((byte)0);
       return st;
     }
 
-    private static UnicodeString makeUnicodeString( int numChars) {
+    private static UnicodeString makeUnicodeString(int numChars) {
+        return makeUnicodeString(numChars, false);
+    }
+    /**
+     * @param is16Bit if <code>true</code> the created string will have characters > 0x00FF
+     * @return a string of the specified number of characters
+     */
+    private static UnicodeString makeUnicodeString(int numChars, boolean is16Bit) {
       StringBuffer b = new StringBuffer(numChars);
+      int charBase = is16Bit ? 0x8A00 : 'A';
       for (int i=0;i<numChars;i++) {
-        b.append(i%10);
+        char ch = (char) ((i%16)+charBase);
+        b.append(ch);
       }
       return makeUnicodeString(b.toString());
     }
