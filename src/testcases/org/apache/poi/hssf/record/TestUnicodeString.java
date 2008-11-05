@@ -25,6 +25,7 @@ import junit.framework.TestCase;
  * @author Jason Height (jheight at apache.org)
  */
 public final class TestUnicodeString extends TestCase {
+	private static final int MAX_DATA_SIZE = SSTRecord.MAX_RECORD_SIZE;
 
     /** a 4 character string requiring 16 bit encoding */
     private static final String STR_16_BIT = "A\u591A\u8A00\u8A9E";
@@ -34,7 +35,7 @@ public final class TestUnicodeString extends TestCase {
     }
     private static void confirmSize(int expectedSize, UnicodeString s, int amountUsedInCurrentRecord) {
         UnicodeString.UnicodeRecordStats stats = new UnicodeString.UnicodeRecordStats();
-        stats.remainingSize = SSTRecord.MAX_RECORD_SIZE-amountUsedInCurrentRecord;
+        stats.remainingSize = MAX_DATA_SIZE-amountUsedInCurrentRecord;
         s.getRecordSize(stats);
         assertEquals(expectedSize, stats.recordSize);
     }
@@ -77,45 +78,45 @@ public final class TestUnicodeString extends TestCase {
 
     public void testPerfectStringSize() {
       //Test a basic string
-      UnicodeString s = makeUnicodeString(SSTRecord.MAX_RECORD_SIZE-2-1);
-      confirmSize(SSTRecord.MAX_RECORD_SIZE, s);
+      UnicodeString s = makeUnicodeString(MAX_DATA_SIZE-2-1);
+      confirmSize(MAX_DATA_SIZE, s);
 
       //Test an uncompressed string
       //Note that we can only ever get to a maximim size of 8227 since an uncompressed
       //string is writing double bytes.
-      s = makeUnicodeString((SSTRecord.MAX_RECORD_SIZE-2-1)/2, true);
+      s = makeUnicodeString((MAX_DATA_SIZE-2-1)/2, true);
       s.setOptionFlags((byte)0x1);
-      confirmSize(SSTRecord.MAX_RECORD_SIZE-1, s);
+      confirmSize(MAX_DATA_SIZE-1, s);
     }
 
     public void testPerfectRichStringSize() {
       //Test a rich text string
-      UnicodeString s = makeUnicodeString(SSTRecord.MAX_RECORD_SIZE-2-1-8-2);
+      UnicodeString s = makeUnicodeString(MAX_DATA_SIZE-2-1-8-2);
       s.addFormatRun(new UnicodeString.FormatRun((short)1,(short)0));
       s.addFormatRun(new UnicodeString.FormatRun((short)2,(short)1));
       s.setOptionFlags((byte)0x8);
-      confirmSize(SSTRecord.MAX_RECORD_SIZE, s);
+      confirmSize(MAX_DATA_SIZE, s);
 
       //Test an uncompressed rich text string
       //Note that we can only ever get to a maximum size of 8227 since an uncompressed
       //string is writing double bytes.
-      s = makeUnicodeString((SSTRecord.MAX_RECORD_SIZE-2-1-8-2)/2, true);
+      s = makeUnicodeString((MAX_DATA_SIZE-2-1-8-2)/2, true);
       s.addFormatRun(new UnicodeString.FormatRun((short)1,(short)0));
       s.addFormatRun(new UnicodeString.FormatRun((short)2,(short)1));
       s.setOptionFlags((byte)0x9);
-      confirmSize(SSTRecord.MAX_RECORD_SIZE-1, s);
+      confirmSize(MAX_DATA_SIZE-1, s);
     }
 
     public void testContinuedStringSize() {
       //Test a basic string
-      UnicodeString s = makeUnicodeString(SSTRecord.MAX_RECORD_SIZE-2-1+20);
-      confirmSize(SSTRecord.MAX_RECORD_SIZE+4+1+20, s);
+      UnicodeString s = makeUnicodeString(MAX_DATA_SIZE-2-1+20);
+      confirmSize(MAX_DATA_SIZE+4+1+20, s);
     }
 
     /** Tests that a string size calculation that fits neatly in two records, the second being a continue*/
     public void testPerfectContinuedStringSize() {
       //Test a basic string
-      int strSize = SSTRecord.MAX_RECORD_SIZE*2;
+      int strSize = MAX_DATA_SIZE*2;
       //String overhead
       strSize -= 3;
       //Continue Record overhead
@@ -123,7 +124,7 @@ public final class TestUnicodeString extends TestCase {
       //Continue Record additional byte overhead
       strSize -= 1;
       UnicodeString s = makeUnicodeString(strSize);
-      confirmSize(SSTRecord.MAX_RECORD_SIZE*2, s);
+      confirmSize(MAX_DATA_SIZE*2, s);
     }
 
 
