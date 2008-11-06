@@ -17,75 +17,84 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.HexDump;
-
-import java.util.Iterator;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: Unicode String<P>
- * Description:  Unicode String record.  We implement these as a record, although
- *               they are really just standard fields that are in several records.
- *               It is considered more desirable then repeating it in all of them.<P>
- * REFERENCE:  PG 264 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
+ * Title: Unicode String<p/>
+ * Description:  Unicode String - just standard fields that are in several records.
+ *               It is considered more desirable then repeating it in all of them.<p/>
+ * REFERENCE:  PG 264 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
  * @author  Andrew C. Oliver
  * @author Marc Johnson (mjohnson at apache dot org)
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class UnicodeString implements Comparable {
-    private short             field_1_charCount;     // = 0;
-    private byte              field_2_optionflags;   // = 0;
-    private String            field_3_string;        // = null;
+    private short             field_1_charCount;
+    private byte              field_2_optionflags;
+    private String            field_3_string;
     private List field_4_format_runs;
     private byte[] field_5_ext_rst;
-    private  static final BitField   highByte  = BitFieldFactory.getInstance(0x1);
-    private  static final BitField   extBit    = BitFieldFactory.getInstance(0x4);
-    private  static final BitField   richText  = BitFieldFactory.getInstance(0x8);
+    private static final BitField   highByte  = BitFieldFactory.getInstance(0x1);
+    private static final BitField   extBit    = BitFieldFactory.getInstance(0x4);
+    private static final BitField   richText  = BitFieldFactory.getInstance(0x8);
 
     public static class FormatRun implements Comparable {
-      short character;
-      short fontIndex;
+        short character;
+        short fontIndex;
 
-      public FormatRun(short character, short fontIndex) {
-        this.character = character;
-        this.fontIndex = fontIndex;
-      }
-
-      public short getCharacterPos() {
-        return character;
-      }
-
-      public short getFontIndex() {
-        return fontIndex;
-      }
-
-      public boolean equals(Object o) {
-        if ((o == null) || (o.getClass() != this.getClass()))
-    {
-            return false;
+        public FormatRun(short character, short fontIndex) {
+            this.character = character;
+            this.fontIndex = fontIndex;
         }
-        FormatRun other = ( FormatRun ) o;
 
-        return ((character == other.character) && (fontIndex == other.fontIndex));
-      }
+        public FormatRun(LittleEndianInput in) {
+            this(in.readShort(), in.readShort());
+        }
 
-      public int compareTo(Object obj) {
-        FormatRun r = (FormatRun)obj;
-        if ((character == r.character) && (fontIndex == r.fontIndex))
-          return 0;
-        if (character == r.character)
-          return fontIndex - r.fontIndex;
-        else return character - r.character;
-      }
+        public short getCharacterPos() {
+            return character;
+        }
 
-      public String toString() {
-        return "character="+character+",fontIndex="+fontIndex;
-      }
+        public short getFontIndex() {
+            return fontIndex;
+        }
+
+        public boolean equals(Object o) {
+            if (!(o instanceof FormatRun)) {
+                return false;
+            }
+            FormatRun other = ( FormatRun ) o;
+
+            return character == other.character && fontIndex == other.fontIndex;
+        }
+
+        public int compareTo(Object obj) {
+            FormatRun r = (FormatRun)obj;
+            if ((character == r.character) && (fontIndex == r.fontIndex))
+                return 0;
+            if (character == r.character)
+                return fontIndex - r.fontIndex;
+            else return character - r.character;
+        }
+
+        public String toString() {
+            return "character="+character+",fontIndex="+fontIndex;
+        }
+
+        public void serialize(LittleEndianOutput out) {
+            out.writeShort(character);
+            out.writeShort(fontIndex);
+        }
     }
 
     private UnicodeString() {
@@ -116,13 +125,12 @@ public final class UnicodeString implements Comparable {
      */
     public boolean equals(Object o)
     {
-        if ((o == null) || (o.getClass() != this.getClass()))
-        {
+        if (!(o instanceof UnicodeString)) {
             return false;
         }
-        UnicodeString other = ( UnicodeString ) o;
+        UnicodeString other = (UnicodeString) o;
 
-        //Ok lets do this in stages to return a quickly, first check the actual string
+        //OK lets do this in stages to return a quickly, first check the actual string
         boolean eq = ((field_1_charCount == other.field_1_charCount)
                 && (field_2_optionflags == other.field_2_optionflags)
                 && field_3_string.equals(other.field_3_string));
@@ -148,7 +156,7 @@ public final class UnicodeString implements Comparable {
 
           if (!run1.equals(run2))
             return false;
-    }
+        }
 
         //Well the format runs are equal as well!, better check the ExtRst data
         //Which by the way we dont know how to decode!
@@ -194,19 +202,17 @@ public final class UnicodeString implements Comparable {
 
         boolean isCompressed = ((field_2_optionflags & 1) == 0);
         if (isCompressed) {
-        	field_3_string = in.readCompressedUnicode(field_1_charCount);
+            field_3_string = in.readCompressedUnicode(field_1_charCount);
         } else {
-        	field_3_string = in.readUnicodeLEString(field_1_charCount);
+            field_3_string = in.readUnicodeLEString(field_1_charCount);
         }
  
 
         if (isRichText() && (runCount > 0)) {
           field_4_format_runs = new ArrayList(runCount);
           for (int i=0;i<runCount;i++) {
-            field_4_format_runs.add(new FormatRun(in.readShort(), in.readShort()));
-            //read reserved
-            //in.readInt();
-            }
+            field_4_format_runs.add(new FormatRun(in));
+          }
         }
 
         if (isExtendedText() && (extensionLength > 0)) {
@@ -372,11 +378,8 @@ public final class UnicodeString implements Comparable {
       field_2_optionflags = richText.clearByte(field_2_optionflags);
     }
 
-    public byte[] getExtendedRst() {
-       return this.field_5_ext_rst;
-    }
 
-    public void setExtendedRst(byte[] ext_rst) {
+    void setExtendedRst(byte[] ext_rst) {
       if (ext_rst != null)
         field_2_optionflags = extBit.setByte(field_2_optionflags);
       else field_2_optionflags = extBit.clearByte(field_2_optionflags);
@@ -391,13 +394,13 @@ public final class UnicodeString implements Comparable {
      *  removed / re-ordered
      */
     public void swapFontUse(short oldFontIndex, short newFontIndex) {
-    	Iterator i = field_4_format_runs.iterator();
-    	while(i.hasNext()) {
-    		FormatRun run = (FormatRun)i.next();
-    		if(run.fontIndex == oldFontIndex) {
-    			run.fontIndex = newFontIndex;
-    		}
-    	}
+        Iterator i = field_4_format_runs.iterator();
+        while(i.hasNext()) {
+            FormatRun run = (FormatRun)i.next();
+            if(run.fontIndex == oldFontIndex) {
+                run.fontIndex = newFontIndex;
+            }
+        }
     }
     
     /**
@@ -442,353 +445,45 @@ public final class UnicodeString implements Comparable {
         return buffer.toString();
     }
 
-    private int writeContinueIfRequired(UnicodeRecordStats stats, final int requiredSize, int offset, byte[] data) {
-      //Basic string overhead
-      if (stats.remainingSize < requiredSize) {
-        //Check if be are already in a continue record, if so make sure that
-        //we go back and write out our length
-        if (stats.lastLengthPos != -1) {
-          short lastRecordLength = (short)(offset - stats.lastLengthPos - 2);
-          if (lastRecordLength > 8224)
-            throw new InternalError();
-          LittleEndian.putShort(data, stats.lastLengthPos, lastRecordLength);
+    public void serialize(ContinuableRecordOutput out) {
+        int numberOfRichTextRuns = 0;
+        int extendedDataSize = 0;
+        if (isRichText() && field_4_format_runs != null) {
+            numberOfRichTextRuns = field_4_format_runs.size();
+        }
+        if (isExtendedText() && field_5_ext_rst != null) {
+            extendedDataSize = field_5_ext_rst.length;
+        }
+    
+        out.writeString(field_3_string, numberOfRichTextRuns, extendedDataSize);
+
+        if (numberOfRichTextRuns > 0) {
+
+          //This will ensure that a run does not split a continue
+          for (int i=0;i<numberOfRichTextRuns;i++) {
+              if (out.getAvailableSpace() < 4) {
+                  out.writeContinue();
+              }
+                FormatRun r = (FormatRun)field_4_format_runs.get(i);
+                r.serialize(out);
+          }
         }
 
-        LittleEndian.putShort(data, offset, ContinueRecord.sid);
-        offset+=2;
-        //Record the location of the last continue length position, but don't write
-        //anything there yet (since we don't know what it will be!)
-        stats.lastLengthPos = offset;
-        offset += 2;
+        if (extendedDataSize > 0) {
+            // OK ExtRst is actually not documented, so i am going to hope
+            // that we can actually continue on byte boundaries
 
-        stats.recordSize += 4;
-        stats.remainingSize = SSTRecord.MAX_RECORD_SIZE-4;
-      }
-      return offset;
-    }
-
-    public int serialize(UnicodeRecordStats stats, final int offset, byte [] data)
-    {
-      int pos = offset;
-
-      //Basic string overhead
-      pos = writeContinueIfRequired(stats, 3, pos, data);
-      LittleEndian.putShort(data, pos, getCharCount());
-      pos += 2;
-      data[ pos ] = getOptionFlags();
-      pos += 1;
-      stats.recordSize += 3;
-      stats.remainingSize-= 3;
-
-      if (isRichText()) {
-        if (field_4_format_runs != null) {
-          pos = writeContinueIfRequired(stats, 2, pos, data);
-
-          LittleEndian.putShort(data, pos, (short) field_4_format_runs.size());
-          pos += 2;
-          stats.recordSize += 2;
-          stats.remainingSize -= 2;
-        }
-      }
-      if ( isExtendedText() )
-      {
-        if (this.field_5_ext_rst != null) {
-          pos = writeContinueIfRequired(stats, 4, pos, data);
-
-          LittleEndian.putInt(data, pos, field_5_ext_rst.length);
-          pos += 4;
-          stats.recordSize += 4;
-          stats.remainingSize -= 4;
-        }
-      }
-
-      int charsize = isUncompressedUnicode() ? 2 : 1;
-      int strSize = (getString().length() * charsize);
-
-      byte[] strBytes = null;
-        try {
-            String unicodeString = getString();
-              if (!isUncompressedUnicode())
-            {
-                strBytes = unicodeString.getBytes("ISO-8859-1");
-            }
-            else
-            {
-                  strBytes = unicodeString.getBytes("UTF-16LE");
+            int extPos = 0;
+            while (true) {
+                int nBytesToWrite = Math.min(extendedDataSize - extPos, out.getAvailableSpace());
+                out.write(field_5_ext_rst, extPos, nBytesToWrite);
+                extPos += nBytesToWrite;
+                if (extPos >= extendedDataSize) {
+                    break;
+                }
+                out.writeContinue();
             }
         }
-        catch (Exception e) {
-              throw new InternalError();
-        }
-          if (strSize != strBytes.length)
-            throw new InternalError("That shouldnt have happened!");
-
-      //Check to see if the offset occurs mid string, if so then we need to add
-      //the byte to start with that represents the first byte of the continue record.
-      if (strSize > stats.remainingSize) {
-        //OK the offset occurs half way through the string, that means that
-        //we need an extra byte after the continue record ie we didnt finish
-        //writing out the string the 1st time through
-
-        //But hang on, how many continue records did we span? What if this is
-        //a REALLY long string. We need to work this all out.
-        int amountThatCantFit = strSize;
-        int strPos = 0;
-        while (amountThatCantFit > 0) {
-          int amountWritten = Math.min(stats.remainingSize, amountThatCantFit);
-          //Make sure that the amount that can't fit takes into account
-          //whether we are writing double byte unicode
-          if (isUncompressedUnicode()) {
-            //We have the '-1' here because whether this is the first record or
-            //subsequent continue records, there is always the case that the
-            //number of bytes in a string on double byte boundaries is actually odd.
-            if ( ( (amountWritten ) % 2) == 1)
-              amountWritten--;
-          }
-          System.arraycopy(strBytes, strPos, data, pos, amountWritten);
-          pos += amountWritten;
-          strPos += amountWritten;
-          stats.recordSize += amountWritten;
-          stats.remainingSize -= amountWritten;
-
-          //Ok lets subtract what we can write
-          amountThatCantFit -= amountWritten;
-
-          //Each iteration of this while loop is another continue record, unless
-          //everything  now fits.
-          if (amountThatCantFit > 0) {
-            //We know that a continue WILL be requied, but use this common method
-            pos = writeContinueIfRequired(stats, amountThatCantFit, pos, data);
-
-            //The first byte after a continue mid string is the extra byte to
-            //indicate if this run is compressed or not.
-            data[pos] = (byte) (isUncompressedUnicode() ? 0x1 : 0x0);
-            pos++;
-            stats.recordSize++;
-            stats.remainingSize --;
-          }
-        }
-      } else {
-        if (strSize > (data.length-pos))
-          System.out.println("Hmm shouldnt happen");
-        //Ok the string fits nicely in the remaining size
-        System.arraycopy(strBytes, 0, data, pos, strSize);
-        pos += strSize;
-        stats.recordSize += strSize;
-        stats.remainingSize -= strSize;
-      }
-
-
-      if (isRichText() && (field_4_format_runs != null)) {
-        int count = field_4_format_runs.size();
-
-        //This will ensure that a run does not split a continue
-        for (int i=0;i<count;i++) {
-          pos = writeContinueIfRequired(stats, 4, pos, data);
-          FormatRun r = (FormatRun)field_4_format_runs.get(i);
-          LittleEndian.putShort(data, pos, r.character);
-          pos += 2;
-          LittleEndian.putShort(data, pos, r.fontIndex);
-          pos += 2;
-
-          //Each run count is four bytes
-          stats.recordSize += 4;
-          stats.remainingSize -=4;
-        }
-      }
-
-      if (isExtendedText() && (field_5_ext_rst != null)) {
-        //Ok ExtRst is actually not documented, so i am going to hope
-        //that we can actually continue on byte boundaries
-        int ammountThatCantFit = field_5_ext_rst.length - stats.remainingSize;
-        int extPos = 0;
-        if (ammountThatCantFit > 0) {
-          while (ammountThatCantFit > 0) {
-            //So for this record we have already written
-            int ammountWritten = Math.min(stats.remainingSize, ammountThatCantFit);
-            System.arraycopy(field_5_ext_rst, extPos, data, pos, ammountWritten);
-            pos += ammountWritten;
-            extPos += ammountWritten;
-            stats.recordSize += ammountWritten;
-            stats.remainingSize -= ammountWritten;
-
-            //Ok lets subtract what we can write
-            ammountThatCantFit -= ammountWritten;
-            if (ammountThatCantFit > 0) {
-              pos = writeContinueIfRequired(stats, 1, pos, data);
-            }
-          }
-        } else {
-          //We can fit wholey in what remains.
-          System.arraycopy(field_5_ext_rst, 0, data, pos, field_5_ext_rst.length);
-          pos +=  field_5_ext_rst.length;
-          stats.remainingSize -= field_5_ext_rst.length;
-          stats.recordSize += field_5_ext_rst.length;
-        }
-      }
-
-        return pos - offset;
-    }
-
-
-    public void setCompressedUnicode() {
-      field_2_optionflags = highByte.setByte(field_2_optionflags);
-    }
-
-    public void setUncompressedUnicode() {
-      field_2_optionflags = highByte.clearByte(field_2_optionflags);
-    }
-
-    private boolean isUncompressedUnicode()
-    {
-        return highByte.isSet(getOptionFlags());
-    }
-
-    /** Returns the size of this record, given the amount of record space
-     * remaining, it will also include the size of writing a continue record.
-     */
-
-    public static class UnicodeRecordStats {
-      public int recordSize;
-      public int remainingSize = SSTRecord.MAX_RECORD_SIZE;
-      public int lastLengthPos = -1;
-    }
-    public void getRecordSize(UnicodeRecordStats stats) {
-      //Basic string overhead
-      if (stats.remainingSize < 3) {
-        //Needs a continue
-         stats.recordSize += 4;
-         stats.remainingSize = SSTRecord.MAX_RECORD_SIZE-4;
-      }
-      stats.recordSize += 3;
-      stats.remainingSize-= 3;
-
-      //Read the number of rich runs if rich text.
-      if ( isRichText() )
-    {
-          //Run count
-          if (stats.remainingSize < 2) {
-            //Needs a continue
-            //Reset the available space.
-            stats.remainingSize = SSTRecord.MAX_RECORD_SIZE-4;
-            //continue record overhead
-            stats.recordSize+=4;
-    }
-
-          stats.recordSize += 2;
-          stats.remainingSize -=2;
-      }
-      //Read the size of extended data if present.
-      if ( isExtendedText() )
-    {
-        //Needs a continue
-          //extension length
-          if (stats.remainingSize < 4) {
-            //Reset the available space.
-            stats.remainingSize = SSTRecord.MAX_RECORD_SIZE-4;
-            //continue record overhead
-            stats.recordSize+=4;
-          }
-
-          stats.recordSize += 4;
-          stats.remainingSize -=4;
-      }
-
-      int charsize = isUncompressedUnicode() ? 2 : 1;
-      int strSize = (getString().length() * charsize);
-      //Check to see if the offset occurs mid string, if so then we need to add
-      //the byte to start with that represents the first byte of the continue record.
-      if (strSize > stats.remainingSize) {
-        //Ok the offset occurs half way through the string, that means that
-        //we need an extra byte after the continue record ie we didnt finish
-        //writing out the string the 1st time through
-
-        //But hang on, how many continue records did we span? What if this is
-        //a REALLY long string. We need to work this all out.
-        int ammountThatCantFit = strSize;
-        while (ammountThatCantFit > 0) {
-          int ammountWritten = Math.min(stats.remainingSize, ammountThatCantFit);
-          //Make sure that the ammount that cant fit takes into account
-          //whether we are writing double byte unicode
-          if (isUncompressedUnicode()) {
-            //We have the '-1' here because whether this is the first record or
-            //subsequent continue records, there is always the case that the
-            //number of bytes in a string on doube byte boundaries is actually odd.
-            if ( ( (ammountWritten) % 2) == 1)
-              ammountWritten--;
-          }
-          stats.recordSize += ammountWritten;
-          stats.remainingSize -= ammountWritten;
-
-          //Ok lets subtract what we can write
-          ammountThatCantFit -= ammountWritten;
-
-          //Each iteration of this while loop is another continue record, unless
-          //everything  now fits.
-          if (ammountThatCantFit > 0) {
-            //Reset the available space.
-            stats.remainingSize = SSTRecord.MAX_RECORD_SIZE-4;
-            //continue record overhead
-            stats.recordSize+=4;
-
-            //The first byte after a continue mid string is the extra byte to
-            //indicate if this run is compressed or not.
-            stats.recordSize++;
-            stats.remainingSize --;
-          }
-        }
-      } else {
-        //Ok the string fits nicely in the remaining size
-        stats.recordSize += strSize;
-        stats.remainingSize -= strSize;
-      }
-
-      if (isRichText() && (field_4_format_runs != null)) {
-        int count = field_4_format_runs.size();
-
-        //This will ensure that a run does not split a continue
-        for (int i=0;i<count;i++) {
-          if (stats.remainingSize < 4) {
-            //Reset the available space.
-            stats.remainingSize = SSTRecord.MAX_RECORD_SIZE-4;
-            //continue record overhead
-            stats.recordSize+=4;
-          }
-
-          //Each run count is four bytes
-          stats.recordSize += 4;
-          stats.remainingSize -=4;
-        }
-      }
-
-      if (isExtendedText() && (field_5_ext_rst != null)) {
-        //Ok ExtRst is actually not documented, so i am going to hope
-        //that we can actually continue on byte boundaries
-        int ammountThatCantFit = field_5_ext_rst.length - stats.remainingSize;
-        if (ammountThatCantFit > 0) {
-          while (ammountThatCantFit > 0) {
-            //So for this record we have already written
-            int ammountWritten = Math.min(stats.remainingSize, ammountThatCantFit);
-            stats.recordSize += ammountWritten;
-            stats.remainingSize -= ammountWritten;
-
-            //Ok lets subtract what we can write
-            ammountThatCantFit -= ammountWritten;
-            if (ammountThatCantFit > 0) {
-              //Each iteration of this while loop is another continue record.
-
-              //Reset the available space.
-              stats.remainingSize = SSTRecord.MAX_RECORD_SIZE-4;
-              //continue record overhead
-              stats.recordSize += 4;
-            }
-          }
-        } else {
-          //We can fit wholey in what remains.
-          stats.remainingSize -= field_5_ext_rst.length;
-          stats.recordSize += field_5_ext_rst.length;
-        }
-      }
     }
 
     public int compareTo(Object obj)
@@ -801,9 +496,9 @@ public final class UnicodeString implements Comparable {
         if (result != 0)
           return result;
 
-        //Ok string appears to be equal but now lets compare formatting runs
+        //OK string appears to be equal but now lets compare formatting runs
         if ((field_4_format_runs == null) && (str.field_4_format_runs == null))
-          //Strings are equal, and there are no formtting runs.
+          //Strings are equal, and there are no formatting runs.
           return 0;
 
         if ((field_4_format_runs == null) && (str.field_4_format_runs != null))
@@ -850,12 +545,12 @@ public final class UnicodeString implements Comparable {
         return 0;
     }
 
-    public boolean isRichText()
+    private boolean isRichText()
     {
       return richText.isSet(getOptionFlags());
     }
 
-    public boolean isExtendedText()
+    private boolean isExtendedText()
         {
         return extBit.isSet(getOptionFlags());
     }
@@ -877,10 +572,8 @@ public final class UnicodeString implements Comparable {
           str.field_5_ext_rst = new byte[field_5_ext_rst.length];
           System.arraycopy(field_5_ext_rst, 0, str.field_5_ext_rst, 0,
                            field_5_ext_rst.length);
-    }
+        }
 
         return str;
     }
-
-
 }

@@ -19,8 +19,11 @@ package org.apache.poi.hssf.record;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
+
 /**
- * Tests that records size calculates correctly.
+ * Tests that {@link UnicodeString} record size calculates correctly.  The record size
+ * is used when serializing {@link SSTRecord}s.
  *
  * @author Jason Height (jheight at apache.org)
  */
@@ -33,11 +36,23 @@ public final class TestUnicodeString extends TestCase {
     private static void confirmSize(int expectedSize, UnicodeString s) {
         confirmSize(expectedSize, s, 0);
     }
+    /**
+     * Note - a value of zero for <tt>amountUsedInCurrentRecord</tt> would only ever occur just
+     * after a {@link ContinueRecord} had been started.  In the initial {@link SSTRecord} this 
+     * value starts at 8 (for the first {@link UnicodeString} written).  In general, it can be
+     * any value between 0 and {@link #MAX_DATA_SIZE}
+     */
     private static void confirmSize(int expectedSize, UnicodeString s, int amountUsedInCurrentRecord) {
-        UnicodeString.UnicodeRecordStats stats = new UnicodeString.UnicodeRecordStats();
-        stats.remainingSize = MAX_DATA_SIZE-amountUsedInCurrentRecord;
-        s.getRecordSize(stats);
-        assertEquals(expectedSize, stats.recordSize);
+        ContinuableRecordOutput out = ContinuableRecordOutput.createForCountingOnly();
+        out.writeContinue();
+        for(int i=amountUsedInCurrentRecord; i>0; i--) {
+            out.writeByte(0);
+        }
+        int size0 = out.getTotalSize();
+        s.serialize(out);
+        int size1 = out.getTotalSize();
+        int actualSize = size1-size0;
+        assertEquals(expectedSize, actualSize);
     }
 
     public void testSmallStringSize() {

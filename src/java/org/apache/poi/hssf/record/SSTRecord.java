@@ -17,14 +17,16 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Iterator;
+
+import org.apache.poi.hssf.record.cont.ContinuableRecord;
+import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.IntMapper;
 import org.apache.poi.util.LittleEndianConsts;
 
-import java.util.Iterator;
-
 /**
- * Title:        Static String Table Record
- * <P>
+ * Title:        Static String Table Record (0x00FC)<p/>
+ *
  * Description:  This holds all the strings for LabelSSTRecords.
  * <P>
  * REFERENCE:    PG 389 Microsoft Excel 97 Developer's Kit (ISBN:
@@ -37,27 +39,20 @@ import java.util.Iterator;
  * @see org.apache.poi.hssf.record.LabelSSTRecord
  * @see org.apache.poi.hssf.record.ContinueRecord
  */
-public final class SSTRecord extends Record {
+public final class SSTRecord extends ContinuableRecord {
     public static final short sid = 0x00FC;
 
-      private static UnicodeString EMPTY_STRING = new UnicodeString("");
+    private static final UnicodeString EMPTY_STRING = new UnicodeString("");
 
-    /** how big can an SST record be? As big as any record can be: 8228 bytes */
-    static final int MAX_RECORD_SIZE = 8228;
-
+    // TODO - move these constants to test class (the only consumer)
     /** standard record overhead: two shorts (record id plus data space size)*/
-    static final int STD_RECORD_OVERHEAD =
-            2 * LittleEndianConsts.SHORT_SIZE;
+    static final int STD_RECORD_OVERHEAD = 2 * LittleEndianConsts.SHORT_SIZE;
 
     /** SST overhead: the standard record overhead, plus the number of strings and the number of unique strings -- two ints */
-    static final int SST_RECORD_OVERHEAD =
-            ( STD_RECORD_OVERHEAD + ( 2 * LittleEndianConsts.INT_SIZE ) );
+    static final int SST_RECORD_OVERHEAD = STD_RECORD_OVERHEAD + 2 * LittleEndianConsts.INT_SIZE;
 
     /** how much data can we stuff into an SST record? That would be _max minus the standard SST record overhead */
-    static final int MAX_DATA_SPACE = MAX_RECORD_SIZE - SST_RECORD_OVERHEAD;
-
-    /** overhead for each string includes the string's character count (a short) and the flag describing its characteristics (a byte) */
-    static final int STRING_MINIMAL_OVERHEAD = LittleEndianConsts.SHORT_SIZE + LittleEndianConsts.BYTE_SIZE;
+    static final int MAX_DATA_SPACE = RecordInputStream.MAX_RECORD_DATA_SIZE - 8;
 
     /** union of strings in the SST and EXTSST */
     private int field_1_num_strings;
@@ -133,37 +128,6 @@ public final class SSTRecord extends Record {
         return field_2_num_unique_strings;
     }
 
-    /**
-     * USE THIS METHOD AT YOUR OWN PERIL: THE <code>addString</code>
-     * METHODS MANIPULATE THE NUMBER OF STRINGS AS A SIDE EFFECT; YOUR
-     * ATTEMPTS AT MANIPULATING THE STRING COUNT IS LIKELY TO BE VERY
-     * WRONG AND WILL RESULT IN BAD BEHAVIOR WHEN THIS RECORD IS
-     * WRITTEN OUT AND ANOTHER PROCESS ATTEMPTS TO READ THE RECORD
-     *
-     * @param count  number of strings
-     *
-     */
-
-    public void setNumStrings( final int count )
-    {
-        field_1_num_strings = count;
-    }
-
-    /**
-     * USE THIS METHOD AT YOUR OWN PERIL: THE <code>addString</code>
-     * METHODS MANIPULATE THE NUMBER OF UNIQUE STRINGS AS A SIDE
-     * EFFECT; YOUR ATTEMPTS AT MANIPULATING THE UNIQUE STRING COUNT
-     * IS LIKELY TO BE VERY WRONG AND WILL RESULT IN BAD BEHAVIOR WHEN
-     * THIS RECORD IS WRITTEN OUT AND ANOTHER PROCESS ATTEMPTS TO READ
-     * THE RECORD
-     *
-     * @param count  number of strings
-     */
-
-    public void setNumUniqueStrings( final int count )
-    {
-        field_2_num_unique_strings = count;
-    }
 
     /**
      * Get a particular string by its index
@@ -178,11 +142,6 @@ public final class SSTRecord extends Record {
         return (UnicodeString) field_3_strings.get( id );
     }
 
-    public boolean isString16bit( final int id )
-    {
-        UnicodeString unicodeString = ( (UnicodeString) field_3_strings.get( id  ) );
-        return ( ( unicodeString.getOptionFlags() & 0x01 ) == 1 );
-    }
 
     /**
      * Return a debugging string representation
@@ -350,29 +309,11 @@ public final class SSTRecord extends Record {
         return field_3_strings.size();
     }
 
-    /**
-     * called by the class that is responsible for writing this sucker.
-     * Subclasses should implement this so that their data is passed back in a
-     * byte array.
-     *
-     * @return size
-     */
-
-    public int serialize( int offset, byte[] data )
-    {
-        SSTSerializer serializer = new SSTSerializer(
-               field_3_strings, getNumStrings(), getNumUniqueStrings() );
-        int bytes = serializer.serialize( offset, data );
+    protected void serialize(ContinuableRecordOutput out) {
+        SSTSerializer serializer = new SSTSerializer(field_3_strings, getNumStrings(), getNumUniqueStrings() );
+        serializer.serialize(out);
         bucketAbsoluteOffsets = serializer.getBucketAbsoluteOffsets();
         bucketRelativeOffsets = serializer.getBucketRelativeOffsets();
-        return bytes;
-    }
-
-
-    protected int getDataSize() {
-        SSTRecordSizeCalculator calculator = new SSTRecordSizeCalculator(field_3_strings);
-        int recordSize = calculator.getRecordSize();
-        return recordSize-4;
     }
 
     SSTDeserializer getDeserializer()

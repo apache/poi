@@ -24,7 +24,7 @@ package org.apache.poi.util;
  * 
  * @author Josh Micich
  */
-public final class LittleEndianByteArrayOutputStream implements LittleEndianOutput {
+public final class LittleEndianByteArrayOutputStream implements LittleEndianOutput, DelayableLittleEndianOutput {
 	private final byte[] _buf;
 	private final int _endIndex;
 	private int _writeIndex;
@@ -88,5 +88,11 @@ public final class LittleEndianByteArrayOutputStream implements LittleEndianOutp
 	}
 	public int getWriteIndex() {
 		return _writeIndex;
+	}
+	public LittleEndianOutput createDelayedOutput(int size) {
+		checkPosition(size);
+		LittleEndianOutput result = new LittleEndianByteArrayOutputStream(_buf, _writeIndex, _writeIndex+size);
+		_writeIndex += size;
+		return result;
 	}
 }

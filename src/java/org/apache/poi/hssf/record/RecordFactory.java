@@ -379,8 +379,6 @@ public final class RecordFactory {
 					records.add(record);
 				} else if (lastRecord instanceof DrawingGroupRecord) {
 					((DrawingGroupRecord)lastRecord).processContinueRecord(contRec.getData());
-				} else if (lastRecord instanceof StringRecord) {
-					((StringRecord)lastRecord).processContinueRecord(contRec.getData());
 				} else if (lastRecord instanceof UnknownRecord) {
 					//Gracefully handle records that we don't know about,
 					//that happen to be continued
