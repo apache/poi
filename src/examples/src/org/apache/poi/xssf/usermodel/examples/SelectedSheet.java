@@ -26,7 +26,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 public class SelectedSheet {
 
     public static void main(String[]args) throws Exception {
-        Workbook wb = new XSSFWorkbook();
+        Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
         Sheet sheet = wb.createSheet("row sheet");
 
         Sheet sheet2 = wb.createSheet("another sheet");

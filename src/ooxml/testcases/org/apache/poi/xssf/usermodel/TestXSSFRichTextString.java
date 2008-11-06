@@ -71,7 +71,7 @@ public class TestXSSFRichTextString extends TestCase {
 
         rt.applyFont(2, 5, font1);
 
-        assertEquals(4, rt.numFormattingRuns());
+        assertEquals(5, rt.numFormattingRuns());
         assertEquals(0, rt.getIndexOfFormattingRun(0));
         assertEquals(2, rt.getLengthOfFormattingRun(0));
 
@@ -79,10 +79,10 @@ public class TestXSSFRichTextString extends TestCase {
         assertEquals(3, rt.getLengthOfFormattingRun(1));
 
         assertEquals(5, rt.getIndexOfFormattingRun(2));
-        assertEquals(2, rt.getLengthOfFormattingRun(2));
+        assertEquals(3, rt.getLengthOfFormattingRun(2));
 
-        assertEquals(7, rt.getIndexOfFormattingRun(3));
-        assertEquals(2, rt.getLengthOfFormattingRun(3));
+        assertEquals(8, rt.getIndexOfFormattingRun(3));
+        assertEquals(1, rt.getLengthOfFormattingRun(3));
     }
 
     public void testClearFormatting() throws Exception {

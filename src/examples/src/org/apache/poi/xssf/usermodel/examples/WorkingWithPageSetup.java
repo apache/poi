@@ -29,7 +29,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class WorkingWithPageSetup {
 
     public static void main(String[]args) throws Exception {
-        Workbook wb = new XSSFWorkbook();
+        Workbook wb = new XSSFWorkbook();  //or new HSSFWorkbook();
 
         /**
          * It's possible to set up repeating rows and columns in your printouts by using the setRepeatingRowsAndColumns() function in the Workbook object.

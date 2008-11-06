@@ -31,7 +31,7 @@ public class CreateCell {
 
 
 	public static void main(String[]args) throws Exception {
-        Workbook wb = new XSSFWorkbook();
+        Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
         CreationHelper creationHelper = wb.getCreationHelper();
         Sheet sheet = wb.createSheet("new sheet");
 

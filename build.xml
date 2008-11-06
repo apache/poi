@@ -1000,7 +1000,7 @@ FORREST_HOME environment variable!</echo>
       <packageset dir="${contrib.src}" defaultexcludes="yes">
         <include name="org/apache/poi/**"/>
       </packageset>
-      <packageset dir="${examples.src}" defaultexcludes="yes">
+      <packageset dir="${ooxml.src}" defaultexcludes="yes">
         <include name="org/apache/poi/**"/>
       </packageset>
 

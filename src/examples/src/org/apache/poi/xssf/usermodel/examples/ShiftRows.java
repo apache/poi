@@ -30,7 +30,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ShiftRows {
 
     public static void main(String[]args) throws Exception {
-        Workbook wb = new XSSFWorkbook();
+        Workbook wb = new XSSFWorkbook();   //or new HSSFWorkbook();
         Sheet sheet = wb.createSheet("Sheet1");
 
         Row row1 = sheet.createRow(1);

@@ -68,7 +68,6 @@ import java.util.ArrayList;
 public class XSSFRichTextString implements RichTextString {
     private CTRst st;
     private StylesTable styles;
-    private ArrayList<CTRPrElt> fontIdRuns;
 
     /**
      * Create a rich text string and initialize it with empty string
@@ -106,7 +105,6 @@ public class XSSFRichTextString implements RichTextString {
             //when setStylesTableReference is called
             font = new XSSFFont();
             font.setFontName("#" + fontIndex);
-            fontIdRuns = new ArrayList<CTRPrElt>();
         } else {
             font = styles.getFontAt(fontIndex);
         }
@@ -139,49 +137,49 @@ public class XSSFRichTextString implements RichTextString {
         XSSFFont xssfFont = (XSSFFont)font;
         ArrayList<CTRElt> runs = new ArrayList<CTRElt>();
 
+        CTRElt[] r = st.getRArray();
         int pos = 0;
-        int i;
-        for (i = 0; i < st.sizeOfRArray(); i++) {
-            CTRElt r = st.getRArray(i);
+        for (int i = 0; i < r.length; i++) {
+            int rStart = pos;
+            String t = r[i].getT();
+            int rEnd = rStart + t.length();
 
-            int len = r.getT().length();
-            int p1 = pos;
-            int p2 = pos + len;
-            if(startIndex > p2) {
-                runs.add(r);
-            } else if (startIndex >= p1 && startIndex < p2){
-                String t = r.getT();
-                r.setT(t.substring(0, startIndex-p1));
-                runs.add(r);
+            if(rEnd <= startIndex) {
+                runs.add(r[i]);
+                pos += r[i].getT().length();
+            }
+            else if (startIndex > rStart && startIndex < rEnd){
+                CTRElt c = (CTRElt)r[i].copy();
+                String txt = text.substring(rStart, startIndex);
+                c.setT(txt);
+                runs.add(c);
+                pos += txt.length();
             } else {
                 break;
             }
-            pos = p2;
         }
-        CTRElt r = CTRElt.Factory.newInstance();
-        r.setT(text.substring(startIndex, endIndex));
-        CTRPrElt pr = r.addNewRPr();
+        CTRElt rt = CTRElt.Factory.newInstance();
+        String txt = text.substring(startIndex, endIndex);
+        rt.setT(txt);
+        CTRPrElt pr = rt.addNewRPr();
         setRunAttributes(xssfFont.getCTFont(), pr);
-        if(fontIdRuns != null) fontIdRuns.add(pr);
-        runs.add(r);
+        runs.add(rt);
+        pos += txt.length();
 
-        for (; i < st.sizeOfRArray(); i++) {
-            r = st.getRArray(i);
+        for (int i = 0; i < r.length; i++) {
+            int rStart = pos;
+            String t = r[i].getT();
+            int rEnd = Math.min(rStart + t.length(), text.length());
 
-            int len = r.getT().length();
-            int p1 = pos;
-            int p2 = pos + len;
-            if(endIndex > p2) {
-                ;
-            } else if (endIndex >= p1 && endIndex < p2){
-                String t = r.getT();
-                r.setT(t.substring(endIndex-p1, len));
-                runs.add(r);
-            } else {
-                runs.add(r);
+            if (endIndex < rEnd){
+                CTRElt c = (CTRElt)r[i].copy();
+                txt = text.substring(rStart, rEnd);
+                c.setT(txt);
+                runs.add(c);
+                pos += txt.length();
             }
-            pos = p2;
         }
+
 
         st.setRArray(runs.toArray(new CTRElt[runs.size()]));
     }
@@ -202,9 +200,6 @@ public class XSSFRichTextString implements RichTextString {
             setRunAttributes(((XSSFFont)font).getCTFont(), r.addNewRPr());
             st.setRArray(new CTRElt[]{r});
         }
-
-        if(fontIdRuns != null) fontIdRuns.add(st.getRArray(0).getRPr());
-
     }
 
     /**
@@ -217,7 +212,6 @@ public class XSSFRichTextString implements RichTextString {
         if(styles == null) {
             font = new XSSFFont();
             font.setFontName("#" + fontIndex);
-            fontIdRuns = new ArrayList<CTRPrElt>();
         } else {
             font = styles.getFontAt(fontIndex);
         }
@@ -240,8 +234,6 @@ public class XSSFRichTextString implements RichTextString {
         lt.setT(text);
         CTRPrElt pr = lt.addNewRPr();
         if(font != null) setRunAttributes(font.getCTFont(), pr);
-
-        if(fontIdRuns != null) fontIdRuns.add(pr);
     }
 
     /**
@@ -419,9 +411,10 @@ public class XSSFRichTextString implements RichTextString {
 
     protected void setStylesTableReference(StylesTable tbl){
         styles = tbl;
-        if(fontIdRuns != null){
-            for (CTRPrElt pr : fontIdRuns) {
-                if(pr.sizeOfRFontArray() > 0 ) {
+        if(st.sizeOfRArray() > 0) {
+            for (CTRElt r : st.getRArray()) {
+                CTRPrElt pr = r.getRPr();
+                if(pr != null){
                     String fontName = pr.getRFontArray(0).getVal();
                     if(fontName.startsWith("#")){
                         int idx = Integer.parseInt(fontName.substring(1));

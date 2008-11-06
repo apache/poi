@@ -31,7 +31,9 @@ public class XSSFCreationHelper implements CreationHelper {
      * Creates a new XSSFRichTextString for you.
      */
 	public XSSFRichTextString createRichTextString(String text) {
-		return new XSSFRichTextString(text);
+        XSSFRichTextString rt =new XSSFRichTextString(text);
+        rt.setStylesTableReference(workbook.getStylesSource());
+        return rt;
 	}
 	
 	public XSSFDataFormat createDataFormat() {

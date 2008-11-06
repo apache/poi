@@ -28,11 +28,10 @@ public class TestXSSFName extends TestCase {
         // Create a new workbook
         XSSFWorkbook wb = new XSSFWorkbook();
 
-
-        // Create a worksheet 'sheet1' in the new workbook
         XSSFName name1 = wb.createName();
         name1.setNameName("testOne");
 
+        //setting a duplicate name should throw IllegalArgumentException
         XSSFName name2 = wb.createName();
         try {
             name2.setNameName("testOne");

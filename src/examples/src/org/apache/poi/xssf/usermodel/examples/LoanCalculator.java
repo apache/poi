@@ -138,7 +138,7 @@ public class LoanCalculator {
     /**
      * cell styles used for formatting calendar sheets
      */
-    public static Map<String, XSSFCellStyle> createStyles(XSSFWorkbook wb){
+    private static Map<String, XSSFCellStyle> createStyles(XSSFWorkbook wb){
         Map<String, XSSFCellStyle> styles = new HashMap<String, XSSFCellStyle>();
 
         XSSFCellStyle style;
