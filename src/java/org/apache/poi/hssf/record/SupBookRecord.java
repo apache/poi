@@ -17,11 +17,12 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.record.UnicodeString.UnicodeRecordStats;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.StringUtil;
 
 /**
- * Title:        Sup Book (EXTERNALBOOK) <P>
+ * Title:        Sup Book - EXTERNALBOOK (0x01AE) <p/>
  * Description:  A External Workbook Description (Supplemental Book)
  *               Its only a dummy record for making new ExternSheet Record <P>
  * REFERENCE:  5.38<P>
@@ -31,25 +32,25 @@ import org.apache.poi.util.LittleEndian;
  */
 public final class SupBookRecord extends Record {
 
-    public final static short sid = 0x1AE;
+    public final static short sid = 0x01AE;
 
     private static final short SMALL_RECORD_SIZE = 4;
     private static final short TAG_INTERNAL_REFERENCES = 0x0401;
     private static final short TAG_ADD_IN_FUNCTIONS = 0x3A01;
 
-    private short             field_1_number_of_sheets;
-    private UnicodeString     field_2_encoded_url;
-    private UnicodeString[]   field_3_sheet_names;
-    private boolean           _isAddInFunctions;
+    private short field_1_number_of_sheets;
+    private String field_2_encoded_url;
+    private String[] field_3_sheet_names;
+    private boolean _isAddInFunctions;
 
-    
+
     public static SupBookRecord createInternalReferences(short numberOfSheets) {
         return new SupBookRecord(false, numberOfSheets);
     }
     public static SupBookRecord createAddInFunctions() {
         return new SupBookRecord(true, (short)0);
     }
-    public static SupBookRecord createExternalReferences(UnicodeString url, UnicodeString[] sheetNames) {
+    public static SupBookRecord createExternalReferences(String url, String[] sheetNames) {
         return new SupBookRecord(url, sheetNames);
     }
     private SupBookRecord(boolean isAddInFuncs, short numberOfSheets) {
@@ -59,7 +60,7 @@ public final class SupBookRecord extends Record {
         field_3_sheet_names = null;
         _isAddInFunctions = isAddInFuncs;
     }
-    public SupBookRecord(UnicodeString url, UnicodeString[] sheetNames) {
+    public SupBookRecord(String url, String[] sheetNames) {
         field_1_number_of_sheets = (short) sheetNames.length;
         field_2_encoded_url = url;
         field_3_sheet_names = sheetNames;
@@ -84,18 +85,18 @@ public final class SupBookRecord extends Record {
      * @param offset of the record's data (provided a big array of the file)
      */
     public SupBookRecord(RecordInputStream in) {
-    	int recLen = in.remaining();
-    	
+        int recLen = in.remaining();
+
         field_1_number_of_sheets = in.readShort();
-        
+
         if(recLen > SMALL_RECORD_SIZE) {
             // 5.38.1 External References
             _isAddInFunctions = false;
 
-            field_2_encoded_url = in.readUnicodeString();
-            UnicodeString[] sheetNames = new UnicodeString[field_1_number_of_sheets];
+            field_2_encoded_url = in.readString();
+            String[] sheetNames = new String[field_1_number_of_sheets];
             for (int i = 0; i < sheetNames.length; i++) {
-                sheetNames[i] = in.readUnicodeString();
+                sheetNames[i] = in.readString();
             }
             field_3_sheet_names = sheetNames;
             return;
@@ -103,7 +104,7 @@ public final class SupBookRecord extends Record {
         // else not 'External References'
         field_2_encoded_url = null;
         field_3_sheet_names = null;
-      
+
         short nextShort = in.readShort();
         if(nextShort == TAG_INTERNAL_REFERENCES) {
             // 5.38.2 'Internal References'
@@ -116,7 +117,7 @@ public final class SupBookRecord extends Record {
                      + field_1_number_of_sheets + ")");
             }
         } else {
-            throw new RuntimeException("invalid EXTERNALBOOK code (" 
+            throw new RuntimeException("invalid EXTERNALBOOK code ("
                      + Integer.toHexString(nextShort) + ")");
         }
      }
@@ -124,7 +125,7 @@ public final class SupBookRecord extends Record {
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(getClass().getName()).append(" [SUPBOOK ");
-        
+
         if(isExternalReferences()) {
             sb.append("External References");
             sb.append(" nSheets=").append(field_1_number_of_sheets);
@@ -143,18 +144,14 @@ public final class SupBookRecord extends Record {
             return SMALL_RECORD_SIZE;
         }
         int sum = 2; // u16 number of sheets
-        UnicodeRecordStats urs = new UnicodeRecordStats();
-        field_2_encoded_url.getRecordSize(urs);
-        sum += urs.recordSize;
-        
+
+        sum += StringUtil.getEncodedSize(field_2_encoded_url);
+
         for(int i=0; i<field_3_sheet_names.length; i++) {
-            urs = new UnicodeRecordStats();
-            field_3_sheet_names[i].getRecordSize(urs);
-            sum += urs.recordSize;
+            sum += StringUtil.getEncodedSize(field_3_sheet_names[i]);
         }
         return sum;
     }
-
     /**
      * called by the class that is responsible for writing this sucker.
      * Subclasses should implement this so that their data is passed back in a
@@ -165,29 +162,26 @@ public final class SupBookRecord extends Record {
      * @return number of bytes written
      */
     public int serialize(int offset, byte [] data) {
-        LittleEndian.putShort(data, 0 + offset, sid);
         int dataSize = getDataSize();
-        LittleEndian.putShort(data, 2 + offset, (short) dataSize);
-        LittleEndian.putShort(data, 4 + offset, field_1_number_of_sheets);
-               
+        int recordSize = 4 + dataSize;
+        LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, recordSize);
+
+        out.writeShort(sid);
+        out.writeShort(dataSize);
+        out.writeShort(field_1_number_of_sheets);
+
         if(isExternalReferences()) {
-            
-            int currentOffset = 6 + offset;
-            UnicodeRecordStats urs = new UnicodeRecordStats();
-            field_2_encoded_url.serialize(urs, currentOffset, data);
-            currentOffset += urs.recordSize;
-            
+            StringUtil.writeUnicodeString(out, field_2_encoded_url);
+
             for(int i=0; i<field_3_sheet_names.length; i++) {
-                urs = new UnicodeRecordStats();
-                field_3_sheet_names[i].serialize(urs, currentOffset, data);
-                currentOffset += urs.recordSize;
+                StringUtil.writeUnicodeString(out, field_3_sheet_names[i]);
             }
         } else {
-            short field2val = _isAddInFunctions ? TAG_ADD_IN_FUNCTIONS : TAG_INTERNAL_REFERENCES;
-            
-            LittleEndian.putShort(data, 6 + offset, field2val);
+            int field2val = _isAddInFunctions ? TAG_ADD_IN_FUNCTIONS : TAG_INTERNAL_REFERENCES;
+
+            out.writeShort(field2val);
         }
-        return dataSize + 4;
+        return recordSize;
     }
 
     public void setNumberOfSheets(short number){
@@ -203,7 +197,7 @@ public final class SupBookRecord extends Record {
         return sid;
     }
     public String getURL() {
-        String encodedUrl = field_2_encoded_url.getString();
+        String encodedUrl = field_2_encoded_url;
         switch(encodedUrl.charAt(0)) {
             case 0: // Reference to an empty workbook name
                 return encodedUrl.substring(1); // will this just be empty string?
@@ -211,7 +205,7 @@ public final class SupBookRecord extends Record {
                 return decodeFileName(encodedUrl);
             case 2: // Self-referential external reference
                 return encodedUrl.substring(1);
-                
+
         }
         return encodedUrl;
     }
@@ -219,18 +213,18 @@ public final class SupBookRecord extends Record {
         return encodedUrl.substring(1);
         // TODO the following special characters may appear in the rest of the string, and need to get interpreted
         /* see "MICROSOFT OFFICE EXCEL 97-2007  BINARY FILE FORMAT SPECIFICATION"
-        chVolume  1 
-        chSameVolume  2 
+        chVolume  1
+        chSameVolume  2
         chDownDir  3
-        chUpDir  4 
+        chUpDir  4
         chLongVolume  5
         chStartupDir  6
         chAltStartupDir 7
         chLibDir  8
-        
+
         */
     }
-    public UnicodeString[] getSheetNames() {
-        return (UnicodeString[]) field_3_sheet_names.clone();
+    public String[] getSheetNames() {
+        return (String[]) field_3_sheet_names.clone();
     }
 }

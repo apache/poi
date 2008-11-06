@@ -49,7 +49,7 @@ public final class RecordFactory {
 	 * contains the classes for all the records we want to parse.<br/>
 	 * Note - this most but not *every* subclass of Record.
 	 */
-	private static final Class[] records = {
+	private static final Class[] recordClasses = {
 		ArrayRecord.class,
 		BackupRecord.class,
 		BlankRecord.class,
@@ -163,7 +163,7 @@ public final class RecordFactory {
 	/**
 	 * cache of the recordsToMap();
 	 */
-	private static Map recordsMap  = recordsToMap(records);
+	private static Map recordsMap  = recordsToMap(recordClasses);
 
 	private static short[] _allKnownRecordSIDs;
 	
@@ -172,16 +172,33 @@ public final class RecordFactory {
 	 * are returned digested into the non-mul form.
 	 */
 	public static Record [] createRecord(RecordInputStream in) {
+		
+		Record record = createSingleRecord(in);
+		if (record instanceof DBCellRecord) {
+			// Not needed by POI.  Regenerated from scratch by POI when spreadsheet is written
+			return new Record[] { null, };
+		}
+		if (record instanceof RKRecord) {
+			return new Record[] { convertToNumberRecord((RKRecord) record), };
+		}
+		if (record instanceof MulRKRecord) {
+			return convertRKRecords((MulRKRecord)record);
+		}
+		if (record instanceof MulBlankRecord) {
+			return convertMulBlankRecords((MulBlankRecord)record);
+		}
+		return new Record[] { record, };
+	}
+	
+	private static Record createSingleRecord(RecordInputStream in) {
 		Constructor constructor = (Constructor) recordsMap.get(new Short(in.getSid()));
 
 		if (constructor == null) {
-			return new Record[] { new UnknownRecord(in), };
+			return new UnknownRecord(in);
 		}
 		
-		Record retval;
-
 		try {
-			retval = ( Record ) constructor.newInstance(new Object[] { in });
+			return (Record) constructor.newInstance(new Object[] { in });
 		} catch (InvocationTargetException e) {
 			throw new RecordFormatException("Unable to construct record instance" , e.getTargetException());
 		} catch (IllegalArgumentException e) {
@@ -191,54 +208,55 @@ public final class RecordFactory {
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
-		
-		if (retval instanceof RKRecord) {
-			// RK record is a slightly smaller alternative to NumberRecord
-			// POI likes NumberRecord better
-			RKRecord	 rk  = ( RKRecord ) retval;
-			NumberRecord num = new NumberRecord();
+	}
 
-			num.setColumn(rk.getColumn());
-			num.setRow(rk.getRow());
-			num.setXFIndex(rk.getXFIndex());
-			num.setValue(rk.getRKNumber());
-			return new Record[] { num, };
+	/**
+	 * RK record is a slightly smaller alternative to NumberRecord
+	 * POI likes NumberRecord better
+	 */
+	private static NumberRecord convertToNumberRecord(RKRecord rk) {
+		NumberRecord num = new NumberRecord();
+
+		num.setColumn(rk.getColumn());
+		num.setRow(rk.getRow());
+		num.setXFIndex(rk.getXFIndex());
+		num.setValue(rk.getRKNumber());
+		return num;
+	}
+
+	/**
+	 * Converts a {@link MulRKRecord} into an equivalent array of {@link NumberRecord}s
+	 */
+	private static NumberRecord[] convertRKRecords(MulRKRecord mrk) {
+
+		NumberRecord[] mulRecs = new NumberRecord[mrk.getNumColumns()];
+		for (int k = 0; k < mrk.getNumColumns(); k++) {
+			NumberRecord nr = new NumberRecord();
+
+			nr.setColumn((short) (k + mrk.getFirstColumn()));
+			nr.setRow(mrk.getRow());
+			nr.setXFIndex(mrk.getXFAt(k));
+			nr.setValue(mrk.getRKNumberAt(k));
+			mulRecs[k] = nr;
 		}
-		if (retval instanceof DBCellRecord) {
-			// Not needed by POI.  Regenerated from scratch by POI when spreadsheet is written
-			return new Record[] { null, };
+		return mulRecs;
+	}
+
+	/**
+	 * Converts a {@link MulBlankRecord} into an equivalent array of {@link BlankRecord}s
+	 */
+	private static BlankRecord[] convertMulBlankRecords(MulBlankRecord mb) {
+
+		BlankRecord[] mulRecs = new BlankRecord[mb.getNumColumns()];
+		for (int k = 0; k < mb.getNumColumns(); k++) {
+			BlankRecord br = new BlankRecord();
+
+			br.setColumn((short) (k + mb.getFirstColumn()));
+			br.setRow(mb.getRow());
+			br.setXFIndex(mb.getXFAt(k));
+			mulRecs[k] = br;
 		}
-		// expand multiple records where necessary
-		if (retval instanceof MulRKRecord) {
-			MulRKRecord mrk = ( MulRKRecord ) retval;
-
-			Record[] mulRecs = new Record[ mrk.getNumColumns() ];
-			for (int k = 0; k < mrk.getNumColumns(); k++) {
-				NumberRecord nr = new NumberRecord();
-
-				nr.setColumn(( short ) (k + mrk.getFirstColumn()));
-				nr.setRow(mrk.getRow());
-				nr.setXFIndex(mrk.getXFAt(k));
-				nr.setValue(mrk.getRKNumberAt(k));
-				mulRecs[ k ] = nr;
-			}
-			return mulRecs;
-		}
-		if (retval instanceof MulBlankRecord) {
-			MulBlankRecord mb = ( MulBlankRecord ) retval;
-
-			Record[] mulRecs = new Record[ mb.getNumColumns() ];
-			for (int k = 0; k < mb.getNumColumns(); k++) {
-				BlankRecord br = new BlankRecord();
-
-				br.setColumn(( short ) (k + mb.getFirstColumn()));
-				br.setRow(mb.getRow());
-				br.setXFIndex(mb.getXFAt(k));
-				mulRecs[ k ] = br;
-			}
-			return mulRecs;
-		}
-		return new Record[] { retval, };
+		return mulRecs;
 	}
 
 	/**
@@ -325,19 +343,26 @@ public final class RecordFactory {
 				// After EOF, Excel seems to pad block with zeros
 				continue;
 			}
-			Record[] recs = createRecord(recStream);   // handle MulRK records
+			Record record = createSingleRecord(recStream);
 
-			if (recs.length > 1) {
-				for (int k = 0; k < recs.length; k++) {
-					records.add(recs[ k ]);			   // these will be number records
-				}
+			if (record instanceof DBCellRecord) {
+				// Not needed by POI.  Regenerated from scratch by POI when spreadsheet is written
 				continue;
 			}
-			Record record = recs[ 0 ];
 
-			if (record == null) {
+			if (record instanceof RKRecord) {
+				records.add(convertToNumberRecord((RKRecord) record));
 				continue;
 			}
+			if (record instanceof MulRKRecord) {
+				addAll(records, convertRKRecords((MulRKRecord)record));
+				continue;
+			}
+			if (record instanceof MulBlankRecord) {
+				addAll(records, convertMulBlankRecords((MulBlankRecord)record));
+				continue;
+			}
+
 			if (record.getSid() == DrawingGroupRecord.sid
 				   && lastRecord instanceof DrawingGroupRecord) {
 				DrawingGroupRecord lastDGRecord = (DrawingGroupRecord) lastRecord;
@@ -354,8 +379,6 @@ public final class RecordFactory {
 					records.add(record);
 				} else if (lastRecord instanceof DrawingGroupRecord) {
 					((DrawingGroupRecord)lastRecord).processContinueRecord(contRec.getData());
-				} else if (lastRecord instanceof StringRecord) {
-					((StringRecord)lastRecord).processContinueRecord(contRec.getData());
 				} else if (lastRecord instanceof UnknownRecord) {
 					//Gracefully handle records that we don't know about,
 					//that happen to be continued
@@ -372,5 +395,11 @@ public final class RecordFactory {
 			}
 		}
 		return records;
+	}
+
+	private static void addAll(List destList, Record[] srcRecs) {
+		for (int i = 0; i < srcRecs.length; i++) {
+			destList.add(srcRecs[i]);
+		}
 	}
 }
