@@ -69,10 +69,10 @@ public final class TestSupBookRecord extends TestCase {
         assertEquals( 34, record.getRecordSize() );  //sid+size+data
         
         assertEquals("testURL", record.getURL());
-        UnicodeString[] sheetNames = record.getSheetNames();
+        String[] sheetNames = record.getSheetNames();
         assertEquals(2, sheetNames.length);
-        assertEquals("Sheet1", sheetNames[0].getString());
-        assertEquals("Sheet2", sheetNames[1].getString());
+        assertEquals("Sheet1", sheetNames[0]);
+        assertEquals("Sheet2", sheetNames[1]);
     }
     
     /**
@@ -97,11 +97,8 @@ public final class TestSupBookRecord extends TestCase {
     }   
     
     public void testStoreER() {
-        UnicodeString url = new UnicodeString("testURL");
-        UnicodeString[] sheetNames = {
-                new UnicodeString("Sheet1"),
-                new UnicodeString("Sheet2"),
-        };
+        String url = "testURL";
+        String[] sheetNames = { "Sheet1", "Sheet2", };
         SupBookRecord record = SupBookRecord.createExternalReferences(url, sheetNames);
 
         TestcaseRecordInputStream.confirmRecordEncoding(0x01AE, dataER, record.serialize());

@@ -29,8 +29,9 @@ import org.apache.poi.hssf.record.ExternalNameRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SupBookRecord;
-import org.apache.poi.hssf.record.UnicodeString;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
+import org.apache.poi.hssf.record.formula.Ref3DPtg;
 
 /**
  * Link Table (OOO pdf reference: 4.10.3 ) <p/>
@@ -311,10 +312,10 @@ final class LinkTable {
 			return null;
 		}
 		int shIx = _externSheetRecord.getFirstSheetIndexFromRefIndex(extRefIndex);
-		UnicodeString usSheetName = ebr.getSheetNames()[shIx];
+		String usSheetName = ebr.getSheetNames()[shIx];
 		return new String[] {
 				ebr.getURL(),
-				usSheetName.getString(),
+				usSheetName,
 		};
 	}
 
@@ -345,9 +346,9 @@ final class LinkTable {
 		return result;
 	}
 
-	private static int getSheetIndex(UnicodeString[] sheetNames, String sheetName) {
+	private static int getSheetIndex(String[] sheetNames, String sheetName) {
 		for (int i = 0; i < sheetNames.length; i++) {
-			if (sheetNames[i].getString().equals(sheetName)) {
+			if (sheetNames[i].equals(sheetName)) {
 				return i;
 			}
 			

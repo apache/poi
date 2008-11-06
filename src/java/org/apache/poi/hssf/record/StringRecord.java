@@ -17,19 +17,23 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hssf.record.cont.ContinuableRecord;
+import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Supports the STRING record structure. (0x0207)
+ * STRING (0x0207)<p/>
+ * 
+ * Stores the cached result of a text formula
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class StringRecord extends Record {
-    public final static short   sid = 0x0207;
-    private int                 field_1_string_length;
-    private byte                field_2_unicode_flag;
-    private String              field_3_string;
+public final class StringRecord extends ContinuableRecord {
+
+	public final static short sid = 0x0207;
+
+	private boolean _is16bitUnicode;
+	private String _text;
 
 
     public StringRecord()
@@ -39,77 +43,24 @@ public class StringRecord extends Record {
     /**
      * @param in the RecordInputstream to read the record from
      */
-    public StringRecord( RecordInputStream in)
-    {
-        field_1_string_length           = in.readShort();
-        field_2_unicode_flag            = in.readByte();
-        byte[] data = in.readRemainder();
-        //Why isn't this using the in.readString methods???
-        if (isUnCompressedUnicode())
-        {
-            field_3_string = StringUtil.getFromUnicodeLE(data, 0, field_1_string_length );
-        }
-        else
-        {
-            field_3_string = StringUtil.getFromCompressedUnicode(data, 0, field_1_string_length);
+    public StringRecord( RecordInputStream in) {
+        int field_1_string_length           = in.readUShort();
+        _is16bitUnicode            = in.readByte() != 0x00;
+        
+        if (_is16bitUnicode){
+            _text = in.readUnicodeLEString(field_1_string_length);
+        } else {
+            _text = in.readCompressedUnicode(field_1_string_length);
         }
     }
-    
-    public void processContinueRecord(byte[] data) {
-    	if(isUnCompressedUnicode()) {
-    		field_3_string += StringUtil.getFromUnicodeLE(data, 0, field_1_string_length - field_3_string.length());
-    	} else {
-    		field_3_string += StringUtil.getFromCompressedUnicode(data, 0, field_1_string_length - field_3_string.length());
-    	}
+
+
+    protected void serialize(ContinuableRecordOutput out) {
+        out.writeShort(_text.length());
+        out.writeStringData(_text);
     }
 
-    private int getStringByteLength()
-    {
-        return isUnCompressedUnicode() ? field_1_string_length * 2 : field_1_string_length;
-    }
 
-    protected int getDataSize() {
-        return 2 + 1 + getStringByteLength();
-    }
-
-    /**
-     * is this uncompressed unicode (16bit)?  Or just 8-bit compressed?
-     * @return isUnicode - True for 16bit- false for 8bit
-     */
-    public boolean isUnCompressedUnicode()
-    {
-        return (field_2_unicode_flag == 1);
-    }
-
-    /**
-     * called by the class that is responsible for writing this sucker.
-     * Subclasses should implement this so that their data is passed back in a
-     * byte array.
-     *
-     * @param offset to begin writing at
-     * @param data byte array containing instance data
-     * @return number of bytes written
-     */
-    public int serialize( int offset, byte[] data )
-    {
-        LittleEndian.putUShort(data, 0 + offset, sid);
-        LittleEndian.putUShort(data, 2 + offset, 3 + getStringByteLength());
-        LittleEndian.putUShort(data, 4 + offset, field_1_string_length);
-        data[6 + offset] = field_2_unicode_flag;
-        if (isUnCompressedUnicode())
-        {
-            StringUtil.putUnicodeLE(field_3_string, data, 7 + offset);
-        }
-        else
-        {
-            StringUtil.putCompressedUnicode(field_3_string, data, 7 + offset);
-        }
-        return getRecordSize();
-    }
-
-    /**
-     * return the non static version of the id for this record.
-     */
     public short getSid()
     {
         return sid;
@@ -120,26 +71,16 @@ public class StringRecord extends Record {
      */
     public String getString()
     {
-        return field_3_string;
+        return _text;
     }
 
-    /**
-     * Sets whether the string is compressed or not
-     * @param unicode_flag   1 = uncompressed, 0 = compressed
-     */
-    public void setCompressedFlag( byte unicode_flag )
-    {
-        this.field_2_unicode_flag = unicode_flag;
-    }
 
     /**
      * Sets the string represented by this record.
      */
-    public void setString( String string )
-    {
-        this.field_1_string_length = string.length();
-        this.field_3_string = string;
-        setCompressedFlag(StringUtil.hasMultibyte(string) ?  (byte)1 : (byte)0);        
+    public void setString(String string) {
+        _text = string;
+        _is16bitUnicode = StringUtil.hasMultibyte(string);        
     }
 
     public String toString()
@@ -148,16 +89,15 @@ public class StringRecord extends Record {
 
         buffer.append("[STRING]\n");
         buffer.append("    .string            = ")
-            .append(field_3_string).append("\n");
+            .append(_text).append("\n");
         buffer.append("[/STRING]\n");
         return buffer.toString();
     }
     
     public Object clone() {
         StringRecord rec = new StringRecord();
-        rec.field_1_string_length = this.field_1_string_length;
-        rec.field_2_unicode_flag= this.field_2_unicode_flag;
-        rec.field_3_string = this.field_3_string;
+        rec._is16bitUnicode= _is16bitUnicode;
+        rec._text = _text;
         return rec;
     }
 }
