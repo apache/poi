@@ -18,175 +18,121 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
+ * SERIESTEXT (0x100D)</p> 
  * Defines a series name</p>
  * 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
 public final class SeriesTextRecord extends Record {
-    public final static short      sid                             = 0x100d;
-    private  short      field_1_id;
-    private  byte       field_2_textLength;
-    private  byte       field_3_undocumented;
-    private  String     field_4_text;
+	public final static short sid = 0x100D;
 
+	/** the actual text cannot be longer than 255 characters */
+	private static final int MAX_LEN = 0xFF;
+	private int field_1_id;
+	private boolean is16bit;
+	private String field_4_text;
 
-    public SeriesTextRecord()
-    {
+	public SeriesTextRecord() {
+		field_4_text = "";
+		is16bit = false;
+	}
 
-    }
+	public SeriesTextRecord(RecordInputStream in) {
+		field_1_id = in.readUShort();
+		int field_2_textLength = in.readUByte();
+		is16bit = (in.readUByte() & 0x01) != 0;
+		if (is16bit) {
+			field_4_text = in.readUnicodeLEString(field_2_textLength);
+		} else {
+			field_4_text = in.readCompressedUnicode(field_2_textLength);
+		}
+	}
 
-    public SeriesTextRecord(RecordInputStream in)
-    {
-        field_1_id                     = in.readShort();
-        field_2_textLength             = in.readByte();
-        field_3_undocumented           = in.readByte();
-        field_4_text                   = in.readUnicodeLEString(
-        		LittleEndian.ubyteToInt(field_2_textLength));
-    }
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
+		sb.append("[SERIESTEXT]\n");
+		sb.append("  .id     =").append(HexDump.shortToHex(getId())).append('\n');
+		sb.append("  .textLen=").append(field_4_text.length()).append('\n');
+		sb.append("  .is16bit=").append(is16bit).append('\n');
+		sb.append("  .text   =").append(" (").append(getText()).append(" )").append('\n');
+		sb.append("[/SERIESTEXT]\n");
+		return sb.toString();
+	}
 
-        buffer.append("[SERIESTEXT]\n");
-        buffer.append("    .id                   = ")
-            .append("0x").append(HexDump.toHex(  getId ()))
-            .append(" (").append( getId() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-        buffer.append("    .textLength           = ")
-            .append("0x").append(HexDump.toHex(  getTextLength ()))
-            .append(" (").append( getTextLength() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-        buffer.append("    .undocumented         = ")
-            .append("0x").append(HexDump.toHex(  getUndocumented ()))
-            .append(" (").append( getUndocumented() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-        buffer.append("    .text                 = ")
-            .append(" (").append( getText() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+	public int serialize(int offset, byte[] data) {
+		int dataSize = getDataSize();
+		int recordSize = 4 + dataSize;
+		LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, recordSize);
+		out.writeShort(sid);
+		out.writeShort(dataSize);
 
-        buffer.append("[/SERIESTEXT]\n");
-        return buffer.toString();
-    }
+		out.writeShort(field_1_id);
+		out.writeByte(field_4_text.length());
+		if (is16bit) {
+			// Excel (2007) seems to choose 16bit regardless of whether it is needed
+			out.writeByte(0x01);
+			StringUtil.putUnicodeLE(field_4_text, out);
+		} else {
+			// Excel can read this OK
+			out.writeByte(0x00);
+			StringUtil.putCompressedUnicode(field_4_text, out);
+		}
+		return recordSize;
+	}
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
+	protected int getDataSize() {
+		return 2 + 1 + 1 + field_4_text.length() * (is16bit ? 2 : 1);
+	}
 
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
+	public short getSid() {
+		return sid;
+	}
 
-        LittleEndian.putShort(data, 4 + offset + pos, field_1_id);
-        data[ 6 + offset + pos ] = field_2_textLength;
-        data[ 7 + offset + pos ] = field_3_undocumented;
-        StringUtil.putUnicodeLE(field_4_text, data, 8 + offset + pos);
+	public Object clone() {
+		SeriesTextRecord rec = new SeriesTextRecord();
 
-        return getRecordSize();
-    }
+		rec.field_1_id = field_1_id;
+		rec.is16bit = is16bit;
+		rec.field_4_text = field_4_text;
+		return rec;
+	}
 
-    protected int getDataSize() {
-        return 2 + 1 + 1 + (field_2_textLength *2);
-    }
+	/**
+	 * Get the id field for the SeriesText record.
+	 */
+	public int getId() {
+		return field_1_id;
+	}
 
-    public short getSid()
-    {
-        return sid;
-    }
+	/**
+	 * Set the id field for the SeriesText record.
+	 */
+	public void setId(int id) {
+		field_1_id = id;
+	}
 
-    public Object clone() {
-        SeriesTextRecord rec = new SeriesTextRecord();
-    
-        rec.field_1_id = field_1_id;
-        rec.field_2_textLength = field_2_textLength;
-        rec.field_3_undocumented = field_3_undocumented;
-        rec.field_4_text = field_4_text;
-        return rec;
-    }
+	/**
+	 * Get the text field for the SeriesText record.
+	 */
+	public String getText() {
+		return field_4_text;
+	}
 
-
-
-
-    /**
-     * Get the id field for the SeriesText record.
-     */
-    public short getId()
-    {
-        return field_1_id;
-    }
-
-    /**
-     * Set the id field for the SeriesText record.
-     */
-    public void setId(short field_1_id)
-    {
-        this.field_1_id = field_1_id;
-    }
-
-    /**
-     * Get the text length field for the SeriesText record.
-     */
-    public int getTextLength()
-    {
-        return LittleEndian.ubyteToInt(field_2_textLength);
-    }
-
-    /**
-     * Set the text length field for the SeriesText record.
-     * Needs to be wrapped.
-     */
-    public void setTextLength(byte field_2_textLength)
-    {
-        this.field_2_textLength = field_2_textLength;
-    }
-    /**
-     * Set the text length field for the SeriesText record.
-     */
-    public void setTextLength(int field_2_textLength)
-    {
-    	if(field_2_textLength > 255) {
-    		throw new IllegalArgumentException("Length must be 0-255");
-    	}
-    	if(field_2_textLength > 127) {
-    		this.field_2_textLength = (byte)
-    			(field_2_textLength-256);
-    	} else {
-    		this.field_2_textLength = (byte)field_2_textLength;
-    	}
-    }
-
-    /**
-     * Get the undocumented field for the SeriesText record.
-     */
-    public byte getUndocumented()
-    {
-        return field_3_undocumented;
-    }
-
-    /**
-     * Set the undocumented field for the SeriesText record.
-     */
-    public void setUndocumented(byte field_3_undocumented)
-    {
-        this.field_3_undocumented = field_3_undocumented;
-    }
-
-    /**
-     * Get the text field for the SeriesText record.
-     */
-    public String getText()
-    {
-        return field_4_text;
-    }
-
-    /**
-     * Set the text field for the SeriesText record.
-     */
-    public void setText(String field_4_text)
-    {
-        this.field_4_text = field_4_text;
-    }
+	/**
+	 * Set the text field for the SeriesText record.
+	 */
+	public void setText(String text) {
+		if (text.length() > MAX_LEN) {
+			throw new IllegalArgumentException("Text is too long ("
+					+ text.length() + ">" + MAX_LEN + ")");
+		}
+		field_4_text = text;
+		is16bit = StringUtil.hasMultibyte(text);
+	}
 }
