@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.IntMapper;
 
 /**
@@ -35,8 +36,10 @@ public final class TestSSTRecordSizeCalculator extends TestCase {
 
 	
 	private void confirmSize(int expectedSize) {
-		SSTRecordSizeCalculator calculator = new SSTRecordSizeCalculator(strings);
-		assertEquals(expectedSize, calculator.getRecordSize());
+		ContinuableRecordOutput cro = ContinuableRecordOutput.createForCountingOnly();
+		SSTSerializer ss = new SSTSerializer(strings, 0, 0);
+		ss.serialize(cro);
+		assertEquals(expectedSize, cro.getTotalSize());
 	}
 
 	public void testBasic() {

@@ -17,16 +17,13 @@
 
 package org.apache.poi.hssf.record;
 
-import java.io.UnsupportedEncodingException;
-
+import org.apache.poi.hssf.record.cont.ContinuableRecord;
+import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
-import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The TXO record (0x01B6) is used to define the properties of a text box. It is
@@ -36,7 +33,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TextObjectRecord extends Record {
+public final class TextObjectRecord extends ContinuableRecord {
 	public final static short sid = 0x01B6;
 
 	private static final int FORMAT_RUN_ENCODED_SIZE = 8; // 2 shorts and 4 bytes reserved
@@ -163,30 +160,7 @@ public final class TextObjectRecord extends Record {
 		return sid;
 	}
 
-	/**
-	 * Only for the current record. does not include any subsequent Continue
-	 * records
-	 */
-	private int getCurrentRecordDataSize() {
-		int result = 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4;
-		if (_linkRefPtg != null) {
-			result += 2 // formula size
-				+ 4  // unknownInt
-				+_linkRefPtg.getSize();
-			if (_unknownPostFormulaByte != null) {
-				result += 1;
-			}
-		}
-		return result;
-	}
-
-	private int serializeTXORecord(int offset, byte[] data) {
-		int dataSize = getCurrentRecordDataSize();
-		int recSize = dataSize+4;
-		LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
-		
-		out.writeShort(TextObjectRecord.sid);
-		out.writeShort(dataSize);
+	private void serializeTXORecord(ContinuableRecordOutput out) {
 		
 		out.writeShort(field_1_options);
 		out.writeShort(field_2_textOrientation);
@@ -206,79 +180,23 @@ public final class TextObjectRecord extends Record {
 				out.writeByte(_unknownPostFormulaByte.byteValue());
 			}
 		}
-		return recSize;
 	}
 
-	private int serializeTrailingRecords(int offset, byte[] data) {
-		byte[] textBytes;
-		try {
-			textBytes = _text.getString().getBytes("UTF-16LE");
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-		int remainingLength = textBytes.length;
-
-		int countTextBytesWritten = 0;
-		int pos = offset;
-		// (regardless what was read, we always serialize double-byte
-		// unicode characters (UTF-16LE).
-		Byte unicodeFlag = new Byte((byte)1);
-		while (remainingLength > 0) {
-			int chunkSize = Math.min(RecordInputStream.MAX_RECORD_DATA_SIZE - 2, remainingLength);
-			remainingLength -= chunkSize;
-			pos += ContinueRecord.write(data, pos, unicodeFlag, textBytes, countTextBytesWritten, chunkSize);
-			countTextBytesWritten += chunkSize;
-		}
-
-		byte[] formatData = createFormatData(_text);
-		pos += ContinueRecord.write(data, pos, null, formatData);
-		return pos - offset;
+	private void serializeTrailingRecords(ContinuableRecordOutput out) {
+		out.writeContinue();
+		out.writeStringData(_text.getString());
+		out.writeContinue();
+		writeFormatData(out, _text);
 	}
 
-	private int getTrailingRecordsSize() {
-		if (_text.length() < 1) {
-			return 0;
-		}
-		int encodedTextSize = 0;
-		int textBytesLength = _text.length() * LittleEndian.SHORT_SIZE;
-		while (textBytesLength > 0) {
-			int chunkSize = Math.min(RecordInputStream.MAX_RECORD_DATA_SIZE - 2, textBytesLength);
-			textBytesLength -= chunkSize;
+	protected void serialize(ContinuableRecordOutput out) {
 
-			encodedTextSize += 4;           // +4 for ContinueRecord sid+size
-			encodedTextSize += 1+chunkSize; // +1 for compressed unicode flag, 
-		}
-
-		int encodedFormatSize = (_text.numFormattingRuns() + 1) * FORMAT_RUN_ENCODED_SIZE
-			+ 4;  // +4 for ContinueRecord sid+size
-		return encodedTextSize + encodedFormatSize;
-	}
-
-
-	public int serialize(int offset, byte[] data) {
-
-		int expectedTotalSize = getRecordSize();
-		int totalSize = serializeTXORecord(offset, data);
-		
+		serializeTXORecord(out);
 		if (_text.getString().length() > 0) {
-			totalSize += serializeTrailingRecords(offset+totalSize, data);
+			serializeTrailingRecords(out);
 		} 
-		
-		if (totalSize != expectedTotalSize)
-			throw new RecordFormatException(totalSize
-					+ " bytes written but getRecordSize() reports " + expectedTotalSize);
-		return totalSize;
 	}
 
-	/**
-	 * Note - this total size includes all potential {@link ContinueRecord}s written
-	 * but it is not the "ushort size" value to be written at the start of the first BIFF record 
-	 */
-	protected int getDataSize() {
-		return getCurrentRecordDataSize() + getTrailingRecordsSize();
-	}
-
-	
 	private int getFormattingDataLength() {
 		if (_text.length() < 1) {
 			// important - no formatting data if text is empty 
@@ -287,25 +205,17 @@ public final class TextObjectRecord extends Record {
 		return (_text.numFormattingRuns() + 1) * FORMAT_RUN_ENCODED_SIZE;
 	}
 
-	private static byte[] createFormatData(HSSFRichTextString str) {
+	private static void writeFormatData(ContinuableRecordOutput out , HSSFRichTextString str) {
 		int nRuns = str.numFormattingRuns();
-		byte[] result = new byte[(nRuns + 1) * FORMAT_RUN_ENCODED_SIZE];
-		int pos = 0;
 		for (int i = 0; i < nRuns; i++) {
-			LittleEndian.putUShort(result, pos, str.getIndexOfFormattingRun(i));
-			pos += 2;
+			out.writeShort(str.getIndexOfFormattingRun(i));
 			int fontIndex = str.getFontOfFormattingRun(i);
-			LittleEndian.putUShort(result, pos, fontIndex == str.NO_FONT ? 0 : fontIndex);
-			pos += 2;
-			pos += 4; // skip reserved
+			out.writeShort(fontIndex == str.NO_FONT ? 0 : fontIndex);
+			out.writeInt(0); // skip reserved
 		}
-		LittleEndian.putUShort(result, pos, str.length());
-		pos += 2;
-		LittleEndian.putUShort(result, pos, 0);
-		pos += 2;
-		pos += 4; // skip reserved
-
-		return result;
+		out.writeShort(str.length());
+		out.writeShort(0);
+		out.writeInt(0); // skip reserved
 	}
 
 	/**

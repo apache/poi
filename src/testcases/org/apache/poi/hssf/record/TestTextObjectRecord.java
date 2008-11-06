@@ -37,16 +37,14 @@ import org.apache.poi.util.LittleEndian;
 public final class TestTextObjectRecord extends TestCase {
 
     private static final byte[] simpleData = HexRead.readFromString(
-    	"B6 01 12 00 " +
-    	"12 02 00 00 00 00 00 00" +
-    	"00 00 0D 00 08 00	00 00" +
-    	"00 00 " +
-    	"3C 00 1B 00 " +
-    	"01 48 00 65 00 6C 00 6C 00 6F 00 " +
-    	"2C 00 20 00 57 00 6F 00 72 00 6C " +
-    	"00 64 00 21 00 " + 
-    	"3C 00 08 " +
-    	"00 0D 00 00 00 00 00 00 00"
+        "B6 01 12 00 " +
+        "12 02 00 00 00 00 00 00" +
+        "00 00 0D 00 08 00    00 00" +
+        "00 00 " +
+        "3C 00 0E 00 " +
+        "00 48 65 6C 6C 6F 2C 20 57 6F 72 6C 64 21 " +
+        "3C 00 08 " +
+        "00 0D 00 00 00 00 00 00 00"
     );
 
 
@@ -92,12 +90,12 @@ public final class TestTextObjectRecord extends TestCase {
         record.setStr(str);
 
         byte [] ser = record.serialize();
-        
+
         int formatDataLen = LittleEndian.getUShort(ser, 16);
         assertEquals("formatDataLength", 0, formatDataLen);
 
         assertEquals(22, ser.length); // just the TXO record
-        
+
         //read again
         RecordInputStream is = TestcaseRecordInputStream.create(ser);
         record = new TextObjectRecord(is);
@@ -152,38 +150,38 @@ public final class TestTextObjectRecord extends TestCase {
         byte[] cln = cloned.serialize();
         assertTrue(Arrays.equals(src, cln));
     }
-    
-    /** similar to {@link #simpleData} but with link formula at end of TXO rec*/ 
+
+    /** similar to {@link #simpleData} but with link formula at end of TXO rec*/
     private static final byte[] linkData = HexRead.readFromString(
-        	"B6 01 " + // TextObjectRecord.sid
-        	"1E 00 " + // size 18
-    	    "44 02 02 00 00 00 00 00" +
-    	    "00 00 " +
-    	    "02 00 " + // strLen 2
-    	    "10 00 " + // 16 bytes for 2 format runs
-    	    "00 00 00 00 " +
+            "B6 01 " + // TextObjectRecord.sid
+            "1E 00 " + // size 18
+            "44 02 02 00 00 00 00 00" +
+            "00 00 " +
+            "02 00 " + // strLen 2
+            "10 00 " + // 16 bytes for 2 format runs
+            "00 00 00 00 " +
 
             "05 00 " +          // formula size
             "D4 F0 8A 03 " +    // unknownInt
             "24 01 00 13 C0 " + //tRef(T2)
             "13 " +             // ??
 
-        	"3C 00 " + // ContinueRecord.sid
-    	    "05 00 " + // size 5
-    	    "01 " + // unicode uncompressed
-    	    "41 00 42 00 " + // 'AB'
-        	"3C 00 " + // ContinueRecord.sid
-    	    "10 00 " + // size 16 
-    	    "00 00 18 00 00 00 00 00 " +
-    	    "02 00 00 00 00 00 00 00 " 
+            "3C 00 " + // ContinueRecord.sid
+            "03 00 " + // size 3
+            "00 " + // unicode compressed
+            "41 42 " + // 'AB'
+            "3C 00 " + // ContinueRecord.sid
+            "10 00 " + // size 16
+            "00 00 18 00 00 00 00 00 " +
+            "02 00 00 00 00 00 00 00 "
         );
-    
-    
+
+
     public void testLinkFormula() {
         RecordInputStream is = new RecordInputStream(new ByteArrayInputStream(linkData));
         is.nextRecord();
         TextObjectRecord rec = new TextObjectRecord(is);
-		
+
         Ptg ptg = rec.getLinkRefPtg();
         assertNotNull(ptg);
         assertEquals(RefPtg.class, ptg.getClass());
@@ -193,6 +191,6 @@ public final class TestTextObjectRecord extends TestCase {
         byte [] data2 = rec.serialize();
         assertEquals(linkData.length, data2.length);
         assertTrue(Arrays.equals(linkData, data2));
-	}
-    
+    }
+
 }

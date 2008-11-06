@@ -44,9 +44,9 @@ public final class TestTextObjectBaseRecord extends TestCase {
         "00 00" +
         "00 00 " +
         "3C 00 " + // ContinueRecord.sid
-        "05 00 " + // size 5
-        "01 " + // unicode uncompressed
-        "41 00 42 00 " + // 'AB'
+        "03 00 " + // size 3
+        "00 " + // unicode compressed
+        "41 42 " + // 'AB'
         "3C 00 " + // ContinueRecord.sid
         "10 00 " + // size 16 
         "00 00 18 00 00 00 00 00 " +
@@ -63,7 +63,7 @@ public final class TestTextObjectBaseRecord extends TestCase {
         assertEquals(true, record.isTextLocked());
         assertEquals(TextObjectRecord.TEXT_ORIENTATION_ROT_RIGHT, record.getTextOrientation());
 
-        assertEquals(51, record.getRecordSize() );
+        assertEquals(49, record.getRecordSize() );
     }
 
     public void testStore()
