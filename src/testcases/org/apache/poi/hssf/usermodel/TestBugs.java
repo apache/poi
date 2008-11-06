@@ -1479,9 +1479,10 @@ public final class TestBugs extends TestCase {
      * Charts with long titles
      */
     public void test45784() {
-    	// This used to break
+        // This used to break
         HSSFWorkbook wb = openSample("45784.xls");
         assertEquals(1, wb.getNumberOfSheets());
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
     }
     
    /**
