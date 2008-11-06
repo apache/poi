@@ -27,7 +27,7 @@ import java.io.FileOutputStream;
  */
 public class WorkingWithBorders {
     public static void main(String[] args) throws Exception {
-        Workbook wb = new XSSFWorkbook();
+        Workbook wb = new XSSFWorkbook();  //or new HSSFWorkbook();
         Sheet sheet = wb.createSheet("borders");
 
         // Create a row and put some cells in it. Rows are 0 based.

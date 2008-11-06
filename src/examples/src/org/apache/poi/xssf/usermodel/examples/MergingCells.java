@@ -32,7 +32,7 @@ import java.io.FileOutputStream;
  */
 public class MergingCells {
     public static void main(String[] args) throws Exception {
-        Workbook wb = new XSSFWorkbook();
+        Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
         Sheet sheet = wb.createSheet("new sheet");
 
         Row row = sheet.createRow((short) 1);

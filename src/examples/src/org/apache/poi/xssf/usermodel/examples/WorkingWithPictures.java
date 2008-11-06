@@ -32,7 +32,7 @@ public class WorkingWithPictures {
     public static void main(String[] args) throws IOException {
 
         //create a new workbook
-        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFWorkbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
 
         //add a picture in this workbook.
         InputStream is = new FileInputStream("lilies.jpg");

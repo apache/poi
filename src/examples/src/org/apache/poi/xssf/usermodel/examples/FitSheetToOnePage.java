@@ -27,7 +27,7 @@ public class FitSheetToOnePage {
 
 
     public static void main(String[]args) throws Exception {
-        Workbook wb = new XSSFWorkbook();
+        Workbook wb = new XSSFWorkbook();  //or new HSSFWorkbook();
         Sheet sheet = wb.createSheet("format sheet");
         PrintSetup ps = sheet.getPrintSetup();
 
