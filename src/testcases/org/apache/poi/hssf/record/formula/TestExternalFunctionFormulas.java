@@ -29,7 +29,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.CellValue;
+import org.apache.poi.ss.usermodel.CellValue;
 /**
  * Tests for functions from external workbooks (e.g. YEARFRAC).
  * 

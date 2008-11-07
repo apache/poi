@@ -20,7 +20,7 @@ package org.apache.poi.hssf.usermodel;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.CellValue;
+import org.apache.poi.ss.usermodel.CellValue;
 /**
  * 
  * @author Josh Micich

@@ -16,22 +16,15 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.EscherAggregate;
-import org.apache.poi.hssf.record.NoteRecord;
-import org.apache.poi.hssf.record.TextObjectRecord;
 import org.apache.poi.hssf.record.HyperlinkRecord;
-import org.apache.poi.ddf.*;
-
-import java.util.Map;
-import java.util.List;
-import java.util.Iterator;
+import org.apache.poi.ss.usermodel.Hyperlink;
 
 /**
  * Represents an Excel hyperlink.
  *
  * @author Yegor Kozlov (yegor at apache dot org)
  */
-public class HSSFHyperlink {
+public class HSSFHyperlink implements Hyperlink {
 
     /**
      * Link to a existing file or web page
@@ -137,7 +130,7 @@ public class HSSFHyperlink {
      *
      * @return the 0-based column of the first cell that contains the hyperlink
      */
-    public short getFirstColumn(){
+    public int getFirstColumn(){
         return record.getFirstColumn();
     }
 
@@ -146,8 +139,8 @@ public class HSSFHyperlink {
      *
      * @param col the 0-based column of the first cell that contains the hyperlink
      */
-    public void setFirstColumn(short col){
-        record.setFirstColumn(col);
+    public void setFirstColumn(int col){
+        record.setFirstColumn((short)col);
     }
 
     /**
@@ -155,7 +148,7 @@ public class HSSFHyperlink {
      *
      * @return the 0-based column of the last cell that contains the hyperlink
      */
-    public short getLastColumn(){
+    public int getLastColumn(){
         return record.getLastColumn();
     }
 
@@ -164,8 +157,8 @@ public class HSSFHyperlink {
      *
      * @param col the 0-based column of the last cell that contains the hyperlink
      */
-    public void setLastColumn(short col){
-        record.setLastColumn(col);
+    public void setLastColumn(int col){
+        record.setLastColumn((short)col);
     }
 
     /**
@@ -209,7 +202,7 @@ public class HSSFHyperlink {
      *
      * @return the type of this hyperlink
      */
-    protected int getType(){
+    public int getType(){
         return link_type;
     }
 }

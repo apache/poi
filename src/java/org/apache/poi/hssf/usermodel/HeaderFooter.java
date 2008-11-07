@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * Common class for {@link HSSFHeader} and
  *  {@link HSSFFooter}.
  */
-public abstract class HeaderFooter {
+public abstract class HeaderFooter implements org.apache.poi.ss.usermodel.HeaderFooter {
 	protected String left;
 	protected String center;
 	protected String right;
@@ -102,8 +102,6 @@ public abstract class HeaderFooter {
     }
     public abstract void setRight( String newRight );
 
-    
-    
 
     /**
      * Returns the string that represents the change in font size.
@@ -273,7 +271,7 @@ public abstract class HeaderFooter {
 	
 	/**
 	 * Are fields currently being stripped from
-	 *  the text that this {@link HeaderStories} returns?
+	 *  the text that this {@link HeaderFooter} returns?
 	 *  Default is false, but can be changed
 	 */
 	public boolean areFieldsStripped() {

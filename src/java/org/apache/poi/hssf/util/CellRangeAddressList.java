@@ -16,13 +16,7 @@
 
 package org.apache.poi.hssf.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
-import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Implementation of the cell range address lists,like is described
@@ -35,122 +29,27 @@ import org.apache.poi.util.LittleEndianOutput;
  * range address (called an ADDR structure) contains 4 16-bit-values.
  * </p>
  * 
+ * @deprecated use {@link org.apache.poi.ss.util.CellRangeAddressList}
+ * 
  * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
  */
-public final class CellRangeAddressList {
-
-	/**
-	 * List of <tt>CellRangeAddress</tt>es. Each structure represents a cell range
-	 */
-	private final List _list;
-
-	public CellRangeAddressList() {
-		_list = new ArrayList();
-	}
-	/**
-	 * Convenience constructor for creating a <tt>CellRangeAddressList</tt> with a single 
-	 * <tt>CellRangeAddress</tt>.  Other <tt>CellRangeAddress</tt>es may be added later.
-	 */
+public class CellRangeAddressList extends org.apache.poi.ss.util.CellRangeAddressList {
 	public CellRangeAddressList(int firstRow, int lastRow, int firstCol, int lastCol) {
-		this();
-		addCellRangeAddress(firstRow, firstCol, lastRow, lastCol);
+		super(firstRow,lastRow,firstCol,lastCol);
+	}
+	public CellRangeAddressList() {
+		super();
 	}
 
 	/**
 	 * @param in the RecordInputstream to read the record from
 	 */
 	public CellRangeAddressList(RecordInputStream in) {
+		super();
 		int nItems = in.readUShort();
-		_list = new ArrayList(nItems);
 
 		for (int k = 0; k < nItems; k++) {
 			_list.add(new CellRangeAddress(in));
 		}
-	}
-
-	/**
-	 * Get the number of following ADDR structures. The number of this
-	 * structures is automatically set when reading an Excel file and/or
-	 * increased when you manually add a new ADDR structure . This is the reason
-	 * there isn't a set method for this field .
-	 * 
-	 * @return number of ADDR structures
-	 */
-	public int countRanges() {
-		return _list.size();
-	}
-
-	/**
-	 * Add a cell range structure.
-	 * 
-	 * @param firstRow - the upper left hand corner's row
-	 * @param firstCol - the upper left hand corner's col
-	 * @param lastRow - the lower right hand corner's row
-	 * @param lastCol - the lower right hand corner's col
-	 * @return the index of this ADDR structure
-	 */
-	public void addCellRangeAddress(int firstRow, int firstCol, int lastRow, int lastCol) {
-		CellRangeAddress region = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
-		addCellRangeAddress(region);
-	}
-	public void addCellRangeAddress(CellRangeAddress cra) {
-		_list.add(cra);
-	}
-	public CellRangeAddress remove(int rangeIndex) {
-		if (_list.isEmpty()) {
-			throw new RuntimeException("List is empty");
-		}
-		if (rangeIndex < 0 || rangeIndex >= _list.size()) {
-			throw new RuntimeException("Range index (" + rangeIndex 
-					+ ") is outside allowable range (0.." + (_list.size()-1) + ")");
-		}
-		return (CellRangeAddress) _list.remove(rangeIndex);
-	}
-
-	/**
-	 * @return <tt>CellRangeAddress</tt> at the given index
-	 */
-	public CellRangeAddress getCellRangeAddress(int index) {
-		return (CellRangeAddress) _list.get(index);
-	}
-
-	public int serialize(int offset, byte[] data) {
-		int totalSize = getSize();
-		serialize(new LittleEndianByteArrayOutputStream(data, offset, totalSize));
-		return totalSize;
-	}
-	public void serialize(LittleEndianOutput out) {
-		int nItems = _list.size();
-		out.writeShort(nItems);
-		for (int k = 0; k < nItems; k++) {
-			CellRangeAddress region = (CellRangeAddress) _list.get(k);
-			region.serialize(out);
-		}
-	}
-
-	public int getSize() {
-		return getEncodedSize(_list.size());
-	}
-	/**
-	 * @return the total size of for the specified number of ranges,
-	 *  including the initial 2 byte range count
-	 */
-	public static int getEncodedSize(int numberOfRanges) {
-		return 2 + CellRangeAddress.getEncodedSize(numberOfRanges);
-	}
-	public CellRangeAddressList copy() {
-		CellRangeAddressList result = new CellRangeAddressList();
-		
-		int nItems = _list.size();
-		for (int k = 0; k < nItems; k++) {
-			CellRangeAddress region = (CellRangeAddress) _list.get(k);
-			result.addCellRangeAddress(region.copy());
-		}
-		return result;
-	}
-	public CellRangeAddress[] getCellRangeAddresses() {
-		CellRangeAddress[] result = new CellRangeAddress[_list.size()];
-		_list.toArray(result);
-		return result;
 	}
 }

@@ -18,8 +18,8 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
-import org.apache.poi.hssf.util.CellRangeAddress;
-import org.apache.poi.hssf.util.Region;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.Region;
 
 /**
  * HSSFConditionalFormatting class encapsulates all settings of Conditional Formatting. 

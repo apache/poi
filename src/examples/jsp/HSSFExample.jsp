@@ -92,7 +92,7 @@ row.getRowNum() %> </b>
 %>									
                                     <%= "CELL col=" 
 									
-	+ cell.getCellNum()
+	+ cell.getColumnIndex()
                                         + " VALUE=" + value %>
 <%
                                 } 

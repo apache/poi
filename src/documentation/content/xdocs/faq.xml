@@ -181,7 +181,7 @@ System.out.println("Core POI came from " + path);
         </question>
         <answer>
             <p>
-	   Yes.  You first need to get a HSSFDataFormat object from the workbook and call getFormat with the desired format.  Some examples are <link href="hssf/quick-guide.html#DataFormats">here</link>.
+	   Yes.  You first need to get a HSSFDataFormat object from the workbook and call getFormat with the desired format.  Some examples are <link href="spreadsheet/quick-guide.html#DataFormats">here</link>.
             </p>
         </answer>
     </faq>

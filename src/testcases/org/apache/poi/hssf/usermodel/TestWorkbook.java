@@ -30,8 +30,9 @@ import org.apache.poi.hssf.record.BackupRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
-import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.Region;
 import org.apache.poi.util.TempFile;
 
 /**

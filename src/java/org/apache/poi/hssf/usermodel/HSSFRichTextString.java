@@ -17,11 +17,13 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.util.Iterator;
+
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.LabelSSTRecord;
 import org.apache.poi.hssf.record.UnicodeString;
-
-import java.util.Iterator;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.RichTextString;
 /**
  * Rich text unicode string.  These strings can have fonts applied to
  * arbitary parts of the string.
@@ -30,7 +32,7 @@ import java.util.Iterator;
  * @author Jason Height (jheight at apache.org)
  */
 public class HSSFRichTextString
-        implements Comparable
+        implements Comparable, RichTextString
 {
     /** Place holder for indicating that NO_FONT has been applied here */
     public static final short NO_FONT = 0;
@@ -136,16 +138,16 @@ public class HSSFRichTextString
      * @param endIndex      The end index to apply to font to (exclusive)
      * @param font          The index of the font to use.
      */
-    public void applyFont(int startIndex, int endIndex, HSSFFont font)
+    public void applyFont(int startIndex, int endIndex, Font font)
     {
-        applyFont(startIndex, endIndex, font.getIndex());
+        applyFont(startIndex, endIndex, ((HSSFFont) font).getIndex());
     }
 
     /**
      * Sets the font of the entire string.
      * @param font          The font to use.
      */
-    public void applyFont(HSSFFont font)
+    public void applyFont(Font font)
     {
         applyFont(0, string.getCharCount(), font);
     }

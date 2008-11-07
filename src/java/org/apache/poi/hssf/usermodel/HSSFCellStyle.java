@@ -23,6 +23,8 @@ import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.FontRecord;
 import org.apache.poi.hssf.record.StyleRecord;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 
 /**
  * High level representation of the style of a cell in a sheet of a workbook.
@@ -36,7 +38,7 @@ import org.apache.poi.hssf.util.HSSFColor;
  * @see org.apache.poi.hssf.usermodel.HSSFCell#setCellStyle(HSSFCellStyle)
  */
 
-public class HSSFCellStyle
+public class HSSFCellStyle implements CellStyle
 {
     private ExtendedFormatRecord format                     = null;
     private short                index                      = 0;
@@ -307,11 +309,21 @@ public class HSSFCellStyle
      *
      * @return the format string or "General" if not found
      */
-    public String getDataFormatString(Workbook workbook) {
-    	HSSFDataFormat format = new HSSFDataFormat(workbook);
+    public String getDataFormatString(org.apache.poi.ss.usermodel.Workbook workbook) {
+    	HSSFDataFormat format = new HSSFDataFormat( ((HSSFWorkbook)workbook).getWorkbook() );
     	
         int idx = getDataFormat();
         return idx == -1 ? "General" : format.getFormat(getDataFormat());
+    }
+    /**
+     * Get the contents of the format string, by looking up
+     *  the DataFormat against the supplied low level workbook
+     * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
+     */
+    public String getDataFormatString(org.apache.poi.hssf.model.Workbook workbook) {
+    	HSSFDataFormat format = new HSSFDataFormat( workbook );
+    	
+        return format.getFormat(getDataFormat());
     }
 
     /**
@@ -320,11 +332,12 @@ public class HSSFCellStyle
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createFont()
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
      */
-
-    public void setFont(HSSFFont font)
-    {
+    public void setFont(Font font) {
+		setFont((HSSFFont)font);
+	}
+	public void setFont(HSSFFont font) {
         format.setIndentNotParentFont(true);
-        short fontindex = ((HSSFFont) font).getIndex();
+        short fontindex = font.getIndex();
         format.setFontIndex(fontindex);
     }
 
@@ -343,7 +356,7 @@ public class HSSFCellStyle
      * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#getFontIndex()
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
      */
-    public HSSFFont getFont(HSSFWorkbook parentWorkbook) {
+    public HSSFFont getFont(org.apache.poi.ss.usermodel.Workbook parentWorkbook) {
     	return ((HSSFWorkbook) parentWorkbook).getFontAt(getFontIndex());
     }
 
@@ -1009,6 +1022,12 @@ public class HSSFCellStyle
      *  HSSFWorkbook if you like. This allows you to
      *  copy styles from one HSSFWorkbook to another.
      */
+    public void cloneStyleFrom(CellStyle source) {
+		if(source instanceof HSSFCellStyle) {
+			this.cloneStyleFrom((HSSFCellStyle)source);
+		}
+		throw new IllegalArgumentException("Can only clone from one HSSFCellStyle to another, not between HSSFCellStyle and XSSFCellStyle");
+	}
     public void cloneStyleFrom(HSSFCellStyle source) {
     	// First we need to clone the extended format
     	//  record

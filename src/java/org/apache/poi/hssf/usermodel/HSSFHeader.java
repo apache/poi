@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.HeaderRecord;
+import org.apache.poi.ss.usermodel.Header;
 
 /**
  * Class to read and manipulate the header.
@@ -32,7 +33,7 @@ import org.apache.poi.hssf.record.HeaderRecord;
  *
  * @author Shawn Laubach (slaubach at apache dot org)
  */
-public class HSSFHeader extends HeaderFooter {
+public class HSSFHeader extends HeaderFooter implements Header {
 	private HeaderRecord headerRecord;
 
     /**

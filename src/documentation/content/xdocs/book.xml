@@ -35,10 +35,10 @@
     <menu label="Project">
         <menu-item label="Overview" href="overview.html"/>
         <menu-item label="POIFS" href="poifs/index.html"/>
-        <menu-item label="HSSF" href="hssf/index.html"/>
+        <menu-item label="HSSF+XSSF" href="spreadsheet/index.html"/>
         <menu-item label="HWPF" href="hwpf/index.html"/>
         <menu-item label="HPSF" href="hpsf/index.html"/>
-        <menu-item label="HSLF" href="hslf/index.html"/>
+        <menu-item label="HSLF" href="slideshow/index.html"/>
         <menu-item label="HSMF" href="hsmf/index.html"/>
         <menu-item label="HDGF" href="hdgf/index.html"/>
         <menu-item label="HPBF" href="hpbf/index.html"/>

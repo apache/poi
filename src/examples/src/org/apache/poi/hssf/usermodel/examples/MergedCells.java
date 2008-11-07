@@ -20,7 +20,7 @@
 package org.apache.poi.hssf.usermodel.examples;
 
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.Region;
+import org.apache.poi.ss.util.Region;
 
 import java.io.IOException;
 import java.io.FileOutputStream;

@@ -19,6 +19,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.FooterRecord;
+import org.apache.poi.ss.usermodel.Footer;
 
 /**
  * Class to read and manipulate the footer.
@@ -32,7 +33,7 @@ import org.apache.poi.hssf.record.FooterRecord;
  * <P>
  * @author Shawn Laubach (slaubach at apache dot org)
  */
-public class HSSFFooter extends HeaderFooter {
+public class HSSFFooter extends HeaderFooter implements Footer {
     private FooterRecord footerRecord;
 
     /**

@@ -31,6 +31,19 @@
   </header>
 
   <body>
+    <section><title>POI 3.5.1 beta 1, and Office Open XML Support (2008-07-18)</title>
+      <p>We are currently working to support the new Office Open XML
+       file formats, such as XLSX and PPTX, which were introduced in
+       Office 2007.</p>
+      <p>Development for this is in a svn branch, but we are please to
+       announce our first preview release containing this support.
+       Users interested in the OOXML support should download the
+       <link href="http://www.apache.org/dyn/closer.cgi/poi/dev/">POI 3.5.1 beta 1</link>
+       the source and binaries from their
+       <link href="http://www.apache.org/dyn/closer.cgi/poi/dev/">local mirror</link>.
+       People interested should also follow the
+       <link href="mailinglists.html">dev list</link> to track progress.</p>
+    </section>
     <section><title>POI 3.2-FINAL Released (2008-10-19)</title>
       <p>
         The POI team is pleased to announce the release of 3.2 FINAL, the latest release of Apache POI.
@@ -46,47 +59,27 @@
         under Group ID "org.apache.poi" and Version "3.2-FINAL".
       </p>  
     </section>
-    <section><title>Office Open XML Support - POI 3.5</title>
-      <p>We are currently working to support the new Office Open XML
-       file formats, such as XLSX and PPTX, which were introduced in
-       Office 2007.</p>
-      <p>Support for these is currently only available in the 3.5 series,
-       which is in a svn branch (not trunk). POI 3.5.1 beta 3 was released
-       in October 2008, and is our first release including the OOXML support.
-       It is available to download from your favourite
-       <link href="http://www.apache.org/dyn/closer.cgi/poi/dev/">local mirror</link>.
-      </p>
-      <p>Please note that the documentation on the website is for the
-       3.2 series of POI. Documentation on the new OOXML support is
-       included in the 3.5.1 beta 3 distribution.</p>
-    </section>
 
     <section><title>Purpose</title>
       <p>
       The POI project consists of APIs for manipulating various file formats
-      based upon Microsoft's OLE 2 Compound Document format using pure Java.  
-      In short, you can read and write MS Excel files using Java.  Soon, 
-      you'll be able to read and write Word, PowerPoint and Visio files 
-      using Java. POI is your Java Excel solution as well as your Java 
-      Word solution. However, we have a complete API for porting other OLE 
-      2 Compound Document formats, and welcome others to participate.
+      based upon Microsoft's OLE 2 Compound Document format, and Office OpenXML format, using 
+      pure Java.  In short, you can read and write MS Excel files using Java. In addition,
+      you can read and write MS Word and MS PowerPoint files using Java.  POI is your Java Excel 
+      solution (for Excel 97-2007). However, we have a complete API for porting other OLE 2 
+      Compound Document formats and welcome others to participate.
       </p>
       <p>
       OLE 2 Compound Document Format based files include most Microsoft Office
-      files such as XLS and DOC as well as MFC serialization API based file 
-      formats.
+      files such as XLS and DOC as well as MFC serialization API based file formats.
       </p>
       <p>
-      At this time, none of our releases support the new Office Open XML
-      file formats, such as .xlsx or .docx. Work to support these is in
-      progress, and people interested should follow the 
-      <link href="mailinglists.html">dev list</link>. We expect this
-      support to make it into a full release by the summer.
+      Office OpenXML Format based files include the new (2007+) xml based file formats,
+      including Microsoft office files such as XLSX, DOCX and PPTX.
       </p>
       <p>
-         As a general policy, we try to collaborate as much as possible
-         with other projects to provide this functionality.  Examples 
-         include: <link href="http://xml.apache.org/cocoon">Cocoon</link> for
+         As a general policy we try to collaborate as much as possible with other projects to
+         provide this functionality.  Examples include: <link href="http://xml.apache.org/cocoon">Cocoon</link> for
          which there are serializers for HSSF;
          <link href="http://www.openoffice.org">Open Office.org</link> with whom we collaborate in documenting the
          XLS format; and <link href="http://lucene.apache.org/">Lucene</link> 
@@ -98,7 +91,7 @@
  		We'll tackle this on a component level. POI refers to the whole project.
         </p>
         <p>
-		So why should you use POIFS or HSSF?
+		So why should you use POIFS, HSSF or XSSF?
         </p>
         <p>
 		You'd use POIFS if you had a document written in OLE 2 Compound Document Format, probably written using
@@ -107,8 +100,10 @@
 		we say that POIFS is the most complete and correct implementation of this file format to date!
         </p>
         <p>
-		You'd use HSSF if you needed to read, write or modify an Excel file 
-        using Java (XLS).
+		You'd use HSSF if you needed to read or write an Excel file using Java (XLS). You'd use
+        XSSF if you need to read or write an OOXML Excel file using Java (XLSX). The combined
+        SS interface allows you to easily read and write all kinds of Excel files (XLS and XLSX)
+        using Java.
         </p>
       </section>
     </section>
@@ -124,12 +119,12 @@
              pure Java.  It supports both read and write functionality.  All of our components ultimately rely on it by
              definition.  Please see <link href="./poifs/index.html">the POIFS project page</link> for more information.</p>
         </section>
-        <section><title>HSSF for Excel Documents</title>
-             <p>HSSF is our port of the Microsoft Excel 97(-2003) file 
-             format (BIFF8) to pure Java.  It supports read and write
-             capability. (Support for Excel 2007 .xlsx files is in progress). 
-             Please see <link href="./hssf/index.html">the HSSF project 
-             page</link> for more information.</p>
+        <section><title>HSSF and XSSF for Excel Documents</title>
+             <p>HSSF is our port of the Microsoft Excel 97(-2007) file format (BIFF8) to pure 
+              Java. XSSF is our port of the Microsoft Excel XML (2007+) file format (OOXML) to
+              pure Java. They both supports read and write capability. Please see 
+              <link href="./spreadsheet/index.html">the HSSF+XSSF project page</link> for more 
+              information.</p>
         </section>
         <section><title>HWPF for Word Documents</title>
 	<p>HWPF is our port of the Microsoft Word 97 file format to pure
@@ -143,7 +138,7 @@
         <section><title>HSLF for PowerPoint Documents</title>
 	<p>HSLF is our port of the Microsoft PowerPoint 97(-2003) file format to pure
 	  Java. It supports read and write capabilities. Please see <link
-	    href="./hslf/index.html">the HSLF project page for more
+	    href="./slideshow/index.html">the HSLF project page for more
 	    information</link>.</p>
         </section>
         <section><title>HPSF for Document Properties</title>

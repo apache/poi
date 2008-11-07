@@ -33,7 +33,8 @@ import org.apache.poi.util.StringUtil;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class HSSFPatriarch implements HSSFShapeContainer
+public class HSSFPatriarch
+        implements HSSFShapeContainer
 {
     List shapes = new ArrayList();
     HSSFSheet sheet;

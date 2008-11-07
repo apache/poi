@@ -42,9 +42,9 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.CellValue;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.formula.PlainCellCache.Loc;
+import org.apache.poi.ss.usermodel.CellValue;
 
 /**
  * Tests {@link EvaluationCache}.  Makes sure that where possible (previously calculated) cached 
@@ -153,7 +153,7 @@ public class TestEvaluationCache extends TestCase {
 		private void log(String tag, int rowIndex, int columnIndex, Object value) {
 			StringBuffer sb = new StringBuffer(64);
 			sb.append(tag).append(' ');
-			sb.append(new CellReference(rowIndex, columnIndex).formatAsString());
+			sb.append(new CellReference(rowIndex, columnIndex, false, false).formatAsString());
 			if (value != null) {
 				sb.append(' ').append(formatValue(value));
 			}

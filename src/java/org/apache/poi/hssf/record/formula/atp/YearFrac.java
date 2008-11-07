@@ -29,7 +29,7 @@ import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
 /**
  * Implementation of Excel 'Analysis ToolPak' function YEARFRAC()<br/>
@@ -93,7 +93,7 @@ final class YearFrac implements FreeRefFunction {
 				return dVal.doubleValue();
 			}
 			Calendar date = parseDate(strVal);
-			return HSSFDateUtil.getExcelDate(date, false);
+			return DateUtil.getExcelDate(date, false);
 		}
 		return OperandResolver.coerceValueToDouble(ve);
 	}

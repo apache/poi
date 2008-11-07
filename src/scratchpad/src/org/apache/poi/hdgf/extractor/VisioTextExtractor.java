@@ -28,6 +28,7 @@ import org.apache.poi.hdgf.chunks.Chunk.Command;
 import org.apache.poi.hdgf.streams.ChunkStream;
 import org.apache.poi.hdgf.streams.PointerContainingStream;
 import org.apache.poi.hdgf.streams.Stream;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -44,7 +45,10 @@ public class VisioTextExtractor extends POIOLE2TextExtractor {
 		this.hdgf = hdgf;
 	}
 	public VisioTextExtractor(POIFSFileSystem fs) throws IOException {
-		this(new HDGFDiagram(fs));
+		this(fs.getRoot(), fs);
+	}
+	public VisioTextExtractor(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
+		this(new HDGFDiagram(dir, fs));
 		this.fs = fs;
 	}
 	public VisioTextExtractor(InputStream inp) throws IOException {

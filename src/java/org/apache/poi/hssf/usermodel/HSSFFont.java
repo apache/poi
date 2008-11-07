@@ -24,6 +24,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.FontRecord;
+import org.apache.poi.ss.usermodel.Font;
 
 /**
  * Represents a Font used in a workbook.
@@ -35,102 +36,8 @@ import org.apache.poi.hssf.record.FontRecord;
  * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#setFont(HSSFFont)
  */
 
-public class HSSFFont
+public class HSSFFont implements Font
 {
-
-    /**
-     * Arial font
-     */
-
-    public final static String FONT_ARIAL          = "Arial";
-
-    /**
-     * Normal boldness (not bold)
-     */
-
-    public final static short  BOLDWEIGHT_NORMAL   = 0x190;
-
-    /**
-     * Bold boldness (bold)
-     */
-
-    public final static short  BOLDWEIGHT_BOLD     = 0x2bc;
-
-    /**
-     * normal type of black color.
-     */
-
-    public final static short  COLOR_NORMAL        = 0x7fff;
-
-    /**
-     * Dark Red color
-     */
-
-    public final static short  COLOR_RED           = 0xa;
-
-    /**
-     * no type offsetting (not super or subscript)
-     */
-
-    public final static short  SS_NONE             = 0;
-
-    /**
-     * superscript
-     */
-
-    public final static short  SS_SUPER            = 1;
-
-    /**
-     * subscript
-     */
-
-    public final static short  SS_SUB              = 2;
-
-    /**
-     * not underlined
-     */
-
-    public final static byte   U_NONE              = 0;
-
-    /**
-     * single (normal) underline
-     */
-
-    public final static byte   U_SINGLE            = 1;
-
-    /**
-     * double underlined
-     */
-
-    public final static byte   U_DOUBLE            = 2;
-
-    /**
-     * accounting style single underline
-     */
-
-    public final static byte   U_SINGLE_ACCOUNTING = 0x21;
-
-    /**
-     * accounting style double underline
-     */
-
-    public final static byte   U_DOUBLE_ACCOUNTING = 0x22;
-
-    /**
-     * ANSI character set
-     */
-    public final static byte ANSI_CHARSET = 0;
-
-    /**
-     * Default character set.
-     */
-    public final static byte DEFAULT_CHARSET = 1;
-
-    /**
-     * Symbol character set
-     */
-    public final static byte SYMBOL_CHARSET = 2;
-
 
 
     private FontRecord         font;

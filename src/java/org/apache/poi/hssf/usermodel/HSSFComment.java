@@ -16,21 +16,17 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.NoteRecord;
 import org.apache.poi.hssf.record.TextObjectRecord;
-import org.apache.poi.ddf.*;
-
-import java.util.Map;
-import java.util.List;
-import java.util.Iterator;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.RichTextString;
 
 /**
  * Represents a cell comment - a sticky note associated with a cell.
  *
  * @author Yegor Kozlov
  */
-public class HSSFComment extends HSSFTextbox {
+public class HSSFComment extends HSSFTextbox implements Comment {
 
     private boolean visible;
     private short col, row;
@@ -109,7 +105,7 @@ public class HSSFComment extends HSSFTextbox {
      *
      * @return the 0-based column of the cell that contains the comment
      */
-    public short getColumn(){
+    public int getColumn(){
         return col;
     }
 
@@ -141,18 +137,19 @@ public class HSSFComment extends HSSFTextbox {
         if(note != null) note.setAuthor(author);
         this.author = author;
     }
-
+    
     /**
      * Sets the rich text string used by this comment.
      *
      * @param string    Sets the rich text string used by this object.
      */
-    public void setString( HSSFRichTextString string )  {
+    public void setString( RichTextString string )  {
+        HSSFRichTextString hstring = (HSSFRichTextString) string;
         //if font is not set we must set the default one
-        if (string.numFormattingRuns() == 0) string.applyFont((short)0);
+        if (hstring.numFormattingRuns() == 0) hstring.applyFont((short)0);
 
         if (txo != null) {
-            txo.setStr(string);
+            txo.setStr(hstring);
         }
         super.setString(string);
     }

@@ -20,6 +20,7 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.util.RangeAddress;
+import org.apache.poi.ss.usermodel.Name;
 
 /**
  * High Level Representation of a 'defined name' which could be a 'built-in' name,
@@ -27,7 +28,7 @@ import org.apache.poi.hssf.util.RangeAddress;
  *
  * @author Libin Roman (Vista Portal LDT. Developer)
  */
-public final class HSSFName {
+public final class HSSFName implements Name {
     private HSSFWorkbook _book;
     private NameRecord _definedNameRec;
 

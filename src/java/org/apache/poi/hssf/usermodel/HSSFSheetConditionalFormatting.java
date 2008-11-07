@@ -21,8 +21,8 @@ import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
-import org.apache.poi.hssf.util.CellRangeAddress;
-import org.apache.poi.hssf.util.Region;
+import org.apache.poi.ss.util.Region;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * The 'Conditional Formatting' facet of <tt>HSSFSheet</tt>

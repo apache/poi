@@ -30,7 +30,8 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.util.CellRangeAddress;
+import org.apache.poi.ss.util.Region;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ddf.EscherDgRecord;
 
 /**

@@ -20,7 +20,7 @@ package org.apache.poi.ddf;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.record.RecordFormatException;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * The spgr record defines information about a shape group.  Groups in escher

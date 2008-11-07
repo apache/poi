@@ -22,8 +22,8 @@ import java.util.List;
 
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.MergeCellsRecord;
-import org.apache.poi.hssf.util.CellRangeAddress;
-import org.apache.poi.hssf.util.CellRangeAddressList;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddressList;
 
 /**
  * 

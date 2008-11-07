@@ -25,7 +25,7 @@ package org.apache.poi.hssf.record;
  */
 
 public class RecordFormatException
-    extends RuntimeException
+    extends org.apache.poi.util.RecordFormatException
 {
     public RecordFormatException(String exception)
     {

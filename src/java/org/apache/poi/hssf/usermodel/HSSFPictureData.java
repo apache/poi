@@ -20,13 +20,14 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.ddf.EscherBitmapBlip;
 import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ddf.EscherMetafileBlip;
+import org.apache.poi.ss.usermodel.PictureData;
 
 /**
  * Represents binary data stored in the file.  Eg. A GIF, JPEG etc...
  *
  * @author Daniel Noll
  */
-public class HSSFPictureData
+public class HSSFPictureData implements PictureData
 {
     // MSOBI constants for various formats.
     public static final short MSOBI_WMF   = 0x2160;
@@ -53,20 +54,16 @@ public class HSSFPictureData
         this.blip = blip;
     }
 
-    /**
-     * Gets the picture data.
-     *
-     * @return the picture data.
+    /* (non-Javadoc)
+     * @see org.apache.poi.hssf.usermodel.PictureData#getData()
      */
     public byte[] getData()
     {
         return blip.getPicturedata();
     }
 
-    /**
-     * Suggests a file extension for this image.
-     *
-     * @return the file extension.
+    /* (non-Javadoc)
+     * @see org.apache.poi.hssf.usermodel.PictureData#suggestFileExtension()
      */
     public String suggestFileExtension()
     {

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.poi.hssf.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * 

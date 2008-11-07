@@ -16,6 +16,7 @@
 
 package org.apache.poi.hssf.util;
 
+import org.apache.poi.ss.util.CellRangeAddressBase;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;

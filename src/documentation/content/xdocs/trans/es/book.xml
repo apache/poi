@@ -35,7 +35,7 @@
   <menu label="Proyecto">
     <menu-item label="Descripción General" href="overview.html"/>
     <menu-item label="POIFS [EN]" href="../../poifs/index.html"/>
-    <menu-item label="HSSF [EN]" href="../../hssf/index.html"/>
+    <menu-item label="HSSF [EN]" href="../../spreadsheet/index.html"/>
     <menu-item label="HWPF [EN]" href="../../hwpf/index.html"/>
     <menu-item label="HPSF [EN]" href="../../hpsf/index.html"/>
     <menu-item label="POI-Utils [EN]" href="../../utils/index.html"/>

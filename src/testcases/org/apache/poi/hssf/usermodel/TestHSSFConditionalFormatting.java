@@ -21,8 +21,10 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
-import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.Region;
+
 /**
  * 
  * @author Dmitriy Kumshayev

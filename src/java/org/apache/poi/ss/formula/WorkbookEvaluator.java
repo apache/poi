@@ -60,9 +60,9 @@ import org.apache.poi.hssf.record.formula.eval.OperationEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
+import org.apache.poi.ss.usermodel.Cell;
 
 /**
  * Evaluates formula cells.<p/>
@@ -182,7 +182,7 @@ public final class WorkbookEvaluator {
 	private ValueEval evaluateAny(EvaluationCell srcCell, int sheetIndex,
 				int rowIndex, int columnIndex, EvaluationTracker tracker) {
 
-		if (srcCell == null || srcCell.getCellType() != HSSFCell.CELL_TYPE_FORMULA) {
+		if (srcCell == null || srcCell.getCellType() != Cell.CELL_TYPE_FORMULA) {
 			ValueEval result = getValueFromNonFormulaCell(srcCell);
 			tracker.acceptPlainValueDependency(_workbookIx, sheetIndex, rowIndex, columnIndex, result);
 			return result;
@@ -236,15 +236,15 @@ public final class WorkbookEvaluator {
 		}
 		int cellType = cell.getCellType();
 		switch (cellType) {
-			case HSSFCell.CELL_TYPE_NUMERIC:
+			case Cell.CELL_TYPE_NUMERIC:
 				return new NumberEval(cell.getNumericCellValue());
-			case HSSFCell.CELL_TYPE_STRING:
+			case Cell.CELL_TYPE_STRING:
 				return new StringEval(cell.getStringCellValue());
-			case HSSFCell.CELL_TYPE_BOOLEAN:
+			case Cell.CELL_TYPE_BOOLEAN:
 				return BoolEval.valueOf(cell.getBooleanCellValue());
-			case HSSFCell.CELL_TYPE_BLANK:
+			case Cell.CELL_TYPE_BLANK:
 				return BlankEval.INSTANCE;
-			case HSSFCell.CELL_TYPE_ERROR:
+			case Cell.CELL_TYPE_ERROR:
 				return ErrorEval.valueOf(cell.getErrorCellValue());
 		}
 		throw new RuntimeException("Unexpected cell type (" + cellType + ")");

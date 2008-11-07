@@ -17,7 +17,7 @@ limitations under the License.
 
 package org.apache.poi.hssf.record.cf;
 
-import org.apache.poi.hssf.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
