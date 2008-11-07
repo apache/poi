@@ -353,8 +353,8 @@ under the License.
           <param name="destfile" value="${main.log4j.jar}"/>
         </antcall>
         <antcall target="downloadfile">
-          <param name="sourcefile" value="${{main.junit.url}"/>
-          <param name="destfile" value="${{main.junit.jar}"/>
+          <param name="sourcefile" value="${main.junit.url}"/>
+          <param name="destfile" value="${main.junit.jar}"/>
         </antcall>
     </target>
 
