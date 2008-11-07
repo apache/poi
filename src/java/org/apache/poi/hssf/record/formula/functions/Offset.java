@@ -165,7 +165,6 @@ public final class Offset implements Function {
 	}
 	
 	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
-		
 		if(args.length < 3 || args.length > 5) {
 			return ErrorEval.VALUE_INVALID;
 		}
@@ -196,7 +195,6 @@ public final class Offset implements Function {
 
 	private static AreaEval createOffset(BaseRef baseRef, 
 			LinearOffsetRange orRow, LinearOffsetRange orCol) throws EvaluationException {
-
 		LinearOffsetRange absRows = orRow.normaliseAndTranslate(baseRef.getFirstRowIndex());
 		LinearOffsetRange absCols = orCol.normaliseAndTranslate(baseRef.getFirstColumnIndex());
 		

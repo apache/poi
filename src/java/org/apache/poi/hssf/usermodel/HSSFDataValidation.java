@@ -18,7 +18,7 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.DVRecord;
 import org.apache.poi.hssf.usermodel.DVConstraint.FormulaPair;
-import org.apache.poi.hssf.util.CellRangeAddressList;
+import org.apache.poi.ss.util.CellRangeAddressList;
 
 /**
  *Utility class for creating data validation cells

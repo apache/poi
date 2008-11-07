@@ -21,8 +21,8 @@ package org.apache.poi.hssf.usermodel;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.util.CellRangeAddress;
-import org.apache.poi.hssf.util.Region;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.Region;
 
 /**
  * Test the ability to clone a sheet. 

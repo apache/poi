@@ -32,10 +32,11 @@ import org.apache.poi.hssf.eventmodel.ERFListener;
 import org.apache.poi.hssf.eventmodel.EventRecordFactory;
 import org.apache.poi.hssf.record.DVRecord;
 import org.apache.poi.hssf.record.RecordFormatException;
-import org.apache.poi.hssf.util.CellRangeAddress;
-import org.apache.poi.hssf.util.CellRangeAddressList;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.ss.util.Region;
 
 /**
  * Class for testing Excel's data validation mechanism

@@ -99,7 +99,7 @@
                     El
                     <link href="http://www.lbank.lt/">Banco de Lituania</link>
                     genera informes de datos estadísticos financieros en formato Excel 
-                    utilizando el API <link href="http://jakarta.apache.org/poi/hssf/">
+                    utilizando el API <link href="http://jakarta.apache.org/poi/spreadsheet/">
                         HSSF</link> del proyecto 
                     <link href="http://jakarta.apache.org/poi/">Jakarta POI</link>
                     El sistema está basado en Oracle JServer y utiliza

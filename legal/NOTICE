@@ -22,8 +22,8 @@ For those wishing to avoid this component, the HDGF part of the POI
 See http://www.gnome.ru/projects/vsdump_en.html
 
 
-The Office Open XML experimental support had additional dependencies,
-with their own licensing:
+The Office Open XML support had additional dependencies, with their 
+own licensing:
  * XML Beans - http://xmlbeans.apache.org/
       Apache Licence Version 2.0 - http://www.apache.org/licenses/LICENSE-2.0
  * DOM4J - http://www.dom4j.org/

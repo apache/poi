@@ -26,7 +26,8 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.aggregates.MergedCellsTable;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
-import org.apache.poi.hssf.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddress;
+
 
 /**
  * Make sure the merge cells record behaves

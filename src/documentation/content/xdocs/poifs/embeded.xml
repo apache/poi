@@ -62,7 +62,7 @@
          <p>PowerPoint does not normally store embeded files
          in the OLE2 layer. Instead, they are held within records
          of the main PowerPoint file. 
-         <br/>See the <link href="./../hslf/how-to-shapes.html#OLE">HSLF Tutorial</link> 
+         <br/>See the <link href="./../slideshow/how-to-shapes.html#OLE">HSLF Tutorial</link> 
          for how to retrieve embedded OLE objects from a presentation</p>
        </section>
     </section>

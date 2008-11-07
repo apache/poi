@@ -43,8 +43,10 @@ import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.formula.FormulaShifter;
-import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.hssf.util.PaneInformation;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -58,7 +60,9 @@ import org.apache.poi.util.POILogger;
  * @author  Jean-Pierre Paris (jean-pierre.paris at m4x dot org) (Just a little, too)
  * @author  Yegor Kozlov (yegor at apache.org) (Autosizing columns)
  */
-public final class HSSFSheet {
+
+public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
+{
     private static final int DEBUG = POILogger.DEBUG;
 
     /* Constants for margins */
@@ -227,7 +231,9 @@ public final class HSSFSheet {
      *
      * @param row   representing a row to remove.
      */
-    public void removeRow(HSSFRow row) {
+    public void removeRow(Row row)
+    {
+        HSSFRow hrow = (HSSFRow) row;
         if (rows.size() > 0)
         {
             Integer key = new Integer(row.getRowNum());
@@ -238,15 +244,15 @@ public final class HSSFSheet {
                 }
                 throw new RuntimeException("Specified row does not belong to this sheet");
             }
-            if (row.getRowNum() == getLastRowNum())
+            if (hrow.getRowNum() == getLastRowNum())
             {
                 lastrow = findLastRow(lastrow);
             }
-            if (row.getRowNum() == getFirstRowNum())
+            if (hrow.getRowNum() == getFirstRowNum())
             {
                 firstrow = findFirstRow(firstrow);
             }
-            sheet.removeRow(row.getRowRecord());
+            sheet.removeRow(hrow.getRowRecord());
         }
     }
 
@@ -543,7 +549,7 @@ public final class HSSFSheet {
     /**
      * @deprecated (Aug-2008) use <tt>CellRangeAddress</tt> instead of <tt>Region</tt>
      */
-    public int addMergedRegion(Region region)
+    public int addMergedRegion(org.apache.poi.ss.util.Region region)
     {
         return sheet.addMergedRegion( region.getRowFrom(),
                 region.getColumnFrom(),
@@ -1644,8 +1650,8 @@ public final class HSSFSheet {
      * @param column the column index
      * @param style the style to set
      */
-    public void setDefaultColumnStyle(short column, HSSFCellStyle style) {
-        sheet.setDefaultColumnStyle(column, style.getIndex());
+    public void setDefaultColumnStyle(short column, CellStyle style) {
+        sheet.setDefaultColumnStyle(column, ((HSSFCellStyle)style).getIndex());
     }
 
     /**

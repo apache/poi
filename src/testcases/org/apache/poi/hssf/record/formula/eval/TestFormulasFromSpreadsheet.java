@@ -25,11 +25,12 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.formula.functions.TestMathX;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 
 /**
  * Tests formulas and operators as loaded from a test data spreadsheet.<p/>
@@ -88,7 +89,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	}
 
 	private HSSFWorkbook workbook;
-	private HSSFSheet sheet;
+	private Sheet sheet;
 	// Note - multiple failures are aggregated before ending.  
 	// If one or more functions fail, a single AssertionFailedError is thrown at the end
 	private int _functionFailureCount;
@@ -96,7 +97,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	private int _evaluationFailureCount;
 	private int _evaluationSuccessCount;
 
-	private static final HSSFCell getExpectedValueCell(HSSFRow row, int columnIndex) {
+	private static final Cell getExpectedValueCell(Row row, int columnIndex) {
 		if (row == null) {
 			return null;
 		}
@@ -104,7 +105,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	}
 
 
-	private static void confirmExpectedResult(String msg, HSSFCell expected, HSSFFormulaEvaluator.CellValue actual) {
+	private static void confirmExpectedResult(String msg, Cell expected, CellValue actual) {
 		if (expected == null) {
 			throw new AssertionFailedError(msg + " - Bad setup data expected value is null");
 		}
@@ -113,25 +114,25 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 		}
 		
 		switch (expected.getCellType()) {
-			case HSSFCell.CELL_TYPE_BLANK:
-				assertEquals(msg, HSSFCell.CELL_TYPE_BLANK, actual.getCellType());
+			case Cell.CELL_TYPE_BLANK:
+				assertEquals(msg, Cell.CELL_TYPE_BLANK, actual.getCellType());
 				break;
-			case HSSFCell.CELL_TYPE_BOOLEAN:
-				assertEquals(msg, HSSFCell.CELL_TYPE_BOOLEAN, actual.getCellType());
+			case Cell.CELL_TYPE_BOOLEAN:
+				assertEquals(msg, Cell.CELL_TYPE_BOOLEAN, actual.getCellType());
 				assertEquals(msg, expected.getBooleanCellValue(), actual.getBooleanValue());
 				break;
-			case HSSFCell.CELL_TYPE_ERROR:
-				assertEquals(msg, HSSFCell.CELL_TYPE_ERROR, actual.getCellType());
+			case Cell.CELL_TYPE_ERROR:
+				assertEquals(msg, Cell.CELL_TYPE_ERROR, actual.getCellType());
 				assertEquals(msg, ErrorEval.getText(expected.getErrorCellValue()), ErrorEval.getText(actual.getErrorValue()));
 				break;
-			case HSSFCell.CELL_TYPE_FORMULA: // will never be used, since we will call method after formula evaluation
+			case Cell.CELL_TYPE_FORMULA: // will never be used, since we will call method after formula evaluation
 				throw new AssertionFailedError("Cannot expect formula as result of formula evaluation: " + msg);
-			case HSSFCell.CELL_TYPE_NUMERIC:
-				assertEquals(msg, HSSFCell.CELL_TYPE_NUMERIC, actual.getCellType());
+			case Cell.CELL_TYPE_NUMERIC:
+				assertEquals(msg, Cell.CELL_TYPE_NUMERIC, actual.getCellType());
 				TestMathX.assertEquals(msg, expected.getNumericCellValue(), actual.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
 				break;
-			case HSSFCell.CELL_TYPE_STRING:
-				assertEquals(msg, HSSFCell.CELL_TYPE_STRING, actual.getCellType());
+			case Cell.CELL_TYPE_STRING:
+				assertEquals(msg, Cell.CELL_TYPE_STRING, actual.getCellType());
 				assertEquals(msg, expected.getRichStringCellValue().getString(), actual.getStringValue());
 				break;
 		}
@@ -177,12 +178,11 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	 * Typically pass <code>null</code> to test all functions
 	 */
 	private void processFunctionGroup(int startRowIndex, String testFocusFunctionName) {
-
 		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(workbook);
 
 		int rowIndex = startRowIndex;
 		while (true) {
-			HSSFRow r = sheet.getRow(rowIndex);
+			Row r = sheet.getRow(rowIndex);
 			String targetFunctionName = getTargetFunctionName(r);
 			if(targetFunctionName == null) {
 				throw new AssertionFailedError("Test spreadsheet cell empty on row (" 
@@ -196,7 +196,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 			if(testFocusFunctionName == null || targetFunctionName.equalsIgnoreCase(testFocusFunctionName)) {
 				
 				// expected results are on the row below
-				HSSFRow expectedValuesRow = sheet.getRow(rowIndex + 1);
+				Row expectedValuesRow = sheet.getRow(rowIndex + 1);
 				if(expectedValuesRow == null) {
 					int missingRowNum = rowIndex + 2; //+1 for 1-based, +1 for next row
 					throw new AssertionFailedError("Missing expected values row for function '" 
@@ -220,21 +220,21 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	 * cases, and whether they all succeeded.
 	 */
 	private int processFunctionRow(HSSFFormulaEvaluator evaluator, String targetFunctionName, 
-			HSSFRow formulasRow, HSSFRow expectedValuesRow) {
+			Row formulasRow, Row expectedValuesRow) {
 		
 		int result = Result.NO_EVALUATIONS_FOUND; // so far
 		short endcolnum = formulasRow.getLastCellNum();
 
 		// iterate across the row for all the evaluation cases
 		for (int colnum=SS.COLUMN_INDEX_FIRST_TEST_VALUE; colnum < endcolnum; colnum++) {
-			HSSFCell c = formulasRow.getCell(colnum);
-			if (c == null || c.getCellType() != HSSFCell.CELL_TYPE_FORMULA) {
+			Cell c = formulasRow.getCell(colnum);
+			if (c == null || c.getCellType() != Cell.CELL_TYPE_FORMULA) {
 				continue;
 			}
 
-			HSSFFormulaEvaluator.CellValue actualValue = evaluator.evaluate(c);
+			CellValue actualValue = evaluator.evaluate(c);
 
-			HSSFCell expectedValueCell = getExpectedValueCell(expectedValuesRow, colnum);
+			Cell expectedValueCell = getExpectedValueCell(expectedValuesRow, colnum);
 			try {
 				confirmExpectedResult("Function '" + targetFunctionName + "': Formula: " + c.getCellFormula() + " @ " + formulasRow.getRowNum() + ":" + colnum,
 						expectedValueCell, actualValue);
@@ -287,20 +287,20 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	/**
 	 * @return <code>null</code> if cell is missing, empty or blank
 	 */
-	private static String getTargetFunctionName(HSSFRow r) {
+	private static String getTargetFunctionName(Row r) {
 		if(r == null) {
 			System.err.println("Warning - given null row, can't figure out function name");
 			return null;
 		}
-		HSSFCell cell = r.getCell(SS.COLUMN_INDEX_FUNCTION_NAME);
+		Cell cell = r.getCell(SS.COLUMN_INDEX_FUNCTION_NAME);
 		if(cell == null) {
 			System.err.println("Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name");
 			return null;
 		}
-		if(cell.getCellType() == HSSFCell.CELL_TYPE_BLANK) {
+		if(cell.getCellType() == Cell.CELL_TYPE_BLANK) {
 			return null;
 		}
-		if(cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
+		if(cell.getCellType() == Cell.CELL_TYPE_STRING) {
 			return cell.getRichStringCellValue().getString();
 		}
 		

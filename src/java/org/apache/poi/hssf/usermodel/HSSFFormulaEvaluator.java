@@ -26,6 +26,8 @@ import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellValue;
 
 /**
  * Evaluates formula cells.<p/>
@@ -37,7 +39,7 @@ import org.apache.poi.ss.formula.WorkbookEvaluator;
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  * @author Josh Micich
  */
-public class HSSFFormulaEvaluator {
+public class HSSFFormulaEvaluator /* almost implements FormulaEvaluator */ {
 
 	private WorkbookEvaluator _bookEvaluator;
 
@@ -120,7 +122,7 @@ public class HSSFFormulaEvaluator {
 	 * @param cell may be <code>null</code> signifying that the cell is not present (or blank)
 	 * @return <code>null</code> if the supplied cell is <code>null</code> or blank
 	 */
-	public CellValue evaluate(HSSFCell cell) {
+	public CellValue evaluate(Cell cell) {
 		if (cell == null) {
 			return null;
 		}
@@ -158,7 +160,7 @@ public class HSSFFormulaEvaluator {
 	 * @param cell The cell to evaluate
 	 * @return -1 for non-formula cells, or the type of the <em>formula result</em>
 	 */
-	public int evaluateFormulaCell(HSSFCell cell) {
+	public int evaluateFormulaCell(Cell cell) {
 		if (cell == null || cell.getCellType() != HSSFCell.CELL_TYPE_FORMULA) {
 			return -1;
 		}
@@ -184,18 +186,19 @@ public class HSSFFormulaEvaluator {
 	 *  value computed for you, use {@link #evaluateFormulaCell(HSSFCell)}
 	 * @param cell
 	 */
-	public HSSFCell evaluateInCell(HSSFCell cell) {
+	public HSSFCell evaluateInCell(Cell cell) {
 		if (cell == null) {
 			return null;
 		}
+		HSSFCell result = (HSSFCell) cell;
 		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
 			CellValue cv = evaluateFormulaCellValue(cell);
 			setCellType(cell, cv); // cell will no longer be a formula cell
 			setCellValue(cell, cv);
 		}
-		return cell;
+		return result;
 	}
-	private static void setCellType(HSSFCell cell, CellValue cv) {
+	private static void setCellType(Cell cell, CellValue cv) {
 		int cellType = cv.getCellType();
 		switch (cellType) {
 			case HSSFCell.CELL_TYPE_BOOLEAN:
@@ -212,7 +215,7 @@ public class HSSFFormulaEvaluator {
 		throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");
 	}
 
-	private static void setCellValue(HSSFCell cell, CellValue cv) {
+	private static void setCellValue(Cell cell, CellValue cv) {
 		int cellType = cv.getCellType();
 		switch (cellType) {
 			case HSSFCell.CELL_TYPE_BOOLEAN:
@@ -225,7 +228,7 @@ public class HSSFFormulaEvaluator {
 				cell.setCellValue(cv.getNumberValue());
 				break;
 			case HSSFCell.CELL_TYPE_STRING:
-				cell.setCellValue(cv.getRichTextStringValue());
+				cell.setCellValue(new HSSFRichTextString(cv.getStringValue()));
 				break;
 			case HSSFCell.CELL_TYPE_BLANK:
 				// never happens - blanks eventually get translated to zero
@@ -268,8 +271,8 @@ public class HSSFFormulaEvaluator {
 	 * Returns a CellValue wrapper around the supplied ValueEval instance.
 	 * @param eval
 	 */
-	private CellValue evaluateFormulaCellValue(HSSFCell cell) {
-		ValueEval eval = _bookEvaluator.evaluate(new HSSFEvaluationCell(cell));
+	private CellValue evaluateFormulaCellValue(Cell cell) {
+		ValueEval eval = _bookEvaluator.evaluate(new HSSFEvaluationCell((HSSFCell)cell));
 		if (eval instanceof NumberEval) {
 			NumberEval ne = (NumberEval) eval;
 			return new CellValue(ne.getNumberValue());
@@ -286,105 +289,5 @@ public class HSSFFormulaEvaluator {
 			return CellValue.getError(((ErrorEval)eval).getErrorCode());
 		}
 		throw new RuntimeException("Unexpected eval class (" + eval.getClass().getName() + ")");
-	}
-
-	/**
-	 * Mimics the 'data view' of a cell. This allows formula evaluator
-	 * to return a CellValue instead of precasting the value to String
-	 * or Number or boolean type.
-	 * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
-	 */
-	public static final class CellValue {
-		public static final CellValue TRUE = new CellValue(HSSFCell.CELL_TYPE_BOOLEAN, 0.0, true,  null, 0);
-		public static final CellValue FALSE= new CellValue(HSSFCell.CELL_TYPE_BOOLEAN, 0.0, false, null, 0);
-
-		private final int _cellType;
-		private final double _numberValue;
-		private final boolean _booleanValue;
-		private final String _textValue;
-		private final int _errorCode;
-
-		private CellValue(int cellType, double numberValue, boolean booleanValue,
-				String textValue, int errorCode) {
-			_cellType = cellType;
-			_numberValue = numberValue;
-			_booleanValue = booleanValue;
-			_textValue = textValue;
-			_errorCode = errorCode;
-		}
-
-
-		/* package*/ CellValue(double numberValue) {
-			this(HSSFCell.CELL_TYPE_NUMERIC, numberValue, false, null, 0);
-		}
-		/* package*/ static CellValue valueOf(boolean booleanValue) {
-			return booleanValue ? TRUE : FALSE;
-		}
-		/* package*/ CellValue(String stringValue) {
-			this(HSSFCell.CELL_TYPE_STRING, 0.0, false, stringValue, 0);
-		}
-		/* package*/ static CellValue getError(int errorCode) {
-			return new CellValue(HSSFCell.CELL_TYPE_ERROR, 0.0, false, null, errorCode);
-		}
-
-
-		/**
-		 * @return Returns the booleanValue.
-		 */
-		public boolean getBooleanValue() {
-			return _booleanValue;
-		}
-		/**
-		 * @return Returns the numberValue.
-		 */
-		public double getNumberValue() {
-			return _numberValue;
-		}
-		/**
-		 * @return Returns the stringValue.
-		 */
-		public String getStringValue() {
-			return _textValue;
-		}
-		/**
-		 * @return Returns the cellType.
-		 */
-		public int getCellType() {
-			return _cellType;
-		}
-		/**
-		 * @return Returns the errorValue.
-		 */
-		public byte getErrorValue() {
-			return (byte) _errorCode;
-		}
-		/**
-		 * @return Returns the richTextStringValue.
-		 * @deprecated (Sep 2008) Text formatting is lost during formula evaluation.  Use {@link #getStringValue()}
-		 */
-		public HSSFRichTextString getRichTextStringValue() {
-			return new HSSFRichTextString(_textValue);
-		}
-		public String toString() {
-			StringBuffer sb = new StringBuffer(64);
-			sb.append(getClass().getName()).append(" [");
-			sb.append(formatAsString());
-			sb.append("]");
-			return sb.toString();
-		}
-
-		public String formatAsString() {
-			switch (_cellType) {
-				case HSSFCell.CELL_TYPE_NUMERIC:
-					return String.valueOf(_numberValue);
-				case HSSFCell.CELL_TYPE_STRING:
-					return '"' + _textValue + '"';
-				case HSSFCell.CELL_TYPE_BOOLEAN:
-					return _booleanValue ? "TRUE" : "FALSE";
-				case HSSFCell.CELL_TYPE_ERROR:
-					return ErrorEval.getText(_errorCode);
-			}
-			return "<error unexpected cell type " + _cellType + ">";
-		}
 	}
 }

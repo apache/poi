@@ -15,8 +15,8 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.util;
 
+package org.apache.poi.hssf.util;
 
 /**
  * Represents a from/to row/col square.  This is a object primitive
@@ -24,162 +24,24 @@ package org.apache.poi.hssf.util;
  * to represent a string of characters.  Its really only useful for HSSF though.
  *
  * @author  Andrew C. Oliver acoliver at apache dot org
- * @deprecated (Aug-2008) use {@link CellRangeAddress}
  */
-public class Region {
-    private int   rowFrom;
-    private short colFrom;
-    private int   rowTo;
-    private short colTo;
 
+public class Region extends org.apache.poi.ss.util.Region
+{
     /**
      * Creates a new instance of Region (0,0 - 0,0)
      */
-
     public Region()
     {
+		super();
     }
 
     public Region(int rowFrom, short colFrom, int rowTo, short colTo)
     {
-        this.rowFrom = rowFrom;
-        this.rowTo   = rowTo;
-        this.colFrom = colFrom;
-        this.colTo   = colTo;
+		super(rowFrom, colFrom, rowTo, colTo);
     }
 
-
-    /**
-     * get the upper left hand corner column number
-     *
-     * @return column number for the upper left hand corner
-     */
-
-    public short getColumnFrom()
-    {
-        return colFrom;
-    }
-
-    /**
-     * get the upper left hand corner row number
-     *
-     * @return row number for the upper left hand corner
-     */
-
-    public int getRowFrom()
-    {
-        return rowFrom;
-    }
-
-    /**
-     * get the lower right hand corner column number
-     *
-     * @return column number for the lower right hand corner
-     */
-
-    public short getColumnTo()
-    {
-        return colTo;
-    }
-
-    /**
-     * get the lower right hand corner row number
-     *
-     * @return row number for the lower right hand corner
-     */
-
-    public int getRowTo()
-    {
-        return rowTo;
-    }
-
-    /**
-     * set the upper left hand corner column number
-     *
-     * @param colFrom  column number for the upper left hand corner
-     */
-
-    public void setColumnFrom(short colFrom)
-    {
-        this.colFrom = colFrom;
-    }
-
-    /**
-     * set the upper left hand corner row number
-     *
-     * @param rowFrom  row number for the upper left hand corner
-     */
-
-    public void setRowFrom(int rowFrom)
-    {
-        this.rowFrom = rowFrom;
-    }
-
-    /**
-     * set the lower right hand corner column number
-     *
-     * @param colTo  column number for the lower right hand corner
-     */
-
-    public void setColumnTo(short colTo)
-    {
-        this.colTo = colTo;
-    }
-
-    /**
-     * get the lower right hand corner row number
-     *
-     * @param rowTo  row number for the lower right hand corner
-     */
-
-    public void setRowTo(int rowTo)
-    {
-        this.rowTo = rowTo;
-    }
-
-
-	/**
-	 * Convert a List of CellRange objects to an array of regions 
-	 *  
-	 * @param List of CellRange objects
-	 * @return regions
-	 */
-	public static Region[] convertCellRangesToRegions(CellRangeAddress[] cellRanges) {
-		int size = cellRanges.length;
-		if(size < 1) {
-			return new Region[0];
-		}
-		
-		Region[] result = new Region[size];
-
-		for (int i = 0; i != size; i++) {
-			result[i] = convertToRegion(cellRanges[i]);
-		}
-		return result;
-	}
-
-
-		
-	private static Region convertToRegion(CellRangeAddress cr) {
-		
-		return new Region(cr.getFirstRow(), (short)cr.getFirstColumn(), cr.getLastRow(), (short)cr.getLastColumn());
-	}
-
-	public static CellRangeAddress[] convertRegionsToCellRanges(Region[] regions) {
-		int size = regions.length;
-		if(size < 1) {
-			return new CellRangeAddress[0];
-		}
-		
-		CellRangeAddress[] result = new CellRangeAddress[size];
-
-		for (int i = 0; i != size; i++) {
-			result[i] = convertToCellRangeAddress(regions[i]);
-		}
-		return result;
-	}
-
-	public static CellRangeAddress convertToCellRangeAddress(Region r) {
-		return new CellRangeAddress(r.getRowFrom(), r.getRowTo(), r.getColumnFrom(), r.getColumnTo());
+    public Region(String ref) {
+		super(ref);
 	}
 }

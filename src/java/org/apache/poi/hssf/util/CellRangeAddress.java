@@ -18,17 +18,15 @@ package org.apache.poi.hssf.util;
 
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.SelectionRecord;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
-import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p/>
  * 
  * Note - {@link SelectionRecord} uses the BIFF5 version of this structure
+ * @deprecated use {@link org.apache.poi.ss.util.CellRangeAddress}
  * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
  */
-public final class CellRangeAddress extends CellRangeAddressBase {
+public class CellRangeAddress extends org.apache.poi.ss.util.CellRangeAddress {
 	/*
 	 * TODO - replace  org.apache.poi.hssf.util.Region
 	 */
@@ -37,7 +35,6 @@ public final class CellRangeAddress extends CellRangeAddressBase {
 	public CellRangeAddress(int firstRow, int lastRow, int firstCol, int lastCol) {
 		super(firstRow, lastRow, firstCol, lastCol);
 	}
-
 	public CellRangeAddress(RecordInputStream in) {
 		super(readUShortAndCheck(in), in.readUShort(), in.readUShort(), in.readUShort());
 	}
@@ -48,27 +45,5 @@ public final class CellRangeAddress extends CellRangeAddressBase {
 			throw new RuntimeException("Ran out of data reading CellRangeAddress");
 		}
 		return in.readUShort();
-	}
-
-	/**
-	 * @deprecated use {@link #serialize(LittleEndianOutput)}
-	 */
-	public int serialize(int offset, byte[] data) {
-		serialize(new LittleEndianByteArrayOutputStream(data, offset, ENCODED_SIZE));
-		return ENCODED_SIZE;
-	}
-	public void serialize(LittleEndianOutput out) {
-		out.writeShort(getFirstRow());
-		out.writeShort(getLastRow());
-		out.writeShort(getFirstColumn());
-		out.writeShort(getLastColumn());
-	}
-	
-	public CellRangeAddress copy() {
-		return new CellRangeAddress(getFirstRow(), getLastRow(), getFirstColumn(), getLastColumn());
-	}
-
-	public static int getEncodedSize(int numberOfItems) {
-		return numberOfItems * ENCODED_SIZE;
 	}
 }

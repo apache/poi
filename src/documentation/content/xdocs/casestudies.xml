@@ -132,7 +132,7 @@ format,
                     reports financial statistical data to Excel format using the
                     <link href="http://poi.apache.org/">Apache POI</link>
                     project's
-                    <link href="hssf/">
+                    <link href="spreadsheet/">
                         HSSF</link> API.  The system is based on Oracle JServer and
                     utilizes a Java stored procedure that outputs to XLS format
                     using the HSSF API.  - Arian Lashkov (alaskov at lbank.lt)

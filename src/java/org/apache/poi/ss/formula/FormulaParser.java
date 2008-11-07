@@ -61,7 +61,7 @@ import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.hssf.util.CellReference.NameType;
+import org.apache.poi.ss.util.CellReference.NameType;
 
 /**
  * This class parses a formula string into a List of tokens in RPN order.

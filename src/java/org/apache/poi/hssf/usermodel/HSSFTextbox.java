@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.ss.usermodel.RichTextString;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 
@@ -79,12 +81,14 @@ public class HSSFTextbox
     /**
      * @param string    Sets the rich text string used by this object.
      */
-    public void setString( HSSFRichTextString string )
+    public void setString( RichTextString string )
     {
-        //if font is not set we must set the default one
-        if (string.numFormattingRuns() == 0) string.applyFont((short)0);
+        HSSFRichTextString rtr = (HSSFRichTextString)string;
 
-        this.string = string;
+        // If font is not set we must set the default one
+        if (rtr.numFormattingRuns() == 0) rtr.applyFont((short)0);
+
+        this.string = rtr;
     }
 
     /**

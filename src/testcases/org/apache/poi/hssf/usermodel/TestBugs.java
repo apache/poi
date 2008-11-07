@@ -27,6 +27,9 @@ import java.util.List;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.poi.ss.util.Region;
+import org.apache.poi.ss.util.CellRangeAddress;
+
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
@@ -35,7 +38,6 @@ import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.util.TempFile;
 
 /**

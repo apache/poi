@@ -20,14 +20,15 @@ package org.apache.poi.hssf.extractor;
 import java.io.IOException;
 
 import org.apache.poi.POIOLE2TextExtractor;
+import org.apache.poi.ss.usermodel.HeaderFooter;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.usermodel.HeaderFooter;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFComment;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -39,7 +40,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  the XLS2CSVmra example
  * @see org.apache.poi.hssf.eventusermodel.examples.XLS2CSVmra
  */
-public class ExcelExtractor extends POIOLE2TextExtractor {
+public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.poi.ss.extractor.ExcelExtractor {
 	private HSSFWorkbook wb;
 	private boolean includeSheetNames = true;
 	private boolean formulasNotResults = false;
@@ -51,7 +52,10 @@ public class ExcelExtractor extends POIOLE2TextExtractor {
 		this.wb = wb;
 	}
 	public ExcelExtractor(POIFSFileSystem fs) throws IOException {
-		this(new HSSFWorkbook(fs));
+		this(fs.getRoot(), fs);
+	}
+	public ExcelExtractor(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
+		this(new HSSFWorkbook(dir, fs, true));
 	}
 	
 
@@ -109,7 +113,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor {
 			// Header text, if there is any
 			if(sheet.getHeader() != null) {
 				text.append(
-						extractHeaderFooter(sheet.getHeader())
+						_extractHeaderFooter(sheet.getHeader())
 				);
 			}
 			
@@ -199,7 +203,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor {
 			// Finally Feader text, if there is any
 			if(sheet.getFooter() != null) {
 				text.append(
-						extractHeaderFooter(sheet.getFooter())
+						_extractHeaderFooter(sheet.getFooter())
 				);
 			}
 		}
@@ -207,7 +211,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor {
 		return text.toString();
 	}
 	
-	private String extractHeaderFooter(HeaderFooter hf) {
+	public static String _extractHeaderFooter(HeaderFooter hf) {
 		StringBuffer text = new StringBuffer();
 		
 		if(hf.getLeft() != null) {

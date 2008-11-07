@@ -48,10 +48,11 @@
         </p> 
       </section>
       
-      <section><title>HSSF</title>
+      <section><title>HSSF and XSSF</title>
         <p>
-          <link href="hssf/index.html">HSSF</link> is the set of APIs 
-           for reading and writing Microsoft Excel 97(-XP) spreadsheets using (only) Java.
+          <link href="spreadsheet/index.html">HSSF and XSSF</link> are 
+           the set of APIs for reading and writing Microsoft Excel 
+           97-2007 and OOXML spreadsheets using (only) Java.
         </p>
       </section>
 
@@ -64,7 +65,7 @@
 
       <section><title>HSLF</title>
         <p>
-          <link href="hslf/index.html">HSLF</link>  is the set of APIs                   
+          <link href="slideshow/index.html">HSLF</link>  is the set of APIs                   
           for reading and writing Microsoft PowerPoint 97(-XP) documents using (only) Java.
         </p>
       </section>

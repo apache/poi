@@ -20,7 +20,7 @@ package org.apache.poi.hssf.record;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * Tests the serialization and deserialization of the TestCFHeaderRecord

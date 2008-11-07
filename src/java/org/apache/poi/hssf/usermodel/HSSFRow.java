@@ -23,6 +23,8 @@ import java.util.NoSuchElementException;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 
 /**
  * High level representation of a row of a spreadsheet.
@@ -32,7 +34,7 @@ import org.apache.poi.hssf.record.RowRecord;
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class HSSFRow implements Comparable {
+public final class HSSFRow implements Comparable, Row {
 
     // used for collections
     public final static int INITIAL_CAPACITY = 5;
@@ -90,11 +92,18 @@ public final class HSSFRow implements Comparable {
 
         setRowNum(record.getRowNumber());
     }
+
     /**
      * @deprecated (Aug 2008) use {@link HSSFRow#createCell(int) }
      */
     public HSSFCell createCell(short columnIndex) {
         return createCell((int)columnIndex);
+    }
+    /**
+     * @deprecated (Aug 2008) use {@link HSSFRow#createCell(int, int) }
+     */
+    public HSSFCell createCell(short columnIndex, int type) {
+        return createCell((int)columnIndex, type);
     }
     /**
      * Use this to create new cells within the row and return it.
@@ -106,17 +115,11 @@ public final class HSSFRow implements Comparable {
      *
      * @return HSSFCell a high level representation of the created cell.
      */
-    public HSSFCell createCell(int columnIndex)
+    public HSSFCell createCell(int column)
     {
-      return this.createCell(columnIndex,HSSFCell.CELL_TYPE_BLANK);
+        return this.createCell(column,HSSFCell.CELL_TYPE_BLANK);
     }
 
-    /**
-     * @deprecated (Aug 2008) use {@link HSSFRow#createCell(int, int) }
-     */
-    public HSSFCell createCell(short columnIndex, int type) {
-        return createCell((int)columnIndex, type);
-    }
     /**
      * Use this to create new cells within the row and return it.
      * <p>
@@ -127,11 +130,14 @@ public final class HSSFRow implements Comparable {
      *
      * @return HSSFCell a high level representation of the created cell.
      */
-
     public HSSFCell createCell(int columnIndex, int type)
     {
-        HSSFCell cell = new HSSFCell(book, sheet, getRowNum(), (short)columnIndex, type);
+    	short shortCellNum = (short)columnIndex;
+    	if(columnIndex > 0x7FFF) {
+    		shortCellNum = (short)(0xffff - columnIndex);
+    	}
 
+        HSSFCell cell = new HSSFCell(book, sheet, getRowNum(), shortCellNum, type);
         addCell(cell);
         sheet.getSheet().addValueRecord(getRowNum(), cell.getCellValueRecord());
         return cell;
@@ -141,11 +147,11 @@ public final class HSSFRow implements Comparable {
      * remove the HSSFCell from this row.
      * @param cell to remove
      */
-    public void removeCell(HSSFCell cell) {
+    public void removeCell(Cell cell) {
         if(cell == null) {
             throw new IllegalArgumentException("cell must not be null");
         }
-        removeCell(cell, true);
+        removeCell((HSSFCell)cell, true);
     }
     private void removeCell(HSSFCell cell, boolean alsoRemoveRecords) {
         
@@ -549,26 +555,6 @@ public final class HSSFRow implements Comparable {
     }
 
     /**
-     * Used to specify the different possible policies
-     *  if for the case of null and blank cells
-     */
-    public static class MissingCellPolicy {
-        private static int NEXT_ID = 1;
-        private final int id;
-        /* package */ MissingCellPolicy() {
-            this.id = NEXT_ID++;
-        }
-    }
-
-    /** Missing cells are returned as null, Blank cells are returned as normal */
-    public static final MissingCellPolicy RETURN_NULL_AND_BLANK = new MissingCellPolicy();
-    /** Missing cells are returned as null, as are blank cells */
-    public static final MissingCellPolicy RETURN_BLANK_AS_NULL = new MissingCellPolicy();
-    /** A new, blank cell is created for missing cells. Blank cells are returned as normal */
-    public static final MissingCellPolicy CREATE_NULL_AS_BLANK = new MissingCellPolicy();
-    
-
-    /**
      * @return cell iterator of the physically defined cells. 
      * Note that the 4th element might well not be cell 4, as the iterator
      *  will not return un-defined (null) cells.
@@ -581,7 +567,7 @@ public final class HSSFRow implements Comparable {
       return new CellIterator();
     }
     /**
-     * Alias for {@link CellIterator} to allow
+     * Alias for {@link #cellIterator} to allow
      *  foreach loops
      */
     public Iterator iterator() { 

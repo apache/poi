@@ -17,8 +17,8 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.util.CellRangeAddress;
-import org.apache.poi.hssf.util.CellRangeAddressList;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.util.LittleEndian;
 
 /**

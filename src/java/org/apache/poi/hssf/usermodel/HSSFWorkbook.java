@@ -58,10 +58,11 @@ import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
-import org.apache.poi.hssf.usermodel.HSSFRow.MissingCellPolicy;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -77,7 +78,7 @@ import org.apache.poi.util.POILogger;
  * @author  Shawn Laubach (slaubach at apache dot org)
  * @version 2.0-pre
  */
-public class HSSFWorkbook extends POIDocument
+public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.usermodel.Workbook
 {
     private static final int MAX_ROW = 0xFFFF;
     private static final short MAX_COLUMN = (short)0x00FF;
@@ -612,7 +613,7 @@ public class HSSFWorkbook extends POIDocument
      * @param sheet the sheet to look up
      * @return index of the sheet (0 based). <tt>-1</tt> if not found
      */
-    public int getSheetIndex(HSSFSheet sheet)
+    public int getSheetIndex(org.apache.poi.ss.usermodel.Sheet sheet)
     {
         for(int i=0; i<_sheets.size(); i++) {
             if(_sheets.get(i) == sheet) {
@@ -621,6 +622,43 @@ public class HSSFWorkbook extends POIDocument
         }
         return -1;
     }
+
+    /**
+<<<<<<< .working
+     * Returns the external sheet index of the sheet
+     *  with the given internal index, creating one
+     *  if needed.
+     * Used by some of the more obscure formula and
+     *  named range things.
+     * @deprecated for POI internal use only (formula parsing).  This method is likely to
+     * be removed in future versions of POI.
+     */
+    public int getExternalSheetIndex(int internalSheetIndex) {
+        return workbook.checkExternSheet(internalSheetIndex);
+    }
+    /**
+     * @deprecated for POI internal use only (formula rendering).  This method is likely to
+     * be removed in future versions of POI.
+     */
+    public String findSheetNameFromExternSheet(int externSheetIndex){
+        // TODO - don't expose internal ugliness like externSheet indexes to the user model API
+        return workbook.findSheetNameFromExternSheet(externSheetIndex);
+    }
+    /**
+     * @deprecated for POI internal use only (formula rendering).  This method is likely to
+     * be removed in future versions of POI.
+     * 
+     * @param refIndex Index to REF entry in EXTERNSHEET record in the Link Table
+     * @param definedNameIndex zero-based to DEFINEDNAME or EXTERNALNAME record
+     * @return the string representation of the defined or external name
+     */
+    public String resolveNameXText(int refIndex, int definedNameIndex) {
+        // TODO - make this less cryptic / move elsewhere
+        return workbook.resolveNameXText(refIndex, definedNameIndex);
+    }
+
+
+
 
     /**
      * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and returns
@@ -761,12 +799,17 @@ public class HSSFWorkbook extends POIDocument
         return _sheets.size();
     }
 
+    public int getSheetIndexFromExternSheetIndex(int externSheetNumber) {
+    	return workbook.getSheetIndexFromExternSheetIndex(externSheetNumber);
+	}
+
     private HSSFSheet[] getSheets() {
         HSSFSheet[] result = new HSSFSheet[_sheets.size()];
         _sheets.toArray(result);
         return result;
     }
-    /**
+
+	/**
      * Get the HSSFSheet object at the given index.
      * @param index of the sheet number (0-based physical & logical)
      * @return HSSFSheet at the provided index
@@ -1295,6 +1338,9 @@ public class HSSFWorkbook extends POIDocument
 
         return result;
     }
+	public NameRecord getNameRecord(int nameIndex) {
+		return getWorkbook().getNameRecord(nameIndex);
+	}
 
     /** gets the named range name
      * @param index the named range index (0 based)
@@ -1669,6 +1715,10 @@ public class HSSFWorkbook extends POIDocument
                 }
             }
         }
+    }
+    
+    public CreationHelper getCreationHelper() {
+    	return new HSSFCreationHelper(this);
     }
 
     private static byte[] newUID() {
