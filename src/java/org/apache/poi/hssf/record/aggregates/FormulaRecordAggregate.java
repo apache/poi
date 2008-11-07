@@ -25,6 +25,8 @@ import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.record.formula.ExpPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.formula.Formula;
 
 /**
  * The formula record aggregate is used to join together the formula record and it's
@@ -57,15 +59,19 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
 					+ (hasCachedStringFlag ? "" : "not ") + " set");
 		}
 
+		if (formulaRec.isSharedFormula()) {
+			CellReference cr = new CellReference(formulaRec.getRow(), formulaRec.getColumn());
+			
+			CellReference firstCell = formulaRec.getFormula().getExpReference();
+			if (firstCell == null) {
+				handleMissingSharedFormulaRecord(formulaRec);
+			} else {
+				_sharedFormulaRecord = svm.linkSharedFormulaRecord(firstCell, this);
+			}
+		}
 		_formulaRecord = formulaRec;
 		_sharedValueManager = svm;
 		_stringRecord = stringRec;
-		if (formulaRec.isSharedFormula()) {
-			_sharedFormulaRecord = svm.linkSharedFormulaRecord(this);
-			if (_sharedFormulaRecord == null) {
-				handleMissingSharedFormulaRecord(formulaRec);
-			}
-		}
 	}
 	/**
 	 * Sometimes the shared formula flag "seems" to be erroneously set (because the corresponding
@@ -132,10 +138,14 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
 
 	public void visitContainedRecords(RecordVisitor rv) {
 		 rv.visitRecord(_formulaRecord);
-		 // TODO - only bother with this if array or table formula
-		 Record sharedFormulaRecord = _sharedValueManager.getRecordForFirstCell(_formulaRecord);
-		 if (sharedFormulaRecord != null) {
-			 rv.visitRecord(sharedFormulaRecord);
+		 CellReference sharedFirstCell = _formulaRecord.getFormula().getExpReference();
+		 // perhaps this could be optimised by consulting the (somewhat unreliable) isShared flag
+		 // and/or distinguishing between tExp and tTbl.
+		 if (sharedFirstCell != null) {
+			 Record sharedFormulaRecord = _sharedValueManager.getRecordForFirstCell(sharedFirstCell, this);
+			 if (sharedFormulaRecord != null) {
+				 rv.visitRecord(sharedFormulaRecord);
+			 }
 		 }
 		 if (_stringRecord != null) {
 			 rv.visitRecord(_stringRecord);

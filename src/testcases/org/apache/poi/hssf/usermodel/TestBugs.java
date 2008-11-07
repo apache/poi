@@ -60,6 +60,7 @@ public final class TestBugs extends TestCase {
         if (true) { // set to false to output test files
             return;
         }
+        System.setProperty("poi.keep.tmp.files", "true");
         File file;
         try {
             file = TempFile.createTempFile(simpleFileName + "#", ".xls");

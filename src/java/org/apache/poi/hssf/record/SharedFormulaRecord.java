@@ -182,4 +182,7 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
         result.field_7_parsed_expr = field_7_parsed_expr.copy();
         return result;
     }
+	public boolean isFormulaSame(SharedFormulaRecord other) {
+		return field_7_parsed_expr.isSame(other.field_7_parsed_expr);
+	}
 }

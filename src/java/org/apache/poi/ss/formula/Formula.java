@@ -1,6 +1,15 @@
 package org.apache.poi.ss.formula;
 
+import java.util.Arrays;
+
+import org.apache.poi.hssf.record.ArrayRecord;
+import org.apache.poi.hssf.record.SharedFormulaRecord;
+import org.apache.poi.hssf.record.TableRecord;
+import org.apache.poi.hssf.record.formula.ExpPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.TblPtg;
+import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
@@ -129,5 +138,36 @@ public class Formula {
 	public Formula copy() {
 		// OK to return this for the moment because currently immutable
 		return this;
+	}
+	
+	/**
+	 * Gets the locator for the corresponding {@link SharedFormulaRecord}, {@link ArrayRecord} or
+	 * {@link TableRecord} if this formula belongs to such a grouping.  The {@link CellReference}
+	 * returned by this method will  match the top left corner of the range of that grouping. 
+	 * The return value is usually not the same as the location of the cell containing this formula.
+	 * 
+	 * @return the firstRow & firstColumn of an array formula or shared formula that this formula
+	 * belongs to.  <code>null</code> if this formula is not part of an array or shared formula.
+	 */
+	public CellReference getExpReference() {
+		byte[] data = _byteEncoding;
+		if (data.length != 5) {
+			// tExp and tTbl are always 5 bytes long, and the only ptg in the formula
+			return null;
+		}
+		switch (data[0]) {
+			case ExpPtg.sid:
+				break;
+			case TblPtg.sid:
+				break;
+			default:
+				return null;
+		}
+		int firstRow = LittleEndian.getUShort(data, 1);
+		int firstColumn = LittleEndian.getUShort(data, 3);
+		return new CellReference(firstRow, firstColumn);
+	}
+	public boolean isSame(Formula other) {
+		return Arrays.equals(_byteEncoding, other._byteEncoding);
 	}
 }
