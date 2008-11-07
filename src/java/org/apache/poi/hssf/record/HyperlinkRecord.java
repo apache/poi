@@ -211,7 +211,7 @@ public final class HyperlinkRecord extends Record {
     }
 
     /**
-     * Returns a 16-byte guid identifier. Seems to always equal {@link STD_MONIKER}
+     * Returns a 16-byte guid identifier. Seems to always equal {@link #STD_MONIKER}
      *
      * @return 16-byte guid identifier
      */

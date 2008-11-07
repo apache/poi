@@ -148,7 +148,7 @@ public final class DBCellRecord extends Record {
     }
     
     /**
-     *  @returns the size of the group of <tt>DBCellRecord</tt>s needed to encode
+     *  @return the size of the group of <tt>DBCellRecord</tt>s needed to encode
      *  the specified number of blocks and rows
      */
     public static int calculateSizeOfRecords(int nBlocks, int nRows) {

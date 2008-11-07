@@ -25,7 +25,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
 /**
  *  Title: String Utility Description: Collection of string handling utilities<p/>
  *  
- * Note - none of the methods in this class deals with {@link ContinueRecord}s.  For such
+ * Note - none of the methods in this class deals with {@link org.apache.poi.hssf.record.ContinueRecord}s.  For such
  * functionality, consider using {@link RecordInputStream
 } *
  *

@@ -66,7 +66,6 @@ public class POIFSChunkParser {
 
 	/**
 	 * Get a reference to the FileSystem object that this object is currently using.
-	 * @return
 	 */
 	public POIFSFileSystem getFileSystem() {
 		return this.fs;
@@ -117,7 +116,6 @@ public class POIFSChunkParser {
 	/**
 	 * Pull the chunk data that's stored in this object's hashmap out and return it as a HashMap.
 	 * @param entryName
-	 * @return
 	 */
 	public Object getChunk(HashMap dirMap, String entryName) {
 		if(dirMap == null) return null;
@@ -143,8 +141,8 @@ public class POIFSChunkParser {
 	
 	/**
 	 * Pulls a ByteArrayOutputStream from this objects HashMap, this can be used to read a byte array of the contents of the given chunk.
-	 * @param directoryMap, chunk
-	 * @return
+	 * @param dirNode
+     * @param chunk
 	 * @throws ChunkNotFoundException
 	 */
 	public Chunk getDocumentNode(HashMap dirNode, Chunk chunk) throws ChunkNotFoundException {
@@ -161,7 +159,6 @@ public class POIFSChunkParser {
 	/**
 	 * Pulls a Chunk out of this objects root Node tree.
 	 * @param chunk
-	 * @return
 	 * @throws ChunkNotFoundException
 	 */
 	public Chunk getDocumentNode(Chunk chunk) throws ChunkNotFoundException {

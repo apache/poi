@@ -94,7 +94,7 @@ public final class StyleRecord extends Record {
 
 	/**
 	 * get the actual index of the style extended format record
-	 * @see #getIndex()
+	 * @see #getXFIndex() 
 	 * @return index of the xf record
 	 */
 	public int getXFIndex() {

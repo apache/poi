@@ -66,7 +66,7 @@ public final class DVRecord extends Record {
 	/**
 	 * Option flags field
 	 * 
-	 * @see org.apache.poi.hssf.util.HSSFDataValidation utility class
+	 * @see HSSFDataValidation utility class
 	 */
 	private static final BitField opt_data_type                    = new BitField(0x0000000F);
 	private static final BitField opt_error_style                  = new BitField(0x00000070);
@@ -133,7 +133,7 @@ public final class DVRecord extends Record {
 	// --> start option flags
 	/**
 	 * @return the condition data type
-	 * @see DVConstraint.ValidationType
+	 * @see org.apache.poi.hssf.usermodel.DVConstraint.ValidationType
 	 */
 	public int getDataType() {
 	   return opt_data_type.getValue(_option_flags);
@@ -141,7 +141,7 @@ public final class DVRecord extends Record {
 
 	/**
 	 * @return the condition error style
-	 * @see HSSFDataValidation.ErrorStyle
+	 * @see org.apache.poi.hssf.usermodel.HSSFDataValidation.ErrorStyle
 	 */
 	public int getErrorStyle() {
 	   return opt_error_style.getValue(_option_flags);
@@ -189,7 +189,7 @@ public final class DVRecord extends Record {
 	/**
 	 * get the condition operator
 	 * @return the condition operator
-	 * @see org.apache.poi.hssf.util.HSSFDataValidation utility class
+	 * @see HSSFDataValidation utility class
 	 */
 	public int getConditionOperator() {
 	   return opt_condition_operator.getValue(_option_flags);

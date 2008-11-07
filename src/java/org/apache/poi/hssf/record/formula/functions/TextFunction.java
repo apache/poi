@@ -90,7 +90,7 @@ public abstract class TextFunction implements Function {
 	 * An implementation of the TRIM function:
 	 * Removes leading and trailing spaces from value if evaluated operand
 	 *  value is string.
-	 * @author Manda Wilson &lt; wilson at c bio dot msk cc dot org &gt;
+	 * Author: Manda Wilson &lt; wilson at c bio dot msk cc dot org &gt;
 	 */
 	public static final Function TRIM = new SingleArgTextFunc() {
 		protected ValueEval evaluate(String arg) {
@@ -106,7 +106,7 @@ public abstract class TextFunction implements Function {
 	 * <b>Syntax<b>:<br/> <b>MID</b>(<b>text</b>, <b>start_num</b>,
 	 * <b>num_chars</b>)<br/>
 	 * 
-	 * @author Manda Wilson &lt; wilson at c bio dot msk cc dot org &gt;
+	 * Author: Manda Wilson &lt; wilson at c bio dot msk cc dot org &gt;
 	 */
 	public static final Function MID = new TextFunction() {
 

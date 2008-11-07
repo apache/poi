@@ -120,13 +120,13 @@ public class XSSFCellStyle implements CellStyle {
      * Get the type of horizontal alignment for the cell
      *
      * @return short - the type of alignment
-     * @see #ALIGN_GENERAL
-     * @see #ALIGN_LEFT
-     * @see #ALIGN_CENTER
-     * @see #ALIGN_RIGHT
-     * @see #ALIGN_FILL
-     * @see #ALIGN_JUSTIFY
-     * @see #ALIGN_CENTER_SELECTION
+     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_GENERAL
+     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_LEFT
+     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_CENTER
+     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_RIGHT
+     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_FILL
+     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_JUSTIFY
+     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_CENTER_SELECTION
      */
     public short getAlignment() {
         return (short)(getAlignmentEnum().ordinal());
@@ -136,6 +136,7 @@ public class XSSFCellStyle implements CellStyle {
      * Get the type of horizontal alignment for the cell
      *
      * @return HorizontalAlignment - the type of alignment
+     * @see org.apache.poi.ss.usermodel.HorizontalAlignment
      */
     public HorizontalAlignment getAlignmentEnum() {
         CTCellAlignment align = cellXf.getAlignment();
@@ -150,20 +151,20 @@ public class XSSFCellStyle implements CellStyle {
      * Get the type of border to use for the bottom border of the cell
      *
      * @return short - border type
-     * @see #BORDER_NONE
-     * @see #BORDER_THIN
-     * @see #BORDER_MEDIUM
-     * @see #BORDER_DASHED
-     * @see #BORDER_DOTTED
-     * @see #BORDER_THICK
-     * @see #BORDER_DOUBLE
-     * @see #BORDER_HAIR
-     * @see #BORDER_MEDIUM_DASHED
-     * @see #BORDER_DASH_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT
-     * @see #BORDER_DASH_DOT_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT_DOT
-     * @see #BORDER_SLANTED_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_NONE
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THIN
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASHED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOTTED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THICK
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOUBLE
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_HAIR
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASHED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
      */
     public short getBorderBottom() {
         if(!cellXf.getApplyBorder()) return BORDER_NONE;
@@ -188,21 +189,21 @@ public class XSSFCellStyle implements CellStyle {
     /**
      * Get the type of border to use for the left border of the cell
      *
-     * @return short - border type, default value is {@link #BORDER_NONE}
-     * @see #BORDER_NONE
-     * @see #BORDER_THIN
-     * @see #BORDER_MEDIUM
-     * @see #BORDER_DASHED
-     * @see #BORDER_DOTTED
-     * @see #BORDER_THICK
-     * @see #BORDER_DOUBLE
-     * @see #BORDER_HAIR
-     * @see #BORDER_MEDIUM_DASHED
-     * @see #BORDER_DASH_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT
-     * @see #BORDER_DASH_DOT_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT_DOT
-     * @see #BORDER_SLANTED_DASH_DOT
+     * @return short - border type, default value is {@link org.apache.poi.ss.usermodel.CellStyle#BORDER_NONE}
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_NONE
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THIN
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASHED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOTTED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THICK
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOUBLE
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_HAIR
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASHED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
      */
     public short getBorderLeft() {
         if(!cellXf.getApplyBorder()) return BORDER_NONE;
@@ -216,7 +217,7 @@ public class XSSFCellStyle implements CellStyle {
     /**
      * Get the type of border to use for the left border of the cell
      *
-     * @return border type, default value is {@link BorderStyle.NONE}
+     * @return border type, default value is {@link org.apache.poi.ss.usermodel.BorderStyle#NONE}
      */
     public BorderStyle getBorderLeftEnum() {
         int style  = getBorderLeft();
@@ -226,21 +227,21 @@ public class XSSFCellStyle implements CellStyle {
     /**
      * Get the type of border to use for the right border of the cell
      *
-     * @return short - border type, default value is {@link #BORDER_NONE}
-     * @see #BORDER_NONE
-     * @see #BORDER_THIN
-     * @see #BORDER_MEDIUM
-     * @see #BORDER_DASHED
-     * @see #BORDER_DOTTED
-     * @see #BORDER_THICK
-     * @see #BORDER_DOUBLE
-     * @see #BORDER_HAIR
-     * @see #BORDER_MEDIUM_DASHED
-     * @see #BORDER_DASH_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT
-     * @see #BORDER_DASH_DOT_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT_DOT
-     * @see #BORDER_SLANTED_DASH_DOT
+     * @return short - border type, default value is {@link org.apache.poi.ss.usermodel.CellStyle#BORDER_NONE}
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_NONE
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THIN
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASHED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOTTED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THICK
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOUBLE
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_HAIR
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASHED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
      */
     public short getBorderRight() {
         if(!cellXf.getApplyBorder()) return BORDER_NONE;
@@ -254,7 +255,7 @@ public class XSSFCellStyle implements CellStyle {
     /**
      * Get the type of border to use for the right border of the cell
      *
-     * @return border type, default value is {@link BorderStyle.NONE}
+     * @return border type, default value is {@link org.apache.poi.ss.usermodel.BorderStyle#NONE}
      */
     public BorderStyle getBorderRightEnum() {
         int style  = getBorderRight();
@@ -264,21 +265,21 @@ public class XSSFCellStyle implements CellStyle {
     /**
      * Get the type of border to use for the top border of the cell
      *
-     * @return short - border type, default value is {@link #BORDER_NONE}
-     * @see #BORDER_NONE
-     * @see #BORDER_THIN
-     * @see #BORDER_MEDIUM
-     * @see #BORDER_DASHED
-     * @see #BORDER_DOTTED
-     * @see #BORDER_THICK
-     * @see #BORDER_DOUBLE
-     * @see #BORDER_HAIR
-     * @see #BORDER_MEDIUM_DASHED
-     * @see #BORDER_DASH_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT
-     * @see #BORDER_DASH_DOT_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT_DOT
-     * @see #BORDER_SLANTED_DASH_DOT
+     * @return short - border type, default value is {@link org.apache.poi.ss.usermodel.CellStyle#BORDER_NONE}
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_NONE
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THIN
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASHED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOTTED
+     * @see org.apache.poi.ss.usermodel.CellStyle #BORDER_THICK
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOUBLE
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_HAIR
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASHED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
      */
     public short getBorderTop() {
         if(!cellXf.getApplyBorder()) return BORDER_NONE;
@@ -292,7 +293,7 @@ public class XSSFCellStyle implements CellStyle {
      /**
      * Get the type of border to use for the top border of the cell
      *
-     * @return border type, default value is {@link BorderStyle.NONE}
+     * @return border type, default value is {@link org.apache.poi.ss.usermodel.BorderStyle#NONE}
      */
     public BorderStyle getBorderTopEnum() {
          int style  = getBorderTop();
@@ -303,8 +304,8 @@ public class XSSFCellStyle implements CellStyle {
      * Get the color to use for the bottom border
      * <br/>
      * Color is optional. When missing, IndexedColors.AUTOMATIC is implied.
-     * @return the index of the color definition, default value is {@link org.apache.poi.ss.usermodel.IndexedColors.AUTOMATIC}
-     * @see IndexedColors
+     * @return the index of the color definition, default value is {@link org.apache.poi.ss.usermodel.IndexedColors#AUTOMATIC}
+     * @see org.apache.poi.ss.usermodel.IndexedColors
      */
     public short getBottomBorderColor() {
         XSSFColor clr = getBottomBorderXSSFColor();
@@ -350,8 +351,8 @@ public class XSSFCellStyle implements CellStyle {
      * Note - many cells are actually filled with a foreground
      *  fill, not a background fill - see {@link #getFillForegroundColor()}
      * </p>
-     * @return fill color, default value is {@link IndexedColors.AUTOMATIC}
-     * @see IndexedColors
+     * @return fill color, default value is {@link org.apache.poi.ss.usermodel.IndexedColors#AUTOMATIC}
+     * @see org.apache.poi.ss.usermodel.IndexedColors
      */
     public short getFillBackgroundColor() {
         XSSFColor clr = getFillBackgroundXSSFColor();
@@ -383,7 +384,7 @@ public class XSSFCellStyle implements CellStyle {
      *  background color ({@link #getFillBackgroundColor()})
      * </p>
      * @see IndexedColors
-     * @return fill color, default value is {@link IndexedColors.AUTOMATIC}
+     * @return fill color, default value is {@link org.apache.poi.ss.usermodel.IndexedColors#AUTOMATIC}
      */
     public short getFillForegroundColor() {
         XSSFColor clr = getFillForegroundXSSFColor();
@@ -406,25 +407,25 @@ public class XSSFCellStyle implements CellStyle {
 
     /**
      * Get the fill pattern
-     * @return fill pattern, default value is {@link #NO_FILL}
+     * @return fill pattern, default value is {@link org.apache.poi.ss.usermodel.CellStyle#NO_FILL}
      *
-     * @see #NO_FILL
-     * @see #SOLID_FOREGROUND
-     * @see #FINE_DOTS
-     * @see #ALT_BARS
-     * @see #SPARSE_DOTS
-     * @see #THICK_HORZ_BANDS
-     * @see #THICK_VERT_BANDS
-     * @see #THICK_BACKWARD_DIAG
-     * @see #THICK_FORWARD_DIAG
-     * @see #BIG_SPOTS
-     * @see #BRICKS
-     * @see #THIN_HORZ_BANDS
-     * @see #THIN_VERT_BANDS
-     * @see #THIN_BACKWARD_DIAG
-     * @see #THIN_FORWARD_DIAG
-     * @see #SQUARES
-     * @see #DIAMONDS
+     * @see org.apache.poi.ss.usermodel.CellStyle#NO_FILL
+     * @see org.apache.poi.ss.usermodel.CellStyle#SOLID_FOREGROUND
+     * @see org.apache.poi.ss.usermodel.CellStyle#FINE_DOTS
+     * @see org.apache.poi.ss.usermodel.CellStyle#ALT_BARS
+     * @see org.apache.poi.ss.usermodel.CellStyle#SPARSE_DOTS
+     * @see org.apache.poi.ss.usermodel.CellStyle#THICK_HORZ_BANDS
+     * @see org.apache.poi.ss.usermodel.CellStyle#THICK_VERT_BANDS
+     * @see org.apache.poi.ss.usermodel.CellStyle#THICK_BACKWARD_DIAG
+     * @see org.apache.poi.ss.usermodel.CellStyle#THICK_FORWARD_DIAG
+     * @see org.apache.poi.ss.usermodel.CellStyle#BIG_SPOTS
+     * @see org.apache.poi.ss.usermodel.CellStyle#BRICKS
+     * @see org.apache.poi.ss.usermodel.CellStyle#THIN_HORZ_BANDS
+     * @see org.apache.poi.ss.usermodel.CellStyle#THIN_VERT_BANDS
+     * @see org.apache.poi.ss.usermodel.CellStyle#THIN_BACKWARD_DIAG
+     * @see org.apache.poi.ss.usermodel.CellStyle#THIN_FORWARD_DIAG
+     * @see org.apache.poi.ss.usermodel.CellStyle#SQUARES
+     * @see org.apache.poi.ss.usermodel.CellStyle#DIAMONDS
      */
     public short getFillPattern() {
         if(!cellXf.getApplyFill()) return 0;
@@ -440,7 +441,7 @@ public class XSSFCellStyle implements CellStyle {
     /**
      * Get the fill pattern
      *
-     * @return the fill pattern, default value is {@link FillPatternType.NO_FILL}
+     * @return the fill pattern, default value is {@link org.apache.poi.ss.usermodel.FillPatternType#NO_FILL}
      */
     public FillPatternType getFillPatternEnum() {
         int style  = getFillPattern();
@@ -499,8 +500,8 @@ public class XSSFCellStyle implements CellStyle {
     /**
      * Get the color to use for the left border
      *
-     * @return the index of the color definition, default value is {@link IndexedColors.BLACK}
-     * @see IndexedColors
+     * @return the index of the color definition, default value is {@link org.apache.poi.ss.usermodel.IndexedColors#BLACK}
+     * @see org.apache.poi.ss.usermodel.IndexedColors
      */
     public short getLeftBorderColor() {
         XSSFColor clr = getLeftBorderXSSFColor();
@@ -511,7 +512,7 @@ public class XSSFCellStyle implements CellStyle {
      * Get the color to use for the left border
      *
      * @return the index of the color definition or <code>null</code> if not set
-     * @see IndexedColors
+     * @see org.apache.poi.ss.usermodel.IndexedColors
      */
     public XSSFColor getLeftBorderXSSFColor() {
         if(!cellXf.getApplyBorder()) return null;
@@ -534,8 +535,8 @@ public class XSSFCellStyle implements CellStyle {
     /**
      * Get the color to use for the right border
      *
-     * @return the index of the color definition, default value is {@link IndexedColors.BLACK}
-     * @see IndexedColors
+     * @return the index of the color definition, default value is {@link org.apache.poi.ss.usermodel.IndexedColors#BLACK}
+     * @see org.apache.poi.ss.usermodel.IndexedColors
      */
     public short getRightBorderColor() {
         XSSFColor clr = getRightBorderXSSFColor();
@@ -577,8 +578,8 @@ public class XSSFCellStyle implements CellStyle {
     /**
      * Get the color to use for the top border
      *
-     * @return the index of the color definition, default value is {@link IndexedColors.BLACK}
-     * @see IndexedColors
+     * @return the index of the color definition, default value is {@link org.apache.poi.ss.usermodel.IndexedColors#BLACK}
+     * @see org.apache.poi.ss.usermodel.IndexedColors
      */
     public short getTopBorderColor() {
         XSSFColor clr = getTopBorderXSSFColor();
@@ -602,11 +603,11 @@ public class XSSFCellStyle implements CellStyle {
     /**
      * Get the type of vertical alignment for the cell
      *
-     * @return align the type of alignment, default value is {@link #VERTICAL_BOTTOM}
-     * @see #VERTICAL_TOP
-     * @see #VERTICAL_CENTER
-     * @see #VERTICAL_BOTTOM
-     * @see #VERTICAL_JUSTIFY
+     * @return align the type of alignment, default value is {@link org.apache.poi.ss.usermodel.CellStyle#VERTICAL_BOTTOM}
+     * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_TOP
+     * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_CENTER
+     * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_BOTTOM
+     * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_JUSTIFY
      */
     public short getVerticalAlignment() {
         return (short) (getVerticalAlignmentEnum().ordinal());
@@ -615,8 +616,8 @@ public class XSSFCellStyle implements CellStyle {
     /**
      * Get the type of vertical alignment for the cell
      *
-     * @return the type of alignment, default value is {@link VerticalAlignment.BOTTOM}
-     * @see VerticalAlignment
+     * @return the type of alignment, default value is {@link org.apache.poi.ss.usermodel.VerticalAlignment#BOTTOM}
+     * @see org.apache.poi.ss.usermodel.VerticalAlignment
      */
     public VerticalAlignment getVerticalAlignmentEnum() {
         CTCellAlignment align = cellXf.getAlignment();
@@ -641,13 +642,13 @@ public class XSSFCellStyle implements CellStyle {
      * Set the type of horizontal alignment for the cell
      *
      * @param align - the type of alignment
-     * @see #ALIGN_GENERAL
-     * @see #ALIGN_LEFT
-     * @see #ALIGN_CENTER
-     * @see #ALIGN_RIGHT
-     * @see #ALIGN_FILL
-     * @see #ALIGN_JUSTIFY
-     * @see #ALIGN_CENTER_SELECTION
+     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_GENERAL
+     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_LEFT
+     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_CENTER
+     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_RIGHT
+     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_FILL
+     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_JUSTIFY
+     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_CENTER_SELECTION
      */
     public void setAlignment(short align) {
         getCellAlignment().setHorizontal(HorizontalAlignment.values()[align]);
@@ -667,20 +668,20 @@ public class XSSFCellStyle implements CellStyle {
      * Set the type of border to use for the bottom border of the cell
      *
      * @param border the type of border to use
-     * @see #BORDER_NONE
-     * @see #BORDER_THIN
-     * @see #BORDER_MEDIUM
-     * @see #BORDER_DASHED
-     * @see #BORDER_DOTTED
-     * @see #BORDER_THICK
-     * @see #BORDER_DOUBLE
-     * @see #BORDER_HAIR
-     * @see #BORDER_MEDIUM_DASHED
-     * @see #BORDER_DASH_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT
-     * @see #BORDER_DASH_DOT_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT_DOT
-     * @see #BORDER_SLANTED_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_NONE
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THIN
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASHED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOTTED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THICK
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOUBLE
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_HAIR
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASHED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
      */
     public void setBorderBottom(short border) {
         CTBorder ct = getCTBorder();
@@ -698,7 +699,7 @@ public class XSSFCellStyle implements CellStyle {
      * Set the type of border to use for the bottom border of the cell
      *
      * @param border - type of border to use
-     * @see BorderStyle
+     * @see org.apache.poi.ss.usermodel.BorderStyle
      */
     public void setBorderBottom(BorderStyle border) {
 	    setBorderBottom((short)border.ordinal());
@@ -707,20 +708,20 @@ public class XSSFCellStyle implements CellStyle {
     /**
      * Set the type of border to use for the left border of the cell
      * @param border the type of border to use
-     * @see #BORDER_NONE
-     * @see #BORDER_THIN
-     * @see #BORDER_MEDIUM
-     * @see #BORDER_DASHED
-     * @see #BORDER_DOTTED
-     * @see #BORDER_THICK
-     * @see #BORDER_DOUBLE
-     * @see #BORDER_HAIR
-     * @see #BORDER_MEDIUM_DASHED
-     * @see #BORDER_DASH_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT
-     * @see #BORDER_DASH_DOT_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT_DOT
-     * @see #BORDER_SLANTED_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_NONE
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THIN
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASHED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOTTED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THICK
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOUBLE
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_HAIR
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASHED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
      */
     public void setBorderLeft(short border) {
         CTBorder ct = getCTBorder();
@@ -747,20 +748,20 @@ public class XSSFCellStyle implements CellStyle {
      * Set the type of border to use for the right border of the cell
      *
      * @param border the type of border to use
-     * @see #BORDER_NONE
-     * @see #BORDER_THIN
-     * @see #BORDER_MEDIUM
-     * @see #BORDER_DASHED
-     * @see #BORDER_DOTTED
-     * @see #BORDER_THICK
-     * @see #BORDER_DOUBLE
-     * @see #BORDER_HAIR
-     * @see #BORDER_MEDIUM_DASHED
-     * @see #BORDER_DASH_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT
-     * @see #BORDER_DASH_DOT_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT_DOT
-     * @see #BORDER_SLANTED_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_NONE
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THIN
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASHED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOTTED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THICK
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOUBLE
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_HAIR
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASHED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
      */
    public void setBorderRight(short border) {
         CTBorder ct = getCTBorder();
@@ -787,20 +788,20 @@ public class XSSFCellStyle implements CellStyle {
      * Set the type of border to use for the top border of the cell
      *
      * @param border the type of border to use
-     * @see #BORDER_NONE
-     * @see #BORDER_THIN
-     * @see #BORDER_MEDIUM
-     * @see #BORDER_DASHED
-     * @see #BORDER_DOTTED
-     * @see #BORDER_THICK
-     * @see #BORDER_DOUBLE
-     * @see #BORDER_HAIR
-     * @see #BORDER_MEDIUM_DASHED
-     * @see #BORDER_DASH_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT
-     * @see #BORDER_DASH_DOT_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT_DOT
-     * @see #BORDER_SLANTED_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_NONE
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THIN
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASHED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOTTED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THICK
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOUBLE
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_HAIR
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASHED
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
+     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
      */
    public void setBorderTop(short border) {
         CTBorder ct = getCTBorder();
@@ -826,7 +827,7 @@ public class XSSFCellStyle implements CellStyle {
     /**
      * Set the color to use for the bottom border
      * @param color the index of the color definition
-     * @see IndexedColors
+     * @see org.apache.poi.ss.usermodel.IndexedColors
      */
     public void setBottomBorderColor(short color) {
         XSSFColor clr = new XSSFColor();
@@ -928,7 +929,7 @@ public class XSSFCellStyle implements CellStyle {
      * for the color to be shown in the cell.
      *
      * @param bg - the color to use
-     * @see IndexedColors
+     * @see org.apache.poi.ss.usermodel.IndexedColors
      */
     public void setFillBackgroundColor(short bg) {
         XSSFColor clr = new XSSFColor();
@@ -965,7 +966,7 @@ public class XSSFCellStyle implements CellStyle {
      * <br/>
      * <i>Note: Ensure Foreground color is set prior to background color.</i>
      * @param fg the color to use
-     * @see IndexedColors
+     * @see org.apache.poi.ss.usermodel.IndexedColors
      */
     public void setFillForegroundColor(short fg) {
         XSSFColor clr = new XSSFColor();
@@ -1010,26 +1011,26 @@ public class XSSFCellStyle implements CellStyle {
      * For solid cell fills (no pattern),  foregorund color is used.
      * For cell fills with patterns specified, then the cell fill color is specified by the background color.
      *
-     * @see #NO_FILL
-     * @see #SOLID_FOREGROUND
-     * @see #FINE_DOTS
-     * @see #ALT_BARS
-     * @see #SPARSE_DOTS
-     * @see #THICK_HORZ_BANDS
-     * @see #THICK_VERT_BANDS
-     * @see #THICK_BACKWARD_DIAG
-     * @see #THICK_FORWARD_DIAG
-     * @see #BIG_SPOTS
-     * @see #BRICKS
-     * @see #THIN_HORZ_BANDS
-     * @see #THIN_VERT_BANDS
-     * @see #THIN_BACKWARD_DIAG
-     * @see #THIN_FORWARD_DIAG
-     * @see #SQUARES
-     * @see #DIAMONDS
+     * @see org.apache.poi.ss.usermodel.CellStyle#NO_FILL
+     * @see org.apache.poi.ss.usermodel.CellStyle#SOLID_FOREGROUND
+     * @see org.apache.poi.ss.usermodel.CellStyle#FINE_DOTS
+     * @see org.apache.poi.ss.usermodel.CellStyle#ALT_BARS
+     * @see org.apache.poi.ss.usermodel.CellStyle#SPARSE_DOTS
+     * @see org.apache.poi.ss.usermodel.CellStyle#THICK_HORZ_BANDS
+     * @see org.apache.poi.ss.usermodel.CellStyle#THICK_VERT_BANDS
+     * @see org.apache.poi.ss.usermodel.CellStyle#THICK_BACKWARD_DIAG
+     * @see org.apache.poi.ss.usermodel.CellStyle#THICK_FORWARD_DIAG
+     * @see org.apache.poi.ss.usermodel.CellStyle#BIG_SPOTS
+     * @see org.apache.poi.ss.usermodel.CellStyle#BRICKS
+     * @see org.apache.poi.ss.usermodel.CellStyle#THIN_HORZ_BANDS
+     * @see org.apache.poi.ss.usermodel.CellStyle#THIN_VERT_BANDS
+     * @see org.apache.poi.ss.usermodel.CellStyle#THIN_BACKWARD_DIAG
+     * @see org.apache.poi.ss.usermodel.CellStyle#THIN_FORWARD_DIAG
+     * @see org.apache.poi.ss.usermodel.CellStyle#SQUARES
+     * @see org.apache.poi.ss.usermodel.CellStyle#DIAMONDS
      * @see #setFillBackgroundColor(short)
      * @see #setFillForegroundColor(short)
-     * @param fp  fill pattern (set to {@link #SOLID_FOREGROUND} to fill w/foreground color)
+     * @param fp  fill pattern (set to {@link org.apache.poi.ss.usermodel.CellStyle#SOLID_FOREGROUND} to fill w/foreground color)
      */
    public void setFillPattern(short fp) {
         CTFill ct = getCTFill();
@@ -1050,7 +1051,7 @@ public class XSSFCellStyle implements CellStyle {
      * @param ptrn the fill pattern to use
      * @see #setFillBackgroundColor(short)
      * @see #setFillForegroundColor(short)
-     * @see FillPatternType
+     * @see org.apache.poi.ss.usermodel.FillPatternType
      */
     public void setFillPattern(FillPatternType ptrn) {
 	    setFillPattern((short)ptrn.ordinal());
@@ -1095,7 +1096,7 @@ public class XSSFCellStyle implements CellStyle {
      * Set the color to use for the left border as a indexed color value
      *
      * @param color the index of the color definition
-     * @see IndexedColors
+     * @see org.apache.poi.ss.usermodel.IndexedColors
      */
     public void setLeftBorderColor(short color) {
         XSSFColor clr = new XSSFColor();
@@ -1135,7 +1136,7 @@ public class XSSFCellStyle implements CellStyle {
      * Set the color to use for the right border
      *
      * @param color the index of the color definition
-     * @see IndexedColors
+     * @see org.apache.poi.ss.usermodel.IndexedColors
      */
     public void setRightBorderColor(short color) {
         XSSFColor clr = new XSSFColor();
@@ -1216,11 +1217,11 @@ public class XSSFCellStyle implements CellStyle {
      * Set the type of vertical alignment for the cell
      *
      * @param align - align the type of alignment
-     * @see #VERTICAL_TOP
-     * @see #VERTICAL_CENTER
-     * @see #VERTICAL_BOTTOM
-     * @see #VERTICAL_JUSTIFY
-     * @see VerticalAlignment
+     * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_TOP
+     * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_CENTER
+     * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_BOTTOM
+     * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_JUSTIFY
+     * @see org.apache.poi.ss.usermodel.VerticalAlignment
      */
     public void setVerticalAlignment(short align) {
         getCellAlignment().setVertical(VerticalAlignment.values()[align]);

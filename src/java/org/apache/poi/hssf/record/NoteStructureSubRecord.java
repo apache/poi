@@ -40,8 +40,6 @@ public final class NoteStructureSubRecord extends SubRecord {
     /**
      * Construct a new <code>NoteStructureSubRecord</code> and
      * fill its data with the default values
-     * @param size 
-     * @param in 
      */
     public NoteStructureSubRecord()
     {
@@ -80,10 +78,7 @@ public final class NoteStructureSubRecord extends SubRecord {
     /**
      * Serialize the record data into the supplied array of bytes
      *
-     * @param offset offset in the <code>data</code>
-     * @param data the data to serialize into
-     *
-     * @return size of the record
+     * @param out the stream to serialize into
      */
     public void serialize(LittleEndianOutput out) {
         out.writeShort(sid);

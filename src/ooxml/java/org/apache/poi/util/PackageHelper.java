@@ -84,9 +84,7 @@ public class PackageHelper {
     }
 
     /**
-     *
-     * @return
-     * @throws IOException
+     * Creates an empty file in the default temporary-file directory, 
      */
     public static File createTempFile() throws IOException {
         File file = File.createTempFile("poi-ooxml-", ".tmp");

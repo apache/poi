@@ -74,8 +74,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
 
 	/**
 	 * Create CFRecordsAggregate from a list of CF Records
-	 * @param recs - list of {@link Record} objects
-	 * @param offset - position of {@link CFHeaderRecord} object in the list of Record objects
+	 * @param rs - the stream to read from
 	 * @return CFRecordsAggregate object
 	 */
 	public static CFRecordsAggregate createCFAggregate(RecordStream rs) {
@@ -98,7 +97,6 @@ public final class CFRecordsAggregate extends RecordAggregate {
 
 	/**
 	 * Create a deep clone of the record
-	 * @return
 	 */
 	public CFRecordsAggregate cloneCFAggregate()
 	{

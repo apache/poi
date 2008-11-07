@@ -90,28 +90,28 @@ public final class FileSharingRecord extends Record {
     }
 
     /**
-     * @param hashed password
+     * @param password hashed password
      */
     public void setPassword(short password) {
         field_2_password = password;
     }
 
     /**
-     * @returns password hashed with hashPassword() (very lame)
+     * @return password hashed with hashPassword() (very lame)
      */
     public short getPassword() {
         return field_2_password;
     }
 
     /**
-     * @returns byte representing the length of the username field
+     * @return byte representing the length of the username field
      */
     public short getUsernameLength() {
         return (short) field_3_username_value.length();
     }
 
     /**
-     * @returns username of the user that created the file
+     * @return username of the user that created the file
      */
     public String getUsername() {
         return field_3_username_value;

@@ -148,9 +148,7 @@ public final class Sheet implements Model {
      * to the passed in records and references to those records held. This function
      * is normally called via Workbook.
      *
-     * @param inRecs array containing those records in the sheet in sequence (normally obtained from RecordFactory)
-     * @param sheetnum integer specifying the sheet's number (0,1 or 2 in this release)
-     * @param offset of the sheet's BOF record
+     * @param rs the stream to read records from
      *
      * @return Sheet object with all values set to those read from the file
      *
@@ -653,7 +651,6 @@ public final class Sheet implements Model {
      * at what this sets it to.
      *
      * @param row the row record to be added
-     * @see #setLoc(int)
      */
 
     public void addRow(RowRecord row)
@@ -706,7 +703,6 @@ public final class Sheet implements Model {
      * subsequent calls will return values in (physical) sequence or NULL when you get to the end.
      *
      * @return CellValueRecordInterface representing the next value record or NULL if there are no more
-     * @see #setLoc(int)
      */
     public CellValueRecordInterface[] getValueRecords() {
         return _rowsAggregate.getValueRecords();
@@ -723,8 +719,6 @@ public final class Sheet implements Model {
      * subsequent calls will return rows in (physical) sequence or NULL when you get to the end.
      *
      * @return RowRecord representing the next row record or NULL if there are no more
-     * @see #setLoc(int)
-     *
      */
     public RowRecord getNextRow() {
         if (rowRecIterator == null)
@@ -751,7 +745,6 @@ public final class Sheet implements Model {
      *
      * @param rownum   which row to return (careful with LOC)
      * @return RowRecord representing the next row record or NULL if there are no more
-     * @see #setLoc(int)
      *
      */
     public RowRecord getRow(int rownum) {
@@ -985,7 +978,7 @@ public final class Sheet implements Model {
      * @param columnIndex index
      * @see org.apache.poi.hssf.record.DefaultColWidthRecord
      * @see org.apache.poi.hssf.record.ColumnInfoRecord
-     * @see #setColumnWidth(short,short)
+     * @see #setColumnWidth(int, int)
      * @return column width in units of 1/256th of a character width
      */
 
@@ -1036,10 +1029,10 @@ public final class Sheet implements Model {
 
     /**
      * Get the hidden property for a given column.
-     * @param column index
+     * @param columnIndex column index
      * @see org.apache.poi.hssf.record.DefaultColWidthRecord
      * @see org.apache.poi.hssf.record.ColumnInfoRecord
-     * @see #setColumnHidden(short,boolean)
+     * @see #setColumnHidden(int, boolean)
      * @return whether the column is hidden or not.
      */
     public boolean isColumnHidden(int columnIndex) {

@@ -101,12 +101,12 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
      * Return an integer constant that specifies type of this picture
      *
      * @return an integer constant that specifies type of this picture 
-     * @see Workbook#PICTURE_TYPE_EMF
-     * @see Workbook#PICTURE_TYPE_WMF
-     * @see Workbook#PICTURE_TYPE_PICT
-     * @see Workbook#PICTURE_TYPE_JPEG
-     * @see Workbook#PICTURE_TYPE_PNG
-     * @see Workbook#PICTURE_TYPE_DIB
+     * @see org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_EMF
+     * @see org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_WMF
+     * @see org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_PICT
+     * @see org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_JPEG
+     * @see org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_PNG
+     * @see org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_DIB
      */
     public int getPictureType(){
         String contentType = getPackagePart().getContentType();

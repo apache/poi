@@ -72,7 +72,7 @@ public class PicturesTable
 
   /**
    *
-   * @param document 
+   * @param _document 
    * @param _dataStream
    */
   public PicturesTable(HWPFDocument _document, byte[] _dataStream, byte[] _mainStream, FSPATable fspa, EscherRecordHolder dgg)

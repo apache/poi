@@ -21,7 +21,7 @@ package org.apache.poi.ss.formula;
  * Abstracts a cell for the purpose of formula evaluation.  This interface represents both formula
  * and non-formula cells.<br/>
  * 
- * Implementors of this class must implement {@link #hashCode()} and {@link #equals(Object)}
+ * Implementors of this class must implement {@link Object#hashCode()} and {@link Object#equals(Object)}
  * to provide an <em>identity</em> relationship based on the underlying HSSF or XSSF cell <p/>
  * 
  * For POI internal use only

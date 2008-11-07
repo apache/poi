@@ -89,7 +89,6 @@ public class HeaderStories {
 	 * Returns the correct, defined header for the given
 	 *  one based page
 	 * @param pageNumber The one based page number
-	 * @return
 	 */
 	public String getHeader(int pageNumber) {
 		// First page header is optional, only return
@@ -124,7 +123,6 @@ public class HeaderStories {
 	 * Returns the correct, defined footer for the given
 	 *  one based page
 	 * @param pageNumber The one based page number
-	 * @return
 	 */
 	public String getFooter(int pageNumber) {
 		// First page footer is optional, only return

@@ -234,7 +234,7 @@ public final class OperandResolver {
 	 *  "5**2" -&gt; 500<br/>
 	 *  "250%" -&gt; 2.5<br/>
 	 *  
-	 * @param text
+	 * @param pText
 	 * @return <code>null</code> if the specified text cannot be parsed as a number
 	 */
 	public static Double parseDouble(String pText) {

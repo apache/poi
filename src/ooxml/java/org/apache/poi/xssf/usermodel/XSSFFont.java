@@ -38,7 +38,7 @@ public class XSSFFont implements Font {
     public static final short DEFAULT_FONT_SIZE = 11;
     /**
      * Default font color is black
-     * @see IndexedColors.BLACK
+     * @see org.apache.poi.ss.usermodel.IndexedColors#BLACK
      */
     public static final short DEFAULT_FONT_COLOR = IndexedColors.BLACK.getIndex();
 

@@ -86,8 +86,8 @@ public final class XSSFCell implements Cell {
     /**
      * Construct a XSSFCell.
      *
-     * @param row the xml bean containing information about the cell.
      * @param row the parent row.
+     * @param cell the xml bean containing information about the cell.
      */
     protected XSSFCell(XSSFRow row, CTCell cell) {
         this.cell = cell;

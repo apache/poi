@@ -24,7 +24,6 @@ import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -36,7 +35,7 @@ import org.apache.poi.ss.usermodel.Sheet;
  * Evaluates formula cells.<p/>
  *
  * For performance reasons, this class keeps a cache of all previously calculated intermediate
- * cell values.  Be sure to call {@link #clearCache()} if any workbook cells are changed between
+ * cell values.  Be sure to call {@link #clearAllCachedResultValues()} if any workbook cells are changed between
  * calls to evaluate~ methods on this class.
  *
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -109,7 +108,7 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 	 * </pre>
 	 * Be aware that your cell will hold both the formula,
 	 *  and the result. If you want the cell replaced with
-	 *  the result of the formula, use {@link #evaluateInCell(HSSFCell)}
+	 *  the result of the formula, use {@link #evaluate(org.apache.poi.ss.usermodel.Cell)} }
 	 * @param cell The cell to evaluate
 	 * @return The type of the formula result (the cell's type remains as HSSFCell.CELL_TYPE_FORMULA however)
 	 */
@@ -136,7 +135,7 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 	 * </pre>
 	 * Be aware that your cell value will be changed to hold the
 	 *  result of the formula. If you simply want the formula
-	 *  value computed for you, use {@link #evaluateFormulaCell(HSSFCell)}
+	 *  value computed for you, use {@link #evaluateFormulaCell(org.apache.poi.ss.usermodel.Cell)} }
 	 * @param cell
 	 */
 	public XSSFCell evaluateInCell(Cell cell) {
@@ -222,7 +221,6 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 
 	/**
 	 * Returns a CellValue wrapper around the supplied ValueEval instance.
-	 * @param eval
 	 */
 	private CellValue evaluateFormulaCellValue(Cell cell) {
 		ValueEval eval = _bookEvaluator.evaluate(new XSSFEvaluationCell((XSSFCell) cell));

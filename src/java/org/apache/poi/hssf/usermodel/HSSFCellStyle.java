@@ -438,28 +438,6 @@ public class HSSFCellStyle implements CellStyle
     }
 
     /**
-     * get whether this cell is to be part of a merged block of cells
-     *
-     * @returns merged or not
-     */
-
-//    public boolean getMergeCells()
-//    {
-//        return format.getMergeCells();
-//    }
-
-    /**
-     * set whether this cell is to be part of a merged block of cells
-     *
-     * @param merge  merged or not
-     */
-
-//    public void setMergeCells(boolean merge)
-//    {
-//        format.setMergeCells(merge);
-//    }
-
-    /**
      * set whether the text should be wrapped
      * @param wrapped  wrap text or not
      */
@@ -767,7 +745,7 @@ public class HSSFCellStyle implements CellStyle
     /**
      * get the color to use for the left border
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @param color The index of the color definition
+     * @return The index of the color definition
      */
     public short getLeftBorderColor()
     {
@@ -786,7 +764,7 @@ public class HSSFCellStyle implements CellStyle
     /**
      * get the color to use for the left border
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @param color The index of the color definition
+     * @return The index of the color definition
      */
     public short getRightBorderColor()
     {
@@ -805,7 +783,7 @@ public class HSSFCellStyle implements CellStyle
     /**
      * get the color to use for the top border
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @param color The index of the color definition
+     * @return The index of the color definition
      */
     public short getTopBorderColor()
     {
@@ -824,7 +802,7 @@ public class HSSFCellStyle implements CellStyle
     /**
      * get the color to use for the left border
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @param color The index of the color definition
+     * @return The index of the color definition
      */
     public short getBottomBorderColor()
     {

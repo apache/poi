@@ -81,7 +81,7 @@ public final class TestHSSFFormulaEvaluator extends TestCase {
 	}
 
 	/**
-	 * {@link HSSFFormulaEvaluator#evaluate(HSSFCell)} should behave the same whether the cell
+	 * {@link HSSFFormulaEvaluator#evaluate(org.apache.poi.ss.usermodel.Cell)} should behave the same whether the cell
 	 * is <code>null</code> or blank.
 	 */
 	public void testEvaluateBlank() {

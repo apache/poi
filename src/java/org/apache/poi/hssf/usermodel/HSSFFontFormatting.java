@@ -102,7 +102,6 @@ public final class HSSFFontFormatting
 	}
 
 	/**
-	 * @return
 	 * @see org.apache.poi.hssf.record.cf.FontFormatting#getRawRecord()
 	 */
 	protected byte[] getRawRecord()
@@ -228,7 +227,7 @@ public final class HSSFFontFormatting
 	 * set font style options.
 	 * 
 	 * @param italic - if true, set posture style to italic, otherwise to normal 
-	 * @param bold- if true, set font weight to bold, otherwise to normal
+	 * @param bold if true, set font weight to bold, otherwise to normal
 	 */
 	
 	public void setFontStyle(boolean italic, boolean bold)
@@ -302,7 +301,7 @@ public final class HSSFFontFormatting
 
 	/**
 	 * @param height
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setFontHeight(short)
+	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setFontHeight(int)
 	 */
 	public void setFontHeight(int height)
 	{
@@ -369,7 +368,7 @@ public final class HSSFFontFormatting
 	/**
 	 * set the type of underlining type for the font
 	 *
-	 * @param u  super or subscript option
+	 * @param underlineType  super or subscript option
 	 *
 	 * @see #U_NONE
 	 * @see #U_SINGLE

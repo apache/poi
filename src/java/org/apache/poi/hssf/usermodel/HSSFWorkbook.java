@@ -382,7 +382,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * Sets the policy on what to do when
      *  getting missing or blank cells from a row.
      * This will then apply to all calls to
-     *  {@link HSSFRow.getCell()}. See
+     *  {@link HSSFRow#getCell(int)}}. See
      *  {@link MissingCellPolicy}.
      * Note that this has no effect on any
      *  iterators, only on when fetching Cells

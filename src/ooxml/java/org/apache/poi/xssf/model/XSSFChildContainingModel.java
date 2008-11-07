@@ -36,7 +36,7 @@ public interface XSSFChildContainingModel extends XSSFModel {
 	 *  appropriate model or usermodel thing can be 
 	 *  created for it.
 	 * @param childPart The PackagePart of the child
-	 * @param childId the ID of the relationship the child comes from
+	 * @param childRelId the ID of the relationship the child comes from
 	 */
 	public void generateChild(PackagePart childPart, String childRelId);
 

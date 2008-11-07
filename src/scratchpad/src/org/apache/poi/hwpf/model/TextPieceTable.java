@@ -157,7 +157,7 @@ public class TextPieceTable
    * In a very evil fashion, you have to actually 
    *  know this to make sense of character and
    *  paragraph properties :(
-   * @param cp The character offset to check about
+   * @param bytePos The character offset to check about
    */
   public boolean isUnicodeAtByteOffset(int bytePos) {
 	  boolean lastWas = false;

@@ -105,7 +105,6 @@ public class TextPiece extends PropertyNode implements Comparable
     * Works only in characters, not in bytes!
     * @param start Local start position, in characters
     * @param end Local end position, in characters
-    * @return
     */
    public String substring(int start, int end)
    {

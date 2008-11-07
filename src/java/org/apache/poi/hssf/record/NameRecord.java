@@ -523,7 +523,7 @@ public final class NameRecord extends Record {
 	 * called by the constructor, should set class level fields.  Should throw
 	 * runtime exception for bad/icomplete data.
 	 *
-	 * @param in the RecordInputstream to read the record from
+	 * @param ris the RecordInputstream to read the record from
 	 */
 	public NameRecord(RecordInputStream ris) {
 		LittleEndianInput in = ris;

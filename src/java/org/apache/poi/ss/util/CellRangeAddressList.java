@@ -84,7 +84,6 @@ public class CellRangeAddressList {
 	 * @param firstCol - the upper left hand corner's col
 	 * @param lastRow - the lower right hand corner's row
 	 * @param lastCol - the lower right hand corner's col
-	 * @return the index of this ADDR structure
 	 */
 	public void addCellRangeAddress(int firstRow, int firstCol, int lastRow, int lastCol) {
 		CellRangeAddress region = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);

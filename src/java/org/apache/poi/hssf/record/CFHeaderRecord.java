@@ -87,7 +87,7 @@ public final class CFHeaderRecord extends Record {
 	/**
 	 * Set cell ranges list to a single cell range and 
 	 * modify the enclosing cell range accordingly.
-	 * @param List cellRanges - list of CellRange objects
+	 * @param cellRanges - list of CellRange objects
 	 */
 	public void setCellRanges(CellRangeAddress[] cellRanges)
 	{

@@ -188,8 +188,8 @@ public final class FontFormatting
 	/**
 	 * set the font to be italics or not
 	 *
-	 * @param italics - whether the font is italics or not
-	 * @see #setAttributes(short)
+	 * @param italic - whether the font is italics or not
+	 * @see #setFontOption(boolean, org.apache.poi.util.BitField)
 	 */
 
 	public void setItalic(boolean italic)
@@ -201,7 +201,7 @@ public final class FontFormatting
 	 * get whether the font is to be italics or not
 	 *
 	 * @return italics - whether the font is italics or not
-	 * @see #getAttributes()
+	 * @see #getFontOption(org.apache.poi.util.BitField)
 	 */
 
 	public boolean isItalic()
@@ -244,7 +244,7 @@ public final class FontFormatting
 	 * get whether the font is to be stricken out or not
 	 *
 	 * @return strike - whether the font is stricken out or not
-	 * @see #getAttributes()
+	 * @see #getFontOption(org.apache.poi.util.BitField)
 	 */
 
 	public boolean isStruckout()

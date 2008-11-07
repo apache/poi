@@ -82,7 +82,6 @@ public class HSSFPatternFormatting
 	}
 
 	/**
-	 * @return
 	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#getFillBackgroundColor()
 	 */
 	public short getFillBackgroundColor()
@@ -91,7 +90,6 @@ public class HSSFPatternFormatting
 	}
 
 	/**
-	 * @return
 	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#getFillForegroundColor()
 	 */
 	public short getFillForegroundColor()
@@ -100,7 +98,6 @@ public class HSSFPatternFormatting
 	}
 
 	/**
-	 * @return
 	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#getFillPattern()
 	 */
 	public short getFillPattern()
@@ -110,7 +107,7 @@ public class HSSFPatternFormatting
 
 	/**
 	 * @param bg
-	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#setFillBackgroundColor(short)
+	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#setFillBackgroundColor(int)
 	 */
 	public void setFillBackgroundColor(short bg)
 	{
@@ -123,7 +120,7 @@ public class HSSFPatternFormatting
 
 	/**
 	 * @param fg
-	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#setFillForegroundColor(short)
+	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#setFillForegroundColor(int)
 	 */
 	public void setFillForegroundColor(short fg)
 	{
@@ -136,7 +133,7 @@ public class HSSFPatternFormatting
 
 	/**
 	 * @param fp
-	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#setFillPattern(short)
+	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#setFillPattern(int)
 	 */
 	public void setFillPattern(short fp)
 	{

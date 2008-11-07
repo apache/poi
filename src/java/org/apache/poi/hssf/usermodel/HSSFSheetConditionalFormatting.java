@@ -45,7 +45,7 @@ public final class HSSFSheetConditionalFormatting {
 	 * TODO - formulas containing cell references are currently not parsed properly 
 	 *
 	 * @param comparisonOperation - a constant value from
-	 *		 <tt>{@link HSSFConditionalFormattingRule.ComparisonOperator}</tt>: <p>
+	 *		 <tt>{@link org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator}</tt>: <p>
 	 * <ul>
 	 *		 <li>BETWEEN</li>
 	 *		 <li>NOT_BETWEEN</li>
@@ -59,8 +59,8 @@ public final class HSSFSheetConditionalFormatting {
 	 * </p>
 	 * @param formula1 - formula for the valued, compared with the cell
 	 * @param formula2 - second formula (only used with
-	 * {@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_BETWEEN}) and
-	 * {@link HSSFConditionalFormattingRule#COMPARISON_OPERATOR_NOT_BETWEEN} operations)
+	 * {@link org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator#BETWEEN}) and
+	 * {@link org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator#NOT_BETWEEN} operations)
 	 */
 	public HSSFConditionalFormattingRule createConditionalFormattingRule(
 			byte comparisonOperation,

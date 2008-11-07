@@ -26,7 +26,6 @@ abstract public class Chunk {
 	
 	/**
 	 * Gets the id of this chunk
-	 * @return
 	 */
 	public int getChunkId() {
 		return this.chunkId;
@@ -34,7 +33,6 @@ abstract public class Chunk {
 	
 	/**
 	 * Gets the numeric type of this chunk.
-	 * @return
 	 */
 	public int getType() {
 		return this.type;
@@ -42,7 +40,6 @@ abstract public class Chunk {
 	
 	/**
 	 * Creates a string to use to identify this chunk in the POI file system object.
-	 * @return
 	 */
 	public String getEntryName() {
 		String type = Integer.toHexString(this.type);
@@ -56,7 +53,6 @@ abstract public class Chunk {
 	
 	/**
 	 * Gets a reference to a ByteArrayOutputStream that contains the value of this chunk.
-	 * @return
 	 */
 	public abstract ByteArrayOutputStream getValueByteArray();
 	

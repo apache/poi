@@ -68,7 +68,7 @@ import org.apache.poi.ss.usermodel.Cell;
  * Evaluates formula cells.<p/>
  *
  * For performance reasons, this class keeps a cache of all previously calculated intermediate
- * cell values.  Be sure to call {@link #clearCache()} if any workbook cells are changed between
+ * cell values.  Be sure to call {@link #clearAllCachedResultValues()} if any workbook cells are changed between
  * calls to evaluate~ methods on this class.<br/>
  *
  * For POI internal use only
