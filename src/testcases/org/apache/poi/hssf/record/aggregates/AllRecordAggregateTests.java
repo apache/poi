@@ -34,6 +34,7 @@ public final class AllRecordAggregateTests {
 		result.addTestSuite(TestColumnInfoRecordsAggregate.class);
 		result.addTestSuite(TestFormulaRecordAggregate.class);
 		result.addTestSuite(TestRowRecordsAggregate.class);
+		result.addTestSuite(TestSharedValueManager.class);
 		result.addTestSuite(TestValueRecordsAggregate.class);
 		return result;
 	}

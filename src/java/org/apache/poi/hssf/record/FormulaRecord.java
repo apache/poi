@@ -345,6 +345,10 @@ public final class FormulaRecord extends Record implements CellValueRecordInterf
 		return field_8_parsed_expr.getTokens();
 	}
 
+	public Formula getFormula() {
+		return field_8_parsed_expr;
+	}
+
 	public void setParsedExpression(Ptg[] ptgs) {
 		field_8_parsed_expr = Formula.create(ptgs);
 	}

@@ -46,8 +46,7 @@ public abstract class CellRangeAddressBase {
 		_firstCol = firstCol;
 		_lastCol = lastCol;
 	}
-	private static boolean isValid(int firstRow, int lastRow, int firstColumn, int lastColumn)
-	{
+	private static boolean isValid(int firstRow, int lastRow, int firstColumn, int lastColumn) {
 		if(lastRow < 0 || lastRow > LAST_ROW_INDEX) {
 			return false;
 		}
@@ -129,6 +128,8 @@ public abstract class CellRangeAddressBase {
 	}
 
 	public final String toString() {
-		return getClass().getName() + " ["+_firstRow+", "+_lastRow+", "+_firstCol+", "+_lastCol+"]";
+		CellReference crA = new CellReference(_firstRow, _firstCol);
+		CellReference crB = new CellReference(_lastRow, _lastCol);
+		return getClass().getName() + " [" + crA.formatAsString() + ":" + crB.formatAsString() +"]";
 	}
 }

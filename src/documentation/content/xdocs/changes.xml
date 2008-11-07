@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta4" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">Fixed problem with linking shared formulas when ranges overlap</action>
            <action dev="POI-DEVELOPERS" type="fix">45784 - More fixes to SeriesTextRecord</action>
            <action dev="POI-DEVELOPERS" type="fix">46033 - fixed TableCell to correctly set text type</action>
            <action dev="POI-DEVELOPERS" type="fix">46122 - fixed Picture.draw to skip rendering if picture data was not found</action>
