@@ -138,7 +138,7 @@ public final class HSSFDataValidation {
 	}
 
 	/**
-	 * @param show <code>true</code> if an prompt box should be displayed , <code>false</code> otherwise
+	 * @return <code>true</code> if an prompt box should be displayed , <code>false</code> otherwise
 	 */
 	public boolean getShowPromptBox() {
 		return _showPromptBox;

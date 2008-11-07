@@ -111,10 +111,6 @@ public abstract class XSSFHeaderFooter implements HeaderFooter {
         return this.headerFooter;
     }
 
-    /**
-     * 
-     * @return
-     */
     public String getValue() {
         String value = getText();
         if(value == null)

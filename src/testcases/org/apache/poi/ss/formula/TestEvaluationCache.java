@@ -47,7 +47,7 @@ import org.apache.poi.ss.formula.PlainCellCache.Loc;
 import org.apache.poi.ss.usermodel.CellValue;
 
 /**
- * Tests {@link EvaluationCache}.  Makes sure that where possible (previously calculated) cached 
+ * Tests {@link org.apache.poi.ss.formula.EvaluationCache}.  Makes sure that where possible (previously calculated) cached 
  * values are used.  Also checks that changing cell values causes the correct (minimal) set of
  * dependent cached values to be cleared.
  *

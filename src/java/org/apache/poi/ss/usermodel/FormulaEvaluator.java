@@ -17,20 +17,11 @@
 
 package org.apache.poi.ss.usermodel;
 
-import org.apache.poi.hssf.record.formula.eval.BlankEval;
-import org.apache.poi.hssf.record.formula.eval.BoolEval;
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.StringEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-
-
 /**
  * Evaluates formula cells.<p/>
  * 
  * For performance reasons, this class keeps a cache of all previously calculated intermediate
- * cell values.  Be sure to call {@link #clearCache()} if any workbook cells are changed between
+ * cell values.  Be sure to call {@link #clearAllCachedResultValues()} if any workbook cells are changed between
  * calls to evaluate~ methods on this class.
  * 
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;

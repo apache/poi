@@ -201,7 +201,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * @param rownum  row number
      * @return High level HSSFRow object representing a row in the sheet
      * @see org.apache.poi.hssf.usermodel.HSSFRow
-     * @see #removeRow(HSSFRow)
+     * @see #removeRow(org.apache.poi.ss.usermodel.Row)
      */
     public HSSFRow createRow(int rownum)
     {

@@ -75,7 +75,6 @@ public class MAPIMessage {
 	/**
 	 * Gets a string value based on the passed chunk.
 	 * @param chunk
-	 * @return
 	 * @throws ChunkNotFoundException
 	 */
 	public String getStringFromChunk(StringChunk chunk) throws ChunkNotFoundException {
@@ -97,7 +96,6 @@ public class MAPIMessage {
 
 	/**
 	 * Gets the subject line of the Outlook Message
-	 * @return
 	 * @throws ChunkNotFoundException
 	 */
 	public String getSubject() throws ChunkNotFoundException {
@@ -108,7 +106,6 @@ public class MAPIMessage {
 	/**
 	 * Gets the display value of the "TO" line of the outlook message
 	 * This is not the actual list of addresses/values that will be sent to if you click Reply in the email.
-	 * @return
 	 * @throws ChunkNotFoundException
 	 */
 	public String getDisplayTo() throws ChunkNotFoundException {
@@ -118,7 +115,6 @@ public class MAPIMessage {
 	/**
 	 * Gets the display value of the "FROM" line of the outlook message
 	 * This is not the actual address that was sent from but the formated display of the user name.
-	 * @return
 	 * @throws ChunkNotFoundException
 	 */
 	public String getDisplayFrom() throws ChunkNotFoundException {
@@ -128,7 +124,6 @@ public class MAPIMessage {
 	/**
 	 * Gets the display value of the "TO" line of the outlook message
 	 * This is not the actual list of addresses/values that will be sent to if you click Reply in the email.
-	 * @return
 	 * @throws ChunkNotFoundException
 	 */
 	public String getDisplayCC() throws ChunkNotFoundException {
@@ -138,7 +133,6 @@ public class MAPIMessage {
 	/**
 	 * Gets the display value of the "TO" line of the outlook message
 	 * This is not the actual list of addresses/values that will be sent to if you click Reply in the email.
-	 * @return
 	 * @throws ChunkNotFoundException
 	 */
 	public String getDisplayBCC() throws ChunkNotFoundException {
@@ -149,7 +143,6 @@ public class MAPIMessage {
 	/**
 	 * Gets the conversation topic of the parsed Outlook Message.
 	 * This is the part of the subject line that is after the RE: and FWD:
-	 * @return
 	 * @throws ChunkNotFoundException
 	 */
 	public String getConversationTopic() throws ChunkNotFoundException {
@@ -161,7 +154,6 @@ public class MAPIMessage {
 	 * (Yes, you can use this to determine if a message is a calendar item, note, or actual outlook Message)
 	 * For emails the class will be IPM.Note
 	 * 
-	 * @return
 	 * @throws ChunkNotFoundException
 	 */
 	public String getMessageClass() throws ChunkNotFoundException {

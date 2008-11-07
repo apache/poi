@@ -254,12 +254,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param format            The format of the picture.
      *
      * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .
-     * @see #PICTURE_TYPE_EMF
-     * @see #PICTURE_TYPE_WMF
-     * @see #PICTURE_TYPE_PICT
-     * @see #PICTURE_TYPE_JPEG
-     * @see #PICTURE_TYPE_PNG
-     * @see #PICTURE_TYPE_DIB
+     * @see Workbook#PICTURE_TYPE_EMF
+     * @see Workbook#PICTURE_TYPE_WMF
+     * @see Workbook#PICTURE_TYPE_PICT
+     * @see Workbook#PICTURE_TYPE_JPEG
+     * @see Workbook#PICTURE_TYPE_PNG
+     * @see Workbook#PICTURE_TYPE_DIB
      * @see #getAllPictures()
      */
     public int addPicture(byte[] pictureData, int format) {
@@ -283,12 +283,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param format            The format of the picture.
      *
      * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .
-     * @see #PICTURE_TYPE_EMF
-     * @see #PICTURE_TYPE_WMF
-     * @see #PICTURE_TYPE_PICT
-     * @see #PICTURE_TYPE_JPEG
-     * @see #PICTURE_TYPE_PNG
-     * @see #PICTURE_TYPE_DIB
+     * @see Workbook#PICTURE_TYPE_EMF
+     * @see Workbook#PICTURE_TYPE_WMF
+     * @see Workbook#PICTURE_TYPE_PICT
+     * @see Workbook#PICTURE_TYPE_JPEG
+     * @see Workbook#PICTURE_TYPE_PNG
+     * @see Workbook#PICTURE_TYPE_DIB
      * @see #getAllPictures()
      */
     public int addPicture(InputStream is, int format) throws IOException {

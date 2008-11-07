@@ -358,7 +358,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
     /**
      * Create a row record.
      *
-     * @param row number
+     * @param rowNumber row number
      * @return RowRecord created for the passed in row number
      * @see org.apache.poi.hssf.record.RowRecord
      */

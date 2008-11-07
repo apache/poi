@@ -101,28 +101,28 @@ public abstract class CellRangeAddressBase {
 	}
 
 	/**
-	 * @param _firstCol column number for the upper left hand corner
+	 * @param firstCol column number for the upper left hand corner
 	 */
 	public final void setFirstColumn(int firstCol) {
 		_firstCol = firstCol;
 	}
 
 	/**
-	 * @param rowFrom row number for the upper left hand corner
+	 * @param firstRow row number for the upper left hand corner
 	 */
 	public final void setFirstRow(int firstRow) {
 		_firstRow = firstRow;
 	}
 
 	/**
-	 * @param colTo column number for the lower right hand corner
+	 * @param lastCol column number for the lower right hand corner
 	 */
 	public final void setLastColumn(int lastCol) {
 		_lastCol = lastCol;
 	}
 
 	/**
-	 * @param rowTo row number for the lower right hand corner
+	 * @param lastRow row number for the lower right hand corner
 	 */
 	public final void setLastRow(int lastRow) {
 		_lastRow = lastRow;

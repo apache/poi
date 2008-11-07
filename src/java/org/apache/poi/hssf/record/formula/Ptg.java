@@ -260,7 +260,7 @@ public abstract class Ptg implements Cloneable {
 	public abstract int getSize();
 	
 	/**
-	 * @return the encoded length of this Ptg, not including the initial Ptg type identifier byte. 
+	 * //@return the encoded length of this Ptg, not including the initial Ptg type identifier byte. 
 	 */
 //    public abstract int getDataSize();
 

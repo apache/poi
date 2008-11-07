@@ -321,7 +321,7 @@ public final class BorderFormatting {
     /**
      * get the color to use for the left border
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @param color The index of the color definition
+     * @return  The index of the color definition
      */
     public int getLeftBorderColor() {
         return bordLeftLineColor.getValue(field_13_border_styles1);
@@ -338,7 +338,7 @@ public final class BorderFormatting {
     /**
      * get the color to use for the right border
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @param color The index of the color definition
+     * @return The index of the color definition
      */
     public int getRightBorderColor() {
         return bordRightLineColor.getValue(field_13_border_styles1);
@@ -355,7 +355,7 @@ public final class BorderFormatting {
     /**
      * get the color to use for the top border
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @param color The index of the color definition
+     * @return The index of the color definition
      */
     public int getTopBorderColor() {
         return bordTopLineColor.getValue(field_14_border_styles2);
@@ -373,7 +373,7 @@ public final class BorderFormatting {
     /**
      * get the color to use for the bottom border
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @param color The index of the color definition
+     * @return The index of the color definition
      */
     public int getBottomBorderColor() {
         return bordBottomLineColor.getValue(field_14_border_styles2);
@@ -390,7 +390,7 @@ public final class BorderFormatting {
     /**
      * get the color to use for the diagonal border
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @param color The index of the color definition
+     * @return The index of the color definition
      */
     public int getDiagonalBorderColor() {
         return bordDiagLineColor.getValue(field_14_border_styles2);

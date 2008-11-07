@@ -33,7 +33,7 @@ import org.apache.poi.ss.usermodel.CellValue;
  * Evaluates formula cells.<p/>
  *
  * For performance reasons, this class keeps a cache of all previously calculated intermediate
- * cell values.  Be sure to call {@link #clearCache()} if any workbook cells are changed between
+ * cell values.  Be sure to call {@link #clearAllCachedResultValues()} if any workbook cells are changed between
  * calls to evaluate~ methods on this class.
  *
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -156,7 +156,7 @@ public class HSSFFormulaEvaluator /* almost implements FormulaEvaluator */ {
 	 * int evaluatedCellType = evaluator.evaluateFormulaCell(cell);
 	 * </pre>
 	 * Be aware that your cell will hold both the formula, and the result. If you want the cell 
-	 * replaced with the result of the formula, use {@link #evaluateInCell(HSSFCell)}
+	 * replaced with the result of the formula, use {@link #evaluateInCell(org.apache.poi.ss.usermodel.Cell)}
 	 * @param cell The cell to evaluate
 	 * @return -1 for non-formula cells, or the type of the <em>formula result</em>
 	 */
@@ -183,7 +183,7 @@ public class HSSFFormulaEvaluator /* almost implements FormulaEvaluator */ {
 	 * </pre>
 	 * Be aware that your cell value will be changed to hold the
 	 *  result of the formula. If you simply want the formula
-	 *  value computed for you, use {@link #evaluateFormulaCell(HSSFCell)}
+	 *  value computed for you, use {@link #evaluateFormulaCell(org.apache.poi.ss.usermodel.Cell)}}
 	 * @param cell
 	 */
 	public HSSFCell evaluateInCell(Cell cell) {

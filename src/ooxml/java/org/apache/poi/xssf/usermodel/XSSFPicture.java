@@ -223,7 +223,8 @@ public class XSSFPicture extends XSSFShape {
      * Return the dimension of this image
      *
      * @param part the package part holding raw picture data
-     * @param type type of the picture: {@link Workbook#PICTURE_TYPE_JPEG, Workbook#PICTURE_TYPE_PNG or Workbook#PICTURE_TYPE_DIB)
+     * @param type type of the picture: {@link Workbook#PICTURE_TYPE_JPEG},
+     * {@link Workbook#PICTURE_TYPE_PNG} or {@link Workbook#PICTURE_TYPE_DIB}
      *
      * @return image dimension in pixels
      */

@@ -43,7 +43,7 @@ import org.apache.poi.ss.util.Region;
  *  </LI>
  *  </UL>
  * 
- * Use {@link HSSFSheet#getConditionalFormattingAt(int)} to get access to an instance of this class. 
+ * Use {@link org.apache.poi.hssf.usermodel.HSSFSheet#getSheetConditionalFormatting()} to get access to an instance of this class.
  * <P>
  * To create a new Conditional Formatting set use the following approach:
  * 

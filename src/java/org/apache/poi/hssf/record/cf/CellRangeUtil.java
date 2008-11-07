@@ -89,7 +89,7 @@ public final class CellRangeUtil
 	 * Do all possible cell merges between cells of the list so that:<br>
 	 * 	<li>if a cell range is completely inside of another cell range, it gets removed from the list 
 	 * 	<li>if two cells have a shared border, merge them into one bigger cell range
-	 * @param cellRangeList
+	 * @param cellRanges
 	 * @return updated List of cell ranges
 	 */
 	public static CellRangeAddress[] mergeCellRanges(CellRangeAddress[] cellRanges) {

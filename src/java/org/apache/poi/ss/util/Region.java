@@ -209,7 +209,7 @@ public class Region implements Comparable {
 	/**
 	 * Convert a List of CellRange objects to an array of regions 
 	 *  
-	 * @param List of CellRange objects
+	 * @param cellRanges list of CellRange objects
 	 * @return regions
 	 */
 	public static Region[] convertCellRangesToRegions(CellRangeAddress[] cellRanges) {

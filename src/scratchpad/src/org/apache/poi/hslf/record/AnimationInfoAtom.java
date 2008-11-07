@@ -203,14 +203,14 @@ public class AnimationInfoAtom extends RecordAtom
 
     /**
      * A signed integer that specifies the delay time, in milliseconds, before the animation starts to play.
-     * If {@link Automatic} is 0x1, this value MUST be greater than or equal to 0; otherwise, this field MUST be ignored.
+     * If {@link #Automatic} is 0x1, this value MUST be greater than or equal to 0; otherwise, this field MUST be ignored.
      */
     public int getDelayTime(){
         return LittleEndian.getInt(_recdata, 12);
     }
     /**
      * A signed integer that specifies the delay time, in milliseconds, before the animation starts to play.
-     * If {@link Automatic} is 0x1, this value MUST be greater than or equal to 0; otherwise, this field MUST be ignored.
+     * If {@link #Automatic} is 0x1, this value MUST be greater than or equal to 0; otherwise, this field MUST be ignored.
      */
     public void setDelayTime(int id){
          LittleEndian.putInt(_recdata, 12, id);

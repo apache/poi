@@ -216,7 +216,6 @@ public class HSSFCell implements Cell {
 
     /**
      * Returns the Workbook that this Cell is bound to
-     * @return
      */
     protected Workbook getBoundWorkbook() {
         return book.getWorkbook();
@@ -1085,7 +1084,7 @@ public class HSSFCell implements Cell {
     /**
      * Assign a hypelrink to this cell
      *
-     * @param link hypelrink associated with this cell
+     * @param hyperlink hypelrink associated with this cell
      */
     public void setHyperlink(Hyperlink hyperlink){
     	HSSFHyperlink link = (HSSFHyperlink)hyperlink;

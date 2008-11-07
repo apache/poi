@@ -52,7 +52,7 @@ public final class BiffViewer {
 	/**
 	 *  Create an array of records from an input stream
 	 *
-	 *@param  in the InputStream from which the records will be obtained
+	 *@param  is the InputStream from which the records will be obtained
 	 *@return an array of Records created from the InputStream
 	 *@exception  RecordFormatException  on error processing the InputStream
 	 */

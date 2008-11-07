@@ -34,13 +34,15 @@ public class HeadersFootersAtom extends RecordAtom {
 
     /**
      * A bit that specifies whether the date is displayed in the footer.
-     * @see {@link #getMask()}, {@link #setMask(int)}},
+     * @see #getMask()
+     * @see #setMask(int)
      */
     public static final int fHasDate = 1;
 
     /**
      * A bit that specifies whether the current datetime is used for displaying the datetime.
-     * @see {@link #getMask()}, {@link #setMask(int)}},
+     * @see #getMask()
+     * @see #setMask(int)
      */
     public static final int fHasTodayDate = 2;
 
@@ -48,28 +50,32 @@ public class HeadersFootersAtom extends RecordAtom {
      * A bit that specifies whether the date specified in UserDateAtom record
      * is used for displaying the datetime.
      *
-     * @see {@link #getMask()}, {@link #setMask(int)}},
+     * @see #getMask()
+     * @see #setMask(int)
      */
      public static final int fHasUserDate = 4;
 
     /**
      * A bit that specifies whether the slide number is displayed in the footer.
      * 
-     * @see {@link #getMask()}, {@link #setMask(int)}},
+     * @see #getMask()
+     * @see #setMask(int)
      */
     public static final int fHasSlideNumber = 8;
 
     /**
      * bit that specifies whether the header text is displayed.
      *
-     * @see {@link #getMask()}, {@link #setMask(int)}},
+     * @see #getMask()
+     * @see #setMask(int)
      */
     public static final int fHasHeader = 16;
 
     /**
      * bit that specifies whether the footer text is displayed.
      *
-     * @see {@link #getMask()}, {@link #setMask(int)}},
+     * @see #getMask()
+     * @see #setMask(int)
      */
     public static final int fHasFooter = 32;
 

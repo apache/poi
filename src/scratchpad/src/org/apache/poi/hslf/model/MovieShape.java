@@ -95,7 +95,7 @@ public class MovieShape extends Picture {
     /**
      * Assign a movie to this shape
      *
-     * @see {@link org.apache.poi.hslf.usermodel.SlideShow#addMovie(String, int)}
+     * @see org.apache.poi.hslf.usermodel.SlideShow#addMovie(String, int)
      * @param idx  the index of the movie
      */
     public void setMovieIndex(int idx){

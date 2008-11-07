@@ -120,7 +120,7 @@ public final class ColumnInfoRecord extends Record {
     /**
      * set whether or not these cells are hidden
      * @param ishidden - whether the cells are hidden.
-     * @see #setOptions(short)
+     * @see #setOptions(int)
      */
 
     public void setHidden(boolean ishidden)
@@ -130,7 +130,7 @@ public final class ColumnInfoRecord extends Record {
 
     /**
      * set the outline level for the cells
-     * @see #setOptions(short)
+     * @see #setOptions(int)
      * @param olevel -outline level for the cells
      */
 
@@ -142,7 +142,7 @@ public final class ColumnInfoRecord extends Record {
     /**
      * set whether the cells are collapsed
      * @param iscollapsed - wether the cells are collapsed
-     * @see #setOptions(short)
+     * @see #setOptions(int)
      */
 
     public void setCollapsed(boolean iscollapsed)
@@ -206,7 +206,7 @@ public final class ColumnInfoRecord extends Record {
     /**
      * get whether or not these cells are hidden
      * @return whether the cells are hidden.
-     * @see #setOptions(short)
+     * @see #setOptions(int)
      */
 
     public boolean getHidden()
@@ -216,7 +216,7 @@ public final class ColumnInfoRecord extends Record {
 
     /**
      * get the outline level for the cells
-     * @see #setOptions(short)
+     * @see #setOptions(int)
      * @return outline level for the cells
      */
 
@@ -228,7 +228,7 @@ public final class ColumnInfoRecord extends Record {
     /**
      * get whether the cells are collapsed
      * @return wether the cells are collapsed
-     * @see #setOptions(short)
+     * @see #setOptions(int)
      */
 
     public boolean getCollapsed()

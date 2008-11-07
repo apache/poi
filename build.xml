@@ -1010,7 +1010,7 @@ FORREST_HOME environment variable!</echo>
     warn-unless-xslt-is-available"
     description="Generates the API documentation">
     <javadoc verbose="false" author="true" destdir="${apidocs.report.dir}"
-      windowtitle="POI API Documentation" use="true" version="true">
+      windowtitle="POI API Documentation" use="true" version="true" maxmemory="256M">
 
       <packageset dir="${main.src}" defaultexcludes="yes">
         <include name="org/apache/poi/**"/>
@@ -1022,7 +1022,7 @@ FORREST_HOME environment variable!</echo>
       <packageset dir="${contrib.src}" defaultexcludes="yes">
         <include name="org/apache/poi/**"/>
       </packageset>
-      <packageset dir="${examples.src}" defaultexcludes="yes">
+      <packageset dir="${ooxml.src}" defaultexcludes="yes">
         <include name="org/apache/poi/**"/>
       </packageset>
 
@@ -1030,7 +1030,7 @@ FORREST_HOME environment variable!</echo>
         <path refid="main.classpath"/>
         <path refid="scratchpad.classpath"/>
         <path refid="contrib.classpath"/>
-        <path refid="examples.classpath"/>
+        <path refid="ooxml.classpath"/>
         <path path="${env.CLASSPATH}"/>
       </classpath>
 

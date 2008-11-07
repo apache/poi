@@ -76,7 +76,7 @@ public final class RecordInputStream extends InputStream implements LittleEndian
 	}
 	
 	/**
-	 * @returns the number of bytes available in the current BIFF record
+	 * @return the number of bytes available in the current BIFF record
 	 * @see #remaining()
 	 */
 	public int available() {
@@ -216,7 +216,6 @@ public final class RecordInputStream extends InputStream implements LittleEndian
 
 	/**
 	 * Reads a 16 bit, unsigned value.
-	 * @return
 	 */
 	public int readUShort() {
 		checkRecordPosition(LittleEndian.SHORT_SIZE);

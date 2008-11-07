@@ -317,7 +317,7 @@ public final class HSSFRow implements Comparable, Row {
      * Get the hssfcell representing a given column (logical cell)
      *  0-based.  If you ask for a cell that is not defined then
      *  you get a null, unless you have set a different
-     *  {@link MissingCellPolicy} on the base workbook.
+     *  {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy} on the base workbook.
      *
      * @param cellnum  0 based column number
      * @return HSSFCell representing that column or null if undefined.
@@ -560,7 +560,7 @@ public final class HSSFRow implements Comparable, Row {
      *  will not return un-defined (null) cells.
      * Call getCellNum() on the returned cells to know which cell they are.
      * As this only ever works on physically defined cells, 
-     *  the {@link MissingCellPolicy} has no effect.
+     *  the {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy} has no effect.
      */
     public Iterator cellIterator()
     {

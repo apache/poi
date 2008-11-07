@@ -104,7 +104,6 @@ public class OLEShape extends Picture {
      * 5. CString (4026), Instance ClipboardName (3) that appears in the paste special dialog.
      * 6. MetaFile( 4033), optional
      * </p>
-     * @return
      */
     public ExEmbed getExEmbed(){
         if(_exEmbed == null){

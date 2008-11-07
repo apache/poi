@@ -163,7 +163,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
 
     /**
      * Returns the cell at the given (0 based) index,
-     *  with the {@link MissingCellPolicy} from the parent Workbook.
+     *  with the {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy} from the parent Workbook.
      *
      * @return the cell at the given (0 based) index
      */
@@ -172,7 +172,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     }
 
     /**
-     * Returns the cell at the given (0 based) index, with the specified {@link MissingCellPolicy}
+     * Returns the cell at the given (0 based) index, with the specified {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy}
      *
      * @return the cell at the given (0 based) index
      * @throws IllegalArgumentException if cellnum < 0 or the specified MissingCellPolicy is invalid
