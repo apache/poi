@@ -197,7 +197,7 @@ under the License.
 
     <path id="ooxml.classpath">
         <path refid="main.classpath"/>
-        <path refid="scratchpad.classpath"/>
+        <pathelement location="${main.output.dir}"/>
         <pathelement location="${scratchpad.output.dir}"/>
         <fileset dir="${ooxml.lib}">
 			<include name="*.jar" />
@@ -1121,7 +1121,7 @@ FORREST_HOME environment variable!</echo>
       description="Generates POI's website's contents"/>
 
 
-    <target name="maven-dist" depends="jar,jar-ooxml" description="Builds the POM files for a maven distribution, and copies these and the jars to the appropriate locations">
+    <target name="maven-dist" depends="jar" description="Builds the POM files for a maven distribution, and copies these and the jars to the appropriate locations">
 		<!-- Copy the jar files into the maven jar directory -->
 		<!-- Same jars as for the main release, only lacking the datestamp -->
 		<copy
@@ -1263,10 +1263,10 @@ FORREST_HOME environment variable!</echo>
 		</copy>
 	</target>
 
-  <target name="jar" depends="compile, compile-version, jar-ooxml" description="Creates jar files for distribution">
+  <target name="jar" depends="compile, compile-version" description="Creates jar files for distribution">
         <jar destfile="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar">
-			<fileset dir="${main.output.dir}" />
-			<fileset dir="legal/" />
+			      <fileset dir="${main.output.dir}" />
+			      <fileset dir="legal/" />
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Specification-Title" value="Apache POI"/>
@@ -1278,8 +1278,8 @@ FORREST_HOME environment variable!</echo>
             </manifest>        
         </jar>
         <jar destfile="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar">
-			<fileset dir="${contrib.output.dir}" />
-			<fileset dir="legal/" />
+			      <fileset dir="${contrib.output.dir}" />
+			      <fileset dir="legal/" />
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Specification-Title" value="Apache POI"/>
@@ -1291,8 +1291,8 @@ FORREST_HOME environment variable!</echo>
             </manifest>        
         </jar>
         <jar destfile="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar">
-			<fileset dir="${scratchpad.output.dir}" />
-			<fileset dir="legal/" />
+      			<fileset dir="${scratchpad.output.dir}" />
+      			<fileset dir="legal/" />
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Specification-Title" value="Apache POI"/>
@@ -1303,11 +1303,9 @@ FORREST_HOME environment variable!</echo>
                 <attribute name="Implementation-Vendor" value="Apache"/>
             </manifest>        
         </jar>
-    </target>
-    <target name="jar-ooxml" depends="compile-ooxml" description="Creates the ooxml jar files for distribution">
         <jar destfile="${dist.dir}/${jar.name}-ooxml-${version.id}-${DSTAMP}.jar">
-			<fileset dir="${ooxml.output.dir}" />
-			<fileset dir="legal/" />
+            <fileset dir="${ooxml.output.dir}" />
+            <fileset dir="legal/" />
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Specification-Title" value="Apache POI"/>
@@ -1320,10 +1318,10 @@ FORREST_HOME environment variable!</echo>
         </jar>
     </target>
 
-  <target name="dist" depends="clean, fail-unless-tools-are-available, compile, site, jar, jar-ooxml"
+  <target name="dist" depends="clean, fail-unless-tools-are-available, compile, site, jar"
     description="Creates the entire distribution into build/dist, from scratch">
 
-	<property name="zipdir" value="${jar.name}-${version.id}" />
+	  <property name="zipdir" value="${jar.name}-${version.id}" />
 
     <zip destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.zip">
       <zipfileset dir="legal/" prefix="${zipdir}" />
