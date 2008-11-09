@@ -128,10 +128,6 @@ under the License.
   <property name="ooxml.openxml4j.url" value="http://people.apache.org/~nick/openxml4j-bin-beta-080728.jar"/>
   <property name="ooxml.dom4j.jar" location="${ooxml.lib}/dom4j-1.6.1.jar"/>
   <property name="ooxml.dom4j.url" value="${repository}/dom4j/jars/dom4j-1.6.1.jar"/>
-  <property name="ooxml.jaxen.jar" location="${ooxml.lib}/jaxen-1.1.jar"/>
-  <property name="ooxml.jaxen.url" value="${repository}/jaxen/jars/jaxen-1.1.jar"/>
-  <property name="ooxml.xerces.jar" location="${ooxml.lib}/xercesImpl-2.8.1.jar"/>
-  <property name="ooxml.xerces.url" value="${repository}/xerces/jars/xercesImpl-2.8.1.jar"/>
   <property name="ooxml.xmlbeans.jar" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
   <property name="ooxml.xmlbeans.url" value="${repository}/org.apache.xmlbeans/jars/xmlbeans-2.3.0.jar"/>
   <property name="ooxml.jsr173.jar" location="${ooxml.lib}/jsr173_1.0_api.jar"/>
@@ -363,8 +359,6 @@ under the License.
             <or>
                 <and>
                     <available file="${ooxml.dom4j.jar}"/>
-                    <available file="${ooxml.jaxen.jar}"/>
-                    <available file="${ooxml.xerces.jar}"/>
                     <available file="${ooxml.xmlbeans.jar}"/>
                     <available file="${ooxml.jsr173.jar}"/>
                     <available file="${ooxml.schemas.jar}"/>
@@ -378,14 +372,6 @@ under the License.
       <antcall target="downloadfile">
         <param name="sourcefile" value="${ooxml.dom4j.url}"/>
         <param name="destfile" value="${ooxml.dom4j.jar}"/>
-      </antcall>
-      <antcall target="downloadfile">
-        <param name="sourcefile" value="${ooxml.jaxen.url}"/>
-        <param name="destfile" value="${ooxml.jaxen.jar}"/>
-      </antcall>
-      <antcall target="downloadfile">
-        <param name="sourcefile" value="${ooxml.xerces.url}"/>
-        <param name="destfile" value="${ooxml.xerces.jar}"/>
       </antcall>
       <antcall target="downloadfile">
         <param name="sourcefile" value="${ooxml.xmlbeans.url}"/>
