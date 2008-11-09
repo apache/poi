@@ -22,7 +22,7 @@ package org.apache.poi.hssf.util;
  *
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Glen Stampoultzis (glens at apache.org)
- * @author Rolf-Jürgen Moll
+ * @author Rolf-J\u00f6rgen Moll
  *
  * @see org.apache.poi.hssf.record.MulRKRecord
  * @see org.apache.poi.hssf.record.RKRecord

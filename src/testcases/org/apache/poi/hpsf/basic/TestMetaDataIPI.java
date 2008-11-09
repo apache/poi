@@ -44,7 +44,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * Basing on: src/examples/src/org/apache/poi/hpsf/examples/ModifyDocumentSummaryInformation.java
  * This class tests reading and writing of meta data. No actual document is created. All information
  * is stored in a virtal document in a ByteArrayOutputStream
- * @author Matthias Günter
+ * @author Matthias G\u00fcnter
  * @since 2006-03-03
  * @version $Id: TestEmptyProperties.java 353563 2004-06-22 16:16:33Z klute $
  */
@@ -286,7 +286,7 @@ public class TestMetaDataIPI extends TestCase{
      
      /* Insert some custom properties into the container. */
      customProperties.put("Key1", "Value1");
-     customProperties.put("Schlüssel2", "Wert2");
+     customProperties.put("Schlï¿½ssel2", "Wert2");
      customProperties.put("Sample Integer", new Integer(12345));
      customProperties.put("Sample Boolean", new Boolean(true));
      Date date=new Date();
@@ -325,8 +325,8 @@ public class TestMetaDataIPI extends TestCase{
      /* Insert some custom properties into the container. */
      String a1=(String) customProperties.get("Key1");
      assertEquals("Key1","Value1",a1);
-     String a2=(String) customProperties.get("Schlüssel2");
-     assertEquals("Schlüssel2","Wert2",a2);
+     String a2=(String) customProperties.get("Schlï¿½ssel2");
+     assertEquals("Schlï¿½ssel2","Wert2",a2);
      Integer a3=(Integer) customProperties.get("Sample Integer");
      assertEquals("Sample Number",new Integer(12345),a3);
      Boolean a4=(Boolean) customProperties.get("Sample Boolean");
@@ -431,7 +431,7 @@ public void testTwo(){
     String a1=(String) customProperties.get(k1);
     assertEquals("Key1",p1,a1);
     String a2=(String) customProperties.get(k2);
-    assertEquals("Schlüssel2",p2,a2);
+    assertEquals("Schlï¿½ssel2",p2,a2);
     Integer a3=(Integer) customProperties.get("Sample Number");
     assertEquals("Sample Number",new Integer(12345),a3);
     Boolean a4=(Boolean) customProperties.get("Sample Boolean");
@@ -450,7 +450,7 @@ public void testTwo(){
  */
 public String strangize(String s){
 	 StringBuffer sb=new StringBuffer();
-	 String[] umlaute= {"ä","ü","ö","Ü","$","Ö","Ü","É","Ö","@","ç","&"};
+	 String[] umlaute= {"ï¿½","ï¿½","ï¿½","ï¿½","$","ï¿½","ï¿½","ï¿½","ï¿½","@","ï¿½","&"};
 	 char j=0;
 	 Random rand=new Random();
 	 for (int i=0;i<5;i++){
@@ -544,7 +544,7 @@ public void testThree(){
    String a1=(String) customProperties.get(k1);
    assertEquals("Key1",p1,a1);
    String a2=(String) customProperties.get(k2);
-   assertEquals("Schlüssel2",p2,a2);
+   assertEquals("Schlï¿½ssel2",p2,a2);
    Integer a3=(Integer) customProperties.get("Sample Number");
    assertEquals("Sample Number",new Integer(12345),a3);
    Boolean a4=(Boolean) customProperties.get("Sample Boolean");
@@ -577,7 +577,7 @@ public void testThree(){
    public String strangizeU(String s){
 	  
    	 StringBuffer sb=new StringBuffer();
-   	 String[] umlaute= {"ä","ü","ö","Ü","$","Ö","Ü","É","Ö","@","ç","&"};
+   	 String[] umlaute= {"ï¿½","ï¿½","ï¿½","ï¿½","$","ï¿½","ï¿½","ï¿½","ï¿½","@","ï¿½","&"};
    	 char j=0;
    	 Random rand=new Random();
    	 for (int i=0;i<5;i++){
@@ -592,7 +592,7 @@ public void testThree(){
    		 sb.append(umlaute[rand.nextInt(umlaute.length)]);
    		 sb.append("<");
    	 }
-   	 sb.append("äöü\uD840\uDC00");
+   	 sb.append("ï¿½ï¿½ï¿½\uD840\uDC00");
    	 return sb.toString();
    }
    /**
@@ -668,7 +668,7 @@ public void testThree(){
 	   String a1=(String) customProperties.get(k1);
 	   assertEquals("Key1",p1,a1);
 	   String a2=(String) customProperties.get(k2);
-	   assertEquals("Schlüssel2",p2,a2);
+	   assertEquals("Schlï¿½ssel2",p2,a2);
        Integer a3=(Integer) customProperties.get("Sample Number");
 	   assertEquals("Sample Number",new Integer(12345),a3);
 	   Boolean a4=(Boolean) customProperties.get("Sample Boolean");

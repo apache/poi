@@ -344,7 +344,7 @@ public class XSSFPrintSetup implements PrintSetup {
     }
 
     /**
-     * Use the printer’s defaults settings for page setup values and don't use the default values
+     * Use the printer's defaults settings for page setup values and don't use the default values
      * specified in the schema. For example, if dpi is not present or specified in the XML, the
      * application shall not assume 600dpi as specified in the schema as a default and instead
      * shall let the printer specify the default dpi.

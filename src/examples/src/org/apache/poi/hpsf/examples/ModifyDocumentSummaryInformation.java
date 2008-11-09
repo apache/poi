@@ -173,7 +173,7 @@ public class ModifyDocumentSummaryInformation
         
         /* Insert some custom properties into the container. */
         customProperties.put("Key 1", "Value 1");
-        customProperties.put("Schlüssel 2", "Wert 2");
+        customProperties.put("Schl\u00fcssel 2", "Wert 2");
         customProperties.put("Sample Number", new Integer(12345));
         customProperties.put("Sample Boolean", new Boolean(true));
         customProperties.put("Sample Date", new Date());

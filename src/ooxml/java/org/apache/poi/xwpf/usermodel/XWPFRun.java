@@ -22,7 +22,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 
 /**
- * XWPFRun object  defines a region of text with a common set of properties
+ * XWPFRun object defines a region of text with a common set of properties
  *
  * @author Yegor Kozlov
  */

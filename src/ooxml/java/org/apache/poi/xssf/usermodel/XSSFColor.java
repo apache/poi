@@ -121,23 +121,23 @@ public class XSSFColor {
      * <blockquote>
      * <pre>
      * If (tint &lt; 0)
-     * Lum’ = Lum * (1.0 + tint)
+     * Lum' = Lum * (1.0 + tint)
      *
      * For example: Lum = 200; tint = -0.5; Darken 50%
-     * Lum‘ = 200 * (0.5) =&gt; 100
+     * Lum' = 200 * (0.5) =&gt; 100
      * For example: Lum = 200; tint = -1.0; Darken 100% (make black)
-     * Lum‘ = 200 * (1.0-1.0) =&gt; 0
+     * Lum' = 200 * (1.0-1.0) =&gt; 0
      * If (tint &gt; 0)
-     * Lum‘ = Lum * (1.0-tint) + (HLSMAX – HLSMAX * (1.0-tint))
+     * Lum' = Lum * (1.0-tint) + (HLSMAX - HLSMAX * (1.0-tint))
      * For example: Lum = 100; tint = 0.75; Lighten 75%
      *
-     * Lum‘ = 100 * (1-.75) + (HLSMAX – HLSMAX*(1-.75))
-     * = 100 * .25 + (255 – 255 * .25)
-     * = 25 + (255 – 63) = 25 + 192 = 217
+     * Lum' = 100 * (1-.75) + (HLSMAX - HLSMAX*(1-.75))
+     * = 100 * .25 + (255 - 255 * .25)
+     * = 25 + (255 - 63) = 25 + 192 = 217
      * For example: Lum = 100; tint = 1.0; Lighten 100% (make white)
-     * Lum‘ = 100 * (1-1) + (HLSMAX – HLSMAX*(1-1))
-     * = 100 * 0 + (255 – 255 * 0)
-     * = 0 + (255 – 0) = 255
+     * Lum' = 100 * (1-1) + (HLSMAX - HLSMAX*(1-1))
+     * = 100 * 0 + (255 - 255 * 0)
+     * = 0 + (255 - 0) = 255
      * </pre>
      * </blockquote>
      *
@@ -166,23 +166,23 @@ public class XSSFColor {
      * <blockquote>
      * <pre>
      * If (tint &lt; 0)
-     * Lum’ = Lum * (1.0 + tint)
+     * Lum' = Lum * (1.0 + tint)
      *
      * For example: Lum = 200; tint = -0.5; Darken 50%
-     * Lum‘ = 200 * (0.5) =&gt; 100
+     * Lum' = 200 * (0.5) =&gt; 100
      * For example: Lum = 200; tint = -1.0; Darken 100% (make black)
-     * Lum‘ = 200 * (1.0-1.0) =&gt; 0
+     * Lum' = 200 * (1.0-1.0) =&gt; 0
      * If (tint &gt; 0)
-     * Lum‘ = Lum * (1.0-tint) + (HLSMAX – HLSMAX * (1.0-tint))
+     * Lum' = Lum * (1.0-tint) + (HLSMAX - HLSMAX * (1.0-tint))
      * For example: Lum = 100; tint = 0.75; Lighten 75%
      *
-     * Lum‘ = 100 * (1-.75) + (HLSMAX – HLSMAX*(1-.75))
-     * = 100 * .25 + (255 – 255 * .25)
-     * = 25 + (255 – 63) = 25 + 192 = 217
+     * Lum' = 100 * (1-.75) + (HLSMAX - HLSMAX*(1-.75))
+     * = 100 * .25 + (255 - 255 * .25)
+     * = 25 + (255 - 63) = 25 + 192 = 217
      * For example: Lum = 100; tint = 1.0; Lighten 100% (make white)
-     * Lum‘ = 100 * (1-1) + (HLSMAX – HLSMAX*(1-1))
-     * = 100 * 0 + (255 – 255 * 0)
-     * = 0 + (255 – 0) = 255
+     * Lum' = 100 * (1-1) + (HLSMAX - HLSMAX*(1-1))
+     * = 100 * 0 + (255 - 255 * 0)
+     * = 0 + (255 - 0) = 255
      * </pre>
      * </blockquote>
      *

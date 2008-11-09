@@ -19,7 +19,7 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndian;
 /**
- * XCT – CRN Count <P>
+ * XCT - CRN Count <P>
  *
  * REFERENCE:  5.114<P>
  *

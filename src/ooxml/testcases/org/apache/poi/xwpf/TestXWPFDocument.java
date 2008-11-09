@@ -51,7 +51,7 @@ public class TestXWPFDocument extends TestCase {
 		
 		boolean found = false;
 		for(PackagePart part : pack.getParts()) {
-			if(part.getContentType().equals(XWPFRelation.MAIN_CONTENT_TYPE)) {
+			if(part.getContentType().equals(XWPFRelation.DOCUMENT.getContentType())) {
 				found = true;
 			}
 			System.out.println(part);

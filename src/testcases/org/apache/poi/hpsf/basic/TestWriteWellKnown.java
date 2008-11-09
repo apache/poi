@@ -351,10 +351,10 @@ public class TestWriteWellKnown extends TestCase
         CustomProperties customProperties = dsi.getCustomProperties();
         if (customProperties == null)
             customProperties = new CustomProperties();
-        customProperties.put("Schlüssel ä",    "Wert ä");
-        customProperties.put("Schlüssel äö",   "Wert äö");
-        customProperties.put("Schlüssel äöü",  "Wert äöü");
-        customProperties.put("Schlüssel äöüß", "Wert äöüß");
+        customProperties.put("Schl\u00fcssel ï¿½",    "Wert ï¿½");
+        customProperties.put("Schl\u00fcssel ï¿½ï¿½",   "Wert ï¿½ï¿½");
+        customProperties.put("Schl\u00fcssel ï¿½ï¿½ï¿½",  "Wert ï¿½ï¿½ï¿½");
+        customProperties.put("Schl\u00fcssel ï¿½ï¿½ï¿½ï¿½", "Wert ï¿½ï¿½ï¿½ï¿½");
         customProperties.put("positive_Integer", POSITIVE_INTEGER);
         customProperties.put("positive_Long", POSITIVE_LONG);
         customProperties.put("positive_Double", POSITIVE_DOUBLE);
@@ -440,10 +440,10 @@ public class TestWriteWellKnown extends TestCase
         final CustomProperties cps = dsi.getCustomProperties();
         assertEquals(customProperties, cps);
         assertNull(cps.get("No value available"));
-        assertEquals("Wert ä", cps.get("Schlüssel ä"));
-        assertEquals("Wert äö", cps.get("Schlüssel äö"));
-        assertEquals("Wert äöü", cps.get("Schlüssel äöü"));
-        assertEquals("Wert äöüß", cps.get("Schlüssel äöüß"));
+        assertEquals("Wert ï¿½", cps.get("Schl\u00fcssel ï¿½"));
+        assertEquals("Wert ï¿½ï¿½", cps.get("Schl\u00fcssel ï¿½ï¿½"));
+        assertEquals("Wert ï¿½ï¿½ï¿½", cps.get("Schl\u00fcssel ï¿½ï¿½ï¿½"));
+        assertEquals("Wert ï¿½ï¿½ï¿½ï¿½", cps.get("Schl\u00fcssel ï¿½ï¿½ï¿½ï¿½"));
         assertEquals(POSITIVE_INTEGER, cps.get("positive_Integer"));
         assertEquals(POSITIVE_LONG, cps.get("positive_Long"));
         assertEquals(POSITIVE_DOUBLE, cps.get("positive_Double"));
@@ -665,7 +665,7 @@ public class TestWriteWellKnown extends TestCase
      */
     public void testCustomerProperties()
     {
-        final String KEY = "Schlüssel ä";
+        final String KEY = "Schl\u00fcssel ï¿½";
         final String VALUE_1 = "Wert 1";
         final String VALUE_2 = "Wert 2";
 
@@ -705,7 +705,7 @@ public class TestWriteWellKnown extends TestCase
     {
         final int ID_1 = 2;
         final int ID_2 = 3;
-        final String NAME_1 = "Schlüssel ä";
+        final String NAME_1 = "Schl\u00fcssel ï¿½";
         final String VALUE_1 = "Wert 1";
         final Map dictionary = new HashMap();
 

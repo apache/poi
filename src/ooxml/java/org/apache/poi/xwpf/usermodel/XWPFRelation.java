@@ -26,15 +26,6 @@ import java.util.HashMap;
  * @author Yegor Kozlov
  */
 public class XWPFRelation extends POIXMLRelation {
-    public static final String MAIN_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml";
-    public static final String HEADER_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml";
-    public static final String HEADER_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/header";
-    public static final String FOOTER_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml";
-    public static final String FOOTER_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer";
-    public static final String STYLES_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml";
-    public static final String STYLES_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles";
-    public static final String HYPERLINK_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink";
-    public static final String COMMENT_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments";
 
     /**
      * A map to lookup POIXMLRelation by its relation type
@@ -70,6 +61,30 @@ public class XWPFRelation extends POIXMLRelation {
             "application/vnd.openxmlformats-officedocument.wordprocessingml.webSettings+xml",
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/webSettings",
             "/word/webSettings.xml",
+            null
+    );
+    public static final XWPFRelation HEADER = new XWPFRelation(
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/header",
+            "/word/header#.xml",
+            null
+    );
+    public static final XWPFRelation FOOTER = new XWPFRelation(
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer",
+            "/word/footer#.xml",
+            null
+    );
+    public static final XWPFRelation HYPERLINK = new XWPFRelation(
+            null,
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
+            null,
+            null
+    );
+    public static final XWPFRelation COMMENT = new XWPFRelation(
+            null,
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments",
+            null,
             null
     );
 

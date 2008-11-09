@@ -46,7 +46,7 @@ public class XSSFFactory extends POIXMLFactory  {
     }
 
     public POIXMLDocumentPart createDocumentPart(PackageRelationship rel, PackagePart part){
-        XSSFRelation descriptor = XSSFRelation.getInstance(rel.getRelationshipType());
+        POIXMLRelation descriptor = XSSFRelation.getInstance(rel.getRelationshipType());
         if(descriptor == null || descriptor.getRelationClass() == null){
             logger.log(POILogger.DEBUG, "using default POIXMLDocumentPart for " + rel.getRelationshipType());
             return new POIXMLDocumentPart(part, rel);
