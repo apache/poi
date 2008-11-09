@@ -100,7 +100,7 @@ public class ExtractorFactory {
 		if(corePart.getContentType().equals(XSSFRelation.WORKBOOK.getContentType())) {
 			return new XSSFExcelExtractor(pkg);
 		}
-		if(corePart.getContentType().equals(XWPFRelation.MAIN_CONTENT_TYPE)) {
+		if(corePart.getContentType().equals(XWPFRelation.DOCUMENT.getContentType())) {
 			return new XWPFWordExtractor(pkg);
 		}
 		if(corePart.getContentType().equals(XSLFSlideShow.MAIN_CONTENT_TYPE)) {

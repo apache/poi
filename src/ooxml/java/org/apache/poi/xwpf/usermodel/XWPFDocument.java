@@ -110,7 +110,7 @@ public class XWPFDocument extends POIXMLDocument {
 
             for(POIXMLDocumentPart p : getRelations()){
                 String relation = p.getPackageRelationship().getRelationshipType();
-                if(relation.equals(XWPFRelation.COMMENT_RELATION_TYPE)){
+                if(relation.equals(XWPFRelation.COMMENT.getRelation())){
                     CommentsDocument cmntdoc = CommentsDocument.Factory.parse(p.getPackagePart().getInputStream());
                     for(CTComment ctcomment : cmntdoc.getComments().getCommentArray()) {
                         comments.add(new XWPFComment(ctcomment));
@@ -130,7 +130,7 @@ public class XWPFDocument extends POIXMLDocument {
         // TODO: make me optional/separated in private function
         try	{
             Iterator <PackageRelationship> relIter =
-                getPackagePart().getRelationshipsByType(XWPFRelation.HYPERLINK_RELATION_TYPE).iterator();
+                getPackagePart().getRelationshipsByType(XWPFRelation.HYPERLINK.getRelation()).iterator();
             while(relIter.hasNext()) {
                 PackageRelationship rel = relIter.next();
                 hyperlinks.add(new XWPFHyperlink(rel.getId(), rel.getTargetURI().toString()));
@@ -257,7 +257,7 @@ public class XWPFDocument extends POIXMLDocument {
     public CTStyles getStyle() throws XmlException, IOException {
         PackagePart[] parts;
         try {
-            parts = getRelatedByType(XWPFRelation.STYLES_RELATION_TYPE);
+            parts = getRelatedByType(XWPFRelation.STYLES.getRelation());
         } catch(InvalidFormatException e) {
             throw new IllegalStateException(e);
         }
