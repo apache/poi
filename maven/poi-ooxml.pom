@@ -33,12 +33,10 @@
 
   <mailingLists>
     <mailingList>
-      <name>OpenXML4J Users List</name>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum_name=openxml4j-users</archive>
-    </mailingList>
-    <mailingList>
-      <name>OpenXML4J Developer List</name>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum_name=openxml4j-devs</archive>
+      <name>POI Users List</name>
+      <subscribe>user-subscribe@poi.apache.org</subscribe>
+      <unsubscribe>user-unsubscribe@poi.apache.org</unsubscribe>
+      <archive>http://mail-archives.apache.org/mod_mbox/poi-user/</archive>
     </mailingList>
     <mailingList>
       <name>POI Developer List</name>
@@ -75,12 +73,12 @@
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>openxml4j</artifactId>
-      <version>@VERSION@</version>
+      <version>1.0-beta</version>
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>ooxml-schemas</artifactId>
-      <version>@VERSION@</version>
+      <version>1.0</version>
     </dependency>
   </dependencies>
 </project>
