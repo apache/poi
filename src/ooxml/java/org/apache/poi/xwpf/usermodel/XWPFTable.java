@@ -37,7 +37,7 @@ public class XWPFTable
         	StringBuffer rowText = new StringBuffer();
             for(CTTc cell : row.getTcArray()) {
                 for(CTP ctp : cell.getPArray()) {
-                    XWPFParagraph p = new XWPFParagraph(ctp);
+                    XWPFParagraph p = new XWPFParagraph(ctp, null);
                     if(rowText.length() > 0) {
                     	rowText.append('\t');
                     }

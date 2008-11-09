@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.PackageHelper;
 import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.exceptions.OpenXML4JException;
@@ -168,5 +169,36 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
      * Get the document's embedded files.
      */
     public abstract List<PackagePart> getAllEmbedds() throws OpenXML4JException;
+
+    /**
+     * YK: current implementation of OpenXML4J is funny.
+     * Packages opened by Package.open(InputStream is) are read-only,
+     * there is no way to change or even save such an instance in a OutputStream.
+     * The workaround is to create a copy via a temp file
+     */
+    protected static Package ensureWriteAccess(Package pkg) throws IOException {
+        if(pkg.getPackageAccess() == PackageAccess.READ){
+            try {
+                return PackageHelper.clone(pkg);
+            } catch (OpenXML4JException e){
+                throw new POIXMLException(e);
+            }
+        }
+        return pkg;
+    }
+
+    /**
+     * Write out this document to an Outputstream.
+     *
+     * @param stream - the java OutputStream you wish to write the XLS to
+     *
+     * @exception IOException if anything can't be written.
+     */
+    public final void write(OutputStream stream) throws IOException {
+        //force all children to commit their changes into the underlying OOXML Package
+        onSave();
+
+        getPackage().save(stream);
+    }
 
 }

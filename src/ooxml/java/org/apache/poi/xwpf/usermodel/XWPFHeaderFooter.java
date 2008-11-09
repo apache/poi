@@ -47,7 +47,7 @@ public abstract class XWPFHeaderFooter {
 			new XWPFParagraph[headerFooter.getPArray().length];
 		for(int i=0; i<paras.length; i++) {
 			paras[i] = new XWPFParagraph(
-					headerFooter.getPArray(i)
+					headerFooter.getPArray(i), null
 			);
 		}
 		return paras;
