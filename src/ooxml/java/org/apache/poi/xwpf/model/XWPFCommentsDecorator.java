@@ -41,7 +41,7 @@ public class XWPFCommentsDecorator extends XWPFParagraphDecorator {
 
 		for(CTMarkupRange anchor : paragraph.getCTP().getCommentRangeStartArray())
 		{
-			if((comment = paragraph.getDocRef().getCommentByID(anchor.getId().toString())) != null)
+			if((comment = paragraph.getDocument().getCommentByID(anchor.getId().toString())) != null)
 				commentText.append("\tComment by " + comment.getAuthor()+": "+comment.getText());
 		}
 	}

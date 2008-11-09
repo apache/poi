@@ -21,7 +21,7 @@ import java.util.Iterator;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLTextExtractor;
-import org.apache.poi.xwpf.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.model.XWPFCommentsDecorator;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.model.XWPFHyperlinkDecorator;

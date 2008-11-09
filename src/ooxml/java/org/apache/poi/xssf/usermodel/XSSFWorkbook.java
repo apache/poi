@@ -137,23 +137,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         this(openPackage(path));
     }
 
-    /**
-     * YK: current implementation of OpenXML4J is funny.
-     * Packages opened by Package.open(InputStream is) are read-only,
-     * there is no way to change or even save such an instance in a OutputStream.
-     * The workaround is to create a copy via a temp file
-     */
-    private static Package ensureWriteAccess(Package pkg) throws IOException {
-        if(pkg.getPackageAccess() == PackageAccess.READ){
-            try {
-                return PackageHelper.clone(pkg);
-            } catch (OpenXML4JException e){
-                throw new POIXMLException(e);
-            }
-        }
-        return pkg;
-    }
-
     @Override
     protected void onDocumentRead() throws IOException {
         try {
@@ -1055,20 +1038,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         OutputStream out = part.getOutputStream();
         workbook.save(out, xmlOptions);
         out.close();
-    }
-
-    /**
-     * Write out this workbook to an Outputstream.
-     *
-     * @param stream - the java OutputStream you wish to write the XLS to
-     *
-     * @exception IOException if anything can't be written.
-     */
-    public void write(OutputStream stream) throws IOException {
-        //force all children to commit their changes into the underlying OOXML Package
-        onSave();
-
-        getPackage().save(stream);
     }
 
     /**

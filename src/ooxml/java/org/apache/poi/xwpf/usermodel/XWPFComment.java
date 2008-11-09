@@ -39,7 +39,7 @@ public class XWPFComment
         
         for(CTP ctp : comment.getPArray())
         {
-            XWPFParagraph p = new XWPFParagraph(ctp);
+            XWPFParagraph p = new XWPFParagraph(ctp, null);
             text.append(p.getText());
         }
     }

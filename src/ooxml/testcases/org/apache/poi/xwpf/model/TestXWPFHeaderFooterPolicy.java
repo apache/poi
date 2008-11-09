@@ -19,7 +19,7 @@ package org.apache.poi.xwpf.model;
 import java.io.File;
 
 import org.apache.poi.POIXMLDocument;
-import org.apache.poi.xwpf.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 import junit.framework.TestCase;
 

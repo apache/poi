@@ -20,12 +20,11 @@
 package org.apache.poi;
 
 import java.io.File;
-import java.util.Iterator;
 
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xwpf.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
 

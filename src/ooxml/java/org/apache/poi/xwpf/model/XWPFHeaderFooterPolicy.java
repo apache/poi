@@ -18,7 +18,7 @@ package org.apache.poi.xwpf.model;
 
 import java.io.IOException;
 
-import org.apache.poi.xwpf.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFFooter;
 import org.apache.poi.xwpf.usermodel.XWPFHeader;
 import org.apache.xmlbeans.XmlException;
@@ -57,7 +57,7 @@ public class XWPFHeaderFooterPolicy {
 		// For now, we don't care about different ranges, as it
 		//  doesn't seem that .docx properly supports that
 		//  feature of the file format yet
-		CTSectPr sectPr = doc.getDocumentBody().getSectPr();
+		CTSectPr sectPr = doc.getDocument().getBody().getSectPr();
 		for(int i=0; i<sectPr.sizeOfHeaderReferenceArray(); i++) {
 			// Get the header
 			CTHdrFtrRef ref = sectPr.getHeaderReferenceArray(i);

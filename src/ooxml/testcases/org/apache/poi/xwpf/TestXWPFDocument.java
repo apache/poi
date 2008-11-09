@@ -19,6 +19,8 @@ package org.apache.poi.xwpf;
 import java.io.File;
 
 import org.apache.poi.POIXMLDocument;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
 
@@ -49,7 +51,7 @@ public class TestXWPFDocument extends TestCase {
 		
 		boolean found = false;
 		for(PackagePart part : pack.getParts()) {
-			if(part.getContentType().equals(XWPFDocument.MAIN_CONTENT_TYPE)) {
+			if(part.getContentType().equals(XWPFRelation.MAIN_CONTENT_TYPE)) {
 				found = true;
 			}
 			System.out.println(part);
@@ -76,7 +78,7 @@ public class TestXWPFDocument extends TestCase {
 		);
 		// Check it has key parts
 		assertNotNull(xml.getDocument());
-		assertNotNull(xml.getDocumentBody());
+		assertNotNull(xml.getDocument().getBody());
 		assertNotNull(xml.getStyle());
 		
 		// Complex file
@@ -84,7 +86,7 @@ public class TestXWPFDocument extends TestCase {
 				POIXMLDocument.openPackage(complexFile.toString())
 		);
 		assertNotNull(xml.getDocument());
-		assertNotNull(xml.getDocumentBody());
+		assertNotNull(xml.getDocument().getBody());
 		assertNotNull(xml.getStyle());
 	}
 	

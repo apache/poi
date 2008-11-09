@@ -41,7 +41,8 @@ import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
-import org.apache.poi.xwpf.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.InvalidFormatException;
@@ -99,7 +100,7 @@ public class ExtractorFactory {
 		if(corePart.getContentType().equals(XSSFRelation.WORKBOOK.getContentType())) {
 			return new XSSFExcelExtractor(pkg);
 		}
-		if(corePart.getContentType().equals(XWPFDocument.MAIN_CONTENT_TYPE)) {
+		if(corePart.getContentType().equals(XWPFRelation.MAIN_CONTENT_TYPE)) {
 			return new XWPFWordExtractor(pkg);
 		}
 		if(corePart.getContentType().equals(XSLFSlideShow.MAIN_CONTENT_TYPE)) {
