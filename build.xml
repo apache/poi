@@ -585,21 +585,15 @@ under the License.
 
   <target name="test-main" unless="main.test.notRequired"
     depends="compile-main, -test-main-check, fail-unless-junit-is-available">
-    <junit fork="no" printsummary="yes" haltonfailure="${halt.on.test.failure}"
+    <junit fork="yes" printsummary="yes" haltonfailure="${halt.on.test.failure}"
       failureproperty="main.test.failed" showoutput="true">
       <classpath refid="test.classpath"/>
-      <sysproperty key="HSSF.testdata.path"
-        file="${main.src.test}/org/apache/poi/hssf/data"/> 
-      <sysproperty key="HSLF.testdata.path"
-        file="${main.src.test}/org/apache/poi/hslf/data"/> 
-      <sysproperty key="HWPF.testdata.path"
-        file="${main.src.test}/org/apache/poi/hwpf/data"/> 
-      <sysproperty key="HPSF.testdata.path"
-        file="${main.src.test}/org/apache/poi/hpsf/data"/> 
-      <sysproperty key="POIFS.testdata.path"
-        file="${main.src.test}/org/apache/poi/poifs/data"/> 
-      <sysproperty key="DDF.testdata.path"
-        file="${main.src.test}/org/apache/poi/ddf/data"/> 
+      <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/> 
+      <sysproperty key="HSLF.testdata.path" file="${main.src.test}/org/apache/poi/hslf/data"/> 
+      <sysproperty key="HWPF.testdata.path" file="${main.src.test}/org/apache/poi/hwpf/data"/> 
+      <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/> 
+      <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/> 
+      <sysproperty key="DDF.testdata.path" file="${main.src.test}/org/apache/poi/ddf/data"/> 
       <sysproperty key="java.awt.headless" value="true"/>
       <formatter type="plain"/>
       <formatter type="xml"/>
@@ -629,14 +623,10 @@ under the License.
         <pathelement location="${scratchpad.output.test.dir}"/>
         <pathelement location="${junit.jar1.dir}"/>
       </classpath>
-      <sysproperty key="HSSF.testdata.path"
-        file="${main.src.test}/org/apache/poi/hssf/data"/>
-      <sysproperty key="HPSF.testdata.path"
-        file="${main.src.test}/org/apache/poi/hpsf/data"/>
-      <sysproperty key="HWPF.testdata.path"
-        file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
-      <sysproperty key="POIFS.testdata.path"
-        file="${main.src.test}/org/apache/poi/poifs/data"/> 
+      <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
+      <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
+      <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
+      <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/> 
       <sysproperty key="java.awt.headless" value="true"/>
       <formatter type="plain" usefile="no"/>
       <batchtest todir="${main.reports.test}">
@@ -653,13 +643,13 @@ under the License.
     <target name="single-test" depends="-test-property-check,compile-main" description="Runs a single test case specified with -Dtestcase=classname">
         <junit printsummary="yes" showoutput="true" filtertrace="no" haltonfailure="false" >
             <classpath refid="test.classpath"/>
-                 <classpath>
-                                <path refid="test.classpath"/>
-                                <pathelement location="${main.output.dir}"/>
-                                <pathelement location="${scratchpad.output.dir}"/>
-                                <pathelement location="${scratchpad.output.test.dir}"/>
-                                <pathelement location="${junit.jar1.dir}"/>
-                            </classpath>
+            <classpath>
+              <path refid="test.classpath"/>
+              <pathelement location="${main.output.dir}"/>
+              <pathelement location="${scratchpad.output.dir}"/>
+              <pathelement location="${scratchpad.output.test.dir}"/>
+              <pathelement location="${junit.jar1.dir}"/>
+            </classpath>
             <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
             <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
@@ -709,7 +699,7 @@ under the License.
     </target>
 
     <target name="test-scratchpad" depends="compile-main,compile-scratchpad,-test-scratchpad-check" unless="scratchpad.test.notRequired">
-        <junit printsummary="yes" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="scratchpad.test.failed">
+        <junit printsummary="yes" fork="yes" haltonfailure="${halt.on.test.failure}" failureproperty="scratchpad.test.failed">
             <classpath>
                 <path refid="scratchpad.classpath"/>
                 <pathelement location="${main.output.dir}"/>
@@ -779,7 +769,7 @@ under the License.
     </target>
 
     <target name="test-contrib" depends="compile-main,compile-contrib,-test-contrib-check" unless="contrib.test.notRequired">
-        <junit printsummary="yes" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="contrib.test.failed">
+        <junit printsummary="yes" fork="yes" haltonfailure="${halt.on.test.failure}" failureproperty="contrib.test.failed">
             <classpath>
                 <path refid="contrib.classpath"/>
                 <pathelement location="${main.output.dir}"/>
@@ -815,7 +805,7 @@ under the License.
     </target>
 
     <target name="test-ooxml" depends="compile-main,compile-ooxml,-test-ooxml-check" unless="ooxml.test.notRequired">
-        <junit printsummary="yes" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="ooxml.test.failed">
+        <junit printsummary="yes" fork="yes" haltonfailure="${halt.on.test.failure}" failureproperty="ooxml.test.failed">
             <classpath refid="test.ooxml.classpath" />
             <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/>
             <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
@@ -843,13 +833,7 @@ under the License.
 
     <target name="single-test-ooxml" depends="-test-property-check,compile-main,compile-ooxml" description="Runs a single ooxml test case specified with -Dtestcase=classname">
         <junit printsummary="yes" showoutput="true" filtertrace="no" haltonfailure="false" >
-            <classpath>
-                <path refid="ooxml.classpath"/>
-                <pathelement location="${main.output.dir}"/>
-                <pathelement location="${ooxml.output.dir}"/>
-                <pathelement location="${ooxml.output.test.dir}"/>
-                <pathelement location="${junit.jar1.dir}"/>
-            </classpath>
+            <classpath refid="test.ooxml.classpath" />
             <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
             <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
