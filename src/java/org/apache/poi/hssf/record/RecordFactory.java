@@ -383,6 +383,10 @@ public final class RecordFactory {
 					//Gracefully handle records that we don't know about,
 					//that happen to be continued
 					records.add(record);
+				} else if (lastRecord instanceof EOFRecord) {
+					// This is really odd, but excel still sometimes
+					//  outputs a file like this all the same
+		            records.add(record);
 				} else {
 					throw new RecordFormatException("Unhandled Continue Record");
 				}
