@@ -1523,4 +1523,14 @@ public final class TestBugs extends TestCase {
     	assertEquals(64, green.getCellStyle().getFillBackgroundColor());
     	assertEquals("0:FFFF:0", p.getColor(11).getHexString());
     }
+    
+    /**
+     * ContinueRecord after EOF
+     */
+    public void test46137() {
+        // This used to break
+        HSSFWorkbook wb = openSample("46137.xls");
+        assertEquals(7, wb.getNumberOfSheets());
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+    }
 }
