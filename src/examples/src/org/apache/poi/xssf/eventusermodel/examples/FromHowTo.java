@@ -32,7 +32,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
- * Various things from the how-to documentation
+ * XSSF and SAX (Event API)
  */
 public class FromHowTo {
 	public void processOneSheet(String filename) throws Exception {
