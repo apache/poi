@@ -333,17 +333,16 @@ public final class HSLFSlideShow extends POIDocument {
 				logger.log(POILogger.ERROR, "Problem reading picture: Invalid image type 0, on picture with length " + imgsize + ".\nYou document will probably become corrupted if you save it!");
 				logger.log(POILogger.ERROR, "" + pos);
 			} else {
-	            // Copy the data, ready to pass to PictureData
-	            byte[] imgdata = new byte[imgsize];
-	            if(imgsize > 0) {
-	            	System.arraycopy(pictstream, pos, imgdata, 0, imgdata.length);
-	            }
-	            
 				// Build the PictureData object from the data
 				try {
 					PictureData pict = PictureData.create(type - 0xF018);
-					pict.setRawData(imgdata);
-					pict.setOffset(offset);
+
+                    // Copy the data, ready to pass to PictureData
+                    byte[] imgdata = new byte[imgsize];
+                    System.arraycopy(pictstream, pos, imgdata, 0, imgdata.length);
+                    pict.setRawData(imgdata);
+
+                    pict.setOffset(offset);
 					p.add(pict);
 				} catch(IllegalArgumentException e) {
 					logger.log(POILogger.ERROR, "Problem reading picture: " + e + "\nYou document will probably become corrupted if you save it!");
