@@ -32,10 +32,7 @@
 				formulas in Excels sheets read-in, or created in POI. This document explains
 				how to use the API to evaluate your formulas. 
 			</p>
-			<note>In versions of POI before 3.0.3, this code lived in the
-				scratchpad area of the POI SVN repository. If using an such an older
-				version of POI, ensure that you have the scratchpad jar or the 
-				scratchpad build area in your classpath before experimenting with this 
+			<note>.xlsx format is suported since POI 3.5, make sure yoy upgraded to that version before experimenting with this 
 				code. Users of all versions of POI may wish to make use of a recent 
 				SVN checkout, as new functions are currently being added fairly frequently.
 			</note>
@@ -47,7 +44,8 @@
 				It also provides implementations for approx. 100 built in 
 				functions in Excel. The framework however makes is easy to add 
 			 	implementation of new functions. See the <link href="eval-devguide.html"> Formula
-				evaluation development guide</link> for details. </p>
+        evaluation development guide</link>  and <link href="../apidocs/org/apache/poi/hssf/record/formula/functions/package-summary.html">javadocs</link> 
+        for details. </p>
             <p> Both HSSFWorkbook and XSSFWorkbook are supported, so you can 
                 evaluate formulas on both .xls and .xlsx files.</p>
 			<p> Note that user-defined functions are not supported, and is not likely to done
@@ -66,38 +64,37 @@
 				without affecting the cell</p>
 				<source>
 FileInputStream fis = new FileInputStream("c:/temp/test.xls");
-Workbook wb = new HSSFWorkbook(fis);
+Workbook wb = new HSSFWorkbook(fis); //or new XSSFWorkbook("c:/temp/test.xls")
 Sheet sheet = wb.getSheetAt(0);
-FormulaEvaluator evaluator = new FormulaEvaluator(sheet, wb);
+FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
 // suppose your formula is in B3
 CellReference cellReference = new CellReference("B3"); 
 Row row = sheet.getRow(cellReference.getRow());
 Cell cell = row.getCell(cellReference.getCol()); 
 
-evaluator.setCurrentRow(row);
-FormulaEvaluator.CellValue cellValue = evaluator.evaluate(cell);
+CellValue cellValue = evaluator.evaluate(cell);
 
 switch (cellValue.getCellType()) {
-	case Cell.CELL_TYPE_BOOLEAN:
-    	System.out.println(cellValue.getBooleanValue());
-    	break;
-	case Cell.CELL_TYPE_NUMERIC:
-    	System.out.println(cellValue.getNumberValue());
-    	break;
-	case Cell.CELL_TYPE_STRING:
-    	System.out.println(cellValue.getStringValue());
-    	break;
-	case Cell.CELL_TYPE_BLANK:
-    	break;
-	case Cell.CELL_TYPE_ERROR:
-    	break;
+    case Cell.CELL_TYPE_BOOLEAN:
+        System.out.println(cellValue.getBooleanValue());
+        break;
+    case Cell.CELL_TYPE_NUMERIC:
+        System.out.println(cellValue.getNumberValue());
+        break;
+    case Cell.CELL_TYPE_STRING:
+        System.out.println(cellValue.getStringValue());
+        break;
+    case Cell.CELL_TYPE_BLANK:
+        break;
+    case Cell.CELL_TYPE_ERROR:
+        break;
 
-	// CELL_TYPE_FORMULA will never happen
-	case Cell.CELL_TYPE_FORMULA: 
-    	break;
+    // CELL_TYPE_FORMULA will never happen
+    case Cell.CELL_TYPE_FORMULA: 
+        break;
 }				
-				</source>
+        </source>
 				<p>Thus using the retrieved value (of type 
 					FormulaEvaluator.CellValue - a nested class) returned 
 					by FormulaEvaluator is similar to using a Cell object 
@@ -117,39 +114,38 @@ switch (cellValue.getCellType()) {
 				formula remains in the cell, just with a new value</p>
 				<p>The return of the function is the type of the
 				formula result, such as Cell.CELL_TYPE_BOOLEAN</p>
-				<source>
+        <source>
 FileInputStream fis = new FileInputStream("/somepath/test.xls");
-Workbook wb = new HSSFWorkbook(fis);
+Workbook wb = new HSSFWorkbook(fis); //or new XSSFWorkbook("/somepath/test.xls")
 Sheet sheet = wb.getSheetAt(0);
-FormulaEvaluator evaluator = new FormulaEvaluator(sheet, wb);
+FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
 // suppose your formula is in B3
 CellReference cellReference = new CellReference("B3"); 
 Row row = sheet.getRow(cellReference.getRow());
 Cell cell = row.getCell(cellReference.getCol()); 
-evaluator.setCurrentRow(row);
 
 if (cell!=null) {
-	switch (<strong>evaluator.evaluateFormulaCell</strong>(cell)) {
-		case Cell.CELL_TYPE_BOOLEAN:
-		    System.out.println(cell.getBooleanCellValue());
-		    break;
-		case Cell.CELL_TYPE_NUMERIC:
-		    System.out.println(cell.getNumberCellValue());
-		    break;
-		case Cell.CELL_TYPE_STRING:
-		    System.out.println(cell.getStringCellValue());
-		    break;
-		case Cell.CELL_TYPE_BLANK:
-		    break;
-		case Cell.CELL_TYPE_ERROR:
-		    System.out.println(cell.getErrorCellValue());
-		    break;
-		
-		// CELL_TYPE_FORMULA will never occur
-		case Cell.CELL_TYPE_FORMULA: 
-		    break;
-	}
+    switch (evaluator.evaluateFormulaCell(cell)) {
+        case Cell.CELL_TYPE_BOOLEAN:
+            System.out.println(cell.getBooleanCellValue());
+            break;
+        case Cell.CELL_TYPE_NUMERIC:
+            System.out.println(cell.getNumericCellValue());
+            break;
+        case Cell.CELL_TYPE_STRING:
+            System.out.println(cell.getStringCellValue());
+            break;
+        case Cell.CELL_TYPE_BLANK:
+            break;
+        case Cell.CELL_TYPE_ERROR:
+            System.out.println(cell.getErrorCellValue());
+            break;
+
+        // CELL_TYPE_FORMULA will never occur
+        case Cell.CELL_TYPE_FORMULA: 
+            break;
+    }
 }
 				</source>
 			</section>
@@ -163,64 +159,59 @@ if (cell!=null) {
 				in place of the old formula.</p>
 				<source>
 FileInputStream fis = new FileInputStream("/somepath/test.xls");
-Workbook wb = new HSSFWorkbook(fis);
+Workbook wb = new HSSFWorkbook(fis); //or new XSSFWorkbook("/somepath/test.xls")
 Sheet sheet = wb.getSheetAt(0);
-FormulaEvaluator evaluator = new FormulaEvaluator(sheet, wb);
+FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
 // suppose your formula is in B3
-CellReference cellReference = new CellReference("B3"); 
+CellReference cellReference = new CellReference("B3");
 Row row = sheet.getRow(cellReference.getRow());
 Cell cell = row.getCell(cellReference.getCol()); 
-evaluator.setCurrentRow(row);
 
 if (cell!=null) {
-	switch (<strong>evaluator.evaluateInCell</strong>(cell).getCellType()) {
-		case Cell.CELL_TYPE_BOOLEAN:
-		    System.out.println(cell.getBooleanCellValue());
-		    break;
-		case Cell.CELL_TYPE_NUMERIC:
-		    System.out.println(cell.getNumberCellValue());
-		    break;
-		case Cell.CELL_TYPE_STRING:
-		    System.out.println(cell.getStringCellValue());
-		    break;
-		case Cell.CELL_TYPE_BLANK:
-		    break;
-		case Cell.CELL_TYPE_ERROR:
-		    System.out.println(cell.getErrorCellValue());
-		    break;
-		
-		// CELL_TYPE_FORMULA will never occur
-		case Cell.CELL_TYPE_FORMULA: 
-		    break;
-	}
+    switch (evaluator.<strong>evaluateInCell</strong>(cell).getCellType()) {
+        case Cell.CELL_TYPE_BOOLEAN:
+            System.out.println(cell.getBooleanCellValue());
+            break;
+        case Cell.CELL_TYPE_NUMERIC:
+            System.out.println(cell.getNumericCellValue());
+            break;
+        case Cell.CELL_TYPE_STRING:
+            System.out.println(cell.getStringCellValue());
+            break;
+        case Cell.CELL_TYPE_BLANK:
+            break;
+        case Cell.CELL_TYPE_ERROR:
+            System.out.println(cell.getErrorCellValue());
+            break;
+
+        // CELL_TYPE_FORMULA will never occur
+        case Cell.CELL_TYPE_FORMULA:
+            break;
+    }
 }
-				</source>
+
+        </source>
 			</section>
 
 			<anchor id="EvaluateAll"/>
 			<section><title>Re-calculating all formulas in a Workbook</title>
 				<source>
+
 FileInputStream fis = new FileInputStream("/somepath/test.xls");
-Workbook wb = new HSSFWorkbook(fis);
+Workbook wb = new HSSFWorkbook(fis); //or new XSSFWorkbook("/somepath/test.xls")
+FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 for(int sheetNum = 0; sheetNum &lt; wb.getNumberOfSheets(); sheetNum++) {
-	Sheet sheet = wb.getSheetAt(sheetNum);
-	FormulaEvaluator evaluator = new FormulaEvaluator(sheet, wb);
-
-	for(Iterator rit = sheet.rowIterator(); rit.hasNext();) {
-		Row r = (Row)rit.next();
-		evaluator.setCurrentRow(r);
-
-		for(Iterator cit = r.cellIterator(); cit.hasNext();) {
-			Cell c = (Cell)cit.next();
-			if(c.getCellType() == Cell.CELL_TYPE_FORMULA) {
-				evaluator.evaluateFormulaCell(c);
-			}
-		}
-	}
+    Sheet sheet = wb.getSheetAt(sheetNum);
+    for(Row r : sheet) {
+        for(Cell c : r) {
+            if(c.getCellType() == Cell.CELL_TYPE_FORMULA) {
+                evaluator.evaluateFormulaCell(c);
+            }
+        }
+    }
 }
-wb.write(new FileOutputStream("/somepath/changed.xls"));
-				</source>
+        </source>
 			</section>
 		</section>
 		

@@ -31,7 +31,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 
 /**
- * Implementation for the Excel function SUMPRODUCT<p/>
+ * Implementation for the Excel function SUMPRODUCT<p>
  * 
  * Syntax : <br/>
  *  SUMPRODUCT ( array1[, array2[, array3[, ...]]])
@@ -49,7 +49,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  * 			A<b>n</b><sub>(<b>i</b>,<b>j</b>)</sub>&nbsp;
  *    )&nbsp;
  *  ) 
- * 
+ * </p>
  * @author Josh Micich
  */
 public final class Sumproduct implements Function {

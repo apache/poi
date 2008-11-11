@@ -44,4 +44,11 @@ public interface CreationHelper {
      * Creates a new Hyperlink, of the given type
      */
     Hyperlink createHyperlink(int type);
+
+    /**
+     * Creates FormulaEvaluator - an object that evaluates formula cells.
+     *
+     * @return a FormulaEvaluator instance
+     */
+    FormulaEvaluator createFormulaEvaluator();
 }

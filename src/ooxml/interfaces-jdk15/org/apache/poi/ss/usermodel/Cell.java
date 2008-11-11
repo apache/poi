@@ -184,6 +184,15 @@ public interface Cell {
     RichTextString getRichStringCellValue();
 
     /**
+     * Get the value of the cell as a string - for numeric cells we throw an exception
+     * <p>
+     * For blank cells we return an empty string.
+     * For formulaCells that are not string Formulas, we return empty String
+     * </p>
+     */
+    String getStringCellValue();
+
+    /**
      * set a boolean value for the cell
      *
      * @param value the boolean value to set this cell to.  For formulas we'll set the

@@ -671,9 +671,7 @@ public class HSSFCell implements Cell {
      * get the value of the cell as a string - for numeric cells we throw an exception.
      * For blank cells we return an empty string.
      * For formulaCells that are not string Formulas, we return empty String
-     * @deprecated Use the HSSFRichTextString return
      */
-
     public String getStringCellValue()
     {
       HSSFRichTextString str = getRichStringCellValue();

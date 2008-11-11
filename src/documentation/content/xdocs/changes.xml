@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta4" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">45973 - added CreationHelper.createFormulaEvaluator(), implemeted both for HSSF and XSSF</action>
            <action dev="POI-DEVELOPERS" type="fix">46182 - fixed Slideshow.readPictures() to skip pictures with invalid headers</action>
            <action dev="POI-DEVELOPERS" type="fix">46137 - Handle odd files with a ContinueRecord after EOFRecord</action>
            <action dev="POI-DEVELOPERS" type="fix">Fixed problem with linking shared formulas when ranges overlap</action>

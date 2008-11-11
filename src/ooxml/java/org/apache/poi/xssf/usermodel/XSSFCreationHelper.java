@@ -31,7 +31,7 @@ public class XSSFCreationHelper implements CreationHelper {
      * Creates a new XSSFRichTextString for you.
      */
 	public XSSFRichTextString createRichTextString(String text) {
-        XSSFRichTextString rt =new XSSFRichTextString(text);
+        XSSFRichTextString rt = new XSSFRichTextString(text);
         rt.setStylesTableReference(workbook.getStylesSource());
         return rt;
 	}
@@ -43,4 +43,14 @@ public class XSSFCreationHelper implements CreationHelper {
 	public XSSFHyperlink createHyperlink(int type) {
 		return new XSSFHyperlink(type);
 	}
+
+    /**
+     * Creates a XSSFFormulaEvaluator, the object that evaluates formula cells.
+     *
+     * @return a XSSFFormulaEvaluator instance
+     */
+    public XSSFFormulaEvaluator createFormulaEvaluator(){
+        return new XSSFFormulaEvaluator(workbook);
+    }
+
 }
