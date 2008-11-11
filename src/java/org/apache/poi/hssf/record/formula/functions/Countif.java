@@ -31,14 +31,14 @@ import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.functions.CountUtils.I_MatchPredicate;
 
 /**
- * Implementation for the function COUNTIF<p/>
- * 
- * Syntax: COUNTIF ( range, criteria )
+ * Implementation for the function COUNTIF
+ * <p>
+ *  Syntax: COUNTIF ( range, criteria )
  *    <table border="0" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
  *      <tr><th>range&nbsp;&nbsp;&nbsp;</th><td>is the range of cells to be counted based on the criteria</td></tr>
  *      <tr><th>criteria</th><td>is used to determine which cells to count</td></tr>
  *    </table>
- * <p/>
+ * </p>
  * 
  * @author Josh Micich
  */

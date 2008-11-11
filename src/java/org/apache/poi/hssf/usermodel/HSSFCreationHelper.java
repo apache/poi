@@ -44,4 +44,14 @@ public class HSSFCreationHelper implements CreationHelper {
 	public HSSFHyperlink createHyperlink(int type) {
 		return new HSSFHyperlink(type);
 	}
+
+    /**
+     * Creates a HSSFFormulaEvaluator, the object that evaluates formula cells.
+     *
+     * @return a HSSFFormulaEvaluator instance
+     */
+    public HSSFFormulaEvaluator createFormulaEvaluator(){
+        return new HSSFFormulaEvaluator(workbook);
+    }
+
 }

@@ -26,7 +26,8 @@ import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
- * Implementation for the Excel function INDEX<p/>
+ * Implementation for the Excel function INDEX
+ * <p>
  * 
  * Syntax : <br/>
  *  INDEX ( reference, row_num[, column_num [, area_num]])</br>
@@ -38,7 +39,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  *      <tr><th>column_num</th><td>selects column within the array or area reference. default is 1</td></tr>
  *      <tr><th>area_num</th><td>used when reference is a union of areas</td></tr>
  *    </table>
- * <p/>
+ * </p>
  * 
  * @author Josh Micich
  */

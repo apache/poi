@@ -25,13 +25,13 @@ import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 
 /**
- * Implementation for the ERROR.TYPE() Excel function.<p/>
- * 
+ * Implementation for the ERROR.TYPE() Excel function.
+ * <p>
  * <b>Syntax:</b><br/>
- * <b>ERROR.TYPE</b>(<b>errorValue</b>)<p/>
- * 
+ * <b>ERROR.TYPE</b>(<b>errorValue</b>)</p>
+ * <p>
  * Returns a number corresponding to the error type of the supplied argument.<p/>
- * 
+ * <p>
  *    <table border="1" cellpadding="1" cellspacing="1" summary="Return values for ERROR.TYPE()">
  *      <tr><td>errorValue</td><td>Return Value</td></tr>
  *      <tr><td>#NULL!</td><td>1</td></tr>
@@ -46,7 +46,8 @@ import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
  * 
  * Note - the results of ERROR.TYPE() are different to the constants defined in 
  * <tt>HSSFErrorConstants</tt>.
- * 
+ * </p>
+ *
  * @author Josh Micich
  */
 public final class Errortype implements Function {
