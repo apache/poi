@@ -112,14 +112,14 @@
     // Create a row and put some cells in it. Rows are 0 based.
     Row row = sheet.createRow((short)0);
     // Create a cell and put a value in it.
-    Cell cell = row.createCell((short)0);
+    Cell cell = row.createCell(0);
     cell.setCellValue(1);
 
     // Or do it on one line.
-    row.createCell((short)1).setCellValue(1.2);
-    row.createCell((short)2).setCellValue(
+    row.createCell(1).setCellValue(1.2);
+    row.createCell(2).setCellValue(
          createHelper.createRichTextString("This is a string"));
-    row.createCell((short)3).setCellValue(true);
+    row.createCell(3).setCellValue(true);
 
     // Write the output to a file
     FileOutputStream fileOut = new FileOutputStream("workbook.xls");
@@ -136,11 +136,11 @@
     Sheet sheet = wb.createSheet("new sheet");
 
     // Create a row and put some cells in it. Rows are 0 based.
-    Row row = sheet.createRow((short)0);
+    Row row = sheet.createRow(0);
 
     // Create a cell and put a date value in it.  The first cell is not styled
     // as a date.
-    Cell cell = row.createCell((short)0);
+    Cell cell = row.createCell(0);
     cell.setCellValue(new Date());
 
     // we style the second cell as a date (and time).  It is important to
@@ -149,8 +149,13 @@
     CellStyle cellStyle = wb.createCellStyle();
     cellStyle.setDataFormat(
         createHelper.createDataFormat().getFormat("m/d/yy h:mm"));
-    cell = row.createCell((short)1);
+    cell = row.createCell(1);
     cell.setCellValue(new Date());
+    cell.setCellStyle(cellStyle);
+
+    //you can also set date as java.util.Calendar
+    cell = row.createCell(2);
+    cell.setCellValue(Calendar.getInstance());
     cell.setCellStyle(cellStyle);
 
     // Write the output to a file
@@ -162,14 +167,15 @@
                 <anchor id="CellTypes"/>
                 <section><title>Working with different types of cells</title>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet = wb.createSheet("new sheet");
-    HSSFRow row = sheet.createRow((short)2);
-    row.createCell((short) 0).setCellValue(1.1);
-    row.createCell((short) 1).setCellValue(new Date());
-    row.createCell((short) 2).setCellValue("a string");
-    row.createCell((short) 3).setCellValue(true);
-    row.createCell((short) 4).setCellType(HSSFCell.CELL_TYPE_ERROR);
+    Workbook wb = new HSSFWorkbook();
+    Sheet sheet = wb.createSheet("new sheet");
+    Row row = sheet.createRow((short)2);
+    row.createCell(0).setCellValue(1.1);
+    row.createCell(1).setCellValue(new Date());
+    row.createCell(2).setCellValue(Calendar.getInstance());
+    row.createCell(3).setCellValue("a string");
+    row.createCell(4).setCellValue(true);
+    row.createCell(5).setCellType(HSSFCell.CELL_TYPE_ERROR);
 
     // Write the output to a file
     FileOutputStream fileOut = new FileOutputStream("workbook.xls");
@@ -180,22 +186,23 @@
                 <anchor id="Alignment"/>
                 <section><title>Demonstrates various alignment options</title>
                     <source>
-    public static void main(String[] args)
-            throws IOException
-    {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet("new sheet");
-        HSSFRow row = sheet.createRow((short) 2);
-        createCell(wb, row, (short) 0, HSSFCellStyle.ALIGN_CENTER);
-        createCell(wb, row, (short) 1, HSSFCellStyle.ALIGN_CENTER_SELECTION);
-        createCell(wb, row, (short) 2, HSSFCellStyle.ALIGN_FILL);
-        createCell(wb, row, (short) 3, HSSFCellStyle.ALIGN_GENERAL);
-        createCell(wb, row, (short) 4, HSSFCellStyle.ALIGN_JUSTIFY);
-        createCell(wb, row, (short) 5, HSSFCellStyle.ALIGN_LEFT);
-        createCell(wb, row, (short) 6, HSSFCellStyle.ALIGN_RIGHT);
+    public static void main(String[] args)  throws Exception {
+        Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
+
+        Sheet sheet = wb.createSheet();
+        Row row = sheet.createRow((short) 2);
+        row.setHeightInPoints(30);
+
+        createCell(wb, row, (short) 0, XSSFCellStyle.ALIGN_CENTER, XSSFCellStyle.VERTICAL_BOTTOM);
+        createCell(wb, row, (short) 1, XSSFCellStyle.ALIGN_CENTER_SELECTION, XSSFCellStyle.VERTICAL_BOTTOM);
+        createCell(wb, row, (short) 2, XSSFCellStyle.ALIGN_FILL, XSSFCellStyle.VERTICAL_CENTER);
+        createCell(wb, row, (short) 3, XSSFCellStyle.ALIGN_GENERAL, XSSFCellStyle.VERTICAL_CENTER);
+        createCell(wb, row, (short) 4, XSSFCellStyle.ALIGN_JUSTIFY, XSSFCellStyle.VERTICAL_JUSTIFY);
+        createCell(wb, row, (short) 5, XSSFCellStyle.ALIGN_LEFT, XSSFCellStyle.VERTICAL_TOP);
+        createCell(wb, row, (short) 6, XSSFCellStyle.ALIGN_RIGHT, XSSFCellStyle.VERTICAL_TOP);
 
         // Write the output to a file
-        FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+        FileOutputStream fileOut = new FileOutputStream("xssf-align.xlsx");
         wb.write(fileOut);
         fileOut.close();
 
@@ -204,17 +211,17 @@
     /**
      * Creates a cell and aligns it a certain way.
      *
-     * @param wb        the workbook
-     * @param row       the row to create the cell in
-     * @param column    the column number to create the cell in
-     * @param align     the alignment for the cell.
+     * @param wb     the workbook
+     * @param row    the row to create the cell in
+     * @param column the column number to create the cell in
+     * @param halign the horizontal alignment for the cell.
      */
-    private static void createCell(HSSFWorkbook wb, HSSFRow row, short column, short align)
-    {
-        HSSFCell cell = row.createCell(column);
-        cell.setCellValue("Align It");
-        HSSFCellStyle cellStyle = wb.createCellStyle();
-        cellStyle.setAlignment(align);
+    private static void createCell(Workbook wb, Row row, short column, short halign, short valign) {
+        Cell cell = row.createCell(column);
+        cell.setCellValue(new XSSFRichTextString("Align It"));
+        CellStyle cellStyle = wb.createCellStyle();
+        cellStyle.setAlignment(halign);
+        cellStyle.setVerticalAlignment(valign);
         cell.setCellStyle(cellStyle);
     }
                     </source>
@@ -222,26 +229,26 @@
                 <anchor id="Borders"/>
                 <section><title>Working with borders</title>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet = wb.createSheet("new sheet");
+    Workbook wb = new HSSFWorkbook();
+    Sheet sheet = wb.createSheet("new sheet");
 
     // Create a row and put some cells in it. Rows are 0 based.
-    HSSFRow row = sheet.createRow((short) 1);
+    Row row = sheet.createRow(1);
 
     // Create a cell and put a value in it.
-    HSSFCell cell = row.createCell((short) 1);
+    Cell cell = row.createCell(1);
     cell.setCellValue(4);
 
     // Style the cell with borders all around.
-    HSSFCellStyle style = wb.createCellStyle();
-    style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-    style.setBottomBorderColor(HSSFColor.BLACK.index);
-    style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-    style.setLeftBorderColor(HSSFColor.GREEN.index);
-    style.setBorderRight(HSSFCellStyle.BORDER_THIN);
-    style.setRightBorderColor(HSSFColor.BLUE.index);
-    style.setBorderTop(HSSFCellStyle.BORDER_MEDIUM_DASHED);
-    style.setTopBorderColor(HSSFColor.BLACK.index);
+    CellStyle style = wb.createCellStyle();
+    style.setBorderBottom(CellStyle.BORDER_THIN);
+    style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+    style.setBorderLeft(CellStyle.BORDER_THIN);
+    style.setLeftBorderColor(IndexedColors.GREEN.getIndex());
+    style.setBorderRight(CellStyle.BORDER_THIN);
+    style.setRightBorderColor(IndexedColors.BLUE.getIndex());
+    style.setBorderTop(CellStyle.BORDER_MEDIUM_DASHED);
+    style.setTopBorderColor(IndexedColors.BLACK.getIndex());
     cell.setCellStyle(style);
 
     // Write the output to a file
@@ -327,24 +334,24 @@ for (Row row : sheet1) {
 		System.out.print(" - ");
 		
 		switch(cell.getCellType()) {
-		case Cell.CELL_TYPE_STRING:
-			System.out.println(cell.getRichStringCellValue().getString());
-			break;
-		case Cell.CELL_TYPE_NUMERIC:
-			if(DateUtil.isCellDateFormatted(cell)) {
-				System.out.println(cell.getDateCellValue());
-			} else {
-				System.out.println(cell.getNumericCellValue());
-			}
-			break;
-		case Cell.CELL_TYPE_BOOLEAN:
-			System.out.println(cell.getBooleanCellValue());
-			break;
-		case Cell.CELL_TYPE_FORMULA:
-			System.out.println(cell.getCellFormula());
-			break;
-		default:
-			System.out.println();
+      case Cell.CELL_TYPE_STRING:
+        System.out.println(cell.getRichStringCellValue().getString());
+        break;
+      case Cell.CELL_TYPE_NUMERIC:
+        if(DateUtil.isCellDateFormatted(cell)) {
+          System.out.println(cell.getDateCellValue());
+        } else {
+          System.out.println(cell.getNumericCellValue());
+        }
+        break;
+      case Cell.CELL_TYPE_BOOLEAN:
+        System.out.println(cell.getBooleanCellValue());
+        break;
+      case Cell.CELL_TYPE_FORMULA:
+        System.out.println(cell.getCellFormula());
+        break;
+      default:
+        System.out.println();
 		}
 	}
 }
@@ -372,24 +379,24 @@ for (Row row : sheet1) {
                 <anchor id="FillsAndFrills"/>
                 <section><title>Fills and colors</title>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet = wb.createSheet("new sheet");
+    Workbook wb = new XSSFWorkbook();
+    Sheet sheet = wb.createSheet("new sheet");
 
     // Create a row and put some cells in it. Rows are 0 based.
-    HSSFRow row = sheet.createRow((short) 1);
+    Row row = sheet.createRow((short) 1);
 
     // Aqua background
-    HSSFCellStyle style = wb.createCellStyle();
-    style.setFillBackgroundColor(HSSFColor.AQUA.index);
-    style.setFillPattern(HSSFCellStyle.BIG_SPOTS);
-    HSSFCell cell = row.createCell((short) 1);
+    CellStyle style = wb.createCellStyle();
+    style.setFillBackgroundColor(IndexedColors.AQUA.getIndex());
+    style.setFillPattern(CellStyle.BIG_SPOTS);
+    Cell cell = row.createCell((short) 1);
     cell.setCellValue("X");
     cell.setCellStyle(style);
 
     // Orange "foreground", foreground being the fill foreground not the font color.
     style = wb.createCellStyle();
-    style.setFillForegroundColor(HSSFColor.ORANGE.index);
-    style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+    style.setFillForegroundColor(IndexedColors.ORANGE.getIndex());
+    style.setFillPattern(CellStyle.SOLID_FOREGROUND);
     cell = row.createCell((short) 2);
     cell.setCellValue("X");
     cell.setCellStyle(style);
@@ -403,14 +410,19 @@ for (Row row : sheet1) {
                 <anchor id="MergedCells"/>
                 <section><title>Merging cells</title>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet = wb.createSheet("new sheet");
+    Workbook wb = new HSSFWorkbook();
+    Sheet sheet = wb.createSheet("new sheet");
 
-    HSSFRow row = sheet.createRow((short) 1);
-    HSSFCell cell = row.createCell((short) 1);
+    Row row = sheet.createRow((short) 1);
+    Cell cell = row.createCell((short) 1);
     cell.setCellValue("This is a test of merging");
 
-    sheet.addMergedRegion(new Region(1,(short)1,1,(short)2));
+    sheet.addMergedRegion(new CellRangeAddress(
+            1, //first row (0-based)
+            1, //last row  (0-based)
+            1, //first column (0-based)
+            2  //last column  (0-based)
+    ));
 
     // Write the output to a file
     FileOutputStream fileOut = new FileOutputStream("workbook.xls");
@@ -421,25 +433,25 @@ for (Row row : sheet1) {
                 <anchor id="WorkingWithFonts"/>
                 <section><title>Working with fonts</title>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet = wb.createSheet("new sheet");
+    Workbook wb = new HSSFWorkbook();
+    Sheet sheet = wb.createSheet("new sheet");
 
     // Create a row and put some cells in it. Rows are 0 based.
-    HSSFRow row = sheet.createRow((short) 1);
+    Row row = sheet.createRow(1);
 
     // Create a new font and alter it.
-    HSSFFont font = wb.createFont();
+    Font font = wb.createFont();
     font.setFontHeightInPoints((short)24);
     font.setFontName("Courier New");
     font.setItalic(true);
     font.setStrikeout(true);
 
     // Fonts are set into a style so create a new one to use.
-    HSSFCellStyle style = wb.createCellStyle();
+    CellStyle style = wb.createCellStyle();
     style.setFont(font);
 
     // Create a cell and put a value in it.
-    HSSFCell cell = row.createCell((short) 1);
+    Cell cell = row.createCell(1);
     cell.setCellValue("This is a test of fonts");
     cell.setCellStyle(style);
 
@@ -457,12 +469,12 @@ Examples:
 <p><strong>Wrong:</strong></p>
 <source>
         for (int i = 0; i &lt; 10000; i++) {
-            HSSFRow row = sheet.createRow(i);
-            HSSFCell cell = row.createCell((short) 0);
+            Row row = sheet.createRow(i);
+            Cell cell = row.createCell((short) 0);
 
-            HSSFCellStyle style = workbook.createCellStyle();
-            HSSFFont font = workbook.createFont();
-            font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+            CellStyle style = workbook.createCellStyle();
+            Font font = workbook.createFont();
+            font.setBoldweight(Font.BOLDWEIGHT_BOLD);
             style.setFont(font);
             cell.setCellStyle(style);
         }
@@ -470,13 +482,13 @@ Examples:
 <p><strong>Correct:</strong></p>
 <source>
 
-        HSSFCellStyle style = workbook.createCellStyle();
-        HSSFFont font = workbook.createFont();
-        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        CellStyle style = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
         style.setFont(font);
         for (int i = 0; i &lt; 10000; i++) {
-            HSSFRow row = sheet.createRow(i);
-            HSSFCell cell = row.createCell((short) 0);
+            Row row = sheet.createRow(i);
+            Cell cell = row.createCell((short) 0);
             cell.setCellStyle(style);
         }
 </source>
@@ -484,6 +496,7 @@ Examples:
                 </section>
                 <anchor id="CustomColors"/>
                 <section><title>Custom colors</title>
+                  <p><strong>HSSF:</strong></p>
                     <source>
     HSSFWorkbook wb = new HSSFWorkbook();
     HSSFSheet sheet = wb.createSheet();
@@ -535,6 +548,18 @@ Examples:
     wb.write(out);
     out.close();
                     </source>
+                    <p><strong>XSSF:</strong></p>
+                    <source>
+    XSSFWorkbook wb = new XSSFWorkbook();
+    XSSFSheet sheet = wb.createSheet();
+    XSSFRow row = sheet.createRow(0);
+    XSSFCell cell = row.createCell( 0);
+    cell.setCellValue("custom XSSF colors");
+
+    XSSFCellStyle style1 = wb.createCellStyle();
+    style1.setFillForegroundColor(new XSSFColor(new java.awt.Color(128, 0, 128)));
+    style1.setFillPattern(CellStyle.SOLID_FOREGROUND);
+                    </source>
                 </section>
                 <anchor id="ReadWriteWorkbook"/>
                 <section><title>Reading and Rewriting Workbooks</title>
@@ -545,9 +570,9 @@ Examples:
     Workbook wb = WorkbookFactory.create(inp);
     Sheet sheet = wb.getSheetAt(0);
     Row row = sheet.getRow(2);
-    Cell cell = row.getCell((short)3);
+    Cell cell = row.getCell(3);
     if (cell == null)
-        cell = row.createCell((short)3);
+        cell = row.createCell(3);
     cell.setCellType(Cell.CELL_TYPE_STRING);
     cell.setCellValue("a test");
 
@@ -560,41 +585,38 @@ Examples:
                 <anchor id="NewLinesInCells"/>
                 <section><title>Using newlines in cells</title>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet s = wb.createSheet();
-    HSSFRow r = null;
-    HSSFCell c = null;
-    HSSFCellStyle cs = wb.createCellStyle();
-    HSSFFont f = wb.createFont();
-    HSSFFont f2 = wb.createFont();
+    Workbook wb = new XSSFWorkbook();   //or new HSSFWorkbook();
+    Sheet sheet = wb.createSheet();
 
-    cs = wb.createCellStyle();
+    Row row = sheet.createRow(2);
+    Cell cell = row.createCell(2);
+    cell.setCellValue("Use \n with word wrap on to create a new line");
 
-    cs.setFont( f2 );
-    //Word Wrap MUST be turned on
-    cs.setWrapText( true );
+    //to enable newlines you need set a cell styles with wrap=true
+    CellStyle cs = wb.createCellStyle();
+    cs.setWrapText(true);
+    cell.setCellStyle(cs);
 
-    r = s.createRow( (short) 2 );
-    r.setHeight( (short) 0x349 );
-    c = r.createCell( (short) 2 );
-    c.setCellType( HSSFCell.CELL_TYPE_STRING );
-    c.setCellValue( "Use \n with word wrap on to create a new line" );
-    c.setCellStyle( cs );
-    s.setColumnWidth( (short) 2, (short) ( ( 50 * 8 ) / ( (double) 1 / 20 ) ) );
+    //increase row height to accomodate two lines of text
+    row.setHeightInPoints((2*sheet.getDefaultRowHeightInPoints()));
 
-    FileOutputStream fileOut = new FileOutputStream( "workbook.xls" );
-    wb.write( fileOut );
-    fileOut.close();</source>
+    //adjust column width to fit the content
+    sheet.autoSizeColumn((short)2);
+
+    FileOutputStream fileOut = new FileOutputStream("ooxml-newlines.xlsx");
+    wb.write(fileOut);
+    fileOut.close();
+                  </source>
                 </section>
                 <anchor id="DataFormats"/>
                 <section><title>Data Formats</title>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet = wb.createSheet("format sheet");
-    HSSFCellStyle style;
-    HSSFDataFormat format = wb.createDataFormat();
-    HSSFRow row;
-    HSSFCell cell;
+    Workbook wb = new HSSFWorkbook();
+    Sheet sheet = wb.createSheet("format sheet");
+    CellStyle style;
+    DataFormat format = wb.createDataFormat();
+    Row row;
+    Cell cell;
     short rowNum = 0;
     short colNum = 0;
 
@@ -620,9 +642,9 @@ Examples:
                 <anchor id="FitTo"/>
                 <section><title>Fit Sheet to One Page</title>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet = wb.createSheet("format sheet");
-    HSSFPrintSetup ps = sheet.getPrintSetup();
+    Workbook wb = new HSSFWorkbook();
+    Sheet sheet = wb.createSheet("format sheet");
+    PrintSetup ps = sheet.getPrintSetup();
 
     sheet.setAutobreaks(true);
 
@@ -640,20 +662,23 @@ Examples:
                 <anchor id="PrintArea2"/>
                 <section><title>Set Print Area</title>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet = wb.createSheet("Sheet1");
-    wb.setPrintArea(0, "$A$1:$C$2");
+    Workbook wb = new HSSFWorkbook();
+    Sheet sheet = wb.createSheet("Sheet1");
     //sets the print area for the first sheet
+    wb.setPrintArea(0, "$A$1:$C$2");
+    
     //Alternatively:
-    //wb.setPrintArea(0, 0, 1, 0, 0) is equivalent to using the name reference (See the JavaDocs for more details)
-
-    // Create various cells and rows for spreadsheet.
+    wb.setPrintArea(
+            0, //sheet index
+            0, //start column
+            1, //end column
+            0, //start row
+            0  //end row
+    );
 
     FileOutputStream fileOut = new FileOutputStream("workbook.xls");
     wb.write(fileOut);
     fileOut.close();
-
-
                     </source>
                 </section>
 
@@ -728,32 +753,24 @@ Examples:
                 <anchor id="ShiftRows"/>
                 <section><title>Shift rows up or down on a sheet</title>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet = wb.createSheet("row sheet");
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet("row sheet");
 
-    // Create various cells and rows for spreadsheet.
+        // Create various cells and rows for spreadsheet.
 
-    // Shift rows 6 - 11 on the spreadsheet to the top (rows 0 - 5)
-    sheet.shiftRows(5, 10, -5);
+        // Shift rows 6 - 11 on the spreadsheet to the top (rows 0 - 5)
+        sheet.shiftRows(5, 10, -5);
 
-    FileOutputStream fileOut = new FileOutputStream("workbook.xls");
-    wb.write(fileOut);
-    fileOut.close();
                     </source>
                 </section>
 
                 <anchor id="SelectSheet"/>
                 <section><title>Set a sheet as selected</title>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet = wb.createSheet("row sheet");
+    Workbook wb = new HSSFWorkbook();
+    Sheet sheet = wb.createSheet("row sheet");
     sheet.setSelected(true);
 
-    // Create various cells and rows for spreadsheet.
-
-    FileOutputStream fileOut = new FileOutputStream("workbook.xls");
-    wb.write(fileOut);
-    fileOut.close();
                     </source>
                 </section>
 
@@ -765,12 +782,9 @@ Examples:
                         4 for the denominator.
                     </p>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet1 = wb.createSheet("new sheet");
+    Workbook wb = new HSSFWorkbook();
+    Sheet sheet1 = wb.createSheet("new sheet");
     sheet1.setZoom(3,4);   // 75 percent magnification
-    FileOutputStream fileOut = new FileOutputStream("workbook.xls");
-    wb.write(fileOut);
-    fileOut.close();
                     </source>
                 </section>
 
@@ -803,7 +817,7 @@ Examples:
                         Split panes are created with the following call:
                     </p>
                     <p>
-                            sheet2.createSplitPane( 2000, 2000, 0, 0, HSSFSheet.PANE_LOWER_LEFT );
+                            sheet2.createSplitPane( 2000, 2000, 0, 0, Sheet.PANE_LOWER_LEFT );
                     </p>
                     <p>
 
@@ -814,15 +828,15 @@ Examples:
                     </p>
                     <p>
                         The last parameter indicates which pane currently has
-                        the focus.  This will be one of HSSFSheet.PANE_LOWER_LEFT,
+                        the focus.  This will be one of Sheet.PANE_LOWER_LEFT,
                         PANE_LOWER_RIGHT, PANE_UPPER_RIGHT or PANE_UPPER_LEFT.
                     </p>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet1 = wb.createSheet("new sheet");
-    HSSFSheet sheet2 = wb.createSheet("second sheet");
-    HSSFSheet sheet3 = wb.createSheet("third sheet");
-    HSSFSheet sheet4 = wb.createSheet("fourth sheet");
+    Workbook wb = new HSSFWorkbook();
+    Sheet sheet1 = wb.createSheet("new sheet");
+    Sheet sheet2 = wb.createSheet("second sheet");
+    Sheet sheet3 = wb.createSheet("third sheet");
+    Sheet sheet4 = wb.createSheet("fourth sheet");
 
     // Freeze just one row
     sheet1.createFreezePane( 0, 1, 0, 1 );
@@ -831,7 +845,7 @@ Examples:
     // Freeze the columns and rows (forget about scrolling position of the lower right quadrant).
     sheet3.createFreezePane( 2, 2 );
     // Create a split with the lower left side being the active quadrant
-    sheet4.createSplitPane( 2000, 2000, 0, 0, HSSFSheet.PANE_LOWER_LEFT );
+    sheet4.createSplitPane( 2000, 2000, 0, 0, Sheet.PANE_LOWER_LEFT );
 
     FileOutputStream fileOut = new FileOutputStream("workbook.xls");
     wb.write(fileOut);
@@ -855,9 +869,9 @@ Examples:
                         To stop the columns from repeating pass in -1 as the start and end rows.
                     </p>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet1 = wb.createSheet("new sheet");
-    HSSFSheet sheet2 = wb.createSheet("second sheet");
+    Workbook wb = new HSSFWorkbook();
+    Sheet sheet1 = wb.createSheet("new sheet");
+    Sheet sheet2 = wb.createSheet("second sheet");
 
     // Set the columns to repeat from column 0 to 2 on the first sheet
     wb.setRepeatingRowsAndColumns(0,0,2,-1,-1);
@@ -875,10 +889,10 @@ Examples:
                         Example is for headers but applies directly to footers.
                     </p>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet = wb.createSheet("new sheet");
+    Workbook wb = new HSSFWorkbook();
+    Sheet sheet = wb.createSheet("new sheet");
 
-    HSSFHeader header = sheet.getHeader();
+    Header header = sheet.getHeader();
     header.setCenter("Center Header");
     header.setLeft("Left Header");
     header.setRight(HSSFHeader.font("Stencil-Normal", "Italic") +
@@ -1103,8 +1117,8 @@ Examples:
                         using the POI API.  Here's how:
                     </p>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet1 = wb.createSheet("new sheet");
+    Workbook wb = new HSSFWorkbook();
+    Sheet sheet1 = wb.createSheet("new sheet");
 
     sheet1.groupRow( 5, 14 );
     sheet1.groupRow( 7, 14 );
@@ -1148,7 +1162,8 @@ Examples:
             <p>
                 It should be noted that any existing drawings may be erased
                 once you add a image to a sheet.
-            </p>
+              </p>
+              <p><strong>HSSF:</strong></p>  
             <source>
     // Create the drawing patriarch.  This is the top level container for
     // all shapes. This will clear out any existing shapes for that sheet.
@@ -1174,17 +1189,43 @@ Examples:
     HSSFClientAnchor preferredSize = picture.getPreferredSize();
     picture.setAnchor(preferredSize);
       </source>
+      <p><strong>XSSF:</strong></p>
+      <source>
+    //create a new workbook
+    XSSFWorkbook wb = new XSSFWorkbook(); 
+
+    //add a picture in this workbook.
+    InputStream is = new FileInputStream("lilies.jpg");
+    int pictureIdx = wb.addPicture(is, XSSFWorkbook.PICTURE_TYPE_JPEG);
+    is.close();
+
+    //create sheet
+    XSSFSheet sheet = wb.createSheet();
+
+    //create drawing
+    XSSFDrawing drawing = sheet.createDrawingPatriarch();
+
+    //add a picture shape
+    XSSFPicture pict = drawing.createPicture(new XSSFClientAnchor(), pictureIdx);
+
+    //auto-size picture
+    pict.resize();
+
+    //save workbook
+    FileOutputStream fileOut = new FileOutputStream("xssf-picture.xlsx");
+    wb.write(fileOut);
+    fileOut.close();
+      </source>
         <warning>
-          HSSFPicture.resize() works only for JPEG and PNG. Other formats are not yet supported.
+          HSSFPicture.resize() and XSSFPicture.resize() work only for JPEG and PNG. Other formats are not yet supported.
         </warning>
 
    <p>Reading images from a workbook:</p>
       <source>
-    HSSFWorkbook wb;
-
-    List lst = wb.getAllPictures();
+ 
+    List lst = workbook.getAllPictures();
     for (Iterator it = lst.iterator(); it.hasNext(); ) {
-        HSSFPictureData pict = (HSSFPictureData)it.next();
+        PictureData pict = (PictureData)it.next();
         String ext = pict.suggestFileExtension();
         byte[] data = pict.getData();
         if (ext.equals("jpeg")){
@@ -1440,7 +1481,7 @@ Examples:
      <anchor id="Autofit"/>
      <section><title>Adjust column width to fit the contents</title>
         <source>
-    HSSFSheet sheet = workbook.getSheetAt(0);
+    Sheet sheet = workbook.getSheetAt(0);
     sheet.autoSizeColumn((short)0); //adjust width of the first column
     sheet.autoSizeColumn((short)1); //adjust width of the second column
         </source>
@@ -1448,17 +1489,16 @@ Examples:
     To calculate column width HSSFSheet.autoSizeColumn uses Java2D classes
     that throw exception if graphical environment is not available. In case if graphical environment
     is not available, you must tell Java that you are running in headless mode and
-    set the following system property: <code> java.awt.headless=true </code>
-    (either via <code>-Djava.awt.headless=true</code> startup parameter or via <code>System.setProperty("java.awt.headless", "true")</code>).
+    set the following system property: <code> java.awt.headless=true </code>.
         </warning>
      </section>
      <anchor id="Hyperlinks"/>
      <section><title>How to read hyperlinks</title>
         <source>
-    HSSFSheet sheet = workbook.getSheetAt(0);
+    Sheet sheet = workbook.getSheetAt(0);
 
-    HSSFCell cell = sheet.getRow(0).getCell((short)0);
-    HSSFHyperlink link = cell.getHyperlink();
+    Cell cell = sheet.getRow(0).getCell((short)0);
+    Hyperlink link = cell.getHyperlink();
     if(link != null){
         System.out.println(link.getAddress());
     }
@@ -1466,23 +1506,24 @@ Examples:
      </section>
      <section><title>How to create hyperlinks</title>
         <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
+    Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
+    CreationHelper createHelper = wb.getCreationHelper();
 
     //cell style for hyperlinks
     //by default hypelrinks are blue and underlined
-    HSSFCellStyle hlink_style = wb.createCellStyle();
-    HSSFFont hlink_font = wb.createFont();
-    hlink_font.setUnderline(HSSFFont.U_SINGLE);
-    hlink_font.setColor(HSSFColor.BLUE.index);
+    CellStyle hlink_style = wb.createCellStyle();
+    Font hlink_font = wb.createFont();
+    hlink_font.setUnderline(Font.U_SINGLE);
+    hlink_font.setColor(IndexedColors.BLUE.getIndex());
     hlink_style.setFont(hlink_font);
 
-    HSSFCell cell;
-    HSSFSheet sheet = wb.createSheet("Hyperlinks");
-
+    Cell cell;
+    Sheet sheet = wb.createSheet("Hyperlinks");
     //URL
     cell = sheet.createRow(0).createCell((short)0);
     cell.setCellValue("URL Link");
-    HSSFHyperlink link = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
+
+    Hyperlink link = createHelper.createHyperlink(Hyperlink.LINK_URL);
     link.setAddress("http://poi.apache.org/");
     cell.setHyperlink(link);
     cell.setCellStyle(hlink_style);
@@ -1490,7 +1531,7 @@ Examples:
     //link to a file in the current directory
     cell = sheet.createRow(1).createCell((short)0);
     cell.setCellValue("File Link");
-    link = new HSSFHyperlink(HSSFHyperlink.LINK_FILE);
+    link = createHelper.createHyperlink(Hyperlink.LINK_FILE);
     link.setAddress("link1.xls");
     cell.setHyperlink(link);
     cell.setCellStyle(hlink_style);
@@ -1498,7 +1539,7 @@ Examples:
     //e-mail link
     cell = sheet.createRow(2).createCell((short)0);
     cell.setCellValue("Email Link");
-    link = new HSSFHyperlink(HSSFHyperlink.LINK_EMAIL);
+    link = createHelper.createHyperlink(Hyperlink.LINK_EMAIL);
     //note, if subject contains white spaces, make sure they are url-encoded
     link.setAddress("mailto:poi@apache.org?subject=Hyperlinks");
     cell.setHyperlink(link);
@@ -1507,20 +1548,20 @@ Examples:
     //link to a place in this workbook
 
     //create a target sheet and cell
-    HSSFSheet sheet2 = wb.createSheet("Target Sheet");
+    Sheet sheet2 = wb.createSheet("Target Sheet");
     sheet2.createRow(0).createCell((short)0).setCellValue("Target Cell");
 
     cell = sheet.createRow(3).createCell((short)0);
     cell.setCellValue("Worksheet Link");
-    link = new HSSFHyperlink(HSSFHyperlink.LINK_DOCUMENT);
-    link.setAddress("'Target Sheet'!A1");
-    cell.setHyperlink(link);
+    Hyperlink link2 = createHelper.createHyperlink(Hyperlink.LINK_DOCUMENT);
+    link2.setAddress("'Target Sheet'!A1");
+    cell.setHyperlink(link2);
     cell.setCellStyle(hlink_style);
 
-    FileOutputStream out = new FileOutputStream("hssf-links.xls");
+    FileOutputStream out = new FileOutputStream("hyperinks.xlsx");
     wb.write(out);
     out.close();
-    </source>
+        </source>
      </section>
 
     </body>
