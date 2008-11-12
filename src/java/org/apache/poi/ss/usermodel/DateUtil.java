@@ -211,6 +211,8 @@ public class DateUtil {
         fs = fs.replaceAll("\\\\-","-");
         // And \, into ,
         fs = fs.replaceAll("\\\\,",",");
+        // And \. into .
+        fs = fs.replaceAll("\\\\.",".");
         // And '\ ' into ' '
         fs = fs.replaceAll("\\\\ "," ");
 
