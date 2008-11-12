@@ -239,6 +239,7 @@ public final class TestHSSFDateUtil extends TestCase {
                 "dd-mm-yy", "dd-mm-yyyy",
                 "DD-MM-YY", "DD-mm-YYYY",
                 "dd\\-mm\\-yy", // Sometimes escaped
+                "dd.mm.yyyy", "dd\\.mm\\.yyyy",
 
                 // These crazy ones are valid
                 "yyyy-mm-dd;@", "yyyy/mm/dd;@",
