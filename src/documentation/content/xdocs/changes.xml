@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta4" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">45290 - Support odd files where the POIFS header block comes after the data blocks, and is on the data blocks list</header>
            <action dev="POI-DEVELOPERS" type="fix">46184 - More odd escaped date formats</action>
            <action dev="POI-DEVELOPERS" type="add">Include the sheet number in the output of XLS2CSVmra</action>
            <action dev="POI-DEVELOPERS" type="fix">46043 - correctly write out HPSF properties with HWPF</action>

@@ -179,17 +179,34 @@ public class BlockAllocationTableReader
      */
 
     ListManagedBlock [] fetchBlocks(final int startBlock,
+                                    final int headerPropertiesStartBlock,
                                     final BlockList blockList)
         throws IOException
     {
         List blocks       = new ArrayList();
         int  currentBlock = startBlock;
-
-        while (currentBlock != POIFSConstants.END_OF_CHAIN)
-        {
-            blocks.add(blockList.remove(currentBlock));
-            currentBlock = _entries.get(currentBlock);
+        boolean firstPass = true;
+        
+        // Process the chain from the start to the end
+        // Normally we have header, data, end
+        // Sometimes we have data, header, end
+        // For those cases, stop at the header, not the end
+        while (currentBlock != POIFSConstants.END_OF_CHAIN) {
+        	try {
+        		blocks.add(blockList.remove(currentBlock));
+                currentBlock = _entries.get(currentBlock);
+        	} catch(IOException e) {
+        		if(currentBlock == headerPropertiesStartBlock) {
+        			// Special case where things are in the wrong order
+        			System.err.println("Warning, header block comes after data blocks in POIFS block listing");
+        			currentBlock = POIFSConstants.END_OF_CHAIN;
+        		} else {
+        			// Ripple up
+        			throw e;
+        		}
+        	}
         }
+        
         return ( ListManagedBlock [] ) blocks
             .toArray(new ListManagedBlock[ 0 ]);
     }

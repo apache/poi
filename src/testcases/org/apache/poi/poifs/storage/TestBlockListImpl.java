@@ -285,7 +285,7 @@ public class TestBlockListImpl
             try
             {
                 ListManagedBlock[] dataBlocks =
-                    list.fetchBlocks(start_blocks[ j ]);
+                    list.fetchBlocks(start_blocks[ j ], -1);
 
                 if (expected_length[ j ] == -1)
                 {

@@ -173,11 +173,16 @@ public class POIFSFileSystem
                               data_blocks);
 
         // init documents
-        processProperties(SmallBlockTableReader
-            .getSmallDocumentBlocks(data_blocks, properties
-                .getRoot(), header_block_reader
-                    .getSBATStart()), data_blocks, properties.getRoot()
-                        .getChildren(), null);
+        processProperties(
+        		SmallBlockTableReader.getSmallDocumentBlocks(
+        				data_blocks, properties.getRoot(), 
+        				header_block_reader.getSBATStart()
+        		), 
+        		data_blocks, 
+        		properties.getRoot().getChildren(), 
+        		null,
+        		header_block_reader.getPropertyStart()
+        );
     }
     /**
      * @param stream the stream to be closed
@@ -491,7 +496,8 @@ public class POIFSFileSystem
     private void processProperties(final BlockList small_blocks,
                                    final BlockList big_blocks,
                                    final Iterator properties,
-                                   final DirectoryNode dir)
+                                   final DirectoryNode dir,
+                                   final int headerPropertiesStartAt)
         throws IOException
     {
         while (properties.hasNext())
@@ -511,7 +517,8 @@ public class POIFSFileSystem
 
                 processProperties(
                     small_blocks, big_blocks,
-                    (( DirectoryProperty ) property).getChildren(), new_dir);
+                    (( DirectoryProperty ) property).getChildren(), 
+                    new_dir, headerPropertiesStartAt);
             }
             else
             {
@@ -522,14 +529,15 @@ public class POIFSFileSystem
                 if (property.shouldUseSmallBlocks())
                 {
                     document =
-                        new POIFSDocument(name, small_blocks
-                            .fetchBlocks(startBlock), size);
+                        new POIFSDocument(name, 
+                                          small_blocks.fetchBlocks(startBlock, headerPropertiesStartAt), 
+                                          size);
                 }
                 else
                 {
                     document =
                         new POIFSDocument(name,
-                                          big_blocks.fetchBlocks(startBlock),
+                                          big_blocks.fetchBlocks(startBlock, headerPropertiesStartAt),
                                           size);
                 }
                 parent.createDocument(document);

@@ -245,13 +245,13 @@ public class POIFSReader
                     {
                         document =
                             new POIFSDocument(name, small_blocks
-                                .fetchBlocks(startBlock), size);
+                                .fetchBlocks(startBlock, -1), size);
                     }
                     else
                     {
                         document =
                             new POIFSDocument(name, big_blocks
-                                .fetchBlocks(startBlock), size);
+                                .fetchBlocks(startBlock, -1), size);
                     }
                     while (listeners.hasNext())
                     {
@@ -270,11 +270,11 @@ public class POIFSReader
                     // consume the document's data and discard it
                     if (property.shouldUseSmallBlocks())
                     {
-                        small_blocks.fetchBlocks(startBlock);
+                        small_blocks.fetchBlocks(startBlock, -1);
                     }
                     else
                     {
-                        big_blocks.fetchBlocks(startBlock);
+                        big_blocks.fetchBlocks(startBlock, -1);
                     }
                 }
             }

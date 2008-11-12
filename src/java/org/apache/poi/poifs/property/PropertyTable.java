@@ -78,7 +78,7 @@ public class PropertyTable
         _blocks      = null;
         _properties  =
             PropertyFactory
-                .convertToProperties(blockList.fetchBlocks(startBlock));
+                .convertToProperties(blockList.fetchBlocks(startBlock, -1));
         populatePropertyTree(( DirectoryProperty ) _properties.get(0));
     }
 

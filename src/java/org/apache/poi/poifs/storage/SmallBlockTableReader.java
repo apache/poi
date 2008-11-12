@@ -56,9 +56,9 @@ public class SmallBlockTableReader
     {
         BlockList list =
             new SmallDocumentBlockList(SmallDocumentBlock
-                .extract(blockList.fetchBlocks(root.getStartBlock())));
+                .extract(blockList.fetchBlocks(root.getStartBlock(), -1)));
 
-        new BlockAllocationTableReader(blockList.fetchBlocks(sbatStart),
+        new BlockAllocationTableReader(blockList.fetchBlocks(sbatStart, -1),
                                        list);
         return list;
     }
