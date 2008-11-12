@@ -19,10 +19,9 @@ package org.apache.poi.hwpf.usermodel;
 import java.io.File;
 import java.io.FileInputStream;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFTestCase;
 import org.apache.poi.hwpf.model.StyleSheet;
 
 /**
@@ -30,13 +29,10 @@ import org.apache.poi.hwpf.model.StyleSheet;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestProblems extends TestCase {
+public class TestProblems extends HWPFTestCase {
 
 	private String dirname = System.getProperty("HWPF.testdata.path");
 	
-    protected void setUp() throws Exception {
-    }
-
     /**
      * ListEntry passed no ListTable
      */
@@ -164,5 +160,15 @@ public class TestProblems extends TestCase {
 		} catch(EncryptedDocumentException e) {
 			// Good
 		}
+	}
+	
+	public void testWriteProperties() throws Exception {
+		HWPFDocument doc = new HWPFDocument(new FileInputStream(
+    			new File(dirname, "SampleDoc.doc")));
+		assertEquals("Nick Burch", doc.getSummaryInformation().getAuthor());
+		
+		// Write and read
+		HWPFDocument doc2 = writeOutAndRead(doc);
+		assertEquals("Nick Burch", doc.getSummaryInformation().getAuthor());
 	}
 }

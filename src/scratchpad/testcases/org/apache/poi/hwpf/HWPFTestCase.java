@@ -18,6 +18,10 @@
         
 package org.apache.poi.hwpf;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import junit.framework.TestCase;
 
 
@@ -30,9 +34,7 @@ public abstract class HWPFTestCase
   {
   }
 
-  protected void setUp()
-    throws Exception
-  {
+  protected void setUp() throws Exception {
     super.setUp();
     /**@todo verify the constructors*/
     _hWPFDocFixture = new HWPFDocFixture(this);
@@ -40,13 +42,20 @@ public abstract class HWPFTestCase
     _hWPFDocFixture.setUp();
   }
 
-  protected void tearDown()
-    throws Exception
-  {
-    _hWPFDocFixture.tearDown();
+  protected void tearDown() throws Exception {
+	  if(_hWPFDocFixture != null) {
+         _hWPFDocFixture.tearDown();
+	  }
 
-    _hWPFDocFixture = null;
-    super.tearDown();
+      _hWPFDocFixture = null;
+      super.tearDown();
   }
 
+  public HWPFDocument writeOutAndRead(HWPFDocument doc) throws IOException {
+	  ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	  doc.write(baos);
+	  ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+	  HWPFDocument newDoc = new HWPFDocument(bais);
+	  return newDoc;
+  }
 }

@@ -552,7 +552,8 @@ public class HWPFDocument extends POIDocument
     pfs.createDocument(new ByteArrayInputStream(mainBuf), "WordDocument");
     pfs.createDocument(new ByteArrayInputStream(tableBuf), "1Table");
     pfs.createDocument(new ByteArrayInputStream(dataBuf), "Data");
-
+    writeProperties(pfs);
+    
     pfs.writeFilesystem(out);
   }
 
