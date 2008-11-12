@@ -599,4 +599,6 @@ public interface Sheet extends Iterable<Row> {
      */
     Comment getCellComment(int row, int column);
 
+    Drawing createDrawingPatriarch();
+
 }

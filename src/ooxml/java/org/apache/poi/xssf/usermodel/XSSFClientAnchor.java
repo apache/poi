@@ -17,6 +17,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
+import org.apache.poi.ss.usermodel.ClientAnchor;
 
 /**
  * A client anchor is attached to an excel worksheet.  It anchors against
@@ -24,7 +25,7 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
  *
  * @author Yegor Kozlov
  */
-public class XSSFClientAnchor extends XSSFAnchor {
+public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
 
     /**
      * Starting anchor point
@@ -88,16 +89,16 @@ public class XSSFClientAnchor extends XSSFAnchor {
         this.cell2 = cell2;
     }
 
-    public int getCol1() {
-        return cell1.getCol();
+    public short getCol1() {
+        return (short)cell1.getCol();
     }
 
     public void setCol1(int col1) {
         cell1.setCol(col1);
     }
 
-    public int getCol2() {
-        return cell2.getCol();
+    public short getCol2() {
+        return (short)cell2.getCol();
     }
 
     public void setCol2(int col2) {

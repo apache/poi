@@ -53,4 +53,13 @@ public class XSSFCreationHelper implements CreationHelper {
         return new XSSFFormulaEvaluator(workbook);
     }
 
+    /**
+     * Creates a XSSFClientAnchor. Use this object to position drawing object in a sheet
+     *
+     * @return a XSSFClientAnchor instance
+     * @see org.apache.poi.ss.usermodel.Drawing
+     */
+    public XSSFClientAnchor createClientAnchor(){
+        return new XSSFClientAnchor();
+    }
 }

@@ -17,6 +17,8 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxml4j.opc.*;
@@ -34,7 +36,7 @@ import java.util.HashMap;
  *
  * @author Yegor Kozlov
  */
-public class XSSFDrawing extends POIXMLDocumentPart {
+public class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
     /**
      * Root element of the SpreadsheetML Drawing part
      */
@@ -144,6 +146,10 @@ public class XSSFDrawing extends POIXMLDocumentPart {
         shape.anchor = anchor;
         shape.setPictureReference(rel);
         return shape;
+    }
+
+    public XSSFPicture createPicture(ClientAnchor anchor, int pictureIndex){
+        return createPicture((XSSFClientAnchor)anchor, pictureIndex);
     }
 
     /**
