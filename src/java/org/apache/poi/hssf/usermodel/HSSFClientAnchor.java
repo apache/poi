@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
-
+import org.apache.poi.ss.usermodel.ClientAnchor;
 
 
 /**
@@ -27,7 +27,7 @@ package org.apache.poi.hssf.usermodel;
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public class HSSFClientAnchor
-        extends HSSFAnchor
+        extends HSSFAnchor implements ClientAnchor
 {
     short col1;
     int row1;
@@ -124,6 +124,9 @@ public class HSSFClientAnchor
         checkRange(col1, 0, 255, "col1");
         this.col1 = col1;
     }
+    public void setCol1( int col1 ){
+        setCol1((short)col1);
+    }
 
     public short getCol2()
     {
@@ -134,6 +137,10 @@ public class HSSFClientAnchor
     {
         checkRange(col2, 0, 255, "col2");
         this.col2 = col2;
+    }
+
+    public void setCol2( int col2 ){
+        setCol2((short)col2);
     }
 
     public int getRow1()

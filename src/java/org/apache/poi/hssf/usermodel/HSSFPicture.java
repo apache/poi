@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.ss.usermodel.Picture;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -38,7 +39,7 @@ import java.util.Iterator;
  * @author Yegor Kozlov (yegor at apache.org)
  */
 public class HSSFPicture
-        extends HSSFSimpleShape
+        extends HSSFSimpleShape implements Picture
 {
     public static final int PICTURE_TYPE_EMF = HSSFWorkbook.PICTURE_TYPE_EMF;                // Windows Enhanced Metafile
     public static final int PICTURE_TYPE_WMF = HSSFWorkbook.PICTURE_TYPE_WMF;                // Windows Metafile

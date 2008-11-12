@@ -51,4 +51,6 @@ public interface CreationHelper {
      * @return a FormulaEvaluator instance
      */
     FormulaEvaluator createFormulaEvaluator();
+    
+    ClientAnchor createClientAnchor();
 }

@@ -63,7 +63,7 @@ import java.text.*;
  * @author James May (james dot may at fmr dot com)
  *
  */
-public final class DataFormatter {
+public class DataFormatter {
 
     /** Pattern to find a number format: "0" or  "#" */
     private static final Pattern numPattern = Pattern.compile("[0#]+");

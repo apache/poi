@@ -1163,63 +1163,45 @@ Examples:
                 It should be noted that any existing drawings may be erased
                 once you add a image to a sheet.
               </p>
-              <p><strong>HSSF:</strong></p>  
             <source>
-    // Create the drawing patriarch.  This is the top level container for
-    // all shapes. This will clear out any existing shapes for that sheet.
-    HSSFPatriarch patriarch = sheet5.createDrawingPatriarch();
-
-    HSSFClientAnchor anchor;
-    anchor = new HSSFClientAnchor(0,0,0,255,(short)2,2,(short)4,7);
-    anchor.setAnchorType( 2 );
-    patriarch.createPicture(anchor, loadPicture( "src/resources/logos/logoKarmokar4.png", wb ));
-  </source>
-  <p>Creating an image and setting its anchor to the actual width and height:</p>
-      <source>
-    HSSFPatriarch patriarch = sheet5.createDrawingPatriarch();
-
-    HSSFPicture picture = patriarch.createPicture(new HSSFClientAnchor(), loadPicture( "src/resources/logos/logoKarmokar4.png", wb ));
-    picture.resize();
-      </source>
-      <p>or</p> 
-      <source>
-    HSSFPatriarch patriarch = sheet5.createDrawingPatriarch();
-
-    HSSFPicture picture = patriarch.createPicture(new HSSFClientAnchor(), loadPicture( "src/resources/logos/logoKarmokar4.png", wb ));
-    HSSFClientAnchor preferredSize = picture.getPreferredSize();
-    picture.setAnchor(preferredSize);
-      </source>
-      <p><strong>XSSF:</strong></p>
-      <source>
     //create a new workbook
-    XSSFWorkbook wb = new XSSFWorkbook(); 
+    Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
 
-    //add a picture in this workbook.
-    InputStream is = new FileInputStream("lilies.jpg");
-    int pictureIdx = wb.addPicture(is, XSSFWorkbook.PICTURE_TYPE_JPEG);
+    //add picture data to this workbook.
+    InputStream is = new FileInputStream("image1.jpeg");
+    byte[] bytes = IOUtils.toByteArray(is);
+    int pictureIdx = wb.addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
     is.close();
 
-    //create sheet
-    XSSFSheet sheet = wb.createSheet();
+    CreationHelper helper = wb.getCreationHelper();
 
-    //create drawing
-    XSSFDrawing drawing = sheet.createDrawingPatriarch();
+    //create sheet
+    Sheet sheet = wb.createSheet();
+
+    // Create the drawing patriarch.  This is the top level container for all shapes. 
+    Drawing drawing = sheet.createDrawingPatriarch();
 
     //add a picture shape
-    XSSFPicture pict = drawing.createPicture(new XSSFClientAnchor(), pictureIdx);
+    ClientAnchor anchor = helper.createClientAnchor();
+    //set top-left corner of the picture,
+    //subsequent call of Picture#resize() will operate relative to it
+    anchor.setCol1(3);
+    anchor.setRow1(2);
+    Picture pict = drawing.createPicture(anchor, pictureIdx);
 
-    //auto-size picture
+    //auto-size picture relative to its top-left corner
     pict.resize();
 
     //save workbook
-    FileOutputStream fileOut = new FileOutputStream("xssf-picture.xlsx");
+    String file = "picture.xls";
+    if(wb instanceof XSSFWorkbook) file += "x";
+    FileOutputStream fileOut = new FileOutputStream(file);
     wb.write(fileOut);
     fileOut.close();
-      </source>
+        </source>
         <warning>
-          HSSFPicture.resize() and XSSFPicture.resize() work only for JPEG and PNG. Other formats are not yet supported.
+          Picture.resize() works only for JPEG and PNG. Other formats are not yet supported.
         </warning>
-
    <p>Reading images from a workbook:</p>
       <source>
  

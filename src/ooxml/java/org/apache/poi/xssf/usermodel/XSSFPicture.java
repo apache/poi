@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.POIXMLDocumentPart;
@@ -39,7 +40,7 @@ import java.util.Iterator;
  *
  * @author Yegor Kozlov
  */
-public class XSSFPicture extends XSSFShape {
+public class XSSFPicture extends XSSFShape implements Picture {
     private static final POILogger logger = POILogFactory.getLogger(XSSFPicture.class);
 
     /**
@@ -132,7 +133,7 @@ public class XSSFPicture extends XSSFShape {
         int row2 = anchor.getRow1() + (pref.getRow2() - pref.getRow1());
         int col2 = anchor.getCol1() + (pref.getCol2() - pref.getCol1());
 
-        anchor.setCol2((short)col2);
+        anchor.setCol2(col2);
         anchor.setDx1(0);
         anchor.setDx2(pref.getDx2());
 

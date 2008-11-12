@@ -54,4 +54,14 @@ public class HSSFCreationHelper implements CreationHelper {
         return new HSSFFormulaEvaluator(workbook);
     }
 
+    /**
+     * Creates a HSSFClientAnchor. Use this object to position drawing object in a sheet
+     *
+     * @return a HSSFClientAnchor instance
+     * @see org.apache.poi.ss.usermodel.Drawing
+     */
+    public HSSFClientAnchor createClientAnchor(){
+        return new HSSFClientAnchor();
+    }
+
 }

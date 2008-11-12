@@ -26,6 +26,8 @@ import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperty;
 import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.util.StringUtil;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.ClientAnchor;
 
 /**
  * The patriarch is the toplevel container for shapes in a sheet.  It does
@@ -34,7 +36,7 @@ import org.apache.poi.util.StringUtil;
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public class HSSFPatriarch
-        implements HSSFShapeContainer
+        implements HSSFShapeContainer, Drawing
 {
     List shapes = new ArrayList();
     HSSFSheet sheet;
@@ -108,7 +110,10 @@ public class HSSFPatriarch
         shapes.add(shape);
         return shape;
     }
-
+    public HSSFPicture createPicture(ClientAnchor anchor, int pictureIndex)
+    {
+        return createPicture((HSSFClientAnchor)anchor, pictureIndex);
+    }
 
     /**
      * Creates a polygon
@@ -187,7 +192,7 @@ public class HSSFPatriarch
         this.x2 = x2;
         this.y2 = y2;
     }
-    
+
     /**
      * Does this HSSFPatriarch contain a chart?
      * (Technically a reference to a chart, since they
@@ -197,7 +202,7 @@ public class HSSFPatriarch
      */
     public boolean containsChart() {
         // TODO - support charts properly in usermodel
-        
+
         // We're looking for a EscherOptRecord
         EscherOptRecord optRecord = (EscherOptRecord)
             boundAggregate.findFirstWithId(EscherOptRecord.RECORD_ID);
@@ -205,7 +210,7 @@ public class HSSFPatriarch
             // No opt record, can't have chart
             return false;
         }
-        
+
         for(Iterator it = optRecord.getEscherProperties().iterator(); it.hasNext();) {
             EscherProperty prop = (EscherProperty)it.next();
             if(prop.getPropertyNumber() == 896 && prop.isComplex()) {
