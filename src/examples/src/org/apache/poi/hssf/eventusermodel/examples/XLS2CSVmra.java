@@ -159,7 +159,10 @@ public class XLS2CSVmra implements HSSFListener {
 					orderedBSRs = BoundSheetRecord.orderByBofPosition(boundSheetRecords);
 				}
 				output.println();
-				output.println(orderedBSRs[sheetIndex].getSheetname() + ":");
+				output.println( 
+						orderedBSRs[sheetIndex].getSheetname() +
+						" [" + (sheetIndex+1) + "]:"
+				);
 			}
 			break;
 
