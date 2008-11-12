@@ -27,9 +27,6 @@ import java.util.List;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.ss.util.Region;
-import org.apache.poi.ss.util.CellRangeAddress;
-
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
@@ -38,6 +35,7 @@ import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -1532,5 +1530,14 @@ public final class TestBugs extends TestCase {
         HSSFWorkbook wb = openSample("46137.xls");
         assertEquals(7, wb.getNumberOfSheets());
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+    }
+    
+    /**
+     * Odd POIFS blocks issue:
+     * block[ 44 ] already removed from org.apache.poi.poifs.storage.BlockListImpl.remove
+     */
+    public void test45290() {
+        HSSFWorkbook wb = openSample("45290.xls");
+        assertEquals(1, wb.getNumberOfSheets());
     }
 }

@@ -1325,7 +1325,7 @@ public class TestBlockAllocationTableReader
             try
             {
                 ListManagedBlock[] dataBlocks =
-                    table.fetchBlocks(start_blocks[ j ], list);
+                    table.fetchBlocks(start_blocks[ j ], -1, list);
 
                 if (expected_length[ j ] == -1)
                 {

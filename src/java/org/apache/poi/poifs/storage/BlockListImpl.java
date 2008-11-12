@@ -94,8 +94,10 @@ class BlockListImpl
             result = _blocks[ index ];
             if (result == null)
             {
-                throw new IOException("block[ " + index
-                                      + " ] already removed");
+                throw new IOException(
+                		"block[ " + index + " ] already removed - " +
+                		"does your POIFS have circular or duplicate block references?"
+                );
             }
             _blocks[ index ] = null;
         }
@@ -119,7 +121,7 @@ class BlockListImpl
      * @exception IOException if blocks are missing
      */
 
-    public ListManagedBlock [] fetchBlocks(final int startBlock)
+    public ListManagedBlock [] fetchBlocks(final int startBlock, final int headerPropertiesStartBlock)
         throws IOException
     {
         if (_bat == null)
@@ -127,7 +129,7 @@ class BlockListImpl
             throw new IOException(
                 "Improperly initialized list: no block allocation table provided");
         }
-        return _bat.fetchBlocks(startBlock, this);
+        return _bat.fetchBlocks(startBlock, headerPropertiesStartBlock, this);
     }
 
     /**
