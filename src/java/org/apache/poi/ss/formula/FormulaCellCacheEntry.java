@@ -45,6 +45,15 @@ final class FormulaCellCacheEntry extends CellCacheEntry {
 	public FormulaCellCacheEntry() {
 		
 	}
+	
+	public boolean isInputSensitive() {
+		if (_sensitiveInputCells != null) {
+			if (_sensitiveInputCells.length > 0 ) {
+				return true;
+			}
+		}
+		return _usedBlankCellGroup == null ? false : !_usedBlankCellGroup.isEmpty();
+	}
 
 	public void setSensitiveInputCells(CellCacheEntry[] sensitiveInputCells) {
 		// need to tell all cells that were previously used, but no longer are, 

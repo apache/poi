@@ -42,6 +42,10 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  */
 public class TestWorkbookEvaluator extends TestCase {
 
+	private static WorkbookEvaluator createEvaluator() {
+		return new WorkbookEvaluator(null, null);
+	}
+
 	/**
 	 * Make sure that the evaluator can directly handle tAttrSum (instead of relying on re-parsing
 	 * the whole formula which converts tAttrSum to tFuncVar("SUM") )
@@ -53,7 +57,7 @@ public class TestWorkbookEvaluator extends TestCase {
 			AttrPtg.SUM,
 		};
 
-		ValueEval result = new WorkbookEvaluator(null).evaluateFormula(0, 0, 0, ptgs, null);
+		ValueEval result = createEvaluator().evaluateFormula(0, 0, 0, ptgs, null);
 		assertEquals(42, ((NumberEval)result).getNumberValue(), 0.0);
 	}
 
@@ -74,7 +78,7 @@ public class TestWorkbookEvaluator extends TestCase {
 			ptg,
 		};
 
-		ValueEval result = new WorkbookEvaluator(null).evaluateFormula(0, 0, 0, ptgs, null);
+		ValueEval result = createEvaluator().evaluateFormula(0, 0, 0, ptgs, null);
 		assertEquals(ErrorEval.REF_INVALID, result);
 	}
 
@@ -89,7 +93,7 @@ public class TestWorkbookEvaluator extends TestCase {
 			AttrPtg.SUM,
 		};
 
-		ValueEval result = new WorkbookEvaluator(null).evaluateFormula(0, 0, 0, ptgs, null);
+		ValueEval result = createEvaluator().evaluateFormula(0, 0, 0, ptgs, null);
 		assertEquals(42, ((NumberEval)result).getNumberValue(), 0.0);
 	}
 

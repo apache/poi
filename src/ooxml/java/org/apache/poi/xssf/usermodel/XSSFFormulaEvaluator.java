@@ -24,6 +24,7 @@ import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -46,7 +47,15 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 	private WorkbookEvaluator _bookEvaluator;
 
 	public XSSFFormulaEvaluator(XSSFWorkbook workbook) {
-   		_bookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(workbook));
+		this(workbook, null);
+	}
+	/**
+	 * @param stabilityClassifier used to optimise caching performance. Pass <code>null</code>
+	 * for the (conservative) assumption that any cell may have its definition changed after 
+	 * evaluation begins.
+	 */
+	public XSSFFormulaEvaluator(XSSFWorkbook workbook, IStabilityClassifier stabilityClassifier) {
+		_bookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(workbook), stabilityClassifier);
 	}
 
 	/**
