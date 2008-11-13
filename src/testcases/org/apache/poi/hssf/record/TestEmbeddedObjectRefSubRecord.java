@@ -33,14 +33,18 @@ import org.apache.poi.util.HexRead;
  */
 public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 
-	String data1 = "[20, 00, 05, 00, FC, 10, 76, 01, 02, 24, 14, DF, 00, 03, 10, 00, 00, 46, 6F, 72, 6D, 73, 2E, 43, 68, 65, 63, 6B, 42, 6F, 78, 2E, 31, 00, 00, 00, 00, 00, 70, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, ]";
+	private static final short EORSR_SID = EmbeddedObjectRefSubRecord.sid;
 
 	public void testStore() {
+		String data1
+				= "20 00 05 00 FC 10 76 01 02 24 14 DF 00 03 10 00 "
+				+ "00 46 6F 72 6D 73 2E 43 68 65 63 6B 42 6F 78 2E "
+				+ "31 00 00 00 00 00 70 00 00 00 00 00 00 00 00 00 "
+				+ "00 00";
 
 		byte[] src = hr(data1);
-//		src = TestcaseRecordInputStream.mergeDataAndSid(EmbeddedObjectRefSubRecord.sid, (short)src.length, src);
 
-		RecordInputStream in = TestcaseRecordInputStream.create(EmbeddedObjectRefSubRecord.sid, src);
+		RecordInputStream in = TestcaseRecordInputStream.create(EORSR_SID, src);
 
 		EmbeddedObjectRefSubRecord record1 = new EmbeddedObjectRefSubRecord(in, src.length);
 
@@ -84,22 +88,19 @@ public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 		assertTrue(Arrays.equals(ser, ser2));
 	}
 
-
-	/**
-	 * taken from ftPictFmla sub-record in attachment 22645 (offset 0x40AB).
-	 */
-	private static final byte[] data45912 = hr(
-		"12 00 0B 00 F8 02 88 04 3B 00 " +
-		"00 00 00 01 00 00 00 01 " +
-		"00 00");
-
 	public void testCameraTool_bug45912() {
-		byte[] data = data45912;
-		RecordInputStream in = TestcaseRecordInputStream.create(EmbeddedObjectRefSubRecord.sid, data);
+		/**
+		 * taken from ftPictFmla sub-record in attachment 22645 (offset 0x40AB).
+		 */
+		byte[] data45912 = hr(
+				"12 00 0B 00 F8 02 88 04 3B 00 " +
+				"00 00 00 01 00 00 00 01 " +
+				"00 00");
+		RecordInputStream in = TestcaseRecordInputStream.create(EORSR_SID, data45912);
 
-		EmbeddedObjectRefSubRecord rec = new EmbeddedObjectRefSubRecord(in, data.length);
+		EmbeddedObjectRefSubRecord rec = new EmbeddedObjectRefSubRecord(in, data45912.length);
 		byte[] ser2 = rec.serialize();
-		confirmData(data, ser2);
+		confirmData(data45912, ser2);
 	}
 
 	private static byte[] hr(String string) {
@@ -134,14 +135,37 @@ public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 	}
 
 	private static void confirmRead(byte[] data, int i) {
-		RecordInputStream in = TestcaseRecordInputStream.create(EmbeddedObjectRefSubRecord.sid, data);
+		RecordInputStream in = TestcaseRecordInputStream.create(EORSR_SID, data);
 
 		EmbeddedObjectRefSubRecord rec = new EmbeddedObjectRefSubRecord(in, data.length);
 		byte[] ser2 = rec.serialize();
-		byte[] d2 = (byte[]) data.clone(); // remove sid+len for compare
-		System.arraycopy(ser2, 4, d2, 0, d2.length);
-		if (!Arrays.equals(data, d2)) {
-			fail("re-read NQR for case " + i);
+		TestcaseRecordInputStream.confirmRecordEncoding("Test record " + i, EORSR_SID, data, ser2);
+	}
+	
+	public void testVisioDrawing_bug46199() {
+		/**
+		 * taken from ftPictFmla sub-record in attachment 22860 (stream offset 0x768F).<br/>
+		 * Note that the since the string length is zero, there is no unicode flag byte
+		 */
+		byte[] data46199 = hr(
+				  "0E 00 "
+				+ "05 00 "
+				+ "28 25 A3 01 "
+				+ "02 6C D1 34 02 "
+				+ "03 00 00 "
+				+ "0F CB E8 00");
+		RecordInputStream in = TestcaseRecordInputStream.create(EORSR_SID, data46199);
+
+		EmbeddedObjectRefSubRecord rec;
+		try {
+			rec = new EmbeddedObjectRefSubRecord(in, data46199.length);
+		} catch (RecordFormatException e) {
+			if (e.getMessage().equals("Not enough data (3) to read requested (4) bytes")) {
+				throw new AssertionFailedError("Identified bug 22860");
+			}
+			throw e;
 		}
+		byte[] ser2 = rec.serialize();
+		TestcaseRecordInputStream.confirmRecordEncoding(EORSR_SID, data46199, ser2);
 	}
 }
