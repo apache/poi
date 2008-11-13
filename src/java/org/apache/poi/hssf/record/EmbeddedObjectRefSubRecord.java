@@ -46,9 +46,9 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 	private int field_1_unknown_int;
 	/** either an area or a cell ref */
 	private Ptg field_2_refPtg;
+	/** for when the 'formula' doesn't parse properly */
 	private byte[] field_2_unknownFormulaData;
-	// TODO: Consider making a utility class for these.  I've discovered the same field ordering
-	//	   in FormatRecord and StringRecord, it may be elsewhere too.
+	/** note- this byte is not present in the encoding if the string length is zero */ 
 	private boolean field_3_unicode_flag;  // Flags whether the string is Unicode.
 	private String  field_4_ole_classname; // Classname of the embedded OLE document (e.g. Word.Document.8)
 	/** Formulas often have a single non-zero trailing byte.
@@ -72,7 +72,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 	}
 
 	public EmbeddedObjectRefSubRecord(LittleEndianInput in, int size) {
-		// TODO use 'size' param 
+
 		// Much guess-work going on here due to lack of any documentation.
 		// See similar source code in OOO:
 		// http://lxr.go-oo.org/source/sc/sc/source/filter/excel/xiescher.cxx
@@ -101,26 +101,25 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		int stringByteCount;
 		if (remaining >= dataLenAfterFormula + 3) {
 			int tag = in.readByte();
-			remaining -= LittleEndian.BYTE_SIZE;
+			stringByteCount = LittleEndian.BYTE_SIZE;
 			if (tag != 0x03) {
 				throw new RecordFormatException("Expected byte 0x03 here");
 			}
 			int nChars = in.readUShort();
-			remaining -= LittleEndian.SHORT_SIZE;
+			stringByteCount += LittleEndian.SHORT_SIZE;
 			if (nChars > 0) {
 				 // OOO: the 4th way Xcl stores a unicode string: not even a Grbit byte present if length 0
 				field_3_unicode_flag = ( in.readByte() & 0x01 ) != 0;
-				remaining -= LittleEndian.BYTE_SIZE;
+				stringByteCount += LittleEndian.BYTE_SIZE;
 				if (field_3_unicode_flag) {
 					field_4_ole_classname = StringUtil.readUnicodeLE(in, nChars);
-					stringByteCount = nChars * 2;
+					stringByteCount += nChars * 2;
 				} else {
 					field_4_ole_classname = StringUtil.readCompressedUnicode(in, nChars);
-					stringByteCount = nChars;
+					stringByteCount += nChars;
 				}
 			} else {
 				field_4_ole_classname = "";
-				stringByteCount = 0;
 			}
 		} else {
 			field_4_ole_classname = null;
@@ -150,10 +149,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		} else {
 			field_5_stream_id = null;
 		}
-
-		byte [] buf = new byte[remaining];
-		in.readFully(buf);
-		field_6_unknown = buf;
+		field_6_unknown = readRawData(in, remaining);
 	}
 
 	private static Ptg readRefPtg(byte[] formulaRawBytes) {
@@ -176,9 +172,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 			return EMPTY_BYTE_ARRAY;
 		}
 		byte[] result = new byte[size];
-		for(int i=0; i< size; i++) {
-			result[i] = in.readByte();
-		}
+		in.readFully(result);
 		return result;
 	}
 	
@@ -191,12 +185,15 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 			// don't write 0x03, stringLen, flag, text
 			stringLen = 0;
 		} else {
-			result += 1 + 2 + 1;  // 0x03, stringLen, flag
+			result += 1 + 2;  // 0x03, stringLen
 			stringLen = field_4_ole_classname.length();
-			if (field_3_unicode_flag) {
-				result += stringLen * 2;
-			} else {
-				result += stringLen;
+			if (stringLen > 0) {
+				result += 1; // flag
+				if (field_3_unicode_flag) {
+					result += stringLen * 2;
+				} else {
+					result += stringLen;
+				}
 			}
 		}
 		// pad to next 2 byte boundary
@@ -253,15 +250,17 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 			stringLen = field_4_ole_classname.length();
 			out.writeShort(stringLen);
 			pos+=2;
-			out.writeByte(field_3_unicode_flag ? 0x01 : 0x00);
-			pos+=1;
-
-			if (field_3_unicode_flag) {
-				StringUtil.putUnicodeLE(field_4_ole_classname, out);
-				pos += stringLen * 2;
-			} else {
-				StringUtil.putCompressedUnicode(field_4_ole_classname, out);
-				pos += stringLen;
+			if (stringLen > 0) {
+    			out.writeByte(field_3_unicode_flag ? 0x01 : 0x00);
+    			pos+=1;
+    
+    			if (field_3_unicode_flag) {
+    				StringUtil.putUnicodeLE(field_4_ole_classname, out);
+    				pos += stringLen * 2;
+    			} else {
+    				StringUtil.putCompressedUnicode(field_4_ole_classname, out);
+    				pos += stringLen;
+    			}
 			}
 		}
 
