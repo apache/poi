@@ -53,7 +53,9 @@ final class EvaluationCache {
 	public void notifyUpdateCell(int bookIndex, int sheetIndex, EvaluationCell cell) {
 		FormulaCellCacheEntry fcce = _formulaCellCache.get(cell);
 
-		Loc loc = new Loc(bookIndex, sheetIndex, cell.getRowIndex(), cell.getColumnIndex());
+		int rowIndex = cell.getRowIndex();
+		int columnIndex = cell.getColumnIndex();
+		Loc loc = new Loc(bookIndex, sheetIndex, rowIndex, columnIndex);
 		PlainValueCellCacheEntry pcce = _plainCellCache.get(loc);
 
 		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
@@ -61,11 +63,11 @@ final class EvaluationCache {
 				fcce = new FormulaCellCacheEntry();
 				if (pcce == null) {
 					if (_evaluationListener != null) {
-						_evaluationListener.onChangeFromBlankValue(sheetIndex, cell.getRowIndex(),
-								cell.getColumnIndex(), cell, fcce);
+						_evaluationListener.onChangeFromBlankValue(sheetIndex, rowIndex,
+								columnIndex, cell, fcce);
 					}
-					updateAnyBlankReferencingFormulas(bookIndex, sheetIndex, cell.getRowIndex(),
-							cell.getColumnIndex());
+					updateAnyBlankReferencingFormulas(bookIndex, sheetIndex, rowIndex,
+							columnIndex);
 				}
 				_formulaCellCache.put(cell, fcce);
 			} else {
@@ -89,11 +91,10 @@ final class EvaluationCache {
 					pcce = new PlainValueCellCacheEntry(value);
 					if (fcce == null) {
 						if (_evaluationListener != null) {
-							_evaluationListener.onChangeFromBlankValue(sheetIndex, cell
-									.getRowIndex(), cell.getColumnIndex(), cell, pcce);
+							_evaluationListener.onChangeFromBlankValue(sheetIndex, rowIndex, columnIndex, cell, pcce);
 						}
 						updateAnyBlankReferencingFormulas(bookIndex, sheetIndex,
-								cell.getRowIndex(), cell.getColumnIndex());
+								rowIndex, columnIndex);
 					}
 					_plainCellCache.put(loc, pcce);
 				}
@@ -153,7 +154,7 @@ final class EvaluationCache {
 		if (a == null) {
 			return false;
 		}
-		Class cls = a.getClass();
+		Class<?> cls = a.getClass();
 		if (cls != b.getClass()) {
 			// value type is changing
 			return false;
