@@ -32,6 +32,6 @@ public final class WorkbookEvaluatorTestHelper {
 	}
 	
 	public static WorkbookEvaluator createEvaluator(HSSFWorkbook wb, EvaluationListener listener) {
-		return new WorkbookEvaluator(HSSFEvaluationWorkbook.create(wb), listener);
+		return new WorkbookEvaluator(HSSFEvaluationWorkbook.create(wb), listener, null);
 	}
 }

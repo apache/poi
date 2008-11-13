@@ -82,19 +82,22 @@ public final class WorkbookEvaluator {
 	private int _workbookIx;
 
 	private final IEvaluationListener _evaluationListener;
-	private final Map _sheetIndexesBySheet;
+	private final Map<EvaluationSheet, Integer> _sheetIndexesBySheet;
 	private CollaboratingWorkbooksEnvironment _collaboratingWorkbookEnvironment;
+	private final IStabilityClassifier _stabilityClassifier;
 
-	public WorkbookEvaluator(EvaluationWorkbook workbook) {
-		this (workbook, null);
+	public WorkbookEvaluator(EvaluationWorkbook workbook, IStabilityClassifier stabilityClassifier) {
+		this (workbook, null, stabilityClassifier);
 	}
-	/* package */ WorkbookEvaluator(EvaluationWorkbook workbook, IEvaluationListener evaluationListener) {
+	/* package */ WorkbookEvaluator(EvaluationWorkbook workbook, IEvaluationListener evaluationListener,
+			IStabilityClassifier stabilityClassifier) {
 		_workbook = workbook;
 		_evaluationListener = evaluationListener;
 		_cache = new EvaluationCache(evaluationListener);
-		_sheetIndexesBySheet = new IdentityHashMap();
+		_sheetIndexesBySheet = new IdentityHashMap<EvaluationSheet, Integer>();
 		_collaboratingWorkbookEnvironment = CollaboratingWorkbooksEnvironment.EMPTY;
 		_workbookIx = 0;
+		_stabilityClassifier = stabilityClassifier;
 	}
 
 	/**
@@ -141,7 +144,7 @@ public final class WorkbookEvaluator {
 	}
 
 	/**
-	 * Should be called to tell the cell value cache that the specified (value or formula) cell 
+	 * Should be called to tell the cell value cache that the specified (value or formula) cell
 	 * has changed.
 	 */
 	public void notifyUpdateCell(EvaluationCell cell) {
@@ -150,7 +153,7 @@ public final class WorkbookEvaluator {
 	}
 	/**
 	 * Should be called to tell the cell value cache that the specified cell has just been
-	 * deleted. 
+	 * deleted.
 	 */
 	public void notifyDeleteCell(EvaluationCell cell) {
 		int sheetIndex = getSheetIndex(cell.getSheet());
@@ -158,7 +161,7 @@ public final class WorkbookEvaluator {
 	}
 
 	private int getSheetIndex(EvaluationSheet sheet) {
-		Integer result = (Integer) _sheetIndexesBySheet.get(sheet);
+		Integer result = _sheetIndexesBySheet.get(sheet);
 		if (result == null) {
 			int sheetIndex = _workbook.getSheetIndex(sheet);
 			if (sheetIndex < 0) {
@@ -182,14 +185,21 @@ public final class WorkbookEvaluator {
 	private ValueEval evaluateAny(EvaluationCell srcCell, int sheetIndex,
 				int rowIndex, int columnIndex, EvaluationTracker tracker) {
 
+		// avoid tracking dependencies for cells that have constant definition
+		boolean shouldCellDependencyBeRecorded = _stabilityClassifier == null ? true
+					: !_stabilityClassifier.isCellFinal(sheetIndex, rowIndex, columnIndex);
 		if (srcCell == null || srcCell.getCellType() != Cell.CELL_TYPE_FORMULA) {
 			ValueEval result = getValueFromNonFormulaCell(srcCell);
-			tracker.acceptPlainValueDependency(_workbookIx, sheetIndex, rowIndex, columnIndex, result);
+			if (shouldCellDependencyBeRecorded) {
+				tracker.acceptPlainValueDependency(_workbookIx, sheetIndex, rowIndex, columnIndex, result);
+			}
 			return result;
 		}
 
 		FormulaCellCacheEntry cce = _cache.getOrCreateFormulaCellEntry(srcCell);
-		tracker.acceptFormulaDependency(cce);
+		if (shouldCellDependencyBeRecorded || cce.isInputSensitive()) {
+			tracker.acceptFormulaDependency(cce);
+		}
 		IEvaluationListener evalListener = _evaluationListener;
 		if (cce.getValue() == null) {
 			if (!tracker.startEvaluate(cce)) {
@@ -252,7 +262,7 @@ public final class WorkbookEvaluator {
 	// visibility raised for testing
 	/* package */ ValueEval evaluateFormula(int sheetIndex, int srcRowNum, int srcColNum, Ptg[] ptgs, EvaluationTracker tracker) {
 
-		Stack stack = new Stack();
+		Stack<Eval> stack = new Stack<Eval>();
 		for (int i = 0, iSize = ptgs.length; i < iSize; i++) {
 
 			// since we don't know how to handle these yet :(
@@ -289,7 +299,7 @@ public final class WorkbookEvaluator {
 
 				// storing the ops in reverse order since they are popping
 				for (int j = numops - 1; j >= 0; j--) {
-					Eval p = (Eval) stack.pop();
+					Eval p = stack.pop();
 					ops[j] = p;
 				}
 //				logDebug("invoke " + operation + " (nAgs=" + numops + ")");
@@ -307,7 +317,7 @@ public final class WorkbookEvaluator {
 			stack.push(opResult);
 		}
 
-		ValueEval value = ((ValueEval) stack.pop());
+		ValueEval value = (ValueEval) stack.pop();
 		if (!stack.isEmpty()) {
 			throw new IllegalStateException("evaluation stack not empty");
 		}

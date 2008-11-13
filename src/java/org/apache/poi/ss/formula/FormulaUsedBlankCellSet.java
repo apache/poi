@@ -186,4 +186,8 @@ final class FormulaUsedBlankCellSet {
 		}
 		return bcsg.containsCell(rowIndex, columnIndex);
 	}
+
+	public boolean isEmpty() {
+		return _sheetGroupsByBookSheet.isEmpty();
+	}
 }
