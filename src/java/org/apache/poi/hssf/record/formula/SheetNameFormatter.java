@@ -52,7 +52,7 @@ public final class SheetNameFormatter {
 	}
 	
 	/**
-	 * Convenience method for when a StringBuffer is already available
+	 * Convenience method for ({@link #format(String)}) when a StringBuffer is already available.
 	 * 
 	 * @param out - sheet name will be appended here possibly with delimiting quotes 
 	 */
