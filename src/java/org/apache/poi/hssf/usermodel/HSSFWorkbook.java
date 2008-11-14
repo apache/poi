@@ -33,6 +33,7 @@ import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBitmapBlip;
 import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
@@ -57,6 +58,7 @@ import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
+import org.apache.poi.hssf.record.formula.SheetNameFormatter;
 import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -1364,15 +1366,15 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         NameRecord name = workbook.getSpecificBuiltinRecord(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
 
 
-        if (name == null)
-            name = workbook.createBuiltInName(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
-       //adding one here because 0 indicates a global named region; doesnt make sense for print areas
-
-        short externSheetIndex = getWorkbook().checkExternSheet(sheetIndex);
-        name.setExternSheetNumber(externSheetIndex);
-        name.setAreaReference(reference);
-
-
+        if (name == null) {
+			name = workbook.createBuiltInName(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
+			// adding one here because 0 indicates a global named region; doesn't make sense for print areas
+		}
+        StringBuffer sb = new StringBuffer(32);
+        SheetNameFormatter.appendFormat(sb, getSheetName(sheetIndex));
+        sb.append("!");
+        sb.append(reference);
+        name.setNameDefinition(HSSFFormulaParser.parse(sb.toString(), this));
     }
 
     /**
@@ -1403,13 +1405,14 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * @param sheetIndex Zero-based sheet index (0 Represents the first sheet to keep consistent with java)
      * @return String Null if no print area has been defined
      */
-    public String getPrintArea(int sheetIndex)
-    {
+    public String getPrintArea(int sheetIndex) {
         NameRecord name = workbook.getSpecificBuiltinRecord(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
-        if (name == null) return null;
-        //adding one here because 0 indicates a global named region; doesnt make sense for print areas
-
-        return name.getAreaReference(this);
+        //adding one here because 0 indicates a global named region; doesn't make sense for print areas
+        if (name == null) {
+			return null;
+		}
+ 
+        return HSSFFormulaParser.toFormulaString(this, name.getNameDefinition());
     }
 
     /**

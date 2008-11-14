@@ -23,6 +23,7 @@ import java.io.InputStream;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
@@ -107,6 +108,7 @@ public final class TestAreaReference extends TestCase {
         TestCellReference.confirmCell(allCells[2], "Tabelle1", 6, 1, true, true, "Tabelle1!$B$7");
     }
 
+    // TODO - remove this sub-class
     private static final class HSSFWB extends HSSFWorkbook {
         public HSSFWB(InputStream in) throws IOException {
             super(in);
@@ -220,7 +222,7 @@ public final class TestAreaReference extends TestCase {
         assertEquals(refB, ptgC.toFormulaString(eb));
         assertEquals(",", ptgD.toFormulaString());
 
-        assertEquals(ref, nr.getAreaReference(wb));
+        assertEquals(ref, HSSFFormulaParser.toFormulaString(wb, nr.getNameDefinition()));
 
         // Check the high level definition
         int idx = wb.getNameIndex("test");

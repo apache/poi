@@ -26,6 +26,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
@@ -533,7 +534,7 @@ public final class TestHSSFWorkbook extends TestCase {
         assertEquals(3, wb.getWorkbook().getNumNames());
         nr = wb.getWorkbook().getNameRecord(2);
         // TODO - render full row and full column refs properly
-        assertEquals("Sheet2!$A$1:$IV$1", nr.getAreaReference(wb)); // 1:1
+        assertEquals("Sheet2!$A$1:$IV$1", HSSFFormulaParser.toFormulaString(wb, nr.getNameDefinition())); // 1:1
         
         try {
             wb.setRepeatingRowsAndColumns(3, 4, 5, 8, 11);
@@ -547,6 +548,6 @@ public final class TestHSSFWorkbook extends TestCase {
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         assertEquals(3, wb.getWorkbook().getNumNames());
         nr = wb.getWorkbook().getNameRecord(2);
-        assertEquals("Sheet2!E:F,Sheet2!$A$9:$IV$12", nr.getAreaReference(wb)); // E:F,9:12
+        assertEquals("Sheet2!E:F,Sheet2!$A$9:$IV$12", HSSFFormulaParser.toFormulaString(wb, nr.getNameDefinition())); // E:F,9:12
     }
 }
