@@ -35,7 +35,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-public final class FormulaRecord extends Record implements CellValueRecordInterface {
+public final class FormulaRecord extends StandardRecord implements CellValueRecordInterface {
 
 	public static final short sid = 0x0006;   // docs say 406...because of a bug Microsoft support site article #Q184647)
 	private static int FIXED_SIZE = 20;
@@ -360,13 +360,8 @@ public final class FormulaRecord extends Record implements CellValueRecordInterf
 	protected int getDataSize() {
 		return FIXED_SIZE + field_8_parsed_expr.getEncodedSize();
 	}
-	public int serialize(int offset, byte [] data) {
+	public void serialize(LittleEndianOutput out) {
 
-		int dataSize = getDataSize();
-		int recSize = 4 + dataSize;
-		LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
-		out.writeShort(sid);
-		out.writeShort(dataSize);
 		out.writeShort(getRow());
 		out.writeShort(getColumn());
 		out.writeShort(getXFIndex());
@@ -381,7 +376,6 @@ public final class FormulaRecord extends Record implements CellValueRecordInterf
 
 		out.writeInt(field_6_zero); // may as well write original data back so as to minimise differences from original
 		field_8_parsed_expr.serialize(out);
-		return recSize;
 	}
 
 	public String toString() {

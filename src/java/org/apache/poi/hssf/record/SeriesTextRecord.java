@@ -28,7 +28,7 @@ import org.apache.poi.util.StringUtil;
  * 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public final class SeriesTextRecord extends Record {
+public final class SeriesTextRecord extends StandardRecord {
 	public final static short sid = 0x100D;
 
 	/** the actual text cannot be longer than 255 characters */
@@ -65,12 +65,7 @@ public final class SeriesTextRecord extends Record {
 		return sb.toString();
 	}
 
-	public int serialize(int offset, byte[] data) {
-		int dataSize = getDataSize();
-		int recordSize = 4 + dataSize;
-		LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, recordSize);
-		out.writeShort(sid);
-		out.writeShort(dataSize);
+	public void serialize(LittleEndianOutput out) {
 
 		out.writeShort(field_1_id);
 		out.writeByte(field_4_text.length());
@@ -83,7 +78,6 @@ public final class SeriesTextRecord extends Record {
 			out.writeByte(0x00);
 			StringUtil.putCompressedUnicode(field_4_text, out);
 		}
-		return recordSize;
 	}
 
 	protected int getDataSize() {

@@ -27,7 +27,7 @@ import org.apache.poi.util.StringUtil;
  * 
  * @author Josh Micich
  */
-public final class ExternalNameRecord extends Record {
+public final class ExternalNameRecord extends StandardRecord {
 
 	public final static short sid = 0x0023; // as per BIFF8. (some old versions used 0x223)
 
@@ -92,22 +92,7 @@ public final class ExternalNameRecord extends Record {
 		return result;
 	}
 
-	/**
-	 * called by the class that is responsible for writing this sucker.
-	 * Subclasses should implement this so that their data is passed back in a
-	 * byte array.
-	 *
-	 * @param offset to begin writing at
-	 * @param data byte array containing instance data
-	 * @return number of bytes written
-	 */
-	public int serialize( int offset, byte[] data ) {
-		int dataSize = getDataSize();
-		int recSize = dataSize + 4;
-		LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
-
-		out.writeShort(sid);
-		out.writeShort(dataSize);
+	public void serialize(LittleEndianOutput out) {
 		out.writeShort(field_1_option_flag);
 		out.writeShort(field_2_index);
 		out.writeShort(field_3_not_used);
@@ -117,7 +102,6 @@ public final class ExternalNameRecord extends Record {
 		if (hasFormula()) {
 			field_5_name_definition.serialize(out);
 		}
-		return recSize;
 	}
 
 

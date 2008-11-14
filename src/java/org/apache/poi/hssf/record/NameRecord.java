@@ -30,8 +30,8 @@ import org.apache.poi.hssf.util.RangeAddress;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -43,7 +43,7 @@ import org.apache.poi.util.StringUtil;
  * @author Glen Stampoultzis (glens at apache.org)
  * @version 1.0-pre
  */
-public final class NameRecord extends Record {
+public final class NameRecord extends StandardRecord {
     public final static short sid = 0x0018;
 	/**Included for completeness sake, not implemented */
 	public final static byte  BUILTIN_CONSOLIDATE_AREA      = 1;
@@ -334,35 +334,13 @@ public final class NameRecord extends Record {
 	}
 
 
-	/**
-	 * called by the class that is responsible for writing this sucker.
-	 * Subclasses should implement this so that their data is passed back in a
-	 * @param offset to begin writing at
-	 * @param data byte array containing instance data
-	 * @return number of bytes written
-	 */
-	public int serialize( int offset, byte[] data ) {
+	public void serialize(LittleEndianOutput out) {
 
 		int field_7_length_custom_menu = field_14_custom_menu_text.length();
 		int field_8_length_description_text = field_15_description_text.length();
 		int field_9_length_help_topic_text = field_16_help_topic_text.length();
 		int field_10_length_status_bar_text = field_17_status_bar_text.length();
-		int rawNameSize = getNameRawSize();
-
-		int formulaTotalSize = field_13_name_definition.getEncodedSize();
-		int dataSize = 13 // 3 shorts + 7 bytes
-			+ rawNameSize
-			+ field_7_length_custom_menu
-			+ field_8_length_description_text
-			+ field_9_length_help_topic_text
-			+ field_10_length_status_bar_text
-			+ formulaTotalSize;
 		
-		int recSize = 4 + dataSize;
-		LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
-		
-		out.writeShort(sid);
-		out.writeShort(dataSize);
 		// size defined below
 		out.writeShort(getOptionFlag());
 		out.writeByte(getKeyboardShortcut());
@@ -395,8 +373,6 @@ public final class NameRecord extends Record {
 		StringUtil.putCompressedUnicode( getDescriptionText(), out);
 		StringUtil.putCompressedUnicode( getHelpTopicText(), out);
 		StringUtil.putCompressedUnicode( getStatusBarText(), out);
-
-		return recSize;
 	}
 	private int getNameRawSize() {
 		if (isBuiltInName()) {

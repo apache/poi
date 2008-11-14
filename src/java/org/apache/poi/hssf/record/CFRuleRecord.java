@@ -26,13 +26,14 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Conditional Formatting Rule Record.
+ * Conditional Formatting Rule Record (0x01B1).<br/>
+ * 
  * @author Dmitriy Kumshayev
  */
-public final class CFRuleRecord extends Record {
+public final class CFRuleRecord extends StandardRecord {
 
 	public static final short sid = 0x01B1;
 
@@ -441,17 +442,11 @@ public final class CFRuleRecord extends Record {
 	 * @param data byte array containing instance data
 	 * @return number of bytes written
 	 */
-	public int serialize(int pOffset, byte [] data) {
+	public void serialize(LittleEndianOutput out) {
 		
 		int formula1Len=getFormulaSize(field_17_formula1);
 		int formula2Len=getFormulaSize(field_18_formula2);
 		
-		int recordsize = getRecordSize();
-		
-		LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(data, pOffset, recordsize);
-		
-		out.writeShort(sid);
-		out.writeShort(recordsize-4);
 		out.writeByte(field_1_condition_type);
 		out.writeByte(field_2_comparison_operator);
 		out.writeShort(formula1Len);
@@ -474,12 +469,6 @@ public final class CFRuleRecord extends Record {
 		
 		field_17_formula1.serializeTokens(out);
 		field_18_formula2.serializeTokens(out);
-		
-		if(out.getWriteIndex() - pOffset != recordsize) {
-			throw new IllegalStateException("write mismatch (" 
-					+ (out.getWriteIndex() - pOffset) + "!=" + recordsize + ")");
-		}
-		return recordsize;
 	}
 
 	protected int getDataSize() {
