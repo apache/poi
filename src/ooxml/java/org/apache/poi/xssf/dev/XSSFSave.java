@@ -32,7 +32,7 @@ public class XSSFSave {
             XSSFWorkbook wb = new XSSFWorkbook(args[i]);
 
             int sep = args[i].lastIndexOf('.');
-            String outfile = args[i].substring(0, sep) + "-save.xlsx";
+            String outfile = args[i].substring(0, sep) + "-save.xls" + (wb.isMacroEnabled() ? "m" : "x");
             FileOutputStream out = new FileOutputStream(outfile);
             wb.write(out);
             out.close();

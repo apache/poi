@@ -789,19 +789,19 @@ public class TestXSSFSheet extends TestCase {
 	    	//one level
 	    	sheet.groupRow(9,10);
 	    	assertEquals(2,sheet.getPhysicalNumberOfRows());
-	    	CTRow ctrow = sheet.getRow(8).getCTRow();
+	    	CTRow ctrow = sheet.getRow(9).getCTRow();
 
 	    	assertNotNull(ctrow);
-	    	assertEquals(9,ctrow.getR());
+	    	assertEquals(10,ctrow.getR());
 	    	assertEquals(1, ctrow.getOutlineLevel());
 	    	assertEquals(1,sheet.getCTWorksheet().getSheetFormatPr().getOutlineLevelRow());
 
 	    	//two level    	
 	    	sheet.groupRow(10,13);
 	    	assertEquals(5,sheet.getPhysicalNumberOfRows());
-	    	ctrow = sheet.getRow(9).getCTRow();
+	    	ctrow = sheet.getRow(10).getCTRow();
 	    	assertNotNull(ctrow);
-	    	assertEquals(10,ctrow.getR());
+	    	assertEquals(11,ctrow.getR());
 	    	assertEquals(2, ctrow.getOutlineLevel());
 	    	assertEquals(2,sheet.getCTWorksheet().getSheetFormatPr().getOutlineLevelRow());
 

@@ -145,21 +145,33 @@ public interface Cell {
     void setCellValue(Calendar value);
 
     /**
-     * set a string value for the cell. Please note that if you are using
-     * full 16 bit unicode you should call <code>setEncoding()</code> first.
+     * Set a rich string value for the cell.
      *
      * @param value  value to set the cell to.  For formulas we'll set the formula
      * string, for String cells we'll set its value.  For other types we will
      * change the cell to a string cell and set its value.
      * If value is null then we will change the cell to a Blank cell.
      */
-
     void setCellValue(RichTextString value);
 
+    /**
+     * Set a string value for the cell.
+     *
+     * @param value  value to set the cell to.  For formulas we'll set the formula
+     * string, for String cells we'll set its value.  For other types we will
+     * change the cell to a string cell and set its value.
+     * If value is null then we will change the cell to a Blank cell.
+     */
     void setCellValue(String value);
 
+    /**
+     * Set a formula value for the cell.
+     */
     void setCellFormula(String formula);
 
+    /**
+     * Get the formula value of the cell.
+     */
     String getCellFormula();
 
     /**

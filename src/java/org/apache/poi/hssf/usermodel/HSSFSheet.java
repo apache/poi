@@ -1626,6 +1626,12 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
         sheet.groupColumnRange(fromColumn, toColumn, false);
     }
 
+    /**
+     * Tie a range of cell together so that they can be collapsed or expanded
+     *
+     * @param fromRow   start row (0-based)
+     * @param toRow     end row (0-based)
+     */
     public void groupRow(int fromRow, int toRow)
     {
         sheet.groupRowRange( fromRow, toRow, true );

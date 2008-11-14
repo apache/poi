@@ -37,11 +37,11 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta4" date="2008-??-??">
-           <action dev="POI-DEVELOPERS" type="fix">46174 - Fixed HSSFName to handle general formulas (not just area references)</header>
+           <action dev="POI-DEVELOPERS" type="fix">46174 - Fixed HSSFName to handle general formulas (not just area references)</action>
            <action dev="POI-DEVELOPERS" type="add">46189 - added chart records: CHARTFRTINFO, STARTBLOCK, ENDBLOCK, STARTOBJECT, ENDOBJECT, and CATLAB</action>
-           <action dev="POI-DEVELOPERS" type="fix">46199 - More tweaks to EmbeddedObjectRefSubRecord</header>
+           <action dev="POI-DEVELOPERS" type="fix">46199 - More tweaks to EmbeddedObjectRefSubRecord</action>
            <action dev="POI-DEVELOPERS" type="add">Changes to formula evaluation allowing for reduced memory usage</action>
-           <action dev="POI-DEVELOPERS" type="fix">45290 - Support odd files where the POIFS header block comes after the data blocks, and is on the data blocks list</header>
+           <action dev="POI-DEVELOPERS" type="fix">45290 - Support odd files where the POIFS header block comes after the data blocks, and is on the data blocks list</action>
            <action dev="POI-DEVELOPERS" type="fix">46184 - More odd escaped date formats</action>
            <action dev="POI-DEVELOPERS" type="add">Include the sheet number in the output of XLS2CSVmra</action>
            <action dev="POI-DEVELOPERS" type="fix">46043 - correctly write out HPSF properties with HWPF</action>

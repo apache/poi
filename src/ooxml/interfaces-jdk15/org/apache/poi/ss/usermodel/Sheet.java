@@ -409,7 +409,6 @@ public interface Sheet extends Iterable<Row> {
      * Additionally shifts merged regions that are completely defined in these
      * rows (ie. merged 2 cells on a row to be shifted).
      * <p>
-     * TODO Might want to add bounds checking here
      * @param startRow the row to start shifting
      * @param endRow the row to end shifting
      * @param n the number of rows to shift
@@ -542,14 +541,6 @@ public interface Sheet extends Iterable<Row> {
     void removeColumnBreak(short column);
 
     /**
-     * Creates the toplevel drawing patriarch.  This will have the effect of
-     * removing any existing drawings on this sheet.
-     *
-     * @return  The new patriarch.
-     */
-    //Patriarch createDrawingPatriarch();
-
-    /**
      * Expands or collapses a column group.
      *
      * @param columnNumber      One of the columns in the group.
@@ -567,10 +558,28 @@ public interface Sheet extends Iterable<Row> {
 
     void ungroupColumn(short fromColumn, short toColumn);
 
+    /**
+     * Tie a range of rows together so that they can be collapsed or expanded
+     *
+     * @param fromRow   start row (0-based)
+     * @param toRow     end row (0-based)
+     */
     void groupRow(int fromRow, int toRow);
 
+    /**
+     * Ungroup a range of rows that were previously groupped
+     *
+     * @param fromRow   start row (0-based)
+     * @param toRow     end row (0-based)
+     */
     void ungroupRow(int fromRow, int toRow);
 
+    /**
+     * Set view state of a groupped range of rows
+     *
+     * @param row   start row of a groupped range of rows (0-based)
+     * @param collapse whether to expand/collapse the detail rows
+     */
     void setRowGroupCollapsed(int row, boolean collapse);
 
     /**
@@ -599,6 +608,11 @@ public interface Sheet extends Iterable<Row> {
      */
     Comment getCellComment(int row, int column);
 
+    /**
+     * Creates the top-level drawing patriarch.
+     *
+     * @return  The new drawing patriarch.
+     */
     Drawing createDrawingPatriarch();
 
 }

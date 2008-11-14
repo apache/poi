@@ -952,20 +952,26 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         setSheetFormatPrOutlineLevelCol();
     }
 
+    /**
+     * Tie a range of cell together so that they can be collapsed or expanded
+     *
+     * @param fromRow   start row (0-based)
+     * @param toRow     end row (0-based)
+     */
     public void groupRow(int fromRow, int toRow) {
-          for(int i=fromRow;i<=toRow;i++){
-            XSSFRow xrow = getRow(i-1);
-            if(xrow == null){//create a new Row
-                 xrow = createRow(i-1);
+        for (int i = fromRow; i <= toRow; i++) {
+            XSSFRow xrow = getRow(i);
+            if (xrow == null) {
+                xrow = createRow(i);
             }
-            CTRow ctrow=xrow.getCTRow();
-            short outlineLevel=ctrow.getOutlineLevel();
-            ctrow.setOutlineLevel((short)(outlineLevel+1));
-           }
-          setSheetFormatPrOutlineLevelRow();
+            CTRow ctrow = xrow.getCTRow();
+            short outlineLevel = ctrow.getOutlineLevel();
+            ctrow.setOutlineLevel((short) (outlineLevel + 1));
+        }
+        setSheetFormatPrOutlineLevelRow();
     }
 
-   private short getMaxOutlineLevelRows(){
+    private short getMaxOutlineLevelRows(){
         short outlineLevel=0;
         for(Row r : rows.values()){
             XSSFRow xrow=(XSSFRow)r;
@@ -1478,9 +1484,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         setSheetFormatPrOutlineLevelCol();
     }
 
+    /**
+     * Ungroup a range of rows that were previously groupped
+     *
+     * @param fromRow   start row (0-based)
+     * @param toRow     end row (0-based)
+     */
     public void ungroupRow(int fromRow, int toRow) {
         for (int i = fromRow; i <= toRow; i++) {
-            XSSFRow xrow = getRow(i - 1);
+            XSSFRow xrow = getRow(i);
             if (xrow != null) {
                 CTRow ctrow = xrow.getCTRow();
                 short outlinelevel = ctrow.getOutlineLevel();

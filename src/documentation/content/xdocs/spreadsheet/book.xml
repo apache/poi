@@ -34,7 +34,8 @@
         <menu-item label="HSSF to SS Converting" href="converting.html"/>
         <menu-item label="Formula Support" href="formula.html" />
         <menu-item label="Formula Evaluation" href="eval.html" />
-		<menu-item label="Eval Dev Guide" href="eval-devguide.html" />
+		    <menu-item label="Eval Dev Guide" href="eval-devguide.html" />
+        <menu-item label="Examples" href="examples.html"/>
         <menu-item label="Use Case" href="use-case.html"/>
         <menu-item label="Pictorial Docs" href="diagrams.html"/>
         <menu-item label="Limitations" href="limitations.html"/>
