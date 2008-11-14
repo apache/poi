@@ -153,11 +153,8 @@ public final class UnknownRecord extends Record {
 			case 0x0803: return "DBQUERYEXT";
 			case 0x0805: return "TXTQUERY";
 
+			case 0x0812: return "CONTINUEFRT";
 			case QUICKTIP_0800: return "QUICKTIP";
-			case 0x0850: return "CHARTFRTINFO";
-			case 0x0852: return "STARTBLOCK";
-			case 0x0853: return "ENDBLOCK";
-			case 0x0856: return "CATLAB";
 			case SHEETEXT_0862: return "SHEETEXT";
 			case 0x0863: return "BOOKEXT";
 			case SHEETPROTECTION_0867: return "SHEETPROTECTION";
@@ -169,6 +166,7 @@ public final class UnknownRecord extends Record {
 			case 0x087B: return "CFEX";
 			case 0x087C: return "XFCRC";
 			case 0x087D: return "XFEXT";
+			case 0x087F: return "CONTINUEFRT12";	
 			case 0x088B: return "PLV";
 			case 0x088C: return "COMPAT12";
 			case 0x088D: return "DXF";
@@ -179,6 +177,7 @@ public final class UnknownRecord extends Record {
 			case 0x089A: return "MTRSETTINGS";
 			case 0x089B: return "COMPRESSPICTURES";
 			case 0x089C: return "HEADERFOOTER";
+			case 0x08A1: return "SHAPEPROPSSTREAM";
 			case 0x08A3: return "FORCEFULLCALCULATION";
 			case 0x08A4: return "SHAPEPROPSSTREAM";
 			case 0x08A5: return "TEXTPROPSSTREAM";
@@ -186,7 +185,6 @@ public final class UnknownRecord extends Record {
 
 			case 0x08C8: return "PLV{Mac Excel}";
 
-			case 0x1051: return "SHAPEPROPSSTREAM";
 
 		}
 		if (isObservedButUnknown(sid)) {
