@@ -509,8 +509,7 @@ public class HSSFCell implements Cell {
     }
 
     /**
-     * set a string value for the cell. Please note that if you are using
-     * full 16 bit unicode you should call <code>setEncoding()</code> first.
+     * Set a string value for the cell.
      *
      * @param value  value to set the cell to.  For formulas we'll set the formula
      * string, for String cells we'll set its value.  For other types we will

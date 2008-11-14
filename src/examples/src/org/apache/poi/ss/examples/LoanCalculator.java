@@ -14,32 +14,40 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.usermodel.examples;
+package org.apache.poi.ss.examples;
 
 import org.apache.poi.xssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import java.util.Map;
 import java.util.HashMap;
 import java.io.FileOutputStream;
 
 /**
- * Simple Loan Calculator
+ * Simple Loan Calculator. Demonstrates advance usage of cell formulas and named ranges.
+ *
+ * Usage:
+ *   LoanCalculator -xls|xlsx
  *
  * @author Yegor Kozlov
  */
 public class LoanCalculator {
 
     public static void main(String[] args) throws Exception {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        Map<String, XSSFCellStyle> styles = createStyles(wb);
-        XSSFSheet sheet = wb.createSheet("Loan Calculator");
+        Workbook wb;
+
+        if(args.length > 0 && args[0].equals("-xls")) wb = new HSSFWorkbook();
+        else wb = new XSSFWorkbook();
+
+        Map<String, CellStyle> styles = createStyles(wb);
+        Sheet sheet = wb.createSheet("Loan Calculator");
         sheet.setPrintGridlines(false);
         sheet.setDisplayGridlines(false);
 
-        XSSFPrintSetup printSetup = sheet.getPrintSetup();
-        printSetup.setOrientation(PrintOrientation.LANDSCAPE);
+        PrintSetup printSetup = sheet.getPrintSetup();
+        printSetup.setLandscape(true);
         sheet.setFitToPage(true);
         sheet.setHorizontallyCenter(true);
 
@@ -53,17 +61,17 @@ public class LoanCalculator {
 
         createNames(wb);
 
-        XSSFRow titleRow = sheet.createRow(0);
+        Row titleRow = sheet.createRow(0);
         titleRow.setHeightInPoints(35);
         for (int i = 1; i <= 7; i++) {
             titleRow.createCell(i).setCellStyle(styles.get("title"));
         }
-        XSSFCell titleCell = titleRow.getCell(2);
+        Cell titleCell = titleRow.getCell(2);
         titleCell.setCellValue("Simple Loan Calculator");
         sheet.addMergedRegion(CellRangeAddress.valueOf("$C$1:$H$1"));
 
-        XSSFRow row = sheet.createRow(2);
-        XSSFCell cell = row.createCell(4);
+        Row row = sheet.createRow(2);
+        Cell cell = row.createCell(4);
         cell.setCellValue("Enter values");
         cell.setCellStyle(styles.get("item_right"));
 
@@ -73,6 +81,7 @@ public class LoanCalculator {
         cell.setCellStyle(styles.get("item_left"));
         cell = row.createCell(4);
         cell.setCellStyle(styles.get("input_$"));
+        cell.setAsActiveCell();
 
         row = sheet.createRow(4);
         cell = row.createCell(2);
@@ -127,10 +136,11 @@ public class LoanCalculator {
         cell.setCellFormula("IF(Values_Entered,Monthly_Payment*Number_of_Payments,\"\")");
         cell.setCellStyle(styles.get("formula_$"));
 
-        sheet.setActiveCell("E4");
 
         // Write the output to a file
-        FileOutputStream out = new FileOutputStream("loan-calculator.xlsx");
+        String file = "loan-calculator.xls";
+        if(wb instanceof XSSFWorkbook) file += "x";
+        FileOutputStream out = new FileOutputStream(file);
         wb.write(out);
         out.close();
     }
@@ -138,126 +148,122 @@ public class LoanCalculator {
     /**
      * cell styles used for formatting calendar sheets
      */
-    private static Map<String, XSSFCellStyle> createStyles(XSSFWorkbook wb){
-        Map<String, XSSFCellStyle> styles = new HashMap<String, XSSFCellStyle>();
+    private static Map<String, CellStyle> createStyles(Workbook wb){
+        Map<String, CellStyle> styles = new HashMap<String, CellStyle>();
 
-        XSSFCellStyle style;
-        XSSFFont titleFont = wb.createFont();
+        CellStyle style;
+        Font titleFont = wb.createFont();
         titleFont.setFontHeightInPoints((short)14);
         titleFont.setFontName("Trebuchet MS");
         style = wb.createCellStyle();
         style.setFont(titleFont);
-        style.setBorderBottom(BorderStyle.DOTTED);
+        style.setBorderBottom(CellStyle.BORDER_DOTTED);
         style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
         styles.put("title", style);
 
-        XSSFFont itemFont = wb.createFont();
+        Font itemFont = wb.createFont();
         itemFont.setFontHeightInPoints((short)9);
         itemFont.setFontName("Trebuchet MS");
         style = wb.createCellStyle();
-        style.setAlignment(HorizontalAlignment.LEFT);
+        style.setAlignment(CellStyle.ALIGN_LEFT);
         style.setFont(itemFont);
         styles.put("item_left", style);
 
         style = wb.createCellStyle();
-        style.setAlignment(HorizontalAlignment.RIGHT);
+        style.setAlignment(CellStyle.ALIGN_RIGHT);
         style.setFont(itemFont);
         styles.put("item_right", style);
 
         style = wb.createCellStyle();
-        style.setAlignment(HorizontalAlignment.RIGHT);
+        style.setAlignment(CellStyle.ALIGN_RIGHT);
         style.setFont(itemFont);
-        style.setBorderRight(BorderStyle.DOTTED);
+        style.setBorderRight(CellStyle.BORDER_DOTTED);
         style.setRightBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        style.setBorderBottom(BorderStyle.DOTTED);
+        style.setBorderBottom(CellStyle.BORDER_DOTTED);
         style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        style.setBorderLeft(BorderStyle.DOTTED);
+        style.setBorderLeft(CellStyle.BORDER_DOTTED);
         style.setLeftBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        style.setBorderTop(BorderStyle.DOTTED);
+        style.setBorderTop(CellStyle.BORDER_DOTTED);
         style.setTopBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
         style.setDataFormat(wb.createDataFormat().getFormat("_($* #,##0.00_);_($* (#,##0.00);_($* \"-\"??_);_(@_)"));
         styles.put("input_$", style);
 
         style = wb.createCellStyle();
-        style.setAlignment(HorizontalAlignment.RIGHT);
+        style.setAlignment(CellStyle.ALIGN_RIGHT);
         style.setFont(itemFont);
-        style.setBorderRight(BorderStyle.DOTTED);
+        style.setBorderRight(CellStyle.BORDER_DOTTED);
         style.setRightBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        style.setBorderBottom(BorderStyle.DOTTED);
+        style.setBorderBottom(CellStyle.BORDER_DOTTED);
         style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        style.setBorderLeft(BorderStyle.DOTTED);
+        style.setBorderLeft(CellStyle.BORDER_DOTTED);
         style.setLeftBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        style.setBorderTop(BorderStyle.DOTTED);
+        style.setBorderTop(CellStyle.BORDER_DOTTED);
         style.setTopBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
         style.setDataFormat(wb.createDataFormat().getFormat("0.000%"));
         styles.put("input_%", style);
 
         style = wb.createCellStyle();
-        style.setAlignment(HorizontalAlignment.RIGHT);
+        style.setAlignment(CellStyle.ALIGN_RIGHT);
         style.setFont(itemFont);
-        style.setBorderRight(BorderStyle.DOTTED);
+        style.setBorderRight(CellStyle.BORDER_DOTTED);
         style.setRightBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        style.setBorderBottom(BorderStyle.DOTTED);
+        style.setBorderBottom(CellStyle.BORDER_DOTTED);
         style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        style.setBorderLeft(BorderStyle.DOTTED);
+        style.setBorderLeft(CellStyle.BORDER_DOTTED);
         style.setLeftBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        style.setBorderTop(BorderStyle.DOTTED);
+        style.setBorderTop(CellStyle.BORDER_DOTTED);
         style.setTopBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
         style.setDataFormat(wb.createDataFormat().getFormat("0"));
         styles.put("input_i", style);
 
         style = wb.createCellStyle();
-        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setAlignment(CellStyle.ALIGN_CENTER);
         style.setFont(itemFont);
         style.setDataFormat(wb.createDataFormat().getFormat("m/d/yy"));
         styles.put("input_d", style);
 
         style = wb.createCellStyle();
-        style.setAlignment(HorizontalAlignment.RIGHT);
+        style.setAlignment(CellStyle.ALIGN_RIGHT);
         style.setFont(itemFont);
-        style.setBorderRight(BorderStyle.DOTTED);
+        style.setBorderRight(CellStyle.BORDER_DOTTED);
         style.setRightBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        style.setBorderBottom(BorderStyle.DOTTED);
+        style.setBorderBottom(CellStyle.BORDER_DOTTED);
         style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        style.setBorderLeft(BorderStyle.DOTTED);
+        style.setBorderLeft(CellStyle.BORDER_DOTTED);
         style.setLeftBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        style.setBorderTop(BorderStyle.DOTTED);
+        style.setBorderTop(CellStyle.BORDER_DOTTED);
         style.setTopBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
         style.setDataFormat(wb.createDataFormat().getFormat("$##,##0.00"));
-        style.setBorderBottom(BorderStyle.DOTTED);
+        style.setBorderBottom(CellStyle.BORDER_DOTTED);
         style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(234, 234, 234)));
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
         styles.put("formula_$", style);
 
         style = wb.createCellStyle();
-        style.setAlignment(HorizontalAlignment.RIGHT);
+        style.setAlignment(CellStyle.ALIGN_RIGHT);
         style.setFont(itemFont);
-        style.setBorderRight(BorderStyle.DOTTED);
+        style.setBorderRight(CellStyle.BORDER_DOTTED);
         style.setRightBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        style.setBorderBottom(BorderStyle.DOTTED);
+        style.setBorderBottom(CellStyle.BORDER_DOTTED);
         style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        style.setBorderLeft(BorderStyle.DOTTED);
+        style.setBorderLeft(CellStyle.BORDER_DOTTED);
         style.setLeftBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        style.setBorderTop(BorderStyle.DOTTED);
+        style.setBorderTop(CellStyle.BORDER_DOTTED);
         style.setTopBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
         style.setDataFormat(wb.createDataFormat().getFormat("0"));
-        style.setBorderBottom(BorderStyle.DOTTED);
+        style.setBorderBottom(CellStyle.BORDER_DOTTED);
         style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(234, 234, 234)));
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
         styles.put("formula_i", style);
 
         return styles;
     }
 
     //define named ranges for the inputs and formulas
-    public static void createNames(XSSFWorkbook wb){
-        XSSFName name;
-
-        name = wb.createName();
-        name.setNameName("Header_Row");
-        name.setReference("ROW('Loan Calculator'!#REF!)");
+    public static void createNames(Workbook wb){
+        Name name;
 
         name = wb.createName();
         name.setNameName("Interest_Rate");
@@ -268,10 +274,6 @@ public class LoanCalculator {
         name.setReference("'Loan Calculator'!$E$4");
 
         name = wb.createName();
-        name.setNameName("Loan_Not_Paid");
-        name.setReference("F(Payment_Number<=Number_of_Payments,1,0)");
-
-        name = wb.createName();
         name.setNameName("Loan_Start");
         name.setReference("'Loan Calculator'!$E$7");
 
@@ -280,20 +282,12 @@ public class LoanCalculator {
         name.setReference("'Loan Calculator'!$E$6");
 
         name = wb.createName();
-        name.setNameName("Monthly_Payment");
-        name.setReference("-PMT(Interest_Rate/12,Number_of_Payments,Loan_Amount)");
-
-        name = wb.createName();
         name.setNameName("Number_of_Payments");
         name.setReference("'Loan Calculator'!$E$10");
 
         name = wb.createName();
-        name.setNameName("Payment_Number");
-        name.setReference("ROW()-Header_Row");
-
-        name = wb.createName();
-        name.setNameName("Principal");
-        name.setReference("-PPMT(Interest_Rate/12,Payment_Number,Number_of_Payments,Loan_Amount)");
+        name.setNameName("Monthly_Payment");
+        name.setReference("-PMT(Interest_Rate/12,Number_of_Payments,Loan_Amount)");
 
         name = wb.createName();
         name.setNameName("Total_Cost");
@@ -306,7 +300,5 @@ public class LoanCalculator {
         name = wb.createName();
         name.setNameName("Values_Entered");
         name.setReference("IF(Loan_Amount*Interest_Rate*Loan_Years*Loan_Start>0,1,0)");
-
-
     }
 }

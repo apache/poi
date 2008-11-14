@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>HSSF and XSSF Examples</title>
+    <authors>
+      <person id="YK" name="Yegor Kozlov" email="user@poi.apache.org"/>
+    </authors>
+    </header>
+    <body>
+		<section><title>HSSF and XSSF examples</title>
+      <p>POI comes with a number of examples that demonstrate how you can use POI API to create documents from "real life". 
+        The examples are based on common XSSF-HSSF interfaces so that you can generate either *.xls or *.xlsx output just by setting a command-line argument:
+        </p>
+        <source>
+          BusinessPlan -xls 
+          or
+          BusinessPlan -xlsx
+        </source>
+        <p>All sample source is available in <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/ss/examples/">SVN</link></p>
+		</section>
+		<section><title>BusinessPlan</title>
+      <p> The <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/ss/examples/BusinessPlan.java">BusinessPlan</link>
+        application creates a sample business plan with three phases, weekly iterations and time highlighting. Demonstrates advanced cell formatting 
+        (number and date formats, alignmnets, fills, borders) and various settings for organizing data in a sheet (freezed panes, groupped rows).
+      </p>
+      <p>
+        <img src="../resources/images/businessplan.jpg" alt="business plan demo"/>
+      </p>
+		</section>
+		<section><title>Calendar</title>
+      <p> The <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/ss/examples/Calendar.java">Calendar</link>
+        demo creates a multi sheet calendar. Each month is on a separate sheet. 
+      </p>
+      <p>
+        <img src="../resources/images/calendar.jpg" alt="calendar demo"/>
+      </p>
+		</section>
+		<section><title>LoanCalculator</title>
+      <p> The <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/ss/examples/LoanCalculator.java">LoanCalculator</link>
+        demo creates a simple loan calculator. Demonstrates advance usage of cell formulas and named ranges. 
+      </p>
+      <p>
+        <img src="../resources/images/loancalc.jpg" alt="loan calculator demo"/>
+      </p>
+		</section>
+		<section><title>TimesheetDemo</title>
+      <p> The <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/ss/examples/TimesheetDemo.java">TimesheetDemo</link>
+        demo creates a weekly timesheet with automatic calculation of total hours. Demonstrates advance usage of cell formulas. 
+      </p>
+      <p>
+        <img src="../resources/images/timesheet.jpg" alt="timesheet demo"/>
+      </p>
+		</section>
+	</body>
+</document>

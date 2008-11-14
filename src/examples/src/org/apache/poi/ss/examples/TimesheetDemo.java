@@ -14,11 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.usermodel.examples;
+package org.apache.poi.ss.examples;
 
 import org.apache.poi.xssf.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -26,6 +27,8 @@ import java.io.FileOutputStream;
 
 /**
  * A weekly timesheet created using Apache POI.
+ * Usage:
+ *  TimesheetDemo -xls|xlsx
  *
  * @author Yegor Kozlov
  */
@@ -37,32 +40,35 @@ public class TimesheetDemo {
 
     private static Object[][] sample_data = {
             {"Yegor Kozlov", "YK", 5.0, 8.0, 10.0, 5.0, 5.0, 7.0, 6.0},
-            {"Gisella Bronsetti", "GB", 4.0, 3.0, 1.0, 3.5, null, null, 4.0},
+            {"Gisella Bronzetti", "GB", 4.0, 3.0, 1.0, 3.5, null, null, 4.0},
     };
 
     public static void main(String[] args) throws Exception {
+        Workbook wb;
 
-        XSSFWorkbook wb = new XSSFWorkbook();
-        Map<String, XSSFCellStyle> styles = createStyles(wb);
+        if(args.length > 0 && args[0].equals("-xls")) wb = new HSSFWorkbook();
+        else wb = new XSSFWorkbook();
 
-        XSSFSheet sheet = wb.createSheet("Timesheet");
-        XSSFPrintSetup printSetup = sheet.getPrintSetup();
-        printSetup.setOrientation(PrintOrientation.LANDSCAPE);
+        Map<String, CellStyle> styles = createStyles(wb);
+
+        Sheet sheet = wb.createSheet("Timesheet");
+        PrintSetup printSetup = sheet.getPrintSetup();
+        printSetup.setLandscape(true);
         sheet.setFitToPage(true);
         sheet.setHorizontallyCenter(true);
 
         //title row
-        XSSFRow titleRow = sheet.createRow(0);
+        Row titleRow = sheet.createRow(0);
         titleRow.setHeightInPoints(45);
-        XSSFCell titleCell = titleRow.createCell(0);
+        Cell titleCell = titleRow.createCell(0);
         titleCell.setCellValue("Weekly Timesheet");
         titleCell.setCellStyle(styles.get("title"));
         sheet.addMergedRegion(CellRangeAddress.valueOf("$A$1:$L$1"));
 
         //header row
-        XSSFRow headerRow = sheet.createRow(1);
+        Row headerRow = sheet.createRow(1);
         headerRow.setHeightInPoints(40);
-        XSSFCell headerCell;
+        Cell headerCell;
         for (int i = 0; i < titles.length; i++) {
             headerCell = headerRow.createCell(i);
             headerCell.setCellValue(titles[i]);
@@ -71,9 +77,9 @@ public class TimesheetDemo {
 
         int rownum = 2;
         for (int i = 0; i < 10; i++) {
-            XSSFRow row = sheet.createRow(rownum++);
+            Row row = sheet.createRow(rownum++);
             for (int j = 0; j < titles.length; j++) {
-                XSSFCell cell = row.createCell(j);
+                Cell cell = row.createCell(j);
                 if(j == 9){
                     //the 10th cell contains sum over week days, e.g. SUM(C3:I3)
                     String ref = "C" +rownum+ ":I" + rownum;
@@ -89,9 +95,9 @@ public class TimesheetDemo {
         }
 
         //row with totals below
-        XSSFRow sumRow = sheet.createRow(rownum++);
+        Row sumRow = sheet.createRow(rownum++);
         sumRow.setHeightInPoints(35);
-        XSSFCell cell;
+        Cell cell;
         cell = sumRow.createCell(0);
         cell.setCellStyle(styles.get("formula"));
         cell = sumRow.createCell(1);
@@ -125,7 +131,7 @@ public class TimesheetDemo {
 
         //set sample data
         for (int i = 0; i < sample_data.length; i++) {
-            XSSFRow row = sheet.getRow(2 + i);
+            Row row = sheet.getRow(2 + i);
             for (int j = 0; j < sample_data[i].length; j++) {
                 if(sample_data[i][j] == null) continue;
 
@@ -137,70 +143,74 @@ public class TimesheetDemo {
             }
         }
 
-        //finally set column widths
-        sheet.setColumnWidth(0, 30*256);
+        //finally set column widths, the width is measured in units of 1/256th of a character width
+        sheet.setColumnWidth(0, 30*256); //30 characters wide
         for (int i = 2; i < 9; i++) {
-            sheet.setColumnWidth(i, 6*256);
+            sheet.setColumnWidth(i, 6*256);  //6 characters wide
         }
+        sheet.setColumnWidth(10, 10*256); //10 characters wide
 
         // Write the output to a file
-        FileOutputStream out = new FileOutputStream("ooxml-timesheet.xlsx");
+        String file = "timesheet.xls";
+        if(wb instanceof XSSFWorkbook) file += "x";
+        FileOutputStream out = new FileOutputStream(file);
         wb.write(out);
         out.close();
     }
 
-    private static Map<String, XSSFCellStyle> createStyles(XSSFWorkbook wb){
-        Map<String, XSSFCellStyle> styles = new HashMap<String, XSSFCellStyle>();
-        XSSFCellStyle style;
-        XSSFFont titleFont = wb.createFont();
+    /**
+     * Create a library of cell styles
+     */
+    private static Map<String, CellStyle> createStyles(Workbook wb){
+        Map<String, CellStyle> styles = new HashMap<String, CellStyle>();
+        CellStyle style;
+        Font titleFont = wb.createFont();
         titleFont.setFontHeightInPoints((short)18);
-        titleFont.setBold(true);
+        titleFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
         style = wb.createCellStyle();
-        style.setAlignment(HorizontalAlignment.CENTER);
-        style.setVerticalAlignment(VerticalAlignment.CENTER);
-        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(234, 234, 234)));
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setAlignment(CellStyle.ALIGN_CENTER);
+        style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
         style.setFont(titleFont);
         styles.put("title", style);
 
-        XSSFFont monthFont = wb.createFont();
+        Font monthFont = wb.createFont();
         monthFont.setFontHeightInPoints((short)11);
-        monthFont.setColor(new XSSFColor(new java.awt.Color(255, 255, 255)));
+        monthFont.setColor(IndexedColors.WHITE.getIndex());
         style = wb.createCellStyle();
-        style.setAlignment(HorizontalAlignment.CENTER);
-        style.setVerticalAlignment(VerticalAlignment.CENTER);
-        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(102, 102, 102)));
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setAlignment(CellStyle.ALIGN_CENTER);
+        style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+        style.setFillForegroundColor(IndexedColors.GREY_50_PERCENT.getIndex());
+        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
         style.setFont(monthFont);
         style.setWrapText(true);
         styles.put("header", style);
 
         style = wb.createCellStyle();
-        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setAlignment(CellStyle.ALIGN_CENTER);
         style.setWrapText(true);
-        style.setBorderRight(BorderStyle.THIN);
+        style.setBorderRight(CellStyle.BORDER_THIN);
         style.setRightBorderColor(IndexedColors.BLACK.getIndex());
-        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderLeft(CellStyle.BORDER_THIN);
         style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-        style.setBorderTop(BorderStyle.THIN);
+        style.setBorderTop(CellStyle.BORDER_THIN);
         style.setTopBorderColor(IndexedColors.BLACK.getIndex());
-        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderBottom(CellStyle.BORDER_THIN);
         style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
         styles.put("cell", style);
 
         style = wb.createCellStyle();
-        style.setAlignment(HorizontalAlignment.CENTER);
-        style.setVerticalAlignment(VerticalAlignment.CENTER);
-        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(234, 234, 234)));
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setAlignment(CellStyle.ALIGN_CENTER);
+        style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+        style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
         style.setDataFormat(wb.createDataFormat().getFormat("0.00"));
         styles.put("formula", style);
 
         style = wb.createCellStyle();
-        style.setAlignment(HorizontalAlignment.CENTER);
-        style.setVerticalAlignment(VerticalAlignment.CENTER);
-        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(192, 192, 192)));
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setAlignment(CellStyle.ALIGN_CENTER);
+        style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+        style.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
+        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
         style.setDataFormat(wb.createDataFormat().getFormat("0.00"));
         styles.put("formula_2", style);
 

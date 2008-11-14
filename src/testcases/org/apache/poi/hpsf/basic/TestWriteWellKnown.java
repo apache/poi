@@ -120,7 +120,6 @@ public class TestWriteWellKnown extends TestCase
         for (int i = 0; i < docs.length; i++)
         {
             final File doc = docs[i];
-            System.out.println("Reading file " + doc);
 
             /* Read a test document <em>doc</em> into a POI filesystem. */
             final POIFSFileSystem poifs = new POIFSFileSystem(new FileInputStream(doc));
@@ -351,10 +350,10 @@ public class TestWriteWellKnown extends TestCase
         CustomProperties customProperties = dsi.getCustomProperties();
         if (customProperties == null)
             customProperties = new CustomProperties();
-        customProperties.put("Schl\u00fcssel �",    "Wert �");
-        customProperties.put("Schl\u00fcssel ��",   "Wert ��");
-        customProperties.put("Schl\u00fcssel ���",  "Wert ���");
-        customProperties.put("Schl\u00fcssel ����", "Wert ����");
+        customProperties.put("Schl\u00fcssel \u00e4",    "Wert \u00e4");
+        customProperties.put("Schl\u00fcssel \u00e4\u00f6",   "Wert \u00e4\u00f6");
+        customProperties.put("Schl\u00fcssel \u00e4\u00f6\u00fc",  "Wert \u00e4\u00f6\u00fc");
+        customProperties.put("Schl\u00fcssel \u00e4\u00f6\u00fc\u00d6", "Wert \u00e4\u00f6\u00fc\u00d6");
         customProperties.put("positive_Integer", POSITIVE_INTEGER);
         customProperties.put("positive_Long", POSITIVE_LONG);
         customProperties.put("positive_Double", POSITIVE_DOUBLE);
@@ -440,10 +439,10 @@ public class TestWriteWellKnown extends TestCase
         final CustomProperties cps = dsi.getCustomProperties();
         assertEquals(customProperties, cps);
         assertNull(cps.get("No value available"));
-        assertEquals("Wert �", cps.get("Schl\u00fcssel �"));
-        assertEquals("Wert ��", cps.get("Schl\u00fcssel ��"));
-        assertEquals("Wert ���", cps.get("Schl\u00fcssel ���"));
-        assertEquals("Wert ����", cps.get("Schl\u00fcssel ����"));
+        assertEquals("Wert \u00e4", cps.get("Schl\u00fcssel \u00e4"));
+        assertEquals("Wert \u00e4\u00f6", cps.get("Schl\u00fcssel \u00e4\u00f6"));
+        assertEquals("Wert \u00e4\u00f6\u00fc", cps.get("Schl\u00fcssel \u00e4\u00f6\u00fc"));
+        assertEquals("Wert \u00e4\u00f6\u00fc\u00d6", cps.get("Schl\u00fcssel \u00e4\u00f6\u00fc\u00d6"));
         assertEquals(POSITIVE_INTEGER, cps.get("positive_Integer"));
         assertEquals(POSITIVE_LONG, cps.get("positive_Long"));
         assertEquals(POSITIVE_DOUBLE, cps.get("positive_Double"));
@@ -665,7 +664,7 @@ public class TestWriteWellKnown extends TestCase
      */
     public void testCustomerProperties()
     {
-        final String KEY = "Schl\u00fcssel �";
+        final String KEY = "Schl\u00fcssel \u00e4";
         final String VALUE_1 = "Wert 1";
         final String VALUE_2 = "Wert 2";
 
@@ -705,7 +704,7 @@ public class TestWriteWellKnown extends TestCase
     {
         final int ID_1 = 2;
         final int ID_2 = 3;
-        final String NAME_1 = "Schl\u00fcssel �";
+        final String NAME_1 = "Schl\u00fcssel \u00e4";
         final String VALUE_1 = "Wert 1";
         final Map dictionary = new HashMap();
 
