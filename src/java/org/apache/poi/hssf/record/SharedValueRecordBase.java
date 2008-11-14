@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -28,7 +27,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Josh Micich
  */
-public abstract class SharedValueRecordBase extends Record {
+public abstract class SharedValueRecordBase extends StandardRecord {
 
 	private CellRangeAddress8Bit _range;
 
@@ -75,17 +74,9 @@ public abstract class SharedValueRecordBase extends Record {
 
 	protected abstract void serializeExtraData(LittleEndianOutput out);
 
-	public final int serialize(int offset, byte[] data) {
-		int dataSize = CellRangeAddress8Bit.ENCODED_SIZE + getExtraDataSize();
-		
-		int totalRecSize = dataSize + 4;
-		LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, totalRecSize);
-		out.writeShort(getSid());
-		out.writeShort(dataSize);
-
+	public void serialize(LittleEndianOutput out) {
 		_range.serialize(out);
 		serializeExtraData(out);
-		return totalRecSize;
 	}
 
 	/**

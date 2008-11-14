@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -29,7 +28,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Josh Micich
  */
-public final class DrawingSelectionRecord extends Record {
+public final class DrawingSelectionRecord extends StandardRecord {
 	public static final short sid = 0x00ED;
 
 	/**
@@ -101,12 +100,7 @@ public final class DrawingSelectionRecord extends Record {
 			+ _shapeIds.length * 4;
 	}
 
-	public int serialize(int offset, byte[] data) {
-		int dataSize = getDataSize();
-		int recSize = 4 + dataSize;
-		LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
-		out.writeShort(sid);
-		out.writeShort(dataSize);
+	public void serialize(LittleEndianOutput out) {
 		_header.serialize(out);
 		out.writeInt(_cpsp);
 		out.writeInt(_dgslk);
@@ -114,7 +108,6 @@ public final class DrawingSelectionRecord extends Record {
 		for (int i = 0; i < _shapeIds.length; i++) {
 			out.writeInt(_shapeIds[i]);
 		}
-		return recSize;
 	}
 
 	public Object clone() {

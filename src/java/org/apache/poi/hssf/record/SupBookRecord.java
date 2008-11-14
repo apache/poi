@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
@@ -30,7 +29,7 @@ import org.apache.poi.util.StringUtil;
  * @author Andrew C. Oliver (acoliver@apache.org)
  *
  */
-public final class SupBookRecord extends Record {
+public final class SupBookRecord extends StandardRecord {
 
     public final static short sid = 0x01AE;
 
@@ -150,22 +149,8 @@ public final class SupBookRecord extends Record {
         }
         return sum;
     }
-    /**
-     * called by the class that is responsible for writing this sucker.
-     * Subclasses should implement this so that their data is passed back in a
-     * byte array.
-     *
-     * @param offset to begin writing at
-     * @param data byte array containing instance data
-     * @return number of bytes written
-     */
-    public int serialize(int offset, byte [] data) {
-        int dataSize = getDataSize();
-        int recordSize = 4 + dataSize;
-        LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, recordSize);
 
-        out.writeShort(sid);
-        out.writeShort(dataSize);
+    public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_number_of_sheets);
 
         if(isExternalReferences()) {
@@ -179,7 +164,6 @@ public final class SupBookRecord extends Record {
 
             out.writeShort(field2val);
         }
-        return recordSize;
     }
 
     public void setNumberOfSheets(short number){
@@ -223,6 +207,6 @@ public final class SupBookRecord extends Record {
         */
     }
     public String[] getSheetNames() {
-        return (String[]) field_3_sheet_names.clone();
+        return field_3_sheet_names.clone();
     }
 }

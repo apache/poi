@@ -17,13 +17,11 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.usermodel.DVConstraint;
 import org.apache.poi.hssf.usermodel.HSSFDataValidation;
+import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
-import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.util.BitField;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
@@ -36,7 +34,7 @@ import org.apache.poi.util.StringUtil;
  * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
  * @author Josh Micich
  */
-public final class DVRecord extends Record {
+public final class DVRecord extends StandardRecord {
 	public final static short sid = 0x01BE;
 	
 	/** the unicode string used for error/prompt title/text when not present */
@@ -253,12 +251,7 @@ public final class DVRecord extends Record {
 		}
 	}
 
-	public int serialize(int offset, byte [] data) {
-		int recSize = getRecordSize();
-		LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
-		
-		out.writeShort(sid);
-		out.writeShort(recSize-4);
+	public void serialize(LittleEndianOutput out) {
 
 		out.writeInt(_option_flags);
 		
@@ -275,7 +268,6 @@ public final class DVRecord extends Record {
 		_formula2.serializeTokens(out);
 		
 		_regions.serialize(out);
-		return recSize;
 	}
 
 	/**
