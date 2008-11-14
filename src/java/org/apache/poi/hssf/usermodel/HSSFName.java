@@ -17,9 +17,10 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.util.RangeAddress;
+import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.ss.usermodel.Name;
 
 /**
@@ -80,43 +81,33 @@ public final class HSSFName implements Name {
     }
 
     /**
-     * Note - this method only applies to named ranges
-     * @return the formula text defining the named range
+     * @deprecated (Nov 2008) Misleading name. Use {@link #getFormula()} instead.
      */
     public String getReference() {
+        return getFormula();
+    }
+
+    /**
+     * @deprecated (Nov 2008) Misleading name. Use {@link #setFormula(String)} instead.
+     */
+    public void setReference(String ref){
+    	setFormula(ref);
+    }
+
+    public void setFormula(String formulaText) {
+		Ptg[] ptgs = HSSFFormulaParser.parse(formulaText, _book);
+    	_definedNameRec.setNameDefinition(ptgs);
+	}
+
+    /**
+     * Note - this method only applies to named ranges
+     * @return the formula text defining this name
+     */
+    public String getFormula() {
         if (_definedNameRec.isFunctionName()) {
             throw new IllegalStateException("Only applicable to named ranges");
         }
-        return _definedNameRec.getAreaReference(_book);
-    }
-
-    /**
-     * sets the sheet name which this named range referenced to
-     * @param sheetName the sheet name of the reference
-     */
-    private void setSheetName(String sheetName){
-        int sheetNumber = _book.getSheetIndex(sheetName);
-        short externSheetNumber = _book.getWorkbook().checkExternSheet(sheetNumber);
-        _definedNameRec.setExternSheetNumber(externSheetNumber);
-    }
-
-
-    /**
-     * sets the reference of this named range
-     * @param ref the reference to set
-     */
-    public void setReference(String ref){
-
-        RangeAddress ra = new RangeAddress(ref);
-
-        String sheetName = ra.getSheetName();
-
-        if (ra.hasSheetName()) {
-            setSheetName(sheetName);
-        }
-
-        //allow the poi utilities to parse it out
-        _definedNameRec.setAreaReference(ref);
+    	return HSSFFormulaParser.toFormulaString(_book, _definedNameRec.getNameDefinition());
     }
 
     /**

@@ -17,8 +17,11 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.hssf.usermodel.HSSFName;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.HexRead;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 /**
@@ -54,5 +57,28 @@ public final class TestNameRecord extends TestCase {
 		assertEquals(0x0020, nr.getOptionFlag());
 		byte[] data2 = nr.serialize();
 		TestcaseRecordInputStream.confirmRecordEncoding(NameRecord.sid, data, data2);
+	}
+	public void testFormulaRelAbs_bug46174() {
+		// perhaps this testcase belongs on TestHSSFName
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFName name = wb.createName();
+		wb.createSheet("Sheet1");
+		name.setNameName("test");
+		name.setReference("Sheet1!$B$3");
+		if (name.getReference().equals("Sheet1!B3")) {
+			throw new AssertionFailedError("Identified bug 46174");
+		}
+		assertEquals("Sheet1!$B$3", name.getReference());
+	}
+	public void testFormulaGeneral() {
+		// perhaps this testcase belongs on TestHSSFName
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFName name = wb.createName();
+		wb.createSheet("Sheet1");
+		name.setNameName("test");
+		name.setFormula("Sheet1!A1+Sheet1!A2");
+		assertEquals("Sheet1!A1+Sheet1!A2", name.getFormula());
+		name.setFormula("5*6");
+		assertEquals("5*6", name.getFormula());
 	}
 }

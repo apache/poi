@@ -17,18 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
-import org.apache.poi.hssf.record.formula.UnionPtg;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.RangeAddress;
 import org.apache.poi.ss.formula.Formula;
-import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
@@ -412,87 +404,6 @@ public final class NameRecord extends StandardRecord {
 			return ((Ref3DPtg) ptg).getExternSheetIndex();
 		}
 		return 0;
-	}
-
-	/** sets the extern sheet number
-	 * @param externSheetNumber extern sheet number
-	 */
-	public void setExternSheetNumber(short externSheetNumber){
-		Ptg[] ptgs = field_13_name_definition.getTokens();
-		Ptg ptg;
-
-		if (ptgs.length < 1){
-			ptg = createNewPtg();
-			ptgs = new Ptg[] { ptg, };
-		} else {
-			ptg = ptgs[0];
-		}
-
-		if (ptg.getClass() == Area3DPtg.class){
-			((Area3DPtg) ptg).setExternSheetIndex(externSheetNumber);
-
-		} else if (ptg.getClass() == Ref3DPtg.class){
-			((Ref3DPtg) ptg).setExternSheetIndex(externSheetNumber);
-		}
-		field_13_name_definition = Formula.create(ptgs);
-	}
-
-	private static Ptg createNewPtg(){
-		return new Area3DPtg("A1:A1", 0); // TODO - change to not be partially initialised
-	}
-
-	/** gets the reference , the area only (range)
-	 * @return area reference
-	 */
-	public String getAreaReference(HSSFWorkbook book){
-		return HSSFFormulaParser.toFormulaString(book, field_13_name_definition.getTokens());
-	}
-
-	/** sets the reference , the area only (range)
-	 * @param ref area reference
-	 */
-	public void setAreaReference(String ref){
-		//Trying to find if what ptg do we need
-		RangeAddress ra = new RangeAddress(ref);
-		Ptg oldPtg;
-
-		if (field_13_name_definition.getEncodedTokenSize() < 1){
-			oldPtg = createNewPtg();
-		} else {
-			//Trying to find extern sheet index
-			oldPtg = field_13_name_definition.getTokens()[0];
-		}
-		List temp = new ArrayList();
-		int externSheetIndex = 0;
-
-		if (oldPtg.getClass() == Area3DPtg.class){
-			externSheetIndex =  ((Area3DPtg) oldPtg).getExternSheetIndex();
-
-		} else if (oldPtg.getClass() == Ref3DPtg.class){
-			externSheetIndex =  ((Ref3DPtg) oldPtg).getExternSheetIndex();
-		}
-
-		if (ra.hasRange()) {
-			// Is it contiguous or not?
-			AreaReference[] refs = AreaReference.generateContiguous(ref);
-
-			// Add the area reference(s)
-			for(int i=0; i<refs.length; i++) {
-				Ptg ptg = new Area3DPtg(refs[i].formatAsString(), externSheetIndex);
-				temp.add(ptg);
-			}
-			// And then a union if we had more than one area
-			if(refs.length > 1) {
-				Ptg ptg = UnionPtg.instance;
-				temp.add(ptg);
-			}
-		} else {
-			Ref3DPtg ptg = new Ref3DPtg(ra.getFromCell(), externSheetIndex);
-			temp.add(ptg);
-		}
-		Ptg[] ptgs = new Ptg[temp.size()];
-		temp.toArray(ptgs);
-		field_13_name_definition = Formula.create(ptgs);
 	}
 
 	/**
