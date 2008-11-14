@@ -252,7 +252,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @param column the column index
      */
-   public void autoSizeColumn(short column) {
+   public void autoSizeColumn(int column) {
         autoSizeColumn(column, false);
     }
 
@@ -269,7 +269,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param column the column index
      * @param useMergedCells whether to use the contents of merged cells when calculating the width of the column
      */
-    public void autoSizeColumn(short column, boolean useMergedCells) {
+    public void autoSizeColumn(int column, boolean useMergedCells) {
         double width = ColumnHelper.getColumnWidth(this, column, useMergedCells);
         if(width != -1){
             columnHelper.setColBestFit(column, true);
@@ -932,7 +932,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Group between (0 based) columns
      */
-    public void groupColumn(short fromColumn, short toColumn) {
+    public void groupColumn(int fromColumn, int toColumn) {
         groupColumn1Based(fromColumn+1, toColumn+1);
     }
     private void groupColumn1Based(int fromColumn, int toColumn) {
@@ -1231,7 +1231,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
     }
 
-    public void setColumnGroupCollapsed(short columnNumber, boolean collapsed) {
+    public void setColumnGroupCollapsed(int columnNumber, boolean collapsed) {
         // TODO Auto-generated method stub
 
     }
@@ -1261,7 +1261,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         columnHelper.setColWidth(columnIndex, (double)width/256);
     }
 
-    public void setDefaultColumnStyle(short column, CellStyle style) {
+    public void setDefaultColumnStyle(int column, CellStyle style) {
         columnHelper.setColDefaultStyle(column, style);
     }
 
@@ -1465,7 +1465,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         getSheetTypeSheetView().setTopLeftCell(cellRef);
     }
 
-    public void ungroupColumn(short fromColumn, short toColumn) {
+    public void ungroupColumn(int fromColumn, int toColumn) {
         CTCols cols = worksheet.getColsArray(0);
         for (int index = fromColumn; index <= toColumn; index++) {
             CTCol col = columnHelper.getColumn(index, false);

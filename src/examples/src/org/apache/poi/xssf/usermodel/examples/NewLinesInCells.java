@@ -47,7 +47,7 @@ public class NewLinesInCells {
         row.setHeightInPoints((2*sheet.getDefaultRowHeightInPoints()));
 
         //adjust column width to fit the content
-        sheet.autoSizeColumn((short)2);
+        sheet.autoSizeColumn(2);
 
         FileOutputStream fileOut = new FileOutputStream("ooxml-newlines.xlsx");
         wb.write(fileOut);

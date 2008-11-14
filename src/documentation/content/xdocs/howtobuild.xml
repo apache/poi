@@ -29,6 +29,13 @@
     </header>
     <body>
         <section>
+          <title>JDK</title>
+          <p>
+            POI 3.5 and later requires the JDK version 1.5 or later.
+            Versions prior to 3.5 require JDK 1.4+
+          </p>
+        </section>
+        <section>
             <title>Installing Ant</title>
             <p>
                 The POI build system requires two components to perform a
@@ -113,6 +120,22 @@
                 <tr>
                     <td>/junit/jars/junit-3.8.1.jar</td>
                     <td>lib</td>
+                </tr>
+                <tr>
+                    <td>/dom4j/jars/dom4j-1.6.1.jar</td>
+                    <td>ooxml-lib</td>
+                </tr>
+                <tr>
+                    <td>/org.apache.xmlbeans/jars/xmlbeans-2.3.0.jar</td>
+                    <td>ooxml-lib</td>
+                </tr>
+                <tr>
+                    <td>/xmlbeans/jars/jsr173_1.0_api.jar</td>
+                    <td>ooxml-lib</td>
+                </tr>
+                <tr>
+                    <td>/org.apache.poi/jars/ooxml-schemas-1.0.jar</td>
+                    <td>ooxml-lib</td>
                 </tr>
             </table>
             <p>

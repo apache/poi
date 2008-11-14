@@ -20,6 +20,19 @@ package org.apache.poi.ss.usermodel;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * High level representation of a cell in a row of a spreadsheet.
+ * <p>
+ * Cells can be numeric, formula-based or string-based (text).  The cell type
+ * specifies this.  String cells cannot conatin numbers and numeric cells cannot
+ * contain strings (at least according to our model).  Client apps should do the
+ * conversions themselves.  Formula cells have the formula string, as well as
+ * the formula result, which can be numeric or string.
+ * </p>
+ * <p>
+ * Cells should have their number (0 based) before being added to a row.
+ * </p>
+ */
 public interface Cell {
 
     /**
@@ -27,7 +40,6 @@ public interface Cell {
      * @see #setCellType(int)
      * @see #getCellType()
      */
-
     public final static int CELL_TYPE_NUMERIC = 0;
 
     /**
@@ -35,7 +47,6 @@ public interface Cell {
      * @see #setCellType(int)
      * @see #getCellType()
      */
-
     public final static int CELL_TYPE_STRING = 1;
 
     /**
@@ -43,7 +54,6 @@ public interface Cell {
      * @see #setCellType(int)
      * @see #getCellType()
      */
-
     public final static int CELL_TYPE_FORMULA = 2;
 
     /**
@@ -51,7 +61,6 @@ public interface Cell {
      * @see #setCellType(int)
      * @see #getCellType()
      */
-
     public final static int CELL_TYPE_BLANK = 3;
 
     /**
@@ -59,7 +68,6 @@ public interface Cell {
      * @see #setCellType(int)
      * @see #getCellType()
      */
-
     public final static int CELL_TYPE_BOOLEAN = 4;
 
     /**
@@ -67,32 +75,33 @@ public interface Cell {
      * @see #setCellType(int)
      * @see #getCellType()
      */
-
     public final static int CELL_TYPE_ERROR = 5;
     
     /**
-     * set the cell's number within the row (0 based)
-     * @param num  short the cell number
-     */
-
-    void setCellNum(short num);
-
-    /**
-     * @deprecated (Oct 2008) use {@link #getColumnIndex()}
-     */
-    short getCellNum();
-    
-    /**
-     * @return the cell's column index (zero based)
+     * Returns column index of this cell
+     *
+     * @return zero-based column index of a column in a sheet.
      */
     int getColumnIndex();
 
+    /**
+     * Returns row index of a row in the sheet that contains this cell
+     *
+     * @return zero-based row index of a row in the sheet that contains this cell
+     */
     int getRowIndex();
 
+    /**
+     * Returns the sheet this cell belongs to
+     *
+     * @return the sheet this cell belongs to
+     */
     Sheet getSheet();
 
     /**
-     * set the cells type (numeric, formula or string)
+     * Set the cells type (numeric, formula or string)
+     *
+     * @throws IllegalArgumentException if the specified cell type is invalid
      * @see #CELL_TYPE_NUMERIC
      * @see #CELL_TYPE_STRING
      * @see #CELL_TYPE_FORMULA
@@ -100,23 +109,23 @@ public interface Cell {
      * @see #CELL_TYPE_BOOLEAN
      * @see #CELL_TYPE_ERROR
      */
-
     void setCellType(int cellType);
 
     /**
-     * @return the cell's type (e.g. numeric, formula or string)
-     * @see #CELL_TYPE_STRING
-     * @see #CELL_TYPE_NUMERIC
-     * @see #CELL_TYPE_FORMULA
-     * @see #CELL_TYPE_BOOLEAN
-     * @see #CELL_TYPE_BLANK
-     * @see #CELL_TYPE_ERROR
+     * Return the cell type.
+     *
+     * @return the cell type
+     * @see Cell#CELL_TYPE_BLANK
+     * @see Cell#CELL_TYPE_NUMERIC
+     * @see Cell#CELL_TYPE_STRING
+     * @see Cell#CELL_TYPE_FORMULA
+     * @see Cell#CELL_TYPE_BOOLEAN
+     * @see Cell#CELL_TYPE_ERROR
      */
-
     int getCellType();
 
     /**
-     * set a numeric value for the cell
+     * Set a numeric value for the cell
      *
      * @param value  the numeric value to set this cell to.  For formulas we'll set the
      *        precalculated value, for numerics we'll set its value. For other types we
@@ -125,18 +134,25 @@ public interface Cell {
     void setCellValue(double value);
 
     /**
-     * set a date value for the cell. Excel treats dates as numeric so you will need to format the cell as
-     * a date.
+     * Set a boolean value for the cell
      *
-     * @param value  the date value to set this cell to.  For formulas we'll set the
-     *        precalculated value, for numerics we'll set its value. For other types we
-     *        will change the cell to a numeric cell and set its value.
+     * @param value the boolean value to set this cell to.  For formulas we'll set the
+     *        precalculated value, for booleans we'll set its value. For other types we
+     *        will change the cell to a boolean cell and set its value.
      */
     void setCellValue(Date value);
 
     /**
-     * set a date value for the cell. Excel treats dates as numeric so you will need to format the cell as
+     * Set a date value for the cell. Excel treats dates as numeric so you will need to format the cell as
      * a date.
+     * <p>
+     * This will set the cell value based on the Calendar's timezone. As Excel
+     * does not support timezones this means that both 20:00+03:00 and
+     * 20:00-03:00 will be reported as the same value (20:00) even that there
+     * are 6 hours difference between the two times. This difference can be
+     * preserved by using <code>setCellValue(value.getTime())</code> which will
+     * automatically shift the times to the default timezone.
+     * </p>
      *
      * @param value  the date value to set this cell to.  For formulas we'll set the
      *        precalculated value, for numerics we'll set its value. For othertypes we
@@ -165,97 +181,131 @@ public interface Cell {
     void setCellValue(String value);
 
     /**
-     * Set a formula value for the cell.
+     * Sets formula for this cell.
+     * <p>
+     * Note, this method only sets the formula string and does not calculate the formula value.
+     * To set the precalculated value use {@link #setCellValue(double)} or {@link #setCellValue(String)}
+     * </p>
+     *
+     * @param formula the formula to set, e.g. <code>SUM(C4:E4)</code>.
+     *  If the argument is <code>null</code> then the current formula is removed.
      */
     void setCellFormula(String formula);
 
     /**
-     * Get the formula value of the cell.
+     * Return a formula for the cell, for example, <code>SUM(C4:E4)</code>
+     *
+     * @return a formula for the cell
+     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is not CELL_TYPE_FORMULA
      */
     String getCellFormula();
 
     /**
-     * get the value of the cell as a number.  For strings we throw an exception.
-     * For blank cells we return a 0.
+     * Get the value of the cell as a number.
+     * <p>
+     * For strings we throw an exception. For blank cells we return a 0.
+     * For formulas or error cells we return the precalculated value;
+     * </p>
+     * @return the value of the cell as a number
+     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is CELL_TYPE_STRING
+     * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
+     * @see DataFormatter for turning this number into a string similar to that which Excel would render this number as.
      */
-
     double getNumericCellValue();
 
     /**
-     * get the value of the cell as a date.  For strings we throw an exception.
-     * For blank cells we return a null.
+     * Get the value of the cell as a date.
+     * <p>
+     * For strings we throw an exception. For blank cells we return a null.
+     * </p>
+     * @return the value of the cell as a date
+     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is CELL_TYPE_STRING
+     * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
+     * @see DataFormatter for formatting  this date into a string similar to how excel does.
      */
     Date getDateCellValue();
 
     /**
-     * get the value of the cell as a string - for numeric cells we throw an exception.
-     * For blank cells we return an empty string.
-     * For formulaCells that are not string Formulas, we return empty String
+     * Get the value of the cell as a XSSFRichTextString
+     * <p>
+     * For numeric cells we throw an exception. For blank cells we return an empty string.
+     * For formula cells we return the pre-calculated value.
+     * </p>
+     * @return the value of the cell as a XSSFRichTextString
      */
-
     RichTextString getRichStringCellValue();
 
     /**
-     * Get the value of the cell as a string - for numeric cells we throw an exception
+     * Get the value of the cell as a string
      * <p>
-     * For blank cells we return an empty string.
-     * For formulaCells that are not string Formulas, we return empty String
+     * For numeric cells we throw an exception. For blank cells we return an empty string.
+     * For formulaCells that are not string Formulas, we return empty String.
      * </p>
+     * @return the value of the cell as a string
      */
     String getStringCellValue();
 
     /**
-     * set a boolean value for the cell
+     * Set a boolean value for the cell
      *
      * @param value the boolean value to set this cell to.  For formulas we'll set the
      *        precalculated value, for booleans we'll set its value. For other types we
      *        will change the cell to a boolean cell and set its value.
      */
-
-    void setCellValue(boolean value);
+     void setCellValue(boolean value);
 
     /**
-     * set a error value for the cell
+     * Set a error value for the cell
      *
      * @param value the error value to set this cell to.  For formulas we'll set the
-     *        precalculated value ??? IS THIS RIGHT??? , for errors we'll set
+     *        precalculated value , for errors we'll set
      *        its value. For other types we will change the cell to an error
      *        cell and set its value.
+     * @see FormulaError
      */
-
     void setCellErrorValue(byte value);
 
     /**
-     * get the value of the cell as a boolean.  For strings, numbers, and errors, we throw an exception.
-     * For blank cells we return a false.
+     * Get the value of the cell as a boolean.
+     * <p>
+     * For strings, numbers, and errors, we throw an exception. For blank cells we return a false.
+     * </p>
+     * @return the value of the cell as a boolean
+     * @throws IllegalStateException if the cell type returned by {@link #getCellType()}
+     *   is not CELL_TYPE_BOOLEAN, CELL_TYPE_BLANK or CELL_TYPE_FORMULA
      */
-
     boolean getBooleanCellValue();
 
     /**
-     * get the value of the cell as an error code.  For strings, numbers, and booleans, we throw an exception.
+     * Get the value of the cell as an error code.
+     * <p>
+     * For strings, numbers, and booleans, we throw an exception.
      * For blank cells we return a 0.
+     * </p>
+     *
+     * @return the value of the cell as an error code
+     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} isn't CELL_TYPE_ERROR
+     * @see FormulaError for error codes
      */
-
     byte getErrorCellValue();
 
     /**
-     * set the style for the cell.  The style should be an CellStyle created/retreived from
+     * Set the style for the cell.  The style should be an CellStyle created/retreived from
      * the Workbook.
      *
-     * @param style  reference contained in the workbook
-     * @see Workbook#createCellStyle()
-     * @see Workbook#getCellStyleAt(short)
+     * @param style  reference contained in the workbook.
+     * If the value is null then the style information is removed causing the cell to used the default workbook style.
+     * @see org.apache.poi.ss.usermodel.Workbook#createCellStyle()
      */
-
     void setCellStyle(CellStyle style);
 
     /**
-     * get the style for the cell.  This is a reference to a cell style contained in the workbook
-     * object.
+     * Return the cell's style.
+     *
+     * @return the cell's style. Always not-null. Default cell style has zero index and can be obtained as
+     * <code>workbook.getCellStyleAt(0)</code>
      * @see Workbook#getCellStyleAt(short)
      */
-
     CellStyle getCellStyle();
 
     /**
@@ -273,14 +323,14 @@ public interface Cell {
     /**
      * Returns comment associated with this cell
      *
-     * @return comment associated with this cell
+     * @return comment associated with this cell or <code>null</code> if not found
      */
     Comment getCellComment();
 
     /**
      * Returns hyperlink associated with this cell
      *
-     * @return hyperlink associated with this cell or null if not found
+     * @return hyperlink associated with this cell or <code>null</code> if not found
      */
     Hyperlink getHyperlink();
 

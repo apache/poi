@@ -344,13 +344,6 @@ public final class XSSFCell implements Cell {
     }
 
     /**
-     * @deprecated use {@link #getColumnIndex()}
-     */
-    public short getCellNum() {
-        return (short)getColumnIndex();
-    }
-
-    /**
      * Returns column index of this cell
      *
      * @return zero-based column index of a column in a sheet.
@@ -584,16 +577,7 @@ public final class XSSFCell implements Cell {
      *
      * @param num column index of this cell
      */
-    public void setCellNum(int num) {
-        setCellNum((short)num);
-    }
-
-    /**
-     * Sets column index of this cell
-     *
-     * @param num column index of this cell
-     */
-    public void setCellNum(short num) {
+    protected void setCellNum(int num) {
         checkBounds(num);
         cellNum = num;
         cell.setR(formatPosition());

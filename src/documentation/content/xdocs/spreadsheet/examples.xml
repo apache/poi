@@ -38,7 +38,7 @@
         </source>
         <p>All sample source is available in <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/ss/examples/">SVN</link></p>
 		</section>
-		<section><title>BusinessPlan</title>
+		<section><title>Business Plan</title>
       <p> The <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/ss/examples/BusinessPlan.java">BusinessPlan</link>
         application creates a sample business plan with three phases, weekly iterations and time highlighting. Demonstrates advanced cell formatting 
         (number and date formats, alignmnets, fills, borders) and various settings for organizing data in a sheet (freezed panes, groupped rows).
@@ -48,14 +48,14 @@
       </p>
 		</section>
 		<section><title>Calendar</title>
-      <p> The <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/ss/examples/Calendar.java">Calendar</link>
+      <p> The <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/ss/examples/CalendarDemo.java">Calendar</link>
         demo creates a multi sheet calendar. Each month is on a separate sheet. 
       </p>
       <p>
         <img src="../resources/images/calendar.jpg" alt="calendar demo"/>
       </p>
 		</section>
-		<section><title>LoanCalculator</title>
+		<section><title>Loan Calculator</title>
       <p> The <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/ss/examples/LoanCalculator.java">LoanCalculator</link>
         demo creates a simple loan calculator. Demonstrates advance usage of cell formulas and named ranges. 
       </p>
@@ -63,8 +63,8 @@
         <img src="../resources/images/loancalc.jpg" alt="loan calculator demo"/>
       </p>
 		</section>
-		<section><title>TimesheetDemo</title>
-      <p> The <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/ss/examples/TimesheetDemo.java">TimesheetDemo</link>
+		<section><title>Timesheet</title>
+      <p> The <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/ss/examples/TimesheetDemo.java">Timesheet</link>
         demo creates a weekly timesheet with automatic calculation of total hours. Demonstrates advance usage of cell formulas. 
       </p>
       <p>

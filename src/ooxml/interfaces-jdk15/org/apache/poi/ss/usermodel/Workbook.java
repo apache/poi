@@ -23,6 +23,11 @@ import java.util.List;
 
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
+/**
+ * High level representation of a Excel workbook.  This is the first object most users
+ * will construct whether they are reading or writing a workbook.  It is also the
+ * top level object for creating new sheets/etc.
+ */
 public interface Workbook {
 
     /** Extended windows meta file */
@@ -43,114 +48,143 @@ public interface Workbook {
     /** Device independent bitmap */
     public static final int PICTURE_TYPE_DIB = 7;
 
+    /**
+     * Convenience method to get the active sheet.  The active sheet is is the sheet
+     * which is currently displayed when the workbook is viewed in Excel.
+     * 'Selected' sheet(s) is a distinct concept.
+     *
+     * @return the index of the active sheet (0-based)
+     */
     int getActiveSheetIndex();
+
+    /**
+     * Convenience method to set the active sheet.  The active sheet is is the sheet
+     * which is currently displayed when the workbook is viewed in Excel.
+     * 'Selected' sheet(s) is a distinct concept.
+     *
+     * @param sheetIndex index of the active sheet (0-based)
+     */
     void setActiveSheet(int sheetIndex);
 
+    /**
+     * Gets the first tab that is displayed in the list of tabs in excel.
+     *
+     * @return the first tab that to display in the list of tabs (0-based).
+     */
     int getFirstVisibleTab();
+
+    /**
+     * Sets the first tab that is displayed in the list of tabs in excel.
+     *
+     * @param sheetIndex the first tab that to display in the list of tabs (0-based)
+     */
     void setFirstVisibleTab(int sheetIndex);
 
     /**
-     * sets the order of appearance for a given sheet.
+     * Sets the order of appearance for a given sheet.
      *
      * @param sheetname the name of the sheet to reorder
      * @param pos the position that we want to insert the sheet into (0 based)
      */
-
     void setSheetOrder(String sheetname, int pos);
 
     /**
-     * sets the tab whose data is actually seen when the sheet is opened.
+     * Sets the tab whose data is actually seen when the sheet is opened.
      * This may be different from the "selected sheet" since excel seems to
      * allow you to show the data of one sheet when another is seen "selected"
      * in the tabs (at the bottom).
+     *
      * @see Sheet#setSelected(boolean)
-     * @param index
+     * @param index the index of the sheet to select (0 based)
      */
     void setSelectedTab(short index);
 
     /**
-     * set the sheet name.
-     * Will throw IllegalArgumentException if the name is greater than 31 chars
-     * or contains /\?*[]
+     * Set the sheet name.
+     *
      * @param sheet number (0 based)
+     * @throws IllegalArgumentException if the name is greater than 31 chars or contains <code>/\?*[]</code>
      */
     void setSheetName(int sheet, String name);
 
     /**
-     * get the sheet name
-     * @param sheet Number
+     * Set the sheet name
+     *
+     * @param sheet sheet number (0 based)
      * @return Sheet name
      */
-
     String getSheetName(int sheet);
 
-    /** Returns the index of the sheet by his name
+    /**
+     * Returns the index of the sheet by his name
+     *
      * @param name the sheet name
      * @return index of the sheet (0 based)
      */
     int getSheetIndex(String name);
 
-    /** Returns the index of the given sheet
+    /**
+     * Returns the index of the given sheet
+     *
      * @param sheet the sheet to look up
      * @return index of the sheet (0 based)
      */
     int getSheetIndex(Sheet sheet);
 
     /**
-     * create an Sheet for this Workbook, adds it to the sheets and returns
+     * Sreate an Sheet for this Workbook, adds it to the sheets and returns
      * the high level representation.  Use this to create new sheets.
      *
      * @return Sheet representing the new sheet.
      */
-
     Sheet createSheet();
 
     /**
-     * create an Sheet from an existing sheet in the Workbook.
-     *
-     * @return Sheet representing the cloned sheet.
-     */
-
-    Sheet cloneSheet(int sheetNum);
-
-    /**
-     * create an Sheet for this Workbook, adds it to the sheets and returns
+     * Create an Sheet for this Workbook, adds it to the sheets and returns
      * the high level representation.  Use this to create new sheets.
      *
-     * @param sheetname     sheetname to set for the sheet.
+     * @param sheetname  sheetname to set for the sheet.
      * @return Sheet representing the new sheet.
+     * @throws IllegalArgumentException if the name is greater than 31 chars or contains <code>/\?*[]</code>
      */
-
     Sheet createSheet(String sheetname);
 
     /**
-     * get the number of spreadsheets in the workbook (this will be three after serialization)
-     * @return number of sheets
+     * Create an Sheet from an existing sheet in the Workbook.
+     *
+     * @return Sheet representing the cloned sheet.
      */
+    Sheet cloneSheet(int sheetNum);
 
+
+    /**
+     * Get the number of spreadsheets in the workbook
+     *
+     * @return the number of sheets
+     */
     int getNumberOfSheets();
 
     /**
      * Get the Sheet object at the given index.
+     *
      * @param index of the sheet number (0-based physical & logical)
      * @return Sheet at the provided index
      */
-
     Sheet getSheetAt(int index);
 
     /**
      * Get sheet with the given name
+     *
      * @param name of the sheet
-     * @return Sheet with the name provided or null if it does not exist
+     * @return Sheet with the name provided or <code>null</code> if it does not exist
      */
-
     Sheet getSheet(String name);
 
     /**
-     * removes sheet at the given index
-     * @param index of the sheet  (0-based)
+     * Removes sheet at the given index
+     *
+     * @param index of the sheet to remove (0-based)
      */
-
     void removeSheetAt(int index);
     
     /**
@@ -181,79 +215,111 @@ public interface Workbook {
     void setRepeatingRowsAndColumns(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow);
 
     /**
-     * create a new Font and add it to the workbook's font table
+     * Create a new Font and add it to the workbook's font table
+     *
      * @return new font object
      */
-
     Font createFont();
 
     /**
      * Finds a font that matches the one with the supplied attributes
+     *
+     * @return the font with the matched attributes or <code>null</code>
      */
     Font findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline);
 
     /**
-     * get the number of fonts in the font table
+     * Get the number of fonts in the font table
+     *
      * @return number of fonts
      */
-
     short getNumberOfFonts();
 
     /**
-     * get the font at the given index number
-     * @param idx  index number
-     * @return XSSFFont at the index
+     * Get the font at the given index number
+     *
+     * @param idx  index number (0-based)
+     * @return font at the index
      */
-
     Font getFontAt(short idx);
 
     /**
-     * create a new Cell style and add it to the workbook's style table
+     * Create a new Cell style and add it to the workbook's style table
+     *
      * @return the new Cell Style object
      */
-
     CellStyle createCellStyle();
 
     /**
-     * get the number of styles the workbook contains
+     * Get the number of styles the workbook contains
+     *
      * @return count of cell styles
      */
-
     short getNumCellStyles();
 
     /**
-     * get the cell style object at the given index
-     * @param idx  index within the set of styles
+     * Get the cell style object at the given index
+     *
+     * @param idx  index within the set of styles (0-based)
      * @return CellStyle object at the index
      */
-
     CellStyle getCellStyleAt(short idx);
 
     /**
-     * Method write - write out this workbook to an Outputstream.  Constructs
-     * a new POI POIFSFileSystem, passes in the workbook binary representation  and
-     * writes it out.
+     * Write out this workbook to an Outputstream.
      *
-     * @param stream - the java OutputStream you wish to write the XLS to
-     *
+     * @param stream - the java OutputStream you wish to write to
      * @exception IOException if anything can't be written.
-     * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
      */
-
     void write(OutputStream stream) throws IOException;
 
-    /** gets the total number of named ranges in the workboko
+    /**
+     * Gets the total number of named ranges in the workbook
+     *
      * @return number of named ranges
      */
     int getNumberOfNames();
 
-    /** gets the Named range
-     * @param index position of the named range
+    /**
+     * Gets the Named range
+     *
+     * @param index position of the named range (0-based)
      * @return named range high level
      */
     Name getNameAt(int index);
 
     /**
+     * Creates a new named range in this workbook
+     *
+     * @return new named range object
+     */
+    Name createName();
+
+    /**
+     * Gets the named range index by his name
+      * <i>Note:</i>Excel named ranges are case-insensitive and
+      * this method performs a case-insensitive search.
+      *
+      * @param name named range name
+      * @return named range index
+      */
+     int getNameIndex(String name);
+
+     /**
+      * Remove the named range by his index
+      *
+      * @param index named range index (0 based)
+      */
+     void removeName(int index);
+
+    /**
+     * Remove the named range by his name
+     *
+     * @param name named range name
+     */
+    void removeName(String name);
+
+     /**
      * Sets the printarea for the sheet provided
      * <p>
      * i.e. Reference = $A$1:$B$2
@@ -274,7 +340,9 @@ public interface Workbook {
     void setPrintArea(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow);
 
     /**
-     * Retrieves the reference for the printarea of the specified sheet, the sheet name is appended to the reference even if it was not specified.
+     * Retrieves the reference for the printarea of the specified sheet,
+     * the sheet name is appended to the reference even if it was not specified.
+     *
      * @param sheetIndex Zero-based sheet index (0 Represents the first sheet to keep consistent with java)
      * @return String Null if no print area has been defined
      */
@@ -282,6 +350,7 @@ public interface Workbook {
 
     /**
      * Delete the printarea for the sheet specified
+     *
      * @param sheetIndex Zero-based sheet index (0 = First Sheet)
      */
     void removePrintArea(int sheetIndex);
@@ -289,56 +358,43 @@ public interface Workbook {
 	/**
 	 * Retrieves the current policy on what to do when
 	 *  getting missing or blank cells from a row.
+     * <p>
 	 * The default is to return blank and null cells.
 	 *  {@link MissingCellPolicy}
+     * </p>
 	 */
 	MissingCellPolicy getMissingCellPolicy();
-	/**
+
+    /**
 	 * Sets the policy on what to do when
 	 *  getting missing or blank cells from a row.
+     *
 	 * This will then apply to all calls to 
 	 *  {@link Row#getCell(int)} }. See
 	 *  {@link MissingCellPolicy}
 	 */
 	void setMissingCellPolicy(MissingCellPolicy missingCellPolicy);
 
-    /** creates a new named range and add it to the model
-     * @return named range high level
-     */
-    Name createName();
-
-    /** gets the named range index by his name
-     * <i>Note:</i>Excel named ranges are case-insensitive and
-     * this method performs a case-insensitive search.
-     * 
-     * @param name named range name
-     * @return named range index
-     */
-    int getNameIndex(String name);
-
-    /** remove the named range by his index
-     * @param index named range index (0 based)
-     */
-    void removeName(int index);
-
     /**
      * Returns the instance of DataFormat for this workbook.
+     *
      * @return the DataFormat object
      */
     DataFormat createDataFormat();
-
-    /** remove the named range by his name
-     * @param name named range name
-     */
-    void removeName(String name);
 
     /**
      * Adds a picture to the workbook.
      *
      * @param pictureData       The bytes of the picture
-     * @param format            The format of the picture.  One of <code>PICTURE_TYPE_*</code>
+     * @param format            The format of the picture.
      *
      * @return the index to this picture (1 based).
+     * @see #PICTURE_TYPE_EMF
+     * @see #PICTURE_TYPE_WMF
+     * @see #PICTURE_TYPE_PICT
+     * @see #PICTURE_TYPE_JPEG
+     * @see #PICTURE_TYPE_PNG
+     * @see #PICTURE_TYPE_DIB
      */
     int addPicture(byte[] pictureData, int format);
 
@@ -351,51 +407,50 @@ public interface Workbook {
 
     /**
      * Returns an object that handles instantiating concrete
-     *  classes of the various instances one needs for 
-     *  HSSF and XSSF.
-     * Works around a major shortcoming in Java, where we
-     *  can't have static methods on interfaces or abstract
-     *  classes.
+     * classes of the various instances one needs for  HSSF and XSSF.
      */
     CreationHelper getCreationHelper();
 
     /**
      * Check whether a sheet is hidden.
-     * Note that a sheet could instead be
-     *  set to be very hidden, which is different
+     * <p>
+     * Note that a sheet could instead be set to be very hidden, which is different
      *  ({@link #isSheetVeryHidden(int)})
+     * </p>
      * @param sheetIx Number
      * @return True if sheet is hidden
      */
-    public boolean isSheetHidden(int sheetIx) ;
+    boolean isSheetHidden(int sheetIx) ;
 
     /**
      * Check whether a sheet is very hidden.
-     * This is different from the normal
-     *  hidden status
+     * <p>
+     * This is different from the normal hidden status
      *  ({@link #isSheetHidden(int)})
-     * @param sheetIx Number
-     * @return True if sheet is very hidden
+     * </p>
+     * @param sheetIx sheet index to check
+     * @return <code>true</code> if sheet is very hidden
      */
-    public boolean isSheetVeryHidden(int sheetIx);
+    boolean isSheetVeryHidden(int sheetIx);
 
     /**
      * Hide or unhide a sheet
      *
-     * @param sheetIx The sheet index
+     * @param sheetIx the sheet index (0-based)
      * @param hidden True to mark the sheet as hidden, false otherwise
      */
-    public void setSheetHidden(int sheetIx, boolean hidden);
+    void setSheetHidden(int sheetIx, boolean hidden);
 
     /**
      * Hide or unhide a sheet.
+     * <pre>
      *  0 = not hidden
      *  1 = hidden
      *  2 = very hidden.
-     *
+     * </pre>
      * @param sheetIx The sheet number
      * @param hidden 0 for not hidden, 1 for hidden, 2 for very hidden
      */
-    public void setSheetHidden(int sheetIx, int hidden);
+    void setSheetHidden(int sheetIx, int hidden);
     
 }

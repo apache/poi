@@ -1317,10 +1317,10 @@ Examples:
             constructing AreaReference  
             </p>
             <source>
-    if(hssfName.isDeleted()){
+    if(name.isDeleted()){
       //named range points to a deleted cell. 
     } else {
-      AreaReference ref = new AreaReference(hssfName.getReference());
+      AreaReference ref = new AreaReference(name.getReference());
     }
             </source>
         </section>
