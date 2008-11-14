@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta4" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">46189 - added chart records: CHARTFRTINFO, STARTBLOCK, ENDBLOCK, STARTOBJECT, ENDOBJECT, and CATLAB</action>
            <action dev="POI-DEVELOPERS" type="fix">46199 - More tweaks to EmbeddedObjectRefSubRecord</header>
            <action dev="POI-DEVELOPERS" type="add">Changes to formula evaluation allowing for reduced memory usage</action>
            <action dev="POI-DEVELOPERS" type="fix">45290 - Support odd files where the POIFS header block comes after the data blocks, and is on the data blocks list</header>

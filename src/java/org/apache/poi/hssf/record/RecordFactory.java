@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.poi.hssf.record.chart.*;
+
 /**
  * Title:  Record Factory<P>
  * Description:  Takes a stream and outputs an array of Record objects.<P>
@@ -158,6 +160,19 @@ public final class RecordFactory {
 		WriteAccessRecord.class,
 		WriteProtectRecord.class,
 		WSBoolRecord.class,
+		
+		LinkedDataRecord.class,
+		
+		ChartFRTInfoRecord.class,
+		ChartStartBlockRecord.class,
+		ChartEndBlockRecord.class,
+		ChartStartObjectRecord.class,
+		ChartEndObjectRecord.class,
+		CatLabRecord.class,
+		
+		BeginRecord.class,
+		EndRecord.class,
+		SeriesToChartGroupRecord.class,
 	};
 	
 	/**
