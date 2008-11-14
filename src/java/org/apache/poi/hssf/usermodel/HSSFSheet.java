@@ -1656,7 +1656,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * @param column the column index
      * @param style the style to set
      */
-    public void setDefaultColumnStyle(short column, CellStyle style) {
+    public void setDefaultColumnStyle(int column, CellStyle style) {
         sheet.setDefaultColumnStyle(column, ((HSSFCellStyle)style).getIndex());
     }
 
@@ -1669,7 +1669,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      *
      * @param column the column index
      */
-    public void autoSizeColumn(short column) {
+    public void autoSizeColumn(int column) {
         autoSizeColumn(column, false);
     }
     
@@ -1686,7 +1686,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * @param column the column index
      * @param useMergedCells whether to use the contents of merged cells when calculating the width of the column
      */
-    public void autoSizeColumn(short column, boolean useMergedCells) {
+    public void autoSizeColumn(int column, boolean useMergedCells) {
         AttributedString str;
         TextLayout layout;
         /**

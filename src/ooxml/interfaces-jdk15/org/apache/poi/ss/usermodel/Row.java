@@ -20,132 +20,159 @@ package org.apache.poi.ss.usermodel;
 import java.lang.Iterable;
 import java.util.Iterator;
 
+/**
+ * High level representation of a row of a spreadsheet.
+ */
 public interface Row extends Iterable<Cell> {
+
     /**
      * Use this to create new cells within the row and return it.
      * <p>
-     * The cell that is returned is a CELL_TYPE_BLANK. The type can be changed
+     * The cell that is returned is a {@link Cell#CELL_TYPE_BLANK}. The type can be changed
      * either through calling <code>setCellValue</code> or <code>setCellType</code>.
      *
      * @param column - the column number this cell represents
-     *
      * @return Cell a high level representation of the created cell.
+     * @throws IllegalArgumentException if columnIndex < 0
      */
     Cell createCell(int column);
 
     /**
      * Use this to create new cells within the row and return it.
      * <p>
-     * The cell that is returned is a CELL_TYPE_BLANK. The type can be changed
+     * The cell that is returned is a {@link Cell#CELL_TYPE_BLANK}. The type can be changed
      * either through calling setCellValue or setCellType.
      *
      * @param column - the column number this cell represents
-     *
      * @return Cell a high level representation of the created cell.
+     * @throws IllegalArgumentException if columnIndex < 0
      */
     Cell createCell(int column, int type);
 
     /**
-     * remove the Cell from this row.
-     * @param cell to remove
+     * Remove the Cell from this row.
+     *
+     * @param cell the cell to remove
      */
     void removeCell(Cell cell);
 
     /**
-     * set the row number of this row.
+     * Set the row number of this row.
+     *
      * @param rowNum  the row number (0-based)
-     * @throws IndexOutOfBoundsException if the row number is not within the range 0-65535.
+     * @throws IllegalArgumentException if rowNum < 0
      */
-
     void setRowNum(int rowNum);
 
     /**
-     * get row number this row represents
+     * Get row number this row represents
+     *
      * @return the row number (0 based)
      */
-
     int getRowNum();
 
     /**
-     * get the cell representing a given column (logical cell) 0-based.  If you
+     * Get the cell representing a given column (logical cell) 0-based.  If you
      * ask for a cell that is not defined....you get a null.
      *
      * @param cellnum  0 based column number
      * @return Cell representing that column or null if undefined.
+     * @see #getCell(int, org.apache.poi.ss.usermodel.Row.MissingCellPolicy)
      */
     Cell getCell(int cellnum);
     
     /**
-     * Get the cell representing a given column (logical cell)
-     *  0-based.  If you ask for a cell that is not defined, then
-     *  your supplied policy says what to do
+     * Returns the cell at the given (0 based) index, with the specified {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy}
      *
-     * @param cellnum  0 based column number
-     * @param policy Policy on blank / missing cells
-     * @return representing that column or null if undefined + policy allows.
+     * @return the cell at the given (0 based) index
+     * @throws IllegalArgumentException if cellnum < 0 or the specified MissingCellPolicy is invalid
+     * @see Row#RETURN_NULL_AND_BLANK
+     * @see Row#RETURN_BLANK_AS_NULL
+     * @see Row#CREATE_NULL_AS_BLANK
      */
-    public Cell getCell(int cellnum, MissingCellPolicy policy);
+    Cell getCell(int cellnum, MissingCellPolicy policy);
 
     /**
-     * get the number of the first cell contained in this row.
-     * @return short representing the first logical cell in the row, or -1 if the row does not contain any cells.
+     * Get the number of the first cell contained in this row.
+     *
+     * @return short representing the first logical cell in the row,
+     *  or -1 if the row does not contain any cells.
      */
     short getFirstCellNum();
 
     /**
-     * gets the number of the last cell contained in this row <b>PLUS ONE</b>. 
-     * @return short representing the last logical cell in the row <b>PLUS ONE</b>, or -1 if the row does not contain any cells.
+     * Gets the index of the last cell contained in this row <b>PLUS ONE</b>. The result also
+     * happens to be the 1-based column number of the last cell.  This value can be used as a
+     * standard upper bound when iterating over cells:
+     * <pre>
+     * short minColIx = row.getFirstCellNum();
+     * short maxColIx = row.getLastCellNum();
+     * for(short colIx=minColIx; colIx&lt;maxColIx; colIx++) {
+     *   Cell cell = row.getCell(colIx);
+     *   if(cell == null) {
+     *     continue;
+     *   }
+     *   //... do something with cell
+     * }
+     * </pre>
+     *
+     * @return short representing the last logical cell in the row <b>PLUS ONE</b>,
+     *   or -1 if the row does not contain any cells.
      */
-
     short getLastCellNum();
 
     /**
-     * gets the number of defined cells (NOT number of cells in the actual row!).
+     * Gets the number of defined cells (NOT number of cells in the actual row!).
      * That is to say if only columns 0,4,5 have values then there would be 3.
+     *
      * @return int representing the number of defined cells in the row.
      */
-
     int getPhysicalNumberOfCells();
 
     /**
-     * set the row's height or set to ff (-1) for undefined/default-height.  Set the height in "twips" or
+     * Set the row's height or set to ff (-1) for undefined/default-height.  Set the height in "twips" or
      * 1/20th of a point.
+     *
      * @param height  rowheight or 0xff for undefined (use sheet default)
      */
-
     void setHeight(short height);
 
     /**
-     * set whether or not to display this row with 0 height
+     * Set whether or not to display this row with 0 height
+     *
      * @param zHeight  height is zero or not.
      */
     void setZeroHeight(boolean zHeight);
 
     /**
-     * get whether or not to display this row with 0 height
+     * Get whether or not to display this row with 0 height
+     *
      * @return - zHeight height is zero or not.
      */
     boolean getZeroHeight();
 
     /**
-     * set the row's height in points.
-     * @param height  row height in points
+     * Set the row's height in points.
+     *
+     * @param height the height in points. <code>-1</code>  resets to the default height
      */
-
     void setHeightInPoints(float height);
 
     /**
-     * get the row's height or ff (-1) for undefined/default-height in twips (1/20th of a point)
-     * @return rowheight or 0xff for undefined (use sheet default)
+     * Get the row's height measured in twips (1/20th of a point). If the height is not set, the default worksheet value is returned,
+     * See {@link Sheet#getDefaultRowHeightInPoints()}
+     *
+     * @return row height measured in twips (1/20th of a point)
      */
-
     short getHeight();
 
     /**
-     * get the row's height or ff (-1) for undefined/default-height in points (20*getHeight())
-     * @return rowheight or 0xff for undefined (use sheet default)
+     * Returns row height measured in point size. If the height is not set, the default worksheet value is returned,
+     * See {@link Sheet#getDefaultRowHeightInPoints()}
+     *
+     * @return row height measured in point size
+     * @see Sheet#getDefaultRowHeightInPoints()
      */
-
     float getHeightInPoints();
 
     /**
@@ -158,7 +185,7 @@ public interface Row extends Iterable<Cell> {
      * Used to specify the different possible policies
      *  if for the case of null and blank cells
      */
-    public static class MissingCellPolicy {
+    public static final class MissingCellPolicy {
     	private static int NEXT_ID = 1;
     	public final int id;
     	private MissingCellPolicy() {

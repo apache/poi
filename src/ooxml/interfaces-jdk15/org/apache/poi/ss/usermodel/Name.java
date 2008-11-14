@@ -22,36 +22,43 @@ public interface Name {
     /** Get the sheets name which this named range is referenced to
      * @return sheet name, which this named range refered to
      */
-
     String getSheetName();
 
     /** 
      * gets the name of the named range
      * @return named range name
      */
-
     String getNameName();
 
     /** 
      * sets the name of the named range
      * @param nameName named range name to set
      */
-
     void setNameName(String nameName);
 
     /** 
      * gets the reference of the named range
      * @return reference of the named range
      */
-
     String getReference();
 
     /** 
      * sets the reference of this named range
      * @param ref the reference to set
      */
+   void setReference(String ref);
 
-    void setReference(String ref);
-
+    /**
+     * Checks if this name is a function name
+     *
+     * @return true if this name is a function name
+     */
 	boolean isFunctionName();
+
+    /**
+     * Checks if this name points to a cell that no longer exists
+     *
+     * @return true if the name refers to a deleted cell, false otherwise
+     */
+    boolean isDeleted();
 }

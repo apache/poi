@@ -22,6 +22,15 @@ import java.util.Iterator;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.util.CellRangeAddress;
 
+/**
+ * High level representation of a Excel worksheet.
+ *
+ * <p>
+ * Sheets are the central structures within a workbook, and are where a user does most of his spreadsheet work.
+ * The most common type of sheet is the worksheet, which is represented as a grid of cells. Worksheet cells can
+ * contain text, numbers, dates, and formulas. Cells can also be formatted.
+ * </p>
+ */
 public interface Sheet extends Iterable<Row> {
 
     /* Constants for margins */
@@ -49,8 +58,7 @@ public interface Sheet extends Iterable<Row> {
      * Create a new row within the sheet and return the high level representation
      *
      * @param rownum  row number
-     * @return High level Row object representing a row in the sheet
-     * @see Row
+     * @return high level Row object representing a row in the sheet
      * @see #removeRow(Row)
      */
     Row createRow(int rownum);
@@ -60,54 +68,57 @@ public interface Sheet extends Iterable<Row> {
      *
      * @param row   representing a row to remove.
      */
-
     void removeRow(Row row);
 
     /**
      * Returns the logical row (not physical) 0-based.  If you ask for a row that is not
      * defined you get a null.  This is to say row 4 represents the fifth row on a sheet.
-     * @param rownum  row to get
+     *
+     * @param rownum  row to get (0-based)
      * @return Row representing the rownumber or null if its not defined on the sheet
      */
-
     Row getRow(int rownum);
 
     /**
-     * Returns the number of phsyically defined rows (NOT the number of rows in the sheet)
+     * Returns the number of physically defined rows (NOT the number of rows in the sheet)
+     *
+     * @return the number of physically defined rows in this sheet
      */
-
     int getPhysicalNumberOfRows();
 
     /**
-     * gets the first row on the sheet
-     * @return the number of the first logical row on the sheet
+     * Gets the first row on the sheet
+     *
+     * @return the number of the first logical row on the sheet (0-based)
      */
-
     int getFirstRowNum();
 
     /**
-     * gets the last row on the sheet
-     * @return last row contained n this sheet.
+     * Gets the last row on the sheet
+     *
+     * @return last row contained n this sheet (0-based)
      */
-
     int getLastRowNum();
 
     /**
-     * Get the visibility state for a given column.
+     * Get the visibility state for a given column
+     *
      * @param columnIndex - the column to get (0-based)
      * @param hidden - the visiblity state of the column
      */
     void setColumnHidden(int columnIndex, boolean hidden);
 
     /**
-     * Get the hidden state for a given column.
+     * Get the hidden state for a given column
+     *
      * @param columnIndex - the column to set (0-based)
      * @return hidden - <code>false</code> if the column is visible
      */
     boolean isColumnHidden(int columnIndex);
 
     /**
-     * set the width (in units of 1/256th of a character width)
+     * Set the width (in units of 1/256th of a character width)
+     *
      * @param columnIndex - the column to set (0-based)
      * @param width - the width in units of 1/256th of a character width
      */
@@ -119,72 +130,74 @@ public interface Sheet extends Iterable<Row> {
      * @return width - the width in units of 1/256th of a character width
      */
     int getColumnWidth(int columnIndex);
-    /**
-     * set the default column width for the sheet (if the columns do not define their own width) in
-     * characters
-     * @param width default column width
-     */
-    public void setDefaultColumnWidth(int width);
 
     /**
-     * get the default column width for the sheet (if the columns do not define their own width) in
-     * characters
-     * @return default column width
+     * Set the default column width for the sheet (if the columns do not define their own width)
+     * in characters
+     *
+     * @param width default column width measured in characters
      */
+    void setDefaultColumnWidth(int width);
 
+    /**
+     * Get the default column width for the sheet (if the columns do not define their own width)
+     * in characters
+     *
+     * @return default column width measured in characters
+     */
     int getDefaultColumnWidth();
 
     /**
-     * get the default row height for the sheet (if the rows do not define their own height) in
+     * Get the default row height for the sheet (if the rows do not define their own height) in
      * twips (1/20 of  a point)
-     * @return  default row height
+     *
+     * @return  default row height measured in twips (1/20 of  a point)
      */
-
     short getDefaultRowHeight();
 
     /**
-     * get the default row height for the sheet (if the rows do not define their own height) in
+     * Get the default row height for the sheet (if the rows do not define their own height) in
      * points.
+     *
      * @return  default row height in points
      */
-
     float getDefaultRowHeightInPoints();
 
     /**
-     * set the default row height for the sheet (if the rows do not define their own height) in
+     * Set the default row height for the sheet (if the rows do not define their own height) in
      * twips (1/20 of  a point)
-     * @param  height default row height
+     *
+     * @param  height default row height measured in twips (1/20 of  a point)
      */
-
     void setDefaultRowHeight(short height);
 
     /**
-     * set the default row height for the sheet (if the rows do not define their own height) in
+     * Set the default row height for the sheet (if the rows do not define their own height) in
      * points
      * @param height default row height
      */
-
     void setDefaultRowHeightInPoints(float height);
 
     /**
-     * adds a merged region of cells (hence those cells form one)
+     * Adds a merged region of cells (hence those cells form one)
+     *
      * @param region (rowfrom/colfrom-rowto/colto) to merge
      * @return index of this region
      */
     int addMergedRegion(CellRangeAddress region);
 
     /**
-     * determines whether the output is vertically centered on the page.
+     * Determines whether the output is vertically centered on the page.
+     *
      * @param value true to vertically center, false otherwise.
      */
-
     void setVerticallyCenter(boolean value);
 
     /**
-     * determines whether the output is horizontally centered on the page.
+     * Determines whether the output is horizontally centered on the page.
+     *
      * @param value true to horizontally center, false otherwise.
      */
-
     void setHorizontallyCenter(boolean value);
 
     /**
@@ -194,140 +207,187 @@ public interface Sheet extends Iterable<Row> {
     boolean getHorizontallyCenter();
 
     /**
-     * removes a merged region of cells (hence letting them free)
+     * Removes a merged region of cells (hence letting them free)
+     *
      * @param index of the region to unmerge
      */
-
     void removeMergedRegion(int index);
 
     /**
-     * returns the number of merged regions
+     * Returns the number of merged regions
+     *
      * @return number of merged regions
      */
-
     int getNumMergedRegions();
 
     /**
+     *  Returns an iterator of the physical rows
+     *
      * @return an iterator of the PHYSICAL rows.  Meaning the 3rd element may not
      * be the third row if say for instance the second row is undefined.
      */
     Iterator<Row> rowIterator();
 
     /**
-     * show automatic page breaks or not
-     * @param b  whether to show auto page breaks
+     * Flag indicating whether the sheet displays Automatic Page Breaks.
+     *
+     * @param value <code>true</code> if the sheet displays Automatic Page Breaks.
      */
-
     void setAutobreaks(boolean b);
 
     /**
-     * set whether to display the guts or not
+     * Set whether to display the guts or not
      *
-     * @param b  guts or no guts (or glory)
+     * @param value - guts or no guts
      */
-
-    void setDisplayGuts(boolean b);
+    void setDisplayGuts(boolean value);
 
     /**
-     * fit to page option is on
-     * @param b  fit or not
+     * Flag indicating whether the Fit to Page print option is enabled.
+     *
+     * @param value <code>true</code> if the Fit to Page print option is enabled.
      */
-
-    void setFitToPage(boolean b);
+    void setFitToPage(boolean value);
 
     /**
-     * set if row summaries appear below detail in the outline
-     * @param b  below or not
+     * Flag indicating whether summary rows appear below detail in an outline, when applying an outline.
+     *
+     * <p>
+     * When true a summary row is inserted below the detailed data being summarized and a
+     * new outline level is established on that row.
+     * </p>
+     * <p>
+     * When false a summary row is inserted above the detailed data being summarized and a new outline level
+     * is established on that row.
+     * </p>
+     * @param value <code>true</code> if row summaries appear below detail in the outline
      */
-
-    void setRowSumsBelow(boolean b);
+    void setRowSumsBelow(boolean value);
 
     /**
-     * set if col summaries appear right of the detail in the outline
-     * @param b  right or not
+     * Flag indicating whether summary columns appear to the right of detail in an outline, when applying an outline.
+     *
+     * <p>
+     * When true a summary column is inserted to the right of the detailed data being summarized
+     * and a new outline level is established on that column.
+     * </p>
+     * <p>
+     * When false a summary column is inserted to the left of the detailed data being
+     * summarized and a new outline level is established on that column.
+     * </p>
+     * @param value <code>true</code> if col summaries appear right of the detail in the outline
      */
-
-    void setRowSumsRight(boolean b);
+    void setRowSumsRight(boolean value);
 
     /**
-     * show automatic page breaks or not
-     * @return whether to show auto page breaks
+     * Flag indicating whether the sheet displays Automatic Page Breaks.
+     *
+     * @return <code>true</code> if the sheet displays Automatic Page Breaks.
      */
-
     boolean getAutobreaks();
 
     /**
-     * get whether to display the guts or not
+     * Get whether to display the guts or not,
+     * default value is true
      *
-     * @return guts or no guts (or glory)
+     * @return boolean - guts or no guts
      */
-
     boolean getDisplayGuts();
 
     /**
-     * fit to page option is on
-     * @return fit or not
+     * Flag indicating whether the Fit to Page print option is enabled.
+     *
+     * @return <code>true</code> if the Fit to Page print option is enabled.
      */
-
     boolean getFitToPage();
 
     /**
-     * get if row summaries appear below detail in the outline
-     * @return below or not
+     * Flag indicating whether summary rows appear below detail in an outline, when applying an outline.
+     *
+     * <p>
+     * When true a summary row is inserted below the detailed data being summarized and a
+     * new outline level is established on that row.
+     * </p>
+     * <p>
+     * When false a summary row is inserted above the detailed data being summarized and a new outline level
+     * is established on that row.
+     * </p>
+     * @return <code>true</code> if row summaries appear below detail in the outline
      */
-
     boolean getRowSumsBelow();
 
     /**
-     * get if col summaries appear right of the detail in the outline
-     * @return right or not
+     * Flag indicating whether summary columns appear to the right of detail in an outline, when applying an outline.
+     *
+     * <p>
+     * When true a summary column is inserted to the right of the detailed data being summarized
+     * and a new outline level is established on that column.
+     * </p>
+     * <p>
+     * When false a summary column is inserted to the left of the detailed data being
+     * summarized and a new outline level is established on that column.
+     * </p>
+     * @return <code>true</code> if col summaries appear right of the detail in the outline
      */
-
     boolean getRowSumsRight();
 
     /**
-     * Returns whether gridlines are printed.
-     * @return Gridlines are printed
+     * Gets the flag indicating whether this sheet displays the lines
+     * between rows and columns to make editing and reading easier.
+     *
+     * @return <code>true</code> if this sheet displays gridlines.
+     * @see #isPrintGridlines() to check if printing of gridlines is turned on or off
      */
     boolean isPrintGridlines();
 
     /**
-     * Turns on or off the printing of gridlines.
-     * @param newPrintGridlines boolean to turn on or off the printing of
-     * gridlines
+     * Sets the flag indicating whether this sheet should display the lines
+     * between rows and columns to make editing and reading easier.
+     * To turn printing of gridlines use {@link #setPrintGridlines(boolean)}
+     *
+     *
+     * @param show <code>true</code> if this sheet should display gridlines.
+     * @see #setPrintGridlines(boolean)
      */
-    void setPrintGridlines(boolean newPrintGridlines);
+    void setPrintGridlines(boolean show);
 
     /**
      * Gets the print setup object.
+     *
      * @return The user model for the print setup object.
      */
     PrintSetup getPrintSetup();
 
     /**
      * Gets the user model for the default document header.
-     * Note that XSSF offers more kinds of document
-     *  headers than HSSF does
-     * @return The Document header.
+     * <p>
+     * Note that XSSF offers more kinds of document headers than HSSF does
+     * </p>
+     * @return the document header.
      */
     Header getHeader();
 
     /**
      * Gets the user model for the default document footer.
-     * Note that XSSF offers more kinds of document
-     *  footers than HSSF does.
-     * @return The Document footer.
+     * Note that XSSF offers more kinds of document footers than HSSF does.
+     *
+     * @return the document footer.
      */
     Footer getFooter();
 
     /**
-     * Sets whether sheet is selected.
-     * @param sel Whether to select the sheet or deselect the sheet.
+     * Sets a flag indicating whether this sheet is selected.
+     *<p>
+     * Note: multiple sheets can be selected, but only one sheet can be active at one time.
+     *</p>
+     * @param value <code>true</code> if this sheet is selected
+     * @see Workbook#setActiveSheet(int)
      */
-    void setSelected(boolean sel);
+    void setSelected(boolean value);
 
     /**
      * Gets the size of the margin in inches.
+     *
      * @param margin which margin to get
      * @return the size of the margin
      */
@@ -335,6 +395,7 @@ public interface Sheet extends Iterable<Row> {
 
     /**
      * Sets the size of the margin in inches.
+     *
      * @param margin which margin to get
      * @param size the size of the margin
      */
@@ -342,12 +403,14 @@ public interface Sheet extends Iterable<Row> {
 
     /**
      * Answer whether protection is enabled or disabled
+     *
      * @return true => protection enabled; false => protection disabled
      */
     boolean getProtect();
 
     /**
      * Answer whether scenario protection is enabled or disabled
+     *
      * @return true => protection enabled; false => protection disabled
      */
     boolean getScenarioProtect();
@@ -364,14 +427,16 @@ public interface Sheet extends Iterable<Row> {
 
     /**
      * The top row in the visible view when the sheet is 
-     * first viewed after opening it in a viewer 
+     * first viewed after opening it in a viewer
+     *
      * @return short indicating the rownum (0 based) of the top row
      */
     short getTopRow();
 
     /**
      * The left col in the visible view when the sheet is 
-     * first viewed after opening it in a viewer 
+     * first viewed after opening it in a viewer
+     *
      * @return short indicating the rownum (0 based) of the top row
      */
     short getLeftCol();
@@ -379,6 +444,7 @@ public interface Sheet extends Iterable<Row> {
     /**
      * Sets desktop window pane display area, when the 
      * file is first opened in a viewer.
+     *
      * @param toprow the top row to show in desktop window pane
      * @param leftcol the left column to show in desktop window pane
      */
@@ -449,37 +515,43 @@ public interface Sheet extends Iterable<Row> {
     void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane);
 
     /**
-     * Returns the information regarding the currently configured pane (split or freeze).
+     * Returns the information regarding the currently configured pane (split or freeze)
+     *
      * @return null if no pane configured, or the pane information.
      */
     PaneInformation getPaneInformation();
 
     /**
-     * Sets whether the gridlines are shown in a viewer.
+     * Sets whether the gridlines are shown in a viewer
+     *
      * @param show whether to show gridlines or not
      */
     void setDisplayGridlines(boolean show);
 
     /**
-     * Returns if gridlines are displayed.
+     * Returns if gridlines are displayed
+     *
      * @return whether gridlines are displayed
      */
     boolean isDisplayGridlines();
 
     /**
-     * Sets whether the formulas are shown in a viewer.
+     * Sets whether the formulas are shown in a viewer
+     *
      * @param show whether to show formulas or not
      */
     void setDisplayFormulas(boolean show);
 
     /**
-     * Returns if formulas are displayed.
+     * Returns if formulas are displayed
+     *
      * @return whether formulas are displayed
      */
     boolean isDisplayFormulas();
 
     /**
-     * Sets whether the RowColHeadings are shown in a viewer.
+     * Sets whether the RowColHeadings are shown in a viewer
+     *
      * @param show whether to show RowColHeadings or not
      */
     void setDisplayRowColHeadings(boolean show);
@@ -546,7 +618,7 @@ public interface Sheet extends Iterable<Row> {
      * @param columnNumber      One of the columns in the group.
      * @param collapsed         true = collapse group, false = expand group.
      */
-    void setColumnGroupCollapsed(short columnNumber, boolean collapsed);
+    void setColumnGroupCollapsed(int columnNumber, boolean collapsed);
 
     /**
      * Create an outline for the provided column range.
@@ -554,9 +626,15 @@ public interface Sheet extends Iterable<Row> {
      * @param fromColumn        beginning of the column range.
      * @param toColumn          end of the column range.
      */
-    void groupColumn(short fromColumn, short toColumn);
+    void groupColumn(int fromColumn, int toColumn);
 
-    void ungroupColumn(short fromColumn, short toColumn);
+    /**
+     * Ungroup a range of columns that were previously groupped
+     *
+     * @param fromColumn   start column (0-based)
+     * @param toColumn     end column (0-based)
+     */
+    void ungroupColumn(int fromColumn, int toColumn);
 
     /**
      * Tie a range of rows together so that they can be collapsed or expanded
@@ -588,18 +666,37 @@ public interface Sheet extends Iterable<Row> {
      * @param column the column index
      * @param style the style to set
      */
-    void setDefaultColumnStyle(short column, CellStyle style);
+    void setDefaultColumnStyle(int column, CellStyle style);
 
     /**
      * Adjusts the column width to fit the contents.
      *
+     * <p>
      * This process can be relatively slow on large sheets, so this should
      *  normally only be called once per column, at the end of your
      *  processing.
+     * </p>
+     * You can specify whether the content of merged cells should be considered or ignored.
+     *  Default is to ignore merged cells.
      *
      * @param column the column index
      */
-    void autoSizeColumn(short column);
+    void autoSizeColumn(int column);
+
+    /**
+     * Adjusts the column width to fit the contents.
+     * <p>
+     * This process can be relatively slow on large sheets, so this should
+     *  normally only be called once per column, at the end of your
+     *  processing.
+     * </p>
+     * You can specify whether the content of merged cells should be considered or ignored.
+     *  Default is to ignore merged cells.
+     *
+     * @param column the column index
+     * @param useMergedCells whether to use the contents of merged cells when calculating the width of the column
+     */
+    void autoSizeColumn(int column, boolean useMergedCells);
 
     /**
      * Returns cell comment for the specified row and column
