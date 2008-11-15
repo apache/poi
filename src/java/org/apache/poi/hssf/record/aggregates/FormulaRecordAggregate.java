@@ -26,7 +26,6 @@ import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.record.formula.ExpPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.ss.formula.Formula;
 
 /**
  * The formula record aggregate is used to join together the formula record and it's
@@ -51,17 +50,19 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
 		if (svm == null) {
 			throw new IllegalArgumentException("sfm must not be null");
 		}
-		boolean hasStringRec = stringRec != null;
-		boolean hasCachedStringFlag = formulaRec.hasCachedResultString();
-		if (hasStringRec != hasCachedStringFlag) {
-			throw new RecordFormatException("String record was "
-					+ (hasStringRec ? "": "not ") + " supplied but formula record flag is "
-					+ (hasCachedStringFlag ? "" : "not ") + " set");
+		if (formulaRec.hasCachedResultString()) {
+			if (stringRec == null) {
+				throw new RecordFormatException("Formula record flag is set but String record was not found");
+			}
+			_stringRecord = stringRec;
+		} else {
+			// Usually stringRec is null here (in agreement with what the formula rec says).
+			// In the case where an extra StringRecord is erroneously present, Excel (2007)
+			// ignores it (see bug 46213). 
+			_stringRecord = null;
 		}
 
 		if (formulaRec.isSharedFormula()) {
-			CellReference cr = new CellReference(formulaRec.getRow(), formulaRec.getColumn());
-			
 			CellReference firstCell = formulaRec.getFormula().getExpReference();
 			if (firstCell == null) {
 				handleMissingSharedFormulaRecord(formulaRec);
@@ -71,7 +72,6 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
 		}
 		_formulaRecord = formulaRec;
 		_sharedValueManager = svm;
-		_stringRecord = stringRec;
 	}
 	/**
 	 * Sometimes the shared formula flag "seems" to be erroneously set (because the corresponding

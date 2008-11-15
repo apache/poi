@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta4" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">46213 - Fixed FormulaRecordAggregate to gracefully ignore extra StringRecords</action>
            <action dev="POI-DEVELOPERS" type="fix">46174 - Fixed HSSFName to handle general formulas (not just area references)</action>
            <action dev="POI-DEVELOPERS" type="add">46189 - added chart records: CHARTFRTINFO, STARTBLOCK, ENDBLOCK, STARTOBJECT, ENDOBJECT, and CATLAB</action>
            <action dev="POI-DEVELOPERS" type="fix">46199 - More tweaks to EmbeddedObjectRefSubRecord</action>
