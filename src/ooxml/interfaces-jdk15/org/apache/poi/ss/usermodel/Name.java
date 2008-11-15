@@ -36,18 +36,25 @@ public interface Name {
      */
     void setNameName(String nameName);
 
-    /** 
-     * gets the reference of the named range
-     * @return reference of the named range
+    /**
+     * @deprecated (Nov 2008) Misleading name. Use {@link #getFormula()} instead.
      */
     String getReference();
 
-    /** 
-     * sets the reference of this named range
-     * @param ref the reference to set
+    /**
+     * @deprecated (Nov 2008) Misleading name. Use {@link #setFormula(String)} instead.
      */
    void setReference(String ref);
 
+   /**
+     * @return the formula text defining this name
+    */
+   String getFormula();
+   
+   /**
+    * Sets the formula text defining this name
+   */
+   void setFormula(String formulaText);
     /**
      * Checks if this name is a function name
      *

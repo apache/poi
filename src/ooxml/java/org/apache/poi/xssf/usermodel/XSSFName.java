@@ -18,8 +18,8 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
 /**
@@ -50,8 +50,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
  * @author Nick Burch
  * @author Yegor Kozlov
  */
-public class XSSFName implements Name {
-    private static POILogger logger = POILogFactory.getLogger(XSSFWorkbook.class);
+public final class XSSFName implements Name {
 
     /**
      * A built-in defined name that specifies the workbook's print area
@@ -154,27 +153,36 @@ public class XSSFName implements Name {
     }
 
     /**
+     * @deprecated (Nov 2008) Misleading name. Use {@link #getFormula()} instead.
+     */
+    public String getReference() {
+        return getFormula();
+    }
+
+    /**
+     * @deprecated (Nov 2008) Misleading name. Use {@link #setFormula(String)} instead.
+     */
+    public void setReference(String ref){
+    	setFormula(ref);
+    }
+    /**
      * Returns the reference of this named range, such as Sales!C20:C30.
      *
      * @return the reference of this named range
      */
-    public String getReference() {
+    public String getFormula() {
         return ctName.getStringValue();
     }
 
     /**
      * Sets the reference of this named range, such as Sales!C20:C30.
      *
-     * @param ref the reference to set
+     * @param formulaText the reference to set
      * @throws IllegalArgumentException if the specified reference is unparsable
      */
-    public void setReference(String ref) {
-        try {
-            ref = AreaReference.isContiguous(ref) ? new AreaReference(ref).formatAsString() : ref;
-        } catch (IllegalArgumentException e){
-            logger.log(POILogger.WARN, "failed to parse cell reference. Setting raw value");
-        }
-        ctName.setStringValue(ref);
+    public void setFormula(String formulaText) {
+    	// TODO parse formula and throw IllegalArgumentException if problem
+        ctName.setStringValue(formulaText);
     }
 
     /**
