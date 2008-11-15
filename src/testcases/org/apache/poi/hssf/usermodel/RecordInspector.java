@@ -24,7 +24,7 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 
 /**
- * Test utility class to get {@link Record}s out HSSF objects
+ * Test utility class to get {@link Record}s out of HSSF objects
  * 
  * @author Josh Micich
  */
@@ -34,12 +34,12 @@ public final class RecordInspector {
 		// no instances of this class
 	}
 
-	private static final class RecordCollector implements RecordVisitor {
+	public static final class RecordCollector implements RecordVisitor {
 
-		private List _list;
+		private List<Record> _list;
 
 		public RecordCollector() {
-			_list = new ArrayList(128);
+			_list = new ArrayList<Record>(128);
 		}
 
 		public void visitRecord(Record r) {
