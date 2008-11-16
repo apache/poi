@@ -87,15 +87,17 @@ public class HSSFPicture
     }
 
     /**
-     * Reset the image to the original size.
+     * Resize the image
      *
-     * @since POI 3.0.2
+     * @param scale the amount by which image dimensions are multiplied relative to the original size.
+     * <code>resize(1.0)</code> sets the original size, <code>resize(0.5)</code> resize to 50% of the original,
+     * <code>resize(2.0)</code> resizes to 200% of the original.
      */
-    public void resize(){
+    public void resize(double scale){
         HSSFClientAnchor anchor = (HSSFClientAnchor)getAnchor();
         anchor.setAnchorType(2);
 
-        HSSFClientAnchor pref = getPreferredSize();
+        HSSFClientAnchor pref = getPreferredSize(scale);
 
         int row2 = anchor.getRow1() + (pref.getRow2() - pref.getRow1());
         int col2 = anchor.getCol1() + (pref.getCol2() - pref.getCol1());
@@ -110,49 +112,69 @@ public class HSSFPicture
     }
 
     /**
+     * Reset the image to the original size.
+     */
+    public void resize(){
+        resize(1.0);
+    }
+
+    /**
      * Calculate the preferred size for this picture.
      *
      * @return HSSFClientAnchor with the preferred size for this image
      * @since POI 3.0.2
      */
     public HSSFClientAnchor getPreferredSize(){
+        return getPreferredSize(1.0);
+    }
+
+    /**
+     * Calculate the preferred size for this picture.
+     *
+     * @param scale the amount by which image dimensions are multiplied relative to the original size.
+     * @return HSSFClientAnchor with the preferred size for this image
+     * @since POI 3.0.2
+     */
+    public HSSFClientAnchor getPreferredSize(double scale){
         HSSFClientAnchor anchor = (HSSFClientAnchor)getAnchor();
 
         Dimension size = getImageDimension();
+        double scaledWidth = size.getWidth() * scale;
+        double scaledHeight = size.getHeight() * scale;
 
         float w = 0;
 
         //space in the leftmost cell
-        w += getColumnWidthInPixels(anchor.col1)*(1 - anchor.dx1/1024);
+        w += getColumnWidthInPixels(anchor.col1)*(1 - (float)anchor.dx1/1024);
         short col2 = (short)(anchor.col1 + 1);
         int dx2 = 0;
 
-        while(w < size.width){
+        while(w < scaledWidth){
             w += getColumnWidthInPixels(col2++);
         }
 
-        if(w > size.width) {
+        if(w > scaledWidth) {
             //calculate dx2, offset in the rightmost cell
             col2--;
-            float cw = getColumnWidthInPixels(col2);
-            float delta = w - size.width;
+            double cw = getColumnWidthInPixels(col2);
+            double delta = w - scaledWidth;
             dx2 = (int)((cw-delta)/cw*1024);
         }
         anchor.col2 = col2;
         anchor.dx2 = dx2;
 
         float h = 0;
-        h += (1 - anchor.dy1/256)* getRowHeightInPixels(anchor.row1);
+        h += (1 - (float)anchor.dy1/256)* getRowHeightInPixels(anchor.row1);
         int row2 = anchor.row1 + 1;
         int dy2 = 0;
 
-        while(h < size.height){
+        while(h < scaledHeight){
             h += getRowHeightInPixels(row2++);
         }
-        if(h > size.height) {
+        if(h > scaledHeight) {
             row2--;
-            float ch = getRowHeightInPixels(row2);
-            float delta = h - size.height;
+            double ch = getRowHeightInPixels(row2);
+            double delta = h - scaledHeight;
             dy2 = (int)((ch-delta)/ch*256);
         }
         anchor.row2 = row2;
