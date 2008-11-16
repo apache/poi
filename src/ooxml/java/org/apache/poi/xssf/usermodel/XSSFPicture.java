@@ -126,9 +126,20 @@ public class XSSFPicture extends XSSFShape implements Picture {
      * Reset the image to the original size.
      */
     public void resize(){
+        resize(1.0);
+    }
+
+    /**
+     * Reset the image to the original size.
+     *
+     * @param scale the amount by which image dimensions are multiplied relative to the original size.
+     * <code>resize(1.0)</code> sets the original size, <code>resize(0.5)</code> resize to 50% of the original,
+     * <code>resize(2.0)</code> resizes to 200% of the original.
+     */
+    public void resize(double scale){
         XSSFClientAnchor anchor = (XSSFClientAnchor)getAnchor();
 
-        XSSFClientAnchor pref = getPreferredSize();
+        XSSFClientAnchor pref = getPreferredSize(scale);
 
         int row2 = anchor.getRow1() + (pref.getRow2() - pref.getRow1());
         int col2 = anchor.getCol1() + (pref.getCol2() - pref.getCol1());
@@ -148,10 +159,22 @@ public class XSSFPicture extends XSSFShape implements Picture {
      * @return XSSFClientAnchor with the preferred size for this image
      */
     public XSSFClientAnchor getPreferredSize(){
+        return getPreferredSize(1);
+    }
+
+    /**
+     * Calculate the preferred size for this picture.
+     *
+     * @param scale the amount by which image dimensions are multiplied relative to the original size.
+     * @return XSSFClientAnchor with the preferred size for this image
+     */
+    public XSSFClientAnchor getPreferredSize(double scale){
         XSSFClientAnchor anchor = (XSSFClientAnchor)getAnchor();
 
         XSSFPictureData data = getPictureData();
         Dimension size = getImageDimension(data.getPackagePart(), data.getPictureType());
+        double scaledWidth = size.getWidth() * scale;
+        double scaledHeight = size.getHeight() * scale;
 
         float w = 0;
         int col2 = anchor.getCol1();
@@ -163,19 +186,19 @@ public class XSSFPicture extends XSSFShape implements Picture {
 
         for (;;) {
             w += getColumnWidthInPixels(col2);
-            if(w > size.width) break;
+            if(w > scaledWidth) break;
             col2++;
         }
 
-        if(w > size.width) {
-            float cw = getColumnWidthInPixels(col2 + 1);
-            float delta = w - size.width;
+        if(w > scaledWidth) {
+            double cw = getColumnWidthInPixels(col2 + 1);
+            double delta = w - scaledWidth;
             dx2 = (int)(EMU_PER_PIXEL*(cw-delta));
         }
         anchor.setCol2(col2);
         anchor.setDx2(dx2);
 
-        float h = 0;
+        double h = 0;
         int row2 = anchor.getRow1();
         int dy2 = 0;
 
@@ -186,21 +209,21 @@ public class XSSFPicture extends XSSFShape implements Picture {
 
         for (;;) {
             h += getRowHeightInPixels(row2);
-            if(h > size.height) break;
+            if(h > scaledHeight) break;
             row2++;
         }
 
-        if(h > size.height) {
-            float ch = getRowHeightInPixels(row2 + 1);
-            float delta = h - size.height;
+        if(h > scaledHeight) {
+            double ch = getRowHeightInPixels(row2 + 1);
+            double delta = h - scaledHeight;
             dy2 = (int)(EMU_PER_PIXEL*(ch-delta));
         }
         anchor.setRow2(row2);
         anchor.setDy2(dy2);
 
         CTPositiveSize2D size2d =  ctPicture.getSpPr().getXfrm().getExt();
-        size2d.setCx(size.width*EMU_PER_PIXEL);
-        size2d.setCy(size.height*EMU_PER_PIXEL);
+        size2d.setCx((long)(scaledWidth*EMU_PER_PIXEL));
+        size2d.setCy((long)(scaledHeight*EMU_PER_PIXEL));
 
         return anchor;
     }

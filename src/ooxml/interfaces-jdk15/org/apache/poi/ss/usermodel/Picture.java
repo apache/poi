@@ -27,4 +27,13 @@ public interface Picture {
      * Reset the image to the original size.
      */
     void resize();
+
+    /**
+     * Reset the image to the original size.
+     *
+     * @param scale the amount by which image dimensions are multiplied relative to the original size.
+     * <code>resize(1.0)</code> sets the original size, <code>resize(0.5)</code> resize to 50% of the original,
+     * <code>resize(2.0)</code> resizes to 200% of the original.
+     */
+    void resize(double scale);
 }
