@@ -47,7 +47,7 @@ public class TestXSSFName extends TestCase {
         assertEquals(ref1, name1.getReference());
         assertEquals("Test1", name1.getSheetName());
 
-        String ref2 = "Testing Named Ranges!$A$1:$B$1";
+        String ref2 = "'Testing Named Ranges'!$A$1:$B$1";
         name1.setReference(ref2);
         //XSSFName#setReference stores the reference in canonical form and puts the sheet name in single quotes
         assertEquals("'Testing Named Ranges'!$A$1:$B$1", name1.getReference());

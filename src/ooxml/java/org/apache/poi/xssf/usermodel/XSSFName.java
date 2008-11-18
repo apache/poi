@@ -16,10 +16,11 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
 /**
@@ -163,7 +164,7 @@ public final class XSSFName implements Name {
      * @deprecated (Nov 2008) Misleading name. Use {@link #setFormula(String)} instead.
      */
     public void setReference(String ref){
-    	setFormula(ref);
+        setFormula(ref);
     }
     /**
      * Returns the reference of this named range, such as Sales!C20:C30.
@@ -181,7 +182,16 @@ public final class XSSFName implements Name {
      * @throws IllegalArgumentException if the specified reference is unparsable
      */
     public void setFormula(String formulaText) {
-    	// TODO parse formula and throw IllegalArgumentException if problem
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(workbook);
+        Ptg[] ptgs;
+        try {
+            ptgs = FormulaParser.parse(formulaText, fpb, FormulaType.CELL); // TODO - use type NAMEDRANGE
+        } catch (RuntimeException e) {
+            if (e.getClass().getName().startsWith(FormulaParser.class.getName())) {
+                throw new IllegalArgumentException("Unparsable formula '" + formulaText + "'");
+            }
+            throw e;
+        }
         ctName.setStringValue(formulaText);
     }
 
