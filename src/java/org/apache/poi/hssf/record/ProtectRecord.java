@@ -19,7 +19,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title: Protect Record<P>
@@ -32,8 +32,8 @@ import org.apache.poi.util.LittleEndian;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  */
 
-public class ProtectRecord
-    extends Record
+public final class ProtectRecord
+    extends StandardRecord
 {
     public final static short sid = 0x12;
     private short             field_1_protect;
@@ -85,13 +85,8 @@ public class ProtectRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) 0x02));   // 2 bytes (6 total)
-        LittleEndian.putShort(data, 4 + offset, field_1_protect);
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_protect);
     }
 
     protected int getDataSize() {

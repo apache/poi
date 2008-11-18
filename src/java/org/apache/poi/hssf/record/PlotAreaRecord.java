@@ -17,14 +17,14 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * preceeds and identifies a frame as belonging to the plot area.<p/>
  * 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public final class PlotAreaRecord extends Record {
+public final class PlotAreaRecord extends StandardRecord {
     public final static short      sid                             = 0x1035;
 
 
@@ -51,13 +51,7 @@ public final class PlotAreaRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
     }
 
     protected int getDataSize() {

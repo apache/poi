@@ -19,7 +19,7 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Window Two Record<P>
@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-public final class WindowTwoRecord extends Record {
+public final class WindowTwoRecord extends StandardRecord {
     public final static short sid = 0x023E;
 
     // bitfields
@@ -523,18 +523,14 @@ public final class WindowTwoRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 18);
-        LittleEndian.putShort(data, 4 + offset, getOptions());
-        LittleEndian.putShort(data, 6 + offset, getTopRow());
-        LittleEndian.putShort(data, 8 + offset, getLeftCol());
-        LittleEndian.putInt(data, 10 + offset, getHeaderColor());
-        LittleEndian.putShort(data, 14 + offset, getPageBreakZoom());
-        LittleEndian.putShort(data, 16 + offset, getNormalZoom());
-        LittleEndian.putInt(data, 18 + offset, getReserved());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getOptions());
+        out.writeShort(getTopRow());
+        out.writeShort(getLeftCol());
+        out.writeInt(getHeaderColor());
+        out.writeShort(getPageBreakZoom());
+        out.writeShort(getNormalZoom());
+        out.writeInt(getReserved());
     }
 
     protected int getDataSize() {

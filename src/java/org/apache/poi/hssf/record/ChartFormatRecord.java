@@ -19,7 +19,7 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Class ChartFormatRecord
@@ -28,7 +28,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Glen Stampoultzis (glens at apache.org)
  * @version %I%, %G%
  */
-public final class ChartFormatRecord extends Record {
+public final class ChartFormatRecord extends StandardRecord {
     public static final short sid = 0x1014;
 
     private static final BitField varyDisplayPattern = BitFieldFactory.getInstance(0x01);
@@ -72,17 +72,12 @@ public final class ChartFormatRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) 22));   // 22 byte length
-        LittleEndian.putInt(data, 4 + offset, getXPosition());
-        LittleEndian.putInt(data, 8 + offset, getYPosition());
-        LittleEndian.putInt(data, 12 + offset, getWidth());
-        LittleEndian.putInt(data, 16 + offset, getHeight());
-        LittleEndian.putShort(data, 20 + offset, field5_grbit);
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeInt(getXPosition());
+        out.writeInt(getYPosition());
+        out.writeInt(getWidth());
+        out.writeInt(getHeight());
+        out.writeShort(field5_grbit);
     }
 
     protected int getDataSize() {

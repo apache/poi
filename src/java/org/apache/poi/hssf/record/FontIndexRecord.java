@@ -18,14 +18,14 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The font index record indexes into the font table for the text record.<p/>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class FontIndexRecord extends Record {
+public final class FontIndexRecord extends StandardRecord {
     public final static short      sid                             = 0x1026;
     private  short      field_1_fontIndex;
 
@@ -54,16 +54,8 @@ public final class FontIndexRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putShort(data, 4 + offset + pos, field_1_fontIndex);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_fontIndex);
     }
 
     protected int getDataSize() {

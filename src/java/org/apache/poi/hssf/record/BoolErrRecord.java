@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Creates new BoolErrRecord. (0x0205) <P>
@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-public final class BoolErrRecord extends Record implements CellValueRecordInterface {
+public final class BoolErrRecord extends StandardRecord implements CellValueRecordInterface {
     public final static short sid = 0x0205;
     private int               field_1_row;
     private short             field_2_column;
@@ -187,23 +187,12 @@ public final class BoolErrRecord extends Record implements CellValueRecordInterf
         return sb.toString();
     }
 
-    /**
-     * called by the class that is responsible for writing this sucker.
-     * Subclasses should implement this so that their data is passed back in a
-     * byte array.
-     * 
-     * @return byte array containing instance data
-     */
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putUShort(data, 0 + offset, sid);
-        LittleEndian.putUShort(data, 2 + offset, 8);
-        LittleEndian.putUShort(data, 4 + offset, getRow());
-        LittleEndian.putUShort(data, 6 + offset, getColumn());
-        LittleEndian.putUShort(data, 8 + offset, getXFIndex());
-        data[ 10 + offset ] = field_4_bBoolErr;
-        data[ 11 + offset ] = field_5_fError;
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getRow());
+        out.writeShort(getColumn());
+        out.writeShort(getXFIndex());
+        out.writeByte(field_4_bBoolErr);
+        out.writeByte(field_5_fError);
     }
 
     protected int getDataSize() {

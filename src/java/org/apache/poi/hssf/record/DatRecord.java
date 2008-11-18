@@ -20,14 +20,14 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The dat record is used to store options for the chart.<p/>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class DatRecord extends Record {
+public final class DatRecord extends StandardRecord {
     public final static short sid = 0x1063;
 
     private static final BitField horizontalBorder = BitFieldFactory.getInstance(0x1);
@@ -66,16 +66,8 @@ public final class DatRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putShort(data, 4 + offset + pos, field_1_options);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_options);
     }
 
     protected int getDataSize() {

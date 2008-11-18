@@ -20,14 +20,14 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The value range record defines the range of the value axis.<p/>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class ValueRangeRecord extends Record {
+public final class ValueRangeRecord extends StandardRecord {
     public final static short sid = 0x101f;
     
     private static final BitField automaticMinimum           = BitFieldFactory.getInstance(0x0001);
@@ -102,21 +102,13 @@ public final class ValueRangeRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putDouble(data, 4 + offset + pos, field_1_minimumAxisValue);
-        LittleEndian.putDouble(data, 12 + offset + pos, field_2_maximumAxisValue);
-        LittleEndian.putDouble(data, 20 + offset + pos, field_3_majorIncrement);
-        LittleEndian.putDouble(data, 28 + offset + pos, field_4_minorIncrement);
-        LittleEndian.putDouble(data, 36 + offset + pos, field_5_categoryAxisCross);
-        LittleEndian.putShort(data, 44 + offset + pos, field_6_options);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeDouble(field_1_minimumAxisValue);
+        out.writeDouble(field_2_maximumAxisValue);
+        out.writeDouble(field_3_majorIncrement);
+        out.writeDouble(field_4_minorIncrement);
+        out.writeDouble(field_5_categoryAxisCross);
+        out.writeShort(field_6_options);
     }
 
     protected int getDataSize() {

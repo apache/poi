@@ -18,14 +18,14 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Links text to an object on the chart or identifies it as the title.<p/>
  * 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public final class ObjectLinkRecord extends Record {
+public final class ObjectLinkRecord extends StandardRecord {
     public final static short      sid                             = 0x1027;
     private  short      field_1_anchorId;
     public final static short       ANCHOR_ID_CHART_TITLE          = 1;
@@ -72,18 +72,10 @@ public final class ObjectLinkRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putShort(data, 4 + offset + pos, field_1_anchorId);
-        LittleEndian.putShort(data, 6 + offset + pos, field_2_link1);
-        LittleEndian.putShort(data, 8 + offset + pos, field_3_link2);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_anchorId);
+        out.writeShort(field_2_link1);
+        out.writeShort(field_3_link2);
     }
 
     protected int getDataSize() {

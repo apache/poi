@@ -19,7 +19,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Use Natural Language Formulas Flag<P>
@@ -30,8 +30,8 @@ import org.apache.poi.util.LittleEndian;
  * @version 2.0-pre
  */
 
-public class UseSelFSRecord
-    extends Record
+public final class UseSelFSRecord
+    extends StandardRecord
 {
     public final static short sid   = 0x160;
     public final static short TRUE  = 1;
@@ -84,13 +84,8 @@ public class UseSelFSRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) 0x02));   // 2 bytes (6 total)
-        LittleEndian.putShort(data, 4 + offset, getFlag());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getFlag());
     }
 
     protected int getDataSize() {

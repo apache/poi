@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The end record defines the end of a block of records for a (Graphing)
@@ -28,7 +28,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Glen Stampoultzis (glens at apache.org)
  */
 
-public final class EndRecord extends Record {
+public final class EndRecord extends StandardRecord {
     public static final short sid = 0x1034;
 
     public EndRecord()
@@ -51,11 +51,7 @@ public final class EndRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putUShort(data, 0 + offset, sid);
-        LittleEndian.putUShort(data, 2 + offset, 0);   // no record info
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
     }
 
     protected int getDataSize() {

@@ -20,14 +20,14 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The data format record is used to index into a series.<p/>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class DataFormatRecord extends Record {
+public final class DataFormatRecord extends StandardRecord {
     public final static short sid = 0x1006;
 
     private static final BitField useExcel4Colors = BitFieldFactory.getInstance(0x1);
@@ -78,19 +78,11 @@ public final class DataFormatRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putShort(data, 4 + offset + pos, field_1_pointNumber);
-        LittleEndian.putShort(data, 6 + offset + pos, field_2_seriesIndex);
-        LittleEndian.putShort(data, 8 + offset + pos, field_3_seriesNumber);
-        LittleEndian.putShort(data, 10 + offset + pos, field_4_formatFlags);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_pointNumber);
+        out.writeShort(field_2_seriesIndex);
+        out.writeShort(field_3_seriesNumber);
+        out.writeShort(field_4_formatFlags);
     }
 
     protected int getDataSize() {

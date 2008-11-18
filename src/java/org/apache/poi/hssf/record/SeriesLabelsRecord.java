@@ -20,14 +20,14 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The series label record defines the type of label associated with the data format record.<p/>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class SeriesLabelsRecord extends Record {
+public final class SeriesLabelsRecord extends StandardRecord {
     public final static short      sid = 0x100c;
 
     private static final BitField showActual        = BitFieldFactory.getInstance(0x01);
@@ -69,16 +69,8 @@ public final class SeriesLabelsRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putShort(data, 4 + offset + pos, field_1_formatFlags);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_formatFlags);
     }
 
     protected int getDataSize() {

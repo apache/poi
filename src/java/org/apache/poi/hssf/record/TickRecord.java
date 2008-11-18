@@ -20,14 +20,14 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The Tick record defines how tick marks and label positioning/formatting<p/>
  * 
  * @author Andrew C. Oliver(acoliver at apache.org)
  */
-public final class TickRecord extends Record {
+public final class TickRecord extends StandardRecord {
     public final static short sid = 0x101E;
     
     private static final BitField autoTextColor      = BitFieldFactory.getInstance(0x1);
@@ -126,27 +126,19 @@ public final class TickRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        data[ 4 + offset + pos ] = field_1_majorTickType;
-        data[ 5 + offset + pos ] = field_2_minorTickType;
-        data[ 6 + offset + pos ] = field_3_labelPosition;
-        data[ 7 + offset + pos ] = field_4_background;
-        LittleEndian.putInt(data, 8 + offset + pos, field_5_labelColorRgb);
-        LittleEndian.putInt(data, 12 + offset + pos, field_6_zero1);
-        LittleEndian.putInt(data, 16 + offset + pos, field_7_zero2);
-        LittleEndian.putInt(data, 20 + offset + pos, field_8_zero3);
-        LittleEndian.putInt(data, 24 + offset + pos, field_9_zero4);        
-        LittleEndian.putShort(data, 28 + offset + pos, field_10_options);
-        LittleEndian.putShort(data, 30 + offset + pos, field_11_tickColor);
-        LittleEndian.putShort(data, 32 + offset + pos, field_12_zero5);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeByte(field_1_majorTickType);
+        out.writeByte(field_2_minorTickType);
+        out.writeByte(field_3_labelPosition);
+        out.writeByte(field_4_background);
+        out.writeInt(field_5_labelColorRgb);
+        out.writeInt(field_6_zero1);
+        out.writeInt(field_7_zero2);
+        out.writeInt(field_8_zero3);
+        out.writeInt(field_9_zero4);
+        out.writeShort(field_10_options);
+        out.writeShort(field_11_tickColor);
+        out.writeShort(field_12_zero5);
     }
 
     protected int getDataSize() {

@@ -19,7 +19,7 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Window1 Record<P>
@@ -30,7 +30,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @version 2.0-pre
  */
-public final class WindowOneRecord extends Record {
+public final class WindowOneRecord extends StandardRecord {
     public final static short     sid = 0x3d;
 
     // our variable names stolen from old TV sets.
@@ -422,21 +422,16 @@ public final class WindowOneRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) 0x12));   // 18 bytes (22 total)
-        LittleEndian.putShort(data, 4 + offset, getHorizontalHold());
-        LittleEndian.putShort(data, 6 + offset, getVerticalHold());
-        LittleEndian.putShort(data, 8 + offset, getWidth());
-        LittleEndian.putShort(data, 10 + offset, getHeight());
-        LittleEndian.putShort(data, 12 + offset, getOptions());
-        LittleEndian.putUShort(data, 14 + offset, getActiveSheetIndex());
-        LittleEndian.putUShort(data, 16 + offset, getFirstVisibleTab());
-        LittleEndian.putShort(data, 18 + offset, getNumSelectedTabs());
-        LittleEndian.putShort(data, 20 + offset, getTabWidthRatio());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getHorizontalHold());
+        out.writeShort(getVerticalHold());
+        out.writeShort(getWidth());
+        out.writeShort(getHeight());
+        out.writeShort(getOptions());
+        out.writeShort(getActiveSheetIndex());
+        out.writeShort(getFirstVisibleTab());
+        out.writeShort(getNumSelectedTabs());
+        out.writeShort(getTabWidthRatio());
     }
 
     protected int getDataSize() {

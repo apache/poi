@@ -19,7 +19,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Dimensions Record<P>
@@ -31,8 +31,8 @@ import org.apache.poi.util.LittleEndian;
  * @version 2.0-pre
  */
 
-public class DimensionsRecord
-    extends Record
+public final class DimensionsRecord
+    extends StandardRecord
 {
     public final static short sid = 0x200;
     private int               field_1_first_row;
@@ -153,16 +153,12 @@ public class DimensionsRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 14);
-        LittleEndian.putInt(data, 4 + offset, getFirstRow());
-        LittleEndian.putInt(data, 8 + offset, getLastRow());
-        LittleEndian.putShort(data, 12 + offset, getFirstCol());
-        LittleEndian.putShort(data, 14 + offset, getLastCol());
-        LittleEndian.putShort(data, 16 + offset, ( short ) 0);
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeInt(getFirstRow());
+        out.writeInt(getLastRow());
+        out.writeShort(getFirstCol());
+        out.writeShort(getLastCol());
+        out.writeShort(( short ) 0);
     }
 
     protected int getDataSize() {

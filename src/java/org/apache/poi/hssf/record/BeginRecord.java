@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The begin record defines the start of a block of records for a (grpahing
@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class BeginRecord extends Record {
+public final class BeginRecord extends StandardRecord {
     public static final short sid = 0x1033;
 
     public BeginRecord()
@@ -50,11 +50,7 @@ public class BeginRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putUShort(data, 0 + offset, sid);
-        LittleEndian.putUShort(data, 2 + offset, 0);   // no record info
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
     }
 
     protected int getDataSize() {

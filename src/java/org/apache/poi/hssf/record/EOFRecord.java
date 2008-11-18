@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * End Of File record.
@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-public final class EOFRecord extends Record {
+public final class EOFRecord extends StandardRecord {
     public final static short sid = 0x0A;
 	public static final int ENCODED_SIZE = 4;
 
@@ -55,12 +55,7 @@ public final class EOFRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) 0));   // no record info
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
     }
 
     protected int getDataSize() {

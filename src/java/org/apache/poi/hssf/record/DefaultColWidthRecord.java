@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Default Column Width Record (0x0055) <P>
@@ -28,7 +28,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-public final class DefaultColWidthRecord extends Record {
+public final class DefaultColWidthRecord extends StandardRecord {
     public final static short sid = 0x0055;
     private int             field_1_col_width;
 
@@ -72,12 +72,8 @@ public final class DefaultColWidthRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putUShort(data, 0 + offset, sid);
-        LittleEndian.putUShort(data, 2 + offset, 0x2);
-        LittleEndian.putUShort(data, 4 + offset, getColWidth());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getColWidth());
     }
 
     protected int getDataSize() {

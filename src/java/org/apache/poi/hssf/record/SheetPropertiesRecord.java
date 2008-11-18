@@ -20,14 +20,14 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Describes a chart sheet properties record.<p/>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class SheetPropertiesRecord extends Record {
+public final class SheetPropertiesRecord extends StandardRecord {
     public final static short sid = 0x1044;
     
     private static final BitField chartTypeManuallyFormatted = BitFieldFactory.getInstance(0x01);
@@ -77,17 +77,9 @@ public final class SheetPropertiesRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putShort(data, 4 + offset + pos, field_1_flags);
-        data[ 6 + offset + pos ] = field_2_empty;
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_flags);
+        out.writeByte(field_2_empty);
     }
 
     protected int getDataSize() {

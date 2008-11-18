@@ -19,7 +19,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Password Record<P>
@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndian;
  * @version 2.0-pre
  */
 
-public class PasswordRecord extends Record {
+public final class PasswordRecord extends StandardRecord {
     public final static short sid = 0x13;
     private short             field_1_password;   // not sure why this is only 2 bytes, but it is... go figure
 
@@ -88,12 +88,8 @@ public class PasswordRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data) {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) 0x02));   // 2 bytes (6 total)
-        LittleEndian.putShort(data, 4 + offset, getPassword());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getPassword());
     }
 
     protected int getDataSize() {

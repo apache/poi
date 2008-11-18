@@ -18,14 +18,14 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The axis size and location<p/>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class AxisParentRecord extends Record {
+public final class AxisParentRecord extends StandardRecord {
     public final static short      sid                             = 0x1041;
     private  short      field_1_axisType;
     public final static short       AXIS_TYPE_MAIN                 = 0;
@@ -80,20 +80,12 @@ public final class AxisParentRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putShort(data, 4 + offset + pos, field_1_axisType);
-        LittleEndian.putInt(data, 6 + offset + pos, field_2_x);
-        LittleEndian.putInt(data, 10 + offset + pos, field_3_y);
-        LittleEndian.putInt(data, 14 + offset + pos, field_4_width);
-        LittleEndian.putInt(data, 18 + offset + pos, field_5_height);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_axisType);
+        out.writeInt(field_2_x);
+        out.writeInt(field_3_y);
+        out.writeInt(field_4_width);
+        out.writeInt(field_5_height);
     }
 
     protected int getDataSize() {

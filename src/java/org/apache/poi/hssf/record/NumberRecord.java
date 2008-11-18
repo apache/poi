@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.hssf.record.Record;
 
 /**
@@ -28,7 +28,7 @@ import org.apache.poi.hssf.record.Record;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-public final class NumberRecord extends Record implements CellValueRecordInterface {
+public final class NumberRecord extends StandardRecord implements CellValueRecordInterface {
     public static final short sid = 0x0203;
     private int field_1_row;
     private int field_2_col;
@@ -124,22 +124,11 @@ public final class NumberRecord extends Record implements CellValueRecordInterfa
         return sb.toString();
     }
 
-    /**
-     * called by the class that is responsible for writing this sucker.
-     * Subclasses should implement this so that their data is passed back in a
-     * byte array.
-     * 
-     * @return byte array containing instance data
-     */
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putUShort(data, 0 + offset, sid);
-        LittleEndian.putUShort(data, 2 + offset, 14);
-        LittleEndian.putUShort(data, 4 + offset, getRow());
-        LittleEndian.putUShort(data, 6 + offset, getColumn());
-        LittleEndian.putUShort(data, 8 + offset, getXFIndex());
-        LittleEndian.putDouble(data, 10 + offset, getValue());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getRow());
+        out.writeShort(getColumn());
+        out.writeShort(getXFIndex());
+        out.writeDouble(getValue());
     }
 
     protected int getDataSize() {

@@ -19,7 +19,7 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        WSBool Record.<p>
@@ -31,7 +31,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-public final class WSBoolRecord extends Record {
+public final class WSBoolRecord extends StandardRecord {
     public final static short     sid = 0x81;
     private byte                  field_1_wsbool;         // crappy names are because this is really one big short field (2byte)
     private byte                  field_2_wsbool;         // but the docs inconsistently use it as 2 separate bytes
@@ -316,13 +316,9 @@ public final class WSBoolRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 0x2);
-        data[ 5 + offset ] = getWSBool1();
-        data[ 4 + offset ] = getWSBool2();
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeByte(getWSBool2());
+        out.writeByte(getWSBool1());
     }
 
     protected int getDataSize() {

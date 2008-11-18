@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 /**
  * XCT - CRN Count <P>
  *
@@ -25,7 +25,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Josh Micich
  */
-public final class CRNCountRecord extends Record {
+public final class CRNCountRecord extends StandardRecord {
 	public final static short sid = 0x59;
 
 	private static final short DATA_SIZE = 4;
@@ -63,12 +63,9 @@ public final class CRNCountRecord extends Record {
         return sb.toString();
 	}
 
-	public int serialize(int offset, byte [] data) {
-		LittleEndian.putShort(data, 0 + offset, sid);
-		LittleEndian.putShort(data, 2 + offset, DATA_SIZE);
-		LittleEndian.putShort(data, 4 + offset, (short)field_1_number_crn_records);
-		LittleEndian.putShort(data, 6 + offset, (short)field_2_sheet_table_index);
-		return getRecordSize();
+	public void serialize(LittleEndianOutput out) {
+		out.writeShort((short)field_1_number_crn_records);
+		out.writeShort((short)field_2_sheet_table_index);
 	}
 	protected int getDataSize() {
 		return DATA_SIZE;

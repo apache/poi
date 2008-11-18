@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 
@@ -29,7 +29,7 @@ import org.apache.poi.util.BitFieldFactory;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @version 2.0-pre
  */
-public final class ColumnInfoRecord extends Record {
+public final class ColumnInfoRecord extends StandardRecord {
     public static final short     sid = 0x7d;
     private int field_1_first_col;
     private int field_2_last_col;
@@ -267,17 +267,13 @@ public final class ColumnInfoRecord extends Record {
         return sid;
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putUShort(data, 2 + offset, 12);
-        LittleEndian.putUShort(data, 4 + offset, getFirstColumn());
-        LittleEndian.putUShort(data, 6 + offset, getLastColumn());
-        LittleEndian.putUShort(data, 8 + offset, getColumnWidth());
-        LittleEndian.putUShort(data, 10 + offset, getXFIndex());
-        LittleEndian.putUShort(data, 12 + offset, field_5_options);
-        LittleEndian.putUShort(data, 14 + offset, field_6_reserved);   
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getFirstColumn());
+        out.writeShort(getLastColumn());
+        out.writeShort(getColumnWidth());
+        out.writeShort(getXFIndex());
+        out.writeShort(field_5_options);
+        out.writeShort(field_6_reserved);
     }
 
     protected int getDataSize() {

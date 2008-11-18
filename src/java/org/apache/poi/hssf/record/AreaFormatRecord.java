@@ -20,14 +20,14 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The area format record is used to define the colours and patterns for an area.<p/>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class AreaFormatRecord extends Record {
+public final class AreaFormatRecord extends StandardRecord {
     public final static short sid = 0x100A;
     
     private static final BitField automatic = BitFieldFactory.getInstance(0x1);
@@ -93,21 +93,13 @@ public final class AreaFormatRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putInt(data, 4 + offset + pos, field_1_foregroundColor);
-        LittleEndian.putInt(data, 8 + offset + pos, field_2_backgroundColor);
-        LittleEndian.putShort(data, 12 + offset + pos, field_3_pattern);
-        LittleEndian.putShort(data, 14 + offset + pos, field_4_formatFlags);
-        LittleEndian.putShort(data, 16 + offset + pos, field_5_forecolorIndex);
-        LittleEndian.putShort(data, 18 + offset + pos, field_6_backcolorIndex);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeInt(field_1_foregroundColor);
+        out.writeInt(field_2_backgroundColor);
+        out.writeShort(field_3_pattern);
+        out.writeShort(field_4_formatFlags);
+        out.writeShort(field_5_forecolorIndex);
+        out.writeShort(field_6_backcolorIndex);
     }
 
     protected int getDataSize() {

@@ -20,7 +20,7 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Row Record (0x0208)<P/>
@@ -30,7 +30,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-public final class RowRecord extends Record {
+public final class RowRecord extends StandardRecord {
     public final static short sid = 0x0208;
 
     public static final int ENCODED_SIZE = 20;
@@ -335,20 +335,15 @@ public final class RowRecord extends Record {
         return sb.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putUShort(data, 0 + offset, sid);
-        LittleEndian.putUShort(data, 2 + offset, ENCODED_SIZE - 4);
-        LittleEndian.putUShort(data, 4 + offset, getRowNumber());
-        LittleEndian.putUShort(data, 6 + offset, getFirstCol() == -1 ? (short)0 : getFirstCol());
-        LittleEndian.putUShort(data, 8 + offset, getLastCol() == -1 ? (short)0 : getLastCol());
-        LittleEndian.putUShort(data, 10 + offset, getHeight());
-        LittleEndian.putUShort(data, 12 + offset, getOptimize());
-        LittleEndian.putUShort(data, 14 + offset, field_6_reserved);
-        LittleEndian.putUShort(data, 16 + offset, getOptionFlags());
-
-        LittleEndian.putUShort(data, 18 + offset, getXFIndex());
-        return ENCODED_SIZE;
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getRowNumber());
+        out.writeShort(getFirstCol() == -1 ? (short)0 : getFirstCol());
+        out.writeShort(getLastCol() == -1 ? (short)0 : getLastCol());
+        out.writeShort(getHeight());
+        out.writeShort(getOptimize());
+        out.writeShort(field_6_reserved);
+        out.writeShort(getOptionFlags());
+        out.writeShort(getXFIndex());
     }
 
     protected int getDataSize() {
