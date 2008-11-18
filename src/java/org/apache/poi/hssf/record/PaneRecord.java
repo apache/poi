@@ -19,14 +19,14 @@ package org.apache.poi.hssf.record;
 
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Describes the frozen and unfozen panes.<p/>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class PaneRecord extends Record {
+public final class PaneRecord extends StandardRecord {
     public final static short      sid                             = 0x41;
     private  short      field_1_x;
     private  short      field_2_y;
@@ -86,20 +86,12 @@ public final class PaneRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putShort(data, 4 + offset + pos, field_1_x);
-        LittleEndian.putShort(data, 6 + offset + pos, field_2_y);
-        LittleEndian.putShort(data, 8 + offset + pos, field_3_topRow);
-        LittleEndian.putShort(data, 10 + offset + pos, field_4_leftColumn);
-        LittleEndian.putShort(data, 12 + offset + pos, field_5_activePane);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_x);
+        out.writeShort(field_2_y);
+        out.writeShort(field_3_topRow);
+        out.writeShort(field_4_leftColumn);
+        out.writeShort(field_5_activePane);
     }
 
     protected int getDataSize() {

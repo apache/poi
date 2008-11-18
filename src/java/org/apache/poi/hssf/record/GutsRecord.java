@@ -19,7 +19,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Guts Record <P>
@@ -30,8 +30,8 @@ import org.apache.poi.util.LittleEndian;
  * @version 2.0-pre
  */
 
-public class GutsRecord
-    extends Record
+public final class GutsRecord
+    extends StandardRecord
 {
     public final static short sid = 0x80;
     private short             field_1_left_row_gutter;   // size of the row gutter to the left of the rows
@@ -156,15 +156,11 @@ public class GutsRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 0x8);
-        LittleEndian.putShort(data, 4 + offset, getLeftRowGutter());
-        LittleEndian.putShort(data, 6 + offset, getTopColGutter());
-        LittleEndian.putShort(data, 8 + offset, getRowLevelMax());
-        LittleEndian.putShort(data, 10 + offset, getColLevelMax());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getLeftRowGutter());
+        out.writeShort(getTopColGutter());
+        out.writeShort(getRowLevelMax());
+        out.writeShort(getColLevelMax());
     }
 
     protected int getDataSize() {

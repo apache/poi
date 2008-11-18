@@ -21,7 +21,7 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Extended Format Record
@@ -39,8 +39,8 @@ import org.apache.poi.util.LittleEndian;
  * @version 2.0-pre
  */
 
-public class ExtendedFormatRecord
-    extends Record
+public final class ExtendedFormatRecord
+    extends StandardRecord
 {
     public final static short     sid                 = 0xE0;
 
@@ -1770,21 +1770,16 @@ public class ExtendedFormatRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              ( short ) (20));   // 24 - 4(sid/len)
-        LittleEndian.putShort(data, 4 + offset, getFontIndex());
-        LittleEndian.putShort(data, 6 + offset, getFormatIndex());
-        LittleEndian.putShort(data, 8 + offset, getCellOptions());
-        LittleEndian.putShort(data, 10 + offset, getAlignmentOptions());
-        LittleEndian.putShort(data, 12 + offset, getIndentionOptions());
-        LittleEndian.putShort(data, 14 + offset, getBorderOptions());
-        LittleEndian.putShort(data, 16 + offset, getPaletteOptions());
-        LittleEndian.putInt(data, 18 + offset, getAdtlPaletteOptions());
-        LittleEndian.putShort(data, 22 + offset, getFillPaletteOptions());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getFontIndex());
+        out.writeShort(getFormatIndex());
+        out.writeShort(getCellOptions());
+        out.writeShort(getAlignmentOptions());
+        out.writeShort(getIndentionOptions());
+        out.writeShort(getBorderOptions());
+        out.writeShort(getPaletteOptions());
+        out.writeInt(getAdtlPaletteOptions());
+        out.writeShort(getFillPaletteOptions());
     }
 
     protected int getDataSize() {

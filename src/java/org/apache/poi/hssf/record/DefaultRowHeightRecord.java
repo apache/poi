@@ -19,7 +19,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Default Row Height Record
@@ -31,8 +31,8 @@ import org.apache.poi.util.LittleEndian;
  * @version 2.0-pre
  */
 
-public class DefaultRowHeightRecord
-    extends Record
+public final class DefaultRowHeightRecord
+    extends StandardRecord
 {
     public final static short sid = 0x225;
     private short             field_1_option_flags;
@@ -101,13 +101,9 @@ public class DefaultRowHeightRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 0x4);
-        LittleEndian.putShort(data, 4 + offset, getOptionFlags());
-        LittleEndian.putShort(data, 6 + offset, getRowHeight());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getOptionFlags());
+        out.writeShort(getRowHeight());
     }
 
     protected int getDataSize() {

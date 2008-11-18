@@ -18,14 +18,14 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The axis line format record defines the axis type details.<p/>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class AxisLineFormatRecord extends Record {
+public final class AxisLineFormatRecord extends StandardRecord {
     public final static short      sid                             = 0x1021;
     private  short      field_1_axisType;
     public final static short       AXIS_TYPE_AXIS_LINE            = 0;
@@ -58,16 +58,8 @@ public final class AxisLineFormatRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putShort(data, 4 + offset + pos, field_1_axisType);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_axisType);
     }
 
     protected int getDataSize() {

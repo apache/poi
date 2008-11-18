@@ -20,14 +20,14 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The axis options record provides unit information and other various tidbits about the axis.<p/>
  * 
  * @author Andrew C. Oliver(acoliver at apache.org)
  */
-public final class AxisOptionsRecord extends Record {
+public final class AxisOptionsRecord extends StandardRecord {
     public final static short sid = 0x1062;
 
     private static final BitField defaultMinimum      = BitFieldFactory.getInstance(0x01);
@@ -122,24 +122,16 @@ public final class AxisOptionsRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putShort(data, 4 + offset + pos, field_1_minimumCategory);
-        LittleEndian.putShort(data, 6 + offset + pos, field_2_maximumCategory);
-        LittleEndian.putShort(data, 8 + offset + pos, field_3_majorUnitValue);
-        LittleEndian.putShort(data, 10 + offset + pos, field_4_majorUnit);
-        LittleEndian.putShort(data, 12 + offset + pos, field_5_minorUnitValue);
-        LittleEndian.putShort(data, 14 + offset + pos, field_6_minorUnit);
-        LittleEndian.putShort(data, 16 + offset + pos, field_7_baseUnit);
-        LittleEndian.putShort(data, 18 + offset + pos, field_8_crossingPoint);
-        LittleEndian.putShort(data, 20 + offset + pos, field_9_options);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_minimumCategory);
+        out.writeShort(field_2_maximumCategory);
+        out.writeShort(field_3_majorUnitValue);
+        out.writeShort(field_4_majorUnit);
+        out.writeShort(field_5_minorUnitValue);
+        out.writeShort(field_6_minorUnit);
+        out.writeShort(field_7_baseUnit);
+        out.writeShort(field_8_crossingPoint);
+        out.writeShort(field_9_options);
     }
 
     protected int getDataSize() {

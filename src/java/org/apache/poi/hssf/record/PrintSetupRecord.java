@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 
@@ -29,7 +29,7 @@ import org.apache.poi.util.BitFieldFactory;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-public class PrintSetupRecord extends Record {
+public final class PrintSetupRecord extends StandardRecord {
     public final static short     sid = 0x00A1;
     private short                 field_1_paper_size;
     private short                 field_2_scale;
@@ -322,22 +322,18 @@ public class PrintSetupRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 34);
-        LittleEndian.putShort(data, 4 + offset, getPaperSize());
-        LittleEndian.putShort(data, 6 + offset, getScale());
-        LittleEndian.putShort(data, 8 + offset, getPageStart());
-        LittleEndian.putShort(data, 10 + offset, getFitWidth());
-        LittleEndian.putShort(data, 12 + offset, getFitHeight());
-        LittleEndian.putShort(data, 14 + offset, getOptions());
-        LittleEndian.putShort(data, 16 + offset, getHResolution());
-        LittleEndian.putShort(data, 18 + offset, getVResolution());
-        LittleEndian.putDouble(data, 20 + offset, getHeaderMargin());
-        LittleEndian.putDouble(data, 28 + offset, getFooterMargin());
-        LittleEndian.putShort(data, 36 + offset, getCopies());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getPaperSize());
+        out.writeShort(getScale());
+        out.writeShort(getPageStart());
+        out.writeShort(getFitWidth());
+        out.writeShort(getFitHeight());
+        out.writeShort(getOptions());
+        out.writeShort(getHResolution());
+        out.writeShort(getVResolution());
+        out.writeDouble(getHeaderMargin());
+        out.writeDouble(getFooterMargin());
+        out.writeShort(getCopies());
     }
 
     protected int getDataSize() {

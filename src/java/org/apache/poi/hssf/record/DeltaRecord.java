@@ -19,7 +19,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Delta Record<P>
@@ -30,8 +30,8 @@ import org.apache.poi.util.LittleEndian;
  * @version 2.0-pre
  */
 
-public class DeltaRecord
-    extends Record
+public final class DeltaRecord
+    extends StandardRecord
 {
     public final static short  sid           = 0x10;
     public final static double DEFAULT_VALUE = 0.0010;   // should be .001
@@ -80,12 +80,8 @@ public class DeltaRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 0x8);
-        LittleEndian.putDouble(data, 4 + offset, getMaxChange());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeDouble(getMaxChange());
     }
 
     protected int getDataSize() {

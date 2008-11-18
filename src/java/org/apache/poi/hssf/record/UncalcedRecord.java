@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title: Uncalced Record
@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndian;
  * 
  * @author Olivier Leprince
  */
-public final class UncalcedRecord extends Record  {
+public final class UncalcedRecord extends StandardRecord  {
 	public final static short sid = 0x005E;
 
 	public UncalcedRecord() {
@@ -48,11 +48,8 @@ public final class UncalcedRecord extends Record  {
 		return buffer.toString();
 	}
 
-	public int serialize(int offset, byte[] data) {
-		LittleEndian.putUShort(data, 0 + offset, sid);
-		LittleEndian.putUShort(data, 2 + offset, 2);
-		LittleEndian.putUShort(data, 4 + offset, 0); // unused
-		return getRecordSize();
+	public void serialize(LittleEndianOutput out) {
+		out.writeShort(0);
 	}
 
 	protected int getDataSize() {

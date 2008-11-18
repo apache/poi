@@ -19,7 +19,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        File Pass Record<P>
@@ -30,8 +30,8 @@ import org.apache.poi.util.LittleEndian;
  * @version 3.0-pre
  */
 
-public class FilePassRecord
-    extends Record
+public final class FilePassRecord
+    extends StandardRecord
 {
     public final static short sid = 0x2F;
     private int             field_1_encryptedpassword;
@@ -60,12 +60,8 @@ public class FilePassRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 0x4);
-        LittleEndian.putInt(data, 4 + offset, ( short ) field_1_encryptedpassword);
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeInt(( short ) field_1_encryptedpassword);
     }
 
     protected int getDataSize() {

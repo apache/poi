@@ -19,7 +19,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title: Interface Header Record<P>
@@ -29,8 +29,8 @@ import org.apache.poi.util.LittleEndian;
  * @version 2.0-pre
  */
 
-public class InterfaceHdrRecord
-    extends Record
+public final class InterfaceHdrRecord
+    extends StandardRecord
 {
     public final static short sid = 0xe1;
     private short             field_1_codepage;   // = 0;
@@ -85,13 +85,8 @@ public class InterfaceHdrRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) 0x02));   // 2 bytes (6 total)
-        LittleEndian.putShort(data, 4 + offset, getCodepage());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getCodepage());
     }
 
     protected int getDataSize() {

@@ -19,7 +19,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Calc Count Record
@@ -35,8 +35,8 @@ import org.apache.poi.util.LittleEndian;
  * @see org.apache.poi.hssf.record.CalcModeRecord
  */
 
-public class CalcCountRecord
-    extends Record
+public final class CalcCountRecord
+    extends StandardRecord
 {
     public final static short sid = 0xC;
     private short             field_1_iterations;
@@ -81,12 +81,8 @@ public class CalcCountRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 0x2);
-        LittleEndian.putShort(data, 4 + offset, getIterations());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getIterations());
     }
 
     protected int getDataSize() {

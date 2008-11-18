@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        HCenter record (0x0083)<P>
@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-public final class HCenterRecord extends Record {
+public final class HCenterRecord extends StandardRecord {
     public final static short sid = 0x0083;
     private short             field_1_hcenter;
 
@@ -78,12 +78,8 @@ public final class HCenterRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putUShort(data, 2 + offset, 0x2);
-        LittleEndian.putUShort(data, 4 + offset, field_1_hcenter);
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_hcenter);
     }
 
     protected int getDataSize() {

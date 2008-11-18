@@ -20,14 +20,14 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The bar record is used to define a bar chart.<p/>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class BarRecord extends Record {
+public final class BarRecord extends StandardRecord {
     public final static short sid = 0x1017;
 
     private static final BitField   horizontal          = BitFieldFactory.getInstance(0x1);
@@ -78,18 +78,10 @@ public final class BarRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putShort(data, 4 + offset + pos, field_1_barSpace);
-        LittleEndian.putShort(data, 6 + offset + pos, field_2_categorySpace);
-        LittleEndian.putShort(data, 8 + offset + pos, field_3_formatFlags);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_barSpace);
+        out.writeShort(field_2_categorySpace);
+        out.writeShort(field_3_formatFlags);
     }
 
     protected int getDataSize() {

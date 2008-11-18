@@ -20,14 +20,14 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Describes a line format record.  The line format record controls how a line on a chart appears.<p/>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class LineFormatRecord extends Record {
+public final class LineFormatRecord extends StandardRecord {
     public final static short sid = 0x1007;
 
     private static final BitField auto      = BitFieldFactory.getInstance(0x1);
@@ -102,20 +102,12 @@ public final class LineFormatRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putInt(data, 4 + offset + pos, field_1_lineColor);
-        LittleEndian.putShort(data, 8 + offset + pos, field_2_linePattern);
-        LittleEndian.putShort(data, 10 + offset + pos, field_3_weight);
-        LittleEndian.putShort(data, 12 + offset + pos, field_4_format);
-        LittleEndian.putShort(data, 14 + offset + pos, field_5_colourPaletteIndex);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeInt(field_1_lineColor);
+        out.writeShort(field_2_linePattern);
+        out.writeShort(field_3_weight);
+        out.writeShort(field_4_format);
+        out.writeShort(field_5_colourPaletteIndex);
     }
 
     protected int getDataSize() {

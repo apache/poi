@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title: Interface End Record (0x00E2)<P>
@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @version 2.0-pre
  */
-public final class InterfaceEndRecord extends Record {
+public final class InterfaceEndRecord extends StandardRecord {
     public final static short sid = 0x00E2;
 
     public InterfaceEndRecord()
@@ -50,12 +50,7 @@ public final class InterfaceEndRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) 0x00));   // 0 bytes (4 total)
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
     }
 
     protected int getDataSize() {

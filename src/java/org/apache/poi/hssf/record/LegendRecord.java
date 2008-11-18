@@ -20,14 +20,14 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Defines a legend for a chart.<p/>
  * 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public final class LegendRecord extends Record {
+public final class LegendRecord extends StandardRecord {
     public final static short sid = 0x1015;
 
     private static final BitField autoPosition     = BitFieldFactory.getInstance(0x01);
@@ -115,22 +115,14 @@ public final class LegendRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putInt(data, 4 + offset + pos, field_1_xAxisUpperLeft);
-        LittleEndian.putInt(data, 8 + offset + pos, field_2_yAxisUpperLeft);
-        LittleEndian.putInt(data, 12 + offset + pos, field_3_xSize);
-        LittleEndian.putInt(data, 16 + offset + pos, field_4_ySize);
-        data[ 20 + offset + pos ] = field_5_type;
-        data[ 21 + offset + pos ] = field_6_spacing;
-        LittleEndian.putShort(data, 22 + offset + pos, field_7_options);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeInt(field_1_xAxisUpperLeft);
+        out.writeInt(field_2_yAxisUpperLeft);
+        out.writeInt(field_3_xSize);
+        out.writeInt(field_4_ySize);
+        out.writeByte(field_5_type);
+        out.writeByte(field_6_spacing);
+        out.writeShort(field_7_options);
     }
 
     protected int getDataSize() {

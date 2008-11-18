@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Write Protect Record<P>
@@ -25,7 +25,7 @@ import org.apache.poi.util.LittleEndian;
  * REFERENCE:  PG 425 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @version 3.0-pre
  */
-public final class WriteProtectRecord extends Record {
+public final class WriteProtectRecord extends StandardRecord {
     public final static short sid = 0x86;
 
     public WriteProtectRecord()
@@ -48,12 +48,7 @@ public final class WriteProtectRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putUShort(data, 0 + offset, sid);
-        LittleEndian.putUShort(data, 2 + offset, 0);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
     }
 
     protected int getDataSize() {

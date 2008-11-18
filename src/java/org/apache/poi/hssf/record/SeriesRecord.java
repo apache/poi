@@ -18,14 +18,14 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The series record describes the overall data for a series.<p/>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class SeriesRecord extends Record {
+public final class SeriesRecord extends StandardRecord {
     public final static short      sid                             = 0x1003;
     private  short      field_1_categoryDataType;
     public final static short       CATEGORY_DATA_TYPE_DATES       = 0;
@@ -97,21 +97,13 @@ public final class SeriesRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putShort(data, 4 + offset + pos, field_1_categoryDataType);
-        LittleEndian.putShort(data, 6 + offset + pos, field_2_valuesDataType);
-        LittleEndian.putShort(data, 8 + offset + pos, field_3_numCategories);
-        LittleEndian.putShort(data, 10 + offset + pos, field_4_numValues);
-        LittleEndian.putShort(data, 12 + offset + pos, field_5_bubbleSeriesType);
-        LittleEndian.putShort(data, 14 + offset + pos, field_6_numBubbleValues);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_categoryDataType);
+        out.writeShort(field_2_valuesDataType);
+        out.writeShort(field_3_numCategories);
+        out.writeShort(field_4_numValues);
+        out.writeShort(field_5_bubbleSeriesType);
+        out.writeShort(field_6_numBubbleValues);
     }
 
     protected int getDataSize() {

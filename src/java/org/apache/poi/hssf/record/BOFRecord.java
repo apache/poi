@@ -19,7 +19,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title: Beginning Of File<P>
@@ -32,8 +32,8 @@ import org.apache.poi.util.LittleEndian;
  * @version 2.0-pre
  */
 
-public class BOFRecord
-    extends Record
+public final class BOFRecord
+    extends StandardRecord
 {
 
     /**
@@ -272,18 +272,13 @@ public class BOFRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) 0x10));   // 16 byte length
-        LittleEndian.putShort(data, 4 + offset, getVersion());
-        LittleEndian.putShort(data, 6 + offset, getType());
-        LittleEndian.putShort(data, 8 + offset, getBuild());
-        LittleEndian.putShort(data, 10 + offset, getBuildYear());
-        LittleEndian.putInt(data, 12 + offset, getHistoryBitMask());
-        LittleEndian.putInt(data, 16 + offset, getRequiredVersion());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getVersion());
+        out.writeShort(getType());
+        out.writeShort(getBuild());
+        out.writeShort(getBuildYear());
+        out.writeInt(getHistoryBitMask());
+        out.writeInt(getRequiredVersion());
     }
 
     protected int getDataSize() {

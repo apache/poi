@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Specifies the window's zoom magnification.  <p/>
@@ -26,7 +26,7 @@ import org.apache.poi.util.LittleEndian;
  * 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public final class SCLRecord extends Record {
+public final class SCLRecord extends StandardRecord {
     public final static short      sid                             = 0x00A0;
     private  short      field_1_numerator;
     private  short      field_2_denominator;
@@ -61,17 +61,9 @@ public final class SCLRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putShort(data, 4 + offset + pos, field_1_numerator);
-        LittleEndian.putShort(data, 6 + offset + pos, field_2_denominator);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_numerator);
+        out.writeShort(field_2_denominator);
     }
 
     protected int getDataSize() {

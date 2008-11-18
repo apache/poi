@@ -20,14 +20,14 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The text record is used to define text stored on a chart.<p/>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TextRecord extends Record {
+public final class TextRecord extends StandardRecord {
     public final static short      sid                             = 0x1025;
     
     private static final BitField dataLabelPlacement            = BitFieldFactory.getInstance(0x000F);
@@ -179,27 +179,19 @@ public final class TextRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        data[ 4 + offset + pos ] = field_1_horizontalAlignment;
-        data[ 5 + offset + pos ] = field_2_verticalAlignment;
-        LittleEndian.putShort(data, 6 + offset + pos, field_3_displayMode);
-        LittleEndian.putInt(data, 8 + offset + pos, field_4_rgbColor);
-        LittleEndian.putInt(data, 12 + offset + pos, field_5_x);
-        LittleEndian.putInt(data, 16 + offset + pos, field_6_y);
-        LittleEndian.putInt(data, 20 + offset + pos, field_7_width);
-        LittleEndian.putInt(data, 24 + offset + pos, field_8_height);
-        LittleEndian.putShort(data, 28 + offset + pos, field_9_options1);
-        LittleEndian.putShort(data, 30 + offset + pos, field_10_indexOfColorValue);
-        LittleEndian.putShort(data, 32 + offset + pos, field_11_options2);
-        LittleEndian.putShort(data, 34 + offset + pos, field_12_textRotation);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeByte(field_1_horizontalAlignment);
+        out.writeByte(field_2_verticalAlignment);
+        out.writeShort(field_3_displayMode);
+        out.writeInt(field_4_rgbColor);
+        out.writeInt(field_5_x);
+        out.writeInt(field_6_y);
+        out.writeInt(field_7_width);
+        out.writeInt(field_8_height);
+        out.writeShort(field_9_options1);
+        out.writeShort(field_10_indexOfColorValue);
+        out.writeShort(field_11_options2);
+        out.writeShort(field_12_textRotation);
     }
 
     protected int getDataSize() {

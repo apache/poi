@@ -18,14 +18,14 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The plot growth record specifies the scaling factors used when a font is scaled.<p/>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class PlotGrowthRecord extends Record {
+public final class PlotGrowthRecord extends StandardRecord {
     public final static short      sid                             = 0x1064;
     private  int        field_1_horizontalScale;
     private  int        field_2_verticalScale;
@@ -61,17 +61,9 @@ public final class PlotGrowthRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putInt(data, 4 + offset + pos, field_1_horizontalScale);
-        LittleEndian.putInt(data, 8 + offset + pos, field_2_verticalScale);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeInt(field_1_horizontalScale);
+        out.writeInt(field_2_verticalScale);
     }
 
     protected int getDataSize() {

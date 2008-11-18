@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Label SST Record<P>
@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-public final class LabelSSTRecord extends Record implements CellValueRecordInterface {
+public final class LabelSSTRecord extends StandardRecord implements CellValueRecordInterface {
     public final static short sid = 0xfd;
     private int field_1_row;
     private int field_2_column;
@@ -129,15 +129,11 @@ public final class LabelSSTRecord extends Record implements CellValueRecordInter
         return sb.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putUShort(data, 0 + offset, sid);
-        LittleEndian.putUShort(data, 2 + offset, 10);
-        LittleEndian.putUShort(data, 4 + offset, getRow());
-        LittleEndian.putUShort(data, 6 + offset, getColumn());
-        LittleEndian.putUShort(data, 8 + offset, getXFIndex());
-        LittleEndian.putInt(data, 10 + offset, getSSTIndex());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getRow());
+        out.writeShort(getColumn());
+        out.writeShort(getXFIndex());
+        out.writeInt(getSSTIndex());
     }
 
     protected int getDataSize() {

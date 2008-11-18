@@ -18,13 +18,13 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The chart record is used to define the location and size of a chart.
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class ChartRecord extends Record {
+public final class ChartRecord extends StandardRecord {
     public final static short      sid                             = 0x1002;
     private  int        field_1_x;
     private  int        field_2_y;
@@ -71,19 +71,11 @@ public final class ChartRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putInt(data, 4 + offset + pos, field_1_x);
-        LittleEndian.putInt(data, 8 + offset + pos, field_2_y);
-        LittleEndian.putInt(data, 12 + offset + pos, field_3_width);
-        LittleEndian.putInt(data, 16 + offset + pos, field_4_height);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeInt(field_1_x);
+        out.writeInt(field_2_y);
+        out.writeInt(field_3_width);
+        out.writeInt(field_4_height);
     }
 
     protected int getDataSize() {
