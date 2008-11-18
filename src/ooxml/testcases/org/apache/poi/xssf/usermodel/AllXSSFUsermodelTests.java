@@ -35,26 +35,33 @@ public final class AllXSSFUsermodelTests {
 
 	public static Test suite() {
 		TestSuite result = new TestSuite(AllXSSFUsermodelTests.class.getName());
-		result.addTestSuite(TestXSSFBorder.class);
-		result.addTestSuite(TestXSSFBugs.class);
-		result.addTestSuite(TestXSSFCellFill.class);
-		result.addTestSuite(TestXSSFHeaderFooter.class);
-		result.addTestSuite(TestXSSFSheetComments.class);
-		result.addTestSuite(TestColumnHelper.class);
-		result.addTestSuite(TestHeaderFooterHelper.class);
 		result.addTestSuite(TestFormulaEvaluatorOnXSSF.class);
+		result.addTestSuite(TestSheetHiding.class);
+		result.addTestSuite(TestXSSFBugs.class);
 		result.addTestSuite(TestXSSFCell.class);
 		result.addTestSuite(TestXSSFCellStyle.class);
 		result.addTestSuite(TestXSSFComment.class);
 		result.addTestSuite(TestXSSFDialogSheet.class);
+		result.addTestSuite(TestXSSFDrawing.class);
+		result.addTestSuite(TestXSSFFont.class);
 		result.addTestSuite(TestXSSFFormulaEvaluation.class);
 		result.addTestSuite(TestXSSFHeaderFooter.class);
+		result.addTestSuite(TestXSSFHyperlink.class);
+		result.addTestSuite(TestXSSFName.class);
+		result.addTestSuite(TestXSSFPicture.class);
+		result.addTestSuite(TestXSSFPictureData.class);
+		result.addTestSuite(TestXSSFPrintSetup.class);
+		result.addTestSuite(TestXSSFRichTextString.class);
 		result.addTestSuite(TestXSSFRow.class);
 		result.addTestSuite(TestXSSFSheet.class);
 		result.addTestSuite(TestXSSFWorkbook.class);
-				
-		result.addTestSuite(TestXSSFFont.class);
-		result.addTestSuite(TestXSSFPrintSetup.class);
+
+		result.addTestSuite(TestXSSFBorder.class);
+		result.addTestSuite(TestXSSFCellFill.class);
+		result.addTestSuite(TestXSSFSheetComments.class);
+		
+		result.addTestSuite(TestColumnHelper.class);
+		result.addTestSuite(TestHeaderFooterHelper.class);
 
 		return result;
 	}
