@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.util.RKUtil;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * MULRK (0x00BD) <p/>
@@ -29,7 +30,7 @@ import org.apache.poi.util.HexDump;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @version 2.0-pre
  */
-public final class MulRKRecord extends Record {
+public final class MulRKRecord extends StandardRecord {
 	public final static short sid = 0x00BD;
 
 	private int	 field_1_row;
@@ -113,7 +114,7 @@ public final class MulRKRecord extends Record {
 		return sid;
 	}
 
-	public int serialize(int offset, byte [] data) {
+	public void serialize(LittleEndianOutput out) {
 		throw new RecordFormatException( "Sorry, you can't serialize MulRK in this release");
 	}
 	protected int getDataSize() {

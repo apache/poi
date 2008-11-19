@@ -1015,9 +1015,7 @@ public class HSSFCellStyle implements CellStyle
     	if(workbook != source.workbook) {
 			// Then we need to clone the format string,
 			//  and update the format record for this
-    		short fmt = workbook.createFormat(
-    				source.getDataFormatString()
-    		);
+    		short fmt = (short)workbook.createFormat(source.getDataFormatString() );
     		setDataFormat(fmt);
 			
 			// Finally we need to clone the font,

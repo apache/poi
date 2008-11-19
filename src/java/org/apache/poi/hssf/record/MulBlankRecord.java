@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.LittleEndianOutput;
+
 /**
  * Title:        Multiple Blank cell record(0x00BE) <P/>
  * Description:  Represents a  set of columns in a row with no value but with styling.
@@ -27,7 +29,7 @@ package org.apache.poi.hssf.record;
  * @author Glen Stampoultzis (glens at apache.org)
  * @see BlankRecord
  */
-public final class MulBlankRecord extends Record {
+public final class MulBlankRecord extends StandardRecord {
     public final static short sid = 0x00BE;
     
     private int               field_1_row;
@@ -124,7 +126,7 @@ public final class MulBlankRecord extends Record {
         return sid;
     }
 
-    public int serialize(int offset, byte [] data) {
+    public void serialize(LittleEndianOutput out) {
         throw new RecordFormatException( "Sorry, you can't serialize MulBlank in this release");
     }
     protected int getDataSize() {

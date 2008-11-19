@@ -18,25 +18,23 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.IntList;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Index Record<P>
+ * Title:        Index Record (0x020B)<p/>
  * Description:  Occurs right after BOF, tells you where the DBCELL records are for a sheet
- *               Important for locating cells<P>
+ *               Important for locating cells<p/>
  * NOT USED IN THIS RELEASE
- * REFERENCE:  PG 323 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
+ * REFERENCE:  PG 323 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public class IndexRecord extends Record {
-    public final static short sid             = 0x020B;
-    public final static int   DBCELL_CAPACITY = 30;
-    public int                field_1_zero;            // reserved must be 0
-    public int                field_2_first_row;       // first row on the sheet
-    public int                field_3_last_row_add1;   // last row
-    public int                field_4_zero;            // reserved must be 0
-    public IntList            field_5_dbcells;         // array of offsets to DBCELL records
+public class IndexRecord extends StandardRecord {
+    public final static short sid = 0x020B;
+    private int                field_2_first_row;       // first row on the sheet
+    private int                field_3_last_row_add1;   // last row
+    private int                field_4_zero;            // supposed to be zero
+    private IntList            field_5_dbcells;         // array of offsets to DBCELL records
 
     public IndexRecord()
     {
@@ -44,16 +42,17 @@ public class IndexRecord extends Record {
 
     public IndexRecord(RecordInputStream in)
     {
-        field_5_dbcells       =
-            new IntList(DBCELL_CAPACITY);   // initial capacity of 30
-        field_1_zero          = in.readInt();
+        int field_1_zero          = in.readInt();
+        if (field_1_zero != 0) {
+        	throw new RecordFormatException("Expected zero for field 1 but got " + field_1_zero);
+        }
         field_2_first_row     = in.readInt();
         field_3_last_row_add1 = in.readInt();
-        field_4_zero          = in.readInt();
-        while(in.remaining() > 0)
-        {
-
-            // System.out.println("getting " + k);
+        field_4_zero      = in.readInt();
+        
+        int nCells = in.remaining() / 4;
+        field_5_dbcells = new IntList(nCells);
+        for(int i=0; i<nCells; i++) {
             field_5_dbcells.add(in.readInt());
         }
     }
@@ -115,50 +114,43 @@ public class IndexRecord extends Record {
             .append(Integer.toHexString(getFirstRow())).append("\n");
         buffer.append("    .lastrowadd1    = ")
             .append(Integer.toHexString(getLastRowAdd1())).append("\n");
-        for (int k = 0; k < getNumDbcells(); k++)
-        {
-            buffer.append("    .dbcell_" + k + "       = ")
+        for (int k = 0; k < getNumDbcells(); k++) {
+            buffer.append("    .dbcell_").append(k).append(" = ")
                 .append(Integer.toHexString(getDbcellAt(k))).append("\n");
         }
         buffer.append("[/INDEX]\n");
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              ( short ) (16 + (getNumDbcells() * 4)));
-        LittleEndian.putInt(data, 4 + offset, 0);
-        LittleEndian.putInt(data, 8 + offset, getFirstRow());
-        LittleEndian.putInt(data, 12 + offset, getLastRowAdd1());
-        LittleEndian.putInt(data, 16 + offset, 0);
-        for (int k = 0; k < getNumDbcells(); k++)
-        {
-            LittleEndian.putInt(data, (k * 4) + 20 + offset, getDbcellAt(k));
+    public void serialize(LittleEndianOutput out) {
+
+        out.writeInt(0);
+        out.writeInt(getFirstRow());
+        out.writeInt(getLastRowAdd1());
+        out.writeInt(field_4_zero);
+        for (int k = 0; k < getNumDbcells(); k++) {
+        	out.writeInt(getDbcellAt(k));
         }
-        return getRecordSize();
     }
 
     protected int getDataSize() {
-        return 16 + (getNumDbcells() * 4);
+        return 16 // 4 ints
+        	+ getNumDbcells() * 4;
     }
     
-    /** Returns the size of an INdexRecord when it needs to index the specified number of blocks
-      *
-      */
-     public static int getRecordSizeForBlockCount(int blockCount) {
-       return 20 + (4 * blockCount);
-     }  
+    /** 
+     * @return the size of an INdexRecord when it needs to index the specified number of blocks
+     */
+    public static int getRecordSizeForBlockCount(int blockCount) {
+        return 20 + 4 * blockCount;
+    }  
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 
     public Object clone() {
       IndexRecord rec = new IndexRecord();
-      rec.field_1_zero = field_1_zero;
       rec.field_2_first_row = field_2_first_row;
       rec.field_3_last_row_add1 = field_3_last_row_add1;
       rec.field_4_zero = field_4_zero;

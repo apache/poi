@@ -250,7 +250,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
             // Serialize a block of cells for those rows
             final int startRowNumber = getStartRowNumberForBlock(blockIndex);
             final int endRowNumber = getEndRowNumberForBlock(blockIndex);
-            DBCellRecord cellRecord = new DBCellRecord();
+            DBCellRecord.Builder dbcrBuilder = new DBCellRecord.Builder();
             // Note: Cell references start from the second row...
             int cellRefOffset = (rowBlockSize - RowRecord.ENCODED_SIZE);
             for (int row = startRowNumber; row <= endRowNumber; row++) {
@@ -261,13 +261,12 @@ public final class RowRecordsAggregate extends RecordAggregate {
                     pos += rowCellSize;
                     // Add the offset to the first cell for the row into the
                     // DBCellRecord.
-                    cellRecord.addCellOffset((short) cellRefOffset);
+                    dbcrBuilder.addCellOffset(cellRefOffset);
                     cellRefOffset = rowCellSize;
                 }
             }
             // Calculate Offset from the start of a DBCellRecord to the first Row
-            cellRecord.setRowOffset(pos);
-            rv.visitRecord(cellRecord);
+            rv.visitRecord(dbcrBuilder.build(pos));
         }
         for (int i=0; i< _unknownRecords.size(); i++) {
             // Potentially breaking the file here since we don't know exactly where to write these records

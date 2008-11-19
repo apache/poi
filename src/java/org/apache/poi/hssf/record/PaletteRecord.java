@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,52 +14,44 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * PaletteRecord - Supports custom palettes.
+ * PaletteRecord (0x0092) - Supports custom palettes.
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Brian Sanders (bsanders at risklabs dot com) - custom palette editing
- * @version 2.0-pre
+ *
  */
-
-public class PaletteRecord
-    extends Record
-{
-    public final static short sid = 0x92;
+public final class PaletteRecord extends StandardRecord {
+    public final static short sid = 0x0092;
     /** The standard size of an XLS palette */
     public final static byte STANDARD_PALETTE_SIZE = (byte) 56;
     /** The byte index of the first color */
     public final static short FIRST_COLOR_INDEX = (short) 0x8;
     
-    private short field_1_numcolors;
-    private List  field_2_colors;
+    private List<PColor>  field_2_colors;
 
     public PaletteRecord()
     {
-      createDefaultPalette();
+      PColor[] defaultPalette = createDefaultPalette();
+      field_2_colors    = new ArrayList<PColor>(defaultPalette.length);
+      for (int i = 0; i < defaultPalette.length; i++) {
+        field_2_colors.add(defaultPalette[i]);
+      }
     }
 
     public PaletteRecord(RecordInputStream in)
     {
-       field_1_numcolors = in.readShort();
-       field_2_colors    = new ArrayList(field_1_numcolors);
+       int field_1_numcolors = in.readShort();
+       field_2_colors    = new ArrayList<PColor>(field_1_numcolors);
        for (int k = 0; k < field_1_numcolors; k++) {
-           field_2_colors.add(new PColor(
-                                         in.readByte(),
-                                         in.readByte(),
-                                         in.readByte()
-                                        )
-                              );
-           //Read unused byte.
-           in.readByte();
+           field_2_colors.add(new PColor(in));
        } 
     }
 
@@ -69,35 +60,27 @@ public class PaletteRecord
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[PALETTE]\n");
-        buffer.append("  numcolors     = ").append(field_1_numcolors)
-              .append('\n');
-        for (int k = 0; k < field_1_numcolors; k++) {
-        PColor c = (PColor) field_2_colors.get(k);
-        buffer.append("* colornum      = ").append(k)
-              .append('\n');
-        buffer.append(c.toString());
-        buffer.append("/*colornum      = ").append(k)
-              .append('\n');
+        buffer.append("  numcolors     = ").append(field_2_colors.size()).append('\n');
+        for (int i = 0; i < field_2_colors.size(); i++) {
+            PColor c = field_2_colors.get(i);
+            buffer.append("* colornum      = ").append(i).append('\n');
+            buffer.append(c.toString());
+            buffer.append("/*colornum      = ").append(i).append('\n');
         }
         buffer.append("[/PALETTE]\n");
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
+    public void serialize(LittleEndianOutput out)
     {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short) (getRecordSize() - 4));
-        LittleEndian.putShort(data, 4 + offset, field_1_numcolors);
-        for (int k = 0; k < field_1_numcolors; k++) {
-          PColor c = (PColor)field_2_colors.get(k);
-          c.serialize(data, (6+offset+(k*4)));
+        out.writeShort(field_2_colors.size());
+        for (int i = 0; i < field_2_colors.size(); i++) {
+          field_2_colors.get(i).serialize(out);
         }
-
-        return getRecordSize();
     }
 
     protected int getDataSize() {
-        return 2 + (field_1_numcolors * 4);
+        return 2 + field_2_colors.size() * PColor.ENCODED_SIZE;
     }
 
     public short getSid()
@@ -108,17 +91,16 @@ public class PaletteRecord
     /**
      * Returns the color value at a given index
      *
-     * @return the RGB triplet for the color, or null if the specified index
+     * @return the RGB triplet for the color, or <code>null</code> if the specified index
      * does not exist
      */
-    public byte[] getColor(short byteIndex)
-    {
+    public byte[] getColor(short byteIndex) {
         int i = byteIndex - FIRST_COLOR_INDEX;
         if (i < 0 || i >= field_2_colors.size())
         {
             return null;
         }
-        PColor color = (PColor) field_2_colors.get(i);
+        PColor color =  field_2_colors.get(i);
         return new byte[] { color.red, color.green, color.blue };
     }
     
@@ -138,9 +120,9 @@ public class PaletteRecord
         {
             return;
         }
-        while (field_2_colors.size() <= i)
-        {
-            field_2_colors.add(new PColor((byte) 0, (byte) 0, (byte) 0));
+        // may need to grow - fill intervening pallette entries with black
+        while (field_2_colors.size() <= i) {
+            field_2_colors.add(new PColor(0, 0, 0));
         }
         PColor custColor = new PColor(red, green, blue);
         field_2_colors.set(i, custColor);
@@ -151,100 +133,99 @@ public class PaletteRecord
      *
      * @see org.apache.poi.hssf.model.Workbook#createPalette
      */
-    private void createDefaultPalette()
+    private static PColor[] createDefaultPalette()
     {
-      field_1_numcolors = STANDARD_PALETTE_SIZE;
-      field_2_colors    = new ArrayList(field_1_numcolors);
-      byte[] palette = new byte[]
-        {
-            (byte) 0, (byte) 0, (byte) 0, (byte) 0, //color 0...
-            (byte) 255, (byte) 255, (byte) 255, (byte) 0,
-            (byte) 255, (byte) 0, (byte) 0, (byte) 0,
-            (byte) 0, (byte) 255, (byte) 0, (byte) 0,
-            (byte) 0, (byte) 0, (byte) 255, (byte) 0,
-            (byte) 255, (byte) 255, (byte) 0, (byte) 0,
-            (byte) 255, (byte) 0, (byte) 255, (byte) 0,
-            (byte) 0, (byte) 255, (byte) 255, (byte) 0,
-            (byte) 128, (byte) 0, (byte) 0, (byte) 0,
-            (byte) 0, (byte) 128, (byte) 0, (byte) 0,
-            (byte) 0, (byte) 0, (byte) 128, (byte) 0,
-            (byte) 128, (byte) 128, (byte) 0, (byte) 0,
-            (byte) 128, (byte) 0, (byte) 128, (byte) 0,
-            (byte) 0, (byte) 128, (byte) 128, (byte) 0,
-            (byte) 192, (byte) 192, (byte) 192, (byte) 0,
-            (byte) 128, (byte) 128, (byte) 128, (byte) 0,
-            (byte) 153, (byte) 153, (byte) 255, (byte) 0,
-            (byte) 153, (byte) 51, (byte) 102, (byte) 0,
-            (byte) 255, (byte) 255, (byte) 204, (byte) 0,
-            (byte) 204, (byte) 255, (byte) 255, (byte) 0,
-            (byte) 102, (byte) 0, (byte) 102, (byte) 0,
-            (byte) 255, (byte) 128, (byte) 128, (byte) 0,
-            (byte) 0, (byte) 102, (byte) 204, (byte) 0,
-            (byte) 204, (byte) 204, (byte) 255, (byte) 0,
-            (byte) 0, (byte) 0, (byte) 128, (byte) 0,
-            (byte) 255, (byte) 0, (byte) 255, (byte) 0,
-            (byte) 255, (byte) 255, (byte) 0, (byte) 0,
-            (byte) 0, (byte) 255, (byte) 255, (byte) 0, 
-            (byte) 128, (byte) 0, (byte) 128, (byte) 0,
-            (byte) 128, (byte) 0, (byte) 0, (byte) 0,
-            (byte) 0, (byte) 128, (byte) 128, (byte) 0,
-            (byte) 0, (byte) 0, (byte) 255, (byte) 0,
-            (byte) 0, (byte) 204, (byte) 255, (byte) 0,
-            (byte) 204, (byte) 255, (byte) 255, (byte) 0,
-            (byte) 204, (byte) 255, (byte) 204, (byte) 0,
-            (byte) 255, (byte) 255, (byte) 153, (byte) 0,
-            (byte) 153, (byte) 204, (byte) 255, (byte) 0,
-            (byte) 255, (byte) 153, (byte) 204, (byte) 0,
-            (byte) 204, (byte) 153, (byte) 255, (byte) 0,
-            (byte) 255, (byte) 204, (byte) 153, (byte) 0,
-            (byte) 51, (byte) 102, (byte) 255, (byte) 0,
-            (byte) 51, (byte) 204, (byte) 204, (byte) 0,
-            (byte) 153, (byte) 204, (byte) 0, (byte) 0,
-            (byte) 255, (byte) 204, (byte) 0, (byte) 0,
-            (byte) 255, (byte) 153, (byte) 0, (byte) 0,
-            (byte) 255, (byte) 102, (byte) 0, (byte) 0,
-            (byte) 102, (byte) 102, (byte) 153, (byte) 0,
-            (byte) 150, (byte) 150, (byte) 150, (byte) 0,
-            (byte) 0, (byte) 51, (byte) 102, (byte) 0,
-            (byte) 51, (byte) 153, (byte) 102, (byte) 0,
-            (byte) 0, (byte) 51, (byte) 0, (byte) 0,
-            (byte) 51, (byte) 51, (byte) 0, (byte) 0,
-            (byte) 153, (byte) 51, (byte) 0, (byte) 0,
-            (byte) 153, (byte) 51, (byte) 102, (byte) 0,
-            (byte) 51, (byte) 51, (byte) 153, (byte) 0,
-            (byte) 51, (byte) 51, (byte) 51, (byte) 0
+        return new PColor[] {
+                pc(0, 0, 0),
+                pc(255, 255, 255),
+                pc(255, 0, 0),
+                pc(0, 255, 0),
+                pc(0, 0, 255),
+                pc(255, 255, 0),
+                pc(255, 0, 255),
+                pc(0, 255, 255),
+                pc(128, 0, 0),
+                pc(0, 128, 0),
+                pc(0, 0, 128),
+                pc(128, 128, 0),
+                pc(128, 0, 128),
+                pc(0, 128, 128),
+                pc(192, 192, 192),
+                pc(128, 128, 128),
+                pc(153, 153, 255),
+                pc(153, 51, 102),
+                pc(255, 255, 204),
+                pc(204, 255, 255),
+                pc(102, 0, 102),
+                pc(255, 128, 128),
+                pc(0, 102, 204),
+                pc(204, 204, 255),
+                pc(0, 0, 128),
+                pc(255, 0, 255),
+                pc(255, 255, 0),
+                pc(0, 255, 255),
+                pc(128, 0, 128),
+                pc(128, 0, 0),
+                pc(0, 128, 128),
+                pc(0, 0, 255),
+                pc(0, 204, 255),
+                pc(204, 255, 255),
+                pc(204, 255, 204),
+                pc(255, 255, 153),
+                pc(153, 204, 255),
+                pc(255, 153, 204),
+                pc(204, 153, 255),
+                pc(255, 204, 153),
+                pc(51, 102, 255),
+                pc(51, 204, 204),
+                pc(153, 204, 0),
+                pc(255, 204, 0),
+                pc(255, 153, 0),
+                pc(255, 102, 0),
+                pc(102, 102, 153),
+                pc(150, 150, 150),
+                pc(0, 51, 102),
+                pc(51, 153, 102),
+                pc(0, 51, 0),
+                pc(51, 51, 0),
+                pc(153, 51, 0),
+                pc(153, 51, 102),
+                pc(51, 51, 153),
+                pc(51, 51, 51),
         };
-      
-      for (int k = 0; k < field_1_numcolors; k++) {
-          field_2_colors.add(new PColor(
-                                        palette[k*4],
-                                        palette[k*4+1],
-                                        palette[k*4+2]
-                                       )
-                             );
-      }
-      
     }
-}
+
+    private static PColor pc(int r, int g, int b) {
+        return new PColor(r, g, b);
+    }
 
 /**
  * PColor - element in the list of colors - consider it a "struct"
  */
-class PColor {
+private static final class PColor {
+  public static final short ENCODED_SIZE = 4;
   public byte red;
   public byte green;
   public byte blue;
-  public PColor(byte red, byte green, byte blue) {
-    this.red=red;
-    this.green=green;
-    this.blue=blue;
+
+  public PColor(int red, int green, int blue) {
+    this.red=(byte) red;
+    this.green=(byte) green;
+    this.blue=(byte) blue;
   }
 
-  public void serialize(byte[] data, int offset) {
-     data[offset + 0] = red;
-     data[offset + 1] = green;
-     data[offset + 2] = blue;
-     data[offset + 3] = 0;
+  public PColor(RecordInputStream in) {
+    red=in.readByte();
+    green=in.readByte();
+    blue=in.readByte();
+    in.readByte(); // unused
+  }
+
+  public void serialize(LittleEndianOutput out) {
+      out.writeByte(red);
+      out.writeByte(green);
+      out.writeByte(blue);
+      out.writeByte(0);
   }
 
   public String toString() {
@@ -254,4 +235,5 @@ class PColor {
         buffer.append("  blue          = ").append(blue & 0xff).append('\n');
         return buffer.toString();
   }
+}
 }

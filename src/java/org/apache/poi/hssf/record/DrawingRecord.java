@@ -17,9 +17,12 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
-
-public final class DrawingRecord extends Record {
+import org.apache.poi.util.LittleEndianOutput;
+/**
+ * DrawingRecord (0x00EC)<p/>
+ *
+ */
+public final class DrawingRecord extends StandardRecord {
     public static final short sid = 0x00EC;
 
 	private static final byte[] EMPTY_BYTE_ARRAY = { };
@@ -31,70 +34,50 @@ public final class DrawingRecord extends Record {
     	recordData = EMPTY_BYTE_ARRAY;
     }
 
-    public DrawingRecord( RecordInputStream in )
-    {
+    public DrawingRecord(RecordInputStream in) {
       recordData = in.readRemainder();
     }
 
-    public void processContinueRecord( byte[] record )
-    {
+    public void processContinueRecord(byte[] record) {
         //don't merge continue record with the drawing record, it must be serialized separately
         contd = record;
     }
 
-    public int serialize( int offset, byte[] data )
-    {
-        if (recordData == null)
-        {
-            recordData = new byte[ 0 ];
-        }
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) (recordData.length));
-        if (recordData.length > 0)
-        {
-            System.arraycopy(recordData, 0, data, 4 + offset, recordData.length);
-        }
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.write(recordData);
     }
     protected int getDataSize() {
-        int retval = 0;
-
-        if (recordData != null) {
-            retval += recordData.length;
-        }
-        return retval;
+        return recordData.length;
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 
-    public byte[] getData()
-    {
+    public byte[] getData() {
         if(contd != null) {
             byte[] newBuffer = new byte[ recordData.length + contd.length ];
             System.arraycopy( recordData, 0, newBuffer, 0, recordData.length );
             System.arraycopy( contd, 0, newBuffer, recordData.length, contd.length);
             return newBuffer;
-        } else {
-            return recordData;
         }
+        return recordData;
     }
 
-    public void setData( byte[] thedata )
-    {
-        this.recordData = thedata;
+    public void setData(byte[] thedata) {
+    	if (thedata == null) {
+    		throw new IllegalArgumentException("data must not be null");
+    	}
+        recordData = thedata;
     }
 
     public Object clone() {
     	DrawingRecord rec = new DrawingRecord();
     	
-    	rec.recordData = new byte[ recordData.length ];
-    	System.arraycopy(recordData, 0, rec.recordData, 0, recordData.length);
+    	rec.recordData = recordData.clone();
     	if (contd != null) {
-	    	System.arraycopy(contd, 0, rec.contd, 0, contd.length);
-	    	rec.contd = new byte[ contd.length ];
+	    	// TODO - this code probably never executes
+	    	rec.contd = contd.clone();
     	}
     	
     	return rec;

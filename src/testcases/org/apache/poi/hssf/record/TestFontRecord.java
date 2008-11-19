@@ -14,58 +14,52 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.record;
 
 
 import junit.framework.TestCase;
 
 /**
- * Tests the serialization and deserialization of the FontRecord
- * class works correctly.  Test data taken directly from a real
- * Excel file.
+ * Tests the serialization and deserialization of the {@link FontRecord}
+ * class works correctly.  Test data taken directly from a real Excel file.
  */
 public final class TestFontRecord extends TestCase {
-	byte[] header = new byte[] {
-    		0x31, 00, 0x1a, 00, // sid=31, 26 bytes long
-	};
-    byte[] data = new byte[] {
-    		0xC8-256, 00,       // font height = xc8
-    		00, 00,             // attrs = 0 
-    		0xFF-256, 0x7F,     // colour palette = x7fff 
-    		0x90-256, 0x01,     // bold weight = x190
-    		00, 00,  // supersubscript
-    		00, 00,  // underline, family
-    		00, 00,  // charset, padding
-    		05, 01,  // name length, unicode flag
-    		0x41, 0x00, 0x72, 0x00, 0x69, // Arial, as unicode 
-    		0x00, 0x61, 0x00, 0x6C, 0x00
+
+    private static final byte[] data = {
+            0xC8-256, 00,       // font height = xc8
+            00, 00,             // attrs = 0
+            0xFF-256, 0x7F,     // colour palette = x7fff
+            0x90-256, 0x01,     // bold weight = x190
+            00, 00,  // supersubscript
+            00, 00,  // underline, family
+            00, 00,  // charset, padding
+            05, 00,  // name length, unicode flag
+            0x41, 0x72, 0x69, 0x61, 0x6C, // Arial, as unicode
+
     };
 
     public void testLoad() {
 
         FontRecord record = new FontRecord(TestcaseRecordInputStream.create(0x31, data));
-        assertEquals( 0xc8, record.getFontHeight());
-        assertEquals( 0x00, record.getAttributes());
-        assertFalse( record.isItalic());
-        assertFalse( record.isStruckout());
-        assertFalse( record.isMacoutlined());
-        assertFalse( record.isMacshadowed());
-        assertEquals( 0x7fff, record.getColorPaletteIndex());
-        assertEquals( 0x190, record.getBoldWeight());
-        assertEquals( 0x00, record.getSuperSubScript());
-        assertEquals( 0x00, record.getUnderline());
-        assertEquals( 0x00, record.getFamily());
-        assertEquals( 0x00, record.getCharset());
-        assertEquals( 0x05, record.getFontNameLength());
-        assertEquals( "Arial", record.getFontName());
+        assertEquals(0xc8, record.getFontHeight());
+        assertEquals(0x00, record.getAttributes());
+        assertFalse(record.isItalic());
+        assertFalse(record.isStruckout());
+        assertFalse(record.isMacoutlined());
+        assertFalse(record.isMacshadowed());
+        assertEquals(0x7fff, record.getColorPaletteIndex());
+        assertEquals(0x190, record.getBoldWeight());
+        assertEquals(0x00, record.getSuperSubScript());
+        assertEquals(0x00, record.getUnderline());
+        assertEquals(0x00, record.getFamily());
+        assertEquals(0x00, record.getCharset());
+        assertEquals("Arial", record.getFontName());
 
-
-        assertEquals( 26 + 4, record.getRecordSize() );
+        assertEquals(21 + 4, record.getRecordSize());
     }
 
-    public void testStore()
-    {
+    public void testStore() {
 //      .fontheight      = c8
 //      .attributes      = 0
 //           .italic     = false
@@ -90,7 +84,6 @@ public final class TestFontRecord extends TestCase {
         record.setUnderline((byte)0);
         record.setFamily((byte)0);
         record.setCharset((byte)0);
-        record.setFontNameLength((byte)5);
         record.setFontName("Arial");
 
         byte [] recordBytes = record.serialize();
@@ -98,10 +91,10 @@ public final class TestFontRecord extends TestCase {
         for (int i = 0; i < data.length; i++)
             assertEquals("At offset " + i, data[i], recordBytes[i+4]);
     }
-    
-    public void testCloneOnto() throws Exception {
+
+    public void testCloneOnto() {
         FontRecord base = new FontRecord(TestcaseRecordInputStream.create(0x31, data));
-    	
+
         FontRecord other = new FontRecord();
         other.cloneStyleFrom(base);
 
@@ -110,18 +103,18 @@ public final class TestFontRecord extends TestCase {
         for (int i = 0; i < data.length; i++)
             assertEquals("At offset " + i, data[i], recordBytes[i+4]);
     }
-    
+
     public void testSameProperties() throws Exception {
         FontRecord f1 = new FontRecord(TestcaseRecordInputStream.create(0x31, data));
         FontRecord f2 = new FontRecord(TestcaseRecordInputStream.create(0x31, data));
-    	
+
         assertTrue(f1.sameProperties(f2));
-        
+
         f2.setFontName("Arial2");
         assertFalse(f1.sameProperties(f2));
         f2.setFontName("Arial");
         assertTrue(f1.sameProperties(f2));
-        
+
         f2.setFontHeight((short)11);
         assertFalse(f1.sameProperties(f2));
         f2.setFontHeight((short)0xc8);

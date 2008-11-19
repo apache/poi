@@ -17,19 +17,19 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Title:        FILESHARING<P>
+ * Title:        FILESHARING (0x005B) <p/>
  * Description:  stores the encrypted readonly for a workbook (write protect) 
  * This functionality is accessed from the options dialog box available when performing 'Save As'.<p/>
  * REFERENCE:  PG 314 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  */
-public final class FileSharingRecord extends Record {
+public final class FileSharingRecord extends StandardRecord {
 
-    public final static short sid = 0x5b;
+    public final static short sid = 0x005B;
     private short             field_1_readonly;
     private short             field_2_password;
     private byte              field_3_username_unicode_options;
@@ -103,12 +103,6 @@ public final class FileSharingRecord extends Record {
         return field_2_password;
     }
 
-    /**
-     * @return byte representing the length of the username field
-     */
-    public short getUsernameLength() {
-        return (short) field_3_username_value.length();
-    }
 
     /**
      * @return username of the user that created the file
@@ -139,22 +133,19 @@ public final class FileSharingRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data) {
+    public void serialize(LittleEndianOutput out) {
         // TODO - junit
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize()-4));
-        LittleEndian.putShort(data, 4 + offset, getReadOnly());
-        LittleEndian.putShort(data, 6 + offset, getPassword());
-        LittleEndian.putShort(data, 8 + offset, getUsernameLength());
-        if(getUsernameLength() > 0) {
-            LittleEndian.putByte(data, 10 + offset, field_3_username_unicode_options);
-            StringUtil.putCompressedUnicode( getUsername(), data, 11 + offset );
+        out.writeShort(getReadOnly());
+        out.writeShort(getPassword());
+        out.writeShort(field_3_username_value.length());
+        if(field_3_username_value.length() > 0) {
+        	out.writeByte(field_3_username_unicode_options);
+            StringUtil.putCompressedUnicode(getUsername(), out);
         }
-        return getRecordSize();
     }
 
     protected int getDataSize() {
-        short nameLen = getUsernameLength();
+        int nameLen = field_3_username_value.length();
         if (nameLen < 1) {
             return 6;
         }

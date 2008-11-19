@@ -47,12 +47,12 @@ import org.apache.poi.hssf.record.HCenterRecord;
 import org.apache.poi.hssf.record.HeaderRecord;
 import org.apache.poi.hssf.record.LegendRecord;
 import org.apache.poi.hssf.record.LineFormatRecord;
-import org.apache.poi.hssf.record.LinkedDataFormulaField;
 import org.apache.poi.hssf.record.LinkedDataRecord;
 import org.apache.poi.hssf.record.PlotAreaRecord;
 import org.apache.poi.hssf.record.PlotGrowthRecord;
 import org.apache.poi.hssf.record.PrintSetupRecord;
 import org.apache.poi.hssf.record.ProtectRecord;
+import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.SeriesIndexRecord;
@@ -96,12 +96,12 @@ public final class HSSFChart {
 	public void createBarChart( HSSFWorkbook workbook, HSSFSheet sheet )
 	{
 
-		List records = new ArrayList();
+		List<Record> records = new ArrayList<Record>();
 		records.add( createMSDrawingObjectRecord() );
 		records.add( createOBJRecord() );
 		records.add( createBOFRecord() );
-		records.add( createHeaderRecord() );
-		records.add( createFooterRecord() );
+		records.add(new HeaderRecord(""));
+		records.add(new FooterRecord(""));
 		records.add( createHCenterRecord() );
 		records.add( createVCenterRecord() );
 		records.add( createPrintSetupRecord() );
@@ -340,20 +340,6 @@ public final class HSSFChart {
 		return r;
 	}
 
-	private FooterRecord createFooterRecord()
-	{
-		FooterRecord r = new FooterRecord();
-		r.setFooter(null);
-		return r;
-	}
-
-	private HeaderRecord createHeaderRecord()
-	{
-		HeaderRecord r = new HeaderRecord();
-		r.setHeader(null);
-		return r;
-	}
-
 	private BOFRecord createBOFRecord()
 	{
 		BOFRecord r = new BOFRecord();
@@ -447,7 +433,7 @@ public final class HSSFChart {
 		r.setReferenceType(LinkedDataRecord.REFERENCE_TYPE_DIRECT);
 		r.setCustomNumberFormat(false);
 		r.setIndexNumberFmtRecord((short)0);
-		r.setFormulaOfLink( new LinkedDataFormulaField() );
+		r.setFormulaOfLink(null);
 		return r;
 	}
 
@@ -647,7 +633,7 @@ public final class HSSFChart {
 		r.setReferenceType( LinkedDataRecord.REFERENCE_TYPE_DIRECT );
 		r.setCustomNumberFormat( false );
 		r.setIndexNumberFmtRecord( (short) 0 );
-		r.setFormulaOfLink( new LinkedDataFormulaField() );
+		r.setFormulaOfLink(null);
 		return r;
 	}
 
@@ -758,11 +744,9 @@ public final class HSSFChart {
 		r.setReferenceType( LinkedDataRecord.REFERENCE_TYPE_WORKSHEET );
 		r.setCustomNumberFormat( false );
 		r.setIndexNumberFmtRecord( (short) 0 );
-		LinkedDataFormulaField formula = new LinkedDataFormulaField();
 		Area3DPtg p = new Area3DPtg(0, 31, 1, 1,
 		        false, false, false, false, 0);
-		formula.setFormulaTokens(new Ptg[] { p, });
-		r.setFormulaOfLink( formula );
+		r.setFormulaOfLink(new Ptg[] { p, });
 		return r;
 	}
 
@@ -773,11 +757,9 @@ public final class HSSFChart {
 		r.setReferenceType( LinkedDataRecord.REFERENCE_TYPE_WORKSHEET );
 		r.setCustomNumberFormat( false );
 		r.setIndexNumberFmtRecord( (short) 0 );
-		LinkedDataFormulaField formula = new LinkedDataFormulaField();
 		Area3DPtg p = new Area3DPtg(0, 31, 0, 0,
 				false, false, false, false, 0);
-		formula.setFormulaTokens(new Ptg[] { p, });
-		r.setFormulaOfLink( formula );
+		r.setFormulaOfLink(new Ptg[] { p, });
 		return r;
 	}
 
@@ -788,7 +770,7 @@ public final class HSSFChart {
 		r.setReferenceType( LinkedDataRecord.REFERENCE_TYPE_DIRECT );
 		r.setCustomNumberFormat( false );
 		r.setIndexNumberFmtRecord( (short) 0 );
-		r.setFormulaOfLink( new LinkedDataFormulaField() );
+		r.setFormulaOfLink(null);
 		return r;
 	}
 

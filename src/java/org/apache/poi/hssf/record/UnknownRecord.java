@@ -18,19 +18,19 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Unknown Record (for debugging)<P>
+ * Title:        Unknown Record (for debugging)<p/>
  * Description:  Unknown record just tells you the sid so you can figure out
  *               what records you are missing.  Also helps us read/modify sheets we
- *               don't know all the records to.  (HSSF leaves these alone!) <P>
+ *               don't know all the records to.  (HSSF leaves these alone!) <p/>
  * Company:      SuperLink Software, Inc.<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class UnknownRecord extends Record {
+public final class UnknownRecord extends StandardRecord {
 
 	/*
 	 * Some Record IDs used by POI as 'milestones' in the record stream
@@ -79,12 +79,8 @@ public final class UnknownRecord extends Record {
 	/**
 	 * spit the record out AS IS. no interpretation or identification
 	 */
-	public final int serialize(int offset, byte[] data) {
-		LittleEndian.putUShort(data, 0 + offset, _sid);
-		int dataSize = _rawData.length;
-		LittleEndian.putUShort(data, 2 + offset, dataSize);
-		System.arraycopy(_rawData, 0, data, 4 + offset, dataSize);
-		return 4 + dataSize;
+	public void serialize(LittleEndianOutput out) {
+		out.write(_rawData);
 	}
 
 	protected int getDataSize() {
@@ -94,7 +90,7 @@ public final class UnknownRecord extends Record {
 	/**
 	 * print a sort of string representation ([UNKNOWN RECORD] id = x [/UNKNOWN RECORD])
 	 */
-	public final String toString() {
+	public String toString() {
 		String biffName = getBiffName(_sid);
 		if (biffName == null) {
 			biffName = "UNKNOWNRECORD";
@@ -110,7 +106,7 @@ public final class UnknownRecord extends Record {
 		return sb.toString();
 	}
 
-	public final short getSid() {
+	public short getSid() {
 		return (short) _sid;
 	}
 
@@ -267,8 +263,8 @@ public final class UnknownRecord extends Record {
 		return false;
 	}
 
-	public final Object clone() {
-		// immutable - ok to return this
+	public Object clone() {
+		// immutable - OK to return this
 		return this;
 	}
 }

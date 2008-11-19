@@ -95,7 +95,7 @@ public final class Workbook implements Model {
 
     protected int              numxfs      = 0;   // hold the number of extended format records
     protected int              numfonts    = 0;   // hold the number of font records
-    private short              maxformatid  = -1;  // holds the max format id
+    private int                maxformatid  = -1;  // holds the max format id
     private boolean            uses1904datewindowing  = false;  // whether 1904 date windowing is being used
     private DrawingManager2    drawingManager;
     private List               escherBSERecords = new ArrayList();  // EscherBSERecord
@@ -1106,15 +1106,8 @@ public final class Workbook implements Model {
      * @see org.apache.poi.hssf.record.Record
      * @return record containing a TabIdRecord
      */
-
-    protected Record createTabId() {
-        TabIdRecord retval     = new TabIdRecord();
-        short[]     tabidarray = {
-            0
-        };
-
-        retval.setTabIdArray(tabidarray);
-        return retval;
+    private static TabIdRecord createTabId() {
+        return new TabIdRecord();
     }
 
     /**
@@ -1334,7 +1327,6 @@ public final class Workbook implements Model {
      * @see org.apache.poi.hssf.record.Record
      * @return record containing a FontRecord
      */
-
     protected Record createFont() {
         FontRecord retval = new FontRecord();
 
@@ -1342,7 +1334,6 @@ public final class Workbook implements Model {
         retval.setAttributes(( short ) 0x0);
         retval.setColorPaletteIndex(( short ) 0x7fff);
         retval.setBoldWeight(( short ) 0x190);
-        retval.setFontNameLength(( byte ) 5);
         retval.setFontName("Arial");
         return retval;
     }
@@ -1355,66 +1346,21 @@ public final class Workbook implements Model {
      * @see org.apache.poi.hssf.record.FormatRecord
      * @see org.apache.poi.hssf.record.Record
      */
-
-    protected Record createFormat(int id) {   // we'll need multiple editions for
-        FormatRecord retval = new FormatRecord();   // the differnt formats
+    private static FormatRecord createFormat(int id) {  
+    	// we'll need multiple editions for
+        // the different formats
 
         switch (id) {
-
-            case 0 :
-                retval.setIndexCode(( short ) 5);
-                retval.setFormatStringLength(( byte ) 0x17);
-                retval.setFormatString("\"$\"#,##0_);\\(\"$\"#,##0\\)");
-                break;
-
-            case 1 :
-                retval.setIndexCode(( short ) 6);
-                retval.setFormatStringLength(( byte ) 0x1c);
-                retval.setFormatString("\"$\"#,##0_);[Red]\\(\"$\"#,##0\\)");
-                break;
-
-            case 2 :
-                retval.setIndexCode(( short ) 7);
-                retval.setFormatStringLength(( byte ) 0x1d);
-                retval.setFormatString("\"$\"#,##0.00_);\\(\"$\"#,##0.00\\)");
-                break;
-
-            case 3 :
-                retval.setIndexCode(( short ) 8);
-                retval.setFormatStringLength(( byte ) 0x22);
-                retval.setFormatString(
-                "\"$\"#,##0.00_);[Red]\\(\"$\"#,##0.00\\)");
-                break;
-
-            case 4 :
-                retval.setIndexCode(( short ) 0x2a);
-                retval.setFormatStringLength(( byte ) 0x32);
-                retval.setFormatString(
-                "_(\"$\"* #,##0_);_(\"$\"* \\(#,##0\\);_(\"$\"* \"-\"_);_(@_)");
-                break;
-
-            case 5 :
-                retval.setIndexCode(( short ) 0x29);
-                retval.setFormatStringLength(( byte ) 0x29);
-                retval.setFormatString(
-                "_(* #,##0_);_(* \\(#,##0\\);_(* \"-\"_);_(@_)");
-                break;
-
-            case 6 :
-                retval.setIndexCode(( short ) 0x2c);
-                retval.setFormatStringLength(( byte ) 0x3a);
-                retval.setFormatString(
-                "_(\"$\"* #,##0.00_);_(\"$\"* \\(#,##0.00\\);_(\"$\"* \"-\"??_);_(@_)");
-                break;
-
-            case 7 :
-                retval.setIndexCode(( short ) 0x2b);
-                retval.setFormatStringLength(( byte ) 0x31);
-                retval.setFormatString(
-                "_(* #,##0.00_);_(* \\(#,##0.00\\);_(* \"-\"??_);_(@_)");
-                break;
+            case 0: return new FormatRecord(5, "\"$\"#,##0_);\\(\"$\"#,##0\\)");
+            case 1: return new FormatRecord(6, "\"$\"#,##0_);[Red]\\(\"$\"#,##0\\)");
+            case 2: return new FormatRecord(7, "\"$\"#,##0.00_);\\(\"$\"#,##0.00\\)");
+            case 3: return new FormatRecord(8, "\"$\"#,##0.00_);[Red]\\(\"$\"#,##0.00\\)");
+            case 4: return new FormatRecord(0x2a, "_(\"$\"* #,##0_);_(\"$\"* \\(#,##0\\);_(\"$\"* \"-\"_);_(@_)");
+            case 5: return new FormatRecord(0x29, "_(* #,##0_);_(* \\(#,##0\\);_(* \"-\"_);_(@_)");
+            case 6: return new FormatRecord(0x2c, "_(\"$\"* #,##0.00_);_(\"$\"* \\(#,##0.00\\);_(\"$\"* \"-\"??_);_(@_)");
+            case 7: return new FormatRecord(0x2b, "_(* #,##0.00_);_(* \\(#,##0.00\\);_(* \"-\"??_);_(@_)");
         }
-        return retval;
+        throw new  IllegalArgumentException("Unexpected id " + id);
     }
 
     /**
@@ -2061,12 +2007,12 @@ public final class Workbook implements Model {
     for (iterator = formats.iterator(); iterator.hasNext();) {
         FormatRecord r = (FormatRecord)iterator.next();
         if (r.getFormatString().equals(format)) {
-        return r.getIndexCode();
+        return (short)r.getIndexCode();
         }
     }
 
     if (createIfNotFound) {
-        return createFormat(format);
+        return (short)createFormat(format);
     }
 
     return -1;
@@ -2082,21 +2028,15 @@ public final class Workbook implements Model {
 
     /**
      * Creates a FormatRecord, inserts it, and returns the index code.
-     * @param format the format string
+     * @param formatString the format string
      * @return the index code of the format record.
      * @see org.apache.poi.hssf.record.FormatRecord
      * @see org.apache.poi.hssf.record.Record
      */
-    public short createFormat( String format )
-    {
-//        ++xfpos;    //These are to ensure that positions are updated properly
-//        ++palettepos;
-//        ++bspos;
-        FormatRecord rec = new FormatRecord();
-        maxformatid = maxformatid >= (short) 0xa4 ? (short) ( maxformatid + 1 ) : (short) 0xa4; //Starting value from M$ empiracle study.
-        rec.setIndexCode( maxformatid );
-        rec.setFormatStringLength( (byte) format.length() );
-        rec.setFormatString( format );
+    public int createFormat(String formatString) {
+
+        maxformatid = maxformatid >= 0xa4 ? maxformatid + 1 : 0xa4; //Starting value from M$ empircal study.
+        FormatRecord rec = new FormatRecord(maxformatid, formatString);
 
         int pos = 0;
         while ( pos < records.size() && records.get( pos ).getSid() != FormatRecord.sid )

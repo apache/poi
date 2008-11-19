@@ -19,18 +19,15 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title: Merged Cells Record (0x00E5)
  * <br/>
- * Description:  Optional record defining a square area of cells to "merged" into
- *               one cell. <br>
- * REFERENCE:  NONE (UNDOCUMENTED PRESENTLY) <br>
+ * Description:  Optional record defining a square area of cells to "merged" into one cell. <br>
  * @author Andrew C. Oliver (acoliver at apache dot org)
- * @version 2.0-pre
  */
-public final class MergeCellsRecord extends Record {
+public final class MergeCellsRecord extends StandardRecord {
     public final static short sid = 0x00E5;
     /** sometimes the regions array is shared with other MergedCellsRecords */ 
     private CellRangeAddress[] _regions;
@@ -80,37 +77,26 @@ public final class MergeCellsRecord extends Record {
         return sid;
     }
 
-    public int serialize(int offset, byte [] data) {
-        int dataSize = CellRangeAddressList.getEncodedSize(_numberOfRegions);
-
-        LittleEndian.putUShort(data, offset + 0, sid);
-        LittleEndian.putUShort(data, offset + 2, dataSize);
+    public void serialize(LittleEndianOutput out) {
         int nItems = _numberOfRegions;
-        LittleEndian.putUShort(data, offset + 4, nItems);
-        int pos = 6;
+        out.writeShort(nItems);
         for (int i = 0; i < _numberOfRegions; i++) {
-			pos += _regions[_startIndex + i].serialize(offset+pos, data);
+			_regions[_startIndex + i].serialize(out);
 		}
-        return 4 + dataSize;
     }
 
     public String toString() {
         StringBuffer retval = new StringBuffer();
 
         retval.append("[MERGEDCELLS]").append("\n");
-        retval.append("     .numregions =").append(getNumAreas())
-            .append("\n");
+        retval.append("     .numregions =").append(getNumAreas()).append("\n");
         for (int k = 0; k < _numberOfRegions; k++) {
-            CellRangeAddress region = _regions[_startIndex + k];
+            CellRangeAddress r = _regions[_startIndex + k];
 
-            retval.append("     .rowfrom    =").append(region.getFirstRow())
-                .append("\n");
-            retval.append("     .rowto      =").append(region.getLastRow())
-            	.append("\n");
-            retval.append("     .colfrom    =").append(region.getFirstColumn())
-                .append("\n");
-            retval.append("     .colto      =").append(region.getLastColumn())
-                .append("\n");
+            retval.append("     .rowfrom =").append(r.getFirstRow()).append("\n");
+            retval.append("     .rowto   =").append(r.getLastRow()).append("\n");
+            retval.append("     .colfrom =").append(r.getFirstColumn()).append("\n");
+            retval.append("     .colto   =").append(r.getLastColumn()).append("\n");
         }
         retval.append("[MERGEDCELLS]").append("\n");
         return retval.toString();

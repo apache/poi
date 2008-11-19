@@ -20,7 +20,7 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -30,10 +30,8 @@ import org.apache.poi.util.StringUtil;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author aviks : string fixes for UserDefined Style
  */
-public final class StyleRecord extends Record {
+public final class StyleRecord extends StandardRecord {
 	public final static short sid = 0x0293;
-
-	private static final BitField is16BitUnicodeFlag = BitFieldFactory.getInstance(0x01);
 
 	private static final BitField styleIndexMask = BitFieldFactory.getInstance(0x0FFF);
 	private static final BitField isBuiltinFlag  = BitFieldFactory.getInstance(0x8000);
@@ -46,7 +44,7 @@ public final class StyleRecord extends Record {
 	private int field_3_outline_style_level;
 
 	// only for user defined styles
-	private int field_3_string_options;
+	private boolean field_3_stringHasMultibyte;
 	private String field_4_name;
 
 	/**
@@ -74,8 +72,8 @@ public final class StyleRecord extends Record {
 				field_4_name = "";
 			} else {
 				
-				int is16BitUnicode = in.readByte();
-				if (is16BitUnicodeFlag.isSet(is16BitUnicode)) {
+				field_3_stringHasMultibyte = in.readByte() != 0x00;
+				if (field_3_stringHasMultibyte) {
 					field_4_name = StringUtil.readUnicodeLE(in, field_2_name_length);
 				} else {
 					field_4_name = StringUtil.readCompressedUnicode(in, field_2_name_length);
@@ -107,7 +105,7 @@ public final class StyleRecord extends Record {
 	 */
 	public void setName(String name) {
 		field_4_name = name;
-		field_3_string_options = StringUtil.hasMultibyte(name) ? 0x01 : 0x00;
+		field_3_stringHasMultibyte = StringUtil.hasMultibyte(name);
 		field_1_xf_index = isBuiltinFlag.clear(field_1_xf_index);
 	}
 
@@ -162,34 +160,24 @@ public final class StyleRecord extends Record {
 		if (isBuiltin()) {
 			return 4; // short, byte, byte
 		}
-		int size = 2 + 3; // short
-		if (is16BitUnicodeFlag.isSet(field_3_string_options))  {
-			size += 2 * field_4_name.length();
-		} else {
-			size += field_4_name.length();
-		}
-		return size;
+		return 2 // short xf index 
+			+ 3 // str len + flag 
+			+ field_4_name.length() * (field_3_stringHasMultibyte ? 2 : 1);
 	}
 
-	public int serialize(int offset, byte [] data) {
-		int dataSize = getDataSize();
-		LittleEndian.putShort(data, 0 + offset, sid);
-		LittleEndian.putUShort(data, 2 + offset, dataSize);
-		
-		LittleEndian.putUShort(data, 4 + offset, field_1_xf_index);
+	public void serialize(LittleEndianOutput out) {
+		out.writeShort(field_1_xf_index);
 		if (isBuiltin()) {
-			LittleEndian.putByte(data, 6 + offset, field_2_builtin_style);
-			LittleEndian.putByte(data, 7 + offset, field_3_outline_style_level);
+			out.writeByte(field_2_builtin_style);
+			out.writeByte(field_3_outline_style_level);
 		} else {
-			LittleEndian.putUShort(data, 6 + offset, field_4_name.length());
-			LittleEndian.putByte(data, 8 + offset, field_3_string_options);
-			StringUtil.putCompressedUnicode(getName(), data, 9 + offset);
+			out.writeShort(field_4_name.length());
+			out.writeByte(field_3_stringHasMultibyte ? 0x01 : 0x00);
+			StringUtil.putCompressedUnicode(getName(), out);
 		}
-		return 4+dataSize;
 	}
 
-	public short getSid()
-	{
+	public short getSid() {
 		return sid;
 	}
 }

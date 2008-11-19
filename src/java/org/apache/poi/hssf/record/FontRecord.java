@@ -17,18 +17,19 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.StringUtil;
 
 /**
- * Title:        Font Record - descrbes a font in the workbook (index = 0-3,5-infinity - skip 4)<P>
+ * Title:        Font Record (0x0031) <p/>
+ * - describes a font in the workbook (index = 0-3,5-infinity - skip 4)<P>
  * Description:  An element in the Font Table<P>
  * REFERENCE:  PG 315 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  */
-public final class FontRecord extends Record {
+public final class FontRecord extends StandardRecord {
     public final static short     sid                 = 0x0031;                                                 // docs are wrong (0x231 Microsoft Support site article Q184647)
     public final static short     SS_NONE             = 0;
     public final static short     SS_SUPER            = 1;
@@ -42,16 +43,12 @@ public final class FontRecord extends Record {
     private short                 field_2_attributes;
 
     // 0 0x01 - Reserved bit must be 0
-    static final private BitField italic     =
-        BitFieldFactory.getInstance(0x02);                                   // is this font in italics
+    private static final BitField italic     = BitFieldFactory.getInstance(0x02); // is this font in italics
 
     // 2 0x04 - reserved bit must be 0
-    static final private BitField strikeout  =
-        BitFieldFactory.getInstance(0x08);                                   // is this font has a line through the center
-    static final private BitField macoutline = BitFieldFactory.getInstance(
-        0x10);                                                // some weird macintosh thing....but who understands those mac people anyhow
-    static final private BitField macshadow  = BitFieldFactory.getInstance(
-        0x20);                                                // some weird macintosh thing....but who understands those mac people anyhow
+    private static final BitField strikeout  =BitFieldFactory.getInstance(0x08);  // is this font has a line through the center
+    private static final BitField macoutline = BitFieldFactory.getInstance(0x10); // some weird macintosh thing....but who understands those mac people anyhow
+    private static final BitField macshadow  = BitFieldFactory.getInstance(0x20); // some weird macintosh thing....but who understands those mac people anyhow
 
     // 7-6 - reserved bits must be 0
     // the rest is unused
@@ -62,15 +59,13 @@ public final class FontRecord extends Record {
     private byte                  field_7_family;             // ?? defined by windows api logfont structure?
     private byte                  field_8_charset;            // ?? defined by windows api logfont structure?
     private byte                  field_9_zero = 0;           // must be 0
-    private byte                  field_10_font_name_len;     // length of the font name
+    /** possibly empty string never <code>null</code> */
     private String                field_11_font_name;         // whoa...the font name
 
-    public FontRecord()
-    {
+    public FontRecord() {
     }
 
-    public FontRecord(RecordInputStream in)
-    {
+    public FontRecord(RecordInputStream in) {
         field_1_font_height         = in.readShort();
         field_2_attributes          = in.readShort();
         field_3_color_palette_index = in.readShort();
@@ -80,17 +75,15 @@ public final class FontRecord extends Record {
         field_7_family              = in.readByte();
         field_8_charset             = in.readByte();
         field_9_zero                = in.readByte();
-        field_10_font_name_len      = in.readByte();
-        if (field_10_font_name_len > 0)
-        {
-            if (in.readByte() == 0)
-            {   // is compressed unicode
-                field_11_font_name = in.readCompressedUnicode(LittleEndian.ubyteToInt(field_10_font_name_len));
-            }
-            else
-            {   // is not compressed unicode
+        int field_10_font_name_len  = in.readUByte();
+        if (field_10_font_name_len > 0) {
+            if (in.readByte() == 0) {   // is compressed unicode
+                field_11_font_name = in.readCompressedUnicode(field_10_font_name_len);
+            } else {   // is not compressed unicode
                 field_11_font_name = in.readUnicodeLEString(field_10_font_name_len);
             }
+        } else {
+        	field_11_font_name = "";
         }
     }
 
@@ -244,17 +237,6 @@ public final class FontRecord extends Record {
         field_8_charset = charset;
     }
 
-    /**
-     * set the length of the fontname string
-     *
-     * @param len  length of the font name
-     * @see #setFontName(String)
-     */
-
-    public void setFontNameLength(byte len)
-    {
-        field_10_font_name_len = len;
-    }
 
     /**
      * set the name of the font
@@ -416,18 +398,6 @@ public final class FontRecord extends Record {
     }
 
     /**
-     * get the length of the fontname string
-     *
-     * @return length of the font name
-     * @see #getFontName()
-     */
-
-    public byte getFontNameLength()
-    {
-        return field_10_font_name_len;
-    }
-
-    /**
      * get the name of the font
      *
      * @return fn - name of the font (i.e. "Arial")
@@ -467,45 +437,46 @@ public final class FontRecord extends Record {
             .append(Integer.toHexString(getFamily())).append("\n");
         buffer.append("    .charset         = ")
             .append(Integer.toHexString(getCharset())).append("\n");
-        buffer.append("    .namelength      = ")
-            .append(Integer.toHexString(getFontNameLength())).append("\n");
         buffer.append("    .fontname        = ").append(getFontName())
             .append("\n");
         buffer.append("[/FONT]\n");
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        int realflen = getFontNameLength() * 2;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(
-            data, 2 + offset,
-            ( short ) (15 + realflen
-                       + 1));   // 19 - 4 (sid/len) + font name length = datasize
-
-        // undocumented single byte (1)
-        LittleEndian.putShort(data, 4 + offset, getFontHeight());
-        LittleEndian.putShort(data, 6 + offset, getAttributes());
-        LittleEndian.putShort(data, 8 + offset, getColorPaletteIndex());
-        LittleEndian.putShort(data, 10 + offset, getBoldWeight());
-        LittleEndian.putShort(data, 12 + offset, getSuperSubScript());
-        data[ 14 + offset ] = getUnderline();
-        data[ 15 + offset ] = getFamily();
-        data[ 16 + offset ] = getCharset();
-        data[ 17 + offset ] = field_9_zero;
-        data[ 18 + offset ] = getFontNameLength();
-        data[ 19 + offset ] = ( byte ) 1;
-        if (getFontName() != null) {
-           StringUtil.putUnicodeLE(getFontName(), data, 20 + offset);
-        }
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+ 
+    	out.writeShort(getFontHeight());
+    	out.writeShort(getAttributes());
+    	out.writeShort(getColorPaletteIndex());
+    	out.writeShort(getBoldWeight());
+    	out.writeShort(getSuperSubScript());
+    	out.writeByte(getUnderline());
+    	out.writeByte(getFamily());
+    	out.writeByte(getCharset());
+    	out.writeByte(field_9_zero);
+    	int fontNameLen = field_11_font_name.length();
+		out.writeByte(fontNameLen);
+		if (fontNameLen > 0) {
+        	boolean hasMultibyte = StringUtil.hasMultibyte(field_11_font_name);
+        	out.writeByte(hasMultibyte ? 0x01 : 0x00);
+            if (hasMultibyte) {
+               StringUtil.putUnicodeLE(field_11_font_name, out);
+            } else {
+                StringUtil.putCompressedUnicode(field_11_font_name, out);
+            }
+		}
     }
     protected int getDataSize() {
-    	// Note - no matter the original, we always
-    	//  re-serialise the font name as unicode
-        return 16 + getFontNameLength() * 2;
+    	int size = 15; // 5 shorts + 5 bytes
+    	int fontNameLen = field_11_font_name.length();
+    	if (fontNameLen < 1) {
+    		// options byte is not encoded if no character data
+    		return size;
+    	}
+    	size ++; // options byte
+    	
+    	boolean hasMultibyte = StringUtil.hasMultibyte(field_11_font_name);
+    	return size + fontNameLen * (hasMultibyte ? 2 : 1);
     }
 
     public short getSid()
@@ -528,7 +499,6 @@ public final class FontRecord extends Record {
         field_7_family              = source.field_7_family;
         field_8_charset             = source.field_8_charset;
         field_9_zero                = source.field_9_zero;
-        field_10_font_name_len      = source.field_10_font_name_len;
         field_11_font_name          = source.field_11_font_name;
     }
 
@@ -548,7 +518,6 @@ public final class FontRecord extends Record {
 		result = prime * result + field_7_family;
 		result = prime * result + field_8_charset;
 		result = prime * result + field_9_zero;
-		result = prime * result + field_10_font_name_len;
 		return result;
 	}
 	
@@ -572,7 +541,6 @@ public final class FontRecord extends Record {
 		field_7_family              == other.field_7_family &&
 		field_8_charset             == other.field_8_charset &&
 		field_9_zero                == other.field_9_zero &&
-		field_10_font_name_len      == other.field_10_font_name_len &&
 		field_11_font_name.equals(other.field_11_font_name)
 		;
 	}
