@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,54 +14,46 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Iteration Record<P>
+ * Title:        Iteration Record (0x0011) <p/>
  * Description:  Tells whether to iterate over forumla calculations or not
  *               (if a formula is dependant upon another formula's result)
  *               (odd feature for something that can only have 32 elements in
  *                a formula!)<P>
- * REFERENCE:  PG 325 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
+ * REFERENCE:  PG 325 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
- * @version 2.0-pre
  */
+public final class IterationRecord extends StandardRecord {
+    public final static short sid = 0x0011;
 
-public final class IterationRecord
-    extends StandardRecord
-{
-    public final static short sid = 0x11;
-    private short             field_1_iteration;
+    private static final BitField iterationOn = BitFieldFactory.getInstance(0x0001);
 
-    public IterationRecord()
-    {
+    private int _flags;
+
+    public IterationRecord(boolean iterateOn) {
+        _flags = iterationOn.setBoolean(0, iterateOn);
     }
 
     public IterationRecord(RecordInputStream in)
     {
-        field_1_iteration = in.readShort();
+        _flags = in.readShort();
     }
 
     /**
      * set whether or not to iterate for calculations
      * @param iterate or not
      */
-
-    public void setIteration(boolean iterate)
-    {
-        if (iterate)
-        {
-            field_1_iteration = 1;
-        }
-        else
-        {
-            field_1_iteration = 0;
-        }
+    public void setIteration(boolean iterate) {
+        _flags = iterationOn.setBoolean(_flags, iterate);
     }
 
     /**
@@ -70,39 +61,32 @@ public final class IterationRecord
      *
      * @return whether iterative calculations are turned off or on
      */
-
-    public boolean getIteration()
-    {
-        return (field_1_iteration == 1);
+    public boolean getIteration() {
+        return iterationOn.isSet(_flags);
     }
 
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[ITERATION]\n");
-        buffer.append("    .iteration      = ").append(getIteration())
-            .append("\n");
+        buffer.append("    .flags      = ").append(HexDump.shortToHex(_flags)).append("\n");
         buffer.append("[/ITERATION]\n");
         return buffer.toString();
     }
 
     public void serialize(LittleEndianOutput out) {
-        out.writeShort(field_1_iteration);
+        out.writeShort(_flags);
     }
 
     protected int getDataSize() {
         return 2;
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 
     public Object clone() {
-      IterationRecord rec = new IterationRecord();
-      rec.field_1_iteration = field_1_iteration;
-      return rec;
+        return new IterationRecord(getIteration());
     }
 }

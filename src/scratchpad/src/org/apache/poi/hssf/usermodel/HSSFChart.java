@@ -108,7 +108,7 @@ public final class HSSFChart {
 		// unknown 33
 		records.add( createFontBasisRecord1() );
 		records.add( createFontBasisRecord2() );
-		records.add( createProtectRecord() );
+		records.add(new ProtectRecord(false));
 		records.add( createUnitsRecord() );
 		records.add( createChartRecord( 0, 0, 30434904, 19031616 ) );
 		records.add( createBeginRecord() );
@@ -330,13 +330,6 @@ public final class HSSFChart {
 	{
 		FontBasisRecord r = createFontBasisRecord1();
 		r.setIndexToFontTable((short)6);
-		return r;
-	}
-
-	private ProtectRecord createProtectRecord()
-	{
-		ProtectRecord r = new ProtectRecord();
-		r.setProtect(false);
 		return r;
 	}
 

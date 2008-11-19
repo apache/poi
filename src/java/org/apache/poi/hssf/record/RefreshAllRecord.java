@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,84 +14,79 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Refresh All Record <P>
+ * Title:        Refresh All Record (0x01B7) <p/>
  * Description:  Flag whether to refresh all external data when loading a sheet.
  *               (which hssf doesn't support anyhow so who really cares?)<P>
  * REFERENCE:  PG 376 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
- * @version 2.0-pre
  */
+public final class RefreshAllRecord extends StandardRecord {
+    public final static short sid = 0x01B7;
 
-public final class RefreshAllRecord
-    extends StandardRecord
-{
-    public final static short sid = 0x1B7;
-    private short             field_1_refreshall;
+    private static final BitField refreshFlag = BitFieldFactory.getInstance(0x0001);
 
-    public RefreshAllRecord()
-    {
+    private int _options;
+
+    private RefreshAllRecord(int options) {
+        _options = options;
     }
 
-    public RefreshAllRecord(RecordInputStream in)
-    {
-        field_1_refreshall = in.readShort();
+    public RefreshAllRecord(RecordInputStream in) {
+        this(in.readUShort());
+    }
+
+    public RefreshAllRecord(boolean refreshAll) {
+        this(0);
+        setRefreshAll(refreshAll);
     }
 
     /**
      * set whether to refresh all external data when loading a sheet
-     * @param refreshall or not
+     * @param refreshAll or not
      */
-
-    public void setRefreshAll(boolean refreshall)
-    {
-        if (refreshall)
-        {
-            field_1_refreshall = 1;
-        }
-        else
-        {
-            field_1_refreshall = 0;
-        }
+    public void setRefreshAll(boolean refreshAll) {
+        _options = refreshFlag.setBoolean(_options, refreshAll);
     }
 
     /**
      * get whether to refresh all external data when loading a sheet
      * @return refreshall or not
      */
-
-    public boolean getRefreshAll()
-    {
-        return (field_1_refreshall == 1);
+    public boolean getRefreshAll() {
+        return refreshFlag.isSet(_options);
     }
 
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[REFRESHALL]\n");
-        buffer.append("    .refreshall      = ").append(getRefreshAll())
-            .append("\n");
+        buffer.append("    .options      = ").append(HexDump.shortToHex(_options)).append("\n");
         buffer.append("[/REFRESHALL]\n");
         return buffer.toString();
     }
 
     public void serialize(LittleEndianOutput out) {
-        out.writeShort(field_1_refreshall);
+        out.writeShort(_options);
     }
 
     protected int getDataSize() {
         return 2;
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
+    }
+    @Override
+    public Object clone() {
+        return new RefreshAllRecord(_options);
     }
 }

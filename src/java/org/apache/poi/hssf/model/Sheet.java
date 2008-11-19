@@ -801,20 +801,14 @@ public final class Sheet implements Model {
      * creates the Iteration record and sets it to false (don't iteratively calculate formulas)
      */
     private static IterationRecord createIteration() {
-        IterationRecord retval = new IterationRecord();
-
-        retval.setIteration(false);
-        return retval;
+        return new IterationRecord(false);
     }
 
     /**
      * creates the Delta record and sets it to 0.0010 (default accuracy)
      */
     private static DeltaRecord createDelta() {
-        DeltaRecord retval = new DeltaRecord();
-
-        retval.setMaxChange(0.0010);
-        return retval;
+        return new DeltaRecord(DeltaRecord.DEFAULT_VALUE);
     }
 
     /**
@@ -1413,18 +1407,6 @@ public final class Sheet implements Model {
     }
 
     /**
-     * creates a Protect record with protect set to false.
-     */
-    private static ProtectRecord createProtect() {
-        if (log.check( POILogger.DEBUG )) {
-            log.log(POILogger.DEBUG, "create protect record with protection disabled");
-        }
-        ProtectRecord retval = new ProtectRecord();
-        retval.setProtect(false); // TODO - supply param to constructor
-        return retval;
-    }
-
-    /**
      * creates an ObjectProtect record with protect set to false.
      */
     private static ObjectProtectRecord createObjectProtect() {
@@ -1454,7 +1436,7 @@ public final class Sheet implements Model {
     public ProtectRecord getProtect()
     {
         if (protect == null) {
-            protect = createProtect();
+            protect = new ProtectRecord(false);
             // Insert the newly created protect record just before DefaultColWidthRecord
             int loc = findFirstRecordLocBySid(DefaultColWidthRecord.sid);
             records.add(loc, protect);
@@ -1477,16 +1459,10 @@ public final class Sheet implements Model {
     }
 
     /**
-     * creates a Password record with password set to 00.
+     * creates a Password record with password set to 0x0000.
      */
     private static PasswordRecord createPassword() {
-        if (log.check( POILogger.DEBUG )) {
-            log.log(POILogger.DEBUG, "create password record with 00 password");
-        }
-        PasswordRecord retval = new PasswordRecord();
-
-        retval.setPassword((short)00);
-        return retval;
+        return new PasswordRecord(0x0000);
     }
 
     /**

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,25 +14,25 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Password Record<P>
+ * Title:        Password Record (0x0013)<p/>
  * Description:  stores the encrypted password for a sheet or workbook (HSSF doesn't support encryption)
- * REFERENCE:  PG 371 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
+ * REFERENCE:  PG 371 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
  * @author Andrew C. Oliver (acoliver at apache dot org)
- * @version 2.0-pre
+ *
  */
-
 public final class PasswordRecord extends StandardRecord {
-    public final static short sid = 0x13;
-    private short             field_1_password;   // not sure why this is only 2 bytes, but it is... go figure
+    public final static short sid = 0x0013;
+    private int field_1_password;   // not sure why this is only 2 bytes, but it is... go figure
 
-    public PasswordRecord() {
+    public PasswordRecord(int password) {
+        field_1_password = password;
     }
 
     public PasswordRecord(RecordInputStream in) {
@@ -57,7 +56,7 @@ public final class PasswordRecord extends StandardRecord {
             hash ^= (0x8000 | ('N' << 8) | 'K');
         }
         return (short)hash;
-    } 
+    }
 
     /**
      * set the password
@@ -65,7 +64,7 @@ public final class PasswordRecord extends StandardRecord {
      * @param password  representing the password
      */
 
-    public void setPassword(short password) {
+    public void setPassword(int password) {
         field_1_password = password;
     }
 
@@ -74,7 +73,7 @@ public final class PasswordRecord extends StandardRecord {
      *
      * @return short  representing the password
      */
-    public short getPassword() {
+    public int getPassword() {
         return field_1_password;
     }
 
@@ -82,14 +81,13 @@ public final class PasswordRecord extends StandardRecord {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[PASSWORD]\n");
-        buffer.append("    .password       = ")
-            .append(Integer.toHexString(getPassword())).append("\n");
+        buffer.append("    .password = ").append(HexDump.shortToHex(field_1_password)).append("\n");
         buffer.append("[/PASSWORD]\n");
         return buffer.toString();
     }
 
     public void serialize(LittleEndianOutput out) {
-        out.writeShort(getPassword());
+        out.writeShort(field_1_password);
     }
 
     protected int getDataSize() {
@@ -104,9 +102,6 @@ public final class PasswordRecord extends StandardRecord {
      * Clone this record.
      */
     public Object clone() {
-      PasswordRecord clone = new PasswordRecord();
-      clone.setPassword(field_1_password);
-      return clone;
+        return new PasswordRecord(field_1_password);
     }
-
 }

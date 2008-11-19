@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,84 +14,74 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Protection Revision 4 Record<P>
- * Description:  describes whether this is a protected shared/tracked workbook<P>
- *  ( HSSF does not support encryption because we don't feel like going to jail ) <P>
- * REFERENCE:  PG 373 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
+ * Title:        Protection Revision 4 Record (0x01AF) <p/>
+ * Description:  describes whether this is a protected shared/tracked workbook<p/>
+ * REFERENCE:  PG 373 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
  * @author Andrew C. Oliver (acoliver at apache dot org)
- * @version 2.0-pre
  */
+public final class ProtectionRev4Record extends StandardRecord {
+    public final static short sid = 0x01AF;
 
-public final class ProtectionRev4Record
-    extends StandardRecord
-{
-    public final static short sid = 0x1af;
-    private short             field_1_protect;
+    private static final BitField protectedFlag = BitFieldFactory.getInstance(0x0001);
 
-    public ProtectionRev4Record()
-    {
+    private int _options;
+
+    private ProtectionRev4Record(int options) {
+        _options = options;
     }
 
-    public ProtectionRev4Record(RecordInputStream in)
-    {
-        field_1_protect = in.readShort();
+    public ProtectionRev4Record(boolean protect) {
+        this(0);
+        setProtect(protect);
+    }
+
+    public ProtectionRev4Record(RecordInputStream in) {
+        this(in.readUShort());
     }
 
     /**
      * set whether the this is protected shared/tracked workbook or not
      * @param protect  whether to protect the workbook or not
      */
-
-    public void setProtect(boolean protect)
-    {
-        if (protect)
-        {
-            field_1_protect = 1;
-        }
-        else
-        {
-            field_1_protect = 0;
-        }
+    public void setProtect(boolean protect) {
+        _options = protectedFlag.setBoolean(_options, protect);
     }
 
     /**
      * get whether the this is protected shared/tracked workbook or not
      * @return whether to protect the workbook or not
      */
+    public boolean getProtect() {
+        return protectedFlag.isSet(_options);
+    }
 
-	public boolean getProtect()
-	{
-		return (field_1_protect == 1);
-	}
-
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[PROT4REV]\n");
-	    buffer.append("    .protect         = ").append(getProtect())
-            .append("\n");
+        buffer.append("    .options = ").append(HexDump.shortToHex(_options)).append("\n");
         buffer.append("[/PROT4REV]\n");
         return buffer.toString();
     }
 
     public void serialize(LittleEndianOutput out) {
-        out.writeShort(field_1_protect);
+        out.writeShort(_options);
     }
 
     protected int getDataSize() {
         return 2;
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 }

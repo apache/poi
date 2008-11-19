@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,85 +14,64 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Use Natural Language Formulas Flag<P>
+ * Title:        USESELFS (0x0160) - Use Natural Language Formulas Flag <p/>
  * Description:  Tells the GUI if this was written by something that can use
- *               "natural language" formulas. HSSF can't.<P>
- * REFERENCE:  PG 420 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
+ *               "natural language" formulas. HSSF can't.<p/>
+ * REFERENCE:  PG 420 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
  * @author Andrew C. Oliver (acoliver at apache dot org)
- * @version 2.0-pre
  */
+public final class UseSelFSRecord extends StandardRecord {
+    public final static short sid   = 0x0160;
 
-public final class UseSelFSRecord
-    extends StandardRecord
-{
-    public final static short sid   = 0x160;
-    public final static short TRUE  = 1;
-    public final static short FALSE = 0;
-    private short             field_1_flag;
+    private static final BitField useNaturalLanguageFormulasFlag = BitFieldFactory.getInstance(0x0001);
 
-    public UseSelFSRecord()
-    {
+    private int _options;
+
+    private UseSelFSRecord(int options) {
+        _options = options;
     }
 
-    public UseSelFSRecord(RecordInputStream in)
-    {
-        field_1_flag = in.readShort();
+    public UseSelFSRecord(RecordInputStream in) {
+        this(in.readUShort());
     }
 
-    /**
-     * turn the flag on or off
-     *
-     * @param flag  whether to use natural language formulas or not
-     * @see #TRUE
-     * @see #FALSE
-     */
-
-    public void setFlag(short flag)
-    {
-        field_1_flag = flag;
+    public UseSelFSRecord(boolean b) {
+        this(0);
+        _options = useNaturalLanguageFormulasFlag.setBoolean(_options, b);
     }
 
-    /**
-     * returns whether we use natural language formulas or not
-     *
-     * @return whether to use natural language formulas or not
-     * @see #TRUE
-     * @see #FALSE
-     */
-
-    public short getFlag()
-    {
-        return field_1_flag;
-    }
-
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[USESELFS]\n");
-        buffer.append("    .flag            = ")
-            .append(Integer.toHexString(getFlag())).append("\n");
+        buffer.append("    .options = ").append(HexDump.shortToHex(_options)).append("\n");
         buffer.append("[/USESELFS]\n");
         return buffer.toString();
     }
 
     public void serialize(LittleEndianOutput out) {
-        out.writeShort(getFlag());
+        out.writeShort(_options);
     }
 
     protected int getDataSize() {
         return 2;
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
+    }
+
+    @Override
+    public Object clone() {
+        return new UseSelFSRecord(_options);
     }
 }

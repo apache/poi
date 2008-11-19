@@ -24,14 +24,16 @@ import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.HexDump;
 
 /**
- * The <code>HyperlinkRecord</code> wraps an HLINK-record 
+ * The <code>HyperlinkRecord</code> (0x01B8) wraps an HLINK-record
  *  from the Excel-97 format.
- * Supports only external links for now (eg http://) 
+ * Supports only external links for now (eg http://)
  *
  * @author      Mark Hissink Muller <a href="mailto:mark@hissinkmuller.nl >mark&064;hissinkmuller.nl</a>
  * @author      Yegor Kozlov (yegor at apache dot org)
  */
 public final class HyperlinkRecord extends Record {
+    public final static short sid = 0x01B8;
+
     /**
      * Link flags
      */
@@ -60,7 +62,6 @@ public final class HyperlinkRecord extends Record {
     protected final static byte[] FILE_TAIL = {(byte)0xFF, (byte)0xFF, (byte)0xAD, (byte)0xDE, 0x00, 0x00, 0x00, 0x00,
                                                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                                                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    public final static short sid = 0x1b8;
 
     /**
      * First row of the hyperlink
@@ -238,8 +239,8 @@ public final class HyperlinkRecord extends Record {
      */
     public String getLabel()
     {
-    	if(label == null) return null;
-    	
+        if(label == null) return null;
+
         int idx = label.indexOf('\u0000');
         return idx == -1 ? label : label.substring(0, idx);
     }
@@ -261,8 +262,8 @@ public final class HyperlinkRecord extends Record {
      */
     public String getAddress()
     {
-    	if(address == null) return null;
-    	
+        if(address == null) return null;
+
         int idx = address.indexOf('\u0000');
         return idx == -1 ? address : address.substring(0, idx);
     }
@@ -402,7 +403,7 @@ public final class HyperlinkRecord extends Record {
             LittleEndian.putInt(data, pos, address.length()); pos += 4;
             StringUtil.putUnicodeLE(address, data, pos);  pos += address.length()*2;
         }
-    	return getRecordSize();
+        return getRecordSize();
     }
 
     protected int getDataSize() {

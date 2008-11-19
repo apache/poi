@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,50 +14,46 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: Window Protect Record<P>
- * Description:  flags whether workbook windows are protected<P>
- * REFERENCE:  PG 424 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
+ * Title: Window Protect Record (0x0019) <p/>
+ * Description:  flags whether workbook windows are protected<p/>
+ * REFERENCE:  PG 424 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
  * @author Andrew C. Oliver (acoliver at apache dot org)
- * @version 2.0-pre
  */
+public final class WindowProtectRecord extends StandardRecord {
+    public final static short sid = 0x0019;
 
-public final class WindowProtectRecord
-    extends StandardRecord
-{
-    public final static short sid = 0x19;
-    private short             field_1_protect;
+    private static final BitField settingsProtectedFlag = BitFieldFactory.getInstance(0x0001);
 
-    public WindowProtectRecord()
-    {
+    private int _options;
+
+    public WindowProtectRecord(int options) {
+        _options = options;
     }
 
-    public WindowProtectRecord(RecordInputStream in)
-    {
-        field_1_protect = in.readShort();
+    public WindowProtectRecord(RecordInputStream in) {
+        this(in.readUShort());
+    }
+
+    public WindowProtectRecord(boolean protect) {
+        this(0);
+        setProtect(protect);
     }
 
     /**
      * set whether this window should be protected or not
      * @param protect or not
      */
-
-    public void setProtect(boolean protect)
-    {
-        if (protect == true)
-        {
-            field_1_protect = 1;
-        }
-        else
-        {
-            field_1_protect = 0;
-        }
+    public void setProtect(boolean protect) {
+        _options = settingsProtectedFlag.setBoolean(_options, protect);
     }
 
     /**
@@ -66,25 +61,21 @@ public final class WindowProtectRecord
      *
      * @return protected or not
      */
-
-    public boolean getProtect()
-    {
-        return (field_1_protect == 1);
+    public boolean getProtect() {
+        return settingsProtectedFlag.isSet(_options);
     }
 
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[WINDOWPROTECT]\n");
-        buffer.append("    .protect         = ").append(getProtect())
-            .append("\n");
+        buffer.append("    .options = ").append(HexDump.shortToHex(_options)).append("\n");
         buffer.append("[/WINDOWPROTECT]\n");
         return buffer.toString();
     }
 
     public void serialize(LittleEndianOutput out) {
-        out.writeShort(field_1_protect);
+        out.writeShort(_options);
     }
 
     protected int getDataSize() {
@@ -94,5 +85,9 @@ public final class WindowProtectRecord
     public short getSid()
     {
         return sid;
+    }
+    @Override
+    public Object clone() {
+        return new WindowProtectRecord(_options);
     }
 }

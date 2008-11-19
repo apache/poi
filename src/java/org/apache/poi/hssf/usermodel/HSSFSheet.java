@@ -1004,7 +1004,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * @return hashed password
      */
     public short getPassword() {
-        return getSheet().getPassword().getPassword();
+        return (short)getSheet().getPassword().getPassword();
     }
 
     /**
