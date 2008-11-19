@@ -25,11 +25,9 @@ import org.apache.poi.xssf.eventusermodel.TestXSSFReader;
 import org.apache.poi.xssf.extractor.TestXSSFExcelExtractor;
 import org.apache.poi.xssf.io.TestLoadSaveXSSF;
 import org.apache.poi.xssf.model.TestCommentsTable;
+import org.apache.poi.xssf.model.TestSharedStringsTable;
 import org.apache.poi.xssf.model.TestStylesTable;
 import org.apache.poi.xssf.usermodel.AllXSSFUsermodelTests;
-import org.apache.poi.xssf.usermodel.TestXSSFFont;
-import org.apache.poi.xssf.usermodel.TestXSSFSheet;
-import org.apache.poi.xssf.usermodel.TestXSSFWorkbook;
 import org.apache.poi.xssf.util.TestCTColComparator;
 import org.apache.poi.xssf.util.TestNumericRanges;
 
@@ -47,6 +45,7 @@ public final class AllXSSFTests {
 		result.addTestSuite(TestXSSFExcelExtractor.class);
 		result.addTestSuite(TestLoadSaveXSSF.class);
 		result.addTestSuite(TestCommentsTable.class);
+		result.addTestSuite(TestSharedStringsTable.class);
 		result.addTestSuite(TestStylesTable.class);
 		result.addTestSuite(TestCellReference.class);
 		result.addTestSuite(TestCTColComparator.class);
