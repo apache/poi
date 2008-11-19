@@ -39,6 +39,7 @@ import org.apache.poi.hssf.record.formula.GreaterThanPtg;
 import org.apache.poi.hssf.record.formula.IntPtg;
 import org.apache.poi.hssf.record.formula.LessEqualPtg;
 import org.apache.poi.hssf.record.formula.LessThanPtg;
+import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.MissingArgPtg;
 import org.apache.poi.hssf.record.formula.MultiplyPtg;
 import org.apache.poi.hssf.record.formula.NamePtg;
@@ -56,6 +57,7 @@ import org.apache.poi.hssf.record.formula.StringPtg;
 import org.apache.poi.hssf.record.formula.SubtractPtg;
 import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
 import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
+import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
@@ -370,6 +372,11 @@ public final class FormulaParser {
             // TODO - handle <book name> ! <named range name>
             int externIdx = getExternalSheetIndex(iden.getName());
             String secondIden = parseUnquotedIdentifier();
+            if (isRowOrCol(secondIden) && look == ':') {
+                GetChar();
+                String thirdIden = parseUnquotedIdentifier();
+                return new Area3DPtg(secondIden + ":" + thirdIden, externIdx);
+            }
             AreaReference areaRef = parseArea(secondIden);
             if (areaRef == null) {
                 return new Ref3DPtg(secondIden, externIdx);
@@ -416,6 +423,33 @@ public final class FormulaParser {
         }
         throw new FormulaParseException("Specified name '"
                     + name + "' is not a range as expected");
+    }
+
+    private static boolean isRowOrCol(String str) {
+        int i=0;
+        if (str.charAt(i) == '$') {
+            i++;
+        }
+        if (IsDigit(str.charAt(i))) {
+            while (i<str.length()) {
+                if (!IsDigit(str.charAt(i))) {
+                    return false;
+                }
+                i++;
+            }
+            return true;
+        }
+        if (IsAlpha(str.charAt(i))) {
+            while (i<str.length()) {
+                if (!IsAlpha(str.charAt(i))) {
+                    return false;
+                }
+                i++;
+            }
+            return true;
+        }
+        
+        return false;
     }
 
     private int getExternalSheetIndex(String name) {
@@ -578,7 +612,7 @@ public final class FormulaParser {
     /** get arguments to a function */
     private ParseNode[] Arguments() {
         //average 2 args per function
-        List temp = new ArrayList(2);
+        List<ParseNode> temp = new ArrayList<ParseNode>(2);
         SkipWhite();
         if(look == ')') {
             return ParseNode.EMPTY_ARRAY;
@@ -676,7 +710,7 @@ public final class FormulaParser {
 
 
     private ParseNode parseArray() {
-        List rowsData = new ArrayList();
+        List<Object[]> rowsData = new ArrayList<Object[]>();
         while(true) {
             Object[] singleRowData = parseArrayRow();
             rowsData.add(singleRowData);
@@ -707,7 +741,7 @@ public final class FormulaParser {
     }
 
     private Object[] parseArrayRow() {
-        List temp = new ArrayList();
+        List<Object> temp = new ArrayList<Object>();
         while (true) {
             temp.add(parseArrayItem());
             SkipWhite();
@@ -937,6 +971,26 @@ public final class FormulaParser {
             result = new ParseNode(operator, result, other);
         }
     }
+    private ParseNode unionExpression() {
+        ParseNode result = comparisonExpression();
+        boolean hasUnions = false;
+        while (true) {
+            SkipWhite();
+            switch(look) {
+                case ',':
+                    GetChar();
+                    hasUnions = true;
+                    ParseNode other = comparisonExpression();
+                    result = new ParseNode(UnionPtg.instance, result, other);
+                    continue;
+            }
+            if (hasUnions) {
+                MemFuncPtg memFuncPtg = new MemFuncPtg(result.getEncodedSize());
+                result = new ParseNode(memFuncPtg, result);
+            }
+            return result;
+        }
+    }
 
     private ParseNode comparisonExpression() {
         ParseNode result = concatExpression();
@@ -1040,7 +1094,7 @@ end;
     private void parse() {
         pointer=0;
         GetChar();
-        _rootNode = comparisonExpression();
+        _rootNode = unionExpression();
 
         if(pointer <= formulaLength) {
             String msg = "Unused input [" + formulaString.substring(pointer-1)

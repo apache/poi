@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.poi.POIDocument;
 import org.apache.poi.ddf.EscherBSERecord;
@@ -78,10 +79,10 @@ import org.apache.poi.util.POILogger;
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author  Shawn Laubach (slaubach at apache dot org)
- * @version 2.0-pre
+ *
  */
-public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.usermodel.Workbook
-{
+public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.usermodel.Workbook {
+    private static final Pattern COMMA_PATTERN = Pattern.compile(",");
     private static final int MAX_ROW = 0xFFFF;
     private static final short MAX_COLUMN = (short)0x00FF;
 
@@ -802,8 +803,8 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     }
 
     public int getSheetIndexFromExternSheetIndex(int externSheetNumber) {
-    	return workbook.getSheetIndexFromExternSheetIndex(externSheetNumber);
-	}
+        return workbook.getSheetIndexFromExternSheetIndex(externSheetNumber);
+    }
 
     private HSSFSheet[] getSheets() {
         HSSFSheet[] result = new HSSFSheet[_sheets.size()];
@@ -811,7 +812,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         return result;
     }
 
-	/**
+    /**
      * Get the HSSFSheet object at the given index.
      * @param index of the sheet number (0-based physical & logical)
      * @return HSSFSheet at the provided index
@@ -1340,9 +1341,9 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
         return result;
     }
-	public NameRecord getNameRecord(int nameIndex) {
-		return getWorkbook().getNameRecord(nameIndex);
-	}
+    public NameRecord getNameRecord(int nameIndex) {
+        return getWorkbook().getNameRecord(nameIndex);
+    }
 
     /** gets the named range name
      * @param index the named range index (0 based)
@@ -1367,13 +1368,19 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
 
         if (name == null) {
-			name = workbook.createBuiltInName(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
-			// adding one here because 0 indicates a global named region; doesn't make sense for print areas
-		}
+            name = workbook.createBuiltInName(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
+            // adding one here because 0 indicates a global named region; doesn't make sense for print areas
+        }
+        String[] parts = COMMA_PATTERN.split(reference);
         StringBuffer sb = new StringBuffer(32);
-        SheetNameFormatter.appendFormat(sb, getSheetName(sheetIndex));
-        sb.append("!");
-        sb.append(reference);
+        for (int i = 0; i < parts.length; i++) {
+            if(i>0) {
+                sb.append(",");
+            }
+            SheetNameFormatter.appendFormat(sb, getSheetName(sheetIndex));
+            sb.append("!");
+            sb.append(parts[i]);
+        }
         name.setNameDefinition(HSSFFormulaParser.parse(sb.toString(), this));
     }
 
@@ -1409,8 +1416,8 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         NameRecord name = workbook.getSpecificBuiltinRecord(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
         //adding one here because 0 indicates a global named region; doesn't make sense for print areas
         if (name == null) {
-			return null;
-		}
+            return null;
+        }
  
         return HSSFFormulaParser.toFormulaString(this, name.getNameDefinition());
     }
@@ -1721,7 +1728,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     }
     
     public CreationHelper getCreationHelper() {
-    	return new HSSFCreationHelper(this);
+        return new HSSFCreationHelper(this);
     }
 
     private static byte[] newUID() {

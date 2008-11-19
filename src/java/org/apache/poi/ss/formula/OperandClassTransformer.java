@@ -19,9 +19,11 @@ package org.apache.poi.ss.formula;
 
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.ControlPtg;
-import org.apache.poi.hssf.record.formula.RangePtg;
-import org.apache.poi.hssf.record.formula.ValueOperatorPtg;
+import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.RangePtg;
+import org.apache.poi.hssf.record.formula.UnionPtg;
+import org.apache.poi.hssf.record.formula.ValueOperatorPtg;
 
 /**
  * This class performs 'operand class' transformation. Non-base tokens are classified into three 
@@ -98,7 +100,9 @@ final class OperandClassTransformer {
 			return;
 		}
 		
-		if (token instanceof ValueOperatorPtg || token instanceof ControlPtg) {
+		if (token instanceof ValueOperatorPtg || token instanceof ControlPtg
+				|| token instanceof MemFuncPtg
+				|| token instanceof UnionPtg) {
 			// Value Operator Ptgs and Control are base tokens, so token will be unchanged
 			// but any child nodes are processed according to desiredOperandClass and callerForceArrayFlag
 			

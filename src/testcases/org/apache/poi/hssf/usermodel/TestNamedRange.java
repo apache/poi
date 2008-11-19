@@ -355,16 +355,12 @@ public final class TestNamedRange extends TestCase {
 	public void testPrintAreaUnion(){
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		workbook.createSheet("Test Print Area");
-		String sheetName = workbook.getSheetName(0);
-
-
-		if (false) { // TODO - fix formula parser to support unions
-			String reference = "'" + sheetName + "'!$A$1:$B$1,'" + sheetName + "'!$D$1:$F$2";
-			workbook.setPrintArea(0, reference);
-			String retrievedPrintArea = workbook.getPrintArea(0);
-			assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);
-			assertEquals(reference, retrievedPrintArea);
-		}
+		
+		String reference = "$A$1:$B$1,$D$1:$F$2";
+		workbook.setPrintArea(0, reference);
+		String retrievedPrintArea = workbook.getPrintArea(0);
+		assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);
+		assertEquals("'Test Print Area'!$A$1:$B$1,'Test Print Area'!$D$1:$F$2", retrievedPrintArea);
 	}
 
 	/**
