@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,67 +14,47 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Delta Record<P>
- * Description:  controls the accuracy of the calculations<P>
- * REFERENCE:  PG 303 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
+ * Title:        Delta Record (0x0010)<p/>
+ * Description:  controls the accuracy of the calculations<p/>
+ * REFERENCE:  PG 303 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
- * @version 2.0-pre
  */
-
-public final class DeltaRecord
-    extends StandardRecord
-{
-    public final static short  sid           = 0x10;
+public final class DeltaRecord extends StandardRecord {
+    public final static short sid = 0x0010;
     public final static double DEFAULT_VALUE = 0.0010;   // should be .001
 
     // a double is an IEEE 8-byte float...damn IEEE and their goofy standards an
     // ambiguous numeric identifiers
-    private double             field_1_max_change;
+    private double field_1_max_change;
 
-    public DeltaRecord()
-    {
-    }
-
-    public DeltaRecord(RecordInputStream in)
-    {
-        field_1_max_change = in.readDouble();
-    }
-
-    /**
-     * set the maximum change
-     * @param maxChange - maximum rounding error
-     */
-
-    public void setMaxChange(double maxChange)
-    {
+    public DeltaRecord(double maxChange) {
         field_1_max_change = maxChange;
+    }
+
+    public DeltaRecord(RecordInputStream in) {
+        field_1_max_change = in.readDouble();
     }
 
     /**
      * get the maximum change
      * @return maxChange - maximum rounding error
      */
-
-    public double getMaxChange()
-    {
+    public double getMaxChange() {
         return field_1_max_change;
     }
 
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[DELTA]\n");
-        buffer.append("    .maxchange      = ").append(getMaxChange())
-            .append("\n");
+        buffer.append("    .maxchange = ").append(getMaxChange()).append("\n");
         buffer.append("[/DELTA]\n");
         return buffer.toString();
     }
@@ -88,14 +67,12 @@ public final class DeltaRecord
         return 8;
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 
     public Object clone() {
-      DeltaRecord rec = new DeltaRecord();
-      rec.field_1_max_change = field_1_max_change;
-      return rec;
+        // immutable
+        return this;
     }
 }

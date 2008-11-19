@@ -1092,11 +1092,7 @@ public final class Workbook implements Model {
      */
 
     protected Record createDSF() {
-        DSFRecord retval = new DSFRecord();
-
-        retval.setDsf(
-        ( short ) 0);   // we don't even support double stream files
-        return retval;
+        return new DSFRecord(false); // we don't even support double stream files
     }
 
     /**
@@ -1125,75 +1121,42 @@ public final class Workbook implements Model {
     }
 
     /**
-     * creates the WindowProtect record with protect set to false.
-     * @see org.apache.poi.hssf.record.WindowProtectRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a WindowProtectRecord
+     * @return a new WindowProtect record with protect set to false.
      */
-
-    protected Record createWindowProtect() {
-        WindowProtectRecord retval = new WindowProtectRecord();
-
-        retval.setProtect(
-        false);   // by default even when we support it we won't
-        return retval;   // want it to be protected
+    private static WindowProtectRecord createWindowProtect() {
+        // by default even when we support it we won't
+        // want it to be protected
+        return new WindowProtectRecord(false);
     }
 
     /**
-     * creates the Protect record with protect set to false.
-     * @see org.apache.poi.hssf.record.ProtectRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a ProtectRecord
+     * @return a new Protect record with protect set to false.
      */
-
-    protected Record createProtect() {
-        ProtectRecord retval = new ProtectRecord();
-
-        retval.setProtect(
-        false);   // by default even when we support it we won't
-        return retval;   // want it to be protected
+    private static ProtectRecord createProtect() {
+    	// by default even when we support it we won't
+    	// want it to be protected
+        return new ProtectRecord(false); 
     }
 
     /**
-     * creates the Password record with password set to 0.
-     * @see org.apache.poi.hssf.record.PasswordRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a PasswordRecord
+     * @return a new Password record with password set to 0x0000 (no password).
      */
-
-    protected Record createPassword() {
-        PasswordRecord retval = new PasswordRecord();
-
-        retval.setPassword(( short ) 0);   // no password by default!
-        return retval;
+    private static PasswordRecord createPassword() {
+        return new PasswordRecord(0x0000); // no password by default!
     }
 
     /**
-     * creates the ProtectionRev4 record with protect set to false.
-     * @see org.apache.poi.hssf.record.ProtectionRev4Record
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a ProtectionRev4Record
+     * @return a new ProtectionRev4 record with protect set to false.
      */
-
-    protected Record createProtectionRev4() {
-        ProtectionRev4Record retval = new ProtectionRev4Record();
-
-        retval.setProtect(false);
-        return retval;
+    private static ProtectionRev4Record createProtectionRev4() {
+        return new ProtectionRev4Record(false);
     }
 
     /**
-     * creates the PasswordRev4 record with password set to 0.
-     * @see org.apache.poi.hssf.record.PasswordRev4Record
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a PasswordRev4Record
+     * @return a new PasswordRev4 record with password set to 0.
      */
-
-    protected Record createPasswordRev4() {
-        PasswordRev4Record retval = new PasswordRev4Record();
-
-        retval.setPassword(( short ) 0);   // no password by default!
-        return retval;
+    private static PasswordRev4Record createPasswordRev4() {
+        return new PasswordRev4Record(0x0000);
     }
 
     /**
@@ -1287,17 +1250,10 @@ public final class Workbook implements Model {
     }
 
     /**
-     * creates the RefreshAll record with refreshAll set to true. (refresh all calcs)
-     * @see org.apache.poi.hssf.record.RefreshAllRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a RefreshAllRecord
+     * @return a new RefreshAll record with refreshAll set to false. (do not refresh all calcs)
      */
-
-    protected Record createRefreshAll() {
-        RefreshAllRecord retval = new RefreshAllRecord();
-
-        retval.setRefreshAll(false);
-        return retval;
+    private static RefreshAllRecord createRefreshAll() {
+        return new RefreshAllRecord(false);
     }
 
     /**
@@ -1783,17 +1739,10 @@ public final class Workbook implements Model {
     }
     
     /**
-     * Creates the UseSelFS object with the use natural language flag set to 0 (false)
-     * @return record containing a UseSelFSRecord
-     * @see org.apache.poi.hssf.record.UseSelFSRecord
-     * @see org.apache.poi.hssf.record.Record
+     * @return a new UseSelFS object with the use natural language flag set to 0 (false)
      */
-
-    protected Record createUseSelFS() {
-        UseSelFSRecord retval = new UseSelFSRecord();
-
-        retval.setFlag(( short ) 0);
-        return retval;
+    private static UseSelFSRecord createUseSelFS() {
+        return new UseSelFSRecord(false);
     }
 
     /**

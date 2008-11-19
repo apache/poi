@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,77 +14,62 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: Double Stream Flag Record<P>
- * Description:  tells if this is a double stream file. (always no for HSSF generated files)<P>
- *               Double Stream files contain both BIFF8 and BIFF7 workbooks.<P>
- * REFERENCE:  PG 305 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
+ * Title: Double Stream Flag Record (0x0161)<p/>
+ * Description:  tells if this is a double stream file. (always no for HSSF generated files)<p/>
+ *               Double Stream files contain both BIFF8 and BIFF7 workbooks.<p/>
+ * REFERENCE:  PG 305 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
  * @author Andrew C. Oliver (acoliver at apache dot org)
- * @version 2.0-pre
  */
+public final class DSFRecord extends StandardRecord {
+    public final static short sid = 0x0161;
 
-public final class DSFRecord
-    extends StandardRecord
-{
-    public final static short sid = 0x161;
-    private short             field_1_dsf;
+    private static final BitField biff5BookStreamFlag = BitFieldFactory.getInstance(0x0001);
 
-    public DSFRecord()
-    {
+    private int _options;
+
+    private DSFRecord(int options) {
+        _options = options;
+    }
+    public DSFRecord(boolean isBiff5BookStreamPresent) {
+        this(0);
+        _options = biff5BookStreamFlag.setBoolean(0, isBiff5BookStreamPresent);
     }
 
-    public DSFRecord(RecordInputStream in)
-    {
-        field_1_dsf = in.readShort();
+    public DSFRecord(RecordInputStream in) {
+        this(in.readShort());
     }
 
-    /**
-     * set the DSF flag
-     * @param dsfflag (0-off,1-on)
-     */
-
-    public void setDsf(short dsfflag)
-    {
-        field_1_dsf = dsfflag;
+    public boolean isBiff5BookStreamPresent() {
+        return biff5BookStreamFlag.isSet(_options);
     }
 
-    /**
-     * get the DSF flag
-     * @return dsfflag (0-off,1-on)
-     */
-
-    public short getDsf()
-    {
-        return field_1_dsf;
-    }
-
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[DSF]\n");
-        buffer.append("    .isDSF           = ")
-            .append(Integer.toHexString(getDsf())).append("\n");
+        buffer.append("    .options = ").append(HexDump.shortToHex(_options)).append("\n");
         buffer.append("[/DSF]\n");
         return buffer.toString();
     }
 
     public void serialize(LittleEndianOutput out) {
-        out.writeShort(getDsf());
+        out.writeShort(_options);
     }
 
     protected int getDataSize() {
         return 2;
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 }
