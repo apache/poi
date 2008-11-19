@@ -17,14 +17,15 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.StringUtil;
 
 /**
- * NOTE: Comment Associated with a Cell (1Ch)
+ * NOTE: Comment Associated with a Cell (0x001C)<p/>
  *
  * @author Yegor Kozlov
  */
-public final class NoteRecord extends Record {
+public final class NoteRecord extends StandardRecord {
     public final static short sid = 0x001C;
 
     /**
@@ -37,88 +38,95 @@ public final class NoteRecord extends Record {
      */
     public final static short NOTE_VISIBLE = 0x2;
 
-    private short           field_1_row;
-    private short           field_2_col;
-    private short           field_3_flags;
-    private short           field_4_shapeid;
-    private String          field_5_author;
+	private static final Byte DEFAULT_PADDING = new Byte((byte)0);
+
+    private short field_1_row;
+	private short field_2_col;
+	private short field_3_flags;
+	private short field_4_shapeid;
+	private boolean field_5_hasMultibyte;
+	private String field_6_author;
+	/**
+	 * Saves padding byte value to reduce delta during round-trip serialization.<br/>
+	 * 
+	 * The documentation is not clear about how padding should work.  In any case
+	 * Excel(2007) does something different. 
+	 */
+	private Byte field_7_padding;
 
     /**
      * Construct a new <code>NoteRecord</code> and
      * fill its data with the default values
      */
-    public NoteRecord()
-    {
-        field_5_author = "";
+    public NoteRecord() {
+        field_6_author = "";
         field_3_flags = 0;
+        field_7_padding = DEFAULT_PADDING; // seems to be always present regardless of author text
     }
 
     /**
      * @return id of this record.
      */
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 
     /**
      * Read the record data from the supplied <code>RecordInputStream</code>
      */
-    public NoteRecord(RecordInputStream in)
-    {
+    public NoteRecord(RecordInputStream in) {
         field_1_row = in.readShort();
         field_2_col = in.readShort();
         field_3_flags = in.readShort();
         field_4_shapeid = in.readShort();
         int length = in.readShort();
-        byte[] bytes = in.readRemainder();
-        field_5_author = new String(bytes, 1, length);
+        field_5_hasMultibyte = in.readByte() != 0x00;
+        if (field_5_hasMultibyte) {
+        	field_6_author = StringUtil.readUnicodeLE(in, length);
+        } else {
+        	field_6_author = StringUtil.readCompressedUnicode(in, length);
+        }
+ 		if (in.available() == 1) {
+			field_7_padding = new Byte(in.readByte());
+        }
     }
 
-    /**
-     * Serialize the record data into the supplied array of bytes
-     *
-     * @param offset offset in the <code>data</code>
-     * @param data the data to serialize into
-     *
-     * @return size of the record
-     */
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putShort(data, 4 + offset , field_1_row);
-        LittleEndian.putShort(data, 6 + offset , field_2_col);
-        LittleEndian.putShort(data, 8 + offset , field_3_flags);
-        LittleEndian.putShort(data, 10 + offset , field_4_shapeid);
-        LittleEndian.putShort(data, 12 + offset , (short)field_5_author.length());
-
-        byte[] str = field_5_author.getBytes();
-        System.arraycopy(str, 0, data, 15 + offset, str.length);
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_row);
+        out.writeShort(field_2_col);
+        out.writeShort(field_3_flags);
+        out.writeShort(field_4_shapeid);
+        out.writeShort(field_6_author.length());
+        out.writeByte(field_5_hasMultibyte ? 0x01 : 0x00);
+        if (field_5_hasMultibyte) {
+        	StringUtil.putUnicodeLE(field_6_author, out);
+        } else {
+        	StringUtil.putCompressedUnicode(field_6_author, out);
+        }
+        if (field_7_padding != null) {
+        	out.writeByte(field_7_padding.intValue());
+        }
     }
 
     protected int getDataSize() {
-        return 2 + 2 + 2 + 2 + 2 + 1 + field_5_author.length() + 1;
+        return 11 // 5 shorts + 1 byte
+        	+ field_6_author.length() * (field_5_hasMultibyte ? 2 : 1)
+        	+ (field_7_padding == null ? 0 : 1);
     }
 
     /**
      * Convert this record to string.
      * Used by BiffViewer and other utilities.
      */
-     public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[NOTE]\n");
-        buffer.append("    .recordid = 0x" + Integer.toHexString( getSid() ) + ", size = " + getRecordSize() + "\n");
-        buffer.append("    .row =     " + field_1_row + "\n");
-        buffer.append("    .col =     " + field_2_col + "\n");
-        buffer.append("    .flags =   " + field_3_flags + "\n");
-        buffer.append("    .shapeid = " + field_4_shapeid + "\n");
-        buffer.append("    .author =  " + field_5_author + "\n");
+        buffer.append("    .row    = ").append(field_1_row).append("\n");
+        buffer.append("    .col    = ").append(field_2_col).append("\n");
+        buffer.append("    .flags  = ").append(field_3_flags).append("\n");
+        buffer.append("    .shapeid= ").append(field_4_shapeid).append("\n");
+        buffer.append("    .author = ").append(field_6_author).append("\n");
         buffer.append("[/NOTE]\n");
         return buffer.toString();
     }
@@ -201,7 +209,7 @@ public final class NoteRecord extends Record {
      * @return the name of the original author of the comment
      */
     public String getAuthor(){
-        return field_5_author;
+        return field_6_author;
     }
 
     /**
@@ -210,7 +218,7 @@ public final class NoteRecord extends Record {
      * @param author the name of the original author of the comment
      */
     public void setAuthor(String author){
-        field_5_author = author;
+        field_6_author = author;
     }
 
     public Object clone() {
@@ -219,8 +227,7 @@ public final class NoteRecord extends Record {
         rec.field_2_col = field_2_col;
         rec.field_3_flags = field_3_flags;
         rec.field_4_shapeid = field_4_shapeid;
-        rec.field_5_author = field_5_author;
+        rec.field_6_author = field_6_author;
         return rec;
     }
-
 }
