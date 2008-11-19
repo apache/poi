@@ -20,7 +20,7 @@ package org.apache.poi.hssf.record;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * EXTERNSHEET (0x0017)<br/>
@@ -28,9 +28,9 @@ import org.apache.poi.util.LittleEndian;
  * 
  * @author Libin Roman (Vista Portal LDT. Developer)
  */
-public class ExternSheetRecord extends Record {
+public class ExternSheetRecord extends StandardRecord {
 	public final static short sid = 0x0017;
-	private List _list;
+	private List<RefSubRecord> _list;
 	
 	private final class RefSubRecord {
 		public static final int ENCODED_SIZE = 6;
@@ -73,43 +73,27 @@ public class ExternSheetRecord extends Record {
 			return buffer.toString();
 		}
 		
-		/**
-		 * called by the class that is responsible for writing this sucker.
-		 * Subclasses should implement this so that their data is passed back in a
-		 * byte array.
-		 *
-		 * @param offset to begin writing at
-		 * @param data byte array containing instance data
-		 * @return number of bytes written
-		 */
-		public void serialize(int offset, byte [] data) {
-			LittleEndian.putUShort(data, 0 + offset, _extBookIndex);
-			LittleEndian.putUShort(data, 2 + offset, _firstSheetIndex);
-			LittleEndian.putUShort(data, 4 + offset, _lastSheetIndex);
+		public void serialize(LittleEndianOutput out) {
+			out.writeShort(_extBookIndex);
+			out.writeShort(_firstSheetIndex);
+			out.writeShort(_lastSheetIndex);
 		}
 	}	
 	
 	
 	
 	public ExternSheetRecord() {
-		_list = new ArrayList();
+		_list = new ArrayList<RefSubRecord>();
 	}
-	
-	/**
-	 * called by the constructor, should set class level fields.  Should throw
-	 * runtime exception for bad/icomplete data.
-	 *
-	 * @param in the RecordInputstream to read the record from
-	 */
+
 	public ExternSheetRecord(RecordInputStream in) {
-		_list		   = new ArrayList();
+		_list = new ArrayList<RefSubRecord>();
 		
 		int nItems  = in.readShort();
 		
 		for (int i = 0 ; i < nItems ; ++i) {
 			RefSubRecord rec = new RefSubRecord(in);
-			
-			_list.add( rec);
+			_list.add(rec);
 		}
 	}
 	
@@ -157,35 +141,18 @@ public class ExternSheetRecord extends Record {
 		return 2 + _list.size() * RefSubRecord.ENCODED_SIZE;
 	}
 	
-	/**
-	 * called by the class that is responsible for writing this sucker.
-	 * Subclasses should implement this so that their data is passed back in a
-	 * byte array.
-	 *
-	 * @param offset to begin writing at
-	 * @param data byte array containing instance data
-	 * @return number of bytes written
-	 */
-	public int serialize(int offset, byte [] data) {
-		int dataSize = getDataSize();
-		
+	public void serialize(LittleEndianOutput out) {
 		int nItems = _list.size();
 
-		LittleEndian.putShort(data, 0 + offset, sid);
-		LittleEndian.putUShort(data, 2 + offset, dataSize);
-		LittleEndian.putUShort(data, 4 + offset, nItems);
-		
-		int pos = 6 ;
+		out.writeShort(nItems);
 		
 		for (int i = 0; i < nItems; i++) {
-			getRef(i).serialize(offset + pos, data);
-			pos +=6;
+			getRef(i).serialize(out);
 		}
-		return dataSize + 4;
 	}
 
 	private RefSubRecord getRef(int i) {
-		return (RefSubRecord) _list.get(i);
+		return _list.get(i);
 	}
 	
 	/**

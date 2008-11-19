@@ -19,15 +19,16 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.util.RKUtil;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        RK Record (0x027E)
+ * Title:        RK Record (0x027E)<p/>
  * Description:  An internal 32 bit number with the two most significant bits
  *               storing the type.  This is part of a bizarre scheme to save disk
  *               space and memory (gee look at all the other whole records that
  *               are in the file just "cause"..,far better to waste processor
- *               cycles on this then leave on of those "valuable" records out).<P>
- * We support this in READ-ONLY mode.  HSSF converts these to NUMBER records<P>
+ *               cycles on this then leave on of those "valuable" records out).<p/>
+ * We support this in READ-ONLY mode.  HSSF converts these to NUMBER records<p/>
  *
  *
  *
@@ -36,7 +37,7 @@ import org.apache.poi.util.HexDump;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @see org.apache.poi.hssf.record.NumberRecord
  */
-public final class RKRecord extends Record implements CellValueRecordInterface {
+public final class RKRecord extends StandardRecord implements CellValueRecordInterface {
     public final static short sid                      = 0x027E;
     public final static short RK_IEEE_NUMBER           = 0;
     public final static short RK_IEEE_NUMBER_TIMES_100 = 1;
@@ -47,7 +48,7 @@ public final class RKRecord extends Record implements CellValueRecordInterface {
     private int field_3_xf_index;
     private int field_4_rk_number;
 
-    public RKRecord()
+    private RKRecord()
     {
     }
 
@@ -133,7 +134,7 @@ public final class RKRecord extends Record implements CellValueRecordInterface {
         return sb.toString();
     }
 
-	public int serialize(int offset, byte [] data) {
+	public void serialize(LittleEndianOutput out) {
 		throw new RecordFormatException( "Sorry, you can't serialize RK in this release");
 	}
 	protected int getDataSize() {

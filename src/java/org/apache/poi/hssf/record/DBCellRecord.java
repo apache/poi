@@ -17,29 +17,56 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        DBCell Record
+ * Title:        DBCell Record (0x00D7)<p/>
  * Description:  Used by Excel and other MS apps to quickly find rows in the sheets.<P>
  * REFERENCE:  PG 299/440 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height
- * @version 2.0-pre
  */
-public final class DBCellRecord extends Record {
+public final class DBCellRecord extends StandardRecord {
+    public final static short sid = 0x00D7;
     public final static int BLOCK_SIZE = 32;
-    public final static short sid = 0xd7;
-    private int               field_1_row_offset;
-    private short[]           field_2_cell_offsets;
+    
+    public static final class Builder {
+        private short[] _cellOffsets;
+        private int _nCellOffsets;
+        public Builder() {
+        	_cellOffsets = new short[4];
+		}
 
-    public DBCellRecord()
-    {
-        field_2_cell_offsets = new short[0];
+        public void addCellOffset(int cellRefOffset) {
+            if (_cellOffsets.length <= _nCellOffsets) {
+                short[] temp = new short[_nCellOffsets * 2];
+                System.arraycopy(_cellOffsets, 0, temp, 0, _nCellOffsets);
+                _cellOffsets = temp;
+            }
+            _cellOffsets[_nCellOffsets] = (short) cellRefOffset;
+            _nCellOffsets++;
+        }
+
+        public DBCellRecord build(int rowOffset) {
+            short[] cellOffsets = new short[_nCellOffsets];
+            System.arraycopy(_cellOffsets, 0, cellOffsets, 0, _nCellOffsets);
+            return new DBCellRecord(rowOffset, cellOffsets);
+        }
+    }
+    /**
+     * offset from the start of this DBCellRecord to the start of the first cell in
+     * the next DBCell block.
+     */
+    private final int     field_1_row_offset;
+    private final short[] field_2_cell_offsets;
+
+    DBCellRecord(int rowOffset, short[]cellOffsets) {
+        field_1_row_offset = rowOffset;
+        field_2_cell_offsets = cellOffsets;
     }
 
-    public DBCellRecord(RecordInputStream in)
-    {
+    public DBCellRecord(RecordInputStream in) {
         field_1_row_offset   = in.readUShort();
         int size = in.remaining();        
         field_2_cell_offsets = new short[ size / 2 ];
@@ -50,101 +77,28 @@ public final class DBCellRecord extends Record {
         }
     }
 
-    /**
-     * sets offset from the start of this DBCellRecord to the start of the first cell in
-     * the next DBCell block.
-     *
-     * @param offset    offset to the start of the first cell in the next DBCell block
-     */
-    public void setRowOffset(int offset)
-    {
-        field_1_row_offset = offset;
-    }
 
-    // need short list impl.
-    public void addCellOffset(short offset)
-    {
-        if (field_2_cell_offsets == null)
-        {
-            field_2_cell_offsets = new short[ 1 ];
-        }
-        else
-        {
-            short[] temp = new short[ field_2_cell_offsets.length + 1 ];
-
-            System.arraycopy(field_2_cell_offsets, 0, temp, 0,
-                             field_2_cell_offsets.length);
-            field_2_cell_offsets = temp;
-        }
-        field_2_cell_offsets[ field_2_cell_offsets.length - 1 ] = offset;
-    }
-
-    /**
-     * gets offset from the start of this DBCellRecord to the start of the first cell in
-     * the next DBCell block.
-     *
-     * @return rowoffset to the start of the first cell in the next DBCell block
-     */
-    public int getRowOffset()
-    {
-        return field_1_row_offset;
-    }
-
-    /**
-     * return the cell offset in the array
-     *
-     * @param index of the cell offset to retrieve
-     * @return celloffset from the celloffset array
-     */
-    public short getCellOffsetAt(int index)
-    {
-        return field_2_cell_offsets[ index ];
-    }
-
-    /**
-     * get the number of cell offsets in the celloffset array
-     *
-     * @return number of cell offsets
-     */
-    public int getNumCellOffsets()
-    {
-        return field_2_cell_offsets.length;
-    }
-
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[DBCELL]\n");
-        buffer.append("    .rowoffset       = ")
-            .append(Integer.toHexString(getRowOffset())).append("\n");
-        for (int k = 0; k < getNumCellOffsets(); k++)
-        {
-            buffer.append("    .cell_" + k + "          = ")
-                .append(Integer.toHexString(getCellOffsetAt(k))).append("\n");
+        buffer.append("    .rowoffset = ").append(HexDump.intToHex(field_1_row_offset)).append("\n");
+        for (int k = 0; k < field_2_cell_offsets.length; k++) {
+            buffer.append("    .cell_").append(k).append(" = ")
+                .append(HexDump.shortToHex(field_2_cell_offsets[ k ])).append("\n");
         }
         buffer.append("[/DBCELL]\n");
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        if (field_2_cell_offsets == null)
-        {
-            field_2_cell_offsets = new short[ 0 ];
+    public void serialize(LittleEndianOutput out) {
+        out.writeInt(field_1_row_offset);
+        for (int k = 0; k < field_2_cell_offsets.length; k++) {
+            out.writeShort(field_2_cell_offsets[ k ]);
         }
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) (4 + (getNumCellOffsets() * 2))));
-        LittleEndian.putInt(data, 4 + offset, getRowOffset());
-        for (int k = 0; k < getNumCellOffsets(); k++)
-        {
-            LittleEndian.putShort(data, 8 + 2*k + offset, getCellOffsetAt(k));
-        }
-        return getRecordSize();
     }
     protected int getDataSize() {
-    	return 4 + (getNumCellOffsets() * 2);
+        return 4 + field_2_cell_offsets.length * 2;
     }
     
     /**
@@ -158,14 +112,12 @@ public final class DBCellRecord extends Record {
         return nBlocks * 8 + nRows * 2;
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 
     public Object clone() {
-        // TODO - make immutable.
-        // this should be safe because only the instantiating code mutates these objects
+        // safe because immutable
         return this;
     }
 }

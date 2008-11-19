@@ -20,15 +20,15 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.hssf.record.cf.CellRangeUtil;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Conditional Formatting Header record CFHEADER (0x1B0)
+ * Conditional Formatting Header record CFHEADER (0x01B0)
  * 
  * @author Dmitriy Kumshayev
  */
-public final class CFHeaderRecord extends Record {
-	public static final short sid = 0x1B0;
+public final class CFHeaderRecord extends StandardRecord {
+	public static final short sid = 0x01B0;
 
 	private int field_1_numcf;
 	private int field_2_need_recalculation;
@@ -136,23 +136,15 @@ public final class CFHeaderRecord extends Record {
 			+ field_4_cell_ranges.getSize();
 	}
 	
-	/**
-	 * @return byte array containing instance data
-	 */
-	public int serialize(int offset, byte[] data) {
-		int dataSize = getDataSize();
-		
-		LittleEndian.putUShort(data, 0 + offset, sid);
-		LittleEndian.putUShort(data, 2 + offset, dataSize);
-		LittleEndian.putUShort(data, 4 + offset, field_1_numcf);
-		LittleEndian.putUShort(data, 6 + offset, field_2_need_recalculation);
-		field_3_enclosing_cell_range.serialize(8 + offset, data);
-		field_4_cell_ranges.serialize(16 + offset, data);
-		return 4 + dataSize;
+	public void serialize(LittleEndianOutput out) {
+
+		out.writeShort(field_1_numcf);
+		out.writeShort(field_2_need_recalculation);
+		field_3_enclosing_cell_range.serialize(out);
+		field_4_cell_ranges.serialize(out);
 	}
 
-	public short getSid()
-	{
+	public short getSid() {
 		return sid;
 	}
 

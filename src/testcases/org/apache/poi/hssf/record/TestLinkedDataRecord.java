@@ -167,7 +167,7 @@ recordid = 0x1051, size =8
         Area3DPtg ptgExpected = new Area3DPtg(0, 7936, 0, 0,
                 false, false, false, false, 0);
         
-        Object ptgActual = record.getFormulaOfLink().getFormulaTokens()[0];
+        Ptg ptgActual = record.getFormulaOfLink()[0];
         assertEquals(ptgExpected.toString(),  ptgActual.toString());
 
         assertEquals( data.length + 4, record.getRecordSize() );
@@ -182,9 +182,7 @@ recordid = 0x1051, size =8
         record.setIndexNumberFmtRecord( (short)0 );
         Area3DPtg ptg = new Area3DPtg(0, 7936, 0, 0,
         		false, false, false, false, 0);
-        LinkedDataFormulaField formulaOfLink = new LinkedDataFormulaField();
-        formulaOfLink.setFormulaTokens(new Ptg[] { ptg, });
-        record.setFormulaOfLink(formulaOfLink );
+        record.setFormulaOfLink(new Ptg[] { ptg, } );
 
         byte [] recordBytes = record.serialize();
         assertEquals(recordBytes.length - 4, data.length);

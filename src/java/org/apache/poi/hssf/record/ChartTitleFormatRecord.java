@@ -20,76 +20,67 @@
  */
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
-
-import java.util.ArrayList;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
+ * CHARTTITLEFORMAT (0x1050)<p/>
  * Describes the formatting runs associated with a chart title.
  */
-public class ChartTitleFormatRecord extends Record {
+public class ChartTitleFormatRecord extends StandardRecord {
 	public static final short sid = 0x1050;
 	
-	private int 		m_recs;
+	private CTFormat[] _formats;
 	
-	private class CTFormat {
-		private short m_offset;
-		private short m_fontIndex;
+	private static final class CTFormat {
+		public static final int ENCODED_SIZE=4;
+		private int _offset;
+		private int _fontIndex;
 		
 		protected CTFormat(short offset,short fontIdx){
-			m_offset = offset;
-			m_fontIndex = fontIdx;
+			_offset = offset;
+			_fontIndex = fontIdx;
 		}
 		
-		public short getOffset(){
-			return m_offset;
+		public CTFormat(RecordInputStream in) {
+			_offset = in.readShort();
+			_fontIndex = in.readShort();
 		}
-		public void setOffset(short newOff){
-			m_offset = newOff;
-		}
-		public short getFontIndex() {
-			return m_fontIndex;
-		}
-	}
-	
-	private ArrayList m_formats;
 
-	public ChartTitleFormatRecord() {
-		super();
+		public int getOffset(){
+			return _offset;
+		}
+		public void setOffset(int newOff){
+			_offset = newOff;
+		}
+		public int getFontIndex() {
+			return _fontIndex;
+		}
+
+		public void serialize(LittleEndianOutput out) {
+			out.writeShort(_offset);
+			out.writeShort(_fontIndex);
+		}
 	}
+
 
 	public ChartTitleFormatRecord(RecordInputStream in) {
-		m_recs = in.readUShort();
-		int idx;
-		CTFormat ctf;
-		if (m_formats == null){
-			m_formats = new ArrayList(m_recs);
-		}
-		for(idx=0;idx<m_recs;idx++) {
-			ctf = new CTFormat(in.readShort(),in.readShort());
-			m_formats.add(ctf);
+		int nRecs = in.readUShort();
+		_formats = new CTFormat[nRecs];
+
+		for(int i=0;i<nRecs;i++) {
+			_formats[i] = new CTFormat(in);
 		}
 	}
 
-	public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              ( short ) (getRecordSize() - 4));   
-        int idx;
-        CTFormat ctf;
-        LittleEndian.putShort(data, 4 + offset,(short)m_formats.size());
-        for(idx=0;idx<m_formats.size();idx++){
-        	ctf = (CTFormat)m_formats.get(idx);
-        	LittleEndian.putShort(data, 6 + (idx * 4) + offset, ctf.getOffset());
-        	LittleEndian.putShort(data, 8 + (idx * 4) + offset, ctf.getFontIndex());
+	public void serialize(LittleEndianOutput out) {
+        out.writeShort(_formats.length);
+        for(int i=0; i<_formats.length; i++){
+            _formats[i].serialize(out);
         }
-        
-        return getRecordSize();
     }
 
     protected int getDataSize() {
-        return 2 + (4 * m_formats.size());
+        return 2 + CTFormat.ENCODED_SIZE * _formats.length;
     }
     
 	public short getSid() {
@@ -97,33 +88,29 @@ public class ChartTitleFormatRecord extends Record {
 	}
 	
 	public int getFormatCount() {
-		return m_formats.size();
+		return _formats.length;
 	}
 	
-	public void modifyFormatRun(short oldPos,short newLen) {
-		short shift = (short)0;
-		for(int idx=0;idx < m_formats.size();idx++) {
-			CTFormat ctf = (CTFormat)m_formats.get(idx);
+	public void modifyFormatRun(short oldPos, short newLen) {
+		int shift = 0;
+		for(int i=0; i < _formats.length; i++) {
+			CTFormat ctf = _formats[i];
 			if (shift != 0) {
-				ctf.setOffset((short)(ctf.getOffset() + shift));
-			} else if ((oldPos == ctf.getOffset()) && (idx < (m_formats.size() - 1))){
-				CTFormat nextCTF = (CTFormat)m_formats.get(idx + 1);
-				shift = (short)(newLen - (nextCTF.getOffset() - ctf.getOffset()));
+				ctf.setOffset(ctf.getOffset() + shift);
+			} else if (oldPos == ctf.getOffset() && i < _formats.length - 1){
+				CTFormat nextCTF = _formats[i + 1];
+				shift = newLen - (nextCTF.getOffset() - ctf.getOffset());
 			} 
 		}
 	}
 	
-	public String toString()
-    {
+	public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[CHARTTITLEFORMAT]\n");
-        buffer.append("    .format_runs       = ").append(m_recs)
-            .append("\n");
-        int idx;
-        CTFormat ctf;
-        for(idx=0;idx<m_formats.size();idx++){
-        	ctf = (CTFormat)m_formats.get(idx);
+        buffer.append("    .format_runs       = ").append(_formats.length).append("\n");
+        for(int i=0; i<_formats.length; i++) {
+            CTFormat ctf = _formats[i];
         	buffer.append("       .char_offset= ").append(ctf.getOffset());
         	buffer.append(",.fontidx= ").append(ctf.getFontIndex());
             buffer.append("\n");

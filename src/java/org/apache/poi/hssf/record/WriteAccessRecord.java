@@ -19,7 +19,7 @@ package org.apache.poi.hssf.record;
 
 import java.util.Arrays;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -33,9 +33,10 @@ import org.apache.poi.util.StringUtil;
  * 
  * @author Andrew C. Oliver (acoliver at apache dot org)
  */
-public final class WriteAccessRecord extends Record {
-	private static final byte PAD_CHAR = (byte) ' ';
+public final class WriteAccessRecord extends StandardRecord {
 	public final static short sid = 0x005C;
+
+	private static final byte PAD_CHAR = (byte) ' ';
 	private static final int DATA_SIZE = 112;
 	private String field_1_username;
 	/** this record is always padded to a constant length */
@@ -113,24 +114,18 @@ public final class WriteAccessRecord extends Record {
 		return buffer.toString();
 	}
 
-	public int serialize(int offset, byte[] data) {
+	public void serialize(LittleEndianOutput out) {
 		String username = getUsername();
 		boolean is16bit = StringUtil.hasMultibyte(username);
 
-		LittleEndian.putUShort(data, 0 + offset, sid);
-		LittleEndian.putUShort(data, 2 + offset, DATA_SIZE);
-		LittleEndian.putUShort(data, 4 + offset, username.length());
-		LittleEndian.putByte(data, 6 + offset, is16bit ? 0x01 : 0x00);
-		int pos = offset + 7;
+		out.writeShort(username.length());
+		out.writeByte(is16bit ? 0x01 : 0x00);
 		if (is16bit) {
-			StringUtil.putUnicodeLE(username, data, pos);
-			pos += username.length() * 2;
+			StringUtil.putUnicodeLE(username, out);
 		} else {
-			StringUtil.putCompressedUnicode(username, data, pos);
-			pos += username.length();
+			StringUtil.putCompressedUnicode(username, out);
 		}
-		System.arraycopy(padding, 0, data, pos, padding.length);
-		return 4 + DATA_SIZE;
+		out.write(padding);
 	}
 
 	protected int getDataSize() {

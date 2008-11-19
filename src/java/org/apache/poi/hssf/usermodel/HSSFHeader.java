@@ -92,7 +92,6 @@ public class HSSFHeader extends HeaderFooter implements Header {
         headerRecord.setHeader( "&C" + ( center == null ? "" : center ) +
                 "&L" + ( left == null ? "" : left ) +
                 "&R" + ( right == null ? "" : right ) );
-        headerRecord.setHeaderLength( (byte) headerRecord.getHeader().length() );
     }
 
 }

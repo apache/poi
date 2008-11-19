@@ -17,16 +17,19 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
+ * SERIESLIST (0x1016)
  * 
  * The series list record defines the series displayed as an overlay to the main chart record.<br/>
- * TODO - does this record (0x1016) really exist.  It doesn't seem to be referenced in either the OOO or MS doc
+ * This record doesn't seem to be referenced in either the OOO or MS doc, but this page mentions it
+ * http://ooxmlisdefectivebydesign.blogspot.com/2008/03/bad-surprise-in-microsoft-office-binary.html
+ * 
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class SeriesListRecord extends Record {
+public final class SeriesListRecord extends StandardRecord {
     public final static short sid = 0x1016;
     private  short[]    field_1_seriesNumbers;
 
@@ -55,23 +58,13 @@ public final class SeriesListRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data) {
+    public void serialize(LittleEndianOutput out) {
 
         int nItems = field_1_seriesNumbers.length;
-        int dataSize = 2 + 2 * nItems;
-    	
-        LittleEndian.putUShort(data, 0 + offset, sid);
-        LittleEndian.putUShort(data, 2 + offset, dataSize);
-
-        LittleEndian.putUShort(data, 4 + offset, nItems);
-        
-        int pos = offset + 6;
+        out.writeShort(nItems);
     	for (int i = 0; i < nItems; i++) {
-    		LittleEndian.putUShort(data, pos, field_1_seriesNumbers[i]);
-    		pos += 2;
+    		out.writeShort(field_1_seriesNumbers[i]);
     	}
-
-        return 4 + dataSize;
     }
 
     protected int getDataSize() {
@@ -84,7 +77,7 @@ public final class SeriesListRecord extends Record {
     }
 
     public Object clone() {
-        return new SeriesListRecord((short[]) field_1_seriesNumbers.clone());
+        return new SeriesListRecord(field_1_seriesNumbers.clone());
     }
 
     /**

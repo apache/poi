@@ -15,12 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
-/*
- * HSSFFont.java
- *
- * Created on December 9, 2001, 10:34 AM
- */
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.FontRecord;
@@ -29,16 +23,13 @@ import org.apache.poi.ss.usermodel.Font;
 /**
  * Represents a Font used in a workbook.
  *
- * @version 1.0-pre
+ *
  * @author  Andrew C. Oliver
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createFont()
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
  * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#setFont(HSSFFont)
  */
-
-public class HSSFFont implements Font
-{
-
+public final class HSSFFont implements Font {
 
     private FontRecord         font;
     private short              index;
@@ -60,7 +51,6 @@ public class HSSFFont implements Font
     public void setFontName(String name)
     {
         font.setFontName(name);
-        font.setFontNameLength(( byte ) name.length());
     }
 
     /**

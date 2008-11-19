@@ -18,7 +18,9 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Selection Record (0x001D)<P>
@@ -30,7 +32,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class SelectionRecord extends Record {
+public final class SelectionRecord extends StandardRecord {
     public final static short sid = 0x001D;
     private byte        field_1_pane;
     private int         field_2_row_active_cell;
@@ -123,45 +125,35 @@ public final class SelectionRecord extends Record {
      * @return ref number of active cell
      */
     public int getActiveCellRef() {
-        return (short)field_4_active_cell_ref_index;
+        return field_4_active_cell_ref_index;
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuffer sb = new StringBuffer();
 
-        buffer.append("[SELECTION]\n");
-        buffer.append("    .pane            = ")
-            .append(Integer.toHexString(getPane())).append("\n");
-        buffer.append("    .activecellrow   = ")
-            .append(Integer.toHexString(getActiveCellRow())).append("\n");
-        buffer.append("    .activecellcol   = ")
-            .append(Integer.toHexString(getActiveCellCol())).append("\n");
-        buffer.append("    .activecellref   = ")
-            .append(Integer.toHexString(getActiveCellRef())).append("\n");
-        buffer.append("    .numrefs         = ")
-            .append(Integer.toHexString(field_6_refs.length)).append("\n");
-        buffer.append("[/SELECTION]\n");
-        return buffer.toString();
+        sb.append("[SELECTION]\n");
+        sb.append("    .pane            = ").append(HexDump.byteToHex(getPane())).append("\n");
+        sb.append("    .activecellrow   = ").append(HexDump.shortToHex(getActiveCellRow())).append("\n");
+        sb.append("    .activecellcol   = ").append(HexDump.shortToHex(getActiveCellCol())).append("\n");
+        sb.append("    .activecellref   = ").append(HexDump.shortToHex(getActiveCellRef())).append("\n");
+        sb.append("    .numrefs         = ").append(HexDump.shortToHex(field_6_refs.length)).append("\n");
+        sb.append("[/SELECTION]\n");
+        return sb.toString();
     }
     protected int getDataSize() {
         return 9 // 1 byte + 4 shorts 
             + CellRangeAddress8Bit.getEncodedSize(field_6_refs.length);
     }
-    public int serialize(int offset, byte [] data) {
-        int dataSize = getDataSize();
-        LittleEndian.putUShort(data, 0 + offset, sid);
-        LittleEndian.putUShort(data, 2 + offset, dataSize);
-        LittleEndian.putByte(data, 4 + offset,  getPane());
-        LittleEndian.putUShort(data, 5 + offset, getActiveCellRow());
-        LittleEndian.putUShort(data, 7 + offset, getActiveCellCol());
-        LittleEndian.putUShort(data, 9 + offset, getActiveCellRef());
+    public void serialize(LittleEndianOutput out) {
+        out.writeByte(getPane());
+        out.writeShort(getActiveCellRow());
+        out.writeShort(getActiveCellCol());
+        out.writeShort(getActiveCellRef());
         int nRefs = field_6_refs.length;
-        LittleEndian.putUShort(data, 11 + offset, nRefs);
+        out.writeShort(nRefs);
         for (int i = 0; i < field_6_refs.length; i++) {
-            CellRangeAddress8Bit r = field_6_refs[i];
-            r.serialize(offset + 13 + i * CellRangeAddress8Bit.ENCODED_SIZE, data);
+            field_6_refs[i].serialize(out);
         }
-        return 4 + dataSize;
     }
 
     public short getSid() {

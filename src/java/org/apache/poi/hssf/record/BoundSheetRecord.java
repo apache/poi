@@ -24,20 +24,19 @@ import java.util.List;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Title:        Bound Sheet Record (aka BundleSheet) <P>
- * Description:  Defines a sheet within a workbook.  Basically stores the sheetname
+ * Title:        Bound Sheet Record (aka BundleSheet) (0x0085)<P>
+ * Description:  Defines a sheet within a workbook.  Basically stores the sheet name
  *               and tells where the Beginning of file record is within the HSSF
  *               file. <P>
  * REFERENCE:  PG 291 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Sergei Kozello (sergeikozello at mail.ru)
- * @version 2.0-pre
  */
-public final class BoundSheetRecord extends Record {
+public final class BoundSheetRecord extends StandardRecord {
 	public final static short sid = 0x0085;
 
 	private static final BitField hiddenFlag = BitFieldFactory.getInstance(0x01);
@@ -160,23 +159,19 @@ public final class BoundSheetRecord extends Record {
 		return 8 + field_5_sheetname.length() * (isMultibyte() ? 2 : 1);
 	}
 
-	public int serialize(int offset, byte[] data) {
-		int dataSize = getDataSize();
-		LittleEndian.putUShort(data, 0 + offset, sid);
-		LittleEndian.putUShort(data, 2 + offset, dataSize);
-		LittleEndian.putInt(data, 4 + offset, getPositionOfBof());
-		LittleEndian.putUShort(data, 8 + offset, field_2_option_flags);
+	public void serialize(LittleEndianOutput out) {
+		out.writeInt(getPositionOfBof());
+		out.writeShort(field_2_option_flags);
 
 		String name = field_5_sheetname;
-		LittleEndian.putByte(data, 10 + offset, name.length());
-		LittleEndian.putByte(data, 11 + offset, field_4_isMultibyteUnicode);
+		out.writeByte(name.length());
+		out.writeByte(field_4_isMultibyteUnicode);
 
 		if (isMultibyte()) {
-			StringUtil.putUnicodeLE(name, data, 12 + offset);
+			StringUtil.putUnicodeLE(name, out);
 		} else {
-			StringUtil.putCompressedUnicode(name, data, 12 + offset);
+			StringUtil.putCompressedUnicode(name, out);
 		}
-		return 4 + dataSize;
 	}
 
 	public short getSid() {
@@ -215,16 +210,14 @@ public final class BoundSheetRecord extends Record {
 	 * Converts a List of {@link BoundSheetRecord}s to an array and sorts by the position of their
 	 * BOFs.
 	 */
-	public static BoundSheetRecord[] orderByBofPosition(List boundSheetRecords) {
+	public static BoundSheetRecord[] orderByBofPosition(List<BoundSheetRecord> boundSheetRecords) {
 		BoundSheetRecord[] bsrs = new BoundSheetRecord[boundSheetRecords.size()];
 		boundSheetRecords.toArray(bsrs);
 		Arrays.sort(bsrs, BOFComparator);
 	 	return bsrs;
 	}
-	private static final Comparator BOFComparator = new Comparator() {
-		public int compare(Object bsr1, Object bsr2) {
-			return compare((BoundSheetRecord)bsr1, (BoundSheetRecord)bsr2);
-		}
+	private static final Comparator<BoundSheetRecord> BOFComparator = new Comparator<BoundSheetRecord>() {
+
 		public int compare(BoundSheetRecord bsr1, BoundSheetRecord bsr2) {
 			return bsr1.getPositionOfBof() - bsr2.getPositionOfBof();
 		}

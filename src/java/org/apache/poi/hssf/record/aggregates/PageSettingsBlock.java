@@ -51,8 +51,8 @@ public final class PageSettingsBlock extends RecordAggregate {
 	// (The whole PageSettingsBlock may not be present) 
 	private PageBreakRecord _rowBreaksRecord;
 	private PageBreakRecord _columnBreaksRecord;
-	private HeaderRecord header;
-	private FooterRecord footer;
+	private HeaderRecord _header;
+	private FooterRecord _footer;
 	private HCenterRecord _hCenter;
 	private VCenterRecord _vCenter;
 	private LeftMarginRecord _leftMargin;
@@ -77,8 +77,8 @@ public final class PageSettingsBlock extends RecordAggregate {
 	public PageSettingsBlock() {
 		_rowBreaksRecord = new HorizontalPageBreakRecord();
 		_columnBreaksRecord = new VerticalPageBreakRecord();
-		header = createHeader();
-		footer = createFooter();
+		_header = new HeaderRecord("");
+		_footer = new FooterRecord("");
 		_hCenter = createHCenter();
 		_vCenter = createVCenter();
 		printSetup = createPrintSetup();
@@ -117,10 +117,10 @@ public final class PageSettingsBlock extends RecordAggregate {
 				_columnBreaksRecord = (PageBreakRecord) rs.getNext();
 				break;
 			case HeaderRecord.sid:
-				header = (HeaderRecord) rs.getNext();
+				_header = (HeaderRecord) rs.getNext();
 				break;
 			case FooterRecord.sid:
-				footer = (FooterRecord) rs.getNext();
+				_footer = (FooterRecord) rs.getNext();
 				break;
 			case HCenterRecord.sid:
 				_hCenter = (HCenterRecord) rs.getNext();
@@ -193,8 +193,8 @@ public final class PageSettingsBlock extends RecordAggregate {
 	public void visitContainedRecords(RecordVisitor rv) {
 		visitIfPresent(_rowBreaksRecord, rv);
 		visitIfPresent(_columnBreaksRecord, rv);
-		visitIfPresent(header, rv);
-		visitIfPresent(footer, rv);
+		visitIfPresent(_header, rv);
+		visitIfPresent(_footer, rv);
 		visitIfPresent(_hCenter, rv);
 		visitIfPresent(_vCenter, rv);
 		visitIfPresent(_leftMargin, rv);
@@ -218,28 +218,6 @@ public final class PageSettingsBlock extends RecordAggregate {
 			}
 			rv.visitRecord(r);
 		}
-	}
-
-	/**
-	 * creates the Header Record and sets it to nothing/0 length
-	 */
-	private static HeaderRecord createHeader() {
-		HeaderRecord retval = new HeaderRecord();
-
-		retval.setHeaderLength(( byte ) 0);
-		retval.setHeader(null);
-		return retval;
-	}
-
-	/**
-	 * creates the Footer Record and sets it to nothing/0 length
-	 */
-	private static FooterRecord createFooter() {
-		FooterRecord retval = new FooterRecord();
-
-		retval.setFooterLength(( byte ) 0);
-		retval.setFooter(null);
-		return retval;
 	}
 
 	/**
@@ -292,7 +270,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 	 */
 	public HeaderRecord getHeader ()
 	{
-	return header;
+	return _header;
 	}
 
 	/**
@@ -301,7 +279,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 	 */
 	public void setHeader (HeaderRecord newHeader)
 	{
-		header = newHeader;
+		_header = newHeader;
 	}
 
 	/**
@@ -310,7 +288,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 	 */
 	public FooterRecord getFooter ()
 	{
-		return footer;
+		return _footer;
 	}
 
 	/**
@@ -319,7 +297,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 	 */
 	public void setFooter (FooterRecord newFooter)
 	{
-		footer = newFooter;
+		_footer = newFooter;
 	}
 
 	/**
@@ -419,11 +397,11 @@ public final class PageSettingsBlock extends RecordAggregate {
 	 */
 	private static void shiftBreaks(PageBreakRecord breaks, int start, int stop, int count) {
 
-		Iterator iterator = breaks.getBreaksIterator();
-		List shiftedBreak = new ArrayList();
+		Iterator<PageBreakRecord.Break> iterator = breaks.getBreaksIterator();
+		List<PageBreakRecord.Break> shiftedBreak = new ArrayList<PageBreakRecord.Break>();
 		while(iterator.hasNext())
 		{
-			PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
+			PageBreakRecord.Break breakItem = iterator.next();
 			int breakLocation = breakItem.main;
 			boolean inStart = (breakLocation >= start);
 			boolean inEnd = (breakLocation <= stop);
@@ -433,7 +411,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 
 		iterator = shiftedBreak.iterator();
 		while (iterator.hasNext()) {
-			PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
+			PageBreakRecord.Break breakItem = iterator.next();
 			breaks.removeBreak(breakItem.main);
 			breaks.addBreak((short)(breakItem.main+count), breakItem.subFrom, breakItem.subTo);
 		}

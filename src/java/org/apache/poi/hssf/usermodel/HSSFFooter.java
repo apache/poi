@@ -86,7 +86,6 @@ public class HSSFFooter extends HeaderFooter implements Footer {
 			       "&C" + (center == null ? "" : center) +
 			       "&L" + (left == null ? "" : left) +
 			       "&R" + (right == null ? "" : right));
-	footerRecord.setFooterLength((byte)footerRecord.getFooter().length());
     }
 }
 

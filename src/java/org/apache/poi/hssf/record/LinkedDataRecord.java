@@ -17,17 +17,19 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Describes a linked data record.  This record referes to the series data or text.<p/>
+ * Describes a linked data record.  This record refers to the series data or text.<p/>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class LinkedDataRecord extends Record {
+public final class LinkedDataRecord extends StandardRecord {
     public final static short sid  = 0x1051;
 
     private static final BitField customNumberFormat= BitFieldFactory.getInstance(0x1);
@@ -44,7 +46,7 @@ public final class LinkedDataRecord extends Record {
     public final static byte        REFERENCE_TYPE_ERROR_REPORTED  = 4;
     private  short      field_3_options;
     private  short      field_4_indexNumberFmtRecord;
-    private  LinkedDataFormulaField field_5_formulaOfLink;
+    private  Formula field_5_formulaOfLink;
 
 
     public LinkedDataRecord()
@@ -58,8 +60,8 @@ public final class LinkedDataRecord extends Record {
         field_2_referenceType          = in.readByte();
         field_3_options                = in.readShort();
         field_4_indexNumberFmtRecord   = in.readShort();
-        field_5_formulaOfLink = new LinkedDataFormulaField();
-        field_5_formulaOfLink.fillField(in);
+        int encodedTokenLen = in.readUShort();
+		field_5_formulaOfLink = Formula.read(encodedTokenLen, in);
     }
 
     public String toString()
@@ -92,28 +94,19 @@ public final class LinkedDataRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        data[ 4 + offset + pos ] = field_1_linkType;
-        data[ 5 + offset + pos ] = field_2_referenceType;
-        LittleEndian.putShort(data, 6 + offset + pos, field_3_options);
-        LittleEndian.putShort(data, 8 + offset + pos, field_4_indexNumberFmtRecord);
-        pos += field_5_formulaOfLink.serializeField( pos + 10 + offset, data );
-
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+    	out.writeByte(field_1_linkType);
+    	out.writeByte(field_2_referenceType);
+    	out.writeShort(field_3_options);
+    	out.writeShort(field_4_indexNumberFmtRecord);
+        field_5_formulaOfLink.serialize(out);
     }
 
     protected int getDataSize() {
-        return 1 + 1 + 2 + 2 + field_5_formulaOfLink.getSize();
+        return 1 + 1 + 2 + 2 + field_5_formulaOfLink.getEncodedSize();
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 
@@ -224,17 +217,16 @@ public final class LinkedDataRecord extends Record {
     /**
      * Get the formula of link field for the LinkedData record.
      */
-    public LinkedDataFormulaField getFormulaOfLink()
-    {
-        return field_5_formulaOfLink;
+    public Ptg[] getFormulaOfLink() {
+        return field_5_formulaOfLink.getTokens();
     }
 
     /**
      * Set the formula of link field for the LinkedData record.
      */
-    public void setFormulaOfLink(LinkedDataFormulaField field_5_formulaOfLink)
+    public void setFormulaOfLink(Ptg[] ptgs)
     {
-        this.field_5_formulaOfLink = field_5_formulaOfLink;
+        this.field_5_formulaOfLink = Formula.create(ptgs);
     }
 
     /**
