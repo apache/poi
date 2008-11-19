@@ -178,4 +178,10 @@ public final class TestCellRange extends TestCase
 		assertEquals("isFullRowRange", isFullRow, cr.isFullRowRange());
 		assertEquals("isFullColumnRange", isFullColumn, cr.isFullColumnRange());
 	}
+	
+	public void testNumberOfCells() {
+		assertEquals(1, oneCell.getNumberOfCells());
+		assertEquals(100, box9x9.getNumberOfCells());
+		assertEquals(121, box10to20c.getNumberOfCells());
+	}
 }

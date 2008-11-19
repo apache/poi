@@ -17,30 +17,59 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+
 import javax.xml.namespace.QName;
+
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLException;
+import org.apache.poi.hssf.record.formula.SheetNameFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.PackageHelper;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.xssf.model.*;
-import org.apache.poi.POIXMLException;
+import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.model.StylesTable;
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.OpenXML4JException;
-import org.openxml4j.opc.*;
 import org.openxml4j.opc.Package;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxml4j.opc.PackagePart;
+import org.openxml4j.opc.PackagePartName;
+import org.openxml4j.opc.PackageRelationship;
+import org.openxml4j.opc.PackageRelationshipTypes;
+import org.openxml4j.opc.PackagingURIHelper;
+import org.openxml4j.opc.TargetMode;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookView;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookViews;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STSheetState;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
 
 /**
  * High level representation of a SpreadsheetML workbook.  This is the first object most users
@@ -48,6 +77,7 @@ import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelations
  * top level object for creating new sheets/etc.
  */
 public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<XSSFSheet> {
+    private static final Pattern COMMA_PATTERN = Pattern.compile(",");
 
     /**
      * Width of one character of the default font in pixels. Same for Calibry and Arial.
@@ -831,7 +861,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         }
         //short externSheetIndex = getWorkbook().checkExternSheet(sheetIndex);
         //name.setExternSheetNumber(externSheetIndex);
-        name.setReference(reference);
+        String[] parts = COMMA_PATTERN.split(reference);
+        StringBuffer sb = new StringBuffer(32);
+        for (int i = 0; i < parts.length; i++) {
+            if(i>0) {
+                sb.append(",");
+            }
+            SheetNameFormatter.appendFormat(sb, getSheetName(sheetIndex));
+            sb.append("!");
+            sb.append(parts[i]);
+        }
+        name.setFormula(sb.toString());
     }
 
     /**
@@ -922,7 +962,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         CellReference colRef = new CellReference(sheetName, startR, startC, true, true);
         CellReference colRef2 = new CellReference(sheetName, endR, endC, true, true);
 
-        return "'" + sheetName + "'!$" + colRef.getCellRefParts()[2] + "$" + colRef.getCellRefParts()[1] + ":$" + colRef2.getCellRefParts()[2] + "$" + colRef2.getCellRefParts()[1];
+        return "$" + colRef.getCellRefParts()[2] + "$" + colRef.getCellRefParts()[1] + ":$" + colRef2.getCellRefParts()[2] + "$" + colRef2.getCellRefParts()[1];
     }
 
     private XSSFName getBuiltInName(String builtInCode, int sheetNumber) {

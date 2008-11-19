@@ -60,9 +60,9 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 		CellReference firstCell = ar.getFirstCell();
 		CellReference lastCell = ar.getLastCell();
 		setFirstRow(firstCell.getRow());
-		setFirstColumn(firstCell.getCol());
+		setFirstColumn(firstCell.getCol() == -1 ? 0 : firstCell.getCol());
 		setLastRow(lastCell.getRow());
-		setLastColumn(lastCell.getCol());
+		setLastColumn(lastCell.getCol() == -1 ? 0xFF : lastCell.getCol());
 		setFirstColRelative(!firstCell.isColAbsolute());
 		setLastColRelative(!lastCell.isColAbsolute());
 		setFirstRowRelative(!firstCell.isRowAbsolute());

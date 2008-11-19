@@ -188,7 +188,7 @@ public final class XSSFName implements Name {
             ptgs = FormulaParser.parse(formulaText, fpb, FormulaType.CELL); // TODO - use type NAMEDRANGE
         } catch (RuntimeException e) {
             if (e.getClass().getName().startsWith(FormulaParser.class.getName())) {
-                throw new IllegalArgumentException("Unparsable formula '" + formulaText + "'");
+                throw new IllegalArgumentException("Unparsable formula '" + formulaText + "'", e);
             }
             throw e;
         }

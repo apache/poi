@@ -17,8 +17,10 @@
 
 package org.apache.poi.ss.formula;
 
+import org.apache.poi.hssf.record.formula.ArrayPtg;
 import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
+import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 /**
@@ -62,6 +64,13 @@ final class ParseNode {
 	private int getTokenCount() {
 		return _tokenCount;
 	}
+	public int getEncodedSize() {
+		int result = _token instanceof ArrayPtg ? ArrayPtg.PLAIN_TOKEN_SIZE : _token.getSize();
+		for (int i = 0; i < _children.length; i++) {
+			result += _children[i].getEncodedSize();
+		}
+		return result;
+	}
 
 	/**
 	 * Collects the array of <tt>Ptg</tt> tokens for the specified tree.
@@ -72,14 +81,20 @@ final class ParseNode {
 		return temp.getResult();
 	}
 	private void collectPtgs(TokenCollector temp) {
-		if (isIf(getToken())) {
+		if (isIf(_token)) {
 			collectIfPtgs(temp);
 			return;
+		}
+		boolean isPreFixOperator = _token instanceof MemFuncPtg;
+		if (isPreFixOperator) {
+			temp.add(_token);
 		}
 		for (int i=0; i< getChildren().length; i++) {
 			getChildren()[i].collectPtgs(temp);
 		}
-		temp.add(getToken());
+		if (!isPreFixOperator) {
+			temp.add(_token);
+		}
 	}
 	/**
 	 * The IF() function gets marked up with two or three tAttr tokens.
@@ -136,7 +151,7 @@ final class ParseNode {
 			temp.setPlaceholder(skipAfterTrueParamIndex, attrSkipAfterTrue);
 		}
 		
-		temp.add(getToken());
+		temp.add(_token);
 	}
 
 	private static boolean isIf(Ptg token) {

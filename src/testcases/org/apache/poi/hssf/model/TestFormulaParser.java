@@ -24,6 +24,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.constant.ErrorConstant;
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.AddPtg;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.AreaI;
 import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.ArrayPtg;
@@ -36,6 +37,7 @@ import org.apache.poi.hssf.record.formula.ErrPtg;
 import org.apache.poi.hssf.record.formula.FuncPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.IntPtg;
+import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.MissingArgPtg;
 import org.apache.poi.hssf.record.formula.MultiplyPtg;
 import org.apache.poi.hssf.record.formula.NamePtg;
@@ -49,6 +51,7 @@ import org.apache.poi.hssf.record.formula.StringPtg;
 import org.apache.poi.hssf.record.formula.SubtractPtg;
 import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
 import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
+import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.hssf.usermodel.FormulaExtractor;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
@@ -57,6 +60,7 @@ import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParserTestHelper;
 
 /**
@@ -509,6 +513,10 @@ public final class TestFormulaParser extends TestCase {
 
 	/* package */ static Ptg[] confirmTokenClasses(String formula, Class[] expectedClasses) {
 		Ptg[] ptgs = parseFormula(formula);
+		confirmTokenClasses(ptgs, expectedClasses);
+		return ptgs;
+	}
+	private static void confirmTokenClasses(Ptg[] ptgs, Class[] expectedClasses) {
 		assertEquals(expectedClasses.length, ptgs.length);
 		for (int i = 0; i < expectedClasses.length; i++) {
 			if(expectedClasses[i] != ptgs[i].getClass()) {
@@ -517,7 +525,6 @@ public final class TestFormulaParser extends TestCase {
 					+ ptgs[i].getClass().getName() + ")");
 			}
 		}
-		return ptgs;
 	}
 
 	public void testPower() {
@@ -818,7 +825,7 @@ public final class TestFormulaParser extends TestCase {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Sheet1");
 		HSSFName name = wb.createName();
-		name.setReference("Sheet1!B1");
+		name.setFormula("Sheet1!B1");
 		name.setNameName("pfy1");
 
 		Ptg[] ptgs;
@@ -944,4 +951,26 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals(expectedExternSheetIndex, ((Ref3DPtg)ptg0).getExternSheetIndex());
 	}
 	
+	public void testUnion() {
+		String formula = "Sheet1!$B$2:$C$3,OFFSET(Sheet1!$E$2:$E$4,1,Sheet1!$A$1),Sheet1!$D$6";
+		HSSFWorkbook wb = new HSSFWorkbook();
+		wb.createSheet("Sheet1");
+		Ptg[] ptgs = FormulaParser.parse(formula, HSSFEvaluationWorkbook.create(wb));
+		
+		Class[] expectedClasses = {
+				// TODO - AttrPtg.class, // Excel prepends this
+				MemFuncPtg.class,
+				Area3DPtg.class,
+				Area3DPtg.class,
+				IntPtg.class,
+				Ref3DPtg.class,
+				FuncVarPtg.class,
+				UnionPtg.class,
+				Ref3DPtg.class,
+				UnionPtg.class,
+		};
+		confirmTokenClasses(ptgs, expectedClasses);
+		MemFuncPtg mf = (MemFuncPtg)ptgs[0];
+		assertEquals(45, mf.getLenRefSubexpression());
+	}
 }
