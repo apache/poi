@@ -17,10 +17,14 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import org.apache.poi.xssf.usermodel.extensions.XSSFHeaderFooter;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
 
 import junit.framework.TestCase;
 
+/**
+ * Tests for {@link XSSFHeaderFooter}
+ */
 public class TestXSSFHeaderFooter extends TestCase {
 	public void testStripFields() {
 		String simple = "I am a test header";
@@ -41,22 +45,45 @@ public class TestXSSFHeaderFooter extends TestCase {
 		XSSFEvenHeader head = new XSSFEvenHeader(CTHeaderFooter.Factory.newInstance());
 		head.setCenter("Center");
 		head.setLeft("In the left");
-    
-    	assertEquals("In the left", head.getLeft());
-    	assertEquals("Center", head.getCenter());
-    	assertEquals("", head.getRight());
-    	
-    	head.setLeft("Top &P&F&D Left");
-    	assertEquals("Top &P&F&D Left", head.getLeft());
-    	assertFalse(head.areFieldsStripped());
-    	
-    	head.setAreFieldsStripped(true);
-    	assertEquals("Top  Left", head.getLeft());
-    	assertTrue(head.areFieldsStripped());
-    	
-    	// Now even more complex
-    	head.setCenter("HEADER TEXT &P&N&D&T&Z&F&F&A&V");
-    	assertEquals("HEADER TEXT &V", head.getCenter());
+	
+		assertEquals("In the left", head.getLeft());
+		assertEquals("Center", head.getCenter());
+		assertEquals("", head.getRight());
+		
+		head.setLeft("Top &P&F&D Left");
+		assertEquals("Top &P&F&D Left", head.getLeft());
+		assertFalse(head.areFieldsStripped());
+		
+		head.setAreFieldsStripped(true);
+		assertEquals("Top  Left", head.getLeft());
+		assertTrue(head.areFieldsStripped());
+		
+		// Now even more complex
+		head.setCenter("HEADER TEXT &P&N&D&T&Z&F&F&A&V");
+		assertEquals("HEADER TEXT &V", head.getCenter());
+	}
+
+	public void testGetSetCenterLeftRight() {
+		
+		XSSFOddFooter footer = new XSSFOddFooter(CTHeaderFooter.Factory.newInstance());
+		assertEquals("", footer.getCenter());
+		footer.setCenter("My first center section");
+		assertEquals("My first center section", footer.getCenter());
+		footer.setCenter("No, let's update the center section");
+		assertEquals("No, let's update the center section", footer.getCenter());
+		footer.setLeft("And add a left one");
+		footer.setRight("Finally the right section is added");
+		assertEquals("And add a left one", footer.getLeft());
+		assertEquals("Finally the right section is added", footer.getRight());
+		
+		// Test changing the three sections value
+		footer.setCenter("Second center version");
+		footer.setLeft("Second left version");
+		footer.setRight("Second right version");
+		assertEquals("Second center version", footer.getCenter());
+		assertEquals("Second left version", footer.getLeft());
+		assertEquals("Second right version", footer.getRight());
+		
 	}
 	
 	// TODO Rest of tests
