@@ -20,11 +20,14 @@ package org.apache.poi.hssf.usermodel;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.record.SeriesRecord;
+import org.apache.poi.hssf.record.chart.SeriesRecord;
 
+/**
+ * Tests for {@link HSSFChart}
+ */
 public final class TestHSSFChart extends TestCase {
 
-	public void testSingleChart() throws Exception {
+	public void testSingleChart() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithChart.xls");
 		
 		HSSFSheet s1 = wb.getSheetAt(0);
@@ -53,7 +56,7 @@ public final class TestHSSFChart extends TestCase {
 		assertEquals(15040512, charts[0].getChartHeight());
 	}
 
-	public void testTwoCharts() throws Exception {
+	public void testTwoCharts() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithTwoCharts.xls");
 		
 		HSSFSheet s1 = wb.getSheetAt(0);
@@ -85,7 +88,7 @@ public final class TestHSSFChart extends TestCase {
 		assertEquals(null, charts[0].getChartTitle());
 	}
 	
-	public void testThreeCharts() throws Exception {
+	public void testThreeCharts() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithThreeCharts.xls");
 		
 		HSSFSheet s1 = wb.getSheetAt(0);
