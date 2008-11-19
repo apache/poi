@@ -126,6 +126,12 @@ public abstract class CellRangeAddressBase {
 	public final void setLastRow(int lastRow) {
 		_lastRow = lastRow;
 	}
+    /**
+     * @return the size of the range (number of cells in the area).
+     */
+    public int getNumberOfCells() {
+        return (_lastRow - _firstRow + 1) * (_lastCol - _firstCol + 1);
+    }
 
 	public final String toString() {
 		CellReference crA = new CellReference(_firstRow, _firstCol);
