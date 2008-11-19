@@ -205,6 +205,14 @@ public class Region implements Comparable {
     {
         return compareTo(( Region ) o);
     }
+    
+    /**
+     * @return the size of the region (number of cells in the area).
+     */
+    public int getArea() {
+        return (rowTo - rowFrom + 1) * (colTo - colFrom + 1);
+    }
+    
 
 	/**
 	 * Convert a List of CellRange objects to an array of regions 
