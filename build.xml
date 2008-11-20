@@ -45,8 +45,7 @@ under the License.
     To build the documentation you will need to install forrest and set
     the FORREST_HOME environment variable.  Forrest 0.5.1 required.
 
-    You will need JDK 1.5 or newer to build much of POI. If all you want
-    is the core OLE2 support, then you only need JDK 1.4
+    Since POI 3.5 you will need JDK 1.5 or newer to build POI. 
 
     Some people may find the tests hang when run through Ant. If this
     happens to you, try giving Ant some more memory when you run it, eg:
@@ -125,7 +124,7 @@ under the License.
 
   <!-- The following jars are downloaded by the fetch-ooxml-jars task --> 
   <property name="ooxml.openxml4j.jar" location="${ooxml.lib}/openxml4j-1.0-beta.jar"/>
-  <property name="ooxml.openxml4j.url" value="http://people.apache.org/~nick/openxml4j-bin-beta-080728.jar"/>
+  <property name="ooxml.openxml4j.url" value="http://mirrors.ibiblio.org/pub/mirrors/maven2/org/apache/poi/openxml4j/1.0-beta/openxml4j-1.0-beta.jar"/>
   <property name="ooxml.dom4j.jar" location="${ooxml.lib}/dom4j-1.6.1.jar"/>
   <property name="ooxml.dom4j.url" value="${repository}/dom4j/jars/dom4j-1.6.1.jar"/>
   <property name="ooxml.xmlbeans.jar" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
@@ -155,10 +154,9 @@ under the License.
   <property name="apidocs.report.dir" location="${build.site}/apidocs"/>
   <property name="changelog.file" location="${build.site}/changelog.html"/>
   <property name="dist.dir" location="build/dist"/>
-  <property name="mavendist.dir" location="build/maven-dist"/>
-  <property name="mavendist.poi.dir" location="build/maven-dist/poi"/>
-  <property name="mavendist.oap.dir" location="build/maven-dist/org.apache.poi"/>
   <property name="mavendist.ooxml.dir" location="build/maven-ooxml-dependencies"/>
+  <property name="apache.repository" value="scp://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository"/>
+  <property name="snapshots.repository" value="scp://people.apache.org/www/people.apache.org/repo/m2-snapshot-repository/"/>
   <property name="jar.name" value="poi"/>
   <property name="version.id" value="3.5-beta4"/>
   <property name="halt.on.test.failure" value="true"/>
@@ -298,13 +296,6 @@ under the License.
         <mkdir dir="${apidocs.report.dir}"/>
         <mkdir dir="${dist.dir}"/>
         <mkdir dir="${build.site.src}/${main.documentation}"/>
-
-        <mkdir dir="${mavendist.dir}"/>
-        <mkdir dir="${mavendist.poi.dir}"/>
-        <mkdir dir="${mavendist.poi.dir}/poms"/>
-        <mkdir dir="${mavendist.oap.dir}"/>
-        <mkdir dir="${mavendist.oap.dir}/jars"/>
-        <mkdir dir="${mavendist.oap.dir}/poms"/>
 
         <copy todir="${build.site.src}/${main.documentation}">
             <fileset dir="${main.documentation}"/>
@@ -1091,124 +1082,47 @@ FORREST_HOME environment variable!</echo>
       description="Generates POI's website's contents"/>
 
 
-    <target name="maven-dist" depends="jar" description="Builds the POM files for a maven distribution, and copies these and the jars to the appropriate locations">
-		<!-- Copy the jar files into the maven jar directory -->
-		<!-- Same jars as for the main release, only lacking the datestamp -->
-		<copy
-			file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"
-			tofile="${mavendist.oap.dir}/jars/${jar.name}-${version.id}.jar" />
-		<copy
-			file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"
-			tofile="${mavendist.oap.dir}/jars/${jar.name}-contrib-${version.id}.jar" />
-		<copy
-			file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"
-			tofile="${mavendist.oap.dir}/jars/${jar.name}-scratchpad-${version.id}.jar" />
-		<copy
-			file="${dist.dir}/${jar.name}-ooxml-${version.id}-${DSTAMP}.jar"
-			tofile="${mavendist.oap.dir}/jars/${jar.name}-ooxml-${version.id}.jar" />
+    <target name="maven-poms" depends="jar" description="Builds the POM files for a maven distribution, and copies these and the jars to the appropriate locations">
+      <!-- TODO: Decide about source jars, and copy them if we have some -->
 
-		<!-- TODO: Decide about source jars, and copy them if we have some -->
-
-		<!-- Build the org.apache.poi poms -->
-		<!-- Copy from the base file, substituting in the version and -->
-		<!--  artificat, plus doing the core poi dependency as needed -->
-
-		<!-- Build the main pom -->
-		<copy 
-			file="poi.pom" 
-			tofile="${mavendist.oap.dir}/poms/${jar.name}-${version.id}.pom" 
-		>
-			<filterchain>
-				<replacetokens>
-					<token key="VERSION" value="${version.id}" />
-					<token key="ARTIFICAT" value="poi" />
-				</replacetokens>
-				<tokenfilter>
-					<filetokenizer/>
-					<replaceregex pattern="START_NON_MAIN.*END_NON_MAIN_DEPENDENCY" replace="No POI dependency on the main jar" flags="s" />
-				</tokenfilter>
-			</filterchain>
-		</copy>
-		<!-- And the contrib pom -->
-		<copy 
-			file="poi.pom" 
-			tofile="${mavendist.oap.dir}/poms/${jar.name}-contrib-${version.id}.pom" 
-		>
-			<filterchain>
-				<replacetokens>
-					<token key="VERSION" value="${version.id}" />
-					<token key="ARTIFICAT" value="poi-contrib" />
-				</replacetokens>
-				<tokenfilter>
-					<replaceregex pattern="..-- START_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
-					<replaceregex pattern="..-- END_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
-				</tokenfilter>
-			</filterchain>
-		</copy>
-		<!-- And the scratchpad pom -->
-		<copy 
-			file="poi.pom" 
-			tofile="${mavendist.oap.dir}/poms/${jar.name}-scratchpad-${version.id}.pom" 
-		>
-			<filterchain>
-				<replacetokens>
-					<token key="VERSION" value="${version.id}" />
-					<token key="ARTIFICAT" value="poi-scratchpad" />
-				</replacetokens>
-				<tokenfilter>
-					<replaceregex pattern="..-- START_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
-					<replaceregex pattern="..-- END_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
-				</tokenfilter>
-			</filterchain>
-		</copy>
-		<!-- And the ooxml pom -->
-		<copy 
-      file="maven/poi-ooxml.pom" 
-			tofile="${mavendist.oap.dir}/poms/${jar.name}-ooxml-${version.id}.pom" 
-		>
-			<filterchain>
-				<replacetokens>
-					<token key="VERSION" value="${version.id}" />
-					<token key="ARTIFICAT" value="poi-ooxml" />
-				</replacetokens>
-				<tokenfilter>
-					<replaceregex pattern="..-- START_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
-					<replaceregex pattern="..-- END_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
-				</tokenfilter>
-			</filterchain>
-		</copy>
-
-		<!-- Build the poi => org.apache.poi redirect poms -->
-		<!-- Copy from the base file, substituting in the version+artifact -->
-		<copy 
-			file="poi-redirect.pom" 
-			tofile="${mavendist.poi.dir}/poms/${jar.name}-${version.id}.pom" 
-		>
-			<filterchain><replacetokens>
-				<token key="VERSION" value="${version.id}" />
-				<token key="ARTIFICAT" value="poi" />
-			</replacetokens></filterchain>
-		</copy>
-		<copy 
-			file="poi-redirect.pom" 
-			tofile="${mavendist.poi.dir}/poms/${jar.name}-contrib-${version.id}.pom" 
-		>
-			<filterchain><replacetokens>
-				<token key="VERSION" value="${version.id}" />
-				<token key="ARTIFICAT" value="poi-contrib" />
-			</replacetokens></filterchain>
-		</copy>
-		<copy 
-			file="poi-redirect.pom" 
-			tofile="${mavendist.poi.dir}/poms/${jar.name}-scratchpad-${version.id}.pom" 
-		>
-			<filterchain><replacetokens>
-				<token key="VERSION" value="${version.id}" />
-				<token key="ARTIFICAT" value="poi-scratchpad" />
-			</replacetokens></filterchain>
-		</copy>
-
-		<!-- And that's it for maven -->
+      <!-- Build the org.apache.poi poms -->
+      <copy file="maven/poi.pom" tofile="${dist.dir}/poi-${version.id}.pom">
+        <filterchain>
+          <replacetokens>
+            <token key="VERSION" value="${version.id}" />
+          </replacetokens>
+        </filterchain>
+      </copy>
+      <copy file="maven/poi-contrib.pom" tofile="${dist.dir}/poi-contrib-${version.id}.pom">
+        <filterchain>
+          <replacetokens>
+            <token key="VERSION" value="${version.id}" />
+          </replacetokens>
+        </filterchain>
+      </copy>
+      <copy file="maven/poi-scratchpad.pom" tofile="${dist.dir}/poi-scratchpad-${version.id}.pom">
+        <filterchain>
+          <replacetokens>
+            <token key="VERSION" value="${version.id}" />
+          </replacetokens>
+        </filterchain>
+      </copy>
+      <copy file="maven/poi-ooxml.pom" tofile="${dist.dir}/poi-ooxml-${version.id}.pom">
+        <filterchain>
+          <replacetokens>
+            <token key="VERSION" value="${version.id}" />
+          </replacetokens>
+        </filterchain>
+      </copy>
+      <copy file="maven/mvn-deploy.sh" todir="${dist.dir}">
+        <filterchain>
+          <replacetokens>
+            <token key="REPOSITORY" value="${apache.repository}" />
+            <token key="VERSION" value="${version.id}" />
+            <token key="DSTAMP" value="${DSTAMP}" />
+          </replacetokens>
+        </filterchain>
+      </copy>
 	</target>
 
   <target name="maven-ooxml-dependencies" description="Builds the POM files for OpenXml4J and compiled XmlBeans generated from the Ecma supplied xsds">
@@ -1352,6 +1266,9 @@ FORREST_HOME environment variable!</echo>
         <exclude name=".project"/>
       </tarfileset>
     </tar>
+
+    <echo>Creating Maven POMs</echo>
+    <antcall target="maven-poms"/>
 
     <echo>Distribution located in build/dist</echo>
   </target>
