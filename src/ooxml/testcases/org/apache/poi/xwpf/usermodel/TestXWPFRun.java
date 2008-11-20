@@ -35,101 +35,106 @@ public class TestXWPFRun extends TestCase {
     public XWPFParagraph p;
 
     protected void setUp() {
-	XWPFDocument doc = new XWPFDocument();
-	p = doc.createParagraph();
+        XWPFDocument doc = new XWPFDocument();
+        p = doc.createParagraph();
 
-	this.ctRun = CTR.Factory.newInstance();
+        this.ctRun = CTR.Factory.newInstance();
 
     }
 
     public void testSetGetBold() {
-	CTRPr rpr = ctRun.addNewRPr();
-	rpr.addNewB().setVal(STOnOff.TRUE);
+        CTRPr rpr = ctRun.addNewRPr();
+        rpr.addNewB().setVal(STOnOff.TRUE);
 
-	XWPFRun run = new XWPFRun(ctRun, p);
-	assertEquals(true, run.isBold());
+        XWPFRun run = new XWPFRun(ctRun, p);
+        assertEquals(true, run.isBold());
 
-	run.setBold(false);
-	assertEquals(STOnOff.FALSE, rpr.getB().getVal());
+        run.setBold(false);
+        assertEquals(STOnOff.FALSE, rpr.getB().getVal());
     }
 
     public void testSetGetItalic() {
-	CTRPr rpr = ctRun.addNewRPr();
-	rpr.addNewI().setVal(STOnOff.TRUE);
+        CTRPr rpr = ctRun.addNewRPr();
+        rpr.addNewI().setVal(STOnOff.TRUE);
 
-	XWPFRun run = new XWPFRun(ctRun, p);
-	assertEquals(true, run.isItalic());
+        XWPFRun run = new XWPFRun(ctRun, p);
+        assertEquals(true, run.isItalic());
 
-	run.setItalic(false);
-	assertEquals(STOnOff.FALSE, rpr.getI().getVal());
+        run.setItalic(false);
+        assertEquals(STOnOff.FALSE, rpr.getI().getVal());
     }
 
     public void testSetGetStrike() {
-	CTRPr rpr = ctRun.addNewRPr();
-	rpr.addNewStrike().setVal(STOnOff.TRUE);
+        CTRPr rpr = ctRun.addNewRPr();
+        rpr.addNewStrike().setVal(STOnOff.TRUE);
 
-	XWPFRun run = new XWPFRun(ctRun, p);
-	assertEquals(true, run.isStrike());
+        XWPFRun run = new XWPFRun(ctRun, p);
+        assertEquals(true, run.isStrike());
 
-	run.setStrike(false);
-	assertEquals(STOnOff.FALSE, rpr.getStrike().getVal());
+        run.setStrike(false);
+        assertEquals(STOnOff.FALSE, rpr.getStrike().getVal());
     }
 
     public void testSetGetUnderline() {
-	CTRPr rpr = ctRun.addNewRPr();
-	rpr.addNewU().setVal(STUnderline.DASH);
+        CTRPr rpr = ctRun.addNewRPr();
+        rpr.addNewU().setVal(STUnderline.DASH);
 
-	XWPFRun run = new XWPFRun(ctRun, p);
-	assertEquals(UnderlinePatterns.DASH.getValue(), run.getUnderline()
-		.getValue());
+        XWPFRun run = new XWPFRun(ctRun, p);
+        assertEquals(UnderlinePatterns.DASH.getValue(), run.getUnderline()
+                .getValue());
 
-	run.setUnderline(UnderlinePatterns.NONE);
-	assertEquals(STUnderline.NONE.intValue(), rpr.getU().getVal()
-		.intValue());
+        run.setUnderline(UnderlinePatterns.NONE);
+        assertEquals(STUnderline.NONE.intValue(), rpr.getU().getVal()
+                .intValue());
     }
+
 
     public void testSetGetVAlign() {
-	CTRPr rpr = ctRun.addNewRPr();
-	rpr.addNewVertAlign().setVal(STVerticalAlignRun.SUBSCRIPT);
+        CTRPr rpr = ctRun.addNewRPr();
+        rpr.addNewVertAlign().setVal(STVerticalAlignRun.SUBSCRIPT);
 
-	XWPFRun run = new XWPFRun(ctRun, p);
-	assertEquals(VerticalAlign.SUBSCRIPT, run.getSubscript());
+        XWPFRun run = new XWPFRun(ctRun, p);
+        assertEquals(VerticalAlign.SUBSCRIPT, run.getSubscript());
 
-	run.setSubscript(VerticalAlign.BASELINE);
-	assertEquals(STVerticalAlignRun.BASELINE, rpr.getVertAlign().getVal());
+        run.setSubscript(VerticalAlign.BASELINE);
+        assertEquals(STVerticalAlignRun.BASELINE, rpr.getVertAlign().getVal());
     }
+
 
     public void testSetGetFontFamily() {
-	CTRPr rpr = ctRun.addNewRPr();
-	rpr.addNewRFonts().setAscii("Times New Roman");
+        CTRPr rpr = ctRun.addNewRPr();
+        rpr.addNewRFonts().setAscii("Times New Roman");
 
-	XWPFRun run = new XWPFRun(ctRun, p);
-	assertEquals("Times New Roman", run.getFontFamily());
+        XWPFRun run = new XWPFRun(ctRun, p);
+        assertEquals("Times New Roman", run.getFontFamily());
 
-	run.setFontFamily("Verdana");
-	assertEquals("Verdana", rpr.getRFonts().getAscii());
+        run.setFontFamily("Verdana");
+        assertEquals("Verdana", rpr.getRFonts().getAscii());
     }
+
 
     public void testSetGetFontSize() {
-	CTRPr rpr = ctRun.addNewRPr();
-	rpr.addNewSz().setVal(new BigInteger("4000"));
+        CTRPr rpr = ctRun.addNewRPr();
+        rpr.addNewSz().setVal(new BigInteger("14"));
 
-	XWPFRun run = new XWPFRun(ctRun, p);
-	assertEquals(4000, run.getFontSize().longValue());
+        XWPFRun run = new XWPFRun(ctRun, p);
+        assertEquals(7, run.getFontSize().longValue());
 
-	run.setFontSize(new BigInteger("2400"));
-	assertEquals(2400, rpr.getSz().getVal().longValue());
+        run.setFontSize(new BigInteger("24"));
+        assertEquals(48, rpr.getSz().getVal().longValue());
     }
 
+
     public void testSetGetTextForegroundBackground() {
-	CTRPr rpr = ctRun.addNewRPr();
-	rpr.addNewPosition().setVal(new BigInteger("4000"));
+        CTRPr rpr = ctRun.addNewRPr();
+        rpr.addNewPosition().setVal(new BigInteger("4000"));
 
-	XWPFRun run = new XWPFRun(ctRun, p);
-	assertEquals(4000, run.getTextPosition().longValue());
+        XWPFRun run = new XWPFRun(ctRun, p);
+        assertEquals(4000, run.getTextPosition().longValue());
 
-	run.setTextPosition(new BigInteger("2400"));
-	assertEquals(2400, rpr.getPosition().getVal().longValue());
+        run.setTextPosition(new BigInteger("2400"));
+        assertEquals(2400, rpr.getPosition().getVal().longValue());
     }
 
 }
+
