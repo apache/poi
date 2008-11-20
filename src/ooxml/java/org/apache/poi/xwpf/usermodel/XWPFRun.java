@@ -307,7 +307,7 @@ public class XWPFRun {
      */
     public BigInteger getFontSize() {
         CTRPr pr = run.getRPr();
-        return (pr != null && pr.isSetSz()) ? pr.getSz().getVal() : null;
+        return (pr != null && pr.isSetSz()) ? pr.getSz().getVal().divide(new BigInteger("2")) : null;
     }
 
     /**
@@ -325,7 +325,7 @@ public class XWPFRun {
     public void setFontSize(BigInteger size) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTHpsMeasure ctSize = pr.isSetSz() ? pr.getSz() : pr.addNewSz();
-        ctSize.setVal(size);
+        ctSize.setVal(size.multiply(new BigInteger("2")));
     }
 
     /**
