@@ -24,7 +24,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.apache.poi</groupId>
-	<artifactId>poi-ooxml</artifactId>
+	<artifactId>poi-scratchpad</artifactId>
 	<version>@VERSION@</version>
 	<packaging>jar</packaging>
 	<name>Apache POI</name>
@@ -60,6 +60,11 @@
 
   <dependencies>
     <dependency>
+       <groupId>org.apache.poi</groupId>
+       <artifactId>poi</artifactId>
+       <version>@VERSION@</version>
+    </dependency>
+    <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <version>1.1</version>
@@ -70,16 +75,6 @@
       <artifactId>log4j</artifactId>
       <version>1.2.13</version>
       <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.poi</groupId>
-      <artifactId>openxml4j</artifactId>
-      <version>1.0-beta</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.poi</groupId>
-      <artifactId>ooxml-schemas</artifactId>
-      <version>1.0</version>
     </dependency>
   </dependencies>
 </project>
