@@ -70,7 +70,7 @@ public final class TestHSSFHyperlink extends TestCase {
         assertNotNull(link);
         assertEquals("Link To First Sheet", link.getLabel());
         assertEquals("Link To First Sheet", cell.getRichStringCellValue().getString());
-        assertEquals("WebLinks!A1", link.getAddress());
+        assertEquals("WebLinks!A1", link.getTextMark());
     }
 
     public void testModify() throws Exception {
@@ -136,7 +136,7 @@ public final class TestHSSFHyperlink extends TestCase {
         cell = sheet.createRow(3).createCell(0);
         cell.setCellValue("Worksheet Link");
         link = new HSSFHyperlink(HSSFHyperlink.LINK_DOCUMENT);
-        link.setAddress("'Target Sheet'!A1");
+        link.setTextMark("'Target Sheet'!A1");
         cell.setHyperlink(link);
 
         //serialize and read again
@@ -163,7 +163,7 @@ public final class TestHSSFHyperlink extends TestCase {
         cell = sheet.getRow(3).getCell(0);
         link = cell.getHyperlink();
         assertNotNull(link);
-        assertEquals("'Target Sheet'!A1", link.getAddress());
+        assertEquals("'Target Sheet'!A1", link.getTextMark());
     }
 
     public void testCloneSheet() {
