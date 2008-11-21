@@ -30,7 +30,7 @@ import junit.framework.TestCase;
 public final class TestHyperlinkRecord extends TestCase {
 
     //link to http://www.lakings.com/
-    byte[] data1 = { 0x02, 0x00,    //First row of the hyperlink
+    private static final byte[] data1 = { 0x02, 0x00,    //First row of the hyperlink
                      0x02, 0x00,    //Last row of the hyperlink
                      0x00, 0x00,    //First column of the hyperlink
                      0x00, 0x00,    //Last column of the hyperlink
@@ -69,7 +69,7 @@ public final class TestHyperlinkRecord extends TestCase {
                     0x00, (byte)0xA5, (byte)0xAB, 0x00, 0x00};
 
     //link to a file in the current directory: link1.xls
-    byte[] data2 =  {0x00, 0x00,
+    private static final byte[] data2 =  {0x00, 0x00,
                      0x00, 0x00,
                      0x00, 0x00,
                      0x00, 0x00,
@@ -94,13 +94,16 @@ public final class TestHyperlinkRecord extends TestCase {
                      //path to the file (plain ISO-8859 bytes, NOT UTF-16LE!)
                      0x6C, 0x69, 0x6E, 0x6B, 0x31, 0x2E, 0x78, 0x6C, 0x73, 0x00,
 
-                     //standard 28-byte tail of a file link
+                     //standard 24-byte tail of a file link
                      (byte)0xFF, (byte)0xFF, (byte)0xAD, (byte)0xDE, 0x00, 0x00, 0x00, 0x00,
                      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+                     0x00, 0x00, 0x00, 0x00,
+                     
+                     0x00, 0x00, 0x00, 0x00, // length of address link field
+                     };
 
     // mailto:ebgans@mail.ru?subject=Hello,%20Ebgans!
-    byte[] data3 = {0x01, 0x00,
+    private static final byte[] data3 = {0x01, 0x00,
                     0x01, 0x00,
                     0x00, 0x00,
                     0x00, 0x00,
@@ -163,6 +166,9 @@ public final class TestHyperlinkRecord extends TestCase {
                     0x53, 0x00, 0x68, 0x00, 0x65, 0x00, 0x65, 0x00, 0x74, 0x00, 0x31, 0x00, 0x21,
                     0x00, 0x41, 0x00, 0x31, 0x00, 0x00, 0x00};
 
+    private void confirmGUID(byte[] expectedGuid, byte[] actualGuid) {
+		assertTrue(Arrays.equals(expectedGuid, actualGuid));
+	}
     public void testReadURLLink(){
         RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data1);
         HyperlinkRecord link = new HyperlinkRecord(is);
@@ -170,8 +176,8 @@ public final class TestHyperlinkRecord extends TestCase {
         assertEquals(2, link.getLastRow());
         assertEquals(0, link.getFirstColumn());
         assertEquals(0, link.getLastColumn());
-        assertTrue(Arrays.equals(HyperlinkRecord.STD_MONIKER, link.getGuid()));
-        assertTrue(Arrays.equals(HyperlinkRecord.URL_MONIKER, link.getMoniker()));
+        confirmGUID(HyperlinkRecord.STD_MONIKER, link.getGuid());
+        confirmGUID(HyperlinkRecord.URL_MONIKER, link.getMoniker());
         assertEquals(2, link.getLabelOptions());
         int opts = HyperlinkRecord.HLINK_URL | HyperlinkRecord.HLINK_ABS | HyperlinkRecord.HLINK_LABEL;
         assertEquals(0x17, opts);
@@ -189,8 +195,8 @@ public final class TestHyperlinkRecord extends TestCase {
         assertEquals(0, link.getLastRow());
         assertEquals(0, link.getFirstColumn());
         assertEquals(0, link.getLastColumn());
-        assertTrue(Arrays.equals(HyperlinkRecord.STD_MONIKER, link.getGuid()));
-        assertTrue(Arrays.equals(HyperlinkRecord.FILE_MONIKER, link.getMoniker()));
+        confirmGUID(HyperlinkRecord.STD_MONIKER, link.getGuid());
+        confirmGUID(HyperlinkRecord.FILE_MONIKER, link.getMoniker());
         assertEquals(2, link.getLabelOptions());
         int opts = HyperlinkRecord.HLINK_URL | HyperlinkRecord.HLINK_LABEL;
         assertEquals(0x15, opts);
@@ -207,8 +213,8 @@ public final class TestHyperlinkRecord extends TestCase {
         assertEquals(1, link.getLastRow());
         assertEquals(0, link.getFirstColumn());
         assertEquals(0, link.getLastColumn());
-        assertTrue(Arrays.equals(HyperlinkRecord.STD_MONIKER, link.getGuid()));
-        assertTrue(Arrays.equals(HyperlinkRecord.URL_MONIKER, link.getMoniker()));
+        confirmGUID(HyperlinkRecord.STD_MONIKER, link.getGuid());
+        confirmGUID(HyperlinkRecord.URL_MONIKER, link.getMoniker());
         assertEquals(2, link.getLabelOptions());
         int opts = HyperlinkRecord.HLINK_URL | HyperlinkRecord.HLINK_ABS | HyperlinkRecord.HLINK_LABEL;
         assertEquals(0x17, opts);
@@ -225,7 +231,7 @@ public final class TestHyperlinkRecord extends TestCase {
         assertEquals(3, link.getLastRow());
         assertEquals(0, link.getFirstColumn());
         assertEquals(0, link.getLastColumn());
-        assertTrue(Arrays.equals(HyperlinkRecord.STD_MONIKER, link.getGuid()));
+        confirmGUID(HyperlinkRecord.STD_MONIKER, link.getGuid());
         assertEquals(2, link.getLabelOptions());
         int opts = HyperlinkRecord.HLINK_LABEL | HyperlinkRecord.HLINK_PLACE;
         assertEquals(0x1C, opts);
@@ -253,7 +259,7 @@ public final class TestHyperlinkRecord extends TestCase {
         serialize(data4);
     }
 
-    public void testCreateURLRecord() throws Exception {
+    public void testCreateURLRecord() {
         HyperlinkRecord link = new HyperlinkRecord();
         link.newUrlLink();
         link.setFirstRow((short)2);
@@ -268,7 +274,7 @@ public final class TestHyperlinkRecord extends TestCase {
         assertTrue(Arrays.equals(data1, ser));
     }
 
-    public void testCreateFileRecord() throws Exception {
+    public void testCreateFileRecord() {
         HyperlinkRecord link = new HyperlinkRecord();
         link.newFileLink();
         link.setFirstRow((short)0);
@@ -283,7 +289,7 @@ public final class TestHyperlinkRecord extends TestCase {
         assertTrue(Arrays.equals(data2, ser));
     }
 
-    public void testCreateDocumentRecord() throws Exception {
+    public void testCreateDocumentRecord() {
         HyperlinkRecord link = new HyperlinkRecord();
         link.newDocumentLink();
         link.setFirstRow((short)3);
@@ -298,7 +304,7 @@ public final class TestHyperlinkRecord extends TestCase {
         assertTrue(Arrays.equals(data4, ser));
     }
 
-    public void testCreateEmailtRecord() throws Exception {
+    public void testCreateEmailtRecord() {
         HyperlinkRecord link = new HyperlinkRecord();
         link.newUrlLink();
         link.setFirstRow((short)1);
@@ -313,7 +319,7 @@ public final class TestHyperlinkRecord extends TestCase {
         assertTrue(Arrays.equals(data3, ser));
     }
 
-    public void testClone() throws Exception {
+    public void testClone() {
         byte[][] data = {data1, data2, data3, data4};
         for (int i = 0; i < data.length; i++) {
             RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data[i]);
