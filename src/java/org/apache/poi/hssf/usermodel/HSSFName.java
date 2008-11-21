@@ -62,8 +62,28 @@ public final class HSSFName implements Name {
     }
 
     /**
-     * sets the name of the named range
+     * Sets the name of the named range
+     *
+     * <p>The following is a list of syntax rules that you need to be aware of when you create and edit names.</p>
+     * <ul>
+     *   <li><strong>Valid characters</strong>
+     *   The first character of a name must be a letter, an underscore character (_), or a backslash (\).
+     *   Remaining characters in the name can be letters, numbers, periods, and underscore characters.
+     *   </li>
+     *   <li><strong>Cell references disallowed</strong>
+     *   Names cannot be the same as a cell reference, such as Z$100 or R1C1.</li>
+     *   <li><strong>Spaces are not valid</strong>
+     *   Spaces are not allowed as part of a name. Use the underscore character (_) and period (.) as word separators, such as, Sales_Tax or First.Quarter.
+     *   </li>
+     *   <li><strong>Name length</strong>
+     *    A name can contain up to 255 characters.
+     *   </li>
+     *   <li><strong>Case sensitivity</strong>
+     *   Names can contain uppercase and lowercase letters.
+     *   </li>
+     * </ul>
      * @param nameName named range name to set
+     * @throws IllegalArgumentException if the name is invalid or the workbook already contains this name (case-insensitive)
      */
     public void setNameName(String nameName){
         _definedNameRec.setNameText(nameName);
@@ -81,29 +101,49 @@ public final class HSSFName implements Name {
     }
 
     /**
-     * @deprecated (Nov 2008) Misleading name. Use {@link #getFormula()} instead.
+     * Returns the formula that the name is defined to refer to.
+     *
+     * @deprecated (Nov 2008) Misleading name. Use {@link #getRefersToFormula()} instead.
      */
     public String getReference() {
-        return getFormula();
+        return getRefersToFormula();
     }
 
     /**
-     * @deprecated (Nov 2008) Misleading name. Use {@link #setFormula(String)} instead.
+     * Sets the formula that the name is defined to refer to.
+     *
+     * @deprecated (Nov 2008) Misleading name. Use {@link #setRefersToFormula(String)} instead.
      */
     public void setReference(String ref){
-    	setFormula(ref);
+    	setRefersToFormula(ref);
     }
 
-    public void setFormula(String formulaText) {
+    /**
+     * Sets the formula that the name is defined to refer to. The following are representative examples:
+     *
+     * <ul>
+     *  <li><code>'My Sheet'!$A$3</code></li>
+     *  <li><code>8.3</code></li>
+     *  <li><code>HR!$A$1:$Z$345</code></li>
+     *  <li><code>SUM(Sheet1!A1,Sheet2!B2)</li>
+     *  <li><code>-PMT(Interest_Rate/12,Number_of_Payments,Loan_Amount)</li>
+     * </ul>
+     *
+     * @param formulaText the reference for this name
+     * @throws IllegalArgumentException if the specified reference is unparsable
+    */
+    public void setRefersToFormula(String formulaText) {
 		Ptg[] ptgs = HSSFFormulaParser.parse(formulaText, _book);
     	_definedNameRec.setNameDefinition(ptgs);
 	}
 
     /**
-     * Note - this method only applies to named ranges
-     * @return the formula text defining this name
+     * Returns the formula that the name is defined to refer to. The following are representative examples:
+     *
+     * @return the reference for this name
+     * @see #setRefersToFormula(String)
      */
-    public String getFormula() {
+    public String getRefersToFormula() {
         if (_definedNameRec.isFunctionName()) {
             throw new IllegalStateException("Only applicable to named ranges");
         }
@@ -116,20 +156,19 @@ public final class HSSFName implements Name {
      * @return true if the name refers to a deleted cell, false otherwise
      */
     public boolean isDeleted(){
-        String formulaText = getReference();
-        if (formulaText.startsWith("#REF!")) {
-        	// sheet deleted
-        	return true;
-        }
-        if (formulaText.endsWith("#REF!")) {
-        	// cell range deleted
-        	return true;
-        }
-        return false;
+        String formulaText = getRefersToFormula();
+        return formulaText.indexOf("#REF!") != -1;
     }
+
+    /**
+     * Checks if this name is a function name
+     *
+     * @return true if this name is a function name
+     */
     public boolean isFunctionName() {
         return _definedNameRec.isFunctionName();
     }
+
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
         sb.append(getClass().getName()).append(" [");

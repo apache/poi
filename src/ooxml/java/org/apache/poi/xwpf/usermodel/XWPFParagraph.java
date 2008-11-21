@@ -657,7 +657,7 @@ public class XWPFParagraph {
      * Specifies the spacing that should be added above the first line in this
      * paragraph in the document in absolute units.
      *
-     * @return
+     * @return the spacing that should be added above the first line
      * @see #setSpacingBefore(BigInteger)
      */
     public BigInteger getSpacingBefore() {
@@ -687,7 +687,7 @@ public class XWPFParagraph {
      * document in line units.
      * The value of this attribute is specified in one hundredths of a line.
      *
-     * @return
+     * @return the spacing that should be added before the first line in this paragraph
      * @see #setSpacingBeforeLines(BigInteger)
      */
     public BigInteger getSpacingBeforeLines() {

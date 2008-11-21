@@ -43,14 +43,13 @@ public class TestXSSFName extends TestCase {
         name2.setNameName("testTwo");
 
         String ref1 = "Test1!$A$1:$B$1";
-        name1.setReference(ref1);
-        assertEquals(ref1, name1.getReference());
+        name1.setRefersToFormula(ref1);
+        assertEquals(ref1, name1.getRefersToFormula());
         assertEquals("Test1", name1.getSheetName());
 
         String ref2 = "'Testing Named Ranges'!$A$1:$B$1";
-        name1.setReference(ref2);
-        //XSSFName#setReference stores the reference in canonical form and puts the sheet name in single quotes
-        assertEquals("'Testing Named Ranges'!$A$1:$B$1", name1.getReference());
+        name1.setRefersToFormula(ref2);
+        assertEquals("'Testing Named Ranges'!$A$1:$B$1", name1.getRefersToFormula());
         assertEquals("Testing Named Ranges", name1.getSheetName());
 
         assertEquals(-1, name1.getLocalSheetId());
@@ -63,14 +62,14 @@ public class TestXSSFName extends TestCase {
         workBook.createSheet("Test");
         XSSFName name = workBook.createName();
         name.setNameName("\u03B1");
-        name.setReference("Test!$D$3:$E$8");
+        name.setRefersToFormula("Test!$D$3:$E$8");
 
 
         XSSFWorkbook workBook2 = XSSFTestDataSamples.writeOutAndReadBack(workBook);
         XSSFName name2 = workBook2.getNameAt(0);
 
         assertEquals("\u03B1", name2.getNameName());
-        assertEquals("Test!$D$3:$E$8", name2.getReference());
+        assertEquals("Test!$D$3:$E$8", name2.getRefersToFormula());
     }
 
     public void testAddRemove() {

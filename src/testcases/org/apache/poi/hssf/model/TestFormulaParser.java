@@ -825,7 +825,7 @@ public final class TestFormulaParser extends TestCase {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Sheet1");
 		HSSFName name = wb.createName();
-		name.setFormula("Sheet1!B1");
+		name.setRefersToFormula("Sheet1!B1");
 		name.setNameName("pfy1");
 
 		Ptg[] ptgs;
