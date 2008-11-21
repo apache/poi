@@ -169,6 +169,18 @@ public class HSSFHyperlink implements Hyperlink {
     public String getAddress(){
         return record.getAddress();
     }
+    public String getTextMark(){
+        return record.getTextMark();
+    }
+    public void setTextMark(String textMark) {
+        record.setTextMark(textMark);
+    }
+    public String getShortFilename(){
+        return record.getShortFilename();
+    }
+    public void setShortFilename(String shortFilename) {
+        record.setShortFilename(shortFilename);
+    }
 
     /**
      * Hypelink address. Depending on the hyperlink type it can be URL, e-mail, patrh to a file, etc.

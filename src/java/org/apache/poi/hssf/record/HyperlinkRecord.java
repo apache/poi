@@ -17,11 +17,17 @@
 
 package org.apache.poi.hssf.record;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
+
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.HexRead;
+import org.apache.poi.util.LittleEndianByteArrayInputStream;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.StringUtil;
 
 /**
  * The <code>HyperlinkRecord</code> (0x01B8) wraps an HLINK-record
@@ -31,97 +37,210 @@ import org.apache.poi.util.HexDump;
  * @author      Mark Hissink Muller <a href="mailto:mark@hissinkmuller.nl >mark&064;hissinkmuller.nl</a>
  * @author      Yegor Kozlov (yegor at apache dot org)
  */
-public final class HyperlinkRecord extends Record {
+public final class HyperlinkRecord extends StandardRecord {
     public final static short sid = 0x01B8;
+
+    static final class GUID {
+		/*
+		 * this class is currently only used here, but could be moved to a
+		 * common package if needed
+		 */
+		private static final int TEXT_FORMAT_LENGTH = 36;
+
+		public static final int ENCODED_SIZE = 16;
+
+		/** 4 bytes - little endian */
+		private final int _d1;
+		/** 2 bytes - little endian */
+		private final int _d2;
+		/** 2 bytes - little endian */
+		private final int _d3;
+		/**
+		 * 8 bytes - serialized as big endian,  stored with inverted endianness here
+		 */
+		private final long _d4;
+
+		public GUID(LittleEndianInput in) {
+			this(in.readInt(), in.readUShort(), in.readUShort(), in.readLong());
+		}
+
+		public GUID(int d1, int d2, int d3, long d4) {
+			_d1 = d1;
+			_d2 = d2;
+			_d3 = d3;
+			_d4 = d4;
+		}
+
+		public void serialize(LittleEndianOutput out) {
+			out.writeInt(_d1);
+			out.writeShort(_d2);
+			out.writeShort(_d3);
+			out.writeLong(_d4);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			GUID other = (GUID) obj;
+			return _d1 == other._d1 && _d2 == other._d2 
+			    && _d3 == other._d3 && _d4 == other._d4;
+		}
+
+		public int getD1() {
+			return _d1;
+		}
+
+		public int getD2() {
+			return _d2;
+		}
+
+		public int getD3() {
+			return _d3;
+		}
+
+		public long getD4() {
+			//
+			ByteArrayOutputStream baos = new ByteArrayOutputStream(8);
+			try {
+				new DataOutputStream(baos).writeLong(_d4);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+			byte[] buf = baos.toByteArray();
+			return new LittleEndianByteArrayInputStream(buf).readLong();
+		}
+
+		public String formatAsString() {
+
+			StringBuilder sb = new StringBuilder(36);
+
+			int PREFIX_LEN = "0x".length();
+			sb.append(HexDump.intToHex(_d1), PREFIX_LEN, 8);
+			sb.append("-");
+			sb.append(HexDump.shortToHex(_d2), PREFIX_LEN, 4);
+			sb.append("-");
+			sb.append(HexDump.shortToHex(_d3), PREFIX_LEN, 4);
+			sb.append("-");
+			char[] d4Chars = HexDump.longToHex(getD4());
+			sb.append(d4Chars, PREFIX_LEN, 4);
+			sb.append("-");
+			sb.append(d4Chars, PREFIX_LEN + 4, 12);
+			return sb.toString();
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder(64);
+			sb.append(getClass().getName()).append(" [");
+			sb.append(formatAsString());
+			sb.append("]");
+			return sb.toString();
+		}
+
+		/**
+		 * Read a GUID in standard text form e.g.<br/>
+		 * 13579BDF-0246-8ACE-0123-456789ABCDEF 
+		 * <br/> -&gt; <br/>
+		 *  0x13579BDF, 0x0246, 0x8ACE 0x0123456789ABCDEF
+		 */
+		public static GUID parse(String rep) {
+			char[] cc = rep.toCharArray();
+			if (cc.length != TEXT_FORMAT_LENGTH) {
+				throw new RecordFormatException("supplied text is the wrong length for a GUID");
+			}
+			int d0 = (parseShort(cc, 0) << 16) + (parseShort(cc, 4) << 0);
+			int d1 = parseShort(cc, 9);
+			int d2 = parseShort(cc, 14);
+			for (int i = 23; i > 19; i--) {
+				cc[i] = cc[i - 1];
+			}
+			long d3 = parseLELong(cc, 20);
+
+			return new GUID(d0, d1, d2, d3);
+		}
+
+		private static long parseLELong(char[] cc, int startIndex) {
+			long acc = 0;
+			for (int i = startIndex + 14; i >= startIndex; i -= 2) {
+				acc <<= 4;
+				acc += parseHexChar(cc[i + 0]);
+				acc <<= 4;
+				acc += parseHexChar(cc[i + 1]);
+			}
+			return acc;
+		}
+
+		private static int parseShort(char[] cc, int startIndex) {
+			int acc = 0;
+			for (int i = 0; i < 4; i++) {
+				acc <<= 4;
+				acc += parseHexChar(cc[startIndex + i]);
+			}
+			return acc;
+		}
+
+		private static int parseHexChar(char c) {
+			if (c >= '0' && c <= '9') {
+				return c - '0';
+			}
+			if (c >= 'A' && c <= 'F') {
+				return c - 'A' + 10;
+			}
+			if (c >= 'a' && c <= 'f') {
+				return c - 'a' + 10;
+			}
+			throw new RecordFormatException("Bad hex char '" + c + "'");
+		}
+	}
 
     /**
      * Link flags
      */
-    protected static final int  HLINK_URL    = 0x01;  // File link or URL.
-    protected static final int  HLINK_ABS    = 0x02;  // Absolute path.
-    protected static final int  HLINK_LABEL  = 0x14;  // Has label.
-    protected static final int  HLINK_PLACE  = 0x08;  // Place in worksheet.
+     static final int  HLINK_URL    = 0x01;  // File link or URL.
+     static final int  HLINK_ABS    = 0x02;  // Absolute path.
+     static final int  HLINK_LABEL  = 0x14;  // Has label/description.
+    /** Place in worksheet. If set, the {@link #_textMark} field will be present */
+     static final int  HLINK_PLACE  = 0x08;
+    private static final int  HLINK_TARGET_FRAME  = 0x80;  // has 'target frame'
+    private static final int  HLINK_UNC_PATH  = 0x100;  // has UNC path
 
+     final static GUID STD_MONIKER = GUID.parse("79EAC9D0-BAF9-11CE-8C82-00AA004BA90B");
+     final static GUID URL_MONIKER = GUID.parse("79EAC9E0-BAF9-11CE-8C82-00AA004BA90B");
+     final static GUID FILE_MONIKER = GUID.parse("00000303-0000-0000-C000-000000000046");
+    /** expected Tail of a URL link */
+    private final static byte[] URL_TAIL  = HexRead.readFromString("79 58 81 F4  3B 1D 7F 48   AF 2C 82 5D  C4 85 27 63   00 00 00 00  A5 AB 00 00"); 
+    /** expected Tail of a file link */
+    private final static byte[] FILE_TAIL = HexRead.readFromString("FF FF AD DE  00 00 00 00   00 00 00 00  00 00 00 00   00 00 00 00  00 00 00 00");
 
-    protected final static byte[] STD_MONIKER = {(byte)0xD0, (byte)0xC9, (byte)0xEA, 0x79, (byte)0xF9, (byte)0xBA, (byte)0xCE, 0x11,
-                                                 (byte)0x8C, (byte)0x82, 0x00, (byte)0xAA, 0x00, 0x4B, (byte)0xA9, 0x0B };
-    protected final static byte[] URL_MONIKER = {(byte)0xE0, (byte)0xC9, (byte)0xEA, 0x79, (byte)0xF9, (byte)0xBA, (byte)0xCE, 0x11,
-                                                 (byte)0x8C, (byte)0x82, 0x00, (byte)0xAA, 0x00, 0x4B, (byte)0xA9, 0x0B };
-    protected final static byte[] FILE_MONIKER = {0x03, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46};
+    private static final int TAIL_SIZE = FILE_TAIL.length;
 
+    /** cell range of this hyperlink */
+    private CellRangeAddress _range;
+
+    /** 16-byte GUID */
+    private GUID _guid;
+    /** Some sort of options for file links. */
+    private int _fileOpts;
+    /** Link options. Can include any of HLINK_* flags. */
+    private int _linkOpts;
+    /** Test label */
+    private String _label;
+
+    private String _targetFrame;
+    /** Moniker. Makes sense only for URL and file links */
+    private GUID _moniker;
+    /** in 8:3 DOS format No Unicode string header,
+     * always 8-bit characters, zero-terminated */
+    private String _shortFilename;
+    /** Link */
+    private String _address;
     /**
-     * Tail of a URL link
+     * Text describing a place in document.  In Excel UI, this is appended to the
+     * address, (after a '#' delimiter).<br/>
+     * This field is optional.  If present, the {@link #HLINK_PLACE} must be set.
      */
-    protected final static byte[] URL_TAIL = {0x79, 0x58, (byte)0x81, (byte)0xF4, 0x3B, 0x1D, 0x7F, 0x48, (byte)0xAF, 0x2C,
-                                              (byte)0x82, 0x5D, (byte)0xC4, (byte)0x85, 0x27, 0x63, 0x00, 0x00, 0x00,
-                                               0x00, (byte)0xA5, (byte)0xAB, 0x00, 0x00};
-
-    /**
-     * Tail of a file link
-     */
-    protected final static byte[] FILE_TAIL = {(byte)0xFF, (byte)0xFF, (byte)0xAD, (byte)0xDE, 0x00, 0x00, 0x00, 0x00,
-                                                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                                                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
-    /**
-     * First row of the hyperlink
-     */
-    private int rwFirst;
-
-    /**
-     * Last row of the hyperlink
-     */
-    private int rwLast;
-
-    /**
-     * First column of the hyperlink
-     */
-    private short colFirst;
-
-    /**
-     * Last column of the hyperlink
-     */
-    private short colLast;
-
-    /**
-     * 16-byte GUID
-     */
-    private byte[] guid;
-
-    /**
-     * Some sort of options. Seems to always equal 2
-     */
-    private int label_opts;
-
-    /**
-     * Some sort of options for file links.
-     */
-    private short file_opts;
-
-    /**
-     * Link options. Can include any of HLINK_* flags.
-     */
-    private int link_opts;
-
-    /**
-     * Test label
-     */
-    private String label;
-
-    /**
-     * Moniker. Makes sense only for URL and file links
-     */
-    private byte[] moniker;
-
-    /**
-     * Link
-     */
-    private String address;
-
-    /**
-     * Remaining bytes
-     */
-    private byte[] tail;
+    private String _textMark;
+    
+    private byte[] _uninterpretedTail;
 
     /**
      * Create a new hyperlink
@@ -132,117 +251,100 @@ public final class HyperlinkRecord extends Record {
     }
 
     /**
-     * Return the column of the first cell that contains the hyperlink
-     *
-     * @return the 0-based column of the first cell that contains the hyperlink
+     * @return the 0-based column of the first cell that contains this hyperlink
      */
-   public short getFirstColumn()
-    {
-        return colFirst;
+    public int getFirstColumn() {
+        return _range.getFirstColumn();
     }
 
     /**
-     * Set the column of the first cell that contains the hyperlink
-     *
-     * @param col the 0-based column of the first cell that contains the hyperlink
+     * Set the first column (zero-based)of the range that contains this hyperlink
      */
-    public void setFirstColumn(short col)
-    {
-        this.colFirst = col;
+    public void setFirstColumn(int col) {
+        _range.setFirstColumn(col);
     }
 
     /**
-     * Set the column of the last cell that contains the hyperlink
-     *
-     * @return the 0-based column of the last cell that contains the hyperlink
-    */
-    public short getLastColumn()
-    {
-        return colLast;
-    }
-
-    /**
-     * Set the column of the last cell that contains the hyperlink
-     *
-     * @param col the 0-based column of the last cell that contains the hyperlink
+     * @return the 0-based column of the last cell that contains this hyperlink
      */
-    public void setLastColumn(short col)
-    {
-        this.colLast = col;
+    public int getLastColumn() {
+        return _range.getLastColumn();
     }
 
     /**
-     * Return the row of the first cell that contains the hyperlink
-     *
-     * @return the 0-based row of the first cell that contains the hyperlink
+     * Set the last column (zero-based)of the range that contains this hyperlink
      */
-    public int getFirstRow()
-    {
-        return rwFirst;
+    public void setLastColumn(int col) {
+        _range.setLastColumn(col);
     }
 
     /**
-     * Set the row of the first cell that contains the hyperlink
-     *
-     * @param row the 0-based row of the first cell that contains the hyperlink
+     * @return the 0-based row of the first cell that contains this hyperlink
      */
-    public void setFirstRow(int row)
-    {
-        this.rwFirst = row;
+    public int getFirstRow() {
+        return _range.getFirstRow();
     }
 
     /**
-     * Return the row of the last cell that contains the hyperlink
-     *
-     * @return the 0-based row of the last cell that contains the hyperlink
+     * Set the first row (zero-based)of the range that contains this hyperlink
      */
-    public int getLastRow()
-    {
-        return rwLast;
+    public void setFirstRow(int col) {
+        _range.setFirstRow(col);
     }
 
     /**
-     * Set the row of the last cell that contains the hyperlink
-     *
-     * @param row the 0-based row of the last cell that contains the hyperlink
+     * @return the 0-based row of the last cell that contains this hyperlink
      */
-    public void setLastRow(int row)
-    {
-        this.rwLast = row;
+    public int getLastRow() {
+        return _range.getLastRow();
     }
 
     /**
-     * Returns a 16-byte guid identifier. Seems to always equal {@link #STD_MONIKER}
-     *
-     * @return 16-byte guid identifier
+     * Set the last row (zero-based)of the range that contains this hyperlink
      */
-    public byte[] getGuid()
-    {
-        return guid;
+    public void setLastRow(int col) {
+        _range.setLastRow(col);
     }
 
     /**
-     * Returns a 16-byte moniker.
-     *
+     * @return 16-byte guid identifier Seems to always equal {@link #STD_MONIKER}
+     */
+    GUID getGuid() {
+        return _guid;
+    }
+
+    /**
      * @return 16-byte moniker
      */
-    public byte[] getMoniker()
+    GUID getMoniker()
     {
-        return moniker;
+        return _moniker;
     }
 
+    private static String cleanString(String s) {
+        if (s == null) {
+            return null;
+        }
+        int idx = s.indexOf('\u0000');
+        if (idx < 0) {
+            return s;
+        }
+        return s.substring(0, idx);
+    }
+    private static String appendNullTerm(String s) {
+        if (s == null) {
+            return null;
+        }
+        return s + '\u0000';
+    }
 
     /**
      * Return text label for this hyperlink
      *
      * @return  text to display
      */
-    public String getLabel()
-    {
-        if(label == null) return null;
-
-        int idx = label.indexOf('\u0000');
-        return idx == -1 ? label : label.substring(0, idx);
+    public String getLabel() {
+        return cleanString(_label);
     }
 
     /**
@@ -250,207 +352,289 @@ public final class HyperlinkRecord extends Record {
      *
      * @param label text label for this hyperlink
      */
-     public void setLabel(String label)
-    {
-        this.label = label + '\u0000';
+    public void setLabel(String label) {
+        _label = appendNullTerm(label);
+    }
+    public String getTargetFrame() {
+        return cleanString(_targetFrame);
     }
 
     /**
-     * Hypelink address. Depending on the hyperlink type it can be URL, e-mail, patrh to a file, etc.
+     * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, patrh to a file, etc.
      *
      * @return  the address of this hyperlink
      */
-    public String getAddress()
-    {
-        if(address == null) return null;
-
-        int idx = address.indexOf('\u0000');
-        return idx == -1 ? address : address.substring(0, idx);
+    public String getAddress() {
+        return cleanString(_address);
     }
 
     /**
-     * Hypelink address. Depending on the hyperlink type it can be URL, e-mail, patrh to a file, etc.
+     * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, patrh to a file, etc.
      *
      * @param address  the address of this hyperlink
      */
-    public void setAddress(String address)
-    {
-        this.address = address + '\u0000';
+    public void setAddress(String address) {
+        _address = appendNullTerm(address);
     }
+
+    public String getShortFilename() {
+        return cleanString(_shortFilename);
+    }
+
+    public void setShortFilename(String shortFilename) {
+        _shortFilename = appendNullTerm(shortFilename);
+    }
+
+    public String getTextMark() {
+        return cleanString(_textMark);
+    }
+    public void setTextMark(String textMark) {
+        _textMark = appendNullTerm(textMark);
+    }
+
 
     /**
      * Link options. Must be a combination of HLINK_* constants.
+     * For testing only
      */
-    public int getLinkOptions(){
-        return link_opts;
+    int getLinkOptions(){
+        return _linkOpts;
     }
 
     /**
      * Label options
      */
     public int getLabelOptions(){
-        return label_opts;
+        return 2; // always 2
     }
 
     /**
      * Options for a file link
      */
     public int getFileOptions(){
-        return file_opts;
+        return _fileOpts;
     }
 
-    public byte[] getTail(){
-        return tail;
-    }
 
-    /**
-     * @param in the RecordInputstream to read the record from
-     */
-    public HyperlinkRecord(RecordInputStream in)
-    {
-        try {
-            rwFirst = in.readShort();
-            rwLast = in.readUShort();
-            colFirst = in.readShort();
-            colLast = in.readShort();
+    public HyperlinkRecord(RecordInputStream in) {
+        _range = new CellRangeAddress(in);
 
-            // 16-byte GUID
-            guid = new byte[16];
-            in.read(guid);
+        _guid = new GUID(in);
 
-            label_opts = in.readInt();
-            link_opts = in.readInt();
+        if (in.readInt() != 0x00000002) {
+            throw new RecordFormatException("expected "); // TODO
+        }
+        _linkOpts = in.readInt();
 
-            if ((link_opts & HLINK_LABEL) != 0){
-                int label_len = in.readInt();
-                label = in.readUnicodeLEString(label_len);
-            }
+        if ((_linkOpts & HLINK_LABEL) != 0){
+            int label_len = in.readInt();
+            _label = in.readUnicodeLEString(label_len);
+        }
 
-            if ((link_opts & HLINK_URL) != 0){
-                moniker = new byte[16];
-                in.read(moniker);
+        if ((_linkOpts & HLINK_TARGET_FRAME) != 0){
+            int len = in.readInt();
+            _targetFrame = in.readUnicodeLEString(len);
+        }
 
-                if(Arrays.equals(URL_MONIKER, moniker)){
-                    int len = in.readInt();
+        if ((_linkOpts & HLINK_UNC_PATH) != 0) {
+            _moniker = null;
+            int nChars = in.readInt();
+            _address = in.readUnicodeLEString(nChars);
 
-                    address = in.readUnicodeLEString(len/2);
+        } else if ((_linkOpts & HLINK_URL) != 0) {
+            _moniker = new GUID(in);
 
-                    tail = in.readRemainder();
-                } else if (Arrays.equals(FILE_MONIKER, moniker)){
-                    file_opts = in.readShort();
+            if(URL_MONIKER.equals(_moniker)){
+                int fieldSize = in.readInt();
 
-                    int len = in.readInt();
-
-                    byte[] path_bytes = new byte[len];
-                    in.read(path_bytes);
-
-                    address = new String(path_bytes);
-
-                    tail = in.readRemainder();
+                if ((_linkOpts & HLINK_TARGET_FRAME) != 0) { 
+                    int nChars = fieldSize/2;
+                    _address = in.readUnicodeLEString(nChars);
+                } else {
+                    int nChars = (fieldSize - TAIL_SIZE)/2;
+                    _address = in.readUnicodeLEString(nChars);
+                    _uninterpretedTail = readTail(URL_TAIL, in);
                 }
-            } else if((link_opts & HLINK_PLACE) != 0){
+            } else if (FILE_MONIKER.equals(_moniker)) {
+                _fileOpts = in.readShort();
+
                 int len = in.readInt();
-                address = in.readUnicodeLEString(len);
+                _shortFilename = StringUtil.readCompressedUnicode(in, len);
+                _uninterpretedTail = readTail(FILE_TAIL, in);
+                int size = in.readInt();
+                if (size > 0) {
+                    int charDataSize = in.readInt();
+                    if (in.readUShort() != 0x0003) {
+                        throw new RecordFormatException("expected "); // TODO
+                    }
+                    _address = StringUtil.readUnicodeLE(in, charDataSize/2);
+                } else {
+                    _address = null; // TODO
+                }
+            } else if (STD_MONIKER.equals(_moniker)) {
+                _fileOpts = in.readShort();
+
+                int len = in.readInt();
+
+                byte[] path_bytes = new byte[len];
+                in.readFully(path_bytes);
+
+                _address = new String(path_bytes);
             }
-        } catch (IOException e){
-            throw new RuntimeException(e);
+        } else {
+            // can happen for a plain link within the current document
+            _moniker = null;
         }
 
+        if((_linkOpts & HLINK_PLACE) != 0) {
+
+            int len = in.readInt();
+            _textMark = in.readUnicodeLEString(len);
+        }
+
+        if (in.remaining() > 0) {
+            System.out.println(HexDump.toHex(in.readRemainder()));
+        }
     }
 
-    public short getSid()
-    {
-        return HyperlinkRecord.sid;
-    }
+    public void serialize(LittleEndianOutput out) {
+        _range.serialize(out);
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = offset;
-        LittleEndian.putShort(data, pos, sid); pos += 2;
-        LittleEndian.putShort(data, pos, ( short )(getRecordSize()-4)); pos += 2;
-        LittleEndian.putUShort(data, pos, rwFirst); pos += 2;
-        LittleEndian.putUShort(data, pos, rwLast); pos += 2;
-        LittleEndian.putShort(data, pos, colFirst); pos += 2;
-        LittleEndian.putShort(data, pos, colLast); pos += 2;
+        _guid.serialize(out);
+        out.writeInt(0x00000002); // TODO const
+        out.writeInt(_linkOpts);
 
-        System.arraycopy(guid, 0, data, pos, guid.length); pos += guid.length;
-
-        LittleEndian.putInt(data, pos, label_opts); pos += 4;
-        LittleEndian.putInt(data, pos, link_opts); pos += 4;
-
-        if ((link_opts & HLINK_LABEL) != 0){
-            LittleEndian.putInt(data, pos, label.length()); pos += 4;
-            StringUtil.putUnicodeLE(label, data, pos);  pos += label.length()*2;
+        if ((_linkOpts & HLINK_LABEL) != 0){
+            out.writeInt(_label.length());
+            StringUtil.putUnicodeLE(_label, out);
         }
-        if ((link_opts & HLINK_URL) != 0){
-            System.arraycopy(moniker, 0, data, pos, moniker.length); pos += moniker.length;
-            if(Arrays.equals(URL_MONIKER, moniker)){
-                LittleEndian.putInt(data, pos, address.length()*2 + tail.length); pos += 4;
-                StringUtil.putUnicodeLE(address, data, pos);  pos += address.length()*2;
-                if(tail.length > 0){
-                    System.arraycopy(tail, 0, data, pos, tail.length); pos += tail.length;
+        if ((_linkOpts & HLINK_TARGET_FRAME) != 0){
+            out.writeInt(_targetFrame.length());
+            StringUtil.putUnicodeLE(_targetFrame, out);
+        }
+
+        if ((_linkOpts & HLINK_UNC_PATH) != 0) {
+            out.writeInt(_address.length());
+            StringUtil.putUnicodeLE(_address, out);
+        } else if ((_linkOpts & HLINK_URL) != 0){
+            _moniker.serialize(out);
+            if(URL_MONIKER.equals(_moniker)){
+                if ((_linkOpts & HLINK_TARGET_FRAME) != 0) {
+                    out.writeInt(_address.length()*2);
+                    StringUtil.putUnicodeLE(_address, out);
+                } else {
+                    out.writeInt(_address.length()*2 + TAIL_SIZE);
+                    StringUtil.putUnicodeLE(_address, out);
+                    writeTail(_uninterpretedTail, out);
                 }
-            } else if (Arrays.equals(FILE_MONIKER, moniker)){
-                LittleEndian.putShort(data, pos, file_opts); pos += 2;
-                LittleEndian.putInt(data, pos, address.length()); pos += 4;
-                byte[] bytes = address.getBytes();
-                System.arraycopy(bytes, 0, data, pos, bytes.length); pos += bytes.length;
-                if(tail.length > 0){
-                    System.arraycopy(tail, 0, data, pos, tail.length); pos += tail.length;
+            } else if (FILE_MONIKER.equals(_moniker)){
+                out.writeShort(_fileOpts);
+                out.writeInt(_shortFilename.length());
+                StringUtil.putCompressedUnicode(_shortFilename, out);
+                writeTail(_uninterpretedTail, out);
+                if (_address == null) {
+                    out.writeInt(0);
+                } else {
+                    int addrLen = _address.length() * 2;
+                    out.writeInt(addrLen + 6);
+                    out.writeInt(addrLen);
+                    out.writeShort(0x0003); // TODO const
+                    StringUtil.putUnicodeLE(_address, out);
                 }
             }
-        } else if((link_opts & HLINK_PLACE) != 0){
-            LittleEndian.putInt(data, pos, address.length()); pos += 4;
-            StringUtil.putUnicodeLE(address, data, pos);  pos += address.length()*2;
         }
-        return getRecordSize();
+        if((_linkOpts & HLINK_PLACE) != 0){
+               out.writeInt(_textMark.length());
+            StringUtil.putUnicodeLE(_textMark, out);
+        }
     }
 
     protected int getDataSize() {
         int size = 0;
         size += 2 + 2 + 2 + 2;  //rwFirst, rwLast, colFirst, colLast
-        size += guid.length;
+        size += GUID.ENCODED_SIZE;
         size += 4;  //label_opts
         size += 4;  //link_opts
-        if ((link_opts & HLINK_LABEL) != 0){
+        if ((_linkOpts & HLINK_LABEL) != 0){
             size += 4;  //link length
-            size += label.length()*2;
+            size += _label.length()*2;
         }
-        if ((link_opts & HLINK_URL) != 0){
-            size += moniker.length;  //moniker length
-            if(Arrays.equals(URL_MONIKER, moniker)){
+        if ((_linkOpts & HLINK_TARGET_FRAME) != 0){
+            size += 4;  // int nChars
+            size += _targetFrame.length()*2;
+        }
+        if ((_linkOpts & HLINK_UNC_PATH) != 0) {
+            size += 4;  // int nChars
+            size += _address.length()*2;
+        } else if ((_linkOpts & HLINK_URL) != 0){
+            size += GUID.ENCODED_SIZE;
+            if(URL_MONIKER.equals(_moniker)){
                 size += 4;  //address length
-                size += address.length()*2;
-                size += tail.length;
-            } else if (Arrays.equals(FILE_MONIKER, moniker)){
+                size += _address.length()*2;
+                if ((_linkOpts & HLINK_TARGET_FRAME) == 0) {
+                	size += TAIL_SIZE;
+                }
+            } else if (FILE_MONIKER.equals(_moniker)){
                 size += 2;  //file_opts
                 size += 4;  //address length
-                size += address.length();
-                size += tail.length;
+                size += _shortFilename.length();
+                size += TAIL_SIZE;
+                size += 4;
+                if (_address != null) {
+                    size += 6;
+                    size += _address.length() * 2;
+                }
+
             }
-        } else if((link_opts & HLINK_PLACE) != 0){
+        }
+        if((_linkOpts & HLINK_PLACE) != 0){
             size += 4;  //address length
-            size += address.length()*2;
+            size += _textMark.length()*2;
         }
         return size;
     }
 
-    public String toString()
-    {
+
+    private static byte[] readTail(byte[] expectedTail, LittleEndianInput in) {
+    	byte[] result = new byte[TAIL_SIZE];
+    	in.readFully(result);
+    	if (false) { // Quite a few examples in the unit tests which don't have the exact expected tail
+            for (int i = 0; i < expectedTail.length; i++) {
+                if (expectedTail[i] != result[i]) {
+                    System.err.println("Mismatch in tail byte [" + i + "]"
+                    		+ "expected " + (expectedTail[i] & 0xFF) + " but got " + (result[i] & 0xFF));
+                }
+            }
+    	}
+        return result;
+    }
+    private static void writeTail(byte[] tail, LittleEndianOutput out) {
+        out.write(tail);
+    }
+
+    public short getSid() {
+        return HyperlinkRecord.sid;
+    }
+
+
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[HYPERLINK RECORD]\n");
-        buffer.append("    .rwFirst            = ").append(Integer.toHexString(getFirstRow())).append("\n");
-        buffer.append("    .rwLast         = ").append(Integer.toHexString(getLastRow())).append("\n");
-        buffer.append("    .colFirst            = ").append(Integer.toHexString(getFirstColumn())).append("\n");
-        buffer.append("    .colLast         = ").append(Integer.toHexString(getLastColumn())).append("\n");
-        buffer.append("    .guid        = ").append(HexDump.toHex(guid)).append("\n");
-        buffer.append("    .label_opts          = ").append(label_opts).append("\n");
-        buffer.append("    .label          = ").append(getLabel()).append("\n");
-        if((link_opts & HLINK_URL) != 0){
-            buffer.append("    .moniker          = ").append(HexDump.toHex(moniker)).append("\n");
+        buffer.append("    .range   = ").append(_range.formatAsString()).append("\n");
+        buffer.append("    .guid    = ").append(_guid.formatAsString()).append("\n");
+        buffer.append("    .linkOpts= ").append(HexDump.intToHex(_linkOpts)).append("\n");
+        buffer.append("    .label   = ").append(getLabel()).append("\n");
+        if ((_linkOpts & HLINK_TARGET_FRAME) != 0) {
+            buffer.append("    .targetFrame= ").append(getTargetFrame()).append("\n");
         }
-        buffer.append("    .address            = ").append(getAddress()).append("\n");
+        if((_linkOpts & HLINK_URL) != 0) {
+            buffer.append("    .moniker   = ").append(_moniker.formatAsString()).append("\n");
+        }
+        if ((_linkOpts & HLINK_PLACE) != 0) {
+            buffer.append("    .targetFrame= ").append(getTextMark()).append("\n");
+        }
+        buffer.append("    .address   = ").append(getAddress()).append("\n");
         buffer.append("[/HYPERLINK RECORD]\n");
         return buffer.toString();
     }
@@ -458,71 +642,57 @@ public final class HyperlinkRecord extends Record {
     /**
      * Initialize a new url link
      */
-    public void newUrlLink(){
-        rwFirst = 0;
-        rwLast = 0;
-        colFirst = 0;
-        colLast = 0;
-        guid = STD_MONIKER;
-        label_opts = 0x2;
-        link_opts = HLINK_URL | HLINK_ABS | HLINK_LABEL;
-        label = "" + '\u0000';
-        moniker = URL_MONIKER;
-        address = "" + '\u0000';
-        tail = URL_TAIL;
+    public void newUrlLink() {
+        _range = new CellRangeAddress(0, 0, 0, 0);
+        _guid = STD_MONIKER;
+        _linkOpts = HLINK_URL | HLINK_ABS | HLINK_LABEL;
+        setLabel("");
+        _moniker = URL_MONIKER;
+        setAddress("");
+        _uninterpretedTail = URL_TAIL;
     }
 
     /**
      * Initialize a new file link
      */
-    public void newFileLink(){
-        rwFirst = 0;
-        rwLast = 0;
-        colFirst = 0;
-        colLast = 0;
-        guid = STD_MONIKER;
-        label_opts = 0x2;
-        link_opts = HLINK_URL | HLINK_LABEL;
-        file_opts = 0;
-        label = "" + '\u0000';
-        moniker = FILE_MONIKER;
-        address = "" + '\0';
-        tail = FILE_TAIL;
+    public void newFileLink() {
+        _range = new CellRangeAddress(0, 0, 0, 0);
+        _guid = STD_MONIKER;
+        _linkOpts = HLINK_URL | HLINK_LABEL;
+        _fileOpts = 0;
+        setLabel("");
+        _moniker = FILE_MONIKER;
+        setAddress(null);
+        setShortFilename("");
+        _uninterpretedTail = FILE_TAIL;
     }
 
     /**
      * Initialize a new document link
      */
-    public void newDocumentLink(){
-        rwFirst = 0;
-        rwLast = 0;
-        colFirst = 0;
-        colLast = 0;
-        guid = STD_MONIKER;
-        label_opts = 0x2;
-        link_opts = HLINK_LABEL | HLINK_PLACE;
-        label = "" + '\u0000';
-        moniker = FILE_MONIKER;
-        address = "" + '\0';
-        tail = new byte[]{};
+    public void newDocumentLink() {
+        _range = new CellRangeAddress(0, 0, 0, 0);
+        _guid = STD_MONIKER;
+        _linkOpts = HLINK_LABEL | HLINK_PLACE;
+        setLabel("");
+        _moniker = FILE_MONIKER;
+        setAddress("");
+        setTextMark("");
     }
 
     public Object clone() {
         HyperlinkRecord rec = new HyperlinkRecord();
-        rec.rwFirst = rwFirst;
-        rec.rwLast = rwLast;
-        rec.colFirst = colFirst;
-        rec.colLast = colLast;
-        rec.guid = guid;
-        rec.label_opts = label_opts;
-        rec.link_opts = link_opts;
-        rec.file_opts = file_opts;
-        rec.label = label;
-        rec.address = address;
-        rec.moniker = moniker;
-        rec.tail = tail;
+        rec._range = _range.copy();
+        rec._guid = _guid;
+        rec._linkOpts = _linkOpts;
+        rec._fileOpts = _fileOpts;
+        rec._label = _label;
+        rec._address = _address;
+        rec._moniker = _moniker;
+        rec._shortFilename = _shortFilename;
+        rec._targetFrame = _targetFrame;
+        rec._textMark = _textMark;
+        rec._uninterpretedTail = _uninterpretedTail;
         return rec;
     }
-
-
 }
