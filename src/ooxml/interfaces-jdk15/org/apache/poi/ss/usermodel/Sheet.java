@@ -233,7 +233,7 @@ public interface Sheet extends Iterable<Row> {
      *
      * @param value <code>true</code> if the sheet displays Automatic Page Breaks.
      */
-    void setAutobreaks(boolean b);
+    void setAutobreaks(boolean value);
 
     /**
      * Set whether to display the guts or not

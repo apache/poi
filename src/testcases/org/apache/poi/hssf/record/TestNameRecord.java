@@ -76,9 +76,9 @@ public final class TestNameRecord extends TestCase {
 		HSSFName name = wb.createName();
 		wb.createSheet("Sheet1");
 		name.setNameName("test");
-		name.setFormula("Sheet1!A1+Sheet1!A2");
-		assertEquals("Sheet1!A1+Sheet1!A2", name.getFormula());
-		name.setFormula("5*6");
-		assertEquals("5*6", name.getFormula());
+		name.setRefersToFormula("Sheet1!A1+Sheet1!A2");
+		assertEquals("Sheet1!A1+Sheet1!A2", name.getRefersToFormula());
+		name.setRefersToFormula("5*6");
+		assertEquals("5*6", name.getRefersToFormula());
 	}
 }

@@ -617,7 +617,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         XSSFName name = getBuiltInName(XSSFName.BUILTIN_PRINT_AREA, sheetIndex);
         if (name == null) return null;
         //adding one here because 0 indicates a global named region; doesnt make sense for print areas
-        return name.getReference();
+        return name.getRefersToFormula();
 
     }
 
@@ -871,7 +871,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             sb.append("!");
             sb.append(parts[i]);
         }
-        name.setFormula(sb.toString());
+        name.setRefersToFormula(sb.toString());
     }
 
     /**
@@ -931,7 +931,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         if (name == null) {
             name = createBuiltInName(XSSFName.BUILTIN_PRINT_TITLE, sheetIndex);
             String reference = getReferenceBuiltInRecord(name.getSheetName(), startColumn, endColumn, startRow, endRow);
-            name.setReference(reference);
+            name.setRefersToFormula(reference);
             namedRanges.add(name);
         }
 

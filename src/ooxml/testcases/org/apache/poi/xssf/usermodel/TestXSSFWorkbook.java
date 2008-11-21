@@ -183,7 +183,7 @@ public final class TestXSSFWorkbook extends TestCase {
 		XSSFName nr1 = wb.getNameAt(0);
 		
 		assertEquals(XSSFName.BUILTIN_PRINT_TITLE, nr1.getNameName());
-		assertEquals("'FirstSheet'!$A:$A,'FirstSheet'!$1:$4", nr1.getReference());
+		assertEquals("'FirstSheet'!$A:$A,'FirstSheet'!$1:$4", nr1.getRefersToFormula());
 		
 		// Save and re-open
 		XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb);
@@ -192,7 +192,7 @@ public final class TestXSSFWorkbook extends TestCase {
 		nr1 = nwb.getNameAt(0);
 		
 		assertEquals(XSSFName.BUILTIN_PRINT_TITLE, nr1.getNameName());
-		assertEquals("'FirstSheet'!$A:$A,'FirstSheet'!$1:$4", nr1.getReference());
+		assertEquals("'FirstSheet'!$A:$A,'FirstSheet'!$1:$4", nr1.getRefersToFormula());
 		
 		// check that setting RR&C on a second sheet causes a new Print_Titles built-in
 		// name to be created
@@ -203,7 +203,7 @@ public final class TestXSSFWorkbook extends TestCase {
 		XSSFName nr2 = nwb.getNameAt(1);
 		
 		assertEquals(XSSFName.BUILTIN_PRINT_TITLE, nr2.getNameName());
-		assertEquals("'SecondSheet'!$B:$C,'SecondSheet'!$1:$1", nr2.getReference());
+		assertEquals("'SecondSheet'!$B:$C,'SecondSheet'!$1:$1", nr2.getRefersToFormula());
 		
 		
 		nwb.setRepeatingRowsAndColumns(1, -1, -1, -1, -1);
@@ -464,11 +464,11 @@ public final class TestXSSFWorkbook extends TestCase {
 		assertEquals(0, workbook.getNumberOfNames());
 		
 		Name nameA = workbook.createName();
-		nameA.setReference("A2");
+		nameA.setRefersToFormula("A2");
 		nameA.setNameName("ForA2");
 		
 		XSSFName nameB = workbook.createName();
-		nameB.setReference("B3");
+		nameB.setRefersToFormula("B3");
 		nameB.setNameName("ForB3");
 		nameB.setComment("B3 Comment");
 		
@@ -476,11 +476,11 @@ public final class TestXSSFWorkbook extends TestCase {
 		workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
 		
 		assertEquals(2, workbook.getNumberOfNames());
-		assertEquals("A2", workbook.getNameAt(0).getReference());
+		assertEquals("A2", workbook.getNameAt(0).getRefersToFormula());
 		assertEquals("ForA2", workbook.getNameAt(0).getNameName());
 		assertNull(workbook.getNameAt(0).getComment());
 		
-		assertEquals("B3", workbook.getNameAt(1).getReference());
+		assertEquals("B3", workbook.getNameAt(1).getRefersToFormula());
 		assertEquals("ForB3", workbook.getNameAt(1).getNameName());
 		assertEquals("B3 Comment", workbook.getNameAt(1).getComment());
 		
@@ -493,11 +493,11 @@ public final class TestXSSFWorkbook extends TestCase {
 		workbook = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx");
 
 		assertEquals(2, workbook.getNumberOfNames());
-		assertEquals("Sheet1!$A$2:$A$7", workbook.getNameAt(0).getReference());
+		assertEquals("Sheet1!$A$2:$A$7", workbook.getNameAt(0).getRefersToFormula());
 		assertEquals("AllANumbers", workbook.getNameAt(0).getNameName());
 		assertEquals("All the numbers in A", workbook.getNameAt(0).getComment());
 		
-		assertEquals("Sheet1!$B$2:$B$7", workbook.getNameAt(1).getReference());
+		assertEquals("Sheet1!$B$2:$B$7", workbook.getNameAt(1).getRefersToFormula());
 		assertEquals("AllBStrings", workbook.getNameAt(1).getNameName());
 		assertEquals("All the strings in B", workbook.getNameAt(1).getComment());
 		
@@ -507,11 +507,11 @@ public final class TestXSSFWorkbook extends TestCase {
 		workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
 		
 		assertEquals(2, workbook.getNumberOfNames());
-		assertEquals("Sheet1!$A$2:$A$7", workbook.getNameAt(0).getReference());
+		assertEquals("Sheet1!$A$2:$A$7", workbook.getNameAt(0).getRefersToFormula());
 		assertEquals("AllANumbers", workbook.getNameAt(0).getNameName());
 		assertEquals("All the numbers in A", workbook.getNameAt(0).getComment());
 		
-		assertEquals("Sheet1!$B$2:$B$7", workbook.getNameAt(1).getReference());
+		assertEquals("Sheet1!$B$2:$B$7", workbook.getNameAt(1).getRefersToFormula());
 		assertEquals("BStringsFun", workbook.getNameAt(1).getNameName());
 		assertEquals("All the strings in B", workbook.getNameAt(1).getComment());
 	}

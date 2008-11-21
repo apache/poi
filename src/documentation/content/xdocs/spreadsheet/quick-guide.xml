@@ -1243,19 +1243,24 @@ Examples:
     Name namedCell = wb.createName();
     namedCell.setNameName(cname);
     String reference = sname+"!A1:A1"; // area reference
-    namedCell.setReference(reference);
+    namedCell.setRefersToFormula(reference);
 
     // 2. create named range for a single cell using cellreference
-    Name namedCell = wb.createName();
-    namedCell.setNameName(cname);
+    Name namedCel2 = wb.createName();
+    namedCel2.setNameName(cname);
     String reference = sname+"!A1"; // cell reference
-    namedCell.setReference(reference);
+    namedCel2.setRefersToFormula(reference);
 
     // 3. create named range for an area using AreaReference
-    Name namedCell = wb.createName();
-    namedCell.setNameName(cname);
+    Name namedCel3 = wb.createName();
+    namedCel3.setNameName(cname);
     String reference = sname+"!A1:C5"; // area reference
-    namedCell.setReference(reference);
+    namedCel3.setRefersToFormula(reference);
+
+    // 4. create named formula
+    Name namedCel4 = wb.createName();
+    namedCel4.setNameName("my_sum");
+    namedCel4.setRefersToFormula("SUM(sname+!$I$2:$I$6)");
             </source>
             <p>
             Reading from Named Range / Named Cell
@@ -1270,7 +1275,7 @@ Examples:
     Name aNamedCell = wb.getNameAt(namedCellIdx);
 
     // retrieve the cell at the named range and test its contents
-    AreaReference aref = new AreaReference(aNamedCell.getReference());
+    AreaReference aref = new AreaReference(aNamedCell.getRefersToFormula());
     CellReference[] crefs = aref.getAllReferencedCells();
     for (int i=0; i&lt;crefs.length; i++) {
         Sheet s = wb.getSheet(crefs[i].getSheetName());
@@ -1295,7 +1300,7 @@ Examples:
     // Retrieve the cell at the named range and test its contents
     // Will get back one AreaReference for C10, and
     //  another for D12 to D14
-    AreaReference[] arefs = AreaReference.generateContiguous(aNamedCell.getReference());
+    AreaReference[] arefs = AreaReference.generateContiguous(aNamedCell.getRefersToFormula());
     for (int i=0; i&lt;arefs.length; i++) {
         // Only get the corners of the Area
         // (use arefs[i].getAllReferencedCells() to get all cells)
@@ -1320,7 +1325,7 @@ Examples:
     if(name.isDeleted()){
       //named range points to a deleted cell. 
     } else {
-      AreaReference ref = new AreaReference(name.getReference());
+      AreaReference ref = new AreaReference(name.getRefersToFormula());
     }
             </source>
         </section>

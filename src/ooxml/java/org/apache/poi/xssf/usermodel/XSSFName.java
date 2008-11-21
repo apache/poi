@@ -37,14 +37,14 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
  *   //applies to the entire workbook
  *   XSSFName name1 = wb.createName();
  *   name1.setNameName("FMLA");
- *   name1.setReference("Sheet1!$B$3");
+ *   name1.setRefersToFormula("Sheet1!$B$3");
  *
  *   //applies to Sheet1
  *   XSSFName name2 = wb.createName();
  *   name2.setNameName("SheetLevelName");
  *   name2.setComment("This name is scoped to Sheet1");
  *   name2.setLocalSheetId(0);
- *   name2.setReference("Sheet1!$B$3");
+ *   name2.setRefersToFormula("Sheet1!$B$3");
  *
  * </blockquote></pre>
  *
@@ -154,24 +154,11 @@ public final class XSSFName implements Name {
     }
 
     /**
-     * @deprecated (Nov 2008) Misleading name. Use {@link #getFormula()} instead.
-     */
-    public String getReference() {
-        return getFormula();
-    }
-
-    /**
-     * @deprecated (Nov 2008) Misleading name. Use {@link #setFormula(String)} instead.
-     */
-    public void setReference(String ref){
-        setFormula(ref);
-    }
-    /**
      * Returns the reference of this named range, such as Sales!C20:C30.
      *
      * @return the reference of this named range
      */
-    public String getFormula() {
+    public String getRefersToFormula() {
         return ctName.getStringValue();
     }
 
@@ -181,7 +168,7 @@ public final class XSSFName implements Name {
      * @param formulaText the reference to set
      * @throws IllegalArgumentException if the specified reference is unparsable
      */
-    public void setFormula(String formulaText) {
+    public void setRefersToFormula(String formulaText) {
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(workbook);
         Ptg[] ptgs;
         try {
@@ -201,7 +188,7 @@ public final class XSSFName implements Name {
      * @return true if the name refers to a deleted cell, false otherwise
      */
     public boolean isDeleted(){
-        String ref = getReference();
+        String ref = getRefersToFormula();
         return ref != null && ref.indexOf("#REF!") != -1;
     }
 
@@ -278,7 +265,7 @@ public final class XSSFName implements Name {
             int sheetId = (int)ctName.getLocalSheetId();
             return workbook.getSheetName(sheetId);
         } else {
-            String ref = getReference();
+            String ref = getRefersToFormula();
             AreaReference areaRef = new AreaReference(ref);
             return areaRef.getFirstCell().getSheetName();
         }

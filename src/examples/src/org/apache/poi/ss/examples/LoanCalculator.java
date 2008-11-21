@@ -267,38 +267,38 @@ public class LoanCalculator {
 
         name = wb.createName();
         name.setNameName("Interest_Rate");
-        name.setReference("'Loan Calculator'!$E$5");
+        name.setRefersToFormula("'Loan Calculator'!$E$5");
 
         name = wb.createName();
         name.setNameName("Loan_Amount");
-        name.setReference("'Loan Calculator'!$E$4");
+        name.setRefersToFormula("'Loan Calculator'!$E$4");
 
         name = wb.createName();
         name.setNameName("Loan_Start");
-        name.setReference("'Loan Calculator'!$E$7");
+        name.setRefersToFormula("'Loan Calculator'!$E$7");
 
         name = wb.createName();
         name.setNameName("Loan_Years");
-        name.setReference("'Loan Calculator'!$E$6");
+        name.setRefersToFormula("'Loan Calculator'!$E$6");
 
         name = wb.createName();
         name.setNameName("Number_of_Payments");
-        name.setReference("'Loan Calculator'!$E$10");
+        name.setRefersToFormula("'Loan Calculator'!$E$10");
 
         name = wb.createName();
         name.setNameName("Monthly_Payment");
-        name.setReference("-PMT(Interest_Rate/12,Number_of_Payments,Loan_Amount)");
+        name.setRefersToFormula("-PMT(Interest_Rate/12,Number_of_Payments,Loan_Amount)");
 
         name = wb.createName();
         name.setNameName("Total_Cost");
-        name.setReference("'Loan Calculator'!$E$12");
+        name.setRefersToFormula("'Loan Calculator'!$E$12");
 
         name = wb.createName();
         name.setNameName("Total_Interest");
-        name.setReference("'Loan Calculator'!$E$11");
+        name.setRefersToFormula("'Loan Calculator'!$E$11");
 
         name = wb.createName();
         name.setNameName("Values_Entered");
-        name.setReference("IF(Loan_Amount*Interest_Rate*Loan_Years*Loan_Start>0,1,0)");
+        name.setRefersToFormula("IF(Loan_Amount*Interest_Rate*Loan_Years*Loan_Start>0,1,0)");
     }
 }

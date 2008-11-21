@@ -152,7 +152,7 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 
 		public Ptg[] getNameDefinition() {
 			
-			return FormulaParser.parse(_nameRecord.getReference(), _fpBook);
+			return FormulaParser.parse(_nameRecord.getRefersToFormula(), _fpBook);
 		}
 
 		public String getNameText() {

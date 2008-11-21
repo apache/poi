@@ -182,6 +182,7 @@ wb.setSheetName(0, "\u0422\u0435\u0441\u0442\u043E\u0432\u0430\u044F " +
 // in case of plain ascii
 // wb.setSheetName(0, "HSSF Test");
 // create a sheet with 30 rows (0-29)
+int rownum;
 for (rownum = (short) 0; rownum < 30; rownum++)
 {
     // create a row
