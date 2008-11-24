@@ -45,11 +45,11 @@ public final class RowBlocksReader {
 	 * mergedCellsTable
 	 */
 	public RowBlocksReader(RecordStream rs) {
-		List plainRecords = new ArrayList();
-		List shFrmRecords = new ArrayList();
-		List arrayRecords = new ArrayList();
-		List tableRecords = new ArrayList();
-		List mergeCellRecords = new ArrayList();
+		List<Record> plainRecords = new ArrayList<Record>();
+		List<Record> shFrmRecords = new ArrayList<Record>();
+		List<Record> arrayRecords = new ArrayList<Record>();
+		List<Record> tableRecords = new ArrayList<Record>();
+		List<Record> mergeCellRecords = new ArrayList<Record>();
 
 		while(!RecordOrderer.isEndOfRowBlock(rs.peekNextSid())) {
 			// End of row/cell records for the current sheet
@@ -61,7 +61,7 @@ public final class RowBlocksReader {
 			
 			}
 			Record rec = rs.getNext();
-			List dest;
+			List<Record> dest;
 			switch (rec.getSid()) {
 				case MergeCellsRecord.sid:    dest = mergeCellRecords; break;
 				case SharedFormulaRecord.sid: dest = shFrmRecords;     break;

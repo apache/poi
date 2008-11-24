@@ -37,7 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta5" date="2008-??-??">
-          <action dev="POI-DEVELOPERS" type="fix"><!--remove me--></action>
+           <action dev="POI-DEVELOPERS" type="fix">46280 - Fixed RowRecordsAggregate etc to properly skip PivotTable records</action>
         </release>
         <release version="3.5-beta4" date="2008-11-29">
            <action dev="POI-DEVELOPERS" type="fix">46213 - Fixed FormulaRecordAggregate to gracefully ignore extra StringRecords</action>

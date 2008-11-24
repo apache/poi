@@ -39,6 +39,7 @@ public final class UnknownRecord extends StandardRecord {
 	public static final int SHEETPR_0081         = 0x0081;
 	public static final int STANDARDWIDTH_0099   = 0x0099;
 	public static final int SCL_00A0             = 0x00A0;
+	public static final int SXVIEW_00B0          = 0x00B0;
 	public static final int BITMAP_00E9          = 0x00E9;
 	public static final int PHONETICPR_00EF      = 0x00EF;
 	public static final int LABELRANGES_015F     = 0x015F;
@@ -128,13 +129,22 @@ public final class UnknownRecord extends StandardRecord {
 			case 0x0094: return "LHRECORD";
 			case STANDARDWIDTH_0099: return "STANDARDWIDTH";
 			case 0x009D: return "AUTOFILTERINFO";
-			case SCL_00A0: return "SCL";
+			case SCL_00A0:     return "SCL";
 			case 0x00AE: return "SCENMAN";
+			case SXVIEW_00B0: return "SXVIEW"; // (pivot table) View Definition
+			case 0x00B1: return "SXVD";        // (pivot table) View Fields
+			case 0x00B2: return "SXVI";        // (pivot table) View Item
+			case 0x00B4: return "SXIVD";       // (pivot table) Row/Column Field IDs
+			case 0x00B5: return "SXLI";        // (pivot table) Line Item Array
+			case 0x00C5: return "SXDI";        // (pivot table) Data Item
+			
 			case 0x00D3: return "OBPROJ";
 			case 0x00DC: return "PARAMQRY";
 			case 0x00DE: return "OLESIZE";
 			case BITMAP_00E9: return "BITMAP";
 			case PHONETICPR_00EF: return "PHONETICPR";
+			case 0x00F1: return "SXEX";        // PivotTable View Extended Information
+			case 0x0100: return "SXVDEX";      // Extended PivotTable View Fields
 
 			case LABELRANGES_015F: return "LABELRANGES";
 			case 0x01BA: return "CODENAME";
@@ -145,14 +155,16 @@ public final class UnknownRecord extends StandardRecord {
 
 			case 0x01C0: return "EXCEL9FILE";
 
-			case 0x0802: return "QSISXTAG";
+			case 0x0802: return "QSISXTAG";   // Pivot Table and Query Table Extensions
 			case 0x0803: return "DBQUERYEXT";
 			case 0x0805: return "TXTQUERY";
+			case 0x0810: return "SXVIEWEX9";  // Pivot Table Extensions
 
 			case 0x0812: return "CONTINUEFRT";
 			case QUICKTIP_0800: return "QUICKTIP";
 			case SHEETEXT_0862: return "SHEETEXT";
 			case 0x0863: return "BOOKEXT";
+			case 0x0864: return "SXADDL";    // Pivot Table Additional Info
 			case SHEETPROTECTION_0867: return "SHEETPROTECTION";
 			case RANGEPROTECTION_0868: return "RANGEPROTECTION";
 			case 0x086B: return "DATALABEXTCONTENTS";

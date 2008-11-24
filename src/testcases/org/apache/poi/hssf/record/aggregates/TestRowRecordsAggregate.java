@@ -21,24 +21,30 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.ArrayRecord;
+import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.SharedValueRecordBase;
 import org.apache.poi.hssf.record.TableRecord;
+import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.RecordInspector;
+import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 
 /**
- * 
+ * Tests for {@link RowRecordsAggregate}
  */
 public final class TestRowRecordsAggregate extends TestCase {
 
@@ -112,5 +118,38 @@ public final class TestRowRecordsAggregate extends TestCase {
 		CellRangeAddress8Bit range = ((SharedValueRecordBase)rec).getRange();
 		assertEquals(range.getFirstRow(), firstFormula.getRow());
 		assertEquals(range.getFirstColumn(), firstFormula.getColumn());
+	}
+
+	/**
+	 * This problem was noted as the overt symptom of bug 46280.  The logic for skipping {@link
+	 * UnknownRecord}s in the constructor {@link RowRecordsAggregate} did not allow for the
+	 * possibility of tailing {@link ContinueRecord}s.<br/>
+	 * The functionality change being tested here is actually not critical to the overall fix
+	 * for bug 46280, since the fix involved making sure the that offending <i>PivotTable</i>
+	 * records do not get into {@link RowRecordsAggregate}.<br/>
+	 * This fix in {@link RowRecordsAggregate} was implemented anyway since any {@link 
+	 * UnknownRecord} has the potential of being 'continued'.
+	 */
+	public void testUnknownContinue_bug46280() {
+		Record[] inRecs = {
+			new RowRecord(0),
+			new NumberRecord(),
+			new UnknownRecord(0x5555, "dummydata".getBytes()),
+			new ContinueRecord("moredummydata".getBytes()),
+		};
+		RecordStream rs = new RecordStream(Arrays.asList(inRecs), 0);
+		RowRecordsAggregate rra;
+		try {
+			rra = new RowRecordsAggregate(rs, SharedValueManager.EMPTY);
+		} catch (RuntimeException e) {
+			if (e.getMessage().startsWith("Unexpected record type")) {
+				throw new AssertionFailedError("Identified bug 46280a");
+			}
+			throw e;
+		}
+		RecordCollector rv = new RecordCollector();
+		rra.visitContainedRecords(rv);
+		Record[] outRecs = rv.getRecords();
+		assertEquals(5, outRecs.length);
 	}
 }
