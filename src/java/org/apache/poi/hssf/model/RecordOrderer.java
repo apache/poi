@@ -85,12 +85,12 @@ final class RecordOrderer {
 	 * Adds the specified new record in the correct place in sheet records list
 	 * 
 	 */
-	public static void addNewSheetRecord(List sheetRecords, RecordBase newRecord) {
+	public static void addNewSheetRecord(List<RecordBase> sheetRecords, RecordBase newRecord) {
 		int index = findSheetInsertPos(sheetRecords, newRecord.getClass());
 		sheetRecords.add(index, newRecord);
 	}
 
-	private static int findSheetInsertPos(List records, Class recClass) {
+	private static int findSheetInsertPos(List<RecordBase> records, Class recClass) {
 		if (recClass == DataValidityTable.class) {
 			return findDataValidationTableInsertPos(records);
 		}
@@ -109,7 +109,7 @@ final class RecordOrderer {
 		throw new RuntimeException("Unexpected record class (" + recClass.getName() + ")");
 	}
 
-	private static int getPageBreakRecordInsertPos(List records) {
+	private static int getPageBreakRecordInsertPos(List<RecordBase> records) {
 		int dimensionsIndex = getDimensionsIndex(records);
 		int i = dimensionsIndex-1;
 		while (i > 0) {
@@ -152,7 +152,7 @@ final class RecordOrderer {
 	/**
 	 * Find correct position to add new CFHeader record
 	 */
-	private static int findInsertPosForNewCondFormatTable(List records) {
+	private static int findInsertPosForNewCondFormatTable(List<RecordBase> records) {
 
 		for (int i = records.size() - 2; i >= 0; i--) { // -2 to skip EOF record
 			Object rb = records.get(i);
@@ -175,7 +175,7 @@ final class RecordOrderer {
 		throw new RuntimeException("Did not find Window2 record");
 	}
 
-	private static int findInsertPosForNewMergedRecordTable(List records) {
+	private static int findInsertPosForNewMergedRecordTable(List<RecordBase> records) {
 		for (int i = records.size() - 2; i >= 0; i--) { // -2 to skip EOF record
 			Object rb = records.get(i);
 			if (!(rb instanceof Record)) {
@@ -219,14 +219,14 @@ final class RecordOrderer {
 	 * o RANGEPROTECTION
 	 * + EOF
 	 */
-	private static int findDataValidationTableInsertPos(List records) {
+	private static int findDataValidationTableInsertPos(List<RecordBase> records) {
 		int i = records.size() - 1;
 		if (!(records.get(i) instanceof EOFRecord)) {
 			throw new IllegalStateException("Last sheet record should be EOFRecord");
 		}
 		while (i > 0) {
 			i--;
-			Object rb = records.get(i);
+			RecordBase rb = records.get(i);
 			if (isDVTPriorRecord(rb)) {
 				Record nextRec = (Record) records.get(i + 1);
 				if (!isDVTSubsequentRecord(nextRec.getSid())) {
@@ -245,7 +245,7 @@ final class RecordOrderer {
 	}
 
 
-	private static boolean isDVTPriorRecord(Object rb) {
+	private static boolean isDVTPriorRecord(RecordBase rb) {
 		if (rb instanceof MergedCellsTable || rb instanceof ConditionalFormattingTable) {
 			return true;
 		}
@@ -280,7 +280,7 @@ final class RecordOrderer {
 	/**
 	 * DIMENSIONS record is always present
 	 */
-	private static int getDimensionsIndex(List records) {
+	private static int getDimensionsIndex(List<RecordBase> records) {
 		int nRecs = records.size();
 		for(int i=0; i<nRecs; i++) {
 			if(records.get(i) instanceof DimensionsRecord) {
@@ -291,12 +291,12 @@ final class RecordOrderer {
 		throw new RuntimeException("DimensionsRecord not found");
 	}
 
-	private static int getGutsRecordInsertPos(List records) {
+	private static int getGutsRecordInsertPos(List<RecordBase> records) {
 		int dimensionsIndex = getDimensionsIndex(records);
 		int i = dimensionsIndex-1;
 		while (i > 0) {
 			i--;
-			Object rb = records.get(i);
+			RecordBase rb = records.get(i);
 			if (isGutsPriorRecord(rb)) {
 				return i+1;
 			}
@@ -304,7 +304,7 @@ final class RecordOrderer {
 		throw new RuntimeException("Did not find insert point for GUTS");
 	}
 
-	private static boolean isGutsPriorRecord(Object rb) {
+	private static boolean isGutsPriorRecord(RecordBase rb) {
 		if (rb instanceof Record) {
 			Record record = (Record) rb;
 			switch (record.getSid()) {
@@ -337,6 +337,8 @@ final class RecordOrderer {
 	 */
 	public static boolean isEndOfRowBlock(int sid) {
 		switch(sid) {
+			case UnknownRecord.SXVIEW_00B0:
+				// should have been prefixed with DrawingRecord (0x00EC), but bug 46280 seems to allow this
 			case DrawingRecord.sid:
 			case DrawingSelectionRecord.sid:
 			case ObjRecord.sid:

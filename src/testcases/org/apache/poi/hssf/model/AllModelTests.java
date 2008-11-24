@@ -35,6 +35,7 @@ public final class AllModelTests {
 		result.addTestSuite(TestFormulaParserEval.class);
 		result.addTestSuite(TestFormulaParserIf.class);
 		result.addTestSuite(TestOperandClassTransformer.class);
+		result.addTestSuite(TestRowBlocksReader.class);
 		result.addTestSuite(TestRVA.class);
 		result.addTestSuite(TestSheet.class);
 		result.addTestSuite(TestSheetAdditional.class);
