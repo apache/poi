@@ -28,7 +28,7 @@
     </header>
     <body>
 		<section><title>HSSF and XSSF examples</title>
-      <p>POI comes with a number of examples that demonstrate how you can use POI API to create documents from "real life". 
+      <p>POI 3.5 and later comes with a number of examples that demonstrate how you can use POI API to create documents from "real life". 
         The examples are based on common XSSF-HSSF interfaces so that you can generate either *.xls or *.xlsx output just by setting a command-line argument:
         </p>
         <source>

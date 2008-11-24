@@ -158,7 +158,7 @@ under the License.
   <property name="apache.repository" value="scp://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository"/>
   <property name="snapshots.repository" value="scp://people.apache.org/www/people.apache.org/repo/m2-snapshot-repository/"/>
   <property name="jar.name" value="poi"/>
-  <property name="version.id" value="3.5-beta4"/>
+  <property name="version.id" value="3.5-beta5"/>
   <property name="halt.on.test.failure" value="true"/>
 
   <property name="jdk.version.source" value="1.5"
@@ -984,6 +984,9 @@ FORREST_HOME environment variable!</echo>
         <include name="org/apache/poi/**"/>
       </packageset>
       <packageset dir="${ooxml.src}" defaultexcludes="yes">
+        <include name="org/apache/poi/**"/>
+      </packageset>
+      <packageset dir="${interfaces.jdk15.src}" defaultexcludes="yes">
         <include name="org/apache/poi/**"/>
       </packageset>
 
