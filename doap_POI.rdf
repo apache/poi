@@ -3,32 +3,39 @@
 <rdf:RDF xml:lang="en"
          xmlns="http://usefulinc.com/ns/doap#" 
          xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
-         xmlns:asfext="http:projects.apache.org/ns/asfext#">
-  <Project rdf:about="http://httpd.apache.org/">
+         xmlns:asfext="http://projects.apache.org/ns/asfext#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/">
+  <Project rdf:about="http://poi.apache.org">
     <created>2006-01-26</created>
     <license rdf:resource="http://usefulinc.com/doap/licenses/asl20" />
-    <name>Apache Jakarta POI</name>
-    <homepage rdf:resource="http://jakarta.apache.org/poi/" />
-    <asfext:pmc rdf:resource="http://jakarta.apache.org" />
+    <name>Apache POI</name>
+    <homepage rdf:resource="http://poi.apache.org" />
+    <asfext:pmc rdf:resource="http://poi.apache.org" />
     <shortdesc>Java API To Access Microsoft Format Files</shortdesc>
     <description>APIs for manipulating various file formats based upon Microsoft's OLE 2 Compound Document format using pure Java. POI is your Java Excel solution as well as your Java Word solution. However, we have a complete API for porting other OLE 2 Compound Document formats and welcome others to participate.</description>
     <bug-database rdf:resource="http://issues.apache.org/bugzilla/buglist.cgi?product=POI" />
-    <mailing-list rdf:resource="http://jakarta.apache.org/site/mail2.html#POI" />
-    <download-page rdf:resource="http://www.apache.org/dyn/closer.cgi/jakarta/poi/" />
+    <mailing-list rdf:resource="http://poi.apache.org/mailinglists.html" />
+    <download-page rdf:resource="http://www.apache.org/dyn/closer.cgi/poi/" />
     <programming-language>Java</programming-language>
     <category rdf:resource="http://projects.apache.org/category/library" />
     <release>
       <Version>
-        <name>poi-bin</name>
-        <created>2004-08-04</created>
-        <revision>2.5.1-final-20040804</revision>
+        <name>Apache POI 3.2</name>
+        <created>2008-10-19</created>
+        <revision>3.2</revision>
       </Version>
     </release>
     <repository>
       <SVNRepository>
-        <location rdf:resource="http://svn.apache.org/repos/asf/jakarta/poi"/>
-        <browse rdf:resource="http://svn.apache.org/viewvc/jakarta/poi/"/>
+        <location rdf:resource="http://svn.apache.org/repos/asf/poi/"/>
+        <browse rdf:resource="http://svn.apache.org/viewvc/poi/"/>
       </SVNRepository>
     </repository>
+   <maintainer>
+      <foaf:Person>
+        <foaf:name>Yegor Kozlov</foaf:name>
+          <foaf:mbox rdf:resource="mailto:yegor@apache.org"/>
+      </foaf:Person>
+    </maintainer>
   </Project>
 </rdf:RDF>

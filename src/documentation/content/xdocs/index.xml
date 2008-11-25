@@ -165,8 +165,75 @@
 	    href="./hpbf/index.html">the HPBF project page for more
 	    information</link>.</p>
         </section>
+     <section><title>Component map</title>
+       <p>
+         The POI distribution consists of several JAR files. Not all of them are needed in every case. The following table
+         shows the relationships between POI components and the JAR files. 
+       </p>
+        <table>
+          <tr>
+            <th>Component</th>
+            <th>JAR</th>
+            <th>Maven artifactId</th>
+            <th>Comment</th>
+          </tr>
+          <tr>
+            <td><link href="./poifs/index.html">POIFS</link></td>
+            <td>poi-version-yyymmdd.jar</td>
+            <td>poi</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><link href="./hpsf/index.html">HPSF</link></td>
+            <td>poi-version-yyymmdd.jar</td>
+            <td>poi</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><link href="./spreadsheet/index.html">HSSF</link></td>
+            <td>poi-version-yyymmdd.jar</td>
+            <td>poi</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><link href="./spreadsheet/index.html">XSSF</link></td>
+            <td>poi-ooxml-version-yyymmdd.jar</td>
+            <td>poi-ooxml</td>
+            <td>since 3.5-beta4</td>
+          </tr>
+          <tr>
+            <td><link href="./slideshow/index.html">HLSF</link></td>
+            <td>poi-scratchpad-version-yyymmdd.jar</td>
+            <td>poi-scratchpad</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><link href="./hwpf/index.html">HWPF</link></td>
+            <td>poi-scratchpad-version-yyymmdd.jar</td>
+            <td>poi-scratchpad</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><link href="./hdgf/index.html">HDGF</link></td>
+            <td>poi-scratchpad-version-yyymmdd.jar</td>
+            <td>poi-scratchpad</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><link href="./hpbf/index.html">HPBF</link></td>
+            <td>poi-scratchpad-version-yyymmdd.jar</td>
+            <td>poi-scratchpad</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><link href="./hsmf/index.html">HSMF</link></td>
+            <td>poi-scratchpad-version-yyymmdd.jar</td>
+            <td>poi-scratchpad</td>
+            <td></td>
+          </tr>
+        </table>
      </section>
-
+     </section>
     <section><title>Contributing </title>
         <p>
 		So you'd like to contribute to the project? Great! We need enthusiastic, hard-working, talented folks to help
