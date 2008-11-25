@@ -261,6 +261,7 @@ public class XSSFRichTextString implements RichTextString {
             if(c1.isSetTheme()) c2.setTheme(c1.getTheme());
             if(c1.isSetTint()) c2.setTint(c1.getTint());
         }
+        if(ctFont.sizeOfSzArray() > 0) pr.addNewSz().setVal(ctFont.getSzArray(0).getVal());
         if(ctFont.sizeOfNameArray() > 0) pr.addNewRFont().setVal(ctFont.getNameArray(0).getVal());
         if(ctFont.sizeOfFamilyArray() > 0) pr.addNewFamily().setVal(ctFont.getFamilyArray(0).getVal());
         if(ctFont.sizeOfSchemeArray() > 0) pr.addNewScheme().setVal(ctFont.getSchemeArray(0).getVal());
