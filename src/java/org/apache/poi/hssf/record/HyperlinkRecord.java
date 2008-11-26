@@ -628,7 +628,7 @@ public final class HyperlinkRecord extends StandardRecord {
         if ((_linkOpts & HLINK_TARGET_FRAME) != 0) {
             buffer.append("    .targetFrame= ").append(getTargetFrame()).append("\n");
         }
-        if((_linkOpts & HLINK_URL) != 0) {
+        if((_linkOpts & HLINK_URL) != 0 && _moniker != null) {
             buffer.append("    .moniker   = ").append(_moniker.formatAsString()).append("\n");
         }
         if ((_linkOpts & HLINK_PLACE) != 0) {
