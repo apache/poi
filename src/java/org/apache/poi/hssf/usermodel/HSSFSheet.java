@@ -377,22 +377,6 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
        DVRecord dvRecord = dataValidation.createDVRecord(workbook);
        dvt.addDataValidation(dvRecord);
     }
-    
-    /**
-     * Get the DVRecords objects that are associated to this sheet
-     * @return a list of DVRecord instances
-     */
-    public List getDVRecords() {
-        List dvRecords = new ArrayList();
-        List records = sheet.getRecords();
-        
-        for(int index=0; index<records.size(); index++) {
-           if(records.get(index) instanceof DVRecord) {
-               dvRecords.add(records.get(index));
-           }
-        }
-        return dvRecords;
-    }
 
 
     /**
