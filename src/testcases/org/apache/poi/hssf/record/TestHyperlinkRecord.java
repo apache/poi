@@ -435,6 +435,11 @@ public final class TestHyperlinkRecord extends TestCase {
 		HyperlinkRecord hr = new HyperlinkRecord(in);
 		byte[] ser = hr.serialize();
 		TestcaseRecordInputStream.confirmRecordEncoding(HyperlinkRecord.sid, dataUNC, ser);
+		try {
+			hr.toString();
+		} catch (NullPointerException e) {
+			throw new AssertionFailedError("Identified bug with option URL and UNC set at same time");
+		}
 	}
 	
 	public void testGUID() {
