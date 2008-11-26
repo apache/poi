@@ -32,6 +32,7 @@ import java.util.List;
 
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.chart.*;
+import org.apache.poi.hssf.record.pivottable.*;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
@@ -59,7 +60,7 @@ public final class BiffViewer {
 	 */
 	public static Record[] createRecords(InputStream is, PrintStream ps, BiffRecordListener recListener, boolean dumpInterpretedRecords)
 			throws RecordFormatException {
-		ArrayList temp = new ArrayList();
+		List<Record> temp = new ArrayList<Record>();
 
 		RecordInputStream recStream = new RecordInputStream(is);
 		while (recStream.hasNextRecord()) {
@@ -210,6 +211,7 @@ public final class BiffViewer {
 			case StyleRecord.sid:          return new StyleRecord(in);
 			case SupBookRecord.sid:        return new SupBookRecord(in);
 			case TabIdRecord.sid:          return new TabIdRecord(in);
+			case TableStylesRecord.sid:    return new TableStylesRecord(in);
 			case TableRecord.sid:          return new TableRecord(in);
 			case TextObjectRecord.sid:     return new TextObjectRecord(in);
 			case TextRecord.sid:           return new TextRecord(in);
@@ -225,65 +227,160 @@ public final class BiffViewer {
 			case WindowProtectRecord.sid:  return new WindowProtectRecord(in);
 			case WindowTwoRecord.sid:      return new WindowTwoRecord(in);
 			case WriteAccessRecord.sid:    return new WriteAccessRecord(in);
-			case WriteProtectRecord.sid:   return new WriteProtectRecord(in);        
-		
+			case WriteProtectRecord.sid:   return new WriteProtectRecord(in);
+
+			// chart
+			case CatLabRecord.sid:         return new CatLabRecord(in);
+			case ChartEndBlockRecord.sid:  return new ChartEndBlockRecord(in);
+			case ChartEndObjectRecord.sid: return new ChartEndObjectRecord(in);
+			case ChartFRTInfoRecord.sid:   return new ChartFRTInfoRecord(in);
+			case ChartStartBlockRecord.sid: return new ChartStartBlockRecord(in);
+			case ChartStartObjectRecord.sid: return new ChartStartObjectRecord(in);
+
+			// pivot table
+			case StreamIDRecord.sid:        return new StreamIDRecord(in);
+			case ViewSourceRecord.sid:      return new ViewSourceRecord(in);
+			case PageItemRecord.sid:        return new PageItemRecord(in);
+			case ViewDefinitionRecord.sid:  return new ViewDefinitionRecord(in);
+			case ViewFieldsRecord.sid:      return new ViewFieldsRecord(in);
+			case DataItemRecord.sid:        return new DataItemRecord(in);
+			case ExtendedPivotTableViewFieldsRecord.sid: return new ExtendedPivotTableViewFieldsRecord(in);
 		}
 		return new UnknownRecord(in);
+	}
+
+	private static final class CommandArgs {
+
+		private final boolean _biffhex;
+		private final boolean _noint;
+		private final boolean _out;
+		private final boolean _rawhex;
+		private final File _file;
+
+		private CommandArgs(boolean biffhex, boolean noint, boolean out, boolean rawhex, File file) {
+			_biffhex = biffhex;
+			_noint = noint;
+			_out = out;
+			_rawhex = rawhex;
+			_file = file;
+		}
+
+		public static CommandArgs parse(String[] args) throws CommandParseException {
+			int nArgs = args.length;
+			boolean biffhex = false;
+			boolean noint = false;
+			boolean out = false;
+			boolean rawhex = false;
+			File file = null;
+			for (int i=0; i<nArgs; i++) {
+				String arg = args[i];
+				if (arg.startsWith("--")) {
+					if ("--biffhex".equals(arg)) {
+						biffhex = true;
+					} else if ("--noint".equals(arg)) {
+						noint = true;
+					} else if ("--out".equals(arg)) {
+						out = true;
+					} else if ("--rawhex".equals(arg)) {
+						rawhex = true;
+					} else {
+						throw new CommandParseException("Unexpected option '" + arg + "'");
+					}
+					continue;
+				}
+				file = new File(arg);
+				if (!file.exists()) {
+					throw new CommandParseException("Specified file '" + arg + "' does not exist");
+				}
+				if (i+1<nArgs) {
+					throw new CommandParseException("File name must be the last arg");
+				}
+			}
+			if (file == null) {
+				throw new CommandParseException("Biff viewer needs a filename");
+			}
+			return new CommandArgs(biffhex, noint, out, rawhex, file);
+		}
+		public boolean shouldDumpBiffHex() {
+			return _biffhex;
+		}
+		public boolean shouldDumpRecordInterpretations() {
+			return !_noint;
+		}
+		public boolean shouldOutputToFile() {
+			return _out;
+		}
+		public boolean shouldOutputRawHexOnly() {
+			return _rawhex;
+		}
+		public File getFile() {
+			return _file;
+		}
+	}
+	private static final class CommandParseException extends Exception {
+		public CommandParseException(String msg) {
+			super(msg);
+		}
 	}
 
 	/**
 	 * Method main with 1 argument just run straight biffview against given
 	 * file<P>
 	 *
-	 * with 2 arguments where the second argument is "on" - run biffviewer<P>
+	 * <b>Usage</b>:<br/>
 	 *
-	 * with hex dumps of records <P>
+	 * BiffViewer [--biffhex] [--noint] [--out] &lt;fileName&gt; <br/>
+	 * BiffViewer --rawhex  [--out] &lt;fileName&gt; <br/>
+	 * <br/>
 	 *
-	 * with 2 arguments where the second argument is "bfd" just run a big fat
-	 * hex dump of the file...don't worry about biffviewing it at all
-	 * <p>
+	 * <table>
+	 * <tr><td>--biffhex</td><td>show hex dump of each BIFF record</td></tr>
+	 * <tr><td>--noint</td><td>do not output interpretation of BIFF records</td></tr>
+	 * <tr><td>--out</td><td>send output to &lt;fileName&gt;.out</td></tr>
+	 * <tr><td>--rawhex</td><td>output raw hex dump of whole workbook stream</td></tr>
+	 * </table>
+	 *
 	 * Define the system property <code>poi.deserialize.escher</code> to turn on
 	 * deserialization of escher records.
 	 *
 	 */
 	public static void main(String[] args) {
 
-		System.setProperty("poi.deserialize.escher", "true");
-
-		if (args.length == 0) {
-			System.out.println( "Biff viewer needs a filename" );
+		CommandArgs cmdArgs;
+		try {
+			cmdArgs = CommandArgs.parse(args);
+		} catch (CommandParseException e) {
+			e.printStackTrace();
 			return;
 		}
 
+		System.setProperty("poi.deserialize.escher", "true");
+
+
 		try {
-			String inFileName = args[0];
-			File inputFile = new File(inFileName);
-			if(!inputFile.exists()) {
-				throw new RuntimeException("specified inputFile '" + inFileName + "' does not exist");
-			}
+
 			PrintStream ps;
-			if (false) { // set to true to output to file
-				OutputStream os = new FileOutputStream(inFileName + ".out");
+			if (cmdArgs.shouldOutputToFile()) {
+				OutputStream os = new FileOutputStream(cmdArgs.getFile().getAbsolutePath() + ".out");
 				ps = new PrintStream(os);
 			} else {
 				ps = System.out;
 			}
- 
-			if (args.length > 1 && args[1].equals("bfd")) {
-				POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(inputFile));
-				InputStream stream = fs.createDocumentInputStream("Workbook");
-				int size = stream.available();
+
+			POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(cmdArgs.getFile()));
+			InputStream is = fs.createDocumentInputStream("Workbook");
+
+			if (cmdArgs.shouldOutputRawHexOnly()) {
+				int size = is.available();
 				byte[] data = new byte[size];
 
-				stream.read(data);
+				is.read(data);
 				HexDump.dump(data, 0, System.out, 0);
 			} else {
-				boolean dumpInterpretedRecords = true;
-				boolean dumpHex = args.length > 1 && args[1].equals("on");
-
-				POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(inputFile));
-				InputStream is = fs.createDocumentInputStream("Workbook");
-				BiffRecordListener recListener = new BiffRecordListener(dumpHex ? new OutputStreamWriter(ps) : null);
+				boolean dumpInterpretedRecords = cmdArgs.shouldDumpRecordInterpretations();
+				boolean dumpHex = cmdArgs.shouldDumpBiffHex();
+				boolean zeroAlignHexDump = dumpInterpretedRecords;
+				BiffRecordListener recListener = new BiffRecordListener(dumpHex ? new OutputStreamWriter(ps) : null, zeroAlignHexDump);
 				is = new BiffDumpingStream(is, recListener);
 				createRecords(is, ps, recListener, dumpInterpretedRecords);
 			}
@@ -295,10 +392,12 @@ public final class BiffViewer {
 
 	private static final class BiffRecordListener implements IBiffRecordListener {
 		private final Writer _hexDumpWriter;
-		private final List _headers;
-		public BiffRecordListener(Writer hexDumpWriter) {
+		private final List<String> _headers;
+		private final boolean _zeroAlignEachRecord;
+		public BiffRecordListener(Writer hexDumpWriter, boolean zeroAlignEachRecord) {
 			_hexDumpWriter = hexDumpWriter;
-			_headers = new ArrayList();
+			_zeroAlignEachRecord = zeroAlignEachRecord;
+			_headers = new ArrayList<String>();
 		}
 
 		public void processRecord(int globalOffset, int recordCounter, int sid, int dataSize,
@@ -310,7 +409,7 @@ public final class BiffViewer {
 				try {
 					w.write(header);
 					w.write(NEW_LINE_CHARS);
-					hexDumpAligned(w, data, 0, dataSize+4, globalOffset);
+					hexDumpAligned(w, data, dataSize+4, globalOffset, _zeroAlignEachRecord);
 					w.flush();
 				} catch (IOException e) {
 					throw new RuntimeException(e);
@@ -332,11 +431,11 @@ public final class BiffViewer {
 			return sb.toString();
 		}
 	}
-	
+
 	private static interface IBiffRecordListener {
 
 		void processRecord(int globalOffset, int recordCounter, int sid, int dataSize, byte[] data);
-		
+
 	}
 
 	/**
@@ -352,7 +451,7 @@ public final class BiffViewer {
 		private int _currentPos;
 		private int _currentSize;
 		private boolean _innerHasReachedEOF;
-		
+
 		public BiffDumpingStream(InputStream is, IBiffRecordListener listener) {
 			_is = new DataInputStream(is);
 			_listener = listener;
@@ -431,33 +530,40 @@ public final class BiffViewer {
 			_is.close();
 		}
 	}
-	
+
 	private static final int DUMP_LINE_LEN = 16;
 	private static final char[] COLUMN_SEPARATOR = " | ".toCharArray();
 	/**
-	 * Hex-dumps a portion of a byte array in typical format, also preserving dump-line alignment  
-	 * @param globalOffset (somewhat arbitrary) used to calculate the addresses printed at the 
-	 * start of each line 
+	 * Hex-dumps a portion of a byte array in typical format, also preserving dump-line alignment
+	 * @param globalOffset (somewhat arbitrary) used to calculate the addresses printed at the
+	 * start of each line
 	 */
-	static void hexDumpAligned(Writer w, byte[] data, int baseDataOffset, int dumpLen, int globalOffset) {
+	static void hexDumpAligned(Writer w, byte[] data, int dumpLen, int globalOffset,
+			boolean zeroAlignEachRecord) {
+		int baseDataOffset = 0;
+
 		// perhaps this code should be moved to HexDump
 		int globalStart = globalOffset + baseDataOffset;
 		int globalEnd = globalOffset + baseDataOffset + dumpLen;
 		int startDelta = globalStart % DUMP_LINE_LEN;
 		int endDelta = globalEnd % DUMP_LINE_LEN;
+		if (zeroAlignEachRecord) {
+			startDelta = 0;
+			endDelta = 0;
+		}
 		int startLineAddr = globalStart - startDelta;
 		int endLineAddr = globalEnd - endDelta;
-		
+
 		int lineDataOffset = baseDataOffset - startDelta;
 		int lineAddr = startLineAddr;
-		
+
 		// output (possibly incomplete) first line
 		if (startLineAddr == endLineAddr) {
 			hexDumpLine(w, data, lineAddr, lineDataOffset, startDelta, endDelta);
 			return;
 		}
 		hexDumpLine(w, data, lineAddr, lineDataOffset, startDelta, DUMP_LINE_LEN);
-		
+
 		// output all full lines in the middle
 		while (true) {
 			lineAddr += DUMP_LINE_LEN;
@@ -467,8 +573,8 @@ public final class BiffViewer {
 			}
 			hexDumpLine(w, data, lineAddr, lineDataOffset, 0, DUMP_LINE_LEN);
 		}
-		
-		
+
+
 		// output (possibly incomplete) last line
 		if (endDelta != 0) {
 			hexDumpLine(w, data, lineAddr, lineDataOffset, 0, endDelta);
@@ -528,4 +634,3 @@ public final class BiffViewer {
 		w.write(buf);
 	}
 }
-

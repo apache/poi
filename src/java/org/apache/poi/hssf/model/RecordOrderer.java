@@ -66,6 +66,7 @@ import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.aggregates.MergedCellsTable;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
+import org.apache.poi.hssf.record.pivottable.ViewDefinitionRecord;
 
 /**
  * Finds correct insert positions for records in workbook streams<p/>
@@ -337,7 +338,7 @@ final class RecordOrderer {
 	 */
 	public static boolean isEndOfRowBlock(int sid) {
 		switch(sid) {
-			case UnknownRecord.SXVIEW_00B0:
+			case ViewDefinitionRecord.sid:
 				// should have been prefixed with DrawingRecord (0x00EC), but bug 46280 seems to allow this
 			case DrawingRecord.sid:
 			case DrawingSelectionRecord.sid:
@@ -378,7 +379,6 @@ final class RecordOrderer {
 			case SharedFormulaRecord.sid:
 			case TableRecord.sid:
 				return true;
-				
 		}
 		return false;
 	}

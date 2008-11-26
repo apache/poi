@@ -141,6 +141,25 @@ public class StringUtil {
 		return readUnicodeLE(in, nChars);
 	}
 	/**
+	 * InputStream <tt>in</tt> is expected to contain:
+	 * <ol>
+	 * <li>byte is16BitFlag</li>
+	 * <li>byte[]/char[] characterData</li>
+	 * </ol>
+	 * For this encoding, the is16BitFlag is always present even if nChars==0.
+	 * <br/>
+	 * This method should be used when the nChars field is <em>not</em> stored 
+	 * as a ushort immediately before the is16BitFlag. Otherwise, {@link 
+	 * #readUnicodeString(LittleEndianInput)} can be used. 
+	 */
+	public static String readUnicodeString(LittleEndianInput in, int nChars) {
+		byte is16Bit = in.readByte();
+		if ((is16Bit & 0x01) == 0) {
+			return readCompressedUnicode(in, nChars);
+		}
+		return readUnicodeLE(in, nChars);		
+	}	
+	/**
 	 * OutputStream <tt>out</tt> will get:
 	 * <ol>
 	 * <li>ushort nChars</li>
@@ -161,7 +180,28 @@ public class StringUtil {
 			putCompressedUnicode(value, out);
 		}
 	}
-
+	/**
+	 * OutputStream <tt>out</tt> will get:
+	 * <ol>
+	 * <li>byte is16BitFlag</li>
+	 * <li>byte[]/char[] characterData</li>
+	 * </ol>
+	 * For this encoding, the is16BitFlag is always present even if nChars==0.
+	 * <br/>
+	 * This method should be used when the nChars field is <em>not</em> stored 
+	 * as a ushort immediately before the is16BitFlag. Otherwise, {@link 
+	 * #writeUnicodeString(LittleEndianOutput, String)} can be used. 
+	 */
+	public static void writeUnicodeStringFlagAndData(LittleEndianOutput out, String value) {		
+		boolean is16Bit = hasMultibyte(value);
+		out.writeByte(is16Bit ? 0x01 : 0x00);
+		if (is16Bit) {
+			putUnicodeLE(value, out);
+		} else {
+			putCompressedUnicode(value, out);
+		}
+	}
+	
 	/**
 	 * @return the number of bytes that would be written by {@link #writeUnicodeString(LittleEndianOutput, String)}
 	 */
