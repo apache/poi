@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.poi.hssf.record.chart.*;
+import org.apache.poi.hssf.record.pivottable.*;
 
 /**
  * Title:  Record Factory<P>
@@ -51,7 +52,8 @@ public final class RecordFactory {
 	 * contains the classes for all the records we want to parse.<br/>
 	 * Note - this most but not *every* subclass of Record.
 	 */
-	private static final Class[] recordClasses = {
+	@SuppressWarnings("unchecked")
+	private static final Class<? extends Record>[] recordClasses = new Class[] {
 		ArrayRecord.class,
 		BackupRecord.class,
 		BlankRecord.class,
@@ -148,6 +150,7 @@ public final class RecordFactory {
 		SupBookRecord.class,
 		TabIdRecord.class,
 		TableRecord.class,
+		TableStylesRecord.class,
 		TextObjectRecord.class,
 		TopMarginRecord.class,
 		UncalcedRecord.class,
@@ -161,18 +164,26 @@ public final class RecordFactory {
 		WriteProtectRecord.class,
 		WSBoolRecord.class,
 		
-		LinkedDataRecord.class,
-		
+		// chart records
+		BeginRecord.class,
 		ChartFRTInfoRecord.class,
 		ChartStartBlockRecord.class,
 		ChartEndBlockRecord.class,
 		ChartStartObjectRecord.class,
 		ChartEndObjectRecord.class,
 		CatLabRecord.class,
-		
-		BeginRecord.class,
 		EndRecord.class,
+		LinkedDataRecord.class,
 		SeriesToChartGroupRecord.class,
+		
+		// pivot table records
+		DataItemRecord.class,
+		ExtendedPivotTableViewFieldsRecord.class,
+		PageItemRecord.class,
+		StreamIDRecord.class,
+		ViewDefinitionRecord.class, 
+		ViewFieldsRecord.class,
+		ViewSourceRecord.class,
 	};
 	
 	/**
@@ -291,7 +302,7 @@ public final class RecordFactory {
  			_allKnownRecordSIDs = results;
 		}
 
-		return (short[]) _allKnownRecordSIDs.clone();
+		return _allKnownRecordSIDs.clone();
 	}
 
 	/**
@@ -299,13 +310,13 @@ public final class RecordFactory {
 	 * @return map of SIDs to short,short,byte[] constructors for Record classes
 	 * most of org.apache.poi.hssf.record.*
 	 */
-	private static Map recordsToMap(Class [] records) {
-		Map result = new HashMap();
-		Set uniqueRecClasses = new HashSet(records.length * 3 / 2);
+	private static Map<Short, Constructor<? extends Record>> recordsToMap(Class<? extends Record> [] records) {
+		Map<Short, Constructor<? extends Record>> result = new HashMap<Short, Constructor<? extends Record>>();
+		Set<Class<?>> uniqueRecClasses = new HashSet<Class<?>>(records.length * 3 / 2);
 
 		for (int i = 0; i < records.length; i++) {
 
-			Class recClass = records[ i ];
+			Class<? extends Record> recClass = records[ i ];
 			if(!Record.class.isAssignableFrom(recClass)) {
 				throw new RuntimeException("Invalid record sub-class (" + recClass.getName() + ")");
 			}
@@ -317,7 +328,7 @@ public final class RecordFactory {
 			}
 			
 			short sid;
-			Constructor constructor;
+			Constructor<? extends Record> constructor;
 			try {
 				sid		 = recClass.getField("sid").getShort(null);
 				constructor = recClass.getConstructor(CONSTRUCTOR_ARGS);
@@ -327,7 +338,7 @@ public final class RecordFactory {
 			}
 			Short key = new Short(sid);
 			if (result.containsKey(key)) {
-				Class prev = (Class)result.get(key);
+				Class prev = result.get(key).getDeclaringClass();
 				throw new RuntimeException("duplicate record sid 0x" + Integer.toHexString(sid).toUpperCase()
 						+ " for classes (" + recClass.getName() + ") and (" + prev.getName() + ")");
 			}
@@ -347,7 +358,7 @@ public final class RecordFactory {
 	 */
 	public static List createRecords(InputStream in) throws RecordFormatException {
 
-		List records = new ArrayList(NUM_RECORDS);
+		List<Record> records = new ArrayList<Record>(NUM_RECORDS);
 
 		RecordInputStream recStream = new RecordInputStream(in);
 		DrawingRecord lastDrawingRecord = new DrawingRecord( );
@@ -401,7 +412,7 @@ public final class RecordFactory {
 				} else if (lastRecord instanceof EOFRecord) {
 					// This is really odd, but excel still sometimes
 					//  outputs a file like this all the same
-		            records.add(record);
+					records.add(record);
 				} else {
 					throw new RecordFormatException("Unhandled Continue Record");
 				}
@@ -416,7 +427,7 @@ public final class RecordFactory {
 		return records;
 	}
 
-	private static void addAll(List destList, Record[] srcRecs) {
+	private static void addAll(List<Record> destList, Record[] srcRecs) {
 		for (int i = 0; i < srcRecs.length; i++) {
 			destList.add(srcRecs[i]);
 		}

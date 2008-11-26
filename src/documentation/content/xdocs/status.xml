@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.5-beta5" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">46301 - added pivot table records: SXDI, SXVDEX, SXPI, SXIDSTM, SXVIEW, SXVD, SXVS, et al</action>
            <action dev="POI-DEVELOPERS" type="fix">46280 - Fixed RowRecordsAggregate etc to properly skip PivotTable records</action>
         </release>
         <release version="3.5-beta4" date="2008-11-29">

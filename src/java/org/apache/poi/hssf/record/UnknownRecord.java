@@ -39,7 +39,6 @@ public final class UnknownRecord extends StandardRecord {
 	public static final int SHEETPR_0081         = 0x0081;
 	public static final int STANDARDWIDTH_0099   = 0x0099;
 	public static final int SCL_00A0             = 0x00A0;
-	public static final int SXVIEW_00B0          = 0x00B0;
 	public static final int BITMAP_00E9          = 0x00E9;
 	public static final int PHONETICPR_00EF      = 0x00EF;
 	public static final int LABELRANGES_015F     = 0x015F;
@@ -122,21 +121,19 @@ public final class UnknownRecord extends StandardRecord {
 		// this method any time a new Record subclass is created.
 		switch (sid) {
 			case PLS_004D: return "PLS";
-			case 0x0050: return "DCON";
+			case 0x0050: return "DCON"; // Data Consolidation Information
 			case 0x007F: return "IMDATA";
 			case SHEETPR_0081: return "SHEETPR";
-			case 0x0090: return "SORT";
-			case 0x0094: return "LHRECORD";
-			case STANDARDWIDTH_0099: return "STANDARDWIDTH";
-			case 0x009D: return "AUTOFILTERINFO";
-			case SCL_00A0:     return "SCL";
-			case 0x00AE: return "SCENMAN";
-			case SXVIEW_00B0: return "SXVIEW"; // (pivot table) View Definition
-			case 0x00B1: return "SXVD";        // (pivot table) View Fields
+			case 0x0090: return "SORT"; // Sorting Options
+			case 0x0094: return "LHRECORD"; // .WK? File Conversion Information
+			case STANDARDWIDTH_0099: return "STANDARDWIDTH"; //Standard Column Width
+			case 0x009D: return "AUTOFILTERINFO"; // Drop-Down Arrow Count
+			case SCL_00A0: return "SCL"; // Window Zoom Magnification
+			case 0x00AE: return "SCENMAN"; // Scenario Output Data
+
 			case 0x00B2: return "SXVI";        // (pivot table) View Item
 			case 0x00B4: return "SXIVD";       // (pivot table) Row/Column Field IDs
 			case 0x00B5: return "SXLI";        // (pivot table) Line Item Array
-			case 0x00C5: return "SXDI";        // (pivot table) Data Item
 			
 			case 0x00D3: return "OBPROJ";
 			case 0x00DC: return "PARAMQRY";
@@ -144,7 +141,6 @@ public final class UnknownRecord extends StandardRecord {
 			case BITMAP_00E9: return "BITMAP";
 			case PHONETICPR_00EF: return "PHONETICPR";
 			case 0x00F1: return "SXEX";        // PivotTable View Extended Information
-			case 0x0100: return "SXVDEX";      // Extended PivotTable View Fields
 
 			case LABELRANGES_015F: return "LABELRANGES";
 			case 0x01BA: return "CODENAME";
@@ -178,7 +174,6 @@ public final class UnknownRecord extends StandardRecord {
 			case 0x088B: return "PLV";
 			case 0x088C: return "COMPAT12";
 			case 0x088D: return "DXF";
-			case 0x088E: return "TABLESTYLES";
 			case 0x0892: return "STYLEEXT";
 			case 0x0896: return "THEME";
 			case 0x0897: return "GUIDTYPELIB";
