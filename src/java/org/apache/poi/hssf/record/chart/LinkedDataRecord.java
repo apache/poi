@@ -28,14 +28,14 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Describes a linked data record.  This record refers to the series data or text.<p/>
- * 
+ *
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class LinkedDataRecord extends StandardRecord {
     public final static short sid  = 0x1051;
 
     private static final BitField customNumberFormat= BitFieldFactory.getInstance(0x1);
-    
+
     private  byte       field_1_linkType;
     public final static byte        LINK_TYPE_TITLE_OR_TEXT        = 0;
     public final static byte        LINK_TYPE_VALUES               = 1;
@@ -63,44 +63,34 @@ public final class LinkedDataRecord extends StandardRecord {
         field_3_options                = in.readShort();
         field_4_indexNumberFmtRecord   = in.readShort();
         int encodedTokenLen = in.readUShort();
-		field_5_formulaOfLink = Formula.read(encodedTokenLen, in);
+        field_5_formulaOfLink = Formula.read(encodedTokenLen, in);
     }
 
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[AI]\n");
-        buffer.append("    .linkType             = ")
-            .append("0x").append(HexDump.toHex(  getLinkType ()))
-            .append(" (").append( getLinkType() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-        buffer.append("    .referenceType        = ")
-            .append("0x").append(HexDump.toHex(  getReferenceType ()))
-            .append(" (").append( getReferenceType() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-        buffer.append("    .options              = ")
-            .append("0x").append(HexDump.toHex(  getOptions ()))
-            .append(" (").append( getOptions() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-        buffer.append("         .customNumberFormat       = ").append(isCustomNumberFormat()).append('\n'); 
-        buffer.append("    .indexNumberFmtRecord = ")
-            .append("0x").append(HexDump.toHex(  getIndexNumberFmtRecord ()))
-            .append(" (").append( getIndexNumberFmtRecord() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-        buffer.append("    .formulaOfLink        = ")
-            .append(" (").append( getFormulaOfLink() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append("    .linkType             = ").append(HexDump.byteToHex(getLinkType())).append('\n');
+        buffer.append("    .referenceType        = ").append(HexDump.byteToHex(getReferenceType())).append('\n');
+        buffer.append("    .options              = ").append(HexDump.shortToHex(getOptions())).append('\n');
+        buffer.append("    .customNumberFormat   = ").append(isCustomNumberFormat()).append('\n');
+        buffer.append("    .indexNumberFmtRecord = ").append(HexDump.shortToHex(getIndexNumberFmtRecord())).append('\n');
+        buffer.append("    .formulaOfLink        = ").append('\n');
+        Ptg[] ptgs = field_5_formulaOfLink.getTokens();
+        for (int i = 0; i < ptgs.length; i++) {
+            Ptg ptg = ptgs[i];
+            buffer.append(ptg.toString()).append(ptg.getRVAType()).append('\n');
+        }
 
         buffer.append("[/AI]\n");
         return buffer.toString();
     }
 
     public void serialize(LittleEndianOutput out) {
-    	out.writeByte(field_1_linkType);
-    	out.writeByte(field_2_referenceType);
-    	out.writeShort(field_3_options);
-    	out.writeShort(field_4_indexNumberFmtRecord);
+        out.writeByte(field_1_linkType);
+        out.writeByte(field_2_referenceType);
+        out.writeShort(field_3_options);
+        out.writeShort(field_4_indexNumberFmtRecord);
         field_5_formulaOfLink.serialize(out);
     }
 
@@ -114,7 +104,7 @@ public final class LinkedDataRecord extends StandardRecord {
 
     public Object clone() {
         LinkedDataRecord rec = new LinkedDataRecord();
-    
+
         rec.field_1_linkType = field_1_linkType;
         rec.field_2_referenceType = field_2_referenceType;
         rec.field_3_options = field_3_options;
@@ -129,7 +119,7 @@ public final class LinkedDataRecord extends StandardRecord {
     /**
      * Get the link type field for the LinkedData record.
      *
-     * @return  One of 
+     * @return  One of
      *        LINK_TYPE_TITLE_OR_TEXT
      *        LINK_TYPE_VALUES
      *        LINK_TYPE_CATEGORIES
@@ -143,7 +133,7 @@ public final class LinkedDataRecord extends StandardRecord {
      * Set the link type field for the LinkedData record.
      *
      * @param field_1_linkType
-     *        One of 
+     *        One of
      *        LINK_TYPE_TITLE_OR_TEXT
      *        LINK_TYPE_VALUES
      *        LINK_TYPE_CATEGORIES
@@ -156,7 +146,7 @@ public final class LinkedDataRecord extends StandardRecord {
     /**
      * Get the reference type field for the LinkedData record.
      *
-     * @return  One of 
+     * @return  One of
      *        REFERENCE_TYPE_DEFAULT_CATEGORIES
      *        REFERENCE_TYPE_DIRECT
      *        REFERENCE_TYPE_WORKSHEET
@@ -172,7 +162,7 @@ public final class LinkedDataRecord extends StandardRecord {
      * Set the reference type field for the LinkedData record.
      *
      * @param field_2_referenceType
-     *        One of 
+     *        One of
      *        REFERENCE_TYPE_DEFAULT_CATEGORIES
      *        REFERENCE_TYPE_DIRECT
      *        REFERENCE_TYPE_WORKSHEET
