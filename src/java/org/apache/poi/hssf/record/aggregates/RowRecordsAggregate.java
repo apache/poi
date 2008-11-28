@@ -28,6 +28,7 @@ import org.apache.poi.hssf.record.ArrayRecord;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.DBCellRecord;
+import org.apache.poi.hssf.record.DimensionsRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.IndexRecord;
 import org.apache.poi.hssf.record.MergeCellsRecord;
@@ -486,5 +487,13 @@ public final class RowRecordsAggregate extends RecordAggregate {
 	}
 	public void updateFormulasAfterRowShift(FormulaShifter formulaShifter, int currentExternSheetIndex) {
 		_valuesAgg.updateFormulasAfterRowShift(formulaShifter, currentExternSheetIndex);
+	}
+	public DimensionsRecord createDimensions() {
+		DimensionsRecord result = new DimensionsRecord();
+		result.setFirstRow(_firstrow);
+		result.setLastRow(_lastrow);
+		result.setFirstCol((short) _valuesAgg.getFirstCellNum());
+		result.setLastCol((short) _valuesAgg.getLastCellNum());
+		return result;
 	}
 }
