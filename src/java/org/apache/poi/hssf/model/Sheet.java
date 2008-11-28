@@ -93,7 +93,6 @@ import org.apache.poi.util.POILogger;
  *
  * @see org.apache.poi.hssf.model.Workbook
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
- * @version 1.0-pre
  */
 public final class Sheet implements Model {
     public static final short   LeftMargin = 0;
@@ -103,7 +102,7 @@ public final class Sheet implements Model {
 
     private static POILogger            log              = POILogFactory.getLogger(Sheet.class);
 
-    protected ArrayList                  records           =     null;
+    private List<RecordBase>             records;
     protected PrintGridlinesRecord       printGridlines    =     null;
     protected GridsetRecord              gridset           =     null;
     private   GutsRecord                 _gutsRecord;
@@ -162,7 +161,7 @@ public final class Sheet implements Model {
         _mergedCellsTable = new MergedCellsTable();
         RowRecordsAggregate rra = null;
 
-        records            = new ArrayList(128);
+        records            = new ArrayList<RecordBase>(128);
         // TODO - take chart streams off into separate java objects
         int       bofEofNestingLevel = 0;  // nesting level can only get to 2 (when charts are present)
         int dimsloc = -1;
@@ -304,11 +303,24 @@ public final class Sheet implements Model {
 
             records.add(rec);
         }
-        if (_dimensions == null) {
-            throw new RuntimeException("DimensionsRecord was not found");
-        }
         if (windowTwo == null) {
             throw new RuntimeException("WINDOW2 was not found");
+        }
+        if (_dimensions == null) {
+            // Excel seems to always write the DIMENSION record, but tolerates when it is not present
+            // in all cases Excel (2007) adds the missing DIMENSION record
+            if (rra == null) {
+                // bug 46206 alludes to files which skip the DIMENSION record 
+                // when there are no row/cell records.
+                // Not clear which application wrote these files.
+                rra = new RowRecordsAggregate();
+            } else {
+                log.log(POILogger.WARN, "DIMENSION record not found even though row/cells present");
+                // Not sure if any tools write files like this, but Excel reads them OK  
+            }
+            dimsloc = findFirstRecordLocBySid(WindowTwoRecord.sid);
+            _dimensions = rra.createDimensions();
+            records.add(dimsloc, _dimensions);
         }
         if (rra == null) {
             rra = new RowRecordsAggregate();
@@ -323,13 +335,13 @@ public final class Sheet implements Model {
 
     private static final class RecordCloner implements RecordVisitor {
 
-        private final List _destList;
+        private final List<RecordBase> _destList;
 
-        public RecordCloner(List destList) {
+        public RecordCloner(List<RecordBase> destList) {
             _destList = destList;
         }
         public void visitRecord(Record r) {
-            _destList.add(r.clone());
+            _destList.add((RecordBase)r.clone());
         }
     }
 
@@ -341,9 +353,9 @@ public final class Sheet implements Model {
      * belongs to a sheet.
      */
     public Sheet cloneSheet() {
-        List clonedRecords = new ArrayList(this.records.size());
-        for (int i = 0; i < this.records.size(); i++) {
-            RecordBase rb = (RecordBase) this.records.get(i);
+        List<RecordBase> clonedRecords = new ArrayList<RecordBase>(records.size());
+        for (int i = 0; i < records.size(); i++) {
+            RecordBase rb = records.get(i);
             if (rb instanceof RecordAggregate) {
                 ((RecordAggregate) rb).visitContainedRecords(new RecordCloner(clonedRecords));
                 continue;
@@ -366,7 +378,7 @@ public final class Sheet implements Model {
     }
     private Sheet() {
         _mergedCellsTable = new MergedCellsTable();
-        records = new ArrayList(32);
+        records = new ArrayList<RecordBase>(32);
 
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "Sheet createsheet from scratch called");
@@ -516,9 +528,8 @@ public final class Sheet implements Model {
 
         boolean haveSerializedIndex = false;
 
-        for (int k = 0; k < records.size(); k++)
-        {
-            RecordBase record = (RecordBase) records.get(k);
+        for (int k = 0; k < records.size(); k++) {
+            RecordBase record = records.get(k);
 
             if (record instanceof RecordAggregate) {
                 RecordAggregate agg = (RecordAggregate) record;
@@ -560,7 +571,7 @@ public final class Sheet implements Model {
         int result = 0;
         // start just after BOF record (INDEX is not present in this list)
         for (int j = bofRecordIndex + 1; j < records.size(); j++) {
-            RecordBase tmpRec = (RecordBase) records.get(j);
+            RecordBase tmpRec = records.get(j);
             if (tmpRec instanceof RowRecordsAggregate) {
                 break;
             }
@@ -1203,7 +1214,7 @@ public final class Sheet implements Model {
         }
     }
 
-    public List getRecords()
+    public List<RecordBase> getRecords()
     {
         return records;
     }
@@ -1564,7 +1575,7 @@ public final class Sheet implements Model {
         }
         else
         {
-            List records = getRecords();
+            List<RecordBase> records = getRecords();
             EscherAggregate r = EscherAggregate.createAggregate( records, loc, drawingManager );
             int startloc = loc;
             while ( loc + 1 < records.size()

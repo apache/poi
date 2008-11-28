@@ -34,21 +34,20 @@ import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.GutsRecord;
 import org.apache.poi.hssf.record.IndexRecord;
 import org.apache.poi.hssf.record.MergeCellsRecord;
+import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.record.UncalcedRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
-import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
-import org.apache.poi.hssf.record.aggregates.MergedCellsTable;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
-import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.CellRangeAddress;
+import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * Unit test for the Sheet class.
@@ -59,25 +58,29 @@ public final class TestSheet extends TestCase {
     private static Sheet createSheet(List inRecs) {
         return Sheet.createSheet(new RecordStream(inRecs, 0));
     }
-	
-	
+
+    private static Record[] getSheetRecords(Sheet s, int offset) {
+        RecordCollector rc = new RecordCollector();
+        s.visitContainedRecords(rc, offset);
+        return rc.getRecords();
+    }
+
     public void testCreateSheet() {
         // Check we're adding row and cell aggregates
-        List records = new ArrayList();
+        List<Record> records = new ArrayList<Record>();
         records.add( new BOFRecord() );
         records.add( new DimensionsRecord() );
         records.add(createWindow2Record());
         records.add(EOFRecord.instance);
         Sheet sheet = createSheet(records);
+        Record[] outRecs = getSheetRecords(sheet, 0);
 
         int pos = 0;
-        assertTrue( sheet.records.get(pos++) instanceof BOFRecord );
-        assertTrue( sheet.records.get(pos++) instanceof ColumnInfoRecordsAggregate );
-        assertTrue( sheet.records.get(pos++) instanceof DimensionsRecord );
-        assertTrue( sheet.records.get(pos++) instanceof RowRecordsAggregate );
-        assertTrue( sheet.records.get(pos++) instanceof WindowTwoRecord );
-        assertTrue( sheet.records.get(pos++) instanceof MergedCellsTable );
-        assertTrue( sheet.records.get(pos++) instanceof EOFRecord );
+        assertTrue(outRecs[pos++] instanceof BOFRecord );
+        assertTrue(outRecs[pos++] instanceof IndexRecord );
+        assertTrue(outRecs[pos++] instanceof DimensionsRecord );
+        assertTrue(outRecs[pos++] instanceof WindowTwoRecord );
+        assertTrue(outRecs[pos++] instanceof EOFRecord );
     }
 
     private static Record createWindow2Record() {
@@ -106,7 +109,7 @@ public final class TestSheet extends TestCase {
             return _count;
         }
     }
-    
+
     public void testAddMergedRegion() {
         Sheet sheet = Sheet.createSheet();
         int regionsToAdd = 4096;
@@ -128,7 +131,7 @@ public final class TestSheet extends TestCase {
         int recordsExpected = regionsToAdd/1027;
         if ((regionsToAdd % 1027) != 0)
             recordsExpected++;
-        assertTrue("The " + regionsToAdd + " merged regions should have been spread out over " 
+        assertTrue("The " + regionsToAdd + " merged regions should have been spread out over "
                 + recordsExpected + " records, not " + recordsAdded, recordsAdded == recordsExpected);
         // Check we can't add one with invalid date
         try {
@@ -164,9 +167,9 @@ public final class TestSheet extends TestCase {
             //assert they have been deleted
             assertEquals("Num of regions", regionsToAdd - n - 1, sheet.getNumMergedRegions());
         }
-        
-        // merge records are removed from within the MergedCellsTable, 
-        // so the sheet record count should not change 
+
+        // merge records are removed from within the MergedCellsTable,
+        // so the sheet record count should not change
         assertEquals("Sheet Records", nSheetRecords, sheet.getRecords().size());
     }
 
@@ -178,7 +181,7 @@ public final class TestSheet extends TestCase {
      *
      */
     public void testMovingMergedRegion() {
-        List records = new ArrayList();
+        List<Record> records = new ArrayList<Record>();
 
         CellRangeAddress[] cras = {
             new CellRangeAddress(0, 1, 0, 2),
@@ -193,7 +196,7 @@ public final class TestSheet extends TestCase {
         records.add(merged);
 
         Sheet sheet = createSheet(records);
-        sheet.records.remove(0);
+        sheet.getRecords().remove(0); // TODO - what does this line do?
 
         //stub object to throw off list INDEX operations
         sheet.removeMergedRegion(0);
@@ -213,7 +216,7 @@ public final class TestSheet extends TestCase {
      *
      */
     public void testRowAggregation() {
-        List records = new ArrayList();
+        List<Record> records = new ArrayList<Record>();
 
         records.add(Sheet.createBOF());
         records.add(new DimensionsRecord());
@@ -221,7 +224,7 @@ public final class TestSheet extends TestCase {
         records.add(new RowRecord(1));
         FormulaRecord formulaRecord = new FormulaRecord();
         formulaRecord.setCachedResultTypeString();
-		records.add(formulaRecord);
+        records.add(formulaRecord);
         records.add(new StringRecord());
         records.add(new RowRecord(2));
         records.add(createWindow2Record());
@@ -430,7 +433,7 @@ public final class TestSheet extends TestCase {
             byte[] buf = new byte[estimatedSize];
             int serializedSize = r.serialize(0, buf);
             if (estimatedSize != serializedSize) {
-                throw new AssertionFailedError("serialized size mismatch for record (" 
+                throw new AssertionFailedError("serialized size mismatch for record ("
                         + r.getClass().getName() + ")");
             }
             _totalSize += estimatedSize;
@@ -445,15 +448,15 @@ public final class TestSheet extends TestCase {
      */
     public void testUncalcSize_bug45066() {
 
-        List records = new ArrayList();
+        List<Record> records = new ArrayList<Record>();
         records.add(new BOFRecord());
         records.add(new UncalcedRecord());
         records.add(new DimensionsRecord());
         records.add(createWindow2Record());
         records.add(EOFRecord.instance);
         Sheet sheet = createSheet(records);
-        
-        // The original bug was due to different logic for collecting records for sizing and 
+
+        // The original bug was due to different logic for collecting records for sizing and
         // serialization. The code has since been refactored into a single method for visiting
         // all contained records.  Now this test is much less interesting
         SizeCheckingRecordVisitor scrv = new SizeCheckingRecordVisitor();
@@ -491,7 +494,7 @@ public final class TestSheet extends TestCase {
         if (false) {
             // make sure that RRA and VRA are in the right place
             // (Aug 2008) since the VRA is now part of the RRA, there is much less chance that
-            // they could get out of order. Still, one could write serialize the sheet here, 
+            // they could get out of order. Still, one could write serialize the sheet here,
             // and read back with EventRecordFactory to make sure...
         }
         assertEquals(242, dbCellRecordPos);
@@ -528,13 +531,13 @@ public final class TestSheet extends TestCase {
             }
         }
     }
-    
+
     /**
      * Checks for bug introduced around r682282-r683880 that caused a second GUTS records
      * which in turn got the dimensions record out of alignment
      */
     public void testGutsRecord_bug45640() {
-        
+
         Sheet sheet = Sheet.createSheet();
         sheet.addRow(new RowRecord(0));
         sheet.addRow(new RowRecord(1));
@@ -552,10 +555,10 @@ public final class TestSheet extends TestCase {
         }
         assertEquals(1, count);
     }
-    
+
     public void testMisplacedMergedCellsRecords_bug45699() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45698-22488.xls");
-        
+
         HSSFSheet sheet = wb.getSheetAt(0);
         HSSFRow row = sheet.getRow(3);
         HSSFCell cell = row.getCell(4);
@@ -581,5 +584,45 @@ public final class TestSheet extends TestCase {
             }
             throw e;
         }
+    }
+
+    /**
+     * Some apps seem to write files with missing DIMENSION records.
+     * Excel(2007) tolerates this, so POI should too.
+     */
+    public void testMissingDims() {
+
+        int rowIx = 5;
+        int colIx = 6;
+        NumberRecord nr = new NumberRecord();
+        nr.setRow(rowIx);
+        nr.setColumn((short) colIx);
+        nr.setValue(3.0);
+
+        List<Record> inRecs = new ArrayList<Record>();
+        inRecs.add(new BOFRecord());
+        inRecs.add(new RowRecord(rowIx));
+        inRecs.add(nr);
+        inRecs.add(createWindow2Record());
+        inRecs.add(EOFRecord.instance);
+        Sheet sheet;
+        try {
+            sheet = createSheet(inRecs);
+        } catch (RuntimeException e) {
+            if (e.getMessage().equals("DimensionsRecord was not found")) {
+                throw new AssertionFailedError("Identified bug 46206");
+            }
+            throw e;
+        }
+
+        RecordCollector rv = new RecordCollector();
+        sheet.visitContainedRecords(rv, rowIx);
+        Record[] outRecs = rv.getRecords();
+        assertEquals(8, outRecs.length);
+        DimensionsRecord dims = (DimensionsRecord) outRecs[5];
+        assertEquals(rowIx, dims.getFirstRow());
+        assertEquals(rowIx, dims.getLastRow());
+        assertEquals(colIx, dims.getFirstCol());
+        assertEquals(colIx, dims.getLastCol());
     }
 }
