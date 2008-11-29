@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta5" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">46269 - Improved error message when attempting to read BIFF2 file</action>
            <action dev="POI-DEVELOPERS" type="fix">46206 - Fixed Sheet to tolerate missing DIMENSION records</action>
            <action dev="POI-DEVELOPERS" type="add">46301 - added pivot table records: SXDI, SXVDEX, SXPI, SXIDSTM, SXVIEW, SXVD, SXVS, et al</action>
            <action dev="POI-DEVELOPERS" type="fix">46280 - Fixed RowRecordsAggregate etc to properly skip PivotTable records</action>
