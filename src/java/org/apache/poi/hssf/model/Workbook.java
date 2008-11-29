@@ -17,13 +17,66 @@
 
 package org.apache.poi.hssf.model;
 
+import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherBoolProperty;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherDgRecord;
+import org.apache.poi.ddf.EscherDggRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherRGBProperty;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.ddf.EscherSplitMenuColorsRecord;
+import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.BackupRecord;
+import org.apache.poi.hssf.record.BookBoolRecord;
+import org.apache.poi.hssf.record.BoundSheetRecord;
+import org.apache.poi.hssf.record.CodepageRecord;
+import org.apache.poi.hssf.record.CountryRecord;
+import org.apache.poi.hssf.record.DSFRecord;
+import org.apache.poi.hssf.record.DateWindow1904Record;
+import org.apache.poi.hssf.record.DrawingGroupRecord;
+import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.hssf.record.ExtSSTRecord;
+import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.ExternSheetRecord;
+import org.apache.poi.hssf.record.FileSharingRecord;
+import org.apache.poi.hssf.record.FnGroupCountRecord;
+import org.apache.poi.hssf.record.FontRecord;
+import org.apache.poi.hssf.record.FormatRecord;
+import org.apache.poi.hssf.record.HideObjRecord;
+import org.apache.poi.hssf.record.HyperlinkRecord;
+import org.apache.poi.hssf.record.InterfaceEndRecord;
+import org.apache.poi.hssf.record.InterfaceHdrRecord;
+import org.apache.poi.hssf.record.MMSRecord;
+import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.PaletteRecord;
+import org.apache.poi.hssf.record.PasswordRecord;
+import org.apache.poi.hssf.record.PasswordRev4Record;
+import org.apache.poi.hssf.record.PrecisionRecord;
+import org.apache.poi.hssf.record.ProtectRecord;
+import org.apache.poi.hssf.record.ProtectionRev4Record;
+import org.apache.poi.hssf.record.RecalcIdRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RefreshAllRecord;
+import org.apache.poi.hssf.record.SSTRecord;
+import org.apache.poi.hssf.record.StyleRecord;
+import org.apache.poi.hssf.record.SupBookRecord;
+import org.apache.poi.hssf.record.TabIdRecord;
+import org.apache.poi.hssf.record.UnicodeString;
+import org.apache.poi.hssf.record.UseSelFSRecord;
+import org.apache.poi.hssf.record.WindowOneRecord;
+import org.apache.poi.hssf.record.WindowProtectRecord;
+import org.apache.poi.hssf.record.WriteAccessRecord;
+import org.apache.poi.hssf.record.WriteProtectRecord;
 import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
@@ -52,7 +105,6 @@ import org.apache.poi.util.POILogger;
  * @author  Dan Sherman (dsherman at isisph.com)
  * @author  Glen Stampoultzis (glens at apache.org)
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook
- * @version 1.0-pre
  */
 public final class Workbook implements Model {
     /**
@@ -61,18 +113,20 @@ public final class Workbook implements Model {
      */
     private static final int MAX_SENSITIVE_SHEET_NAME_LEN = 31;
 
-    private static final int   DEBUG       = POILogger.DEBUG;
+
+    private static final POILogger log = POILogFactory.getLogger(Workbook.class);
+    private static final int DEBUG = POILogger.DEBUG;
 
     /**
      * constant used to set the "codepage" wherever "codepage" is set in records
      * (which is duplicated in more than one record)
      */
-    private final static short CODEPAGE    = ( short ) 0x4b0;
+    private final static short CODEPAGE = 0x04B0;
 
     /**
      * this contains the Worksheet record objects
      */
-    protected WorkbookRecordList        records     = new WorkbookRecordList();
+    private final WorkbookRecordList records     = new WorkbookRecordList();
 
     /**
      * this contains a reference to the SSTRecord so that new stings can be added
@@ -87,24 +141,20 @@ public final class Workbook implements Model {
      * holds the "boundsheet" records (aka bundlesheet) so that they can have their
      * reference to their "BOF" marker
      */
-    protected ArrayList        boundsheets = new ArrayList();
-
-    protected ArrayList        formats = new ArrayList();
-
-    protected ArrayList        hyperlinks = new ArrayList();
+    private final List<BoundSheetRecord> boundsheets = new ArrayList<BoundSheetRecord>();
+    private final List<FormatRecord> formats = new ArrayList<FormatRecord>();
+    private final List<HyperlinkRecord> hyperlinks = new ArrayList<HyperlinkRecord>();
 
     protected int              numxfs      = 0;   // hold the number of extended format records
     protected int              numfonts    = 0;   // hold the number of font records
     private int                maxformatid  = -1;  // holds the max format id
     private boolean            uses1904datewindowing  = false;  // whether 1904 date windowing is being used
     private DrawingManager2    drawingManager;
-    private List               escherBSERecords = new ArrayList();  // EscherBSERecord
+    private List<EscherBSERecord> escherBSERecords = new ArrayList<EscherBSERecord>();
     private WindowOneRecord windowOne;
     private FileSharingRecord fileShare;
     private WriteAccessRecord writeAccess;
     private WriteProtectRecord writeProtect;
-
-    private static POILogger   log = POILogFactory.getLogger(Workbook.class);
 
     /**
      * Creates new Workbook with no intitialization --useless right now
@@ -125,17 +175,17 @@ public final class Workbook implements Model {
      * @param recs an array of Record objects
      * @return Workbook object
      */
-    public static Workbook createWorkbook(List recs) {
+    public static Workbook createWorkbook(List<Record> recs) {
         if (log.check( POILogger.DEBUG ))
             log.log(DEBUG, "Workbook (readfile) created with reclen=",
                     new Integer(recs.size()));
-        Workbook  retval  = new Workbook();
-        ArrayList records = new ArrayList(recs.size() / 3);
+        Workbook retval = new Workbook();
+        List<Record> records = new ArrayList<Record>(recs.size() / 3);
         retval.records.setRecords(records);
 
         int k;
         for (k = 0; k < recs.size(); k++) {
-            Record rec = ( Record ) recs.get(k);
+            Record rec = recs.get(k);
 
             if (rec.getSid() == EOFRecord.sid) {
                 records.add(rec);
@@ -148,7 +198,7 @@ public final class Workbook implements Model {
                 case BoundSheetRecord.sid :
                     if (log.check( POILogger.DEBUG ))
                         log.log(DEBUG, "found boundsheet record at " + k);
-                    retval.boundsheets.add(rec);
+                    retval.boundsheets.add((BoundSheetRecord) rec);
                     retval.records.setBspos( k );
                     break;
 
@@ -202,7 +252,7 @@ public final class Workbook implements Model {
                 case FormatRecord.sid :
                     if (log.check( POILogger.DEBUG ))
                         log.log(DEBUG, "found format record at " + k);
-                    retval.formats.add(rec);
+                    retval.formats.add((FormatRecord) rec);
                     retval.maxformatid = retval.maxformatid >= ((FormatRecord)rec).getIndexCode() ? retval.maxformatid : ((FormatRecord)rec).getIndexCode();
                     break;
                 case DateWindow1904Record.sid :
@@ -247,16 +297,16 @@ public final class Workbook implements Model {
         // Look for other interesting values that
         //  follow the EOFRecord
         for ( ; k < recs.size(); k++) {
-            Record rec = ( Record ) recs.get(k);
+            Record rec = recs.get(k);
             switch (rec.getSid()) {
                 case HyperlinkRecord.sid:
-                    retval.hyperlinks.add(rec);
+                    retval.hyperlinks.add((HyperlinkRecord)rec);
                     break;
             }
         }
         
         if (retval.windowOne == null) {
-            retval.windowOne = (WindowOneRecord) retval.createWindowOne();
+            retval.windowOne = createWindowOne();
         }
         if (log.check( POILogger.DEBUG ))
             log.log(DEBUG, "exit create workbook from existing file function");
@@ -272,82 +322,75 @@ public final class Workbook implements Model {
         if (log.check( POILogger.DEBUG ))
             log.log( DEBUG, "creating new workbook from scratch" );
         Workbook retval = new Workbook();
-        ArrayList records = new ArrayList( 30 );
+        List<Record> records = new ArrayList<Record>( 30 );
         retval.records.setRecords(records);
-        ArrayList formats = new ArrayList( 8 );
+        List<FormatRecord> formats = retval.formats;
 
-        records.add( retval.createBOF() );
-        records.add( retval.createInterfaceHdr() );
-        records.add( retval.createMMS() );
-        records.add( retval.createInterfaceEnd() );
-        records.add( retval.createWriteAccess() );
-        records.add( retval.createCodepage() );
-        records.add( retval.createDSF() );
-        records.add( retval.createTabId() );
-        retval.records.setTabpos( records.size() - 1 );
-        records.add( retval.createFnGroupCount() );
-        records.add( retval.createWindowProtect() );
-        records.add( retval.createProtect() );
-        retval.records.setProtpos( records.size() - 1 );
-        records.add( retval.createPassword() );
-        records.add( retval.createProtectionRev4() );
-        records.add( retval.createPasswordRev4() );
-        retval.windowOne = (WindowOneRecord) retval.createWindowOne();
-        records.add( retval.windowOne );
-        records.add( retval.createBackup() );
-        retval.records.setBackuppos( records.size() - 1 );
-        records.add( retval.createHideObj() );
-        records.add( retval.createDateWindow1904() );
-        records.add( retval.createPrecision() );
-        records.add( retval.createRefreshAll() );
-        records.add( retval.createBookBool() );
-        records.add( retval.createFont() );
-        records.add( retval.createFont() );
-        records.add( retval.createFont() );
-        records.add( retval.createFont() );
-        retval.records.setFontpos( records.size() - 1 );   // last font record postion
+        records.add(retval.createBOF());
+        records.add(retval.createInterfaceHdr());
+        records.add(retval.createMMS());
+        records.add(retval.createInterfaceEnd());
+        records.add(retval.createWriteAccess());
+        records.add(retval.createCodepage());
+        records.add(retval.createDSF());
+        records.add(retval.createTabId());
+        retval.records.setTabpos(records.size() - 1);
+        records.add(retval.createFnGroupCount());
+        records.add(createWindowProtect());
+        records.add(createProtect());
+        retval.records.setProtpos(records.size() - 1);
+        records.add(createPassword());
+        records.add(createProtectionRev4());
+        records.add(retval.createPasswordRev4());
+        retval.windowOne = createWindowOne();
+        records.add(retval.windowOne);
+        records.add(retval.createBackup());
+        retval.records.setBackuppos(records.size() - 1);
+        records.add(retval.createHideObj());
+        records.add(retval.createDateWindow1904());
+        records.add(retval.createPrecision());
+        records.add(createRefreshAll());
+        records.add(retval.createBookBool());
+        records.add(retval.createFont());
+        records.add(retval.createFont());
+        records.add(retval.createFont());
+        records.add(retval.createFont());
+        retval.records.setFontpos( records.size() - 1 );   // last font record position
         retval.numfonts = 4;
 
         // set up format records
-        for ( int i = 0; i <= 7; i++ )
-        {
-            Record rec;
-            rec = retval.createFormat( i );
-            retval.maxformatid = retval.maxformatid >= ( (FormatRecord) rec ).getIndexCode() ? retval.maxformatid : ( (FormatRecord) rec ).getIndexCode();
-            formats.add( rec );
-            records.add( rec );
+        for (int i = 0; i <= 7; i++) {
+            FormatRecord rec = createFormat(i);
+            retval.maxformatid = retval.maxformatid >= rec.getIndexCode() ? retval.maxformatid : rec.getIndexCode();
+            formats.add(rec);
+            records.add(rec);
         }
-        retval.formats = formats;
 
-        for ( int k = 0; k < 21; k++ )
-        {
-            records.add( retval.createExtendedFormat( k ) );
+        for (int k = 0; k < 21; k++) {
+            records.add(retval.createExtendedFormat(k));
             retval.numxfs++;
         }
         retval.records.setXfpos( records.size() - 1 );
-        for ( int k = 0; k < 6; k++ )
-        {
-            records.add( retval.createStyle( k ) );
+        for (int k = 0; k < 6; k++) {
+            records.add(retval.createStyle(k));
         }
-        records.add( retval.createUseSelFS() );
+        records.add(retval.createUseSelFS());
 
         int nBoundSheets = 1; // now just do 1
-        for ( int k = 0; k < nBoundSheets; k++ ) {   
-            BoundSheetRecord bsr = retval.createBoundSheet(k);
+        for (int k = 0; k < nBoundSheets; k++) {
+            BoundSheetRecord bsr = createBoundSheet(k);
 
             records.add(bsr);
             retval.boundsheets.add(bsr);
             retval.records.setBspos(records.size() - 1);
         }
-        // retval.records.supbookpos = retval.records.bspos + 1;
-        //        retval.records.namepos = retval.records.supbookpos + 2;
         records.add( retval.createCountry() );
         for ( int k = 0; k < nBoundSheets; k++ ) {   
             retval.getOrCreateLinkTable().checkExternSheet(k);
         }
-        retval.sst = (SSTRecord) retval.createSST();
-        records.add( retval.sst );
-        records.add( retval.createExtendedSST() );
+        retval.sst = new SSTRecord();
+        records.add(retval.sst);
+        records.add(retval.createExtendedSST());
 
         records.add(EOFRecord.instance);
         if (log.check( POILogger.DEBUG ))
@@ -434,7 +477,7 @@ public final class Workbook implements Model {
      */
 
     public FontRecord createNewFont() {
-        FontRecord rec = ( FontRecord ) createFont();
+        FontRecord rec = createFont();
 
         records.add(records.getFontpos()+1, rec);
         records.setFontpos( records.getFontpos() + 1 );
@@ -480,7 +523,7 @@ public final class Workbook implements Model {
     }
 
     private BoundSheetRecord getBoundSheetRec(int sheetIndex) {
-        return ((BoundSheetRecord) boundsheets.get(sheetIndex));
+        return boundsheets.get(sheetIndex);
     }
 
     /**
@@ -502,7 +545,7 @@ public final class Workbook implements Model {
      */
     public void setSheetName(int sheetnum, String sheetname) {
         checkSheets(sheetnum);
-        BoundSheetRecord sheet = (BoundSheetRecord)boundsheets.get( sheetnum );
+        BoundSheetRecord sheet = boundsheets.get(sheetnum);
         sheet.setSheetname(sheetname);
     }
 
@@ -874,7 +917,7 @@ public final class Workbook implements Model {
     public void insertSST() {
         if (log.check( POILogger.DEBUG ))
             log.log(DEBUG, "creating new SST via insertSST!");
-        sst = ( SSTRecord ) createSST();
+        sst = new SSTRecord();
         records.add(records.size() - 1, createExtendedSST());
         records.add(records.size() - 2, sst);
     }
@@ -986,49 +1029,26 @@ public final class Workbook implements Model {
         return retval;
     }
 
-    /**
-     * creates the BOF record
-     * @see org.apache.poi.hssf.record.BOFRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a BOFRecord
-     */
-
-    protected Record createBOF() {
+    private static BOFRecord createBOF() {
         BOFRecord retval = new BOFRecord();
 
         retval.setVersion(( short ) 0x600);
-        retval.setType(( short ) 5);
+        retval.setType(BOFRecord.TYPE_WORKBOOK);
         retval.setBuild(( short ) 0x10d3);
-
-        //        retval.setBuild((short)0x0dbb);
         retval.setBuildYear(( short ) 1996);
         retval.setHistoryBitMask(0x41);   // was c1 before verify
         retval.setRequiredVersion(0x6);
         return retval;
     }
 
-    /**
-     * creates the InterfaceHdr record
-     * @see org.apache.poi.hssf.record.InterfaceHdrRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a InterfaceHdrRecord
-     */
-
-    protected Record createInterfaceHdr() {
+    private static InterfaceHdrRecord createInterfaceHdr() {
         InterfaceHdrRecord retval = new InterfaceHdrRecord();
 
         retval.setCodepage(CODEPAGE);
         return retval;
     }
 
-    /**
-     * creates an MMS record
-     * @see org.apache.poi.hssf.record.MMSRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a MMSRecord
-     */
-
-    protected Record createMMS() {
+    private static MMSRecord createMMS() {
         MMSRecord retval = new MMSRecord();
 
         retval.setAddMenuCount(( byte ) 0);
@@ -1036,33 +1056,19 @@ public final class Workbook implements Model {
         return retval;
     }
 
-    /**
-     * creates the InterfaceEnd record
-     * @see org.apache.poi.hssf.record.InterfaceEndRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a InterfaceEndRecord
-     */
-
-    protected Record createInterfaceEnd() {
+    private static InterfaceEndRecord createInterfaceEnd() {
         return new InterfaceEndRecord();
     }
 
     /**
      * creates the WriteAccess record containing the logged in user's name
-     * @see org.apache.poi.hssf.record.WriteAccessRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a WriteAccessRecord
      */
-
-    protected Record createWriteAccess() {
+    private static WriteAccessRecord createWriteAccess() {
         WriteAccessRecord retval = new WriteAccessRecord();
 
-        try
-        {
+        try {
             retval.setUsername(System.getProperty("user.name"));
-        }
-        catch (java.security.AccessControlException e)
-        {
+        } catch (AccessControlException e) {
                 // AccessControlException can occur in a restricted context
                 // (client applet/jws application or restricted security server)
                 retval.setUsername("POI");
@@ -1070,37 +1076,19 @@ public final class Workbook implements Model {
         return retval;
     }
 
-    /**
-     * creates the Codepage record containing the constant stored in CODEPAGE
-     * @see org.apache.poi.hssf.record.CodepageRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a CodepageRecord
-     */
-
-    protected Record createCodepage() {
+    private static CodepageRecord createCodepage() {
         CodepageRecord retval = new CodepageRecord();
 
         retval.setCodepage(CODEPAGE);
         return retval;
     }
 
-    /**
-     * creates the DSF record containing a 0 since HSSF can't even create Dual Stream Files
-     * @see org.apache.poi.hssf.record.DSFRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a DSFRecord
-     */
-
-    protected Record createDSF() {
+    private static DSFRecord createDSF() {
         return new DSFRecord(false); // we don't even support double stream files
     }
 
     /**
-     * creates the TabId record containing an array of 0,1,2.  This release of HSSF
-     * always has the default three sheets, no less, no more.
-     * @see org.apache.poi.hssf.record.TabIdRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a TabIdRecord
+     * creates the TabId record containing an array 
      */
     private static TabIdRecord createTabId() {
         return new TabIdRecord();
@@ -1108,12 +1096,8 @@ public final class Workbook implements Model {
 
     /**
      * creates the FnGroupCount record containing the Magic number constant of 14.
-     * @see org.apache.poi.hssf.record.FnGroupCountRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a FnGroupCountRecord
      */
-
-    protected Record createFnGroupCount() {
+    private static FnGroupCountRecord createFnGroupCount() {
         FnGroupCountRecord retval = new FnGroupCountRecord();
 
         retval.setCount(( short ) 14);
@@ -1133,8 +1117,8 @@ public final class Workbook implements Model {
      * @return a new Protect record with protect set to false.
      */
     private static ProtectRecord createProtect() {
-    	// by default even when we support it we won't
-    	// want it to be protected
+        // by default even when we support it we won't
+        // want it to be protected
         return new ProtectRecord(false); 
     }
 
@@ -1170,12 +1154,8 @@ public final class Workbook implements Model {
      * displayed tab   - 0 <P>
      * num selected tab- 0 <P>
      * tab width ratio - 0x258 <P>
-     * @see org.apache.poi.hssf.record.WindowOneRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a WindowOneRecord
      */
-
-    protected Record createWindowOne() {
+    private static WindowOneRecord createWindowOne() {
         WindowOneRecord retval = new WindowOneRecord();
 
         retval.setHorizontalHold(( short ) 0x168);
@@ -1192,60 +1172,39 @@ public final class Workbook implements Model {
 
     /**
      * creates the Backup record with backup set to 0. (loose the data, who cares)
-     * @see org.apache.poi.hssf.record.BackupRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a BackupRecord
      */
-
-    protected Record createBackup() {
+    private static BackupRecord createBackup() {
         BackupRecord retval = new BackupRecord();
 
-        retval.setBackup(
-        ( short ) 0);   // by default DONT save backups of files...just loose data
+        retval.setBackup(( short ) 0);   // by default DONT save backups of files...just loose data
         return retval;
     }
 
     /**
      * creates the HideObj record with hide object set to 0. (don't hide)
-     * @see org.apache.poi.hssf.record.HideObjRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a HideObjRecord
      */
-
-    protected Record createHideObj() {
+    private static HideObjRecord createHideObj() {
         HideObjRecord retval = new HideObjRecord();
-
         retval.setHideObj(( short ) 0);   // by default set hide object off
         return retval;
     }
 
     /**
      * creates the DateWindow1904 record with windowing set to 0. (don't window)
-     * @see org.apache.poi.hssf.record.DateWindow1904Record
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a DateWindow1904Record
      */
-
-    protected Record createDateWindow1904() {
+    private static DateWindow1904Record createDateWindow1904() {
         DateWindow1904Record retval = new DateWindow1904Record();
 
-        retval.setWindowing(
-        ( short ) 0);   // don't EVER use 1904 date windowing...tick tock..
+        retval.setWindowing(( short ) 0);   // don't EVER use 1904 date windowing...tick tock..
         return retval;
     }
 
     /**
      * creates the Precision record with precision set to true. (full precision)
-     * @see org.apache.poi.hssf.record.PrecisionRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a PrecisionRecord
      */
-
-    protected Record createPrecision() {
+    private static PrecisionRecord createPrecision() {
         PrecisionRecord retval = new PrecisionRecord();
-
-        retval.setFullPrecision(
-        true);   // always use real numbers in calculations!
+        retval.setFullPrecision(true);   // always use real numbers in calculations!
         return retval;
     }
 
@@ -1258,14 +1217,9 @@ public final class Workbook implements Model {
 
     /**
      * creates the BookBool record with saveLinkValues set to 0. (don't save link values)
-     * @see org.apache.poi.hssf.record.BookBoolRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a BookBoolRecord
      */
-
-    protected Record createBookBool() {
+    private static BookBoolRecord createBookBool() {
         BookBoolRecord retval = new BookBoolRecord();
-
         retval.setSaveLinkValues(( short ) 0);
         return retval;
     }
@@ -1278,12 +1232,8 @@ public final class Workbook implements Model {
      * bold weight          = 0x190<P>
      * Font Name Length     = 5 <P>
      * Font Name            = Arial <P>
-     *
-     * @see org.apache.poi.hssf.record.FontRecord
-     * @see org.apache.poi.hssf.record.Record
-     * @return record containing a FontRecord
      */
-    protected Record createFont() {
+    private static FontRecord createFont() {
         FontRecord retval = new FontRecord();
 
         retval.setFontHeight(( short ) 0xc8);
@@ -1298,12 +1248,9 @@ public final class Workbook implements Model {
      * Creates a FormatRecord object
      * @param id    the number of the format record to create (meaning its position in
      *        a file as M$ Excel would create it.)
-     * @return record containing a FormatRecord
-     * @see org.apache.poi.hssf.record.FormatRecord
-     * @see org.apache.poi.hssf.record.Record
      */
     private static FormatRecord createFormat(int id) {  
-    	// we'll need multiple editions for
+        // we'll need multiple editions for
         // the different formats
 
         switch (id) {
@@ -1323,13 +1270,8 @@ public final class Workbook implements Model {
      * Creates an ExtendedFormatRecord object
      * @param id    the number of the extended format record to create (meaning its position in
      *        a file as MS Excel would create it.)
-     *
-     * @return record containing an ExtendedFormatRecord
-     * @see org.apache.poi.hssf.record.ExtendedFormatRecord
-     * @see org.apache.poi.hssf.record.Record
      */
-
-    protected Record createExtendedFormat(int id) {   // we'll need multiple editions
+    private static ExtendedFormatRecord createExtendedFormat(int id) {   // we'll need multiple editions
         ExtendedFormatRecord retval = new ExtendedFormatRecord();
 
         switch (id) {
@@ -1656,8 +1598,7 @@ public final class Workbook implements Model {
      * creates an default cell type ExtendedFormatRecord object.
      * @return ExtendedFormatRecord with intial defaults (cell-type)
      */
-
-    protected ExtendedFormatRecord createExtendedFormat() {
+    private static ExtendedFormatRecord createExtendedFormat() {
         ExtendedFormatRecord retval = new ExtendedFormatRecord();
 
         retval.setFontIndex(( short ) 0);
@@ -1680,11 +1621,8 @@ public final class Workbook implements Model {
      * Creates a StyleRecord object
      * @param id        the number of the style record to create (meaning its position in
      *                  a file as MS Excel would create it.
-     * @return record containing a StyleRecord
-     * @see org.apache.poi.hssf.record.StyleRecord
-     * @see org.apache.poi.hssf.record.Record
      */
-    protected Record createStyle(int id) {   // we'll need multiple editions
+    private static StyleRecord createStyle(int id) {   // we'll need multiple editions
         StyleRecord retval = new StyleRecord();
 
         switch (id) {
@@ -1730,11 +1668,8 @@ public final class Workbook implements Model {
 
     /**
      * Creates a palette record initialized to the default palette
-     * @return a PaletteRecord instance populated with the default colors
-     * @see org.apache.poi.hssf.record.PaletteRecord
      */
-    protected PaletteRecord createPalette()
-    {
+    private static PaletteRecord createPalette() {
         return new PaletteRecord();
     }
     
@@ -1760,12 +1695,8 @@ public final class Workbook implements Model {
     /**
      * Creates the Country record with the default country set to 1
      * and current country set to 7 in case of russian locale ("ru_RU") and 1 otherwise
-     * @return record containing a CountryRecord
-     * @see org.apache.poi.hssf.record.CountryRecord
-     * @see org.apache.poi.hssf.record.Record
      */
-
-    protected Record createCountry() {   // what a novel idea, create your own!
+    private static CountryRecord createCountry() {
         CountryRecord retval = new CountryRecord();
 
         retval.setDefaultCountry(( short ) 1);
@@ -1782,29 +1713,12 @@ public final class Workbook implements Model {
     }
 
     /**
-     * Creates the SST record with no strings and the unique/num string set to 0
-     * @return record containing a SSTRecord
-     * @see org.apache.poi.hssf.record.SSTRecord
-     * @see org.apache.poi.hssf.record.Record
-     */
-
-    protected Record createSST() {
-        return new SSTRecord();
-    }
-
-    /**
      * Creates the ExtendedSST record with numstrings per bucket set to 0x8.  HSSF
      * doesn't yet know what to do with this thing, but we create it with nothing in
      * it hardly just to make Excel happy and our sheets look like Excel's
-     *
-     * @return record containing an ExtSSTRecord
-     * @see org.apache.poi.hssf.record.ExtSSTRecord
-     * @see org.apache.poi.hssf.record.Record
      */
-
-    protected Record createExtendedSST() {
+    private static ExtSSTRecord createExtendedSST() {
         ExtSSTRecord retval = new ExtSSTRecord();
-
         retval.setNumStringsPerBucket(( short ) 0x8);
         return retval;
     }
@@ -1971,7 +1885,7 @@ public final class Workbook implements Model {
      * Returns the list of FormatRecords in the workbook.
      * @return ArrayList of FormatRecords in the notebook
      */
-    public ArrayList getFormats() {
+    public List getFormats() {
     return formats;
     }
 
@@ -2051,21 +1965,9 @@ public final class Workbook implements Model {
         return hyperlinks;
     }
     
-    public List getRecords()
-    {
+    public List<Record> getRecords() {
         return records.getRecords();
     }
-
-//    public void insertChartRecords( List chartRecords )
-//    {
-//        backuppos += chartRecords.size();
-//        fontpos += chartRecords.size();
-//        palettepos += chartRecords.size();
-//        bspos += chartRecords.size();
-//        xfpos += chartRecords.size();
-//
-//        records.addAll(protpos, chartRecords);
-//    }
 
     /**
     * Whether date windowing is based on 1/2/1904 or 1/1/1900.
@@ -2107,11 +2009,11 @@ public final class Workbook implements Model {
     public void findDrawingGroup() {
         // Need to find a DrawingGroupRecord that
         //  contains a EscherDggRecord
-        for(Iterator rit = records.iterator(); rit.hasNext();) {
-            Record r = (Record)rit.next();
+        for(Iterator<Record> rit = records.iterator(); rit.hasNext();) {
+            Record r = rit.next();
 
             if(r instanceof DrawingGroupRecord) {
-                DrawingGroupRecord dg =    (DrawingGroupRecord)r;
+                DrawingGroupRecord dg = (DrawingGroupRecord)r;
                 dg.processChildRecords();
 
                 EscherContainerRecord cr =
@@ -2140,8 +2042,7 @@ public final class Workbook implements Model {
 
         // If there is one, does it have a EscherDggRecord?
         if(dgLoc != -1) {
-            DrawingGroupRecord dg =
-                (DrawingGroupRecord)records.get(dgLoc);
+            DrawingGroupRecord dg = (DrawingGroupRecord)records.get(dgLoc);
             EscherDggRecord dgg = null;
             for(Iterator it = dg.getEscherRecords().iterator(); it.hasNext();) {
                 Object er = it.next();
@@ -2160,10 +2061,8 @@ public final class Workbook implements Model {
      * Creates a primary drawing group record.  If it already 
      *  exists then it's modified.
      */
-    public void createDrawingGroup()
-    {
-        if (drawingManager == null)
-        {
+    public void createDrawingGroup() {
+        if (drawingManager == null) {
             EscherContainerRecord dggContainer = new EscherContainerRecord();
             EscherDggRecord dgg = new EscherDggRecord();
             EscherOptRecord opt = new EscherOptRecord();
@@ -2209,16 +2108,13 @@ public final class Workbook implements Model {
             dggContainer.addChildRecord(splitMenuColors);
 
             int dgLoc = findFirstRecordLocBySid(DrawingGroupRecord.sid);
-            if (dgLoc == -1)
-            {
+            if (dgLoc == -1) {
                 DrawingGroupRecord drawingGroup = new DrawingGroupRecord();
                 drawingGroup.addEscherRecord(dggContainer);
                 int loc = findFirstRecordLocBySid(CountryRecord.sid);
 
                 getRecords().add(loc+1, drawingGroup);
-            }
-            else
-            {
+            } else {
                 DrawingGroupRecord drawingGroup = new DrawingGroupRecord();
                 drawingGroup.addEscherRecord(dggContainer);
                 getRecords().set(dgLoc, drawingGroup);
@@ -2231,13 +2127,11 @@ public final class Workbook implements Model {
         return windowOne;
     }
 
-    public EscherBSERecord getBSERecord(int pictureIndex)
-    {
-        return (EscherBSERecord)escherBSERecords.get(pictureIndex-1);
+    public EscherBSERecord getBSERecord(int pictureIndex) {
+        return escherBSERecords.get(pictureIndex-1);
     }
 
-    public int addBSERecord(EscherBSERecord e)
-    {
+    public int addBSERecord(EscherBSERecord e) {
         createDrawingGroup();
 
         // maybe we don't need that as an instance variable anymore
@@ -2271,53 +2165,53 @@ public final class Workbook implements Model {
     }
 
     public WriteProtectRecord getWriteProtect() {
-        if (this.writeProtect == null) {
-           this.writeProtect = new WriteProtectRecord();
+        if (writeProtect == null) {
+           writeProtect = new WriteProtectRecord();
            int i = 0;
            for (i = 0; 
                 i < records.size() && !(records.get(i) instanceof BOFRecord); 
                 i++) {
            }
-           records.add(i+1,this.writeProtect);
+           records.add(i+1, writeProtect);
         }
         return this.writeProtect;
     }
 
     public WriteAccessRecord getWriteAccess() {
-        if (this.writeAccess == null) {
-           this.writeAccess = (WriteAccessRecord)createWriteAccess();
+        if (writeAccess == null) {
+           writeAccess = createWriteAccess();
            int i = 0;
            for (i = 0; 
                 i < records.size() && !(records.get(i) instanceof InterfaceEndRecord); 
                 i++) {
            }
-           records.add(i+1,this.writeAccess);
+           records.add(i+1, writeAccess);
         }
-        return this.writeAccess;
+        return writeAccess;
     }
 
     public FileSharingRecord getFileSharing() {
-        if (this.fileShare == null) {
-           this.fileShare = new FileSharingRecord();
+        if (fileShare == null) {
+           fileShare = new FileSharingRecord();
            int i = 0;
            for (i = 0; 
                 i < records.size() && !(records.get(i) instanceof WriteAccessRecord); 
                 i++) {
            }
-           records.add(i+1,this.fileShare);
+           records.add(i+1, fileShare);
         }
-        return this.fileShare;
+        return fileShare;
     }
     
     /**
      * is the workbook protected with a password (not encrypted)?
      */
     public boolean isWriteProtected() {
-        if (this.fileShare == null) {
+        if (fileShare == null) {
             return false;
         }
         FileSharingRecord frec = getFileSharing();
-        return (frec.getReadOnly() == 1);
+        return frec.getReadOnly() == 1;
     }
 
     /**
