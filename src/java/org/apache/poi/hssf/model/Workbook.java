@@ -72,6 +72,7 @@ import org.apache.poi.hssf.record.StyleRecord;
 import org.apache.poi.hssf.record.SupBookRecord;
 import org.apache.poi.hssf.record.TabIdRecord;
 import org.apache.poi.hssf.record.UnicodeString;
+import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.UseSelFSRecord;
 import org.apache.poi.hssf.record.WindowOneRecord;
 import org.apache.poi.hssf.record.WindowProtectRecord;
@@ -824,18 +825,17 @@ public final class Workbook implements Model {
     public StyleRecord getStyleRecord(int xfIndex) {
         // Style records always follow after 
         //  the ExtendedFormat records
-        boolean done = false;
-        for(int i=records.getXfpos(); i<records.size() &&
-                !done; i++) {
+        for(int i=records.getXfpos(); i<records.size(); i++) {
             Record r = records.get(i);
             if(r instanceof ExtendedFormatRecord) {
-            } else if(r instanceof StyleRecord) {
-                StyleRecord sr = (StyleRecord)r;
-                if(sr.getXFIndex() == xfIndex) {
-                    return sr;
-                }
-            } else {
-                done = true;
+                continue;
+            }
+            if(!(r instanceof StyleRecord)) {
+                return null;
+            }
+            StyleRecord sr = (StyleRecord)r;
+            if(sr.getXFIndex() == xfIndex) {
+                return sr;
             }
         }
         return null;
