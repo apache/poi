@@ -17,51 +17,49 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
+import junit.framework.TestCase;
+
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
-import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
 /**
+ * Tests for {@link FinanceFunction#NPER}
  * 
  * @author Josh Micich
  */
 public final class TestNper extends TestCase {
 	public void testSimpleEvaluate() {
-		
+
 		Eval[] args = {
 			new NumberEval(0.05),
 			new NumberEval(250),
 			new NumberEval(-1000),
 		};
 		Eval result = FinanceFunction.NPER.evaluate(args, 0, (short)0);
-		
+
 		assertEquals(NumberEval.class, result.getClass());
 		assertEquals(4.57353557, ((NumberEval)result).getNumberValue(), 0.00000001);
 	}
-	
+
 	public void testEvaluate_bug_45732() {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Sheet1");
 		HSSFCell cell = sheet.createRow(0).createCell(0);
-		
+
 		cell.setCellFormula("NPER(12,4500,100000,100000)");
 		cell.setCellValue(15.0);
-		assertEquals("NPER(12,4500,100000.0,100000.0)", cell.getCellFormula());
+		assertEquals("NPER(12,4500,100000,100000)", cell.getCellFormula());
 		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cell.getCachedFormulaResultType());
 		assertEquals(15.0, cell.getNumericCellValue(), 0.0);
-		
+
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		fe.evaluateFormulaCell(cell);
 		assertEquals(HSSFCell.CELL_TYPE_ERROR, cell.getCachedFormulaResultType());
 		assertEquals(HSSFErrorConstants.ERROR_NUM, cell.getErrorCellValue());
 	}
-	
 }

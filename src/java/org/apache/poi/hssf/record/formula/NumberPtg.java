@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
+import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -65,7 +66,6 @@ public final class NumberPtg extends ScalarConstantPtg {
 	}
 
 	public String toFormulaString() {
-		// TODO - java's rendering of double values is not quite same as excel's
-		return String.valueOf(field_1_value);
+		return NumberToTextConverter.toText(field_1_value);
 	}
 }

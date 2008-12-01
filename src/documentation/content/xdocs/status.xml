@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.5-beta5" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">46156 - Improved number to text conversion to be closer to that of Excel</action>
            <action dev="POI-DEVELOPERS" type="fix">46312 - Fixed ValueRecordsAggregate to handle removal of new empty row</action>
            <action dev="POI-DEVELOPERS" type="add">46269 - Improved error message when attempting to read BIFF2 file</action>
            <action dev="POI-DEVELOPERS" type="fix">46206 - Fixed Sheet to tolerate missing DIMENSION records</action>

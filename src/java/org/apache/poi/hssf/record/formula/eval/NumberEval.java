@@ -23,51 +23,45 @@ package org.apache.poi.hssf.record.formula.eval;
 import org.apache.poi.hssf.record.formula.IntPtg;
 import org.apache.poi.hssf.record.formula.NumberPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.util.NumberToTextConverter;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  *  
  */
-public class NumberEval implements NumericValueEval, StringValueEval {
+public final class NumberEval implements NumericValueEval, StringValueEval {
     
     public static final NumberEval ZERO = new NumberEval(0);
 
-    private double value;
-    private String stringValue;
+    private final double _value;
+    private String _stringValue;
 
     public NumberEval(Ptg ptg) {
-        if (ptg instanceof IntPtg) {
-            this.value = ((IntPtg) ptg).getValue();
+        if (ptg == null) {
+            throw new IllegalArgumentException("ptg must not be null");
         }
-        else if (ptg instanceof NumberPtg) {
-            this.value = ((NumberPtg) ptg).getValue();
+        if (ptg instanceof IntPtg) {
+            _value = ((IntPtg) ptg).getValue();
+        } else if (ptg instanceof NumberPtg) {
+            _value = ((NumberPtg) ptg).getValue();
+        } else {
+            throw new IllegalArgumentException("bad argument type (" + ptg.getClass().getName() + ")");
         }
     }
 
     public NumberEval(double value) {
-        this.value = value;
+        _value = value;
     }
 
     public double getNumberValue() {
-        return value;
+        return _value;
     }
 
-    public String getStringValue() { // TODO: limit to 15 decimal places
-        if (stringValue == null)
-            makeString();
-        return stringValue;
-    }
-    
-    protected void makeString() {
-        if (!Double.isNaN(value)) {
-            long lvalue = Math.round(value);
-            if (lvalue == value) {
-                stringValue = String.valueOf(lvalue);
-            }
-            else {
-                stringValue = String.valueOf(value);
-            }
+    public String getStringValue() {
+        if (_stringValue == null) {
+            _stringValue = NumberToTextConverter.toText(_value);
         }
+        return _stringValue;
     }
     public final String toString() {
         StringBuffer sb = new StringBuffer(64);

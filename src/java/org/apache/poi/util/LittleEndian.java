@@ -264,12 +264,7 @@ public class LittleEndian implements LittleEndianConsts {
      *@param  value   the double (64-bit) value
      */
     public static void putDouble(byte[] data, int offset, double value) {
-        // Excel likes NaN to be a specific value.
-        if (Double.isNaN(value)) {
-            putLong(data, offset, -276939487313920L);
-        } else {
-            putLong(data, offset, Double.doubleToLongBits(value));
-        }
+        putLong(data, offset, Double.doubleToLongBits(value));
     }
 
 
