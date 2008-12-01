@@ -419,7 +419,7 @@ public final class TestBugs extends TestCase {
           if (name.isFunctionName()) {
               continue;
           }
-          name.getReference();
+          name.getRefersToFormula();
         }
     }
 
@@ -1070,8 +1070,8 @@ public final class TestBugs extends TestCase {
         HSSFSheet s = wb.createSheet();
         s.createRow(0);
         s.createRow(1);
-        HSSFCell c1 = s.getRow(0).createCell(0);
-        HSSFCell c2 = s.getRow(1).createCell(0);
+        s.getRow(0).createCell(0);
+        s.getRow(1).createCell(0);
 
         assertEquals(4, wb.getNumberOfFonts());
 
@@ -1162,7 +1162,7 @@ public final class TestBugs extends TestCase {
         c3.setCellFormula("\"90210\"");
 
         // Check the formulas
-        assertEquals("70164.0", c1.getCellFormula());
+        assertEquals("70164", c1.getCellFormula());
         assertEquals("\"70164\"", c2.getCellFormula());
 
         // And check the values - blank
@@ -1415,67 +1415,67 @@ public final class TestBugs extends TestCase {
         assertFalse(nwb.isSheetHidden(2));
         assertTrue(nwb.isSheetVeryHidden(2));
     }
-    
+
     /**
      * header / footer text too long
      */
     public void test45777() {
-    	HSSFWorkbook wb = new HSSFWorkbook();
-    	HSSFSheet s = wb.createSheet();
-    	
-    	String s248 = "";
-    	for(int i=0; i<248; i++) {
-    		s248 += "x";
-    	}
-    	String s249 = s248 + "1";
-    	String s250 = s248 + "12";
-    	String s251 = s248 + "123";
-    	assertEquals(248, s248.length());
-    	assertEquals(249, s249.length());
-    	assertEquals(250, s250.length());
-    	assertEquals(251, s251.length());
-    	
-    	
-    	// Try on headers
-    	s.getHeader().setCenter(s248);
-    	assertEquals(254, s.getHeader().getRawHeader().length());
-    	writeOutAndReadBack(wb);
-    	
-    	s.getHeader().setCenter(s249);
-    	assertEquals(255, s.getHeader().getRawHeader().length());
-    	writeOutAndReadBack(wb);
-    	
-    	try {
-    		s.getHeader().setCenter(s250); // 256
-    		fail();
-    	} catch(IllegalArgumentException e) {}
-    	
-    	try {
-    		s.getHeader().setCenter(s251); // 257
-    		fail();
-    	} catch(IllegalArgumentException e) {}
-    	
-    	
-    	// Now try on footers
-    	s.getFooter().setCenter(s248);
-    	assertEquals(254, s.getFooter().getRawFooter().length());
-    	writeOutAndReadBack(wb);
-    	
-    	s.getFooter().setCenter(s249);
-    	assertEquals(255, s.getFooter().getRawFooter().length());
-    	writeOutAndReadBack(wb);
-    	
-    	try {
-    		s.getFooter().setCenter(s250); // 256
-    		fail();
-    	} catch(IllegalArgumentException e) {}
-    	
-    	try {
-    		s.getFooter().setCenter(s251); // 257
-    		fail();
-    	} catch(IllegalArgumentException e) {}
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet s = wb.createSheet();
+
+        String s248 = "";
+        for(int i=0; i<248; i++) {
+            s248 += "x";
+        }
+        String s249 = s248 + "1";
+        String s250 = s248 + "12";
+        String s251 = s248 + "123";
+        assertEquals(248, s248.length());
+        assertEquals(249, s249.length());
+        assertEquals(250, s250.length());
+        assertEquals(251, s251.length());
+
+
+        // Try on headers
+        s.getHeader().setCenter(s248);
+        assertEquals(254, s.getHeader().getRawHeader().length());
+        writeOutAndReadBack(wb);
+
+        s.getHeader().setCenter(s249);
+        assertEquals(255, s.getHeader().getRawHeader().length());
+        writeOutAndReadBack(wb);
+
+        try {
+            s.getHeader().setCenter(s250); // 256
+            fail();
+        } catch(IllegalArgumentException e) {}
+
+        try {
+            s.getHeader().setCenter(s251); // 257
+            fail();
+        } catch(IllegalArgumentException e) {}
+
+
+        // Now try on footers
+        s.getFooter().setCenter(s248);
+        assertEquals(254, s.getFooter().getRawFooter().length());
+        writeOutAndReadBack(wb);
+
+        s.getFooter().setCenter(s249);
+        assertEquals(255, s.getFooter().getRawFooter().length());
+        writeOutAndReadBack(wb);
+
+        try {
+            s.getFooter().setCenter(s250); // 256
+            fail();
+        } catch(IllegalArgumentException e) {}
+
+        try {
+            s.getFooter().setCenter(s251); // 257
+            fail();
+        } catch(IllegalArgumentException e) {}
     }
-    
+
     /**
      * Charts with long titles
      */
@@ -1485,43 +1485,43 @@ public final class TestBugs extends TestCase {
         assertEquals(1, wb.getNumberOfSheets());
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
     }
-    
+
    /**
      * Cell background colours
      */
     public void test45492() {
-    	HSSFWorkbook wb = openSample("45492.xls");
-    	HSSFSheet s = wb.getSheetAt(0);
-    	HSSFRow r = s.getRow(0);
-    	HSSFPalette p = wb.getCustomPalette();
-    	
-    	HSSFCell auto = r.getCell(0);
-    	HSSFCell grey = r.getCell(1);
-    	HSSFCell red = r.getCell(2);
-    	HSSFCell blue = r.getCell(3);
-    	HSSFCell green = r.getCell(4);
-    	
-    	assertEquals(64, auto.getCellStyle().getFillForegroundColor());
-    	assertEquals(64, auto.getCellStyle().getFillBackgroundColor());
-    	assertEquals("0:0:0", p.getColor(64).getHexString());
-    	
-    	assertEquals(22, grey.getCellStyle().getFillForegroundColor());
-    	assertEquals(64, grey.getCellStyle().getFillBackgroundColor());
-    	assertEquals("C0C0:C0C0:C0C0", p.getColor(22).getHexString());
-    	
-    	assertEquals(10, red.getCellStyle().getFillForegroundColor());
-    	assertEquals(64, red.getCellStyle().getFillBackgroundColor());
-    	assertEquals("FFFF:0:0", p.getColor(10).getHexString());
-    	
-    	assertEquals(12, blue.getCellStyle().getFillForegroundColor());
-    	assertEquals(64, blue.getCellStyle().getFillBackgroundColor());
-    	assertEquals("0:0:FFFF", p.getColor(12).getHexString());
-    	
-    	assertEquals(11, green.getCellStyle().getFillForegroundColor());
-    	assertEquals(64, green.getCellStyle().getFillBackgroundColor());
-    	assertEquals("0:FFFF:0", p.getColor(11).getHexString());
+        HSSFWorkbook wb = openSample("45492.xls");
+        HSSFSheet s = wb.getSheetAt(0);
+        HSSFRow r = s.getRow(0);
+        HSSFPalette p = wb.getCustomPalette();
+
+        HSSFCell auto = r.getCell(0);
+        HSSFCell grey = r.getCell(1);
+        HSSFCell red = r.getCell(2);
+        HSSFCell blue = r.getCell(3);
+        HSSFCell green = r.getCell(4);
+
+        assertEquals(64, auto.getCellStyle().getFillForegroundColor());
+        assertEquals(64, auto.getCellStyle().getFillBackgroundColor());
+        assertEquals("0:0:0", p.getColor(64).getHexString());
+
+        assertEquals(22, grey.getCellStyle().getFillForegroundColor());
+        assertEquals(64, grey.getCellStyle().getFillBackgroundColor());
+        assertEquals("C0C0:C0C0:C0C0", p.getColor(22).getHexString());
+
+        assertEquals(10, red.getCellStyle().getFillForegroundColor());
+        assertEquals(64, red.getCellStyle().getFillBackgroundColor());
+        assertEquals("FFFF:0:0", p.getColor(10).getHexString());
+
+        assertEquals(12, blue.getCellStyle().getFillForegroundColor());
+        assertEquals(64, blue.getCellStyle().getFillBackgroundColor());
+        assertEquals("0:0:FFFF", p.getColor(12).getHexString());
+
+        assertEquals(11, green.getCellStyle().getFillForegroundColor());
+        assertEquals(64, green.getCellStyle().getFillBackgroundColor());
+        assertEquals("0:FFFF:0", p.getColor(11).getHexString());
     }
-    
+
     /**
      * ContinueRecord after EOF
      */
@@ -1531,7 +1531,7 @@ public final class TestBugs extends TestCase {
         assertEquals(7, wb.getNumberOfSheets());
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
     }
-    
+
     /**
      * Odd POIFS blocks issue:
      * block[ 44 ] already removed from org.apache.poi.poifs.storage.BlockListImpl.remove

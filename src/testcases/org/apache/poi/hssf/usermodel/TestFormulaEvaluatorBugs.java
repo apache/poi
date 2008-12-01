@@ -151,7 +151,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 
 		row = sheet.getRow(8);
 		cell = row.getCell(0);
-		assertEquals("327680.0/32768", cell.getCellFormula());
+		assertEquals("327680/32768", cell.getCellFormula());
 		assertEquals(10, eva.evaluate(cell).getNumberValue(), 0);
 
 		row = sheet.getRow(9);
@@ -166,15 +166,9 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 
 		row = sheet.getRow(11);
 		cell = row.getCell(0);
-		assertEquals("-1000000.0-3000000.0", cell.getCellFormula());
+		assertEquals("-1000000-3000000", cell.getCellFormula());
 		assertEquals(-4000000, eva.evaluate(cell).getNumberValue(), 0);
 	}
-//	public static void main(String[] args) {
-//		new TestFormulaEvaluatorBugs().test44410();
-//		new TestFormulaEvaluatorBugs().testSlowEvaluate45376();
-//		new HSSFWorkbook();
-//		System.out.println("done");
-//	}
 
 	/**
 	 * Bug 44410: SUM(C:C) is valid in excel, and means a sum

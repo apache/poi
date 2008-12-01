@@ -283,63 +283,63 @@ public final class TestFormulaParser extends TestCase {
 
 		cell.setCellFormula("1.3E21/3");
 		formula = cell.getCellFormula();
-		assertEquals("Exponential formula string", "1.3E21/3", formula);
+		assertEquals("Exponential formula string", "1.3E+21/3", formula);
 
 		cell.setCellFormula("-1.3E21/3");
 		formula = cell.getCellFormula();
-		assertEquals("Exponential formula string", "-1.3E21/3", formula);
+		assertEquals("Exponential formula string", "-1.3E+21/3", formula);
 
 		cell.setCellFormula("1322E21/3");
 		formula = cell.getCellFormula();
-		assertEquals("Exponential formula string", "1.322E24/3", formula);
+		assertEquals("Exponential formula string", "1.322E+24/3", formula);
 
 		cell.setCellFormula("-1322E21/3");
 		formula = cell.getCellFormula();
-		assertEquals("Exponential formula string", "-1.322E24/3", formula);
+		assertEquals("Exponential formula string", "-1.322E+24/3", formula);
 
 		cell.setCellFormula("1.3E1/3");
 		formula = cell.getCellFormula();
-		assertEquals("Exponential formula string", "13.0/3", formula);
+		assertEquals("Exponential formula string", "13/3", formula);
 
 		cell.setCellFormula("-1.3E1/3");
 		formula = cell.getCellFormula();
-		assertEquals("Exponential formula string", "-13.0/3", formula);
+		assertEquals("Exponential formula string", "-13/3", formula);
 
 		cell.setCellFormula("1.3E-4/3");
 		formula = cell.getCellFormula();
-		assertEquals("Exponential formula string", "1.3E-4/3", formula);
+		assertEquals("Exponential formula string", "0.00013/3", formula);
 
 		cell.setCellFormula("-1.3E-4/3");
 		formula = cell.getCellFormula();
-		assertEquals("Exponential formula string", "-1.3E-4/3", formula);
+		assertEquals("Exponential formula string", "-0.00013/3", formula);
 
 		cell.setCellFormula("13E-15/3");
 		formula = cell.getCellFormula();
-		assertEquals("Exponential formula string", "1.3E-14/3", formula);
+        assertEquals("Exponential formula string", "0.000000000000013/3", formula);
 
 		cell.setCellFormula("-13E-15/3");
 		formula = cell.getCellFormula();
-		assertEquals("Exponential formula string", "-1.3E-14/3", formula);
+        assertEquals("Exponential formula string", "-0.000000000000013/3", formula);
 
 		cell.setCellFormula("1.3E3/3");
 		formula = cell.getCellFormula();
-		assertEquals("Exponential formula string", "1300.0/3", formula);
+        assertEquals("Exponential formula string", "1300/3", formula);
 
 		cell.setCellFormula("-1.3E3/3");
 		formula = cell.getCellFormula();
-		assertEquals("Exponential formula string", "-1300.0/3", formula);
+        assertEquals("Exponential formula string", "-1300/3", formula);
 
 		cell.setCellFormula("1300000000000000/3");
 		formula = cell.getCellFormula();
-		assertEquals("Exponential formula string", "1.3E15/3", formula);
+        assertEquals("Exponential formula string", "1300000000000000/3", formula);
 
 		cell.setCellFormula("-1300000000000000/3");
 		formula = cell.getCellFormula();
-		assertEquals("Exponential formula string", "-1.3E15/3", formula);
+        assertEquals("Exponential formula string", "-1300000000000000/3", formula);
 
 		cell.setCellFormula("-10E-1/3.1E2*4E3/3E4");
 		formula = cell.getCellFormula();
-		assertEquals("Exponential formula string", "-1.0/310.0*4000.0/30000.0", formula);
+        assertEquals("Exponential formula string", "-1/310*4000/30000", formula);
 	}
 
 	public void testNumbers() {
@@ -370,15 +370,15 @@ public final class TestFormulaParser extends TestCase {
 
 		cell.setCellFormula("10E1");
 		formula = cell.getCellFormula();
-		assertEquals("100.0", formula);
+        assertEquals("100", formula);
 
 		cell.setCellFormula("10E+1");
 		formula = cell.getCellFormula();
-		assertEquals("100.0", formula);
+        assertEquals("100", formula);
 
 		cell.setCellFormula("10E-1");
 		formula = cell.getCellFormula();
-		assertEquals("1.0", formula);
+        assertEquals("1", formula);
 	}
 
 	public void testRanges() {
