@@ -21,7 +21,6 @@ import junit.framework.AssertionFailedError;
 import junit.framework.ComparisonFailure;
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.biff2.record.BIFF2RecordFactory.NumberRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.constant.ConstantValueParser;
 import org.apache.poi.hssf.record.formula.NumberPtg;
