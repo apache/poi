@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.RecordInputStream.LeftoverDataException;
 import org.apache.poi.hssf.record.chart.*;
 import org.apache.poi.hssf.record.pivottable.*;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -63,7 +64,19 @@ public final class BiffViewer {
 		List<Record> temp = new ArrayList<Record>();
 
 		RecordInputStream recStream = new RecordInputStream(is);
-		while (recStream.hasNextRecord()) {
+		while (true) {
+			boolean hasNext;
+			try {
+				hasNext = recStream.hasNextRecord();
+			} catch (LeftoverDataException e) {
+				e.printStackTrace();
+				System.err.println("Discarding " + recStream.remaining() + " bytes and continuing");
+				recStream.readRemainder();
+				hasNext = recStream.hasNextRecord();
+			}
+			if (!hasNext) {
+				break;
+			}
 			recStream.nextRecord();
 			if (recStream.getSid() == 0) {
 				continue;

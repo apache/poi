@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
+import org.apache.poi.hssf.dev.BiffViewer;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -40,6 +41,17 @@ public final class RecordInputStream extends InputStream implements LittleEndian
 	 */
 	private static final int DATA_LEN_NEEDS_TO_BE_READ = -1;
 	private static final byte[] EMPTY_BYTE_ARRAY = { };
+	
+	/**
+	 * For use in {@link BiffViewer} which may construct {@link Record}s that don't completely
+	 * read all available data.  This exception should never be thrown otherwise.
+	 */
+	public static final class LeftoverDataException extends RuntimeException {
+		public LeftoverDataException(int sid, int remainingByteCount) {
+			super("Initialisation of record 0x" + Integer.toHexString(sid).toUpperCase() 
+					+ " left " + remainingByteCount + " bytes remaining still to be read.");
+		}
+	}
 
 	/** {@link LittleEndianInput} facet of the wrapped {@link InputStream} */
 	private final LittleEndianInput _le;
@@ -102,17 +114,14 @@ public final class RecordInputStream extends InputStream implements LittleEndian
 	}
 
 	/**
-	 * Note - this method is expected to be called only when completed reading the current BIFF record.
-	 * Calling this before reaching the end of the current record will cause all remaining data to be
-	 * discarded
+	 * Note - this method is expected to be called only when completed reading the current BIFF 
+	 * record.
+	 * @throws LeftoverDataException if this method is called before reaching the end of the 
+	 * current record.
 	 */
-	public boolean hasNextRecord() {
+	public boolean hasNextRecord() throws LeftoverDataException {
 		if (_currentDataLength != -1 && _currentDataLength != _currentDataOffset) {
-			System.out.println("WARN. Unread "+remaining()+" bytes of record 0x"+Integer.toHexString(_currentSid));
-			// discard unread data
-			while (_currentDataOffset < _currentDataLength) {
-				readByte();
-			}
+			throw new LeftoverDataException(_currentSid, remaining());
 		}
 		if (_currentDataLength != DATA_LEN_NEEDS_TO_BE_READ) {
 			_nextSid = readNextSid();
