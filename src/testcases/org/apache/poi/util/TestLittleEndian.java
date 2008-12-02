@@ -84,10 +84,8 @@ public final class TestLittleEndian extends TestCase {
     {
         56, 50, -113, -4, -63, -64, -13, 63, 76, -32, -42, -35, 60, -43, 3, 64
     };
-    private static final byte[]   _nan_double_array =
-    {
-        (byte)0x00, (byte)0x00, (byte)0x3C, (byte)0x00, (byte)0x20, (byte)0x04, (byte)0xFF, (byte)0xFF
-    };
+	/** 0x7ff8000000000000 encoded in little endian order */
+	private static final byte[] _nan_double_array = HexRead.readFromString("00 00 00 00 00 00 F8 7F");
     private static final double[] _doubles      =
     {
         1.23456, 2.47912, Double.NaN
