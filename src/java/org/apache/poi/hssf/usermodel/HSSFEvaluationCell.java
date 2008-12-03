@@ -34,15 +34,12 @@ final class HSSFEvaluationCell implements EvaluationCell {
 		_evalSheet = evalSheet;
 	}
 	public HSSFEvaluationCell(HSSFCell cell) {
-		_cell = cell;
-		_evalSheet = new HSSFEvaluationSheet(cell.getSheet());
+		this(cell, new HSSFEvaluationSheet(cell.getSheet()));
 	}
-	// Note -  hashCode and equals defined according to underlying cell
-	public int hashCode() {
-		return _cell.hashCode();
-	}
-	public boolean equals(Object obj) {
-		return _cell == ((HSSFEvaluationCell)obj)._cell;
+	public Object getIdentityKey() {
+		// save memory by just using the cell itself as the identity key
+		// Note - this assumes HSSFCell has not overridden hashCode and equals
+		return _cell;
 	}
 
 	public HSSFCell getHSSFCell() {

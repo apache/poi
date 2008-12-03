@@ -31,11 +31,11 @@ final class FormulaCellCache {
 		void processEntry(FormulaCellCacheEntry entry);
 	}
 
-	private Map _formulaEntriesByCell;
+	private final Map<Object, FormulaCellCacheEntry> _formulaEntriesByCell;
 
 	public FormulaCellCache() {
-		// assumes HSSFCell does not override hashCode or equals, otherwise we need IdentityHashMap
-		_formulaEntriesByCell = new HashMap(); 
+		// assumes the object returned by EvaluationCell.getIdentityKey() has a well behaved hashCode+equals
+		_formulaEntriesByCell = new HashMap<Object, FormulaCellCacheEntry>();
 	}
 
 	public CellCacheEntry[] getCacheEntries() {
@@ -53,15 +53,15 @@ final class FormulaCellCache {
 	 * @return <code>null</code> if not found
 	 */
 	public FormulaCellCacheEntry get(EvaluationCell cell) {
-		return (FormulaCellCacheEntry) _formulaEntriesByCell.get(cell);
+		return _formulaEntriesByCell.get(cell.getIdentityKey());
 	}
 
 	public void put(EvaluationCell cell, FormulaCellCacheEntry entry) {
-		_formulaEntriesByCell.put(cell, entry);
+		_formulaEntriesByCell.put(cell.getIdentityKey(), entry);
 	}
 
 	public FormulaCellCacheEntry remove(EvaluationCell cell) {
-		return (FormulaCellCacheEntry) _formulaEntriesByCell.remove(cell);
+		return _formulaEntriesByCell.remove(cell.getIdentityKey());
 	}
 
 	public void applyOperation(IEntryOperation operation) {

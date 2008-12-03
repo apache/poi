@@ -17,19 +17,22 @@
 
 package org.apache.poi.ss.formula;
 
+import java.util.HashMap;
+
 /**
  * Abstracts a cell for the purpose of formula evaluation.  This interface represents both formula
  * and non-formula cells.<br/>
- * 
- * Implementors of this class must implement {@link Object#hashCode()} and {@link Object#equals(Object)}
- * to provide an <em>identity</em> relationship based on the underlying HSSF or XSSF cell <p/>
  * 
  * For POI internal use only
  * 
  * @author Josh Micich
  */
 public interface EvaluationCell {
-	// consider method Object getUnderlyingCell() to reduce memory consumption in formula cell cache
+	/**
+	 * @return an Object that identifies the underlying cell, suitable for use as a key in a {@link HashMap}
+	 */
+	Object getIdentityKey();
+
 	EvaluationSheet getSheet();
 	int getRowIndex();
 	int getColumnIndex();
