@@ -87,11 +87,11 @@ final class FormulaCellCacheEntry extends CellCacheEntry {
 		if (nPrevUsed < 1) {
 			return;
 		}
-		Set usedSet;
+		Set<CellCacheEntry> usedSet;
 		if (nUsed < 1) {
-			usedSet = Collections.EMPTY_SET;
+			usedSet = Collections.emptySet();
 		} else {
-			usedSet = new HashSet(nUsed * 3 / 2);
+			usedSet = new HashSet<CellCacheEntry>(nUsed * 3 / 2);
 			for (int i = 0; i < nUsed; i++) {
 				usedSet.add(usedCells[i]);
 			}

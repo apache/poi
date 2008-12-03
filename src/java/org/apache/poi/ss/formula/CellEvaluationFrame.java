@@ -28,12 +28,12 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
 final class CellEvaluationFrame {
 
 	private final FormulaCellCacheEntry _cce;
-	private final Set _sensitiveInputCells;
+	private final Set<CellCacheEntry> _sensitiveInputCells;
 	private FormulaUsedBlankCellSet _usedBlankCellGroup;
 
 	public CellEvaluationFrame(FormulaCellCacheEntry cce) {
 		_cce = cce;
-		_sensitiveInputCells = new HashSet();
+		_sensitiveInputCells = new HashSet<CellCacheEntry>();
 	}
 	public CellCacheEntry getCCE() {
 		return _cce;

@@ -17,9 +17,6 @@
 
 package org.apache.poi.ss.formula;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,80 +63,38 @@ import org.apache.poi.hssf.record.formula.eval.UnaryPlusEval;
 /**
  * This class creates <tt>OperationEval</tt> instances to help evaluate <tt>OperationPtg</tt>
  * formula tokens.
- * 
+ *
  * @author Josh Micich
  */
 final class OperationEvaluatorFactory {
-	private static final Class[] OPERATION_CONSTRUCTOR_CLASS_ARRAY = new Class[] { Ptg.class };
-	// TODO - use singleton instances directly instead of reflection
-	private static final Map _constructorsByPtgClass = initialiseConstructorsMap();
-	private static final Map _instancesByPtgClass = initialiseInstancesMap();
-	
+
+	private static final Map<Class<? extends Ptg>, OperationEval> _instancesByPtgClass = initialiseInstancesMap();
+
 	private OperationEvaluatorFactory() {
 		// no instances of this class
 	}
-	
-	private static Map initialiseConstructorsMap() {
-		Map m = new HashMap(32);
-		add(m, ConcatPtg.class, ConcatEval.class);
-		add(m, FuncPtg.class, FuncVarEval.class);
-		add(m, FuncVarPtg.class, FuncVarEval.class);
+
+	private static Map<Class<? extends Ptg>, OperationEval> initialiseInstancesMap() {
+		Map<Class<? extends Ptg>, OperationEval> m = new HashMap<Class<? extends Ptg>, OperationEval>(32);
+		m.put(EqualPtg.class, EqualEval.instance);
+
+		m.put(EqualPtg.class, EqualEval.instance);
+		m.put(GreaterEqualPtg.class, GreaterEqualEval.instance);
+		m.put(GreaterThanPtg.class, GreaterThanEval.instance);
+		m.put(LessEqualPtg.class, LessEqualEval.instance);
+		m.put(LessThanPtg.class, LessThanEval.instance);
+		m.put(NotEqualPtg.class, NotEqualEval.instance);
+
+		m.put(AddPtg.class, AddEval.instance);
+		m.put(DividePtg.class, DivideEval.instance);
+		m.put(MultiplyPtg.class, MultiplyEval.instance);
+		m.put(PercentPtg.class, PercentEval.instance);
+		m.put(PowerPtg.class, PowerEval.instance);
+		m.put(SubtractPtg.class, SubtractEval.instance);
+		m.put(UnaryMinusPtg.class, UnaryMinusEval.instance);
+		m.put(UnaryPlusPtg.class, UnaryPlusEval.instance);
+		m.put(RangePtg.class, RangeEval.instance);
 		return m;
-	}
-	private static Map initialiseInstancesMap() {
-		Map m = new HashMap(32);
-		add(m, EqualPtg.class, EqualEval.instance);
-		add(m, GreaterEqualPtg.class, GreaterEqualEval.instance);
-		add(m, GreaterThanPtg.class, GreaterThanEval.instance);
-		add(m, LessEqualPtg.class, LessEqualEval.instance);
-		add(m, LessThanPtg.class, LessThanEval.instance);
-		add(m, NotEqualPtg.class, NotEqualEval.instance);
-
-		add(m, AddPtg.class, AddEval.instance);
-		add(m, DividePtg.class, DivideEval.instance);
-		add(m, MultiplyPtg.class, MultiplyEval.instance);
-		add(m, PercentPtg.class, PercentEval.instance);
-		add(m, PowerPtg.class, PowerEval.instance);
-		add(m, SubtractPtg.class, SubtractEval.instance);
-		add(m, UnaryMinusPtg.class, UnaryMinusEval.instance);
-		add(m, UnaryPlusPtg.class, UnaryPlusEval.instance);
-		add(m, RangePtg.class, RangeEval.instance);
-		return m;
-	}
-
-	private static void add(Map m, Class ptgClass, OperationEval evalInstance) {
-		if(!Ptg.class.isAssignableFrom(ptgClass)) {
-			throw new IllegalArgumentException("Expected Ptg subclass");
-		}
-		m.put(ptgClass, evalInstance);
-	}
-
-	private static void add(Map m, Class ptgClass, Class evalClass) {
-		// perform some validation now, to keep later exception handlers simple
-		if(!Ptg.class.isAssignableFrom(ptgClass)) {
-			throw new IllegalArgumentException("Expected Ptg subclass");
-		}
-		
-		if(!OperationEval.class.isAssignableFrom(evalClass)) {
-			throw new IllegalArgumentException("Expected OperationEval subclass");
-		}
-		if (!Modifier.isPublic(evalClass.getModifiers())) {
-			throw new RuntimeException("Eval class must be public");
-		}
-		if (Modifier.isAbstract(evalClass.getModifiers())) {
-			throw new RuntimeException("Eval class must not be abstract");
-		}
-		
-		Constructor constructor;
-		try {
-			constructor = evalClass.getDeclaredConstructor(OPERATION_CONSTRUCTOR_CLASS_ARRAY);
-		} catch (NoSuchMethodException e) {
-			throw new RuntimeException("Missing constructor");
-		}
-		if (!Modifier.isPublic(constructor.getModifiers())) {
-			throw new RuntimeException("Eval constructor must be public");
-		}
-		m.put(ptgClass, constructor);
 	}
 
 	/**
@@ -150,38 +105,29 @@ final class OperationEvaluatorFactory {
 		if(ptg == null) {
 			throw new IllegalArgumentException("ptg must not be null");
 		}
-		Object result;
-		
+		OperationEval result;
+
 		Class ptgClass = ptg.getClass();
-		
+
 		result = _instancesByPtgClass.get(ptgClass);
 		if (result != null) {
-			return (OperationEval) result;
+			return  result;
 		}
 		
-		
-		Constructor constructor = (Constructor) _constructorsByPtgClass.get(ptgClass);
-		if(constructor == null) {
-			if(ptgClass == ExpPtg.class) {
-				// ExpPtg is used for array formulas and shared formulas.
-				// it is currently unsupported, and may not even get implemented here
-				throw new RuntimeException("ExpPtg currently not supported");
-			}
-			throw new RuntimeException("Unexpected operation ptg class (" + ptgClass.getName() + ")");
+		if (ptgClass == FuncPtg.class) {
+			return new FuncVarEval((FuncPtg)ptg);
 		}
-		
-		Object[] initargs = { ptg };
-		try {
-			result = constructor.newInstance(initargs);
-		} catch (IllegalArgumentException e) {
-			throw new RuntimeException(e);
-		} catch (InstantiationException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		} catch (InvocationTargetException e) {
-			throw new RuntimeException(e);
+		if (ptgClass == FuncVarPtg.class) {
+			return new FuncVarEval((FuncVarPtg)ptg);
 		}
-		return (OperationEval) result;
+		if (ptgClass == ConcatPtg.class) {
+			return new ConcatEval((ConcatPtg)ptg);
+		}
+		if(ptgClass == ExpPtg.class) {
+			// ExpPtg is used for array formulas and shared formulas.
+			// it is currently unsupported, and may not even get implemented here
+			throw new RuntimeException("ExpPtg currently not supported");
+		}
+		throw new RuntimeException("Unexpected operation ptg class (" + ptgClass.getName() + ")");
 	}
 }

@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record.formula.eval;
 
 import org.apache.poi.hssf.record.formula.ConcatPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -28,8 +27,8 @@ public final class ConcatEval implements OperationEval {
 
     private ConcatPtg delegate;
 
-    public ConcatEval(Ptg ptg) {
-        this.delegate = (ConcatPtg) ptg;
+    public ConcatEval(ConcatPtg ptg) {
+        delegate = ptg;
     }
 
     public Eval evaluate(Eval[] args, int srcRow, short srcCol) {
@@ -46,7 +45,7 @@ public final class ConcatEval implements OperationEval {
 			        sb.append(sve.getStringValue());
 			    } else if (ve == BlankEval.INSTANCE) {
 			        // do nothing
-			    } else { // must be an error eval
+			    } else {
 			        throw new RuntimeException("Unexpected value type (" 
 			        		+ ve.getClass().getName() + ")");
 			    }
