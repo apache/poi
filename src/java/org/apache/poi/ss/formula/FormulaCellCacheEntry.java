@@ -26,12 +26,11 @@ import org.apache.poi.ss.formula.FormulaUsedBlankCellSet.BookSheetKey;
 
 
 /**
- * Stores the cached result of a formula evaluation, along with the set of sensititive input cells
+ * Stores the cached result of a formula evaluation, along with the set of sensitive input cells
  * 
  * @author Josh Micich
  */
 final class FormulaCellCacheEntry extends CellCacheEntry {
-	public static final FormulaCellCacheEntry[] EMPTY_ARRAY = { };
 	
 	/**
 	 * Cells 'used' in the current evaluation of the formula corresponding to this cache entry
@@ -43,7 +42,7 @@ final class FormulaCellCacheEntry extends CellCacheEntry {
 	private FormulaUsedBlankCellSet _usedBlankCellGroup;
 
 	public FormulaCellCacheEntry() {
-		
+		// leave fields un-set
 	}
 	
 	public boolean isInputSensitive() {

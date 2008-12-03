@@ -126,9 +126,9 @@ public final class FormulaParser {
     }
 
 
-    private final String formulaString;
-    private final int formulaLength;
-    private int pointer;
+    private final String _formulaString;
+    private final int _formulaLength;
+    private int _pointer;
 
     private ParseNode _rootNode;
 
@@ -140,7 +140,7 @@ public final class FormulaParser {
      */
     private char look;
 
-    private FormulaParsingWorkbook book;
+    private FormulaParsingWorkbook _book;
 
 
 
@@ -148,7 +148,7 @@ public final class FormulaParser {
      * Create the formula parser, with the string that is to be
      *  parsed against the supplied workbook.
      * A later call the parse() method to return ptg list in
-     *  rpn order, then call the getRPNPtg() to retrive the
+     *  rpn order, then call the getRPNPtg() to retrieve the
      *  parse results.
      * This class is recommended only for single threaded use.
      *
@@ -157,10 +157,10 @@ public final class FormulaParser {
      *  usermodel.HSSFFormulaEvaluator
      */
     private FormulaParser(String formula, FormulaParsingWorkbook book){
-        formulaString = formula;
-        pointer=0;
-        this.book = book;
-        formulaLength = formulaString.length();
+        _formulaString = formula;
+        _pointer=0;
+        _book = book;
+        _formulaLength = _formulaString.length();
     }
 
     public static Ptg[] parse(String formula, FormulaParsingWorkbook book) {
@@ -176,17 +176,17 @@ public final class FormulaParser {
     /** Read New Character From Input Stream */
     private void GetChar() {
         // Check to see if we've walked off the end of the string.
-        if (pointer > formulaLength) {
+        if (_pointer > _formulaLength) {
             throw new RuntimeException("too far");
         }
-        if (pointer < formulaLength) {
-            look=formulaString.charAt(pointer);
+        if (_pointer < _formulaLength) {
+            look=_formulaString.charAt(_pointer);
         } else {
             // Just return if so and reset 'look' to something to keep
             // SkipWhitespace from spinning
             look = (char)0;
         }
-        pointer++;
+        _pointer++;
         //System.out.println("Got char: "+ look);
     }
 
@@ -194,12 +194,12 @@ public final class FormulaParser {
     private RuntimeException expected(String s) {
         String msg;
 
-        if (look == '=' && formulaString.substring(0, pointer-1).trim().length() < 1) {
-            msg = "The specified formula '" + formulaString
+        if (look == '=' && _formulaString.substring(0, _pointer-1).trim().length() < 1) {
+            msg = "The specified formula '" + _formulaString
                 + "' starts with an equals sign which is not allowed.";
         } else {
-            msg = "Parse error near char " + (pointer-1) + " '" + look + "'"
-                + " in specified formula '" + formulaString + "'. Expected "
+            msg = "Parse error near char " + (_pointer-1) + " '" + look + "'"
+                + " in specified formula '" + _formulaString + "'. Expected "
                 + s;
         }
         return new FormulaParseException(msg);
@@ -413,7 +413,7 @@ public final class FormulaParser {
             new FormulaParseException("Name '" + name
                 + "' does not look like a cell reference or named range");
         }
-        EvaluationName evalName = book.getName(name);
+        EvaluationName evalName = _book.getName(name);
         if (evalName == null) {
             throw new FormulaParseException("Specified named range '"
                     + name + "' does not exist in the current workbook.");
@@ -458,9 +458,9 @@ public final class FormulaParser {
             int pos = name.lastIndexOf(']'); // safe because sheet names never have ']'
             String wbName = name.substring(1, pos);
             String sheetName = name.substring(pos+1);
-            return book.getExternalSheetIndex(wbName, sheetName);
+            return _book.getExternalSheetIndex(wbName, sheetName);
         }
-        return book.getExternalSheetIndex(name);
+        return _book.getExternalSheetIndex(name);
     }
 
     /**
@@ -516,10 +516,10 @@ public final class FormulaParser {
             // user defined function
             // in the token tree, the name is more or less the first argument
 
-            EvaluationName hName = book.getName(name);
+            EvaluationName hName = _book.getName(name);
             if (hName == null) {
 
-                nameToken = book.getNameXPtg(name);
+                nameToken = _book.getNameXPtg(name);
                 if (nameToken == null) {
                     throw new FormulaParseException("Name '" + name
                             + "' is completely unknown in the current workbook");
@@ -1092,13 +1092,13 @@ end;
      * 
      */
     private void parse() {
-        pointer=0;
+        _pointer=0;
         GetChar();
         _rootNode = unionExpression();
 
-        if(pointer <= formulaLength) {
-            String msg = "Unused input [" + formulaString.substring(pointer-1)
-                + "] after attempting to parse the formula [" + formulaString + "]";
+        if(_pointer <= _formulaLength) {
+            String msg = "Unused input [" + _formulaString.substring(_pointer-1)
+                + "] after attempting to parse the formula [" + _formulaString + "]";
             throw new FormulaParseException(msg);
         }
     }

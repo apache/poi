@@ -24,7 +24,6 @@ import org.apache.poi.hssf.record.formula.AddPtg;
 import org.apache.poi.hssf.record.formula.ConcatPtg;
 import org.apache.poi.hssf.record.formula.DividePtg;
 import org.apache.poi.hssf.record.formula.EqualPtg;
-import org.apache.poi.hssf.record.formula.ExpPtg;
 import org.apache.poi.hssf.record.formula.FuncPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.GreaterEqualPtg;
@@ -107,7 +106,7 @@ final class OperationEvaluatorFactory {
 		}
 		OperationEval result;
 
-		Class ptgClass = ptg.getClass();
+		Class<? extends OperationPtg> ptgClass = ptg.getClass();
 
 		result = _instancesByPtgClass.get(ptgClass);
 		if (result != null) {
@@ -122,11 +121,6 @@ final class OperationEvaluatorFactory {
 		}
 		if (ptgClass == ConcatPtg.class) {
 			return new ConcatEval((ConcatPtg)ptg);
-		}
-		if(ptgClass == ExpPtg.class) {
-			// ExpPtg is used for array formulas and shared formulas.
-			// it is currently unsupported, and may not even get implemented here
-			throw new RuntimeException("ExpPtg currently not supported");
 		}
 		throw new RuntimeException("Unexpected operation ptg class (" + ptgClass.getName() + ")");
 	}
