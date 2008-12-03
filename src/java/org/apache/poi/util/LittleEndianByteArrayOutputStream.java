@@ -30,9 +30,17 @@ public final class LittleEndianByteArrayOutputStream implements LittleEndianOutp
 	private int _writeIndex;
 
 	public LittleEndianByteArrayOutputStream(byte[] buf, int startOffset, int maxWriteLen) {
+		if (startOffset < 0 || startOffset > buf.length) {
+			throw new IllegalArgumentException("Specified startOffset (" + startOffset 
+					+ ") is out of allowable range (0.." + buf.length + ")");
+		}
 		_buf = buf;
 		_writeIndex = startOffset;
 		_endIndex = startOffset + maxWriteLen;
+		if (_endIndex < startOffset ||  _endIndex > buf.length) {
+			throw new IllegalArgumentException("calculated end index (" + _endIndex 
+					+ ") is out of allowable range (" + _writeIndex + ".." + buf.length + ")");
+		}
 	}
 	public LittleEndianByteArrayOutputStream(byte[] buf, int startOffset) {
 		this(buf, startOffset, buf.length - startOffset);
@@ -91,7 +99,7 @@ public final class LittleEndianByteArrayOutputStream implements LittleEndianOutp
 	}
 	public LittleEndianOutput createDelayedOutput(int size) {
 		checkPosition(size);
-		LittleEndianOutput result = new LittleEndianByteArrayOutputStream(_buf, _writeIndex, _writeIndex+size);
+		LittleEndianOutput result = new LittleEndianByteArrayOutputStream(_buf, _writeIndex, size);
 		_writeIndex += size;
 		return result;
 	}
