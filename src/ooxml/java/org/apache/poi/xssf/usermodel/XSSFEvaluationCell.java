@@ -30,22 +30,19 @@ final class XSSFEvaluationCell implements EvaluationCell {
 	private final EvaluationSheet _evalSheet;
 	private final XSSFCell _cell;
 
-	public XSSFEvaluationCell(XSSFCell cell) {
-		_cell = cell;
-		_evalSheet = new XSSFEvaluationSheet(cell.getSheet());
-	}
-
 	public XSSFEvaluationCell(XSSFCell cell, XSSFEvaluationSheet evaluationSheet) {
 		_cell = cell;
 		_evalSheet = evaluationSheet;
 	}
 
-	// Note -  hashCode and equals defined according to underlying cell
-	public int hashCode() {
-		return _cell.hashCode();
+	public XSSFEvaluationCell(XSSFCell cell) {
+		this(cell, new XSSFEvaluationSheet(cell.getSheet()));
 	}
-	public boolean equals(Object obj) {
-		return _cell == ((XSSFEvaluationCell)obj)._cell;
+
+	public Object getIdentityKey() {
+		// save memory by just using the cell itself as the identity key
+		// Note - this assumes HSSFCell has not overridden hashCode and equals
+		return _cell;
 	}
 
 	public XSSFCell getXSSFCell() {
