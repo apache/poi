@@ -1,3 +1,20 @@
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.ss.formula;
 
 import java.util.Arrays;
@@ -14,9 +31,16 @@ import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
+/**
+ * Encapsulates an encoded formula token array. 
+ * 
+ * @author Josh Micich
+ */
 public class Formula {
 
-	private static final byte[] EMPTY_BYTE_ARRAY = { };
+	private static final Formula EMPTY = new Formula(new byte[0], 0);
+
+	/** immutable */
 	private final byte[] _byteEncoding;
 	private final int _encodedTokenLen;
 	
@@ -24,17 +48,17 @@ public class Formula {
 		_byteEncoding = byteEncoding;
 		_encodedTokenLen = encodedTokenLen;
 		if (false) { // set to true to eagerly check Ptg decoding 
-    		LittleEndianByteArrayInputStream in = new LittleEndianByteArrayInputStream(byteEncoding);
-    		Ptg.readTokens(encodedTokenLen, in);
-    		int nUnusedBytes = _byteEncoding.length - in.getReadIndex();
-    		if (nUnusedBytes > 0) {
-    			// TODO - this seems to occur when IntersectionPtg is present
-        		// This example file "IntersectionPtg.xls"
-        		// used by test: TestIntersectionPtg.testReading()
-        		// has 10 bytes unused at the end of the formula
-    			// 10 extra bytes are just 0x01 and 0x00
-    			System.out.println(nUnusedBytes + " unused bytes at end of formula");
-    		}
+			LittleEndianByteArrayInputStream in = new LittleEndianByteArrayInputStream(byteEncoding);
+			Ptg.readTokens(encodedTokenLen, in);
+			int nUnusedBytes = _byteEncoding.length - in.getReadIndex();
+			if (nUnusedBytes > 0) {
+				// TODO - this seems to occur when IntersectionPtg is present
+				// This example file "IntersectionPtg.xls"
+				// used by test: TestIntersectionPtg.testReading()
+				// has 10 bytes unused at the end of the formula
+				// 10 extra bytes are just 0x01 and 0x00
+				System.out.println(nUnusedBytes + " unused bytes at end of formula");
+			}
 		}
 	}
 	/**
@@ -112,8 +136,8 @@ public class Formula {
 	 * @return Never <code>null</code> (Possibly empty if the supplied <tt>ptgs</tt> is <code>null</code>)
 	 */
 	public static Formula create(Ptg[] ptgs) {
-		if (ptgs == null) {
-			return new Formula(EMPTY_BYTE_ARRAY, 0);
+		if (ptgs == null || ptgs.length < 1) {
+			return EMPTY;
 		}
 		int totalSize = Ptg.getEncodedSize(ptgs);
 		byte[] encodedData = new byte[totalSize];
@@ -136,7 +160,7 @@ public class Formula {
 	}
 	
 	public Formula copy() {
-		// OK to return this for the moment because currently immutable
+		// OK to return this because immutable
 		return this;
 	}
 	
