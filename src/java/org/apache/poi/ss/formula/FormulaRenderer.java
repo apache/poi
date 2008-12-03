@@ -47,7 +47,7 @@ public class FormulaRenderer {
         if (ptgs == null || ptgs.length == 0) {
             throw new IllegalArgumentException("ptgs must not be null");
         }
-        Stack stack = new Stack();
+        Stack<String> stack = new Stack<String>();
 
         for (int i=0 ; i < ptgs.length; i++) {
             Ptg ptg = ptgs[i];
@@ -59,7 +59,7 @@ public class FormulaRenderer {
                 continue;
             }
             if (ptg instanceof ParenthesisPtg) {
-                String contents = (String)stack.pop();
+                String contents = stack.pop();
                 stack.push ("(" + contents + ")");
                 continue;
             }
@@ -106,7 +106,7 @@ public class FormulaRenderer {
             // stack.push(). So this is either an internal error or impossible.
             throw new IllegalStateException("Stack underflow");
         }
-        String result = (String) stack.pop();
+        String result = stack.pop();
         if(!stack.isEmpty()) {
             // Might be caused by some tokens like AttrPtg and Mem*Ptg, which really shouldn't
             // put anything on the stack

@@ -37,12 +37,12 @@ public final class CollaboratingWorkbooksEnvironment {
 	
 	public static final CollaboratingWorkbooksEnvironment EMPTY = new CollaboratingWorkbooksEnvironment();
 	
-	private final Map _evaluatorsByName;
+	private final Map<String, WorkbookEvaluator> _evaluatorsByName;
 	private final WorkbookEvaluator[] _evaluators;
 
 	private boolean _unhooked;
 	private CollaboratingWorkbooksEnvironment() {
-		_evaluatorsByName = Collections.EMPTY_MAP;
+		_evaluatorsByName = Collections.emptyMap();
 		_evaluators = new WorkbookEvaluator[0];
 	}
 	public static void setup(String[] workbookNames, WorkbookEvaluator[] evaluators) {
@@ -58,8 +58,8 @@ public final class CollaboratingWorkbooksEnvironment {
 	}
 
 	private CollaboratingWorkbooksEnvironment(String[] workbookNames, WorkbookEvaluator[] evaluators, int nItems) {
-		Map m = new HashMap(nItems * 3 / 2);
-		IdentityHashMap uniqueEvals = new IdentityHashMap(nItems * 3 / 2);
+		Map<String, WorkbookEvaluator> m = new HashMap<String, WorkbookEvaluator>(nItems * 3 / 2);
+		IdentityHashMap<WorkbookEvaluator, String> uniqueEvals = new IdentityHashMap<WorkbookEvaluator, String>(nItems * 3 / 2);
 		for(int i=0; i<nItems; i++) {
 			String wbName = workbookNames[i];
 			WorkbookEvaluator wbEval = evaluators[i];
@@ -102,7 +102,7 @@ public final class CollaboratingWorkbooksEnvironment {
 		
 	}
 	private void unhookOldEnvironments(WorkbookEvaluator[] evaluators) {
-		Set oldEnvs = new HashSet();
+		Set<CollaboratingWorkbooksEnvironment> oldEnvs = new HashSet<CollaboratingWorkbooksEnvironment>();
 		for(int i=0; i<evaluators.length; i++) {
 			oldEnvs.add(evaluators[i].getEnvironment());
 		}
@@ -130,7 +130,7 @@ public final class CollaboratingWorkbooksEnvironment {
 		if (_unhooked) {
 			throw new IllegalStateException("This environment has been unhooked");
 		}
-		WorkbookEvaluator result = (WorkbookEvaluator) _evaluatorsByName.get(workbookName);
+		WorkbookEvaluator result = _evaluatorsByName.get(workbookName);
 		if (result == null) {
 			StringBuffer sb = new StringBuffer(256);
 			sb.append("Could not resolve external workbook name '").append(workbookName).append("'.");
@@ -138,7 +138,7 @@ public final class CollaboratingWorkbooksEnvironment {
 				sb.append(" Workbook environment has not been set up.");
 			} else {
 				sb.append(" The following workbook names are valid: (");
-				Iterator i = _evaluatorsByName.keySet().iterator();
+				Iterator<String> i = _evaluatorsByName.keySet().iterator();
 				int count=0;
 				while(i.hasNext()) {
 					if (count++>0) {

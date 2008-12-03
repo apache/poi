@@ -37,14 +37,14 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
  */
 final class EvaluationTracker {
 	// TODO - consider deleting this class and letting CellEvaluationFrame take care of itself
-	private final List _evaluationFrames;
-	private final Set _currentlyEvaluatingCells;
+	private final List<CellEvaluationFrame> _evaluationFrames;
+	private final Set<FormulaCellCacheEntry> _currentlyEvaluatingCells;
 	private final EvaluationCache _cache;
 
 	public EvaluationTracker(EvaluationCache cache) {
 		_cache = cache;
-		_evaluationFrames = new ArrayList();
-		_currentlyEvaluatingCells = new HashSet();
+		_evaluationFrames = new ArrayList<CellEvaluationFrame>();
+		_currentlyEvaluatingCells = new HashSet<FormulaCellCacheEntry>();
 	}
 
 	/**
@@ -79,7 +79,7 @@ final class EvaluationTracker {
 		if (nFrames < 1) {
 			throw new IllegalStateException("Call to endEvaluate without matching call to startEvaluate");
 		}
-		CellEvaluationFrame frame = (CellEvaluationFrame) _evaluationFrames.get(nFrames-1);
+		CellEvaluationFrame frame = _evaluationFrames.get(nFrames-1);
 
 		frame.updateFormulaResult(result);
 	}
@@ -102,7 +102,7 @@ final class EvaluationTracker {
 		}
 
 		nFrames--;
-		CellEvaluationFrame frame = (CellEvaluationFrame) _evaluationFrames.get(nFrames);
+		CellEvaluationFrame frame = _evaluationFrames.get(nFrames);
 		if (cce != frame.getCCE()) {
 			throw new IllegalStateException("Wrong cell specified. ");
 		}
@@ -117,7 +117,7 @@ final class EvaluationTracker {
 		if (prevFrameIndex < 0) {
 			// Top level frame, there is no 'cell' above this frame that is using the current cell
 		} else {
-			CellEvaluationFrame consumingFrame = (CellEvaluationFrame) _evaluationFrames.get(prevFrameIndex);
+			CellEvaluationFrame consumingFrame = _evaluationFrames.get(prevFrameIndex);
 			consumingFrame.addSensitiveInputCell(cce);
 		}
 	}
@@ -129,7 +129,7 @@ final class EvaluationTracker {
 		if (prevFrameIndex < 0) {
 			// Top level frame, there is no 'cell' above this frame that is using the current cell
 		} else {
-			CellEvaluationFrame consumingFrame = (CellEvaluationFrame) _evaluationFrames.get(prevFrameIndex);
+			CellEvaluationFrame consumingFrame = _evaluationFrames.get(prevFrameIndex);
 			if (value == BlankEval.INSTANCE) {
 				consumingFrame.addUsedBlankCell(bookIndex, sheetIndex, rowIndex, columnIndex);
 			} else {

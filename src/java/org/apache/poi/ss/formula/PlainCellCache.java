@@ -64,10 +64,10 @@ final class PlainCellCache {
 		}
 	}
 
-	private Map _plainValueEntriesByLoc;
+	private Map<Loc, PlainValueCellCacheEntry> _plainValueEntriesByLoc;
 
 	public PlainCellCache() {
-		_plainValueEntriesByLoc = new HashMap();
+		_plainValueEntriesByLoc = new HashMap<Loc, PlainValueCellCacheEntry>();
 	}
 	public void put(Loc key, PlainValueCellCacheEntry cce) {
 		_plainValueEntriesByLoc.put(key, cce);
@@ -76,7 +76,7 @@ final class PlainCellCache {
 		_plainValueEntriesByLoc.clear();
 	}
 	public PlainValueCellCacheEntry get(Loc key) {
-		return (PlainValueCellCacheEntry) _plainValueEntriesByLoc.get(key);
+		return _plainValueEntriesByLoc.get(key);
 	}
 	public void remove(Loc key) {
 		_plainValueEntriesByLoc.remove(key);

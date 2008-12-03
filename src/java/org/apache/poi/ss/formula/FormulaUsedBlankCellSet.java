@@ -49,14 +49,14 @@ final class FormulaUsedBlankCellSet {
 	}
 
 	private static final class BlankCellSheetGroup {
-		private final List _rectangleGroups;
+		private final List<BlankCellRectangleGroup> _rectangleGroups;
 		private int _currentRowIndex;
 		private int _firstColumnIndex;
 		private int _lastColumnIndex;
 		private BlankCellRectangleGroup _currentRectangleGroup;
 
 		public BlankCellSheetGroup() {
-			_rectangleGroups = new ArrayList();
+			_rectangleGroups = new ArrayList<BlankCellRectangleGroup>();
 			_currentRowIndex = -1;
 		}
 
@@ -87,7 +87,7 @@ final class FormulaUsedBlankCellSet {
 
 		public boolean containsCell(int rowIndex, int columnIndex) {
 			for (int i=_rectangleGroups.size()-1; i>=0; i--) {
-				BlankCellRectangleGroup bcrg = (BlankCellRectangleGroup) _rectangleGroups.get(i);
+				BlankCellRectangleGroup bcrg = _rectangleGroups.get(i);
 				if (bcrg.containsCell(rowIndex, columnIndex)) {
 					return true;
 				}
@@ -157,10 +157,10 @@ final class FormulaUsedBlankCellSet {
 		}
 	}
 
-	private final Map _sheetGroupsByBookSheet;
+	private final Map<BookSheetKey, BlankCellSheetGroup> _sheetGroupsByBookSheet;
 
 	public FormulaUsedBlankCellSet() {
-		_sheetGroupsByBookSheet = new HashMap();
+		_sheetGroupsByBookSheet = new HashMap<BookSheetKey, BlankCellSheetGroup>();
 	}
 
 	public void addCell(int bookIndex, int sheetIndex, int rowIndex, int columnIndex) {
@@ -171,7 +171,7 @@ final class FormulaUsedBlankCellSet {
 	private BlankCellSheetGroup getSheetGroup(int bookIndex, int sheetIndex) {
 		BookSheetKey key = new BookSheetKey(bookIndex, sheetIndex);
 
-		BlankCellSheetGroup result = (BlankCellSheetGroup) _sheetGroupsByBookSheet.get(key);
+		BlankCellSheetGroup result = _sheetGroupsByBookSheet.get(key);
 		if (result == null) {
 			result = new BlankCellSheetGroup();
 			_sheetGroupsByBookSheet.put(key, result);
@@ -180,7 +180,7 @@ final class FormulaUsedBlankCellSet {
 	}
 
 	public boolean containsCell(BookSheetKey key, int rowIndex, int columnIndex) {
-		BlankCellSheetGroup bcsg = (BlankCellSheetGroup) _sheetGroupsByBookSheet.get(key);
+		BlankCellSheetGroup bcsg = _sheetGroupsByBookSheet.get(key);
 		if (bcsg == null) {
 			return false;
 		}
