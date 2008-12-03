@@ -30,6 +30,7 @@ import org.apache.poi.hssf.record.formula.ControlPtg;
 import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
 import org.apache.poi.hssf.record.formula.DeletedRef3DPtg;
 import org.apache.poi.hssf.record.formula.ErrPtg;
+import org.apache.poi.hssf.record.formula.ExpPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.IntPtg;
 import org.apache.poi.hssf.record.formula.MemErrPtg;
@@ -455,6 +456,11 @@ public final class WorkbookEvaluator {
 			// This seems to occur in very rare cases (e.g. unused name formulas in bug 44774, attachment 21790)
 			// In any case, formulas are re-parsed before execution, so UnknownPtg should not get here
 			throw new RuntimeException("UnknownPtg not allowed");
+		}
+		if (ptg instanceof ExpPtg) {
+			// ExpPtg is used for array formulas and shared formulas.
+			// it is currently unsupported, and may not even get implemented here
+			throw new RuntimeException("ExpPtg currently not supported");
 		}
 
 		throw new RuntimeException("Unexpected ptg class (" + ptg.getClass().getName() + ")");

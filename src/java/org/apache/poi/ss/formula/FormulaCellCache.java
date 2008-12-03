@@ -65,9 +65,9 @@ final class FormulaCellCache {
 	}
 
 	public void applyOperation(IEntryOperation operation) {
-		Iterator i = _formulaEntriesByCell.values().iterator();
+		Iterator<FormulaCellCacheEntry> i = _formulaEntriesByCell.values().iterator();
 		while (i.hasNext()) {
-			operation.processEntry((FormulaCellCacheEntry) i.next());
+			operation.processEntry(i.next());
 		}
 	}
 }

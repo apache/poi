@@ -58,7 +58,7 @@ abstract class CellCacheEntry implements ICacheEntry {
 		if (a == null) {
 			return false;
 		}
-		Class cls = a.getClass();
+		Class<? extends ValueEval> cls = a.getClass();
 		if (cls != b.getClass()) {
 			// value type is changing
 			return false;

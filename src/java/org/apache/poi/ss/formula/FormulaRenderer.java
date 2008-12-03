@@ -115,7 +115,7 @@ public class FormulaRenderer {
         return result;
     }
 
-    private static String[] getOperands(Stack stack, int nOperands) {
+    private static String[] getOperands(Stack<String> stack, int nOperands) {
         String[] operands = new String[nOperands];
 
         for (int j = nOperands-1; j >= 0; j--) { // reverse iteration because args were pushed in-order
@@ -124,7 +124,7 @@ public class FormulaRenderer {
                     + ") operands but got (" + (nOperands - j - 1) + ")";
                 throw new IllegalStateException(msg);
             }
-            operands[j] = (String) stack.pop();
+            operands[j] = stack.pop();
         }
         return operands;
     }
