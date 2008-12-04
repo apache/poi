@@ -170,9 +170,8 @@ public final class XSSFName implements Name {
      */
     public void setRefersToFormula(String formulaText) {
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(workbook);
-        Ptg[] ptgs;
         try {
-            ptgs = FormulaParser.parse(formulaText, fpb, FormulaType.CELL); // TODO - use type NAMEDRANGE
+            Ptg[] ptgs = FormulaParser.parse(formulaText, fpb, FormulaType.NAMEDRANGE);
         } catch (RuntimeException e) {
             if (e.getClass().getName().startsWith(FormulaParser.class.getName())) {
                 throw new IllegalArgumentException("Unparsable formula '" + formulaText + "'", e);
@@ -195,11 +194,20 @@ public final class XSSFName implements Name {
     /**
      * Tell Excel that this name applies to the worksheet with the specified index instead of the entire workbook.
      *
-     * @param sheetId the sheet index this name applies to, -1 unsets this property making the name workbook-global
+     * @param index the sheet index this name applies to, -1 unsets this property making the name workbook-global
      */
-    public void setLocalSheetId(int sheetId) {
-        if(sheetId == -1) ctName.unsetLocalSheetId();
-        else ctName.setLocalSheetId(sheetId);
+    public void setSheetIndex(int index) {
+        int lastSheetIx = workbook.getNumberOfSheets() - 1;
+        if (index < -1 || index > lastSheetIx) {
+            throw new IllegalArgumentException("Sheet index (" + index +") is out of range" +
+                    (lastSheetIx == -1 ? "" : (" (0.." +    lastSheetIx + ")")));
+        }
+
+        if(index == -1) {
+            if(ctName.isSetLocalSheetId()) ctName.unsetLocalSheetId();
+        } else {
+            ctName.setLocalSheetId(index);
+        }
     }
 
     /**
@@ -207,7 +215,7 @@ public final class XSSFName implements Name {
      *
      * @return the sheet index this name applies to, -1 if this name applies to the entire workbook
      */
-    public int getLocalSheetId() {
+    public int getSheetIndex() {
         return ctName.isSetLocalSheetId() ? (int) ctName.getLocalSheetId() : -1;
     }
 

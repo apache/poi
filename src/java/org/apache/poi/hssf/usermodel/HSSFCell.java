@@ -557,6 +557,17 @@ public class HSSFCell implements Cell {
         stringValue.setUnicodeString(book.getWorkbook().getSSTString(index));
     }
 
+    /**
+     * Sets formula for this cell.
+     * <p>
+     * Note, this method only sets the formula string and does not calculate the formula value.
+     * To set the precalculated value use {@link #setCellValue(double)} or {@link #setCellValue(String)}
+     * </p>
+     *
+     * @param formula the formula to set, e.g. <code>SUM(C4:E4)</code>.
+     *  If the argument is <code>null</code> then the current formula is removed.
+     * @throws IllegalArgumentException if the formula is unparsable
+     */
     public void setCellFormula(String formula) {
         int row=record.getRow();
         short col=record.getColumn();

@@ -745,7 +745,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     public void removePrintArea(int sheetIndex) {
         int cont = 0;
         for (XSSFName name : namedRanges) {
-            if (name.getNameName().equals(XSSFName.BUILTIN_PRINT_AREA) && name.getLocalSheetId() == sheetIndex) {
+            if (name.getNameName().equals(XSSFName.BUILTIN_PRINT_AREA) && name.getSheetIndex() == sheetIndex) {
                 namedRanges.remove(cont);
                 break;
             }
@@ -967,7 +967,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
     private XSSFName getBuiltInName(String builtInCode, int sheetNumber) {
         for (XSSFName name : namedRanges) {
-            if (name.getNameName().equalsIgnoreCase(builtInCode) && name.getLocalSheetId() == sheetNumber) {
+            if (name.getNameName().equalsIgnoreCase(builtInCode) && name.getSheetIndex() == sheetNumber) {
                 return name;
             }
         }

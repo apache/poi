@@ -52,9 +52,25 @@ public class TestXSSFName extends TestCase {
         assertEquals("'Testing Named Ranges'!$A$1:$B$1", name1.getRefersToFormula());
         assertEquals("Testing Named Ranges", name1.getSheetName());
 
-        assertEquals(-1, name1.getLocalSheetId());
-        name1.setLocalSheetId(1);
-        assertEquals(1, name1.getLocalSheetId());
+        assertEquals(-1, name1.getSheetIndex());
+        name1.setSheetIndex(-1);
+        assertEquals(-1, name1.getSheetIndex());
+        try {
+            name1.setSheetIndex(1);
+            fail("should throw IllegalArgumentException");
+        } catch(IllegalArgumentException e){
+            assertEquals("Sheet index (1) is out of range", e.getMessage());
+        }
+        wb.createSheet();
+        try {
+            name1.setSheetIndex(1);
+            fail("should throw IllegalArgumentException");
+        } catch(IllegalArgumentException e){
+            assertEquals("Sheet index (1) is out of range (0..0)", e.getMessage());
+        }
+        wb.createSheet();
+        name1.setSheetIndex(1);
+        assertEquals(1, name1.getSheetIndex());
     }
 
     public void testUnicodeNamedRange() {

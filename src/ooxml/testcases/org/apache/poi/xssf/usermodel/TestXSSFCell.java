@@ -305,22 +305,41 @@ public final class TestXSSFCell extends TestCase {
         assertEquals(255, XSSFCell.parseCellNum("IV32768"));
     }
     
-    public void testFormatPosition() {
-        XSSFRow row = createParentObjects();
-        row.setRowNum(0);
+    public void testSetCellReference() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        XSSFRow row = sheet.createRow(0);
         XSSFCell cell = row.createCell(0);
-        cell.setCellNum((short) 0);
-        assertEquals("A1", cell.formatPosition());
-        cell.setCellNum((short) 25);
-        assertEquals("Z1", cell.formatPosition());
-        cell.setCellNum((short) 26);
-        assertEquals("AA1", cell.formatPosition());
-        cell.setCellNum((short) 255);
-        assertEquals("IV1", cell.formatPosition());
-        row.setRowNum(32767);
-        assertEquals("IV32768", cell.formatPosition());
+        assertEquals("A1", cell.getCTCell().getR());
+
+        row = sheet.createRow(100);
+        cell = row.createCell(100);
+        assertEquals("CW101", cell.getCTCell().getR());
+
+        row = sheet.createRow(XSSFRow.MAX_ROW_NUMBER);
+        cell = row.createCell(100);
+        assertEquals("CW1048577", cell.getCTCell().getR());
+
+        row = sheet.createRow(XSSFRow.MAX_ROW_NUMBER);
+        cell = row.createCell(XSSFCell.MAX_COLUMN_NUMBER);
+        assertEquals("XFE1048577", cell.getCTCell().getR());
+
+        try {
+            sheet.createRow(XSSFRow.MAX_ROW_NUMBER + 1);
+            fail("expecting exception when rownum > XSSFRow.MAX_ROW_NUMBER");
+        } catch(IllegalArgumentException e){
+            ;
+        }
+
+        try {
+            row = sheet.createRow(100);
+            row.createCell(XSSFCell.MAX_COLUMN_NUMBER + 1);
+            fail("expecting exception when columnIndex > XSSFCell.MAX_COLUMN_NUMBER");
+        } catch(IllegalArgumentException e){
+            ;
+        }
     }
-    
+
     public void testGetCellComment() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();

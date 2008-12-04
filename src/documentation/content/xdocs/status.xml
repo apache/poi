@@ -34,6 +34,8 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.5-beta5" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">Support sheet-level names</action>
+           <action dev="POI-DEVELOPERS" type="fix">Fixed XSSFCell to properly handle cell references with column numbers up to XFD</action>
            <action dev="POI-DEVELOPERS" type="fix">44914 - Fixed warning message "WARN. Unread n bytes of record 0xNN"</action>
            <action dev="POI-DEVELOPERS" type="add">46156 - Improved number to text conversion to be closer to that of Excel</action>
            <action dev="POI-DEVELOPERS" type="fix">46312 - Fixed ValueRecordsAggregate to handle removal of new empty row</action>
