@@ -141,8 +141,8 @@ public final class ObjRecord extends Record {
 	}
 
 	public int serialize(int offset, byte[] data) {
-		int dataSize = getDataSize();
-		int recSize = 4 + dataSize;
+		int recSize = getRecordSize();
+		int dataSize = recSize - 4;
 		LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
 
 		out.writeShort(sid);
