@@ -21,6 +21,7 @@ import java.util.*;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.POIXMLException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
@@ -28,6 +29,11 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
  * High level representation of a row of a spreadsheet.
  */
 public class XSSFRow implements Row, Comparable<XSSFRow> {
+
+    /**
+     * The maximum  number of rows in SpreadsheetML
+     */
+    public static final int MAX_ROW_NUMBER  = 1048576; //2 ^ 20
 
     /**
      * the xml bean containing all cell definitions for this row
@@ -309,10 +315,12 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * Set the row number of this row.
      *
      * @param rowNum  the row number (0-based)
-     * @throws IllegalArgumentException if rowNum < 0
+     * @throws IllegalArgumentException if rowNum < 0 or greater than {@link #MAX_ROW_NUMBER}
      */
     public void setRowNum(int rowNum) {
         if(rowNum < 0) throw new IllegalArgumentException("Row number must be >= 0");
+        if (rowNum > MAX_ROW_NUMBER)
+            throw new IllegalArgumentException("You cannot have more than "+MAX_ROW_NUMBER+" rows ");
 
         this.row.setR(rowNum + 1);
     }

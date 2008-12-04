@@ -22,6 +22,7 @@ import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.formula.FormulaType;
 
 /**
  * High Level Representation of a 'defined name' which could be a 'built-in' name,
@@ -115,7 +116,7 @@ public final class HSSFName implements Name {
      * @deprecated (Nov 2008) Misleading name. Use {@link #setRefersToFormula(String)} instead.
      */
     public void setReference(String ref){
-    	setRefersToFormula(ref);
+        setRefersToFormula(ref);
     }
 
     /**
@@ -133,9 +134,9 @@ public final class HSSFName implements Name {
      * @throws IllegalArgumentException if the specified reference is unparsable
     */
     public void setRefersToFormula(String formulaText) {
-		Ptg[] ptgs = HSSFFormulaParser.parse(formulaText, _book);
-    	_definedNameRec.setNameDefinition(ptgs);
-	}
+        Ptg[] ptgs = HSSFFormulaParser.parse(formulaText, _book, FormulaType.NAMEDRANGE);
+        _definedNameRec.setNameDefinition(ptgs);
+    }
 
     /**
      * Returns the formula that the name is defined to refer to. The following are representative examples:
@@ -147,7 +148,7 @@ public final class HSSFName implements Name {
         if (_definedNameRec.isFunctionName()) {
             throw new IllegalStateException("Only applicable to named ranges");
         }
-    	return HSSFFormulaParser.toFormulaString(_book, _definedNameRec.getNameDefinition());
+        return HSSFFormulaParser.toFormulaString(_book, _definedNameRec.getNameDefinition());
     }
 
     /**
@@ -176,4 +177,49 @@ public final class HSSFName implements Name {
         sb.append("]");
         return sb.toString();
     }
+
+    /**
+     * Specifies if the defined name is a local name, and if so, which sheet it is on.
+     *
+     * @param index if greater than 0, the defined name is a local name and the value MUST be a 0-based index
+     * to the collection of sheets as they appear in the workbook.
+     * @throws IllegalArgumentException if the sheet index is invalid.
+     */
+    public void setSheetIndex(int index){
+        int lastSheetIx = _book.getNumberOfSheets() - 1;
+        if (index < -1 || index > lastSheetIx) {
+            throw new IllegalArgumentException("Sheet index (" + index +") is out of range" +
+                    (lastSheetIx == -1 ? "" : (" (0.." +    lastSheetIx + ")")));
+        }
+
+        _definedNameRec.setSheetNumber(index + 1);
+    }
+
+    /**
+     * Returns the sheet index this name applies to.
+     *
+     * @return the sheet index this name applies to, -1 if this name applies to the entire workbook
+     */
+    public int getSheetIndex(){
+        return _definedNameRec.getSheetNumber() - 1;
+    }
+
+    /**
+     * Returns the comment the user provided when the name was created.
+     *
+     * @return the user comment for this named range
+     */
+    public String getComment(){
+        return _definedNameRec.getDescriptionText();
+    }
+
+    /**
+     * Sets the comment the user provided when the name was created.
+     *
+     * @param comment the user comment for this named range
+     */
+    public void setComment(String comment){
+        _definedNameRec.setDescriptionText(comment);
+    }
+
 }

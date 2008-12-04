@@ -189,6 +189,7 @@ public interface Cell {
      *
      * @param formula the formula to set, e.g. <code>SUM(C4:E4)</code>.
      *  If the argument is <code>null</code> then the current formula is removed.
+     * @throws IllegalArgumentException if the formula is unparsable
      */
     void setCellFormula(String formula);
 

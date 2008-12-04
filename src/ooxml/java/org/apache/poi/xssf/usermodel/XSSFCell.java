@@ -23,8 +23,11 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.POIXMLException;
@@ -51,7 +54,7 @@ public final class XSSFCell implements Cell {
     /**
      * The maximum  number of columns in SpreadsheetML
      */
-    private static final int MAX_COLUMN_NUMBER  = 16384;
+    public static final int MAX_COLUMN_NUMBER  = 16384; //2^14
 
     private static final String FALSE_AS_STRING = "0";
     private static final String TRUE_AS_STRING  = "1";
@@ -330,11 +333,22 @@ public final class XSSFCell implements Cell {
      *
      * @param formula the formula to set, e.g. <code>SUM(C4:E4)</code>.
      *  If the argument is <code>null</code> then the current formula is removed.
+     * @throws IllegalArgumentException if the formula is invalid
      */
     public void setCellFormula(String formula) {
         if (formula == null && cell.isSetF()) {
             cell.unsetF();
             return;
+        }
+
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(row.getSheet().getWorkbook());
+        try {
+            Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL);
+        } catch (RuntimeException e) {
+            if (e.getClass().getName().startsWith(FormulaParser.class.getName())) {
+                throw new IllegalArgumentException("Unparsable formula '" + formula + "'", e);
+            }
+            throw e;
         }
 
         CTCellFormula f =  CTCellFormula.Factory.newInstance();
@@ -580,7 +594,8 @@ public final class XSSFCell implements Cell {
     protected void setCellNum(int num) {
         checkBounds(num);
         cellNum = num;
-        cell.setR(formatPosition());
+        String ref = new CellReference(getRowIndex(), getColumnIndex()).formatAsString();
+        cell.setR(ref);
     }
 
     /**
@@ -596,22 +611,6 @@ public final class XSSFCell implements Cell {
         } else {
             return (short) (r.charAt(1) - 'A' + 26 * (r.charAt(0) - '@'));
         }
-    }
-
-    /**
-     * Builds an A1 style reference from internal represenetation
-     *
-     * @return an A1 style reference to the location of this cell
-     */
-    protected String formatPosition() {
-        int col = this.getColumnIndex();
-        String result = Character.valueOf((char) (col % 26 + 'A')).toString();
-        if (col >= 26){
-            col = col / 26;
-            result = Character.valueOf((char) (col + '@')) + result;
-        }
-        result = result + String.valueOf(row.getRowNum() + 1);
-        return result;
     }
 
     /**
@@ -733,10 +732,10 @@ public final class XSSFCell implements Cell {
      */
     private static void checkBounds(int cellNum) {
         if (cellNum > MAX_COLUMN_NUMBER) {
-            throw new POIXMLException("You cannot have more than "+MAX_COLUMN_NUMBER+" columns " +
+            throw new IllegalArgumentException("You cannot have more than "+MAX_COLUMN_NUMBER+" columns " +
                     "in a given row because Excel can't handle it");
         } else if (cellNum < 0) {
-            throw new POIXMLException("You cannot reference columns with an index of less then 0.");
+            throw new IllegalArgumentException("You cannot reference columns with an index of less then 0.");
         }
     }
 

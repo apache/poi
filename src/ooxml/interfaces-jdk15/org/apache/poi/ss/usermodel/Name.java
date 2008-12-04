@@ -93,7 +93,7 @@ public interface Name {
     void setNameName(String name);
 
     /**
-     * Returns the formula that the name is defined to refer to. The following are representative examples:
+     * Returns the formula that the name is defined to refer to. 
      *
      * @return the reference for this name
      * @see #setRefersToFormula(String)
@@ -129,4 +129,33 @@ public interface Name {
      * @return true if the name refers to a deleted cell, false otherwise
      */
     boolean isDeleted();
+
+    /**
+     * Tell Excel that this name applies to the worksheet with the specified index instead of the entire workbook.
+     *
+     * @param sheetId the sheet index this name applies to, -1 unsets this property making the name workbook-global
+     * @throws IllegalArgumentException if the sheet index is invalid.
+     */
+    public void setSheetIndex(int sheetId);
+
+    /**
+     * Returns the sheet index this name applies to.
+     *
+     * @return the sheet index this name applies to, -1 if this name applies to the entire workbook
+     */
+    public int getSheetIndex();
+
+    /**
+     * Returns the comment the user provided when the name was created.
+     *
+     * @return the user comment for this named range
+     */
+    public String getComment();
+
+    /**
+     * Sets the comment the user provided when the name was created.
+     *
+     * @param comment the user comment for this named range
+     */
+    public void setComment(String comment);
 }
