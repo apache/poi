@@ -117,7 +117,7 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
     public int serialize(int offset, byte [] data) {
         throw new RecordFormatException("Label Records are supported READ ONLY...convert to LabelSST");
     }
-    protected int getDataSize() {
+    public int getRecordSize() {
         throw new RecordFormatException("Label Records are supported READ ONLY...convert to LabelSST");
     }
 

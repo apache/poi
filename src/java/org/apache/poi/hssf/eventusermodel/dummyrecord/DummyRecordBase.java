@@ -34,7 +34,7 @@ abstract class DummyRecordBase extends Record {
 	public int serialize(int offset, byte[] data) {
 		throw new RecordFormatException("Cannot serialize a dummy record");
 	}
-	protected final int getDataSize() {
+	public final int getRecordSize() {
 		throw new RecordFormatException("Cannot serialize a dummy record");
 	}
 }

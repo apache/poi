@@ -27,6 +27,10 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Josh Micich
  */
 public abstract class StandardRecord extends Record {
+	protected abstract int getDataSize();
+	public final int getRecordSize() {
+		return 4 + getDataSize();
+	}
 	@Override
 	public final int serialize(int offset, byte[] data) {
 		int dataSize = getDataSize();

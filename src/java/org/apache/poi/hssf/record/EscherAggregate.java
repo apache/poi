@@ -69,9 +69,8 @@ import org.apache.poi.util.POILogger;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class EscherAggregate extends AbstractEscherHolderRecord
-{
-    public static final short sid = 9876;
+public final class EscherAggregate extends AbstractEscherHolderRecord {
+    public static final short sid = 9876; // not a real sid - dummy value
     private static POILogger log = POILogFactory.getLogger(EscherAggregate.class);
 
     public static final short ST_MIN = (short) 0;
@@ -498,8 +497,8 @@ public class EscherAggregate extends AbstractEscherHolderRecord
         return size;
     }
 
-    protected int getDataSize() {
-    	// TODO - convert this to RecordAggregate
+    public int getRecordSize() {
+        // TODO - convert this to RecordAggregate
         convertUserModelToRecords();
         List records = getEscherRecords();
         int rawEscherSize = getEscherRecordSize( records );
@@ -516,7 +515,7 @@ public class EscherAggregate extends AbstractEscherHolderRecord
             Record r = (Record) iterator.next();
             tailRecordSize += r.getRecordSize();
         }
-        return drawingRecordSize + objRecordSize + tailRecordSize - 4;
+        return drawingRecordSize + objRecordSize + tailRecordSize;
     }
 
     /**

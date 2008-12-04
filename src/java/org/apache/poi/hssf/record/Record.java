@@ -21,89 +21,76 @@ import java.io.ByteArrayInputStream;
 
 /**
  * Title: Record
- * Description: All HSSF Records inherit from this class.  It
- *              populates the fields common to all records (id, size and data).
- *              Subclasses should be sure to validate the id,
- * Company:
+ * Description: All HSSF Records inherit from this class.
  * @author Andrew C. Oliver
  * @author Marc Johnson (mjohnson at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 public abstract class Record extends RecordBase {
 
-    /**
-     * instantiates a blank record strictly for ID matching
-     */
+	protected Record() {
+		// no fields to initialise
+	}
 
-    protected Record()
-    {
-    }
+	/**
+	 * called by the class that is responsible for writing this sucker.
+	 * Subclasses should implement this so that their data is passed back in a
+	 * byte array.
+	 *
+	 * @return byte array containing instance data
+	 */
+	public final byte[] serialize() {
+		byte[] retval = new byte[ getRecordSize() ];
 
-    /**
-     * called by the class that is responsible for writing this sucker.
-     * Subclasses should implement this so that their data is passed back in a
-     * byte array.
-     *
-     * @return byte array containing instance data
-     */
+		serialize(0, retval);
+		return retval;
+	}
 
-    public final byte[] serialize() {
-        byte[] retval = new byte[ getRecordSize() ];
+	/**
+	 * get a string representation of the record (for biffview/debugging)
+	 */
+	public String toString() {
+		return super.toString();
+	}
 
-        serialize(0, retval);
-        return retval;
-    }
+	/**
+	 * return the non static version of the id for this record.
+	 */
 
-    public final int getRecordSize() {
-    	return 4 + getDataSize();
-    }
-    /**
-     * @return the size of the data portion of this record 
-     * (does not include initial 4 bytes for sid and size)
-     */
-    protected abstract int getDataSize();
-    
-    /**
-     * get a string representation of the record (for biffview/debugging)
-     */
-    public String toString()
-    {
-        return super.toString();
-    }
+	public abstract short getSid();
 
-    /**
-     * return the non static version of the id for this record.
-     */
+	public Object clone() {
+		if (false) {
+			// TODO - implement clone in a more standardised way
+			try {
+				return super.clone();
+			} catch (CloneNotSupportedException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		throw new RuntimeException("The class "+getClass().getName()+" needs to define a clone method");
+	}
 
-    public abstract short getSid();
+	/**
+	 * Clone the current record, via a call to serialize
+	 *  it, and another to create a new record from the
+	 *  bytes.
+	 * May only be used for classes which don't have
+	 *  internal counts / ids in them. For those which
+	 *  do, a full model-aware cloning is needed, which
+	 *  allocates new ids / counts as needed.
+	 */
+	public Record cloneViaReserialise() {
+		// Do it via a re-serialization
+		// It's a cheat, but it works...
+		byte[] b = serialize();
+		RecordInputStream rinp = new RecordInputStream(new ByteArrayInputStream(b));
+		rinp.nextRecord();
 
-    public Object clone() {
-      throw new RuntimeException("The class "+getClass().getName()+" needs to define a clone method");
-    }
-    
-    /**
-     * Clone the current record, via a call to serialise
-     *  it, and another to create a new record from the
-     *  bytes.
-     * May only be used for classes which don't have
-     *  internal counts / ids in them. For those which
-     *  do, a full record-aware serialise is needed, which
-     *  allocates new ids / counts as needed.
-     */
-    public Record cloneViaReserialise()
-    {
-    	// Do it via a re-serialise
-    	// It's a cheat, but it works...
-    	byte[] b = serialize();
-    	RecordInputStream rinp = new RecordInputStream(
-    			new ByteArrayInputStream(b)
-    	);
-    	rinp.nextRecord();
-
-    	Record[] r = RecordFactory.createRecord(rinp);
-    	if(r.length != 1) {
-    		throw new IllegalStateException("Re-serialised a record to clone it, but got " + r.length + " records back!");
-    	}
-    	return r[0];
-    }
+		Record[] r = RecordFactory.createRecord(rinp);
+		if(r.length != 1) {
+			throw new IllegalStateException("Re-serialised a record to clone it, but got " + r.length + " records back!");
+		}
+		return r[0];
+	}
 }
