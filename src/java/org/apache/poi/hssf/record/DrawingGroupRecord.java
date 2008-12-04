@@ -81,9 +81,10 @@ public final class DrawingGroupRecord extends AbstractEscherHolderRecord {
     public void processChildRecords() {
     	convertRawBytesToEscherRecords();
     }
-    protected int getDataSize() {
-    	// TODO - convert this to a RecordAggregate
-    	return grossSizeFromDataSize( getRawDataSize() ) - 4;
+
+    public int getRecordSize() {
+        // TODO - convert this to a RecordAggregate
+        return grossSizeFromDataSize(getRawDataSize());
     }
 
     private int getRawDataSize() {

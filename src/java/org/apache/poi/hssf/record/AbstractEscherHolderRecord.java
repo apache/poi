@@ -130,7 +130,8 @@ public abstract class AbstractEscherHolderRecord extends Record {
         }
         return getRecordSize();
     }
-    protected int getDataSize() {
+
+    public int getRecordSize() {
         if (escherRecords.size() == 0 && rawData != null) {
             return rawData.length;
         }

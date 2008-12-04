@@ -47,15 +47,15 @@ public abstract class ContinuableRecord extends Record {
 
 
 	/**
-	 * @return four less than the total length of the encoded record(s) 
-	 * (in the case when no {@link ContinueRecord} is needed, this is the 
-	 *  same ushort value that gets encoded after the record sid
+	 * @return the total length of the encoded record(s) 
+	 * (Note - if any {@link ContinueRecord} is required, this result includes the
+	 * size of those too)
 	 */
-	protected final int getDataSize() {
+	public final int getRecordSize() {
 		ContinuableRecordOutput out = ContinuableRecordOutput.createForCountingOnly();
 		serialize(out);
 		out.terminate();
-		return out.getTotalSize() - 4;
+		return out.getTotalSize();
 	}
 
 	public final int serialize(int offset, byte[] data) {

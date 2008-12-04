@@ -119,9 +119,9 @@ public final class ObjRecord extends Record {
 		return sb.toString();
 	}
 	
-	protected int getDataSize() {
+	public int getRecordSize() {
 		if (_uninterpretedData != null) {
-			return _uninterpretedData.length;
+			return _uninterpretedData.length + 4;
 		}
 		int size = 0;
 		for (int i=subrecords.size()-1; i>=0; i--) {
@@ -137,7 +137,7 @@ public final class ObjRecord extends Record {
 				size++;
 			}
 		}
-		return size;
+		return size + 4;
 	}
 
 	public int serialize(int offset, byte[] data) {

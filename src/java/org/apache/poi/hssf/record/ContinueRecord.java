@@ -17,7 +17,9 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Continue Record(0x003C) - Helper class used primarily for SST Records <P>
@@ -27,7 +29,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Csaba Nagy (ncsaba at yahoo dot com)
  */
-public final class ContinueRecord extends Record {
+public final class ContinueRecord extends StandardRecord {
     public final static short sid = 0x003C;
     private byte[] _data;
 
@@ -39,70 +41,36 @@ public final class ContinueRecord extends Record {
         return _data.length;
     }
 
-    public int serialize(int offset, byte[] data) {
-        return write(data, offset, null, _data);
+    public void serialize(LittleEndianOutput out) {
+        out.write(_data);
     }
 
     /**
      * get the data for continuation
      * @return byte array containing all of the continued data
      */
-    public byte [] getData()
-    {
+    public byte[] getData() {
         return _data;
     }
 
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[CONTINUE RECORD]\n");
-        buffer.append("    .id        = ").append(Integer.toHexString(sid))
-            .append("\n");
+        buffer.append("    .data = ").append(HexDump.toHex(_data)).append("\n");
         buffer.append("[/CONTINUE RECORD]\n");
         return buffer.toString();
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 
-    /**
-     * Fill the fields. Only thing is, this record has no fields --
-     *
-     * @param in the RecordInputstream to read the record from
-     */
-    public ContinueRecord(RecordInputStream in)
-    {
-      _data = in.readRemainder();
+    public ContinueRecord(RecordInputStream in) {
+        _data = in.readRemainder();
     }
 
     public Object clone() {
-      return new ContinueRecord(_data);
-    }
-
-    /**
-     * Writes the full encoding of a Continue record without making an instance
-     */
-    public static int write(byte[] destBuf, int destOffset, Byte initialDataByte, byte[] srcData) {
-        return write(destBuf, destOffset, initialDataByte, srcData, 0, srcData.length);
-    }
-    /**
-     * @param initialDataByte (optional - often used for unicode flag). 
-     * If supplied, this will be written before srcData
-     * @return the total number of bytes written
-     */
-    public static int write(byte[] destBuf, int destOffset, Byte initialDataByte, byte[] srcData, int srcOffset, int len) {
-        int totalLen = len + (initialDataByte == null ? 0 : 1);
-        LittleEndian.putUShort(destBuf, destOffset, sid);
-        LittleEndian.putUShort(destBuf, destOffset + 2, totalLen);
-        int pos = destOffset + 4;
-        if (initialDataByte != null) {
-            LittleEndian.putByte(destBuf, pos, initialDataByte.byteValue());
-            pos += 1;
-        }
-        System.arraycopy(srcData, srcOffset, destBuf, pos, len);
-        return 4 + totalLen;
+        return new ContinueRecord(_data);
     }
 }
