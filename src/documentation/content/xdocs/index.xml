@@ -31,18 +31,22 @@
   </header>
 
   <body>
-    <section><title>POI 3.5 beta 3, and Office Open XML Support (2008-07-18)</title>
+    <section><title>POI 3.5 beta 4, and Office Open XML Support (2008-12-01)</title>
       <p>We are currently working to support the new Office Open XML
        file formats, such as XLSX and PPTX, which were introduced in
        Office 2007.</p>
       <p>Development for this is in a svn branch, but we are please to
        announce our first preview release containing this support.
        Users interested in the OOXML support should download the
-       <link href="http://www.apache.org/dyn/closer.cgi/poi/dev/">POI 3.5 beta 3</link>
+       <link href="http://www.apache.org/dyn/closer.cgi/poi/dev/">POI 3.5 beta 4</link>
        the source and binaries from their
        <link href="http://www.apache.org/dyn/closer.cgi/poi/dev/">local mirror</link>.
        People interested should also follow the
        <link href="mailinglists.html">dev list</link> to track progress.</p>
+      <p>
+        The release is also available from the central Maven repository 
+        under Group ID "org.apache.poi" and Version "3.5-beta4".
+      </p>  
     </section>
     <section><title>POI 3.2-FINAL Released (2008-10-19)</title>
       <p>
@@ -179,55 +183,55 @@
           </tr>
           <tr>
             <td><link href="./poifs/index.html">POIFS</link></td>
-            <td>poi-version-yyymmdd.jar</td>
+            <td>poi-version-yyyymmdd.jar</td>
             <td>poi</td>
             <td></td>
           </tr>
           <tr>
             <td><link href="./hpsf/index.html">HPSF</link></td>
-            <td>poi-version-yyymmdd.jar</td>
+            <td>poi-version-yyyymmdd.jar</td>
             <td>poi</td>
             <td></td>
           </tr>
           <tr>
             <td><link href="./spreadsheet/index.html">HSSF</link></td>
-            <td>poi-version-yyymmdd.jar</td>
+            <td>poi-version-yyyymmdd.jar</td>
             <td>poi</td>
             <td></td>
           </tr>
           <tr>
             <td><link href="./spreadsheet/index.html">XSSF</link></td>
-            <td>poi-ooxml-version-yyymmdd.jar</td>
+            <td>poi-ooxml-version-yyyymmdd.jar</td>
             <td>poi-ooxml</td>
             <td>since 3.5-beta4</td>
           </tr>
           <tr>
             <td><link href="./slideshow/index.html">HLSF</link></td>
-            <td>poi-scratchpad-version-yyymmdd.jar</td>
+            <td>poi-scratchpad-version-yyyymmdd.jar</td>
             <td>poi-scratchpad</td>
             <td></td>
           </tr>
           <tr>
             <td><link href="./hwpf/index.html">HWPF</link></td>
-            <td>poi-scratchpad-version-yyymmdd.jar</td>
+            <td>poi-scratchpad-version-yyyymmdd.jar</td>
             <td>poi-scratchpad</td>
             <td></td>
           </tr>
           <tr>
             <td><link href="./hdgf/index.html">HDGF</link></td>
-            <td>poi-scratchpad-version-yyymmdd.jar</td>
+            <td>poi-scratchpad-version-yyyymmdd.jar</td>
             <td>poi-scratchpad</td>
             <td></td>
           </tr>
           <tr>
             <td><link href="./hpbf/index.html">HPBF</link></td>
-            <td>poi-scratchpad-version-yyymmdd.jar</td>
+            <td>poi-scratchpad-version-yyyymmdd.jar</td>
             <td>poi-scratchpad</td>
             <td></td>
           </tr>
           <tr>
             <td><link href="./hsmf/index.html">HSMF</link></td>
-            <td>poi-scratchpad-version-yyymmdd.jar</td>
+            <td>poi-scratchpad-version-yyyymmdd.jar</td>
             <td>poi-scratchpad</td>
             <td></td>
           </tr>
