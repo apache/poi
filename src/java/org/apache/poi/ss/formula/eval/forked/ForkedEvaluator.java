@@ -31,7 +31,6 @@ import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * An alternative workbook evaluator that saves memory in situations where a single workbook is
