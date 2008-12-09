@@ -35,6 +35,9 @@ import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.TempFile;
 
@@ -1539,5 +1542,37 @@ public final class TestBugs extends TestCase {
     public void test45290() {
         HSSFWorkbook wb = openSample("45290.xls");
         assertEquals(1, wb.getNumberOfSheets());
+    }
+    
+    /**
+     * HSSFRichTextString.length() returns negative for really
+     *  long strings
+     */
+    public void test46368() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+    	HSSFSheet s = wb.createSheet();
+    	HSSFRow r = s.createRow(0);
+    	for(int i=0; i<15; i++) {
+    		int len = 32760 + i;
+    		HSSFCell c = r.createCell(i);
+    		
+    		StringBuffer sb = new StringBuffer();
+    		for(int j=0; j<len; j++) {
+    			sb.append("x");
+    		}
+    		HSSFRichTextString rtr = new HSSFRichTextString(sb.toString());
+    		assertEquals(len, rtr.length());
+    		c.setCellValue(rtr);
+    	}
+    	
+    	// Save and reload
+    	wb = writeOutAndReadBack(wb);
+    	s = wb.getSheetAt(0);
+    	r = s.getRow(0);
+    	for(int i=0; i<15; i++) {
+    		int len = 32760 + i;
+    		HSSFCell c = r.getCell(i);
+    		assertEquals(len, c.getRichStringCellValue().length());
+    	}
     }
 }

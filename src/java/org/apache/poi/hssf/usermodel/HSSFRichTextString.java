@@ -198,8 +198,7 @@ public class HSSFRichTextString
     /**
      * @return  the number of characters in the text.
      */
-    public int length()
-    {
+    public int length() {
         return string.getCharCount();
     }
 

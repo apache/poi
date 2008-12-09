@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta5" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">46368 - Fix HSSFRichTextRun and strings longer than 32768 characters</action>
            <action dev="POI-DEVELOPERS" type="add">Support sheet-level names</action>
            <action dev="POI-DEVELOPERS" type="fix">Fixed XSSFCell to properly handle cell references with column numbers up to XFD</action>
            <action dev="POI-DEVELOPERS" type="fix">44914 - Fixed warning message "WARN. Unread n bytes of record 0xNN"</action>
