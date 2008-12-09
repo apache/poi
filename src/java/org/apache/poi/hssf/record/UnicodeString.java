@@ -202,9 +202,9 @@ public final class UnicodeString implements Comparable {
 
         boolean isCompressed = ((field_2_optionflags & 1) == 0);
         if (isCompressed) {
-            field_3_string = in.readCompressedUnicode(field_1_charCount);
+            field_3_string = in.readCompressedUnicode(getCharCount());
         } else {
-            field_3_string = in.readUnicodeLEString(field_1_charCount);
+            field_3_string = in.readUnicodeLEString(getCharCount());
         }
  
 
@@ -226,15 +226,25 @@ public final class UnicodeString implements Comparable {
 
 
     /**
-     * get the number of characters in the string
-     *
+     * get the number of characters in the string,
+     *  as an un-wrapped int
      *
      * @return number of characters
-     *
      */
+    public int getCharCount() {
+    	if(field_1_charCount < 0) {
+    		return field_1_charCount + 65536;
+    	}
+        return field_1_charCount;
+    }
 
-    public short getCharCount()
-    {
+    /**
+     * get the number of characters in the string,
+     * wrapped as needed to fit within a short
+     *
+     * @return number of characters
+     */
+    public short getCharCountShort() {
         return field_1_charCount;
     }
 
