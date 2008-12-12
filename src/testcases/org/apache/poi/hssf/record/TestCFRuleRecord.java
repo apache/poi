@@ -30,6 +30,7 @@ import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.ss.formula.Formula;
 
 /**
  * Tests the serialization and deserialization of the TestCFRuleRecord
@@ -39,322 +40,344 @@ import org.apache.poi.util.LittleEndian;
  */
 public final class TestCFRuleRecord extends TestCase
 {
+    public void testConstructors ()
+    {
+        HSSFWorkbook workbook = new HSSFWorkbook();
 
-	public void testCreateCFRuleRecord () 
-	{
-		HSSFWorkbook workbook = new HSSFWorkbook();
-		CFRuleRecord record = CFRuleRecord.create(workbook, "7");
-		testCFRuleRecord(record);
+        CFRuleRecord rule1 = CFRuleRecord.create(workbook, "7");
+        assertEquals(CFRuleRecord.CONDITION_TYPE_FORMULA, rule1.getConditionType());
+        assertEquals(ComparisonOperator.NO_COMPARISON, rule1.getComparisonOperation());
+        assertNotNull(rule1.getParsedExpression1());
+        assertSame(Ptg.EMPTY_PTG_ARRAY, rule1.getParsedExpression2());
 
-		// Serialize
-		byte [] serializedRecord = record.serialize();
+        CFRuleRecord rule2 = CFRuleRecord.create(workbook, ComparisonOperator.BETWEEN, "2", "5");
+        assertEquals(CFRuleRecord.CONDITION_TYPE_CELL_VALUE_IS, rule2.getConditionType());
+        assertEquals(ComparisonOperator.BETWEEN, rule2.getComparisonOperation());
+        assertNotNull(rule2.getParsedExpression1());
+        assertNotNull(rule2.getParsedExpression2());
 
-		// Strip header
-		byte [] recordData = new byte[serializedRecord.length-4];
-		System.arraycopy(serializedRecord, 4, recordData, 0, recordData.length);
+        CFRuleRecord rule3 = CFRuleRecord.create(workbook, ComparisonOperator.EQUAL, null, null);
+        assertEquals(CFRuleRecord.CONDITION_TYPE_CELL_VALUE_IS, rule3.getConditionType());
+        assertEquals(ComparisonOperator.EQUAL, rule3.getComparisonOperation());
+        assertSame(Ptg.EMPTY_PTG_ARRAY, rule3.getParsedExpression2());
+        assertSame(Ptg.EMPTY_PTG_ARRAY, rule3.getParsedExpression2());
+    }
 
-		// Deserialize
-		record = new CFRuleRecord(TestcaseRecordInputStream.create(CFRuleRecord.sid, recordData));
+    public void testCreateCFRuleRecord ()
+    {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        CFRuleRecord record = CFRuleRecord.create(workbook, "7");
+        testCFRuleRecord(record);
 
-		// Serialize again
-		byte[] output = record.serialize();
+        // Serialize
+        byte [] serializedRecord = record.serialize();
 
-		// Compare
-		assertEquals("Output size", recordData.length+4, output.length); //includes sid+recordlength
+        // Strip header
+        byte [] recordData = new byte[serializedRecord.length-4];
+        System.arraycopy(serializedRecord, 4, recordData, 0, recordData.length);
 
-		for (int i = 0; i < recordData.length;i++) 
-		{
-			assertEquals("CFRuleRecord doesn't match", recordData[i], output[i+4]);
-		}
-	}
+        // Deserialize
+        record = new CFRuleRecord(TestcaseRecordInputStream.create(CFRuleRecord.sid, recordData));
 
-	private void testCFRuleRecord(CFRuleRecord record)
-	{
-		FontFormatting fontFormatting = new FontFormatting();
-		testFontFormattingAccessors(fontFormatting);
-		assertFalse(record.containsFontFormattingBlock());
-		record.setFontFormatting(fontFormatting);
-		assertTrue(record.containsFontFormattingBlock());
+        // Serialize again
+        byte[] output = record.serialize();
 
-		BorderFormatting borderFormatting = new BorderFormatting();
-		testBorderFormattingAccessors(borderFormatting);
-		assertFalse(record.containsBorderFormattingBlock());
-		record.setBorderFormatting(borderFormatting);
-		assertTrue(record.containsBorderFormattingBlock());
+        // Compare
+        assertEquals("Output size", recordData.length+4, output.length); //includes sid+recordlength
 
-		assertFalse(record.isLeftBorderModified());
-		record.setLeftBorderModified(true);
-		assertTrue(record.isLeftBorderModified());
+        for (int i = 0; i < recordData.length;i++)
+        {
+            assertEquals("CFRuleRecord doesn't match", recordData[i], output[i+4]);
+        }
+    }
 
-		assertFalse(record.isRightBorderModified());
-		record.setRightBorderModified(true);
-		assertTrue(record.isRightBorderModified());
+    private void testCFRuleRecord(CFRuleRecord record)
+    {
+        FontFormatting fontFormatting = new FontFormatting();
+        testFontFormattingAccessors(fontFormatting);
+        assertFalse(record.containsFontFormattingBlock());
+        record.setFontFormatting(fontFormatting);
+        assertTrue(record.containsFontFormattingBlock());
 
-		assertFalse(record.isTopBorderModified());
-		record.setTopBorderModified(true);
-		assertTrue(record.isTopBorderModified());
+        BorderFormatting borderFormatting = new BorderFormatting();
+        testBorderFormattingAccessors(borderFormatting);
+        assertFalse(record.containsBorderFormattingBlock());
+        record.setBorderFormatting(borderFormatting);
+        assertTrue(record.containsBorderFormattingBlock());
 
-		assertFalse(record.isBottomBorderModified());
-		record.setBottomBorderModified(true);
-		assertTrue(record.isBottomBorderModified());
+        assertFalse(record.isLeftBorderModified());
+        record.setLeftBorderModified(true);
+        assertTrue(record.isLeftBorderModified());
 
-		assertFalse(record.isTopLeftBottomRightBorderModified());
-		record.setTopLeftBottomRightBorderModified(true);
-		assertTrue(record.isTopLeftBottomRightBorderModified());
+        assertFalse(record.isRightBorderModified());
+        record.setRightBorderModified(true);
+        assertTrue(record.isRightBorderModified());
 
-		assertFalse(record.isBottomLeftTopRightBorderModified());
-		record.setBottomLeftTopRightBorderModified(true);
-		assertTrue(record.isBottomLeftTopRightBorderModified());
+        assertFalse(record.isTopBorderModified());
+        record.setTopBorderModified(true);
+        assertTrue(record.isTopBorderModified());
 
+        assertFalse(record.isBottomBorderModified());
+        record.setBottomBorderModified(true);
+        assertTrue(record.isBottomBorderModified());
 
-		PatternFormatting patternFormatting = new PatternFormatting();
-		testPatternFormattingAccessors(patternFormatting);
-		assertFalse(record.containsPatternFormattingBlock());
-		record.setPatternFormatting(patternFormatting);
-		assertTrue(record.containsPatternFormattingBlock());
+        assertFalse(record.isTopLeftBottomRightBorderModified());
+        record.setTopLeftBottomRightBorderModified(true);
+        assertTrue(record.isTopLeftBottomRightBorderModified());
 
-		assertFalse(record.isPatternBackgroundColorModified());
-		record.setPatternBackgroundColorModified(true);
-		assertTrue(record.isPatternBackgroundColorModified());
-
-		assertFalse(record.isPatternColorModified());
-		record.setPatternColorModified(true);
-		assertTrue(record.isPatternColorModified());
-
-		assertFalse(record.isPatternStyleModified());
-		record.setPatternStyleModified(true);
-		assertTrue(record.isPatternStyleModified());
-	}
-
-	private void testPatternFormattingAccessors(PatternFormatting patternFormatting)
-	{
-		patternFormatting.setFillBackgroundColor(HSSFColor.GREEN.index);
-		assertEquals(HSSFColor.GREEN.index,patternFormatting.getFillBackgroundColor());
-
-		patternFormatting.setFillForegroundColor(HSSFColor.INDIGO.index);
-		assertEquals(HSSFColor.INDIGO.index,patternFormatting.getFillForegroundColor());
-
-		patternFormatting.setFillPattern(PatternFormatting.DIAMONDS);
-		assertEquals(PatternFormatting.DIAMONDS,patternFormatting.getFillPattern());
-	}
-	
-	private void testBorderFormattingAccessors(BorderFormatting borderFormatting)
-	{
-		borderFormatting.setBackwardDiagonalOn(false);
-		assertFalse(borderFormatting.isBackwardDiagonalOn());
-		borderFormatting.setBackwardDiagonalOn(true);
-		assertTrue(borderFormatting.isBackwardDiagonalOn());
-
-		borderFormatting.setBorderBottom(BorderFormatting.BORDER_DOTTED);
-		assertEquals(BorderFormatting.BORDER_DOTTED, borderFormatting.getBorderBottom());
-
-		borderFormatting.setBorderDiagonal(BorderFormatting.BORDER_MEDIUM);
-		assertEquals(BorderFormatting.BORDER_MEDIUM, borderFormatting.getBorderDiagonal());
-
-		borderFormatting.setBorderLeft(BorderFormatting.BORDER_MEDIUM_DASH_DOT_DOT);
-		assertEquals(BorderFormatting.BORDER_MEDIUM_DASH_DOT_DOT, borderFormatting.getBorderLeft());
-
-		borderFormatting.setBorderRight(BorderFormatting.BORDER_MEDIUM_DASHED);
-		assertEquals(BorderFormatting.BORDER_MEDIUM_DASHED, borderFormatting.getBorderRight());
-
-		borderFormatting.setBorderTop(BorderFormatting.BORDER_HAIR);
-		assertEquals(BorderFormatting.BORDER_HAIR, borderFormatting.getBorderTop());
-
-		borderFormatting.setBottomBorderColor(HSSFColor.AQUA.index);
-		assertEquals(HSSFColor.AQUA.index, borderFormatting.getBottomBorderColor());
-
-		borderFormatting.setDiagonalBorderColor(HSSFColor.RED.index);
-		assertEquals(HSSFColor.RED.index, borderFormatting.getDiagonalBorderColor());
-
-		assertFalse(borderFormatting.isForwardDiagonalOn());
-		borderFormatting.setForwardDiagonalOn(true);
-		assertTrue(borderFormatting.isForwardDiagonalOn());
-
-		borderFormatting.setLeftBorderColor(HSSFColor.BLACK.index);
-		assertEquals(HSSFColor.BLACK.index, borderFormatting.getLeftBorderColor());
-
-		borderFormatting.setRightBorderColor(HSSFColor.BLUE.index);
-		assertEquals(HSSFColor.BLUE.index, borderFormatting.getRightBorderColor());
-
-		borderFormatting.setTopBorderColor(HSSFColor.GOLD.index);
-		assertEquals(HSSFColor.GOLD.index, borderFormatting.getTopBorderColor());
-	}
+        assertFalse(record.isBottomLeftTopRightBorderModified());
+        record.setBottomLeftTopRightBorderModified(true);
+        assertTrue(record.isBottomLeftTopRightBorderModified());
 
 
-	private void testFontFormattingAccessors(FontFormatting fontFormatting)
-	{
-		// Check for defaults
-		assertFalse(fontFormatting.isEscapementTypeModified());
-		assertFalse(fontFormatting.isFontCancellationModified());
-		assertFalse(fontFormatting.isFontOutlineModified());
-		assertFalse(fontFormatting.isFontShadowModified());
-		assertFalse(fontFormatting.isFontStyleModified());
-		assertFalse(fontFormatting.isUnderlineTypeModified());
-		assertFalse(fontFormatting.isFontWeightModified());
+        PatternFormatting patternFormatting = new PatternFormatting();
+        testPatternFormattingAccessors(patternFormatting);
+        assertFalse(record.containsPatternFormattingBlock());
+        record.setPatternFormatting(patternFormatting);
+        assertTrue(record.containsPatternFormattingBlock());
 
-		assertFalse(fontFormatting.isBold());
-		assertFalse(fontFormatting.isItalic());
-		assertFalse(fontFormatting.isOutlineOn());
-		assertFalse(fontFormatting.isShadowOn());
-		assertFalse(fontFormatting.isStruckout());
+        assertFalse(record.isPatternBackgroundColorModified());
+        record.setPatternBackgroundColorModified(true);
+        assertTrue(record.isPatternBackgroundColorModified());
 
-		assertEquals(0, fontFormatting.getEscapementType());
-		assertEquals(-1, fontFormatting.getFontColorIndex());
-		assertEquals(-1, fontFormatting.getFontHeight());
-		assertEquals(0, fontFormatting.getFontWeight());
-		assertEquals(0, fontFormatting.getUnderlineType());
+        assertFalse(record.isPatternColorModified());
+        record.setPatternColorModified(true);
+        assertTrue(record.isPatternColorModified());
 
-		fontFormatting.setBold(true);
-		assertTrue(fontFormatting.isBold());
-		fontFormatting.setBold(false);
-		assertFalse(fontFormatting.isBold());
+        assertFalse(record.isPatternStyleModified());
+        record.setPatternStyleModified(true);
+        assertTrue(record.isPatternStyleModified());
+    }
 
-		fontFormatting.setEscapementType(FontFormatting.SS_SUB);
-		assertEquals(FontFormatting.SS_SUB, fontFormatting.getEscapementType());
-		fontFormatting.setEscapementType(FontFormatting.SS_SUPER);
-		assertEquals(FontFormatting.SS_SUPER, fontFormatting.getEscapementType());
-		fontFormatting.setEscapementType(FontFormatting.SS_NONE);
-		assertEquals(FontFormatting.SS_NONE, fontFormatting.getEscapementType());
+    private void testPatternFormattingAccessors(PatternFormatting patternFormatting)
+    {
+        patternFormatting.setFillBackgroundColor(HSSFColor.GREEN.index);
+        assertEquals(HSSFColor.GREEN.index,patternFormatting.getFillBackgroundColor());
 
-		fontFormatting.setEscapementTypeModified(false);
-		assertFalse(fontFormatting.isEscapementTypeModified());
-		fontFormatting.setEscapementTypeModified(true);
-		assertTrue(fontFormatting.isEscapementTypeModified());
+        patternFormatting.setFillForegroundColor(HSSFColor.INDIGO.index);
+        assertEquals(HSSFColor.INDIGO.index,patternFormatting.getFillForegroundColor());
 
-		fontFormatting.setFontWieghtModified(false);
-		assertFalse(fontFormatting.isFontWeightModified());
-		fontFormatting.setFontWieghtModified(true);
-		assertTrue(fontFormatting.isFontWeightModified());
+        patternFormatting.setFillPattern(PatternFormatting.DIAMONDS);
+        assertEquals(PatternFormatting.DIAMONDS,patternFormatting.getFillPattern());
+    }
 
-		fontFormatting.setFontCancellationModified(false);
-		assertFalse(fontFormatting.isFontCancellationModified());
-		fontFormatting.setFontCancellationModified(true);
-		assertTrue(fontFormatting.isFontCancellationModified());
+    private void testBorderFormattingAccessors(BorderFormatting borderFormatting)
+    {
+        borderFormatting.setBackwardDiagonalOn(false);
+        assertFalse(borderFormatting.isBackwardDiagonalOn());
+        borderFormatting.setBackwardDiagonalOn(true);
+        assertTrue(borderFormatting.isBackwardDiagonalOn());
 
-		fontFormatting.setFontColorIndex((short)10);
-		assertEquals(10,fontFormatting.getFontColorIndex());
+        borderFormatting.setBorderBottom(BorderFormatting.BORDER_DOTTED);
+        assertEquals(BorderFormatting.BORDER_DOTTED, borderFormatting.getBorderBottom());
 
-		fontFormatting.setFontHeight(100);
-		assertEquals(100,fontFormatting.getFontHeight());
+        borderFormatting.setBorderDiagonal(BorderFormatting.BORDER_MEDIUM);
+        assertEquals(BorderFormatting.BORDER_MEDIUM, borderFormatting.getBorderDiagonal());
 
-		fontFormatting.setFontOutlineModified(false);
-		assertFalse(fontFormatting.isFontOutlineModified());
-		fontFormatting.setFontOutlineModified(true);
-		assertTrue(fontFormatting.isFontOutlineModified());
+        borderFormatting.setBorderLeft(BorderFormatting.BORDER_MEDIUM_DASH_DOT_DOT);
+        assertEquals(BorderFormatting.BORDER_MEDIUM_DASH_DOT_DOT, borderFormatting.getBorderLeft());
 
-		fontFormatting.setFontShadowModified(false);
-		assertFalse(fontFormatting.isFontShadowModified());
-		fontFormatting.setFontShadowModified(true);
-		assertTrue(fontFormatting.isFontShadowModified());
+        borderFormatting.setBorderRight(BorderFormatting.BORDER_MEDIUM_DASHED);
+        assertEquals(BorderFormatting.BORDER_MEDIUM_DASHED, borderFormatting.getBorderRight());
 
-		fontFormatting.setFontStyleModified(false);
-		assertFalse(fontFormatting.isFontStyleModified());
-		fontFormatting.setFontStyleModified(true);
-		assertTrue(fontFormatting.isFontStyleModified());
+        borderFormatting.setBorderTop(BorderFormatting.BORDER_HAIR);
+        assertEquals(BorderFormatting.BORDER_HAIR, borderFormatting.getBorderTop());
 
-		fontFormatting.setItalic(false);
-		assertFalse(fontFormatting.isItalic());
-		fontFormatting.setItalic(true);
-		assertTrue(fontFormatting.isItalic());
+        borderFormatting.setBottomBorderColor(HSSFColor.AQUA.index);
+        assertEquals(HSSFColor.AQUA.index, borderFormatting.getBottomBorderColor());
 
-		fontFormatting.setOutline(false);
-		assertFalse(fontFormatting.isOutlineOn());
-		fontFormatting.setOutline(true);
-		assertTrue(fontFormatting.isOutlineOn());
+        borderFormatting.setDiagonalBorderColor(HSSFColor.RED.index);
+        assertEquals(HSSFColor.RED.index, borderFormatting.getDiagonalBorderColor());
 
-		fontFormatting.setShadow(false);
-		assertFalse(fontFormatting.isShadowOn());
-		fontFormatting.setShadow(true);
-		assertTrue(fontFormatting.isShadowOn());
+        assertFalse(borderFormatting.isForwardDiagonalOn());
+        borderFormatting.setForwardDiagonalOn(true);
+        assertTrue(borderFormatting.isForwardDiagonalOn());
 
-		fontFormatting.setStrikeout(false);
-		assertFalse(fontFormatting.isStruckout());
-		fontFormatting.setStrikeout(true);
-		assertTrue(fontFormatting.isStruckout());
+        borderFormatting.setLeftBorderColor(HSSFColor.BLACK.index);
+        assertEquals(HSSFColor.BLACK.index, borderFormatting.getLeftBorderColor());
 
-		fontFormatting.setUnderlineType(FontFormatting.U_DOUBLE_ACCOUNTING);
-		assertEquals(FontFormatting.U_DOUBLE_ACCOUNTING, fontFormatting.getUnderlineType());
+        borderFormatting.setRightBorderColor(HSSFColor.BLUE.index);
+        assertEquals(HSSFColor.BLUE.index, borderFormatting.getRightBorderColor());
 
-		fontFormatting.setUnderlineTypeModified(false);
-		assertFalse(fontFormatting.isUnderlineTypeModified());
-		fontFormatting.setUnderlineTypeModified(true);
-		assertTrue(fontFormatting.isUnderlineTypeModified());
-	}
+        borderFormatting.setTopBorderColor(HSSFColor.GOLD.index);
+        assertEquals(HSSFColor.GOLD.index, borderFormatting.getTopBorderColor());
+    }
 
-	public void testWrite() {
-		HSSFWorkbook workbook = new HSSFWorkbook();
-		CFRuleRecord rr = CFRuleRecord.create(workbook, ComparisonOperator.BETWEEN, "5", "10");
 
-		PatternFormatting patternFormatting = new PatternFormatting();
-		patternFormatting.setFillPattern(PatternFormatting.BRICKS);
-		rr.setPatternFormatting(patternFormatting);
+    private void testFontFormattingAccessors(FontFormatting fontFormatting)
+    {
+        // Check for defaults
+        assertFalse(fontFormatting.isEscapementTypeModified());
+        assertFalse(fontFormatting.isFontCancellationModified());
+        assertFalse(fontFormatting.isFontOutlineModified());
+        assertFalse(fontFormatting.isFontShadowModified());
+        assertFalse(fontFormatting.isFontStyleModified());
+        assertFalse(fontFormatting.isUnderlineTypeModified());
+        assertFalse(fontFormatting.isFontWeightModified());
 
-		byte[] data = rr.serialize();
-		assertEquals(26, data.length);
-		assertEquals(3, LittleEndian.getShort(data, 6));
-		assertEquals(3, LittleEndian.getShort(data, 8));
+        assertFalse(fontFormatting.isBold());
+        assertFalse(fontFormatting.isItalic());
+        assertFalse(fontFormatting.isOutlineOn());
+        assertFalse(fontFormatting.isShadowOn());
+        assertFalse(fontFormatting.isStruckout());
 
-		int flags = LittleEndian.getInt(data, 10);
-		assertEquals("unused flags should be 111", 0x00380000, flags & 0x00380000);
-		assertEquals("undocumented flags should be 0000", 0, flags & 0x03C00000); // Otherwise Excel gets unhappy
-		// check all remaining flag bits (some are not well understood yet)
-		assertEquals(0x203FFFFF, flags);
-	}
-	
-	private static final byte[] DATA_REFN = {
-		// formula extracted from bugzilla 45234 att 22141
-		1, 3, 
-		9, // formula 1 length 
-		0, 0, 0, -1, -1, 63, 32, 2, -128, 0, 0, 0, 5,
-		// formula 1: "=B3=1" (formula is relative to B4)
-		76, -1, -1, 0, -64, // tRefN(B1)
-		30, 1, 0,	
-		11,	
-	};
+        assertEquals(0, fontFormatting.getEscapementType());
+        assertEquals(-1, fontFormatting.getFontColorIndex());
+        assertEquals(-1, fontFormatting.getFontHeight());
+        assertEquals(0, fontFormatting.getFontWeight());
+        assertEquals(0, fontFormatting.getUnderlineType());
 
-	/**
-	 * tRefN and tAreaN tokens must be preserved when re-serializing conditional format formulas
-	 */
-	public void testReserializeRefNTokens() {
-		
-		RecordInputStream is = TestcaseRecordInputStream.create(CFRuleRecord.sid, DATA_REFN);
-		CFRuleRecord rr = new CFRuleRecord(is);
-		Ptg[] ptgs = rr.getParsedExpression1();
-		assertEquals(3, ptgs.length);
-		if (ptgs[0] instanceof RefPtg) {
-			throw new AssertionFailedError("Identified bug 45234");
-		}
-		assertEquals(RefNPtg.class, ptgs[0].getClass());
-		RefNPtg refNPtg = (RefNPtg) ptgs[0];
-		assertTrue(refNPtg.isColRelative());
-		assertTrue(refNPtg.isRowRelative());
-		
-		byte[] data = rr.serialize();
-		
-		if (!compareArrays(DATA_REFN, 0, data, 4, DATA_REFN.length)) {
-			fail("Did not re-serialize correctly");
-		}
-	}
+        fontFormatting.setBold(true);
+        assertTrue(fontFormatting.isBold());
+        fontFormatting.setBold(false);
+        assertFalse(fontFormatting.isBold());
 
-	private static boolean compareArrays(byte[] arrayA, int offsetA, byte[] arrayB, int offsetB, int length) {
-		
-		if (offsetA + length > arrayA.length) {
-			return false;
-		}
-		if (offsetB + length > arrayB.length) {
-			return false;
-		}
-		for (int i = 0; i < length; i++) {
-			if (arrayA[i+offsetA] != arrayB[i+offsetB]) {
-				return false;
-			}
-		}
-		return true;
-	}
+        fontFormatting.setEscapementType(FontFormatting.SS_SUB);
+        assertEquals(FontFormatting.SS_SUB, fontFormatting.getEscapementType());
+        fontFormatting.setEscapementType(FontFormatting.SS_SUPER);
+        assertEquals(FontFormatting.SS_SUPER, fontFormatting.getEscapementType());
+        fontFormatting.setEscapementType(FontFormatting.SS_NONE);
+        assertEquals(FontFormatting.SS_NONE, fontFormatting.getEscapementType());
 
-	public static void main(String[] ignored_args)
-	{
-		System.out.println("Testing org.apache.poi.hssf.record.CFRuleRecord");
-		junit.textui.TestRunner.run(TestCFRuleRecord.class);
-	}
+        fontFormatting.setEscapementTypeModified(false);
+        assertFalse(fontFormatting.isEscapementTypeModified());
+        fontFormatting.setEscapementTypeModified(true);
+        assertTrue(fontFormatting.isEscapementTypeModified());
+
+        fontFormatting.setFontWieghtModified(false);
+        assertFalse(fontFormatting.isFontWeightModified());
+        fontFormatting.setFontWieghtModified(true);
+        assertTrue(fontFormatting.isFontWeightModified());
+
+        fontFormatting.setFontCancellationModified(false);
+        assertFalse(fontFormatting.isFontCancellationModified());
+        fontFormatting.setFontCancellationModified(true);
+        assertTrue(fontFormatting.isFontCancellationModified());
+
+        fontFormatting.setFontColorIndex((short)10);
+        assertEquals(10,fontFormatting.getFontColorIndex());
+
+        fontFormatting.setFontHeight(100);
+        assertEquals(100,fontFormatting.getFontHeight());
+
+        fontFormatting.setFontOutlineModified(false);
+        assertFalse(fontFormatting.isFontOutlineModified());
+        fontFormatting.setFontOutlineModified(true);
+        assertTrue(fontFormatting.isFontOutlineModified());
+
+        fontFormatting.setFontShadowModified(false);
+        assertFalse(fontFormatting.isFontShadowModified());
+        fontFormatting.setFontShadowModified(true);
+        assertTrue(fontFormatting.isFontShadowModified());
+
+        fontFormatting.setFontStyleModified(false);
+        assertFalse(fontFormatting.isFontStyleModified());
+        fontFormatting.setFontStyleModified(true);
+        assertTrue(fontFormatting.isFontStyleModified());
+
+        fontFormatting.setItalic(false);
+        assertFalse(fontFormatting.isItalic());
+        fontFormatting.setItalic(true);
+        assertTrue(fontFormatting.isItalic());
+
+        fontFormatting.setOutline(false);
+        assertFalse(fontFormatting.isOutlineOn());
+        fontFormatting.setOutline(true);
+        assertTrue(fontFormatting.isOutlineOn());
+
+        fontFormatting.setShadow(false);
+        assertFalse(fontFormatting.isShadowOn());
+        fontFormatting.setShadow(true);
+        assertTrue(fontFormatting.isShadowOn());
+
+        fontFormatting.setStrikeout(false);
+        assertFalse(fontFormatting.isStruckout());
+        fontFormatting.setStrikeout(true);
+        assertTrue(fontFormatting.isStruckout());
+
+        fontFormatting.setUnderlineType(FontFormatting.U_DOUBLE_ACCOUNTING);
+        assertEquals(FontFormatting.U_DOUBLE_ACCOUNTING, fontFormatting.getUnderlineType());
+
+        fontFormatting.setUnderlineTypeModified(false);
+        assertFalse(fontFormatting.isUnderlineTypeModified());
+        fontFormatting.setUnderlineTypeModified(true);
+        assertTrue(fontFormatting.isUnderlineTypeModified());
+    }
+
+    public void testWrite() {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        CFRuleRecord rr = CFRuleRecord.create(workbook, ComparisonOperator.BETWEEN, "5", "10");
+
+        PatternFormatting patternFormatting = new PatternFormatting();
+        patternFormatting.setFillPattern(PatternFormatting.BRICKS);
+        rr.setPatternFormatting(patternFormatting);
+
+        byte[] data = rr.serialize();
+        assertEquals(26, data.length);
+        assertEquals(3, LittleEndian.getShort(data, 6));
+        assertEquals(3, LittleEndian.getShort(data, 8));
+
+        int flags = LittleEndian.getInt(data, 10);
+        assertEquals("unused flags should be 111", 0x00380000, flags & 0x00380000);
+        assertEquals("undocumented flags should be 0000", 0, flags & 0x03C00000); // Otherwise Excel gets unhappy
+        // check all remaining flag bits (some are not well understood yet)
+        assertEquals(0x203FFFFF, flags);
+    }
+
+    private static final byte[] DATA_REFN = {
+        // formula extracted from bugzilla 45234 att 22141
+        1, 3,
+        9, // formula 1 length
+        0, 0, 0, -1, -1, 63, 32, 2, -128, 0, 0, 0, 5,
+        // formula 1: "=B3=1" (formula is relative to B4)
+        76, -1, -1, 0, -64, // tRefN(B1)
+        30, 1, 0,
+        11,
+    };
+
+    /**
+     * tRefN and tAreaN tokens must be preserved when re-serializing conditional format formulas
+     */
+    public void testReserializeRefNTokens() {
+
+        RecordInputStream is = TestcaseRecordInputStream.create(CFRuleRecord.sid, DATA_REFN);
+        CFRuleRecord rr = new CFRuleRecord(is);
+        Ptg[] ptgs = rr.getParsedExpression1();
+        assertEquals(3, ptgs.length);
+        if (ptgs[0] instanceof RefPtg) {
+            throw new AssertionFailedError("Identified bug 45234");
+        }
+        assertEquals(RefNPtg.class, ptgs[0].getClass());
+        RefNPtg refNPtg = (RefNPtg) ptgs[0];
+        assertTrue(refNPtg.isColRelative());
+        assertTrue(refNPtg.isRowRelative());
+
+        byte[] data = rr.serialize();
+
+        if (!compareArrays(DATA_REFN, 0, data, 4, DATA_REFN.length)) {
+            fail("Did not re-serialize correctly");
+        }
+    }
+
+    private static boolean compareArrays(byte[] arrayA, int offsetA, byte[] arrayB, int offsetB, int length) {
+
+        if (offsetA + length > arrayA.length) {
+            return false;
+        }
+        if (offsetB + length > arrayB.length) {
+            return false;
+        }
+        for (int i = 0; i < length; i++) {
+            if (arrayA[i+offsetA] != arrayB[i+offsetB]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static void main(String[] ignored_args)
+    {
+        System.out.println("Testing org.apache.poi.hssf.record.CFRuleRecord");
+        junit.textui.TestRunner.run(TestCFRuleRecord.class);
+    }
 }

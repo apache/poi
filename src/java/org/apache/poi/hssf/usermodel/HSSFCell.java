@@ -578,6 +578,7 @@ public class HSSFCell implements Cell {
             setCellType(CELL_TYPE_BLANK, false, row, col, styleIndex);
             return;
         }
+        Ptg[] ptgs = HSSFFormulaParser.parse(formula, book);
         setCellType(CELL_TYPE_FORMULA, false, row, col, styleIndex);
         FormulaRecordAggregate agg = (FormulaRecordAggregate) record;
         FormulaRecord frec = agg.getFormulaRecord();
@@ -588,7 +589,6 @@ public class HSSFCell implements Cell {
         if (agg.getXFIndex() == (short)0) {
             agg.setXFIndex((short) 0x0f);
         }
-        Ptg[] ptgs = HSSFFormulaParser.parse(formula, book);
         agg.setParsedExpression(ptgs);
     }
     /**
@@ -896,11 +896,11 @@ public class HSSFCell implements Cell {
      */
     private void checkBounds(int cellNum) {
       if (cellNum > 255) {
-          throw new RuntimeException("You cannot have more than 255 columns "+
+          throw new IllegalArgumentException("You cannot have more than 255 columns "+
                     "in a given row (IV).  Because Excel can't handle it");
       }
       else if (cellNum < 0) {
-          throw new RuntimeException("You cannot reference columns with an index of less then 0.");
+          throw new IllegalArgumentException("You cannot reference columns with an index of less then 0.");
       }
     }
 
