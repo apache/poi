@@ -125,8 +125,6 @@ public final class CFRuleRecord extends StandardRecord {
 	
 	private CFRuleRecord(byte conditionType, byte comparisonOperation, Ptg[] formula1, Ptg[] formula2) {
 		this(conditionType, comparisonOperation); 
-		field_1_condition_type = CONDITION_TYPE_CELL_VALUE_IS;
-		field_2_comparison_operator = comparisonOperation;
 		field_17_formula1 = Formula.create(formula1);
 		field_18_formula2 = Formula.create(formula2);
 	}
@@ -485,6 +483,7 @@ public final class CFRuleRecord extends StandardRecord {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("[CFRULE]\n");
+        buffer.append("    .condition_type   ="+field_1_condition_type);
 		buffer.append("    OPTION FLAGS=0x"+Integer.toHexString(getOptions()));
 		if (false) {
 			if (containsFontFormattingBlock()) {

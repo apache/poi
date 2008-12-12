@@ -134,7 +134,8 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * </p>
      * @param columnIndex - the column number this cell represents
      * @return Cell a high level representation of the created cell.
-     * @throws IllegalArgumentException if columnIndex < 0
+     * @throws IllegalArgumentException if columnIndex < 0 or greater than 16384,
+     *   the maximum number of columns supported by the SpreadsheetML format (.xlsx)
      */
     public XSSFCell createCell(int columnIndex) {
     	return createCell(columnIndex, Cell.CELL_TYPE_BLANK);
@@ -146,7 +147,8 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @param columnIndex - the column number this cell represents
      * @param type - the cell's data type
      * @return XSSFCell a high level representation of the created cell.
-     * @throws IllegalArgumentException if columnIndex < 0 or if the specified cell type is invalid
+     * @throws IllegalArgumentException if the specified cell type is invalid, columnIndex < 0
+     *   or greater than 16384, the maximum number of columns supported by the SpreadsheetML format (.xlsx)
      * @see Cell#CELL_TYPE_BLANK
      * @see Cell#CELL_TYPE_BOOLEAN
      * @see Cell#CELL_TYPE_ERROR
