@@ -40,7 +40,8 @@ public abstract class StandardRecord extends Record {
 		out.writeShort(dataSize);
 		serialize(out);
 		if (out.getWriteIndex() - offset != recSize) {
-			throw new IllegalStateException("Incorrect number of bytes written - expected " 
+			throw new IllegalStateException("Error in serialization of (" + getClass().getName() + "): "
+					+ "Incorrect number of bytes written - expected " 
 					+ recSize + " but got " + (out.getWriteIndex() - offset));
 		}
 		return recSize;

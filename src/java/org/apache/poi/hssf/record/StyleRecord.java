@@ -173,7 +173,11 @@ public final class StyleRecord extends StandardRecord {
 		} else {
 			out.writeShort(field_4_name.length());
 			out.writeByte(field_3_stringHasMultibyte ? 0x01 : 0x00);
-			StringUtil.putCompressedUnicode(getName(), out);
+			if (field_3_stringHasMultibyte) {
+				StringUtil.putUnicodeLE(getName(), out);
+			} else {
+				StringUtil.putCompressedUnicode(getName(), out);
+			}
 		}
 	}
 
