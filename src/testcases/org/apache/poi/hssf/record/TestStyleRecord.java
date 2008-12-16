@@ -17,17 +17,30 @@
 
 package org.apache.poi.hssf.record;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+
+import org.apache.poi.util.HexRead;
+
 /**
- * 
+ * Tests for {@link StyleRecord}
  */
 public final class TestStyleRecord extends TestCase {
-    public void testUnicodeReadName() {
-    	byte[] data = {
-   			17, 0, 9, 0, 1, 56, 94, -60, -119, 95, 0, 83, 0, 104, 0, 101, 0, 101, 0, 116, 0, 49, 0, 92, 40, //92, 36    			
-    	};
-    	RecordInputStream in = TestcaseRecordInputStream.create(StyleRecord.sid, data);
-    	StyleRecord sr = new StyleRecord(in);
-    	assertEquals("\u5E38\u89C4_Sheet1", sr.getName()); // "<Conventional>_Sheet1"
-    }
+	public void testUnicodeReadName() {
+		byte[] data = HexRead.readFromString(
+				"11 00 09 00 01 38 5E C4 89 5F 00 53 00 68 00 65 00 65 00 74 00 31 00");
+		RecordInputStream in = TestcaseRecordInputStream.create(StyleRecord.sid, data);
+		StyleRecord sr = new StyleRecord(in);
+		assertEquals("\u5E38\u89C4_Sheet1", sr.getName()); // "<Conventional>_Sheet1"
+		byte[] ser;
+		try {
+			ser = sr.serialize();
+		} catch (IllegalStateException e) {
+			if (e.getMessage().equals("Incorrect number of bytes written - expected 27 but got 18")) {
+				throw new AssertionFailedError("Identified bug 46385");
+			}
+			throw e;
+		}
+		TestcaseRecordInputStream.confirmRecordEncoding(StyleRecord.sid, data, ser);
+	}
 }
