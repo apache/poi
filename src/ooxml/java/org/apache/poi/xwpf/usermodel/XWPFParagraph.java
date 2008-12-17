@@ -38,6 +38,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTextAlignment;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLineSpacingRule;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTextAlignment;
 import org.w3c.dom.NodeList;
@@ -58,80 +59,86 @@ public class XWPFParagraph {
     private StringBuffer text = new StringBuffer();
     private StringBuffer pictureText = new StringBuffer();
 
+
+    protected XWPFParagraph(CTP prgrph) {
+        this(prgrph, null);
+    }
+
+
     protected XWPFParagraph(CTP prgrph, XWPFDocument docRef) {
-        this.paragraph = prgrph;
-        this.document = docRef;
+	this.paragraph = prgrph;
+	this.document = docRef;
 
-        if (!isEmpty()) {
-            // All the runs to loop over
-            // TODO - replace this with some sort of XPath expression
-            // to directly find all the CTRs, in the right order
-            ArrayList<CTR> rs = new ArrayList<CTR>();
-            CTR[] tmp;
+	if (!isEmpty()) {
+	    // All the runs to loop over
+	    // TODO - replace this with some sort of XPath expression
+	    // to directly find all the CTRs, in the right order
+	    ArrayList<CTR> rs = new ArrayList<CTR>();
+	    CTR[] tmp;
 
-            // Get the main text runs
-            tmp = paragraph.getRArray();
-            for (int i = 0; i < tmp.length; i++) {
-                rs.add(tmp[i]);
-            }
+	    // Get the main text runs
+	    tmp = paragraph.getRArray();
+	    for (int i = 0; i < tmp.length; i++) {
+		rs.add(tmp[i]);
+	    }
 
-            // Not sure quite what these are, but they hold
-            // more text runs
-            CTSdtRun[] sdts = paragraph.getSdtArray();
-            for (int i = 0; i < sdts.length; i++) {
-                CTSdtContentRun run = sdts[i].getSdtContent();
-                tmp = run.getRArray();
-                for (int j = 0; j < tmp.length; j++) {
-                    rs.add(tmp[j]);
-                }
-            }
+	    // Not sure quite what these are, but they hold
+	    // more text runs
+	    CTSdtRun[] sdts = paragraph.getSdtArray();
+	    for (int i = 0; i < sdts.length; i++) {
+		CTSdtContentRun run = sdts[i].getSdtContent();
+		tmp = run.getRArray();
+		for (int j = 0; j < tmp.length; j++) {
+		    rs.add(tmp[j]);
+		}
+	    }
 
-            // Get text of the paragraph
-            for (int j = 0; j < rs.size(); j++) {
-                // Grab the text and tabs of the paragraph
-                // Do so in a way that preserves the ordering
-                XmlCursor c = rs.get(j).newCursor();
-                c.selectPath("./*");
-                while (c.toNextSelection()) {
-                    XmlObject o = c.getObject();
-                    if (o instanceof CTText) {
-                        text.append(((CTText) o).getStringValue());
-                    }
-                    if (o instanceof CTPTab) {
-                        text.append("\t");
-                    }
-                }
+	    // Get text of the paragraph
+	    for (int j = 0; j < rs.size(); j++) {
+		// Grab the text and tabs of the paragraph
+		// Do so in a way that preserves the ordering
+		XmlCursor c = rs.get(j).newCursor();
+		c.selectPath("./*");
+		while (c.toNextSelection()) {
+		    XmlObject o = c.getObject();
+		    if (o instanceof CTText) {
+			text.append(((CTText) o).getStringValue());
+		    }
+		    if (o instanceof CTPTab) {
+			text.append("\t");
+		    }
+		}
 
-                // Loop over pictures inside our
-                // paragraph, looking for text in them
-                CTPicture[] picts = rs.get(j).getPictArray();
-                for (int k = 0; k < picts.length; k++) {
-                    XmlObject[] t = picts[k]
-                            .selectPath("declare namespace w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' .//w:t");
-                    for (int m = 0; m < t.length; m++) {
-                        NodeList kids = t[m].getDomNode().getChildNodes();
-                        for (int n = 0; n < kids.getLength(); n++) {
-                            if (kids.item(n) instanceof Text) {
-                                pictureText.append("\n");
-                                pictureText.append(kids.item(n).getNodeValue());
-                            }
-                        }
-                    }
-                }
-            }
-        }
+		// Loop over pictures inside our
+		// paragraph, looking for text in them
+		CTPicture[] picts = rs.get(j).getPictArray();
+		for (int k = 0; k < picts.length; k++) {
+		    XmlObject[] t = picts[k]
+		                          .selectPath("declare namespace w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' .//w:t");
+		    for (int m = 0; m < t.length; m++) {
+			NodeList kids = t[m].getDomNode().getChildNodes();
+			for (int n = 0; n < kids.getLength(); n++) {
+			    if (kids.item(n) instanceof Text) {
+				pictureText.append("\n");
+				pictureText.append(kids.item(n).getNodeValue());
+			    }
+			}
+		    }
+		}
+	    }
+	}
     }
 
     public CTP getCTP() {
-        return paragraph;
+	return paragraph;
     }
 
     public boolean isEmpty() {
-        return !paragraph.getDomNode().hasChildNodes();
+	return !paragraph.getDomNode().hasChildNodes();
     }
 
     public XWPFDocument getDocument() {
-        return document;
+	return document;
     }
 
     /**
@@ -139,7 +146,7 @@ public class XWPFParagraph {
      * in it.
      */
     public String getText() {
-        return getParagraphText() + getPictureText();
+	return getParagraphText() + getPictureText();
     }
 
     /**
@@ -147,14 +154,14 @@ public class XWPFParagraph {
      * paragraph
      */
     public String getParagraphText() {
-        return text.toString();
+	return text.toString();
     }
 
     /**
      * Returns any text from any suitable pictures in the paragraph
      */
     public String getPictureText() {
-        return pictureText.toString();
+	return pictureText.toString();
     }
 
     /**
@@ -163,7 +170,7 @@ public class XWPFParagraph {
      * @return a new text run
      */
     public XWPFRun createRun() {
-        return new XWPFRun(paragraph.addNewR(), this);
+	return new XWPFRun(paragraph.addNewR(), this);
     }
 
     /**
@@ -181,7 +188,7 @@ public class XWPFParagraph {
      * @return the paragraph alignment of this paragraph.
      */
     public ParagraphAlignment getAlignment() {
-        CTPPr pr = paragraph.getPPr();
+        CTPPr pr = getCTPPr();
         return pr == null || !pr.isSetJc() ? ParagraphAlignment.LEFT
                 : ParagraphAlignment.valueOf(pr.getJc().getVal().intValue());
     }
@@ -201,8 +208,7 @@ public class XWPFParagraph {
      * @param align the paragraph alignment to apply to this paragraph.
      */
     public void setAlignment(ParagraphAlignment align) {
-        CTPPr pr = paragraph.isSetPPr() ? paragraph.getPPr() : paragraph
-                .addNewPPr();
+        CTPPr pr = getCTPPr();
         CTJc jc = pr.isSetJc() ? pr.getJc() : pr.addNewJc();
         STJc.Enum en = STJc.Enum.forInt(align.getValue());
         jc.setVal(en);
@@ -227,8 +233,8 @@ public class XWPFParagraph {
      * @return the vertical alignment of this paragraph.
      */
     public TextAlignment getVerticalAlignment() {
-        CTPPr pr = paragraph.getPPr();
-        return pr == null || !pr.isSetTextAlignment() ? TextAlignment.AUTO
+        CTPPr pr = getCTPPr();
+        return (pr == null || !pr.isSetTextAlignment()) ? TextAlignment.AUTO
                 : TextAlignment.valueOf(pr.getTextAlignment().getVal()
                 .intValue());
     }
@@ -253,8 +259,7 @@ public class XWPFParagraph {
      *               paragraph.
      */
     public void setVerticalAlignment(TextAlignment valign) {
-        CTPPr pr = paragraph.isSetPPr() ? paragraph.getPPr() : paragraph
-                .addNewPPr();
+        CTPPr pr = getCTPPr();
         CTTextAlignment textAlignment = pr.isSetTextAlignment() ? pr
                 .getTextAlignment() : pr.addNewTextAlignment();
         STTextAlignment.Enum en = STTextAlignment.Enum
@@ -291,7 +296,8 @@ public class XWPFParagraph {
      */
     public void setBorderTop(Borders border) {
         CTPBdr ct = getCTPBrd(true);
-        CTBorder pr = ct.isSetTop() ? ct.getTop() : ct.addNewTop();
+
+        CTBorder pr = (ct != null && ct.isSetTop()) ? ct.getTop() : ct.addNewTop();
         if (border.getValue() == Borders.NONE.getValue())
             ct.unsetTop();
         else
@@ -308,13 +314,12 @@ public class XWPFParagraph {
      */
     public Borders getBorderTop() {
         CTPBdr border = getCTPBrd(false);
-        CTBorder ct;
+        CTBorder ct = null;
         if (border != null) {
             ct = border.getTop();
-            STBorder.Enum ptrn = ct != null ? ct.getVal() : STBorder.NONE;
-            return Borders.valueOf(ptrn.intValue());
         }
-        return Borders.NONE;
+        STBorder.Enum ptrn = (ct != null) ? ct.getVal() : STBorder.NONE;
+        return Borders.valueOf(ptrn.intValue());
     }
 
     /**
@@ -345,12 +350,12 @@ public class XWPFParagraph {
      * @see Borders a list of all types of borders
      */
     public void setBorderBottom(Borders border) {
-        CTPBdr ct = getCTPBrd(true);
-        CTBorder pr = ct.isSetBottom() ? ct.getBottom() : ct.addNewBottom();
-        if (border.getValue() == Borders.NONE.getValue())
-            ct.unsetBottom();
-        else
-            pr.setVal(STBorder.Enum.forInt(border.getValue()));
+	CTPBdr ct = getCTPBrd(true);
+	CTBorder pr = ct.isSetBottom() ? ct.getBottom() : ct.addNewBottom();
+	if (border.getValue() == Borders.NONE.getValue())
+	    ct.unsetBottom();
+	else
+	    pr.setVal(STBorder.Enum.forInt(border.getValue()));
     }
 
     /**
@@ -362,13 +367,13 @@ public class XWPFParagraph {
      * @see Borders a list of all types of borders
      */
     public Borders getBorderBottom() {
-        CTPBdr border = getCTPBrd(false);
-        CTBorder ct = null;
-        if (border != null) {
-            ct = border.getBottom();
-        }
-        STBorder.Enum ptrn = ct != null ? ct.getVal() : STBorder.NONE;
-        return Borders.valueOf(ptrn.intValue());
+	CTPBdr border = getCTPBrd(false);
+	CTBorder ct = null;
+	if (border != null) {
+	    ct = border.getBottom();
+	}
+	STBorder.Enum ptrn = ct != null ? ct.getVal() : STBorder.NONE;
+	return Borders.valueOf(ptrn.intValue());
     }
 
     /**
@@ -394,12 +399,12 @@ public class XWPFParagraph {
      * @see Borders for a list of all possible borders
      */
     public void setBorderLeft(Borders border) {
-        CTPBdr ct = getCTPBrd(true);
-        CTBorder pr = ct.isSetLeft() ? ct.getLeft() : ct.addNewLeft();
-        if (border.getValue() == Borders.NONE.getValue())
-            ct.unsetLeft();
-        else
-            pr.setVal(STBorder.Enum.forInt(border.getValue()));
+	CTPBdr ct = getCTPBrd(true);
+	CTBorder pr = ct.isSetLeft() ? ct.getLeft() : ct.addNewLeft();
+	if (border.getValue() == Borders.NONE.getValue())
+	    ct.unsetLeft();
+	else
+	    pr.setVal(STBorder.Enum.forInt(border.getValue()));
     }
 
     /**
@@ -411,13 +416,13 @@ public class XWPFParagraph {
      * @see Borders for a list of all possible borders
      */
     public Borders getBorderLeft() {
-        CTPBdr border = getCTPBrd(false);
-        CTBorder ct = null;
-        if (border != null) {
-            ct = border.getLeft();
-        }
-        STBorder.Enum ptrn = ct != null ? ct.getVal() : STBorder.NONE;
-        return Borders.valueOf(ptrn.intValue());
+	CTPBdr border = getCTPBrd(false);
+	CTBorder ct = null;
+	if (border != null) {
+	    ct = border.getLeft();
+	}
+	STBorder.Enum ptrn = ct != null ? ct.getVal() : STBorder.NONE;
+	return Borders.valueOf(ptrn.intValue());
     }
 
     /**
@@ -443,12 +448,12 @@ public class XWPFParagraph {
      * @see Borders for a list of all possible borders
      */
     public void setBorderRight(Borders border) {
-        CTPBdr ct = getCTPBrd(true);
-        CTBorder pr = ct.isSetRight() ? ct.getRight() : ct.addNewRight();
-        if (border.getValue() == Borders.NONE.getValue())
-            ct.unsetRight();
-        else
-            pr.setVal(STBorder.Enum.forInt(border.getValue()));
+	CTPBdr ct = getCTPBrd(true);
+	CTBorder pr = ct.isSetRight() ? ct.getRight() : ct.addNewRight();
+	if (border.getValue() == Borders.NONE.getValue())
+	    ct.unsetRight();
+	else
+	    pr.setVal(STBorder.Enum.forInt(border.getValue()));
     }
 
     /**
@@ -460,13 +465,13 @@ public class XWPFParagraph {
      * @see Borders for a list of all possible borders
      */
     public Borders getBorderRight() {
-        CTPBdr border = getCTPBrd(false);
-        CTBorder ct = null;
-        if (border != null) {
-            ct = border.getRight();
-        }
-        STBorder.Enum ptrn = ct != null ? ct.getVal() : STBorder.NONE;
-        return Borders.valueOf(ptrn.intValue());
+	CTPBdr border = getCTPBrd(false);
+	CTBorder ct = null;
+	if (border != null) {
+	    ct = border.getRight();
+	}
+	STBorder.Enum ptrn = ct != null ? ct.getVal() : STBorder.NONE;
+	return Borders.valueOf(ptrn.intValue());
     }
 
     /**
@@ -496,12 +501,12 @@ public class XWPFParagraph {
      * @see Borders for a list of all possible borders
      */
     public void setBorderBetween(Borders border) {
-        CTPBdr ct = getCTPBrd(true);
-        CTBorder pr = ct.isSetBetween() ? ct.getBetween() : ct.addNewBetween();
-        if (border.getValue() == Borders.NONE.getValue())
-            ct.unsetBetween();
-        else
-            pr.setVal(STBorder.Enum.forInt(border.getValue()));
+	CTPBdr ct = getCTPBrd(true);
+	CTBorder pr = ct.isSetBetween() ? ct.getBetween() : ct.addNewBetween();
+	if (border.getValue() == Borders.NONE.getValue())
+	    ct.unsetBetween();
+	else
+	    pr.setVal(STBorder.Enum.forInt(border.getValue()));
     }
 
     /**
@@ -513,13 +518,13 @@ public class XWPFParagraph {
      * @see Borders for a list of all possible borders
      */
     public Borders getBorderBetween() {
-        CTPBdr border = getCTPBrd(false);
-        CTBorder ct = null;
-        if (border != null) {
-            ct = border.getBetween();
-        }
-        STBorder.Enum ptrn = ct != null ? ct.getVal() : STBorder.NONE;
-        return Borders.valueOf(ptrn.intValue());
+	CTPBdr border = getCTPBrd(false);
+	CTBorder ct = null;
+	if (border != null) {
+	    ct = border.getBetween();
+	}
+	STBorder.Enum ptrn = ct != null ? ct.getVal() : STBorder.NONE;
+	return Borders.valueOf(ptrn.intValue());
     }
 
     /**
@@ -539,13 +544,13 @@ public class XWPFParagraph {
      *                  boolean value
      */
     public void setPageBreak(boolean pageBreak) {
-        CTPPr ppr = getCTPPr();
-        CTOnOff ct_pageBreak = ppr.isSetPageBreakBefore() ? ppr
-                .getPageBreakBefore() : ppr.addNewPageBreakBefore();
-        if (pageBreak)
-            ct_pageBreak.setVal(STOnOff.TRUE);
-        else
-            ct_pageBreak.setVal(STOnOff.FALSE);
+	CTPPr ppr = getCTPPr();
+	CTOnOff ct_pageBreak = ppr.isSetPageBreakBefore() ? ppr
+		.getPageBreakBefore() : ppr.addNewPageBreakBefore();
+		if (pageBreak)
+		    ct_pageBreak.setVal(STOnOff.TRUE);
+		else
+		    ct_pageBreak.setVal(STOnOff.FALSE);
     }
 
     /**
@@ -564,14 +569,14 @@ public class XWPFParagraph {
      * @return boolean - if page break is set
      */
     public boolean isPageBreak() {
-        CTPPr ppr = getCTPPr();
-        CTOnOff ct_pageBreak = ppr.isSetPageBreakBefore() ? ppr
-                .getPageBreakBefore() : null;
-        if (ct_pageBreak != null
-                && ct_pageBreak.getVal().intValue() == STOnOff.INT_TRUE)
-            return true;
-        else
-            return false;
+	CTPPr ppr = getCTPPr();
+	CTOnOff ct_pageBreak = ppr.isSetPageBreakBefore() ? ppr
+		.getPageBreakBefore() : null;
+		if (ct_pageBreak != null
+			&& ct_pageBreak.getVal().intValue() == STOnOff.INT_TRUE)
+		    return true;
+		else
+		    return false;
     }
 
     /**
@@ -586,21 +591,24 @@ public class XWPFParagraph {
      *               a positive whole number, whose contents consist of a
      *               measurement in twentieths of a point.
      */
-    public void setSpacingAfter(BigInteger spaces) {
+    public void setSpacingAfter(int spaces) {
         CTSpacing spacing = getCTSpacing(true);
-        if (spacing != null)
-            spacing.setAfter(spaces);
+        if (spacing != null) {
+            BigInteger bi = new BigInteger("" + spaces);
+            spacing.setAfter(bi);
+        }
+
     }
 
     /**
      * Specifies the spacing that should be added after the last line in this
      * paragraph in the document in absolute units.
      *
-     * @return bigInteger - value representing the spacing after the paragraph
+     * @return int - value representing the spacing after the paragraph
      */
-    public BigInteger getSpacingAfter() {
+    public int getSpacingAfter() {
         CTSpacing spacing = getCTSpacing(false);
-        return spacing.isSetAfter() ? spacing.getAfter() : null;
+        return (spacing != null && spacing.isSetAfter()) ? spacing.getAfter().intValue() : -1;
     }
 
     /**
@@ -620,9 +628,10 @@ public class XWPFParagraph {
      *               a positive whole number, whose contents consist of a
      *               measurement in twentieths of a
      */
-    public void setSpacingAfterLines(BigInteger spaces) {
+    public void setSpacingAfterLines(int spaces) {
         CTSpacing spacing = getCTSpacing(true);
-        spacing.setAfterLines(spaces);
+        BigInteger bi = new BigInteger("" + spaces);
+        spacing.setAfterLines(bi);
     }
 
 
@@ -633,10 +642,11 @@ public class XWPFParagraph {
      * @return bigInteger - value representing the spacing after the paragraph
      * @see #setSpacingAfterLines(BigInteger)
      */
-    public BigInteger getSpacingAfterLines() {
+    public int getSpacingAfterLines() {
         CTSpacing spacing = getCTSpacing(false);
-        return spacing.isSetAfterLines() ? spacing.getAfterLines() : null;
+        return (spacing != null && spacing.isSetAfterLines()) ? spacing.getAfterLines().intValue() : -1;
     }
+
 
     /**
      * Specifies the spacing that should be added above the first line in this
@@ -648,9 +658,10 @@ public class XWPFParagraph {
      *
      * @param spaces
      */
-    public void setSpacingBefore(BigInteger spaces) {
+    public void setSpacingBefore(int spaces) {
         CTSpacing spacing = getCTSpacing(true);
-        spacing.setBefore(spaces);
+        BigInteger bi = new BigInteger("" + spaces);
+        spacing.setBefore(bi);
     }
 
     /**
@@ -660,9 +671,9 @@ public class XWPFParagraph {
      * @return the spacing that should be added above the first line
      * @see #setSpacingBefore(BigInteger)
      */
-    public BigInteger getSpacingBefore() {
+    public int getSpacingBefore() {
         CTSpacing spacing = getCTSpacing(false);
-        return spacing.isSetBefore() ? spacing.getBefore() : null;
+        return (spacing != null && spacing.isSetBefore()) ? spacing.getBefore().intValue() : -1;
     }
 
     /**
@@ -677,9 +688,10 @@ public class XWPFParagraph {
      *
      * @param spaces
      */
-    public void setSpacingBeforeLines(BigInteger spaces) {
+    public void setSpacingBeforeLines(int spaces) {
         CTSpacing spacing = getCTSpacing(true);
-        spacing.setBeforeLines(spaces);
+        BigInteger bi = new BigInteger("" + spaces);
+        spacing.setBeforeLines(bi);
     }
 
     /**
@@ -690,10 +702,40 @@ public class XWPFParagraph {
      * @return the spacing that should be added before the first line in this paragraph
      * @see #setSpacingBeforeLines(BigInteger)
      */
-    public BigInteger getSpacingBeforeLines() {
+    public int getSpacingBeforeLines() {
         CTSpacing spacing = getCTSpacing(false);
-        return spacing.isSetBeforeLines() ? spacing.getBeforeLines() : null;
+        return (spacing != null && spacing.isSetBeforeLines()) ? spacing.getBeforeLines().intValue() : -1;
     }
+
+
+    /**
+     * Specifies how the spacing between lines is calculated as stored in the
+     * line attribute. If this attribute is omitted, then it shall be assumed to
+     * be of a value auto if a line attribute value is present.
+     *
+     * @param rule
+     * @see LineSpacingRule
+     */
+    public void setSpacingLineRule(LineSpacingRule rule) {
+        CTSpacing spacing = getCTSpacing(true);
+        spacing.setLineRule(STLineSpacingRule.Enum.forInt(rule.getValue()));
+    }
+
+    /**
+     * Specifies how the spacing between lines is calculated as stored in the
+     * line attribute. If this attribute is omitted, then it shall be assumed to
+     * be of a value auto if a line attribute value is present.
+     *
+     * @return rule
+     * @see LineSpacingRule
+     * @see #setSpacingLineRule(LineSpacingRule)
+     */
+    public LineSpacingRule getSpacingLineRule() {
+        CTSpacing spacing = getCTSpacing(false);
+        return (spacing != null && spacing.isSetLineRule()) ? LineSpacingRule.valueOf(spacing
+                .getLineRule().intValue()) : LineSpacingRule.AUTO;
+    }
+
 
     /**
      * Specifies the indentation which shall be placed between the left text
@@ -708,9 +750,10 @@ public class XWPFParagraph {
      *
      * @param indentation
      */
-    public void setIndentationLeft(BigInteger indentation) {
+    public void setIndentationLeft(int indentation) {
         CTInd indent = getCTInd(true);
-        indent.setLeft(indentation);
+        BigInteger bi = new BigInteger("" + indentation);
+        indent.setLeft(bi);
     }
 
     /**
@@ -726,10 +769,10 @@ public class XWPFParagraph {
      *
      * @return indentation or null if indentation is not set
      */
-    public BigInteger getIndentationLeft() {
+    public int getIndentationLeft() {
         CTInd indentation = getCTInd(false);
-        return indentation.isSetLeft() ? indentation.getLeft()
-                : new BigInteger("0");
+        return (indentation != null && indentation.isSetLeft()) ? indentation.getLeft().intValue()
+                : -1;
     }
 
     /**
@@ -745,9 +788,10 @@ public class XWPFParagraph {
      *
      * @param indentation
      */
-    public void setIndentationRight(BigInteger indentation) {
+    public void setIndentationRight(int indentation) {
         CTInd indent = getCTInd(true);
-        indent.setRight(indentation);
+        BigInteger bi = new BigInteger("" + indentation);
+        indent.setRight(bi);
     }
 
     /**
@@ -764,10 +808,10 @@ public class XWPFParagraph {
      * @return indentation or null if indentation is not set
      */
 
-    public BigInteger getIndentationRight() {
+    public int getIndentationRight() {
         CTInd indentation = getCTInd(false);
-        return indentation.isSetRight() ? indentation.getRight()
-                : new BigInteger("0");
+        return (indentation != null && indentation.isSetRight()) ? indentation.getRight().intValue()
+                : -1;
     }
 
     /**
@@ -784,9 +828,10 @@ public class XWPFParagraph {
      * @param indentation
      */
 
-    public void setIndentationHanging(BigInteger indentation) {
+    public void setIndentationHanging(int indentation) {
         CTInd indent = getCTInd(true);
-        indent.setHanging(indentation);
+        BigInteger bi = new BigInteger("" + indentation);
+        indent.setHanging(bi);
     }
 
     /**
@@ -802,9 +847,9 @@ public class XWPFParagraph {
      *
      * @return indentation or null if indentation is not set
      */
-    public BigInteger getIndentationHanging() {
+    public int getIndentationHanging() {
         CTInd indentation = getCTInd(false);
-        return indentation.isSetHanging() ? indentation.getHanging() : null;
+        return (indentation != null && indentation.isSetHanging()) ? indentation.getHanging().intValue() : -1;
     }
 
     /**
@@ -821,9 +866,10 @@ public class XWPFParagraph {
      *
      * @param indentation
      */
-    public void setIndentationFirstLine(BigInteger indentation) {
+    public void setIndentationFirstLine(int indentation) {
         CTInd indent = getCTInd(true);
-        indent.setFirstLine(indentation);
+        BigInteger bi = new BigInteger("" + indentation);
+        indent.setFirstLine(bi);
     }
 
     /**
@@ -841,10 +887,10 @@ public class XWPFParagraph {
      *
      * @return indentation or null if indentation is not set
      */
-    public BigInteger getIndentationFirstLine() {
+    public int getIndentationFirstLine() {
         CTInd indentation = getCTInd(false);
-        return indentation.isSetFirstLine() ? indentation.getFirstLine()
-                : new BigInteger("0");
+        return (indentation != null && indentation.isSetFirstLine()) ? indentation.getFirstLine().intValue()
+                : -1;
     }
 
     /**
@@ -856,12 +902,12 @@ public class XWPFParagraph {
      * @param wrap - boolean
      */
     public void setWordWrap(boolean wrap) {
-        CTOnOff wordWrap = getCTPPr().isSetWordWrap() ? getCTPPr()
-                .getWordWrap() : getCTPPr().addNewWordWrap();
-        if (wrap)
-            wordWrap.setVal(STOnOff.TRUE);
-        else
-            wordWrap.unsetVal();
+	CTOnOff wordWrap = getCTPPr().isSetWordWrap() ? getCTPPr()
+		.getWordWrap() : getCTPPr().addNewWordWrap();
+		if (wrap)
+		    wordWrap.setVal(STOnOff.TRUE);
+		else
+		    wordWrap.unsetVal();
     }
 
     /**
@@ -873,14 +919,14 @@ public class XWPFParagraph {
      * @return boolean
      */
     public boolean isWordWrap() {
-        CTOnOff wordWrap = getCTPPr().isSetWordWrap() ? getCTPPr()
-                .getWordWrap() : null;
-        if (wordWrap != null) {
-            return (wordWrap.getVal() == STOnOff.ON
-                    || wordWrap.getVal() == STOnOff.TRUE || wordWrap.getVal() == STOnOff.X_1) ? true
-                    : false;
-        } else
-            return false;
+	CTOnOff wordWrap = getCTPPr().isSetWordWrap() ? getCTPPr()
+		.getWordWrap() : null;
+		if (wordWrap != null) {
+		    return (wordWrap.getVal() == STOnOff.ON
+			    || wordWrap.getVal() == STOnOff.TRUE || wordWrap.getVal() == STOnOff.X_1) ? true
+				    : false;
+		} else
+		    return false;
     }
 
     /**
@@ -889,13 +935,10 @@ public class XWPFParagraph {
      */
     private CTPBdr getCTPBrd(boolean create) {
         CTPPr pr = getCTPPr();
-        if (pr != null) {
-            CTPBdr ct = pr.isSetPBdr() ? pr.getPBdr() : null;
-            if (create && ct == null)
-                ct = pr.addNewPBdr();
-            return ct;
-        }
-        return null;
+        CTPBdr ct = pr.isSetPBdr() ? pr.getPBdr() : null;
+        if (create && ct == null)
+            ct = pr.addNewPBdr();
+        return ct;
     }
 
     /**
@@ -904,13 +947,10 @@ public class XWPFParagraph {
      */
     private CTSpacing getCTSpacing(boolean create) {
         CTPPr pr = getCTPPr();
-        if (pr != null) {
-            CTSpacing ct = pr.isSetSpacing() ? pr.getSpacing() : null;
-            if (create && ct == null)
-                ct = pr.addNewSpacing();
-            return ct;
-        }
-        return null;
+        CTSpacing ct = pr.getSpacing() == null ? null : pr.getSpacing();
+        if (create && ct == null)
+            ct = pr.addNewSpacing();
+        return ct;
     }
 
     /**
@@ -919,15 +959,16 @@ public class XWPFParagraph {
      */
     private CTInd getCTInd(boolean create) {
         CTPPr pr = getCTPPr();
-        if (pr != null) {
-            CTInd ct = pr.isSetInd() ? pr.getInd() : null;
-            if (create && ct == null)
-                ct = pr.addNewInd();
-            return ct;
-        }
-        return null;
+        CTInd ct = pr.getInd() == null ? null : pr.getInd();
+        if (create && ct == null)
+            ct = pr.addNewInd();
+        return ct;
     }
 
+    /**
+     * Get a <b>copy</b> of the currently used CTPPr, if none is used, return
+     * a new instance.
+     */
     private CTPPr getCTPPr() {
         CTPPr pr = paragraph.getPPr() == null ? paragraph.addNewPPr()
                 : paragraph.getPPr();
