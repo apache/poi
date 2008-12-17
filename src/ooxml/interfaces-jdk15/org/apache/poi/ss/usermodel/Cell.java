@@ -99,6 +99,13 @@ public interface Cell {
     Sheet getSheet();
 
     /**
+     * Returns the Row this cell belongs to
+     *
+     * @return the Row that owns this cell
+     */
+     Row getRow();
+
+    /**
      * Set the cells type (numeric, formula or string)
      *
      * @throws IllegalArgumentException if the specified cell type is invalid

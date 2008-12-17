@@ -127,8 +127,24 @@ public class HSSFCell implements Cell {
         short xfindex = sheet.getSheet().getXFIndexForColAt(col);
         setCellType(CELL_TYPE_BLANK, false, row, col,xfindex);
     }
+
+    /**
+     * Returns the HSSFSheet this cell belongs to
+     *
+     * @return the HSSFSheet that owns this cell
+     */
     public HSSFSheet getSheet() {
         return sheet;
+    }
+
+    /**
+     * Returns the HSSFRow this cell belongs to
+     *
+     * @return the HSSFRow that owns this cell
+     */
+    public HSSFRow getRow() {
+        int rowIndex = getRowIndex();
+        return sheet.getRow(rowIndex);
     }
 
     /**
