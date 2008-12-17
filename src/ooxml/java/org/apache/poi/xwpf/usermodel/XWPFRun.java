@@ -18,6 +18,7 @@ package org.apache.poi.xwpf.usermodel;
 
 import java.math.BigInteger;
 
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHpsMeasure;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
@@ -27,6 +28,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSignedHpsMeasure
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTUnderline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVerticalAlignRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrClear;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrType;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
@@ -49,10 +52,18 @@ public class XWPFRun {
         this.paragraph = p;
     }
 
+    /**
+     * Get the currently used CTR object
+     * @return ctr object
+     */
     public CTR getCTR() {
         return run;
     }
 
+    /**
+     * Get the currenty referenced paragraph object
+     * @return current paragraph
+     */
     public XWPFParagraph getParagraph() {
         return paragraph;
     }
@@ -70,9 +81,8 @@ public class XWPFRun {
 
     /**
      * Whether the bold property shall be applied to all non-complex script
-     * characters in the contents of this run when displayed in a document
-     * <p/>
-     * <p/>
+     * characters in the contents of this run when displayed in a document. 
+     * <p>
      * This formatting property is a toggle property, which specifies that its
      * behavior differs between its use within a style definition and its use as
      * direct formatting. When used as part of a style definition, setting this
@@ -83,7 +93,7 @@ public class XWPFRun {
      * direct formatting, setting this property to true or false shall set the
      * absolute state of the resulting property.
      * </p>
-     * <p/>
+     * <p>
      * If this element is not present, the default value is to leave the
      * formatting applied at previous level in the style hierarchy. If this
      * element is never applied in the style hierarchy, then bold shall not be
@@ -104,8 +114,8 @@ public class XWPFRun {
      *
      * @return the text of this text run or <code>null</code> if not set
      */
-    public String getText() {
-        return run.sizeOfTArray() == 0 ? null : run.getTArray(0)
+    public String getText(int pos) {
+        return run.sizeOfTArray() == 0 ? null : run.getTArray(pos)
                 .getStringValue();
     }
 
@@ -115,10 +125,22 @@ public class XWPFRun {
      * @param value the literal text which shall be displayed in the document
      */
     public void setText(String value) {
-        CTText t = run.sizeOfTArray() == 0 ? run.addNewT() : run.getTArray(0);
+	setText(value,run.getTArray().length);
+    }
+
+    /**
+     * Sets the text of this text run in the 
+     *
+     * @param value the literal text which shall be displayed in the document
+     * @param pos - position in the text array (NB: 0 based)
+     */
+    public void setText(String value, int pos) {
+	if(pos > run.sizeOfTArray()) throw new ArrayIndexOutOfBoundsException("Value too large for the parameter position in XWPFRun.setText(String value,int pos)");
+        CTText t = (pos < run.sizeOfTArray() && pos >= 0) ? run.getTArray(pos) : run.addNewT();
         t.setStringValue(value);
     }
 
+    
     /**
      * Whether the italic property should be applied to all non-complex script
      * characters in the contents of this run when displayed in a document.
@@ -171,7 +193,7 @@ public class XWPFRun {
     public UnderlinePatterns getUnderline() {
         CTRPr pr = run.getRPr();
         return (pr != null && pr.isSetU()) ? UnderlinePatterns.valueOf(pr
-                .getU().getVal().intValue()) : null;
+                .getU().getVal().intValue()) : UnderlinePatterns.NONE;
     }
 
     /**
@@ -191,7 +213,7 @@ public class XWPFRun {
      */
     public void setUnderline(UnderlinePatterns value) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
-        CTUnderline underline = pr.isSetU() ? pr.getU() : pr.addNewU();
+        CTUnderline underline = (pr.getU() == null) ? pr.addNewU() : pr.getU();
         underline.setVal(STUnderline.Enum.forInt(value.getValue()));
     }
 
@@ -248,7 +270,7 @@ public class XWPFRun {
     public VerticalAlign getSubscript() {
         CTRPr pr = run.getRPr();
         return (pr != null && pr.isSetVertAlign()) ? VerticalAlign.valueOf(pr
-                .getVertAlign().getVal().intValue()) : null;
+                .getVertAlign().getVal().intValue()) : VerticalAlign.BASELINE;
     }
 
     /**
@@ -305,9 +327,9 @@ public class XWPFRun {
      *
      * @return value representing the font size
      */
-    public BigInteger getFontSize() {
+    public int getFontSize() {
         CTRPr pr = run.getRPr();
-        return (pr != null && pr.isSetSz()) ? pr.getSz().getVal().divide(new BigInteger("2")) : null;
+        return (pr != null && pr.isSetSz()) ? pr.getSz().getVal().divide(new BigInteger("2")).intValue() : -1;
     }
 
     /**
@@ -322,10 +344,11 @@ public class XWPFRun {
      *
      * @param size
      */
-    public void setFontSize(BigInteger size) {
+    public void setFontSize(int size) {
+	BigInteger bint=new BigInteger(""+size);
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTHpsMeasure ctSize = pr.isSetSz() ? pr.getSz() : pr.addNewSz();
-        ctSize.setVal(size.multiply(new BigInteger("2")));
+        ctSize.setVal(bint.multiply(new BigInteger("2")));
     }
 
     /**
@@ -336,10 +359,10 @@ public class XWPFRun {
      *
      * @return a big integer representing the amount of text shall be "moved"
      */
-    public BigInteger getTextPosition() {
+    public int getTextPosition() {
         CTRPr pr = run.getRPr();
-        return (pr != null && pr.isSetPosition()) ? pr.getPosition().getVal()
-                : null;
+        return (pr != null && pr.isSetPosition()) ? pr.getPosition().getVal().intValue()
+                : -1;
     }
 
     /**
@@ -364,10 +387,87 @@ public class XWPFRun {
      *
      * @param val
      */
-    public void setTextPosition(BigInteger val) {
+    public void setTextPosition(int val) {
+	BigInteger bint=new BigInteger(""+val);
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTSignedHpsMeasure position = pr.isSetPosition() ? pr.getPosition() : pr.addNewPosition();
-        position.setVal(val);
+        position.setVal(bint);
     }
 
+    /**
+     * 
+     */
+    public void removeBreak() {
+	// TODO
+    }
+
+    /**
+     * Specifies that a break shall be placed at the current location in the run
+     * content. 
+     * A break is a special character which is used to override the
+     * normal line breaking that would be performed based on the normal layout
+     * of the document’s contents. 
+     * @see addCarriageReturn()
+     */
+    public void addBreak() {
+	run.addNewBr();
+    } 
+
+    /**
+     * Specifies that a break shall be placed at the current location in the run
+     * content.
+     * A break is a special character which is used to override the
+     * normal line breaking that would be performed based on the normal layout
+     * of the document’s contents.
+     * <p>
+     * The behavior of this break character (the
+     * location where text shall be restarted after this break) shall be
+     * determined by its type values.
+     * </p>
+     * @see BreakType
+     */
+    public void addBreak(BreakType type){
+	CTBr br=run.addNewBr();
+	br.setType(STBrType.Enum.forInt(type.getValue()));
+    }
+
+    
+    /**
+     * Specifies that a break shall be placed at the current location in the run
+     * content. A break is a special character which is used to override the
+     * normal line breaking that would be performed based on the normal layout
+     * of the document’s contents.
+     * <p>
+     * The behavior of this break character (the
+     * location where text shall be restarted after this break) shall be
+     * determined by its type (in this case is BreakType.TEXT_WRAPPING as default) and clear attribute values.
+     * </p>
+     * @see BreakClear
+     */
+    public void addBreak(BreakClear clear){
+	CTBr br=run.addNewBr();
+	br.setType(STBrType.Enum.forInt(BreakType.TEXT_WRAPPING.getValue()));
+	    br.setClear(STBrClear.Enum.forInt(clear.getValue()));
+    }
+
+    /**
+     * Specifies that a carriage return shall be placed at the
+     * current location in the run content.
+     * A carriage return is used to end the current line of text in
+     * Wordprocess.
+     * The behavior of a carriage return in run content shall be
+     * identical to a break character with null type and clear attributes, which
+     * shall end the current line and find the next available line on which to
+     * continue.
+     * The carriage return character forced the following text to be
+     * restarted on the next available line in the document.
+     */
+    public void addCarriageReturn() {
+	run.addNewCr();
+    }
+
+    public void removeCarriageReturn() {
+	//TODO
+    }    
+    
 }

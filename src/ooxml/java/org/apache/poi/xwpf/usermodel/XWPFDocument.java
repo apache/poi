@@ -318,5 +318,23 @@ public class XWPFDocument extends POIXMLDocument {
         return new XWPFParagraph(ctDocument.getBody().addNewP(), this);
     }
 
+    /**
+     * Create an empty table with one row and one column as default.
+     * 
+     * @return a new table
+     */
+    public XWPFTable createTable(){
+        return new XWPFTable(ctDocument.getBody().addNewTbl());
+    }
+    
+    /**
+     * Create an empty table with a number of rows and cols specified
+     * @param rows
+     * @param cols
+     * @return table
+     */
+    public XWPFTable createTable(int rows, int cols) {
+	return new XWPFTable(ctDocument.getBody().addNewTbl(), rows, cols);
+    }
 }
 

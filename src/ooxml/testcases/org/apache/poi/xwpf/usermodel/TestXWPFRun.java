@@ -20,8 +20,10 @@ import java.math.BigInteger;
 
 import junit.framework.TestCase;
 
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrClear;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
@@ -39,9 +41,26 @@ public class TestXWPFRun extends TestCase {
         p = doc.createParagraph();
 
         this.ctRun = CTR.Factory.newInstance();
-
+        
     }
 
+    public void testSetGetText() {
+	ctRun.addNewT().setStringValue("TEST STRING");	
+	ctRun.addNewT().setStringValue("TEST2 STRING");	
+	ctRun.addNewT().setStringValue("TEST3 STRING");
+	
+	assertEquals(3,ctRun.sizeOfTArray());
+	XWPFRun run = new XWPFRun(ctRun, p);
+	
+	assertEquals("TEST2 STRING",run.getText(1));
+	
+	run.setText("NEW STRING",0);
+	assertEquals("NEW STRING",run.getText(0));
+	
+	//run.setText("xxx",14);
+	//fail("Position wrong");
+    }
+  
     public void testSetGetBold() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewB().setVal(STOnOff.TRUE);
@@ -118,9 +137,9 @@ public class TestXWPFRun extends TestCase {
         rpr.addNewSz().setVal(new BigInteger("14"));
 
         XWPFRun run = new XWPFRun(ctRun, p);
-        assertEquals(7, run.getFontSize().longValue());
+        assertEquals(7, run.getFontSize());
 
-        run.setFontSize(new BigInteger("24"));
+        run.setFontSize(24);
         assertEquals(48, rpr.getSz().getVal().longValue());
     }
 
@@ -130,11 +149,48 @@ public class TestXWPFRun extends TestCase {
         rpr.addNewPosition().setVal(new BigInteger("4000"));
 
         XWPFRun run = new XWPFRun(ctRun, p);
-        assertEquals(4000, run.getTextPosition().longValue());
+        assertEquals(4000, run.getTextPosition());
 
-        run.setTextPosition(new BigInteger("2400"));
+        run.setTextPosition(2400);
         assertEquals(2400, rpr.getPosition().getVal().longValue());
     }
+
+    public void testAddCarriageReturn() {
+	
+	ctRun.addNewT().setStringValue("TEST STRING");
+	ctRun.addNewCr();
+	ctRun.addNewT().setStringValue("TEST2 STRING");
+	ctRun.addNewCr();
+	ctRun.addNewT().setStringValue("TEST3 STRING");
+        assertEquals(2, ctRun.sizeOfCrArray());
+        
+        XWPFRun run = new XWPFRun(CTR.Factory.newInstance(), p);
+        run.setText("T1");
+        run.addCarriageReturn();
+        run.addCarriageReturn();
+        run.setText("T2");
+        run.addCarriageReturn();
+        assertEquals(3, run.getCTR().getCrArray().length);
+        
+    }
+
+    public void testAddPageBreak() {
+	ctRun.addNewT().setStringValue("TEST STRING");
+	ctRun.addNewBr();
+	ctRun.addNewT().setStringValue("TEST2 STRING");
+	CTBr breac=ctRun.addNewBr();
+	breac.setClear(STBrClear.LEFT);
+	ctRun.addNewT().setStringValue("TEST3 STRING");
+        assertEquals(2, ctRun.sizeOfBrArray());
+        
+        XWPFRun run = new XWPFRun(CTR.Factory.newInstance(), p);
+        run.setText("TEXT1");
+        run.addBreak();
+        run.setText("TEXT2");
+        run.addBreak();
+        assertEquals(2, run.getCTR().sizeOfBrArray());
+    }
+    
 
 }
 
