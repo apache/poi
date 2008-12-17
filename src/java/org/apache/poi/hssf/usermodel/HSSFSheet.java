@@ -128,6 +128,14 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
       return new HSSFSheet(workbook, sheet.cloneSheet());
     }
 
+    /**
+     * Return the parent workbook
+     *
+     * @return the parent workbook
+     */
+    public HSSFWorkbook getWorkbook(){
+        return workbook;    
+    }
 
     /**
      * used internally to set the properties given a Sheet object

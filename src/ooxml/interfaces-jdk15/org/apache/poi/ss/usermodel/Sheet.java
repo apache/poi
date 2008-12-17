@@ -712,4 +712,11 @@ public interface Sheet extends Iterable<Row> {
      */
     Drawing createDrawingPatriarch();
 
+
+    /**
+     * Return the parent workbook
+     *
+     * @return the parent workbook
+     */
+    Workbook getWorkbook();
 }

@@ -234,6 +234,16 @@ public final class HSSFRow implements Comparable, Row {
     }
     
     /**
+     * Returns the HSSFSheet this row belongs to
+     *
+     * @return the HSSFSheet that owns this row
+     */
+    public HSSFSheet getSheet()
+    {
+        return sheet;
+    }
+
+    /**
      * Returns the rows outline level. Increased as you
      *  put it into more groups (outlines), reduced as
      *  you take it out of them.

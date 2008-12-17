@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.5-beta5" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">Added getters to parent objects: HSSFSheet.getWorkbook(), HSSFRow.getSheet() and HSSFCell.getRow()</action>
            <action dev="POI-DEVELOPERS" type="fix">46385 - (also patch 46362) fix serialization of StyleRecord with unicode name</action>
            <action dev="POI-DEVELOPERS" type="fix">46368 - Fix HSSFRichTextRun and strings longer than 32768 characters</action>
            <action dev="POI-DEVELOPERS" type="add">Support sheet-level names</action>

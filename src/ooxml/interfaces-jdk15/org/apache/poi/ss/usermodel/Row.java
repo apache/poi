@@ -184,6 +184,13 @@ public interface Row extends Iterable<Cell> {
     Iterator<Cell> cellIterator();
 
     /**
+     * Returns the Sheet this row belongs to
+     *
+     * @return the Sheet that owns this row
+     */
+    Sheet getSheet();
+
+    /**
      * Used to specify the different possible policies
      *  if for the case of null and blank cells
      */
