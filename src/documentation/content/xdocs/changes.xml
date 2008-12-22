@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta5" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">46433 - support for shared formulas in XSSF</action>
            <action dev="POI-DEVELOPERS" type="add">46299 - support for carriage return and line break in XWPFRun</action>
            <action dev="POI-DEVELOPERS" type="add">46300 - support for line spacing in XWPFParagraph</action>
            <action dev="POI-DEVELOPERS" type="add">46308 - initial support for creation of XWPFTable</action>

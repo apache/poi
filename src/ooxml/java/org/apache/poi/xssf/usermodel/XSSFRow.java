@@ -63,7 +63,8 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         this.cells = new TreeMap<Integer, Cell>();
         for (CTCell c : row.getCArray()) {
             XSSFCell cell = new XSSFCell(this, c);
-            this.cells.put(cell.getColumnIndex(), cell);
+            cells.put(cell.getColumnIndex(), cell);
+            sheet.onReadCell(cell);
         }
     }
 

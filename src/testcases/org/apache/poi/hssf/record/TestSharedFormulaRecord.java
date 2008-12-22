@@ -24,12 +24,10 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RefPtg;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.RecordInspector;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.util.LittleEndianInput;
 
 /**
@@ -62,7 +60,7 @@ public final class TestSharedFormulaRecord extends TestCase {
 		0x13,
 		0x42, 0x02, (byte)0xE4, 0x00,
 	};
-	
+
 	/**
 	 * The method <tt>SharedFormulaRecord.convertSharedFormulas()</tt> converts formulas from
 	 * 'shared formula' to 'single cell formula' format.  It is important that token operand
@@ -70,19 +68,19 @@ public final class TestSharedFormulaRecord extends TestCase {
 	 * incorrect encoding.  The formula here is one such example (Excel displays #VALUE!).
 	 */
 	public void testConvertSharedFormulasOperandClasses_bug45123() {
-		
+
 		LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(SHARED_FORMULA_WITH_REF_ARRAYS_DATA);
 		int encodedLen = in.readUShort();
 		Ptg[] sharedFormula = Ptg.readTokens(encodedLen, in);
-		
+
 		Ptg[] convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 100, 200);
-		
+
 		RefPtg refPtg = (RefPtg) convertedFormula[1];
 		assertEquals("$C101", refPtg.toFormulaString());
 		if (refPtg.getPtgClass() == Ptg.CLASS_REF) {
 			throw new AssertionFailedError("Identified bug 45123");
 		}
-		
+
 		confirmOperandClasses(sharedFormula, convertedFormula);
 	}
 
@@ -97,8 +95,43 @@ public final class TestSharedFormulaRecord extends TestCase {
 			}
 		}
 	}
-	
-	/**
+
+    public void testConvertSharedFormulas() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFEvaluationWorkbook fpb = HSSFEvaluationWorkbook.create(wb);
+        Ptg[] sharedFormula, convertedFormula;
+
+        sharedFormula = FormulaParser.parse("A2", fpb);
+        convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 0, 0);
+        confirmOperandClasses(sharedFormula, convertedFormula);
+        //conversion relative to [0,0] should return the original formula
+        assertEquals("A2", FormulaRenderer.toFormulaString(fpb, convertedFormula));
+
+        convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 1, 0);
+        confirmOperandClasses(sharedFormula, convertedFormula);
+        //one row down
+        assertEquals("A3", FormulaRenderer.toFormulaString(fpb, convertedFormula));
+
+        convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 1, 1);
+        confirmOperandClasses(sharedFormula, convertedFormula);
+        //one row down and one cell right
+        assertEquals("B3", FormulaRenderer.toFormulaString(fpb, convertedFormula));
+
+        sharedFormula = FormulaParser.parse("SUM(A1:C1)", fpb);
+        convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 0, 0);
+        confirmOperandClasses(sharedFormula, convertedFormula);
+        assertEquals("SUM(A1:C1)", FormulaRenderer.toFormulaString(fpb, convertedFormula));
+
+        convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 1, 0);
+        confirmOperandClasses(sharedFormula, convertedFormula);
+        assertEquals("SUM(A2:C2)", FormulaRenderer.toFormulaString(fpb, convertedFormula));
+
+        convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 1, 1);
+        confirmOperandClasses(sharedFormula, convertedFormula);
+        assertEquals("SUM(B2:D2)", FormulaRenderer.toFormulaString(fpb, convertedFormula));
+    }
+
+    /**
 	 * Make sure that POI preserves {@link SharedFormulaRecord}s
 	 */
 	public void testPreserveOnReserialize() {

@@ -87,8 +87,31 @@ public interface Name {
      *   Names can contain uppercase and lowercase letters.
      *   </li>
      * </ul>
+     * <p>
+     * A name must always be unique within its scope. POI prevents you from defining a name that is not unique
+     * within its scope. However you can use the same name in different scopes. Example:
+     * <pre><blockquote>
+     * //by default names are workbook-global
+     * Name name;
+     * name = workbook.createName();
+     * name.setNameName("sales_08");
+     *
+     * name = workbook.createName();
+     * name.setNameName("sales_08"); //will throw an exception: "The workbook already contains this name (case-insensitive)"
+     *
+     * //create sheet-level name
+     * name = workbook.createName();
+     * name.setSheetIndex(0); //the scope of the name is the first sheet
+     * name.setNameName("sales_08");  //ok
+     *
+     * name = workbook.createName();
+     * name.setSheetIndex(0);
+     * name.setNameName("sales_08");  //will throw an exception: "The sheet already contains this name (case-insensitive)"
+     *
+     * </blockquote></pre>
+    * </p>
      * @param name named range name to set
-     * @throws IllegalArgumentException if the name is invalid or the workbook already contains this name (case-insensitive)
+     * @throws IllegalArgumentException if the name is invalid or the already exists within its scope (case-insensitive)
      */
     void setNameName(String name);
 

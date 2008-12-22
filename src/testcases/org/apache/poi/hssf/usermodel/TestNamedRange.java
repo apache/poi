@@ -549,4 +549,55 @@ public final class TestNamedRange extends TestCase {
         }
 
     }
+
+    public void testScope() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sh1 = wb.createSheet();
+        HSSFSheet sh2 = wb.createSheet();
+
+        HSSFName name;
+
+        name = wb.createName();
+        name.setNameName("aaa");
+        name = wb.createName();
+        try {
+            name.setNameName("aaa");
+            fail("Expected exception");
+        } catch(Exception e){
+            assertEquals("The workbook already contains this name: aaa", e.getMessage());
+            name.setNameName("aaa-2");
+        }
+
+        name = wb.createName();
+        name.setSheetIndex(0);
+        name.setNameName("aaa");
+        name = wb.createName();
+        name.setSheetIndex(0);
+        try {
+            name.setNameName("aaa");
+            fail("Expected exception");
+        } catch(Exception e){
+            assertEquals("The sheet already contains this name: aaa", e.getMessage());
+            name.setNameName("aaa-2");
+        }
+
+        name = wb.createName();
+        name.setSheetIndex(1);
+        name.setNameName("aaa");
+        name = wb.createName();
+        name.setSheetIndex(1);
+        try {
+            name.setNameName("aaa");
+            fail("Expected exception");
+        } catch(Exception e){
+            assertEquals("The sheet already contains this name: aaa", e.getMessage());
+            name.setNameName("aaa-2");
+        }
+
+        int cnt = 0;
+        for (int i = 0; i < wb.getNumberOfNames(); i++) {
+            if("aaa".equals(wb.getNameName(i))) cnt++;
+        }
+        assertEquals(3, cnt);
+    }
 }

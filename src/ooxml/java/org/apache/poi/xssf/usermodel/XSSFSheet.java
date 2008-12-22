@@ -74,6 +74,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     private List<XSSFHyperlink> hyperlinks;
     private ColumnHelper columnHelper;
     private CommentsTable sheetComments;
+    private Map<Integer, XSSFCell> sharedFormulas;
 
     /**
      * Creates new XSSFSheet   - called by XSSFWorkbook to create a sheet from scratch.
@@ -147,6 +148,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     private void initRows(CTWorksheet worksheet) {
         rows = new TreeMap<Integer, Row>();
+        sharedFormulas = new HashMap<Integer, XSSFCell>();
         for (CTRow row : worksheet.getSheetData().getRowArray()) {
             XSSFRow r = new XSSFRow(row, this);
             rows.put(r.getRowNum(), r);
@@ -1664,6 +1666,24 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return getDefaultSheetView().getPane();
     }
 
+    /**
+     * Return a cell holding shared formula by shared group index
+     *
+     * @param sid shared group index
+     * @return a cell holding shared formula or <code>null</code> if not found
+     */
+    XSSFCell getSharedFormulaCell(int sid){
+        return sharedFormulas.get(sid);
+    }
+
+    void onReadCell(XSSFCell cell){
+        //collect cells holding shared formulas
+        CTCell ct = cell.getCTCell();
+        CTCellFormula f = ct.getF();
+        if(f != null && f.getT() == STCellFormulaType.SHARED && f.isSetRef() && f.getStringValue() != null){
+            sharedFormulas.put((int)f.getSi(), cell);
+        }
+    }
 
     @Override
     protected void commit() throws IOException {

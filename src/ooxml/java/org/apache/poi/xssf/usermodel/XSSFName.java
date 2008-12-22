@@ -137,17 +137,45 @@ public final class XSSFName implements Name {
      * Sets the name that will appear in the user interface for the defined name.
      * Names must begin with a letter or underscore, not contain spaces and be unique across the workbook.
      *
+     * <p>
+     * A name must always be unique within its scope. POI prevents you from defining a name that is not unique
+     * within its scope. However you can use the same name in different scopes. Example:
+     * <pre><blockquote>
+     * //by default names are workbook-global
+     * XSSFName name;
+     * name = workbook.createName();
+     * name.setNameName("sales_08");
+     *
+     * name = workbook.createName();
+     * name.setNameName("sales_08"); //will throw an exception: "The workbook already contains this name (case-insensitive)"
+     *
+     * //create sheet-level name
+     * name = workbook.createName();
+     * name.setSheetIndex(0); //the scope of the name is the first sheet
+     * name.setNameName("sales_08");  //ok
+     *
+     * name = workbook.createName();
+     * name.setSheetIndex(0);
+     * name.setNameName("sales_08");  //will throw an exception: "The sheet already contains this name (case-insensitive)"
+     *
+     * </blockquote></pre>
+    * </p>
      * @param name name of this defined name
      * @throws IllegalArgumentException if the name is invalid or the workbook already contains this name (case-insensitive)
      */
     public void setNameName(String name) {
         validateName(name);
 
+        int sheetIndex = getSheetIndex();
+
         //Check to ensure no other names have the same case-insensitive name
         for (int i = 0; i < workbook.getNumberOfNames(); i++) {
             XSSFName nm = workbook.getNameAt(i);
-            if (nm != this && nm.getNameName().equalsIgnoreCase(name)) {
-                throw new IllegalArgumentException("The workbook already contains this name: " + name);
+            if (nm != this) {
+                if(name.equalsIgnoreCase(nm.getNameName()) && sheetIndex == nm.getSheetIndex()){
+                    String msg = "The "+(sheetIndex == -1 ? "workbook" : "sheet")+" already contains this name: " + name;
+                    throw new IllegalArgumentException(msg);
+               }
             }
         }
         ctName.setName(name);

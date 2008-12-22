@@ -24,16 +24,21 @@ import java.util.Date;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.POIXMLException;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.
@@ -50,6 +55,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
  * </p>
  */
 public final class XSSFCell implements Cell {
+    private static POILogger logger = POILogFactory.getLogger(XSSFCell.class);
 
     /**
      * The maximum  number of columns in SpreadsheetML
@@ -108,7 +114,7 @@ public final class XSSFCell implements Cell {
     protected SharedStringsTable getSharedStringSource() {
         return sharedStringSource;
     }
-    
+
     /**
      * @return table of cell styles shared across this workbook
      */
@@ -122,8 +128,8 @@ public final class XSSFCell implements Cell {
      * @return the sheet this cell belongs to
      */
     public XSSFSheet getSheet() {
-		return getRow().getSheet();
-	}
+        return getRow().getSheet();
+    }
 
     /**
      * Returns the row this cell belongs to
@@ -131,8 +137,8 @@ public final class XSSFCell implements Cell {
      * @return the row this cell belongs to
      */
     public XSSFRow getRow() {
-		return row;
-	}
+        return row;
+    }
 
     /**
      * Get the value of the cell as a boolean.
@@ -321,7 +327,31 @@ public final class XSSFCell implements Cell {
         int cellType = getCellType();
         if(cellType != CELL_TYPE_FORMULA) throw typeMismatch(CELL_TYPE_FORMULA, cellType, false);
 
-        return this.cell.getF().getStringValue();
+        CTCellFormula f = cell.getF();
+        if(f.getT() == STCellFormulaType.SHARED){
+            return convertSharedFormula((int)f.getSi());
+        } else {
+            return f.getStringValue();
+        }
+    }
+
+    /**
+     * Creates a non shared formula from the shared formula counterpart
+     *
+     * @return non shared formula created for the given shared formula and this cell
+     */
+    private String convertSharedFormula(int idx){
+        XSSFSheet sheet = getSheet();
+        XSSFCell sfCell = sheet.getSharedFormulaCell(idx);
+        if(sfCell == null){
+            throw new IllegalStateException("Shared Formula not found for group index " + idx);
+        }
+        String sharedFormula = sfCell.getCTCell().getF().getStringValue();
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(sheet.getWorkbook());
+        Ptg[] ptgs = FormulaParser.parse(sharedFormula, fpb);
+        Ptg[] fmla = SharedFormulaRecord.convertSharedFormulas(ptgs,
+                getRowIndex() - sfCell.getRowIndex(), getColumnIndex() - sfCell.getColumnIndex());
+        return FormulaRenderer.toFormulaString(fpb, fmla);
     }
 
     /**
@@ -363,7 +393,7 @@ public final class XSSFCell implements Cell {
      * @return zero-based column index of a column in a sheet.
      */
     public int getColumnIndex() {
-    	return this.cellNum;
+        return this.cellNum;
     }
 
     /**
@@ -372,8 +402,8 @@ public final class XSSFCell implements Cell {
      * @return zero-based row index of a row in the sheet that contains this cell
      */
     public int getRowIndex() {
-		return row.getRowNum();
-	}
+        return row.getRowNum();
+    }
 
     /**
      * Returns an A1 style reference to the location of this cell
@@ -381,8 +411,8 @@ public final class XSSFCell implements Cell {
      * @return A1 style reference to the location of this cell
      */
     public String getReference() {
-		return cell.getR();
-	}
+        return cell.getR();
+    }
 
     /**
      * Return the cell's style.
@@ -406,8 +436,8 @@ public final class XSSFCell implements Cell {
         if(style == null) {
             if(cell.isSetS()) cell.unsetS();
         } else {
-			XSSFCellStyle xStyle = (XSSFCellStyle)style;
-			xStyle.verifyBelongsToStylesSource(stylesSource);
+            XSSFCellStyle xStyle = (XSSFCellStyle)style;
+            xStyle.verifyBelongsToStylesSource(stylesSource);
 
             long idx = stylesSource.putStyle(xStyle);
             cell.setS(idx);
@@ -486,7 +516,7 @@ public final class XSSFCell implements Cell {
      *        will change the cell to a numeric cell and set its value.
      */
     public void setCellValue(Date value) {
-	    boolean date1904 = getSheet().getWorkbook().isDate1904();
+        boolean date1904 = getSheet().getWorkbook().isDate1904();
         setCellValue(DateUtil.getExcelDate(value, date1904));
     }
 
@@ -507,7 +537,7 @@ public final class XSSFCell implements Cell {
      *        will change the cell to a numeric cell and set its value.
      */
     public void setCellValue(Calendar value) {
-	    boolean date1904 = getSheet().getWorkbook().isDate1904();
+        boolean date1904 = getSheet().getWorkbook().isDate1904();
         setCellValue( DateUtil.getExcelDate(value, date1904 ));
     }
 
@@ -765,8 +795,8 @@ public final class XSSFCell implements Cell {
      * @return hyperlink associated with this cell or <code>null</code> if not found
      */
     public XSSFHyperlink getHyperlink() {
-		return getSheet().getHyperlink(row.getRowNum(), cellNum);
-	}
+        return getSheet().getHyperlink(row.getRowNum(), cellNum);
+    }
 
     /**
      * Assign a hypelrink to this cell
@@ -774,14 +804,14 @@ public final class XSSFCell implements Cell {
      * @param hyperlink the hypelrink to associate with this cell
      */
     public void setHyperlink(Hyperlink hyperlink) {
-		XSSFHyperlink link = (XSSFHyperlink)hyperlink;
-		
-		// Assign to us
-		link.setCellReference( new CellReference(row.getRowNum(), cellNum).formatAsString() );
-		
-		// Add to the lists
-		getSheet().setCellHyperlink(link);
-	}
+        XSSFHyperlink link = (XSSFHyperlink)hyperlink;
+
+        // Assign to us
+        link.setCellReference( new CellReference(row.getRowNum(), cellNum).formatAsString() );
+
+        // Add to the lists
+        getSheet().setCellHyperlink(link);
+    }
 
     /**
      * Returns the xml bean containing information about the cell's location (reference), value,

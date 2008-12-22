@@ -109,4 +109,53 @@ public class TestXSSFName extends TestCase {
         wb.removeName(0);
         assertEquals(1, wb.getNumberOfNames());
     }
+
+    public void testScope() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        wb.createSheet();
+        wb.createSheet();
+        
+        XSSFName name;
+
+        name = wb.createName();
+        name.setNameName("aaa");
+        name = wb.createName();
+        try {
+            name.setNameName("aaa");
+            fail("Expected exception");
+        } catch(Exception e){
+            assertEquals("The workbook already contains this name: aaa", e.getMessage());
+        }
+
+        name = wb.createName();
+        name.setSheetIndex(0);
+        name.setNameName("aaa");
+        name = wb.createName();
+        name.setSheetIndex(0);
+        try {
+            name.setNameName("aaa");
+            fail("Expected exception");
+        } catch(Exception e){
+            assertEquals("The sheet already contains this name: aaa", e.getMessage());
+        }
+
+        name = wb.createName();
+        name.setSheetIndex(1);
+        name.setNameName("aaa");
+        name = wb.createName();
+        name.setSheetIndex(1);
+        try {
+            name.setNameName("aaa");
+            fail("Expected exception");
+        } catch(Exception e){
+            assertEquals("The sheet already contains this name: aaa", e.getMessage());
+        }
+
+        int cnt = 0;
+        for (int i = 0; i < wb.getNumberOfNames(); i++) {
+            if("aaa".equals(wb.getNameAt(i).getNameName())) cnt++;
+        }
+        assertEquals(3, cnt);
+    }
+
 }
