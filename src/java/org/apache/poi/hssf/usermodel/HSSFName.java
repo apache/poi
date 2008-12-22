@@ -83,20 +83,49 @@ public final class HSSFName implements Name {
      *   Names can contain uppercase and lowercase letters.
      *   </li>
      * </ul>
+     *
+     * <p>
+     * A name must always be unique within its scope. POI prevents you from defining a name that is not unique
+     * within its scope. However you can use the same name in different scopes. Example:
+     * <pre><blockquote>
+     * //by default names are workbook-global
+     * HSSFName name;
+     * name = workbook.createName();
+     * name.setNameName("sales_08");
+     *
+     * name = workbook.createName();
+     * name.setNameName("sales_08"); //will throw an exception: "The workbook already contains this name (case-insensitive)"
+     *
+     * //create sheet-level name
+     * name = workbook.createName();
+     * name.setSheetIndex(0); //the scope of the name is the first sheet
+     * name.setNameName("sales_08");  //ok
+     *
+     * name = workbook.createName();
+     * name.setSheetIndex(0);
+     * name.setNameName("sales_08");  //will throw an exception: "The sheet already contains this name (case-insensitive)"
+     *
+     * </blockquote></pre>
+    * </p>
+     *
      * @param nameName named range name to set
-     * @throws IllegalArgumentException if the name is invalid or the workbook already contains this name (case-insensitive)
+     * @throws IllegalArgumentException if the name is invalid or the name already exists (case-insensitive)
      */
     public void setNameName(String nameName){
-        _definedNameRec.setNameText(nameName);
         Workbook wb = _book.getWorkbook();
+        _definedNameRec.setNameText(nameName);
+
+        int sheetNumber = _definedNameRec.getSheetNumber();
 
         //Check to ensure no other names have the same case-insensitive name
         for ( int i = wb.getNumNames()-1; i >=0; i-- )
         {
             NameRecord rec = wb.getNameRecord(i);
             if (rec != _definedNameRec) {
-                if (rec.getNameText().equalsIgnoreCase(getNameName()))
-                    throw new IllegalArgumentException("The workbook already contains this name (case-insensitive)");
+                if (rec.getNameText().equalsIgnoreCase(nameName) && sheetNumber == rec.getSheetNumber()){
+                    String msg = "The "+(sheetNumber == 0 ? "workbook" : "sheet")+" already contains this name: " + nameName;
+                    throw new IllegalArgumentException(msg);
+                }
             }
         }
     }

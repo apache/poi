@@ -17,11 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.record.formula.AreaNPtg;
-import org.apache.poi.hssf.record.formula.AreaPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.RefNPtg;
-import org.apache.poi.hssf.record.formula.RefPtg;
+import org.apache.poi.hssf.record.formula.*;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.util.HexDump;
@@ -106,7 +102,7 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
      * Perhaps this functionality could be implemented in terms of the raw 
      * byte array inside {@link Formula}.
      */
-    static Ptg[] convertSharedFormulas(Ptg[] ptgs, int formulaRow, int formulaColumn) {
+    public static Ptg[] convertSharedFormulas(Ptg[] ptgs, int formulaRow, int formulaColumn) {
 
         Ptg[] newPtgStack = new Ptg[ptgs.length];
 
@@ -116,14 +112,14 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
             if (!ptg.isBaseToken()) {
                 originalOperandClass = ptg.getPtgClass();
             }
-            if (ptg instanceof RefNPtg) {
-              RefNPtg refNPtg = (RefNPtg)ptg;
+            if (ptg instanceof RefPtgBase) {
+              RefPtgBase refNPtg = (RefPtgBase)ptg;
               ptg = new RefPtg(fixupRelativeRow(formulaRow,refNPtg.getRow(),refNPtg.isRowRelative()),
                                      fixupRelativeColumn(formulaColumn,refNPtg.getColumn(),refNPtg.isColRelative()),
                                      refNPtg.isRowRelative(),
                                      refNPtg.isColRelative());
-            } else if (ptg instanceof AreaNPtg) {
-              AreaNPtg areaNPtg = (AreaNPtg)ptg;
+            } else if (ptg instanceof AreaPtgBase) {
+              AreaPtgBase areaNPtg = (AreaPtgBase)ptg;
               ptg = new AreaPtg(fixupRelativeRow(formulaRow,areaNPtg.getFirstRow(),areaNPtg.isFirstRowRelative()),
                                 fixupRelativeRow(formulaRow,areaNPtg.getLastRow(),areaNPtg.isLastRowRelative()),
                                 fixupRelativeColumn(formulaColumn,areaNPtg.getFirstColumn(),areaNPtg.isFirstColRelative()),
