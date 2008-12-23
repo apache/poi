@@ -163,7 +163,7 @@ public final class HSSFName implements Name {
      * @throws IllegalArgumentException if the specified reference is unparsable
     */
     public void setRefersToFormula(String formulaText) {
-        Ptg[] ptgs = HSSFFormulaParser.parse(formulaText, _book, FormulaType.NAMEDRANGE);
+        Ptg[] ptgs = HSSFFormulaParser.parse(formulaText, _book, FormulaType.NAMEDRANGE, getSheetIndex());
         _definedNameRec.setNameDefinition(ptgs);
     }
 

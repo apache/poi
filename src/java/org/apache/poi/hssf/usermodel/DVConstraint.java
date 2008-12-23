@@ -24,7 +24,6 @@ import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.formula.NumberPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.StringPtg;
-import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
 
 /**
@@ -324,24 +323,25 @@ public class DVConstraint {
 	/**
 	 * @return both parsed formulas (for expression 1 and 2). 
 	 */
-	/* package */ FormulaPair createFormulas(HSSFWorkbook workbook) {
+	/* package */ FormulaPair createFormulas(HSSFSheet sheet) {
 		Ptg[] formula1;
 		Ptg[] formula2;
 		if (isListValidationType()) {
-			formula1 = createListFormula(workbook);
+			formula1 = createListFormula(sheet);
 			formula2 = Ptg.EMPTY_PTG_ARRAY;
 		} else {
-			formula1 = convertDoubleFormula(_formula1, _value1, workbook);
-			formula2 = convertDoubleFormula(_formula2, _value2, workbook);
+			formula1 = convertDoubleFormula(_formula1, _value1, sheet);
+			formula2 = convertDoubleFormula(_formula2, _value2, sheet);
 		}
 		return new FormulaPair(formula1, formula2);
 	}
 
-	private Ptg[] createListFormula(HSSFWorkbook workbook) {
+	private Ptg[] createListFormula(HSSFSheet sheet) {
 
 		if (_explicitListValues == null) {
-			// formula is parsed with slightly different RVA rules: (root node type must be 'reference')
-			return HSSFFormulaParser.parse(_formula1, workbook, FormulaType.DATAVALIDATION_LIST);
+            HSSFWorkbook wb = sheet.getWorkbook();
+            // formula is parsed with slightly different RVA rules: (root node type must be 'reference')
+			return HSSFFormulaParser.parse(_formula1, wb, FormulaType.DATAVALIDATION_LIST, wb.getSheetIndex(sheet));
 			// To do: Excel places restrictions on the available operations within a list formula.
 			// Some things like union and intersection are not allowed.
 		}
@@ -361,7 +361,7 @@ public class DVConstraint {
 	 * @return The parsed token array representing the formula or value specified. 
 	 * Empty array if both formula and value are <code>null</code>
 	 */
-	private static Ptg[] convertDoubleFormula(String formula, Double value, HSSFWorkbook workbook) {
+	private static Ptg[] convertDoubleFormula(String formula, Double value, HSSFSheet sheet) {
 		if (formula == null) {
 			if (value == null) {
 				return Ptg.EMPTY_PTG_ARRAY;
@@ -371,7 +371,8 @@ public class DVConstraint {
 		if (value != null) {
 			throw new IllegalStateException("Both formula and value cannot be present");
 		}
-		return HSSFFormulaParser.parse(formula, workbook);
+        HSSFWorkbook wb = sheet.getWorkbook();
+		return HSSFFormulaParser.parse(formula, wb, FormulaType.CELL, wb.getSheetIndex(sheet));
 	}
 	
 	

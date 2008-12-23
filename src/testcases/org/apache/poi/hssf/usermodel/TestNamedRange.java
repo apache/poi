@@ -543,7 +543,7 @@ public final class TestNamedRange extends TestCase {
         HSSFWorkbook wb = new HSSFWorkbook();
         wb.createSheet("CSCO");
 
-        Ptg[] ptgs = HSSFFormulaParser.parse("CSCO!$E$71", wb, FormulaType.NAMEDRANGE);
+        Ptg[] ptgs = HSSFFormulaParser.parse("CSCO!$E$71", wb, FormulaType.NAMEDRANGE, 0);
         for (int i = 0; i < ptgs.length; i++) {
             assertEquals('R', ptgs[i].getRVAType());
         }

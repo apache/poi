@@ -899,11 +899,11 @@ public final class TestFormulaParser extends TestCase {
 
 		wb.setSheetName(0, "Sheet1");
 		cell.setCellFormula("Sheet1!B$4:Sheet1!$C1"); // explicit range ':' operator
-		assertEquals("Sheet1!B$4:Sheet1!$C1", cell.getCellFormula()); 
+		assertEquals("Sheet1!B$4:Sheet1!$C1", cell.getCellFormula());
 
 		cell.setCellFormula("Sheet1!B$4:$C1"); // plain area ref
 		assertEquals("Sheet1!B1:$C$4", cell.getCellFormula()); // note - area ref is normalised
-		
+
 		cell.setCellFormula("Sheet1!$C1...B$4"); // different syntax for plain area ref
 		assertEquals("Sheet1!B1:$C$4", cell.getCellFormula());
 
@@ -922,7 +922,7 @@ public final class TestFormulaParser extends TestCase {
 
 		assertEquals("'true'!B2", cell.getCellFormula());
 	}
-	
+
 	public void testParseExternalWorkbookReference() {
 		HSSFWorkbook wbA = HSSFTestDataSamples.openSampleWorkbook("multibookFormulaA.xls");
 		HSSFCell cell = wbA.getSheetAt(0).getRow(0).getCell(0);
@@ -931,15 +931,15 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals("[multibookFormulaB.xls]BSheet1!B1", cell.getCellFormula());
 		Ptg[] expectedPtgs = FormulaExtractor.getPtgs(cell);
 		confirmSingle3DRef(expectedPtgs, 1);
-		
+
 		// now try (re-)parsing the formula
 		Ptg[] actualPtgs = HSSFFormulaParser.parse("[multibookFormulaB.xls]BSheet1!B1", wbA);
 		confirmSingle3DRef(actualPtgs, 1); // externalSheetIndex 1 -> BSheet1
-		
+
 		// try parsing a formula pointing to a different external sheet
 		Ptg[] otherPtgs = HSSFFormulaParser.parse("[multibookFormulaB.xls]AnotherSheet!B1", wbA);
 		confirmSingle3DRef(otherPtgs, 0); // externalSheetIndex 0 -> AnotherSheet
-		
+
 		// try setting the same formula in a cell
 		cell.setCellFormula("[multibookFormulaB.xls]AnotherSheet!B1");
 		assertEquals("[multibookFormulaB.xls]AnotherSheet!B1", cell.getCellFormula());
@@ -950,13 +950,13 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals(Ref3DPtg.class, ptg0.getClass());
 		assertEquals(expectedExternSheetIndex, ((Ref3DPtg)ptg0).getExternSheetIndex());
 	}
-	
+
 	public void testUnion() {
 		String formula = "Sheet1!$B$2:$C$3,OFFSET(Sheet1!$E$2:$E$4,1,Sheet1!$A$1),Sheet1!$D$6";
 		HSSFWorkbook wb = new HSSFWorkbook();
 		wb.createSheet("Sheet1");
 		Ptg[] ptgs = FormulaParser.parse(formula, HSSFEvaluationWorkbook.create(wb));
-		
+
 		Class[] expectedClasses = {
 				// TODO - AttrPtg.class, // Excel prepends this
 				MemFuncPtg.class,

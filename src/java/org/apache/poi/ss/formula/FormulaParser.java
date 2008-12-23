@@ -142,6 +142,7 @@ public final class FormulaParser {
 
     private FormulaParsingWorkbook _book;
 
+    private int _sheetIndex;
 
 
     /**
@@ -156,11 +157,12 @@ public final class FormulaParser {
      *  model.Workbook, then use the convenience method on
      *  usermodel.HSSFFormulaEvaluator
      */
-    private FormulaParser(String formula, FormulaParsingWorkbook book){
+    private FormulaParser(String formula, FormulaParsingWorkbook book, int sheetIndex){
         _formulaString = formula;
         _pointer=0;
         _book = book;
         _formulaLength = _formulaString.length();
+        _sheetIndex = sheetIndex;
     }
 
     public static Ptg[] parse(String formula, FormulaParsingWorkbook book) {
@@ -168,7 +170,24 @@ public final class FormulaParser {
     }
 
     public static Ptg[] parse(String formula, FormulaParsingWorkbook workbook, int formulaType) {
-        FormulaParser fp = new FormulaParser(formula, workbook);
+        return parse(formula, workbook, formulaType, -1);
+    }
+
+    /**
+     * Parse a formula into a array of tokens
+     *
+     * @param formula     the formula to parse
+     * @param workbook    the parent workbook
+     * @param formulaType the type of the formula, see {@link FormulaType}
+     * @param sheetIndex  the 0-based index of the sheet this formula belongs to.
+     * The sheet index is required to resolve sheet-level names. <code>-1</code> means that
+     * the scope of the name will be ignored and  the parser will match names only by name
+     *
+     * @return array of parsed tokens
+     * @throws FormulaParseException if the formula is unparsable
+     */
+    public static Ptg[] parse(String formula, FormulaParsingWorkbook workbook, int formulaType, int sheetIndex) {
+        FormulaParser fp = new FormulaParser(formula, workbook, sheetIndex);
         fp.parse();
         return fp.getRPNPtg(formulaType);
     }
@@ -413,7 +432,7 @@ public final class FormulaParser {
             new FormulaParseException("Name '" + name
                 + "' does not look like a cell reference or named range");
         }
-        EvaluationName evalName = _book.getName(name);
+        EvaluationName evalName = _book.getName(name, _sheetIndex);
         if (evalName == null) {
             throw new FormulaParseException("Specified named range '"
                     + name + "' does not exist in the current workbook.");
@@ -516,7 +535,7 @@ public final class FormulaParser {
             // user defined function
             // in the token tree, the name is more or less the first argument
 
-            EvaluationName hName = _book.getName(name);
+            EvaluationName hName = _book.getName(name, _sheetIndex);
             if (hName == null) {
 
                 nameToken = _book.getNameXPtg(name);

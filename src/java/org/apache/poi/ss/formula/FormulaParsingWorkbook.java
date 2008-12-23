@@ -30,7 +30,7 @@ public interface FormulaParsingWorkbook {
 	/**
 	 *  named range name matching is case insensitive
 	 */
-	EvaluationName getName(String name);
+    EvaluationName getName(String name, int sheetIndex);
 
 	NameXPtg getNameXPtg(String name);
 

@@ -219,9 +219,9 @@ public final class HSSFDataValidation {
 		return _error_text;
 	}
 
-	public DVRecord createDVRecord(HSSFWorkbook workbook) {
+	public DVRecord createDVRecord(HSSFSheet sheet) {
 
-		FormulaPair fp = _constraint.createFormulas(workbook);
+		FormulaPair fp = _constraint.createFormulas(sheet);
 		
 		return new DVRecord(_constraint.getValidationType(),
 				_constraint.getOperator(),

@@ -31,13 +31,13 @@ import org.apache.poi.ss.util.CellRangeAddress;
  */
 public final class HSSFSheetConditionalFormatting {
 	
-	private final HSSFWorkbook _workbook;
+    private final HSSFSheet _sheet;
 	private final ConditionalFormattingTable _conditionalFormattingTable;
 
-	/* package */ HSSFSheetConditionalFormatting(HSSFWorkbook workbook, Sheet sheet) {
-		_workbook = workbook;
-		_conditionalFormattingTable = sheet.getConditionalFormattingTable();
-	}
+    /* package */ HSSFSheetConditionalFormatting(HSSFSheet sheet) {
+        _sheet = sheet;
+        _conditionalFormattingTable = sheet.getSheet().getConditionalFormattingTable();
+    }
 
 	/**
 	 * A factory method allowing to create a conditional formatting rule
@@ -67,8 +67,8 @@ public final class HSSFSheetConditionalFormatting {
 			String formula1,
 			String formula2) {
 
-		HSSFWorkbook wb = _workbook;
-		CFRuleRecord rr = CFRuleRecord.create(wb, comparisonOperation, formula1, formula2);
+		HSSFWorkbook wb = _sheet.getWorkbook();
+		CFRuleRecord rr = CFRuleRecord.create(_sheet, comparisonOperation, formula1, formula2);
 		return new HSSFConditionalFormattingRule(wb, rr);
 	}
 
@@ -80,8 +80,8 @@ public final class HSSFSheetConditionalFormatting {
 	 * @param formula - formula for the valued, compared with the cell
 	 */
 	public HSSFConditionalFormattingRule createConditionalFormattingRule(String formula) {
-		HSSFWorkbook wb = _workbook;
-		CFRuleRecord rr = CFRuleRecord.create(wb, formula);
+        HSSFWorkbook wb = _sheet.getWorkbook();
+		CFRuleRecord rr = CFRuleRecord.create(_sheet, formula);
 		return new HSSFConditionalFormattingRule(wb, rr);
 	}
 
@@ -171,7 +171,7 @@ public final class HSSFSheetConditionalFormatting {
 		if (cf == null) {
 			return null;
 		}
-		return new HSSFConditionalFormatting(_workbook, cf);
+		return new HSSFConditionalFormatting(_sheet.getWorkbook(), cf);
 	}
 
 	/**

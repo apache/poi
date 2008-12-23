@@ -23,7 +23,9 @@ import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.formula.Formula;
+import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianOutput;
@@ -132,18 +134,18 @@ public final class CFRuleRecord extends StandardRecord {
 	/**
 	 * Creates a new comparison operation rule
 	 */
-	public static CFRuleRecord create(HSSFWorkbook workbook, String formulaText) {
-		Ptg[] formula1 = parseFormula(formulaText, workbook);
-		return new CFRuleRecord(CONDITION_TYPE_FORMULA, ComparisonOperator.NO_COMPARISON,
-				formula1, null);
-	}
+    public static CFRuleRecord create(HSSFSheet sheet, String formulaText) {
+        Ptg[] formula1 = parseFormula(formulaText, sheet);
+        return new CFRuleRecord(CONDITION_TYPE_FORMULA, ComparisonOperator.NO_COMPARISON,
+                formula1, null);
+    }
 	/**
 	 * Creates a new comparison operation rule
 	 */
-	public static CFRuleRecord create(HSSFWorkbook workbook, byte comparisonOperation,
+	public static CFRuleRecord create(HSSFSheet sheet, byte comparisonOperation,
 			String formulaText1, String formulaText2) {
-		Ptg[] formula1 = parseFormula(formulaText1, workbook);
-		Ptg[] formula2 = parseFormula(formulaText2, workbook);
+		Ptg[] formula1 = parseFormula(formulaText1, sheet);
+		Ptg[] formula2 = parseFormula(formulaText2, sheet);
 		return new CFRuleRecord(CONDITION_TYPE_CELL_VALUE_IS, comparisonOperation, formula1, formula2);
 	}
 
@@ -527,10 +529,11 @@ public final class CFRuleRecord extends StandardRecord {
 	 * 
 	 * @return <code>null</code> if <tt>formula</tt> was null.
 	 */
-	private static Ptg[] parseFormula(String formula, HSSFWorkbook workbook) {
-		if(formula == null) {
-			return null;
-		}
-		return HSSFFormulaParser.parse(formula, workbook);
-	}
+    private static Ptg[] parseFormula(String formula, HSSFSheet sheet) {
+        if(formula == null) {
+            return null;
+        }
+        int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
+        return HSSFFormulaParser.parse(formula, sheet.getWorkbook(), FormulaType.CELL, sheetIndex);
+    }
 }

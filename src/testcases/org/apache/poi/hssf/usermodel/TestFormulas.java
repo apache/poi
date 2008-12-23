@@ -25,8 +25,12 @@ import java.util.Date;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.model.HSSFFormulaParser;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.ss.formula.FormulaType;
 
 /**
  * @author Andrew C. Oliver (acoliver at apache dot org)
@@ -182,11 +186,11 @@ public final class TestFormulas extends TestCase {
         // don't know how to check correct result .. for the moment, we just verify that the file can be read.
 
         for (int x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
-        	HSSFRow r = s.getRow(x);
+            HSSFRow r = s.getRow(x);
 
             for (int y = 1; y < 256 && y > 0; y=(short)(y+2)) {
 
-            	HSSFCell c = r.getCell(y);
+                HSSFCell c = r.getCell(y);
                 assertTrue("got a formula",c.getCellFormula()!=null);
 
                 assertTrue("loop Formula is as expected "+x+"."+y+operator+y+"."+x+"!="+c.getCellFormula(),(
@@ -535,9 +539,9 @@ public final class TestFormulas extends TestCase {
 
     public void testAbsRefs() {
         HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFSheet s = wb.createSheet();
-		HSSFRow r;
-		HSSFCell c;
+        HSSFSheet s = wb.createSheet();
+        HSSFRow r;
+        HSSFCell c;
 
         r = s.createRow(0);
         c = r.createCell(0);
@@ -883,5 +887,52 @@ public final class TestFormulas extends TestCase {
         assertEquals("$A11*2", wb.getSheetAt(0).getRow(11).getCell(1).toString());
         assertEquals("DZ2*2", wb.getSheetAt(0).getRow(1).getCell(128).toString());
         assertEquals("B32770*2", wb.getSheetAt(0).getRow(32768).getCell(1).toString());
+    }
+
+    /**
+     * Test creation / evaluation of formulas with sheet-level names
+     */
+    public void testSheetLevelFormulas(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        HSSFRow row;
+        HSSFSheet sh1 = wb.createSheet("Sheet1");
+        HSSFName nm1 = wb.createName();
+        nm1.setNameName("sales_1");
+        nm1.setSheetIndex(0);
+        nm1.setRefersToFormula("Sheet1!$A$1");
+        row = sh1.createRow(0);
+        row.createCell(0).setCellValue(3);
+        row.createCell(1).setCellFormula("sales_1");
+        row.createCell(2).setCellFormula("sales_1*2");
+
+
+        HSSFSheet sh2 = wb.createSheet("Sheet2");
+        HSSFName nm2 = wb.createName();
+        nm2.setNameName("sales_1");
+        nm2.setSheetIndex(1);
+        nm2.setRefersToFormula("Sheet2!$A$1");
+
+        row = sh2.createRow(0);
+        row.createCell(0).setCellValue(5);
+        row.createCell(1).setCellFormula("sales_1");
+        row.createCell(2).setCellFormula("sales_1*3");
+
+        //check that NamePtg refers to the correct NameRecord
+        Ptg[] ptgs1 = HSSFFormulaParser.parse("sales_1", wb, FormulaType.CELL, 0);
+        NamePtg nPtg1 = (NamePtg)ptgs1[0];
+        assertSame(nm1, wb.getNameAt(nPtg1.getIndex()));
+
+        Ptg[] ptgs2 = HSSFFormulaParser.parse("sales_1", wb, FormulaType.CELL, 1);
+        NamePtg nPtg2 = (NamePtg)ptgs2[0];
+        assertSame(nm2, wb.getNameAt(nPtg2.getIndex()));
+
+        //check that the formula evaluator returns the correct result
+        HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
+        assertEquals(3.0, evaluator.evaluate(sh1.getRow(0).getCell(1)).getNumberValue());
+        assertEquals(6.0, evaluator.evaluate(sh1.getRow(0).getCell(2)).getNumberValue());
+
+        assertEquals(5.0, evaluator.evaluate(sh2.getRow(0).getCell(1)).getNumberValue());
+        assertEquals(15.0, evaluator.evaluate(sh2.getRow(0).getCell(2)).getNumberValue());
     }
 }

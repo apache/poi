@@ -347,8 +347,9 @@ public final class XSSFCell implements Cell {
             throw new IllegalStateException("Shared Formula not found for group index " + idx);
         }
         String sharedFormula = sfCell.getCTCell().getF().getStringValue();
+        int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(sheet.getWorkbook());
-        Ptg[] ptgs = FormulaParser.parse(sharedFormula, fpb);
+        Ptg[] ptgs = FormulaParser.parse(sharedFormula, fpb, FormulaType.CELL, sheetIndex);
         Ptg[] fmla = SharedFormulaRecord.convertSharedFormulas(ptgs,
                 getRowIndex() - sfCell.getRowIndex(), getColumnIndex() - sfCell.getColumnIndex());
         return FormulaRenderer.toFormulaString(fpb, fmla);
@@ -371,9 +372,10 @@ public final class XSSFCell implements Cell {
             return;
         }
 
-        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(row.getSheet().getWorkbook());
+        XSSFWorkbook wb = row.getSheet().getWorkbook();
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         try {
-            Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL);
+            Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, wb.getSheetIndex(getSheet()));
         } catch (RuntimeException e) {
             if (e.getClass().getName().startsWith(FormulaParser.class.getName())) {
                 throw new IllegalArgumentException("Unparsable formula '" + formula + "'", e);
