@@ -44,7 +44,7 @@ public final class HSSFFormulaParser {
 	 * Convenience method for parsing cell formulas. see {@link #parse(String, HSSFWorkbook, int)}
 	 */
 	public static Ptg[] parse(String formula, HSSFWorkbook workbook) {
-		return FormulaParser.parse(formula, createParsingWorkbook(workbook));
+        return parse(formula, workbook, FormulaType.CELL);
 	}
 
 	/**
@@ -52,8 +52,22 @@ public final class HSSFFormulaParser {
 	 * @return the parsed formula tokens
 	 */
 	public static Ptg[] parse(String formula, HSSFWorkbook workbook, int formulaType) {
-		return FormulaParser.parse(formula, createParsingWorkbook(workbook), formulaType);
+		return parse(formula, workbook, formulaType, -1);
 	}
+
+    /**
+     * @param formula     the formula to parse
+     * @param workbook    the parent workbook
+     * @param formulaType a constant from {@link FormulaType}
+     * @param sheetIndex  the 0-based index of the sheet this formula belongs to.
+     * The sheet index is required to resolve sheet-level names. <code>-1</code> means that
+     * the scope of the name will be ignored and  the parser will match named ranges only by name
+     *
+     * @return the parsed formula tokens
+     */
+    public static Ptg[] parse(String formula, HSSFWorkbook workbook, int formulaType, int sheetIndex) {
+        return FormulaParser.parse(formula, createParsingWorkbook(workbook), formulaType, sheetIndex);
+    }
 
 	/**
 	 * Static method to convert an array of {@link Ptg}s in RPN order

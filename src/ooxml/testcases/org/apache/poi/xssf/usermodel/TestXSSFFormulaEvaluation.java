@@ -121,4 +121,41 @@ public final class TestXSSFFormulaEvaluation extends TestCase {
         assertEquals("B5", cell.getCellFormula());
         assertEquals("UniqueDocumentNumberID", evaluator.evaluate(cell).getStringValue());
     }
+
+    /**
+     * Test creation / evaluation of formulas with sheet-level names
+     */
+    public void testSheetLevelFormulas(){
+        XSSFWorkbook wb = new XSSFWorkbook();
+
+        XSSFRow row;
+        XSSFSheet sh1 = wb.createSheet("Sheet1");
+        XSSFName nm1 = wb.createName();
+        nm1.setNameName("sales_1");
+        nm1.setSheetIndex(0);
+        nm1.setRefersToFormula("Sheet1!$A$1");
+        row = sh1.createRow(0);
+        row.createCell(0).setCellValue(3);
+        row.createCell(1).setCellFormula("sales_1");
+        row.createCell(2).setCellFormula("sales_1*2");
+
+        XSSFSheet sh2 = wb.createSheet("Sheet2");
+        XSSFName nm2 = wb.createName();
+        nm2.setNameName("sales_1");
+        nm2.setSheetIndex(1);
+        nm2.setRefersToFormula("Sheet2!$A$1");
+
+        row = sh2.createRow(0);
+        row.createCell(0).setCellValue(5);
+        row.createCell(1).setCellFormula("sales_1");
+        row.createCell(2).setCellFormula("sales_1*3");
+
+        XSSFFormulaEvaluator evaluator = new XSSFFormulaEvaluator(wb);
+        assertEquals(3.0, evaluator.evaluate(sh1.getRow(0).getCell(1)).getNumberValue());
+        assertEquals(6.0, evaluator.evaluate(sh1.getRow(0).getCell(2)).getNumberValue());
+
+        assertEquals(5.0, evaluator.evaluate(sh2.getRow(0).getCell(1)).getNumberValue());
+        assertEquals(15.0, evaluator.evaluate(sh2.getRow(0).getCell(2)).getNumberValue());
+    }
+
 }

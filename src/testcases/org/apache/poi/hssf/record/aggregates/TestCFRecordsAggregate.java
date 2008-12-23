@@ -31,6 +31,7 @@ import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LittleEndian;
 
@@ -46,11 +47,13 @@ public final class TestCFRecordsAggregate extends TestCase
 	public void testCFRecordsAggregate() 
 	{
 		HSSFWorkbook workbook = new HSSFWorkbook();
-		List recs = new ArrayList();
+        HSSFSheet sheet = workbook.createSheet();
+
+        List recs = new ArrayList();
 		CFHeaderRecord header = new CFHeaderRecord();
-		CFRuleRecord rule1 = CFRuleRecord.create(workbook, "7");
-		CFRuleRecord rule2 = CFRuleRecord.create(workbook, ComparisonOperator.BETWEEN, "2", "5");
-		CFRuleRecord rule3 = CFRuleRecord.create(workbook, ComparisonOperator.GE, "100", null);
+		CFRuleRecord rule1 = CFRuleRecord.create(sheet, "7");
+		CFRuleRecord rule2 = CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "2", "5");
+		CFRuleRecord rule3 = CFRuleRecord.create(sheet, ComparisonOperator.GE, "100", null);
 		header.setNumberOfConditionalFormats(3);
 		CellRangeAddress[] cellRanges = {
 				new CellRangeAddress(0,1,0,0),
@@ -107,13 +110,14 @@ public final class TestCFRecordsAggregate extends TestCase
 	 */
 	public void testNRules() {
 		HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet();
 		CellRangeAddress[] cellRanges = {
 				new CellRangeAddress(0,1,0,0),
 				new CellRangeAddress(0,1,2,2),
 		};
 		CFRuleRecord[] rules = {
-			CFRuleRecord.create(workbook, "7"),
-			CFRuleRecord.create(workbook, ComparisonOperator.BETWEEN, "2", "5"),
+			CFRuleRecord.create(sheet, "7"),
+			CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "2", "5"),
 		};
 		CFRecordsAggregate agg = new CFRecordsAggregate(cellRanges, rules);
 		byte[] serializedRecord = new byte[agg.getRecordSize()];

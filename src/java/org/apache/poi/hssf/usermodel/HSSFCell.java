@@ -54,6 +54,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.formula.FormulaType;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.
@@ -269,7 +270,7 @@ public class HSSFCell implements Cell {
     public short getCellNum() {
         return (short) getColumnIndex();
     }
-    
+
     public int getColumnIndex() {
         return record.getColumn() & 0xFFFF;
     }
@@ -594,7 +595,8 @@ public class HSSFCell implements Cell {
             setCellType(CELL_TYPE_BLANK, false, row, col, styleIndex);
             return;
         }
-        Ptg[] ptgs = HSSFFormulaParser.parse(formula, book);
+        int sheetIndex = book.getSheetIndex(sheet);
+        Ptg[] ptgs = HSSFFormulaParser.parse(formula, book, FormulaType.CELL, sheetIndex);
         setCellType(CELL_TYPE_FORMULA, false, row, col, styleIndex);
         FormulaRecordAggregate agg = (FormulaRecordAggregate) record;
         FormulaRecord frec = agg.getFormulaRecord();
@@ -874,7 +876,7 @@ public class HSSFCell implements Cell {
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(short)
      */
     public void setCellStyle(CellStyle style) {
-		setCellStyle( (HSSFCellStyle)style );
+        setCellStyle( (HSSFCellStyle)style );
     }
     public void setCellStyle(HSSFCellStyle style) {
         // Verify it really does belong to our workbook
@@ -1111,8 +1113,8 @@ public class HSSFCell implements Cell {
      * @param hyperlink hypelrink associated with this cell
      */
     public void setHyperlink(Hyperlink hyperlink){
-    	HSSFHyperlink link = (HSSFHyperlink)hyperlink;
-    	
+        HSSFHyperlink link = (HSSFHyperlink)hyperlink;
+
         link.setFirstRow(record.getRow());
         link.setLastRow(record.getRow());
         link.setFirstColumn(record.getColumn());

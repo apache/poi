@@ -367,7 +367,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
        }
        DataValidityTable dvt = sheet.getOrCreateDataValidityTable();
 
-       DVRecord dvRecord = dataValidation.createDVRecord(workbook);
+       DVRecord dvRecord = dataValidation.createDVRecord(this);
        dvt.addDataValidation(dvRecord);
     }
 
@@ -1789,6 +1789,6 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
     public HSSFSheetConditionalFormatting getSheetConditionalFormatting() {
-        return new HSSFSheetConditionalFormatting(workbook, sheet);
+        return new HSSFSheetConditionalFormatting(this);
     }
 }

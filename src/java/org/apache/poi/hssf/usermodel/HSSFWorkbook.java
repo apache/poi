@@ -66,6 +66,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -1381,7 +1382,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
             sb.append("!");
             sb.append(parts[i]);
         }
-        name.setNameDefinition(HSSFFormulaParser.parse(sb.toString(), this));
+        name.setNameDefinition(HSSFFormulaParser.parse(sb.toString(), this, FormulaType.CELL, sheetIndex));
     }
 
     /**

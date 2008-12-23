@@ -20,13 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.ss.formula.EvaluationCell;
-import org.apache.poi.ss.formula.EvaluationName;
-import org.apache.poi.ss.formula.EvaluationSheet;
-import org.apache.poi.ss.formula.EvaluationWorkbook;
-import org.apache.poi.ss.formula.FormulaParser;
-import org.apache.poi.ss.formula.FormulaParsingWorkbook;
-import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
+import org.apache.poi.ss.formula.*;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
 /**
@@ -73,15 +67,16 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		return convertToExternalSheetIndex(sheetIndex);
 	}
 
-	public EvaluationName getName(String name) {
-		for(int i=0; i < _uBook.getNumberOfNames(); i++) {
-			String nameText = _uBook.getNameAt(i).getNameName();
-			if (name.equalsIgnoreCase(nameText)) {
-				return new Name(_uBook.getNameAt(i), i, this);
-			}
-		}
-		return null;
-	}
+    public EvaluationName getName(String name, int sheetIndex) {
+        for(int i=0; i < _uBook.getNumberOfNames(); i++) {
+            XSSFName nm = _uBook.getNameAt(i);
+            String nameText = nm.getNameName();
+            if (name.equalsIgnoreCase(nameText) && nm.getSheetIndex() == sheetIndex) {
+                return new Name(_uBook.getNameAt(i), i, this);
+            }
+        }
+        return sheetIndex == -1 ? null : getName(name, -1);
+    }
 
 	public int getSheetIndex(EvaluationSheet evalSheet) {
 		XSSFSheet sheet = ((XSSFEvaluationSheet)evalSheet).getXSSFSheet();
@@ -135,7 +130,7 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	public Ptg[] getFormulaTokens(EvaluationCell evalCell) {
 		XSSFCell cell = ((XSSFEvaluationCell)evalCell).getXSSFCell();
 		XSSFEvaluationWorkbook frBook = XSSFEvaluationWorkbook.create(_uBook);
-		return FormulaParser.parse(cell.getCellFormula(), frBook);
+		return FormulaParser.parse(cell.getCellFormula(), frBook, FormulaType.CELL, _uBook.getSheetIndex(cell.getSheet()));
 	}
 
 	private static final class Name implements EvaluationName {
@@ -152,7 +147,7 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 
 		public Ptg[] getNameDefinition() {
 			
-			return FormulaParser.parse(_nameRecord.getRefersToFormula(), _fpBook);
+			return FormulaParser.parse(_nameRecord.getRefersToFormula(), _fpBook, FormulaType.NAMEDRANGE, _nameRecord.getSheetIndex());
 		}
 
 		public String getNameText() {
