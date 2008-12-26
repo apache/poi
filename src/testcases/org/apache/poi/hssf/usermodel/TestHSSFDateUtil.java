@@ -448,4 +448,30 @@ public final class TestHSSFDateUtil extends TestCase {
         Date expected = createDate(1982, 1, 18, 16, 48, 0);
         assertEquals(expected, actual);
     }
+
+    /**
+     * User reported a datetime issue in POI-2.5:
+     *  Setting Cell's value to Jan 1, 1900 without a time doesn't return the same value set to
+     */
+    public void testBug19172()
+    {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet();
+        HSSFCell cell = sheet.createRow(0).createCell(0);
+
+        Calendar cal = Calendar.getInstance();
+
+        // A pseduo special Excel dates
+        cal.set(1900, 0, 1);
+
+        Date valueToTest = cal.getTime();
+
+        cell.setCellValue(valueToTest);
+
+        Date returnedValue = cell.getDateCellValue();
+
+        assertEquals(valueToTest.getTime(), returnedValue.getTime());
+    }
+
+
 }
