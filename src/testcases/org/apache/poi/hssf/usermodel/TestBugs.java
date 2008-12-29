@@ -17,10 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Iterator;
 import java.util.List;
 
@@ -1575,4 +1572,74 @@ public final class TestBugs extends TestCase {
     		assertEquals(len, c.getRichStringCellValue().length());
     	}
     }
+
+    /**
+     * In POI-2.5 user reported exception when parsing a name with a custom VBA function:
+     *  =MY_VBA_FUNCTION("lskdjflsk")
+     */
+    public void test30070() {
+        HSSFWorkbook wb = openSample("30070.xls"); //contains custom VBA function 'Commission'
+        HSSFSheet sh = wb.getSheetAt(0);
+        HSSFCell cell = sh.getRow(0).getCell(1);
+
+        //B1 uses VBA in the formula
+        assertEquals("Commission(A1)", cell.getCellFormula());
+
+        //name sales_1 refers to Commission(Sheet0!$A$1)
+        int idx = wb.getNameIndex("sales_1");
+        assertTrue(idx != -1);
+
+        HSSFName name = wb.getNameAt(idx);
+        assertEquals("Commission(Sheet0!$A$1)", name.getRefersToFormula());
+
+    }
+
+    /**
+     * The link formulas which is referring to other books cannot be taken (the bug existed prior to POI-3.2)
+     * Expected:
+     *
+     * [link_sub.xls]Sheet1!$A$1
+     * [link_sub.xls]Sheet1!$A$2
+     * [link_sub.xls]Sheet1!$A$3
+     *
+     * POI-3.1 output:
+     *
+     * Sheet1!$A$1
+     * Sheet1!$A$2
+     * Sheet1!$A$3
+     *
+     */
+    public void test27364() {
+        HSSFWorkbook wb = openSample("27364.xls");
+        HSSFSheet sheet = wb.getSheetAt(0);
+
+        assertEquals("[link_sub.xls]Sheet1!$A$1", sheet.getRow(0).getCell(0).getCellFormula());
+        assertEquals("[link_sub.xls]Sheet1!$A$2", sheet.getRow(1).getCell(0).getCellFormula());
+        assertEquals("[link_sub.xls]Sheet1!$A$3", sheet.getRow(2).getCell(0).getCellFormula());
+    }
+
+    /**
+     * Similar to bug#27364:
+     * HSSFCell.getCellFormula() fails with references to external workbooks
+     */
+    public void test31661() {
+        HSSFWorkbook wb = openSample("31661.xls");
+        HSSFSheet sheet = wb.getSheetAt(0);
+        HSSFCell cell = sheet.getRow(11).getCell(10); //K11
+        assertEquals("+'[GM Budget.xls]8085.4450'!$B$2", cell.getCellFormula());
+    }
+
+    /**
+     * Incorrect handling of non-ISO 8859-1 characters in Windows ANSII Code Page 1252
+     */
+    public void test27394() {
+        HSSFWorkbook wb = openSample("27394.xls");
+        assertEquals("\u0161\u017E", wb.getSheetName(0));
+        assertEquals("\u0161\u017E\u010D\u0148\u0159", wb.getSheetName(1));
+        HSSFSheet sheet = wb.getSheetAt(0);
+
+        assertEquals("\u0161\u017E", sheet.getRow(0).getCell(0).getStringCellValue());
+        assertEquals("\u0161\u017E\u010D\u0148\u0159", sheet.getRow(1).getCell(0).getStringCellValue());
+    }
+
 }
