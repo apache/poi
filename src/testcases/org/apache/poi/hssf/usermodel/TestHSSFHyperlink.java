@@ -184,4 +184,49 @@ public final class TestHSSFHyperlink extends TestCase {
         assertNotNull(link);
         assertEquals("http://poi.apache.org/hssf/", link.getAddress());
     }
+
+    /**
+     * Test that HSSFSheet#shiftRows moves hyperlinks,
+     * see bugs #46445 and #29957
+     */
+    public void testShiftRows(){
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("46445.xls");
+
+
+        HSSFSheet sheet = wb.getSheetAt(0);
+
+        //verify existing hyperlink in A3
+        HSSFCell cell1 = sheet.getRow(2).getCell(0);
+        HSSFHyperlink link1 = cell1.getHyperlink();
+        assertNotNull(link1);
+        assertEquals(2, link1.getFirstRow());
+        assertEquals(2, link1.getLastRow());
+
+        //assign a hyperlink to A4
+        HSSFHyperlink link2 = new HSSFHyperlink(HSSFHyperlink.LINK_DOCUMENT);
+        link2.setAddress("Sheet2!A2");
+        HSSFCell cell2 = sheet.getRow(3).getCell(0);
+        cell2.setHyperlink(link2);
+        assertEquals(3, link2.getFirstRow());
+        assertEquals(3, link2.getLastRow());
+
+        //move the 3rd row two rows down
+        sheet.shiftRows(sheet.getFirstRowNum(), sheet.getLastRowNum(), 2);
+
+        //cells A3 and A4 don't contain hyperlinks anymore
+        assertNull(sheet.getRow(2).getCell(0).getHyperlink());
+        assertNull(sheet.getRow(3).getCell(0).getHyperlink());
+
+        //the first hypelink now belongs to A5
+        HSSFHyperlink link1_shifted = sheet.getRow(2+2).getCell(0).getHyperlink();
+        assertNotNull(link1_shifted);
+        assertEquals(4, link1_shifted.getFirstRow());
+        assertEquals(4, link1_shifted.getLastRow());
+
+        //the second hypelink now belongs to A6
+        HSSFHyperlink link2_shifted = sheet.getRow(3+2).getCell(0).getHyperlink();
+        assertNotNull(link2_shifted);
+        assertEquals(5, link2_shifted.getFirstRow());
+        assertEquals(5, link2_shifted.getLastRow());
+    }
 }

@@ -1187,6 +1187,12 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                 cellRecord.setRow( rowNum + n );
                 row2Replace.createCellFromRecord( cellRecord );
                 sheet.addValueRecord( rowNum + n, cellRecord );
+
+                HSSFHyperlink link = cell.getHyperlink();
+                if(link != null){
+                    link.setFirstRow(link.getFirstRow() + n);
+                    link.setLastRow(link.getLastRow() + n);
+                }
             }
             // Now zap all the cells in the source row
             row.removeAllCells();

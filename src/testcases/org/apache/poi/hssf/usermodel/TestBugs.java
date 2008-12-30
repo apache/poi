@@ -1642,4 +1642,28 @@ public final class TestBugs extends TestCase {
         assertEquals("\u0161\u017E\u010D\u0148\u0159", sheet.getRow(1).getCell(0).getStringCellValue());
     }
 
+    /**
+     * Multiple calls of HSSFWorkbook.write result in corrupted xls
+     */
+    public void test32191() throws IOException {
+        HSSFWorkbook wb = openSample("27394.xls");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+        int size1 = out.size();
+        
+        out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+        int size2 = out.size();
+
+        assertEquals(size1, size2);
+        out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+        int size3 = out.size();
+        assertEquals(size2, size3);
+
+    }
 }
