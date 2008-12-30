@@ -37,6 +37,8 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta5" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">46320 - added HSSFPictureData.getFormat()</action>
+           <action dev="POI-DEVELOPERS" type="fix">fixed HSSFSheet.shiftRow to move hyperlinks</action>
            <action dev="POI-DEVELOPERS" type="fix">fixed formula parser to correctly resolve sheet-level names</action>
            <action dev="POI-DEVELOPERS" type="fix">46433 - support for shared formulas in XSSF</action>
            <action dev="POI-DEVELOPERS" type="add">46299 - support for carriage return and line break in XWPFRun</action>

@@ -62,9 +62,23 @@ public class HSSFPictureData implements PictureData
         return blip.getPicturedata();
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.poi.hssf.usermodel.PictureData#suggestFileExtension()
+    /**
+     *
+     * @return format of the picture.
+     * @see HSSFWorkbook#PICTURE_TYPE_DIB
+     * @see HSSFWorkbook#PICTURE_TYPE_WMF
+     * @see HSSFWorkbook#PICTURE_TYPE_EMF
+     * @see HSSFWorkbook#PICTURE_TYPE_PNG
+     * @see HSSFWorkbook#PICTURE_TYPE_JPEG
+     * @see HSSFWorkbook#PICTURE_TYPE_PICT
      */
+    public int getFormat(){
+        return blip.getRecordId() - (short)0xF018;
+    }
+
+    /**
+    * @see #getFormat
+    */
     public String suggestFileExtension()
     {
         switch (blip.getRecordId())
