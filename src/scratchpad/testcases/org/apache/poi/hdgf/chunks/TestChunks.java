@@ -179,7 +179,7 @@ public static final byte[] data_b = new byte[] { 70, 0, 0, 0,
 		
 		assertEquals(10, chunk.commandDefinitions[0].getType());
 		assertEquals(0, chunk.commandDefinitions[0].getOffset());
-		assertEquals("Unknown 0x68", chunk.commandDefinitions[0].getName());
+		assertEquals("PropList", chunk.commandDefinitions[0].getName());
 		
 		assertEquals(18, chunk.commandDefinitions[1].getType());
 		assertEquals(0, chunk.commandDefinitions[1].getOffset());

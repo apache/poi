@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.5-beta5" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">46361 - resolve licensing issues around the HDGF resource file, chunks_parse_cmds.tbl</action>
            <action dev="POI-DEVELOPERS" type="add">46410 - added implementation for TIME() function</action>
            <action dev="POI-DEVELOPERS" type="add">46320 - added HSSFPictureData.getFormat()</action>
            <action dev="POI-DEVELOPERS" type="fix">46445 fixed HSSFSheet.shiftRow to move hyperlinks</action>

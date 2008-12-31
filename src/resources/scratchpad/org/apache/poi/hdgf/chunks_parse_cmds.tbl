@@ -1,14 +1,41 @@
-#   This program is free software; you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation; version 3 of the License.
-#   
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
+# vsdump: test program to dump and parse content of vsd file
 #
-#   
-# version 0.0.26
+# Copyright (C) 2006-2007	Valek Filippov (frob@df.ru)
+#
+# This file is dual-licensed (GPLv3 and ASLv2).
+# 
+# =======================================================================
+#  Licensed to the Apache Software Foundation (ASF) under one or more
+#  contributor license agreements.  See the NOTICE file distributed with
+#  this work for additional information regarding copyright ownership.
+#  The ASF licenses this file to You under the Apache License, Version 2.0
+#  (the "License"); you may not use this file except in compliance with
+#  the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+# =======================================================================
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of version 3 or later of the GNU General Public
+# License as published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301
+# USA
+# =======================================================================
+#
+# version 0.0.45
 #
 # Need to extend with 'format' field for conversion length (inch->mm), angles(rad->degree) and enums (e.g.
 # for aligns -- left/right/justify etc.
@@ -39,6 +66,8 @@
 # 21	- offset to start of blocks in version 11
 # 28    - extension for image files [experimental]
 # 29    - num of parts and type for OLE [experimental]
+# 30    - 3 bytes RGB-color
+# 31    - 9 bytes -- 1st is 'Unit', + 8 bytes IEEE-754 fraction
 
 # Quick workaround for losing of 1st table
 start 10
@@ -56,7 +85,7 @@ end
 
 start 14
 10 0 Text
-12 27 0
+12 8 0
 18 0 0
 end
 
@@ -180,7 +209,7 @@ start 100
 end
 
 start 101
-10 0 Unknown 0x65
+10 0 ShapeList
 18 0 0
 end
 
@@ -195,17 +224,17 @@ start 103
 end
 
 start 104
-10 0 Unknown 0x68
+10 0 PropList
 18 0 0
 end
 
 start 105
-10 0 Unknown 0x69
+10 0 CharList
 18 0 0
 end
 
 start 106
-10 0 Unknown 0x6a
+10 0 ParaList
 18 0 0
 end
 
@@ -215,7 +244,7 @@ start 107
 end
 
 start 108
-10 0 Unknown 0x6c
+10 0 GeomList
 18 0 0
 end
 
@@ -240,7 +269,7 @@ start 112
 end
 
 start 113
-10 0 Unknown 0x71
+10 0 ConnectionList
 18 0 0
 end
 
@@ -275,7 +304,7 @@ start 130
 end
 
 start 131
-10 0 Unknown 0x83
+10 0 ShapeID
 18 0 0
 end
 
@@ -350,10 +379,10 @@ end
 
 start 137
 10 0 Geometry
-0 20 NoFill
-1 20 NoLine
-2 20 NoShow
-3 20 NoSnap
+0 19 NoFill
+1 19 NoLine
+2 19 NoShow
+3 19 NoSnap
 21 22 BlocksStart
 18 0 0
 end
@@ -871,9 +900,9 @@ start 192
 end
 
 start 193
-10 0 Unknown 0xc1
-9 20 Unknown1
-9 29 Unknown2
+10 0 PolylineTo
+9 20 X
+9 29 Y
 18 0 0
 end
 
@@ -912,12 +941,12 @@ start 197
 end
 
 start 198
-10 0 Unknown 0xc6
+10 0 Annotation
 18 0 0
 end
 
 start 199
-10 0 Unknown 0xc7
+10 0 SmartTagDef
 18 0 0
 end
 
