@@ -49,6 +49,7 @@ public final class AllIndividualFunctionEvaluationTests {
 		result.addTestSuite(TestSumproduct.class);
 		result.addTestSuite(TestStatsLib.class);
 		result.addTestSuite(TestTFunc.class);
+		result.addTestSuite(TestTime.class);
 		result.addTestSuite(TestTrim.class);
 		result.addTestSuite(TestValue.class);
 		result.addTestSuite(TestXYNumericFunction.class);
