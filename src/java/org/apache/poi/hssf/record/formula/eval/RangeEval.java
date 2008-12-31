@@ -27,6 +27,7 @@ public final class RangeEval implements OperationEval {
 	public static final OperationEval instance = new RangeEval();
 	
 	private RangeEval() {
+		// enforces singleton
 	}
 
 	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
@@ -63,9 +64,5 @@ public final class RangeEval implements OperationEval {
 
 	public int getNumberOfOperands() {
 		return 2;
-	}
-
-	public int getType() {
-		throw new RuntimeException("obsolete code should not be called");
 	}
 }

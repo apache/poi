@@ -20,7 +20,7 @@ package org.apache.poi.hssf.record.formula.eval;
 /**
  * @author Josh Micich
  */
-public final class NameEval implements Eval {
+public final class NameEval implements ValueEval {
 
 	private final String _functionName;
 

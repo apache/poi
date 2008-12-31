@@ -22,7 +22,7 @@ import org.apache.poi.hssf.record.formula.NameXPtg;
 /**
  * @author Josh Micich
  */
-public final class NameXEval implements Eval {
+public final class NameXEval implements ValueEval {
 
 	private final NameXPtg _ptg;
 

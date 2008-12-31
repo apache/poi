@@ -60,8 +60,4 @@ public final class ConcatEval implements OperationEval {
     public int getNumberOfOperands() {
         return delegate.getNumberOfOperands();
     }
-
-    public int getType() {
-        return delegate.getType();
-    }
 }
