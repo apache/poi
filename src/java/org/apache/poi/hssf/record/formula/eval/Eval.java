@@ -25,5 +25,5 @@ package org.apache.poi.hssf.record.formula.eval;
  *  
  */
 public interface Eval {
-
+	// TODO - remove this interface
 }

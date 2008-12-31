@@ -263,7 +263,7 @@ public final class WorkbookEvaluator {
 	// visibility raised for testing
 	/* package */ ValueEval evaluateFormula(int sheetIndex, int srcRowNum, int srcColNum, Ptg[] ptgs, EvaluationTracker tracker) {
 
-		Stack<Eval> stack = new Stack<Eval>();
+		Stack<ValueEval> stack = new Stack<ValueEval>();
 		for (int i = 0, iSize = ptgs.length; i < iSize; i++) {
 
 			// since we don't know how to handle these yet :(
@@ -287,7 +287,7 @@ public final class WorkbookEvaluator {
 			}
 			if (ptg instanceof MemErrPtg) { continue; }
 
-			Eval opResult;
+			ValueEval opResult;
 			if (ptg instanceof OperationPtg) {
 				OperationPtg optg = (OperationPtg) ptg;
 
@@ -296,11 +296,11 @@ public final class WorkbookEvaluator {
 				OperationEval operation = OperationEvaluatorFactory.create(optg);
 
 				int numops = operation.getNumberOfOperands();
-				Eval[] ops = new Eval[numops];
+				ValueEval[] ops = new ValueEval[numops];
 
 				// storing the ops in reverse order since they are popping
 				for (int j = numops - 1; j >= 0; j--) {
-					Eval p = stack.pop();
+					ValueEval p = stack.pop();
 					ops[j] = p;
 				}
 //				logDebug("invoke " + operation + " (nAgs=" + numops + ")");
@@ -318,7 +318,7 @@ public final class WorkbookEvaluator {
 			stack.push(opResult);
 		}
 
-		ValueEval value = (ValueEval) stack.pop();
+		ValueEval value = stack.pop();
 		if (!stack.isEmpty()) {
 			throw new IllegalStateException("evaluation stack not empty");
 		}
@@ -359,7 +359,7 @@ public final class WorkbookEvaluator {
 		return evaluationResult;
 	}
 
-	private static Eval invokeOperation(OperationEval operation, Eval[] ops,
+	private static ValueEval invokeOperation(OperationEval operation, Eval[] ops,
 			EvaluationWorkbook workbook, int sheetIndex, int srcRowNum, int srcColNum) {
 
 		if(operation instanceof FunctionEval) {
@@ -368,7 +368,8 @@ public final class WorkbookEvaluator {
 				return fe.getFreeRefFunction().evaluate(ops, workbook, sheetIndex, srcRowNum, srcColNum);
 			}
 		}
-		return operation.evaluate(ops, srcRowNum, (short)srcColNum);
+		// TODO - fix return type of this evaluate method:
+		return (ValueEval) operation.evaluate(ops, srcRowNum, (short)srcColNum);
 	}
 	private SheetRefEvaluator createExternSheetRefEvaluator(EvaluationTracker tracker,
 			ExternSheetReferenceToken ptg) {
@@ -391,7 +392,7 @@ public final class WorkbookEvaluator {
 	 * StringPtg, BoolPtg <br/>special Note: OperationPtg subtypes cannot be
 	 * passed here!
 	 */
-	private Eval getEvalForPtg(Ptg ptg, int sheetIndex, EvaluationTracker tracker) {
+	private ValueEval getEvalForPtg(Ptg ptg, int sheetIndex, EvaluationTracker tracker) {
 		//  consider converting all these (ptg instanceof XxxPtg) expressions to (ptg.getClass() == XxxPtg.class)
 
 		if (ptg instanceof NamePtg) {
@@ -465,7 +466,7 @@ public final class WorkbookEvaluator {
 
 		throw new RuntimeException("Unexpected ptg class (" + ptg.getClass().getName() + ")");
 	}
-	private Eval evaluateNameFormula(Ptg[] ptgs, int sheetIndex, EvaluationTracker tracker) {
+	private ValueEval evaluateNameFormula(Ptg[] ptgs, int sheetIndex, EvaluationTracker tracker) {
 		if (ptgs.length > 1) {
 			throw new RuntimeException("Complex name formulas not supported yet");
 		}

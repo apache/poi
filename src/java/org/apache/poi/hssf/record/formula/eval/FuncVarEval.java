@@ -44,10 +44,6 @@ public final class FuncVarEval extends FunctionEval {
         return delegate.getNumberOfOperands();
     }
 
-    public int getType() {
-        return delegate.getType();
-    }
-
     public short getFunctionIndex() {
         return delegate.getFunctionIndex();
     }

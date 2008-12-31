@@ -27,6 +27,7 @@ public final class PercentEval implements OperationEval {
 	public static final OperationEval instance = new PercentEval();
 
 	private PercentEval() {
+		// enforce singleton
 	}
 
 	public Eval evaluate(Eval[] args, int srcRow, short srcCol) {
@@ -45,9 +46,5 @@ public final class PercentEval implements OperationEval {
 
 	public int getNumberOfOperands() {
 		return 1;
-	}
-	public final int getType() {
-		// TODO - remove
-		throw new RuntimeException("obsolete code should not be called");
 	}
 }

@@ -42,8 +42,4 @@ public abstract class OperationPtg extends Ptg {
     public byte getDefaultOperandClass() {
         return Ptg.CLASS_VALUE;
     }
-    public final int getType() {
-        // TODO remove "int getType();" from Eval hierarchy
-        throw new RuntimeException("remove this method");
-    }
 }

@@ -137,9 +137,4 @@ public abstract class RelationalOperationEval implements OperationEval {
 	public final int getNumberOfOperands() {
 		return 2;
 	}
-
-	public final int getType() {
-		// TODO - get rid of this method
-		throw new RuntimeException("Obsolete code - should not be called");
-	}
 }
