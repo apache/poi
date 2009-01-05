@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.AttrPtg;
@@ -28,8 +29,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 
 /**
- * Tests the serialization and deserialization of the FormulaRecord
- * class works correctly.
+ * Tests for {@link FormulaRecord}
  *
  * @author Andrew C. Oliver
  */
@@ -167,5 +167,27 @@ public final class TestFormulaRecord extends TestCase {
 		assertEquals(1, ptgs.length);
 		RefPtg rp = (RefPtg) ptgs[0];
 		assertEquals("B$5", rp.toFormulaString());
+	}
+	
+	/**
+	 * Bug noticed while fixing 46479.  Operands of conditional operator ( ? : ) were swapped
+	 * inside {@link FormulaRecord}
+	 */
+	public void testCachedValue_bug46479() {
+		FormulaRecord fr0 = new FormulaRecord();
+		FormulaRecord fr1 = new FormulaRecord();
+		// test some other cached value types 
+		fr0.setValue(3.5);
+		assertEquals(3.5, fr0.getValue(), 0.0);
+		fr0.setCachedResultErrorCode(HSSFErrorConstants.ERROR_REF);
+		assertEquals(HSSFErrorConstants.ERROR_REF, fr0.getCachedErrorValue());
+
+		fr0.setCachedResultBoolean(false);
+		fr1.setCachedResultBoolean(true);
+		if (fr0.getCachedBooleanValue() == true && fr1.getCachedBooleanValue() == false) {
+			throw new AssertionFailedError("Identified bug 46479c");
+		}
+		assertEquals(false, fr0.getCachedBooleanValue());
+		assertEquals(true, fr1.getCachedBooleanValue());
 	}
 }

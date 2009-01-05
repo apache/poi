@@ -122,7 +122,7 @@ public final class FormulaRecord extends StandardRecord implements CellValueReco
 			return create(STRING, 0);
 		}
 		public static SpecialCachedValue createCachedBoolean(boolean b) {
-			return create(BOOLEAN, b ? 0 : 1);
+			return create(BOOLEAN, b ? 1 : 0);
 		}
 		public static SpecialCachedValue createCachedErrorCode(int errorCode) {
 			return create(ERROR_CODE, errorCode);

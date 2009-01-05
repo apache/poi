@@ -215,8 +215,8 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator  {
 		HSSFCell result = (HSSFCell) cell;
 		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
 			CellValue cv = evaluateFormulaCellValue(cell);
-			setCellType(cell, cv); // cell will no longer be a formula cell
 			setCellValue(cell, cv);
+			setCellType(cell, cv); // cell will no longer be a formula cell
 		}
 		return result;
 	}
