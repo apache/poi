@@ -470,7 +470,7 @@ public class HSSFCell implements Cell {
         switch (cellType) {
             default:
                 setCellType(CELL_TYPE_NUMERIC, false, row, col, styleIndex);
-            case CELL_TYPE_ERROR:
+            case CELL_TYPE_NUMERIC:
                 (( NumberRecord ) record).setValue(value);
                 break;
             case CELL_TYPE_FORMULA:
@@ -745,7 +745,7 @@ public class HSSFCell implements Cell {
         switch (cellType) {
             default:
                 setCellType(CELL_TYPE_BOOLEAN, false, row, col, styleIndex);
-            case CELL_TYPE_ERROR:
+            case CELL_TYPE_BOOLEAN:
                 (( BoolErrRecord ) record).setValue(value);
                 break;
             case CELL_TYPE_FORMULA:
@@ -797,10 +797,13 @@ public class HSSFCell implements Cell {
             case CELL_TYPE_NUMERIC:
                 return ((NumberRecord)record).getValue() != 0;
 
-            // All other cases convert to false
-            // These choices are not well justified.
             case CELL_TYPE_FORMULA:
-                // should really evaluate, but HSSFCell can't call HSSFFormulaEvaluator
+                // use cached formula result if it's the right type:
+                FormulaRecord fr = ((FormulaRecordAggregate)record).getFormulaRecord();
+                checkFormulaCachedValueType(CELL_TYPE_BOOLEAN, fr);
+                return fr.getCachedBooleanValue();
+            // Other cases convert to false
+            // These choices are not well justified.
             case CELL_TYPE_ERROR:
             case CELL_TYPE_BLANK:
                 return false;

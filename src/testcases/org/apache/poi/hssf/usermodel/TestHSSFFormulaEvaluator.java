@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -91,5 +92,33 @@ public final class TestHSSFFormulaEvaluator extends TestCase {
 		HSSFSheet sheet = wb.createSheet("Sheet1");
 		HSSFCell cell = sheet.createRow(0).createCell(0);
 		assertNull(fe.evaluate(cell));
+	}
+
+	/**
+	 * Test for bug due to attempt to convert a cached formula error result to a boolean
+	 */
+	public void testUpdateCachedFormulaResultFromErrorToNumber_bug46479() {
+
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet("Sheet1");
+		HSSFRow row = sheet.createRow(0);
+		HSSFCell cellA1 = row.createCell(0);
+		HSSFCell cellB1 = row.createCell(1);
+		cellB1.setCellFormula("A1+1");
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+
+		cellA1.setCellErrorValue((byte)HSSFErrorConstants.ERROR_NAME);
+		fe.evaluateFormulaCell(cellB1);
+
+		cellA1.setCellValue(2.5);
+		fe.notifyUpdateCell(cellA1);
+		try {
+			fe.evaluateInCell(cellB1);
+		} catch (IllegalStateException e) {
+			if (e.getMessage().equals("Cannot get a numeric value from a error formula cell")) {
+				throw new AssertionFailedError("Identified bug 46479a");
+			}
+		}
+		assertEquals(3.5, cellB1.getNumericCellValue(), 0.0);
 	}
 }

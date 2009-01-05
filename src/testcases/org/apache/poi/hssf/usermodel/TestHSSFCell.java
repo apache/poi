@@ -422,5 +422,46 @@ public final class TestHSSFCell extends TestCase {
 		}
 		assertEquals("TRUE", cell.getRichStringCellValue().getString());
 	}
+
+	public void testChangeTypeErrorToNumber_bug46479() {
+		HSSFCell cell = new HSSFWorkbook().createSheet("Sheet1").createRow(0).createCell(0);
+		cell.setCellErrorValue((byte)HSSFErrorConstants.ERROR_NAME);
+		try {
+			cell.setCellValue(2.5);
+		} catch (ClassCastException e) {
+			throw new AssertionFailedError("Identified bug 46479b");
+		}
+		assertEquals(2.5, cell.getNumericCellValue(), 0.0);
+	}
+
+	public void testChangeTypeErrorToBoolean_bug46479() {
+		HSSFCell cell = new HSSFWorkbook().createSheet("Sheet1").createRow(0).createCell(0);
+		cell.setCellErrorValue((byte)HSSFErrorConstants.ERROR_NAME);
+		cell.setCellValue(true); 
+		try {
+			cell.getBooleanCellValue();
+		} catch (IllegalStateException e) {
+			if (e.getMessage().equals("Cannot get a boolean value from a error cell")) {
+
+				throw new AssertionFailedError("Identified bug 46479c");
+			}
+			throw e;
+		}
+		assertEquals(true, cell.getBooleanCellValue());
+	}
+
+	/**
+	 * Test for bug in convertCellValueToBoolean to make sure that formula results get converted 
+	 */
+	public void testChangeTypeFormulaToBoolean_bug46479() {
+		HSSFCell cell = new HSSFWorkbook().createSheet("Sheet1").createRow(0).createCell(0);
+		cell.setCellFormula("1=1");
+		cell.setCellValue(true);
+		cell.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
+		if (cell.getBooleanCellValue() == false) {
+			throw new AssertionFailedError("Identified bug 46479d");
+		}
+		assertEquals(true, cell.getBooleanCellValue());
+	}
 }
 
