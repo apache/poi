@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta5" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">46472 - Avoid NPE in HPSFPropertiesExtractor when no properties exist</action>
            <action dev="POI-DEVELOPERS" type="fix">46479 - fixed bugs related to cached formula values and HSSFFormulaEvaluator.evaluateInCell()</action>
            <action dev="POI-DEVELOPERS" type="add">45031 - added implementation for CHOOSE() function</action>
            <action dev="POI-DEVELOPERS" type="fix">46361 - resolve licensing issues around the HDGF resource file, chunks_parse_cmds.tbl</action>

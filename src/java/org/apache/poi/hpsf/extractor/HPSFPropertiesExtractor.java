@@ -56,11 +56,13 @@ public class HPSFPropertiesExtractor extends POITextExtractor {
 		
 		// Now custom ones
 		CustomProperties cps = dsi.getCustomProperties();
-		Iterator keys = cps.keySet().iterator();
-		while(keys.hasNext()) {
-			String key = (String)keys.next();
-			String val = getPropertyValueText( cps.get(key) );
-			text.append(key + " = " + val + "\n");
+		if(cps != null) {
+			Iterator keys = cps.keySet().iterator();
+			while(keys.hasNext()) {
+				String key = (String)keys.next();
+				String val = getPropertyValueText( cps.get(key) );
+				text.append(key + " = " + val + "\n");
+			}
 		}
 		
 		// All done
