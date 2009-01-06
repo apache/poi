@@ -18,8 +18,11 @@ package org.apache.poi;
 
 import java.io.File;
 
+import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxml4j.opc.Package;
+
+import sun.awt.X11.XModifierKeymap;
 
 import junit.framework.TestCase;
 
@@ -29,6 +32,27 @@ public class TestXMLPropertiesTextExtractor extends TestCase {
 	protected void setUp() throws Exception {
 		dirname = System.getProperty("OOXML.testdata.path");
 		assertTrue( (new File(dirname)).exists() );
+	}
+	
+	public void testGetFromMainExtractor() throws Exception {
+		org.openxml4j.opc.Package pkg = Package.open(
+				(new File(dirname, "ExcelWithAttachments.xlsx")).toString()
+		);
+		XSSFWorkbook wb = new XSSFWorkbook(pkg);
+
+		XSSFExcelExtractor ext = new XSSFExcelExtractor(wb);
+		POIXMLPropertiesTextExtractor textExt = ext.getMetadataTextExtractor();
+		
+		// Check basics
+		assertNotNull(textExt);
+		assertTrue(textExt.getText().length() > 0);
+		
+		// Check some of the content
+		String text = textExt.getText();
+		String cText = textExt.getCorePropertiesText();
+		
+		assertTrue(text.contains("LastModifiedBy = Yury Batrakov"));
+		assertTrue(cText.contains("LastModifiedBy = Yury Batrakov"));
 	}
 
 	public void testCore() throws Exception {

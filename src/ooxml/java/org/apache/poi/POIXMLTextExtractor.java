@@ -66,7 +66,7 @@ public abstract class POIXMLTextExtractor extends POITextExtractor {
 	 * Returns an OOXML properties text extractor for the 
 	 *  document properties metadata, such as title and author.
 	 */
-	public POITextExtractor getMetadataTextExtractor() {
-		throw new RuntimeException("Not yet supported for OOXML!");
+	public POIXMLPropertiesTextExtractor getMetadataTextExtractor() {
+		return new POIXMLPropertiesTextExtractor(document);
 	}
 }
