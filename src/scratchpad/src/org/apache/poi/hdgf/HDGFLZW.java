@@ -259,6 +259,8 @@ private void outputCompressed(OutputStream res) throws IOException {
 	// Increment the mask bit count, we've done another code
 	maskBitsSet++;
 	// Add the length+code to the buffer
+	// (The position is the first 12 bits, the
+	//  length is the last 4 bits)
 	// TODO
 	posOut += 2;
 	
@@ -351,8 +353,11 @@ private void compress(InputStream src, OutputStream res) throws IOException {
 			continue;
 		}
 		
-		// If there was something in rawCode before, then we
-		//  need to output that
+		// If we get here, then the rawCode + this byte weren't
+		// found in the dictionary
+		
+		// If there was something in rawCode before, then that was
+		// found in the dictionary, so output that compressed
 		rawCodeLen--;
 		if(rawCodeLen > 0) {
 			// Output the old rawCode
