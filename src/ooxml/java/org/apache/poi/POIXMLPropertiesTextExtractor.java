@@ -136,7 +136,7 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 		}
 	}
 
-	public POITextExtractor getMetadataTextExtractor() {
+	public POIXMLPropertiesTextExtractor getMetadataTextExtractor() {
 		throw new IllegalStateException("You already have the Metadata Text Extractor, not recursing!");
 	}
 }
