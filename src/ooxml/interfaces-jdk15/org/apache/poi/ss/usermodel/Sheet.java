@@ -177,6 +177,19 @@ public interface Sheet extends Iterable<Row> {
      * @param height default row height
      */
     void setDefaultRowHeightInPoints(float height);
+    
+    /**
+     * Returns the CellStyle that applies to the given
+     *  (0 based) column, or null if no style has been
+     *  set for that column
+     */
+    public CellStyle getColumnStyle(int column);
+
+    /**
+     * Sets the CellStyle that applies to the given
+     *  (0 based) column.
+     */
+//    public CellStyle setColumnStyle(int column, CellStyle style);
 
     /**
      * Adds a merged region of cells (hence those cells form one)

@@ -36,6 +36,7 @@ import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.DVRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SCLRecord;
@@ -501,6 +502,23 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     public void setDefaultRowHeightInPoints(float height)
     {
         sheet.setDefaultRowHeight((short) (height * 20));
+    }
+    
+    /**
+     * Returns the HSSFCellStyle that applies to the given
+     *  (0 based) column, or null if no style has been
+     *  set for that column
+     */
+    public HSSFCellStyle getColumnStyle(int column) {
+    	short styleIndex = sheet.getXFIndexForColAt((short)column);
+    	
+    	if(styleIndex == 0xf) {
+    		// None set
+    		return null;
+    	}
+    	
+        ExtendedFormatRecord xf = book.getExFormatAt(styleIndex);
+        return new HSSFCellStyle(styleIndex, xf, book);
     }
 
     /**
