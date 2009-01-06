@@ -911,4 +911,43 @@ public final class TestHSSFSheet extends TestCase {
         }
         wb.createSheet(SAME_PREFIX + "Exxxx"); // OK - differs in the 31st char
     }
+    
+    /**
+     * Tests that we can read existing column styles
+     */
+    public void testReadColumnStyles() {
+        HSSFWorkbook wbNone = HSSFTestDataSamples.openSampleWorkbook("ColumnStyleNone.xls");
+        HSSFWorkbook wbSimple = HSSFTestDataSamples.openSampleWorkbook("ColumnStyle1dp.xls");
+        HSSFWorkbook wbComplex = HSSFTestDataSamples.openSampleWorkbook("ColumnStyle1dpColoured.xls");
+    	
+        // Presence / absence checks
+        assertNull(wbNone.getSheetAt(0).getColumnStyle(0));
+        assertNull(wbNone.getSheetAt(0).getColumnStyle(1));
+        
+        assertNull(wbSimple.getSheetAt(0).getColumnStyle(0));
+        assertNotNull(wbSimple.getSheetAt(0).getColumnStyle(1));
+        
+        assertNull(wbComplex.getSheetAt(0).getColumnStyle(0));
+        assertNotNull(wbComplex.getSheetAt(0).getColumnStyle(1));
+        
+        // Details checks
+        HSSFCellStyle bs = wbSimple.getSheetAt(0).getColumnStyle(1);
+        assertEquals(62, bs.getIndex());
+        assertEquals("#,##0.0_ ;\\-#,##0.0\\ ", bs.getDataFormatString());
+        assertEquals("Calibri", bs.getFont(wbSimple).getFontName());
+        assertEquals(11*20, bs.getFont(wbSimple).getFontHeight());
+        assertEquals(8, bs.getFont(wbSimple).getColor());
+        assertFalse(bs.getFont(wbSimple).getItalic());
+        assertEquals(HSSFFont.BOLDWEIGHT_NORMAL, bs.getFont(wbSimple).getBoldweight());
+        
+        
+        HSSFCellStyle cs = wbComplex.getSheetAt(0).getColumnStyle(1);
+        assertEquals(62, cs.getIndex());
+        assertEquals("#,##0.0_ ;\\-#,##0.0\\ ", cs.getDataFormatString());
+        assertEquals("Arial", cs.getFont(wbComplex).getFontName());
+        assertEquals(8*20, cs.getFont(wbComplex).getFontHeight());
+        assertEquals(10, cs.getFont(wbComplex).getColor());
+        assertFalse(cs.getFont(wbComplex).getItalic());
+        assertEquals(HSSFFont.BOLDWEIGHT_BOLD, cs.getFont(wbComplex).getBoldweight());
+    }
 }

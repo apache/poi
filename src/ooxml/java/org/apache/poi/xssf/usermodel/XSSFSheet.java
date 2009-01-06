@@ -500,6 +500,17 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                worksheet.getSheetFormatPr() :
                worksheet.addNewSheetFormatPr();
     }
+    
+    /**
+     * Returns the CellStyle that applies to the given
+     *  (0 based) column, or null if no style has been
+     *  set for that column
+     */
+    public CellStyle getColumnStyle(int column) {
+    	// TODO
+    	return null;
+    }
+
 
     /**
      * Get whether to display the guts or not,
