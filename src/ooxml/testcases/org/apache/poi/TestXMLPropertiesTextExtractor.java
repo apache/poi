@@ -22,8 +22,6 @@ import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxml4j.opc.Package;
 
-import sun.awt.X11.XModifierKeymap;
-
 import junit.framework.TestCase;
 
 public class TestXMLPropertiesTextExtractor extends TestCase {
