@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta5" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">46523 - added implementation for SUMIF function</action>
            <action dev="POI-DEVELOPERS" type="add">Support for reading HSSF column styles</action>
            <action dev="POI-DEVELOPERS" type="fix">Hook up POIXMLTextExtractor.getMetadataTextExtractor() to the already written POIXMLPropertiesTextExtractor</action>
            <action dev="POI-DEVELOPERS" type="fix">46472 - Avoid NPE in HPSFPropertiesExtractor when no properties exist</action>
