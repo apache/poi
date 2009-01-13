@@ -24,8 +24,10 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.CountUtils.I_MatchPredicate;
@@ -42,6 +44,8 @@ import org.apache.poi.ss.usermodel.CellValue;
  * @author Josh Micich
  */
 public final class TestCountFuncs extends TestCase {
+	
+	private static final String NULL = null;
 
 	public void testCountA() {
 
@@ -142,89 +146,159 @@ public final class TestCountFuncs extends TestCase {
 		assertEquals(expected, result, 0);
 	}
 
-	public void testCountIfEmptyStringCriteria() {
+	private static I_MatchPredicate createCriteriaPredicate(Eval ev) {
+		return Countif.createCriteriaPredicate(ev, 0, 0);
+	}
+	
+	/**
+	 * the criteria arg is mostly handled by {@link OperandResolver#getSingleValue(Eval, int, short)}
+	 */
+	public void testCountifAreaCriteria() {
+		int srcColIx = 2; // anything but column A
+		
+		ValueEval v0 = new NumberEval(2.0);
+		ValueEval v1 = new StringEval("abc");
+		ValueEval v2 = ErrorEval.DIV_ZERO;
+		
+		AreaEval ev = EvalFactory.createAreaEval("A10:A12", new ValueEval[] { v0, v1, v2, });
+		
+		I_MatchPredicate mp;
+		mp = Countif.createCriteriaPredicate(ev, 9, srcColIx);
+		confirmPredicate(true, mp, srcColIx);
+		confirmPredicate(false, mp, "abc");
+		confirmPredicate(false, mp, ErrorEval.DIV_ZERO);
+		
+		mp = Countif.createCriteriaPredicate(ev, 10, srcColIx);
+		confirmPredicate(false, mp, srcColIx);
+		confirmPredicate(true, mp, "abc");
+		confirmPredicate(false, mp, ErrorEval.DIV_ZERO);
+		
+		mp = Countif.createCriteriaPredicate(ev, 11, srcColIx);
+		confirmPredicate(false, mp, srcColIx);
+		confirmPredicate(false, mp, "abc");
+		confirmPredicate(true, mp, ErrorEval.DIV_ZERO);
+		confirmPredicate(false, mp, ErrorEval.VALUE_INVALID);
+
+		// tricky: indexing outside of A10:A12 
+		// even this #VALUE! error gets used by COUNTIF as valid criteria
+		mp = Countif.createCriteriaPredicate(ev, 12, srcColIx);
+		confirmPredicate(false, mp, srcColIx);
+		confirmPredicate(false, mp, "abc");
+		confirmPredicate(false, mp, ErrorEval.DIV_ZERO);
+		confirmPredicate(true, mp, ErrorEval.VALUE_INVALID);
+	}
+	
+	public void testCountifEmptyStringCriteria() {
 		I_MatchPredicate mp;
 
 		// pred '=' matches blank cell but not empty string
-		mp = Countif.createCriteriaPredicate(new StringEval("="));
+		mp = createCriteriaPredicate(new StringEval("="));
 		confirmPredicate(false, mp, "");
-		confirmPredicate(true, mp, null);
+		confirmPredicate(true, mp, NULL);
 
 		// pred '' matches both blank cell but not empty string
-		mp = Countif.createCriteriaPredicate(new StringEval(""));
+		mp = createCriteriaPredicate(new StringEval(""));
 		confirmPredicate(true, mp, "");
-		confirmPredicate(true, mp, null);
+		confirmPredicate(true, mp, NULL);
 
 		// pred '<>' matches empty string but not blank cell
-		mp = Countif.createCriteriaPredicate(new StringEval("<>"));
-		confirmPredicate(false, mp, null);
+		mp = createCriteriaPredicate(new StringEval("<>"));
+		confirmPredicate(false, mp, NULL);
 		confirmPredicate(true, mp, "");
 	}
 
 	public void testCountifComparisons() {
 		I_MatchPredicate mp;
 
-		mp = Countif.createCriteriaPredicate(new StringEval(">5"));
+		mp = createCriteriaPredicate(new StringEval(">5"));
 		confirmPredicate(false, mp, 4);
 		confirmPredicate(false, mp, 5);
 		confirmPredicate(true, mp, 6);
 
-		mp = Countif.createCriteriaPredicate(new StringEval("<=5"));
+		mp = createCriteriaPredicate(new StringEval("<=5"));
 		confirmPredicate(true, mp, 4);
 		confirmPredicate(true, mp, 5);
 		confirmPredicate(false, mp, 6);
 		confirmPredicate(true, mp, "4.9");
 		confirmPredicate(false, mp, "4.9t");
 		confirmPredicate(false, mp, "5.1");
-		confirmPredicate(false, mp, null);
+		confirmPredicate(false, mp, NULL);
 
-		mp = Countif.createCriteriaPredicate(new StringEval("=abc"));
+		mp = createCriteriaPredicate(new StringEval("=abc"));
 		confirmPredicate(true, mp, "abc");
 
-		mp = Countif.createCriteriaPredicate(new StringEval("=42"));
+		mp = createCriteriaPredicate(new StringEval("=42"));
 		confirmPredicate(false, mp, 41);
 		confirmPredicate(true, mp, 42);
 		confirmPredicate(true, mp, "42");
 
-		mp = Countif.createCriteriaPredicate(new StringEval(">abc"));
+		mp = createCriteriaPredicate(new StringEval(">abc"));
 		confirmPredicate(false, mp, 4);
 		confirmPredicate(false, mp, "abc");
 		confirmPredicate(true, mp, "abd");
 
-		mp = Countif.createCriteriaPredicate(new StringEval(">4t3"));
+		mp = createCriteriaPredicate(new StringEval(">4t3"));
 		confirmPredicate(false, mp, 4);
 		confirmPredicate(false, mp, 500);
 		confirmPredicate(true, mp, "500");
 		confirmPredicate(true, mp, "4t4");
 	}
+	
+	/**
+	 * the criteria arg value can be an error code (the error does not
+	 * propagate to the COUNTIF result).
+	 */
+	public void testCountifErrorCriteria() {
+		I_MatchPredicate mp;
+
+		mp = createCriteriaPredicate(new StringEval("#REF!"));
+		confirmPredicate(false, mp, 4);
+		confirmPredicate(false, mp, "#REF!");
+		confirmPredicate(true, mp, ErrorEval.REF_INVALID);
+
+		mp = createCriteriaPredicate(new StringEval("<#VALUE!"));
+		confirmPredicate(false, mp, 4);
+		confirmPredicate(false, mp, "#DIV/0!");
+		confirmPredicate(false, mp, "#REF!");
+		confirmPredicate(true, mp, ErrorEval.DIV_ZERO);
+		confirmPredicate(false, mp, ErrorEval.REF_INVALID);
+		
+		// not quite an error literal, should be treated as plain text
+		mp = createCriteriaPredicate(new StringEval("<=#REF!a"));
+		confirmPredicate(false, mp, 4);
+		confirmPredicate(true, mp, "#DIV/0!");
+		confirmPredicate(true, mp, "#REF!");
+		confirmPredicate(false, mp, ErrorEval.DIV_ZERO);
+		confirmPredicate(false, mp, ErrorEval.REF_INVALID);
+	}
 
 	public void testWildCards() {
 		I_MatchPredicate mp;
 
-		mp = Countif.createCriteriaPredicate(new StringEval("a*b"));
+		mp = createCriteriaPredicate(new StringEval("a*b"));
 		confirmPredicate(false, mp, "abc");
 		confirmPredicate(true, mp, "ab");
 		confirmPredicate(true, mp, "axxb");
 		confirmPredicate(false, mp, "xab");
 
-		mp = Countif.createCriteriaPredicate(new StringEval("a?b"));
+		mp = createCriteriaPredicate(new StringEval("a?b"));
 		confirmPredicate(false, mp, "abc");
 		confirmPredicate(false, mp, "ab");
 		confirmPredicate(false, mp, "axxb");
 		confirmPredicate(false, mp, "xab");
 		confirmPredicate(true, mp, "axb");
 
-		mp = Countif.createCriteriaPredicate(new StringEval("a~?"));
+		mp = createCriteriaPredicate(new StringEval("a~?"));
 		confirmPredicate(false, mp, "a~a");
 		confirmPredicate(false, mp, "a~?");
 		confirmPredicate(true, mp, "a?");
 
-		mp = Countif.createCriteriaPredicate(new StringEval("~*a"));
+		mp = createCriteriaPredicate(new StringEval("~*a"));
 		confirmPredicate(false, mp, "~aa");
 		confirmPredicate(false, mp, "~*a");
 		confirmPredicate(true, mp, "*a");
 
-		mp = Countif.createCriteriaPredicate(new StringEval("12?12"));
+		mp = createCriteriaPredicate(new StringEval("12?12"));
 		confirmPredicate(false, mp, 12812);
 		confirmPredicate(true, mp, "12812");
 		confirmPredicate(false, mp, "128812");
@@ -233,18 +307,18 @@ public final class TestCountFuncs extends TestCase {
 		I_MatchPredicate mp;
 
 		// make sure special reg-ex chars are treated like normal chars
-		mp = Countif.createCriteriaPredicate(new StringEval("a.b"));
+		mp = createCriteriaPredicate(new StringEval("a.b"));
 		confirmPredicate(false, mp, "aab");
 		confirmPredicate(true, mp, "a.b");
 
 
-		mp = Countif.createCriteriaPredicate(new StringEval("a~b"));
+		mp = createCriteriaPredicate(new StringEval("a~b"));
 		confirmPredicate(false, mp, "ab");
 		confirmPredicate(false, mp, "axb");
 		confirmPredicate(false, mp, "a~~b");
 		confirmPredicate(true, mp, "a~b");
 
-		mp = Countif.createCriteriaPredicate(new StringEval(">a*b"));
+		mp = createCriteriaPredicate(new StringEval(">a*b"));
 		confirmPredicate(false, mp, "a(b");
 		confirmPredicate(true, mp, "aab");
 		confirmPredicate(false, mp, "a*a");
@@ -257,6 +331,9 @@ public final class TestCountFuncs extends TestCase {
 	private static void confirmPredicate(boolean expectedResult, I_MatchPredicate matchPredicate, String value) {
 		Eval ev = value == null ? (Eval)BlankEval.INSTANCE : new StringEval(value);
 		assertEquals(expectedResult, matchPredicate.matches(ev));
+	}
+	private static void confirmPredicate(boolean expectedResult, I_MatchPredicate matchPredicate, ErrorEval value) {
+		assertEquals(expectedResult, matchPredicate.matches(value));
 	}
 
 	public void testCountifFromSpreadsheet() {

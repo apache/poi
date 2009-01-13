@@ -24,6 +24,7 @@ import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
@@ -214,6 +215,24 @@ public final class Countif implements Function {
 			return _operator.evaluate(testValue - _value);
 		}
 	}
+	private static final class ErrorMatcher implements I_MatchPredicate {
+
+		private final int _value;
+		private final CmpOp _operator;
+
+		public ErrorMatcher(int errorCode, CmpOp operator) {
+			_value = errorCode;
+			_operator = operator;
+		}
+
+		public boolean matches(Eval x) {
+			if(x instanceof ErrorEval) {
+				int testValue = ((ErrorEval)x).getErrorCode();
+				return _operator.evaluate(testValue - _value);
+			}
+			return false;
+		}
+	}
 	private static final class StringMatcher implements I_MatchPredicate {
 
 		private final String _value;
@@ -322,7 +341,7 @@ public final class Countif implements Function {
 		}
 	}
 
-	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+	public Eval evaluate(Eval[] args, int srcRowIndex, short srcColumnIndex) {
 		switch(args.length) {
 			case 2:
 				// expected
@@ -333,41 +352,36 @@ public final class Countif implements Function {
 				return ErrorEval.VALUE_INVALID;
 		}
 
-		Eval criteriaArg = args[1];
-		if(criteriaArg instanceof RefEval) {
-			// criteria is not a literal value, but a cell reference
-			// for example COUNTIF(B2:D4, E1)
-			RefEval re = (RefEval)criteriaArg;
-			criteriaArg = re.getInnerValueEval();
-		} else {
-			// other non literal tokens such as function calls, have been fully evaluated
-			// for example COUNTIF(B2:D4, COLUMN(E1))
-		}
-		if(criteriaArg instanceof BlankEval) {
+		I_MatchPredicate mp = createCriteriaPredicate(args[1], srcRowIndex, srcColumnIndex);
+		if(mp == null) {
 			// If the criteria arg is a reference to a blank cell, countif always returns zero.
 			return NumberEval.ZERO;
 		}
-		I_MatchPredicate mp = createCriteriaPredicate(criteriaArg);
-		return countMatchingCellsInArea(args[0], mp);
+		double result = countMatchingCellsInArea(args[0], mp);
+		return new NumberEval(result);
 	}
 	/**
 	 * @return the number of evaluated cells in the range that match the specified criteria
 	 */
-	private Eval countMatchingCellsInArea(Eval rangeArg, I_MatchPredicate criteriaPredicate) {
+	private double countMatchingCellsInArea(Eval rangeArg, I_MatchPredicate criteriaPredicate) {
 		
-		int result;
 		if (rangeArg instanceof RefEval) {
-			result = CountUtils.countMatchingCell((RefEval) rangeArg, criteriaPredicate);
+			return CountUtils.countMatchingCell((RefEval) rangeArg, criteriaPredicate);
 		} else if (rangeArg instanceof AreaEval) {
-			result = CountUtils.countMatchingCellsInArea((AreaEval) rangeArg, criteriaPredicate);
+			return CountUtils.countMatchingCellsInArea((AreaEval) rangeArg, criteriaPredicate);
 		} else {
 			throw new IllegalArgumentException("Bad range arg type (" + rangeArg.getClass().getName() + ")");
 		}
-		return new NumberEval(result);
 	}
 
-	/* package */ static I_MatchPredicate createCriteriaPredicate(Eval evaluatedCriteriaArg) {
+	/**
+	 * Creates a criteria predicate object for the supplied criteria arg
+	 * @return <code>null</code> if the arg evaluates to blank.
+	 */
+	/* package */ static I_MatchPredicate createCriteriaPredicate(Eval arg, int srcRowIndex, int srcColumnIndex) {
 
+		Eval evaluatedCriteriaArg = evaluateCriteriaArg(arg, srcRowIndex, srcColumnIndex);
+		
 		if(evaluatedCriteriaArg instanceof NumberEval) {
 			return new NumberMatcher(((NumberEval)evaluatedCriteriaArg).getNumberValue(), CmpOp.OP_NONE);
 		}
@@ -378,10 +392,27 @@ public final class Countif implements Function {
 		if(evaluatedCriteriaArg instanceof StringEval) {
 			return createGeneralMatchPredicate((StringEval)evaluatedCriteriaArg);
 		}
+		if(evaluatedCriteriaArg instanceof ErrorEval) {
+			return new ErrorMatcher(((ErrorEval)evaluatedCriteriaArg).getErrorCode(), CmpOp.OP_NONE);
+		}
+		if(evaluatedCriteriaArg == BlankEval.INSTANCE) {
+			return null;
+		}
 		throw new RuntimeException("Unexpected type for criteria (" 
 				+ evaluatedCriteriaArg.getClass().getName() + ")");
 	}
 
+	/**
+	 * 
+	 * @return the de-referenced criteria arg (possibly {@link ErrorEval})
+	 */
+	private static Eval evaluateCriteriaArg(Eval arg, int srcRowIndex, int srcColumnIndex) {
+		try {
+			return OperandResolver.getSingleValue(arg, srcRowIndex, (short)srcColumnIndex);
+		} catch (EvaluationException e) {
+			return e.getErrorEval();
+		}
+	}
 	/**
 	 * When the second argument is a string, many things are possible
 	 */
@@ -399,9 +430,27 @@ public final class Countif implements Function {
 		if(doubleVal != null) {
 			return new NumberMatcher(doubleVal.doubleValue(), operator);
 		}
+		ErrorEval ee = parseError(value);
+		if (ee != null) {
+			return new ErrorMatcher(ee.getErrorCode(), operator);
+		}
 
 		//else - just a plain string with no interpretation.
 		return new StringMatcher(value, operator);
+	}
+	private static ErrorEval parseError(String value) {
+		if (value.length() < 4 || value.charAt(0) != '#') {
+			return null;
+		}
+		if (value.equals("#NULL!"))  return ErrorEval.NULL_INTERSECTION;
+		if (value.equals("#DIV/0!")) return ErrorEval.DIV_ZERO;
+		if (value.equals("#VALUE!")) return ErrorEval.VALUE_INVALID;
+		if (value.equals("#REF!"))   return ErrorEval.REF_INVALID;
+		if (value.equals("#NAME?"))  return ErrorEval.NAME_INVALID;
+		if (value.equals("#NUM!"))   return ErrorEval.NUM_ERROR;
+		if (value.equals("#N/A"))    return ErrorEval.NA;
+
+		return null;
 	}
 	/**
 	 * Boolean literals ('TRUE', 'FALSE') treated similarly but NOT same as numbers. 
