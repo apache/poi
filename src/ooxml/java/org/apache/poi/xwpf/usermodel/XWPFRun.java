@@ -406,7 +406,7 @@ public class XWPFRun {
      * content. 
      * A break is a special character which is used to override the
      * normal line breaking that would be performed based on the normal layout
-     * of the document’s contents. 
+     * of the document's contents. 
      * @see addCarriageReturn()
      */
     public void addBreak() {
@@ -418,7 +418,7 @@ public class XWPFRun {
      * content.
      * A break is a special character which is used to override the
      * normal line breaking that would be performed based on the normal layout
-     * of the document’s contents.
+     * of the document's contents.
      * <p>
      * The behavior of this break character (the
      * location where text shall be restarted after this break) shall be
@@ -436,7 +436,7 @@ public class XWPFRun {
      * Specifies that a break shall be placed at the current location in the run
      * content. A break is a special character which is used to override the
      * normal line breaking that would be performed based on the normal layout
-     * of the document’s contents.
+     * of the document's contents.
      * <p>
      * The behavior of this break character (the
      * location where text shall be restarted after this break) shall be
