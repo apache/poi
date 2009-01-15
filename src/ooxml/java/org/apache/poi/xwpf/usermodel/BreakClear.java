@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  * Specifies the set of possible restart locations which may be used as to
- * determine the next available line when a break’s type attribute has a value
+ * determine the next available line when a break's type attribute has a value
  * of textWrapping.
  * 
  * @author Gisella Bronzetti
