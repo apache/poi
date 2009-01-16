@@ -316,25 +316,25 @@ public final class TestXSSFCell extends TestCase {
         cell = row.createCell(100);
         assertEquals("CW101", cell.getCTCell().getR());
 
-        row = sheet.createRow(XSSFRow.MAX_ROW_NUMBER);
+        row = sheet.createRow(XSSFRow.MAX_ROW_NUMBER-1);
         cell = row.createCell(100);
-        assertEquals("CW1048577", cell.getCTCell().getR());
+        assertEquals("CW1048576", cell.getCTCell().getR());
 
-        row = sheet.createRow(XSSFRow.MAX_ROW_NUMBER);
-        cell = row.createCell(XSSFCell.MAX_COLUMN_NUMBER);
-        assertEquals("XFE1048577", cell.getCTCell().getR());
+        row = sheet.createRow(XSSFRow.MAX_ROW_NUMBER-1);
+        cell = row.createCell(XSSFCell.MAX_COLUMN_NUMBER-1);
+        assertEquals("XFD1048576", cell.getCTCell().getR());
 
         try {
-            sheet.createRow(XSSFRow.MAX_ROW_NUMBER + 1);
-            fail("expecting exception when rownum > XSSFRow.MAX_ROW_NUMBER");
+            sheet.createRow(XSSFRow.MAX_ROW_NUMBER);
+            fail("expecting exception when rownum >= XSSFRow.MAX_ROW_NUMBER");
         } catch(IllegalArgumentException e){
             ;
         }
 
+        row = sheet.createRow(100);
         try {
-            row = sheet.createRow(100);
-            row.createCell(XSSFCell.MAX_COLUMN_NUMBER + 1);
-            fail("expecting exception when columnIndex > XSSFCell.MAX_COLUMN_NUMBER");
+            row.createCell(XSSFCell.MAX_COLUMN_NUMBER);
+            fail("expecting exception when columnIndex >= XSSFCell.MAX_COLUMN_NUMBER");
         } catch(IllegalArgumentException e){
             ;
         }

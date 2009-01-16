@@ -88,6 +88,13 @@ public class HSSFCell implements Cell {
     /** Error   Cell type (5) @see #setCellType(int) @see #getCellType() */
     public final static int CELL_TYPE_ERROR   = 5;
 
+    private static final String FILE_FORMAT_NAME  = "BIFF8";
+    /**
+     * The maximum  number of columns in BIFF8
+     */
+    private static final int LAST_COLUMN_NUMBER  = 255; // 2^8 - 1
+    private static final String LAST_COLUMN_NAME  = "IV";
+    
     public final static short        ENCODING_UNCHANGED          = -1;
     public final static short        ENCODING_COMPRESSED_UNICODE = 0;
     public final static short        ENCODING_UTF_16             = 1;
@@ -915,14 +922,12 @@ public class HSSFCell implements Cell {
     /**
      * @throws RuntimeException if the bounds are exceeded.
      */
-    private void checkBounds(int cellNum) {
-      if (cellNum > 255) {
-          throw new IllegalArgumentException("You cannot have more than 255 columns "+
-                    "in a given row (IV).  Because Excel can't handle it");
-      }
-      else if (cellNum < 0) {
-          throw new IllegalArgumentException("You cannot reference columns with an index of less then 0.");
-      }
+    private static void checkBounds(int cellIndex) {
+        if (cellIndex < 0 || cellIndex > LAST_COLUMN_NUMBER) {
+            throw new IllegalArgumentException("Invalid column index (" + cellIndex 
+                    + ").  Allowable column range for " + FILE_FORMAT_NAME + " is (0.." 
+                    + LAST_COLUMN_NUMBER + ") or ('A'..'" + LAST_COLUMN_NAME + "')");
+        }
     }
 
     /**

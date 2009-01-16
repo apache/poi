@@ -32,7 +32,6 @@ import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.POIXMLException;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
@@ -57,10 +56,13 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 public final class XSSFCell implements Cell {
     private static POILogger logger = POILogFactory.getLogger(XSSFCell.class);
 
+    private static final String FILE_FORMAT_NAME  = "BIFF12";
     /**
      * The maximum  number of columns in SpreadsheetML
      */
-    public static final int MAX_COLUMN_NUMBER  = 16384; //2^14
+    public static final int MAX_COLUMN_NUMBER  = 16384; // 2^14
+    private static final int LAST_COLUMN_NUMBER  = MAX_COLUMN_NUMBER-1;
+    private static final String LAST_COLUMN_NAME  = "XFD";
 
     private static final String FALSE_AS_STRING = "0";
     private static final String TRUE_AS_STRING  = "1";
@@ -762,12 +764,11 @@ public final class XSSFCell implements Cell {
     /**
      * @throws RuntimeException if the bounds are exceeded.
      */
-    private static void checkBounds(int cellNum) {
-        if (cellNum > MAX_COLUMN_NUMBER) {
-            throw new IllegalArgumentException("You cannot have more than "+MAX_COLUMN_NUMBER+" columns " +
-                    "in a given row because Excel can't handle it");
-        } else if (cellNum < 0) {
-            throw new IllegalArgumentException("You cannot reference columns with an index of less then 0.");
+    private static void checkBounds(int cellIndex) {
+        if (cellIndex < 0 || cellIndex > LAST_COLUMN_NUMBER) {
+            throw new IllegalArgumentException("Invalid column index (" + cellIndex 
+                    + ").  Allowable column range for " + FILE_FORMAT_NAME + " is (0.." 
+                    + LAST_COLUMN_NUMBER + ") or ('A'..'" + LAST_COLUMN_NAME + "')");
         }
     }
 
