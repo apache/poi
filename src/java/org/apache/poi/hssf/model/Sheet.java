@@ -56,6 +56,7 @@ import org.apache.poi.hssf.record.SaveRecalcRecord;
 import org.apache.poi.hssf.record.ScenarioProtectRecord;
 import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.hssf.record.UncalcedRecord;
+import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
@@ -163,9 +164,18 @@ public final class Sheet implements Model {
 
         records            = new ArrayList<RecordBase>(128);
         // TODO - take chart streams off into separate java objects
-        int       bofEofNestingLevel = 0;  // nesting level can only get to 2 (when charts are present)
+        int       bofEofNestingLevel = 1;  // nesting level can only get to 2 (when charts are present)
         int dimsloc = -1;
 
+        if (rs.peekNextSid() == BOFRecord.sid) {
+            BOFRecord bof = (BOFRecord) rs.getNext();
+            if (bof.getType() != BOFRecord.TYPE_WORKSHEET) {
+                // TODO - fix junit tests throw new RuntimeException("Bad BOF record type");
+            }
+            records.add(bof);
+        } else {
+            throw new RuntimeException("BOF record expected");
+        }
         while (rs.hasNext()) {
             int recSid = rs.peekNextSid();
 
@@ -200,12 +210,34 @@ public final class Sheet implements Model {
 
             if (PageSettingsBlock.isComponentRecord(recSid)) {
                 PageSettingsBlock psb = new PageSettingsBlock(rs);
-                if (bofEofNestingLevel == 1) {
-                    if (_psBlock == null) {
-                        _psBlock = psb;
+                if (_psBlock == null) {
+                    _psBlock = psb;
+                } else {
+                    if (bofEofNestingLevel == 2) {
+                        // It's normal for a chart to have its own PageSettingsBlock
+                        // Fall through and add psb here, because chart records 
+                        // are stored loose among the sheet records.
+                        // this latest psb does not clash with _psBlock
+                    } else if (windowTwo != null) {
+                        // probably 'Custom View Settings' sub-stream which is found between
+                        // USERSVIEWBEGIN(01AA) and USERSVIEWEND(01AB)
+                        // This happens three times in test sample file "29982.xls"
+                         if (rs.peekNextSid() != UnknownRecord.USERSVIEWEND_01AB) {
+                            // not quite the expected situation
+                            throw new RuntimeException("two Page Settings Blocks found in the same sheet");
+                        }
                     } else {
-                        // more than one 'Page Settings Block' at nesting level 1 ?
-                        // apparently this happens in about 15 test sample files
+                            // Some apps write PLS, WSBOOL, <psb> but PLS is part of <psb>
+                            // This happens in the test sample file "NoGutsRecords.xls" and "WORKBOOK_in_capitals.xls"
+                            // In this case the first PSB is two records back
+                            int prevPsbIx = records.size()-2;
+                            if (_psBlock != records.get(prevPsbIx) || !(records.get(prevPsbIx+1) instanceof WSBoolRecord)) {
+                                // not quite the expected situation
+                                throw new RuntimeException("two Page Settings Blocks found in the same sheet");
+                            }
+                            records.remove(prevPsbIx); // WSBOOL will drop down one position.
+                            psb = mergePSBs(_psBlock, psb);
+                            _psBlock = psb;
                     }
                 }
                 records.add(psb);
@@ -332,7 +364,34 @@ public final class Sheet implements Model {
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "sheet createSheet (existing file) exited");
     }
+    /**
+     * Hack to recover from the situation where the page settings block has been split by
+     * an intervening {@link WSBoolRecord}
+     */
+    private static PageSettingsBlock mergePSBs(PageSettingsBlock a, PageSettingsBlock b) {
+        List<Record> temp = new ArrayList<Record>();
+        RecordTransferrer rt = new RecordTransferrer(temp);
+        a.visitContainedRecords(rt);
+        b.visitContainedRecords(rt);
+        RecordStream rs = new RecordStream(temp, 0);
+        PageSettingsBlock result = new PageSettingsBlock(rs);
+        if (rs.hasNext()) {
+            throw new RuntimeException("PageSettingsBlocks did not merge properly");
+        }
+        return result;
+    }
 
+    private static final class RecordTransferrer  implements RecordVisitor {
+
+        private final List<Record> _destList;
+
+        public RecordTransferrer(List<Record> destList) {
+            _destList = destList;
+        }
+        public void visitRecord(Record r) {
+            _destList.add(r);
+        }
+    }
     private static final class RecordCloner implements RecordVisitor {
 
         private final List<RecordBase> _destList;

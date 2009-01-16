@@ -20,6 +20,8 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
+import com.sun.java_cup.internal.version;
+
 /**
  * Title: Beginning Of File (0x0809)<P>
  * Description: Somewhat of a misnomer, its used for the beginning of a set of
@@ -35,8 +37,8 @@ public final class BOFRecord extends StandardRecord {
      */
     public final static short sid = 0x809;
 
-    /** suggested default (0x06 - BIFF8) */
-    public final static int VERSION             = 0x06;
+    /** suggested default (0x0600 - BIFF8) */
+    public final static int VERSION             = 0x0600;
     /** suggested default 0x10d3 */
     public final static int BUILD               = 0x10d3;
     /** suggested default  0x07CC (1996) */
@@ -62,6 +64,19 @@ public final class BOFRecord extends StandardRecord {
      * Constructs an empty BOFRecord with no fields set.
      */
     public BOFRecord() {
+    }
+    
+    private BOFRecord(int type) {
+        field_1_version = VERSION;
+        field_2_type = type;
+        field_3_build = BUILD;
+        field_4_year = BUILD_YEAR;
+        field_5_history = 0x01;
+        field_6_rversion = VERSION;
+    }
+    
+    public static BOFRecord createSheetBOF() {
+        return new BOFRecord(TYPE_WORKSHEET);
     }
 
     public BOFRecord(RecordInputStream in) {

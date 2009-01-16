@@ -17,26 +17,34 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
- * Collects all tests for package <tt>org.apache.poi.hssf.record.aggregates</tt>.
+ * Tess for {@link PageSettingsBlock}
  * 
- * @author Josh Micich
+ * @author Dmitriy Kumshayev
  */
-public final class AllRecordAggregateTests {
+public final class TestPageSettingBlock extends TestCase {
 	
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllRecordAggregateTests.class.getName());
-
-		result.addTestSuite(TestCFRecordsAggregate.class);
-		result.addTestSuite(TestColumnInfoRecordsAggregate.class);
-		result.addTestSuite(TestFormulaRecordAggregate.class);
-		result.addTestSuite(TestRowRecordsAggregate.class);
-		result.addTestSuite(TestSharedValueManager.class);
-		result.addTestSuite(TestValueRecordsAggregate.class);
-		result.addTestSuite(TestPageSettingBlock.class);
-		return result;
+	public void testPrintSetup_bug46548() {
+		
+		// PageSettingBlock in this file contains PLS (sid=x004D) record 
+		// followed by ContinueRecord (sid=x003C)  
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex46548-23133.xls");
+		HSSFSheet sheet = wb.getSheetAt(0);
+		HSSFPrintSetup ps = sheet.getPrintSetup();
+		
+		try {
+			ps.getCopies();
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			throw new AssertionFailedError("Identified bug 46548: PageSettingBlock missing PrintSetupRecord record");
+		}
 	}
 }

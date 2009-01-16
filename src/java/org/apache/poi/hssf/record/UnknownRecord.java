@@ -42,6 +42,8 @@ public final class UnknownRecord extends StandardRecord {
 	public static final int BITMAP_00E9          = 0x00E9;
 	public static final int PHONETICPR_00EF      = 0x00EF;
 	public static final int LABELRANGES_015F     = 0x015F;
+	public static final int USERSVIEWBEGIN_01AA  = 0x01AA;
+	public static final int USERSVIEWEND_01AB    = 0x01AB;
 	public static final int QUICKTIP_0800        = 0x0800;
 	public static final int SHEETEXT_0862        = 0x0862; // OOO calls this SHEETLAYOUT
 	public static final int SHEETPROTECTION_0867 = 0x0867;
@@ -145,8 +147,8 @@ public final class UnknownRecord extends StandardRecord {
 			case LABELRANGES_015F: return "LABELRANGES";
 			case 0x01BA: return "CODENAME";
 			case 0x01A9: return "USERBVIEW";
-			case 0x01AA: return "USERSVIEWBEGIN";
-			case 0x01AB: return "USERSVIEWEND";
+			case USERSVIEWBEGIN_01AA: return "USERSVIEWBEGIN";
+			case USERSVIEWEND_01AB: return "USERSVIEWEND";
 			case 0x01AD: return "QSI";
 
 			case 0x01C0: return "EXCEL9FILE";

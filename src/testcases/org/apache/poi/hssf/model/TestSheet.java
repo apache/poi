@@ -68,7 +68,7 @@ public final class TestSheet extends TestCase {
     public void testCreateSheet() {
         // Check we're adding row and cell aggregates
         List<Record> records = new ArrayList<Record>();
-        records.add( new BOFRecord() );
+        records.add(BOFRecord.createSheetBOF());
         records.add( new DimensionsRecord() );
         records.add(createWindow2Record());
         records.add(EOFRecord.instance);
@@ -187,6 +187,7 @@ public final class TestSheet extends TestCase {
             new CellRangeAddress(0, 1, 0, 2),
         };
         MergeCellsRecord merged = new MergeCellsRecord(cras, 0, cras.length);
+        records.add(BOFRecord.createSheetBOF());
         records.add(new DimensionsRecord());
         records.add(new RowRecord(0));
         records.add(new RowRecord(1));
@@ -449,7 +450,7 @@ public final class TestSheet extends TestCase {
     public void testUncalcSize_bug45066() {
 
         List<Record> records = new ArrayList<Record>();
-        records.add(new BOFRecord());
+        records.add(BOFRecord.createSheetBOF());
         records.add(new UncalcedRecord());
         records.add(new DimensionsRecord());
         records.add(createWindow2Record());
@@ -600,7 +601,7 @@ public final class TestSheet extends TestCase {
         nr.setValue(3.0);
 
         List<Record> inRecs = new ArrayList<Record>();
-        inRecs.add(new BOFRecord());
+        inRecs.add(BOFRecord.createSheetBOF());
         inRecs.add(new RowRecord(rowIx));
         inRecs.add(nr);
         inRecs.add(createWindow2Record());

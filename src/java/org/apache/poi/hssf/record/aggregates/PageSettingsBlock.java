@@ -19,11 +19,13 @@ package org.apache.poi.hssf.record.aggregates;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.BottomMarginRecord;
+import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.FooterRecord;
 import org.apache.poi.hssf.record.HCenterRecord;
 import org.apache.poi.hssf.record.HeaderRecord;
@@ -60,6 +62,13 @@ public final class PageSettingsBlock extends RecordAggregate {
 	private TopMarginRecord _topMargin;
 	private BottomMarginRecord _bottomMargin;
 	private Record _pls;
+	/**
+	 * holds any continue records found after the PLS record.<br/>
+	 * This would not be required if PLS was properly interpreted.
+	 * Currently, PLS is an {@link UnknownRecord} and does not automatically
+	 * include any trailing {@link ContinueRecord}s.
+	 */
+	private List<ContinueRecord> _plsContinues;
 	private PrintSetupRecord printSetup;
 	private Record _bitmap;
 
@@ -140,13 +149,19 @@ public final class PageSettingsBlock extends RecordAggregate {
 			case BottomMarginRecord.sid:
 				_bottomMargin = (BottomMarginRecord) rs.getNext();
 				break;
-			case 0x004D: // PLS
+			case UnknownRecord.PLS_004D:
 				_pls = rs.getNext();
+				while (rs.peekNextSid()==ContinueRecord.sid) {
+					if (_plsContinues==null) {
+						_plsContinues = new LinkedList<ContinueRecord>();
+					}
+					_plsContinues.add((ContinueRecord)rs.getNext());
+				}
 				break;
 			case PrintSetupRecord.sid:
 				printSetup = (PrintSetupRecord)rs.getNext();
 				break;
-			case 0x00E9: // BITMAP
+			case UnknownRecord.BITMAP_00E9:
 				_bitmap = rs.getNext();
 				break;
 			default:
@@ -202,6 +217,11 @@ public final class PageSettingsBlock extends RecordAggregate {
 		visitIfPresent(_topMargin, rv);
 		visitIfPresent(_bottomMargin, rv);
 		visitIfPresent(_pls, rv);
+		if (_plsContinues != null) {
+			for (ContinueRecord cr : _plsContinues) {
+				visitIfPresent(cr, rv);
+			}
+		}
 		visitIfPresent(printSetup, rv);
 		visitIfPresent(_bitmap, rv);
 	}
@@ -335,58 +355,51 @@ public final class PageSettingsBlock extends RecordAggregate {
 	 * @param margin which margin to get
 	 * @return the size of the margin
 	 */
-   public double getMargin(short margin) {
-	   Margin m = getMarginRec(margin);
-	   if (m != null) {
-		return m.getMargin();
-	} else {
-	   switch ( margin )
-	   {
-	   case Sheet.LeftMargin:
-		   return .75;
-	   case Sheet.RightMargin:
-		   return .75;
-	   case Sheet.TopMargin:
-		   return 1.0;
-	   case Sheet.BottomMargin:
-		   return 1.0;
-	   }
+	public double getMargin(short margin) {
+		Margin m = getMarginRec(margin);
+		if (m != null) {
+			return m.getMargin();
+		}
+		switch (margin) {
+			case Sheet.LeftMargin:   return .75;
+			case Sheet.RightMargin:  return .75;
+			case Sheet.TopMargin:    return 1.0;
+			case Sheet.BottomMargin: return 1.0;
+		}
 		throw new RuntimeException( "Unknown margin constant:  " + margin );
-   }
-   }
+	}
 
 	/**
 	 * Sets the size of the margin in inches.
 	 * @param margin which margin to get
 	 * @param size the size of the margin
 	 */
-   public void setMargin(short margin, double size) {
-   Margin m = getMarginRec(margin);
-   if (m  == null) {
-	   switch ( margin )
-	   {
-	   case Sheet.LeftMargin:
-		   _leftMargin = new LeftMarginRecord();
-		   m = _leftMargin;
-		   break;
-	   case Sheet.RightMargin:
-		   _rightMargin = new RightMarginRecord();
-		   m = _rightMargin;
-		   break;
-	   case Sheet.TopMargin:
-		   _topMargin = new TopMarginRecord();
-		   m = _topMargin;
-		   break;
-	   case Sheet.BottomMargin:
-		   _bottomMargin = new BottomMarginRecord();
-		   m = _bottomMargin;
-		   break;
-	   default :
-		   throw new RuntimeException( "Unknown margin constant:  " + margin );
-	   }
-   }
-   m.setMargin( size );
-   }
+	public void setMargin(short margin, double size) {
+		Margin m = getMarginRec(margin);
+		if (m  == null) {
+			switch (margin) {
+				case Sheet.LeftMargin:
+					_leftMargin = new LeftMarginRecord();
+					m = _leftMargin;
+					break;
+				case Sheet.RightMargin:
+					_rightMargin = new RightMarginRecord();
+					m = _rightMargin;
+					break;
+				case Sheet.TopMargin:
+					_topMargin = new TopMarginRecord();
+					m = _topMargin;
+					break;
+				case Sheet.BottomMargin:
+					_bottomMargin = new BottomMarginRecord();
+					m = _bottomMargin;
+					break;
+				default :
+					throw new RuntimeException( "Unknown margin constant:  " + margin );
+			}
+		}
+		m.setMargin( size );
+	}
 
 	/**
 	 * Shifts all the page breaks in the range "count" number of rows/columns
