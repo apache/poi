@@ -331,33 +331,38 @@ public class TestExtractorFactory extends TestCase {
 		ext = (POIOLE2TextExtractor)
 				ExtractorFactory.createExtractor(f);
 		embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
-		
+
 		assertEquals(6, embeds.length);
-		assertTrue(embeds[0] instanceof PowerPointExtractor);
-		assertTrue(embeds[1] instanceof ExcelExtractor);
-		assertTrue(embeds[2] instanceof ExcelExtractor);
-		assertTrue(embeds[3] instanceof PowerPointExtractor);
-		assertTrue(embeds[4] instanceof WordExtractor);
-		assertTrue(embeds[5] instanceof WordExtractor);
-		for(int i=0; i<embeds.length; i++) {
+		int numWord = 0, numXls = 0, numPpt = 0;
+        for(int i=0; i<embeds.length; i++) {
 			assertTrue(embeds[i].getText().length() > 20);
-		}
-		
-		// Word
+
+            if(embeds[i] instanceof PowerPointExtractor) numPpt++;
+            else if(embeds[i] instanceof ExcelExtractor) numXls++;
+            else if(embeds[i] instanceof WordExtractor) numWord++;
+        }
+		assertEquals(2, numPpt);
+        assertEquals(2, numXls);
+        assertEquals(2, numWord);
+
+        // Word
 		f = new File(poifs_dir, "word_with_embeded.doc");
 		ext = (POIOLE2TextExtractor)
 				ExtractorFactory.createExtractor(f);
 		embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
 		
+        numWord = 0; numXls = 0; numPpt = 0;
 		assertEquals(4, embeds.length);
-		assertTrue(embeds[0] instanceof WordExtractor);
-		assertTrue(embeds[1] instanceof ExcelExtractor);
-		assertTrue(embeds[2] instanceof ExcelExtractor);
-		assertTrue(embeds[3] instanceof PowerPointExtractor);
 		for(int i=0; i<embeds.length; i++) {
 			assertTrue(embeds[i].getText().length() > 20);
+            if(embeds[i] instanceof PowerPointExtractor) numPpt++;
+            else if(embeds[i] instanceof ExcelExtractor) numXls++;
+            else if(embeds[i] instanceof WordExtractor) numWord++;
 		}
-		
+        assertEquals(1, numPpt);
+        assertEquals(2, numXls);
+        assertEquals(1, numWord);
+
 		// TODO - PowerPoint
 		// TODO - Visio
 	}
