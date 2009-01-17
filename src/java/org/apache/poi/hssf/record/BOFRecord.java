@@ -20,8 +20,6 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
-import com.sun.java_cup.internal.version;
-
 /**
  * Title: Beginning Of File (0x0809)<P>
  * Description: Somewhat of a misnomer, its used for the beginning of a set of
