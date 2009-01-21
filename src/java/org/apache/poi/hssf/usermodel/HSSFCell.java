@@ -72,7 +72,6 @@ import org.apache.poi.ss.formula.FormulaType;
  * @author  Dan Sherman (dsherman at isisph.com)
  * @author  Brian Sanders (kestrel at burdell dot org) Active Cell support
  * @author  Yegor Kozlov cell comments support
- * @version 1.0-pre
  */
 public class HSSFCell implements Cell {
     /** Numeric Cell type (0) @see #setCellType(int) @see #getCellType() */
@@ -481,7 +480,7 @@ public class HSSFCell implements Cell {
                 (( NumberRecord ) record).setValue(value);
                 break;
             case CELL_TYPE_FORMULA:
-                ((FormulaRecordAggregate)record).getFormulaRecord().setValue(value);
+                ((FormulaRecordAggregate)record).setCachedDoubleResult(value);
                 break;
         }
     }
@@ -743,7 +742,6 @@ public class HSSFCell implements Cell {
      *        precalculated value, for booleans we'll set its value. For other types we
      *        will change the cell to a boolean cell and set its value.
      */
-
     public void setCellValue(boolean value) {
         int row=record.getRow();
         short col=record.getColumn();
@@ -756,7 +754,7 @@ public class HSSFCell implements Cell {
                 (( BoolErrRecord ) record).setValue(value);
                 break;
             case CELL_TYPE_FORMULA:
-                ((FormulaRecordAggregate)record).getFormulaRecord().setCachedResultBoolean(value);
+                ((FormulaRecordAggregate)record).setCachedBooleanResult(value);
                 break;
         }
     }
@@ -780,7 +778,7 @@ public class HSSFCell implements Cell {
                 (( BoolErrRecord ) record).setValue(errorCode);
                 break;
             case CELL_TYPE_FORMULA:
-                ((FormulaRecordAggregate)record).getFormulaRecord().setCachedResultErrorCode(errorCode);
+                ((FormulaRecordAggregate)record).setCachedErrorResult(errorCode);
                 break;
         }
     }

@@ -147,7 +147,7 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
 				 rv.visitRecord(sharedFormulaRecord);
 			 }
 		 }
-		 if (_stringRecord != null) {
+		 if (_formulaRecord.hasCachedResultString() && _stringRecord != null) {
 			 rv.visitRecord(_stringRecord);
 		 }
 	}
@@ -179,6 +179,10 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
 	public void setCachedErrorResult(int errorCode) {
 		_stringRecord = null;
 		_formulaRecord.setCachedResultErrorCode(errorCode);
+	}
+	public void setCachedDoubleResult(double value) {
+		_stringRecord = null;
+		_formulaRecord.setValue(value);
 	}
 
 	public Ptg[] getFormulaTokens() {
