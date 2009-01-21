@@ -37,7 +37,8 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta5" date="2008-??-??">
-           <action dev="POI-DEVELOPERS" type="fix">46548 - Print Settings Block fixes - continued PLS records and PSB in sheet sub-streams</action>
+           <action dev="POI-DEVELOPERS" type="fix">46547 - Allow addition of conditional formatting after data validation</action>
+           <action dev="POI-DEVELOPERS" type="fix">46548 - Page Settings Block fixes - continued PLS records and PSB in sheet sub-streams</action>
            <action dev="POI-DEVELOPERS" type="add">46523 - added implementation for SUMIF function</action>
            <action dev="POI-DEVELOPERS" type="add">Support for reading HSSF column styles</action>
            <action dev="POI-DEVELOPERS" type="fix">Hook up POIXMLTextExtractor.getMetadataTextExtractor() to the already written POIXMLPropertiesTextExtractor</action>
