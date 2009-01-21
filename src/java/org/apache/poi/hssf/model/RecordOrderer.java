@@ -91,7 +91,7 @@ final class RecordOrderer {
 		sheetRecords.add(index, newRecord);
 	}
 
-	private static int findSheetInsertPos(List<RecordBase> records, Class recClass) {
+	private static int findSheetInsertPos(List<RecordBase> records, Class<? extends RecordBase> recClass) {
 		if (recClass == DataValidityTable.class) {
 			return findDataValidationTableInsertPos(records);
 		}
@@ -160,6 +160,10 @@ final class RecordOrderer {
 			if (rb instanceof MergedCellsTable) {
 				return i + 1;
 			}
+			if (rb instanceof DataValidityTable) {
+				continue;
+			}
+			
 			Record rec = (Record) rb;
 			switch (rec.getSid()) {
 				case WindowTwoRecord.sid:
@@ -170,7 +174,10 @@ final class RecordOrderer {
 				// MergedCellsTable usually here 
 				case UnknownRecord.LABELRANGES_015F:
 				case UnknownRecord.PHONETICPR_00EF:
+					// ConditionalFormattingTable goes here
 					return i + 1;
+				// HyperlinkTable (not aggregated by POI yet)
+				// DataValidityTable
 			}
 		}
 		throw new RuntimeException("Did not find Window2 record");

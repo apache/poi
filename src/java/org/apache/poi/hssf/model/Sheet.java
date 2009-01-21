@@ -504,7 +504,9 @@ public final class Sheet implements Model {
      */
     public void updateFormulasAfterCellShift(FormulaShifter shifter, int externSheetIndex) {
         getRowsAggregate().updateFormulasAfterRowShift(shifter, externSheetIndex);
-        getConditionalFormattingTable().updateFormulasAfterCellShift(shifter, externSheetIndex);
+        if (condFormatting != null) {
+            getConditionalFormattingTable().updateFormulasAfterCellShift(shifter, externSheetIndex);
+        }
         // TODO - adjust data validations
     }
 
