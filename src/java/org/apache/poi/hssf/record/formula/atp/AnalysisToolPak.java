@@ -20,34 +20,39 @@ package org.apache.poi.hssf.record.formula.atp;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 
 public final class AnalysisToolPak {
 
-	private static final FreeRefFunction NotImplemented = new FreeRefFunction() {
+	private static final class NotImplemented implements FreeRefFunction {
+		private final String _functionName;
+
+		public NotImplemented(String functionName) {
+			_functionName = functionName;
+		}
 
 		public ValueEval evaluate(Eval[] args, EvaluationWorkbook workbook, int srcCellSheet,
 				int srcCellRow, int srcCellCol) {
-			return ErrorEval.FUNCTION_NOT_IMPLEMENTED;
+			throw new NotImplementedException(_functionName);
 		}
 	};
 	
-	private static Map _functionsByName = createFunctionsMap();
+	private static Map<String, FreeRefFunction> _functionsByName = createFunctionsMap();
 
 	private AnalysisToolPak() {
 		// no instances of this class
 	}
 
 	public static FreeRefFunction findFunction(String name) {
-		return (FreeRefFunction)_functionsByName.get(name);
+		return _functionsByName.get(name);
 	}
 	
-	private static Map createFunctionsMap() {
-		Map m = new HashMap(100);
+	private static Map<String, FreeRefFunction> createFunctionsMap() {
+		Map<String, FreeRefFunction> m = new HashMap<String, FreeRefFunction>(100);
 
 		r(m, "ACCRINT", null);
 		r(m, "ACCRINTM", null);
@@ -146,8 +151,8 @@ public final class AnalysisToolPak {
 		return m;
 	}
 
-	private static void r(Map m, String functionName, FreeRefFunction pFunc) {
-		FreeRefFunction func = pFunc == null ? NotImplemented : pFunc;
+	private static void r(Map<String, FreeRefFunction> m, String functionName, FreeRefFunction pFunc) {
+		FreeRefFunction func = pFunc == null ? new NotImplemented(functionName) : pFunc;
 		m.put(functionName, func);
 	}
 }

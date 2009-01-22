@@ -43,16 +43,13 @@ public abstract class FunctionEval implements OperationEval {
     
     protected static Function[] functions = produceFunctions();
 
-    private static Map freeRefFunctionsByIdMap;
+    private static Map<Integer, FreeRefFunction> freeRefFunctionsByIdMap;
      
     static {
-        Map m = new HashMap();
-        addMapping(m, ID.INDIRECT, new Indirect());
-        addMapping(m, ID.EXTERNAL_FUNC, new ExternalFunction());
+        Map<Integer, FreeRefFunction> m = new HashMap<Integer, FreeRefFunction>();
+        m.put(createFRFKey(ID.INDIRECT), new Indirect());
+        m.put(createFRFKey(ID.EXTERNAL_FUNC), new ExternalFunction());
         freeRefFunctionsByIdMap = m;
-    }
-    private static void addMapping(Map m, int offset, FreeRefFunction frf) {
-        m.put(createFRFKey(offset), frf);
     }
     private static Integer createFRFKey(int functionIndex) {
         return new Integer(functionIndex);
@@ -67,7 +64,7 @@ public abstract class FunctionEval implements OperationEval {
         return freeRefFunctionsByIdMap.containsKey(createFRFKey(getFunctionIndex()));
     }
     public FreeRefFunction getFreeRefFunction() {
-        return (FreeRefFunction) freeRefFunctionsByIdMap.get(createFRFKey(getFunctionIndex()));
+        return freeRefFunctionsByIdMap.get(createFRFKey(getFunctionIndex()));
     }
 
     public abstract short getFunctionIndex();
@@ -164,11 +161,11 @@ public abstract class FunctionEval implements OperationEval {
         retval[88] = new Setname(); // SETNAME
         retval[89] = new Caller(); // CALLER
         retval[90] = new Deref(); // DEREF
-        retval[91] = new NotImplementedFunction(); // WINDOWS
+        retval[91] = new NotImplementedFunction("WINDOWS");
         retval[92] = new Series(); // SERIES
-        retval[93] = new NotImplementedFunction(); // DOCUMENTS
+        retval[93] = new NotImplementedFunction("DOCUMENTS");
         retval[94] = new Activecell(); // ACTIVECELL
-        retval[95] = new NotImplementedFunction(); // SELECTION
+        retval[95] = new NotImplementedFunction("SELECTION");
         retval[96] = new Result(); // RESULT
         retval[97] = NumericFunction.ATAN2;
         retval[98] = NumericFunction.ASIN;
@@ -179,8 +176,8 @@ public abstract class FunctionEval implements OperationEval {
         retval[103] = new Links(); // LINKS
         retval[104] = new Input(); // INPUT
         retval[105] = new Isref(); // ISREF
-        retval[106] = new NotImplementedFunction(); // GETFORMULA
-        retval[107] = new NotImplementedFunction(); // GETNAME
+        retval[106] = new NotImplementedFunction("GETFORMULA");
+        retval[107] = new NotImplementedFunction("GETNAME");
         retval[108] = new Setvalue(); // SETVALUE
         retval[109] = NumericFunction.LOG;
         retval[110] = new Exec(); // EXEC
@@ -196,7 +193,7 @@ public abstract class FunctionEval implements OperationEval {
         retval[120] = new Substitute(); // SUBSTITUTE
         retval[121] = new Code(); // CODE
         retval[122] = new Names(); // NAMES
-        retval[123] = new NotImplementedFunction(); // DIRECTORY
+        retval[123] = new NotImplementedFunction("DIRECTORY");
         retval[124] = new Find(); // FIND
         retval[125] = new Cell(); // CELL
         retval[126] = new Iserr(); // ISERR
@@ -205,36 +202,36 @@ public abstract class FunctionEval implements OperationEval {
         retval[129] = new Isblank(); // ISBLANK
         retval[130] = new T(); // T
         retval[131] = new N(); // N
-        retval[132] = new NotImplementedFunction(); // FOPEN
-        retval[133] = new NotImplementedFunction(); // FCLOSE
-        retval[134] = new NotImplementedFunction(); // FSIZE
-        retval[135] = new NotImplementedFunction(); // FREADLN
-        retval[136] = new NotImplementedFunction(); // FREAD
-        retval[137] = new NotImplementedFunction(); // FWRITELN
-        retval[138] = new NotImplementedFunction(); // FWRITE
+        retval[132] = new NotImplementedFunction("FOPEN");
+        retval[133] = new NotImplementedFunction("FCLOSE");
+        retval[134] = new NotImplementedFunction("FSIZE");
+        retval[135] = new NotImplementedFunction("FREADLN");
+        retval[136] = new NotImplementedFunction("FREAD");
+        retval[137] = new NotImplementedFunction("FWRITELN");
+        retval[138] = new NotImplementedFunction("FWRITE");
         retval[139] = new Fpos(); // FPOS
         retval[140] = new Datevalue(); // DATEVALUE
         retval[141] = new Timevalue(); // TIMEVALUE
         retval[142] = new Sln(); // SLN
         retval[143] = new Syd(); // SYD
         retval[144] = new Ddb(); // DDB
-        retval[145] = new NotImplementedFunction(); // GETDEF
+        retval[145] = new NotImplementedFunction("GETDEF");
         retval[146] = new Reftext(); // REFTEXT
         retval[147] = new Textref(); // TEXTREF
         retval[ID.INDIRECT] = null; // Indirect.evaluate has different signature
-        retval[149] = new NotImplementedFunction(); // REGISTER
+        retval[149] = new NotImplementedFunction("REGISTER");
         retval[150] = new Call(); // CALL
-        retval[151] = new NotImplementedFunction(); // ADDBAR
-        retval[152] = new NotImplementedFunction(); // ADDMENU
-        retval[153] = new NotImplementedFunction(); // ADDCOMMAND
-        retval[154] = new NotImplementedFunction(); // ENABLECOMMAND
-        retval[155] = new NotImplementedFunction(); // CHECKCOMMAND
-        retval[156] = new NotImplementedFunction(); // RENAMECOMMAND
-        retval[157] = new NotImplementedFunction(); // SHOWBAR
-        retval[158] = new NotImplementedFunction(); // DELETEMENU
-        retval[159] = new NotImplementedFunction(); // DELETECOMMAND
-        retval[160] = new NotImplementedFunction(); // GETCHARTITEM
-        retval[161] = new NotImplementedFunction(); // DIALOGBOX
+        retval[151] = new NotImplementedFunction("ADDBAR");
+        retval[152] = new NotImplementedFunction("ADDMENU");
+        retval[153] = new NotImplementedFunction("ADDCOMMAND");
+        retval[154] = new NotImplementedFunction("ENABLECOMMAND");
+        retval[155] = new NotImplementedFunction("CHECKCOMMAND");
+        retval[156] = new NotImplementedFunction("RENAMECOMMAND");
+        retval[157] = new NotImplementedFunction("SHOWBAR");
+        retval[158] = new NotImplementedFunction("DELETEMENU");
+        retval[159] = new NotImplementedFunction("DELETECOMMAND");
+        retval[160] = new NotImplementedFunction("GETCHARTITEM");
+        retval[161] = new NotImplementedFunction("DIALOGBOX");
         retval[162] = new Clean(); // CLEAN
         retval[163] = new Mdeterm(); // MDETERM
         retval[164] = new Minverse(); // MINVERSE
@@ -243,24 +240,24 @@ public abstract class FunctionEval implements OperationEval {
         retval[167] = new Ipmt(); // IPMT
         retval[168] = new Ppmt(); // PPMT
         retval[169] = new Counta(); // COUNTA
-        retval[170] = new NotImplementedFunction(); // CANCELKEY
+        retval[170] = new NotImplementedFunction("CANCELKEY");
         retval[175] = new Initiate(); // INITIATE
         retval[176] = new Request(); // REQUEST
-        retval[177] = new NotImplementedFunction(); // POKE
-        retval[178] = new NotImplementedFunction(); // EXECUTE
-        retval[179] = new NotImplementedFunction(); // TERMINATE
-        retval[180] = new NotImplementedFunction(); // RESTART
+        retval[177] = new NotImplementedFunction("POKE");
+        retval[178] = new NotImplementedFunction("EXECUTE");
+        retval[179] = new NotImplementedFunction("TERMINATE");
+        retval[180] = new NotImplementedFunction("RESTART");
         retval[181] = new Help(); // HELP
-        retval[182] = new NotImplementedFunction(); // GETBAR
+        retval[182] = new NotImplementedFunction("GETBAR");
         retval[183] = AggregateFunction.PRODUCT;
         retval[184] = NumericFunction.FACT;
-        retval[185] = new NotImplementedFunction(); // GETCELL
-        retval[186] = new NotImplementedFunction(); // GETWORKSPACE
-        retval[187] = new NotImplementedFunction(); // GETWINDOW
-        retval[188] = new NotImplementedFunction(); // GETDOCUMENT
+        retval[185] = new NotImplementedFunction("GETCELL");
+        retval[186] = new NotImplementedFunction("GETWORKSPACE");
+        retval[187] = new NotImplementedFunction("GETWINDOW");
+        retval[188] = new NotImplementedFunction("GETDOCUMENT");
         retval[189] = new Dproduct(); // DPRODUCT
         retval[190] = new Isnontext(); // ISNONTEXT
-        retval[191] = new NotImplementedFunction(); // GETNOTE
+        retval[191] = new NotImplementedFunction("GETNOTE");
         retval[192] = new Note(); // NOTE
         retval[193] = new Stdevp(); // STDEVP
         retval[194] = new Varp(); // VARP
@@ -269,8 +266,8 @@ public abstract class FunctionEval implements OperationEval {
         retval[197] = new Trunc(); // TRUNC
         retval[198] = new Islogical(); // ISLOGICAL
         retval[199] = new Dcounta(); // DCOUNTA
-        retval[200] = new NotImplementedFunction(); // DELETEBAR
-        retval[201] = new NotImplementedFunction(); // UNREGISTER
+        retval[200] = new NotImplementedFunction("DELETEBAR");
+        retval[201] = new NotImplementedFunction("UNREGISTER");
         retval[204] = new Usdollar(); // USDOLLAR
         retval[205] = new Findb(); // FINDB
         retval[206] = new Searchb(); // SEARCHB
@@ -297,37 +294,37 @@ public abstract class FunctionEval implements OperationEval {
         retval[233] = NumericFunction.ACOSH;
         retval[234] = NumericFunction.ATANH;
         retval[235] = new Dget(); // DGET
-        retval[236] = new NotImplementedFunction(); // CREATEOBJECT
+        retval[236] = new NotImplementedFunction("CREATEOBJECT");
         retval[237] = new Volatile(); // VOLATILE
         retval[238] = new Lasterror(); // LASTERROR
-        retval[239] = new NotImplementedFunction(); // CUSTOMUNDO
+        retval[239] = new NotImplementedFunction("CUSTOMUNDO");
         retval[240] = new Customrepeat(); // CUSTOMREPEAT
         retval[241] = new Formulaconvert(); // FORMULACONVERT
-        retval[242] = new NotImplementedFunction(); // GETLINKINFO
-        retval[243] = new NotImplementedFunction(); // TEXTBOX
+        retval[242] = new NotImplementedFunction("GETLINKINFO");
+        retval[243] = new NotImplementedFunction("TEXTBOX");
         retval[244] = new Info(); // INFO
         retval[245] = new Group(); // GROUP
-        retval[246] = new NotImplementedFunction(); // GETOBJECT
+        retval[246] = new NotImplementedFunction("GETOBJECT");
         retval[247] = new Db(); // DB
-        retval[248] = new NotImplementedFunction(); // PAUSE
-        retval[250] = new NotImplementedFunction(); // RESUME
+        retval[248] = new NotImplementedFunction("PAUSE");
+        retval[250] = new NotImplementedFunction("RESUME");
         retval[252] = new Frequency(); // FREQUENCY
-        retval[253] = new NotImplementedFunction(); // ADDTOOLBAR
-        retval[254] = new NotImplementedFunction(); // DELETETOOLBAR
+        retval[253] = new NotImplementedFunction("ADDTOOLBAR");
+        retval[254] = new NotImplementedFunction("DELETETOOLBAR");
         retval[ID.EXTERNAL_FUNC] = null; // ExternalFunction is a FreeREfFunction
-        retval[256] = new NotImplementedFunction(); // RESETTOOLBAR
+        retval[256] = new NotImplementedFunction("RESETTOOLBAR");
         retval[257] = new Evaluate(); // EVALUATE
-        retval[258] = new NotImplementedFunction(); // GETTOOLBAR
-        retval[259] = new NotImplementedFunction(); // GETTOOL
-        retval[260] = new NotImplementedFunction(); // SPELLINGCHECK
+        retval[258] = new NotImplementedFunction("GETTOOLBAR");
+        retval[259] = new NotImplementedFunction("GETTOOL");
+        retval[260] = new NotImplementedFunction("SPELLINGCHECK");
         retval[261] = new Errortype(); // ERRORTYPE
-        retval[262] = new NotImplementedFunction(); // APPTITLE
-        retval[263] = new NotImplementedFunction(); // WINDOWTITLE
-        retval[264] = new NotImplementedFunction(); // SAVETOOLBAR
-        retval[265] = new NotImplementedFunction(); // ENABLETOOL
-        retval[266] = new NotImplementedFunction(); // PRESSTOOL
-        retval[267] = new NotImplementedFunction(); // REGISTERID
-        retval[268] = new NotImplementedFunction(); // GETWORKBOOK
+        retval[262] = new NotImplementedFunction("APPTITLE");
+        retval[263] = new NotImplementedFunction("WINDOWTITLE");
+        retval[264] = new NotImplementedFunction("SAVETOOLBAR");
+        retval[265] = new NotImplementedFunction("ENABLETOOL");
+        retval[266] = new NotImplementedFunction("PRESSTOOL");
+        retval[267] = new NotImplementedFunction("REGISTERID");
+        retval[268] = new NotImplementedFunction("GETWORKBOOK");
         retval[269] = AggregateFunction.AVEDEV;
         retval[270] = new Betadist(); // BETADIST
         retval[271] = new Gammaln(); // GAMMALN
@@ -392,33 +389,33 @@ public abstract class FunctionEval implements OperationEval {
         retval[330] = new Mode(); // MODE
         retval[331] = new Trimmean(); // TRIMMEAN
         retval[332] = new Tinv(); // TINV
-        retval[334] = new NotImplementedFunction(); // MOVIECOMMAND
-        retval[335] = new NotImplementedFunction(); // GETMOVIE
+        retval[334] = new NotImplementedFunction("MOVIECOMMAND");
+        retval[335] = new NotImplementedFunction("GETMOVIE");
         retval[336] = TextFunction.CONCATENATE;
         retval[337] = NumericFunction.POWER;
-        retval[338] = new NotImplementedFunction(); // PIVOTADDDATA
-        retval[339] = new NotImplementedFunction(); // GETPIVOTTABLE
-        retval[340] = new NotImplementedFunction(); // GETPIVOTFIELD
-        retval[341] = new NotImplementedFunction(); // GETPIVOTITEM
+        retval[338] = new NotImplementedFunction("PIVOTADDDATA");
+        retval[339] = new NotImplementedFunction("GETPIVOTTABLE");
+        retval[340] = new NotImplementedFunction("GETPIVOTFIELD");
+        retval[341] = new NotImplementedFunction("GETPIVOTITEM");
         retval[342] = NumericFunction.RADIANS;
         retval[343] = NumericFunction.DEGREES;
         retval[344] = new Subtotal(); // SUBTOTAL
         retval[345] = new Sumif(); // SUMIF
         retval[346] = new Countif(); // COUNTIF
         retval[347] = new Countblank(); // COUNTBLANK
-        retval[348] = new NotImplementedFunction(); // SCENARIOGET
-        retval[349] = new NotImplementedFunction(); // OPTIONSLISTSGET
+        retval[348] = new NotImplementedFunction("SCENARIOGET");
+        retval[349] = new NotImplementedFunction("OPTIONSLISTSGET");
         retval[350] = new Ispmt(); // ISPMT
         retval[351] = new Datedif(); // DATEDIF
         retval[352] = new Datestring(); // DATESTRING
         retval[353] = new Numberstring(); // NUMBERSTRING
         retval[354] = new Roman(); // ROMAN
-        retval[355] = new NotImplementedFunction(); // OPENDIALOG
-        retval[356] = new NotImplementedFunction(); // SAVEDIALOG
-        retval[357] = new NotImplementedFunction(); // VIEWGET
-        retval[358] = new NotImplementedFunction(); // GETPIVOTDATA
+        retval[355] = new NotImplementedFunction("OPENDIALOG");
+        retval[356] = new NotImplementedFunction("SAVEDIALOG");
+        retval[357] = new NotImplementedFunction("VIEWGET");
+        retval[358] = new NotImplementedFunction("GETPIVOTDATA");
         retval[359] = new Hyperlink(); // HYPERLINK
-        retval[360] = new NotImplementedFunction(); // PHONETIC
+        retval[360] = new NotImplementedFunction("PHONETIC");
         retval[361] = new Averagea(); // AVERAGEA
         retval[362] = MinaMaxa.MAXA;
         retval[363] = MinaMaxa.MINA;

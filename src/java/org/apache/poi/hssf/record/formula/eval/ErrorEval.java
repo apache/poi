@@ -48,7 +48,6 @@ public final class ErrorEval implements ValueEval {
     private static final int CIRCULAR_REF_ERROR_CODE = 0xFFFFFFC4;
     private static final int FUNCTION_NOT_IMPLEMENTED_CODE = 0xFFFFFFE2;
 
-    public static final ErrorEval FUNCTION_NOT_IMPLEMENTED = new ErrorEval(FUNCTION_NOT_IMPLEMENTED_CODE);
     // Note - Excel does not seem to represent this condition with an error code
     public static final ErrorEval CIRCULAR_REF_ERROR = new ErrorEval(CIRCULAR_REF_ERROR_CODE);
 
@@ -68,7 +67,6 @@ public final class ErrorEval implements ValueEval {
             case HSSFErrorConstants.ERROR_NA:    return NA;
             // non-std errors (conditions modeled as errors by POI)
             case CIRCULAR_REF_ERROR_CODE:        return CIRCULAR_REF_ERROR;
-            case FUNCTION_NOT_IMPLEMENTED_CODE:  return FUNCTION_NOT_IMPLEMENTED;
         }
         throw new RuntimeException("Unexpected error code (" + errorCode + ")");
     }
