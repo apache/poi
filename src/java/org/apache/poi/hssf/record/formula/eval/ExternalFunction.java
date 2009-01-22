@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record.formula.eval;
 import org.apache.poi.hssf.record.formula.atp.AnalysisToolPak;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 /**
  * 
  * Common entry point for all user-defined (non-built-in) functions (where 
@@ -40,17 +41,13 @@ final class ExternalFunction implements FreeRefFunction {
 		
 		Eval nameArg = args[0];
 		FreeRefFunction targetFunc;
-		try {
-			if (nameArg instanceof NameEval) {
-				targetFunc = findInternalUserDefinedFunction((NameEval) nameArg);
-			} else if (nameArg instanceof NameXEval) {
-				targetFunc = findExternalUserDefinedFunction(workbook, (NameXEval) nameArg);
-			} else {
-				throw new RuntimeException("First argument should be a NameEval, but got ("
-						+ nameArg.getClass().getName() + ")");
-			}
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
+		if (nameArg instanceof NameEval) {
+			targetFunc = findInternalUserDefinedFunction((NameEval) nameArg);
+		} else if (nameArg instanceof NameXEval) {
+			targetFunc = findExternalUserDefinedFunction(workbook, (NameXEval) nameArg);
+		} else {
+			throw new RuntimeException("First argument should be a NameEval, but got ("
+					+ nameArg.getClass().getName() + ")");
 		}
 		int nOutGoingArgs = nIncomingArgs -1;
 		Eval[] outGoingArgs = new Eval[nOutGoingArgs];
@@ -58,8 +55,8 @@ final class ExternalFunction implements FreeRefFunction {
 		return targetFunc.evaluate(outGoingArgs, workbook, srcCellSheet, srcCellRow, srcCellCol);
 	}
 
-	private FreeRefFunction findExternalUserDefinedFunction(EvaluationWorkbook workbook,
-			NameXEval n) throws EvaluationException {
+	private static FreeRefFunction findExternalUserDefinedFunction(EvaluationWorkbook workbook,
+			NameXEval n) {
 		String functionName = workbook.resolveNameXText(n.getPtg());
 
 		if(false) {
@@ -71,10 +68,10 @@ final class ExternalFunction implements FreeRefFunction {
 		if (result != null) {
 			return result;
 		}
-		throw new EvaluationException(ErrorEval.FUNCTION_NOT_IMPLEMENTED);
+		throw new NotImplementedException(functionName);
 	}
 
-	private FreeRefFunction findInternalUserDefinedFunction(NameEval functionNameEval) throws EvaluationException {
+	private static FreeRefFunction findInternalUserDefinedFunction(NameEval functionNameEval) {
 
 		String functionName = functionNameEval.getFunctionName();
 		if(false) {
@@ -82,7 +79,6 @@ final class ExternalFunction implements FreeRefFunction {
 		}
 		// TODO find the implementation for the user defined function
 		
-		throw new EvaluationException(ErrorEval.FUNCTION_NOT_IMPLEMENTED);
+		throw new NotImplementedException(functionName);
 	}
 }
-

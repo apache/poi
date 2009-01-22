@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record.formula.eval;
 
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.functions.Function;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -26,25 +27,25 @@ import org.apache.poi.hssf.record.formula.functions.Function;
  */
 public final class FuncVarEval extends FunctionEval {
 
-    private AbstractFunctionPtg delegate;
+	private AbstractFunctionPtg delegate;
 
-    public FuncVarEval(AbstractFunctionPtg funcPtg) {
-        delegate = funcPtg;
-    }
+	public FuncVarEval(AbstractFunctionPtg funcPtg) {
+		delegate = funcPtg;
+	}
 
-    public Eval evaluate(Eval[] operands, int srcRow, short srcCol) {
-        Function f = getFunction();
-        if (f == null) {
-			return ErrorEval.FUNCTION_NOT_IMPLEMENTED;
+	public Eval evaluate(Eval[] operands, int srcRow, short srcCol) {
+		Function f = getFunction();
+		if (f == null) {
+			throw new NotImplementedException("FuncIx=" + getFunctionIndex());
 		}
 		return f.evaluate(operands, srcRow, srcCol);
-    }
+	}
 
-    public int getNumberOfOperands() {
-        return delegate.getNumberOfOperands();
-    }
+	public int getNumberOfOperands() {
+		return delegate.getNumberOfOperands();
+	}
 
-    public short getFunctionIndex() {
-        return delegate.getFunctionIndex();
-    }
+	public short getFunctionIndex() {
+		return delegate.getFunctionIndex();
+	}
 }

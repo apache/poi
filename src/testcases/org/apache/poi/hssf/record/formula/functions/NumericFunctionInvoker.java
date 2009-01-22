@@ -24,6 +24,7 @@ import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
 import org.apache.poi.hssf.record.formula.eval.OperationEval;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 
 /**
  * Test helper class for invoking functions with numeric results.
@@ -83,12 +84,16 @@ public final class NumericFunctionInvoker {
 				throws NumericEvalEx {
 		Eval evalResult;
 		// TODO - make OperationEval extend Function
-		if (target instanceof Function) {
-			Function ff = (Function) target;
-			evalResult = ff.evaluate(args, srcCellRow, (short)srcCellCol);
-		} else {
-			OperationEval ff = (OperationEval) target;
-			evalResult = ff.evaluate(args, srcCellRow, (short)srcCellCol);
+		try {
+			if (target instanceof Function) {
+				Function ff = (Function) target;
+				evalResult = ff.evaluate(args, srcCellRow, (short)srcCellCol);
+			} else {
+				OperationEval ff = (OperationEval) target;
+				evalResult = ff.evaluate(args, srcCellRow, (short)srcCellCol);
+			}
+		} catch (NotImplementedException e) {
+			throw new NumericEvalEx("Not implemented:" + e.getMessage());
 		}
 		
 		if(evalResult == null) {
@@ -108,9 +113,6 @@ public final class NumericFunctionInvoker {
 		return result.getNumberValue();
 	}
 	private static String formatErrorMessage(ErrorEval ee) {
-		if(errorCodesAreEqual(ee, ErrorEval.FUNCTION_NOT_IMPLEMENTED)) {
-			return "Function not implemented";
-		}
 		if(errorCodesAreEqual(ee, ErrorEval.VALUE_INVALID)) {
 			return "Error code: #VALUE! (invalid value)";
 		}

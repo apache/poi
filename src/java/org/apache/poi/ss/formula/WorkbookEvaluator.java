@@ -63,6 +63,7 @@ import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.Cell;
 
 /**
@@ -220,6 +221,8 @@ public final class WorkbookEvaluator {
 				}
 
 				tracker.updateCacheResult(result);
+			} catch (NotImplementedException e) {
+				throw addExceptionInfo(e, sheetIndex, rowIndex, columnIndex);
 			} finally {
 				tracker.endEvaluate(cce);
 			}
@@ -235,6 +238,25 @@ public final class WorkbookEvaluator {
 			logDebug("Evaluated " + sheetName + "!" + cr.formatAsString() + " to " + cce.getValue().toString());
 		}
 		return cce.getValue();
+	}
+
+	/**
+	 * Adds the current cell reference to the exception for easier debugging. 
+	 * Would be nice to get the formula text as well, but that seems to require
+	 * too much digging around and casting to get the FormulaRenderingWorkbook. 
+	 */
+	private NotImplementedException addExceptionInfo(NotImplementedException inner, int sheetIndex, int rowIndex, int columnIndex) {
+		
+		try {
+			String sheetName = _workbook.getSheetName(sheetIndex);
+			CellReference cr = new CellReference(sheetName, rowIndex, columnIndex, false, false);
+			String msg =  "Error evaluating cell " + cr.formatAsString();
+			return new NotImplementedException(msg, inner);
+		} catch (Exception e) {
+			// avoid bombing out during exception handling
+			e.printStackTrace();
+			return inner; // preserve original exception
+		}
 	}
 	/**
 	 * Gets the value from a non-formula cell.

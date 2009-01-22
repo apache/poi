@@ -28,6 +28,7 @@ import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.CellValue;
 /**
  * 
@@ -66,11 +67,16 @@ public final class TestExternalFunction extends TestCase {
 		assertEquals("myFunc()", actualFormula);
 		
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-		CellValue evalResult = fe.evaluate(cell);
-		
-		// Check the return value from ExternalFunction.evaluate()
+		// Check out what ExternalFunction.evaluate() does:
+		CellValue evalResult;
+		try {
+			evalResult = fe.evaluate(cell);
+		} catch (NotImplementedException e) {
+			assertEquals("Error evaluating cell Sheet1!B1", e.getMessage());
+			assertEquals("myFunc", e.getCause().getMessage());
+			return;
+		}
 		// TODO - make this test assert something more interesting as soon as ExternalFunction works a bit better
-		assertEquals(HSSFCell.CELL_TYPE_ERROR, evalResult.getCellType());
-		assertEquals(ErrorEval.FUNCTION_NOT_IMPLEMENTED.getErrorCode(), evalResult.getErrorValue());
+		assertNotNull(evalResult);
 	}
 }
