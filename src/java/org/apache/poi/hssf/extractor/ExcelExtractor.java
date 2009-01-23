@@ -89,10 +89,11 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 					break;
 				}
 				if ("-i".equals(arg)) {
-					arg = args[++i]; // step to next arg
-					if (i >= nArgs) {
+					 // step to next arg
+					if (++i >= nArgs) {
 						throw new CommandParseException("Expected filename after '-i'");
 					}
+					arg = args[i];
 					if (inputFile != null) {
 						throw new CommandParseException("Only one input file can be supplied");
 					}
