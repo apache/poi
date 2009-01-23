@@ -17,10 +17,13 @@
 
 package org.apache.poi.hssf.extractor;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 
 import org.apache.poi.POIOLE2TextExtractor;
-import org.apache.poi.ss.usermodel.HeaderFooter;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFComment;
@@ -30,6 +33,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.HeaderFooter;
 
 /**
  * A text extractor for Excel files.
@@ -41,15 +45,15 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * @see org.apache.poi.hssf.eventusermodel.examples.XLS2CSVmra
  */
 public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.poi.ss.extractor.ExcelExtractor {
-	private HSSFWorkbook wb;
-	private boolean includeSheetNames = true;
-	private boolean formulasNotResults = false;
-	private boolean includeCellComments = false;
-	private boolean includeBlankCells = false;
+	private HSSFWorkbook _wb;
+	private boolean _includeSheetNames = true;
+	private boolean _shouldEvaluateFormulas = true;
+	private boolean _includeCellComments = false;
+	private boolean _includeBlankCells = false;
 	
 	public ExcelExtractor(HSSFWorkbook wb) {
 		super(wb);
-		this.wb = wb;
+		_wb = wb;
 	}
 	public ExcelExtractor(POIFSFileSystem fs) throws IOException {
 		this(fs.getRoot(), fs);
@@ -58,52 +62,205 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 		this(new HSSFWorkbook(dir, fs, true));
 	}
 	
+	private static final class CommandParseException extends Exception {
+		public CommandParseException(String msg) {
+			super(msg);
+		}
+	}
+	private static final class CommandArgs {
+		private final boolean _requestHelp;
+		private final File _inputFile;
+		private final boolean _showSheetNames;
+		private final boolean _evaluateFormulas;
+		private final boolean _showCellComments;
+		private final boolean _showBlankCells;
+		public CommandArgs(String[] args) throws CommandParseException {
+			int nArgs = args.length;
+			File inputFile = null;
+			boolean requestHelp = false;
+			boolean showSheetNames = true;
+			boolean evaluateFormulas = true;
+			boolean showCellComments = false;
+			boolean showBlankCells = false;
+			for (int i=0; i<nArgs; i++) {
+				String arg = args[i];
+				if ("-help".equalsIgnoreCase(arg)) {
+					requestHelp = true;
+					break;
+				}
+				if ("-i".equals(arg)) {
+					i++; // step to next arg
+					if (i >= nArgs) {
+						throw new CommandParseException("Expected filename after '-i'");
+					}
+					if (inputFile != null) {
+						throw new CommandParseException("Only one input file can be supplied");
+					}
+					inputFile = new File(arg);
+					if (!inputFile.exists()) {
+						throw new CommandParseException("Specified input file '" + arg + "' does not exist");
+					}
+					if (inputFile.isDirectory()) {
+						throw new CommandParseException("Specified input file '" + arg + "' is a directory");
+					}
+					continue;
+				}
+				if ("--show-sheet-names".equals(arg)) {
+					showSheetNames = parseBoolArg(args, ++i);
+					continue;
+				}
+				if ("--evaluate-formulas".equals(arg)) {
+					evaluateFormulas = parseBoolArg(args, ++i);
+					continue;
+				}
+				if ("--show-comments".equals(arg)) {
+					showCellComments = parseBoolArg(args, ++i);
+					continue;
+				}
+				if ("--show-blanks".equals(arg)) {
+					showBlankCells = parseBoolArg(args, ++i);
+					continue;
+				}
+				throw new CommandParseException("Invalid argument '" + arg + "'");
+			}
+			_requestHelp = requestHelp;
+			_inputFile = inputFile;
+			_showSheetNames = showSheetNames;
+			_evaluateFormulas = evaluateFormulas;
+			_showCellComments = showCellComments;
+			_showBlankCells = showBlankCells;
+		}
+		private static boolean parseBoolArg(String[] args, int i) throws CommandParseException {
+			if (i >= args.length) {
+				throw new CommandParseException("Expected value after '" + args[i-1] + "'");
+			}
+			String value = args[i].toUpperCase();
+			if ("Y".equals(value) || "YES".equals(value) || "ON".equals(value) || "TRUE".equals(value)) {
+				return true;
+			}
+			if ("N".equals(value) || "NO".equals(value) || "OFF".equals(value) || "FALSE".equals(value)) {
+				return false;
+			}
+			throw new CommandParseException("Invalid value '" + args[i] + "' for '" + args[i-1] + "'. Expected 'Y' or 'N'");
+		}
+		public boolean isRequestHelp() {
+			return _requestHelp;
+		}
+		public File getInputFile() {
+			return _inputFile;
+		}
+		public boolean shouldShowSheetNames() {
+			return _showSheetNames;
+		}
+		public boolean shouldEvaluateFormulas() {
+			return _evaluateFormulas;
+		}
+		public boolean shouldShowCellComments() {
+			return _showCellComments;
+		}
+		public boolean shouldShowBlankCells() {
+			return _showBlankCells;
+		}
+		
+	}
+	
+	private static void printUsageMessage(PrintStream ps) {
+		ps.println("Use:");
+		ps.println("    " + ExcelExtractor.class.getName() + " [<flag> <value> [<flag> <value> [...]]] [-i <filename.xls>]");
+		ps.println("       -i <filename.xls> specifies input file (default is to use stdin)");
+		ps.println("       Flags can be set on or off by using the values 'Y' or 'N'.");
+		ps.println("       Following are available flags and their default values:");
+		ps.println("       --show-sheet-names  Y");
+		ps.println("       --evaluate-formulas Y");
+		ps.println("       --show-comments     N");
+		ps.println("       --show-blanks       Y");
+	}
 
+	/**
+	 * Command line extractor.
+	 */
+	public static void main(String[] args) {
+		
+		CommandArgs cmdArgs;
+		try {
+			cmdArgs = new CommandArgs(args);
+		} catch (CommandParseException e) {
+			System.err.println(e.getMessage());
+			printUsageMessage(System.err);
+			System.exit(1);
+			return; // suppress compiler error
+		}
+		
+		if (cmdArgs.isRequestHelp()) {
+			printUsageMessage(System.out);
+			return;
+		}
+		
+		try {
+			InputStream is;
+			if(cmdArgs.getInputFile() == null) {
+				is = System.in;
+			} else {
+				is = new FileInputStream(cmdArgs.getInputFile());
+			}
+			HSSFWorkbook wb = new HSSFWorkbook(is);
+
+			ExcelExtractor extractor = new ExcelExtractor(wb);
+			extractor.setIncludeSheetNames(cmdArgs.shouldShowSheetNames());
+			extractor.setFormulasNotResults(!cmdArgs.shouldEvaluateFormulas());
+			extractor.setIncludeCellComments(cmdArgs.shouldShowCellComments());
+			extractor.setIncludeBlankCells(cmdArgs.shouldShowBlankCells());
+			System.out.println(extractor.getText());
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
 	/**
 	 * Should sheet names be included? Default is true
 	 */
 	public void setIncludeSheetNames(boolean includeSheetNames) {
-		this.includeSheetNames = includeSheetNames;
+		_includeSheetNames = includeSheetNames;
 	}
 	/**
 	 * Should we return the formula itself, and not
 	 *  the result it produces? Default is false
 	 */
 	public void setFormulasNotResults(boolean formulasNotResults) {
-		this.formulasNotResults = formulasNotResults;
+		_shouldEvaluateFormulas = !formulasNotResults;
 	}
 	/**
-     * Should cell comments be included? Default is false
-     */
-    public void setIncludeCellComments(boolean includeCellComments) {
-        this.includeCellComments = includeCellComments;
-    }
+	 * Should cell comments be included? Default is false
+	 */
+	public void setIncludeCellComments(boolean includeCellComments) {
+		_includeCellComments = includeCellComments;
+	}
 	/**
 	 * Should blank cells be output? Default is to only
 	 *  output cells that are present in the file and are
 	 *  non-blank.
 	 */
 	public void setIncludeBlankCells(boolean includeBlankCells) {
-		this.includeBlankCells = includeBlankCells;
+		_includeBlankCells = includeBlankCells;
 	}
 	
 	/**
-	 * Retreives the text contents of the file
+	 * Retrieves the text contents of the file
 	 */
 	public String getText() {
 		StringBuffer text = new StringBuffer();
 
-		// We don't care about the differnce between
+		// We don't care about the difference between
 		//  null (missing) and blank cells
-		wb.setMissingCellPolicy(HSSFRow.RETURN_BLANK_AS_NULL);
+		_wb.setMissingCellPolicy(HSSFRow.RETURN_BLANK_AS_NULL);
 		
 		// Process each sheet in turn
-		for(int i=0;i<wb.getNumberOfSheets();i++) {
-			HSSFSheet sheet = wb.getSheetAt(i);
+		for(int i=0;i<_wb.getNumberOfSheets();i++) {
+			HSSFSheet sheet = _wb.getSheetAt(i);
 			if(sheet == null) { continue; }
 			
-			if(includeSheetNames) {
-				String name = wb.getSheetName(i);
+			if(_includeSheetNames) {
+				String name = _wb.getSheetName(i);
 				if(name != null) {
 					text.append(name);
 					text.append("\n");
@@ -126,7 +283,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 				// Check each cell in turn
 				int firstCell = row.getFirstCellNum();
 				int lastCell = row.getLastCellNum();
-				if(includeBlankCells) {
+				if(_includeBlankCells) {
 					firstCell = 0;
 				}
 				
@@ -136,7 +293,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 
 					if(cell == null) {
 						// Only output if requested
-						outputContents = includeBlankCells;
+						outputContents = _includeBlankCells;
 					} else {
 						switch(cell.getCellType()) {
 							case HSSFCell.CELL_TYPE_STRING:
@@ -153,7 +310,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 								text.append(ErrorEval.getText(cell.getErrorCellValue()));
 								break;
 							case HSSFCell.CELL_TYPE_FORMULA:
-								if(formulasNotResults) {
+								if(!_shouldEvaluateFormulas) {
 									text.append(cell.getCellFormula());
 								} else {
 									switch(cell.getCachedFormulaResultType()) {
@@ -181,12 +338,12 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 						}
 						
 						// Output the comment, if requested and exists
-					    HSSFComment comment = cell.getCellComment();
-						if(includeCellComments && comment != null) {
-						    // Replace any newlines with spaces, otherwise it
-						    //  breaks the output
-						    String commentText = comment.getString().getString().replace('\n', ' ');
-						    text.append(" Comment by "+comment.getAuthor()+": "+commentText);
+						HSSFComment comment = cell.getCellComment();
+						if(_includeCellComments && comment != null) {
+							// Replace any newlines with spaces, otherwise it
+							//  breaks the output
+							String commentText = comment.getString().getString().replace('\n', ' ');
+							text.append(" Comment by "+comment.getAuthor()+": "+commentText);
 						}
 					}
 					
