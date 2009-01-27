@@ -97,7 +97,7 @@ public abstract class RelationalOperationEval implements OperationEval {
 			if (vb instanceof StringEval) {
 				StringEval sA = (StringEval) va;
 				StringEval sB = (StringEval) vb;
-				return sA.getStringValue().compareTo(sB.getStringValue());
+				return sA.getStringValue().compareToIgnoreCase(sB.getStringValue());
 			}
 			return 1;
 		}

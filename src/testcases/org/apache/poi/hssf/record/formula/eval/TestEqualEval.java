@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.record.formula.functions.EvalFactory;
 
 /**
- * Test for unary plus operator evaluator.
+ * Test for {@link EqualEval}
  *
  * @author Josh Micich
  */
@@ -65,5 +65,30 @@ public final class TestEqualEval extends TestCase {
 			throw new AssertionFailedError("Identified bug blank/empty string equality");
 		}
 		assertTrue(be.getBooleanValue());
+	}
+	
+	/**
+	 * Test for bug 46613 (observable at svn r737248)
+	 */
+	public void testStringInsensitive_bug46613() {
+		if (!evalStringCmp("abc", "aBc", EqualEval.instance)) {
+			throw new AssertionFailedError("Identified bug 46613");
+		}
+		assertTrue(evalStringCmp("abc", "aBc", EqualEval.instance));
+		assertTrue(evalStringCmp("ABC", "azz", LessThanEval.instance));
+		assertTrue(evalStringCmp("abc", "AZZ", LessThanEval.instance));
+		assertTrue(evalStringCmp("ABC", "aaa", GreaterThanEval.instance));
+		assertTrue(evalStringCmp("abc", "AAA", GreaterThanEval.instance));
+	}
+
+	private static boolean evalStringCmp(String a, String b, OperationEval cmpOp) {
+		Eval[] args = {
+			new StringEval(a),
+			new StringEval(b),
+		};
+		Eval result = cmpOp.evaluate(args, 10, (short)20);
+		assertEquals(BoolEval.class, result.getClass());
+		BoolEval be = (BoolEval) result;
+		return be.getBooleanValue();
 	}
 }

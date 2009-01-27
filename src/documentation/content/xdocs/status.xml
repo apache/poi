@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.5-beta5" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">46613 - Fixed evaluator to perform case insensitive string comparisons</action>
            <action dev="POI-DEVELOPERS" type="add">46544 - command line interface for hssf ExcelExtractor</action>
            <action dev="POI-DEVELOPERS" type="fix">46547 - Allow addition of conditional formatting after data validation</action>
            <action dev="POI-DEVELOPERS" type="fix">46548 - Page Settings Block fixes - continued PLS records and PSB in sheet sub-streams</action>
