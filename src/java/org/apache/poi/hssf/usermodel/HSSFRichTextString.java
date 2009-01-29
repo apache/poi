@@ -109,7 +109,7 @@ public class HSSFRichTextString
         //the range is completed
         short currentFont = NO_FONT;
         if (endIndex != length()) {
-          currentFont = this.getFontAtIndex(startIndex);
+          currentFont = this.getFontAtIndex(endIndex);
         }
 
         //Need to clear the current formatting between the startIndex and endIndex

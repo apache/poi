@@ -74,4 +74,59 @@ public class TestHSSFRichTextString extends TestCase
       r.clearFormatting();
       assertEquals(0, r.numFormattingRuns());
     }
+
+
+    /**
+     * Test case proposed in Bug 40520:  formated twice => will format whole String
+     */
+    public void test40520_1(){
+
+        short font = 3;
+
+        HSSFRichTextString r = new HSSFRichTextString("f0_123456789012345678901234567890123456789012345678901234567890");
+
+        r.applyFont(0,7,font);
+        r.applyFont(5,9,font);
+
+        for(int i=0; i < 7; i++) assertEquals(font, r.getFontAtIndex(i));
+        for(int i=5; i < 9; i++) assertEquals(font, r.getFontAtIndex(i));
+        for(int i=9; i < r.length(); i++) assertEquals(HSSFRichTextString.NO_FONT, r.getFontAtIndex(i));
+    }
+
+    /**
+     * Test case proposed in Bug 40520:  overlapped range => will format whole String
+     */
+    public void test40520_2(){
+
+        short font = 3;
+        HSSFRichTextString r = new HSSFRichTextString("f0_123456789012345678901234567890123456789012345678901234567890");
+
+        r.applyFont(0,2,font);
+        for(int i=0; i < 2; i++) assertEquals(font, r.getFontAtIndex(i));
+        for(int i=2; i < r.length(); i++) assertEquals(HSSFRichTextString.NO_FONT, r.getFontAtIndex(i));
+
+        r.applyFont(0,2,font);
+        for(int i=0; i < 2; i++) assertEquals(font, r.getFontAtIndex(i));
+        for(int i=2; i < r.length(); i++) assertEquals(HSSFRichTextString.NO_FONT, r.getFontAtIndex(i));
+    }
+
+    /**
+     * Test case proposed in Bug 40520:  formated twice => will format whole String
+     */
+    public void test40520_3(){
+
+        short font = 3;
+        HSSFRichTextString r = new HSSFRichTextString("f0_123456789012345678901234567890123456789012345678901234567890");
+
+        // wrong order => will format 0-6
+        r.applyFont(0,2,font);
+        r.applyFont(5,7,font);
+        r.applyFont(0,2,font);
+
+        r.applyFont(0,2,font);
+        for(int i=0; i < 2; i++) assertEquals(font, r.getFontAtIndex(i));
+        for(int i=2; i < 5; i++) assertEquals(HSSFRichTextString.NO_FONT, r.getFontAtIndex(i));
+        for(int i=5; i < 7; i++) assertEquals(font, r.getFontAtIndex(i));
+        for(int i=7; i < r.length(); i++) assertEquals(HSSFRichTextString.NO_FONT, r.getFontAtIndex(i));
+    }
 }
