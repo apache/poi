@@ -20,7 +20,6 @@ package org.apache.poi.xssf.model;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -33,9 +32,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.POIXMLDocumentPart;
-import org.openxml4j.opc.Package;
-import org.openxml4j.opc.PackagePart;
-import org.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.Package;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 import junit.framework.TestCase;

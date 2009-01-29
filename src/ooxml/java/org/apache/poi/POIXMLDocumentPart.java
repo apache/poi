@@ -23,15 +23,15 @@ import java.util.List;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
-import org.openxml4j.exceptions.OpenXML4JException;
-import org.openxml4j.opc.*;
-import org.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.*;
+import org.apache.poi.openxml4j.opc.Package;
 
 /**
  * Represents an entry of a OOXML package.
  *
  * <p>
- * Each POIXMLDocumentPart keeps a reference to the underlying a {@link org.openxml4j.opc.PackagePart}.
+ * Each POIXMLDocumentPart keeps a reference to the underlying a {@link org.apache.poi.openxml4j.opc.PackagePart}.
  * </p>
  *
  * @author Yegor Kozlov

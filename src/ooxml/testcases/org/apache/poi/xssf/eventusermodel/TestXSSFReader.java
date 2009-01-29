@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.Package;
 
 /**
  * Tests for XSSFReader

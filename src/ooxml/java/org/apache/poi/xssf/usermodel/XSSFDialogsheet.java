@@ -17,15 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.POIXMLException;
-import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
-import org.openxml4j.opc.PackagePart;
-import org.openxml4j.opc.PackageRelationship;
-
-import java.io.IOException;
 
 //YK: TODO: this is only a prototype
 public class XSSFDialogsheet extends XSSFSheet implements Sheet{

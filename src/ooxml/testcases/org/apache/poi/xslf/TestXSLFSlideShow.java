@@ -19,8 +19,8 @@ package org.apache.poi.xslf;
 import java.io.File;
 
 import org.apache.poi.POIXMLDocument;
-import org.openxml4j.opc.Package;
-import org.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.PackagePart;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
 

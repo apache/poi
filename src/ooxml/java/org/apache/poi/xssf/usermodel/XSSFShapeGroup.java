@@ -18,7 +18,7 @@ package org.apache.poi.xssf.usermodel;
 
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
-import org.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
 
 /**
  * This object specifies a group shape that represents many shapes grouped together. This shape is to be treated

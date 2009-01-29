@@ -16,16 +16,12 @@
 ==================================================================== */
 package org.apache.poi.util;
 
-import org.openxml4j.opc.*;
-import org.openxml4j.opc.Package;
-import org.openxml4j.opc.internal.PackagePropertiesPart;
-import org.openxml4j.opc.internal.marshallers.PackagePropertiesMarshaller;
-import org.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.*;
+import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.util.IOUtils;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.lang.reflect.Method;
 
 /**
  * Provides handy methods to work with OOXML packages

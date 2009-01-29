@@ -22,11 +22,11 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
-import org.openxml4j.opc.Package;
-import org.openxml4j.opc.PackageAccess;
-import org.openxml4j.opc.PackagePart;
-import org.openxml4j.opc.PackageRelationship;
-import org.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.PackageAccess;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 
 /**
  * Prints out the contents of a OOXML container.

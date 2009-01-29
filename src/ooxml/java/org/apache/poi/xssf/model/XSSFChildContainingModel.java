@@ -17,7 +17,7 @@
 package org.apache.poi.xssf.model;
 
 import org.apache.poi.xssf.usermodel.XSSFRelation;
-import org.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePart;
 
 /**
  * Common interface for XSSF models, which have (typically

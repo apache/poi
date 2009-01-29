@@ -25,8 +25,8 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.openxml4j.opc.Package;
-import org.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.PackagePart;
 
 import junit.framework.TestCase;
 

@@ -19,10 +19,8 @@ package org.apache.poi.xssf.usermodel;
 import junit.framework.TestCase;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.POIXMLDocumentPart;
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
 
 import java.util.List;
-import java.io.IOException;
 
 /**
  * @author Yegor Kozlov
@@ -73,7 +71,7 @@ public class TestXSSFDrawing extends TestCase {
             XSSFSheet sheet = wb.createSheet();
             XSSFDrawing drawing = sheet.createDrawingPatriarch();
         }
-        org.openxml4j.opc.Package pkg = wb.getPackage();
+        org.apache.poi.openxml4j.opc.Package pkg = wb.getPackage();
         assertEquals(3, pkg.getPartsByContentType(XSSFRelation.DRAWINGS.getContentType()).size());
     }
 }

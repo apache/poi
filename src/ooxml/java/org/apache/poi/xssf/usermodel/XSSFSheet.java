@@ -39,10 +39,10 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlException;
-import org.openxml4j.opc.PackagePart;
-import org.openxml4j.opc.PackageRelationship;
-import org.openxml4j.opc.PackageRelationshipCollection;
-import org.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 

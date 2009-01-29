@@ -21,9 +21,9 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
-import org.openxml4j.opc.Package;
-import org.openxml4j.opc.PackagePart;
-import org.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 
 public class TestXSSFBugs extends TestCase {

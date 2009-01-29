@@ -19,10 +19,10 @@ package org.apache.poi;
 import java.io.IOException;
 
 import org.apache.xmlbeans.XmlException;
-import org.openxml4j.exceptions.OpenXML4JException;
-import org.openxml4j.opc.Package;
-import org.openxml4j.opc.PackageRelationshipCollection;
-import org.openxml4j.opc.internal.PackagePropertiesPart;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 
 /**
  * Wrapper around the two different kinds of OOXML properties 

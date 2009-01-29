@@ -28,10 +28,10 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
-import org.openxml4j.opc.ContentTypes;
-import org.openxml4j.opc.Package;
-import org.openxml4j.opc.PackagePart;
-import org.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.ContentTypes;
+import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 

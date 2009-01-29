@@ -30,12 +30,12 @@ import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.openxml4j.exceptions.InvalidFormatException;
-import org.openxml4j.opc.PackagePart;
-import org.openxml4j.opc.PackagePartName;
-import org.openxml4j.opc.PackageRelationship;
-import org.openxml4j.opc.PackageRelationshipCollection;
-import org.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 
 /**
  * 

@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi;
 
-import org.openxml4j.opc.PackageRelationship;
-import org.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackagePart;
 
 
 /**

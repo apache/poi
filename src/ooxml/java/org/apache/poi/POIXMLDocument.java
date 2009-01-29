@@ -23,10 +23,10 @@ import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.PackageHelper;
 import org.apache.xmlbeans.XmlException;
-import org.openxml4j.exceptions.InvalidFormatException;
-import org.openxml4j.exceptions.OpenXML4JException;
-import org.openxml4j.opc.*;
-import org.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.*;
+import org.apache.poi.openxml4j.opc.Package;
 
 public abstract class POIXMLDocument extends POIXMLDocumentPart{
 
