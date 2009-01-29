@@ -24,8 +24,8 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLRelation;
-import org.openxml4j.opc.PackagePart;
-import org.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
 
 /**
  * Raw picture data, normally attached to a SpreadsheetML Drawing.

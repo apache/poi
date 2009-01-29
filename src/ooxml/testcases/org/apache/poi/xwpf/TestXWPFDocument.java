@@ -21,8 +21,8 @@ import java.io.File;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
-import org.openxml4j.opc.Package;
-import org.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.PackagePart;
 
 import junit.framework.TestCase;
 

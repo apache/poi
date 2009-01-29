@@ -29,8 +29,8 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
-import org.openxml4j.exceptions.OpenXML4JException;
-import org.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.Package;
 
 /**
  * Helper class to extract text from an OOXML Excel file

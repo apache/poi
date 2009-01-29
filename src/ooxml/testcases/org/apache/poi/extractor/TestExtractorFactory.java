@@ -33,8 +33,8 @@ import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 
 import junit.framework.TestCase;
 
-import org.openxml4j.exceptions.InvalidOperationException;
-import org.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.openxml4j.opc.Package;
 
 /**
  * Test that the extractor factory plays nicely

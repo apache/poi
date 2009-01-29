@@ -124,8 +124,6 @@ under the License.
   <property name="ooxml.testokfile" location="build/ooxml-testokfile.txt"/>
 
   <!-- The following jars are downloaded by the fetch-ooxml-jars task --> 
-  <property name="ooxml.openxml4j.jar" location="${ooxml.lib}/openxml4j-1.0-beta.jar"/>
-  <property name="ooxml.openxml4j.url" value="http://mirrors.ibiblio.org/pub/mirrors/maven2/org/apache/poi/openxml4j/1.0-beta/openxml4j-1.0-beta.jar"/>
   <property name="ooxml.dom4j.jar" location="${ooxml.lib}/dom4j-1.6.1.jar"/>
   <property name="ooxml.dom4j.url" value="${repository}/dom4j/jars/dom4j-1.6.1.jar"/>
   <property name="ooxml.xmlbeans.jar" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
@@ -144,8 +142,6 @@ under the License.
 
   <property name="maven.ooxml.xsds.version.id" value="1.0"/>
   <property name="maven.ooxml.xsds.jar" value="ooxml-schemas-${maven.ooxml.xsds.version.id}.jar"/>
-  <property name="maven.openxml4j.version.id" value="1.0-beta"/>
-  <property name="maven.openxml4j.jar" value="openxml4j-${maven.openxml4j.version.id}.jar"/>
   
   <property name="build.site" location="build/tmp/site/build/site"/>
   <property name="build.site.src" location="build/tmp/site"/>
@@ -354,7 +350,6 @@ under the License.
                     <available file="${ooxml.xmlbeans.jar}"/>
                     <available file="${ooxml.jsr173.jar}"/>
                     <available file="${ooxml.schemas.jar}"/>
-                    <available file="${ooxml.openxml4j.jar}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -376,10 +371,6 @@ under the License.
       <antcall target="downloadfile">
         <param name="sourcefile" value="${ooxml.schemas.url}"/>
         <param name="destfile" value="${ooxml.schemas.jar}"/>
-      </antcall>
-      <antcall target="downloadfile">
-        <param name="sourcefile" value="${ooxml.openxml4j.url}"/>
-        <param name="destfile" value="${ooxml.openxml4j.jar}"/>
       </antcall>
     </target>
 
@@ -524,7 +515,6 @@ under the License.
   </target>
 
   <target name="compile-ooxml" depends="init, compile-main, compile-scratchpad">
-	<!-- openxml4j requires java 1.5, so so must we, for now -->
     <javac target="1.5" source="1.5"
       destdir="${ooxml.output.dir}" debug="on" srcdir="${ooxml.src}">
       <classpath refid="ooxml.classpath"/>
@@ -805,6 +795,9 @@ under the License.
             <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
             <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
             <sysproperty key="OOXML.testdata.path" file="${ooxml.src.test}/org/apache/poi/ooxml/data"/> 
+            <sysproperty key="openxml4j.compliance.input" file="${ooxml.src.test}/org/apache/poi/openxml4j/opc/compliance/input"/> 
+            <sysproperty key="openxml4j.testdata.input" file="${ooxml.src.test}/org/apache/poi/openxml4j/opc/INPUT"/> 
+            <sysproperty key="openxml4j.testdata.output" file="${ooxml.src.test}/org/apache/poi/openxml4j/opc/OUTPUT"/> 
             <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain"/>
             <formatter type="xml"/>
@@ -812,6 +805,7 @@ under the License.
                 <fileset dir="${ooxml.src.test}">
                     <include name="**/Test*.java"/>
                     <exclude name="**/All*Tests.java"/>
+                    <exclude name="**/TestCore.java"/> <!--non-junit class from OpenXML4j-->
                 </fileset>
             </batchtest>
         </junit>
@@ -1129,16 +1123,7 @@ FORREST_HOME environment variable!</echo>
       </copy>
 	</target>
 
-  <target name="maven-ooxml-dependencies" description="Builds the POM files for OpenXml4J and compiled XmlBeans generated from the Ecma supplied xsds">
-    <!-- OpenXml4J -->
-    <copy file="${ooxml.jar6.dir}" tofile="${mavendist.ooxml.dir}/org.openxml4j/jars/${maven.openxml4j.jar}" />
-    <copy file="maven/openxml4j.pom" tofile="${mavendist.ooxml.dir}/org.openxml4j/poms/openxml4j-${maven.openxml4j.version.id}.pom">
-			<filterchain>
-				<replacetokens>
-					<token key="VERSION" value="${maven.openxml4j.version.id}" />
-				</replacetokens>
-			</filterchain>
-		</copy>
+  <target name="maven-ooxml-dependencies" description="Builds the POM files for the compiled XmlBeans generated from the Ecma supplied xsds">
 
     <!-- ooxml-schemas -->
     <copy file="${ooxml.xsds.jar}" tofile="${mavendist.ooxml.dir}/org.apache.poi/jars/${maven.ooxml.xsds.jar}" />

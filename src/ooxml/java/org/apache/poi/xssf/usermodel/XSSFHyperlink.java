@@ -22,8 +22,8 @@ import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.util.CellReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
 
-import org.openxml4j.opc.PackagePart;
-import org.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
 
 
 /**

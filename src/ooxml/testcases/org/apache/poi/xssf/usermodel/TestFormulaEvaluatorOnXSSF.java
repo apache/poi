@@ -32,7 +32,7 @@ import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.Package;
 
 /**
  * Performs much the same role as {@link TestFormulasFromSpreadsheet},

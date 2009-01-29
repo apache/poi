@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import org.apache.poi.POIXMLProperties.*;
 import org.apache.xmlbeans.XmlException;
-import org.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 
 public abstract class POIXMLTextExtractor extends POITextExtractor {
 	/** The POIXMLDocument that's open */

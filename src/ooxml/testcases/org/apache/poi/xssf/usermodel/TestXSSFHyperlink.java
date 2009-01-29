@@ -26,7 +26,6 @@ import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.openxml4j.opc.Package;
 
 public class TestXSSFHyperlink extends TestCase {
     public TestXSSFHyperlink(String name) {

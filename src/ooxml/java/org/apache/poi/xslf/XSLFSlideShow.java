@@ -22,12 +22,12 @@ import java.util.LinkedList;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.xmlbeans.XmlException;
-import org.openxml4j.exceptions.InvalidFormatException;
-import org.openxml4j.exceptions.OpenXML4JException;
-import org.openxml4j.opc.Package;
-import org.openxml4j.opc.PackagePart;
-import org.openxml4j.opc.PackageRelationship;
-import org.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesSlide;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPresentation;

@@ -31,9 +31,8 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.SstDocument;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxml4j.opc.PackagePart;
-import org.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
 
 
 /**

@@ -7,7 +7,7 @@ import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.model.XSSFWritableModel;
 import org.apache.poi.POIXMLException;
-import org.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePart;
 
 public class XSSFActiveXData implements PictureData, XSSFWritableModel {
 

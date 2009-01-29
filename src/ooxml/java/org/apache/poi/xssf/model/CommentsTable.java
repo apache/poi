@@ -29,8 +29,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CommentsDocument;
-import org.openxml4j.opc.PackagePart;
-import org.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
 
 public class CommentsTable extends POIXMLDocumentPart {
     protected CTComments comments;
