@@ -163,6 +163,11 @@ public class SlideListWithText extends RecordContainer
 	 */
 	public SlideAtomsSet[] getSlideAtomsSets() { return slideAtomsSets; }
 
+    /**
+    * Get access to the SlideAtomsSets of the children of this record
+    */
+    public void setSlideAtomsSets( SlideAtomsSet[] sas ) { slideAtomsSets = sas; }
+
 	/**
 	 * Return the value we were given at creation
 	 */
