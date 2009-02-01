@@ -225,4 +225,48 @@ public final class TestAddingSlides extends TestCase {
 		assertEquals(8, s3._getSheetRefId());
 		assertEquals(3, s3.getSlideNumber());
 	}
+
+    /**
+     * Test SlideShow#removeSlide
+     */
+    public void testRemoving() throws Exception {
+        SlideShow ppt = new SlideShow();
+        Slide slide1 = ppt.createSlide();
+        Slide slide2 = ppt.createSlide();
+
+        Slide[] s1 = ppt.getSlides();
+        assertEquals(2, s1.length);
+        try {
+            ppt.removeSlide(-1);
+            fail("expected exception");
+        } catch (Exception e){
+            ;
+        }
+
+        try {
+            ppt.removeSlide(2);
+            fail("expected exception");
+        } catch (Exception e){
+            ;
+        }
+
+        assertEquals(1, slide1.getSlideNumber());
+
+        Slide removedSlide = ppt.removeSlide(0);
+        Slide[] s2 = ppt.getSlides();
+        assertEquals(1, s2.length);
+        assertSame(slide1, removedSlide);
+        assertSame(slide2, s2[0]);
+
+        assertEquals(0, slide2.getSlideNumber());
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ppt.write(out);
+
+        ppt = new SlideShow(new ByteArrayInputStream(out.toByteArray()));
+
+        Slide[] s3 = ppt.getSlides();
+        assertEquals(1, s3.length);
+    }
+
 }
