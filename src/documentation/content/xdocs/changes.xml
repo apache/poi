@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta5" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">46647 - Fixed COUNTIF NE operator and other special cases involving type conversion</action>
            <action dev="POI-DEVELOPERS" type="add">46635 - Added a method to remove slides</action>
            <action dev="POI-DEVELOPERS" type="fix">46520 - Fixed HSSFFont.applyFont() to properly apply font to overlapping regions</action>
            <action dev="POI-DEVELOPERS" type="fix">46545 - Fixed ObjRecord to ignore excessive padding written by previous POI versions</action>

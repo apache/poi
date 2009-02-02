@@ -108,11 +108,64 @@ public final class TestCountFuncs extends TestCase {
 		// note - same results when criteria is a string that parses as the number with the same value
 		confirmCountIf(3, range, new StringEval("2.00"));
 
-		if (false) { // not supported yet:
-			// when criteria is an expression (starting with a comparison operator)
-			confirmCountIf(4, range, new StringEval(">1"));
-		}
+		// when criteria is an expression (starting with a comparison operator)
+		confirmCountIf(2, range, new StringEval(">1"));
+		// when criteria is an expression (starting with a comparison operator)
+		confirmCountIf(2, range, new StringEval(">0.5"));
 	}
+
+	public void testCriteriaPredicateNe_Bug46647() {
+		I_MatchPredicate mp = Countif.createCriteriaPredicate(new StringEval("<>aa"), 0, 0);
+		StringEval seA = new StringEval("aa"); // this should not match the criteria '<>aa'
+		StringEval seB = new StringEval("bb"); // this should match
+		if (mp.matches(seA) && !mp.matches(seB)) {
+			throw new AssertionFailedError("Identified bug 46647");
+		}
+		assertFalse(mp.matches(seA));
+		assertTrue(mp.matches(seB));
+
+		// general tests for not-equal (<>) operator
+		AreaEval range;
+		ValueEval[] values;
+
+		values = new ValueEval[] {
+				new StringEval("aa"),
+				new StringEval("def"),
+				new StringEval("aa"),
+				new StringEval("ghi"),
+				new StringEval("aa"),
+				new StringEval("aa"),
+		};
+
+		range = EvalFactory.createAreaEval("A1:A6", values);
+		confirmCountIf(2, range, new StringEval("<>aa"));
+
+		values = new ValueEval[] {
+				new StringEval("ab"),
+				new StringEval("aabb"),
+				new StringEval("aa"), // match
+				new StringEval("abb"),
+				new StringEval("aab"),
+				new StringEval("ba"), // match
+		};
+
+		range = EvalFactory.createAreaEval("A1:A6", values);
+		confirmCountIf(2, range, new StringEval("<>a*b"));
+
+
+		values = new ValueEval[] {
+				new NumberEval(222),
+				new NumberEval(222),
+				new NumberEval(111),
+				new StringEval("aa"),
+				new StringEval("111"),
+		};
+
+		range = EvalFactory.createAreaEval("A1:A5", values);
+		confirmCountIf(4, range, new StringEval("<>111"));
+	
+	}
+
 	/**
 	 * special case where the criteria argument is a cell reference
 	 */
@@ -219,7 +272,7 @@ public final class TestCountFuncs extends TestCase {
 		confirmPredicate(true, mp, 4);
 		confirmPredicate(true, mp, 5);
 		confirmPredicate(false, mp, 6);
-		confirmPredicate(true, mp, "4.9");
+		confirmPredicate(false, mp, "4.9");
 		confirmPredicate(false, mp, "4.9t");
 		confirmPredicate(false, mp, "5.1");
 		confirmPredicate(false, mp, NULL);

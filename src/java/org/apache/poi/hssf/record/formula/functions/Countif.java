@@ -128,7 +128,7 @@ public final class Countif implements Function {
 				case NONE:
 				case EQ:
 					return cmpResult == 0;
-				case NE: return cmpResult == 0;
+				case NE: return cmpResult != 0;
 				case LT: return cmpResult <  0;
 				case LE: return cmpResult <= 0;
 				case GT: return cmpResult >  0;
@@ -160,14 +160,27 @@ public final class Countif implements Function {
 			double testValue;
 			if(x instanceof StringEval) {
 				// if the target(x) is a string, but parses as a number
-				// it may still count as a match
+				// it may still count as a match, only for the equality operator
+				switch (_operator.getCode()) {
+					case CmpOp.EQ:
+					case CmpOp.NONE:
+						break;
+					case CmpOp.NE:
+						// Always matches (inconsistent with above two cases).
+						// for example '<>123' matches '123', '4', 'abc', etc
+						return true;
+					default:
+						// never matches (also inconsistent with above three cases).
+						// for example '>5' does not match '6', 
+						return false;
+				}
 				StringEval se = (StringEval)x;
 				Double val = OperandResolver.parseDouble(se.getStringValue());
 				if(val == null) {
 					// x is text that is not a number
 					return false;
 				}
-				testValue = val.doubleValue();
+				return _value == val.doubleValue();
 			} else if((x instanceof NumberEval)) {
 				NumberEval ne = (NumberEval) x;
 				testValue = ne.getNumberValue();
@@ -249,6 +262,7 @@ public final class Countif implements Function {
 					_pattern = getWildCardPattern(value);
 					break;
 				default:
+					// pattern matching is never used for < > <= =>
 					_pattern = null;
 			}
 		}
