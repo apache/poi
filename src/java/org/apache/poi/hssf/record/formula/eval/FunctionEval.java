@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record.formula.eval;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.hssf.record.formula.functions.*;
 
 /**
@@ -31,12 +32,14 @@ public abstract class FunctionEval implements OperationEval {
      * Some function IDs that require special treatment
      */
     private static final class FunctionID {
+        /** 4 */
+        public static final int SUM = FunctionMetadataRegistry.FUNCTION_INDEX_SUM;
         /** 78 */
         public static final int OFFSET = 78;
         /** 148 */
         public static final int INDIRECT = 148;
         /** 255 */
-        public static final int EXTERNAL_FUNC = 255;
+        public static final int EXTERNAL_FUNC = FunctionMetadataRegistry.FUNCTION_INDEX_EXTERNAL;
     }
     // convenient access to namespace
     private static final FunctionID ID = null;
@@ -75,7 +78,7 @@ public abstract class FunctionEval implements OperationEval {
         retval[1] = new If(); // IF
         retval[2] = new IsNa(); // ISNA
         retval[3] = new IsError(); // ISERROR
-        retval[4] = AggregateFunction.SUM;
+        retval[ID.SUM] = AggregateFunction.SUM;
         retval[5] = AggregateFunction.AVERAGE;
         retval[6] = AggregateFunction.MIN;
         retval[7] = AggregateFunction.MAX;

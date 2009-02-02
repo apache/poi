@@ -30,11 +30,12 @@ public final class FunctionMetadataRegistry {
 	 */ 
 	public static final String FUNCTION_NAME_IF = "IF";
 
+	public static final short FUNCTION_INDEX_SUM = 4;
 	public static final short FUNCTION_INDEX_EXTERNAL = 255;
 	private static FunctionMetadataRegistry _instance;
 
 	private final FunctionMetadata[] _functionDataByIndex;
-	private final Map _functionDataByName;
+	private final Map<String, FunctionMetadata> _functionDataByName;
 
 	private static FunctionMetadataRegistry getInstance() {
 		if (_instance == null) {
@@ -43,12 +44,12 @@ public final class FunctionMetadataRegistry {
 		return _instance;
 	}
 
-	/* package */ FunctionMetadataRegistry(FunctionMetadata[] functionDataByIndex, Map functionDataByName) {
+	/* package */ FunctionMetadataRegistry(FunctionMetadata[] functionDataByIndex, Map<String, FunctionMetadata> functionDataByName) {
 		_functionDataByIndex = functionDataByIndex;
 		_functionDataByName = functionDataByName;
 	}
 
-	/* package */ Set getAllFunctionNames() {
+	/* package */ Set<String> getAllFunctionNames() {
 		return _functionDataByName.keySet();
 	}
 
@@ -75,7 +76,7 @@ public final class FunctionMetadataRegistry {
 	}
 
 	private FunctionMetadata getFunctionByNameInternal(String name) {
-		return (FunctionMetadata) _functionDataByName.get(name);
+		return _functionDataByName.get(name);
 	}
 
 

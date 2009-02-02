@@ -20,7 +20,7 @@ package org.apache.poi.hssf.model;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.formula.FuncVarPtg;
+import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -58,9 +58,8 @@ public final class TestFormulaParserEval extends TestCase {
 		confirmParseFormula(workbook);
 		
 		// And make it non-contiguous
-		if (false) { // TODO (Nov 2008) - make the formula parser support area unions
-			name.setReference("A1:A2,C3");
-		}
+		// using area unions
+		name.setReference("A1:A2,C3");
 		
 		confirmParseFormula(workbook);
 	}
@@ -72,7 +71,7 @@ public final class TestFormulaParserEval extends TestCase {
 		Ptg[] ptgs = HSSFFormulaParser.parse("SUM(testName)", workbook);
 		assertTrue("two tokens expected, got "+ptgs.length,ptgs.length == 2);
 		assertEquals(NamePtg.class, ptgs[0].getClass());
-		assertEquals(FuncVarPtg.class, ptgs[1].getClass());
+		assertEquals(AttrPtg.class, ptgs[1].getClass());
 	}
 
 	public void testEvaluateFormulaWithRowBeyond32768_Bug44539() {

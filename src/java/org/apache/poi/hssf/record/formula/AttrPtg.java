@@ -79,8 +79,7 @@ public final class AttrPtg extends ControlPtg {
         _chooseFuncOffset = -1;
     }
 
-    public AttrPtg(LittleEndianInput in) 
-    {
+    public AttrPtg(LittleEndianInput in) {
         field_1_options = in.readByte();
         field_2_data    = in.readShort();
         if (isOptimizedChoose()) {
@@ -113,44 +112,30 @@ public final class AttrPtg extends ControlPtg {
         return new AttrPtg(space.set(0), data, null, -1);
     }
 
-    public void setOptions(byte options)
-    {
-        field_1_options = options;
+    public static AttrPtg getSumSingle() {
+        return new AttrPtg(sum.set(0), 0, null, -1);
     }
 
-    public byte getOptions()
-    {
-        return field_1_options;
+
+    public boolean isSemiVolatile() {
+        return semiVolatile.isSet(field_1_options);
     }
 
-    public boolean isSemiVolatile()
-    {
-        return semiVolatile.isSet(getOptions());
+    public boolean isOptimizedIf() {
+        return optiIf.isSet(field_1_options);
     }
 
-    public boolean isOptimizedIf()
-    {
-        return optiIf.isSet(getOptions());
-    }
-
-    public boolean isOptimizedChoose()
-    {
-        return optiChoose.isSet(getOptions());
+    public boolean isOptimizedChoose() {
+        return optiChoose.isSet(field_1_options);
     }
 
     // lets hope no one uses this anymore
-    public boolean isGoto()
-    {
-        return optGoto.isSet(getOptions());
+    public boolean isGoto() {
+        return optGoto.isSet(field_1_options);
     }
 
-    public boolean isSum()
-    {
-        return sum.isSet(getOptions());
-    }
-
-    public void setSum(boolean bsum) {
-        field_1_options=sum.setByteBoolean(field_1_options,bsum);
+    public boolean isSum() {
+        return sum.isSet(field_1_options);
     }
 
     public void setOptimizedIf(boolean bif) {
@@ -166,24 +151,20 @@ public final class AttrPtg extends ControlPtg {
     }
 
     // lets hope no one uses this anymore
-    public boolean isBaxcel()
-    {
-        return baxcel.isSet(getOptions());
+    private boolean isBaxcel() {
+        return baxcel.isSet(field_1_options);
     }
 
     // biff3&4 only  shouldn't happen anymore
-    public boolean isSpace()
-    {
-        return space.isSet(getOptions());
+    public boolean isSpace() {
+        return space.isSet(field_1_options);
     }
 
-    public void setData(short data)
-    {
+    public void setData(short data) {
         field_2_data = data;
     }
 
-    public short getData()
-    {
+    public short getData() {
         return field_2_data;
     }
 
@@ -227,8 +208,7 @@ public final class AttrPtg extends ControlPtg {
         }
     }
 
-    public int getSize()
-    {
+    public int getSize() {
         if (_jumpTable != null) {
             return SIZE + (_jumpTable.length + 1) * LittleEndian.SHORT_SIZE;
         }
@@ -239,22 +219,20 @@ public final class AttrPtg extends ControlPtg {
         if(space.isSet(field_1_options)) {
             return operands[ 0 ];
         } else if (optiIf.isSet(field_1_options)) {
-            return toFormulaString() + "(" + operands[ 0 ]             +")";
+            return toFormulaString() + "(" + operands[0] + ")";
         } else if (optGoto.isSet(field_1_options)) {
             return toFormulaString() + operands[0];   //goto isn't a real formula element should not show up
         } else {
-            return toFormulaString() + "(" + operands[ 0 ] + ")";
+            return toFormulaString() + "(" + operands[0] + ")";
         }
     }
 
 
-    public int getNumberOfOperands()
-    {
+    public int getNumberOfOperands() {
         return 1;
     }
 
-    public int getType()
-    {
+    public int getType() {
         return -1;
     }
 
@@ -288,7 +266,7 @@ public final class AttrPtg extends ControlPtg {
         if (_jumpTable == null) {
             jt = null;
         } else {
-            jt = (int[]) _jumpTable.clone();
+            jt = _jumpTable.clone();
         }
         return new AttrPtg(field_1_options, field_2_data, jt, _chooseFuncOffset);
     }
