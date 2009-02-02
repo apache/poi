@@ -45,6 +45,7 @@ import org.apache.poi.hssf.record.formula.NumberPtg;
 import org.apache.poi.hssf.record.formula.PercentPtg;
 import org.apache.poi.hssf.record.formula.PowerPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.RangePtg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.StringPtg;
@@ -972,5 +973,27 @@ public final class TestFormulaParser extends TestCase {
 		confirmTokenClasses(ptgs, expectedClasses);
 		MemFuncPtg mf = (MemFuncPtg)ptgs[0];
 		assertEquals(45, mf.getLenRefSubexpression());
+	}
+
+	public void testRange_bug46643() {
+		String formula = "Sheet1!A1:Sheet1!B3";
+		HSSFWorkbook wb = new HSSFWorkbook();
+		wb.createSheet("Sheet1");
+		Ptg[] ptgs = FormulaParser.parse(formula, HSSFEvaluationWorkbook.create(wb));
+
+		if (ptgs.length == 3) {
+			confirmTokenClasses(ptgs, new Class[] { Ref3DPtg.class, Ref3DPtg.class, RangePtg.class,});
+			throw new AssertionFailedError("Identified bug 46643");
+		}
+		
+		Class [] expectedClasses = {
+				MemFuncPtg.class,
+				Ref3DPtg.class,
+				Ref3DPtg.class,
+				RangePtg.class,
+		};
+		confirmTokenClasses(ptgs, expectedClasses);
+		MemFuncPtg mf = (MemFuncPtg)ptgs[0];
+		assertEquals(15, mf.getLenRefSubexpression());
 	}
 }

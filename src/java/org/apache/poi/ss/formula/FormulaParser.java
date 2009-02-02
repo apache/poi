@@ -344,7 +344,9 @@ public final class FormulaParser {
                     new ParseNode(ptgA),    
                     new ParseNode(ptgB),
                 };
-                return new ParseNode(RangePtg.instance, children);
+                ParseNode result = new ParseNode(RangePtg.instance, children);
+                MemFuncPtg memFuncPtg = new MemFuncPtg(result.getEncodedSize());
+                return new ParseNode(memFuncPtg, result);
             }
             return new ParseNode(simplified);
         }
@@ -590,6 +592,10 @@ public final class FormulaParser {
         }
         boolean isVarArgs = !fm.hasFixedArgsLength();
         int funcIx = fm.getIndex();
+        if (false && funcIx == 4 && args.length == 1) {
+            // TODO - make POI behave more like Excel when summing a single argument:
+            // return new ParseNode(AttrPtg.getSumSingle(), args);
+        }
         validateNumArgs(args.length, fm);
 
         AbstractFunctionPtg retval;
