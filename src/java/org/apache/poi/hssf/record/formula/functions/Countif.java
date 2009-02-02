@@ -30,6 +30,7 @@ import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.functions.CountUtils.I_MatchPredicate;
+import org.apache.poi.ss.usermodel.ErrorConstants;
 
 /**
  * Implementation for the function COUNTIF
@@ -143,17 +144,49 @@ public final class Countif implements Function {
 			sb.append(" [").append(_representation).append("]");
 			return sb.toString();
 		}
+		public String getRepresentation() {
+			return _representation;
+		}
 	}
 
-
-	private static final class NumberMatcher implements I_MatchPredicate {
-
-		private final double _value;
+	private static abstract class MatcherBase implements I_MatchPredicate {
 		private final CmpOp _operator;
 
-		public NumberMatcher(double value, CmpOp operator) {
-			_value = value;
+		MatcherBase(CmpOp operator) {
 			_operator = operator;
+		}
+		protected final int getCode() {
+			return _operator.getCode();
+		}
+		protected final boolean evaluate(int cmpResult) {
+			return _operator.evaluate(cmpResult);
+		}
+		protected final boolean evaluate(boolean cmpResult) {
+			return _operator.evaluate(cmpResult);
+		}
+		@Override
+		public final String toString() {
+			StringBuffer sb = new StringBuffer(64);
+			sb.append(getClass().getName()).append(" [");
+			sb.append(_operator.getRepresentation());
+			sb.append(getValueText());
+			sb.append("]");
+			return sb.toString();
+		}
+		protected abstract String getValueText();
+	}
+
+	private static final class NumberMatcher extends MatcherBase {
+
+		private final double _value;
+
+		public NumberMatcher(double value, CmpOp operator) {
+			super(operator);
+			_value = value;
+		}
+		@Override
+		protected String getValueText() {
+			return String.valueOf(_value);
 		}
 
 		public boolean matches(Eval x) {
@@ -161,7 +194,7 @@ public final class Countif implements Function {
 			if(x instanceof StringEval) {
 				// if the target(x) is a string, but parses as a number
 				// it may still count as a match, only for the equality operator
-				switch (_operator.getCode()) {
+				switch (getCode()) {
 					case CmpOp.EQ:
 					case CmpOp.NONE:
 						break;
@@ -187,17 +220,20 @@ public final class Countif implements Function {
 			} else {
 				return false;
 			}
-			return _operator.evaluate(Double.compare(testValue, _value));
+			return evaluate(Double.compare(testValue, _value));
 		}
 	}
-	private static final class BooleanMatcher implements I_MatchPredicate {
+	private static final class BooleanMatcher extends MatcherBase {
 
 		private final int _value;
-		private final CmpOp _operator;
 
 		public BooleanMatcher(boolean value, CmpOp operator) {
+			super(operator);
 			_value = boolToInt(value);
-			_operator = operator;
+		}
+		@Override
+		protected String getValueText() {
+			return _value == 1 ? "TRUE" : "FALSE";
 		}
 
 		private static int boolToInt(boolean value) {
@@ -225,36 +261,38 @@ public final class Countif implements Function {
 			} else {
 				return false;
 			}
-			return _operator.evaluate(testValue - _value);
+			return evaluate(testValue - _value);
 		}
 	}
-	private static final class ErrorMatcher implements I_MatchPredicate {
+	private static final class ErrorMatcher extends MatcherBase {
 
 		private final int _value;
-		private final CmpOp _operator;
 
 		public ErrorMatcher(int errorCode, CmpOp operator) {
+			super(operator);
 			_value = errorCode;
-			_operator = operator;
+		}
+		@Override
+		protected String getValueText() {
+			return ErrorConstants.getText(_value);
 		}
 
 		public boolean matches(Eval x) {
 			if(x instanceof ErrorEval) {
 				int testValue = ((ErrorEval)x).getErrorCode();
-				return _operator.evaluate(testValue - _value);
+				return evaluate(testValue - _value);
 			}
 			return false;
 		}
 	}
-	private static final class StringMatcher implements I_MatchPredicate {
+	private static final class StringMatcher extends MatcherBase {
 
 		private final String _value;
-		private final CmpOp _operator;
 		private final Pattern _pattern;
 
 		public StringMatcher(String value, CmpOp operator) {
+			super(operator);
 			_value = value;
-			_operator = operator;
 			switch(operator.getCode()) {
 				case CmpOp.NONE:
 				case CmpOp.EQ:
@@ -266,10 +304,17 @@ public final class Countif implements Function {
 					_pattern = null;
 			}
 		}
+		@Override
+		protected String getValueText() {
+			if (_pattern == null) {
+				return _value;
+			}
+			return _pattern.pattern();
+		}
 
 		public boolean matches(Eval x) {
 			if (x instanceof BlankEval) {
-				switch(_operator.getCode()) {
+				switch(getCode()) {
 					case CmpOp.NONE:
 					case CmpOp.EQ:
 						return _value.length() == 0;
@@ -287,7 +332,7 @@ public final class Countif implements Function {
 			if (testedValue.length() < 1 && _value.length() < 1) {
 				// odd case: criteria '=' behaves differently to criteria ''
 
-				switch(_operator.getCode()) {
+				switch(getCode()) {
 					case CmpOp.NONE: return true;
 					case CmpOp.EQ:   return false;
 					case CmpOp.NE:   return true;
@@ -295,9 +340,9 @@ public final class Countif implements Function {
 				return false;
 			}
 			if (_pattern != null) {
-				return _operator.evaluate(_pattern.matcher(testedValue).matches());
+				return evaluate(_pattern.matcher(testedValue).matches());
 			}
-			return _operator.evaluate(testedValue.compareTo(_value));
+			return evaluate(testedValue.compareTo(_value));
 		}
 		/**
 		 * Translates Excel countif wildcard strings into java regex strings
