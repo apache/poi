@@ -64,4 +64,12 @@ public final class MemFuncPtg extends OperandPtg {
 	public int getLenRefSubexpression() {
 		return field_1_len_ref_subexpression;
 	}
+	@Override
+	public final String toString() {
+		StringBuffer sb = new StringBuffer(64);
+		sb.append(getClass().getName()).append(" [len=");
+		sb.append(field_1_len_ref_subexpression);
+		sb.append("]");
+		return sb.toString();
+	}
 }
