@@ -18,7 +18,9 @@
 package org.apache.poi.ss.formula;
 
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
+import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.ControlPtg;
+import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RangePtg;
@@ -101,6 +103,13 @@ final class OperandClassTransformer {
 			return;
 		}
 		
+		if (isSingleArgSum(token)) {
+			// Need to process the argument of SUM with transformFunctionNode below
+			// so make a dummy FuncVarPtg for that call.
+			token = new FuncVarPtg("SUM", (byte)1);
+			// Note - the tAttrSum token (node.getToken()) is a base 
+			// token so does not need to have its operand class set
+		}
 		if (token instanceof ValueOperatorPtg || token instanceof ControlPtg
 				|| token instanceof MemFuncPtg
 				|| token instanceof UnionPtg) {
@@ -133,6 +142,14 @@ final class OperandClassTransformer {
 			return;
 		}
 		token.setClass(transformClass(token.getPtgClass(), desiredOperandClass, callerForceArrayFlag));
+	}
+
+	private static boolean isSingleArgSum(Ptg token) {
+		if (token instanceof AttrPtg) {
+			AttrPtg attrPtg = (AttrPtg) token;
+			return attrPtg.isSum(); 
+		}
+		return false;
 	}
 
 	private static boolean isSimpleValueFunction(Ptg token) {

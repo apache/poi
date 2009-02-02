@@ -27,6 +27,7 @@ import org.apache.poi.hssf.record.formula.AddPtg;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.ArrayPtg;
+import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.BoolPtg;
 import org.apache.poi.hssf.record.formula.ConcatPtg;
 import org.apache.poi.hssf.record.formula.DividePtg;
@@ -592,9 +593,11 @@ public final class FormulaParser {
         }
         boolean isVarArgs = !fm.hasFixedArgsLength();
         int funcIx = fm.getIndex();
-        if (false && funcIx == 4 && args.length == 1) {
-            // TODO - make POI behave more like Excel when summing a single argument:
-            // return new ParseNode(AttrPtg.getSumSingle(), args);
+        if (funcIx == FunctionMetadataRegistry.FUNCTION_INDEX_SUM && args.length == 1) {
+            // Excel encodes the sum of a single argument as tAttrSum
+            // POI does the same for consistency, but this is not critical
+            return new ParseNode(AttrPtg.getSumSingle(), args);
+            // The code below would encode tFuncVar(SUM) which seems to do no harm 
         }
         validateNumArgs(args.length, fm);
 
