@@ -49,17 +49,17 @@ public final class TestFormulaParserEval extends TestCase {
 
 		HSSFName name = workbook.createName();
 		name.setNameName("testName");
-		name.setReference("A1:A2");
+		name.setRefersToFormula("A1:A2");
 
 		confirmParseFormula(workbook);
 
 		// Now make it a single cell
-		name.setReference("C3");
+		name.setRefersToFormula("C3");
 		confirmParseFormula(workbook);
 		
 		// And make it non-contiguous
 		// using area unions
-		name.setReference("A1:A2,C3");
+		name.setRefersToFormula("A1:A2,C3");
 		
 		confirmParseFormula(workbook);
 	}

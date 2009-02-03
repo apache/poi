@@ -64,11 +64,11 @@ public final class TestNameRecord extends TestCase {
 		HSSFName name = wb.createName();
 		wb.createSheet("Sheet1");
 		name.setNameName("test");
-		name.setReference("Sheet1!$B$3");
-		if (name.getReference().equals("Sheet1!B3")) {
+		name.setRefersToFormula("Sheet1!$B$3");
+		if (name.getRefersToFormula().equals("Sheet1!B3")) {
 			throw new AssertionFailedError("Identified bug 46174");
 		}
-		assertEquals("Sheet1!$B$3", name.getReference());
+		assertEquals("Sheet1!$B$3", name.getRefersToFormula());
 	}
 	public void testFormulaGeneral() {
 		// perhaps this testcase belongs on TestHSSFName
