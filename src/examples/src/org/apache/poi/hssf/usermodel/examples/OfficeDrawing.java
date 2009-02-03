@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.usermodel.examples;
 
 import org.apache.poi.hssf.usermodel.*;
@@ -27,11 +26,8 @@ import java.io.*;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class OfficeDrawing
-{
-    public static void main(String[] args)
-        throws IOException
-    {
+public class OfficeDrawing {
+    public static void main(String[] args) throws IOException {
         // Create the workbook and sheets.
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("new sheet");
@@ -58,8 +54,8 @@ public class OfficeDrawing
         // Create a row and size one of the cells reasonably large.
         HSSFRow row = sheet1.createRow(2);
         row.setHeight((short) 2800);
-        row.createCell( (short)1 );
-        sheet1.setColumnWidth((short) 2, (short) 9000);
+        row.createCell(1);
+        sheet1.setColumnWidth(2, 9000);
 
         // Create the drawing patriarch.  This is the top level container for
         // all shapes.
@@ -80,9 +76,9 @@ public class OfficeDrawing
     {
         // Create a row and size one of the cells reasonably large.
         HSSFRow row = sheet2.createRow(2);
-        row.createCell( (short)1 );
+        row.createCell(1);
         row.setHeightInPoints(240);
-        sheet2.setColumnWidth((short) 2, (short) 9000);
+        sheet2.setColumnWidth(2, 9000);
 
         // Create the drawing patriarch.  This is the top level container for
         // all shapes. This will clear out any existing shapes for that sheet.
@@ -97,8 +93,8 @@ public class OfficeDrawing
         // Create a row and size one of the cells reasonably large
         HSSFRow row = sheet3.createRow(2);
         row.setHeightInPoints(140);
-        row.createCell( (short)1 );
-        sheet3.setColumnWidth((short) 2, (short) 9000);
+        row.createCell(1);
+        sheet3.setColumnWidth(2, 9000);
 
         // Create the drawing patriarch.  This is the top level container for
         // all shapes. This will clear out any existing shapes for that sheet.

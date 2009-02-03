@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.usermodel.examples;
 
@@ -30,19 +28,16 @@ import java.io.IOException;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class Borders
-{
-    public static void main(String[] args)
-        throws IOException
-    {
+public class Borders {
+    public static void main(String[] args) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("new sheet");
 
         // Create a row and put some cells in it. Rows are 0 based.
-        HSSFRow row = sheet.createRow((short) 1);
+        HSSFRow row = sheet.createRow(1);
 
         // Create a cell and put a value in it.
-        HSSFCell cell = row.createCell((short) 1);
+        HSSFCell cell = row.createCell(1);
         cell.setCellValue(4);
 
         // Style the cell with borders all around.

@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hssf.usermodel.examples;
 
 import org.apache.poi.hssf.usermodel.*;
@@ -42,7 +43,7 @@ public class CellComments {
         HSSFPatriarch patr = sheet.createDrawingPatriarch();
 
         //create a cell in row 3
-        HSSFCell cell1 = sheet.createRow(3).createCell((short)1);
+        HSSFCell cell1 = sheet.createRow(3).createCell(1);
         cell1.setCellValue(new HSSFRichTextString("Hello, World"));
 
         //anchor defines size and position of the comment in worksheet
@@ -59,7 +60,7 @@ public class CellComments {
         cell1.setCellComment(comment1);
 
         //create another cell in row 6
-        HSSFCell cell2 = sheet.createRow(6).createCell((short)1);
+        HSSFCell cell2 = sheet.createRow(6).createCell(1);
         cell2.setCellValue(36.6);
 
 
@@ -85,7 +86,7 @@ public class CellComments {
         /**
          * The second way to assign comment to a cell is to implicitly specify its row and column.
          * Note, it is possible to set row and column of a non-existing cell.
-         * It works, the commnet is visible.
+         * It works, the comment is visible.
          */
         comment2.setRow(6);
         comment2.setColumn((short)1);
@@ -93,7 +94,5 @@ public class CellComments {
         FileOutputStream out = new FileOutputStream("poi_comment.xls");
         wb.write(out);
         out.close();
-
-
     }
 }

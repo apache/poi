@@ -45,9 +45,9 @@ import org.apache.poi.ss.util.Region;
 
 public class HSSF
 {
-    private String         filename     = null;
+    private String         _filename     = null;
 
-    protected HSSFWorkbook hssfworkbook = null;
+    protected HSSFWorkbook _hssfworkbook = null;
 
     /**
      * Constructor HSSF - creates an HSSFStream from an InputStream.  The HSSFStream
@@ -60,16 +60,9 @@ public class HSSF
      *
      */
 
-    public HSSF(String filename)
-        throws IOException
-    {
-        this.filename = filename;
-        POIFSFileSystem fs =
-            new POIFSFileSystem(new FileInputStream(filename));
-
-        hssfworkbook = new HSSFWorkbook(fs);
-
-        // records = RecordFactory.createRecords(stream);
+    public HSSF(String filename) throws IOException {
+        _filename = filename;
+        _hssfworkbook = new HSSFWorkbook(new FileInputStream(filename));
     }
 
     /**
@@ -87,7 +80,7 @@ public class HSSF
     public HSSF(String filename, boolean write)
         throws IOException
     {
-        short            rownum = 0;
+        int            rownum = 0;
         FileOutputStream out    = new FileOutputStream(filename);
         HSSFWorkbook     wb     = new HSSFWorkbook();
         HSSFSheet        s      = wb.createSheet();
@@ -112,7 +105,7 @@ public class HSSF
         cs2.setFillForegroundColor(( short ) 0xA);
         cs2.setFont(f2);
         wb.setSheetName(0, "HSSF Test");
-        for (rownum = ( short ) 0; rownum < 300; rownum++)
+        for (rownum = 0; rownum < 300; rownum++)
         {
             r = s.createRow(rownum);
             if ((rownum % 2) == 0)
@@ -121,7 +114,7 @@ public class HSSF
             }
 
             // r.setRowNum(( short ) rownum);
-            for (short cellnum = ( short ) 0; cellnum < 50; cellnum += 2)
+            for (int cellnum =  0; cellnum < 50; cellnum += 2)
             {
                 c = r.createCell(cellnum, HSSFCell.CELL_TYPE_NUMERIC);
                 c.setCellValue(rownum * 10000 + cellnum
@@ -147,7 +140,7 @@ public class HSSF
         rownum++;
         r = s.createRow(rownum);
         cs3.setBorderBottom(HSSFCellStyle.BORDER_THICK);
-        for (short cellnum = ( short ) 0; cellnum < 50; cellnum++)
+        for (int cellnum = 0; cellnum < 50; cellnum++)
         {
             c = r.createCell(cellnum, HSSFCell.CELL_TYPE_BLANK);
 
@@ -183,11 +176,11 @@ public class HSSF
     public HSSF(String infile, String outfile, boolean write)
         throws IOException
     {
-        this.filename = infile;
+        _filename = infile;
         POIFSFileSystem fs =
-            new POIFSFileSystem(new FileInputStream(filename));
+            new POIFSFileSystem(new FileInputStream(_filename));
 
-        hssfworkbook = new HSSFWorkbook(fs);
+        _hssfworkbook = new HSSFWorkbook(fs);
 
         // HSSFWorkbook book = hssfstream.getWorkbook();
     }
@@ -226,7 +219,7 @@ public class HSSF
                 HSSF hssf = new HSSF(args[ 0 ]);
 
                 System.out.println("Data dump:\n");
-                HSSFWorkbook wb = hssf.hssfworkbook;
+                HSSFWorkbook wb = hssf._hssfworkbook;
 
                 for (int k = 0; k < wb.getNumberOfSheets(); k++)
                 {
@@ -238,11 +231,12 @@ public class HSSF
                     for (int r = 0; r < rows; r++)
                     {
                         HSSFRow row   = sheet.getRow(r);
-                        int     cells = (row != null) ? row.getPhysicalNumberOfCells() : 0;
-                        if (row != null) {
-                          System.out.println("\nROW " + row.getRowNum()
-                                             + " has " + cells + " cell(s).");
+                        if (row == null) {
+                            continue;
                         }
+                        int cells = row.getPhysicalNumberOfCells();
+                        System.out.println("\nROW " + row.getRowNum()
+                                             + " has " + cells + " cell(s).");
                         for (int c = 0; c < cells; c++)
                         {
                             HSSFCell cell  = row.getCell(c);
@@ -269,7 +263,7 @@ public class HSSF
                                 default :
                             }
                             System.out.println("CELL col="
-                                               + cell.getCellNum()
+                                               + cell.getColumnIndex()
                                                + " VALUE=" + value);
                         }
                     }
@@ -307,7 +301,7 @@ public class HSSF
                     HSSF             hssf   = new HSSF(args[ 0 ]);
 
                     // HSSFStream       hssfstream = hssf.hssfstream;
-                    HSSFWorkbook     wb     = hssf.hssfworkbook;
+                    HSSFWorkbook     wb     = hssf._hssfworkbook;
                     FileOutputStream stream = new FileOutputStream(args[ 1 ]);
 
                     // HSSFCell cell = new HSSFCell();
@@ -332,7 +326,7 @@ public class HSSF
                 HSSF             hssf   = new HSSF(args[ 0 ]);
 
                 // HSSFStream       hssfstream = hssf.hssfstream;
-                HSSFWorkbook     wb     = hssf.hssfworkbook;
+                HSSFWorkbook     wb     = hssf._hssfworkbook;
                 FileOutputStream stream = new FileOutputStream(args[ 1 ]);
                 HSSFSheet        sheet  = wb.getSheetAt(0);
 

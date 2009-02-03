@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.usermodel.examples;
 
@@ -29,16 +27,11 @@ import java.io.IOException;
 
 /**
  * Creates outlines.
- *
+ * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class Outlines
-{
-    private Outlines(){}
-
-    public static void main(String[] args)
-        throws IOException
-    {
+public class Outlines {
+     public static void main(String[] args) throws IOException {
         createCase1( "outline1.xls" );
         System.out.println( "outline1.xls written.  Two expanded groups." );
         createCase2( "outline2.xls" );
@@ -67,19 +60,17 @@ public class Outlines
         System.out.println( "outline13.xls written.  Mixed bag." );
     }
 
-    private static void createCase1( String filename ) throws IOException{
+    private static void createCase1(String filename) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("new sheet");
 
-        sheet1.groupColumn( (short)4, (short)7 );
+        sheet1.groupColumn(4, 7);
 
-        for (int row = 0; row < 200; row++)
-        {
-            HSSFRow r = sheet1.createRow( row );
-            for (int column = 0; column < 200; column++)
-            {
-                HSSFCell c = r.createCell( (short) column );
-                c.setCellValue( column );
+        for (int row = 0; row < 200; row++) {
+            HSSFRow r = sheet1.createRow(row);
+            for (int column = 0; column < 200; column++) {
+                HSSFCell c = r.createCell(column);
+                c.setCellValue(column);
             }
         }
 
@@ -88,198 +79,181 @@ public class Outlines
         fileOut.close();
     }
 
-    private static void createCase2( String filename ) throws IOException{
+    private static void createCase2(String filename) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("new sheet");
 
-        sheet1.groupColumn( (short)2, (short)10 );
-        sheet1.groupColumn( (short)4, (short)7 );
-        sheet1.setColumnGroupCollapsed( (short)4, true );
+        sheet1.groupColumn(2, 10);
+        sheet1.groupColumn(4, 7);
+        sheet1.setColumnGroupCollapsed(4, true);
 
         FileOutputStream fileOut = new FileOutputStream(filename);
         wb.write(fileOut);
         fileOut.close();
     }
 
-    private static void createCase3( String filename ) throws IOException{
+    private static void createCase3(String filename) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("new sheet");
 
-        sheet1.groupColumn( (short)2, (short)10 );
-        sheet1.groupColumn( (short)4, (short)7 );
-        sheet1.setColumnGroupCollapsed( (short)4, true );
-        sheet1.setColumnGroupCollapsed( (short)2, true );
+        sheet1.groupColumn(2, 10);
+        sheet1.groupColumn(4, 7);
+        sheet1.setColumnGroupCollapsed(4, true);
+        sheet1.setColumnGroupCollapsed(2, true);
 
         FileOutputStream fileOut = new FileOutputStream(filename);
         wb.write(fileOut);
         fileOut.close();
     }
 
-    private static void createCase4( String filename ) throws IOException{
+    private static void createCase4(String filename) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("new sheet");
 
-        sheet1.groupColumn( (short)2, (short)10 );
-        sheet1.groupColumn( (short)4, (short)7 );
-        sheet1.setColumnGroupCollapsed( (short)4, true );
-        sheet1.setColumnGroupCollapsed( (short)2, true );
+        sheet1.groupColumn(2, 10);
+        sheet1.groupColumn(4, 7);
+        sheet1.setColumnGroupCollapsed(4, true);
+        sheet1.setColumnGroupCollapsed(2, true);
 
-        sheet1.setColumnGroupCollapsed( (short)4, false );
+        sheet1.setColumnGroupCollapsed(4, false);
 
         FileOutputStream fileOut = new FileOutputStream(filename);
         wb.write(fileOut);
         fileOut.close();
     }
 
-    private static void createCase5( String filename ) throws IOException{
+    private static void createCase5(String filename) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("new sheet");
 
-        sheet1.groupColumn( (short)2, (short)10 );
-        sheet1.groupColumn( (short)4, (short)7 );
-        sheet1.setColumnGroupCollapsed( (short)4, true );
-        sheet1.setColumnGroupCollapsed( (short)2, true );
+        sheet1.groupColumn(2, 10);
+        sheet1.groupColumn(4, 7);
+        sheet1.setColumnGroupCollapsed(4, true);
+        sheet1.setColumnGroupCollapsed(2, true);
 
-        sheet1.setColumnGroupCollapsed( (short)4, false );
-        sheet1.setColumnGroupCollapsed( (short)3, false );
+        sheet1.setColumnGroupCollapsed(4, false);
+        sheet1.setColumnGroupCollapsed(3, false);
 
         FileOutputStream fileOut = new FileOutputStream(filename);
         wb.write(fileOut);
         fileOut.close();
     }
 
-    private static void createCase6( String filename ) throws IOException{
+    private static void createCase6(String filename) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("new sheet");
 
-        sheet1.groupColumn( (short)2, (short)10 );
-        sheet1.groupColumn( (short)4, (short)10 );
-        sheet1.setColumnGroupCollapsed( (short)4, true );
-        sheet1.setColumnGroupCollapsed( (short)2, true );
+        sheet1.groupColumn(2, 10);
+        sheet1.groupColumn(4, 10);
+        sheet1.setColumnGroupCollapsed(4, true);
+        sheet1.setColumnGroupCollapsed(2, true);
 
-        sheet1.setColumnGroupCollapsed( (short)3, false );
+        sheet1.setColumnGroupCollapsed(3, false);
 
         FileOutputStream fileOut = new FileOutputStream(filename);
         wb.write(fileOut);
         fileOut.close();
     }
 
-    private static void createCase7( String filename )
-            throws IOException
-    {
+    private static void createCase7(String filename) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("new sheet");
 
-        sheet1.groupRow( 5, 14 );
-        sheet1.groupRow( 7, 10 );
+        sheet1.groupRow(5, 14);
+        sheet1.groupRow(7, 10);
 
         FileOutputStream fileOut = new FileOutputStream(filename);
         wb.write(fileOut);
         fileOut.close();
     }
 
-    private static void createCase8( String filename )
-            throws IOException
-    {
+    private static void createCase8(String filename) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("new sheet");
 
-        sheet1.groupRow( 5, 14 );
-        sheet1.groupRow( 7, 10 );
-        sheet1.setRowGroupCollapsed( 7, true );
+        sheet1.groupRow(5, 14);
+        sheet1.groupRow(7, 10);
+        sheet1.setRowGroupCollapsed(7, true);
 
         FileOutputStream fileOut = new FileOutputStream(filename);
         wb.write(fileOut);
         fileOut.close();
     }
 
-    private static void createCase9( String filename )
-            throws IOException
-    {
+    private static void createCase9(String filename) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("new sheet");
 
-        sheet1.groupRow( 5, 14 );
-        sheet1.groupRow( 7, 10 );
-        sheet1.setRowGroupCollapsed( 7, true );
-        sheet1.setRowGroupCollapsed( 5, true );
+        sheet1.groupRow(5, 14);
+        sheet1.groupRow(7, 10);
+        sheet1.setRowGroupCollapsed(7, true);
+        sheet1.setRowGroupCollapsed(5, true);
 
         FileOutputStream fileOut = new FileOutputStream(filename);
         wb.write(fileOut);
         fileOut.close();
     }
 
-
-    private static void createCase10( String filename )
-            throws IOException
-    {
+    private static void createCase10(String filename) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("new sheet");
 
-        sheet1.groupRow( 5, 14 );
-        sheet1.groupRow( 7, 10 );
-        sheet1.setRowGroupCollapsed( 7, true );
-        sheet1.setRowGroupCollapsed( 5, true );
-        sheet1.setRowGroupCollapsed( 8, false );
+        sheet1.groupRow(5, 14);
+        sheet1.groupRow(7, 10);
+        sheet1.setRowGroupCollapsed(7, true);
+        sheet1.setRowGroupCollapsed(5, true);
+        sheet1.setRowGroupCollapsed(8, false);
 
         FileOutputStream fileOut = new FileOutputStream(filename);
         wb.write(fileOut);
         fileOut.close();
     }
 
-    private static void createCase11( String filename )
-            throws IOException
-    {
+    private static void createCase11(String filename) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("new sheet");
 
-        sheet1.groupRow( 5, 14 );
-        sheet1.groupRow( 7, 10 );
-        sheet1.setRowGroupCollapsed( 7, true );
-        sheet1.setRowGroupCollapsed( 5, true );
-        sheet1.setRowGroupCollapsed( 8, false );
-        sheet1.setRowGroupCollapsed( 14, false );
+        sheet1.groupRow(5, 14);
+        sheet1.groupRow(7, 10);
+        sheet1.setRowGroupCollapsed(7, true);
+        sheet1.setRowGroupCollapsed(5, true);
+        sheet1.setRowGroupCollapsed(8, false);
+        sheet1.setRowGroupCollapsed(14, false);
 
         FileOutputStream fileOut = new FileOutputStream(filename);
         wb.write(fileOut);
         fileOut.close();
     }
 
-    private static void createCase12( String filename )
-            throws IOException
-    {
+    private static void createCase12(String filename) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("new sheet");
 
-        sheet1.groupRow( 5, 14 );
-        sheet1.groupRow( 7, 14 );
-        sheet1.setRowGroupCollapsed( 7, true );
-        sheet1.setRowGroupCollapsed( 5, true );
-        sheet1.setRowGroupCollapsed( 6, false );
+        sheet1.groupRow(5, 14);
+        sheet1.groupRow(7, 14);
+        sheet1.setRowGroupCollapsed(7, true);
+        sheet1.setRowGroupCollapsed(5, true);
+        sheet1.setRowGroupCollapsed(6, false);
 
         FileOutputStream fileOut = new FileOutputStream(filename);
         wb.write(fileOut);
         fileOut.close();
     }
 
-    private static void createCase13( String filename )
-            throws IOException
-    {
+    private static void createCase13(String filename) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("new sheet");
 
-        sheet1.groupRow( 5, 14 );
-        sheet1.groupRow( 7, 14 );
-        sheet1.groupRow( 16, 19 );
+        sheet1.groupRow(5, 14);
+        sheet1.groupRow(7, 14);
+        sheet1.groupRow(16, 19);
 
-        sheet1.groupColumn( (short)4, (short)7 );
-        sheet1.groupColumn( (short)9, (short)12 );
-        sheet1.groupColumn( (short)10, (short)11 );
+        sheet1.groupColumn(4, 7);
+        sheet1.groupColumn(9, 12);
+        sheet1.groupColumn(10, 11);
 
         FileOutputStream fileOut = new FileOutputStream(filename);
         wb.write(fileOut);
         fileOut.close();
     }
-
-
 }
