@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.usermodel.examples;
 
@@ -28,19 +26,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
-public class CellTypes
-{
-    public static void main(String[] args)
-        throws IOException
-    {
+public class CellTypes {
+    public static void main(String[] args) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("new sheet");
-        HSSFRow row = sheet.createRow((short)2);
-        row.createCell((short) 0).setCellValue(1.1);
-        row.createCell((short) 1).setCellValue(new Date());
-        row.createCell((short) 2).setCellValue("a string");
-        row.createCell((short) 3).setCellValue(true);
-        row.createCell((short) 4).setCellType(HSSFCell.CELL_TYPE_ERROR);
+        HSSFRow row = sheet.createRow(2);
+        row.createCell(0).setCellValue(1.1);
+        row.createCell(1).setCellValue(new Date());
+        row.createCell(2).setCellValue("a string");
+        row.createCell(3).setCellValue(true);
+        row.createCell(4).setCellType(HSSFCell.CELL_TYPE_ERROR);
 
         // Write the output to a file
         FileOutputStream fileOut = new FileOutputStream("workbook.xls");

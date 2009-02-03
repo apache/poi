@@ -14,37 +14,18 @@
    limitations under the License.
 ==================================================================== */
         
-
-/*
- * TestRowStyle.java
- *
- * Created on May 20, 2005
- */
 package org.apache.poi.hssf.usermodel;
-
-import java.io.IOException;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.util.TempFile;
 
 /**
  * Class to test row styling functionality
  *
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
-
-public class TestRowStyle
-    extends TestCase
-{
-
-    /** Creates a new instance of TestCellStyle */
-
-    public TestRowStyle(String name)
-    {
-        super(name);
-    }
+public final class TestRowStyle extends TestCase {
 
     /**
      * TEST NAME:  Test Write Sheet Font <P>
@@ -55,21 +36,17 @@ public class TestRowStyle
      *             HSSFSheet last row or first row is incorrect.             <P>
      *
      */
-
-    public void testWriteSheetFont()
-        throws IOException
-    {
+    public void testWriteSheetFont() {
         HSSFWorkbook     wb   = new HSSFWorkbook();
         HSSFSheet        s    = wb.createSheet();
         HSSFRow          r    = null;
-        HSSFCell         c    = null;
         HSSFFont         fnt  = wb.createFont();
         HSSFCellStyle    cs   = wb.createCellStyle();
 
         fnt.setColor(HSSFFont.COLOR_RED);
         fnt.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
         cs.setFont(fnt);
-        for (short rownum = ( short ) 0; rownum < 100; rownum++)
+        for (int rownum = 0; rownum < 100; rownum++)
         {
             r = s.createRow(rownum);
             r.setRowStyle(cs);
@@ -86,13 +63,11 @@ public class TestRowStyle
     /**
      * Tests that is creating a file with a date or an calendar works correctly.
      */
-    public void testDataStyle()
-            throws Exception
-    {
+    public void testDataStyle() {
         HSSFWorkbook     wb   = new HSSFWorkbook();
         HSSFSheet        s    = wb.createSheet();
         HSSFCellStyle    cs   = wb.createCellStyle();
-        HSSFRow row = s.createRow((short)0);
+        HSSFRow row = s.createRow(0);
 
         // with Date:
         cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
@@ -101,7 +76,7 @@ public class TestRowStyle
 
 
         // with Calendar:
-        row = s.createRow((short)1);
+        row = s.createRow(1);
         cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
         row.setRowStyle(cs);
         row.createCell(0);
@@ -126,10 +101,7 @@ public class TestRowStyle
      *             HSSFSheet last row or first row is incorrect.             <P>
      *
      */
-
-    public void testWriteSheetStyle()
-        throws IOException
-    {
+    public void testWriteSheetStyle() {
         HSSFWorkbook     wb   = new HSSFWorkbook();
         HSSFSheet        s    = wb.createSheet();
         HSSFRow          r    = null;
@@ -148,7 +120,7 @@ public class TestRowStyle
         cs2.setFillForegroundColor(( short ) 0x0);
         cs2.setFillPattern(( short ) 1);
         cs2.setFont(fnt);
-        for (short rownum = ( short ) 0; rownum < 100; rownum++)
+        for (int rownum = 0; rownum < 100; rownum++)
         {
             r = s.createRow(rownum);
             r.setRowStyle(cs);
@@ -171,7 +143,7 @@ public class TestRowStyle
         s    = wb.getSheetAt(0);
         assertNotNull("Sheet is not null", s);
         
-        for (short rownum = ( short ) 0; rownum < 100; rownum++)
+        for (int rownum = 0; rownum < 100; rownum++)
         {
             r = s.getRow(rownum);
             assertNotNull("Row is not null", r);
@@ -193,12 +165,5 @@ public class TestRowStyle
             assertEquals("FillForegroundColor for row: ", cs2.getFillForegroundColor(), (short) 0x0);
             assertEquals("FillPattern for row: ", cs2.getFillPattern(), (short) 0x1);
         }
-    }
-
-    public static void main(String [] ignored_args)
-    {
-        System.out
-            .println("Testing org.apache.poi.hssf.usermodel.HSSFCellStyle");
-        junit.textui.TestRunner.run(TestCellStyle.class);
     }
 }

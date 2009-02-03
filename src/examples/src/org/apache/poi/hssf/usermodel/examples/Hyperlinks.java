@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -35,7 +34,7 @@ public class Hyperlinks {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         //cell style for hyperlinks
-        //by default hypelrinks are blue and underlined
+        //by default hyperlinks are blue and underlined
         HSSFCellStyle hlink_style = wb.createCellStyle();
         HSSFFont hlink_font = wb.createFont();
         hlink_font.setUnderline(HSSFFont.U_SINGLE);
@@ -46,7 +45,7 @@ public class Hyperlinks {
         HSSFSheet sheet = wb.createSheet("Hyperlinks");
 
         //URL
-        cell = sheet.createRow(0).createCell((short)0);
+        cell = sheet.createRow(0).createCell(0);
         cell.setCellValue("URL Link");
         HSSFHyperlink link = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
         link.setAddress("http://poi.apache.org/");
@@ -54,7 +53,7 @@ public class Hyperlinks {
         cell.setCellStyle(hlink_style);
 
         //link to a file in the current directory
-        cell = sheet.createRow(1).createCell((short)0);
+        cell = sheet.createRow(1).createCell(0);
         cell.setCellValue("File Link");
         link = new HSSFHyperlink(HSSFHyperlink.LINK_FILE);
         link.setAddress("link1.xls");
@@ -62,7 +61,7 @@ public class Hyperlinks {
         cell.setCellStyle(hlink_style);
 
         //e-mail link
-        cell = sheet.createRow(2).createCell((short)0);
+        cell = sheet.createRow(2).createCell(0);
         cell.setCellValue("Email Link");
         link = new HSSFHyperlink(HSSFHyperlink.LINK_EMAIL);
         //note, if subject contains white spaces, make sure they are url-encoded
@@ -74,9 +73,9 @@ public class Hyperlinks {
 
         //create a target sheet and cell
         HSSFSheet sheet2 = wb.createSheet("Target Sheet");
-        sheet2.createRow(0).createCell((short)0).setCellValue("Target Cell");
+        sheet2.createRow(0).createCell(0).setCellValue("Target Cell");
 
-        cell = sheet.createRow(3).createCell((short)0);
+        cell = sheet.createRow(3).createCell(0);
         cell.setCellValue("Worksheet Link");
         link = new HSSFHyperlink(HSSFHyperlink.LINK_DOCUMENT);
         link.setAddress("'Target Sheet'!A1");
@@ -86,6 +85,5 @@ public class Hyperlinks {
         FileOutputStream out = new FileOutputStream("hssf-links.xls");
         wb.write(out);
         out.close();
-
     }
 }

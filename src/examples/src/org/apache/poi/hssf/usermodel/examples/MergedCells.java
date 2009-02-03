@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,12 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.usermodel.examples;
 
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.util.Region;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.io.IOException;
 import java.io.FileOutputStream;
@@ -30,24 +28,20 @@ import java.io.FileOutputStream;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class MergedCells
-{
-   public static void main(String[] args)
-        throws IOException
-    {
+public class MergedCells {
+   public static void main(String[] args) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("new sheet");
 
-        HSSFRow row = sheet.createRow((short) 1);
-        HSSFCell cell = row.createCell((short) 1);
+        HSSFRow row = sheet.createRow(1);
+        HSSFCell cell = row.createCell(1);
         cell.setCellValue("This is a test of merging");
 
-        sheet.addMergedRegion(new Region(1,(short)1,1,(short)2));
+        sheet.addMergedRegion(new CellRangeAddress(1, 1, 1, 2));
 
         // Write the output to a file
         FileOutputStream fileOut = new FileOutputStream("workbook.xls");
         wb.write(fileOut);
         fileOut.close();
-
     }
 }

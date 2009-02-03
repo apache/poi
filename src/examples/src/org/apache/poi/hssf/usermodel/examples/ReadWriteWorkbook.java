@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.usermodel.examples;
 
@@ -35,11 +33,8 @@ import java.io.IOException;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class ReadWriteWorkbook
-{
-    public static void main(String[] args)
-        throws IOException
-    {
+public class ReadWriteWorkbook {
+    public static void main(String[] args) throws IOException {
         FileInputStream fileIn = null;
         FileOutputStream fileOut = null;
 
@@ -52,18 +47,16 @@ public class ReadWriteWorkbook
             HSSFRow row = sheet.getRow(2);
             if (row == null)
                 row = sheet.createRow(2);
-            HSSFCell cell = row.getCell((short)3);
+            HSSFCell cell = row.getCell(3);
             if (cell == null)
-                cell = row.createCell((short)3);
+                cell = row.createCell(3);
             cell.setCellType(HSSFCell.CELL_TYPE_STRING);
             cell.setCellValue("a test");
 
             // Write the output to a file
             fileOut = new FileOutputStream("workbookout.xls");
             wb.write(fileOut);
-        }
-        finally
-        {
+        } finally {
             if (fileOut != null)
                 fileOut.close();
             if (fileIn != null)

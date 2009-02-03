@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.usermodel.examples;
 
@@ -31,12 +29,9 @@ import java.io.IOException;
  * @author Glen Stampoultzis (glens at apache.org)
  * @author Andrew Oliver (acoliver at apache.org)
  */
-public class BigExample
-{
-    public static void main(String[] args)
-        throws IOException
-    {
-        short rownum;
+public class BigExample {
+    public static void main(String[] args) throws IOException {
+        int rownum;
 
         // create a new file
         FileOutputStream out = new FileOutputStream("workbook.xls");
@@ -59,7 +54,7 @@ public class BigExample
         //set font 1 to 12 point type
         f.setFontHeightInPoints((short) 12);
         //make it red
-        f.setColor((short) HSSFColor.RED.index);
+        f.setColor(HSSFColor.RED.index);
         // make it bold
         //arial is the default font
         f.setBoldweight(f.BOLDWEIGHT_BOLD);
@@ -67,7 +62,7 @@ public class BigExample
         //set font 2 to 10 point type
         f2.setFontHeightInPoints((short) 10);
         //make it the color at palette index 0xf (white)
-        f2.setColor((short) HSSFColor.WHITE.index);
+        f2.setColor(HSSFColor.WHITE.index);
         //make it bold
         f2.setBoldweight(f2.BOLDWEIGHT_BOLD);
 
@@ -79,9 +74,9 @@ public class BigExample
         //set a thin border
         cs2.setBorderBottom(cs2.BORDER_THIN);
         //fill w fg fill color
-        cs2.setFillPattern((short) HSSFCellStyle.SOLID_FOREGROUND);
+        cs2.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         // set foreground fill to red
-        cs2.setFillForegroundColor((short) HSSFColor.RED.index);
+        cs2.setFillForegroundColor(HSSFColor.RED.index);
 
         // set the font
         cs2.setFont(f2);
@@ -89,7 +84,7 @@ public class BigExample
         // set the sheet name to HSSF Test
         wb.setSheetName(0, "HSSF Test");
         // create a sheet with 300 rows (0-299)
-        for (rownum = (short) 0; rownum < 300; rownum++)
+        for (rownum = 0; rownum < 300; rownum++)
         {
             // create a row
             r = s.createRow(rownum);
@@ -102,7 +97,7 @@ public class BigExample
 
             //r.setRowNum(( short ) rownum);
             // create 50 cells (0-49) (the += 2 becomes apparent later
-            for (short cellnum = (short) 0; cellnum < 50; cellnum += 2)
+            for (int cellnum = 0; cellnum < 50; cellnum += 2)
             {
                 // create a numeric cell
                 c = r.createCell(cellnum);
@@ -119,12 +114,12 @@ public class BigExample
                 }
 
                 // create a string cell (see why += 2 in the
-                c = r.createCell((short) (cellnum + 1));
+                c = r.createCell(cellnum + 1);
 
                 // set the cell's string value to "TEST"
                 c.setCellValue("TEST");
                 // make this column a bit wider
-                s.setColumnWidth((short) (cellnum + 1), (short) ((50 * 8) / ((double) 1 / 20)));
+                s.setColumnWidth(cellnum + 1, (int)((50 * 8) / ((double) 1 / 20)));
 
                 // on every other row
                 if ((rownum % 2) == 0)
@@ -149,8 +144,7 @@ public class BigExample
         cs3.setBorderBottom(cs3.BORDER_THICK);
 
         //create 50 cells
-        for (short cellnum = (short) 0; cellnum < 50; cellnum++)
-        {
+        for (int cellnum =0; cellnum < 50; cellnum++) {
             //create a blank type cell (no value)
             c = r.createCell(cellnum);
             // set it to the thick black border style

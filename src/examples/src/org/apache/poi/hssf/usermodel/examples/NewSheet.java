@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.usermodel.examples;
 
@@ -30,14 +28,12 @@ import java.io.FileOutputStream;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class NewSheet
-{
-    public static void main(String[] args)
-        throws IOException
-    {
+public class NewSheet {
+    public static void main(String[] args) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("new sheet");
-        HSSFSheet sheet2 = wb.createSheet("second sheet");
+        HSSFSheet sheet2 = wb.createSheet(); // create with default name
+        wb.setSheetName(1, "second sheet"); // setting sheet name later
         FileOutputStream fileOut = new FileOutputStream("workbook.xls");
         wb.write(fileOut);
         fileOut.close();

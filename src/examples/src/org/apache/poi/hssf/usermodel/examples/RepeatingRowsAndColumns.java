@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,34 +14,23 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.usermodel.examples;
 
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import java.io.IOException;
 import java.io.FileOutputStream;
-import java.io.FileInputStream;
 
 /**
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class RepeatingRowsAndColumns
-{
-    public static void main(String[] args)
-        throws IOException
-    {
+public class RepeatingRowsAndColumns {
+    public static void main(String[] args) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("first sheet");
-        HSSFSheet sheet2 = wb.createSheet("second sheet");
-        HSSFSheet sheet3 = wb.createSheet("third sheet");
-
-//        POIFSFileSystem fs      =
-//                new POIFSFileSystem(new FileInputStream("workbook.xls"));
-//        HSSFWorkbook wb = new HSSFWorkbook(fs);
-//        HSSFSheet sheet1 = wb.getSheetAt(0);
+        wb.createSheet("second sheet");
+        wb.createSheet("third sheet");
 
         HSSFFont boldFont = wb.createFont();
         boldFont.setFontHeightInPoints((short)22);
@@ -51,8 +39,8 @@ public class RepeatingRowsAndColumns
         HSSFCellStyle boldStyle = wb.createCellStyle();
         boldStyle.setFont(boldFont);
 
-        HSSFRow row = sheet1.createRow((short)1);
-        HSSFCell cell = row.createCell((short)0);
+        HSSFRow row = sheet1.createRow(1);
+        HSSFCell cell = row.createCell(0);
         cell.setCellValue("This quick brown fox");
         cell.setCellStyle(boldStyle);
 
