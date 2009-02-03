@@ -36,7 +36,6 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
-import org.apache.poi.ss.util.Region;
 
 /**
  * Class for testing Excel's data validation mechanism
@@ -385,7 +384,7 @@ public final class TestDataValidation extends TestCase {
 		va.addListValidation(null, strFormula, strFormula, false, false);
 		HSSFName namedRange = wb.createName();
 		namedRange.setNameName("myName");
-		namedRange.setReference(dataSheetName + "!$A$2:$A$7");
+		namedRange.setRefersToFormula(dataSheetName + "!$A$2:$A$7");
 		strFormula = "myName";
 		va.addListValidation(null, strFormula, strFormula, false, false);
 		strFormula = "offset(myName, 2, 1, 4, 2)"; // Note about last param '2': 

@@ -56,7 +56,7 @@ public final class TestNamedRange extends TestCase {
         //Setting its name
         newNamedRange.setNameName("RangeTest");
         //Setting its reference
-        newNamedRange.setReference(sheetName + "!$D$4:$E$8");
+        newNamedRange.setRefersToFormula(sheetName + "!$D$4:$E$8");
 
         //Getting NAmed Range
         HSSFName namedRange1 = wb.getNameAt(0);
@@ -70,7 +70,7 @@ public final class TestNamedRange extends TestCase {
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         HSSFName nm =wb.getNameAt(wb.getNameIndex("RangeTest"));
         assertTrue("Name is "+nm.getNameName(),"RangeTest".equals(nm.getNameName()));
-        assertEquals(wb.getSheetName(0)+"!$D$4:$E$8", nm.getReference());
+        assertEquals(wb.getSheetName(0)+"!$D$4:$E$8", nm.getRefersToFormula());
     }
 
     /**
@@ -89,13 +89,13 @@ public final class TestNamedRange extends TestCase {
         String sheetName = wb.getSheetName(0);
 
         //Getting its reference
-        String reference = namedRange1.getReference();
+        String reference = namedRange1.getRefersToFormula();
 
         assertEquals(sheetName+"!$A$1:$D$10", reference);
 
         HSSFName namedRange2 = wb.getNameAt(1);
 
-        assertEquals(sheetName+"!$D$17:$G$27", namedRange2.getReference());
+        assertEquals(sheetName+"!$D$17:$G$27", namedRange2.getRefersToFormula());
         assertEquals("SecondNamedRange", namedRange2.getNameName());
     }
 
@@ -110,13 +110,13 @@ public final class TestNamedRange extends TestCase {
         HSSFName name = wb.getNameAt(0);
         String sheetName = wb.getSheetName(0);
 
-        assertEquals(sheetName+"!$A$1:$D$10", name.getReference());
+        assertEquals(sheetName+"!$A$1:$D$10", name.getRefersToFormula());
 
         name = wb.getNameAt(1);
         String newReference = sheetName +"!$A$1:$C$36";
 
-        name.setReference(newReference);
-        assertEquals(newReference, name.getReference());
+        name.setRefersToFormula(newReference);
+        assertEquals(newReference, name.getRefersToFormula());
     }
 
     /**
@@ -135,24 +135,24 @@ public final class TestNamedRange extends TestCase {
         HSSFName newNamedRange = wb.createName();
 
         newNamedRange.setNameName("RangeTest");
-        newNamedRange.setReference(sheetName + "!$D$4:$E$8");
+        newNamedRange.setRefersToFormula(sheetName + "!$D$4:$E$8");
 
         //Creating another new Named Range
         HSSFName newNamedRange2 = wb.createName();
 
         newNamedRange2.setNameName("AnotherTest");
-        newNamedRange2.setReference(sheetName + "!$F$1:$G$6");
+        newNamedRange2.setRefersToFormula(sheetName + "!$F$1:$G$6");
 
         wb.getNameAt(0);
 
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         HSSFName nm =wb.getNameAt(wb.getNameIndex("RangeTest"));
         assertTrue("Name is "+nm.getNameName(),"RangeTest".equals(nm.getNameName()));
-        assertTrue("Reference is "+nm.getReference(),(wb.getSheetName(0)+"!$D$4:$E$8").equals(nm.getReference()));
+        assertTrue("Reference is "+nm.getRefersToFormula(),(wb.getSheetName(0)+"!$D$4:$E$8").equals(nm.getRefersToFormula()));
 
         nm = wb.getNameAt(wb.getNameIndex("AnotherTest"));
         assertTrue("Name is "+nm.getNameName(),"AnotherTest".equals(nm.getNameName()));
-        assertTrue("Reference is "+nm.getReference(),newNamedRange2.getReference().equals(nm.getReference()));
+        assertTrue("Reference is "+nm.getRefersToFormula(),newNamedRange2.getRefersToFormula().equals(nm.getRefersToFormula()));
     }
 
     /**
@@ -181,7 +181,7 @@ public final class TestNamedRange extends TestCase {
          namedRange1.setNameName("RangeTest1");
 
          // Set the reference for the named range for worksheet 'sheet1'
-         namedRange1.setReference("sheet1" + "!$A$1:$L$41");
+         namedRange1.setRefersToFormula("sheet1" + "!$A$1:$L$41");
 
          // Create a new named range for worksheet 'sheet2'
          HSSFName namedRange2 = wb.createName();
@@ -190,18 +190,18 @@ public final class TestNamedRange extends TestCase {
          namedRange2.setNameName("RangeTest2");
 
          // Set the reference for the named range for worksheet 'sheet2'
-         namedRange2.setReference("sheet2" + "!$A$1:$O$21");
+         namedRange2.setRefersToFormula("sheet2" + "!$A$1:$O$21");
 
          // Write the workbook to a file
          // Read the Excel file and verify its content
          wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
          HSSFName nm1 =wb.getNameAt(wb.getNameIndex("RangeTest1"));
          assertTrue("Name is "+nm1.getNameName(),"RangeTest1".equals(nm1.getNameName()));
-         assertTrue("Reference is "+nm1.getReference(),(wb.getSheetName(0)+"!$A$1:$L$41").equals(nm1.getReference()));
+         assertTrue("Reference is "+nm1.getRefersToFormula(),(wb.getSheetName(0)+"!$A$1:$L$41").equals(nm1.getRefersToFormula()));
 
          HSSFName nm2 =wb.getNameAt(wb.getNameIndex("RangeTest2"));
          assertTrue("Name is "+nm2.getNameName(),"RangeTest2".equals(nm2.getNameName()));
-         assertTrue("Reference is "+nm2.getReference(),(wb.getSheetName(1)+"!$A$1:$O$21").equals(nm2.getReference()));
+         assertTrue("Reference is "+nm2.getRefersToFormula(),(wb.getSheetName(1)+"!$A$1:$O$21").equals(nm2.getRefersToFormula()));
      }
 
     public void testUnicodeNamedRange() {
@@ -209,14 +209,14 @@ public final class TestNamedRange extends TestCase {
         workBook.createSheet("Test");
         HSSFName name = workBook.createName();
         name.setNameName("\u03B1");
-        name.setReference("Test!$D$3:$E$8");
+        name.setRefersToFormula("Test!$D$3:$E$8");
 
 
         HSSFWorkbook workBook2 = HSSFTestDataSamples.writeOutAndReadBack(workBook);
         HSSFName name2 = workBook2.getNameAt(0);
 
         assertEquals("\u03B1", name2.getNameName());
-        assertEquals("Test!$D$3:$E$8", name2.getReference());
+        assertEquals("Test!$D$3:$E$8", name2.getRefersToFormula());
     }
 
      /**
@@ -402,7 +402,7 @@ public final class TestNamedRange extends TestCase {
         HSSFName namedCell = wb.createName();
         namedCell.setNameName(cellName);
         String reference = "'" + sheetName + "'" + "!A1:A1";
-        namedCell.setReference(reference);
+        namedCell.setRefersToFormula(reference);
 
         // retrieve the newly created named range
         int namedCellIdx = wb.getNameIndex(cellName);
@@ -410,7 +410,7 @@ public final class TestNamedRange extends TestCase {
         assertNotNull(aNamedCell);
 
         // retrieve the cell at the named range and test its contents
-        AreaReference aref = new AreaReference(aNamedCell.getReference());
+        AreaReference aref = new AreaReference(aNamedCell.getRefersToFormula());
         assertTrue("Should be exactly 1 cell in the named cell :'" +cellName+"'", aref.isSingleCell());
 
         CellReference cref = aref.getFirstCell();
@@ -438,7 +438,7 @@ public final class TestNamedRange extends TestCase {
         HSSFName namedCell = wb.createName();
         namedCell.setNameName(cname);
         String reference = sname+"!A1";
-        namedCell.setReference(reference);
+        namedCell.setRefersToFormula(reference);
 
         // retrieve the newly created named range
         int namedCellIdx = wb.getNameIndex(cname);
@@ -446,7 +446,7 @@ public final class TestNamedRange extends TestCase {
         assertNotNull(aNamedCell);
 
         // retrieve the cell at the named range and test its contents
-        CellReference cref = new CellReference(aNamedCell.getReference());
+        CellReference cref = new CellReference(aNamedCell.getRefersToFormula());
         assertNotNull(cref);
         HSSFSheet s = wb.getSheet(cref.getSheetName());
         HSSFRow r = sheet.getRow(cref.getRow());
@@ -461,16 +461,16 @@ public final class TestNamedRange extends TestCase {
 
         HSSFName name1 = wb.getNameAt(0);
         assertEquals("a", name1.getNameName());
-        assertEquals("Sheet1!$A$1", name1.getReference());
-        new AreaReference(name1.getReference());
+        assertEquals("Sheet1!$A$1", name1.getRefersToFormula());
+        new AreaReference(name1.getRefersToFormula());
         assertTrue("Successfully constructed first reference", true);
 
         HSSFName name2 = wb.getNameAt(1);
         assertEquals("b", name2.getNameName());
-        assertEquals("Sheet1!#REF!", name2.getReference());
+        assertEquals("Sheet1!#REF!", name2.getRefersToFormula());
         assertTrue(name2.isDeleted());
         try {
-            new AreaReference(name2.getReference());
+            new AreaReference(name2.getRefersToFormula());
             fail("attempt to supply an invalid reference to AreaReference constructor results in exception");
         } catch (StringIndexOutOfBoundsException e) { // TODO - use a different exception for this condition
             // expected during successful test
@@ -494,9 +494,9 @@ public final class TestNamedRange extends TestCase {
         assertEquals("Print_Titles", nr1.getNameName());
         if (false) {
             // 	TODO - full column references not rendering properly, absolute markers not present either
-            assertEquals("FirstSheet!$A:$A,FirstSheet!$1:$3", nr1.getReference());
+            assertEquals("FirstSheet!$A:$A,FirstSheet!$1:$3", nr1.getRefersToFormula());
         } else {
-            assertEquals("FirstSheet!A:A,FirstSheet!$A$1:$IV$3", nr1.getReference());
+            assertEquals("FirstSheet!A:A,FirstSheet!$A$1:$IV$3", nr1.getRefersToFormula());
         }
 
         // Save and re-open
@@ -506,7 +506,7 @@ public final class TestNamedRange extends TestCase {
         nr1 = nwb.getNameAt(0);
 
         assertEquals("Print_Titles", nr1.getNameName());
-        assertEquals("FirstSheet!A:A,FirstSheet!$A$1:$IV$3", nr1.getReference());
+        assertEquals("FirstSheet!A:A,FirstSheet!$A$1:$IV$3", nr1.getRefersToFormula());
 
         // check that setting RR&C on a second sheet causes a new Print_Titles built-in
         // name to be created
@@ -517,7 +517,7 @@ public final class TestNamedRange extends TestCase {
         HSSFName nr2 = nwb.getNameAt(1);
 
         assertEquals("Print_Titles", nr2.getNameName());
-        assertEquals("SecondSheet!B:C,SecondSheet!$A$1:$IV$1", nr2.getReference());
+        assertEquals("SecondSheet!B:C,SecondSheet!$A$1:$IV$1", nr2.getRefersToFormula());
 
         if (false) {
             // In case you fancy checking in excel, to ensure it
