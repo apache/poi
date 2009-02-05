@@ -21,14 +21,8 @@ import junit.framework.TestCase;
 
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
-import org.apache.poi.openxml4j.opc.internal.ZipContentTypeManager;
-
-import org.apache.poi.openxml4j.TestCore;
 
 public class TestContentTypeManager extends TestCase {
-
-	TestCore testCore = new TestCore(this.getClass());
 
 	/**
 	 * Test the properties part content parsing.

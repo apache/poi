@@ -15,19 +15,30 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.openxml4j.opc.internal;
+package org.apache.poi.openxml4j.opc;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class AllTests {
+import org.apache.poi.openxml4j.opc.compliance.AllOpenXML4JComplianceTests;
+import org.apache.poi.openxml4j.opc.internal.AllOpenXML4JInternalTests;
+
+public final class AllOpenXML4JTests {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(
-				"Test for test.org.apache.poi.openxml4j.opc.internal");
-		//$JUnit-BEGIN$
-		suite.addTestSuite(TestContentTypeManager.class);
-		//$JUnit-END$
+		
+		TestSuite suite = new TestSuite(AllOpenXML4JTests.class.getName());
+		suite.addTestSuite(TestContentType.class);
+		suite.addTestSuite(TestFileHelper.class);
+		suite.addTestSuite(TestListParts.class);
+		suite.addTestSuite(TestPackage.class);
+		suite.addTestSuite(TestPackageCoreProperties.class);
+		suite.addTestSuite(TestPackagePartName.class);
+		suite.addTestSuite(TestPackageThumbnail.class);
+		suite.addTestSuite(TestPackagingURIHelper.class);
+		suite.addTestSuite(TestRelationships.class);
+		suite.addTest(AllOpenXML4JComplianceTests.suite());
+		suite.addTest(AllOpenXML4JInternalTests.suite());
 		return suite;
 	}
 }

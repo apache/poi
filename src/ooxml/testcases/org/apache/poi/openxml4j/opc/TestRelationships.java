@@ -19,32 +19,23 @@ package org.apache.poi.openxml4j.opc;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
+import java.io.InputStream;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.openxml4j.opc.Package;
-import org.apache.poi.openxml4j.opc.PackageAccess;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
-import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
-import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.openxml4j.opc.TargetMode;
-
-import org.apache.poi.openxml4j.TestCore;
+import org.apache.log4j.Logger;
+import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 
 
 public class TestRelationships extends TestCase {
-	public static final String HYPERLINK_REL_TYPE =
+	private static final String HYPERLINK_REL_TYPE =
 		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink";
-	public static final String COMMENTS_REL_TYPE =
+	private static final String COMMENTS_REL_TYPE =
 		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments";
-	public static final String SHEET_WITH_COMMENTS =
+	private static final String SHEET_WITH_COMMENTS =
 		"/xl/worksheets/sheet1.xml";
 
-    TestCore testCore = new TestCore(this.getClass());
+	private static Logger logger = Logger.getLogger("org.apache.poi.openxml4j.test");
 
     /**
      * Test relationships are correctly loaded. This at the moment fails (as of r499)
@@ -53,10 +44,9 @@ public class TestRelationships extends TestCase {
      * really look also for not yet loaded parts.
      */
     public void testLoadRelationships() throws Exception {
-        String filepath = System.getProperty("openxml4j.testdata.input") + File.separator
-            + "sample.xlsx";
-        Package pkg = Package.open(filepath, PackageAccess.READ);
-        TestCore.getLogger().debug("1: " + pkg);
+        InputStream is = OpenXML4JTestDataSamples.openSampleStream("sample.xlsx");
+        Package pkg = Package.open(is);
+        logger.debug("1: " + pkg);
         PackageRelationshipCollection rels = pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
         PackageRelationship coreDocRelationship = rels.getRelationship(0);
         PackagePart corePart = pkg.getPart(coreDocRelationship);
@@ -75,10 +65,8 @@ public class TestRelationships extends TestCase {
      *  type, then grab from within there by id
      */
     public void testFetchFromCollection() throws Exception {
-        String filepath = System.getProperty("openxml4j.testdata.input") + File.separator
-        	+ "ExcelWithHyperlinks.xlsx";
-    	
-        Package pkg = Package.open(filepath, PackageAccess.READ);
+        InputStream is = OpenXML4JTestDataSamples.openSampleStream("ExcelWithHyperlinks.xlsx");
+        Package pkg = Package.open(is);
         PackagePart sheet = pkg.getPart(
         		PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));
         assertNotNull(sheet);
@@ -118,10 +106,8 @@ public class TestRelationships extends TestCase {
      *  external hyperlinks. Check we can load these ok.
      */
     public void testLoadExcelHyperlinkRelations() throws Exception {
-        String filepath = System.getProperty("openxml4j.testdata.input") + File.separator
-	    	+ "ExcelWithHyperlinks.xlsx";
-		
-	    Package pkg = Package.open(filepath, PackageAccess.READ);
+        InputStream is = OpenXML4JTestDataSamples.openSampleStream("ExcelWithHyperlinks.xlsx");
+        Package pkg = Package.open(is);
 	    PackagePart sheet = pkg.getPart(
 	    		PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));
 	    assertNotNull(sheet);
@@ -150,13 +136,11 @@ public class TestRelationships extends TestCase {
     
     /*
      * Excel uses relations on sheets to store the details of 
-     *  external hyperlinks. Check we can create these ok, 
+     *  external hyperlinks. Check we can create these OK, 
      *  then still read them later
      */
     public void testCreateExcelHyperlinkRelations() throws Exception {
-        String filepath = System.getProperty("openxml4j.testdata.input") + File.separator
-	    	+ "ExcelWithHyperlinks.xlsx";
-		
+    	String filepath = OpenXML4JTestDataSamples.getSampleFileName("ExcelWithHyperlinks.xlsx");
 	    Package pkg = Package.open(filepath, PackageAccess.READ_WRITE);
 	    PackagePart sheet = pkg.getPart(
 	    		PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));

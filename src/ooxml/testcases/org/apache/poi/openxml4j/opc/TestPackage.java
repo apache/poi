@@ -30,33 +30,28 @@ import java.util.TreeMap;
 
 import junit.framework.TestCase;
 
+import org.apache.log4j.Logger;
+import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
+import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
-import org.apache.poi.openxml4j.opc.internal.FileHelper;
 
-import org.apache.poi.openxml4j.TestCore;
-
-public class TestPackage extends TestCase {
-
-	TestCore testCore = new TestCore(this.getClass());
+public final class TestPackage extends TestCase {
+	private static Logger logger = Logger.getLogger("org.apache.poi.openxml4j.test");
 
 	/**
 	 * Test that just opening and closing the file doesn't alter the document.
 	 */
 	public void testOpenSave() throws Exception {
-		File originalFile = new File(System.getProperty("openxml4j.testdata.input") + File.separator
-				+ "TestPackageCommon.docx");
-		File targetFile = new File(System.getProperty("openxml4j.testdata.output")
-				+ File.separator + "TestPackageOpenSaveTMP.docx");
-		assertTrue("Source file " + originalFile + " doesn't exist!", originalFile.exists());
+		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
+		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageOpenSaveTMP.docx");
 
-		Package p = Package.open(originalFile.getAbsolutePath(),
-				PackageAccess.READ_WRITE);
+		Package p = Package.open(originalFile, PackageAccess.READ_WRITE);
 		p.save(targetFile.getAbsoluteFile());
 
 		// Compare the original and newly saved document
@@ -70,8 +65,7 @@ public class TestPackage extends TestCase {
 	 *  the correct default content types
 	 */
 	public void testCreateGetsContentTypes() throws Exception {
-		File targetFile = new File(System.getProperty("openxml4j.testdata.output") + File.separator 
-				+ "TestCreatePackageTMP.docx");
+		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestCreatePackageTMP.docx");
 		
 		// Zap the target file, in case of an earlier run
 		if(targetFile.exists()) targetFile.delete();
@@ -103,11 +97,9 @@ public class TestPackage extends TestCase {
 	 * Test package creation.
 	 */
 	public void testCreatePackageAddPart() throws Exception {
-		File targetFile = new File(System.getProperty("openxml4j.testdata.output") + File.separator
-				+ "TestCreatePackageTMP.docx");
+		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestCreatePackageTMP.docx");
 
-		File expectedFile = new File(System.getProperty("openxml4j.testdata.output") + File.separator
-				+ "TestCreatePackageOUTPUT.docx");
+		File expectedFileFile = OpenXML4JTestDataSamples.getOutputFile("TestCreatePackageOUTPUT.docx");
 
 		// Zap the target file, in case of an earlier run
 		if(targetFile.exists()) targetFile.delete();
@@ -208,14 +200,11 @@ public class TestPackage extends TestCase {
 	 * Test package opening.
 	 */
 	public void testOpenPackage() throws Exception {
-		File targetFile = new File(System.getProperty("openxml4j.testdata.output")
-				+ File.separator + "TestOpenPackageTMP.docx");
+		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestOpenPackageTMP.docx");
 
-		File inputFile = new File(System.getProperty("openxml4j.testdata.input")
-				+ File.separator + "TestOpenPackageINPUT.docx");
+		File inputFile = OpenXML4JTestDataSamples.getSampleFile("TestOpenPackageINPUT.docx");
 
-		File expectedFile = new File(System.getProperty("openxml4j.testdata.output")
-                + File.separator + "TestOpenPackageOUTPUT.docx");
+		File expectedFile = OpenXML4JTestDataSamples.getOutputFile("TestOpenPackageOUTPUT.docx");
 
 		// Copy the input file in the output directory
 		FileHelper.copyFile(inputFile, targetFile);
@@ -271,14 +260,10 @@ public class TestPackage extends TestCase {
 	 *  to a file
 	 */
 	public void testSaveToOutputStream() throws Exception {
-		File originalFile = new File(System.getProperty("openxml4j.testdata.input") + File.separator
-				+ "TestPackageCommon.docx");
-		File targetFile = new File(System.getProperty("openxml4j.testdata.output") + File.separator
-                + "TestPackageOpenSaveTMP.docx");
-		assertTrue("Source file " + originalFile + " doesn't exist!", originalFile.exists());
+		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
+		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageOpenSaveTMP.docx");
 
-		Package p = Package.open(originalFile.getAbsolutePath(),
-				PackageAccess.READ_WRITE);
+		Package p = Package.open(originalFile, PackageAccess.READ_WRITE);
 		FileOutputStream fout = new FileOutputStream(targetFile);
 		p.save(fout);
 		fout.close();
@@ -295,9 +280,7 @@ public class TestPackage extends TestCase {
 	 *  reading from a file
 	 */
 	public void testOpenFromInputStream() throws Exception {
-		File originalFile = new File(System.getProperty("openxml4j.testdata.input") + File.separator
-				+ "TestPackageCommon.docx");
-		assertTrue("Source file " + originalFile + " doesn't exist!", originalFile.exists());
+		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
 		
 		FileInputStream finp = new FileInputStream(originalFile);
 		
@@ -313,18 +296,14 @@ public class TestPackage extends TestCase {
 	}
 
     /**
-     * TODO: fix and unable
+     * TODO: fix and enable
      */
     public void disabled_testRemovePartRecursive() throws Exception {
-		File originalFile = new File(System.getProperty("openxml4j.testdata.input") + File.separator
-				+ "TestPackageCommon.docx");
-		File targetFile = new File(System.getProperty("openxml4j.testdata.output") + File.separator
-				+ "TestPackageRemovePartRecursiveOUTPUT.docx");
-		File tempFile = new File(System.getProperty("openxml4j.testdata.output") + File.separator
-				+ "TestPackageRemovePartRecursiveTMP.docx");
+		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
+		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageRemovePartRecursiveOUTPUT.docx");
+		File tempFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageRemovePartRecursiveTMP.docx");
 
-		Package p = Package.open(originalFile.getAbsolutePath(),
-				PackageAccess.READ_WRITE);
+		Package p = Package.open(originalFile, PackageAccess.READ_WRITE);
 		p.removePartRecursive(PackagingURIHelper.createPartName(new URI(
 				"/word/document.xml")));
 		p.save(tempFile.getAbsoluteFile());
@@ -372,8 +351,7 @@ public class TestPackage extends TestCase {
 								.createPartName("/word/webSettings.xml"),
 						"application/vnd.openxmlformats-officedocument.wordprocessingml.webSettings+xml");
 
-		String filepath = System.getProperty("openxml4j.testdata.input") + File.separator
-				+ "sample.docx";
+		String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
 
 		Package p = Package.open(filepath, PackageAccess.READ_WRITE);
 		// Remove the core part
@@ -381,7 +359,7 @@ public class TestPackage extends TestCase {
 
 		for (PackagePart part : p.getParts()) {
 			values.put(part.getPartName(), part.getContentType());
-			TestCore.getLogger().debug(part.getPartName());
+			logger.debug(part.getPartName());
 		}
 
 		// Compare expected values with values return by the package
@@ -389,7 +367,7 @@ public class TestPackage extends TestCase {
 			assertNotNull(values.get(partName));
 			assertEquals(expectedValues.get(partName), values.get(partName));
 		}
-		// Don't save modfications
+		// Don't save modifications
 		p.revert();
 	}
 	
@@ -411,8 +389,7 @@ public class TestPackage extends TestCase {
 				.createPartName("/docProps/core.xml"),
 				"application/vnd.openxmlformats-package.core-properties+xml");
 
-		String filepath = System.getProperty("openxml4j.testdata.input") + File.separator
-				+ "sample.docx";
+		String filepath = OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
 
 		Package p = Package.open(filepath, PackageAccess.READ_WRITE);
 		// Remove the core part
@@ -420,7 +397,7 @@ public class TestPackage extends TestCase {
 
 		for (PackagePart part : p.getParts()) {
 			values.put(part.getPartName(), part.getContentType());
-			TestCore.getLogger().debug(part.getPartName());
+			logger.debug(part.getPartName());
 		}
 
 		// Compare expected values with values return by the package
@@ -428,7 +405,7 @@ public class TestPackage extends TestCase {
 			assertNotNull(values.get(partName));
 			assertEquals(expectedValues.get(partName), values.get(partName));
 		}
-		// Don't save modfications
+		// Don't save modifications
 		p.revert();
 	}
 	

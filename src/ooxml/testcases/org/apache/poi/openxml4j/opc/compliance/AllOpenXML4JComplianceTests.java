@@ -20,16 +20,13 @@ package org.apache.poi.openxml4j.opc.compliance;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class AllTests {
+public class AllOpenXML4JComplianceTests {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(
-				"Test for test.org.apache.poi.openxml4j.opc.compliance");
-		// $JUnit-BEGIN$
-		suite.addTestSuite(OPCCompliance_PartName.class);
-		suite.addTestSuite(OPCCompliance_CoreProperties.class);
-		suite.addTestSuite(OPCCompliance_PackageModel.class);
-		// $JUnit-END$
+		TestSuite suite = new TestSuite(AllOpenXML4JComplianceTests.class.getName());
+		suite.addTestSuite(TestOPCCompliancePartName.class);
+		suite.addTestSuite(TestOPCComplianceCoreProperties.class);
+		suite.addTestSuite(TestOPCCompliancePackageModel.class);
 		return suite;
 	}
 

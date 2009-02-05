@@ -30,8 +30,6 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 
-import org.apache.poi.openxml4j.TestCore;
-
 /**
  * Test Open Packaging Convention package model compliance.
  * 
@@ -40,11 +38,9 @@ import org.apache.poi.openxml4j.TestCore;
  * 
  * @author Julien Chable
  */
-public class OPCCompliance_PackageModel extends TestCase {
+public class TestOPCCompliancePackageModel extends TestCase {
 
-	TestCore testCore = new TestCore(this.getClass());
-
-	public OPCCompliance_PackageModel(String name) {
+	public TestOPCCompliancePackageModel(String name) {
 		super(name);
 	}
 
@@ -54,9 +50,8 @@ public class OPCCompliance_PackageModel extends TestCase {
 	 * [M1.11]
 	 */
 	public void testPartNameDerivationAdditionFailure() {
-		Package pkg = null;
+		Package pkg = Package.create("TODELETEIFEXIST.docx");
 		try {
-			pkg = Package.create("TODELETEIFEXIST.docx");
 			PackagePartName name = PackagingURIHelper
 					.createPartName("/word/document.xml");
 			PackagePartName nameDerived = PackagingURIHelper

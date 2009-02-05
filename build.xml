@@ -797,7 +797,6 @@ under the License.
             <sysproperty key="OOXML.testdata.path" file="${ooxml.src.test}/org/apache/poi/ooxml/data"/> 
             <sysproperty key="openxml4j.compliance.input" file="${ooxml.src.test}/org/apache/poi/openxml4j/opc/compliance/input"/> 
             <sysproperty key="openxml4j.testdata.input" file="${ooxml.src.test}/org/apache/poi/openxml4j/opc/INPUT"/> 
-            <sysproperty key="openxml4j.testdata.output" file="${ooxml.src.test}/org/apache/poi/openxml4j/opc/OUTPUT"/> 
             <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain"/>
             <formatter type="xml"/>
