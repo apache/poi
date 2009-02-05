@@ -62,10 +62,10 @@ public final class TestExcelExtractor extends TestCase {
 		assertEquals(
 				"Sheet1\n" +
 				"1000.0\t1.0\t5.0\n" +
-				"2000.0\t2.0\t\n" +	
-				"3000.0\t3.0\t\n" +
-				"4000.0\t4.0\t\n" + 
-				"5000.0\t5.0\t\n" +
+				"2000.0\t2.0\n" +	
+				"3000.0\t3.0\n" +
+				"4000.0\t4.0\n" + 
+				"5000.0\t5.0\n" +
 				"Sheet2\nSheet3\n", 
 				extractor.getText()
 		);
@@ -75,10 +75,10 @@ public final class TestExcelExtractor extends TestCase {
 		assertEquals(
 				"Sheet1\n" +
 				"1000.0\t1.0\tSUMIF(A1:A5,\">4000\",B1:B5)\n" +
-				"2000.0\t2.0\t\n" +	
-				"3000.0\t3.0\t\n" +
-				"4000.0\t4.0\t\n" + 
-				"5000.0\t5.0\t\n" +
+				"2000.0\t2.0\n" +	
+				"3000.0\t3.0\n" +
+				"4000.0\t4.0\n" + 
+				"5000.0\t5.0\n" +
 				"Sheet2\nSheet3\n", 
 				extractor.getText()
 		);
@@ -196,15 +196,15 @@ public final class TestExcelExtractor extends TestCase {
 		assertTrue(def.startsWith(
 				"Sheet1\n" +
 				"&[TAB]\t\n" +
-				"Hello\t\n" +
-				"11.0\t23.0\t\n"
+				"Hello\n" +
+				"11.0\t23.0\n"
 		));
 		
 		assertTrue(padded.startsWith(
 				"Sheet1\n" +
 				"&[TAB]\t\n" +
-				"Hello\t\t\t\t\t\t\t\t\t\t\t\n" +
-				"11.0\t\t\t23.0\t\t\t\t\t\t\t\t\n"
+				"Hello\n" +
+				"11.0\t\t\t23.0\n"
 		));
 	}
 	
