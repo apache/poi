@@ -40,6 +40,7 @@ import org.apache.poi.hssf.record.GutsRecord;
 import org.apache.poi.hssf.record.IndexRecord;
 import org.apache.poi.hssf.record.IterationRecord;
 import org.apache.poi.hssf.record.MergeCellsRecord;
+import org.apache.poi.hssf.record.NoteRecord;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.record.ObjectProtectRecord;
 import org.apache.poi.hssf.record.PaneRecord;
@@ -215,7 +216,7 @@ public final class Sheet implements Model {
                 } else {
                     if (bofEofNestingLevel == 2) {
                         // It's normal for a chart to have its own PageSettingsBlock
-                        // Fall through and add psb here, because chart records 
+                        // Fall through and add psb here, because chart records
                         // are stored loose among the sheet records.
                         // this latest psb does not clash with _psBlock
                     } else if (windowTwo != null) {
@@ -342,13 +343,13 @@ public final class Sheet implements Model {
             // Excel seems to always write the DIMENSION record, but tolerates when it is not present
             // in all cases Excel (2007) adds the missing DIMENSION record
             if (rra == null) {
-                // bug 46206 alludes to files which skip the DIMENSION record 
+                // bug 46206 alludes to files which skip the DIMENSION record
                 // when there are no row/cell records.
                 // Not clear which application wrote these files.
                 rra = new RowRecordsAggregate();
             } else {
                 log.log(POILogger.WARN, "DIMENSION record not found even though row/cells present");
-                // Not sure if any tools write files like this, but Excel reads them OK  
+                // Not sure if any tools write files like this, but Excel reads them OK
             }
             dimsloc = findFirstRecordLocBySid(WindowTwoRecord.sid);
             _dimensions = rra.createDimensions();
@@ -1794,5 +1795,24 @@ public final class Sheet implements Model {
             _dataValidityTable = result;
         }
         return _dataValidityTable;
+    }
+    /**
+     * Get the {@link NoteRecord}s (related to cell comments) for this sheet
+     * @return never <code>null</code>, typically empty array
+     */
+    public NoteRecord[] getNoteRecords() {
+        List<NoteRecord> temp = new ArrayList<NoteRecord>();
+        for(int i=records.size()-1; i>=0; i--) {
+            RecordBase rec = records.get(i);
+            if (rec instanceof NoteRecord) {
+                temp.add((NoteRecord) rec);
+            }
+        }
+        if (temp.size() < 1) {
+            return NoteRecord.EMPTY_ARRAY;
+        }
+        NoteRecord[] result = new NoteRecord[temp.size()];
+        temp.toArray(result);
+        return result;
     }
 }

@@ -30,11 +30,11 @@ import org.apache.poi.ss.usermodel.Row;
  * High level representation of a row of a spreadsheet.
  *
  * Only rows that have cells should be added to a Sheet.
- * @version 1.0-pre
+ *
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class HSSFRow implements Comparable, Row {
+public final class HSSFRow implements Row {
 
     // used for collections
     public final static int INITIAL_CAPACITY = 5;
@@ -65,14 +65,8 @@ public final class HSSFRow implements Comparable, Row {
      * @param rowNum the row number of this row (0 based)
      * @see org.apache.poi.hssf.usermodel.HSSFSheet#createRow(int)
      */
-    HSSFRow(HSSFWorkbook book, HSSFSheet sheet, int rowNum)
-    {
-        this.rowNum = rowNum;
-        this.book = book;
-        this.sheet = sheet;
-        row = new RowRecord(rowNum);
-
-        setRowNum(rowNum);
+    HSSFRow(HSSFWorkbook book, HSSFSheet sheet, int rowNum) {
+        this(book, sheet, new RowRecord(rowNum));
     }
 
     /**
@@ -84,13 +78,15 @@ public final class HSSFRow implements Comparable, Row {
      * @param record the low level api object this row should represent
      * @see org.apache.poi.hssf.usermodel.HSSFSheet#createRow(int)
      */
-    HSSFRow(HSSFWorkbook book, HSSFSheet sheet, RowRecord record)
-    {
+    HSSFRow(HSSFWorkbook book, HSSFSheet sheet, RowRecord record) {
         this.book = book;
         this.sheet = sheet;
         row = record;
-
         setRowNum(record.getRowNumber());
+        // Don't trust colIx boundaries as read by other apps
+        // set the RowRecord empty for the moment
+        record.setEmpty();
+        // subsequent calls to createCellFromRecord() will update the colIx boundaries properly
     }
 
     /**
@@ -136,10 +132,10 @@ public final class HSSFRow implements Comparable, Row {
      */
     public HSSFCell createCell(int columnIndex, int type)
     {
-    	short shortCellNum = (short)columnIndex;
-    	if(columnIndex > 0x7FFF) {
-    		shortCellNum = (short)(0xffff - columnIndex);
-    	}
+        short shortCellNum = (short)columnIndex;
+        if(columnIndex > 0x7FFF) {
+            shortCellNum = (short)(0xffff - columnIndex);
+        }
 
         HSSFCell cell = new HSSFCell(book, sheet, getRowNum(), shortCellNum, type);
         addCell(cell);
@@ -158,7 +154,7 @@ public final class HSSFRow implements Comparable, Row {
         removeCell((HSSFCell)cell, true);
     }
     private void removeCell(HSSFCell cell, boolean alsoRemoveRecords) {
-        
+
         int column=cell.getColumnIndex();
         if(column < 0) {
             throw new RuntimeException("Negative cell indexes not allowed");
@@ -167,20 +163,19 @@ public final class HSSFRow implements Comparable, Row {
             throw new RuntimeException("Specified cell is not from this row");
         }
         cells[column]=null;
-        
+
         if(alsoRemoveRecords) {
             CellValueRecordInterface cval = cell.getCellValueRecord();
             sheet.getSheet().removeValueRecord(getRowNum(), cval);
         }
-        
         if (cell.getColumnIndex()+1 == row.getLastCol()) {
-            row.setLastCol((short) (findLastCell(row.getLastCol())+1));
+            row.setLastCol(calculateNewLastCellPlusOne(row.getLastCol()));
         }
         if (cell.getColumnIndex() == row.getFirstCol()) {
-            row.setFirstCol(findFirstCell(row.getFirstCol()));
+            row.setFirstCol(calculateNewFirstCell(row.getFirstCol()));
         }
     }
-    
+
     /**
      * Removes all the cells from the row, and their
      *  records too.
@@ -200,27 +195,40 @@ public final class HSSFRow implements Comparable, Row {
      * @param cell low level cell to create the high level representation from
      * @return HSSFCell representing the low level record passed in
      */
-    protected HSSFCell createCellFromRecord(CellValueRecordInterface cell) {
+    HSSFCell createCellFromRecord(CellValueRecordInterface cell) {
         HSSFCell hcell = new HSSFCell(book, sheet, cell);
 
         addCell(hcell);
+        int colIx = cell.getColumn();
+        if (row.isEmpty()) {
+            row.setFirstCol(colIx);
+            row.setLastCol(colIx + 1);
+        } else {
+            if (colIx < row.getFirstCol()) {
+                row.setFirstCol(colIx);
+            } else if (colIx > row.getLastCol()) {
+                row.setLastCol(colIx + 1);
+            } else {
+                // added cell is within first and last cells
+            }
+        }
+        // TODO - RowRecord column boundaries need to be updated for cell comments too
         return hcell;
     }
 
     /**
      * set the row number of this row.
-     * @param rowNum  the row number (0-based)
+     * @param rowIndex  the row number (0-based)
      * @throws IndexOutOfBoundsException if the row number is not within the range 0-65535.
      */
-    public void setRowNum(int rowNum) {
-        if ((rowNum < 0) || (rowNum > RowRecord.MAX_ROW_NUMBER)) {
-          throw new IllegalArgumentException("Invalid row number (" + rowNum 
+    public void setRowNum(int rowIndex) {
+        if ((rowIndex < 0) || (rowIndex > RowRecord.MAX_ROW_NUMBER)) {
+          throw new IllegalArgumentException("Invalid row number (" + rowIndex
                   + ") outside allowable range (0.." + RowRecord.MAX_ROW_NUMBER + ")");
         }
-        this.rowNum = rowNum;
-        if (row != null)
-        {
-            row.setRowNumber(rowNum);   // used only for KEY comparison (HSSFRow)
+        rowNum = rowIndex;
+        if (row != null) {
+            row.setRowNumber(rowIndex);   // used only for KEY comparison (HSSFRow)
         }
     }
 
@@ -232,7 +240,7 @@ public final class HSSFRow implements Comparable, Row {
     {
         return rowNum;
     }
-    
+
     /**
      * Returns the HSSFSheet this row belongs to
      *
@@ -252,7 +260,7 @@ public final class HSSFRow implements Comparable, Row {
     protected int getOutlineLevel() {
         return row.getOutlineLevel();
     }
-    
+
     /**
      * Moves the supplied cell to a new column, which
      *  must not already have a cell there!
@@ -264,12 +272,12 @@ public final class HSSFRow implements Comparable, Row {
         if(cells.length > newColumn && cells[newColumn] != null) {
             throw new IllegalArgumentException("Asked to move cell to column " + newColumn + " but there's already a cell there");
         }
-        
+
         // Check it's one of ours
         if(! cells[cell.getColumnIndex()].equals(cell)) {
             throw new IllegalArgumentException("Asked to move a cell, but it didn't belong to our row");
         }
-        
+
         // Move the cell to the new position
         // (Don't remove the records though)
         removeCell(cell, false);
@@ -294,14 +302,14 @@ public final class HSSFRow implements Comparable, Row {
             System.arraycopy(oldCells,0,cells,0,oldCells.length);
         }
         cells[column]=cell;
-        
+
         // fix up firstCol and lastCol indexes
-        if (row.getFirstCol() == -1 || column < row.getFirstCol()) {
+        if (row.isEmpty() || column < row.getFirstCol()) {
             row.setFirstCol((short)column);
         }
-        
-        if (row.getLastCol() == -1 || column >= row.getLastCol()) {
-            row.setLastCol((short) (column+1)); // +1 -> for one past the last index 
+
+        if (row.isEmpty() || column >= row.getLastCol()) {
+            row.setLastCol((short) (column+1)); // +1 -> for one past the last index
         }
     }
 
@@ -311,14 +319,16 @@ public final class HSSFRow implements Comparable, Row {
      *  you get a null.
      * This is the basic call, with no policies applied
      *
-     * @param cellnum  0 based column number
+     * @param cellIndex  0 based column number
      * @return HSSFCell representing that column or null if undefined.
      */
-    private HSSFCell retrieveCell(int cellnum) {
-        if(cellnum<0||cellnum>=cells.length) return null;
-        return cells[cellnum];
+    private HSSFCell retrieveCell(int cellIndex) {
+        if(cellIndex<0||cellIndex>=cells.length) {
+            return null;
+        }
+        return cells[cellIndex];
     }
-    
+
     /**
      * @deprecated (Aug 2008) use {@link #getCell(int)}
      */
@@ -326,7 +336,7 @@ public final class HSSFRow implements Comparable, Row {
         int ushortCellNum = cellnum & 0x0000FFFF; // avoid sign extension
         return getCell(ushortCellNum);
     }
-    
+
     /**
      * Get the hssfcell representing a given column (logical cell)
      *  0-based.  If you ask for a cell that is not defined then
@@ -339,7 +349,7 @@ public final class HSSFRow implements Comparable, Row {
     public HSSFCell getCell(int cellnum) {
         return getCell(cellnum, book.getMissingCellPolicy());
     }
-    
+
     /**
      * Get the hssfcell representing a given column (logical cell)
      *  0-based.  If you ask for a cell that is not defined, then
@@ -374,19 +384,18 @@ public final class HSSFRow implements Comparable, Row {
      * get the number of the first cell contained in this row.
      * @return short representing the first logical cell in the row, or -1 if the row does not contain any cells.
      */
-    public short getFirstCellNum()
-    {
-        if (getPhysicalNumberOfCells() == 0)
+    public short getFirstCellNum() {
+        if (row.isEmpty()) {
             return -1;
-        else
-            return row.getFirstCol();
+        }
+        return (short) row.getFirstCol();
     }
 
     /**
-     * Gets the index of the last cell contained in this row <b>PLUS ONE</b>. The result also 
+     * Gets the index of the last cell contained in this row <b>PLUS ONE</b>. The result also
      * happens to be the 1-based column number of the last cell.  This value can be used as a
      * standard upper bound when iterating over cells:
-     * <pre> 
+     * <pre>
      * short minColIx = row.getFirstCellNum();
      * short maxColIx = row.getLastCellNum();
      * for(short colIx=minColIx; colIx&lt;maxColIx; colIx++) {
@@ -397,15 +406,15 @@ public final class HSSFRow implements Comparable, Row {
      *   //... do something with cell
      * }
      * </pre>
-     * 
+     *
      * @return short representing the last logical cell in the row <b>PLUS ONE</b>, or -1 if the
      *  row does not contain any cells.
      */
     public short getLastCellNum() {
-        if (getPhysicalNumberOfCells() == 0) {
+        if (row.isEmpty()) {
             return -1;
         }
-        return row.getLastCol();
+        return (short) row.getLastCol();
     }
 
 
@@ -446,7 +455,7 @@ public final class HSSFRow implements Comparable, Row {
     public void setZeroHeight(boolean zHeight) {
         row.setZeroHeight(zHeight);
     }
-  
+
     /**
      * get whether or not to display this row with 0 height
      * @return - zHeight height is zero or not.
@@ -478,7 +487,7 @@ public final class HSSFRow implements Comparable, Row {
         short height = row.getHeight();
 
         //The low-order 15 bits contain the row height.
-        //The 0x8000 bit indicates that the row is standard height (optional) 
+        //The 0x8000 bit indicates that the row is standard height (optional)
         if ((height & 0x8000) != 0) height = sheet.getSheet().getDefaultRowHeight();
         else height &= 0x7FFF;
 
@@ -508,46 +517,46 @@ public final class HSSFRow implements Comparable, Row {
     }
 
     /**
-     * used internally to refresh the "last cell" when the last cell is removed.
+     * used internally to refresh the "last cell plus one" when the last cell is removed.
+     * @return 0 when row contains no cells
      */
+    private int calculateNewLastCellPlusOne(int lastcell) {
+        int cellIx = lastcell - 1;
+        HSSFCell r = retrieveCell(cellIx);
 
-    private short findLastCell(short lastcell)
-    {
-        short cellnum = (short) (lastcell - 1);
-        HSSFCell r = getCell(cellnum);
-
-        while (r == null && cellnum >= 0)
-        {
-            r = getCell(--cellnum);
+        while (r == null) {
+            if (cellIx < 0) {
+                return 0;
+            }
+            r = retrieveCell(--cellIx);
         }
-        return cellnum;
+        return cellIx+1;
     }
 
     /**
      * used internally to refresh the "first cell" when the first cell is removed.
+     * @return 0 when row contains no cells (also when first cell is occupied)
      */
+    private int calculateNewFirstCell(int firstcell) {
+        int cellIx = firstcell + 1;
+        HSSFCell r = retrieveCell(cellIx);
 
-    private short findFirstCell(short firstcell)
-    {
-        short cellnum = (short) (firstcell + 1);
-        HSSFCell r = getCell(cellnum);
-
-        while (r == null && cellnum <= getLastCellNum())
-        {
-            r = getCell(++cellnum);
+        while (r == null) {
+            if (cellIx <= cells.length) {
+                return 0;
+            }
+            r = retrieveCell(++cellIx);
         }
-        if (cellnum > getLastCellNum())
-            return -1;
-        return cellnum;
+        return cellIx;
     }
-    
+
     /**
      * Is this row formatted? Most aren't, but some rows
      *  do have whole-row styles. For those that do, you
      *  can get the formatting from {@link #getRowStyle()}
      */
     public boolean isFormatted() {
-    	return row.getFormatted();
+        return row.getFormatted();
     }
     /**
      * Returns the whole-row cell styles. Most rows won't
@@ -555,7 +564,7 @@ public final class HSSFRow implements Comparable, Row {
      *  {@link #isFormatted()} to check first.
      */
     public HSSFCellStyle getRowStyle() {
-    	if(!isFormatted()) { return null; }
+        if(!isFormatted()) { return null; }
         short styleIndex = row.getXFIndex();
         ExtendedFormatRecord xf = book.getWorkbook().getExFormatAt(styleIndex);
         return new HSSFCellStyle(styleIndex, xf, book);
@@ -564,19 +573,19 @@ public final class HSSFRow implements Comparable, Row {
      * Applies a whole-row cell styling to the row.
      */
     public void setRowStyle(HSSFCellStyle style) {
-    	row.setFormatted(true);
-    	row.setXFIndex(style.getIndex());
+        row.setFormatted(true);
+        row.setXFIndex(style.getIndex());
     }
 
     /**
-     * @return cell iterator of the physically defined cells. 
+     * @return cell iterator of the physically defined cells.
      * Note that the 4th element might well not be cell 4, as the iterator
      *  will not return un-defined (null) cells.
      * Call getCellNum() on the returned cells to know which cell they are.
-     * As this only ever works on physically defined cells, 
+     * As this only ever works on physically defined cells,
      *  the {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy} has no effect.
      */
-    public Iterator cellIterator()
+    public Iterator<Cell> cellIterator()
     {
       return new CellIterator();
     }
@@ -584,18 +593,17 @@ public final class HSSFRow implements Comparable, Row {
      * Alias for {@link #cellIterator} to allow
      *  foreach loops
      */
-    public Iterator iterator() { 
+    public Iterator iterator() {
        return cellIterator();
     }
-    
+
     /**
      * An iterator over the (physical) cells in the row.
      */
-    private class CellIterator implements Iterator
-    {
+    private class CellIterator implements Iterator<Cell> {
       int thisId=-1;
       int nextId=-1;
-      
+
       public CellIterator()
       {
         findNext();
@@ -605,7 +613,7 @@ public final class HSSFRow implements Comparable, Row {
         return nextId<cells.length;
       }
 
-      public Object next() {
+      public Cell next() {
           if (!hasNext())
               throw new NoSuchElementException("At last element");
         HSSFCell cell=cells[nextId];
@@ -619,7 +627,7 @@ public final class HSSFRow implements Comparable, Row {
               throw new IllegalStateException("remove() called before next()");
         cells[thisId]=null;
       }
-      
+
       private void findNext()
       {
         int i=nextId+1;
@@ -629,7 +637,7 @@ public final class HSSFRow implements Comparable, Row {
         }
         nextId=i;
       }
-      
+
     }
 
     public int compareTo(Object obj)

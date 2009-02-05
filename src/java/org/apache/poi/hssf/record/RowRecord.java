@@ -43,16 +43,16 @@ public final class RowRecord extends StandardRecord {
      */
     public final static int MAX_ROW_NUMBER = 65535;
     
-    private int               field_1_row_number;
-    private short             field_2_first_col;
-    private short             field_3_last_col;   // plus 1
-    private short             field_4_height;
-    private short             field_5_optimize;   // hint field for gui, can/should be set to zero
+    private int field_1_row_number;
+    private int field_2_first_col;
+    private int field_3_last_col; // plus 1
+    private short field_4_height;
+    private short field_5_optimize; // hint field for gui, can/should be set to zero
 
     // for generated sheets.
-    private short             field_6_reserved;
+    private short field_6_reserved;
     /** 16 bit options flags */
-    private int             field_7_option_flags;
+    private int field_7_option_flags;
     private static final BitField          outlineLevel  = BitFieldFactory.getInstance(0x07);
 
     // bit 3 reserved
@@ -60,22 +60,20 @@ public final class RowRecord extends StandardRecord {
     private static final BitField          zeroHeight    = BitFieldFactory.getInstance(0x20);
     private static final BitField          badFontHeight = BitFieldFactory.getInstance(0x40);
     private static final BitField          formatted     = BitFieldFactory.getInstance(0x80);
-    private short             field_8_xf_index;   // only if isFormatted
+    private short field_8_xf_index;   // only if isFormatted
 
     public RowRecord(int rowNumber) {
         field_1_row_number = rowNumber;
-        field_2_first_col = -1;
-        field_3_last_col = -1;
         field_4_height = (short)0xFF;
         field_5_optimize = ( short ) 0;
         field_6_reserved = ( short ) 0;
         field_7_option_flags = OPTION_BITS_ALWAYS_SET; // seems necessary for outlining
 
         field_8_xf_index = ( short ) 0xf;
+        setEmpty();
     }
 
-    public RowRecord(RecordInputStream in)
-    {
+    public RowRecord(RecordInputStream in) {
         field_1_row_number   = in.readUShort();
         field_2_first_col    = in.readShort();
         field_3_last_col     = in.readShort();
@@ -87,11 +85,22 @@ public final class RowRecord extends StandardRecord {
     }
 
     /**
+     * Updates the firstCol and lastCol fields to the reserved value (-1) 
+     * to signify that this row is empty
+     */
+    public void setEmpty() {
+        field_2_first_col = 0;
+        field_3_last_col = 0;
+    }
+    public boolean isEmpty() {
+        return (field_2_first_col | field_3_last_col) == 0;
+    }
+    
+    /**
      * set the logical row number for this row (0 based index)
      * @param row - the row number
      */
-    public void setRowNumber(int row)
-    {
+    public void setRowNumber(int row) {
         field_1_row_number = row;
     }
 
@@ -99,17 +108,14 @@ public final class RowRecord extends StandardRecord {
      * set the logical col number for the first cell this row (0 based index)
      * @param col - the col number
      */
-    public void setFirstCol(short col)
-    {
+    public void setFirstCol(int col) {
         field_2_first_col = col;
     }
 
     /**
-     * set the logical col number for the last cell this row (0 based index)
-     * @param col - the col number
+     * @param col - one past the zero-based index to the last cell in this row
      */
-    public void setLastCol(short col)
-    {
+    public void setLastCol(int col) {
         field_3_last_col = col;
     }
 
@@ -117,8 +123,7 @@ public final class RowRecord extends StandardRecord {
      * set the height of the row
      * @param height of the row
      */
-    public void setHeight(short height)
-    {
+    public void setHeight(short height) {
         field_4_height = height;
     }
 
@@ -126,8 +131,7 @@ public final class RowRecord extends StandardRecord {
      * set whether to optimize or not (set to 0)
      * @param optimize (set to 0)
      */
-    public void setOptimize(short optimize)
-    {
+    public void setOptimize(short optimize) {
         field_5_optimize = optimize;
     }
 
@@ -137,8 +141,7 @@ public final class RowRecord extends StandardRecord {
      * set the outline level of this row
      * @param ol - the outline level
      */
-    public void setOutlineLevel(short ol)
-    {
+    public void setOutlineLevel(short ol) {
         field_7_option_flags = outlineLevel.setValue(field_7_option_flags, ol);
     }
 
@@ -146,8 +149,7 @@ public final class RowRecord extends StandardRecord {
      * set whether or not to collapse this row
      * @param c - collapse or not
      */
-    public void setColapsed(boolean c)
-    {
+    public void setColapsed(boolean c) {
         field_7_option_flags = colapsed.setBoolean(field_7_option_flags, c);
     }
 
@@ -155,8 +157,7 @@ public final class RowRecord extends StandardRecord {
      * set whether or not to display this row with 0 height
      * @param z  height is zero or not.
      */
-    public void setZeroHeight(boolean z)
-    {
+    public void setZeroHeight(boolean z) {
         field_7_option_flags = zeroHeight.setBoolean(field_7_option_flags, z);
     }
 
@@ -164,8 +165,7 @@ public final class RowRecord extends StandardRecord {
      * set whether the font and row height are not compatible
      * @param  f  true if they aren't compatible (damn not logic)
      */
-    public void setBadFontHeight(boolean f)
-    {
+    public void setBadFontHeight(boolean f) {
         field_7_option_flags = badFontHeight.setBoolean(field_7_option_flags, f);
     }
 
@@ -173,8 +173,7 @@ public final class RowRecord extends StandardRecord {
      * set whether the row has been formatted (even if its got all blank cells)
      * @param f  formatted or not
      */
-    public void setFormatted(boolean f)
-    {
+    public void setFormatted(boolean f) {
         field_7_option_flags = formatted.setBoolean(field_7_option_flags, f);
     }
 
@@ -185,8 +184,7 @@ public final class RowRecord extends StandardRecord {
      * @see org.apache.poi.hssf.record.ExtendedFormatRecord
      * @param index to the XF record
      */
-    public void setXFIndex(short index)
-    {
+    public void setXFIndex(short index) {
         field_8_xf_index = index;
     }
 
@@ -194,8 +192,7 @@ public final class RowRecord extends StandardRecord {
      * get the logical row number for this row (0 based index)
      * @return row - the row number
      */
-    public int getRowNumber()
-    {
+    public int getRowNumber() {
         return field_1_row_number;
     }
 
@@ -203,17 +200,15 @@ public final class RowRecord extends StandardRecord {
      * get the logical col number for the first cell this row (0 based index)
      * @return col - the col number
      */
-    public short getFirstCol()
-    {
+    public int getFirstCol() {
         return field_2_first_col;
     }
 
     /**
-     * get the logical col number for the last cell this row plus one (0 based index)
-     * @return col - the last col number + 1
+     * get the logical col number for the last cell this row (0 based index), plus one 
+     * @return col - the last col index + 1
      */
-    public short getLastCol()
-    {
+    public int getLastCol() {
         return field_3_last_col;
     }
 
@@ -221,8 +216,7 @@ public final class RowRecord extends StandardRecord {
      * get the height of the row
      * @return height of the row
      */
-    public short getHeight()
-    {
+    public short getHeight() {
         return field_4_height;
     }
 
@@ -230,8 +224,7 @@ public final class RowRecord extends StandardRecord {
      * get whether to optimize or not (set to 0)
      * @return optimize (set to 0)
      */
-    public short getOptimize()
-    {
+    public short getOptimize() {
         return field_5_optimize;
     }
 
@@ -240,8 +233,7 @@ public final class RowRecord extends StandardRecord {
      * method)
      * @return options - the bitmask
      */
-    public short getOptionFlags()
-    {
+    public short getOptionFlags() {
         return (short)field_7_option_flags;
     }
 
@@ -252,8 +244,7 @@ public final class RowRecord extends StandardRecord {
      * @return ol - the outline level
      * @see #getOptionFlags()
      */
-    public short getOutlineLevel()
-    {
+    public short getOutlineLevel() {
         return (short)outlineLevel.getValue(field_7_option_flags);
     }
 
@@ -262,8 +253,7 @@ public final class RowRecord extends StandardRecord {
      * @return c - colapse or not
      * @see #getOptionFlags()
      */
-    public boolean getColapsed()
-    {
+    public boolean getColapsed() {
         return (colapsed.isSet(field_7_option_flags));
     }
 
@@ -272,8 +262,7 @@ public final class RowRecord extends StandardRecord {
      * @return - z height is zero or not.
      * @see #getOptionFlags()
      */
-    public boolean getZeroHeight()
-    {
+    public boolean getZeroHeight() {
         return zeroHeight.isSet(field_7_option_flags);
     }
 
@@ -282,9 +271,7 @@ public final class RowRecord extends StandardRecord {
      * @return - f -true if they aren't compatible (damn not logic)
      * @see #getOptionFlags()
      */
-
-    public boolean getBadFontHeight()
-    {
+    public boolean getBadFontHeight() {
         return badFontHeight.isSet(field_7_option_flags);
     }
 
@@ -293,9 +280,7 @@ public final class RowRecord extends StandardRecord {
      * @return formatted or not
      * @see #getOptionFlags()
      */
-
-    public boolean getFormatted()
-    {
+    public boolean getFormatted() {
         return formatted.isSet(field_7_option_flags);
     }
 
@@ -306,14 +291,11 @@ public final class RowRecord extends StandardRecord {
      * @see org.apache.poi.hssf.record.ExtendedFormatRecord
      * @return index to the XF record or bogus value (undefined) if isn't formatted
      */
-
-    public short getXFIndex()
-    {
+    public short getXFIndex() {
         return field_8_xf_index;
     }
 
-    public String toString()
-    {
+    public String toString() {
         StringBuffer sb = new StringBuffer();
 
         sb.append("[ROW]\n");
@@ -350,8 +332,7 @@ public final class RowRecord extends StandardRecord {
         return ENCODED_SIZE - 4;
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 

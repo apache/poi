@@ -1056,6 +1056,7 @@ public class HSSFCell implements Cell {
      * @return cell comment or <code>null</code> if not found
      */
     protected static HSSFComment findCellComment(Sheet sheet, int row, int column){
+        // TODO - optimise this code by searching backwards, find NoteRecord first, quit if not found. Find one TXO by id
         HSSFComment comment = null;
         HashMap<Integer, TextObjectRecord> txshapesByShapeId = new HashMap<Integer, TextObjectRecord>(); 
         for (Iterator<RecordBase> it = sheet.getRecords().iterator(); it.hasNext(); ) {
@@ -1066,7 +1067,7 @@ public class HSSFCell implements Cell {
                    TextObjectRecord txo = txshapesByShapeId.get(new Integer(note.getShapeId()));
                    comment = new HSSFComment(note, txo);
                    comment.setRow(note.getRow());
-                   comment.setColumn(note.getColumn());
+                   comment.setColumn((short)note.getColumn());
                    comment.setAuthor(note.getAuthor());
                    comment.setVisible(note.getFlags() == NoteRecord.NOTE_VISIBLE);
                    comment.setString(txo.getStr());
@@ -1074,7 +1075,7 @@ public class HSSFCell implements Cell {
                }
            } else if (rec instanceof ObjRecord){
                ObjRecord obj = (ObjRecord)rec;
-               SubRecord sub = (SubRecord)obj.getSubRecords().get(0);
+               SubRecord sub = obj.getSubRecords().get(0);
                if (sub instanceof CommonObjectDataSubRecord){
                    CommonObjectDataSubRecord cmo = (CommonObjectDataSubRecord)sub;
                    if (cmo.getObjectType() == CommonObjectDataSubRecord.OBJECT_TYPE_COMMENT){
