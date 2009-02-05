@@ -17,27 +17,22 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.TreeMap;
 
 import junit.framework.TestCase;
 
+import org.apache.log4j.Logger;
+import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.Package;
-import org.apache.poi.openxml4j.opc.PackageAccess;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 
-import org.apache.poi.openxml4j.TestCore;
+public final class TestListParts extends TestCase {
+	private static Logger logger = Logger.getLogger("org.apache.poi.openxml4j.test");
 
-public class TestListParts extends TestCase {
+	private TreeMap<PackagePartName, String> expectedValues;
 
-	TestCore testCore = new TestCore(this.getClass());
-
-	TreeMap<PackagePartName, String> expectedValues;
-
-	TreeMap<PackagePartName, String> values;
+	private TreeMap<PackagePartName, String> values;
 
 	@Override
 	protected void setUp() throws Exception {
@@ -86,13 +81,17 @@ public class TestListParts extends TestCase {
 	 * List all parts of a package.
 	 */
 	public void testListParts() throws InvalidFormatException {
-		String filepath = System.getProperty("openxml4j.testdata.input") + File.separator
-				+ "sample.docx";
+		InputStream is = OpenXML4JTestDataSamples.openSampleStream("sample.docx");
 
-		Package p = Package.open(filepath, PackageAccess.READ);
+		Package p;
+		try {
+			p = Package.open(is);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		for (PackagePart part : p.getParts()) {
 			values.put(part.getPartName(), part.getContentType());
-			TestCore.getLogger().debug(part.getPartName());
+			logger.debug(part.getPartName());
 		}
 
 		// Compare expected values with values return by the package

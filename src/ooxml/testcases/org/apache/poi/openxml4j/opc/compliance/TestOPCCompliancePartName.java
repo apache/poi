@@ -78,9 +78,9 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
  * @author Julien Chable
  * @version 1.0
  */
-public class OPCCompliance_PartName extends TestCase {
+public class TestOPCCompliancePartName extends TestCase {
 
-	public OPCCompliance_PartName(String name) {
+	public TestOPCCompliancePartName(String name) {
 		super(name);
 	}
 

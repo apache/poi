@@ -18,22 +18,20 @@
 package org.apache.poi.openxml4j.opc;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import junit.framework.TestCase;
 
+import org.apache.log4j.Logger;
+import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.util.Nullable;
 
-import org.apache.poi.openxml4j.TestCore;
-import org.apache.log4j.Logger;
-
-public class TestPackageCoreProperties extends TestCase {
-
-	TestCore testCore = new TestCore(this.getClass());
+public final class TestPackageCoreProperties extends TestCase {
 
 	/**
 	 * Test package core properties getters.
@@ -41,13 +39,14 @@ public class TestPackageCoreProperties extends TestCase {
 	public void testGetProperties() {
 		try {
 			// Open the package
-			Package p = Package.open(System.getProperty("openxml4j.testdata.input") + File.separator
-					+ "TestPackageCoreProperiesGetters.docx",
-					PackageAccess.READ);
+			Package p = Package.open(OpenXML4JTestDataSamples.openSampleStream("TestPackageCoreProperiesGetters.docx"));
 			compareProperties(p);
 			p.revert();
 		} catch (OpenXML4JException e) {
 			Logger.getLogger("org.apache.poi.openxml4j.demo").debug(e.getMessage());
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -55,11 +54,9 @@ public class TestPackageCoreProperties extends TestCase {
 	 * Test package core properties setters.
 	 */
 	public void testSetProperties() throws Exception {
-		String inputPath = System.getProperty("openxml4j.testdata.input")
-				+ File.separator + "TestPackageCoreProperiesSetters.docx";
+		String inputPath = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCoreProperiesSetters.docx");
 
-		String outputFilename = System.getProperty("openxml4j.testdata.input")
-				+ File.separator + "TestPackageCoreProperiesSettersOUTPUT.docx";
+		File outputFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageCoreProperiesSettersOUTPUT.docx");
 
 		// Open package
 		Package p = Package.open(inputPath, PackageAccess.READ_WRITE);
@@ -86,14 +83,13 @@ public class TestPackageCoreProperties extends TestCase {
 		props.setSubjectProperty("MySubject");
 		props.setVersionProperty("2");
 		// Save the package in the output directory
-		p.save(new File(outputFilename));
+		p.save(outputFile);
 
 		// Open the newly created file to check core properties saved values.
-		File fOut = new File(outputFilename);
-		Package p2 = Package.open(outputFilename, PackageAccess.READ);
+		Package p2 = Package.open(outputFile.getAbsolutePath(), PackageAccess.READ);
 		compareProperties(p2);
 		p2.revert();
-		fOut.delete();
+		outputFile.delete();
 	}
 
 	private void compareProperties(Package p) throws InvalidFormatException {

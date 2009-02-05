@@ -21,47 +21,37 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.openxml4j.opc.Package;
-import org.apache.poi.openxml4j.opc.PackageAccess;
-import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
-
-import org.apache.poi.openxml4j.TestCore;
+import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 
 /**
  * Test the addition of thumbnail in a package.
  * 
  * @author Julien Chable
  */
-public class TestPackageThumbnail extends TestCase {
-
-	TestCore testCore = new TestCore(this.getClass());
+public final class TestPackageThumbnail extends TestCase {
 
 	/**
 	 * Test package addThumbnail() method.
 	 */
 	public void testSetProperties() throws Exception {
-		String inputPath = System.getProperty("openxml4j.testdata.input")
-				+ File.separator + "TestPackageThumbnail.docx";
+		String inputPath = OpenXML4JTestDataSamples.getSampleFileName("TestPackageThumbnail.docx");
 
-		String imagePath = System.getProperty("openxml4j.testdata.input")
-				+ File.separator + "thumbnail.jpg";
+		String imagePath = OpenXML4JTestDataSamples.getSampleFileName("thumbnail.jpg");
 
-		String outputFilename = System.getProperty("openxml4j.testdata.output")
-				+ File.separator + "TestPackageThumbnailOUTPUT.docx";
+		File outputFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageThumbnailOUTPUT.docx");
 
 		// Open package
 		Package p = Package.open(inputPath, PackageAccess.READ_WRITE);
 		p.addThumbnail(imagePath);
 		// Save the package in the output directory
-		p.save(new File(outputFilename));
+		p.save(outputFile);
 
 		// Open the newly created file to check core properties saved values.
-		File fOut = new File(outputFilename);
-		Package p2 = Package.open(outputFilename, PackageAccess.READ);
+		Package p2 = Package.open(outputFile.getAbsolutePath(), PackageAccess.READ);
 		if (p2.getRelationshipsByType(PackageRelationshipTypes.THUMBNAIL)
 				.size() == 0)
 			fail("Thumbnail not added to the package !");
 		p2.revert();
-		//fOut.delete();
+		outputFile.delete();
 	}
 }
