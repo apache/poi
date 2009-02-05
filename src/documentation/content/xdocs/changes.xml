@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta5" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">46654 - HSSFRow/RowRecord to properly update cell boundary indexes</action>
            <action dev="POI-DEVELOPERS" type="fix">46643 - Fixed formula parser to encode range operator with tMemFunc</action>
            <action dev="POI-DEVELOPERS" type="fix">46647 - Fixed COUNTIF NE operator and other special cases involving type conversion</action>
            <action dev="POI-DEVELOPERS" type="add">46635 - Added a method to remove slides</action>

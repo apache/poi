@@ -17,9 +17,12 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.BlankRecord;
+import org.apache.poi.hssf.record.RowRecord;
 
 /**
  * Test HSSFRow is okay.
@@ -47,6 +50,32 @@ public final class TestHSSFRow extends TestCase {
         row.createCell(3);
         assertEquals(1, row.getFirstCellNum());
         assertEquals(4, row.getLastCellNum());
+    }
+    public void testLastAndFirstColumns_bug46654() {
+        int ROW_IX = 10;
+        int COL_IX = 3;
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Sheet1");
+        RowRecord rowRec = new RowRecord(ROW_IX);
+        rowRec.setFirstCol((short)2);
+        rowRec.setLastCol((short)5);
+
+        BlankRecord br = new BlankRecord();
+        br.setRow(ROW_IX);
+		br.setColumn((short)COL_IX);
+
+        sheet.getSheet().addValueRecord(ROW_IX, br);
+        HSSFRow row = new HSSFRow(workbook, sheet, rowRec);
+        HSSFCell cell = row.createCellFromRecord(br);
+
+        if (row.getFirstCellNum() == 2 && row.getLastCellNum() == 5) {
+            throw new AssertionFailedError("Identified bug 46654a");
+        }
+        assertEquals(COL_IX, row.getFirstCellNum());
+        assertEquals(COL_IX + 1, row.getLastCellNum());
+        row.removeCell(cell);
+        assertEquals(-1, row.getFirstCellNum());
+        assertEquals(-1, row.getLastCellNum());
     }
 
     /**
@@ -204,11 +233,11 @@ public final class TestHSSFRow extends TestCase {
         row.createCell(255);
         assertEquals(256, row.getLastCellNum());
     }
-    
+
     /**
      * Tests for the missing/blank cell policy stuff
      */
-    public void testGetCellPolicy() throws Exception {
+    public void testGetCellPolicy() {
         HSSFWorkbook book = new HSSFWorkbook();
         HSSFSheet sheet = book.createSheet("test");
         HSSFRow row = sheet.createRow(0);
@@ -223,7 +252,7 @@ public final class TestHSSFRow extends TestCase {
         row.createCell(1).setCellValue(3.2);
         row.createCell(4, HSSFCell.CELL_TYPE_BLANK);
         row.createCell(5).setCellValue(4);
-        
+
         // First up, no policy given, uses default
         assertEquals(HSSFCell.CELL_TYPE_STRING,  row.getCell(0).getCellType());
         assertEquals(HSSFCell.CELL_TYPE_NUMERIC, row.getCell(1).getCellType());
@@ -231,7 +260,7 @@ public final class TestHSSFRow extends TestCase {
         assertEquals(null, row.getCell(3));
         assertEquals(HSSFCell.CELL_TYPE_BLANK,   row.getCell(4).getCellType());
         assertEquals(HSSFCell.CELL_TYPE_NUMERIC, row.getCell(5).getCellType());
-        
+
         // RETURN_NULL_AND_BLANK - same as default
         assertEquals(HSSFCell.CELL_TYPE_STRING,  row.getCell(0, HSSFRow.RETURN_NULL_AND_BLANK).getCellType());
         assertEquals(HSSFCell.CELL_TYPE_NUMERIC, row.getCell(1, HSSFRow.RETURN_NULL_AND_BLANK).getCellType());
@@ -239,7 +268,7 @@ public final class TestHSSFRow extends TestCase {
         assertEquals(null, row.getCell(3, HSSFRow.RETURN_NULL_AND_BLANK));
         assertEquals(HSSFCell.CELL_TYPE_BLANK,   row.getCell(4, HSSFRow.RETURN_NULL_AND_BLANK).getCellType());
         assertEquals(HSSFCell.CELL_TYPE_NUMERIC, row.getCell(5, HSSFRow.RETURN_NULL_AND_BLANK).getCellType());
-        
+
         // RETURN_BLANK_AS_NULL - nearly the same
         assertEquals(HSSFCell.CELL_TYPE_STRING,  row.getCell(0, HSSFRow.RETURN_BLANK_AS_NULL).getCellType());
         assertEquals(HSSFCell.CELL_TYPE_NUMERIC, row.getCell(1, HSSFRow.RETURN_BLANK_AS_NULL).getCellType());
@@ -247,7 +276,7 @@ public final class TestHSSFRow extends TestCase {
         assertEquals(null, row.getCell(3, HSSFRow.RETURN_BLANK_AS_NULL));
         assertEquals(null, row.getCell(4, HSSFRow.RETURN_BLANK_AS_NULL));
         assertEquals(HSSFCell.CELL_TYPE_NUMERIC, row.getCell(5, HSSFRow.RETURN_BLANK_AS_NULL).getCellType());
-        
+
         // CREATE_NULL_AS_BLANK - creates as needed
         assertEquals(HSSFCell.CELL_TYPE_STRING,  row.getCell(0, HSSFRow.CREATE_NULL_AS_BLANK).getCellType());
         assertEquals(HSSFCell.CELL_TYPE_NUMERIC, row.getCell(1, HSSFRow.CREATE_NULL_AS_BLANK).getCellType());
@@ -255,7 +284,7 @@ public final class TestHSSFRow extends TestCase {
         assertEquals(HSSFCell.CELL_TYPE_BLANK,   row.getCell(3, HSSFRow.CREATE_NULL_AS_BLANK).getCellType());
         assertEquals(HSSFCell.CELL_TYPE_BLANK,   row.getCell(4, HSSFRow.CREATE_NULL_AS_BLANK).getCellType());
         assertEquals(HSSFCell.CELL_TYPE_NUMERIC, row.getCell(5, HSSFRow.CREATE_NULL_AS_BLANK).getCellType());
-        
+
         // Check created ones get the right column
         assertEquals(0, row.getCell(0, HSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
         assertEquals(1, row.getCell(1, HSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
@@ -263,12 +292,12 @@ public final class TestHSSFRow extends TestCase {
         assertEquals(3, row.getCell(3, HSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
         assertEquals(4, row.getCell(4, HSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
         assertEquals(5, row.getCell(5, HSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
-        
-        
+
+
         // Now change the cell policy on the workbook, check
         //  that that is now used if no policy given
         book.setMissingCellPolicy(HSSFRow.RETURN_BLANK_AS_NULL);
-        
+
         assertEquals(HSSFCell.CELL_TYPE_STRING,  row.getCell(0).getCellType());
         assertEquals(HSSFCell.CELL_TYPE_NUMERIC, row.getCell(1).getCellType());
         assertEquals(null, row.getCell(2));
@@ -300,5 +329,4 @@ public final class TestHSSFRow extends TestCase {
         row2 = sheet.getRow(1);
         assertEquals(400, row2.getHeight());
     }
-
 }

@@ -37,6 +37,7 @@ import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.DVRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.NoteRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SCLRecord;
@@ -45,10 +46,11 @@ import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.formula.FormulaShifter;
 import org.apache.poi.hssf.util.PaneInformation;
+import org.apache.poi.hssf.util.Region;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.hssf.util.Region;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -1160,6 +1162,12 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             s = endRow;
             inc = -1;
         }
+        NoteRecord[] noteRecs;
+        if (moveComments) {
+            noteRecs = sheet.getNoteRecords(); 
+        } else {
+            noteRecs = NoteRecord.EMPTY_ARRAY;
+        }
 
         shiftMerged(startRow, endRow, n, true);
         sheet.getPageSettings().shiftRowBreaks(startRow, endRow, n);
@@ -1182,12 +1190,6 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             //  be done for the now empty destination row
             if (row == null) continue; // Nothing to do for this row
 
-            // Fetch the first and last columns of the
-            //  row now, so we still have them to hand
-            //  once we start removing cells
-            short firstCol = row.getFirstCellNum();
-            short lastCol = row.getLastCellNum();
-
             // Fix up row heights if required
             if (copyRowHeight) {
                 row2Replace.setHeight(row.getHeight());
@@ -1198,7 +1200,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
             // Copy each cell from the source row to
             //  the destination row
-            for(Iterator cells = row.cellIterator(); cells.hasNext(); ) {
+            for(Iterator<Cell> cells = row.cellIterator(); cells.hasNext(); ) {
                 HSSFCell cell = (HSSFCell)cells.next();
                 row.removeCell( cell );
                 CellValueRecordInterface cellRecord = cell.getCellValueRecord();
@@ -1219,8 +1221,13 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             //  destination row. Note that comments can
             //  exist for cells which are null
             if(moveComments) {
-                for( short col = firstCol; col <= lastCol; col++ ) {
-                    HSSFComment comment = getCellComment(rowNum, col);
+                // This code would get simpler if NoteRecords could be organised by HSSFRow.
+                for(int i=noteRecs.length-1; i>=0; i--) {
+                    NoteRecord nr = noteRecs[i];
+                    if (nr.getRow() != rowNum) {
+                        continue;
+                    }
+                    HSSFComment comment = getCellComment(rowNum, nr.getColumn());
                     if (comment != null) {
                        comment.setRow(rowNum + n);
                     }

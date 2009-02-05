@@ -16,9 +16,11 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-import java.io.*;
+import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 
@@ -37,7 +39,7 @@ public final class TestHSSFComment extends TestCase {
         String commentText = "We can set comments in POI";
         String commentAuthor = "Apache Software Foundation";
         int cellRow = 3;
-        short cellColumn = 1;
+        int cellColumn = 1;
 
         HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -55,6 +57,10 @@ public final class TestHSSFComment extends TestCase {
         comment.setString(string1);
         comment.setAuthor(commentAuthor);
         cell.setCellComment(comment);
+        if (false) {
+            // TODO - the following line should break this test, but it doesn't
+            cell.removeCellComment();
+        }
 
         //verify our settings
         assertEquals(HSSFSimpleShape.OBJECT_TYPE_COMMENT, comment.getShapeType());
@@ -79,11 +85,11 @@ public final class TestHSSFComment extends TestCase {
         assertEquals(commentText, comment.getString().getString());
         assertEquals(cellRow, comment.getRow());
         assertEquals(cellColumn, comment.getColumn());
-        
-        
+
+
         // Change slightly, and re-test
         comment.setString(new HSSFRichTextString("New Comment Text"));
-        
+
         out = new ByteArrayOutputStream();
         wb.write(out);
         out.close();
@@ -131,7 +137,7 @@ public final class TestHSSFComment extends TestCase {
 
              assertEquals(HSSFSimpleShape.OBJECT_TYPE_COMMENT, comment.getShapeType());
              assertEquals("Yegor Kozlov", comment.getAuthor());
-             assertFalse("cells in the second column have not empyy notes", 
+             assertFalse("cells in the second column have not empyy notes",
                      "".equals(comment.getString().getString()));
              assertEquals(rownum, comment.getRow());
              assertEquals(cell.getColumnIndex(), comment.getColumn());
@@ -176,24 +182,24 @@ public final class TestHSSFComment extends TestCase {
         }
 
      }
-    
+
     public void testDeleteComments() throws Exception {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithComments.xls");
         HSSFSheet sheet = wb.getSheetAt(0);
-        
+
         // Zap from rows 1 and 3
         assertNotNull(sheet.getRow(0).getCell(1).getCellComment());
         assertNotNull(sheet.getRow(1).getCell(1).getCellComment());
         assertNotNull(sheet.getRow(2).getCell(1).getCellComment());
-        
+
         sheet.getRow(0).getCell(1).removeCellComment();
         sheet.getRow(2).getCell(1).setCellComment(null);
-        
+
         // Check gone so far
         assertNull(sheet.getRow(0).getCell(1).getCellComment());
         assertNotNull(sheet.getRow(1).getCell(1).getCellComment());
         assertNull(sheet.getRow(2).getCell(1).getCellComment());
-        
+
         // Save and re-load
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         wb.write(out);
@@ -204,7 +210,7 @@ public final class TestHSSFComment extends TestCase {
         assertNull(sheet.getRow(0).getCell(1).getCellComment());
         assertNotNull(sheet.getRow(1).getCell(1).getCellComment());
         assertNull(sheet.getRow(2).getCell(1).getCellComment());
-        
+
 //        FileOutputStream fout = new FileOutputStream("/tmp/c.xls");
 //        wb.write(fout);
 //        fout.close();
