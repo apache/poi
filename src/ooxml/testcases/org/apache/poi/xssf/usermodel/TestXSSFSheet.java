@@ -184,6 +184,18 @@ public class TestXSSFSheet extends TestCase {
         assertEquals(1, sheet.getRowBreaks().length);
     }
 
+    public void testMaxColumnWidth() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Sheet 1");
+        sheet.setColumnWidth(0, 255*256); //the limit
+        try {
+            sheet.setColumnWidth(0, 256*256); //the limit
+            fail("expected exception");
+        } catch (Exception e){
+            ;
+        }
+    }
+
     public void testGetSetColumnBreaks() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Sheet 1");

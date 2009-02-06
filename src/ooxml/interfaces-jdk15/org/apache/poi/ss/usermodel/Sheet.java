@@ -118,6 +118,11 @@ public interface Sheet extends Iterable<Row> {
 
     /**
      * Set the width (in units of 1/256th of a character width)
+     * <p>
+     * The maximum column width for an individual cell is 255 characters.
+     * This value represents the number of characters that can be displayed
+     * in a cell that is formatted with the standard font.
+     * </p>
      *
      * @param columnIndex - the column to set (0-based)
      * @param width - the width in units of 1/256th of a character width

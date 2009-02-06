@@ -1091,6 +1091,8 @@ public final class Sheet implements Model {
      *            (in units of 1/256th of a character width)
      */
     public void setColumnWidth(int column, int width) {
+        if(width > 255*256) throw new IllegalArgumentException("The maximum column width for an individual cell is 255 characters.");
+        
         setColumn(column, null, new Integer(width), null, null, null);
     }
 
