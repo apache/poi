@@ -1266,11 +1266,19 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     /**
      * Set the width (in units of 1/256th of a character width)
+     * <p>
+     * The maximum column width for an individual cell is 255 characters.
+     * This value represents the number of characters that can be displayed
+     * in a cell that is formatted with the standard font.
+     * </p>
      *
      * @param columnIndex - the column to set (0-based)
      * @param width - the width in units of 1/256th of a character width
+     * @throws IllegalArgumentException if width > 65536 (the maximum column width in Excel)
      */
     public void setColumnWidth(int columnIndex, int width) {
+        if(width > 255*256) throw new IllegalArgumentException("The maximum column width for an individual cell is 255 characters.");
+
         columnHelper.setColWidth(columnIndex, (double)width/256);
     }
 

@@ -54,4 +54,15 @@ public final class TestSheetAdditional extends TestCase {
 		assertEquals((short)100,sheet.getColumnWidth((short)9));
 		assertEquals((short)100,sheet.getColumnWidth((short)10));
 	}
+
+    public void testMaxColumnWidth() {
+        Sheet sheet = Sheet.createSheet();
+        sheet.setColumnWidth(0, 255*256); //the limit
+        try {
+            sheet.setColumnWidth(0, 256*256); //the limit
+            fail("expected exception");
+        } catch (Exception e){
+            ;
+        }
+    }
 }
