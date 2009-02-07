@@ -46,7 +46,7 @@ import org.apache.poi.hssf.record.pivottable.*;
 public final class RecordFactory {
 	private static final int NUM_RECORDS = 512;
 
-	private static final Class[] CONSTRUCTOR_ARGS = { RecordInputStream.class, };
+	private static final Class<?>[] CONSTRUCTOR_ARGS = { RecordInputStream.class, };
 
 	/**
 	 * contains the classes for all the records we want to parse.<br/>
@@ -189,7 +189,7 @@ public final class RecordFactory {
 	/**
 	 * cache of the recordsToMap();
 	 */
-	private static Map recordsMap  = recordsToMap(recordClasses);
+	private static Map<Short, Constructor<? extends Record>> recordsMap  = recordsToMap(recordClasses);
 
 	private static short[] _allKnownRecordSIDs;
 	
@@ -210,21 +210,18 @@ public final class RecordFactory {
 		if (record instanceof MulRKRecord) {
 			return convertRKRecords((MulRKRecord)record);
 		}
-		if (record instanceof MulBlankRecord) {
-			return convertMulBlankRecords((MulBlankRecord)record);
-		}
 		return new Record[] { record, };
 	}
 	
 	private static Record createSingleRecord(RecordInputStream in) {
-		Constructor constructor = (Constructor) recordsMap.get(new Short(in.getSid()));
+		Constructor<? extends Record> constructor = recordsMap.get(new Short(in.getSid()));
 
 		if (constructor == null) {
 			return new UnknownRecord(in);
 		}
 		
 		try {
-			return (Record) constructor.newInstance(new Object[] { in });
+			return constructor.newInstance(new Object[] { in });
 		} catch (InvocationTargetException e) {
 			throw new RecordFormatException("Unable to construct record instance" , e.getTargetException());
 		} catch (IllegalArgumentException e) {
@@ -269,23 +266,6 @@ public final class RecordFactory {
 	}
 
 	/**
-	 * Converts a {@link MulBlankRecord} into an equivalent array of {@link BlankRecord}s
-	 */
-	private static BlankRecord[] convertMulBlankRecords(MulBlankRecord mb) {
-
-		BlankRecord[] mulRecs = new BlankRecord[mb.getNumColumns()];
-		for (int k = 0; k < mb.getNumColumns(); k++) {
-			BlankRecord br = new BlankRecord();
-
-			br.setColumn((short) (k + mb.getFirstColumn()));
-			br.setRow(mb.getRow());
-			br.setXFIndex(mb.getXFAt(k));
-			mulRecs[k] = br;
-		}
-		return mulRecs;
-	}
-
-	/**
 	 * @return an array of all the SIDS for all known records
 	 */
 	public static short[] getAllKnownRecordSIDs() {
@@ -293,8 +273,8 @@ public final class RecordFactory {
 			short[] results = new short[ recordsMap.size() ];
 			int i = 0;
 
-			for (Iterator iterator = recordsMap.keySet().iterator(); iterator.hasNext(); ) {
-				Short sid = (Short) iterator.next();
+			for (Iterator<Short> iterator = recordsMap.keySet().iterator(); iterator.hasNext(); ) {
+				Short sid = iterator.next();
 
 				results[i++] = sid.shortValue();
 			}
@@ -330,7 +310,7 @@ public final class RecordFactory {
 			short sid;
 			Constructor<? extends Record> constructor;
 			try {
-				sid		 = recClass.getField("sid").getShort(null);
+				sid = recClass.getField("sid").getShort(null);
 				constructor = recClass.getConstructor(CONSTRUCTOR_ARGS);
 			} catch (Exception illegalArgumentException) {
 				throw new RecordFormatException(
@@ -338,7 +318,7 @@ public final class RecordFactory {
 			}
 			Short key = new Short(sid);
 			if (result.containsKey(key)) {
-				Class prev = result.get(key).getDeclaringClass();
+				Class<? extends Record> prev = result.get(key).getDeclaringClass();
 				throw new RuntimeException("duplicate record sid 0x" + Integer.toHexString(sid).toUpperCase()
 						+ " for classes (" + recClass.getName() + ") and (" + prev.getName() + ")");
 			}
@@ -356,7 +336,7 @@ public final class RecordFactory {
 	 *
 	 * @exception RecordFormatException on error processing the InputStream
 	 */
-	public static List createRecords(InputStream in) throws RecordFormatException {
+	public static List<Record> createRecords(InputStream in) throws RecordFormatException {
 
 		List<Record> records = new ArrayList<Record>(NUM_RECORDS);
 
@@ -382,10 +362,6 @@ public final class RecordFactory {
 			}
 			if (record instanceof MulRKRecord) {
 				addAll(records, convertRKRecords((MulRKRecord)record));
-				continue;
-			}
-			if (record instanceof MulBlankRecord) {
-				addAll(records, convertMulBlankRecords((MulBlankRecord)record));
 				continue;
 			}
 

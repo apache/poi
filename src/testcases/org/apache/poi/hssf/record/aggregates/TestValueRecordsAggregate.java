@@ -20,7 +20,7 @@ package org.apache.poi.hssf.record.aggregates;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
 import java.util.zip.CRC32;
 
@@ -33,13 +33,15 @@ import org.apache.poi.hssf.model.RowBlocksReader;
 import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.MulBlankRecord;
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.util.HexRead;
 
 /**
  * Tests for {@link ValueRecordsAggregate}
@@ -59,16 +61,16 @@ public final class TestValueRecordsAggregate extends TestCase {
 		records.add(new WindowTwoRecord());
 
 		constructValueRecord(records);
-		Iterator iterator = valueRecord.getIterator();
-		RecordBase record = (RecordBase) iterator.next();
+		CellValueRecordInterface[] cvrs = valueRecord.getValueRecords();
+		//Ensure that the SharedFormulaRecord has been converted
+		assertEquals(1, cvrs.length);
+
+		CellValueRecordInterface record = cvrs[0];
 		assertNotNull( "Row contains a value", record );
 		assertTrue( "First record is a FormulaRecordsAggregate", ( record instanceof FormulaRecordAggregate ) );
-		//Ensure that the SharedFormulaRecord has been converted
-		assertFalse( "SharedFormulaRecord is null", iterator.hasNext() );
-
 	}
 
-	private void constructValueRecord(List records) {
+	private void constructValueRecord(List<Record> records) {
 		RowBlocksReader rbr = new RowBlocksReader(new RecordStream(records, 0));
 		SharedValueManager sfrh = rbr.getSharedFormulaManager();
 		RecordStream rs = rbr.getPlainRecordStream();
@@ -78,7 +80,7 @@ public final class TestValueRecordsAggregate extends TestCase {
 		}
 	}
 
-	private static List testData() {
+	private static List<Record> testData() {
 		List<Record> records = new ArrayList<Record>();
 		FormulaRecord formulaRecord = new FormulaRecord();
 		BlankRecord blankRecord = new BlankRecord();
@@ -93,13 +95,13 @@ public final class TestValueRecordsAggregate extends TestCase {
 	}
 
 	public void testInsertCell() {
-		Iterator iterator = valueRecord.getIterator();
-		assertFalse( iterator.hasNext() );
+		CellValueRecordInterface[] cvrs = valueRecord.getValueRecords();
+		assertEquals(0, cvrs.length);
 
 		BlankRecord blankRecord = newBlankRecord();
 		valueRecord.insertCell( blankRecord );
-		iterator = valueRecord.getIterator();
-		assertTrue( iterator.hasNext() );
+		cvrs = valueRecord.getValueRecords();
+		assertEquals(1, cvrs.length);
 	}
 
 	public void testRemoveCell() {
@@ -107,8 +109,8 @@ public final class TestValueRecordsAggregate extends TestCase {
 		valueRecord.insertCell( blankRecord1 );
 		BlankRecord blankRecord2 = newBlankRecord();
 		valueRecord.removeCell( blankRecord2 );
-		Iterator iterator = valueRecord.getIterator();
-		assertFalse( iterator.hasNext() );
+		CellValueRecordInterface[] cvrs = valueRecord.getValueRecords();
+		assertEquals(0, cvrs.length);
 
 		// removing an already empty cell just falls through
 		valueRecord.removeCell( blankRecord2 );
@@ -148,36 +150,46 @@ public final class TestValueRecordsAggregate extends TestCase {
 
 	}
 
-	public void testSerialize() {
-		byte[] actualArray = new byte[36];
-		byte[] expectedArray = new byte[]
-		{
-			(byte)0x06, (byte)0x00, (byte)0x16, (byte)0x00,
-			(byte)0x01, (byte)0x00, (byte)0x01, (byte)0x00,
-			(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
-			(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
-			(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
-			(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
-			(byte)0x00, (byte)0x00, (byte)0x01, (byte)0x02,
-			(byte)0x06, (byte)0x00, (byte)0x02, (byte)0x00,
-			(byte)0x02, (byte)0x00, (byte)0x00, (byte)0x00,
-		};
-		List records = testData();
-		constructValueRecord(records);
-		int bytesWritten = valueRecord.serializeCellRow(1, 0, actualArray );
-		bytesWritten += valueRecord.serializeCellRow(2, bytesWritten, actualArray );
-		assertEquals( 36, bytesWritten );
-		for (int i = 0; i < 36; i++)
-			assertEquals( expectedArray[i], actualArray[i] );
+
+	private static final class SerializerVisitor implements RecordVisitor {
+		private final byte[] _buf;
+		private int _writeIndex;
+		public SerializerVisitor(byte[] buf) {
+			_buf = buf;
+			_writeIndex = 0;
+
+		}
+		public void visitRecord(Record r) {
+			r.serialize(_writeIndex, _buf);
+			_writeIndex += r.getRecordSize();
+		}
+		public int getWriteIndex() {
+			return _writeIndex;
+		}
 	}
 
-	private static BlankRecord newBlankRecord()
-	{
+	public void testSerialize() {
+		byte[] expectedArray = HexRead.readFromString(""
+				+ "06 00 16 00 " // Formula
+				+ "01 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 "
+				+ "01 02 06 00 " // Blank
+				+ "02 00 02 00 00 00");
+		byte[] actualArray = new byte[expectedArray.length];
+		List<Record> records = testData();
+		constructValueRecord(records);
+
+		SerializerVisitor sv = new SerializerVisitor(actualArray);
+		valueRecord.visitCellsForRow(1, sv);
+		valueRecord.visitCellsForRow(2, sv);
+		assertEquals(actualArray.length, sv.getWriteIndex());
+		assertTrue(Arrays.equals(expectedArray, actualArray));
+	}
+
+	private static BlankRecord newBlankRecord() {
 		return newBlankRecord( 2, 2 );
 	}
 
-	private static BlankRecord newBlankRecord( int col, int row)
-	{
+	private static BlankRecord newBlankRecord(int col, int row) {
 		BlankRecord blankRecord = new BlankRecord();
 		blankRecord.setRow( row );
 		blankRecord.setColumn( (short) col );
@@ -185,19 +197,19 @@ public final class TestValueRecordsAggregate extends TestCase {
 	}
 
 	/**
-	 * Sometimes the 'shared formula' flag (<tt>FormulaRecord.isSharedFormula()</tt>) is set when 
+	 * Sometimes the 'shared formula' flag (<tt>FormulaRecord.isSharedFormula()</tt>) is set when
 	 * there is no corresponding SharedFormulaRecord available. SharedFormulaRecord definitions do
-	 * not span multiple sheets.  They are are only defined within a sheet, and thus they do not 
+	 * not span multiple sheets.  They are are only defined within a sheet, and thus they do not
 	 * have a sheet index field (only row and column range fields).<br/>
-	 * So it is important that the code which locates the SharedFormulaRecord for each 
-	 * FormulaRecord does not allow matches across sheets.</br> 
-	 * 
-	 * Prior to bugzilla 44449 (Feb 2008), POI <tt>ValueRecordsAggregate.construct(int, List)</tt> 
+	 * So it is important that the code which locates the SharedFormulaRecord for each
+	 * FormulaRecord does not allow matches across sheets.</br>
+	 *
+	 * Prior to bugzilla 44449 (Feb 2008), POI <tt>ValueRecordsAggregate.construct(int, List)</tt>
 	 * allowed <tt>SharedFormulaRecord</tt>s to be erroneously used across sheets.  That incorrect
 	 * behaviour is shown by this test.<p/>
-	 * 
+	 *
 	 * <b>Notes on how to produce the test spreadsheet</b>:</p>
-	 * The setup for this test (AbnormalSharedFormulaFlag.xls) is rather fragile, insomuchas 
+	 * The setup for this test (AbnormalSharedFormulaFlag.xls) is rather fragile, insomuchas
 	 * re-saving the file (either with Excel or POI) clears the flag.<br/>
 	 * <ol>
 	 * <li>A new spreadsheet was created in Excel (File | New | Blank Workbook).</li>
@@ -207,15 +219,15 @@ public final class TestValueRecordsAggregate extends TestCase {
 	 * <li>Four rows on Sheet1 "5" through "8" were deleted ('delete rows' alt-E D, not 'clear' Del).</li>
 	 * <li>The spreadsheet was saved as AbnormalSharedFormulaFlag.xls.</li>
 	 * </ol>
-	 * Prior to the row delete action the spreadsheet has two <tt>SharedFormulaRecord</tt>s. One 
+	 * Prior to the row delete action the spreadsheet has two <tt>SharedFormulaRecord</tt>s. One
 	 * for each sheet. To expose the bug, the shared formulas have been made to overlap.<br/>
-	 * The row delete action (as described here) seems to to delete the 
+	 * The row delete action (as described here) seems to to delete the
 	 * <tt>SharedFormulaRecord</tt> from Sheet1 (but not clear the 'shared formula' flags.<br/>
-	 * There are other variations on this theme to create the same effect.  
-	 * 
+	 * There are other variations on this theme to create the same effect.
+	 *
 	 */
 	public void testSpuriousSharedFormulaFlag() {
-		
+
 		long actualCRC = getFileCRC(HSSFTestDataSamples.openSampleFileStream(ABNORMAL_SHARED_FORMULA_FLAG_TEST_FILE));
 		long expectedCRC = 2277445406L;
 		if(actualCRC != expectedCRC) {
@@ -223,17 +235,17 @@ public final class TestValueRecordsAggregate extends TestCase {
 			throw failUnexpectedTestFileChange();
 		}
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(ABNORMAL_SHARED_FORMULA_FLAG_TEST_FILE);
-		
+
 		HSSFSheet s = wb.getSheetAt(0); // Sheet1
-		
+
 		String cellFormula;
 		cellFormula = getFormulaFromFirstCell(s, 0); // row "1"
 		// the problem is not observable in the first row of the shared formula
 		if(!cellFormula.equals("\"first formula\"")) {
 			throw new RuntimeException("Something else wrong with this test case");
 		}
-		
-		// but the problem is observable in rows 2,3,4 
+
+		// but the problem is observable in rows 2,3,4
 		cellFormula = getFormulaFromFirstCell(s, 1); // row "2"
 		if(cellFormula.equals("\"second formula\"")) {
 			throw new AssertionFailedError("found bug 44449 (Wrong SharedFormulaRecord was used).");
@@ -260,8 +272,8 @@ public final class TestValueRecordsAggregate extends TestCase {
 		// A breakpoint in ValueRecordsAggregate.handleMissingSharedFormulaRecord(FormulaRecord)
 		// should get hit during parsing of Sheet1.
 		// If the test spreadsheet is created as directed, this condition should occur.
-		// It is easy to upset the test spreadsheet (for example re-saving will destroy the 
-		// peculiar condition we are testing for). 
+		// It is easy to upset the test spreadsheet (for example re-saving will destroy the
+		// peculiar condition we are testing for).
 		throw new RuntimeException(msg);
 	}
 
@@ -283,13 +295,13 @@ public final class TestValueRecordsAggregate extends TestCase {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		return crc.getValue();
 	}
 	public void testRemoveNewRow_bug46312() {
 		// To make bug occur, rowIndex needs to be >= ValueRecordsAggregate.records.length
 		int rowIndex = 30;
-		
+
 		ValueRecordsAggregate vra = new ValueRecordsAggregate();
 		try {
 			vra.removeAllCellsValuesForRow(rowIndex);
@@ -314,5 +326,81 @@ public final class TestValueRecordsAggregate extends TestCase {
 				throw new AssertionFailedError("Identified bug 46312");
 			}
 		}
+	}
+
+	/**
+	 * Tests various manipulations of blank cells, to make sure that {@link MulBlankRecord}s
+	 * are use appropriately
+	 */
+	public void testMultipleBlanks() {
+		BlankRecord brA2 = newBlankRecord(0, 1);
+		BlankRecord brB2 = newBlankRecord(1, 1);
+		BlankRecord brC2 = newBlankRecord(2, 1);
+		BlankRecord brD2 = newBlankRecord(3, 1);
+		BlankRecord brE2 = newBlankRecord(4, 1);
+		BlankRecord brB3 = newBlankRecord(1, 2);
+		BlankRecord brC3 = newBlankRecord(2, 2);
+
+		valueRecord.insertCell(brA2);
+		valueRecord.insertCell(brB2);
+		valueRecord.insertCell(brD2);
+		confirmMulBlank(3, 1, 1);
+
+		valueRecord.insertCell(brC3);
+		confirmMulBlank(4, 1, 2);
+
+		valueRecord.insertCell(brB3);
+		valueRecord.insertCell(brE2);
+		confirmMulBlank(6, 3, 0);
+
+		valueRecord.insertCell(brC2);
+		confirmMulBlank(7, 2, 0);
+
+		valueRecord.removeCell(brA2);
+		confirmMulBlank(6, 2, 0);
+
+		valueRecord.removeCell(brC2);
+		confirmMulBlank(5, 2, 1);
+
+		valueRecord.removeCell(brC3);
+		confirmMulBlank(4, 1, 2);
+	}
+
+	private void confirmMulBlank(int expectedTotalBlankCells,
+			int expectedNumberOfMulBlankRecords, int expectedNumberOfSingleBlankRecords) {
+		// assumed row ranges set-up by caller:
+		final int firstRow = 1;
+		final int lastRow = 2;
+
+
+		final class BlankStats {
+			public int countBlankCells;
+			public int countMulBlankRecords;
+			public int countSingleBlankRecords;
+		}
+
+		final BlankStats bs = new BlankStats();
+		RecordVisitor rv = new RecordVisitor() {
+
+			public void visitRecord(Record r) {
+				if (r instanceof MulBlankRecord) {
+					MulBlankRecord mbr = (MulBlankRecord) r;
+					bs.countMulBlankRecords++;
+					bs.countBlankCells += mbr.getNumColumns();
+				} else if (r instanceof BlankRecord) {
+					bs.countSingleBlankRecords++;
+					bs.countBlankCells++;
+				}
+			}
+		};
+
+		for (int rowIx = firstRow; rowIx <=lastRow; rowIx++) {
+			if (valueRecord.rowHasCells(rowIx)) {
+				valueRecord.visitCellsForRow(rowIx, rv);
+			}
+		}
+		assertEquals(expectedTotalBlankCells, bs.countBlankCells);
+		assertEquals(expectedNumberOfMulBlankRecords, bs.countMulBlankRecords);
+		assertEquals(expectedNumberOfSingleBlankRecords, bs.countSingleBlankRecords);
 	}
 }
