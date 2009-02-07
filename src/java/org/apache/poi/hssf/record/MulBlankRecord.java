@@ -37,6 +37,12 @@ public final class MulBlankRecord extends StandardRecord {
     private short[]           field_3_xfs;
     private short             field_4_last_col;
 
+    public MulBlankRecord(int row, int firstCol, short[] xfs) {
+        field_1_row = row;
+        field_2_first_col = (short)firstCol;
+        field_3_xfs = xfs;
+        field_4_last_col = (short) (firstCol + xfs.length - 1);
+    }
 
     /**
      * get the row number of the cells this represents
@@ -127,9 +133,17 @@ public final class MulBlankRecord extends StandardRecord {
     }
 
     public void serialize(LittleEndianOutput out) {
-        throw new RecordFormatException( "Sorry, you can't serialize MulBlank in this release");
+        out.writeShort(field_1_row);
+        out.writeShort(field_2_first_col);
+        int nItems = field_3_xfs.length;
+        for (int i = 0; i < nItems; i++) {
+            out.writeShort(field_3_xfs[i]);
+        }
+        out.writeShort(field_4_last_col);
     }
+
     protected int getDataSize() {
-        throw new RecordFormatException( "Sorry, you can't serialize MulBlank in this release");
+        // 3 short fields + array of shorts
+        return 6 + field_3_xfs.length * 2; 
     }
 }

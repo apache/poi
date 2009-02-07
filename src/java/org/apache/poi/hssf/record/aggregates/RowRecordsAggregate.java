@@ -32,6 +32,7 @@ import org.apache.poi.hssf.record.DimensionsRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.IndexRecord;
 import org.apache.poi.hssf.record.MergeCellsRecord;
+import org.apache.poi.hssf.record.MulBlankRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
@@ -86,6 +87,10 @@ public final class RowRecordsAggregate extends RecordAggregate {
 				while (rs.peekNextSid() == ContinueRecord.sid) {
 					addUnknownRecord(rs.getNext());
 				}
+				continue;
+			}
+			if (rec instanceof MulBlankRecord) {
+				_valuesAgg.addMultipleBlanks((MulBlankRecord) rec);
 				continue;
 			}
 			if (!(rec instanceof CellValueRecordInterface)) {
