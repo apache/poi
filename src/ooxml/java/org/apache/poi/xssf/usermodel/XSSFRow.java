@@ -21,8 +21,16 @@ import java.util.*;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.xssf.model.CalculationChain;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 
 /**
  * High level representation of a row of a spreadsheet.
@@ -391,4 +399,61 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     public String toString(){
         return row.toString();
     }
+
+    /**
+     * update cell references when shifting rows
+     *
+     * @param n the number of rows to move
+     */
+    protected void shift(int n) {
+        XSSFSheet sheet = getSheet();
+        CalculationChain calcChain = sheet.getWorkbook().getCalculationChain();
+        int rownum = getRowNum() + n;
+        for(Cell c : this){
+            XSSFCell cell = (XSSFCell)c;
+
+            //remove the reference in the calculation chain
+            if(calcChain != null) calcChain.removeItem((int)sheet.sheet.getSheetId(), cell.getReference());
+
+            CTCell ctCell = cell.getCTCell();
+            String r = new CellReference(rownum, cell.getColumnIndex()).formatAsString();
+            ctCell.setR(r);
+
+            if(ctCell.isSetF()){
+                CTCellFormula f = ctCell.getF();
+                String fmla = f.getStringValue();
+                if(fmla.length() > 0) {
+                    String shiftedFmla = shiftFormula(fmla, n);
+                    f.setStringValue(shiftedFmla);
+                }
+                if(f.isSetRef()){ //Range of cells which the formula applies to.
+                    String ref = f.getRef();
+                    String shiftedRef = shiftFormula(ref, n);
+                    f.setRef(shiftedRef);
+                }
+            }
+        }
+        setRowNum(rownum);
+    }
+
+    /**
+     * Shift a formula by the specified number of rows
+     * <p>
+     * Example: shiftFormula("A1+B1+C1", 3) will return "A4+B4+C4"
+     * </p>
+     *
+     * @param formula the formula to shift
+     * @param n the number of rows to shift
+     * @return the shifted formula
+     */
+    private String shiftFormula(String formula, int n){
+        XSSFSheet sheet = getSheet();
+        XSSFWorkbook wb = sheet.getWorkbook();
+        int sheetIndex = wb.getSheetIndex(sheet);
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
+        Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex);
+        Ptg[] fmla = SharedFormulaRecord.convertSharedFormulas(ptgs, n, 0);
+        return FormulaRenderer.toFormulaString(fpb, fmla);
+    }
+
 }

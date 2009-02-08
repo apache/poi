@@ -27,16 +27,11 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 
 public class TestXSSFSheet extends TestCase {
@@ -608,7 +603,46 @@ public class TestXSSFSheet extends TestCase {
     	assertNull(sheet6.getRow(7));
     	assertEquals(8, sheet6.getPhysicalNumberOfRows());
     }
-    
+
+    /**
+     * When shifting rows, update formulas on that sheet to point to the new location of those rows
+     * (see bugzilla 46536)
+     */
+    public void testShiftRows_46536() {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("46536.xlsx");
+        CalculationChain calcChain = wb.getCalculationChain();
+        int numItems = calcChain.getCTCalcChain().getCArray().length;
+        assertEquals(3, numItems);
+
+        XSSFSheet sheet = wb.getSheet("Test");
+        XSSFRow row2 = sheet.getRow(1);
+        XSSFCell cell_A2 = row2.getCell(0);
+        assertEquals("A2", cell_A2.getReference());
+
+        XSSFRow row3 = sheet.getRow(2);
+        XSSFCell cell_B3 = row3.getCell(1);
+        assertEquals("B3", cell_B3.getReference());
+
+        XSSFCell cell_E2 = row2.getCell(4);
+        CTCellFormula f = cell_E2.getCTCell().getF();
+        assertEquals("B2+C2+D2", f.getStringValue());
+        assertEquals("E2:E3", f.getRef());
+
+        sheet.shiftRows(1, sheet.getLastRowNum(), 3, false, true);
+
+        assertEquals(4, row2.getRowNum());
+        assertEquals(5, row3.getRowNum());
+        assertEquals("A5", cell_A2.getReference());
+        assertEquals("B6", cell_B3.getReference());
+
+        assertEquals("B5+C5+D5", f.getStringValue());
+        assertEquals("E5:E6", f.getRef());
+
+        numItems = calcChain.getCTCalcChain().getCArray().length;
+        assertEquals(1, numItems);
+
+    }
+
     public void testGetCellComment() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
