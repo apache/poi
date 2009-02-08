@@ -24,14 +24,17 @@ import java.util.*;
 import javax.xml.namespace.QName;
 
 import org.apache.poi.hssf.util.PaneInformation;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Footer;
-import org.apache.poi.ss.usermodel.Header;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.SharedFormulaRecord;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
@@ -1438,7 +1441,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
-            Row row = it.next();
+            XSSFRow row = (XSSFRow)it.next();
 
             if (!copyRowHeight) {
                 row.setHeight((short)-1);
@@ -1451,26 +1454,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                 it.remove();
             }
             else if (row.getRowNum() >= startRow && row.getRowNum() <= endRow) {
-                row.setRowNum(row.getRowNum() + n);
-                if (row.getFirstCellNum() > -1) {
-                    modifyCellReference((XSSFRow) row);
-                }
+                row.shift(n);
             }
         }
         //rebuild the rows map
         TreeMap<Integer, Row> map = new TreeMap<Integer, Row>();
         for(Row r : this) map.put(r.getRowNum(), r);
         rows = map;
-    }
-
-
-    private void modifyCellReference(XSSFRow row) {
-        for (int i = row.getFirstCellNum(); i <= row.getLastCellNum(); i++) {
-            XSSFCell c = row.getCell(i);
-            if (c != null) {
-                c.modifyCellReference(row);
-            }
-        }
     }
 
     /**
