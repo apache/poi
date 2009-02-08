@@ -369,12 +369,13 @@ public final class XSSFCell implements Cell {
      * @throws IllegalArgumentException if the formula is invalid
      */
     public void setCellFormula(String formula) {
+        XSSFWorkbook wb = row.getSheet().getWorkbook();
         if (formula == null && cell.isSetF()) {
+            wb.onDeleteFormula(this);
             cell.unsetF();
             return;
         }
 
-        XSSFWorkbook wb = row.getSheet().getWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         try {
             Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, wb.getSheetIndex(getSheet()));
@@ -482,9 +483,8 @@ public final class XSSFCell implements Cell {
                 return CELL_TYPE_ERROR;
             case STCellType.INT_S: // String is in shared strings
             case STCellType.INT_INLINE_STR: // String is inline in cell
-                return CELL_TYPE_STRING;
             case STCellType.INT_STR:
-                return CELL_TYPE_FORMULA;
+                 return CELL_TYPE_STRING;
             default:
                 throw new IllegalStateException("Illegal cell type: " + this.cell.getT());
         }
