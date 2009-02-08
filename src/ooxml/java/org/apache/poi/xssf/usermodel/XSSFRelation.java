@@ -28,6 +28,7 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -184,7 +185,12 @@ public final class XSSFRelation extends POIXMLRelation {
             "/xl/theme/theme#.xml",
             null
     );
-	
+    public static final XSSFRelation CALC_CHAIN = new XSSFRelation(
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.calcChain+xml",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/calcChain",
+            "/xl/calcChain.xml",
+            CalculationChain.class
+    );
 	
 
 	private XSSFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {

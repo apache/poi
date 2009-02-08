@@ -47,6 +47,7 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.PackageHelper;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -109,6 +110,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * e.g. fonts, cell styles, colors, etc.
      */
     private StylesTable stylesSource;
+
+    /**
+     * TODO
+     */
+    private CalculationChain calcChain;
 
     /**
      * Used to keep track of the data formatter so that all
@@ -177,6 +183,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             for(POIXMLDocumentPart p : getRelations()){
                 if(p instanceof SharedStringsTable) sharedStringSource = (SharedStringsTable)p;
                 else if(p instanceof StylesTable) stylesSource = (StylesTable)p;
+                else if(p instanceof CalculationChain) calcChain = (CalculationChain)p;
                 else if (p instanceof XSSFSheet) {
                     shIdMap.put(p.getPackageRelationship().getId(), (XSSFSheet)p);
                 }
@@ -1258,6 +1265,31 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         validateSheetIndex(sheetIx);
         CTSheet ctSheet = sheets.get(sheetIx).sheet;
         ctSheet.setState(STSheetState.Enum.forInt(hidden));
+    }
+
+    /**
+     * Fired when a formula is deleted from this workbook,
+     * for example when calling cell.setCellFormula(null)
+     *
+     * @see XSSFCell#setCellFormula(String) 
+     */
+    protected void onDeleteFormula(XSSFCell cell){
+        if(calcChain != null) {
+            int sheetId = (int)cell.getSheet().sheet.getSheetId();
+            calcChain.removeItem(sheetId, cell.getReference());
+        }
+    }
+
+    /**
+     * Return the CalculationChain object for this workbook
+     * <p>
+     *   The calculation chain object specifies the order in which the cells in a workbook were last calculated
+     * </p>
+     * 
+     * @return the <code>CalculationChain</code> object or <code>null</code> if not defined
+     */
+    public CalculationChain getCalculationChain(){
+        return calcChain;
     }
 
 }
