@@ -33,7 +33,10 @@
 
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
-        <release version="3.5-beta5" date="2008-??-??">
+        <release version="3.5-beta6" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">remove me</action>
+        </release>
+        <release version="3.5-beta5" date="2008-02-19">
            <action dev="POI-DEVELOPERS" type="fix">46536 - When shifting rows, update formulas on that sheet to point to the new location of those rows</action>
            <action dev="POI-DEVELOPERS" type="fix">46663 - Fixed XSSFSheet.shiftRows to properly update references of the shifted cells</action>
            <action dev="POI-DEVELOPERS" type="fix">46535 - Remove reference from calculation chain when a formula is deleted</action>
