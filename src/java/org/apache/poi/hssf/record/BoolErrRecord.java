@@ -27,45 +27,23 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Michael P. Harhen
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class BoolErrRecord extends StandardRecord implements CellValueRecordInterface {
+public final class BoolErrRecord extends CellRecord {
 	public final static short sid = 0x0205;
-	private int field_1_row;
-	private short field_2_column;
-	private short field_3_xf_index;
 	private byte field_4_bBoolErr;
 	private byte field_5_fError;
 
 	/** Creates new BoolErrRecord */
 	public BoolErrRecord() {
- 
+		// fields uninitialised 
 	}
 
 	/**
 	 * @param in the RecordInputstream to read the record from
 	 */
 	public BoolErrRecord(RecordInputStream in) {
-		field_1_row      = in.readUShort();
-		field_2_column   = in.readShort();
-		field_3_xf_index = in.readShort();
+		super(in);
 		field_4_bBoolErr = in.readByte();
 		field_5_fError   = in.readByte();
-	}
-
-	public void setRow(int row) {
-		field_1_row = row;
-	}
-
-	public void setColumn(short col) {
-		field_2_column = col;
-	}
-
-	/**
-	 * set the index to the ExtendedFormat
-	 * @see org.apache.poi.hssf.record.ExtendedFormatRecord
-	 * @param xf    index to the XF record
-	 */
-	public void setXFIndex(short xf) {
-		field_3_xf_index = xf;
 	}
 
 	/**
@@ -99,23 +77,6 @@ public final class BoolErrRecord extends StandardRecord implements CellValueReco
 				return;
 		}
 		throw new IllegalArgumentException("Error Value can only be 0,7,15,23,29,36 or 42. It cannot be "+value);
-	}
-
-	public int getRow() {
-		return field_1_row;
-	}
-
-	public short getColumn() {
-		return field_2_column;
-	}
-
-	/**
-	 * get the index to the ExtendedFormat
-	 * @see org.apache.poi.hssf.record.ExtendedFormatRecord
-	 * @return index to the XF record
-	 */
-	public short getXFIndex() {
-		return field_3_xf_index;
 	}
 
 	/**
@@ -162,44 +123,39 @@ public final class BoolErrRecord extends StandardRecord implements CellValueReco
 		return field_5_fError != 0;
 	}
 
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-
-		sb.append("[BOOLERR]\n");
-		sb.append("    .row    = ").append(HexDump.shortToHex(getRow())).append("\n");
-		sb.append("    .col    = ").append(HexDump.shortToHex(getColumn())).append("\n");
-		sb.append("    .xfindex= ").append(HexDump.shortToHex(getXFIndex())).append("\n");
-		if (isBoolean()) {
-			sb.append("    .booleanValue   = ").append(getBooleanValue()).append("\n");
-		} else {
-			sb.append("    .errorValue     = ").append(getErrorValue()).append("\n");
-		}
-		sb.append("[/BOOLERR]\n");
-		return sb.toString();
+	@Override
+	protected String getRecordName() {
+		return "BOOLERR";
 	}
-
-	public void serialize(LittleEndianOutput out) {
-		out.writeShort(getRow());
-		out.writeShort(getColumn());
-		out.writeShort(getXFIndex());
+	@Override
+	protected void appendValueText(StringBuilder sb) {
+		if (isBoolean()) {
+			sb.append("  .boolVal = ");
+			sb.append(getBooleanValue());
+		} else {
+			sb.append("  .errCode = ");
+			sb.append(ErrorConstants.getText(getErrorValue()));
+			sb.append(" (").append(HexDump.byteToHex(getErrorValue())).append(")");
+		}
+	}
+	@Override
+	protected void serializeValue(LittleEndianOutput out) {
 		out.writeByte(field_4_bBoolErr);
 		out.writeByte(field_5_fError);
 	}
 
-	protected int getDataSize() {
-		return 8;
+	@Override
+	protected int getValueDataSize() {
+		return 2;
 	}
 
-	public short getSid()
-	{
+	public short getSid() {
 		return sid;
 	}
 
 	public Object clone() {
 	  BoolErrRecord rec = new BoolErrRecord();
-	  rec.field_1_row = field_1_row;
-	  rec.field_2_column = field_2_column;
-	  rec.field_3_xf_index = field_3_xf_index;
+	  copyBaseFields(rec);
 	  rec.field_4_bBoolErr = field_4_bBoolErr;
 	  rec.field_5_fError = field_5_fError;
 	  return rec;

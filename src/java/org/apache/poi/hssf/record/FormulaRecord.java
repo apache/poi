@@ -24,7 +24,6 @@ import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -33,12 +32,11 @@ import org.apache.poi.util.LittleEndianOutput;
  * REFERENCE:  PG 317/444 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
- * @version 2.0-pre
  */
-public final class FormulaRecord extends StandardRecord implements CellValueRecordInterface {
+public final class FormulaRecord extends CellRecord {
 
 	public static final short sid = 0x0006;   // docs say 406...because of a bug Microsoft support site article #Q184647)
-	private static int FIXED_SIZE = 20;
+	private static int FIXED_SIZE = 14; // double + short + int
 
 	private static final BitField alwaysCalc = BitFieldFactory.getInstance(0x0001);
 	private static final BitField calcOnLoad = BitFieldFactory.getInstance(0x0002);
@@ -168,11 +166,6 @@ public final class FormulaRecord extends StandardRecord implements CellValueReco
 		}
 	}
 
-
-
-	private int    field_1_row;
-	private short  field_2_column;
-	private short  field_3_xf;
 	private double field_4_value;
 	private short  field_5_options;
 	/**
@@ -195,10 +188,8 @@ public final class FormulaRecord extends StandardRecord implements CellValueReco
 	}
 
 	public FormulaRecord(RecordInputStream ris) {
+		super(ris);
 		LittleEndianInput in = ris;
-		field_1_row = in.readUShort();
-		field_2_column = in.readShort();
-		field_3_xf = in.readShort();
 		long valueLongBits  = in.readLong();
 		field_5_options = in.readShort();
 		specialCachedValue = SpecialCachedValue.create(valueLongBits);
@@ -211,19 +202,6 @@ public final class FormulaRecord extends StandardRecord implements CellValueReco
 		int field_7_expression_len = in.readShort(); // this length does not include any extra array data
 		int nBytesAvailable = in.available();
 		field_8_parsed_expr = Formula.read(field_7_expression_len, in, nBytesAvailable);
-	}
-
-
-	public void setRow(int row) {
-		field_1_row = row;
-	}
-
-	public void setColumn(short column) {
-		field_2_column = column;
-	}
-
-	public void setXFIndex(short xf) {
-		field_3_xf = xf;
 	}
 
 	/**
@@ -282,18 +260,6 @@ public final class FormulaRecord extends StandardRecord implements CellValueReco
 	 */
 	public void setOptions(short options) {
 		field_5_options = options;
-	}
-
-	public int getRow() {
-		return field_1_row;
-	}
-
-	public short getColumn() {
-		return field_2_column;
-	}
-
-	public short getXFIndex() {
-		return field_3_xf;
 	}
 
 	/**
@@ -357,14 +323,12 @@ public final class FormulaRecord extends StandardRecord implements CellValueReco
 		return sid;
 	}
 
-	protected int getDataSize() {
+	@Override
+	protected int getValueDataSize() {
 		return FIXED_SIZE + field_8_parsed_expr.getEncodedSize();
 	}
-	public void serialize(LittleEndianOutput out) {
-
-		out.writeShort(getRow());
-		out.writeShort(getColumn());
-		out.writeShort(getXFIndex());
+	@Override
+	protected void serializeValue(LittleEndianOutput out) {
 
 		if (specialCachedValue == null) {
 			out.writeDouble(field_4_value);
@@ -377,14 +341,14 @@ public final class FormulaRecord extends StandardRecord implements CellValueReco
 		out.writeInt(field_6_zero); // may as well write original data back so as to minimise differences from original
 		field_8_parsed_expr.serialize(out);
 	}
-
-	public String toString() {
-
-		StringBuffer sb = new StringBuffer();
-		sb.append("[FORMULA]\n");
-		sb.append("  .row	   = ").append(HexDump.shortToHex(getRow())).append("\n");
-		sb.append("  .column	= ").append(HexDump.shortToHex(getColumn())).append("\n");
-		sb.append("  .xf		= ").append(HexDump.shortToHex(getXFIndex())).append("\n");
+	
+	@Override
+	protected String getRecordName() {
+		return "FORMULA";
+	}
+	
+	@Override
+	protected void appendValueText(StringBuilder sb) {
 		sb.append("  .value	 = ");
 		if (specialCachedValue == null) {
 			sb.append(field_4_value).append("\n");
@@ -395,23 +359,22 @@ public final class FormulaRecord extends StandardRecord implements CellValueReco
 		sb.append("    .alwaysCalc= ").append(isAlwaysCalc()).append("\n");
 		sb.append("    .calcOnLoad= ").append(isCalcOnLoad()).append("\n");
 		sb.append("    .shared    = ").append(isSharedFormula()).append("\n");
-		sb.append("  .zero      = ").append(HexDump.intToHex(field_6_zero)).append("\n");
+		sb.append("  .zero      = ").append(HexDump.intToHex(field_6_zero));
 
 		Ptg[] ptgs = field_8_parsed_expr.getTokens();
 		for (int k = 0; k < ptgs.length; k++ ) {
+			if (k>0) {
+				sb.append("\n");
+			}
 			sb.append("    Ptg[").append(k).append("]=");
 			Ptg ptg = ptgs[k];
-			sb.append(ptg.toString()).append(ptg.getRVAType()).append("\n");
+			sb.append(ptg.toString()).append(ptg.getRVAType());
 		}
-		sb.append("[/FORMULA]\n");
-		return sb.toString();
 	}
 
 	public Object clone() {
 		FormulaRecord rec = new FormulaRecord();
-		rec.field_1_row = field_1_row;
-		rec.field_2_column = field_2_column;
-		rec.field_3_xf = field_3_xf;
+		copyBaseFields(rec);
 		rec.field_4_value = field_4_value;
 		rec.field_5_options = field_5_options;
 		rec.field_6_zero = field_6_zero;
