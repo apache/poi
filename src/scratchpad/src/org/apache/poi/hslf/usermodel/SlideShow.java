@@ -739,7 +739,6 @@ public final class SlideShow {
         byte[] uid = PictureData.getChecksum(data);
 
         EscherContainerRecord bstore;
-        int offset = 0;
 
         EscherContainerRecord dggContainer = _documentRecord.getPPDrawingGroup().getDggContainer();
         bstore = (EscherContainerRecord)Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
@@ -763,13 +762,13 @@ public final class SlideShow {
                 if (Arrays.equals(bse.getUid(), uid)){
                     return i + 1;
                 }
-                offset += bse.getSize();
              }
         }
 
         PictureData pict = PictureData.create(format);
         pict.setData(data);
-        pict.setOffset(offset);
+
+        int offset = _hslfSlideShow.addPicture(pict);
 
         EscherBSERecord bse = new EscherBSERecord();
         bse.setRecordId(EscherBSERecord.RECORD_ID);
@@ -786,12 +785,11 @@ public final class SlideShow {
 
         bse.setRef(0);
         bse.setOffset(offset);
+        bse.setRemainingData( new byte[0] );
 
         bstore.addChildRecord(bse);
         int count = bstore.getChildRecords().size();
         bstore.setOptions((short)( (count << 4) | 0xF ));
-
-        _hslfSlideShow.addPicture(pict);
 
         return count;
     }

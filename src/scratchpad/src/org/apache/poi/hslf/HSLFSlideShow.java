@@ -66,7 +66,7 @@ public final class HSLFSlideShow extends POIDocument {
 	private Record[] _records;
 
 	// Raw Pictures contained in the pictures stream
-	private PictureData[] _pictures;
+	private List<PictureData> _pictures;
 
     // Embedded objects stored in storage records in the document stream, lazily populated.
     private ObjectData[] _objects;
@@ -291,6 +291,8 @@ public final class HSLFSlideShow extends POIDocument {
 	 * Find and read in pictures contained in this presentation
 	 */
 	private void readPictures() throws IOException {
+        _pictures = new ArrayList<PictureData>();
+
 		byte[] pictstream;
 
 		try {
@@ -304,9 +306,7 @@ public final class HSLFSlideShow extends POIDocument {
 			return;
 		}
 
-        List p = new ArrayList();
         int pos = 0;
-
 		// An empty picture record (length 0) will take up 8 bytes
         while (pos <= (pictstream.length-8)) {
             int offset = pos;
@@ -325,7 +325,7 @@ public final class HSLFSlideShow extends POIDocument {
 			// (0 is allowed, but odd, since we do wind on by the header each
 			//  time, so we won't get stuck)
 			if(imgsize < 0) {
-				throw new CorruptPowerPointFileException("The file contains a picture, at position " + p.size() + ", which has a negatively sized data length, so we can't trust any of the picture data");
+				throw new CorruptPowerPointFileException("The file contains a picture, at position " + _pictures.size() + ", which has a negatively sized data length, so we can't trust any of the picture data");
 			}
 
 			// If they type (including the bonus 0xF018) is 0, skip it
@@ -343,7 +343,7 @@ public final class HSLFSlideShow extends POIDocument {
                     pict.setRawData(imgdata);
 
                     pict.setOffset(offset);
-					p.add(pict);
+					_pictures.add(pict);
 				} catch(IllegalArgumentException e) {
 					logger.log(POILogger.ERROR, "Problem reading picture: " + e + "\nYou document will probably become corrupted if you save it!");
 				}
@@ -351,8 +351,6 @@ public final class HSLFSlideShow extends POIDocument {
             
             pos += imgsize;
         }
-
-		_pictures = (PictureData[])p.toArray(new PictureData[p.size()]);
 	}
 
 
@@ -453,10 +451,10 @@ public final class HSLFSlideShow extends POIDocument {
 
 	
         // Write any pictures, into another stream
-        if (_pictures != null) {
+        if (_pictures.size() > 0) {
             ByteArrayOutputStream pict = new ByteArrayOutputStream();
-            for (int i = 0; i < _pictures.length; i++ ) {
-                _pictures[i].write(pict);
+            for (PictureData p : _pictures) {
+                p.write(pict);
             }
             outFS.createDocument(
                 new ByteArrayInputStream(pict.toByteArray()), "Pictures"
@@ -502,21 +500,21 @@ public final class HSLFSlideShow extends POIDocument {
 	}
 	
 	/**
-	 *  Add a new picture to this presentation.
+	 * Add a new picture to this presentation.
+     *
+     * @return offset of this picture in the Pictures stream
 	 */
-	public void addPicture(PictureData img) {
-		// Copy over the existing pictures, into an array one bigger
-		PictureData[] lst;
-		if(_pictures == null) {
-			lst = new PictureData[1];
-		} else {
-			lst = new PictureData[(_pictures.length+1)];
-			System.arraycopy(_pictures,0,lst,0,_pictures.length);
-		}
-		// Add in the new image
-		lst[lst.length - 1] = img;
-		_pictures = lst;
-	}
+	public int addPicture(PictureData img) {
+		int offset = 0;
+
+        if(_pictures.size() > 0){
+            PictureData prev = _pictures.get(_pictures.size() - 1);
+            offset = prev.getOffset() + prev.getRawData().length + 8;
+        }
+        img.setOffset(offset);
+        _pictures.add(img);
+        return offset;
+   }
 
 	/* ******************* fetching methods follow ********************* */
 
@@ -544,7 +542,7 @@ public final class HSLFSlideShow extends POIDocument {
 	 *  presentation doesn't contain pictures.
 	 */
 	public PictureData[] getPictures() {
-		return _pictures;
+		return _pictures.toArray(new PictureData[_pictures.size()]);
 	}
 
     /**

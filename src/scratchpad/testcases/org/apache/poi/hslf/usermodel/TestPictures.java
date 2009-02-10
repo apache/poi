@@ -436,7 +436,21 @@ public class TestPictures extends TestCase{
         pdata = pict.getPictureData();
         assertTrue(pdata instanceof WMF);
         assertEquals(Picture.WMF, pdata.getType());
-	}
+
+        //add a new picture, it should be correctly appended to the Pictures stream
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        for(PictureData p : pictures) p.write(out);
+        out.close();
+
+        int streamSize = out.size();
+
+        PictureData data = PictureData.create(Picture.JPEG);
+        data.setData(new byte[100]);
+        int offset = hslf.addPicture(data);
+        assertEquals(streamSize, offset);
+        assertEquals(3, ppt.getPictureData().length);
+
+    }
 
     public void testGetPictureName() throws Exception {
         SlideShow ppt = new SlideShow(new HSLFSlideShow(new File(cwd, "ppt_with_png.ppt").getPath()));
