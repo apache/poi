@@ -34,7 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.5-beta6" date="2008-??-??">
-           <action dev="POI-DEVELOPERS" type="fix">remove me</action>
+           <action dev="POI-DEVELOPERS" type="fix">46627 - Fixed offset of added images if Pictures stream contains pictures with zero length</action>
         </release>
         <release version="3.5-beta5" date="2008-02-19">
            <action dev="POI-DEVELOPERS" type="fix">46536 - When shifting rows, update formulas on that sheet to point to the new location of those rows</action>
