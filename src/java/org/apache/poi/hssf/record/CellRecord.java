@@ -87,7 +87,7 @@ public abstract class CellRecord extends StandardRecord implements CellValueReco
 		sb.append("    .xfindex= ").append(HexDump.shortToHex(getXFIndex())).append("\n");
 		appendValueText(sb);
 		sb.append("\n");
-		sb.append("[/NUMBER]\n");
+		sb.append("[/").append(recordName).append("]\n");
 		return sb.toString();
 	}
 
