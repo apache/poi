@@ -32,7 +32,7 @@ public class ExternSheetRecord extends StandardRecord {
 	public final static short sid = 0x0017;
 	private List<RefSubRecord> _list;
 	
-	private final class RefSubRecord {
+	private static final class RefSubRecord {
 		public static final int ENCODED_SIZE = 6;
 
 		/** index to External Book Block (which starts with a EXTERNALBOOK record) */
