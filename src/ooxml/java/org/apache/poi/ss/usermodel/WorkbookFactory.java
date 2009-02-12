@@ -24,6 +24,7 @@ import org.apache.poi.POIXMLDocument;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.Package;
 
 /**
@@ -49,7 +50,7 @@ public class WorkbookFactory {
 	 * Your input stream MUST either support mark/reset, or
 	 *  be wrapped as a {@link PushbackInputStream}!
 	 */
-	public static Workbook create(InputStream inp) throws Exception {
+	public static Workbook create(InputStream inp) throws IOException, InvalidFormatException {
 		// If clearly doesn't do mark/reset, wrap up
 		if(! inp.markSupported()) {
 			inp = new PushbackInputStream(inp, 8);
