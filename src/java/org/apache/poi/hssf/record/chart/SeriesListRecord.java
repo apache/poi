@@ -22,12 +22,12 @@ import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * SERIESLIST (0x1016)
+ * SERIESLIST (0x1016)<p/>
  * 
  * The series list record defines the series displayed as an overlay to the main chart record.<br/>
- * This record doesn't seem to be referenced in either the OOO or MS doc, but this page mentions it
- * http://ooxmlisdefectivebydesign.blogspot.com/2008/03/bad-surprise-in-microsoft-office-binary.html
  * 
+ * (As with all chart related records, documentation is lacking.
+ * See {@link ChartRecord} for more details)
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
@@ -73,8 +73,7 @@ public final class SeriesListRecord extends StandardRecord {
         return field_1_seriesNumbers.length * 2 + 2;
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 
@@ -88,14 +87,4 @@ public final class SeriesListRecord extends StandardRecord {
     public short[] getSeriesNumbers() {
         return field_1_seriesNumbers;
     }
-
-    /**
-     * Set the series numbers field for the SeriesList record.
-     */
-    public void setSeriesNumbers(short[] field_1_seriesNumbers) {
-        this.field_1_seriesNumbers = field_1_seriesNumbers;
-    }
 }
-
-
-

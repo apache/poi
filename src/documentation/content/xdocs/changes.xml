@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta6" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">46693 - Fixed bugs serialization bugs in records: CHARTFORMAT, SHTPROPS, SXVD and SXVDEX</action>
            <action dev="POI-DEVELOPERS" type="fix">46627 - Fixed offset of added images if Pictures stream contains pictures with zero length</action>
         </release>
         <release version="3.5-beta5" date="2008-02-19">

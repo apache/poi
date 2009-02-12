@@ -25,6 +25,7 @@ import org.apache.poi.hssf.record.cf.TestCellRange;
 import org.apache.poi.hssf.record.chart.AllChartRecordTests;
 import org.apache.poi.hssf.record.constant.TestConstantValueParser;
 import org.apache.poi.hssf.record.formula.AllFormulaTests;
+import org.apache.poi.hssf.record.pivot.AllPivotRecordTests;
 
 /**
  * Collects all tests for package <tt>org.apache.poi.hssf.record</tt> and sub-packages.
@@ -38,6 +39,7 @@ public final class AllRecordTests {
 
 		result.addTest(AllChartRecordTests.suite());
 		result.addTest(AllFormulaTests.suite());
+		result.addTest(AllPivotRecordTests.suite());
 		result.addTest(AllRecordAggregateTests.suite());
 
 		result.addTestSuite(TestBOFRecord.class);
