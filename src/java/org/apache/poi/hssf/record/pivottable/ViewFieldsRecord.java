@@ -31,18 +31,20 @@ import org.apache.poi.util.StringUtil;
 public final class ViewFieldsRecord extends StandardRecord {
 	public static final short sid = 0x00B1;
 
-	/** the value of the <tt>cchName</tt> field when the name is not present */
-	private static final int STRING_NOT_PRESENT_LEN = -1;
+	/** the value of the <tt>cchName</tt> field when the {@link #_name} is not present */
+	private static final int STRING_NOT_PRESENT_LEN = 0xFFFF;
+	/** 5 shorts */
+	private static final int BASE_SIZE = 10;
 
-	private int sxaxis;
-	private int cSub;
-	private int grbitSub;
-	private int cItm;
+	private int _sxaxis;
+	private int _cSub;
+	private int _grbitSub;
+	private int _cItm;
 	
-	private String name = null;
+	private String _name;
 	
 	/**
-	 * values for the {@link ViewFieldsRecord#sxaxis} field
+	 * values for the {@link ViewFieldsRecord#_sxaxis} field
 	 */
 	private static final class Axis {
 		public static final int NO_AXIS = 0;
@@ -53,27 +55,32 @@ public final class ViewFieldsRecord extends StandardRecord {
 	}
 
 	public ViewFieldsRecord(RecordInputStream in) {
-		sxaxis = in.readShort();
-		cSub = in.readShort();
-		grbitSub = in.readShort();
-		cItm = in.readShort();
+		_sxaxis = in.readShort();
+		_cSub = in.readShort();
+		_grbitSub = in.readShort();
+		_cItm = in.readShort();
 		
-		int cchName = in.readShort();
+		int cchName = in.readUShort();
 		if (cchName != STRING_NOT_PRESENT_LEN) {
-			name = in.readCompressedUnicode(cchName);
+			int flag = in.readByte();
+			if ((flag & 0x01) != 0) {
+				_name = in.readUnicodeLEString(cchName);
+			} else {
+				_name = in.readCompressedUnicode(cchName);
+			}
 		}
 	}
 	
 	@Override
 	protected void serialize(LittleEndianOutput out) {
 		
-		out.writeShort(sxaxis);
-		out.writeShort(cSub);
-		out.writeShort(grbitSub);
-		out.writeShort(cItm);
+		out.writeShort(_sxaxis);
+		out.writeShort(_cSub);
+		out.writeShort(_grbitSub);
+		out.writeShort(_cItm);
 		
-		if (name != null) {
-			StringUtil.writeUnicodeString(out, name);
+		if (_name != null) {
+			StringUtil.writeUnicodeString(out, _name);
 		} else {
 			out.writeShort(STRING_NOT_PRESENT_LEN);
 		}
@@ -81,12 +88,12 @@ public final class ViewFieldsRecord extends StandardRecord {
 
 	@Override
 	protected int getDataSize() {
-		
-		int cchName = 0;
-		if (name != null) {
-			cchName = name.length();
+		if (_name == null) {
+			return BASE_SIZE;
 		}
-		return 2 +2 + 2 + 2 + 2 + cchName;
+		return BASE_SIZE 
+			+ 1 // unicode flag 
+			+ _name.length() * (StringUtil.hasMultibyte(_name) ? 2 : 1);
 	}
 
 	@Override
@@ -98,11 +105,11 @@ public final class ViewFieldsRecord extends StandardRecord {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("[SXVD]\n");
-		buffer.append("    .sxaxis    = ").append(HexDump.shortToHex(sxaxis)).append('\n');
-		buffer.append("    .cSub      = ").append(HexDump.shortToHex(cSub)).append('\n');
-		buffer.append("    .grbitSub  = ").append(HexDump.shortToHex(grbitSub)).append('\n');
-		buffer.append("    .cItm      = ").append(HexDump.shortToHex(cItm)).append('\n');
-		buffer.append("    .name      = ").append(name).append('\n');
+		buffer.append("    .sxaxis    = ").append(HexDump.shortToHex(_sxaxis)).append('\n');
+		buffer.append("    .cSub      = ").append(HexDump.shortToHex(_cSub)).append('\n');
+		buffer.append("    .grbitSub  = ").append(HexDump.shortToHex(_grbitSub)).append('\n');
+		buffer.append("    .cItm      = ").append(HexDump.shortToHex(_cItm)).append('\n');
+		buffer.append("    .name      = ").append(_name).append('\n');
 		
 		buffer.append("[/SXVD]\n");
 		return buffer.toString();

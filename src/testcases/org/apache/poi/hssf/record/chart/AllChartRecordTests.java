@@ -39,6 +39,7 @@ public final class AllChartRecordTests {
 		result.addTestSuite(TestAxisUsedRecord.class);
 		result.addTestSuite(TestBarRecord.class);
 		result.addTestSuite(TestCategorySeriesAxisRecord.class);
+		result.addTestSuite(TestChartFormatRecord.class);
 		result.addTestSuite(TestChartRecord.class);
 		result.addTestSuite(TestChartTitleFormatRecord.class);
 		result.addTestSuite(TestDatRecord.class);

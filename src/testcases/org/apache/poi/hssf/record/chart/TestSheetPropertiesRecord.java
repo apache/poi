@@ -18,27 +18,32 @@
 package org.apache.poi.hssf.record.chart;
 
 
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 /**
- * Tests the serialization and deserialization of the SheetPropertiesRecord
- * class works correctly.  Test data taken directly from a real
- * Excel file.
+ * Tests for {@link SheetPropertiesRecord}
+ * Test data taken directly from a real Excel file.
  *
-
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class TestSheetPropertiesRecord extends TestCase {
-    byte[] data = new byte[] {
+    private static final byte[] data = {
         (byte)0x0A,(byte)0x00,
-        (byte)0x00
-        //,(byte)0x00       // not sure where that last byte comes from
+        (byte)0x00,
+        (byte)0x00,      // not sure where that last byte comes from
     };
 
     public void testLoad() {
-        SheetPropertiesRecord record = new SheetPropertiesRecord(TestcaseRecordInputStream.create(0x1044, data));
+        RecordInputStream in = TestcaseRecordInputStream.create(0x1044, data);
+        SheetPropertiesRecord record = new SheetPropertiesRecord(in);
+        if (in.remaining() == 1) {
+            throw new AssertionFailedError("Identified bug 44693c");
+        }
+        assertEquals(0, in.remaining());
         assertEquals( 10, record.getFlags());
         assertEquals( false, record.isChartTypeManuallyFormatted() );
         assertEquals( true, record.isPlotVisibleOnly() );
@@ -47,12 +52,10 @@ public final class TestSheetPropertiesRecord extends TestCase {
         assertEquals( false, record.isAutoPlotArea() );
         assertEquals( 0, record.getEmpty());
 
-
-        assertEquals( 7, record.getRecordSize() );
+        assertEquals( 8, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
+    public void testStore() {
         SheetPropertiesRecord record = new SheetPropertiesRecord();
         record.setChartTypeManuallyFormatted( false );
         record.setPlotVisibleOnly( true );
@@ -63,8 +66,6 @@ public final class TestSheetPropertiesRecord extends TestCase {
 
 
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        TestcaseRecordInputStream.confirmRecordEncoding(SheetPropertiesRecord.sid, data, recordBytes);
     }
 }
