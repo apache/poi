@@ -35,32 +35,29 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class HSSFPatriarch
-        implements HSSFShapeContainer, Drawing
-{
-    List shapes = new ArrayList();
-    HSSFSheet sheet;
-    int x1 = 0;
-    int y1  = 0 ;
-    int x2 = 1023;
-    int y2 = 255;
+public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
+    private final List<HSSFShape> _shapes = new ArrayList<HSSFShape>();
+    private int _x1 = 0;
+    private int _y1  = 0 ;
+    private int _x2 = 1023;
+    private int _y2 = 255;
 
     /**
      * The EscherAggregate we have been bound to.
      * (This will handle writing us out into records,
      *  and building up our shapes from the records)
      */
-    private EscherAggregate boundAggregate;
+    private EscherAggregate _boundAggregate;
+	final HSSFSheet _sheet; // TODO make private
 
     /**
      * Creates the patriarch.
      *
      * @param sheet the sheet this patriarch is stored in.
      */
-    HSSFPatriarch(HSSFSheet sheet, EscherAggregate boundAggregate)
-    {
-        this.boundAggregate = boundAggregate;
-        this.sheet = sheet;
+    HSSFPatriarch(HSSFSheet sheet, EscherAggregate boundAggregate){
+        _sheet = sheet;
+		_boundAggregate = boundAggregate;
     }
 
     /**
@@ -74,7 +71,7 @@ public class HSSFPatriarch
     {
         HSSFShapeGroup group = new HSSFShapeGroup(null, anchor);
         group.anchor = anchor;
-        shapes.add(group);
+        _shapes.add(group);
         return group;
     }
 
@@ -90,7 +87,7 @@ public class HSSFPatriarch
     {
         HSSFSimpleShape shape = new HSSFSimpleShape(null, anchor);
         shape.anchor = anchor;
-        shapes.add(shape);
+        _shapes.add(shape);
         return shape;
     }
 
@@ -106,8 +103,8 @@ public class HSSFPatriarch
         HSSFPicture shape = new HSSFPicture(null, anchor);
         shape.setPictureIndex( pictureIndex );
         shape.anchor = anchor;
-        shape.patriarch = this;
-        shapes.add(shape);
+        shape._patriarch = this;
+        _shapes.add(shape);
         return shape;
     }
     public HSSFPicture createPicture(ClientAnchor anchor, int pictureIndex)
@@ -126,7 +123,7 @@ public class HSSFPatriarch
     {
         HSSFPolygon shape = new HSSFPolygon(null, anchor);
         shape.anchor = anchor;
-        shapes.add(shape);
+        _shapes.add(shape);
         return shape;
     }
 
@@ -141,7 +138,7 @@ public class HSSFPatriarch
     {
         HSSFTextbox shape = new HSSFTextbox(null, anchor);
         shape.anchor = anchor;
-        shapes.add(shape);
+        _shapes.add(shape);
         return shape;
     }
 
@@ -156,41 +153,38 @@ public class HSSFPatriarch
     {
         HSSFComment shape = new HSSFComment(null, anchor);
         shape.anchor = anchor;
-        shapes.add(shape);
+        _shapes.add(shape);
         return shape;
     }
 
     /**
      * Returns a list of all shapes contained by the patriarch.
      */
-    public List getChildren()
+    public List<HSSFShape> getChildren()
     {
-        return shapes;
+        return _shapes;
     }
 
     /**
      * Total count of all children and their children's children.
      */
-    public int countOfAllChildren()
-    {
-        int count = shapes.size();
-        for ( Iterator iterator = shapes.iterator(); iterator.hasNext(); )
-        {
-            HSSFShape shape = (HSSFShape) iterator.next();
+    public int countOfAllChildren() {
+        int count = _shapes.size();
+        for (Iterator<HSSFShape> iterator = _shapes.iterator(); iterator.hasNext();) {
+            HSSFShape shape = iterator.next();
             count += shape.countOfAllChildren();
         }
         return count;
     }
     /**
-     * Sets the coordinate space of this group.  All children are contrained
+     * Sets the coordinate space of this group.  All children are constrained
      * to these coordinates.
      */
-    public void setCoordinates( int x1, int y1, int x2, int y2 )
-    {
-        this.x1 = x1;
-        this.y1 = y1;
-        this.x2 = x2;
-        this.y2 = y2;
+    public void setCoordinates(int x1, int y1, int x2, int y2){
+        _x1 = x1;
+        _y1 = y1;
+        _x2 = x2;
+        _y2 = y2;
     }
 
     /**
@@ -205,18 +199,18 @@ public class HSSFPatriarch
 
         // We're looking for a EscherOptRecord
         EscherOptRecord optRecord = (EscherOptRecord)
-            boundAggregate.findFirstWithId(EscherOptRecord.RECORD_ID);
+            _boundAggregate.findFirstWithId(EscherOptRecord.RECORD_ID);
         if(optRecord == null) {
             // No opt record, can't have chart
             return false;
         }
 
-        for(Iterator it = optRecord.getEscherProperties().iterator(); it.hasNext();) {
-            EscherProperty prop = (EscherProperty)it.next();
+        for(Iterator<EscherProperty> it = optRecord.getEscherProperties().iterator(); it.hasNext();) {
+            EscherProperty prop = it.next();
             if(prop.getPropertyNumber() == 896 && prop.isComplex()) {
                 EscherComplexProperty cp = (EscherComplexProperty)prop;
                 String str = StringUtil.getFromUnicodeLE(cp.getComplexData());
-                //System.err.println(str);
+
                 if(str.equals("Chart 1\0")) {
                     return true;
                 }
@@ -231,7 +225,7 @@ public class HSSFPatriarch
      */
     public int getX1()
     {
-        return x1;
+        return _x1;
     }
 
     /**
@@ -239,7 +233,7 @@ public class HSSFPatriarch
      */
     public int getY1()
     {
-        return y1;
+        return _y1;
     }
 
     /**
@@ -247,7 +241,7 @@ public class HSSFPatriarch
      */
     public int getX2()
     {
-        return x2;
+        return _x2;
     }
 
     /**
@@ -255,13 +249,13 @@ public class HSSFPatriarch
      */
     public int getY2()
     {
-        return y2;
+        return _y2;
     }
 
     /**
      * Returns the aggregate escher record we're bound to 
      */
     protected EscherAggregate _getBoundAggregate() {
-        return boundAggregate;
+        return _boundAggregate;
     }
 }

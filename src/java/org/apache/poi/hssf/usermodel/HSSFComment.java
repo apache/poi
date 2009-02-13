@@ -57,7 +57,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
         setShapeType(OBJECT_TYPE_COMMENT);
 
         //default color for comments
-        fillColor = 0x08000050;
+        _fillColor = 0x08000050;
 
         //by default comments are hidden
         _visible = false;

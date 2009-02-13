@@ -22,8 +22,7 @@ package org.apache.poi.hssf.usermodel;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public abstract class HSSFShape
-{
+public abstract class HSSFShape {
     public static final int LINEWIDTH_ONE_PT = 12700;
     public static final int LINEWIDTH_DEFAULT = 9525;
 
@@ -40,13 +39,14 @@ public abstract class HSSFShape
     public static final int LINESTYLE_LONGDASHDOTDOTGEL = 10; // long dash short dash short dash
     public static final int LINESTYLE_NONE = -1;
 
-    HSSFShape parent;
+    // TODO - make all these fields private
+    final HSSFShape parent;  
     HSSFAnchor anchor;
-    int lineStyleColor = 0x08000040;
-    int fillColor = 0x08000009;
-    int lineWidth = LINEWIDTH_DEFAULT;    // 12700 = 1pt
-    int lineStyle = LINESTYLE_SOLID;
-    boolean noFill = false;
+    private int _lineStyleColor = 0x08000040;
+    int _fillColor = 0x08000009;
+    private int _lineWidth = LINEWIDTH_DEFAULT;    // 12700 = 1pt
+    private int _lineStyle = LINESTYLE_SOLID;
+    private boolean _noFill = false;
 
     /**
      * Create a new shape with the specified parent and anchor.
@@ -103,25 +103,22 @@ public abstract class HSSFShape
     /**
      * The color applied to the lines of this shape.
      */
-    public int getLineStyleColor()
-    {
-        return lineStyleColor;
+    public int getLineStyleColor() {
+        return _lineStyleColor;
     }
 
     /**
      * The color applied to the lines of this shape.
      */
-    public void setLineStyleColor( int lineStyleColor )
-    {
-        this.lineStyleColor = lineStyleColor;
+    public void setLineStyleColor(int lineStyleColor) {
+        _lineStyleColor = lineStyleColor;
     }
 
     /**
      * The color applied to the lines of this shape.
      */
-    public void setLineStyleColor( int red, int green, int blue )
-    {
-        this.lineStyleColor = ((blue) << 16) | ((green) << 8) | red;
+    public void setLineStyleColor(int red, int green, int blue) {
+        this._lineStyleColor = ((blue) << 16) | ((green) << 8) | red;
     }
 
     /**
@@ -129,15 +126,14 @@ public abstract class HSSFShape
      */
     public int getFillColor()
     {
-        return fillColor;
+        return _fillColor;
     }
 
     /**
      * The color used to fill this shape.
      */
-    public void setFillColor( int fillColor )
-    {
-        this.fillColor = fillColor;
+    public void setFillColor(int fillColor) {
+        _fillColor = fillColor;
     }
 
     /**
@@ -145,15 +141,14 @@ public abstract class HSSFShape
      */
     public void setFillColor( int red, int green, int blue )
     {
-        this.fillColor = ((blue) << 16) | ((green) << 8) | red;
+        this._fillColor = ((blue) << 16) | ((green) << 8) | red;
     }
 
     /**
      * @return  returns with width of the line in EMUs.  12700 = 1 pt.
      */
-    public int getLineWidth()
-    {
-        return lineWidth;
+    public int getLineWidth() {
+        return _lineWidth;
     }
 
     /**
@@ -163,17 +158,15 @@ public abstract class HSSFShape
      *
      * @see HSSFShape#LINEWIDTH_ONE_PT
      */
-    public void setLineWidth( int lineWidth )
-    {
-        this.lineWidth = lineWidth;
+    public void setLineWidth(int lineWidth) {
+        _lineWidth = lineWidth;
     }
 
     /**
      * @return One of the constants in LINESTYLE_*
      */
-    public int getLineStyle()
-    {
-        return lineStyle;
+    public int getLineStyle() {
+        return _lineStyle;
     }
 
     /**
@@ -181,32 +174,28 @@ public abstract class HSSFShape
      *
      * @param lineStyle     One of the constants in LINESTYLE_*
      */
-    public void setLineStyle( int lineStyle )
-    {
-        this.lineStyle = lineStyle;
+    public void setLineStyle(int lineStyle) {
+        _lineStyle = lineStyle;
     }
 
     /**
-     * @return  true if this shape is not filled with a color.
+     * @return <code>true</code> if this shape is not filled with a color.
      */
-    public boolean isNoFill()
-    {
-        return noFill;
+    public boolean isNoFill() {
+        return _noFill;
     }
 
     /**
      * Sets whether this shape is filled or transparent.
      */
-    public void setNoFill( boolean noFill )
-    {
-        this.noFill = noFill;
+    public void setNoFill(boolean noFill) {
+        _noFill = noFill;
     }
 
     /**
-     * Count of all children and their childrens children.
+     * Count of all children and their children's children.
      */
-    public int countOfAllChildren()
-    {
+    public int countOfAllChildren() {
         return 1;
     }
 }
