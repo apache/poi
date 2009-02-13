@@ -412,15 +412,25 @@ public interface Workbook {
     CreationHelper getCreationHelper();
 
     /**
+     * @return <code>false</code> if this workbook is not visible in the GUI
+     */
+    boolean isHidden();
+
+    /**
+     * @param hiddenFlag pass <code>false</code> to make the workbook visible in the GUI
+     */
+    void setHidden(boolean hiddenFlag);
+
+    /**
      * Check whether a sheet is hidden.
      * <p>
      * Note that a sheet could instead be set to be very hidden, which is different
      *  ({@link #isSheetVeryHidden(int)})
      * </p>
      * @param sheetIx Number
-     * @return True if sheet is hidden
+     * @return <code>true</code> if sheet is hidden
      */
-    boolean isSheetHidden(int sheetIx) ;
+    boolean isSheetHidden(int sheetIx);
 
     /**
      * Check whether a sheet is very hidden.
@@ -452,5 +462,4 @@ public interface Workbook {
      * @param hidden 0 for not hidden, 1 for hidden, 2 for very hidden
      */
     void setSheetHidden(int sheetIx, int hidden);
-    
 }
