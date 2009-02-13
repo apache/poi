@@ -1,19 +1,20 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ddf.EscherBSERecord;
@@ -38,9 +39,7 @@ import java.util.Iterator;
  * @author Glen Stampoultzis
  * @author Yegor Kozlov (yegor at apache.org)
  */
-public class HSSFPicture
-        extends HSSFSimpleShape implements Picture
-{
+public final class HSSFPicture extends HSSFSimpleShape implements Picture {
     public static final int PICTURE_TYPE_EMF = HSSFWorkbook.PICTURE_TYPE_EMF;                // Windows Enhanced Metafile
     public static final int PICTURE_TYPE_WMF = HSSFWorkbook.PICTURE_TYPE_WMF;                // Windows Metafile
     public static final int PICTURE_TYPE_PICT = HSSFWorkbook.PICTURE_TYPE_PICT;              // Macintosh PICT
@@ -62,8 +61,8 @@ public class HSSFPicture
      */
     private static final int PX_ROW = 15;
 
-    int pictureIndex;
-    HSSFPatriarch patriarch;
+    private int _pictureIndex;
+    HSSFPatriarch _patriarch;  // TODO make private
 
     private static final POILogger log = POILogFactory.getLogger(HSSFPicture.class);
 
@@ -78,12 +77,12 @@ public class HSSFPicture
 
     public int getPictureIndex()
     {
-        return pictureIndex;
+        return _pictureIndex;
     }
 
     public void setPictureIndex( int pictureIndex )
     {
-        this.pictureIndex = pictureIndex;
+        this._pictureIndex = pictureIndex;
     }
 
     /**
@@ -185,7 +184,7 @@ public class HSSFPicture
 
     private float getColumnWidthInPixels(int column){
 
-        int cw = patriarch.sheet.getColumnWidth(column);
+        int cw = _patriarch._sheet.getColumnWidth(column);
         float px = getPixelWidth(column);
 
         return cw/px;
@@ -193,18 +192,18 @@ public class HSSFPicture
 
     private float getRowHeightInPixels(int i){
 
-        HSSFRow row = patriarch.sheet.getRow(i);
+        HSSFRow row = _patriarch._sheet.getRow(i);
         float height;
         if(row != null) height = row.getHeight();
-        else height = patriarch.sheet.getDefaultRowHeight();
+        else height = _patriarch._sheet.getDefaultRowHeight();
 
         return height/PX_ROW;
     }
 
     private float getPixelWidth(int column){
 
-        int def = patriarch.sheet.getDefaultColumnWidth()*256;
-        int cw = patriarch.sheet.getColumnWidth(column);
+        int def = _patriarch._sheet.getDefaultColumnWidth()*256;
+        int cw = _patriarch._sheet.getColumnWidth(column);
 
         return cw == def ? PX_DEFAULT : PX_MODIFIED;
     }
@@ -238,7 +237,7 @@ public class HSSFPicture
      * @return image dimension
      */
     public Dimension getImageDimension(){
-        EscherBSERecord bse = patriarch.sheet.book.getBSERecord(pictureIndex);
+        EscherBSERecord bse = _patriarch._sheet._book.getBSERecord(_pictureIndex);
         byte[] data = bse.getBlipRecord().getPicturedata();
         int type = bse.getBlipTypeWin32();
         Dimension size = new Dimension();
@@ -252,8 +251,8 @@ public class HSSFPicture
                 try {
                     //read the image using javax.imageio.*
                     ImageInputStream iis = ImageIO.createImageInputStream( new ByteArrayInputStream(data) );
-                    Iterator i = ImageIO.getImageReaders( iis );
-                    ImageReader r = (ImageReader) i.next();
+                    Iterator<ImageReader> i = ImageIO.getImageReaders( iis );
+                    ImageReader r = i.next();
                     r.setInput( iis );
                     BufferedImage img = r.read(0);
 
