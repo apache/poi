@@ -279,7 +279,6 @@
         </release>
         <release version="3.1-beta1" date="2008-04-28">
            <action dev="POI-DEVELOPERS" type="fix">44857 - Avoid OOM on unknown escher records when EscherMetafileBlip is incorrect</action>
->>>>>>> .merge-right.r653675
            <action dev="POI-DEVELOPERS" type="add">HSLF: Support for getting embedded sounds from slide show </action>
            <action dev="POI-DEVELOPERS" type="add">HSLF: Initial support for rendering slides into images</action>
            <action dev="POI-DEVELOPERS" type="add">HSLF: Support for getting OLE object data from slide show </action>
