@@ -129,7 +129,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *  blank cells when fetching from a row.
      * See {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy}
      */
-    private MissingCellPolicy missingCellPolicy = Row.RETURN_NULL_AND_BLANK;
+    private MissingCellPolicy _missingCellPolicy = Row.RETURN_NULL_AND_BLANK;
 
     /**
      * array of pictures for this workbook
@@ -514,7 +514,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         if(pictures == null) {
             //In OOXML pictures are referred to in sheets,
             //dive into sheet's relations, select drawings and their images
-            pictures = new ArrayList();
+            pictures = new ArrayList<XSSFPictureData>();
             for(XSSFSheet sh : sheets){
                 for(POIXMLDocumentPart dr : sh.getRelations()){
                     if(dr instanceof XSSFDrawing){
@@ -788,7 +788,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *  {@link MissingCellPolicy}
      */
     public MissingCellPolicy getMissingCellPolicy() {
-        return missingCellPolicy;
+        return _missingCellPolicy;
     }
     /**
      * Sets the policy on what to do when
@@ -798,7 +798,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *  {@link MissingCellPolicy}
      */
     public void setMissingCellPolicy(MissingCellPolicy missingCellPolicy) {
-        this.missingCellPolicy = missingCellPolicy;
+        _missingCellPolicy = missingCellPolicy;
     }
 
     /**
@@ -1077,7 +1077,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorkbook.type.getName().getNamespaceURI(), "workbook"));
-        Map map = new HashMap();
+        Map<String, String> map = new HashMap<String, String>();
         map.put(STRelationshipId.type.getName().getNamespaceURI(), "r");
         xmlOptions.setSaveSuggestedPrefixes(map);
 
@@ -1208,59 +1208,33 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         }
         return embedds;
     }
+    
+    public boolean isHidden() {
+    	throw new RuntimeException("Not implemented yet");
+    }
 
-    /**
-     * Check whether a sheet is hidden.
-     * Note that a sheet could instead be set to be very hidden, which is different
-     *  ({@link #isSheetVeryHidden(int)})
-     * @param sheetIx Number
-     * @return True if sheet is hidden
-     * @throws IllegalArgumentException if sheetIx is invalid
-     */
+    public void setHidden(boolean hiddenFlag) {
+    	throw new RuntimeException("Not implemented yet");
+    }
+
     public boolean isSheetHidden(int sheetIx) {
         validateSheetIndex(sheetIx);
         CTSheet ctSheet = sheets.get(sheetIx).sheet;
         return ctSheet.getState() == STSheetState.HIDDEN;
     }
 
-    /**
-     * Check whether a sheet is very hidden.
-     * This is different from the normal  hidden status ({@link #isSheetHidden(int)})
-     * @param sheetIx Number
-     * @return True if sheet is very hidden
-     * @throws IllegalArgumentException if sheetIx is invalid
-     */
     public boolean isSheetVeryHidden(int sheetIx) {
         validateSheetIndex(sheetIx);
         CTSheet ctSheet = sheets.get(sheetIx).sheet;
         return ctSheet.getState() == STSheetState.VERY_HIDDEN;
     }
 
-    /**
-     * Hide or unhide a sheet
-     *
-     * @param sheetIx The sheet index
-     * @param hidden True to mark the sheet as hidden, false otherwise
-     * @throws IllegalArgumentException if sheetIx is invalid
-     */
     public void setSheetHidden(int sheetIx, boolean hidden) {
         validateSheetIndex(sheetIx);
         CTSheet ctSheet = sheets.get(sheetIx).sheet;
         ctSheet.setState(hidden ? STSheetState.HIDDEN : STSheetState.VISIBLE);
     }
 
-    /**
-     * Hide or unhide a sheet.
-     * <pre>
-     *  0 = not hidden
-     *  1 = hidden
-     *  2 = very hidden.
-     * </pre>
-     *
-     * @param sheetIx The sheet number
-     * @param hidden 0 for not hidden, 1 for hidden, 2 for very hidden
-     * @throws IllegalArgumentException if sheetIx is invalid
-     */
     public void setSheetHidden(int sheetIx, int hidden) {
         validateSheetIndex(sheetIx);
         CTSheet ctSheet = sheets.get(sheetIx).sheet;

@@ -537,88 +537,55 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     }
 
     /**
-     * get the sheet name
-     * @param sheetIx Number
-     * @return Sheet name
+     * @return Sheet name for the specified index
      */
-    public String getSheetName(int sheetIx)
-    {
-        validateSheetIndex(sheetIx);
-        return workbook.getSheetName(sheetIx);
+    public String getSheetName(int sheetIndex) {
+        validateSheetIndex(sheetIndex);
+        return workbook.getSheetName(sheetIndex);
     }
 
-    /**
-     * Check whether a sheet is hidden.
-     * Note that a sheet could instead be 
-     *  set to be very hidden, which is different
-     *  ({@link #isSheetVeryHidden(int)})
-     * @param sheetIx Number
-     * @return True if sheet is hidden
-     */
+    public boolean isHidden() {
+        return workbook.getWindowOne().getHidden();
+    }
+
+    public void setHidden(boolean hiddenFlag) {
+        workbook.getWindowOne().setHidden(hiddenFlag);
+    }
+    
     public boolean isSheetHidden(int sheetIx) {
         validateSheetIndex(sheetIx);
         return workbook.isSheetHidden(sheetIx);
     }
-    /**
-     * Check whether a sheet is very hidden.
-     * This is different from the normal 
-     *  hidden status  
-     *  ({@link #isSheetHidden(int)})
-     * @param sheetIx Number
-     * @return True if sheet is very hidden
-     */
+
     public boolean isSheetVeryHidden(int sheetIx) {
         validateSheetIndex(sheetIx);
         return workbook.isSheetVeryHidden(sheetIx);
     }
 
-    /**
-     * Hide or unhide a sheet
-     *
-     * @param sheetIx The sheet index
-     * @param hidden True to mark the sheet as hidden, false otherwise
-     */
+
     public void setSheetHidden(int sheetIx, boolean hidden) {
         validateSheetIndex(sheetIx);
         workbook.setSheetHidden(sheetIx, hidden);
     }
-    /**
-     * Hide or unhide a sheet.
-     *  0 = not hidden
-     *  1 = hidden
-     *  2 = very hidden.
-     * 
-     * @param sheetIx The sheet number
-     * @param hidden 0 for not hidden, 1 for hidden, 2 for very hidden
-     */
+
     public void setSheetHidden(int sheetIx, int hidden) {
         validateSheetIndex(sheetIx);
         workbook.setSheetHidden(sheetIx, hidden);
     }
 
-    /*
-     * get the sheet's index
-     * @param name  sheet name
-     * @return sheet index or -1 if it was not found.
-     */
-
     /** Returns the index of the sheet by his name
      * @param name the sheet name
      * @return index of the sheet (0 based)
      */
-    public int getSheetIndex(String name)
-    {
-        int retval = workbook.getSheetIndex(name);
-
-        return retval;
+    public int getSheetIndex(String name){
+        return workbook.getSheetIndex(name);
     }
 
     /** Returns the index of the given sheet
      * @param sheet the sheet to look up
      * @return index of the sheet (0 based). <tt>-1</tt> if not found
      */
-    public int getSheetIndex(org.apache.poi.ss.usermodel.Sheet sheet)
-    {
+    public int getSheetIndex(org.apache.poi.ss.usermodel.Sheet sheet) {
         for(int i=0; i<_sheets.size(); i++) {
             if(_sheets.get(i) == sheet) {
                 return i;
@@ -628,7 +595,6 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     }
 
     /**
-<<<<<<< .working
      * Returns the external sheet index of the sheet
      *  with the given internal index, creating one
      *  if needed.

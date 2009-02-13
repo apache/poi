@@ -32,6 +32,7 @@ import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.RecordFormatException;
+import org.apache.poi.hssf.record.WindowOneRecord;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.TempFile;
@@ -118,6 +119,33 @@ public final class TestHSSFWorkbook extends TestCase {
             fail("WindowOneRecord in Workbook is probably not initialized");
         }
     }
+    
+    /**
+     * Tests for {@link HSSFWorkbook#isHidden()} etc
+     */
+    public void testHidden() {
+    	HSSFWorkbook wb = new HSSFWorkbook();
+
+    	WindowOneRecord w1 = wb.getWorkbook().getWindowOne();
+
+    	assertEquals(false, wb.isHidden());
+    	assertEquals(false, w1.getHidden());
+
+    	wb.setHidden(true);
+    	assertEquals(true, wb.isHidden());
+    	assertEquals(true, w1.getHidden());
+
+    	wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+    	w1 = wb.getWorkbook().getWindowOne();
+
+    	wb.setHidden(true);
+    	assertEquals(true, wb.isHidden());
+    	assertEquals(true, w1.getHidden());
+
+    	wb.setHidden(false);
+    	assertEquals(false, wb.isHidden());
+    	assertEquals(false, w1.getHidden());
+	}
 
     public void testSheetSelection() {
         HSSFWorkbook b = new HSSFWorkbook();
