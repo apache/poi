@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.FormulaShifter;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -60,7 +61,7 @@ import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelations
  * </p>
  */
 public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
-    private static POILogger logger = POILogFactory.getLogger(XSSFSheet.class);
+    private static final POILogger logger = POILogFactory.getLogger(XSSFSheet.class);
 
     /**
      * Column width measured as the number of characters of the maximum digit width of the
@@ -1442,6 +1443,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             XSSFRow row = (XSSFRow)it.next();
+            int rownum = row.getRowNum();
 
             if (!copyRowHeight) {
                 row.setHeight((short)-1);
@@ -1456,11 +1458,39 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             else if (row.getRowNum() >= startRow && row.getRowNum() <= endRow) {
                 row.shift(n);
             }
+
+            if(sheetComments != null){
+                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
+                CTCommentList lst = sheetComments.getCTComments().getCommentList();
+                for (CTComment comment : lst.getCommentArray()) {
+                    CellReference ref = new CellReference(comment.getRef());
+                    if(ref.getRow() == rownum){
+                        ref = new CellReference(rownum + n, ref.getCol());
+                        comment.setRef(ref.formatAsString());
+                    }
+                }
+            }
         }
         //rebuild the rows map
+        int sheetIndex = getWorkbook().getSheetIndex(this);
+        FormulaShifter shifter = FormulaShifter.createForRowShift(sheetIndex, startRow, endRow, n);
         TreeMap<Integer, Row> map = new TreeMap<Integer, Row>();
-        for(Row r : this) map.put(r.getRowNum(), r);
+        for(Row r : this) {
+            XSSFRow row = (XSSFRow)r;
+            row.updateFormulasAfterCellShift(shifter);
+            map.put(r.getRowNum(), r);
+        }
         rows = map;
+
+        //update formulas on other sheets
+        for(XSSFSheet sheet : getWorkbook()) {
+            if (sheet == this) continue;
+            for(Row r : sheet) {
+                XSSFRow row = (XSSFRow)r;
+                row.updateFormulasAfterCellShift(shifter);
+            }
+        }
+
     }
 
     /**

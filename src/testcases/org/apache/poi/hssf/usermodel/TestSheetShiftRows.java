@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.BaseTestSheetShiftRows;
 
 /**
  * Tests row shifting capabilities.
@@ -31,7 +32,7 @@ public final class TestSheetShiftRows extends BaseTestSheetShiftRows {
 
 	@Override
 	protected Workbook openSampleWorkbook(String sampleFileName) {
-		return HSSFTestDataSamples.openSampleWorkbook(sampleFileName + ".xls");
+		return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);
 	}
 
 	@Override
@@ -46,4 +47,29 @@ public final class TestSheetShiftRows extends BaseTestSheetShiftRows {
 	protected Workbook createWorkbook() {
 		return new HSSFWorkbook();
 	}
+
+    public void testShiftRows() {
+        baseTestShiftRows("SimpleMultiCell.xls");
+    }
+
+    public void testShiftRow() {
+        baseTestShiftRow();
+    }
+
+    public void testShiftRow0() {
+        baseTestShiftRow0();
+    }
+
+    public void testShiftRowBreaks() {
+        baseTestShiftRowBreaks();
+    }
+
+    public void testShiftWithComments() {
+        baseTestShiftWithComments("comments.xls");
+    }
+
+    public void testShiftWithFormulas() {
+        baseTestShiftWithFormulas("ForShifting.xls");
+    }
+
 }

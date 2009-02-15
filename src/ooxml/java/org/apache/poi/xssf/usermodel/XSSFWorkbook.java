@@ -1068,12 +1068,22 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                 workbook.unsetDefinedNames();
             }
         }
+    }
 
+    private void saveCalculationChain(){
+        if(calcChain != null){
+            int count = calcChain.getCTCalcChain().getCArray().length;
+            if(count == 0){
+                removeRelation(calcChain);
+                calcChain = null;
+            }
+        }
     }
 
     @Override
     protected void commit() throws IOException {
         saveNamedRanges();
+        saveCalculationChain();
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorkbook.type.getName().getNamespaceURI(), "workbook"));
