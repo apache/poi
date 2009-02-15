@@ -298,7 +298,7 @@ public final class FormulaParser {
         } else {
             // allow for any sequence of dots and identifier chars
             // special case of two consecutive dots is best treated in the calling code
-            while (IsAlNum(look) || look == '.' || look == '[' || look == ']') {
+            while (IsAlNum(look) || look == '.' || look == '[' || look == ']' || look == '\\') {
                 sb.append(look);
                 GetChar();
             }
