@@ -27,7 +27,10 @@ import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.FormulaShifter;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
@@ -36,6 +39,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
  * High level representation of a row of a spreadsheet.
  */
 public class XSSFRow implements Row, Comparable<XSSFRow> {
+    private static final POILogger logger = POILogFactory.getLogger(XSSFRow.class);
 
     private static final String FILE_FORMAT_NAME  = "BIFF12";
     /**
@@ -406,34 +410,45 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @param n the number of rows to move
      */
     protected void shift(int n) {
-        XSSFSheet sheet = getSheet();
-        CalculationChain calcChain = sheet.getWorkbook().getCalculationChain();
         int rownum = getRowNum() + n;
+        CalculationChain calcChain = sheet.getWorkbook().getCalculationChain();
+        int sheetId = (int)sheet.sheet.getSheetId();
         for(Cell c : this){
             XSSFCell cell = (XSSFCell)c;
 
             //remove the reference in the calculation chain
-            if(calcChain != null) calcChain.removeItem((int)sheet.sheet.getSheetId(), cell.getReference());
+            if(calcChain != null) calcChain.removeItem(sheetId, cell.getReference());
 
             CTCell ctCell = cell.getCTCell();
             String r = new CellReference(rownum, cell.getColumnIndex()).formatAsString();
             ctCell.setR(r);
-
-            if(ctCell.isSetF()){
-                CTCellFormula f = ctCell.getF();
-                String fmla = f.getStringValue();
-                if(fmla.length() > 0) {
-                    String shiftedFmla = shiftFormula(fmla, n);
-                    f.setStringValue(shiftedFmla);
-                }
-                if(f.isSetRef()){ //Range of cells which the formula applies to.
-                    String ref = f.getRef();
-                    String shiftedRef = shiftFormula(ref, n);
-                    f.setRef(shiftedRef);
-                }
-            }
         }
         setRowNum(rownum);
+    }
+
+    protected void updateFormulasAfterCellShift(FormulaShifter shifter) {
+        for(Cell c : this){
+            XSSFCell cell = (XSSFCell)c;
+
+            CTCell ctCell = cell.getCTCell();
+            if(ctCell.isSetF()){
+                CTCellFormula f = ctCell.getF();
+                String formula = f.getStringValue();
+                if(formula.length() > 0) {
+                    String shiftedFormula = shiftFormula(formula, shifter);
+                    if (shiftedFormula != null) {
+                        f.setStringValue(shiftedFormula);
+                    }
+                }
+
+                if(f.isSetRef()){ //Range of cells which the formula applies to.
+                    String ref = f.getRef();
+                    String shiftedRef = shiftFormula(ref, shifter);
+                    if(shiftedRef != null) f.setRef(shiftedRef);
+                }
+            }
+
+        }
     }
 
     /**
@@ -443,17 +458,21 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * </p>
      *
      * @param formula the formula to shift
-     * @param n the number of rows to shift
-     * @return the shifted formula
+     * @param shifter the FormulaShifter object that operates on the parsed formula tokens
+     * @return the shifted formula if the formula was changed,
+     *   <code>null</code> if the formula wasn't modified
      */
-    private String shiftFormula(String formula, int n){
+    private String shiftFormula(String formula, FormulaShifter shifter){
         XSSFSheet sheet = getSheet();
         XSSFWorkbook wb = sheet.getWorkbook();
         int sheetIndex = wb.getSheetIndex(sheet);
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex);
-        Ptg[] fmla = SharedFormulaRecord.convertSharedFormulas(ptgs, n, 0);
-        return FormulaRenderer.toFormulaString(fpb, fmla);
+        String shiftedFmla = null;
+        if (shifter.adjustFormula(ptgs, sheetIndex)) {
+            shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
+        }
+        return shiftedFmla;
     }
 
 }

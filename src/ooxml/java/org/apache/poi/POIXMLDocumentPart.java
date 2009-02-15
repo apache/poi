@@ -128,6 +128,15 @@ public class POIXMLDocumentPart {
     }
 
     /**
+     * Remove the specified part in this package.
+     */
+    public final void removeRelation(POIXMLDocumentPart part){
+        getPackagePart().removeRelationship(part.getPackageRelationship().getId());
+        getPackagePart().getPackage().removePart(part.getPackagePart());
+        relations.remove(part);
+    }
+
+    /**
      * Returns the parent POIXMLDocumentPart. All parts except root have not-null parent.
      *
      * @return the parent POIXMLDocumentPart or <code>null</code> for the root element.
