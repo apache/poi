@@ -996,4 +996,25 @@ public final class TestFormulaParser extends TestCase {
 		MemFuncPtg mf = (MemFuncPtg)ptgs[0];
 		assertEquals(15, mf.getLenRefSubexpression());
 	}
+
+    /** Named ranges with backslashes, e.g. 'POI\\2009' */
+    public void testBackSlashInNames() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        HSSFName name = wb.createName();
+        name.setNameName("POI\\2009");
+        name.setRefersToFormula("Sheet1!$A$1");
+
+        HSSFSheet sheet = wb.createSheet();
+        HSSFRow row = sheet.createRow(0);
+
+        HSSFCell cell_C1 =  row.createCell(2);
+        cell_C1.setCellFormula("POI\\2009");
+        assertEquals("POI\\2009", cell_C1.getCellFormula());
+
+        HSSFCell cell_D1 = row.createCell(2);
+        cell_D1.setCellFormula("NOT(POI\\2009=\"3.5-final\")");
+        assertEquals("NOT(POI\\2009=\"3.5-final\")", cell_D1.getCellFormula());
+    }
+
 }

@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.5-beta6" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">Fixed formula parser to handle names with backslashes</action>
            <action dev="POI-DEVELOPERS" type="add">46660 - added Workbook getHidden() and setHidden(boolean)</action>
            <action dev="POI-DEVELOPERS" type="fix">46693 - Fixed bugs serialization bugs in records: CHARTFORMAT, SHTPROPS, SXVD and SXVDEX</action>
            <action dev="POI-DEVELOPERS" type="fix">46627 - Fixed offset of added images if Pictures stream contains pictures with zero length</action>
