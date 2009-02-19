@@ -30,16 +30,15 @@ import java.util.List;
  *
  * @author Glen Stampoultzis
  */
-abstract public class EscherRecord
-{
-    private short options;
-    private short recordId;
+public abstract class EscherRecord {
+    private short _options;
+    private short _recordId;
 
     /**
      * Create a new instance
      */
-    public EscherRecord()
-    {
+    public EscherRecord() {
+        // fields uninitialised
     }
 
     /**
@@ -73,11 +72,10 @@ abstract public class EscherRecord
      * @return          the number of bytes remaining in this record.  This
      *                  may include the children if this is a container.
      */
-    protected int readHeader( byte[] data, int offset )
-    {
+    protected int readHeader( byte[] data, int offset ) {
         EscherRecordHeader header = EscherRecordHeader.readHeader(data, offset);
-        options = header.getOptions();
-        recordId = header.getRecordId();
+        _options = header.getOptions();
+        _recordId = header.getRecordId();
         return header.getRemainingBytes();
     }
 
@@ -86,26 +84,23 @@ abstract public class EscherRecord
      * field.
      * @return  true is this is a container field.
      */
-    public boolean isContainerRecord()
-    {
-        return (options & (short)0x000f) == (short)0x000f;
+    public boolean isContainerRecord() {
+        return (_options & (short)0x000f) == (short)0x000f;
     }
 
     /**
      * @return The options field for this record.  All records have one.
      */
-    public short getOptions()
-    {
-        return options;
+    public short getOptions() {
+        return _options;
     }
 
     /**
      * Set the options this this record.  Container records should have the
      * last nibble set to 0xF.
      */
-    public void setOptions( short options )
-    {
-        this.options = options;
+    public void setOptions( short options ) {
+        _options = options;
     }
 
     /**
@@ -164,17 +159,15 @@ abstract public class EscherRecord
      *
      * @return  The 16 bit record id.
      */
-    public short getRecordId()
-    {
-        return recordId;
+    public short getRecordId() {
+        return _recordId;
     }
 
     /**
      * Sets the record id for this record.
      */
-    public void setRecordId( short recordId )
-    {
-        this.recordId = recordId;
+    public void setRecordId( short recordId ) {
+        _recordId = recordId;
     }
 
     /**
@@ -184,7 +177,7 @@ abstract public class EscherRecord
      *
      * @see EscherContainerRecord
      */
-    public List getChildRecords() { return Collections.EMPTY_LIST; }
+    public List<EscherRecord> getChildRecords() { return Collections.emptyList(); }
 
     /**
      * Sets the child records for this record.  By default this will throw
@@ -192,7 +185,9 @@ abstract public class EscherRecord
      *
      * @param childRecords  Not used in base implementation.
      */
-    public void setChildRecords( List childRecords ) { throw new IllegalArgumentException("This record does not support child records."); }
+    public void setChildRecords(List<EscherRecord> childRecords) {
+        throw new UnsupportedOperationException("This record does not support child records.");
+    }
 
     /**
      * Escher records may need to be clonable in the future.
@@ -205,9 +200,8 @@ abstract public class EscherRecord
     /**
      * Returns the indexed child record.
      */
-    public EscherRecord getChild( int index )
-    {
-        return (EscherRecord) getChildRecords().get(index);
+    public EscherRecord getChild( int index ) {
+        return getChildRecords().get(index);
     }
 
     /**
@@ -233,9 +227,8 @@ abstract public class EscherRecord
      *
      * @return The instance part of the record
      */
-    public short getInstance()
-    {
-        return (short) ( options >> 4 );
+    public short getInstance() {
+        return (short) ( _options >> 4 );
     }
 
     /**
@@ -247,8 +240,8 @@ abstract public class EscherRecord
         private short recordId;
         private int remainingBytes;
 
-        private EscherRecordHeader()
-        {
+        private EscherRecordHeader() {
+            // fields uninitialised
         }
 
         public static EscherRecordHeader readHeader( byte[] data, int offset )
@@ -284,8 +277,5 @@ abstract public class EscherRecord
                     ", remainingBytes=" + remainingBytes +
                     "}";
         }
-
-
     }
-
 }

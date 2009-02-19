@@ -43,7 +43,7 @@ public class EscherContainerRecord extends EscherRecord
     public static final short SP_CONTAINER     = (short)0xF004;
     public static final short SOLVER_CONTAINER = (short)0xF005;
 
-    private List childRecords = new ArrayList();
+    private final List<EscherRecord> _childRecords = new ArrayList<EscherRecord>();
 
     public int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory )
     {
@@ -110,7 +110,7 @@ public class EscherContainerRecord extends EscherRecord
         {
             EscherRecord r = (EscherRecord) iterator.next();
             if(r.getRecordId() == recordId) {
-            	return true;
+                return true;
             }
         }
         return false;
@@ -120,9 +120,8 @@ public class EscherContainerRecord extends EscherRecord
      * Returns a list of all the child (escher) records
      *  of the container.
      */
-    public List getChildRecords()
-    {
-        return childRecords;
+    public List<EscherRecord> getChildRecords() {
+        return _childRecords;
     }
     
     /**
@@ -131,7 +130,7 @@ public class EscherContainerRecord extends EscherRecord
      *   2 or 3)
      */
     public List getChildContainers() {
-    	List containers = new ArrayList();
+        List containers = new ArrayList();
         for ( Iterator iterator = getChildRecords().iterator(); iterator.hasNext(); )
         {
             EscherRecord r = (EscherRecord) iterator.next();
@@ -142,15 +141,13 @@ public class EscherContainerRecord extends EscherRecord
         return containers;
     }
 
-    public void setChildRecords( List childRecords )
-    {
-        this.childRecords = childRecords;
+    public void setChildRecords(List<EscherRecord> childRecords) {
+        _childRecords.clear();
+        _childRecords.addAll(childRecords);
     }
 
-    public String getRecordName()
-    {
-        switch ((short)getRecordId())
-        {
+    public String getRecordName() {
+        switch (getRecordId()) {
             case DGG_CONTAINER:
                 return "DggContainer";
             case BSTORE_CONTAINER:
@@ -171,16 +168,15 @@ public class EscherContainerRecord extends EscherRecord
     public void display( PrintWriter w, int indent )
     {
         super.display( w, indent );
-        for ( Iterator iterator = childRecords.iterator(); iterator.hasNext(); )
+        for (Iterator iterator = _childRecords.iterator(); iterator.hasNext();)
         {
             EscherRecord escherRecord = (EscherRecord) iterator.next();
             escherRecord.display( w, indent + 1 );
         }
     }
 
-    public void addChildRecord( EscherRecord record )
-    {
-        this.childRecords.add( record );
+    public void addChildRecord(EscherRecord record) {
+        _childRecords.add( record );
     }
 
     public String toString()
@@ -226,7 +222,7 @@ public class EscherContainerRecord extends EscherRecord
 
     public EscherSpRecord getChildById( short recordId )
     {
-        for ( Iterator iterator = childRecords.iterator(); iterator.hasNext(); )
+        for ( Iterator iterator = _childRecords.iterator(); iterator.hasNext(); )
         {
             EscherRecord escherRecord = (EscherRecord) iterator.next();
             if (escherRecord.getRecordId() == recordId)
@@ -241,7 +237,7 @@ public class EscherContainerRecord extends EscherRecord
      * @param out - list to store found records
      */
     public void getRecordsById(short recordId, List out){
-        for(Iterator it = childRecords.iterator(); it.hasNext();) {
+        for(Iterator it = _childRecords.iterator(); it.hasNext();) {
             Object er = it.next();
             EscherRecord r = (EscherRecord)er;
             if(r instanceof EscherContainerRecord) {
