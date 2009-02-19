@@ -346,9 +346,11 @@ public class ColumnHelper {
             }
 
             XSSFCellStyle style = cell.getCellStyle();
+            int cellType = cell.getCellType();
+            if(cellType == XSSFCell.CELL_TYPE_FORMULA) cellType = cell.getCachedFormulaResultType();
             XSSFFont font = wb.getFontAt(style.getFontIndex());
 
-            if (cell.getCellType() == XSSFCell.CELL_TYPE_STRING) {
+            if (cellType == XSSFCell.CELL_TYPE_STRING) {
                 XSSFRichTextString rt = cell.getRichStringCellValue();
                 String[] lines = rt.getString().split("\\n");
                 for (int i = 0; i < lines.length; i++) {
@@ -388,8 +390,9 @@ public class ColumnHelper {
                 }
             } else {
                 String sval = null;
-                if (cell.getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
-                    String format = style.getDataFormatString().replaceAll("\"", "");
+                if (cellType == XSSFCell.CELL_TYPE_NUMERIC) {
+                    String dfmt = style.getDataFormatString();
+                    String format = dfmt == null ? null : dfmt.replaceAll("\"", "");
                     double value = cell.getNumericCellValue();
                     try {
                         NumberFormat fmt;
@@ -403,7 +406,7 @@ public class ColumnHelper {
                     } catch (Exception e) {
                         sval = "" + value;
                     }
-                } else if (cell.getCellType() == XSSFCell.CELL_TYPE_BOOLEAN) {
+                } else if (cellType == XSSFCell.CELL_TYPE_BOOLEAN) {
                     sval = String.valueOf(cell.getBooleanCellValue());
                 }
                 if(sval != null) {

@@ -466,7 +466,28 @@ public final class XSSFCell implements Cell {
             return CELL_TYPE_FORMULA;
         }
 
-        switch (this.cell.getT().intValue()) {
+        return getBaseCellType();
+    }
+
+    /**
+     * Only valid for formula cells
+     * @return one of ({@link #CELL_TYPE_NUMERIC}, {@link #CELL_TYPE_STRING},
+     *     {@link #CELL_TYPE_BOOLEAN}, {@link #CELL_TYPE_ERROR}) depending
+     * on the cached value of the formula
+     */
+    public int getCachedFormulaResultType() {
+        if (cell.getF() == null) {
+            throw new IllegalStateException("Only formula cells have cached results");
+        }
+
+        return getBaseCellType();
+    }
+
+    /**
+     * Detect cell type based on the "t" attribute of the CTCell bean
+     */
+    private int getBaseCellType() {
+        switch (cell.getT().intValue()) {
             case STCellType.INT_B:
                 return CELL_TYPE_BOOLEAN;
             case STCellType.INT_N:

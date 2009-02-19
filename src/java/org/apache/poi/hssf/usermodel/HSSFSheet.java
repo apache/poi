@@ -1699,9 +1699,12 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             }
 
             HSSFCellStyle style = cell.getCellStyle();
+            int cellType = cell.getCellType();
+            if(cellType == HSSFCell.CELL_TYPE_FORMULA) cellType = cell.getCachedFormulaResultType();
+            
             HSSFFont font = wb.getFontAt(style.getFontIndex());
 
-            if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
+            if (cellType == HSSFCell.CELL_TYPE_STRING) {
                 HSSFRichTextString rt = cell.getRichStringCellValue();
                 String[] lines = rt.getString().split("\\n");
                 for (int i = 0; i < lines.length; i++) {
@@ -1739,8 +1742,9 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                 }
             } else {
                 String sval = null;
-                if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
-                    String format = style.getDataFormatString().replaceAll("\"", "");
+                if (cellType == HSSFCell.CELL_TYPE_NUMERIC) {
+                    String dfmt = style.getDataFormatString();
+                    String format = dfmt == null ? null : dfmt.replaceAll("\"", "");
                     double value = cell.getNumericCellValue();
                     try {
                         NumberFormat fmt;
@@ -1754,7 +1758,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                     } catch (Exception e) {
                         sval = "" + value;
                     }
-                } else if (cell.getCellType() == HSSFCell.CELL_TYPE_BOOLEAN) {
+                } else if (cellType == HSSFCell.CELL_TYPE_BOOLEAN) {
                     sval = String.valueOf(cell.getBooleanCellValue());
                 }
                 if(sval != null) {

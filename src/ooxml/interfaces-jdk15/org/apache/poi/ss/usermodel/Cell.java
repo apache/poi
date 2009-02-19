@@ -132,6 +132,14 @@ public interface Cell {
     int getCellType();
 
     /**
+     * Only valid for formula cells
+     * @return one of ({@link #CELL_TYPE_NUMERIC}, {@link #CELL_TYPE_STRING},
+     *     {@link #CELL_TYPE_BOOLEAN}, {@link #CELL_TYPE_ERROR}) depending
+     * on the cached value of the formula
+     */
+    int getCachedFormulaResultType();
+
+    /**
      * Set a numeric value for the cell
      *
      * @param value  the numeric value to set this cell to.  For formulas we'll set the
