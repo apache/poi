@@ -34,8 +34,7 @@ import java.io.PrintWriter;
  *
  * @author Glen Stampoultzis
  */
-public class EscherContainerRecord extends EscherRecord
-{
+public final class EscherContainerRecord extends EscherRecord {
     public static final short DGG_CONTAINER    = (short)0xF000;
     public static final short BSTORE_CONTAINER = (short)0xF001;
     public static final short DG_CONTAINER     = (short)0xF002;
@@ -57,7 +56,7 @@ public class EscherContainerRecord extends EscherRecord
             bytesWritten += childBytesWritten;
             offset += childBytesWritten;
             bytesRemaining -= childBytesWritten;
-            getChildRecords().add( child );
+            addChildRecord(child);
             if (offset >= data.length && bytesRemaining > 0)
             {
                 System.out.println("WARNING: " + bytesRemaining + " bytes remaining but no space left");
@@ -73,16 +72,16 @@ public class EscherContainerRecord extends EscherRecord
         LittleEndian.putShort(data, offset, getOptions());
         LittleEndian.putShort(data, offset+2, getRecordId());
         int remainingBytes = 0;
-        for ( Iterator iterator = getChildRecords().iterator(); iterator.hasNext(); )
-        {
-            EscherRecord r = (EscherRecord) iterator.next();
+        Iterator<EscherRecord> iterator = _childRecords.iterator();
+        while (iterator.hasNext()) {
+            EscherRecord r = iterator.next();
             remainingBytes += r.getRecordSize();
         }
         LittleEndian.putInt(data, offset+4, remainingBytes);
         int pos = offset+8;
-        for ( Iterator iterator = getChildRecords().iterator(); iterator.hasNext(); )
-        {
-            EscherRecord r = (EscherRecord) iterator.next();
+        iterator = _childRecords.iterator();
+        while (iterator.hasNext()) {
+            EscherRecord r = iterator.next();
             pos += r.serialize(pos, data, listener );
         }
 
@@ -90,12 +89,11 @@ public class EscherContainerRecord extends EscherRecord
         return pos - offset;
     }
 
-    public int getRecordSize()
-    {
+    public int getRecordSize() {
         int childRecordsSize = 0;
-        for ( Iterator iterator = getChildRecords().iterator(); iterator.hasNext(); )
-        {
-            EscherRecord r = (EscherRecord) iterator.next();
+        Iterator<EscherRecord> iterator = _childRecords.iterator();
+        while (iterator.hasNext()) {
+            EscherRecord r = iterator.next();
             childRecordsSize += r.getRecordSize();
         }
         return 8 + childRecordsSize;
@@ -106,44 +104,49 @@ public class EscherContainerRecord extends EscherRecord
      *  given recordId?
      */
     public boolean hasChildOfType(short recordId) {
-        for ( Iterator iterator = getChildRecords().iterator(); iterator.hasNext(); )
-        {
-            EscherRecord r = (EscherRecord) iterator.next();
+        Iterator<EscherRecord> iterator = _childRecords.iterator();
+        while (iterator.hasNext()) {
+            EscherRecord r = iterator.next();
             if(r.getRecordId() == recordId) {
                 return true;
             }
         }
         return false;
     }
-
+    
     /**
-     * Returns a list of all the child (escher) records
-     *  of the container.
+     * @return a copy of the list of all the child records of the container.
      */
     public List<EscherRecord> getChildRecords() {
-        return _childRecords;
+        return new ArrayList<EscherRecord>(_childRecords);
     }
-    
+    /**
+     * replaces the internal child list with the contents of the supplied <tt>childRecords</tt>
+     */
+    public void setChildRecords(List<EscherRecord> childRecords) {
+    	if (childRecords == _childRecords) {
+    		throw new IllegalStateException("Child records private data member has escaped");
+    	}
+        _childRecords.clear();
+        _childRecords.addAll(childRecords);
+    }
+
+   
     /**
      * Returns all of our children which are also
      *  EscherContainers (may be 0, 1, or vary rarely
      *   2 or 3)
      */
-    public List getChildContainers() {
-        List containers = new ArrayList();
-        for ( Iterator iterator = getChildRecords().iterator(); iterator.hasNext(); )
-        {
-            EscherRecord r = (EscherRecord) iterator.next();
+    public List<EscherContainerRecord> getChildContainers() {
+        List<EscherContainerRecord> containers = new ArrayList<EscherContainerRecord>();
+        Iterator<EscherRecord> iterator = _childRecords.iterator();
+        while (iterator.hasNext()) {
+            EscherRecord r = iterator.next();
             if(r instanceof EscherContainerRecord) {
-            	containers.add(r);
+            	containers.add((EscherContainerRecord) r);
             }
         }
         return containers;
-    }
-
-    public void setChildRecords(List<EscherRecord> childRecords) {
-        _childRecords.clear();
-        _childRecords.addAll(childRecords);
     }
 
     public String getRecordName() {
@@ -165,13 +168,12 @@ public class EscherContainerRecord extends EscherRecord
         }
     }
 
-    public void display( PrintWriter w, int indent )
-    {
-        super.display( w, indent );
-        for (Iterator iterator = _childRecords.iterator(); iterator.hasNext();)
+    public void display(PrintWriter w, int indent) {
+        super.display(w, indent);
+        for (Iterator<EscherRecord> iterator = _childRecords.iterator(); iterator.hasNext();)
         {
-            EscherRecord escherRecord = (EscherRecord) iterator.next();
-            escherRecord.display( w, indent + 1 );
+            EscherRecord escherRecord = iterator.next();
+            escherRecord.display(w, indent + 1);
         }
     }
 
@@ -188,16 +190,15 @@ public class EscherContainerRecord extends EscherRecord
         String nl = System.getProperty( "line.separator" );
 
         StringBuffer children = new StringBuffer();
-        if ( getChildRecords().size() > 0 )
-        {
+        if (_childRecords.size() > 0) {
             children.append( "  children: " + nl );
             
             int count = 0;
-            for ( Iterator iterator = getChildRecords().iterator(); iterator.hasNext(); )
+            for ( Iterator<EscherRecord> iterator = _childRecords.iterator(); iterator.hasNext(); )
             {
             	String newIndent = indent + "   ";
             	
-                EscherRecord record = (EscherRecord) iterator.next();
+                EscherRecord record = iterator.next();
                 children.append(newIndent + "Child " + count + ":" + nl);
                 
                 if(record instanceof EscherContainerRecord) {
@@ -215,18 +216,17 @@ public class EscherContainerRecord extends EscherRecord
             indent + "  isContainer: " + isContainerRecord() + nl +
             indent + "  options: 0x" + HexDump.toHex( getOptions() ) + nl +
             indent + "  recordId: 0x" + HexDump.toHex( getRecordId() ) + nl +
-            indent + "  numchildren: " + getChildRecords().size() + nl +
+            indent + "  numchildren: " + _childRecords.size() + nl +
             indent + children.toString();
 
     }
 
-    public EscherSpRecord getChildById( short recordId )
-    {
-        for ( Iterator iterator = _childRecords.iterator(); iterator.hasNext(); )
-        {
-            EscherRecord escherRecord = (EscherRecord) iterator.next();
-            if (escherRecord.getRecordId() == recordId)
-                return (EscherSpRecord) escherRecord;
+    public EscherSpRecord getChildById(short recordId) {
+        Iterator<EscherRecord> iterator = _childRecords.iterator();
+        while (iterator.hasNext()) {
+            EscherRecord r = iterator.next();
+            if (r.getRecordId() == recordId)
+                return (EscherSpRecord) r;
         }
         return null;
     }
@@ -236,15 +236,15 @@ public class EscherContainerRecord extends EscherRecord
      *
      * @param out - list to store found records
      */
-    public void getRecordsById(short recordId, List out){
-        for(Iterator it = _childRecords.iterator(); it.hasNext();) {
-            Object er = it.next();
-            EscherRecord r = (EscherRecord)er;
+    public void getRecordsById(short recordId, List<EscherRecord> out){
+        Iterator<EscherRecord> iterator = _childRecords.iterator();
+        while (iterator.hasNext()) {
+            EscherRecord r = iterator.next();
             if(r instanceof EscherContainerRecord) {
                 EscherContainerRecord c = (EscherContainerRecord)r;
                 c.getRecordsById(recordId, out );
             } else if (r.getRecordId() == recordId){
-                out.add(er);
+                out.add(r);
             }
         }
     }
