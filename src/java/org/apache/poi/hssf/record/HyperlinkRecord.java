@@ -632,7 +632,7 @@ public final class HyperlinkRecord extends StandardRecord {
             buffer.append("    .moniker   = ").append(_moniker.formatAsString()).append("\n");
         }
         if ((_linkOpts & HLINK_PLACE) != 0) {
-            buffer.append("    .targetFrame= ").append(getTextMark()).append("\n");
+            buffer.append("    .textMark= ").append(getTextMark()).append("\n");
         }
         buffer.append("    .address   = ").append(getAddress()).append("\n");
         buffer.append("[/HYPERLINK RECORD]\n");
