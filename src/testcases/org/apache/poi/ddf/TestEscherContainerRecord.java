@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -20,14 +19,17 @@ package org.apache.poi.ddf;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.List;
 
 import junit.framework.TestCase;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 
-public class TestEscherContainerRecord extends TestCase
-{
+/**
+ * Tests for {@link EscherContainerRecord}
+ */
+public final class TestEscherContainerRecord extends TestCase {
 	private String ESCHER_DATA_PATH;
 	
 	protected void setUp() {
@@ -129,17 +131,18 @@ public class TestEscherContainerRecord extends TestCase
                    "  properties:" + nl;
         assertEquals( expected, r.toString() );
     }
+    
+    private static final class DummyEscherRecord extends EscherRecord {
+    	public DummyEscherRecord() { }
+        public int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory ) { return 0; }
+        public int serialize( int offset, byte[] data, EscherSerializationListener listener ) { return 0; }
+        public int getRecordSize() { return 10; }
+        public String getRecordName() { return ""; }
+    }
 
     public void testGetRecordSize() {
         EscherContainerRecord r = new EscherContainerRecord();
-        r.addChildRecord(new EscherRecord()
-        {
-            public int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory ) { return 0; }
-            public int serialize( int offset, byte[] data, EscherSerializationListener listener ) { return 0; }
-            public int getRecordSize() { return 10; }
-            public String getRecordName() { return ""; }
-        } );
-
+        r.addChildRecord(new DummyEscherRecord());
         assertEquals(18, r.getRecordSize());
     }
 
@@ -158,4 +161,36 @@ public class TestEscherContainerRecord extends TestCase
     	EscherContainerRecord record = new EscherContainerRecord();
     	record.fillFields(data, 0, new DefaultEscherRecordFactory());
     }
+    
+    /**
+     * Ensure {@link EscherContainerRecord} doesn't spill its guts everywhere
+     */
+    public void testChildren() {
+    	EscherContainerRecord ecr = new EscherContainerRecord();
+    	List<EscherRecord> children0 = ecr.getChildRecords();
+    	assertEquals(0, children0.size());
+
+    	EscherRecord chA = new DummyEscherRecord();
+    	EscherRecord chB = new DummyEscherRecord();
+    	EscherRecord chC = new DummyEscherRecord();
+    	
+    	ecr.addChildRecord(chA);
+    	ecr.addChildRecord(chB);
+    	children0.add(chC);
+    	
+    	List<EscherRecord> children1 = ecr.getChildRecords();
+    	assertTrue(children0 !=  children1);
+    	assertEquals(2, children1.size());
+    	assertEquals(chA, children1.get(0));
+    	assertEquals(chB, children1.get(1));
+    	
+    	assertEquals(1, children0.size()); // first copy unchanged
+    	
+    	ecr.setChildRecords(children0);
+    	ecr.addChildRecord(chA);
+    	List<EscherRecord> children2 = ecr.getChildRecords();
+    	assertEquals(2, children2.size());
+    	assertEquals(chC, children2.get(0));
+    	assertEquals(chA, children2.get(1));
+	}
 }

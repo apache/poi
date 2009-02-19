@@ -83,7 +83,7 @@ public final class MovieShape extends Picture {
 
         EscherClientDataRecord cldata = new EscherClientDataRecord();
         cldata.setOptions((short)0xF);
-        _escherContainer.getChildRecords().add(cldata);
+        _escherContainer.addChildRecord(cldata);
 
         OEShapeAtom oe = new OEShapeAtom();
         InteractiveInfo info = new InteractiveInfo();
