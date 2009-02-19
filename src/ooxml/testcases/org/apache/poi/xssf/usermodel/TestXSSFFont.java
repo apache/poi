@@ -1,3 +1,20 @@
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
 import junit.framework.TestCase;
@@ -105,7 +122,7 @@ public final class TestXSSFFont extends TestCase{
 		assertEquals(11,xssfFont.getFontHeight());
 
 		xssfFont.setFontHeight((short)20);
-		assertEquals(new Double(20).doubleValue(),ctFont.getSzArray(0).getVal());
+		assertEquals(20.0, ctFont.getSzArray(0).getVal(), 0.0);
 	}
 
 	public void testFontHeightInPoint() {
@@ -118,7 +135,7 @@ public final class TestXSSFFont extends TestCase{
 		assertEquals(14,xssfFont.getFontHeightInPoints());
 
 		xssfFont.setFontHeightInPoints((short)20);
-		assertEquals(new Double(20).doubleValue(),ctFont.getSzArray(0).getVal());
+		assertEquals(20.0, ctFont.getSzArray(0).getVal(), 0.0);
 	}
 
 	public void testUnderline() {
@@ -353,8 +370,8 @@ public final class TestXSSFFont extends TestCase{
         XSSFSheet s = wb.createSheet();
         s.createRow(0);
         s.createRow(1);
-        XSSFCell c1 = s.getRow(0).createCell(0);
-        XSSFCell c2 = s.getRow(1).createCell(0);
+        s.getRow(0).createCell(0);
+        s.getRow(1).createCell(0);
 
         assertEquals(1, wb.getNumberOfFonts());
 
@@ -364,10 +381,7 @@ public final class TestXSSFFont extends TestCase{
         // Check that asking for the same font
         //  multiple times gives you the same thing.
         // Otherwise, our tests wouldn't work!
-        assertEquals(
-                wb.getFontAt((short)0),
-                wb.getFontAt((short)0)
-        );
+        assertEquals(wb.getFontAt((short)0), wb.getFontAt((short)0));
 
         // Look for a new font we have
         //  yet to add
@@ -396,15 +410,8 @@ public final class TestXSSFFont extends TestCase{
         assertEquals(2, wb.getNumberOfFonts());
         assertEquals(nf, wb.getFontAt((short)1));
 
-        assertEquals(
-                wb.getFontAt((short)1),
-                wb.getFontAt((short)1)
-        );
-        assertTrue(
-                wb.getFontAt((short)0)
-                !=
-                wb.getFontAt((short)1)
-        );
+        assertEquals(wb.getFontAt((short)1), wb.getFontAt((short)1));
+        assertTrue(wb.getFontAt((short)0) != wb.getFontAt((short)1));
 
         // Find it now
         assertNotNull(

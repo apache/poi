@@ -1,3 +1,20 @@
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
@@ -15,7 +32,7 @@ import java.util.Iterator;
  * TODO: finish
  * @author Yegor Kozlov
  */
-public class ActiveXShape extends Picture {
+public final class ActiveXShape extends Picture {
     public static final int DEFAULT_ACTIVEX_THUMBNAIL = -1;
 
     /**
@@ -83,8 +100,8 @@ public class ActiveXShape extends Picture {
      */
     public void setActiveXIndex(int idx){
         EscherContainerRecord spContainer = getSpContainer();
-        for (Iterator it = spContainer.getChildRecords().iterator(); it.hasNext();) {
-            EscherRecord obj = (EscherRecord) it.next();
+        for (Iterator<EscherRecord> it = spContainer.getChildRecords().iterator(); it.hasNext();) {
+            EscherRecord obj = it.next();
             if (obj.getRecordId() == EscherClientDataRecord.RECORD_ID) {
                 EscherClientDataRecord clientRecord = (EscherClientDataRecord)obj;
                 byte[] recdata = clientRecord.getRemainingData();
