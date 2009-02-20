@@ -201,22 +201,20 @@ public final class SlideShowRecordDumper {
         String nl = System.getProperty( "line.separator" );
 
         StringBuffer children = new StringBuffer();
-        if ( ecr.getChildRecords().size() > 0 )
+        int count = 0;
+        for ( Iterator<EscherRecord> iterator = ecr.getChildIterator(); iterator.hasNext(); )
         {
-            children.append( "  children: " + nl );
-            
-            int count = 0;
-            for ( Iterator iterator = ecr.getChildRecords().iterator(); iterator.hasNext(); )
-            {
-            	String newIndent = "   ";
-            	
-                EscherRecord record = (EscherRecord) iterator.next();
-                children.append(newIndent + "Child " + count + ":" + nl);
-                
-               	children.append( printEscherRecord(record) );
-
-                count++;
+            if (count < 1) {
+                children.append( "  children: " + nl );
             }
+            String newIndent = "   ";
+
+            EscherRecord record = iterator.next();
+            children.append(newIndent + "Child " + count + ":" + nl);
+            
+           	children.append( printEscherRecord(record) );
+
+            count++;
         }
 
         return 

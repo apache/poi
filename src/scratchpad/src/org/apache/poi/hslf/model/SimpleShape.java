@@ -17,19 +17,20 @@
 
 package org.apache.poi.hslf.model;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hslf.record.ColorSchemeAtom;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.InteractiveInfo;
-import org.apache.poi.hslf.record.InteractiveInfoAtom;
-import org.apache.poi.hslf.exceptions.HSLFException;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
+
+import org.apache.poi.ddf.*;
+import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.hslf.record.InteractiveInfo;
+import org.apache.poi.hslf.record.InteractiveInfoAtom;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.util.LittleEndian;
 
 /**
  *  An abstract simple (non-group) shape.
@@ -256,8 +257,8 @@ public class SimpleShape extends Shape {
             Rectangle2D clientAnchor = top.getAnchor2D();
             Rectangle2D spgrAnchor = ((ShapeGroup)top).getCoordinates();
 
-            double scalex = (double)spgrAnchor.getWidth()/clientAnchor.getWidth();
-            double scaley = (double)spgrAnchor.getHeight()/clientAnchor.getHeight();
+            double scalex = spgrAnchor.getWidth()/clientAnchor.getWidth();
+            double scaley = spgrAnchor.getHeight()/clientAnchor.getHeight();
 
             double x = clientAnchor.getX() + (anchor.getX() - spgrAnchor.getX())/scalex;
             double y = clientAnchor.getY() + (anchor.getY() - spgrAnchor.getY())/scaley;
@@ -353,7 +354,7 @@ public class SimpleShape extends Shape {
 
         EscherClientDataRecord cldata = new EscherClientDataRecord();
         cldata.setOptions((short)0xF);
-        getSpContainer().getChildRecords().add(cldata);
+        getSpContainer().addChildRecord(cldata); // TODO - junit to prove getChildRecords().add is wrong
 
         InteractiveInfo info = new InteractiveInfo();
         InteractiveInfoAtom infoAtom = info.getInteractiveInfoAtom();

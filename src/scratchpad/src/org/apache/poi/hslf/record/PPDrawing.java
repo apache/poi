@@ -175,11 +175,9 @@ public class PPDrawing extends RecordAtom
 			} else {
 				// If it has children, walk them
 				if(toSearch[i].isContainerRecord()) {
-					List childrenL = toSearch[i].getChildRecords();
+					List<EscherRecord> childrenL = toSearch[i].getChildRecords();
 					EscherRecord[] children = new EscherRecord[childrenL.size()];
-					for(int j=0; j< children.length; j++) {
-						children[j] = (EscherRecord)childrenL.get(j);
-					}
+					childrenL.toArray(children);
 					findEscherTextboxRecord(children,found);
 				}
 			}
@@ -309,8 +307,8 @@ public class PPDrawing extends RecordAtom
     public EscherDgRecord getEscherDgRecord(){
         if(dg == null){
             EscherContainerRecord dgContainer = (EscherContainerRecord)childRecords[0];
-            for(Iterator it = dgContainer.getChildRecords().iterator(); it.hasNext();){
-                EscherRecord r = (EscherRecord) it.next();
+            for(Iterator<EscherRecord> it = dgContainer.getChildIterator(); it.hasNext();){
+                EscherRecord r = it.next();
                 if(r instanceof EscherDgRecord){
                     dg = (EscherDgRecord)r;
                     break;

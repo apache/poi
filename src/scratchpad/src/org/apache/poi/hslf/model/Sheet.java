@@ -211,26 +211,32 @@ public abstract class Sheet {
 
         EscherContainerRecord dg = (EscherContainerRecord) ppdrawing.getEscherRecords()[0];
         EscherContainerRecord spgr = null;
-        List ch = dg.getChildRecords();
 
-        for (Iterator it = ch.iterator(); it.hasNext();) {
-            EscherRecord rec = (EscherRecord) it.next();
+        for (Iterator<EscherRecord> it = dg.getChildIterator(); it.hasNext();) {
+            EscherRecord rec = it.next();
             if (rec.getRecordId() == EscherContainerRecord.SPGR_CONTAINER) {
                 spgr = (EscherContainerRecord) rec;
                 break;
             }
         }
-        ch = spgr.getChildRecords();
+        if (spgr == null) {
+            throw new IllegalStateException("spgr not found");
+        }
 
-        ArrayList shapes = new ArrayList();
-        for (int i = 1; i < ch.size(); i++) {
-            EscherContainerRecord sp = (EscherContainerRecord) ch.get(i);
+        List<Shape> shapes = new ArrayList<Shape>();
+        Iterator<EscherRecord> it = spgr.getChildIterator();
+        if (it.hasNext()) {
+            // skip first item
+            it.next();
+        }
+        for (; it.hasNext();) {
+            EscherContainerRecord sp = (EscherContainerRecord) it.next();
             Shape sh = ShapeFactory.createShape(sp, null);
             sh.setSheet(this);
             shapes.add(sh);
         }
 
-        return (Shape[]) shapes.toArray(new Shape[shapes.size()]);
+        return shapes.toArray(new Shape[shapes.size()]);
     }
 
     /**
@@ -301,17 +307,21 @@ public abstract class Sheet {
         EscherContainerRecord dg = (EscherContainerRecord) ppdrawing.getEscherRecords()[0];
         EscherContainerRecord spgr = null;
 
-        for (Iterator it = dg.getChildRecords().iterator(); it.hasNext();) {
-            EscherRecord rec = (EscherRecord) it.next();
+        for (Iterator<EscherRecord> it = dg.getChildIterator(); it.hasNext();) {
+            EscherRecord rec = it.next();
             if (rec.getRecordId() == EscherContainerRecord.SPGR_CONTAINER) {
                 spgr = (EscherContainerRecord) rec;
                 break;
             }
         }
-        if(spgr == null) return false;
+        if(spgr == null) {
+            return false;
+        }
 
-        List lst = spgr.getChildRecords();
-        return lst.remove(shape.getSpContainer());
+        List<EscherRecord> lst = spgr.getChildRecords();
+        boolean result = lst.remove(shape.getSpContainer());
+        spgr.setChildRecords(lst);
+        return result;
     }
 
     /**
@@ -344,10 +354,9 @@ public abstract class Sheet {
 
             EscherContainerRecord dg = (EscherContainerRecord) ppdrawing.getEscherRecords()[0];
             EscherContainerRecord spContainer = null;
-            List ch = dg.getChildRecords();
 
-            for (Iterator it = ch.iterator(); it.hasNext();) {
-                EscherRecord rec = (EscherRecord) it.next();
+            for (Iterator<EscherRecord> it = dg.getChildIterator(); it.hasNext();) {
+                EscherRecord rec = it.next();
                 if (rec.getRecordId() == EscherContainerRecord.SP_CONTAINER) {
                     spContainer = (EscherContainerRecord) rec;
                     break;

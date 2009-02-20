@@ -86,13 +86,7 @@ public class Placeholder extends TextBox {
         cldata.setRemainingData(out.toByteArray());
 
         //append placeholder container before EscherTextboxRecord
-        List lst = _escherContainer.getChildRecords();
-        for (int i = 0; i < lst.size(); i++) {
-              EscherRecord rec = (EscherRecord)lst.get(i);
-              if(rec.getRecordId() == EscherTextboxRecord.RECORD_ID){
-                  lst.add(i++, cldata);
-              }
-        }
+        _escherContainer.addChildBefore(cldata, EscherTextboxRecord.RECORD_ID);
 
         return _escherContainer;
     }

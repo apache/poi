@@ -2023,7 +2023,7 @@ public final class Workbook implements Model {
                 }
 
                 EscherDggRecord dgg = null;
-                for(Iterator it = cr.getChildRecords().iterator(); it.hasNext();) {
+                for(Iterator<EscherRecord> it = cr.getChildIterator(); it.hasNext();) {
                     Object er = it.next();
                     if(er instanceof EscherDggRecord) {
                         dgg = (EscherDggRecord)er;
@@ -2150,7 +2150,9 @@ public final class Workbook implements Model {
         {
             bstoreContainer = new EscherContainerRecord();
             bstoreContainer.setRecordId( EscherContainerRecord.BSTORE_CONTAINER );
-            dggContainer.getChildRecords().add( 1, bstoreContainer );
+            List<EscherRecord> childRecords = dggContainer.getChildRecords();
+            childRecords.add(1, bstoreContainer);
+            dggContainer.setChildRecords(childRecords);
         }
         bstoreContainer.setOptions( (short) ( (escherBSERecords.size() << 4) | 0xF ) );
 
@@ -2285,18 +2287,18 @@ public final class Workbook implements Model {
             dgg.setDrawingsSaved(dgg.getDrawingsSaved() + 1);
 
             EscherDgRecord dg = null;
-            for(Iterator it = escherContainer.getChildRecords().iterator(); it.hasNext();) {
-                Object er = it.next();
+            for(Iterator<EscherRecord> it = escherContainer.getChildIterator(); it.hasNext();) {
+                EscherRecord er = it.next();
                 if(er instanceof EscherDgRecord) {
                     dg = (EscherDgRecord)er;
                     //update id of the drawing in the cloned sheet
                     dg.setOptions( (short) ( dgId << 4 ) );
                 } else if (er instanceof EscherContainerRecord){
                     //recursively find shape records and re-generate shapeId
-                    ArrayList spRecords = new ArrayList();
+                    List<EscherRecord> spRecords = new ArrayList<EscherRecord>();
                     EscherContainerRecord cp = (EscherContainerRecord)er;
                     cp.getRecordsById(EscherSpRecord.RECORD_ID,  spRecords);
-                    for(Iterator spIt = spRecords.iterator(); spIt.hasNext();) {
+                    for(Iterator<EscherRecord> spIt = spRecords.iterator(); spIt.hasNext();) {
                         EscherSpRecord sp = (EscherSpRecord)spIt.next();
                         int shapeId = drawingManager.allocateShapeId((short)dgId, dg);
                         //allocateShapeId increments the number of shapes. roll back to the previous value
