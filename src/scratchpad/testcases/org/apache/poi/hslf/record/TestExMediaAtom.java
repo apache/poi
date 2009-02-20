@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
@@ -30,13 +27,13 @@ import java.util.Arrays;
  *
  * @author Yegor Kozlov
  */
-public class TestExMediaAtom extends TestCase {
+public final class TestExMediaAtom extends TestCase {
 	// From a real file
-    private byte[] data = new byte[] {
+    private static final byte[] data = {
             0x00, 0x00, (byte)0x04, 0x10, 0x08, 0x00, 0x00, 00,
             0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-    public void testRead() throws Exception {
+    public void testRead() {
 		ExMediaAtom record = new ExMediaAtom(data, 0, data.length);
 		assertEquals(RecordTypes.ExMediaAtom.typeID, record.getRecordType());
 
@@ -57,7 +54,7 @@ public class TestExMediaAtom extends TestCase {
 
     public void testNewRecord() throws Exception {
         ExMediaAtom ref = new ExMediaAtom(data, 0, data.length);
-        System.out.println(ref.getMask());
+        assertEquals(0, ref.getMask()); //
 
         ExMediaAtom record = new ExMediaAtom();
         record.setObjectId(1);
@@ -72,7 +69,7 @@ public class TestExMediaAtom extends TestCase {
         assertTrue(Arrays.equals(data, b));
     }
 
-    public void testFlags() throws Exception {
+    public void testFlags() {
         ExMediaAtom record = new ExMediaAtom();
 
         //in a new record all the bits are 0

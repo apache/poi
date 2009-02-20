@@ -108,7 +108,7 @@ public class TestTextRunReWrite extends TestCase {
 		pfs.createDocumentInputStream("PowerPoint Document").read(_oData);
 		npfs.createDocumentInputStream("PowerPoint Document").read(_nData);
 		for(int i=0; i<_oData.length; i++) {
-			System.out.println(i + "\t" + Integer.toHexString(i));
+//			System.out.println(i + "\t" + Integer.toHexString(i));
 			assertEquals(_oData[i], _nData[i]);
 		}
 	}
@@ -165,7 +165,7 @@ public class TestTextRunReWrite extends TestCase {
 		pfs.createDocumentInputStream("PowerPoint Document").read(_oData);
 		npfs.createDocumentInputStream("PowerPoint Document").read(_nData);
 		for(int i=0; i<_oData.length; i++) {
-			System.out.println(i + "\t" + Integer.toHexString(i) + "\t" + _oData[i]);
+//			System.out.println(i + "\t" + Integer.toHexString(i) + "\t" + _oData[i]);
 			assertEquals(_oData[i], _nData[i]);
 		}
 	}
