@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 import org.apache.poi.util.HexDump;
@@ -24,6 +23,7 @@ import org.apache.poi.util.LittleEndian;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.io.PrintWriter;
 
 /**
@@ -44,21 +44,18 @@ public final class EscherContainerRecord extends EscherRecord {
 
     private final List<EscherRecord> _childRecords = new ArrayList<EscherRecord>();
 
-    public int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory )
-    {
-        int bytesRemaining = readHeader( data, offset );
+    public int fillFields(byte[] data, int pOffset, EscherRecordFactory recordFactory) {
+        int bytesRemaining = readHeader(data, pOffset);
         int bytesWritten = 8;
-        offset += 8;
-        while ( bytesRemaining > 0 && offset < data.length )
-        {
+        int offset = pOffset + 8;
+        while (bytesRemaining > 0 && offset < data.length) {
             EscherRecord child = recordFactory.createRecord(data, offset);
-            int childBytesWritten = child.fillFields( data, offset, recordFactory );
+            int childBytesWritten = child.fillFields(data, offset, recordFactory);
             bytesWritten += childBytesWritten;
             offset += childBytesWritten;
             bytesRemaining -= childBytesWritten;
             addChildRecord(child);
-            if (offset >= data.length && bytesRemaining > 0)
-            {
+            if (offset >= data.length && bytesRemaining > 0) {
                 System.out.println("WARNING: " + bytesRemaining + " bytes remaining but no space left");
             }
         }
@@ -98,7 +95,7 @@ public final class EscherContainerRecord extends EscherRecord {
         }
         return 8 + childRecordsSize;
     }
-    
+
     /**
      * Do any of our (top level) children have the
      *  given recordId?
@@ -113,25 +110,59 @@ public final class EscherContainerRecord extends EscherRecord {
         }
         return false;
     }
-    
+    public EscherRecord getChild( int index ) {
+        return _childRecords.get(index);
+    }
+
     /**
      * @return a copy of the list of all the child records of the container.
      */
     public List<EscherRecord> getChildRecords() {
         return new ArrayList<EscherRecord>(_childRecords);
     }
+
+    public Iterator<EscherRecord> getChildIterator() {
+        return new ReadOnlyIterator(_childRecords);
+    }
+    private static final class ReadOnlyIterator implements Iterator<EscherRecord> {
+        private final List<EscherRecord> _list;
+        private int _index;
+
+        public ReadOnlyIterator(List<EscherRecord> list) {
+            _list = list;
+            _index = 0;
+        }
+
+        public boolean hasNext() {
+            return _index < _list.size();
+        }
+        public EscherRecord next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return _list.get(_index++);
+        }
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+    }
     /**
      * replaces the internal child list with the contents of the supplied <tt>childRecords</tt>
      */
     public void setChildRecords(List<EscherRecord> childRecords) {
-    	if (childRecords == _childRecords) {
-    		throw new IllegalStateException("Child records private data member has escaped");
-    	}
+        if (childRecords == _childRecords) {
+            throw new IllegalStateException("Child records private data member has escaped");
+        }
         _childRecords.clear();
         _childRecords.addAll(childRecords);
     }
 
-   
+    public boolean removeChildRecord(EscherRecord toBeRemoved) {
+        return _childRecords.remove(toBeRemoved);
+    }
+
+
+
     /**
      * Returns all of our children which are also
      *  EscherContainers (may be 0, 1, or vary rarely
@@ -143,7 +174,7 @@ public final class EscherContainerRecord extends EscherRecord {
         while (iterator.hasNext()) {
             EscherRecord r = iterator.next();
             if(r instanceof EscherContainerRecord) {
-            	containers.add((EscherContainerRecord) r);
+                containers.add((EscherContainerRecord) r);
             }
         }
         return containers;
@@ -178,12 +209,22 @@ public final class EscherContainerRecord extends EscherRecord {
     }
 
     public void addChildRecord(EscherRecord record) {
-        _childRecords.add( record );
+        _childRecords.add(record);
+    }
+
+    public void addChildBefore(EscherRecord record, int insertBeforeRecordId) {
+        for (int i = 0; i < _childRecords.size(); i++) {
+            EscherRecord rec = _childRecords.get(i);
+            if(rec.getRecordId() == insertBeforeRecordId){
+                _childRecords.add(i++, record);
+                // TODO - keep looping? Do we expect multiple matches?
+            }
+        }
     }
 
     public String toString()
     {
-    	return toString("");
+        return toString("");
     }
     public String toString(String indent)
     {
@@ -192,27 +233,27 @@ public final class EscherContainerRecord extends EscherRecord {
         StringBuffer children = new StringBuffer();
         if (_childRecords.size() > 0) {
             children.append( "  children: " + nl );
-            
+
             int count = 0;
             for ( Iterator<EscherRecord> iterator = _childRecords.iterator(); iterator.hasNext(); )
             {
-            	String newIndent = indent + "   ";
-            	
+                String newIndent = indent + "   ";
+
                 EscherRecord record = iterator.next();
                 children.append(newIndent + "Child " + count + ":" + nl);
-                
+
                 if(record instanceof EscherContainerRecord) {
-                	EscherContainerRecord ecr = (EscherContainerRecord)record;
-                	children.append( ecr.toString(newIndent));
+                    EscherContainerRecord ecr = (EscherContainerRecord)record;
+                    children.append( ecr.toString(newIndent));
                 } else {
-                	children.append( record.toString() );
+                    children.append( record.toString() );
                 }
                 count++;
             }
         }
 
-        return 
-        	indent + getClass().getName() + " (" + getRecordName() + "):" + nl +
+        return
+            indent + getClass().getName() + " (" + getRecordName() + "):" + nl +
             indent + "  isContainer: " + isContainerRecord() + nl +
             indent + "  options: 0x" + HexDump.toHex( getOptions() ) + nl +
             indent + "  recordId: 0x" + HexDump.toHex( getRecordId() ) + nl +
@@ -248,5 +289,4 @@ public final class EscherContainerRecord extends EscherRecord {
             }
         }
     }
-
 }
