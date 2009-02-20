@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,11 +14,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
-
 
 import junit.framework.TestCase;
 import java.io.ByteArrayOutputStream;
@@ -30,17 +26,16 @@ import java.util.Arrays;
  *
  * @author Yegor Kozlov
  */
-public class TestExOleObjAtom extends TestCase {
+public final class TestExOleObjAtom extends TestCase {
 	// From a real file (embedded SWF control)
-    private byte[] data = new byte[] {
+    private byte[] data = {
             0x01, 0x00, (byte)0xC3, 0x0F, 0x18, 0x00, 0x00, 0x00,
             0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, (byte)0x96, 0x13, 0x00  };
 
-    public void testRead() throws Exception {
+    public void testRead() {
 		ExOleObjAtom record = new ExOleObjAtom(data, 0, data.length);
 		assertEquals(RecordTypes.ExOleObjAtom.typeID, record.getRecordType());
-        System.out.println(record);
 
         assertEquals(record.getDrawAspect(), ExOleObjAtom.DRAW_ASPECT_VISIBLE);
         assertEquals(record.getType(), ExOleObjAtom.TYPE_CONTROL);

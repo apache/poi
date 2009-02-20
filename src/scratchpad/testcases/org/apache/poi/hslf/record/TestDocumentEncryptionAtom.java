@@ -87,18 +87,18 @@ public class TestDocumentEncryptionAtom extends TestCase {
 			3, -104, 22, 6, 102, -61, -98, 62, 40, 61, 21
 	};
 
-    public void testRecordType() throws Exception {
+    public void testRecordType() {
 		DocumentEncryptionAtom dea1 = new DocumentEncryptionAtom(data_a, 0, data_a.length);
 		assertEquals(12052l, dea1.getRecordType());
 		
 		DocumentEncryptionAtom dea2 = new DocumentEncryptionAtom(data_b, 0, data_b.length);
 		assertEquals(12052l, dea2.getRecordType());
 		
-		System.out.println(data_a.length);
-		System.out.println(data_b.length);
+		assertEquals(199, data_a.length);
+		assertEquals(198, data_b.length);
 	}
     
-    public void testEncryptionTypeName() throws Exception {
+    public void testEncryptionTypeName() {
 		DocumentEncryptionAtom dea1 = new DocumentEncryptionAtom(data_a, 0, data_a.length);
 		assertEquals("Microsoft Base Cryptographic Provider v1.0", dea1.getEncryptionProviderName());
 		
