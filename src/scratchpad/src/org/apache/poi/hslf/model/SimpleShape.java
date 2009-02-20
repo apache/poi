@@ -314,12 +314,17 @@ public class SimpleShape extends Shape {
         return null;
     }
 
+    /**
+     * Search for EscherClientDataRecord, if found, convert its contents into an array of HSLF records
+     *
+     * @return an array of HSLF records contained in the shape's EscherClientDataRecord or <code>null</code>
+     */
     protected Record[] getClientRecords() {
         if(_clientData == null){
             EscherRecord r = Shape.getEscherChild(getSpContainer(), EscherClientDataRecord.RECORD_ID);
             //ddf can return EscherContainerRecord with recordId=EscherClientDataRecord.RECORD_ID
             //convert in to EscherClientDataRecord on the fly
-            if(!(r instanceof EscherClientDataRecord)){
+            if(r != null && !(r instanceof EscherClientDataRecord)){
                 byte[] data = r.serialize();
                 r = new EscherClientDataRecord();
                 r.fillFields(data, 0, new DefaultEscherRecordFactory());
