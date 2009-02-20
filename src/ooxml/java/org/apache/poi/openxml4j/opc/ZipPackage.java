@@ -28,7 +28,6 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -43,6 +42,8 @@ import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPartMarshaller;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipFileZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 
 /**
  * Physical zip package.
@@ -52,7 +53,7 @@ import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
  */
 public final class ZipPackage extends Package {
 
-	private static Logger logger = Logger.getLogger("org.openxml4j");
+    private static POILogger logger = POILogFactory.getLogger(ZipPackage.class);
 
 	/**
 	 * Zip archive, as either a file on disk,
@@ -220,7 +221,7 @@ public final class ZipPackage extends Package {
 			}
 		} catch (Exception e) {
 			// We assume we can continue, even in degraded mode ...
-			logger.warn("Entry "
+			logger.log(POILogger.WARN,"Entry "
 							+ entry.getName()
 							+ " is not valid, so this part won't be add to the package.");
 			return null;
@@ -308,7 +309,7 @@ public final class ZipPackage extends Package {
 					// temporary file
 					if (!tempFile.delete()) {
 						logger
-								.warn("The temporary file: '"
+								.log(POILogger.WARN,"The temporary file: '"
 										+ targetFile.getAbsolutePath()
 										+ "' cannot be deleted ! Make sure that no other application use it.");
 					}
@@ -353,7 +354,7 @@ public final class ZipPackage extends Package {
 	 * current package
 	 * 
 	 * 
-	 * @see #getPart(URI)
+	 * @see #getPart(PackageRelationship)
 	 */
 	@Override
 	protected PackagePart getPartImpl(PackagePartName partName) {
@@ -371,7 +372,6 @@ public final class ZipPackage extends Package {
 	 *            The stream use to save this package.
 	 * 
 	 * @see #save(OutputStream)
-	 * @see #saveInZip(ZipOutputStream)
 	 */
 	@Override
 	public void saveImpl(OutputStream outputStream) {
@@ -389,7 +389,7 @@ public final class ZipPackage extends Package {
 			// we save it as well
 			if (this.getPartsByRelationshipType(
 					PackageRelationshipTypes.CORE_PROPERTIES).size() == 0) {
-				logger.debug("Save core properties part");
+				logger.log(POILogger.DEBUG,"Save core properties part");
 
 				// We have to save the core properties part ...
 				new ZipPackagePropertiesMarshaller().marshall(
@@ -408,13 +408,13 @@ public final class ZipPackage extends Package {
 			}
 
 			// Save package relationships part.
-			logger.debug("Save package relationships");
+			logger.log(POILogger.DEBUG,"Save package relationships");
 			ZipPartMarshaller.marshallRelationshipPart(this.getRelationships(),
 					PackagingURIHelper.PACKAGE_RELATIONSHIPS_ROOT_PART_NAME,
 					zos);
 
 			// Save content type part.
-			logger.debug("Save content types part");
+			logger.log(POILogger.DEBUG,"Save content types part");
 			this.contentTypeManager.save(zos);
 
 			// Save parts.
@@ -424,7 +424,7 @@ public final class ZipPackage extends Package {
 				if (part.isRelationshipPart())
 					continue;
 
-				logger.debug("Save part '"
+				logger.log(POILogger.DEBUG,"Save part '"
 						+ ZipHelper.getZipItemNameFromOPCName(part
 								.getPartName().getName()) + "'");
 				PartMarshaller marshaller = partMarshallers
@@ -449,7 +449,7 @@ public final class ZipPackage extends Package {
 			zos.close();
 		} catch (Exception e) {
 			logger
-					.error("Fail to save: an error occurs while saving the package : "
+					.log(POILogger.ERROR,"Fail to save: an error occurs while saving the package : "
 							+ e.getMessage());
 		}
 	}

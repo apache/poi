@@ -85,7 +85,8 @@ public class ContentTypes {
 	/**
 	 * TIFF image format.
 	 * 
-	 * @see http://partners.adobe.com/public/developer/tiff/index.html#spec
+	 * @see <a href="http://partners.adobe.com/public/developer/tiff/index.html#spec">
+     * http://partners.adobe.com/public/developer/tiff/index.html#spec</a>
 	 */
 	public static final String IMAGE_TIFF = "image/tiff";
 
@@ -94,7 +95,8 @@ public class ContentTypes {
 	/**
 	 * Pict image format.
 	 * 
-	 * @see http://developer.apple.com/documentation/mac/QuickDraw/QuickDraw-2.html
+	 * @see <a href="http://developer.apple.com/documentation/mac/QuickDraw/QuickDraw-2.html">
+     * http://developer.apple.com/documentation/mac/QuickDraw/QuickDraw-2.html</a>
 	 */
 	public static final String IMAGE_PICT = "image/pict";
 

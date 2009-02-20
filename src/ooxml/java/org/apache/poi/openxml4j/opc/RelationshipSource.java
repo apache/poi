@@ -40,12 +40,12 @@ public interface RelationshipSource {
 
 	/**
 	 * Add a relationship to a part (except relationships part).
-	 * 
+	 * <p>
 	 * Check rule M1.25: The Relationships part shall not have relationships to
 	 * any other part. Package implementers shall enforce this requirement upon
 	 * the attempt to create such a relationship and shall treat any such
 	 * relationship as invalid.
-	 * 
+	 * </p>
 	 * @param targetPartName
 	 *            Name of the target part. This one must be relative to the
 	 *            source root directory of the part.

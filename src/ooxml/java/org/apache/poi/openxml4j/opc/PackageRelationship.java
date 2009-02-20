@@ -60,7 +60,7 @@ public final class PackageRelationship {
 	private String id;
 
 	/**
-	 * R�f�rence vers le package.
+	 * Reference to the package.
 	 */
 	private Package container;
 
@@ -87,7 +87,7 @@ public final class PackageRelationship {
 	/**
 	 * Constructor.
 	 * 
-	 * @param packageParent
+	 * @param pkg
 	 * @param sourcePart
 	 * @param targetUri
 	 * @param targetMode
@@ -170,7 +170,7 @@ public final class PackageRelationship {
 
 	/**
 	 * 
-	 * @return
+	 * @return URL of the source part of this relationship
 	 */
 	public URI getSourceURI() {
 		if (source == null) {

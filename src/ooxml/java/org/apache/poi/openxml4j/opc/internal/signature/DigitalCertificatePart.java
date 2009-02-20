@@ -75,5 +75,4 @@ public final class DigitalCertificatePart extends PackagePart  {
 		return false;
 	}
 
-	// TODO Introduire le concept de partie typ�e d�s cette partie
 }

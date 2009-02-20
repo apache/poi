@@ -24,7 +24,6 @@ import java.net.URI;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -41,6 +40,8 @@ import org.apache.poi.openxml4j.opc.StreamHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 
 /**
  * Zip part marshaller. This marshaller is use to save any part in a zip stream.
@@ -49,7 +50,7 @@ import org.apache.poi.openxml4j.opc.internal.ZipHelper;
  * @version 0.1
  */
 public class ZipPartMarshaller implements PartMarshaller {
-	private static Logger logger = Logger.getLogger("org.openxml4j");
+    private static POILogger logger = POILogFactory.getLogger(ZipPartMarshaller.class);
 
 	/**
 	 * Save the specified part.
@@ -60,7 +61,7 @@ public class ZipPartMarshaller implements PartMarshaller {
 	public boolean marshall(PackagePart part, OutputStream os)
 			throws OpenXML4JException {
 		if (!(os instanceof ZipOutputStream)) {
-			logger.error("Unexpected class " + os.getClass().getName());
+			logger.log(POILogger.ERROR,"Unexpected class " + os.getClass().getName());
 			throw new OpenXML4JException("ZipOutputStream expected !");
 			// Normally should happen only in developpement phase, so just throw
 			// exception
@@ -88,7 +89,7 @@ public class ZipPartMarshaller implements PartMarshaller {
 			}
 			zos.closeEntry();
 		} catch (IOException ioe) {
-			logger.error("Cannot write: " + part.getPartName() + ": in ZIP",
+			logger.log(POILogger.ERROR,"Cannot write: " + part.getPartName() + ": in ZIP",
 					ioe);
 			return false;
 		}
@@ -110,7 +111,7 @@ public class ZipPartMarshaller implements PartMarshaller {
 	 * 
 	 * @param rels
 	 *            The relationships collection to marshall.
-	 * @param relPartURI
+	 * @param relPartName
 	 *            Part name of the relationship part to marshall.
 	 * @param zos
 	 *            Zip output stream in which to save the XML content of the
@@ -137,19 +138,19 @@ public class ZipPartMarshaller implements PartMarshaller {
 				.getSourcePartUriFromRelationshipPartUri(relPartName.getURI());
 
 		for (PackageRelationship rel : rels) {
-			// L'�l�ment de la relation
+			// the relationship element
 			Element relElem = root
 					.addElement(PackageRelationship.RELATIONSHIP_TAG_NAME);
 
-			// L'attribut ID
+			// the relationship ID
 			relElem.addAttribute(PackageRelationship.ID_ATTRIBUTE_NAME, rel
 					.getId());
 
-			// L'attribut Type
+			// the relationship Type
 			relElem.addAttribute(PackageRelationship.TYPE_ATTRIBUTE_NAME, rel
 					.getRelationshipType());
 
-			// L'attribut Target
+			// the relationship Target
 			String targetValue;
 			URI uri = rel.getTargetURI();
 			if (rel.getTargetMode() == TargetMode.EXTERNAL) {
@@ -157,7 +158,7 @@ public class ZipPartMarshaller implements PartMarshaller {
 				//  alter it etc
                 targetValue = uri.toString();
 
-				// add TargetMode attribut (as it is external link external)
+				// add TargetMode attribute (as it is external link external)
 				relElem.addAttribute(
 						PackageRelationship.TARGET_MODE_ATTRIBUTE_NAME,
 						"External");
@@ -178,14 +179,13 @@ public class ZipPartMarshaller implements PartMarshaller {
 		ZipEntry ctEntry = new ZipEntry(ZipHelper.getZipURIFromOPCName(
 				relPartName.getURI().toASCIIString()).getPath());
 		try {
-			// Cr�ation de l'entr�e dans le fichier ZIP
 			zos.putNextEntry(ctEntry);
 			if (!StreamHelper.saveXmlInStream(xmlOutDoc, zos)) {
 				return false;
 			}
 			zos.closeEntry();
 		} catch (IOException e) {
-			logger.error("Cannot create zip entry " + relPartName, e);
+			logger.log(POILogger.ERROR,"Cannot create zip entry " + relPartName, e);
 			return false;
 		}
 		return true; // success

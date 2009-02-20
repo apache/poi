@@ -32,7 +32,6 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -48,6 +47,8 @@ import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPackagePropertiesMar
 import org.apache.poi.openxml4j.opc.internal.unmarshallers.PackagePropertiesUnmarshaller;
 import org.apache.poi.openxml4j.opc.internal.unmarshallers.UnmarshallContext;
 import org.apache.poi.openxml4j.util.Nullable;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 
 /**
  * Represents a container that can store multiple data objects.
@@ -60,7 +61,7 @@ public abstract class Package implements RelationshipSource {
 	/**
 	 * Logger.
 	 */
-	protected static Logger logger = Logger.getLogger("org.openxml4j.opc");
+    private static POILogger logger = POILogFactory.getLogger(Package.class);
 
 	/**
 	 * Default package access.
@@ -340,7 +341,7 @@ public abstract class Package implements RelationshipSource {
 	public void close() throws IOException {
 		if (this.packageAccess == PackageAccess.READ) {
 			logger
-					.warn("The close() method is intended to SAVE a package. This package is open in READ ONLY mode, use the revert() method instead !");
+					.log(POILogger.WARN, "The close() method is intended to SAVE a package. This package is open in READ ONLY mode, use the revert() method instead !");
 			return;
 		}
 
@@ -539,7 +540,7 @@ public abstract class Package implements RelationshipSource {
 			}
 		} catch (OpenXML4JException e) {
 			logger
-					.warn("Can't retrieve parts by relationship type: an exception has been thrown by getRelationshipsByType method");
+					.log(POILogger.WARN, "Can't retrieve parts by relationship type: an exception has been thrown by getRelationshipsByType method");
 			return null;
 		}
 		return retArr;
@@ -619,7 +620,7 @@ public abstract class Package implements RelationshipSource {
 						if (unmarshallPart instanceof PackagePropertiesPart)
 							this.packageProperties = (PackagePropertiesPart) unmarshallPart;
 					} catch (IOException ioe) {
-						logger.warn("Unmarshall operation : IOException for "
+						logger.log(POILogger.WARN, "Unmarshall operation : IOException for "
 								+ part.partName);
 						continue;
 					} catch (InvalidOperationException invoe) {
@@ -650,7 +651,7 @@ public abstract class Package implements RelationshipSource {
 	 *             If rule M1.12 is not verified : Packages shall not contain
 	 *             equivalent part names and package implementers shall neither
 	 *             create nor recognize packages with equivalent part names.
-	 * @see {@link#createPartImpl(URI, String)}
+	 * @see #createPartImpl(PackagePartName, String, boolean) 
 	 */
 	public PackagePart createPart(PackagePartName partName, String contentType) {
 		return this.createPart(partName, contentType, true);
@@ -732,7 +733,7 @@ public abstract class Package implements RelationshipSource {
 	 *            disk
 	 * 
 	 * @return The new part.
-	 * @see {@link #createPart(PackagePartName, String)}
+	 * @see #createPart(PackagePartName, String)
 	 */
 	public PackagePart createPart(PackagePartName partName, String contentType,
 			ByteArrayOutputStream content) {
@@ -846,7 +847,7 @@ public abstract class Package implements RelationshipSource {
 				sourcePartName = PackagingURIHelper.createPartName(sourceURI);
 			} catch (InvalidFormatException e) {
 				logger
-						.error("Part name URI '"
+						.log(POILogger.ERROR, "Part name URI '"
 								+ sourceURI
 								+ "' is not valid ! This message is not intended to be displayed !");
 				return;
@@ -947,7 +948,7 @@ public abstract class Package implements RelationshipSource {
 				this.deletePartRecursive(targetPartName);
 			}
 		} catch (InvalidFormatException e) {
-			logger.warn("An exception occurs while deleting part '"
+			logger.log(POILogger.WARN, "An exception occurs while deleting part '"
 					+ partName.getName()
 					+ "'. Some parts may remain in the package. - "
 					+ e.getMessage());
@@ -1126,7 +1127,7 @@ public abstract class Package implements RelationshipSource {
 	 * 
 	 * @return All package relationships of this package.
 	 * @throws OpenXML4JException
-	 * @see {@link #getRelationshipsHelper(String)}
+	 * @see #getRelationshipsHelper(String)
 	 */
 	public PackageRelationshipCollection getRelationships()
 			throws OpenXML4JException {
@@ -1230,7 +1231,7 @@ public abstract class Package implements RelationshipSource {
 		try {
 			partMarshallers.put(new ContentType(contentType), marshaller);
 		} catch (InvalidFormatException e) {
-			logger.warn("The specified content type is not valid: '"
+			logger.log(POILogger.WARN, "The specified content type is not valid: '"
 					+ e.getMessage() + "'. The marshaller will not be added !");
 		}
 	}
@@ -1248,7 +1249,7 @@ public abstract class Package implements RelationshipSource {
 		try {
 			partUnmarshallers.put(new ContentType(contentType), unmarshaller);
 		} catch (InvalidFormatException e) {
-			logger.warn("The specified content type is not valid: '"
+			logger.log(POILogger.WARN, "The specified content type is not valid: '"
 					+ e.getMessage()
 					+ "'. The unmarshaller will not be added !");
 		}

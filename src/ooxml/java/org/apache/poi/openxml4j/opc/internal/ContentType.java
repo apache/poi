@@ -25,28 +25,28 @@ import java.util.regex.Pattern;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 /**
- * Represents a immutable MIME ContentType value (RFC 2616 �3.7)
- * 
+ * Represents a immutable MIME ContentType value (RFC 2616 &#167;3.7)
+ * <p>
  * media-type = type "/" subtype *( ";" parameter ) type = token<br>
  * subtype = token<br>
- * 
+ * </p><p>
  * Rule M1.13 : Package implementers shall only create and only recognize parts
  * with a content type; format designers shall specify a content type for each
  * part included in the format. Content types for package parts shall fit the
- * definition and syntax for media types as specified in RFC 2616,��3.7.
- * 
+ * definition and syntax for media types as specified in RFC 2616, \&#167;3.7.
+ * </p><p>
  * Rule M1.14: Content types shall not use linear white space either between the
  * type and subtype or between an attribute and its value. Content types also
  * shall not have leading or trailing white spaces. Package implementers shall
  * create only such content types and shall require such content types when
  * retrieving a part from a package; format designers shall specify only such
  * content types for inclusion in the format.
- * 
+ * </p>
  * @author Julien Chable
  * @version 0.1
  * 
- * @see http://www.ietf.org/rfc/rfc2045.txt
- * @see http://www.ietf.org/rfc/rfc2616.txt
+ * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">http://www.ietf.org/rfc/rfc2045.txt</a>
+ * @see <a href="http://www.ietf.org/rfc/rfc2616.txt">http://www.ietf.org/rfc/rfc2616.txt</a>
  */
 public final class ContentType {
 
