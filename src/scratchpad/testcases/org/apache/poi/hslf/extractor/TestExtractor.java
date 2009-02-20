@@ -237,14 +237,7 @@ public final class TestExtractor extends TestCase {
 		filename = dirname + "/45543.ppt";
 		ppe = new PowerPointExtractor(filename);
 
-		try {
-			text = ppe.getText();
-		} catch (NullPointerException e) {
-			// TODO - fix this failing test
-			// This test was failing here with NPE as at svn r745972.
-			// At that time, the class name was 'TextExtractor' which caused the build script to skip it
-			return; // for the moment skip the rest of this test.
-		}
+        text = ppe.getText();
 		assertFalse("Comments not in by default", contains(text, "testdoc"));
 		
 		ppe.setCommentsByDefault(true);
