@@ -1120,6 +1120,14 @@ FORREST_HOME environment variable!</echo>
           </replacetokens>
         </filterchain>
       </copy>
+      <copy file="maven/mvn-sig.sh" todir="${dist.dir}">
+        <filterchain>
+          <replacetokens>
+            <token key="VERSION" value="${version.id}" />
+            <token key="DSTAMP" value="${DSTAMP}" />
+          </replacetokens>
+        </filterchain>
+      </copy>
 	</target>
 
   <target name="maven-ooxml-dependencies" description="Builds the POM files for the compiled XmlBeans generated from the Ecma supplied xsds">
