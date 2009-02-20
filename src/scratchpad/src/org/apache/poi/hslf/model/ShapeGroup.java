@@ -14,18 +14,24 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
-import org.apache.poi.ddf.*;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.poi.ddf.EscherChildAnchorRecord;
+import org.apache.poi.ddf.EscherClientAnchorRecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.ddf.EscherSpgrRecord;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.hslf.record.EscherTextboxWrapper;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.AffineTransform;
-import java.awt.*;
 
 /**
  *  Represents a group of shapes.
@@ -57,14 +63,17 @@ public class ShapeGroup extends Shape{
      * @return the shapes contained in this group container
      */
     public Shape[] getShapes() {
-    	// Out escher container record should contain serveral
+    	// Out escher container record should contain several
         //  SpContainers, the first of which is the group shape itself
-        List lst = _escherContainer.getChildRecords();
+        Iterator<EscherRecord> iter = _escherContainer.getChildIterator();
 
-        ArrayList shapeList = new ArrayList();
         // Don't include the first SpContainer, it is always NotPrimitive
-        for (int i = 1; i < lst.size(); i++){
-        	EscherRecord r = (EscherRecord)lst.get(i);
+        if (iter.hasNext()) {
+        	iter.next();
+        }
+        List<Shape> shapeList = new ArrayList<Shape>();
+        while (iter.hasNext()) {
+        	EscherRecord r = iter.next();
         	if(r instanceof EscherContainerRecord) {
         		// Create the Shape for it
         		EscherContainerRecord container = (EscherContainerRecord)r;
@@ -79,7 +88,7 @@ public class ShapeGroup extends Shape{
         }
         
         // Put the shapes into an array, and return
-        Shape[] shapes = (Shape[])shapeList.toArray(new Shape[shapeList.size()]);
+        Shape[] shapes = shapeList.toArray(new Shape[shapeList.size()]);
         return shapes;
     }
 
@@ -91,7 +100,7 @@ public class ShapeGroup extends Shape{
      */
     public void setAnchor(java.awt.Rectangle anchor){
 
-        EscherContainerRecord spContainer = (EscherContainerRecord)_escherContainer.getChildRecords().get(0);
+        EscherContainerRecord spContainer = (EscherContainerRecord)_escherContainer.getChild(0);
 
         EscherClientAnchorRecord clientAnchor = (EscherClientAnchorRecord)getEscherChild(spContainer, EscherClientAnchorRecord.RECORD_ID);
         //hack. internal variable EscherClientAnchorRecord.shortRecord can be
@@ -122,7 +131,7 @@ public class ShapeGroup extends Shape{
      * @param anchor the coordinate space of this group
      */
     public void setCoordinates(Rectangle2D anchor){
-        EscherContainerRecord spContainer = (EscherContainerRecord)_escherContainer.getChildRecords().get(0);
+        EscherContainerRecord spContainer = (EscherContainerRecord)_escherContainer.getChild(0);
         EscherSpgrRecord spgr = (EscherSpgrRecord)getEscherChild(spContainer, EscherSpgrRecord.RECORD_ID);
 
         int x1 = (int)Math.round(anchor.getX()*MASTER_DPI/POINT_DPI);
@@ -144,7 +153,7 @@ public class ShapeGroup extends Shape{
      * @return the coordinate space of this group
      */
     public Rectangle2D getCoordinates(){
-        EscherContainerRecord spContainer = (EscherContainerRecord)_escherContainer.getChildRecords().get(0);
+        EscherContainerRecord spContainer = (EscherContainerRecord)_escherContainer.getChild(0);
         EscherSpgrRecord spgr = (EscherSpgrRecord)getEscherChild(spContainer, EscherSpgrRecord.RECORD_ID);
 
         Rectangle2D.Float anchor = new Rectangle2D.Float();
@@ -228,7 +237,7 @@ public class ShapeGroup extends Shape{
      * @return the anchor of this shape group
      */
     public Rectangle2D getAnchor2D(){
-        EscherContainerRecord spContainer = (EscherContainerRecord)_escherContainer.getChildRecords().get(0);
+        EscherContainerRecord spContainer = (EscherContainerRecord)_escherContainer.getChild(0);
         EscherClientAnchorRecord clientAnchor = (EscherClientAnchorRecord)getEscherChild(spContainer, EscherClientAnchorRecord.RECORD_ID);
         Rectangle2D.Float anchor = new Rectangle2D.Float();
         if(clientAnchor == null){

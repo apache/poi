@@ -44,8 +44,8 @@ public class TestEscherBlipRecord extends TestCase
 
         EscherContainerRecord record = new EscherContainerRecord();
         record.fillFields(data, 0, new DefaultEscherRecordFactory());
-        EscherContainerRecord bstore = (EscherContainerRecord)record.getChildRecords().get(1);
-        EscherBSERecord bse1 = (EscherBSERecord)bstore.getChildRecords().get(0);
+        EscherContainerRecord bstore = (EscherContainerRecord)record.getChild(1);
+        EscherBSERecord bse1 = (EscherBSERecord)bstore.getChild(0);
         assertEquals(EscherBSERecord.BT_PNG, bse1.getBlipTypeWin32());
         assertEquals(EscherBSERecord.BT_PNG, bse1.getBlipTypeMacOS());
         assertTrue(Arrays.equals(new byte[]{
@@ -89,8 +89,8 @@ public class TestEscherBlipRecord extends TestCase
 
         EscherContainerRecord record = new EscherContainerRecord();
         record.fillFields(data, 0, new DefaultEscherRecordFactory());
-        EscherContainerRecord bstore = (EscherContainerRecord)record.getChildRecords().get(1);
-        EscherBSERecord bse1 = (EscherBSERecord)bstore.getChildRecords().get(1);
+        EscherContainerRecord bstore = (EscherContainerRecord)record.getChild(1);
+        EscherBSERecord bse1 = (EscherBSERecord)bstore.getChild(1);
         //System.out.println(bse1);
         assertEquals(EscherBSERecord.BT_WMF, bse1.getBlipTypeWin32());
         assertEquals(EscherBSERecord.BT_PICT, bse1.getBlipTypeMacOS());

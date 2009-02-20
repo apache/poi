@@ -246,9 +246,9 @@ public abstract class Shape {
      * @return escher record or <code>null</code> if not found.
      */
     public static EscherRecord getEscherChild(EscherContainerRecord owner, int recordId){
-        for ( Iterator iterator = owner.getChildRecords().iterator(); iterator.hasNext(); )
+        for ( Iterator<EscherRecord> iterator = owner.getChildIterator(); iterator.hasNext(); )
         {
-            EscherRecord escherRecord = (EscherRecord) iterator.next();
+            EscherRecord escherRecord = iterator.next();
             if (escherRecord.getRecordId() == recordId)
                 return escherRecord;
         }

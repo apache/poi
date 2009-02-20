@@ -125,8 +125,8 @@ public class ShapeFactory {
 
     protected static Record getClientDataRecord(EscherContainerRecord spContainer, int recordType) {
         Record oep = null;
-        for (Iterator it = spContainer.getChildRecords().iterator(); it.hasNext();) {
-            EscherRecord obj = (EscherRecord) it.next();
+        for (Iterator<EscherRecord> it = spContainer.getChildIterator(); it.hasNext();) {
+            EscherRecord obj = it.next();
             if (obj.getRecordId() == EscherClientDataRecord.RECORD_ID) {
                 byte[] data = obj.serialize();
                 Record[] records = Record.findChildRecords(data, 8, data.length - 8);

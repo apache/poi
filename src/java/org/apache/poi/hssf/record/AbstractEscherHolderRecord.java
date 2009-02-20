@@ -196,21 +196,20 @@ public abstract class AbstractEscherHolderRecord extends Record {
     public EscherRecord findFirstWithId(short id) {
     	return findFirstWithId(id, getEscherRecords());
     }
-    private EscherRecord findFirstWithId(short id, List records) {
+    private EscherRecord findFirstWithId(short id, List<EscherRecord> records) {
     	// Check at our level
-    	for(Iterator it = records.iterator(); it.hasNext();) {
-    		EscherRecord r = (EscherRecord)it.next();
+    	for(Iterator<EscherRecord> it = records.iterator(); it.hasNext();) {
+    		EscherRecord r = it.next();
     		if(r.getRecordId() == id) {
     			return r;
     		}
     	}
     	
     	// Then check our children in turn
-    	for(Iterator it = records.iterator(); it.hasNext();) {
-    		EscherRecord r = (EscherRecord)it.next();
+    	for(Iterator<EscherRecord> it = records.iterator(); it.hasNext();) {
+    		EscherRecord r = it.next();
     		if(r.isContainerRecord()) {
-    			EscherRecord found =
-    				findFirstWithId(id, r.getChildRecords());
+    			EscherRecord found = findFirstWithId(id, r.getChildRecords());
     			if(found != null) {
     				return found;
     			}

@@ -76,7 +76,7 @@ public final class ActiveXShape extends Picture {
 
         EscherClientDataRecord cldata = new EscherClientDataRecord();
         cldata.setOptions((short)0xF);
-        _escherContainer.getChildRecords().add(cldata);
+        _escherContainer.addChildRecord(cldata); // TODO unit test to prove getChildRecords().add is wrong
 
         OEShapeAtom oe = new OEShapeAtom();
 
@@ -100,7 +100,7 @@ public final class ActiveXShape extends Picture {
      */
     public void setActiveXIndex(int idx){
         EscherContainerRecord spContainer = getSpContainer();
-        for (Iterator<EscherRecord> it = spContainer.getChildRecords().iterator(); it.hasNext();) {
+        for (Iterator<EscherRecord> it = spContainer.getChildIterator(); it.hasNext();) {
             EscherRecord obj = it.next();
             if (obj.getRecordId() == EscherClientDataRecord.RECORD_ID) {
                 EscherClientDataRecord clientRecord = (EscherClientDataRecord)obj;

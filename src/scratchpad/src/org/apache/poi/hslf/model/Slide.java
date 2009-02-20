@@ -152,7 +152,7 @@ public class Slide extends Sheet
             EscherSpRecord spr = null;
             switch(c.getRecordId()){
                 case EscherContainerRecord.SPGR_CONTAINER:
-                    EscherContainerRecord dc = (EscherContainerRecord)c.getChildRecords().get(0);
+                    EscherContainerRecord dc = (EscherContainerRecord)c.getChild(0);
                     spr = dc.getChildById(EscherSpRecord.RECORD_ID);
                     break;
                 case EscherContainerRecord.SP_CONTAINER:

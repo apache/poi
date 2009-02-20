@@ -746,19 +746,11 @@ public final class SlideShow {
             bstore = new EscherContainerRecord();
             bstore.setRecordId( EscherContainerRecord.BSTORE_CONTAINER);
 
-            List child = dggContainer.getChildRecords();
-            for ( int i = 0; i < child.size(); i++ ) {
-                EscherRecord rec = (EscherRecord)child.get(i);
-                if (rec.getRecordId() == EscherOptRecord.RECORD_ID){
-                    child.add(i, bstore);
-                    i++;
-                }
-            }
-            dggContainer.setChildRecords(child);
+            dggContainer.addChildBefore(bstore, EscherOptRecord.RECORD_ID);
         } else {
-            List lst = bstore.getChildRecords();
-            for ( int i = 0; i < lst.size(); i++ ) {
-                EscherBSERecord bse = (EscherBSERecord) lst.get(i);
+            Iterator<EscherRecord> iter = bstore.getChildIterator();
+            for (int i = 0; iter.hasNext(); i++) {
+                EscherBSERecord bse = (EscherBSERecord) iter.next();
                 if (Arrays.equals(bse.getUid(), uid)){
                     return i + 1;
                 }

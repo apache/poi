@@ -71,15 +71,14 @@ public class PPDrawingGroup extends RecordAtom {
 
     public void writeOut(OutputStream out) throws IOException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        List child = dggContainer.getChildRecords();
-        for (int i = 0; i < child.size(); i++) {
-            EscherRecord r = (EscherRecord)child.get(i);
+        Iterator<EscherRecord> iter = dggContainer.getChildIterator();
+        while (iter.hasNext()) {
+        	EscherRecord r = iter.next();
             if (r.getRecordId() == EscherContainerRecord.BSTORE_CONTAINER){
                 EscherContainerRecord bstore = (EscherContainerRecord)r;
 
                 ByteArrayOutputStream b2 = new ByteArrayOutputStream();
-                List blip = bstore.getChildRecords();
-                for (Iterator it=blip.iterator(); it.hasNext();) {
+                for (Iterator<EscherRecord> it= bstore.getChildIterator(); it.hasNext();) {
                     EscherBSERecord bse = (EscherBSERecord)it.next();
                     byte[] b = new byte[36+8];
                     bse.serialize(0, b);
@@ -121,8 +120,8 @@ public class PPDrawingGroup extends RecordAtom {
 
     public EscherDggRecord getEscherDggRecord(){
         if(dgg == null){
-            for(Iterator it = dggContainer.getChildRecords().iterator(); it.hasNext();){
-                EscherRecord r = (EscherRecord) it.next();
+            for(Iterator<EscherRecord> it = dggContainer.getChildIterator(); it.hasNext();){
+                EscherRecord r = it.next();
                 if(r instanceof EscherDggRecord){
                     dgg = (EscherDggRecord)r;
                     break;

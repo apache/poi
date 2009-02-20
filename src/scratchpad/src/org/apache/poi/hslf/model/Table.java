@@ -73,7 +73,6 @@ public class Table extends ShapeGroup {
         setAnchor(new Rectangle(0, 0, tblWidth, tblHeight));
 
         EscherContainerRecord spCont = (EscherContainerRecord) getSpContainer().getChild(0);
-        List lst = spCont.getChildRecords();
         EscherOptRecord opt = new EscherOptRecord();
         opt.setRecordId((short)0xF122);
         opt.addEscherProperty(new EscherSimpleProperty((short)0x39F, 1));
@@ -82,8 +81,9 @@ public class Table extends ShapeGroup {
         p.setNumberOfElementsInArray(numrows);
         p.setNumberOfElementsInMemory(numrows);
         opt.addEscherProperty(p);
+        List<EscherRecord> lst = spCont.getChildRecords();
         lst.add(lst.size()-1, opt);
-
+        spCont.setChildRecords(lst);
     }
 
     /**
@@ -118,7 +118,7 @@ public class Table extends ShapeGroup {
         super.afterInsert(sh);
 
         EscherContainerRecord spCont = (EscherContainerRecord) getSpContainer().getChild(0);
-        List lst = spCont.getChildRecords();
+        List<EscherRecord> lst = spCont.getChildRecords();
         EscherOptRecord opt = (EscherOptRecord)lst.get(lst.size()-2);
         EscherArrayProperty p = (EscherArrayProperty)opt.getEscherProperty(1);
         for (int i = 0; i < cells.length; i++) {

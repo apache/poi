@@ -177,11 +177,10 @@ public class Hyperlink {
         }
 
         EscherContainerRecord spContainer = shape.getSpContainer();
-        List spchild = spContainer.getChildRecords();
-        for (Iterator it = spchild.iterator(); it.hasNext(); ) {
-            EscherRecord obj = (EscherRecord)it.next();
+        for (Iterator<EscherRecord> it = spContainer.getChildIterator(); it.hasNext(); ) {
+            EscherRecord obj = it.next();
             if (obj.getRecordId() ==  EscherClientDataRecord.RECORD_ID){
-                byte[] data = ((EscherContainerRecord)obj).serialize();
+                byte[] data = obj.serialize();
                 Record[] records = Record.findChildRecords(data, 8, data.length-8);
                 if(records != null) find(records, exobj, lst);
             }
