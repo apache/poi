@@ -34,7 +34,7 @@ public class TestContentType extends TestCase {
 	 * recognize parts with a content type; format designers shall specify a
 	 * content type for each part included in the format. Content types for
 	 * package parts shall fit the definition and syntax for media types as
-	 * specified in RFC 2616,аз3.7.
+	 * specified in RFC 2616, \u00A73.7.
 	 */
 	public void testContentTypeValidation() throws InvalidFormatException {
 		String[] contentTypesToTest = new String[] { "text/xml",
@@ -50,7 +50,7 @@ public class TestContentType extends TestCase {
 	 * recognize parts with a content type; format designers shall specify a
 	 * content type for each part included in the format. Content types for
 	 * package parts shall fit the definition and syntax for media types as
-	 * specified in RFC 2616,аз3.7.
+	 * specified in RFC 2616, \u00A3.7.
 	 * 
 	 * Check rule M1.14: Content types shall not use linear white space either
 	 * between the type and subtype or between an attribute and its value.

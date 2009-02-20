@@ -310,25 +310,26 @@ public class PackagePropertiesUnmarshaller implements PartUnmarshaller {
 
 	/**
 	 * Check the element for the following OPC compliance rules:
-	 * 
+	 * <p>
 	 * Rule M4.2: A format consumer shall consider the use of the Markup
 	 * Compatibility namespace to be an error.
-	 * 
+	 * </p><p>
 	 * Rule M4.3: Producers shall not create a document element that contains
 	 * refinements to the Dublin Core elements, except for the two specified in
 	 * the schema: <dcterms:created> and <dcterms:modified> Consumers shall
 	 * consider a document element that violates this constraint to be an error.
-	 * 
+	 * </p><p>
 	 * Rule M4.4: Producers shall not create a document element that contains
 	 * the xml:lang attribute. Consumers shall consider a document element that
 	 * violates this constraint to be an error.
-	 * 
+	 *  </p><p>
 	 * Rule M4.5: Producers shall not create a document element that contains
 	 * the xsi:type attribute, except for a <dcterms:created> or
 	 * <dcterms:modified> element where the xsi:type attribute shall be present
 	 * and shall hold the value dcterms:W3CDTF, where dcterms is the namespace
 	 * prefix of the Dublin Core namespace. Consumers shall consider a document
 	 * element that violates this constraint to be an error.
+     * </p>
 	 */
 	public void checkElementForOPCCompliance(Element el)
 			throws InvalidFormatException {

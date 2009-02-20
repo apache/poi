@@ -22,13 +22,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeMap;
 
-import org.apache.log4j.Logger;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 
 /**
  * Represents a collection of PackageRelationship elements that are owned by a
@@ -40,7 +41,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 public final class PackageRelationshipCollection implements
 		Iterable<PackageRelationship> {
 
-	private static Logger logger = Logger.getLogger("org.openxml4j.opc");
+    private static POILogger logger = POILogFactory.getLogger(PackageRelationshipCollection.class);
 
 	/**
 	 * Package relationships ordered by ID.
@@ -300,7 +301,7 @@ public final class PackageRelationshipCollection implements
 			throws InvalidFormatException {
 		try {
 			SAXReader reader = new SAXReader();
-			logger.debug("Parsing relationship: " + relPart.getPartName());
+			logger.log(POILogger.DEBUG, "Parsing relationship: " + relPart.getPartName());
 			Document xmlRelationshipsDoc = reader
 					.read(relPart.getInputStream());
 
@@ -352,7 +353,7 @@ public final class PackageRelationshipCollection implements
 
 					if (value.indexOf("\\") != -1) {
 						logger
-								.info("target contains \\ therefore not a valid URI"
+								.log(POILogger.INFO, "target contains \\ therefore not a valid URI"
 										+ value + " replaced by /");
 						value = value.replaceAll("\\\\", "/");
 						// word can save external relationship with a \ instead
@@ -361,14 +362,14 @@ public final class PackageRelationshipCollection implements
 
 					target = new URI(value);
 				} catch (URISyntaxException e) {
-					logger.error("Cannot convert " + value
+					logger.log(POILogger.ERROR, "Cannot convert " + value
 							+ " in a valid relationship URI-> ignored", e);
 					continue;
 				}
 				addRelationship(target, targetMode, type, id);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.log(POILogger.ERROR, e);
 			throw new InvalidFormatException(e.getMessage());
 		}
 	}

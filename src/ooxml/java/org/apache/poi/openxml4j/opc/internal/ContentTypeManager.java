@@ -27,7 +27,6 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -42,6 +41,8 @@ import org.apache.poi.openxml4j.opc.Package;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 
 /**
  * Manage package content types ([Content_Types].xml part).
@@ -51,7 +52,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
  */
 public abstract class ContentTypeManager {
 
-	protected static Logger logger = Logger.getLogger("org.openxml4j");
+    private static POILogger logger = POILogFactory.getLogger(ContentTypeManager.class);
 
 	/**
 	 * Reference to the package using this content type manager.
@@ -95,7 +96,7 @@ public abstract class ContentTypeManager {
 	/**
 	 * Constructor. Parses the content of the specified input stream.
 	 * 
-	 * @param archive
+	 * @param in
 	 *            If different of <i>null</i> then the content types part is
 	 *            retrieve and parse.
 	 * @throws InvalidFormatException
@@ -118,43 +119,39 @@ public abstract class ContentTypeManager {
 	/**
 	 * Build association extention-> content type (will be stored in
 	 * [Content_Types].xml) for example ContentType="image/png" Extension="png"
-	 * 
+	 * <p>
 	 * [M2.8]: When adding a new part to a package, the package implementer
 	 * shall ensure that a content type for that part is specified in the
 	 * Content Types stream; the package implementer shall perform the steps
-	 * described in��9.1.2.3:
-	 * 
+	 * described in &#167;9.1.2.3:
+	 * </p><p>
 	 * 1. Get the extension from the part name by taking the substring to the
 	 * right of the rightmost occurrence of the dot character (.) from the
 	 * rightmost segment.
-	 * 
+	 * </p><p>
 	 * 2. If a part name has no extension, a corresponding Override element
 	 * shall be added to the Content Types stream.
-	 * 
+	 * </p><p>
 	 * 3. Compare the resulting extension with the values specified for the
 	 * Extension attributes of the Default elements in the Content Types stream.
 	 * The comparison shall be case-insensitive ASCII.
-	 * 
+	 * </p><p>
 	 * 4. If there is a Default element with a matching Extension attribute,
 	 * then the content type of the new part shall be compared with the value of
 	 * the ContentType attribute. The comparison might be case-sensitive and
 	 * include every character regardless of the role it plays in the
 	 * content-type grammar of RFC 2616, or it might follow the grammar of RFC
 	 * 2616.
-	 * 
+	 * </p><p>
 	 * a. If the content types match, no further action is required.
-	 * 
+	 * </p><p>
 	 * b. If the content types do not match, a new Override element shall be
 	 * added to the Content Types stream. .
-	 * 
+	 * </p><p>
 	 * 5. If there is no Default element with a matching Extension attribute, a
 	 * new Default element or Override element shall be added to the Content
 	 * Types stream.
-	 * 
-	 * 
-	 * @param partUri
-	 *            the uri that will be stored
-	 * @return <b>false</b> if an error occured.
+	 * </p>
 	 */
 	public void addContentType(PackagePartName partName, String contentType) {
 		boolean defaultCTExists = false;
@@ -197,18 +194,19 @@ public abstract class ContentTypeManager {
 	}
 
 	/**
+     * <p>
 	 * Delete a content type based on the specified part name. If the specified
 	 * part name is register with an override content type, then this content
 	 * type is remove, else the content type is remove in the default content
 	 * type list if it exists and if no part is associated with it yet.
-	 * 
+	 * </p><p>
 	 * Check rule M2.4: The package implementer shall require that the Content
 	 * Types stream contain one of the following for every part in the package:
 	 * One matching Default element One matching Override element Both a
 	 * matching Default element and a matching Override element, in which case
 	 * the Override element takes precedence.
-	 * 
-	 * @param partUri
+	 * </p>
+	 * @param partName
 	 *            The part URI associated with the override content type to
 	 *            delete.
 	 * @exception InvalidOperationException
@@ -290,34 +288,34 @@ public abstract class ContentTypeManager {
 
 	/**
 	 * Get the content type for the specified part, if any.
-	 * 
+	 * <p>
 	 * Rule [M2.9]: To get the content type of a part, the package implementer
-	 * shall perform the steps described in��9.1.2.4:
-	 * 
+	 * shall perform the steps described in &#167;9.1.2.4:
+	 * </p><p>
 	 * 1. Compare the part name with the values specified for the PartName
 	 * attribute of the Override elements. The comparison shall be
 	 * case-insensitive ASCII.
-	 * 
+	 * </p><p>
 	 * 2. If there is an Override element with a matching PartName attribute,
 	 * return the value of its ContentType attribute. No further action is
 	 * required.
-	 * 
+	 * </p><p>
 	 * 3. If there is no Override element with a matching PartName attribute,
 	 * then a. Get the extension from the part name by taking the substring to
 	 * the right of the rightmost occurrence of the dot character (.) from the
 	 * rightmost segment. b. Check the Default elements of the Content Types
 	 * stream, comparing the extension with the value of the Extension
 	 * attribute. The comparison shall be case-insensitive ASCII.
-	 * 
+	 * </p><p>
 	 * 4. If there is a Default element with a matching Extension attribute,
 	 * return the value of its ContentType attribute. No further action is
 	 * required.
-	 * 
+	 * </p><p>
 	 * 5. If neither Override nor Default elements with matching attributes are
 	 * found for the specified part name, the implementation shall not map this
 	 * part name to a part.
-	 * 
-	 * @param partUri
+	 * </p>
+	 * @param partName
 	 *            The URI part to check.
 	 * @return The content type associated with the URI (in case of an override
 	 *         content type) or the extension (in case of default content type),
@@ -460,7 +458,7 @@ public abstract class ContentTypeManager {
 	 *            XML parent element use to append this override type element.
 	 * @param entry
 	 *            The values to append.
-	 * @see #save(ZipOutputStream)
+	 * @see #save(java.io.OutputStream)
 	 */
 	private void appendSpecificTypes(Element root,
 			Entry<PackagePartName, String> entry) {
@@ -477,7 +475,7 @@ public abstract class ContentTypeManager {
 	 *            XML parent element use to append this default type element.
 	 * @param entry
 	 *            The values to append.
-	 * @see #save(ZipOutputStream)
+	 * @see #save(java.io.OutputStream)
 	 */
 	private void appendDefaultType(Element root, Entry<String, String> entry) {
 		root.addElement(DEFAULT_TAG_NAME).addAttribute(

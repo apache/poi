@@ -46,7 +46,7 @@ public final class Nullable<E> {
 	/**
 	 * Get the store value if any.
 	 * 
-	 * @return
+	 * @return the store value
 	 */
 	public E getValue() {
 		return value;

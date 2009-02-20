@@ -29,7 +29,7 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
  * @author Julien Chable
  * @version 0.1
  * 
- * @see http://www.ietf.org/rfc/rfc3986.txt
+ * @see <a href="http://www.ietf.org/rfc/rfc3986.txt">http://www.ietf.org/rfc/rfc3986.txt</a>
  */
 public final class PackagePartName implements Comparable<PackagePartName> {
 

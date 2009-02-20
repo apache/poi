@@ -29,6 +29,8 @@ import org.dom4j.Document;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.Package;
 import org.apache.poi.openxml4j.opc.StreamHelper;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 
 /**
  * Zip implementation of the ContentTypeManager.
@@ -38,6 +40,7 @@ import org.apache.poi.openxml4j.opc.StreamHelper;
  * @see ContentTypeManager
  */
 public class ZipContentTypeManager extends ContentTypeManager {
+    private static POILogger logger = POILogFactory.getLogger(ZipContentTypeManager.class);
 
 	/**
 	 * Delegate constructor to the super constructor.
@@ -81,7 +84,7 @@ public class ZipContentTypeManager extends ContentTypeManager {
 			}
 			zos.closeEntry();
 		} catch (IOException ioe) {
-			logger.error("Cannot write: " + CONTENT_TYPES_PART_NAME
+			logger.log(POILogger.ERROR, "Cannot write: " + CONTENT_TYPES_PART_NAME
 					+ " in Zip !", ioe);
 			return false;
 		}

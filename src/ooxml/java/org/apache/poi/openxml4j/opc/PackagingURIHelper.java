@@ -218,13 +218,12 @@ public final class PackagingURIHelper {
 	}
 
 	/**
-	 * Combine les deux URI.
+	 * Combine two URIs.
 	 * 
-	 * @param prefix
-	 *            L'URI de pr�fixe.
-	 * @param suffix
-	 *            L'URI de suffixe.
-	 * @return
+	 * @param prefix the prefix URI
+	 * @param suffix the suffix URI
+	 *
+	 * @return the combined URI
 	 */
 	public static URI combine(URI prefix, URI suffix) {
 		URI retUri = null;
@@ -406,11 +405,11 @@ public final class PackagingURIHelper {
 			URI relationshipPartUri) {
 		if (relationshipPartUri == null)
 			throw new IllegalArgumentException(
-					"Le param�tre relationshipPartUri ne doit pas �tre null !");
+					"Must not be null");
 
 		if (!isRelationshipPartURI(relationshipPartUri))
 			throw new IllegalArgumentException(
-					"L'URI ne doit pas �tre celle d'une partie de type relation.");
+					"Must be a relationship part");
 
 		if (relationshipPartUri.compareTo(PACKAGE_RELATIONSHIPS_ROOT_URI) == 0)
 			return PACKAGE_ROOT_URI;
