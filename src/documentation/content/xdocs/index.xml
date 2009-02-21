@@ -31,7 +31,7 @@
   </header>
 
   <body>
-    <section><title>POI 3.5 beta 4, and Office Open XML Support (2008-12-01)</title>
+    <section><title>POI 3.5 beta 5, and Office Open XML Support (2009-02-19)</title>
       <p>We are currently working to support the new Office Open XML
        file formats, such as XLSX and PPTX, which were introduced in
        Office 2007.</p>
@@ -45,7 +45,7 @@
        <link href="mailinglists.html">dev list</link> to track progress.</p>
       <p>
         The release is also available from the central Maven repository 
-        under Group ID "org.apache.poi" and Version "3.5-beta4".
+        under Group ID "org.apache.poi" and Version "3.5-beta5".
       </p>  
     </section>
     <section><title>POI 3.2-FINAL Released (2008-10-19)</title>
