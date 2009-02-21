@@ -32,7 +32,8 @@
         <section>
             <title>Overview</title>
 
-            <p>HPBF is the POI Project's pure Java implementation of the Visio file format.</p>
+            <p>HPBF is the POI Project's pure Java implementation of the 
+			  Publisher file format.</p>
             <p>Currently, HPBF is in an early stage, whilst we try to
               figure out the file format. So far, we have basic text
               extraction support, and are able to read some parts within
