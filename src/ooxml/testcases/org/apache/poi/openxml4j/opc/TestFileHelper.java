@@ -33,13 +33,23 @@ public class TestFileHelper extends TestCase {
 
 	public void testGetDirectory() {
 		TreeMap<String, String> expectedValue = new TreeMap<String, String>();
-		expectedValue.put("c:\\test\\test.doc", "c:\\test");
-		expectedValue.put("d:\\test\\test2\\test.doc.xml", "d:\\test\\test2");
+		expectedValue.put("/dir1/test.doc", "/dir1");
+		expectedValue.put("/dir1/dir2/test.doc.xml", "/dir1/dir2");
 
 		for (String filename : expectedValue.keySet()) {
-			assertTrue(expectedValue.get(filename).equalsIgnoreCase(
-					FileHelper.getDirectory(new File(filename))
-							.getAbsolutePath()));
+            File f1 = new File(expectedValue.get(filename));
+            File f2 = FileHelper.getDirectory(new File(filename));
+
+            /*
+             * YK: The original version asserted expected values against File#getAbsolutePath():
+             * assertTrue(expectedValue.get(filename).equalsIgnoreCase(
+             *        FileHelper.getDirectory(new File(filename))
+             *                .getAbsolutePath()));
+             *
+             * This comparison is platform dependent and resulted in build errors in Gump since 21/02/2009.
+             * Assertion via File#equals(File otherFile) is a better approach. 
+             */
+            assertTrue(f1.equals(f2));
 		}
 	}
 }
