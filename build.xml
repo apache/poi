@@ -137,7 +137,7 @@ under the License.
   <!-- "Copy these file(s), free of charge" -->
   <property name="ooxml.xsds.ozip" location="${ooxml.lib}/OfficeOpenXML-Part4.zip"/>
   <property name="ooxml.xsds.izip" location="${ooxml.lib}/OfficeOpenXML-XMLSchema.zip"/>
-  <property name="ooxml.xsds.url" value="http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%20Part%204%20(DOCX).zip" />
+  <property name="ooxml.xsds.url" value="http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%204%20(PDF).zip" />
   <property name="ooxml.xsds.jar" location="${ooxml.lib}/ooxml-schemas.jar"/>
 
   <property name="maven.ooxml.xsds.version.id" value="1.0"/>
