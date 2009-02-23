@@ -795,8 +795,8 @@ under the License.
             <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
             <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
             <sysproperty key="OOXML.testdata.path" file="${ooxml.src.test}/org/apache/poi/ooxml/data"/> 
-            <sysproperty key="openxml4j.compliance.input" file="${ooxml.src.test}/org/apache/poi/openxml4j/opc/compliance/input"/> 
-            <sysproperty key="openxml4j.testdata.input" file="${ooxml.src.test}/org/apache/poi/openxml4j/opc/INPUT"/> 
+            <sysproperty key="openxml4j.compliance.input" file="${ooxml.src.test}/org/apache/poi/openxml4j/opc/compliance/data"/> 
+            <sysproperty key="openxml4j.testdata.input" file="${ooxml.src.test}/org/apache/poi/openxml4j/opc/data"/> 
             <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain"/>
             <formatter type="xml"/>
@@ -804,7 +804,6 @@ under the License.
                 <fileset dir="${ooxml.src.test}">
                     <include name="**/Test*.java"/>
                     <exclude name="**/All*Tests.java"/>
-                    <exclude name="**/TestCore.java"/> <!--non-junit class from OpenXML4j-->
                 </fileset>
             </batchtest>
         </junit>
