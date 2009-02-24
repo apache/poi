@@ -36,14 +36,16 @@
     </devs>
 
 		<!-- Don't forget to update status.xml too! -->
-        <release version="3.5-beta6" date="2008-??-??">
+        <release version="3.5-beta6" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="add">46703 - added setDisplayZeros / isDisplayZeros to common interface org.apache.poi.ss.usermodel.Sheet</action>
+           <action dev="POI-DEVELOPERS" type="add">46708 - added getMergedRegion(int) to common interface org.apache.poi.ss.usermodel.Sheet</action>
            <action dev="POI-DEVELOPERS" type="fix">fixed Sheet.autoSizeColumn() to use cached formula values when processing formula cells </action>
            <action dev="POI-DEVELOPERS" type="fix">Fixed formula parser to handle names with backslashes</action>
            <action dev="POI-DEVELOPERS" type="add">46660 - added Workbook getHidden() and setHidden(boolean)</action>
            <action dev="POI-DEVELOPERS" type="fix">46693 - Fixed bugs serialization bugs in records: CHARTFORMAT, SHTPROPS, SXVD and SXVDEX</action>
            <action dev="POI-DEVELOPERS" type="fix">46627 - Fixed offset of added images if Pictures stream contains pictures with zero length</action>
         </release>
-        <release version="3.5-beta5" date="2008-02-19">
+        <release version="3.5-beta5" date="2009-02-19">
            <action dev="POI-DEVELOPERS" type="fix">46536 - When shifting rows, update formulas on that sheet to point to the new location of those rows</action>
            <action dev="POI-DEVELOPERS" type="fix">46663 - Fixed XSSFSheet.shiftRows to properly update references of the shifted cells</action>
            <action dev="POI-DEVELOPERS" type="fix">46535 - Remove reference from calculation chain when a formula is deleted</action>

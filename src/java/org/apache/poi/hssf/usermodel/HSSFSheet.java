@@ -841,6 +841,31 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                 .getDisplayGuts();
     }
 
+
+    /**
+     * Gets the flag indicating whether the window should show 0 (zero) in cells containing zero value.
+     * When false, cells with zero value appear blank instead of showing the number zero.
+     * <p>
+     * In Excel 2003 this option can be changed in the Options dialog on the View tab.
+     * </p>
+     * @return whether all zero values on the worksheet are displayed
+     */
+    public boolean isDisplayZeros(){
+        return _sheet.getWindowTwo().getDisplayZeros();
+    }
+
+    /**
+     * Set whether the window should show 0 (zero) in cells containing zero value.
+     * When false, cells with zero value appear blank instead of showing the number zero.
+     * <p>
+     * In Excel 2003 this option can be set in the Options dialog on the View tab.
+     * </p>
+     * @param value whether to display or hide all zero values on the worksheet
+     */
+    public void setDisplayZeros(boolean value){
+        _sheet.getWindowTwo().setDisplayZeros(value);    
+    }
+
     /**
      * fit to page option is on
      * @return fit or not

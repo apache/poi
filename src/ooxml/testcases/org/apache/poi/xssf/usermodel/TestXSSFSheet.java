@@ -926,4 +926,32 @@ public class TestXSSFSheet extends TestCase {
         assertEquals(500, sh2.getColumnWidth(0));
         assertEquals(sh1.getColumnWidth(0), sh2.getColumnWidth(0));
     }
+
+    /**
+     * Tests the display of gridlines, formulas, and rowcolheadings.
+     * @author Shawn Laubach (slaubach at apache dot org)
+     */
+    public void testDisplayOptions() {
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet();
+
+        assertEquals(sheet.isDisplayGridlines(), true);
+        assertEquals(sheet.isDisplayRowColHeadings(), true);
+        assertEquals(sheet.isDisplayFormulas(), false);
+        assertEquals(sheet.isDisplayZeros(), true);
+
+        sheet.setDisplayGridlines(false);
+        sheet.setDisplayRowColHeadings(false);
+        sheet.setDisplayFormulas(true);
+        sheet.setDisplayZeros(false);
+
+        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        sheet = wb.getSheetAt(0);
+
+        assertEquals(sheet.isDisplayGridlines(), false);
+        assertEquals(sheet.isDisplayRowColHeadings(), false);
+        assertEquals(sheet.isDisplayFormulas(), true);
+        assertEquals(sheet.isDisplayZeros(), false);
+    }
+
 }

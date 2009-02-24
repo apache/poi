@@ -17,8 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestSheetShiftRows;
 
 /**
@@ -30,23 +29,11 @@ import org.apache.poi.ss.usermodel.BaseTestSheetShiftRows;
  */
 public final class TestSheetShiftRows extends BaseTestSheetShiftRows {
 
-	@Override
-	protected Workbook openSampleWorkbook(String sampleFileName) {
-		return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);
-	}
 
-	@Override
-	protected Workbook writeOutAndReadBack(Workbook wb) {
-		if (wb instanceof HSSFWorkbook) {
-			return HSSFTestDataSamples.writeOutAndReadBack((HSSFWorkbook) wb);
-		}
-		throw new IllegalArgumentException("bad workbook type (" + wb.getClass().getName() + ")");
-	}
-
-	@Override
-	protected Workbook createWorkbook() {
-		return new HSSFWorkbook();
-	}
+    @Override
+    protected HSSFITestDataProvider getTestDataProvider(){
+        return HSSFITestDataProvider.getInstance();
+    }
 
     public void testShiftRows() {
         baseTestShiftRows("SimpleMultiCell.xls");
