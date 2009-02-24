@@ -540,6 +540,28 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
+     * Gets the flag indicating whether the window should show 0 (zero) in cells containing zero value.
+     * When false, cells with zero value appear blank instead of showing the number zero.
+     * 
+     * @return whether all zero values on the worksheet are displayed
+     */
+    public boolean isDisplayZeros(){
+        CTSheetView view = getDefaultSheetView();
+        return view == null ? true : view.getShowZeros();
+    }
+
+    /**
+     * Set whether the window should show 0 (zero) in cells containing zero value.
+     * When false, cells with zero value appear blank instead of showing the number zero.
+     *
+     * @param value whether to display or hide all zero values on the worksheet
+     */
+    public void setDisplayZeros(boolean value){
+        CTSheetView view = getSheetTypeSheetView();
+        view.setShowZeros(value);
+    }
+
+    /**
      * Gets the first row on the sheet
      *
      * @return the number of the first logical row on the sheet, zero based

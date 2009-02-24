@@ -14,45 +14,37 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.BaseTestSheetShiftRows;
+package org.apache.poi.hssf;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
-import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * @author Yegor Kozlov
  */
-public class TestSheetShiftRows  extends BaseTestSheetShiftRows {
+public final class HSSFITestDataProvider implements ITestDataProvider {
 
-    @Override
-    protected ITestDataProvider getTestDataProvider(){
-        return XSSFITestDataProvider.getInstance();
+    public HSSFWorkbook openSampleWorkbook(String sampleFileName) {
+		return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);
+	}
+
+	public HSSFWorkbook writeOutAndReadBack(Workbook original) {
+        if(!(original instanceof HSSFWorkbook)) {
+            throw new IllegalArgumentException("Expected an instance of HSSFWorkbook");
+        }
+
+        return HSSFTestDataSamples.writeOutAndReadBack((HSSFWorkbook)original);
+	}
+
+    public HSSFWorkbook createWorkbook(){
+        return new HSSFWorkbook();
     }
 
-    public void testShiftRows() {
-        baseTestShiftRows("SimpleMultiCell.xlsx");
-    }
-
-    public void testShiftRow() {
-        baseTestShiftRow();
-    }
-
-    public void testShiftRow0() {
-        baseTestShiftRow0();
-    }
-
-    //TODO support shifting of page breaks
-    public void $testShiftRowBreaks() {
-        baseTestShiftRowBreaks();
-    }
-
-    //TODO support shifting of comments. 
-    public void $testShiftWithComments() {
-        baseTestShiftWithComments("comments.xlsx");
-    }
-
-    public void testShiftWithFormulas() {
-        baseTestShiftWithFormulas("ForShifting.xlsx");
+    private HSSFITestDataProvider(){}
+    private static HSSFITestDataProvider inst = new HSSFITestDataProvider();
+    public static HSSFITestDataProvider getInstance(){
+        return inst;
     }
 }

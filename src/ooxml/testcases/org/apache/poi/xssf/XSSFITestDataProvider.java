@@ -14,45 +14,36 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.usermodel;
+package org.apache.poi.xssf;
 
-import org.apache.poi.ss.usermodel.BaseTestSheetShiftRows;
 import org.apache.poi.ss.ITestDataProvider;
-import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * @author Yegor Kozlov
  */
-public class TestSheetShiftRows  extends BaseTestSheetShiftRows {
+public final class XSSFITestDataProvider implements ITestDataProvider {
 
-    @Override
-    protected ITestDataProvider getTestDataProvider(){
-        return XSSFITestDataProvider.getInstance();
+    public XSSFWorkbook openSampleWorkbook(String sampleFileName) {
+		return XSSFTestDataSamples.openSampleWorkbook(sampleFileName);
+	}
+
+	public XSSFWorkbook writeOutAndReadBack(Workbook original) {
+        if(!(original instanceof XSSFWorkbook)) {
+            throw new IllegalArgumentException("Expected an instance of XSSFWorkbook");
+        }
+
+        return XSSFTestDataSamples.writeOutAndReadBack((XSSFWorkbook)original);
+	}
+
+    public XSSFWorkbook createWorkbook(){
+        return new XSSFWorkbook();
     }
 
-    public void testShiftRows() {
-        baseTestShiftRows("SimpleMultiCell.xlsx");
-    }
-
-    public void testShiftRow() {
-        baseTestShiftRow();
-    }
-
-    public void testShiftRow0() {
-        baseTestShiftRow0();
-    }
-
-    //TODO support shifting of page breaks
-    public void $testShiftRowBreaks() {
-        baseTestShiftRowBreaks();
-    }
-
-    //TODO support shifting of comments. 
-    public void $testShiftWithComments() {
-        baseTestShiftWithComments("comments.xlsx");
-    }
-
-    public void testShiftWithFormulas() {
-        baseTestShiftWithFormulas("ForShifting.xlsx");
+    private XSSFITestDataProvider(){}
+    private static XSSFITestDataProvider inst = new XSSFITestDataProvider();
+    public static XSSFITestDataProvider getInstance(){
+        return inst;
     }
 }

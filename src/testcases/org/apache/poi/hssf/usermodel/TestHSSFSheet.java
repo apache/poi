@@ -538,16 +538,15 @@ public final class TestHSSFSheet extends TestCase {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
-
         assertEquals(sheet.isDisplayGridlines(), true);
         assertEquals(sheet.isDisplayRowColHeadings(), true);
         assertEquals(sheet.isDisplayFormulas(), false);
+        assertEquals(sheet.isDisplayZeros(), true);
 
         sheet.setDisplayGridlines(false);
         sheet.setDisplayRowColHeadings(false);
         sheet.setDisplayFormulas(true);
+        sheet.setDisplayZeros(false);
 
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         sheet = wb.getSheetAt(0);
@@ -555,6 +554,7 @@ public final class TestHSSFSheet extends TestCase {
         assertEquals(sheet.isDisplayGridlines(), false);
         assertEquals(sheet.isDisplayRowColHeadings(), false);
         assertEquals(sheet.isDisplayFormulas(), true);
+        assertEquals(sheet.isDisplayZeros(), false);
     }
 
 

@@ -18,6 +18,7 @@
 package org.apache.poi.ss.usermodel;
 
 import junit.framework.TestCase;
+import org.apache.poi.ss.ITestDataProvider;
 
 /**
  * Tests row shifting capabilities.
@@ -26,19 +27,11 @@ import junit.framework.TestCase;
  * @author Toshiaki Kamoshida (kamoshida.toshiaki at future dot co dot jp)
  */
 public abstract class BaseTestSheetShiftRows  extends TestCase {
+
     /**
-     * Override to provide HSSF / XSSF specific way for re-serialising a workbook
+     * @return an object that provides test data in HSSF / XSSF specific way
      */
-    protected abstract Workbook writeOutAndReadBack(Workbook wb);
-    /**
-     * Override to provide way of loading HSSF / XSSF sample workbooks
-     * @param sampleFileName without the ".xls" or ".xlsx" suffix
-     */
-    protected abstract Workbook openSampleWorkbook(String sampleFileName);
-    /**
-     * Override to provide way of creating HSSF / XSSF workbooks
-     */
-    protected abstract Workbook createWorkbook();
+    protected abstract ITestDataProvider getTestDataProvider();
 
     /**
      * Tests the shiftRows function.  Does three different shifts.
@@ -46,17 +39,17 @@ public abstract class BaseTestSheetShiftRows  extends TestCase {
      * check.  This ensures that if some changes code that breaks
      * writing or what not, they realize it.
      *
-     * @author Shawn Laubach (slaubach at apache dot org)
+     * @param sampleName the sample file to test against
      */
     public final void baseTestShiftRows(String sampleName){
         // Read initial file in
-        Workbook wb = openSampleWorkbook(sampleName);
+        Workbook wb = getTestDataProvider().openSampleWorkbook(sampleName);
         Sheet s = wb.getSheetAt( 0 );
 
         // Shift the second row down 1 and write to temp file
         s.shiftRows( 1, 1, 1 );
 
-        wb = writeOutAndReadBack(wb);
+        wb = getTestDataProvider().writeOutAndReadBack(wb);
 
         // Read from temp file and check the number of cells in each
         // row (in original file each row was unique)
@@ -71,7 +64,7 @@ public abstract class BaseTestSheetShiftRows  extends TestCase {
         // Shift rows 1-3 down 3 in the current one.  This tests when
         // 1 row is blank.  Write to a another temp file
         s.shiftRows( 0, 2, 3 );
-        wb = writeOutAndReadBack(wb);
+        wb = getTestDataProvider().writeOutAndReadBack(wb);
 
         // Read and ensure things are where they should be
         s = wb.getSheetAt(0);
@@ -83,12 +76,12 @@ public abstract class BaseTestSheetShiftRows  extends TestCase {
         assertEquals(s.getRow(5).getPhysicalNumberOfCells(), 2);
 
         // Read the first file again
-        wb = openSampleWorkbook(sampleName);
+        wb = getTestDataProvider().openSampleWorkbook(sampleName);
         s = wb.getSheetAt( 0 );
 
         // Shift rows 3 and 4 up and write to temp file
         s.shiftRows( 2, 3, -2 );
-        wb = writeOutAndReadBack(wb);
+        wb = getTestDataProvider().writeOutAndReadBack(wb);
         s = wb.getSheetAt( 0 );
         assertEquals(s.getRow(0).getPhysicalNumberOfCells(), 3);
         assertEquals(s.getRow(1).getPhysicalNumberOfCells(), 4);
@@ -103,11 +96,9 @@ public abstract class BaseTestSheetShiftRows  extends TestCase {
 
     /**
      * Tests when rows are null.
-     *
-     * @author Toshiaki Kamoshida (kamoshida.toshiaki at future dot co dot jp)
      */
     public final void baseTestShiftRow() {
-        Workbook b = createWorkbook();
+        Workbook b = getTestDataProvider().createWorkbook();
         Sheet s	= b.createSheet();
         s.createRow(0).createCell(0).setCellValue("TEST1");
         s.createRow(3).createCell(0).setCellValue("TEST2");
@@ -116,11 +107,9 @@ public abstract class BaseTestSheetShiftRows  extends TestCase {
 
     /**
      * Tests when shifting the first row.
-     *
-     * @author Toshiaki Kamoshida (kamoshida.toshiaki at future dot co dot jp)
      */
     public final void baseTestShiftRow0() {
-        Workbook b = createWorkbook();
+        Workbook b = getTestDataProvider().createWorkbook();
         Sheet s	= b.createSheet();
         s.createRow(0).createCell(0).setCellValue("TEST1");
         s.createRow(3).createCell(0).setCellValue("TEST2");
@@ -132,7 +121,7 @@ public abstract class BaseTestSheetShiftRows  extends TestCase {
      *
      */
     public final void baseTestShiftRowBreaks() {
-        Workbook b = createWorkbook();
+        Workbook b = getTestDataProvider().createWorkbook();
         Sheet s	= b.createSheet();
         Row row = s.createRow(4);
         row.createCell(0).setCellValue("test");
@@ -144,7 +133,7 @@ public abstract class BaseTestSheetShiftRows  extends TestCase {
 
 
     public final void baseTestShiftWithComments(String sampleName) {
-        Workbook wb = openSampleWorkbook(sampleName);
+        Workbook wb = getTestDataProvider().openSampleWorkbook(sampleName);
 
         Sheet sheet = wb.getSheet("Sheet1");
         assertEquals(3, sheet.getLastRowNum());
@@ -182,7 +171,7 @@ public abstract class BaseTestSheetShiftRows  extends TestCase {
 
         // Write out and read back in again
         // Ensure that the changes were persisted
-        wb = writeOutAndReadBack(wb);
+        wb = getTestDataProvider().writeOutAndReadBack(wb);
         sheet = wb.getSheet("Sheet1");
         assertEquals(4, sheet.getLastRowNum());
 
@@ -203,9 +192,11 @@ public abstract class BaseTestSheetShiftRows  extends TestCase {
 
     /**
      * See bug #34023
+     *
+     * @param sampleName the sample file to test against
      */
     public void baseTestShiftWithFormulas(String sampleName) {
-        Workbook wb = openSampleWorkbook(sampleName);
+        Workbook wb = getTestDataProvider().openSampleWorkbook(sampleName);
 
         Sheet sheet = wb.getSheet("Sheet1");
         assertEquals(20, sheet.getLastRowNum());

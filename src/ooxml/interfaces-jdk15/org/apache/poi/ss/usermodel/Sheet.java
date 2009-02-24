@@ -239,6 +239,13 @@ public interface Sheet extends Iterable<Row> {
     int getNumMergedRegions();
 
     /**
+     * Returns the merged region at the specified index
+     *
+     * @return the merged region at the specified index
+     */
+    public CellRangeAddress getMergedRegion(int index);
+
+    /**
      *  Returns an iterator of the physical rows
      *
      * @return an iterator of the PHYSICAL rows.  Meaning the 3rd element may not
@@ -259,6 +266,23 @@ public interface Sheet extends Iterable<Row> {
      * @param value - guts or no guts
      */
     void setDisplayGuts(boolean value);
+
+    /**
+     * Set whether the window should show 0 (zero) in cells containing zero value.
+     * When false, cells with zero value appear blank instead of showing the number zero.
+     * 
+     * @param value whether to display or hide all zero values on the worksheet
+     */
+    void setDisplayZeros(boolean value);
+
+
+    /**
+     * Gets the flag indicating whether the window should show 0 (zero) in cells containing zero value.
+     * When false, cells with zero value appear blank instead of showing the number zero.
+     *
+     * @return whether all zero values on the worksheet are displayed
+     */
+    boolean isDisplayZeros();
 
     /**
      * Flag indicating whether the Fit to Page print option is enabled.
