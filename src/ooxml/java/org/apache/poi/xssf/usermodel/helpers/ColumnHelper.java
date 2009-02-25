@@ -219,13 +219,14 @@ public class ColumnHelper {
     }
 
     public void setColumnAttributes(CTCol fromCol, CTCol toCol) {
-    	toCol.setWidth(fromCol.getWidth());
-    	toCol.setHidden(fromCol.getHidden());
-    	toCol.setBestFit(fromCol.getBestFit());
-        toCol.setStyle(fromCol.getStyle());
-        if(fromCol.getOutlineLevel()!=0){
-        	toCol.setOutlineLevel(fromCol.getOutlineLevel());
-        }
+    	if(fromCol.isSetBestFit()) toCol.setBestFit(fromCol.getBestFit());
+        if(fromCol.isSetCustomWidth()) toCol.setCustomWidth(fromCol.getCustomWidth());
+        if(fromCol.isSetHidden()) toCol.setHidden(fromCol.getHidden());
+        if(fromCol.isSetStyle()) toCol.setStyle(fromCol.getStyle());
+        if(fromCol.isSetWidth()) toCol.setWidth(fromCol.getWidth());
+        if(fromCol.isSetCollapsed()) toCol.setCollapsed(fromCol.getCollapsed());
+        if(fromCol.isSetPhonetic()) toCol.setPhonetic(fromCol.getPhonetic());
+        if(fromCol.isSetOutlineLevel()) toCol.setOutlineLevel(fromCol.getOutlineLevel());
     }
 
     public void setColBestFit(long index, boolean bestFit) {
