@@ -79,6 +79,8 @@ import org.apache.poi.hssf.record.WindowProtectRecord;
 import org.apache.poi.hssf.record.WriteAccessRecord;
 import org.apache.poi.hssf.record.WriteProtectRecord;
 import org.apache.poi.hssf.record.formula.NameXPtg;
+import org.apache.poi.hssf.record.formula.FormulaShifter;
+import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
 import org.apache.poi.util.POILogFactory;
@@ -2310,4 +2312,18 @@ public final class Workbook implements Model {
 
         }
     }
+
+    /**
+     * Updates named ranges due to moving of cells
+     */
+    public void updateNamesAfterCellShift(FormulaShifter shifter) {
+        for (int i = 0 ; i < getNumNames() ; ++i){
+            NameRecord nr = getNameRecord(i);
+            Ptg[] ptgs = nr.getNameDefinition();
+            if (shifter.adjustFormula(ptgs, nr.getExternSheetNumber())) {
+                nr.setNameDefinition(ptgs);
+            }
+        }
+    }
+
 }

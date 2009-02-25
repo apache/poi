@@ -1285,7 +1285,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             short otherExtSheetIx = _book.checkExternSheet(i);
             otherSheet.updateFormulasAfterCellShift(shifter, otherExtSheetIx);
         }
-        // TODO - adjust formulas in named ranges
+        _workbook.getWorkbook().updateNamesAfterCellShift(shifter);
     }
 
     protected void insertChartRecords(List<Record> records) {

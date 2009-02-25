@@ -43,8 +43,8 @@ public final class TestSheetShiftRows extends BaseTestSheetShiftRows {
         baseTestShiftRow();
     }
 
-    public void testShiftRow0() {
-        baseTestShiftRow0();
+    public void testShiftNames() {
+        baseTestShiftWithNames();
     }
 
     public void testShiftRowBreaks() {
@@ -59,4 +59,7 @@ public final class TestSheetShiftRows extends BaseTestSheetShiftRows {
         baseTestShiftWithFormulas("ForShifting.xls");
     }
 
+    public void testShiftWithMergedRegions() {
+        baseTestShiftWithMergedRegions();
+    }
 }

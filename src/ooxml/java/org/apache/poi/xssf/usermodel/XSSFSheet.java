@@ -37,6 +37,7 @@ import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
+import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.util.POILogger;
@@ -74,7 +75,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     protected CTSheet sheet;
     protected CTWorksheet worksheet;
-    private TreeMap<Integer, Row> rows;
+    private TreeMap<Integer, XSSFRow> rows;
     private List<XSSFHyperlink> hyperlinks;
     private ColumnHelper columnHelper;
     private CommentsTable sheetComments;
@@ -151,7 +152,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     private void initRows(CTWorksheet worksheet) {
-        rows = new TreeMap<Integer, Row>();
+        rows = new TreeMap<Integer, XSSFRow>();
         sharedFormulas = new HashMap<Integer, XSSFCell>();
         for (CTRow row : worksheet.getSheetData().getRowArray()) {
             XSSFRow r = new XSSFRow(row, this);
@@ -831,7 +832,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return <code>XSSFRow</code> representing the rownumber or <code>null</code> if its not defined on the sheet
      */
     public XSSFRow getRow(int rownum) {
-        return (XSSFRow)rows.get(rownum);
+        return rows.get(rownum);
     }
 
     /**
@@ -1012,8 +1013,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     private short getMaxOutlineLevelRows(){
         short outlineLevel=0;
-        for(Row r : rows.values()){
-            XSSFRow xrow=(XSSFRow)r;
+        for(XSSFRow xrow : rows.values()){
             outlineLevel=xrow.getCTRow().getOutlineLevel()>outlineLevel? xrow.getCTRow().getOutlineLevel(): outlineLevel;
         }
         return outlineLevel;
@@ -1224,7 +1224,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * Call getRowNum() on each row if you care which one it is.
      */
     public Iterator<Row> rowIterator() {
-        return rows.values().iterator();
+        return (Iterator<Row>)(Iterator<? extends Row>)rows.values().iterator();
     }
 
     /**
@@ -1466,18 +1466,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             XSSFRow row = (XSSFRow)it.next();
             int rownum = row.getRowNum();
+            if(rownum < startRow) continue;
 
             if (!copyRowHeight) {
                 row.setHeight((short)-1);
             }
 
-            if (resetOriginalRowHeight && getDefaultRowHeight() >= 0) {
-                row.setHeight(getDefaultRowHeight());
-            }
-            if (removeRow(startRow, endRow, n, row.getRowNum())) {
+            if (removeRow(startRow, endRow, n, rownum)) {
                 it.remove();
             }
-            else if (row.getRowNum() >= startRow && row.getRowNum() <= endRow) {
+            else if (rownum >= startRow && rownum <= endRow) {
                 row.shift(n);
             }
 
@@ -1493,26 +1491,21 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                 }
             }
         }
-        //rebuild the rows map
+        XSSFRowShifter rowShifter = new XSSFRowShifter(this);
+
         int sheetIndex = getWorkbook().getSheetIndex(this);
         FormulaShifter shifter = FormulaShifter.createForRowShift(sheetIndex, startRow, endRow, n);
-        TreeMap<Integer, Row> map = new TreeMap<Integer, Row>();
-        for(Row r : this) {
-            XSSFRow row = (XSSFRow)r;
-            row.updateFormulasAfterCellShift(shifter);
+
+        rowShifter.updateNamedRanges(shifter);
+        rowShifter.updateFormulas(shifter);
+        rowShifter.shiftMerged(startRow, endRow, n);
+
+        //rebuild the rows map
+        TreeMap<Integer, XSSFRow> map = new TreeMap<Integer, XSSFRow>();
+        for(XSSFRow r : rows.values()) {
             map.put(r.getRowNum(), r);
         }
         rows = map;
-
-        //update formulas on other sheets
-        for(XSSFSheet sheet : getWorkbook()) {
-            if (sheet == this) continue;
-            for(Row r : sheet) {
-                XSSFRow row = (XSSFRow)r;
-                row.updateFormulasAfterCellShift(shifter);
-            }
-        }
-
     }
 
     /**
@@ -1783,10 +1776,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         CTSheetData sheetData = worksheet.getSheetData();
         ArrayList<CTRow> rArray = new ArrayList<CTRow>(rows.size());
-        for(Row row : rows.values()){
-            XSSFRow r = (XSSFRow)row;
-            r.onDocumentWrite();
-            rArray.add(r.getCTRow());
+        for(XSSFRow row : rows.values()){
+            row.onDocumentWrite();
+            rArray.add(row.getCTRow());
         }
         sheetData.setRowArray(rArray.toArray(new CTRow[rArray.size()]));
 

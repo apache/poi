@@ -19,6 +19,7 @@ package org.apache.poi.ss.usermodel;
 
 import junit.framework.TestCase;
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * Tests row shifting capabilities.
@@ -108,9 +109,10 @@ public abstract class BaseTestSheetShiftRows  extends TestCase {
     /**
      * Tests when shifting the first row.
      */
-    public final void baseTestShiftRow0() {
+    public final void baseTestActiveCell() {
         Workbook b = getTestDataProvider().createWorkbook();
         Sheet s	= b.createSheet();
+
         s.createRow(0).createCell(0).setCellValue("TEST1");
         s.createRow(3).createCell(0).setCellValue("TEST2");
         s.shiftRows(0,4,1);
@@ -189,6 +191,45 @@ public abstract class BaseTestSheetShiftRows  extends TestCase {
         comment4_shifted = sheet.getCellComment(4,0).getString().getString();
         assertEquals(comment4,comment4_shifted);
     }
+
+    public final void baseTestShiftWithNames() {
+        Workbook wb = getTestDataProvider().createWorkbook();
+        Sheet sheet	= wb.createSheet();
+        Row row = sheet.createRow(0);
+        row.createCell(0).setCellValue(1.1);
+        row.createCell(1).setCellValue(2.2);
+
+        Name name1 = wb.createName();
+        name1.setNameName("name1");
+        name1.setRefersToFormula("A1+B1");
+
+        Name name2 = wb.createName();
+        name2.setNameName("name2");
+        name2.setRefersToFormula("A1");
+
+        sheet.shiftRows(0, 1, 2);
+        name1 = wb.getNameAt(0);
+        assertEquals("A3+B3", name1.getRefersToFormula());
+
+        name2 = wb.getNameAt(1);
+        assertEquals("A3", name2.getRefersToFormula());    
+    }
+
+    public final void baseTestShiftWithMergedRegions() {
+        Workbook wb = getTestDataProvider().createWorkbook();
+        Sheet sheet	= wb.createSheet();
+        Row row = sheet.createRow(0);
+        row.createCell(0).setCellValue(1.1);
+        row.createCell(1).setCellValue(2.2);
+        CellRangeAddress region = new CellRangeAddress(0, 0, 0, 2);
+        assertEquals("A1:C1", region.formatAsString());
+
+        sheet.addMergedRegion(region);
+
+        sheet.shiftRows(0, 1, 2);
+        region = sheet.getMergedRegion(0);
+        assertEquals("A3:C3", region.formatAsString());
+   }
 
     /**
      * See bug #34023
