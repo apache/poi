@@ -38,8 +38,8 @@ public class TestSheetShiftRows  extends BaseTestSheetShiftRows {
         baseTestShiftRow();
     }
 
-    public void testShiftRow0() {
-        baseTestShiftRow0();
+    public void testShiftNames() {
+        baseTestShiftWithNames();
     }
 
     //TODO support shifting of page breaks
@@ -54,5 +54,9 @@ public class TestSheetShiftRows  extends BaseTestSheetShiftRows {
 
     public void testShiftWithFormulas() {
         baseTestShiftWithFormulas("ForShifting.xlsx");
+    }
+
+    public void testShiftWithMergedRegions() {
+        baseTestShiftWithMergedRegions();
     }
 }
