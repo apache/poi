@@ -102,11 +102,11 @@ public class XSSFRowShifter {
      */
     public void updateNamedRanges(FormulaShifter shifter) {
         XSSFWorkbook wb = sheet.getWorkbook();
-        int sheetIndex = wb.getSheetIndex(sheet);
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         for (int i = 0; i < wb.getNumberOfNames(); i++) {
             XSSFName name = wb.getNameAt(i);
             String formula = name.getRefersToFormula();
+            int sheetIndex = name.getSheetIndex();
 
             Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.NAMEDRANGE, sheetIndex);
             if (shifter.adjustFormula(ptgs, sheetIndex)) {

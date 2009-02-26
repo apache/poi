@@ -194,25 +194,44 @@ public abstract class BaseTestSheetShiftRows  extends TestCase {
 
     public final void baseTestShiftWithNames() {
         Workbook wb = getTestDataProvider().createWorkbook();
-        Sheet sheet	= wb.createSheet();
-        Row row = sheet.createRow(0);
+        Sheet sheet1	= wb.createSheet("Sheet1");
+        Sheet sheet2	= wb.createSheet("Sheet2");
+        Row row = sheet1.createRow(0);
         row.createCell(0).setCellValue(1.1);
         row.createCell(1).setCellValue(2.2);
 
         Name name1 = wb.createName();
         name1.setNameName("name1");
-        name1.setRefersToFormula("A1+B1");
+        name1.setRefersToFormula("Sheet1!$A$1+Sheet1!$B$1");
 
         Name name2 = wb.createName();
         name2.setNameName("name2");
-        name2.setRefersToFormula("A1");
+        name2.setRefersToFormula("Sheet1!$A$1");
 
-        sheet.shiftRows(0, 1, 2);
+        //refers to A1 but on Sheet2. Should stay unaffected.
+        Name name3 = wb.createName();
+        name3.setNameName("name3");
+        name3.setRefersToFormula("Sheet2!$A$1");
+
+        //The scope of this one is Sheet2. Should stay unaffected.
+        Name name4 = wb.createName();
+        name4.setNameName("name4");
+        name4.setRefersToFormula("A1");
+        name4.setSheetIndex(1);
+
+        sheet1.shiftRows(0, 1, 2);  //shift down the top row on Sheet1.
         name1 = wb.getNameAt(0);
-        assertEquals("A3+B3", name1.getRefersToFormula());
+        assertEquals("Sheet1!$A$3+Sheet1!$B$3", name1.getRefersToFormula());
 
         name2 = wb.getNameAt(1);
-        assertEquals("A3", name2.getRefersToFormula());    
+        assertEquals("Sheet1!$A$3", name2.getRefersToFormula());    
+
+        //name3 and name4 refer to Sheet2 and should not be affected
+        name3 = wb.getNameAt(2);
+        assertEquals("Sheet2!$A$1", name3.getRefersToFormula());
+
+        name4 = wb.getNameAt(3);
+        assertEquals("A1", name4.getRefersToFormula());
     }
 
     public final void baseTestShiftWithMergedRegions() {
