@@ -2320,7 +2320,7 @@ public final class Workbook implements Model {
         for (int i = 0 ; i < getNumNames() ; ++i){
             NameRecord nr = getNameRecord(i);
             Ptg[] ptgs = nr.getNameDefinition();
-            if (shifter.adjustFormula(ptgs, nr.getExternSheetNumber())) {
+            if (shifter.adjustFormula(ptgs, nr.getSheetNumber())) {
                 nr.setNameDefinition(ptgs);
             }
         }
