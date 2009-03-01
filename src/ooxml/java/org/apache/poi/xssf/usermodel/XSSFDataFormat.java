@@ -17,11 +17,12 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.xssf.model.StylesTable;
 
 /**
  * Handles data formats for XSSF.
- * TODO Figure out if there are build in formats too 
+ * 
  */
 public class XSSFDataFormat implements DataFormat {
     private StylesTable stylesSource;
@@ -30,11 +31,28 @@ public class XSSFDataFormat implements DataFormat {
         this.stylesSource = stylesSource;
     }
 
+    /**
+     * Get the format index that matches the given format
+     *  string, creating a new format entry if required.
+     * Aliases text to the proper format as required.
+     *
+     * @param format string matching a built in format
+     * @return index of format.
+     */
     public short getFormat(String format) {
-        return (short)stylesSource.putNumberFormat(format);
+        int idx = BuiltinFormats.getBuiltinFormat(format);
+        if(idx == -1) idx = stylesSource.putNumberFormat(format);
+        return (short)idx;
     }
 
+    /**
+     * get the format string that matches the given format index
+     * @param index of a format
+     * @return string represented at index of format or null if there is not a  format at that index
+     */
     public String getFormat(short index) {
-        return stylesSource.getNumberFormatAt(index);
+        String fmt = BuiltinFormats.getBuiltinFormat(index);
+        if(fmt == null) fmt = stylesSource.getNumberFormatAt(index);
+        return fmt;
     }
 }

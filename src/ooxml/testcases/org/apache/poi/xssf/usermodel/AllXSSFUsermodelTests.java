@@ -38,7 +38,7 @@ public final class AllXSSFUsermodelTests {
 		result.addTestSuite(TestFormulaEvaluatorOnXSSF.class);
 		result.addTestSuite(TestSheetHiding.class);
 		result.addTestSuite(TestXSSFBugs.class);
-		result.addTestSuite(TestXSSFCell.class);
+		result.addTestSuite(TestXSSFDataFormat.class);
 		result.addTestSuite(TestXSSFCellStyle.class);
 		result.addTestSuite(TestXSSFComment.class);
 		result.addTestSuite(TestXSSFDialogSheet.class);

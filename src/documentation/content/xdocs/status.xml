@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.5-beta6" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="add">46772 - support built-in data formats in XSSFDataFormat</action>
            <action dev="POI-DEVELOPERS" type="fix">46719 - fixed XSSFSheet.shiftRows to correctly preserve row heights</action>
            <action dev="POI-DEVELOPERS" type="fix">46715 - preserve custom column widths across re-serialization of XSSFWorkbook</action>
            <action dev="POI-DEVELOPERS" type="add">46703 - added setDisplayZeros / isDisplayZeros to common interface org.apache.poi.ss.usermodel.Sheet</action>

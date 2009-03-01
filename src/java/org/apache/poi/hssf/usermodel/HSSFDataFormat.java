@@ -23,14 +23,12 @@
  */
 package org.apache.poi.hssf.usermodel;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Vector;
+import java.util.*;
 
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.FormatRecord;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.BuiltinFormats;
 
 /**
  * Utility to identify builtin formats.  Now can handle user defined data formats also.  The following is a list of the formats as
@@ -115,61 +113,10 @@ public class HSSFDataFormat implements DataFormat
     private static synchronized List createBuiltinFormats()
     {
         List builtinFormats = new Vector();
-        builtinFormats.add( 0, "General" );
-        builtinFormats.add( 1, "0" );
-        builtinFormats.add( 2, "0.00" );
-        builtinFormats.add( 3, "#,##0" );
-        builtinFormats.add( 4, "#,##0.00" );
-        builtinFormats.add( 5, "($#,##0_);($#,##0)" );
-        builtinFormats.add( 6, "($#,##0_);[Red]($#,##0)" );
-        builtinFormats.add( 7, "($#,##0.00);($#,##0.00)" );
-        builtinFormats.add( 8, "($#,##0.00_);[Red]($#,##0.00)" );
-        builtinFormats.add( 9, "0%" );
-        builtinFormats.add( 0xa, "0.00%" );
-        builtinFormats.add( 0xb, "0.00E+00" );
-        builtinFormats.add( 0xc, "# ?/?" );
-        builtinFormats.add( 0xd, "# ??/??" );
-        builtinFormats.add( 0xe, "m/d/yy" );
-        builtinFormats.add( 0xf, "d-mmm-yy" );
-        builtinFormats.add( 0x10, "d-mmm" );
-        builtinFormats.add( 0x11, "mmm-yy" );
-        builtinFormats.add( 0x12, "h:mm AM/PM" );
-        builtinFormats.add( 0x13, "h:mm:ss AM/PM" );
-        builtinFormats.add( 0x14, "h:mm" );
-        builtinFormats.add( 0x15, "h:mm:ss" );
-        builtinFormats.add( 0x16, "m/d/yy h:mm" );
-
-        // 0x17 - 0x24 reserved for international and undocumented
-        builtinFormats.add( 0x17, "0x17" );
-        builtinFormats.add( 0x18, "0x18" );
-        builtinFormats.add( 0x19, "0x19" );
-        builtinFormats.add( 0x1a, "0x1a" );
-        builtinFormats.add( 0x1b, "0x1b" );
-        builtinFormats.add( 0x1c, "0x1c" );
-        builtinFormats.add( 0x1d, "0x1d" );
-        builtinFormats.add( 0x1e, "0x1e" );
-        builtinFormats.add( 0x1f, "0x1f" );
-        builtinFormats.add( 0x20, "0x20" );
-        builtinFormats.add( 0x21, "0x21" );
-        builtinFormats.add( 0x22, "0x22" );
-        builtinFormats.add( 0x23, "0x23" );
-        builtinFormats.add( 0x24, "0x24" );
-
-        // 0x17 - 0x24 reserved for international and undocumented
-        builtinFormats.add( 0x25, "(#,##0_);(#,##0)" );
-        builtinFormats.add( 0x26, "(#,##0_);[Red](#,##0)" );
-        builtinFormats.add( 0x27, "(#,##0.00_);(#,##0.00)" );
-        builtinFormats.add( 0x28, "(#,##0.00_);[Red](#,##0.00)" );
-        builtinFormats.add( 0x29, "_(*#,##0_);_(*(#,##0);_(* \"-\"_);_(@_)" );
-        builtinFormats.add( 0x2a, "_($*#,##0_);_($*(#,##0);_($* \"-\"_);_(@_)" );
-        builtinFormats.add( 0x2b, "_(*#,##0.00_);_(*(#,##0.00);_(*\"-\"??_);_(@_)" );
-        builtinFormats.add( 0x2c,
-                "_($*#,##0.00_);_($*(#,##0.00);_($*\"-\"??_);_(@_)" );
-        builtinFormats.add( 0x2d, "mm:ss" );
-        builtinFormats.add( 0x2e, "[h]:mm:ss" );
-        builtinFormats.add( 0x2f, "mm:ss.0" );
-        builtinFormats.add( 0x30, "##0.0E+0" );
-        builtinFormats.add( 0x31, "@" );
+        Map<Integer, String> formats = BuiltinFormats.getBuiltinFormats();
+        for(int key : formats.keySet()) {
+            builtinFormats.add(key, formats.get(key));
+        }
         return builtinFormats;
     }
 
@@ -187,22 +134,7 @@ public class HSSFDataFormat implements DataFormat
 
     public static short getBuiltinFormat( String format )
     {
-	if (format.toUpperCase().equals("TEXT")) 
-		format = "@";
-
-        short retval = -1;
-
-        for (short k = 0; k <= 0x31; k++)
-        {
-            String nformat = (String) builtinFormats.get( k );
-
-            if ( ( nformat != null ) && nformat.equals( format ) )
-            {
-                retval = k;
-                break;
-            }
-        }
-        return retval;
+        return (short)BuiltinFormats.getBuiltinFormat(format);
     }
 
     /**
@@ -212,41 +144,36 @@ public class HSSFDataFormat implements DataFormat
      * @param format string matching a built in format
      * @return index of format.
      */
-    public short getFormat( String format )
-    {
+    public short getFormat(String format) {
         ListIterator i;
         int ind;
 
-	if (format.toUpperCase().equals("TEXT")) 
-		format = "@";
+        if (format.toUpperCase().equals("TEXT"))
+            format = "@";
 
-        if ( !movedBuiltins )
-        {
+        if (!movedBuiltins) {
             i = builtinFormats.listIterator();
-            while ( i.hasNext() )
-            {
+            while (i.hasNext()) {
                 ind = i.nextIndex();
-		if ( formats.size() < ind + 1 )
-		{
-		    formats.setSize( ind + 1 );
-		}
-		
-                formats.set( ind, i.next() );
+                if (formats.size() < ind + 1) {
+                    formats.setSize(ind + 1);
+                }
+
+                formats.set(ind, i.next());
             }
             movedBuiltins = true;
         }
         i = formats.listIterator();
-        while ( i.hasNext() )
-        {
+        while (i.hasNext()) {
             ind = i.nextIndex();
-            if ( format.equals( i.next() ) )
+            if (format.equals(i.next()))
                 return (short) ind;
         }
 
-        ind = workbook.getFormat( format, true );
-        if ( formats.size() <= ind )
-            formats.setSize( ind + 1 );
-        formats.set( ind, format );
+        ind = workbook.getFormat(format, true);
+        if (formats.size() <= ind)
+            formats.setSize(ind + 1);
+        formats.set(ind, format);
 
         return (short) ind;
     }
@@ -271,12 +198,11 @@ public class HSSFDataFormat implements DataFormat
      * get the format string that matches the given format index
      * @param index of a built in format
      * @return string represented at index of format or null if there is not a builtin format at that index
-     * @throws ArrayOutOfBoundsException when the index exceeds the number of builtin formats.
      */
 
     public static String getBuiltinFormat( short index )
     {
-        return (String) builtinFormats.get( index );
+        return BuiltinFormats.getBuiltinFormat(index);
     }
 
     /**
@@ -286,6 +212,6 @@ public class HSSFDataFormat implements DataFormat
 
     public static int getNumberOfBuiltinBuiltinFormats()
     {
-        return builtinFormats.size();
+        return BuiltinFormats.getBuiltinFormats().size();
     }
 }
