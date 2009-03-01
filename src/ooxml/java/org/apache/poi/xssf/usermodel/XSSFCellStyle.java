@@ -342,7 +342,8 @@ public class XSSFCellStyle implements CellStyle {
      * @return the number format string
      */
     public String getDataFormatString() {
-        return stylesSource.getNumberFormatAt(getDataFormat());
+        int idx = getDataFormat();
+        return new XSSFDataFormat(stylesSource).getFormat((short)idx);
     }
 
     /**

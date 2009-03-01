@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 
 import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.FontScheme;
+import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
@@ -70,7 +71,7 @@ public class StylesTable extends POIXMLDocumentPart {
 	/**
 	 * The first style id available for use as a custom style
 	 */
-	public static final int FIRST_CUSTOM_STYLE_ID = 165;
+	public static final int FIRST_CUSTOM_STYLE_ID = BuiltinFormats.FIRST_USER_DEFINED_FORMAT_INDEX + 1;
 
 	private StyleSheetDocument doc;
 

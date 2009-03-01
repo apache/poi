@@ -1,0 +1,63 @@
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
+package org.apache.poi.ss.usermodel;
+
+import java.util.Map;
+
+import junit.framework.TestCase;
+import org.apache.poi.ss.ITestDataProvider;
+
+/**
+ * Tests for {@link org.apache.poi.xssf.usermodel.XSSFDataFormat}
+ *
+ */
+public abstract class BaseTestDataFormat extends TestCase {
+
+    /**
+     * @return an object that provides test data in HSSF / XSSF specific way
+     */
+    protected abstract ITestDataProvider getTestDataProvider();
+
+    public void baseBuiltinFormats() throws Exception {
+        Workbook wb = getTestDataProvider().createWorkbook();
+
+        DataFormat df = wb.createDataFormat();
+
+        Map<Integer, String> formats = BuiltinFormats.getBuiltinFormats();
+        for (int idx : formats.keySet()) {
+            String fmt = formats.get(idx);
+            assertEquals(idx, df.getFormat(fmt));
+        }
+
+        //default format for new cells is General
+        Sheet sheet = wb.createSheet();
+        Cell cell = sheet.createRow(0).createCell(0);
+        assertEquals(0, cell.getCellStyle().getDataFormat());
+        assertEquals("General", cell.getCellStyle().getDataFormatString());
+
+        //create a custom data format
+        String customFmt = "#0.00 AM/PM";
+        //check it is not in built-in formats
+        assertEquals(-1, BuiltinFormats.getBuiltinFormat(customFmt));
+        int customIdx = df.getFormat(customFmt);
+        //The first user-defined format starts at 164.
+        assertTrue(customIdx >= BuiltinFormats.FIRST_USER_DEFINED_FORMAT_INDEX);
+        //read and verify the string representation
+        assertEquals(customFmt, df.getFormat((short)customIdx));
+    }
+}
