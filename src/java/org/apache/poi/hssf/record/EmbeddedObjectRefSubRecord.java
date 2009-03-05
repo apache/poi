@@ -75,7 +75,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 
 		// Much guess-work going on here due to lack of any documentation.
 		// See similar source code in OOO:
-		// http://lxr.go-oo.org/source/sc/sc/source/filter/excel/xiescher.cxx
+		// http://svn.services.openoffice.org/ooo/trunk/sc/source/filter/excel/xiescher.cxx
 		// 1223 void XclImpOleObj::ReadPictFmla( XclImpStream& rStrm, sal_uInt16 nRecSize )
 
 		int streamIdOffset = in.readShort(); // OOO calls this 'nFmlaLen'
