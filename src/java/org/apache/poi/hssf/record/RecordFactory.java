@@ -45,6 +45,37 @@ import org.apache.poi.hssf.record.pivottable.*;
  */
 public final class RecordFactory {
 	private static final int NUM_RECORDS = 512;
+	
+	private interface I_RecordCreator {
+		Record create(RecordInputStream in);
+
+		String getRecordClassName();
+	}
+	private static final class ReflectionRecordCreator implements I_RecordCreator {
+
+		private final Constructor<? extends Record> _c;
+		public ReflectionRecordCreator(Constructor<? extends Record> c) {
+			_c = c;
+		}
+		public Record create(RecordInputStream in) {
+			Object[] args = { in, };
+			try {
+				return _c.newInstance(args);
+			} catch (IllegalArgumentException e) {
+				throw new RuntimeException(e);
+			} catch (InstantiationException e) {
+				throw new RuntimeException(e);
+			} catch (IllegalAccessException e) {
+				throw new RuntimeException(e);
+			} catch (InvocationTargetException e) {
+				throw new RecordFormatException("Unable to construct record instance" , e.getTargetException());
+			}
+		}
+		public String getRecordClassName() {
+			return _c.getDeclaringClass().getName();
+		}
+	}
+
 
 	private static final Class<?>[] CONSTRUCTOR_ARGS = { RecordInputStream.class, };
 
@@ -189,7 +220,7 @@ public final class RecordFactory {
 	/**
 	 * cache of the recordsToMap();
 	 */
-	private static Map<Short, Constructor<? extends Record>> recordsMap  = recordsToMap(recordClasses);
+	private static Map<Short, I_RecordCreator> recordsMap  = recordsToMap(recordClasses);
 
 	private static short[] _allKnownRecordSIDs;
 	
@@ -213,24 +244,14 @@ public final class RecordFactory {
 		return new Record[] { record, };
 	}
 	
-	private static Record createSingleRecord(RecordInputStream in) {
-		Constructor<? extends Record> constructor = recordsMap.get(new Short(in.getSid()));
+	static Record createSingleRecord(RecordInputStream in) {
+		I_RecordCreator constructor = recordsMap.get(new Short(in.getSid()));
 
 		if (constructor == null) {
 			return new UnknownRecord(in);
 		}
 		
-		try {
-			return constructor.newInstance(new Object[] { in });
-		} catch (InvocationTargetException e) {
-			throw new RecordFormatException("Unable to construct record instance" , e.getTargetException());
-		} catch (IllegalArgumentException e) {
-			throw new RuntimeException(e);
-		} catch (InstantiationException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
+		return constructor.create(in);
 	}
 
 	/**
@@ -290,8 +311,8 @@ public final class RecordFactory {
 	 * @return map of SIDs to short,short,byte[] constructors for Record classes
 	 * most of org.apache.poi.hssf.record.*
 	 */
-	private static Map<Short, Constructor<? extends Record>> recordsToMap(Class<? extends Record> [] records) {
-		Map<Short, Constructor<? extends Record>> result = new HashMap<Short, Constructor<? extends Record>>();
+	private static Map<Short, I_RecordCreator> recordsToMap(Class<? extends Record> [] records) {
+		Map<Short, I_RecordCreator> result = new HashMap<Short, I_RecordCreator>();
 		Set<Class<?>> uniqueRecClasses = new HashSet<Class<?>>(records.length * 3 / 2);
 
 		for (int i = 0; i < records.length; i++) {
@@ -318,11 +339,11 @@ public final class RecordFactory {
 			}
 			Short key = new Short(sid);
 			if (result.containsKey(key)) {
-				Class<? extends Record> prev = result.get(key).getDeclaringClass();
+				String prevClassName = result.get(key).getRecordClassName();
 				throw new RuntimeException("duplicate record sid 0x" + Integer.toHexString(sid).toUpperCase()
-						+ " for classes (" + recClass.getName() + ") and (" + prev.getName() + ")");
+						+ " for classes (" + recClass.getName() + ") and (" + prevClassName + ")");
 			}
-			result.put(key, constructor);
+			result.put(key, new ReflectionRecordCreator(constructor));
 		}
 		return result;
 	}
