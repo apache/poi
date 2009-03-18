@@ -19,12 +19,12 @@ package org.apache.poi.xslf.extractor;
 import java.io.IOException;
 
 import org.apache.poi.POIXMLTextExtractor;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.xmlbeans.XmlException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.Package;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
@@ -48,7 +48,7 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
 	public XSLFPowerPointExtractor(XSLFSlideShow slideshow) throws XmlException, IOException {
 		this(new XMLSlideShow(slideshow));
 	}
-	public XSLFPowerPointExtractor(Package container) throws XmlException, OpenXML4JException, IOException {
+	public XSLFPowerPointExtractor(OPCPackage container) throws XmlException, OpenXML4JException, IOException {
 		this(new XSLFSlideShow(container));
 	}
 

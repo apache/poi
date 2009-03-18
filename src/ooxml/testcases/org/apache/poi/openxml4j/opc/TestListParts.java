@@ -83,9 +83,9 @@ public final class TestListParts extends TestCase {
 	public void testListParts() throws InvalidFormatException {
 		InputStream is = OpenXML4JTestDataSamples.openSampleStream("sample.docx");
 
-		Package p;
+		OPCPackage p;
 		try {
-			p = Package.open(is);
+			p = OPCPackage.open(is);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

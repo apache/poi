@@ -18,24 +18,28 @@ package org.apache.poi.xssf.eventusermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
-import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.POIXMLException;
-import org.apache.xmlbeans.XmlException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
+import org.apache.xmlbeans.XmlException;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 
 /**
  * This class makes it easy to get at individual parts
@@ -45,13 +49,13 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
  *  for XSSF.
  */
 public class XSSFReader {
-    private Package pkg;
+    private OPCPackage pkg;
     private PackagePart workbookPart;
 
     /**
      * Creates a new XSSFReader, for the given package
      */
-    public XSSFReader(Package pkg) throws IOException, OpenXML4JException {
+    public XSSFReader(OPCPackage pkg) throws IOException, OpenXML4JException {
         this.pkg = pkg;
 
         PackageRelationship coreDocRelationship = this.pkg.getRelationshipsByType(

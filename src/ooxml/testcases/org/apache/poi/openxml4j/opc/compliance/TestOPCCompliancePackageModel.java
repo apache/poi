@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
@@ -50,7 +50,7 @@ public class TestOPCCompliancePackageModel extends TestCase {
 	 * [M1.11]
 	 */
 	public void testPartNameDerivationAdditionFailure() {
-		Package pkg = Package.create("TODELETEIFEXIST.docx");
+		OPCPackage pkg = OPCPackage.create("TODELETEIFEXIST.docx");
 		try {
 			PackagePartName name = PackagingURIHelper
 					.createPartName("/word/document.xml");
@@ -78,7 +78,7 @@ public class TestOPCCompliancePackageModel extends TestCase {
 		String filepath = System.getProperty("openxml4j.compliance.input")
 				+ File.separator + "OPCCompliance_DerivedPartNameFAIL.docx";
 		try {
-			Package.open(filepath);
+			OPCPackage.open(filepath);
 		} catch (InvalidFormatException e) {
 			return;
 		}
@@ -93,7 +93,7 @@ public class TestOPCCompliancePackageModel extends TestCase {
 	 * part names.
 	 */
 	public void testAddPackageAlreadyAddFailure() throws Exception {
-		Package pkg = Package.create("DELETEIFEXISTS.docx");
+		OPCPackage pkg = OPCPackage.create("DELETEIFEXISTS.docx");
 		PackagePartName name1 = null;
 		PackagePartName name2 = null;
 		try {
@@ -117,7 +117,7 @@ public class TestOPCCompliancePackageModel extends TestCase {
 	 * part names.
 	 */
 	public void testAddPackageAlreadyAddFailure2() throws Exception {
-		Package pkg = Package.create("DELETEIFEXISTS.docx");
+		OPCPackage pkg = OPCPackage.create("DELETEIFEXISTS.docx");
 		PackagePartName partName = null;
 		try {
 			partName = PackagingURIHelper.createPartName("/word/document.xml");
@@ -142,7 +142,7 @@ public class TestOPCCompliancePackageModel extends TestCase {
 	 * relationship as invalid.
 	 */
 	public void testAddRelationshipRelationshipsPartFailure() {
-		Package pkg = Package.create("DELETEIFEXISTS.docx");
+		OPCPackage pkg = OPCPackage.create("DELETEIFEXISTS.docx");
 		PackagePartName name1 = null;
 		try {
 			name1 = PackagingURIHelper

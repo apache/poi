@@ -39,7 +39,7 @@ public final class TestPackageCoreProperties extends TestCase {
 	public void testGetProperties() {
 		try {
 			// Open the package
-			Package p = Package.open(OpenXML4JTestDataSamples.openSampleStream("TestPackageCoreProperiesGetters.docx"));
+			OPCPackage p = OPCPackage.open(OpenXML4JTestDataSamples.openSampleStream("TestPackageCoreProperiesGetters.docx"));
 			compareProperties(p);
 			p.revert();
 		} catch (OpenXML4JException e) {
@@ -59,7 +59,7 @@ public final class TestPackageCoreProperties extends TestCase {
 		File outputFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageCoreProperiesSettersOUTPUT.docx");
 
 		// Open package
-		Package p = Package.open(inputPath, PackageAccess.READ_WRITE);
+		OPCPackage p = OPCPackage.open(inputPath, PackageAccess.READ_WRITE);
 
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		Date dateToInsert = df.parse("2007-05-12T08:00:00Z", new ParsePosition(
@@ -86,13 +86,13 @@ public final class TestPackageCoreProperties extends TestCase {
 		p.save(outputFile);
 
 		// Open the newly created file to check core properties saved values.
-		Package p2 = Package.open(outputFile.getAbsolutePath(), PackageAccess.READ);
+		OPCPackage p2 = OPCPackage.open(outputFile.getAbsolutePath(), PackageAccess.READ);
 		compareProperties(p2);
 		p2.revert();
 		outputFile.delete();
 	}
 
-	private void compareProperties(Package p) throws InvalidFormatException {
+	private void compareProperties(OPCPackage p) throws InvalidFormatException {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		Date expectedDate = df.parse("2007-05-12T08:00:00Z", new ParsePosition(
 				0));

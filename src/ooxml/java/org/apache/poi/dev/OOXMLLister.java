@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -34,13 +34,13 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
  *  they're all related to each other.
  */
 public class OOXMLLister {
-	private Package container;
+	private OPCPackage container;
 	private PrintStream disp;
 	
-	public OOXMLLister(Package container) {
+	public OOXMLLister(OPCPackage container) {
 		this(container, System.out);
 	}
-	public OOXMLLister(Package container, PrintStream disp) {
+	public OOXMLLister(OPCPackage container, PrintStream disp) {
 		this.container = container;
 		this.disp = disp;
 	}
@@ -122,7 +122,7 @@ public class OOXMLLister {
 		}
 		
 		OOXMLLister lister = new OOXMLLister(
-				Package.open(f.toString(), PackageAccess.READ)
+				OPCPackage.open(f.toString(), PackageAccess.READ)
 		);
 		
 		lister.disp.println(f.toString() + "\n");

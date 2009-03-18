@@ -25,7 +25,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 
 import junit.framework.TestCase;
@@ -47,7 +47,7 @@ public class TestEmbeded extends TestCase
 		File f = new File(dirname, "ExcelWithAttachments.xlsx");
 		assertTrue(f.exists());
 		
-		POIXMLDocument doc = new XSSFWorkbook(Package.open(f.toString()));
+		POIXMLDocument doc = new XSSFWorkbook(OPCPackage.open(f.toString()));
 		test(doc, 4);
 	}
 
@@ -55,7 +55,7 @@ public class TestEmbeded extends TestCase
 		File f = new File(dirname, "WordWithAttachments.docx");
 		assertTrue(f.exists());
 		
-		POIXMLDocument doc = new XWPFDocument(Package.open(f.toString()));
+		POIXMLDocument doc = new XWPFDocument(OPCPackage.open(f.toString()));
 		test(doc, 5);
 	}
 
@@ -63,7 +63,7 @@ public class TestEmbeded extends TestCase
 		File f = new File(dirname, "PPTWithAttachments.pptx");
 		assertTrue(f.exists());
 		
-		POIXMLDocument doc = new XSLFSlideShow(Package.open(f.toString()));
+		POIXMLDocument doc = new XSLFSlideShow(OPCPackage.open(f.toString()));
 		test(doc, 4);
 	}
 	

@@ -41,14 +41,14 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
     public static final String PACK_OBJECT_REL_TYPE="http://schemas.openxmlformats.org/officeDocument/2006/relationships/package";
 
     /** The OPC Package */
-    private Package pkg;
+    private OPCPackage pkg;
 
     /**
      * The properties of the OPC package, opened as needed
      */
     private POIXMLProperties properties;
 
-    protected POIXMLDocument(Package pkg) {
+    protected POIXMLDocument(OPCPackage pkg) {
         super(pkg);
         this.pkg = pkg;
     }
@@ -58,15 +58,15 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
      *  in the event of a problem.
      * Works around shortcomings in java's this() constructor calls
      */
-    public static Package openPackage(String path) throws IOException {
+    public static OPCPackage openPackage(String path) throws IOException {
         try {
-            return Package.open(path);
+            return OPCPackage.open(path);
         } catch (InvalidFormatException e) {
             throw new IOException(e.toString());
         }
     }
 
-    public Package getPackage() {
+    public OPCPackage getPackage() {
         return this.pkg;
     }
 
@@ -92,7 +92,7 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
      * @return The target part
      * @throws InvalidFormatException
      */
-    protected static PackagePart getTargetPart(Package pkg, PackageRelationship rel) throws InvalidFormatException {
+    protected static PackagePart getTargetPart(OPCPackage pkg, PackageRelationship rel) throws InvalidFormatException {
         PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
         PackagePart part = pkg.getPart(relName);
         if (part == null) {
@@ -176,7 +176,7 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
      * there is no way to change or even save such an instance in a OutputStream.
      * The workaround is to create a copy via a temp file
      */
-    protected static Package ensureWriteAccess(Package pkg) throws IOException {
+    protected static OPCPackage ensureWriteAccess(OPCPackage pkg) throws IOException {
         if(pkg.getPackageAccess() == PackageAccess.READ){
             try {
                 return PackageHelper.clone(pkg);

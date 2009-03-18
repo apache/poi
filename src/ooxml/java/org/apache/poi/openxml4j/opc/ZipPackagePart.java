@@ -53,7 +53,7 @@ public class ZipPackagePart extends PackagePart {
 	 * @throws InvalidFormatException
 	 *             Throws if the content of this part invalid.
 	 */
-	public ZipPackagePart(Package container, PackagePartName partName,
+	public ZipPackagePart(OPCPackage container, PackagePartName partName,
 			String contentType) throws InvalidFormatException {
 		super(container, partName, contentType);
 	}
@@ -72,7 +72,7 @@ public class ZipPackagePart extends PackagePart {
 	 * @throws InvalidFormatException
 	 *             Throws if the content of this part is invalid.
 	 */
-	public ZipPackagePart(Package container, ZipEntry zipEntry,
+	public ZipPackagePart(OPCPackage container, ZipEntry zipEntry,
 			PackagePartName partName, String contentType)
 			throws InvalidFormatException {
 		super(container, partName, contentType);

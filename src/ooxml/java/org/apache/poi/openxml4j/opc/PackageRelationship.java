@@ -62,7 +62,7 @@ public final class PackageRelationship {
 	/**
 	 * Reference to the package.
 	 */
-	private Package container;
+	private OPCPackage container;
 
 	/**
 	 * Type de relation.
@@ -94,7 +94,7 @@ public final class PackageRelationship {
 	 * @param relationshipType
 	 * @param id
 	 */
-	public PackageRelationship(Package pkg, PackagePart sourcePart,
+	public PackageRelationship(OPCPackage pkg, PackagePart sourcePart,
 			URI targetUri, TargetMode targetMode, String relationshipType,
 			String id) {
 		if (pkg == null)
@@ -143,7 +143,7 @@ public final class PackageRelationship {
 	/**
 	 * @return the container
 	 */
-	public Package getPackage() {
+	public OPCPackage getPackage() {
 		return container;
 	}
 

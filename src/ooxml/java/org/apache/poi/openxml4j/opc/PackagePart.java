@@ -39,7 +39,7 @@ public abstract class PackagePart implements RelationshipSource {
 	/**
 	 * This part's container.
 	 */
-	protected Package container;
+	protected OPCPackage container;
 
 	/**
 	 * The part name. (required by the specification [M1.1])
@@ -78,7 +78,7 @@ public abstract class PackagePart implements RelationshipSource {
 	 * @throws InvalidFormatException
 	 *             If the specified URI is not valid.
 	 */
-	protected PackagePart(Package pack, PackagePartName partName,
+	protected PackagePart(OPCPackage pack, PackagePartName partName,
 			ContentType contentType) throws InvalidFormatException {
 		this(pack, partName, contentType, true);
 	}
@@ -97,12 +97,12 @@ public abstract class PackagePart implements RelationshipSource {
 	 * @throws InvalidFormatException
 	 *             If the specified URI is not valid.
 	 */
-	protected PackagePart(Package pack, PackagePartName partName,
+	protected PackagePart(OPCPackage pack, PackagePartName partName,
 			ContentType contentType, boolean loadRelationships)
 			throws InvalidFormatException {
 		this.partName = partName;
 		this.contentType = contentType;
-		this.container = (ZipPackage) pack;
+		this.container = (ZipPackage) pack; // TODO - enforcing ZipPackage here - perhaps should change constructor signature
 
 		// Check if this part is a relationship part
 		isRelationshipPart = this.partName.isRelationshipPartURI();
@@ -123,7 +123,7 @@ public abstract class PackagePart implements RelationshipSource {
 	 *            The Multipurpose Internet Mail Extensions (MIME) content type
 	 *            of the part's data stream.
 	 */
-	public PackagePart(Package pack, PackagePartName partName,
+	public PackagePart(OPCPackage pack, PackagePartName partName,
 			String contentType) throws InvalidFormatException {
 		this(pack, partName, new ContentType(contentType));
 	}
@@ -567,7 +567,7 @@ public abstract class PackagePart implements RelationshipSource {
 					"You can't change the content type of a part.");
 	}
 
-	public Package getPackage() {
+	public OPCPackage getPackage() {
 		return container;
 	}
 

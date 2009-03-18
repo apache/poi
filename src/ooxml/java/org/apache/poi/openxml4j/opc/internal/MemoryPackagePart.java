@@ -23,7 +23,7 @@ import java.io.OutputStream;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPartMarshaller;
@@ -58,7 +58,7 @@ public final class MemoryPackagePart extends PackagePart {
 	 * @throws InvalidFormatException
 	 *             If the specified URI is not OPC compliant.
 	 */
-	public MemoryPackagePart(Package pack, PackagePartName partName,
+	public MemoryPackagePart(OPCPackage pack, PackagePartName partName,
 			String contentType) throws InvalidFormatException {
 		super(pack, partName, contentType);
 	}
@@ -77,7 +77,7 @@ public final class MemoryPackagePart extends PackagePart {
 	 * @throws InvalidFormatException
 	 *             If the specified URI is not OPC compliant.
 	 */
-	public MemoryPackagePart(Package pack, PackagePartName partName,
+	public MemoryPackagePart(OPCPackage pack, PackagePartName partName,
 			String contentType, boolean loadRelationships)
 			throws InvalidFormatException {
 		super(pack, partName, new ContentType(contentType), loadRelationships);

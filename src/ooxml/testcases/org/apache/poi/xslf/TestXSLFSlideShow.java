@@ -18,13 +18,13 @@ package org.apache.poi.xslf;
 
 import java.io.File;
 
+import junit.framework.TestCase;
+
 import org.apache.poi.POIXMLDocument;
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
-
-import junit.framework.TestCase;
 
 public class TestXSLFSlideShow extends TestCase {
 	private String sampleFile;
@@ -39,7 +39,7 @@ public class TestXSLFSlideShow extends TestCase {
 	}
 
 	public void testContainsMainContentType() throws Exception {
-		Package pack = POIXMLDocument.openPackage(sampleFile);
+		OPCPackage pack = POIXMLDocument.openPackage(sampleFile);
 		
 		boolean found = false;
 		for(PackagePart part : pack.getParts()) {

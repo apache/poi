@@ -32,7 +32,7 @@ import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 
 /**
  * Performs much the same role as {@link TestFormulasFromSpreadsheet},
@@ -149,7 +149,7 @@ public final class TestFormulaEvaluatorOnXSSF extends TestCase {
 	protected void setUp() throws Exception {
 		if (workbook == null) {
 			InputStream is = HSSFTestDataSamples.openSampleFileStream(SS.FILENAME);
-			Package pkg = Package.open(is);
+			OPCPackage pkg = OPCPackage.open(is);
 			workbook = new XSSFWorkbook( pkg );
 			sheet = workbook.getSheetAt( 0 );
 		  }

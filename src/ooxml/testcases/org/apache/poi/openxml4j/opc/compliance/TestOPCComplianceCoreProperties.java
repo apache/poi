@@ -29,7 +29,7 @@ import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
@@ -68,10 +68,10 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 public final class TestOPCComplianceCoreProperties extends TestCase {
 
 	public void testCorePropertiesPart() {
-		Package pkg;
+		OPCPackage pkg;
 		try {
 			InputStream is = OpenXML4JTestDataSamples.openComplianceSampleStream("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx");
-			pkg = Package.open(is);
+			pkg = OPCPackage.open(is);
 		} catch (InvalidFormatException e) {
 			throw new RuntimeException(e);
 		} catch (IOException e) {
@@ -83,9 +83,9 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
 	private static String extractInvalidFormatMessage(String sampleNameSuffix) {
 
 		InputStream is = OpenXML4JTestDataSamples.openComplianceSampleStream("OPCCompliance_CoreProperties_" + sampleNameSuffix);
-		Package pkg;
+		OPCPackage pkg;
 		try {
-			pkg = Package.open(is);
+			pkg = OPCPackage.open(is);
 		} catch (InvalidFormatException e) {
 			// expected during successful test
 			return e.getMessage();
@@ -118,9 +118,9 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
 	 */
 	public void testOnlyOneCorePropertiesPart_AddRelationship() {
 		InputStream is = OpenXML4JTestDataSamples.openComplianceSampleStream("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx");
-		Package pkg;
+		OPCPackage pkg;
 		try {
-			pkg = Package.open(is);
+			pkg = OPCPackage.open(is);
 		} catch (InvalidFormatException e) {
 			throw new RuntimeException(e);
 		} catch (IOException e) {
@@ -145,9 +145,9 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
 	 */
 	public void testOnlyOneCorePropertiesPart_AddPart() {
 		String sampleFileName = OpenXML4JTestDataSamples.getComplianceSampleFileName("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx");
-		Package pkg = null;
+		OPCPackage pkg = null;
 		try {
-			pkg = Package.open(sampleFileName);
+			pkg = OPCPackage.open(sampleFileName);
 		} catch (InvalidFormatException e) {
 			throw new RuntimeException(e);
 		}

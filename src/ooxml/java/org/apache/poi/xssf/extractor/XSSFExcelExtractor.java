@@ -21,6 +21,8 @@ import java.util.Iterator;
 
 import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.HeaderFooter;
@@ -29,8 +31,6 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.Package;
 
 /**
  * Helper class to extract text from an OOXML Excel file
@@ -44,7 +44,7 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apach
 	public XSSFExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {
 		this(new XSSFWorkbook(path));
 	}
-	public XSSFExcelExtractor(Package container) throws XmlException, OpenXML4JException, IOException {
+	public XSSFExcelExtractor(OPCPackage container) throws XmlException, OpenXML4JException, IOException {
 		this(new XSSFWorkbook(container));
 	}
 	public XSSFExcelExtractor(XSSFWorkbook workbook) {

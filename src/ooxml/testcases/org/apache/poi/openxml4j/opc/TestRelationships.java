@@ -45,7 +45,7 @@ public class TestRelationships extends TestCase {
      */
     public void testLoadRelationships() throws Exception {
         InputStream is = OpenXML4JTestDataSamples.openSampleStream("sample.xlsx");
-        Package pkg = Package.open(is);
+        OPCPackage pkg = OPCPackage.open(is);
         logger.debug("1: " + pkg);
         PackageRelationshipCollection rels = pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
         PackageRelationship coreDocRelationship = rels.getRelationship(0);
@@ -66,7 +66,7 @@ public class TestRelationships extends TestCase {
      */
     public void testFetchFromCollection() throws Exception {
         InputStream is = OpenXML4JTestDataSamples.openSampleStream("ExcelWithHyperlinks.xlsx");
-        Package pkg = Package.open(is);
+        OPCPackage pkg = OPCPackage.open(is);
         PackagePart sheet = pkg.getPart(
         		PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));
         assertNotNull(sheet);
@@ -107,7 +107,7 @@ public class TestRelationships extends TestCase {
      */
     public void testLoadExcelHyperlinkRelations() throws Exception {
         InputStream is = OpenXML4JTestDataSamples.openSampleStream("ExcelWithHyperlinks.xlsx");
-        Package pkg = Package.open(is);
+        OPCPackage pkg = OPCPackage.open(is);
 	    PackagePart sheet = pkg.getPart(
 	    		PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));
 	    assertNotNull(sheet);
@@ -141,7 +141,7 @@ public class TestRelationships extends TestCase {
      */
     public void testCreateExcelHyperlinkRelations() throws Exception {
     	String filepath = OpenXML4JTestDataSamples.getSampleFileName("ExcelWithHyperlinks.xlsx");
-	    Package pkg = Package.open(filepath, PackageAccess.READ_WRITE);
+	    OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ_WRITE);
 	    PackagePart sheet = pkg.getPart(
 	    		PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));
 	    assertNotNull(sheet);
@@ -185,7 +185,7 @@ public class TestRelationships extends TestCase {
 	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    pkg.save(baos);
 	    ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-	    pkg = Package.open(bais);
+	    pkg = OPCPackage.open(bais);
 	    
 	    // Check again
 	    sheet = pkg.getPart(
@@ -208,7 +208,7 @@ public class TestRelationships extends TestCase {
 
     public void testCreateRelationsFromScratch() throws Exception {
     	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    	Package pkg = Package.create(baos);
+    	OPCPackage pkg = OPCPackage.create(baos);
     	
     	PackagePart partA =
     		pkg.createPart(PackagingURIHelper.createPartName("/partA"), "text/plain");
@@ -235,7 +235,7 @@ public class TestRelationships extends TestCase {
     	// Save, and re-load
     	pkg.close();
     	ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-    	pkg = Package.open(bais);
+    	pkg = OPCPackage.open(bais);
     	
     	partA = pkg.getPart(PackagingURIHelper.createPartName("/partA"));
     	partB = pkg.getPart(PackagingURIHelper.createPartName("/partB"));

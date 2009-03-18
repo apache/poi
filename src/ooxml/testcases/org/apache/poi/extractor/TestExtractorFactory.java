@@ -34,7 +34,7 @@ import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import junit.framework.TestCase;
 
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 
 /**
  * Test that the extractor factory plays nicely
@@ -276,34 +276,34 @@ public class TestExtractorFactory extends TestCase {
 	public void testPackage() throws Exception {
 		// Excel
 		assertTrue(
-				ExtractorFactory.createExtractor(Package.open(xlsx.toString()))
+				ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString()))
 				instanceof XSSFExcelExtractor
 		);
 		assertTrue(
-				ExtractorFactory.createExtractor(Package.open(xlsx.toString())).getText().length() > 200
+				ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString())).getText().length() > 200
 		);
 		
 		// Word
 		assertTrue(
-				ExtractorFactory.createExtractor(Package.open(docx.toString()))
+				ExtractorFactory.createExtractor(OPCPackage.open(docx.toString()))
 				instanceof XWPFWordExtractor
 		);
 		assertTrue(
-				ExtractorFactory.createExtractor(Package.open(docx.toString())).getText().length() > 120
+				ExtractorFactory.createExtractor(OPCPackage.open(docx.toString())).getText().length() > 120
 		);
 		
 		// PowerPoint
 		assertTrue(
-				ExtractorFactory.createExtractor(Package.open(pptx.toString()))
+				ExtractorFactory.createExtractor(OPCPackage.open(pptx.toString()))
 				instanceof XSLFPowerPointExtractor
 		);
 		assertTrue(
-				ExtractorFactory.createExtractor(Package.open(pptx.toString())).getText().length() > 120
+				ExtractorFactory.createExtractor(OPCPackage.open(pptx.toString())).getText().length() > 120
 		);
 		
 		// Text
 		try {
-			ExtractorFactory.createExtractor(Package.open(txt.toString()));
+			ExtractorFactory.createExtractor(OPCPackage.open(txt.toString()));
 			fail();
 		} catch(InvalidOperationException e) {
 			// Good

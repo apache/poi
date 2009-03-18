@@ -26,7 +26,7 @@ import org.apache.poi.openxml4j.util.Nullable;
  * 
  * @author Julien Chable
  * @version 1.0
- * @see org.apache.poi.openxml4j.opc.Package
+ * @see org.apache.poi.openxml4j.opc.OPCPackage
  */
 public interface PackageProperties {
 	

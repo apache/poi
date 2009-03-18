@@ -20,7 +20,7 @@ import java.io.File;
 
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 
 import junit.framework.TestCase;
 
@@ -33,7 +33,7 @@ public class TestXMLPropertiesTextExtractor extends TestCase {
 	}
 	
 	public void testGetFromMainExtractor() throws Exception {
-		org.apache.poi.openxml4j.opc.Package pkg = Package.open(
+		OPCPackage pkg = OPCPackage.open(
 				(new File(dirname, "ExcelWithAttachments.xlsx")).toString()
 		);
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
@@ -54,7 +54,7 @@ public class TestXMLPropertiesTextExtractor extends TestCase {
 	}
 
 	public void testCore() throws Exception {
-		org.apache.poi.openxml4j.opc.Package pkg = Package.open(
+		OPCPackage pkg = OPCPackage.open(
 				(new File(dirname, "ExcelWithAttachments.xlsx")).toString()
 		);
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
@@ -71,7 +71,7 @@ public class TestXMLPropertiesTextExtractor extends TestCase {
 	}
 	
 	public void testExtended() throws Exception {
-		org.apache.poi.openxml4j.opc.Package pkg = Package.open(
+		OPCPackage pkg = OPCPackage.open(
 				(new File(dirname, "ExcelWithAttachments.xlsx")).toString()
 		);
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);

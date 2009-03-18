@@ -22,10 +22,10 @@ import java.io.PushbackInputStream;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.Package;
 
 /**
  * Factory for creating the appropriate kind of Workbook
@@ -41,7 +41,7 @@ public class WorkbookFactory {
 	/**
 	 * Creates an XSSFWorkbook from the given OOXML Package
 	 */
-	public static Workbook create(Package pkg) throws IOException {
+	public static Workbook create(OPCPackage pkg) throws IOException {
 		return new XSSFWorkbook(pkg);
 	}
 	/**
@@ -60,7 +60,7 @@ public class WorkbookFactory {
 			return new HSSFWorkbook(inp);
 		}
 		if(POIXMLDocument.hasOOXMLHeader(inp)) {
-			return new XSSFWorkbook( Package.open(inp) );
+			return new XSSFWorkbook(OPCPackage.open(inp));
 		}
 		throw new IllegalArgumentException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
 	}

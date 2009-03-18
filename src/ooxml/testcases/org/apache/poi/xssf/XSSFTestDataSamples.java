@@ -17,14 +17,19 @@
 
 package org.apache.poi.xssf;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.Package;
 
 /**
  * Centralises logic for finding/opening sample files in the src/testcases/org/apache/poi/hssf/hssf/data folder. 
@@ -35,7 +40,7 @@ public class XSSFTestDataSamples {
 	public static final XSSFWorkbook openSampleWorkbook(String sampleName) {
 		InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleName);
 		try {
-			Package pkg = Package.open(is);
+			OPCPackage pkg = OPCPackage.open(is);
 			return new XSSFWorkbook(pkg);
 		} catch (InvalidFormatException e) {
 			throw new RuntimeException(e);
@@ -57,7 +62,7 @@ public class XSSFTestDataSamples {
                 FileOutputStream out = new FileOutputStream(tmp);
                 wb.write(out);
                 out.close();
-    			Package pkg = Package.open(tmp.getAbsolutePath());
+                OPCPackage pkg = OPCPackage.open(tmp.getAbsolutePath());
     			result = new XSSFWorkbook(pkg);
 	    	} else {
 	    		throw new RuntimeException("Unexpected workbook type (" 
