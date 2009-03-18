@@ -36,6 +36,14 @@ import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.hssf.record.formula.SheetNameFormatter;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -45,20 +53,12 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.PackageHelper;
+import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.Package;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
-import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.openxml4j.opc.TargetMode;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookView;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookViews;
@@ -152,7 +152,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @param pkg the OpenXML4J <code>Package</code> object.
      */
-    public XSSFWorkbook(Package pkg) throws IOException {
+    public XSSFWorkbook(OPCPackage pkg) throws IOException {
         super(ensureWriteAccess(pkg));
 
         //build a tree of POIXMLDocumentParts, this workbook being the root
@@ -240,9 +240,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     /**
      * Create a new SpreadsheetML package and setup the default minimal content
      */
-    protected static Package newPackage() {
+    protected static OPCPackage newPackage() {
         try {
-            Package pkg = Package.create(PackageHelper.createTempFile());
+            OPCPackage pkg = OPCPackage.create(PackageHelper.createTempFile());
             // Main part
             PackagePartName corePartName = PackagingURIHelper.createPartName(XSSFRelation.WORKBOOK.getDefaultFileName());
             // Create main part relationship

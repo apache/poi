@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
@@ -80,7 +80,7 @@ public class TestPackagingURIHelper extends TestCase {
 		PackagePartName partNameToValid = PackagingURIHelper
 				.createPartName("/word/media/image1.gif");
 
-		Package pkg = Package.create("DELETEIFEXISTS.docx");
+		OPCPackage pkg = OPCPackage.create("DELETEIFEXISTS.docx");
 		// Base part
 		PackagePartName nameBase = PackagingURIHelper
 				.createPartName("/word/document.xml");
@@ -101,7 +101,7 @@ public class TestPackagingURIHelper extends TestCase {
 		PackagePartName partNameToValid = PackagingURIHelper
 				.createPartName("/word/media/image1.gif");
 
-		Package pkg = Package.create("DELETEIFEXISTS.docx");
+		OPCPackage pkg = OPCPackage.create("DELETEIFEXISTS.docx");
 		// Base part
 		PackagePartName nameBase = PackagingURIHelper
 				.createPartName("/word/document.xml");

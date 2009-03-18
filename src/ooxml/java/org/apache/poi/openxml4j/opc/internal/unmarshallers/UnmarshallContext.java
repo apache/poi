@@ -19,7 +19,7 @@ package org.apache.poi.openxml4j.opc.internal.unmarshallers;
 
 import java.util.zip.ZipEntry;
 
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 
 /**
@@ -30,7 +30,7 @@ import org.apache.poi.openxml4j.opc.PackagePartName;
  */
 public final class UnmarshallContext {
 
-	private Package _package;
+	private OPCPackage _package;
 
 	private PackagePartName partName;
 
@@ -44,7 +44,7 @@ public final class UnmarshallContext {
 	 * @param partName
 	 *            Name of the part to unmarshall.
 	 */
-	public UnmarshallContext(Package targetPackage, PackagePartName partName) {
+	public UnmarshallContext(OPCPackage targetPackage, PackagePartName partName) {
 		this._package = targetPackage;
 		this.partName = partName;
 	}
@@ -52,7 +52,7 @@ public final class UnmarshallContext {
 	/**
 	 * @return the container
 	 */
-	Package getPackage() {
+	OPCPackage getPackage() {
 		return _package;
 	}
 
@@ -60,7 +60,7 @@ public final class UnmarshallContext {
 	 * @param container
 	 *            the container to set
 	 */
-	public void setPackage(Package container) {
+	public void setPackage(OPCPackage container) {
 		this._package = container;
 	}
 

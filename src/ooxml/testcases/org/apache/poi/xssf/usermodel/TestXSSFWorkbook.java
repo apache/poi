@@ -29,7 +29,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.openxml4j.opc.ContentTypes;
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
@@ -251,7 +251,7 @@ public final class TestXSSFWorkbook extends TestCase {
 		out.close();
 		
 		// Check the package contains what we'd expect it to
-		Package pkg = Package.open(file.toString());
+		OPCPackage pkg = OPCPackage.open(file.toString());
 		PackagePart wbRelPart = 
 			pkg.getPart(PackagingURIHelper.createPartName("/xl/_rels/workbook.xml.rels"));
 		assertNotNull(wbRelPart);
@@ -293,7 +293,7 @@ public final class TestXSSFWorkbook extends TestCase {
 		assertNotNull(workbook.getStylesSource());
 		
 		// And check a few low level bits too
-		Package pkg = Package.open(HSSFTestDataSamples.openSampleFileStream("Formatting.xlsx"));
+		OPCPackage pkg = OPCPackage.open(HSSFTestDataSamples.openSampleFileStream("Formatting.xlsx"));
 		PackagePart wbPart = 
 			pkg.getPart(PackagingURIHelper.createPartName("/xl/workbook.xml"));
 		

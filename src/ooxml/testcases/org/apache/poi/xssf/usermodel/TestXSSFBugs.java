@@ -21,7 +21,8 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -71,7 +72,7 @@ public class TestXSSFBugs extends TestCase {
      * We should carry vba macros over after save
      */
     public void test45431() throws Exception {
-        Package pkg = Package.open(getFilePath("45431.xlsm"));
+        OPCPackage pkg = OPCPackage.open(getFilePath("45431.xlsm"));
         XSSFWorkbook wb = new XSSFWorkbook(pkg);
         assertTrue(wb.isMacroEnabled());
 
@@ -89,7 +90,7 @@ public class TestXSSFBugs extends TestCase {
 
         // Save and re-open, both still there
         XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        Package nPkg = nwb.getPackage();
+        OPCPackage nPkg = nwb.getPackage();
         assertTrue(nwb.isMacroEnabled());
 
         vba = nPkg.getPart(

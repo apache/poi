@@ -21,16 +21,16 @@ import java.util.Iterator;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLTextExtractor;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.model.XWPFCommentsDecorator;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.model.XWPFHyperlinkDecorator;
 import org.apache.poi.xwpf.model.XWPFParagraphDecorator;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.xmlbeans.XmlException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.Package;
 
 /**
  * Helper class to extract text from an OOXML Word file
@@ -39,7 +39,7 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
 	private XWPFDocument document;
 	private boolean fetchHyperlinks = false;
 	
-	public XWPFWordExtractor(Package container) throws XmlException, OpenXML4JException, IOException {
+	public XWPFWordExtractor(OPCPackage container) throws XmlException, OpenXML4JException, IOException {
 		this(new XWPFDocument(container));
 	}
 	public XWPFWordExtractor(XWPFDocument document) {

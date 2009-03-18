@@ -22,7 +22,7 @@ import java.util.Iterator;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -36,7 +36,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 public class FromHowTo {
 	public void processOneSheet(String filename) throws Exception {
-		Package pkg = Package.open(filename);
+		OPCPackage pkg = OPCPackage.open(filename);
 		XSSFReader r = new XSSFReader( pkg );
 		SharedStringsTable sst = r.getSharedStringsTable();
 
@@ -51,7 +51,7 @@ public class FromHowTo {
 	}
 
 	public void processAllSheets(String filename) throws Exception {
-		Package pkg = Package.open(filename);
+		OPCPackage pkg = OPCPackage.open(filename);
 		XSSFReader r = new XSSFReader( pkg );
 		SharedStringsTable sst = r.getSharedStringsTable();
 		

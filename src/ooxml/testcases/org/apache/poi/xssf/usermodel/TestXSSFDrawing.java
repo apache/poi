@@ -16,11 +16,13 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import junit.framework.TestCase;
-import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.POIXMLDocumentPart;
-
 import java.util.List;
+
+import junit.framework.TestCase;
+
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 
 /**
  * @author Yegor Kozlov
@@ -71,7 +73,7 @@ public class TestXSSFDrawing extends TestCase {
             XSSFSheet sheet = wb.createSheet();
             XSSFDrawing drawing = sheet.createDrawingPatriarch();
         }
-        org.apache.poi.openxml4j.opc.Package pkg = wb.getPackage();
+        OPCPackage pkg = wb.getPackage();
         assertEquals(3, pkg.getPartsByContentType(XSSFRelation.DRAWINGS.getContentType()).size());
     }
 }

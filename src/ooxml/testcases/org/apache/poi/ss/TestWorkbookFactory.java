@@ -24,7 +24,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 
 import junit.framework.TestCase;
 
@@ -63,7 +63,7 @@ public class TestWorkbookFactory extends TestCase {
 		
 		// Package -> xssf
 		wb = WorkbookFactory.create(
-				Package.open(xlsx.toString())
+				OPCPackage.open(xlsx.toString())
 		);
 		assertNotNull(wb);
 		assertTrue(wb instanceof XSSFWorkbook);

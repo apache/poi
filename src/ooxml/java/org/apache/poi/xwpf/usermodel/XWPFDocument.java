@@ -30,7 +30,6 @@ import org.apache.xmlbeans.XmlOptions;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.*;
-import org.apache.poi.openxml4j.opc.Package;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBody;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTComment;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocument1;
@@ -65,7 +64,7 @@ public class XWPFDocument extends POIXMLDocument {
     /** Handles the joy of different headers/footers for different pages */
     private XWPFHeaderFooterPolicy headerFooterPolicy;
 
-    public XWPFDocument(Package pkg) throws IOException {
+    public XWPFDocument(OPCPackage pkg) throws IOException {
         super(ensureWriteAccess(pkg));
 
         //build a tree of POIXMLDocumentParts, this document being the root
@@ -143,9 +142,9 @@ public class XWPFDocument extends POIXMLDocument {
     /**
      * Create a new SpreadsheetML package and setup the default minimal content
      */
-    protected static Package newPackage() {
+    protected static OPCPackage newPackage() {
         try {
-            Package pkg = Package.create(PackageHelper.createTempFile());
+        	OPCPackage pkg = OPCPackage.create(PackageHelper.createTempFile());
             // Main part
             PackagePartName corePartName = PackagingURIHelper.createPartName(XWPFRelation.DOCUMENT.getDefaultFileName());
             // Create main part relationship

@@ -17,17 +17,17 @@
 package org.apache.poi.xslf;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.poi.POIXMLDocument;
-import org.apache.xmlbeans.XmlException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesSlide;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPresentation;
@@ -68,7 +68,7 @@ public class XSLFSlideShow extends POIXMLDocument {
      */
     private List<PackagePart> embedds;
 
-	public XSLFSlideShow(Package container) throws OpenXML4JException, IOException, XmlException {
+	public XSLFSlideShow(OPCPackage container) throws OpenXML4JException, IOException, XmlException {
 		super(container);
 		
 		presentationDoc =

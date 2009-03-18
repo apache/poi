@@ -71,7 +71,7 @@ public final class PackageRelationshipCollection implements
 	/**
 	 * Reference to the package.
 	 */
-	private Package container;
+	private OPCPackage container;
 
 	/**
 	 * Constructor.
@@ -105,7 +105,7 @@ public final class PackageRelationshipCollection implements
 	/**
 	 * Constructor.
 	 */
-	public PackageRelationshipCollection(Package container)
+	public PackageRelationshipCollection(OPCPackage container)
 			throws InvalidFormatException {
 		this(container, null);
 	}
@@ -136,7 +136,7 @@ public final class PackageRelationshipCollection implements
 	 *             If an error occurs during the parsing of the relatinships
 	 *             part fo the specified part.
 	 */
-	public PackageRelationshipCollection(Package container, PackagePart part)
+	public PackageRelationshipCollection(OPCPackage container, PackagePart part)
 			throws InvalidFormatException {
 		this();
 

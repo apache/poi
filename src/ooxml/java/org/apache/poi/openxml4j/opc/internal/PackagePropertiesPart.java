@@ -27,7 +27,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageProperties;
@@ -60,7 +60,7 @@ public class PackagePropertiesPart extends PackagePart implements
 	 * @throws InvalidFormatException
 	 *             Throws if the content is invalid.
 	 */
-	public PackagePropertiesPart(Package pack, PackagePartName partName)
+	public PackagePropertiesPart(OPCPackage pack, PackagePartName partName)
 			throws InvalidFormatException {
 		super(pack, partName, ContentTypes.CORE_PROPERTIES_PART);
 	}

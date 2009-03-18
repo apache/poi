@@ -32,7 +32,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 import junit.framework.TestCase;
@@ -125,7 +125,7 @@ public class TestCommentsTable extends TestCase {
 		);
 		assertTrue(xml.exists());
     	
-		Package pkg = Package.open(xml.toString());
+		OPCPackage pkg = OPCPackage.open(xml.toString());
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
         List<POIXMLDocumentPart> rels = wb.getSheetAt(0).getRelations();
         CommentsTable ct = null;

@@ -33,6 +33,11 @@ import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
@@ -41,14 +46,9 @@ import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
-import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
+import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.xmlbeans.XmlException;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.Package;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 
 /**
  * Figures out the correct POITextExtractor for your supplied
@@ -67,7 +67,7 @@ public class ExtractorFactory {
 		}
 		if(POIXMLDocument.hasOOXMLHeader(inp)) {
 			inp.close();
-			return createExtractor(Package.open(f.toString()));
+			return createExtractor(OPCPackage.open(f.toString()));
 		}
 		throw new IllegalArgumentException("Your File was neither an OLE2 file, nor an OOXML file");
 	}
@@ -83,12 +83,12 @@ public class ExtractorFactory {
 			return createExtractor(new POIFSFileSystem(inp));
 		}
 		if(POIXMLDocument.hasOOXMLHeader(inp)) {
-			return createExtractor(Package.open(inp));
+			return createExtractor(OPCPackage.open(inp));
 		}
 		throw new IllegalArgumentException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
 	}
 	
-	public static POIXMLTextExtractor createExtractor(Package pkg) throws IOException, OpenXML4JException, XmlException {
+	public static POIXMLTextExtractor createExtractor(OPCPackage pkg) throws IOException, OpenXML4JException, XmlException {
 		PackageRelationshipCollection core = 
 			pkg.getRelationshipsByType(CORE_DOCUMENT_REL);
 		if(core.size() != 1) {

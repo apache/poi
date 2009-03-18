@@ -18,13 +18,13 @@ package org.apache.poi.xwpf;
 
 import java.io.File;
 
+import junit.framework.TestCase;
+
 import org.apache.poi.POIXMLDocument;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
-import org.apache.poi.openxml4j.opc.Package;
-import org.apache.poi.openxml4j.opc.PackagePart;
-
-import junit.framework.TestCase;
 
 public class TestXWPFDocument extends TestCase {
 	private File sampleFile;
@@ -47,7 +47,7 @@ public class TestXWPFDocument extends TestCase {
 	}
 
 	public void testContainsMainContentType() throws Exception {
-		Package pack = POIXMLDocument.openPackage(sampleFile.toString());
+		OPCPackage pack = POIXMLDocument.openPackage(sampleFile.toString());
 		
 		boolean found = false;
 		for(PackagePart part : pack.getParts()) {

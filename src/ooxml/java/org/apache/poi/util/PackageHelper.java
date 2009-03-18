@@ -17,7 +17,7 @@
 package org.apache.poi.util;
 
 import org.apache.poi.openxml4j.opc.*;
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.util.IOUtils;
 
@@ -36,7 +36,7 @@ public class PackageHelper {
      * @param   pkg   the package to clone
      * @return  the cloned package
      */
-    public static Package clone(Package pkg) throws OpenXML4JException, IOException {
+    public static OPCPackage clone(OPCPackage pkg) throws OpenXML4JException, IOException {
         return clone(pkg, createTempFile());
     }
 
@@ -47,11 +47,11 @@ public class PackageHelper {
      * @param   file  the destination file
      * @return  the cloned package
      */
-    public static Package clone(Package pkg, File file) throws OpenXML4JException, IOException {
+    public static OPCPackage clone(OPCPackage pkg, File file) throws OpenXML4JException, IOException {
 
         String path = file.getAbsolutePath();
 
-        Package dest = Package.create(path);
+        OPCPackage dest = OPCPackage.create(path);
         PackageRelationshipCollection rels = pkg.getRelationships();
         for (PackageRelationship rel : rels) {
             PackagePart part = pkg.getPart(rel);
@@ -76,7 +76,7 @@ public class PackageHelper {
 
         //the temp file will be deleted when JVM terminates
         new File(path).deleteOnExit();
-        return Package.open(path);
+        return OPCPackage.open(path);
     }
 
     /**
@@ -95,7 +95,7 @@ public class PackageHelper {
     /**
      * Recursively copy package parts to the destination package
      */
-    private static void copy(Package pkg, PackagePart part, Package tgt, PackagePart part_tgt) throws OpenXML4JException, IOException {
+    private static void copy(OPCPackage pkg, PackagePart part, OPCPackage tgt, PackagePart part_tgt) throws OpenXML4JException, IOException {
         PackageRelationshipCollection rels = part.getRelationships();
         if(rels != null) for (PackageRelationship rel : rels) {
             PackagePart p;

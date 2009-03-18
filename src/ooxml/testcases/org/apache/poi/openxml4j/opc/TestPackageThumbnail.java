@@ -41,13 +41,13 @@ public final class TestPackageThumbnail extends TestCase {
 		File outputFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageThumbnailOUTPUT.docx");
 
 		// Open package
-		Package p = Package.open(inputPath, PackageAccess.READ_WRITE);
+		OPCPackage p = OPCPackage.open(inputPath, PackageAccess.READ_WRITE);
 		p.addThumbnail(imagePath);
 		// Save the package in the output directory
 		p.save(outputFile);
 
 		// Open the newly created file to check core properties saved values.
-		Package p2 = Package.open(outputFile.getAbsolutePath(), PackageAccess.READ);
+		OPCPackage p2 = OPCPackage.open(outputFile.getAbsolutePath(), PackageAccess.READ);
 		if (p2.getRelationshipsByType(PackageRelationshipTypes.THUMBNAIL)
 				.size() == 0)
 			fail("Thumbnail not added to the package !");

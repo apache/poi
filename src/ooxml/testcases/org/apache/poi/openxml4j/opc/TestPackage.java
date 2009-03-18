@@ -51,7 +51,7 @@ public final class TestPackage extends TestCase {
 		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageOpenSaveTMP.docx");
 
-		Package p = Package.open(originalFile, PackageAccess.READ_WRITE);
+		OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE);
 		p.save(targetFile.getAbsoluteFile());
 
 		// Compare the original and newly saved document
@@ -70,7 +70,7 @@ public final class TestPackage extends TestCase {
 		// Zap the target file, in case of an earlier run
 		if(targetFile.exists()) targetFile.delete();
 		
-		Package pkg = Package.create(targetFile);
+		OPCPackage pkg = OPCPackage.create(targetFile);
 		
 		// Check it has content types for rels and xml
 		ContentTypeManager ctm = getContentTypeManager(pkg);
@@ -105,7 +105,7 @@ public final class TestPackage extends TestCase {
 		if(targetFile.exists()) targetFile.delete();
 		
 		// Create a package
-		Package pkg = Package.create(targetFile);
+		OPCPackage pkg = OPCPackage.create(targetFile);
 		PackagePartName corePartName = PackagingURIHelper
 				.createPartName("/word/document.xml");
 
@@ -145,7 +145,7 @@ public final class TestPackage extends TestCase {
 	 */
 	public void testCreatePackageWithCoreDocument() throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		Package pkg = Package.create(baos);
+		OPCPackage pkg = OPCPackage.create(baos);
 		
 		// Add a core document
         PackagePartName corePartName = PackagingURIHelper.createPartName("/xl/workbook.xml");
@@ -184,7 +184,7 @@ public final class TestPackage extends TestCase {
         FileOutputStream fout = new FileOutputStream(File.createTempFile("testCreatePackageWithCoreDocument", ".zip"));
         fout.write(baos.toByteArray());
         fout.close();
-        pkg = Package.open(new ByteArrayInputStream(baos.toByteArray()));
+        pkg = OPCPackage.open(new ByteArrayInputStream(baos.toByteArray()));
         
         
         // Check still right
@@ -210,7 +210,7 @@ public final class TestPackage extends TestCase {
 		FileHelper.copyFile(inputFile, targetFile);
 
 		// Create a package
-		Package pkg = Package.open(targetFile.getAbsolutePath());
+		OPCPackage pkg = OPCPackage.open(targetFile.getAbsolutePath());
 
 		// Modify core part
 		PackagePartName corePartName = PackagingURIHelper
@@ -263,7 +263,7 @@ public final class TestPackage extends TestCase {
 		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageOpenSaveTMP.docx");
 
-		Package p = Package.open(originalFile, PackageAccess.READ_WRITE);
+		OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE);
 		FileOutputStream fout = new FileOutputStream(targetFile);
 		p.save(fout);
 		fout.close();
@@ -284,7 +284,7 @@ public final class TestPackage extends TestCase {
 		
 		FileInputStream finp = new FileInputStream(originalFile);
 		
-		Package p = Package.open(finp);
+		OPCPackage p = OPCPackage.open(finp);
 		
 		assertNotNull(p);
 		assertNotNull(p.getRelationships());
@@ -303,7 +303,7 @@ public final class TestPackage extends TestCase {
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageRemovePartRecursiveOUTPUT.docx");
 		File tempFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageRemovePartRecursiveTMP.docx");
 
-		Package p = Package.open(originalFile, PackageAccess.READ_WRITE);
+		OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE);
 		p.removePartRecursive(PackagingURIHelper.createPartName(new URI(
 				"/word/document.xml")));
 		p.save(tempFile.getAbsoluteFile());
@@ -353,7 +353,7 @@ public final class TestPackage extends TestCase {
 
 		String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
 
-		Package p = Package.open(filepath, PackageAccess.READ_WRITE);
+		OPCPackage p = OPCPackage.open(filepath, PackageAccess.READ_WRITE);
 		// Remove the core part
 		p.deletePart(PackagingURIHelper.createPartName("/word/document.xml"));
 
@@ -391,7 +391,7 @@ public final class TestPackage extends TestCase {
 
 		String filepath = OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
 
-		Package p = Package.open(filepath, PackageAccess.READ_WRITE);
+		OPCPackage p = OPCPackage.open(filepath, PackageAccess.READ_WRITE);
 		// Remove the core part
 		p.deletePartRecursive(PackagingURIHelper.createPartName("/word/document.xml"));
 
@@ -409,8 +409,8 @@ public final class TestPackage extends TestCase {
 		p.revert();
 	}
 	
-	private static ContentTypeManager getContentTypeManager(Package pkg) throws Exception {
-		Field f = Package.class.getDeclaredField("contentTypeManager");
+	private static ContentTypeManager getContentTypeManager(OPCPackage pkg) throws Exception {
+		Field f = OPCPackage.class.getDeclaredField("contentTypeManager");
 		f.setAccessible(true);
 		return (ContentTypeManager)f.get(pkg);
 	}

@@ -18,23 +18,23 @@ package org.apache.poi;
 
 import java.io.IOException;
 
-import org.apache.xmlbeans.XmlException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
+import org.apache.xmlbeans.XmlException;
 
 /**
  * Wrapper around the two different kinds of OOXML properties 
  *  a document can have
  */
 public class POIXMLProperties {
-	private Package pkg;
+	private OPCPackage pkg;
 	private CoreProperties core;
 	private ExtendedProperties ext;
 	private CustomProperties cust;
 	
-	public POIXMLProperties(Package docPackage) throws IOException, OpenXML4JException, XmlException {
+	public POIXMLProperties(OPCPackage docPackage) throws IOException, OpenXML4JException, XmlException {
 		this.pkg = docPackage;
 		
 		// Core properties
@@ -97,7 +97,7 @@ public class POIXMLProperties {
 	 * Writes out the ooxml properties into the supplied,
 	 *  new Package
 	 */
-	public void write(Package pkg) {
+	public void write(OPCPackage pkg) {
 		// TODO
 	}
 	

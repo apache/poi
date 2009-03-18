@@ -55,17 +55,13 @@ public class POIXMLDocumentPart {
     /**
      * Construct POIXMLDocumentPart representing a "core document" package part.
      */
-    public POIXMLDocumentPart(Package pkg) {
-        try {
-            PackageRelationship coreRel = pkg.getRelationshipsByType(
-                    PackageRelationshipTypes.CORE_DOCUMENT).getRelationship(0);
+    public POIXMLDocumentPart(OPCPackage pkg) {
+        PackageRelationship coreRel = pkg.getRelationshipsByType(
+                PackageRelationshipTypes.CORE_DOCUMENT).getRelationship(0);
 
-            this.relations = new LinkedList<POIXMLDocumentPart>();
-            this.packagePart = pkg.getPart(coreRel);
-            this.packageRel = coreRel;
-        } catch (OpenXML4JException e){
-            throw new POIXMLException(e);
-        }
+        this.relations = new LinkedList<POIXMLDocumentPart>();
+        this.packagePart = pkg.getPart(coreRel);
+        this.packageRel = coreRel;
     }
 
     /**

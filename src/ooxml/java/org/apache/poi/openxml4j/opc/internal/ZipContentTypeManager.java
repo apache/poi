@@ -25,12 +25,12 @@ import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.dom4j.Document;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.Package;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.StreamHelper;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.dom4j.Document;
 
 /**
  * Zip implementation of the ContentTypeManager.
@@ -51,7 +51,7 @@ public class ZipContentTypeManager extends ContentTypeManager {
 	 * @throws InvalidFormatException
 	 *             If the content types part content is not valid.
 	 */
-	public ZipContentTypeManager(InputStream in, Package pkg)
+	public ZipContentTypeManager(InputStream in, OPCPackage pkg)
 			throws InvalidFormatException {
 		super(in, pkg);
 	}
