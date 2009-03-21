@@ -23,6 +23,44 @@ package org.apache.poi.ss.usermodel;
  * @author Yegor Kozlov
  */
 public interface ClientAnchor {
+    /**
+     * Move and Resize With Anchor Cells
+     * <p>
+     * Specifies that the current drawing shall move and
+     * resize to maintain its row and column anchors (i.e. the
+     * object is anchored to the actual from and to row and column)
+     * </p>
+     */
+    public static final int MOVE_AND_RESIZE = 0;
+
+    /**
+     * Move With Cells but Do Not Resize
+     * <p>
+     * Specifies that the current drawing shall move with its
+     * row and column (i.e. the object is anchored to the
+     * actual from row and column), but that the size shall remain absolute.
+     * </p>
+     * <p>
+     * If additional rows/columns are added between the from and to locations of the drawing,
+     * the drawing shall move its to anchors as needed to maintain this same absolute size.
+     * </p>
+     */
+    public static final int MOVE_DONT_RESIZE = 2;
+
+    /**
+     * Do Not Move or Resize With Underlying Rows/Columns
+     * <p>
+     * Specifies that the current start and end positions shall
+     * be maintained with respect to the distances from the
+     * absolute start point of the worksheet.
+     * </p>
+     * <p>
+     * If additional rows/columns are added before the
+     * drawing, the drawing shall move its anchors as needed
+     * to maintain this same absolute position.
+     * </p>
+     */
+    public static final int DONT_MOVE_AND_RESIZE = 3;
 
     /**
      * Returns the column (0 based) of the first cell.
@@ -135,4 +173,30 @@ public interface ClientAnchor {
      * @param dx2 the x coordinate within the second cell
      */
     public void setDx2(int dx2);
+
+
+    /**
+     * Sets the anchor type
+     * <p>
+     * 0 = Move and size with Cells, 2 = Move but don't size with cells, 3 = Don't move or size with cells.
+     * </p>
+     * @param anchorType the anchor type
+     * @see #MOVE_AND_RESIZE
+     * @see #MOVE_DONT_RESIZE
+     * @see #DONT_MOVE_AND_RESIZE
+     */
+    public void setAnchorType( int anchorType );
+
+    /**
+     * Gets the anchor type
+     * <p>
+     * 0 = Move and size with Cells, 2 = Move but don't size with cells, 3 = Don't move or size with cells.
+     * </p>
+     * @return the anchor type
+     * @see #MOVE_AND_RESIZE
+     * @see #MOVE_DONT_RESIZE
+     * @see #DONT_MOVE_AND_RESIZE
+     */
+    public int getAnchorType();
+
 }
