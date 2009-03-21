@@ -17,13 +17,12 @@
 package org.apache.poi.xssf.usermodel;
 
 import junit.framework.TestCase;
-import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.POIXMLDocumentPart;
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.STEditAs;
 
 import java.util.List;
 import java.util.Arrays;
-import java.io.IOException;
 
 /**
  * @author Yegor Kozlov
@@ -46,10 +45,17 @@ public class TestXSSFPicture extends TestCase {
         assertTrue(Arrays.equals(jpegData, pictures.get(jpegIdx).getData()));
 
         XSSFClientAnchor anchor = new XSSFClientAnchor(0, 0, 0, 0, 1, 1, 10, 30);
+        assertEquals(ClientAnchor.MOVE_AND_RESIZE, anchor.getAnchorType());
+        anchor.setAnchorType(ClientAnchor.DONT_MOVE_AND_RESIZE);
+        assertEquals(ClientAnchor.DONT_MOVE_AND_RESIZE, anchor.getAnchorType());
+
         XSSFPicture shape = drawing.createPicture(anchor, jpegIdx);
         assertTrue(anchor.equals(shape.getAnchor()));
         assertNotNull(shape.getPictureData());
         assertTrue(Arrays.equals(jpegData, shape.getPictureData().getData()));
 
+        CTTwoCellAnchor ctShapeHolder = drawing.getCTDrawing().getTwoCellAnchorArray(0);
+        // STEditAs.ABSOLUTE corresponds to ClientAnchor.DONT_MOVE_AND_RESIZE
+        assertEquals(STEditAs.ABSOLUTE, ctShapeHolder.getEditAs());
     }
 }

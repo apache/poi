@@ -138,7 +138,6 @@ public class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         PackageRelationship rel = addPictureReference(pictureIndex);
 
         CTTwoCellAnchor ctAnchor = createTwoCellAnchor(anchor);
-        ctAnchor.setEditAs(STEditAs.ONE_CELL);
         CTPicture ctShape = ctAnchor.addNewPic();
         ctShape.set(XSSFPicture.prototype());
 
@@ -235,6 +234,14 @@ public class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         ctAnchor.addNewClientData();
         anchor.setTo(ctAnchor.getTo());
         anchor.setFrom(ctAnchor.getFrom());
+        STEditAs.Enum aditAs;
+        switch(anchor.getAnchorType()) {
+            case ClientAnchor.DONT_MOVE_AND_RESIZE: aditAs = STEditAs.ABSOLUTE; break;
+            case ClientAnchor.MOVE_AND_RESIZE: aditAs = STEditAs.TWO_CELL; break;
+            case ClientAnchor.MOVE_DONT_RESIZE: aditAs = STEditAs.ONE_CELL; break;
+            default: aditAs = STEditAs.ONE_CELL;
+        }
+        ctAnchor.setEditAs(aditAs);
         return ctAnchor;
     }
 }

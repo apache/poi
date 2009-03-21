@@ -26,6 +26,7 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
  * @author Yegor Kozlov
  */
 public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
+    private int anchorType;
 
     /**
      * Starting anchor point
@@ -193,4 +194,26 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
     protected void setTo(CTMarker to){
         cell2 = to;
     }
+
+
+    /**
+     * Sets the anchor type
+     * <p>
+     * 0 = Move and size with Cells, 2 = Move but don't size with cells, 3 = Don't move or size with cells.
+     */
+    public void setAnchorType( int anchorType )
+    {
+        this.anchorType = anchorType;
+    }
+
+    /**
+     * Gets the anchor type
+     * <p>
+     * 0 = Move and size with Cells, 2 = Move but don't size with cells, 3 = Don't move or size with cells.
+     */
+    public int getAnchorType()
+    {
+        return anchorType;
+    }
+
 }
