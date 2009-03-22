@@ -212,16 +212,12 @@ public final class XSSFCell implements Cell {
      *        will change the cell to a numeric cell and set its value.
      */
     public void setCellValue(double value) {
-        int cellType = getCellType();
-        switch (cellType) {
-            case CELL_TYPE_ERROR:
-            case CELL_TYPE_FORMULA:
-                cell.setV(String.valueOf(value));
-                break;
-            default:
-                cell.setT(STCellType.N);
-                cell.setV(String.valueOf(value));
-                break;
+        if(Double.isInfinite(value) || Double.isNaN(value)) {
+            cell.setT(STCellType.E);
+            cell.setV(FormulaError.NUM.getString());
+        } else {
+            cell.setT(STCellType.N);
+            cell.setV(String.valueOf(value));
         }
     }
 
@@ -303,6 +299,7 @@ public final class XSSFCell implements Cell {
         switch(cellType){
             case Cell.CELL_TYPE_FORMULA:
                 cell.setV(str.getString());
+                cell.setT(STCellType.STR);
                 break;
             default:
                 if(cell.getT() == STCellType.INLINE_STR) {
@@ -466,7 +463,7 @@ public final class XSSFCell implements Cell {
             return CELL_TYPE_FORMULA;
         }
 
-        return getBaseCellType();
+        return getBaseCellType(true);
     }
 
     /**
@@ -480,18 +477,18 @@ public final class XSSFCell implements Cell {
             throw new IllegalStateException("Only formula cells have cached results");
         }
 
-        return getBaseCellType();
+        return getBaseCellType(false);
     }
 
     /**
      * Detect cell type based on the "t" attribute of the CTCell bean
      */
-    private int getBaseCellType() {
+    private int getBaseCellType(boolean blankCells) {
         switch (cell.getT().intValue()) {
             case STCellType.INT_B:
                 return CELL_TYPE_BOOLEAN;
             case STCellType.INT_N:
-                if (!cell.isSetV()) {
+                if (!cell.isSetV() && blankCells) {
                     // ooxml does have a separate cell type of 'blank'.  A blank cell gets encoded as
                     // (either not present or) a numeric cell with no value set.
                     // The formula evaluator (and perhaps other clients of this interface) needs to
@@ -680,12 +677,15 @@ public final class XSSFCell implements Cell {
      * @see #CELL_TYPE_ERROR
      */
     public void setCellType(int cellType) {
+        int prevType = getCellType();
         switch (cellType) {
             case CELL_TYPE_BLANK:
                 setBlank();
                 break;
             case CELL_TYPE_BOOLEAN:
+                String newVal = convertCellValueToBoolean() ? TRUE_AS_STRING : FALSE_AS_STRING;
                 cell.setT(STCellType.B);
+                cell.setV(newVal);
                 break;
             case CELL_TYPE_NUMERIC:
                 cell.setT(STCellType.N);
@@ -694,6 +694,13 @@ public final class XSSFCell implements Cell {
                 cell.setT(STCellType.E);
                 break;
             case CELL_TYPE_STRING:
+                if(prevType != CELL_TYPE_STRING){
+                    String str = convertCellValueToString();
+                    XSSFRichTextString rt = new XSSFRichTextString(str);
+                    rt.setStylesTableReference(stylesSource);
+                    int sRef = sharedStringSource.addEntry(rt.getCTRst());
+                    cell.setV(Integer.toString(sRef));
+                }
                 cell.setT(STCellType.S);
                 break;
             case CELL_TYPE_FORMULA:
@@ -845,6 +852,59 @@ public final class XSSFCell implements Cell {
      */
     public CTCell getCTCell(){
         return cell;
+    }
+
+    /**
+     * Chooses a new boolean value for the cell when its type is changing.<p/>
+     *
+     * Usually the caller is calling setCellType() with the intention of calling
+     * setCellValue(boolean) straight afterwards.  This method only exists to give
+     * the cell a somewhat reasonable value until the setCellValue() call (if at all).
+     * TODO - perhaps a method like setCellTypeAndValue(int, Object) should be introduced to avoid this
+     */
+    private boolean convertCellValueToBoolean() {
+        int cellType = getCellType();
+
+        switch (cellType) {
+            case CELL_TYPE_BOOLEAN:
+                return TRUE_AS_STRING.equals(cell.getV());
+            case CELL_TYPE_STRING:
+                int sstIndex = Integer.parseInt(cell.getV());
+                XSSFRichTextString rt = new XSSFRichTextString(sharedStringSource.getEntryAt(sstIndex));
+                String text = rt.getString();
+                return Boolean.valueOf(text);
+            case CELL_TYPE_NUMERIC:
+                return Double.parseDouble(cell.getV()) != 0;
+
+            case CELL_TYPE_FORMULA:
+            case CELL_TYPE_ERROR:
+            case CELL_TYPE_BLANK:
+                return false;
+        }
+        throw new RuntimeException("Unexpected cell type (" + cellType + ")");
+    }
+
+    private String convertCellValueToString() {
+        int cellType = getCellType();
+
+        switch (cellType) {
+            case CELL_TYPE_BLANK:
+                return "";
+            case CELL_TYPE_BOOLEAN:
+                return TRUE_AS_STRING.equals(cell.getV()) ? "TRUE" : "FALSE";
+            case CELL_TYPE_STRING:
+                int sstIndex = Integer.parseInt(cell.getV());
+                XSSFRichTextString rt = new XSSFRichTextString(sharedStringSource.getEntryAt(sstIndex));
+                return rt.getString();
+            case CELL_TYPE_NUMERIC:
+                return String.valueOf(Double.parseDouble(cell.getV()));
+            case CELL_TYPE_ERROR:
+                   return cell.getV();
+            case CELL_TYPE_FORMULA:
+                // should really evaluate, but HSSFCell can't call HSSFFormulaEvaluator
+                return "";
+        }
+        throw new RuntimeException("Unexpected cell type (" + cellType + ")");
     }
 
 }
