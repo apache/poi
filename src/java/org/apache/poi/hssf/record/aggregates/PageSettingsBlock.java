@@ -71,6 +71,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 	private List<ContinueRecord> _plsContinues;
 	private PrintSetupRecord printSetup;
 	private Record _bitmap;
+	private Record _headerFooter;
 
 	public PageSettingsBlock(RecordStream rs) {
 		while(true) {
@@ -112,6 +113,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 			case UnknownRecord.PLS_004D:
 			case PrintSetupRecord.sid:
 			case UnknownRecord.BITMAP_00E9:
+			case UnknownRecord.HEADER_FOOTER_089C: // extra header/footer settings supported by Excel 2007 
 				return true;
 		}
 		return false;
@@ -163,6 +165,9 @@ public final class PageSettingsBlock extends RecordAggregate {
 				break;
 			case UnknownRecord.BITMAP_00E9:
 				_bitmap = rs.getNext();
+				break;
+			case UnknownRecord.HEADER_FOOTER_089C:
+				_headerFooter = rs.getNext();
 				break;
 			default:
 				// all other record types are not part of the PageSettingsBlock
@@ -224,6 +229,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 		}
 		visitIfPresent(printSetup, rv);
 		visitIfPresent(_bitmap, rv);
+		visitIfPresent(_headerFooter, rv);
 	}
 	private static void visitIfPresent(Record r, RecordVisitor rv) {
 		if (r != null) {
@@ -522,5 +528,17 @@ public final class PageSettingsBlock extends RecordAggregate {
 
 	public HCenterRecord getHCenter() {
 		return _hCenter;
+	}
+	
+	/**
+	 * HEADERFOOTER is new in 2007.  Some apps seem to have scattered this record long after
+	 * the {@link PageSettingsBlock} where it belongs.
+	 * 
+	 */
+	public void addLateHeaderFooter(Record rec) {
+		if (_headerFooter != null) {
+			throw new IllegalStateException("This page settings block already has a header/footer record");
+		}
+		_headerFooter = rec;
 	}
 }
