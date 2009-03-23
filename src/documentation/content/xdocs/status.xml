@@ -34,7 +34,8 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.5-beta6" date="2009-??-??">
-           <action dev="POI-DEVELOPERS" type="fix">update cell type when setting cached formula result in XSSFCell</action>
+           <action dev="POI-DEVELOPERS" type="fix">46840 - PageSettingsBlock should include HEADERFOOTER record</action>
+           <action dev="POI-DEVELOPERS" type="fix">46885 - update cell type when setting cached formula result in XSSFCell</action>
            <action dev="POI-DEVELOPERS" type="add">added modifiers for anchor type to XSSFClientAnchor</action>
            <action dev="POI-DEVELOPERS" type="add">46772 - support built-in data formats in XSSFDataFormat</action>
            <action dev="POI-DEVELOPERS" type="fix">46719 - fixed XSSFSheet.shiftRows to correctly preserve row heights</action>

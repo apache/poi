@@ -48,6 +48,7 @@ public final class UnknownRecord extends StandardRecord {
 	public static final int SHEETEXT_0862        = 0x0862; // OOO calls this SHEETLAYOUT
 	public static final int SHEETPROTECTION_0867 = 0x0867;
 	public static final int RANGEPROTECTION_0868 = 0x0868;
+	public static final int HEADER_FOOTER_089C   = 0x089C;
 	
 	private int _sid;
 	private byte[] _rawData;
@@ -181,7 +182,7 @@ public final class UnknownRecord extends StandardRecord {
 			case 0x0897: return "GUIDTYPELIB";
 			case 0x089A: return "MTRSETTINGS";
 			case 0x089B: return "COMPRESSPICTURES";
-			case 0x089C: return "HEADERFOOTER";
+			case HEADER_FOOTER_089C: return "HEADERFOOTER";
 			case 0x08A1: return "SHAPEPROPSSTREAM";
 			case 0x08A3: return "FORCEFULLCALCULATION";
 			case 0x08A4: return "SHAPEPROPSSTREAM";

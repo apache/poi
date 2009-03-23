@@ -222,8 +222,12 @@ public final class Sheet implements Model {
                     } else if (windowTwo != null) {
                         // probably 'Custom View Settings' sub-stream which is found between
                         // USERSVIEWBEGIN(01AA) and USERSVIEWEND(01AB)
+                        // TODO - create UsersViewAggregate to hold these sub-streams, and simplify this code a bit
                         // This happens three times in test sample file "29982.xls"
-                         if (rs.peekNextSid() != UnknownRecord.USERSVIEWEND_01AB) {
+                        // Also several times in bugzilla samples 46840-23373 and 46840-23374
+                        if (recSid == UnknownRecord.HEADER_FOOTER_089C) {
+                            _psBlock.addLateHeaderFooter(rs.getNext());
+                        } else if (rs.peekNextSid() != UnknownRecord.USERSVIEWEND_01AB) {
                             // not quite the expected situation
                             throw new RuntimeException("two Page Settings Blocks found in the same sheet");
                         }

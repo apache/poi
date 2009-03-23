@@ -17,13 +17,28 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
+import java.util.Arrays;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.model.RecordStream;
+import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.DimensionsRecord;
+import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.FooterRecord;
+import org.apache.poi.hssf.record.HeaderRecord;
+import org.apache.poi.hssf.record.NumberRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
+import org.apache.poi.util.HexRead;
 
 /**
  * Tess for {@link PageSettingsBlock}
@@ -46,5 +61,55 @@ public final class TestPageSettingBlock extends TestCase {
 			e.printStackTrace();
 			throw new AssertionFailedError("Identified bug 46548: PageSettingBlock missing PrintSetupRecord record");
 		}
+	}
+
+	/**
+	 * Bug 46840 occurred because POI failed to recognise HEADERFOOTER as part of the
+	 * {@link PageSettingsBlock}.
+	 * 
+	 */
+	public void testHeaderFooter_bug46840() {
+
+		int rowIx = 5;
+		int colIx = 6;
+		NumberRecord nr = new NumberRecord();
+		nr.setRow(rowIx);
+		nr.setColumn((short) colIx);
+		nr.setValue(3.0);
+
+		Record[] recs = {
+				BOFRecord.createSheetBOF(),
+				new HeaderRecord("&LSales Figures"),
+				new FooterRecord("&LJanuary"),
+				ur(UnknownRecord.HEADER_FOOTER_089C, "9C 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 C4 60 00 00 00 00 00 00 00 00"),
+				new DimensionsRecord(),
+				new WindowTwoRecord(),
+				ur(UnknownRecord.USERSVIEWBEGIN_01AA, "ED 77 3B 86 BC 3F 37 4C A9 58 60 23 43 68 54 4B 01 00 00 00 64 00 00 00 40 00 00 00 02 00 00 00 3D 80 04 00 00 00 00 00 00 00 0C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 F0 3F FF FF 01 00"),
+				new HeaderRecord("&LSales Figures"),
+				new FooterRecord("&LJanuary"),
+				ur(UnknownRecord.HEADER_FOOTER_089C, "9C 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 C4 60 00 00 00 00 00 00 00 00"),
+				ur(UnknownRecord.USERSVIEWEND_01AB, "01, 00"),
+
+				EOFRecord.instance,
+		};
+		RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
+		Sheet sheet;
+		try {
+			sheet = Sheet.createSheet(rs);
+		} catch (RuntimeException e) {
+			if (e.getMessage().equals("two Page Settings Blocks found in the same sheet")) {
+				throw new AssertionFailedError("Identified bug 46480");
+			}
+			throw e;
+		}
+
+		RecordCollector rv = new RecordCollector();
+		sheet.visitContainedRecords(rv, rowIx);
+		Record[] outRecs = rv.getRecords();
+		assertEquals(13, outRecs.length);
+	}
+
+	private static UnknownRecord ur(int sid, String hexData) {
+		return new UnknownRecord(sid, HexRead.readFromString(hexData));
 	}
 }
