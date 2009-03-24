@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.5-beta6" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">46904 - Fix POIFS issue with duplicate block 0 references on very old BIFF5/BIFF7 files</action>
            <action dev="POI-DEVELOPERS" type="fix">46840 - PageSettingsBlock should include HEADERFOOTER record</action>
            <action dev="POI-DEVELOPERS" type="fix">46885 - update cell type when setting cached formula result in XSSFCell</action>
            <action dev="POI-DEVELOPERS" type="add">added modifiers for anchor type to XSSFClientAnchor</action>

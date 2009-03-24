@@ -25,6 +25,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
@@ -1669,8 +1670,16 @@ public final class TestBugs extends TestCase {
     
     /**
      * java.io.IOException: block[ 0 ] already removed
+     * (is an excel 95 file though)
      */
-    public void BROKENtest46904() throws IOException {
-        HSSFWorkbook wb = openSample("46904.xls");
+    public void test46904() throws IOException {
+    	try {
+    		HSSFWorkbook wb = openSample("46904.xls");
+    		fail();
+    	} catch(OldExcelFormatException e) {
+    		assertTrue(e.getMessage().startsWith(
+    				"The supplied spreadsheet seems to be Excel"
+    		));
+    	}
     }
 }
