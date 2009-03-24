@@ -200,6 +200,10 @@ public class BlockAllocationTableReader
         			// Special case where things are in the wrong order
         			System.err.println("Warning, header block comes after data blocks in POIFS block listing");
         			currentBlock = POIFSConstants.END_OF_CHAIN;
+        		} else if(currentBlock == 0) {
+        			// Special case where the termination isn't done right
+        			System.err.println("Warning, incorrectly terminated data blocks in POIFS block listing (should end at -2, ended at 0)");
+        			currentBlock = POIFSConstants.END_OF_CHAIN;
         		} else {
         			// Ripple up
         			throw e;

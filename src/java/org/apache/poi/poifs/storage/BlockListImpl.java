@@ -72,6 +72,14 @@ class BlockListImpl
             _blocks[ index ] = null;
         }
     }
+    
+    /**
+     * Unit testing method. Gets, without sanity checks or
+     *  removing.
+     */
+    protected ListManagedBlock get(final int index) throws IOException {
+    	return _blocks[index];
+    }
 
     /**
      * remove and return the specified block from the list

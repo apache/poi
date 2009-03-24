@@ -34,6 +34,7 @@ import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBitmapBlip;
 import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.model.Sheet;
@@ -227,7 +228,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         // check for previous version of file format
         try {
             directory.getEntry("Book");
-            throw new IllegalArgumentException("The supplied spreadsheet seems to be Excel 5.0/7.0 (BIFF5) format. "
+            throw new OldExcelFormatException("The supplied spreadsheet seems to be Excel 5.0/7.0 (BIFF5) format. "
                     + "POI only supports BIFF8 format (from Excel versions 97/2000/XP/2003)");
         } catch (FileNotFoundException e) {
             // fall through
