@@ -1133,10 +1133,9 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * @param idx  index within the set of styles
      * @return HSSFCellStyle object at the index
      */
-
     public HSSFCellStyle getCellStyleAt(short idx)
     {
-        ExtendedFormatRecord xfr = workbook.getExFormatAt(idx);
+        ExtendedFormatRecord xfr = workbook.getExFormatAt((int)idx);
         HSSFCellStyle style = new HSSFCellStyle(idx, xfr, this);
 
         return style;
