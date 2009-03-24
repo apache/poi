@@ -1666,4 +1666,11 @@ public final class TestBugs extends TestCase {
         assertEquals(size2, size3);
 
     }
+    
+    /**
+     * java.io.IOException: block[ 0 ] already removed
+     */
+    public void BROKENtest46904() throws IOException {
+        HSSFWorkbook wb = openSample("46904.xls");
+    }
 }
