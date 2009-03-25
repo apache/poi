@@ -186,6 +186,7 @@ public class BlockAllocationTableReader
         List blocks       = new ArrayList();
         int  currentBlock = startBlock;
         boolean firstPass = true;
+        ListManagedBlock dataBlock = null;
         
         // Process the chain from the start to the end
         // Normally we have header, data, end
@@ -193,16 +194,21 @@ public class BlockAllocationTableReader
         // For those cases, stop at the header, not the end
         while (currentBlock != POIFSConstants.END_OF_CHAIN) {
         	try {
-        		blocks.add(blockList.remove(currentBlock));
+        		// Grab the data at the current block offset
+        		dataBlock = blockList.remove(currentBlock);
+        		blocks.add(dataBlock);
+        		// Now figure out which block we go to next
                 currentBlock = _entries.get(currentBlock);
+                firstPass = false;
         	} catch(IOException e) {
         		if(currentBlock == headerPropertiesStartBlock) {
         			// Special case where things are in the wrong order
         			System.err.println("Warning, header block comes after data blocks in POIFS block listing");
         			currentBlock = POIFSConstants.END_OF_CHAIN;
-        		} else if(currentBlock == 0) {
+        		} else if(currentBlock == 0 && firstPass) {
         			// Special case where the termination isn't done right
-        			System.err.println("Warning, incorrectly terminated data blocks in POIFS block listing (should end at -2, ended at 0)");
+        			//  on an empty set
+        			System.err.println("Warning, incorrectly terminated empty data blocks in POIFS block listing (should end at -2, ended at 0)");
         			currentBlock = POIFSConstants.END_OF_CHAIN;
         		} else {
         			// Ripple up
@@ -212,7 +218,7 @@ public class BlockAllocationTableReader
         }
         
         return ( ListManagedBlock [] ) blocks
-            .toArray(new ListManagedBlock[ 0 ]);
+            .toArray(new ListManagedBlock[ blocks.size() ]);
     }
 
     // methods for debugging reader
