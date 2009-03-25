@@ -1329,7 +1329,7 @@ public class TestBlockAllocationTableReader
 
                 if (expected_length[ j ] == -1)
                 {
-                    fail("document " + j + " should have failed");
+                    fail("document " + j + " should have failed, but found a length of " + dataBlocks.length);
                 }
                 else
                 {
