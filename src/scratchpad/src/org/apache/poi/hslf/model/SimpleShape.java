@@ -246,6 +246,15 @@ public class SimpleShape extends Shape {
         return angle;
     }
 
+    /**
+     * Rotate this shape
+     *
+     * @param theta the rotation angle in degrees
+     */
+    public void setRotation(int theta){
+        setEscherProperty(EscherProperties.TRANSFORM__ROTATION, (theta << 16));
+    }
+
     public Rectangle2D getLogicalAnchor2D(){
         Rectangle2D anchor = getAnchor2D();
 
