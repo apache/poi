@@ -31,6 +31,8 @@ public final class AllPivotRecordTests {
 		TestSuite result = new TestSuite(AllPivotRecordTests.class.getName());
 		
 		result.addTestSuite(TestExtendedPivotTableViewFieldsRecord.class);
+		result.addTestSuite(TestPageItemRecord.class);
+		result.addTestSuite(TestViewFieldsRecord.class);
 		return result;
 	}
 }
