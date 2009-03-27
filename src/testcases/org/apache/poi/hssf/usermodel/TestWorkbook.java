@@ -546,29 +546,4 @@ public final class TestWorkbook extends TestCase {
         assertTrue("file exists",file.exists());
     }
 
-    public void testParentReferences(){
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet();
-        assertSame(workbook, sheet.getWorkbook());
-
-        HSSFRow row = sheet.createRow(0);
-        assertSame(sheet, row.getSheet());
-
-        HSSFCell cell = row.createCell(1);
-        assertSame(sheet, cell.getSheet());
-        assertSame(row, cell.getRow());
-
-        workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
-        sheet = workbook.getSheetAt(0);
-        assertSame(workbook, sheet.getWorkbook());
-
-        row = sheet.getRow(0);
-        assertSame(sheet, row.getSheet());
-
-        cell = row.getCell(1);
-        assertSame(sheet, cell.getSheet());
-        assertSame(row, cell.getRow());
-
-
-    }
 }

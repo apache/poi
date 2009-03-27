@@ -35,7 +35,7 @@ public class TestHSSFClientAnchor extends TestCase
         HSSFSheet sheet = wb.createSheet("test");
         HSSFClientAnchor a = new HSSFClientAnchor(0,0,1023,255,(short)0,0,(short)0,0);
         float p = a.getAnchorHeightInPoints(sheet);
-        assertEquals(11.953,p,0.001);
+        assertEquals(12.7,p,0.001);
 
         sheet.createRow(0).setHeightInPoints(14);
         a = new HSSFClientAnchor(0,0,1023,255,(short)0,0,(short)0,0);
@@ -57,7 +57,7 @@ public class TestHSSFClientAnchor extends TestCase
         sheet.createRow(0).setHeightInPoints(12);
         a = new HSSFClientAnchor(0,127,1023,127,(short)0,0,(short)0,1);
         p = a.getAnchorHeightInPoints(sheet);
-        assertEquals(12.0,p,0.001);
+        assertEquals(12.372,p,0.001);
 
     }
 
@@ -96,7 +96,7 @@ public class TestHSSFClientAnchor extends TestCase
             new HSSFClientAnchor( 0 , 128 , 0 , 128 ,(short)0, 1,(short)1, 3),
             new HSSFClientAnchor( 0 , 0 , 0 , 128 ,(short)0, 1,(short)1, 3),
         };
-        float[] ref = {24.0f, 18.0f, 24.0f, 30.0f};
+        float[] ref = {25.5f, 19.125f, 25.5f, 31.875f};
         for (int i = 0; i < anchor.length; i++) {
             float height = anchor[i].getAnchorHeightInPoints(sheet);
             assertEquals(ref[i], height, 0);

@@ -60,17 +60,7 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookView;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookViews;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STSheetState;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 /**
  * High level representation of a SpreadsheetML workbook.  This is the first object most users
@@ -445,7 +435,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @return XSSFSheet representing the new sheet.
      */
     public XSSFSheet createSheet() {
-        String sheetname = "Sheet" + (sheets.size() + 1);
+        String sheetname = "Sheet" + (sheets.size());
         return createSheet(sheetname);
     }
 
@@ -777,6 +767,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     public void removeSheetAt(int index) {
         validateSheetIndex(index);
 
+        XSSFSheet sheet = getSheetAt(index);
+        removeRelation(sheet);
         this.sheets.remove(index);
         this.workbook.getSheets().removeSheet(index);
     }
@@ -1009,7 +1001,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     /**
      * We only set one sheet as selected for compatibility with HSSF.
      */
-    public void setSelectedTab(short index) {
+    public void setSelectedTab(int index) {
         for (int i = 0 ; i < sheets.size() ; ++i) {
             XSSFSheet sheet = sheets.get(i);
             sheet.setSelected(i == index);
@@ -1042,10 +1034,16 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         int idx = getSheetIndex(sheetname);
         sheets.add(pos, sheets.remove(idx));
         // Reorder CTSheets
-        XmlObject cts = workbook.getSheets().getSheetArray(idx).copy();
+        CTSheets ct = workbook.getSheets();
+        XmlObject cts = ct.getSheetArray(idx).copy();
         workbook.getSheets().removeSheet(idx);
-        CTSheet newcts = workbook.getSheets().insertNewSheet(pos);
+        CTSheet newcts = ct.insertNewSheet(pos);
         newcts.set(cts);
+
+        //notify sheets
+        for(int i=0; i < sheets.size(); i++) {
+            sheets.get(i).sheet = ct.getSheetArray(i);
+        }
     }
 
     /**

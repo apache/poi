@@ -97,7 +97,7 @@ public interface Workbook {
      * @see Sheet#setSelected(boolean)
      * @param index the index of the sheet to select (0 based)
      */
-    void setSelectedTab(short index);
+    void setSelectedTab(int index);
 
     /**
      * Set the sheet name.

@@ -625,27 +625,6 @@ public final class TestBugs extends TestCase {
     }
 
     /**
-     * Bug 40296:      HSSFCell.setCellFormula throws
-     *   ClassCastException if cell is created using HSSFRow.createCell(short column, int type)
-     */
-    public void test40296() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-
-        HSSFWorkbook workBook = new HSSFWorkbook();
-        HSSFSheet workSheet = workBook.createSheet("Sheet1");
-        HSSFCell cell;
-        HSSFRow row = workSheet.createRow(0);
-        cell = row.createCell(0, HSSFCell.CELL_TYPE_NUMERIC);
-        cell.setCellValue(1.0);
-        cell = row.createCell(1, HSSFCell.CELL_TYPE_NUMERIC);
-        cell.setCellValue(2.0);
-        cell = row.createCell(2, HSSFCell.CELL_TYPE_FORMULA);
-        cell.setCellFormula("SUM(A1:B1)");
-
-        writeOutAndReadBack(wb);
-    }
-
-    /**
      * Test bug 38266: NPE when adding a row break
      *
      * User's diagnosis:

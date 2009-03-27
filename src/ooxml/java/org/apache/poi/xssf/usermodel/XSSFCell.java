@@ -60,8 +60,7 @@ public final class XSSFCell implements Cell {
     /**
      * The maximum  number of columns in SpreadsheetML
      */
-    public static final int MAX_COLUMN_NUMBER  = 16384; // 2^14
-    private static final int LAST_COLUMN_NUMBER  = MAX_COLUMN_NUMBER-1;
+    public static final int LAST_COLUMN_NUMBER  = 16384-1; //2^14-1
     private static final String LAST_COLUMN_NAME  = "XFD";
 
     private static final String FALSE_AS_STRING = "0";
@@ -194,7 +193,6 @@ public final class XSSFCell implements Cell {
         switch(cellType) {
             case CELL_TYPE_BLANK:
                 return 0.0;
-            case CELL_TYPE_ERROR:
             case CELL_TYPE_FORMULA:
             case CELL_TYPE_NUMERIC:
                 return cell.isSetV() ? Double.parseDouble(cell.getV()) : 0.0;
@@ -708,7 +706,7 @@ public final class XSSFCell implements Cell {
                     CTCellFormula f =  CTCellFormula.Factory.newInstance();
                     f.setStringValue("0");
                     cell.setF(f);
-                    cell.unsetT();
+                    if(cell.isSetT()) cell.unsetT();
                 }
                 break;
             default:

@@ -27,11 +27,13 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.ss.util.Region;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ddf.EscherDgRecord;
 
 /**
@@ -41,10 +43,15 @@ import org.apache.poi.ddf.EscherDgRecord;
  * @author Glen Stampoultzis (glens at apache.org)
  * @author Andrew C. Oliver (acoliver apache org)
  */
-public final class TestHSSFSheet extends TestCase {
+public final class TestHSSFSheet extends BaseTestSheet {
 
-    private static HSSFWorkbook openSample(String sampleFileName) {
-        return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);
+    @Override
+    protected HSSFITestDataProvider getTestDataProvider(){
+        return HSSFITestDataProvider.getInstance();
+    }
+
+    public void testTestGetSetMargin() {
+        baseTestGetSetMargin(new double[]{0.75, 0.75, 1.0, 1.0, 0.3, 0.3});
     }
 
     /**
@@ -140,138 +147,11 @@ public final class TestHSSFSheet extends TestCase {
         assertEquals(true, s.getRowSumsRight());
     }
 
-    public void testReadBooleans() {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("Test boolean");
-        HSSFRow row = sheet.createRow(2);
-        HSSFCell cell = row.createCell(9);
-        cell.setCellValue(true);
-        cell = row.createCell(11);
-        cell.setCellValue(true);
-
-        workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
-
-        sheet = workbook.getSheetAt(0);
-        row = sheet.getRow(2);
-        assertNotNull(row);
-        assertEquals(2, row.getPhysicalNumberOfCells());
-    }
-
-    public void testRemoveRow() {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("Test boolean");
-        HSSFRow row = sheet.createRow(2);
-        sheet.removeRow(row);
-    }
-
-    public void testRemoveZeroRow() {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("Sheet1");
-        HSSFRow row = sheet.createRow(0);
-        try {
-            sheet.removeRow(row);
-        } catch (IllegalArgumentException e) {
-            if (e.getMessage().equals("Invalid row number (-1) outside allowable range (0..65535)")) {
-                throw new AssertionFailedError("Identified bug 45367");
-            }
-            throw e;
-        }
-    }
-
-    public void testCloneSheet() {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("Test Clone");
-        HSSFRow row = sheet.createRow(0);
-        HSSFCell cell = row.createCell(0);
-        HSSFCell cell2 = row.createCell(1);
-        cell.setCellValue(new HSSFRichTextString("clone_test"));
-        cell2.setCellFormula("sin(1)");
-
-        HSSFSheet clonedSheet = workbook.cloneSheet(0);
-        HSSFRow clonedRow = clonedSheet.getRow(0);
-
-        //Check for a good clone
-        assertEquals(clonedRow.getCell(0).getRichStringCellValue().getString(), "clone_test");
-
-        //Check that the cells are not somehow linked
-        cell.setCellValue(new HSSFRichTextString("Difference Check"));
-        cell2.setCellFormula("cos(2)");
-        if ("Difference Check".equals(clonedRow.getCell(0).getRichStringCellValue().getString())) {
-            fail("string cell not properly cloned");
-        }
-        if ("COS(2)".equals(clonedRow.getCell(1).getCellFormula())) {
-            fail("formula cell not properly cloned");
-        }
-        assertEquals(clonedRow.getCell(0).getRichStringCellValue().getString(), "clone_test");
-        assertEquals(clonedRow.getCell(1).getCellFormula(), "SIN(1)");
-    }
-
-    /** tests that the sheet name for multiple clones of the same sheet is unique
-     * BUG 37416
-     */
-    public void testCloneSheetMultipleTimes() {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("Test Clone");
-        HSSFRow row = sheet.createRow(0);
-        HSSFCell cell = row.createCell(0);
-        cell.setCellValue(new HSSFRichTextString("clone_test"));
-        //Clone the sheet multiple times
-        workbook.cloneSheet(0);
-        workbook.cloneSheet(0);
-
-        assertNotNull(workbook.getSheet("Test Clone"));
-        assertNotNull(workbook.getSheet("Test Clone (2)"));
-        assertEquals("Test Clone (3)", workbook.getSheetName(2));
-        assertNotNull(workbook.getSheet("Test Clone (3)"));
-
-        workbook.removeSheetAt(0);
-        workbook.removeSheetAt(0);
-        workbook.removeSheetAt(0);
-        workbook.createSheet("abc ( 123)");
-        workbook.cloneSheet(0);
-        assertEquals("abc (124)", workbook.getSheetName(1));
-    }
-
-    /**
-     * Setting landscape and portrait stuff on new sheets
-     */
-    public void testPrintSetupLandscapeNew() throws Exception {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheetL = workbook.createSheet("LandscapeS");
-        HSSFSheet sheetP = workbook.createSheet("LandscapeP");
-
-        // Check two aspects of the print setup
-        assertFalse(sheetL.getPrintSetup().getLandscape());
-        assertFalse(sheetP.getPrintSetup().getLandscape());
-        assertEquals(0, sheetL.getPrintSetup().getCopies());
-        assertEquals(0, sheetP.getPrintSetup().getCopies());
-
-        // Change one on each
-        sheetL.getPrintSetup().setLandscape(true);
-        sheetP.getPrintSetup().setCopies((short)3);
-
-        // Check taken
-        assertTrue(sheetL.getPrintSetup().getLandscape());
-        assertFalse(sheetP.getPrintSetup().getLandscape());
-        assertEquals(0, sheetL.getPrintSetup().getCopies());
-        assertEquals(3, sheetP.getPrintSetup().getCopies());
-
-        // Save and re-load, and check still there
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        workbook.write(baos);
-        workbook = new HSSFWorkbook(new ByteArrayInputStream(baos.toByteArray()));
-
-        assertTrue(sheetL.getPrintSetup().getLandscape());
-        assertFalse(sheetP.getPrintSetup().getLandscape());
-        assertEquals(0, sheetL.getPrintSetup().getCopies());
-        assertEquals(3, sheetP.getPrintSetup().getCopies());
-    }
-
     /**
      * Setting landscape and portrait stuff on existing sheets
      */
     public void testPrintSetupLandscapeExisting() {
-        HSSFWorkbook workbook = openSample("SimpleWithPageBreaks.xls");
+        HSSFWorkbook workbook = getTestDataProvider().openSampleWorkbook("SimpleWithPageBreaks.xls");
 
         assertEquals(3, workbook.getNumberOfSheets());
 
@@ -352,7 +232,7 @@ public final class TestHSSFSheet extends TestCase {
     }
 
     public void testGroupRowsExisting() {
-        HSSFWorkbook workbook = openSample("NoGutsRecords.xls");
+        HSSFWorkbook workbook = getTestDataProvider().openSampleWorkbook("NoGutsRecords.xls");
 
         HSSFSheet s = workbook.getSheetAt(0);
         HSSFRow r1 = s.getRow(0);
@@ -403,8 +283,8 @@ public final class TestHSSFSheet extends TestCase {
     }
 
     public void testGetDrawings() {
-        HSSFWorkbook wb1c = openSample("WithChart.xls");
-        HSSFWorkbook wb2c = openSample("WithTwoCharts.xls");
+        HSSFWorkbook wb1c = getTestDataProvider().openSampleWorkbook("WithChart.xls");
+        HSSFWorkbook wb2c = getTestDataProvider().openSampleWorkbook("WithTwoCharts.xls");
 
         // 1 chart sheet -> data on 1st, chart on 2nd
         assertNotNull(wb1c.getSheetAt(0).getDrawingPatriarch());
@@ -476,94 +356,12 @@ public final class TestHSSFSheet extends TestCase {
      * When removing one merged region, it would break
      *
      */
-    public void testRemoveMerged() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-        CellRangeAddress region = new CellRangeAddress(0, 1, 0, 1);
-        sheet.addMergedRegion(region);
-        region = new CellRangeAddress(1, 2, 0, 1);
-        sheet.addMergedRegion(region);
-
-        sheet.removeMergedRegion(0);
-
-        region = sheet.getMergedRegion(0);
-        assertEquals("Left over region should be starting at row 1", 1, region.getFirstRow());
-
-        sheet.removeMergedRegion(0);
-
-        assertEquals("there should be no merged regions left!", 0, sheet.getNumMergedRegions());
-
-        //an, add, remove, get(0) would null pointer
-        sheet.addMergedRegion(region);
-        assertEquals("there should now be one merged region!", 1, sheet.getNumMergedRegions());
-        sheet.removeMergedRegion(0);
-        assertEquals("there should now be zero merged regions!", 0, sheet.getNumMergedRegions());
-        //add it again!
-        region.setLastRow(4);
-
-        sheet.addMergedRegion(region);
-        assertEquals("there should now be one merged region!", 1, sheet.getNumMergedRegions());
-
-        //should exist now!
-        assertTrue("there isn't more than one merged region in there", 1 <= sheet.getNumMergedRegions());
-        region = sheet.getMergedRegion(0);
-        assertEquals("the merged row to doesnt match the one we put in ", 4, region.getLastRow());
-    }
-
-    public void testShiftMerged() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-        HSSFRow row = sheet.createRow(0);
-        HSSFCell cell = row.createCell(0);
-        cell.setCellValue(new HSSFRichTextString("first row, first cell"));
-
-        row = sheet.createRow(1);
-        cell = row.createCell(1);
-        cell.setCellValue(new HSSFRichTextString("second row, second cell"));
-
-        CellRangeAddress region = new CellRangeAddress(1, 1, 0, 1);
-        sheet.addMergedRegion(region);
-
-        sheet.shiftRows(1, 1, 1);
-
-        region = sheet.getMergedRegion(0);
-        assertEquals("Merged region not moved over to row 2", 2, region.getFirstRow());
-    }
-
-    /**
-     * Tests the display of gridlines, formulas, and rowcolheadings.
-     * @author Shawn Laubach (slaubach at apache dot org)
-     */
-    public void testDisplayOptions() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-
-        assertEquals(sheet.isDisplayGridlines(), true);
-        assertEquals(sheet.isDisplayRowColHeadings(), true);
-        assertEquals(sheet.isDisplayFormulas(), false);
-        assertEquals(sheet.isDisplayZeros(), true);
-
-        sheet.setDisplayGridlines(false);
-        sheet.setDisplayRowColHeadings(false);
-        sheet.setDisplayFormulas(true);
-        sheet.setDisplayZeros(false);
-
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
-
-        assertEquals(sheet.isDisplayGridlines(), false);
-        assertEquals(sheet.isDisplayRowColHeadings(), false);
-        assertEquals(sheet.isDisplayFormulas(), true);
-        assertEquals(sheet.isDisplayZeros(), false);
-    }
-
-
     /**
      * Make sure the excel file loads work
      *
      */
     public void testPageBreakFiles() {
-        HSSFWorkbook wb = openSample("SimpleWithPageBreaks.xls");
+        HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("SimpleWithPageBreaks.xls");
 
         HSSFSheet sheet = wb.getSheetAt(0);
         assertNotNull(sheet);
@@ -591,7 +389,7 @@ public final class TestHSSFSheet extends TestCase {
     }
 
     public void testDBCSName () {
-        HSSFWorkbook wb = openSample("DBCSSheetName.xls");
+        HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("DBCSSheetName.xls");
         wb.getSheetAt(1);
         assertEquals ("DBCS Sheet Name 2", wb.getSheetName(1),"\u090f\u0915" );
         assertEquals("DBCS Sheet Name 1", wb.getSheetName(0),"\u091c\u093e");
@@ -603,7 +401,7 @@ public final class TestHSSFSheet extends TestCase {
      * of the sheet when it is first opened.
      */
     public void testTopRow() {
-        HSSFWorkbook wb = openSample("SimpleWithPageBreaks.xls");
+        HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("SimpleWithPageBreaks.xls");
 
         HSSFSheet sheet = wb.getSheetAt(0);
         assertNotNull(sheet);
@@ -630,18 +428,6 @@ public final class TestHSSFSheet extends TestCase {
         assertEquals("formula", r.getCell(1).getCellFormula(), "A1*2");
     }
 
-    /** test that new default column styles get applied */
-    public void testDefaultColumnStyle() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFCellStyle style = wb.createCellStyle();
-        HSSFSheet s = wb.createSheet();
-        s.setDefaultColumnStyle((short) 0, style);
-        HSSFRow r = s.createRow(0);
-        HSSFCell c = r.createCell(0);
-        assertEquals("style should match", style.getIndex(), c.getCellStyle().getIndex());
-    }
-
-
     /**
      *
      */
@@ -656,7 +442,7 @@ public final class TestHSSFSheet extends TestCase {
         workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
 
         //try adding empty rows in an existing worksheet
-        workbook = openSample("Simple.xls");
+        workbook = getTestDataProvider().openSampleWorkbook("Simple.xls");
 
         sheet = workbook.getSheetAt(0);
         for (int i = 3; i < 10; i++) sheet.createRow(i);
@@ -665,7 +451,7 @@ public final class TestHSSFSheet extends TestCase {
     }
 
     public void testAutoSizeColumn() {
-        HSSFWorkbook wb = openSample("43902.xls");
+        HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("43902.xls");
         String sheetName = "my sheet";
         HSSFSheet sheet = wb.getSheet(sheetName);
 
@@ -709,7 +495,7 @@ public final class TestHSSFSheet extends TestCase {
      * Setting ForceFormulaRecalculation on sheets
      */
     public void testForceRecalculation() throws Exception {
-        HSSFWorkbook workbook = openSample("UncalcedRecord.xls");
+        HSSFWorkbook workbook = getTestDataProvider().openSampleWorkbook("UncalcedRecord.xls");
 
         HSSFSheet sheet = workbook.getSheetAt(0);
         HSSFSheet sheet2 = workbook.getSheetAt(0);
@@ -778,7 +564,7 @@ public final class TestHSSFSheet extends TestCase {
 
     public void testColumnWidth() {
         //check we can correctly read column widths from a reference workbook
-        HSSFWorkbook wb = openSample("colwidth.xls");
+        HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("colwidth.xls");
 
         //reference values
         int[] ref = {365, 548, 731, 914, 1097, 1280, 1462, 1645, 1828, 2011, 2194, 2377, 2560, 2742, 2925, 3108, 3291, 3474, 3657};
@@ -950,4 +736,5 @@ public final class TestHSSFSheet extends TestCase {
         assertFalse(cs.getFont(wbComplex).getItalic());
         assertEquals(HSSFFont.BOLDWEIGHT_BOLD, cs.getFont(wbComplex).getBoldweight());
     }
+
 }

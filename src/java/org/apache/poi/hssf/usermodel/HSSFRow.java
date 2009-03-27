@@ -437,15 +437,17 @@ public final class HSSFRow implements Row {
     /**
      * set the row's height or set to ff (-1) for undefined/default-height.  Set the height in "twips" or
      * 1/20th of a point.
-     * @param height  rowheight or 0xff for undefined (use sheet default)
+     * @param height  rowheight or -1 for undefined (use sheet default)
      */
 
     public void setHeight(short height)
     {
-
-        // row.setOptionFlags(
-        row.setBadFontHeight(true);
-        row.setHeight(height);
+        if(height == -1){
+            row.setHeight((short)(0xFF | 0x8000));
+        } else {
+            row.setBadFontHeight(true);
+            row.setHeight(height);
+        }
     }
 
     /**
@@ -466,15 +468,17 @@ public final class HSSFRow implements Row {
 
     /**
      * set the row's height in points.
-     * @param height  row height in points
+     * @param height  row height in points, <code>-1</code> means to use the default height
      */
 
     public void setHeightInPoints(float height)
     {
-
-        // row.setOptionFlags(
-        row.setBadFontHeight(true);
-        row.setHeight((short) (height * 20));
+        if(height == -1){
+            row.setHeight((short)(0xFF | 0x8000));
+        } else {
+            row.setBadFontHeight(true);
+            row.setHeight((short) (height * 20));
+        }
     }
 
     /**

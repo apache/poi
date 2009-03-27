@@ -752,8 +752,8 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
         HSSFSheet sheet = new HSSFSheet(this);
 
+        workbook.setSheetName(_sheets.size(), sheetname);
         _sheets.add(sheet);
-        workbook.setSheetName(_sheets.size() - 1, sheetname);
         boolean isOnlySheet = _sheets.size() == 1;
         sheet.setSelected(isOnlySheet);
         sheet.setActive(isOnlySheet);
@@ -788,6 +788,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
     public HSSFSheet getSheetAt(int index)
     {
+        validateSheetIndex(index);
         return (HSSFSheet) _sheets.get(index);
     }
 

@@ -44,21 +44,6 @@ public final class TestHSSFCell extends BaseTestCell {
         return HSSFITestDataProvider.getInstance();
     }
 
-	public void testSetValues() {
-		baseTestSetValues();
-	}
-	
-	/**
-	 * test that Boolean and Error types (BoolErrRecord) are supported properly.
-	 */
-	public void testBoolErr() {
-        baseTestBoolErr();
-	}
-
-    public void testSetFormulaValue() {
-        baseTestSetFormulaValue();
-    }
-
 	/**
 	 * Checks that the recognition of files using 1904 date windowing
 	 *  is working properly. Conversion of the date is also an issue,
@@ -169,13 +154,6 @@ public final class TestHSSFCell extends BaseTestCell {
 	}
 
 	/**
-	 * test that Cell Styles being applied to formulas remain intact
-	 */
-	public void testFormulaStyle() {
-        baseTestFormulaStyle();
-	}
-
-	/**
 	 * Test reading hyperlinks
 	 */
 	public void testWithHyperlink() {
@@ -219,13 +197,8 @@ public final class TestHSSFCell extends BaseTestCell {
 		assertEquals(1, link2.getFirstColumn());
 	}
 	
-	/**tests the toString() method of HSSFCell*/
-	public void testToString() {
-		baseTestToString();
-	}
-	
 	public void testSetStringInFormulaCell_bug44606() {
-		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFWorkbook wb = getTestDataProvider().createWorkbook();
 		HSSFCell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
 		cell.setCellFormula("B1&C1");
 		try {

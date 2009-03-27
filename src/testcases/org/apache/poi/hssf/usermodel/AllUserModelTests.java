@@ -57,8 +57,6 @@ public class AllUserModelTests {
 		result.addTestSuite(TestHSSFRichTextString.class);
 		result.addTestSuite(TestHSSFRow.class);
 		result.addTestSuite(TestHSSFSheet.class);
-		result.addTestSuite(TestHSSFSheetOrder.class);
-		result.addTestSuite(TestHSSFSheetSetOrder.class);
 		result.addTestSuite(TestHSSFTextbox.class);
 		result.addTestSuite(TestHSSFWorkbook.class);
 		result.addTestSuite(TestLinkTable.class);

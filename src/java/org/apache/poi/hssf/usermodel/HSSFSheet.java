@@ -67,18 +67,6 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     private static final POILogger log = POILogFactory.getLogger(HSSFSheet.class);
     private static final int DEBUG = POILogger.DEBUG;
 
-    /* Constants for margins */
-    public static final short LeftMargin = Sheet.LeftMargin;
-    public static final short RightMargin = Sheet.RightMargin;
-    public static final short TopMargin = Sheet.TopMargin;
-    public static final short BottomMargin = Sheet.BottomMargin;
-
-    public static final byte PANE_LOWER_RIGHT = (byte)0;
-    public static final byte PANE_UPPER_RIGHT = (byte)1;
-    public static final byte PANE_LOWER_LEFT = (byte)2;
-    public static final byte PANE_UPPER_LEFT = (byte)3;
-
-
     /**
      * Used for compile-time optimization.  This is the initial size for the collection of
      * rows.  It is currently set to 20.  If you generate larger sheets you may benefit
@@ -236,14 +224,16 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      */
     public void removeRow(Row row) {
         HSSFRow hrow = (HSSFRow) row;
+        if (row.getSheet() != this) {
+            throw new IllegalArgumentException("Specified row does not belong to this sheet");
+        }
+
         if (_rows.size() > 0) {
             Integer key = new Integer(row.getRowNum());
             HSSFRow removedRow = _rows.remove(key);
             if (removedRow != row) {
-                if (removedRow != null) {
-                    _rows.put(key, removedRow);
-                }
-                throw new RuntimeException("Specified row does not belong to this sheet");
+                //should not happen if the input argument is valid
+                throw new IllegalArgumentException("Specified row does not belong to this sheet");
             }
             if (hrow.getRowNum() == getLastRowNum())
             {
@@ -488,7 +478,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     public float getDefaultRowHeightInPoints()
     {
-        return (_sheet.getDefaultRowHeight() / 20);
+        return ((float)_sheet.getDefaultRowHeight() / 20);
     }
 
     /**
@@ -1434,9 +1424,9 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * Sets a page break at the indicated column
      * @param column
      */
-    public void setColumnBreak(short column) {
-        validateColumn(column);
-        _sheet.getPageSettings().setColumnBreak(column, (short)0, (short)65535);
+    public void setColumnBreak(int column) {
+        validateColumn((short)column);
+        _sheet.getPageSettings().setColumnBreak((short)column, (short)0, (short)65535);
     }
 
     /**
@@ -1444,7 +1434,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @param column FIXME: Document this!
      * @return FIXME: Document this!
      */
-    public boolean isColumnBroken(short column) {
+    public boolean isColumnBroken(int column) {
         return _sheet.getPageSettings().isColumnBroken(column);
     }
 
@@ -1452,7 +1442,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * Removes a page break at the indicated column
      * @param column
      */
-    public void removeColumnBreak(short column) {
+    public void removeColumnBreak(int column) {
         _sheet.getPageSettings().removeColumnBreak(column);
     }
 
@@ -1857,4 +1847,16 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     public HSSFSheetConditionalFormatting getSheetConditionalFormatting() {
         return new HSSFSheetConditionalFormatting(this);
     }
+
+    /**
+     * Returns the name of this sheet
+     *
+     * @return the name of this sheet
+     */
+    public String getSheetName() {
+        HSSFWorkbook wb = getWorkbook();
+        int idx = wb.getSheetIndex(this);
+        return wb.getSheetName(idx);
+    }
+
 }

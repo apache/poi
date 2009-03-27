@@ -225,6 +225,11 @@ public interface Sheet extends Iterable<Row> {
     boolean getHorizontallyCenter();
 
     /**
+     * Determine whether printed output for this sheet will be vertically centered.
+     */
+    boolean getVerticallyCenter();
+
+    /**
      * Removes a merged region of cells (hence letting them free)
      *
      * @param index of the region to unmerge
@@ -639,20 +644,20 @@ public interface Sheet extends Iterable<Row> {
      * Sets a page break at the indicated column
      * @param column
      */
-    void setColumnBreak(short column);
+    void setColumnBreak(int column);
 
     /**
      * Determines if there is a page break at the indicated column
      * @param column FIXME: Document this!
      * @return FIXME: Document this!
      */
-    boolean isColumnBroken(short column);
+    boolean isColumnBroken(int column);
 
     /**
      * Removes a page break at the indicated column
      * @param column
      */
-    void removeColumnBreak(short column);
+    void removeColumnBreak(int column);
 
     /**
      * Expands or collapses a column group.
@@ -761,4 +766,18 @@ public interface Sheet extends Iterable<Row> {
      * @return the parent workbook
      */
     Workbook getWorkbook();
+
+    /**
+     * Returns the name of this sheet
+     *
+     * @return the name of this sheet
+     */
+    String getSheetName();
+
+    /**
+     * Note - this is not the same as whether the sheet is focused (isActive)
+     * @return <code>true</code> if this sheet is currently selected
+     */
+    boolean isSelected();
+
 }

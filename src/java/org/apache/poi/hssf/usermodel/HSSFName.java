@@ -124,6 +124,7 @@ public final class HSSFName implements Name {
             if (rec != _definedNameRec) {
                 if (rec.getNameText().equalsIgnoreCase(nameName) && sheetNumber == rec.getSheetNumber()){
                     String msg = "The "+(sheetNumber == 0 ? "workbook" : "sheet")+" already contains this name: " + nameName;
+                    _definedNameRec.setNameText(nameName + "(2)");
                     throw new IllegalArgumentException(msg);
                 }
             }

@@ -27,6 +27,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -35,139 +36,14 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 
-public final class TestXSSFWorkbook extends TestCase {
+public final class TestXSSFWorkbook extends BaseTestWorkbook {
 
-	@Override
-	protected void setUp() {
-		// Use system out logger
-		System.setProperty(
-				"org.apache.poi.util.POILogger",
-				"org.apache.poi.util.SystemOutLogger"
-		);
-	}
-
-	public void testGetSetActiveSheet(){
-		XSSFWorkbook workbook = new XSSFWorkbook();
-        assertEquals(0, workbook.getActiveSheetIndex());
-
-		workbook.createSheet("sheet1");
-		workbook.createSheet("sheet2");
-		workbook.createSheet("sheet3");
-		// set second sheet
-		workbook.setActiveSheet(1);
-		// test if second sheet is set up
-		assertEquals(1, workbook.getActiveSheetIndex());
-	}
-
-	public void testGetSheetIndex() {
-		XSSFWorkbook workbook = new XSSFWorkbook();
-		Sheet sheet1 = workbook.createSheet("sheet1");
-		Sheet sheet2 = workbook.createSheet("sheet2");
-		assertEquals(0, workbook.getSheetIndex(sheet1));
-		assertEquals(0, workbook.getSheetIndex("sheet1"));
-		assertEquals(1, workbook.getSheetIndex(sheet2));
-		assertEquals(1, workbook.getSheetIndex("sheet2"));
-		assertEquals(-1, workbook.getSheetIndex("noSheet"));
-	}
-	
-	public void testSetSheetOrder() {
-		XSSFWorkbook workbook = new XSSFWorkbook();
-		Sheet sheet1 = workbook.createSheet("sheet1");
-		Sheet sheet2 = workbook.createSheet("sheet2");
-		assertSame(sheet1, workbook.getSheetAt(0));
-		assertSame(sheet2, workbook.getSheetAt(1));
-		workbook.setSheetOrder("sheet2", 0);
-		assertSame(sheet2, workbook.getSheetAt(0));
-		assertSame(sheet1, workbook.getSheetAt(1));
-		// Test reordering of CTSheets
-		CTWorkbook ctwb = workbook.getCTWorkbook();
-		CTSheet[] ctsheets = ctwb.getSheets().getSheetArray();
-		assertEquals("sheet2", ctsheets[0].getName());
-		assertEquals("sheet1", ctsheets[1].getName());
-		
-		// Borderline case: only one sheet
-		workbook = new XSSFWorkbook();
-		sheet1 = workbook.createSheet("sheet1");
-		assertSame(sheet1, workbook.getSheetAt(0));
-		workbook.setSheetOrder("sheet1", 0);
-		assertSame(sheet1, workbook.getSheetAt(0));
-	}
-	
-	public void testSetSheetName() {
-		XSSFWorkbook workbook = new XSSFWorkbook();
-		workbook.createSheet("sheet1");
-		assertEquals("sheet1", workbook.getSheetName(0));
-		workbook.setSheetName(0, "sheet2");
-		assertEquals("sheet2", workbook.getSheetName(0));
-	}
-	
-	public void testCloneSheet() {
-        XSSFWorkbook book = new XSSFWorkbook();
-        XSSFSheet sheet = book.createSheet("TEST");
-        sheet.createRow(0).createCell(0).setCellValue("Test");
-        sheet.createRow(1).createCell(0).setCellValue(36.6);
-        sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, 2));
-        sheet.addMergedRegion(new CellRangeAddress(1, 2, 0, 2));
-        assertTrue(sheet.isSelected());
-
-        XSSFSheet clonedSheet = book.cloneSheet(0);
-        assertEquals("TEST (2)", clonedSheet.getSheetName());
-        assertEquals(2, clonedSheet.getPhysicalNumberOfRows());
-        assertEquals(2, clonedSheet.getNumMergedRegions());
-        assertFalse(clonedSheet.isSelected());
-
-        //cloned sheet is a deep copy, adding rows in the original does not affect the clone
-        sheet.createRow(2).createCell(0).setCellValue(1);
-        sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 2));
-        assertEquals(2, clonedSheet.getPhysicalNumberOfRows());
-        assertEquals(2, clonedSheet.getPhysicalNumberOfRows());
-
-        clonedSheet.createRow(2).createCell(0).setCellValue(1);
-        clonedSheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 2));
-        assertEquals(3, clonedSheet.getPhysicalNumberOfRows());
-        assertEquals(3, clonedSheet.getPhysicalNumberOfRows());
-
+    @Override
+    protected XSSFITestDataProvider getTestDataProvider(){
+        return XSSFITestDataProvider.getInstance();
     }
-	
-	public void testGetSheetByName() {
-		XSSFWorkbook workbook = new XSSFWorkbook();
-		Sheet sheet1 = workbook.createSheet("sheet1");
-		Sheet sheet2 = workbook.createSheet("sheet2");
-		assertSame(sheet1, workbook.getSheet("sheet1"));
-		assertSame(sheet2, workbook.getSheet("sheet2"));
-		assertNull(workbook.getSheet("nosheet"));
-	}
-	
-	public void testRemoveSheetAt() {
-		XSSFWorkbook workbook = new XSSFWorkbook();
-		workbook.createSheet("sheet1");
-		workbook.createSheet("sheet2");
-		workbook.createSheet("sheet3");
-		workbook.removeSheetAt(1);
-		assertEquals(2, workbook.getNumberOfSheets());
-		assertEquals("sheet3", workbook.getSheetName(1));
-		workbook.removeSheetAt(0);
-		assertEquals(1, workbook.getNumberOfSheets());
-		assertEquals("sheet3", workbook.getSheetName(0));
-		workbook.removeSheetAt(0);
-		assertEquals(0, workbook.getNumberOfSheets());
-	}
 
-	public void testPrintArea(){
-	 Workbook workbook = new XSSFWorkbook();
-	 Sheet sheet = workbook.createSheet("Test Print Area");
-	 String sheetName = workbook.getSheetName(0);
-	 
-	// String reference = sheetName+"!$A$1:$B$1";
-	// workbook.setPrintArea(0, reference);
-	 workbook.setPrintArea(0,1,5,4,9);
-	 
-	 String retrievedPrintArea = workbook.getPrintArea(0);
 
- 	 //assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);
-	 assertEquals("'"+sheetName+"'!$B$5:$F$10", retrievedPrintArea);
-}
-	
 	public void testRepeatingRowsAndColums() {
 		// First test that setting RR&C for same sheet more than once only creates a 
 		// single  Print_Titles built-in record
@@ -205,24 +81,9 @@ public final class TestXSSFWorkbook extends TestCase {
 		assertEquals(XSSFName.BUILTIN_PRINT_TITLE, nr2.getNameName());
 		assertEquals("'SecondSheet'!$B:$C,'SecondSheet'!$1:$1", nr2.getRefersToFormula());
 		
-		
 		nwb.setRepeatingRowsAndColumns(1, -1, -1, -1, -1);
-
 	}
 	
-
-	/**
-	 * Tests that we can save a new document
-	 */
-	public void testSaveNew() {
-		XSSFWorkbook workbook = new XSSFWorkbook();
-		workbook.createSheet("sheet1");
-		workbook.createSheet("sheet2");
-		workbook.createSheet("sheet3");
-
-        XSSFTestDataSamples.writeOutAndReadBack(workbook);
-	}
-
 	/**
 	 * Tests that we can save, and then re-load a new document
 	 */
@@ -242,8 +103,8 @@ public final class TestXSSFWorkbook extends TestCase {
 		assertEquals(1, workbook.getSheetAt(0).getLastRowNum());
 		assertEquals(0, workbook.getSheetAt(1).getFirstRowNum());
 		assertEquals(0, workbook.getSheetAt(1).getLastRowNum());
-		assertEquals(-1, workbook.getSheetAt(2).getFirstRowNum());
-		assertEquals(-1, workbook.getSheetAt(2).getLastRowNum());
+		assertEquals(0, workbook.getSheetAt(2).getFirstRowNum());
+		assertEquals(0, workbook.getSheetAt(2).getLastRowNum());
 		
 		File file = File.createTempFile("poi-", ".xlsx");
 		OutputStream out = new FileOutputStream(file);
@@ -278,8 +139,8 @@ public final class TestXSSFWorkbook extends TestCase {
 		assertEquals(1, workbook.getSheetAt(0).getLastRowNum());
 		assertEquals(0, workbook.getSheetAt(1).getFirstRowNum());
 		assertEquals(0, workbook.getSheetAt(1).getLastRowNum());
-		assertEquals(-1, workbook.getSheetAt(2).getFirstRowNum());
-		assertEquals(-1, workbook.getSheetAt(2).getLastRowNum());
+		assertEquals(0, workbook.getSheetAt(2).getFirstRowNum());
+		assertEquals(0, workbook.getSheetAt(2).getLastRowNum());
 		
 		sheet1 = workbook.getSheetAt(0);
 		assertEquals(1.2, sheet1.getRow(0).getCell(0).getNumericCellValue(), 0.0001);
@@ -379,13 +240,6 @@ public final class TestXSSFWorkbook extends TestCase {
 		assertNotSame(2, i);		
 	}
 	
-	public void testGetDisplayedTab(){
-		XSSFWorkbook workbook = new XSSFWorkbook();
-		short i = (short) workbook.getFirstVisibleTab();
-		//get default diplayedTab
-		assertEquals(0, i);		
-	}
-	
 	public void testSetDisplayedTab(){
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		workbook.setFirstVisibleTab(1);
@@ -395,8 +249,8 @@ public final class TestXSSFWorkbook extends TestCase {
 		//1 is the default tab
 		assertEquals(1, i);
 	}
-	
-	
+
+
 	public void testLoadSave() {
 		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("Formatting.xlsx");
 		assertEquals(3, workbook.getNumberOfSheets());
@@ -458,94 +312,4 @@ public final class TestXSSFWorkbook extends TestCase {
 		assertEquals(1, st.getBorders().size());
 	}
 	
-	public void testNamedRanges() {
-		// First up, a new file
-		XSSFWorkbook workbook = new XSSFWorkbook();
-		assertEquals(0, workbook.getNumberOfNames());
-		
-		Name nameA = workbook.createName();
-		nameA.setRefersToFormula("A2");
-		nameA.setNameName("ForA2");
-		
-		XSSFName nameB = workbook.createName();
-		nameB.setRefersToFormula("B3");
-		nameB.setNameName("ForB3");
-		nameB.setComment("B3 Comment");
-		
-		// Save and re-load
-		workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
-		
-		assertEquals(2, workbook.getNumberOfNames());
-		assertEquals("A2", workbook.getNameAt(0).getRefersToFormula());
-		assertEquals("ForA2", workbook.getNameAt(0).getNameName());
-		assertNull(workbook.getNameAt(0).getComment());
-		
-		assertEquals("B3", workbook.getNameAt(1).getRefersToFormula());
-		assertEquals("ForB3", workbook.getNameAt(1).getNameName());
-		assertEquals("B3 Comment", workbook.getNameAt(1).getComment());
-		
-		assertEquals("ForA2", workbook.getNameAt(0).getNameName());
-		assertEquals(1, workbook.getNameIndex("ForB3"));
-		assertEquals(-1, workbook.getNameIndex("ForB3!!"));
-		
-		
-		// Now, an existing file with named ranges
-		workbook = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx");
-
-		assertEquals(2, workbook.getNumberOfNames());
-		assertEquals("Sheet1!$A$2:$A$7", workbook.getNameAt(0).getRefersToFormula());
-		assertEquals("AllANumbers", workbook.getNameAt(0).getNameName());
-		assertEquals("All the numbers in A", workbook.getNameAt(0).getComment());
-		
-		assertEquals("Sheet1!$B$2:$B$7", workbook.getNameAt(1).getRefersToFormula());
-		assertEquals("AllBStrings", workbook.getNameAt(1).getNameName());
-		assertEquals("All the strings in B", workbook.getNameAt(1).getComment());
-		
-		// Tweak, save, and re-check
-		workbook.getNameAt(1).setNameName("BStringsFun");
-		
-		workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
-		
-		assertEquals(2, workbook.getNumberOfNames());
-		assertEquals("Sheet1!$A$2:$A$7", workbook.getNameAt(0).getRefersToFormula());
-		assertEquals("AllANumbers", workbook.getNameAt(0).getNameName());
-		assertEquals("All the numbers in A", workbook.getNameAt(0).getComment());
-		
-		assertEquals("Sheet1!$B$2:$B$7", workbook.getNameAt(1).getRefersToFormula());
-		assertEquals("BStringsFun", workbook.getNameAt(1).getNameName());
-		assertEquals("All the strings in B", workbook.getNameAt(1).getComment());
-	}
-	
-	public void testDuplicateNames() {
-
-		XSSFWorkbook wb = new XSSFWorkbook();
-		wb.createSheet("Sheet1");
-		wb.createSheet();
-		wb.createSheet("name1");
-		try {
-		wb.createSheet("name1");
-			fail();
-		} catch (IllegalArgumentException e) {
-			assertEquals("The workbook already contains a sheet of this name", e.getMessage());
-		}
-
-		wb.createSheet();
-
-		try {
-			wb.setSheetName(3, "name1");
-			fail();
-		} catch (IllegalArgumentException e) {
-			assertEquals("The workbook already contains a sheet of this name", e.getMessage());
-		}
-
-		try {
-			wb.setSheetName(3, "Sheet1");
-			fail();
-		} catch (IllegalArgumentException e) {
-			assertEquals("The workbook already contains a sheet of this name", e.getMessage());
-		}
-
-		wb.setSheetName(3, "name2");
-		wb.setSheetName(3, "Sheet3");
-	}
 }

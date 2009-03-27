@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,52 +14,35 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
+import junit.framework.AssertionFailedError;
+import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.record.DBCellRecord;
+import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.StringRecord;
+import org.apache.poi.ss.usermodel.ErrorConstants;
+import org.apache.poi.ss.usermodel.BaseTestCell;
+import org.apache.poi.ss.usermodel.BaseTestNamedRange;
 
 /**
-* Tests HSSFWorkbook method setSheetOrder()
-*
-*
-* @author Ruel Loehr (loehr1 at us.ibm.com)
-*/
+ * Tests various functionality having to do with {@link org.apache.poi.hssf.usermodel.HSSFCell}.  For instance support for
+ * particular datatypes, etc.
+ * @author Andrew C. Oliver (andy at superlinksoftware dot com)
+ * @author  Dan Sherman (dsherman at isisph.com)
+ * @author Alex Jacoby (ajacoby at gmail.com)
+ */
+public final class TestHSSFName extends BaseTestNamedRange {
 
-public class TestHSSFSheetSetOrder
-       extends TestCase
-{
-   public TestHSSFSheetSetOrder(String s)
-   {
-       super(s);
-   }
-
-   /**
-    * Test the sheet set order method
-    */
-
-   public void testBackupRecord()
-           throws Exception
-   {
-       HSSFWorkbook wb = new HSSFWorkbook();
-       
-       for (int i=0; i < 10; i++)
-       {
-			HSSFSheet s = wb.createSheet("Sheet " +i);
-			Sheet sheet = s.getSheet();
-       }
-
-     wb.getWorkbook().setSheetOrder("Sheet 6", 0);
-	  wb.getWorkbook().setSheetOrder("Sheet 3", 7);
-	  wb.getWorkbook().setSheetOrder("Sheet 1", 9);
-	  
-	 
-   }
-
+    @Override
+    protected HSSFITestDataProvider getTestDataProvider(){
+        return HSSFITestDataProvider.getInstance();
+    }
 
 }
-
-

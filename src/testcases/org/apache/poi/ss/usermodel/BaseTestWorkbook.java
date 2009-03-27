@@ -1,0 +1,276 @@
+package org.apache.poi.ss.usermodel;
+
+import junit.framework.TestCase;
+import junit.framework.AssertionFailedError;
+import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.util.CellRangeAddress;
+
+/**
+ * @author Yegor Kozlov
+ */
+public abstract class BaseTestWorkbook extends TestCase {
+
+    protected abstract ITestDataProvider getTestDataProvider();
+
+    public void testCreateSheet() {
+        Workbook wb = getTestDataProvider().createWorkbook();
+        assertEquals(0, wb.getNumberOfSheets());
+
+        //getting a sheet by invalid index or non-existing name
+        assertNull(wb.getSheet("Sheet1"));
+        try {
+            wb.getSheetAt(0);
+            fail("should have thrown exceptiuon due to invalid sheet index");
+        } catch (IllegalArgumentException e) {
+            // expected during successful test
+            ;
+        }
+
+        Sheet sheet0 = wb.createSheet();
+        Sheet sheet1 = wb.createSheet();
+        assertEquals("Sheet0", sheet0.getSheetName());
+        assertEquals("Sheet1", sheet1.getSheetName());
+        assertEquals(2, wb.getNumberOfSheets());
+
+        //fetching sheets by name is case-insensitive
+        Sheet originalSheet = wb.createSheet("Sheet3");
+        Sheet fetchedSheet = wb.getSheet("sheet3");
+        if (fetchedSheet == null) {
+            throw new AssertionFailedError("Identified bug 44892");
+        }
+        assertEquals("Sheet3", fetchedSheet.getSheetName());
+        assertEquals(3, wb.getNumberOfSheets());
+        assertSame(originalSheet, fetchedSheet);
+        try {
+            wb.createSheet("sHeeT3");
+            fail("should have thrown exceptiuon due to duplicate sheet name");
+        } catch (IllegalArgumentException e) {
+            // expected during successful test
+            assertEquals("The workbook already contains a sheet of this name", e.getMessage());
+        }
+
+        //names cannot be blank or contain any of /\*?[]
+        String[] invalidNames = {"", "Sheet/", "Sheet\\",
+                "Sheet?", "Sheet*", "Sheet[", "Sheet]"};
+        for (String sheetName : invalidNames) {
+            try {
+                wb.createSheet(sheetName);
+                fail("should have thrown exceptiuon due to invalid sheet name: " + sheetName);
+            } catch (IllegalArgumentException e) {
+                // expected during successful test
+                ;
+            }
+        }
+        //still have 3 sheets
+        assertEquals(3, wb.getNumberOfSheets());
+
+        //change the name of the 3rd sheet
+        wb.setSheetName(2, "I changed!");
+
+        //try to assign an invalid name to the 2nd sheet
+        try {
+            wb.setSheetName(1, "[I'm invalid]");
+            fail("should have thrown exceptiuon due to invalid sheet name");
+        } catch (IllegalArgumentException e) {
+            ; // expected during successful test
+        }
+
+        //check
+        assertEquals(0, wb.getSheetIndex("sheet0"));
+        assertEquals(1, wb.getSheetIndex("sheet1"));
+        assertEquals(2, wb.getSheetIndex("I changed!"));
+
+        assertSame(sheet0, wb.getSheet("sheet0"));
+        assertSame(sheet1, wb.getSheet("sheet1"));
+        assertSame(originalSheet, wb.getSheet("I changed!"));
+        assertNull(wb.getSheet("unknown"));
+
+        //serialize and read again
+        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        assertEquals(3, wb.getNumberOfSheets());
+        assertEquals(0, wb.getSheetIndex("sheet0"));
+        assertEquals(1, wb.getSheetIndex("sheet1"));
+        assertEquals(2, wb.getSheetIndex("I changed!"));
+
+    }
+
+    public void testRemoveSheetAt() {
+        Workbook workbook = getTestDataProvider().createWorkbook();
+        workbook.createSheet("sheet1");
+        workbook.createSheet("sheet2");
+        workbook.createSheet("sheet3");
+        assertEquals(3, workbook.getNumberOfSheets());
+        workbook.removeSheetAt(1);
+        assertEquals(2, workbook.getNumberOfSheets());
+        assertEquals("sheet3", workbook.getSheetName(1));
+        workbook.removeSheetAt(0);
+        assertEquals(1, workbook.getNumberOfSheets());
+        assertEquals("sheet3", workbook.getSheetName(0));
+        workbook.removeSheetAt(0);
+        assertEquals(0, workbook.getNumberOfSheets());
+    }
+
+    public void testDefaultValues() {
+        Workbook b = getTestDataProvider().createWorkbook();
+        assertEquals(0, b.getActiveSheetIndex());
+        assertEquals(0, b.getFirstVisibleTab());
+        assertEquals(0, b.getNumberOfNames());
+        assertEquals(0, b.getNumberOfSheets());
+    }
+
+
+    public void testSheetSelection() {
+        Workbook b = getTestDataProvider().createWorkbook();
+        b.createSheet("Sheet One");
+        b.createSheet("Sheet Two");
+        b.setActiveSheet(1);
+        b.setSelectedTab(1);
+        b.setFirstVisibleTab(1);
+        assertEquals(1, b.getActiveSheetIndex());
+        assertEquals(1, b.getFirstVisibleTab());
+    }
+
+    public void testPrintArea() {
+        Workbook workbook = getTestDataProvider().createWorkbook();
+        Sheet sheet1 = workbook.createSheet("Test Print Area");
+        String sheetName1 = sheet1.getSheetName();
+
+        // workbook.setPrintArea(0, reference);
+        workbook.setPrintArea(0, 1, 5, 4, 9);
+        String retrievedPrintArea = workbook.getPrintArea(0);
+        assertEquals("'" + sheetName1 + "'!$B$5:$F$10", retrievedPrintArea);
+
+        String reference = "$A$1:$B$1";
+        workbook.setPrintArea(0, reference);
+        retrievedPrintArea = workbook.getPrintArea(0);
+        assertEquals("'" + sheetName1 + "'!" + reference, retrievedPrintArea);
+
+        workbook.removePrintArea(0);
+        assertNull(workbook.getPrintArea(0));
+    }
+
+    public void testGetSetActiveSheet(){
+        Workbook workbook = getTestDataProvider().createWorkbook();
+        assertEquals(0, workbook.getActiveSheetIndex());
+
+		workbook.createSheet("sheet1");
+		workbook.createSheet("sheet2");
+		workbook.createSheet("sheet3");
+		// set second sheet
+		workbook.setActiveSheet(1);
+		// test if second sheet is set up
+		assertEquals(1, workbook.getActiveSheetIndex());
+
+        workbook.setActiveSheet(0);
+        // test if second sheet is set up
+        assertEquals(0, workbook.getActiveSheetIndex());
+	}
+
+    public void testSetSheetOrder() {
+        Workbook wb = getTestDataProvider().createWorkbook();
+
+        for (int i=0; i < 10; i++) {
+			Sheet sh = wb.createSheet("Sheet " + i);
+        }
+
+        // Check the initial order
+        assertEquals(0, wb.getSheetIndex("Sheet 0"));
+        assertEquals(1, wb.getSheetIndex("Sheet 1"));
+        assertEquals(2, wb.getSheetIndex("Sheet 2"));
+        assertEquals(3, wb.getSheetIndex("Sheet 3"));
+        assertEquals(4, wb.getSheetIndex("Sheet 4"));
+        assertEquals(5, wb.getSheetIndex("Sheet 5"));
+        assertEquals(6, wb.getSheetIndex("Sheet 6"));
+        assertEquals(7, wb.getSheetIndex("Sheet 7"));
+        assertEquals(8, wb.getSheetIndex("Sheet 8"));
+        assertEquals(9, wb.getSheetIndex("Sheet 9"));
+
+        // Change
+        wb.setSheetOrder("Sheet 6", 0);
+        wb.setSheetOrder("Sheet 3", 7);
+        wb.setSheetOrder("Sheet 1", 9);
+
+        // Check they're currently right
+        assertEquals(0, wb.getSheetIndex("Sheet 6"));
+        assertEquals(1, wb.getSheetIndex("Sheet 0"));
+        assertEquals(2, wb.getSheetIndex("Sheet 2"));
+        assertEquals(3, wb.getSheetIndex("Sheet 4"));
+        assertEquals(4, wb.getSheetIndex("Sheet 5"));
+        assertEquals(5, wb.getSheetIndex("Sheet 7"));
+        assertEquals(6, wb.getSheetIndex("Sheet 3"));
+        assertEquals(7, wb.getSheetIndex("Sheet 8"));
+        assertEquals(8, wb.getSheetIndex("Sheet 9"));
+        assertEquals(9, wb.getSheetIndex("Sheet 1"));
+
+        Workbook wbr = getTestDataProvider().writeOutAndReadBack(wb);
+
+        assertEquals(0, wbr.getSheetIndex("Sheet 6"));
+        assertEquals(1, wbr.getSheetIndex("Sheet 0"));
+        assertEquals(2, wbr.getSheetIndex("Sheet 2"));
+        assertEquals(3, wbr.getSheetIndex("Sheet 4"));
+        assertEquals(4, wbr.getSheetIndex("Sheet 5"));
+        assertEquals(5, wbr.getSheetIndex("Sheet 7"));
+        assertEquals(6, wbr.getSheetIndex("Sheet 3"));
+        assertEquals(7, wbr.getSheetIndex("Sheet 8"));
+        assertEquals(8, wbr.getSheetIndex("Sheet 9"));
+        assertEquals(9, wbr.getSheetIndex("Sheet 1"));
+
+        // Now get the index by the sheet, not the name
+        for(int i=0; i<10; i++) {
+        	Sheet s = wbr.getSheetAt(i);
+        	assertEquals(i, wbr.getSheetIndex(s));
+        }
+    }
+
+    public void testCloneSheet() {
+        Workbook book = getTestDataProvider().createWorkbook();
+        Sheet sheet = book.createSheet("TEST");
+        sheet.createRow(0).createCell(0).setCellValue("Test");
+        sheet.createRow(1).createCell(0).setCellValue(36.6);
+        sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, 2));
+        sheet.addMergedRegion(new CellRangeAddress(1, 2, 0, 2));
+        assertTrue(sheet.isSelected());
+
+        Sheet clonedSheet = book.cloneSheet(0);
+        assertEquals("TEST (2)", clonedSheet.getSheetName());
+        assertEquals(2, clonedSheet.getPhysicalNumberOfRows());
+        assertEquals(2, clonedSheet.getNumMergedRegions());
+        assertFalse(clonedSheet.isSelected());
+
+        //cloned sheet is a deep copy, adding rows in the original does not affect the clone
+        sheet.createRow(2).createCell(0).setCellValue(1);
+        sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 2));
+        assertEquals(2, clonedSheet.getPhysicalNumberOfRows());
+        assertEquals(2, clonedSheet.getPhysicalNumberOfRows());
+
+        clonedSheet.createRow(2).createCell(0).setCellValue(1);
+        clonedSheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 2));
+        assertEquals(3, clonedSheet.getPhysicalNumberOfRows());
+        assertEquals(3, clonedSheet.getPhysicalNumberOfRows());
+
+    }
+
+    public void testParentReferences(){
+        Workbook workbook = getTestDataProvider().createWorkbook();
+        Sheet sheet = workbook.createSheet();
+        assertSame(workbook, sheet.getWorkbook());
+
+        Row row = sheet.createRow(0);
+        assertSame(sheet, row.getSheet());
+
+        Cell cell = row.createCell(1);
+        assertSame(sheet, cell.getSheet());
+        assertSame(row, cell.getRow());
+
+        workbook = getTestDataProvider().writeOutAndReadBack(workbook);
+        sheet = workbook.getSheetAt(0);
+        assertSame(workbook, sheet.getWorkbook());
+
+        row = sheet.getRow(0);
+        assertSame(sheet, row.getSheet());
+
+        cell = row.getCell(1);
+        assertSame(sheet, cell.getSheet());
+        assertSame(row, cell.getRow());
+    }
+}
