@@ -91,7 +91,7 @@ public class HSSFCell implements Cell {
     /**
      * The maximum  number of columns in BIFF8
      */
-    private static final int LAST_COLUMN_NUMBER  = 255; // 2^8 - 1
+    public static final int LAST_COLUMN_NUMBER  = 255; // 2^8 - 1
     private static final String LAST_COLUMN_NAME  = "IV";
     
     public final static short        ENCODING_UNCHANGED          = -1;
@@ -626,6 +626,9 @@ public class HSSFCell implements Cell {
     }
 
     public String getCellFormula() {
+        if (!(_record instanceof FormulaRecordAggregate)) {
+            throw typeMismatch(CELL_TYPE_FORMULA, _cellType, true);
+        }
         return HSSFFormulaParser.toFormulaString(_book, ((FormulaRecordAggregate)_record).getFormulaTokens());
     }
 

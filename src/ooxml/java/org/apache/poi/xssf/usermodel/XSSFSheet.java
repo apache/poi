@@ -64,15 +64,6 @@ import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelations
 public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     private static final POILogger logger = POILogFactory.getLogger(XSSFSheet.class);
 
-    /**
-     * Column width measured as the number of characters of the maximum digit width of the
-     * numbers 0, 1, 2, ..., 9 as rendered in the normal style's font. There are 4 pixels of margin
-     * padding (two on each side), plus 1 pixel padding for the gridlines.
-     *
-     * This value is the same for default font in Office 2007 (Calibry) and Office 2003 and earlier (Arial)
-     */
-    private static float DEFAULT_COLUMN_WIDTH = 9.140625f;
-
     protected CTSheet sheet;
     protected CTWorksheet worksheet;
     private TreeMap<Integer, XSSFRow> rows;
@@ -462,7 +453,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     public int getColumnWidth(int columnIndex) {
         CTCol col = columnHelper.getColumn(columnIndex, false);
-        double width = col == null || !col.isSetWidth() ? DEFAULT_COLUMN_WIDTH : col.getWidth();
+        double width = col == null || !col.isSetWidth() ? getDefaultColumnWidth() : col.getWidth();
         return (int)(width*256);
     }
 
@@ -512,8 +503,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *  set for that column
      */
     public CellStyle getColumnStyle(int column) {
-    	// TODO
-    	return null;
+        int idx = columnHelper.getColDefaultStyle(column);
+        return getWorkbook().getCellStyleAt((short)(idx == -1 ? 0 : idx));
     }
 
 
@@ -568,7 +559,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return the number of the first logical row on the sheet, zero based
      */
     public int getFirstRowNum() {
-        return rows.size() == 0 ? -1 : rows.firstKey();
+        return rows.size() == 0 ? 0 : rows.firstKey();
     }
 
     /**
@@ -681,7 +672,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     public int getLastRowNum() {
-        return rows.size() == 0 ? -1 : rows.lastKey();
+        return rows.size() == 0 ? 0 : rows.lastKey();
     }
 
     public short getLeftCol() {
@@ -720,7 +711,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             case FooterMargin:
                 return pageMargins.getFooter();
             default :
-                throw new POIXMLException("Unknown margin constant:  " + margin);
+                throw new IllegalArgumentException("Unknown margin constant:  " + margin);
         }
     }
 
@@ -742,16 +733,24 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         switch (margin) {
             case LeftMargin:
                 pageMargins.setLeft(size);
+                break;
             case RightMargin:
                 pageMargins.setRight(size);
+                break;
             case TopMargin:
                 pageMargins.setTop(size);
+                break;
             case BottomMargin:
                 pageMargins.setBottom(size);
+                break;
             case HeaderMargin:
                 pageMargins.setHeader(size);
+                break;
             case FooterMargin:
                 pageMargins.setFooter(size);
+                break;
+            default :
+                throw new IllegalArgumentException( "Unknown margin constant:  " + margin );
         }
     }
 
@@ -1033,7 +1032,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Determines if there is a page break at the indicated column
      */
-    public boolean isColumnBroken(short column) {
+    public boolean isColumnBroken(int column) {
         int[] colBreaks = getColumnBreaks();
         for (int i = 0 ; i < colBreaks.length ; i++) {
             if (colBreaks[i] == column) {
@@ -1167,7 +1166,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Removes a page break at the indicated column
      */
-    public void removeColumnBreak(short column) {
+    public void removeColumnBreak(int column) {
         CTBreak[] brkArray = getSheetTypeColumnBreaks().getBrkArray();
         for (int i = 0 ; i < brkArray.length ; i++) {
             if (brkArray[i].getId() == column) {
@@ -1202,6 +1201,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param row  the row to remove.
      */
     public void removeRow(Row row) {
+        if (row.getSheet() != this) {
+            throw new IllegalArgumentException("Specified row does not belong to this sheet");
+        }
+
         rows.remove(row.getRowNum());
     }
 
@@ -1263,7 +1266,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @param column the column to break
      */
-    public void setColumnBreak(short column) {
+    public void setColumnBreak(int column) {
         if (! isColumnBroken(column)) {
             CTBreak brk = getSheetTypeColumnBreaks().addNewBrk();
             brk.setId(column);

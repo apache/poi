@@ -66,48 +66,7 @@ public class TestXSSFDialogSheet extends TestCase {
         assertFalse(sheet.getFitToPage());
     }
     
-    public void testGetSetMargin() {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFDialogsheet sheet = workbook.createDialogsheet("Dialogsheet 1", null);
-        assertEquals((double) 0, sheet.getMargin((short) 0));
-        sheet.setMargin((short) 0, 10);
-        assertEquals((double) 10, sheet.getMargin((short) 0));
-        assertEquals((double) 10, sheet.getMargin((short) 1));
-        assertEquals((double) 10, sheet.getMargin((short) 2));
-        assertEquals((double) 10, sheet.getMargin((short) 3));
-        assertEquals((double) 10, sheet.getMargin((short) 4));
-        assertEquals((double) 10, sheet.getMargin((short) 5));
-        sheet.setMargin((short) 1, 11);
-        assertEquals((double) 11, sheet.getMargin((short) 1));
-        assertEquals((double) 11, sheet.getMargin((short) 2));
-        assertEquals((double) 11, sheet.getMargin((short) 3));
-        assertEquals((double) 11, sheet.getMargin((short) 4));
-        assertEquals((double) 11, sheet.getMargin((short) 5));
-        sheet.setMargin((short) 2, 12);
-        assertEquals((double) 12, sheet.getMargin((short) 2));
-        assertEquals((double) 12, sheet.getMargin((short) 3));
-        assertEquals((double) 12, sheet.getMargin((short) 4));
-        assertEquals((double) 12, sheet.getMargin((short) 5));
-        sheet.setMargin((short) 3, 13);
-        assertEquals((double) 13, sheet.getMargin((short) 3));
-        assertEquals((double) 13, sheet.getMargin((short) 4));
-        assertEquals((double) 13, sheet.getMargin((short) 5));
-        sheet.setMargin((short) 4, 14);
-        assertEquals((double) 14, sheet.getMargin((short) 4));
-        assertEquals((double) 14, sheet.getMargin((short) 5));
-        sheet.setMargin((short) 5, 15);
-        assertEquals((double) 15, sheet.getMargin((short) 5));
-        
-        // Test that nothing happens if another margin constant is given (E.G. 65)
-        sheet.setMargin((short) 65, 15);
-        assertEquals((double) 10, sheet.getMargin((short) 0));
-        assertEquals((double) 11, sheet.getMargin((short) 1));
-        assertEquals((double) 12, sheet.getMargin((short) 2));
-        assertEquals((double) 13, sheet.getMargin((short) 3));
-        assertEquals((double) 14, sheet.getMargin((short) 4));
-        assertEquals((double) 15, sheet.getMargin((short) 5));
-    }
-    
+   
     public void testGetFooter() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFDialogsheet sheet = workbook.createDialogsheet("Dialogsheet 1", null);

@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 import org.apache.poi.ss.ITestDataProvider;
 
 /**
- * Tests for {@link org.apache.poi.xssf.usermodel.XSSFDataFormat}
+ * Tests of implementation of {@link DataFormat}
  *
  */
 public abstract class BaseTestDataFormat extends TestCase {

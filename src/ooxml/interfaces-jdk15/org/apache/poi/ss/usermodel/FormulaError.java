@@ -106,7 +106,7 @@ public enum FormulaError {
     /**
      * @return numeric code of the error
      */
-    public int getCode() {
+    public byte getCode() {
         return type;
     }
 
@@ -118,7 +118,7 @@ public enum FormulaError {
     }
 
     private static Map<String, FormulaError> smap = new HashMap<String, FormulaError>();
-    private static Map<Integer, FormulaError> imap = new HashMap<Integer, FormulaError>();
+    private static Map<Byte, FormulaError> imap = new HashMap<Byte, FormulaError>();
     static{
         for (FormulaError error : values()) {
             imap.put(error.getCode(), error);
@@ -126,7 +126,7 @@ public enum FormulaError {
         }
     }
 
-    public static FormulaError forInt(int type){
+    public static FormulaError forInt(byte type){
         FormulaError err = imap.get(type);
         if(err == null) throw new IllegalArgumentException("Unknown error type: " + type);
         return err;

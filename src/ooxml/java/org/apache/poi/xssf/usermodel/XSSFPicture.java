@@ -18,6 +18,7 @@ package org.apache.poi.xssf.usermodel;
 
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.util.POILogger;
@@ -42,6 +43,15 @@ import java.util.Iterator;
  */
 public class XSSFPicture extends XSSFShape implements Picture {
     private static final POILogger logger = POILogFactory.getLogger(XSSFPicture.class);
+
+    /**
+     * Column width measured as the number of characters of the maximum digit width of the
+     * numbers 0, 1, 2, ..., 9 as rendered in the normal style's font. There are 4 pixels of margin
+     * padding (two on each side), plus 1 pixel padding for the gridlines.
+     *
+     * This value is the same for default font in Office 2007 (Calibry) and Office 2003 and earlier (Arial)
+     */
+    private static float DEFAULT_COLUMN_WIDTH = 9.140625f;
 
     /**
      * A default instance of CTShape used for creating new shapes.
@@ -230,9 +240,11 @@ public class XSSFPicture extends XSSFShape implements Picture {
 
     private float getColumnWidthInPixels(int columnIndex){
         XSSFSheet sheet = (XSSFSheet)getDrawing().getParent();
-        float numChars = (float)sheet.getColumnWidth(columnIndex)/256;
 
-        return numChars*XSSFWorkbook.DEFAULT_CHARACTER_WIDTH;
+        CTCol col = sheet.getColumnHelper().getColumn(columnIndex, false);
+        double numChars = col == null || !col.isSetWidth() ? DEFAULT_COLUMN_WIDTH : col.getWidth();
+
+        return (float)numChars*XSSFWorkbook.DEFAULT_CHARACTER_WIDTH;
     }
 
     private float getRowHeightInPixels(int rowIndex){

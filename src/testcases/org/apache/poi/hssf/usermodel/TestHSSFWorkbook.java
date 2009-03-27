@@ -26,6 +26,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.NameRecord;
@@ -36,12 +37,15 @@ import org.apache.poi.hssf.record.WindowOneRecord;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.ss.usermodel.BaseTestWorkbook;
+
 /**
  * Tests for {@link HSSFWorkbook}
  */
-public final class TestHSSFWorkbook extends TestCase {
-    private static HSSFWorkbook openSample(String sampleFileName) {
-        return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);
+public final class TestHSSFWorkbook extends BaseTestWorkbook {
+    @Override
+    protected HSSFITestDataProvider getTestDataProvider(){
+        return HSSFITestDataProvider.getInstance();
     }
 
     public void testSetRepeatingRowsAndColumns() {
@@ -70,44 +74,6 @@ public final class TestHSSFWorkbook extends TestCase {
             // expected during successful test
             assertEquals("The workbook already contains a sheet of this name", e.getMessage());
         }
-    }
-
-    public void testDuplicateNames() {
-        HSSFWorkbook b = new HSSFWorkbook( );
-        b.createSheet("Sheet1");
-        b.createSheet();
-        b.createSheet("name1");
-        try {
-            b.createSheet("name1");
-            fail();
-        } catch (IllegalArgumentException pass) {
-            // expected during successful test
-        }
-        b.createSheet();
-        try {
-            b.setSheetName(3, "name1");
-            fail();
-        } catch (IllegalArgumentException pass) {
-            // expected during successful test
-        }
-
-        try {
-            b.setSheetName(3, "name1");
-            fail();
-        } catch (IllegalArgumentException pass) {
-            // expected during successful test
-        }
-
-        b.setSheetName( 3,  "name2" );
-        b.setSheetName( 3,  "name2" );
-        b.setSheetName( 3,  "name2" );
-
-        HSSFWorkbook c = new HSSFWorkbook( );
-        c.createSheet("Sheet1");
-        c.createSheet("Sheet2");
-        c.createSheet("Sheet3");
-        c.createSheet("Sheet4");
-
     }
 
     public void testWindowOneDefaults() {
@@ -147,17 +113,6 @@ public final class TestHSSFWorkbook extends TestCase {
     	assertEquals(false, w1.getHidden());
 	}
 
-    public void testSheetSelection() {
-        HSSFWorkbook b = new HSSFWorkbook();
-        b.createSheet("Sheet One");
-        b.createSheet("Sheet Two");
-        b.setActiveSheet(1);
-        b.setSelectedTab(1);
-        b.setFirstVisibleTab(1);
-        assertEquals(1, b.getActiveSheetIndex());
-        assertEquals(1, b.getFirstVisibleTab());
-    }
-
     public void testSheetClone() {
         // First up, try a simple file
         HSSFWorkbook b = new HSSFWorkbook();
@@ -170,7 +125,7 @@ public final class TestHSSFWorkbook extends TestCase {
         assertEquals(3, b.getNumberOfSheets());
 
         // Now try a problem one with drawing records in it
-        b = openSample("SheetWithDrawing.xls");
+        b = getTestDataProvider().openSampleWorkbook("SheetWithDrawing.xls");
         assertEquals(1, b.getNumberOfSheets());
         b.cloneSheet(0);
         assertEquals(2, b.getNumberOfSheets());
@@ -181,7 +136,7 @@ public final class TestHSSFWorkbook extends TestCase {
         HSSFSheet s;
 
         // Single chart, two sheets
-        b = openSample("44010-SingleChart.xls");
+        b = getTestDataProvider().openSampleWorkbook("44010-SingleChart.xls");
         assertEquals(2, b.getNumberOfSheets());
         assertEquals("Graph2", b.getSheetName(1));
         s = b.getSheetAt(1);
@@ -197,7 +152,7 @@ public final class TestHSSFWorkbook extends TestCase {
         // We've now called getDrawingPatriarch() so
         //  everything will be all screwy
         // So, start again
-        b = openSample("44010-SingleChart.xls");
+        b = getTestDataProvider().openSampleWorkbook("44010-SingleChart.xls");
 
         b = writeRead(b);
         assertEquals(2, b.getNumberOfSheets());
@@ -207,7 +162,7 @@ public final class TestHSSFWorkbook extends TestCase {
 
 
         // Two charts, three sheets
-        b = openSample("44010-TwoCharts.xls");
+        b = getTestDataProvider().openSampleWorkbook("44010-TwoCharts.xls");
         assertEquals(3, b.getNumberOfSheets());
 
         s = b.getSheetAt(1);
@@ -227,7 +182,7 @@ public final class TestHSSFWorkbook extends TestCase {
         // We've now called getDrawingPatriarch() so
         //  everything will be all screwy
         // So, start again
-        b = openSample("44010-TwoCharts.xls");
+        b = getTestDataProvider().openSampleWorkbook("44010-TwoCharts.xls");
 
         b = writeRead(b);
         assertEquals(3, b.getNumberOfSheets());
@@ -434,7 +389,7 @@ public final class TestHSSFWorkbook extends TestCase {
      *  that point to deleted sheets
      */
     public void testNamesToDeleteSheets() {
-        HSSFWorkbook b = openSample("30978-deleted.xls");
+        HSSFWorkbook b = getTestDataProvider().openSampleWorkbook("30978-deleted.xls");
         assertEquals(3, b.getNumberOfNames());
 
         // Sheet 2 is deleted

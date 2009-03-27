@@ -18,144 +18,17 @@ package org.apache.poi.xssf.usermodel;
 
 import junit.framework.TestCase;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.ss.usermodel.BaseTestNamedRange;
 
 /**
  * @author Yegor Kozlov
  */
-public class TestXSSFName extends TestCase {
+public class TestXSSFName extends BaseTestNamedRange {
 
-    public void testCreate(){
-        // Create a new workbook
-        XSSFWorkbook wb = new XSSFWorkbook();
-
-        XSSFName name1 = wb.createName();
-        name1.setNameName("testOne");
-
-        //setting a duplicate name should throw IllegalArgumentException
-        XSSFName name2 = wb.createName();
-        try {
-            name2.setNameName("testOne");
-            fail("expected exception");
-        } catch (IllegalArgumentException e){
-            assertEquals("The workbook already contains this name: testOne", e.getMessage());
-        }
-
-        name2.setNameName("testTwo");
-
-        String ref1 = "Test1!$A$1:$B$1";
-        name1.setRefersToFormula(ref1);
-        assertEquals(ref1, name1.getRefersToFormula());
-        assertEquals("Test1", name1.getSheetName());
-
-        String ref2 = "'Testing Named Ranges'!$A$1:$B$1";
-        name1.setRefersToFormula(ref2);
-        assertEquals("'Testing Named Ranges'!$A$1:$B$1", name1.getRefersToFormula());
-        assertEquals("Testing Named Ranges", name1.getSheetName());
-
-        assertEquals(-1, name1.getSheetIndex());
-        name1.setSheetIndex(-1);
-        assertEquals(-1, name1.getSheetIndex());
-        try {
-            name1.setSheetIndex(1);
-            fail("should throw IllegalArgumentException");
-        } catch(IllegalArgumentException e){
-            assertEquals("Sheet index (1) is out of range", e.getMessage());
-        }
-        wb.createSheet();
-        try {
-            name1.setSheetIndex(1);
-            fail("should throw IllegalArgumentException");
-        } catch(IllegalArgumentException e){
-            assertEquals("Sheet index (1) is out of range (0..0)", e.getMessage());
-        }
-        wb.createSheet();
-        name1.setSheetIndex(1);
-        assertEquals(1, name1.getSheetIndex());
-    }
-
-    public void testUnicodeNamedRange() {
-        XSSFWorkbook workBook = new XSSFWorkbook();
-        workBook.createSheet("Test");
-        XSSFName name = workBook.createName();
-        name.setNameName("\u03B1");
-        name.setRefersToFormula("Test!$D$3:$E$8");
-
-
-        XSSFWorkbook workBook2 = XSSFTestDataSamples.writeOutAndReadBack(workBook);
-        XSSFName name2 = workBook2.getNameAt(0);
-
-        assertEquals("\u03B1", name2.getNameName());
-        assertEquals("Test!$D$3:$E$8", name2.getRefersToFormula());
-    }
-
-    public void testAddRemove() {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        assertEquals(0, wb.getNumberOfNames());
-        XSSFName name1 = wb.createName();
-        name1.setNameName("name1");
-        assertEquals(1, wb.getNumberOfNames());
-
-        XSSFName name2 = wb.createName();
-        name2.setNameName("name2");
-        assertEquals(2, wb.getNumberOfNames());
-
-        XSSFName name3 = wb.createName();
-        name3.setNameName("name3");
-        assertEquals(3, wb.getNumberOfNames());
-
-        wb.removeName("name2");
-        assertEquals(2, wb.getNumberOfNames());
-
-        wb.removeName(0);
-        assertEquals(1, wb.getNumberOfNames());
-    }
-
-    public void testScope() {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        wb.createSheet();
-        wb.createSheet();
-        
-        XSSFName name;
-
-        name = wb.createName();
-        name.setNameName("aaa");
-        name = wb.createName();
-        try {
-            name.setNameName("aaa");
-            fail("Expected exception");
-        } catch(Exception e){
-            assertEquals("The workbook already contains this name: aaa", e.getMessage());
-        }
-
-        name = wb.createName();
-        name.setSheetIndex(0);
-        name.setNameName("aaa");
-        name = wb.createName();
-        name.setSheetIndex(0);
-        try {
-            name.setNameName("aaa");
-            fail("Expected exception");
-        } catch(Exception e){
-            assertEquals("The sheet already contains this name: aaa", e.getMessage());
-        }
-
-        name = wb.createName();
-        name.setSheetIndex(1);
-        name.setNameName("aaa");
-        name = wb.createName();
-        name.setSheetIndex(1);
-        try {
-            name.setNameName("aaa");
-            fail("Expected exception");
-        } catch(Exception e){
-            assertEquals("The sheet already contains this name: aaa", e.getMessage());
-        }
-
-        int cnt = 0;
-        for (int i = 0; i < wb.getNumberOfNames(); i++) {
-            if("aaa".equals(wb.getNameAt(i).getNameName())) cnt++;
-        }
-        assertEquals(3, cnt);
+    @Override
+    protected XSSFITestDataProvider getTestDataProvider(){
+        return XSSFITestDataProvider.getInstance();
     }
 
 }

@@ -285,7 +285,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 		retval.setVResolution(( short ) 300);
 		retval.setHeaderMargin( 0.5);
 		retval.setFooterMargin( 0.5);
-		retval.setCopies(( short ) 0);
+		retval.setCopies(( short ) 1);
 		return retval;
 	}
 
@@ -352,7 +352,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 			case Sheet.TopMargin:    return _topMargin;
 			case Sheet.BottomMargin: return _bottomMargin;
 		}
-		throw new RuntimeException( "Unknown margin constant:  " + marginIndex );
+		throw new IllegalArgumentException( "Unknown margin constant:  " + marginIndex );
 	}
 
 
@@ -372,7 +372,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 			case Sheet.TopMargin:    return 1.0;
 			case Sheet.BottomMargin: return 1.0;
 		}
-		throw new RuntimeException( "Unknown margin constant:  " + margin );
+		throw new IllegalArgumentException( "Unknown margin constant:  " + margin );
 	}
 
 	/**
@@ -401,7 +401,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 					m = _bottomMargin;
 					break;
 				default :
-					throw new RuntimeException( "Unknown margin constant:  " + margin );
+					throw new IllegalArgumentException( "Unknown margin constant:  " + margin );
 			}
 		}
 		m.setMargin( size );

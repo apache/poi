@@ -45,7 +45,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     /**
      * The maximum  number of rows in SpreadsheetML
      */
-    public static final int MAX_ROW_NUMBER  = 1048576; //2 ^ 20
+    public static final int MAX_ROW_NUMBER  = 1048575; //2 ^ 20 - 1
 
     /**
      * the xml bean containing all cell definitions for this row
@@ -170,8 +170,6 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @see Cell#CELL_TYPE_STRING
      */
     public XSSFCell createCell(int columnIndex, int type) {
-        if(columnIndex < 0) throw new IllegalArgumentException("columnIndex must be >= 0, was " + columnIndex);
-
         CTCell ctcell = CTCell.Factory.newInstance();
         XSSFCell xcell = new XSSFCell(this, ctcell);
         xcell.setCellNum(columnIndex);
@@ -333,10 +331,9 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @throws IllegalArgumentException if rowNum < 0 or greater than {@link #MAX_ROW_NUMBER}
      */
     public void setRowNum(int rowIndex) {
-        if (rowIndex < 0 || rowIndex >= MAX_ROW_NUMBER) {
-            throw new IllegalArgumentException("Invalid row index (" + rowIndex 
-                    + ").  Allowable row range for " + FILE_FORMAT_NAME 
-                    + " is (0.." + (MAX_ROW_NUMBER-1) + ")");
+        if (rowIndex < 0 || rowIndex > MAX_ROW_NUMBER) {
+            throw new IllegalArgumentException("Invalid row number (" + rowIndex 
+                    + ") outside allowable range (0.." + MAX_ROW_NUMBER + ")");
         }
         row.setR(rowIndex + 1);
     }

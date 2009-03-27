@@ -31,27 +31,8 @@ public final class TestXSSFCell extends BaseTestCell {
         return XSSFITestDataProvider.getInstance();
     }
 
-    public void testSetValues() {
-        baseTestSetValues();
-    }
-
-   public void testBoolErr() {
-        baseTestBoolErr();
-    }
-
-    public void testFormulaStyle() {
-        baseTestFormulaStyle();
-    }
-
-    public void testToString() {
-        baseTestToString();
-    }
-
-    public void testSetFormulaValue() {
-        baseTestSetFormulaValue();
-    }
-
     public void testChangeCellType() {
+        //for performance reasons combine baseTestChangeType* together 
         Workbook wb = getTestDataProvider().createWorkbook();
         Row row = wb.createSheet().createRow(0);
         baseTestChangeTypeStringToBool(row.createCell(0));
@@ -62,6 +43,4 @@ public final class TestXSSFCell extends BaseTestCell {
         //TODO: works in HSSF but fails in XSSF
         //baseTestChangeTypeFormulaToBoolean(row.createCell(4));
     }
-
-
 }
