@@ -41,6 +41,9 @@ public abstract class BaseTestRow extends TestCase {
         assertEquals(-1, row.getFirstCellNum());
         assertEquals(-1, row.getLastCellNum());
 
+        //getting cells from an empty row should returns null
+        for(int i=0; i < 10; i++) assertNull(row.getCell(i));
+
         row.createCell(2);
         assertEquals(2, row.getFirstCellNum());
         assertEquals(3, row.getLastCellNum());

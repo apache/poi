@@ -18,6 +18,8 @@ package org.apache.poi.xssf.usermodel;
 
 import junit.framework.TestCase;
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.BaseTestPicture;
+import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.STEditAs;
 
@@ -27,7 +29,17 @@ import java.util.Arrays;
 /**
  * @author Yegor Kozlov
  */
-public class TestXSSFPicture extends TestCase {
+public class TestXSSFPicture extends BaseTestPicture {
+
+    @Override
+    protected XSSFITestDataProvider getTestDataProvider(){
+        return XSSFITestDataProvider.getInstance();
+    }
+
+    public void testResize() {
+        baseTestResize(new XSSFClientAnchor(0, 0, 504825, 85725, (short)0, 0, (short)1, 8));
+    }
+
 
     public void testCreate(){
         XSSFWorkbook wb = new XSSFWorkbook();

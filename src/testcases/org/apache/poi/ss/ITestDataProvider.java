@@ -44,4 +44,10 @@ public interface ITestDataProvider {
      */
     Workbook createWorkbook();
 
+    /**
+     * Opens a sample file from the standard HSSF test data directory
+     *
+     * @return an open <tt>InputStream</tt> for the specified sample file
+     */
+    byte[] getTestDataFileContent(String fileName);
 }

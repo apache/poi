@@ -60,7 +60,7 @@ public class AllUserModelTests {
 		result.addTestSuite(TestHSSFTextbox.class);
 		result.addTestSuite(TestHSSFWorkbook.class);
 		result.addTestSuite(TestLinkTable.class);
-		result.addTestSuite(TestNamedRange.class);
+		result.addTestSuite(TestHSSFName.class);
 		result.addTestSuite(TestOLE2Embeding.class);
 		result.addTestSuite(TestPOIFSProperties.class);
 		result.addTestSuite(TestReadWriteChart.class);

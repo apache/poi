@@ -562,4 +562,31 @@ public abstract class BaseTestSheet extends TestCase {
         assertFalse(sheet.isColumnBroken(11));
         assertFalse(sheet.isColumnBroken(12));
     }
+
+    public void testGetFirstLastRowNum() {
+        Workbook workbook = getTestDataProvider().createWorkbook();
+        Sheet sheet = workbook.createSheet("Sheet 1");
+        Row row10 = sheet.createRow(9);
+        Row row1 = sheet.createRow(0);
+        Row row2 = sheet.createRow(1);
+        assertEquals(0, sheet.getFirstRowNum());
+        assertEquals(9, sheet.getLastRowNum());
+    }
+
+    public void testGetFooter() {
+        Workbook workbook = getTestDataProvider().createWorkbook();
+        Sheet sheet = workbook.createSheet("Sheet 1");
+        assertNotNull(sheet.getFooter());
+        sheet.getFooter().setCenter("test center footer");
+        assertEquals("test center footer", sheet.getFooter().getCenter());
+    }
+
+    public void testGetSetColumnHidden() {
+        Workbook workbook = getTestDataProvider().createWorkbook();
+        Sheet sheet = workbook.createSheet("Sheet 1");
+        sheet.setColumnHidden(2, true);
+        assertTrue(sheet.isColumnHidden(2));
+    }
+
+
 }

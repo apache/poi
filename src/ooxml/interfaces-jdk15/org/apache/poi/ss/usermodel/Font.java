@@ -19,13 +19,6 @@ package org.apache.poi.ss.usermodel;
 
 
 public interface Font {
-
-    /**
-     * Arial font
-     */
-
-    public final static String FONT_ARIAL = "Arial";
-
     /**
      * Normal boldness (not bold)
      */
@@ -116,7 +109,6 @@ public interface Font {
     /**
      * set the name for the font (i.e. Arial)
      * @param name  String representing the name of the font to use
-     * @see #FONT_ARIAL
      */
 
     void setFontName(String name);
@@ -124,7 +116,6 @@ public interface Font {
     /**
      * get the name for the font (i.e. Arial)
      * @return String representing the name of the font to use
-     * @see #FONT_ARIAL
      */
 
     String getFontName();
