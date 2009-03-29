@@ -44,46 +44,6 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
     }
 
 
-	public void testRepeatingRowsAndColums() {
-		// First test that setting RR&C for same sheet more than once only creates a 
-		// single  Print_Titles built-in record
-		XSSFWorkbook wb = new XSSFWorkbook();
-		XSSFSheet sheet = wb.createSheet("FirstSheet");
-		
-		// set repeating rows and columns twice for the first sheet
-		for (int i = 0; i < 2; i++) {
-			wb.setRepeatingRowsAndColumns(0, 0, 0, 0, 3);
-			//sheet.createFreezePane(0, 3);
-		}
-		assertEquals(1, wb.getNumberOfNames());
-		XSSFName nr1 = wb.getNameAt(0);
-		
-		assertEquals(XSSFName.BUILTIN_PRINT_TITLE, nr1.getNameName());
-		assertEquals("'FirstSheet'!$A:$A,'FirstSheet'!$1:$4", nr1.getRefersToFormula());
-		
-		// Save and re-open
-		XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-
-		assertEquals(1, nwb.getNumberOfNames());
-		nr1 = nwb.getNameAt(0);
-		
-		assertEquals(XSSFName.BUILTIN_PRINT_TITLE, nr1.getNameName());
-		assertEquals("'FirstSheet'!$A:$A,'FirstSheet'!$1:$4", nr1.getRefersToFormula());
-		
-		// check that setting RR&C on a second sheet causes a new Print_Titles built-in
-		// name to be created
-		sheet = nwb.createSheet("SecondSheet");
-		nwb.setRepeatingRowsAndColumns(1, 1, 2, 0, 0);
-
-		assertEquals(2, nwb.getNumberOfNames());
-		XSSFName nr2 = nwb.getNameAt(1);
-		
-		assertEquals(XSSFName.BUILTIN_PRINT_TITLE, nr2.getNameName());
-		assertEquals("'SecondSheet'!$B:$C,'SecondSheet'!$1:$1", nr2.getRefersToFormula());
-		
-		nwb.setRepeatingRowsAndColumns(1, -1, -1, -1, -1);
-	}
-	
 	/**
 	 * Tests that we can save, and then re-load a new document
 	 */
@@ -164,20 +124,6 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 
 	}
 	
-	public void testFindFont(){
-		//get default font and check against default value
-		XSSFWorkbook workbook = new XSSFWorkbook();
-		Font fontFind=workbook.findFont(Font.BOLDWEIGHT_NORMAL, IndexedColors.BLACK.getIndex(), (short)11, "Calibri", false, false, Font.SS_NONE, Font.U_NONE);
-		assertNotNull(fontFind);
-		
-		//get default font, then change 2 values and check against different values (height changes)
-		Font font=workbook.createFont();
-		((XSSFFont)font).setBold(true);
-		font.setUnderline(Font.U_DOUBLE);
-		fontFind=workbook.findFont(Font.BOLDWEIGHT_BOLD, IndexedColors.BLACK.getIndex(), (short)15, "Calibri", false, false, Font.SS_NONE, Font.U_DOUBLE);
-		assertNull(fontFind);
-	}
-
 	public void testGetCellStyleAt(){
 	 	XSSFWorkbook workbook = new XSSFWorkbook();
 		short i = 0;
@@ -212,25 +158,6 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		assertNotNull(fontAt);
 	}
 	
-	public void testGetNumberOfFonts(){
-	 	XSSFWorkbook wb = new XSSFWorkbook();
-
-		XSSFFont f1=wb.createFont();
-	 	f1.setBold(true);
-	 	wb.createCellStyle().setFont(f1);
-
-		XSSFFont f2=wb.createFont();
-	 	f2.setUnderline(Font.U_DOUBLE);
-		wb.createCellStyle().setFont(f2);
-
-		XSSFFont f3=wb.createFont();
-	 	f3.setFontHeightInPoints((short)23);
-		wb.createCellStyle().setFont(f3);
-
-		assertEquals(4,wb.getNumberOfFonts());
-	 	assertEquals(Font.U_DOUBLE,wb.getFontAt((short)2).getUnderline());
-	}
-	
 	public void testGetNumCellStyles(){
 	 	XSSFWorkbook workbook = new XSSFWorkbook();
 		short i = workbook.getNumCellStyles();
@@ -240,17 +167,6 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		assertNotSame(2, i);		
 	}
 	
-	public void testSetDisplayedTab(){
-		XSSFWorkbook workbook = new XSSFWorkbook();
-		workbook.setFirstVisibleTab(1);
-		short i = (short) workbook.getFirstVisibleTab();
-		//0 (defualt value) is not longer set
-		assertNotSame(0, i);
-		//1 is the default tab
-		assertEquals(1, i);
-	}
-
-
 	public void testLoadSave() {
 		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("Formatting.xlsx");
 		assertEquals(3, workbook.getNumberOfSheets());

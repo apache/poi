@@ -436,6 +436,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     public XSSFSheet createSheet() {
         String sheetname = "Sheet" + (sheets.size());
+        int idx = 0;
+        while(getSheet(sheetname) != null) {
+            sheetname = "Sheet" + idx;
+            idx++;
+        }
         return createSheet(sheetname);
     }
 

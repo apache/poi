@@ -31,6 +31,13 @@ import org.apache.poi.ss.usermodel.Font;
  */
 public final class HSSFFont implements Font {
 
+    /**
+     * Arial font
+     */
+
+    public final static String FONT_ARIAL = "Arial";
+
+
     private FontRecord         font;
     private short              index;
 

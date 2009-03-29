@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.OldExcelFormatException;
+import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
@@ -36,23 +37,33 @@ import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.TempFile;
 
 /**
  * Testcases for bugs entered in bugzilla
  * the Test name contains the bugzilla bug id
+ *
+ * <b>YK: If a bug can be tested in terms of common ss interfaces,
+ *  define the test in the base class {@link BaseTestBugzillaIssues}</b>
+ *
  * @author Avik Sengupta
  * @author Yegor Kozlov
  */
-public final class TestBugs extends TestCase {
+public final class TestBugs extends BaseTestBugzillaIssues {
 
-    private static HSSFWorkbook openSample(String sampleFileName) {
-        return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);
+    @Override
+    protected HSSFITestDataProvider getTestDataProvider(){
+        return HSSFITestDataProvider.getInstance();
     }
 
-    private static HSSFWorkbook writeOutAndReadBack(HSSFWorkbook original) {
-        return HSSFTestDataSamples.writeOutAndReadBack(original);
+    private HSSFWorkbook openSample(String sampleFileName) {
+        return getTestDataProvider().openSampleWorkbook(sampleFileName);
+    }
+
+    private HSSFWorkbook writeOutAndReadBack(HSSFWorkbook original) {
+        return getTestDataProvider().writeOutAndReadBack(original);
     }
 
     private static void writeTestOutputFileForViewing(HSSFWorkbook wb, String simpleFileName) {
@@ -93,16 +104,6 @@ public final class TestBugs extends TestCase {
         HSSFCell c = r.createCell(0);
         c.setCellValue(10);
         writeOutAndReadBack(wb);
-    }
-    /**Test writing a hyperlink
-     * Open resulting sheet in Excel and check that A1 contains a hyperlink*/
-    public void test23094() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet s = wb.createSheet();
-        HSSFRow r = s.createRow(0);
-        r.createCell(0).setCellFormula("HYPERLINK( \"http://jakarta.apache.org\", \"Jakarta\" )");
-
-        writeTestOutputFileForViewing(wb, "test23094");
     }
 
      /** test hyperlinks
@@ -163,68 +164,14 @@ public final class TestBugs extends TestCase {
 
         writeTestOutputFileForViewing(wb, "test15375");
     }
-
-    /** test writing a file with large number of unique strings
-     *open resulting file in Excel to check results!*/
-
-    public void test15375_2() throws Exception{
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-
-        String tmp1 = null;
-        String tmp2 = null;
-        String tmp3 = null;
-
-        for (int i = 0; i < 6000; i++) {
-            tmp1 = "Test1" + i;
-            tmp2 = "Test2" + i;
-            tmp3 = "Test3" + i;
-
-            HSSFRow row = sheet.createRow(i);
-
-            HSSFCell cell = row.createCell(0);
-            setCellText(cell, tmp1);
-            cell = row.createCell(1);
-            setCellText(cell, tmp2);
-            cell = row.createCell(2);
-            setCellText(cell, tmp3);
-        }
-        writeTestOutputFileForViewing(wb, "test15375-2");
+    /**
+     * test writing a file with large number of unique strings,
+     * open resulting file in Excel to check results!
+     */
+    public void test15375_2() {
+        baseTest15375(6000);
     }
-    /** another test for the number of unique strings issue
-     *test opening the resulting file in Excel*/
-    public void test22568() {
-        int r=2000;int c=3;
-
-        HSSFWorkbook wb = new HSSFWorkbook() ;
-        HSSFSheet sheet = wb.createSheet("ExcelTest") ;
-
-        int col_cnt=0, rw_cnt=0 ;
-
-        col_cnt = c;
-        rw_cnt = r;
-
-        HSSFRow rw ;
-        rw = sheet.createRow(0) ;
-        //Header row
-        for(int j=0; j<col_cnt; j++){
-            HSSFCell cell = rw.createCell(j) ;
-            setCellText(cell, "Col " + (j+1)) ;
-        }
-
-        for(int i=1; i<rw_cnt; i++){
-            rw = sheet.createRow(i) ;
-            for(int j=0; j<col_cnt; j++){
-                HSSFCell cell = rw.createCell(j) ;
-                setCellText(cell, "Row:" + (i+1) + ",Column:" + (j+1)) ;
-            }
-        }
-
-        sheet.setDefaultColumnWidth(18) ;
-
-        writeTestOutputFileForViewing(wb, "test22568");
-    }
-
+    
     /**Double byte strings*/
     public void test15556() {
 
@@ -284,50 +231,6 @@ public final class TestBugs extends TestCase {
                 }
             }
         }
-    }
-
-     public void test18800() {
-        HSSFWorkbook book = new HSSFWorkbook();
-        book.createSheet("TEST");
-        HSSFSheet sheet = book.cloneSheet(0);
-        book.setSheetName(1,"CLONE");
-        sheet.createRow(0).createCell(0).setCellValue(new HSSFRichTextString("Test"));
-
-        book = writeOutAndReadBack(book);
-        sheet = book.getSheet("CLONE");
-        HSSFRow row = sheet.getRow(0);
-        HSSFCell cell = row.getCell(0);
-        assertEquals("Test", cell.getRichStringCellValue().getString());
-    }
-
-    /**
-     * Merged regions were being removed from the parent in cloned sheets
-     */
-    public void test22720() {
-       HSSFWorkbook workBook = new HSSFWorkbook();
-       workBook.createSheet("TEST");
-       HSSFSheet template = workBook.getSheetAt(0);
-
-       template.addMergedRegion(new CellRangeAddress(0, 1, 0, 2));
-       template.addMergedRegion(new CellRangeAddress(1, 2, 0, 2));
-
-       HSSFSheet clone = workBook.cloneSheet(0);
-       int originalMerged = template.getNumMergedRegions();
-       assertEquals("2 merged regions", 2, originalMerged);
-
-//        remove merged regions from clone
-       for (int i=template.getNumMergedRegions()-1; i>=0; i--) {
-           clone.removeMergedRegion(i);
-       }
-
-      assertEquals("Original Sheet's Merged Regions were removed", originalMerged, template.getNumMergedRegions());
-//        check if template's merged regions are OK
-       if (template.getNumMergedRegions()>0) {
-            // fetch the first merged region...EXCEPTION OCCURS HERE
-            template.getMergedRegion(0);
-       }
-       //make sure we dont exception
-
     }
 
     /**Tests read and write of Unicode strings in formula results
@@ -424,21 +327,6 @@ public final class TestBugs extends TestCase {
         }
     }
 
-    public void test28031() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-        wb.setSheetName(0, "Sheet1");
-
-        HSSFRow row = sheet.createRow(0);
-        HSSFCell cell = row.createCell(0);
-        String formulaText =
-            "IF(ROUND(A2*B2*C2,2)>ROUND(B2*D2,2),ROUND(A2*B2*C2,2),ROUND(B2*D2,2))";
-        cell.setCellFormula(formulaText);
-
-        assertEquals(formulaText, cell.getCellFormula());
-        writeTestOutputFileForViewing(wb, "output28031.xls");
-    }
-
     public void test33082() {
         openSample("33082.xls");
     }
@@ -486,19 +374,8 @@ public final class TestBugs extends TestCase {
      */
     public void test29206() {
         //the first check with blank workbook
-        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFWorkbook wb = openSample("Simple.xls");
         HSSFSheet sheet = wb.createSheet();
-
-        for(int i = 1; i < 400; i++) {
-            HSSFRow row = sheet.getRow(i);
-            if(row != null) {
-                row.getCell(0);
-            }
-        }
-
-        //now check on an existing xls file
-        wb = openSample("Simple.xls");
-
         for(int i = 1; i < 400; i++) {
             HSSFRow row = sheet.getRow(i);
             if(row != null) {
@@ -901,38 +778,11 @@ public final class TestBugs extends TestCase {
         assertTrue("no errors writing sample xls", true);
     }
 
-    /**
-     * Bug 21334: "File error: data may have been lost" with a file
-     * that contains macros and this formula:
-     * {=SUM(IF(FREQUENCY(IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),""),IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),""))>0,1))}
-     */
-    public void test21334() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sh = wb.createSheet();
-        HSSFCell cell = sh.createRow(0).createCell(0);
-        String formula = "SUM(IF(FREQUENCY(IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),\"\"),IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),\"\"))>0,1))";
-        cell.setCellFormula(formula);
-
-        HSSFWorkbook wb_sv = writeOutAndReadBack(wb);
-        HSSFCell cell_sv = wb_sv.getSheetAt(0).getRow(0).getCell(0);
-        assertEquals(formula, cell_sv.getCellFormula());
-    }
-
     public void test36947() {
         HSSFWorkbook wb = openSample("36947.xls");
         assertTrue("no errors reading sample xls", true);
         writeOutAndReadBack(wb);
         assertTrue("no errors writing sample xls", true);
-    }
-
-    /**
-     * Bug 42448: Can't parse SUMPRODUCT(A!C7:A!C67, B8:B68) / B69
-     */
-    public void test42448(){
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
-        cell.setCellFormula("SUMPRODUCT(A!C7:A!C67, B8:B68) / B69");
-        assertTrue("no errors parsing formula", true);
     }
 
     public void test39634() {
@@ -1521,38 +1371,6 @@ public final class TestBugs extends TestCase {
         assertEquals(1, wb.getNumberOfSheets());
     }
     
-    /**
-     * HSSFRichTextString.length() returns negative for really
-     *  long strings
-     */
-    public void test46368() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-    	HSSFSheet s = wb.createSheet();
-    	HSSFRow r = s.createRow(0);
-    	for(int i=0; i<15; i++) {
-    		int len = 32760 + i;
-    		HSSFCell c = r.createCell(i);
-    		
-    		StringBuffer sb = new StringBuffer();
-    		for(int j=0; j<len; j++) {
-    			sb.append("x");
-    		}
-    		HSSFRichTextString rtr = new HSSFRichTextString(sb.toString());
-    		assertEquals(len, rtr.length());
-    		c.setCellValue(rtr);
-    	}
-    	
-    	// Save and reload
-    	wb = writeOutAndReadBack(wb);
-    	s = wb.getSheetAt(0);
-    	r = s.getRow(0);
-    	for(int i=0; i<15; i++) {
-    		int len = 32760 + i;
-    		HSSFCell c = r.getCell(i);
-    		assertEquals(len, c.getRichStringCellValue().length());
-    	}
-    }
-
     /**
      * In POI-2.5 user reported exception when parsing a name with a custom VBA function:
      *  =MY_VBA_FUNCTION("lskdjflsk")

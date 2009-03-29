@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.FontScheme;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
@@ -468,9 +469,9 @@ public class StylesTable extends POIXMLDocumentPart {
      */
     public XSSFFont findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
         for (XSSFFont font : fonts) {
-            if (	(font.getBold() == (boldWeight == XSSFFont.BOLDWEIGHT_BOLD))
+            if (	(font.getBoldweight() == boldWeight)
                     && font.getColor() == color
-                    && font.getFontHeightInPoints() == fontHeight
+                    && font.getFontHeight() == fontHeight
                     && font.getFontName().equals(name)
                     && font.getItalic() == italic
                     && font.getStrikeout() == strikeout

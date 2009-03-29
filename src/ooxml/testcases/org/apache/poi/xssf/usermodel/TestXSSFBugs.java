@@ -26,16 +26,21 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 
-public class TestXSSFBugs extends TestCase {
-    private String getFilePath(String file) {
-        File xml = new File(
-                System.getProperty("HSSF.testdata.path") +
-                File.separator + file
-        );
-        assertTrue(xml.exists());
+public class TestXSSFBugs extends BaseTestBugzillaIssues {
+    @Override
+    protected XSSFITestDataProvider getTestDataProvider(){
+        return XSSFITestDataProvider.getInstance();
+    }
 
-        return xml.toString();
+    /**
+     * test writing a file with large number of unique strings,
+     * open resulting file in Excel to check results!
+     */
+    public void test15375_2() {
+        baseTest15375(1000);
     }
 
     /**
@@ -43,7 +48,7 @@ public class TestXSSFBugs extends TestCase {
      *  the wrong sheet name
      */
     public void test45430() throws Exception {
-        XSSFWorkbook wb = new XSSFWorkbook(getFilePath("45430.xlsx"));
+        XSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("45430.xlsx");
         assertFalse(wb.isMacroEnabled());
         assertEquals(3, wb.getNumberOfNames());
 
@@ -72,8 +77,8 @@ public class TestXSSFBugs extends TestCase {
      * We should carry vba macros over after save
      */
     public void test45431() throws Exception {
-        OPCPackage pkg = OPCPackage.open(getFilePath("45431.xlsm"));
-        XSSFWorkbook wb = new XSSFWorkbook(pkg);
+        XSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("45431.xlsm");
+        OPCPackage pkg = wb.getPackage();
         assertTrue(wb.isMacroEnabled());
 
         // Check the various macro related bits can be found
@@ -115,10 +120,5 @@ public class TestXSSFBugs extends TestCase {
                 PackagingURIHelper.createPartName("/xl/drawings/vmlDrawing1.vml")
         );
         assertNotNull(drw);
-
-        // For testing with excel
-//		FileOutputStream fout = new FileOutputStream("/tmp/foo.xlsm");
-//		nwb.write(fout);
-//		fout.close();
     }
 }

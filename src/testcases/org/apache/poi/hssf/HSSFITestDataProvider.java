@@ -42,6 +42,10 @@ public final class HSSFITestDataProvider implements ITestDataProvider {
         return new HSSFWorkbook();
     }
 
+    public byte[] getTestDataFileContent(String fileName) {
+        return HSSFTestDataSamples.getTestDataFileContent(fileName);
+    }
+    
     private HSSFITestDataProvider(){}
     private static HSSFITestDataProvider inst = new HSSFITestDataProvider();
     public static HSSFITestDataProvider getInstance(){

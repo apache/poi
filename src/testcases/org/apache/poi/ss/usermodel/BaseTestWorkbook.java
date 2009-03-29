@@ -273,4 +273,77 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertSame(sheet, cell.getSheet());
         assertSame(row, cell.getRow());
     }
+
+    /** Tests that all of the unicode capable string fields can be set, written and then read back
+     *
+     *
+     */
+    public void testUnicodeInAll() throws Exception {
+        Workbook wb = getTestDataProvider().createWorkbook();
+        CreationHelper factory = wb.getCreationHelper();
+        //Create a unicode dataformat (contains euro symbol)
+        DataFormat df = wb.createDataFormat();
+        final String formatStr = "_([$\u20ac-2]\\\\\\ * #,##0.00_);_([$\u20ac-2]\\\\\\ * \\\\\\(#,##0.00\\\\\\);_([$\u20ac-2]\\\\\\ *\\\"\\-\\\\\"??_);_(@_)";
+        short fmt = df.getFormat(formatStr);
+
+        //Create a unicode sheet name (euro symbol)
+        Sheet s = wb.createSheet("\u20ac");
+
+        //Set a unicode header (you guessed it the euro symbol)
+        Header h = s.getHeader();
+        h.setCenter("\u20ac");
+        h.setLeft("\u20ac");
+        h.setRight("\u20ac");
+
+        //Set a unicode footer
+        Footer f = s.getFooter();
+        f.setCenter("\u20ac");
+        f.setLeft("\u20ac");
+        f.setRight("\u20ac");
+
+        Row r = s.createRow(0);
+        Cell c = r.createCell(1);
+        c.setCellValue(12.34);
+        c.getCellStyle().setDataFormat(fmt);
+
+        Cell c2 = r.createCell(2);
+        c.setCellValue(factory.createRichTextString("\u20ac"));
+
+        Cell c3 = r.createCell(3);
+        String formulaString = "TEXT(12.34,\"\u20ac###,##\")";
+        c3.setCellFormula(formulaString);
+
+        wb = getTestDataProvider().writeOutAndReadBack(wb);
+
+        //Test the sheetname
+        s = wb.getSheet("\u20ac");
+        assertNotNull(s);
+
+        //Test the header
+        h = s.getHeader();
+        assertEquals(h.getCenter(), "\u20ac");
+        assertEquals(h.getLeft(), "\u20ac");
+        assertEquals(h.getRight(), "\u20ac");
+
+        //Test the footer
+        f = s.getFooter();
+        assertEquals(f.getCenter(), "\u20ac");
+        assertEquals(f.getLeft(), "\u20ac");
+        assertEquals(f.getRight(), "\u20ac");
+
+        //Test the dataformat
+        r = s.getRow(0);
+        c = r.getCell(1);
+        df = wb.createDataFormat();
+        assertEquals(formatStr, df.getFormat(c.getCellStyle().getDataFormat()));
+
+        //Test the cell string value
+        c2 = r.getCell(2);
+        assertEquals(c.getRichStringCellValue().getString(), "\u20ac");
+
+        //Test the cell formula
+        c3 = r.getCell(3);
+        assertEquals(c3.getCellFormula(), formulaString);
+    }
+    
 }

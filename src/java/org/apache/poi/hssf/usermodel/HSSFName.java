@@ -112,6 +112,8 @@ public final class HSSFName implements Name {
      * @throws IllegalArgumentException if the name is invalid or the name already exists (case-insensitive)
      */
     public void setNameName(String nameName){
+        validateName(nameName);
+
         Workbook wb = _book.getWorkbook();
         _definedNameRec.setNameText(nameName);
 
@@ -128,6 +130,15 @@ public final class HSSFName implements Name {
                     throw new IllegalArgumentException(msg);
                 }
             }
+        }
+    }
+
+    private static void validateName(String name){
+        if(name.length() == 0)  throw new IllegalArgumentException("Name cannot be blank");
+        
+        char c = name.charAt(0);
+        if(!(c == '_' || Character.isLetter(c)) || name.indexOf(' ') != -1) {
+            throw new IllegalArgumentException("Invalid name: '"+name+"'; Names must begin with a letter or underscore and not contain spaces");
         }
     }
 

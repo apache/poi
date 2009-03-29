@@ -19,6 +19,7 @@ package org.apache.poi.xssf;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 
 /**
  * @author Yegor Kozlov
@@ -39,6 +40,10 @@ public final class XSSFITestDataProvider implements ITestDataProvider {
 
     public XSSFWorkbook createWorkbook(){
         return new XSSFWorkbook();
+    }
+
+    public byte[] getTestDataFileContent(String fileName) {
+        return HSSFTestDataSamples.getTestDataFileContent(fileName);
     }
 
     private XSSFITestDataProvider(){}

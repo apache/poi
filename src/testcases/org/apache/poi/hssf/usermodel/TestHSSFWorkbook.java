@@ -59,23 +59,6 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertEquals(3, nameRecord.getSheetNumber());
     }
 
-    public void testCaseInsensitiveNames() {
-        HSSFWorkbook b = new HSSFWorkbook( );
-        HSSFSheet originalSheet = b.createSheet("Sheet1");
-        HSSFSheet fetchedSheet = b.getSheet("sheet1");
-        if(fetchedSheet == null) {
-            throw new AssertionFailedError("Identified bug 44892");
-        }
-        assertEquals(originalSheet, fetchedSheet);
-        try {
-            b.createSheet("sHeeT1");
-            fail("should have thrown exceptiuon due to duplicate sheet name");
-        } catch (IllegalArgumentException e) {
-            // expected during successful test
-            assertEquals("The workbook already contains a sheet of this name", e.getMessage());
-        }
-    }
-
     public void testWindowOneDefaults() {
         HSSFWorkbook b = new HSSFWorkbook( );
         try {
@@ -154,7 +137,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         // So, start again
         b = getTestDataProvider().openSampleWorkbook("44010-SingleChart.xls");
 
-        b = writeRead(b);
+        b = getTestDataProvider().writeOutAndReadBack(b);
         assertEquals(2, b.getNumberOfSheets());
         s = b.getSheetAt(1);
         assertEquals(0, s.getFirstRowNum());
@@ -184,7 +167,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         // So, start again
         b = getTestDataProvider().openSampleWorkbook("44010-TwoCharts.xls");
 
-        b = writeRead(b);
+        b = getTestDataProvider().writeOutAndReadBack(b);
         assertEquals(3, b.getNumberOfSheets());
 
         s = b.getSheetAt(1);
@@ -194,11 +177,6 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertEquals(0, s.getFirstRowNum());
         assertEquals(8, s.getLastRowNum());
     }
-
-    private static HSSFWorkbook writeRead(HSSFWorkbook b) {
-        return HSSFTestDataSamples.writeOutAndReadBack(b);
-    }
-
 
     public void testSelectedSheet_bug44523() {
         HSSFWorkbook wb=new HSSFWorkbook();

@@ -36,4 +36,7 @@ public interface Picture {
      * <code>resize(2.0)</code> resizes to 200% of the original.
      */
     void resize(double scale);
+
+    ClientAnchor getPreferredSize();
+
 }

@@ -66,7 +66,7 @@ public class XSSFFont implements Font {
     protected XSSFFont() {
         this.ctFont = CTFont.Factory.newInstance();
         setFontName(DEFAULT_FONT_NAME);
-        setFontHeight(DEFAULT_FONT_SIZE);
+        setFontHeight((double)DEFAULT_FONT_SIZE);
     }
 
     /**
@@ -154,21 +154,16 @@ public class XSSFFont implements Font {
         CTFontSize size = ctFont.sizeOfSzArray() == 0 ? null : ctFont.getSzArray(0);
         if (size != null) {
             double fontHeight = size.getVal();
-            return (short) fontHeight;
+            return (short)(fontHeight*20);
         } else
-            return DEFAULT_FONT_SIZE;
+            return (short)(DEFAULT_FONT_SIZE*20);
     }
 
     /**
      * @see #getFontHeight()
      */
     public short getFontHeightInPoints() {
-        CTFontSize size = ctFont.sizeOfSzArray() == 0 ? null : ctFont.getSzArray(0);
-        if (size != null) {
-            double fontHeight = size.getVal();
-            return (short) fontHeight;
-        } else
-            return DEFAULT_FONT_SIZE;
+        return (short)(getFontHeight()/20);
     }
 
     /**
@@ -347,7 +342,7 @@ public class XSSFFont implements Font {
      * @param height - height in points
      */
     public void setFontHeight(short height) {
-        setFontHeight((double) height);
+        setFontHeight((double) height/20);
     }
 
     /**
@@ -366,7 +361,7 @@ public class XSSFFont implements Font {
      * @link #setFontHeight
      */
     public void setFontHeightInPoints(short height) {
-        setFontHeight(height);
+        setFontHeight((double)height);
     }
 
     /**
