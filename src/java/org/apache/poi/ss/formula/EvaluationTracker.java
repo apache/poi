@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 
@@ -80,6 +81,15 @@ final class EvaluationTracker {
 			throw new IllegalStateException("Call to endEvaluate without matching call to startEvaluate");
 		}
 		CellEvaluationFrame frame = _evaluationFrames.get(nFrames-1);
+		if (result == ErrorEval.CIRCULAR_REF_ERROR && nFrames > 1) {
+			// Don't cache a circular ref error result if this cell is not the top evaluated cell.
+			// A true circular ref error will propagate all the way around the loop.  However, it's
+			// possible to have parts of the formula tree (/ parts of the loop) to evaluate to 
+			// CIRCULAR_REF_ERROR, and that value not get used in the final cell result (see the
+			// unit tests for a simple example). Thus, the only CIRCULAR_REF_ERROR result that can
+			// safely be cached is that of the top evaluated cell.
+			return;
+		}
 
 		frame.updateFormulaResult(result);
 	}

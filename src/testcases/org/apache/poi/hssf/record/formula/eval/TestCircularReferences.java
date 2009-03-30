@@ -25,7 +25,9 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.ErrorConstants;
 /**
  * Tests HSSFFormulaEvaluator for its handling of cell formula circular references.
  * 
@@ -117,5 +119,52 @@ public final class TestCircularReferences extends TestCase {
 		CellValue cellValue = evaluateWithCycles(wb, testCell);
 		
 		confirmCycleErrorCode(cellValue);
+	}
+	
+	public void testIntermediateCircularReferenceResults_bug46898() {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet("Sheet1");
+		
+		HSSFRow row = sheet.createRow(0);
+		
+		HSSFCell cellA1 = row.createCell(0);
+		HSSFCell cellB1 = row.createCell(1);
+		HSSFCell cellC1 = row.createCell(2);
+		HSSFCell cellD1 = row.createCell(3);
+		HSSFCell cellE1 = row.createCell(4);
+		
+		cellA1.setCellFormula("IF(FALSE, 1+B1, 42)");
+		cellB1.setCellFormula("1+C1");
+		cellC1.setCellFormula("1+D1");
+		cellD1.setCellFormula("1+E1");
+		cellE1.setCellFormula("1+A1");
+		
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+		CellValue cv;
+		
+		// Happy day flow - evaluate A1 first 
+		cv = fe.evaluate(cellA1);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, cv.getCellType());
+		assertEquals(42.0, cv.getNumberValue(), 0.0);
+		cv = fe.evaluate(cellB1); // no circ-ref-error because A1 result is cached
+		assertEquals(Cell.CELL_TYPE_NUMERIC, cv.getCellType());
+		assertEquals(46.0, cv.getNumberValue(), 0.0);
+		
+		// Show the bug - evaluate another cell from the loop first
+		fe.clearAllCachedResultValues();
+		cv = fe.evaluate(cellB1);
+		if (cv.getCellType() == ErrorEval.CIRCULAR_REF_ERROR.getErrorCode()) {
+			throw new AssertionFailedError("Identified bug 46898");
+		}
+		assertEquals(Cell.CELL_TYPE_NUMERIC, cv.getCellType());
+		assertEquals(46.0, cv.getNumberValue(), 0.0);
+
+		// start evaluation on another cell
+		fe.clearAllCachedResultValues();
+		cv = fe.evaluate(cellE1);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, cv.getCellType());
+		assertEquals(43.0, cv.getNumberValue(), 0.0);
+		
+		
 	}
 }

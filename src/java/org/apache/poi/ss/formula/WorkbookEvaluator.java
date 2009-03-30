@@ -203,13 +203,13 @@ public final class WorkbookEvaluator {
 			tracker.acceptFormulaDependency(cce);
 		}
 		IEvaluationListener evalListener = _evaluationListener;
+		ValueEval result;
 		if (cce.getValue() == null) {
 			if (!tracker.startEvaluate(cce)) {
 				return ErrorEval.CIRCULAR_REF_ERROR;
 			}
 
 			try {
-				ValueEval result;
 
 				Ptg[] ptgs = _workbook.getFormulaTokens(srcCell);
 				if (evalListener == null) {
@@ -235,9 +235,13 @@ public final class WorkbookEvaluator {
 		if (isDebugLogEnabled()) {
 			String sheetName = getSheetName(sheetIndex);
 			CellReference cr = new CellReference(rowIndex, columnIndex);
-			logDebug("Evaluated " + sheetName + "!" + cr.formatAsString() + " to " + cce.getValue().toString());
+			logDebug("Evaluated " + sheetName + "!" + cr.formatAsString() + " to " + result.toString());
 		}
-		return cce.getValue();
+		// Usually (result === cce.getValue())  
+		// But sometimes: (result==ErrorEval.CIRCULAR_REF_ERROR, cce.getValue()==null)
+		// When circular references are detected, the cache entry is only updated for 
+		// the top evaluation frame 
+		return result;
 	}
 
 	/**
