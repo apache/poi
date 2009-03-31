@@ -23,7 +23,7 @@
 # 
 
 VERSION=0.1.0
-POI_VER=2.0-final-20040126
+POI_VER=$(shell grep '<property name="version.id"' ../../../build.xml | awk -F'"' '{print $$4}')
 RUBY_VER=1.8
 
 POI4R:=$(shell pwd)
@@ -148,6 +148,7 @@ JCCH=$(GCJ_HOME)/bin/gcjh
 JAR=$(GCJ_HOME)/bin/jar
 POI_ZIP=poi-$(POI_VER).jar
 POI_JAR=poi-$(POI_VER).jar
+POI_JAR_WC=poi-$(POI_VER)-*.jar
 
 POI4R_CP:=$(BINDIR)/$(POI_JAR):$(CLASSES)
 
@@ -188,8 +189,8 @@ _poi=$(POI)
 endif
 
 $(BINDIR)/$(POI_JAR): 
-	cp $(POI4R)/$(POI_JAR) $(BINDIR)/$(POI_JAR)
-	cd $(JAR_CLASSES); $(JAR) -xf $(POI4R)/$(POI_JAR)
+	cp ../../../build/dist/$(POI_JAR_WC) $(BINDIR)/$(POI_JAR)
+	cd $(JAR_CLASSES); $(JAR) -xf ../../$(POI_JAR)
 
 $(BINDIR)/io.java.o: java/org/apache/poi/RubyOutputStream.java
 	$(JCC) $(JCCFLAGS) -C -d $(CLASSES) java/org/apache/poi/RubyOutputStream.java
