@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta6" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">46918 - Fixed ExtendedPivotTableViewFieldsRecord(SXVDEX) to allow shorter format</action>
            <action dev="POI-DEVELOPERS" type="fix">46898 - Fixed formula evaluator to not cache intermediate circular-reference error results</action>
            <action dev="POI-DEVELOPERS" type="fix">46917 - Fixed PageItemRecord(SXPI) to allow multiple field infos</action>
            <action dev="POI-DEVELOPERS" type="fix">46904 - Fix POIFS issue with duplicate block 0 references on very old BIFF5/BIFF7 files</action>

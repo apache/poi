@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record.pivottable;
 
+import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.HexDump;
@@ -31,7 +32,7 @@ import org.apache.poi.util.StringUtil;
 public final class ExtendedPivotTableViewFieldsRecord extends StandardRecord {
 	public static final short sid = 0x0100;
 
-	/** the value of the subname length when the {@link #_subName} is not present */
+	/** the value of the subname length when the {@link #_subtotalName} is not present */
 	private static final int STRING_NOT_PRESENT_LEN = 0xFFFF;
 
 	private int _grbit1;
@@ -41,7 +42,8 @@ public final class ExtendedPivotTableViewFieldsRecord extends StandardRecord {
 	private int _isxdiShow;
 	private int _reserved1;
 	private int _reserved2;
-	private String _subName;
+	/** custom sub-total name */
+	private String _subtotalName;
 
 	public ExtendedPivotTableViewFieldsRecord(RecordInputStream in) {
 
@@ -50,11 +52,26 @@ public final class ExtendedPivotTableViewFieldsRecord extends StandardRecord {
 		_citmShow = in.readUByte();
 		_isxdiSort = in.readUShort();
 		_isxdiShow = in.readUShort();
+		// This record seems to have different valid encodings
+		switch (in.remaining()) {
+			case 0:
+				// as per "Microsoft Excel Developer's Kit" book
+				// older version of SXVDEX - doesn't seem to have a sub-total name
+				_reserved1 = 0;
+				_reserved2 = 0;
+				_subtotalName = null;
+				return;
+			case 10:
+				// as per "MICROSOFT OFFICE EXCEL 97-2007 BINARY FILE FORMAT SPECIFICATION" pdf
+				break;
+			default:
+				throw new RecordFormatException("Unexpected remaining size (" + in.remaining() + ")");
+		}
 		int cchSubName = in.readUShort();
 		_reserved1 = in.readInt();
 		_reserved2 = in.readInt();
 		if (cchSubName != STRING_NOT_PRESENT_LEN) {
-			_subName = in.readUnicodeLEString(cchSubName);
+			_subtotalName = in.readUnicodeLEString(cchSubName);
 		}
 	}
 
@@ -67,16 +84,16 @@ public final class ExtendedPivotTableViewFieldsRecord extends StandardRecord {
 		out.writeShort(_isxdiSort);
 		out.writeShort(_isxdiShow);
 
-		if (_subName == null) {
+		if (_subtotalName == null) {
 			out.writeShort(STRING_NOT_PRESENT_LEN);
 		} else {
-			out.writeShort(_subName.length());
+			out.writeShort(_subtotalName.length());
 		}
 
 		out.writeInt(_reserved1);
 		out.writeInt(_reserved2);
-		if (_subName != null) {
-			StringUtil.putUnicodeLE(_subName, out);
+		if (_subtotalName != null) {
+			StringUtil.putUnicodeLE(_subtotalName, out);
 		}
 	}
 
@@ -84,7 +101,7 @@ public final class ExtendedPivotTableViewFieldsRecord extends StandardRecord {
 	protected int getDataSize() {
 		
 		return 4 + 1 + 1 + 2 + 2 + 2 +  4 + 4 +
-					(_subName == null ? 0 : (2*_subName.length())); // in unicode
+					(_subtotalName == null ? 0 : (2*_subtotalName.length())); // in unicode
 	}
 
 	@Override
@@ -103,7 +120,7 @@ public final class ExtendedPivotTableViewFieldsRecord extends StandardRecord {
 		buffer.append("    .citmShow =").append(HexDump.byteToHex(_citmShow)).append("\n");
 		buffer.append("    .isxdiSort =").append(HexDump.shortToHex(_isxdiSort)).append("\n");
 		buffer.append("    .isxdiShow =").append(HexDump.shortToHex(_isxdiShow)).append("\n");
-		buffer.append("    .subName =").append(_subName).append("\n");
+		buffer.append("    .subtotalName =").append(_subtotalName).append("\n");
 		buffer.append("[/SXVDEX]\n");
 		return buffer.toString();
 	}
