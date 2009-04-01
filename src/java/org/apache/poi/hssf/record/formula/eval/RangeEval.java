@@ -36,25 +36,36 @@ public final class RangeEval implements OperationEval {
 		}
 
 		try {
-			RefEval reA = evaluateRef(args[0]);
-			RefEval reB = evaluateRef(args[1]);
+			AreaEval reA = evaluateRef(args[0]);
+			AreaEval reB = evaluateRef(args[1]);
 			return resolveRange(reA, reB);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
 	}
 
-	private static AreaEval resolveRange(RefEval reA, RefEval reB) {
+	/**
+	 * @return simple rectangular {@link AreaEval} which fully encloses both areas 
+	 * <tt>aeA</tt> and <tt>aeB</tt>
+	 */
+	private static AreaEval resolveRange(AreaEval aeA, AreaEval aeB) {
+		int aeAfr = aeA.getFirstRow();
+		int aeAfc = aeA.getFirstColumn();
 		
-		int height = reB.getRow() - reA.getRow();
-		int width = reB.getColumn() - reA.getColumn();
+		int top = Math.min(aeAfr, aeB.getFirstRow());
+		int bottom = Math.max(aeA.getLastRow(), aeB.getLastRow());
+		int left = Math.min(aeAfc, aeB.getFirstColumn());
+		int right = Math.max(aeA.getLastColumn(), aeB.getLastColumn());
 		
-		return reA.offset(0, height, 0, width);
+		return aeA.offset(top-aeAfr, bottom-aeAfr, left-aeAfc, right-aeAfc);
 	}
 
-	private static RefEval evaluateRef(Eval arg) throws EvaluationException {
+	private static AreaEval evaluateRef(Eval arg) throws EvaluationException {
+		if (arg instanceof AreaEval) {
+			return (AreaEval) arg;
+		}
 		if (arg instanceof RefEval) {
-			return (RefEval) arg;
+			return ((RefEval) arg).offset(0, 0, 0, 0);
 		}
 		if (arg instanceof ErrorEval) {
 			throw new EvaluationException((ErrorEval)arg);
