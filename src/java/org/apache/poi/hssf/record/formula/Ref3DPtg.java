@@ -30,7 +30,6 @@ import org.apache.poi.util.LittleEndianOutput;
  * REFERENCE:  <P>
  * @author Libin Roman (Vista Portal LDT. Developer)
  * @author Jason Height (jheight at chariot dot net dot au)
- * @version 1.0-pre
  */
 public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormula, ExternSheetReferenceToken {
     public final static byte sid  = 0x3a;
@@ -38,8 +37,6 @@ public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormu
     private final static int  SIZE = 7; // 6 + 1 for Ptg
     private int             field_1_index_extern_sheet;
 
-    /** Creates new AreaPtg */
-    public Ref3DPtg() {}
 
     public Ref3DPtg(LittleEndianInput in)  {
         field_1_index_extern_sheet = in.readShort();
@@ -47,11 +44,11 @@ public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormu
     }
     
     public Ref3DPtg(String cellref, int externIdx ) {
-        CellReference c= new CellReference(cellref);
-        setRow(c.getRow());
-        setColumn(c.getCol());
-        setColRelative(!c.isColAbsolute());
-        setRowRelative(!c.isRowAbsolute());   
+        this(new CellReference(cellref), externIdx);
+    }
+
+    public Ref3DPtg(CellReference c, int externIdx) {
+        super(c);
         setExternSheetIndex(externIdx);
     }
 
@@ -66,8 +63,8 @@ public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormu
         return sb.toString();
     }
 
-	public void write(LittleEndianOutput out) {
-		out.writeByte(sid + getPtgClass());
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
         out.writeShort(getExternSheetIndex());
         writeCoordinates(out);
     }

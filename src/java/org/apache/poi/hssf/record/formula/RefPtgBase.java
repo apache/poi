@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianInput;
@@ -48,26 +48,14 @@ public abstract class RefPtgBase extends OperandPtg {
 		// Required for clone methods
 	}
 
-	/**
-	 * Takes in a String representation of a cell reference and fills out the
-	 * numeric fields.
-	 */
-	protected RefPtgBase(String cellref) {
-		CellReference c = new CellReference(cellref);
+	protected RefPtgBase(CellReference c) {
 		setRow(c.getRow());
 		setColumn(c.getCol());
 		setColRelative(!c.isColAbsolute());
 		setRowRelative(!c.isRowAbsolute());
 	}
 
-	protected RefPtgBase(int row, int column, boolean isRowRelative, boolean isColumnRelative) {
-		setRow(row);
-		setColumn(column);
-		setRowRelative(isRowRelative);
-		setColRelative(isColumnRelative);
-	}
-
-	protected final void readCoordinates(LittleEndianInput in)  {
+	protected final void readCoordinates(LittleEndianInput in) {
 		field_1_row = in.readUShort();
 		field_2_col = in.readUShort();
 	}

@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -26,13 +27,6 @@ import org.apache.poi.util.LittleEndianOutput;
 abstract class Ref2DPtgBase extends RefPtgBase {
 	private final static int SIZE = 5;
 
-	/**
-	 * Takes in a String representation of a cell reference and fills out the
-	 * numeric fields.
-	 */
-	protected Ref2DPtgBase(String cellref) {
-		super(cellref);
-	}
 
 	protected Ref2DPtgBase(int row, int column, boolean isRowRelative, boolean isColumnRelative) {
 		setRow(row);
@@ -43,6 +37,10 @@ abstract class Ref2DPtgBase extends RefPtgBase {
 
 	protected Ref2DPtgBase(LittleEndianInput in)  {
 		readCoordinates(in);
+	}
+
+	protected Ref2DPtgBase(CellReference cr) {
+		super(cr);
 	}
 
 	public void write(LittleEndianOutput out) {

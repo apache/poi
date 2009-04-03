@@ -55,8 +55,7 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 		// do nothing
 	}
 
-	protected AreaPtgBase(String arearef) {
-		AreaReference ar = new AreaReference(arearef);
+	protected AreaPtgBase(AreaReference ar) {
 		CellReference firstCell = ar.getFirstCell();
 		CellReference lastCell = ar.getLastCell();
 		setFirstRow(firstCell.getRow());

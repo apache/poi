@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.util.LittleEndianInput;
 
 /**
@@ -33,7 +34,10 @@ public final class AreaPtg extends Area2DPtgBase {
 		super(in);
 	}
 	public AreaPtg(String arearef) {
-		super(arearef);
+		super(new AreaReference(arearef));
+	}
+	public AreaPtg(AreaReference areaRef) {
+		super(areaRef);
 	}
 	protected byte getSid() {
 		return sid;
