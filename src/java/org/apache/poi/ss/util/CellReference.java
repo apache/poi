@@ -388,7 +388,7 @@ public class CellReference {
 	 *  representation.
 	 * eg column #3 -> D
 	 */
-	protected static String convertNumToColString(int col) {
+	public static String convertNumToColString(int col) {
 		// Excel counts column A as the 1st column, we
 		//  treat it as the 0th one
 		int excelColNum = col + 1;
