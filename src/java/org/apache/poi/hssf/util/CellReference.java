@@ -40,10 +40,8 @@ public final class CellReference extends org.apache.poi.ss.util.CellReference {
     public CellReference(int pRow, int pCol, boolean pAbsRow, boolean pAbsCol) {
         super(null, pRow, pCol, pAbsRow, pAbsCol);
     }
+
     public CellReference(String pSheetName, int pRow, int pCol, boolean pAbsRow, boolean pAbsCol) {
     	super(pSheetName, pRow, pCol, pAbsRow, pAbsCol);
-    }
-    protected static String convertNumToColString(int col) {
-    	return org.apache.poi.ss.util.CellReference.convertNumToColString(col);
     }
 }
