@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
+import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.ss.formula.ExternSheetReferenceToken;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
@@ -30,7 +31,6 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Libin Roman (Vista Portal LDT. Developer)
  * @author avik
  * @author Jason Height (jheight at chariot dot net dot au)
- * @version 1.0-pre
  */
 public final class Area3DPtg extends AreaPtgBase implements WorkbookDependentFormula, ExternSheetReferenceToken {
 	public final static byte sid = 0x3b;
@@ -39,9 +39,9 @@ public final class Area3DPtg extends AreaPtgBase implements WorkbookDependentFor
 	private int field_1_index_extern_sheet;
 
 
-	public Area3DPtg( String arearef, int externIdx ) {
-		super(arearef);
-		setExternSheetIndex( externIdx );
+	public Area3DPtg(String arearef, int externIdx) {
+		super(new AreaReference(arearef));
+		setExternSheetIndex(externIdx);
 	}
 
 	public Area3DPtg(LittleEndianInput in)  {
@@ -54,6 +54,11 @@ public final class Area3DPtg extends AreaPtgBase implements WorkbookDependentFor
 			int externalSheetIndex) {
 		super(firstRow, lastRow, firstColumn, lastColumn, firstRowRelative, lastRowRelative, firstColRelative, lastColRelative);
 		setExternSheetIndex(externalSheetIndex);
+	}
+
+	public Area3DPtg(AreaReference arearef, int externIdx) {
+		super(arearef);
+		setExternSheetIndex(externIdx);
 	}
 
 	public String toString() {
