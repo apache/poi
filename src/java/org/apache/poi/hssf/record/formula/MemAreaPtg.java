@@ -23,7 +23,7 @@ import org.apache.poi.util.LittleEndianOutput;
 /**
  * @author Daniel Noll (daniel at nuix dot com dot au)
  */
-public class MemAreaPtg extends OperandPtg {
+public final class MemAreaPtg extends OperandPtg {
 	public final static short sid = 0x26;
 	private final static int SIZE = 7;
 	private final int field_1_reserved;
@@ -57,5 +57,14 @@ public class MemAreaPtg extends OperandPtg {
 
 	public byte getDefaultOperandClass() {
 		return Ptg.CLASS_VALUE;
+	}
+
+	@Override
+	public final String toString() {
+		StringBuffer sb = new StringBuffer(64);
+		sb.append(getClass().getName()).append(" [len=");
+		sb.append(field_2_subex_len);
+		sb.append("]");
+		return sb.toString();
 	}
 }
