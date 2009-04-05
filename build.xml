@@ -65,7 +65,6 @@ under the License.
 
   <property environment="env"/>
 
-  <property name="repository" value="http://www.ibiblio.org/maven"/>
   <property name="repository.m2" value="http://repo1.maven.org"/>
   <property name="forrest.home" value="${env.FORREST_HOME}"/>
 
@@ -81,11 +80,11 @@ under the License.
   <property name="main.reports.test" location="build/test-results"/>
 
   <property name="main.commons-logging.jar" location="${main.lib}/commons-logging-1.1.jar"/>
-  <property name="main.commons-logging.url" value="${repository}/commons-logging/jars/commons-logging-1.1.jar"/>
+  <property name="main.commons-logging.url" value="${repository.m2}/maven2/commons-logging/commons-logging/1.1/commons-logging-1.1.jar"/>
   <property name="main.log4j.jar" location="${main.lib}/log4j-1.2.13.jar"/>
-  <property name="main.log4j.url" value="${repository}/log4j/jars/log4j-1.2.13.jar"/>
+  <property name="main.log4j.url" value="${repository.m2}/maven2/log4j/log4j/1.2.13/log4j-1.2.13.jar"/>
   <property name="main.junit.jar" location="${main.lib}/junit-3.8.1.jar"/>
-  <property name="main.junit.url" value="${repository}/junit/jars/junit-3.8.1.jar"/>
+  <property name="main.junit.url" value="${repository.m2}/maven2/junit/junit/3.8.1/junit-3.8.1.jar"/>
 
   <property name="main.testokfile" location="build/main-testokfile.txt"/>
 
@@ -125,13 +124,13 @@ under the License.
 
   <!-- The following jars are downloaded by the fetch-ooxml-jars task --> 
   <property name="ooxml.dom4j.jar" location="${ooxml.lib}/dom4j-1.6.1.jar"/>
-  <property name="ooxml.dom4j.url" value="${repository}/dom4j/jars/dom4j-1.6.1.jar"/>
+  <property name="ooxml.dom4j.url" value="${repository.m2}/maven2/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar"/>
   <property name="ooxml.xmlbeans.jar" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
-  <property name="ooxml.xmlbeans.url" value="${repository}/org.apache.xmlbeans/jars/xmlbeans-2.3.0.jar"/>
+  <property name="ooxml.xmlbeans.url" value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.3.0/xmlbeans-2.3.0.jar"/>
   <property name="ooxml.jsr173.jar" location="${ooxml.lib}/geronimo-stax-api_1.0_spec-1.0.jar"/>
   <property name="ooxml.jsr173.url" value="${repository.m2}/maven2/org/apache/geronimo/specs/geronimo-stax-api_1.0_spec/1.0/geronimo-stax-api_1.0_spec-1.0.jar"/>
   <property name="ooxml.schemas.jar" location="${ooxml.lib}/ooxml-schemas-1.0.jar"/>
-  <property name="ooxml.schemas.url" value="${repository}/org.apache.poi/jars/ooxml-schemas-1.0.jar"/>
+  <property name="ooxml.schemas.url" value="${repository.m2}/maven2/org/apache/poi/ooxml-schemas/1.0/ooxml-schemas-1.0.jar"/>
 
   <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
   <!-- "Copy these file(s), free of charge" -->
