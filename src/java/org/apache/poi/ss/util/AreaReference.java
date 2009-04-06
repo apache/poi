@@ -158,7 +158,15 @@ public class AreaReference {
         }
         return false;
     }
-    
+
+    public static AreaReference getWholeRow(String start, String end) {
+        return new AreaReference("$A" + start + ":$IV" + end);
+    }
+
+    public static AreaReference getWholeColumn(String start, String end) {
+        return new AreaReference(start + "$1:" + end + "$65536");
+    }
+
     /**
      * Is the reference for a whole-column reference,
      *  such as C:C or D:G ?

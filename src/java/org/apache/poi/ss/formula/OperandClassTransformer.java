@@ -21,6 +21,7 @@ import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.ControlPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
+import org.apache.poi.hssf.record.formula.MemAreaPtg;
 import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RangePtg;
@@ -112,6 +113,7 @@ final class OperandClassTransformer {
 		}
 		if (token instanceof ValueOperatorPtg || token instanceof ControlPtg
 				|| token instanceof MemFuncPtg
+				|| token instanceof MemAreaPtg
 				|| token instanceof UnionPtg) {
 			// Value Operator Ptgs and Control are base tokens, so token will be unchanged
 			// but any child nodes are processed according to desiredOperandClass and callerForceArrayFlag

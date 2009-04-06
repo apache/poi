@@ -291,7 +291,7 @@ public class CellReference {
 		return true;
 	}
 
-	private static boolean isColumnWithnRange(String colStr) {
+	public static boolean isColumnWithnRange(String colStr) {
 		int numberOfLetters = colStr.length();
 		if(numberOfLetters > BIFF8_LAST_COLUMN_TEXT_LEN) {
 			// "Sheet1" case etc

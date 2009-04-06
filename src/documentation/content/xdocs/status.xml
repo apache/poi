@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.5-beta6" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">46951 - Fixed formula parser to better handle range operators and whole row/column refs.</action>
            <action dev="POI-DEVELOPERS" type="fix">46948 - Fixed evaluation of range operator to allow for area-ref operands</action>
            <action dev="POI-DEVELOPERS" type="fix">46918 - Fixed ExtendedPivotTableViewFieldsRecord(SXVDEX) to allow shorter format</action>
            <action dev="POI-DEVELOPERS" type="fix">46898 - Fixed formula evaluator to not cache intermediate circular-reference error results</action>

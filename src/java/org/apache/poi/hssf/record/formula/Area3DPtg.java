@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.util.AreaReference;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.formula.ExternSheetReferenceToken;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;

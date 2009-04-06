@@ -20,6 +20,7 @@ package org.apache.poi.ss.formula;
 import org.apache.poi.hssf.record.formula.ArrayPtg;
 import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
+import org.apache.poi.hssf.record.formula.MemAreaPtg;
 import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
@@ -39,6 +40,9 @@ final class ParseNode {
 	private final int _tokenCount;
 
 	public ParseNode(Ptg token, ParseNode[] children) {
+		if (token == null) {
+			throw new IllegalArgumentException("token must not be null");
+		}
 		_token = token;
 		_children = children;
 		_isIf = isIf(token);
@@ -85,7 +89,7 @@ final class ParseNode {
 			collectIfPtgs(temp);
 			return;
 		}
-		boolean isPreFixOperator = _token instanceof MemFuncPtg;
+		boolean isPreFixOperator = _token instanceof MemFuncPtg || _token instanceof MemAreaPtg;
 		if (isPreFixOperator) {
 			temp.add(_token);
 		}
