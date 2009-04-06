@@ -118,7 +118,7 @@ public interface Name {
     /**
      * Returns the formula that the name is defined to refer to. 
      *
-     * @return the reference for this name
+     * @return the reference for this name, <code>null</code> if it has not been set yet. Never empty string
      * @see #setRefersToFormula(String)
      */
     String getRefersToFormula();
@@ -134,10 +134,10 @@ public interface Name {
      *  <li><code>-PMT(Interest_Rate/12,Number_of_Payments,Loan_Amount)</li>
      * </ul>
      *
-     * @param ref the reference for this name
-     * @throws IllegalArgumentException if the specified reference is unparsable
+     * @param formulaText the reference for this name
+     * @throws IllegalArgumentException if the specified formulaText is unparsable
     */
-   void setRefersToFormula(String ref);
+   void setRefersToFormula(String formulaText);
 
     /**
      * Checks if this name is a function name
@@ -149,7 +149,7 @@ public interface Name {
     /**
      * Checks if this name points to a cell that no longer exists
      *
-     * @return true if the name refers to a deleted cell, false otherwise
+     * @return <code>true</code> if the name refers to a deleted cell, <code>false</code> otherwise
      */
     boolean isDeleted();
 

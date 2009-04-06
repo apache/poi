@@ -321,4 +321,32 @@ public abstract class Ptg implements Cloneable {
 	 * @return <code>false</code> if this token is classified as 'reference', 'value', or 'array'
 	 */
 	public abstract boolean isBaseToken();
+
+	public static boolean doesFormulaReferToDeletedCell(Ptg[] ptgs) {
+		for (int i = 0; i < ptgs.length; i++) {
+			if (isDeletedCellRef(ptgs[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+	private static boolean isDeletedCellRef(Ptg ptg) {
+		if (ptg == ErrPtg.REF_INVALID) {
+			return true;
+		}
+		if (ptg instanceof DeletedArea3DPtg) {
+			return true;
+		}
+		if (ptg instanceof DeletedRef3DPtg) {
+			return true;
+		}
+		if (ptg instanceof AreaErrPtg) {
+			return true;
+		}
+		if (ptg instanceof RefErrorPtg) {
+			return true;
+		}
+		return false;
+	}
+
 }

@@ -21,8 +21,8 @@ import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.usermodel.Name;
 
 /**
  * High Level Representation of a 'defined name' which could be a 'built-in' name,
@@ -160,46 +160,26 @@ public final class HSSFName implements Name {
         setRefersToFormula(ref);
     }
 
-    /**
-     * Sets the formula that the name is defined to refer to. The following are representative examples:
-     *
-     * <ul>
-     *  <li><code>'My Sheet'!$A$3</code></li>
-     *  <li><code>8.3</code></li>
-     *  <li><code>HR!$A$1:$Z$345</code></li>
-     *  <li><code>SUM(Sheet1!A1,Sheet2!B2)</li>
-     *  <li><code>-PMT(Interest_Rate/12,Number_of_Payments,Loan_Amount)</li>
-     * </ul>
-     *
-     * @param formulaText the reference for this name
-     * @throws IllegalArgumentException if the specified reference is unparsable
-    */
     public void setRefersToFormula(String formulaText) {
         Ptg[] ptgs = HSSFFormulaParser.parse(formulaText, _book, FormulaType.NAMEDRANGE, getSheetIndex());
         _definedNameRec.setNameDefinition(ptgs);
     }
 
-    /**
-     * Returns the formula that the name is defined to refer to. The following are representative examples:
-     *
-     * @return the reference for this name
-     * @see #setRefersToFormula(String)
-     */
     public String getRefersToFormula() {
         if (_definedNameRec.isFunctionName()) {
             throw new IllegalStateException("Only applicable to named ranges");
         }
-        return HSSFFormulaParser.toFormulaString(_book, _definedNameRec.getNameDefinition());
+        Ptg[] ptgs = _definedNameRec.getNameDefinition();
+        if (ptgs.length < 1) {
+            // 'refersToFormula' has not been set yet
+            return null;
+        }
+        return HSSFFormulaParser.toFormulaString(_book, ptgs);
     }
 
-    /**
-     * Tests if this name points to a cell that no longer exists
-     *
-     * @return true if the name refers to a deleted cell, false otherwise
-     */
     public boolean isDeleted(){
-        String formulaText = getRefersToFormula();
-        return formulaText.indexOf("#REF!") != -1;
+        Ptg[] ptgs = _definedNameRec.getNameDefinition();
+        return Ptg.doesFormulaReferToDeletedCell(ptgs);
     }
 
     /**

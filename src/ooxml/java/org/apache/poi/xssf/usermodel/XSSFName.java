@@ -181,25 +181,18 @@ public final class XSSFName implements Name {
         ctName.setName(name);
     }
 
-    /**
-     * Returns the reference of this named range, such as Sales!C20:C30.
-     *
-     * @return the reference of this named range
-     */
     public String getRefersToFormula() {
-        return ctName.getStringValue();
+        String result = ctName.getStringValue();
+        if (result == null || result.length() < 1) {
+            return null;
+        }
+        return result;
     }
 
-    /**
-     * Sets the reference of this named range, such as Sales!C20:C30.
-     *
-     * @param formulaText the reference to set
-     * @throws IllegalArgumentException if the specified reference is unparsable
-     */
     public void setRefersToFormula(String formulaText) {
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(workbook);
         try {
-            Ptg[] ptgs = FormulaParser.parse(formulaText, fpb, FormulaType.NAMEDRANGE, getSheetIndex());
+            FormulaParser.parse(formulaText, fpb, FormulaType.NAMEDRANGE, getSheetIndex());
         } catch (RuntimeException e) {
             if (e.getClass().getName().startsWith(FormulaParser.class.getName())) {
                 throw new IllegalArgumentException("Unparsable formula '" + formulaText + "'", e);
@@ -209,14 +202,14 @@ public final class XSSFName implements Name {
         ctName.setStringValue(formulaText);
     }
 
-    /**
-     * Tests if this name points to a cell that no longer exists
-     *
-     * @return true if the name refers to a deleted cell, false otherwise
-     */
     public boolean isDeleted(){
-        String ref = getRefersToFormula();
-        return ref != null && ref.indexOf("#REF!") != -1;
+        String formulaText = getRefersToFormula();
+        if (formulaText == null) {
+            return false;
+        }
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(workbook);
+        Ptg[] ptgs = FormulaParser.parse(formulaText, fpb, FormulaType.NAMEDRANGE, getSheetIndex());
+        return Ptg.doesFormulaReferToDeletedCell(ptgs);
     }
 
     /**
