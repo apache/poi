@@ -17,13 +17,13 @@
 
 package org.apache.poi.ss.usermodel;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+
+import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.ss.ITestDataProvider;
-import org.apache.poi.ss.formula.FormulaParser;
-import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.util.CellReference;
 
 /**
  * Tests of implementations of {@link org.apache.poi.ss.usermodel.Name}.
@@ -395,7 +395,7 @@ public abstract class BaseTestNamedRange extends TestCase {
      * Test that multiple named ranges can be added written and read
      */
     public void testMultipleNamedWrite() {
-        Workbook wb	 = getTestDataProvider().createWorkbook();
+        Workbook wb = getTestDataProvider().createWorkbook();
 
 
         wb.createSheet("testSheet1");
@@ -498,4 +498,50 @@ public abstract class BaseTestNamedRange extends TestCase {
         assertEquals("Contents of cell retrieved by its named reference", contents, cvalue);
     }
 
+    
+    /**
+     * Bugzilla attachment 23444 (from bug 46973) has a NAME record with the following encoding: 
+     * <pre>
+     * 00000000 | 18 00 17 00 00 00 00 08 00 00 00 00 00 00 00 00 | ................
+     * 00000010 | 00 00 00 55 50 53 53 74 61 74 65                | ...UPSState
+     * </pre>     
+     * 
+     * This caused trouble for anything that requires {@link HSSFName#getRefersToFormula()}
+     * It is easy enough to re-create the the same data (by not setting the formula). Excel
+     * seems to gracefully remove this uninitialized name record.  It would be nice if POI
+     * could do the same, but that would involve adjusting subsequent name indexes across 
+     * all formulas. <p/>
+     * 
+     * For the moment, POI has been made to behave more sensibly with uninitialised name 
+     * records.
+     */
+    public final void testUninitialisedNameGetRefersToFormula_bug46973() {
+        Workbook wb = getTestDataProvider().createWorkbook();
+        Name n = wb.createName();
+        n.setNameName("UPSState");
+        String formula;
+        try {
+            formula = n.getRefersToFormula();
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().equals("ptgs must not be null")) {
+                throw new AssertionFailedError("Identified bug 46973");
+            }
+            throw e;
+        }
+        assertNull(formula);
+        assertFalse(n.isDeleted()); // according to exact definition of isDeleted()
+    }
+
+    public void testDeletedCell() {
+        Workbook wb = getTestDataProvider().createWorkbook();
+        Name n = wb.createName();
+        n.setNameName("MyName");
+        // contrived example to expose bug:
+        n.setRefersToFormula("if(A1,\"#REF!\", \"\")");
+
+        if (n.isDeleted()) {
+            throw new AssertionFailedError("Identified bug in recoginising formulas referring to deleted cells");
+        }
+
+    }
 }
