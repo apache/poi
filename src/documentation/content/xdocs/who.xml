@@ -63,17 +63,17 @@
 
   <section><title>Emeritus Committers</title>
     <ul>
+      <li><link href="http://people.apache.org/~acoliver/">Andrew C. Oliver</link> (acoliver at apache dot org)</li>
       <li>Nicola Ken Barozzi (barozzi at nicolaken dot com)</li>
+      <li>Ryan Ackley (sackley at apache dot org)</li>
     </ul>
   </section>
 
   <section><title>Committers</title>
     <ul>
-      <li><link href="http://people.apache.org/~acoliver/">Andrew C. Oliver</link> (acoliver at apache dot org)</li>
       <li><link href="http://www.marcj.com/">Marc Johnson</link> (mjohnson at apache dot org)</li>
       <li><link href="http://members.iinet.net.au/~gstamp/glen/">Glen Stampoultzis</link> (glens at apache.org)</li>
       <li><link href="http://www.rainer-klute.de/">Rainer Klute</link> (klute at apache dot org)</li>
-      <li>Ryan Ackley (sackley at apache dot org)</li>
       <li>Avik Sengupta (avik at apache dot org)</li>
       <li>Shawn Laubach (slaubach at apache dot org)</li>
       <li>Danny Mui (dmui at apache dot org)</li>
@@ -81,6 +81,8 @@
       <li><link href="http://www.apache.org/~tetsuya/">Tetsuya Kitahata</link> (tetsuya at apache dot org)</li>
       <li>Yegor Kozlov (yegor at apache dot org)</li>
       <li>Amol S Deshmukh (amol at apache dot org)</li>
+      <li>David Fisher (wave at apache dot org)</li>
+      <li>Josh Micich (josh at apache dot org)</li>
     </ul>
   </section>
   <section><title>Translators</title>
