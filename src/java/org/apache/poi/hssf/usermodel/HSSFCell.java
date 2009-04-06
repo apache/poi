@@ -55,6 +55,7 @@ import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.
@@ -79,8 +80,8 @@ public class HSSFCell implements Cell {
     /**
      * The maximum  number of columns in BIFF8
      */
-    public static final int LAST_COLUMN_NUMBER  = 255; // 2^8 - 1
-    private static final String LAST_COLUMN_NAME  = "IV";
+    public static final int LAST_COLUMN_NUMBER  = SpreadsheetVersion.EXCEL97.getLastColumnIndex(); // 2^8 - 1
+    private static final String LAST_COLUMN_NAME  = SpreadsheetVersion.EXCEL97.getLastColumnName();
     
     public final static short        ENCODING_UNCHANGED          = -1;
     public final static short        ENCODING_COMPRESSED_UNICODE = 0;

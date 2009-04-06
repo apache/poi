@@ -23,6 +23,7 @@ import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.ss.util.Region;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * The 'Conditional Formatting' facet of <tt>HSSFSheet</tt>
@@ -120,7 +121,9 @@ public final class HSSFSheetConditionalFormatting {
 		if (regions == null) {
 			throw new IllegalArgumentException("regions must not be null");
 		}
-		if (cfRules == null) {
+        for(CellRangeAddress range : regions) range.validate(SpreadsheetVersion.EXCEL97);
+
+        if (cfRules == null) {
 			throw new IllegalArgumentException("cfRules must not be null");
 		}
 		if (cfRules.length == 0) {

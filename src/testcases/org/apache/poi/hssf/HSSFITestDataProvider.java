@@ -19,6 +19,7 @@ package org.apache.poi.hssf;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Workbook;
 
 /**
@@ -46,6 +47,10 @@ public final class HSSFITestDataProvider implements ITestDataProvider {
         return HSSFTestDataSamples.getTestDataFileContent(fileName);
     }
     
+    public SpreadsheetVersion getSpreadsheetVersion(){
+        return SpreadsheetVersion.EXCEL2007;
+    }
+
     private HSSFITestDataProvider(){}
     private static HSSFITestDataProvider inst = new HSSFITestDataProvider();
     public static HSSFITestDataProvider getInstance(){

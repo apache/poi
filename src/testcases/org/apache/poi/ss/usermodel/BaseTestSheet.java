@@ -19,6 +19,7 @@ package org.apache.poi.ss.usermodel;
 
 import junit.framework.TestCase;
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.util.Iterator;
@@ -193,6 +194,46 @@ public abstract class BaseTestSheet extends TestCase {
         assertFalse(sheetP.getPrintSetup().getLandscape());
         assertEquals(1, sheetL.getPrintSetup().getCopies());
         assertEquals(3, sheetP.getPrintSetup().getCopies());
+    }
+
+    /**
+     * Test adding merged regions. If the region's bounds are outside of the allowed range
+     * then an IllegalArgumentException should be thrown
+     *
+     */
+    public void testAddMerged() {
+        Workbook wb = getTestDataProvider().createWorkbook();
+        Sheet sheet = wb.createSheet();
+        assertEquals(0, sheet.getNumMergedRegions());
+        SpreadsheetVersion ssVersion = getTestDataProvider().getSpreadsheetVersion();
+
+        CellRangeAddress region = new CellRangeAddress(0, 1, 0, 1);
+        sheet.addMergedRegion(region);
+        assertEquals(1, sheet.getNumMergedRegions());
+
+        try {
+            region = new CellRangeAddress(-1, -1, -1, -1);
+            sheet.addMergedRegion(region);
+            fail("Expected exception");
+        } catch (IllegalArgumentException e){
+            ;
+        }
+        try {
+            region = new CellRangeAddress(0, 0, 0, ssVersion.getLastColumnIndex() + 1);
+            sheet.addMergedRegion(region);
+            fail("Expected exception");
+        } catch (IllegalArgumentException e){
+            ;
+        }
+        try {
+            region = new CellRangeAddress(0, ssVersion.getLastRowIndex() + 1, 0, 1);
+            sheet.addMergedRegion(region);
+            fail("Expected exception");
+        } catch (IllegalArgumentException e){
+            ;
+        }
+        assertEquals(1, sheet.getNumMergedRegions());
+        
     }
 
     /**

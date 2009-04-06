@@ -34,6 +34,7 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
@@ -235,6 +236,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return index of this region
      */
     public int addMergedRegion(CellRangeAddress cra) {
+        cra.validate(SpreadsheetVersion.EXCEL2007);
+
         CTMergeCells ctMergeCells = worksheet.isSetMergeCells() ? worksheet.getMergeCells() : worksheet.addNewMergeCells();
         CTMergeCell ctMergeCell = ctMergeCells.addNewMergeCell();
         ctMergeCell.setRef(cra.formatAsString());
@@ -764,9 +767,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         CTMergeCell ctMergeCell = ctMergeCells.getMergeCellArray(index);
         String ref = ctMergeCell.getRef();
-        CellReference cell1 = new CellReference(ref.substring(0, ref.indexOf(":")));
-        CellReference cell2 = new CellReference(ref.substring(ref.indexOf(":") + 1));
-        return new CellRangeAddress(cell1.getRow(), cell2.getRow(), cell1.getCol(), cell2.getCol());
+        return CellRangeAddress.valueOf(ref);
     }
 
     /**

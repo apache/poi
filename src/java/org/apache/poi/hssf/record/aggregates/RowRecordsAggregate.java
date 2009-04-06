@@ -39,6 +39,7 @@ import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.TableRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.formula.FormulaShifter;
+import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  *
@@ -138,8 +139,9 @@ public final class RowRecordsAggregate extends RecordAggregate {
 	}
 
 	public RowRecord getRow(int rowIndex) {
-		if (rowIndex < 0 || rowIndex > 65535) {
-			throw new IllegalArgumentException("The row number must be between 0 and 65535");
+        int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
+        if (rowIndex < 0 || rowIndex > maxrow) {
+			throw new IllegalArgumentException("The row number must be between 0 and " + maxrow);
 		}
 		return _rowRecords.get(new Integer(rowIndex));
 	}

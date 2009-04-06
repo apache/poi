@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.record.formula.SheetNameFormatter;
+import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  *
@@ -61,9 +62,9 @@ public class CellReference {
 	 * digits or dot.  (They can even end in dot).
 	 */
 	private static final Pattern NAMED_RANGE_NAME_PATTERN = Pattern.compile("[_A-Za-z][_.A-Za-z0-9]*");
-	private static final String BIFF8_LAST_COLUMN = "IV";
+	private static final String BIFF8_LAST_COLUMN = SpreadsheetVersion.EXCEL97.getLastColumnName();
 	private static final int BIFF8_LAST_COLUMN_TEXT_LEN = BIFF8_LAST_COLUMN.length();
-	private static final String BIFF8_LAST_ROW = String.valueOf(0x10000);
+	private static final String BIFF8_LAST_ROW = String.valueOf(SpreadsheetVersion.EXCEL97.getMaxRows());
 	private static final int BIFF8_LAST_ROW_TEXT_LEN = BIFF8_LAST_ROW.length();
 
     private final int _rowIndex;

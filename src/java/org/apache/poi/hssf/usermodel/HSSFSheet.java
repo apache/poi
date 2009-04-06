@@ -51,6 +51,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -558,6 +559,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      */
     public int addMergedRegion(CellRangeAddress region)
     {
+        region.validate(SpreadsheetVersion.EXCEL97);
         return _sheet.addMergedRegion( region.getFirstRow(),
                 region.getFirstColumn(),
                 region.getLastRow(),
@@ -1256,7 +1258,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                 }
             }
         }
-        if ( endRow == _lastrow || endRow + n > _lastrow ) _lastrow = Math.min( endRow + n, 65535 );
+        if ( endRow == _lastrow || endRow + n > _lastrow ) _lastrow = Math.min( endRow + n, SpreadsheetVersion.EXCEL97.getLastRowIndex() );
         if ( startRow == _firstrow || startRow + n < _firstrow ) _firstrow = Math.max( startRow + n, 0 );
 
         // Update any formulas on this sheet that point to
@@ -1291,8 +1293,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @param leftmostColumn   Left column visible in right pane.
      */
     public void createFreezePane(int colSplit, int rowSplit, int leftmostColumn, int topRow) {
-        if (colSplit < 0 || colSplit > 255) throw new IllegalArgumentException("Column must be between 0 and 255");
-        if (rowSplit < 0 || rowSplit > 65535) throw new IllegalArgumentException("Row must be between 0 and 65535");
+        validateColumn(colSplit);
+        validateRow(rowSplit);
         if (leftmostColumn < colSplit) throw new IllegalArgumentException("leftmostColumn parameter must not be less than colSplit parameter");
         if (topRow < rowSplit) throw new IllegalArgumentException("topRow parameter must not be less than leftmostColumn parameter");
         getSheet().createFreezePane( colSplit, rowSplit, topRow, leftmostColumn );
@@ -1426,7 +1428,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      */
     public void setColumnBreak(int column) {
         validateColumn((short)column);
-        _sheet.getPageSettings().setColumnBreak((short)column, (short)0, (short)65535);
+        _sheet.getPageSettings().setColumnBreak((short)column, (short)0, (short) SpreadsheetVersion.EXCEL97.getLastRowIndex());
     }
 
     /**
@@ -1451,7 +1453,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @param row
      */
     protected void validateRow(int row) {
-        if (row > 65535) throw new IllegalArgumentException("Maximum row number is 65535");
+        int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
+        if (row > maxrow) throw new IllegalArgumentException("Maximum row number is " + maxrow);
         if (row < 0) throw new IllegalArgumentException("Minumum row number is 0");
     }
 
@@ -1459,8 +1462,9 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * Runs a bounds check for column numbers
      * @param column
      */
-    protected void validateColumn(short column) {
-        if (column > 255) throw new IllegalArgumentException("Maximum column number is 255");
+    protected void validateColumn(int column) {
+        int maxcol = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
+        if (column > maxcol) throw new IllegalArgumentException("Maximum column number is " + maxcol);
         if (column < 0)    throw new IllegalArgumentException("Minimum column number is 0");
     }
 

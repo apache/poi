@@ -22,6 +22,7 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * ReferencePtgBase - handles references (such as A1, A2, IA4)
@@ -31,7 +32,7 @@ import org.apache.poi.util.LittleEndianOutput;
  */
 public abstract class RefPtgBase extends OperandPtg {
 
-	private final static int MAX_ROW_NUMBER = 65536;
+	private final static int MAX_ROW_NUMBER = SpreadsheetVersion.EXCEL97.getMaxRows();
 
 	/** The row index - zero based unsigned 16 bit value */
 	private int field_1_row;
@@ -73,7 +74,7 @@ public abstract class RefPtgBase extends OperandPtg {
 	}
 
 	/**
-	 * @return the row number as an int, between 0 and 65535
+	 * @return the row number as an int
 	 */
 	public final int getRow() {
 		return field_1_row;

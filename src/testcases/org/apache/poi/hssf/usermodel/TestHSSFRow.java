@@ -25,6 +25,7 @@ import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.ss.usermodel.BaseTestRow;
+import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * Test HSSFRow is okay.
@@ -39,11 +40,11 @@ public final class TestHSSFRow extends BaseTestRow {
     }
 
     public void testRowBounds() {
-        baseTestRowBounds(RowRecord.MAX_ROW_NUMBER);
+        baseTestRowBounds(SpreadsheetVersion.EXCEL97.getLastRowIndex());
     }
 
     public void testCellBounds() {
-        baseTestCellBounds(HSSFCell.LAST_COLUMN_NUMBER);
+        baseTestCellBounds(SpreadsheetVersion.EXCEL97.getLastColumnIndex());
     }
 
     public void testLastAndFirstColumns_bug46654() {

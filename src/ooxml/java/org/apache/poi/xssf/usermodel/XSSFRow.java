@@ -25,6 +25,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.FormulaShifter;
@@ -40,12 +41,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
  */
 public class XSSFRow implements Row, Comparable<XSSFRow> {
     private static final POILogger logger = POILogFactory.getLogger(XSSFRow.class);
-
-    private static final String FILE_FORMAT_NAME  = "BIFF12";
-    /**
-     * The maximum  number of rows in SpreadsheetML
-     */
-    public static final int MAX_ROW_NUMBER  = 1048575; //2 ^ 20 - 1
 
     /**
      * the xml bean containing all cell definitions for this row
@@ -328,12 +323,13 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * Set the row number of this row.
      *
      * @param rowIndex  the row number (0-based)
-     * @throws IllegalArgumentException if rowNum < 0 or greater than {@link #MAX_ROW_NUMBER}
+     * @throws IllegalArgumentException if rowNum < 0 or greater than 1048575
      */
     public void setRowNum(int rowIndex) {
-        if (rowIndex < 0 || rowIndex > MAX_ROW_NUMBER) {
+        int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
+        if (rowIndex < 0 || rowIndex > maxrow) {
             throw new IllegalArgumentException("Invalid row number (" + rowIndex 
-                    + ") outside allowable range (0.." + MAX_ROW_NUMBER + ")");
+                    + ") outside allowable range (0.." + maxrow + ")");
         }
         row.setR(rowIndex + 1);
     }
