@@ -41,6 +41,10 @@ public final class MemAreaPtg extends OperandPtg {
 		field_2_subex_len = in.readShort();
 	}
 
+	public int getLenRefSubexpression() {
+		return field_2_subex_len;
+	}
+
 	public void write(LittleEndianOutput out) {
 		out.writeByte(sid + getPtgClass());
 		out.writeInt(field_1_reserved);

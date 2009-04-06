@@ -23,36 +23,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.constant.ErrorConstant;
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
-import org.apache.poi.hssf.record.formula.AddPtg;
-import org.apache.poi.hssf.record.formula.Area3DPtg;
-import org.apache.poi.hssf.record.formula.AreaI;
-import org.apache.poi.hssf.record.formula.AreaPtg;
-import org.apache.poi.hssf.record.formula.ArrayPtg;
-import org.apache.poi.hssf.record.formula.AttrPtg;
-import org.apache.poi.hssf.record.formula.BoolPtg;
-import org.apache.poi.hssf.record.formula.ConcatPtg;
-import org.apache.poi.hssf.record.formula.DividePtg;
-import org.apache.poi.hssf.record.formula.EqualPtg;
-import org.apache.poi.hssf.record.formula.ErrPtg;
-import org.apache.poi.hssf.record.formula.FuncPtg;
-import org.apache.poi.hssf.record.formula.FuncVarPtg;
-import org.apache.poi.hssf.record.formula.IntPtg;
-import org.apache.poi.hssf.record.formula.MemFuncPtg;
-import org.apache.poi.hssf.record.formula.MissingArgPtg;
-import org.apache.poi.hssf.record.formula.MultiplyPtg;
-import org.apache.poi.hssf.record.formula.NamePtg;
-import org.apache.poi.hssf.record.formula.NumberPtg;
-import org.apache.poi.hssf.record.formula.PercentPtg;
-import org.apache.poi.hssf.record.formula.PowerPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.RangePtg;
-import org.apache.poi.hssf.record.formula.Ref3DPtg;
-import org.apache.poi.hssf.record.formula.RefPtg;
-import org.apache.poi.hssf.record.formula.StringPtg;
-import org.apache.poi.hssf.record.formula.SubtractPtg;
-import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
-import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
-import org.apache.poi.hssf.record.formula.UnionPtg;
+import org.apache.poi.hssf.record.formula.*;
 import org.apache.poi.hssf.usermodel.FormulaExtractor;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
@@ -63,6 +34,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParserTestHelper;
+import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 
 /**
  * Test the low level formula parser functionality. High level tests are to
@@ -316,31 +288,31 @@ public final class TestFormulaParser extends TestCase {
 
 		cell.setCellFormula("13E-15/3");
 		formula = cell.getCellFormula();
-        assertEquals("Exponential formula string", "0.000000000000013/3", formula);
+		assertEquals("Exponential formula string", "0.000000000000013/3", formula);
 
 		cell.setCellFormula("-13E-15/3");
 		formula = cell.getCellFormula();
-        assertEquals("Exponential formula string", "-0.000000000000013/3", formula);
+		assertEquals("Exponential formula string", "-0.000000000000013/3", formula);
 
 		cell.setCellFormula("1.3E3/3");
 		formula = cell.getCellFormula();
-        assertEquals("Exponential formula string", "1300/3", formula);
+		assertEquals("Exponential formula string", "1300/3", formula);
 
 		cell.setCellFormula("-1.3E3/3");
 		formula = cell.getCellFormula();
-        assertEquals("Exponential formula string", "-1300/3", formula);
+		assertEquals("Exponential formula string", "-1300/3", formula);
 
 		cell.setCellFormula("1300000000000000/3");
 		formula = cell.getCellFormula();
-        assertEquals("Exponential formula string", "1300000000000000/3", formula);
+		assertEquals("Exponential formula string", "1300000000000000/3", formula);
 
 		cell.setCellFormula("-1300000000000000/3");
 		formula = cell.getCellFormula();
-        assertEquals("Exponential formula string", "-1300000000000000/3", formula);
+		assertEquals("Exponential formula string", "-1300000000000000/3", formula);
 
 		cell.setCellFormula("-10E-1/3.1E2*4E3/3E4");
 		formula = cell.getCellFormula();
-        assertEquals("Exponential formula string", "-1/310*4000/30000", formula);
+		assertEquals("Exponential formula string", "-1/310*4000/30000", formula);
 	}
 
 	public void testNumbers() {
@@ -371,15 +343,15 @@ public final class TestFormulaParser extends TestCase {
 
 		cell.setCellFormula("10E1");
 		formula = cell.getCellFormula();
-        assertEquals("100", formula);
+		assertEquals("100", formula);
 
 		cell.setCellFormula("10E+1");
 		formula = cell.getCellFormula();
-        assertEquals("100", formula);
+		assertEquals("100", formula);
 
 		cell.setCellFormula("10E-1");
 		formula = cell.getCellFormula();
-        assertEquals("1", formula);
+		assertEquals("1", formula);
 	}
 
 	public void testRanges() {
@@ -985,7 +957,7 @@ public final class TestFormulaParser extends TestCase {
 			confirmTokenClasses(ptgs, new Class[] { Ref3DPtg.class, Ref3DPtg.class, RangePtg.class,});
 			throw new AssertionFailedError("Identified bug 46643");
 		}
-		
+
 		Class [] expectedClasses = {
 				MemFuncPtg.class,
 				Ref3DPtg.class,
@@ -997,24 +969,200 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals(15, mf.getLenRefSubexpression());
 	}
 
-    /** Named ranges with backslashes, e.g. 'POI\\2009' */
-    public void testBackSlashInNames() {
-        HSSFWorkbook wb = new HSSFWorkbook();
+	/** Named ranges with backslashes, e.g. 'POI\\2009' */
+	public void testBackSlashInNames() {
+		HSSFWorkbook wb = new HSSFWorkbook();
 
-        HSSFName name = wb.createName();
-        name.setNameName("POI\\2009");
-        name.setRefersToFormula("Sheet1!$A$1");
+		HSSFName name = wb.createName();
+		name.setNameName("POI\\2009");
+		name.setRefersToFormula("Sheet1!$A$1");
 
-        HSSFSheet sheet = wb.createSheet();
-        HSSFRow row = sheet.createRow(0);
+		HSSFSheet sheet = wb.createSheet();
+		HSSFRow row = sheet.createRow(0);
 
-        HSSFCell cell_C1 =  row.createCell(2);
-        cell_C1.setCellFormula("POI\\2009");
-        assertEquals("POI\\2009", cell_C1.getCellFormula());
+		HSSFCell cell_C1 =  row.createCell(2);
+		cell_C1.setCellFormula("POI\\2009");
+		assertEquals("POI\\2009", cell_C1.getCellFormula());
 
-        HSSFCell cell_D1 = row.createCell(2);
-        cell_D1.setCellFormula("NOT(POI\\2009=\"3.5-final\")");
-        assertEquals("NOT(POI\\2009=\"3.5-final\")", cell_D1.getCellFormula());
-    }
+		HSSFCell cell_D1 = row.createCell(2);
+		cell_D1.setCellFormula("NOT(POI\\2009=\"3.5-final\")");
+		assertEquals("NOT(POI\\2009=\"3.5-final\")", cell_D1.getCellFormula());
+	}
 
+	/**
+	 * TODO - delete equiv test:
+	 * {@link BaseTestBugzillaIssues#test42448()}
+	 */
+	public void testParseAbnormalSheetNamesAndRanges_bug42448() {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		wb.createSheet("A");
+		try {
+			HSSFFormulaParser.parse("SUM(A!C7:A!C67)", wb);
+		} catch (StringIndexOutOfBoundsException e) {
+			throw new AssertionFailedError("Identified bug 42448");
+		}
+		// the exact example from the bugzilla description:
+		HSSFFormulaParser.parse("SUMPRODUCT(A!C7:A!C67, B8:B68) / B69", wb);
+	}
+
+	public void testRangeFuncOperand_bug46951() {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		Ptg[] ptgs;
+		try {
+			ptgs = HSSFFormulaParser.parse("SUM(C1:OFFSET(C1,0,B1))", wb);
+		} catch (RuntimeException e) {
+			if (e.getMessage().equals("Specified named range 'OFFSET' does not exist in the current workbook.")) {
+				throw new AssertionFailedError("Identified bug 46951");
+			}
+			throw e;
+		}
+		confirmTokenClasses(ptgs, new Class[] {
+			MemFuncPtg.class, // [len=23]
+			RefPtg.class, // [C1]
+			RefPtg.class, // [C1]
+			IntPtg.class, // [0]
+			RefPtg.class, // [B1]
+			FuncVarPtg.class, // [OFFSET nArgs=3]
+			RangePtg.class, //
+			AttrPtg.class, // [sum ]
+		});
+		
+	}
+
+	public void testUnionOfFullCollFullRowRef() {
+		Ptg[] ptgs;
+		ptgs = parseFormula("3:4");
+		ptgs = parseFormula("$Z:$AC");
+		confirmTokenClasses(ptgs, new Class[] {
+				AreaPtg.class,
+		});
+		ptgs = parseFormula("B:B");
+
+		ptgs = parseFormula("$11:$13");
+		confirmTokenClasses(ptgs, new Class[] {
+				AreaPtg.class,
+		});
+
+		ptgs = parseFormula("$A:$A,$1:$4");
+		confirmTokenClasses(ptgs, new Class[] {
+				MemAreaPtg.class,
+				AreaPtg.class,
+				AreaPtg.class,
+				UnionPtg.class,
+		});
+
+		HSSFWorkbook wb = new HSSFWorkbook();
+		wb.createSheet("Sheet1");
+		ptgs = HSSFFormulaParser.parse("Sheet1!$A:$A,Sheet1!$1:$4", wb);
+		confirmTokenClasses(ptgs, new Class[] {
+				MemFuncPtg.class,
+				Area3DPtg.class,
+				Area3DPtg.class,
+				UnionPtg.class,
+		});
+
+		ptgs = HSSFFormulaParser.parse("'Sheet1'!$A:$A,'Sheet1'!$1:$4", wb);
+		confirmTokenClasses(ptgs, new Class[] {
+				MemFuncPtg.class,
+				Area3DPtg.class,
+				Area3DPtg.class,
+				UnionPtg.class,
+		});
+	}
+
+
+	public void testExplicitRangeWithTwoSheetNames() {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		wb.createSheet("Sheet1");
+		Ptg[] ptgs = HSSFFormulaParser.parse("Sheet1!F1:Sheet1!G2", wb);
+		confirmTokenClasses(ptgs, new Class[] {
+				MemFuncPtg.class,
+				Ref3DPtg.class,
+				Ref3DPtg.class,
+				RangePtg.class,
+		});
+		MemFuncPtg mf;
+		mf = (MemFuncPtg)ptgs[0];
+		assertEquals(15, mf.getLenRefSubexpression());
+
+	}
+
+	/**
+	 * Checks that the area-ref and explicit range operators get the right associativity
+	 * and that the {@link MemFuncPtg} / {@link MemAreaPtg} is added correctly
+	 */
+	public void testComplexExplicitRangeEncodings() {
+
+		Ptg[] ptgs;
+		ptgs = parseFormula("SUM(OFFSET(A1,0,0):B2:C3:D4:E5:OFFSET(F6,1,1):G7)");
+		confirmTokenClasses(ptgs, new Class[] {
+			// AttrPtg.class, // [volatile ] // POI doesn't do this yet (Apr 2009)
+			MemFuncPtg.class, // len 57
+			RefPtg.class, // [A1]
+			IntPtg.class, // [0]
+			IntPtg.class, // [0]
+			FuncVarPtg.class, // [OFFSET nArgs=3]
+			AreaPtg.class, // [B2:C3]
+			RangePtg.class,
+			AreaPtg.class, // [D4:E5]
+			RangePtg.class,
+			RefPtg.class, // [F6]
+			IntPtg.class, // [1]
+			IntPtg.class, // [1]
+			FuncVarPtg.class, // [OFFSET nArgs=3]
+			RangePtg.class,
+			RefPtg.class, // [G7]
+			RangePtg.class,
+			AttrPtg.class, // [sum ]
+		});
+
+		MemFuncPtg mf = (MemFuncPtg)ptgs[0];
+		assertEquals(57, mf.getLenRefSubexpression());
+		assertEquals("D4:E5", ((AreaPtgBase)ptgs[7]).toFormulaString());
+		assertTrue(((AttrPtg)ptgs[16]).isSum());
+
+		ptgs = parseFormula("SUM(A1:B2:C3:D4)");
+		confirmTokenClasses(ptgs, new Class[] {
+			// AttrPtg.class, // [volatile ] // POI doesn't do this yet (Apr 2009)
+				MemAreaPtg.class, // len 19
+				AreaPtg.class, // [A1:B2]
+				AreaPtg.class, // [C3:D4]
+				RangePtg.class,
+				AttrPtg.class, // [sum ]
+		});
+		MemAreaPtg ma = (MemAreaPtg)ptgs[0];
+		assertEquals(19, ma.getLenRefSubexpression());
+	}
+
+
+	/**
+	 * Mostly confirming that erroneous conditions are detected.  Actual error message wording is not critical.
+	 *
+	 */
+	public void testEdgeCaseParserErrors() {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		wb.createSheet("Sheet1");
+
+		confirmParseError(wb, "A1:ROUND(B1,1)", "The RHS of the range operator ':' at position 3 is not a proper reference.");
+
+		confirmParseError(wb, "Sheet1!Sheet1", "Cell reference expected after sheet name at index 8.");
+		confirmParseError(wb, "Sheet1!F:Sheet1!G", "'Sheet1!F' is not a proper reference.");
+		confirmParseError(wb, "Sheet1!F..foobar", "Complete area reference expected after sheet name at index 11.");
+		confirmParseError(wb, "Sheet1!A .. B", "Dotted range (full row or column) expression 'A .. B' must not contain whitespace.");
+		confirmParseError(wb, "Sheet1!A...B", "Dotted range (full row or column) expression 'A...B' must have exactly 2 dots.");
+		confirmParseError(wb, "Sheet1!A foobar", "Second part of cell reference expected after sheet name at index 10.");
+
+		confirmParseError(wb, "foobar", "Specified named range 'foobar' does not exist in the current workbook.");
+		confirmParseError(wb, "A1:1", "The RHS of the range operator ':' at position 3 is not a proper reference.");
+	}
+
+	private static void confirmParseError(HSSFWorkbook wb, String formula, String expectedMessage) {
+
+		try {
+			HSSFFormulaParser.parse(formula, wb);
+			throw new AssertionFailedError("Expected formula parse execption");
+		} catch (RuntimeException e) {
+			FormulaParserTestHelper.confirmParseException(e, expectedMessage);
+		}
+	}
 }
