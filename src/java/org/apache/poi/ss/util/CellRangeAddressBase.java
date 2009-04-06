@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.util;
 
+import org.apache.poi.ss.SpreadsheetVersion;
+
 
 /**
  * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p/>
@@ -27,49 +29,58 @@ package org.apache.poi.ss.util;
  */
 public abstract class CellRangeAddressBase {
 
-	/** max 65536 rows in BIFF8 */
-	private static final int LAST_ROW_INDEX = 0x00FFFF; 
-	/** max 256 columns in BIFF8 */
-	private static final int LAST_COLUMN_INDEX = 0x00FF;
-	
 	private int _firstRow;
 	private int _firstCol;
 	private int _lastRow;
 	private int _lastCol;
 
 	protected CellRangeAddressBase(int firstRow, int lastRow, int firstCol, int lastCol) {
-		if(!isValid(firstRow, lastRow, firstCol, lastCol)) {
-			throw new IllegalArgumentException("invalid cell range (" + firstRow + ", " + lastRow 
-					+ ", " + firstCol + ", " + lastCol + ")");
-		}
 		_firstRow = firstRow;
-		_lastRow =lastRow;
+		_lastRow = lastRow;
 		_firstCol = firstCol;
 		_lastCol = lastCol;
 	}
-	private static boolean isValid(int firstRow, int lastRow, int firstColumn, int lastColumn) {
-		if(lastRow < 0 || lastRow > LAST_ROW_INDEX) {
-			return false;
-		}
-		if(firstRow < 0 || firstRow > LAST_ROW_INDEX) {
-			return false;
-		}
-		
-		if(lastColumn < 0 || lastColumn > LAST_COLUMN_INDEX) {
-			return false;
-		}
-		if(firstColumn < 0 || firstColumn > LAST_COLUMN_INDEX) {
-			return false;
-		}
-		return true;
-	}
-	
 
-	public final boolean isFullColumnRange() {
-		return _firstRow == 0 && _lastRow == LAST_ROW_INDEX;
+    /**
+     * Validate the range limits against the supplied version of Excel
+     *
+     * @param ssVersion the version of Excel to validate against
+     * @throws IllegalArgumentException if the range limits are outside of the allowed range
+     */
+    public void validate(SpreadsheetVersion ssVersion) {
+        validateRow(_firstRow, ssVersion);
+		validateRow(_lastRow, ssVersion);
+        validateColumn(_firstCol, ssVersion);
+		validateColumn(_lastCol, ssVersion);
 	}
+    /**
+     * Runs a bounds check for row numbers
+     * @param row
+     */
+    private static void validateRow(int row, SpreadsheetVersion ssVersion) {
+        int maxrow = ssVersion.getLastRowIndex();
+        if (row > maxrow) throw new IllegalArgumentException("Maximum row number is " + maxrow);
+        if (row < 0) throw new IllegalArgumentException("Minumum row number is 0");
+    }
+
+    /**
+     * Runs a bounds check for column numbers
+     * @param column
+     */
+    private static void validateColumn(int column, SpreadsheetVersion ssVersion) {
+        int maxcol = ssVersion.getLastColumnIndex();
+        if (column > maxcol) throw new IllegalArgumentException("Maximum column number is " + maxcol);
+        if (column < 0)    throw new IllegalArgumentException("Minimum column number is 0");
+    }
+
+
+    //TODO use the correct SpreadsheetVersion
+    public final boolean isFullColumnRange() {
+		return _firstRow == 0 && _lastRow == SpreadsheetVersion.EXCEL97.getLastRowIndex();
+	}
+    //TODO use the correct SpreadsheetVersion
 	public final boolean isFullRowRange() {
-		return _firstCol == 0 && _lastCol == LAST_COLUMN_INDEX;
+		return _firstCol == 0 && _lastCol == SpreadsheetVersion.EXCEL97.getLastColumnIndex();
 	}
 
 	/**

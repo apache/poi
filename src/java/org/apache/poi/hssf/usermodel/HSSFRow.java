@@ -25,6 +25,7 @@ import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * High level representation of a row of a spreadsheet.
@@ -222,9 +223,10 @@ public final class HSSFRow implements Row {
      * @throws IndexOutOfBoundsException if the row number is not within the range 0-65535.
      */
     public void setRowNum(int rowIndex) {
-        if ((rowIndex < 0) || (rowIndex > RowRecord.MAX_ROW_NUMBER)) {
+        int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
+        if ((rowIndex < 0) || (rowIndex > maxrow)) {
           throw new IllegalArgumentException("Invalid row number (" + rowIndex
-                  + ") outside allowable range (0.." + RowRecord.MAX_ROW_NUMBER + ")");
+                  + ") outside allowable range (0.." + maxrow + ")");
         }
         rowNum = rowIndex;
         if (row != null) {

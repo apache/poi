@@ -50,4 +50,6 @@ public interface ITestDataProvider {
      * @return an open <tt>InputStream</tt> for the specified sample file
      */
     byte[] getTestDataFileContent(String fileName);
+
+    SpreadsheetVersion getSpreadsheetVersion();
 }

@@ -30,6 +30,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.util.POILogger;
@@ -55,13 +56,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
  */
 public final class XSSFCell implements Cell {
     private static POILogger logger = POILogFactory.getLogger(XSSFCell.class);
-
-    private static final String FILE_FORMAT_NAME  = "BIFF12";
-    /**
-     * The maximum  number of columns in SpreadsheetML
-     */
-    public static final int LAST_COLUMN_NUMBER  = 16384-1; //2^14-1
-    private static final String LAST_COLUMN_NAME  = "XFD";
 
     private static final String FALSE_AS_STRING = "0";
     private static final String TRUE_AS_STRING  = "1";
@@ -791,10 +785,12 @@ public final class XSSFCell implements Cell {
      * @throws RuntimeException if the bounds are exceeded.
      */
     private static void checkBounds(int cellIndex) {
-        if (cellIndex < 0 || cellIndex > LAST_COLUMN_NUMBER) {
+        SpreadsheetVersion v = SpreadsheetVersion.EXCEL2007;
+        int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
+        if (cellIndex < 0 || cellIndex > maxcol) {
             throw new IllegalArgumentException("Invalid column index (" + cellIndex 
-                    + ").  Allowable column range for " + FILE_FORMAT_NAME + " is (0.." 
-                    + LAST_COLUMN_NUMBER + ") or ('A'..'" + LAST_COLUMN_NAME + "')");
+                    + ").  Allowable column range for " + v.name() + " is (0.."
+                    + maxcol + ") or ('A'..'" + v.getLastColumnName() + "')");
         }
     }
 

@@ -28,23 +28,11 @@ import org.apache.poi.hssf.record.SelectionRecord;
  * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
  */
 public class CellRangeAddress extends org.apache.poi.ss.util.CellRangeAddress {
-	/*
-	 * TODO - replace  org.apache.poi.hssf.util.Region
-	 */
-	public static final int ENCODED_SIZE = 8;
 
 	public CellRangeAddress(int firstRow, int lastRow, int firstCol, int lastCol) {
 		super(firstRow, lastRow, firstCol, lastCol);
 	}
 	public CellRangeAddress(RecordInputStream in) {
-		super(readUShortAndCheck(in), in.readUShort(), in.readUShort(), in.readUShort());
-	}
-
-	private static int readUShortAndCheck(RecordInputStream in) {
-		if (in.remaining() < ENCODED_SIZE) {
-			// Ran out of data
-			throw new RuntimeException("Ran out of data reading CellRangeAddress");
-		}
-		return in.readUShort();
+		super(in);
 	}
 }

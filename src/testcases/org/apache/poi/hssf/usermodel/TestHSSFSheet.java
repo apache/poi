@@ -17,21 +17,17 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.record.*;
-import org.apache.poi.ss.util.Region;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ddf.EscherDgRecord;

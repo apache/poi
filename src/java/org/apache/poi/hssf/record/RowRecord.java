@@ -38,11 +38,6 @@ public final class RowRecord extends StandardRecord {
     private static final int OPTION_BITS_ALWAYS_SET = 0x0100;
     private static final int DEFAULT_HEIGHT_BIT = 0x8000;
 
-    /** The maximum row number that excel can handle (zero based) ie 65536 rows is
-     *  max number of rows.
-     */
-    public final static int MAX_ROW_NUMBER = 65535;
-    
     private int field_1_row_number;
     private int field_2_first_col;
     private int field_3_last_col; // plus 1

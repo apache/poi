@@ -25,8 +25,6 @@ import org.apache.poi.ss.util.CellReference;
  * discernable to the user.  It is not intended to deal with low-level issues like file formats.  
  * <p/>
  * 
- * For internal POI use only
- * 
  * @author Josh Micich
  * @author Yegor Kozlov
  */

@@ -24,6 +24,7 @@ import java.util.Iterator;
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.XSSFITestDataProvider;
@@ -43,10 +44,10 @@ public final class TestXSSFRow extends BaseTestRow {
     }
 
     public void testRowBounds() {
-        baseTestRowBounds(XSSFRow.MAX_ROW_NUMBER);
+        baseTestRowBounds(SpreadsheetVersion.EXCEL2007.getLastRowIndex());
     }
 
     public void testCellBounds() {
-        baseTestCellBounds(XSSFCell.LAST_COLUMN_NUMBER);
+        baseTestCellBounds(SpreadsheetVersion.EXCEL2007.getLastColumnIndex());
     }
 }

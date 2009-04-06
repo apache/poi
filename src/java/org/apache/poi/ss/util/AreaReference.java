@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.util;
 
+import org.apache.poi.ss.SpreadsheetVersion;
+
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -176,7 +178,7 @@ public class AreaReference {
         //   C$1:C$65535 or D$1:F$0
         // i.e. absolute from 1st row to 0th one
         if(topLeft.getRow() == 0 && topLeft.isRowAbsolute() &&
-            botRight.getRow() == 65535 && botRight.isRowAbsolute()) {
+            botRight.getRow() == SpreadsheetVersion.EXCEL97.getLastRowIndex() && botRight.isRowAbsolute()) {
             return true;
         }
         return false;

@@ -108,6 +108,12 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertEquals("sheet3", workbook.getSheetName(0));
         workbook.removeSheetAt(0);
         assertEquals(0, workbook.getNumberOfSheets());
+
+        //re-create the sheets
+        workbook.createSheet("sheet1");
+        workbook.createSheet("sheet2");
+        workbook.createSheet("sheet3");
+        assertEquals(3, workbook.getNumberOfSheets());
     }
 
     public void testDefaultValues() {
