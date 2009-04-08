@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record;
 
 import java.util.Arrays;
 
+import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
@@ -40,11 +41,13 @@ public final class WriteAccessRecord extends StandardRecord {
 	private static final int DATA_SIZE = 112;
 	private String field_1_username;
 	/** this record is always padded to a constant length */
-	private byte[] padding;
+	private static final byte[] PADDING = new byte[DATA_SIZE];
+	static {
+		Arrays.fill(PADDING, PAD_CHAR);
+	}
 
 	public WriteAccessRecord() {
 		setUsername("");
-		padding = new byte[DATA_SIZE - 3];
 	}
 
 	public WriteAccessRecord(RecordInputStream in) {
@@ -57,21 +60,33 @@ public final class WriteAccessRecord extends StandardRecord {
 
 		int nChars = in.readUShort();
 		int is16BitFlag = in.readUByte();
-		int expectedPadSize = DATA_SIZE - 3;
-		if ((is16BitFlag & 0x01) == 0x00) {
-			field_1_username = StringUtil.readCompressedUnicode(in, nChars);
-			expectedPadSize -= nChars;
-		} else {
-			field_1_username = StringUtil.readUnicodeLE(in, nChars);
-			expectedPadSize -= nChars * 2;
+		if (nChars > DATA_SIZE || (is16BitFlag & 0xFE) != 0) {
+			// String header looks wrong (probably missing)
+			// OOO doc says this is optional anyway.
+			// reconstruct data
+			byte[] data = new byte[3 + in.remaining()];
+			LittleEndian.putUShort(data, 0, nChars);
+			LittleEndian.putByte(data, 2, is16BitFlag);
+			in.readFully(data, 3, data.length-3);
+			String rawValue = new String(data);
+			setUsername(rawValue.trim());
+			return;
 		}
-		padding = new byte[expectedPadSize];
+
+		String rawText;
+		if ((is16BitFlag & 0x01) == 0x00) {
+			rawText = StringUtil.readCompressedUnicode(in, nChars);
+		} else {
+			rawText = StringUtil.readUnicodeLE(in, nChars);
+		}
+		field_1_username = rawText.trim();
+
+		// consume padding
 		int padSize = in.remaining();
-		in.readFully(padding, 0, padSize);
-		if (padSize < expectedPadSize) {
-			// this occurs in a couple of test examples: "42564.xls",
-			// "bug_42794.xls"
-			Arrays.fill(padding, padSize, expectedPadSize, PAD_CHAR);
+		while (padSize > 0) {
+			// in some cases this seems to be garbage (non spaces)
+			in.readUByte();
+			padSize--;
 		}
 	}
 
@@ -88,8 +103,6 @@ public final class WriteAccessRecord extends StandardRecord {
 		if (paddingSize < 0) {
 			throw new IllegalArgumentException("Name is too long: " + username);
 		}
-		padding = new byte[paddingSize];
-		Arrays.fill(padding, PAD_CHAR);
 
 		field_1_username = username;
 	}
@@ -109,7 +122,7 @@ public final class WriteAccessRecord extends StandardRecord {
 		StringBuffer buffer = new StringBuffer();
 
 		buffer.append("[WRITEACCESS]\n");
-		buffer.append("    .name            = ").append(field_1_username.toString()).append("\n");
+		buffer.append("    .name = ").append(field_1_username.toString()).append("\n");
 		buffer.append("[/WRITEACCESS]\n");
 		return buffer.toString();
 	}
@@ -125,7 +138,9 @@ public final class WriteAccessRecord extends StandardRecord {
 		} else {
 			StringUtil.putCompressedUnicode(username, out);
 		}
-		out.write(padding);
+		int encodedByteCount = 3 + username.length() * (is16bit ? 2 : 1);
+		int paddingSize = DATA_SIZE - encodedByteCount;
+		out.write(PADDING, 0, paddingSize);
 	}
 
 	protected int getDataSize() {

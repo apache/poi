@@ -15,12 +15,20 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.apache.poi.hssf.model;
+
+import java.util.Arrays;
+import java.util.List;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.SSTRecord;
+import org.apache.poi.hssf.record.SupBookRecord;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 /**
  * Tests for {@link LinkTable}
  *
@@ -81,7 +89,7 @@ public final class TestLinkTable extends TestCase {
 		The original file produces the same error.
 
 		This bug was caused by a combination of invalid sheet indexes in the EXTERNSHEET
-		record, and eager initialisation of the extern sheet references. Note - the worbook
+		record, and eager initialisation of the extern sheet references. Note - the workbook
 		has 2 sheets, but the EXTERNSHEET record refers to sheet indexes 0, 1 and 2.
 
 		Offset 0x3954 (14676)
@@ -114,4 +122,30 @@ public final class TestLinkTable extends TestCase {
 		}
 		assertEquals("Data!$A2", cellFormula);
 	}
+
+	/**
+	 * This problem was visible in POI svn r763332
+	 * when reading the workbook of attachment 23468 from bugzilla 47001
+	 */
+	public void testMissingExternSheetRecord_bug47001b() {
+		
+		Record[] recs = {
+				SupBookRecord.createAddInFunctions(),
+				new SSTRecord(),
+		};
+		List<Record> recList = Arrays.asList(recs);
+		WorkbookRecordList wrl = new WorkbookRecordList();
+		
+		LinkTable lt;
+		try {
+			lt = new LinkTable(recList, 0, wrl);
+		} catch (RuntimeException e) {
+			if (e.getMessage().equals("Expected an EXTERNSHEET record but got (org.apache.poi.hssf.record.SSTRecord)")) {
+				throw new AssertionFailedError("Identified bug 47001b");
+			}
+		
+			throw e;
+		}
+		assertNotNull(lt);
+	}	
 }

@@ -161,7 +161,12 @@ final class LinkTable {
 		
 		if (_externalBookBlocks.length > 0) {
 			// If any ExternalBookBlock present, there is always 1 of ExternSheetRecord
-			_externSheetRecord = readExtSheetRecord(rs);
+			if (rs.peekNextClass() != ExternSheetRecord.class) {
+				// not quite - if written by google docs
+				_externSheetRecord = null;
+			} else {
+				_externSheetRecord = readExtSheetRecord(rs);
+			}
 		} else {
 			_externSheetRecord = null;
 		}
