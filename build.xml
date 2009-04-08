@@ -111,10 +111,7 @@ under the License.
   <property name="examples.src" location="src/examples/src"/>
   <property name="examples.output.dir" location="build/examples-classes"/>
 
-  <!-- Common interfaces for ole2 and ooxml classes -->
-  <property name="interfaces.jdk15.src" location="src/ooxml/interfaces-jdk15"/>
-
-  <!-- Experimental OOXML support: -->
+  <!-- OOXML support: -->
   <property name="ooxml.src" location="src/ooxml/java"/>
   <property name="ooxml.src.test" location="src/ooxml/testcases"/>
   <property name="ooxml.reports.test" location="build/ooxml-test-results"/>
@@ -437,7 +434,6 @@ under the License.
     <javac target="${jdk.version.class}" source="${jdk.version.source}"
       failonerror="true" destdir="${main.output.dir}" debug="on" fork="yes">
       <src path="${main.src}" />
-      <src path="${interfaces.jdk15.src}" />
       <classpath refid="main.classpath"/>
     </javac>
     <javac target="${jdk.version.class}" source="${jdk.version.source}"
@@ -976,9 +972,6 @@ FORREST_HOME environment variable!</echo>
         <include name="org/apache/poi/**"/>
       </packageset>
       <packageset dir="${ooxml.src}" defaultexcludes="yes">
-        <include name="org/apache/poi/**"/>
-      </packageset>
-      <packageset dir="${interfaces.jdk15.src}" defaultexcludes="yes">
         <include name="org/apache/poi/**"/>
       </packageset>
 
