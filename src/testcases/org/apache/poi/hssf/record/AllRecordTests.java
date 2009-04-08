@@ -80,6 +80,7 @@ public final class AllRecordTests {
 		result.addTestSuite(TestTextObjectRecord.class);
 		result.addTestSuite(TestUnicodeNameRecord.class);
 		result.addTestSuite(TestUnicodeString.class);
+		result.addTestSuite(TestWriteAccessRecord.class);
 		result.addTestSuite(TestCellRange.class);
 		result.addTestSuite(TestConstantValueParser.class);
 		return result;

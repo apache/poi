@@ -586,7 +586,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  when reading the BOFRecord
      */
     public void test42564() {
-        HSSFWorkbook wb = openSample("42564.xls");
+        HSSFWorkbook wb = openSample("ex42564-21435.xls");
         writeOutAndReadBack(wb);
     }
 
@@ -596,7 +596,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  issue.
      */
     public void test42564Alt() {
-        HSSFWorkbook wb = openSample("42564-2.xls");
+        HSSFWorkbook wb = openSample("ex42564-21503.xls");
         writeOutAndReadBack(wb);
     }
 

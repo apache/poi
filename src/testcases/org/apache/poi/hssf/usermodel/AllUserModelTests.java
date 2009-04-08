@@ -59,7 +59,6 @@ public class AllUserModelTests {
 		result.addTestSuite(TestHSSFSheet.class);
 		result.addTestSuite(TestHSSFTextbox.class);
 		result.addTestSuite(TestHSSFWorkbook.class);
-		result.addTestSuite(TestLinkTable.class);
 		result.addTestSuite(TestHSSFName.class);
 		result.addTestSuite(TestOLE2Embeding.class);
 		result.addTestSuite(TestPOIFSProperties.class);
