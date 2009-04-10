@@ -562,7 +562,7 @@ under the License.
 
   <target name="test-main" unless="main.test.notRequired"
     depends="compile-main, -test-main-check, fail-unless-junit-is-available">
-    <junit fork="yes" printsummary="yes" haltonfailure="${halt.on.test.failure}"
+    <junit fork="yes" forkmode="once" printsummary="yes" haltonfailure="${halt.on.test.failure}"
       failureproperty="main.test.failed" showoutput="true">
       <classpath refid="test.classpath"/>
       <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/> 
@@ -676,7 +676,7 @@ under the License.
     </target>
 
     <target name="test-scratchpad" depends="compile-main,compile-scratchpad,-test-scratchpad-check" unless="scratchpad.test.notRequired">
-        <junit printsummary="yes" fork="yes" haltonfailure="${halt.on.test.failure}" failureproperty="scratchpad.test.failed">
+        <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}" failureproperty="scratchpad.test.failed">
             <classpath>
                 <path refid="scratchpad.classpath"/>
                 <pathelement location="${main.output.dir}"/>
@@ -782,7 +782,7 @@ under the License.
     </target>
 
     <target name="test-ooxml" depends="compile-main,compile-ooxml,-test-ooxml-check" unless="ooxml.test.notRequired">
-        <junit printsummary="yes" fork="yes" haltonfailure="${halt.on.test.failure}" failureproperty="ooxml.test.failed">
+        <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}" failureproperty="ooxml.test.failed">
             <classpath refid="test.ooxml.classpath" />
             <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/>
             <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>

@@ -21,9 +21,9 @@ package org.apache.poi.poifs.storage;
 
 import java.io.*;
 import java.util.Random;
+import java.lang.reflect.Field;
 
 import org.apache.poi.util.DummyPOILogger;
-import org.apache.poi.util.POILogFactory;
 
 import junit.framework.*;
 
@@ -115,9 +115,10 @@ public class TestRawDataBlock
     public void testShortConstructor() throws Exception
     {
         // Get the logger to be used
-        DummyPOILogger logger = (DummyPOILogger)POILogFactory.getLogger(
-        		RawDataBlock.class
-        );
+        DummyPOILogger logger = new DummyPOILogger();
+        Field fld = RawDataBlock.class.getDeclaredField("log");
+        fld.setAccessible(true);
+        fld.set(null, logger);
         assertEquals(0, logger.logged.size());
         
         // Test for various data sizes
@@ -168,9 +169,10 @@ public class TestRawDataBlock
      */
     public void testSlowInputStream() throws Exception {
         // Get the logger to be used
-        DummyPOILogger logger = (DummyPOILogger)POILogFactory.getLogger(
-        		RawDataBlock.class
-        );
+        DummyPOILogger logger = new DummyPOILogger();
+        Field fld = RawDataBlock.class.getDeclaredField("log");
+        fld.setAccessible(true);
+        fld.set(null, logger);
         assertEquals(0, logger.logged.size());
         
         // Test for various ok data sizes
