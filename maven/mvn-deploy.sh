@@ -31,16 +31,18 @@
 #   3. ./mvn-deploy.sh 
 # @author Yegor Kozlov
 
-mvn deploy:deploy-file -DrepositoryId=apache-releases \
-  -Durl=@REPOSITORY@ \
+M2_REPOSITORY=@REPOSITORY@
+
+mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases \
+  -Durl=$M2_REPOSITORY \
   -Dfile=poi-@VERSION@-@DSTAMP@.jar -DpomFile=poi-@VERSION@.pom
-mvn deploy:deploy-file -DrepositoryId=apache-releases \
-  -Durl=@REPOSITORY@ \
+mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases \
+  -Durl=$M2_REPOSITORY \
   -Dfile=poi-scratchpad-@VERSION@-@DSTAMP@.jar -DpomFile=poi-scratchpad-@VERSION@.pom
-mvn deploy:deploy-file -DrepositoryId=apache-releases \
-  -Durl=@REPOSITORY@ \
+mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases \
+  -Durl=$M2_REPOSITORY \
   -Dfile=poi-contrib-@VERSION@-@DSTAMP@.jar -DpomFile=poi-contrib-@VERSION@.pom
-mvn deploy:deploy-file -DrepositoryId=apache-releases \
-  -Durl=@REPOSITORY@ \
+mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases \
+  -Durl=$M2_REPOSITORY \
   -Dfile=poi-ooxml-@VERSION@-@DSTAMP@.jar -DpomFile=poi-ooxml-@VERSION@.pom
 
