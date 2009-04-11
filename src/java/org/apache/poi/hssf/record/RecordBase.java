@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.record;
 
 /**
- * Common base class of {@link Record} and {@link RecordAggregate}
+ * Common base class of {@link Record} and {@link org.apache.poi.hssf.record.aggregates.RecordAggregate}
  * 
  * @author Josh Micich
  */

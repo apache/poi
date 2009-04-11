@@ -57,9 +57,12 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * Returns the textual content of the file, suitable for
  *  indexing by something like Lucene, but not really
  *  intended for display to the user.
+ * <p>
  * To turn an excel file into a CSV or similar, then see
  *  the XLS2CSVmra example
- * @see org.apache.poi.hssf.eventusermodel.examples.XLS2CSVmra
+ * </p>
+ * <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/hssf/eventusermodel/examples/XLS2CSVmra.java">
+ * http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/hssf/eventusermodel/examples/XLS2CSVmra.java</link>
  */
 public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 	private POIFSFileSystem fs;

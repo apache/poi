@@ -23,7 +23,7 @@ import junit.framework.AssertionFailedError;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParser.FormulaParseException;
 /**
- * Avoids making {@link FormulaParser#FormulaParseException} public
+ * Avoids making {@link FormulaParseException} public
  * 
  * @author Josh Micich
  */

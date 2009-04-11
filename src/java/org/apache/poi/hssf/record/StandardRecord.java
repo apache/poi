@@ -51,7 +51,7 @@ public abstract class StandardRecord extends Record {
 	 * Write the data content of this BIFF record.  The 'ushort sid' and 'ushort size' header fields
 	 * have already been written by the superclass.<br/>
 	 * 
-	 * The subclass must write the exact number of bytes as reported by {@link Record#getDataSize()}
+	 * The subclass must write the exact number of bytes as reported by {@link org.apache.poi.hssf.record.Record#getRecordSize()}}
 	 */
 	protected abstract void serialize(LittleEndianOutput out);
 }

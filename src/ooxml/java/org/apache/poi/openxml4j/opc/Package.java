@@ -90,7 +90,7 @@ public abstract class Package extends OPCPackage {
 	}
 
 	/**
-	 * @deprecated use {@link OPCPackage#open(File)} 
+	 * @deprecated use {@link OPCPackage#openOrCreate(java.io.File)}  
 	 */
 	public static Package openOrCreate(File file) throws InvalidFormatException {
 		Package retPackage = null;

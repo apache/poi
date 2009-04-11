@@ -61,7 +61,7 @@ public class SVTableModel extends AbstractTableModel {
     HSSFRow r = st.getRow(row);
     HSSFCell c = null;
     if (r != null) {
-      c = r.getCell((short)col);
+      c = r.getCell(col);
     }
     return c;
   }

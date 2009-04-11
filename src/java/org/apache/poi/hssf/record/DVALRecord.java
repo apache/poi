@@ -57,21 +57,21 @@ public final class DVALRecord extends StandardRecord {
 	}
 
     /**
-	 * @param field_1_options the options of the dialog
+	 * @param options the options of the dialog
 	 */
 	public void setOptions(short options) {
 		field_1_options = options;
 	}
 
 	/**
-	 * @param field_2_horiz_pos the Horizontal position of the dialog
+	 * @param horiz_pos the Horizontal position of the dialog
 	 */
 	public void setHorizontalPos(int horiz_pos) {
 		field_2_horiz_pos = horiz_pos;
 	}
 
 	/**
-	 * @param field_3_vert_pos the Vertical position of the dialog
+	 * @param vert_pos the Vertical position of the dialog
 	 */
 	public void setVerticalPos(int vert_pos) {
 		field_3_vert_pos = vert_pos;

@@ -34,7 +34,7 @@ import java.awt.geom.Rectangle2D;
  *  </p>
  *  <p>
  *  When you add a shape, you usually specify the dimensions of the shape and the position
- *  of the upper�left corner of the bounding box for the shape relative to the upper�left
+ *  of the upper'left corner of the bounding box for the shape relative to the upper'left
  *  corner of the page, worksheet, or slide. Distances in the drawing layer are measured
  *  in points (72 points = 1 inch).
  *  </p>

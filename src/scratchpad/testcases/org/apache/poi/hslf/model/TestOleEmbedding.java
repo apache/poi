@@ -73,11 +73,11 @@ public final class TestOleEmbedding extends TestCase {
                     HSSFWorkbook wb = new HSSFWorkbook(data.getData());
                     HSSFSheet sheet = wb.getSheetAt(0);
                     //verify we can access the xls data
-                    assertEquals(1, sheet.getRow(0).getCell((short)0).getNumericCellValue(), 0);
-                    assertEquals(1, sheet.getRow(1).getCell((short)0).getNumericCellValue(), 0);
-                    assertEquals(2, sheet.getRow(2).getCell((short)0).getNumericCellValue(), 0);
-                    assertEquals(3, sheet.getRow(3).getCell((short)0).getNumericCellValue(), 0);
-                    assertEquals(8, sheet.getRow(5).getCell((short)0).getNumericCellValue(), 0);
+                    assertEquals(1, sheet.getRow(0).getCell(0).getNumericCellValue(), 0);
+                    assertEquals(1, sheet.getRow(1).getCell(0).getNumericCellValue(), 0);
+                    assertEquals(2, sheet.getRow(2).getCell(0).getNumericCellValue(), 0);
+                    assertEquals(3, sheet.getRow(3).getCell(0).getNumericCellValue(), 0);
+                    assertEquals(8, sheet.getRow(5).getCell(0).getNumericCellValue(), 0);
                 } else if ("Document".equals(ole.getInstanceName())){
                     //creating a HWPF document 
                     HWPFDocument doc = new HWPFDocument(data.getData());
