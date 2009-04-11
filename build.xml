@@ -35,9 +35,7 @@ under the License.
     LIBRARY         LOCATION
     =======         ========
     junit(3.8+)     http://www.ibiblio.org/maven/junit/jars/
-    xerces          http://www.ibiblio.org/maven/xerces/jars/
     jdepend         http://www.ibiblio.org/maven/jdepend/jars/
-    xalan           http://www.ibiblio.org/maven/xalan/jars/
 
     The ant jar "optional.jar" should also be available otherwise the
     build will fail.
@@ -427,7 +425,7 @@ under the License.
     compile-scratchpad, compile-contrib, compile-examples"
     description="Compiles the POI main classes, scratchpad, contrib, and examples"/>
 
-  <target name="compile-main" depends="fail-unless-xslt-is-available">
+  <target name="compile-main">
     <copy todir="${main.output.dir}">
       <fileset dir="${main.resource1.dir}"/>
     </copy>
@@ -549,7 +547,7 @@ under the License.
 	<delete file="${version.java}" />
   </target>
 
-  <target name="test" depends="test-main,test-scratchpad,test-contrib,test-ooxml"
+  <target name="test" depends="compile,test-main,test-scratchpad,test-contrib,test-ooxml"
     description="Tests main, contrib, scratchpad and ooxml"/>
 
     <target name="-test-main-check">
@@ -561,7 +559,7 @@ under the License.
     </target>
 
   <target name="test-main" unless="main.test.notRequired"
-    depends="compile-main, -test-main-check, fail-unless-junit-is-available">
+    depends="compile-main, -test-main-check">
     <junit fork="yes" forkmode="once" printsummary="yes" haltonfailure="${halt.on.test.failure}"
       failureproperty="main.test.failed" showoutput="true">
       <classpath refid="test.classpath"/>
@@ -587,8 +585,7 @@ under the License.
     <antcall target="-test-main-write-testfile"/>
   </target>
 
-  <target name="test-fail" depends="compile-main,
-    fail-unless-junit-is-available"
+  <target name="test-fail" depends="compile-main"
     description="run tests that are known to fail">
     <junit printsummary="yes" showoutput="true" filtertrace="no"
       haltonfailure="false">
@@ -639,22 +636,6 @@ under the License.
                 <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain" usefile="no"/>
             <formatter type="xml"/>
-            <test name="${testcase}"/>
-        </junit>
-    </target>
-
-    <target name="debug-test" depends="-test-property-check,compile-main" description="Runs a single test case specified with -Dtestcase=classname with remote debug options turned on." >
-	    <echo>Waiting for debugger on port 5001</echo>    
-        <junit printsummary="no" showoutput="true" filtertrace="no" fork="yes" haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed">
-            <jvmarg value="-Xdebug"/>
-            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=5001,server=y,suspend=y"/>
-            <sysproperty key="java.compiler" value="NONE"/>
-            <classpath refid="test.classpath"/>
-            <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
-            <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
-            <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/> 
-            <sysproperty key="java.awt.headless" value="true"/>
-            <formatter type="plain" usefile="no"/>
             <test name="${testcase}"/>
         </junit>
     </target>
@@ -888,38 +869,10 @@ FORREST_HOME environment variable!</echo>
     </target>
 
 
-
-  <!-- Generates a log of the latest changes in the CVS repository. -->
-  <target name="cvschangelog" unless="disconnected"
-    depends="fail-unless-xslt-is-available"
-    description="Generates a CVS change log report">
-    <antcall target="cvs-rsh-warning"/>
-    <cvschangelog destfile="${changelog.file}" daysinpast="30"/>
-
-    <style in="${changelog.file}"
-      out="${build.site.src}/src/documentation/content/changelog.html"
-      style="changelog.xsl">
-      <param name="title"  expression="POI Change Log"/>
-      <param name="module" expression="jakarta-poi"/>
-      <param name="cvsweb" expression="http://cvs.apache.org/viewcvs/"/>
-    </style>
-  </target>
-
-  <target name="cvs-rsh-warning" unless="env.CVS_RSH">
-    <echo>
-      WARNING: The environment variable CVS_RSH is not set. If you cannot
-      access the CVS repository this could be one of the reasons for the
-      failure.
-    </echo>
-  </target>
-
-
-
   <!-- Creates reports and API documentation -->
   <target name="reports" unless="reports.notRequired" depends="-check-reports,
-    fail-unless-xslt-is-available, fail-unless-junit-is-available,
     fail-unless-jdepend-is-available, test-ignore-failures, junitreport,
-    jdepend, cvschangelog, javadocs, clover.html"
+    jdepend, javadocs, clover.html"
     description="Creates various reports and the API documentation">
   </target>
 
@@ -936,7 +889,7 @@ FORREST_HOME environment variable!</echo>
 
   <!-- Produces a report of the JUnit test results -->
   <target name="junitreport"
-    depends="fail-unless-xslt-is-available, test-ignore-failures"
+    depends="test-ignore-failures"
     description="Produces a report of the JUnit test results">
     <junitreport todir="${junit.report.dir}">
       <fileset dir="${main.reports.test}">
@@ -955,8 +908,7 @@ FORREST_HOME environment variable!</echo>
 
 
   <!-- Generates the API documentation. -->
-  <target name="javadocs" depends="init, warn-unless-junit-is-available,
-    warn-unless-xslt-is-available"
+  <target name="javadocs" depends="init"
     description="Generates the API documentation">
     <javadoc verbose="false" author="true" destdir="${apidocs.report.dir}"
       windowtitle="POI API Documentation" use="true" version="true" maxmemory="256M">
@@ -1021,48 +973,6 @@ FORREST_HOME environment variable!</echo>
 
     <antcall target="clover.html"/>
   </target>
-
-
-
-  <!-- ================================== -->
-  <!--       Generate records                -->
-  <!-- ================================== -->
-
-  <target name="generate-records" depends="init"
-    description="Generates HSSF records"> 
-    <java classname="org.apache.poi.dev.RecordGenerator" fork="yes">
-      <arg file="src/records/definitions"/>
-      <arg file="src/records/styles"/>
-      <arg file="src/java"/>
-      <arg file="src/testcases"/>
-      <classpath>
-        <path refid="scratchpad.classpath"/>
-        <pathelement location="${main.output.dir}"/>
-        <pathelement location="${scratchpad.output.dir}"/>
-      </classpath>
-    </java>  
-  </target>
-
-  <!-- ================================== -->
-  <!--       Generate types               -->
-  <!-- ================================== -->
-
-  <target name="generate-types" depends="init"
-    description="Generates word types">
-    <java classname="org.apache.poi.dev.RecordGenerator" fork="yes">
-      <arg file="src/types/definitions"/>
-      <arg file="src/types/styles"/>
-      <arg file="src/scratchpad/src"/>
-      <arg file="src/scratchpad/testcases"/>
-      <classpath>
-        <path refid="scratchpad.classpath">
-        </path>
-        <pathelement location="${main.output.dir}"/>
-        <pathelement location="${scratchpad.output.dir}"/>
-      </classpath>
-    </java>
-  </target>
-
 
 
     <!-- Generates documentation and reports -->
@@ -1275,42 +1185,6 @@ FORREST_HOME environment variable!</echo>
     <antstructure output="ant.dtd"/>
   </target>
 
-  <!-- Abort the build if JUnit is missing. -->
-  <target name="fail-unless-junit-is-available" depends="init">
-    <condition property="isAvailable.junit">
-      <available classname="junit.framework.TestCase"/>
-    </condition>
-    <antcall target="fail-junit"/>
-  </target>
-
-  <target name="fail-junit" unless="isAvailable.junit">
-    <echo>
-      JUnit is not available. You must download JUnit from
-      &lt;http://www.junit.org/&gt; and include the JAR file in your
-      classpath.
-    </echo> 
-    <fail message="JUnit is not available."/>
-  </target>
-
-  <!-- Warn if JUnit is missing. -->
-  <target name="warn-unless-junit-is-available" depends="init">
-    <condition property="isAvailable.junit">
-      <available classname="junit.framework.TestCase"/>
-    </condition>
-    <antcall target="warn-junit"/>
-  </target>
-
-  <target name="warn-junit" unless="isAvailable.junit">
-    <echo>
-      WARNING: Since JUnit is not available you might encounter failures
-      subsequently. In order to avoid this you should download JUnit from
-      &lt;http://www.junit.org/&gt; and include the JAR file in your
-      classpath.
-    </echo> 
-  </target>
-
-
-
   <!-- Abort the build if JDepend is missing. -->
   <target name="fail-unless-jdepend-is-available" depends="init">
     <condition property="isAvailable.jdepend">
@@ -1328,48 +1202,9 @@ FORREST_HOME environment variable!</echo>
     <fail message="JDepend is not available."/>
   </target>
 
-
-
-  <!-- Abort the build if an XSLT processor is missing. -->
-  <target name="fail-unless-xslt-is-available" depends="init">
-    <condition property="isAvailable.xslt">
-      <available classname="javax.xml.transform.TransformerFactory"/>
-    </condition>
-    <antcall target="fail-xslt"/>
-  </target>
-
-  <target name="fail-xslt" unless="isAvailable.xslt">
-    <echo>
-      An XSLT processor is missing. You must download e.g. Xalan from
-      &lt;http://xml.apache.org/xalan-j/&gt; and include the JAR file in your
-      classpath.
-    </echo> 
-    <fail message="An XSLT processor is not available."/>
-  </target>
-
-  <!-- Warn if an XSLT processor is missing. -->
-  <target name="warn-unless-xslt-is-available" depends="init">
-    <condition property="isAvailable.xslt">
-      <available classname="javax.xml.transform.TransformerFactory"/>
-    </condition>
-    <antcall target="warn-xslt"/>
-  </target>
-
-  <target name="warn-xslt" unless="isAvailable.xslt">
-    <echo>
-      WARNING: Since an XSLT processor is not available you might encounter
-      failures subsequently. In order to avoid this you should download
-      e.g. Xalan from &lt;http://xml.apache.org/xalan-j/&gt; and include the
-      JAR file in your classpath.
-    </echo> 
-  </target>
-
-
-
   <!-- Aborts the build if any of the required tools are missing. -->
   <target name="fail-unless-tools-are-available"
-    depends="fail-unless-junit-is-available, fail-unless-junit-is-available,
-    fail-unless-jdepend-is-available"/>
+    depends="fail-unless-jdepend-is-available"/>
 
 
 
