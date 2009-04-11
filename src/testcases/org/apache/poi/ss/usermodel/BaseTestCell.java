@@ -17,12 +17,13 @@
 
 package org.apache.poi.ss.usermodel;
 
-import junit.framework.TestCase;
-import junit.framework.AssertionFailedError;
-import org.apache.poi.ss.ITestDataProvider;
-
-import java.util.Date;
 import java.util.Calendar;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
+
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.ss.ITestDataProvider;
 
 /**
  * Common superclass for testing implementatiosn of
@@ -30,240 +31,249 @@ import java.util.Calendar;
  */
 public abstract class BaseTestCell extends TestCase {
 
-    /**
-     * @return an object that provides test data in HSSF / XSSF specific way
-     */
-    protected abstract ITestDataProvider getTestDataProvider();
+	private final ITestDataProvider _testDataProvider;
 
-    public void testSetValues() {
-        Workbook book = getTestDataProvider().createWorkbook();
-        Sheet sheet = book.createSheet("test");
-        Row row = sheet.createRow(0);
+	/**
+	 * @param testDataProvider an object that provides test data in HSSF / XSSF specific way
+	 */
+	protected BaseTestCell(ITestDataProvider testDataProvider) {
+		_testDataProvider = testDataProvider;
+	}
 
-        CreationHelper factory = book.getCreationHelper();
-        Cell cell = row.createCell(0);
+	public final void testSetValues() {
+		Workbook book = _testDataProvider.createWorkbook();
+		Sheet sheet = book.createSheet("test");
+		Row row = sheet.createRow(0);
 
-        cell.setCellValue(1.2);
-        assertEquals(1.2, cell.getNumericCellValue(), 0.0001);
-        assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
-        assertProhibitedValueAccess(cell, Cell.CELL_TYPE_BOOLEAN, Cell.CELL_TYPE_STRING,
-                Cell.CELL_TYPE_FORMULA, Cell.CELL_TYPE_ERROR);
+		CreationHelper factory = book.getCreationHelper();
+		Cell cell = row.createCell(0);
 
-        cell.setCellValue(false);
-        assertEquals(false, cell.getBooleanCellValue());
-        assertEquals(Cell.CELL_TYPE_BOOLEAN, cell.getCellType());
-        cell.setCellValue(true);
-        assertEquals(true, cell.getBooleanCellValue());
-        assertProhibitedValueAccess(cell, Cell.CELL_TYPE_NUMERIC, Cell.CELL_TYPE_STRING,
-                Cell.CELL_TYPE_FORMULA, Cell.CELL_TYPE_ERROR);
+		cell.setCellValue(1.2);
+		assertEquals(1.2, cell.getNumericCellValue(), 0.0001);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+		assertProhibitedValueAccess(cell, Cell.CELL_TYPE_BOOLEAN, Cell.CELL_TYPE_STRING,
+				Cell.CELL_TYPE_FORMULA, Cell.CELL_TYPE_ERROR);
 
-        cell.setCellValue(factory.createRichTextString("Foo"));
-        assertEquals("Foo", cell.getRichStringCellValue().getString());
-        assertEquals("Foo", cell.getStringCellValue());
-        assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
-        assertProhibitedValueAccess(cell, Cell.CELL_TYPE_NUMERIC, Cell.CELL_TYPE_BOOLEAN,
-                Cell.CELL_TYPE_FORMULA, Cell.CELL_TYPE_ERROR);
+		cell.setCellValue(false);
+		assertEquals(false, cell.getBooleanCellValue());
+		assertEquals(Cell.CELL_TYPE_BOOLEAN, cell.getCellType());
+		cell.setCellValue(true);
+		assertEquals(true, cell.getBooleanCellValue());
+		assertProhibitedValueAccess(cell, Cell.CELL_TYPE_NUMERIC, Cell.CELL_TYPE_STRING,
+				Cell.CELL_TYPE_FORMULA, Cell.CELL_TYPE_ERROR);
 
-        cell.setCellValue("345");
-        assertEquals("345", cell.getRichStringCellValue().getString());
-        assertEquals("345", cell.getStringCellValue());
-        assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
-        assertProhibitedValueAccess(cell, Cell.CELL_TYPE_NUMERIC, Cell.CELL_TYPE_BOOLEAN,
-                Cell.CELL_TYPE_FORMULA, Cell.CELL_TYPE_ERROR);
+		cell.setCellValue(factory.createRichTextString("Foo"));
+		assertEquals("Foo", cell.getRichStringCellValue().getString());
+		assertEquals("Foo", cell.getStringCellValue());
+		assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
+		assertProhibitedValueAccess(cell, Cell.CELL_TYPE_NUMERIC, Cell.CELL_TYPE_BOOLEAN,
+				Cell.CELL_TYPE_FORMULA, Cell.CELL_TYPE_ERROR);
 
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(123456789);
-        cell.setCellValue(c.getTime());
-        assertEquals(c.getTime().getTime(), cell.getDateCellValue().getTime());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
-        assertProhibitedValueAccess(cell, Cell.CELL_TYPE_BOOLEAN, Cell.CELL_TYPE_STRING,
-                Cell.CELL_TYPE_FORMULA, Cell.CELL_TYPE_ERROR);
+		cell.setCellValue("345");
+		assertEquals("345", cell.getRichStringCellValue().getString());
+		assertEquals("345", cell.getStringCellValue());
+		assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
+		assertProhibitedValueAccess(cell, Cell.CELL_TYPE_NUMERIC, Cell.CELL_TYPE_BOOLEAN,
+				Cell.CELL_TYPE_FORMULA, Cell.CELL_TYPE_ERROR);
 
-        cell.setCellValue(c);
-        assertEquals(c.getTime().getTime(), cell.getDateCellValue().getTime());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
-        assertProhibitedValueAccess(cell, Cell.CELL_TYPE_BOOLEAN, Cell.CELL_TYPE_STRING,
-                Cell.CELL_TYPE_FORMULA, Cell.CELL_TYPE_ERROR);
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(123456789);
+		cell.setCellValue(c.getTime());
+		assertEquals(c.getTime().getTime(), cell.getDateCellValue().getTime());
+		assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+		assertProhibitedValueAccess(cell, Cell.CELL_TYPE_BOOLEAN, Cell.CELL_TYPE_STRING,
+				Cell.CELL_TYPE_FORMULA, Cell.CELL_TYPE_ERROR);
 
-        cell.setCellErrorValue(FormulaError.NA.getCode());
-        assertEquals(FormulaError.NA.getCode(), cell.getErrorCellValue());
-        assertEquals(Cell.CELL_TYPE_ERROR, cell.getCellType());
-        assertProhibitedValueAccess(cell, Cell.CELL_TYPE_NUMERIC, Cell.CELL_TYPE_BOOLEAN,
-                Cell.CELL_TYPE_FORMULA, Cell.CELL_TYPE_STRING);
-    }
+		cell.setCellValue(c);
+		assertEquals(c.getTime().getTime(), cell.getDateCellValue().getTime());
+		assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+		assertProhibitedValueAccess(cell, Cell.CELL_TYPE_BOOLEAN, Cell.CELL_TYPE_STRING,
+				Cell.CELL_TYPE_FORMULA, Cell.CELL_TYPE_ERROR);
 
-    private void assertProhibitedValueAccess(Cell cell, int ... types){
-        for(int type : types){
-            try {
-                switch (type) {
-                    case Cell.CELL_TYPE_NUMERIC:
-                        cell.getNumericCellValue();
-                        fail();
-                        break;
-                    case Cell.CELL_TYPE_STRING:
-                        cell.getStringCellValue();
-                        fail();
-                        break;
-                    case Cell.CELL_TYPE_BOOLEAN:
-                        cell.getBooleanCellValue();
-                        fail();
-                        break;
-                    case Cell.CELL_TYPE_FORMULA:
-                        cell.getCellFormula();
-                        fail();
-                        break;
-                    case Cell.CELL_TYPE_ERROR:
-                        cell.getErrorCellValue();
-                        fail();
-                        break;
-                }
-            } catch (IllegalStateException e){
-                ;
-            }
-        }
-    }
+		cell.setCellErrorValue(FormulaError.NA.getCode());
+		assertEquals(FormulaError.NA.getCode(), cell.getErrorCellValue());
+		assertEquals(Cell.CELL_TYPE_ERROR, cell.getCellType());
+		assertProhibitedValueAccess(cell, Cell.CELL_TYPE_NUMERIC, Cell.CELL_TYPE_BOOLEAN,
+				Cell.CELL_TYPE_FORMULA, Cell.CELL_TYPE_STRING);
+	}
 
-    /**
-     * test that Boolean and Error types (BoolErrRecord) are supported properly.
-     */
-    public void testBoolErr() {
+	private static void assertProhibitedValueAccess(Cell cell, int ... types){
+		for(int type : types){
+			try {
+				switch (type) {
+					case Cell.CELL_TYPE_NUMERIC:
+						cell.getNumericCellValue();
+						fail();
+						break;
+					case Cell.CELL_TYPE_STRING:
+						cell.getStringCellValue();
+						fail();
+						break;
+					case Cell.CELL_TYPE_BOOLEAN:
+						cell.getBooleanCellValue();
+						fail();
+						break;
+					case Cell.CELL_TYPE_FORMULA:
+						cell.getCellFormula();
+						fail();
+						break;
+					case Cell.CELL_TYPE_ERROR:
+						cell.getErrorCellValue();
+						fail();
+						break;
+				}
+			} catch (IllegalStateException e){
+				;
+			}
+		}
+	}
 
-        Workbook	 wb	 = getTestDataProvider().createWorkbook();
-        Sheet		s	  = wb.createSheet("testSheet1");
-        Row		  r	  = null;
-        Cell		 c	  = null;
-        r = s.createRow(0);
-        c=r.createCell(1);
-        //c.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
-        c.setCellValue(true);
+	/**
+	 * test that Boolean and Error types (BoolErrRecord) are supported properly.
+	 */
+	public final void testBoolErr() {
 
-        c=r.createCell(2);
-        //c.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
-        c.setCellValue(false);
+		Workbook wb = _testDataProvider.createWorkbook();
+		Sheet s = wb.createSheet("testSheet1");
+		Row r;
+		Cell c;
+		r = s.createRow(0);
+		c=r.createCell(1);
+		//c.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
+		c.setCellValue(true);
 
-        r = s.createRow(1);
-        c=r.createCell(1);
-        //c.setCellType(HSSFCell.CELL_TYPE_ERROR);
-        c.setCellErrorValue((byte)0);
+		c=r.createCell(2);
+		//c.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
+		c.setCellValue(false);
 
-        c=r.createCell(2);
-        //c.setCellType(HSSFCell.CELL_TYPE_ERROR);
-        c.setCellErrorValue((byte)7);
+		r = s.createRow(1);
+		c=r.createCell(1);
+		//c.setCellType(HSSFCell.CELL_TYPE_ERROR);
+		c.setCellErrorValue((byte)0);
 
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
-        s = wb.getSheetAt(0);
-        r = s.getRow(0);
-        c = r.getCell(1);
-        assertTrue("boolean value 0,1 = true",c.getBooleanCellValue());
-        c = r.getCell(2);
-        assertTrue("boolean value 0,2 = false",c.getBooleanCellValue()==false);
-        r = s.getRow(1);
-        c = r.getCell(1);
-        assertTrue("boolean value 0,1 = 0",c.getErrorCellValue() == 0);
-        c = r.getCell(2);
-        assertTrue("boolean value 0,2 = 7",c.getErrorCellValue() == 7);
-    }
+		c=r.createCell(2);
+		//c.setCellType(HSSFCell.CELL_TYPE_ERROR);
+		c.setCellErrorValue((byte)7);
 
-    /**
-     * test that Cell Styles being applied to formulas remain intact
-     */
-    public void testFormulaStyle() {
+		wb = _testDataProvider.writeOutAndReadBack(wb);
+		s = wb.getSheetAt(0);
+		r = s.getRow(0);
+		c = r.getCell(1);
+		assertTrue("boolean value 0,1 = true",c.getBooleanCellValue());
+		c = r.getCell(2);
+		assertTrue("boolean value 0,2 = false",c.getBooleanCellValue()==false);
+		r = s.getRow(1);
+		c = r.getCell(1);
+		assertTrue("boolean value 0,1 = 0",c.getErrorCellValue() == 0);
+		c = r.getCell(2);
+		assertTrue("boolean value 0,2 = 7",c.getErrorCellValue() == 7);
+	}
 
-        Workbook wb = getTestDataProvider().createWorkbook();
-        Sheet s = wb.createSheet("testSheet1");
-        Row r = null;
-        Cell c = null;
-        CellStyle cs = wb.createCellStyle();
-        Font f = wb.createFont();
-        f.setFontHeightInPoints((short) 20);
-        f.setColor(IndexedColors.RED.getIndex());
-        f.setBoldweight(f.BOLDWEIGHT_BOLD);
-        f.setFontName("Arial Unicode MS");
-        cs.setFillBackgroundColor((short)3);
-        cs.setFont(f);
-        cs.setBorderTop((short)1);
-        cs.setBorderRight((short)1);
-        cs.setBorderLeft((short)1);
-        cs.setBorderBottom((short)1);
+	/**
+	 * test that Cell Styles being applied to formulas remain intact
+	 */
+	public final void testFormulaStyle() {
 
-        r = s.createRow(0);
-        c=r.createCell(0);
-        c.setCellStyle(cs);
-        c.setCellFormula("2*3");
+		Workbook wb = _testDataProvider.createWorkbook();
+		Sheet s = wb.createSheet("testSheet1");
+		Row r = null;
+		Cell c = null;
+		CellStyle cs = wb.createCellStyle();
+		Font f = wb.createFont();
+		f.setFontHeightInPoints((short) 20);
+		f.setColor(IndexedColors.RED.getIndex());
+		f.setBoldweight(f.BOLDWEIGHT_BOLD);
+		f.setFontName("Arial Unicode MS");
+		cs.setFillBackgroundColor((short)3);
+		cs.setFont(f);
+		cs.setBorderTop((short)1);
+		cs.setBorderRight((short)1);
+		cs.setBorderLeft((short)1);
+		cs.setBorderBottom((short)1);
 
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
-        s = wb.getSheetAt(0);
-        r = s.getRow(0);
-        c = r.getCell(0);
+		r = s.createRow(0);
+		c=r.createCell(0);
+		c.setCellStyle(cs);
+		c.setCellFormula("2*3");
 
-        assertTrue("Formula Cell at 0,0", (c.getCellType()==c.CELL_TYPE_FORMULA));
-        cs = c.getCellStyle();
+		wb = _testDataProvider.writeOutAndReadBack(wb);
+		s = wb.getSheetAt(0);
+		r = s.getRow(0);
+		c = r.getCell(0);
 
-        assertNotNull("Formula Cell Style", cs);
-        assertTrue("Font Index Matches", (cs.getFontIndex() == f.getIndex()));
-        assertTrue("Top Border", (cs.getBorderTop() == (short)1));
-        assertTrue("Left Border", (cs.getBorderLeft() == (short)1));
-        assertTrue("Right Border", (cs.getBorderRight() == (short)1));
-        assertTrue("Bottom Border", (cs.getBorderBottom() == (short)1));
-    }
+		assertTrue("Formula Cell at 0,0", (c.getCellType()==c.CELL_TYPE_FORMULA));
+		cs = c.getCellStyle();
 
-    /**tests the toString() method of HSSFCell*/
-    public void testToString() {
-        Workbook wb = getTestDataProvider().createWorkbook();
-        Row r = wb.createSheet("Sheet1").createRow(0);
-        CreationHelper factory = wb.getCreationHelper();
+		assertNotNull("Formula Cell Style", cs);
+		assertTrue("Font Index Matches", (cs.getFontIndex() == f.getIndex()));
+		assertTrue("Top Border", (cs.getBorderTop() == (short)1));
+		assertTrue("Left Border", (cs.getBorderLeft() == (short)1));
+		assertTrue("Right Border", (cs.getBorderRight() == (short)1));
+		assertTrue("Bottom Border", (cs.getBorderBottom() == (short)1));
+	}
 
-        r.createCell(0).setCellValue(true);
-        r.createCell(1).setCellValue(1.5);
-        r.createCell(2).setCellValue(factory.createRichTextString("Astring"));
-        r.createCell(3).setCellErrorValue((byte)ErrorConstants.ERROR_DIV_0);
-        r.createCell(4).setCellFormula("A1+B1");
+	/**tests the toString() method of HSSFCell*/
+	public final void testToString() {
+		Workbook wb = _testDataProvider.createWorkbook();
+		Row r = wb.createSheet("Sheet1").createRow(0);
+		CreationHelper factory = wb.getCreationHelper();
 
-        assertEquals("Boolean", "TRUE", r.getCell(0).toString());
-        assertEquals("Numeric", "1.5", r.getCell(1).toString());
-        assertEquals("String", "Astring", r.getCell(2).toString());
-        assertEquals("Error", "#DIV/0!", r.getCell(3).toString());
-        assertEquals("Formula", "A1+B1", r.getCell(4).toString());
+		r.createCell(0).setCellValue(true);
+		r.createCell(1).setCellValue(1.5);
+		r.createCell(2).setCellValue(factory.createRichTextString("Astring"));
+		r.createCell(3).setCellErrorValue((byte)ErrorConstants.ERROR_DIV_0);
+		r.createCell(4).setCellFormula("A1+B1");
 
-        //Write out the file, read it in, and then check cell values
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+		assertEquals("Boolean", "TRUE", r.getCell(0).toString());
+		assertEquals("Numeric", "1.5", r.getCell(1).toString());
+		assertEquals("String", "Astring", r.getCell(2).toString());
+		assertEquals("Error", "#DIV/0!", r.getCell(3).toString());
+		assertEquals("Formula", "A1+B1", r.getCell(4).toString());
 
-        r = wb.getSheetAt(0).getRow(0);
-        assertEquals("Boolean", "TRUE", r.getCell(0).toString());
-        assertEquals("Numeric", "1.5", r.getCell(1).toString());
-        assertEquals("String", "Astring", r.getCell(2).toString());
-        assertEquals("Error", "#DIV/0!", r.getCell(3).toString());
-        assertEquals("Formula", "A1+B1", r.getCell(4).toString());
-    }
+		//Write out the file, read it in, and then check cell values
+		wb = _testDataProvider.writeOutAndReadBack(wb);
 
-    /**
-     *  Test that setting cached formula result keeps the cell type
-     */
-    public void testSetFormulaValue() {
-        Workbook wb = getTestDataProvider().createWorkbook();
-        Sheet s = wb.createSheet();
-        Row r = s.createRow(0);
+		r = wb.getSheetAt(0).getRow(0);
+		assertEquals("Boolean", "TRUE", r.getCell(0).toString());
+		assertEquals("Numeric", "1.5", r.getCell(1).toString());
+		assertEquals("String", "Astring", r.getCell(2).toString());
+		assertEquals("Error", "#DIV/0!", r.getCell(3).toString());
+		assertEquals("Formula", "A1+B1", r.getCell(4).toString());
+	}
 
-        Cell c1 = r.createCell(0);
-        c1.setCellFormula("NA()");
-        assertEquals(0.0, c1.getNumericCellValue());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, c1.getCachedFormulaResultType());
-        c1.setCellValue(10);
-        assertEquals(10.0, c1.getNumericCellValue());
-        assertEquals(Cell.CELL_TYPE_FORMULA, c1.getCellType());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, c1.getCachedFormulaResultType());
+	/**
+	 *  Test that setting cached formula result keeps the cell type
+	 */
+	public final void testSetFormulaValue() {
+		Workbook wb = _testDataProvider.createWorkbook();
+		Sheet s = wb.createSheet();
+		Row r = s.createRow(0);
 
-        Cell c2 = r.createCell(1);
-        c2.setCellFormula("NA()");
-        assertEquals(0.0, c2.getNumericCellValue());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, c2.getCachedFormulaResultType());
-        c2.setCellValue("I changed!");
-        assertEquals("I changed!", c2.getStringCellValue());
-        assertEquals(Cell.CELL_TYPE_FORMULA, c2.getCellType());
-        assertEquals(Cell.CELL_TYPE_STRING, c2.getCachedFormulaResultType());
-    }
+		Cell c1 = r.createCell(0);
+		c1.setCellFormula("NA()");
+		assertEquals(0.0, c1.getNumericCellValue(), 0.0);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, c1.getCachedFormulaResultType());
+		c1.setCellValue(10);
+		assertEquals(10.0, c1.getNumericCellValue(), 0.0);
+		assertEquals(Cell.CELL_TYPE_FORMULA, c1.getCellType());
+		assertEquals(Cell.CELL_TYPE_NUMERIC, c1.getCachedFormulaResultType());
 
-    public void baseTestChangeTypeStringToBool(Cell cell) {
+		Cell c2 = r.createCell(1);
+		c2.setCellFormula("NA()");
+		assertEquals(0.0, c2.getNumericCellValue(), 0.0);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, c2.getCachedFormulaResultType());
+		c2.setCellValue("I changed!");
+		assertEquals("I changed!", c2.getStringCellValue());
+		assertEquals(Cell.CELL_TYPE_FORMULA, c2.getCellType());
+		assertEquals(Cell.CELL_TYPE_STRING, c2.getCachedFormulaResultType());
+	}
+	private Cell createACell() {
+		return _testDataProvider.createWorkbook().createSheet("Sheet1").createRow(0).createCell(0);
+	}
+
+
+	public final void testChangeTypeStringToBool() {
+		Cell cell = createACell();
 
 		cell.setCellValue("TRUE");
 		assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
@@ -288,98 +298,112 @@ public abstract class BaseTestCell extends TestCase {
 		assertEquals("FALSE", cell.getRichStringCellValue().getString());
 	}
 
-    public void baseTestChangeTypeBoolToString(Cell cell) {
-        cell.setCellValue(true);
-        try {
-            cell.setCellType(Cell.CELL_TYPE_STRING);
-        } catch (IllegalStateException e) {
-            if (e.getMessage().equals("Cannot get a text value from a boolean cell")) {
-                throw new AssertionFailedError(
-                        "Identified bug in conversion of cell from boolean to text");
-            }
-            throw e;
-        }
-        assertEquals("TRUE", cell.getRichStringCellValue().getString());
-    }
+	public final void testChangeTypeBoolToString() {
+		Cell cell = createACell();
 
-    public void baseTestChangeTypeErrorToNumber(Cell cell) {
-        cell.setCellErrorValue((byte)ErrorConstants.ERROR_NAME);
-        try {
-            cell.setCellValue(2.5);
-        } catch (ClassCastException e) {
-            throw new AssertionFailedError("Identified bug 46479b");
-        }
-        assertEquals(2.5, cell.getNumericCellValue(), 0.0);
-    }
+		cell.setCellValue(true);
+		try {
+			cell.setCellType(Cell.CELL_TYPE_STRING);
+		} catch (IllegalStateException e) {
+			if (e.getMessage().equals("Cannot get a text value from a boolean cell")) {
+				throw new AssertionFailedError(
+						"Identified bug in conversion of cell from boolean to text");
+			}
+			throw e;
+		}
+		assertEquals("TRUE", cell.getRichStringCellValue().getString());
+	}
 
-    public void baseTestChangeTypeErrorToBoolean(Cell cell) {
-        cell.setCellErrorValue((byte)ErrorConstants.ERROR_NAME);
-        cell.setCellValue(true);
-        try {
-            cell.getBooleanCellValue();
-        } catch (IllegalStateException e) {
-            if (e.getMessage().equals("Cannot get a boolean value from a error cell")) {
+	public final void testChangeTypeErrorToNumber() {
+		Cell cell = createACell();
+		cell.setCellErrorValue((byte)ErrorConstants.ERROR_NAME);
+		try {
+			cell.setCellValue(2.5);
+		} catch (ClassCastException e) {
+			throw new AssertionFailedError("Identified bug 46479b");
+		}
+		assertEquals(2.5, cell.getNumericCellValue(), 0.0);
+	}
 
-                throw new AssertionFailedError("Identified bug 46479c");
-            }
-            throw e;
-        }
-        assertEquals(true, cell.getBooleanCellValue());
-    }
+	public final void testChangeTypeErrorToBoolean() {
+		Cell cell = createACell();
+		cell.setCellErrorValue((byte)ErrorConstants.ERROR_NAME);
+		cell.setCellValue(true);
+		try {
+			cell.getBooleanCellValue();
+		} catch (IllegalStateException e) {
+			if (e.getMessage().equals("Cannot get a boolean value from a error cell")) {
 
-    /**
-     * Test for bug in convertCellValueToBoolean to make sure that formula results get converted
-     */
-    public void baseTestChangeTypeFormulaToBoolean(Cell cell) {
-        cell.setCellFormula("1=1");
-        cell.setCellValue(true);
-        cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
-        if (cell.getBooleanCellValue() == false) {
-            throw new AssertionFailedError("Identified bug 46479d");
-        }
-        assertEquals(true, cell.getBooleanCellValue());
-    }
+				throw new AssertionFailedError("Identified bug 46479c");
+			}
+			throw e;
+		}
+		assertEquals(true, cell.getBooleanCellValue());
+	}
 
-    /**
-     * Bug 40296:      HSSFCell.setCellFormula throws
-     *   ClassCastException if cell is created using HSSFRow.createCell(short column, int type)
-     */
-    public void test40296() {
-        Workbook wb = getTestDataProvider().createWorkbook();
-        Sheet workSheet = wb.createSheet("Sheet1");
-        Cell cell;
-        Row row = workSheet.createRow(0);
+	/**
+	 * Test for bug in convertCellValueToBoolean to make sure that formula results get converted
+	 */
+	public void testChangeTypeFormulaToBoolean() {
+		Cell cell = createACell();
+		cell.setCellFormula("1=1");
+		cell.setCellValue(true);
+		cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+		if (cell.getBooleanCellValue() == false) {
+			throw new AssertionFailedError("Identified bug 46479d");
+		}
+		assertEquals(true, cell.getBooleanCellValue());
+	}
 
-        cell = row.createCell(0, Cell.CELL_TYPE_NUMERIC);
-        cell.setCellValue(1.0);
-        assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
-        assertEquals(1.0, cell.getNumericCellValue());
+	/**
+	 * Bug 40296:	  HSSFCell.setCellFormula throws
+	 *   ClassCastException if cell is created using HSSFRow.createCell(short column, int type)
+	 */
+	public void test40296() {
+		Workbook wb = _testDataProvider.createWorkbook();
+		Sheet workSheet = wb.createSheet("Sheet1");
+		Cell cell;
+		Row row = workSheet.createRow(0);
 
-        cell = row.createCell(1, Cell.CELL_TYPE_NUMERIC);
-        cell.setCellValue(2.0);
-        assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
-        assertEquals(2.0, cell.getNumericCellValue());
+		cell = row.createCell(0, Cell.CELL_TYPE_NUMERIC);
+		cell.setCellValue(1.0);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+		assertEquals(1.0, cell.getNumericCellValue(), 0.0);
 
-        cell = row.createCell(2, Cell.CELL_TYPE_FORMULA);
-        cell.setCellFormula("SUM(A1:B1)");
-        assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
-        assertEquals("SUM(A1:B1)", cell.getCellFormula());
+		cell = row.createCell(1, Cell.CELL_TYPE_NUMERIC);
+		cell.setCellValue(2.0);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+		assertEquals(2.0, cell.getNumericCellValue(), 0.0);
 
-        //serialize and check again
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
-        row = wb.getSheetAt(0).getRow(0);
-        cell = row.getCell(0);
-        assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
-        assertEquals(1.0, cell.getNumericCellValue());
+		cell = row.createCell(2, Cell.CELL_TYPE_FORMULA);
+		cell.setCellFormula("SUM(A1:B1)");
+		assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
+		assertEquals("SUM(A1:B1)", cell.getCellFormula());
 
-        cell = row.getCell(1);
-        assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
-        assertEquals(2.0, cell.getNumericCellValue());
+		//serialize and check again
+		wb = _testDataProvider.writeOutAndReadBack(wb);
+		row = wb.getSheetAt(0).getRow(0);
+		cell = row.getCell(0);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+		assertEquals(1.0, cell.getNumericCellValue(), 0.0);
 
-        cell = row.getCell(2);
-        assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
-        assertEquals("SUM(A1:B1)", cell.getCellFormula());
-    }
+		cell = row.getCell(1);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+		assertEquals(2.0, cell.getNumericCellValue(), 0.0);
 
+		cell = row.getCell(2);
+		assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
+		assertEquals("SUM(A1:B1)", cell.getCellFormula());
+	}
 
+	public final void testSetStringInFormulaCell_bug44606() {
+		Workbook wb = _testDataProvider.createWorkbook();
+		Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
+		cell.setCellFormula("B1&C1");
+		try {
+			cell.setCellValue(new HSSFRichTextString("hello"));
+		} catch (ClassCastException e) {
+			throw new AssertionFailedError("Identified bug 44606");
+		}
+	}
 }
