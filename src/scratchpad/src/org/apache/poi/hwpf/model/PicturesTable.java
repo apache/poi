@@ -35,8 +35,8 @@ import org.apache.poi.ddf.EscherRecordFactory;
 
 /**
  * Holds information about all pictures embedded in Word Document either via "Insert -> Picture -> From File" or via
- * clipboard. Responsible for images extraction and determining whether some document�s piece contains embedded image.
- * Analyzes raw data bytestream �Data� (where Word stores all embedded objects) provided by HWPFDocument.
+ * clipboard. Responsible for images extraction and determining whether some document's piece contains embedded image.
+ * Analyzes raw data bytestream 'Data' (where Word stores all embedded objects) provided by HWPFDocument.
  *
  * Word stores images as is within so called "Data stream" - the stream within a Word docfile containing various data
  * that hang off of characters in the main stream. For example, binary data describing in-line pictures and/or

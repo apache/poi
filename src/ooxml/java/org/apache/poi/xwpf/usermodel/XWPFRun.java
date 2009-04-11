@@ -407,7 +407,7 @@ public class XWPFRun {
      * A break is a special character which is used to override the
      * normal line breaking that would be performed based on the normal layout
      * of the document's contents. 
-     * @see addCarriageReturn()
+     * @see #addCarriageReturn() 
      */
     public void addBreak() {
 	run.addNewBr();

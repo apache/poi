@@ -230,11 +230,11 @@ public final class TestAreaReference extends TestCase {
         HSSFName aNamedCell = wb.getNameAt(idx);
 
         // Should have 2 references
-        assertEquals(ref, aNamedCell.getReference());
+        assertEquals(ref, aNamedCell.getRefersToFormula());
 
         // Check the parsing of the reference into cells
-        assertFalse(AreaReference.isContiguous(aNamedCell.getReference()));
-        AreaReference[] arefs = AreaReference.generateContiguous(aNamedCell.getReference());
+        assertFalse(AreaReference.isContiguous(aNamedCell.getRefersToFormula()));
+        AreaReference[] arefs = AreaReference.generateContiguous(aNamedCell.getRefersToFormula());
         assertEquals(2, arefs.length);
         assertEquals(refA, arefs[0].formatAsString());
         assertEquals(refB, arefs[1].formatAsString());

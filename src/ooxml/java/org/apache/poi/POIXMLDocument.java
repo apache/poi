@@ -26,7 +26,6 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.*;
-import org.apache.poi.openxml4j.opc.Package;
 
 public abstract class POIXMLDocument extends POIXMLDocumentPart{
 

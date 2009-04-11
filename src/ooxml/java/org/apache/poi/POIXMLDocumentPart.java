@@ -25,7 +25,6 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.*;
-import org.apache.poi.openxml4j.opc.Package;
 
 /**
  * Represents an entry of a OOXML package.
