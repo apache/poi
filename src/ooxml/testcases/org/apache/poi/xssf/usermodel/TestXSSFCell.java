@@ -17,8 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.usermodel.BaseTestCell;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 
 /**
@@ -26,21 +25,7 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
  */
 public final class TestXSSFCell extends BaseTestCell {
 
-    @Override
-    protected ITestDataProvider getTestDataProvider(){
-        return XSSFITestDataProvider.getInstance();
-    }
-
-    public void testChangeCellType() {
-        //for performance reasons combine baseTestChangeType* together 
-        Workbook wb = getTestDataProvider().createWorkbook();
-        Row row = wb.createSheet().createRow(0);
-        baseTestChangeTypeStringToBool(row.createCell(0));
-        baseTestChangeTypeBoolToString(row.createCell(1));
-        baseTestChangeTypeErrorToNumber(row.createCell(2));
-        baseTestChangeTypeErrorToBoolean(row.createCell(3));
-
-        //TODO: works in HSSF but fails in XSSF
-        //baseTestChangeTypeFormulaToBoolean(row.createCell(4));
-    }
+	public TestXSSFCell() {
+		super(XSSFITestDataProvider.getInstance());
+	}
 }

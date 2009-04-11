@@ -858,6 +858,10 @@ public final class XSSFCell implements Cell {
      */
     private boolean convertCellValueToBoolean() {
         int cellType = getCellType();
+        
+        if (cellType == CELL_TYPE_FORMULA) {
+            cellType = getBaseCellType(false);
+        }
 
         switch (cellType) {
             case CELL_TYPE_BOOLEAN:
@@ -870,7 +874,6 @@ public final class XSSFCell implements Cell {
             case CELL_TYPE_NUMERIC:
                 return Double.parseDouble(cell.getV()) != 0;
 
-            case CELL_TYPE_FORMULA:
             case CELL_TYPE_ERROR:
             case CELL_TYPE_BLANK:
                 return false;
