@@ -1479,4 +1479,14 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     		));
     	}
     }
+    
+    /**
+     * java.lang.NegativeArraySizeException reading long
+     *  non-unicode data for a name record
+     */
+    public void test47034() throws IOException {
+		HSSFWorkbook wb = openSample("47034.xls");
+		assertEquals(893, wb.getNumberOfNames());
+		assertEquals("Matthew\\Matthew11_1\\Matthew2331_1\\Matthew2351_1\\Matthew2361_1___lab", wb.getNameName(300));
+    }
 }

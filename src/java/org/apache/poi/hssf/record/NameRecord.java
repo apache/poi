@@ -416,7 +416,7 @@ public final class NameRecord extends StandardRecord {
 		LittleEndianInput in = ris;
 		field_1_option_flag                 = in.readShort();
 		field_2_keyboard_shortcut           = in.readByte();
-		int field_3_length_name_text        = in.readByte();
+		int field_3_length_name_text        = in.readUByte();
 		int field_4_length_name_definition  = in.readShort();
 		field_5_externSheetIndex_plus1      = in.readShort();
 		field_6_sheetNumber                 = in.readUShort();
