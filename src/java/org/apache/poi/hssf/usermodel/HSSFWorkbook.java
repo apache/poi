@@ -1292,23 +1292,31 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         return workbook;
     }
 
-    /** gets the total number of named ranges in the workboko
-     * @return number of named ranges
-     */
     public int getNumberOfNames(){
         int result = names.size();
         return result;
     }
-
-    /** gets the Named range
-     * @param index position of the named range
-     * @return named range high level
-     */
-    public HSSFName getNameAt(int index){
-        HSSFName result = (HSSFName) names.get(index);
-
-        return result;
+    
+    public HSSFName getName(String name) {
+        int nameIndex = getNameIndex(name);
+        if (nameIndex < 0) {
+            return null;
+        }
+        return (HSSFName) names.get(nameIndex);
     }
+
+    public HSSFName getNameAt(int nameIndex) {
+        int nNames = names.size();
+        if (nNames < 1) {
+            throw new IllegalStateException("There are no defined names in this workbook");
+        }
+        if (nameIndex < 0 || nameIndex > nNames) {
+            throw new IllegalArgumentException("Specified name index " + nameIndex 
+                    + " is outside the allowable range (0.." + (nNames-1) + ").");
+        }
+        return (HSSFName) names.get(nameIndex);
+    }
+
     public NameRecord getNameRecord(int nameIndex) {
         return getWorkbook().getNameRecord(nameIndex);
     }
@@ -1411,34 +1419,19 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         return newName;
     }
 
-    /** gets the named range index by his name
-     * <i>Note:</i>Excel named ranges are case-insensitive and
-     * this method performs a case-insensitive search.
-     *
-     * @param name named range name
-     * @return named range index
-     */
-    public int getNameIndex(String name)
-    {
-        int retval = -1;
+    public int getNameIndex(String name) {
 
-        for (int k = 0; k < names.size(); k++)
-        {
+        for (int k = 0; k < names.size(); k++) {
             String nameName = getNameName(k);
 
-            if (nameName.equalsIgnoreCase(name))
-            {
-                retval = k;
-                break;
+            if (nameName.equalsIgnoreCase(name)) {
+                return k;
             }
         }
-        return retval;
+        return -1;
     }
 
 
-    /** remove the named range by his index
-     * @param index named range index (0 based)
-     */
     public void removeName(int index){
         names.remove(index);
         workbook.removeName(index);
@@ -1456,14 +1449,11 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     return formatter;
     }
 
-    /** remove the named range by his name
-     * @param name named range name
-     */
-    public void removeName(String name){
+
+    public void removeName(String name) {
         int index = getNameIndex(name);
 
         removeName(index);
-
     }
 
     public HSSFPalette getCustomPalette()

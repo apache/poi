@@ -417,11 +417,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return font;
     }
 
-    /**
-     * Create a new named range and add it to the workbook's names table
-     *
-     * @return named range high level
-     */
     public XSSFName createName() {
         XSSFName name = new XSSFName(CTDefinedName.Factory.newInstance(), this);
         namedRanges.add(name);
@@ -545,14 +540,24 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return stylesSource.getFontAt(idx);
     }
 
-    /**
-     * Gets the Named range at the given index number
-     *
-     * @param index position of the named range
-     * @return XSSFName at the index
-     */
-    public XSSFName getNameAt(int index) {
-        return namedRanges.get(index);
+    public XSSFName getName(String name) {
+        int nameIndex = getNameIndex(name);
+        if (nameIndex < 0) {
+            return null;
+        }
+        return namedRanges.get(nameIndex);
+    }
+
+    public XSSFName getNameAt(int nameIndex) {
+        int nNames = namedRanges.size();
+        if (nNames < 1) {
+            throw new IllegalStateException("There are no defined names in this workbook");
+        }
+        if (nameIndex < 0 || nameIndex > nNames) {
+            throw new IllegalArgumentException("Specified name index " + nameIndex 
+                    + " is outside the allowable range (0.." + (nNames-1) + ").");
+        }
+        return namedRanges.get(nameIndex);
     }
 
     /**
@@ -615,7 +620,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param sheetIndex Zero-based sheet index (0 Represents the first sheet to keep consistent with java)
      * @return String Null if no print area has been defined
      */
-    public String getPrintArea(int sheetIndex) {	
+    public String getPrintArea(int sheetIndex) {    
         XSSFName name = getBuiltInName(XSSFName.BUILTIN_PRINT_AREA, sheetIndex);
         if (name == null) return null;
         //adding one here because 0 indicates a global named region; doesnt make sense for print areas
@@ -713,21 +718,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return getPackagePart().getContentType().equals(XSSFRelation.MACROS_WORKBOOK.getContentType());
     }
 
-    /**
-     * Removes the name by its index
-     *
-     * @param nameIndex 0-based index of the name to remove.
-     */
     public void removeName(int nameIndex) {
         namedRanges.remove(nameIndex);
     }
 
-    /**
-     * Remove the named range by its name
-     *
-     * @param name named range name
-     * @throws IllegalArgumentException if the name was not found
-     */
     public void removeName(String name) {
         for (int i = 0; i < namedRanges.size(); i++) {
             XSSFName nm = namedRanges.get(i);
@@ -824,7 +818,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         int lastSheetIx = sheets.size() - 1;
         if (index < 0 || index > lastSheetIx) {
             throw new IllegalArgumentException("Sheet index ("
-                    + index +") is out of range (0.." +	lastSheetIx + ")");
+                    + index +") is out of range (0.." +    lastSheetIx + ")");
         }
     }
 
@@ -918,7 +912,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     public void setRepeatingRowsAndColumns(int sheetIndex,
                                            int startColumn, int endColumn,
                                            int startRow, int endRow) {
-        //	Check arguments
+        //    Check arguments
         if ((startColumn == -1 && endColumn != -1) || startColumn < -1 || endColumn < -1 || startColumn > endColumn)
             throw new IllegalArgumentException("Invalid column range specification");
         if ((startRow == -1 && endRow != -1) || startRow < -1 || endRow < -1 || startRow > endRow)
@@ -1223,11 +1217,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
     
     public boolean isHidden() {
-    	throw new RuntimeException("Not implemented yet");
+        throw new RuntimeException("Not implemented yet");
     }
 
     public void setHidden(boolean hiddenFlag) {
-    	throw new RuntimeException("Not implemented yet");
+        throw new RuntimeException("Not implemented yet");
     }
 
     public boolean isSheetHidden(int sheetIx) {

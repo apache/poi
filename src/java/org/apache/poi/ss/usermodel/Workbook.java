@@ -274,48 +274,50 @@ public interface Workbook {
     void write(OutputStream stream) throws IOException;
 
     /**
-     * Gets the total number of named ranges in the workbook
-     *
-     * @return number of named ranges
+     * @return the total number of defined names in this workbook
      */
     int getNumberOfNames();
 
     /**
-     * Gets the Named range
-     *
-     * @param index position of the named range (0-based)
-     * @return named range high level
+     * @param name the name of the defined name
+     * @return the defined name with the specified name. <code>null</code> if not found.
      */
-    Name getNameAt(int index);
+    Name getName(String name);
+    /**
+     * @param nameIndex position of the named range (0-based)
+     * @return the defined name at the specified index
+     * @throws IllegalArgumentException if the supplied index is invalid
+     */
+    Name getNameAt(int nameIndex);
 
     /**
-     * Creates a new named range in this workbook
+     * Creates a new (uninitialised) defined name in this workbook
      *
-     * @return new named range object
+     * @return new defined name object
      */
     Name createName();
 
     /**
-     * Gets the named range index by his name
-      * <i>Note:</i>Excel named ranges are case-insensitive and
-      * this method performs a case-insensitive search.
-      *
-      * @param name named range name
-      * @return named range index
-      */
-     int getNameIndex(String name);
-
-     /**
-      * Remove the named range by his index
-      *
-      * @param index named range index (0 based)
-      */
-     void removeName(int index);
+     * Gets the defined name index by name<br/>
+     * <i>Note:</i> Excel defined names are case-insensitive and
+     * this method performs a case-insensitive search.
+     *
+     * @param name the name of the defined name
+     * @return zero based index of the defined name. <tt>-1</tt> if not found.
+     */
+    int getNameIndex(String name);
 
     /**
-     * Remove the named range by his name
+     * Remove the defined name at the specified index
      *
-     * @param name named range name
+     * @param index named range index (0 based)
+     */
+    void removeName(int index);
+
+    /**
+     * Remove a defined name by name
+     *
+      * @param name the name of the defined name
      */
     void removeName(String name);
 
