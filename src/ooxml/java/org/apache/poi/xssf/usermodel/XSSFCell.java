@@ -627,6 +627,7 @@ public final class XSSFCell implements Cell {
     private void setBlank(){
         CTCell blank = CTCell.Factory.newInstance();
         blank.setR(cell.getR());
+        blank.setS(cell.getS());
         cell.set(blank);
     }
 

@@ -17,7 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.BaseTestCell;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 
 /**
@@ -28,4 +28,26 @@ public final class TestXSSFCell extends BaseTestCell {
 	public TestXSSFCell() {
 		super(XSSFITestDataProvider.getInstance());
 	}
+
+    /**
+     * Bug 47026: trouble changing cell type when workbook doesn't contain
+     * Shared String Table
+     */
+    public void test47026_1() throws Exception {
+        Workbook source = _testDataProvider.openSampleWorkbook("47026.xlsm");
+        Sheet sheet = source.getSheetAt(0);
+        Row row = sheet.getRow(0);
+        Cell cell = row.getCell(0);
+        cell.setCellType(Cell.CELL_TYPE_STRING);
+        cell.setCellValue("456");
+    }
+
+    public void test47026_2() throws Exception {
+        Workbook source = _testDataProvider.openSampleWorkbook("47026.xlsm");
+        Sheet sheet = source.getSheetAt(0);
+        Row row = sheet.getRow(0);
+        Cell cell = row.getCell(0);
+        cell.setCellFormula(null);
+        cell.setCellValue("456");
+    }
 }

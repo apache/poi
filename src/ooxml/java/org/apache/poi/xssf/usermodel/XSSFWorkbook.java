@@ -179,6 +179,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                 }
             }
 
+            if(sharedStringSource == null) {
+                //Create SST if it is missing
+                sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, XSSFFactory.getInstance());
+            }
+
             // Load individual sheets. The order of sheets is defined by the order of CTSheet elements in the workbook
             sheets = new ArrayList<XSSFSheet>(shIdMap.size());
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
@@ -190,11 +195,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                 sh.sheet = ctSheet;
                 sh.onDocumentRead();
                 sheets.add(sh);
-            }
-
-            if(sharedStringSource == null) {
-                //Create SST if it is missing
-                sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, XSSFFactory.getInstance());
             }
 
             // Process the named ranges
