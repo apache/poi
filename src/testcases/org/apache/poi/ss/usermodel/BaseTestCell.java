@@ -22,7 +22,6 @@ import java.util.Calendar;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.ITestDataProvider;
 
 /**
@@ -31,7 +30,7 @@ import org.apache.poi.ss.ITestDataProvider;
  */
 public abstract class BaseTestCell extends TestCase {
 
-	private final ITestDataProvider _testDataProvider;
+	protected final ITestDataProvider _testDataProvider;
 
 	/**
 	 * @param testDataProvider an object that provides test data in HSSF / XSSF specific way
@@ -401,9 +400,23 @@ public abstract class BaseTestCell extends TestCase {
 		Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
 		cell.setCellFormula("B1&C1");
 		try {
-			cell.setCellValue(new HSSFRichTextString("hello"));
+			cell.setCellValue(wb.getCreationHelper().createRichTextString("hello"));
 		} catch (ClassCastException e) {
 			throw new AssertionFailedError("Identified bug 44606");
 		}
 	}
+
+    /**
+     *  Make sure that cell.setCellType(Cell.CELL_TYPE_BLANK) preserves the cell style
+     */
+    public void testSetBlank_bug47028() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        CellStyle style = wb.createCellStyle();
+        Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
+        cell.setCellStyle(style);
+        int i1 = cell.getCellStyle().getIndex();
+        cell.setCellType(Cell.CELL_TYPE_BLANK);
+        int i2 = cell.getCellStyle().getIndex();
+        assertEquals(i1, i2);
+    }
 }
