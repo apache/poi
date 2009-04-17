@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -32,6 +33,7 @@ import java.util.Set;
 
 import org.apache.poi.hssf.record.chart.*;
 import org.apache.poi.hssf.record.pivottable.*;
+import org.apache.poi.util.HexDump;
 
 /**
  * Title:  Record Factory<P>
@@ -348,6 +350,22 @@ public final class RecordFactory {
 		return result;
 	}
 
+	private static void checkZeros(InputStream in, int avail) throws IOException {
+		int count=0;
+		while(true) {
+			int b = in.read();
+			if (b < 0) {
+				break;
+			}
+			if (b!=0) {
+				System.err.print(HexDump.byteToHex(b));
+			}
+			count++;
+		}
+		if (avail != count) {
+			System.err.println("avail!=count (" + avail + "!=" + count + ").");
+		}
+	}
 	/**
 	 * Create an array of records from an input stream
 	 *
@@ -364,14 +382,48 @@ public final class RecordFactory {
 		RecordInputStream recStream = new RecordInputStream(in);
 		DrawingRecord lastDrawingRecord = new DrawingRecord( );
 		Record lastRecord = null;
+		/*
+		 * How to recognise end of stream?
+		 * In the best case, the underlying input stream (in) ends just after the last EOF record
+		 * Usually however, the stream is padded with an arbitrary byte count.  Excel and most apps
+		 * reliably use zeros for padding and if this were always the case, this code could just
+		 * skip all the (zero sized) records with sid==0.  However, bug 46987 shows a file with
+		 * non-zero padding that is read OK by Excel (Excel also fixes the padding).
+		 * 
+		 * So to properly detect the workbook end of stream, this code has to identify the last
+		 * EOF record.  This is not so easy because the worbook bof+eof pair do not bracket the 
+		 * whole stream.  The worksheets follow the workbook, but it is not easy to tell how many 
+		 * sheet sub-streams should be present.  Hence we are looking for an EOF record that is not 
+		 * immediately followed by a BOF record.  One extra complication is that bof+eof sub-
+		 * streams can be nested within worksheet streams and it's not clear in these cases what
+		 * record might follow any EOF record.  So we also need to keep track of the bof/eof 
+		 * nesting level.
+		 */
+		 
+		int bofDepth=0;
+		boolean lastRecordWasEOFLevelZero = false;
 		while (recStream.hasNextRecord()) {
 			recStream.nextRecord();
-			if (recStream.getSid() == 0) {
-				// After EOF, Excel seems to pad block with zeros
-				continue;
+			if (lastRecordWasEOFLevelZero && recStream.getSid() != BOFRecord.sid) {
+				// Normally InputStream (in) contains only zero padding after this point
+				break;
 			}
 			Record record = createSingleRecord(recStream);
-
+			lastRecordWasEOFLevelZero = false;
+			if (record instanceof BOFRecord) {
+				bofDepth++;
+				records.add(record);
+				continue;
+			}
+			if (record instanceof EOFRecord) {
+				bofDepth--;
+				records.add(record);
+				if (bofDepth<1) {
+					lastRecordWasEOFLevelZero = true;
+				}
+				continue;
+			}
+			
 			if (record instanceof DBCellRecord) {
 				// Not needed by POI.  Regenerated from scratch by POI when spreadsheet is written
 				continue;
