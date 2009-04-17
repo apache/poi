@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xssf.dev;
 
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.w3c.dom.Document;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -25,9 +25,6 @@ import java.io.*;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipEntry;
 import java.util.Enumeration;
-
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 
 /**
  * Utility class which dumps the contents of a *.xlsx file into file system.
@@ -68,15 +65,10 @@ public class XSSFDump {
 
             if(entry.getName().endsWith(".xml") || entry.getName().endsWith(".vml") || entry.getName().endsWith(".rels")){
                 try {
-                    //pass the xml through the Xerces serializer to produce nicely formatted output
-                    Document doc = builder.parse(zip.getInputStream(entry));
-
-                    OutputFormat  format  = new OutputFormat( doc );
-                    format.setIndenting(true);
-
-                    XMLSerializer serial = new  XMLSerializer( out, format );
-                    serial.asDOMSerializer();
-                    serial.serialize( doc.getDocumentElement() );
+                    XmlObject xml = XmlObject.Factory.parse(zip.getInputStream(entry));
+                    XmlOptions options = new XmlOptions();
+                    options.setSavePrettyPrint();
+                    xml.save(out, options);
                 } catch (Exception e){
                     System.err.println("Failed to parse " + entry.getName() + ", dumping raw content");
                     dump(zip.getInputStream(entry), out);
