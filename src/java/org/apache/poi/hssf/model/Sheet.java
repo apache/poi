@@ -337,6 +337,10 @@ public final class Sheet implements Model {
             {
                 password = (PasswordRecord) rec;
             }
+            else if ( recSid == GutsRecord.sid )
+            {
+                _gutsRecord = (GutsRecord) rec;
+            }
 
             records.add(rec);
         }

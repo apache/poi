@@ -37,6 +37,8 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta6" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">46186 - Fixed Sheet to read GutsRecord in the Sheet(RecordStream rs)</action>
+           <action dev="POI-DEVELOPERS" type="fix">46714 - Automatically call sheet.setAlternativeExpression when sheet.setRowSumsBelow is called </action>
            <action dev="POI-DEVELOPERS" type="fix">46279 - Allow 255 arguments for excel functions in XSSF </action>
            <action dev="POI-DEVELOPERS" type="fix">47028 - Fixed XSSFCell to preserve cell style when cell value is set to blank</action>
            <action dev="POI-DEVELOPERS" type="fix">47026 - Avoid NPE in XSSFCell.setCellType() when workbook does not have SST</action>

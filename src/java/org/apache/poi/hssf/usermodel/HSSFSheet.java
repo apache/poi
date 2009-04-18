@@ -774,6 +774,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                 (WSBoolRecord) _sheet.findFirstRecordBySid(WSBoolRecord.sid);
 
         record.setRowSumsBelow(b);
+        //setAlternateExpression must be set in conjuction with setRowSumsBelow
+        record.setAlternateExpression(b);
     }
 
     /**

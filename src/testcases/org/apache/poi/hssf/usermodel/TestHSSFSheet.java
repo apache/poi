@@ -125,7 +125,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
         s.setRowSumsRight(true);
 
         // Check
-        assertEquals(false, record.getAlternateExpression());
+        assertEquals(true, record.getAlternateExpression()); //sheet.setRowSumsBelow alters this field too 
         assertEquals(false, record.getAlternateFormula());
         assertEquals(true, record.getAutobreaks());
         assertEquals(true, record.getDialog());
@@ -133,7 +133,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
         assertEquals(false, record.getFitToPage());
         assertEquals(true, record.getRowSumsBelow());
         assertEquals(true, record.getRowSumsRight());
-        assertEquals(false, s.getAlternateExpression());
+        assertEquals(true, s.getAlternateExpression());
         assertEquals(false, s.getAlternateFormula());
         assertEquals(true, s.getAutobreaks());
         assertEquals(true, s.getDialog());
