@@ -17,11 +17,9 @@
 package org.apache.poi.ss.usermodel;
 
 import junit.framework.TestCase;
-import junit.framework.AssertionFailedError;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * A base class for bugzilla issues that can be described in terms of common ss interfaces.
