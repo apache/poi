@@ -19,7 +19,9 @@ package org.apache.poi.ss.usermodel;
 import junit.framework.TestCase;
 import junit.framework.AssertionFailedError;
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * A base class for bugzilla issues that can be described in terms of common ss interfaces.
@@ -294,5 +296,43 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
         double d = eva.evaluate(s2E4).getNumberValue();
 
         assertEquals(d, (311+312+321+322), 0.0000001);
+    }
+
+    public void testMaxFunctionArguments_bug46729(){
+        String[] func = {"COUNT", "AVERAGE", "MAX", "MIN", "OR", "SUBTOTAL", "SKEW"};
+
+        SpreadsheetVersion ssVersion = getTestDataProvider().getSpreadsheetVersion();
+        Workbook wb = getTestDataProvider().createWorkbook();
+        Cell cell = wb.createSheet().createRow(0).createCell(0);
+
+        String fmla;
+        for (String name : func) {
+
+            fmla = createFunction(name, 5);
+            cell.setCellFormula(fmla);
+
+            fmla = createFunction(name, ssVersion.getMaxFunctionArgs());
+            cell.setCellFormula(fmla);
+
+            try {
+                fmla = createFunction(name, ssVersion.getMaxFunctionArgs() + 1);
+                cell.setCellFormula(fmla);
+                fail("Expected FormulaParseException");
+            } catch (RuntimeException e){
+                 assertTrue(e.getMessage().startsWith("Too many arguments to function '"+name+"'"));
+            }
+        }
+    }
+
+    private String createFunction(String name, int maxArgs){
+        StringBuffer fmla = new StringBuffer();
+        fmla.append(name);
+        fmla.append("(");
+        for(int i=0; i < maxArgs; i++){
+            if(i > 0) fmla.append(',');
+            fmla.append("A1");
+        }
+        fmla.append(")");
+        return fmla.toString();
     }
 }

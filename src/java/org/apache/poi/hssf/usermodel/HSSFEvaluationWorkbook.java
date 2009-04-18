@@ -25,6 +25,7 @@ import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.ss.formula.*;
+import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * Internal POI use only
@@ -153,5 +154,9 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         public NamePtg createPtg() {
             return new NamePtg(_index);
         }
+    }
+
+    public SpreadsheetVersion getSpreadsheetVersion(){
+        return SpreadsheetVersion.EXCEL97;    
     }
 }

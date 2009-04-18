@@ -191,14 +191,9 @@ public final class XSSFName implements Name {
 
     public void setRefersToFormula(String formulaText) {
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(workbook);
-        try {
-            FormulaParser.parse(formulaText, fpb, FormulaType.NAMEDRANGE, getSheetIndex());
-        } catch (RuntimeException e) {
-            if (e.getClass().getName().startsWith(FormulaParser.class.getName())) {
-                throw new IllegalArgumentException("Unparsable formula '" + formulaText + "'", e);
-            }
-            throw e;
-        }
+        //validate through the FormulaParser
+        FormulaParser.parse(formulaText, fpb, FormulaType.NAMEDRANGE, getSheetIndex());
+
         ctName.setStringValue(formulaText);
     }
 

@@ -48,7 +48,7 @@ public final class HSSFITestDataProvider implements ITestDataProvider {
     }
     
     public SpreadsheetVersion getSpreadsheetVersion(){
-        return SpreadsheetVersion.EXCEL2007;
+        return SpreadsheetVersion.EXCEL97;
     }
 
     private HSSFITestDataProvider(){}

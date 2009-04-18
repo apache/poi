@@ -30,7 +30,15 @@ public final class FunctionMetadataRegistry {
 	 */ 
 	public static final String FUNCTION_NAME_IF = "IF";
 
-	public static final short FUNCTION_INDEX_SUM = 4;
+    /**
+     * maxParams=30 in functionMetadata.txt means the maximum number arguments supported
+     * by the given version of Excel. Validation routines should take the actual limit (Excel 97 or 2007)
+     * from the SpreadsheetVersion enum.
+     * @see org.apache.poi.ss.formula.FormulaParser#validateNumArgs(int, FunctionMetadata)
+     */
+    public static final short FUNCTION_MAX_PARAMS = 30;
+
+    public static final short FUNCTION_INDEX_SUM = 4;
 	public static final short FUNCTION_INDEX_EXTERNAL = 255;
 	private static FunctionMetadataRegistry _instance;
 

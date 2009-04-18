@@ -22,19 +22,12 @@ import java.util.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.formula.FormulaParser;
-import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.xssf.model.CalculationChain;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.FormulaShifter;
-import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 
 /**
  * High level representation of a row of a spreadsheet.
