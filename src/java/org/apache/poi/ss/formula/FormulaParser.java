@@ -31,6 +31,7 @@ import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
+import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * This class parses a formula string into a List of tokens in RPN order.
@@ -982,13 +983,20 @@ public final class FormulaParser {
 			}
 			msg += " but got " + numArgs + ".";
 			throw new FormulaParseException(msg);
-		 }
-		if(numArgs > fm.getMaxParams()) {
+		}
+        //the maximum number of arguments depends on the Excel version
+        int maxArgs = fm.getMaxParams();
+        if( maxArgs == FunctionMetadataRegistry.FUNCTION_MAX_PARAMS) {
+            //_book can be omitted by test cases
+            if(_book != null) maxArgs = _book.getSpreadsheetVersion().getMaxFunctionArgs();
+        }
+
+        if(numArgs > maxArgs) {
 			String msg = "Too many arguments to function '" + fm.getName() + "'. ";
 			if(fm.hasFixedArgsLength()) {
-				msg += "Expected " + fm.getMaxParams();
+				msg += "Expected " + maxArgs;
 			} else {
-				msg += "At most " + fm.getMaxParams() + " were expected";
+				msg += "At most " + maxArgs + " were expected";
 			}
 			msg += " but got " + numArgs + ".";
 			throw new FormulaParseException(msg);

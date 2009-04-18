@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula;
 
 import org.apache.poi.hssf.record.formula.NameXPtg;
+import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * Abstracts a workbook for the purpose of formula parsing.<br/>
@@ -44,4 +45,11 @@ public interface FormulaParsingWorkbook {
 	 * @param sheetName a name of a sheet in that workbook
 	 */
 	int getExternalSheetIndex(String workbookName, String sheetName);
+
+    /**
+     * Returns an enum holding spreadhseet properties specific to an Excel version (
+     * max column and row numbers, max arguments to a function, etc.)
+     */
+    SpreadsheetVersion getSpreadsheetVersion();
+
 }

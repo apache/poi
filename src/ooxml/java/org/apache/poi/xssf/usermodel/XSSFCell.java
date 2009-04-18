@@ -366,14 +366,8 @@ public final class XSSFCell implements Cell {
         }
 
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
-        try {
-            Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, wb.getSheetIndex(getSheet()));
-        } catch (RuntimeException e) {
-            if (e.getClass().getName().startsWith(FormulaParser.class.getName())) {
-                throw new IllegalArgumentException("Unparsable formula '" + formula + "'", e);
-            }
-            throw e;
-        }
+        //validate through the FormulaParser
+        FormulaParser.parse(formula, fpb, FormulaType.CELL, wb.getSheetIndex(getSheet()));
 
         CTCellFormula f =  CTCellFormula.Factory.newInstance();
         f.setStringValue(formula);
