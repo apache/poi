@@ -814,8 +814,9 @@ public class HSSFCellStyle implements CellStyle
     public void cloneStyleFrom(CellStyle source) {
 		if(source instanceof HSSFCellStyle) {
 			this.cloneStyleFrom((HSSFCellStyle)source);
+		} else {
+		    throw new IllegalArgumentException("Can only clone from one HSSFCellStyle to another, not between HSSFCellStyle and XSSFCellStyle");
 		}
-		throw new IllegalArgumentException("Can only clone from one HSSFCellStyle to another, not between HSSFCellStyle and XSSFCellStyle");
 	}
     public void cloneStyleFrom(HSSFCellStyle source) {
     	// First we need to clone the extended format
