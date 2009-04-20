@@ -25,9 +25,12 @@ import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTComment;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
@@ -140,11 +143,18 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
 				CTTextParagraph[] paras = 
 					textBody.getPArray();
 				for (int j = 0; j < paras.length; j++) {
-					CTRegularTextRun[] textRuns =
-						paras[j].getRArray();
-					for (int k = 0; k < textRuns.length; k++) {
-						text.append( textRuns[k].getT() );
-					}
+                    XmlCursor c = paras[j].newCursor();
+                    c.selectPath("./*");
+                    while (c.toNextSelection()) {
+                        XmlObject o = c.getObject();
+                        if(o instanceof CTRegularTextRun){
+                            CTRegularTextRun txrun = (CTRegularTextRun)o;
+                            text.append( txrun.getT() );
+                        } else if (o instanceof CTTextLineBreak){
+                            text.append('\n');
+                        }
+                    }
+                    
 					// End each paragraph with a new line
 					text.append("\n");
 				}

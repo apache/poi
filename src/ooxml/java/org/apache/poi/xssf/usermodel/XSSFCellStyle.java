@@ -111,7 +111,9 @@ public class XSSFCellStyle implements CellStyle {
      */
     public void cloneStyleFrom(CellStyle source) {
         if(source instanceof XSSFCellStyle) {
-            this.cloneStyleFrom(source);
+            XSSFCellStyle src = (XSSFCellStyle)source;
+            cellXf.set(src.getCoreXf());
+            cellStyleXf.set(src.getStyleXf());
         } else {
             throw new IllegalArgumentException("Can only clone from one XSSFCellStyle to another, not between HSSFCellStyle and XSSFCellStyle");
         }
