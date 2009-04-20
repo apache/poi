@@ -265,7 +265,13 @@ public abstract class BaseTestCell extends TestCase {
 		assertEquals("I changed!", c2.getStringCellValue());
 		assertEquals(Cell.CELL_TYPE_FORMULA, c2.getCellType());
 		assertEquals(Cell.CELL_TYPE_STRING, c2.getCachedFormulaResultType());
-	}
+
+        //calglin Cell.setCellFormula(null) for a non-formula cell
+        Cell c3 = r.createCell(2);
+        c3.setCellFormula(null);
+        assertEquals(Cell.CELL_TYPE_BLANK, c3.getCellType());
+
+    }
 	private Cell createACell() {
 		return _testDataProvider.createWorkbook().createSheet("Sheet1").createRow(0).createCell(0);
 	}

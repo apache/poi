@@ -359,9 +359,9 @@ public final class XSSFCell implements Cell {
      */
     public void setCellFormula(String formula) {
         XSSFWorkbook wb = row.getSheet().getWorkbook();
-        if (formula == null && cell.isSetF()) {
+        if (formula == null) {
             wb.onDeleteFormula(this);
-            cell.unsetF();
+            if(cell.isSetF()) cell.unsetF();
             return;
         }
 
