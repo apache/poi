@@ -183,6 +183,9 @@ public class POIFSFileSystem
         		null,
         		header_block_reader.getPropertyStart()
         );
+
+        // For whatever reason CLSID of root is always 0.
+        getRoot().setStorageClsid(properties.getRoot().getStorageClsid());
     }
     /**
      * @param stream the stream to be closed
