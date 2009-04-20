@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta6" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">46568 - Fixed XSLFPowerPointExtractor to properly process line breaks</action>
            <action dev="POI-DEVELOPERS" type="fix">39056 - Fixed POIFSFileSystem to set CLSID of root when constructing instances from InputStream</action>
            <action dev="POI-DEVELOPERS" type="fix">47054 - Fixed cloneStyleFrom to avoid exception when cloning styles of the same family</action>
            <action dev="POI-DEVELOPERS" type="fix">46186 - Fixed Sheet to read GutsRecord in the Sheet(RecordStream rs)</action>
