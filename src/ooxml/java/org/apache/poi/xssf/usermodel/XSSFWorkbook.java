@@ -453,7 +453,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
         CTSheet sheet = addSheet(sheetname);
 
-        int sheetNumber = getNumberOfSheets() + 1;
+        int sheetNumber = 1;
+        for(XSSFSheet sh : sheets) sheetNumber = (int)Math.max(sh.sheet.getSheetId() + 1, sheetNumber);
+
         XSSFSheet wrapper = (XSSFSheet)createRelationship(XSSFRelation.WORKSHEET, XSSFFactory.getInstance(), sheetNumber);
         wrapper.sheet = sheet;
         sheet.setId(wrapper.getPackageRelationship().getId());

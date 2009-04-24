@@ -227,5 +227,18 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		assertEquals(2, st.getFills().size());
 		assertEquals(1, st.getBorders().size());
 	}
-	
+
+    public void testIncrementSheetId() throws Exception {
+        XSSFWorkbook wb = getTestDataProvider().createWorkbook();
+        int sheetId = (int)wb.createSheet().sheet.getSheetId();
+        assertEquals(1, sheetId);
+        sheetId = (int)wb.createSheet().sheet.getSheetId();
+        assertEquals(2, sheetId);
+
+        //test file with gaps in the sheetId sequence
+        wb = getTestDataProvider().openSampleWorkbook("47089.xlsm");
+        int lastSheetId = (int)wb.getSheetAt(wb.getNumberOfSheets() - 1).sheet.getSheetId();
+        sheetId = (int)wb.createSheet().sheet.getSheetId();
+        assertEquals(lastSheetId+1, sheetId);
+    }
 }
