@@ -465,7 +465,7 @@ to the event model, and start that as normal.
 One example use for this API is to write a CSV outputter, which always
 outputs a minimum number of columns, even where the file doesn't contain
 some of the rows or cells. It can be found at 
-<code>/src/scratchpad/examples/src/org/apache/poi/hssf/eventusermodel/examples/XLS2CSVmra.java</code>,
+<code>/src/examples/src/org/apache/poi/hssf/eventusermodel/examples/XLS2CSVmra.java</code>,
 and may be called on the command line, or from within your own code.
 The latest version is always available from
 <link href="http://svn.apache.org/repos/asf/poi/trunk/src/scratchpad/examples/src/org/apache/poi/hssf/eventusermodel/examples/">subversion</link>.
