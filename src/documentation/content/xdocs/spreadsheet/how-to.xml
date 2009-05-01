@@ -468,7 +468,7 @@ some of the rows or cells. It can be found at
 <code>/src/examples/src/org/apache/poi/hssf/eventusermodel/examples/XLS2CSVmra.java</code>,
 and may be called on the command line, or from within your own code.
 The latest version is always available from
-<link href="http://svn.apache.org/repos/asf/poi/trunk/src/scratchpad/examples/src/org/apache/poi/hssf/eventusermodel/examples/">subversion</link>.
+<link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/hssf/eventusermodel/examples/">subversion</link>.
 </p>
 <p>
 <em>In POI versions before 3.0.3, this code lived in the scratchpad section. 

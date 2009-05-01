@@ -373,7 +373,7 @@ for (Row row : sheet1) {
 					</source>
 					<p>For very fancy text extraction, XLS to CSV etc, 
 					take a look at
-					<em>/src/scratchpad/examples/src/org/apache/poi/hssf/eventusermodel/examples/XLS2CSVmra.java</em>
+					<em>/src/examples/src/org/apache/poi/hssf/eventusermodel/examples/XLS2CSVmra.java</em>
 					</p>
                 </section>
                 <anchor id="FillsAndFrills"/>
