@@ -22,26 +22,28 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.eventusermodel.HSSFUserException;
 
 /**
- * Interface for use with the HSSFRequest and HSSFEventFactory.  Users should create
- * a listener supporting this interface and register it with the HSSFRequest (associating
- * it with Record SID's).
+ * Abstract class for use with the HSSFRequest and HSSFEventFactory, which
+ *  allows for the halting of processing. 
+ * Users should create subclass of this (which implements the usual
+ *  HSSFListener), and then override the #abortableProcessRecord(Record)
+ *  method to do their processing.
+ * This should then be registered with the HSSFRequest (associating
+ * it with Record SID's) as usual.
  *
  * @see org.apache.poi.hssf.eventusermodel.HSSFEventFactory
  * @see org.apache.poi.hssf.eventusermodel.HSSFRequest
  * @see org.apache.poi.hssf.eventusermodel.HSSFUserException
  *
  * @author Carey Sublette (careysub@earthling.net)
- *
  */
 
 public abstract class AbortableHSSFListener implements HSSFListener
 {
     /**
      * This method, inherited from HSSFListener is implemented as a stub.
-     * It is never called by HSSFEventFActory or HSSFRequest.
-     *
+     * It is never called by HSSFEventFactory or HSSFRequest.
+     * You should implement #abortableProcessRecord instead
      */
-     
 	public void processRecord(Record record)
 	{
 	}
