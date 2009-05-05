@@ -72,6 +72,7 @@ public final class TestEventRecordFactory extends TestCase {
         factory.processRecords(new ByteArrayInputStream(bytes));    
         assertTrue("The record listener must be called", wascalled[0]);    
     }
+    
 
     /**
      * tests that the create record function returns a properly 
