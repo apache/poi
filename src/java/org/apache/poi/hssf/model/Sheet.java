@@ -50,7 +50,6 @@ import org.apache.poi.hssf.record.PrintHeadersRecord;
 import org.apache.poi.hssf.record.ProtectRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
-import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.RefModeRecord;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SCLRecord;
@@ -61,6 +60,7 @@ import org.apache.poi.hssf.record.UncalcedRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.aggregates.ChartSubstreamRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
@@ -71,8 +71,8 @@ import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.PositionTrackingVisitor;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.formula.FormulaShifter;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.hssf.util.PaneInformation;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -165,19 +165,16 @@ public final class Sheet implements Model {
         RowRecordsAggregate rra = null;
 
         records            = new ArrayList<RecordBase>(128);
-        // TODO - take chart streams off into separate java objects
-        int       bofEofNestingLevel = 1;  // nesting level can only get to 2 (when charts are present)
         int dimsloc = -1;
 
-        if (rs.peekNextSid() == BOFRecord.sid) {
-            BOFRecord bof = (BOFRecord) rs.getNext();
-            if (bof.getType() != BOFRecord.TYPE_WORKSHEET) {
-                // TODO - fix junit tests throw new RuntimeException("Bad BOF record type");
-            }
-            records.add(bof);
-        } else {
+        if (rs.peekNextSid() != BOFRecord.sid) {
             throw new RuntimeException("BOF record expected");
         }
+        BOFRecord bof = (BOFRecord) rs.getNext();
+        if (bof.getType() != BOFRecord.TYPE_WORKSHEET) {
+            // TODO - fix junit tests throw new RuntimeException("Bad BOF record type");
+        }
+        records.add(bof);
         while (rs.hasNext()) {
             int recSid = rs.peekNextSid();
 
@@ -198,7 +195,7 @@ public final class Sheet implements Model {
                 continue;
             }
 
-            if (RecordOrderer.isRowBlockRecord(recSid) && bofEofNestingLevel == 1 ) {
+            if (RecordOrderer.isRowBlockRecord(recSid)) {
                 //only add the aggregate once
                 if (rra != null) {
                     throw new RuntimeException("row/cell records found in the wrong place");
@@ -218,13 +215,7 @@ public final class Sheet implements Model {
                     records.add(psb);
                     continue;
                 }
-                if (bofEofNestingLevel == 2) {
-                    psb = new PageSettingsBlock(rs);
-                    // It's normal for a chart to have its own PageSettingsBlock
-                    // Fall through and add psb here, because chart records
-                    // are stored loose among the sheet records.
-                    // this latest psb does not clash with _psBlock
-                } else if (windowTwo != null) {
+                if (windowTwo != null) {
                     // probably 'Custom View Settings' sub-stream which is found between
                     // USERSVIEWBEGIN(01AA) and USERSVIEWEND(01AB)
                     // TODO - create UsersViewAggregate to hold these sub-streams, and simplify this code a bit
@@ -262,6 +253,17 @@ public final class Sheet implements Model {
                 _mergedCellsTable.read(rs);
                 continue;
             }
+            
+            if (recSid == BOFRecord.sid) {
+                ChartSubstreamRecordAggregate chartAgg = new ChartSubstreamRecordAggregate(rs);
+                if (false) {
+                    // TODO - would like to keep the chart aggregate packed, but one unit test needs attention
+                    records.add(chartAgg);
+                } else {
+                    spillAggregate(chartAgg, records);
+                }
+                continue;
+            }
 
             Record rec = rs.getNext();
             if ( recSid == IndexRecord.sid ) {
@@ -277,28 +279,12 @@ public final class Sheet implements Model {
                 continue;
             }
 
-            if (recSid == BOFRecord.sid)
-            {
-                bofEofNestingLevel++;
-                if (log.check( POILogger.DEBUG ))
-                    log.log(POILogger.DEBUG, "Hit BOF record. Nesting increased to " + bofEofNestingLevel);
-                BOFRecord bof = (BOFRecord)rec;
-                // TODO - extract chart sub-stream into record aggregate
-                if (bof.getType() != BOFRecord.TYPE_CHART) {
-                    throw new RecordFormatException("Bad BOF record type: " + bof.getType());
-                }
+            if (recSid == EOFRecord.sid) {
+                records.add(rec);
+                break;
             }
-            else if (recSid == EOFRecord.sid)
-            {
-                --bofEofNestingLevel;
-                if (log.check( POILogger.DEBUG ))
-                    log.log(POILogger.DEBUG, "Hit EOF record. Nesting decreased to " + bofEofNestingLevel);
-                if (bofEofNestingLevel == 0) {
-                    records.add(rec);
-                    break;
-                }
-            }
-            else if (recSid == DimensionsRecord.sid)
+
+            if (recSid == DimensionsRecord.sid)
             {
                 // Make a columns aggregate if one hasn't ready been created.
                 if (_columnInfos == null)
@@ -385,6 +371,12 @@ public final class Sheet implements Model {
         RecordOrderer.addNewSheetRecord(records, _mergedCellsTable);
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "sheet createSheet (existing file) exited");
+    }
+    private static void spillAggregate(RecordAggregate ra, final List<RecordBase> recs) {
+        ra.visitContainedRecords(new RecordVisitor() {
+            public void visitRecord(Record r) {
+                recs.add(r);
+            }});
     }
     /**
      * Hack to recover from the situation where the page settings block has been split by
