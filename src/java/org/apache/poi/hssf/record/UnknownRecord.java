@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -35,6 +36,12 @@ public final class UnknownRecord extends StandardRecord {
 	/*
 	 * Some Record IDs used by POI as 'milestones' in the record stream
 	 */
+	/**
+	 * seems to be part of the {@link PageSettingsBlock}. Not interpreted by POI.
+	 * The name 'PRINTSIZE' was taken from OOO source.<br/>
+	 * The few POI test samples with this record have data { 0x03, 0x00 }.
+	 */
+	public static final int PRINTSIZE_0033       = 0x0033;
 	public static final int PLS_004D             = 0x004D;
 	public static final int SHEETPR_0081         = 0x0081;
 	public static final int STANDARDWIDTH_0099   = 0x0099;
@@ -123,6 +130,7 @@ public final class UnknownRecord extends StandardRecord {
 		// Make sure you delete the corresponding entry from 
 		// this method any time a new Record subclass is created.
 		switch (sid) {
+			case PRINTSIZE_0033: return "PRINTSIZE";
 			case PLS_004D: return "PLS";
 			case 0x0050: return "DCON"; // Data Consolidation Information
 			case 0x007F: return "IMDATA";

@@ -70,9 +70,10 @@ public final class PageSettingsBlock extends RecordAggregate {
 	 * include any trailing {@link ContinueRecord}s.
 	 */
 	private List<ContinueRecord> _plsContinues;
-	private PrintSetupRecord printSetup;
+	private PrintSetupRecord _printSetup;
 	private Record _bitmap;
 	private Record _headerFooter;
+	private Record _printSize;
 
 	public PageSettingsBlock(RecordStream rs) {
 		while(true) {
@@ -92,7 +93,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 		_footer = new FooterRecord("");
 		_hCenter = createHCenter();
 		_vCenter = createVCenter();
-		printSetup = createPrintSetup();
+		_printSetup = createPrintSetup();
 	}
 
 	/**
@@ -114,6 +115,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 			case UnknownRecord.PLS_004D:
 			case PrintSetupRecord.sid:
 			case UnknownRecord.BITMAP_00E9:
+			case UnknownRecord.PRINTSIZE_0033: 
 			case UnknownRecord.HEADER_FOOTER_089C: // extra header/footer settings supported by Excel 2007 
 				return true;
 		}
@@ -162,10 +164,13 @@ public final class PageSettingsBlock extends RecordAggregate {
 				}
 				break;
 			case PrintSetupRecord.sid:
-				printSetup = (PrintSetupRecord)rs.getNext();
+				_printSetup = (PrintSetupRecord)rs.getNext();
 				break;
 			case UnknownRecord.BITMAP_00E9:
 				_bitmap = rs.getNext();
+				break;
+			case UnknownRecord.PRINTSIZE_0033:
+				_printSize = rs.getNext();
 				break;
 			case UnknownRecord.HEADER_FOOTER_089C:
 				_headerFooter = rs.getNext();
@@ -228,8 +233,9 @@ public final class PageSettingsBlock extends RecordAggregate {
 				visitIfPresent(cr, rv);
 			}
 		}
-		visitIfPresent(printSetup, rv);
+		visitIfPresent(_printSetup, rv);
 		visitIfPresent(_bitmap, rv);
+		visitIfPresent(_printSize, rv);
 		visitIfPresent(_headerFooter, rv);
 	}
 	private static void visitIfPresent(Record r, RecordVisitor rv) {
@@ -333,7 +339,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 	 */
 	public PrintSetupRecord getPrintSetup ()
 	{
-		return printSetup;
+		return _printSetup;
 	}
 
 	/**
@@ -342,7 +348,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 	 */
 	public void setPrintSetup (PrintSetupRecord newPrintSetup)
 	{
-		printSetup = newPrintSetup;
+		_printSetup = newPrintSetup;
 	}
 
 
