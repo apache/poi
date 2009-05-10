@@ -50,6 +50,7 @@ import org.apache.poi.hssf.record.PrintHeadersRecord;
 import org.apache.poi.hssf.record.ProtectRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
+import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.RefModeRecord;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SCLRecord;
@@ -210,40 +211,47 @@ public final class Sheet implements Model {
             }
 
             if (PageSettingsBlock.isComponentRecord(recSid)) {
-                PageSettingsBlock psb = new PageSettingsBlock(rs);
+                PageSettingsBlock psb;
                 if (_psBlock == null) {
+                    psb = new PageSettingsBlock(rs);
                     _psBlock = psb;
-                } else {
-                    if (bofEofNestingLevel == 2) {
-                        // It's normal for a chart to have its own PageSettingsBlock
-                        // Fall through and add psb here, because chart records
-                        // are stored loose among the sheet records.
-                        // this latest psb does not clash with _psBlock
-                    } else if (windowTwo != null) {
-                        // probably 'Custom View Settings' sub-stream which is found between
-                        // USERSVIEWBEGIN(01AA) and USERSVIEWEND(01AB)
-                        // TODO - create UsersViewAggregate to hold these sub-streams, and simplify this code a bit
-                        // This happens three times in test sample file "29982.xls"
-                        // Also several times in bugzilla samples 46840-23373 and 46840-23374
-                        if (recSid == UnknownRecord.HEADER_FOOTER_089C) {
-                            _psBlock.addLateHeaderFooter(rs.getNext());
-                        } else if (rs.peekNextSid() != UnknownRecord.USERSVIEWEND_01AB) {
-                            // not quite the expected situation
-                            throw new RuntimeException("two Page Settings Blocks found in the same sheet");
-                        }
-                    } else {
-                            // Some apps write PLS, WSBOOL, <psb> but PLS is part of <psb>
-                            // This happens in the test sample file "NoGutsRecords.xls" and "WORKBOOK_in_capitals.xls"
-                            // In this case the first PSB is two records back
-                            int prevPsbIx = records.size()-2;
-                            if (_psBlock != records.get(prevPsbIx) || !(records.get(prevPsbIx+1) instanceof WSBoolRecord)) {
-                                // not quite the expected situation
-                                throw new RuntimeException("two Page Settings Blocks found in the same sheet");
-                            }
-                            records.remove(prevPsbIx); // WSBOOL will drop down one position.
-                            psb = mergePSBs(_psBlock, psb);
-                            _psBlock = psb;
+                    records.add(psb);
+                    continue;
+                }
+                if (bofEofNestingLevel == 2) {
+                    psb = new PageSettingsBlock(rs);
+                    // It's normal for a chart to have its own PageSettingsBlock
+                    // Fall through and add psb here, because chart records
+                    // are stored loose among the sheet records.
+                    // this latest psb does not clash with _psBlock
+                } else if (windowTwo != null) {
+                    // probably 'Custom View Settings' sub-stream which is found between
+                    // USERSVIEWBEGIN(01AA) and USERSVIEWEND(01AB)
+                    // TODO - create UsersViewAggregate to hold these sub-streams, and simplify this code a bit
+                    // This happens three times in test sample file "29982.xls"
+                    // Also several times in bugzilla samples 46840-23373 and 46840-23374
+                    if (recSid == UnknownRecord.HEADER_FOOTER_089C) {
+                        _psBlock.addLateHeaderFooter(rs.getNext());
+                        continue;
                     }
+                    psb = new PageSettingsBlock(rs);
+                    if (rs.peekNextSid() != UnknownRecord.USERSVIEWEND_01AB) {
+                        // not quite the expected situation
+                        throw new RuntimeException("two Page Settings Blocks found in the same sheet");
+                    }
+                } else {
+                    psb = new PageSettingsBlock(rs);
+                    // Some apps write PLS, WSBOOL, <psb> but PLS is part of <psb>
+                    // This happens in the test sample file "NoGutsRecords.xls" and "WORKBOOK_in_capitals.xls"
+                    // In this case the first PSB is two records back
+                    int prevPsbIx = records.size()-2;
+                    if (_psBlock != records.get(prevPsbIx) || !(records.get(prevPsbIx+1) instanceof WSBoolRecord)) {
+                        // not quite the expected situation
+                        throw new RuntimeException("two Page Settings Blocks found in the same sheet");
+                    }
+                    records.remove(prevPsbIx); // WSBOOL will drop down one position.
+                    psb = mergePSBs(_psBlock, psb);
+                    _psBlock = psb;
                 }
                 records.add(psb);
                 continue;
@@ -274,6 +282,11 @@ public final class Sheet implements Model {
                 bofEofNestingLevel++;
                 if (log.check( POILogger.DEBUG ))
                     log.log(POILogger.DEBUG, "Hit BOF record. Nesting increased to " + bofEofNestingLevel);
+                BOFRecord bof = (BOFRecord)rec;
+                // TODO - extract chart sub-stream into record aggregate
+                if (bof.getType() != BOFRecord.TYPE_CHART) {
+                    throw new RecordFormatException("Bad BOF record type: " + bof.getType());
+                }
             }
             else if (recSid == EOFRecord.sid)
             {

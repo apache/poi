@@ -35,6 +35,7 @@ import org.apache.poi.hssf.record.Margin;
 import org.apache.poi.hssf.record.PageBreakRecord;
 import org.apache.poi.hssf.record.PrintSetupRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.RightMarginRecord;
 import org.apache.poi.hssf.record.TopMarginRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
@@ -538,6 +539,9 @@ public final class PageSettingsBlock extends RecordAggregate {
 	public void addLateHeaderFooter(Record rec) {
 		if (_headerFooter != null) {
 			throw new IllegalStateException("This page settings block already has a header/footer record");
+		}
+		if (rec.getSid() != UnknownRecord.HEADER_FOOTER_089C) {
+			throw new RecordFormatException("Unexpected header-footer record sid: 0x" + Integer.toHexString(rec.getSid()));
 		}
 		_headerFooter = rec;
 	}

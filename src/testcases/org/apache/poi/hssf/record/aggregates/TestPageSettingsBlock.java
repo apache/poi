@@ -30,6 +30,7 @@ import org.apache.poi.hssf.record.DimensionsRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.FooterRecord;
 import org.apache.poi.hssf.record.HeaderRecord;
+import org.apache.poi.hssf.record.IndexRecord;
 import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.UnknownRecord;
@@ -45,7 +46,7 @@ import org.apache.poi.util.HexRead;
  * 
  * @author Dmitriy Kumshayev
  */
-public final class TestPageSettingBlock extends TestCase {
+public final class TestPageSettingsBlock extends TestCase {
 	
 	public void testPrintSetup_bug46548() {
 		
@@ -107,6 +108,48 @@ public final class TestPageSettingBlock extends TestCase {
 		sheet.visitContainedRecords(rv, rowIx);
 		Record[] outRecs = rv.getRecords();
 		assertEquals(13, outRecs.length);
+	}
+
+	/**
+	 * Bug 46953 occurred because POI didn't handle late PSB records properly.
+	 */
+	public void testLateHeaderFooter_bug46953() {
+
+		int rowIx = 5;
+		int colIx = 6;
+		NumberRecord nr = new NumberRecord();
+		nr.setRow(rowIx);
+		nr.setColumn((short) colIx);
+		nr.setValue(3.0);
+
+		Record[] recs = {
+				BOFRecord.createSheetBOF(),
+				new HeaderRecord("&LSales Figures"),
+				new FooterRecord("&LJanuary"),
+				new DimensionsRecord(),
+				new WindowTwoRecord(),
+				ur(UnknownRecord.HEADER_FOOTER_089C, "9C 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 C4 60 00 00 00 00 00 00 00 00"),
+				EOFRecord.instance,
+		};
+		RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
+		Sheet sheet = Sheet.createSheet(rs);
+
+		RecordCollector rv = new RecordCollector();
+		sheet.visitContainedRecords(rv, rowIx);
+		Record[] outRecs = rv.getRecords();
+		if (outRecs[4] == EOFRecord.instance) {
+			throw new AssertionFailedError("Identified bug 46953 - EOF incorrectly appended to PSB");
+		}
+		assertEquals(recs.length+1, outRecs.length); // +1 for index record
+
+		assertEquals(BOFRecord.class, outRecs[0].getClass());
+		assertEquals(IndexRecord.class, outRecs[1].getClass());
+		assertEquals(HeaderRecord.class, outRecs[2].getClass());
+		assertEquals(FooterRecord.class, outRecs[3].getClass());
+		assertEquals(UnknownRecord.HEADER_FOOTER_089C, outRecs[4].getSid());
+		assertEquals(DimensionsRecord.class, outRecs[5].getClass());
+		assertEquals(WindowTwoRecord.class, outRecs[6].getClass());
+		assertEquals(EOFRecord.instance, outRecs[7]);
 	}
 
 	private static UnknownRecord ur(int sid, String hexData) {
