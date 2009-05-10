@@ -36,7 +36,7 @@ public final class AllRecordAggregateTests {
 		result.addTestSuite(TestRowRecordsAggregate.class);
 		result.addTestSuite(TestSharedValueManager.class);
 		result.addTestSuite(TestValueRecordsAggregate.class);
-		result.addTestSuite(TestPageSettingBlock.class);
+		result.addTestSuite(TestPageSettingsBlock.class);
 		return result;
 	}
 }
