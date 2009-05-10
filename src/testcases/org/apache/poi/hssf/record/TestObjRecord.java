@@ -20,10 +20,10 @@ package org.apache.poi.hssf.record;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.poi.util.HexRead;
-
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+
+import org.apache.poi.util.HexRead;
 
 /**
  * Tests the serialization and deserialization of the ObjRecord class works correctly.
@@ -48,7 +48,12 @@ public final class TestObjRecord extends TestCase {
             // it's not bug 38607 attachment 17639
     );
 
+    /**
+     * Hex dump from
+     * offset 0x2072 in att 22076 of bug 45133
+     */
     private static final byte[] recdataNeedingPadding = HexRead.readFromString(""
+            + "5D 00 20 00"
             + "15 00 12 00 00 00 01 00 11 60 00 00 00 00 38 6F CC 03 00 00 00 00 06 00 02 00 00 00 00 00 00 00"
     );
 
@@ -57,7 +62,7 @@ public final class TestObjRecord extends TestCase {
 
         assertEquals(26, record.getRecordSize() - 4);
 
-        List subrecords = record.getSubRecords();
+        List<SubRecord> subrecords = record.getSubRecords();
         assertEquals(2, subrecords.size() );
         assertTrue(subrecords.get(0) instanceof CommonObjectDataSubRecord);
         assertTrue(subrecords.get(1) instanceof EndSubRecord );
@@ -94,14 +99,14 @@ public final class TestObjRecord extends TestCase {
         System.arraycopy(recordBytes, 4, bytes, 0, bytes.length);
 
         record = new ObjRecord(TestcaseRecordInputStream.create(ObjRecord.sid, bytes));
-        List subrecords = record.getSubRecords();
+        List<SubRecord> subrecords = record.getSubRecords();
         assertEquals( 2, subrecords.size() );
         assertTrue( subrecords.get(0) instanceof CommonObjectDataSubRecord);
         assertTrue( subrecords.get(1) instanceof EndSubRecord );
     }
     
     public void testReadWriteWithPadding_bug45133() {
-        ObjRecord record = new ObjRecord(TestcaseRecordInputStream.create(ObjRecord.sid, recdataNeedingPadding));
+        ObjRecord record = new ObjRecord(TestcaseRecordInputStream.create(recdataNeedingPadding));
         
         if (record.getRecordSize() == 34) {
             throw new AssertionFailedError("Identified bug 45133");
@@ -109,7 +114,7 @@ public final class TestObjRecord extends TestCase {
 
         assertEquals(36, record.getRecordSize());
 
-        List subrecords = record.getSubRecords();
+        List<SubRecord> subrecords = record.getSubRecords();
         assertEquals(3, subrecords.size() );
         assertEquals(CommonObjectDataSubRecord.class, subrecords.get(0).getClass());
         assertEquals(GroupMarkerSubRecord.class, subrecords.get(1).getClass());
