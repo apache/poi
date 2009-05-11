@@ -43,7 +43,6 @@ import org.apache.poi.hssf.model.CommentShape;
 import org.apache.poi.hssf.model.ConvertAnchor;
 import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.model.TextboxShape;
-import org.apache.poi.hssf.record.aggregates.RecordAggregate;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
 import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFShape;
@@ -885,11 +884,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 
 	private static short sid( List records, int loc )
 	{
-		Object obj = records.get( loc );
-		if (obj instanceof RecordAggregate) {
-			return -1;
-		}
-		return ( (Record) obj ).getSid();
+		return ( (Record) records.get( loc ) ).getSid();
 	}
 
 

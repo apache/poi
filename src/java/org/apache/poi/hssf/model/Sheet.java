@@ -63,6 +63,7 @@ import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.ChartSubstreamRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
+import org.apache.poi.hssf.record.aggregates.CustomViewSettingsRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.aggregates.MergedCellsTable;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
@@ -206,45 +207,38 @@ public final class Sheet implements Model {
                 records.add(rra); //only add the aggregate once
                 continue;
             }
+            
+            if (CustomViewSettingsRecordAggregate.isBeginRecord(recSid)) {
+                // This happens three times in test sample file "29982.xls"
+                // Also several times in bugzilla samples 46840-23373 and 46840-23374
+                records.add(new CustomViewSettingsRecordAggregate(rs));
+                continue;
+            }
 
             if (PageSettingsBlock.isComponentRecord(recSid)) {
-                PageSettingsBlock psb;
                 if (_psBlock == null) {
-                    psb = new PageSettingsBlock(rs);
-                    _psBlock = psb;
-                    records.add(psb);
+                    // typical case - just one PSB (so far)
+                    _psBlock = new PageSettingsBlock(rs);
+                    records.add(_psBlock);
                     continue;
                 }
-                if (windowTwo != null) {
-                    // probably 'Custom View Settings' sub-stream which is found between
-                    // USERSVIEWBEGIN(01AA) and USERSVIEWEND(01AB)
-                    // TODO - create UsersViewAggregate to hold these sub-streams, and simplify this code a bit
-                    // This happens three times in test sample file "29982.xls"
-                    // Also several times in bugzilla samples 46840-23373 and 46840-23374
-                    if (recSid == UnknownRecord.HEADER_FOOTER_089C) {
-                        _psBlock.addLateHeaderFooter(rs.getNext());
-                        continue;
-                    }
-                    psb = new PageSettingsBlock(rs);
-                    if (rs.peekNextSid() != UnknownRecord.USERSVIEWEND_01AB) {
-                        // not quite the expected situation
-                        throw new RuntimeException("two Page Settings Blocks found in the same sheet");
-                    }
-                } else {
-                    psb = new PageSettingsBlock(rs);
-                    // Some apps write PLS, WSBOOL, <psb> but PLS is part of <psb>
-                    // This happens in the test sample file "NoGutsRecords.xls" and "WORKBOOK_in_capitals.xls"
-                    // In this case the first PSB is two records back
-                    int prevPsbIx = records.size()-2;
-                    if (_psBlock != records.get(prevPsbIx) || !(records.get(prevPsbIx+1) instanceof WSBoolRecord)) {
-                        // not quite the expected situation
-                        throw new RuntimeException("two Page Settings Blocks found in the same sheet");
-                    }
-                    records.remove(prevPsbIx); // WSBOOL will drop down one position.
-                    psb = mergePSBs(_psBlock, psb);
-                    _psBlock = psb;
+                if (recSid == UnknownRecord.HEADER_FOOTER_089C) {
+                    // test samples: SharedFormulaTest.xls, ex44921-21902.xls, ex42570-20305.xls
+                    _psBlock.addLateHeaderFooter(rs.getNext());
+                    continue;
                 }
-                records.add(psb);
+                // Some apps write PLS, WSBOOL, <psb> but PLS is part of <psb>
+                // This happens in the test sample file "NoGutsRecords.xls" and "WORKBOOK_in_capitals.xls"
+                // In this case the first PSB is two records back
+                int prevPsbIx = records.size()-2;
+                if (_psBlock != records.get(prevPsbIx) || !(records.get(prevPsbIx+1) instanceof WSBoolRecord)) {
+                    // not quite the expected situation
+                    throw new RuntimeException("two Page Settings Blocks found in the same sheet");
+                }
+                records.remove(prevPsbIx); // WSBOOL will drop down one position.
+                PageSettingsBlock latePsb = new PageSettingsBlock(rs);
+                _psBlock = mergePSBs(_psBlock, latePsb);
+                records.add(_psBlock);
                 continue;
             }
 
