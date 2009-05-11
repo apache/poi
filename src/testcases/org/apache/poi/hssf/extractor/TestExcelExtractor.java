@@ -165,7 +165,7 @@ public final class TestExcelExtractor extends TestCase {
 		);
 	}
 	
-	public void testWithComments() throws Exception {
+	public void testWithComments() {
 		ExcelExtractor extractor = createExtractor("SimpleWithComments.xls");
 		extractor.setIncludeSheetNames(false);
 
@@ -187,7 +187,7 @@ public final class TestExcelExtractor extends TestCase {
 		);
 	}
 	
-	public void testWithBlank() throws Exception {
+	public void testWithBlank() {
 		ExcelExtractor extractor = createExtractor("MissingBits.xls");
 		String def = extractor.getText();
 		extractor.setIncludeBlankCells(true);
@@ -277,7 +277,7 @@ public final class TestExcelExtractor extends TestCase {
 	/**
 	 * Test that we get text from headers and footers
 	 */
-	public void test45538() throws Exception {
+	public void test45538() {
 		String[] files = {
 			"45538_classic_Footer.xls", "45538_form_Footer.xls",    
 			"45538_classic_Header.xls", "45538_form_Header.xls"

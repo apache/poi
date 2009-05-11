@@ -48,10 +48,7 @@ public final class HSSFTests {
         suite.addTest(AllUserModelTests.suite());
         suite.addTest(AllRecordTests.suite());
         suite.addTest(AllHSSFUtilTests.suite());
-
-        if (false) { // TODO - hook this test up
-            suite.addTest(new TestSuite(TestExcelExtractor.class));
-        }
+        suite.addTest(new TestSuite(TestExcelExtractor.class));
         suite.addTest(new TestSuite(TestEventRecordFactory.class));
         suite.addTest(new TestSuite(TestModelFactory.class));
         suite.addTest(AllSSFormulaTests.suite());
