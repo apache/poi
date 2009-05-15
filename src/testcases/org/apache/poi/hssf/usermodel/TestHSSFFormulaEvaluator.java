@@ -21,9 +21,11 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 /**
- * 
+ *
  * @author Josh Micich
  */
 public final class TestHSSFFormulaEvaluator extends TestCase {
@@ -41,7 +43,7 @@ public final class TestHSSFFormulaEvaluator extends TestCase {
 		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
 		assertEquals(3.72, cv.getNumberValue(), 0.0);
 	}
-	
+
 	public void testFullColumnRefs() {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Sheet1");
@@ -56,18 +58,18 @@ public final class TestHSSFFormulaEvaluator extends TestCase {
 		setValue(sheet, 2, 3, 6.0);
 		setValue(sheet, 5, 3, 7.0);
 		setValue(sheet, 50, 3, 8.0);
-		
+
 		// some values in column E
 		setValue(sheet, 1, 4, 9.0);
 		setValue(sheet, 2, 4, 10.0);
 		setValue(sheet, 30000, 4, 11.0);
-		
-		// some other values 
+
+		// some other values
 		setValue(sheet, 1, 2, 100.0);
 		setValue(sheet, 2, 5, 100.0);
 		setValue(sheet, 3, 6, 100.0);
-		
-		
+
+
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		assertEquals(26.0, fe.evaluate(cell0).getNumberValue(), 0.0);
 		assertEquals(56.0, fe.evaluate(cell1).getNumberValue(), 0.0);
@@ -120,5 +122,49 @@ public final class TestHSSFFormulaEvaluator extends TestCase {
 			}
 		}
 		assertEquals(3.5, cellB1.getNumericCellValue(), 0.0);
+	}
+
+	/**
+	 * When evaluating defined names, POI has to decide whether it is capable.  Currently
+	 * (May2009) POI only supports simple cell and area refs.<br/>
+	 * The sample spreadsheet (bugzilla attachment 23508) had a name flagged as 'complex'
+	 * which contained a simple area ref.  It is not clear what the 'complex' flag is used
+	 * for but POI should look elsewhere to decide whether it can evaluate the name.
+	 */
+	public void testDefinedNameWithComplexFlag_bug47048() {
+		// Mock up a spreadsheet to match the critical details of the sample
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet("Input");
+		HSSFName definedName = wb.createName();
+		definedName.setNameName("Is_Multicar_Vehicle");
+		definedName.setRefersToFormula("Input!$B$17:$G$17");
+
+		// Set up some data and the formula
+		HSSFRow row17 = sheet.createRow(16);
+		row17.createCell(0).setCellValue(25.0);
+		row17.createCell(1).setCellValue(1.33);
+		row17.createCell(2).setCellValue(4.0);
+
+		HSSFRow row = sheet.createRow(0);
+		HSSFCell cellA1 = row.createCell(0);
+		cellA1.setCellFormula("SUM(Is_Multicar_Vehicle)");
+
+		// Set the complex flag - POI doesn't usually manipulate this flag
+		NameRecord nameRec = TestHSSFName.getNameRecord(definedName);
+		nameRec.setOptionFlag((short)0x10); // 0x10 -> complex
+
+		HSSFFormulaEvaluator hsf = new HSSFFormulaEvaluator(wb);
+		CellValue value;
+		try {
+			value = hsf.evaluate(cellA1);
+		} catch (RuntimeException e) {
+			if (e.getMessage().equals("Don't now how to evalate name 'Is_Multicar_Vehicle'")) {
+				throw new AssertionFailedError("Identified bug 47048a");
+			}
+			throw e;
+		}
+
+		assertEquals(Cell.CELL_TYPE_NUMERIC, value.getCellType());
+		assertEquals(5.33, value.getNumberValue(), 0.0);
 	}
 }

@@ -17,28 +17,19 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 
-import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.record.DBCellRecord;
-import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.StringRecord;
+import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.ss.usermodel.ErrorConstants;
-import org.apache.poi.ss.usermodel.BaseTestCell;
+import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.usermodel.BaseTestNamedRange;
 import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.formula.FormulaType;
 
 /**
  * Tests various functionality having to do with {@link org.apache.poi.ss.usermodel.Name}.
@@ -49,6 +40,30 @@ import org.apache.poi.ss.formula.FormulaType;
  * @author Amol S. Deshmukh &lt; amol at ap ache dot org &gt;
  */
 public final class TestHSSFName extends BaseTestNamedRange {
+
+    /**
+     * For manipulating the internals of {@link HSSFName} during testing.<br/>
+     * Some tests need a {@link NameRecord} with unusual state, not normally producible by POI.
+     * This method achieves the aims at low cost without augmenting the POI usermodel api.
+     * @return a reference to the wrapped {@link NameRecord} 
+     */
+    public static NameRecord getNameRecord(HSSFName definedName) {
+
+        Field f;
+        try {
+            f = HSSFName.class.getDeclaredField("_definedNameRec");
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+        f.setAccessible(true);
+        try {
+            return (NameRecord) f.get(definedName);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        }
 
     @Override
     protected HSSFITestDataProvider getTestDataProvider(){
@@ -71,7 +86,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
 
          assertEquals("Print_Titles", nr1.getNameName());
          if (false) {
-             // 	TODO - full column references not rendering properly, absolute markers not present either
+             //     TODO - full column references not rendering properly, absolute markers not present either
              assertEquals("FirstSheet!$A:$A,FirstSheet!$1:$3", nr1.getRefersToFormula());
          } else {
              assertEquals("FirstSheet!A:A,FirstSheet!$A$1:$IV$3", nr1.getRefersToFormula());
@@ -112,7 +127,6 @@ public final class TestHSSFName extends BaseTestNamedRange {
          }
      }
 
-    /** Test of TestCase method, of class test.RangeTest. */
     public void testNamedRange() {
         HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("Simple.xls");
 
@@ -150,8 +164,8 @@ public final class TestHSSFName extends BaseTestNamedRange {
     public void testNamedRead() {
         HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("namedinput.xls");
 
-        //Get index of the namedrange with the name = "NamedRangeName" , which was defined in input.xls as A1:D10
-        int NamedRangeIndex	 = wb.getNameIndex("NamedRangeName");
+        //Get index of the named range with the name = "NamedRangeName" , which was defined in input.xls as A1:D10
+        int NamedRangeIndex     = wb.getNameIndex("NamedRangeName");
 
         //Getting NAmed Range
         HSSFName namedRange1 = wb.getNameAt(NamedRangeIndex);
@@ -201,7 +215,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
     }
 
 
-    public void testDeletedReference() throws Exception {
+    public void testDeletedReference() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("24207.xls");
         assertEquals(2, wb.getNumberOfNames());
 
@@ -224,9 +238,9 @@ public final class TestHSSFName extends BaseTestNamedRange {
     }
 
     /**
-     * When setting A1 type of referencese HSSFName.setRefersToFormula
+     * When setting A1 type of references with HSSFName.setRefersToFormula
      * must set the type of operands to Ptg.CLASS_REF,
-     * otherwise created named don't appear in the dropdown to the left opf formula bar in Excel
+     * otherwise created named don't appear in the drop-down to the left of formula bar in Excel
      */
     public void testTypeOfRootPtg(){
         HSSFWorkbook wb = new HSSFWorkbook();
