@@ -72,6 +72,9 @@ public final class NameRecord extends StandardRecord {
 		public static final int OPT_COMPLEX =       0x0010;
 		public static final int OPT_BUILTIN =       0x0020;
 		public static final int OPT_BINDATA =       0x1000;
+		public static final boolean isFormula(int optValue) {
+			return (optValue & 0x0F) == 0;
+		}
 	}
 
 	private short             field_1_option_flag;
@@ -239,7 +242,7 @@ public final class NameRecord extends StandardRecord {
 	 * @return <code>true</code> if name has a formula (named range or defined value)
 	 */
 	public boolean hasFormula() {
-		return field_1_option_flag == 0 && field_13_name_definition.getEncodedTokenSize() > 0;
+		return Option.isFormula(field_1_option_flag) && field_13_name_definition.getEncodedTokenSize() > 0;
 	}
 
 	/**

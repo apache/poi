@@ -21,9 +21,41 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.constant.ErrorConstant;
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
-import org.apache.poi.hssf.record.formula.*;
+import org.apache.poi.hssf.record.formula.AddPtg;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.hssf.record.formula.AreaI;
+import org.apache.poi.hssf.record.formula.AreaPtg;
+import org.apache.poi.hssf.record.formula.AreaPtgBase;
+import org.apache.poi.hssf.record.formula.ArrayPtg;
+import org.apache.poi.hssf.record.formula.AttrPtg;
+import org.apache.poi.hssf.record.formula.BoolPtg;
+import org.apache.poi.hssf.record.formula.ConcatPtg;
+import org.apache.poi.hssf.record.formula.DividePtg;
+import org.apache.poi.hssf.record.formula.EqualPtg;
+import org.apache.poi.hssf.record.formula.ErrPtg;
+import org.apache.poi.hssf.record.formula.FuncPtg;
+import org.apache.poi.hssf.record.formula.FuncVarPtg;
+import org.apache.poi.hssf.record.formula.IntPtg;
+import org.apache.poi.hssf.record.formula.MemAreaPtg;
+import org.apache.poi.hssf.record.formula.MemFuncPtg;
+import org.apache.poi.hssf.record.formula.MissingArgPtg;
+import org.apache.poi.hssf.record.formula.MultiplyPtg;
+import org.apache.poi.hssf.record.formula.NamePtg;
+import org.apache.poi.hssf.record.formula.NumberPtg;
+import org.apache.poi.hssf.record.formula.PercentPtg;
+import org.apache.poi.hssf.record.formula.PowerPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.RangePtg;
+import org.apache.poi.hssf.record.formula.Ref3DPtg;
+import org.apache.poi.hssf.record.formula.RefPtg;
+import org.apache.poi.hssf.record.formula.StringPtg;
+import org.apache.poi.hssf.record.formula.SubtractPtg;
+import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
+import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
+import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.hssf.usermodel.FormulaExtractor;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
@@ -32,6 +64,7 @@ import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.TestHSSFName;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParserTestHelper;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
@@ -450,7 +483,7 @@ public final class TestFormulaParser extends TestCase {
 	 */
 	public void testPrecedenceAndAssociativity() {
 
-		Class[] expClss;
+		Class<?>[] expClss;
 
 		// TRUE=TRUE=2=2  evaluates to FALSE
 		expClss = new Class[] { BoolPtg.class, BoolPtg.class, EqualPtg.class,
@@ -484,12 +517,12 @@ public final class TestFormulaParser extends TestCase {
 		confirmTokenClasses("2^200%", expClss);
 	}
 
-	/* package */ static Ptg[] confirmTokenClasses(String formula, Class[] expectedClasses) {
+	/* package */ static Ptg[] confirmTokenClasses(String formula, Class<?>[] expectedClasses) {
 		Ptg[] ptgs = parseFormula(formula);
 		confirmTokenClasses(ptgs, expectedClasses);
 		return ptgs;
 	}
-	private static void confirmTokenClasses(Ptg[] ptgs, Class[] expectedClasses) {
+	private static void confirmTokenClasses(Ptg[] ptgs, Class<?>[] expectedClasses) {
 		assertEquals(expectedClasses.length, ptgs.length);
 		for (int i = 0; i < expectedClasses.length; i++) {
 			if(expectedClasses[i] != ptgs[i].getClass()) {
@@ -504,7 +537,7 @@ public final class TestFormulaParser extends TestCase {
 		confirmTokenClasses("2^5", new Class[] { IntPtg.class, IntPtg.class, PowerPtg.class, });
 	}
 
-	private static Ptg parseSingleToken(String formula, Class ptgClass) {
+	private static Ptg parseSingleToken(String formula, Class<? extends Ptg> ptgClass) {
 		Ptg[] ptgs = parseFormula(formula);
 		assertEquals(1, ptgs.length);
 		Ptg result = ptgs[0];
@@ -533,7 +566,7 @@ public final class TestFormulaParser extends TestCase {
 
 	public void testMissingArgs() {
 
-		Class[] expClss;
+		Class<?>[] expClss;
 
 		expClss = new Class[] {
 				RefPtg.class,
@@ -930,7 +963,7 @@ public final class TestFormulaParser extends TestCase {
 		wb.createSheet("Sheet1");
 		Ptg[] ptgs = FormulaParser.parse(formula, HSSFEvaluationWorkbook.create(wb));
 
-		Class[] expectedClasses = {
+		Class<?>[] expectedClasses = {
 				// TODO - AttrPtg.class, // Excel prepends this
 				MemFuncPtg.class,
 				Area3DPtg.class,
@@ -958,7 +991,7 @@ public final class TestFormulaParser extends TestCase {
 			throw new AssertionFailedError("Identified bug 46643");
 		}
 
-		Class [] expectedClasses = {
+		Class<?> [] expectedClasses = {
 				MemFuncPtg.class,
 				Ref3DPtg.class,
 				Ref3DPtg.class,
@@ -1026,7 +1059,7 @@ public final class TestFormulaParser extends TestCase {
 			RangePtg.class, //
 			AttrPtg.class, // [sum ]
 		});
-		
+
 	}
 
 	public void testUnionOfFullCollFullRowRef() {
@@ -1164,5 +1197,36 @@ public final class TestFormulaParser extends TestCase {
 		} catch (RuntimeException e) {
 			FormulaParserTestHelper.confirmParseException(e, expectedMessage);
 		}
+	}
+
+	/**
+	 * In bug 47078, POI had trouble evaluating a defined name flagged as 'complex'.
+	 * POI should also be able to parse such defined names.
+	 */
+	public void testParseComplexName() {
+
+		// Mock up a spreadsheet to match the critical details of the sample
+		HSSFWorkbook wb = new HSSFWorkbook();
+		wb.createSheet("Sheet1");
+		HSSFName definedName = wb.createName();
+		definedName.setNameName("foo");
+		definedName.setRefersToFormula("Sheet1!B2");
+
+		// Set the complex flag - POI doesn't usually manipulate this flag
+		NameRecord nameRec = TestHSSFName.getNameRecord(definedName);
+		nameRec.setOptionFlag((short)0x10); // 0x10 -> complex
+
+		Ptg[] result;
+		try {
+			result = HSSFFormulaParser.parse("1+foo", wb);
+		} catch (RuntimeException e) {
+			FormulaParserTestHelper.confirmParseException(e);
+			if (e.getMessage().equals("Specified name 'foo' is not a range as expected.")) {
+				throw new AssertionFailedError("Identified bug 47078c");
+			}
+			throw e;
+		}
+		assertNotNull("Ptg array should not be null", result);
+		confirmTokenClasses(result, new Class[] { IntPtg.class, NamePtg.class, AddPtg.class,});
 	}
 }
