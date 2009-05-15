@@ -20,7 +20,6 @@ package org.apache.poi.ss.formula;
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 
-import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParser.FormulaParseException;
 /**
  * Avoids making {@link FormulaParseException} public
@@ -28,10 +27,18 @@ import org.apache.poi.ss.formula.FormulaParser.FormulaParseException;
  * @author Josh Micich
  */
 public class FormulaParserTestHelper {
+	/**
+	 * @throws AssertionFailedError  if <tt>e</tt> is not a formula parser exception 
+	 * or if the exception message doesn't match.
+	 */
 	public static void confirmParseException(RuntimeException e, String expectedMessage) {
 		checkType(e);
 		Assert.assertEquals(expectedMessage, e.getMessage());
 	}
+	/**
+	 * @throws AssertionFailedError  if <tt>e</tt> is not a formula parser exception 
+	 * or if <tt>e</tt> has no message.
+	 */
 	public static void confirmParseException(RuntimeException e) {
 		checkType(e);
 		Assert.assertNotNull(e.getMessage());
