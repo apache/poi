@@ -14,29 +14,47 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+package org.apache.poi.hsmf.datatypes;
 
-package org.apache.poi.hsmf;
+import java.io.ByteArrayOutputStream;
 
-import junit.framework.*;
+/**
+ * A Chunk made up of a ByteArrayOutputStream.
+ */
 
-public class AllTests
-  extends TestCase
-{
+public class ByteChunk extends Chunk {
 
-  public AllTests(String s)
-  {
-    super(s);
-  }
+	private ByteArrayOutputStream value;
+	
+	/**
+	 * Creates a Byte Chunk, for either the old
+	 *  or new style of string chunk types.
+	 */
+	public ByteChunk(int chunkId, boolean newStyleString) {
+		this(chunkId, getStringType(newStyleString));
+	}
+	private static int getStringType(boolean newStyleString) {
+		if(newStyleString)
+			return Types.NEW_STRING;
+		return Types.OLD_STRING;
+	}
+	
+	/**
+	 * Create a Byte Chunk, with the specified
+	 *  type.
+	 */
+	public ByteChunk(int chunkId, int type) {
+		this.chunkId = chunkId;
+		this.type = type;
+	}
+	
+	public ByteArrayOutputStream getValueByteArray() {
+		return this.value;
+	}
 
-  public static Test suite()
-  {
-    TestSuite suite = new TestSuite();
-    suite.addTestSuite(org.apache.poi.hsmf.model.TestBlankFileRead.class);
-    suite.addTestSuite(org.apache.poi.hsmf.model.TestSimpleFileRead.class);
-    suite.addTestSuite(org.apache.poi.hsmf.model.TestOutlook30FileRead.class);
-    suite.addTestSuite(org.apache.poi.hsmf.model.TestChunkData.class);
-    suite.addTestSuite(org.apache.poi.hsmf.model.TestFileWithAttachmentsRead.class);
-    
-    return suite;
-  }
+	public void setValue(ByteArrayOutputStream value) {
+		this.value = value;
+	}
+
+	
 }

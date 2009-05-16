@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.poi.hsmf.datatypes.Chunk;
 import org.apache.poi.hsmf.datatypes.Chunks;
@@ -158,5 +159,14 @@ public class MAPIMessage {
 	 */
 	public String getMessageClass() throws ChunkNotFoundException {
 		return getStringFromChunk(chunks.messageClass);
+	}	
+	
+	/**
+	 * Gets the message attachments.
+	 * 
+	 * @return a map containing attachment name (String) and data (ByteArrayInputStream)
+	 */
+	public Map getAttachmentFiles() {
+		return this.chunkParser.getAttachmentList();
 	}	
 }
