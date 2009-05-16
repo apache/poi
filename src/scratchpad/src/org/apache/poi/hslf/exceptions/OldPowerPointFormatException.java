@@ -1,3 +1,4 @@
+
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -14,12 +15,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hssf;
+package org.apache.poi.hslf.exceptions;
 
 import org.apache.poi.OldFileFormatException;
 
-public class OldExcelFormatException extends OldFileFormatException {
-	public OldExcelFormatException(String s) {
+/**
+ * This exception is thrown when we try to open a PowerPoint file, and
+ *  it's too old for us.
+ */
+public class OldPowerPointFormatException extends OldFileFormatException {
+	public OldPowerPointFormatException(String s) {
 		super(s);
 	}
 }
