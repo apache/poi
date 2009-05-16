@@ -18,6 +18,9 @@
 package org.apache.poi.hsmf.datatypes;
 
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
+
+import org.apache.poi.hsmf.datatypes.Types;
 
 /**
  * A Chunk made up of a single string.
@@ -61,7 +64,21 @@ public class StringChunk extends Chunk {
 	 * @see org.apache.poi.hsmf.Chunk.Chunk#setValue(java.io.ByteArrayOutputStream)
 	 */
 	public void setValue(ByteArrayOutputStream value) {
-		this.value = value.toString().replaceAll("\0", "");
+		String tmpValue;
+		if (type == Types.NEW_STRING) {
+			try {
+				tmpValue = new String(value.toByteArray(), "UTF-16LE");
+			} catch (UnsupportedEncodingException e) {
+				throw new RuntimeException("Core encoding not found, JVM broken?", e);
+			}
+		} else {
+			try {
+				tmpValue = new String(value.toByteArray(), "CP1252");
+			} catch (UnsupportedEncodingException e) {
+				throw new RuntimeException("Core encoding not found, JVM broken?", e);
+			}
+		}
+		this.value = tmpValue.replace("\0", "");
 	}
 
 	public String toString() {
