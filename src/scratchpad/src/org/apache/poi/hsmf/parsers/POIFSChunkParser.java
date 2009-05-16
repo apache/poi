@@ -17,12 +17,16 @@
 
 package org.apache.poi.hsmf.parsers;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
+import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.datatypes.Chunk;
 import org.apache.poi.hsmf.datatypes.Chunks;
 import org.apache.poi.hsmf.datatypes.Types;
@@ -89,14 +93,30 @@ public class POIFSChunkParser {
 	 *  appropriate for the chunks we find in the file.
 	 */
 	public Chunks identifyChunks() {
+		return Chunks.getInstance(this.isNewChunkVersion(this.directoryMap));
+	}
+	
+	/**
+	 * Returns a list of the standard chunk types, as 
+	 *  appropriate for the chunks we find in the file attachment.
+	 */
+	private AttachmentChunks identifyAttachmentChunks(Map attachmentMap) {
+		return AttachmentChunks.getInstance(this.isNewChunkVersion(attachmentMap));
+	}
+	
+	/**
+	 * Return chunk version of the map in parameter
+	 */
+	private boolean isNewChunkVersion(Map map) {
 		// Are they of the old or new type of strings?
 		boolean hasOldStrings = false;
 		boolean hasNewStrings = false;
 		String oldStringEnd = Types.asFileEnding(Types.OLD_STRING);
 		String newStringEnd = Types.asFileEnding(Types.NEW_STRING);
 		
-		for(Iterator i = directoryMap.keySet().iterator(); i.hasNext();) {
+		for(Iterator i = map.keySet().iterator(); i.hasNext();) {
 			String entry = (String)i.next();
+			
 			if(entry.endsWith( oldStringEnd )) {
 				hasOldStrings = true;
 			}
@@ -108,9 +128,9 @@ public class POIFSChunkParser {
 		if(hasOldStrings && hasNewStrings) {
 			throw new IllegalStateException("Your file contains string chunks of both the old and new types. Giving up");
 		} else if(hasNewStrings) {
-			return Chunks.getInstance(true);
+			return true;
 		}
-		return Chunks.getInstance(false);
+		return false;
 	}
 	
 	/**
@@ -165,6 +185,39 @@ public class POIFSChunkParser {
 		return getDocumentNode(this.directoryMap, chunk);
 	}
 	
+	/**
+	 * 
+	 * @return a map containing attachment name (String) and data (ByteArrayInputStream)
+	 */
+	public Map getAttachmentList() {
+		Map attachments = new HashMap();
+		List attachmentList = new ArrayList();
+		for(Iterator i = directoryMap.keySet().iterator(); i.hasNext();) {
+			String entry = (String)i.next();
+			
+			if(entry.startsWith(AttachmentChunks.namePrefix)) {
+				String attachmentIdString = entry.replace(AttachmentChunks.namePrefix, "");
+				try {
+					int attachmentId = Integer.parseInt(attachmentIdString);
+					attachmentList.add((HashMap)directoryMap.get(entry));
+				} catch (NumberFormatException nfe) {
+					System.err.println("Invalid attachment id");
+				}
+			}
+		}
+		for (Iterator iterator = attachmentList.iterator(); iterator.hasNext();) {
+			HashMap AttachmentChunkMap = (HashMap) iterator.next();
+			AttachmentChunks attachmentChunks = this.identifyAttachmentChunks(AttachmentChunkMap);
+			try {
+				Chunk fileName = this.getDocumentNode(AttachmentChunkMap, attachmentChunks.attachLongFileName);
+				Chunk content = this.getDocumentNode(AttachmentChunkMap, attachmentChunks.attachData);
+				attachments.put(fileName.toString(), new ByteArrayInputStream(content.getValueByteArray().toByteArray()));
+			} catch (ChunkNotFoundException e) {
+				System.err.println("Invalid attachment chunk");
+			}
+		}
+		return attachments;
+	}
 	
 	/**
 	 * Processes an iterator returned by a POIFS call to getRoot().getEntries()
