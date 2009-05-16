@@ -68,7 +68,7 @@ public class TestBlankFileRead extends TestCase {
 		String obtained = mapiMessage.getDisplayCC();
 		String expected = "";
 		
-		TestCase.assertEquals(obtained, expected);
+		TestCase.assertEquals(expected, obtained);
 	}
 	
 	/**
@@ -80,7 +80,7 @@ public class TestBlankFileRead extends TestCase {
 		String obtained = mapiMessage.getDisplayTo();
 		String expected = "";
 		
-		TestCase.assertEquals(obtained, expected);
+		TestCase.assertEquals(expected, obtained);
 	}
 	
 	/**
@@ -107,7 +107,7 @@ public class TestBlankFileRead extends TestCase {
 		String obtained = mapiMessage.getDisplayBCC();
 		String expected = "";
 		
-		TestCase.assertEquals(obtained, expected);
+		TestCase.assertEquals(expected, obtained);
 	}
 	
 	
