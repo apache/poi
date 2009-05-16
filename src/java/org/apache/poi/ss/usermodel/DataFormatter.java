@@ -147,7 +147,7 @@ public class DataFormatter {
         if (format != null) {
             return format;
         }
-        if (formatStr.equals("General")) {
+        if (formatStr.equals("General") || formatStr.equals("@")) {
             if (DataFormatter.isWholeNumber(cellValue)) {
                 return generalWholeNumFormat;
             }

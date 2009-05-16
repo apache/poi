@@ -21,6 +21,8 @@ import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.Iterator;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
+
 import junit.framework.TestCase;
 
 /**
@@ -266,6 +268,24 @@ public final class TestHSSFDataFormatter extends TestCase {
 			assertTrue(formatter.formatCellValue(cell).startsWith("Balance "));
 			assertTrue(formatter.formatCellValue(cell).endsWith(" USD"));
 		}
+	}
+	
+	/**
+	 * A format of "@" means use the general format
+	 */
+	public void testGeneralAtFormat() {
+        HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("47154.xls");
+        HSSFSheet sheet       = workbook.getSheetAt(0);
+        HSSFRow   row         = sheet.getRow(0);
+        HSSFCell  cellA1      = row.getCell(0);
+        
+        assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cellA1.getCellType());
+        assertEquals(2345.0, cellA1.getNumericCellValue(), 0.0001);
+        assertEquals("@", cellA1.getCellStyle().getDataFormatString());
+
+        HSSFDataFormatter f = new HSSFDataFormatter();
+        
+        assertEquals("2345", f.formatCellValue(cellA1));
 	}
 
 	private static void log(String msg) {

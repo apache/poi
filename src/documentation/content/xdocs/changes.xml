@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta6" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">47154 - Handle the cell format @ as the same as General</action>
            <action dev="POI-DEVELOPERS" type="fix">47048 - Fixed evaluation of defined names with the 'complex' flag set</action>
            <action dev="POI-DEVELOPERS" type="fix">46953 - More tweaks to PageSettingsBlock parsing logic in Sheet constructor</action>
            <action dev="POI-DEVELOPERS" type="fix">47089 - Fixed XSSFWorkbook.createSheet to properly increment sheetId</action>
