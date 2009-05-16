@@ -19,6 +19,7 @@ package org.apache.poi.hslf.usermodel;
 
 import junit.framework.TestCase;
 import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 import org.apache.poi.hslf.model.*;
 import org.apache.poi.hslf.model.Shape;
 
@@ -379,5 +380,24 @@ public class TestBugs extends TestCase {
         TextRun[] run = slide.getTextRuns();
         assertEquals(1, run.length);
         assertEquals("Fundera, planera och involvera.", run[0].getText());
+    }
+    
+    /**
+     * PowerPoint 95 files should throw a more helpful exception
+     * @throws Exception
+     */
+    public void test41711() throws Exception {
+    	// New file is fine
+        FileInputStream is = new FileInputStream(new File(cwd, "SampleShow.ppt"));
+        SlideShow ppt = new SlideShow(is);
+        
+        // PowerPoint 95 gives an old format exception
+        is = new FileInputStream(new File(cwd, "PPT95.ppt"));
+        try {
+        	new SlideShow(is);
+        	fail("OldPowerPointFormatException should've been thrown");
+        } catch(OldPowerPointFormatException e) {
+        	// Good
+        }
     }
 }

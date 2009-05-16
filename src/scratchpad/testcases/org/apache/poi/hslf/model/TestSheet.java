@@ -43,6 +43,8 @@ public class TestSheet extends TestCase{
         File[] files = home.listFiles();
         for (int i = 0; i < files.length; i++) {
             if(!files[i].getName().endsWith(".ppt")) continue;
+            if(files[i].getName().endsWith("PPT95.ppt")) continue;
+            
             try {
                 FileInputStream is = new FileInputStream(files[i]);
                 HSLFSlideShow hslf = new HSLFSlideShow(is);

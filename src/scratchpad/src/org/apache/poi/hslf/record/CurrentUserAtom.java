@@ -26,6 +26,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
+import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 
 
 /**
@@ -110,17 +111,30 @@ public class CurrentUserAtom
 		// Decide how big it is
 		DocumentEntry docProps =
 			(DocumentEntry)dir.getEntry("Current User");
-		_contents = new byte[docProps.getSize()];
-
-		// Check it's big enough - if it's not at least 28 bytes long, then
-		//  the record is corrupt
-		if(_contents.length < 28) {
-			throw new CorruptPowerPointFileException("The Current User stream must be at least 28 bytes long, but was only " + _contents.length);
+		
+		// If it's clearly junk, bail out
+		if(docProps.getSize() > 131072) {
+			throw new CorruptPowerPointFileException("The Current User stream is implausably long. It's normally 28-200 bytes long, but was " + docProps.getSize() + " bytes");
 		}
-
+		
 		// Grab the contents
+		_contents = new byte[docProps.getSize()];
 		InputStream in = dir.createDocumentInputStream("Current User");
 		in.read(_contents);
+
+		// See how long it is. If it's under 28 bytes long, we can't
+		//  read it
+		if(_contents.length < 28) {
+			if(_contents.length >= 4) {
+				// PPT95 has 4 byte size, then data
+				int size = LittleEndian.getInt(_contents);
+				System.err.println(size);
+				if(size + 4 == _contents.length) {
+					throw new OldPowerPointFormatException("Based on the Current User stream, you seem to have supplied a PowerPoint95 file, which isn't supported");
+				}
+			}
+			throw new CorruptPowerPointFileException("The Current User stream must be at least 28 bytes long, but was only " + _contents.length);
+		}
 
 		// Set everything up
 		init();

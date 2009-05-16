@@ -14,12 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hssf;
+package org.apache.poi;
 
-import org.apache.poi.OldFileFormatException;
-
-public class OldExcelFormatException extends OldFileFormatException {
-	public OldExcelFormatException(String s) {
+/**
+ * Base class of all the exceptions that POI throws in the event
+ * that it's given a file that's older than currently supported.
+ */
+public abstract class OldFileFormatException extends IllegalArgumentException {
+	public OldFileFormatException(String s) {
 		super(s);
 	}
 }
