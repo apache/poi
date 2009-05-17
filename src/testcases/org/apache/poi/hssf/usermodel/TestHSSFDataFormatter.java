@@ -22,6 +22,7 @@ import java.text.Format;
 import java.util.Iterator;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ss.usermodel.Cell;
 
 import junit.framework.TestCase;
 
@@ -80,8 +81,8 @@ public final class TestHSSFDataFormatter extends TestCase {
 				"(#,##0.00_);(#,##0.00)",
 				"($#,##0.00_);[Red]($#,##0.00)",
 				"$#,##0.00",
-				"[$�-809]#,##0.00",
-				"[$�-2] #,##0.00",
+				"[$-809]#,##0.00", // international format
+				"[$-2]#,##0.00", // international format
 				"0000.00000%",
 				"0.000E+00",
 				"0.00E+00",
@@ -170,10 +171,10 @@ public final class TestHSSFDataFormatter extends TestCase {
 	public void testGetFormattedCellValueHSSFCell() {
 		// Valid date formats -- cell values should be date formatted & not "555.555"
 		HSSFRow row = wb.getSheetAt(0).getRow(0);
-		Iterator it = row.cellIterator();
+		Iterator<Cell> it = row.cellIterator();
 		log("==== VALID DATE FORMATS ====");
 		while (it.hasNext()) {
-			HSSFCell cell = (HSSFCell) it.next();
+			Cell cell = it.next();
 			log(formatter.formatCellValue(cell));
 
 			// should not be equal to "555.555"
@@ -256,13 +257,13 @@ public final class TestHSSFDataFormatter extends TestCase {
 	 */
 	public void testSetDefaultNumberFormat() {
 		HSSFRow row = wb.getSheetAt(0).getRow(2);
-		Iterator it = row.cellIterator();
+		Iterator<Cell> it = row.cellIterator();
 		Format defaultFormat = new DecimalFormat("Balance $#,#00.00 USD;Balance -$#,#00.00 USD");
 		formatter.setDefaultNumberFormat(defaultFormat);
 
 		log("\n==== DEFAULT NUMBER FORMAT ====");
 		while (it.hasNext()) {
-			HSSFCell cell = (HSSFCell) it.next();
+			Cell cell = it.next();
 			cell.setCellValue(cell.getNumericCellValue() * Math.random() / 1000000 - 1000);
 			log(formatter.formatCellValue(cell));
 			assertTrue(formatter.formatCellValue(cell).startsWith("Balance "));
@@ -274,18 +275,18 @@ public final class TestHSSFDataFormatter extends TestCase {
 	 * A format of "@" means use the general format
 	 */
 	public void testGeneralAtFormat() {
-        HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("47154.xls");
-        HSSFSheet sheet       = workbook.getSheetAt(0);
-        HSSFRow   row         = sheet.getRow(0);
-        HSSFCell  cellA1      = row.getCell(0);
-        
-        assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cellA1.getCellType());
-        assertEquals(2345.0, cellA1.getNumericCellValue(), 0.0001);
-        assertEquals("@", cellA1.getCellStyle().getDataFormatString());
+		HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("47154.xls");
+		HSSFSheet sheet = workbook.getSheetAt(0);
+		HSSFRow row = sheet.getRow(0);
+		HSSFCell cellA1 = row.getCell(0);
 
-        HSSFDataFormatter f = new HSSFDataFormatter();
-        
-        assertEquals("2345", f.formatCellValue(cellA1));
+		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cellA1.getCellType());
+		assertEquals(2345.0, cellA1.getNumericCellValue(), 0.0001);
+		assertEquals("@", cellA1.getCellStyle().getDataFormatString());
+
+		HSSFDataFormatter f = new HSSFDataFormatter();
+
+		assertEquals("2345", f.formatCellValue(cellA1));
 	}
 
 	private static void log(String msg) {
