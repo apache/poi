@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta6" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="add">46161 - Support in XSSF for setGroupColumnCollapsed and setGroupRowCollapsed</action>
            <action dev="POI-DEVELOPERS" type="add">46806 - Allow columns greater than 255 and rows greater than 0x100000 in XSSF formulas</action>
            <action dev="POI-DEVELOPERS" type="add">41711 - Base class for "old version" exceptions, and new HSLF detection + use of old versions exception</action>
            <action dev="POI-DEVELOPERS" type="fix">47179 - Fix string encoding issues with HSMF chunks on non-windows platforms</action>

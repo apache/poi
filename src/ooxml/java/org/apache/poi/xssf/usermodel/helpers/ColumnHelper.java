@@ -227,6 +227,7 @@ public class ColumnHelper {
         if(fromCol.isSetCollapsed()) toCol.setCollapsed(fromCol.getCollapsed());
         if(fromCol.isSetPhonetic()) toCol.setPhonetic(fromCol.getPhonetic());
         if(fromCol.isSetOutlineLevel()) toCol.setOutlineLevel(fromCol.getOutlineLevel());
+        toCol.setCollapsed(fromCol.isSetCollapsed());
     }
 
     public void setColBestFit(long index, boolean bestFit) {
