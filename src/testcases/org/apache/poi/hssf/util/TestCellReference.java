@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
+import org.apache.poi.ss.SpreadsheetVersion;
 
 
 public final class TestCellReference extends TestCase {
@@ -104,7 +105,7 @@ public final class TestCellReference extends TestCase {
     }
     
     private void confirmNameType(String ref, int expectedResult) {
-        int actualResult = CellReference.classifyCellReference(ref);
+        int actualResult = CellReference.classifyCellReference(ref, SpreadsheetVersion.EXCEL97);
         assertEquals(expectedResult, actualResult);
     }
 }

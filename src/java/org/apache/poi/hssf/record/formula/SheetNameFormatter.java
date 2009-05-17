@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * Formats sheet names for use in formula expressions.
@@ -183,7 +184,7 @@ public final class SheetNameFormatter {
 	 * @see org.apache.poi.hssf.util.CellReference
 	 */
 	/* package */ static boolean cellReferenceIsWithinRange(String lettersPrefix, String numbersSuffix) {
-		return CellReference.cellReferenceIsWithinRange(lettersPrefix, numbersSuffix);
+		return CellReference.cellReferenceIsWithinRange(lettersPrefix, numbersSuffix, SpreadsheetVersion.EXCEL97);
 	}
 
 	/**

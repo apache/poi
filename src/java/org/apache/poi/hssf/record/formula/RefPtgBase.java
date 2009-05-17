@@ -32,8 +32,6 @@ import org.apache.poi.ss.SpreadsheetVersion;
  */
 public abstract class RefPtgBase extends OperandPtg {
 
-	private final static int MAX_ROW_NUMBER = SpreadsheetVersion.EXCEL97.getMaxRows();
-
 	/** The row index - zero based unsigned 16 bit value */
 	private int field_1_row;
 	/**
@@ -67,9 +65,6 @@ public abstract class RefPtgBase extends OperandPtg {
 	}
 
 	public final void setRow(int rowIndex) {
-		if (rowIndex < 0 || rowIndex >= MAX_ROW_NUMBER) {
-			throw new IllegalArgumentException("rowIndex must be between 0 and " + MAX_ROW_NUMBER);
-		}
 		field_1_row = rowIndex;
 	}
 
@@ -97,9 +92,6 @@ public abstract class RefPtgBase extends OperandPtg {
 	}
 
 	public final void setColumn(int col) {
-		if (col < 0 || col >= 0x100) {
-			throw new IllegalArgumentException("Specified colIx (" + col + ") is out of range");
-		}
 		field_2_col = column.setValue(field_2_col, col);
 	}
 
