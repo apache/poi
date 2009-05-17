@@ -1098,6 +1098,21 @@ FORREST_HOME environment variable!</echo>
             </manifest>        
         </jar>
     </target>
+  <target name="jar-examples" depends="compile, compile-version" description="Creates a jar file of the examples, in case people want to use them as-is">
+        <jar destfile="${dist.dir}/${jar.name}-examples-${version.id}-${DSTAMP}.jar">
+      			<fileset dir="${examples.output.dir}" />
+      			<fileset dir="legal/" />
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Specification-Title" value="Apache POI"/>
+                <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
+                <attribute name="Specification-Vendor" value="Apache"/>
+                <attribute name="Implementation-Title" value="Apache POI"/>
+                <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
+                <attribute name="Implementation-Vendor" value="Apache"/>
+            </manifest>        
+        </jar>
+    </target>
 
   <target name="dist" depends="clean, fail-unless-tools-are-available, compile, site, jar"
     description="Creates the entire distribution into build/dist, from scratch">
