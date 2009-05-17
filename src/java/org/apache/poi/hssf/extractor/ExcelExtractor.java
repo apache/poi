@@ -55,6 +55,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 	private boolean _shouldEvaluateFormulas = true;
 	private boolean _includeCellComments = false;
 	private boolean _includeBlankCells = false;
+	private boolean _includeHeadersFooters = true;
 	
 	public ExcelExtractor(HSSFWorkbook wb) {
 		super(wb);
@@ -79,6 +80,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 		private final boolean _evaluateFormulas;
 		private final boolean _showCellComments;
 		private final boolean _showBlankCells;
+		private final boolean _headersFooters;
 		public CommandArgs(String[] args) throws CommandParseException {
 			int nArgs = args.length;
 			File inputFile = null;
@@ -87,6 +89,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 			boolean evaluateFormulas = true;
 			boolean showCellComments = false;
 			boolean showBlankCells = false;
+			boolean headersFooters = true;
 			for (int i=0; i<nArgs; i++) {
 				String arg = args[i];
 				if ("-help".equalsIgnoreCase(arg)) {
@@ -127,6 +130,10 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 					showBlankCells = parseBoolArg(args, ++i);
 					continue;
 				}
+				if ("--headers-footers".equals(arg)) {
+					headersFooters = parseBoolArg(args, ++i);
+					continue;
+				}
 				throw new CommandParseException("Invalid argument '" + arg + "'");
 			}
 			_requestHelp = requestHelp;
@@ -135,6 +142,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 			_evaluateFormulas = evaluateFormulas;
 			_showCellComments = showCellComments;
 			_showBlankCells = showBlankCells;
+			_headersFooters = headersFooters;
 		}
 		private static boolean parseBoolArg(String[] args, int i) throws CommandParseException {
 			if (i >= args.length) {
@@ -167,7 +175,9 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 		public boolean shouldShowBlankCells() {
 			return _showBlankCells;
 		}
-		
+		public boolean shouldIncludeHeadersFooters() {
+			return _headersFooters;
+		}
 	}
 	
 	private static void printUsageMessage(PrintStream ps) {
@@ -180,6 +190,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 		ps.println("       --evaluate-formulas Y");
 		ps.println("       --show-comments     N");
 		ps.println("       --show-blanks       Y");
+		ps.println("       --headers-footers   Y");
 	}
 
 	/**
@@ -216,6 +227,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 			extractor.setFormulasNotResults(!cmdArgs.shouldEvaluateFormulas());
 			extractor.setIncludeCellComments(cmdArgs.shouldShowCellComments());
 			extractor.setIncludeBlankCells(cmdArgs.shouldShowBlankCells());
+			extractor.setIncludeHeadersFooters(cmdArgs.shouldIncludeHeadersFooters());
 			System.out.println(extractor.getText());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -249,6 +261,13 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 	public void setIncludeBlankCells(boolean includeBlankCells) {
 		_includeBlankCells = includeBlankCells;
 	}
+	/**
+	 * Should headers and footers be included in the output?
+	 * Default is to include them.
+	 */
+	public void setIncludeHeadersFooters(boolean includeHeadersFooters) {
+		_includeHeadersFooters = includeHeadersFooters; 
+	}
 	
 	/**
 	 * Retrieves the text contents of the file
@@ -274,7 +293,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 			}
 			
 			// Header text, if there is any
-			if(sheet.getHeader() != null) {
+			if(_includeHeadersFooters && sheet.getHeader() != null) {
 				text.append(
 						_extractHeaderFooter(sheet.getHeader())
 				);
@@ -364,7 +383,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 			}
 			
 			// Finally Feader text, if there is any
-			if(sheet.getFooter() != null) {
+			if(_includeHeadersFooters && sheet.getFooter() != null) {
 				text.append(
 						_extractHeaderFooter(sheet.getFooter())
 				);

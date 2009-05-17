@@ -40,6 +40,7 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apach
 	private boolean includeSheetNames = true;
 	private boolean formulasNotResults = false;
 	private boolean includeCellComments = false;
+	private boolean includeHeadersFooters = true;
 	
 	public XSSFExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {
 		this(new XSSFWorkbook(path));
@@ -82,6 +83,12 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apach
     public void setIncludeCellComments(boolean includeCellComments) {
         this.includeCellComments = includeCellComments;
     }
+	/**
+     * Should headers and footers be included? Default is true
+     */
+    public void setIncludeHeadersFooters(boolean includeHeadersFooters) {
+        this.includeHeadersFooters = includeHeadersFooters;
+    }
 	
 	/**
 	 * Retreives the text contents of the file
@@ -96,15 +103,17 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apach
 			}
 			
 			// Header(s), if present
-			text.append(
-					extractHeaderFooter(sheet.getFirstHeader())
-			);
-			text.append(
-					extractHeaderFooter(sheet.getOddHeader())
-			);
-			text.append(
-					extractHeaderFooter(sheet.getEvenHeader())
-			);
+			if(includeHeadersFooters) {
+				text.append(
+						extractHeaderFooter(sheet.getFirstHeader())
+				);
+				text.append(
+						extractHeaderFooter(sheet.getOddHeader())
+				);
+				text.append(
+						extractHeaderFooter(sheet.getEvenHeader())
+				);
+			}
 
 			// Rows and cells
 			for (Object rawR : sheet) {
@@ -138,15 +147,17 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apach
 			}
 			
 			// Finally footer(s), if present
-			text.append(
-					extractHeaderFooter(sheet.getFirstFooter())
-			);
-			text.append(
-					extractHeaderFooter(sheet.getOddFooter())
-			);
-			text.append(
-					extractHeaderFooter(sheet.getEvenFooter())
-			);
+			if(includeHeadersFooters) {
+				text.append(
+						extractHeaderFooter(sheet.getFirstFooter())
+				);
+				text.append(
+						extractHeaderFooter(sheet.getOddFooter())
+				);
+				text.append(
+						extractHeaderFooter(sheet.getEvenFooter())
+				);
+			}
 		}
 		
 		return text.toString();
