@@ -20,23 +20,15 @@ package org.apache.poi.hssf.record.formula.function;
 import java.util.Map;
 import java.util.Set;
 /**
- * Allows clients to get <tt>FunctionMetadata</tt> instances for any built-in function of Excel.
- * 
+ * Allows clients to get {@link FunctionMetadata} instances for any built-in function of Excel.
+ *
  * @author Josh Micich
  */
 public final class FunctionMetadataRegistry {
 	/**
 	 * The name of the IF function (i.e. "IF").  Extracted as a constant for clarity.
-	 */ 
+	 */
 	public static final String FUNCTION_NAME_IF = "IF";
-
-    /**
-     * maxParams=30 in functionMetadata.txt means the maximum number arguments supported
-     * by the given version of Excel. Validation routines should take the actual limit (Excel 97 or 2007)
-     * from the SpreadsheetVersion enum.
-     * @see org.apache.poi.ss.formula.FormulaParser#validateNumArgs(int, FunctionMetadata)
-     */
-    public static final short FUNCTION_MAX_PARAMS = 30;
 
     public static final short FUNCTION_INDEX_SUM = 4;
 	public static final short FUNCTION_INDEX_EXTERNAL = 255;
@@ -70,7 +62,7 @@ public final class FunctionMetadataRegistry {
 		return _functionDataByIndex[index];
 	}
 	/**
-	 * Resolves a built-in function index. 
+	 * Resolves a built-in function index.
 	 * @param name uppercase function name
 	 * @return a negative value if the function name is not found.
 	 * This typically occurs for external functions.
