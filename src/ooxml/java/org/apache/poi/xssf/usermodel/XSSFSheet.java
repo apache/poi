@@ -18,33 +18,73 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.InputStream;
-import java.util.*;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import javax.xml.namespace.QName;
 
-import org.apache.poi.hssf.util.PaneInformation;
-import org.apache.poi.hssf.record.formula.FormulaShifter;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
-import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
-import org.apache.xmlbeans.XmlOptions;
-import org.apache.xmlbeans.XmlException;
+import org.apache.poi.hssf.record.formula.FormulaShifter;
+import org.apache.poi.hssf.util.PaneInformation;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Footer;
+import org.apache.poi.ss.usermodel.Header;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
+import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDrawing;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOutlinePr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetUpPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPrintOptions;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSelection;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
 
 /**
  * High level representation of a SpreadsheetML worksheet.
@@ -314,6 +354,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.
      * @param colSplit	  Horizonatal position of split.
      * @param rowSplit	  Vertical position of split.
+     */
+    public void createFreezePane(int colSplit, int rowSplit) {
+        createFreezePane( colSplit, rowSplit, colSplit, rowSplit );
+    }
+    
+    /**
+     * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.
+     * @param colSplit	  Horizonatal position of split.
+     * @param rowSplit	  Vertical position of split.
      * @param topRow		Top row visible in bottom pane
      * @param leftmostColumn   Left column visible in right pane.
      */
@@ -337,15 +386,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         ctView.setSelectionArray(null);
         CTSelection sel = ctView.addNewSelection();
         sel.setPane(pane.getActivePane());
-    }
-
-    /**
-     * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.
-     * @param colSplit	  Horizonatal position of split.
-     * @param rowSplit	  Vertical position of split.
-     */
-    public void createFreezePane(int colSplit, int rowSplit) {
-        createFreezePane( colSplit, rowSplit, colSplit, rowSplit );
     }
 
     /**
@@ -382,13 +422,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param leftmostColumn   Left column visible in right pane.
      * @param activePane	Active pane.  One of: PANE_LOWER_RIGHT,
      *					  PANE_UPPER_RIGHT, PANE_LOWER_LEFT, PANE_UPPER_LEFT
-     * @see #PANE_LOWER_LEFT
-     * @see #PANE_LOWER_RIGHT
-     * @see #PANE_UPPER_LEFT
-     * @see #PANE_UPPER_RIGHT
+     * @see org.apache.poi.ss.usermodel.Sheet#PANE_LOWER_LEFT
+     * @see org.apache.poi.ss.usermodel.Sheet#PANE_LOWER_RIGHT
+     * @see org.apache.poi.ss.usermodel.Sheet#PANE_UPPER_LEFT
+     * @see org.apache.poi.ss.usermodel.Sheet#PANE_UPPER_RIGHT
      */
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane) {
         createFreezePane(xSplitPos, ySplitPos, leftmostColumn, topRow);
+        getPane().setState(STPaneState.SPLIT);
         getPane().setActivePane(STPane.Enum.forInt(activePane));
     }
 
@@ -1268,13 +1309,342 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     public void setColumnGroupCollapsed(int columnNumber, boolean collapsed) {
-        // TODO Auto-generated method stub
+    	if (collapsed) {
+    		collapseColumn(columnNumber);
+    	} else {
+    		expandColumn(columnNumber);
+    	}
+    }
+
+    private void collapseColumn(int columnNumber) {
+    	CTCols cols = worksheet.getColsArray(0);
+    	CTCol col = columnHelper.getColumn(columnNumber, false);
+    	int colInfoIx = columnHelper.getIndexOfColumn(cols, col);
+    	if (colInfoIx == -1) {
+    		return;
+    	}
+    	// Find the start of the group.
+    	int groupStartColInfoIx = findStartOfColumnOutlineGroup(colInfoIx);
+
+    	CTCol columnInfo = cols.getColArray(groupStartColInfoIx);
+
+    	// Hide all the columns until the end of the group
+    	int lastColMax = setGroupHidden(groupStartColInfoIx, columnInfo
+    			.getOutlineLevel(), true);
+
+    	// write collapse field
+    	setColumn((int) (lastColMax + 1), null, 0, null, null, Boolean.TRUE);
 
     }
 
-    public void setRowGroupCollapsed(int row, boolean collapse) {
-        // TODO Auto-generated method stub
+    private void setColumn(int targetColumnIx, Short xfIndex, Integer style,
+    		Integer level, Boolean hidden, Boolean collapsed) {
+    	CTCols cols = worksheet.getColsArray(0);
+    	CTCol ci = null;
+    	int k = 0;
+    	for (k = 0; k < cols.sizeOfColArray(); k++) {
+    		CTCol tci = cols.getColArray(k);
+    		if (tci.getMin() >= targetColumnIx
+    				&& tci.getMax() <= targetColumnIx) {
+    			ci = tci;
+    			break;
+    		}
+    		if (tci.getMin() > targetColumnIx) {
+    			// call column infos after k are for later columns
+    			break; // exit now so k will be the correct insert pos
+    		}
+    	}
 
+    	if (ci == null) {
+    		// okay so there ISN'T a column info record that covers this column
+    		// so lets create one!
+    		CTCol nci = CTCol.Factory.newInstance();
+    		nci.setMin(targetColumnIx);
+    		nci.setMax(targetColumnIx);
+    		unsetCollapsed(collapsed, nci);
+    		this.columnHelper.addCleanColIntoCols(cols, nci);
+    		return;
+    	}
+
+    	boolean styleChanged = style != null
+    	&& ci.getStyle() != style.intValue();
+    	boolean levelChanged = level != null
+    	&& ci.getOutlineLevel() != level.intValue();
+    	boolean hiddenChanged = hidden != null
+    	&& ci.getHidden() != hidden.booleanValue();
+    	boolean collapsedChanged = collapsed != null
+    	&& ci.getCollapsed() != collapsed.booleanValue();
+    	boolean columnChanged = levelChanged || hiddenChanged
+    	|| collapsedChanged || styleChanged;
+    	if (!columnChanged) {
+    		// do nothing...nothing changed.
+    		return;
+    	}
+
+    	if (ci.getMin() == targetColumnIx && ci.getMax() == targetColumnIx) {
+    		// ColumnInfo ci for a single column, the target column
+    		unsetCollapsed(collapsed, ci);
+    		return;
+    	}
+
+    	if (ci.getMin() == targetColumnIx || ci.getMax() == targetColumnIx) {
+    		// The target column is at either end of the multi-column ColumnInfo
+    		// ci
+    		// we'll just divide the info and create a new one
+    		if (ci.getMin() == targetColumnIx) {
+    			ci.setMin(targetColumnIx + 1);
+    		} else {
+    			ci.setMax(targetColumnIx - 1);
+    			k++; // adjust insert pos to insert after
+    		}
+    		CTCol nci = columnHelper.cloneCol(cols, ci);
+    		nci.setMin(targetColumnIx);
+    		unsetCollapsed(collapsed, nci);
+    		this.columnHelper.addCleanColIntoCols(cols, nci);
+
+    	} else {
+    		// split to 3 records
+    		CTCol ciStart = ci;
+    		CTCol ciMid = columnHelper.cloneCol(cols, ci);
+    		CTCol ciEnd = columnHelper.cloneCol(cols, ci);
+    		int lastcolumn = (int) ci.getMax();
+
+    		ciStart.setMax(targetColumnIx - 1);
+
+    		ciMid.setMin(targetColumnIx);
+    		ciMid.setMax(targetColumnIx);
+    		unsetCollapsed(collapsed, ciMid);
+    		this.columnHelper.addCleanColIntoCols(cols, ciMid);
+
+    		ciEnd.setMin(targetColumnIx + 1);
+    		ciEnd.setMax(lastcolumn);
+    		this.columnHelper.addCleanColIntoCols(cols, ciEnd);
+    	}
+    }
+
+    private void unsetCollapsed(boolean collapsed, CTCol ci) {
+    	if (collapsed) {
+    		ci.setCollapsed(collapsed);
+    	} else {
+    		ci.unsetCollapsed();
+    	}
+    }
+
+    /**
+     * Sets all adjacent columns of the same outline level to the specified
+     * hidden status.
+     * 
+     * @param pIdx
+     *                the col info index of the start of the outline group
+     * @return the column index of the last column in the outline group
+     */
+    private int setGroupHidden(int pIdx, int level, boolean hidden) {
+    	CTCols cols = worksheet.getColsArray(0);
+    	int idx = pIdx;
+    	CTCol columnInfo = cols.getColArray(idx);
+    	while (idx < cols.sizeOfColArray()) {
+    		columnInfo.setHidden(hidden);
+    		if (idx + 1 < cols.sizeOfColArray()) {
+    			CTCol nextColumnInfo = cols.getColArray(idx + 1);
+
+    			if (!isAdjacentBefore(columnInfo, nextColumnInfo)) {
+    				break;
+    			}
+
+    			if (nextColumnInfo.getOutlineLevel() < level) {
+    				break;
+    			}
+    			columnInfo = nextColumnInfo;
+    		}
+    		idx++;
+    	}
+    	return (int) columnInfo.getMax();
+    }
+
+    private boolean isAdjacentBefore(CTCol col, CTCol other_col) {
+    	return (col.getMax() == (other_col.getMin() - 1));
+    }
+
+    private int findStartOfColumnOutlineGroup(int pIdx) {
+    	// Find the start of the group.
+    	CTCols cols = worksheet.getColsArray(0);
+    	CTCol columnInfo = cols.getColArray(pIdx);
+    	int level = columnInfo.getOutlineLevel();
+    	int idx = pIdx;
+    	while (idx != 0) {
+    		CTCol prevColumnInfo = cols.getColArray(idx - 1);
+    		if (!isAdjacentBefore(prevColumnInfo, columnInfo)) {
+    			break;
+    		}
+    		if (prevColumnInfo.getOutlineLevel() < level) {
+    			break;
+    		}
+    		idx--;
+    		columnInfo = prevColumnInfo;
+    	}
+    	return idx;
+    }
+
+    private int findEndOfColumnOutlineGroup(int colInfoIndex) {
+    	CTCols cols = worksheet.getColsArray(0);
+    	// Find the end of the group.
+    	CTCol columnInfo = cols.getColArray(colInfoIndex);
+    	int level = columnInfo.getOutlineLevel();
+    	int idx = colInfoIndex;
+    	while (idx < cols.sizeOfColArray() - 1) {
+    		CTCol nextColumnInfo = cols.getColArray(idx + 1);
+    		if (!isAdjacentBefore(columnInfo, nextColumnInfo)) {
+    			break;
+    		}
+    		if (nextColumnInfo.getOutlineLevel() < level) {
+    			break;
+    		}
+    		idx++;
+    		columnInfo = nextColumnInfo;
+    	}
+    	return idx;
+    }
+
+    private void expandColumn(int columnIndex) {
+    	CTCols cols = worksheet.getColsArray(0);
+    	CTCol col = columnHelper.getColumn(columnIndex, false);
+    	int colInfoIx = columnHelper.getIndexOfColumn(cols, col);
+
+    	int idx = findColInfoIdx((int) col.getMax(), colInfoIx);
+    	if (idx == -1) {
+    		return;
+    	}
+
+    	// If it is already expanded do nothing.
+    	if (!isColumnGroupCollapsed(idx)) {
+    		return;
+    	}
+
+    	// Find the start/end of the group.
+    	int startIdx = findStartOfColumnOutlineGroup(idx);
+    	int endIdx = findEndOfColumnOutlineGroup(idx);
+
+    	// expand:
+    	// colapsed bit must be unset
+    	// hidden bit gets unset _if_ surrounding groups are expanded you can
+    	// determine
+    	// this by looking at the hidden bit of the enclosing group. You will
+    	// have
+    	// to look at the start and the end of the current group to determine
+    	// which
+    	// is the enclosing group
+    	// hidden bit only is altered for this outline level. ie. don't
+    	// uncollapse contained groups
+    	CTCol columnInfo = cols.getColArray(endIdx);
+    	if (!isColumnGroupHiddenByParent(idx)) {
+    		int outlineLevel = columnInfo.getOutlineLevel();
+    		boolean nestedGroup = false;
+    		for (int i = startIdx; i <= endIdx; i++) {
+    			CTCol ci = cols.getColArray(i);
+    			if (outlineLevel == ci.getOutlineLevel()) {
+    				ci.unsetHidden();
+    				if (nestedGroup) {
+    					nestedGroup = false;
+    					ci.setCollapsed(true);
+    				}
+    			} else {
+    				nestedGroup = true;
+    			}
+    		}
+    	}
+    	// Write collapse flag (stored in a single col info record after this
+    	// outline group)
+    	setColumn((int) columnInfo.getMax() + 1, null, null, null,
+    			Boolean.FALSE, Boolean.FALSE);
+    }
+
+    private boolean isColumnGroupHiddenByParent(int idx) {
+    	CTCols cols = worksheet.getColsArray(0);
+    	// Look out outline details of end
+    	int endLevel = 0;
+    	boolean endHidden = false;
+    	int endOfOutlineGroupIdx = findEndOfColumnOutlineGroup(idx);
+    	if (endOfOutlineGroupIdx < cols.sizeOfColArray()) {
+    		CTCol nextInfo = cols.getColArray(endOfOutlineGroupIdx + 1);
+    		if (isAdjacentBefore(cols.getColArray(endOfOutlineGroupIdx),
+    				nextInfo)) {
+    			endLevel = nextInfo.getOutlineLevel();
+    			endHidden = nextInfo.getHidden();
+    		}
+    	}
+    	// Look out outline details of start
+    	int startLevel = 0;
+    	boolean startHidden = false;
+    	int startOfOutlineGroupIdx = findStartOfColumnOutlineGroup(idx);
+    	if (startOfOutlineGroupIdx > 0) {
+    		CTCol prevInfo = cols.getColArray(startOfOutlineGroupIdx - 1);
+
+    		if (isAdjacentBefore(prevInfo, cols
+    				.getColArray(startOfOutlineGroupIdx))) {
+    			startLevel = prevInfo.getOutlineLevel();
+    			startHidden = prevInfo.getHidden();
+    		}
+
+    	}
+    	if (endLevel > startLevel) {
+    		return endHidden;
+    	}
+    	return startHidden;
+    }
+
+    private int findColInfoIdx(int columnValue, int fromColInfoIdx) {
+    	CTCols cols = worksheet.getColsArray(0);
+
+    	if (columnValue < 0) {
+    		throw new IllegalArgumentException(
+    				"column parameter out of range: " + columnValue);
+    	}
+    	if (fromColInfoIdx < 0) {
+    		throw new IllegalArgumentException(
+    				"fromIdx parameter out of range: " + fromColInfoIdx);
+    	}
+
+    	for (int k = fromColInfoIdx; k < cols.sizeOfColArray(); k++) {
+    		CTCol ci = cols.getColArray(k);
+
+    		if (containsColumn(ci, columnValue)) {
+    			return k;
+    		}
+
+    		if (ci.getMin() > fromColInfoIdx) {
+    			break;
+    		}
+
+    	}
+    	return -1;
+    }
+
+    private boolean containsColumn(CTCol col, int columnIndex) {
+    	return col.getMin() <= columnIndex && columnIndex <= col.getMax();
+    }
+
+    /**
+     * 'Collapsed' state is stored in a single column col info record
+     * immediately after the outline group
+     * 
+     * @param idx
+     * @return a boolean represented if the column is collapsed
+     */
+    private boolean isColumnGroupCollapsed(int idx) {
+    	CTCols cols = worksheet.getColsArray(0);
+    	int endOfOutlineGroupIdx = findEndOfColumnOutlineGroup(idx);
+    	int nextColInfoIx = endOfOutlineGroupIdx + 1;
+    	if (nextColInfoIx >= cols.sizeOfColArray()) {
+    		return false;
+    	}
+    	CTCol nextColInfo = cols.getColArray(nextColInfoIx);
+
+    	CTCol col = cols.getColArray(endOfOutlineGroupIdx);
+    	if (!isAdjacentBefore(col, nextColInfo)) {
+    		return false;
+    	}
+
+    	return nextColInfo.getCollapsed();
     }
 
     /**
@@ -1388,6 +1758,180 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         opts.setVerticalCentered(value);
     }
 
+    /**
+     * group the row It is possible for collapsed to be false and yet still have
+     * the rows in question hidden. This can be achieved by having a lower
+     * outline level collapsed, thus hiding all the child rows. Note that in
+     * this case, if the lowest level were expanded, the middle level would
+     * remain collapsed.
+     * 
+     * @param rowIndex -
+     *                the row involved, 0 based
+     * @param collapse -
+     *                boolean value for collapse
+     */
+    public void setRowGroupCollapsed(int rowIndex, boolean collapse) {
+    	if (collapse) {
+    		collapseRow(rowIndex);
+    	} else {
+    		expandRow(rowIndex);
+    	}
+    }
+
+    /**
+     * @param rowIndex the zero based row index to collapse
+     */
+    private void collapseRow(int rowIndex) {
+    	XSSFRow row = getRow(rowIndex);
+    	if (row != null) {
+    		int startRow = findStartOfRowOutlineGroup(rowIndex);
+
+    		// Hide all the columns until the end of the group
+    		int lastRow = writeHidden(row, startRow, true);
+    		if (getRow(lastRow) != null) {
+    			getRow(lastRow).getCTRow().setCollapsed(true);
+    		} else {
+    			XSSFRow newRow = createRow(lastRow);
+    			newRow.getCTRow().setCollapsed(true);
+    		}
+    	}
+    }
+
+    /**
+     * @param rowIndex the zero based row index to find from
+     */
+    private int findStartOfRowOutlineGroup(int rowIndex) {
+    	// Find the start of the group.
+    	int level = getRow(rowIndex).getCTRow().getOutlineLevel();
+    	int currentRow = rowIndex;
+    	while (getRow(currentRow) != null) {
+    		if (getRow(currentRow).getCTRow().getOutlineLevel() < level)
+    			return currentRow + 1;
+    		currentRow--;
+    	}
+    	return currentRow;
+    }
+
+    private int writeHidden(XSSFRow xRow, int rowIndex, boolean hidden) {
+    	int level = xRow.getCTRow().getOutlineLevel();
+    	for (Iterator<Row> it = rowIterator(); it.hasNext();) {
+    		xRow = (XSSFRow) it.next();
+    		if (xRow.getCTRow().getOutlineLevel() >= level) {
+    			xRow.getCTRow().setHidden(hidden);
+    			rowIndex++;
+    		}
+
+    	}
+    	return rowIndex;
+    }
+
+    /**
+     * @param rowIndex the zero based row index to expand
+     */
+    private void expandRow(int rowNumber) {
+    	int idx = rowNumber;
+    	if (idx == -1)
+    		return;
+    	XSSFRow row = getRow(rowNumber);
+    	// If it is already expanded do nothing.
+    	if (!row.getCTRow().isSetHidden())
+    		return;
+
+    	// Find the start of the group.
+    	int startIdx = findStartOfRowOutlineGroup(idx);
+
+    	// Find the end of the group.
+    	int endIdx = findEndOfRowOutlineGroup(idx);
+
+    	// expand:
+    	// collapsed must be unset
+    	// hidden bit gets unset _if_ surrounding groups are expanded you can
+    	// determine
+    	// this by looking at the hidden bit of the enclosing group. You will
+    	// have
+    	// to look at the start and the end of the current group to determine
+    	// which
+    	// is the enclosing group
+    	// hidden bit only is altered for this outline level. ie. don't
+    	// un-collapse contained groups
+    	if (!isRowGroupHiddenByParent(idx)) {
+    		for (int i = startIdx; i < endIdx; i++) {
+    			if (row.getCTRow().getOutlineLevel() == getRow(i).getCTRow()
+    					.getOutlineLevel()) {
+    				getRow(i).getCTRow().unsetHidden();
+    			} else if (!isRowGroupCollapsed(i)) {
+    				getRow(i).getCTRow().unsetHidden();
+    			}
+    		}
+    	}
+    	// Write collapse field
+    	getRow(endIdx).getCTRow().unsetCollapsed();
+    }
+
+    /**
+     * @param rowIndex the zero based row index to find from
+     */
+    public int findEndOfRowOutlineGroup(int row) {
+    	int level = getRow(row).getCTRow().getOutlineLevel();
+    	int currentRow;
+    	for (currentRow = row; currentRow < getLastRowNum(); currentRow++) {
+    		if (getRow(currentRow) == null
+    				|| getRow(currentRow).getCTRow().getOutlineLevel() < level) {
+    			break;
+    		}
+    	}
+    	return currentRow;
+    }
+
+    /**
+     * @param rowIndex the zero based row index to find from
+     */
+    private boolean isRowGroupHiddenByParent(int row) {
+    	// Look out outline details of end
+    	int endLevel;
+    	boolean endHidden;
+    	int endOfOutlineGroupIdx = findEndOfRowOutlineGroup(row);
+    	if (getRow(endOfOutlineGroupIdx) == null) {
+    		endLevel = 0;
+    		endHidden = false;
+    	} else {
+    		endLevel = (int) (getRow(endOfOutlineGroupIdx).getCTRow()
+    				.getOutlineLevel());
+    		endHidden = getRow(endOfOutlineGroupIdx).getCTRow().getHidden();
+    	}
+
+    	// Look out outline details of start
+    	int startLevel;
+    	boolean startHidden;
+    	int startOfOutlineGroupIdx = findStartOfRowOutlineGroup(row);
+    	if (startOfOutlineGroupIdx < 0
+    			|| getRow(startOfOutlineGroupIdx) == null) {
+    		startLevel = 0;
+    		startHidden = false;
+    	} else {
+    		startLevel = getRow(startOfOutlineGroupIdx).getCTRow()
+    		.getOutlineLevel();
+    		startHidden = getRow(startOfOutlineGroupIdx).getCTRow()
+    		.getHidden();
+    	}
+    	if (endLevel > startLevel) {
+    		return endHidden;
+    	} else {
+    		return startHidden;
+    	}
+    }
+
+    /**
+     * @param rowIndex the zero based row index to find from
+     */
+    private boolean isRowGroupCollapsed(int row) {
+    	int collapseRow = findEndOfRowOutlineGroup(row) + 1;
+    	if (getRow(collapseRow) == null)
+    		return false;
+    	else
+    		return getRow(collapseRow).getCTRow().getCollapsed();
+    }
+    
     /**
      * Sets the zoom magnication for the sheet.  The zoom is expressed as a
      * fraction.  For example to express a zoom of 75% use 3 for the numerator
@@ -1515,7 +2059,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     public void showInPane(short toprow, short leftcol) {
         CellReference cellReference = new CellReference(toprow, leftcol);
         String cellRef = cellReference.formatAsString();
-        getSheetTypeSheetView().setTopLeftCell(cellRef);
+		getPane().setTopLeftCell(cellRef);
     }
 
     public void ungroupColumn(int fromColumn, int toColumn) {
