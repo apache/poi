@@ -71,11 +71,6 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 	protected AreaPtgBase(int firstRow, int lastRow, int firstColumn, int lastColumn,
 			boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative) {
 
-		checkColumnBounds(firstColumn);
-		checkColumnBounds(lastColumn);
-		checkRowBounds(firstRow);
-		checkRowBounds(lastRow);
-
 		if (lastRow > firstRow) {
 			setFirstRow(firstRow);
 			setLastRow(lastRow);
@@ -101,12 +96,12 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 		}
 	}
 
-	private static void checkColumnBounds(int colIx) {
+	private static void $checkColumnBounds(int colIx) {
 		if((colIx & 0x0FF) != colIx) {
 			throw new IllegalArgumentException("colIx (" + colIx + ") is out of range");
 		}
 	}
-	private static void checkRowBounds(int rowIx) {
+	private static void $checkRowBounds(int rowIx) {
 		if((rowIx & 0x0FFFF) != rowIx) {
 			throw new IllegalArgumentException("rowIx (" + rowIx + ") is out of range");
 		}
@@ -137,7 +132,6 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 	 * @param rowIx number (0-based)
 	 */
 	public final void setFirstRow(int rowIx) {
-		checkRowBounds(rowIx);
 		field_1_first_row = rowIx;
 	}
 
@@ -152,7 +146,6 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 	 * @param rowIx last row number in the area
 	 */
 	public final void setLastRow(int rowIx) {
-		checkRowBounds(rowIx);
 		field_2_last_row = rowIx;
 	}
 
@@ -203,7 +196,6 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 	 * set the first column in the area
 	 */
 	public final void setFirstColumn(int colIx) {
-		checkColumnBounds(colIx);
 		field_3_first_column=columnMask.setValue(field_3_first_column, colIx);
 	}
 
@@ -262,7 +254,6 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 	 * set the last column in the area
 	 */
 	public final void setLastColumn(int colIx) {
-		checkColumnBounds(colIx);
 		field_4_last_column=columnMask.setValue(field_4_last_column, colIx);
 	}
 

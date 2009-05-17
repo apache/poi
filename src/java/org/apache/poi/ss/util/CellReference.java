@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.record.formula.SheetNameFormatter;
+import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
@@ -62,10 +63,10 @@ public class CellReference {
 	 * digits or dot.  (They can even end in dot).
 	 */
 	private static final Pattern NAMED_RANGE_NAME_PATTERN = Pattern.compile("[_A-Za-z][_.A-Za-z0-9]*");
-	private static final String BIFF8_LAST_COLUMN = SpreadsheetVersion.EXCEL97.getLastColumnName();
-	private static final int BIFF8_LAST_COLUMN_TEXT_LEN = BIFF8_LAST_COLUMN.length();
-	private static final String BIFF8_LAST_ROW = String.valueOf(SpreadsheetVersion.EXCEL97.getMaxRows());
-	private static final int BIFF8_LAST_ROW_TEXT_LEN = BIFF8_LAST_ROW.length();
+	//private static final String BIFF8_LAST_COLUMN = SpreadsheetVersion.EXCEL97.getLastColumnName();
+	//private static final int BIFF8_LAST_COLUMN_TEXT_LEN = BIFF8_LAST_COLUMN.length();
+	//private static final String BIFF8_LAST_ROW = String.valueOf(SpreadsheetVersion.EXCEL97.getMaxRows());
+	//private static final int BIFF8_LAST_ROW_TEXT_LEN = BIFF8_LAST_ROW.length();
 
     private final int _rowIndex;
     private final int _colIndex;
@@ -176,7 +177,7 @@ public class CellReference {
 	 * Classifies an identifier as either a simple (2D) cell reference or a named range name
 	 * @return one of the values from <tt>NameType</tt> 
 	 */
-	public static int classifyCellReference(String str) {
+	public static int classifyCellReference(String str, SpreadsheetVersion ssVersion) {
 		int len = str.length();
 		if (len < 1) {
 			throw new IllegalArgumentException("Empty string not allowed");
@@ -195,15 +196,15 @@ public class CellReference {
 		}
 		if (!Character.isDigit(str.charAt(len-1))) {
 			// no digits at end of str
-			return validateNamedRangeName(str);
+			return validateNamedRangeName(str, ssVersion);
 		}
 		Matcher cellRefPatternMatcher = CELL_REF_PATTERN.matcher(str);
 		if (!cellRefPatternMatcher.matches()) {
-			return validateNamedRangeName(str);
+			return validateNamedRangeName(str, ssVersion);
 		}
 		String lettersGroup = cellRefPatternMatcher.group(1);
 		String digitsGroup = cellRefPatternMatcher.group(2);
-		if (cellReferenceIsWithinRange(lettersGroup, digitsGroup)) {
+        if (cellReferenceIsWithinRange(lettersGroup, digitsGroup, ssVersion)) {
 			// valid cell reference
 			return NameType.CELL;
 		}
@@ -219,11 +220,11 @@ public class CellReference {
 		return NameType.NAMED_RANGE;
 	}
 
-	private static int validateNamedRangeName(String str) {
+	private static int validateNamedRangeName(String str, SpreadsheetVersion ssVersion) {
 		Matcher colMatcher = COLUMN_REF_PATTERN.matcher(str);
 		if (colMatcher.matches()) {
 			String colStr = colMatcher.group(1);
-			if (isColumnWithnRange(colStr)) {
+			if (isColumnWithnRange(colStr, ssVersion)) {
 				return NameType.COLUMN;
 			}
 		}
@@ -270,18 +271,21 @@ public class CellReference {
 	 * @param rowStr a string of only digit characters
 	 * @return <code>true</code> if the row and col parameters are within range of a BIFF8 spreadsheet.
 	 */
-	public static boolean cellReferenceIsWithinRange(String colStr, String rowStr) {
-		if (!isColumnWithnRange(colStr)) {
+	public static boolean cellReferenceIsWithinRange(String colStr, String rowStr, SpreadsheetVersion ssVersion) {
+		if (!isColumnWithnRange(colStr, ssVersion)) {
 			return false;
 		}
-		int nDigits = rowStr.length();
-		if(nDigits > BIFF8_LAST_ROW_TEXT_LEN) {
+        String lastRow = String.valueOf(ssVersion.getMaxRows());
+        int lastRowLen = lastRow.length();
+
+        int nDigits = rowStr.length();
+		if(nDigits > lastRowLen) {
 			return false; 
 		}
 		
-		if(nDigits == BIFF8_LAST_ROW_TEXT_LEN) {
+		if(nDigits == lastRowLen) {
 			// ASCII comparison is valid if digit count is same
-			if(rowStr.compareTo(BIFF8_LAST_ROW) > 0) {
+			if(rowStr.compareTo(lastRow) > 0) {
 				return false;
 			}
 		} else {
@@ -292,14 +296,17 @@ public class CellReference {
 		return true;
 	}
 
-	public static boolean isColumnWithnRange(String colStr) {
+	public static boolean isColumnWithnRange(String colStr, SpreadsheetVersion ssVersion) {
+        String lastCol = ssVersion.getLastColumnName();
+        int lastColLength = lastCol.length();
+
 		int numberOfLetters = colStr.length();
-		if(numberOfLetters > BIFF8_LAST_COLUMN_TEXT_LEN) {
+		if(numberOfLetters > lastColLength) {
 			// "Sheet1" case etc
 			return false; // that was easy
 		}
-		if(numberOfLetters == BIFF8_LAST_COLUMN_TEXT_LEN) {
-			if(colStr.toUpperCase().compareTo(BIFF8_LAST_COLUMN) > 0) {
+		if(numberOfLetters == lastColLength) {
+			if(colStr.toUpperCase().compareTo(lastCol) > 0) {
 				return false;
 			}
 		} else {

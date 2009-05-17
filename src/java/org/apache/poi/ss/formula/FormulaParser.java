@@ -31,6 +31,7 @@ import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
+import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * This class parses a formula string into a List of tokens in RPN order.
@@ -140,6 +141,7 @@ public final class FormulaParser {
 	private char look;
 
 	private FormulaParsingWorkbook _book;
+    private SpreadsheetVersion _ssVersion;
 
 	private int _sheetIndex;
 
@@ -160,7 +162,8 @@ public final class FormulaParser {
 		_formulaString = formula;
 		_pointer=0;
 		_book = book;
-		_formulaLength = _formulaString.length();
+        _ssVersion = book == null ? SpreadsheetVersion.EXCEL97 : book.getSpreadsheetVersion();
+        _formulaLength = _formulaString.length();
 		_sheetIndex = sheetIndex;
 	}
 
@@ -699,8 +702,8 @@ public final class FormulaParser {
 			if (!isValidCellReference(rep)) {
 				return null;
 			}
-		} else if (hasLetters) {
-			if (!CellReference.isColumnWithnRange(rep.replace("$", ""))) {
+        } else if (hasLetters) {
+			if (!CellReference.isColumnWithnRange(rep.replace("$", ""), _ssVersion)) {
 				return null;
 			}
 		} else if (hasDigits) {
@@ -798,7 +801,6 @@ public final class FormulaParser {
 
 	/**
 	 * Note - caller should reset {@link #_pointer} upon <code>null</code> result
-	 * @param iden identifier prefix (if unquoted, it is terminated at first dot)
 	 * @return The sheet name as an identifier <code>null</code> if '!' is not found in the right place
 	 */
 	private SheetIdentifier parseSheetName() {
@@ -878,8 +880,30 @@ public final class FormulaParser {
 	/**
 	 * @return <code>true</code> if the specified name is a valid cell reference
 	 */
-	private static boolean isValidCellReference(String str) {
-		return CellReference.classifyCellReference(str) == NameType.CELL;
+	private boolean isValidCellReference(String str) {
+        //check range bounds against grid max
+        boolean result = CellReference.classifyCellReference(str, _ssVersion) == NameType.CELL;
+
+        if(result){
+            /**
+             * Check if the argument is a function. Certain names can be either a cell reference or a function name
+             * depending on the contenxt. Compare the following examples in Excel 2007:
+             * (a) LOG10(100) + 1
+             * (b) LOG10 + 1
+             * In (a) LOG10 is a name of a built-in function. In (b) LOG10 is a cell reference
+             */
+            boolean isFunc = FunctionMetadataRegistry.getFunctionByName(str.toUpperCase()) != null;
+            if(isFunc){
+                int savePointer = _pointer;
+                resetPointer(_pointer + str.length());
+                SkipWhite();
+                // open bracket indicates that the argument is a function,
+                // the returning value should be false, i.e. "not a valid cell reference"
+                result = look != '(';
+                resetPointer(savePointer);
+            }
+        }
+        return result;
 	}
 
 
@@ -932,7 +956,6 @@ public final class FormulaParser {
 	 * <p>
 	 * For IF Formulas, additional PTGs are added to the tokens
 	 * @param name a {@link NamePtg} or {@link NameXPtg} or <code>null</code>
-	 * @param numArgs
 	 * @return Ptg a null is returned if we're in an IF formula, it needs extreme manipulation and is handled in this function
 	 */
 	private ParseNode getFunction(String name, Ptg namePtg, ParseNode[] args) {
