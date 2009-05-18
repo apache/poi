@@ -28,7 +28,7 @@ import junit.framework.TestCase;
  * @author Josh Micich
  */
 public final class TestLittleEndianStreams extends TestCase {
-	
+
 	public void testRead() {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		LittleEndianOutput leo = new LittleEndianOutputStream(baos);
@@ -39,9 +39,9 @@ public final class TestLittleEndianStreams extends TestCase {
 		leo.writeByte(200);
 		leo.writeLong(1234567890123456789L);
 		leo.writeDouble(123.456);
-		
+
 		LittleEndianInput lei = new LittleEndianInputStream(new ByteArrayInputStream(baos.toByteArray()));
-		
+
 		assertEquals(12345678, lei.readInt());
 		assertEquals(12345, lei.readShort());
 		assertEquals(123, lei.readByte());

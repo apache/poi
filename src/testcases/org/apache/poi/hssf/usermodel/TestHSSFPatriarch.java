@@ -33,7 +33,6 @@ public final class TestHSSFPatriarch extends TestCase {
 		HSSFSheet sheet = wb.createSheet();
 
 		HSSFPatriarch patr = sheet.createDrawingPatriarch();
-
 		assertNotNull(patr);
 
 		// assert something more interesting
@@ -67,5 +66,4 @@ public final class TestHSSFPatriarch extends TestCase {
 		existingPatr = sheet.getDrawingPatriarch();
 		assertNotNull(existingPatr);
 	}
-
 }

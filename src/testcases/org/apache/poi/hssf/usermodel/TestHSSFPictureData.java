@@ -39,10 +39,11 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 public final class TestHSSFPictureData extends TestCase{
 
 
-    public void testPictures() throws IOException {
+	public void testPictures() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithImages.xls");
 
-        List lst = wb.getAllPictures();
+        @SuppressWarnings("unchecked") // TODO - add getFormat() to interface PictureData and genericise wb.getAllPictures()
+        List<HSSFPictureData> lst = (List<HSSFPictureData>)(List<?>)wb.getAllPictures();
         //assertEquals(2, lst.size());
 
         for (Iterator it = lst.iterator(); it.hasNext(); ) {

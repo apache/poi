@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.ss.usermodel;
 
 import junit.framework.TestCase;
@@ -48,6 +49,4 @@ public abstract class BaseTestPicture extends TestCase {
         assertEquals(referenceAnchor.getDx2(), anchor1.getDx2());
         assertEquals(referenceAnchor.getDy2(), anchor1.getDy2());
     }
-
-
 }

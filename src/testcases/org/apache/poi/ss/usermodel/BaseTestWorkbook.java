@@ -1,3 +1,20 @@
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.ss.usermodel;
 
 import junit.framework.TestCase;
@@ -23,7 +40,6 @@ public abstract class BaseTestWorkbook extends TestCase {
             fail("should have thrown exceptiuon due to invalid sheet index");
         } catch (IllegalArgumentException e) {
             // expected during successful test
-            ;
         }
 
         Sheet sheet0 = wb.createSheet();
@@ -55,10 +71,9 @@ public abstract class BaseTestWorkbook extends TestCase {
         for (String sheetName : invalidNames) {
             try {
                 wb.createSheet(sheetName);
-                fail("should have thrown exceptiuon due to invalid sheet name: " + sheetName);
+                fail("should have thrown exception due to invalid sheet name: " + sheetName);
             } catch (IllegalArgumentException e) {
                 // expected during successful test
-                ;
             }
         }
         //still have 3 sheets
@@ -91,7 +106,6 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertEquals(0, wb.getSheetIndex("sheet0"));
         assertEquals(1, wb.getSheetIndex("sheet1"));
         assertEquals(2, wb.getSheetIndex("I changed!"));
-
     }
 
     public void testRemoveSheetAt() {
@@ -123,7 +137,6 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertEquals(0, b.getNumberOfNames());
         assertEquals(0, b.getNumberOfSheets());
     }
-
 
     public void testSheetSelection() {
         Workbook b = getTestDataProvider().createWorkbook();
@@ -159,24 +172,24 @@ public abstract class BaseTestWorkbook extends TestCase {
         Workbook workbook = getTestDataProvider().createWorkbook();
         assertEquals(0, workbook.getActiveSheetIndex());
 
-		workbook.createSheet("sheet1");
-		workbook.createSheet("sheet2");
-		workbook.createSheet("sheet3");
-		// set second sheet
-		workbook.setActiveSheet(1);
-		// test if second sheet is set up
-		assertEquals(1, workbook.getActiveSheetIndex());
+        workbook.createSheet("sheet1");
+        workbook.createSheet("sheet2");
+        workbook.createSheet("sheet3");
+        // set second sheet
+        workbook.setActiveSheet(1);
+        // test if second sheet is set up
+        assertEquals(1, workbook.getActiveSheetIndex());
 
         workbook.setActiveSheet(0);
         // test if second sheet is set up
         assertEquals(0, workbook.getActiveSheetIndex());
-	}
+    }
 
     public void testSetSheetOrder() {
         Workbook wb = getTestDataProvider().createWorkbook();
 
         for (int i=0; i < 10; i++) {
-			Sheet sh = wb.createSheet("Sheet " + i);
+            wb.createSheet("Sheet " + i);
         }
 
         // Check the initial order
@@ -280,11 +293,10 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertSame(row, cell.getRow());
     }
 
-    /** Tests that all of the unicode capable string fields can be set, written and then read back
-     *
-     *
+    /**
+     * Tests that all of the unicode capable string fields can be set, written and then read back
      */
-    public void testUnicodeInAll() throws Exception {
+    public void testUnicodeInAll() {
         Workbook wb = getTestDataProvider().createWorkbook();
         CreationHelper factory = wb.getCreationHelper();
         //Create a unicode dataformat (contains euro symbol)
@@ -312,7 +324,7 @@ public abstract class BaseTestWorkbook extends TestCase {
         c.setCellValue(12.34);
         c.getCellStyle().setDataFormat(fmt);
 
-        Cell c2 = r.createCell(2);
+        Cell c2 = r.createCell(2); // TODO - c2 unused but changing next line ('c'->'c2') causes test to fail
         c.setCellValue(factory.createRichTextString("\u20ac"));
 
         Cell c3 = r.createCell(3);
@@ -351,5 +363,4 @@ public abstract class BaseTestWorkbook extends TestCase {
         c3 = r.getCell(3);
         assertEquals(c3.getCellFormula(), formulaString);
     }
-    
 }

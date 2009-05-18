@@ -29,7 +29,7 @@ import junit.framework.TestCase;
 /**
  * Tests for {@link ChartFormatRecord} Test data taken directly from a real
  * Excel file.
- * 
+ *
  * @author Josh Micich
  */
 public final class TestChartFormatRecord extends TestCase {

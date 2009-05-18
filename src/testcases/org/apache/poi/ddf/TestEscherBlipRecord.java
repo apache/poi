@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,30 +14,26 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
-import junit.framework.TestCase;
-import org.apache.poi.util.HexRead;
-import org.apache.poi.util.HexDump;
-
-import java.io.IOException;
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Iterator;
+import java.io.IOException;
 import java.util.Arrays;
+
+import junit.framework.TestCase;
 
 /**
  * Test read/serialize of escher blip records
  *
  * @author Yegor Kozlov
  */
-public class TestEscherBlipRecord extends TestCase
-{
+public final class TestEscherBlipRecord extends TestCase {
     protected String cwd = System.getProperty("DDF.testdata.path");
 
     //test reading/serializing of a PNG blip
-    public void testReadPNG() throws IOException {
+    public void testReadPNG() {
         //provided in bug-44886
         byte[] data = read(new File(cwd, "Container.dat"));
 
@@ -83,7 +78,7 @@ public class TestEscherBlipRecord extends TestCase
     }
 
     //test reading/serializing of a PICT metafile
-    public void testReadPICT() throws IOException {
+    public void testReadPICT() {
         //provided in bug-44886
         byte[] data = read(new File(cwd, "Container.dat"));
 
@@ -135,7 +130,7 @@ public class TestEscherBlipRecord extends TestCase
     }
 
     //integral test: check that the read-write-read round trip is consistent
-    public void testContainer() throws IOException {
+    public void testContainer() {
         byte[] data = read(new File(cwd, "Container.dat"));
 
         EscherContainerRecord record = new EscherContainerRecord();
@@ -145,11 +140,15 @@ public class TestEscherBlipRecord extends TestCase
         assertTrue(Arrays.equals(data, ser));
     }
 
-    private byte[] read(File file) throws IOException {
+    private byte[] read(File file) {
         byte[] data = new byte[(int)file.length()];
-        FileInputStream is = new FileInputStream(file);
-        is.read(data);
-        is.close();
+        try {
+            FileInputStream is = new FileInputStream(file);
+            is.read(data);
+            is.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return data;
     }
 
