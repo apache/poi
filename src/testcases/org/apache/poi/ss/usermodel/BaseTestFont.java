@@ -14,12 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.ss.usermodel;
 
 import junit.framework.TestCase;
-import junit.framework.AssertionFailedError;
+
 import org.apache.poi.ss.ITestDataProvider;
-import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * @author Yegor Kozlov
@@ -47,27 +47,27 @@ public abstract class BaseTestFont extends TestCase {
         assertNotNull(fontFind);
     }
 
-	public void testGetNumberOfFonts(){
+    public void testGetNumberOfFonts(){
         Workbook wb = getTestDataProvider().createWorkbook();
         int num0 = wb.getNumberOfFonts();
 
         Font f1=wb.createFont();
-	 	f1.setBoldweight(Font.BOLDWEIGHT_BOLD);
-	 	short idx1 = f1.getIndex();
+        f1.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        short idx1 = f1.getIndex();
         wb.createCellStyle().setFont(f1);
 
-		Font f2=wb.createFont();
-	 	f2.setUnderline(Font.U_DOUBLE);
+        Font f2=wb.createFont();
+        f2.setUnderline(Font.U_DOUBLE);
         short idx2 = f2.getIndex();
-		wb.createCellStyle().setFont(f2);
+        wb.createCellStyle().setFont(f2);
 
-		Font f3=wb.createFont();
-	 	f3.setFontHeightInPoints((short)23);
+        Font f3=wb.createFont();
+        f3.setFontHeightInPoints((short)23);
         short idx3 = f3.getIndex();
-		wb.createCellStyle().setFont(f3);
+        wb.createCellStyle().setFont(f3);
 
-		assertEquals(num0 + 3,wb.getNumberOfFonts());
-	 	assertEquals(Font.BOLDWEIGHT_BOLD,wb.getFontAt(idx1).getBoldweight());
+        assertEquals(num0 + 3,wb.getNumberOfFonts());
+        assertEquals(Font.BOLDWEIGHT_BOLD,wb.getFontAt(idx1).getBoldweight());
         assertEquals(Font.U_DOUBLE,wb.getFontAt(idx2).getUnderline());
         assertEquals(23,wb.getFontAt(idx3).getFontHeightInPoints());
 	}
@@ -75,7 +75,6 @@ public abstract class BaseTestFont extends TestCase {
     /**
      * Tests that we can define fonts to a new
      *  file, save, load, and still see them
-     * @throws Exception
      */
     public void testCreateSave() {
         Workbook wb = getTestDataProvider().createWorkbook();
@@ -129,8 +128,6 @@ public abstract class BaseTestFont extends TestCase {
         assertEquals(15, wb.getFontAt(font2Idx).getFontHeightInPoints());
         assertEquals(true, wb.getFontAt(font2Idx).getItalic());
     }
-
-
 
     /**
      * Test that fonts get added properly
@@ -200,5 +197,4 @@ public abstract class BaseTestFont extends TestCase {
                )
         );
     }
-
 }

@@ -20,7 +20,7 @@ package org.apache.poi.hssf.record;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 /**
- * 
+ *
  * @author Josh Micich
  */
 public final class TestExternalNameRecord extends TestCase {
@@ -28,28 +28,28 @@ public final class TestExternalNameRecord extends TestCase {
 	private static final byte[] dataFDS = {
 		0, 0, 0, 0, 0, 0, 3, 0, 70, 68, 83, 0, 0,
 	};
-	
+
 	// data taken from bugzilla 44774 att 21790
 	private static final byte[] dataAutoDocName = {
 		-22, 127, 0, 0, 0, 0, 29, 0, 39, 49, 57, 49, 50, 49, 57, 65, 87, 52, 32, 67, 111, 114,
 			112, 44, 91, 87, 79, 82, 75, 79, 85, 84, 95, 80, 88, 93, 39,
 	};
-	
+
 	// data taken from bugzilla 44774 att 21790
 	private static final byte[] dataPlainName = {
 		0, 0, 0, 0, 0, 0, 9, 0, 82, 97, 116, 101, 95, 68, 97, 116, 101, 9, 0, 58, 0, 0, 0, 0, 4, 0, 8, 0
 		// TODO - the last 2 bytes of formula data (8,0) seem weird.  They encode to ConcatPtg, UnknownPtg
 		// UnknownPtg is otherwise not created by any other test cases
 	};
-	
+
 	private static ExternalNameRecord createSimpleENR(byte[] data) {
 		return new ExternalNameRecord(TestcaseRecordInputStream.create(0x0023, data));
 	}
 	public void testBasicDeserializeReserialize() {
-		
+
 		ExternalNameRecord enr = createSimpleENR(dataFDS);
 		assertEquals("FDS", enr.getText());
-	 
+
 		try {
 			TestcaseRecordInputStream.confirmRecordEncoding(0x0023, dataFDS, enr.serialize());
 		} catch (ArrayIndexOutOfBoundsException e) {
@@ -66,7 +66,7 @@ public final class TestExternalNameRecord extends TestCase {
 		}
 		assertEquals(17, enr.getRecordSize());
 	}
-	
+
 	public void testAutoStdDocName() {
 
 		ExternalNameRecord enr;

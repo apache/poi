@@ -27,15 +27,16 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.pivottable.ViewDefinitionRecord;
 
 /**
  * Tests for {@link RowBlocksReader}
- * 
+ *
  * @author Josh Micich
  */
 public final class TestRowBlocksReader extends TestCase {
 	public void testAbnormalPivotTableRecords_bug46280() {
-		int SXVIEW_SID = 0x00B0;
+		int SXVIEW_SID = ViewDefinitionRecord.sid;
 		Record[] inRecs = {
 			new RowRecord(0),
 			new NumberRecord(),
@@ -46,7 +47,7 @@ public final class TestRowBlocksReader extends TestCase {
 		RecordStream rs = new RecordStream(Arrays.asList(inRecs), 0);
 		RowBlocksReader rbr = new RowBlocksReader(rs);
 		if (rs.peekNextClass() == WindowTwoRecord.class) {
-			// Should have stopped at the SXVIEW record 
+			// Should have stopped at the SXVIEW record
 			throw new AssertionFailedError("Identified bug 46280b");
 		}
 		RecordStream rbStream = rbr.getPlainRecordStream();

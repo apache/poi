@@ -126,7 +126,6 @@ public final class TestTextObjectRecord extends TestCase {
             assertEquals(buff.length(), str.length());
             assertEquals(buff.toString(), str.getString());
         }
-
     }
 
     /**
@@ -192,5 +191,4 @@ public final class TestTextObjectRecord extends TestCase {
         assertEquals(linkData.length, data2.length);
         assertTrue(Arrays.equals(linkData, data2));
     }
-
 }

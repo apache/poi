@@ -14,12 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.ss;
 
 import org.apache.poi.ss.usermodel.Workbook;
 
 /**
- * Incapsulates a provider of test data for common HSSF / XSSF tests.
+ * Encapsulates a provider of test data for common HSSF / XSSF tests.
  */
 public interface ITestDataProvider {
     /**

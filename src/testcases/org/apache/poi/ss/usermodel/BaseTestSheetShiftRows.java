@@ -194,8 +194,8 @@ public abstract class BaseTestSheetShiftRows  extends TestCase {
 
     public final void baseTestShiftWithNames() {
         Workbook wb = getTestDataProvider().createWorkbook();
-        Sheet sheet1	= wb.createSheet("Sheet1");
-        Sheet sheet2	= wb.createSheet("Sheet2");
+        Sheet sheet1 = wb.createSheet("Sheet1");
+        wb.createSheet("Sheet2");
         Row row = sheet1.createRow(0);
         row.createCell(0).setCellValue(1.1);
         row.createCell(1).setCellValue(2.2);
@@ -224,7 +224,7 @@ public abstract class BaseTestSheetShiftRows  extends TestCase {
         assertEquals("Sheet1!$A$3+Sheet1!$B$3", name1.getRefersToFormula());
 
         name2 = wb.getNameAt(1);
-        assertEquals("Sheet1!$A$3", name2.getRefersToFormula());    
+        assertEquals("Sheet1!$A$3", name2.getRefersToFormula());
 
         //name3 and name4 refer to Sheet2 and should not be affected
         name3 = wb.getNameAt(2);

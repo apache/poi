@@ -46,7 +46,7 @@ public final class HSSFITestDataProvider implements ITestDataProvider {
     public byte[] getTestDataFileContent(String fileName) {
         return HSSFTestDataSamples.getTestDataFileContent(fileName);
     }
-    
+
     public SpreadsheetVersion getSpreadsheetVersion(){
         return SpreadsheetVersion.EXCEL97;
     }

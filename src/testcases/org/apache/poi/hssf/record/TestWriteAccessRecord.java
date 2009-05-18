@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.record;
 
 import junit.framework.AssertionFailedError;
@@ -28,14 +28,14 @@ import org.apache.poi.util.HexRead;
  * @author Josh Micich
  */
 public final class TestWriteAccessRecord extends TestCase {
-    
+
 	private static final String HEX_SIXTYFOUR_SPACES = ""
 		+ "20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 "
 		+ "20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 "
 		+ "20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 "
 		+ "20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20";
-		
-	
+
+
 	public void testMissingStringHeader_bug47001a() {
 		/*
 		 * Data taken from offset 0x0224 in
@@ -61,22 +61,22 @@ public final class TestWriteAccessRecord extends TestCase {
 			throw e;
 		}
 		assertEquals("Java Excel API v2.6.4", rec.getUsername());
-		
-		
+
+
 		byte[] expectedEncoding = HexRead.readFromString(""
 				+ "15 00 00 4A 61 76 61 20 45 78 63 65 6C 20 41 50 "
 				+ "49 20 76 32 2E 36 2E 34"
 				+                         "20 20 20 20 20 20 20 20 "
 				+ "20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 "
 				+ HEX_SIXTYFOUR_SPACES);
-		
+
 		TestcaseRecordInputStream.confirmRecordEncoding(WriteAccessRecord.sid, expectedEncoding, rec.serialize());
 	}
-	
+
 	public void testShortRecordWrittenByMSAccess() {
 		/*
 		 * Data taken from two example files
-		 * ex42564-21435.xls 
+		 * ex42564-21435.xls
 		 * bug_42794.xls (from bug 42794 attachment 20429)
 		 * In both cases, this data is found at offset 0x0C1C.
 		 */
@@ -97,7 +97,7 @@ public final class TestWriteAccessRecord extends TestCase {
 				+ "20 55 73 65 72"
 				+                "20 20 20 20 20 20 20 20 20 20 20 "
 				+ HEX_SIXTYFOUR_SPACES);
-		
+
 		TestcaseRecordInputStream.confirmRecordEncoding(WriteAccessRecord.sid, expectedEncoding, rec.serialize());
 	}
 }

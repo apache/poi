@@ -28,8 +28,8 @@ import java.io.InputStream;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
- * Centralises logic for finding/opening sample files in the src/testcases/org/apache/poi/hssf/hssf/data folder. 
- * 
+ * Centralises logic for finding/opening sample files in the src/testcases/org/apache/poi/hssf/hssf/data folder.
+ *
  * @author Josh Micich
  */
 public final class HSSFTestDataSamples {
@@ -38,17 +38,17 @@ public final class HSSFTestDataSamples {
 
 	private static boolean _isInitialised;
 	private static File _resolvedDataDir;
-	/** <code>true</code> if standard system propery is not set, 
+	/** <code>true</code> if standard system propery is not set,
 	 * but the data is available on the test runtime classpath */
 	private static boolean _sampleDataIsAvaliableOnClassPath;
 
 	/**
 	 * Opens a sample file from the standard HSSF test data directory
-	 * 
+	 *
 	 * @return an open <tt>InputStream</tt> for the specified sample file
 	 */
 	public static InputStream openSampleFileStream(String sampleFileName) {
-		
+
 		if(!_isInitialised) {
 			try {
 				initialise();
@@ -59,7 +59,7 @@ public final class HSSFTestDataSamples {
 		if (_sampleDataIsAvaliableOnClassPath) {
 			InputStream result = openClasspathResource(sampleFileName);
 			if(result == null) {
-				throw new RuntimeException("specified test sample file '" + sampleFileName 
+				throw new RuntimeException("specified test sample file '" + sampleFileName
 						+ "' not found on the classpath");
 			}
 //			System.out.println("opening cp: " + sampleFileName);
@@ -71,7 +71,7 @@ public final class HSSFTestDataSamples {
 					+ TEST_DATA_DIR_SYS_PROPERTY_NAME
 					+ "' properly before running tests");
 		}
-		
+
 		File f = new File(_resolvedDataDir, sampleFileName);
 		if (!f.exists()) {
 			throw new RuntimeException("Sample file '" + sampleFileName
@@ -87,32 +87,31 @@ public final class HSSFTestDataSamples {
 
 	private static void initialise() {
 		String dataDirName = System.getProperty(TEST_DATA_DIR_SYS_PROPERTY_NAME);
-        if (dataDirName == null) {
-        	// check to see if we can just get the resources from the classpath
-        	InputStream is = openClasspathResource("SampleSS.xls"); 
-        	if(is != null) {
-        		try {
+		if (dataDirName == null) {
+			// check to see if we can just get the resources from the classpath
+			InputStream is = openClasspathResource("SampleSS.xls");
+			if (is != null) {
+				try {
 					is.close(); // be nice
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
-        		_sampleDataIsAvaliableOnClassPath = true;
-        		return;
-        	}
-        	
-        	
-        	throw new RuntimeException("Must set system property '"
-        			+ TEST_DATA_DIR_SYS_PROPERTY_NAME
-        			+ "' before running tests");
-        }
-        File dataDir = new File(dataDirName);
-        if (!dataDir.exists()) {
-        	throw new RuntimeException("Data dir '" + dataDirName
-        			+ "' specified by system property '"
-        			+ TEST_DATA_DIR_SYS_PROPERTY_NAME + "' does not exist");
-        }
-        // convert to canonical file, to make any subsequent error messages clearer.
-        try {
+				_sampleDataIsAvaliableOnClassPath = true;
+				return;
+			}
+
+			throw new RuntimeException("Must set system property '"
+					+ TEST_DATA_DIR_SYS_PROPERTY_NAME + "' before running tests");
+		}
+		File dataDir = new File(dataDirName);
+		if (!dataDir.exists()) {
+			throw new RuntimeException("Data dir '" + dataDirName
+					+ "' specified by system property '" + TEST_DATA_DIR_SYS_PROPERTY_NAME
+					+ "' does not exist");
+		}
+		// convert to canonical file, to make any subsequent error messages
+		// clearer.
+		try {
 			_resolvedDataDir = dataDir.getCanonicalFile();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -120,13 +119,13 @@ public final class HSSFTestDataSamples {
 	}
 
 	/**
-	 * Opens a test sample file from the 'data' sub-package of this class's package. 
+	 * Opens a test sample file from the 'data' sub-package of this class's package.
 	 * @return <code>null</code> if the sample file is not deployed on the classpath.
 	 */
 	private static InputStream openClasspathResource(String sampleFileName) {
 		return HSSFTestDataSamples.class.getResourceAsStream("data/" + sampleFileName);
 	}
-	
+
 	private static final class NonSeekableInputStream extends InputStream {
 
 		private final InputStream _is;
@@ -162,7 +161,7 @@ public final class HSSFTestDataSamples {
 	 * Useful for verifying that the serialisation round trip
 	 */
 	public static HSSFWorkbook writeOutAndReadBack(HSSFWorkbook original) {
-		
+
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
 			original.write(baos);
@@ -174,7 +173,7 @@ public final class HSSFTestDataSamples {
 	}
 
 	/**
-	 * @return byte array of sample file content from file found in standard hssf test data dir 
+	 * @return byte array of sample file content from file found in standard hssf test data dir
 	 */
 	public static byte[] getTestDataFileContent(String fileName) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();

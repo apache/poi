@@ -23,8 +23,9 @@ import junit.framework.TestCase;
 /**
  * Tests that the common CellReference works as we need it to
  */
-public class TestRegion extends TestCase {
-	
+@SuppressWarnings("deprecation") // the Region class is deprecated in the public API, but still needs to be tested
+public final class TestRegion extends TestCase {
+
 	public void testGetRegionRef() {
 		int rowFrom = 3;
 		short colFrom = 3;
@@ -33,7 +34,7 @@ public class TestRegion extends TestCase {
 		Region region = new Region(rowFrom, colFrom, rowTo, colTo);
 		assertEquals("D4:J10", region.getRegionRef());
 	}
-	
+
 	public void testContains() {
 		int rowFrom = 3;
 		short colFrom = 3;
@@ -45,11 +46,10 @@ public class TestRegion extends TestCase {
 		assertTrue(region.contains(9, (short) 9));
 		assertFalse(region.contains(9, (short) 10));
 	}
-	
+
 	public void testConstructors() {
 		Region region_1 = new Region("A1:E7");
 		assertEquals(0, region_1.getColumnFrom());
 		assertEquals((short)4, region_1.getColumnTo());
 	}
-	
 }

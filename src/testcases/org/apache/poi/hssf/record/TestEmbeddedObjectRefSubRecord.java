@@ -141,7 +141,7 @@ public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 		byte[] ser2 = rec.serialize();
 		TestcaseRecordInputStream.confirmRecordEncoding("Test record " + i, EORSR_SID, data, ser2);
 	}
-	
+
 	public void testVisioDrawing_bug46199() {
 		/**
 		 * taken from ftPictFmla sub-record in attachment 22860 (stream offset 0x768F).<br/>

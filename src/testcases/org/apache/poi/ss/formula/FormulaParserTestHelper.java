@@ -23,12 +23,12 @@ import junit.framework.AssertionFailedError;
 import org.apache.poi.ss.formula.FormulaParser.FormulaParseException;
 /**
  * Avoids making {@link FormulaParseException} public
- * 
+ *
  * @author Josh Micich
  */
 public class FormulaParserTestHelper {
 	/**
-	 * @throws AssertionFailedError  if <tt>e</tt> is not a formula parser exception 
+	 * @throws AssertionFailedError  if <tt>e</tt> is not a formula parser exception
 	 * or if the exception message doesn't match.
 	 */
 	public static void confirmParseException(RuntimeException e, String expectedMessage) {
@@ -36,7 +36,7 @@ public class FormulaParserTestHelper {
 		Assert.assertEquals(expectedMessage, e.getMessage());
 	}
 	/**
-	 * @throws AssertionFailedError  if <tt>e</tt> is not a formula parser exception 
+	 * @throws AssertionFailedError  if <tt>e</tt> is not a formula parser exception
 	 * or if <tt>e</tt> has no message.
 	 */
 	public static void confirmParseException(RuntimeException e) {
@@ -45,11 +45,11 @@ public class FormulaParserTestHelper {
 	}
 	private static void checkType(RuntimeException e) throws AssertionFailedError {
 		if (!(e instanceof FormulaParseException)) {
-    		String failMsg = "Expected FormulaParseException, but got (" 
-    			+ e.getClass().getName() + "):";
-    		System.err.println(failMsg);
-    		e.printStackTrace();
-    		throw new AssertionFailedError(failMsg);
+			String failMsg = "Expected FormulaParseException, but got ("
+				+ e.getClass().getName() + "):";
+			System.err.println(failMsg);
+			e.printStackTrace();
+			throw new AssertionFailedError(failMsg);
 		}
 	}
 }

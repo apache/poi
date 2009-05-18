@@ -34,7 +34,7 @@ public final class TestEqualEval extends TestCase {
 	 * The value from a 1x1 area should be taken immediately, regardless of srcRow and srcCol
 	 */
 	public void test1x1AreaOperand() {
- 
+
 		ValueEval[] values = { BoolEval.FALSE, };
 		Eval[] args = {
 			EvalFactory.createAreaEval("B1:B1", values),
@@ -53,7 +53,7 @@ public final class TestEqualEval extends TestCase {
 	 * Empty string is equal to blank
 	 */
 	public void testBlankEqualToEmptyString() {
-		 
+
 		Eval[] args = {
 			new StringEval(""),
 			BlankEval.INSTANCE,
@@ -66,7 +66,7 @@ public final class TestEqualEval extends TestCase {
 		}
 		assertTrue(be.getBooleanValue());
 	}
-	
+
 	/**
 	 * Test for bug 46613 (observable at svn r737248)
 	 */
