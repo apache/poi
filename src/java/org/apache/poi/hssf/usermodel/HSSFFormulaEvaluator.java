@@ -30,6 +30,7 @@ import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
 
 /**
  * Evaluates formula cells.<p/>
@@ -59,7 +60,7 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator  {
 	}
 	/**
 	 * @param stabilityClassifier used to optimise caching performance. Pass <code>null</code>
-	 * for the (conservative) assumption that any cell may have its definition changed after 
+	 * for the (conservative) assumption that any cell may have its definition changed after
 	 * evaluation begins.
 	 */
 	public HSSFFormulaEvaluator(HSSFWorkbook workbook, IStabilityClassifier stabilityClassifier) {
@@ -277,11 +278,11 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator  {
 		for(int i=0; i<wb.getNumberOfSheets(); i++) {
 			HSSFSheet sheet = wb.getSheetAt(i);
 
-			for (Iterator rit = sheet.rowIterator(); rit.hasNext();) {
-				HSSFRow r = (HSSFRow)rit.next();
+			for (Iterator<Row> rit = sheet.rowIterator(); rit.hasNext();) {
+				Row r = rit.next();
 
-				for (Iterator cit = r.cellIterator(); cit.hasNext();) {
-					HSSFCell c = (HSSFCell)cit.next();
+				for (Iterator<Cell> cit = r.cellIterator(); cit.hasNext();) {
+					Cell c = cit.next();
 					if (c.getCellType() == HSSFCell.CELL_TYPE_FORMULA)
 						evaluator.evaluateFormulaCell(c);
 				}

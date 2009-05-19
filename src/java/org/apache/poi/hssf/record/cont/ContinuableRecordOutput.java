@@ -25,12 +25,12 @@ import org.apache.poi.util.StringUtil;
 /**
  * An augmented {@link LittleEndianOutput} used for serialization of {@link ContinuableRecord}s.
  * This class keeps track of how much remaining space is available in the current BIFF record and
- * can start new {@link ContinueRecord}s as required. 
- * 
+ * can start new {@link ContinueRecord}s as required.
+ *
  * @author Josh Micich
  */
 public final class ContinuableRecordOutput implements LittleEndianOutput {
-	
+
 	private final LittleEndianOutput _out;
 	private UnknownLengthRecordOutput _ulrOutput;
 	private int _totalPreviousRecordsSize;
@@ -40,13 +40,13 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
 		_out = out;
 		_totalPreviousRecordsSize = 0;
 	}
-	
+
 	public static ContinuableRecordOutput createForCountingOnly() {
 		return new ContinuableRecordOutput(NOPOutput, -777); // fake sid
 	}
 
 	/**
-	 * @return total number of bytes written so far (including all BIFF headers) 
+	 * @return total number of bytes written so far (including all BIFF headers)
 	 */
 	public int getTotalSize() {
 		return _totalPreviousRecordsSize + _ulrOutput.getTotalSize();
@@ -63,7 +63,7 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
 	public int getAvailableSpace() {
 		return _ulrOutput.getAvailableSpace();
 	}
-	
+
 	/**
 	 * Terminates the current record and starts a new {@link ContinueRecord} (regardless
 	 * of how much space is still available in the current record).
@@ -85,14 +85,14 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
 	 * <li>byte optionFlags</li>
 	 * <li>encoded character data (in "ISO-8859-1" or "UTF-16LE" encoding)</li>
 	 * </ul>
-	 * 
+	 *
 	 * Notes:
 	 * <ul>
-	 * <li>The value of the 'is16bitEncoded' flag is determined by the actual character data 
+	 * <li>The value of the 'is16bitEncoded' flag is determined by the actual character data
 	 * of <tt>text</tt></li>
 	 * <li>The string options flag is never separated (by a {@link ContinueRecord}) from the
 	 * first chunk of character data it refers to.</li>
-	 * <li>The 'ushort length' field is assumed to have been explicitly written earlier.  Hence, 
+	 * <li>The 'ushort length' field is assumed to have been explicitly written earlier.  Hence,
 	 * there may be an intervening {@link ContinueRecord}</li>
 	 * </ul>
 	 */
@@ -118,7 +118,7 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
 	 * <li>ushort extendedDataSize (optional)</li>
 	 * <li>encoded character data (in "ISO-8859-1" or "UTF-16LE" encoding)</li>
 	 * </ul>
-	 * 
+	 *
 	 * The following bits of the 'optionFlags' byte will be set as appropriate:
 	 * <table border='1'>
 	 * <tr><th>Mask</th><th>Description</th></tr>
@@ -127,8 +127,8 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
 	 * <tr><td>0x08</td><td>isRichText</td></tr>
 	 * </table>
 	 * Notes:
-	 * <ul> 
-	 * <li>The value of the 'is16bitEncoded' flag is determined by the actual character data 
+	 * <ul>
+	 * <li>The value of the 'is16bitEncoded' flag is determined by the actual character data
 	 * of <tt>text</tt></li>
 	 * <li>The string header fields are never separated (by a {@link ContinueRecord}) from the
 	 * first chunk of character data (i.e. the first character is always encoded in the same
@@ -178,7 +178,7 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
 					break;
 				}
 				writeContinue();
-				writeByte(0x01); 
+				writeByte(0x01);
 			}
 		} else {
 			while(true) {
@@ -190,7 +190,7 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
 					break;
 				}
 				writeContinue();
-				writeByte(0x00); 
+				writeByte(0x00);
 			}
 		}
 	}
@@ -223,11 +223,11 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
 		writeContinueIfRequired(2);
 		_ulrOutput.writeShort(v);
 	}
-	
+
 	/**
 	 * Allows optimised usage of {@link ContinuableRecordOutput} for sizing purposes only.
 	 */
-    private static final LittleEndianOutput NOPOutput = new DelayableLittleEndianOutput() {
+	private static final LittleEndianOutput NOPOutput = new DelayableLittleEndianOutput() {
 
 		public LittleEndianOutput createDelayedOutput(int size) {
 			return this;
@@ -253,5 +253,5 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
 		public void writeShort(int v) {
 			// does nothing
 		}
-    };
+	};
 }

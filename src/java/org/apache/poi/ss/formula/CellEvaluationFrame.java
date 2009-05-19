@@ -52,7 +52,7 @@ final class CellEvaluationFrame {
 		_sensitiveInputCells.add(inputCell);
 	}
 	/**
-	 * @return never <code>null</code>, (possibly empty) array of all cells directly used while 
+	 * @return never <code>null</code>, (possibly empty) array of all cells directly used while
 	 * evaluating the formula of this frame.
 	 */
 	private CellCacheEntry[] getSensitiveInputCells() {
@@ -70,7 +70,7 @@ final class CellEvaluationFrame {
 		}
 		_usedBlankCellGroup.addCell(bookIndex, sheetIndex, rowIndex, columnIndex);
 	}
-	
+
 	public void updateFormulaResult(ValueEval result) {
 		_cce.updateFormulaResult(result, getSensitiveInputCells(), _usedBlankCellGroup);
 	}

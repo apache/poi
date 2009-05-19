@@ -22,7 +22,7 @@ import org.apache.poi.hssf.record.SelectionRecord;
 
 /**
  * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p/>
- * 
+ *
  * Note - {@link SelectionRecord} uses the BIFF5 version of this structure
  * @deprecated use {@link org.apache.poi.ss.util.CellRangeAddress}
  * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)

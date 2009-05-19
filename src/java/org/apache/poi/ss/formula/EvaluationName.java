@@ -21,9 +21,9 @@ import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 /**
  * Abstracts a name record for formula evaluation.<br/>
- * 
+ *
  * For POI internal use only
- * 
+ *
  * @author Josh Micich
  */
 public interface EvaluationName {

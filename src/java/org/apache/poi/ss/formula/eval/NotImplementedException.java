@@ -22,7 +22,7 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 /**
  * An exception thrown by implementors of {@link FormulaEvaluator} when attempting to evaluate
  * a formula which requires features that POI does not (yet) support.
- * 
+ *
  * @author Josh Micich
  */
 public final class NotImplementedException extends RuntimeException {

@@ -17,7 +17,7 @@
 
 package org.apache.poi.util;
 /**
- * 
+ *
  * @author Josh Micich
  */
 public interface LittleEndianOutput {

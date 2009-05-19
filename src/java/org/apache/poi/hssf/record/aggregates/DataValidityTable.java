@@ -62,7 +62,7 @@ public final class DataValidityTable extends RecordAggregate {
 			rv.visitRecord((Record) _validationList.get(i));
 		}
 	}
-	
+
 	public void addDataValidation(DVRecord dvRecord) {
 		_validationList.add(dvRecord);
 		_headerRec.setDVRecNo(_validationList.size());

@@ -19,8 +19,8 @@ package org.apache.poi.ss.formula;
 
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 /**
- * 
- * 
+ *
+ *
  * @author Josh Micich
  */
 final class SheetRefEvaluator {

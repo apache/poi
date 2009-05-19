@@ -34,7 +34,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * An alternative workbook evaluator that saves memory in situations where a single workbook is
- * concurrently and independently evaluated many times.  With standard formula evaluation, around 
+ * concurrently and independently evaluated many times.  With standard formula evaluation, around
  * 90% of memory consumption is due to loading of the {@link HSSFWorkbook} or {@link org.apache.poi.xssf.usermodel.XSSFWorkbook}.
  * This class enables a 'master workbook' to be loaded just once and shared between many evaluation
  * clients.  Each evaluation client creates its own {@link ForkedEvaluator} and can set cell values
@@ -78,10 +78,10 @@ public final class ForkedEvaluator {
 		_evaluator.notifyUpdateCell(cell);
 	}
 	/**
-	 * Copies the values of all updated cells (modified by calls to {@link 
+	 * Copies the values of all updated cells (modified by calls to {@link
 	 * #updateCell(String, int, int, ValueEval)}) to the supplied <tt>workbook</tt>.<br/>
-	 * Typically, the supplied <tt>workbook</tt> is a writable copy of the 'master workbook', 
-	 * but at the very least it must contain sheets with the same names. 
+	 * Typically, the supplied <tt>workbook</tt> is a writable copy of the 'master workbook',
+	 * but at the very least it must contain sheets with the same names.
 	 */
 	public void copyUpdatedCells(Workbook workbook) {
 		_sewb.copyUpdatedCells(workbook);

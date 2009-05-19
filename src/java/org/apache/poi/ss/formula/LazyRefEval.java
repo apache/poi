@@ -28,7 +28,7 @@ import org.apache.poi.hssf.util.CellReference;
 
 /**
 *
-* @author Josh Micich 
+* @author Josh Micich
 */
 final class LazyRefEval extends RefEvalBase {
 
@@ -46,15 +46,15 @@ final class LazyRefEval extends RefEvalBase {
 	public ValueEval getInnerValueEval() {
 		return _evaluator.getEvalForCell(getRow(), getColumn());
 	}
-	
+
 	public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
-		
+
 		AreaI area = new OffsetArea(getRow(), getColumn(),
 				relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
 
 		return new LazyAreaEval(area, _evaluator);
 	}
-	
+
 	public String toString() {
 		CellReference cr = new CellReference(getRow(), getColumn());
 		StringBuffer sb = new StringBuffer();
