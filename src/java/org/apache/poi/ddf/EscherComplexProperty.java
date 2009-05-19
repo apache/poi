@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.HexDump;
-
 import java.util.Arrays;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * A complex property differs from a simple property in that the data can not fit inside a 32 bit
@@ -32,10 +29,9 @@ import java.io.IOException;
  *
  * @author Glen Stampoultzis
  */
-public class EscherComplexProperty
-        extends EscherProperty
-{
-    byte[] complexData = new byte[0];
+public class EscherComplexProperty extends EscherProperty {
+    // TODO - make private and final
+    protected byte[] _complexData;
 
     /**
      * Create a complex property using the property id and a byte array containing the complex
@@ -45,10 +41,9 @@ public class EscherComplexProperty
      *                    indicating that this is a complex property.
      * @param complexData The value of this property.
      */
-    public EscherComplexProperty( short id, byte[] complexData )
-    {
-        super( id );
-        this.complexData = complexData;
+    public EscherComplexProperty(short id, byte[] complexData) {
+        super(id);
+        _complexData = complexData;
     }
 
     /**
@@ -59,19 +54,17 @@ public class EscherComplexProperty
      * @param isBlipId       Whether this is a blip id.  Should be false.
      * @param complexData    The value of this complex property.
      */
-    public EscherComplexProperty( short propertyNumber, boolean isBlipId, byte[] complexData )
-    {
-        super( propertyNumber, true, isBlipId );
-        this.complexData = complexData;
+    public EscherComplexProperty(short propertyNumber, boolean isBlipId, byte[] complexData) {
+        super(propertyNumber, true, isBlipId);
+        _complexData = complexData;
     }
 
     /**
-     * Serializes the simple part of this property.  ie the first 6 bytes.
+     * Serializes the simple part of this property.  i.e. the first 6 bytes.
      */
-    public int serializeSimplePart( byte[] data, int pos )
-    {
+    public int serializeSimplePart(byte[] data, int pos) {
         LittleEndian.putShort(data, pos, getId());
-        LittleEndian.putInt(data, pos + 2, complexData.length);
+        LittleEndian.putInt(data, pos + 2, _complexData.length);
         return 6;
     }
 
@@ -82,18 +75,16 @@ public class EscherComplexProperty
      * @param pos  The offset within data to start serializing to.
      * @return The number of bytes serialized.
      */
-    public int serializeComplexPart( byte[] data, int pos )
-    {
-        System.arraycopy(complexData, 0, data, pos, complexData.length);
-        return complexData.length;
+    public int serializeComplexPart(byte[] data, int pos) {
+        System.arraycopy(_complexData, 0, data, pos, _complexData.length);
+        return _complexData.length;
     }
 
     /**
      * Get the complex data value.
      */
-    public byte[] getComplexData()
-    {
-        return complexData;
+    public byte[] getComplexData() {
+        return _complexData;
     }
 
     /**
@@ -102,63 +93,39 @@ public class EscherComplexProperty
      * @param o The object to compare to.
      * @return True if the objects are equal.
      */
-    public boolean equals( Object o )
-    {
-        if ( this == o ) return true;
-        if ( !( o instanceof EscherComplexProperty ) ) return false;
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof EscherComplexProperty)) {
+            return false;
+        }
 
-        final EscherComplexProperty escherComplexProperty = (EscherComplexProperty) o;
+        EscherComplexProperty escherComplexProperty = (EscherComplexProperty) o;
 
-        if ( !Arrays.equals( complexData, escherComplexProperty.complexData ) ) return false;
+        if ( !Arrays.equals( _complexData, escherComplexProperty._complexData ) ) return false;
 
         return true;
     }
 
     /**
-     * Caclulates the number of bytes required to serialize this property.
+     * Calculates the number of bytes required to serialize this property.
      *
      * @return Number of bytes
      */
-    public int getPropertySize()
-    {
-        return 6 + complexData.length;
+    public int getPropertySize() {
+        return 6 + _complexData.length;
     }
 
-    /**
-     * Calculates a hashcode for this property.
-     */
-    public int hashCode()
-    {
+    public int hashCode() {
         return getId() * 11;
     }
 
     /**
      * Retrieves the string representation for this property.
      */
-    public String toString()
-    {
-        String dataStr;
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        try
-        {
-            HexDump.dump( this.complexData, 0, b, 0 );
-            dataStr = b.toString();
-        }
-        catch ( Exception e )
-        {
-            dataStr = e.toString();
-        }
-        finally
-        {
-            try
-            {
-                b.close();
-            }
-            catch ( IOException e )
-            {
-                e.printStackTrace();
-            }
-        }
+    public String toString() {
+        String dataStr = HexDump.toHex( _complexData, 32);
 
         return "propNum: " + getPropertyNumber()
                 + ", propName: " + EscherProperties.getPropertyName( getPropertyNumber() )

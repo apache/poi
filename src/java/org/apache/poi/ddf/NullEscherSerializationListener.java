@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 /**
@@ -23,16 +22,12 @@ package org.apache.poi.ddf;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class NullEscherSerializationListener implements EscherSerializationListener
-{
-    public void beforeRecordSerialize( int offset, short recordId, EscherRecord record )
-    {
+public class NullEscherSerializationListener implements EscherSerializationListener {
+    public void beforeRecordSerialize(int offset, short recordId, EscherRecord record) {
         // do nothing
     }
 
-    public void afterRecordSerialize( int offset, short recordId, int size, EscherRecord record )
-    {
+    public void afterRecordSerialize(int offset, short recordId, int size, EscherRecord record) {
         // do nothing
     }
-
 }

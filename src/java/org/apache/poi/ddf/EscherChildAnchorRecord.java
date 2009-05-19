@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 import org.apache.poi.util.HexDump;
@@ -39,16 +39,7 @@ public class EscherChildAnchorRecord
     private int field_3_dx2;
     private int field_4_dy2;
 
-    /**
-     * This method deserializes the record from a byte array.
-     *
-     * @param data          The byte array containing the escher record information
-     * @param offset        The starting offset into <code>data</code>.
-     * @param recordFactory May be null since this is not a container record.
-     * @return The number of bytes read from the byte array.
-     */
-    public int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory )
-    {
+    public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
         int pos            = offset + 8;
         int size           = 0;
@@ -59,17 +50,7 @@ public class EscherChildAnchorRecord
         return 8 + size;
     }
 
-    /**
-     * This method serializes this escher record into a byte array.
-     *
-     * @param offset   The offset into <code>data</code> to start writing the record data to.
-     * @param data     The byte array to serialize to.
-     * @param listener A listener to retrieve start and end callbacks.  Use a <code>NullEscherSerailizationListener</code> to ignore these events.
-     * @return The number of bytes written.
-     * @see NullEscherSerializationListener
-     */
-    public int serialize( int offset, byte[] data, EscherSerializationListener listener )
-    {
+    public int serialize(int offset, byte[] data, EscherSerializationListener listener) {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
         int pos = offset;
         LittleEndian.putShort( data, pos, getOptions() );          pos += 2;
@@ -84,31 +65,19 @@ public class EscherChildAnchorRecord
         return pos - offset;
     }
 
-    /**
-     * Returns the number of bytes that are required to serialize this record.
-     *
-     * @return Number of bytes
-     */
     public int getRecordSize()
     {
         return 8 + 4 * 4;
     }
 
-    /**
-     * The record id for the EscherChildAnchorRecord.
-     */
-    public short getRecordId()
-    {
+    public short getRecordId() {
         return RECORD_ID;
     }
 
-    /**
-     * The short name for this record
-     */
-    public String getRecordName()
-    {
+    public String getRecordName() {
         return "ChildAnchor";
     }
+
 
     /**
      * The string representation of this record

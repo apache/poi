@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
-
-import java.io.ByteArrayOutputStream;
 
 /**
  * The BSE record is related closely to the <code>EscherBlipRecord</code> and stores
@@ -31,9 +28,7 @@ import java.io.ByteArrayOutputStream;
  * @author Glen Stampoultzis
  * @see EscherBlipRecord
  */
-public class EscherBSERecord
-        extends EscherRecord
-{
+public final class EscherBSERecord extends EscherRecord {
     public static final short RECORD_ID = (short) 0xF007;
     public static final String RECORD_DESCRIPTION = "MsofbtBSE";
 
@@ -59,20 +54,9 @@ public class EscherBSERecord
     private byte field_11_unused3;
     private EscherBlipRecord field_12_blipRecord;
 
-    private byte[] remainingData;
+    private byte[] _remainingData;
 
-    /**
-     * This method deserializes the record from a byte array.
-     *
-     * @param data          The byte array containing the escher record information
-     * @param offset        The starting offset into <code>data</code>.
-     * @param recordFactory May be null since this is not a container record.
-     * @return The number of bytes read from the byte array.
-     */
-    public int fillFields( byte[] data, int offset,
-                              EscherRecordFactory recordFactory
-                              )
-    {
+    public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
         int pos = offset + 8;
         field_1_blipTypeWin32 = data[pos];
@@ -87,53 +71,33 @@ public class EscherBSERecord
         field_10_unused2 = data[pos + 34];
         field_11_unused3 = data[pos + 35];
         bytesRemaining -= 36;
-        
+
         int bytesRead = 0;
         if (bytesRemaining > 0) {
-        	// Some older escher formats skip this last record
+            // Some older escher formats skip this last record
             field_12_blipRecord = (EscherBlipRecord) recordFactory.createRecord( data, pos + 36 );
             bytesRead = field_12_blipRecord.fillFields( data, pos + 36, recordFactory );
         }
         pos += 36 + bytesRead;
         bytesRemaining -= bytesRead;
-//        if (field_1_blipTypeWin32 == BT_PNG)
-//        {
-//            byte[] uid = new byte[16];
-//            System.arraycopy( data, pos + 36, uid, 0, 16 );
-//            byte[] puid = new byte[16];
-//            System.arraycopy( data, pos + 52, puid, 0, 16 );
-//            byte tag = data[pos+68];
-//            System.out.println( HexDump.dump( data, 0, 0 ) );
-//            byte[] pngBytes = EscherBlipRecord.decompress( data, pos+69, bytesRemaining);
-//        }
 
-        remainingData = new byte[bytesRemaining];
-        System.arraycopy( data, pos, remainingData, 0, bytesRemaining );
+        _remainingData = new byte[bytesRemaining];
+        System.arraycopy( data, pos, _remainingData, 0, bytesRemaining );
         return bytesRemaining + 8 + 36 + (field_12_blipRecord == null ? 0 : field_12_blipRecord.getRecordSize()) ;
 
     }
 
-    /**
-     * This method serializes this escher record into a byte array.
-     *
-     * @param offset   The offset into <code>data</code> to start writing the record data to.
-     * @param data     The byte array to serialize to.
-     * @param listener A listener to retrieve start and end callbacks.  Use a <code>NullEscherSerailizationListener</code> to ignore these events.
-     * @return The number of bytes written.
-     * @see NullEscherSerializationListener
-     */
-    public int serialize( int offset, byte[] data, EscherSerializationListener listener )
-    {
+    public int serialize(int offset, byte[] data, EscherSerializationListener listener) {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
 
-        if (remainingData == null)
-            remainingData = new byte[0];
+        if (_remainingData == null)
+            _remainingData = new byte[0];
 
         LittleEndian.putShort( data, offset, getOptions() );
         LittleEndian.putShort( data, offset + 2, getRecordId() );
-        if (remainingData == null) remainingData = new byte[0];
+        if (_remainingData == null) _remainingData = new byte[0];
         int blipSize = field_12_blipRecord == null ? 0 : field_12_blipRecord.getRecordSize();
-        int remainingBytes = remainingData.length + 36 + blipSize;
+        int remainingBytes = _remainingData.length + 36 + blipSize;
         LittleEndian.putInt( data, offset + 4, remainingBytes );
 
         data[offset + 8] = field_1_blipTypeWin32;
@@ -153,39 +117,29 @@ public class EscherBSERecord
         {
             bytesWritten = field_12_blipRecord.serialize( offset + 44, data, new NullEscherSerializationListener() );
         }
-        if (remainingData == null)
-            remainingData = new byte[0];
-        System.arraycopy( remainingData, 0, data, offset + 44 + bytesWritten, remainingData.length );
-        int pos = offset + 8 + 36 + remainingData.length + bytesWritten;
+        if (_remainingData == null)
+            _remainingData = new byte[0];
+        System.arraycopy( _remainingData, 0, data, offset + 44 + bytesWritten, _remainingData.length );
+        int pos = offset + 8 + 36 + _remainingData.length + bytesWritten;
 
         listener.afterRecordSerialize(pos, getRecordId(), pos - offset, this);
         return pos - offset;
     }
 
-    /**
-     * Returns the number of bytes that are required to serialize this record.
-     *
-     * @return Number of bytes
-     */
-    public int getRecordSize()
-    {
-    	int field_12_size = 0;
-    	if(field_12_blipRecord != null) {
-    		field_12_size = field_12_blipRecord.getRecordSize(); 
-    	}
-    	int remaining_size = 0;
-    	if(remainingData != null) {
-    		remaining_size = remainingData.length;
-    	}
+    public int getRecordSize() {
+        int field_12_size = 0;
+        if(field_12_blipRecord != null) {
+            field_12_size = field_12_blipRecord.getRecordSize();
+        }
+        int remaining_size = 0;
+        if(_remainingData != null) {
+            remaining_size = _remainingData.length;
+        }
         return 8 + 1 + 1 + 16 + 2 + 4 + 4 + 4 + 1 + 1 +
             1 + 1 + field_12_size + remaining_size;
     }
 
-    /**
-     * The short name for this record
-     */
-    public String getRecordName()
-    {
+    public String getRecordName() {
         return "BSE";
     }
 
@@ -193,260 +147,205 @@ public class EscherBSERecord
      * The expected blip type under windows (failure to match this blip type will result in
      * Excel converting to this format).
      */
-    public byte getBlipTypeWin32()
-    {
+    public byte getBlipTypeWin32() {
         return field_1_blipTypeWin32;
     }
 
     /**
      * Set the expected win32 blip type
      */
-    public void setBlipTypeWin32( byte blipTypeWin32 )
-    {
-        this.field_1_blipTypeWin32 = blipTypeWin32;
+    public void setBlipTypeWin32(byte blipTypeWin32) {
+        field_1_blipTypeWin32 = blipTypeWin32;
     }
 
     /**
      * The expected blip type under MacOS (failure to match this blip type will result in
      * Excel converting to this format).
      */
-    public byte getBlipTypeMacOS()
-    {
+    public byte getBlipTypeMacOS() {
         return field_2_blipTypeMacOS;
     }
 
     /**
      * Set the expected MacOS blip type
      */
-    public void setBlipTypeMacOS( byte blipTypeMacOS )
-    {
-        this.field_2_blipTypeMacOS = blipTypeMacOS;
+    public void setBlipTypeMacOS(byte blipTypeMacOS) {
+        field_2_blipTypeMacOS = blipTypeMacOS;
     }
 
     /**
      * 16 byte MD4 checksum.
      */
-    public byte[] getUid()
-    {
+    public byte[] getUid() {
         return field_3_uid;
     }
 
     /**
      * 16 byte MD4 checksum.
      */
-    public void setUid( byte[] uid )
-    {
-        this.field_3_uid = uid;
+    public void setUid(byte[] uid) {
+        field_3_uid = uid;
     }
 
     /**
      * unused
      */
-    public short getTag()
-    {
+    public short getTag() {
         return field_4_tag;
     }
 
     /**
      * unused
      */
-    public void setTag( short tag )
-    {
-        this.field_4_tag = tag;
+    public void setTag(short tag) {
+        field_4_tag = tag;
     }
 
     /**
      * Blip size in stream.
      */
-    public int getSize()
-    {
+    public int getSize() {
         return field_5_size;
     }
 
     /**
      * Blip size in stream.
      */
-    public void setSize( int size )
-    {
-        this.field_5_size = size;
+    public void setSize(int size) {
+        field_5_size = size;
     }
 
     /**
      * The reference count of this blip.
      */
-    public int getRef()
-    {
+    public int getRef() {
         return field_6_ref;
     }
 
     /**
      * The reference count of this blip.
      */
-    public void setRef( int ref )
-    {
-        this.field_6_ref = ref;
+    public void setRef(int ref) {
+        field_6_ref = ref;
     }
 
     /**
      * File offset in the delay stream.
      */
-    public int getOffset()
-    {
+    public int getOffset() {
         return field_7_offset;
     }
 
     /**
      * File offset in the delay stream.
      */
-    public void setOffset( int offset )
-    {
-        this.field_7_offset = offset;
+    public void setOffset(int offset) {
+        field_7_offset = offset;
     }
 
     /**
      * Defines the way this blip is used.
      */
-    public byte getUsage()
-    {
+    public byte getUsage() {
         return field_8_usage;
     }
 
     /**
      * Defines the way this blip is used.
      */
-    public void setUsage( byte usage )
-    {
-        this.field_8_usage = usage;
+    public void setUsage(byte usage) {
+        field_8_usage = usage;
     }
 
     /**
      * The length in characters of the blip name.
      */
-    public byte getName()
-    {
+    public byte getName() {
         return field_9_name;
     }
 
     /**
      * The length in characters of the blip name.
      */
-    public void setName( byte name )
-    {
-        this.field_9_name = name;
+    public void setName(byte name) {
+        field_9_name = name;
     }
 
-    public byte getUnused2()
-    {
+    public byte getUnused2() {
         return field_10_unused2;
     }
 
-    public void setUnused2( byte unused2 )
-    {
-        this.field_10_unused2 = unused2;
+    public void setUnused2(byte unused2) {
+        field_10_unused2 = unused2;
     }
 
-    public byte getUnused3()
-    {
+    public byte getUnused3() {
         return field_11_unused3;
     }
 
-    public void setUnused3( byte unused3 )
-    {
-        this.field_11_unused3 = unused3;
+    public void setUnused3(byte unused3) {
+        field_11_unused3 = unused3;
     }
 
-    public EscherBlipRecord getBlipRecord()
-    {
+    public EscherBlipRecord getBlipRecord() {
         return field_12_blipRecord;
     }
 
-    public void setBlipRecord( EscherBlipRecord field_12_blipRecord )
-    {
-        this.field_12_blipRecord = field_12_blipRecord;
+    public void setBlipRecord(EscherBlipRecord blipRecord) {
+        field_12_blipRecord = blipRecord;
     }
 
     /**
      * Any remaining data in this record.
      */
-    public byte[] getRemainingData()
-    {
-        return remainingData;
+    public byte[] getRemainingData() {
+        return _remainingData;
     }
 
     /**
      * Any remaining data in this record.
      */
-    public void setRemainingData( byte[] remainingData )
-    {
-        this.remainingData = remainingData;
+    public void setRemainingData(byte[] remainingData) {
+        _remainingData = remainingData;
     }
 
-    /**
-     * Calculate the string representation of this object
-     */
-    public String toString()
-    {
-        String nl = System.getProperty( "line.separator" );
-
-        String extraData;
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        try
-        {
-            HexDump.dump( this.remainingData, 0, b, 0 );
-            extraData = b.toString();
-        }
-        catch ( Exception e )
-        {
-            extraData = e.toString();
-        }
-        return getClass().getName() + ":" + nl +
-                "  RecordId: 0x" + HexDump.toHex( RECORD_ID ) + nl +
-                "  Options: 0x" + HexDump.toHex( getOptions() ) + nl +
-                "  BlipTypeWin32: " + field_1_blipTypeWin32 + nl +
-                "  BlipTypeMacOS: " + field_2_blipTypeMacOS + nl +
-                "  SUID: " + HexDump.toHex(field_3_uid) + nl +
-                "  Tag: " + field_4_tag + nl +
-                "  Size: " + field_5_size + nl +
-                "  Ref: " + field_6_ref + nl +
-                "  Offset: " + field_7_offset + nl +
-                "  Usage: " + field_8_usage + nl +
-                "  Name: " + field_9_name + nl +
-                "  Unused2: " + field_10_unused2 + nl +
-                "  Unused3: " + field_11_unused3 + nl +
-                "  blipRecord: " + field_12_blipRecord + nl +
-                "  Extra Data:" + nl + extraData;
+    public String toString() {
+        String extraData = HexDump.toHex(_remainingData, 32);
+        return getClass().getName() + ":" + '\n' +
+                "  RecordId: 0x" + HexDump.toHex( RECORD_ID ) + '\n' +
+                "  Options: 0x" + HexDump.toHex( getOptions() ) + '\n' +
+                "  BlipTypeWin32: " + field_1_blipTypeWin32 + '\n' +
+                "  BlipTypeMacOS: " + field_2_blipTypeMacOS + '\n' +
+                "  SUID: " + HexDump.toHex(field_3_uid) + '\n' +
+                "  Tag: " + field_4_tag + '\n' +
+                "  Size: " + field_5_size + '\n' +
+                "  Ref: " + field_6_ref + '\n' +
+                "  Offset: " + field_7_offset + '\n' +
+                "  Usage: " + field_8_usage + '\n' +
+                "  Name: " + field_9_name + '\n' +
+                "  Unused2: " + field_10_unused2 + '\n' +
+                "  Unused3: " + field_11_unused3 + '\n' +
+                "  blipRecord: " + field_12_blipRecord + '\n' +
+                "  Extra Data:" + '\n' + extraData;
     }
 
     /**
      * Retrieve the string representation given a blip id.
      */
-    public String getBlipType( byte b )
-    {
-        switch ( b )
-        {
-            case BT_ERROR:
-                return " ERROR";
-            case BT_UNKNOWN:
-                return " UNKNOWN";
-            case BT_EMF:
-                return " EMF";
-            case BT_WMF:
-                return " WMF";
-            case BT_PICT:
-                return " PICT";
-            case BT_JPEG:
-                return " JPEG";
-            case BT_PNG:
-                return " PNG";
-            case BT_DIB:
-                return " DIB";
-            default:
-                if ( b < 32 )
-                    return " NotKnown";
-                else
-                    return " Client";
+    public static String getBlipType(byte b) {
+        switch (b) {
+            case BT_ERROR:   return " ERROR";
+            case BT_UNKNOWN: return " UNKNOWN";
+            case BT_EMF:     return " EMF";
+            case BT_WMF:     return " WMF";
+            case BT_PICT:    return " PICT";
+            case BT_JPEG:    return " JPEG";
+            case BT_PNG:     return " PNG";
+            case BT_DIB:     return " DIB";
         }
+        if ( b < 32 ) {
+            return " NotKnown";
+        }
+        return " Client";
     }
-
-
 }

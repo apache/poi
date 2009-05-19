@@ -25,9 +25,7 @@ import java.io.ByteArrayOutputStream;
  * @author Glen Stampoultzis
  * @version $Id$
  */
-public class EscherBitmapBlip
-        extends EscherBlipRecord
-{
+public class EscherBitmapBlip extends EscherBlipRecord {
     public static final short RECORD_ID_JPEG = (short) 0xF018 + 5;
     public static final short RECORD_ID_PNG = (short) 0xF018 + 6;
     public static final short RECORD_ID_DIB = (short) 0xF018 + 7;
@@ -37,17 +35,7 @@ public class EscherBitmapBlip
     private byte[] field_1_UID;
     private byte field_2_marker = (byte) 0xFF;
 
-
-    /**
-     * This method deserializes the record from a byte array.
-     *
-     * @param data          The byte array containing the escher record information
-     * @param offset        The starting offset into <code>data</code>.
-     * @param recordFactory May be null since this is not a container record.
-     * @return The number of bytes read from the byte array.
-     */
-    public int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory )
-    {
+    public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesAfterHeader = readHeader( data, offset );
         int pos = offset + HEADER_SIZE;
 
@@ -61,17 +49,6 @@ public class EscherBitmapBlip
         return bytesAfterHeader + HEADER_SIZE;
     }
 
-    /**
-      * Serializes the record to an existing byte array.
-      *
-      * @param offset    the offset within the byte array
-      * @param data      the data array to serialize to
-      * @param listener  a listener for begin and end serialization events.  This
-      *                  is useful because the serialization is
-      *                  hierarchical/recursive and sometimes you need to be able
-      *                  break into that.
-      * @return the number of bytes written.
-      */
      public int serialize( int offset, byte[] data, EscherSerializationListener listener )
      {
          listener.beforeRecordSerialize(offset, getRecordId(), this);
@@ -89,11 +66,6 @@ public class EscherBitmapBlip
          return HEADER_SIZE + 16 + 1 + field_pictureData.length;
      }
 
-    /**
-      * Returns the number of bytes that are required to serialize this record.
-      *
-      * @return Number of bytes
-      */
      public int getRecordSize()
      {
          return 8 + 16 + 1 + field_pictureData.length;
@@ -141,5 +113,4 @@ public class EscherBitmapBlip
                 "  Marker: 0x" + HexDump.toHex( field_2_marker ) + nl +
                 "  Extra Data:" + nl + extraData;
     }
-
 }
