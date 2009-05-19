@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.ddf;
 
@@ -34,11 +32,10 @@ import java.util.zip.InflaterInputStream;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class EscherDump
-{
+public final class EscherDump {
 
-    public EscherDump()
-    {
+    public EscherDump() {
+        //
     }
 
     /**
@@ -51,15 +48,14 @@ public class EscherDump
      * @param out       The output stream to write the results to.
      *
      */
-    public void dump( byte[] data, int offset, int size, PrintStream out ) throws IOException, LittleEndian.BufferUnderrunException
-    {
+    public void dump(byte[] data, int offset, int size, PrintStream out) {
         EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
         int pos = offset;
         while ( pos < offset + size )
         {
             EscherRecord r = recordFactory.createRecord(data, pos);
             int bytesRead = r.fillFields(data, pos, recordFactory );
-            System.out.println( r.toString() );
+            out.println( r.toString() );
             pos += bytesRead;
         }
     }
@@ -71,8 +67,8 @@ public class EscherDump
      * @param in        An input stream to read from.
      * @param out       An output stream to write to.
      */
-    public void dumpOld( long maxLength, InputStream in, PrintStream out ) throws IOException, LittleEndian.BufferUnderrunException
-    {
+    public void dumpOld(long maxLength, InputStream in, PrintStream out)
+            throws IOException, LittleEndian.BufferUnderrunException {
         long remainingBytes = maxLength;
         short options;      // 4 bits for the version and 12 bits for the instance
         short recordId;
@@ -83,8 +79,7 @@ public class EscherDump
 
         boolean atEOF = false;
 
-        while ( !atEOF && ( remainingBytes > 0 ) )
-        {
+        while (!atEOF && (remainingBytes > 0)) {
             stringBuf = new StringBuffer();
             options = LittleEndian.readShort( in );
             recordId = LittleEndian.readShort( in );
@@ -435,17 +430,14 @@ public class EscherDump
      * @param propertyId    The property number for the name
      * @return  A descriptive name.
      */
-    private String propName( short propertyId )
-    {
-        class PropName {
-            public PropName( int id, String name )
-            {
-                this.id = id;
-                this.name = name;
+    private String propName(short propertyId) {
+        final class PropName {
+            final int _id;
+            final String _name;
+            public PropName(int id, String name) {
+                _id = id;
+                _name = name;
             }
-
-            int id;
-            String name;
         }
 
         final PropName[] props = new PropName[] {
@@ -725,11 +717,9 @@ public class EscherDump
             new PropName(959, "groupshape.print"),
         };
 
-        for ( int i = 0; i < props.length; i++ )
-        {
-            if (props[i].id == propertyId)
-            {
-                return props[i].name;
+        for (int i = 0; i < props.length; i++) {
+            if (props[i]._id == propertyId) {
+                return props[i]._name;
             }
         }
 
@@ -742,32 +732,8 @@ public class EscherDump
      * @param   b   blip id
      * @return  A description.
      */
-    private String getBlipType( byte b )
-    {
-        switch ( b )
-        {
-            case 0:
-                return " ERROR";
-            case 1:
-                return " UNKNOWN";
-            case 2:
-                return " EMF";
-            case 3:
-                return " WMF";
-            case 4:
-                return " PICT";
-            case 5:
-                return " JPEG";
-            case 6:
-                return " PNG";
-            case 7:
-                return " DIB";
-            default:
-                if ( b < 32 )
-                    return " NotKnown";
-                else
-                    return " Client";
-        }
+    private static String getBlipType(byte b) {
+        return EscherBSERecord.getBlipType(b);
     }
 
     /**
@@ -810,8 +776,7 @@ public class EscherDump
     /**
      * A simple test stub.
      */
-    public static void main( String[] args ) throws IOException
-    {
+    public static void main( String[] args ) {
         String dump =
                 "0F 00 00 F0 89 07 00 00 00 00 06 F0 18 00 00 00 " +
                 "05 04 00 00 02 00 00 00 05 00 00 00 01 00 00 00 " +
@@ -937,7 +902,7 @@ public class EscherDump
                 "10                                              ";
 
         // Decode the stream to bytes
-        byte[] bytes = HexRead.readData( new ByteArrayInputStream( dump.getBytes() ), -1 );
+        byte[] bytes = HexRead.readFromString(dump);
         // Create a new instance of the escher dumper
         EscherDump dumper = new EscherDump();
         // Dump the contents of scher to screen.
@@ -946,10 +911,7 @@ public class EscherDump
 
     }
 
-    public void dump( int recordSize, byte[] data, PrintStream out ) throws IOException, LittleEndian.BufferUnderrunException
-    {
-//        ByteArrayInputStream is = new ByteArrayInputStream( data );
-//        dump( recordSize, is, out );
-        dump( data, 0, recordSize, System.out );
+    public void dump( int recordSize, byte[] data, PrintStream out ) {
+        dump( data, 0, recordSize, out );
     }
 }

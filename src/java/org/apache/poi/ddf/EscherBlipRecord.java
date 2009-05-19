@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,21 +14,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.HexDump;
 
-import java.io.ByteArrayOutputStream;
-
 /**
  * @author Glen Stampoultzis
- * @version $Id$
  */
-public class EscherBlipRecord
-        extends EscherRecord
-{
+public class EscherBlipRecord extends EscherRecord { // TODO - instantiable superclass
     public static final short  RECORD_ID_START    = (short) 0xF018;
     public static final short  RECORD_ID_END      = (short) 0xF117;
     public static final String RECORD_DESCRIPTION = "msofbtBlip";
@@ -38,20 +32,10 @@ public class EscherBlipRecord
 
     protected              byte[] field_pictureData;
 
-    public EscherBlipRecord()
-    {
+    public EscherBlipRecord() {
     }
 
-    /**
-     * This method deserializes the record from a byte array.
-     *
-     * @param data          The byte array containing the escher record information
-     * @param offset        The starting offset into <code>data</code>.
-     * @param recordFactory May be null since this is not a container record.
-     * @return The number of bytes read from the byte array.
-     */
-    public int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory )
-    {
+    public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesAfterHeader = readHeader( data, offset );
         int pos              = offset + HEADER_SIZE;
 
@@ -61,19 +45,7 @@ public class EscherBlipRecord
         return bytesAfterHeader + 8;
     }
 
-    /**
-     * Serializes the record to an existing byte array.
-     *
-     * @param offset    the offset within the byte array
-     * @param data      the data array to serialize to
-     * @param listener  a listener for begin and end serialization events.  This
-     *                  is useful because the serialization is
-     *                  hierarchical/recursive and sometimes you need to be able
-     *                  break into that.
-     * @return the number of bytes written.
-     */
-    public int serialize( int offset, byte[] data, EscherSerializationListener listener )
-    {
+    public int serialize(int offset, byte[] data, EscherSerializationListener listener) {
         listener.beforeRecordSerialize(offset, getRecordId(), this);
 
         LittleEndian.putShort( data, offset, getOptions() );
@@ -85,53 +57,27 @@ public class EscherBlipRecord
         return field_pictureData.length + 4;
     }
 
-    /**
-     * Returns the number of bytes that are required to serialize this record.
-     *
-     * @return Number of bytes
-     */
-    public int getRecordSize()
-    {
+    public int getRecordSize() {
         return field_pictureData.length + HEADER_SIZE;
     }
 
-    /**
-     * The short name for this record
-     */
-    public String getRecordName()
-    {
+    public String getRecordName() {
         return "Blip";
     }
 
-    public byte[] getPicturedata()
-    {
+    public byte[] getPicturedata() {
         return field_pictureData;
     }
 
-    public void setPictureData(byte[] pictureData)
-    {
+    public void setPictureData(byte[] pictureData) {
         field_pictureData = pictureData;
     }
 
-    public String toString()
-    {
-        String nl = System.getProperty( "line.separator" );
-
-        String extraData;
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        try
-        {
-            HexDump.dump( this.field_pictureData, 0, b, 0 );
-            extraData = b.toString();
-        }
-        catch ( Exception e )
-        {
-            extraData = e.toString();
-        }
-        return getClass().getName() + ":" + nl +
-                "  RecordId: 0x" + HexDump.toHex( getRecordId() ) + nl +
-                "  Options: 0x" + HexDump.toHex( getOptions() ) + nl +
-                "  Extra Data:" + nl + extraData;
-
+    public String toString() {
+        String extraData = HexDump.toHex(field_pictureData, 32);
+        return getClass().getName() + ":" + '\n' +
+                "  RecordId: 0x" + HexDump.toHex( getRecordId() ) + '\n' +
+                "  Options: 0x" + HexDump.toHex( getOptions() ) + '\n' +
+                "  Extra Data:" + '\n' + extraData;
     }
 }

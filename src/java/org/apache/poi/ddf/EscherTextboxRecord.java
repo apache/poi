@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 import org.apache.poi.util.HexDump;
@@ -24,7 +23,7 @@ import org.apache.poi.util.RecordFormatException;
 
 /**
  * Holds data from the parent application. Most commonly used to store
- *  text in the format of the parent application, rather than in 
+ *  text in the format of the parent application, rather than in
  *  Escher format. We don't attempt to understand the contents, since
  *  they will be in the parent's format, not Escher format.
  *
@@ -45,16 +44,7 @@ public class EscherTextboxRecord extends EscherRecord
     {
     }
 
-    /**
-     * This method deserializes the record from a byte array.
-     *
-     * @param data          The byte array containing the escher record information
-     * @param offset        The starting offset into <code>data</code>.
-     * @param recordFactory May be null since this is not a container record.
-     * @return The number of bytes read from the byte array.
-     */
-    public int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory )
-    {
+    public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
 
         // Save the data, ready for the calling code to do something
@@ -64,12 +54,6 @@ public class EscherTextboxRecord extends EscherRecord
         return bytesRemaining + 8;
     }
 
-    /**
-     * Writes this record and any contained records to the supplied byte
-     * array.
-     *
-     * @return  the number of bytes written.
-     */
     public int serialize( int offset, byte[] data, EscherSerializationListener listener )
     {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
@@ -113,12 +97,6 @@ public class EscherTextboxRecord extends EscherRecord
         setData(b,0,b.length);
     }
 
-
-    /**
-     * Returns the number of bytes that are required to serialize this record.
-     *
-     * @return Number of bytes
-     */
     public int getRecordSize()
     {
         return 8 + thedata.length;
@@ -130,11 +108,7 @@ public class EscherTextboxRecord extends EscherRecord
         return super.clone();
     }
 
-    /**
-     * The short name for this record
-     */
-    public String getRecordName()
-    {
+    public String getRecordName() {
         return "ClientTextbox";
     }
 

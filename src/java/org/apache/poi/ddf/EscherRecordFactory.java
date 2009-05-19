@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 /**
@@ -24,8 +23,7 @@ package org.apache.poi.ddf;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public interface EscherRecordFactory
-{
+public interface EscherRecordFactory {
     /**
      * Create a new escher record from the data provided.  Does not attempt
      * to fill the contents of the record however.

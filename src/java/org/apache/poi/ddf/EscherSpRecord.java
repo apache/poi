@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 import org.apache.poi.util.HexDump;
@@ -49,16 +48,7 @@ public class EscherSpRecord
     private int field_1_shapeId;
     private int field_2_flags;
 
-    /**
-     * This method deserializes the record from a byte array.
-     *
-     * @param data          The byte array containing the escher record information
-     * @param offset        The starting offset into <code>data</code>.
-     * @param recordFactory May be null since this is not a container record.
-     * @return The number of bytes read from the byte array.
-     */
-    public int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory )
-    {
+    public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
         int pos            = offset + 8;
         int size           = 0;
@@ -95,31 +85,19 @@ public class EscherSpRecord
         return 8 + 8;
     }
 
-    /**
-     * Returns the number of bytes that are required to serialize this record.
-     *
-     * @return Number of bytes
-     */
     public int getRecordSize()
     {
         return 8 + 8;
     }
 
-    /**
-     * @return  the 16 bit identifier for this record.
-     */
-    public short getRecordId()
-    {
+    public short getRecordId() {
         return RECORD_ID;
     }
 
-    /**
-     * The short name for this record
-     */
-    public String getRecordName()
-    {
+    public String getRecordName() {
         return "Sp";
     }
+
 
     /**
      * @return  the string representing this shape.

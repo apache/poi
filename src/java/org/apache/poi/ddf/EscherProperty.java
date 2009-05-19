@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 /**
@@ -25,61 +24,52 @@ package org.apache.poi.ddf;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-abstract public class EscherProperty
-{
-    protected short  id;
+public abstract class EscherProperty {
+    private short  _id;
 
     /**
      * The id is distinct from the actual property number.  The id includes the property number the blip id
      * flag and an indicator whether the property is complex or not.
      */
-    public EscherProperty( short id )
-    {
-        this.id   = id;
+    public EscherProperty(short id) {
+        _id   = id;
     }
 
     /**
      * Constructs a new escher property.  The three parameters are combined to form a property
      * id.
      */
-    public EscherProperty( short propertyNumber, boolean isComplex, boolean isBlipId )
-    {
-        this.id   = (short)(propertyNumber +
+    public EscherProperty(short propertyNumber, boolean isComplex, boolean isBlipId) {
+        _id   = (short)(propertyNumber +
                 (isComplex ? 0x8000 : 0x0) +
                 (isBlipId ? 0x4000 : 0x0));
     }
 
-    public short getId()
-    {
-        return id;
+    public short getId() {
+        return _id;
     }
 
-    public short getPropertyNumber()
-    {
-        return (short) ( id & (short) 0x3FFF );
+    public short getPropertyNumber() {
+        return (short) (_id & (short) 0x3FFF);
     }
 
-    public boolean isComplex()
-    {
-        return ( id & (short) 0x8000 ) != 0;
+    public boolean isComplex() {
+        return (_id & (short) 0x8000) != 0;
     }
 
-    public boolean isBlipId()
-    {
-        return ( id & (short) 0x4000 ) != 0;
+    public boolean isBlipId() {
+        return (_id & (short) 0x4000) != 0;
     }
 
-    public String getName()
-    {
-        return EscherProperties.getPropertyName(id);
+    public String getName() {
+        return EscherProperties.getPropertyName(_id);
     }
 
     /**
      * Most properties are just 6 bytes in length.  Override this if we're
      * dealing with complex properties.
      */
-    public int getPropertySize()
-    {
+    public int getPropertySize() {
         return 6;
     }
 

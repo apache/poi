@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,10 +14,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-package org.apache.poi.ddf;
 
-import org.apache.poi.util.RecordFormatException;
+package org.apache.poi.ddf;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -32,21 +29,19 @@ import java.util.Map;
  *
  * @see EscherRecordFactory
  */
-public class DefaultEscherRecordFactory
-        implements EscherRecordFactory
-{
-    private static Class[] escherRecordClasses = {
+public class DefaultEscherRecordFactory implements EscherRecordFactory {
+    private static Class<?>[] escherRecordClasses = {
         EscherBSERecord.class, EscherOptRecord.class, EscherClientAnchorRecord.class, EscherDgRecord.class,
         EscherSpgrRecord.class, EscherSpRecord.class, EscherClientDataRecord.class, EscherDggRecord.class,
         EscherSplitMenuColorsRecord.class, EscherChildAnchorRecord.class, EscherTextboxRecord.class
     };
-    private static Map recordsMap = recordsToMap( escherRecordClasses );
+    private static Map<Short, Constructor<? extends EscherRecord>> recordsMap = recordsToMap( escherRecordClasses );
 
     /**
      * Creates an instance of the escher record factory
      */
-    public DefaultEscherRecordFactory()
-    {
+    public DefaultEscherRecordFactory() {
+        // no instance initialisation
     }
 
     /**
@@ -57,14 +52,13 @@ public class DefaultEscherRecordFactory
      * @param offset The starting offset into the byte array
      * @return The generated escher record
      */
-    public EscherRecord createRecord( byte[] data, int offset )
-    {
+    public EscherRecord createRecord(byte[] data, int offset) {
         EscherRecord.EscherRecordHeader header = EscherRecord.EscherRecordHeader.readHeader( data, offset );
 
-		// Options of 0x000F means container record
-		// However, EscherTextboxRecord are containers of records for the
-		//  host application, not of other Escher records, so treat them
-		//  differently
+        // Options of 0x000F means container record
+        // However, EscherTextboxRecord are containers of records for the
+        //  host application, not of other Escher records, so treat them
+        //  differently
         if ( ( header.getOptions() & (short) 0x000F ) == (short) 0x000F
              && header.getRecordId() != EscherTextboxRecord.RECORD_ID ) {
             EscherContainerRecord r = new EscherContainerRecord();
@@ -72,8 +66,9 @@ public class DefaultEscherRecordFactory
             r.setOptions( header.getOptions() );
             return r;
         }
-        else if ( header.getRecordId() >= EscherBlipRecord.RECORD_ID_START && header.getRecordId() <= EscherBlipRecord.RECORD_ID_END )
-        {
+
+        if (header.getRecordId() >= EscherBlipRecord.RECORD_ID_START
+                && header.getRecordId() <= EscherBlipRecord.RECORD_ID_END) {
             EscherBlipRecord r;
             if (header.getRecordId() == EscherBitmapBlip.RECORD_ID_DIB ||
                     header.getRecordId() == EscherBitmapBlip.RECORD_ID_JPEG ||
@@ -86,70 +81,62 @@ public class DefaultEscherRecordFactory
                     header.getRecordId() == EscherMetafileBlip.RECORD_ID_PICT)
             {
                 r = new EscherMetafileBlip();
-            }
-            else
-            {
+            } else {
                 r = new EscherBlipRecord();
             }
             r.setRecordId( header.getRecordId() );
             r.setOptions( header.getOptions() );
             return r;
         }
-        else
-        {
-            Constructor recordConstructor = (Constructor) recordsMap.get( new Short( header.getRecordId() ) );
-            EscherRecord escherRecord = null;
-            if ( recordConstructor != null )
-            {
-                try
-                {
-                    escherRecord = (EscherRecord) recordConstructor.newInstance( new Object[]{} );
-                    escherRecord.setRecordId( header.getRecordId() );
-                    escherRecord.setOptions( header.getOptions() );
-                }
-                catch ( Exception e )
-                {
-                    escherRecord = null;
-                }
-            }
-            return escherRecord == null ? new UnknownEscherRecord() : escherRecord;
+
+        Constructor<? extends EscherRecord> recordConstructor = recordsMap.get(new Short(header.getRecordId()));
+        EscherRecord escherRecord = null;
+        if (recordConstructor == null) {
+            return new UnknownEscherRecord();
         }
+        try {
+            escherRecord = recordConstructor.newInstance(new Object[] {});
+        } catch (Exception e) {
+            return new UnknownEscherRecord();
+        }
+        escherRecord.setRecordId(header.getRecordId());
+        escherRecord.setOptions(header.getOptions());
+        return escherRecord;
     }
 
     /**
      * Converts from a list of classes into a map that contains the record id as the key and
      * the Constructor in the value part of the map.  It does this by using reflection to look up
      * the RECORD_ID field then using reflection again to find a reference to the constructor.
-     * 
-     * @param records The records to convert
+     *
+     * @param recClasses The records to convert
      * @return The map containing the id/constructor pairs.
      */
-    private static Map recordsToMap( Class[] records )
-    {
-        Map result = new HashMap();
-        Constructor constructor;
+    private static Map<Short, Constructor<? extends EscherRecord>> recordsToMap(Class<?>[] recClasses) {
+        Map<Short, Constructor<? extends EscherRecord>> result = new HashMap<Short, Constructor<? extends EscherRecord>>();
+        final Class<?>[] EMPTY_CLASS_ARRAY = new Class[0];
 
-        for ( int i = 0; i < records.length; i++ )
-        {
-            Class record = null;
-            short sid = 0;
-
-            record = records[i];
-            try
-            {
-                sid = record.getField( "RECORD_ID" ).getShort( null );
-                constructor = record.getConstructor( new Class[]
-                {
-                } );
+        for (int i = 0; i < recClasses.length; i++) {
+            @SuppressWarnings("unchecked")
+            Class<? extends EscherRecord> recCls = (Class<? extends EscherRecord>) recClasses[i];
+            short sid;
+            try {
+                sid = recCls.getField("RECORD_ID").getShort(null);
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException(e);
             }
-            catch ( Exception illegalArgumentException )
-            {
-                throw new RecordFormatException(
-                        "Unable to determine record types" );
+            Constructor<? extends EscherRecord> constructor;
+            try {
+                constructor = recCls.getConstructor( EMPTY_CLASS_ARRAY );
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
             }
-            result.put( new Short( sid ), constructor );
+            result.put(new Short(sid), constructor);
         }
         return result;
     }
-
 }
