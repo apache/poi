@@ -23,10 +23,10 @@ import java.io.InputStream;
 
 /**
  * Wraps an {@link InputStream} providing {@link LittleEndianInput}<p/>
- * 
- * This class does not buffer any input, so the stream read position maintained 
+ *
+ * This class does not buffer any input, so the stream read position maintained
  * by this class is consistent with that of the inner stream.
- * 
+ *
  * @author Josh Micich
  */
 public class LittleEndianInputStream extends FilterInputStream implements LittleEndianInput {

@@ -29,7 +29,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * Internal POI use only
- * 
+ *
  * @author Josh Micich
  */
 public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, EvaluationWorkbook, FormulaParsingWorkbook {
@@ -157,6 +157,6 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
     }
 
     public SpreadsheetVersion getSpreadsheetVersion(){
-        return SpreadsheetVersion.EXCEL97;    
+        return SpreadsheetVersion.EXCEL97;
     }
 }

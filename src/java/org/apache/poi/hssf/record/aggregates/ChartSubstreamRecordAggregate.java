@@ -30,7 +30,7 @@ import org.apache.poi.hssf.record.UnknownRecord;
 /**
  * Manages the all the records associated with a chart sub-stream.<br/>
  * Includes the initial {@link BOFRecord} and final {@link EOFRecord}.
- * 
+ *
  * @author Josh Micich
  */
 public final class ChartSubstreamRecordAggregate extends RecordAggregate {

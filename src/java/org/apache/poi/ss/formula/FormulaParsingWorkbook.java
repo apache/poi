@@ -22,16 +22,16 @@ import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * Abstracts a workbook for the purpose of formula parsing.<br/>
- * 
+ *
  * For POI internal use only
- * 
+ *
  * @author Josh Micich
  */
 public interface FormulaParsingWorkbook {
 	/**
 	 *  named range name matching is case insensitive
 	 */
-    EvaluationName getName(String name, int sheetIndex);
+	EvaluationName getName(String name, int sheetIndex);
 
 	NameXPtg getNameXPtg(String name);
 
@@ -46,10 +46,10 @@ public interface FormulaParsingWorkbook {
 	 */
 	int getExternalSheetIndex(String workbookName, String sheetName);
 
-    /**
-     * Returns an enum holding spreadhseet properties specific to an Excel version (
-     * max column and row numbers, max arguments to a function, etc.)
-     */
-    SpreadsheetVersion getSpreadsheetVersion();
+	/**
+	 * Returns an enum holding spreadhseet properties specific to an Excel version (
+	 * max column and row numbers, max arguments to a function, etc.)
+	 */
+	SpreadsheetVersion getSpreadsheetVersion();
 
 }

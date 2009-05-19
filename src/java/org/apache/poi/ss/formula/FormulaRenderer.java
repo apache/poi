@@ -29,13 +29,13 @@ import org.apache.poi.hssf.record.formula.Ptg;
 
 /**
  * Common logic for rendering formulas.<br/>
- * 
+ *
  * For POI internal use only
- * 
+ *
  * @author Josh Micich
  */
 public class FormulaRenderer {
-    
+
     /**
      * Static method to convert an array of {@link Ptg}s in RPN order
      * to a human readable string format in infix mode.
@@ -89,7 +89,7 @@ public class FormulaRenderer {
 
             if (ptg instanceof WorkbookDependentFormula) {
                 WorkbookDependentFormula optg = (WorkbookDependentFormula) ptg;
-				stack.push(optg.toFormulaString(book));
+                stack.push(optg.toFormulaString(book));
                 continue;
             }
             if (! (ptg instanceof OperationPtg)) {

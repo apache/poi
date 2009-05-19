@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
@@ -27,23 +26,23 @@ import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * The 'Conditional Formatting' facet of <tt>HSSFSheet</tt>
- * 
+ *
  * @author Dmitriy Kumshayev
  */
 public final class HSSFSheetConditionalFormatting {
-	
-    private final HSSFSheet _sheet;
+
+	private final HSSFSheet _sheet;
 	private final ConditionalFormattingTable _conditionalFormattingTable;
 
-    /* package */ HSSFSheetConditionalFormatting(HSSFSheet sheet) {
-        _sheet = sheet;
-        _conditionalFormattingTable = sheet.getSheet().getConditionalFormattingTable();
-    }
+	/* package */ HSSFSheetConditionalFormatting(HSSFSheet sheet) {
+		_sheet = sheet;
+		_conditionalFormattingTable = sheet.getSheet().getConditionalFormattingTable();
+	}
 
 	/**
 	 * A factory method allowing to create a conditional formatting rule
 	 * with a cell comparison operator<p/>
-	 * TODO - formulas containing cell references are currently not parsed properly 
+	 * TODO - formulas containing cell references are currently not parsed properly
 	 *
 	 * @param comparisonOperation - a constant value from
 	 *		 <tt>{@link org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator}</tt>: <p>
@@ -81,7 +80,7 @@ public final class HSSFSheetConditionalFormatting {
 	 * @param formula - formula for the valued, compared with the cell
 	 */
 	public HSSFConditionalFormattingRule createConditionalFormattingRule(String formula) {
-        HSSFWorkbook wb = _sheet.getWorkbook();
+		HSSFWorkbook wb = _sheet.getWorkbook();
 		CFRuleRecord rr = CFRuleRecord.create(_sheet, formula);
 		return new HSSFConditionalFormattingRule(wb, rr);
 	}
@@ -121,9 +120,9 @@ public final class HSSFSheetConditionalFormatting {
 		if (regions == null) {
 			throw new IllegalArgumentException("regions must not be null");
 		}
-        for(CellRangeAddress range : regions) range.validate(SpreadsheetVersion.EXCEL97);
+		for(CellRangeAddress range : regions) range.validate(SpreadsheetVersion.EXCEL97);
 
-        if (cfRules == null) {
+		if (cfRules == null) {
 			throw new IllegalArgumentException("cfRules must not be null");
 		}
 		if (cfRules.length == 0) {
@@ -164,7 +163,7 @@ public final class HSSFSheetConditionalFormatting {
 
 	/**
 	* gets Conditional Formatting object at a particular index
-	* 
+	*
 	* @param index
 	*			of the Conditional Formatting object to fetch
 	* @return Conditional Formatting object

@@ -22,8 +22,8 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Base class for all cell value records (implementors of {@link CellValueRecordInterface}).
- * Subclasses are expected to manage the cell data values (of various types). 
- * 
+ * Subclasses are expected to manage the cell data values (of various types).
+ *
  * @author Josh Micich
  */
 public abstract class CellRecord extends StandardRecord implements CellValueRecordInterface {
@@ -51,7 +51,7 @@ public abstract class CellRecord extends StandardRecord implements CellValueReco
 
 	/**
 	 * set the index to the ExtendedFormat
-	 * 
+	 *
 	 * @see org.apache.poi.hssf.record.ExtendedFormatRecord
 	 * @param xf index to the XF record
 	 */
@@ -69,7 +69,7 @@ public abstract class CellRecord extends StandardRecord implements CellValueReco
 
 	/**
 	 * get the index to the ExtendedFormat
-	 * 
+	 *
 	 * @see org.apache.poi.hssf.record.ExtendedFormatRecord
 	 * @return index to the XF record
 	 */

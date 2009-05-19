@@ -22,7 +22,7 @@ import org.apache.poi.util.StringUtil;
 
 /**
  * Common header/footer base class
- * 
+ *
  * @author Josh Micich
  */
 abstract class HeaderFooterBase extends StandardRecord {
@@ -51,7 +51,7 @@ abstract class HeaderFooterBase extends StandardRecord {
 
 	/**
 	 * set the footer string
-	 * 
+	 *
 	 * @param text string to display
 	 */
 	public final void setText(String text) {
@@ -60,7 +60,7 @@ abstract class HeaderFooterBase extends StandardRecord {
 		}
 		field_2_hasMultibyte = StringUtil.hasMultibyte(text);
 		field_3_text = text;
-		
+
 		// Check it'll fit into the space in the record
 		if (field_2_hasMultibyte) {
 			if (field_3_text.length() > 127) {
@@ -77,7 +77,7 @@ abstract class HeaderFooterBase extends StandardRecord {
 
 	/**
 	 * get the length of the footer string
-	 * 
+	 *
 	 * @return length of the footer string
 	 */
 	private int getTextLength() {

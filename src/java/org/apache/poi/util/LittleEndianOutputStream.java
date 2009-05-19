@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * 
+ *
  * @author Josh Micich
  */
 public final class LittleEndianOutputStream extends FilterOutputStream implements LittleEndianOutput {

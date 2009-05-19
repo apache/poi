@@ -32,8 +32,8 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Encapsulates an encoded formula token array. 
- * 
+ * Encapsulates an encoded formula token array.
+ *
  * @author Josh Micich
  */
 public class Formula {
@@ -43,11 +43,11 @@ public class Formula {
 	/** immutable */
 	private final byte[] _byteEncoding;
 	private final int _encodedTokenLen;
-	
+
 	private Formula(byte[] byteEncoding, int encodedTokenLen) {
 		_byteEncoding = byteEncoding;
 		_encodedTokenLen = encodedTokenLen;
-		if (false) { // set to true to eagerly check Ptg decoding 
+		if (false) { // set to true to eagerly check Ptg decoding
 			LittleEndianByteArrayInputStream in = new LittleEndianByteArrayInputStream(byteEncoding);
 			Ptg.readTokens(encodedTokenLen, in);
 			int nUnusedBytes = _byteEncoding.length - in.getReadIndex();
@@ -79,7 +79,7 @@ public class Formula {
 		in.readFully(byteEncoding);
 		return new Formula(byteEncoding, encodedTokenLen);
 	}
-	
+
 	public Ptg[] getTokens() {
 		LittleEndianInput in = new LittleEndianByteArrayInputStream(_byteEncoding);
 		return Ptg.readTokens(_encodedTokenLen, in);
@@ -104,8 +104,8 @@ public class Formula {
 		int len = _byteEncoding.length-_encodedTokenLen;
 		out.write(_byteEncoding, _encodedTokenLen, len);
 	}
-	
-	
+
+
 	/**
 	 * @return total formula encoding length.  The formula encoding includes:
 	 * <ul>
@@ -121,16 +121,16 @@ public class Formula {
 	/**
 	 * This method is often used when the formula length does not appear immediately before
 	 * the encoded token data.
-	 * 
+	 *
 	 * @return the encoded length of the plain formula tokens.  This does <em>not</em> include
 	 * the leading ushort field, nor any trailing array constant data.
 	 */
 	public int getEncodedTokenSize() {
 		return _encodedTokenLen;
 	}
-	
+
 	/**
-	 * Creates a {@link Formula} object from a supplied {@link Ptg} array. 
+	 * Creates a {@link Formula} object from a supplied {@link Ptg} array.
 	 * Handles <code>null</code>s OK.
 	 * @param ptgs may be <code>null</code>
 	 * @return Never <code>null</code> (Possibly empty if the supplied <tt>ptgs</tt> is <code>null</code>)
@@ -146,9 +146,9 @@ public class Formula {
 		return new Formula(encodedData, encodedTokenLen);
 	}
 	/**
-	 * Gets the {@link Ptg} array from the supplied {@link Formula}. 
+	 * Gets the {@link Ptg} array from the supplied {@link Formula}.
 	 * Handles <code>null</code>s OK.
-	 * 
+	 *
 	 * @param formula may be <code>null</code>
 	 * @return possibly <code>null</code> (if the supplied <tt>formula</tt> is <code>null</code>)
 	 */
@@ -158,18 +158,18 @@ public class Formula {
 		}
 		return formula.getTokens();
 	}
-	
+
 	public Formula copy() {
 		// OK to return this because immutable
 		return this;
 	}
-	
+
 	/**
 	 * Gets the locator for the corresponding {@link SharedFormulaRecord}, {@link ArrayRecord} or
 	 * {@link TableRecord} if this formula belongs to such a grouping.  The {@link CellReference}
-	 * returned by this method will  match the top left corner of the range of that grouping. 
+	 * returned by this method will  match the top left corner of the range of that grouping.
 	 * The return value is usually not the same as the location of the cell containing this formula.
-	 * 
+	 *
 	 * @return the firstRow & firstColumn of an array formula or shared formula that this formula
 	 * belongs to.  <code>null</code> if this formula is not part of an array or shared formula.
 	 */

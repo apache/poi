@@ -23,7 +23,7 @@ import org.apache.poi.util.LittleEndianOutput;
 /**
  * Subclasses of this class (the majority of BIFF records) are non-continuable.  This allows for
  * some simplification of serialization logic
- * 
+ *
  * @author Josh Micich
  */
 public abstract class StandardRecord extends Record {
@@ -41,7 +41,7 @@ public abstract class StandardRecord extends Record {
 		serialize(out);
 		if (out.getWriteIndex() - offset != recSize) {
 			throw new IllegalStateException("Error in serialization of (" + getClass().getName() + "): "
-					+ "Incorrect number of bytes written - expected " 
+					+ "Incorrect number of bytes written - expected "
 					+ recSize + " but got " + (out.getWriteIndex() - offset));
 		}
 		return recSize;
@@ -50,7 +50,7 @@ public abstract class StandardRecord extends Record {
 	/**
 	 * Write the data content of this BIFF record.  The 'ushort sid' and 'ushort size' header fields
 	 * have already been written by the superclass.<br/>
-	 * 
+	 *
 	 * The subclass must write the exact number of bytes as reported by {@link org.apache.poi.hssf.record.Record#getRecordSize()}}
 	 */
 	protected abstract void serialize(LittleEndianOutput out);

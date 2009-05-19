@@ -23,9 +23,9 @@ import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
 
 /**
  * Abstracts a workbook for the purpose of converting formula to text.<br/>
- * 
+ *
  * For POI internal use only
- * 
+ *
  * @author Josh Micich
  */
 public interface FormulaRenderingWorkbook {

@@ -24,17 +24,17 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * ARRAY (0x0221)<p/>
- * 
+ *
  * Treated in a similar way to SharedFormulaRecord
- * 
+ *
  * @author Josh Micich
- */		
+ */
 public final class ArrayRecord extends SharedValueRecordBase {
 
 	public final static short sid = 0x0221;
 	private static final int OPT_ALWAYS_RECALCULATE = 0x0001;
 	private static final int OPT_CALCULATE_ON_OPEN  = 0x0002;
-	
+
 	private int	_options;
 	private int _field3notUsed;
 	private Formula _formula;

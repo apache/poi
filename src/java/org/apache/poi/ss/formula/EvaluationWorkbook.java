@@ -23,9 +23,9 @@ import org.apache.poi.hssf.record.formula.Ptg;
 
 /**
  * Abstracts a workbook for the purpose of formula evaluation.<br/>
- * 
+ *
  * For POI internal use only
- * 
+ *
  * @author Josh Micich
  */
 public interface EvaluationWorkbook {
@@ -46,7 +46,7 @@ public interface EvaluationWorkbook {
 	EvaluationName getName(NamePtg namePtg);
 	String resolveNameXText(NameXPtg ptg);
 	Ptg[] getFormulaTokens(EvaluationCell cell);
-	
+
 	class ExternalSheet {
 		private final String _workbookName;
 		private final String _sheetName;

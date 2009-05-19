@@ -23,9 +23,9 @@ import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianOutput;
 /**
  * Allows the writing of BIFF records when the 'ushort size' header field is not known in advance.
- * When the client is finished writing data, it calls {@link #terminate()}, at which point this 
- * class updates the 'ushort size' with its final value. 
- * 
+ * When the client is finished writing data, it calls {@link #terminate()}, at which point this
+ * class updates the 'ushort size' with its final value.
+ *
  * @author Josh Micich
  */
 final class UnknownLengthRecordOutput implements LittleEndianOutput {
@@ -37,7 +37,7 @@ final class UnknownLengthRecordOutput implements LittleEndianOutput {
 	private final byte[] _byteBuffer;
 	private LittleEndianOutput _out;
 	private int _size;
-	
+
 	public UnknownLengthRecordOutput(LittleEndianOutput out, int sid) {
 		_originalOut = out;
 		out.writeShort(sid);
@@ -82,7 +82,7 @@ final class UnknownLengthRecordOutput implements LittleEndianOutput {
 		}
 		_out = null;
 	}
-	
+
 	public void write(byte[] b) {
 		_out.write(b);
 		_size += b.length;

@@ -99,7 +99,7 @@ public class EscherPictBlip
 
         return bytesAfterHeader + HEADER_SIZE;
     }
-    
+
     /**
      * Serializes the record to an existing byte array.
      *
