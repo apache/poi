@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 import junit.framework.TestCase;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 
-public class TestEscherSplitMenuColorsRecord extends TestCase
-{
+public final class TestEscherSplitMenuColorsRecord extends TestCase {
     public void testSerialize() {
         EscherSplitMenuColorsRecord r = createRecord();
 
@@ -60,15 +58,13 @@ public class TestEscherSplitMenuColorsRecord extends TestCase
     }
 
     public void testToString() {
-        String nl = System.getProperty("line.separator");
-
-        String expected = "org.apache.poi.ddf.EscherSplitMenuColorsRecord:" + nl +
-                "  RecordId: 0xF11E" + nl +
-                "  Options: 0x0040" + nl +
-                "  Color1: 0x00000402" + nl +
-                "  Color2: 0x00000002" + nl +
-                "  Color3: 0x00000002" + nl +
-                "  Color4: 0x00000001" + nl +
+        String expected = "org.apache.poi.ddf.EscherSplitMenuColorsRecord:" + '\n' +
+                "  RecordId: 0xF11E" + '\n' +
+                "  Options: 0x0040" + '\n' +
+                "  Color1: 0x00000402" + '\n' +
+                "  Color2: 0x00000002" + '\n' +
+                "  Color3: 0x00000002" + '\n' +
+                "  Color4: 0x00000001" + '\n' +
                 "";
         assertEquals( expected, createRecord().toString() );
     }

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 import junit.framework.TestCase;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.HexDump;
 
-public class TestUnknownEscherRecord extends TestCase
-{
+public final class TestUnknownEscherRecord extends TestCase {
     public void testFillFields() {
         String testData =
                 "0F 02 " + // options
@@ -108,12 +106,12 @@ public class TestUnknownEscherRecord extends TestCase
         byte[] data = new byte[8];
         r.serialize( 0, data, new NullEscherSerializationListener() );
 
-        String nl = System.getProperty("line.separator");
-        assertEquals( "org.apache.poi.ddf.UnknownEscherRecord:" + nl +
-                "  isContainer: false" + nl +
-                "  options: 0x1234" + nl +
-                "  recordId: 0xF112" + nl +
-                "  numchildren: 0" + nl
+        assertEquals( "org.apache.poi.ddf.UnknownEscherRecord:" + '\n' +
+                "  isContainer: false" + '\n' +
+                "  options: 0x1234" + '\n' +
+                "  recordId: 0xF112" + '\n' +
+                "  numchildren: 0" + '\n' +
+                ": 0"
                 , r.toString() );
     }
 }
