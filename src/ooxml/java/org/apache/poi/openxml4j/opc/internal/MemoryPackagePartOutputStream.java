@@ -23,7 +23,7 @@ import java.io.OutputStream;
 
 /**
  * Build an output stream for MemoryPackagePart.
- * 
+ *
  * @author Julien Chable
  * @version 1.0
  */
@@ -45,7 +45,7 @@ public final class MemoryPackagePartOutputStream extends OutputStream {
 
 	/**
 	 * Close this stream and flush the content.
-	 * @see #flush() 
+	 * @see #flush()
 	 */
 	@Override
 	public void close() throws IOException {
@@ -76,8 +76,8 @@ public final class MemoryPackagePartOutputStream extends OutputStream {
 			// was empty, just fill it
 			part.data = buff.toByteArray();
 		}
-		
-		/* 
+
+		/*
 		 * Clear this streams buffer, in case flush() is called a second time
 		 * Fix bug 1921637 - provided by Rainer Schwarze
 		 */

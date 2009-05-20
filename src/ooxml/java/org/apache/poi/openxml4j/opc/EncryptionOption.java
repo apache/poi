@@ -19,7 +19,7 @@ package org.apache.poi.openxml4j.opc;
 
 /**
  * Specifies the encryption option for parts in a Package.
- * 
+ *
  * @author Julien Chable
  * @version 0.1
  */

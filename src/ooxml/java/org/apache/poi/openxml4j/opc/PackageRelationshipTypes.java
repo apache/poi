@@ -19,7 +19,7 @@ package org.apache.poi.openxml4j.opc;
 
 /**
  * Relationship types.
- * 
+ *
  * @author Julien Chable
  * @version 0.2
  */
@@ -59,7 +59,7 @@ public interface PackageRelationshipTypes {
 	 * Core properties relationship type.
 	 */
 	String CORE_DOCUMENT = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument";
-	
+
 	/**
 	 * Custom XML relationship type.
 	 */

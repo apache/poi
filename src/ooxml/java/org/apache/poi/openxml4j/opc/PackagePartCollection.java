@@ -24,7 +24,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 
 /**
  * A package part collection.
- * 
+ *
  * @author Julien Chable
  * @version 0.1
  */
@@ -48,7 +48,7 @@ public final class PackagePartCollection extends
 	 * Check rule [M1.11]: a package implementer shall neither create nor
 	 * recognize a part with a part name derived from another part name by
 	 * appending segments to it.
-	 * 
+	 *
 	 * @exception InvalidOperationException
 	 *                Throws if you try to add a part with a name derived from
 	 *                another part name.

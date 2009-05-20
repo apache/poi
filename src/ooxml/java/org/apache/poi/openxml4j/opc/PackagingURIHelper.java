@@ -25,7 +25,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 
 /**
  * Helper for part and pack URI.
- * 
+ *
  * @author Julien Chable, CDubet, Kim Ung
  * @version 0.1
  */
@@ -144,7 +144,7 @@ public final class PackagingURIHelper {
 
 	/**
 	 * Gets the URI for the package root.
-	 * 
+	 *
 	 * @return URI of the package root.
 	 */
 	public static URI getPackageRootUri() {
@@ -153,7 +153,7 @@ public final class PackagingURIHelper {
 
 	/**
 	 * Know if the specified URI is a relationship part name.
-	 * 
+	 *
 	 * @param partUri
 	 *            URI to check.
 	 * @return <i>true</i> if the URI <i>false</i>.
@@ -219,7 +219,7 @@ public final class PackagingURIHelper {
 
 	/**
 	 * Combine two URIs.
-	 * 
+	 *
 	 * @param prefix the prefix URI
 	 * @param suffix the suffix URI
 	 *
@@ -254,7 +254,7 @@ public final class PackagingURIHelper {
 
 	/**
 	 * Fully relativize the source part URI against the target part URI.
-	 * 
+	 *
 	 * @param sourceURI
 	 *            The source part URI.
 	 * @param targetURI
@@ -279,7 +279,7 @@ public final class PackagingURIHelper {
 			throw new IllegalArgumentException(
 					"Can't relativize an empty target URI !");
 		}
-		
+
 		// If the source is the root, then the relativized
 		//  form must actually be an absolute URI
 		if(sourceURI.toString().equals("/")) {
@@ -301,7 +301,7 @@ public final class PackagingURIHelper {
 		}
 
 		// If we didn't have a good match or at least except a first empty element
-		if ((segmentsTheSame == 0 || segmentsTheSame == 1) && 
+		if ((segmentsTheSame == 0 || segmentsTheSame == 1) &&
 				segmentsSource[0].equals("") && segmentsTarget[0].equals("")) {
 			for (int i = 0; i < segmentsSource.length - 2; i++) {
 				retVal.append("../");
@@ -360,7 +360,7 @@ public final class PackagingURIHelper {
 
 	/**
 	 * Resolve a source uri against a target.
-	 * 
+	 *
 	 * @param sourcePartUri
 	 *            The source URI.
 	 * @param targetUri
@@ -396,7 +396,7 @@ public final class PackagingURIHelper {
 
 	/**
 	 * Get the source part URI from a specified relationships part.
-	 * 
+	 *
 	 * @param relationshipPartUri
 	 *            The relationship part use to retrieve the source part.
 	 * @return The source part URI from the specified relationships part.
@@ -428,7 +428,7 @@ public final class PackagingURIHelper {
 	/**
 	 * Create an OPC compliant part name by throwing an exception if the URI is
 	 * not valid.
-	 * 
+	 *
 	 * @param partUri
 	 *            The part name URI to validate.
 	 * @return A valid part name object, else <code>null</code>.
@@ -445,7 +445,7 @@ public final class PackagingURIHelper {
 
 	/**
 	 * Create an OPC compliant part name.
-	 * 
+	 *
 	 * @param partName
 	 *            The part name to validate.
 	 * @return The correspondant part name if valid, else <code>null</code>.
@@ -466,7 +466,7 @@ public final class PackagingURIHelper {
 
 	/**
 	 * Create an OPC compliant part name by resolving it using a base part.
-	 * 
+	 *
 	 * @param partName
 	 *            The part name to validate.
 	 * @param relativePart
@@ -490,7 +490,7 @@ public final class PackagingURIHelper {
 
 	/**
 	 * Create an OPC compliant part name by resolving it using a base part.
-	 * 
+	 *
 	 * @param partName
 	 *            The part name URI to validate.
 	 * @param relativePart
@@ -510,25 +510,25 @@ public final class PackagingURIHelper {
 	/**
 	 * Validate a part URI by returning a boolean.
 	 * ([M1.1],[M1.3],[M1.4],[M1.5],[M1.6])
-	 * 
+	 *
 	 * (OPC Specifications 8.1.1 Part names) :
-	 * 
+	 *
 	 * Part Name Syntax
-	 * 
+	 *
 	 * The part name grammar is defined as follows:
-	 * 
+	 *
 	 * <i>part_name = 1*( "/" segment )
-	 * 
+	 *
 	 * segment = 1*( pchar )</i>
-	 * 
-	 * 
+	 *
+	 *
 	 * (pchar is defined in RFC 3986)
-	 * 
+	 *
 	 * @param partUri
 	 *            The URI to validate.
 	 * @return <b>true</b> if the URI is valid to the OPC Specifications, else
 	 *         <b>false</b>
-	 * 
+	 *
 	 * @see #createPartName(URI)
 	 */
 	public static boolean isValidPartName(URI partUri) {
@@ -546,7 +546,7 @@ public final class PackagingURIHelper {
 	/**
 	 * Decode a URI by converting all percent encoded character into a String
 	 * character.
-	 * 
+	 *
 	 * @param uri
 	 *            The URI to decode.
 	 * @return The specified URI in a String with converted percent encoded
@@ -581,7 +581,7 @@ public final class PackagingURIHelper {
 	/**
 	 * Build a part name where the relationship should be stored ((ex
 	 * /word/document.xml -> /word/_rels/document.xml.rels)
-	 * 
+	 *
 	 * @param partName
 	 *            Source part URI
 	 * @return the full path (as URI) of the relation file

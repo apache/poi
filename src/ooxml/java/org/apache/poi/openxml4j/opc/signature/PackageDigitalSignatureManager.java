@@ -17,6 +17,6 @@
 
 package org.apache.poi.openxml4j.opc.signature;
 
-public class PackageDigitalSignatureManager {
+public final class PackageDigitalSignatureManager {
 
 }

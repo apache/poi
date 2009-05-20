@@ -44,7 +44,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
  * </p>
  * @author Julien Chable
  * @version 0.1
- * 
+ *
  * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">http://www.ietf.org/rfc/rfc2045.txt</a>
  * @see <a href="http://www.ietf.org/rfc/rfc2616.txt">http://www.ietf.org/rfc/rfc2616.txt</a>
  */
@@ -73,48 +73,48 @@ public final class ContentType {
 	static {
 		/*
 		 * token = 1*<any CHAR except CTLs or separators>
-		 * 
+		 *
 		 * separators = "(" | ")" | "<" | ">" | "@" | "," | ";" | ":" | "\" |
 		 * <"> | "/" | "[" | "]" | "?" | "=" | "{" | "}" | SP | HT
-		 * 
+		 *
 		 * CTL = <any US-ASCII control character (octets 0 - 31) and DEL (127)>
-		 * 
+		 *
 		 * CHAR = <any US-ASCII character (octets 0 - 127)>
 		 */
 		String token = "[\\x21-\\x7E&&[^\\(\\)<>@,;:\\\\/\"\\[\\]\\?={}\\x20\\x09]]";
 
 		/*
 		 * parameter = attribute "=" value
-		 * 
+		 *
 		 * attribute = token
-		 * 
+		 *
 		 * value = token | quoted-string
 		 */
 		// Keep for future use with parameter:
 		// String parameter = "(" + token + "+)=(\"?" + token + "+\"?)";
 		/*
 		 * Pattern for media type.
-		 * 
+		 *
 		 * Don't allow comment, rule M1.15: The package implementer shall
 		 * require a content type that does not include comments and the format
 		 * designer shall specify such a content type.
-		 * 
+		 *
 		 * comment = "(" *( ctext | quoted-pair | comment ) ")"
-		 * 
+		 *
 		 * ctext = <any TEXT excluding "(" and ")">
-		 * 
+		 *
 		 * TEXT = <any OCTET except CTLs, but including LWS>
-		 * 
+		 *
 		 * LWS = [CRLF] 1*( SP | HT )
-		 * 
+		 *
 		 * CR = <US-ASCII CR, carriage return (13)>
-		 * 
+		 *
 		 * LF = <US-ASCII LF, linefeed (10)>
-		 * 
+		 *
 		 * SP = <US-ASCII SP, space (32)>
-		 * 
+		 *
 		 * HT = <US-ASCII HT, horizontal-tab (9)>
-		 * 
+		 *
 		 * quoted-pair = "\" CHAR
 		 */
 
@@ -127,7 +127,7 @@ public final class ContentType {
 
 	/**
 	 * Constructor. Check the input with the RFC 2616 grammar.
-	 * 
+	 *
 	 * @param contentType
 	 *            The content type to store.
 	 * @throws InvalidFormatException
@@ -195,7 +195,7 @@ public final class ContentType {
 
 	/**
 	 * Get the subtype.
-	 * 
+	 *
 	 * @return The subtype of this content type.
 	 */
 	public String getSubType() {
@@ -204,7 +204,7 @@ public final class ContentType {
 
 	/**
 	 * Get the type.
-	 * 
+	 *
 	 * @return The type of this content type.
 	 */
 	public String getType() {
@@ -213,7 +213,7 @@ public final class ContentType {
 
 	/**
 	 * Gets the value associated to the specified key.
-	 * 
+	 *
 	 * @param key
 	 *            The key of the key/value pair.
 	 * @return The value associated to the specified key.

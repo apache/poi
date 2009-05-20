@@ -25,7 +25,7 @@ import java.nio.channels.FileChannel;
 
 /**
  * Provide useful method to manage file.
- * 
+ *
  * @author Julien Chable
  * @version 0.1
  */
@@ -33,7 +33,7 @@ public final class FileHelper {
 
 	/**
 	 * Get the directory part of the specified file path.
-	 * 
+	 *
 	 * @param f
 	 *            File to process.
 	 * @return The directory path from the specified
@@ -55,7 +55,7 @@ public final class FileHelper {
 
 	/**
 	 * Copy a file.
-	 * 
+	 *
 	 * @param in
 	 *            The source file.
 	 * @param out

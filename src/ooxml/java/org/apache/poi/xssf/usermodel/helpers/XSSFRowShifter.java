@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel.helpers;
 
 import org.apache.poi.xssf.usermodel.*;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
 /**
  * @author Yegor Kozlov
  */
-public class XSSFRowShifter {
+public final class XSSFRowShifter {
     private final XSSFSheet sheet;
 
     public XSSFRowShifter(XSSFSheet sh) {

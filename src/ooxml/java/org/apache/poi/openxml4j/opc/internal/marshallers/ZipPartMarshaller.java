@@ -45,16 +45,15 @@ import org.apache.poi.util.POILogFactory;
 
 /**
  * Zip part marshaller. This marshaller is use to save any part in a zip stream.
- * 
+ *
  * @author Julien Chable
- * @version 0.1
  */
-public class ZipPartMarshaller implements PartMarshaller {
-    private static POILogger logger = POILogFactory.getLogger(ZipPartMarshaller.class);
+public final class ZipPartMarshaller implements PartMarshaller {
+	private static POILogger logger = POILogFactory.getLogger(ZipPartMarshaller.class);
 
 	/**
 	 * Save the specified part.
-	 * 
+	 *
 	 * @throws OpenXML4JException
 	 *             Throws if an internal exception is thrown.
 	 */
@@ -63,7 +62,7 @@ public class ZipPartMarshaller implements PartMarshaller {
 		if (!(os instanceof ZipOutputStream)) {
 			logger.log(POILogger.ERROR,"Unexpected class " + os.getClass().getName());
 			throw new OpenXML4JException("ZipOutputStream expected !");
-			// Normally should happen only in developpement phase, so just throw
+			// Normally should happen only in developement phase, so just throw
 			// exception
 		}
 
@@ -83,9 +82,8 @@ public class ZipPartMarshaller implements PartMarshaller {
 				if (resultRead == -1) {
 					// End of file reached
 					break;
-				} else {
-					zos.write(buff, 0, resultRead);
 				}
+				zos.write(buff, 0, resultRead);
 			}
 			zos.closeEntry();
 		} catch (IOException ioe) {
@@ -108,7 +106,7 @@ public class ZipPartMarshaller implements PartMarshaller {
 
 	/**
 	 * Save relationships into the part.
-	 * 
+	 *
 	 * @param rels
 	 *            The relationships collection to marshall.
 	 * @param relPartName
@@ -156,7 +154,7 @@ public class ZipPartMarshaller implements PartMarshaller {
 			if (rel.getTargetMode() == TargetMode.EXTERNAL) {
 				// Save the target as-is - we don't need to validate it,
 				//  alter it etc
-                targetValue = uri.toString();
+				targetValue = uri.toString();
 
 				// add TargetMode attribute (as it is external link external)
 				relElem.addAttribute(

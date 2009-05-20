@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.POIXMLDocumentPart;
@@ -36,7 +37,7 @@ import java.util.HashMap;
  *
  * @author Yegor Kozlov
  */
-public class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
+public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
     /**
      * Root element of the SpreadsheetML Drawing part
      */

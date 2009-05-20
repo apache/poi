@@ -37,7 +37,7 @@ public final class ZipHelper {
 	 * conventions.
 	 */
 	private final static String FORWARD_SLASH = "/";
-	
+
 	/**
 	 * Buffer to read data from file. Use big buffer to improve performaces. the
 	 * InputStream class is reading only 8192 bytes per read call (default value
@@ -54,7 +54,7 @@ public final class ZipHelper {
 
 	/**
 	 * Retrieve the zip entry of the core properties part.
-	 * 
+	 *
 	 * @throws OpenXML4JException
 	 *             Throws if internal error occurs.
 	 */
@@ -88,7 +88,7 @@ public final class ZipHelper {
 	/**
 	 * Convert a zip name into an OPC name by adding a leading forward slash to
 	 * the specified item name.
-	 * 
+	 *
 	 * @param zipItemName
 	 *            Zip item name to convert.
 	 * @return An OPC compliant name.
@@ -105,7 +105,7 @@ public final class ZipHelper {
 	/**
 	 * Convert an OPC item name into a zip item name by removing any leading
 	 * forward slash if it exist.
-	 * 
+	 *
 	 * @param opcItemName
 	 *            The OPC item name to convert.
 	 * @return A zip item name without any leading slashes.
@@ -123,7 +123,7 @@ public final class ZipHelper {
 	/**
 	 * Convert an OPC item name into a zip URI by removing any leading forward
 	 * slash if it exist.
-	 * 
+	 *
 	 * @param opcItemName
 	 *            The OPC item name to convert.
 	 * @return A zip URI without any leading slashes.
@@ -144,7 +144,7 @@ public final class ZipHelper {
 
 	/**
 	 * Retrieve and open a zip file with the specified path.
-	 * 
+	 *
 	 * @param path
 	 *            The file path.
 	 * @return The zip archive freshly open.

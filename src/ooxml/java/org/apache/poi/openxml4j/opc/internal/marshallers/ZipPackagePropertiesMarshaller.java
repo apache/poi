@@ -29,11 +29,10 @@ import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 
 /**
  * Package core properties marshaller specialized for zipped package.
- * 
+ *
  * @author Julien Chable
- * @version 1.0
  */
-public class ZipPackagePropertiesMarshaller extends PackagePropertiesMarshaller {
+public final class ZipPackagePropertiesMarshaller extends PackagePropertiesMarshaller {
 
 	@Override
 	public boolean marshall(PackagePart part, OutputStream out)

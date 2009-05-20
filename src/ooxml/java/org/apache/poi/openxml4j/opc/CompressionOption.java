@@ -21,7 +21,7 @@ import java.util.zip.Deflater;
 
 /**
  * Specifies the compression level for content that is stored in a PackagePart.
- * 
+ *
  * @author Julien Chable
  * @version 1.0
  */
