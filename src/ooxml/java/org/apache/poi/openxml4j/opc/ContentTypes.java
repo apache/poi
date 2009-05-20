@@ -20,11 +20,10 @@ package org.apache.poi.openxml4j.opc;
 /**
  * Open Packaging Convention content types (see Annex F : Standard Namespaces
  * and Content Types).
- * 
+ *
  * @author CDubettier define some constants, Julien Chable
- * @version 0.1
  */
-public class ContentTypes {
+public final class ContentTypes {
 
 	/*
 	 * Open Packaging Convention (Annex F : Standard Namespaces and Content
@@ -84,9 +83,9 @@ public class ContentTypes {
 
 	/**
 	 * TIFF image format.
-	 * 
+	 *
 	 * @see <a href="http://partners.adobe.com/public/developer/tiff/index.html#spec">
-     * http://partners.adobe.com/public/developer/tiff/index.html#spec</a>
+	 * http://partners.adobe.com/public/developer/tiff/index.html#spec</a>
 	 */
 	public static final String IMAGE_TIFF = "image/tiff";
 
@@ -94,9 +93,9 @@ public class ContentTypes {
 
 	/**
 	 * Pict image format.
-	 * 
+	 *
 	 * @see <a href="http://developer.apple.com/documentation/mac/QuickDraw/QuickDraw-2.html">
-     * http://developer.apple.com/documentation/mac/QuickDraw/QuickDraw-2.html</a>
+	 * http://developer.apple.com/documentation/mac/QuickDraw/QuickDraw-2.html</a>
 	 */
 	public static final String IMAGE_PICT = "image/pict";
 

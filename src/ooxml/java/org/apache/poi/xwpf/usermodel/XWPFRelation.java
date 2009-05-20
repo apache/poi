@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xwpf.usermodel;
 
 import org.apache.poi.POIXMLRelation;
@@ -25,7 +26,7 @@ import java.util.HashMap;
 /**
  * @author Yegor Kozlov
  */
-public class XWPFRelation extends POIXMLRelation {
+public final class XWPFRelation extends POIXMLRelation {
 
     /**
      * A map to lookup POIXMLRelation by its relation type

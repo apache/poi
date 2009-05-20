@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xwpf.usermodel;
 
 import java.util.HashMap;
@@ -22,10 +23,10 @@ import java.util.Map;
 /**
  * Specifies all types of borders which can be specified for WordprocessingML
  * objects which have a border. Borders can be separated into two types:
- * <ul> 
+ * <ul>
  * <li> Line borders: which specify a pattern to be used when drawing a line around the
  * specified object.
- * </li> 
+ * </li>
  * <li> Art borders: which specify a repeated image to be used
  * when drawing a border around the specified object. Line borders may be
  * specified on any object which allows a border, however, art borders may only
@@ -601,26 +602,25 @@ public enum Borders {
     private final int value;
 
     private Borders(int val) {
-	value = val;
+        value = val;
     }
 
     public int getValue() {
-	return value;
+        return value;
     }
 
     private static Map<Integer, Borders> imap = new HashMap<Integer, Borders>();
     static {
-	for (Borders p : values()) {
-	    imap.put(p.getValue(), p);
-	}
+        for (Borders p : values()) {
+            imap.put(new Integer(p.getValue()), p);
+        }
     }
 
     public static Borders valueOf(int type) {
-	Borders pBorder = imap.get(type);
-	if (pBorder == null)
-	    throw new IllegalArgumentException("Unknown paragraph border: "
-		    + type);
-	return pBorder;
+        Borders pBorder = imap.get(new Integer(type));
+        if (pBorder == null) {
+            throw new IllegalArgumentException("Unknown paragraph border: " + type);
+        }
+        return pBorder;
     }
-
 }

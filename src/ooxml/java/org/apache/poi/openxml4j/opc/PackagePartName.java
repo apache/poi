@@ -25,10 +25,9 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
 
 /**
  * An immutable Open Packaging Convention compliant part name.
- * 
+ *
  * @author Julien Chable
- * @version 0.1
- * 
+ *
  * @see <a href="http://www.ietf.org/rfc/rfc3986.txt">http://www.ietf.org/rfc/rfc3986.txt</a>
  */
 public final class PackagePartName implements Comparable<PackagePartName> {
@@ -65,7 +64,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 
 	/**
 	 * Constructor. Makes a ValidPartName object from a java.net.URI
-	 * 
+	 *
 	 * @param uri
 	 *            The URI to validate and to transform into ValidPartName.
 	 * @param checkConformance
@@ -94,7 +93,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 
 	/**
 	 * Constructor. Makes a ValidPartName object from a String part name.
-	 * 
+	 *
 	 * @param partName
 	 *            Part name to valid and to create.
 	 * @param checkConformance
@@ -130,7 +129,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 
 	/**
 	 * Check if the specified part name is a relationship part name.
-	 * 
+	 *
 	 * @param partUri
 	 *            The URI to check.
 	 * @return <code>true</code> if this part name respect the relationship
@@ -148,7 +147,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 
 	/**
 	 * Know if this part name is a relationship part name.
-	 * 
+	 *
 	 * @return <code>true</code> if this part name respect the relationship
 	 *         part naming convention else <code>false</code>.
 	 */
@@ -159,7 +158,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 	/**
 	 * Throws an exception (of any kind) if the specified part name does not
 	 * follow the Open Packaging Convention specifications naming rules.
-	 * 
+	 *
 	 * @param partUri
 	 *            The part name to check.
 	 * @throws Exception
@@ -188,7 +187,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 
 	/**
 	 * Throws an exception if the specified URI is empty. [M1.1]
-	 * 
+	 *
 	 * @param partURI
 	 *            Part URI to check.
 	 * @throws InvalidFormatException
@@ -209,22 +208,22 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 
 	/**
 	 * Throws an exception if the part name has empty segments. [M1.3]
-	 * 
+	 *
 	 * Throws an exception if a segment any characters other than pchar
 	 * characters. [M1.6]
-	 * 
+	 *
 	 * Throws an exception if a segment contain percent-encoded forward slash
 	 * ('/'), or backward slash ('\') characters. [M1.7]
-	 * 
+	 *
 	 * Throws an exception if a segment contain percent-encoded unreserved
 	 * characters. [M1.8]
-	 * 
+	 *
 	 * Throws an exception if the specified part name's segments end with a dot
 	 * ('.') character. [M1.9]
-	 * 
+	 *
 	 * Throws an exception if a segment doesn't include at least one non-dot
 	 * character. [M1.10]
-	 * 
+	 *
 	 * @param partUri
 	 *            The part name to check.
 	 * @throws InvalidFormatException
@@ -267,9 +266,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 								+ partUri.getPath());
 			}
 
-			/*
-			 * Check for rule M1.6, M1.7, M1.8
-			 */
+			// Check for rule M1.6, M1.7, M1.8
 			checkPCharCompliance(seg);
 		}
 	}
@@ -277,13 +274,13 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 	/**
 	 * Throws an exception if a segment any characters other than pchar
 	 * characters. [M1.6]
-	 * 
+	 *
 	 * Throws an exception if a segment contain percent-encoded forward slash
 	 * ('/'), or backward slash ('\') characters. [M1.7]
-	 * 
+	 *
 	 * Throws an exception if a segment contain percent-encoded unreserved
 	 * characters. [M1.8]
-	 * 
+	 *
 	 * @param segment
 	 *            The segment to check
 	 */
@@ -378,7 +375,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 	/**
 	 * Throws an exception if the specified part name doesn't start with a
 	 * forward slash character '/'. [M1.4]
-	 * 
+	 *
 	 * @param partUri
 	 *            The part name to check.
 	 * @throws InvalidFormatException
@@ -398,7 +395,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 	/**
 	 * Throws an exception if the specified part name ends with a forwar slash
 	 * character '/'. [M1.5]
-	 * 
+	 *
 	 * @param partUri
 	 *            The part name to check.
 	 * @throws InvalidFormatException
@@ -417,7 +414,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 
 	/**
 	 * Throws an exception if the specified URI is absolute.
-	 * 
+	 *
 	 * @param partUri
 	 *            The URI to check.
 	 * @throws InvalidFormatException
@@ -432,7 +429,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 
 	/**
 	 * Compare two part name following the rule M1.12 :
-	 * 
+	 *
 	 * Part name equivalence is determined by comparing part names as
 	 * case-insensitive ASCII strings. Packages shall not contain equivalent
 	 * part names and package implementers shall neither create nor recognize
@@ -448,7 +445,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 	/**
 	 * Retrieves the extension of the part name if any. If there is no extension
 	 * returns an empty String. Example : '/document/content.xml' => 'xml'
-	 * 
+	 *
 	 * @return The extension of the part name.
 	 */
 	public String getExtension() {
@@ -463,7 +460,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 
 	/**
 	 * Get this part name.
-	 * 
+	 *
 	 * @return The name of this part name.
 	 */
 	public String getName() {
@@ -500,7 +497,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 
 	/**
 	 * Part name property getter.
-	 * 
+	 *
 	 * @return This part name URI.
 	 */
 	public URI getURI() {

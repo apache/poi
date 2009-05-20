@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
@@ -71,7 +72,7 @@ public abstract class XSSFShape {
     }
 
     /**
-     * Returns xml bean with shape properties. 
+     * Returns xml bean with shape properties.
      *
      * @return xml bean with shape properties.
      */

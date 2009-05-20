@@ -14,11 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.openxml4j.util;
 
 /**
  * An immutable object that could be defined as null.
- * 
+ *
  * @author Julien Chable
  * @version 0.9
  */
@@ -35,7 +36,7 @@ public final class Nullable<E> {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param value
 	 *            The value to set to this nullable.
 	 */
@@ -45,7 +46,7 @@ public final class Nullable<E> {
 
 	/**
 	 * Get the store value if any.
-	 * 
+	 *
 	 * @return the store value
 	 */
 	public E getValue() {
@@ -54,7 +55,7 @@ public final class Nullable<E> {
 
 	/**
 	 * Get the status of this nullable.
-	 * 
+	 *
 	 * @return <b>true</b> if the nullable store a value (empty string is
 	 *         considered to be a value) else <b>false</>.
 	 */

@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.dev;
 
 import org.apache.xmlbeans.XmlObject;
@@ -31,7 +32,7 @@ import java.util.Enumeration;
  *
  * @author Yegor Kozlov
  */
-public class XSSFDump {
+public final class XSSFDump {
 
     public static void main(String[] args) throws Exception {
         for (int i = 0; i < args.length; i++) {

@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.POIXMLDocumentPart;
@@ -32,7 +33,7 @@ import java.lang.reflect.Constructor;
  *
  * @author Yegor Kozlov
  */
-public class XSSFFactory extends POIXMLFactory  {
+public final class XSSFFactory extends POIXMLFactory  {
     private static POILogger logger = POILogFactory.getLogger(XSSFFactory.class);
 
     private XSSFFactory(){

@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
@@ -23,7 +24,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 /**
  * @author Yegor Kozlov
  */
-public class XSSFChildAnchor extends XSSFAnchor {
+public final class XSSFChildAnchor extends XSSFAnchor {
     private CTTransform2D t2d;
 
     public XSSFChildAnchor(int x, int y, int cx, int cy) {

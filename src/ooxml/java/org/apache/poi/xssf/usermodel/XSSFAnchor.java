@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
 /**
@@ -23,7 +24,7 @@ package org.apache.poi.xssf.usermodel;
  * @author Yegor Kozlov
  */
 public abstract class XSSFAnchor {
-    
+
     public abstract int getDx1();
     public abstract void setDx1( int dx1 );
     public abstract int getDy1();

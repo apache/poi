@@ -42,11 +42,11 @@ import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 
 /**
  * Package properties unmarshaller.
- * 
+ *
  * @author Julien Chable
  * @version 1.0
  */
-public class PackagePropertiesUnmarshaller implements PartUnmarshaller {
+public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
 
 	private final static Namespace namespaceDC = new Namespace("dc",
 			PackageProperties.NAMESPACE_DC);
@@ -165,145 +165,145 @@ public class PackagePropertiesUnmarshaller implements PartUnmarshaller {
 	private String loadCategory(Document xmlDoc) {
 		Element el = xmlDoc.getRootElement().element(
 				new QName(KEYWORD_CATEGORY, namespaceCP));
-		if (el != null)
-			return el.getStringValue();
-		else
+		if (el == null) {
 			return null;
+		}
+		return el.getStringValue();
 	}
 
 	private String loadContentStatus(Document xmlDoc) {
 		Element el = xmlDoc.getRootElement().element(
 				new QName(KEYWORD_CONTENT_STATUS, namespaceCP));
-		if (el != null)
-			return el.getStringValue();
-		else
+		if (el == null) {
 			return null;
+		}
+		return el.getStringValue();
 	}
 
 	private String loadContentType(Document xmlDoc) {
 		Element el = xmlDoc.getRootElement().element(
 				new QName(KEYWORD_CONTENT_TYPE, namespaceCP));
-		if (el != null)
-			return el.getStringValue();
-		else
+		if (el == null) {
 			return null;
+		}
+		return el.getStringValue();
 	}
 
 	private String loadCreated(Document xmlDoc) {
 		Element el = xmlDoc.getRootElement().element(
 				new QName(KEYWORD_CREATED, namespaceDcTerms));
-		if (el != null)
-			return el.getStringValue();
-		else
+		if (el == null) {
 			return null;
+		}
+		return el.getStringValue();
 	}
 
 	private String loadCreator(Document xmlDoc) {
 		Element el = xmlDoc.getRootElement().element(
 				new QName(KEYWORD_CREATOR, namespaceDC));
-		if (el != null)
-			return el.getStringValue();
-		else
+		if (el == null) {
 			return null;
+		}
+		return el.getStringValue();
 	}
 
 	private String loadDescription(Document xmlDoc) {
 		Element el = xmlDoc.getRootElement().element(
 				new QName(KEYWORD_DESCRIPTION, namespaceDC));
-		if (el != null)
-			return el.getStringValue();
-		else
+		if (el == null) {
 			return null;
+		}
+		return el.getStringValue();
 	}
 
 	private String loadIdentifier(Document xmlDoc) {
 		Element el = xmlDoc.getRootElement().element(
 				new QName(KEYWORD_IDENTIFIER, namespaceDC));
-		if (el != null)
-			return el.getStringValue();
-		else
+		if (el == null) {
 			return null;
+		}
+		return el.getStringValue();
 	}
 
 	private String loadKeywords(Document xmlDoc) {
 		Element el = xmlDoc.getRootElement().element(
 				new QName(KEYWORD_KEYWORDS, namespaceCP));
-		if (el != null)
-			return el.getStringValue();
-		else
+		if (el == null) {
 			return null;
+		}
+		return el.getStringValue();
 	}
 
 	private String loadLanguage(Document xmlDoc) {
 		Element el = xmlDoc.getRootElement().element(
 				new QName(KEYWORD_LANGUAGE, namespaceDC));
-		if (el != null)
-			return el.getStringValue();
-		else
+		if (el == null) {
 			return null;
+		}
+		return el.getStringValue();
 	}
 
 	private String loadLastModifiedBy(Document xmlDoc) {
 		Element el = xmlDoc.getRootElement().element(
 				new QName(KEYWORD_LAST_MODIFIED_BY, namespaceCP));
-		if (el != null)
-			return el.getStringValue();
-		else
+		if (el == null) {
 			return null;
+		}
+		return el.getStringValue();
 	}
 
 	private String loadLastPrinted(Document xmlDoc) {
 		Element el = xmlDoc.getRootElement().element(
 				new QName(KEYWORD_LAST_PRINTED, namespaceCP));
-		if (el != null)
-			return el.getStringValue();
-		else
+		if (el == null) {
 			return null;
+		}
+		return el.getStringValue();
 	}
 
 	private String loadModified(Document xmlDoc) {
 		Element el = xmlDoc.getRootElement().element(
 				new QName(KEYWORD_MODIFIED, namespaceDcTerms));
-		if (el != null)
-			return el.getStringValue();
-		else
+		if (el == null) {
 			return null;
+		}
+		return el.getStringValue();
 	}
 
 	private String loadRevision(Document xmlDoc) {
 		Element el = xmlDoc.getRootElement().element(
 				new QName(KEYWORD_REVISION, namespaceCP));
-		if (el != null)
-			return el.getStringValue();
-		else
+		if (el == null) {
 			return null;
+		}
+		return el.getStringValue();
 	}
 
 	private String loadSubject(Document xmlDoc) {
 		Element el = xmlDoc.getRootElement().element(
 				new QName(KEYWORD_SUBJECT, namespaceDC));
-		if (el != null)
-			return el.getStringValue();
-		else
+		if (el == null) {
 			return null;
+		}
+		return el.getStringValue();
 	}
 
 	private String loadTitle(Document xmlDoc) {
 		Element el = xmlDoc.getRootElement().element(
 				new QName(KEYWORD_TITLE, namespaceDC));
-		if (el != null)
-			return el.getStringValue();
-		else
+		if (el == null) {
 			return null;
+		}
+		return el.getStringValue();
 	}
 
 	private String loadVersion(Document xmlDoc) {
 		Element el = xmlDoc.getRootElement().element(
 				new QName(KEYWORD_VERSION, namespaceCP));
-		if (el != null)
-			return el.getStringValue();
-		else
+		if (el == null) {
 			return null;
+		}
+		return el.getStringValue();
 	}
 
 	/* OPC Compliance methods */
@@ -329,15 +329,16 @@ public class PackagePropertiesUnmarshaller implements PartUnmarshaller {
 	 * and shall hold the value dcterms:W3CDTF, where dcterms is the namespace
 	 * prefix of the Dublin Core namespace. Consumers shall consider a document
 	 * element that violates this constraint to be an error.
-     * </p>
+	 * </p>
 	 */
 	public void checkElementForOPCCompliance(Element el)
 			throws InvalidFormatException {
 		// Check the current element
-		List declaredNamespaces = el.declaredNamespaces();
-		Iterator itNS = declaredNamespaces.iterator();
+		@SuppressWarnings("unchecked")
+		List<Namespace> declaredNamespaces = el.declaredNamespaces();
+		Iterator<Namespace> itNS = declaredNamespaces.iterator();
 		while (itNS.hasNext()) {
-			Namespace ns = (Namespace) itNS.next();
+			Namespace ns = itNS.next();
 
 			// Rule M4.2
 			if (ns.getURI().equals(PackageNamespaces.MARKUP_COMPATIBILITY))
@@ -384,8 +385,9 @@ public class PackagePropertiesUnmarshaller implements PartUnmarshaller {
 		}
 
 		// Check its children
-		Iterator itChildren = el.elementIterator();
+		@SuppressWarnings("unchecked")
+		Iterator<Element> itChildren = el.elementIterator();
 		while (itChildren.hasNext())
-			checkElementForOPCCompliance((Element) itChildren.next());
+			checkElementForOPCCompliance(itChildren.next());
 	}
 }

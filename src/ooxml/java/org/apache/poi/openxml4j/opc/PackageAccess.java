@@ -19,7 +19,7 @@ package org.apache.poi.openxml4j.opc;
 
 /**
  * Specifies package access.
- * 
+ *
  * @author Julien Chable
  * @version 1.0
  */

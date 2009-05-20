@@ -21,13 +21,13 @@ package org.apache.poi;
  *
  * @author Yegor Kozlov
  */
-public class POIXMLException extends RuntimeException{
+public final class POIXMLException extends RuntimeException{
     /**
      * Create a new <code>POIXMLException</code> with no
      * detail mesage.
      */
     public POIXMLException() {
-	    super();
+        super();
     }
 
     /**
@@ -37,7 +37,7 @@ public class POIXMLException extends RuntimeException{
      * @param msg The error message for the exception.
      */
    public POIXMLException(String msg) {
-	    super(msg);
+        super(msg);
     }
 
     /**

@@ -26,7 +26,7 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.internal.ContentType;
 
-public class PackageDigitalSignature extends PackagePart {
+public final class PackageDigitalSignature extends PackagePart {
 
 	public PackageDigitalSignature() throws InvalidFormatException {
 		super(null, null, new ContentType(""));

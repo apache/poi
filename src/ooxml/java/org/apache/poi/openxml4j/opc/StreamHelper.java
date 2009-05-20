@@ -32,7 +32,7 @@ public final class StreamHelper {
 
 	/**
 	 * Turning the DOM4j object in the specified output stream.
-	 * 
+	 *
 	 * @param xmlContent
 	 *            The XML document.
 	 * @param outStream
@@ -55,7 +55,7 @@ public final class StreamHelper {
 
 	/**
 	 * Copy the input stream into the output stream.
-	 * 
+	 *
 	 * @param inStream
 	 *            The source stream.
 	 * @param outStream

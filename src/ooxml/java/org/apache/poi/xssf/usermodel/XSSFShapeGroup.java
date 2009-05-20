@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
@@ -28,7 +29,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
  *
  * @author Yegor Kozlov
  */
-public class XSSFShapeGroup extends XSSFShape {
+public final class XSSFShapeGroup extends XSSFShape {
     private static CTGroupShape prototype = null;
 
     private CTGroupShape ctGroup;

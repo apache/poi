@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
@@ -25,7 +26,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.*;
  *
  * @author Yegor Kozlov
  */
-public class XSSFConnector extends XSSFShape {
+public final class XSSFConnector extends XSSFShape {
 
     private static CTConnector prototype = null;
 

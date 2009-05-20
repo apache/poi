@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
@@ -27,7 +28,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
  *
  * @author Yegor Kozlov
  */
-public class XSSFSimpleShape extends XSSFShape {
+public class XSSFSimpleShape extends XSSFShape { // TODO - instantiable superclass
     /**
      * A default instance of CTShape used for creating new shapes.
      */

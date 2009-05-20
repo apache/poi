@@ -28,7 +28,7 @@ import org.apache.poi.openxml4j.opc.internal.ContentType;
 
 /**
  * Digital certificate part.
- * 
+ *
  * @author Julien Chable
  * @version 0.1
  */
@@ -38,17 +38,17 @@ public final class DigitalCertificatePart extends PackagePart  {
 		super(null, null, new ContentType(""));
 		// Review constructor
 	}
-	
+
 	@Override
 	public void close() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void flush() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

@@ -13,13 +13,12 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-==================================================================== 
- */
+==================================================================== */
 
 package org.apache.poi.openxml4j.exceptions;
 
 @SuppressWarnings("serial")
-public class InvalidFormatException extends OpenXML4JException{
+public final class InvalidFormatException extends OpenXML4JException{
 
 	public InvalidFormatException(String message){
 		super(message);

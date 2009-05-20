@@ -26,13 +26,13 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
 /**
  * Internal POI use only
- * 
+ *
  * @author Josh Micich
  */
 public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, EvaluationWorkbook, FormulaParsingWorkbook {
 
 	private final XSSFWorkbook _uBook;
-	
+
 	public static XSSFEvaluationWorkbook create(XSSFWorkbook book) {
 		if (book == null) {
 			return null;
@@ -55,8 +55,8 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	}
 	/**
 	 * @return  the external sheet index of the sheet with the given internal
-	 * index. Used by some of the more obscure formula and named range things. 
-	 * Fairly easy on XSSF (we think...) since the internal and external 
+	 * index. Used by some of the more obscure formula and named range things.
+	 * Fairly easy on XSSF (we think...) since the internal and external
 	 * indicies are the same
 	 */
 	private int convertToExternalSheetIndex(int sheetIndex) {
@@ -68,16 +68,16 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		return convertToExternalSheetIndex(sheetIndex);
 	}
 
-    public EvaluationName getName(String name, int sheetIndex) {
-        for(int i=0; i < _uBook.getNumberOfNames(); i++) {
-            XSSFName nm = _uBook.getNameAt(i);
-            String nameText = nm.getNameName();
-            if (name.equalsIgnoreCase(nameText) && nm.getSheetIndex() == sheetIndex) {
-                return new Name(_uBook.getNameAt(i), i, this);
-            }
-        }
-        return sheetIndex == -1 ? null : getName(name, -1);
-    }
+	public EvaluationName getName(String name, int sheetIndex) {
+		for (int i = 0; i < _uBook.getNumberOfNames(); i++) {
+			XSSFName nm = _uBook.getNameAt(i);
+			String nameText = nm.getNameName();
+			if (name.equalsIgnoreCase(nameText) && nm.getSheetIndex() == sheetIndex) {
+				return new Name(_uBook.getNameAt(i), i, this);
+			}
+		}
+		return sheetIndex == -1 ? null : getName(name, -1);
+	}
 
 	public int getSheetIndex(EvaluationSheet evalSheet) {
 		XSSFSheet sheet = ((XSSFEvaluationSheet)evalSheet).getXSSFSheet();
@@ -108,10 +108,10 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		return _uBook.getSheetIndex(sheetName);
 	}
 
-    /**
-     * TODO - figure out what the hell this methods does in
-     *  HSSF...
-     */
+	/**
+	 * TODO - figure out what the hell this methods does in
+	 *  HSSF...
+	 */
 	public String resolveNameXText(NameXPtg n) {
 		throw new RuntimeException("method not implemented yet");
 	}
@@ -147,7 +147,7 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		}
 
 		public Ptg[] getNameDefinition() {
-			
+
 			return FormulaParser.parse(_nameRecord.getRefersToFormula(), _fpBook, FormulaType.NAMEDRANGE, _nameRecord.getSheetIndex());
 		}
 
@@ -173,8 +173,8 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 			return new NamePtg(_index);
 		}
 	}
-    
-    public SpreadsheetVersion getSpreadsheetVersion(){
-        return SpreadsheetVersion.EXCEL2007;
-    }
+
+	public SpreadsheetVersion getSpreadsheetVersion(){
+		return SpreadsheetVersion.EXCEL2007;
+	}
 }

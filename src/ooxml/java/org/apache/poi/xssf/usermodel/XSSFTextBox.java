@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
@@ -23,10 +24,9 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
  *
  * @author Yegor Kozlov
  */
-public class XSSFTextBox extends XSSFSimpleShape {
+public final class XSSFTextBox extends XSSFSimpleShape {
 
     protected XSSFTextBox(XSSFDrawing drawing, CTShape ctShape) {
         super(drawing, ctShape);
     }
-
 }

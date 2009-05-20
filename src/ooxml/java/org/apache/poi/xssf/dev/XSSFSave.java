@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.dev;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -26,7 +27,7 @@ import java.io.FileOutputStream;
  *
  * @author Yegor Kozlov
  */
-public class XSSFSave {
+public final class XSSFSave {
     public static void main(String[] args) throws Exception {
         for (int i = 0; i < args.length; i++) {
             XSSFWorkbook wb = new XSSFWorkbook(args[i]);

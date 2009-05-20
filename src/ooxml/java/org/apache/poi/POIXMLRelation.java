@@ -101,7 +101,7 @@ public abstract class POIXMLRelation {
 
     /**
      * Returns the filename for the nth one of these,
-     *  eg /xl/comments4.xml
+     *  e.g. /xl/comments4.xml
      */
     public String getFileName(int index) {
         if(_defaultName.indexOf("#") == -1) {

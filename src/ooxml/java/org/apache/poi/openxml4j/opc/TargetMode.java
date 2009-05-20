@@ -20,7 +20,7 @@ package org.apache.poi.openxml4j.opc;
 /**
  * Specifies whether the target of a PackageRelationship is inside or outside a
  * Package.
- * 
+ *
  * @author Julien Chable
  * @version 1.0
  */

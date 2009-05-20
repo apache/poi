@@ -19,7 +19,6 @@ package org.apache.poi;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackagePart;
 
-
 /**
  * Defines a factory API that enables sub-classes to create instances of <code>POIXMLDocumentPart</code>
  *

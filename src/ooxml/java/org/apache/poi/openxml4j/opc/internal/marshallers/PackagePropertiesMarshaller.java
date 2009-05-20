@@ -31,9 +31,8 @@ import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
 
 /**
  * Package properties marshaller.
- * 
+ *
  * @author CDubet, Julien Chable
- * @version 1.0
  */
 public class PackagePropertiesMarshaller implements PartMarshaller {
 
@@ -321,7 +320,7 @@ public class PackagePropertiesMarshaller implements PartMarshaller {
 
 	/**
 	 * Add 'last printed' property if needed.
-	 * 
+	 *
 	 */
 	private void addLastPrinted() {
 		if (!propsPart.getLastPrintedProperty().hasValue())

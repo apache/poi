@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
@@ -25,7 +26,7 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
  *
  * @author Yegor Kozlov
  */
-public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
+public final class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
     private int anchorType;
 
     /**

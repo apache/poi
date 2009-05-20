@@ -19,10 +19,10 @@ package org.apache.poi.openxml4j.opc.internal.signature;
 
 /**
  * Represents a digital signature origin part.
- * 
+ *
  * @author Julien Chable
  * @version 0.1
  */
-public class DigitalSignatureOriginPart {
+public final class DigitalSignatureOriginPart {
 
 }
