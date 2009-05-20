@@ -28,7 +28,7 @@ import org.apache.poi.hssf.record.formula.functions.LookupUtils.ValueVector;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- * 
+ *
  */
 public abstract class XYNumericFunction implements Function {
 

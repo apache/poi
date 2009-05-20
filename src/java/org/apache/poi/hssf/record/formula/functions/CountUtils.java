@@ -25,14 +25,14 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
 /**
  * Common logic for COUNT, COUNTA and COUNTIF
  *
- * @author Josh Micich 
+ * @author Josh Micich
  */
 final class CountUtils {
 
 	private CountUtils() {
 		// no instances of this class
 	}
-	
+
 	/**
 	 * Common interface for the matching criteria.
 	 */

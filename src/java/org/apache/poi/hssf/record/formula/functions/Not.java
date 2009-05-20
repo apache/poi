@@ -45,7 +45,7 @@ public final class Not implements Function {
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
-		
+
 		return BoolEval.valueOf(!boolArgVal);
 	}
 }

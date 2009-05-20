@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
+import java.util.Date;
+
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
@@ -34,7 +36,7 @@ public final class Now implements Function {
 			return ErrorEval.VALUE_INVALID;
 		}
 
-		java.util.Date now = new java.util.Date(System.currentTimeMillis());
+		Date now = new Date(System.currentTimeMillis());
 		return new NumberEval(HSSFDateUtil.getExcelDate(now));
 	}
 }

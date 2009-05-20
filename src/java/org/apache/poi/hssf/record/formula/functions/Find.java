@@ -29,13 +29,13 @@ import org.apache.poi.hssf.record.formula.eval.EvaluationException;
  * <b>Syntax</b>:<br/>
  * <b>FIND</b>(<b>find_text</b>, <b>within_text</b>, start_num)<p/>
  *
- * FIND returns the character position of the first occurrence of <tt>find_text</tt> inside 
+ * FIND returns the character position of the first occurrence of <tt>find_text</tt> inside
  * <tt>within_text</tt>.  The third parameter, <tt>start_num</tt>, is optional (default=1)
  * and specifies where to start searching from.  Character positions are 1-based.<p/>
  *
  * @author Torstein Tauno Svendsen (torstei@officenet.no)
  */
-public class Find extends TextFunction {
+public final class Find extends TextFunction {
 
 	protected ValueEval evaluateFunc(Eval[] args, int srcCellRow, short srcCellCol)
 			throws EvaluationException {

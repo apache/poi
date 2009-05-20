@@ -62,7 +62,6 @@ public final class Index implements Function {
 
 			// else the other variation of this function takes an array as the first argument
 			// it seems like interface 'ArrayEval' does not even exist yet
-
 			throw new RuntimeException("Incomplete code - cannot handle first arg of type ("
 					+ firstArg.getClass().getName() + ")");
 		}

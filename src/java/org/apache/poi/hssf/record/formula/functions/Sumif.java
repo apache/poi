@@ -28,7 +28,7 @@ import org.apache.poi.hssf.record.formula.functions.CountUtils.I_MatchPredicate;
 
 /**
  * Implementation for the Excel function SUMIF<p>
- * 
+ *
  * Syntax : <br/>
  *  SUMIF ( <b>range</b>, <b>criteria</b>, sum_range ) <br/>
  *    <table border="0" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
@@ -45,12 +45,12 @@ public final class Sumif implements Function {
 		if (args.length < 2) {
 			return ErrorEval.VALUE_INVALID;
 		}
-		
+
 		AreaEval aeRange;
 		AreaEval aeSum;
 		try {
 			aeRange = convertRangeArg(args[0]);
-			
+
 			switch (args.length) {
 				case 2:
 					aeSum = aeRange;
@@ -72,7 +72,7 @@ public final class Sumif implements Function {
 	private static double sumMatchingCells(AreaEval aeRange, I_MatchPredicate mp, AreaEval aeSum) {
 		int height=aeRange.getHeight();
 		int width= aeRange.getWidth();
-		
+
 		double result = 0.0;
 		for (int r=0; r<height; r++) {
 			for (int c=0; c<width; c++) {
@@ -84,7 +84,7 @@ public final class Sumif implements Function {
 
 	private static double accumulate(AreaEval aeRange, I_MatchPredicate mp, AreaEval aeSum, int relRowIndex,
 			int relColIndex) {
-		
+
 		if (!mp.matches(aeRange.getRelativeValue(relRowIndex, relColIndex))) {
 			return 0.0;
 		}

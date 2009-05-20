@@ -1,20 +1,19 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
 
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
 
 package org.apache.poi.hssf.record.formula.functions;
 
@@ -32,23 +31,23 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
  * Implementation for the Excel function SUMPRODUCT<p>
- * 
+ *
  * Syntax : <br/>
  *  SUMPRODUCT ( array1[, array2[, array3[, ...]]])
  *    <table border="0" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
- *      <tr><th>array1, ... arrayN&nbsp;&nbsp;</th><td>typically area references, 
+ *      <tr><th>array1, ... arrayN&nbsp;&nbsp;</th><td>typically area references,
  *      possibly cell references or scalar values</td></tr>
  *    </table><br/>
- *    
- * Let A<b>n</b><sub>(<b>i</b>,<b>j</b>)</sub> represent the element in the <b>i</b>th row <b>j</b>th column 
- * of the <b>n</b>th array<br/>   
- * Assuming each array has the same dimensions (W, H), the result is defined as:<br/>    
+ *
+ * Let A<b>n</b><sub>(<b>i</b>,<b>j</b>)</sub> represent the element in the <b>i</b>th row <b>j</b>th column
+ * of the <b>n</b>th array<br/>
+ * Assuming each array has the same dimensions (W, H), the result is defined as:<br/>
  * SUMPRODUCT = &Sigma;<sub><b>i</b>: 1..H</sub> &nbsp;
  * 	(&nbsp; &Sigma;<sub><b>j</b>: 1..W</sub> &nbsp;
- * 	  (&nbsp; &Pi;<sub><b>n</b>: 1..N</sub> 
+ * 	  (&nbsp; &Pi;<sub><b>n</b>: 1..N</sub>
  * 			A<b>n</b><sub>(<b>i</b>,<b>j</b>)</sub>&nbsp;
  *    )&nbsp;
- *  ) 
+ *  )
  * </p>
  * @author Josh Micich
  */
@@ -56,9 +55,9 @@ public final class Sumproduct implements Function {
 
 
 	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
-		
+
 		int maxN = args.length;
-		
+
 		if(maxN < 1) {
 			return ErrorEval.VALUE_INVALID;
 		}
@@ -80,7 +79,7 @@ public final class Sumproduct implements Function {
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
-		throw new RuntimeException("Invalid arg type for SUMPRODUCT: (" 
+		throw new RuntimeException("Invalid arg type for SUMPRODUCT: ("
 				+ firstArg.getClass().getName() + ")");
 	}
 
@@ -96,7 +95,7 @@ public final class Sumproduct implements Function {
 	}
 
 	private static double getScalarValue(Eval arg) throws EvaluationException {
-		
+
 		Eval eval;
 		if (arg instanceof RefEval) {
 			RefEval re = (RefEval) arg;
@@ -104,7 +103,7 @@ public final class Sumproduct implements Function {
 		} else {
 			eval = arg;
 		}
-		
+
 		if (eval == null) {
 			throw new RuntimeException("parameter may not be null");
 		}
@@ -118,10 +117,10 @@ public final class Sumproduct implements Function {
 		}
 
 		if (!(eval instanceof ValueEval)) {
-			throw new RuntimeException("Unexpected value eval class (" 
+			throw new RuntimeException("Unexpected value eval class ("
 					+ eval.getClass().getName() + ")");
 		}
-		
+
 		return getProductTerm((ValueEval) eval, true);
 	}
 
@@ -135,15 +134,15 @@ public final class Sumproduct implements Function {
 			return ErrorEval.VALUE_INVALID;
 		}
 
-		
+
 		AreaEval firstArg = args[0];
-		
+
 		int height = firstArg.getHeight();
 		int width = firstArg.getWidth(); // TODO - junit
-		
+
 		// first check dimensions
 		if (!areasAllSameSize(args, height, width)) {
-			// normally this results in #VALUE!, 
+			// normally this results in #VALUE!,
 			// but errors in individual cells take precedence
 			for (int i = 1; i < args.length; i++) {
 				throwFirstError(args[i]);
@@ -152,7 +151,7 @@ public final class Sumproduct implements Function {
 		}
 
 		double acc = 0;
-		
+
 		for (int rrIx=0; rrIx<height; rrIx++) {
 			for (int rcIx=0; rcIx<width; rcIx++) {
 				double term = 1D;
@@ -163,7 +162,7 @@ public final class Sumproduct implements Function {
 				acc += term;
 			}
 		}
-		
+
 		return new NumberEval(acc);
 	}
 
@@ -196,11 +195,11 @@ public final class Sumproduct implements Function {
 
 
 	/**
-	 * Determines a <code>double</code> value for the specified <code>ValueEval</code>. 
+	 * Determines a <code>double</code> value for the specified <code>ValueEval</code>.
 	 * @param isScalarProduct <code>false</code> for SUMPRODUCTs over area refs.
 	 * @throws EvaluationException if <code>ve</code> represents an error value.
 	 * <p/>
-	 * Note - string values and empty cells are interpreted differently depending on 
+	 * Note - string values and empty cells are interpreted differently depending on
 	 * <code>isScalarProduct</code>.  For scalar products, if any term is blank or a string, the
 	 * error (#VALUE!) is raised.  For area (sum)products, if any term is blank or a string, the
 	 * result is zero.
@@ -215,7 +214,7 @@ public final class Sumproduct implements Function {
 			}
 			return 0;
 		}
-		
+
 		if(ve instanceof ErrorEval) {
 			throw new EvaluationException((ErrorEval)ve);
 		}
@@ -231,7 +230,7 @@ public final class Sumproduct implements Function {
 			NumericValueEval nve = (NumericValueEval) ve;
 			return nve.getNumberValue();
 		}
-		throw new RuntimeException("Unexpected value eval class (" 
+		throw new RuntimeException("Unexpected value eval class ("
 				+ ve.getClass().getName() + ")");
 	}
 }

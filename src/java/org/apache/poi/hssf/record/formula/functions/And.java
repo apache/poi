@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.record.formula.functions;
 
 /**
- * 
+ *
  */
 public final class And extends BooleanFunction {
 

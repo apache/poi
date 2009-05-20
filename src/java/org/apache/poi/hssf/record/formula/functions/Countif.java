@@ -41,7 +41,7 @@ import org.apache.poi.ss.usermodel.ErrorConstants;
  *      <tr><th>criteria</th><td>is used to determine which cells to count</td></tr>
  *    </table>
  * </p>
- * 
+ *
  * @author Josh Micich
  */
 public final class Countif implements Function {
@@ -121,7 +121,7 @@ public final class Countif implements Function {
 				case NE:
 					return !cmpResult;
 			}
-			throw new RuntimeException("Cannot call boolean evaluate on non-equality operator '" 
+			throw new RuntimeException("Cannot call boolean evaluate on non-equality operator '"
 					+ _representation + "'");
 		}
 		public boolean evaluate(int cmpResult) {
@@ -135,7 +135,7 @@ public final class Countif implements Function {
 				case GT: return cmpResult >  0;
 				case GE: return cmpResult <= 0;
 			}
-			throw new RuntimeException("Cannot call boolean evaluate on non-equality operator '" 
+			throw new RuntimeException("Cannot call boolean evaluate on non-equality operator '"
 					+ _representation + "'");
 		}
 		public String toString() {
@@ -204,7 +204,7 @@ public final class Countif implements Function {
 						return true;
 					default:
 						// never matches (also inconsistent with above three cases).
-						// for example '>5' does not match '6', 
+						// for example '>5' does not match '6',
 						return false;
 				}
 				StringEval se = (StringEval)x;
@@ -244,7 +244,7 @@ public final class Countif implements Function {
 			int testValue;
 			if(x instanceof StringEval) {
 				if (true) { // change to false to observe more intuitive behaviour
-					// Note - Unlike with numbers, it seems that COUNTIF never matches 
+					// Note - Unlike with numbers, it seems that COUNTIF never matches
 					// boolean values when the target(x) is a string
 					return false;
 				}
@@ -387,7 +387,7 @@ public final class Countif implements Function {
 					case ']':
 					case '(':
 					case ')':
-						// escape literal characters that would have special meaning in regex 
+						// escape literal characters that would have special meaning in regex
 						sb.append("\\").append(ch);
 						continue;
 				}
@@ -423,7 +423,7 @@ public final class Countif implements Function {
 	 * @return the number of evaluated cells in the range that match the specified criteria
 	 */
 	private double countMatchingCellsInArea(Eval rangeArg, I_MatchPredicate criteriaPredicate) {
-		
+
 		if (rangeArg instanceof RefEval) {
 			return CountUtils.countMatchingCell((RefEval) rangeArg, criteriaPredicate);
 		} else if (rangeArg instanceof AreaEval) {
@@ -440,7 +440,7 @@ public final class Countif implements Function {
 	/* package */ static I_MatchPredicate createCriteriaPredicate(Eval arg, int srcRowIndex, int srcColumnIndex) {
 
 		Eval evaluatedCriteriaArg = evaluateCriteriaArg(arg, srcRowIndex, srcColumnIndex);
-		
+
 		if(evaluatedCriteriaArg instanceof NumberEval) {
 			return new NumberMatcher(((NumberEval)evaluatedCriteriaArg).getNumberValue(), CmpOp.OP_NONE);
 		}
@@ -457,12 +457,12 @@ public final class Countif implements Function {
 		if(evaluatedCriteriaArg == BlankEval.INSTANCE) {
 			return null;
 		}
-		throw new RuntimeException("Unexpected type for criteria (" 
+		throw new RuntimeException("Unexpected type for criteria ("
 				+ evaluatedCriteriaArg.getClass().getName() + ")");
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the de-referenced criteria arg (possibly {@link ErrorEval})
 	 */
 	private static Eval evaluateCriteriaArg(Eval arg, int srcRowIndex, int srcColumnIndex) {
@@ -512,7 +512,7 @@ public final class Countif implements Function {
 		return null;
 	}
 	/**
-	 * Boolean literals ('TRUE', 'FALSE') treated similarly but NOT same as numbers. 
+	 * Boolean literals ('TRUE', 'FALSE') treated similarly but NOT same as numbers.
 	 */
 	/* package */ static Boolean parseBoolean(String strRep) {
 		if (strRep.length() < 1) {

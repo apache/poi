@@ -24,7 +24,7 @@ import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
- * An implementation of the Excel REPLACE() function<p/>:
+ * An implementation of the Excel REPLACE() function:<p/>
  * Replaces part of a text string based on the number of characters
  * you specify, with another text string.<br/>
  *

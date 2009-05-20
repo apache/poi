@@ -24,12 +24,12 @@ import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.functions.CountUtils.I_MatchPredicate;
 
 /**
- * Counts the number of cells that contain data within the list of arguments. 
+ * Counts the number of cells that contain data within the list of arguments.
  *
  * Excel Syntax
  * COUNTA(value1,value2,...)
  * Value1, value2, ...   are 1 to 30 arguments representing the values or ranges to be counted.
- * 
+ *
  * @author Josh Micich
  */
 public final class Counta implements Function {
@@ -45,12 +45,12 @@ public final class Counta implements Function {
 			// too many arguments
 			return ErrorEval.VALUE_INVALID;
 		}
-		
+
 		int temp = 0;
-		
+
 		for(int i=0; i<nArgs; i++) {
 			temp += CountUtils.countArg(args[i], predicate);
-			
+
 		}
 		return new NumberEval(temp);
 	}

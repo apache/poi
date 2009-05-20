@@ -17,26 +17,22 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *  
+ *
  */
 public final class Odd extends NumericFunction.OneArg {
 	private static final long PARITY_MASK = 0xFFFFFFFFFFFFFFFEL;
-    
+
 	protected double evaluate(double d) {
 		if (d==0) {
 			return 1;
 		}
-		long result;
 		if (d>0) {
-			result = calcOdd(d);
-		} else {
-			result = -calcOdd(-d);
+			return calcOdd(d);
 		}
-		return result;
-    }
+		return -calcOdd(-d);
+	}
 
 	private static long calcOdd(double d) {
 		double dpm1 = d+1;

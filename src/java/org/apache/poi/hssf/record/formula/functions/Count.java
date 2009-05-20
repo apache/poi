@@ -25,12 +25,12 @@ import org.apache.poi.hssf.record.formula.functions.CountUtils.I_MatchPredicate;
 
 /**
  * Counts the number of cells that contain numeric data within
- *  the list of arguments. 
+ *  the list of arguments.
  *
  * Excel Syntax
  * COUNT(value1,value2,...)
  * Value1, value2, ...   are 1 to 30 arguments representing the values or ranges to be counted.
- * 
+ *
  * TODO: Check this properly matches excel on edge cases
  *  like formula cells, error cells etc
  */
@@ -47,12 +47,12 @@ public final class Count implements Function {
 			// too many arguments
 			return ErrorEval.VALUE_INVALID;
 		}
-		
+
 		int temp = 0;
-		
+
 		for(int i=0; i<nArgs; i++) {
 			temp += CountUtils.countArg(args[i], predicate);
-			
+
 		}
 		return new NumberEval(temp);
 	}
