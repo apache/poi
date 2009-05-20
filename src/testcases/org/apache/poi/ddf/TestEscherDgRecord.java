@@ -21,8 +21,7 @@ import junit.framework.TestCase;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 
-public class TestEscherDgRecord extends TestCase
-{
+public final class TestEscherDgRecord extends TestCase {
     public void testSerialize() {
         EscherDgRecord r = createRecord();
 
@@ -53,13 +52,11 @@ public class TestEscherDgRecord extends TestCase
     }
 
     public void testToString() {
-        String nl = System.getProperty("line.separator");
-
-        String expected = "org.apache.poi.ddf.EscherDgRecord:" + nl +
-                "  RecordId: 0xF008" + nl +
-                "  Options: 0x0010" + nl +
-                "  NumShapes: 2" + nl +
-                "  LastMSOSPID: 1025" + nl;
+        String expected = "org.apache.poi.ddf.EscherDgRecord:" + '\n' +
+                "  RecordId: 0xF008" + '\n' +
+                "  Options: 0x0010" + '\n' +
+                "  NumShapes: 2" + '\n' +
+                "  LastMSOSPID: 1025" + '\n';
         assertEquals( expected, createRecord().toString() );
     }
 
